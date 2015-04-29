@@ -54,7 +54,7 @@ public class CcmObject implements Serializable {
         return objectId;
     }
 
-    public void setObjectId(long objectId) {
+    public void setObjectId(final long objectId) {
         this.objectId = objectId;
     }
 
@@ -62,7 +62,7 @@ public class CcmObject implements Serializable {
         return displayName;
     }
 
-    public void setDisplayName(String displayName) {
+    public void setDisplayName(final String displayName) {
         this.displayName = displayName;
     }
 

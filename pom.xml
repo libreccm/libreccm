@@ -149,6 +149,11 @@
                         </execution>
                     </executions>
                 </plugin>
+                <plugin>
+                    <groupId>de.jpdigital</groupId>
+                    <artifactId>hibernate4-ddl-maven-plugin</artifactId>
+                    <version>1.0.0-alpha.1</version>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
