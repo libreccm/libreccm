@@ -23,7 +23,9 @@ import org.libreccm.l10n.LocalizedString;
 
 import java.io.Serializable;
 import java.net.URI;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.AssociationOverride;
@@ -33,6 +35,7 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -78,6 +81,9 @@ public class Domain extends CcmObject implements Serializable {
     
     @ManyToOne
     private Category root;
+    
+    @OneToMany(mappedBy = "domain_id")
+    private List<DomainOwnership> owners;
 
     public String getDomainKey() {
         return domainKey;
@@ -133,6 +139,22 @@ public class Domain extends CcmObject implements Serializable {
 
     protected void setRoot(final Category root) {
         this.root = root;
+    }
+
+    public List<DomainOwnership> getOwners() {
+        return Collections.unmodifiableList(owners);
+    }
+
+    protected void setOwners(final List<DomainOwnership> owners) {
+        this.owners = owners;
+    }
+    
+    protected void addOwner(final DomainOwnership owner) {
+        owners.add(owner);
+    }
+    
+    protected void removeOwner(final DomainOwnership owner) {
+        owners.remove(owner);
     }
 
     @Override
