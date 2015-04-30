@@ -56,7 +56,7 @@ public class Domain extends CcmObject implements Serializable {
     @Embedded
     @AssociationOverride(
         name = "values",
-        joinTable = @JoinTable(name = "category_titles",
+        joinTable = @JoinTable(name = "domain_titles",
                                joinColumns = {
                                    @JoinColumn(name = "object_id")}))
     private LocalizedString title;
@@ -64,7 +64,7 @@ public class Domain extends CcmObject implements Serializable {
     @Embedded
     @AssociationOverride(
         name = "values",
-        joinTable = @JoinTable(name = "category_descriptions",
+        joinTable = @JoinTable(name = "domain_descriptions",
                                joinColumns = {
                                    @JoinColumn(name = "object_id")}))
     private LocalizedString description;

@@ -32,7 +32,7 @@ import javax.persistence.Table;
 
 /**
  *
- * @author Jens Pelzetter jens@jp-digital.de
+ * @author <a href="jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
 @Table(name = "ccm_objects")
@@ -46,6 +46,7 @@ public class CcmObject implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long objectId;
 
+    @Column(name = "display_name")
     private String displayName;
 
     //private Map<String, Category> ownedCategories;
