@@ -86,10 +86,11 @@ public class Category extends CcmObject implements Serializable {
     @OneToMany(mappedBy = "category")
     private List<Categorization> objects;
 
-    @OneToMany(mappedBy = "parent_category")
+    @OneToMany(mappedBy = "parentCategory")
     private List<Category> subCategories;
 
     @ManyToOne
+    @JoinColumn(name = "parent_category_id")
     private Category parentCategory;
 
     @Column(name = "category_order")

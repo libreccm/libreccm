@@ -80,9 +80,10 @@ public class Domain extends CcmObject implements Serializable {
     private Date released;
     
     @ManyToOne
+    @JoinColumn(name = "root_category_id")
     private Category root;
     
-    @OneToMany(mappedBy = "domain_id")
+    @OneToMany(mappedBy = "domain")
     private List<DomainOwnership> owners;
 
     public String getDomainKey() {
