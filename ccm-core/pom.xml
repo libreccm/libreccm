@@ -30,52 +30,6 @@
         </license>
     </licenses>
     
-    <repositories>
-        <repository>
-            <id>jp-digital-snapshots</id>
-            <url>http://archiva.jp-digital.de/repository/jp-digital-snapshots/</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>jp-digital-releases</id>
-            <url>http://archiva.jp-digital.de/repository/jp-digital-releases/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-    
-    <pluginRepositories>
-        <pluginRepository>
-            <id>jp-digital-snapshots</id>
-            <url>http://archiva.jp-digital.de/repository/jp-digital-snapshots/</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </pluginRepository>
-        <pluginRepository>
-            <id>jp-digital-releases</id>
-            <url>http://archiva.jp-digital.de/repository/jp-digital-releases/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
-    
     <dependencies>
         <dependency>
             <groupId>javax</groupId>
@@ -127,7 +81,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.18.1</version>
                 <configuration>
-                    <groups>de.jpdigital.research.accessibilitystudy.tests.UnitTest</groups>
+                    <groups>org.libreccm.tests.categories.UnitTest</groups>
                 </configuration>
             </plugin>
             <plugin>

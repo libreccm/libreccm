@@ -122,7 +122,7 @@ public class Domain extends CcmObject implements Serializable {
         return version;
     }
 
-    public void setVersion(String version) {
+    public void setVersion(final String version) {
         this.version = version;
     }
 
@@ -172,7 +172,11 @@ public class Domain extends CcmObject implements Serializable {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    @SuppressWarnings({"PMD.NPathComplexity",
+                       "PMD.CyclomaticComplexity",
+                       "PMD.StdCyclomaticComplexity",
+                       "PMD.ModifiedCyclomaticComplexity"})
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

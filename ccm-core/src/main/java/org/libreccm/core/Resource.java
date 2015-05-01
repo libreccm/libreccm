@@ -81,7 +81,7 @@ public class Resource extends CcmObject implements Serializable {
         return title;
     }
 
-    public void setTitle(LocalizedString title) {
+    public void setTitle(final LocalizedString title) {
         this.title = title;
     }
 
@@ -89,7 +89,7 @@ public class Resource extends CcmObject implements Serializable {
         return description;
     }
 
-    public void setDescription(LocalizedString description) {
+    public void setDescription(final LocalizedString description) {
         this.description = description;
     }
 
@@ -121,7 +121,7 @@ public class Resource extends CcmObject implements Serializable {
         return parent;
     }
 
-    protected void setParent(Resource parent) {
+    protected void setParent(final Resource parent) {
         this.parent = parent;
     }
 

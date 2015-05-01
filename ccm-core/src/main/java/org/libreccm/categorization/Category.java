@@ -216,6 +216,10 @@ public class Category extends CcmObject implements Serializable {
     }
 
     @Override
+    @SuppressWarnings({"PMD.NPathComplexity",
+                       "PMD.CyclomaticComplexity",
+                       "PMD.StdCyclomaticComplexity",
+                       "PMD.ModifiedCyclomaticComplexity"})
     public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
