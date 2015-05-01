@@ -34,6 +34,52 @@
         <module>ccm-core</module>
     </modules>
 
+    <repositories>
+        <repository>
+            <id>jp-digital-snapshots</id>
+            <url>http://archiva.jp-digital.de/repository/jp-digital-snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>jp-digital-releases</id>
+            <url>http://archiva.jp-digital.de/repository/jp-digital-releases/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+    
+    <pluginRepositories>
+        <pluginRepository>
+            <id>jp-digital-snapshots</id>
+            <url>http://archiva.jp-digital.de/repository/jp-digital-snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+        <pluginRepository>
+            <id>jp-digital-releases</id>
+            <url>http://archiva.jp-digital.de/repository/jp-digital-releases/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+
     <reporting>
         <excludeDefaults>true</excludeDefaults>
         <plugins>
