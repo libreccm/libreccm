@@ -175,12 +175,54 @@ public class CcmObject implements Serializable {
         return hash;
     }
 
+    /**
+     * Implementation of the {@code equals(Object)} method for {@code CcmObject}. We are
+     * using the <em>canEqual</em> approach described at 
+     * http://www.jqno.nl/equalsverifier/2011/01/20/subclass-object-is-not-equal-to-an-instance-of-a-trivial-subclass-with-equal-fields/
+     * here. Therefore, in addition to overwrite this method subclasses should
+     * also overwrite the {@link #canEqual(java.lang.Object)} method.
+     * 
+     * A good pattern for implementing {@code equals(Object)} is the following
+     * (this is similar to {@code equals(Object) implemenation created by 
+     * Netbeans):
+     * 
+     * <pre>
+     * public boolean equals(final Object obj) {
+     *     //Check if obj is null
+     *     if (obj == null) {
+     *         return false;
+     *     }
+     *     
+     *     //Check if obj is an instance of the class implementing equals
+     *     if (!(obj instanceof YourClass)) {
+     *         return false;
+     *     }
+     * 
+     *     //Cast obj to the specific class
+     *     final YourClass other = (YourClass) obj;
+     *     //Check if other can equal YourClass
+     *     if (!other.canEqual(this) {
+     *         return false;
+     *     }
+     * 
+     *     if(!super.equals(obj) {
+     *         return false;
+     *     }
+     * 
+     *     //Check properties of YourClass
+     *     ...
+     * }
+     * </pre>
+     * 
+     * @param obj {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof CcmObject)) {
             return false;
         }
         final CcmObject other = (CcmObject) obj;
@@ -194,15 +236,70 @@ public class CcmObject implements Serializable {
         return Objects.equals(displayName, other.getDisplayName());
     }
 
+    /**
+     * The {@code canEqual(Object} method is a helper method for 
+     * {@link #equals(java.lang.Object)}. Subclasses which overwrite 
+     * {@code #equals(Object)} must override this method also. 
+     * 
+     * Usually the implementation of this method will be a onliner:
+     * <pre>
+     * public boolean canEqual(final Object obj) {
+     *     return obj instanceof YourClass;
+     * }
+     * </pre>
+     * 
+     * @param obj The object to check.
+     * @return {@code true} if {@link obj} can equal this, false otherwise.
+     */
     public boolean canEqual(final Object obj) {
         return obj instanceof CcmObject;
     }
 
+    /**
+     * Implementation of the {@code toString()} method for {@code CcmObject}. To
+     * make extension easy {@code toString()} simply calls 
+     * {@link #toString(java.lang.String)} with an empty string as parameter. 
+     * Subclasses should not overwrite {@code toString}, instead they should use
+     * {@link #toString(java.lang.String)}.
+     * 
+     * @return {@inheritDoc}
+     */
     @Override
     public final String toString() {
         return toString("");
     }
 
+    /**
+     * Creates a string representation of this object. Example:
+     * 
+     * <pre>
+     *   org.libreccm.core.CcmObject@1adafefe4222{ objectId = 42, 
+     *   displayName = "example" }
+     * </pre>
+     * 
+     * Subclasses can simply add their properties by creating a containing the 
+     * additional properties and call {@code super.toString(String)} with this
+     * data. The string should start with a leading space and comma because the
+     * additional properties are inserted after the {@code displayName} in the
+     * string. Also an overwriting method should insert its own data parameter
+     * and the end of the string it creates.
+     * 
+     * Collections should not be included in this string. Associated objects
+     * might be included. In that case their representation should like this:
+     * <pre>
+     * someObject = { ... }
+     * </pre>
+     * 
+     * The content of the curly braces should be the string representation of
+     * the object. If the object is very complex it might be sufficent to 
+     * include only a subset of the objects properties.
+     * 
+     * Likewise, strings would be enclosed by quotes. The value of date 
+     * properties should be shown in ISO format.
+     * 
+     * @param data data from a subclass
+     * @return A string representation of this object.
+     */
     public String toString(final String data) {
         return String.format(
             "%s{ "
