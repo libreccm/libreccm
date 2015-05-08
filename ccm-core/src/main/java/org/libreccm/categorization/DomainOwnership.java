@@ -30,7 +30,11 @@ import javax.persistence.Table;
 import org.libreccm.core.CcmObject;
 
 /**
- *
+ * Association class for the association between a {@link Domain} and a 
+ * {@link CcmObject}. Instances of this class should not be created manually.
+ * Instead the methods provided by the {@link DomainManager} manager class 
+ * should be used.
+ * 
  * @author <a href="jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
@@ -39,23 +43,43 @@ public class DomainOwnership implements Serializable {
 
     private static final long serialVersionUID = 201504301305L;
 
+    /**
+     * The ID of this domain ownership.
+     */
     @Id
     @Column(name = "ownership_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long ownershipId;
 
+    /**
+     * The {@link CcmObject} owning the {@link Domain}.
+     */
     @ManyToOne(optional = false)
     private CcmObject owner;
 
+    /**
+     * The {@link Domain} owned by the {@link CcmObject}.
+     */
     @ManyToOne(optional = false)
     private Domain domain;
 
+    /**
+     * The context for the domain mapping.
+     */
     @Column(name = "context")
     private String context;
 
+    /**
+     * Defines the order in which the owning {@link CcmObject}s of a 
+     * {@link Domain} are shown.
+     */
     @Column(name = "owner_order")
     private long ownerOrder;
 
+    /**
+     * Defines the order in which the {@link Domain}s owned by a 
+     * {@link CcmObject} are shown.
+     */
     @Column(name = "domain_order")
     private long domainOrder;
 

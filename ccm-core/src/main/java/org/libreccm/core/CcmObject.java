@@ -112,7 +112,8 @@ public class CcmObject implements Serializable {
     }
     
     /**
-     * Getter for the list of owned domains.
+     * Gets an <strong>unmodifiable</strong> list of the domains which are owned
+     * by the {@code CcmObject}.
      * 
      * @return An unmodifiable list of the domain ownerships of this 
      * {@code CcmObject}. Might be {@code null} or empty.
@@ -132,8 +133,9 @@ public class CcmObject implements Serializable {
     
     /**
      * <strong>Internal</strong> method for  adding a domain ownership. 
-     * User should use the appropriate methods of the {@code CategoryManager} 
-     * class.
+     * Users should use the appropriate methods of the {@link DomainManager} 
+     * class to
+     * manage the {@link Domain}s assigned to {@code CcmObject}.
      * 
      * @param domain The domain ownership to add.
      */
@@ -143,26 +145,55 @@ public class CcmObject implements Serializable {
     
     /**
      * <strong>Internal</strong> method for removing a domain ownership. 
-     * User should use the appropriate methods of the {@code CategoryManager} 
+     * Users should use the appropriate methods of the {@link DomainManager} to
+     * manage the {@link Domain}s assigned to {@code CcmObject}.
      * 
-     * @param domain 
+     * @param domain The domain to remove.
      */
     protected void removeDomain(final DomainOwnership domain) {
         domains.remove(domain);
     }
 
+    /**
+     * Returns a <strong>unmodifiable</strong> list of the categories this 
+     * object is assigned to. To manage the categories of a {@code CcmObject}
+     * use the methods provided by the {@link CategoryManager} class.
+     * 
+     * @return An <strong>unmodifiable</strong> list of the categories of this
+     * {@code CcmObject}. Might be {@code null} or empty.
+     */
     public List<Categorization> getCategories() {
         return Collections.unmodifiableList(categories);
     }
 
+     /**
+     * Setter for the list of categories assigned to this {@code CcmObject}, 
+     * only for use by JPA. 
+     * 
+     * @param categories  A list of domain ownerships. 
+     */
     protected void setCategories(final List<Categorization> categories) {
         this.categories = categories;
     }
     
+    /**
+     * <strong>Internal</strong> method for  adding a category. 
+     * Users should use the appropriate methods of the {@link CategoryManager} 
+     * class to manage the categories assigned to a {@code CcmObject}.
+     * 
+     * @param category  The domain ownership to add.
+     */
     protected void addCategory(final Categorization category) {
         categories.add(category);
     }
     
+    /**
+     * <strong>Internal</strong> method for removing a assigned category. 
+     * Users should use the appropriate methods of the {@link CategoryManager} 
+     * to manage the categories assigned to a {@code CcmObject}.
+     * 
+     * @param category The assigned category to remove.
+     */
     protected void removeCategory(final Categorization category) {
         categories.remove(category);
     }

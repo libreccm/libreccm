@@ -33,7 +33,10 @@ import org.libreccm.core.CcmObject;
 import java.util.Objects;
 
 /**
- *
+ * Association class describing the association between a category and an 
+ * object. Instances of these class should not created manually. 
+ * The methods provided by the {@link CategoryManager} take care of that.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
@@ -42,20 +45,44 @@ public class Categorization implements Serializable {
 
     private static final long serialVersionUID = 201504301320L;
 
+    /**
+     * The ID of the categorisation object.
+     */
     @Id
     @Column(name = "categorization_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long categorizationId;
 
+    /**
+     * The category to which this {@code Categorization} object belongs.
+     */
     @ManyToOne
     private Category category;
 
+    /**
+     * The categorised object.
+     */
     @ManyToOne
     private CcmObject categorizedObject;
 
+    /**
+     * If the categorised object is the index object of the category this
+     * property is set to {@code true}.
+     */
+    @Column(name = "index")
+    private boolean index;
+
+    /**
+     * Defines the order in which the categories assigned the the categorised 
+     * object are shown.
+     */
     @Column(name = "category_order")
     private long categoryOrder;
 
+    /**
+     * Defines the order in which the objects assigned to the category are 
+     * shown.
+     */
     @Column(name = "object_order")
     private long objectOrder;
 
@@ -83,6 +110,14 @@ public class Categorization implements Serializable {
         this.categorizedObject = categorizedObject;
     }
 
+    public boolean isIndex() {
+        return index;
+    }
+
+    public void setIndex(final boolean index) {
+        this.index = index;
+    }
+
     public long getCategoryOrder() {
         return categoryOrder;
     }
@@ -106,6 +141,7 @@ public class Categorization implements Serializable {
             = 89 * hash + (int) (categorizationId ^ (categorizationId >>> 32));
         hash = 89 * hash + Objects.hashCode(category);
         hash = 89 * hash + Objects.hashCode(categorizedObject);
+        hash = 89 * hash + (index ? 1 : 0);
         hash = 89 * hash + (int) (categoryOrder ^ (categoryOrder >>> 32));
         hash = 89 * hash + (int) (objectOrder ^ (objectOrder >>> 32));
         return hash;
@@ -133,6 +169,11 @@ public class Categorization implements Serializable {
         if (!Objects.equals(categorizedObject, other.getCategorizedObject())) {
             return false;
         }
+
+        if (index != other.isIndex()) {
+            return false;
+        }
+
         if (categoryOrder != other.getCategoryOrder()) {
             return false;
         }
@@ -153,6 +194,7 @@ public class Categorization implements Serializable {
                                  + "categorizationId = %d, "
                                  + "category = %s, "
                                  + "categorizedObject = %s, "
+                                 + "index = %b,"
                                  + "categoryOrder = %d, "
                                  + "objectOrder = %d"
                                  + "%s }",
@@ -160,8 +202,10 @@ public class Categorization implements Serializable {
                              categorizationId,
                              Objects.toString(category),
                              Objects.toString(categorizedObject),
+                             index,
                              categoryOrder,
-                             objectOrder);
+                             objectOrder,
+                             data);
     }
 
 }

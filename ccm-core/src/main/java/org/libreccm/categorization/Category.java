@@ -41,7 +41,15 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 /**
- *
+ * The category entity represents a single category. Each category is part
+ * of a {@link Domain}. A category can be assigned to multiple 
+ * {@link CcmObject}s.
+ * 
+ * In the old structure the properties of this class were split between the
+ * {@code Category} entity from {@code ccm-core} and the {@code Term} entity 
+ * from {@code ccm-ldn-terms}. This class unifies the properties of these two 
+ * classes.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
@@ -50,12 +58,23 @@ public class Category extends CcmObject implements Serializable {
 
     private static final long serialVersionUID = -7250208963391878547L;
 
+    /**
+     * A unique ID for the category. This ID will be the same even the same
+     * category system/domain is used in different installations.
+     */
     @Column(name = "unique_id", nullable = false)
     private String uniqueId;
 
+    /**
+     * The name of the category. This is used as URL stub, therefore only 
+     * the characters a to z, A to Z and 0 to 9 are allowed.
+     */
     @Column(name = "name", nullable = false)
     private String name;
 
+    /**
+     * The human readable and localisable title of the category.
+     */
     @Embedded
     @AssociationOverride(
         name = "values",
@@ -65,6 +84,9 @@ public class Category extends CcmObject implements Serializable {
         ))
     private LocalizedString title;
 
+    /**
+     * A localisable description of the category.
+     */
     @Embedded
     @AssociationOverride(
         name = "values",
@@ -74,25 +96,50 @@ public class Category extends CcmObject implements Serializable {
         ))
     private LocalizedString description;
 
+    /**
+     * Defines if the category is enabled. If the category is <em>not</em> 
+     * enabled, the category can't be used in any way.
+     */
     @Column(name = "enabled")
     private boolean enabled;
 
+    /**
+     * Defines if the category is visible. A category which is <em>not</em>
+     * visible should be only visible in the backend but not in the frontend.
+     */
     @Column(name = "visible")
     private boolean visible;
 
+    /**
+     * Defines if the category is abstract. It is not possible to add
+     * objects to an abstract category. 
+     */
     @Column(name = "abstract_category")
     private boolean abstractCategory;
 
+    /**
+     * The objects assigned to this category.
+     */
     @OneToMany(mappedBy = "category")
     private List<Categorization> objects;
 
+    /**
+     * The sub categories of this category.
+     */
     @OneToMany(mappedBy = "parentCategory")
     private List<Category> subCategories;
 
+    /**
+     * The parent category category of this category. Despite the root category
+     * of domain every category has a parent category.
+     */
     @ManyToOne
     @JoinColumn(name = "parent_category_id")
     private Category parentCategory;
 
+    /**
+     * Numeric value to define the order of the categories.
+     */
     @Column(name = "category_order")
     private long categoryOrder;
 
@@ -152,6 +199,13 @@ public class Category extends CcmObject implements Serializable {
         this.abstractCategory = abstractCategory;
     }
 
+    /**
+     * Retrieves an <strong>unmodifiable</strong> list of the objects assigned
+     * to this category. To manage the assigned objects use the methods provided
+     * by the {@link CategoryManager}.
+     * 
+     * @return An unmodifiable list of objects assigned to this category.
+     */
     public List<Categorization> getObjects() {
         return Collections.unmodifiableList(objects);
     }
@@ -168,11 +222,23 @@ public class Category extends CcmObject implements Serializable {
         objects.remove(object);
     }
 
+    /**
+     * Retrieves an <strong>unmodifiable</strong> list of the sub categories of
+     *  this category. To manage the assigned objects use the methods provided
+     * by the {@link CategoryManager}.
+     * 
+     * @return An unmodifiable list of sub categories of this category.
+     */
     public List<Category> getSubCategories() {
         return Collections.unmodifiableList(subCategories);
     }
 
-    public void setSubCategories(final List<Category> subCategories) {
+    /**
+     * <strong>Internal</strong> setter for the list of sub categories.
+     * 
+     * @param subCategories The list of sub categories.
+     */
+    protected void setSubCategories(final List<Category> subCategories) {
         this.subCategories = subCategories;
     }
 

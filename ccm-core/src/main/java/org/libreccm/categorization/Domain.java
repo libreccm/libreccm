@@ -41,6 +41,15 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 /**
+ * A domain is collection of categories designed a specific purpose. This 
+ * entity replaces the {@code Domain} entity from the old {@code ccm-ldn-terms}
+ * module as well as the {@code CategoryPurpose} entity from the old 
+ * {@code ccm-core module}.
+ * 
+ * A {@code Domain} can be mapped to multiple {@link CcmObject}s. Normally this
+ * is used to make a {@code Domain} available in a application. The 
+ * {@link CcmObject}s to which a {@code Domain} is mapped are called 
+ * <em>owners</em> of the domain.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -50,12 +59,33 @@ public class Domain extends CcmObject implements Serializable {
 
     private static final long serialVersionUID = 4012590760598188732L;
 
-    @Column(name = "domain_key", nullable = false, unique = true)
+    /**
+     * A unique identifier for the {@code Domain}. This should be short string
+     * without special characters or spaces, for example {@code APLAWS-NAV} or
+     * {@code MYNAV}.
+     */
+    @Column(name = "domain_key", nullable = false, unique = true, length = 255)
     private String domainKey;
 
-    @Column(name = "uri", nullable = false, unique = true)
+    /**
+     * An unique URI identifying the domain. It is not required that this domain
+     * points to a real resource, it primary purpose is provide a unique 
+     * identifier. for the domain. If you create your own category system you
+     * should use the top level domain of your organisation. Also the URI should
+     * include the domain key in lower case letters. For example if the domain 
+     * key is {@code EXAMPLE-NAV}, than the URI can be 
+     * 
+     * <pre>
+     * http://example.org/domains/example-nav
+     * </pre>
+     */
+    @Column(name = "uri", nullable = false, unique = true, length = 2048)
     private URI uri;
 
+    /**
+     * A human readable title for the {@code Domain}. The title can be 
+     * localised.
+     */
     @Embedded
     @AssociationOverride(
         name = "values",
@@ -64,6 +94,9 @@ public class Domain extends CcmObject implements Serializable {
                                    @JoinColumn(name = "object_id")}))
     private LocalizedString title;
     
+    /**
+     * A description of the domain. The description can be localised.
+     */
     @Embedded
     @AssociationOverride(
         name = "values",
@@ -72,17 +105,29 @@ public class Domain extends CcmObject implements Serializable {
                                    @JoinColumn(name = "object_id")}))
     private LocalizedString description;
     
+    /**
+     * A version string for the {@code Domain}.
+     */
     @Column(name = "version", nullable = false)
     private String version;
     
+    /**
+     * A timestamp for the release date of the {@code Domain}.
+     */
     @Column(name = "released")
     @Temporal(TemporalType.TIMESTAMP)
     private Date released;
     
+    /**
+     * The root category of the domain.
+     */
     @ManyToOne
     @JoinColumn(name = "root_category_id")
     private Category root;
     
+    /**
+     * The owners of the domain.
+     */
     @OneToMany(mappedBy = "domain")
     private List<DomainOwnership> owners;
 
@@ -142,18 +187,47 @@ public class Domain extends CcmObject implements Serializable {
         this.root = root;
     }
 
+    /**
+     * Returns an <strong>unmodifiable</strong> list of the owners of this
+     * {@code Domain}. To add or remove owners use the methods provided
+     * by the {@link DomainManager}.
+     * 
+     * @return An <strong>unmodifiable</strong> list of the owners of this 
+     * {@Domain}
+     * 
+     * @see #owners
+     */
     public List<DomainOwnership> getOwners() {
         return Collections.unmodifiableList(owners);
     }
 
+    /**
+     * <strong>Internal</strong> method for setting the list of owners.
+     * 
+     * @param owners A list of owners.
+     */
     protected void setOwners(final List<DomainOwnership> owners) {
         this.owners = owners;
     }
     
+    /**
+     * <strong>Internal</strong> method for adding a {@link DomainOwnership}. 
+     * To add or remove owners use the methods provided by the 
+     * {@link DomainManager}.
+     * 
+     * @param owner The domain ownership to add.
+     */
     protected void addOwner(final DomainOwnership owner) {
         owners.add(owner);
     }
     
+    /**
+     * <strong>Internal</strong> method for removing a {@link DomainOwnership}. 
+     * To add or remove owners use the methods provided by the 
+     * {@link DomainManager}.
+     * 
+     * @param owner The domain ownership to add.
+     */
     protected void removeOwner(final DomainOwnership owner) {
         owners.remove(owner);
     }
