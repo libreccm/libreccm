@@ -241,6 +241,15 @@
             </dependency>
             
             <!-- 
+                Hibernate Validator used as implemenation of the Bean 
+                Validation API -->
+                <dependency>
+                    <groupId>org.hibernate</groupId>
+                    <artifactId>hibernate-validator</artifactId>
+                    <version>5.1.3.Final</version>
+                </dependency>
+            
+            <!-- 
                 *********************
                 Libraries used by CCM
                 *********************

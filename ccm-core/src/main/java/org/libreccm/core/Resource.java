@@ -39,8 +39,18 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 /**
- *
- * @author Jens Pelzetter jens@jp-digital.de
+ * The {@code Resource} class is a base class for several other classes, for 
+ * example the {@link Application} class.
+ * 
+ * Resources can be nested, a resource can have multiple child resources.
+ * 
+ * This class is an adopted variant of the class 
+ * {@code com.arsdigita.kernel.Resource} from the old structure. This class is
+ * maybe removed in future releases. Therefore it is strictly recommend not to
+ * use this class directly. 
+ * 
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
+ * 
  */
 @Entity
 @Table(name = "resources")
@@ -48,6 +58,9 @@ public class Resource extends CcmObject implements Serializable {
 
     private static final long serialVersionUID = 7345482620613842781L;
 
+    /**
+     * A localisable title for the {@code Resource}.
+     */
     @Embedded
     @AssociationOverride(
         name = "values",
@@ -56,6 +69,9 @@ public class Resource extends CcmObject implements Serializable {
                                    @JoinColumn(name = "object_id")}))
     private LocalizedString title;
 
+      /**
+     * A localisable description for the {@code Resource}.
+     */
     @Embedded
     @AssociationOverride(
         name = "values",
@@ -64,13 +80,23 @@ public class Resource extends CcmObject implements Serializable {
                                    @JoinColumn(name = "object_id")}))
     private LocalizedString description;
 
+    /**
+     * Date on which the resource was created.
+     */
     @Column(name = "created")
     @Temporal(TemporalType.TIMESTAMP)
     private Date created;
 
+    /**
+     * The child resources of this resource.
+     */
     @OneToMany(mappedBy = "parent")
     private List<Resource> childs;
 
+    /**
+     * The parent resources of this resource. If the resource is a root resource
+     * the property will be null.
+     */
     @ManyToOne
     private Resource parent;
 

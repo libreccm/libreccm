@@ -18,6 +18,8 @@
  */
 package org.libreccm.categorization;
 
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.URL;
 import org.libreccm.core.CcmObject;
 import org.libreccm.l10n.LocalizedString;
 
@@ -39,6 +41,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Pattern;
 
 /**
  * A domain is collection of categories designed a specific purpose. This 
@@ -65,6 +68,8 @@ public class Domain extends CcmObject implements Serializable {
      * {@code MYNAV}.
      */
     @Column(name = "domain_key", nullable = false, unique = true, length = 255)
+    @NotBlank
+    @Pattern(regexp = "[\\w-.]*")
     private String domainKey;
 
     /**
@@ -80,6 +85,8 @@ public class Domain extends CcmObject implements Serializable {
      * </pre>
      */
     @Column(name = "uri", nullable = false, unique = true, length = 2048)
+    @NotBlank
+    @URL
     private URI uri;
 
     /**
@@ -109,6 +116,7 @@ public class Domain extends CcmObject implements Serializable {
      * A version string for the {@code Domain}.
      */
     @Column(name = "version", nullable = false)
+    @NotBlank
     private String version;
     
     /**

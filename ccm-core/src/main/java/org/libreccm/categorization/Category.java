@@ -18,6 +18,7 @@
  */
 package org.libreccm.categorization;
 
+import org.hibernate.validator.constraints.NotBlank;
 import org.libreccm.core.CcmObject;
 
 import java.io.Serializable;
@@ -39,17 +40,17 @@ import java.util.Objects;
 
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.Pattern;
 
 /**
- * The category entity represents a single category. Each category is part
- * of a {@link Domain}. A category can be assigned to multiple 
- * {@link CcmObject}s.
- * 
+ * The category entity represents a single category. Each category is part of a
+ * {@link Domain}. A category can be assigned to multiple {@link CcmObject}s.
+ *
  * In the old structure the properties of this class were split between the
- * {@code Category} entity from {@code ccm-core} and the {@code Term} entity 
- * from {@code ccm-ldn-terms}. This class unifies the properties of these two 
+ * {@code Category} entity from {@code ccm-core} and the {@code Term} entity
+ * from {@code ccm-ldn-terms}. This class unifies the properties of these two
  * classes.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
@@ -66,10 +67,12 @@ public class Category extends CcmObject implements Serializable {
     private String uniqueId;
 
     /**
-     * The name of the category. This is used as URL stub, therefore only 
-     * the characters a to z, A to Z and 0 to 9 are allowed.
+     * The name of the category. This is used as URL stub, therefore only the
+     * characters a to z, A to Z and 0 to 9 are allowed.
      */
     @Column(name = "name", nullable = false)
+    @NotBlank
+    @Pattern(regexp = "[\\w-.]*")
     private String name;
 
     /**
@@ -97,7 +100,7 @@ public class Category extends CcmObject implements Serializable {
     private LocalizedString description;
 
     /**
-     * Defines if the category is enabled. If the category is <em>not</em> 
+     * Defines if the category is enabled. If the category is <em>not</em>
      * enabled, the category can't be used in any way.
      */
     @Column(name = "enabled")
@@ -111,8 +114,8 @@ public class Category extends CcmObject implements Serializable {
     private boolean visible;
 
     /**
-     * Defines if the category is abstract. It is not possible to add
-     * objects to an abstract category. 
+     * Defines if the category is abstract. It is not possible to add objects to
+     * an abstract category.
      */
     @Column(name = "abstract_category")
     private boolean abstractCategory;
@@ -203,7 +206,7 @@ public class Category extends CcmObject implements Serializable {
      * Retrieves an <strong>unmodifiable</strong> list of the objects assigned
      * to this category. To manage the assigned objects use the methods provided
      * by the {@link CategoryManager}.
-     * 
+     *
      * @return An unmodifiable list of objects assigned to this category.
      */
     public List<Categorization> getObjects() {
@@ -224,9 +227,9 @@ public class Category extends CcmObject implements Serializable {
 
     /**
      * Retrieves an <strong>unmodifiable</strong> list of the sub categories of
-     *  this category. To manage the assigned objects use the methods provided
-     * by the {@link CategoryManager}.
-     * 
+     * this category. To manage the assigned objects use the methods provided by
+     * the {@link CategoryManager}.
+     *
      * @return An unmodifiable list of sub categories of this category.
      */
     public List<Category> getSubCategories() {
@@ -235,7 +238,7 @@ public class Category extends CcmObject implements Serializable {
 
     /**
      * <strong>Internal</strong> setter for the list of sub categories.
-     * 
+     *
      * @param subCategories The list of sub categories.
      */
     protected void setSubCategories(final List<Category> subCategories) {
@@ -332,23 +335,23 @@ public class Category extends CcmObject implements Serializable {
 
     @Override
     public String toString(final String data) {
-        return String.format(", uniqueId = %s, "
-                                 + "name = \"%s\", "
-                                 + "title = %s, "
-                                 + "enabled = %b, "
-                                 + "visible = %b, "
-                                 + "abstractCategory = %b, "
-                                 + "parentCategory = %s, "
-                                 + "categoryOrder = %d%s",
-                             uniqueId,
-                             name,
-                             title.toString(),
-                             enabled,
-                             visible,
-                             abstractCategory,
-                             parentCategory,
-                             categoryOrder,
-                             data);
+        return super.toString(String.format(", uniqueId = %s, "
+                                                + "name = \"%s\", "
+                                                + "title = %s, "
+                                                + "enabled = %b, "
+                                                + "visible = %b, "
+                                                + "abstractCategory = %b, "
+                                                + "parentCategory = %s, "
+                                                + "categoryOrder = %d%s",
+                                            uniqueId,
+                                            name,
+                                            title.toString(),
+                                            enabled,
+                                            visible,
+                                            abstractCategory,
+                                            parentCategory,
+                                            categoryOrder,
+                                            data));
     }
 
 }
