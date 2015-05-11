@@ -69,6 +69,10 @@ public class Party extends CcmObject implements Serializable {
 
     @Override
     public boolean equals(final Object obj) {
+        if (!super.equals(obj)) {
+            return false;
+        }
+        
         if (obj == null) {
             return false;
         }

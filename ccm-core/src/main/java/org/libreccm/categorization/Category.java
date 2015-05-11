@@ -22,6 +22,8 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.libreccm.core.CcmObject;
 
 import java.io.Serializable;
+import java.util.AbstractList;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.AssociationOverride;
@@ -52,6 +54,8 @@ import javax.validation.constraints.Pattern;
  * classes.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
+ *
+ * @apiviz.composedOf org.libreccm.categorization.Categorization
  */
 @Entity
 @Table(name = "categories")
@@ -80,11 +84,11 @@ public class Category extends CcmObject implements Serializable {
      */
     @Embedded
     @AssociationOverride(
-        name = "values",
-        joinTable = @JoinTable(name = "category_titles",
-                               joinColumns = {
-                                   @JoinColumn(name = "object_id")}
-        ))
+            name = "values",
+            joinTable = @JoinTable(name = "category_titles",
+                                   joinColumns = {
+                                       @JoinColumn(name = "object_id")}
+            ))
     private LocalizedString title;
 
     /**
@@ -92,11 +96,11 @@ public class Category extends CcmObject implements Serializable {
      */
     @Embedded
     @AssociationOverride(
-        name = "values",
-        joinTable = @JoinTable(name = "category_descriptions",
-                               joinColumns = {
-                                   @JoinColumn(name = "object_id")}
-        ))
+            name = "values",
+            joinTable = @JoinTable(name = "category_descriptions",
+                                   joinColumns = {
+                                       @JoinColumn(name = "object_id")}
+            ))
     private LocalizedString description;
 
     /**
@@ -145,6 +149,14 @@ public class Category extends CcmObject implements Serializable {
      */
     @Column(name = "category_order")
     private long categoryOrder;
+
+    public Category() {
+        super();
+        title = new LocalizedString();
+        description = new LocalizedString();
+        objects = new ArrayList<>();
+        subCategories = new ArrayList<>();
+    }
 
     public String getUniqueId() {
         return uniqueId;
@@ -271,7 +283,7 @@ public class Category extends CcmObject implements Serializable {
 
     @Override
     public int hashCode() {
-        int hash = 5;
+        int hash = super.hashCode();
         hash = 23 * hash + Objects.hashCode(uniqueId);
         hash = 23 * hash + Objects.hashCode(name);
         hash = 23 * hash + Objects.hashCode(title);
@@ -290,6 +302,10 @@ public class Category extends CcmObject implements Serializable {
                        "PMD.StdCyclomaticComplexity",
                        "PMD.ModifiedCyclomaticComplexity"})
     public boolean equals(final Object obj) {
+        if (!super.equals(obj)) {
+            return false;
+        }
+        
         if (obj == null) {
             return false;
         }
@@ -336,13 +352,13 @@ public class Category extends CcmObject implements Serializable {
     @Override
     public String toString(final String data) {
         return super.toString(String.format(", uniqueId = %s, "
-                                                + "name = \"%s\", "
-                                                + "title = %s, "
-                                                + "enabled = %b, "
-                                                + "visible = %b, "
-                                                + "abstractCategory = %b, "
-                                                + "parentCategory = %s, "
-                                                + "categoryOrder = %d%s",
+                                                    + "name = \"%s\", "
+                                                    + "title = %s, "
+                                                    + "enabled = %b, "
+                                                    + "visible = %b, "
+                                                    + "abstractCategory = %b, "
+                                                    + "parentCategory = %s, "
+                                                    + "categoryOrder = %d%s",
                                             uniqueId,
                                             name,
                                             title.toString(),

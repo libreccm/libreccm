@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.categorization;
+package org.libreccm.core;
 
 import org.hibernate.validator.constraints.NotBlank;
 

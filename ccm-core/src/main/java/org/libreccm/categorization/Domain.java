@@ -25,6 +25,7 @@ import org.libreccm.l10n.LocalizedString;
 
 import java.io.Serializable;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -44,14 +45,14 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.Pattern;
 
 /**
- * A domain is collection of categories designed a specific purpose. This 
- * entity replaces the {@code Domain} entity from the old {@code ccm-ldn-terms}
- * module as well as the {@code CategoryPurpose} entity from the old 
+ * A domain is collection of categories designed a specific purpose. This entity
+ * replaces the {@code Domain} entity from the old {@code ccm-ldn-terms} module
+ * as well as the {@code CategoryPurpose} entity from the old
  * {@code ccm-core module}.
- * 
+ *
  * A {@code Domain} can be mapped to multiple {@link CcmObject}s. Normally this
- * is used to make a {@code Domain} available in a application. The 
- * {@link CcmObject}s to which a {@code Domain} is mapped are called 
+ * is used to make a {@code Domain} available in a application. The
+ * {@link CcmObject}s to which a {@code Domain} is mapped are called
  * <em>owners</em> of the domain.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
@@ -74,12 +75,12 @@ public class Domain extends CcmObject implements Serializable {
 
     /**
      * An unique URI identifying the domain. It is not required that this domain
-     * points to a real resource, it primary purpose is provide a unique 
+     * points to a real resource, it primary purpose is provide a unique
      * identifier. for the domain. If you create your own category system you
      * should use the top level domain of your organisation. Also the URI should
-     * include the domain key in lower case letters. For example if the domain 
-     * key is {@code EXAMPLE-NAV}, than the URI can be 
-     * 
+     * include the domain key in lower case letters. For example if the domain
+     * key is {@code EXAMPLE-NAV}, than the URI can be
+     *
      * <pre>
      * http://example.org/domains/example-nav
      * </pre>
@@ -90,54 +91,61 @@ public class Domain extends CcmObject implements Serializable {
     private URI uri;
 
     /**
-     * A human readable title for the {@code Domain}. The title can be 
+     * A human readable title for the {@code Domain}. The title can be
      * localised.
      */
     @Embedded
     @AssociationOverride(
-        name = "values",
-        joinTable = @JoinTable(name = "domain_titles",
-                               joinColumns = {
-                                   @JoinColumn(name = "object_id")}))
+            name = "values",
+            joinTable = @JoinTable(name = "domain_titles",
+                                   joinColumns = {
+                                       @JoinColumn(name = "object_id")}))
     private LocalizedString title;
-    
+
     /**
      * A description of the domain. The description can be localised.
      */
     @Embedded
     @AssociationOverride(
-        name = "values",
-        joinTable = @JoinTable(name = "domain_descriptions",
-                               joinColumns = {
-                                   @JoinColumn(name = "object_id")}))
+            name = "values",
+            joinTable = @JoinTable(name = "domain_descriptions",
+                                   joinColumns = {
+                                       @JoinColumn(name = "object_id")}))
     private LocalizedString description;
-    
+
     /**
      * A version string for the {@code Domain}.
      */
     @Column(name = "version", nullable = false)
     @NotBlank
     private String version;
-    
+
     /**
      * A timestamp for the release date of the {@code Domain}.
      */
     @Column(name = "released")
     @Temporal(TemporalType.TIMESTAMP)
     private Date released;
-    
+
     /**
      * The root category of the domain.
      */
     @ManyToOne
     @JoinColumn(name = "root_category_id")
     private Category root;
-    
+
     /**
      * The owners of the domain.
      */
     @OneToMany(mappedBy = "domain")
     private List<DomainOwnership> owners;
+
+    public Domain() {
+        super();
+        title = new LocalizedString();
+        description = new LocalizedString();
+        owners = new ArrayList<>();
+    }
 
     public String getDomainKey() {
         return domainKey;
@@ -197,12 +205,12 @@ public class Domain extends CcmObject implements Serializable {
 
     /**
      * Returns an <strong>unmodifiable</strong> list of the owners of this
-     * {@code Domain}. To add or remove owners use the methods provided
-     * by the {@link DomainManager}.
-     * 
-     * @return An <strong>unmodifiable</strong> list of the owners of this 
-     * {@Domain}
-     * 
+     * {@code Domain}. To add or remove owners use the methods provided by the
+     * {@link DomainManager}.
+     *
+     * @return An <strong>unmodifiable</strong> list of the owners of this {
+     * @Domain}
+     *
      * @see #owners
      */
     public List<DomainOwnership> getOwners() {
@@ -211,29 +219,29 @@ public class Domain extends CcmObject implements Serializable {
 
     /**
      * <strong>Internal</strong> method for setting the list of owners.
-     * 
+     *
      * @param owners A list of owners.
      */
     protected void setOwners(final List<DomainOwnership> owners) {
         this.owners = owners;
     }
-    
+
     /**
-     * <strong>Internal</strong> method for adding a {@link DomainOwnership}. 
-     * To add or remove owners use the methods provided by the 
+     * <strong>Internal</strong> method for adding a {@link DomainOwnership}. To
+     * add or remove owners use the methods provided by the
      * {@link DomainManager}.
-     * 
+     *
      * @param owner The domain ownership to add.
      */
     protected void addOwner(final DomainOwnership owner) {
         owners.add(owner);
     }
-    
+
     /**
-     * <strong>Internal</strong> method for removing a {@link DomainOwnership}. 
-     * To add or remove owners use the methods provided by the 
+     * <strong>Internal</strong> method for removing a {@link DomainOwnership}.
+     * To add or remove owners use the methods provided by the
      * {@link DomainManager}.
-     * 
+     *
      * @param owner The domain ownership to add.
      */
     protected void removeOwner(final DomainOwnership owner) {
@@ -269,8 +277,7 @@ public class Domain extends CcmObject implements Serializable {
         if (!other.canEqual(this)) {
             return false;
         }
-        
-        
+
         if (!Objects.equals(domainKey, other.getDomainKey())) {
             return false;
         }
@@ -291,28 +298,28 @@ public class Domain extends CcmObject implements Serializable {
         }
         return Objects.equals(root, other.getRoot());
     }
-    
+
     @Override
     public boolean canEqual(final Object obj) {
         return obj instanceof Domain;
     }
-    
+
     @Override
     public String toString(final String data) {
         return String.format(
-            ", domainKey = \"%s\", "
-                + "uri = \"%s\", "
-                + "title = \"%s\", "
-                + "version = \"%s\", "
-                + "released = %tF %<tT, "
-                + "root = \"%s\"%s",
-            domainKey,
-            uri.toString(),
-            title.toString(),
-            version,
-            released,
-            root.toString(),
-            data
+                ", domainKey = \"%s\", "
+                        + "uri = \"%s\", "
+                        + "title = \"%s\", "
+                        + "version = \"%s\", "
+                        + "released = %tF %<tT, "
+                        + "root = \"%s\"%s",
+                domainKey,
+                uri.toString(),
+                title.toString(),
+                version,
+                released,
+                root.toString(),
+                data
         );
     }
 

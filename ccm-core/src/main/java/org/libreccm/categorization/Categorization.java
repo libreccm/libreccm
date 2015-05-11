@@ -38,6 +38,8 @@ import java.util.Objects;
  * The methods provided by the {@link CategoryManager} take care of that.
  * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
+ * 
+ * @apiviz.has org.libreccm.core.CcmObject
  */
 @Entity
 @Table(name = "categorizations")

@@ -53,6 +53,7 @@ import javax.persistence.Table;
  * in the database.
  * 
  * @author <a href="jens.pelzetter@googlemail.com">Jens Pelzetter</a>
+ * 
  */
 @Entity
 @Table(name = "ccm_objects")
