@@ -90,6 +90,12 @@ public class CcmObject implements Serializable {
     @OneToMany(mappedBy = "categorizedObject")
     private List<Categorization> categories;
     
+    public CcmObject() {
+        super();
+        
+        domains = new ArrayList<>();
+        categories = new ArrayList<>();
+    }
     
     public long getObjectId() {
         return objectId;
@@ -107,11 +113,6 @@ public class CcmObject implements Serializable {
         this.displayName = displayName;
     }
 
-    public CcmObject() {
-        domains = new ArrayList<>();
-        categories = new ArrayList<>();
-    }
-    
     /**
      * Gets an <strong>unmodifiable</strong> list of the domains which are owned
      * by the {@code CcmObject}.

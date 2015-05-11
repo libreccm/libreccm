@@ -48,13 +48,13 @@ public class UserGroup extends Party implements Serializable {
     private List<Role> roles;
     
     @OneToMany(mappedBy = "group")
-    private List<GroupMembership> groupMemberships;
+    private List<GroupMembership> members;
 
     public UserGroup() {
         super();
 
         roles = new ArrayList<>();
-        groupMemberships = new ArrayList<>();
+        members = new ArrayList<>();
     }
 
     public String getName() {
@@ -81,8 +81,20 @@ public class UserGroup extends Party implements Serializable {
         roles.remove(role);
     }
     
-    public List<GroupMembership> getGroupMembership() {
-        return Collections.unmodifiableList(groupMemberships);
+    public List<GroupMembership> getMembers() {
+        return Collections.unmodifiableList(members);
+    }
+    
+    protected void setMembers(final List<GroupMembership> members) {
+        this.members = members;
+    }
+    
+    protected void addMember(final GroupMembership member) {
+        members.add(member);
+    }
+    
+    protected void removeMember(final GroupMembership member) {
+        members.remove(member);
     }
 
     @Override
@@ -110,10 +122,10 @@ public class UserGroup extends Party implements Serializable {
             return false;
         }
 
-        if (!Objects.equals(this.name, other.name)) {
+        if (!Objects.equals(this.name, other.getName())) {
             return false;
         }
-        return Objects.equals(this.roles, other.roles);
+        return Objects.equals(this.roles, other.getRoles());
     }
 
     public boolean canEquals(final Object obj) {

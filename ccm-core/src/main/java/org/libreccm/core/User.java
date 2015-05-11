@@ -20,6 +20,7 @@ package org.libreccm.core;
 
 import java.io.Serializable;
 import java.util.Objects;
+
 import javax.persistence.AssociationOverride;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -28,7 +29,14 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Table;
+
 import org.hibernate.validator.constraints.NotBlank;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import javax.persistence.OneToMany;
 
 /**
  *
@@ -42,10 +50,10 @@ public class User extends Party implements Serializable {
 
     @Embedded
     @AssociationOverride(
-            name = "user_names",
-            joinTable = @JoinTable(name = "user_names",
-                                   joinColumns = {
-                                       @JoinColumn(name = " user_id")}))
+        name = "user_names",
+        joinTable = @JoinTable(name = "user_names",
+                               joinColumns = {
+                                   @JoinColumn(name = " user_id")}))
     private PersonName name;
 
     @Column(name = "screen_name", length = 255, nullable = false)
@@ -70,6 +78,15 @@ public class User extends Party implements Serializable {
     @Column(name = "password_answer", length = 2048)
     private String passwordAnswer;
 
+    @OneToMany(mappedBy = "user")
+    private List<GroupMembership> groupMemberships;
+
+    public User() {
+        super();
+        
+        this.groupMemberships = new ArrayList<>();
+    }
+    
     public PersonName getName() {
         return name;
     }
@@ -134,6 +151,24 @@ public class User extends Party implements Serializable {
         this.passwordAnswer = passwordAnswer;
     }
 
+    public List<GroupMembership> getGroupMemberships() {
+        return Collections.unmodifiableList(groupMemberships);
+    }
+
+    protected void setGroupMemberships(
+        final List<GroupMembership> groupMemberships) {
+        this.groupMemberships = groupMemberships;
+    }
+
+    protected void addGroupMembership(final GroupMembership groupMembership) {
+        groupMemberships.add(groupMembership);
+    }
+
+    protected void removeGroupMembership(
+        final GroupMembership groupMembership) {
+        groupMemberships.remove(groupMembership);
+    }
+
     @Override
     public int hashCode() {
         int hash = super.hashCode();
@@ -153,7 +188,7 @@ public class User extends Party implements Serializable {
         if (!super.equals(obj)) {
             return false;
         }
-        
+
         if (obj == null) {
             return false;
         }
@@ -197,9 +232,9 @@ public class User extends Party implements Serializable {
     @Override
     public String toString(final String data) {
         return super.toString(String.format(", name = %s, "
-                                                    + "screenName = \"%s\", "
-                                                    + "banned = %b, "
-                                                    + "ssoLogin = \"%s\"%s",
+                                                + "screenName = \"%s\", "
+                                                + "banned = %b, "
+                                                + "ssoLogin = \"%s\"%s",
                                             Objects.toString(name),
                                             screenName,
                                             banned,

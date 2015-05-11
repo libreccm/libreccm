@@ -21,6 +21,7 @@ package org.libreccm.categorization;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.URL;
 import org.libreccm.core.CcmObject;
+import org.libreccm.jpautils.UriConverter;
 import org.libreccm.l10n.LocalizedString;
 
 import java.io.Serializable;
@@ -33,6 +34,8 @@ import java.util.Objects;
 
 import javax.persistence.AssociationOverride;
 import javax.persistence.Column;
+import javax.persistence.Convert;
+import javax.persistence.Converter;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -86,6 +89,7 @@ public class Domain extends CcmObject implements Serializable {
      * </pre>
      */
     @Column(name = "uri", nullable = false, unique = true, length = 2048)
+    @Convert(converter = UriConverter.class)
     @NotBlank
     @URL
     private URI uri;

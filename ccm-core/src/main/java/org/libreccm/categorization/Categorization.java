@@ -32,6 +32,8 @@ import org.libreccm.core.CcmObject;
 
 import java.util.Objects;
 
+import javax.persistence.JoinColumn;
+
 /**
  * Association class describing the association between a category and an 
  * object. Instances of these class should not created manually. 
@@ -59,19 +61,21 @@ public class Categorization implements Serializable {
      * The category to which this {@code Categorization} object belongs.
      */
     @ManyToOne
+    @JoinColumn(name = "category_id")
     private Category category;
 
     /**
      * The categorised object.
      */
     @ManyToOne
+    @JoinColumn(name = "object_id")
     private CcmObject categorizedObject;
 
     /**
      * If the categorised object is the index object of the category this
      * property is set to {@code true}.
      */
-    @Column(name = "index")
+    @Column(name = "category_index")
     private boolean index;
 
     /**

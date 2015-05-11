@@ -24,8 +24,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
@@ -39,8 +41,11 @@ import javax.validation.constraints.Size;
 public class Party extends CcmObject implements Serializable {
 
     private static final long serialVersionUID = 6303836654273293979L;
-    
+
     @ElementCollection
+    @CollectionTable(name = "party_email_addresses",
+                     joinColumns = {
+                         @JoinColumn(name = "party_id")})
     @Size(min = 1)
     private List<EmailAddress> eMailAddresses;
 
@@ -51,11 +56,11 @@ public class Party extends CcmObject implements Serializable {
     protected void setEmailAddresses(final List<EmailAddress> eMailAddresses) {
         this.eMailAddresses = eMailAddresses;
     }
-    
+
     protected void addEmailAddress(final EmailAddress emailAddress) {
         eMailAddresses.add(emailAddress);
     }
-    
+
     protected void removeEmailAddress(final EmailAddress emailAddress) {
         eMailAddresses.remove(emailAddress);
     }
@@ -72,7 +77,7 @@ public class Party extends CcmObject implements Serializable {
         if (!super.equals(obj)) {
             return false;
         }
-        
+
         if (obj == null) {
             return false;
         }
@@ -83,10 +88,10 @@ public class Party extends CcmObject implements Serializable {
         if (!other.canEqual(this)) {
             return false;
         }
-        
+
         return Objects.equals(this.eMailAddresses, other.getEmailAddresses());
     }
-    
+
     @Override
     public boolean canEqual(final Object obj) {
         return obj instanceof Party;

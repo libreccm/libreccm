@@ -22,7 +22,6 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.libreccm.core.CcmObject;
 
 import java.io.Serializable;
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
 
