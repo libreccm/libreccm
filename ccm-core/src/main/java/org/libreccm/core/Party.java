@@ -20,6 +20,7 @@ package org.libreccm.core;
 
 import java.io.Serializable;
 import java.security.acl.Group;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -28,6 +29,7 @@ import javax.persistence.CollectionTable;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
@@ -47,28 +49,53 @@ public class Party extends CcmObject implements Serializable {
                      joinColumns = {
                          @JoinColumn(name = "party_id")})
     @Size(min = 1)
-    private List<EmailAddress> eMailAddresses;
+    private List<EmailAddress> emailAddresses;
 
+    @OneToMany(mappedBy = "grantee")
+    private List<Permission> grantedPermissions;
+
+    public Party() {
+        super();
+        
+        grantedPermissions = new ArrayList<>();
+    }
+    
     public List<EmailAddress> getEmailAddresses() {
-        return Collections.unmodifiableList(eMailAddresses);
+        return Collections.unmodifiableList(emailAddresses);
     }
 
     protected void setEmailAddresses(final List<EmailAddress> eMailAddresses) {
-        this.eMailAddresses = eMailAddresses;
+        this.emailAddresses = eMailAddresses;
     }
 
     protected void addEmailAddress(final EmailAddress emailAddress) {
-        eMailAddresses.add(emailAddress);
+        emailAddresses.add(emailAddress);
     }
 
     protected void removeEmailAddress(final EmailAddress emailAddress) {
-        eMailAddresses.remove(emailAddress);
+        emailAddresses.remove(emailAddress);
+    }
+
+    public List<Permission> getGrantedPermissions() {
+        return Collections.unmodifiableList(grantedPermissions);
+    }
+
+    protected void setGrantedPermissions(final List<Permission> grantedPermissions) {
+        this.grantedPermissions = grantedPermissions;
+    }
+    
+    protected void addGrantedPermission(final Permission permission) {
+        grantedPermissions.add(permission);
+    }
+    
+    protected void removeGrantedPermission(final Permission permission) {
+        grantedPermissions.remove(permission);
     }
 
     @Override
     public int hashCode() {
         int hash = super.hashCode();
-        hash = 41 * hash + Objects.hashCode(this.eMailAddresses);
+        hash = 41 * hash + Objects.hashCode(this.emailAddresses);
         return hash;
     }
 
@@ -89,7 +116,7 @@ public class Party extends CcmObject implements Serializable {
             return false;
         }
 
-        return Objects.equals(this.eMailAddresses, other.getEmailAddresses());
+        return Objects.equals(this.emailAddresses, other.getEmailAddresses());
     }
 
     @Override

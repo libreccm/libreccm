@@ -78,6 +78,9 @@ public class CcmObject implements Serializable {
     @Column(name = "display_name")
     private String displayName;
 
+    @OneToMany(mappedBy = "object")
+    private List<Permission> permissions;
+    
     /**
      * Category Domains owned by this {@code CcmObject}.
      */
@@ -93,6 +96,7 @@ public class CcmObject implements Serializable {
     public CcmObject() {
         super();
         
+        permissions = new ArrayList<>();
         domains = new ArrayList<>();
         categories = new ArrayList<>();
     }
@@ -113,6 +117,22 @@ public class CcmObject implements Serializable {
         this.displayName = displayName;
     }
 
+    public List<Permission> getPermissions() {
+        return Collections.unmodifiableList(permissions);
+    }
+
+    protected void setPermissions(final List<Permission> permissions) {
+        this.permissions = permissions;
+    }
+
+    protected void addPermission(final Permission permission) {
+        permissions.add(permission);
+    }
+    
+    protected void removePermission(final Permission permission) {
+        permissions.remove(permission);
+    }
+    
     /**
      * Gets an <strong>unmodifiable</strong> list of the domains which are owned
      * by the {@code CcmObject}.

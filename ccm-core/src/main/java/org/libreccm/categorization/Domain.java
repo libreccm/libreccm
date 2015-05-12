@@ -88,7 +88,7 @@ public class Domain extends CcmObject implements Serializable {
      * http://example.org/domains/example-nav
      * </pre>
      */
-    @Column(name = "uri", nullable = false, unique = true, length = 2048)
+    @Column(name = "uri", nullable = false, length = 2048)
     @Convert(converter = UriConverter.class)
     @NotBlank
     @URL
