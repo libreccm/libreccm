@@ -236,7 +236,7 @@ public class CcmObject implements Serializable {
      * also overwrite the {@link #canEqual(java.lang.Object)} method.
      * 
      * A good pattern for implementing {@code equals(Object)} is the following
-     * (this is similar to {@code equals(Object) implemenation created by 
+     * (this is similar to {@code equals(Object)} implemenation created by 
      * Netbeans):
      * 
      * <pre>
