@@ -22,6 +22,7 @@ import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -69,6 +70,41 @@ public class EmailAddress implements Serializable {
 
     public void setVerified(final boolean verified) {
         this.verified = verified;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 79 * hash + Objects.hashCode(eMailAddress);
+        hash = 79 * hash + (bouncing ? 1 : 0);
+        hash = 79 * hash + (verified ? 1 : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final EmailAddress other = (EmailAddress) obj;
+        if (!other.canEqual(this)) {
+            return false;
+        }
+        
+        if (!Objects.equals(eMailAddress, other.getEmailAddress())) {
+            return false;
+        }
+        if (bouncing != other.isBouncing()) {
+            return false;
+        }
+        return verified == other.isVerified();
+    }
+    
+    public boolean canEqual(final Object obj) {
+        return obj instanceof EmailAddress;
     }
 
     @Override

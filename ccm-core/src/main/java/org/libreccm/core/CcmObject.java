@@ -356,7 +356,8 @@ public class CcmObject implements Serializable {
     public String toString(final String data) {
         return String.format(
             "%s{ "
-                + "objectId = %d; displayName = \"%s\""
+                + "objectId = %d, "
+                + "displayName = \"%s\""
                 + "%s"
                 + " }",
             super.toString(), 

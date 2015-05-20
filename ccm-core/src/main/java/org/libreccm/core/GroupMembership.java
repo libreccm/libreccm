@@ -96,13 +96,13 @@ public class GroupMembership implements Serializable {
             return false;
         }
 
-        if (this.membershipId != other.membershipId) {
+        if (this.membershipId != other.getMembershipId()) {
             return false;
         }
-        if (!Objects.equals(this.group, other.group)) {
+        if (!Objects.equals(this.group, other.getGroup())) {
             return false;
         }
-        return Objects.equals(this.user, other.user);
+        return Objects.equals(this.user, other.getUser());
     }
 
     public boolean canEqual(final Object obj) {
