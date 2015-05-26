@@ -81,13 +81,13 @@ public class ConfirmEmailListener
             return false;
         }
 
-        if (!Objects.equals(this.fromEmail, other.fromEmail)) {
+        if (!Objects.equals(this.fromEmail, other.getFromEmail())) {
             return false;
         }
-        if (!Objects.equals(this.subject, other.subject)) {
+        if (!Objects.equals(this.subject, other.getSubject())) {
             return false;
         }
-        return Objects.equals(this.body, other.body);
+        return Objects.equals(this.body, other.getBody());
     }
 
     @Override
@@ -98,7 +98,7 @@ public class ConfirmEmailListener
     @Override
     public String toString(final String data) {
         return super.toString(String.format(", fromEmail = \"%s\","
-                                                    + "subject = \"%s\", ",
+                                                    + "subject = \"%s\"%s",
                                             fromEmail,
                                             subject,
                                             data));

@@ -29,4 +29,10 @@ public class EntitiesTestCore {
                 .withRedefinedSuperclass()
                 .verify();
     }
+//    
+//    @Test
+//    public void verifyToString() {
+//        
+//    }
+    
 }

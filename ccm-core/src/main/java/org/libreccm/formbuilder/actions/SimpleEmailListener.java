@@ -6,11 +6,14 @@
 package org.libreccm.formbuilder.actions;
 
 import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import org.hibernate.annotations.CollectionId;
+
 import org.libreccm.formbuilder.ProcessListener;
+
+import java.util.Objects;
 
 /**
  *
@@ -19,12 +22,14 @@ import org.libreccm.formbuilder.ProcessListener;
 @Entity
 @Table(name = "formbuilder_simple_email_listeners")
 public class SimpleEmailListener
-        extends ProcessListener
-        implements Serializable {
-    
+    extends ProcessListener
+    implements Serializable {
+
+    private static final long serialVersionUID = -5004346250775992079L;
+
     @Column(name = "recipient")
     private String recipient;
-    
+
     @Column(name = "subject")
     private String subject;
 
@@ -44,6 +49,45 @@ public class SimpleEmailListener
         this.subject = subject;
     }
 
-    
-    
+    @Override
+    public int hashCode() {
+        int hash = super.hashCode();
+        hash = 67 * hash + Objects.hashCode(recipient);
+        hash = 67 * hash + Objects.hashCode(subject);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (!super.equals(obj)) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final SimpleEmailListener other = (SimpleEmailListener) obj;
+        if (!other.canEqual(this)) {
+            return false;
+        }
+
+        if (!Objects.equals(recipient, other.getRecipient())) {
+            return false;
+        }
+        return Objects.equals(subject, other.getSubject());
+    }
+
+    @Override
+    public boolean canEqual(final Object obj) {
+        return obj instanceof SimpleEmailListener;
+    }
+
+    @Override
+    public String toString(final String data) {
+        return super.toString(String.format(", recipient = \"%s\", "
+                                                + "subject = \"%s\"%s",
+                                            recipient,
+                                            subject,
+                                            data));
+    }
+
 }

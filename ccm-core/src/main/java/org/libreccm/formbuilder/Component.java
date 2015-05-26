@@ -202,7 +202,7 @@ public class Component extends CcmObject implements Serializable {
                                                 + "attributeString  = \"%s\", "
                                                 + "active = %b, "
                                                 + "parentComponent = %s, "
-                                                + "componentOrder, "
+                                                + "componentOrder = %d, "
                                                 + "selected = %b%s",
                                             adminName,
                                             Objects.toString(description),

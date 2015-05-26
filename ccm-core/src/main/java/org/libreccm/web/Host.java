@@ -110,6 +110,7 @@ public class Host implements Serializable {
                                  + "serverName = \"%s\", "
                                  + "serverPort  =\"%s\""
                                  + " }",
+                             super.toString(),
                              hostId,
                              serverName,
                              serverPort);
