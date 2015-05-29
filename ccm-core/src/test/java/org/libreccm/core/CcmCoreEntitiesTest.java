@@ -23,7 +23,7 @@ import org.libreccm.tests.categories.UnitTest;
 @Category(UnitTest.class)
 public class CcmCoreEntitiesTest extends EntitiesTestCore {
 
-    @Parameterized.Parameters
+    @Parameterized.Parameters(name = "{0}")
     public static Collection<Class<?>> data() {
         return Arrays.asList(new Class<?>[]{
             CcmObject.class,

@@ -77,7 +77,7 @@ public class GroupMembership implements Serializable {
     public int hashCode() {
         int hash = 3;
         hash = 37 * hash
-                       + (int) (this.membershipId ^ (this.membershipId >>> 32));
+                   + (int) (this.membershipId ^ (this.membershipId >>> 32));
         hash = 37 * hash + Objects.hashCode(this.group);
         hash = 37 * hash + Objects.hashCode(this.user);
         return hash;
@@ -112,11 +112,12 @@ public class GroupMembership implements Serializable {
     @Override
     public String toString() {
         return String.format("%s{ "
-                                     + "membershipId = %d, "
-                                     + "user = %s, "
-                                     + "group = %s, "
-                                     + " },"
-                                     + super.toString(),
+                                 + "membershipId = %d, "
+                                 + "user = %s, "
+                                 + "group = %s, "
+                                 + " },",
+                             super.toString(),
+                             membershipId,
                              Objects.toString(user),
                              Objects.toString(group));
     }

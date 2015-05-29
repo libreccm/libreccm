@@ -7,7 +7,19 @@ package org.libreccm.core;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
+import org.junit.Assert;
 import org.junit.Test;
+
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
 /**
  *
@@ -24,15 +36,49 @@ public class EntitiesTestCore {
     @Test
     public void verifyEqualsAndHashCode() {
         EqualsVerifier
-                .forClass(entityClass)
-                .suppress(Warning.STRICT_INHERITANCE)
-                .withRedefinedSuperclass()
-                .verify();
+            .forClass(entityClass)
+            .suppress(Warning.STRICT_INHERITANCE)
+            .withRedefinedSuperclass()
+            .verify();
     }
-//    
-//    @Test
-//    public void verifyToString() {
-//        
-//    }
-    
+
+    @Test
+    public void verifyToString() throws IntrospectionException,
+                                        InstantiationException,
+                                        IllegalAccessException,
+                                        IllegalArgumentException,
+                                        InvocationTargetException {
+        final Object obj = entityClass.newInstance();
+//        final BeanInfo beanInfo = Introspector.getBeanInfo(entityClass);
+//
+//        final PropertyDescriptor[] properties = beanInfo
+//            .getPropertyDescriptors();
+//        for (PropertyDescriptor property : properties) {
+//            final Method setter = property.getWriteMethod();
+
+//            setter.invoke(obj, new Object[]{null});
+        final Field[] fields = entityClass.getDeclaredFields();
+        for (Field field : fields) {
+            if (!Modifier.isStatic(field.getModifiers())
+                && !field.getType().isPrimitive()) {
+                field.setAccessible(true);
+                field.set(obj, null);
+            }
+        }
+
+        try {
+            obj.toString();
+        } catch (NullPointerException ex) {
+            final StringWriter strWriter = new StringWriter();
+            final PrintWriter writer = new PrintWriter(strWriter);
+            ex.printStackTrace(writer);
+            Assert.fail(String.format(
+                "toString() implemention of class \"%s\" "
+                    + "is not null safe:\n %s",
+                entityClass.getName(),
+                strWriter.toString()));
+
+        }
+    }
+
 }

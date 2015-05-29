@@ -86,7 +86,7 @@ public class EmailAddress implements Serializable {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof EmailAddress)) {
             return false;
         }
         final EmailAddress other = (EmailAddress) obj;
