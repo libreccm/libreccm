@@ -39,18 +39,18 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 /**
- * The {@code Resource} class is a base class for several other classes, for 
+ * The {@code Resource} class is a base class for several other classes, for
  * example the {@link Application} class.
- * 
+ *
  * Resources can be nested, a resource can have multiple child resources.
- * 
- * This class is an adopted variant of the class 
+ *
+ * This class is an adopted variant of the class
  * {@code com.arsdigita.kernel.Resource} from the old structure. This class is
  * maybe removed in future releases. Therefore it is strictly recommend not to
- * use this class directly. 
- * 
+ * use this class directly.
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
- * 
+ *
  */
 @Entity
 @Table(name = "resources")
@@ -69,7 +69,7 @@ public class Resource extends CcmObject implements Serializable {
                                    @JoinColumn(name = "object_id")}))
     private LocalizedString title;
 
-      /**
+    /**
      * A localisable description for the {@code Resource}.
      */
     @Embedded
@@ -102,7 +102,6 @@ public class Resource extends CcmObject implements Serializable {
 
 //    @Column(name = "resource_type")
 //    private String resourceType;
-
     public LocalizedString getTitle() {
         return title;
     }
@@ -120,7 +119,11 @@ public class Resource extends CcmObject implements Serializable {
     }
 
     public Date getCreated() {
-        return new Date(created.getTime());
+        if (created == null) {
+            return null;
+        } else {
+            return new Date(created.getTime());
+        }
     }
 
     public void setCreated(final Date created) {
@@ -158,7 +161,6 @@ public class Resource extends CcmObject implements Serializable {
 //    public void setResourceType(final String resourceType) {
 //        this.resourceType = resourceType;
 //    }
-
     @Override
     public int hashCode() {
         int hash = 5;
@@ -174,7 +176,7 @@ public class Resource extends CcmObject implements Serializable {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof Resource)) {
             return false;
         }
         final Resource other = (Resource) obj;
@@ -205,7 +207,7 @@ public class Resource extends CcmObject implements Serializable {
         return super.toString(
             String.format(", title = %s, "
                               + "created = %tF %<tT%s",
-                          title.toString(),
+                          Objects.toString(title),
                           created,
                           data));
     }

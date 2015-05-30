@@ -33,7 +33,7 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "privileges")
+@Table(name = "ccm_privileges")
 public class Privilege implements Serializable {
 
     private static final long serialVersionUID = -3986038536996049440L;
@@ -75,7 +75,7 @@ public class Privilege implements Serializable {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof Privilege)) {
             return false;
         }
         final Privilege other = (Privilege) obj;

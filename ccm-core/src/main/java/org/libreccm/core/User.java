@@ -192,7 +192,7 @@ public class User extends Party implements Serializable {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof User)) {
             return false;
         }
         final User other = (User) obj;

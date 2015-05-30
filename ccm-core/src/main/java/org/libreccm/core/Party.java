@@ -56,12 +56,16 @@ public class Party extends CcmObject implements Serializable {
 
     public Party() {
         super();
-        
+
         grantedPermissions = new ArrayList<>();
     }
-    
+
     public List<EmailAddress> getEmailAddresses() {
-        return Collections.unmodifiableList(emailAddresses);
+        if (emailAddresses == null) {
+            return null;
+        } else {
+            return Collections.unmodifiableList(emailAddresses);
+        }
     }
 
     protected void setEmailAddresses(final List<EmailAddress> eMailAddresses) {
@@ -80,14 +84,15 @@ public class Party extends CcmObject implements Serializable {
         return Collections.unmodifiableList(grantedPermissions);
     }
 
-    protected void setGrantedPermissions(final List<Permission> grantedPermissions) {
+    protected void setGrantedPermissions(
+        final List<Permission> grantedPermissions) {
         this.grantedPermissions = grantedPermissions;
     }
-    
+
     protected void addGrantedPermission(final Permission permission) {
         grantedPermissions.add(permission);
     }
-    
+
     protected void removeGrantedPermission(final Permission permission) {
         grantedPermissions.remove(permission);
     }
@@ -95,7 +100,7 @@ public class Party extends CcmObject implements Serializable {
     @Override
     public int hashCode() {
         int hash = super.hashCode();
-        hash = 41 * hash + Objects.hashCode(this.emailAddresses);
+        hash = 41 * hash + Objects.hashCode(emailAddresses);
         return hash;
     }
 
@@ -108,7 +113,7 @@ public class Party extends CcmObject implements Serializable {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof Party)) {
             return false;
         }
         final Party other = (Party) obj;
@@ -116,7 +121,7 @@ public class Party extends CcmObject implements Serializable {
             return false;
         }
 
-        return Objects.equals(this.emailAddresses, other.getEmailAddresses());
+        return Objects.equals(emailAddresses, other.getEmailAddresses());
     }
 
     @Override

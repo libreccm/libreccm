@@ -109,7 +109,7 @@ public class PersonName implements Serializable {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof PersonName)) {
             return false;
         }
         final PersonName other = (PersonName) obj;

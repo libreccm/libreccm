@@ -118,7 +118,7 @@ public class Role implements Serializable {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof Role)) {
             return false;
         }
         final Role other = (Role) obj;
@@ -126,7 +126,7 @@ public class Role implements Serializable {
             return false;
         }
 
-        if (this.roleId != other.roleId) {
+        if (this.roleId != other.getRoleId()) {
             return false;
         }
         if (!Objects.equals(this.name, other.getName())) {
@@ -144,20 +144,20 @@ public class Role implements Serializable {
     public boolean canEqual(final Object obj) {
         return obj instanceof Role;
     }
-    
+
     @Override
     public String toString() {
         return String.format("%s{ "
-                + "roleId = %d, "
-                + "name = \"%s\", "
-                + "sourceGroup = %s, "
-                + "implicitGroup = %s, "
-                + " }",
+                                 + "roleId = %d, "
+                                 + "name = \"%s\", "
+                                 + "sourceGroup = %s, "
+                                 + "implicitGroup = %s, "
+                                 + " }",
                              super.toString(),
                              roleId,
                              name,
-                             sourceGroup.toString(),
-                             implicitGroup.toString());
+                             Objects.toString(sourceGroup),
+                             Objects.toString(implicitGroup));
     }
 
 }

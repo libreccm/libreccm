@@ -46,7 +46,7 @@ public class UserGroup extends Party implements Serializable {
 
     @OneToMany(mappedBy = "sourceGroup")
     private List<Role> roles;
-    
+
     @OneToMany(mappedBy = "group")
     private List<GroupMembership> members;
 
@@ -66,7 +66,11 @@ public class UserGroup extends Party implements Serializable {
     }
 
     public List<Role> getRoles() {
-        return Collections.unmodifiableList(roles);
+        if (roles == null) {
+            return null;
+        } else {
+            return Collections.unmodifiableList(roles);
+        }
     }
 
     protected void setRoles(final List<Role> roles) {
@@ -80,26 +84,30 @@ public class UserGroup extends Party implements Serializable {
     protected void removeRole(final Role role) {
         roles.remove(role);
     }
-    
+
     public List<GroupMembership> getMembers() {
-        return Collections.unmodifiableList(members);
+        if (members == null) {
+            return null;
+        } else {
+            return Collections.unmodifiableList(members);
+        }
     }
-    
+
     protected void setMembers(final List<GroupMembership> members) {
         this.members = members;
     }
-    
+
     protected void addMember(final GroupMembership member) {
         members.add(member);
     }
-    
+
     protected void removeMember(final GroupMembership member) {
         members.remove(member);
     }
 
     @Override
     public int hashCode() {
-        int hash = 5;
+        int hash = super.hashCode();
         hash = 83 * hash + Objects.hashCode(this.name);
         hash = 83 * hash + Objects.hashCode(this.roles);
         return hash;
@@ -114,7 +122,7 @@ public class UserGroup extends Party implements Serializable {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof UserGroup)) {
             return false;
         }
         final UserGroup other = (UserGroup) obj;
@@ -128,7 +136,8 @@ public class UserGroup extends Party implements Serializable {
         return Objects.equals(this.roles, other.getRoles());
     }
 
-    public boolean canEquals(final Object obj) {
+    @Override
+    public boolean canEqual(final Object obj) {
         return obj instanceof UserGroup;
     }
 

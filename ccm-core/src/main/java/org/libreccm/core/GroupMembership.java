@@ -88,7 +88,7 @@ public class GroupMembership implements Serializable {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof GroupMembership)) {
             return false;
         }
         final GroupMembership other = (GroupMembership) obj;

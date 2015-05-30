@@ -48,27 +48,27 @@ public class Permission implements Serializable {
     @Column(name = "permission_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long permissionId;
-    
+
     @ManyToOne
     @JoinColumn(name = "grantee_id")
     private Party grantee;
-    
+
     @OneToOne
     @JoinColumn(name = "granted_privilege_id")
     private Privilege grantedPrivilege;
-    
+
     @ManyToOne
     @JoinColumn(name = "object_id")
     private CcmObject object;
-    
+
     @ManyToOne
     @JoinColumn(name = "creation_user_id")
     private User creationUser;
-    
+
     @Column(name = "creation_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
-    
+
     @Column(name = "creation_ip")
     private String creationIp;
 
@@ -113,7 +113,11 @@ public class Permission implements Serializable {
     }
 
     public Date getCreationDate() {
-        return new Date(creationDate.getTime());
+        if (creationDate == null) {
+            return null;
+        } else {
+            return new Date(creationDate.getTime());
+        }
     }
 
     public void setCreationDate(final Date creationDate) {
@@ -132,7 +136,7 @@ public class Permission implements Serializable {
     public int hashCode() {
         int hash = 3;
         hash
-        = 31 * hash + (int) (permissionId ^ (permissionId >>> 32));
+            = 31 * hash + (int) (permissionId ^ (permissionId >>> 32));
         hash = 31 * hash + Objects.hashCode(grantee);
         hash = 31 * hash + Objects.hashCode(grantedPrivilege);
         hash = 31 * hash + Objects.hashCode(object);
@@ -147,15 +151,15 @@ public class Permission implements Serializable {
         if (obj == null) {
             return false;
         }
-        
-        if (getClass() != obj.getClass()) {
+
+        if (!(obj instanceof Permission)) {
             return false;
         }
         final Permission other = (Permission) obj;
         if (!other.canEqual(this)) {
             return false;
         }
-        
+
         if (permissionId != other.getPermissionId()) {
             return false;
         }
@@ -176,22 +180,22 @@ public class Permission implements Serializable {
         }
         return Objects.equals(creationIp, other.getCreationIp());
     }
-    
+
     public boolean canEqual(final Object obj) {
         return obj instanceof Permission;
     }
-    
+
     @Override
     public String toString() {
         return String.format("%s{ "
-            + "permissionId = %d, "
-            + "grantee = %s, "
-            + "grantedPrivilege = %s, "
-            + "object = %s, "
-            + "creationUser = %s,"
-            + "creationDate = %tF %<tT, "
-            + "creationIp = %s"
-            + " }",
+                                 + "permissionId = %d, "
+                                 + "grantee = %s, "
+                                 + "grantedPrivilege = %s, "
+                                 + "object = %s, "
+                                 + "creationUser = %s,"
+                                 + "creationDate = %tF %<tT, "
+                                 + "creationIp = %s"
+                                 + " }",
                              super.toString(),
                              permissionId,
                              Objects.toString(grantee),
@@ -201,4 +205,5 @@ public class Permission implements Serializable {
                              creationDate,
                              creationIp);
     }
+
 }
