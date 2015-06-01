@@ -16,12 +16,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.categorization;
+package org.libreccm.runtime;
 
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.libreccm.testutils.ToStringVerifier;
 import org.libreccm.tests.categories.UnitTest;
+import org.libreccm.testutils.EqualsVerifier;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -31,20 +32,19 @@ import java.util.Collection;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RunWith(Parameterized.class)
-@org.junit.experimental.categories.Category(UnitTest.class)
-public class ToStringTest extends ToStringVerifier {
-    
+@Category(UnitTest.class)
+public class EqualsAndHashCodeTest extends EqualsVerifier {
+
     @Parameterized.Parameters(name = "{0}")
     public static Collection<Class<?>> data() {
         return Arrays.asList(new Class<?>[]{
-            Categorization.class,
-            org.libreccm.categorization.Category.class,
-            Domain.class,
-            DomainOwnership.class});
+            Initalizer.class
+        });
     }
 
-    public ToStringTest(final Class<?> entitiesClass) {
-        super(entitiesClass);
+    public EqualsAndHashCodeTest(final Class<?> entityClass) {
+        super(entityClass);
     }
 
+    
 }

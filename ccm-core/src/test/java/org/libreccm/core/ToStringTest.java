@@ -21,7 +21,7 @@ package org.libreccm.core;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.libreccm.jpautils.ToStringVerifier;
+import org.libreccm.testutils.ToStringVerifier;
 import org.libreccm.tests.categories.UnitTest;
 
 import java.util.Arrays;

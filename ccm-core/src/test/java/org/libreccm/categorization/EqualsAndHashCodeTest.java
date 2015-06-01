@@ -20,7 +20,7 @@ package org.libreccm.categorization;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.libreccm.jpautils.EqualsVerifier;
+import org.libreccm.testutils.EqualsVerifier;
 import org.libreccm.tests.categories.UnitTest;
 
 import java.util.Arrays;

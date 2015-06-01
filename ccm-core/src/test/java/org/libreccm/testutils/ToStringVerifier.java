@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.jpautils;
+package org.libreccm.testutils;
 
 import org.junit.Assert;
 import org.junit.Test;

@@ -34,7 +34,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "threads")
-public class Thread extends CcmObject implements Serializable {
+public class MessageThread extends CcmObject implements Serializable {
 
     private static final long serialVersionUID = -395123286904985770L;
 
@@ -65,7 +65,7 @@ public class Thread extends CcmObject implements Serializable {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final Thread other = (Thread) obj;
+        final MessageThread other = (MessageThread) obj;
         if (!other.canEqual(this)) {
             return false;
         }
@@ -75,7 +75,7 @@ public class Thread extends CcmObject implements Serializable {
 
     @Override
     public boolean canEqual(final Object obj) {
-        return obj instanceof Thread;
+        return obj instanceof MessageThread;
     }
 
     @Override
