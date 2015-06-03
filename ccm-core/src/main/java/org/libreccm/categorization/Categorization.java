@@ -158,7 +158,7 @@ public class Categorization implements Serializable {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof Categorization)) {
             return false;
         }
         final Categorization other = (Categorization) obj;

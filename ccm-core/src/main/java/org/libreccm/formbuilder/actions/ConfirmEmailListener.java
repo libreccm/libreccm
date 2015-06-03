@@ -20,8 +20,8 @@ import org.libreccm.formbuilder.ProcessListener;
 @Entity
 @Table(name = "formbuilder_confirm_email_listener")
 public class ConfirmEmailListener
-        extends ProcessListener
-        implements Serializable {
+    extends ProcessListener
+    implements Serializable {
 
     private static final long serialVersionUID = -7009695795355273248L;
 
@@ -73,7 +73,12 @@ public class ConfirmEmailListener
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+
+        if (!super.equals(obj)) {
+            return false;
+        }
+
+        if (!(obj instanceof ConfirmEmailListener)) {
             return false;
         }
         final ConfirmEmailListener other = (ConfirmEmailListener) obj;
@@ -98,7 +103,7 @@ public class ConfirmEmailListener
     @Override
     public String toString(final String data) {
         return super.toString(String.format(", fromEmail = \"%s\","
-                                                    + "subject = \"%s\"%s",
+                                                + "subject = \"%s\"%s",
                                             fromEmail,
                                             subject,
                                             data));

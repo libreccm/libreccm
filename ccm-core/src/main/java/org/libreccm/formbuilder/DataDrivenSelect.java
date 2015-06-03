@@ -70,7 +70,12 @@ public class DataDrivenSelect extends Widget implements Serializable {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        
+        if (!super.equals(obj)) {
+            return false;
+        }
+        
+        if (!(obj instanceof DataDrivenSelect)) {
             return false;
         }
         final DataDrivenSelect other = (DataDrivenSelect) obj;

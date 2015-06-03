@@ -19,11 +19,11 @@ import org.libreccm.formbuilder.ProcessListener;
 @Entity
 @Table(name = "formbuilder_confirm_redirect_listeners")
 public class ConfirmRedirectListener
-        extends ProcessListener
-        implements Serializable {
+    extends ProcessListener
+    implements Serializable {
 
     private static final long serialVersionUID = 7891034630202555922L;
-    
+
     @Column(name = "url")
     private String url;
 
@@ -47,22 +47,27 @@ public class ConfirmRedirectListener
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+
+        if (!super.equals(obj)) {
+            return false;
+        }
+
+        if (!(obj instanceof ConfirmRedirectListener)) {
             return false;
         }
         final ConfirmRedirectListener other = (ConfirmRedirectListener) obj;
         if (!other.canEqual(this)) {
             return false;
         }
-        
+
         return Objects.equals(this.url, other.url);
     }
-    
+
     @Override
     public boolean canEqual(final Object obj) {
         return obj instanceof ConfirmRedirectListener;
     }
-    
+
     @Override
     public String toString(final String data) {
         return super.toString(String.format(", url = \"%s\"%s",

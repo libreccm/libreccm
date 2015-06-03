@@ -109,19 +109,35 @@ public class UserTask extends Task implements Serializable {
     }
 
     public Date getStartDate() {
-        return new Date(startDate.getTime());
+        if (startDate == null) {
+            return null;
+        } else {
+            return new Date(startDate.getTime());
+        }
     }
 
     public void setStartDate(final Date startDate) {
-        this.startDate = new Date(startDate.getTime());
+        if (startDate == null) {
+            this.startDate = null;
+        } else {
+            this.startDate = new Date(startDate.getTime());
+        }
     }
 
     public Date getDueDate() {
-        return new Date(dueDate.getTime());
+        if (dueDate == null) {
+            return null;
+        } else {
+            return new Date(dueDate.getTime());
+        }
     }
 
     public void setDueDate(final Date dueDate) {
-        this.dueDate = new Date(dueDate.getTime());
+        if (dueDate == null) {
+            this.dueDate = null;
+        } else {
+            this.dueDate = new Date(dueDate.getTime());
+        }
     }
 
     public long getDurationMinutes() {
@@ -141,7 +157,11 @@ public class UserTask extends Task implements Serializable {
     }
 
     public List<User> getAssignedUsers() {
-        return Collections.unmodifiableList(assignedUsers);
+        if (assignedUsers == null) {
+            return null;
+        } else {
+            return Collections.unmodifiableList(assignedUsers);
+        }
     }
 
     protected void setAssignedUsers(final List<User> assignedUsers) {
@@ -157,7 +177,11 @@ public class UserTask extends Task implements Serializable {
     }
 
     public List<UserGroup> getAssignedGroups() {
-        return Collections.unmodifiableList(assignedGroups);
+        if (assignedGroups == null) {
+            return null;
+        } else {
+            return Collections.unmodifiableList(assignedGroups);
+        }
     }
 
     protected void setAssignedGroups(final List<UserGroup> assignedGroups) {
@@ -192,11 +216,16 @@ public class UserTask extends Task implements Serializable {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+
+        if (!super.equals(obj)) {
+            return false;
+        }
+
+        if (!(obj instanceof UserTask)) {
             return false;
         }
         final UserTask other = (UserTask) obj;
-        if (!other.canEqual(obj)) {
+        if (!other.canEqual(this)) {
             return false;
         }
 
@@ -224,6 +253,11 @@ public class UserTask extends Task implements Serializable {
         return Objects.equals(assignedGroups, other.getAssignedGroups());
     }
 
+    @Override
+    public boolean canEqual(final Object obj) {
+        return obj instanceof UserTask;
+    }
+    
     @Override
     public String toString(final String data) {
         return super.toString(String.format(", locked = %b, "

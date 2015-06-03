@@ -18,8 +18,6 @@
  */
 package org.libreccm.formbuilder;
 
-import org.hibernate.annotations.CollectionId;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -89,7 +87,12 @@ public class FormSection extends Component implements Serializable {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        
+        if (!super.equals(obj)) {
+            return false;
+        }
+        
+        if (!(obj instanceof FormSection)) {
             return false;
         }
         final FormSection other = (FormSection) obj;

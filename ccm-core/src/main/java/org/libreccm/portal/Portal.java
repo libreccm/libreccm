@@ -62,7 +62,11 @@ public class Portal extends Resource implements Serializable {
     }
 
     public List<Portlet> getPortlets() {
-        return Collections.unmodifiableList(portlets);
+        if (portlets == null) {
+            return null;
+        } else {
+            return Collections.unmodifiableList(portlets);
+        }
     }
 
     protected void setPortlets(final List<Portlet> portlets) {
@@ -90,11 +94,12 @@ public class Portal extends Resource implements Serializable {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+
+        if (!super.equals(obj)) {
             return false;
         }
 
-        if (!super.equals(obj)) {
+        if (!(obj instanceof Portal)) {
             return false;
         }
 
@@ -108,7 +113,7 @@ public class Portal extends Resource implements Serializable {
         }
         return Objects.equals(portlets, other.getPortlets());
     }
-    
+
     @Override
     public boolean canEqual(final Object obj) {
         return obj instanceof Portal;

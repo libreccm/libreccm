@@ -18,7 +18,6 @@
  */
 package org.libreccm.formbuilder;
 
-
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
@@ -51,7 +50,7 @@ public class Widget extends Component implements Serializable {
 
     @OneToOne
     private WidgetLabel label;
-    
+
     @OneToMany(mappedBy = "widget")
     private List<Listener> listeners;
 
@@ -88,7 +87,11 @@ public class Widget extends Component implements Serializable {
     }
 
     public List<Listener> getListeners() {
-        return Collections.unmodifiableList(listeners);
+        if (listeners == null) {
+            return null;
+        } else {
+            return Collections.unmodifiableList(listeners);
+        }
     }
 
     protected void setListeners(final List<Listener> listeners) {
@@ -98,12 +101,11 @@ public class Widget extends Component implements Serializable {
     protected void addListener(final Listener listener) {
         listeners.add(listener);
     }
-    
+
     protected void removeListener(final Listener listener) {
         listeners.remove(listener);
     }
-    
-    
+
     @Override
     public int hashCode() {
         int hash = super.hashCode();
@@ -120,7 +122,12 @@ public class Widget extends Component implements Serializable {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+
+        if (!super.equals(obj)) {
+            return false;
+        }
+
+        if (!(obj instanceof Widget)) {
             return false;
         }
         final Widget other = (Widget) obj;
@@ -140,8 +147,13 @@ public class Widget extends Component implements Serializable {
         if (!Objects.equals(label, other.getLabel())) {
             return false;
         }
-        
+
         return Objects.equals(listeners, other.getListeners());
+    }
+    
+    @Override
+    public boolean canEqual(final Object obj) {
+        return obj instanceof Widget;
     }
 
     @Override

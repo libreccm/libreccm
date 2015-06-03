@@ -308,7 +308,7 @@ public class Category extends CcmObject implements Serializable {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof Category)) {
             return false;
         }
         final Category other = (Category) obj;
@@ -360,11 +360,11 @@ public class Category extends CcmObject implements Serializable {
                                                     + "categoryOrder = %d%s",
                                             uniqueId,
                                             name,
-                                            title.toString(),
+                                            Objects.toString(title),
                                             enabled,
                                             visible,
                                             abstractCategory,
-                                            parentCategory,
+                                            Objects.toString(parentCategory),
                                             categoryOrder,
                                             data));
     }

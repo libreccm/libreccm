@@ -28,20 +28,19 @@ import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 /**
- * 
+ *
  * Models the envelope information associated with a digest.
  *
  * When a digest is processed, all notifications associated with it are grouped
  * for delivery as a single unit to each receiver. The outbound email generated
  * for the receivers has a common subject, header, separator between the
- * individual messages, and signature (from the documentation of the 
+ * individual messages, and signature (from the documentation of the
  * {@code com.arsdigita.notification.Digest} class).
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
@@ -124,11 +123,19 @@ public class Digest extends CcmObject implements Serializable {
     }
 
     public Date getNextRun() {
-        return new Date(nextRun.getTime());
+        if (nextRun == null) {
+            return null;
+        } else {
+            return new Date(nextRun.getTime());
+        }
     }
 
     public void setNextRun(final Date nextRun) {
-        this.nextRun = new Date(nextRun.getTime());
+        if (nextRun == null) {
+            this.nextRun = null;
+        } else {
+            this.nextRun = new Date(nextRun.getTime());
+        }
     }
 
     @Override
@@ -149,11 +156,12 @@ public class Digest extends CcmObject implements Serializable {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        
+        if (!super.equals(obj)) {
             return false;
         }
-
-        if (!super.equals(obj)) {
+        
+        if (!(obj instanceof Digest)) {
             return false;
         }
 

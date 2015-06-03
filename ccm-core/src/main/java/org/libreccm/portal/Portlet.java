@@ -88,16 +88,17 @@ public class Portlet extends Resource implements Serializable {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        
+        if (!super.equals(obj)) {
             return false;
         }
-
-        if (!super.equals(obj)) {
+        
+        if (!(obj instanceof Portlet)) {
             return false;
         }
 
         final Portlet other = (Portlet) obj;
-        if (!other.canEqual(obj)) {
+        if (!other.canEqual(this)) {
             return false;
         }
 

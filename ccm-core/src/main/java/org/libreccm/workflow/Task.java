@@ -163,7 +163,11 @@ public class Task implements Serializable {
     }
 
     public List<Task> getDependentTasks() {
-        return Collections.unmodifiableList(dependentTasks);
+        if (dependentTasks == null) {
+            return null;
+        } else {
+            return Collections.unmodifiableList(dependentTasks);
+        }
     }
 
     protected void setDependentTasks(final List<Task> dependentTasks) {
@@ -179,7 +183,11 @@ public class Task implements Serializable {
     }
 
     public List<Task> getDependsOn() {
-        return Collections.unmodifiableList(dependsOn);
+        if (dependsOn == null) {
+            return null;
+        } else {
+            return Collections.unmodifiableList(dependsOn);
+        }
     }
 
     protected void setDependsOn(final List<Task> dependsOn) {
@@ -195,7 +203,11 @@ public class Task implements Serializable {
     }
 
     public List<String> getComments() {
-        return Collections.unmodifiableList(comments);
+        if (comments == null) {
+            return null;
+        } else {
+            return Collections.unmodifiableList(comments);
+        }
     }
 
     protected void setComments(final List<String> comments) {
@@ -230,14 +242,14 @@ public class Task implements Serializable {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof Task)) {
             return false;
         }
         final Task other = (Task) obj;
-        if (!other.canEqual(obj)) {
+        if (!other.canEqual(this)) {
             return false;
         }
-        
+
         if (taskId != other.getTaskId()) {
             return false;
         }
@@ -264,7 +276,7 @@ public class Task implements Serializable {
         }
         return Objects.equals(comments, other.getComments());
     }
-    
+
     public boolean canEqual(final Object obj) {
         return obj instanceof Task;
     }
@@ -273,17 +285,17 @@ public class Task implements Serializable {
     public final String toString() {
         return toString("");
     }
-    
+
     public String toString(final String data) {
         return String.format("%s{ "
-            + "taskId = %d, "
-            + "label = %s, "
-            + "active = %b, "
-            + "taskState = \"%s\", "
-            + "workflow = %s, "
-            + "dependentTasks = %s, "
-            + "dependsOn = %s%s"
-            + " }",
+                                 + "taskId = %d, "
+                                 + "label = %s, "
+                                 + "active = %b, "
+                                 + "taskState = \"%s\", "
+                                 + "workflow = %s, "
+                                 + "dependentTasks = %s, "
+                                 + "dependsOn = %s%s"
+                                 + " }",
                              super.toString(),
                              taskId,
                              Objects.toString(label),
@@ -294,4 +306,5 @@ public class Task implements Serializable {
                              Objects.toString(dependsOn),
                              data);
     }
+
 }

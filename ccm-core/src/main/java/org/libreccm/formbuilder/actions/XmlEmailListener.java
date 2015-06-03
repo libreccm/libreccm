@@ -24,7 +24,7 @@ public class XmlEmailListener extends ProcessListener implements Serializable {
 
     @Column(name = "recipient")
     private String recipient;
-    
+
     @Column(name = "subject")
     private String subject;
 
@@ -57,7 +57,12 @@ public class XmlEmailListener extends ProcessListener implements Serializable {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+
+        if (!super.equals(obj)) {
+            return false;
+        }
+
+        if (!(obj instanceof XmlEmailListener)) {
             return false;
         }
         final XmlEmailListener other = (XmlEmailListener) obj;
@@ -79,7 +84,7 @@ public class XmlEmailListener extends ProcessListener implements Serializable {
     @Override
     public String toString(final String data) {
         return super.toString(String.format(", recipient = \"%s\", "
-                                                    + "subject = \"%s\"%s",
+                                                + "subject = \"%s\"%s",
                                             recipient,
                                             subject,
                                             data));

@@ -97,10 +97,14 @@ public class Index implements Serializable {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof Index)) {
             return false;
         }
         final Index other = (Index) obj;
+        if (!other.canEqual(this)) {
+            return false;
+        }
+        
         if (indexId != other.getIndexId()) {
             return false;
         }
@@ -110,6 +114,10 @@ public class Index implements Serializable {
         return luceneIndexId == other.getLuceneIndexId();
     }
 
+    public boolean canEqual(final Object obj) {
+        return obj instanceof Index;
+    }
+    
     @Override
     public String toString() {
         return String.format("%s{ "

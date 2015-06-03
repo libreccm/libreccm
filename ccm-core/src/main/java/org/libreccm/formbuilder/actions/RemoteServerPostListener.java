@@ -45,7 +45,12 @@ public class RemoteServerPostListener
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        
+        if (!super.equals(obj)) {
+            return false;
+        }
+        
+        if (!(obj instanceof RemoteServerPostListener)) {
             return false;
         }
         final RemoteServerPostListener other = (RemoteServerPostListener) obj;
@@ -53,7 +58,12 @@ public class RemoteServerPostListener
             return false;
         }
 
-        return Objects.equals(this.remoteUrl, other.remoteUrl);
+        return Objects.equals(this.remoteUrl, other.getRemoteUrl());
+    }
+    
+    @Override
+    public boolean canEqual(final Object obj) {
+        return obj instanceof RemoteServerPostListener;
     }
 
     @Override

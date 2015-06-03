@@ -62,7 +62,12 @@ public class MessageThread extends CcmObject implements Serializable {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        
+        if (!super.equals(obj)) {
+            return false;
+        }
+        
+        if (!(obj instanceof MessageThread)) {
             return false;
         }
         final MessageThread other = (MessageThread) obj;
@@ -70,7 +75,7 @@ public class MessageThread extends CcmObject implements Serializable {
             return false;
         }
 
-        return Objects.equals(this.root, other.getRoot());
+        return Objects.equals(root, other.getRoot());
     }
 
     @Override

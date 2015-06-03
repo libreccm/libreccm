@@ -163,7 +163,7 @@ public class Resource extends CcmObject implements Serializable {
 //    }
     @Override
     public int hashCode() {
-        int hash = 5;
+        int hash = super.hashCode();
         hash = 29 * hash + Objects.hashCode(title);
         hash = 29 * hash + Objects.hashCode(description);
         hash = 29 * hash + Objects.hashCode(created);
@@ -176,11 +176,15 @@ public class Resource extends CcmObject implements Serializable {
         if (obj == null) {
             return false;
         }
+        
+        if (!super.equals(obj)) {
+            return false;
+        }
+        
         if (!(obj instanceof Resource)) {
             return false;
         }
         final Resource other = (Resource) obj;
-
         if (!other.canEqual(this)) {
             return false;
         }

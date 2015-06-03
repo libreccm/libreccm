@@ -160,10 +160,14 @@ public class QueueItem implements Serializable {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof QueueItem)) {
             return false;
         }
         final QueueItem other = (QueueItem) obj;
+        if (!other.canEqual(this)) {
+            return false;
+        }
+        
         if (this.queueItemId != other.getQueueItemId()) {
             return false;
         }

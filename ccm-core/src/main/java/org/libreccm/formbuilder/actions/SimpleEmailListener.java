@@ -62,7 +62,12 @@ public class SimpleEmailListener
         if (!super.equals(obj)) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+
+        if (!super.equals(obj)) {
+            return false;
+        }
+
+        if (!(obj instanceof SimpleEmailListener)) {
             return false;
         }
         final SimpleEmailListener other = (SimpleEmailListener) obj;

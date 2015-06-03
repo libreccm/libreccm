@@ -90,10 +90,13 @@ public class Host implements Serializable {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof Host)) {
             return false;
         }
         final Host other = (Host) obj;
+        if (!other.canEqual(this)) {
+            return false;
+        }
         if (this.hostId != other.getHostId()) {
             return false;
         }
@@ -101,6 +104,10 @@ public class Host implements Serializable {
             return false;
         }
         return this.serverPort == other.getServerPort();
+    }
+
+    public boolean canEqual(final Object obj) {
+        return obj instanceof Host;
     }
 
     @Override

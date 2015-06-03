@@ -116,7 +116,11 @@ public class Component extends CcmObject implements Serializable {
     }
 
     public List<Component> getChildComponents() {
-        return Collections.unmodifiableList(childComponents);
+        if (childComponents == null) {
+            return null;
+        } else {
+            return Collections.unmodifiableList(childComponents);
+        }
     }
 
     protected void setChildComponents(final List<Component> childComponents) {
@@ -158,7 +162,12 @@ public class Component extends CcmObject implements Serializable {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+
+        if (!super.equals(obj)) {
+            return false;
+        }
+
+        if (!(obj instanceof Component)) {
             return false;
         }
         final Component other = (Component) obj;

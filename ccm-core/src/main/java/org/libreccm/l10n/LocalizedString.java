@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -159,13 +160,41 @@ public class LocalizedString implements Serializable {
     }
 
     @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 41 * hash + Objects.hashCode(this.values);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof LocalizedString)) {
+            return false;
+        }
+        final LocalizedString other = (LocalizedString) obj;
+        if (!other.canEqual(this)) {
+            return false;
+        }
+        
+        return Objects.equals(values, other.getValues());
+    }
+
+    public boolean canEqual(final Object obj) {
+        return obj instanceof LocalizedString;
+    }
+    
+    
+    @Override
     public String toString() {
         return String.format(
             "%s{ "
                 + "%s"
                 + " }",
             super.toString(),
-            values.toString());
+            Objects.toString(values));
     }
 
 }

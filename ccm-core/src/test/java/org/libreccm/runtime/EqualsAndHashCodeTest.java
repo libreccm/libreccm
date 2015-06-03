@@ -18,11 +18,13 @@
  */
 package org.libreccm.runtime;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
+import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.libreccm.tests.categories.UnitTest;
-import org.libreccm.testutils.EqualsVerifier;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -33,7 +35,9 @@ import java.util.Collection;
  */
 @RunWith(Parameterized.class)
 @Category(UnitTest.class)
-public class EqualsAndHashCodeTest extends EqualsVerifier {
+public class EqualsAndHashCodeTest {
+
+    private final Class<?> entityClass;
 
     @Parameterized.Parameters(name = "{0}")
     public static Collection<Class<?>> data() {
@@ -43,8 +47,24 @@ public class EqualsAndHashCodeTest extends EqualsVerifier {
     }
 
     public EqualsAndHashCodeTest(final Class<?> entityClass) {
-        super(entityClass);
+        this.entityClass = entityClass;
     }
 
-    
+    @Test
+    public void verifyEqualsAndHashCode() {
+        final Initalizer initalizer1 = new Initalizer();
+        initalizer1.setClassName("org.example.foo.Initalizer");
+        
+        final Initalizer initalizer2 = new Initalizer();
+        initalizer2.setClassName("org.example.bar.Initalizer");
+        
+        EqualsVerifier
+            .forClass(entityClass)
+            .suppress(Warning.STRICT_INHERITANCE)
+            .suppress(Warning.NONFINAL_FIELDS)
+            .withRedefinedSuperclass()
+            .withPrefabValues(Initalizer.class, initalizer1, initalizer2)
+            .verify();
+    }
+
 }

@@ -36,38 +36,34 @@ import javax.persistence.TemporalType;
 
 /**
  *
-  *The {@code Notification} class is used to create and send
- * messages via email to ACS users and groups. It acts as a wrapper
- * for a {@link Message} which contains the subject, sender, body and
- * any attachments for the email.  The recipient can be a {@link
- * com.arsdigita.kernel.User} or a {@link org.libreccm.core.Group}.
- * In the case of Group, the message can be sent to the group's email
- * address or expanded into a separate message for each member of the
- * group.
+ * The {@code Notification} class is used to create and send messages via email
+ * to ACS users and groups. It acts as a wrapper for a {@link Message} which
+ * contains the subject, sender, body and any attachments for the email. The
+ * recipient can be a {@link
+ * com.arsdigita.kernel.User} or a {@link org.libreccm.core.Group}. In the case
+ * of Group, the message can be sent to the group's email address or expanded
+ * into a separate message for each member of the group.
  *
  * <h4>Email Alerts</h4>
  *
- * When using notifications for email alerts, applications often
- * need to wrap a special header and signature around the contained
- * Message object.  This can be useful for including introductory
- * remarks and action links in the email body.  The
- * {@code setHeader} and {@code setSignature} methods allow
- * you to do this without the need to create a separate Message for
- * the modified email.
- * *
+ * When using notifications for email alerts, applications often need to wrap a
+ * special header and signature around the contained Message object. This can be
+ * useful for including introductory remarks and action links in the email body.
+ * The {@code setHeader} and {@code setSignature} methods allow you to do this
+ * without the need to create a separate Message for the modified email.
+ *
  * <h4>Digests</h4>
  *
- * Finally, notifications can be sent in "instant processing mode"
- * or as part of a {@link Digest}.  When sent as part of a digest all
- * notifications to the same recipient are collected into a single
- * email and sent at regular internal.  For example, an hourly digest
- * might send a user all of their workflow task updates that have
- * changed in the past hour, rather a much larger number of individual
- * messages every time an tasks changed.
- * 
- * (Documentation taken from the {@code com.arsdigita.notification.Notification} 
+ * Finally, notifications can be sent in "instant processing mode" or as part of
+ * a {@link Digest}. When sent as part of a digest all notifications to the same
+ * recipient are collected into a single email and sent at regular internal. For
+ * example, an hourly digest might send a user all of their workflow task
+ * updates that have changed in the past hour, rather a much larger number of
+ * individual messages every time an tasks changed.
+ *
+ * (Documentation taken from the {@code com.arsdigita.notification.Notification}
  * class)
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
@@ -166,19 +162,35 @@ public class Notification extends CcmObject implements Serializable {
     }
 
     public Date getRequestDate() {
-        return new Date(requestDate.getTime());
+        if (requestDate == null) {
+            return null;
+        } else {
+            return new Date(requestDate.getTime());
+        }
     }
 
     public void setRequestDate(final Date requestDate) {
-        this.requestDate = new Date(requestDate.getTime());
+        if (requestDate == null) {
+            this.requestDate = null;
+        } else {
+            this.requestDate = new Date(requestDate.getTime());
+        }
     }
 
     public Date getFulfillDate() {
-        return new Date(fulfillDate.getTime());
+        if (fulfillDate == null) {
+            return null;
+        } else {
+            return new Date(fulfillDate.getTime());
+        }
     }
 
     public void setFulfillDate(final Date fulfillDate) {
-        this.fulfillDate = new Date(fulfillDate.getTime());
+        if (fulfillDate == null) {
+            this.fulfillDate = null;
+        } else {
+            this.fulfillDate = new Date(fulfillDate.getTime());
+        }
     }
 
     public String getStatus() {
@@ -236,7 +248,7 @@ public class Notification extends CcmObject implements Serializable {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof Notification)) {
             return false;
         }
 

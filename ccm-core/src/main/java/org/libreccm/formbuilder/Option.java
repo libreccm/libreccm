@@ -80,7 +80,12 @@ public class Option extends Component implements Serializable {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        
+        if (!super.equals(obj)) {
+            return false;
+        }
+        
+        if (!(obj instanceof Option)) {
             return false;
         }
         final Option other = (Option) obj;

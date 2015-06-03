@@ -18,11 +18,14 @@
  */
 package org.libreccm.portal;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
+import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.libreccm.core.Resource;
 import org.libreccm.tests.categories.UnitTest;
-import org.libreccm.testutils.EqualsVerifier;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -33,7 +36,9 @@ import java.util.Collection;
  */
 @RunWith(Parameterized.class)
 @Category(UnitTest.class)
-public class EqualsAndHashCodeTest extends EqualsVerifier {
+public class EqualsAndHashCodeTest {
+
+    private final Class<?> entityClass;
 
     @Parameterized.Parameters(name = "{0}")
     public static Collection<Class<?>> data() {
@@ -44,6 +49,31 @@ public class EqualsAndHashCodeTest extends EqualsVerifier {
     }
 
     public EqualsAndHashCodeTest(final Class<?> entityTest) {
-        super(entityTest);
+        this.entityClass = entityTest;
     }
+
+    @Test
+    public void verifyEqualsAndHashCode() {
+        final Portal portal1 = new Portal();
+        portal1.setDisplayName("Portal One");
+        
+        final Portal portal2 = new Portal();
+        portal2.setDisplayName("Portal Two");
+        
+        final Resource resource1 = new Resource();
+        resource1.setDisplayName("Resource One");
+        
+        final Resource resource2 = new Resource();
+        resource2.setDisplayName("Resource Two");
+        
+        EqualsVerifier
+            .forClass(entityClass)
+            .suppress(Warning.STRICT_INHERITANCE)
+            .suppress(Warning.NONFINAL_FIELDS)
+            .withRedefinedSuperclass()
+            .withPrefabValues(Portal.class, portal1, portal2)
+            .withPrefabValues(Resource.class, resource1, resource2)
+            .verify();
+    }
+
 }

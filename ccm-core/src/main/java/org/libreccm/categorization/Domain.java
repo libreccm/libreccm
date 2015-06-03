@@ -100,10 +100,10 @@ public class Domain extends CcmObject implements Serializable {
      */
     @Embedded
     @AssociationOverride(
-            name = "values",
-            joinTable = @JoinTable(name = "domain_titles",
-                                   joinColumns = {
-                                       @JoinColumn(name = "object_id")}))
+        name = "values",
+        joinTable = @JoinTable(name = "domain_titles",
+                               joinColumns = {
+                                   @JoinColumn(name = "object_id")}))
     private LocalizedString title;
 
     /**
@@ -111,10 +111,10 @@ public class Domain extends CcmObject implements Serializable {
      */
     @Embedded
     @AssociationOverride(
-            name = "values",
-            joinTable = @JoinTable(name = "domain_descriptions",
-                                   joinColumns = {
-                                       @JoinColumn(name = "object_id")}))
+        name = "values",
+        joinTable = @JoinTable(name = "domain_descriptions",
+                               joinColumns = {
+                                   @JoinColumn(name = "object_id")}))
     private LocalizedString description;
 
     /**
@@ -192,11 +192,19 @@ public class Domain extends CcmObject implements Serializable {
     }
 
     public Date getReleased() {
-        return new Date(released.getTime());
+        if (released == null) {
+            return null;
+        } else {
+            return new Date(released.getTime());
+        }
     }
 
     public void setReleased(final Date released) {
-        this.released = new Date(released.getTime());
+        if (released == null) {
+            this.released = null;
+        } else {
+            this.released = new Date(released.getTime());
+        }
     }
 
     public Category getRoot() {
@@ -213,6 +221,7 @@ public class Domain extends CcmObject implements Serializable {
      * {@link DomainManager}.
      *
      * @return An <strong>unmodifiable</strong> list of the owners of this {
+     *
      * @Domain}
      *
      * @see #owners
@@ -254,7 +263,7 @@ public class Domain extends CcmObject implements Serializable {
 
     @Override
     public int hashCode() {
-        int hash = 3;
+        int hash = super.hashCode();
         hash = 41 * hash + Objects.hashCode(domainKey);
         hash = 41 * hash + Objects.hashCode(uri);
         hash = 41 * hash + Objects.hashCode(title);
@@ -271,10 +280,14 @@ public class Domain extends CcmObject implements Serializable {
                        "PMD.StdCyclomaticComplexity",
                        "PMD.ModifiedCyclomaticComplexity"})
     public boolean equals(final Object obj) {
+        if (!super.equals(obj)) {
+            return false;
+        }
+
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof Domain)) {
             return false;
         }
         final Domain other = (Domain) obj;
@@ -311,19 +324,19 @@ public class Domain extends CcmObject implements Serializable {
     @Override
     public String toString(final String data) {
         return String.format(
-                ", domainKey = \"%s\", "
-                        + "uri = \"%s\", "
-                        + "title = \"%s\", "
-                        + "version = \"%s\", "
-                        + "released = %tF %<tT, "
-                        + "root = \"%s\"%s",
-                domainKey,
-                uri.toString(),
-                title.toString(),
-                version,
-                released,
-                root.toString(),
-                data
+            ", domainKey = \"%s\", "
+                + "uri = \"%s\", "
+                + "title = \"%s\", "
+                + "version = \"%s\", "
+                + "released = %tF %<tT, "
+                + "root = \"%s\"%s",
+            domainKey,
+            Objects.toString(uri),
+            Objects.toString(title),
+            version,
+            released,
+            Objects.toString(root),
+            data
         );
     }
 

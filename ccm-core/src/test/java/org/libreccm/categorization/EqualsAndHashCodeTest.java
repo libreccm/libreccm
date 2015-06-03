@@ -18,9 +18,11 @@
  */
 package org.libreccm.categorization;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.libreccm.testutils.EqualsVerifier;
 import org.libreccm.tests.categories.UnitTest;
 
 import java.util.Arrays;
@@ -32,7 +34,9 @@ import java.util.Collection;
  */
 @RunWith(Parameterized.class)
 @org.junit.experimental.categories.Category(UnitTest.class)
-public class EqualsAndHashCodeTest extends EqualsVerifier {
+public class EqualsAndHashCodeTest {
+
+    private final Class<?> entityClass;
 
     @Parameterized.Parameters(name = "{0}")
     public static Collection<Class<?>> data() {
@@ -43,8 +47,32 @@ public class EqualsAndHashCodeTest extends EqualsVerifier {
             DomainOwnership.class});
     }
 
-    public EqualsAndHashCodeTest(final Class<?> entitiesClass) {
-        super(entitiesClass);
+    public EqualsAndHashCodeTest(final Class<?> entityClass) {
+        this.entityClass = entityClass;
+    }
+
+    @Test
+    public void verifyEqualsAndHashCode() {
+        final Category category1 = new Category();
+        category1.setName("Category One");
+        
+        final Category category2 = new Category();
+        category2.setName("Category Two");
+        
+        final Domain domain1 = new Domain();
+        domain1.setDomainKey("Domain-One");
+        
+        final Domain domain2 = new Domain();
+        domain2.setDomainKey("Domain Two");
+        
+        EqualsVerifier
+            .forClass(entityClass)
+            .suppress(Warning.STRICT_INHERITANCE)
+            .suppress(Warning.NONFINAL_FIELDS)
+            .withRedefinedSuperclass()
+            .withPrefabValues(Category.class, category1, category2)
+            .withPrefabValues(Domain.class, domain1, domain2)
+            .verify();
     }
 
 }

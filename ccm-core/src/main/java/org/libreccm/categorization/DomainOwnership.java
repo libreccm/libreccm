@@ -152,7 +152,7 @@ public class DomainOwnership implements Serializable {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof DomainOwnership)) {
             return false;
         }
         final DomainOwnership other = (DomainOwnership) obj;
@@ -199,8 +199,8 @@ public class DomainOwnership implements Serializable {
                                      + "%s }",
                              super.toString(),
                              ownershipId,
-                             owner.toString(),
-                             domain.toString(),
+                             Objects.toString(owner),
+                             Objects.toString(domain),
                              context,
                              domainOrder,
                              ownerOrder,

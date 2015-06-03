@@ -100,7 +100,12 @@ public class PersistentDataQuery extends CcmObject implements Serializable {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        
+        if (!super.equals(obj)) {
+            return false;
+        }
+        
+        if (!(obj instanceof PersistentDataQuery)) {
             return false;
         }
         final PersistentDataQuery other = (PersistentDataQuery) obj;

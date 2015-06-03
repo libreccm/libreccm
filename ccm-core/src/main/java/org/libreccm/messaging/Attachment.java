@@ -110,11 +110,19 @@ public class Attachment implements Serializable {
     }
 
     public byte[] getData() {
-        return Arrays.copyOf(data, data.length);
+        if (data == null) {
+            return null;
+        } else {
+            return Arrays.copyOf(data, data.length);
+        }
     }
 
     public void setData(byte[] data) {
-        this.data = Arrays.copyOf(data, data.length);
+        if (data == null) {
+            this.data = null;
+        } else {
+            this.data = Arrays.copyOf(data, data.length);
+        }
     }
 
     @Override
@@ -135,7 +143,7 @@ public class Attachment implements Serializable {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof Attachment)) {
             return false;
         }
         final Attachment other = (Attachment) obj;

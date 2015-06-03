@@ -59,13 +59,13 @@ public class Document implements Serializable {
 
     @Column(name = "document_timestamp")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date documentTimeStamp;
+    private Date timeStamp;
 
     @Column(name = "dirty")
     private long dirty;
 
     @Column(name = "document_language", length = 8)
-    private String documentLanguage;
+    private String language;
 
     @Column(name = "country", length = 8)
     private String country;
@@ -127,12 +127,20 @@ public class Document implements Serializable {
         this.typeSpecificInfo = typeSpecificInfo;
     }
 
-    public Date getDocumentTimeStamp() {
-        return new Date(documentTimeStamp.getTime());
+    public Date getTimeStamp() {
+        if (timeStamp == null) {
+            return null;
+        } else {
+            return new Date(timeStamp.getTime());
+        }
     }
 
-    public void setDocumentTimeStamp(final Date documentTimeStamp) {
-        this.documentTimeStamp = new Date(documentTimeStamp.getTime());
+    public void setTimeStamp(final Date timeStamp) {
+        if (timeStamp == null) {
+            this.timeStamp = null;
+        } else {
+            this.timeStamp = new Date(timeStamp.getTime());
+        }
     }
 
     public long getDirty() {
@@ -143,12 +151,12 @@ public class Document implements Serializable {
         this.dirty = dirty;
     }
 
-    public String getDocumentLanguage() {
-        return documentLanguage;
+    public String getLanguage() {
+        return language;
     }
 
-    public void setDocumentLanguage(final String documentLanguage) {
-        this.documentLanguage = documentLanguage;
+    public void setLanguage(final String language) {
+        this.language = language;
     }
 
     public String getCountry() {
@@ -184,11 +192,19 @@ public class Document implements Serializable {
     }
 
     public Date getCreated() {
-        return new Date(created.getTime());
+        if (created == null) {
+            return null;
+        } else {
+            return new Date(created.getTime());
+        }
     }
 
     public void setCreated(final Date created) {
-        this.created = new Date(created.getTime());
+        if (created == null) {
+            this.created = null;
+        } else {
+            this.created = new Date(created.getTime());
+        }
     }
 
     public Party getCreatedBy() {
@@ -200,11 +216,19 @@ public class Document implements Serializable {
     }
 
     public Date getLastModified() {
-        return new Date(lastModified.getTime());
+        if (lastModified == null) {
+            return null;
+        } else {
+            return new Date(lastModified.getTime());
+        }
     }
 
     public void setLastModified(final Date lastModified) {
-        this.lastModified = new Date(lastModified.getTime());
+        if (lastModified == null) {
+            this.lastModified = null;
+        } else {
+            this.lastModified = new Date(lastModified.getTime());
+        }
     }
 
     public Party getLastModifiedBy() {
@@ -229,9 +253,9 @@ public class Document implements Serializable {
         hash = 53 * hash + (int) (documentId ^ (documentId >>> 32));
         hash = 53 * hash + Objects.hashCode(type);
         hash = 53 * hash + Objects.hashCode(typeSpecificInfo);
-        hash = 53 * hash + Objects.hashCode(documentTimeStamp);
+        hash = 53 * hash + Objects.hashCode(timeStamp);
         hash = 53 * hash + (int) (dirty ^ (dirty >>> 32));
-        hash = 53 * hash + Objects.hashCode(documentLanguage);
+        hash = 53 * hash + Objects.hashCode(language);
         hash = 53 * hash + Objects.hashCode(country);
         hash = 53 * hash + Objects.hashCode(title);
         hash = 53 * hash + Objects.hashCode(summary);
@@ -249,10 +273,14 @@ public class Document implements Serializable {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof Document)) {
             return false;
         }
         final Document other = (Document) obj;
+        if (!other.canEqual(this)) {
+            return false;
+        }
+        
         if (documentId != other.getDocumentId()) {
             return false;
         }
@@ -262,13 +290,13 @@ public class Document implements Serializable {
         if (!Objects.equals(typeSpecificInfo, other.getTypeSpecificInfo())) {
             return false;
         }
-        if (!Objects.equals(documentTimeStamp, other.getDocumentTimeStamp())) {
+        if (!Objects.equals(timeStamp, other.getTimeStamp())) {
             return false;
         }
         if (dirty != other.getDirty()) {
             return false;
         }
-        if (!Objects.equals(documentLanguage, other.getDocumentLanguage())) {
+        if (!Objects.equals(language, other.getLanguage())) {
             return false;
         }
         if (!Objects.equals(country, other.getCountry())) {
@@ -298,6 +326,10 @@ public class Document implements Serializable {
         return Objects.equals(contentSection, other.getContentSection());
     }
 
+    public boolean canEqual(final Object obj) {
+        return obj instanceof Document;
+    }
+    
     @Override
     public String toString() {
         return String.format("%s{ "
@@ -317,9 +349,9 @@ public class Document implements Serializable {
                              super.toString(),
                              documentId,
                              type,
-                             documentTimeStamp,
+                             timeStamp,
                              dirty,
-                             documentLanguage,
+                             language,
                              country,
                              title,
                              created,

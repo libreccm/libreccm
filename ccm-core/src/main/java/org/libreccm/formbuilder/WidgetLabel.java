@@ -59,7 +59,12 @@ public class WidgetLabel extends Component implements Serializable {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        
+        if (!super.equals(obj)) {
+            return false;
+        }
+        
+        if (!(obj instanceof WidgetLabel)) {
             return false;
         }
         final WidgetLabel other = (WidgetLabel) obj;

@@ -20,8 +20,8 @@ import org.libreccm.formbuilder.ProcessListener;
 @Entity
 @Table(name = "formbuilder_template_email_listeners")
 public class TemplateEmailListener
-        extends ProcessListener
-        implements Serializable {
+    extends ProcessListener
+    implements Serializable {
 
     private static final long serialVersionUID = -4476860960485494976L;
 
@@ -62,9 +62,9 @@ public class TemplateEmailListener
     @Override
     public int hashCode() {
         int hash = super.hashCode();
-        hash = 67 * hash + Objects.hashCode(this.recipient);
-        hash = 67 * hash + Objects.hashCode(this.subject);
-        hash = 67 * hash + Objects.hashCode(this.body);
+        hash = 67 * hash + Objects.hashCode(recipient);
+        hash = 67 * hash + Objects.hashCode(subject);
+        hash = 67 * hash + Objects.hashCode(body);
         return hash;
     }
 
@@ -73,7 +73,12 @@ public class TemplateEmailListener
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+
+        if (!super.equals(obj)) {
+            return false;
+        }
+
+        if (!(obj instanceof TemplateEmailListener)) {
             return false;
         }
         final TemplateEmailListener other = (TemplateEmailListener) obj;
@@ -81,13 +86,13 @@ public class TemplateEmailListener
             return false;
         }
 
-        if (!Objects.equals(this.recipient, other.recipient)) {
+        if (!Objects.equals(recipient, other.getRecipient())) {
             return false;
         }
-        if (!Objects.equals(this.subject, other.subject)) {
+        if (!Objects.equals(subject, other.getSubject())) {
             return false;
         }
-        return Objects.equals(this.body, other.body);
+        return Objects.equals(body, other.getBody());
     }
 
     @Override
@@ -98,7 +103,7 @@ public class TemplateEmailListener
     @Override
     public String toString(final String data) {
         return super.toString(String.format(", recipient = \"%s\", "
-                                                    + "subject = \"%s\"%s",
+                                                + "subject = \"%s\"%s",
                                             recipient,
                                             subject,
                                             data));

@@ -61,7 +61,7 @@ public class ObjectType extends CcmObject implements Serializable {
 
     @Override
     public int hashCode() {
-        int hash = 7;
+        int hash = super.hashCode();
         hash = 61 * hash + Objects.hashCode(appName);
         hash = 61 * hash + Objects.hashCode(className);
         return hash;
@@ -72,7 +72,12 @@ public class ObjectType extends CcmObject implements Serializable {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        
+        if (!super.equals(obj)) {
+            return false;
+        }
+        
+        if (!(obj instanceof ObjectType)) {
             return false;
         }
         final ObjectType other = (ObjectType) obj;

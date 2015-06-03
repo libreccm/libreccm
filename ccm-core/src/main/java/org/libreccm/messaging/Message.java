@@ -111,11 +111,19 @@ public class Message extends CcmObject implements Serializable {
     }
 
     public Date getSent() {
-        return new Date(sent.getTime());
+        if (sent == null) {
+            return null;
+        } else {
+            return new Date(sent.getTime());
+        }
     }
 
     public void setSent(final Date sent) {
-        this.sent = new Date(sent.getTime());
+        if (sent == null) {
+            this.sent = null;
+        } else {
+            this.sent = new Date(sent.getTime());
+        }
     }
 
     public Message getInReplyTo() {
@@ -127,7 +135,11 @@ public class Message extends CcmObject implements Serializable {
     }
 
     public List<Message> getReplies() {
-        return Collections.unmodifiableList(replies);
+        if (replies == null) {
+            return null;
+        } else {
+            return Collections.unmodifiableList(replies);
+        }
     }
 
     protected void setReplies(final List<Message> replies) {
@@ -143,7 +155,11 @@ public class Message extends CcmObject implements Serializable {
     }
 
     public List<Attachment> getAttachments() {
-        return Collections.unmodifiableList(attachments);
+        if (attachments == null) {
+            return null;
+        } else {
+            return Collections.unmodifiableList(attachments);
+        }
     }
 
     protected void setAttachments(final List<Attachment> attachments) {
@@ -177,11 +193,16 @@ public class Message extends CcmObject implements Serializable {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        
+        if (!super.equals(obj)) {
+            return false;
+        }
+        
+        if (!(obj instanceof Message)) {
             return false;
         }
         final Message other = (Message) obj;
-        if (!other.canEqual(obj)) {
+        if (!other.canEqual(this)) {
             return false;
         }
 

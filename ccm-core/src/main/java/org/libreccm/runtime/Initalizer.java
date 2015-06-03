@@ -90,7 +90,11 @@ public class Initalizer implements Serializable {
     }
 
     public List<Initalizer> getRequiredInitializers() {
-        return Collections.unmodifiableList(requiredInitializers);
+        if (requiredInitializers == null) {
+            return null;
+        } else {
+            return Collections.unmodifiableList(requiredInitializers);
+        }
     }
 
     protected void setRequiredInitializers(
@@ -122,7 +126,7 @@ public class Initalizer implements Serializable {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof Initalizer)) {
             return false;
         }
         final Initalizer other = (Initalizer) obj;

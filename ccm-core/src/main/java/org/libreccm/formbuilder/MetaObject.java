@@ -96,7 +96,12 @@ public class MetaObject extends CcmObject implements Serializable {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        
+        if (!super.equals(obj)) {
+            return false;
+        }
+        
+        if (!(obj instanceof MetaObject)) {
             return false;
         }
         final MetaObject other = (MetaObject) obj;

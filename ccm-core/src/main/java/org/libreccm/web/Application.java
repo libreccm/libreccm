@@ -80,11 +80,12 @@ public class Application extends Resource implements Serializable {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+
+        if (!super.equals(obj)) {
             return false;
         }
 
-        if (!super.equals(obj)) {
+        if (!(obj instanceof Application)) {
             return false;
         }
 
@@ -97,6 +98,11 @@ public class Application extends Resource implements Serializable {
             return false;
         }
         return Objects.equals(containerGroup, other.getContainerGroup());
+    }
+    
+    @Override
+    public boolean canEqual(final Object obj) {
+        return obj instanceof Application;
     }
 
     @Override

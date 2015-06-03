@@ -104,9 +104,13 @@ public class Workflow implements Serializable {
     public void setDescription(final LocalizedString description) {
         this.description = description;
     }
-    
+
     public List<Task> getTasks() {
-        return Collections.unmodifiableList(tasks);
+        if (tasks == null) {
+            return null;
+        } else {
+            return Collections.unmodifiableList(tasks);
+        }
     }
 
     protected void setTasks(final List<Task> tasks) {
@@ -135,11 +139,11 @@ public class Workflow implements Serializable {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof Workflow)) {
             return false;
         }
         final Workflow other = (Workflow) obj;
-        if (!other.canEqual(obj)) {
+        if (!other.canEqual(this)) {
             return false;
         }
 

@@ -85,11 +85,16 @@ public class Listener extends CcmObject implements Serializable {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        
+        if (!super.equals(obj)) {
+            return false;
+        }
+        
+        if (!(obj instanceof Listener)) {
             return false;
         }
         final Listener other = (Listener) obj;
-        if (other.canEqual(this)) {
+        if (!other.canEqual(this)) {
             return false;
         }
 
@@ -99,14 +104,11 @@ public class Listener extends CcmObject implements Serializable {
         if (!Objects.equals(attributeString, other.getAttributeString())) {
             return false;
         }
-        if (!Objects.equals(widget, other.getWidget())) {
-            return false;
-        }
-        return true;
+        return Objects.equals(widget, other.getWidget());
     }
 
     @Override
-    public boolean canEqual(Object obj) {
+    public boolean canEqual(final Object obj) {
         return obj instanceof Listener;
     }
 
