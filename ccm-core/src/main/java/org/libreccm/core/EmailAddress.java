@@ -18,6 +18,8 @@
  */
 package org.libreccm.core;
 
+import static org.libreccm.core.CoreConstants.*;
+
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -26,6 +28,8 @@ import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * An embeddable entity for storing email addresses.
@@ -41,19 +45,23 @@ import javax.persistence.Embeddable;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Embeddable
+@XmlRootElement(name = "email-address", namespace = XML_NS)
 public class EmailAddress implements Serializable {
 
     private static final long serialVersionUID = -4076089589412432766L;
 
     @Column(name = "email_address", length = 512, nullable = false)
+    @XmlElement(name = "address", namespace = XML_NS, required = true)
     @NotBlank
     @Email
     private String address;
 
     @Column(name = "bouncing")
+    @XmlElement(name = "bouncing", namespace = XML_NS)
     private boolean bouncing;
 
     @Column(name = "verified")
+    @XmlElement(name = "verified", namespace = XML_NS)
     private boolean verified;
 
     public String getAddress() {

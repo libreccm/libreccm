@@ -18,6 +18,8 @@
  */
 package org.libreccm.core;
 
+import static org.libreccm.core.CoreConstants.*;
+
 import org.hibernate.validator.constraints.NotBlank;
 
 import java.io.Serializable;
@@ -25,6 +27,8 @@ import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * An embeddable entity representing a person's name.
@@ -32,25 +36,31 @@ import javax.persistence.Embeddable;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Embeddable
+@XmlRootElement(name = "person-name", namespace = XML_NS)
 public class PersonName implements Serializable {
 
     private static final long serialVersionUID = -5805626320605809172L;
 
     @Column(name = "title_pre", length = 512)
+    @XmlElement(name = "title-pre", namespace = XML_NS)
     private String titlePre;
 
     @Column(name = "given_name", length = 512)
     @NotBlank
+    @XmlElement(name = "given-name", namespace = XML_NS)
     private String givenName;
 
     @Column(name = "middle_name", length = 512)
+    @XmlElement(name = "middle-name", namespace = XML_NS)
     private String middleName;
 
     @Column(name = "family_name", length = 512)
     @NotBlank
+    @XmlElement(name = "family-name", namespace = XML_NS)
     private String familyName;
 
     @Column(name = "title_post", length = 512)
+    @XmlElement(name = "title-post", namespace = XML_NS)
     private String titlePost;
 
     public String getTitlePre() {

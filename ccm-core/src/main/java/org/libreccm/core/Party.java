@@ -18,6 +18,8 @@
  */
 package org.libreccm.core;
 
+import static org.libreccm.core.CoreConstants.*;
+
 import java.io.Serializable;
 import java.security.acl.Group;
 import java.util.ArrayList;
@@ -32,6 +34,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * Internal basic class for {@link User} and {@link Group}.
@@ -40,6 +45,7 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @Table(name = "parties")
+@XmlRootElement(name = "party", namespace = XML_NS)
 public class Party extends CcmObject implements Serializable {
 
     private static final long serialVersionUID = 6303836654273293979L;
@@ -49,11 +55,15 @@ public class Party extends CcmObject implements Serializable {
                      joinColumns = {
                          @JoinColumn(name = "party_id")})
     @Size(min = 1)
+    @XmlElementWrapper(name = "email-addresses", namespace = XML_NS)
+    @XmlElement(name = "email-address", namespace = XML_NS)
     private List<EmailAddress> emailAddresses;
 
     @OneToMany(mappedBy = "grantee")
     //Can't shorten this variable name without reducing descriptiveness
     @SuppressWarnings("PMD.LongVariable")
+    @XmlElementWrapper(name = "granted-permissions", namespace = XML_NS)
+    @XmlElement(name = "granted-permission", namespace = XML_NS)
     private List<Permission> grantedPermissions;
 
     public Party() {

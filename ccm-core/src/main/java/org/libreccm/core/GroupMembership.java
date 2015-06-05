@@ -18,8 +18,11 @@
  */
 package org.libreccm.core;
 
+import static org.libreccm.core.CoreConstants.*;
+
 import java.io.Serializable;
 import java.util.Objects;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -27,6 +30,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * An association class for the association between a group and it members.
@@ -35,6 +41,8 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "group_memberships")
+@XmlRootElement(name = "group-membership", 
+                namespace = XML_NS)
 public class GroupMembership implements Serializable {
 
     private static final long serialVersionUID = 1897274442468035089L;
@@ -42,12 +50,15 @@ public class GroupMembership implements Serializable {
     @Id
     @Column(name = "membership_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @XmlElement(name = "membership-id", namespace = XML_NS)
     private long membershipId;
 
     @ManyToOne
+    @XmlTransient
     private UserGroup group;
 
     @ManyToOne
+    @XmlTransient
     private User user;
 
     public long getMembershipId() {

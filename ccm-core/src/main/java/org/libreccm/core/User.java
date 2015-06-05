@@ -18,6 +18,8 @@
  */
 package org.libreccm.core;
 
+import static org.libreccm.core.CoreConstants.*;
+
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -37,6 +39,10 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.OneToMany;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -44,6 +50,7 @@ import javax.persistence.OneToMany;
  */
 @Entity
 @Table(name = "users")
+@XmlRootElement(name = "user", namespace = XML_NS)
 //Supressing a few warnings from PMD because they misleading here.
 //User is perfectly fine class name, and the complexity is not to high...
 @SuppressWarnings({"PMD.ShortClassName", 
@@ -60,31 +67,41 @@ public class User extends Party implements Serializable {
         joinTable = @JoinTable(name = "user_names",
                                joinColumns = {
                                    @JoinColumn(name = " user_id")}))
+    @XmlElement(name = "person-name", namespace = XML_NS)
     private PersonName name;
 
     @Column(name = "screen_name", length = 255, nullable = false)
     @NotBlank
+    @XmlElement(name = "screen-name", namespace = XML_NS)
     private String screenName;
 
     @Column(name = "banned")
+    @XmlElement(name = "banned", namespace = XML_NS)
     private boolean banned;
 
     @Column(name = "sso_login", length = 512)
+    @XmlElement(name = "sso-login", namespace = XML_NS)
     private String ssoLogin;
 
     @Column(name = "password", length = 2048)
+    @XmlTransient
     private String password;
 
     @Column(name = "salt", length = 2048)
+    @XmlTransient
     private String salt;
 
     @Column(name = "password_question", length = 2048)
+    @XmlElement(name = "password-question", namespace = XML_NS)
     private String passwordQuestion;
 
     @Column(name = "password_answer", length = 2048)
+    @XmlElement(name = "password-answer", namespace = XML_NS)
     private String passwordAnswer;
 
     @OneToMany(mappedBy = "user")
+    @XmlElementWrapper(name = "group-memberships")
+    @XmlElement(name = "group-membership", namespace = XML_NS)
     private List<GroupMembership> groupMemberships;
 
     public User() {

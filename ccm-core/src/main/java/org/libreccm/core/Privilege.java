@@ -18,6 +18,8 @@
  */
 package org.libreccm.core;
 
+import static org.libreccm.core.CoreConstants.*;
+
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -27,6 +29,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
@@ -34,6 +38,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "ccm_privileges")
+@XmlRootElement(name = "privilege", namespace = XML_NS)
 public class Privilege implements Serializable {
 
     private static final long serialVersionUID = -3986038536996049440L;
@@ -41,11 +46,13 @@ public class Privilege implements Serializable {
     @Id
     @Column(name = "privilege_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @XmlElement(name = "privilege-id", namespace = XML_NS)
     private long privilegeId;
 
     @Column(name = "privilege", length = 255, nullable = false)
     //Field is named like this in the old PDL class, don't want to change it now
     @SuppressWarnings("PMD.AvoidFieldNameMatchingTypeName")
+    @XmlElement(name = "privilege", namespace = XML_NS)
     private String privilege;
 
     public long getPrivilegeId() {

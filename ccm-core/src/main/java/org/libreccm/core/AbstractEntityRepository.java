@@ -24,9 +24,7 @@ public abstract class AbstractEntityRepository<K, E> {
     
     public abstract Class<E> getEntityClass();
     
-    public abstract boolean isNew(final E entity)  {
-        
-    }
+    public abstract boolean isNew(final E entity);
     
     public void save(final E entity) {
         if (isNew(entity)) {
@@ -36,7 +34,7 @@ public abstract class AbstractEntityRepository<K, E> {
         }
     }
     
-    public List<E> findById(final K entityId) {
+    public E findById(final K entityId) {
         return entityManager.find(getEntityClass(), entityId);
     }
     

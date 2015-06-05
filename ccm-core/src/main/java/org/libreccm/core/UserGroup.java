@@ -18,17 +18,25 @@
  */
 package org.libreccm.core;
 
+import static org.libreccm.core.CoreConstants.*; 
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+
 import javax.persistence.Column;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
 import org.hibernate.validator.constraints.NotBlank;
+
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
@@ -36,18 +44,24 @@ import org.hibernate.validator.constraints.NotBlank;
  */
 @Entity
 @Table(name = "user_groups")
+@XmlRootElement(name = "user-group", namespace = XML_NS)
 public class UserGroup extends Party implements Serializable {
 
     private static final long serialVersionUID = -5555063356689597270L;
 
     @Column(name = "name", length = 512, nullable = false)
     @NotBlank
+    @XmlElement(name = "name", namespace = XML_NS)
     private String name;
 
     @OneToMany(mappedBy = "sourceGroup")
+    @XmlElementWrapper(name = "roles", namespace = XML_NS)
+    @XmlElement(name ="role", namespace = XML_NS)
     private List<Role> roles;
 
     @OneToMany(mappedBy = "group")
+    @XmlElementWrapper(name = "group-memberships", namespace = XML_NS)
+    @XmlElement(name = "group-membership", namespace = XML_NS)
     private List<GroupMembership> members;
 
     public UserGroup() {
