@@ -52,6 +52,8 @@ public class Party extends CcmObject implements Serializable {
     private List<EmailAddress> emailAddresses;
 
     @OneToMany(mappedBy = "grantee")
+    //Can't shorten this variable name without reducing descriptiveness
+    @SuppressWarnings("PMD.LongVariable")
     private List<Permission> grantedPermissions;
 
     public Party() {
@@ -84,6 +86,8 @@ public class Party extends CcmObject implements Serializable {
         return Collections.unmodifiableList(grantedPermissions);
     }
 
+    //Can't shorten this variable name without reducing descriptiveness
+    @SuppressWarnings("PMD.LongVariable")
     protected void setGrantedPermissions(
         final List<Permission> grantedPermissions) {
         this.grantedPermissions = grantedPermissions;

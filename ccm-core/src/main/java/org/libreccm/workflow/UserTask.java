@@ -44,6 +44,10 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "workflow_user_tasks")
+//Can't reduce complexity yet
+@SuppressWarnings({"PMD.CyclomaticComplexity",
+                   "PMD.StdCyclomaticComplexity",
+                   "PMD.ModifiedCyclomaticComplexity"})
 public class UserTask extends Task implements Serializable {
 
     private static final long serialVersionUID = 4188064584389893019L;
@@ -68,6 +72,7 @@ public class UserTask extends Task implements Serializable {
 
     @OneToOne
     @JoinColumn(name = "notification_sender")
+    @SuppressWarnings("PMD.LongVariable") //Shorter name would not be descriptive
     private User notificationSender;
 
     @OneToMany
@@ -152,6 +157,7 @@ public class UserTask extends Task implements Serializable {
         return notificationSender;
     }
 
+    @SuppressWarnings("PMD.LongVariable")
     public void setNotificationSender(final User notificationSender) {
         this.notificationSender = notificationSender;
     }
@@ -204,7 +210,7 @@ public class UserTask extends Task implements Serializable {
         hash = 37 * hash + Objects.hashCode(startDate);
         hash = 37 * hash + Objects.hashCode(dueDate);
         hash
-            = 37 * hash + (int) (durationMinutes ^ (durationMinutes >>> 32));
+        = 37 * hash + (int) (durationMinutes ^ (durationMinutes >>> 32));
         hash = 37 * hash + Objects.hashCode(notificationSender);
         hash = 37 * hash + Objects.hashCode(assignedUsers);
         hash = 37 * hash + Objects.hashCode(assignedGroups);
@@ -212,6 +218,11 @@ public class UserTask extends Task implements Serializable {
     }
 
     @Override
+    //Can't reduce complexity yet
+    @SuppressWarnings({"PMD.CyclomaticComplexity",
+                       "PMD.StdCyclomaticComplexity",
+                       "PMD.ModifiedCyclomaticComplexity", 
+                       "PMD.NPathComplexity"})
     public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
@@ -257,15 +268,15 @@ public class UserTask extends Task implements Serializable {
     public boolean canEqual(final Object obj) {
         return obj instanceof UserTask;
     }
-    
+
     @Override
     public String toString(final String data) {
         return super.toString(String.format(", locked = %b, "
-                                                + "lockingUser = %s, "
-                                                + "startDate = %tF %<tT,"
-                                                + "dueDate = %tF %<tT, "
-                                                + "durationMinutes = %d, "
-                                                + "notificationSender = %s%s",
+                                                    + "lockingUser = %s, "
+                                                    + "startDate = %tF %<tT,"
+                                                    + "dueDate = %tF %<tT, "
+                                                    + "durationMinutes = %d, "
+                                                    + "notificationSender = %s%s",
                                             locked,
                                             Objects.toString(lockingUser),
                                             startDate,

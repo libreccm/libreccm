@@ -46,6 +46,10 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "messages")
+//Can't reduce complexity yet
+@SuppressWarnings({"PMD.CyclomaticComplexity",
+                   "PMD.StdCyclomaticComplexity",
+                   "PMD.ModifiedCyclomaticComplexity"})
 public class Message extends CcmObject implements Serializable {
 
     private static final long serialVersionUID = -9143137794418932025L;
@@ -189,15 +193,20 @@ public class Message extends CcmObject implements Serializable {
     }
 
     @Override
+    //Can't reduce complexity yet
+    @SuppressWarnings({"PMD.CyclomaticComplexity",
+                       "PMD.StdCyclomaticComplexity",
+                       "PMD.ModifiedCyclomaticComplexity",
+                       "PMD.NPathComplexity"})
     public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }
-        
+
         if (!super.equals(obj)) {
             return false;
         }
-        
+
         if (!(obj instanceof Message)) {
             return false;
         }
@@ -238,10 +247,10 @@ public class Message extends CcmObject implements Serializable {
     @Override
     public String toString(final String data) {
         return super.toString(String.format(", sender = %s, "
-                                                + "subject = \"%s\", "
-                                                + "bodyMimeType = \"%s\", "
-                                                + "sent = %tF %<tT, "
-                                                + "inReplyTo = %s%s",
+                                                    + "subject = \"%s\", "
+                                                    + "bodyMimeType = \"%s\", "
+                                                    + "sent = %tF %<tT, "
+                                                    + "inReplyTo = %s%s",
                                             Objects.toString(sender),
                                             subject,
                                             Objects.toString(bodyMimeType),

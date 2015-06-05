@@ -117,7 +117,7 @@ public class Attachment implements Serializable {
         }
     }
 
-    public void setData(byte[] data) {
+    public void setData(final byte[] data) {
         if (data == null) {
             this.data = null;
         } else {
@@ -129,7 +129,7 @@ public class Attachment implements Serializable {
     public int hashCode() {
         int hash = 5;
         hash
-            = 67 * hash + (int) (attachmentId ^ (attachmentId >>> 32));
+        = 67 * hash + (int) (attachmentId ^ (attachmentId >>> 32));
         hash = 67 * hash + Objects.hashCode(message);
         hash = 67 * hash + Objects.hashCode(mimeType);
         hash = 67 * hash + Objects.hashCode(title);
@@ -139,6 +139,8 @@ public class Attachment implements Serializable {
     }
 
     @Override
+    //Can't reduce complexity yet
+    @SuppressWarnings("PMD.NPathComplexity")
     public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
@@ -178,11 +180,11 @@ public class Attachment implements Serializable {
     @Override
     public String toString() {
         return String.format("%s{ "
-                                 + "attachmentId = %d, "
-                                 + "message = %s, "
-                                 + "mimeType = \"%s\", "
-                                 + "title = \"%s\""
-                                 + " }",
+                                     + "attachmentId = %d, "
+                                     + "message = %s, "
+                                     + "mimeType = \"%s\", "
+                                     + "title = \"%s\""
+                                     + " }",
                              super.toString(),
                              attachmentId,
                              Objects.toString(message),

@@ -34,17 +34,21 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 /**
- * Represents a notification that has been transferred to the outbound
- * message queue. During processing, this class is used to retrieve information
+ * Represents a notification that has been transferred to the outbound message
+ * queue. During processing, this class is used to retrieve information
  * necessary to convert the notification into an outbound email message.
  *
- * (Documentation taken from the [@code com.arsdigita.notifiction.QueueItem} 
+ * (Documentation taken from the [@code com.arsdigita.notifiction.QueueItem}
  * class.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
 @Table(name = "queue_items")
+//Can't reduce complexity yet
+@SuppressWarnings({"PMD.CyclomaticComplexity",
+                   "PMD.StdCyclomaticComplexity",
+                   "PMD.ModifiedCyclomaticComplexity"})
 public class QueueItem implements Serializable {
 
     private static final long serialVersionUID = 396330385592074013L;
@@ -156,6 +160,11 @@ public class QueueItem implements Serializable {
     }
 
     @Override
+    //Can't reduce complexity yet
+    @SuppressWarnings({"PMD.CyclomaticComplexity",
+                       "PMD.StdCyclomaticComplexity",
+                       "PMD.ModifiedCyclomaticComplexity",
+                       "PMD.NPathComplexity"})
     public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
@@ -167,7 +176,7 @@ public class QueueItem implements Serializable {
         if (!other.canEqual(this)) {
             return false;
         }
-        
+
         if (this.queueItemId != other.getQueueItemId()) {
             return false;
         }
@@ -199,13 +208,13 @@ public class QueueItem implements Serializable {
     @Override
     public String toString() {
         return String.format("%s{ "
-                                 + "queueItemId = %d, "
-                                 + "receiver = %s, "
-                                 + "retryCount = %d, "
-                                 + "successful = %b, "
-                                 + "receiverAddress = \"%s\", "
-                                 + "message = %s"
-                                 + " }",
+                                     + "queueItemId = %d, "
+                                     + "receiver = %s, "
+                                     + "retryCount = %d, "
+                                     + "successful = %b, "
+                                     + "receiverAddress = \"%s\", "
+                                     + "message = %s"
+                                     + " }",
                              super.toString(),
                              queueItemId,
                              Objects.toString(receiver),

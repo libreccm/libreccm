@@ -154,6 +154,8 @@ public class Categorization implements Serializable {
     }
 
     @Override
+     //No chance to make this method less complex, therefore suppress warning
+    @SuppressWarnings("PMD.NPathComplexity")
     public boolean equals(final Object obj) {
         if (obj == null) {
             return false;

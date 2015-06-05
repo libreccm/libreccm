@@ -35,7 +35,6 @@ import java.util.Objects;
 import javax.persistence.AssociationOverride;
 import javax.persistence.Column;
 import javax.persistence.Convert;
-import javax.persistence.Converter;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -46,6 +45,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Pattern;
+import org.omg.CORBA.DomainManager;
 
 /**
  * A domain is collection of categories designed a specific purpose. This entity

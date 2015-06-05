@@ -73,7 +73,7 @@ public class PersonName implements Serializable {
         return middleName;
     }
 
-    public void setMiddleName(String middleName) {
+    public void setMiddleName(final String middleName) {
         this.middleName = middleName;
     }
 

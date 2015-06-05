@@ -42,6 +42,10 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "formbuilder_components")
+//Can't reduce complexity yet
+@SuppressWarnings({"PMD.CyclomaticComplexity",
+                   "PMD.StdCyclomaticComplexity",
+                   "PMD.ModifiedCyclomaticComplexity"})
 public class Component extends CcmObject implements Serializable {
 
     private static final long serialVersionUID = 1787173100367982069L;
@@ -158,6 +162,11 @@ public class Component extends CcmObject implements Serializable {
     }
 
     @Override
+    //Can't reduce complexity yet
+    @SuppressWarnings({"PMD.CyclomaticComplexity",
+                       "PMD.StdCyclomaticComplexity",
+                       "PMD.ModifiedCyclomaticComplexity",
+                       "PMD.NPathComplexity"})
     public boolean equals(final Object obj) {
         if (obj == null) {
             return false;

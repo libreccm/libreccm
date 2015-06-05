@@ -68,6 +68,12 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "notifications")
+//Can't reduce complexity yet. Not sure what to do about the God class warning.
+//Maybe we have to put some of the properties into an extra class.
+@SuppressWarnings({"PMD.CyclomaticComplexity",
+                   "PMD.StdCyclomaticComplexity",
+                   "PMD.ModifiedCyclomaticComplexity",
+                   "PMD.GodClass"})
 public class Notification extends CcmObject implements Serializable {
 
     private static final long serialVersionUID = -6052859580690813506L;
@@ -244,6 +250,11 @@ public class Notification extends CcmObject implements Serializable {
     }
 
     @Override
+    //Can't reduce complexity yet
+    @SuppressWarnings({"PMD.CyclomaticComplexity",
+                       "PMD.StdCyclomaticComplexity",
+                       "PMD.ModifiedCyclomaticComplexity",
+                       "PMD.NPathComplexity"})
     public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
@@ -308,14 +319,14 @@ public class Notification extends CcmObject implements Serializable {
     @Override
     public String toString(final String data) {
         return super.toString(String.format(", receiver = %s, "
-                                                + "digest = %s, "
-                                                + "message = %s, "
-                                                + "expandGroup = %b, "
-                                                + "requestDate  = %tF %<tT, "
-                                                + "fulfillDate = %tF %<tT, "
-                                                + "status = \"%s\", "
-                                                + "expunge = %b, "
-                                                + "expungeMessage = %b%s",
+                                                    + "digest = %s, "
+                                                    + "message = %s, "
+                                                    + "expandGroup = %b, "
+                                                    + "requestDate  = %tF %<tT, "
+                                            + "fulfillDate = %tF %<tT, "
+                                                    + "status = \"%s\", "
+                                                    + "expunge = %b, "
+                                                    + "expungeMessage = %b%s",
                                             Objects.toString(receiver),
                                             Objects.toString(digest),
                                             Objects.toString(message),

@@ -44,6 +44,12 @@ import javax.persistence.OneToMany;
  */
 @Entity
 @Table(name = "users")
+//Supressing a few warnings from PMD because they misleading here.
+//User is perfectly fine class name, and the complexity is not to high...
+@SuppressWarnings({"PMD.ShortClassName", 
+                   "PMD.CyclomaticComplexity",
+                   "PMD.StdCyclomaticComplexity",
+                   "PMD.ModifiedCyclomaticComplexity"})
 public class User extends Party implements Serializable {
 
     private static final long serialVersionUID = 892038270064849732L;
@@ -184,6 +190,11 @@ public class User extends Party implements Serializable {
     }
 
     @Override
+    //Can't reduce complexity yet
+    @SuppressWarnings({"PMD.CyclomaticComplexity",
+                       "PMD.StdCyclomaticComplexity",
+                       "PMD.ModifiedCyclomaticComplexity",
+                       "PMD.NPathComplexity"})
     public boolean equals(final Object obj) {
         if (!super.equals(obj)) {
             return false;

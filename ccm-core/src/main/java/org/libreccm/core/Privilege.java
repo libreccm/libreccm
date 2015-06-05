@@ -44,6 +44,8 @@ public class Privilege implements Serializable {
     private long privilegeId;
 
     @Column(name = "privilege", length = 255, nullable = false)
+    //Field is named like this in the old PDL class, don't want to change it now
+    @SuppressWarnings("PMD.AvoidFieldNameMatchingTypeName")
     private String privilege;
 
     public long getPrivilegeId() {

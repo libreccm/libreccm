@@ -36,6 +36,7 @@ import org.hibernate.validator.constraints.NotBlank;
  */
 @Entity
 @Table(name = "roles")
+@SuppressWarnings("PMD.ShortClassName") //Role is perfectly fine name.
 public class Role implements Serializable {
 
     private static final long serialVersionUID = 3314358449751376350L;

@@ -29,6 +29,14 @@ import javax.persistence.Embeddable;
 
 /**
  * An embeddable entity for storing email addresses.
+ * 
+ * In contrast to its predecessor {@code com.arsdigita.kernel.EmailAddress} 
+ * this class does not provide verification methods. Verification is done using
+ * the <em>Bean Validiation API</em> (Hibernate Validator is used as 
+ * implementation). 
+ * 
+ * Because this class is an embeddable JPA entity it can be used in other 
+ * entities to store eMail addresses.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -40,7 +48,7 @@ public class EmailAddress implements Serializable {
     @Column(name = "email_address", length = 512, nullable = false)
     @NotBlank
     @Email
-    private String eMailAddress;
+    private String address;
 
     @Column(name = "bouncing")
     private boolean bouncing;
@@ -48,12 +56,12 @@ public class EmailAddress implements Serializable {
     @Column(name = "verified")
     private boolean verified;
 
-    public String getEmailAddress() {
-        return eMailAddress;
+    public String getAddress() {
+        return address;
     }
 
-    public void setEmailAddress(final String eMailAddress) {
-        this.eMailAddress = eMailAddress;
+    public void setAddress(final String eMailAddress) {
+        this.address = eMailAddress;
     }
 
     public boolean isBouncing() {
@@ -75,7 +83,7 @@ public class EmailAddress implements Serializable {
     @Override
     public int hashCode() {
         int hash = 5;
-        hash = 79 * hash + Objects.hashCode(eMailAddress);
+        hash = 79 * hash + Objects.hashCode(address);
         hash = 79 * hash + (bouncing ? 1 : 0);
         hash = 79 * hash + (verified ? 1 : 0);
         return hash;
@@ -94,7 +102,7 @@ public class EmailAddress implements Serializable {
             return false;
         }
         
-        if (!Objects.equals(eMailAddress, other.getEmailAddress())) {
+        if (!Objects.equals(address, other.getAddress())) {
             return false;
         }
         if (bouncing != other.isBouncing()) {
@@ -114,7 +122,7 @@ public class EmailAddress implements Serializable {
                                  + "bouncing = %b, "
                                  + "verified = %b }",
                              super.toString(),
-                             eMailAddress,
+                             address,
                              bouncing,
                              verified);
     }

@@ -81,7 +81,7 @@ public class ObjectType extends CcmObject implements Serializable {
             return false;
         }
         final ObjectType other = (ObjectType) obj;
-        if (!canEqual(this)) {
+        if (!other.canEqual(this)) {
             return false;
         }
 

@@ -118,6 +118,8 @@ public class Widget extends Component implements Serializable {
     }
 
     @Override
+    //Can't reduce complexity yet
+    @SuppressWarnings("PMD.NPathComplexity")
     public boolean equals(final Object obj) {
         if (obj == null) {
             return false;

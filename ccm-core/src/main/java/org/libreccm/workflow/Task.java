@@ -50,6 +50,13 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "workflow_tasks")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+//Can't reduce complexity yet, Task is a fine name
+@SuppressWarnings({"PMD.CyclomaticComplexity",
+                   "PMD.StdCyclomaticComplexity",
+                   "PMD.ModifiedCyclomaticComplexity",
+                   "PMD.ShortClassName",
+                   "PMD.TooManyMethods",
+                   "PMD.AvoidDuplicateLiterals"})
 public class Task implements Serializable {
 
     private static final long serialVersionUID = 8161343036908150426L;
@@ -61,18 +68,18 @@ public class Task implements Serializable {
 
     @Embedded
     @AssociationOverride(
-        name = "values",
-        joinTable = @JoinTable(name = "workflow_task_labels",
-                               joinColumns = {
-                                   @JoinColumn(name = "task_id")}))
+            name = "values",
+            joinTable = @JoinTable(name = "workflow_task_labels",
+                                   joinColumns = {
+                                       @JoinColumn(name = "task_id")}))
     private LocalizedString label;
 
     @Embedded
     @AssociationOverride(
-        name = "values",
-        joinTable = @JoinTable(name = "workflow_tasks_descriptions",
-                               joinColumns = {
-                                   @JoinColumn(name = "task_id")}))
+            name = "values",
+            joinTable = @JoinTable(name = "workflow_tasks_descriptions",
+                                   joinColumns = {
+                                       @JoinColumn(name = "task_id")}))
     private LocalizedString description;
 
     @Column(name = "active")
@@ -238,6 +245,11 @@ public class Task implements Serializable {
     }
 
     @Override
+    //Can't reduce complexity yet
+    @SuppressWarnings({"PMD.CyclomaticComplexity",
+                       "PMD.StdCyclomaticComplexity",
+                       "PMD.ModifiedCyclomaticComplexity",
+                       "PMD.NPathComplexity"})
     public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
@@ -288,14 +300,14 @@ public class Task implements Serializable {
 
     public String toString(final String data) {
         return String.format("%s{ "
-                                 + "taskId = %d, "
-                                 + "label = %s, "
-                                 + "active = %b, "
-                                 + "taskState = \"%s\", "
-                                 + "workflow = %s, "
-                                 + "dependentTasks = %s, "
-                                 + "dependsOn = %s%s"
-                                 + " }",
+                                     + "taskId = %d, "
+                                     + "label = %s, "
+                                     + "active = %b, "
+                                     + "taskState = \"%s\", "
+                                     + "workflow = %s, "
+                                     + "dependentTasks = %s, "
+                                     + "dependsOn = %s%s"
+                                     + " }",
                              super.toString(),
                              taskId,
                              Objects.toString(label),

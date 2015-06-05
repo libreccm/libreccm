@@ -122,6 +122,8 @@ public class ProcessListener extends CcmObject implements Serializable {
     }
 
     @Override
+    //We can't reduce the complexity now
+    @SuppressWarnings("PMD.NPathComplexity")
     public boolean equals(final Object obj) {
         if (obj == null) {
             return false;

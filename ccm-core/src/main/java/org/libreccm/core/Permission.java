@@ -40,6 +40,10 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "permissions")
+//Can't reduce complexity yet
+@SuppressWarnings({"PMD.CyclomaticComplexity",
+                   "PMD.StdCyclomaticComplexity",
+                   "PMD.ModifiedCyclomaticComplexity"})
 public class Permission implements Serializable {
 
     private static final long serialVersionUID = -2368935232499907547L;
@@ -136,7 +140,7 @@ public class Permission implements Serializable {
     public int hashCode() {
         int hash = 3;
         hash
-            = 31 * hash + (int) (permissionId ^ (permissionId >>> 32));
+        = 31 * hash + (int) (permissionId ^ (permissionId >>> 32));
         hash = 31 * hash + Objects.hashCode(grantee);
         hash = 31 * hash + Objects.hashCode(grantedPrivilege);
         hash = 31 * hash + Objects.hashCode(object);
@@ -147,6 +151,11 @@ public class Permission implements Serializable {
     }
 
     @Override
+    //Can't reduce complexity yet
+    @SuppressWarnings({"PMD.CyclomaticComplexity",
+                       "PMD.StdCyclomaticComplexity",
+                       "PMD.ModifiedCyclomaticComplexity",
+                       "PMD.NPathComplexity"})
     public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
@@ -188,14 +197,14 @@ public class Permission implements Serializable {
     @Override
     public String toString() {
         return String.format("%s{ "
-                                 + "permissionId = %d, "
-                                 + "grantee = %s, "
-                                 + "grantedPrivilege = %s, "
-                                 + "object = %s, "
-                                 + "creationUser = %s,"
-                                 + "creationDate = %tF %<tT, "
-                                 + "creationIp = %s"
-                                 + " }",
+                                     + "permissionId = %d, "
+                                     + "grantee = %s, "
+                                     + "grantedPrivilege = %s, "
+                                     + "object = %s, "
+                                     + "creationUser = %s,"
+                                     + "creationDate = %tF %<tT, "
+                                     + "creationIp = %s"
+                                     + " }",
                              super.toString(),
                              permissionId,
                              Objects.toString(grantee),

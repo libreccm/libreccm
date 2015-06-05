@@ -42,6 +42,12 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "lucene_documents")
+//Can't reduce complexity yet. Not sure what to do about the God class warning.
+//Maybe we have to put some of the properties into an extra class.
+@SuppressWarnings({"PMD.CyclomaticComplexity",
+                   "PMD.StdCyclomaticComplexity",
+                   "PMD.ModifiedCyclomaticComplexity",
+                   "PMD.GodClass"})
 public class Document implements Serializable {
 
     private static final long serialVersionUID = 3363154040440909619L;
@@ -269,6 +275,11 @@ public class Document implements Serializable {
     }
 
     @Override
+    //Can't reduce complexity yet
+    @SuppressWarnings({"PMD.CyclomaticComplexity",
+                       "PMD.StdCyclomaticComplexity",
+                       "PMD.ModifiedCyclomaticComplexity", 
+                       "PMD.NPathComplexity"})
     public boolean equals(final Object obj) {
         if (obj == null) {
             return false;

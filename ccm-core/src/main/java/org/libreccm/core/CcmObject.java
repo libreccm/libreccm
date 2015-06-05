@@ -37,6 +37,8 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * Root class of all entities in LibreCCM which need categorisation and 
@@ -58,6 +60,11 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "ccm_objects")
 @Inheritance(strategy = InheritanceType.JOINED)
+@XmlRootElement(name = "ccm-object", namespace = "http://core.libreccm.org")
+//False warning (?). Because this class has been migrated from the old PDL style
+//persistence system we can't yet refactor it to make PMD happy. Also I think
+//this is a false warning.
+@SuppressWarnings("PMD.TooManyMethods")
 public class CcmObject implements Serializable {
 
     private static final long serialVersionUID = 201504261329L;
@@ -70,6 +77,7 @@ public class CcmObject implements Serializable {
     @Id
     @Column(name = "object_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @XmlElement(name = "object-id")
     private long objectId;
 
     /**

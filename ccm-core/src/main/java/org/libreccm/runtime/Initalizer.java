@@ -57,12 +57,12 @@ public class Initalizer implements Serializable {
     private Initalizer requiredBy;
 
     @OneToMany(mappedBy = "requiredBy")
-    private List<Initalizer> requiredInitializers;
+    private List<Initalizer> requires;
 
     public Initalizer() {
         super();
 
-        requiredInitializers = new ArrayList<>();
+        requires = new ArrayList<>();
     }
 
     public long getInitializerId() {
@@ -89,25 +89,25 @@ public class Initalizer implements Serializable {
         this.requiredBy = requiredBy;
     }
 
-    public List<Initalizer> getRequiredInitializers() {
-        if (requiredInitializers == null) {
+    public List<Initalizer> getRequires() {
+        if (requires == null) {
             return null;
         } else {
-            return Collections.unmodifiableList(requiredInitializers);
+            return Collections.unmodifiableList(requires);
         }
     }
 
-    protected void setRequiredInitializers(
-        final List<Initalizer> requiredInitializers) {
-        this.requiredInitializers = requiredInitializers;
+    protected void setRequires(
+        final List<Initalizer> requires) {
+        this.requires = requires;
     }
 
     protected void addRequiredInitalizer(final Initalizer initalizer) {
-        requiredInitializers.add(initalizer);
+        requires.add(initalizer);
     }
 
     protected void removeRequiredInitalizer(final Initalizer initalizer) {
-        requiredInitializers.remove(initalizer);
+        requires.remove(initalizer);
     }
 
     @Override
@@ -117,7 +117,7 @@ public class Initalizer implements Serializable {
             = 37 * hash + (int) (initializerId ^ (initializerId >>> 32));
         hash = 37 * hash + Objects.hashCode(className);
         hash = 37 * hash + Objects.hashCode(requiredBy);
-        hash = 37 * hash + Objects.hashCode(requiredInitializers);
+        hash = 37 * hash + Objects.hashCode(requires);
         return hash;
     }
 
@@ -143,8 +143,8 @@ public class Initalizer implements Serializable {
         if (!Objects.equals(requiredBy, other.getRequiredBy())) {
             return false;
         }
-        return Objects.equals(requiredInitializers,
-                              other.getRequiredInitializers());
+        return Objects.equals(requires,
+                              other.getRequires());
     }
 
     public boolean canEqual(final Object obj) {

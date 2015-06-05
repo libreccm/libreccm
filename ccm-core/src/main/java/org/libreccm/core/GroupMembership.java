@@ -29,7 +29,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
- *
+ * An association class for the association between a group and it members.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
