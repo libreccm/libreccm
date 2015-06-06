@@ -50,7 +50,7 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @Entity
 @Table(name = "users")
-@XmlRootElement(name = "user", namespace = XML_NS)
+@XmlRootElement(name = "user", namespace = CORE_XML_NS)
 //Supressing a few warnings from PMD because they misleading here.
 //User is perfectly fine class name, and the complexity is not to high...
 @SuppressWarnings({"PMD.ShortClassName", 
@@ -67,20 +67,20 @@ public class User extends Party implements Serializable {
         joinTable = @JoinTable(name = "user_names",
                                joinColumns = {
                                    @JoinColumn(name = " user_id")}))
-    @XmlElement(name = "person-name", namespace = XML_NS)
+    @XmlElement(name = "person-name", namespace = CORE_XML_NS)
     private PersonName name;
 
     @Column(name = "screen_name", length = 255, nullable = false)
     @NotBlank
-    @XmlElement(name = "screen-name", namespace = XML_NS)
+    @XmlElement(name = "screen-name", namespace = CORE_XML_NS)
     private String screenName;
 
     @Column(name = "banned")
-    @XmlElement(name = "banned", namespace = XML_NS)
+    @XmlElement(name = "banned", namespace = CORE_XML_NS)
     private boolean banned;
 
     @Column(name = "sso_login", length = 512)
-    @XmlElement(name = "sso-login", namespace = XML_NS)
+    @XmlElement(name = "sso-login", namespace = CORE_XML_NS)
     private String ssoLogin;
 
     @Column(name = "password", length = 2048)
@@ -92,16 +92,16 @@ public class User extends Party implements Serializable {
     private String salt;
 
     @Column(name = "password_question", length = 2048)
-    @XmlElement(name = "password-question", namespace = XML_NS)
+    @XmlElement(name = "password-question", namespace = CORE_XML_NS)
     private String passwordQuestion;
 
     @Column(name = "password_answer", length = 2048)
-    @XmlElement(name = "password-answer", namespace = XML_NS)
+    @XmlElement(name = "password-answer", namespace = CORE_XML_NS)
     private String passwordAnswer;
 
     @OneToMany(mappedBy = "user")
     @XmlElementWrapper(name = "group-memberships")
-    @XmlElement(name = "group-membership", namespace = XML_NS)
+    @XmlElement(name = "group-membership", namespace = CORE_XML_NS)
     private List<GroupMembership> groupMemberships;
 
     public User() {

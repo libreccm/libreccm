@@ -20,7 +20,7 @@ package org.libreccm.messaging;
 
 import org.libreccm.core.CcmObject;
 import org.libreccm.core.Party;
-import org.libreccm.jpautils.MimeTypeConverter;
+import org.libreccm.jpa.utils.MimeTypeConverter;
 
 import java.io.Serializable;
 import java.util.Collections;

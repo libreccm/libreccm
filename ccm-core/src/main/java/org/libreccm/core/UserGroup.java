@@ -44,24 +44,24 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Entity
 @Table(name = "user_groups")
-@XmlRootElement(name = "user-group", namespace = XML_NS)
+@XmlRootElement(name = "user-group", namespace = CORE_XML_NS)
 public class UserGroup extends Party implements Serializable {
 
     private static final long serialVersionUID = -5555063356689597270L;
 
     @Column(name = "name", length = 512, nullable = false)
     @NotBlank
-    @XmlElement(name = "name", namespace = XML_NS)
+    @XmlElement(name = "name", namespace = CORE_XML_NS)
     private String name;
 
     @OneToMany(mappedBy = "sourceGroup")
-    @XmlElementWrapper(name = "roles", namespace = XML_NS)
-    @XmlElement(name ="role", namespace = XML_NS)
+    @XmlElementWrapper(name = "roles", namespace = CORE_XML_NS)
+    @XmlElement(name ="role", namespace = CORE_XML_NS)
     private List<Role> roles;
 
     @OneToMany(mappedBy = "group")
-    @XmlElementWrapper(name = "group-memberships", namespace = XML_NS)
-    @XmlElement(name = "group-membership", namespace = XML_NS)
+    @XmlElementWrapper(name = "group-memberships", namespace = CORE_XML_NS)
+    @XmlElement(name = "group-membership", namespace = CORE_XML_NS)
     private List<GroupMembership> members;
 
     public UserGroup() {

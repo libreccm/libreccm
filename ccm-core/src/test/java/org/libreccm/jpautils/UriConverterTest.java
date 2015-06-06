@@ -18,6 +18,7 @@
  */
 package org.libreccm.jpautils;
 
+import org.libreccm.jpa.utils.UriConverter;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

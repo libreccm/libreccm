@@ -45,7 +45,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Entity
 @Table(name = "parties")
-@XmlRootElement(name = "party", namespace = XML_NS)
+@XmlRootElement(name = "party", namespace = CORE_XML_NS)
 public class Party extends CcmObject implements Serializable {
 
     private static final long serialVersionUID = 6303836654273293979L;
@@ -55,15 +55,15 @@ public class Party extends CcmObject implements Serializable {
                      joinColumns = {
                          @JoinColumn(name = "party_id")})
     @Size(min = 1)
-    @XmlElementWrapper(name = "email-addresses", namespace = XML_NS)
-    @XmlElement(name = "email-address", namespace = XML_NS)
+    @XmlElementWrapper(name = "email-addresses", namespace = CORE_XML_NS)
+    @XmlElement(name = "email-address", namespace = CORE_XML_NS)
     private List<EmailAddress> emailAddresses;
 
     @OneToMany(mappedBy = "grantee")
     //Can't shorten this variable name without reducing descriptiveness
     @SuppressWarnings("PMD.LongVariable")
-    @XmlElementWrapper(name = "granted-permissions", namespace = XML_NS)
-    @XmlElement(name = "granted-permission", namespace = XML_NS)
+    @XmlElementWrapper(name = "granted-permissions", namespace = CORE_XML_NS)
+    @XmlElement(name = "granted-permission", namespace = CORE_XML_NS)
     private List<Permission> grantedPermissions;
 
     public Party() {

@@ -16,37 +16,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.jpautils;
-
-
-import javax.activation.MimeType;
-import javax.activation.MimeTypeParseException;
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
+package org.libreccm.tests.categories;
 
 /**
- * A converter for converting properties of the type {@link MimeType} to
- * {@code String}.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@Converter(autoApply = true)
-public class MimeTypeConverter implements AttributeConverter<MimeType, String> {
-
-    @Override
-    public String convertToDatabaseColumn(final MimeType attribute) {
-        return attribute.toString();
-    }
-
-    @Override
-    public MimeType convertToEntityAttribute(final String dbData) {
-        try {
-            return new MimeType(dbData);
-        } catch (MimeTypeParseException ex) {
-            throw new IllegalArgumentException("Not a valid mime type", ex);
-        }
-    }
+public interface IntegrationTest {
     
-    
-
 }

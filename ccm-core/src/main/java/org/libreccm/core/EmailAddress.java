@@ -45,23 +45,23 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Embeddable
-@XmlRootElement(name = "email-address", namespace = XML_NS)
+@XmlRootElement(name = "email-address", namespace = CORE_XML_NS)
 public class EmailAddress implements Serializable {
 
     private static final long serialVersionUID = -4076089589412432766L;
 
     @Column(name = "email_address", length = 512, nullable = false)
-    @XmlElement(name = "address", namespace = XML_NS, required = true)
+    @XmlElement(name = "address", namespace = CORE_XML_NS, required = true)
     @NotBlank
     @Email
     private String address;
 
     @Column(name = "bouncing")
-    @XmlElement(name = "bouncing", namespace = XML_NS)
+    @XmlElement(name = "bouncing", namespace = CORE_XML_NS)
     private boolean bouncing;
 
     @Column(name = "verified")
-    @XmlElement(name = "verified", namespace = XML_NS)
+    @XmlElement(name = "verified", namespace = CORE_XML_NS)
     private boolean verified;
 
     public String getAddress() {

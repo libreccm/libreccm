@@ -70,6 +70,34 @@
             <artifactId>equalsverifier</artifactId>
             <scope>test</scope>
         </dependency>
+        
+        <dependency>
+            <groupId>org.jboss.arquillian.junit</groupId>
+            <artifactId>arquillian-junit-container</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.extension</groupId>
+            <artifactId>arquillian-persistence-dbunit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.extension</groupId>
+            <artifactId>arquillian-transaction-impl-base</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.shrinkwrap.resolver</groupId>
+            <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
+            <scope>test</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+        
     </dependencies>
     
     <build>
@@ -111,7 +139,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.7.4.201502262128</version>
+                <version>0.7.5.201505241946</version>
                 <executions>
                     <execution>
                         <id>default-prepare-agent</id>
@@ -180,7 +208,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.10.2</version>
+                <version>2.10.3</version>
                 <configuration>
                     <detectLinks>true</detectLinks>
                     <detectJavaApiLinks>true</detectJavaApiLinks>
@@ -225,7 +253,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.7.4.201502262128</version>
+                <version>0.7.5.201505241946</version>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -287,5 +315,255 @@
             </plugin>
         </plugins>
     </reporting>
+    
+    <profiles>
+        <profile>
+            <id>tomee-embedded</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.apache.openejb</groupId>
+                    <artifactId>arquillian-tomee-embedded</artifactId>
+                    <version>1.7.2</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.openejb</groupId>
+                    <artifactId>tomee-embedded</artifactId>
+                    <version>1.7.2</version>
+                    <scope>test</scope>
+                    <exclusions>
+                        <exclusion>
+                            <groupId>org.apache.bval</groupId>
+                            <artifactId>bval-core</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>org.apache.bval</groupId>
+                            <artifactId>bval-jsr303</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>org.apache.openjpa</groupId>
+                            <artifactId>openjpa-persistence</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>org.apache.openjpa</groupId>
+                            <artifactId>openjpa-kernel</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>org.apache.openjpa</groupId>
+                            <artifactId>openjpa-lib</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>org.apache.openjpa</groupId>
+                            <artifactId>openjpa-parent</artifactId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+                <dependency>
+                    <groupId>org.jboss.logmanager</groupId>
+                    <artifactId>jboss-logmanager</artifactId>
+                    <version>1.5.4.Final</version>
+                    <scope>test</scope>
+                </dependency>
+                <!--Required for WebServices and RESTful WebServices-->
+                <!--<dependency>
+                    <groupId>org.apache.openejb</groupId>
+                    <artifactId>tomee-webservices</artifactId>
+                    <version>1.7.1</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.openejb</groupId>
+                    <artifactId>tomee-jaxrs</artifactId>
+                    <version>1.7.1</version>
+                </dependency>-->
+                <!--<dependency>
+                    <groupId>com.h2database</groupId>
+                    <artifactId>h2</artifactId>
+                    <version>1.4.187</version>
+                    <scope>test</scope>
+                </dependency>-->
+                <!--<dependency>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>org.jacoco.core</artifactId>
+                    <version>0.7.4.201502262128</version>
+                    <scope>test</scope>
+                </dependency>-->
+                <!--<dependency>
+                    <groupId>org.jboss.arquillian.extension</groupId>
+                    <artifactId>arquillian-jacoco</artifactId>
+                    <version>1.0.0.Alpha7</version>
+                </dependency>-->
+            </dependencies>
+            
+            <build>
+                <testResources>
+                    <testResource>
+                        <directory>src/test/resources</directory>
+                    </testResource>
+                    <testResource>
+                        <directory>src/test/resources-tomee-embedded</directory>
+                    </testResource>
+                </testResources>
+
+                <plugins>
+                    <plugin>
+                        <groupId>de.jpdigital</groupId>
+                        <artifactId>hibernate4-ddl-maven-plugin</artifactId>
+                        <version>1.0.0-alpha.1</version>
+                        <configuration>
+                            <dialects>
+                                <param>h2</param>
+                                <param>mysql5_innodb</param>
+                                <param>postgresql9</param>
+                            </dialects>
+                            <packages>
+                                <param>de.jpdigital.research.accessibilitystudy</param>
+                            </packages>
+                            <useEnvers>true</useEnvers>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>gen-ddl</goal>
+                                </goals>
+                                <phase>process-classes</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>2.18.1</version>
+                        <configuration>
+                            <forkMode>always</forkMode>
+                            <forkCount>999</forkCount>
+                            <reuseForks>true</reuseForks>
+                            <systemPropertyVariables>
+                                <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+                                <jboss.home>${project.basedir}/target/wildfly-8.2.0.Final</jboss.home>
+                                <module.path>${project.basedir}/target/wildfly-8.2.0.Final/modules</module.path>
+                            </systemPropertyVariables>
+                            <redirectTestOutputToFile>false</redirectTestOutputToFile>
+                            <groups>
+                                org.libreccm.tests.categories.UnitTests,
+                                org.libreccm.tests.categories.IntegrationTest
+                            </groups>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        
+        <profile>
+            <id>wildfly8-embedded</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.wildfly</groupId>
+                    <artifactId>wildfly-arquillian-container-embedded</artifactId>
+                    <version>8.2.0.Final</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.wildfly</groupId>
+                    <artifactId>wildfly-embedded</artifactId>
+                    <version>8.2.0.Final</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>org.jacoco.core</artifactId>
+                    <version>0.7.5.201505241946</version>
+                    <scope>test</scope>
+                </dependency>
+                <!--<dependency>
+                    <groupId>org.jboss.arquillian.extension</groupId>
+                    <artifactId>arquillian-jacoco</artifactId>
+                    <version>1.0.0.Alpha8</version>
+                </dependency>-->
+            </dependencies>
+            
+            <build>
+                <testResources>
+                    <testResource>
+                        <directory>src/test/resources</directory>
+                    </testResource>
+                    <testResource>
+                        <directory>src/test/resources-wildfly8-embedded</directory>
+                    </testResource>
+                </testResources>
+                
+                <plugins>
+                    <plugin>
+                        <groupId>de.jpdigital</groupId>
+                        <artifactId>hibernate4-ddl-maven-plugin</artifactId>
+                        <version>1.0.0-alpha.1</version>
+                        <configuration>
+                            <dialects>
+                                <param>h2</param>
+                                <param>mysql5_innodb</param>
+                                <param>postgresql9</param>
+                            </dialects>
+                            <packages>
+                                <param>de.jpdigital.research.accessibilitystudy</param>
+                            </packages>
+                            <useEnvers>true</useEnvers>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>gen-ddl</goal>
+                                </goals>
+                                <phase>process-classes</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <version>2.10</version>
+                        <executions>
+                            <execution>
+                                <id>unpack</id>
+                                <phase>process-test-classes</phase>
+                                <goals>
+                                    <goal>unpack</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>org.wildfly</groupId>
+                                            <artifactId>wildfly-dist</artifactId>
+                                            <version>8.2.0.Final</version>
+                                            <type>zip</type>
+                                            <overWrite>false</overWrite>
+                                            <outputDirectory>target</outputDirectory>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>2.18.1</version>
+                        <configuration>
+                            <forkMode>always</forkMode>
+                            <forkCount>999</forkCount>
+                            <reuseForks>true</reuseForks>
+                            <systemPropertyVariables>
+                                <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+                                <jboss.home>${project.basedir}/target/wildfly-8.2.0.Final</jboss.home>
+                                <module.path>${project.basedir}/target/wildfly-8.2.0.Final/modules</module.path>
+                            </systemPropertyVariables>
+                            <redirectTestOutputToFile>false</redirectTestOutputToFile>
+                            <groups>
+                                org.libreccm.tests.categories.UnitTest,
+                                org.libreccm.tests.categories.IntegrationTest
+                            </groups>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
     
 </project>

@@ -22,7 +22,9 @@ import static org.libreccm.core.CoreConstants.*;
 
 import org.libreccm.categorization.Categorization;
 import org.libreccm.categorization.Category;
+import org.libreccm.categorization.Domain;
 import org.libreccm.categorization.DomainOwnership;
+import org.omg.CORBA.DomainManager;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -63,7 +65,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @Table(name = "ccm_objects")
 @Inheritance(strategy = InheritanceType.JOINED)
-@XmlRootElement(name = "ccm-object", namespace = XML_NS)
+@XmlRootElement(name = "ccm-object", namespace = CORE_XML_NS)
 //False warning (?). Because this class has been migrated from the old PDL style
 //persistence system we can't yet refactor it to make PMD happy. Also I think
 //this is a false warning.
@@ -80,35 +82,35 @@ public class CcmObject implements Serializable {
     @Id
     @Column(name = "object_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @XmlElement(name = "object-id", namespace = XML_NS)
+    @XmlElement(name = "object-id", namespace = CORE_XML_NS)
     private long objectId;
 
     /**
      * A human readable name identifying this {@code CcmObject}
      */
     @Column(name = "display_name")
-    @XmlElement(name = "display-name", namespace = XML_NS)
+    @XmlElement(name = "display-name", namespace = CORE_XML_NS)
     private String displayName;
 
     @OneToMany(mappedBy = "object")
-    @XmlElementWrapper(name = "permissions", namespace = XML_NS)
-    @XmlElement(name = "permission", namespace = XML_NS)
+    @XmlElementWrapper(name = "permissions", namespace = CORE_XML_NS)
+    @XmlElement(name = "permission", namespace = CORE_XML_NS)
     private List<Permission> permissions;
     
     /**
      * Category Domains owned by this {@code CcmObject}.
      */
     @OneToMany(mappedBy = "owner")
-    @XmlElementWrapper(name = "domains", namespace = XML_NS)
-    @XmlElement(name = "domain", namespace = XML_NS)
+    @XmlElementWrapper(name = "domains", namespace = CORE_XML_NS)
+    @XmlElement(name = "domain", namespace = CORE_XML_NS)
     private List<DomainOwnership> domains;
     
     /**
      * Categories which have been assigned to this {@code CcmObject}.
      */
     @OneToMany(mappedBy = "categorizedObject")
-    @XmlElementWrapper(name = "categories", namespace = XML_NS)
-    @XmlElement(name = "category", namespace = XML_NS)
+    @XmlElementWrapper(name = "categories", namespace = CORE_XML_NS)
+    @XmlElement(name = "category", namespace = CORE_XML_NS)
     private List<Categorization> categories;
     
     public CcmObject() {

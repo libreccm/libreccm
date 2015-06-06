@@ -42,7 +42,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @Entity
 @Table(name = "group_memberships")
 @XmlRootElement(name = "group-membership", 
-                namespace = XML_NS)
+                namespace = CORE_XML_NS)
 public class GroupMembership implements Serializable {
 
     private static final long serialVersionUID = 1897274442468035089L;
@@ -50,7 +50,7 @@ public class GroupMembership implements Serializable {
     @Id
     @Column(name = "membership_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @XmlElement(name = "membership-id", namespace = XML_NS)
+    @XmlElement(name = "membership-id", namespace = CORE_XML_NS)
     private long membershipId;
 
     @ManyToOne

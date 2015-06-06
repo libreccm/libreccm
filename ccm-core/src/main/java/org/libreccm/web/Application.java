@@ -20,7 +20,7 @@ package org.libreccm.web;
 
 import org.libreccm.core.Resource;
 import org.libreccm.core.UserGroup;
-import org.libreccm.jpautils.UriConverter;
+import org.libreccm.jpa.utils.UriConverter;
 
 import java.io.Serializable;
 import java.net.URI;

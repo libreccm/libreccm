@@ -38,7 +38,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Entity
 @Table(name = "ccm_privileges")
-@XmlRootElement(name = "privilege", namespace = XML_NS)
+@XmlRootElement(name = "privilege", namespace = CORE_XML_NS)
 public class Privilege implements Serializable {
 
     private static final long serialVersionUID = -3986038536996049440L;
@@ -46,13 +46,13 @@ public class Privilege implements Serializable {
     @Id
     @Column(name = "privilege_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @XmlElement(name = "privilege-id", namespace = XML_NS)
+    @XmlElement(name = "privilege-id", namespace = CORE_XML_NS)
     private long privilegeId;
 
     @Column(name = "privilege", length = 255, nullable = false)
     //Field is named like this in the old PDL class, don't want to change it now
     @SuppressWarnings("PMD.AvoidFieldNameMatchingTypeName")
-    @XmlElement(name = "privilege", namespace = XML_NS)
+    @XmlElement(name = "privilege", namespace = CORE_XML_NS)
     private String privilege;
 
     public long getPrivilegeId() {

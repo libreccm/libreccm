@@ -21,7 +21,7 @@ package org.libreccm.categorization;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.URL;
 import org.libreccm.core.CcmObject;
-import org.libreccm.jpautils.UriConverter;
+import org.libreccm.jpa.utils.UriConverter;
 import org.libreccm.l10n.LocalizedString;
 
 import java.io.Serializable;
@@ -45,6 +45,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Pattern;
+
 import org.omg.CORBA.DomainManager;
 
 /**

@@ -37,7 +37,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -49,7 +48,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @SuppressWarnings({"PMD.CyclomaticComplexity",
                    "PMD.StdCyclomaticComplexity",
                    "PMD.ModifiedCyclomaticComplexity"})
-@XmlRootElement(name = "permission", namespace = XML_NS)
+@XmlRootElement(name = "permission", namespace = CORE_XML_NS)
 public class Permission implements Serializable {
 
     private static final long serialVersionUID = -2368935232499907547L;
@@ -57,7 +56,7 @@ public class Permission implements Serializable {
     @Id
     @Column(name = "permission_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @XmlElement(name = "permission-id", namespace = XML_NS)
+    @XmlElement(name = "permission-id", namespace = CORE_XML_NS)
     private long permissionId;
 
     @ManyToOne
@@ -66,7 +65,7 @@ public class Permission implements Serializable {
 
     @OneToOne
     @JoinColumn(name = "granted_privilege_id")
-    @XmlElement(name = "privilege", namespace = XML_NS)
+    @XmlElement(name = "privilege", namespace = CORE_XML_NS)
     private Privilege grantedPrivilege;
 
     @ManyToOne
@@ -75,16 +74,16 @@ public class Permission implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "creation_user_id")
-    @XmlElement(name = "creation-user", namespace = XML_NS)
+    @XmlElement(name = "creation-user", namespace = CORE_XML_NS)
     private User creationUser;
 
     @Column(name = "creation_date")
     @Temporal(TemporalType.TIMESTAMP)
-    @XmlElement(name = "creation-date", namespace = XML_NS)
+    @XmlElement(name = "creation-date", namespace = CORE_XML_NS)
     private Date creationDate;
 
     @Column(name = "creation_ip")
-    @XmlElement(name = "creation-ip", namespace = XML_NS)
+    @XmlElement(name = "creation-ip", namespace = CORE_XML_NS)
     private String creationIp;
 
     public long getPermissionId() {

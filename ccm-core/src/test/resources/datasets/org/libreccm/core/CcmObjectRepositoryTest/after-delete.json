@@ -1,0 +1,13 @@
+{
+    "ccm_objects":
+            [
+                {
+                    "object_id": -10,
+                    "display_name": "Test Object 1"
+                },
+                {
+                    "object_id": -30,
+                    "display_name": "Test Object 3"
+                }
+            ]
+}

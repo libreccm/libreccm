@@ -16,51 +16,37 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.jpautils;
+package org.libreccm.jpa.utils;
 
-import java.net.URI;
-import java.net.URISyntaxException;
+
+import javax.activation.MimeType;
+import javax.activation.MimeTypeParseException;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
 /**
- * A converter for converting URI properties to String. JPA does not support
- * URI as type and will store them as LOBs without this converter. The converter
- * is automatically applied to all URI properties.
+ * A converter for converting properties of the type {@link MimeType} to
+ * {@code String}.
  * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Converter(autoApply = true)
-public class UriConverter implements AttributeConverter<URI, String> {
+public class MimeTypeConverter implements AttributeConverter<MimeType, String> {
 
-    /**
-     * {@inheritDoc}
-     * 
-     * @param attribute {@inheritDoc}
-     * @return {@inheritDoc}
-     */
     @Override
-    public String convertToDatabaseColumn(final URI attribute) {
+    public String convertToDatabaseColumn(final MimeType attribute) {
         return attribute.toString();
     }
 
-    /**
-     * {@inheritDoc}
-     * 
-     * @param dbData {@inheritDoc}
-     * @return  {@inheritDoc}
-     */
     @Override
-    public URI convertToEntityAttribute(final String dbData) {
+    public MimeType convertToEntityAttribute(final String dbData) {
         try {
-            return new URI(dbData);
-        } catch (URISyntaxException ex) {
-            throw new IllegalArgumentException(
-                    String.format("Failed to convert String value '%s' from "
-                                          + "database to an URI.",
-                                  dbData),
-                    ex);
+            return new MimeType(dbData);
+        } catch (MimeTypeParseException ex) {
+            throw new IllegalArgumentException("Not a valid mime type", ex);
         }
     }
+    
+    
 
 }
