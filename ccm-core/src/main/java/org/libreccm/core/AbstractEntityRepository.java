@@ -31,7 +31,7 @@ public abstract class AbstractEntityRepository<K, E> {
 
     public abstract Class<E> getEntityClass();
 
-        public E findById(final K entityId) {
+    public E findById(final K entityId) {
         return entityManager.find(getEntityClass(), entityId);
     }
 
@@ -64,7 +64,8 @@ public abstract class AbstractEntityRepository<K, E> {
         if (entity == null) {
             throw new IllegalArgumentException("Can't delete a null entity.");
         }
-        
+
         entityManager.remove(entity);
     }
+
 }

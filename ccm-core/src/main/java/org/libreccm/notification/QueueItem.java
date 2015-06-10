@@ -65,7 +65,7 @@ public class QueueItem implements Serializable {
     @Column(name = "retry_count")
     private long retryCount;
 
-    @Column(name = "successful;")
+    @Column(name = "successful_sended")
     private boolean successful;
 
     @Column(name = "receiver_address", length = 512)

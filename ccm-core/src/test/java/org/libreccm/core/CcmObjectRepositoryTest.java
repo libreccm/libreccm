@@ -18,8 +18,6 @@
  */
 package org.libreccm.core;
 
-import org.dbunit.util.fileloader.DataFileLoader;
-
 import static org.hamcrest.CoreMatchers.*;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -50,6 +48,8 @@ import java.util.List;
 
 import javax.ejb.EJBTransactionRolledbackException;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import static org.junit.Assert.*;
 
@@ -65,6 +65,9 @@ public class CcmObjectRepositoryTest {
 
     @Inject
     private transient CcmObjectRepository ccmObjectRepository;
+
+    @PersistenceContext(name = "LibreCCM")
+    private transient EntityManager entityManager;
 
     public CcmObjectRepositoryTest() {
     }
@@ -116,7 +119,67 @@ public class CcmObjectRepositoryTest {
             .addAsResource("test-persistence.xml", "META-INF/persistence.xml")
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
+
+    @Test
+    public void repoIsInjected() {
+        assertThat(ccmObjectRepository, is(not((nullValue()))));
+    }
+
+    @Test
+    public void entityManagerIsInjected() {
+        assertThat(entityManager, is(not((nullValue()))));
+    }
+
+    @Test
+    @UsingDataSet(
+        "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.json")
+    @InSequence(5)
+    public void entityManagerFindCcmObjectByLongPrimitive() {
+        final CcmObject obj1 = entityManager.find(CcmObject.class, -10L);
+        final CcmObject obj2 = entityManager.find(CcmObject.class, -20L);
+        final CcmObject obj3 = entityManager.find(CcmObject.class, -30L);
+        final CcmObject none = entityManager.find(CcmObject.class, -999L);
+
+        assertThat(obj1, is(not(nullValue())));
+        assertThat(obj1.getObjectId(), is(-10L));
+        assertThat(obj1.getDisplayName(), is(equalTo("Test Object 1")));
+
+        assertThat(obj2, is(not(nullValue())));
+        assertThat(obj2.getObjectId(), is(-20L));
+        assertThat(obj2.getDisplayName(), is(equalTo("Test Object 2")));
+
+        assertThat(obj3, is(not(nullValue())));
+        assertThat(obj3.getObjectId(), is(-30L));
+        assertThat(obj3.getDisplayName(), is(equalTo("Test Object 3")));
+
+        assertThat(none, is(nullValue()));
+    }
     
+    @Test
+    @UsingDataSet(
+        "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.json")
+    @InSequence(6)
+    public void entityManagerFindCcmObjectByLongClass() {
+        final CcmObject obj1 = entityManager.find(CcmObject.class, new Long(-10L));
+        final CcmObject obj2 = entityManager.find(CcmObject.class, new Long(-20L));
+        final CcmObject obj3 = entityManager.find(CcmObject.class, new Long(-30L));
+        final CcmObject none = entityManager.find(CcmObject.class, new Long(-999L));
+
+        assertThat(obj1, is(not(nullValue())));
+        assertThat(obj1.getObjectId(), is(-10L));
+        assertThat(obj1.getDisplayName(), is(equalTo("Test Object 1")));
+
+        assertThat(obj2, is(not(nullValue())));
+        assertThat(obj2.getObjectId(), is(-20L));
+        assertThat(obj2.getDisplayName(), is(equalTo("Test Object 2")));
+
+        assertThat(obj3, is(not(nullValue())));
+        assertThat(obj3.getObjectId(), is(-30L));
+        assertThat(obj3.getDisplayName(), is(equalTo("Test Object 3")));
+
+        assertThat(none, is(nullValue()));
+    }
+
     @Test
     @UsingDataSet(
         "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.json")
