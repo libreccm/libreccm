@@ -7,12 +7,13 @@
     <engine>
         <property name="deploymentExportPath">target/deployments</property>
     </engine>
+    <defaultProtocol type="Servlet 3.0"/>
+    <!--<property name="javaVmArguments">
+        -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=y
+    </property>-->
     
     <extension qualifier="persistence">
-        <property name="defaultDataSource">java:/jboss/datasources/ExampleDS</property>
-        <!--<property name="javaVmArguments">
-            -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=y
-        </property>-->
+        <property name="defaultDataSource">java:/comp/env/jdbc/ccm-core-test/h2/mem</property>
         
         <!-- 
             Disable automatic cleanup, does not work because of referential 
@@ -20,7 +21,7 @@
         -->
         <property name="defaultCleanupPhase">NONE</property>
         
-        <property name="dumpData">false</property>
+        <property name="dumpData">true</property>
         <property name="dumpDirectory">target</property>
     </extension>
     

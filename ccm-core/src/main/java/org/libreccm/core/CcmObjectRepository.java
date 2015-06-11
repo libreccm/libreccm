@@ -35,6 +35,9 @@ public class CcmObjectRepository extends AbstractEntityRepository<Long, CcmObjec
 
     @Override
     public boolean isNew(final CcmObject entity) {
+        if (entity == null) {
+            throw new IllegalArgumentException("Entity can't be null");
+        }
         return entity.getObjectId() == 0;
     }
 

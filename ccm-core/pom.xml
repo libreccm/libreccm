@@ -570,6 +570,87 @@
                 </plugins>
             </build>
         </profile>
+        
+        <profile>
+            <id>wildfly8-remote-h2-mem</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.wildfly</groupId>
+                    <artifactId>wildfly-arquillian-container-remote</artifactId>
+                    <version>8.2.0.Final</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>org.jacoco.core</artifactId>
+                    <version>0.7.4.201502262128</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.jboss.arquillian.extension</groupId>
+                    <artifactId>arquillian-jacoco</artifactId>
+                    <version>1.0.0.Alpha7</version>
+                </dependency>
+            </dependencies>
+            
+            <build>
+                <testResources>
+                    <testResource>
+                        <directory>/src/test/resources</directory>
+                    </testResource>
+                    <testResource>
+                        <directory>/src/test/resources-wildfly8-remote-h2-mem</directory>
+                    </testResource>
+                </testResources>
+                
+                <plugins>
+                    <plugin>
+                        <groupId>de.jpdigital</groupId>
+                        <artifactId>hibernate4-ddl-maven-plugin</artifactId>
+                        <configuration>
+                            <dialects>
+                                <param>h2</param>
+                                <param>mysql5_innodb</param>
+                                <param>postgresql9</param>
+                            </dialects>
+                            <packages>
+                                <param>de.jpdigital.research.accessibilitystudy</param>
+                            </packages>
+                            <useEnvers>true</useEnvers>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>gen-ddl</goal>
+                                </goals>
+                                <phase>process-classes</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>2.18.1</version>
+                        <configuration>
+                            <forkMode>always</forkMode>
+                            <forkCount>999</forkCount>
+                            <reuseForks>true</reuseForks>
+                            <systemPropertyVariables>
+                                <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+                                <jboss.home>${project.basedir}/target/wildfly-8.2.0.Final</jboss.home>
+                                <module.path>${project.basedir}/target/wildfly-8.2.0.Final/modules</module.path>
+                            </systemPropertyVariables>
+                            <redirectTestOutputToFile>false</redirectTestOutputToFile>
+                            <groups>
+                                org.libreccm.tests.categories.UnitTest,
+                                org.libreccm.tests.categories.IntegrationTest
+                            </groups>
+                        </configuration>
+                    </plugin>
+
+                </plugins>
+            </build>
+        </profile>
     </profiles>
     
 </project>

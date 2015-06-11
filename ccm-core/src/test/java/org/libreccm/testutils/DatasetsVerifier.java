@@ -23,7 +23,7 @@ import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.operation.DatabaseOperation;
-import org.h2.tools.RunScript;
+//import org.h2.tools.RunScript;
 import org.jboss.arquillian.persistence.core.data.descriptor.Format;
 import org.jboss.arquillian.persistence.dbunit.dataset.DataSetBuilder;
 import org.junit.Test;
@@ -36,6 +36,7 @@ import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import org.h2.tools.RunScript;
 
 /**
  *

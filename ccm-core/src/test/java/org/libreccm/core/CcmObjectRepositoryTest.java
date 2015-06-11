@@ -91,10 +91,10 @@ public class CcmObjectRepositoryTest {
     @Deployment
     public static WebArchive createDeployment() {
         final PomEquippedResolveStage pom = Maven
-            .resolver()
-            .loadPomFromFile("pom.xml");
+                .resolver()
+                .loadPomFromFile("pom.xml");
         final PomEquippedResolveStage dependencies = pom
-            .importCompileAndRuntimeDependencies();
+                .importCompileAndRuntimeDependencies();
         final File[] libs = dependencies.resolve().withTransitivity().asFile();
 
         for (File lib : libs) {
@@ -103,21 +103,24 @@ public class CcmObjectRepositoryTest {
         }
 
         return ShrinkWrap
-            .create(WebArchive.class,
-                    "LibreCCM-org.libreccm.core.CcmObjectRepositoryTest.war")
-            .addPackage(CcmObject.class.getPackage())
-            .addPackage(org.libreccm.categorization.Category.class.getPackage())
-            .addPackage(org.libreccm.l10n.LocalizedString.class.getPackage())
-            .addPackage(org.libreccm.jpa.EntityManagerProducer.class
-                .getPackage())
-            .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
-                .getPackage())
-            .addPackage(org.libreccm.testutils.EqualsVerifier.class.getPackage())
-            .addPackage(org.libreccm.tests.categories.IntegrationTest.class
-                .getPackage())
-            .addAsLibraries(libs)
-            .addAsResource("test-persistence.xml", "META-INF/persistence.xml")
-            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+                .create(WebArchive.class,
+                        "LibreCCM-org.libreccm.core.CcmObjectRepositoryTest.war").
+                addPackage(CcmObject.class.getPackage())
+                .addPackage(org.libreccm.categorization.Category.class.
+                        getPackage())
+                .addPackage(org.libreccm.l10n.LocalizedString.class.getPackage()).
+                addPackage(org.libreccm.jpa.EntityManagerProducer.class
+                        .getPackage())
+                .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
+                        .getPackage())
+                .addPackage(org.libreccm.testutils.EqualsVerifier.class.
+                        getPackage())
+                .addPackage(org.libreccm.tests.categories.IntegrationTest.class
+                        .getPackage())
+                .addAsLibraries(libs)
+                .addAsResource("test-persistence.xml",
+                               "META-INF/persistence.xml")
+                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test
@@ -132,7 +135,23 @@ public class CcmObjectRepositoryTest {
 
     @Test
     @UsingDataSet(
-        "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.json")
+            "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.json")
+    @InSequence(4)
+    public void datasetOnly() {
+        System.out.println("Dataset loaded successfully.");
+    }
+    
+    @Test
+    @UsingDataSet(
+            "datasets/org/libreccm/core/CcmObjectRepositoryTest/after-save-changed.json")
+    @InSequence(4)
+    public void datasetOnly2() {
+        System.out.println("Dataset loaded successfully.");
+    }
+
+    @Test
+    @UsingDataSet(
+            "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.json")
     @InSequence(5)
     public void entityManagerFindCcmObjectByLongPrimitive() {
         final CcmObject obj1 = entityManager.find(CcmObject.class, -10L);
@@ -154,16 +173,20 @@ public class CcmObjectRepositoryTest {
 
         assertThat(none, is(nullValue()));
     }
-    
+
     @Test
     @UsingDataSet(
-        "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.json")
+            "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.json")
     @InSequence(6)
     public void entityManagerFindCcmObjectByLongClass() {
-        final CcmObject obj1 = entityManager.find(CcmObject.class, new Long(-10L));
-        final CcmObject obj2 = entityManager.find(CcmObject.class, new Long(-20L));
-        final CcmObject obj3 = entityManager.find(CcmObject.class, new Long(-30L));
-        final CcmObject none = entityManager.find(CcmObject.class, new Long(-999L));
+        final CcmObject obj1 = entityManager.find(CcmObject.class,
+                                                  new Long(-10L));
+        final CcmObject obj2 = entityManager.find(CcmObject.class,
+                                                  new Long(-20L));
+        final CcmObject obj3 = entityManager.find(CcmObject.class,
+                                                  new Long(-30L));
+        final CcmObject none = entityManager.find(CcmObject.class, new Long(
+                                                  -999L));
 
         assertThat(obj1, is(not(nullValue())));
         assertThat(obj1.getObjectId(), is(-10L));
@@ -182,7 +205,7 @@ public class CcmObjectRepositoryTest {
 
     @Test
     @UsingDataSet(
-        "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.json")
+            "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.json")
     @InSequence(10)
     public void findCcmObjectById() {
         final CcmObject obj1 = ccmObjectRepository.findById(-10L);
@@ -207,7 +230,7 @@ public class CcmObjectRepositoryTest {
 
     @Test
     @UsingDataSet(
-        "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.json")
+            "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.json")
     @InSequence(10)
     public void findAllCcmObjects() {
         final List<CcmObject> objects = ccmObjectRepository.findAll();
@@ -217,9 +240,9 @@ public class CcmObjectRepositoryTest {
 
     @Test
     @UsingDataSet(
-        "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.json")
+            "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.json")
     @ShouldMatchDataSet(value
-                            = "datasets/org/libreccm/core/CcmObjectRepositoryTest/after-save-new.json",
+                        = "datasets/org/libreccm/core/CcmObjectRepositoryTest/after-save-new.json",
                         excludeColumns = {"object_id"})
     @InSequence(300)
     public void saveNewCcmObject() {
@@ -231,9 +254,9 @@ public class CcmObjectRepositoryTest {
 
     @Test
     @UsingDataSet(
-        "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.json")
+            "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.json")
     @ShouldMatchDataSet(value
-                            = "datasets/org/libreccm/core/CcmObjectRepositoryTest/after-save-changed.json",
+                        = "datasets/org/libreccm/core/CcmObjectRepositoryTest/after-save-changed.json",
                         excludeColumns = {"object_id"})
     @InSequence(400)
     public void saveChangedCcmObject() {
@@ -243,7 +266,7 @@ public class CcmObjectRepositoryTest {
         ccmObjectRepository.save(obj);
     }
 
-    @Test(expected = EJBTransactionRolledbackException.class)
+    @Test(expected = IllegalArgumentException.class)
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(500)
     public void saveNullValue() {
@@ -252,9 +275,9 @@ public class CcmObjectRepositoryTest {
 
     @Test
     @UsingDataSet(
-        "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.json")
+            "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.json")
     @ShouldMatchDataSet(value
-                            = "datasets/org/libreccm/core/CcmObjectRepositoryTest/after-delete.json",
+                        = "datasets/org/libreccm/core/CcmObjectRepositoryTest/after-delete.json",
                         excludeColumns = {"object_id"})
     @InSequence(600)
     public void deleteCcmObject() {
@@ -263,7 +286,7 @@ public class CcmObjectRepositoryTest {
         ccmObjectRepository.delete(obj);
     }
 
-    @Test(expected = EJBTransactionRolledbackException.class)
+    @Test(expected = IllegalArgumentException.class)
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(700)
     public void deleteNullValue() {

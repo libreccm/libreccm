@@ -19,13 +19,6 @@
 package org.libreccm.core;
 
 import org.dbunit.DatabaseUnitException;
-import org.dbunit.database.DatabaseConnection;
-import org.dbunit.database.IDatabaseConnection;
-import org.dbunit.dataset.IDataSet;
-import org.dbunit.operation.DatabaseOperation;
-import org.h2.tools.RunScript;
-import org.jboss.arquillian.persistence.core.data.descriptor.Format;
-import org.jboss.arquillian.persistence.dbunit.dataset.DataSetBuilder;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -34,18 +27,22 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.libreccm.tests.categories.UnitTest;
 
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import org.dbunit.database.DatabaseConnection;
+import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.dataset.IDataSet;
+import org.dbunit.operation.DatabaseOperation;
+import org.h2.tools.RunScript;
+import org.jboss.arquillian.persistence.core.data.descriptor.Format;
+import org.jboss.arquillian.persistence.dbunit.dataset.DataSetBuilder;
 
-import static org.junit.Assert.*;
 
 /**
  *
