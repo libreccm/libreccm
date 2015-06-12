@@ -9,7 +9,7 @@
     </engine>
     
     <extension qualifier="persistence">
-        <property name="defaultDataSource">java:/jboss/datasources/ExampleDS</property>
+        <property name="defaultDataSource">java:/comp/env/jdbc/ccm/pgsql/ccm-core</property>
         <!--<property name="javaVmArguments">
             -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=y
         </property>-->
@@ -26,12 +26,12 @@
     
     <extension qualifier="persistence-dbunit">
         <property name="defaultDataSetFormat">json</property>
-        <property name="datatypeFactory">org.dbunit.ext.h2.H2DataTypeFactory</property>
+        <!--<property name="datatypeFactory">org.dbunit.ext.h2.H2DataTypeFactory</property>-->
         <property name="excludePoi">true</property>
     </extension>
     
     <extension qualifier="persistence-script">
-        <property name="scriptsToExecuteAfterTest">scripts/h2-cleanup.sql</property>
+        <property name="scriptsToExecuteAfterTest">scripts/pgsql-cleanup.sql</property>
     </extension>
 
     

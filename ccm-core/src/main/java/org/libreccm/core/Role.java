@@ -35,7 +35,7 @@ import org.hibernate.validator.constraints.NotBlank;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "roles")
+@Table(name = "ccm_roles")
 @SuppressWarnings("PMD.ShortClassName") //Role is perfectly fine name.
 public class Role implements Serializable {
 
@@ -51,10 +51,10 @@ public class Role implements Serializable {
     private String name;
 
     @ManyToOne
-    private UserGroup sourceGroup;
+    private Group sourceGroup;
 
     @OneToOne
-    private UserGroup implicitGroup;
+    private Group implicitGroup;
 
     @Column(name = "description")
     private String description;
@@ -79,19 +79,19 @@ public class Role implements Serializable {
         this.name = name;
     }
 
-    public UserGroup getSourceGroup() {
+    public Group getSourceGroup() {
         return sourceGroup;
     }
 
-    protected void setSourceGroup(final UserGroup sourceGroup) {
+    protected void setSourceGroup(final Group sourceGroup) {
         this.sourceGroup = sourceGroup;
     }
 
-    public UserGroup getImplicitGroup() {
+    public Group getImplicitGroup() {
         return implicitGroup;
     }
 
-    protected void setImplicitGroup(final UserGroup implicitGroup) {
+    protected void setImplicitGroup(final Group implicitGroup) {
         this.implicitGroup = implicitGroup;
     }
 

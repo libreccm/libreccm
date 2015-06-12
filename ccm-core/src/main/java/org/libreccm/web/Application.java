@@ -19,7 +19,7 @@
 package org.libreccm.web;
 
 import org.libreccm.core.Resource;
-import org.libreccm.core.UserGroup;
+import org.libreccm.core.Group;
 import org.libreccm.jpa.utils.UriConverter;
 
 import java.io.Serializable;
@@ -49,7 +49,7 @@ public class Application extends Resource implements Serializable {
 
     @OneToOne
     @JoinColumn(name = "container_group_id")
-    private UserGroup containerGroup;
+    private Group containerGroup;
 
     public URI getPrimaryUrl() {
         return primaryUrl;
@@ -59,11 +59,11 @@ public class Application extends Resource implements Serializable {
         this.primaryUrl = primaryUrl;
     }
 
-    public UserGroup getContainerGroup() {
+    public Group getContainerGroup() {
         return containerGroup;
     }
 
-    public void setContainerGroup(final UserGroup containerGroup) {
+    public void setContainerGroup(final Group containerGroup) {
         this.containerGroup = containerGroup;
     }
 

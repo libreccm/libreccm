@@ -43,9 +43,9 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "user_groups")
+@Table(name = "ccm_groups")
 @XmlRootElement(name = "user-group", namespace = CORE_XML_NS)
-public class UserGroup extends Party implements Serializable {
+public class Group extends Party implements Serializable {
 
     private static final long serialVersionUID = -5555063356689597270L;
 
@@ -64,7 +64,7 @@ public class UserGroup extends Party implements Serializable {
     @XmlElement(name = "group-membership", namespace = CORE_XML_NS)
     private List<GroupMembership> members;
 
-    public UserGroup() {
+    public Group() {
         super();
 
         roles = new ArrayList<>();
@@ -136,10 +136,10 @@ public class UserGroup extends Party implements Serializable {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof UserGroup)) {
+        if (!(obj instanceof Group)) {
             return false;
         }
-        final UserGroup other = (UserGroup) obj;
+        final Group other = (Group) obj;
         if (!other.canEqual(this)) {
             return false;
         }
@@ -152,7 +152,7 @@ public class UserGroup extends Party implements Serializable {
 
     @Override
     public boolean canEqual(final Object obj) {
-        return obj instanceof UserGroup;
+        return obj instanceof Group;
     }
 
     @Override

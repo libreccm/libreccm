@@ -19,7 +19,7 @@
 package org.libreccm.workflow;
 
 import org.libreccm.core.User;
-import org.libreccm.core.UserGroup;
+import org.libreccm.core.Group;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -89,7 +89,7 @@ public class UserTask extends Task implements Serializable {
                    @JoinColumn(name = "user_task_id")},
                inverseJoinColumns = {
                    @JoinColumn(name = "assigned_group_id")})
-    private List<UserGroup> assignedGroups;
+    private List<Group> assignedGroups;
 
     public UserTask() {
         super();
@@ -182,7 +182,7 @@ public class UserTask extends Task implements Serializable {
         assignedUsers.remove(user);
     }
 
-    public List<UserGroup> getAssignedGroups() {
+    public List<Group> getAssignedGroups() {
         if (assignedGroups == null) {
             return null;
         } else {
@@ -190,15 +190,15 @@ public class UserTask extends Task implements Serializable {
         }
     }
 
-    protected void setAssignedGroups(final List<UserGroup> assignedGroups) {
+    protected void setAssignedGroups(final List<Group> assignedGroups) {
         this.assignedGroups = assignedGroups;
     }
 
-    protected void addAssignedGroup(final UserGroup group) {
+    protected void addAssignedGroup(final Group group) {
         assignedGroups.add(group);
     }
 
-    protected void removeAssignedGroup(final UserGroup group) {
+    protected void removeAssignedGroup(final Group group) {
         assignedGroups.remove(group);
     }
 

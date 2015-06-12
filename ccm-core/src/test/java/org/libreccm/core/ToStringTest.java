@@ -48,7 +48,7 @@ public class ToStringTest extends ToStringVerifier {
             Resource.class,
             Role.class,
             User.class,
-            UserGroup.class});
+            Group.class});
     }
 
     public ToStringTest(final Class<?> entityClass) {

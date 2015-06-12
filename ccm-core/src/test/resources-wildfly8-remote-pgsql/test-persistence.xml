@@ -20,7 +20,7 @@
         -->
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
             
-        <jta-data-source>java:/comp/env/jdbc/ccm/h2-mem/ccm-core</jta-data-source>
+        <jta-data-source>java:/comp/env/jdbc/ccm/pgsql/ccm-core</jta-data-source>
         <properties>
             <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
             <property name="hibernate.show_sql" value="true"/>

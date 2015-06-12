@@ -62,7 +62,7 @@ import org.omg.CORBA.DomainManager;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "domains")
+@Table(name = "category_domains")
 public class Domain extends CcmObject implements Serializable {
 
     private static final long serialVersionUID = 4012590760598188732L;

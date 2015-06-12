@@ -55,7 +55,7 @@ public class GroupMembership implements Serializable {
 
     @ManyToOne
     @XmlTransient
-    private UserGroup group;
+    private Group group;
 
     @ManyToOne
     @XmlTransient
@@ -69,11 +69,11 @@ public class GroupMembership implements Serializable {
         this.membershipId = membershipId;
     }
 
-    public UserGroup getGroup() {
+    public Group getGroup() {
         return group;
     }
 
-    protected void setGroup(final UserGroup group) {
+    protected void setGroup(final Group group) {
         this.group = group;
     }
 

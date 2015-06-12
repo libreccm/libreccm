@@ -47,7 +47,7 @@ public class EqualsAndHashCodeTest extends EqualsVerifier {
             Privilege.class,
             Role.class,
             User.class,
-            UserGroup.class});
+            Group.class});
     }
 
     public EqualsAndHashCodeTest(final Class<?> entityClass) {

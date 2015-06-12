@@ -1,0 +1,1 @@
+DELETE FROM ccm_objects;
