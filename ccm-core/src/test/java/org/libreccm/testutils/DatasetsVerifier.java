@@ -21,7 +21,9 @@ package org.libreccm.testutils;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
+import org.dbunit.dataset.xml.FlatXmlDataSet;
 import org.dbunit.operation.DatabaseOperation;
 //import org.h2.tools.RunScript;
 import org.jboss.arquillian.persistence.core.data.descriptor.Format;
@@ -36,6 +38,7 @@ import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+
 import org.h2.tools.RunScript;
 
 /**
@@ -51,9 +54,9 @@ public class DatasetsVerifier {
     }
 
     @Test
-    public void verifyDataset() throws SQLException, 
+    public void verifyDataset() throws SQLException,
                                        URISyntaxException,
-                                       IOException, 
+                                       IOException,
                                        DatabaseUnitException {
         //Create database connection to an in memory h2 database. Placed in
         //try-with-resources block to ensure that the connection is closed.
@@ -69,12 +72,28 @@ public class DatasetsVerifier {
             final DataSetBuilder builder = DataSetBuilder
                 .builderFor(Format.JSON);
             final IDataSet dataSet = builder.build(datasetPath);
-            
-            //Put dataset into DB
+
+            //Create DBUnit DB connection
             final IDatabaseConnection dbUnitConn
                                           = new DatabaseConnection(connection);
+
+            //Check if dumping works the DB works before loading the dataset.
+            System.out.println("Dump before loading dataset...");
+            verifyDumping(dbUnitConn);
+
+            //Put dataset into DB
             DatabaseOperation.CLEAN_INSERT.execute(dbUnitConn, dataSet);
+
+            //Check if dumping works after loading the dataset
+            System.out.println("Dump after loading dataset...");
+            verifyDumping(dbUnitConn);
         }
+    }
+
+    private void verifyDumping(final IDatabaseConnection connection)
+        throws SQLException, IOException, DataSetException {
+        final IDataSet data = connection.createDataSet();
+        FlatXmlDataSet.write(data, System.out);
     }
 
 }
