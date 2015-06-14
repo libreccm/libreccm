@@ -93,7 +93,7 @@ public class ToStringVerifier {
             ex.printStackTrace(writer);
             Assert.fail(String.format(
                 "toString() implemention of class \"%s\" "
-                    + "is not null safe:\n %s",
+                    + "is not null safe:%n %s",
                 entityClass.getName(),
                 strWriter.toString()));
 

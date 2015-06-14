@@ -66,6 +66,13 @@
         </dependency>
         
         <dependency>
+            <groupId>org.libreccm</groupId>
+            <artifactId>ccm-testutils</artifactId>
+            <version>6.7.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+        
+        <dependency>
             <groupId>nl.jqno.equalsverifier</groupId>
             <artifactId>equalsverifier</artifactId>
             <scope>test</scope>
@@ -107,6 +114,7 @@
                 <directory>${project.build.directory}/generated-resources</directory>
             </resource>
         </resources>
+        
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -192,7 +200,18 @@
                         <param>postgresql9</param>
                     </dialects>
                     <packages>
-                        <param>de.jpdigital.webpagebuilder2.data</param>
+                        <param>org.libreccm.categorization</param>
+                        <param>org.libreccm.core</param>
+                        <param>org.libreccm.formbuilder</param>
+                        <param>org.libreccm.jpa</param>
+                        <param>org.libreccm.l10n</param>
+                        <param>org.libreccm.messaging</param>
+                        <param>org.libreccm.notification</param>
+                        <param>org.libreccm.portal</param>
+                        <param>org.libreccm.runtime</param>
+                        <param>org.libreccm.search.lucene</param>
+                        <param>org.libreccm.web</param>
+                        <param>org.libreccm.workflow</param>
                     </packages>
                     <useEnvers>true</useEnvers>
                 </configuration>
@@ -205,6 +224,7 @@
                     </execution>
                 </executions>
             </plugin>
+            
         </plugins>
     </build>
     
