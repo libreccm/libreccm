@@ -113,11 +113,6 @@
     
     <build>
         <finalName>ccm-shortcuts</finalName>
-        <resources>
-            <resource>
-                <directory>${project.build.directory}/generated-resources</directory>
-            </resource>
-        </resources>
         
         <plugins>
             <plugin>
@@ -193,7 +188,7 @@
                         <param>postgresql9</param>
                     </dialects>
                     <packages>
-                        <param>org.libreccm.shortcuts</param>
+                        <param>org.libreccm</param>
                     </packages>
                     <useEnvers>true</useEnvers>
                 </configuration>

@@ -109,11 +109,11 @@
     
     <build>
         <finalName>ccm-core</finalName>
-        <resources>
+        <!--<resources>
             <resource>
                 <directory>${project.build.directory}/generated-resources</directory>
             </resource>
-        </resources>
+        </resources>-->
         
         <plugins>
             <plugin>

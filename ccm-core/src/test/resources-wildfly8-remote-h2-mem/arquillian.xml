@@ -13,7 +13,7 @@
     </property>-->
     
     <extension qualifier="persistence">
-        <property name="defaultDataSource">java:/comp/env/jdbc/ccm/h2-mem/ccm-core</property>
+        <property name="defaultDataSource">java:/comp/env/jdbc/org/libreccm/ccm-core/h2-mem</property>
         
         <!-- 
             Disable automatic cleanup, does not work because of referential 
