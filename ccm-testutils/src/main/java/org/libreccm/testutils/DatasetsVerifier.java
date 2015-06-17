@@ -39,6 +39,11 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import org.h2.tools.RunScript;
+import org.jboss.arquillian.persistence.dbunit.dataset.json.JsonDataSet;
+
+import static org.junit.Assert.*;
+
+import java.io.BufferedReader;
 
 /**
  *
@@ -68,9 +73,8 @@ public class DatasetsVerifier {
             connection.commit();
 
             //Get dataset to test
-            final DataSetBuilder builder = DataSetBuilder
-                .builderFor(Format.JSON);
-            final IDataSet dataSet = builder.build(datasetPath);
+            final IDataSet dataSet = new JsonDataSet(getClass()
+                .getResourceAsStream(datasetPath));
 
             //Create DBUnit DB connection
             final IDatabaseConnection dbUnitConn

@@ -16,32 +16,43 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.core;
+package org.libreccm.categorization;
 
+import org.libreccm.core.AbstractEntityRepository;
+
+import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
+import javax.persistence.TypedQuery;
 
 /**
- * A repository class for {@link CcmObject}. 
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-public class CcmObjectRepository extends AbstractEntityRepository<Long, CcmObject> {
+public class CategoryRepository extends AbstractEntityRepository<Long, Category> {
 
     @Override
-    public Class<CcmObject> getEntityClass() {
-        return CcmObject.class;
+    public Class<Category> getEntityClass() {
+        return Category.class;
     }
 
     @Override
-    public boolean isNew(final CcmObject entity) {
-        if (entity == null) {
-            throw new IllegalArgumentException("Entity can't be null");
-        }
+    public boolean isNew(final Category entity) {
         return entity.getObjectId() == 0;
     }
 
-    
+    /**
+     * Retrieves a list of all top level categories (Categories without a 
+     * parent category).
+     * 
+     * @return A list of all top level categories.
+     */
+    public List<Category> getTopLevelCategories() {
+        final TypedQuery<Category> query = getEntityManager().createNamedQuery(
+            "topLevelCategories", Category.class);
+        
+        return query.getResultList();
+    }
 
 }

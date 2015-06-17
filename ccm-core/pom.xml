@@ -115,6 +115,15 @@
             </resource>
         </resources>-->
         
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+            </testResource>
+            <testResource>
+                <directory>${project.build.directory}/generated-resources</directory>
+            </testResource>
+        </testResources>
+        
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -390,7 +399,7 @@
                     <scope>test</scope>
                 </dependency>
                 <!--Required for WebServices and RESTful WebServices-->
-                <!--<dependency>
+                <dependency>
                     <groupId>org.apache.openejb</groupId>
                     <artifactId>tomee-webservices</artifactId>
                     <version>1.7.1</version>
@@ -399,13 +408,12 @@
                     <groupId>org.apache.openejb</groupId>
                     <artifactId>tomee-jaxrs</artifactId>
                     <version>1.7.1</version>
-                </dependency>-->
-                <!--<dependency>
+                </dependency>
+                <dependency>
                     <groupId>com.h2database</groupId>
                     <artifactId>h2</artifactId>
-                    <version>1.4.187</version>
                     <scope>test</scope>
-                </dependency>-->
+                </dependency>
                 <!--<dependency>
                     <groupId>org.jacoco</groupId>
                     <artifactId>org.jacoco.core</artifactId>
@@ -426,6 +434,9 @@
                     </testResource>
                     <testResource>
                         <directory>src/test/resources-tomee-embedded</directory>
+                    </testResource>
+                    <testResource>
+                        <directory>${project.build.directory}/generated-resources</directory>
                     </testResource>
                 </testResources>
 
@@ -468,12 +479,89 @@
                             </systemPropertyVariables>
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <groups>
-                                org.libreccm.tests.categories.UnitTests,
+                                org.libreccm.tests.categories.UnitTest,
                                 org.libreccm.tests.categories.IntegrationTest
                             </groups>
                             <additionalClasspathElements>
                                 <additionalClasspathElement>${project.build.directory}/generated-resources</additionalClasspathElement>
                             </additionalClasspathElements>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        
+        <profile>
+            <id>tomee-remote-pgsql</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.apache.openejb</groupId>
+                    <artifactId>arquillian-tomee-remote</artifactId>
+                    <version>1.7.2</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.openejb</groupId>
+                    <artifactId>apache-tomee</artifactId>
+                    <version>1.7.2</version>
+                    <classifier>plus</classifier>
+                    <type>zip</type>
+                </dependency>
+            </dependencies>
+            
+            <build>
+                <testResources>
+                    <testResource>
+                        <directory>src/test/resources</directory>
+                    </testResource>
+                    <testResource>
+                        <directory>src/test/resources-tomee-remote-pgsql</directory>
+                    </testResource>
+                    <testResource>
+                        <directory>${project.build.directory}/generated-resources</directory>
+                    </testResource>
+                </testResources>
+                
+                <plugins>
+                    <plugin>
+                        <groupId>de.jpdigital</groupId>
+                        <artifactId>hibernate4-ddl-maven-plugin</artifactId>
+                        <configuration>
+                            <dialects>
+                                <param>h2</param>
+                                <param>mysql5_innodb</param>
+                                <param>postgresql9</param>
+                            </dialects>
+                            <packages>
+                                <param>org.libreccm</param>
+                            </packages>
+                            <useEnvers>true</useEnvers>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>gen-ddl</goal>
+                                </goals>
+                                <phase>process-classes</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>2.18.1</version>
+                        <configuration>
+                            <forkMode>always</forkMode>
+                            <forkCount>999</forkCount>
+                            <reuseForks>true</reuseForks>
+                            <systemPropertyVariables>
+                                <tomee.classifier>plus</tomee.classifier>
+                                <tomee.version>1.7.2</tomee.version>
+                            </systemPropertyVariables>
+                            <redirectTestOutputToFile>false</redirectTestOutputToFile>
+                            <groups>
+                                org.libreccm.tests.categories.UnitTest,
+                                org.libreccm.tests.categories.IntegrationTest
+                            </groups>
                         </configuration>
                     </plugin>
                 </plugins>

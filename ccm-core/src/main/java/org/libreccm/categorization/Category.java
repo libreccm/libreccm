@@ -40,6 +40,8 @@ import java.util.Collections;
 import java.util.Objects;
 
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.Pattern;
 
@@ -58,6 +60,10 @@ import javax.validation.constraints.Pattern;
  */
 @Entity
 @Table(name = "categories")
+@NamedQueries({
+    @NamedQuery(name = "topLevelCategories", 
+                query = "SELECT c FROM Category c WHERE c.parentCategory IS NULL")
+})
 public class Category extends CcmObject implements Serializable {
 
     private static final long serialVersionUID = -7250208963391878547L;

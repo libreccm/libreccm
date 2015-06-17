@@ -42,10 +42,10 @@ public class DatasetsTest extends DatasetsVerifier {
     @Parameterized.Parameters(name = "Dataset {0}")
     public static Collection<String> data() {
         return Arrays.asList(new String[]{
-            "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.json",
-            "datasets/org/libreccm/core/CcmObjectRepositoryTest/after-delete.json",
-            "datasets/org/libreccm/core/CcmObjectRepositoryTest/after-save-changed.json",
-            "datasets/org/libreccm/core/CcmObjectRepositoryTest/after-save-new.json"
+            "/datasets/org/libreccm/core/CcmObjectRepositoryTest/data.json",
+            "/datasets/org/libreccm/core/CcmObjectRepositoryTest/after-delete.json",
+            "/datasets/org/libreccm/core/CcmObjectRepositoryTest/after-save-changed.json",
+            "/datasets/org/libreccm/core/CcmObjectRepositoryTest/after-save-new.json"
         });
     }
     

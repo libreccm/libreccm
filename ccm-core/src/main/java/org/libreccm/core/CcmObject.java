@@ -137,6 +137,12 @@ public class CcmObject implements Serializable {
         this.displayName = displayName;
     }
 
+    /**
+     * 
+     * @return Returns all permissions for this {@code CcmObject}. Please note
+     * that the returned {@link List} can't be modified. For adding and removing
+     * permissions use the methods provided by the {@link CcmObjectManager}.
+     */
     public List<Permission> getPermissions() {
         return Collections.unmodifiableList(permissions);
     }

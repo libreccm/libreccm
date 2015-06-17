@@ -3,11 +3,12 @@
     author: Jens Pelzetter
 -->
 
-<persistence xmlns="http://java.sun.com/xml/ns/persistence"
-             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence 
-                                 http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
-             version="2.0">
+<persistence 
+    xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence 
+                        http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
+    version="2.1">
     
     <persistence-unit name="LibreCCM" transaction-type="JTA">
         
@@ -19,7 +20,7 @@
         -->
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
             
-        <jta-data-source>testdb</jta-data-source>
+        <jta-data-source>java:/comp/env/jdbc/org/libreccm/ccm-core/pgsql</jta-data-source>
         <properties>
             <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
             <property name="hibernate.show_sql" value="true"/>
