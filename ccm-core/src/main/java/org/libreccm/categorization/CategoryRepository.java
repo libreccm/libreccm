@@ -54,5 +54,16 @@ public class CategoryRepository extends AbstractEntityRepository<Long, Category>
         
         return query.getResultList();
     }
+    
+    /**
+     * Retrieves all categories which are not assigned to another category as
+     * subcategory or the an {@link Domain} as root category. 
+     * 
+     * @return A list of all orphaned categories. Normally this list should be 
+     * empty.
+     */
+    public List<Category> getOrphanedCategories() {
+        throw new UnsupportedOperationException();
+    }
 
 }
