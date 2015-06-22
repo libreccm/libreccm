@@ -20,9 +20,13 @@ package org.libreccm.categorization;
 
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.URL;
+
+import static org.libreccm.categorization.CategorizationConstants.*;
+
 import org.libreccm.core.CcmObject;
 import org.libreccm.jpa.utils.UriConverter;
 import org.libreccm.l10n.LocalizedString;
+import org.libreccm.web.Application;
 
 import java.io.Serializable;
 import java.net.URI;
@@ -48,21 +52,26 @@ import javax.validation.constraints.Pattern;
 
 import org.omg.CORBA.DomainManager;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  * A domain is collection of categories designed a specific purpose. This entity
  * replaces the {@code Domain} entity from the old {@code ccm-ldn-terms} module
  * as well as the {@code CategoryPurpose} entity from the old
  * {@code ccm-core module}.
  *
- * A {@code Domain} can be mapped to multiple {@link CcmObject}s. Normally this
- * is used to make a {@code Domain} available in a application. The
- * {@link CcmObject}s to which a {@code Domain} is mapped are called
+ * A {@code Domain} can be mapped to multiple {@link Application}s. Normally 
+ * This is used to make a {@code Domain} available in the application. The
+ * {@link Application}s to which a {@code Domain} is mapped are called
  * <em>owners</em> of the domain.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
 @Table(name = "category_domains")
+@XmlRootElement(name = "domain", namespace = CAT_XML_NS)
 public class Domain extends CcmObject implements Serializable {
 
     private static final long serialVersionUID = 4012590760598188732L;
@@ -75,6 +84,7 @@ public class Domain extends CcmObject implements Serializable {
     @Column(name = "domain_key", nullable = false, unique = true, length = 255)
     @NotBlank
     @Pattern(regexp = "[\\w-.]*")
+    @XmlElement(name = "domain-key", namespace = CAT_XML_NS)
     private String domainKey;
 
     /**
@@ -89,10 +99,11 @@ public class Domain extends CcmObject implements Serializable {
      * http://example.org/domains/example-nav
      * </pre>
      */
-    @Column(name = "uri", nullable = false, length = 2048)
+    @Column(name = "uri", nullable = false, unique = true, length = 2048)
     @Convert(converter = UriConverter.class)
     @NotBlank
     @URL
+    @XmlElement(name = "uri", namespace = CAT_XML_NS)
     private URI uri;
 
     /**
@@ -105,6 +116,7 @@ public class Domain extends CcmObject implements Serializable {
         joinTable = @JoinTable(name = "domain_titles",
                                joinColumns = {
                                    @JoinColumn(name = "object_id")}))
+    @XmlElement(name = "title", namespace = CAT_XML_NS)
     private LocalizedString title;
 
     /**
@@ -116,6 +128,7 @@ public class Domain extends CcmObject implements Serializable {
         joinTable = @JoinTable(name = "domain_descriptions",
                                joinColumns = {
                                    @JoinColumn(name = "object_id")}))
+    @XmlElement(name = "description", namespace = CAT_XML_NS)
     private LocalizedString description;
 
     /**
@@ -123,6 +136,7 @@ public class Domain extends CcmObject implements Serializable {
      */
     @Column(name = "version", nullable = false)
     @NotBlank
+    @XmlElement(name = "version", namespace = CAT_XML_NS)
     private String version;
 
     /**
@@ -130,6 +144,7 @@ public class Domain extends CcmObject implements Serializable {
      */
     @Column(name = "released")
     @Temporal(TemporalType.TIMESTAMP)
+    @XmlElement(name = "released", namespace = CAT_XML_NS)
     private Date released;
 
     /**
@@ -137,12 +152,14 @@ public class Domain extends CcmObject implements Serializable {
      */
     @ManyToOne
     @JoinColumn(name = "root_category_id")
+    @XmlElement(name = "root", namespace = CAT_XML_NS)
     private Category root;
 
     /**
      * The owners of the domain.
      */
     @OneToMany(mappedBy = "domain")
+    @XmlElementWrapper(name = "owners", namespace = CAT_XML_NS)
     private List<DomainOwnership> owners;
 
     public Domain() {

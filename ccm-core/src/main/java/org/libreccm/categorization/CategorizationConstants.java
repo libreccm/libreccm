@@ -15,20 +15,19 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
-    */
+ */
+package org.libreccm.categorization;
 
 /**
- * This package provides some base classes for LibreCCM.
+ *
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@XmlSchema(xmlns = {@XmlNs(prefix = "ccmcore",
-                           namespaceURI = CORE_XML_NS)})
-@XmlAccessorType(XmlAccessType.NONE)
-package org.libreccm.core;
-
-import static org.libreccm.core.CoreConstants.*;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlNs;
-import javax.xml.bind.annotation.XmlSchema;
-
+public final class CategorizationConstants {
+    
+    public static final String CAT_XML_NS = "http://categorization.libreccm.org";
+    
+    private CategorizationConstants() {
+        //Nothing
+    }
+    
+}

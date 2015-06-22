@@ -24,7 +24,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.libreccm.tests.categories.UnitTest;
+import org.libreccm.web.Application;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -52,19 +55,25 @@ public class EqualsAndHashCodeTest {
     }
 
     @Test
-    public void verifyEqualsAndHashCode() {
+    public void verifyEqualsAndHashCode() throws URISyntaxException {
         final Category category1 = new Category();
         category1.setName("Category One");
-        
+
         final Category category2 = new Category();
         category2.setName("Category Two");
-        
+
         final Domain domain1 = new Domain();
         domain1.setDomainKey("Domain-One");
-        
+
         final Domain domain2 = new Domain();
         domain2.setDomainKey("Domain Two");
-        
+
+        final Application application1 = new Application();
+        application1.setPrimaryUrl(new URI("http://application-one.exampl.org"));
+
+        final Application application2 = new Application();
+        application2.setPrimaryUrl(new URI("http://application-two.exampl.org"));
+
         EqualsVerifier
             .forClass(entityClass)
             .suppress(Warning.STRICT_INHERITANCE)
@@ -72,6 +81,7 @@ public class EqualsAndHashCodeTest {
             .withRedefinedSuperclass()
             .withPrefabValues(Category.class, category1, category2)
             .withPrefabValues(Domain.class, domain1, domain2)
+            .withPrefabValues(Application.class, application1, application2)
             .verify();
     }
 

@@ -273,7 +273,7 @@ public class CategoryManager {
      *                       {@code null}.
      *
      * @throws NotASubCategoryException If one or both categories are not 
-     * subcategories of the provided parent category.
+     * subcategories of the provided parent category.qq
      */
     public void swapCategories(final Category subCategoryA,
                                final Category subCategoryB,

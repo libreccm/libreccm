@@ -18,6 +18,8 @@
  */
 package org.libreccm.l10n;
 
+import static org.libreccm.l10n.L10NConstants.*;
+
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
@@ -31,8 +33,6 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Embeddable;
 import javax.persistence.Lob;
 import javax.persistence.MapKeyColumn;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -46,8 +46,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Embeddable
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlRootElement(name = "localized-string", namespace = L10N_XML_NS)
 public class LocalizedString implements Serializable {
 
     private static final long serialVersionUID = 7378282657084330425L;
@@ -59,8 +58,8 @@ public class LocalizedString implements Serializable {
     @MapKeyColumn(name = "locale")
     @Column(name = "localized_value")
     @Lob
-    @XmlElementWrapper(name = "values")
-    @XmlElement(name = "value")
+    @XmlElementWrapper(name = "values", namespace = L10N_XML_NS)
+    @XmlElement(name = "value", namespace = L10N_XML_NS)
     private Map<Locale, String> values;
 
     /**

@@ -45,7 +45,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
- *
+ * The {@code User} entity stores the name and the password of a user along with
+ * some other informations.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
@@ -53,7 +55,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @XmlRootElement(name = "user", namespace = CORE_XML_NS)
 //Supressing a few warnings from PMD because they misleading here.
 //User is perfectly fine class name, and the complexity is not to high...
-@SuppressWarnings({"PMD.ShortClassName", 
+@SuppressWarnings({"PMD.ShortClassName",
                    "PMD.CyclomaticComplexity",
                    "PMD.StdCyclomaticComplexity",
                    "PMD.ModifiedCyclomaticComplexity"})
@@ -61,6 +63,9 @@ public class User extends Party implements Serializable {
 
     private static final long serialVersionUID = 892038270064849732L;
 
+    /**
+     * The real name of the user. We are using an {@code Embeddable} here.
+     */
     @Embedded
     @AssociationOverride(
         name = "user_names",
@@ -70,35 +75,82 @@ public class User extends Party implements Serializable {
     @XmlElement(name = "person-name", namespace = CORE_XML_NS)
     private PersonName name;
 
+    /**
+     * A user name of the user. Usually an abbreviation of the users real name.
+     * For example a the <em>John Doe</em> might have the scree name 
+     * <code>jdoe</code>. The screen name is used as user name for logins (if 
+     * the system if configured so, otherwise the email address of the user is 
+     * used).
+     */
     @Column(name = "screen_name", length = 255, nullable = false)
     @NotBlank
     @XmlElement(name = "screen-name", namespace = CORE_XML_NS)
     private String screenName;
 
+    /**
+     * A user can be banned which means that he or she can't login into the 
+     * system anymore.
+     */
     @Column(name = "banned")
     @XmlElement(name = "banned", namespace = CORE_XML_NS)
     private boolean banned;
 
+    /**
+     * An alias for the user used in an another system for SSO, for example LDAP.
+     */
     @Column(name = "sso_login", length = 512)
     @XmlElement(name = "sso-login", namespace = CORE_XML_NS)
     private String ssoLogin;
 
+    /**
+     * The hashed password of the user.
+     */
     @Column(name = "password", length = 2048)
     @XmlTransient
     private String password;
 
+    /**
+     * The salt used to hash the password.
+     */
     @Column(name = "salt", length = 2048)
     @XmlTransient
     private String salt;
 
+    /**
+     * The hash algorithm used to hash the password. This allows us 
+     * the change to another, stronger hash algorithm without invalidating 
+     * existing accounts. The algorithm to use for new passwords can be 
+     * configured by the administrator.
+     * 
+     */
+    @Column(name = "hash_algorithm", length = 64)
+    @XmlTransient
+    private String hashAlgorithm;
+
+    /**
+     * Indicates that the user should be forced to change his or her password
+     * on the next login.
+     */
+    @Column(name = "password_reset_required")
+    private boolean passwordResetRequired;
+
+    /**
+     * Question the recover a forgotten password. 
+     */
     @Column(name = "password_question", length = 2048)
     @XmlElement(name = "password-question", namespace = CORE_XML_NS)
     private String passwordQuestion;
 
+    /**
+     * Answer the the {@link #passwordQuestion}.
+     */
     @Column(name = "password_answer", length = 2048)
     @XmlElement(name = "password-answer", namespace = CORE_XML_NS)
     private String passwordAnswer;
 
+    /**
+     * The groups of which the user is a member.
+     */
     @OneToMany(mappedBy = "user")
     @XmlElementWrapper(name = "group-memberships")
     @XmlElement(name = "group-membership", namespace = CORE_XML_NS)
@@ -106,10 +158,11 @@ public class User extends Party implements Serializable {
 
     public User() {
         super();
-        
+
+        name = new PersonName();
         this.groupMemberships = new ArrayList<>();
     }
-    
+
     public PersonName getName() {
         return name;
     }
@@ -158,6 +211,22 @@ public class User extends Party implements Serializable {
         this.salt = salt;
     }
 
+    public String getHashAlgorithm() {
+        return hashAlgorithm;
+    }
+
+    public void setHashAlgorithm(final String hashAlgorithm) {
+        this.hashAlgorithm = hashAlgorithm;
+    }
+
+    public boolean isPasswordResetRequired() {
+        return passwordResetRequired;
+    }
+
+    public void setPasswordResetRequired(final boolean passwordResetRequired) {
+        this.passwordResetRequired = passwordResetRequired;
+    }
+
     public String getPasswordQuestion() {
         return passwordQuestion;
     }
@@ -195,14 +264,16 @@ public class User extends Party implements Serializable {
     @Override
     public int hashCode() {
         int hash = super.hashCode();
-        hash = 59 * hash + Objects.hashCode(this.name);
-        hash = 59 * hash + Objects.hashCode(this.screenName);
-        hash = 59 * hash + (this.banned ? 1 : 0);
-        hash = 59 * hash + Objects.hashCode(this.ssoLogin);
-        hash = 59 * hash + Objects.hashCode(this.password);
-        hash = 59 * hash + Objects.hashCode(this.salt);
-        hash = 59 * hash + Objects.hashCode(this.passwordQuestion);
-        hash = 59 * hash + Objects.hashCode(this.passwordAnswer);
+        hash = 59 * hash + Objects.hashCode(name);
+        hash = 59 * hash + Objects.hashCode(screenName);
+        hash = 59 * hash + (banned ? 1 : 0);
+        hash = 59 * hash + Objects.hashCode(ssoLogin);
+        hash = 59 * hash + Objects.hashCode(password);
+        hash = 59 * hash + Objects.hashCode(salt);
+        hash = 59 * hash + Objects.hashCode(hashAlgorithm);
+        hash = 59 * hash + (passwordResetRequired ? 1 : 0);
+        hash = 59 * hash + Objects.hashCode(passwordQuestion);
+        hash = 59 * hash + Objects.hashCode(passwordAnswer);
         return hash;
     }
 
@@ -228,28 +299,37 @@ public class User extends Party implements Serializable {
             return false;
         }
 
-        if (!Objects.equals(this.name, other.getName())) {
+        if (!Objects.equals(name, other.getName())) {
             return false;
         }
-        if (!Objects.equals(this.screenName, other.getScreenName())) {
+        if (!Objects.equals(screenName, other.getScreenName())) {
             return false;
         }
-        if (this.banned != other.isBanned()) {
+        if (banned != other.isBanned()) {
             return false;
         }
-        if (!Objects.equals(this.ssoLogin, other.getSsoLogin())) {
+        if (!Objects.equals(ssoLogin, other.getSsoLogin())) {
             return false;
         }
-        if (!Objects.equals(this.password, other.getPassword())) {
+        if (!Objects.equals(password, other.getPassword())) {
             return false;
         }
-        if (!Objects.equals(this.salt, other.getSalt())) {
+        if (!Objects.equals(salt, other.getSalt())) {
             return false;
         }
-        if (!Objects.equals(this.passwordQuestion, other.getPasswordQuestion())) {
+
+        if (!Objects.equals(hashAlgorithm, other.getHashAlgorithm())) {
             return false;
         }
-        return Objects.equals(this.passwordAnswer, other.getPasswordAnswer());
+
+        if (passwordResetRequired != other.isPasswordResetRequired()) {
+            return false;
+        }
+
+        if (!Objects.equals(passwordQuestion, other.getPasswordQuestion())) {
+            return false;
+        }
+        return Objects.equals(passwordAnswer, other.getPasswordAnswer());
     }
 
     @Override
@@ -262,11 +342,15 @@ public class User extends Party implements Serializable {
         return super.toString(String.format(", name = %s, "
                                                 + "screenName = \"%s\", "
                                                 + "banned = %b, "
-                                                + "ssoLogin = \"%s\"%s",
+                                                + "ssoLogin = \"%s\""
+                                                + "hashAlgorithm = \"%s\""
+                                                + "passwordResetRequired = %b%s",
                                             Objects.toString(name),
                                             screenName,
                                             banned,
                                             ssoLogin,
+                                            hashAlgorithm,
+                                            passwordResetRequired,
                                             data));
     }
 

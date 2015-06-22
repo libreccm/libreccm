@@ -20,6 +20,7 @@ package org.libreccm.categorization;
 
 import java.io.Serializable;
 import java.util.Objects;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -27,7 +28,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
 import org.libreccm.core.CcmObject;
+import org.libreccm.web.Application;
 
 /**
  * Association class for the association between a {@link Domain} and a 
@@ -55,7 +58,7 @@ public class DomainOwnership implements Serializable {
      * The {@link CcmObject} owning the {@link Domain}.
      */
     @ManyToOne(optional = false)
-    private CcmObject owner;
+    private Application owner;
 
     /**
      * The {@link Domain} owned by the {@link CcmObject}.
@@ -91,11 +94,11 @@ public class DomainOwnership implements Serializable {
         this.ownershipId = ownershipId;
     }
 
-    public CcmObject getOwner() {
+    public Application getOwner() {
         return owner;
     }
 
-    protected void setOwner(final CcmObject owner) {
+    protected void setOwner(final Application owner) {
         this.owner = owner;
     }
 

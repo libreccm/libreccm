@@ -15,17 +15,12 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
-    */
-
-/**
- * This package provides some base classes for LibreCCM.
  */
-@XmlSchema(xmlns = {@XmlNs(prefix = "ccmcore",
-                           namespaceURI = CORE_XML_NS)})
+@XmlSchema(xmlns = {@XmlNs(prefix = "l10n", namespaceURI = L10N_XML_NS)})
 @XmlAccessorType(XmlAccessType.NONE)
-package org.libreccm.core;
+package org.libreccm.l10n;
 
-import static org.libreccm.core.CoreConstants.*;
+import static org.libreccm.l10n.L10NConstants.*;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
