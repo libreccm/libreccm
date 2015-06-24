@@ -41,7 +41,7 @@ public class EqualsAndHashCodeTest extends EqualsVerifier {
             CcmObject.class,
             EmailAddress.class,
             GroupMembership.class,
-            Party.class,
+            Subject.class,
             Permission.class,
             PersonName.class,
             Privilege.class,

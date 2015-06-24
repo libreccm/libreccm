@@ -33,23 +33,23 @@ public class CcmSessionContext implements Serializable {
 
     private static final long serialVersionUID = 6110177865273823685L;
 
-    private Party currentParty;
-    private Party effectiveParty;
+    private Subject currentParty;
+    private Subject effectiveParty;
 
-    public Party getCurrentParty() {
+    public Subject getCurrentParty() {
         return currentParty;
     }
 
-    public void setCurrentParty(final Party currentParty) {
+    public void setCurrentParty(final Subject currentParty) {
         this.currentParty = currentParty;
         this.effectiveParty = currentParty;
     }
 
-    public Party getEffectiveParty() {
+    public Subject getEffectiveParty() {
         return effectiveParty;
     }
 
-    protected void setEffectiveParty(final Party effectiveParty) {
+    protected void setEffectiveParty(final Subject effectiveParty) {
         this.effectiveParty = effectiveParty;
     }
     
@@ -63,7 +63,7 @@ public class CcmSessionContext implements Serializable {
      * @param party The party with which permissions the code is executed.
      * @param runnable The code to execute.
      */
-    public void sudo(final Party party, final Runnable runnable) {
+    public void sudo(final Subject party, final Runnable runnable) {
         //ToDo: Check if current user is permitted to use sudo.
         
         effectiveParty = party;

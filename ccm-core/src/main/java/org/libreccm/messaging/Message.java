@@ -19,7 +19,7 @@
 package org.libreccm.messaging;
 
 import org.libreccm.core.CcmObject;
-import org.libreccm.core.Party;
+import org.libreccm.core.Subject;
 import org.libreccm.jpa.utils.MimeTypeConverter;
 
 import java.io.Serializable;
@@ -56,7 +56,7 @@ public class Message extends CcmObject implements Serializable {
 
     @OneToOne
     @JoinColumn(name = "sender_id")
-    private Party sender;
+    private Subject sender;
 
     @Column(name = "subject")
     private String subject;
@@ -82,11 +82,11 @@ public class Message extends CcmObject implements Serializable {
     @OneToMany(mappedBy = "message")
     private List<Attachment> attachments;
 
-    public Party getSender() {
+    public Subject getSender() {
         return sender;
     }
 
-    protected void setSender(final Party sender) {
+    protected void setSender(final Subject sender) {
         this.sender = sender;
     }
 

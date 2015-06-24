@@ -19,7 +19,7 @@
 package org.libreccm.notification;
 
 import org.libreccm.core.CcmObject;
-import org.libreccm.core.Party;
+import org.libreccm.core.Subject;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -57,7 +57,7 @@ public class Digest extends CcmObject implements Serializable {
 
     @OneToOne
     @JoinColumn(name = "from_party_id")
-    private Party fromParty;
+    private Subject fromParty;
 
     @Column(name = "subject", length = 255, nullable = false)
     private String subject;
@@ -78,11 +78,11 @@ public class Digest extends CcmObject implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date nextRun;
 
-    public Party getFromParty() {
+    public Subject getFromParty() {
         return fromParty;
     }
 
-    public void setFromParty(final Party fromParty) {
+    public void setFromParty(final Subject fromParty) {
         this.fromParty = fromParty;
     }
 

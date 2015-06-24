@@ -28,8 +28,12 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.CollectionTable;
+import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -44,16 +48,21 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "parties")
-@XmlRootElement(name = "party", namespace = CORE_XML_NS)
-public class Party extends CcmObject implements Serializable {
+@Table(name = "subjects")
+@XmlRootElement(name = "subject", namespace = CORE_XML_NS)
+public class Subject implements Serializable {
 
     private static final long serialVersionUID = 6303836654273293979L;
 
+    @Id
+    @Column(name = "subject_id")
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long subjectId;
+
     @ElementCollection
-    @CollectionTable(name = "party_email_addresses",
+    @CollectionTable(name = "subject_email_addresses",
                      joinColumns = {
-                         @JoinColumn(name = "party_id")})
+                         @JoinColumn(name = "subject_id")})
     @Size(min = 1)
     @XmlElementWrapper(name = "email-addresses", namespace = CORE_XML_NS)
     @XmlElement(name = "email-address", namespace = CORE_XML_NS)
@@ -66,10 +75,18 @@ public class Party extends CcmObject implements Serializable {
     @XmlElement(name = "granted-permission", namespace = CORE_XML_NS)
     private List<Permission> grantedPermissions;
 
-    public Party() {
+    public Subject() {
         super();
 
         grantedPermissions = new ArrayList<>();
+    }
+
+    public long getSubjectId() {
+        return subjectId;
+    }
+
+    protected void setSubjectId(final long subjectId) {
+        this.subjectId = subjectId;
     }
 
     public List<EmailAddress> getEmailAddresses() {
@@ -113,24 +130,25 @@ public class Party extends CcmObject implements Serializable {
 
     @Override
     public int hashCode() {
-        int hash = super.hashCode();
-        hash = 41 * hash + Objects.hashCode(emailAddresses);
+        int hash = 7;
+        hash = 53 * hash + (int) (subjectId ^ (subjectId >>> 32));
+        hash = 53 * hash + Objects.hashCode(emailAddresses);
         return hash;
     }
 
     @Override
     public boolean equals(final Object obj) {
-        if (!super.equals(obj)) {
-            return false;
-        }
-
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof Party)) {
+        if (!(obj instanceof Subject)) {
             return false;
         }
-        final Party other = (Party) obj;
+        final Subject other = (Subject) obj;
+        if (subjectId != other.getSubjectId()) {
+            return false;
+        }
+
         if (!other.canEqual(this)) {
             return false;
         }
@@ -138,9 +156,24 @@ public class Party extends CcmObject implements Serializable {
         return Objects.equals(emailAddresses, other.getEmailAddresses());
     }
 
-    @Override
     public boolean canEqual(final Object obj) {
-        return obj instanceof Party;
+        return obj instanceof Subject;
+    }
+
+    @Override
+    public final String toString() {
+        return toString("");
+    }
+
+    public String toString(final String data) {
+        return String.format("%s{ "
+                                 + "subjectId = %d, "
+                                 + "emailAddresses = %s"
+                                 + "%s}",
+                             super.toString(),
+                             subjectId,
+                             Objects.toString(emailAddresses),
+                             data);
     }
 
 }

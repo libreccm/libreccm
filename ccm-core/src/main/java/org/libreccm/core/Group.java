@@ -45,7 +45,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @Table(name = "ccm_groups")
 @XmlRootElement(name = "user-group", namespace = CORE_XML_NS)
-public class Group extends Party implements Serializable {
+public class Group extends Subject implements Serializable {
 
     private static final long serialVersionUID = -5555063356689597270L;
 

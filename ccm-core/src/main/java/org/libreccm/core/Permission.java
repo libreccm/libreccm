@@ -61,7 +61,7 @@ public class Permission implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "grantee_id")
-    private Party grantee;
+    private Subject grantee;
 
     @OneToOne
     @JoinColumn(name = "granted_privilege_id")
@@ -94,11 +94,11 @@ public class Permission implements Serializable {
         this.permissionId = permissionId;
     }
 
-    public Party getGrantee() {
+    public Subject getGrantee() {
         return grantee;
     }
 
-    protected void setGrantee(final Party grantee) {
+    protected void setGrantee(final Subject grantee) {
         this.grantee = grantee;
     }
 

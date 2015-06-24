@@ -18,7 +18,7 @@
  */
 package org.libreccm.search.lucene;
 
-import org.libreccm.core.Party;
+import org.libreccm.core.Subject;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -92,7 +92,7 @@ public class Document implements Serializable {
 
     @OneToOne
     @JoinColumn(name = "created_by_party_id")
-    private Party createdBy;
+    private Subject createdBy;
 
     @Column(name = "last_modified")
     @Temporal(TemporalType.TIMESTAMP)
@@ -100,7 +100,7 @@ public class Document implements Serializable {
 
     @OneToOne
     @JoinColumn(name = "last_modified_by")
-    private Party lastModifiedBy;
+    private Subject lastModifiedBy;
 
     @Column(name = "content_section", length = 512)
     private String contentSection;
@@ -213,11 +213,11 @@ public class Document implements Serializable {
         }
     }
 
-    public Party getCreatedBy() {
+    public Subject getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(final Party createdBy) {
+    public void setCreatedBy(final Subject createdBy) {
         this.createdBy = createdBy;
     }
 
@@ -237,11 +237,11 @@ public class Document implements Serializable {
         }
     }
 
-    public Party getLastModifiedBy() {
+    public Subject getLastModifiedBy() {
         return lastModifiedBy;
     }
 
-    public void setLastModifiedBy(final Party lastModifiedBy) {
+    public void setLastModifiedBy(final Subject lastModifiedBy) {
         this.lastModifiedBy = lastModifiedBy;
     }
 

@@ -41,7 +41,7 @@ public class ToStringTest extends ToStringVerifier {
             CcmObject.class,
             EmailAddress.class,
             GroupMembership.class,
-            Party.class,
+            Subject.class,
             Permission.class,
             PersonName.class,
             Privilege.class,

@@ -38,6 +38,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -47,11 +49,17 @@ import javax.xml.bind.annotation.XmlTransient;
 /**
  * The {@code User} entity stores the name and the password of a user along with
  * some other informations.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
 @Table(name = "ccm_users")
+@NamedQueries({
+    @NamedQuery(name = "findUserByScreenName",
+                query = "SELECT u FROM User u WHERE u.screenName = :screenname"),
+    @NamedQuery(name = "findUserByEmail",
+                query = "SELECT u FROM User u JOIN u.emailAddresses e"
+                            + "WHERE e.address = :emailAddress")})
 @XmlRootElement(name = "user", namespace = CORE_XML_NS)
 //Supressing a few warnings from PMD because they misleading here.
 //User is perfectly fine class name, and the complexity is not to high...
@@ -59,7 +67,7 @@ import javax.xml.bind.annotation.XmlTransient;
                    "PMD.CyclomaticComplexity",
                    "PMD.StdCyclomaticComplexity",
                    "PMD.ModifiedCyclomaticComplexity"})
-public class User extends Party implements Serializable {
+public class User extends Subject implements Serializable {
 
     private static final long serialVersionUID = 892038270064849732L;
 
@@ -77,18 +85,18 @@ public class User extends Party implements Serializable {
 
     /**
      * A user name of the user. Usually an abbreviation of the users real name.
-     * For example a the <em>John Doe</em> might have the scree name 
-     * <code>jdoe</code>. The screen name is used as user name for logins (if 
-     * the system if configured so, otherwise the email address of the user is 
+     * For example a the <em>John Doe</em> might have the scree name
+     * <code>jdoe</code>. The screen name is used as user name for logins (if
+     * the system if configured so, otherwise the email address of the user is
      * used).
      */
-    @Column(name = "screen_name", length = 255, nullable = false)
+    @Column(name = "screen_name", length = 255, nullable = false, unique = true)
     @NotBlank
     @XmlElement(name = "screen-name", namespace = CORE_XML_NS)
     private String screenName;
 
     /**
-     * A user can be banned which means that he or she can't login into the 
+     * A user can be banned which means that he or she can't login into the
      * system anymore.
      */
     @Column(name = "banned")
@@ -96,7 +104,8 @@ public class User extends Party implements Serializable {
     private boolean banned;
 
     /**
-     * An alias for the user used in an another system for SSO, for example LDAP.
+     * An alias for the user used in an another system for SSO, for example
+     * LDAP.
      */
     @Column(name = "sso_login", length = 512)
     @XmlElement(name = "sso-login", namespace = CORE_XML_NS)
@@ -117,25 +126,25 @@ public class User extends Party implements Serializable {
     private String salt;
 
     /**
-     * The hash algorithm used to hash the password. This allows us 
-     * the change to another, stronger hash algorithm without invalidating 
-     * existing accounts. The algorithm to use for new passwords can be 
-     * configured by the administrator.
-     * 
+     * The hash algorithm used to hash the password. This allows us the change
+     * to another, stronger hash algorithm without invalidating existing
+     * accounts. The algorithm to use for new passwords can be configured by the
+     * administrator.
+     *
      */
     @Column(name = "hash_algorithm", length = 64)
     @XmlTransient
     private String hashAlgorithm;
 
     /**
-     * Indicates that the user should be forced to change his or her password
-     * on the next login.
+     * Indicates that the user should be forced to change his or her password on
+     * the next login.
      */
     @Column(name = "password_reset_required")
     private boolean passwordResetRequired;
 
     /**
-     * Question the recover a forgotten password. 
+     * Question the recover a forgotten password.
      */
     @Column(name = "password_question", length = 2048)
     @XmlElement(name = "password-question", namespace = CORE_XML_NS)
