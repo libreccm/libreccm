@@ -34,6 +34,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -49,6 +51,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Entity
 @Table(name = "subjects")
+@Inheritance(strategy = InheritanceType.JOINED)
 @XmlRootElement(name = "subject", namespace = CORE_XML_NS)
 public class Subject implements Serializable {
 

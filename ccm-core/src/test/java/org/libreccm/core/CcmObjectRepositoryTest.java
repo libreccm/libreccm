@@ -46,7 +46,6 @@ import org.libreccm.tests.categories.IntegrationTest;
 import java.io.File;
 import java.util.List;
 
-import javax.ejb.EJBTransactionRolledbackException;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;

@@ -391,6 +391,7 @@ public class StringUtils {
             m_hash = hash;
         }
 
+        @Override
         public void appendSubstitution(StringBuffer appendBuffer,
                                        MatchResult match,
                                        int substitutionCount,
@@ -401,7 +402,7 @@ public class StringUtils {
             String link = match.group(2);
             s_log.debug("Link: " + link);
 
-            Integer i = new Integer(m_hash.size());
+            Integer i = m_hash.size();
             s_log.debug("Key: " + i);
             m_hash.put(i, link);
             String dst = "@" + title + "(\u0002" + i.toString() + "\u0002)";
@@ -429,7 +430,7 @@ public class StringUtils {
             String link = match.group(1);
             s_log.debug("Link: " + link);
 
-            Integer i = new Integer(m_hash.size());
+            Integer i = m_hash.size();
             s_log.debug("Key: " + i);
             m_hash.put(i, link);
             String dst = "@\u0002" + i.toString() + "\u0002(\u0002" +
@@ -458,7 +459,7 @@ public class StringUtils {
             String s = match.group(1);
             s_log.debug("Key: " + s);
 
-            Integer i = new Integer(s);
+            Integer i = Integer.valueOf(s);
             appendBuffer.append((String)m_hash.get(i));
             s_log.debug("Link: " + m_hash.get(i));
         }

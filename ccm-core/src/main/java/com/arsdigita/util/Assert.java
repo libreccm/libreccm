@@ -614,7 +614,8 @@ public class Assert {
      * @param actualLabel Label for second (generally actual) value.
      * @throws java.lang.IllegalStateException condition was false
      */
-    public static final void assertEquals(Object expected, Object actual,
+    public static final void assertEquals(Object expected, 
+                                          Object actual,
                                           String expectedLabel,
                                           String actualLabel) {
         if (isEnabled()) {

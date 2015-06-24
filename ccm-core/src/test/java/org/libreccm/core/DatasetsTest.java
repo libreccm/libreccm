@@ -45,7 +45,11 @@ public class DatasetsTest extends DatasetsVerifier {
             "/datasets/org/libreccm/core/CcmObjectRepositoryTest/data.json",
             "/datasets/org/libreccm/core/CcmObjectRepositoryTest/after-delete.json",
             "/datasets/org/libreccm/core/CcmObjectRepositoryTest/after-save-changed.json",
-            "/datasets/org/libreccm/core/CcmObjectRepositoryTest/after-save-new.json"
+            "/datasets/org/libreccm/core/CcmObjectRepositoryTest/after-save-new.json",
+            "/datasets/org/libreccm/core/UserRepositoryTest/data.json",
+            "/datasets/org/libreccm/core/UserRepositoryTest/after-delete.json",
+            "/datasets/org/libreccm/core/UserRepositoryTest/after-save-changed.json",
+            "/datasets/org/libreccm/core/UserRepositoryTest/after-save-new.json"
         });
     }
     

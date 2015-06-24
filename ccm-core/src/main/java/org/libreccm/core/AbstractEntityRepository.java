@@ -18,6 +18,8 @@
  */
 package org.libreccm.core;
 
+import org.hibernate.validator.cdi.HibernateValidator;
+
 import java.util.List;
 
 import javax.inject.Inject;
@@ -26,6 +28,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import javax.validation.Validator;
 
 /**
  * A base class providing common method needed by every repository. 
@@ -42,6 +45,10 @@ public abstract class AbstractEntityRepository<K, E> {
      */
     @Inject
     private transient EntityManager entityManager;
+    
+    @Inject
+    @HibernateValidator
+    private Validator validator;
 
     /**
      * Getter method for retrieving the injected {@link EntityManager}.
