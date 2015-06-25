@@ -45,16 +45,10 @@
                     "hash_algorithm": "MD5",
                     "family_name": "Doe",
                     "given_name": "John",
-                    "middle_name": null,
-                    "title_post": null,
-                    "title_pre": null,
                     "password": "604622dc8a888eb093454ebd77ca1675",
-                    "password_answer": null,
-                    "password_question": null,
                     "password_reset_required": false,
                     "salt": "axg8ira8fa",
                     "screen_name": "jdoe",
-                    "sso_login": null,
                     "subject_id": -10
                 },
                 {
@@ -62,16 +56,10 @@
                     "hash_algorithm": "SHA-512",
                     "family_name": "Mustermann",
                     "given_name": "Max",
-                    "middle_name": null,
-                    "title_post": null,
-                    "title_pre": null,
                     "password": "1c9626af429a6291766d15cbfb38689bd8d49450520765973de70aecaf644b7d4fda711266ba9ec8fb6df30c8ab391d40330829aa85adf371bcde6b4c9bc01e6",
-                    "password_answer": null,
-                    "password_question": null,
                     "password_reset_required": false,
                     "salt": "fjiajhigafgapoa",
                     "screen_name": "mmuster",
-                    "sso_login": null,
                     "subject_id": -20
                 },
                 {
@@ -79,16 +67,10 @@
                     "hash_algorithm": "SHA-512",
                     "family_name": "Public",
                     "given_name": "Joe",
-                    "middle_name": null,
-                    "title_post": null,
-                    "title_pre": null,
                     "password": "4e39eba7f2927182a532cd8700bf251e58d4b0359fbb832e6af21db7501d7a49e6d8b950e0d4b15b1841af0f786c8edaa0c09ef7f474804254f7e895969d2975",
-                    "password_answer": null,
-                    "password_question": null,
                     "password_reset_required": false,
                     "salt": "axg8ira8fa",
                     "screen_name": "joe",
-                    "sso_login": null,
                     "subject_id": -30
                 }
             ]

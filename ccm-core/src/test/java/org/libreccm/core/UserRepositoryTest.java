@@ -176,8 +176,8 @@ public class UserRepositoryTest {
         assertThat(joe.getName().getGivenName(), is(equalTo("Joe")));
         assertThat(joe.getHashAlgorithm(), is(equalTo("SHA-512")));
         assertThat(joe.getPassword(), is(equalTo(
-                   "axg8ira8fa")));
-        assertThat(joe.getSalt(), is(equalTo("fjiajhigafgapoa")));
+                   "4e39eba7f2927182a532cd8700bf251e58d4b0359fbb832e6af21db7501d7a49e6d8b950e0d4b15b1841af0f786c8edaa0c09ef7f474804254f7e895969d2975")));
+        assertThat(joe.getSalt(), is(equalTo("axg8ira8fa")));
 
         assertThat(nobody, is(nullValue()));
     }
