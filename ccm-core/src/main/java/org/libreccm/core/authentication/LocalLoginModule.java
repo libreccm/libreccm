@@ -81,15 +81,15 @@ public class LocalLoginModule extends PasswordLoginModule {
      * @param password The password to verify.
      *
      * @return {@code true} if the password matches the password in the
-     *         database, {@code false} if not or if there is no user account
-     *         identified by the provided user name.
+     * database, {@code false} if not or if there is no user account identified
+     * by the provided user name.
      *
      * @throws LoginException If an error occurs in the process.
      */
     @Override
     protected boolean checkPassword(final String username,
                                     final String password)
-        throws LoginException {
+            throws LoginException {
 
         //Depending on the configured user identifier retrieve the user account
         //using the screen name or the email address.
@@ -103,7 +103,7 @@ public class LocalLoginModule extends PasswordLoginModule {
         //If no matching user is found report this by throwing an exception.
         if (user == null) {
             throw new AccountNotFoundException(String.format(
-                "No user account identified by '%s' found.", username));
+                    "No user account identified by '%s' found.", username));
         }
 
         // Verify the password. The algorithm used for hashing is stored in the 
@@ -111,26 +111,25 @@ public class LocalLoginModule extends PasswordLoginModule {
         // first.
         try {
             final MessageDigest digest = MessageDigest.getInstance(user
-                .getHashAlgorithm());
+                    .getHashAlgorithm());
             final String saltedPassword = String.format("%s%s",
                                                         password,
                                                         user.getSalt());
             final String passwordHash = new String(digest.digest(
-                saltedPassword.getBytes()));
+                    saltedPassword.getBytes()));
 
             if (passwordHash.equals(user.getPassword())) {
-                subject.getPrincipals().add(new SubjectPrincipal(user
-                    .getSubjectId()));
+                subject.getPrincipals().add(new UserPrincipal(user));
                 return true;
             } else {
                 return false;
             }
         } catch (NoSuchAlgorithmException ex) {
             throw new LoginException(String.format(
-                "Failed to validate password because the password stored for "
+                    "Failed to validate password because the password stored for "
                     + "user '%s' in the database is hashed with algorithm '%s' "
-                    + "which is not avialable.",
-                username, user.getHashAlgorithm()));
+                            + "which is not avialable.",
+                    username, user.getHashAlgorithm()));
         }
 
     }

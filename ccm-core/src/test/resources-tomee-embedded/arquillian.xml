@@ -9,7 +9,7 @@
     </engine>
     
     <extension qualifier="persistence">
-        <property name="defaultDataSource">testdb</property>
+        <property name="defaultDataSource">java:openejb/Resource/org-libreccm-ccm-core.testdb</property>
         
         <!-- 
             Disable automatic cleanup, does not work because of referential 

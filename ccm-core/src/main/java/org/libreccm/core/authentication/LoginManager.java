@@ -72,19 +72,19 @@ public class LoginManager {
         loginContext.login();
         final Subject subject = loginContext.getSubject();
 
-        final Set<SubjectPrincipal> principals = subject.getPrincipals(
-            SubjectPrincipal.class);
+        final Set<UserPrincipal> principals = subject.getPrincipals(
+            UserPrincipal.class);
         if (principals.isEmpty()) {
             throw new LoginException("No principal set");
         } else {
-            final Iterator<SubjectPrincipal> iterator = principals.iterator();
-            final SubjectPrincipal principal = iterator.next();
-            final User user = userRepository.findById(principal.getSubjectId());
+            final Iterator<UserPrincipal> iterator = principals.iterator();
+            final UserPrincipal principal = iterator.next();
+            final User user = principal.getUser();
             
             sessionContext.setCurrentParty(user);
         }
     }
-
+    
     private class LoginCallbackHandler implements CallbackHandler {
 
         private final String username;

@@ -19,32 +19,34 @@
 package org.libreccm.core.authentication;
 
 import java.security.Principal;
+import java.util.Objects;
+import org.libreccm.core.User;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public final class SubjectPrincipal implements Principal {
+public final class UserPrincipal implements Principal {
 
-    private final long subjectId;
+    private final User user;
 
-    public SubjectPrincipal(final long subjectId) {
-        this.subjectId = subjectId;
+    public UserPrincipal(final User user) {
+        this.user = user;
     }
     
-    public long getSubjectId() {
-        return subjectId;
+    public User getUser() {
+        return user;
     }
 
     @Override
     public String getName() {
-        return Long.toString(subjectId);
+        return user.getScreenName();
     }
 
     @Override
     public int hashCode() {
         int hash = 5;
-        hash = 41 * hash + (int) (this.subjectId ^ (this.subjectId >>> 32));
+        hash = 41 * Objects.hash(user);
         return hash;
     }
 
@@ -56,17 +58,17 @@ public final class SubjectPrincipal implements Principal {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final SubjectPrincipal other = (SubjectPrincipal) obj;
-        return this.subjectId == other.getSubjectId();
+        final UserPrincipal other = (UserPrincipal) obj;
+        return Objects.equals(user, other.getUser());
     }
 
     @Override
     public String toString() {
         return String.format("%s{ "
-                                 + "subjectId = %d"
+                                 + "user = %s"
                                  + " }",
                              super.toString(),
-                             subjectId);
+                             Objects.toString(user));
     }
 
 }

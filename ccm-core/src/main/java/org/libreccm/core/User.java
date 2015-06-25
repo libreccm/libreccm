@@ -57,8 +57,8 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "findUserByScreenName",
                 query = "SELECT u FROM User u WHERE u.screenName = :screenname"),
-    @NamedQuery(name = "findUserByEmail",
-                query = "SELECT u FROM User u JOIN u.emailAddresses e"
+    @NamedQuery(name = "findUserByEmailAddress",
+                query = "SELECT u FROM User u JOIN u.emailAddresses e "
                             + "WHERE e.address = :emailAddress")})
 @XmlRootElement(name = "user", namespace = CORE_XML_NS)
 //Supressing a few warnings from PMD because they misleading here.

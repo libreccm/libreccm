@@ -19,7 +19,7 @@
         -->
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
             
-        <jta-data-source>testdb</jta-data-source>
+        <jta-data-source>java:openejb/Resource/org-libreccm-ccm-core.testdb</jta-data-source>
         <properties>
             <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
             <property name="hibernate.show_sql" value="true"/>
