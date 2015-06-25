@@ -15,6 +15,13 @@
 
     <name>LibreCCM 3.0.0</name>
     <url>http://www.libreccm.org</url>
+    <distributionManagement>
+        <site>
+            <id>libreccm-site</id>
+            <name>LibreCCM</name>
+            <url>http://www.libreccm.org/project-sites/</url>
+        </site>
+    </distributionManagement>
 
     <organization>
         <name>LibreCCM Foundation</name>

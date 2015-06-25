@@ -351,8 +351,8 @@ public class User extends Subject implements Serializable {
         return super.toString(String.format(", name = %s, "
                                                 + "screenName = \"%s\", "
                                                 + "banned = %b, "
-                                                + "ssoLogin = \"%s\""
-                                                + "hashAlgorithm = \"%s\""
+                                                + "ssoLogin = \"%s\" "
+                                                + "hashAlgorithm = \"%s\" "
                                                 + "passwordResetRequired = %b%s",
                                             Objects.toString(name),
                                             screenName,

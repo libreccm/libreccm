@@ -137,17 +137,11 @@ public class UserRepositoryTest {
         assertThat(entityManager, is(not(nullValue())));
     }
 
-    @Test
-    @UsingDataSet(
-            "datasets/org/libreccm/core/UserRepositoryTest/data.json")
-    @InSequence(10)
-    public void findUserByScreenName() {
-        final User jdoe = userRepository.findByScreenName(JDOE);
-        final User mmuster = userRepository.findByScreenName(MMUSTER);
-        final User joe = userRepository.findByScreenName(JOE);
-        final User nobody = userRepository.findByScreenName(NOBODY);
-
-        assertThat(jdoe, is(not(nullValue())));
+    private void checkUsers(final User jdoe, 
+                            final User mmuster, 
+                            final User joe, 
+                            final User nobody) {
+                assertThat(jdoe, is(not(nullValue())));
         assertThat(jdoe.getSubjectId(), is(-10L));
         assertThat(jdoe.getScreenName(), is(JDOE));
         assertThat(jdoe.getName().getFamilyName(), is(equalTo("Doe")));
@@ -180,12 +174,73 @@ public class UserRepositoryTest {
         assertThat(joe.getSalt(), is(equalTo("axg8ira8fa")));
 
         assertThat(nobody, is(nullValue()));
+
+    }
+    
+    @Test
+    @UsingDataSet(
+            "datasets/org/libreccm/core/UserRepositoryTest/data.json")
+    @InSequence(10)
+    public void findUserById() {
+        final User jdoe = userRepository.findById(-10L);
+        final User mmuster = userRepository.findById(-20L);
+        final User joe = userRepository.findById(-30L);
+        final User nobody = userRepository.findById(-999L);
+        
+        checkUsers(jdoe, mmuster, joe, nobody);
+    }
+    
+    @Test
+    @UsingDataSet(
+            "datasets/org/libreccm/core/UserRepositoryTest/data.json")
+    @InSequence(20)
+    public void findUserByScreenName() {
+        final User jdoe = userRepository.findByScreenName(JDOE);
+        final User mmuster = userRepository.findByScreenName(MMUSTER);
+        final User joe = userRepository.findByScreenName(JOE);
+        final User nobody = userRepository.findByScreenName(NOBODY);
+
+        checkUsers(jdoe, mmuster, joe, nobody);
+        
+//        assertThat(jdoe, is(not(nullValue())));
+//        assertThat(jdoe.getSubjectId(), is(-10L));
+//        assertThat(jdoe.getScreenName(), is(JDOE));
+//        assertThat(jdoe.getName().getFamilyName(), is(equalTo("Doe")));
+//        assertThat(jdoe.getName().getMiddleName(), is(nullValue()));
+//        assertThat(jdoe.getName().getGivenName(), is(equalTo("John")));
+//        assertThat(jdoe.getHashAlgorithm(), is("MD5"));
+//        assertThat(jdoe.getPassword(), is("604622dc8a888eb093454ebd77ca1675"));
+//        assertThat(jdoe.getSalt(), is("axg8ira8fa"));
+//
+//        assertThat(mmuster, is(not(nullValue())));
+//        assertThat(mmuster.getSubjectId(), is(-20L));
+//        assertThat(mmuster.getScreenName(), is(equalTo(MMUSTER)));
+//        assertThat(mmuster.getName().getFamilyName(), is(equalTo("Mustermann")));
+//        assertThat(mmuster.getName().getMiddleName(), is(nullValue()));
+//        assertThat(mmuster.getName().getGivenName(), is(equalTo("Max")));
+//        assertThat(mmuster.getHashAlgorithm(), is(equalTo("SHA-512")));
+//        assertThat(mmuster.getPassword(), is(equalTo(
+//                   "1c9626af429a6291766d15cbfb38689bd8d49450520765973de70aecaf644b7d4fda711266ba9ec8fb6df30c8ab391d40330829aa85adf371bcde6b4c9bc01e6")));
+//        assertThat(mmuster.getSalt(), is(equalTo("fjiajhigafgapoa")));
+//
+//        assertThat(joe, is(not(nullValue())));
+//        assertThat(joe.getSubjectId(), is(-30L));
+//        assertThat(joe.getScreenName(), is(equalTo(JOE)));
+//        assertThat(joe.getName().getFamilyName(), is(equalTo("Public")));
+//        assertThat(joe.getName().getMiddleName(), is(nullValue()));
+//        assertThat(joe.getName().getGivenName(), is(equalTo("Joe")));
+//        assertThat(joe.getHashAlgorithm(), is(equalTo("SHA-512")));
+//        assertThat(joe.getPassword(), is(equalTo(
+//                   "4e39eba7f2927182a532cd8700bf251e58d4b0359fbb832e6af21db7501d7a49e6d8b950e0d4b15b1841af0f786c8edaa0c09ef7f474804254f7e895969d2975")));
+//        assertThat(joe.getSalt(), is(equalTo("axg8ira8fa")));
+//
+//        assertThat(nobody, is(nullValue()));
     }
 
     @Test
     @UsingDataSet(
             "datasets/org/libreccm/core/UserRepositoryTest/data.json")
-    @InSequence(20)
+    @InSequence(30)
     public void findUserByEmail() {
         final User jdoe = userRepository.findByEmailAddress("john.doe@example.com");
         final User mmuster1 = userRepository.findByEmailAddress("max.mustermann@example.org");
@@ -193,41 +248,46 @@ public class UserRepositoryTest {
         final User joe = userRepository.findByEmailAddress("joe.public@example.com");
         final User nobody = userRepository.findByScreenName("nobody@example.org");
 
-        assertThat(jdoe, is(not(nullValue())));
-        assertThat(jdoe.getSubjectId(), is(-10L));
-        assertThat(jdoe.getScreenName(), is(JDOE));
-        assertThat(jdoe.getName().getFamilyName(), is(equalTo("Doe")));
-        assertThat(jdoe.getName().getMiddleName(), is(nullValue()));
-        assertThat(jdoe.getName().getGivenName(), is(equalTo("John")));
-        assertThat(jdoe.getHashAlgorithm(), is("MD5"));
-        assertThat(jdoe.getPassword(), is("604622dc8a888eb093454ebd77ca1675"));
-        assertThat(jdoe.getSalt(), is("axg8ira8fa"));
-
-        assertThat(mmuster1, is(not(nullValue())));
-        assertThat(mmuster1.getSubjectId(), is(-20L));
-        assertThat(mmuster1.getScreenName(), is(equalTo(MMUSTER)));
-        assertThat(mmuster1.getName().getFamilyName(), is(equalTo("Mustermann")));
-        assertThat(mmuster1.getName().getMiddleName(), is(nullValue()));
-        assertThat(mmuster1.getName().getGivenName(), is(equalTo("Max")));
-        assertThat(mmuster1.getHashAlgorithm(), is(equalTo("SHA-512")));
-        assertThat(mmuster1.getPassword(), is(equalTo(
-                   "1c9626af429a6291766d15cbfb38689bd8d49450520765973de70aecaf644b7d4fda711266ba9ec8fb6df30c8ab391d40330829aa85adf371bcde6b4c9bc01e6")));
-        assertThat(mmuster1.getSalt(), is(equalTo("fjiajhigafgapoa")));
-
+        checkUsers(jdoe, mmuster1, joe, nobody);
+        
         assertThat(mmuster2, is(equalTo(mmuster1)));
         
-        assertThat(joe, is(not(nullValue())));
-        assertThat(joe.getSubjectId(), is(-30L));
-        assertThat(joe.getScreenName(), is(equalTo(JOE)));
-        assertThat(joe.getName().getFamilyName(), is(equalTo("Public")));
-        assertThat(joe.getName().getMiddleName(), is(nullValue()));
-        assertThat(joe.getName().getGivenName(), is(equalTo("Joe")));
-        assertThat(joe.getHashAlgorithm(), is(equalTo("SHA-512")));
-        assertThat(joe.getPassword(), is(equalTo(
-                   "axg8ira8fa")));
-        assertThat(joe.getSalt(), is(equalTo("fjiajhigafgapoa")));
-
-        assertThat(nobody, is(nullValue()));
+//        assertThat(jdoe, is(not(nullValue())));
+//        assertThat(jdoe.getSubjectId(), is(-10L));
+//        assertThat(jdoe.getScreenName(), is(JDOE));
+//        assertThat(jdoe.getName().getFamilyName(), is(equalTo("Doe")));
+//        assertThat(jdoe.getName().getMiddleName(), is(nullValue()));
+//        assertThat(jdoe.getName().getGivenName(), is(equalTo("John")));
+//        assertThat(jdoe.getHashAlgorithm(), is("MD5"));
+//        assertThat(jdoe.getPassword(), is("604622dc8a888eb093454ebd77ca1675"));
+//        assertThat(jdoe.getSalt(), is("axg8ira8fa"));
+//
+//        assertThat(mmuster1, is(not(nullValue())));
+//        assertThat(mmuster1.getSubjectId(), is(-20L));
+//        assertThat(mmuster1.getScreenName(), is(equalTo(MMUSTER)));
+//        assertThat(mmuster1.getName().getFamilyName(), is(equalTo("Mustermann")));
+//        assertThat(mmuster1.getName().getMiddleName(), is(nullValue()));
+//        assertThat(mmuster1.getName().getGivenName(), is(equalTo("Max")));
+//        assertThat(mmuster1.getHashAlgorithm(), is(equalTo("SHA-512")));
+//        assertThat(mmuster1.getPassword(), is(equalTo(
+//                   "1c9626af429a6291766d15cbfb38689bd8d49450520765973de70aecaf644b7d4fda711266ba9ec8fb6df30c8ab391d40330829aa85adf371bcde6b4c9bc01e6")));
+//        assertThat(mmuster1.getSalt(), is(equalTo("fjiajhigafgapoa")));
+//
+//        assertThat(mmuster2, is(equalTo(mmuster1)));
+//        //assertThat(mmuster2.equals(mmuster1), is(true));
+//        
+//        assertThat(joe, is(not(nullValue())));
+//        assertThat(joe.getSubjectId(), is(-30L));
+//        assertThat(joe.getScreenName(), is(equalTo(JOE)));
+//        assertThat(joe.getName().getFamilyName(), is(equalTo("Public")));
+//        assertThat(joe.getName().getMiddleName(), is(nullValue()));
+//        assertThat(joe.getName().getGivenName(), is(equalTo("Joe")));
+//        assertThat(joe.getHashAlgorithm(), is(equalTo("SHA-512")));
+//        assertThat(joe.getPassword(), is(equalTo(
+//                   "4e39eba7f2927182a532cd8700bf251e58d4b0359fbb832e6af21db7501d7a49e6d8b950e0d4b15b1841af0f786c8edaa0c09ef7f474804254f7e895969d2975")));
+//        assertThat(joe.getSalt(), is(equalTo("axg8ira8fa")));
+//
+//        assertThat(nobody, is(nullValue()));
 
     }
 

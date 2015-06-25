@@ -31,7 +31,7 @@
     </extension>
     
     <extension qualifier="persistence-script">
-        <property name="scriptsToExecuteAfterTest">scripts/pgsql-cleanup.sql</property>
+        <property name="scriptsToExecuteAfterTest">scripts/mysql-cleanup.sql</property>
     </extension>
 
     

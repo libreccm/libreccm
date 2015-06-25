@@ -135,7 +135,6 @@ public class Subject implements Serializable {
     public int hashCode() {
         int hash = 7;
         hash = 53 * hash + (int) (subjectId ^ (subjectId >>> 32));
-        hash = 53 * hash + Objects.hashCode(emailAddresses);
         return hash;
     }
 
@@ -156,7 +155,7 @@ public class Subject implements Serializable {
             return false;
         }
 
-        return Objects.equals(emailAddresses, other.getEmailAddresses());
+        return (subjectId == other.getSubjectId());
     }
 
     public boolean canEqual(final Object obj) {
@@ -172,7 +171,8 @@ public class Subject implements Serializable {
         return String.format("%s{ "
                                  + "subjectId = %d, "
                                  + "emailAddresses = %s"
-                                 + "%s}",
+                                 + "%s"
+                                 + " }",
                              super.toString(),
                              subjectId,
                              Objects.toString(emailAddresses),
