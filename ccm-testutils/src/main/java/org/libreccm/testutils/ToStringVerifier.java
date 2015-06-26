@@ -31,44 +31,45 @@ import java.lang.reflect.Modifier;
 
 /**
  * A base class for verifying the implementation of the {@code toString()}
- * method of an object using the {@link Parameterized}
- * test runner from JUnit.
- * 
- * To use this class create a new JUnit test class which extends this class
- * and which uses the {@link Parameterized} test runner. The class must have a
+ * method of an object using the {@link Parameterized} test runner from JUnit.
+ *
+ * To use this class create a new JUnit test class which extends this class and
+ * which uses the {@link Parameterized} test runner. The class must have a
  * static method which provides the classes to be tested. Example for testing
  * the classes {@code Foo} and {@code Bar} (imports have been omitted):
- * 
+ *
  * <pre>
- * @RunWith(Parameterized.class)
- * @Category(UnitTest.class)
- * public class FooBarTest extends ToStringVerifier {
- * 
- *     @Parameterized.Parameters(name = "{0}")
- *     public static Collection<Class<?>> data() {
- *         return Arrays.asList(new Class<?>[] {
- *             Foo.class,
- *             Bar.class
- *         }); 
+ * <code>
+ * &#x40;RunWith(Parameterized.class)
+ * &#x40;Category(UnitTest.class) public class FooBarTest extends ToStringVerifier {
+ *
+ *     &#x40;Parameterized.Parameters(name = "{0}") public static Collection<Class<?>> data() {
+ *         return Arrays.asList(new Class<?>[] { Foo.class, Bar.class });
  *     }
- * 
+ *
  *     public FooBarTest(final Class<?> entityClass) {
  *         super(entityClass);
  *     }
  * }
+ * </code>
  * </pre>
  * 
+ * An example can be found in the ccm-core module: <a href="../../../../../ccm-core/xref-test/org/libreccm/core/ToStringTest.html"><code>ToStringTest</code></a>
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class ToStringVerifier {
-    
-    private final Class<?> entityClass;
-    
+
+    private final transient Class<?> entityClass;
+
     public ToStringVerifier(final Class<?> entityClass) {
         this.entityClass = entityClass;
     }
-    
+
     @Test
+    //We want to test if there occurs an NPE therefore we need catch the NPE.
+    @SuppressWarnings({"PMD.AvoidCatchingNPE",
+                       "PMD.AvoidCatchingGenericException"})
     public void verifyToString() throws IntrospectionException,
                                         InstantiationException,
                                         IllegalAccessException,
@@ -77,7 +78,7 @@ public class ToStringVerifier {
         final Object obj = entityClass.newInstance();
 
         final Field[] fields = entityClass.getDeclaredFields();
-        for (Field field : fields) {
+        for (final Field field : fields) {
             if (!Modifier.isStatic(field.getModifiers())
                     && !field.getType().isPrimitive()) {
                 field.setAccessible(true);
@@ -99,5 +100,5 @@ public class ToStringVerifier {
 
         }
     }
-    
+
 }

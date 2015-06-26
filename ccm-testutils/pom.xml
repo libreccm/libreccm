@@ -50,6 +50,13 @@
             <artifactId>arquillian-persistence-dbunit</artifactId>
         </dependency>
         
+        <dependency>
+            <groupId>net.sourceforge.findbugs</groupId>
+            <artifactId>annotations</artifactId>
+            <version>1.3.2</version>
+            <scope>provided</scope>
+        </dependency>
+        
     </dependencies>
     
     <build>
@@ -118,7 +125,7 @@
                 <artifactId>findbugs-maven-plugin</artifactId>
                 <version>3.0.1</version>
             </plugin>
-            <!--<plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
                 <version>3.4</version>
@@ -136,7 +143,7 @@
                         <ruleset>/rulesets/java/finalizers.xml</ruleset>
                         <ruleset>/rulesets/java/imports.xml</ruleset>
                         <ruleset>/rulesets/java/javabeans.xml</ruleset>
-                        <ruleset>/rulesets/java/junit.xml</ruleset>
+                        <!--<ruleset>/rulesets/java/junit.xml</ruleset>-->
                         <ruleset>/rulesets/java/naming.xml</ruleset>
                         <ruleset>/rulesets/java/optimizations.xml</ruleset>
                         <ruleset>/rulesets/java/strictexception.xml</ruleset>
@@ -147,7 +154,7 @@
                         <ruleset>/rulesets/java/unusedcode.xml</ruleset>
                     </rulesets>
                 </configuration>
-            </plugin>-->
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>javancss-maven-plugin</artifactId>
@@ -160,8 +167,8 @@
                 <reportSets>
                     <reportSet>
                         <reports>
-                            <!--<report>dependencies</report>
-                            <report>project-team</report>
+                            <report>dependencies</report>
+                            <!--<report>project-team</report>
                             <report>mailing-list</report>
                             <report>cim</report>
                             <report>issue-tracking</report>-->

@@ -1,0 +1,4 @@
+LibreCCM Core 
+
+    The <Core> module module (<<<ccm-core>>>) for <LibreCCM> provides several
+    basic services for all other modules of LibreCCM.

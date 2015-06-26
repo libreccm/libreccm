@@ -6,14 +6,10 @@
     
     <body>
         <menu name="Overview">
-            <item name="The Core module" href="index.html"/>
+            <item name="The Shortcuts module" 
+                  href="index.html"/>
         </menu>
         <menu ref="reports"/>
     </body>
-    <!--<skin>
-        <groupId>org.apache.maven.skins</groupId>
-        <artifactId>maven-fluido-skin</artifactId>
-        <version>1.4</version>
-    </skin>-->
     
 </project>

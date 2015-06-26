@@ -25,8 +25,6 @@ import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSet;
 import org.dbunit.operation.DatabaseOperation;
-import org.jboss.arquillian.persistence.core.data.descriptor.Format;
-import org.jboss.arquillian.persistence.dbunit.dataset.DataSetBuilder;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -40,24 +38,45 @@ import java.sql.SQLException;
 
 import org.h2.tools.RunScript;
 import org.jboss.arquillian.persistence.dbunit.dataset.json.JsonDataSet;
-
-import static org.junit.Assert.*;
-
-import java.io.BufferedReader;
+import org.junit.runners.Parameterized;
 
 /**
  *
+ * For testing the CCM modules the Arquillian Persistence extension including
+ * the DBUnit integration is used. Unfortunately there are some issues with
+ * exception reporting if there errors in the datasets used for testing.
+ * Therefore we provide this utility class which can be used to implement
+ * test for the datasets outside of Arquillian. 
+ * 
+ * For testing an in-memory H2
+ * database is used. The datasets are loaded into the database using
+ * DBUnit classes. Before loading the dataset this class creates the database
+ * schema. The SQL script for generating the schema is loaded via 
+ * {@code getClass().getResource(/sql/ddl/auto/h2.sql).toURI()}. Therefore the
+ * utility expects to find the SQL for generating the database schema in the 
+ * classpath at th path {@code /sql/ddl/auto/h2.sql}. The default 
+ * {@code pom.xml} for modules take care of that.
+ * 
+ * After each dataset the database is scrapped. To use this utility create
+ * a JUnit test class using the {@link Parameterized} test runner from JUnit.
+ * An example is the
+ * <a href="../../../../../ccm-core/xref-test/org/libreccm/core/DatasetsTest.html"><code>DatasetsTest</code></a> 
+ * in the {@code org.libreccm.core} package of the ccm-core module.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class DatasetsVerifier {
 
-    private final String datasetPath;
+    private final transient String datasetPath;
 
     public DatasetsVerifier(final String datasetsPath) {
         this.datasetPath = datasetsPath;
     }
 
     @Test
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings(
+        value = "DMI_EMPTY_DB_PASSWORD",
+        justification = "H2 in mem database does not need a password")
     public void verifyDataset() throws SQLException,
                                        URISyntaxException,
                                        IOException,

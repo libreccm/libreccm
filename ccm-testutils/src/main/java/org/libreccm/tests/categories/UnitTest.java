@@ -19,7 +19,8 @@
 package org.libreccm.tests.categories;
 
 /**
- * A marker interface for use with JUnit's {@link Category} annotation.
+ * A marker interface for use with JUnit's {@link Category} annotation to mark 
+ * the tests which should be executed in every case.
  * 
  * Tests which are grouped into this category are used to test an
  * individual class. All external dependencies should be mocked.

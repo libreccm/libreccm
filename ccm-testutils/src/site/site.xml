@@ -6,7 +6,7 @@
     
     <body>
         <menu name="Overview">
-            <item name="The Core module" href="index.html"/>
+            <item name="The TestUtils module" href="index.html"/>
         </menu>
         <menu ref="reports"/>
     </body>

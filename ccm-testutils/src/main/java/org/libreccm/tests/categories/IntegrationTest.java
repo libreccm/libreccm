@@ -19,7 +19,14 @@
 package org.libreccm.tests.categories;
 
 /**
- *
+ * A marker interface for use with JUnit's {@link Category} annotation to mark 
+ * the tests which should be only executed when using one of the Arquillian 
+ * profiles.
+ * 
+ * Tests with this category are only executed in the Arquillian profiles and 
+ * are executed by Arquillian inside a Java EE container. The tests are usually
+ * used to test CDI beans and EJBs.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public interface IntegrationTest {
