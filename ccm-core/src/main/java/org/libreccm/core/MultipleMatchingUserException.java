@@ -18,30 +18,28 @@
  */
 package org.libreccm.core;
 
-
-import javax.enterprise.context.RequestScoped;
-
 /**
- * A repository class for {@link CcmObject}. 
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@RequestScoped
-public class CcmObjectRepository extends AbstractEntityRepository<Long, CcmObject> {
-
-    @Override
-    public Class<CcmObject> getEntityClass() {
-        return CcmObject.class;
-    }
-
-    @Override
-    public boolean isNew(final CcmObject entity) {
-        if (entity == null) {
-            throw new IllegalArgumentException("Can't save null.");
-        }
-        return entity.getObjectId() == 0;
-    }
-
+class MultipleMatchingUserException extends RuntimeException {
+    private static final long serialVersionUID = 100237510055701060L;
     
-
+    public MultipleMatchingUserException() {
+        super();
+    }
+    
+    public MultipleMatchingUserException(final String msg) {
+        super(msg);
+    }
+    
+    public MultipleMatchingUserException(final Exception cause) {
+        super(cause);
+    }
+    
+    public MultipleMatchingUserException(final String msg,
+                                         final Exception cause) {
+        super(msg, cause);
+    }
+    
 }

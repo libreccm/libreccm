@@ -37,6 +37,9 @@ public class UserRepository extends AbstractEntityRepository<Long, User> {
 
     @Override
     public boolean isNew(final User entity) {
+        if (entity == null) {
+            throw new IllegalArgumentException("Can't save null.");
+        }
         return entity.getSubjectId() == 0;
     }
 
@@ -47,16 +50,14 @@ public class UserRepository extends AbstractEntityRepository<Long, User> {
 
         final List<User> result = query.getResultList();
 
+        //Check if result list is empty and if not return the first element.
+        //If their ist a result than there can only be one because the 
+        //screen_name column has a unique constraint.
         if (result.isEmpty()) {
             return null;
-        } else if (result.size() == 1) {
+        } else  {
             return result.get(0);
-        } else {
-            throw new MultipleMatchingUserException(String.format(
-                "Found multipe users identified by screen name '%s'. "
-                    + "Check your database.",
-                screenname));
-        }
+        } 
     }
 
     public User findByEmailAddress(final String emailAddress) {
@@ -78,14 +79,5 @@ public class UserRepository extends AbstractEntityRepository<Long, User> {
         }
     }
 
-    private class MultipleMatchingUserException extends RuntimeException {
-
-        private static final long serialVersionUID = 100237510055701060L;
-
-        public MultipleMatchingUserException(final String message) {
-            super(message);
-        }
-
-    }
 
 }

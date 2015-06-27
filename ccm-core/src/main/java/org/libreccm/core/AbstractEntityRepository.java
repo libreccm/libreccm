@@ -45,10 +45,6 @@ public abstract class AbstractEntityRepository<K, E> {
      */
     @Inject
     private transient EntityManager entityManager;
-    
-    @Inject
-    @HibernateValidator
-    private Validator validator;
 
     /**
      * Getter method for retrieving the injected {@link EntityManager}.

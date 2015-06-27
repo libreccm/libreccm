@@ -31,6 +31,7 @@ import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -62,7 +63,7 @@ public class Subject implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long subjectId;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "subject_email_addresses",
                      joinColumns = {
                          @JoinColumn(name = "subject_id")})
@@ -81,6 +82,7 @@ public class Subject implements Serializable {
     public Subject() {
         super();
 
+        emailAddresses = new ArrayList<>();
         grantedPermissions = new ArrayList<>();
     }
 
@@ -155,7 +157,7 @@ public class Subject implements Serializable {
             return false;
         }
 
-        return (subjectId == other.getSubjectId());
+        return subjectId == other.getSubjectId();
     }
 
     public boolean canEqual(final Object obj) {

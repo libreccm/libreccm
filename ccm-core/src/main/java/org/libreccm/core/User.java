@@ -141,6 +141,7 @@ public class User extends Subject implements Serializable {
      * the next login.
      */
     @Column(name = "password_reset_required")
+    @SuppressWarnings("PMD.LongVariable") //Name is fine...
     private boolean passwordResetRequired;
 
     /**
@@ -232,6 +233,7 @@ public class User extends Subject implements Serializable {
         return passwordResetRequired;
     }
 
+    @SuppressWarnings("PMD.LongVariable")
     public void setPasswordResetRequired(final boolean passwordResetRequired) {
         this.passwordResetRequired = passwordResetRequired;
     }

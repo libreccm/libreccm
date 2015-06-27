@@ -5,6 +5,9 @@
                     "subject_id": -10
                 },
                 {
+                    "subject_id": -20
+                },
+                {
                     "subject_id": -30
                 }
             ],
@@ -17,8 +20,20 @@
                     "verified": true
                 },
                 {
+                    "subject_id": -20,
+                    "email_address": "max.mustermann@example.org",
+                    "bouncing": false,
+                    "verified": true
+                },
+                {
+                    "subject_id": -20,
+                    "email_address": "mm@example.com",
+                    "bouncing": false,
+                    "verified": true
+                },
+                {
                     "subject_id": -30,
-                    "email_address": "joe.public@example.com",
+                    "email_address": "max.mustermann@example.org",
                     "bouncing": true,
                     "verified": false
                 }
@@ -35,6 +50,17 @@
                     "salt": "axg8ira8fa",
                     "screen_name": "jdoe",
                     "subject_id": -10
+                },
+                {
+                    "banned": false,
+                    "hash_algorithm": "SHA-512",
+                    "family_name": "Mustermann",
+                    "given_name": "Max",
+                    "password": "1c9626af429a6291766d15cbfb38689bd8d49450520765973de70aecaf644b7d4fda711266ba9ec8fb6df30c8ab391d40330829aa85adf371bcde6b4c9bc01e6",
+                    "password_reset_required": false,
+                    "salt": "fjiajhigafgapoa",
+                    "screen_name": "mmuster",
+                    "subject_id": -20
                 },
                 {
                     "banned": false,

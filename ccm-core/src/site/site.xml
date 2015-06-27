@@ -8,6 +8,7 @@
         <menu name="Overview">
             <item name="The Core module" href="index.html"/>
         </menu>
+        
         <menu ref="reports"/>
     </body>
     <!--<skin>
