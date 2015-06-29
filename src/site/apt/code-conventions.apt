@@ -1,0 +1,201 @@
+        -------------------------
+        LibreCCM Code Conventions
+        -------------------------
+             Jens Pelzetter
+        -------------------------
+                2015-06-29
+        -------------------------
+
+LibreCCM Code Conventions
+
+    The LibreCCM project uses the following code conventions.
+
+* Target language and platform
+
+    The target language of the project is Java 7. At the moment we can't 
+    rely on the availability of Java 8 on the systems our users want to install
+    LibreCCM. LibreCCM also uses the 
+    {{{http://www.jcp.org/en/jsr/detail?id=342}Java EE 7 platform}}. In 
+    particular LibreCCM makes heavy use of the following APIs from the 
+    Java EE 7 standard:
+
+    * {{{http://www.jcp.org/en/jsr/detail?id=338}Java Persistence API (JPA) 2.1}}
+
+    * {{{http://www.jcp.org/en/jsr/detail?id=340}Servlet 3.1}}
+
+    * {{{http://www.jcp.org/en/jsr/detail?id=346}Context and Dependency Injection for the Java EE platform (CDI) 1.1}}
+
+    []
+
+    In consequence LibreCCM requires a Java EE compatible application server 
+    to like {{{http://wildfly.org/}Wildfly 8}} to run. We will stay as close to
+    the standard as possible, but in some cases we will enforce a specific 
+    implementation.
+
+* Coding style
+
+    The LibreCCM project uses the the 
+    {{{http://google.github.io/styleguide/javaguide.html}Google Java Style}}
+    with the following modifications:
+
+    [Block indentation] 4 spaces
+
+    [Column limit (line length)] 80 characters
+
+    [Imports] Star imports are allowed for static imports
+
+** Imports ordering
+    
+    * All static import in a single group
+
+    * All imports from com.arsdigita, org.libreccm, org.librecms, org.aplaws and 
+    org.scientificcms 
+    
+    * Third-party imports, in group per top-level package in ACSII sort order
+
+    * java imports
+
+    * javax imports
+
+* Style checking
+
+    The ensure good code quality the LibreCCM project uses 
+    {{{http://findbugs.sourceforge.net/}FindBugs}} and 
+    {{{http://pmd.sourceforge.net/}PMD}} to check the code for potential bugs
+    and other problems. Code for the official modules <<must>> pass all
+    checks from FindBugs and must follow the followings rule sets from PMD:
+
+    * {{{http://pmd.sourceforge.net/pmd-5.3.2/pmd-java/rules/java/basic.html}Basic}}
+
+    * {{{http://pmd.sourceforge.net/pmd-5.3.2/pmd-java/rules/java/braces.html}Braces}}
+
+    * {{{http://pmd.sourceforge.net/pmd-5.3.2/pmd-java/rules/java/clone.html}Clone}}
+
+    * {{{http://pmd.sourceforge.net/pmd-5.3.2/pmd-java/rules/java/codesize.html}Code Size}}
+
+    * {{{http://pmd.sourceforge.net/pmd-5.3.2/pmd-java/rules/java/design.html}Design}}
+
+    * {{{http://pmd.sourceforge.net/pmd-5.3.2/pmd-java/rules/java/empty.html}Empty code}}
+
+    * {{{http://pmd.sourceforge.net/pmd-5.3.2/pmd-java/rules/java/finalizers.html}Finalizers}}
+
+    * {{{http://pmd.sourceforge.net/pmd-5.3.2/pmd-java/rules/java/imports.html}Import statements}}
+
+    * {{{http://pmd.sourceforge.net/pmd-5.3.2/pmd-java/rules/java/javabeans.html}Java Beans}}
+
+    * {{{http://pmd.sourceforge.net/pmd-5.3.2/pmd-java/rules/java/naming.html}Naming}}
+
+    * {{{http://pmd.sourceforge.net/pmd-5.3.2/pmd-java/rules/java/optimizations.html}Optimizations}}
+
+    * {{{http://pmd.sourceforge.net/pmd-5.3.2/pmd-java/rules/java/strictexception.html}Strict exception}}
+
+    * {{{http://pmd.sourceforge.net/pmd-5.3.2/pmd-java/rules/java/strings.html}String and StringBuffer}}
+
+    * {{{http://pmd.sourceforge.net/pmd-5.3.2/pmd-java/rules/java/sunsecure.html}Security Code Guidelines}}
+
+    * {{{http://pmd.sourceforge.net/pmd-5.3.2/pmd-java/rules/java/typeresolution.html}Type resolution}}
+
+    * {{{http://pmd.sourceforge.net/pmd-5.3.2/pmd-java/rules/java/unnecessary.html}Unnecessary}}
+
+    * {{{http://pmd.sourceforge.net/pmd-5.3.2/pmd-java/rules/java/unusedcode.html}Unused code}}
+
+    []
+
+    In some cases it might necessary to suppress warnings. For FindBugs this can 
+    be done using the <<<edu.umd.cs.findbugs.annotations.SuppressWarnings>>> 
+    annotation (see {{http://findbugs.sourceforge.net/manual/annotations.html}}. 
+    To do that it is necessary to add the following dependency to the POM of the
+    module:
+
+--------------------------------------------------------------------------------
+    <dependency>
+        <groupId>net.sourceforge.findbugs</groupId>
+        <artifactId>annotations</artifactId>
+        <version>1.3.2</version>
+        <scope>provided</scope>
+    </dependency>
+-------------------------------------------------------------------------------
+
+    The scope here is <<<provided>>> because to necessary JAR file has already
+    been added due to the use of the FindBugs Maven plugin. 
+
+    For PMD the standard annotation <<<@SuppressWarnings>>> can be used:
+
+--------------------------------------------------------------------------------
+    @SuppressWarning("PMD.$rulename")
+--------------------------------------------------------------------------------
+
+    where <<<$rulename>>> is the name of rule. For example if you have a 
+    variable which name is longer than 17 characters and you can't shorten the
+    name without making the name cryptic. Example: 
+
+--------------------------------------------------------------------------------
+    ...
+    SuppressWarnings("PMD.LongVariable")
+    private boolean passwordResetRequired;
+    ...
+--------------------------------------------------------------------------------
+
+    In this case it is not possible to shorten the name of the variable without
+    making the name of the variable cryptic. The names of the rules can be found
+    in the PMD documentation (see links to the rulesets above).
+
+    In every case each usage of 
+    <<<edu.umd.cs.findbugs.annotations.SuppressWarnings>>> or 
+    <<<java.lang.SuppressWarnings>>> must be accompanied by an comment in the
+    same line or above the usage of the <<<SuppressWarnings>>> annotation.
+
+    For example
+
+--------------------------------------------------------------------------------
+    ...
+    SuppressWarnings("PMD.LongVariable") //Name is fine
+    private boolean passwordResetRequired;
+    ...
+--------------------------------------------------------------------------------
+
+    or (better)
+
+--------------------------------------------------------------------------------
+    ...
+    //Can't reduce the name without making the name cryptic
+    SuppressWarnings("PMD.LongVariable")
+    private boolean passwordResetRequired;
+    ...
+--------------------------------------------------------------------------------
+
+* Package and class names
+
+    Official modules should use on the following packages depending to which
+    subproject they belong:
+
+*-------------------------*----------------------------------------------------*
+| <<<org.libreccm>>>      | Core components or other common components         |
+*-------------------------*----------------------------------------------------*
+| <<<org.librecms>>>      | Common content management components including     |
+|                         | common content types like Article or NewsItem      |
+*-------------------------*----------------------------------------------------*
+| <<<org.aplaws>>>        | Classes of modules for usage by local authorities  |
+|                         | or other public organisations                      |
+*-------------------------*----------------------------------------------------*
+| <<<org.scientificcms>>> | Classes of modules for Scientific research         |
+|                         | organisations, universities etc.                   |
+*-------------------------*----------------------------------------------------*
+
+    Try to avoid class prefixes or long class names. Instead add an additional 
+    level to the package hierarchy. Use descriptive names for the packages. 
+    Package and class names should be chosen to be intuitive. A new developer
+    should be able to figure out the the general purpose of a class solely
+    by its package and name.
+
+    A practical example: Each content type should get its own package. Instead
+    of <<<org.librecms.contenttypes.SomeFanyContentTypeInitalizer>>> use
+    <<<org.librecms.contenttypes.somefanytype.Initalizer>>>.
+
+    This rules apply only for package and classes in the official modules. 
+    Third-party modules should use the name of the organisation as package, plus
+    the name of the official parent project. For example a custom module for 
+    LibreCMS, for instance a new content type, should use 
+    <<<org.example.librecms.contenttypes.somefancytype>>> as package. When
+    a third-party module is promoted to an official module it has to be 
+    refactored.

@@ -14,7 +14,11 @@
     <body>
         <menu name="Overview">
             <item name="Overview" href="index.html"/>
+            <item name="Code conventions" href="code-conventions.html"/>
+            <item name="Building LibreCCM" href="building.html"/>
+            <item name="Testing LibreCCM" href="testing.html"/>
         </menu>
+        
         <menu ref="modules"/>
         <menu ref="reports"/>
     </body>

@@ -1,4 +1,15 @@
+            --------------
+                Overview
+            --------------
+            Jens Pelzetter
+            --------------
+              2015-06-29
+            --------------
+
 LibreCCM Core 
 
     The <Core> module module (<<<ccm-core>>>) for <LibreCCM> provides several
     basic services for all other modules of LibreCCM.
+
+    For a detailed description of the classes and packages please refer to the 
+    JavaDoc.

@@ -8,18 +8,18 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <ccmVersion>3.0.0-SNAPSHOT</ccmVersion>
+        <!--<ccmVersion>3.0.0-SNAPSHOT</ccmVersion>-->
     </properties>
     
     <parent>
         <groupId>org.libreccm</groupId>
         <artifactId>libreccm-parent</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>7.0.0-SNAPSHOT</version>
     </parent>
     
     <groupId>org.libreccm</groupId>
     <artifactId>ccm-core</artifactId>
-    <version>6.7.0-SNAPSHOT</version>
+    <!--<version>7.0.0-SNAPSHOT</version>-->
     
     <name>LibreCCM Core</name>
     
@@ -96,7 +96,8 @@
         <dependency>
             <groupId>org.libreccm</groupId>
             <artifactId>ccm-testutils</artifactId>
-            <version>6.7.0-SNAPSHOT</version>
+            <version>${project.parent.version}</version>
+            <!--<version>7.0.0-SNAPSHOT</version>-->
             <scope>test</scope>
         </dependency>
         
@@ -364,8 +365,8 @@
                 <reportSets>
                     <reportSet>
                         <reports>
-                            <!--<report>dependencies</report>
-                            <report>project-team</report>
+                            <report>dependencies</report>
+                            <!--<report>project-team</report>
                             <report>mailing-list</report>
                             <report>cim</report>
                             <report>issue-tracking</report>-->
@@ -374,6 +375,9 @@
                         </reports>
                     </reportSet>
                 </reportSets>
+                <configuration>
+                    <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+                </configuration>
             </plugin>
         </plugins>
     </reporting>

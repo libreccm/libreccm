@@ -1,0 +1,105 @@
+            ----------------
+            Testing LibreCCM
+            ----------------
+             Jens Pelzetter
+            ----------------
+              2015-06-29
+            ----------------
+
+Testing LibreCCM
+
+    For testing the LibreCCM uses JUnit 4 and Arquillian. Arquillian is a 
+    testing platform developed by JBoss/RedHat for testing Java EE applications
+    <<inside>> an Application Server. Arquillian integrates with JUnit using
+    a <<<TestRunner>>>. 
+
+    This page only describes the special aspects of testing LibreCCM. For an
+    introduction to Arquillian please refer to the webpage and documentation
+    of Arquillian.
+
+* Controlling which tests to are executed
+
+    All tests are annotated with a category using the category feature from
+    JUnit. Test which are annotated with
+
+--------------------------------------------------------------------------------
+@Category(UnitTest.class)
+--------------------------------------------------------------------------------
+
+    are executed in every case. Tests which are annotated with 
+
+--------------------------------------------------------------------------------
+@Category(IntegrationTest.class)
+--------------------------------------------------------------------------------
+
+    are only executed when special Maven profiles are used. These profiles are
+    used to control against which Application server Arquillan should run its 
+    tests. 
+
+* Available profiles
+
+    At the moment the following profiles are provided:
+
+    [wildfly8-embedded] Uses an embedded Wildfly 8 server and the integrated H2
+    database-
+
+    [wildfly8-remote-h2-mem] Uses a remote Wildfly 8 application server and
+    a in memory H2 database
+
+    [wildfly8-remote-mysql] Uses a remote Wildfly 8 application server and
+    a MySQL or MariaDB database.
+
+    [wildfly8-remote-pgsql] Uses a remote Wildfly 8 application server and
+    a PostgreSQL database.
+
+    Please note that the profiles must be defined separately in each module.
+    Therefore maybe not all modules will provide all modules (but they should).
+
+* Planned profiles
+
+    The following profiles are planned to be added:
+
+    [wildfly8-remote-oracle] Will use a remote Wildfly 8 server and a Oracle 
+    database.
+
+    [tomee17-embedded] Will use a embedded TomEE application server, version 1.7
+    
+    [tomee17-remote-mysql] Will use a remote TomEE application server and a
+    MySQL/MariaDB database.
+    
+    [tomee17-remote-pgsql] Will use a remote TomEE application server and a 
+    PostgreSQL database.
+
+* Structure of the profiles
+
+    For each profile their is separate resource directory in the 
+    <<<src/test/resources>>> directory of the module which at least 
+    contains these files: 
+    
+    [arquillian.xml] Configuration file for Arquillian.
+
+    [test-persistence.xml] JPA configuration file. Will be renamed to 
+    <<<persistence.xml>>> and placed into the test archive by the deploy method
+    of the test. On important difference to the production <<<persistence.xml>>>
+    is that the <<<test-persistence.xml>>> configures Hibernate to automatically
+    drop the database and recreate the schema. The production 
+    <<<persistence.xml>>> is configured to only verify the schema. Schema
+    creation and migrations are done by LibreCCM.
+
+* Preparing the remote Application Servers
+
+** Wildfly 8
+
+    For using the remote profiles you have to install a Wildfly application
+    server on the system you want to run the tests on an configure these 
+    datasources:
+
+    [java:/comp/env/jdbc/org/libreccm/ccm-core/h2-mem] A in memory database 
+    using the H2 database which is part of Wildfly.
+
+    [java:/comp/env/jdbc/org/libreccm/ccm-core/mysql] MySQL database
+
+    [java:/comp/env/jdbc/org/libreccm/ccm-core/pgsql] PostgresSQL database
+
+    Please note that the database is recreated after each test. Therefore
+    you should not use a production database.

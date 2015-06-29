@@ -1,0 +1,26 @@
+            -----------------
+            Building LibreCCM
+            -----------------
+             Jens Pelzetter
+            -----------------
+               2015-06-29
+            -----------------
+
+Building LibreCCM
+
+    LibreCCM uses Maven 3 for building. The project itself is a multi module
+    project. At the moment your viewing the project page of the parent project.
+    Building LibreCCM is done using the standard Maven commands.
+
+    To control some features Maven profiles are used. Especially for testing.
+    These profiles are documented on the {{{./testing.html}Testing LibreCCM}}
+    page.
+
+* Cheat sheet for building LibreCCM
+
+    The following commands must be executed from the directory of the parent
+    project.
+
+    [Build or refresh project site] mvn clean site site:stage
+
+    [Create WAR files] ToDo

@@ -5,15 +5,15 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <ccmVersion>3.0.0-SNAPSHOT</ccmVersion>
+        <!--<ccm.version>7.0.0-SNAPSHOT</ccm.version>-->
     </properties>
 
     <groupId>org.libreccm</groupId>
     <artifactId>libreccm-parent</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
+    <version>7.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>LibreCCM 3.0.0</name>
+    <name>LibreCCM</name>
     <url>http://www.libreccm.org</url>
     <distributionManagement>
         <site>

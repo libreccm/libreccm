@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd" 
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
     
@@ -10,12 +12,12 @@
     <parent>
         <groupId>org.libreccm</groupId>
         <artifactId>libreccm-parent</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>7.0.0-SNAPSHOT</version>
     </parent>
     
     <groupId>org.libreccm</groupId>
     <artifactId>ccm-testutils</artifactId>
-    <version>6.7.0-SNAPSHOT</version>
+    <!--<version>7.0.0-SNAPSHOT</version>-->
     
     <name>LibreCCM Test Utilities</name>
     <url>http://www.libreccm.org/modules/ccm-testutils</url>
@@ -177,6 +179,9 @@
                         </reports>
                     </reportSet>
                 </reportSets>
+                <configuration>
+                    <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+                </configuration>
             </plugin>
         </plugins>
     </reporting>

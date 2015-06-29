@@ -141,7 +141,8 @@ public class User extends Subject implements Serializable {
      * the next login.
      */
     @Column(name = "password_reset_required")
-    @SuppressWarnings("PMD.LongVariable") //Name is fine...
+    //Can't shorten the name without making the name cryptic.
+    @SuppressWarnings("PMD.LongVariable")
     private boolean passwordResetRequired;
 
     /**
