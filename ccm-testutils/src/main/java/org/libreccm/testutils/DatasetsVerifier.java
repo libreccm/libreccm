@@ -40,6 +40,8 @@ import org.h2.tools.RunScript;
 import org.jboss.arquillian.persistence.dbunit.dataset.json.JsonDataSet;
 import org.junit.runners.Parameterized;
 
+import java.nio.charset.StandardCharsets;
+
 /**
  *
  * For testing the CCM modules the Arquillian Persistence extension including
@@ -88,7 +90,8 @@ public class DatasetsVerifier {
             //Create DB schema 
             final Path schemaPath = Paths.get(getClass().getResource(
                 "/sql/ddl/auto/h2.sql").toURI());
-            RunScript.execute(connection, Files.newBufferedReader(schemaPath));
+            RunScript.execute(connection, Files.newBufferedReader(
+                schemaPath, StandardCharsets.UTF_8));
             connection.commit();
 
             //Get dataset to test
