@@ -18,6 +18,9 @@
  */
 package org.libreccm.core;
 
+import static org.libreccm.core.CoreConstants.*;
+
+import org.apache.commons.codec.binary.Base64;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
@@ -30,7 +33,7 @@ import javax.inject.Inject;
 /**
  * This class provides complex operations on {@link User} objects like updating
  * the password. To use this class add an injection point to your class.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
@@ -39,74 +42,134 @@ public class UserManager {
     /**
      * {@link UserRepository} for interacting with the database. The method
      * takes care of hashing the password with random salt.
-     * 
+     *
      */
     @Inject
     private transient UserRepository userRepository;
-    
+
+    private byte[] generateHash(final byte[] password, final byte[] salt) {
+        final byte[] saltedPassword = new byte[password.length + salt.length];
+
+        System.arraycopy(password, 0, saltedPassword, 0, password.length);
+        System.arraycopy(salt, 0, saltedPassword, password.length, salt.length);
+
+        try {
+            final MessageDigest digest = MessageDigest.getInstance(
+                getHashAlgorithm());
+
+            final byte[] hashedPassword = digest.digest(saltedPassword);
+
+            return hashedPassword;
+        } catch (NoSuchAlgorithmException ex) {
+            throw new PasswordHashingFailedException(
+                "Failed to generate hash for password", ex);
+        }
+    }
+
     /**
      * Update the password of an user.
-     * 
-     * @param user The user whose password is to be updated.
+     *
+     * @param user     The user whose password is to be updated.
      * @param password The new password.
      */
     public void updatePassword(final User user, final String password) {
 
         try {
             final Random random = new Random(System.currentTimeMillis());
-            final byte[] passwordBytes = password.getBytes("UTF-8");
+            final byte[] passwordBytes = password.getBytes(UTF8);
             final byte[] salt = new byte[getSaltLength()];
             random.nextBytes(salt);
 
-            final byte[] saltedPassword = new byte[passwordBytes.length
-                                                       + salt.length];
-            System.arraycopy(passwordBytes,
-                             0,
-                             saltedPassword,
-                             0,
-                             passwordBytes.length);
-            System.arraycopy(salt,
-                             0,
-                             saltedPassword,
-                             passwordBytes.length,
-                             salt.length);
-            final MessageDigest digest = MessageDigest.getInstance(
-                getHashAlgorithm());
-            final byte[] hashedBytes = digest.digest(saltedPassword);
-            
-            final String hashedPassword = new String(hashedBytes, "UTF-8");
+            final byte[] hashedBytes = generateHash(passwordBytes, salt);
+
+            final Base64 base64 = new Base64();
+            final String hashedPassword = base64.encodeToString(hashedBytes);
+            final String saltStr = base64.encodeToString(salt);
 
             user.setPassword(hashedPassword);
+            user.setSalt(saltStr);
             userRepository.save(user);
-            
-        } catch (NoSuchAlgorithmException ex) {
-            throw new RuntimeException(String.format(
-                "Configured hash algorithm '%s 'is not available.",
-                getHashAlgorithm()), ex);
+
         } catch (UnsupportedEncodingException ex) {
-            throw new RuntimeException("UTF-8 charset is not supported.");
+            throw new PasswordHashingFailedException(
+                "UTF-8 charset is not supported.", ex);
+        }
+    }
+
+    /**
+     * Verify a password for the a specific user.
+     *
+     * @param user     The user whose password is to be checked.
+     * @param password The password to verify.
+     *
+     * @return {@code true} if the provided password matches the password
+     *         stored, {@code false} if not.
+     */
+    public boolean verifyPasswordForUser(final User user, 
+                                         final String password) {
+        final Base64 base64 = new Base64();
+        
+        try {
+            final byte[] hashed = generateHash(
+                password.getBytes(UTF8), base64.decode(user.getSalt()));
+
+            final String hashedPassword = base64.encodeAsString(hashed);
+
+            return hashedPassword.equals(user.getPassword());
+
+        } catch (UnsupportedEncodingException ex) {
+            throw new PasswordHashingFailedException(
+                "Failed to generate hash of password", ex);
+        }
+    }
+
+    public boolean verifyPasswordForScreenname(final String screenname,
+                                               final String password)
+        throws UserNotFoundException {
+        
+        final User user = userRepository.findByScreenName(screenname);
+
+        if (user == null) {
+            throw new UserNotFoundException(String.format(
+                "No user identified by screenname '%s' found.", screenname));
+        } else {
+            return verifyPasswordForUser(user, password);
+        }
+    }
+    
+    public boolean verifyPasswordForEmail(final String emailAddress,
+                                          final String password) 
+    throws UserNotFoundException{
+        
+        final User user = userRepository.findByEmailAddress(emailAddress);
+
+        if (user == null) {
+            throw new UserNotFoundException(String.format(
+                "No user identified by email address '%s' found.", emailAddress));
+        } else {
+            return verifyPasswordForUser(user, password);
         }
     }
 
     /**
      * Gets the hash algorithm to use.
-     * 
+     *
      * ToDo: Make configurable.
-     * 
+     *
      * @return At the moment SHA-512, will be made configurable.
      */
-    private String getHashAlgorithm() {
+    public String getHashAlgorithm() {
         return "SHA-512";
     }
 
     /**
      * Returns the length for the salt (number of bytes).
-     * 
+     *
      * ToDo: Make configurable.
-     * 
+     *
      * @return At the moment 256. Will be made configurable.
      */
-    private int getSaltLength() {
+    public int getSaltLength() {
         return 256;
     }
 

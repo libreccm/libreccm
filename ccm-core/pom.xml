@@ -70,6 +70,10 @@
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
         </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+        </dependency>
         
         <dependency>
             <groupId>oro</groupId>
@@ -262,7 +266,22 @@
                     </execution>
                 </executions>
             </plugin>
-            
+            <plugin>
+                <groupId>org.jboss.tattletale</groupId>
+                <artifactId>tattletale-maven</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <source>${project.build.directory}</source>
+                    <destination>${project.build.directory}/tattletale</destination>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
     

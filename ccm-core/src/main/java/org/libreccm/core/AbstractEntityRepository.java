@@ -18,7 +18,6 @@
  */
 package org.libreccm.core;
 
-import org.hibernate.validator.cdi.HibernateValidator;
 
 import java.util.List;
 
@@ -28,7 +27,6 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import javax.validation.Validator;
 
 /**
  * A base class providing common method needed by every repository. 

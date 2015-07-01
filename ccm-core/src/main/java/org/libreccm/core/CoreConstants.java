@@ -26,6 +26,7 @@ package org.libreccm.core;
 public final class CoreConstants {
     
     public static final String CORE_XML_NS = "http://core.libreccm.org";
+    public static final String UTF8 = "UTF-8";
     
     private CoreConstants() {
         //Nothing
