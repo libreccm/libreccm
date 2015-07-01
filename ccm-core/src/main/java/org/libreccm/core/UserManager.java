@@ -23,6 +23,7 @@ import static org.libreccm.core.CoreConstants.*;
 import org.apache.commons.codec.binary.Base64;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Random;
@@ -73,27 +74,21 @@ public class UserManager {
      * @param password The new password.
      */
     public void updatePassword(final User user, final String password) {
+        final Random random = new Random(System.currentTimeMillis());
+        final byte[] passwordBytes = password.getBytes(
+            StandardCharsets.UTF_8);
+        final byte[] salt = new byte[getSaltLength()];
+        random.nextBytes(salt);
 
-        try {
-            final Random random = new Random(System.currentTimeMillis());
-            final byte[] passwordBytes = password.getBytes(UTF8);
-            final byte[] salt = new byte[getSaltLength()];
-            random.nextBytes(salt);
+        final byte[] hashedBytes = generateHash(passwordBytes, salt);
 
-            final byte[] hashedBytes = generateHash(passwordBytes, salt);
+        final Base64 base64 = new Base64();
+        final String hashedPassword = base64.encodeToString(hashedBytes);
+        final String saltStr = base64.encodeToString(salt);
 
-            final Base64 base64 = new Base64();
-            final String hashedPassword = base64.encodeToString(hashedBytes);
-            final String saltStr = base64.encodeToString(salt);
-
-            user.setPassword(hashedPassword);
-            user.setSalt(saltStr);
-            userRepository.save(user);
-
-        } catch (UnsupportedEncodingException ex) {
-            throw new PasswordHashingFailedException(
-                "UTF-8 charset is not supported.", ex);
-        }
+        user.setPassword(hashedPassword);
+        user.setSalt(saltStr);
+        userRepository.save(user);
     }
 
     /**
@@ -105,28 +100,24 @@ public class UserManager {
      * @return {@code true} if the provided password matches the password
      *         stored, {@code false} if not.
      */
-    public boolean verifyPasswordForUser(final User user, 
+    public boolean verifyPasswordForUser(final User user,
                                          final String password) {
         final Base64 base64 = new Base64();
-        
-        try {
-            final byte[] hashed = generateHash(
-                password.getBytes(UTF8), base64.decode(user.getSalt()));
 
-            final String hashedPassword = base64.encodeAsString(hashed);
+        final byte[] hashed = generateHash(
+            password.getBytes(StandardCharsets.UTF_8),
+            base64.decode(user.getSalt()));
 
-            return hashedPassword.equals(user.getPassword());
+        final String hashedPassword = base64.encodeAsString(hashed);
 
-        } catch (UnsupportedEncodingException ex) {
-            throw new PasswordHashingFailedException(
-                "Failed to generate hash of password", ex);
-        }
+        return hashedPassword.equals(user.getPassword());
+
     }
 
     public boolean verifyPasswordForScreenname(final String screenname,
                                                final String password)
         throws UserNotFoundException {
-        
+
         final User user = userRepository.findByScreenName(screenname);
 
         if (user == null) {
@@ -136,11 +127,11 @@ public class UserManager {
             return verifyPasswordForUser(user, password);
         }
     }
-    
+
     public boolean verifyPasswordForEmail(final String emailAddress,
-                                          final String password) 
-    throws UserNotFoundException{
-        
+                                          final String password)
+        throws UserNotFoundException {
+
         final User user = userRepository.findByEmailAddress(emailAddress);
 
         if (user == null) {

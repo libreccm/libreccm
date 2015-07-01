@@ -48,6 +48,7 @@ import org.libreccm.tests.categories.IntegrationTest;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -168,7 +169,8 @@ public class UserManagerTest {
 
         final Base64 base64 = new Base64();
         final User user = entityManager.find(User.class, -10L);
-        final byte[] passwordBytes = newPassword.getBytes(UTF8);
+        final byte[] passwordBytes = newPassword.getBytes(
+            StandardCharsets.UTF_8);
         final String salt = user.getSalt();
         final byte[] saltBytes = base64.decode(salt);
 
@@ -201,9 +203,8 @@ public class UserManagerTest {
     @InSequence(200)
     public void verifyPasswordForUser() {
         final User user = userRepository.findById(-10L);
-        
-        //userManager.updatePassword(user, "foobar");
 
+        //userManager.updatePassword(user, "foobar");
         final boolean result = userManager.verifyPasswordForUser(user, "foobar");
 
         assertThat(result, is(true));
