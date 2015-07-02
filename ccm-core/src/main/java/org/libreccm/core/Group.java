@@ -123,7 +123,6 @@ public class Group extends Subject implements Serializable {
     public int hashCode() {
         int hash = super.hashCode();
         hash = 83 * hash + Objects.hashCode(this.name);
-        hash = 83 * hash + Objects.hashCode(this.roles);
         return hash;
     }
 
@@ -144,10 +143,7 @@ public class Group extends Subject implements Serializable {
             return false;
         }
 
-        if (!Objects.equals(this.name, other.getName())) {
-            return false;
-        }
-        return Objects.equals(this.roles, other.getRoles());
+         return Objects.equals(this.name, other.getName());
     }
 
     @Override

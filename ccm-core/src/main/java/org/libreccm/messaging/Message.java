@@ -187,8 +187,6 @@ public class Message extends CcmObject implements Serializable {
         hash = 89 * hash + Objects.hashCode(bodyMimeType);
         hash = 89 * hash + Objects.hashCode(sent);
         hash = 89 * hash + Objects.hashCode(inReplyTo);
-        hash = 89 * hash + Objects.hashCode(replies);
-        hash = 89 * hash + Objects.hashCode(attachments);
         return hash;
     }
 
@@ -230,13 +228,7 @@ public class Message extends CcmObject implements Serializable {
         if (!Objects.equals(sent, other.getSent())) {
             return false;
         }
-        if (!Objects.equals(inReplyTo, other.getInReplyTo())) {
-            return false;
-        }
-        if (!Objects.equals(replies, other.getReplies())) {
-            return false;
-        }
-        return Objects.equals(attachments, other.getAttachments());
+        return Objects.equals(inReplyTo, other.getInReplyTo());
     }
 
     @Override

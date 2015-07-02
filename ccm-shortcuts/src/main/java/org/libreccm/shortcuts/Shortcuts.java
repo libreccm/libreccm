@@ -27,24 +27,24 @@ import org.libreccm.web.Application;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "shortcut_app")
+@Table(name = "shortcuts_app")
 public class Shortcuts extends Application {
     private static final long serialVersionUID = -6793265996161649637L;
     
-    private String shortcutAppName;
+//    private String shortcutAppName;
     
     public Shortcuts() {
         super();
     }
 
-    public String getShortcutAppName() {
-        return shortcutAppName;
-    }
-
-    public void setShortcutAppName(final String shortcutAppName) {
-        this.shortcutAppName = shortcutAppName;
-    }
-    
+//    public String getShortcutAppName() {
+//        return shortcutAppName;
+//    }
+//
+//    public void setShortcutAppName(final String shortcutAppName) {
+//        this.shortcutAppName = shortcutAppName;
+//    }
+//    
     
     
 }

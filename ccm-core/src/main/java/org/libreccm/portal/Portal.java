@@ -85,7 +85,6 @@ public class Portal extends Resource implements Serializable {
     public int hashCode() {
         int hash = super.hashCode();
         hash = 79 * hash + (template ? 1 : 0);
-        hash = 79 * hash + Objects.hashCode(portlets);
         return hash;
     }
 
@@ -108,10 +107,7 @@ public class Portal extends Resource implements Serializable {
             return false;
         }
 
-        if (template != other.isTemplate()) {
-            return false;
-        }
-        return Objects.equals(portlets, other.getPortlets());
+        return (template == other.isTemplate());
     }
 
     @Override

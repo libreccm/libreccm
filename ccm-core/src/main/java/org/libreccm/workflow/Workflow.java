@@ -130,7 +130,6 @@ public class Workflow implements Serializable {
         int hash = 5;
         hash = 79 * hash + (int) (this.workflowId ^ (this.workflowId >>> 32));
         hash = 79 * hash + Objects.hashCode(this.name);
-        hash = 79 * hash + Objects.hashCode(this.tasks);
         return hash;
     }
 
@@ -150,10 +149,8 @@ public class Workflow implements Serializable {
         if (this.workflowId != other.getWorkflowId()) {
             return false;
         }
-        if (!Objects.equals(this.name, other.getName())) {
-            return false;
-        }
-        return Objects.equals(this.tasks, other.getTasks());
+        return Objects.equals(this.name, other.getName());
+        
     }
 
     public boolean canEqual(final Object obj) {

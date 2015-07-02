@@ -80,6 +80,9 @@ public class Resource extends CcmObject implements Serializable {
                                    @JoinColumn(name = "object_id")}))
     private LocalizedString description;
 
+    @ManyToOne
+    private ResourceType resourceType;
+    
     /**
      * Date on which the resource was created.
      */
@@ -118,6 +121,14 @@ public class Resource extends CcmObject implements Serializable {
         this.description = description;
     }
 
+    public ResourceType getResourceType() {
+        return resourceType;
+    }
+    
+    protected void setResourceType(final ResourceType resourceType) {
+        this.resourceType = resourceType;
+    }
+    
     public Date getCreated() {
         if (created == null) {
             return null;

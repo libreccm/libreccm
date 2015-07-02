@@ -26,6 +26,7 @@ import org.libreccm.tests.categories.UnitTest;
 
 import java.util.Arrays;
 import java.util.Collection;
+import org.libreccm.web.ApplicationType;
 
 /**
  *
@@ -45,6 +46,7 @@ public class EqualsAndHashCodeTest extends EqualsVerifier {
             Permission.class,
             PersonName.class,
             Privilege.class,
+            ResourceType.class,
             Role.class,
             User.class,
             Group.class});

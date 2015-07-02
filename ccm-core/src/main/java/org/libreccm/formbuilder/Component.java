@@ -155,7 +155,6 @@ public class Component extends CcmObject implements Serializable {
         hash = 53 * hash + Objects.hashCode(attributeString);
         hash = 53 * hash + (active ? 1 : 0);
         hash = 53 * hash + Objects.hashCode(parentComponent);
-        hash = 53 * hash + Objects.hashCode(childComponents);
         hash = 53 * hash + (int) (componentOrder ^ (componentOrder >>> 32));
         hash = 53 * hash + (selected ? 1 : 0);
         return hash;
@@ -197,9 +196,6 @@ public class Component extends CcmObject implements Serializable {
             return false;
         }
         if (!Objects.equals(parentComponent, other.getParentComponent())) {
-            return false;
-        }
-        if (!Objects.equals(childComponents, other.getChildComponents())) {
             return false;
         }
         if (componentOrder != other.getComponentOrder()) {

@@ -238,9 +238,6 @@ public class Task implements Serializable {
         hash = 79 * hash + (active ? 1 : 0);
         hash = 79 * hash + Objects.hashCode(taskState);
         hash = 79 * hash + Objects.hashCode(workflow);
-        hash = 79 * hash + Objects.hashCode(dependentTasks);
-        hash = 79 * hash + Objects.hashCode(dependsOn);
-        hash = 79 * hash + Objects.hashCode(comments);
         return hash;
     }
 
@@ -277,16 +274,7 @@ public class Task implements Serializable {
         if (!Objects.equals(taskState, other.getTaskState())) {
             return false;
         }
-        if (!Objects.equals(workflow, other.getWorkflow())) {
-            return false;
-        }
-        if (!Objects.equals(dependentTasks, other.getDependentTasks())) {
-            return false;
-        }
-        if (!Objects.equals(dependsOn, other.getDependsOn())) {
-            return false;
-        }
-        return Objects.equals(comments, other.getComments());
+        return Objects.equals(workflow, other.getWorkflow());
     }
 
     public boolean canEqual(final Object obj) {

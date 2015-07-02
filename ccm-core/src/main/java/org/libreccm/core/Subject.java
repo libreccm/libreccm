@@ -149,11 +149,11 @@ public class Subject implements Serializable {
             return false;
         }
         final Subject other = (Subject) obj;
-        if (subjectId != other.getSubjectId()) {
+            if (!other.canEqual(this)) {
             return false;
         }
-
-        if (!other.canEqual(this)) {
+        
+        if (subjectId != other.getSubjectId()) {
             return false;
         }
 

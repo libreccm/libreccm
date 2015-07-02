@@ -117,7 +117,6 @@ public class Initalizer implements Serializable {
             = 37 * hash + (int) (initializerId ^ (initializerId >>> 32));
         hash = 37 * hash + Objects.hashCode(className);
         hash = 37 * hash + Objects.hashCode(requiredBy);
-        hash = 37 * hash + Objects.hashCode(requires);
         return hash;
     }
 
@@ -140,11 +139,7 @@ public class Initalizer implements Serializable {
         if (!Objects.equals(className, other.getClassName())) {
             return false;
         }
-        if (!Objects.equals(requiredBy, other.getRequiredBy())) {
-            return false;
-        }
-        return Objects.equals(requires,
-                              other.getRequires());
+        return Objects.equals(requiredBy, other.getRequiredBy());
     }
 
     public boolean canEqual(final Object obj) {

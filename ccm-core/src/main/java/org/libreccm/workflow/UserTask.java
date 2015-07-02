@@ -212,8 +212,6 @@ public class UserTask extends Task implements Serializable {
         hash
         = 37 * hash + (int) (durationMinutes ^ (durationMinutes >>> 32));
         hash = 37 * hash + Objects.hashCode(notificationSender);
-        hash = 37 * hash + Objects.hashCode(assignedUsers);
-        hash = 37 * hash + Objects.hashCode(assignedGroups);
         return hash;
     }
 
@@ -255,13 +253,7 @@ public class UserTask extends Task implements Serializable {
         if (durationMinutes != other.getDurationMinutes()) {
             return false;
         }
-        if (!Objects.equals(notificationSender, other.getNotificationSender())) {
-            return false;
-        }
-        if (!Objects.equals(assignedUsers, other.getAssignedUsers())) {
-            return false;
-        }
-        return Objects.equals(assignedGroups, other.getAssignedGroups());
+        return Objects.equals(notificationSender, other.getNotificationSender());
     }
 
     @Override
