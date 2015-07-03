@@ -21,6 +21,7 @@ package org.libreccm.core.authentication;
 import com.arsdigita.kernel.KernelConfig;
 
 import org.libreccm.core.User;
+import org.libreccm.core.UserManager;
 import org.libreccm.core.UserRepository;
 
 import java.security.MessageDigest;
@@ -46,6 +47,9 @@ public class LocalLoginModule extends PasswordLoginModule {
      */
     @Inject
     private transient UserRepository userRepository;
+    
+    @Inject
+    private transient UserManager userManager;
 
     private transient Subject subject;
 
@@ -106,31 +110,33 @@ public class LocalLoginModule extends PasswordLoginModule {
                     "No user account identified by '%s' found.", username));
         }
 
+        return userManager.verifyPasswordForUser(user, password);
+        
         // Verify the password. The algorithm used for hashing is stored in the 
         // database so we need to retrieve the correct MessageDigest instance 
         // first.
-        try {
-            final MessageDigest digest = MessageDigest.getInstance(user
-                    .getHashAlgorithm());
-            final String saltedPassword = String.format("%s%s",
-                                                        password,
-                                                        user.getSalt());
-            final String passwordHash = new String(digest.digest(
-                    saltedPassword.getBytes()));
-
-            if (passwordHash.equals(user.getPassword())) {
-                subject.getPrincipals().add(new UserPrincipal(user));
-                return true;
-            } else {
-                return false;
-            }
-        } catch (NoSuchAlgorithmException ex) {
-            throw new LoginException(String.format(
-                    "Failed to validate password because the password stored for "
-                    + "user '%s' in the database is hashed with algorithm '%s' "
-                            + "which is not avialable.",
-                    username, user.getHashAlgorithm()));
-        }
+//        try {
+//            final MessageDigest digest = MessageDigest.getInstance(user
+//                    .getHashAlgorithm());
+//            final String saltedPassword = String.format("%s%s",
+//                                                        password,
+//                                                        user.getSalt());
+//            final String passwordHash = new String(digest.digest(
+//                    saltedPassword.getBytes()));
+//
+//            if (passwordHash.equals(user.getPassword())) {
+//                subject.getPrincipals().add(new UserPrincipal(user));
+//                return true;
+//            } else {
+//                return false;
+//            }
+//        } catch (NoSuchAlgorithmException ex) {
+//            throw new LoginException(String.format(
+//                    "Failed to validate password because the password stored for "
+//                    + "user '%s' in the database is hashed with algorithm '%s' "
+//                            + "which is not avialable.",
+//                    username, user.getHashAlgorithm()));
+//        }
 
     }
 
