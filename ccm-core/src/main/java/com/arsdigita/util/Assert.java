@@ -320,8 +320,8 @@ public class Assert {
     public static final void isEqual(final Object value1,
                                    final Object value2) {
         if (value1 == null) {
-            if (value1 != value2) {
-                final String message = value1 + " does not equal " + value2;
+            if (value2 != null) {
+                final String message = "null does not equal " + value2;
 
                 error(message);
 
@@ -351,7 +351,7 @@ public class Assert {
                                    final Object value2,
                                    final String message) {
         if (value1 == null) {
-            if (value1 != value2) {
+            if (value2 != null) {
                 error(message);
 
                 throw new AssertionError(message);
@@ -377,10 +377,10 @@ public class Assert {
     public static final void isNotEqual(final Object value1,
                                      final Object value2) {
         if (value1 == null) {
-            if (value1 == value2) {
-                final String message = value1 + " equals " + value2;
+            if (value2 == null) {
+                final String message = "null equals null";
 
-                error(message);
+                error(message); 
 
                 throw new AssertionError(message);
             }
@@ -620,9 +620,9 @@ public class Assert {
                                           String actualLabel) {
         if (isEnabled()) {
             if (expected == null) {
-                isTrue(expected == actual,
+                isTrue(actual == null,
                            "Values not equal, " +
-                           expectedLabel + " '" + expected + "', " +
+                           expectedLabel + " '" + "null" + "', " +
                            actualLabel + " '" + actual + "'");
             } else {
                 isTrue(expected.equals(actual),
