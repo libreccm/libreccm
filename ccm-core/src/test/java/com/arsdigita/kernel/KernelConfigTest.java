@@ -47,26 +47,26 @@ import static org.junit.Assert.*;
 @RunWith(Arquillian.class)
 @Category(IntegrationTest.class)
 public class KernelConfigTest {
-
+    
     public KernelConfigTest() {
     }
-
+    
     @BeforeClass
     public static void setUpClass() {
     }
-
+    
     @AfterClass
     public static void tearDownClass() {
     }
-
+    
     @Before
     public void setUp() {
     }
-
+    
     @After
     public void tearDown() {
     }
-
+    
     @Deployment
     public static WebArchive createDeployment() {
         final PomEquippedResolveStage pom = Maven
@@ -75,15 +75,15 @@ public class KernelConfigTest {
         final PomEquippedResolveStage dependencies = pom
             .importCompileAndRuntimeDependencies();
         final File[] libs = dependencies.resolve().withTransitivity().asFile();
-
+        
         for (File lib : libs) {
             System.err.printf("Adding file '%s' to test archive...%n",
                               lib.getName());
         }
-
+        
         return ShrinkWrap
             .create(WebArchive.class,
-                    "LibreCCM-org.libreccm.core.KernelConfigTest.war")
+                    "LibreCCM-com.arsdigita.kernel.KernelConfigTest.war")
             //.addPackage(CcmObject.class.getPackage())
             .addPackage(com.arsdigita.kernel.KernelConfig.class.getPackage())
             .addPackage(com.arsdigita.runtime.AbstractConfig.class.getPackage())
@@ -91,10 +91,14 @@ public class KernelConfigTest {
                 getPackage())
             .addPackage(com.arsdigita.util.JavaPropertyReader.class.
                 getPackage())
+            .addPackage(com.arsdigita.web.CCMApplicationContextListener.class
+                .getPackage())
+            .addPackage(com.arsdigita.xml.XML.class.getPackage())
+            .addPackage(com.arsdigita.xml.formatters.DateFormatter.class.getPackage())
             .addPackage(org.libreccm.tests.categories.IntegrationTest.class
                 .getPackage())
             .addAsLibraries(libs)
-            .addAsWebInfResource(
+            .addAsResource(
                 "configtests/com/arsdigita/kernel/KernelConfigTest/ccm-core.config",
                 "ccm-core.config")
             .addAsWebInfResource(
@@ -106,13 +110,13 @@ public class KernelConfigTest {
             .addAsResource(
                 "com/arsdigita/kernel/KernelConfig_parameter.properties",
                 "com/arsdigita/kernel/KernelConfig_parameter.properties")
-            .addAsWebInfResource(EmptyAsset.INSTANCE, "WEB-INF/beans.xml");
+            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
-
+    
     @Test
     public void verifyKernelConfig() {
         final KernelConfig kernelConfig = KernelConfig.getConfig();
-
+        
         assertThat(kernelConfig.isDebugEnabled(),
                    is(true));
         assertThat(kernelConfig.isDataPermissionCheckEnabled(),
@@ -132,5 +136,5 @@ public class KernelConfigTest {
         assertThat(kernelConfig.getLanguagesIndependentCode(),
                    is(equalTo("--")));
     }
-
+    
 }
