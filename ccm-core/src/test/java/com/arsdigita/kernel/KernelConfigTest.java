@@ -37,6 +37,9 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.libreccm.tests.categories.IntegrationTest;
+import sun.util.locale.StringTokenIterator;
+
+import java.util.StringTokenizer;
 
 import static org.junit.Assert.*;
 
@@ -47,26 +50,26 @@ import static org.junit.Assert.*;
 @RunWith(Arquillian.class)
 @Category(IntegrationTest.class)
 public class KernelConfigTest {
-    
+
     public KernelConfigTest() {
     }
-    
+
     @BeforeClass
     public static void setUpClass() {
     }
-    
+
     @AfterClass
     public static void tearDownClass() {
     }
-    
+
     @Before
     public void setUp() {
     }
-    
+
     @After
     public void tearDown() {
     }
-    
+
     @Deployment
     public static WebArchive createDeployment() {
         final PomEquippedResolveStage pom = Maven
@@ -75,12 +78,12 @@ public class KernelConfigTest {
         final PomEquippedResolveStage dependencies = pom
             .importCompileAndRuntimeDependencies();
         final File[] libs = dependencies.resolve().withTransitivity().asFile();
-        
+
         for (File lib : libs) {
             System.err.printf("Adding file '%s' to test archive...%n",
                               lib.getName());
         }
-        
+
         return ShrinkWrap
             .create(WebArchive.class,
                     "LibreCCM-com.arsdigita.kernel.KernelConfigTest.war")
@@ -94,7 +97,8 @@ public class KernelConfigTest {
             .addPackage(com.arsdigita.web.CCMApplicationContextListener.class
                 .getPackage())
             .addPackage(com.arsdigita.xml.XML.class.getPackage())
-            .addPackage(com.arsdigita.xml.formatters.DateFormatter.class.getPackage())
+            .addPackage(com.arsdigita.xml.formatters.DateFormatter.class
+                .getPackage())
             .addPackage(org.libreccm.tests.categories.IntegrationTest.class
                 .getPackage())
             .addAsLibraries(libs)
@@ -112,17 +116,23 @@ public class KernelConfigTest {
                 "com/arsdigita/kernel/KernelConfig_parameter.properties")
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
-    
+
     @Test
     public void verifyKernelConfig() {
         final KernelConfig kernelConfig = KernelConfig.getConfig();
-        
+
         assertThat(kernelConfig.isDebugEnabled(),
                    is(true));
+        assertThat(kernelConfig.isWebdevSupportActive(),
+                   is(false));
         assertThat(kernelConfig.isDataPermissionCheckEnabled(),
                    is(false));
         assertThat(kernelConfig.getPrimaryUserIdentifier(),
                    is(equalTo("email")));
+        assertThat(kernelConfig.screenNameIsPrimaryIdentifier(),
+                   is(false));
+        assertThat(kernelConfig.emailIsPrimaryIdentifier(),
+                   is(true));
         assertThat(kernelConfig.isSSOenabled(),
                    is(false));
         assertThat(kernelConfig.isLoginRemembered(),
@@ -135,6 +145,17 @@ public class KernelConfigTest {
                    is(true));
         assertThat(kernelConfig.getLanguagesIndependentCode(),
                    is(equalTo("--")));
+        assertThat(kernelConfig.hasLanguage("de"),
+                   is(true));
+        assertThat(kernelConfig.hasLanguage("en"),
+                   is(true));
+        assertThat(kernelConfig.hasLanguage("es"),
+                   is(false));
+        assertThat(kernelConfig.getDefaultLanguage(),
+                   is(equalTo("de")));
+        final StringTokenizer tokenizer = kernelConfig
+            .getSupportedLanguagesTokenizer();
+        assertThat(tokenizer.countTokens(), is(2));
     }
-    
+
 }
