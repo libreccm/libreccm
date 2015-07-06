@@ -1,2 +1,4 @@
-nb-configuration.xml
+.idea
+*.iml
 target
+nb-configuration.xml
