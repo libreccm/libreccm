@@ -40,7 +40,7 @@
         <module>ccm-testutils</module>
     </modules>
 
-    <repositories>
+    <!--<repositories>
         <repository>
             <id>jp-digital-snapshots</id>
             <url>http://archiva.jp-digital.de/repository/jp-digital-snapshots/</url>
@@ -61,7 +61,7 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
-    </repositories>
+    </repositories>-->
     
     <pluginRepositories>
         <pluginRepository>
