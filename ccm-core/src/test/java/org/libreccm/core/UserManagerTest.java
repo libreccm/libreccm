@@ -112,7 +112,7 @@ public class UserManagerTest {
 
         return ShrinkWrap
             .create(WebArchive.class,
-                    "LibreCCM-org.libreccm.core.UserRepositoryTest.war")
+                    "LibreCCM-org.libreccm.core.UserManagerTest.war")
             .addPackage(User.class.getPackage())
             .addPackage(org.libreccm.web.Application.class.getPackage())
             .addPackage(org.libreccm.categorization.Category.class.

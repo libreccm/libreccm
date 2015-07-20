@@ -1,0 +1,30 @@
+{
+    "subjects":
+            [
+                {
+                    "subject_id": -10
+                }
+            ],
+    "subject_email_addresses":
+            [
+                {
+                    "subject_id": -10,
+                    "email_address": "jdoe@example.com",
+                    "bouncing": false,
+                    "verified": true
+                }
+            ],
+    "ccm_users":
+            [
+                {
+                    "banned": false,
+                    "hash_algorithm": "SHA-512",
+                    "family_name": "Doe",
+                    "given_name": "John",
+                    "password": "abc8f796612f5c5b5d0c89cf86ea3b8d1c7d15f9c06851f85708013b0248b2e6d9b315b48f586168fe6cc29296e5a9090a5aab14a85b3ffd0633ca8ccc587a09",
+                    "salt": "fiagaifa",
+                    "screen_name": "jdoe",
+                    "subject_id": -10
+                }
+            ]
+}

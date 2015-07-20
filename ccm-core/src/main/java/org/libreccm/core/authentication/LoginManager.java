@@ -53,13 +53,13 @@ public class LoginManager {
     /**
      * Name of the register login context.
      */
-    private static final String REGISTER_LOGIN_CONTEXT = "RegisterLoginContext";
+    private static final String REGISTER_LOGIN_CONTEXT = "Register";
 
     @Inject
     private transient CcmSessionContext sessionContext;
 
-    @Inject
-    private transient UserRepository userRepository;
+//    @Inject
+//    private transient UserRepository userRepository;
 
     public void login(final String username, final String password)
         throws LoginException {

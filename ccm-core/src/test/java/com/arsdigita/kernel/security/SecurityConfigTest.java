@@ -103,6 +103,7 @@ public class SecurityConfigTest {
                 .getPackage())
             .addPackage(org.libreccm.tests.categories.IntegrationTest.class
                 .getPackage())
+            .addPackage(org.libreccm.core.authentication.LocalLoginModule.class.getPackage())
             .addAsLibraries(libs)
             .addAsResource(
                 "configtests/com/arsdigita/kernel/security/SecurityConfigTest/ccm-core.config",

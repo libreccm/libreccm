@@ -26,6 +26,8 @@ import com.arsdigita.util.parameter.SpecificClassParameter;
 import com.arsdigita.util.parameter.StringArrayParameter;
 import com.arsdigita.util.parameter.StringParameter;
 
+import org.libreccm.core.authentication.LocalLoginModule;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -79,7 +81,8 @@ public class SecurityConfig extends AbstractConfig {
     private final Parameter m_loginConfig = new StringArrayParameter(
         "waf.login_config", Parameter.REQUIRED,
         new String[]{
-            "Register:com.arsdigita.kernel.security.LocalLoginModule:requisite",});
+            String.format("Register:%s:requisite",
+                          LocalLoginModule.class.getName())});
 
     private final Parameter m_adminEmail = new StringParameter(
         "waf.admin.contact_email", Parameter.OPTIONAL, null);
@@ -101,13 +104,13 @@ public class SecurityConfig extends AbstractConfig {
      */
     private final Parameter m_hashAlgorithm = new StringParameter(
         "waf.security.hash_algorithm", Parameter.REQUIRED, "SHA-512");
-    
+
     /**
      * Default length of the salt for new passwords.
      */
     private final Parameter m_saltLength = new IntegerParameter(
         "waf.security.salt_length", Parameter.REQUIRED, 256);
-    
+
     /**
      * Constructs an empty SecurityConfig object
      */
@@ -123,7 +126,7 @@ public class SecurityConfig extends AbstractConfig {
         register(m_autoRegistrationOn);
         register(m_userBanOn);
         register(m_enableQuestion);
-        
+
         register(m_hashAlgorithm);
         register(m_saltLength);
 
@@ -185,7 +188,7 @@ public class SecurityConfig extends AbstractConfig {
 
     public String getAdminContactEmail() {
         String email = (String) get(m_adminEmail);
-        
+
         // Return empty string instead of looking up into the database. If no
         // email if configured for the admin we consider that as a configuration
         // issue.
@@ -223,7 +226,6 @@ public class SecurityConfig extends AbstractConfig {
 //        }
 //        return s_systemAdministratorEmailAddress;
 //    }
-
     public final boolean isAutoRegistrationOn() {
         return ((Boolean) get(m_autoRegistrationOn)).booleanValue();
     }
@@ -231,9 +233,9 @@ public class SecurityConfig extends AbstractConfig {
     public String getHashAlgorithm() {
         return (String) get(m_hashAlgorithm);
     }
-    
+
     public Integer getSaltLength() {
         return (Integer) get(m_saltLength);
     }
-    
+
 }
