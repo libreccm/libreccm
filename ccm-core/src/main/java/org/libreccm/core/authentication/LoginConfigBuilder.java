@@ -24,6 +24,7 @@ import com.arsdigita.runtime.ConfigError;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.security.auth.login.AppConfigurationEntry;
@@ -108,8 +109,10 @@ public class LoginConfigBuilder {
      *               be created, as array of strings as provided by
      *               {@link SecurityConfig#getLoginConfig()}.
      */
+    @SuppressWarnings("PMD.UseVarargs") //Can't use varargs here
     public LoginConfigBuilder(final String[] config) {
-        this.config = config;
+        this.config = new String[config.length];
+        System.arraycopy(config, 0, this.config, 0, config.length);
     }
 
     /**
@@ -259,7 +262,7 @@ public class LoginConfigBuilder {
      */
     private AppConfigurationEntry.LoginModuleControlFlag parseFlag(
         final String flag) {
-        switch (flag.toUpperCase()) {
+        switch (flag.toUpperCase(Locale.ROOT)) {
             case "REQUISITE":
                 return AppConfigurationEntry.LoginModuleControlFlag.REQUISITE;
 

@@ -46,7 +46,7 @@ public class LoginConfig extends Configuration {
     /**
      * The configuration entries.
      */
-    private final Map<String, AppConfigurationEntry[]> appConfigs;
+    private final transient Map<String, AppConfigurationEntry[]> appConfigs;
 
     private LoginConfig() {
         this.appConfigs = new HashMap<>();

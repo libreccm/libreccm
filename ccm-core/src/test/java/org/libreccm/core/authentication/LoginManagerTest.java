@@ -115,8 +115,9 @@ public class LoginManagerTest {
             .addPackage(org.libreccm.web.Application.class.getPackage())
             .addPackage(org.libreccm.categorization.Category.class.
                 getPackage())
-            .addPackage(org.libreccm.l10n.LocalizedString.class.getPackage()).
-            addPackage(org.libreccm.jpa.EntityManagerProducer.class
+            .addPackage(org.libreccm.l10n.LocalizedString.class.getPackage())
+            .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
+            .addPackage(org.libreccm.jpa.EntityManagerProducer.class
                 .getPackage())
             .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
                 .getPackage())
@@ -129,6 +130,10 @@ public class LoginManagerTest {
             .addPackage(com.arsdigita.util.parameter.AbstractParameter.class
                 .getPackage())
             .addPackage(com.arsdigita.util.UncheckedWrapperException.class
+                .getPackage())
+            .addPackage(com.arsdigita.xml.XML.class
+                .getPackage())
+            .addPackage(com.arsdigita.xml.formatters.DateTimeFormatter.class
                 .getPackage())
             .addPackage(org.libreccm.tests.categories.IntegrationTest.class
                 .getPackage())
@@ -168,11 +173,11 @@ public class LoginManagerTest {
         "datasets/org/libreccm/core/authentication/LoginManagerTest/data.json")
     @InSequence(10)
     public void loginValidCredentials() throws LoginException {
-        loginManager.login("jdoe@example.com", "correct-pw");
+        loginManager.login("jdoe@example.com", "foobar");
 
         assertThat(ccmSessionContext.getCurrentParty(), is(not(nullValue())));
         final EmailAddress emailAddress = new EmailAddress();
-        emailAddress.setAddress("jdoe@example.org");
+        emailAddress.setAddress("jdoe@example.com");
         emailAddress.setBouncing(false);
         emailAddress.setVerified(true);
         assertThat(ccmSessionContext.getCurrentParty().getEmailAddresses(),
@@ -188,6 +193,7 @@ public class LoginManagerTest {
             loginManager.login("jdoe@example.com", "wrong-pw");
         } catch (LoginException ex) {
             assertThat(ccmSessionContext.getCurrentParty(), is(nullValue()));
+            return;
         }
 
         fail("No login exception was thrown.");
@@ -202,6 +208,7 @@ public class LoginManagerTest {
             loginManager.login("jdoe@example.com", "");
         } catch (LoginException ex) {
             assertThat(ccmSessionContext.getCurrentParty(), is(nullValue()));
+            return;
         }
 
         fail("No login exception was thrown.");
@@ -216,6 +223,7 @@ public class LoginManagerTest {
             loginManager.login("", "correct-pw");
         } catch (LoginException ex) {
             assertThat(ccmSessionContext.getCurrentParty(), is(nullValue()));
+            return;
         }
 
         fail("No login exception was thrown.");
@@ -230,6 +238,7 @@ public class LoginManagerTest {
             loginManager.login("jdoe@example.com", null);
         } catch (LoginException ex) {
             assertThat(ccmSessionContext.getCurrentParty(), is(nullValue()));
+            return;
         }
 
         fail("No login exception was thrown.");
@@ -244,6 +253,7 @@ public class LoginManagerTest {
             loginManager.login(null, "correct-pw");
         } catch (LoginException ex) {
             assertThat(ccmSessionContext.getCurrentParty(), is(nullValue()));
+            return;
         }
 
         fail("No login exception was thrown.");

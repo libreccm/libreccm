@@ -20,7 +20,6 @@ package org.libreccm.core.authentication;
 
 import org.libreccm.core.CcmSessionContext;
 import org.libreccm.core.User;
-import org.libreccm.core.UserRepository;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -53,7 +52,7 @@ public class LoginManager {
     /**
      * Name of the register login context.
      */
-    private static final String REGISTER_LOGIN_CONTEXT = "Register";
+    private static final String LOGIN_CONTEXT = "Register";
 
     @Inject
     private transient CcmSessionContext sessionContext;
@@ -67,7 +66,7 @@ public class LoginManager {
         final CallbackHandler callbackHandler = new LoginCallbackHandler(
             username, password);
         final LoginContext loginContext = new LoginContext(
-            REGISTER_LOGIN_CONTEXT,
+            LOGIN_CONTEXT,
             callbackHandler);
         loginContext.login();
         final Subject subject = loginContext.getSubject();
@@ -85,10 +84,10 @@ public class LoginManager {
         }
     }
     
-    private class LoginCallbackHandler implements CallbackHandler {
+    private static class LoginCallbackHandler implements CallbackHandler {
 
-        private final String username;
-        private final String password;
+        private final transient String username;
+        private final transient String password;
 
         public LoginCallbackHandler(final String username,
                                     final String password) {
@@ -97,10 +96,11 @@ public class LoginManager {
         }
 
         @Override
+        @SuppressWarnings("PMD.UseVarargs") //Can't use varargs here
         public void handle(final Callback[] callbacks)
             throws IOException, UnsupportedCallbackException {
 
-            for (Callback callback : callbacks) {
+            for (final Callback callback : callbacks) {
                 if (callback instanceof NameCallback) {
                     ((NameCallback) callback).setName(username);
                 } else if (callback instanceof PasswordCallback) {

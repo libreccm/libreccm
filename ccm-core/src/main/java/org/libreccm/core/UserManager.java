@@ -18,11 +18,9 @@
  */
 package org.libreccm.core;
 
-import static org.libreccm.core.CoreConstants.*;
 
 import org.apache.commons.codec.binary.Base64;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

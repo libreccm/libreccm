@@ -43,7 +43,7 @@ import javax.security.auth.spi.LoginModule;
  * the shared data for use by other {@code LoginModule}s.
  *
  * This class in a reworked version of
- * {@code org.arsdigita.kernel.security.PasswordLoginModule} developed by Sameer
+ * {@code org.arsdigita.kernel.security.AbstractPasswordLoginModule} developed by Sameer
  * Ajmani (according to the JavaDoc). The main differences is that the new
  * version uses generics and multi-catch for exceptions. Also the code,
  * especially if clauses have been reworked to match the conventions enforced by
@@ -59,10 +59,9 @@ import javax.security.auth.spi.LoginModule;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public abstract class PasswordLoginModule implements LoginModule {
+public abstract class AbstractPasswordLoginModule implements LoginModule {
 
-    private static final Logger LOGGER = LogManager.getLogger(
-        PasswordLoginModule.class);
+    private static final Logger LOGGER = LogManager.getLogger(AbstractPasswordLoginModule.class);
     /**
      * Key for username in shared data map.
      */
@@ -78,8 +77,8 @@ public abstract class PasswordLoginModule implements LoginModule {
      * method.
      * We only set the fields we use in this class.
      */
-    private CallbackHandler callbackHandler;
-    private Map<String, ?> sharedState;
+    private transient CallbackHandler callbackHandler;
+    private transient Map<String, ?> sharedState;
 
     /**
      * {@inheritDoc }
@@ -155,6 +154,7 @@ public abstract class PasswordLoginModule implements LoginModule {
      *
      * @throws LoginException if an error occurs.
      */
+    @SuppressWarnings("PMD.PreserveStackTrace")
     private String retrieveUsername() throws LoginException {
         String username = (String) sharedState.get(NAME_KEY);
         if (username == null) {
@@ -178,6 +178,7 @@ public abstract class PasswordLoginModule implements LoginModule {
      *
      * @throws LoginException if an error occurs.
      */
+    @SuppressWarnings("PMD.StackTraceLost")
     private String retrievePassword() throws LoginException {
         String password = (String) sharedState.get(PASSWORD_KEY);
 

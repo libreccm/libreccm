@@ -20,15 +20,14 @@ package org.libreccm.core.authentication;
 
 import com.arsdigita.kernel.KernelConfig;
 
+import org.libreccm.cdi.utils.CdiLookupException;
+import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.core.User;
 import org.libreccm.core.UserManager;
 import org.libreccm.core.UserRepository;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 
-import javax.inject.Inject;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.login.AccountNotFoundException;
@@ -39,17 +38,7 @@ import javax.security.auth.login.LoginException;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class LocalLoginModule extends PasswordLoginModule {
-
-    /**
-     * {@link UserRepository} instance for getting user accounts from the
-     * database.
-     */
-    @Inject
-    private transient UserRepository userRepository;
-    
-    @Inject
-    private transient UserManager userManager;
+public class LocalLoginModule extends AbstractPasswordLoginModule {
 
     private transient Subject subject;
 
@@ -85,15 +74,37 @@ public class LocalLoginModule extends PasswordLoginModule {
      * @param password The password to verify.
      *
      * @return {@code true} if the password matches the password in the
-     * database, {@code false} if not or if there is no user account identified
-     * by the provided user name.
+     *         database, {@code false} if not or if there is no user account
+     *         identified by the provided user name.
      *
      * @throws LoginException If an error occurs in the process.
      */
     @Override
+    @SuppressWarnings("PMD.StackTraceLost")
     protected boolean checkPassword(final String username,
                                     final String password)
-            throws LoginException {
+        throws LoginException {
+
+        final CdiUtil cdiUtil = new CdiUtil();
+
+        final UserRepository userRepository;
+        try {
+            userRepository = cdiUtil.findBean(UserRepository.class);
+        } catch (CdiLookupException ex) {
+            throw new LoginException(
+                String.format(
+                    "Failed to obtain reference for UserRepository: %s",
+                    ex.getMessage()));
+        }
+
+        final UserManager userManager;
+        try {
+            userManager = cdiUtil.findBean(UserManager.class);
+        } catch (CdiLookupException ex) {
+            throw new LoginException(String.format(
+                "Failed to obtain reference for UserManager: %s",
+                ex.getMessage()));
+        }
 
         //Depending on the configured user identifier retrieve the user account
         //using the screen name or the email address.
@@ -107,11 +118,19 @@ public class LocalLoginModule extends PasswordLoginModule {
         //If no matching user is found report this by throwing an exception.
         if (user == null) {
             throw new AccountNotFoundException(String.format(
-                    "No user account identified by '%s' found.", username));
+                "No user account identified by '%s' found.", username));
         }
 
-        return userManager.verifyPasswordForUser(user, password);
+        final boolean result = userManager.verifyPasswordForUser(user, password);
         
+        if (result) {
+            final UserPrincipal userPrincipal = new UserPrincipal(user);
+            subject.getPrincipals().add(userPrincipal);
+            return true;
+        } else {
+            return false;
+        }
+
         // Verify the password. The algorithm used for hashing is stored in the 
         // database so we need to retrieve the correct MessageDigest instance 
         // first.
@@ -137,7 +156,6 @@ public class LocalLoginModule extends PasswordLoginModule {
 //                            + "which is not avialable.",
 //                    username, user.getHashAlgorithm()));
 //        }
-
     }
 
 }

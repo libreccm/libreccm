@@ -23,13 +23,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+
 import javax.persistence.Entity;
-import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
 import org.libreccm.core.Group;
 import org.libreccm.core.Privilege;
 import org.libreccm.core.ResourceType;
@@ -43,9 +43,11 @@ import org.libreccm.core.ResourceType;
 public class ApplicationType extends ResourceType implements Serializable {
 
     private static final long serialVersionUID = -1175728067001112457L;
+    private static final String PMD_LONG_VARIABLE = "PMD.LongVariable";
 
     @OneToMany
     @JoinColumn(name = "relevant_privilege_id")
+    @SuppressWarnings(PMD_LONG_VARIABLE)
     private List<Privilege> relevantPrivileges;
 
     @ManyToOne
@@ -54,9 +56,11 @@ public class ApplicationType extends ResourceType implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "provider_app_type_id")
+    @SuppressWarnings(PMD_LONG_VARIABLE)
     private ApplicationType providerApplicationType;
 
     @OneToMany(mappedBy = "providerApplicationType")
+    @SuppressWarnings(PMD_LONG_VARIABLE)
     private List<ApplicationType> dependentApplicationTypes;
 
     public ApplicationType() {
@@ -70,8 +74,9 @@ public class ApplicationType extends ResourceType implements Serializable {
         return Collections.unmodifiableList(relevantPrivileges);
     }
 
+    @SuppressWarnings(PMD_LONG_VARIABLE)
     protected void setRelevantPrivileges(
-            final List<Privilege> relevantPrivileges) {
+        final List<Privilege> relevantPrivileges) {
         this.relevantPrivileges = relevantPrivileges;
     }
 
@@ -95,27 +100,30 @@ public class ApplicationType extends ResourceType implements Serializable {
         return providerApplicationType;
     }
 
+    @SuppressWarnings(PMD_LONG_VARIABLE)
     protected void setProviderApplicationType(
-            final ApplicationType providerApplicationType) {
+        final ApplicationType providerApplicationType) {
         this.providerApplicationType = providerApplicationType;
     }
 
+    @SuppressWarnings(PMD_LONG_VARIABLE)
     public List<ApplicationType> getDependentApplicationTypes() {
         return Collections.unmodifiableList(dependentApplicationTypes);
     }
 
+    @SuppressWarnings(PMD_LONG_VARIABLE)
     protected void setDependentApplicationTypes(
-            final List<ApplicationType> dependentApplicationTypes) {
+        final List<ApplicationType> dependentApplicationTypes) {
         this.dependentApplicationTypes = dependentApplicationTypes;
     }
-
+    
     protected void addDependantApplicationType(
-            final ApplicationType applicationType) {
+        final ApplicationType applicationType) {
         dependentApplicationTypes.add(applicationType);
     }
 
     protected void removeDependentApplicationType(
-            final ApplicationType applicationType) {
+        final ApplicationType applicationType) {
         dependentApplicationTypes.remove(applicationType);
     }
 
@@ -160,11 +168,12 @@ public class ApplicationType extends ResourceType implements Serializable {
     @Override
     public String toString(final String data) {
         return super.toString(String.format(
-                ", containerGroup = { %s },"
-                        + "providerApplicationType = { %s }%s",
-                Objects.toString(containerGroup),
-                Objects.toString(
-                        providerApplicationType),
-                data));
+            ", containerGroup = { %s },"
+                + "providerApplicationType = { %s }%s",
+            Objects.toString(containerGroup),
+            Objects.toString(
+                providerApplicationType),
+            data));
     }
+
 }
