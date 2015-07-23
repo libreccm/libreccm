@@ -142,7 +142,105 @@ public class StringUtilsTest {
                 + "</div>\n";
         String actual = StringUtils.smartTextToHtml(src);
 
-        assertTrue(expected.equals(actual));
+//        assertTrue(expected.equals(actual));
+        String errMsg = "smartTexttoHtml, expected = " + expected
+                + " found = " + actual;
+        assertEquals(errMsg, expected, actual);
+
+    }
+
+    @Test
+    public void testSmartTextHR() {
+        String src = "---";
+
+        String expected = "<hr/>\n";
+
+        String actual = StringUtils.smartTextToHtml(src);
+        String errMsg = "smartTexttoHtml, expected = " + expected
+                + " found = " + actual;
+        assertEquals(errMsg, expected, actual);
+    }
+
+    @Test
+    public void testSmartTextURL() {
+        String src = "foo *bar* wibble /eek/\n"
+                + "and mailto:dan@berrange.com eek!\n"
+                + "\n"
+                + "the second =paragraph= contains\n"
+                + "a link to http://www.google.com\n"
+                + "and now the end is near, lets test\n"
+                + "@google(http://www.google.com) a few\n"
+                + "titled links, including a mailto\n"
+                + "@Dan B(mailto:dan@@berrange.com)";
+        String expected = "<div>\n"
+                + "foo <strong>bar</strong> wibble <em>eek</em>\n"
+                + "and <a href=\"mailto:dan@berrange.com\">mailto:dan@berrange.com</a> eek!\n"
+                + "</div>\n"
+                + "\n"
+                + "<div>\n"
+                + "the second <code>paragraph</code> contains\n"
+                + "a link to <a href=\"http://www.google.com\">http://www.google.com</a>\n"
+                + "and now the end is near, lets test\n"
+                + "<a href=\"http://www.google.com\">google</a> a few\n"
+                + "titled links, including a mailto\n"
+                + "<a href=\"mailto:dan@berrange.com\">Dan B</a>\n"
+                + "</div>\n";
+        String actual = StringUtils.smartTextToHtml(src);
+        String errMsg = "smartTexttoHtml, expected = " + expected
+                + " found = " + actual;
+        assertEquals(errMsg, expected, actual);
+    }
+
+    @Test
+    public void testSmartTextLists() {
+        String src = "+ now an enumerated list item\n"
+                + "+ and one /more/\n"
+                + "+ this one is split over two lines\n"
+                + "for testing purposes\n";
+
+        String expected = "<ol>\n"
+                + "<li>\n"
+                + "now an enumerated list item\n"
+                + "</li>\n"
+                + "<li>\n"
+                + "and one <em>more</em>\n"
+                + "</li>\n"
+                + "<li>\n"
+                + "this one is split over two lines\n"
+                + "for testing purposes\n"
+                + "</li>\n"
+                + "</ol>\n";
+        String actual = StringUtils.smartTextToHtml(src);
+        String errMsg = "smartTexttoHtml, expected = " + expected
+                + " found = " + actual;
+        assertEquals(errMsg, expected, actual);
+
+    }
+
+    @Test
+    public void testSmartTextLists2() {
+        String src = "* a bullet list\n"
+                + "* more *bullets* in\n"
+                + " this list element\n"
+                + "* a final element\n";
+
+        String expected = "<ul>\n"
+                + "<li>\n"
+                + "a bullet list\n"
+                + "</li>\n"
+                + "<li>\n"
+                + "more <strong>bullets</strong> in\n"
+                + " this list element\n"
+                + "</li>\n"
+                + "<li>\n"
+                + "a final element\n"
+                + "</li>\n"
+                + "</ul>\n";
+        String actual = StringUtils.smartTextToHtml(src);
+        String errMsg = "smartTexttoHtml, expected = " + expected
+                + " found = " + actual;
+        assertEquals(errMsg, expected, actual);
+
     }
 
     @Test
@@ -228,6 +326,34 @@ public class StringUtilsTest {
     }
 
     @Test
+    public void testSplitUp() {
+
+        String s = "/packages/foo/xsl/::vhost::/foo_::locale::.xsl";
+
+        List list = new ArrayList();
+        list = StringUtils.splitUp(s, "/::\\w+::/");
+//        if you want to see the result:
+//                        assertEquals("splitup:"
+//                        +(String)list.get(0)+", " +
+//                        (String)list.get(1)+", " +
+//                        (String)list.get(2)+", " 
+////                       + (String)list.get(3)+", " 
+////                        +(String)list.get(4)+", " 
+//                                +"sizekram="
+//                + list.size(), list.size(), 99);
+   
+        verifySplit("/packages/foo/xsl/", (String)list.get(0));
+        verifySplit("::vhost::", (String)list.get(1));
+        verifySplit("/foo_", (String)list.get(2));
+        verifySplit("::locale::", (String)list.get(3));
+        verifySplit(".xsl",(String)list.get(4));
+        assertEquals("expected array length 5, found="
+                + list.size(), list.size(), 5);
+        
+        
+    }
+
+    @Test
     public void testJoinChar() {
 
         String[] input = {"foo", "bar", "Qux"};
@@ -248,7 +374,6 @@ public class StringUtilsTest {
         String errMsg = "join string, expected = " + expected
                 + " found = " + found;
         assertEquals(errMsg, expected, found);
-
     }
 
     @Test
@@ -294,21 +419,19 @@ public class StringUtilsTest {
         String in = "<p>this is the text<br>newline .</p>one<br><b>two</b><br>";
         String expected_out = "\n\nthis is the text\nnewline . one\n two \n";
         String actual_out = StringUtils.htmlToText(in);
-       
-           String errMsg = "htmlToText, expected = " + expected_out
+
+        String errMsg = "htmlToText, expected = " + expected_out
                 + " found = " + actual_out;
-        
+
         assertEquals(errMsg, expected_out, actual_out);
 
-
-        
         in = "Text with <a <b <c > strange markup";
         expected_out = "Text with   strange markup";
         actual_out = StringUtils.htmlToText(in);
-        
+
         errMsg = "htmlToText, expected = " + expected_out
                 + " found = " + actual_out;
-        assertEquals(errMsg,expected_out, actual_out);
+        assertEquals(errMsg, expected_out, actual_out);
     }
 
     @Test
@@ -387,29 +510,28 @@ public class StringUtilsTest {
                 actual_out);
     }
 
-    @Test
-    public void testPlaceholders() {
-        String in = "foo ::bar:: wizz";
-        String expected_out = "foo eek wizz";
-        String actual_out = StringUtils.interpolate(in, "bar", "eek");
-
-        assertEquals("interpolate failed simple placeholder",
-                expected_out,
-                actual_out);
-
-        HashMap vars = new HashMap();
-        vars.put("bar", "eek");
-        vars.put("more", "wibble");
-
-        in = "foo ::bar:: wizz ::more:: done";
-        expected_out = "foo eek wizz wibble done";
-        actual_out = StringUtils.interpolate(in, vars);
-        assertEquals("interpolate failed hashmap test",
-                expected_out,
-                actual_out);
-
-    }
-
+////    @Test
+////    public void testPlaceholders() {
+////        String in = "foo ::bar:: wizz";
+////        String expected_out = "foo eek wizz";
+////        String actual_out = StringUtils.interpolate(in, "bar", "eek");
+////
+////        assertEquals("interpolate failed simple placeholder",
+////                expected_out,
+////                actual_out);
+////
+////        HashMap vars = new HashMap();
+////        vars.put("bar", "eek");
+////        vars.put("more", "wibble");
+////
+////        in = "foo ::bar:: wizz ::more:: done";
+////        expected_out = "foo eek wizz wibble done";
+////        actual_out = StringUtils.interpolate(in, vars);
+////        assertEquals("interpolate failed hashmap test",
+////                expected_out,
+////                actual_out);
+////
+////    }
     @Test
     public void testReplace() {
         String[] pairs = {null, null,
@@ -434,6 +556,13 @@ public class StringUtilsTest {
             assertEquals(expected, actual);
         }
     }
+    
+//    @Test
+//    public void testSmartTextReplace(){
+//    String src = "this is the original text";
+//            String expected = "this is the expected text";
+//            String actual = StringUtils.smartTextReplace("original","original",src);        
+//    }
 
     @Test
     public void testUrlize() {

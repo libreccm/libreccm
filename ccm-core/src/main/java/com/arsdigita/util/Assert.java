@@ -249,7 +249,7 @@ public class Assert {
                               final String label) {
         if (object == null) {
             final String message =
-                    label != null && label.trim().length() > 0
+                    label != null && !label.isEmpty()
                         ? "Value of " + label + " is null." 
                         : DEFAULT_MESSAGE ;
 
