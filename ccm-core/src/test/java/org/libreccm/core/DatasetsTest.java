@@ -42,10 +42,17 @@ public class DatasetsTest extends DatasetsVerifier {
     @Parameterized.Parameters(name = "Dataset {0}")
     public static Collection<String> data() {
         return Arrays.asList(new String[]{
+            "/datasets/org/libreccm/core/authentication/LoginManagerTest/data.json",
             "/datasets/org/libreccm/core/CcmObjectRepositoryTest/data.json",
             "/datasets/org/libreccm/core/CcmObjectRepositoryTest/after-delete.json",
             "/datasets/org/libreccm/core/CcmObjectRepositoryTest/after-save-changed.json",
             "/datasets/org/libreccm/core/CcmObjectRepositoryTest/after-save-new.json",
+            "/datasets/org/libreccm/core/GroupManagerTest/users-groups.json",
+            "/datasets/org/libreccm/core/GroupRepositoryTest/data.json",
+            "/datasets/org/libreccm/core/GroupRepositoryTest/after-delete.json",
+            "/datasets/org/libreccm/core/GroupRepositoryTest/after-save-changed.json",
+            "/datasets/org/libreccm/core/GroupRepositoryTest/after-save-new.json",
+            "/datasets/org/libreccm/core/UserManagerTest/verify-password.json",
             "/datasets/org/libreccm/core/UserRepositoryTest/data.json",
             "/datasets/org/libreccm/core/UserRepositoryTest/after-delete.json",
             "/datasets/org/libreccm/core/UserRepositoryTest/after-save-changed.json",

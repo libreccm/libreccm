@@ -40,7 +40,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import static org.libreccm.core.CoreConstants.*;
 
 import org.apache.commons.codec.binary.Base64;
 import org.jboss.arquillian.container.test.api.ShouldThrowException;

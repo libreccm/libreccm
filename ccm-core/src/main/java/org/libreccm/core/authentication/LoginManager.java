@@ -80,7 +80,7 @@ public class LoginManager {
             final UserPrincipal principal = iterator.next();
             final User user = principal.getUser();
             
-            sessionContext.setCurrentParty(user);
+            sessionContext.setCurrentSubject(user);
         }
     }
     

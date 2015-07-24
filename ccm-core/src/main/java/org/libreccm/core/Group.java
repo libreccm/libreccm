@@ -34,6 +34,8 @@ import javax.persistence.Table;
 
 import org.hibernate.validator.constraints.NotBlank;
 
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -44,12 +46,16 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Entity
 @Table(name = "ccm_groups")
+@NamedQueries({
+    @NamedQuery(name = "findGroupByName", 
+                query = "SELECT g FROM Group g WHERE g.name = :groupName")
+})
 @XmlRootElement(name = "user-group", namespace = CORE_XML_NS)
 public class Group extends Subject implements Serializable {
 
     private static final long serialVersionUID = -5555063356689597270L;
 
-    @Column(name = "name", length = 512, nullable = false)
+    @Column(name = "name", length = 512, unique = true, nullable = false)
     @NotBlank
     @XmlElement(name = "name", namespace = CORE_XML_NS)
     private String name;

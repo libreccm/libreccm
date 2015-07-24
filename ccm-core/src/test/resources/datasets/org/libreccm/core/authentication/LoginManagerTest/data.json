@@ -5,15 +5,6 @@
                     "subject_id": -10
                 }
             ],
-    "subject_email_addresses":
-            [
-                {
-                    "subject_id": -10,
-                    "email_address": "jdoe@example.com",
-                    "bouncing": false,
-                    "verified": true
-                }
-            ],
     "ccm_users":
             [
                 {
@@ -26,6 +17,15 @@
                     "password_reset_required": false,
                     "screen_name": "jdoe",
                     "subject_id": -10
+                }
+            ],
+    "user_email_addresses":
+            [
+                {
+                    "user_id": -10,
+                    "email_address": "jdoe@example.com",
+                    "bouncing": false,
+                    "verified": true
                 }
             ]
 }

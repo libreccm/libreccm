@@ -55,7 +55,6 @@ import org.libreccm.tests.categories.IntegrationTest;
 
 import java.util.List;
 
-import javax.persistence.Query;
 
 /**
  *
@@ -252,7 +251,7 @@ public class UserRepositoryTest {
     @UsingDataSet("datasets/org/libreccm/core/UserRepositoryTest/data.json")
     @ShouldMatchDataSet(value
                             = "datasets/org/libreccm/core/UserRepositoryTest/after-save-new.json",
-                        excludeColumns = {"subject_id"})
+                        excludeColumns = {"subject_id", "user_id"})
     @InSequence(500)
     public void saveNewUser() {
         final User user = new User();

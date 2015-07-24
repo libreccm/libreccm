@@ -45,6 +45,8 @@ import org.junit.runner.RunWith;
 import org.libreccm.core.CcmObject;
 import org.libreccm.core.CcmSessionContext;
 import org.libreccm.core.EmailAddress;
+import org.libreccm.core.Subject;
+import org.libreccm.core.User;
 import org.libreccm.tests.categories.IntegrationTest;
 
 import java.io.File;
@@ -175,13 +177,17 @@ public class LoginManagerTest {
     public void loginValidCredentials() throws LoginException {
         loginManager.login("jdoe@example.com", "foobar");
 
-        assertThat(ccmSessionContext.getCurrentParty(), is(not(nullValue())));
+        assertThat(ccmSessionContext.getCurrentSubject(), is(not(nullValue())));
         final EmailAddress emailAddress = new EmailAddress();
         emailAddress.setAddress("jdoe@example.com");
         emailAddress.setBouncing(false);
         emailAddress.setVerified(true);
-        assertThat(ccmSessionContext.getCurrentParty().getEmailAddresses(),
-                   contains(equalTo(emailAddress)));
+        
+        final Subject subject = ccmSessionContext.getCurrentSubject();
+        assertThat(subject, is(instanceOf(User.class)));
+        
+        final User user = (User) subject;
+        assertThat(user.getEmailAddresses(), contains(equalTo(emailAddress)));
     }
 
     @Test
@@ -192,7 +198,7 @@ public class LoginManagerTest {
         try {
             loginManager.login("jdoe@example.com", "wrong-pw");
         } catch (LoginException ex) {
-            assertThat(ccmSessionContext.getCurrentParty(), is(nullValue()));
+            assertThat(ccmSessionContext.getCurrentSubject(), is(nullValue()));
             return;
         }
 
@@ -207,7 +213,7 @@ public class LoginManagerTest {
         try {
             loginManager.login("jdoe@example.com", "");
         } catch (LoginException ex) {
-            assertThat(ccmSessionContext.getCurrentParty(), is(nullValue()));
+            assertThat(ccmSessionContext.getCurrentSubject(), is(nullValue()));
             return;
         }
 
@@ -222,7 +228,7 @@ public class LoginManagerTest {
         try {
             loginManager.login("", "correct-pw");
         } catch (LoginException ex) {
-            assertThat(ccmSessionContext.getCurrentParty(), is(nullValue()));
+            assertThat(ccmSessionContext.getCurrentSubject(), is(nullValue()));
             return;
         }
 
@@ -237,7 +243,7 @@ public class LoginManagerTest {
         try {
             loginManager.login("jdoe@example.com", null);
         } catch (LoginException ex) {
-            assertThat(ccmSessionContext.getCurrentParty(), is(nullValue()));
+            assertThat(ccmSessionContext.getCurrentSubject(), is(nullValue()));
             return;
         }
 
@@ -252,7 +258,7 @@ public class LoginManagerTest {
         try {
             loginManager.login(null, "correct-pw");
         } catch (LoginException ex) {
-            assertThat(ccmSessionContext.getCurrentParty(), is(nullValue()));
+            assertThat(ccmSessionContext.getCurrentSubject(), is(nullValue()));
             return;
         }
 

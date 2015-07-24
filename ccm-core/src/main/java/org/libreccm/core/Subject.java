@@ -63,15 +63,6 @@ public class Subject implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long subjectId;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "subject_email_addresses",
-                     joinColumns = {
-                         @JoinColumn(name = "subject_id")})
-    @Size(min = 1)
-    @XmlElementWrapper(name = "email-addresses", namespace = CORE_XML_NS)
-    @XmlElement(name = "email-address", namespace = CORE_XML_NS)
-    private List<EmailAddress> emailAddresses;
-
     @OneToMany(mappedBy = "grantee")
     //Can't shorten this variable name without reducing descriptiveness
     @SuppressWarnings("PMD.LongVariable")
@@ -82,7 +73,6 @@ public class Subject implements Serializable {
     public Subject() {
         super();
 
-        emailAddresses = new ArrayList<>();
         grantedPermissions = new ArrayList<>();
     }
 
@@ -92,26 +82,6 @@ public class Subject implements Serializable {
 
     protected void setSubjectId(final long subjectId) {
         this.subjectId = subjectId;
-    }
-
-    public List<EmailAddress> getEmailAddresses() {
-        if (emailAddresses == null) {
-            return null;
-        } else {
-            return Collections.unmodifiableList(emailAddresses);
-        }
-    }
-
-    protected void setEmailAddresses(final List<EmailAddress> eMailAddresses) {
-        this.emailAddresses = eMailAddresses;
-    }
-
-    protected void addEmailAddress(final EmailAddress emailAddress) {
-        emailAddresses.add(emailAddress);
-    }
-
-    protected void removeEmailAddress(final EmailAddress emailAddress) {
-        emailAddresses.remove(emailAddress);
     }
 
     public List<Permission> getGrantedPermissions() {
@@ -172,12 +142,10 @@ public class Subject implements Serializable {
     public String toString(final String data) {
         return String.format("%s{ "
                                  + "subjectId = %d, "
-                                 + "emailAddresses = %s"
                                  + "%s"
                                  + " }",
                              super.toString(),
                              subjectId,
-                             Objects.toString(emailAddresses),
                              data);
     }
 

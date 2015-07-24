@@ -33,24 +33,24 @@ public class CcmSessionContext implements Serializable {
 
     private static final long serialVersionUID = 6110177865273823685L;
 
-    private Subject currentParty;
-    private Subject effectiveParty;
+    private Subject currentSubject;
+    private Subject effectiveSubject;
 
-    public Subject getCurrentParty() {
-        return currentParty;
+    public Subject getCurrentSubject() {
+        return currentSubject;
     }
 
-    public void setCurrentParty(final Subject currentParty) {
-        this.currentParty = currentParty;
-        this.effectiveParty = currentParty;
+    public void setCurrentSubject(final Subject currentSubject) {
+        this.currentSubject = currentSubject;
+        this.effectiveSubject = currentSubject;
     }
 
-    public Subject getEffectiveParty() {
-        return effectiveParty;
+    public Subject getEffectiveSubject() {
+        return effectiveSubject;
     }
 
-    protected void setEffectiveParty(final Subject effectiveParty) {
-        this.effectiveParty = effectiveParty;
+    protected void setEffectiveSubject(final Subject effectiveSubject) {
+        this.effectiveSubject = effectiveSubject;
     }
     
     /**
@@ -60,15 +60,15 @@ public class CcmSessionContext implements Serializable {
      * The there is a current user the method will check if the current user
      * has the permission to use the {@code sudo} method.
      * 
-     * @param party The party with which permissions the code is executed.
+     * @param subject The party with which permissions the code is executed.
      * @param runnable The code to execute.
      */
-    public void sudo(final Subject party, final Runnable runnable) {
+    public void sudo(final Subject subject, final Runnable runnable) {
         //ToDo: Check if current user is permitted to use sudo.
         
-        effectiveParty = party;
+        effectiveSubject = subject;
         runnable.run();
-        effectiveParty = currentParty;
+        effectiveSubject = currentSubject;
     }
 
 }

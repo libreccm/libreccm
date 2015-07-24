@@ -38,9 +38,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.persistence.CollectionTable;
+import javax.persistence.ElementCollection;
+import javax.persistence.FetchType;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -94,6 +98,15 @@ public class User extends Subject implements Serializable {
     @NotBlank
     @XmlElement(name = "screen-name", namespace = CORE_XML_NS)
     private String screenName;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_email_addresses",
+                     joinColumns = {
+                         @JoinColumn(name = "user_id")})
+    @Size(min = 1)
+    @XmlElementWrapper(name = "email-addresses", namespace = CORE_XML_NS)
+    @XmlElement(name = "email-address", namespace = CORE_XML_NS)
+    private List<EmailAddress> emailAddresses;
 
     /**
      * A user can be banned which means that he or she can't login into the
@@ -171,6 +184,7 @@ public class User extends Subject implements Serializable {
         super();
 
         name = new PersonName();
+        emailAddresses = new ArrayList<>();
         this.groupMemberships = new ArrayList<>();
     }
 
@@ -188,6 +202,26 @@ public class User extends Subject implements Serializable {
 
     public void setScreenName(final String screenName) {
         this.screenName = screenName;
+    }
+
+    public List<EmailAddress> getEmailAddresses() {
+        if (emailAddresses == null) {
+            return null;
+        } else {
+            return Collections.unmodifiableList(emailAddresses);
+        }
+    }
+
+    protected void setEmailAddresses(final List<EmailAddress> eMailAddresses) {
+        this.emailAddresses = eMailAddresses;
+    }
+
+    protected void addEmailAddress(final EmailAddress emailAddress) {
+        emailAddresses.add(emailAddress);
+    }
+
+    protected void removeEmailAddress(final EmailAddress emailAddress) {
+        emailAddresses.remove(emailAddress);
     }
 
     public boolean isBanned() {
@@ -353,12 +387,14 @@ public class User extends Subject implements Serializable {
     public String toString(final String data) {
         return super.toString(String.format(", name = %s, "
                                                 + "screenName = \"%s\", "
+                                                + "emailAddress = { %s }"
                                                 + "banned = %b, "
                                                 + "ssoLogin = \"%s\" "
                                                 + "hashAlgorithm = \"%s\" "
                                                 + "passwordResetRequired = %b%s",
                                             Objects.toString(name),
                                             screenName,
+                                            Objects.toString(emailAddresses),
                                             banned,
                                             ssoLogin,
                                             hashAlgorithm,
