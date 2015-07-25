@@ -47,6 +47,8 @@ public class DatasetsTest extends DatasetsVerifier {
             "/datasets/org/libreccm/core/CcmObjectRepositoryTest/after-delete.json",
             "/datasets/org/libreccm/core/CcmObjectRepositoryTest/after-save-changed.json",
             "/datasets/org/libreccm/core/CcmObjectRepositoryTest/after-save-new.json",
+            "/datasets/org/libreccm/core/GroupManagerTest/after-add-to-group.json",
+            "/datasets/org/libreccm/core/GroupManagerTest/after-remove-from-group.json",
             "/datasets/org/libreccm/core/GroupManagerTest/users-groups.json",
             "/datasets/org/libreccm/core/GroupRepositoryTest/data.json",
             "/datasets/org/libreccm/core/GroupRepositoryTest/after-delete.json",
