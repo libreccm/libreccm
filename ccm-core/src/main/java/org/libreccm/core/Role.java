@@ -20,6 +20,7 @@ package org.libreccm.core;
 
 import java.io.Serializable;
 import java.util.Objects;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -28,7 +29,12 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
 import org.hibernate.validator.constraints.NotBlank;
+
+import javax.persistence.JoinColumn;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 
 /**
  *
@@ -36,6 +42,20 @@ import org.hibernate.validator.constraints.NotBlank;
  */
 @Entity
 @Table(name = "ccm_roles")
+@NamedQueries({
+    @NamedQuery(name = "findRolesForName",
+                query = "SELECT r FROM Role r "
+                + "WHERE r.name = :roleName "
+                + "ORDER BY r.name"),
+    @NamedQuery(name = "findRolesForSourceGroup",
+                query = "SELECT r FROM Role r "
+                + "WHERE r.sourceGroup = :sourceGroup "
+                + "ORDER BY r.name"),
+    @NamedQuery(name = "findRolesForImplicitGroup",
+                query = "SELECT r FROM Role r "
+                + "WHERE r.implicitGroup = :implicitGroup "
+                + "ORDER BY r.name")
+})
 @SuppressWarnings("PMD.ShortClassName") //Role is perfectly fine name.
 public class Role implements Serializable {
 
@@ -51,9 +71,11 @@ public class Role implements Serializable {
     private String name;
 
     @ManyToOne
+    @JoinColumn(name = "source_group_id")
     private Group sourceGroup;
 
     @OneToOne
+    @JoinColumn(name = "implicit_group_id")
     private Group implicitGroup;
 
     @Column(name = "description")
