@@ -31,6 +31,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -44,6 +46,18 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Entity
 @Table(name = "permissions")
+@NamedQueries({
+    @NamedQuery(name = "findPermissionsForSubject",
+                query = "SELECT p FROM Permission p WHERE p.grantee = :subject"),
+    @NamedQuery(name = "findPermissionsForUser",
+                query = "SELECT p FROM Permission p "
+                            + "WHERE p.grantee = :user "
+                            + "   OR p.grantee IN (SELECT g "
+                + "                                FROM Group g JOIN g.members m"
+                            + "                    WHERE m.user = :user)"),
+    @NamedQuery(name = "findPermissionsForCcmObject",
+                query = "SELECT p FROM Permission p WHERE p.object = :object")
+})
 //Can't reduce complexity yet
 @SuppressWarnings({"PMD.CyclomaticComplexity",
                    "PMD.StdCyclomaticComplexity",
@@ -150,7 +164,7 @@ public class Permission implements Serializable {
     public int hashCode() {
         int hash = 3;
         hash
-        = 31 * hash + (int) (permissionId ^ (permissionId >>> 32));
+            = 31 * hash + (int) (permissionId ^ (permissionId >>> 32));
         hash = 31 * hash + Objects.hashCode(grantee);
         hash = 31 * hash + Objects.hashCode(grantedPrivilege);
         hash = 31 * hash + Objects.hashCode(object);
@@ -207,14 +221,14 @@ public class Permission implements Serializable {
     @Override
     public String toString() {
         return String.format("%s{ "
-                                     + "permissionId = %d, "
-                                     + "grantee = %s, "
-                                     + "grantedPrivilege = %s, "
-                                     + "object = %s, "
-                                     + "creationUser = %s,"
-                                     + "creationDate = %tF %<tT, "
-                                     + "creationIp = %s"
-                                     + " }",
+                                 + "permissionId = %d, "
+                                 + "grantee = %s, "
+                                 + "grantedPrivilege = %s, "
+                                 + "object = %s, "
+                                 + "creationUser = %s,"
+                                 + "creationDate = %tF %<tT, "
+                                 + "creationIp = %s"
+                                 + " }",
                              super.toString(),
                              permissionId,
                              Objects.toString(grantee),

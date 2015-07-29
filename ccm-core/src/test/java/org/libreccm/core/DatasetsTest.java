@@ -54,6 +54,7 @@ public class DatasetsTest extends DatasetsVerifier {
             "/datasets/org/libreccm/core/GroupRepositoryTest/after-delete.json",
             "/datasets/org/libreccm/core/GroupRepositoryTest/after-save-changed.json",
             "/datasets/org/libreccm/core/GroupRepositoryTest/after-save-new.json",
+            "/datasets/org/libreccm/core/PermissionRepositoryTest/data.json",
             "/datasets/org/libreccm/core/RoleRepositoryTest/data.json",
             "/datasets/org/libreccm/core/RoleRepositoryTest/after-delete.json",
             "/datasets/org/libreccm/core/RoleRepositoryTest/after-save-changed.json",

@@ -131,7 +131,6 @@ public class UserRepositoryTest {
                            "META-INF/persistence.xml")
             .addAsWebInfResource("test-web.xml", "WEB-INF/web.xml")
             .addAsWebInfResource(EmptyAsset.INSTANCE, "WEB-INF/beans.xml");
-
     }
 
     @Test

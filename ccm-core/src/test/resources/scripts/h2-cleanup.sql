@@ -1,3 +1,7 @@
+DELETE FROM permissions;
+
+DELETE FROM ccm_privileges;
+
 DELETE FROM ccm_objects;
 
 DELETE FROM ccm_roles;
