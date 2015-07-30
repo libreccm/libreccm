@@ -18,7 +18,6 @@ package com.arsdigita.util;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,16 +26,6 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.oro.text.perl.Perl5Util;
-import org.apache.oro.text.regex.MalformedPatternException;
-import org.apache.oro.text.regex.MatchResult;
-//import org.apache.oro.text.regex.Pattern;
-import org.apache.oro.text.regex.PatternMatcherInput;
-import org.apache.oro.text.regex.Perl5Compiler;
-import org.apache.oro.text.regex.Perl5Matcher;
-import org.apache.oro.text.regex.Substitution;
-import org.apache.oro.text.regex.Util;
 
 import org.apache.log4j.Logger;
 
@@ -49,8 +38,6 @@ public class StringUtils {
 
     private static final Logger s_log = Logger.getLogger(StringUtils.class);
 
-    private static Perl5Util s_re = new Perl5Util();
-
     public static final String NEW_LINE = System.getProperty("line.separator");
 
     private StringUtils() {
@@ -60,14 +47,14 @@ public class StringUtils {
     /**
      * Tests if a string is empty.
      *
-     * @param s A string to test
-     * @return <code>true</code> if <code>s</code> is null or empty; otherwise
+     * @param str A string to test
+     * @return <code>true</code> if <code>str</code> is null or empty; otherwise
      * <code>false</code>
      *
      */
-    public static boolean emptyString(String s) {
-        if (s != null) {
-            return s.isEmpty();
+    public static boolean emptyString(final String str) {
+        if (str != null) {
+            return str.isEmpty();
         }
         return true;
     }
@@ -75,38 +62,41 @@ public class StringUtils {
     /**
      * Tests if a string is empty.
      *
-     * @param o A string to test
+     * @param obj A string to test
      * @return <code>true</code> if <code>o</code> is null or empty; otherwise
      * <code>false</code>
      */
-    public static boolean emptyString(Object o) {
-        boolean expr
-                = (o == null || (o instanceof String && ((String) o).length() == 0));
+    public static boolean emptyString(final Object obj) {
+        final boolean expr
+                = (obj == null || (obj instanceof String && ((String) obj).length() == 0));
         return expr;
     }
 
     /**
      * If the String is null, returns an empty string. Otherwise, returns the
      * string unaltered
+     *
+     * @param str
+     * @return empty or unalterd string
      */
-    public static String nullToEmptyString(String s) {
-        return (s == null) ? "" : s;
+    public static String nullToEmptyString(final String str) {
+        return (str == null) ? "" : str;
     }
 
     /**
      * Escapes some "special" characters in HTML text (ampersand, angle
      * brackets, quote).
      *
-     * @param s The plain-text string to quote
+     * @param str The plain-text string to quote
      * @return The string with special characters escaped.
      */
-    public static String quoteHtml(String s) {
-        if (s != null) {
-            s = s.replaceAll("&", "&amp;");
-            s = s.replaceAll("\"", "&quot;");
-            s = s.replaceAll("<", "&lt;");
-            s = s.replaceAll(">", "&gt;");
-            return s;
+    public static String quoteHtml(String str) {
+        if (str != null) {
+            str = str.replaceAll("&", "&amp;");
+            str = str.replaceAll("\"", "&quot;");
+            str = str.replaceAll("<", "&lt;");
+            str = str.replaceAll(">", "&gt;");
+            return str;
         } else {
             return "";
         }
@@ -116,19 +106,19 @@ public class StringUtils {
      * Takes a plaintext string, and returns an HTML string that, when rendered
      * by a web browser, will appear as the original input string
      *
-     * @param s The input plaintext string
+     * @param str The input plaintext string
      * @return A HTML string with blank lines coverted to <pre>&lt;p></pre> and
      * ampersands/angle brackets escaped.
      */
-    public static String textToHtml(String s) {
-        s = quoteHtml(s);
-        s = s.replaceAll("\r\n\r\n", "<p>");
-        s = s.replaceAll("\n\n", "<p>");
-        s = s.replaceAll("\r\r", "<p>");
-        s = s.replaceAll("\r\n", "<br>");
-        s = s.replaceAll("\n", "<br>");
-        s = s.replaceAll("\r", "<br>");
-        return s;
+    public static String textToHtml(String str) {
+        str = quoteHtml(str);
+        str = str.replaceAll("\r\n\r\n", "<p>");
+        str = str.replaceAll("\n\n", "<p>");
+        str = str.replaceAll("\r\r", "<p>");
+        str = str.replaceAll("\r\n", "<br>");
+        str = str.replaceAll("\n", "<br>");
+        str = str.replaceAll("\r", "<br>");
+        return str;
     }
 
     /**
@@ -136,17 +126,17 @@ public class StringUtils {
      * extensive conversion of HTML fragments to plain text equivalents, see
      * {@link HtmlToText}.
      */
-    public static String htmlToText(String s) {
-        if (s != null) {
+    public static String htmlToText(String str) {
+        if (str != null) {
             // first take out new-lines
-            s = s.replaceAll("\n", "");
-            s = s.replaceAll("\r", "");
+            str = str.replaceAll("\n", "");
+            str = str.replaceAll("\r", "");
 
-            s = s.replaceAll("<[pP]>", "\n\n");
-            s = s.replaceAll("<br>", "\n");
+            str = str.replaceAll("<[pP]>", "\n\n");
+            str = str.replaceAll("<br>", "\n");
             // take out other tags
-            s = s.replaceAll("<[^>]*>", " ");
-            return s;
+            str = str.replaceAll("<[^>]*>", " ");
+            return str;
         } else {
             return "";
         }
@@ -191,27 +181,29 @@ public class StringUtils {
      * &reg;
      * </ul>
      */
-    public static String smartTextToHtml(String s) {
-        ArrayList blocks = new ArrayList();
+    public static String smartTextToHtml(final String str) {
 
         //first splits the string at every new line
-        s_re.split(blocks, "/\\r?\\n(\\r?\\n)+/", s);
+//        String blocks2[] = str.split( "\r?\n(\r?(?<=\n))"); 
+//          Arrays.asList(str.split( "?<=\r?\n\r?\n")
+//        ArrayList blocks = new ArrayList();
+        final List<String> blocks = splitUpAtNewLine(str);
 
-//        String[] blocks = s.split("[\n\r]");
-        Pattern hrpattern = Pattern.compile("-{3,}|_{3,}");
-        Pattern asterisk = Pattern.compile("^\\*");
-        Pattern plus = Pattern.compile("^\\+");
-        Pattern word = Pattern.compile(".*[a-zA-Z_0-9\\*\\+].*"); // \\w
+//        s_re.split(blocks, "/\\r?\\n(\\r?\\n)+/", s);
+        final Pattern hrpattern = Pattern.compile("-{3,}|_{3,}");
+        final Pattern asterisk = Pattern.compile("^\\*");
+        final Pattern plus = Pattern.compile("^\\+");
+        final Pattern word = Pattern.compile(".*[a-zA-Z_0-9\\*\\+].*"); // \\w
 
-        StringBuffer html = new StringBuffer("");
-        Iterator i = blocks.iterator();
-        while (i.hasNext()) {
-            String block = (String) i.next();
+        final StringBuffer html = new StringBuffer("");
+        final Iterator iter = blocks.iterator();
+        while (iter.hasNext()) {
+            final String block = (String) iter.next();
 
-            Matcher hrmatcher = hrpattern.matcher(block);
-            Matcher asteriskmatcher = asterisk.matcher(block);
-            Matcher plusmatcher = plus.matcher(block);
-            Matcher wordmatcher = word.matcher(block);
+            final Matcher hrmatcher = hrpattern.matcher(block);
+            final Matcher asteriskmatcher = asterisk.matcher(block);
+            final Matcher plusmatcher = plus.matcher(block);
+            final Matcher wordmatcher = word.matcher(block);
 
             if (hrmatcher.find()) { // horizontal line 
                 html.append("<hr/>");
@@ -231,17 +223,17 @@ public class StringUtils {
      *
      * @param match
      * @param type
-     * @param s
+     * @param str
      * @return
      */
-    private static String smartTextList(String match,
-            String type,
-            String s) {
+    private static String smartTextList(final String match,
+            final String type,
+            final String str) {
 //        ArrayList blocks = new ArrayList();
 //        s_re.split(blocks, match, s);
-        String[] blocks = s.split(match);
+        final String[] blocks = str.split(match);
 
-        StringBuffer list = new StringBuffer("<" + type + ">\n");
+        final StringBuffer list = new StringBuffer("<" + type + ">\n");
 //        Iterator i = blocks.iterator();
 
         for (int j = 0; j < blocks.length; j++) {
@@ -272,240 +264,125 @@ public class StringUtils {
     /**
      * dont use directly, use smartTextToHtml instead
      *
-     * @param s
+     * @param str
      * @return
      */
-    private static String smartTextInline(String s) {
+    private static String smartTextInline(String str) {
         if (s_log.isDebugEnabled()) {
-            s_log.debug("Input {" + s + "}");
+            s_log.debug("Input {" + str + "}");
         }
 
         // We're going to use the octal characters \u0001 and \u0002 for
         // escaping stuff, so we'd better make sure there aren't any
         // in the text.
-        s = s.replaceAll("[\u0001|\u0002|\u0003]", "");
+        str = str.replaceAll("[\u0001|\u0002|\u0003]", "");
 
         // We transform a few common symbols
-        s = s.replaceAll("1/4", "&frac14;");
-        s = s.replaceAll("1/2", "&frac12;");
-        s = s.replaceAll("3/4", "&frac34;");
-        s = s.replaceAll("\\([Cc]\\)", "&copy;");
-        s = s.replaceAll("\\([Rr]\\)", "&reg;");
-        s = s.replaceAll("\\(TM\\)|\\(tm\\)", "<sup>TM</sup>");
-        s = s.replaceAll("^\\+", "");
+        str = str.replaceAll("1/4", "&frac14;");
+        str = str.replaceAll("1/2", "&frac12;");
+        str = str.replaceAll("3/4", "&frac34;");
+        str = str.replaceAll("\\([Cc]\\)", "&copy;");
+        str = str.replaceAll("\\([Rr]\\)", "&reg;");
+        str = str.replaceAll("\\(TM\\)|\\(tm\\)", "<sup>TM</sup>");
+        str = str.replaceAll("^\\+", "");
 
         if (s_log.isDebugEnabled()) {
-            s_log.debug("After entities {" + s + "}");
+            s_log.debug("After entities {" + str + "}");
         }
 
         // Next lets process italics /italic/
-        s = s.replaceAll("/+([a-zA-Z_0-9]+)+/", "<em>$1</em>");
+        str = str.replaceAll("/+([a-zA-Z_0-9]+)+/", "<em>$1</em>");
         // Lets process bold text *bold*
-        s = s.replaceAll("\\*+([a-zA-Z_0-9]+)+\\*", "<strong>$1</strong>");
+        str = str.replaceAll("\\*+([a-zA-Z_0-9]+)+\\*", "<strong>$1</strong>");
         // Now we're onto the monospace stuff =monospace=
-        s = s.replaceAll("\\=+([a-zA-Z_0-9]+)+\\=", "<code>$1</code>");
+        str = str.replaceAll("\\=+([a-zA-Z_0-9]+)+\\=", "<code>$1</code>");
 
         if (s_log.isDebugEnabled()) {
-            s_log.debug("After styles {" + s + "}");
+            s_log.debug("After styles {" + str + "}");
         }
 
         // untitled mailto    
         //"mailto:dan@berrange.com" to
         //"<a href=\"mailto:dan@berrange.com\">mailto:dan@berrange.com</a>"
-        s = s.replaceAll("mailto:([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[A-Za-z]{2,4})\\b",
+        str = str.replaceAll("mailto:([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[A-Za-z]{2,4})\\b",
                 "<a href=\\\"mailto:$1\\\">mailto:$1</a>");
 
         //adding a '@' before every untitled link so it does not interfere with 
         // titled links
-        s = s.replaceAll("(http[s]*://www\\..+\\.[A-Za-z]{2,4})",
+        str = str.replaceAll("(http[s]*://www\\..+\\.[A-Za-z]{2,4})",
                 "@$1");
 
         // titled Links
         //"@google(http://www.google.com) to
         //<a href=\"http://www.google.com\">google</a>"
-        s = s.replaceAll("@(\\w+)\\(@(http*[s]*:*/*/*www\\..+\\.[A-Za-z]{2,4})\\)",
+        str = str.replaceAll("@(\\w+)\\(@(http*[s]*:*/*/*www\\..+\\.[A-Za-z]{2,4})\\)",
                 "<a href=\\\"$2\\\">$1</a>");
         //titled mailto
         //"@Dan B(mailto:dan@@berrange.com)" to 
         //"<a href=\"mailto:dan@berrange.com\">Dan B</a>"
-        s = s.replaceAll("@([\\w\\s]+)\\(mailto:([a-zA-Z0-9._%+-]+@@[a-zA-Z0-9.-]+\\.[A-Za-z]{2,4})\\)",
+        str = str.replaceAll("@([\\w\\s]+)\\(mailto:([a-zA-Z0-9._%+-]+@@[a-zA-Z0-9.-]+\\.[A-Za-z]{2,4})\\)",
                 "<a href=\\\"mailto:$2\\\">$1</a>");
         //remove one of the two @'s
-        s = s.replaceAll("mailto:([a-zA-Z0-9._%+-]+)+@@([a-zA-Z0-9.-]+\\.[A-Za-z]{2,4})",
+        str = str.replaceAll("mailto:([a-zA-Z0-9._%+-]+)+@@([a-zA-Z0-9.-]+\\.[A-Za-z]{2,4})",
                 "mailto:$1@$2");
 
         //untitled links (which got an '@' in front now)
-        s = s.replaceAll("@(http[s]*://www\\..+\\.[A-Za-z]{2,4})",
+        str = str.replaceAll("@(http[s]*://www\\..+\\.[A-Za-z]{2,4})",
                 "<a href=\\\"$1\\\">$1</a>");
 
         if (s_log.isDebugEnabled()) {
-            s_log.debug("After links {" + s + "}");
+            s_log.debug("After links {" + str + "}");
         }
 
-        return s;
+        return str;
     }
 
     /**
-     * same as replaceAll()?
      *
      * @param subst
      * @param pattern
-     * @param s
+     * @param str
      * @return
      */
-    private static String smartTextReplace(Substitution subst,
-            String pattern,
-            String s) {
-        Perl5Matcher matcher = new Perl5Matcher();
-        Perl5Compiler compiler = new Perl5Compiler();
-        StringBuffer result = new StringBuffer();
-        PatternMatcherInput input = new PatternMatcherInput(s);
+    private static String smartTextReplace(final String subst,
+            final String pattern,
+            String str) {
+        str = str.replaceAll(pattern, subst);
 
-        try {
-            Util.substitute(result,
-                    matcher,
-                    compiler.compile(pattern),
-                    subst,
-                    input,
-                    Util.SUBSTITUTE_ALL);
-        } catch (MalformedPatternException e) {
-            throw new UncheckedWrapperException("cannot perform substitution", e);
-        }
-        return result.toString();
-
+        return str;
     }
-
-    /**
-     *
-     */
-//    private static class TitledLinkSubstitution implements Substitution {
-//
-//        private Map m_hash;
-//
-//        public TitledLinkSubstitution(Map hash) {
-//            m_hash = hash;
-//    }
-//
-//        @Override
-//        public void appendSubstitution(StringBuffer appendBuffer,
-//                MatchResult match,
-//                int substitutionCount,
-//                PatternMatcherInput originalInput,
-//                PatternMatcher matcher,
-//                Pattern pattern) {
-//            String title = match.group(1);
-//            String link = match.group(2);
-//            s_log.debug("Link: " + link);
-//
-//            Integer i = m_hash.size();
-//            s_log.debug("Key: " + i);
-//            m_hash.put(i, link);
-//            String dst = "@" + title + "(\u0002" + i.toString() + "\u0002)";
-//            appendBuffer.append(dst);
-//            s_log.debug("Encoded Link: " + dst);
-//        }
-//    }
-//    /**
-//     *
-//     */
-//    private static class UnobscureSubstitution implements Substitution {
-//
-//        private Map m_hash;
-//
-//        public UnobscureSubstitution(Map hash) {
-//            m_hash = hash;
-//        }
-//
-//        public void appendSubstitution(StringBuffer appendBuffer,
-//                MatchResult match,
-//                int substitutionCount,
-//                PatternMatcherInput originalInput,
-//                PatternMatcher matcher,
-//                Pattern pattern) {
-//            String s = match.group(1);
-//            s_log.debug("Key: " + s);
-//
-//            Integer i = Integer.valueOf(s);
-//            appendBuffer.append((String) m_hash.get(i));
-//            s_log.debug("Link: " + m_hash.get(i));
-//        }
-//    }
-//
-//    /**
-//     *
-//     */
-//    private static class EntitySubstitution implements Substitution {
-//
-//        public void appendSubstitution(StringBuffer appendBuffer,
-//                MatchResult match,
-//                int substitutionCount,
-//                PatternMatcherInput originalInput,
-//                PatternMatcher matcher,
-//                Pattern pattern) {
-//            String s = match.group(1);
-//            s_log.debug("Key: " + s);
-//
-//            appendBuffer.append((String) s_entities.get(s));
-//            s_log.debug("Entity: " + s_entities.get(s));
-//        }
-//    }
-//
-//        private Map m_hash;
-//
-//        public UntitledLinkSubstitution(Map hash) {
-//            m_hash = hash;
-//        }
-//
-//        public void appendSubstitution(StringBuffer appendBuffer,
-//                MatchResult match,
-//                int substitutionCount,
-//                PatternMatcherInput originalInput,
-//                PatternMatcher matcher,
-//                Pattern pattern) {
-//            String link = match.group(1);
-//            s_log.debug("Link: " + link);
-//
-//            Integer i = m_hash.size();
-//            s_log.debug("Key: " + i);
-//            m_hash.put(i, link);
-//            String dst = "@\u0002" + i.toString() + "\u0002(\u0002"
-//                    + i.toString() + "\u0002)";
-//            appendBuffer.append(dst);
-//            s_log.debug("Encoded Link: " + dst);
-//        }
-//    }
 
     /**
      * Convert a string of items separated by a separator character to an
      * (string)array of the items. sep is the separator character. Example:
-     * Input - s == "cat,house,dog,," sep==',' Output - {"cat", "house", "dog",
-     * "" ,""} different to java.lang.String.split(): Input - s ==
+     * Input - str == "cat,house,dog,," sep==',' Output - {"cat", "house",
+     * "dog", "" ,""} different to java.lang.String.split(): Input - str ==
      * "cat,house,dog,," sep==',' Output - {"cat", "house", "dog"}
      *
-     * @param s string contains items separated by a separator character.
+     * @param str string contains items separated by a separator character.
      * @param sep separator character.
      * @return Array of items.
      *
      */
-    public static String[] split(String s, char sep) {
-        ArrayList al = new ArrayList();
-        int start_pos, end_pos;
-        start_pos = 0;
-        while (start_pos < s.length()) {
-            end_pos = s.indexOf(sep, start_pos);
-            if (end_pos == -1) {
-                end_pos = s.length();
+    public static String[] split(final String str, final char sep) {
+        final ArrayList arrl = new ArrayList();
+        int startpos, endpos;
+        startpos = 0;
+        while (startpos < str.length()) {
+            endpos = str.indexOf(sep, startpos);
+            if (endpos == -1) {
+                endpos = str.length();
             }
-            String found_item = s.substring(start_pos, end_pos);
-            al.add(found_item);
-            start_pos = end_pos + 1;
+            final String found_item = str.substring(startpos, endpos);
+            arrl.add(found_item);
+            startpos = endpos + 1;
         }
-        if (s.length() > 0 && s.charAt(s.length() - 1) == sep) {
-            al.add("");  // In case last character is separator
+        if (str.length() > 0 && str.charAt(str.length() - 1) == sep) {
+            arrl.add("");  // In case last character is separator
         }
-        String[] returned_array = new String[al.size()];
-        al.toArray(returned_array);
-        return returned_array;
+        final String[] returnedArray = new String[arrl.size()];
+        arrl.toArray(returnedArray);
+        return returnedArray;
     }
 
     /**
@@ -519,14 +396,14 @@ public class StringUtils {
      * As an example, let's say the original string is: </p>
      *
      * <pre>
-     * s = "/packages/foo/xsl/::vhost::/foo_::locale::.xsl";
+     * str = "/packages/foo/xsl/::vhost::/foo_::locale::.xsl";
      * </pre>
      *
      * <p>
      * We call the function like this: </p>
      *
      * <pre>
-     * output = splitUp (s, "/::\\w+::/");
+     * output = splitUp (str, "::\\w+::");
      * </pre>
      *
      * <p>
@@ -555,9 +432,8 @@ public class StringUtils {
      * ("The following text will be ", "<b>", "bold", "</b>", ".")
      * </pre>
      *
-     * @param s The original string to split.
-     * @param re The regular expression in the format required by
-     * {@link org.apache.oro.text.perl.Perl5Util#match(String, String)}.
+     * @param str The original string to split.
+     * @param re The regular expression.
      * @return List of substrings.
      *
      * @author Richard W.M. Jones
@@ -567,33 +443,67 @@ public class StringUtils {
      * specifically: <code>@a = /(RE)|(.+)/g;</code> </p>
      *
      */
-   public static List splitUp(String s, String re) {
-        Perl5Util p5 = new Perl5Util();
-        ArrayList list = new ArrayList();
-
-        while (s != null && s.length() > 0) {
+    public static List splitUp(String str, final String re) {
+        final ArrayList list = new ArrayList();
+        final Pattern pattern = Pattern.compile(re);
+        while (str != null && str.length() > 0) {
             // Find the next match.
-            if (p5.match(re, s)) {
-                MatchResult result = p5.getMatch();
+            final Matcher matcher = pattern.matcher(str);
+            if (matcher.find()) {
+                final int start = matcher.start();
+                final int end = matcher.end();
 
                 // String up to the start of the match.
-                if (result.beginOffset(0) > 0) {
-                    list.add(s.substring(0, result.beginOffset(0)));
-                }
+                list.add(str.substring(0, start));
 
                 // Matching part.
-                list.add(result.toString());
+                list.add(str.substring(start, end));
 
-                // Update s to be the remainder of the string.
-                s = s.substring(result.endOffset(0));
+                // Update str to be the remainder of the string.
+                str = str.substring(end);
             } else {
                 // Finished.
-                list.add(s);
+                list.add(str);
 
-                s = null;
+                str = null;
             }
         }
 
+        return list;
+    }
+
+    /**
+     * Splits a String into substrings if there is a linebreak followed by
+     * anoter linebreak. Keeps the empty line.
+     *
+     * @param str The string to split
+     * @return List
+     */
+    public static List splitUpAtNewLine(String str) {
+        final ArrayList list = new ArrayList();
+        final Pattern pattern = Pattern.compile("\r?\n\r?\n");
+        while (str != null && str.length() > 0) {
+            // Find the next match.
+            final Matcher matcher = pattern.matcher(str);
+            if (matcher.find()) {
+                final int start = matcher.start();
+                final int end = matcher.end();
+
+                // String up to the start of the match. first block
+                list.add(str.substring(0, start));
+
+                // second block, an empty block.
+                list.add("\n");
+
+                // Update str to be the remainder of the string.
+                str = str.substring(end);
+            } else {
+                // Finished.
+                list.add(str);
+
+                str = null;
+            }
+        }
         return list;
     }
 
@@ -609,8 +519,8 @@ public class StringUtils {
      *
      * @return Joined String
      */
-    public static String join(String[] strings, char joinChar) {
-        StringBuffer result = new StringBuffer();
+    public static String join(final String[] strings, final char joinChar) {
+        final StringBuffer result = new StringBuffer();
         final int lastIdx = strings.length - 1;
         for (int idx = 0; idx < strings.length; idx++) {
             result.append(strings[idx]);
@@ -634,8 +544,8 @@ public class StringUtils {
      *
      * @return Joined String
      */
-    public static String join(String[] strings, String joinStr) {
-        StringBuffer result = new StringBuffer();
+    public static String join(final String[] strings, final String joinStr) {
+        final StringBuffer result = new StringBuffer();
         final int lastIdx = strings.length - 1;
         for (int idx = 0; idx < strings.length; idx++) {
             result.append(strings[idx]);
@@ -664,30 +574,30 @@ public class StringUtils {
      * present. If the key appears in the list more than once, the first value
      * is returned.
      */
-    public static String getParameter(String key, String plist, char sep) {
-        int key_end;
-        int key_start = 0;
+    public static String getParameter(final String key, final String plist, final char sep) {
+        int keyEnd;
+        int keyStart = 0;
         String found_value;
-        while (key_start < plist.length()) {
-            key_start = plist.indexOf(key, key_start);
-            if (key_start == -1) {
+        while (keyStart < plist.length()) {
+            keyStart = plist.indexOf(key, keyStart);
+            if (keyStart == -1) {
                 return null;   // Did not find key
             }
-            key_end = key_start + key.length();
-            if (plist.charAt(key_end) == '='
-                    && (key_start == 0 || plist.charAt(key_start - 1) == sep)) {
+            keyEnd = keyStart + key.length();
+            if (plist.charAt(keyEnd) == '='
+                    && (keyStart == 0 || plist.charAt(keyStart - 1) == sep)) {
                 // Found isolated parameter value, this is the match
-                int value_end = plist.indexOf(sep, key_end);
+                final int value_end = plist.indexOf(sep, keyEnd);
                 if (value_end == -1) {
                     // did not find another separator, return value
-                    found_value = plist.substring(key_end + 1);
+                    found_value = plist.substring(keyEnd + 1);
                 } else {
                     // found another separator, return value
-                    found_value = plist.substring(key_end + 1, value_end);
+                    found_value = plist.substring(keyEnd + 1, value_end);
                 }
                 return found_value;
             } else {
-                key_start++;   // did not find.  Advance past current position
+                keyStart++;   // did not find.  Advance past current position
             }
         }
         return null;
@@ -700,20 +610,20 @@ public class StringUtils {
      * differences in white space. Example: input = "I \ndo\tsee". Output = "I
      * do see".
      *
-     * @param s string that may contain extra white space
+     * @param str string that may contain extra white space
      * @return string the same as the input, but with extra white space removed
      * and replaced by a single space.
      */
-    static public String stripWhiteSpace(String s) {
+    static public String stripWhiteSpace(final String str) {
         StringBuffer to = new StringBuffer();
         boolean inSpace = true;
         boolean isSpace;
-        char c;
-        for (int i = 0; i < s.length(); i++) {
-            c = s.charAt(i);
-            isSpace = Character.isWhitespace(c);
+        char chr;
+        for (int i = 0; i < str.length(); i++) {
+            chr = str.charAt(i);
+            isSpace = Character.isWhitespace(chr);
             if (!isSpace) {
-                to.append(c);
+                to.append(chr);
                 inSpace = false;
             } else if (!inSpace) {
                 to.append(' ');
@@ -727,14 +637,14 @@ public class StringUtils {
      * Get a String representation for an Object. If it has an asString method,
      * use that; otherwise fall back on toString
      */
-    public static String toString(Object o) {
+    public static String toString(final Object obj) {
         try {
-            return (String) o.getClass().getMethod("asString", null)
-                    .invoke(o, new Object[0]);
+            return (String) obj.getClass().getMethod("asString", null)
+                    .invoke(obj, new Object[0]);
         } catch (NoSuchMethodException e) {
-            return o.toString();
+            return obj.toString();
         } catch (Exception e) {
-            throw new UncheckedWrapperException("Invoking asString() on an " + o.getClass(), e);
+            throw new UncheckedWrapperException("Invoking asString() on an " + obj.getClass(), e);
         }
     }
 
@@ -742,38 +652,37 @@ public class StringUtils {
      * create a String representation of a map. This method is not too
      * necessary, because Map.toString() does almost the same.
      */
-    public static String toString(Map m) {
-        StringBuffer to = new StringBuffer();
-        if (m == null) {
-            to.append("null");
+    public static String toString(final Map map) {
+        final StringBuffer tostr = new StringBuffer();
+        if (map == null) {
+            tostr.append("null");
         } else {
-            to.append(m.getClass().getName());
-            Set entrySet = m.entrySet();
+            tostr.append(map.getClass().getName());
+            final Set entrySet = map.entrySet();
             if (entrySet == null) {
-                to.append("[null entrySet]");
+                tostr.append("[null entrySet]");
             } else {
-                Iterator entries = entrySet.iterator();
+                final Iterator entries = entrySet.iterator();
                 if (entries == null) {
-                    to.append("[null iterator]");
+                    tostr.append("[null iterator]");
                 } else {
-                    to.append("{");
+                    tostr.append("{");
                     String comma = NEW_LINE;
 
                     while (entries.hasNext()) {
-                        to.append(comma);
+                        tostr.append(comma);
                         comma = "," + NEW_LINE;
-                        Map.Entry e = (Map.Entry) entries.next();
+                       final Map.Entry entry = (Map.Entry) entries.next();
 
-                        to.append(toString(e.getKey()))
+                        tostr.append(toString(entry.getKey()))
                                 .append(" => ")
-                                .append(toString(e.getValue()));
+                                .append(toString(entry.getValue()));
                     }
-                    to.append(NEW_LINE).append("}");
+                    tostr.append(NEW_LINE).append("}");
                 }
             }
         }
-        String result = to.toString();
-        return result;
+        return tostr.toString();
     }
 
     /**
@@ -784,7 +693,7 @@ public class StringUtils {
      * @post result.indexOf('\r') == 0
      * @post result.indexOf('\n') == 0
      */
-    public static String stripNewLines(String str) {
+    public static String stripNewLines(final String str) {
 
         return str.replaceAll("[\\n\\r]", "");
     }
@@ -801,14 +710,14 @@ public class StringUtils {
      * character obtained from {@link System#getProperty(String)
      * System.getProperty("line.separator")}.</p>
      */
-    public static String addNewline(String s) {
-        int n = s.length() - 1;
-        if (n == -1) {
-            return s;
-        } else if (Character.isWhitespace(s.charAt(n))) {
-            return s;
+    public static String addNewline(final String str) {
+        final int length = str.length() - 1;
+        if (length == -1) {
+            return str;
+        } else if (Character.isWhitespace(str.charAt(length))) {
+            return str;
         } else {
-            return s.concat(NEW_LINE);
+            return str.concat(NEW_LINE);
         }
     }
 
@@ -818,8 +727,8 @@ public class StringUtils {
      * truncates any word that may have been cut off. It also takes the string
      * and converts it to plain text so that no HTML will be shown.
      */
-    public static String truncateString(String s, int length) {
-        return truncateString(s, length, true);
+    public static String truncateString(final String str, final int length) {
+        return truncateString(str, length, true);
     }
 
     /**
@@ -829,17 +738,18 @@ public class StringUtils {
      * whehter or not the string should be converted from HTML to text before
      * being truncated
      *
-     * @param s The string to be truncated
+     * @param str The string to be truncated
      * @param length The length which to truncate the string
      * @param removeHTML Whether or not to convert the HTML to text
+     * @return the truncated String
      */
-    public static String truncateString(String s, int length,
-            boolean removeHTML) {
-        if (s == null) {
+    public static String truncateString(final String str, final int length,
+            final boolean removeHTML) {
+        if (str == null) {
             return "";
         }
 
-        String string = s;
+        String string = str;
         if (removeHTML) {
             string = htmlToText(string);
         }
@@ -865,34 +775,37 @@ public class StringUtils {
      * @param sep the separator string
      * @return the strings joined together
      */
-    public static String join(List elements, String sep) {
-        StringBuffer sb = new StringBuffer();
+    public static String join(final List elements, final String sep) {
+        final StringBuffer strb = new StringBuffer();
         boolean first = true;
-        Iterator iter = elements.iterator();
+        final Iterator iter = elements.iterator();
 
         while (iter.hasNext()) {
-            String element = (String) iter.next();
+            final String element = (String) iter.next();
 
             if (!first) {
-                sb.append(sep);
+                strb.append(sep);
             } else {
                 first = false;
             }
 
-            sb.append(element);
+            strb.append(element);
         }
 
-        return sb.toString();
+        return strb.toString();
     }
 
     /**
      * Removes whitespace from the beginning of a string. If the string consists
      * of nothing but whitespace characters, an empty string is returned.
+     *
+     * @param str the String
+     * @return the String without whitespaces
      */
-    public final static String trimleft(String s) {
-        for (int i = 0; i < s.length(); i++) {
-            if (!Character.isWhitespace(s.charAt(i))) {
-                return s.substring(i);
+    public final static String trimleft(final String str) {
+        for (int i = 0; i < str.length(); i++) {
+            if (!Character.isWhitespace(str.charAt(i))) {
+                return str.substring(i);
             }
         }
         return "";
@@ -904,13 +817,14 @@ public class StringUtils {
      *
      * @param pattern the pattern String
      * @param repeatCount the number of time to repeat it
+     * @return
      */
     public static String repeat(String pattern, int repeatCount) {
-        StringBuffer sb = new StringBuffer(repeatCount * pattern.length());
+        final StringBuffer strb = new StringBuffer(repeatCount * pattern.length());
         for (int i = 0; i < repeatCount; i++) {
-            sb.append(pattern);
+            strb.append(pattern);
         }
-        return sb.toString();
+        return strb.toString();
     }
 
     /**
@@ -920,7 +834,7 @@ public class StringUtils {
      * @param pattern the pattern character
      * @param repeatCount the number of time to repeat it
      */
-    public static String repeat(char pattern, int repeatCount) {
+    public static String repeat(final char pattern, final int repeatCount) {
         return repeat(String.valueOf(pattern), repeatCount);
     }
 
@@ -933,7 +847,7 @@ public class StringUtils {
      *
      * @since 5.1.2
      */
-    public static String wrap(String input) {
+    public static String wrap(final String input) {
         return wrap(input, 80);
     }
 
@@ -958,7 +872,7 @@ public class StringUtils {
      *
      * @since 5.1.2
      */
-    public static String wrap(String input, int maxLength) {
+    public static String wrap(String input, final int maxLength) {
 
         final char SPACE = ' ';
         final char ENDL = '\n';
@@ -972,20 +886,20 @@ public class StringUtils {
             input = input.trim() + String.valueOf(ENDL);
         }
 
-        StringBuffer output = new StringBuffer();
+        final StringBuffer output = new StringBuffer();
 
         int startOfLine = 0;
 
         while (startOfLine < input.length()) {
 
-            String line = input.substring(startOfLine, Math.min(input.length(),
+            final String line = input.substring(startOfLine, Math.min(input.length(),
                     startOfLine + maxLength));
 
-            if (line.equals("")) {
+            if ("".equals(line)) {
                 break;
             }
 
-            int firstNewLine = line.indexOf(ENDL);
+            final int firstNewLine = line.indexOf(ENDL);
             if (firstNewLine != -1) {
 
                 // there is a newline
@@ -1009,8 +923,8 @@ public class StringUtils {
 
                 // no space found!  Try the first space in the whole
                 // rest of the string
-                int nextSpace = input.indexOf(SPACE, startOfLine);
-                int nextNewLine = input.indexOf(ENDL, startOfLine);
+                final int nextSpace = input.indexOf(SPACE, startOfLine);
+                final int nextNewLine = input.indexOf(ENDL, startOfLine);
 
                 if (nextSpace == -1) {
                     lastSpace = nextNewLine;
@@ -1047,7 +961,7 @@ public class StringUtils {
      * @param value String to check
      * @return true if value is alphanumeric, false otherwise.
      */
-    public static boolean isAlphaNumeric(String value) {
+    public static boolean isAlphaNumeric(final String value) {
         return !value.matches("^.*[^a-zA-Z0-9 ].*$");
     }
 
@@ -1096,12 +1010,11 @@ public class StringUtils {
      * @param key the name of the placeholder
      * @param value the value to insert upon encountering a placeholder
      */
-    public static String interpolate(String text, String key, String value) {
-        String pattern = "s/::" + key + "::/" + value + "/";
-
-        return s_re.substitute(pattern, text);
-    }
-
+//    public static String interpolate(String text, String key, String value) {
+//        String pattern = "s/::" + key + "::/" + value + "/";
+//
+//        return s_re.substitute(pattern, text);
+//    }
     /**
      * Finds all occurrences of <code>find</code> in <code>str</code> and
      * replaces them with them with <code>replace</code>.
@@ -1205,11 +1118,11 @@ public class StringUtils {
             throw new NullPointerException("throwable");
         }
 
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        throwable.printStackTrace(pw);
-        pw.close();
-        return sw.toString();
+        final StringWriter strw = new StringWriter();
+        final PrintWriter prntw = new PrintWriter(strw);
+        throwable.printStackTrace(prntw);
+        prntw.close();
+        return strw.toString();
     }
 
     /**
@@ -1242,10 +1155,10 @@ public class StringUtils {
      * @throws NullPointerException if <code>throwable</code> is null
      */
     public static List getStackList(Throwable throwable) {
-        StringTokenizer tkn = new StringTokenizer(getStackTrace(throwable), System.getProperty("line.separator"));
-        List list = new LinkedList();
+        final StringTokenizer tkn = new StringTokenizer(getStackTrace(throwable), System.getProperty("line.separator"));
+        final List list = new LinkedList();
         while (tkn.hasMoreTokens()) {
-            String token = tkn.nextToken().trim();
+            final String token = tkn.nextToken().trim();
             if ("".equals(token)) {
                 continue;
             }
@@ -1274,16 +1187,16 @@ public class StringUtils {
         if (name == null) {
             return null;
         }
-        StringBuffer urlizedName = new StringBuffer(name.length());
+        final StringBuffer urlizedName = new StringBuffer(name.length());
 
         for (int i = 0; i < name.length(); i++) {
-            char ch = name.charAt(i);
+            final char chr = name.charAt(i);
 
-            if (Character.isLetter(ch)) {
-                urlizedName.append(Character.toLowerCase(ch));
-            } else if (Character.isDigit(ch) || ch == '_' || ch == '-') {
-                urlizedName.append(ch);
-            } else if (ch == ' ' || ch == '&' || ch == '/') {
+            if (Character.isLetter(chr)) {
+                urlizedName.append(Character.toLowerCase(chr));
+            } else if (Character.isDigit(chr) || chr == '_' || chr == '-') {
+                urlizedName.append(chr);
+            } else if (chr == ' ' || chr == '&' || chr == '/') {
                 urlizedName.append('-');
             }
         }

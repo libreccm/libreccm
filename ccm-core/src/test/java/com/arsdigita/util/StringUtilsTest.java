@@ -59,6 +59,29 @@ public class StringUtilsTest {
     @After
     public void tearDown() {
     }
+    
+    
+    
+    @Test
+    public void testSmartText2() {
+        String src = "blabla\n"
+                +"\n"
+                +"blub";
+
+        String expected = "<div>\n"
+                +"blabla\n"
+                +"</div>\n"
+                +"\n"
+                +"<div>\n"
+                +"blub\n"
+                +"</div>\n";
+        String actual = StringUtils.smartTextToHtml(src);
+        String errMsg = "smartTexttoHtml2, expected = " + expected
+                + " found = " + actual;
+        assertEquals(errMsg, expected, actual);
+    }
+    
+    
 
 //    @Test(expected = AssertionError.class)
 //    public void checkFailMessage() {
@@ -331,14 +354,14 @@ public class StringUtilsTest {
         String s = "/packages/foo/xsl/::vhost::/foo_::locale::.xsl";
 
         List list = new ArrayList();
-        list = StringUtils.splitUp(s, "/::\\w+::/");
+        list = StringUtils.splitUp(s, "::\\w+::");
 //        if you want to see the result:
 //                        assertEquals("splitup:"
 //                        +(String)list.get(0)+", " +
 //                        (String)list.get(1)+", " +
 //                        (String)list.get(2)+", " 
-////                       + (String)list.get(3)+", " 
-////                        +(String)list.get(4)+", " 
+//                       + (String)list.get(3)+", " 
+//                        +(String)list.get(4)+", " 
 //                                +"sizekram="
 //                + list.size(), list.size(), 99);
    
@@ -352,6 +375,32 @@ public class StringUtilsTest {
         
         
     }
+        @Test
+    public void testSplitUpAtNewLine() {
+
+        String s = "blabla\n\nblub\n";
+
+        List list = new ArrayList();
+        list = StringUtils.splitUpAtNewLine(s);
+//        if you want to see the result:
+//                        assertEquals("splitup:"
+//                        +(String)list.get(0)+", " +
+//                        (String)list.get(1)+", " +
+//                        (String)list.get(2)+", " 
+//                       + (String)list.get(3)+", " 
+//                        +(String)list.get(4)+", " 
+//                                +"sizekram="
+//                + list.size(), list.size(), 99);
+   
+        verifySplit("blabla", (String)list.get(0));
+        verifySplit("\n", (String)list.get(1));
+        verifySplit("blub\n", (String)list.get(2));
+        assertEquals("expected array length 3, found="
+                + list.size(), list.size(), 3);
+        
+        
+    }
+    
 
     @Test
     public void testJoinChar() {
