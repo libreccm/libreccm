@@ -51,12 +51,26 @@ import javax.xml.bind.annotation.XmlRootElement;
                 query = "SELECT p FROM Permission p WHERE p.grantee = :subject"),
     @NamedQuery(name = "findPermissionsForUser",
                 query = "SELECT p FROM Permission p "
-                            + "WHERE p.grantee = :user "
-                            + "   OR p.grantee IN (SELECT g "
-                + "                                FROM Group g JOIN g.members m"
-                            + "                    WHERE m.user = :user)"),
+                                + "WHERE p.grantee = :user "
+                                + "   OR p.grantee IN (SELECT g "
+                                + "                    FROM Group g JOIN g.members m"
+                        + "                            WHERE m.user = :user)"),
     @NamedQuery(name = "findPermissionsForCcmObject",
-                query = "SELECT p FROM Permission p WHERE p.object = :object")
+                query = "SELECT p FROM Permission p WHERE p.object = :object"),
+    @NamedQuery(name = "findPermissionsByUserObjectAndPrivilege",
+                query = "SELECT p FROM Permission p "
+                                + "WHERE (p.grantee = :user"
+                                + "       OR p.grantee IN (SELECT g "
+                                + "                        FROM Group g JOIN g.members m"
+                        + "                                WHERE m.user = :user))"
+                        + "                AND p.grantedPrivilege = :privilege"
+                                + "        AND p.object = :object"),
+    @NamedQuery(name = "findPermissionsBySubjectObjectAndPrivilege",
+                query = "SELECT p FROM Permission p "
+                                + "WHERE p.grantee          = :subject"
+                                + "  AND p.grantedPrivilege = :privilege"
+                                + "  AND p.object           = :object")
+
 })
 //Can't reduce complexity yet
 @SuppressWarnings({"PMD.CyclomaticComplexity",
@@ -164,7 +178,7 @@ public class Permission implements Serializable {
     public int hashCode() {
         int hash = 3;
         hash
-            = 31 * hash + (int) (permissionId ^ (permissionId >>> 32));
+        = 31 * hash + (int) (permissionId ^ (permissionId >>> 32));
         hash = 31 * hash + Objects.hashCode(grantee);
         hash = 31 * hash + Objects.hashCode(grantedPrivilege);
         hash = 31 * hash + Objects.hashCode(object);
@@ -221,14 +235,14 @@ public class Permission implements Serializable {
     @Override
     public String toString() {
         return String.format("%s{ "
-                                 + "permissionId = %d, "
-                                 + "grantee = %s, "
-                                 + "grantedPrivilege = %s, "
-                                 + "object = %s, "
-                                 + "creationUser = %s,"
-                                 + "creationDate = %tF %<tT, "
-                                 + "creationIp = %s"
-                                 + " }",
+                                     + "permissionId = %d, "
+                                     + "grantee = %s, "
+                                     + "grantedPrivilege = %s, "
+                                     + "object = %s, "
+                                     + "creationUser = %s,"
+                                     + "creationDate = %tF %<tT, "
+                                     + "creationIp = %s"
+                                     + " }",
                              super.toString(),
                              permissionId,
                              Objects.toString(grantee),

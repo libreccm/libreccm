@@ -26,67 +26,125 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
 /**
+ * Repository class for retrieving, storing and deleting permissions.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
 public class PermissionRepository
-    extends AbstractEntityRepository<Long, Permission> {
+        extends AbstractEntityRepository<Long, Permission> {
 
     @Inject
-    private EntityManager entityManager;
+    private transient EntityManager entityManager;
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     */
     @Override
     public Class<Permission> getEntityClass() {
         return Permission.class;
     }
 
+    /**
+     * {@inheritDoc }
+     *
+     * @param entity {@inheritDoc }
+     * @return {@inheritDoc }
+     */
     @Override
     public boolean isNew(final Permission entity) {
         if (entity == null) {
-            throw new UnsupportedOperationException(
-                "Entity to save can't be null");
+            throw new IllegalArgumentException("Entity to save can't be null");
         }
         return entity.getPermissionId() == 0;
     }
 
+    /**
+     * Finds all permissions granted to a specific subject (either a user or
+     * group).
+     *
+     * Please note that this method does <strong>not</strong> find permissions
+     * granted to a user by the groups a user is member of. To get these
+     * permissions also use the
+     * {@link #findPermissionsForUser(org.libreccm.core.User)} method instead.
+     *
+     * @param subject The subject.
+     * @return All permissions granted to the provided subject.
+     */
     public List<Permission> findPermissionsForSubject(final Subject subject) {
         if (subject == null) {
             throw new IllegalArgumentException(
-                "Illegal value 'null' provided for parameter subject.");
+                    "Illegal value 'null' provided for parameter subject.");
         }
 
         final TypedQuery<Permission> query = entityManager.createNamedQuery(
-            "findPermissionsForSubject", Permission.class);
+                "findPermissionsForSubject", Permission.class);
         query.setParameter("subject", subject);
 
         return query.getResultList();
     }
 
+    /**
+     * Finds a permissions granted to a user and to the groups the user is 
+     * member of. 
+     * 
+     * If you only need the permissions assigned to the user itself use the
+     * {@link #findPermissionsForSubject(org.libreccm.core.Subject)} method.
+     * 
+     * @param user The user.
+     * @return  All permissions granted to the user or the groups the user is
+     * member of.
+     */
     public List<Permission> findPermissionsForUser(final User user) {
         if (user == null) {
             throw new IllegalArgumentException(
-                "Illegal value 'null' provided for parameter user");
+                    "Illegal value 'null' provided for parameter user");
         }
 
         final TypedQuery<Permission> query = entityManager.createNamedQuery(
-            "findPermissionsForUser", Permission.class);
+                "findPermissionsForUser", Permission.class);
         query.setParameter("user", user);
-        
+
         return query.getResultList();
     }
 
+    /**
+     * Finds all permissions granted on a object.
+     * 
+     * @param object The object.
+     * @return All permissions granted on the object.
+     */
     public List<Permission> findPermissionsForCcmObject(final CcmObject object) {
         if (object == null) {
             throw new IllegalArgumentException(
-                "Illegal value 'null' provided for parameter object.");
+                    "Illegal value 'null' provided for parameter object.");
         }
 
         final TypedQuery<Permission> query = entityManager.createNamedQuery(
-            "findPermissionsForCcmObject", Permission.class);
+                "findPermissionsForCcmObject", Permission.class);
         query.setParameter("object", object);
 
         return query.getResultList();
     }
 
+//    public List<Permission> findPermissionForUserPrivilegeAndObject(
+//            final User user,
+//            final Privilege privilege,
+//            final CcmObject object) {
+//        if (user == null) {
+//            throw new IllegalArgumentException(
+//                    "Illegal value 'null' provided for parameter user");
+//        }
+//
+//        if (privilege == null) {
+//            throw new IllegalArgumentException(
+//                    "Illegal value 'null' provided for parameter privilege");
+//        }
+//
+//        final TypedQuery<Permission> query = entityManager.createNamedQuery(
+//                "findPermissionsForUserPrivilegeAndObject", Permission.class);
+//
+//    }
 }

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FindBugsFilter>
+    <Match>
+        <Class name="com.arsdigita.util.parameter.CSVParameterReader" />
+    </Match>
+    <Match>
+        <Class name="com.arsdigita.util.parameter.ResourceParameter" />
+    </Match>
+    <Match>
+        <Class name="com.arsdigita.xml.Document" />
+    </Match>
+    <Match>
+        <Class name="com.arsdigita.xml.Element" />
+    </Match>
+    <Match>
+        <Class name="com.arsdigita.xml.formatters.DateFormatter" />
+    </Match>
+    <Match>
+        <Class name="com.arsdigita.xml.formatters.FullDateFormatter" />
+    </Match>
+</FindBugsFilter>

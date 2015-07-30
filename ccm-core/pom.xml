@@ -341,6 +341,9 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
                 <version>3.0.1</version>
+                <configuration>
+                    <excludeFilterFile>findbugs-exclude.xml</excludeFilterFile>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -370,6 +373,54 @@
                         <ruleset>/rulesets/java/unnecessary.xml</ruleset>
                         <ruleset>/rulesets/java/unusedcode.xml</ruleset>
                     </rulesets>
+                    <excludeRoots>
+                        <excludeRoot>src/main/java/com/arsdigita</excludeRoot>
+                    </excludeRoots>
+                    <excludes>
+                        <exclude>**/AbstractConfig.java</exclude>
+                        <exclude>**/AbstractParameter.java</exclude>
+                        <exclude>**/AbstractParameterContext</exclude>
+                        <exclude>**/Assert.java</exclude>
+                        <exclude>**/Classes.java</exclude>
+                        <exclude>**/CCMApplicationContextListener.java</exclude>
+                        <exclude>**/CCMResourceManager.java</exclude>
+                        <exclude>**/ClassParameterReader.java</exclude>
+                        <exclude>**/CompoundParameterReader.java</exclude>
+                        <exclude>**/ConfigError.java</exclude>
+                        <exclude>**/ConfigRegistry.java</exclude>
+                        <exclude>**/Converters.java</exclude>
+                        <exclude>**/CSVParameterReader.java</exclude>
+                        <exclude>**/DateFormatter.java</exclude>
+                        <exclude>**/DataFormatterConfig.java</exclude>
+                        <exclude>**/DateTimeFormatter</exclude>
+                        <exclude>**/Document.java</exclude>
+                        <exclude>**/Element.java</exclude>
+                        <exclude>**/EmailParameter.java</exclude>
+                        <exclude>**/EnumerationParameter.java</exclude>
+                        <exclude>**/ErrorList.java</exclude>
+                        <exclude>**/ExceptionUnwrapper.java</exclude>
+                        <exclude>**/Exceptions.java</exclude>
+                        <exclude>**/FileParameter.java</exclude>
+                        <exclude>**/FullDateFormatter.java</exclude>
+                        <exclude>**/IntegerParameter.java</exclude>
+                        <exclude>**/JavaPropertyReader.java</exclude>
+                        <exclude>**/JavaPropertyWriter.java</exclude>
+                        <exclude>**/KernelConfig.java</exclude>
+                        <exclude>**/LockableImpl.java</exclude>
+                        <exclude>**/MapParameter.java</exclude>
+                        <exclude>**/Parameter.java</exclude>
+                        <exclude>**/ParameterError.java</exclude>
+                        <exclude>**/ParameterException.java</exclude>
+                        <exclude>**/RegistryConfig.java</exclude>
+                        <exclude>**/ResourceParameter.java</exclude>
+                        <exclude>**/SecurityConfig.java</exclude>
+                        <exclude>**/SecurityHelper.java</exclude>
+                        <exclude>**/SingletonParameter.java</exclude>
+                        <exclude>**/StringParameter.java</exclude>
+                        <exclude>**/TimeFormatter.java</exclude>
+                        <exclude>**/UncheckedWrapperException</exclude>
+                        <exclude>**/XML.java</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
             <plugin>
