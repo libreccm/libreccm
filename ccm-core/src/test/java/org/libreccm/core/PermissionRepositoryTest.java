@@ -53,8 +53,11 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+
 import org.jboss.arquillian.container.test.api.ShouldThrowException;
 import org.jboss.arquillian.persistence.ShouldMatchDataSet;
+
+import java.util.Collections;
 
 /**
  *
@@ -219,7 +222,7 @@ public class PermissionRepositoryTest {
         final List<Permission> jdoePermissions = permissionRepository
                 .findPermissionsForUser(jdoe);
         assertThat(jdoePermissions.size(), is(4));
-        jdoePermissions.sort(new Comparator<Permission>() {
+        Collections.sort(jdoePermissions, new Comparator<Permission>() {
 
             @Override
             public int compare(final Permission permission1,
@@ -294,7 +297,7 @@ public class PermissionRepositoryTest {
         final List<Permission> object1Permissions = permissionRepository
                 .findPermissionsForCcmObject(object1);
         assertThat(object1Permissions.size(), is(3));
-        object1Permissions.sort(new Comparator<Permission>() {
+        Collections.sort(object1Permissions, new Comparator<Permission>() {
 
             @Override
             public int compare(final Permission permission1,

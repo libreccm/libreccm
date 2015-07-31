@@ -28,16 +28,35 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
+ * Privileges are used the create {@link Permission}s for specific operations.
+ * Modules can create {@code Privilege}s by using the
+ * {@link PrivilegeRepository}.
+ *
+ * This class is an JPA implementation of the PDL object type
+ * {@code com.arsdigita.kernel.permissions.Privilege} which has been implemented
+ * as an JPA entity. In future releases this class will may refactored to an
+ * {@code enum}. After the class has been refactored to an {@code enum} it is
+ * not longer necessary to store the available privileges in the database.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
 @Table(name = "ccm_privileges")
+@NamedQueries({
+    @NamedQuery(name = "findPrivilegeByName",
+                query = "SELECT p FROM Privilege p "
+                            + "WHERE p.privilege = :name"),
+    @NamedQuery(name = "isPrivilegeInUse",
+                query = "SELECT COUNT(p) FROM Permission p JOIN Privilege r "
+                + "WHERE r.privilege = :name")
+})
 @XmlRootElement(name = "privilege", namespace = CORE_XML_NS)
 public class Privilege implements Serializable {
 
