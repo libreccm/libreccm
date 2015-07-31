@@ -59,29 +59,25 @@ public class StringUtilsTest {
     @After
     public void tearDown() {
     }
-    
-    
-    
+
     @Test
     public void testSmartText2() {
         String src = "blabla\n"
-                +"\n"
-                +"blub";
+                + "\n"
+                + "blub";
 
         String expected = "<div>\n"
-                +"blabla\n"
-                +"</div>\n"
-                +"\n"
-                +"<div>\n"
-                +"blub\n"
-                +"</div>\n";
+                + "blabla\n"
+                + "</div>\n"
+                + "\n"
+                + "<div>\n"
+                + "blub\n"
+                + "</div>\n";
         String actual = StringUtils.smartTextToHtml(src);
         String errMsg = "smartTexttoHtml2, expected = " + expected
                 + " found = " + actual;
         assertEquals(errMsg, expected, actual);
     }
-    
-    
 
 //    @Test(expected = AssertionError.class)
 //    public void checkFailMessage() {
@@ -364,18 +360,18 @@ public class StringUtilsTest {
 //                        +(String)list.get(4)+", " 
 //                                +"sizekram="
 //                + list.size(), list.size(), 99);
-   
-        verifySplit("/packages/foo/xsl/", (String)list.get(0));
-        verifySplit("::vhost::", (String)list.get(1));
-        verifySplit("/foo_", (String)list.get(2));
-        verifySplit("::locale::", (String)list.get(3));
-        verifySplit(".xsl",(String)list.get(4));
+
+        verifySplit("/packages/foo/xsl/", (String) list.get(0));
+        verifySplit("::vhost::", (String) list.get(1));
+        verifySplit("/foo_", (String) list.get(2));
+        verifySplit("::locale::", (String) list.get(3));
+        verifySplit(".xsl", (String) list.get(4));
         assertEquals("expected array length 5, found="
                 + list.size(), list.size(), 5);
-        
-        
+
     }
-        @Test
+
+    @Test
     public void testSplitUpAtNewLine() {
 
         String s = "blabla\n\nblub\n";
@@ -391,16 +387,14 @@ public class StringUtilsTest {
 //                        +(String)list.get(4)+", " 
 //                                +"sizekram="
 //                + list.size(), list.size(), 99);
-   
-        verifySplit("blabla", (String)list.get(0));
-        verifySplit("\n", (String)list.get(1));
-        verifySplit("blub\n", (String)list.get(2));
+
+        verifySplit("blabla", (String) list.get(0));
+        verifySplit("\n", (String) list.get(1));
+        verifySplit("blub\n", (String) list.get(2));
         assertEquals("expected array length 3, found="
                 + list.size(), list.size(), 3);
-        
-        
+
     }
-    
 
     @Test
     public void testJoinChar() {
@@ -559,28 +553,29 @@ public class StringUtilsTest {
                 actual_out);
     }
 
-////    @Test
-////    public void testPlaceholders() {
-////        String in = "foo ::bar:: wizz";
-////        String expected_out = "foo eek wizz";
-////        String actual_out = StringUtils.interpolate(in, "bar", "eek");
-////
-////        assertEquals("interpolate failed simple placeholder",
-////                expected_out,
-////                actual_out);
-////
-////        HashMap vars = new HashMap();
-////        vars.put("bar", "eek");
-////        vars.put("more", "wibble");
-////
-////        in = "foo ::bar:: wizz ::more:: done";
-////        expected_out = "foo eek wizz wibble done";
-////        actual_out = StringUtils.interpolate(in, vars);
-////        assertEquals("interpolate failed hashmap test",
-////                expected_out,
-////                actual_out);
-////
-////    }
+    @Test
+    public void testPlaceholders() {
+        String in = "foo ::bar:: wizz";
+        String expected_out = "foo eek wizz";
+        String actual_out = StringUtils.interpolate(in, "bar", "eek");
+
+        assertEquals("interpolate failed simple placeholder",
+                expected_out,
+                actual_out);
+
+        HashMap vars = new HashMap();
+        vars.put("bar", "eek");
+        vars.put("more", "wibble");
+
+        in = "foo ::bar:: wizz ::more:: done";
+        expected_out = "foo eek wizz wibble done";
+        actual_out = StringUtils.interpolate(in, vars);
+        assertEquals("interpolate failed hashmap test",
+                expected_out,
+                actual_out);
+
+    }
+    
     @Test
     public void testReplace() {
         String[] pairs = {null, null,
@@ -605,14 +600,13 @@ public class StringUtilsTest {
             assertEquals(expected, actual);
         }
     }
-    
+
 //    @Test
 //    public void testSmartTextReplace(){
 //    String src = "this is the original text";
 //            String expected = "this is the expected text";
 //            String actual = StringUtils.smartTextReplace("original","original",src);        
 //    }
-
     @Test
     public void testUrlize() {
         assertEquals(null, StringUtils.urlize(null));
@@ -684,4 +678,43 @@ public class StringUtilsTest {
         assertEquals(StringUtils.textToHtml("line1\nline2"), "line1<br>line2");
         assertEquals(StringUtils.textToHtml("line1\n\nline2"), "line1<p>line2");
     }
+
+//    @Test
+//    public void testInterpolateMap() {
+//
+//        HashMap<String, String> hm = new HashMap<String, String>();
+//        hm.put("Email", "email@adressse.de");
+//        hm.put("Forename", "Hans");
+//        hm.put("Surename", "im Glück");
+//        hm.put("foo-fighters", "bar");
+//        hm.put("pf.ad", "/files/blabla/");
+//        hm.put("keyword", "value");
+//        hm.put("key:word", "value");
+//        hm.put("::::keyword::", "value");
+//
+//        String src1 = "this is his E-Mailadress: ::Email::";
+//        String src2 = "The name is ::Surename:: , ::Forename::";
+//        String src3 = "We'll meet at the ::foo-fighters::";
+//        String src4 = "blub ::pf.ad:: right?";
+//        String src5 = ":::keyword::: got extra colons";
+//        String src6 = ":::keyword:: got 3 colons at the start";
+//        String src7 = "::::keyword:: got 4 colons at start";
+//        String src8 = "::Email:: , ::Forename:: , ::keyword:: , ::foo-fighters::";
+//
+//        assertEquals(StringUtils.interpolate(src1, hm), "this is his E-Mailadress: email@adressse.de");
+//        assertEquals(StringUtils.interpolate(src2, hm), "The name is im Glück , Hans");
+//        assertEquals(StringUtils.interpolate(src3, hm), "We'll meet at the bar");
+//        assertEquals(StringUtils.interpolate(src4, hm), "blub /files/blabla/ right?");
+//        assertEquals(StringUtils.interpolate(src8, hm), "email@adressse.de , Hans , value , bar");
+////        assertEquals(StringUtils.interpolate(src5, hm), "value got extra colons");
+////        assertEquals(StringUtils.interpolate(src6, hm), "value got 3 colons at start");
+////        assertEquals(StringUtils.interpolate(src7, hm), "value got 4 colons at start");
+////          assertEquals("key with two words transforms to one word", StringUtils.interpolate(src5, hm) );
+//    }
+//
+//    @Test
+//    public void testInterpolate() {
+//        String src = "this is a ::sample:: text";
+//        assertEquals(StringUtils.interpolate(src, "sample", "value"), "this is a value text");
+//    }
 }
