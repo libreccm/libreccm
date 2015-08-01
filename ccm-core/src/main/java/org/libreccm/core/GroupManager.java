@@ -95,19 +95,19 @@ public class GroupManager {
                 "Can't remove a user from group null");
         }
         
-        GroupMembership membershipToDelete = null;
+        GroupMembership delete = null;
         for(final GroupMembership membership : group.getMembers()) {
             if (membership.getUser().equals(user)) {
-                membershipToDelete = membership;
+                delete = membership;
                 break;
             }
         }
         
-        if (membershipToDelete != null) {
-            group.removeMember(membershipToDelete);
-            user.removeGroupMembership(membershipToDelete);
+        if (delete != null) {
+            group.removeMember(delete);
+            user.removeGroupMembership(delete);
             
-            entityManager.remove(membershipToDelete);
+            entityManager.remove(delete);
         }
     }
 

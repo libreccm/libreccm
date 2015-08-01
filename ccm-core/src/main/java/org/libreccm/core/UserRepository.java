@@ -43,6 +43,29 @@ public class UserRepository extends AbstractEntityRepository<Long, User> {
         return entity.getSubjectId() == 0;
     }
 
+    /**
+     * Retrieves the internal system user which is permitted to execute almost
+     * every operation.
+     *
+     * @return The internal system user.
+     */
+    public User retrieveSystemUser() {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Retrieves the public user. The public user is used to represent the
+     * privileges of a user which is not logged in. The public user is a
+     * ordinary user account in the database with the screen name
+     * {@code public-user}.
+     *
+     * @return The public user or {@code null} if there is no account for the 
+     * public user.
+     */
+    public User retrievePublicUser() {
+        throw new UnsupportedOperationException();
+    }
+
     public User findByScreenName(final String screenname) {
         final TypedQuery<User> query = getEntityManager().createNamedQuery(
             "findUserByScreenName", User.class);
@@ -55,21 +78,21 @@ public class UserRepository extends AbstractEntityRepository<Long, User> {
         //screen_name column has a unique constraint.
         if (result.isEmpty()) {
             return null;
-        } else  {
+        } else {
             return result.get(0);
-        } 
+        }
     }
 
     public User findByEmailAddress(final String emailAddress) {
         final TypedQuery<User> query = getEntityManager().createNamedQuery(
             "findUserByEmailAddress", User.class);
         query.setParameter("emailAddress", emailAddress);
-        
+
         final List<User> result = query.getResultList();
-        
+
         if (result.isEmpty()) {
             return null;
-        } else if(result.size() == 1) {
+        } else if (result.size() == 1) {
             return result.get(0);
         } else {
             throw new MultipleMatchingUserException(String.format(
@@ -78,6 +101,5 @@ public class UserRepository extends AbstractEntityRepository<Long, User> {
                 emailAddress));
         }
     }
-
 
 }

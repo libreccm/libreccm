@@ -63,12 +63,18 @@ public class PermissionManager {
      * Checks if the the provided {@code subject} has a permission granting the
      * provided {@code privilege} on the provided {@code object}.
      *
+     * If the provided subject is {@code null} the method will try to retrieve
+     * the public user from the database. If there is no public user the method
+     * will return {@code false}.
+     *
      * @param privilege The privilege to check.
      * @param object    The object on which the privilege is granted.
      * @param subject   The subject to which the privilege is granted.
      *
      * @return {@code true} of the subject has a permission granting
      *         {@code privilege} on {@code object}, either explicit or implicit.
+     *
+     * @see UserRepository#retrievePublicUser()
      */
     public boolean isPermitted(final Privilege privilege,
                                final CcmObject object,
@@ -80,6 +86,10 @@ public class PermissionManager {
      * Checks if the the provided {@code subject} has a permission granting the
      * provided {@code privilege} on the provided {@code object}.
      *
+     * If the provided subject is {@code null} the method will try to retrieve
+     * the public user from the database. If there is no public user the method
+     * will return {@code false}.
+     *
      * @param privilege The privilege to check.
      * @param object    The object on which the privilege is granted.
      * @param subject   The subject to which the privilege is granted.
@@ -88,6 +98,8 @@ public class PermissionManager {
      *                                      {@code privilege} on {@code object}
      *                                      to {@code subject}
      *
+     * @see #isPermitted(org.libreccm.core.Privilege,
+     * org.libreccm.core.CcmObject, org.libreccm.core.Subject)
      */
     public void checkPermission(final Privilege privilege,
                                 final CcmObject object,

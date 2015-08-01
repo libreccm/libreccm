@@ -21,6 +21,7 @@ package org.libreccm.core;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 
 /**
@@ -40,16 +41,24 @@ public class PrivilegeRepository {
     /**
      * Finds the {@link Privilege} identified by {@code name}.
      *
-     * @param privilege The name of the privilege to return.
+     * @param name The name of the privilege to return.
      *
-     * @return
+     * @return The requested privilege.
+     *
+     * @throws UnknownPrivilegeException if there is no privilege identified by
+     *                                   the provided {@code name}.
      */
-    public Privilege retrievePrivilege(final String privilege) {
+    public Privilege retrievePrivilege(final String name) {
         final TypedQuery<Privilege> query = entityManager.createNamedQuery(
             "findPrivilegeByName", Privilege.class);
-        query.setParameter("name", privilege);
+        query.setParameter("name", name);
 
-        return query.getSingleResult();
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException ex) {
+            throw new UnknownPrivilegeException(String.format(
+                "There is no privilege \"%s\".", name), ex);
+        }
     }
 
     /**
@@ -78,26 +87,34 @@ public class PrivilegeRepository {
      * ToDo: Check if current user is system user.
      *
      * @param privilegeName The privilege to delete.
+     *
+     * @throws UnknownPrivilegeException if there is no privilege identified by
+     *                                   the provided {@code name}.
      */
     public void deletePrivilege(final String privilegeName) {
-        final Privilege privilege = retrievePrivilege(privilegeName);
-
         if (isPrivilegeInUse(privilegeName)) {
             throw new IllegalArgumentException(
                 "Provided privilage can't be removed because its still in use");
         }
 
-        if (privilege != null) {
-            entityManager.remove(privilege);
-        }
+        final Privilege privilege = retrievePrivilege(privilegeName);
+        entityManager.remove(privilege);
     }
 
+    /**
+     * Checks a {@link Privilege} is in use.
+     *
+     * @param privilegeName The name of the privilege to check.
+     *
+     * @return {@code true} if the privilege is in use (there is a least one
+     *         permission using it), {@code false} otherwise.
+     */
     public boolean isPrivilegeInUse(final String privilegeName) {
-        final TypedQuery<Integer> query = entityManager.createNamedQuery(
-            "isPrivilegeInUse", Integer.class);
+        final TypedQuery<Long> query = entityManager.createNamedQuery(
+            "isPrivilegeInUse", Long.class);
         query.setParameter("name", privilegeName);
 
-        final Integer result = query.getSingleResult();
+        final Long result = query.getSingleResult();
 
         return result > 0;
     }

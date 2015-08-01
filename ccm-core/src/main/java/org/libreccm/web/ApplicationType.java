@@ -40,6 +40,7 @@ import org.libreccm.core.ResourceType;
  */
 @Entity
 @Table(name = "application_types")
+@SuppressWarnings("PMD.LongVariable")
 public class ApplicationType extends ResourceType implements Serializable {
 
     private static final long serialVersionUID = -1175728067001112457L;

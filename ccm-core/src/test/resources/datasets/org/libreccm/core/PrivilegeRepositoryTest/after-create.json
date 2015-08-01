@@ -1,0 +1,21 @@
+{
+    "ccm_privileges":
+            [
+                {
+                    "privilege_id": -10,
+                    "privilege": "admin"
+                },
+                {
+                    "privilege_id": -20,
+                    "privilege": "read"
+                },
+                {
+                    "privilege_id": -30,
+                    "privilege": "write"
+                },
+                {
+                    "privilege_id": -40,
+                    "privilege": "publish"
+                }
+            ]
+}

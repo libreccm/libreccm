@@ -39,6 +39,11 @@ import org.libreccm.l10n.LocalizedString;
 @Entity
 @Table(name = "resource_types")
 @Inheritance(strategy = InheritanceType.JOINED)
+@SuppressWarnings({"PMD.CyclomaticComplexity",
+                   "PMD.StdCyclomaticComplexity",
+                   "PMD.ModifiedCyclomaticComplexity",
+                   "PMD.NPathComplexity",
+                   "PMD.LongVariable"})
 public class ResourceType implements Serializable {
 
     private static final long serialVersionUID = 4563584142251370627L;
@@ -52,10 +57,10 @@ public class ResourceType implements Serializable {
 
     @Embedded
     @AssociationOverride(
-            name = "values",
-            joinTable = @JoinTable(name = "resource_type_descriptions",
-                                   joinColumns = {
-                                       @JoinColumn(name = "resource_type_id")}))
+        name = "values",
+        joinTable = @JoinTable(name = "resource_type_descriptions",
+                               joinColumns = {
+                                   @JoinColumn(name = "resource_type_id")}))
     private LocalizedString description;
 
     @Column(name = "workspace_app")
@@ -73,7 +78,7 @@ public class ResourceType implements Serializable {
     public ResourceType() {
         description = new LocalizedString();
     }
-    
+
     public long getResourceTypeId() {
         return resourceTypeId;
     }
@@ -157,25 +162,25 @@ public class ResourceType implements Serializable {
             return false;
         }
 
-        if (this.resourceTypeId != other.resourceTypeId) {
+        if (this.resourceTypeId != other.getResourceTypeId()) {
             return false;
         }
-        if (!Objects.equals(this.title, other.title)) {
+        if (!Objects.equals(this.title, other.getTitle())) {
             return false;
         }
-        if (!Objects.equals(this.description, other.description)) {
+        if (!Objects.equals(this.description, other.getDescription())) {
             return false;
         }
-        if (this.workspaceApplication != other.workspaceApplication) {
+        if (this.workspaceApplication != other.isWorkspaceApplication()) {
             return false;
         }
-        if (this.viewableAsFullPage != other.viewableAsFullPage) {
+        if (this.viewableAsFullPage != other.isViewableAsFullPage()) {
             return false;
         }
-        if (this.viewableAsEmbedded != other.viewableAsEmbedded) {
+        if (this.viewableAsEmbedded != other.isViewableAsEmbedded()) {
             return false;
         }
-        return this.singleton == other.singleton;
+        return this.singleton == other.isSingleton();
     }
 
     public boolean canEqual(final Object obj) {
@@ -189,14 +194,14 @@ public class ResourceType implements Serializable {
 
     public String toString(final String data) {
         return String.format("%s{ "
-                                     + "resourceTypeId = %d, "
-                                     + "title = \"%s\", "
-                                     + "description = { %s }, "
-                                     + "workspaceApplication = %b, "
-                                     + "viewableAsFullPage = %b, "
-                                     + "viewableAsEmbedded = %b, "
-                                     + "singleton = %b%s"
-                                     + " }",
+                                 + "resourceTypeId = %d, "
+                                 + "title = \"%s\", "
+                                 + "description = { %s }, "
+                                 + "workspaceApplication = %b, "
+                                 + "viewableAsFullPage = %b, "
+                                 + "viewableAsEmbedded = %b, "
+                                 + "singleton = %b%s"
+                                 + " }",
                              super.toString(),
                              resourceTypeId,
                              title,
@@ -207,4 +212,5 @@ public class ResourceType implements Serializable {
                              singleton,
                              data);
     }
+
 }

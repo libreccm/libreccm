@@ -379,11 +379,12 @@
                     <excludes>
                         <exclude>**/AbstractConfig.java</exclude>
                         <exclude>**/AbstractParameter.java</exclude>
-                        <exclude>**/AbstractParameterContext</exclude>
+                        <exclude>**/AbstractParameterContext.java</exclude>
                         <exclude>**/Assert.java</exclude>
-                        <exclude>**/Classes.java</exclude>
                         <exclude>**/CCMApplicationContextListener.java</exclude>
                         <exclude>**/CCMResourceManager.java</exclude>
+                        <exclude>**/Classes.java</exclude>
+                        <exclude>**/ClassParameter.java</exclude>
                         <exclude>**/ClassParameterReader.java</exclude>
                         <exclude>**/CompoundParameterReader.java</exclude>
                         <exclude>**/ConfigError.java</exclude>
@@ -391,8 +392,8 @@
                         <exclude>**/Converters.java</exclude>
                         <exclude>**/CSVParameterReader.java</exclude>
                         <exclude>**/DateFormatter.java</exclude>
-                        <exclude>**/DataFormatterConfig.java</exclude>
-                        <exclude>**/DateTimeFormatter</exclude>
+                        <exclude>**/DateFormatterConfig.java</exclude>
+                        <exclude>**/DateTimeFormatter.java</exclude>
                         <exclude>**/Document.java</exclude>
                         <exclude>**/Element.java</exclude>
                         <exclude>**/EmailParameter.java</exclude>
@@ -416,9 +417,10 @@
                         <exclude>**/SecurityConfig.java</exclude>
                         <exclude>**/SecurityHelper.java</exclude>
                         <exclude>**/SingletonParameter.java</exclude>
+                        <exclude>**/SpecificClassParameter.java</exclude>
                         <exclude>**/StringParameter.java</exclude>
                         <exclude>**/TimeFormatter.java</exclude>
-                        <exclude>**/UncheckedWrapperException</exclude>
+                        <exclude>**/UncheckedWrapperException.java</exclude>
                         <exclude>**/XML.java</exclude>
                     </excludes>
                 </configuration>

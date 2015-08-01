@@ -103,6 +103,10 @@
                 {
                     "privilege_id": -30,
                     "privilege": "write"
+                },
+                {
+                    "privilege_id": -40,
+                    "privilege": "unused"
                 }
             ],
     "ccm_objects":

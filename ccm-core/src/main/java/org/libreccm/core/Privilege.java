@@ -54,8 +54,9 @@ import javax.xml.bind.annotation.XmlRootElement;
                 query = "SELECT p FROM Privilege p "
                             + "WHERE p.privilege = :name"),
     @NamedQuery(name = "isPrivilegeInUse",
-                query = "SELECT COUNT(p) FROM Permission p JOIN Privilege r "
-                + "WHERE r.privilege = :name")
+                query = "SELECT COUNT(p) FROM Permission p "
+                + "      JOIN p.grantedPrivilege g "
+                + "      WHERE g.privilege = :name")
 })
 @XmlRootElement(name = "privilege", namespace = CORE_XML_NS)
 public class Privilege implements Serializable {
