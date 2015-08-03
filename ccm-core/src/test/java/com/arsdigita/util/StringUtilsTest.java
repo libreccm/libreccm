@@ -554,7 +554,7 @@ public class StringUtilsTest {
     }
 
     @Test
-    public void testPlaceholders() {
+    public void testInterpolate() {
         String in = "foo ::bar:: wizz";
         String expected_out = "foo eek wizz";
         String actual_out = StringUtils.interpolate(in, "bar", "eek");
@@ -653,7 +653,7 @@ public class StringUtilsTest {
         assertEquals(errMsg, expected, found);
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testIfGetStackTraceFails() {
         StringUtils.getStackTrace(null);
     }
@@ -679,42 +679,4 @@ public class StringUtilsTest {
         assertEquals(StringUtils.textToHtml("line1\n\nline2"), "line1<p>line2");
     }
 
-//    @Test
-//    public void testInterpolateMap() {
-//
-//        HashMap<String, String> hm = new HashMap<String, String>();
-//        hm.put("Email", "email@adressse.de");
-//        hm.put("Forename", "Hans");
-//        hm.put("Surename", "im Glück");
-//        hm.put("foo-fighters", "bar");
-//        hm.put("pf.ad", "/files/blabla/");
-//        hm.put("keyword", "value");
-//        hm.put("key:word", "value");
-//        hm.put("::::keyword::", "value");
-//
-//        String src1 = "this is his E-Mailadress: ::Email::";
-//        String src2 = "The name is ::Surename:: , ::Forename::";
-//        String src3 = "We'll meet at the ::foo-fighters::";
-//        String src4 = "blub ::pf.ad:: right?";
-//        String src5 = ":::keyword::: got extra colons";
-//        String src6 = ":::keyword:: got 3 colons at the start";
-//        String src7 = "::::keyword:: got 4 colons at start";
-//        String src8 = "::Email:: , ::Forename:: , ::keyword:: , ::foo-fighters::";
-//
-//        assertEquals(StringUtils.interpolate(src1, hm), "this is his E-Mailadress: email@adressse.de");
-//        assertEquals(StringUtils.interpolate(src2, hm), "The name is im Glück , Hans");
-//        assertEquals(StringUtils.interpolate(src3, hm), "We'll meet at the bar");
-//        assertEquals(StringUtils.interpolate(src4, hm), "blub /files/blabla/ right?");
-//        assertEquals(StringUtils.interpolate(src8, hm), "email@adressse.de , Hans , value , bar");
-////        assertEquals(StringUtils.interpolate(src5, hm), "value got extra colons");
-////        assertEquals(StringUtils.interpolate(src6, hm), "value got 3 colons at start");
-////        assertEquals(StringUtils.interpolate(src7, hm), "value got 4 colons at start");
-////          assertEquals("key with two words transforms to one word", StringUtils.interpolate(src5, hm) );
-//    }
-//
-//    @Test
-//    public void testInterpolate() {
-//        String src = "this is a ::sample:: text";
-//        assertEquals(StringUtils.interpolate(src, "sample", "value"), "this is a value text");
-//    }
 }

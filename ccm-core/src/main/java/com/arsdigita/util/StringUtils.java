@@ -17,6 +17,7 @@ package com.arsdigita.util;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -34,6 +35,8 @@ import org.apache.log4j.Logger;
  *
  * @author Bill Schneider
  */
+@SuppressWarnings({"PMD.GodClass",
+    "PMD.ExcessiveClassLength", "PMD.TooManyMethods", "PMD.CyclomaticComplexity"})
 public final class StringUtils {
 
     private static final Logger S_LOG = Logger.getLogger(StringUtils.class);
@@ -198,7 +201,7 @@ public final class StringUtils {
         final Pattern plus = Pattern.compile("^\\+");
         final Pattern word = Pattern.compile(".*[a-zA-Z_0-9\\*\\+].*"); // \\w
 
-        final StringBuffer html = new StringBuffer("");
+        final StringBuffer html = new StringBuffer(20);
         final Iterator iter = blocks.iterator();
         while (iter.hasNext()) {
             final String block = (String) iter.next();
@@ -260,7 +263,7 @@ public final class StringUtils {
         if (S_LOG.isDebugEnabled()) {
             S_LOG.debug("Input {" + str + "}");
         }
-        
+
         // We're going to use the octal characters \u0001 and \u0002 for
         // escaping stuff, so we'd better make sure there aren't any
         // in the text.
@@ -323,21 +326,6 @@ public final class StringUtils {
         if (S_LOG.isDebugEnabled()) {
             S_LOG.debug("After links {" + result + "}");
         }
-
-        return result;
-    }
-
-    /**
-     *
-     * @param subst
-     * @param pattern
-     * @param str
-     * @return
-     */
-    private static String smartTextReplace(final String subst,
-            final String pattern,
-            final String str) {
-        final String result = str.replaceAll(pattern, subst);
 
         return result;
     }
@@ -638,7 +626,8 @@ public final class StringUtils {
                     .invoke(obj, new Object[0]);
         } catch (NoSuchMethodException e) {
             return obj.toString();
-        } catch (Exception e) {
+            
+        } catch (IllegalAccessException | InvocationTargetException e) {
             throw new UncheckedWrapperException("Invoking asString() on an " + obj.getClass(), e);
         }
     }
@@ -797,7 +786,7 @@ public final class StringUtils {
      * @param str the String
      * @return the String without whitespaces
      */
-    public final static String trimleft(final String str) {
+    public static String trimleft(final String str) {
         for (int i = 0; i < str.length(); i++) {
             if (!Character.isWhitespace(str.charAt(i))) {
                 return str.substring(i);
@@ -887,7 +876,7 @@ public final class StringUtils {
 
         while (startOfLine < formattedInput.length()) {
 
-         final String line = formattedInput.substring(startOfLine, Math.min(formattedInput.length(),
+            final String line = formattedInput.substring(startOfLine, Math.min(formattedInput.length(),
                     startOfLine + maxLength));
 
             if ("".equals(line)) {
@@ -1027,11 +1016,11 @@ public final class StringUtils {
     }
 
     /**
-     * @throws NullPointerException if <code>throwable</code> is null
+     * @throws IllegalArgumentException if <code>throwable</code> is null
      */
     public static String getStackTrace(final Throwable throwable) {
         if (throwable == null) {
-            throw new NullPointerException("throwable");
+            throw new IllegalArgumentException();
         }
 
         final StringWriter strw = new StringWriter();
