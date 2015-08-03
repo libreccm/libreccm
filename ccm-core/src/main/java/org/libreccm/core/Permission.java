@@ -41,6 +41,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
+ * Represents a {@link Privilege} granted to a {@link Subject} on an object or
+ * all objects.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -81,35 +83,66 @@ public class Permission implements Serializable {
 
     private static final long serialVersionUID = -2368935232499907547L;
 
+    /**
+     * The database id of the permission.
+     */
     @Id
     @Column(name = "permission_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
     @XmlElement(name = "permission-id", namespace = CORE_XML_NS)
     private long permissionId;
 
+    /**
+     * The {@link Subject} (a {@link User} or a {@link Group}) to which the
+     * permission is granted. If the permission is granted to a {@link Group} a
+     * {@link User}s in that have the permission.
+     */
     @ManyToOne
     @JoinColumn(name = "grantee_id")
     private Subject grantee;
 
+    /**
+     * The {@link Privilege} granted by this {@code Permission}.
+     */
     @OneToOne
     @JoinColumn(name = "granted_privilege_id")
     @XmlElement(name = "privilege", namespace = CORE_XML_NS)
     private Privilege grantedPrivilege;
 
+    /**
+     * The {@link CcmObject} on which the permission is granted. If the the
+     * {@code object} is {@code null} the permission is granted for
+     * <strong>all</strong> objects.
+     */
     @ManyToOne
     @JoinColumn(name = "object_id")
     private CcmObject object;
 
+    /**
+     * The {@link User} which created this {@code Permission}. The property can
+     * be {@code null} if this {@code Permission} was created by a system
+     * process.
+     */
     @ManyToOne
     @JoinColumn(name = "creation_user_id")
     @XmlElement(name = "creation-user", namespace = CORE_XML_NS)
     private User creationUser;
 
+    /**
+     * The date and time on which this {@code Permission} was created. This
+     * property can be {@code null} if this {@code Permission} was created by a
+     * system process.
+     */
     @Column(name = "creation_date")
     @Temporal(TemporalType.TIMESTAMP)
     @XmlElement(name = "creation-date", namespace = CORE_XML_NS)
     private Date creationDate;
 
+    /**
+     * The IP of the system from which this {@code Permission} was created. This
+     * property can be {@code null} if this {@code Permission} was created by a
+     * system process.
+     */
     @Column(name = "creation_ip")
     @XmlElement(name = "creation-ip", namespace = CORE_XML_NS)
     private String creationIp;

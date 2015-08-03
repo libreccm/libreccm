@@ -21,6 +21,7 @@ package org.libreccm.core;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.persistence.TypedQuery;
 
 /**
@@ -30,6 +31,9 @@ import javax.persistence.TypedQuery;
 @RequestScoped
 public class UserRepository extends AbstractEntityRepository<Long, User> {
 
+   @Inject
+    private transient PrivilegeRepository privilegeRepository;
+    
     @Override
     public Class<User> getEntityClass() {
         return User.class;
@@ -50,7 +54,17 @@ public class UserRepository extends AbstractEntityRepository<Long, User> {
      * @return The internal system user.
      */
     public User retrieveSystemUser() {
-        throw new UnsupportedOperationException();
+        final User systemUser = new User();
+        systemUser.setScreenName("system");
+        
+        final Privilege adminPrivilege = privilegeRepository.retrievePrivilege(
+                "admin");
+        final Permission systemPermission = new Permission();
+        systemPermission.setGrantee(systemUser);
+        systemPermission.setGrantedPrivilege(adminPrivilege);
+        systemUser.addGrantedPermission(systemPermission);
+        
+        return systemUser;
     }
 
     /**
@@ -63,7 +77,7 @@ public class UserRepository extends AbstractEntityRepository<Long, User> {
      * public user.
      */
     public User retrievePublicUser() {
-        throw new UnsupportedOperationException();
+        return findByScreenName("public-user");
     }
 
     public User findByScreenName(final String screenname) {
