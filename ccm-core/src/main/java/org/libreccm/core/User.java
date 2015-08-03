@@ -63,14 +63,15 @@ import javax.xml.bind.annotation.XmlTransient;
                 query = "SELECT u FROM User u WHERE u.screenName = :screenname"),
     @NamedQuery(name = "findUserByEmailAddress",
                 query = "SELECT u FROM User u JOIN u.emailAddresses e "
-                            + "WHERE e.address = :emailAddress")})
+                                + "WHERE e.address = :emailAddress")})
 @XmlRootElement(name = "user", namespace = CORE_XML_NS)
 //Supressing a few warnings from PMD because they misleading here.
 //User is perfectly fine class name, and the complexity is not to high...
 @SuppressWarnings({"PMD.ShortClassName",
                    "PMD.CyclomaticComplexity",
                    "PMD.StdCyclomaticComplexity",
-                   "PMD.ModifiedCyclomaticComplexity"})
+                   "PMD.ModifiedCyclomaticComplexity",
+                   "PMD.GodClass"})
 public class User extends Subject implements Serializable {
 
     private static final long serialVersionUID = 892038270064849732L;
@@ -80,10 +81,10 @@ public class User extends Subject implements Serializable {
      */
     @Embedded
     @AssociationOverride(
-        name = "user_names",
-        joinTable = @JoinTable(name = "user_names",
-                               joinColumns = {
-                                   @JoinColumn(name = " user_id")}))
+            name = "user_names",
+            joinTable = @JoinTable(name = "user_names",
+                                   joinColumns = {
+                                       @JoinColumn(name = " user_id")}))
     @XmlElement(name = "person-name", namespace = CORE_XML_NS)
     private PersonName name;
 
@@ -294,7 +295,7 @@ public class User extends Subject implements Serializable {
     }
 
     protected void setGroupMemberships(
-        final List<GroupMembership> groupMemberships) {
+            final List<GroupMembership> groupMemberships) {
         this.groupMemberships = groupMemberships;
     }
 
@@ -303,7 +304,7 @@ public class User extends Subject implements Serializable {
     }
 
     protected void removeGroupMembership(
-        final GroupMembership groupMembership) {
+            final GroupMembership groupMembership) {
         groupMemberships.remove(groupMembership);
     }
 
@@ -386,12 +387,12 @@ public class User extends Subject implements Serializable {
     @Override
     public String toString(final String data) {
         return super.toString(String.format(", name = %s, "
-                                                + "screenName = \"%s\", "
-                                                + "emailAddress = { %s }"
-                                                + "banned = %b, "
-                                                + "ssoLogin = \"%s\" "
-                                                + "hashAlgorithm = \"%s\" "
-                                                + "passwordResetRequired = %b%s",
+                                                    + "screenName = \"%s\", "
+                                                    + "emailAddress = { %s }"
+                                                    + "banned = %b, "
+                                                    + "ssoLogin = \"%s\" "
+                                                    + "hashAlgorithm = \"%s\" "
+                                                    + "passwordResetRequired = %b%s",
                                             Objects.toString(name),
                                             screenName,
                                             Objects.toString(emailAddresses),

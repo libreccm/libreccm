@@ -41,23 +41,23 @@ public class PrivilegeRepository {
     /**
      * Finds the {@link Privilege} identified by {@code name}.
      *
-     * @param name The name of the privilege to return.
+     * @param label The name of the privilege to return.
      *
      * @return The requested privilege.
      *
      * @throws UnknownPrivilegeException if there is no privilege identified by
      *                                   the provided {@code name}.
      */
-    public Privilege retrievePrivilege(final String name) {
+    public Privilege retrievePrivilege(final String label) {
         final TypedQuery<Privilege> query = entityManager.createNamedQuery(
             "findPrivilegeByName", Privilege.class);
-        query.setParameter("name", name);
+        query.setParameter("label", label);
 
         try {
             return query.getSingleResult();
         } catch (NoResultException ex) {
             throw new UnknownPrivilegeException(String.format(
-                "There is no privilege \"%s\".", name), ex);
+                "There is no privilege \"%s\".", label), ex);
         }
     }
 
@@ -68,13 +68,13 @@ public class PrivilegeRepository {
      *
      * ToDo: Check if current user is system user.
      *
-     * @param privilegeName The privilege to create.
+     * @param label The privilege to create.
      *
      * @return The new privilege.
      */
-    public Privilege createPrivilege(final String privilegeName) {
+    public Privilege createPrivilege(final String label) {
         final Privilege privilege = new Privilege();
-        privilege.setPrivilege(privilegeName);
+        privilege.setLabel(label);
 
         entityManager.persist(privilege);
 
@@ -104,15 +104,15 @@ public class PrivilegeRepository {
     /**
      * Checks a {@link Privilege} is in use.
      *
-     * @param privilegeName The name of the privilege to check.
+     * @param label The name of the privilege to check.
      *
      * @return {@code true} if the privilege is in use (there is a least one
      *         permission using it), {@code false} otherwise.
      */
-    public boolean isPrivilegeInUse(final String privilegeName) {
+    public boolean isPrivilegeInUse(final String label) {
         final TypedQuery<Long> query = entityManager.createNamedQuery(
             "isPrivilegeInUse", Long.class);
-        query.setParameter("name", privilegeName);
+        query.setParameter("label", label);
 
         final Long result = query.getSingleResult();
 

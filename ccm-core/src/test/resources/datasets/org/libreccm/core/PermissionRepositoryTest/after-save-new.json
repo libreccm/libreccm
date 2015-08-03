@@ -94,19 +94,19 @@
             [
                 {
                     "privilege_id": -10,
-                    "privilege": "admin"
+                    "label": "admin"
                 },
                 {
                     "privilege_id": -20,
-                    "privilege": "read"
+                    "label": "read"
                 },
                 {
                     "privilege_id": -30,
-                    "privilege": "write"
+                    "label": "write"
                 },
                 {
                     "privilege_id": -40,
-                    "privilege": "unused"
+                    "label": "unused"
                 }
             ],
     "ccm_objects":

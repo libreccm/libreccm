@@ -52,11 +52,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "findPrivilegeByName",
                 query = "SELECT p FROM Privilege p "
-                            + "WHERE p.privilege = :name"),
+                            + "WHERE p.label = :label"),
     @NamedQuery(name = "isPrivilegeInUse",
                 query = "SELECT COUNT(p) FROM Permission p "
                 + "      JOIN p.grantedPrivilege g "
-                + "      WHERE g.privilege = :name")
+                + "      WHERE g.label = :label")
 })
 @XmlRootElement(name = "privilege", namespace = CORE_XML_NS)
 public class Privilege implements Serializable {
@@ -69,11 +69,10 @@ public class Privilege implements Serializable {
     @XmlElement(name = "privilege-id", namespace = CORE_XML_NS)
     private long privilegeId;
 
-    @Column(name = "privilege", length = 255, nullable = false)
+    @Column(name = "label", length = 255, nullable = false)
     //Field is named like this in the old PDL class, don't want to change it now
-    @SuppressWarnings("PMD.AvoidFieldNameMatchingTypeName")
-    @XmlElement(name = "privilege", namespace = CORE_XML_NS)
-    private String privilege;
+    @XmlElement(name = "label", namespace = CORE_XML_NS)
+    private String label;
 
     public long getPrivilegeId() {
         return privilegeId;
@@ -83,19 +82,19 @@ public class Privilege implements Serializable {
         this.privilegeId = privilegeId;
     }
 
-    public String getPrivilege() {
-        return privilege;
+    public String getLabel() {
+        return label;
     }
 
-    public void setPrivilege(final String privilege) {
-        this.privilege = privilege;
+    public void setLabel(final String label) {
+        this.label = label;
     }
 
     @Override
     public int hashCode() {
         int hash = 7;
         hash = 43 * hash + (int) (privilegeId ^ (privilegeId >>> 32));
-        hash = 43 * hash + Objects.hashCode(privilege);
+        hash = 43 * hash + Objects.hashCode(label);
         return hash;
     }
 
@@ -115,7 +114,7 @@ public class Privilege implements Serializable {
         if (privilegeId != other.getPrivilegeId()) {
             return false;
         }
-        return Objects.equals(privilege, other.getPrivilege());
+        return Objects.equals(label, other.getLabel());
     }
 
     public boolean canEqual(final Object obj) {
@@ -130,7 +129,7 @@ public class Privilege implements Serializable {
                                  + " }",
                              super.toString(),
                              privilegeId,
-                             privilege);
+                             label);
     }
 
 }

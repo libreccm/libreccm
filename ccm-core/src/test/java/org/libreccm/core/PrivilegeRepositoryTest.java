@@ -131,9 +131,9 @@ public class PrivilegeRepositoryTest {
         assertThat(read, is(not(nullValue())));
         assertThat(write, is(not(nullValue())));
 
-        assertThat(admin.getPrivilege(), is(equalTo("admin")));
-        assertThat(read.getPrivilege(), is(equalTo("read")));
-        assertThat(write.getPrivilege(), is(equalTo("write")));
+        assertThat(admin.getLabel(), is(equalTo("admin")));
+        assertThat(read.getLabel(), is(equalTo("read")));
+        assertThat(write.getLabel(), is(equalTo("write")));
     }
 
     @Test(expected = UnknownPrivilegeException.class)

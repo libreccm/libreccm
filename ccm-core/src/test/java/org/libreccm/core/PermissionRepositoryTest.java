@@ -162,7 +162,7 @@ public class PermissionRepositoryTest {
         assertThat(permissionsJdoe.size(), is(1));
         assertThat(permissionsJdoe.get(0).getObject().getDisplayName(),
                    is(equalTo("Test Object 2")));
-        assertThat(permissionsJdoe.get(0).getGrantedPrivilege().getPrivilege(),
+        assertThat(permissionsJdoe.get(0).getGrantedPrivilege().getLabel(),
                    is(equalTo("read")));
 
         final List<Permission> permissionsMmuster = permissionRepository
@@ -173,7 +173,7 @@ public class PermissionRepositoryTest {
             .findPermissionsForSubject(admins);
         assertThat(permissionsAdmins.size(), is(1));
         assertThat(permissionsAdmins.get(0).getObject(), is(nullValue()));
-        assertThat(permissionsAdmins.get(0).getGrantedPrivilege().getPrivilege(),
+        assertThat(permissionsAdmins.get(0).getGrantedPrivilege().getLabel(),
                    is("admin"));
 
         final List<Permission> permissionsUsers = permissionRepository
@@ -181,7 +181,7 @@ public class PermissionRepositoryTest {
         assertThat(permissionsUsers.size(), is(1));
         assertThat(permissionsUsers.get(0).getObject().getDisplayName(),
                    is(equalTo("Test Object 1")));
-        assertThat(permissionsUsers.get(0).getGrantedPrivilege().getPrivilege(),
+        assertThat(permissionsUsers.get(0).getGrantedPrivilege().getLabel(),
                    is(equalTo("read")));
 
         final List<Permission> permissionsAuthors = permissionRepository
@@ -193,9 +193,9 @@ public class PermissionRepositoryTest {
                    is(equalTo("Test Object 1")));
         final Set<String> privileges = new HashSet<>();
         privileges.add(permissionsAuthors.get(0).getGrantedPrivilege()
-            .getPrivilege());
+            .getLabel());
         privileges.add(permissionsAuthors.get(1).getGrantedPrivilege()
-            .getPrivilege());
+            .getLabel());
         assertThat(privileges, hasItem("read"));
         assertThat(privileges, hasItem("write"));
     }
@@ -227,9 +227,9 @@ public class PermissionRepositoryTest {
             @Override
             public int compare(final Permission permission1,
                                final Permission permission2) {
-                int result = permission1.getGrantedPrivilege().getPrivilege()
+                int result = permission1.getGrantedPrivilege().getLabel()
                     .compareToIgnoreCase(permission2.getGrantedPrivilege()
-                        .getPrivilege());
+                        .getLabel());
 
                 if (result == 0) {
                     result = permission1.getObject().getDisplayName().compareTo(
@@ -250,19 +250,19 @@ public class PermissionRepositoryTest {
 
         });
 
-        assertThat(jdoePermissions.get(0).getGrantedPrivilege().getPrivilege(),
+        assertThat(jdoePermissions.get(0).getGrantedPrivilege().getLabel(),
                    is(equalTo("read")));
         assertThat(jdoePermissions.get(0).getObject().getDisplayName(),
                    is(equalTo("Test Object 1")));
-        assertThat(jdoePermissions.get(1).getGrantedPrivilege().getPrivilege(),
+        assertThat(jdoePermissions.get(1).getGrantedPrivilege().getLabel(),
                    is(equalTo("read")));
         assertThat(jdoePermissions.get(1).getObject().getDisplayName(),
                    is(equalTo("Test Object 1")));
-        assertThat(jdoePermissions.get(2).getGrantedPrivilege().getPrivilege(),
+        assertThat(jdoePermissions.get(2).getGrantedPrivilege().getLabel(),
                    is(equalTo("read")));
         assertThat(jdoePermissions.get(2).getObject().getDisplayName(),
                    is(equalTo("Test Object 2")));
-        assertThat(jdoePermissions.get(3).getGrantedPrivilege().getPrivilege(),
+        assertThat(jdoePermissions.get(3).getGrantedPrivilege().getLabel(),
                    is(equalTo("write")));
         assertThat(jdoePermissions.get(3).getObject().getDisplayName(),
                    is(equalTo("Test Object 1")));
@@ -271,7 +271,7 @@ public class PermissionRepositoryTest {
             .findPermissionsForUser(mmuster);
         assertThat(mmusterPermissions.size(), is(1));
         assertThat(mmusterPermissions.get(0).getGrantedPrivilege()
-            .getPrivilege(),
+            .getLabel(),
                    is(equalTo("admin")));
         assertThat(mmusterPermissions.get(0).getObject(), is(nullValue()));
     }
@@ -308,21 +308,21 @@ public class PermissionRepositoryTest {
 
         });
         assertThat(object1Permissions.get(0).getGrantedPrivilege()
-            .getPrivilege(),
+            .getLabel(),
                    is(equalTo("read")));
         assertThat(object1Permissions.get(0).getGrantee(),
                    is(instanceOf(Group.class)));
         assertThat(((Group) object1Permissions.get(0).getGrantee()).getName(),
                    is(equalTo("authors")));
         assertThat(object1Permissions.get(1).getGrantedPrivilege()
-            .getPrivilege(),
+            .getLabel(),
                    is(equalTo("write")));
         assertThat(object1Permissions.get(1).getGrantee(),
                    is(instanceOf(Group.class)));
         assertThat(((Group) object1Permissions.get(1).getGrantee()).getName(),
                    is(equalTo("authors")));
         assertThat(object1Permissions.get(2).getGrantedPrivilege()
-            .getPrivilege(),
+            .getLabel(),
                    is(equalTo("read")));
         assertThat(object1Permissions.get(2).getGrantee(),
                    is(instanceOf(Group.class)));
@@ -333,7 +333,7 @@ public class PermissionRepositoryTest {
             .findPermissionsForCcmObject(object2);
         assertThat(object2Permissions.size(), is(1));
         assertThat(object2Permissions.get(0).getGrantedPrivilege()
-            .getPrivilege(),
+            .getLabel(),
                    is(equalTo("read")));
         assertThat(object2Permissions.get(0).getGrantee(),
                    is(instanceOf(User.class)));
@@ -366,10 +366,10 @@ public class PermissionRepositoryTest {
         final User mmuster = userRepository.findByScreenName("mmuster");
 
         final TypedQuery<Privilege> query1 = entityManager.createQuery(
-            "SELECT p FROM Privilege p WHERE p.privilege = 'read'",
+            "SELECT p FROM Privilege p WHERE p.label = 'read'",
             Privilege.class);
         final TypedQuery<Privilege> query2 = entityManager.createQuery(
-            "SELECT p FROM Privilege p WHERE p.privilege = 'write'",
+            "SELECT p FROM Privilege p WHERE p.label = 'write'",
             Privilege.class);
 
         final CcmObject object = ccmObjectRepository.findById(-40L);
