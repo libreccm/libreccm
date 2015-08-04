@@ -59,7 +59,7 @@ import javax.xml.bind.annotation.XmlRootElement;
                         + "                            WHERE m.user = :user)"),
     @NamedQuery(name = "findPermissionsForCcmObject",
                 query = "SELECT p FROM Permission p WHERE p.object = :object"),
-    @NamedQuery(name = "findPermissionsByUserObjectAndPrivilege",
+    @NamedQuery(name = "findPermissionsForUserPrivilegeAndObject",
                 query = "SELECT p FROM Permission p "
                                 + "WHERE (p.grantee = :user"
                                 + "       OR p.grantee IN (SELECT g "
@@ -67,11 +67,24 @@ import javax.xml.bind.annotation.XmlRootElement;
                         + "                                WHERE m.user = :user))"
                         + "                AND p.grantedPrivilege = :privilege"
                                 + "        AND p.object = :object"),
-    @NamedQuery(name = "findPermissionsBySubjectObjectAndPrivilege",
+    @NamedQuery(name = "findWildcardPermissionsForUserPrivilegeAndObject",
+                query = "SELECT p FROM Permission p "
+                                + "WHERE (p.grantee = :user"
+                                + "       OR p.grantee IN (SELECT g "
+                                + "                        FROM Group g JOIN g.members m"
+                        + "                                WHERE m.user = :user))"
+                        + "                AND p.grantedPrivilege = :privilege"
+                                + "        AND p.object IS NULL"),
+    @NamedQuery(name = "findPermissionsForSubjectPrivilegeAndObject",
                 query = "SELECT p FROM Permission p "
                                 + "WHERE p.grantee          = :subject"
                                 + "  AND p.grantedPrivilege = :privilege"
-                                + "  AND p.object           = :object")
+                                + "  AND p.object           = :object"),
+    @NamedQuery(name = "findWildcardPermissionsForSubjectPrivilegeAndObject",
+                query = "SELECT p FROM Permission p "
+                                + "WHERE p.grantee          = :subject"
+                                + "  AND p.grantedPrivilege = :privilege"
+                                + "  AND p.object IS NULL")
 
 })
 //Can't reduce complexity yet

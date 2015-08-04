@@ -18,7 +18,10 @@
  */
 package org.libreccm.core;
 
+import java.util.List;
+
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 
 /**
  *
@@ -27,20 +30,48 @@ import javax.enterprise.context.RequestScoped;
 @RequestScoped
 public class PermissionManager {
 
+    @Inject
+    private transient PermissionRepository permissionRepository;
+
+    @Inject
+    private transient PrivilegeRepository privilegeRepository;
+
+    @Inject
+    private transient CcmObjectRepository ccmObjectRepository;
+
+    @Inject
+    private transient SubjectRepository subjectRepository;
+
     /**
      * Creates a new permission granting the provided {@code privilege} on the
      * provided {@code object} to the provided {@code subject}. If the
      * permission is already granted to the provided {@code subject} this method
      * does nothing.
      *
-     * @param privilege The privilege to grant.
-     * @param object    The object on which the privilege is granted.
-     * @param subject   The subject to grant the privilege to.
+     * @param privilege The privilege to grant. Can't be {@code null}.
+     * @param object    The object on which the privilege is granted. Can be
+     *                  {@code null}.
+     * @param subject   The subject to grant the privilege to. Can't be
+     *                  {@code null}.
      */
     public void grantPermission(final Privilege privilege,
                                 final CcmObject object,
                                 final Subject subject) {
-        throw new UnsupportedOperationException();
+        if (!isPermitted(privilege, object, subject)) {
+            final Permission permission = new Permission();
+            permission.setGrantedPrivilege(privilege);
+            permission.setObject(object);
+            permission.setGrantee(subject);
+
+            subject.addGrantedPermission(permission);
+            subjectRepository.save(subject);
+            if (object != null) {
+                object.addPermission(permission);
+                ccmObjectRepository.save(object);
+            }
+
+            permissionRepository.save(permission);
+        }
     }
 
     /**
@@ -49,14 +80,30 @@ public class PermissionManager {
      * permission granting the provided privilege on the provided {@code object}
      * to the provided {@code subject} this method does nothing.
      *
-     * @param privilege The privilege to revoke
-     * @param object    The object on which the privilege is revoked.
-     * @param subject   The subject to revoke the privilege from.
+     * @param privilege The privilege to revoke. Can't be {@code null}.
+     * @param object    The object on which the privilege is revoked. Can be
+     *                  {@code null}.
+     * @param subject   The subject to revoke the privilege from. Can't be
+     *                  {@code null}.
      */
     public void revokePermission(final Privilege privilege,
                                  final CcmObject object,
                                  final Subject subject) {
-        throw new UnsupportedOperationException();
+        final List<Permission> permissions = permissionRepository
+            .findPermissionsForSubjectPrivilegeAndObject(subject,
+                                                         privilege,
+                                                         object);
+        for (final Permission permission : permissions) {
+            if (object != null) {
+                object.removePermission(permission);
+                ccmObjectRepository.save(object);
+            }
+            subject.removeGrantedPermission(permission);
+            subjectRepository.save(subject);
+
+            permissionRepository.delete(permission);
+        }
+
     }
 
     /**
@@ -67,9 +114,11 @@ public class PermissionManager {
      * the public user from the database. If there is no public user the method
      * will return {@code false}.
      *
-     * @param privilege The privilege to check.
-     * @param object    The object on which the privilege is granted.
-     * @param subject   The subject to which the privilege is granted.
+     * @param privilege The privilege to check. Can't be {@code null}.
+     * @param object    The object on which the privilege is granted. Can't be
+     *                  {@code null}.
+     * @param subject   The subject to which the privilege is granted. Can't be
+     *                  {@code null}.
      *
      * @return {@code true} of the subject has a permission granting
      *         {@code privilege} on {@code object}, either explicit or implicit.
@@ -79,7 +128,101 @@ public class PermissionManager {
     public boolean isPermitted(final Privilege privilege,
                                final CcmObject object,
                                final Subject subject) {
-        throw new UnsupportedOperationException();
+        if (subject instanceof User) {
+            return isPermitted(privilege, object, (User) subject);
+        } else if (subject instanceof Group) {
+            return isPermitted(privilege, object, (Group) subject);
+        } else {
+            return false;
+        }
+    }
+
+    public boolean isPermitted(final Privilege privilege,
+                               final CcmObject object,
+                               final User user) {
+        boolean result;
+
+        final List<Permission> directPermissions = permissionRepository
+            .findPermissionsForUserPrivilegeAndObject(user, privilege, object);
+        result = !directPermissions.isEmpty();
+
+        if (!result) {
+            final List<Permission> permissions = permissionRepository
+                .findPermissionsForUserPrivilegeAndObject(user, privilege, null);
+            result = !permissions.isEmpty();
+        }
+
+        if (!result) {
+            final Privilege admin = privilegeRepository.retrievePrivilege(
+                "admin");
+            if (admin != null) {
+                final List<Permission> permissions = permissionRepository
+                    .findPermissionsForUserPrivilegeAndObject(user,
+                                                              privilege,
+                                                              object);
+                result = !permissions.isEmpty();
+            }
+        }
+
+        if (!result) {
+            final Privilege admin = privilegeRepository.retrievePrivilege(
+                "admin");
+            if (admin != null) {
+                final List<Permission> permissions = permissionRepository
+                    .findPermissionsForUserPrivilegeAndObject(user,
+                                                              privilege,
+                                                              null);
+                result = !permissions.isEmpty();
+            }
+        }
+
+        return result;
+    }
+
+    public boolean isPermitted(final Privilege privilege,
+                               final CcmObject object,
+                               final Group group) {
+        boolean result;
+
+        final List<Permission> directPermissions = permissionRepository
+            .findPermissionsForSubjectPrivilegeAndObject(group,
+                                                         privilege,
+                                                         object);
+        result = !directPermissions.isEmpty();
+
+        if (!result) {
+            final List<Permission> permissions = permissionRepository
+                .findPermissionsForSubjectPrivilegeAndObject(group,
+                                                             privilege,
+                                                             null);
+            result = !permissions.isEmpty();
+        }
+
+        if (!result) {
+            final Privilege admin = privilegeRepository.retrievePrivilege(
+                "admin");
+            if (admin != null) {
+                final List<Permission> permissions = permissionRepository
+                    .findPermissionsForSubjectPrivilegeAndObject(group,
+                                                                 admin,
+                                                                 object);
+                result = !permissions.isEmpty();
+            }
+        }
+
+        if (!result) {
+            final Privilege admin = privilegeRepository.retrievePrivilege(
+                "admin");
+            if (admin != null) {
+                final List<Permission> permissions = permissionRepository
+                    .findPermissionsForSubjectPrivilegeAndObject(group,
+                                                                 admin,
+                                                                 null);
+                result = !permissions.isEmpty();
+            }
+        }
+
+        return result;
     }
 
     /**
@@ -90,9 +233,11 @@ public class PermissionManager {
      * the public user from the database. If there is no public user the method
      * will return {@code false}.
      *
-     * @param privilege The privilege to check.
-     * @param object    The object on which the privilege is granted.
-     * @param subject   The subject to which the privilege is granted.
+     * @param privilege The privilege to check. Can't be {@code null}.
+     * @param object    The object on which the privilege is granted. Can't be
+     *                  {@code null}.
+     * @param subject   The subject to which the privilege is granted. Can't be
+     *                  {@code null}.
      *
      * @throws UnauthorizedAcccessException If there is no permission granting
      *                                      {@code privilege} on {@code object}
@@ -105,7 +250,14 @@ public class PermissionManager {
                                 final CcmObject object,
                                 final Subject subject)
         throws UnauthorizedAcccessException {
-        throw new UnsupportedOperationException();
+        if (!isPermitted(privilege, object, subject)) {
+            throw new UnauthorizedAcccessException(String.format(
+                "Privilege \"%s\" has not been granted to subject \"%s\" "
+                    + "on object \"%s\".",
+                privilege.getLabel(),
+                subject.toString(),
+                object.toString()));
+        }
     }
 
 }
