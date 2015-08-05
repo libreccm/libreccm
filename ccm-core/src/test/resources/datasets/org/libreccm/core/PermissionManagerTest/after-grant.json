@@ -209,12 +209,6 @@
                     "granted_privilege_id": -20
                 },
                 {
-                    "permission_id": -70,
-                    "grantee_id": -50,
-                    "object_id": -60,
-                    "granted_privilege_id": -30
-                },
-                {
                     "permission_id": -80,
                     "grantee_id": -30,
                     "object_id": -10,
@@ -302,6 +296,36 @@
                     "permission_id": -230,
                     "grantee_id": -40,
                     "object_id": -80,
+                    "granted_privilege_id": -30
+                },
+                {
+                    "permission_id": -250,
+                    "grantee_id": -50,
+                    "object_id": -60,
+                    "granted_privilege_id": -20
+                },
+                {
+                    "permission_id": -260,
+                    "grantee_id": -50,
+                    "object_id": -60,
+                    "granted_privilege_id": -30
+                },
+                {
+                    "permission_id": -270,
+                    "grantee_id": -10,
+                    "object_id": -60,
+                    "granted_privilege_id": -20
+                },
+                {
+                    "permission_id": -280,
+                    "grantee_id": -50,
+                    "object_id": -70,
+                    "granted_privilege_id": -20
+                },
+                {
+                    "permission_id": -290,
+                    "grantee_id": -50,
+                    "object_id": -70,
                     "granted_privilege_id": -30
                 }
             ]

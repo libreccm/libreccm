@@ -62,6 +62,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Privilege implements Serializable {
 
     private static final long serialVersionUID = -3986038536996049440L;
+    
+    //Constant for the admin privilege.
+    public static final String ADMIN = "admin";
 
     @Id
     @Column(name = "privilege_id")

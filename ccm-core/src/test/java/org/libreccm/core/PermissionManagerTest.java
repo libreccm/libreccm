@@ -208,7 +208,7 @@ public class PermissionManagerTest {
     @UsingDataSet("datasets/org/libreccm/core/PermissionManagerTest/"
                       + "data.json")
     @InSequence(10)
-    public void isPermittedWebmaster() {
+    public void isPermittedWebmasterAdmin() {
         final User webmaster = userRepository.findByScreenName("webmaster");
         final Map<String, CcmObject> testObjects = retrieveTestObjects();
         final Map<String, Privilege> privileges = retrievePrivileges();
@@ -224,10 +224,55 @@ public class PermissionManagerTest {
         expected.put(testObjects.get(TEST_OBJECT_8), true);
 
         verifyIsPermitted(webmaster, privileges.get(ADMIN), expected);
+    }
+    
+    @Test
+    @UsingDataSet("datasets/org/libreccm/core/PermissionManagerTest/"
+                      + "data.json")
+    @InSequence(11)
+    public void isPermittedWebmasterRead() {
+        final User webmaster = userRepository.findByScreenName("webmaster");
+        final Map<String, CcmObject> testObjects = retrieveTestObjects();
+        final Map<String, Privilege> privileges = retrievePrivileges();
+
+        final Map<CcmObject, Boolean> expected = new LinkedHashMap<>();
+        expected.put(testObjects.get(TEST_OBJECT_1), true);
+        expected.put(testObjects.get(TEST_OBJECT_2), true);
+        expected.put(testObjects.get(TEST_OBJECT_3), true);
+        expected.put(testObjects.get(TEST_OBJECT_4), true);
+        expected.put(testObjects.get(TEST_OBJECT_5), true);
+        expected.put(testObjects.get(TEST_OBJECT_6), true);
+        expected.put(testObjects.get(TEST_OBJECT_7), true);
+        expected.put(testObjects.get(TEST_OBJECT_8), true);
+
         verifyIsPermitted(webmaster, privileges.get(READ), expected);
+    }
+
+        @Test
+    @UsingDataSet("datasets/org/libreccm/core/PermissionManagerTest/"
+                      + "data.json")
+    @InSequence(12)
+    public void isPermittedWebmasterWrite() {
+        final User webmaster = userRepository.findByScreenName("webmaster");
+        final Map<String, CcmObject> testObjects = retrieveTestObjects();
+        final Map<String, Privilege> privileges = retrievePrivileges();
+
+        final Map<CcmObject, Boolean> expected = new LinkedHashMap<>();
+        expected.put(testObjects.get(TEST_OBJECT_1), true);
+        expected.put(testObjects.get(TEST_OBJECT_2), true);
+        expected.put(testObjects.get(TEST_OBJECT_3), true);
+        expected.put(testObjects.get(TEST_OBJECT_4), true);
+        expected.put(testObjects.get(TEST_OBJECT_5), true);
+        expected.put(testObjects.get(TEST_OBJECT_6), true);
+        expected.put(testObjects.get(TEST_OBJECT_7), true);
+        expected.put(testObjects.get(TEST_OBJECT_8), true);
+
         verifyIsPermitted(webmaster, privileges.get(WRITE), expected);
     }
 
+    
+    
+    
     @Test
     @UsingDataSet("datasets/org/libreccm/core/PermissionManagerTest/"
                       + "data.json")
@@ -405,17 +450,16 @@ public class PermissionManagerTest {
         permissionManager.isPermitted(null, object, user);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     @UsingDataSet("datasets/org/libreccm/core/PermissionManagerTest/"
                       + "data.json")
-    @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(80)
     public void isPermittedNullObject() {
         final Privilege privilege = privilegeRepository
             .retrievePrivilege(READ);
         final User user = userRepository.findByScreenName("webmaster");
 
-        permissionManager.isPermitted(privilege, null, user);
+        assertThat(permissionManager.isPermitted(privilege, null, user), is(true));
     }
 
     @Test
@@ -458,10 +502,9 @@ public class PermissionManagerTest {
         permissionManager.checkPermission(null, object, user);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     @UsingDataSet("datasets/org/libreccm/core/PermissionManagerTest/"
                       + "data.json")
-    @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(130)
     public void checkPermissionNullObject() throws UnauthorizedAcccessException {
         final Privilege privilege = privilegeRepository
@@ -471,10 +514,9 @@ public class PermissionManagerTest {
         permissionManager.checkPermission(privilege, null, user);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     @UsingDataSet("datasets/org/libreccm/core/PermissionManagerTest/"
                       + "data.json")
-    @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(140)
     public void checkPermissionNullSubject() throws UnauthorizedAcccessException {
         final Privilege privilege = privilegeRepository
@@ -487,8 +529,9 @@ public class PermissionManagerTest {
     @Test
     @UsingDataSet("datasets/org/libreccm/core/PermissionManagerTest/"
                       + "data.json")
-    @ShouldMatchDataSet("datasets/org/libreccm/core/PermissionManagerTest/"
-                            + "after-grant.json")
+    @ShouldMatchDataSet(value = "datasets/org/libreccm/core/"
+                        + "PermissionManagerTest/after-grant.json",
+                        excludeColumns = {"permission_id"})
     @InSequence(150)
     public void grantPermission() {
         final Privilege read = privilegeRepository.retrievePrivilege(READ);
@@ -509,8 +552,9 @@ public class PermissionManagerTest {
     @Test
     @UsingDataSet("datasets/org/libreccm/core/PermissionManagerTest/"
                       + "data.json")
-    @ShouldMatchDataSet("datasets/org/libreccm/core/PermissionManagerTest/"
-                            + "after-grant-wildcard.json")
+    @ShouldMatchDataSet(value = "datasets/org/libreccm/core/"
+                        + "PermissionManagerTest/after-grant-wildcard.json",
+                        excludeColumns = {"permission_id"})
     @InSequence(160)
     public void grantWildcardPermission() {
         final Privilege read = privilegeRepository.retrievePrivilege(READ);
@@ -546,8 +590,9 @@ public class PermissionManagerTest {
     @Test
     @UsingDataSet("datasets/org/libreccm/core/PermissionManagerTest/"
                       + "data.json")
-    @ShouldMatchDataSet("datasets/org/libreccm/core/PermissionManagerTest/"
-                            + "after-revoke.json")
+    @ShouldMatchDataSet(value = "datasets/org/libreccm/core/"
+                        + "PermissionManagerTest/after-revoke.json",
+                        excludeColumns = {"permission_id"})
     @InSequence(190)
     public void revokePermission() {
         final Privilege read = privilegeRepository.retrievePrivilege(READ);
