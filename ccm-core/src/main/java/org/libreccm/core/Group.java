@@ -41,7 +41,8 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- *
+ * A {@code Group} is collection of {@link User}s.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
@@ -55,16 +56,26 @@ public class Group extends Subject implements Serializable {
 
     private static final long serialVersionUID = -5555063356689597270L;
 
+    /**
+     * The name of the {@code Group}. Must be unique.
+     */
     @Column(name = "name", length = 512, unique = true, nullable = false)
     @NotBlank
     @XmlElement(name = "name", namespace = CORE_XML_NS)
     private String name;
 
+    /**
+     * The {@link Role}s assigned to the {@code Group}.
+     */
     @OneToMany(mappedBy = "sourceGroup")
     @XmlElementWrapper(name = "roles", namespace = CORE_XML_NS)
     @XmlElement(name ="role", namespace = CORE_XML_NS)
     private List<Role> roles;
 
+    /**
+     * The members of the group. For adding or removing members the methods 
+     * provided by the {@link GroupManager} should be used.
+     */
     @OneToMany(mappedBy = "group")
     @XmlElementWrapper(name = "group-memberships", namespace = CORE_XML_NS)
     @XmlElement(name = "group-membership", namespace = CORE_XML_NS)

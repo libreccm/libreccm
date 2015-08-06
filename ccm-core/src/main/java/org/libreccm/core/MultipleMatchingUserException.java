@@ -19,7 +19,9 @@
 package org.libreccm.core;
 
 /**
- *
+ * Thrown by {@link UserRepository#findByEmailAddress(java.lang.String)} if 
+ * there is more than one user with the same email address.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class MultipleMatchingUserException extends RuntimeException {

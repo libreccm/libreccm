@@ -63,17 +63,25 @@ public class Privilege implements Serializable {
 
     private static final long serialVersionUID = -3986038536996049440L;
     
-    //Constant for the admin privilege.
+    /**
+     * Constant for the {@code admin} privilege because this privilege is used
+     * very often.
+     */
     public static final String ADMIN = "admin";
 
+    /**
+     * ID for the privilege.
+     */
     @Id
     @Column(name = "privilege_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
     @XmlElement(name = "privilege-id", namespace = CORE_XML_NS)
     private long privilegeId;
 
-    @Column(name = "label", length = 255, nullable = false)
-    //Field is named like this in the old PDL class, don't want to change it now
+    /**
+     * The label of the {@code Privilege}.
+     */
+    @Column(name = "label", length = 255, nullable = false, unique = true)
     @XmlElement(name = "label", namespace = CORE_XML_NS)
     private String label;
 

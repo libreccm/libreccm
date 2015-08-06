@@ -26,7 +26,6 @@ import com.arsdigita.util.parameter.ParameterError;
 import com.arsdigita.util.parameter.StringParameter;
 import com.arsdigita.util.parameter.URLParameter;
 import com.arsdigita.util.UncheckedWrapperException;
-import com.arsdigita.web.Web;
 
 import java.io.IOException;
 import java.net.URL;

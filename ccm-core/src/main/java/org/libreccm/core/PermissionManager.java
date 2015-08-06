@@ -24,6 +24,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
 /**
+ * This class provides methods for managing {@link Permissions}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -162,7 +163,7 @@ public class PermissionManager {
 
             if (publicUser == null) {
 
-                 //If the public user is not available an null value for the 
+                //If the public user is not available an null value for the 
                 //subject parameter is an illegal argument.
                 throw new IllegalArgumentException(
                     "Illegal value 'null' provided for parameter privilege");
@@ -192,9 +193,9 @@ public class PermissionManager {
      * the provided {@code object} is {@code null} the method will only check
      * for wildcard permission (permissions for all objects).
      *
-     * @param privilege The privilege. Can't be null.
-     * @param object    The object. Can be null.
-     * @param user      The user. Can't be null.
+     * @param privilege The privilege. Can't be {@code null}.
+     * @param object    The object. Can be {@code null}.
+     * @param user      The user. Can be {@code null}.
      *
      * @return {@code true} if the provided {@code user} has a permission
      *         granting the provided privilege for the provided object,
@@ -252,6 +253,28 @@ public class PermissionManager {
         return result;
     }
 
+    /**
+     * Checks if a {@link Group} is granted a {@link Privilege} on a
+     * {@link CcmObject} or on all {@link CcmObject}s.
+     *
+     * As for
+     * {@link #isPermitted(org.libreccm.core.Privilege, org.libreccm.core.CcmObject, org.libreccm.core.User)},
+     * this method also checks if the {@code admin} privilege was granted to the
+     * group for the provided {@code object} or for all objects.
+     *
+     * @param privilege The privilege. Can't be {@code null}.
+     * @param object    The object. Can be {@code null}.
+     * @param group     The group. Can't be {@code null}.
+     *
+     * @return {@code true} if the group has a permission granting the provided
+     *         {@code privilege} on the the provided {@code object} (or on all
+     *         objects), {@code false} of not.
+     *
+     * @see #isPermitted(org.libreccm.core.Privilege,
+     * org.libreccm.core.CcmObject, org.libreccm.core.Subject)
+     * @see #isPermitted(org.libreccm.core.Privilege,
+     * org.libreccm.core.CcmObject, org.libreccm.core.User)
+     */
     public boolean isPermitted(final Privilege privilege,
                                final CcmObject object,
                                final Group group) {
@@ -305,6 +328,11 @@ public class PermissionManager {
      * If the provided subject is {@code null} the method will try to retrieve
      * the public user from the database. If there is no public user the method
      * will return {@code false}.
+     *
+     * Internally this methods calls
+     * {@link #isPermitted(org.libreccm.core.Privilege, org.libreccm.core.CcmObject, org.libreccm.core.Subject)}
+     * and throws an {@link UnauthorizedAcccessException} if the return value is
+     * {@code null}.
      *
      * @param privilege The privilege to check. Can't be {@code null}.
      * @param object    The object on which the privilege is granted. Can't be

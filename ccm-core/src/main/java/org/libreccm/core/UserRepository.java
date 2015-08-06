@@ -25,15 +25,16 @@ import javax.inject.Inject;
 import javax.persistence.TypedQuery;
 
 /**
+ * Provides methods for retrieving, storing and deleting {@link User} objects.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
 public class UserRepository extends AbstractEntityRepository<Long, User> {
 
-   @Inject
+    @Inject
     private transient PrivilegeRepository privilegeRepository;
-    
+
     @Override
     public Class<User> getEntityClass() {
         return User.class;
@@ -56,14 +57,14 @@ public class UserRepository extends AbstractEntityRepository<Long, User> {
     public User retrieveSystemUser() {
         final User systemUser = new User();
         systemUser.setScreenName("system");
-        
+
         final Privilege adminPrivilege = privilegeRepository.retrievePrivilege(
-                "admin");
+            "admin");
         final Permission systemPermission = new Permission();
         systemPermission.setGrantee(systemUser);
         systemPermission.setGrantedPrivilege(adminPrivilege);
         systemUser.addGrantedPermission(systemPermission);
-        
+
         return systemUser;
     }
 
@@ -73,13 +74,21 @@ public class UserRepository extends AbstractEntityRepository<Long, User> {
      * ordinary user account in the database with the screen name
      * {@code public-user}.
      *
-     * @return The public user or {@code null} if there is no account for the 
-     * public user.
+     * @return The public user or {@code null} if there is no account for the
+     *         public user.
      */
     public User retrievePublicUser() {
         return findByScreenName("public-user");
     }
 
+    /**
+     * Retrieve a user by its screen name.
+     *
+     * @param screenname The {@code screename} of the user.
+     *
+     * @return The user identified by the provided {@code screenname} if there
+     *         is such a user, {@code null} if not.
+     */
     public User findByScreenName(final String screenname) {
         final TypedQuery<User> query = getEntityManager().createNamedQuery(
             "findUserByScreenName", User.class);
@@ -97,6 +106,29 @@ public class UserRepository extends AbstractEntityRepository<Long, User> {
         }
     }
 
+    /**
+     * Finds a user by one of the email addresses assigned to the user.
+     *
+     * @param emailAddress The email address of the user.
+     *
+     * @return The user identified by the provided email address if there is
+     *         such a user, {@code null} otherwise.
+     *
+     * @throws MultipleMatchingUserException Because the email addresses are
+     *                                       represented by an embedded entity
+     *                                       (see {@link User} and
+     *                                       {@link EmailAddress}) it is not
+     *                                       possible to enforce uniqueness on
+     *                                       the database level. Therefore this
+     *                                       method deals with the case that
+     *                                       there is more than on matching user
+     *                                       and throws an (unchecked) exception
+     *                                       if this is the case. However if
+     *                                       this the case something very
+     *                                       strange has happened and the
+     *                                       database should be checked
+     *                                       carefully.
+     */
     public User findByEmailAddress(final String emailAddress) {
         final TypedQuery<User> query = getEntityManager().createNamedQuery(
             "findUserByEmailAddress", User.class);

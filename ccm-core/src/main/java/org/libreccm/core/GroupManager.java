@@ -23,7 +23,8 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
 /**
- *
+ * Provides methods for managing the members of a {@link Group}.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped

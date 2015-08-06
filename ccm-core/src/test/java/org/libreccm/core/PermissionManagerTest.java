@@ -109,11 +109,6 @@ public class PermissionManagerTest {
     public void tearDown() {
     }
 
-    // TODO add test methods here.
-    // The methods must be annotated with annotation @Test. For example:
-    //
-    // @Test
-    // public void hello() {}
     @Deployment
     public static WebArchive createDeployment() {
         final PomEquippedResolveStage pom = Maven

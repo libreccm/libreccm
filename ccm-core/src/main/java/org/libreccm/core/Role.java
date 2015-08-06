@@ -37,6 +37,12 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
 /**
+ * A role can be assigned to a group. This class was migrated from the old CCM
+ * code (com.arsdigita.kernel.Role}. Obviously it does not more than to provide
+ * an named association between to groups.
+ *
+ * @todo Check if this class can be removed or refactored to make the whole
+ * system of users, groups and permissions simpler.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -45,16 +51,16 @@ import javax.persistence.NamedQuery;
 @NamedQueries({
     @NamedQuery(name = "findRolesForName",
                 query = "SELECT r FROM Role r "
-                + "WHERE r.name = :roleName "
-                + "ORDER BY r.name"),
+                            + "WHERE r.name = :roleName "
+                            + "ORDER BY r.name"),
     @NamedQuery(name = "findRolesForSourceGroup",
                 query = "SELECT r FROM Role r "
-                + "WHERE r.sourceGroup = :sourceGroup "
-                + "ORDER BY r.name"),
+                            + "WHERE r.sourceGroup = :sourceGroup "
+                            + "ORDER BY r.name"),
     @NamedQuery(name = "findRolesForImplicitGroup",
                 query = "SELECT r FROM Role r "
-                + "WHERE r.implicitGroup = :implicitGroup "
-                + "ORDER BY r.name")
+                            + "WHERE r.implicitGroup = :implicitGroup "
+                            + "ORDER BY r.name")
 })
 @SuppressWarnings("PMD.ShortClassName") //Role is perfectly fine name.
 public class Role implements Serializable {

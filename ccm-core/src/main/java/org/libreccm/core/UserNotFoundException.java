@@ -20,7 +20,9 @@
 package org.libreccm.core;
 
 /**
- *
+ * Thrown by several methods of the {@link UserManager} if a {@link User} can't
+ * be found.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class UserNotFoundException extends Exception {

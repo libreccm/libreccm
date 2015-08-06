@@ -18,7 +18,6 @@
  */
 package org.libreccm.core;
 
-
 import org.apache.commons.codec.binary.Base64;
 
 import java.nio.charset.StandardCharsets;
@@ -46,6 +45,14 @@ public class UserManager {
     @Inject
     private transient UserRepository userRepository;
 
+    /**
+     * Helper method for generating an password hash.
+     *
+     * @param password The password to hash.
+     * @param salt The salt to append.
+     *
+     * @return The password hash.
+     */
     private byte[] generateHash(final byte[] password, final byte[] salt) {
         final byte[] saltedPassword = new byte[password.length + salt.length];
 

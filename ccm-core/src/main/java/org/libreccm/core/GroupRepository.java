@@ -26,7 +26,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
 /**
- *
+ * A repository class for retrieving, storing and deleting {@link Group}s.
+ * 
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
