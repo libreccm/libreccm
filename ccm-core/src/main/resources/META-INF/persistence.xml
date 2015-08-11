@@ -24,9 +24,18 @@
         </jta-data-source>
         
         <properties>
+            <!-- Properties for Hibernate -->
             <property name="hibernate.hbm2ddl.auto" value="verify"/>
             <property name="hibernate.connection.autocommit" value="false" />
             <property name="hibernate.id.new_generator_mappings" value="true"/>
+            
+            <!-- 
+                Properties for Hibernate Envers 
+                We are using the ValidityAuditStrategy here because it is faster
+                when querying data than the DefaultStrategy
+            -->
+            <property name="org.hibernate.envers.audit_strategy" 
+                      value="org.hibernate.envers.strategy.ValidityAuditStrategy"/>
         </properties>
 
     </persistence-unit>

@@ -79,6 +79,7 @@ public class CategoryManager {
     public void addObjectToCategory(final CcmObject object,
                                     final Category category,
                                     final long order) {
+        // TODO implement method
         throw new UnsupportedOperationException();
     }
 
@@ -105,6 +106,7 @@ public class CategoryManager {
     public void removeObjectFromCategory(final CcmObject object,
                                          final Category category)
         throws ObjectNotAssignedToCategoryException {
+        // TODO implement method
         throw new UnsupportedOperationException();
     }
 
@@ -125,6 +127,7 @@ public class CategoryManager {
     public void increaseObjectOrder(final CcmObject object,
                                     final Category category)
         throws ObjectNotAssignedToCategoryException {
+        // TODO implement method
         throw new UnsupportedOperationException();
     }
 
@@ -145,6 +148,7 @@ public class CategoryManager {
     public void decreaseObjectOrder(final CcmObject object,
                                     final Category category)
         throws ObjectNotAssignedToCategoryException {
+        // TODO implement method
         throw new UnsupportedOperationException();
     }
 
@@ -167,6 +171,7 @@ public class CategoryManager {
                             final CcmObject objectB,
                             final Category category)
         throws ObjectNotAssignedToCategoryException {
+        // TODO implement method
         throw new UnsupportedOperationException();
     }
 
@@ -200,6 +205,7 @@ public class CategoryManager {
     public void addSubCategoryToCategory(final Category subCategory,
                                          final Category parentCategory,
                                          final long order) {
+        // TODO implement method
         throw new UnsupportedOperationException();
     }
 
@@ -219,6 +225,7 @@ public class CategoryManager {
     public void removeSubCategoryFromCategory(final Category subCategory,
                                               final Category parentCategory)
         throws NotASubCategoryException {
+        // TODO implement method
         throw new UnsupportedOperationException();
     }
 
@@ -240,6 +247,7 @@ public class CategoryManager {
     public void increaseCategoryOrder(final Category subCategory,
                                       final Category parentCategory)
         throws NotASubCategoryException {
+        // TODO implement method
         throw new UnsupportedOperationException();
     }
 
@@ -261,6 +269,7 @@ public class CategoryManager {
     public void decreaseCategoryOrder(final Category subCategory,
                                       final Category parentCategory)
         throws NotASubCategoryException {
+        // TODO implement method
         throw new UnsupportedOperationException();
     }
 
@@ -279,6 +288,7 @@ public class CategoryManager {
                                final Category subCategoryB,
                                final Category parentCategory)
         throws NotASubCategoryException {
+        // TODO implement method
         throw new UnsupportedOperationException();
     }
 

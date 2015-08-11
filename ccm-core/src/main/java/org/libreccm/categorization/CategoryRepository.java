@@ -63,6 +63,7 @@ public class CategoryRepository extends AbstractEntityRepository<Long, Category>
      * empty.
      */
     public List<Category> getOrphanedCategories() {
+        // TODO implement method
         throw new UnsupportedOperationException();
     }
 

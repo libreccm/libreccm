@@ -56,6 +56,7 @@ public class DomainRepository extends AbstractEntityRepository<Long, Domain> {
      *         {@code null} if there is no such {@code Domain}.
      */
     public Domain findByDomainKey(final String domainKey) {
+        // TODO implement method
         throw new UnsupportedOperationException();
     }
 
@@ -68,6 +69,7 @@ public class DomainRepository extends AbstractEntityRepository<Long, Domain> {
      *         if there is so such {@code Domain}.
      */
     public Domain findByUri(final URI uri) {
+        // TODO implement method
         throw new UnsupportedOperationException();
     }
 

@@ -47,6 +47,7 @@ public class DomainManager {
      */
     public void addDomainOwner(final Application application,
                                final Domain domain) {
+        // TODO implement method
         throw new UnsupportedOperationException();
     }
 
@@ -62,6 +63,7 @@ public class DomainManager {
      */
     public void removeDomainOwner(final Application application,
                                   final Domain domain) {
+        // TODO implement method
         throw new UnsupportedOperationException();
     }
 
@@ -75,6 +77,7 @@ public class DomainManager {
      */
     public boolean isDomainOwner(final Application application,
                                  final Domain domain) {
+        // TODO implement method
         throw new UnsupportedOperationException();
     }
 
