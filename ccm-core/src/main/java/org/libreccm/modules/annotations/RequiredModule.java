@@ -24,8 +24,10 @@ package org.libreccm.modules.annotations;
  */
 public @interface RequiredModule {
 
-    Class<? extends org.libreccm.modules.Module> module();
+    Class<? extends org.libreccm.modules.ModuleDescriptor> module();
 
-    String version() default "";
+    String minVersion() default "";
+    
+    String maxVersion() default "";
 
 }

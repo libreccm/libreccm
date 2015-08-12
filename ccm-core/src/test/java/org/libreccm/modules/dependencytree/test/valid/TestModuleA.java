@@ -16,37 +16,39 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.modules;
+package org.libreccm.modules.dependencytree.test.valid;
+
+import org.libreccm.modules.ModuleDescriptor;
+import org.libreccm.modules.annotations.RequiredModule;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public interface Module {
+@org.libreccm.modules.annotations.Module(
+    name = "org.libreccm.core.ccm-testmodule-a", version = "1.0.0",
+    requiredModules = {
+        @RequiredModule(module = TestModuleRoot.class, minVersion = "1.0.0")})
+public class TestModuleA implements ModuleDescriptor {
 
-    /**
-     * Called by the {@link ModuleManager} after the database tables for the
-     * module have been created. Use this method to create initial or example
-     * data.
-     */
-    void prepare();
+    @Override
+    public void prepare() {
+        //Nothing
+    }
 
-    /**
-     * Called by the {@link ModuleManager} when a module is removed from the
-     * installation. If necessary clean up the data of the module in the
-     * implementation of this method.
-     */
-    void uninstall();
+    @Override
+    public void uninstall() {
+        //Nothing
+    }
 
-    /**
-     * Called each time the CCM application is started. Use an implementation of
-     * this method for creating static instances or for integrity checking.
-     */
-    void init();
+    @Override
+    public void init() {
+        //Nothing
+    }
 
-    /**
-     * Called each time the CCM application stops.
-     */
-    void shutdown();
+    @Override
+    public void shutdown() {
+        //Nothing
+    }
 
 }

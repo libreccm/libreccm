@@ -138,6 +138,11 @@
         </dependency>
         
         <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-artifact</artifactId>
+        </dependency>
+        
+        <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>test</scope>
@@ -399,6 +404,7 @@
                         <exclude>**/DateFormatter.java</exclude>
                         <exclude>**/DateFormatterConfig.java</exclude>
                         <exclude>**/DateTimeFormatter.java</exclude>
+                        <exclude>**/DispatcherConfig.java</exclude>
                         <exclude>**/Document.java</exclude>
                         <exclude>**/Element.java</exclude>
                         <exclude>**/EmailParameter.java</exclude>
@@ -407,13 +413,17 @@
                         <exclude>**/ExceptionUnwrapper.java</exclude>
                         <exclude>**/Exceptions.java</exclude>
                         <exclude>**/FileParameter.java</exclude>
+                        <exclude>**/FormBuilderConfig.java</exclude>
                         <exclude>**/FullDateFormatter.java</exclude>
+                        <exclude>**/GlobalizationConfig.java</exclude>
                         <exclude>**/IntegerParameter.java</exclude>
                         <exclude>**/JavaPropertyReader.java</exclude>
                         <exclude>**/JavaPropertyWriter.java</exclude>
                         <exclude>**/KernelConfig.java</exclude>
                         <exclude>**/LockableImpl.java</exclude>
+                        <exclude>**/MailConfig.java</exclude>
                         <exclude>**/MapParameter.java</exclude>
+                        <exclude>**/NotificationConfig.java</exclude>
                         <exclude>**/Parameter.java</exclude>
                         <exclude>**/ParameterError.java</exclude>
                         <exclude>**/ParameterException.java</exclude>
@@ -425,8 +435,11 @@
                         <exclude>**/SpecificClassParameter.java</exclude>
                         <exclude>**/StringParameter.java</exclude>
                         <exclude>**/TimeFormatter.java</exclude>
+                        <exclude>**/UIConfig.java</exclude>
                         <exclude>**/UncheckedWrapperException.java</exclude>
+                        <exclude>**/WorkflowConfig.java</exclude>
                         <exclude>**/XML.java</exclude>
+                        <exclude>**/XMLConfig.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>

@@ -30,7 +30,7 @@ import javax.inject.Inject;
 public class ModuleManager {
     
     @Inject
-    private transient Instance<Module> modules;
+    private transient Instance<ModuleDescriptor> modules;
     
     
     

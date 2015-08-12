@@ -18,7 +18,7 @@
  */
 package org.libreccm.modules.dependencytree;
 
-import org.libreccm.modules.Module;
+import org.libreccm.modules.ModuleDescriptor;
 import org.libreccm.modules.ModuleUtil;
 
 import java.util.ArrayList;
@@ -27,12 +27,15 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- *
+ * Represents a node in the dependency tree. 
+ * 
+ * @see DependencyTreeManager
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public final class TreeNode {
     
-    private Module module;
+    private ModuleDescriptor module;
     private List<TreeNode> dependentModules;
     private List<TreeNode> dependsOn;
     
@@ -40,20 +43,20 @@ public final class TreeNode {
         super();
         
         dependentModules = new ArrayList<>();
-        dependentModules = new ArrayList<>();
+        dependsOn = new ArrayList<>();
     }
     
-    public TreeNode(final Module module) {
+    public TreeNode(final ModuleDescriptor module) {
         this();
         
         this.module = module;
     }
 
-    public Module getModule() {
+    public ModuleDescriptor getModule() {
         return module;
     }
 
-    public void setModule(final Module module) {
+    public void setModule(final ModuleDescriptor module) {
         this.module = module;
     }
 
@@ -61,15 +64,15 @@ public final class TreeNode {
         return Collections.unmodifiableList(dependentModules);
     }
 
-    protected void setDependentModules(final List<TreeNode> dependentModules) {
+    void setDependentModules(final List<TreeNode> dependentModules) {
         this.dependentModules = dependentModules;
     }
     
-    protected void addDependentModule(final TreeNode node) {
+    void addDependentModule(final TreeNode node) {
         dependentModules.add(node);
     }
     
-    protected void removeDependentModule(final TreeNode node) {
+    void removeDependentModule(final TreeNode node) {
         dependentModules.remove(node);
     }
 
@@ -77,15 +80,15 @@ public final class TreeNode {
         return Collections.unmodifiableList(dependsOn);
     }
 
-    protected void setDependsOn(final List<TreeNode> dependsOn) {
+    void setDependsOn(final List<TreeNode> dependsOn) {
         this.dependsOn = dependsOn;
     }
     
-    protected void addDependsOn(final TreeNode node) {
+    void addDependsOn(final TreeNode node) {
         dependsOn.add(node);
     }
     
-    protected void removeDependsOn(final TreeNode node) {
+    void removeDependsOn(final TreeNode node) {
         dependsOn.remove(node);
     }
     

@@ -16,34 +16,40 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.modules.annotations;
+package org.libreccm.modules.dependencytree.test.cycle;
 
 import org.libreccm.modules.ModuleDescriptor;
-
-import static java.lang.annotation.ElementType.*;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-import javax.enterprise.util.Nonbinding;
-import javax.inject.Qualifier;
+import org.libreccm.modules.annotations.RequiredModule;
 
 /**
- * Annotate an implementation of the {@link ModuleDescriptor} interface with 
- * this annotation to use it as a module.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@Target({METHOD, FIELD, PARAMETER, TYPE})
-@Retention(RetentionPolicy.RUNTIME)
-@Qualifier
-public @interface Module {
+@org.libreccm.modules.annotations.Module(
+    name = "org.libreccm.core.ccm-testmodule-root",
+    version = "1.0.0",
+    requiredModules = {
+        @RequiredModule(module = TestModuleB.class)})
+public class TestModuleRoot implements ModuleDescriptor {
 
-    @Nonbinding String name() default "";
+    @Override
+    public void prepare() {
+        //Nothing
+    }
 
-    @Nonbinding String version() default "";
+    @Override
+    public void uninstall() {
+        //Nothing
+    }
 
-    @Nonbinding RequiredModule[] requiredModules() default {};
+    @Override
+    public void init() {
+        //Nothing
+    }
+
+    @Override
+    public void shutdown() {
+        //Nothing
+    }
 
 }

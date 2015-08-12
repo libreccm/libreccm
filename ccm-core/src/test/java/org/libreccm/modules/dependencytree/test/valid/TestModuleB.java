@@ -16,39 +16,39 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.modules;
+package org.libreccm.modules.dependencytree.test.valid;
 
+import org.libreccm.modules.ModuleDescriptor;
 import org.libreccm.modules.annotations.RequiredModule;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@org.libreccm.modules.annotations.Module(name = "org.libreccm.foo.Foo", 
-                                         version = "1.0.0-beta.1",
-        requiredModules = {
-            @RequiredModule(module = Bar.class, version = "1.0.0"),
-            @RequiredModule(module= Example.class, version = "6.6.7")})
-public class Foo implements Module {
+@org.libreccm.modules.annotations.Module(
+    name = "org.libreccm.core.ccm-testmodule-b", version = "1.0.0",
+    requiredModules = {
+        @RequiredModule(module = TestModuleRoot.class, minVersion = "1.0.0")})
+public class TestModuleB implements ModuleDescriptor {
 
     @Override
     public void prepare() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //Nothing
     }
 
     @Override
     public void uninstall() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //Nothing
     }
 
     @Override
     public void init() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //Nothing
     }
 
     @Override
     public void shutdown() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //Nothing
     }
 
 }

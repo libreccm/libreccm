@@ -18,23 +18,22 @@
  */
 package org.libreccm.modules;
 
+import org.libreccm.modules.annotations.Module;
 import org.libreccm.modules.annotations.RequiredModule;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class ModuleUtil {
+public final class ModuleUtil {
 
     private ModuleUtil() {
         //Nothing
     }
 
-    private static org.libreccm.modules.annotations.Module getModuleAnnotation(
-        final Module module) {
-        final org.libreccm.modules.annotations.Module annotation = module
-            .getClass().getAnnotation(
-                org.libreccm.modules.annotations.Module.class);
+    private static Module getModuleAnnotation(
+        final ModuleDescriptor module) {
+        final Module annotation = module.getClass().getAnnotation(Module.class);
 
         if (annotation == null) {
             throw new IllegalArgumentException(String.format(
@@ -47,21 +46,22 @@ public class ModuleUtil {
         }
     }
 
-    public static String getModuleName(final Module module) {
+    public static String getModuleName(final ModuleDescriptor module) {
         return getModuleAnnotation(module).name();
     }
 
-    public static String getVersion(final Module module) {
+    public static String getVersion(final ModuleDescriptor module) {
         return getModuleAnnotation(module).version();
     }
 
-    public static RequiredModule[] getRequiredModules(final Module module) {
+    public static RequiredModule[] getRequiredModules(final ModuleDescriptor module) {
         return getModuleAnnotation(module).requiredModules();
     }
 
-    public static String getModuleName(Class<? extends Module> module) {
-        final org.libreccm.modules.annotations.Module annotation = module
-            .getAnnotation(org.libreccm.modules.annotations.Module.class);
+    public static String getModuleName(
+        final Class<? extends ModuleDescriptor> module) {
+        
+        final Module annotation = module.getAnnotation(Module.class);
 
         if (annotation == null) {
             throw new IllegalArgumentException(String.format(

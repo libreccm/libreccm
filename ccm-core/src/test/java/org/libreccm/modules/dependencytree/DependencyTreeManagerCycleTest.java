@@ -18,14 +18,10 @@
  */
 package org.libreccm.modules.dependencytree;
 
-import org.libreccm.modules.dependencytree.test.valid.TestModuleB;
-import org.libreccm.modules.dependencytree.test.valid.TestModuleC;
-import org.libreccm.modules.dependencytree.test.valid.TestModuleA;
-import org.libreccm.modules.dependencytree.test.valid.TestModuleRoot;
-
 import static org.hamcrest.Matchers.*;
 
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.container.test.api.ShouldThrowException;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
@@ -43,8 +39,11 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.libreccm.modules.ModuleDescriptor;
-import org.libreccm.modules.ModuleUtil;
 import org.libreccm.modules.annotations.Module;
+import org.libreccm.modules.dependencytree.test.cycle.TestModuleA;
+import org.libreccm.modules.dependencytree.test.cycle.TestModuleB;
+import org.libreccm.modules.dependencytree.test.cycle.TestModuleC;
+import org.libreccm.modules.dependencytree.test.cycle.TestModuleRoot;
 import org.libreccm.tests.categories.IntegrationTest;
 
 import java.io.File;
@@ -60,13 +59,13 @@ import javax.inject.Inject;
  */
 @Category(IntegrationTest.class)
 @RunWith(Arquillian.class)
-public class DependencyTreeManagerTest {
+public class DependencyTreeManagerCycleTest {
 
     @Inject
     @Module
     private transient Instance<ModuleDescriptor> modules;
 
-    public DependencyTreeManagerTest() {
+    public DependencyTreeManagerCycleTest() {
     }
 
     @BeforeClass
@@ -108,7 +107,7 @@ public class DependencyTreeManagerTest {
             .addPackage(org.libreccm.tests.categories.IntegrationTest.class
                 .getPackage())
             .addPackage(
-                org.libreccm.modules.dependencytree.test.valid.TestModuleRoot.class
+                org.libreccm.modules.dependencytree.test.cycle.TestModuleRoot.class
                 .getPackage())
             .addClass(org.libreccm.modules.ModuleDescriptor.class)
             .addClass(org.libreccm.modules.ModuleUtil.class)
@@ -132,23 +131,13 @@ public class DependencyTreeManagerTest {
                                                   TestModuleC.class));
     }
 
-    @Test
+    @Test(expected = DependencyException.class)
+    @ShouldThrowException(DependencyException.class)
     public void verifyModuleOrder() throws DependencyException {
         final DependencyTreeManager treeManager = new DependencyTreeManager();
 
         final List<TreeNode> tree = treeManager.generateTree(modules);
-        final List<TreeNode> ordered = treeManager.orderModules(tree);
-
-        final List<String> modulesInOrder = new ArrayList<>();
-        for (final TreeNode node : ordered) {
-            modulesInOrder.add(ModuleUtil.getModuleName(node.getModule()));
-        }
-
-        assertThat(modulesInOrder,
-                   contains("org.libreccm.core.ccm-testmodule-root",
-                            "org.libreccm.core.ccm-testmodule-a",
-                            "org.libreccm.core.ccm-testmodule-b",
-                            "org.libreccm.core.ccm-testmodule-c"));
+        treeManager.orderModules(tree);
     }
 
 }

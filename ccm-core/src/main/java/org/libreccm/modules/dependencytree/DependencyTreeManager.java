@@ -20,7 +20,8 @@ package org.libreccm.modules.dependencytree;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.libreccm.modules.Module;
+import org.apache.maven.artifact.versioning.ComparableVersion;
+import org.libreccm.modules.ModuleDescriptor;
 import org.libreccm.modules.ModuleUtil;
 import org.libreccm.modules.annotations.RequiredModule;
 
@@ -32,6 +33,18 @@ import java.util.Map;
 import javax.enterprise.inject.Instance;
 
 /**
+ * This class implements topological sorting to determine the order in which the
+ * modules are loaded and initialised.
+ *
+ * The class is used by creating an instance with the parameterless constructor.
+ * To create the tree/graph call the
+ * {@link #generateTree(javax.enterprise.inject.Instance)} method. With the
+ * returned list of nodes call the the {@link #orderModules(java.util.List)}
+ * method. The list returned by {@link #orderModules(java.util.List)} contains
+ * all modules in order.
+ *
+ * More information about topological sorting:
+ * <a href="https://en.wikipedia.org/wiki/Topological_sorting">https://en.wikipedia.org/wiki/Topological_sorting</a>
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -40,23 +53,23 @@ public class DependencyTreeManager {
     private static final Logger LOGGER = LogManager.getLogger(
         DependencyTreeManager.class);
 
-    public List<TreeNode> generateTree(final Instance<Module> modules) throws
-        DependencyException {
+    public List<TreeNode> generateTree(final Instance<ModuleDescriptor> modules)
+        throws DependencyException {
 
         LOGGER.info("Starting to generate dependency tree...");
 
         final Map<String, TreeNode> nodes = new HashMap<>();
 
-        for (final Module module : modules) {
+        for (final ModuleDescriptor module : modules) {
             createTreeNode(module, nodes);
         }
 
-        for (final Module module : modules) {
+        for (final ModuleDescriptor module : modules) {
             addDependencyRelations(module, nodes);
         }
 
         final List<TreeNode> nodeList = new ArrayList<>();
-        for (Map.Entry<String, TreeNode> entry : nodes.entrySet()) {
+        for (final Map.Entry<String, TreeNode> entry : nodes.entrySet()) {
             nodeList.add(entry.getValue());
         }
 
@@ -116,7 +129,7 @@ public class DependencyTreeManager {
         }
     }
 
-    private void createTreeNode(final Module module,
+    private void createTreeNode(final ModuleDescriptor module,
                                 final Map<String, TreeNode> nodes) {
         final TreeNode node = new TreeNode(module);
 
@@ -125,7 +138,7 @@ public class DependencyTreeManager {
         nodes.put(ModuleUtil.getModuleName(module), node);
     }
 
-    private void addDependencyRelations(final Module module,
+    private void addDependencyRelations(final ModuleDescriptor module,
                                         final Map<String, TreeNode> nodes)
         throws DependencyException {
 
@@ -147,8 +160,9 @@ public class DependencyTreeManager {
         final TreeNode node = nodes.get(moduleName);
         LOGGER.info("Processing required modules for module \"{}\"...",
                     ModuleUtil.getModuleName(module));
-        for (RequiredModule requiredModule : ModuleUtil.getRequiredModules(
-            module)) {
+        for (final RequiredModule requiredModule : ModuleUtil
+            .getRequiredModules(
+                module)) {
 
             LOGGER.info("\tModule \"{}\" requires module \"{}\".",
                         ModuleUtil.getModuleName(module),
@@ -171,8 +185,83 @@ public class DependencyTreeManager {
             final TreeNode dependencyNode = nodes.get(ModuleUtil.getModuleName(
                 requiredModule.module()));
 
-            node.addDependsOn(node);
+            //Check version
+            if (!validateVersion(ModuleUtil.getVersion(dependencyNode
+                .getModule()),
+                                 requiredModule.minVersion(),
+                                 requiredModule.maxVersion())) {
+                throw new DependencyException(String.format(
+                    "The required module is avialable but in the correct "
+                        + "version. "
+                        + "Available version: \"%s\"; "
+                        + "minimal required version: \"%s\"; "
+                        + "maximum required version: \"%s\"",
+                    ModuleUtil.getVersion(dependencyNode.getModule()),
+                    requiredModule.minVersion(),
+                    requiredModule.maxVersion()));
+            }
+
+            node.addDependsOn(dependencyNode);
             dependencyNode.addDependentModule(node);
+        }
+    }
+
+    /**
+     * Helper method for checking if an dependency is available in the required
+     * version.
+     *
+     * @param availableVersion   The available version. Can't be {@code null} or
+     *                           empty.
+     * @param minRequiredVersion The minimal version required. Can be
+     *                           {@code null} or empty.
+     * @param maxRequiredVersion The maximum version required. Can be
+     *                           {@code null} or empty.
+     *
+     * @return {@code true} if the available version is in the required range,
+     *         {@code false} if not.
+     */
+    //The names are fine. Shorter names would be less readable. Also removing 
+    //the parentheses in the ifs would make the conditions less readable.
+    @SuppressWarnings({"PMD.LongVariable", 
+                       "PMD.UselessParentheses",
+                       "PMD.CyclomaticComplexity"}) 
+    private boolean validateVersion(final String availableVersion,
+                                    final String minRequiredVersion,
+                                    final String maxRequiredVersion) {
+        if (availableVersion == null || availableVersion.isEmpty()) {
+            throw new IllegalArgumentException("No available version specified.");
+        }
+
+        if ((minRequiredVersion == null || minRequiredVersion.isEmpty())
+                && (maxRequiredVersion == null || maxRequiredVersion.isEmpty())) {
+            return true;
+        } else if ((minRequiredVersion != null && !minRequiredVersion.isEmpty())
+                       && (maxRequiredVersion == null || maxRequiredVersion
+                           .isEmpty())) {
+            final ComparableVersion minVersion = new ComparableVersion(
+                minRequiredVersion);
+            final ComparableVersion version = new ComparableVersion(
+                availableVersion);
+
+            return minVersion.compareTo(version) <= 0;
+        } else if ((minRequiredVersion == null || minRequiredVersion.isEmpty())
+                       && (maxRequiredVersion != null && !maxRequiredVersion
+                           .isEmpty())) {
+            final ComparableVersion maxVersion = new ComparableVersion(
+                maxRequiredVersion);
+            final ComparableVersion version = new ComparableVersion(
+                availableVersion);
+
+            return version.compareTo(maxVersion) <= 0;
+        } else {
+            final ComparableVersion minVersion = new ComparableVersion(
+                minRequiredVersion);
+            final ComparableVersion maxVersion = new ComparableVersion(
+                (maxRequiredVersion));
+            final ComparableVersion version = new ComparableVersion(
+                availableVersion);
+            return minVersion.compareTo(version) <= 0 && version.compareTo(
+                maxVersion) <= 0;
         }
     }
 

@@ -16,32 +16,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.modules;
+package org.libreccm.jpa;
+
+import org.hibernate.envers.AuditReader;
+import org.hibernate.envers.AuditReaderFactory;
+
+import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class Example implements Module {
-
-    @Override
-    public void prepare() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void uninstall() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void init() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void shutdown() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+public class AuditReaderProducer {
     
+    @Inject
+    private transient EntityManager entityManager;
+    
+    @Produces
+    public AuditReader auditReader() {
+        return AuditReaderFactory.get(entityManager);
+    }
 }

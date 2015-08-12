@@ -16,17 +16,21 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.modules.dependencytree;
+package org.libreccm.modules.dependencytree.test.cycle;
 
-import org.libreccm.modules.Module;
+import org.libreccm.modules.dependencytree.test.valid.*;
+import org.libreccm.modules.ModuleDescriptor;
+import org.libreccm.modules.annotations.RequiredModule;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @org.libreccm.modules.annotations.Module(
-    name = "org.libreccm.core.ccm-testmodule-a", version = "1.0.0")
-public class TestModuleRoot implements Module {
+    name = "org.libreccm.core.ccm-testmodule-a", version = "1.0.0",
+    requiredModules = {
+        @RequiredModule(module = TestModuleRoot.class)})
+public class TestModuleA implements ModuleDescriptor {
 
     @Override
     public void prepare() {

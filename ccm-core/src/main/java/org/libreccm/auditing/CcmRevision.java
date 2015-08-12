@@ -21,6 +21,8 @@ package org.libreccm.auditing;
 import org.hibernate.envers.DefaultRevisionEntity;
 import org.hibernate.envers.RevisionEntity;
 
+import java.util.Objects;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -50,5 +52,32 @@ public class CcmRevision extends DefaultRevisionEntity {
     public void setUserName(final String userName) {
         this.userName = userName;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = super.hashCode();
+        
+        hash = 17 * hash + Objects.hashCode(this.userName);
+        
+        return hash;
+    }
+    
+    
+    
+    @Override
+    public boolean equals(final Object object) {
+        if(!super.equals(object)) {
+            return false;
+        }
+        
+        if (!(object instanceof CcmRevision)) {
+            return false;
+        }
+        
+        final CcmRevision other = (CcmRevision) object;
+        return userName.equals(other.getUserName());
+    }
+    
+    
 
 }
