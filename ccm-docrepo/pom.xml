@@ -14,14 +14,14 @@
         <artifactId>libreccm-parent</artifactId>
         <version>7.0.0-SNAPSHOT</version>
     </parent>
-    
+
     <groupId>org.libreccm</groupId>
-    <artifactId>ccm-shortcuts</artifactId>
-    <!--<version>7.0.0-SNAPSHOT</version>-->
+    <artifactId>ccm-docrepo</artifactId>
+    <version>7.0.0-SNAPSHOT</version>
     
-    <name>LibreCCM Shortcuts</name>
-    
-    <url>http://www.libreccm.org/modules/ccm-shortcuts</url>
+    <name>LibreCCM DocRepo</name>
+
+    <url>http://www.libreccm.org/moudles/ccm-docrepo</url>
     
     <licenses>
         <license>
@@ -29,7 +29,7 @@
             <url>http://www.gnu.org/licenses/old-licenses/lgpl-2.1</url>
         </license>
     </licenses>
-    
+
     <dependencies>
         <dependency>
             <groupId>javax</groupId>
@@ -70,7 +70,7 @@
             <artifactId>hamcrest-library</artifactId>
             <scope>test</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>org.libreccm</groupId>
             <artifactId>ccm-testutils</artifactId>
@@ -114,7 +114,7 @@
     </dependencies>
     
     <build>
-        <finalName>ccm-shortcuts</finalName>
+        <finalName>ccm-docrepo</finalName>
         
         <plugins>
             <plugin>
@@ -203,9 +203,8 @@
                     </execution>
                 </executions>
             </plugin>
-                
+            
         </plugins>
-        
     </build>
     
     <reporting>
@@ -321,6 +320,7 @@
                     <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
                 </configuration>
             </plugin>
+
         </plugins>
     </reporting>
     

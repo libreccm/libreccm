@@ -38,7 +38,8 @@
         <module>ccm-core</module>
         <module>ccm-shortcuts</module>
         <module>ccm-testutils</module>
-    </modules>
+    <module>ccm-docrepo</module>
+  </modules>
 
     <!--<repositories>
         <repository>
