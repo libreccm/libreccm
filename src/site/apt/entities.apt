@@ -1,0 +1,60 @@
+        ---------------------------
+        How JPA is used in LibreCCM
+        ---------------------------
+             Jens Pelzetter
+        ---------------------------
+                2015-08-13
+        ---------------------------
+
+How JPA is used in LibreCCM
+
+    The persistence layer of LibreCCM is based on JPA. We using Hibernate as
+    implementation because we use some features from Hibernate which are not
+    available for other JPA providers. The most important of these extensions
+    is {{{http://docs.jboss.org/hibernate/orm/4.2/devguide/en-US/html/ch15.html}Envers}} 
+    which provides auditing (versioning) for JPA Entities.
+
+    If an entity requires services like permissions and categorisation the 
+    entity should extend 
+    {{{./ccm-core/apidocs/index.html?org/libreccm/core/CcmObject.html}CcmObject}}.
+    Usually we customise the table name to use underscores instead of camel case
+    in the database. Also we usually customise the names of columns the use
+    underscores and only lower case letters. For examples look at the various 
+    examples in the code.
+
+    Each entity may be accompanied by one or two helper classes. There should
+    be an {{{Repository_classes}repository}} class for every entity. 
+    Some entities will also be accompanied by a 
+    {{{Manager_classes}manager class}}. The repository classes and the manager 
+    classes are the only classes which should interact directly with the 
+    database using an <<<EntityManager>>>. All other classes should only use
+    the repository and manger classes to interact with the database.
+
+* {Repository classes}
+
+    Each entity is accompanied by a so called <Repository> class. The name of
+    of the repository class is the name of the entity class followed by the
+    word <Repository>. For instance the repository class for the <<<User>>> 
+    entity is called <<<UserRepository>>>. The repository class provides 
+    methods for retrieving, saving and deleting entities of a specific type
+    from and to the database. If there are special queries for the entity these
+    queries should defined as <named query> on the entity class (using the 
+    <<<@NamedQuery>>> annotation. The repository should provide a method for
+    each <named query> of the entity it is responsible for. 
+
+    The {{{./ccm-core/apidocs/index.html?org/libreccm/core/AbstractEntityRepository.html}AbstractEntityRepository}} 
+    class provides a base class for a repository implementing common methods. 
+    Refer to the JavaDoc of the class for more details.
+
+    If an entity should be audited which means that you want to keep track of
+    all changes done to the entity the entity class must be annotated with the
+    <<<@Audited>>> annotation from Envers. For the repository you should extend
+    the {{{./ccm-core/apidocs/index.html?org/libreccm/auditing/AbstractAuditedEntityRepository.html}AbstractAuditedEntityRepository}} 
+    class which provides additional common method for audited entities. Please
+    refer to the JavaDoc for more details.
+
+* {Manager classes}
+    
+    If there are complex operations involving the entity these operations
+    should encapsulated by a manager class. There are several examples in the
+    code.
