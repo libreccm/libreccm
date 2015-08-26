@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.modules.dependencytree;
+package org.libreccm.core.modules;
 
 import static org.hamcrest.Matchers.*;
 

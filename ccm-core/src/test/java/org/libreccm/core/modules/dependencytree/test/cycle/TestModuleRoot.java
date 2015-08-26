@@ -16,39 +16,42 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.modules.dependencytree.test.cycle;
+package org.libreccm.core.modules.dependencytree.test.cycle;
 
-import org.libreccm.modules.dependencytree.test.valid.*;
-import org.libreccm.modules.ModuleDescriptor;
-import org.libreccm.modules.annotations.RequiredModule;
+import org.libreccm.core.modules.CcmModule;
+import org.libreccm.core.modules.InitEvent;
+import org.libreccm.core.modules.InstallEvent;
+import org.libreccm.core.modules.Module;
+import org.libreccm.core.modules.RequiredModule;
+import org.libreccm.core.modules.ShutdownEvent;
+import org.libreccm.core.modules.UnInstallEvent;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@org.libreccm.modules.annotations.Module(
-    name = "org.libreccm.core.ccm-testmodule-a", version = "1.0.0",
+@Module(
     requiredModules = {
-        @RequiredModule(module = TestModuleRoot.class)})
-public class TestModuleA implements ModuleDescriptor {
+        @RequiredModule(module = TestModuleB.class)})
+public class TestModuleRoot implements CcmModule {
 
     @Override
-    public void prepare() {
+    public void install(final InstallEvent event) {
         //Nothing
     }
 
     @Override
-    public void uninstall() {
+    public void init(final InitEvent event) {
         //Nothing
     }
 
     @Override
-    public void init() {
+    public void shutdown(final ShutdownEvent event) {
         //Nothing
     }
 
     @Override
-    public void shutdown() {
+    public void uninstall(final UnInstallEvent event) {
         //Nothing
     }
 

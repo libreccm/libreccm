@@ -19,7 +19,6 @@
 package org.libreccm.core.modules;
 
 import javax.persistence.EntityManager;
-import org.libreccm.modules.ModuleManager;
 
 /**
  * This interface is implemented by all CCM module classes. It defines several

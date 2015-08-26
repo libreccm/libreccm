@@ -16,12 +16,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.modules.dependencytree;
+package org.libreccm.core.modules;
 
-import org.libreccm.modules.dependencytree.test.valid.TestModuleB;
-import org.libreccm.modules.dependencytree.test.valid.TestModuleC;
-import org.libreccm.modules.dependencytree.test.valid.TestModuleA;
-import org.libreccm.modules.dependencytree.test.valid.TestModuleRoot;
+import org.libreccm.core.modules.dependencytree.test.valid.TestModuleB;
+import org.libreccm.core.modules.dependencytree.test.valid.TestModuleC;
+import org.libreccm.core.modules.dependencytree.test.valid.TestModuleA;
+import org.libreccm.core.modules.dependencytree.test.valid.TestModuleRoot;
 
 import static org.hamcrest.Matchers.*;
 
@@ -42,17 +42,13 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
-import org.libreccm.modules.ModuleDescriptor;
-import org.libreccm.modules.ModuleUtil;
-import org.libreccm.modules.annotations.Module;
 import org.libreccm.tests.categories.IntegrationTest;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ServiceLoader;
 
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
 
 /**
  *
@@ -62,9 +58,7 @@ import javax.inject.Inject;
 @RunWith(Arquillian.class)
 public class DependencyTreeManagerTest {
 
-    @Inject
-    @Module
-    private transient Instance<ModuleDescriptor> modules;
+    private transient ServiceLoader<CcmModule> modules;
 
     public DependencyTreeManagerTest() {
     }
@@ -79,6 +73,7 @@ public class DependencyTreeManagerTest {
 
     @Before
     public void setUp() {
+        modules = ServiceLoader.load(CcmModule.class);
     }
 
     @After
@@ -107,11 +102,9 @@ public class DependencyTreeManagerTest {
                 .getPackage())
             .addPackage(org.libreccm.tests.categories.IntegrationTest.class
                 .getPackage())
-            .addPackage(
-                org.libreccm.modules.dependencytree.test.valid.TestModuleRoot.class
+            .addPackage(org.libreccm.core.modules.dependencytree.test.valid.TestModuleRoot.class
                 .getPackage())
-            .addClass(org.libreccm.modules.ModuleDescriptor.class)
-            .addClass(org.libreccm.modules.ModuleUtil.class)
+            .addPackage(CcmModule.class.getPackage())
             .addAsLibraries(libs)
             .addAsWebInfResource("test-web.xml", "web.xml")
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
@@ -120,9 +113,9 @@ public class DependencyTreeManagerTest {
     @Test
     @SuppressWarnings("unchecked")
     public void allModulesInjected() {
-        final List<Class<ModuleDescriptor>> moduleList = new ArrayList<>();
-        for (final ModuleDescriptor module : modules) {
-            moduleList.add((Class<ModuleDescriptor>) module.getClass());
+        final List<Class<CcmModule>> moduleList = new ArrayList<>();
+        for (final CcmModule module : modules) {
+            moduleList.add((Class<CcmModule>) module.getClass());
         }
 
         assertThat(moduleList.size(), is(4));
@@ -141,7 +134,7 @@ public class DependencyTreeManagerTest {
 
         final List<String> modulesInOrder = new ArrayList<>();
         for (final TreeNode node : ordered) {
-            modulesInOrder.add(ModuleUtil.getModuleName(node.getModule()));
+            modulesInOrder.add(node.getModuleInfo().getModuleName());
         }
 
         assertThat(modulesInOrder,
