@@ -61,7 +61,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  */
 @Entity
-@Table(name = "ccm_objects")
+@Table(name = "ccm_objects", schema = "ccm_core")
 @Inheritance(strategy = InheritanceType.JOINED)
 @XmlRootElement(name = "ccm-object", namespace = CORE_XML_NS)
 //False warning (?). Because this class has been migrated from the old PDL style

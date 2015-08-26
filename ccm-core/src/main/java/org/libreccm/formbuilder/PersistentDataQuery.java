@@ -36,7 +36,7 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "formbuilder_data_queries")
+@Table(name = "formbuilder_data_queries", schema = "ccm_core")
 public class PersistentDataQuery extends CcmObject implements Serializable {
 
     private static final long serialVersionUID = -7344153915501267752L;

@@ -35,7 +35,7 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "portlets")
+@Table(name = "portlets", schema = "ccm_core")
 public class Portlet extends Resource implements Serializable {
 
     private static final long serialVersionUID = -5718126018588744104L;

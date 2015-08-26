@@ -35,7 +35,7 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "portals")
+@Table(name = "portals", schema = "ccm_core")
 public class Portal extends Resource implements Serializable {
 
     private static final long serialVersionUID = -5492307663469206053L;

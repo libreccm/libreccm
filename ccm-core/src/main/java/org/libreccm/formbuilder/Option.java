@@ -35,7 +35,7 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "formbuilder_options")
+@Table(name = "formbuilder_options", schema = "ccm_core")
 public class Option extends Component implements Serializable {
 
     private static final long serialVersionUID = -7528058391772415511L;

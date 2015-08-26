@@ -70,7 +70,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "category_domains")
+@Table(name = "category_domains", schema = "ccm_core")
 @XmlRootElement(name = "domain", namespace = CAT_XML_NS)
 public class Domain extends CcmObject implements Serializable {
 
@@ -114,6 +114,7 @@ public class Domain extends CcmObject implements Serializable {
     @AssociationOverride(
         name = "values",
         joinTable = @JoinTable(name = "domain_titles",
+                               schema = "ccm_core",
                                joinColumns = {
                                    @JoinColumn(name = "object_id")}))
     @XmlElement(name = "title", namespace = CAT_XML_NS)
@@ -126,6 +127,7 @@ public class Domain extends CcmObject implements Serializable {
     @AssociationOverride(
         name = "values",
         joinTable = @JoinTable(name = "domain_descriptions",
+                               schema = "ccm_core",
                                joinColumns = {
                                    @JoinColumn(name = "object_id")}))
     @XmlElement(name = "description", namespace = CAT_XML_NS)

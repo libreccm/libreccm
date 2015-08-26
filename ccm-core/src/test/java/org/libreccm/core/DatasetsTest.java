@@ -81,6 +81,11 @@ public class DatasetsTest extends DatasetsVerifier {
         super(datasetPath);
     }
     
+    @Override
+    public String[] getSchemas() {
+        return new String[]{ "ccm_core" };
+    }
+    
     @BeforeClass
     public static void setUpClass() {
     }

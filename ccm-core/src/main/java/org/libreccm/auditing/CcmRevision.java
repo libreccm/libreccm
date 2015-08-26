@@ -36,7 +36,7 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "ccm_revisions")
+@Table(name = "ccm_revisions", schema = "ccm_core")
 @RevisionEntity()
 public class CcmRevision extends DefaultRevisionEntity {
 

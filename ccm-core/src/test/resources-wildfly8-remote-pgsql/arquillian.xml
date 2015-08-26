@@ -28,11 +28,12 @@
         <property name="defaultDataSetFormat">json</property>
         <!--<property name="datatypeFactory">org.dbunit.ext.h2.H2DataTypeFactory</property>-->
         <property name="excludePoi">true</property>
+        <property name="qualifiedTableNames">true</property>
     </extension>
     
-    <extension qualifier="persistence-script">
+    <!--<extension qualifier="persistence-script">
         <property name="scriptsToExecuteAfterTest">scripts/pgsql-cleanup.sql</property>
-    </extension>
+    </extension>-->
 
     
 </arquillian>

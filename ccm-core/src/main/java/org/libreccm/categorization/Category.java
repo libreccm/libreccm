@@ -59,7 +59,7 @@ import javax.validation.constraints.Pattern;
  * @apiviz.composedOf org.libreccm.categorization.Categorization
  */
 @Entity
-@Table(name = "categories")
+@Table(name = "categories", schema = "ccm_core")
 @NamedQueries({
     @NamedQuery(name = "topLevelCategories", 
                 query = "SELECT c FROM Category c WHERE c.parentCategory IS NULL")
@@ -90,7 +90,8 @@ public class Category extends CcmObject implements Serializable {
     @Embedded
     @AssociationOverride(
             name = "values",
-            joinTable = @JoinTable(name = "category_titles",
+            joinTable = @JoinTable(name = "category_titles", 
+                                   schema = "ccm_core",
                                    joinColumns = {
                                        @JoinColumn(name = "object_id")}
             ))
@@ -103,6 +104,7 @@ public class Category extends CcmObject implements Serializable {
     @AssociationOverride(
             name = "values",
             joinTable = @JoinTable(name = "category_descriptions",
+                                   schema = "ccm_core",
                                    joinColumns = {
                                        @JoinColumn(name = "object_id")}
             ))

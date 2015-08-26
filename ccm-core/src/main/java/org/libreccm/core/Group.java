@@ -46,7 +46,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "ccm_groups")
+@Table(name = "ccm_groups", schema = "ccm_core")
 @NamedQueries({
     @NamedQuery(name = "findGroupByName", 
                 query = "SELECT g FROM Group g WHERE g.name = :groupName")

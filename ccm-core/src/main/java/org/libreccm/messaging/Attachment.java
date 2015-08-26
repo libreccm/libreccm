@@ -41,7 +41,7 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "attachments")
+@Table(name = "attachments", schema = "ccm_core")
 public class Attachment implements Serializable {
 
     private static final long serialVersionUID = 2063934721452863106L;

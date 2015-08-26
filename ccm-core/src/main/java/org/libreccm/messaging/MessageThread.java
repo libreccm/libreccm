@@ -33,7 +33,7 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "threads")
+@Table(name = "threads", schema = "ccm_core")
 public class MessageThread extends CcmObject implements Serializable {
 
     private static final long serialVersionUID = -395123286904985770L;

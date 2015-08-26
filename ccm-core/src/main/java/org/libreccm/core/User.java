@@ -57,7 +57,7 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "ccm_users")
+@Table(name = "ccm_users", schema = "ccm_core")
 @NamedQueries({
     @NamedQuery(name = "findUserByScreenName",
                 query = "SELECT u FROM User u WHERE u.screenName = :screenname"),
@@ -83,6 +83,7 @@ public class User extends Subject implements Serializable {
     @AssociationOverride(
             name = "user_names",
             joinTable = @JoinTable(name = "user_names",
+                                   schema = "ccm_core",
                                    joinColumns = {
                                        @JoinColumn(name = " user_id")}))
     @XmlElement(name = "person-name", namespace = CORE_XML_NS)
@@ -102,6 +103,7 @@ public class User extends Subject implements Serializable {
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_email_addresses",
+                     schema = "ccm_core",
                      joinColumns = {
                          @JoinColumn(name = "user_id")})
     @Size(min = 1)

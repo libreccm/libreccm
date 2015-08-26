@@ -34,7 +34,7 @@ import javax.persistence.UniqueConstraint;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "hosts",
+@Table(name = "hosts", schema = "ccm_core",
        uniqueConstraints = {
            @UniqueConstraint(columnNames = {"server_name", "server_port"})})
 @SuppressWarnings("PMD.ShortClassName") //Host is perfectly fine as class name...
@@ -114,10 +114,10 @@ public class Host implements Serializable {
     @Override
     public String toString() {
         return String.format("%s{ "
-                                     + "hostId = %d, "
-                                     + "serverName = \"%s\", "
-                                     + "serverPort  =\"%s\""
-                                     + " }",
+                                 + "hostId = %d, "
+                                 + "serverName = \"%s\", "
+                                 + "serverPort  =\"%s\""
+                                 + " }",
                              super.toString(),
                              hostId,
                              serverName,

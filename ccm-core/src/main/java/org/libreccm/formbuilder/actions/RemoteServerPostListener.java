@@ -16,7 +16,7 @@ import org.libreccm.formbuilder.ProcessListener;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "formbuilder_remote_server_post_listener")
+@Table(name = "formbuilder_remote_server_post_listener", schema = "ccm_core")
 public class RemoteServerPostListener
         extends ProcessListener
         implements Serializable {

@@ -37,7 +37,7 @@ import javax.enterprise.inject.spi.CDI;
 public class CdiUtil {
 
     private final static Logger LOGGER = LogManager.getLogger(CdiUtil.class);
-    
+
     private final transient BeanManager beanManager;
 
     public CdiUtil() {
@@ -51,8 +51,9 @@ public class CdiUtil {
         if (iterator.hasNext()) {
             @SuppressWarnings("unchecked")
             final Bean<T> bean = (Bean<T>) iterator.next();
-            final CreationalContext<T> ctx = beanManager.createCreationalContext(bean);
-            
+            final CreationalContext<T> ctx = beanManager
+                .createCreationalContext(bean);
+
             return (T) beanManager.getReference(bean, beanType, ctx);
         } else {
             LOGGER.error(new ParameterizedMessage(
@@ -61,4 +62,5 @@ public class CdiUtil {
                 "No CDI Bean for type \"%s\" found", beanType.getName()));
         }
     }
+
 }

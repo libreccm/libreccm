@@ -20,7 +20,7 @@
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         
         <jta-data-source>
-            java:/comp/env/jdbc/website_study_tool/db
+            java:/comp/env/jdbc/ccm-core/db
         </jta-data-source>
         
         <properties>

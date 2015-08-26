@@ -39,7 +39,7 @@ import org.libreccm.core.ResourceType;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "application_types")
+@Table(name = "application_types", schema = "ccm_core")
 @SuppressWarnings("PMD.LongVariable")
 public class ApplicationType extends ResourceType implements Serializable {
 

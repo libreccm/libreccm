@@ -1,5 +1,5 @@
 {
-    "ccm_privileges":
+    "ccm_core.ccm_privileges":
             [
                 {
                     "privilege_id": -10,

@@ -34,7 +34,7 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "formbuilder_widgets")
+@Table(name = "formbuilder_widgets", schema = "ccm_core")
 public class Widget extends Component implements Serializable {
 
     private static final long serialVersionUID = 1057792450655098288L;

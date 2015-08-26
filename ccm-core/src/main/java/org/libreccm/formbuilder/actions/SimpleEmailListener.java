@@ -20,7 +20,7 @@ import java.util.Objects;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "formbuilder_simple_email_listeners")
+@Table(name = "formbuilder_simple_email_listeners", schema = "ccm_core")
 public class SimpleEmailListener
     extends ProcessListener
     implements Serializable {

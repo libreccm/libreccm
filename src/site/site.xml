@@ -17,6 +17,12 @@
             <item name="Code conventions" href="code-conventions.html"/>
             <item name="Building LibreCCM" href="building.html"/>
             <item name="Testing LibreCCM" href="testing.html"/>
+            <item name="The module system of LibreCCM" 
+                  href="module-system.html"
+                  collapse="true">
+                <item name="Anatomy of a LibreCCM module"
+                      href="module-system/anatomy.html"/>
+            </item>
             <item name="How LibreCCM uses JPA" href="entities.html"/>
         </menu>
         

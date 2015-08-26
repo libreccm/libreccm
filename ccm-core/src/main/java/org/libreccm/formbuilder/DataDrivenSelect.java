@@ -30,7 +30,7 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "formbuilder_data_driven_selects")
+@Table(name = "formbuilder_data_driven_selects", schema = "ccm_core")
 public class DataDrivenSelect extends Widget implements Serializable {
 
     private static final long serialVersionUID = -4477753441663454661L;

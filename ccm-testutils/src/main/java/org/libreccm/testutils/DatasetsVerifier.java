@@ -41,30 +41,30 @@ import org.jboss.arquillian.persistence.dbunit.dataset.json.JsonDataSet;
 import org.junit.runners.Parameterized;
 
 import java.nio.charset.StandardCharsets;
+import java.sql.Statement;
 
 /**
  *
  * For testing the CCM modules the Arquillian Persistence extension including
  * the DBUnit integration is used. Unfortunately there are some issues with
  * exception reporting if there errors in the datasets used for testing.
- * Therefore we provide this utility class which can be used to implement
- * test for the datasets outside of Arquillian. 
- * 
- * For testing an in-memory H2
- * database is used. The datasets are loaded into the database using
- * DBUnit classes. Before loading the dataset this class creates the database
- * schema. The SQL script for generating the schema is loaded via 
- * {@code getClass().getResource(/sql/ddl/auto/h2.sql).toURI()}. Therefore the
- * utility expects to find the SQL for generating the database schema in the 
- * classpath at th path {@code /sql/ddl/auto/h2.sql}. The default 
+ * Therefore we provide this utility class which can be used to implement test
+ * for the datasets outside of Arquillian.
+ *
+ * For testing an in-memory H2 database is used. The datasets are loaded into
+ * the database using DBUnit classes. Before loading the dataset this class
+ * creates the database schema. The SQL script for generating the schema is
+ * loaded via {@code getClass().getResource(/sql/ddl/auto/h2.sql).toURI()}.
+ * Therefore the utility expects to find the SQL for generating the database
+ * schema in the classpath at th path {@code /sql/ddl/auto/h2.sql}. The default
  * {@code pom.xml} for modules take care of that.
- * 
- * After each dataset the database is scrapped. To use this utility create
- * a JUnit test class using the {@link Parameterized} test runner from JUnit.
- * An example is the
- * <a href="../../../../../ccm-core/xref-test/org/libreccm/core/DatasetsTest.html"><code>DatasetsTest</code></a> 
+ *
+ * After each dataset the database is scrapped. To use this utility create a
+ * JUnit test class using the {@link Parameterized} test runner from JUnit. An
+ * example is the
+ * <a href="../../../../../ccm-core/xref-test/org/libreccm/core/DatasetsTest.html"><code>DatasetsTest</code></a>
  * in the {@code org.libreccm.core} package of the ccm-core module.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class DatasetsVerifier {
@@ -73,6 +73,16 @@ public class DatasetsVerifier {
 
     public DatasetsVerifier(final String datasetsPath) {
         this.datasetPath = datasetsPath;
+    }
+
+    /**
+     * Overwrite this method if you are using another schema than the default
+     * one.
+     *
+     * @return
+     */
+    public String[] getSchemas() {
+        return new String[]{};
     }
 
     @Test
@@ -85,13 +95,23 @@ public class DatasetsVerifier {
                                        DatabaseUnitException {
         //Create database connection to an in memory h2 database. Placed in
         //try-with-resources block to ensure that the connection is closed.
+        final StringBuffer buffer = new StringBuffer("jdbc:h2:mem:testdatabase");
+        //Create schema if necssary
+        if(getSchemas().length > 0) {
+            buffer.append(";INIT=");
+            for(final String schema : getSchemas()) {
+                buffer.append(String.format("CREATE SCHEMA IF NOT EXISTS %s;", 
+                                            schema));
+            }
+        }
+        final String connectionStr = buffer.toString();
         try (Connection connection = DriverManager.getConnection(
-            "jdbc:h2:mem:testdatabase", "sa", "")) {
-            //Create DB schema 
+            connectionStr, "sa", "")) {
+            //Create DB tables etc 
             final Path schemaPath = Paths.get(getClass().getResource(
                 "/sql/ddl/auto/h2.sql").toURI());
             RunScript.execute(connection, Files.newBufferedReader(
-                schemaPath, StandardCharsets.UTF_8));
+                              schemaPath, StandardCharsets.UTF_8));
             connection.commit();
 
             //Get dataset to test
@@ -101,7 +121,8 @@ public class DatasetsVerifier {
             //Create DBUnit DB connection
             final IDatabaseConnection dbUnitConn
                                           = new DatabaseConnection(connection);
-
+            dbUnitConn.getConfig().setProperty(
+                "http://www.dbunit.org/features/qualifiedTableNames", true);
             //Check if dumping works the DB works before loading the dataset.
             System.out.println("Dump before loading dataset...");
             verifyDumping(dbUnitConn);

@@ -67,7 +67,7 @@ import javax.persistence.TemporalType;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "notifications")
+@Table(name = "notifications", schema = "ccm_core")
 //Can't reduce complexity yet. Not sure what to do about the God class warning.
 //Maybe we have to put some of the properties into an extra class.
 @SuppressWarnings({"PMD.CyclomaticComplexity",

@@ -34,7 +34,7 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "formbuilder_formsections")
+@Table(name = "formbuilder_formsections", schema = "ccm_core")
 public class FormSection extends Component implements Serializable {
 
     private static final long serialVersionUID = -3195157282292906945L;

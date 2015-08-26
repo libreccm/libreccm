@@ -1,5 +1,5 @@
 {
-    "subjects":
+    "ccm_core.subjects":
             [
                 {
                     "subject_id": -10
@@ -17,7 +17,7 @@
                     "subject_id": -50
                 }
             ],
-    "ccm_users":
+    "ccm_core.ccm_users":
             [
                 {
                     "banned": false,
@@ -42,7 +42,7 @@
                     "subject_id": -50
                 }
             ],
-    "ccm_groups":
+    "ccm_core.ccm_groups":
             [
                 {
                     "name": "admins",
@@ -57,7 +57,7 @@
                     "subject_id": -40
                 }
             ],
-    "user_email_addresses":
+    "ccm_core.user_email_addresses":
             [
                 {
                     "user_id": -10,
@@ -72,7 +72,7 @@
                     "verified": true
                 }
             ],
-    "group_memberships":
+    "ccm_core.group_memberships":
             [
                 {
                     "membership_id": -10,
@@ -90,7 +90,7 @@
                     "user_subject_id": -50
                 }
             ],
-    "ccm_privileges":
+    "ccm_core.ccm_privileges":
             [
                 {
                     "privilege_id": -10,
@@ -109,7 +109,7 @@
                     "label": "unused"
                 }
             ],
-    "ccm_objects":
+    "ccm_core.ccm_objects":
             [
                 {
                     "object_id": -10,
@@ -128,7 +128,7 @@
                     "display_name": "Test Object 4"
                 }
             ],
-    "permissions":
+    "ccm_core.permissions":
             [
                 {
                     "permission_id": -10,

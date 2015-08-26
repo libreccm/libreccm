@@ -18,7 +18,7 @@ import org.libreccm.formbuilder.ProcessListener;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "formbuilder_template_email_listeners")
+@Table(name = "formbuilder_template_email_listeners", schema = "ccm_core")
 public class TemplateEmailListener
     extends ProcessListener
     implements Serializable {

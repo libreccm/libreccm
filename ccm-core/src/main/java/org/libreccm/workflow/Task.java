@@ -48,7 +48,7 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "workflow_tasks")
+@Table(name = "workflow_tasks", schema = "ccm_core")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 //Can't reduce complexity yet, Task is a fine name
 @SuppressWarnings({"PMD.CyclomaticComplexity",

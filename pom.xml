@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0                               http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -38,8 +41,8 @@
         <module>ccm-core</module>
         <module>ccm-shortcuts</module>
         <module>ccm-testutils</module>
-    <module>ccm-docrepo</module>
-  </modules>
+        <module>ccm-docrepo</module>
+    </modules>
 
     <!--<repositories>
         <repository>
@@ -239,7 +242,7 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-entitymanager</artifactId>
-                <version>4.3.10.Final</version>
+                <version>4.3.11.Final</version>
             </dependency>
             
             <!-- 
@@ -249,7 +252,7 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-envers</artifactId>
-                <version>4.3.10.Final</version>
+                <version>4.3.11.Final</version>
             </dependency>
             
             <!-- 
@@ -258,12 +261,21 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-validator</artifactId>
-                <version>5.1.3.Final</version>
+                <version>5.2.1.Final</version>
             </dependency>
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-validator-cdi</artifactId>
-                <version>5.1.3.Final</version>
+                <version>5.2.1.Final</version>
+            </dependency>
+            
+            <!--
+                Flyway framework for database schema migrations
+            -->
+            <dependency>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-core</artifactId>
+                <version>3.2.1</version>
             </dependency>
             
             <!-- 

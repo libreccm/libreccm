@@ -53,7 +53,7 @@ import javax.persistence.TemporalType;
  *
  */
 @Entity
-@Table(name = "resources")
+@Table(name = "resources", schema = "ccm_core")
 public class Resource extends CcmObject implements Serializable {
 
     private static final long serialVersionUID = 7345482620613842781L;
@@ -65,6 +65,7 @@ public class Resource extends CcmObject implements Serializable {
     @AssociationOverride(
         name = "values",
         joinTable = @JoinTable(name = "resource_titles",
+                               schema = "ccm_core",
                                joinColumns = {
                                    @JoinColumn(name = "object_id")}))
     private LocalizedString title;
@@ -76,6 +77,7 @@ public class Resource extends CcmObject implements Serializable {
     @AssociationOverride(
         name = "values",
         joinTable = @JoinTable(name = "resource_descriptions",
+                               schema = "ccm_core",
                                joinColumns = {
                                    @JoinColumn(name = "object_id")}))
     private LocalizedString description;

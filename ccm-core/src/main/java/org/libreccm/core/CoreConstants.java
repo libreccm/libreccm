@@ -27,6 +27,8 @@ public final class CoreConstants {
     
     public static final String CORE_XML_NS = "http://core.libreccm.org";
     
+    public static final String DB_SCHEMA = "ccm_core";
+    
     private CoreConstants() {
         //Nothing
     }

@@ -37,7 +37,7 @@ import org.libreccm.l10n.LocalizedString;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "resource_types")
+@Table(name = "resource_types", schema = "ccm_core")
 @Inheritance(strategy = InheritanceType.JOINED)
 @SuppressWarnings({"PMD.CyclomaticComplexity",
                    "PMD.StdCyclomaticComplexity",
@@ -59,6 +59,7 @@ public class ResourceType implements Serializable {
     @AssociationOverride(
         name = "values",
         joinTable = @JoinTable(name = "resource_type_descriptions",
+                               schema = "ccm_core",
                                joinColumns = {
                                    @JoinColumn(name = "resource_type_id")}))
     private LocalizedString description;

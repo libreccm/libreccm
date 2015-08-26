@@ -1,5 +1,5 @@
 {
-    "subjects":
+    "ccm_core.subjects":
             [
                 {
                     "subject_id": -10
@@ -32,7 +32,7 @@
                     "subject_id": -100
                 }
             ],
-    "ccm_groups":
+    "ccm_core.ccm_groups":
             [
                 {
                     "name": "Site-wide Administrators",
@@ -75,7 +75,7 @@
                     "subject_id": -100
                 }
             ],
-    "ccm_roles":
+    "ccm_core.ccm_roles":
             [
                 {
                     "role_id": -10,

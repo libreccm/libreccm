@@ -39,7 +39,7 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "inits")
+@Table(name = "inits", schema = "ccm_core")
 public class Initalizer implements Serializable {
 
     private static final long serialVersionUID = 9150623897315380159L;

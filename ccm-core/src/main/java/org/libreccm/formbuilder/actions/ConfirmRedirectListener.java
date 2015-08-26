@@ -17,7 +17,7 @@ import org.libreccm.formbuilder.ProcessListener;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "formbuilder_confirm_redirect_listeners")
+@Table(name = "formbuilder_confirm_redirect_listeners", schema = "ccm_core")
 public class ConfirmRedirectListener
     extends ProcessListener
     implements Serializable {

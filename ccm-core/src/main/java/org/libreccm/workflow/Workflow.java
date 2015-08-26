@@ -43,7 +43,7 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "workflows")
+@Table(name = "workflows", schema = "ccm_core")
 public class Workflow implements Serializable {
 
     private static final long serialVersionUID = 4322500264543325829L;

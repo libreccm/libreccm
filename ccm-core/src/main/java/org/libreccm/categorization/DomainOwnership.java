@@ -41,7 +41,7 @@ import org.libreccm.web.Application;
  * @author <a href="jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "domain_ownerships")
+@Table(name = "domain_ownerships", schema = "ccm_core")
 public class DomainOwnership implements Serializable {
 
     private static final long serialVersionUID = 201504301305L;

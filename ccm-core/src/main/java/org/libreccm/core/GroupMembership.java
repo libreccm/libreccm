@@ -40,7 +40,7 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "group_memberships")
+@Table(name = "group_memberships", schema = "ccm_core")
 @XmlRootElement(name = "group-membership", 
                 namespace = CORE_XML_NS)
 public class GroupMembership implements Serializable {

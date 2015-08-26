@@ -32,7 +32,7 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "formbuilder_object_types")
+@Table(name = "formbuilder_object_types", schema = "ccm_core")
 public class ObjectType extends CcmObject implements Serializable {
 
     private static final long serialVersionUID = 5236718507025096569L;

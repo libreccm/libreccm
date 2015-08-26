@@ -17,7 +17,7 @@ import org.libreccm.formbuilder.ProcessListener;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "formbuilder_xml_email_listeners")
+@Table(name = "formbuilder_xml_email_listeners", schema = "ccm_core")
 public class XmlEmailListener extends ProcessListener implements Serializable {
 
     private static final long serialVersionUID = -4607965414018004925L;

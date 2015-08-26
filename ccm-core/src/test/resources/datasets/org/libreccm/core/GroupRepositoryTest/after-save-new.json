@@ -1,5 +1,5 @@
 {
-    "subjects":
+    "ccm_core.subjects":
             [
                 {
                     "subject_id": -10
@@ -14,7 +14,7 @@
                     "subject_id": -40
                 }
             ],
-    "ccm_groups":
+    "ccm_core.ccm_groups":
             [
                 {
                     "name": "admins",

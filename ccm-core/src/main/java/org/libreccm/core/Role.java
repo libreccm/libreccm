@@ -47,7 +47,7 @@ import javax.persistence.NamedQuery;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "ccm_roles")
+@Table(name = "ccm_roles", schema = "ccm_core")
 @NamedQueries({
     @NamedQuery(name = "findRolesForName",
                 query = "SELECT r FROM Role r "

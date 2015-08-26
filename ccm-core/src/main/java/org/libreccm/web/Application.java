@@ -49,7 +49,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "applications")
+@Table(name = "applications", schema = "ccm_core")
 @XmlRootElement(name = "application", namespace = WEB_XML_NS)
 public class Application extends Resource implements Serializable {
 

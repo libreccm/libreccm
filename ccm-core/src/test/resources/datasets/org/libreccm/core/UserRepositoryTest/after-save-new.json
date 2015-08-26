@@ -1,5 +1,5 @@
 {
-    "subjects":
+    "ccm_core.subjects":
             [
                 {
                     "subject_id": -10
@@ -14,7 +14,7 @@
                     "subject_id": -40
                 }
             ],
-    "ccm_users":
+    "ccm_core.ccm_users":
             [
                 {
                     "banned": false,
@@ -63,7 +63,7 @@
                     "subject_id": -40
                 }
             ],
-    "user_email_addresses":
+    "ccm_core.user_email_addresses":
             [
                 {
                     "user_id": -10,

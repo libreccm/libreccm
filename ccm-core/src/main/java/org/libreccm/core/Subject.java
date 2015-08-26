@@ -45,7 +45,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "subjects")
+@Table(name = "subjects", schema = "ccm_core")
 @Inheritance(strategy = InheritanceType.JOINED)
 @XmlRootElement(name = "subject", namespace = CORE_XML_NS)
 public class Subject implements Serializable {

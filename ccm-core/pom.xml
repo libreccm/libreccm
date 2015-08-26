@@ -57,6 +57,14 @@
             <artifactId>hibernate-validator-cdi</artifactId>
         </dependency>
         
+        <!--
+            Flyway framework for database schema migrations
+        -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
+        
         <!-- Dependencies for log4j 2 including adapter for the log4j 1.2 API -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>

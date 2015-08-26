@@ -37,7 +37,7 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "lucene_indexes")
+@Table(name = "lucene_indexes", schema = "ccm_core")
 public class Index implements Serializable {
 
     private static final long serialVersionUID = 3197625173477366719L;
