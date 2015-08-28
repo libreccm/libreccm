@@ -51,7 +51,7 @@ public class InstalledModule implements Serializable {
         return moduleClassName;
     }
 
-    public void setModuleClassName(String moduleClassName) {
+    public void setModuleClassName(final String moduleClassName) {
         this.moduleClassName = moduleClassName;
     }
 
@@ -59,7 +59,7 @@ public class InstalledModule implements Serializable {
         return status;
     }
 
-    public void setStatus(ModuleStatus status) {
+    public void setStatus(final ModuleStatus status) {
         this.status = status;
     }
 

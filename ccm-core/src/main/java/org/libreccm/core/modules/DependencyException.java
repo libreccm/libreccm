@@ -31,6 +31,8 @@ public class DependencyException extends Exception {
      * message.
      */
     public DependencyException() {
+        super();
+        //Nothin more
     }
 
     /**

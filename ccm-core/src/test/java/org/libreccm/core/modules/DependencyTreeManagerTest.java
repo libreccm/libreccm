@@ -47,8 +47,6 @@ import org.libreccm.tests.categories.IntegrationTest;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ServiceLoader;
-
 
 /**
  *
@@ -58,7 +56,7 @@ import java.util.ServiceLoader;
 @RunWith(Arquillian.class)
 public class DependencyTreeManagerTest {
 
-    private transient ServiceLoader<CcmModule> modules;
+    private transient Iterable<CcmModule> modules;
 
     public DependencyTreeManagerTest() {
     }
@@ -73,7 +71,13 @@ public class DependencyTreeManagerTest {
 
     @Before
     public void setUp() {
-        modules = ServiceLoader.load(CcmModule.class);
+        final List<CcmModule> moduleList = new ArrayList<>();
+        moduleList.add(new TestModuleRoot());
+        moduleList.add(new TestModuleA());
+        moduleList.add(new TestModuleB());
+        moduleList.add(new TestModuleC());
+
+        modules = moduleList;
     }
 
     @After
@@ -96,18 +100,41 @@ public class DependencyTreeManagerTest {
 
         return ShrinkWrap
             .create(WebArchive.class,
-                    "LibreCCM-org.libreccm.modules.dependencytree.DependencyTreeManager.war")
-            .addPackage(DependencyTreeManager.class.getPackage())
-            .addPackage(Module.class
-                .getPackage())
+                    "LibreCCM-org.libreccm.modules.dependencytree.DependencyTreeManagerTest.war")
             .addPackage(org.libreccm.tests.categories.IntegrationTest.class
                 .getPackage())
-            .addPackage(org.libreccm.core.modules.dependencytree.test.valid.TestModuleRoot.class
-                .getPackage())
-            .addPackage(CcmModule.class.getPackage())
+            .addClass(DependencyTreeManager.class)
+            .addClass(DependencyException.class)
+            .addClass(IntegrationException.class)
+            .addClass(TreeNode.class)
+            .addClass(CcmModule.class)
+            .addClass(ModuleInfo.class)
+            .addClass(ModuleStatus.class)
+            .addClass(Module.class)
+            .addClass(RequiredModule.class)
+            .addClass(InitEvent.class)
+            .addClass(InstallEvent.class)
+            .addClass(ShutdownEvent.class)
+            .addClass(UnInstallEvent.class)
+            .addClass(TestModuleRoot.class)
+            .addClass(TestModuleA.class)
+            .addClass(TestModuleB.class)
+            .addClass(TestModuleC.class)
             .addAsLibraries(libs)
             .addAsWebInfResource("test-web.xml", "web.xml")
-            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
+            .addAsResource(
+                "module-info/dependency-tree-manager-test/module-root.properties",
+                "module-info/org.libreccm.core.modules.dependencytree.test.valid.TestModuleRoot.properties")
+            .addAsResource(
+                "module-info/dependency-tree-manager-test/module-a.properties",
+                "module-info/org.libreccm.core.modules.dependencytree.test.valid.TestModuleA.properties")
+            .addAsResource(
+                "module-info/dependency-tree-manager-test/module-b.properties",
+                "module-info/org.libreccm.core.modules.dependencytree.test.valid.TestModuleB.properties")
+            .addAsResource(
+                "module-info/dependency-tree-manager-test/module-c.properties",
+                "module-info/org.libreccm.core.modules.dependencytree.test.valid.TestModuleC.properties");
     }
 
     @Test
@@ -138,10 +165,10 @@ public class DependencyTreeManagerTest {
         }
 
         assertThat(modulesInOrder,
-                   contains("org.libreccm.core.ccm-testmodule-root",
-                            "org.libreccm.core.ccm-testmodule-a",
-                            "org.libreccm.core.ccm-testmodule-b",
-                            "org.libreccm.core.ccm-testmodule-c"));
+                   contains("test-module-root",
+                            "test-module-a",
+                            "test-module-b",
+                            "test-module-c"));
     }
 
 }

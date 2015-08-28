@@ -47,8 +47,6 @@ import org.libreccm.tests.categories.IntegrationTest;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ServiceLoader;
-
 
 /**
  *
@@ -58,7 +56,7 @@ import java.util.ServiceLoader;
 @RunWith(Arquillian.class)
 public class DependencyTreeManagerCycleTest {
 
-    private transient ServiceLoader<CcmModule> modules;
+    private transient Iterable<CcmModule> modules;
 
     public DependencyTreeManagerCycleTest() {
     }
@@ -73,7 +71,12 @@ public class DependencyTreeManagerCycleTest {
 
     @Before
     public void setUp() {
-        modules = ServiceLoader.load(CcmModule.class);
+        final List<CcmModule> moduleList = new ArrayList<>();
+        moduleList.add(new TestModuleRoot());
+        moduleList.add(new TestModuleA());
+        moduleList.add(new TestModuleB());
+        moduleList.add(new TestModuleC());
+        modules = moduleList;
     }
 
     @After
@@ -96,18 +99,41 @@ public class DependencyTreeManagerCycleTest {
 
         return ShrinkWrap
             .create(WebArchive.class,
-                    "LibreCCM-org.libreccm.modules.dependencytree.DependencyTreeManager.war")
-            .addPackage(DependencyTreeManager.class.getPackage())
-            .addPackage(Module.class
-                .getPackage())
+                    "LibreCCM-org.libreccm.modules.dependencytree.DependencyTreeManagerCycleTest.war")
             .addPackage(org.libreccm.tests.categories.IntegrationTest.class
                 .getPackage())
-            .addPackage(org.libreccm.core.modules.dependencytree.test.cycle.TestModuleRoot.class
-                .getPackage())
-            .addPackage(CcmModule.class.getPackage())
+            .addClass(DependencyTreeManager.class)
+            .addClass(DependencyException.class)
+            .addClass(IntegrationException.class)
+            .addClass(TreeNode.class)
+            .addClass(CcmModule.class)
+            .addClass(ModuleInfo.class)
+            .addClass(ModuleStatus.class)
+            .addClass(Module.class)
+            .addClass(RequiredModule.class)
+            .addClass(InitEvent.class)
+            .addClass(InstallEvent.class)
+            .addClass(ShutdownEvent.class)
+            .addClass(UnInstallEvent.class)
+            .addClass(TestModuleRoot.class)
+            .addClass(TestModuleA.class)
+            .addClass(TestModuleB.class)
+            .addClass(TestModuleC.class)
             .addAsLibraries(libs)
             .addAsWebInfResource("test-web.xml", "web.xml")
-            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
+            .addAsResource(
+                "module-info/dependency-tree-manager-cycle-test/module-root.properties",
+                "module-info/org.libreccm.core.modules.dependencytree.test.cycle.TestModuleRoot.properties")
+            .addAsResource(
+                "module-info/dependency-tree-manager-cycle-test/module-a.properties",
+                "module-info/org.libreccm.core.modules.dependencytree.test.cycle.TestModuleA.properties")
+            .addAsResource(
+                "module-info/dependency-tree-manager-cycle-test/module-b.properties",
+                "module-info/org.libreccm.core.modules.dependencytree.test.cycle.TestModuleB.properties")
+            .addAsResource(
+                "module-info/dependency-tree-manager-cycle-test/module-c.properties",
+                "module-info/org.libreccm.core.modules.dependencytree.test.cycle.TestModuleC.properties");
     }
 
     @Test

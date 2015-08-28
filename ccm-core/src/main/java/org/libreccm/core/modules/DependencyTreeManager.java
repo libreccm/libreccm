@@ -45,10 +45,10 @@ import org.apache.maven.artifact.versioning.ComparableVersion;
 final class DependencyTreeManager {
 
     private static final Logger LOGGER = LogManager.getLogger(
-            DependencyTreeManager.class);
+        DependencyTreeManager.class);
 
     public List<TreeNode> generateTree(final Iterable<CcmModule> modules)
-            throws DependencyException {
+        throws DependencyException {
 
         LOGGER.info("Starting to generate dependency tree...");
 
@@ -57,6 +57,11 @@ final class DependencyTreeManager {
         for (final CcmModule module : modules) {
             createTreeNode(module, nodes);
         }
+
+        for (final CcmModule module : modules) {
+            addDependencyRelations(module, nodes);
+        }
+
         final List<TreeNode> nodeList = new ArrayList<>();
         for (final Map.Entry<String, TreeNode> entry : nodes.entrySet()) {
             nodeList.add(entry.getValue());
@@ -68,22 +73,19 @@ final class DependencyTreeManager {
     }
 
     public List<TreeNode> orderModules(final List<TreeNode> dependencyTree)
-            throws DependencyException {
+        throws DependencyException {
         LOGGER.info("Creating an ordered list from the dependency tree...");
 
         final List<TreeNode> orderedModules = new ArrayList<>();
         final List<TreeNode> resolvedModules = new ArrayList<>();
 
         LOGGER.info("Looking for modules which do not depend on any other "
-                            + "modules...");
+                        + "modules...");
         for (final TreeNode node : dependencyTree) {
             if (node.getDependsOn().isEmpty()) {
-//                LOGGER.info(
-//                        "\tModule \"{}\" does not depend on any other module",
-//                        ModuleUtil.getModuleName(node.getModule()));
                 LOGGER.info(
-                        "\tModule \"{}\" does not depend on any other module",
-                        node.getModuleInfo().getModuleName());
+                    "\tModule \"{}\" does not depend on any other module",
+                    node.getModuleInfo().getModuleName());
                 resolvedModules.add(node);
             }
         }
@@ -92,8 +94,6 @@ final class DependencyTreeManager {
         while (!resolvedModules.isEmpty()) {
 
             final TreeNode current = resolvedModules.remove(0);
-//            LOGGER.info("\tProcessing node for module \"{}\"...",
-//                        ModuleUtil.getModuleName(current.getModule()));
             LOGGER.info("\tProcessing node for module \"{}\"...",
                         current.getModuleInfo().getModuleName());
 
@@ -110,9 +110,8 @@ final class DependencyTreeManager {
 
         if (orderedModules.size() == dependencyTree.size()) {
             LOGGER.info("Dependency graph proceessed successfully. "
-                                + "Modules in order:");
+                            + "Modules in order:");
             for (final TreeNode node : orderedModules) {
-                //LOGGER.info("\t{}", ModuleUtil.getModuleName(node.getModule()));
                 LOGGER.info("\t{}", node.getModuleInfo().getModuleName());
             }
 
@@ -120,7 +119,7 @@ final class DependencyTreeManager {
         } else {
             LOGGER.fatal("The dependency graph has a least one cycle.");
             throw new DependencyException(
-                    "The dependency graph has a least one cycle.");
+                "The dependency graph has a least one cycle.");
         }
     }
 
@@ -128,118 +127,140 @@ final class DependencyTreeManager {
                                 final Map<String, TreeNode> nodes) {
         final TreeNode node = new TreeNode(module);
 
-//        LOGGER.info("Creating node for module \"{}\"...",
-//                    ModuleUtil.getModuleName(module));
         LOGGER.info("Creating node for module \"{}\"...",
                     node.getModuleInfo().getModuleName());
-//        nodes.put(ModuleUtil.getModuleName(module), node);
         nodes.put(node.getModuleInfo().getModuleName(), node);
     }
 
     private void addDependencyRelations(final CcmModule module,
                                         final Map<String, TreeNode> nodes)
-            throws DependencyException {
+        throws DependencyException {
         final ModuleInfo moduleInfo = new ModuleInfo();
         moduleInfo.load(module);
 
-//        LOGGER.info("Adding dependency relations for module \"{}\"...",
-//                    ModuleUtil.getModuleName(module));
         LOGGER.info("Adding dependency relations for module \"{}\"...",
                     moduleInfo.getModuleName());
 
-        //final String moduleName = ModuleUtil.getModuleName(module)
         final String moduleName = moduleInfo.getModuleName();
 
         if (!nodes.containsKey(moduleName)) {
-//            LOGGER.fatal("Modules nodes map does contain an entry for \"{}\". "
-//                                 + "That should not happen.",
-//                         ModuleUtil.getModuleName(module));
             LOGGER.fatal("Modules nodes map does contain an entry for \"{}\". "
-                                 + "That should not happen.",
+                             + "That should not happen.",
                          moduleInfo.getModuleName());
             throw new IllegalArgumentException(String.format(
-                    "The nodes map does not contain a node for module \"%s\". "
-                            + "That should not happen.",
-                    moduleName));
+                "The nodes map does not contain a node for module \"%s\". "
+                    + "That should not happen.",
+                moduleName));
         }
 
         final TreeNode node = nodes.get(moduleName);
-//        LOGGER.info("Processing required modules for module \"{}\"...",
-//                    ModuleUtil.getModuleName(module));
         LOGGER.info("Processing required modules for module \"{}\"...",
                     node.getModuleInfo().getModuleName());
-//        for (final RequiredModule requiredModule : ModuleUtil
-//                .getRequiredModules(
-//                        module)) {
         for (final RequiredModule requiredModule : node.getModuleInfo().
-                getRequiredModules()) {
+            getRequiredModules()) {
 
-            final ModuleInfo requiredModuleInfo = new ModuleInfo();
-            requiredModuleInfo.load(requiredModule.module());
-
+//            final ModuleInfo requiredModuleInfo = new ModuleInfo();
+//            requiredModuleInfo.load(requiredModule.module());
+//
 //            LOGGER.info("\tModule \"{}\" requires module \"{}\".",
-//                        ModuleUtil.getModuleName(module),
-//                        ModuleUtil.getModuleName(requiredModule.module()));
-            LOGGER.info("\tModule \"{}\" requires module \"{}\".",
-                        node.getModuleInfo().getModuleName(),
-                        requiredModuleInfo.getModuleName());
-
-//            if (!nodes.containsKey(ModuleUtil.getModuleName(requiredModule
-//                    .module()))) {
-            if (!nodes.containsKey(requiredModuleInfo.getModuleName())) {
-
-                LOGGER.fatal("Required module \"{}\" no found.",
-                             requiredModuleInfo.getModuleName());
-
-                throw new DependencyException(String.format(
-                        "Module \"%s\" depends on module \"%s\" but the dependency "
-                        + "tree does contain an entry for module \"%s\".",
-                        moduleInfo.getModuleName(),
-                        requiredModuleInfo.getModuleName(),
-                        requiredModuleInfo.getModuleName()));
-            }
-
-//            final TreeNode dependencyNode = nodes.get(ModuleUtil.getModuleName(
-//                    requiredModule.module()));            
-            final TreeNode dependencyNode = nodes.get(requiredModuleInfo.
-                    getModuleName());
-
-            //Check version
-//            if (!validateVersion(ModuleUtil.getVersion(dependencyNode
-//                    .getModule()),
-            if (!validateVersion(dependencyNode.getModuleInfo().
-                    getModuleVersion(),
-                                 requiredModule.minVersion(),
-                                 requiredModule.maxVersion())) {
-                throw new DependencyException(String.format(
-                        "The required module is avialable but in the correct "
-                                + "version. "
-                                + "Available version: \"%s\"; "
-                                + "minimal required version: \"%s\"; "
-                                + "maximum required version: \"%s\"",
-                        dependencyNode.getModuleInfo().getModuleVersion(),
-                        requiredModule.minVersion(),
-                        requiredModule.maxVersion()));
-            }
-
-            node.addDependsOn(dependencyNode);
-            dependencyNode.addDependentModule(node);
+//                        node.getModuleInfo().getModuleName(),
+//                        requiredModuleInfo.getModuleName());
+//
+//            if (!nodes.containsKey(requiredModuleInfo.getModuleName())) {
+//
+//                LOGGER.fatal("Required module \"{}\" no found.",
+//                             requiredModuleInfo.getModuleName());
+//
+//                throw new DependencyException(String.format(
+//                    "Module \"%s\" depends on module \"%s\" but the dependency "
+//                        + "tree does contain an entry for module \"%s\".",
+//                    moduleInfo.getModuleName(),
+//                    requiredModuleInfo.getModuleName(),
+//                    requiredModuleInfo.getModuleName()));
+//            }
+//
+//            final TreeNode dependencyNode = nodes.get(requiredModuleInfo.
+//                getModuleName());
+//
+//            //Check version
+//            if (!validateVersion(dependencyNode.getModuleInfo().
+//                getModuleVersion(),
+//                                 requiredModule.minVersion(),
+//                                 requiredModule.maxVersion())) {
+//                throw new DependencyException(String.format(
+//                    "The required module is avialable but in the correct "
+//                        + "version. "
+//                        + "Available version: \"%s\"; "
+//                        + "minimal required version: \"%s\"; "
+//                        + "maximum required version: \"%s\"",
+//                    dependencyNode.getModuleInfo().getModuleVersion(),
+//                    requiredModule.minVersion(),
+//                    requiredModule.maxVersion()));
+//            }
+//
+//            node.addDependsOn(dependencyNode);
+//            dependencyNode.addDependentModule(node);
+            addDependencyRelation(nodes, node, requiredModule);
         }
+
+    }
+
+    private void addDependencyRelation(final Map<String, TreeNode> nodes,
+                                       final TreeNode node,
+                                       final RequiredModule requiredModule)
+        throws DependencyException {
+        final ModuleInfo requiredInfo = new ModuleInfo();
+        requiredInfo.load(requiredModule.module());
+
+        LOGGER.info("\tModule \"{}\" requires module \"{}\".",
+                    node.getModuleInfo().getModuleName(),
+                    requiredInfo.getModuleName());
+
+        if (!nodes.containsKey(requiredInfo.getModuleName())) {
+            LOGGER.fatal("Required module \"{}\" no found.",
+                         requiredInfo.getModuleName());
+            throw new DependencyException(String.format(
+                "Module \"%s\" depends on module \"%s\" but the dependency "
+                    + "tree does contain an entry for module \"%s\".",
+                node.getModuleInfo().getModuleName(),
+                requiredInfo.getModuleName(),
+                requiredInfo.getModuleName()));
+        }
+
+        final TreeNode dependencyNode = nodes.get(requiredInfo.
+            getModuleName());
+        if (!validateVersion(dependencyNode.getModuleInfo().
+            getModuleVersion(),
+                             requiredModule.minVersion(),
+                             requiredModule.maxVersion())) {
+            throw new DependencyException(String.format(
+                "The required module is avialable but in the correct "
+                    + "version. "
+                    + "Available version: \"%s\"; "
+                    + "minimal required version: \"%s\"; "
+                    + "maximum required version: \"%s\"",
+                dependencyNode.getModuleInfo().getModuleVersion(),
+                requiredModule.minVersion(),
+                requiredModule.maxVersion()));
+        }
+
+        node.addDependsOn(dependencyNode);
+        dependencyNode.addDependentModule(node);
     }
 
     /**
      * Helper method for checking if an dependency is available in the required
      * version.
      *
-     * @param availableVersion The available version. Can't be {@code null} or
-     * empty.
+     * @param availableVersion   The available version. Can't be {@code null} or
+     *                           empty.
      * @param minRequiredVersion The minimal version required. Can be
-     * {@code null} or empty.
+     *                           {@code null} or empty.
      * @param maxRequiredVersion The maximum version required. Can be
-     * {@code null} or empty.
+     *                           {@code null} or empty.
      *
      * @return {@code true} if the available version is in the required range,
-     * {@code false} if not.
+     *         {@code false} if not.
      */
     //The names are fine. Shorter names would be less readable. Also removing 
     //the parentheses in the ifs would make the conditions less readable.
@@ -254,36 +275,36 @@ final class DependencyTreeManager {
         }
 
         if ((minRequiredVersion == null || minRequiredVersion.isEmpty())
-                    && (maxRequiredVersion == null || maxRequiredVersion.
-                        isEmpty())) {
+                && (maxRequiredVersion == null || maxRequiredVersion.
+                    isEmpty())) {
             return true;
         } else if ((minRequiredVersion != null && !minRequiredVersion.isEmpty())
-                           && (maxRequiredVersion == null || maxRequiredVersion
-                               .isEmpty())) {
+                       && (maxRequiredVersion == null || maxRequiredVersion
+                           .isEmpty())) {
             final ComparableVersion minVersion = new ComparableVersion(
-                    minRequiredVersion);
+                minRequiredVersion);
             final ComparableVersion version = new ComparableVersion(
-                    availableVersion);
+                availableVersion);
 
             return minVersion.compareTo(version) <= 0;
         } else if ((minRequiredVersion == null || minRequiredVersion.isEmpty())
-                           && (maxRequiredVersion != null && !maxRequiredVersion
-                               .isEmpty())) {
+                       && (maxRequiredVersion != null && !maxRequiredVersion
+                           .isEmpty())) {
             final ComparableVersion maxVersion = new ComparableVersion(
-                    maxRequiredVersion);
+                maxRequiredVersion);
             final ComparableVersion version = new ComparableVersion(
-                    availableVersion);
+                availableVersion);
 
             return version.compareTo(maxVersion) <= 0;
         } else {
             final ComparableVersion minVersion = new ComparableVersion(
-                    minRequiredVersion);
+                minRequiredVersion);
             final ComparableVersion maxVersion = new ComparableVersion(
-                    (maxRequiredVersion));
+                (maxRequiredVersion));
             final ComparableVersion version = new ComparableVersion(
-                    availableVersion);
+                availableVersion);
             return minVersion.compareTo(version) <= 0 && version.compareTo(
-                    maxVersion) <= 0;
+                maxVersion) <= 0;
         }
     }
 

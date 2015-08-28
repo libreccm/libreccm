@@ -21,13 +21,13 @@ package org.libreccm.core.modules;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
-import java.sql.SQLDataException;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -43,11 +43,11 @@ public class ModuleInfo {
 
     private static final Logger LOGGER = LogManager.getLogger(ModuleInfo.class);
 
-    private String moduleName;
-    private String moduleDataPackage;
-    private Class<?>[] moduleEntities;
-    private String moduleVersion;
-    private RequiredModule[] requiredModules;
+    private transient String moduleName;
+    private transient String moduleDataPackage;
+    private transient Class<?>[] moduleEntities;
+    private transient String moduleVersion;
+    private transient RequiredModule[] requiredModules;
 
     public ModuleInfo() {
         //Nothing
@@ -66,8 +66,9 @@ public class ModuleInfo {
     }
 
     public String getDbScriptsLocation(final Connection connection)
-            throws SQLException {
-        final StringBuffer buffer = new StringBuffer("classpath:/db/migrations/");
+        throws SQLException {
+        final StringBuffer buffer
+                               = new StringBuffer("classpath:/db/migrations/");
         buffer.append(moduleDataPackage);
         switch (connection.getMetaData().getDatabaseProductName()) {
             case "H2": {
@@ -82,9 +83,9 @@ public class ModuleInfo {
                 break;
             default:
                 throw new IntegrationException(String.format(
-                        "Integration failed. Database \"%s\" is not supported yet.",
-                        connection.getMetaData().
-                        getDatabaseProductName()));
+                    "Integration failed. Database \"%s\" is not supported yet.",
+                    connection.getMetaData().
+                    getDatabaseProductName()));
         }
 
         return buffer.toString();
@@ -109,8 +110,93 @@ public class ModuleInfo {
     public void load(final Class<? extends CcmModule> moduleClass) {
         LOGGER.info("Reading module info for {}...", moduleClass.getName());
         final Module annotation = moduleClass.getAnnotation(Module.class);
-        final Properties properties = new Properties();
 
+        final Properties properties = loadModuleInfoFile(moduleClass);
+//        final Properties properties = new Properties();
+//
+//        final String path = String.format("/module-info/%s.properties",
+//                                          moduleClass.getName());
+//        LOGGER.info("Trying to retrieve module info for module {} from {}...",
+//                    moduleClass.getName(),
+//                    path);
+//        final InputStream stream = moduleClass.getResourceAsStream(path);
+//        if (stream == null) {
+//            LOGGER.warn("No module info for {} found at {}",
+//                        moduleClass.getName(),
+//                        path);
+//        } else {
+//            try {
+//                properties.load(stream);
+//            } catch (IOException ex) {
+//                LOGGER.error("Failed to read module info for {} at {}.",
+//                             moduleClass.getName(),
+//                             path);
+//                LOGGER.error("Cause: ", ex);
+//            }
+//        }
+
+        LOGGER.info("Reading module name...");
+//        if (annotation.name() != null && !annotation.name().isEmpty()) {
+//            moduleName = annotation.name();
+//        } else if (properties.getProperty(ARTIFACT_ID) != null
+//                       && !properties.getProperty(ARTIFACT_ID).isEmpty()) {
+//            moduleName = properties.getProperty(ARTIFACT_ID);
+//        } else {
+//            LOGGER.warn(
+//                "The module was not specificied by the module annotation "
+//                    + "or by the module info file. Creating name from "
+//                    + "simple name of the module class.");
+//            moduleName = moduleClass.getSimpleName().toLowerCase();
+//        }
+        LOGGER.info("Reading module name...");
+        moduleName = readModuleName(moduleClass, annotation, properties);
+        LOGGER.info("Module name is \"{}\".", moduleName);
+
+        LOGGER.info("Reading module package name...");
+//        if (annotation.packageName() != null
+//                && !annotation.packageName().isEmpty()) {
+//            moduleDataPackage = annotation.packageName();
+//        } else if (properties.getProperty(GROUP_ID) != null
+//                       && !properties.getProperty(GROUP_ID).isEmpty()) {
+//            moduleDataPackage = String.format("%s/%s",
+//                                              properties.getProperty(GROUP_ID),
+//                                              properties.
+//                                              getProperty(ARTIFACT_ID).replace(
+//                                                  "-", "_"));
+//        } else {
+//            LOGGER.warn("The module data package was specified by the module "
+//                            + "annotation nore was an group id found in the module info"
+//                        + "file. Creating data package name from the name of the "
+//                        + "module class.");
+//            moduleDataPackage = moduleClass.getName().toLowerCase();
+//        }
+        moduleDataPackage = readModulePackageName(moduleClass,
+                                                  annotation,
+                                                  properties);
+        LOGGER.info("Module data package is \"{}\".", moduleDataPackage);
+
+        LOGGER.info("Reading module version...");
+//        if (annotation.version() != null && !annotation.version().isEmpty()) {
+//            moduleVersion = annotation.version();
+//        } else if (properties.getProperty(VERSION) != null
+//                       && !properties.getProperty(VERSION).isEmpty()) {
+//            moduleVersion = properties.getProperty(VERSION);
+//        } else {
+//            LOGGER.warn("Module version is not specified by the module "
+//                            + "annotation or in the module info file. Module version is "
+//                        + "undefinied. This can lead to all sorts of strange errors!");
+//        }
+        moduleVersion = readModuleVersion(annotation, properties);
+        LOGGER.info("Module version is \"{}.\"", moduleVersion);
+
+        requiredModules = annotation.requiredModules();
+        moduleEntities = annotation.entities();
+    }
+
+    private Properties loadModuleInfoFile(
+        final Class<? extends CcmModule> moduleClass) {
+
+        final Properties moduleInfo = new Properties();
         final String path = String.format("/module-info/%s.properties",
                                           moduleClass.getName());
         LOGGER.info("Trying to retrieve module info for module {} from {}...",
@@ -123,62 +209,95 @@ public class ModuleInfo {
                         path);
         } else {
             try {
-                properties.load(stream);
+                moduleInfo.load(stream);
             } catch (IOException ex) {
                 LOGGER.error("Failed to read module info for {} at {}.",
                              moduleClass.getName(),
                              path);
+                LOGGER.error("Cause: ", ex);
             }
         }
 
-        LOGGER.info("Reading module name...");
-        if (annotation.name() != null && !annotation.name().isEmpty()) {
-            moduleName = annotation.name();
-        } else if (properties.getProperty(ARTIFACT_ID) != null
-                           && !properties.getProperty(ARTIFACT_ID).isEmpty()) {
-            moduleName = properties.getProperty(ARTIFACT_ID);
+        return moduleInfo;
+    }
+
+    private String readModuleName(final Class<? extends CcmModule> moduleClass,
+                                  final Module annotation,
+                                  final Properties moduleInfo) {
+        @SuppressWarnings("PMD.LongVariable")
+        final boolean annotationHasModuleName = annotation.name() != null
+                                              && !annotation.name().isEmpty();
+        @SuppressWarnings("PMD.LongVariable")
+        final boolean moduleInfoHasModuleName = moduleInfo.getProperty(ARTIFACT_ID)
+                                              != null && !moduleInfo
+            .getProperty(ARTIFACT_ID).isEmpty();
+
+        if (annotationHasModuleName) {
+            return annotation.name();
+        } else if (moduleInfoHasModuleName) {
+            return moduleInfo.getProperty(ARTIFACT_ID);
         } else {
             LOGGER.warn(
-                    "The module was not specificied by the module annotation "
-                            + "or by the module info file. Creating name from "
-                            + "simple name of the module class.");
-            moduleName = moduleClass.getSimpleName().toLowerCase();
+                "The module was not specificied by the module annotation "
+                    + "or by the module info file. Creating name from "
+                    + "simple name of the module class.");
+            return moduleClass.getSimpleName().toLowerCase();
         }
-        LOGGER.info("Module name is \"{}\".", moduleName);
+    }
 
-        LOGGER.info("Reading module package name...");
-        if (annotation.packageName() != null
-                    && !annotation.packageName().isEmpty()) {
-            moduleDataPackage = annotation.packageName();
-        } else if (properties.getProperty(GROUP_ID) != null
-                           && !properties.getProperty(GROUP_ID).isEmpty()) {
-            moduleDataPackage = String.format("%s/%s",
-                                              properties.getProperty(GROUP_ID),
-                                              properties.
-                                              getProperty(ARTIFACT_ID).replace(
-                                                      "-", "_"));
+    private String readModulePackageName(
+        final Class<? extends CcmModule> moduleClass,
+        final Module annotation,
+        final Properties moduleInfo) {
+
+        @SuppressWarnings("PMD.LongVariable")
+        final boolean annotationHasPackageName = annotation.packageName() != null
+                                               && !annotation.packageName()
+            .isEmpty();
+        @SuppressWarnings("PMD.LongVariable")
+        final boolean moduleInfoHasPackageName = moduleInfo.getProperty(GROUP_ID)
+                                               != null
+                                               && !moduleInfo.getProperty(
+                GROUP_ID).isEmpty();
+        if (annotationHasPackageName) {
+            return annotation.packageName();
+        } else if (moduleInfoHasPackageName) {
+            return String.format("%s/%s",
+                                 moduleInfo.getProperty(GROUP_ID),
+                                 moduleInfo.
+                                 getProperty(ARTIFACT_ID).replace(
+                                     "-", "_"));
         } else {
             LOGGER.warn("The module data package was specified by the module "
-                                + "annotation nore was an group id found in the module info"
+                            + "annotation nore was an group id found in the module info"
                         + "file. Creating data package name from the name of the "
                         + "module class.");
-            moduleDataPackage = moduleClass.getName().toLowerCase();
+            return moduleClass.getName().toLowerCase();
         }
-        LOGGER.info("Module data package is \"{}\".", moduleDataPackage);
+    }
 
-        if (annotation.version() != null && !annotation.version().isEmpty()) {
-            moduleVersion = annotation.version();
-        } else if (properties.getProperty(VERSION) != null
-                           && !properties.getProperty(VERSION).isEmpty()) {
-            moduleVersion = properties.getProperty(VERSION);
+    private String readModuleVersion(
+        final Module annotation,
+        final Properties moduleInfo) {
+
+        @SuppressWarnings("PMD.LongVariable")
+        final boolean annotationHasVersion = annotation.version() != null
+                                           && !annotation.version().isEmpty();
+        @SuppressWarnings("PMD.LongVariable")
+        final boolean moduleInfoHasVersion = moduleInfo.getProperty(VERSION) != null
+                                           && !moduleInfo.getProperty(VERSION)
+            .isEmpty();
+
+        if (annotationHasVersion) {
+            return annotation.version();
+        } else if (moduleInfoHasVersion) {
+            return moduleInfo.getProperty(VERSION);
         } else {
             LOGGER.warn("Module version is not specified by the module "
-                                + "annotation or in the module info file. Module version is "
+                            + "annotation or in the module info file. Module version is "
                         + "undefinied. This can lead to all sorts of strange errors!");
+            return "";
         }
-        LOGGER.info("Module version is \"{}.\"", moduleVersion);
-
-        requiredModules = annotation.requiredModules();
-        moduleEntities = annotation.entities();
     }
+
 }
