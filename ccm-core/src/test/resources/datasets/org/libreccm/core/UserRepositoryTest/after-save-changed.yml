@@ -1,0 +1,54 @@
+---
+ccm_core.subjects:
+- subject_id: -10
+- subject_id: -20
+- subject_id: -30
+ccm_core.ccm_users:
+- banned: false
+  hash_algorithm: SHA-512
+  family_name: Doe
+  given_name: John
+  title_pre: Dr.
+  #Een5vuwa
+  password: 19f69a0f8eab3e6124d1b40ca2ae1fc3ece311cf86dde4e9560521e881fb8f063817cf1da1234144825f40fc9b9acd1563cafcb35fb8533544a1b6c3615160e3
+  password_reset_required: false
+  salt: fafjiaddfja0a
+  screen_name: jdoe
+  subject_id: -10
+- banned: false
+  hash_algorithm: SHA-512
+  family_name: Mustermann
+  given_name: Max
+  #foo123
+  password: 1c9626af429a6291766d15cbfb38689bd8d49450520765973de70aecaf644b7d4fda711266ba9ec8fb6df30c8ab391d40330829aa85adf371bcde6b4c9bc01e6
+  password_reset_required: false
+  salt: fjiajhigafgapoa
+  screen_name: mmuster
+  subject_id: -20
+- banned: false
+  hash_algorithm: SHA-512
+  family_name: Public
+  given_name: Joe
+  #foo123
+  password: 4e39eba7f2927182a532cd8700bf251e58d4b0359fbb832e6af21db7501d7a49e6d8b950e0d4b15b1841af0f786c8edaa0c09ef7f474804254f7e895969d2975
+  password_reset_required: false
+  salt: axg8ira8fa
+  screen_name: joe
+  subject_id: -30
+ccm_core.user_email_addresses:
+- user_id: -10
+  email_address: jd@example.com
+  bouncing: false
+  verified: true
+- user_id: -20
+  email_address: max.mustermann@example.org
+  bouncing: false
+  verified: true
+- user_id: -20
+  email_address: mm@example.com
+  bouncing: false
+  verified: true
+- user_id: -30
+  email_address: joe.public@example.com
+  bouncing: true
+  verified: false

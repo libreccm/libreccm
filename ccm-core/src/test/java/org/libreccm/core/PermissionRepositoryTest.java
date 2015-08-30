@@ -55,6 +55,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
 import org.jboss.arquillian.container.test.api.ShouldThrowException;
+import org.jboss.arquillian.persistence.CreateSchema;
 import org.jboss.arquillian.persistence.ShouldMatchDataSet;
 
 import java.util.Collections;
@@ -67,6 +68,7 @@ import java.util.Collections;
 @RunWith(Arquillian.class)
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
+@CreateSchema({"create_ccm_core_schema.sql"})
 public class PermissionRepositoryTest {
 
     @Inject
@@ -142,7 +144,7 @@ public class PermissionRepositoryTest {
 
     @Test
     @UsingDataSet("datasets/org/libreccm/core/PermissionRepositoryTest/"
-                      + "data.json")
+                      + "data.yml")
     @InSequence(10)
     public void findPermissionsForSubject() {
         final User jdoe = userRepository.findByScreenName("jdoe");
@@ -202,7 +204,7 @@ public class PermissionRepositoryTest {
 
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet(
-        "datasets/org/libreccm/core/PermissionRepositoryTest/data.json")
+        "datasets/org/libreccm/core/PermissionRepositoryTest/data.yml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(11)
     public void findPermissionsForNullSubject() {
@@ -211,7 +213,7 @@ public class PermissionRepositoryTest {
 
     @Test
     @UsingDataSet(
-        "datasets/org/libreccm/core/PermissionRepositoryTest/data.json")
+        "datasets/org/libreccm/core/PermissionRepositoryTest/data.yml")
     @InSequence(20)
     public void findPermissionsForUser() {
         final User jdoe = userRepository.findByScreenName("jdoe");
@@ -278,7 +280,7 @@ public class PermissionRepositoryTest {
 
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet(
-        "datasets/org/libreccm/core/PermissionRepositoryTest/data.json")
+        "datasets/org/libreccm/core/PermissionRepositoryTest/data.yml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(21)
     public void findPermissionsForNullUser() {
@@ -287,7 +289,7 @@ public class PermissionRepositoryTest {
 
     @Test
     @UsingDataSet(
-        "datasets/org/libreccm/core/PermissionRepositoryTest/data.json")
+        "datasets/org/libreccm/core/PermissionRepositoryTest/data.yml")
     @InSequence(30)
     public void findPermissionsForCcmObject() {
         final CcmObject object1 = ccmObjectRepository.findById(-10L);
@@ -348,7 +350,7 @@ public class PermissionRepositoryTest {
 
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet(
-        "datasets/org/libreccm/core/PermissionRepositoryTest/data.json")
+        "datasets/org/libreccm/core/PermissionRepositoryTest/data.yml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(31)
     public void findPermissionsForNullObject() {
@@ -357,9 +359,9 @@ public class PermissionRepositoryTest {
 
     @Test
     @UsingDataSet(
-        "datasets/org/libreccm/core/PermissionRepositoryTest/data.json")
+        "datasets/org/libreccm/core/PermissionRepositoryTest/data.yml")
     @ShouldMatchDataSet(value = "datasets/org/libreccm/core/"
-                                    + "PermissionRepositoryTest/after-save-new.json",
+                                    + "PermissionRepositoryTest/after-save-new.yml",
                         excludeColumns = {"permission_id"})
     @InSequence(40)
     public void saveNewPermission() {
@@ -405,9 +407,9 @@ public class PermissionRepositoryTest {
 
     @Test
     @UsingDataSet(
-        "datasets/org/libreccm/core/PermissionRepositoryTest/data.json")
+        "datasets/org/libreccm/core/PermissionRepositoryTest/data.yml")
     @ShouldMatchDataSet(value = "datasets/org/libreccm/core/"
-                                    + "PermissionRepositoryTest/after-save-changed.json",
+                                    + "PermissionRepositoryTest/after-save-changed.yml",
                         excludeColumns = {"permission_id"})
     @InSequence(50)
     public void saveChangedPermission() {
@@ -424,9 +426,9 @@ public class PermissionRepositoryTest {
 
     @Test
     @UsingDataSet(
-        "datasets/org/libreccm/core/PermissionRepositoryTest/data.json")
+        "datasets/org/libreccm/core/PermissionRepositoryTest/data.yml")
     @ShouldMatchDataSet(value = "datasets/org/libreccm/core/"
-                                    + "PermissionRepositoryTest/after-delete.json",
+                                    + "PermissionRepositoryTest/after-delete.yml",
                         excludeColumns = {"permission_id"})
     @InSequence(60)
     public void deletePermission() {

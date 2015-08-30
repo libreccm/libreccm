@@ -18,7 +18,6 @@
  */
 package org.libreccm.core;
 
-import org.dbunit.database.DatabaseConnection;
 
 import static org.hamcrest.CoreMatchers.*;
 
@@ -30,7 +29,6 @@ import org.jboss.arquillian.persistence.CreateSchema;
 import org.jboss.arquillian.persistence.PersistenceTest;
 import org.jboss.arquillian.persistence.ShouldMatchDataSet;
 import org.jboss.arquillian.persistence.UsingDataSet;
-import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -64,7 +62,7 @@ import static org.junit.Assert.*;
 @RunWith(Arquillian.class)
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
-//@CreateSchema({"scripts/create_ccm_core_schema.sql"})
+@CreateSchema({"create_ccm_core_schema.sql"})
 public class CcmObjectRepositoryTest {
 
     @Inject
@@ -109,7 +107,7 @@ public class CcmObjectRepositoryTest {
         return ShrinkWrap
                 .create(WebArchive.class,
                         "LibreCCM-org.libreccm.core.CcmObjectRepositoryTest.war").
-                addPackage(CcmObject.class.getPackage())
+                addPackages(false, CcmObject.class.getPackage())
                 .addPackage(org.libreccm.web.Application.class.getPackage())
                 .addPackage(org.libreccm.categorization.Category.class.
                         getPackage())
@@ -130,26 +128,28 @@ public class CcmObjectRepositoryTest {
     }
 
     @Test
+    @InSequence(1)
     public void repoIsInjected() {
         assertThat(ccmObjectRepository, is(not((nullValue()))));
     }
 
     @Test
+    @InSequence(2)
     public void entityManagerIsInjected() {
         assertThat(entityManager, is(not((nullValue()))));
     }
 
     @Test
     @UsingDataSet(
-            "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.json")
-    @InSequence(4)
+            "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.yml")
+    @InSequence(3)
     public void datasetOnly() {
         System.out.println("Dataset loaded successfully.");
     }
 
     @Test
     @UsingDataSet(
-            "datasets/org/libreccm/core/CcmObjectRepositoryTest/after-save-changed.json")
+            "datasets/org/libreccm/core/CcmObjectRepositoryTest/after-save-changed.yml")
     @InSequence(4)
     public void datasetOnly2() {
         System.out.println("Dataset loaded successfully.");
@@ -157,7 +157,7 @@ public class CcmObjectRepositoryTest {
 
     @Test
     @UsingDataSet(
-            "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.json")
+            "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.yml")
     @InSequence(5)
     public void entityManagerFindCcmObjectByLongPrimitive() {
         final CcmObject obj1 = entityManager.find(CcmObject.class, -10L);
@@ -182,7 +182,7 @@ public class CcmObjectRepositoryTest {
 
     @Test
     @UsingDataSet(
-            "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.json")
+            "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.yml")
     @InSequence(6)
     public void entityManagerFindCcmObjectByLongClass() {
         final CcmObject obj1 = entityManager.find(CcmObject.class,
@@ -211,7 +211,7 @@ public class CcmObjectRepositoryTest {
 
     @Test
     @UsingDataSet(
-            "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.json")
+            "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.yml")
     @InSequence(10)
     public void findCcmObjectById() {
         final CcmObject obj1 = ccmObjectRepository.findById(-10L);
@@ -236,7 +236,7 @@ public class CcmObjectRepositoryTest {
 
     @Test
     @UsingDataSet(
-            "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.json")
+            "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.yml")
     @InSequence(10)
     public void findAllCcmObjects() {
         final List<CcmObject> objects = ccmObjectRepository.findAll();
@@ -246,9 +246,9 @@ public class CcmObjectRepositoryTest {
 
     @Test
     @UsingDataSet(
-            "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.json")
+            "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.yml")
     @ShouldMatchDataSet(value
-                        = "datasets/org/libreccm/core/CcmObjectRepositoryTest/after-save-new.json",
+                        = "datasets/org/libreccm/core/CcmObjectRepositoryTest/after-save-new.yml",
                         excludeColumns = {"object_id"})
     @InSequence(300)
     public void saveNewCcmObject() {
@@ -260,9 +260,9 @@ public class CcmObjectRepositoryTest {
 
     @Test
     @UsingDataSet(
-            "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.json")
+            "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.yml")
     @ShouldMatchDataSet(value
-                        = "datasets/org/libreccm/core/CcmObjectRepositoryTest/after-save-changed.json",
+                        = "datasets/org/libreccm/core/CcmObjectRepositoryTest/after-save-changed.yml",
                         excludeColumns = {"object_id"})
     @InSequence(400)
     public void saveChangedCcmObject() {
@@ -281,9 +281,9 @@ public class CcmObjectRepositoryTest {
 
     @Test
     @UsingDataSet(
-            "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.json")
+            "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.yml")
     @ShouldMatchDataSet(value
-                        = "datasets/org/libreccm/core/CcmObjectRepositoryTest/after-delete.json",
+                        = "datasets/org/libreccm/core/CcmObjectRepositoryTest/after-delete.yml",
                         excludeColumns = {"object_id"})
     @InSequence(600)
     public void deleteCcmObject() {

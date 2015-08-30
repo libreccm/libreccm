@@ -1,0 +1,18 @@
+---
+ccm_core.subjects:
+- subject_id: -10
+ccm_core.ccm_users:
+- banned: false
+  hash_algorithm: SHA-512
+  family_name: Doe
+  given_name: John
+  password: C+o2w6mp+eLrbluMEgKMVSdP50A9BMethXN8R3yihtkbzt7WfWsde2nmq/t5gq6im3J8i3jw4Y3YrKHou8JQ2A==
+  salt: Fu8FPgqAal4GZp1hDjkOB+t6ITRCcO7HBoN5Xqf29UnVj5NUdUFZRTyKYMBEx6JmZGmHcMDG9OGVCKcEM9oyScSRreJs4B51wM44NM6KeRwbCf+VhBn14DkBrl40ygraNf+AJacKpMyCpFI0O/Am7mMDWL4flskBsylkxaQn3vKfzgN5MVG2szW//I6Q6YEH9AuL8LauS6fKaVynMzzu3xzD8Hjqvvlnzym898eom2lqScPfg5g4e8Ww13HCHAYe6twupAW/BjUNax5HSioEisZN/P1UGrde8uFEj+hbbavrWYZuilPuEu25+/98jyXx6542agqrWN8j0SFYcIyOgA==
+  password_reset_required: false
+  screen_name: jdoe
+  subject_id: -10
+ccm_core.user_email_addresses:
+- user_id: -10
+  email_address: jdoe@example.com
+  bouncing: false
+  verified: true

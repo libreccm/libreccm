@@ -43,12 +43,12 @@ public class Option extends Component implements Serializable {
     @Column(name = "parameter_value")
     private String parameterValue;
 
-    @AssociationOverride(name = "values",
-                         joinTable = @JoinTable(name
-                                                    = "formbuilder_option_labels",
-                                                joinColumns = {
-                                                    @JoinColumn(name
-                                                                    = "option_id")}))
+    @AssociationOverride(
+        name = "values",
+        joinTable = @JoinTable(name = "formbuilder_option_labels",
+                               schema = "ccm_core",
+                               joinColumns = {
+                                   @JoinColumn(name = "option_id")}))
     private LocalizedString label;
 
     public String getParameterValue() {
@@ -80,11 +80,11 @@ public class Option extends Component implements Serializable {
         if (obj == null) {
             return false;
         }
-        
+
         if (!super.equals(obj)) {
             return false;
         }
-        
+
         if (!(obj instanceof Option)) {
             return false;
         }
@@ -103,7 +103,7 @@ public class Option extends Component implements Serializable {
     public boolean canEqual(final Object obj) {
         return obj instanceof Option;
     }
-    
+
     @Override
     public String toString(final String data) {
         return super.toString(String.format(", parameterValue = \"%s\", "

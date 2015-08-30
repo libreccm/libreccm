@@ -43,9 +43,9 @@ import javax.security.auth.spi.LoginModule;
  * the shared data for use by other {@code LoginModule}s.
  *
  * This class in a reworked version of
- * {@code org.arsdigita.kernel.security.AbstractPasswordLoginModule} developed by Sameer
- * Ajmani (according to the JavaDoc). The main differences is that the new
- * version uses generics and multi-catch for exceptions. Also the code,
+ * {@code org.arsdigita.kernel.security.AbstractPasswordLoginModule} developed
+ * by Sameer Ajmani (according to the JavaDoc). The main differences is that the
+ * new version uses generics and multi-catch for exceptions. Also the code,
  * especially if clauses have been reworked to match the conventions enforced by
  * PMD and other style checkers. Also the methods {@code getPassword} and
  * {@code getUsername} have been renamed to {@code retrievePassword} and
@@ -61,7 +61,8 @@ import javax.security.auth.spi.LoginModule;
  */
 public abstract class AbstractPasswordLoginModule implements LoginModule {
 
-    private static final Logger LOGGER = LogManager.getLogger(AbstractPasswordLoginModule.class);
+    private static final Logger LOGGER = LogManager.getLogger(
+        AbstractPasswordLoginModule.class);
     /**
      * Key for username in shared data map.
      */

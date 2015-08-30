@@ -26,6 +26,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.ShouldThrowException;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
+import org.jboss.arquillian.persistence.CreateSchema;
 import org.jboss.arquillian.persistence.PersistenceTest;
 import org.jboss.arquillian.persistence.ShouldMatchDataSet;
 import org.jboss.arquillian.persistence.UsingDataSet;
@@ -60,6 +61,7 @@ import static org.junit.Assert.*;
 @RunWith(Arquillian.class)
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
+@CreateSchema({"create_ccm_core_schema.sql"})
 public class PermissionManagerTest {
 
     private static final String TEST_OBJECT_1 = "Test Object 1";
@@ -201,7 +203,7 @@ public class PermissionManagerTest {
 
     @Test
     @UsingDataSet("datasets/org/libreccm/core/PermissionManagerTest/"
-                      + "data.json")
+                      + "data.yml")
     @InSequence(10)
     public void isPermittedWebmasterAdmin() {
         final User webmaster = userRepository.findByScreenName("webmaster");
@@ -223,7 +225,7 @@ public class PermissionManagerTest {
     
     @Test
     @UsingDataSet("datasets/org/libreccm/core/PermissionManagerTest/"
-                      + "data.json")
+                      + "data.yml")
     @InSequence(11)
     public void isPermittedWebmasterRead() {
         final User webmaster = userRepository.findByScreenName("webmaster");
@@ -245,7 +247,7 @@ public class PermissionManagerTest {
 
         @Test
     @UsingDataSet("datasets/org/libreccm/core/PermissionManagerTest/"
-                      + "data.json")
+                      + "data.yml")
     @InSequence(12)
     public void isPermittedWebmasterWrite() {
         final User webmaster = userRepository.findByScreenName("webmaster");
@@ -270,7 +272,7 @@ public class PermissionManagerTest {
     
     @Test
     @UsingDataSet("datasets/org/libreccm/core/PermissionManagerTest/"
-                      + "data.json")
+                      + "data.yml")
     @InSequence(20)
     public void isPermittedJdoe() {
         final User jdoe = userRepository.findByScreenName("jdoe");
@@ -303,7 +305,7 @@ public class PermissionManagerTest {
 
     @Test
     @UsingDataSet("datasets/org/libreccm/core/PermissionManagerTest/"
-                      + "data.json")
+                      + "data.yml")
     @InSequence(30)
     public void isPermittedMmuster() {
         final User mmuster = userRepository.findByScreenName("mmuster");
@@ -336,7 +338,7 @@ public class PermissionManagerTest {
 
     @Test
     @UsingDataSet("datasets/org/libreccm/core/PermissionManagerTest/"
-                      + "data.json")
+                      + "data.yml")
     @InSequence(40)
     public void isPermittedPublicUser() {
         final User publicUser = userRepository.findByScreenName("public-user");
@@ -369,7 +371,7 @@ public class PermissionManagerTest {
 
     @Test
     @UsingDataSet("datasets/org/libreccm/core/PermissionManagerTest/"
-                      + "data.json")
+                      + "data.yml")
     @InSequence(50)
     public void isPermittedUsers() {
         final Group users = groupRepository.findByGroupName("users");
@@ -402,7 +404,7 @@ public class PermissionManagerTest {
 
     @Test
     @UsingDataSet("datasets/org/libreccm/core/PermissionManagerTest/"
-                      + "data.json")
+                      + "data.yml")
     @InSequence(60)
     public void isPermittedAuthors() {
         final Group authors = groupRepository.findByGroupName("authors");
@@ -435,7 +437,7 @@ public class PermissionManagerTest {
 
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet("datasets/org/libreccm/core/PermissionManagerTest/"
-                      + "data.json")
+                      + "data.yml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(70)
     public void isPermittedNullPrivilege() {
@@ -447,7 +449,7 @@ public class PermissionManagerTest {
 
     @Test
     @UsingDataSet("datasets/org/libreccm/core/PermissionManagerTest/"
-                      + "data.json")
+                      + "data.yml")
     @InSequence(80)
     public void isPermittedNullObject() {
         final Privilege privilege = privilegeRepository
@@ -459,7 +461,7 @@ public class PermissionManagerTest {
 
     @Test
     @UsingDataSet("datasets/org/libreccm/core/PermissionManagerTest/"
-                      + "data.json")
+                      + "data.yml")
     @InSequence(100)
     public void checkPermissionValid() throws UnauthorizedAcccessException {
         final Privilege privilege = privilegeRepository
@@ -472,7 +474,7 @@ public class PermissionManagerTest {
 
     @Test(expected = UnauthorizedAcccessException.class)
     @UsingDataSet("datasets/org/libreccm/core/PermissionManagerTest/"
-                      + "data.json")
+                      + "data.yml")
     @ShouldThrowException(UnauthorizedAcccessException.class)
     @InSequence(110)
     public void checkPermissionInValid() throws UnauthorizedAcccessException {
@@ -486,7 +488,7 @@ public class PermissionManagerTest {
 
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet("datasets/org/libreccm/core/PermissionManagerTest/"
-                      + "data.json")
+                      + "data.yml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(120)
     public void checkPermissionNullPrivilege() throws
@@ -499,7 +501,7 @@ public class PermissionManagerTest {
 
     @Test
     @UsingDataSet("datasets/org/libreccm/core/PermissionManagerTest/"
-                      + "data.json")
+                      + "data.yml")
     @InSequence(130)
     public void checkPermissionNullObject() throws UnauthorizedAcccessException {
         final Privilege privilege = privilegeRepository
@@ -511,7 +513,7 @@ public class PermissionManagerTest {
 
     @Test
     @UsingDataSet("datasets/org/libreccm/core/PermissionManagerTest/"
-                      + "data.json")
+                      + "data.yml")
     @InSequence(140)
     public void checkPermissionNullSubject() throws UnauthorizedAcccessException {
         final Privilege privilege = privilegeRepository
@@ -523,9 +525,9 @@ public class PermissionManagerTest {
 
     @Test
     @UsingDataSet("datasets/org/libreccm/core/PermissionManagerTest/"
-                      + "data.json")
+                      + "data.yml")
     @ShouldMatchDataSet(value = "datasets/org/libreccm/core/"
-                        + "PermissionManagerTest/after-grant.json",
+                        + "PermissionManagerTest/after-grant.yml",
                         excludeColumns = {"permission_id"})
     @InSequence(150)
     public void grantPermission() {
@@ -546,9 +548,9 @@ public class PermissionManagerTest {
 
     @Test
     @UsingDataSet("datasets/org/libreccm/core/PermissionManagerTest/"
-                      + "data.json")
+                      + "data.yml")
     @ShouldMatchDataSet(value = "datasets/org/libreccm/core/"
-                        + "PermissionManagerTest/after-grant-wildcard.json",
+                        + "PermissionManagerTest/after-grant-wildcard.yml",
                         excludeColumns = {"permission_id"})
     @InSequence(160)
     public void grantWildcardPermission() {
@@ -560,7 +562,7 @@ public class PermissionManagerTest {
 
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet("datasets/org/libreccm/core/PermissionManagerTest/"
-                      + "data.json")
+                      + "data.yml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(170)
     public void grantPermissionNullPrivilege() {
@@ -572,7 +574,7 @@ public class PermissionManagerTest {
 
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet("datasets/org/libreccm/core/PermissionManagerTest/"
-                      + "data.json")
+                      + "data.yml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(180)
     public void grantPermissionNullSubject() {
@@ -584,9 +586,9 @@ public class PermissionManagerTest {
 
     @Test
     @UsingDataSet("datasets/org/libreccm/core/PermissionManagerTest/"
-                      + "data.json")
+                      + "data.yml")
     @ShouldMatchDataSet(value = "datasets/org/libreccm/core/"
-                        + "PermissionManagerTest/after-revoke.json",
+                        + "PermissionManagerTest/after-revoke.yml",
                         excludeColumns = {"permission_id"})
     @InSequence(190)
     public void revokePermission() {
@@ -605,7 +607,7 @@ public class PermissionManagerTest {
 
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet("datasets/org/libreccm/core/PermissionManagerTest/"
-                      + "data.json")
+                      + "data.yml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(200)
     public void revokePermissionNullPrivilege() {
@@ -617,7 +619,7 @@ public class PermissionManagerTest {
 
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet("datasets/org/libreccm/core/PermissionManagerTest/"
-                      + "data.json")
+                      + "data.yml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(210)
     public void revokePermissionNullSubject() {

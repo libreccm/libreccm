@@ -24,6 +24,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.ShouldThrowException;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
+import org.jboss.arquillian.persistence.CreateSchema;
 import org.jboss.arquillian.persistence.PersistenceTest;
 import org.jboss.arquillian.persistence.ShouldMatchDataSet;
 import org.jboss.arquillian.persistence.UsingDataSet;
@@ -57,6 +58,7 @@ import static org.junit.Assert.*;
 @RunWith(Arquillian.class)
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
+@CreateSchema({"create_ccm_core_schema.sql"})
 public class PrivilegeRepositoryTest {
 
     @Inject
@@ -120,7 +122,7 @@ public class PrivilegeRepositoryTest {
 
     @Test
     @UsingDataSet("datasets/org/libreccm/core/PrivilegeRepositoryTest/"
-                      + "data.json")
+                      + "data.yml")
     @InSequence(10)
     public void retrievePrivilege() {
         final Privilege admin = privilegeRepository.retrievePrivilege("admin");
@@ -138,7 +140,7 @@ public class PrivilegeRepositoryTest {
 
     @Test(expected = UnknownPrivilegeException.class)
     @UsingDataSet("datasets/org/libreccm/core/PrivilegeRepositoryTest/"
-                      + "data.json")
+                      + "data.yml")
     @ShouldThrowException(UnknownPrivilegeException.class)
     @InSequence(20)
     public void retrieveNotExitingPrivilege() {
@@ -147,9 +149,9 @@ public class PrivilegeRepositoryTest {
 
     @Test
     @UsingDataSet("datasets/org/libreccm/core/PrivilegeRepositoryTest/"
-                      + "data.json")
+                      + "data.yml")
     @ShouldMatchDataSet(value = "datasets/org/libreccm/core/"
-                                    + "PrivilegeRepositoryTest/after-create.json",
+                                    + "PrivilegeRepositoryTest/after-create.yml",
                         excludeColumns = {"privilege_id"})
     @InSequence(30)
     public void createNewPrivilege() {
@@ -158,9 +160,9 @@ public class PrivilegeRepositoryTest {
 
     @Test
     @UsingDataSet("datasets/org/libreccm/core/PrivilegeRepositoryTest/"
-                      + "data.json")
+                      + "data.yml")
     @ShouldMatchDataSet(value = "datasets/org/libreccm/core/"
-                        + "PrivilegeRepositoryTest/after-delete.json",
+                        + "PrivilegeRepositoryTest/after-delete.yml",
                         excludeColumns = {"privilege_id"})
     @InSequence(40)
     public void deletePrivilege() {
@@ -169,7 +171,7 @@ public class PrivilegeRepositoryTest {
 
     @Test(expected = UnknownPrivilegeException.class)
     @UsingDataSet("datasets/org/libreccm/core/PrivilegeRepositoryTest/"
-                      + "data.json")
+                      + "data.yml")
     @ShouldThrowException(UnknownPrivilegeException.class)
     @InSequence(41)
     public void deleteNullPrivilege() {
@@ -178,7 +180,7 @@ public class PrivilegeRepositoryTest {
     
     @Test
     @UsingDataSet("datasets/org/libreccm/core/PermissionRepositoryTest/"
-                      + "data.json")
+                      + "data.yml")
     @InSequence(50)
     public void checkIsPermissionInUse() {
         assertThat(privilegeRepository.isPrivilegeInUse("admin"), is(true));
@@ -189,7 +191,7 @@ public class PrivilegeRepositoryTest {
     
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet("datasets/org/libreccm/core/PermissionRepositoryTest/"
-                      + "data.json")
+                      + "data.yml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(60)
     public void deleteInUsePrivilege() {

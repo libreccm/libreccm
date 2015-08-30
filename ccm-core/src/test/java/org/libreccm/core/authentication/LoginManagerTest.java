@@ -23,6 +23,7 @@ import static org.hamcrest.Matchers.*;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
+import org.jboss.arquillian.persistence.CreateSchema;
 import org.jboss.arquillian.persistence.PersistenceTest;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
@@ -63,6 +64,7 @@ import javax.security.auth.login.LoginException;
 @RunWith(Arquillian.class)
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
+@CreateSchema({"create_ccm_core_schema.sql"})
 public class LoginManagerTest {
 
     @Inject
@@ -172,7 +174,7 @@ public class LoginManagerTest {
 
     @Test
     @UsingDataSet(
-        "datasets/org/libreccm/core/authentication/LoginManagerTest/data.json")
+        "datasets/org/libreccm/core/authentication/LoginManagerTest/data.yml")
     @InSequence(10)
     public void loginValidCredentials() throws LoginException {
         loginManager.login("jdoe@example.com", "foobar");
@@ -192,7 +194,7 @@ public class LoginManagerTest {
 
     @Test
     @UsingDataSet(
-        "datasets/org/libreccm/core/authentication/LoginManagerTest/data.json")
+        "datasets/org/libreccm/core/authentication/LoginManagerTest/data.yml")
     @InSequence(20)
     public void loginWrongCredentials() throws LoginException {
         try {
@@ -207,7 +209,7 @@ public class LoginManagerTest {
 
     @Test
     @UsingDataSet(
-        "datasets/org/libreccm/core/authentication/LoginManagerTest/data.json")
+        "datasets/org/libreccm/core/authentication/LoginManagerTest/data.yml")
     @InSequence(30)
     public void loginEmptyPassword() {
         try {
@@ -222,7 +224,7 @@ public class LoginManagerTest {
 
     @Test
     @UsingDataSet(
-        "datasets/org/libreccm/core/authentication/LoginManagerTest/data.json")
+        "datasets/org/libreccm/core/authentication/LoginManagerTest/data.yml")
     @InSequence(40)
     public void loginEmptyUserName() {
         try {
@@ -237,7 +239,7 @@ public class LoginManagerTest {
 
     @Test
     @UsingDataSet(
-        "datasets/org/libreccm/core/authentication/LoginManagerTest/data.json")
+        "datasets/org/libreccm/core/authentication/LoginManagerTest/data.yml")
     @InSequence(50)
     public void loginNullPassword() {
         try {
@@ -252,7 +254,7 @@ public class LoginManagerTest {
 
     @Test
     @UsingDataSet(
-        "datasets/org/libreccm/core/authentication/LoginManagerTest/data.json")
+        "datasets/org/libreccm/core/authentication/LoginManagerTest/data.yml")
     @InSequence(60)
     public void loginNullUsername() {
         try {

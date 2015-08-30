@@ -43,6 +43,7 @@ import org.junit.runner.RunWith;
 
 import org.apache.commons.codec.binary.Base64;
 import org.jboss.arquillian.container.test.api.ShouldThrowException;
+import org.jboss.arquillian.persistence.CreateSchema;
 import org.libreccm.tests.categories.IntegrationTest;
 
 import java.io.File;
@@ -65,6 +66,7 @@ import static org.junit.Assert.*;
 @RunWith(Arquillian.class)
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
+@CreateSchema({"create_ccm_core_schema.sql"})
 public class UserManagerTest {
 
     @Inject
@@ -152,7 +154,7 @@ public class UserManagerTest {
     }
 
     @Test
-    @UsingDataSet("datasets/org/libreccm/core/UserRepositoryTest/data.json")
+    @UsingDataSet("datasets/org/libreccm/core/UserRepositoryTest/data.yml")
     @InSequence(100)
     public void updatePassword() throws NoSuchAlgorithmException,
                                         UnsupportedEncodingException {
@@ -198,7 +200,7 @@ public class UserManagerTest {
 
     @Test
     @UsingDataSet(
-        "datasets/org/libreccm/core/UserManagerTest/verify-password.json")
+        "datasets/org/libreccm/core/UserManagerTest/verify-password.yml")
     @InSequence(200)
     public void verifyPasswordForUser() {
         final User user = userRepository.findById(-10L);
@@ -211,7 +213,7 @@ public class UserManagerTest {
 
     @Test
     @UsingDataSet(
-        "datasets/org/libreccm/core/UserManagerTest/verify-password.json")
+        "datasets/org/libreccm/core/UserManagerTest/verify-password.yml")
     @InSequence(300)
     public void verifyPasswordForScreenname() throws UserNotFoundException {
         final boolean result = userManager.verifyPasswordForScreenname(
@@ -222,7 +224,7 @@ public class UserManagerTest {
 
     @Test
     @UsingDataSet(
-        "datasets/org/libreccm/core/UserManagerTest/verify-password.json")
+        "datasets/org/libreccm/core/UserManagerTest/verify-password.yml")
     @InSequence(400)
     public void verifyPasswordForEmail() throws UserNotFoundException {
         final boolean result = userManager.verifyPasswordForEmail(
@@ -233,7 +235,7 @@ public class UserManagerTest {
 
     @Test
     @UsingDataSet(
-        "datasets/org/libreccm/core/UserManagerTest/verify-password.json")
+        "datasets/org/libreccm/core/UserManagerTest/verify-password.yml")
     @InSequence(500)
     public void verifyPasswordForUserWrongPassword() {
         final User user = userRepository.findById(-10L);
@@ -245,7 +247,7 @@ public class UserManagerTest {
 
     @Test
     @UsingDataSet(
-        "datasets/org/libreccm/core/UserManagerTest/verify-password.json")
+        "datasets/org/libreccm/core/UserManagerTest/verify-password.yml")
     @InSequence(600)
     public void verifyPasswordForScreennameWrongPassword() throws
         UserNotFoundException {
@@ -257,7 +259,7 @@ public class UserManagerTest {
 
     @Test
     @UsingDataSet(
-        "datasets/org/libreccm/core/UserManagerTest/verify-password.json")
+        "datasets/org/libreccm/core/UserManagerTest/verify-password.yml")
     @InSequence(400)
     public void verifyPasswordForEmailWrongPassword() throws
         UserNotFoundException {
@@ -270,7 +272,7 @@ public class UserManagerTest {
     @Test(expected = UserNotFoundException.class)
     @ShouldThrowException(UserNotFoundException.class)
     @UsingDataSet(
-        "datasets/org/libreccm/core/UserManagerTest/verify-password.json")
+        "datasets/org/libreccm/core/UserManagerTest/verify-password.yml")
     @InSequence(700)
     public void verifyPasswordForScreennameNoUser() throws UserNotFoundException {
         userManager.verifyPasswordForScreenname("nobody", "foobar");
@@ -279,7 +281,7 @@ public class UserManagerTest {
     @Test(expected = UserNotFoundException.class)
     @ShouldThrowException(UserNotFoundException.class)
     @UsingDataSet(
-        "datasets/org/libreccm/core/UserManagerTest/verify-password.json")
+        "datasets/org/libreccm/core/UserManagerTest/verify-password.yml")
     @InSequence(800)
     public void verifyPasswordForEmailNoUser() throws UserNotFoundException {
         userManager.verifyPasswordForEmail("nobody@example.com", "foobar");

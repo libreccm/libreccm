@@ -24,6 +24,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.ShouldThrowException;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
+import org.jboss.arquillian.persistence.CreateSchema;
 import org.jboss.arquillian.persistence.PersistenceTest;
 import org.jboss.arquillian.persistence.ShouldMatchDataSet;
 import org.jboss.arquillian.persistence.UsingDataSet;
@@ -59,6 +60,7 @@ import javax.inject.Inject;
 @RunWith(Arquillian.class)
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
+@CreateSchema({"create_ccm_core_schema.sql"})
 public class RoleRepositoryTest {
 
     @Inject
@@ -201,7 +203,7 @@ public class RoleRepositoryTest {
 
     @Test
     @InSequence(10)
-    @UsingDataSet("datasets/org/libreccm/core/RoleRepositoryTest/data.json")
+    @UsingDataSet("datasets/org/libreccm/core/RoleRepositoryTest/data.yml")
     public void findRoleById() {
         final Role author = roleRepository.findById(-10L);
         final Role editor = roleRepository.findById(-20L);
@@ -222,7 +224,7 @@ public class RoleRepositoryTest {
 
     @Test
     @InSequence(20)
-    @UsingDataSet("datasets/org/libreccm/core/RoleRepositoryTest/data.json")
+    @UsingDataSet("datasets/org/libreccm/core/RoleRepositoryTest/data.yml")
     public void findRoleByName() {
         final List<Role> authors = roleRepository.findRolesForName("Author");
         final List<Role> editors = roleRepository.findRolesForName("Editor");
@@ -263,7 +265,7 @@ public class RoleRepositoryTest {
 
     @Test
     @InSequence(30)
-    @UsingDataSet("datasets/org/libreccm/core/RoleRepositoryTest/data.json")
+    @UsingDataSet("datasets/org/libreccm/core/RoleRepositoryTest/data.yml")
     public void findRolesForSourceGroup() {
         final Group group = groupRepository.findByGroupName(
             "info Administration");
@@ -283,7 +285,7 @@ public class RoleRepositoryTest {
 
     @Test
     @InSequence(40)
-    @UsingDataSet("datasets/org/libreccm/core/RoleRepositoryTest/data.json")
+    @UsingDataSet("datasets/org/libreccm/core/RoleRepositoryTest/data.yml")
     public void findRolesForImplicitGroup() {
         final Group authorsGroup = groupRepository.findByGroupName(
             "info Administration Author");
@@ -312,9 +314,9 @@ public class RoleRepositoryTest {
 
     @Test
     @InSequence(50)
-    @UsingDataSet("datasets/org/libreccm/core/RoleRepositoryTest/data.json")
+    @UsingDataSet("datasets/org/libreccm/core/RoleRepositoryTest/data.yml")
     @ShouldMatchDataSet(value = "datasets/org/libreccm/core/RoleRepositoryTest/"
-                                    + "after-save-new.json",
+                                    + "after-save-new.yml",
                         excludeColumns = {"role_id"})
     public void saveNewRole() {
         final Group infoAdmin = groupRepository.findByGroupName(
@@ -333,9 +335,9 @@ public class RoleRepositoryTest {
 
     @Test
     @InSequence(60)
-    @UsingDataSet("datasets/org/libreccm/core/RoleRepositoryTest/data.json")
+    @UsingDataSet("datasets/org/libreccm/core/RoleRepositoryTest/data.yml")
     @ShouldMatchDataSet(value = "datasets/org/libreccm/core/RoleRepositoryTest/"
-                                    + "after-save-changed.json",
+                                    + "after-save-changed.yml",
                         excludeColumns = {"role_id"})
     public void saveChangedRole() {
         final Role role = roleRepository.findById(-60L);
@@ -347,16 +349,16 @@ public class RoleRepositoryTest {
     @Test(expected = IllegalArgumentException.class)
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(70)
-    @UsingDataSet("datasets/org/libreccm/core/RoleRepositoryTest/data.json")
+    @UsingDataSet("datasets/org/libreccm/core/RoleRepositoryTest/data.yml")
     public void saveNullValue() {
         roleRepository.save(null);
     }
 
     @Test
     @InSequence(80)
-    @UsingDataSet("datasets/org/libreccm/core/RoleRepositoryTest/data.json")
+    @UsingDataSet("datasets/org/libreccm/core/RoleRepositoryTest/data.yml")
     @ShouldMatchDataSet("datasets/org/libreccm/core/RoleRepositoryTest/"
-                            + "after-delete.json")
+                            + "after-delete.yml")
     public void deleteRole() {
         final Role role = roleRepository.findById(-50L);
 

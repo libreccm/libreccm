@@ -57,6 +57,7 @@ public class Component extends CcmObject implements Serializable {
     @AssociationOverride(
         name = "values",
         joinTable = @JoinTable(name = "formbuilder_component_descriptions",
+                               schema = "ccm_core",
                                joinColumns = {
                                    @JoinColumn(name = "component_id")}))
     private LocalizedString description;

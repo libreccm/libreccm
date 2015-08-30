@@ -46,20 +46,20 @@ public class PersistentDataQuery extends CcmObject implements Serializable {
 
     @AssociationOverride(
         name = "values",
-        joinTable = @JoinTable(name
-                                   = "formbuilder_data_query_names",
-                               joinColumns = {
-                                   @JoinColumn(name
-                                                   = "data_query_id")}))
+        joinTable = @JoinTable(
+            name = "formbuilder_data_query_names",
+            schema = "ccm_core",
+            joinColumns = {
+                @JoinColumn(name = "data_query_id")}))
     private LocalizedString name;
 
     @AssociationOverride(
         name = "values",
-        joinTable = @JoinTable(name
-                                   = "formbuilder_data_query_descriptions",
-                               joinColumns = {
-                                   @JoinColumn(name
-                                                   = "data_query_id")}))
+        joinTable = @JoinTable(
+            name = "formbuilder_data_query_descriptions",
+            schema = "ccm_core",
+            joinColumns = {
+                @JoinColumn(name = "data_query_id")}))
     private LocalizedString description;
 
     public String getQueryId() {
@@ -100,11 +100,11 @@ public class PersistentDataQuery extends CcmObject implements Serializable {
         if (obj == null) {
             return false;
         }
-        
+
         if (!super.equals(obj)) {
             return false;
         }
-        
+
         if (!(obj instanceof PersistentDataQuery)) {
             return false;
         }

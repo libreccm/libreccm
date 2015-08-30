@@ -70,6 +70,7 @@ public class Task implements Serializable {
     @AssociationOverride(
             name = "values",
             joinTable = @JoinTable(name = "workflow_task_labels",
+                                   schema = "ccm_core",
                                    joinColumns = {
                                        @JoinColumn(name = "task_id")}))
     private LocalizedString label;
@@ -78,6 +79,7 @@ public class Task implements Serializable {
     @AssociationOverride(
             name = "values",
             joinTable = @JoinTable(name = "workflow_tasks_descriptions",
+                                   schema = "ccm_core",
                                    joinColumns = {
                                        @JoinColumn(name = "task_id")}))
     private LocalizedString description;
@@ -97,6 +99,7 @@ public class Task implements Serializable {
 
     @ManyToMany
     @JoinTable(name = "workflow_task_dependencies",
+               schema = "ccm_core",
                joinColumns = {
                    @JoinColumn(name = "depends_on_task_id")},
                inverseJoinColumns = {
@@ -105,6 +108,7 @@ public class Task implements Serializable {
 
     @ElementCollection
     @JoinTable(name = "workflow_task_comments",
+               schema = "ccm_core",
                joinColumns = {
                    @JoinColumn(name = "task_id")})
     @Column(name = "comment")

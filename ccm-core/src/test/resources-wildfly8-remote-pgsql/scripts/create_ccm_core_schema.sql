@@ -1,22 +1,26 @@
-create schema ccm_core;
+DROP SCHEMA IF EXISTS ccm_core CASCADE;
+
+DROP SEQUENCE IF EXISTS hibernate_sequence;
+
+CREATE SCHEMA ccm_core;
 
     create table ccm_core.application_types (
-        resource_type_id bigint not null,
-        container_group_id bigint,
-        provider_app_type_id bigint,
+        resource_type_id int8 not null,
+        container_group_id int8,
+        provider_app_type_id int8,
         primary key (resource_type_id)
     );
 
     create table ccm_core.applications (
         primary_url varchar(1024) not null,
-        object_id bigint not null,
-        container_group_id bigint,
+        object_id int8 not null,
+        container_group_id int8,
         primary key (object_id)
     );
 
     create table ccm_core.attachments (
-        message_id bigint not null,
-        attachment_data blob,
+        message_id int8 not null,
+        attachment_data oid,
         description varchar(255),
         mime_type varchar(255),
         title varchar(255),
@@ -25,29 +29,29 @@ create schema ccm_core;
 
     create table ccm_core.categories (
         abstract_category boolean,
-        category_order bigint,
+        category_order int8,
         enabled boolean,
         name varchar(255) not null,
         unique_id varchar(255) not null,
         visible boolean,
-        object_id bigint not null,
-        parent_category_id bigint,
+        object_id int8 not null,
+        parent_category_id int8,
         primary key (object_id)
     );
 
     create table ccm_core.categorizations (
-        categorization_id bigint not null,
-        category_order bigint,
+        categorization_id int8 not null,
+        category_order int8,
         category_index boolean,
-        object_order bigint,
-        object_id bigint,
-        category_id bigint,
+        object_order int8,
+        object_id int8,
+        category_id int8,
         primary key (categorization_id)
     );
 
     create table ccm_core.category_descriptions (
-        object_id bigint not null,
-        localized_value clob,
+        object_id int8 not null,
+        localized_value text,
         locale varchar(255) not null,
         primary key (object_id, locale)
     );
@@ -57,50 +61,50 @@ create schema ccm_core;
         released timestamp,
         uri varchar(2048) not null,
         version varchar(255) not null,
-        object_id bigint not null,
-        root_category_id bigint,
+        object_id int8 not null,
+        root_category_id int8,
         primary key (object_id)
     );
 
     create table ccm_core.category_titles (
-        object_id bigint not null,
-        localized_value clob,
+        object_id int8 not null,
+        localized_value text,
         locale varchar(255) not null,
         primary key (object_id, locale)
     );
 
     create table ccm_core.ccm_groups (
         name varchar(512) not null,
-        subject_id bigint not null,
+        subject_id int8 not null,
         primary key (subject_id)
     );
 
     create table ccm_core.ccm_objects (
-        object_id bigint not null,
+        object_id int8 not null,
         display_name varchar(255),
         primary key (object_id)
     );
 
     create table ccm_core.ccm_privileges (
-        privilege_id bigint not null,
+        privilege_id int8 not null,
         label varchar(255) not null,
-        relevant_privilege_id bigint,
+        relevant_privilege_id int8,
         primary key (privilege_id)
     );
 
     create table ccm_core.ccm_revisions (
-        id integer not null,
-        timestamp bigint not null,
+        id int4 not null,
+        timestamp int8 not null,
         user_name varchar(255),
         primary key (id)
     );
 
     create table ccm_core.ccm_roles (
-        role_id bigint not null,
+        role_id int8 not null,
         description varchar(255),
         name varchar(512),
-        implicit_group_id bigint,
-        source_group_id bigint,
+        implicit_group_id int8,
+        source_group_id int8,
         primary key (role_id)
     );
 
@@ -119,95 +123,116 @@ create schema ccm_core;
         salt varchar(2048),
         screen_name varchar(255) not null,
         sso_login varchar(512),
-        subject_id bigint not null,
+        subject_id int8 not null,
         primary key (subject_id)
     );
 
     create table ccm_core.digests (
-        frequency integer,
+        frequency int4,
         header varchar(4096) not null,
         next_run timestamp,
         separator varchar(128) not null,
         signature varchar(4096) not null,
         subject varchar(255) not null,
-        object_id bigint not null,
-        from_party_id bigint,
+        object_id int8 not null,
+        from_party_id int8,
         primary key (object_id)
     );
 
     create table ccm_core.domain_descriptions (
-        object_id bigint not null,
-        localized_value clob,
+        object_id int8 not null,
+        localized_value text,
         locale varchar(255) not null,
         primary key (object_id, locale)
     );
 
     create table ccm_core.domain_ownerships (
-        ownership_id bigint not null,
+        ownership_id int8 not null,
         context varchar(255),
-        domain_order bigint,
-        owner_order bigint,
-        domain_object_id bigint not null,
-        owner_object_id bigint not null,
+        domain_order int8,
+        owner_order int8,
+        domain_object_id int8 not null,
+        owner_object_id int8 not null,
         primary key (ownership_id)
     );
 
     create table ccm_core.domain_titles (
-        object_id bigint not null,
-        localized_value clob,
+        object_id int8 not null,
+        localized_value text,
         locale varchar(255) not null,
         primary key (object_id, locale)
+    );
+
+    create table ccm_core.formbuilder_component_descriptions (
+        component_id int8 not null,
+        localized_value text,
+        locale varchar(255) not null,
+        primary key (component_id, locale)
     );
 
     create table ccm_core.formbuilder_components (
         active boolean,
         admin_name varchar(255),
         attribute_string varchar(255),
-        component_order bigint,
+        component_order int8,
         selected boolean,
-        object_id bigint not null,
-        parentComponent_object_id bigint,
+        object_id int8 not null,
+        parentComponent_object_id int8,
         primary key (object_id)
     );
 
     create table ccm_core.formbuilder_confirm_email_listener (
-        body clob,
+        body text,
         from_email varchar(255),
         subject varchar(255),
-        object_id bigint not null,
+        object_id int8 not null,
         primary key (object_id)
     );
 
     create table ccm_core.formbuilder_confirm_redirect_listeners (
         url varchar(255),
-        object_id bigint not null,
+        object_id int8 not null,
         primary key (object_id)
     );
 
     create table ccm_core.formbuilder_data_driven_selects (
         multiple boolean,
         query varchar(255),
-        object_id bigint not null,
+        object_id int8 not null,
         primary key (object_id)
     );
 
     create table ccm_core.formbuilder_data_queries (
         query_id varchar(255),
-        object_id bigint not null,
+        object_id int8 not null,
         primary key (object_id)
+    );
+
+    create table ccm_core.formbuilder_data_query_descriptions (
+        data_query_id int8 not null,
+        localized_value text,
+        locale varchar(255) not null,
+        primary key (data_query_id, locale)
+    );
+
+    create table ccm_core.formbuilder_data_query_names (
+        data_query_id int8 not null,
+        localized_value text,
+        locale varchar(255) not null,
+        primary key (data_query_id, locale)
     );
 
     create table ccm_core.formbuilder_formsections (
         formsection_action varchar(255),
-        object_id bigint not null,
+        object_id int8 not null,
         primary key (object_id)
     );
 
     create table ccm_core.formbuilder_listeners (
         attribute_string varchar(255),
         class_name varchar(255),
-        object_id bigint not null,
-        widget_object_id bigint,
+        object_id int8 not null,
+        widget_object_id int8,
         primary key (object_id)
     );
 
@@ -216,55 +241,76 @@ create schema ccm_core;
         pretty_name varchar(255),
         pretty_plural varchar(255),
         properties_form varchar(255),
-        object_id bigint not null,
+        object_id int8 not null,
         primary key (object_id)
     );
 
     create table ccm_core.formbuilder_object_types (
         app_name varchar(255),
         class_name varchar(255),
-        object_id bigint not null,
+        object_id int8 not null,
         primary key (object_id)
+    );
+
+    create table ccm_core.formbuilder_option_labels (
+        option_id int8 not null,
+        localized_value text,
+        locale varchar(255) not null,
+        primary key (option_id, locale)
     );
 
     create table ccm_core.formbuilder_options (
         parameter_value varchar(255),
-        object_id bigint not null,
+        object_id int8 not null,
         primary key (object_id)
+    );
+
+    create table ccm_core.formbuilder_process_listener_descriptions (
+        process_listener_id int8 not null,
+        localized_value text,
+        locale varchar(255) not null,
+        primary key (process_listener_id, locale)
+    );
+
+    create table ccm_core.formbuilder_process_listener_names (
+        process_listener_id int8 not null,
+        localized_value text,
+        locale varchar(255) not null,
+        primary key (process_listener_id, locale)
     );
 
     create table ccm_core.formbuilder_process_listeners (
         listener_class varchar(255),
-        process_listener_order bigint,
-        object_id bigint not null,
-        formSection_object_id bigint,
+        process_listener_order int8,
+        object_id int8 not null,
+        formSection_object_id int8,
         primary key (object_id)
     );
 
     create table ccm_core.formbuilder_remote_server_post_listener (
         remoteUrl varchar(255),
-        object_id bigint not null,
+        object_id int8 not null,
         primary key (object_id)
     );
 
     create table ccm_core.formbuilder_simple_email_listeners (
         recipient varchar(255),
         subject varchar(255),
-        object_id bigint not null,
+        object_id int8 not null,
         primary key (object_id)
     );
 
     create table ccm_core.formbuilder_template_email_listeners (
-        body clob,
+        body text,
         recipient varchar(255),
         subject varchar(255),
-        object_id bigint not null,
+        object_id int8 not null,
         primary key (object_id)
     );
 
     create table ccm_core.formbuilder_widget_labels (
-        object_id bigint not null,
-        widget_object_id bigint,
+        object_id int8 not null,
+        widget_object_id int8,
         primary key (object_id)
     );
 
@@ -272,46 +318,52 @@ create schema ccm_core;
         default_value varchar(255),
         parameter_model varchar(255),
         parameter_name varchar(255),
-        object_id bigint not null,
-        label_object_id bigint,
+        object_id int8 not null,
+        label_object_id int8,
         primary key (object_id)
     );
 
     create table ccm_core.formbuilder_xml_email_listeners (
         recipient varchar(255),
         subject varchar(255),
-        object_id bigint not null,
+        object_id int8 not null,
         primary key (object_id)
     );
 
     create table ccm_core.group_memberships (
-        membership_id bigint not null,
-        group_subject_id bigint,
-        user_subject_id bigint,
+        membership_id int8 not null,
+        group_subject_id int8,
+        user_subject_id int8,
         primary key (membership_id)
     );
 
     create table ccm_core.hosts (
-        host_id bigint not null,
+        host_id int8 not null,
         server_name varchar(512),
-        server_port bigint,
+        server_port int8,
         primary key (host_id)
     );
 
     create table ccm_core.inits (
-        initializer_id bigint not null,
+        initializer_id int8 not null,
         class_name varchar(255),
-        required_by_id bigint,
+        required_by_id int8,
         primary key (initializer_id)
     );
 
+    create table ccm_core.installed_modules (
+        module_class_name varchar(2048) not null,
+        status varchar(255),
+        primary key (module_class_name)
+    );
+
     create table ccm_core.lucene_documents (
-        document_id bigint not null,
-        content clob,
+        document_id int8 not null,
+        content text,
         content_section varchar(512),
         country varchar(8),
         created timestamp,
-        dirty bigint,
+        dirty int8,
         document_language varchar(8),
         last_modified timestamp,
         summary varchar(4096),
@@ -319,15 +371,15 @@ create schema ccm_core;
         title varchar(4096),
         type varchar(255),
         type_specific_info varchar(512),
-        created_by_party_id bigint,
-        last_modified_by bigint,
+        created_by_party_id int8,
+        last_modified_by int8,
         primary key (document_id)
     );
 
     create table ccm_core.lucene_indexes (
-        index_id bigint not null,
-        lucene_index_id bigint,
-        host_id bigint,
+        index_id int8 not null,
+        lucene_index_id int8,
+        host_id int8,
         primary key (index_id)
     );
 
@@ -336,9 +388,9 @@ create schema ccm_core;
         body_mime_type varchar(255),
         sent timestamp,
         subject varchar(255),
-        object_id bigint not null,
-        in_reply_to_id bigint,
-        sender_id bigint,
+        object_id int8 not null,
+        in_reply_to_id int8,
+        sender_id int8,
         primary key (object_id)
     );
 
@@ -348,77 +400,77 @@ create schema ccm_core;
         expunge_message boolean,
         fulfill_date timestamp,
         header varchar(4096),
-        max_retries bigint,
+        max_retries int8,
         request_date timestamp,
         signature varchar(4096),
         status varchar(32),
-        object_id bigint not null,
-        digest_id bigint,
-        message_id bigint,
-        receiver_id bigint,
+        object_id int8 not null,
+        digest_id int8,
+        message_id int8,
+        receiver_id int8,
         primary key (object_id)
     );
 
     create table ccm_core.permissions (
-        permission_id bigint not null,
+        permission_id int8 not null,
         creation_date timestamp,
         creation_ip varchar(255),
-        creation_user_id bigint,
-        granted_privilege_id bigint,
-        grantee_id bigint,
-        object_id bigint,
+        creation_user_id int8,
+        granted_privilege_id int8,
+        grantee_id int8,
+        object_id int8,
         primary key (permission_id)
     );
 
     create table ccm_core.portals (
         template boolean,
-        object_id bigint not null,
+        object_id int8 not null,
         primary key (object_id)
     );
 
     create table ccm_core.portlets (
-        cell_number bigint,
-        sort_key bigint,
-        object_id bigint not null,
-        portal_id bigint,
+        cell_number int8,
+        sort_key int8,
+        object_id int8 not null,
+        portal_id int8,
         primary key (object_id)
     );
 
     create table ccm_core.queue_items (
-        queue_item_id bigint not null,
+        queue_item_id int8 not null,
         header varchar(4096),
         receiver_address varchar(512),
-        retry_count bigint,
+        retry_count int8,
         signature varchar(4096),
         successful_sended boolean,
-        message_id bigint,
-        receiver_id bigint,
+        message_id int8,
+        receiver_id int8,
         primary key (queue_item_id)
     );
 
     create table ccm_core.resource_descriptions (
-        object_id bigint not null,
-        localized_value clob,
+        object_id int8 not null,
+        localized_value text,
         locale varchar(255) not null,
         primary key (object_id, locale)
     );
 
     create table ccm_core.resource_titles (
-        object_id bigint not null,
-        localized_value clob,
+        object_id int8 not null,
+        localized_value text,
         locale varchar(255) not null,
         primary key (object_id, locale)
     );
 
     create table ccm_core.resource_type_descriptions (
-        resource_type_id bigint not null,
-        localized_value clob,
+        resource_type_id int8 not null,
+        localized_value text,
         locale varchar(255) not null,
         primary key (resource_type_id, locale)
     );
 
     create table ccm_core.resource_types (
-        resource_type_id bigint not null,
+        resource_type_id int8 not null,
         singleton boolean,
         title varchar(254) not null,
         embedded_view boolean,
@@ -429,145 +481,103 @@ create schema ccm_core;
 
     create table ccm_core.resources (
         created timestamp,
-        object_id bigint not null,
-        parent_object_id bigint,
-        resourceType_resource_type_id bigint,
+        object_id int8 not null,
+        parent_object_id int8,
+        resourceType_resource_type_id int8,
         primary key (object_id)
     );
 
     create table ccm_core.subjects (
-        subject_id bigint not null,
+        subject_id int8 not null,
         primary key (subject_id)
     );
 
     create table ccm_core.threads (
-        object_id bigint not null,
-        root_id bigint,
+        object_id int8 not null,
+        root_id int8,
         primary key (object_id)
     );
 
     create table ccm_core.user_email_addresses (
-        user_id bigint not null,
+        user_id int8 not null,
         email_address varchar(512) not null,
         bouncing boolean,
         verified boolean
     );
 
+    create table ccm_core.workflow_descriptions (
+        workflow_id int8 not null,
+        localized_value text,
+        locale varchar(255) not null,
+        primary key (workflow_id, locale)
+    );
+
+    create table ccm_core.workflow_names (
+        workflow_id int8 not null,
+        localized_value text,
+        locale varchar(255) not null,
+        primary key (workflow_id, locale)
+    );
+
+    create table ccm_core.workflow_task_comments (
+        task_id int8 not null,
+        comment text
+    );
+
+    create table ccm_core.workflow_task_dependencies (
+        depends_on_task_id int8 not null,
+        dependent_task_id int8 not null
+    );
+
+    create table ccm_core.workflow_task_labels (
+        task_id int8 not null,
+        localized_value text,
+        locale varchar(255) not null,
+        primary key (task_id, locale)
+    );
+
     create table ccm_core.workflow_tasks (
-        task_id bigint not null,
+        task_id int8 not null,
         active boolean,
         task_state varchar(512),
-        workflow_id bigint,
+        workflow_id int8,
         primary key (task_id)
     );
 
+    create table ccm_core.workflow_tasks_descriptions (
+        task_id int8 not null,
+        localized_value text,
+        locale varchar(255) not null,
+        primary key (task_id, locale)
+    );
+
+    create table ccm_core.workflow_user_task_assigned_groups (
+        user_task_id int8 not null,
+        assigned_group_id int8 not null
+    );
+
+    create table ccm_core.workflow_user_task_assigned_users (
+        user_task_id int8 not null,
+        assigned_user_id int8 not null
+    );
+
     create table ccm_core.workflow_user_tasks (
-        task_id bigint not null,
+        task_id int8 not null,
         active boolean,
         task_state varchar(512),
-        workflow_id bigint,
+        workflow_id int8,
         due_date timestamp,
-        duration_minutes bigint,
+        duration_minutes int8,
         locked boolean,
         start_date timestamp,
-        locking_user_id bigint,
-        notification_sender bigint,
+        locking_user_id int8,
+        notification_sender int8,
         primary key (task_id)
     );
 
     create table ccm_core.workflows (
-        workflow_id bigint not null,
+        workflow_id int8 not null,
         primary key (workflow_id)
-    );
-
-    create table formbuilder_component_descriptions (
-        component_id bigint not null,
-        localized_value clob,
-        locale varchar(255) not null,
-        primary key (component_id, locale)
-    );
-
-    create table formbuilder_data_query_descriptions (
-        data_query_id bigint not null,
-        localized_value clob,
-        locale varchar(255) not null,
-        primary key (data_query_id, locale)
-    );
-
-    create table formbuilder_data_query_names (
-        data_query_id bigint not null,
-        localized_value clob,
-        locale varchar(255) not null,
-        primary key (data_query_id, locale)
-    );
-
-    create table formbuilder_option_labels (
-        option_id bigint not null,
-        localized_value clob,
-        locale varchar(255) not null,
-        primary key (option_id, locale)
-    );
-
-    create table formbuilder_process_listener_descriptions (
-        process_listener_id bigint not null,
-        localized_value clob,
-        locale varchar(255) not null,
-        primary key (process_listener_id, locale)
-    );
-
-    create table formbuilder_process_listener_names (
-        process_listener_id bigint not null,
-        localized_value clob,
-        locale varchar(255) not null,
-        primary key (process_listener_id, locale)
-    );
-
-    create table workflow_descriptions (
-        workflow_id bigint not null,
-        localized_value clob,
-        locale varchar(255) not null,
-        primary key (workflow_id, locale)
-    );
-
-    create table workflow_names (
-        workflow_id bigint not null,
-        localized_value clob,
-        locale varchar(255) not null,
-        primary key (workflow_id, locale)
-    );
-
-    create table workflow_task_comments (
-        task_id bigint not null,
-        comment clob
-    );
-
-    create table workflow_task_dependencies (
-        depends_on_task_id bigint not null,
-        dependent_task_id bigint not null
-    );
-
-    create table workflow_task_labels (
-        task_id bigint not null,
-        localized_value clob,
-        locale varchar(255) not null,
-        primary key (task_id, locale)
-    );
-
-    create table workflow_tasks_descriptions (
-        task_id bigint not null,
-        localized_value clob,
-        locale varchar(255) not null,
-        primary key (task_id, locale)
-    );
-
-    create table workflow_user_task_assigned_groups (
-        user_task_id bigint not null,
-        assigned_group_id bigint not null
-    );
-
-    create table workflow_user_task_assigned_users (
-        user_task_id bigint not null,
-        assigned_user_id bigint not null
     );
 
     alter table ccm_core.category_domains 
@@ -588,10 +598,10 @@ create schema ccm_core;
     alter table ccm_core.hosts 
         add constraint UK_2m0m4m0dhx256d04x2cg3194s  unique (server_name, server_port);
 
-    alter table workflow_user_task_assigned_groups 
+    alter table ccm_core.workflow_user_task_assigned_groups 
         add constraint UK_g58x45aybw2yjtwnr9b9itg6c  unique (assigned_group_id);
 
-    alter table workflow_user_task_assigned_users 
+    alter table ccm_core.workflow_user_task_assigned_users 
         add constraint UK_h62r6cqjp2tdnhscfkgwfupwj  unique (assigned_user_id);
 
     alter table ccm_core.application_types 
@@ -719,6 +729,11 @@ create schema ccm_core;
         foreign key (object_id) 
         references ccm_core.category_domains;
 
+    alter table ccm_core.formbuilder_component_descriptions 
+        add constraint FK_miw32na0kj3r3vx0yd9nmacu3 
+        foreign key (component_id) 
+        references ccm_core.formbuilder_components;
+
     alter table ccm_core.formbuilder_components 
         add constraint FK_ompdvc6pul5xbhn5r2aqv7knb 
         foreign key (parentComponent_object_id) 
@@ -749,6 +764,16 @@ create schema ccm_core;
         foreign key (object_id) 
         references ccm_core.ccm_objects;
 
+    alter table ccm_core.formbuilder_data_query_descriptions 
+        add constraint FK_6vi3n0g1gfjrxd3vvlarrn584 
+        foreign key (data_query_id) 
+        references ccm_core.formbuilder_data_queries;
+
+    alter table ccm_core.formbuilder_data_query_names 
+        add constraint FK_tgnk7hsrmtqxnhvfcefe936v9 
+        foreign key (data_query_id) 
+        references ccm_core.formbuilder_data_queries;
+
     alter table ccm_core.formbuilder_formsections 
         add constraint FK_endc2bmlb7orkk4l5x3fkmy2l 
         foreign key (object_id) 
@@ -774,10 +799,25 @@ create schema ccm_core;
         foreign key (object_id) 
         references ccm_core.ccm_objects;
 
+    alter table ccm_core.formbuilder_option_labels 
+        add constraint FK_e8fy2g61cd7qn8ar1t48g7p1m 
+        foreign key (option_id) 
+        references ccm_core.formbuilder_options;
+
     alter table ccm_core.formbuilder_options 
         add constraint FK_f7fgwaysg76tnx2xtfjnpt8a3 
         foreign key (object_id) 
         references ccm_core.formbuilder_components;
+
+    alter table ccm_core.formbuilder_process_listener_descriptions 
+        add constraint FK_p1e4ygtc3ke9r4gotkc5k8dmv 
+        foreign key (process_listener_id) 
+        references ccm_core.formbuilder_process_listeners;
+
+    alter table ccm_core.formbuilder_process_listener_names 
+        add constraint FK_e3uy4vdqbely8oybcfc0ef7tn 
+        foreign key (process_listener_id) 
+        references ccm_core.formbuilder_process_listeners;
 
     alter table ccm_core.formbuilder_process_listeners 
         add constraint FK_8b4m881ppfw6m13clxu4cp1o0 
@@ -984,10 +1024,40 @@ create schema ccm_core;
         foreign key (user_id) 
         references ccm_core.ccm_users;
 
+    alter table ccm_core.workflow_descriptions 
+        add constraint FK_7grengdpx5d99jkyjlsa3pe6k 
+        foreign key (workflow_id) 
+        references ccm_core.workflows;
+
+    alter table ccm_core.workflow_names 
+        add constraint FK_sjqjarc88yvdrw3yd6swg7uqs 
+        foreign key (workflow_id) 
+        references ccm_core.workflows;
+
     alter table ccm_core.workflow_tasks 
         add constraint FK_mvuhbl6ikm44oxxtkv0s2y9iu 
         foreign key (workflow_id) 
         references ccm_core.workflows;
+
+    alter table ccm_core.workflow_user_task_assigned_groups 
+        add constraint FK_g58x45aybw2yjtwnr9b9itg6c 
+        foreign key (assigned_group_id) 
+        references ccm_core.ccm_groups;
+
+    alter table ccm_core.workflow_user_task_assigned_groups 
+        add constraint FK_jiogatex4mifbgji1og4rri9o 
+        foreign key (user_task_id) 
+        references ccm_core.workflow_user_tasks;
+
+    alter table ccm_core.workflow_user_task_assigned_users 
+        add constraint FK_h62r6cqjp2tdnhscfkgwfupwj 
+        foreign key (assigned_user_id) 
+        references ccm_core.ccm_users;
+
+    alter table ccm_core.workflow_user_task_assigned_users 
+        add constraint FK_ltihq91dcigqixb6ulhkphrix 
+        foreign key (user_task_id) 
+        references ccm_core.workflow_user_tasks;
 
     alter table ccm_core.workflow_user_tasks 
         add constraint FK_5nryb3wmian7oqttwqpa3wwll 
@@ -1004,64 +1074,4 @@ create schema ccm_core;
         foreign key (workflow_id) 
         references ccm_core.workflows;
 
-    alter table formbuilder_component_descriptions 
-        add constraint FK_miw32na0kj3r3vx0yd9nmacu3 
-        foreign key (component_id) 
-        references ccm_core.formbuilder_components;
-
-    alter table formbuilder_data_query_descriptions 
-        add constraint FK_6vi3n0g1gfjrxd3vvlarrn584 
-        foreign key (data_query_id) 
-        references ccm_core.formbuilder_data_queries;
-
-    alter table formbuilder_data_query_names 
-        add constraint FK_tgnk7hsrmtqxnhvfcefe936v9 
-        foreign key (data_query_id) 
-        references ccm_core.formbuilder_data_queries;
-
-    alter table formbuilder_option_labels 
-        add constraint FK_e8fy2g61cd7qn8ar1t48g7p1m 
-        foreign key (option_id) 
-        references ccm_core.formbuilder_options;
-
-    alter table formbuilder_process_listener_descriptions 
-        add constraint FK_p1e4ygtc3ke9r4gotkc5k8dmv 
-        foreign key (process_listener_id) 
-        references ccm_core.formbuilder_process_listeners;
-
-    alter table formbuilder_process_listener_names 
-        add constraint FK_e3uy4vdqbely8oybcfc0ef7tn 
-        foreign key (process_listener_id) 
-        references ccm_core.formbuilder_process_listeners;
-
-    alter table workflow_descriptions 
-        add constraint FK_7grengdpx5d99jkyjlsa3pe6k 
-        foreign key (workflow_id) 
-        references ccm_core.workflows;
-
-    alter table workflow_names 
-        add constraint FK_sjqjarc88yvdrw3yd6swg7uqs 
-        foreign key (workflow_id) 
-        references ccm_core.workflows;
-
-    alter table workflow_user_task_assigned_groups 
-        add constraint FK_g58x45aybw2yjtwnr9b9itg6c 
-        foreign key (assigned_group_id) 
-        references ccm_core.ccm_groups;
-
-    alter table workflow_user_task_assigned_groups 
-        add constraint FK_jiogatex4mifbgji1og4rri9o 
-        foreign key (user_task_id) 
-        references ccm_core.workflow_user_tasks;
-
-    alter table workflow_user_task_assigned_users 
-        add constraint FK_h62r6cqjp2tdnhscfkgwfupwj 
-        foreign key (assigned_user_id) 
-        references ccm_core.ccm_users;
-
-    alter table workflow_user_task_assigned_users 
-        add constraint FK_ltihq91dcigqixb6ulhkphrix 
-        foreign key (user_task_id) 
-        references ccm_core.workflow_user_tasks;
-
-    create sequence hibernate_sequence start with 1 increment by 1;
+    create sequence hibernate_sequence start 1 increment 1;

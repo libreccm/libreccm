@@ -44,20 +44,20 @@ public class ProcessListener extends CcmObject implements Serializable {
 
     @AssociationOverride(
         name = "values",
-        joinTable = @JoinTable(name
-                                   = "formbuilder_process_listener_names",
-                               joinColumns = {
-                                   @JoinColumn(name
-                                                   = "process_listener_id")}))
+        joinTable = @JoinTable(
+            name = "formbuilder_process_listener_names",
+            schema = "ccm_core",
+            joinColumns = {
+                @JoinColumn(name = "process_listener_id")}))
     private LocalizedString name;
 
     @AssociationOverride(
         name = "values",
-        joinTable = @JoinTable(name
-                                   = "formbuilder_process_listener_descriptions",
-                               joinColumns = {
-                                   @JoinColumn(name
-                                                   = "process_listener_id")}))
+        joinTable = @JoinTable(
+            name = "formbuilder_process_listener_descriptions",
+            schema = "ccm_core",
+            joinColumns = {
+                @JoinColumn(name = "process_listener_id")}))
 
     private LocalizedString description;
 
@@ -128,11 +128,11 @@ public class ProcessListener extends CcmObject implements Serializable {
         if (obj == null) {
             return false;
         }
-        
+
         if (!super.equals(obj)) {
             return false;
         }
-        
+
         if (!(obj instanceof ProcessListener)) {
             return false;
         }

@@ -32,6 +32,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.ShouldThrowException;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
+import org.jboss.arquillian.persistence.CreateSchema;
 import org.jboss.arquillian.persistence.PersistenceTest;
 import org.jboss.arquillian.persistence.ShouldMatchDataSet;
 import org.jboss.arquillian.persistence.UsingDataSet;
@@ -64,6 +65,7 @@ import java.util.List;
 @RunWith(Arquillian.class)
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
+@CreateSchema({"create_ccm_core_schema.sql"})
 public class UserRepositoryTest {
 
     private static final String NOBODY = "nobody";
@@ -185,7 +187,7 @@ public class UserRepositoryTest {
 
     @Test
     @UsingDataSet(
-        "datasets/org/libreccm/core/UserRepositoryTest/data.json")
+        "datasets/org/libreccm/core/UserRepositoryTest/data.yml")
     @InSequence(100)
     public void findUserById() {
         final User jdoe = userRepository.findById(-10L);
@@ -197,7 +199,7 @@ public class UserRepositoryTest {
     }
 
     @Test
-    @UsingDataSet("datasets/org/libreccm/core/UserRepositoryTest/data.json")
+    @UsingDataSet("datasets/org/libreccm/core/UserRepositoryTest/data.yml")
     @InSequence(200)
     public void findUserByScreenName() {
         final User jdoe = userRepository.findByScreenName(JDOE);
@@ -209,7 +211,7 @@ public class UserRepositoryTest {
     }
 
     @Test
-    @UsingDataSet("datasets/org/libreccm/core/UserRepositoryTest/data.json")
+    @UsingDataSet("datasets/org/libreccm/core/UserRepositoryTest/data.yml")
     @InSequence(300)
     public void findUserByEmail() {
         final User jdoe = userRepository.findByEmailAddress(
@@ -231,14 +233,14 @@ public class UserRepositoryTest {
     @Test(expected = MultipleMatchingUserException.class)
     @ShouldThrowException(MultipleMatchingUserException.class)
     @UsingDataSet(
-        "datasets/org/libreccm/core/UserRepositoryTest/data-email-duplicate.json")
+        "datasets/org/libreccm/core/UserRepositoryTest/data-email-duplicate.yml")
     @InSequence(350)
     public void findByEmailAddressDuplicate() {
         userRepository.findByEmailAddress("max.mustermann@example.org");
     }
 
     @Test
-    @UsingDataSet("datasets/org/libreccm/core/UserRepositoryTest/data.json")
+    @UsingDataSet("datasets/org/libreccm/core/UserRepositoryTest/data.yml")
     @InSequence(400)
     public void findAllUsers() {
         final List<User> users = userRepository.findAll();
@@ -247,9 +249,9 @@ public class UserRepositoryTest {
     }
 
     @Test
-    @UsingDataSet("datasets/org/libreccm/core/UserRepositoryTest/data.json")
+    @UsingDataSet("datasets/org/libreccm/core/UserRepositoryTest/data.yml")
     @ShouldMatchDataSet(value
-                            = "datasets/org/libreccm/core/UserRepositoryTest/after-save-new.json",
+                            = "datasets/org/libreccm/core/UserRepositoryTest/after-save-new.yml",
                         excludeColumns = {"subject_id", "user_id"})
     @InSequence(500)
     public void saveNewUser() {
@@ -279,9 +281,9 @@ public class UserRepositoryTest {
     }
 
     @Test
-    @UsingDataSet("datasets/org/libreccm/core/UserRepositoryTest/data.json")
+    @UsingDataSet("datasets/org/libreccm/core/UserRepositoryTest/data.yml")
     @ShouldMatchDataSet(value
-                            = "datasets/org/libreccm/core/UserRepositoryTest/after-save-changed.json",
+                            = "datasets/org/libreccm/core/UserRepositoryTest/after-save-changed.yml",
                         excludeColumns = {"subject_id"})
     @InSequence(600)
     public void saveChangedUser() {
@@ -314,9 +316,9 @@ public class UserRepositoryTest {
     }
 
     @Test
-    @UsingDataSet("datasets/org/libreccm/core/UserRepositoryTest/data.json")
+    @UsingDataSet("datasets/org/libreccm/core/UserRepositoryTest/data.yml")
     @ShouldMatchDataSet(value
-                            = "datasets/org/libreccm/core/UserRepositoryTest/after-delete.json",
+                            = "datasets/org/libreccm/core/UserRepositoryTest/after-delete.yml",
                         excludeColumns = {"subject_id"})
     @InSequence(800)
     public void deleteUser() {

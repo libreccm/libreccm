@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dataset>
+    <ccm_core.ccm_objects object_id="-10"
+                          display_name="Test Object 1"/>
+    <ccm_core.ccm_objects object_id="-30"
+                          display_name="Test Object 2"/>
+    <ccm_core.ccm_objects object_id="-30"
+                          display_name="Test Object 3"/>
+</dataset>

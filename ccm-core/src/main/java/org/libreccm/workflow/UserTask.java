@@ -77,6 +77,7 @@ public class UserTask extends Task implements Serializable {
 
     @OneToMany
     @JoinTable(name = "workflow_user_task_assigned_users",
+               schema = "ccm_core",
                joinColumns = {
                    @JoinColumn(name = "user_task_id")},
                inverseJoinColumns = {
@@ -85,6 +86,7 @@ public class UserTask extends Task implements Serializable {
 
     @OneToMany
     @JoinTable(name = "workflow_user_task_assigned_groups",
+               schema = "ccm_core",
                joinColumns = {
                    @JoinColumn(name = "user_task_id")},
                inverseJoinColumns = {

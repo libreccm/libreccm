@@ -57,6 +57,7 @@ public class Workflow implements Serializable {
     @AssociationOverride(
         name = "values",
         joinTable = @JoinTable(name = "workflow_names",
+                               schema = "ccm_core",
                                joinColumns = {
                                    @JoinColumn(name = "workflow_id")}))
     private LocalizedString name;
@@ -65,6 +66,7 @@ public class Workflow implements Serializable {
     @AssociationOverride(
         name = "values",
         joinTable = @JoinTable(name = "workflow_descriptions",
+                               schema = "ccm_core",
                                joinColumns = {
                                    @JoinColumn(name = "workflow_id")
                                }))

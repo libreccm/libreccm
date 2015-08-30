@@ -24,6 +24,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.ShouldThrowException;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
+import org.jboss.arquillian.persistence.CreateSchema;
 import org.jboss.arquillian.persistence.PersistenceTest;
 import org.jboss.arquillian.persistence.ShouldMatchDataSet;
 import org.jboss.arquillian.persistence.UsingDataSet;
@@ -58,6 +59,7 @@ import javax.inject.Inject;
 @RunWith(Arquillian.class)
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
+@CreateSchema({"create_ccm_core_schema.sql"})
 public class GroupRepositoryTest {
 
     @Inject
@@ -138,7 +140,7 @@ public class GroupRepositoryTest {
 
     @Test
     @InSequence
-    @UsingDataSet("datasets/org/libreccm/core/GroupRepositoryTest/data.json")
+    @UsingDataSet("datasets/org/libreccm/core/GroupRepositoryTest/data.yml")
     public void findGroupById() {
         final Group admins = groupRepository.findById(-10L);
         final Group users = groupRepository.findById(-20L);
@@ -150,7 +152,7 @@ public class GroupRepositoryTest {
 
     @Test
     @InSequence(20)
-    @UsingDataSet("datasets/org/libreccm/core/GroupRepositoryTest/data.json")
+    @UsingDataSet("datasets/org/libreccm/core/GroupRepositoryTest/data.yml")
     public void findGroupByName() {
         final Group admins = groupRepository.findByGroupName("admins");
         final Group users = groupRepository.findByGroupName("users");
@@ -162,9 +164,9 @@ public class GroupRepositoryTest {
 
     @Test
     @InSequence(30)
-    @UsingDataSet("datasets/org/libreccm/core/GroupRepositoryTest/data.json")
+    @UsingDataSet("datasets/org/libreccm/core/GroupRepositoryTest/data.yml")
     @ShouldMatchDataSet(value
-                        = "datasets/org/libreccm/core/GroupRepositoryTest/after-save-new.json",
+                        = "datasets/org/libreccm/core/GroupRepositoryTest/after-save-new.yml",
                         excludeColumns = "subject_id")
     public void saveNewGroup() {
         final Group publishers = new Group();
@@ -175,9 +177,9 @@ public class GroupRepositoryTest {
 
     @Test
     @InSequence(40)
-    @UsingDataSet("datasets/org/libreccm/core/GroupRepositoryTest/data.json")
+    @UsingDataSet("datasets/org/libreccm/core/GroupRepositoryTest/data.yml")
     @ShouldMatchDataSet(value
-                            = "datasets/org/libreccm/core/GroupRepositoryTest/after-save-changed.json",
+                            = "datasets/org/libreccm/core/GroupRepositoryTest/after-save-changed.yml",
                         excludeColumns = {"subject_id"})
     public void saveChangedGroup() {
         final Group group = groupRepository.findByGroupName("authors");
@@ -195,9 +197,9 @@ public class GroupRepositoryTest {
     
     @Test
     @InSequence(60)
-    @UsingDataSet("datasets/org/libreccm/core/GroupRepositoryTest/data.json")
+    @UsingDataSet("datasets/org/libreccm/core/GroupRepositoryTest/data.yml")
     @ShouldMatchDataSet(
-        "datasets/org/libreccm/core/GroupRepositoryTest/after-delete.json")
+        "datasets/org/libreccm/core/GroupRepositoryTest/after-delete.yml")
     public void deleteGroup() {
         final Group group = groupRepository.findByGroupName("users");
 

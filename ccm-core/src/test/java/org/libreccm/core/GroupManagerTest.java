@@ -24,6 +24,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.ShouldThrowException;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
+import org.jboss.arquillian.persistence.CreateSchema;
 import org.jboss.arquillian.persistence.PersistenceTest;
 import org.jboss.arquillian.persistence.ShouldMatchDataSet;
 import org.jboss.arquillian.persistence.UsingDataSet;
@@ -58,6 +59,7 @@ import javax.inject.Inject;
 @RunWith(Arquillian.class)
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
+@CreateSchema({"create_ccm_core_schema.sql"})
 public class GroupManagerTest {
 
     @Inject
@@ -133,7 +135,7 @@ public class GroupManagerTest {
     @Test
     @InSequence(10)
     @UsingDataSet("datasets/org/libreccm/core/GroupManagerTest/"
-                      + "users-groups.json")
+                      + "users-groups.yml")
     public void isMemberOfGroup() {
         final User jdoe = userRepository.findByScreenName("jdoe");
         final Group admins = groupRepository.findByGroupName("admins");
@@ -154,7 +156,7 @@ public class GroupManagerTest {
     @Test(expected = IllegalArgumentException.class)
     @InSequence(20)
     @UsingDataSet("datasets/org/libreccm/core/GroupManagerTest/"
-                      + "users-groups.json")
+                      + "users-groups.yml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void isMemberOfGroupNullUser() {
         final Group admins = groupRepository.findByGroupName("admins");
@@ -171,7 +173,7 @@ public class GroupManagerTest {
     @Test(expected = IllegalArgumentException.class)
     @InSequence(30)
     @UsingDataSet("datasets/org/libreccm/core/GroupManagerTest/"
-                      + "users-groups.json")
+                      + "users-groups.yml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void isMemberOfGroupNullGroup() {
         final User jdoe = userRepository.findByScreenName("jdoe");
@@ -188,9 +190,9 @@ public class GroupManagerTest {
     @Test
     @InSequence(40)
     @UsingDataSet("datasets/org/libreccm/core/GroupManagerTest/"
-                      + "users-groups.json")
+                      + "users-groups.yml")
     @ShouldMatchDataSet(value = "datasets/org/libreccm/core/GroupManagerTest/"
-                                    + "after-add-to-group.json",
+                                    + "after-add-to-group.yml",
                         excludeColumns = {"membership_id"})
     public void addUserToGroup() {
         final User jdoe = userRepository.findByScreenName("jdoe");
@@ -210,9 +212,9 @@ public class GroupManagerTest {
     @Test(expected = IllegalArgumentException.class)
     @InSequence(50)
     @UsingDataSet("datasets/org/libreccm/core/GroupManagerTest/"
-                      + "users-groups.json")
+                      + "users-groups.yml")
     @ShouldMatchDataSet(value = "datasets/org/libreccm/core/GroupManagerTest/"
-                                    + "users-groups.json",
+                                    + "users-groups.yml",
                         excludeColumns = {"membership_id"})
     @ShouldThrowException(IllegalArgumentException.class)
     public void addUserToGroupNullUser() {
@@ -230,9 +232,9 @@ public class GroupManagerTest {
     @Test(expected = IllegalArgumentException.class)
     @InSequence(60)
     @UsingDataSet("datasets/org/libreccm/core/GroupManagerTest/"
-                      + "users-groups.json")
+                      + "users-groups.yml")
     @ShouldMatchDataSet(value = "datasets/org/libreccm/core/GroupManagerTest/"
-                                    + "users-groups.json",
+                                    + "users-groups.yml",
                         excludeColumns = {"membership_id"})
     @ShouldThrowException(IllegalArgumentException.class)
     public void addUserToGroupNullGroup() {
@@ -250,9 +252,9 @@ public class GroupManagerTest {
     @Test
     @InSequence(70)
     @UsingDataSet("datasets/org/libreccm/core/GroupManagerTest/"
-                      + "users-groups.json")
+                      + "users-groups.yml")
     @ShouldMatchDataSet(value = "datasets/org/libreccm/core/GroupManagerTest/"
-                                    + "users-groups.json",
+                                    + "users-groups.yml",
                         excludeColumns = {"membership_id"})
     public void addUserToGroupAlreadyMember() {
         final User jdoe = userRepository.findByScreenName("jdoe");
@@ -270,9 +272,9 @@ public class GroupManagerTest {
     @Test
     @InSequence(80)
     @UsingDataSet("datasets/org/libreccm/core/GroupManagerTest/"
-                      + "users-groups.json")
+                      + "users-groups.yml")
     @ShouldMatchDataSet(value = "datasets/org/libreccm/core/GroupManagerTest/"
-                                    + "after-remove-from-group.json",
+                                    + "after-remove-from-group.yml",
                         excludeColumns = {"membership_id"})
     public void removeUserFromGroup() {
         final User jdoe = userRepository.findByScreenName("jdoe");
@@ -292,9 +294,9 @@ public class GroupManagerTest {
     @Test(expected = IllegalArgumentException.class)
     @InSequence(90)
     @UsingDataSet("datasets/org/libreccm/core/GroupManagerTest/"
-                      + "users-groups.json")
+                      + "users-groups.yml")
     @ShouldMatchDataSet(value = "datasets/org/libreccm/core/GroupManagerTest/"
-                                    + "users-groups.json",
+                                    + "users-groups.yml",
                         excludeColumns = {"membership_id"})
     @ShouldThrowException(IllegalArgumentException.class)
     public void removeUserFromGroupNullUser() {
@@ -312,9 +314,9 @@ public class GroupManagerTest {
     @Test(expected = IllegalArgumentException.class)
     @InSequence(100)
     @UsingDataSet("datasets/org/libreccm/core/GroupManagerTest/"
-                      + "users-groups.json")
+                      + "users-groups.yml")
     @ShouldMatchDataSet(value = "datasets/org/libreccm/core/GroupManagerTest/"
-                                    + "users-groups.json",
+                                    + "users-groups.yml",
                         excludeColumns = {"membership_id"})
     @ShouldThrowException(IllegalArgumentException.class)
     public void removeUserFromGroupNullGroup() {
@@ -332,9 +334,9 @@ public class GroupManagerTest {
     @Test
     @InSequence(110)
     @UsingDataSet("datasets/org/libreccm/core/GroupManagerTest/"
-                      + "users-groups.json")
+                      + "users-groups.yml")
     @ShouldMatchDataSet(value = "datasets/org/libreccm/core/GroupManagerTest/"
-                                    + "users-groups.json",
+                                    + "users-groups.yml",
                         excludeColumns = {"membership_id"})
     public void removeUserFromGroupNotMember() {
         final User jdoe = userRepository.findByScreenName("jdoe");
