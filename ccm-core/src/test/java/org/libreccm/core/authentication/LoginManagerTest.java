@@ -78,12 +78,6 @@ public class LoginManagerTest {
 
     @BeforeClass
     public static void setUpClass() {
-        final String[] config = new String[]{
-            String.format("Register:%s:requisite",
-                          LocalLoginModule.class.getName())};
-        final LoginConfigBuilder loginConfigBuilder = new LoginConfigBuilder(
-            config);
-        Configuration.setConfiguration(loginConfigBuilder.build());
     }
 
     @AfterClass
@@ -91,7 +85,13 @@ public class LoginManagerTest {
     }
 
     @Before
-    public void setUp() {
+    public void setUp()  {
+         final String[] config = new String[]{
+            String.format("Register:%s:requisite",
+                          LocalLoginModule.class.getName())};
+        final LoginConfigBuilder loginConfigBuilder = new LoginConfigBuilder(
+            config);
+        Configuration.setConfiguration(loginConfigBuilder.build());
     }
 
     @After
