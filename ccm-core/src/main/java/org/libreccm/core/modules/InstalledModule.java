@@ -52,7 +52,7 @@ public class InstalledModule implements Serializable {
     @Column(name = "module_class_name", length = 2048, unique = true)
     private String moduleClassName;
 
-    @Column
+    @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private ModuleStatus status;
 

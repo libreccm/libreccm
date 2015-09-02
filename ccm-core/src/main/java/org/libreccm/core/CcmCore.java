@@ -25,6 +25,8 @@ import org.libreccm.core.modules.Module;
 import org.libreccm.core.modules.ShutdownEvent;
 import org.libreccm.core.modules.UnInstallEvent;
 
+import javax.persistence.EntityManager;
+
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
@@ -49,7 +51,19 @@ public class CcmCore implements CcmModule {
 
     @Override
     public void install(final InstallEvent event) {
-        //Nothing
+        final EntityManager entityManager = event.getEntityManager();
+        
+        final User user = new User();
+        user.setScreenName("public-user");
+        final PersonName name = new PersonName();
+        name.setFamilyName("ccm");
+        name.setGivenName("public user");
+        user.setName(name);
+        final EmailAddress email = new EmailAddress();
+        email.setAddress("public-user@localhost");
+        user.addEmailAddress(email);
+        
+        entityManager.persist(user);
     }
 
     @Override

@@ -151,8 +151,9 @@ public class CcmIntegrator implements Integrator {
             final Statement statement = connection.createStatement();
             statement.execute(String.format(
                 "INSERT INTO flyhydra_core.installed_modules "
-                    + "(module_class_name, status) "
-                    + "VALUES ('%s', 'NEW')",
+                    + "(module_id, module_class_name, status) "
+                    + "VALUES (%d, %s', 'NEW')",
+                module.getName().hashCode(),
                 module.getName()));
         }
     }
