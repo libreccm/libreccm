@@ -20,7 +20,7 @@
         -->
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
             
-        <jta-data-source>java:/comp/env/jdbc/org/libreccm/ccm-core/h2-mem</jta-data-source>
+        <jta-data-source>java:/jboss/datasources/ExampleDS</jta-data-source>
         <properties>
             <property name="hibernate.hbm2ddl.auto" value=""/>
             <property name="hibernate.show_sql" value="true"/>

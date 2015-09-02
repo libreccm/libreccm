@@ -39,13 +39,30 @@ public class InstalledModule implements Serializable {
 
     private static final long serialVersionUID = 6240025652113643164L;
 
+    /**
+     * ID of the installed module. By convention the hash code of the module's
+     * class name is used (@code{getModuleClassName().hashCode()}). We would use
+     * the {@code moduleClassName} directly but not all databases (MySQL in
+     * particular) accept long varchar fields as primary keys.
+     */
     @Id
-    @Column(name = "module_class_name", length = 2048)
+    @Column(name = "module_id")
+    private int moduleId;
+
+    @Column(name = "module_class_name", length = 2048, unique = true)
     private String moduleClassName;
 
     @Column
     @Enumerated(EnumType.STRING)
     private ModuleStatus status;
+
+    public int getModuleId() {
+        return moduleId;
+    }
+
+    public void setModuleId(final int moduleId) {
+        this.moduleId = moduleId;
+    }
 
     public String getModuleClassName() {
         return moduleClassName;
@@ -98,15 +115,15 @@ public class InstalledModule implements Serializable {
 
     public String toString(final String data) {
         return String.format(
-                "%s{ "
-                        + "moduleClassName = \"%s\"; "
-                        + "status = %s"
-                        + "%s"
-                        + " }",
-                super.toString(),
-                moduleClassName,
-                status.toString(),
-                data);
+            "%s{ "
+                + "moduleClassName = \"%s\"; "
+                + "status = %s"
+                + "%s"
+                + " }",
+            super.toString(),
+            moduleClassName,
+            status.toString(),
+            data);
     }
 
 }

@@ -60,7 +60,7 @@
     create table ccm_core.category_domains (
         domain_key varchar(255) not null,
         released datetime,
-        uri varchar(2048) not null,
+        uri varchar(768) not null,
         version varchar(255) not null,
         object_id bigint not null,
         root_category_id bigint,
@@ -132,7 +132,7 @@
         frequency integer,
         header varchar(4096) not null,
         next_run datetime,
-        separator varchar(128) not null,
+        digest_separator varchar(128) not null,
         signature varchar(4096) not null,
         subject varchar(255) not null,
         object_id bigint not null,
@@ -353,9 +353,10 @@
     ) ENGINE=InnoDB;
 
     create table ccm_core.installed_modules (
+        module_id integer not null,
         module_class_name varchar(2048) not null,
         status varchar(255),
-        primary key (module_class_name)
+        primary key (module_id)
     ) ENGINE=InnoDB;
 
     create table ccm_core.lucene_documents (
@@ -598,6 +599,9 @@
 
     alter table ccm_core.hosts 
         add constraint UK_2m0m4m0dhx256d04x2cg3194s  unique (server_name, server_port);
+
+    alter table ccm_core.installed_modules 
+        add constraint UK_c2ix7lp01ypyb6jf7b1ieptlm  unique (module_class_name);
 
     alter table ccm_core.workflow_user_task_assigned_groups 
         add constraint UK_g58x45aybw2yjtwnr9b9itg6c  unique (assigned_group_id);

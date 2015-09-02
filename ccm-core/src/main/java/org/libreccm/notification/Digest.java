@@ -65,7 +65,7 @@ public class Digest extends CcmObject implements Serializable {
     @Column(name = "header", length = 4096, nullable = false)
     private String header;
 
-    @Column(name = "separator", length = 128, nullable = false)
+    @Column(name = "digest_separator", length = 128, nullable = false)
     private String separator;
 
     @Column(name = "signature", length = 4096, nullable = false)
