@@ -108,7 +108,7 @@ public class CcmModulesTest {
                 .create(WebArchive.class,
                         "LibreCCM-org.libreccm.CcmModulesTest.war")
                 .addAsLibraries(libs)
-                .addAsWebInfResource("web.xml")
+                .setWebXML(new File("src/main/webapp/WEB-INF/web.xml"))
                 .addAsWebInfResource("test-persistence.xml")
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }

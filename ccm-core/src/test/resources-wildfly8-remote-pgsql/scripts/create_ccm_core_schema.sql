@@ -24,7 +24,7 @@ CREATE SCHEMA ccm_core;
         description varchar(255),
         mime_type varchar(255),
         title varchar(255),
-        primary key (message_id)
+        primary key (attachment_id)
     );
 
     create table ccm_core.categories (
