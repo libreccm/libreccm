@@ -39,7 +39,7 @@ import javax.persistence.Table;
 public class Shortcut implements Serializable {
 
     private static final long serialVersionUID = -5674633339633714327L;
-
+    
     @Id
     @Column(name = "shortcut_id")
     @GeneratedValue(strategy = GenerationType.AUTO)

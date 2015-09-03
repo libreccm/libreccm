@@ -47,7 +47,7 @@ public class Attachment implements Serializable {
     private static final long serialVersionUID = 2063934721452863106L;
 
     @Id
-    @Column(name = "message_id")
+    @Column(name = "attachment_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long attachmentId;
 

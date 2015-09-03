@@ -16,12 +16,24 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.core.modules;
+package org.libreccm;
+
+import java.io.File;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.sql.DataSource;
 
 import static org.hamcrest.CoreMatchers.*;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.persistence.CreateSchema;
 import org.jboss.arquillian.persistence.PersistenceTest;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
@@ -32,44 +44,34 @@ import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
 import org.junit.After;
 import org.junit.AfterClass;
+
+import static org.junit.Assert.*;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.libreccm.core.CcmCore;
+import org.libreccm.core.modules.ModuleStatus;
 import org.libreccm.tests.categories.IntegrationTest;
-
-import java.io.File;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.sql.DataSource;
-import org.jboss.arquillian.persistence.CreateSchema;
-
-import static org.junit.Assert.*;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-//@Category(IntegrationTest.class)
+@Category(IntegrationTest.class)
 @RunWith(Arquillian.class)
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
-@CreateSchema({"clearup_schema.sql"})
+@CreateSchema({"clean_schema.sql"})
 public class CcmModulesTest {
 
     @PersistenceContext(name = "LibreCCM")
     private transient EntityManager entityManager;
 
     public CcmModulesTest() {
+
     }
 
     @BeforeClass
@@ -104,65 +106,21 @@ public class CcmModulesTest {
 
         return ShrinkWrap
                 .create(WebArchive.class,
-                        "LibreCCM-org.libreccm.core.modules.CcmModulesTest.war")
-                .addPackage(org.libreccm.auditing.CcmRevision.class.getPackage()).
-                addPackage(org.libreccm.categorization.Category.class.
-                        getPackage())
-                .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
-                .addPackage(org.libreccm.core.CcmCore.class.getPackage())
-                .addPackage(org.libreccm.core.authentication.LoginManager.class.
-                        getPackage())
-                .addPackage(org.libreccm.core.modules.CcmModule.class.
-                        getPackage())
-                .addPackage(org.libreccm.formbuilder.Component.class.
-                        getPackage())
-                .addPackage(
-                        org.libreccm.formbuilder.actions.ConfirmEmailListener.class.
-                        getPackage())
-                .addPackage(org.libreccm.jpa.EntityManagerProducer.class.
-                        getPackage())
-                .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
-                        .getPackage())
-                .addPackage(org.libreccm.l10n.LocalizedString.class.getPackage()).
-                addPackage(org.libreccm.messaging.Message.class.getPackage())
-                .addPackage(org.libreccm.notification.Notification.class.
-                        getPackage())
-                .addPackage(org.libreccm.portal.Portal.class.getPackage())
-                .addPackage(org.libreccm.runtime.Initalizer.class.getPackage())
-                .addPackage(org.libreccm.search.lucene.Document.class.
-                        getPackage())
-                .addPackage(org.libreccm.web.Application.class.getPackage())
-                .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
-                .addPackage(org.libreccm.testutils.EqualsVerifier.class.
-                        getPackage())
-                .addPackage(org.libreccm.tests.categories.IntegrationTest.class
-                        .getPackage())
+                        "LibreCCM-org.libreccm.CcmModulesTest.war")
                 .addAsLibraries(libs)
-                .addAsResource("test-persistence.xml",
-                               "META-INF/persistence.xml")
-                .addAsWebInfResource("test-web.xml", "web.xml")
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
-                .addAsResource(
-                        "META-INF/services/org.hibernate.integrator.spi.Integrator").
-                addAsResource(
-                        "META-INF/services/org.libreccm.core.modules.CcmModule")
-                .addAsResource(
-                        "module-info/org.libreccm.core.CcmCore.properties")
-                .addAsResource("db")
-                .addAsResource("ccm-core.config");
-
+                .addAsWebInfResource("web.xml")
+                .addAsWebInfResource("test-persistence.xml")
+                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test
     public void verifyModules() throws SQLException {
         final Object dataSourceObj = entityManager.getEntityManagerFactory()
                 .getProperties().get("javax.persistence.jtaDataSource");
-
         assertThat(dataSourceObj, is(instanceOf(DataSource.class)));
 
         final DataSource dataSource = (DataSource) dataSourceObj;
         final Connection connection = dataSource.getConnection();
-
         assertThat(connection, is(instanceOf(Connection.class)));
 
         final ResultSet ccmObjectTable = connection.getMetaData()
@@ -184,33 +142,63 @@ public class CcmModulesTest {
                 "SELECT module_id, module_class_name, status "
                         + "FROM ccm_core.installed_modules"
                         + " ORDER BY module_class_name");
-        final List<String[]> modulesList = new ArrayList<>();
+        final List<InstalledModuleData> modulesData = new ArrayList<>();
         while (installedModules.next()) {
-            createInstalledModuleListEntry(installedModules, modulesList);
+            createInstalledModuleListEntry(installedModules, modulesData);
         }
 
-        assertThat(modulesList.size(), is(1));
+        assertThat(modulesData.size(), is(1));
 
-        assertThat(modulesList.get(0)[0],
+        assertThat(Integer.toString(modulesData.get(0).getModuleId()),
                    is(equalTo(Integer.toString(CcmCore.class.getName().
                                            hashCode()))));
-        assertThat(modulesList.get(0)[1],
+        assertThat(modulesData.get(0).getModuleClassName(),
                    is(equalTo(CcmCore.class.getName())));
-        assertThat(modulesList.get(0)[2],
+        assertThat(modulesData.get(0).getStatus(),
                    is(equalTo(ModuleStatus.INSTALLED.toString())));
-
     }
 
     private void createInstalledModuleListEntry(
-            final ResultSet resultSet, final List<String[]> modulesList)
+            final ResultSet resultSet, final List<InstalledModuleData> modulesData)
             throws SQLException {
 
-        final String[] moduleData = new String[3];
-        moduleData[0] = Integer.toString(resultSet.getInt("module_id"));
-        moduleData[1] = resultSet.getString("module_class_name");
-        moduleData[2] = resultSet.getString("status");
-
-        modulesList.add(moduleData);
+        final InstalledModuleData moduleData = new InstalledModuleData();
+        moduleData.setModuleId(resultSet.getInt("module_id"));
+        moduleData.setModuleClassName(resultSet.getString("module_class_name"));
+        moduleData.setStatus(resultSet.getString("status"));
+        
+        modulesData.add(moduleData);
     }
+    
+    private class InstalledModuleData {
+        
+        private int moduleId;
+        private String moduleClassName;
+        private String status;
 
+        public int getModuleId() {
+            return moduleId;
+        }
+
+        public void setModuleId(final int moduleId) {
+            this.moduleId = moduleId;
+        }
+
+        public String getModuleClassName() {
+            return moduleClassName;
+        }
+
+        public void setModuleClassName(final String moduleClassName) {
+            this.moduleClassName = moduleClassName;
+        }
+
+        public String getStatus() {
+            return status;
+        }
+
+        public void setStatus(final String status) {
+            this.status = status;
+        }
+        
+    }
 }

@@ -8,7 +8,6 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!--<ccmVersion>3.0.0-SNAPSHOT</ccmVersion>-->
     </properties>
     
     <parent>
@@ -114,7 +113,6 @@
             <groupId>org.libreccm</groupId>
             <artifactId>ccm-testutils</artifactId>
             <version>${project.parent.version}</version>
-            <!--<version>7.0.0-SNAPSHOT</version>-->
             <scope>test</scope>
         </dependency>
         
@@ -247,7 +245,7 @@
                             </rules>
                         </configuration>
                     </execution>
-                </executions>    
+                </executions>
             </plugin>
             <plugin>
                 <groupId>de.jpdigital</groupId>
@@ -284,7 +282,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
+            <!--<plugin>
                 <groupId>org.jboss.tattletale</groupId>
                 <artifactId>tattletale-maven</artifactId>
                 <executions>
@@ -298,8 +296,7 @@
                     <source>${project.build.directory}</source>
                     <destination>${project.build.directory}/tattletale</destination>
                 </configuration>
-            </plugin>
-
+            </plugin>-->
         </plugins>
     </build>
     
@@ -1002,7 +999,6 @@
                             </groups>
                         </configuration>
                     </plugin>
-
                 </plugins>
             </build>
         </profile>
@@ -1086,7 +1082,6 @@
                             </groups>
                         </configuration>
                     </plugin>
-
                 </plugins>
             </build>
         </profile>

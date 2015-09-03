@@ -19,7 +19,7 @@ CREATE SCHEMA ccm_core;
     );
 
     create table ccm_core.attachments (
-        message_id bigint not null,
+        attachment_id bigint not null,
         attachment_data blob,
         description varchar(255),
         mime_type varchar(255),
@@ -635,7 +635,7 @@ CREATE SCHEMA ccm_core;
 
     alter table ccm_core.attachments 
         add constraint FK_r3hibvgfo1dmawqig8c563xau 
-        foreign key (message_id) 
+        foreign key (attachment_id) 
         references ccm_core.messages;
 
     alter table ccm_core.categories 
