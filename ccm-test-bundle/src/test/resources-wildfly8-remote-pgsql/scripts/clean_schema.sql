@@ -1,6 +1,6 @@
 -- Used by the org.libreccm.core.modules.CcmModulesTest to clean up the
--- schema before the test
+-- schema after the test
 
-DROP SCHEMA IF EXISTS ccm_core;
+DROP SCHEMA IF EXISTS ccm_core CASCADE;
 
 DROP SEQUENCE IF EXISTS hibernate_sequence;

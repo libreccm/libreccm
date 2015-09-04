@@ -32,8 +32,8 @@ import javax.persistence.EntityManager;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Module(entities = {org.libreccm.auditing.CcmRevision.class,
-                    org.libreccm.categorization.Category.class,
                     org.libreccm.categorization.Categorization.class,
+                    org.libreccm.categorization.Category.class,
                     org.libreccm.categorization.Domain.class,
                     org.libreccm.categorization.DomainOwnership.class,
                     org.libreccm.core.CcmObject.class,
@@ -46,13 +46,47 @@ import javax.persistence.EntityManager;
                     org.libreccm.core.Role.class,
                     org.libreccm.core.Subject.class,
                     org.libreccm.core.User.class,
-                    org.libreccm.core.modules.InstalledModule.class})
+                    org.libreccm.core.modules.InstalledModule.class,
+                    org.libreccm.formbuilder.Component.class,
+                    org.libreccm.formbuilder.DataDrivenSelect.class,
+                    org.libreccm.formbuilder.FormSection.class,
+                    org.libreccm.formbuilder.Listener.class,
+                    org.libreccm.formbuilder.MetaObject.class,
+                    org.libreccm.formbuilder.ObjectType.class,
+                    org.libreccm.formbuilder.Option.class,
+                    org.libreccm.formbuilder.PersistentDataQuery.class,
+                    org.libreccm.formbuilder.ProcessListener.class,
+                    org.libreccm.formbuilder.Widget.class,
+                    org.libreccm.formbuilder.WidgetLabel.class,
+                    org.libreccm.formbuilder.actions.ConfirmEmailListener.class,
+                    org.libreccm.formbuilder.actions.ConfirmRedirectListener.class,
+                    org.libreccm.formbuilder.actions.RemoteServerPostListener.class,
+                    org.libreccm.formbuilder.actions.SimpleEmailListener.class,
+                    org.libreccm.formbuilder.actions.TemplateEmailListener.class,
+                    org.libreccm.formbuilder.actions.XmlEmailListener.class,
+                    org.libreccm.messaging.Attachment.class,
+                    org.libreccm.messaging.Message.class,
+                    org.libreccm.messaging.MessageThread.class,
+                    org.libreccm.notification.Digest.class,
+                    org.libreccm.notification.Notification.class,
+                    org.libreccm.notification.QueueItem.class,
+                    org.libreccm.portal.Portal.class,
+                    org.libreccm.portal.Portlet.class,
+                    org.libreccm.runtime.Initalizer.class,
+                    org.libreccm.search.lucene.Document.class,
+                    org.libreccm.search.lucene.Index.class,
+                    org.libreccm.web.Application.class,
+                    org.libreccm.web.ApplicationType.class,
+                    org.libreccm.web.Host.class,
+                    org.libreccm.workflow.Task.class,
+                    org.libreccm.workflow.UserTask.class,
+                    org.libreccm.workflow.Workflow.class})
 public class CcmCore implements CcmModule {
 
     @Override
     public void install(final InstallEvent event) {
         final EntityManager entityManager = event.getEntityManager();
-        
+
         final User user = new User();
         user.setScreenName("public-user");
         final PersonName name = new PersonName();
@@ -62,7 +96,7 @@ public class CcmCore implements CcmModule {
         final EmailAddress email = new EmailAddress();
         email.setAddress("public-user@localhost");
         user.addEmailAddress(email);
-        
+
         entityManager.persist(user);
     }
 

@@ -265,8 +265,7 @@ public class ModuleInfo {
             return String.format("%s/%s",
                                  moduleInfo.getProperty(GROUP_ID),
                                  moduleInfo.
-                                 getProperty(ARTIFACT_ID).replace(
-                                     "-", "_"));
+                                 getProperty(ARTIFACT_ID));
         } else {
             LOGGER.warn("The module data package was specified by the module "
                             + "annotation nore was an group id found in the module info"

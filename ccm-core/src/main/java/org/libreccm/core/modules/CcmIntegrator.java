@@ -150,9 +150,9 @@ public class CcmIntegrator implements Integrator {
         if (newModule) {
             final Statement statement = connection.createStatement();
             statement.execute(String.format(
-                "INSERT INTO flyhydra_core.installed_modules "
+                "INSERT INTO ccm_core.installed_modules "
                     + "(module_id, module_class_name, status) "
-                    + "VALUES (%d, %s', 'NEW')",
+                    + "VALUES (%d, '%s', 'NEW')",
                 module.getName().hashCode(),
                 module.getName()));
         }
@@ -187,7 +187,7 @@ public class CcmIntegrator implements Integrator {
                 final Statement query = connection.createStatement();
                 final ResultSet result = query.executeQuery(
                     String.format("SELECT module_class_name, status "
-                                      + "FROM flyhydra_core.installed_modules "
+                                      + "FROM ccm_core.installed_modules "
                                       + "WHERE module_class_name = '%s'",
                                   module.getClass().getName()));
                 System.out.printf("Checking status of module %s...\n",
@@ -208,7 +208,7 @@ public class CcmIntegrator implements Integrator {
 
                     final Statement statement = connection.createStatement();
                     statement.addBatch(String.format(
-                        "DELETE FROM flyhydra_core.installed_modules "
+                        "DELETE FROM ccm_core.installed_modules "
                             + "WHERE module_class_name = '%s'",
                         module.getClass().getName()));
                     statement.executeBatch();

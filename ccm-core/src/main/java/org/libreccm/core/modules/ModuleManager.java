@@ -39,10 +39,10 @@ import org.apache.logging.log4j.Logger;
 public class ModuleManager {
 
     private static final Logger LOGGER = LogManager.getLogger(
-            ModuleManager.class
+        ModuleManager.class
     );
 
-    @PersistenceContext(name = "FlyHydra")
+    @PersistenceContext(name = "LibreCCM")
     private EntityManager entityManager;
 
     private List<TreeNode> moduleNodes;
@@ -51,7 +51,7 @@ public class ModuleManager {
     public void initDependencyTree() {
         LOGGER.info("Finding modules");
         final ServiceLoader<CcmModule> modules = ServiceLoader.load(
-                CcmModule.class);
+            CcmModule.class);
 
         LOGGER.info("Creating dependency tree these modules:");
         for (final CcmModule module : modules) {
@@ -83,9 +83,10 @@ public class ModuleManager {
             installEvent.setEntityManager(entityManager);
 
             final InstalledModule installedModule = entityManager.find(
-                    InstalledModule.class, node.getModule().getClass().getName());
+                InstalledModule.class, 
+                node.getModule().getClass().getName().hashCode());
             if (installedModule != null
-                        && installedModule.getStatus() == ModuleStatus.NEW) {
+                    && installedModule.getStatus() == ModuleStatus.NEW) {
                 node.getModule().install(installEvent);
                 installedModule.setStatus(ModuleStatus.INSTALLED);
                 entityManager.merge(installedModule);
@@ -99,8 +100,8 @@ public class ModuleManager {
                         node.getModule().getClass().getName());
             final Properties moduleInfo = getModuleInfo(node.getModule());
             LOGGER
-                    .info("Module group id: {}", moduleInfo.getProperty(
-                                  "groupId"));
+                .info("Module group id: {}", moduleInfo.getProperty(
+                          "groupId"));
             LOGGER.info("Module artifact id: {}", moduleInfo.getProperty(
                         "artifactId"));
             LOGGER.info("Module version: {}", moduleInfo.getProperty("version"));
@@ -117,11 +118,11 @@ public class ModuleManager {
 //            final String moduleInfoPath = String.format("/%s/module-info.properties",
 //                              module.getClass().getName().replace(".", "/"));
             final String moduleInfoPath = String.format(
-                    "/module-info/%s.properties",
-                    module.getClass().getName());
+                "/module-info/%s.properties",
+                module.getClass().getName());
             LOGGER.info("Path for module info: {}", moduleInfoPath);
             final InputStream stream = module.getClass().getResourceAsStream(
-                    moduleInfoPath);
+                moduleInfoPath);
             if (stream == null) {
                 LOGGER.warn("No module info found.");
             } else {
@@ -154,8 +155,8 @@ public class ModuleManager {
             System.out.printf("Checking status of module %s\n",
                               node.getModule().getClass().getName());
             final InstalledModule installedModule = entityManager.find(
-                    InstalledModule.class, node.
-                    getModule().getClass().getName());
+                InstalledModule.class, node.
+                getModule().getClass().getName());
             LOGGER.info("Status of module {} ({}): {}",
                         node.getModuleInfo().getModuleName(),
                         node.getModule().getClass().getName(),
@@ -172,16 +173,16 @@ public class ModuleManager {
                                   node.getModuleInfo().getModuleName());
                 if (node.getDependentModules().isEmpty()) {
                     System.out.
-                            printf("Calling uninstall method of module %s...\n",
-                                   node.getModuleInfo().getModuleName());
+                        printf("Calling uninstall method of module %s...\n",
+                               node.getModuleInfo().getModuleName());
                     final UnInstallEvent unInstallEvent = new UnInstallEvent();
                     unInstallEvent.setEntityManager(entityManager);
                     node.getModule().uninstall(null);
 
                 } else {
                     System.out.printf("There are other modules depending on "
-                                              + "module %s. Module can't be "
-                                              + "uninstalled. Depending modules:\n",
+                                          + "module %s. Module can't be "
+                                          + "uninstalled. Depending modules:\n",
                                       node.getModuleInfo().getModuleName());
                     for (final TreeNode dependent : node.getDependentModules()) {
                         System.out.printf("\t%s\n",
@@ -193,9 +194,10 @@ public class ModuleManager {
                 }
             } else {
                 System.out.printf(
-                        "Module %s is *not* scheduled for uninstall.\n",
-                        node.getModuleInfo().getModuleName());
+                    "Module %s is *not* scheduled for uninstall.\n",
+                    node.getModuleInfo().getModuleName());
             }
         }
     }
+
 }

@@ -25,6 +25,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
@@ -33,6 +34,7 @@ import static org.hamcrest.CoreMatchers.*;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.persistence.CleanupUsingScript;
 import org.jboss.arquillian.persistence.CreateSchema;
 import org.jboss.arquillian.persistence.PersistenceTest;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
@@ -64,7 +66,7 @@ import org.libreccm.tests.categories.IntegrationTest;
 @RunWith(Arquillian.class)
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
-@CreateSchema({"clean_schema.sql"})
+//@CreateSchema({"clean_schema.sql"})
 public class CcmModulesTest {
 
     @PersistenceContext(name = "LibreCCM")
@@ -93,10 +95,10 @@ public class CcmModulesTest {
     @Deployment
     public static WebArchive createDeployment() {
         final PomEquippedResolveStage pom = Maven
-                .resolver()
-                .loadPomFromFile("pom.xml");
+            .resolver()
+            .loadPomFromFile("pom.xml");
         final PomEquippedResolveStage dependencies = pom
-                .importCompileAndRuntimeDependencies();
+            .importCompileAndRuntimeDependencies();
         final File[] libs = dependencies.resolve().withTransitivity().asFile();
 
         for (File lib : libs) {
@@ -105,15 +107,18 @@ public class CcmModulesTest {
         }
 
         return ShrinkWrap
-                .create(WebArchive.class,
-                        "LibreCCM-org.libreccm.CcmModulesTest.war")
-                .addAsLibraries(libs)
-                .setWebXML(new File("src/main/webapp/WEB-INF/web.xml"))
-                .addAsWebInfResource("test-persistence.xml")
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+            .create(WebArchive.class,
+                    "LibreCCM-org.libreccm.CcmModulesTest.war")
+            .addAsLibraries(libs)
+            .addPackage(IntegrationTest.class.getPackage())
+            .setWebXML(new File("src/main/webapp/WEB-INF/web.xml"))
+            //.addAsWebInfResource("test-persistence.xml", "persistence.xml")
+            .addAsResource("test-persistence.xml", "META-INF/persistence.xml")
+            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test
+    @CleanupUsingScript("clean_schema.sql")
     public void verifyModules() throws SQLException {
         final Object dataSourceObj = entityManager.getEntityManagerFactory()
                 .getProperties().get("javax.persistence.jtaDataSource");

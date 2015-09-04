@@ -1,6 +1,4 @@
 
-    create schema ccm_core;
-
     create table ccm_core.application_types (
         resource_type_id int8 not null,
         container_group_id int8,
