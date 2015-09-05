@@ -21,7 +21,11 @@ package org.libreccm.web;
 import static org.libreccm.web.WebConstants.*;
 
 import org.libreccm.categorization.Domain;
+import org.libreccm.categorization.DomainManager;
 import org.libreccm.categorization.DomainOwnership;
+
+import static org.libreccm.core.CoreConstants.*;
+
 import org.libreccm.core.Resource;
 import org.libreccm.core.Group;
 import org.libreccm.jpa.utils.UriConverter;
@@ -49,7 +53,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "applications", schema = "ccm_core")
+@Table(name = "applications", schema = DB_SCHEMA)
 @XmlRootElement(name = "application", namespace = WEB_XML_NS)
 public class Application extends Resource implements Serializable {
 

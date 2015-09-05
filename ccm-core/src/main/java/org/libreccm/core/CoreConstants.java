@@ -29,6 +29,8 @@ public final class CoreConstants {
     
     public static final String DB_SCHEMA = "ccm_core";
     
+    public static final String SEQUENCE_GENERATOR = "core_core_sequence";
+    
     private CoreConstants() {
         //Nothing
     }

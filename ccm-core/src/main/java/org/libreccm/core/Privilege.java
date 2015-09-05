@@ -48,7 +48,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "ccm_privileges", schema = "ccm_core")
+@Table(name = "ccm_privileges", schema = DB_SCHEMA)
 @NamedQueries({
     @NamedQuery(name = "findPrivilegeByName",
                 query = "SELECT p FROM Privilege p "

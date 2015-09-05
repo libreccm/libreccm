@@ -18,6 +18,8 @@
  */
 package org.libreccm.runtime;
 
+import static org.libreccm.core.CoreConstants.*;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,7 +41,7 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "inits", schema = "ccm_core")
+@Table(name = "inits", schema = DB_SCHEMA)
 public class Initalizer implements Serializable {
 
     private static final long serialVersionUID = 9150623897315380159L;

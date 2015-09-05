@@ -21,6 +21,8 @@ package org.libreccm.auditing;
 import org.hibernate.envers.DefaultRevisionEntity;
 import org.hibernate.envers.RevisionEntity;
 
+import static org.libreccm.core.CoreConstants.*;
+
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -36,7 +38,7 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "ccm_revisions", schema = "ccm_core")
+@Table(name = "ccm_revisions", schema = DB_SCHEMA)
 @RevisionEntity()
 public class CcmRevision extends DefaultRevisionEntity {
 

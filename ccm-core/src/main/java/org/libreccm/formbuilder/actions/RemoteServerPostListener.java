@@ -5,10 +5,14 @@
  */
 package org.libreccm.formbuilder.actions;
 
+import static org.libreccm.core.CoreConstants.*;
+
 import java.io.Serializable;
 import java.util.Objects;
+
 import javax.persistence.Entity;
 import javax.persistence.Table;
+
 import org.libreccm.formbuilder.ProcessListener;
 
 /**
@@ -16,7 +20,7 @@ import org.libreccm.formbuilder.ProcessListener;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "formbuilder_remote_server_post_listener", schema = "ccm_core")
+@Table(name = "formbuilder_remote_server_post_listener", schema = DB_SCHEMA)
 public class RemoteServerPostListener
         extends ProcessListener
         implements Serializable {

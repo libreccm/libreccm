@@ -5,11 +5,15 @@
  */
 package org.libreccm.formbuilder.actions;
 
+import static org.libreccm.core.CoreConstants.*;
+
 import java.io.Serializable;
 import java.util.Objects;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+
 import org.libreccm.formbuilder.ProcessListener;
 
 /**
@@ -17,7 +21,7 @@ import org.libreccm.formbuilder.ProcessListener;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "formbuilder_confirm_redirect_listeners", schema = "ccm_core")
+@Table(name = "formbuilder_confirm_redirect_listeners", schema = DB_SCHEMA)
 public class ConfirmRedirectListener
     extends ProcessListener
     implements Serializable {

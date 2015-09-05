@@ -18,6 +18,8 @@
  */
 package org.libreccm.web;
 
+import static org.libreccm.core.CoreConstants.*;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,7 +41,7 @@ import org.libreccm.core.ResourceType;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "application_types", schema = "ccm_core")
+@Table(name = "application_types", schema = DB_SCHEMA)
 @SuppressWarnings("PMD.LongVariable")
 public class ApplicationType extends ResourceType implements Serializable {
 

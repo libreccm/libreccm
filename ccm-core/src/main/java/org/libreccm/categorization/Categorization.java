@@ -30,6 +30,8 @@ import javax.persistence.Table;
 
 import org.libreccm.core.CcmObject;
 
+import static org.libreccm.core.CoreConstants.*;
+
 import java.util.Objects;
 
 import javax.persistence.JoinColumn;
@@ -44,7 +46,7 @@ import javax.persistence.JoinColumn;
  * @apiviz.has org.libreccm.core.CcmObject
  */
 @Entity
-@Table(name = "categorizations", schema = "ccm_core")
+@Table(name = "categorizations", schema = DB_SCHEMA)
 public class Categorization implements Serializable {
 
     private static final long serialVersionUID = 201504301320L;

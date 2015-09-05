@@ -20,6 +20,8 @@ package org.libreccm.messaging;
 
 import org.libreccm.core.CcmObject;
 
+import static org.libreccm.core.CoreConstants.*;
+
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -33,7 +35,7 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "threads", schema = "ccm_core")
+@Table(name = "threads", schema = DB_SCHEMA)
 public class MessageThread extends CcmObject implements Serializable {
 
     private static final long serialVersionUID = -395123286904985770L;

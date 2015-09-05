@@ -73,6 +73,16 @@ public class CcmIntegrator implements Integrator {
                 getProperties().get("javax.persistence.jtaDataSource");
             connection = dataSource.getConnection();
 
+            //Migrate tables and sequences which don't belong to a module 
+            //for instance hibernate_sequence
+            final Flyway flyway = new Flyway();
+            flyway.setDataSource(dataSource);
+            final StringBuffer buffer = new StringBuffer(
+                "db/migrations/org/libreccm/base");
+            appendDbLocation(buffer, connection);
+            flyway.setLocations(buffer.toString());
+            flyway.migrate();
+
             for (final TreeNode node : orderedNodes) {
                 migrateModule(node.getModule().getClass(), dataSource);
 
@@ -80,6 +90,8 @@ public class CcmIntegrator implements Integrator {
                     configuration.addAnnotatedClass(entity);
                 }
             }
+
+            configuration.buildMappings();
 
         } catch (DependencyException | SQLException ex) {
             throw new IntegrationException("Failed to integrate modules", ex);
@@ -94,12 +106,10 @@ public class CcmIntegrator implements Integrator {
         return moduleInfo.getModuleName().toLowerCase().replace("-", "_");
     }
 
-    private String getLocation(final ModuleInfo moduleInfo,
-                               final Connection connection) throws SQLException {
-        final StringBuffer buffer = new StringBuffer(
-            "classpath:/db/migrations/");
-        //buffer.append(ModuleUtil.getModulePackageName(module));
-        buffer.append(moduleInfo.getModuleDataPackage());
+    private void appendDbLocation(final StringBuffer buffer,
+                                  final Connection connection)
+        throws SQLException {
+
         switch (connection.getMetaData().getDatabaseProductName()) {
             case "MySQL":
                 buffer.append("/mysql");
@@ -113,6 +123,30 @@ public class CcmIntegrator implements Integrator {
                     connection.getMetaData().
                     getDatabaseProductName()));
         }
+    }
+
+    private String getLocation(final ModuleInfo moduleInfo,
+                               final Connection connection)
+        throws SQLException {
+
+        final StringBuffer buffer = new StringBuffer(
+            "classpath:/db/migrations/");
+        //buffer.append(ModuleUtil.getModulePackageName(module));
+        buffer.append(moduleInfo.getModuleDataPackage());
+//        switch (connection.getMetaData().getDatabaseProductName()) {
+//            case "MySQL":
+//                buffer.append("/mysql");
+//                break;
+//            case "PostgreSQL":
+//                buffer.append("/pgsql");
+//                break;
+//            default:
+//                throw new IntegrationException(String.format(
+//                    "Integration failed. Database \"%s\" is not supported yet.",
+//                    connection.getMetaData().
+//                    getDatabaseProductName()));
+//        }
+        appendDbLocation(buffer, connection);
 
         return buffer.toString();
     }
@@ -222,12 +256,19 @@ public class CcmIntegrator implements Integrator {
             ex.printStackTrace(System.err);
             System.err.println();
             SQLException next = ex.getNextException();
-            while(next != null) {
+            while (next != null) {
                 next.printStackTrace(System.err);
                 System.err.println();
                 next = next.getNextException();
             }
-            throw new IntegrationException("Failed to desintegrate.", next);
+
+            if (next == null) {
+                throw new IntegrationException(
+                    "Failed to desintegrate. No root cause.");
+            } else {
+                throw new IntegrationException(
+                    "Failed to desintegrate. No root cause.");
+            }
         } finally {
             JdbcUtils.closeConnection(connection);
         }

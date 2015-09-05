@@ -19,6 +19,9 @@
 package org.libreccm.notification;
 
 import org.libreccm.core.CcmObject;
+
+import static org.libreccm.core.CoreConstants.*;
+
 import org.libreccm.core.Subject;
 import org.libreccm.messaging.Message;
 
@@ -67,7 +70,7 @@ import javax.persistence.TemporalType;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "notifications", schema = "ccm_core")
+@Table(name = "notifications", schema = DB_SCHEMA)
 //Can't reduce complexity yet. Not sure what to do about the God class warning.
 //Maybe we have to put some of the properties into an extra class.
 @SuppressWarnings({"PMD.CyclomaticComplexity",

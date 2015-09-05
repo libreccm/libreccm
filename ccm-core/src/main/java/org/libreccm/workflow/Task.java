@@ -18,6 +18,8 @@
  */
 package org.libreccm.workflow;
 
+import static org.libreccm.core.CoreConstants.*;
+
 import org.libreccm.l10n.LocalizedString;
 
 import java.io.Serializable;
@@ -48,7 +50,7 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "workflow_tasks", schema = "ccm_core")
+@Table(name = "workflow_tasks", schema = DB_SCHEMA)
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 //Can't reduce complexity yet, Task is a fine name
 @SuppressWarnings({"PMD.CyclomaticComplexity",
@@ -70,7 +72,7 @@ public class Task implements Serializable {
     @AssociationOverride(
             name = "values",
             joinTable = @JoinTable(name = "workflow_task_labels",
-                                   schema = "ccm_core",
+                                   schema = DB_SCHEMA,
                                    joinColumns = {
                                        @JoinColumn(name = "task_id")}))
     private LocalizedString label;
@@ -79,7 +81,7 @@ public class Task implements Serializable {
     @AssociationOverride(
             name = "values",
             joinTable = @JoinTable(name = "workflow_tasks_descriptions",
-                                   schema = "ccm_core",
+                                   schema = DB_SCHEMA,
                                    joinColumns = {
                                        @JoinColumn(name = "task_id")}))
     private LocalizedString description;
@@ -99,7 +101,7 @@ public class Task implements Serializable {
 
     @ManyToMany
     @JoinTable(name = "workflow_task_dependencies",
-               schema = "ccm_core",
+               schema = DB_SCHEMA,
                joinColumns = {
                    @JoinColumn(name = "depends_on_task_id")},
                inverseJoinColumns = {
@@ -108,7 +110,7 @@ public class Task implements Serializable {
 
     @ElementCollection
     @JoinTable(name = "workflow_task_comments",
-               schema = "ccm_core",
+               schema = DB_SCHEMA,
                joinColumns = {
                    @JoinColumn(name = "task_id")})
     @Column(name = "comment")

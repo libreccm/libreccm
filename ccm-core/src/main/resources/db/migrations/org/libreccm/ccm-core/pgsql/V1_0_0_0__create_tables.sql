@@ -1073,4 +1073,3 @@
         foreign key (workflow_id) 
         references ccm_core.workflows;
 
-    create sequence hibernate_sequence start 1 increment 1;

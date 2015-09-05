@@ -18,6 +18,8 @@
  */
 package org.libreccm.formbuilder;
 
+import static org.libreccm.core.CoreConstants.*;
+
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -30,7 +32,7 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "formbuilder_data_driven_selects", schema = "ccm_core")
+@Table(name = "formbuilder_data_driven_selects", schema = DB_SCHEMA)
 public class DataDrivenSelect extends Widget implements Serializable {
 
     private static final long serialVersionUID = -4477753441663454661L;

@@ -18,6 +18,8 @@
  */
 package org.libreccm.workflow;
 
+import static org.libreccm.core.CoreConstants.*;
+
 import org.libreccm.l10n.LocalizedString;
 
 import java.io.Serializable;
@@ -43,7 +45,7 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "workflows", schema = "ccm_core")
+@Table(name = "workflows", schema = DB_SCHEMA)
 public class Workflow implements Serializable {
 
     private static final long serialVersionUID = 4322500264543325829L;
@@ -57,7 +59,7 @@ public class Workflow implements Serializable {
     @AssociationOverride(
         name = "values",
         joinTable = @JoinTable(name = "workflow_names",
-                               schema = "ccm_core",
+                               schema = DB_SCHEMA,
                                joinColumns = {
                                    @JoinColumn(name = "workflow_id")}))
     private LocalizedString name;
@@ -66,7 +68,7 @@ public class Workflow implements Serializable {
     @AssociationOverride(
         name = "values",
         joinTable = @JoinTable(name = "workflow_descriptions",
-                               schema = "ccm_core",
+                               schema = DB_SCHEMA,
                                joinColumns = {
                                    @JoinColumn(name = "workflow_id")
                                }))

@@ -18,7 +18,10 @@
  */
 package org.libreccm.core;
 
+import static org.libreccm.core.CoreConstants.*;
+
 import org.libreccm.l10n.LocalizedString;
+import org.libreccm.web.Application;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -53,7 +56,7 @@ import javax.persistence.TemporalType;
  *
  */
 @Entity
-@Table(name = "resources", schema = "ccm_core")
+@Table(name = "resources", schema = DB_SCHEMA)
 public class Resource extends CcmObject implements Serializable {
 
     private static final long serialVersionUID = 7345482620613842781L;
@@ -65,7 +68,7 @@ public class Resource extends CcmObject implements Serializable {
     @AssociationOverride(
         name = "values",
         joinTable = @JoinTable(name = "resource_titles",
-                               schema = "ccm_core",
+                               schema = DB_SCHEMA,
                                joinColumns = {
                                    @JoinColumn(name = "object_id")}))
     private LocalizedString title;
@@ -77,7 +80,7 @@ public class Resource extends CcmObject implements Serializable {
     @AssociationOverride(
         name = "values",
         joinTable = @JoinTable(name = "resource_descriptions",
-                               schema = "ccm_core",
+                               schema = DB_SCHEMA,
                                joinColumns = {
                                    @JoinColumn(name = "object_id")}))
     private LocalizedString description;

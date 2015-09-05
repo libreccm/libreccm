@@ -32,6 +32,8 @@ import javax.persistence.Table;
 
 import org.hibernate.validator.constraints.NotBlank;
 
+import static org.libreccm.core.CoreConstants.*;
+
 import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -47,7 +49,7 @@ import javax.persistence.NamedQuery;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "ccm_roles", schema = "ccm_core")
+@Table(name = "ccm_roles", schema = DB_SCHEMA)
 @NamedQueries({
     @NamedQuery(name = "findRolesForName",
                 query = "SELECT r FROM Role r "

@@ -20,6 +20,8 @@ package org.libreccm.formbuilder;
 
 import org.libreccm.core.CcmObject;
 
+import static org.libreccm.core.CoreConstants.*;
+
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -33,7 +35,7 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "formbuilder_listeners", schema = "ccm_core")
+@Table(name = "formbuilder_listeners", schema = DB_SCHEMA)
 public class Listener extends CcmObject implements Serializable {
 
     private static final long serialVersionUID = 9030104813240364500L;

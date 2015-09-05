@@ -19,6 +19,9 @@
 package org.libreccm.formbuilder;
 
 import org.libreccm.core.CcmObject;
+
+import static org.libreccm.core.CoreConstants.*;
+
 import org.libreccm.l10n.LocalizedString;
 
 import java.io.Serializable;
@@ -36,7 +39,7 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "formbuilder_data_queries", schema = "ccm_core")
+@Table(name = "formbuilder_data_queries", schema = DB_SCHEMA)
 public class PersistentDataQuery extends CcmObject implements Serializable {
 
     private static final long serialVersionUID = -7344153915501267752L;
@@ -48,7 +51,7 @@ public class PersistentDataQuery extends CcmObject implements Serializable {
         name = "values",
         joinTable = @JoinTable(
             name = "formbuilder_data_query_names",
-            schema = "ccm_core",
+            schema = DB_SCHEMA,
             joinColumns = {
                 @JoinColumn(name = "data_query_id")}))
     private LocalizedString name;
@@ -57,7 +60,7 @@ public class PersistentDataQuery extends CcmObject implements Serializable {
         name = "values",
         joinTable = @JoinTable(
             name = "formbuilder_data_query_descriptions",
-            schema = "ccm_core",
+            schema = DB_SCHEMA,
             joinColumns = {
                 @JoinColumn(name = "data_query_id")}))
     private LocalizedString description;

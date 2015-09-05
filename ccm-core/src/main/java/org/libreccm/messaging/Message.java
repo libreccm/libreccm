@@ -19,6 +19,9 @@
 package org.libreccm.messaging;
 
 import org.libreccm.core.CcmObject;
+
+import static org.libreccm.core.CoreConstants.*;
+
 import org.libreccm.core.Subject;
 import org.libreccm.jpa.utils.MimeTypeConverter;
 
@@ -45,7 +48,7 @@ import javax.persistence.TemporalType;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "messages", schema = "ccm_core")
+@Table(name = "messages", schema = DB_SCHEMA)
 //Can't reduce complexity yet
 @SuppressWarnings({"PMD.CyclomaticComplexity",
                    "PMD.StdCyclomaticComplexity",

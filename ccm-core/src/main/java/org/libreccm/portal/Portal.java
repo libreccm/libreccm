@@ -18,6 +18,8 @@
  */
 package org.libreccm.portal;
 
+import static org.libreccm.core.CoreConstants.*;
+
 import org.libreccm.core.Resource;
 
 import java.io.Serializable;
@@ -35,7 +37,7 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "portals", schema = "ccm_core")
+@Table(name = "portals", schema = DB_SCHEMA)
 public class Portal extends Resource implements Serializable {
 
     private static final long serialVersionUID = -5492307663469206053L;

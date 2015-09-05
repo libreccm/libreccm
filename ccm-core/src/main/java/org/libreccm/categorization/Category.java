@@ -21,6 +21,8 @@ package org.libreccm.categorization;
 import org.hibernate.validator.constraints.NotBlank;
 import org.libreccm.core.CcmObject;
 
+import static org.libreccm.core.CoreConstants.*;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +61,7 @@ import javax.validation.constraints.Pattern;
  * @apiviz.composedOf org.libreccm.categorization.Categorization
  */
 @Entity
-@Table(name = "categories", schema = "ccm_core")
+@Table(name = "categories", schema = DB_SCHEMA)
 @NamedQueries({
     @NamedQuery(name = "topLevelCategories", 
                 query = "SELECT c FROM Category c WHERE c.parentCategory IS NULL")
@@ -91,7 +93,7 @@ public class Category extends CcmObject implements Serializable {
     @AssociationOverride(
             name = "values",
             joinTable = @JoinTable(name = "category_titles", 
-                                   schema = "ccm_core",
+                                   schema = DB_SCHEMA,
                                    joinColumns = {
                                        @JoinColumn(name = "object_id")}
             ))
@@ -104,7 +106,7 @@ public class Category extends CcmObject implements Serializable {
     @AssociationOverride(
             name = "values",
             joinTable = @JoinTable(name = "category_descriptions",
-                                   schema = "ccm_core",
+                                   schema = DB_SCHEMA,
                                    joinColumns = {
                                        @JoinColumn(name = "object_id")}
             ))

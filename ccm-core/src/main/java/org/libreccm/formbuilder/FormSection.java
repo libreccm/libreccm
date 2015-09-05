@@ -18,6 +18,8 @@
  */
 package org.libreccm.formbuilder;
 
+import static org.libreccm.core.CoreConstants.*;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,7 +36,7 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "formbuilder_formsections", schema = "ccm_core")
+@Table(name = "formbuilder_formsections", schema = DB_SCHEMA)
 public class FormSection extends Component implements Serializable {
 
     private static final long serialVersionUID = -3195157282292906945L;

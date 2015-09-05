@@ -19,6 +19,9 @@
 package org.libreccm.notification;
 
 import org.libreccm.core.CcmObject;
+
+import static org.libreccm.core.CoreConstants.*;
+
 import org.libreccm.core.Subject;
 
 import java.io.Serializable;
@@ -46,7 +49,7 @@ import javax.persistence.TemporalType;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "digests", schema = "ccm_core")
+@Table(name = "digests", schema = DB_SCHEMA)
 //Can't reduce complexity yet
 @SuppressWarnings({"PMD.CyclomaticComplexity",
                    "PMD.StdCyclomaticComplexity",

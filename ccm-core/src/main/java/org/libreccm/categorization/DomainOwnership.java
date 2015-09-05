@@ -30,7 +30,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.libreccm.core.CcmObject;
+
+import static org.libreccm.core.CoreConstants.*;
+
 import org.libreccm.web.Application;
+
 
 /**
  * Association class for the association between a {@link Domain} and a 
@@ -41,7 +45,7 @@ import org.libreccm.web.Application;
  * @author <a href="jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "domain_ownerships", schema = "ccm_core")
+@Table(name = "domain_ownerships", schema = DB_SCHEMA)
 public class DomainOwnership implements Serializable {
 
     private static final long serialVersionUID = 201504301305L;

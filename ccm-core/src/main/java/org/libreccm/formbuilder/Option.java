@@ -18,6 +18,8 @@
  */
 package org.libreccm.formbuilder;
 
+import static org.libreccm.core.CoreConstants.*;
+
 import org.libreccm.l10n.LocalizedString;
 
 import java.io.Serializable;
@@ -35,7 +37,7 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "formbuilder_options", schema = "ccm_core")
+@Table(name = "formbuilder_options", schema = DB_SCHEMA)
 public class Option extends Component implements Serializable {
 
     private static final long serialVersionUID = -7528058391772415511L;
@@ -46,7 +48,7 @@ public class Option extends Component implements Serializable {
     @AssociationOverride(
         name = "values",
         joinTable = @JoinTable(name = "formbuilder_option_labels",
-                               schema = "ccm_core",
+                               schema = DB_SCHEMA,
                                joinColumns = {
                                    @JoinColumn(name = "option_id")}))
     private LocalizedString label;

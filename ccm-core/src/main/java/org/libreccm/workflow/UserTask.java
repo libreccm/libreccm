@@ -18,6 +18,8 @@
  */
 package org.libreccm.workflow;
 
+import static org.libreccm.core.CoreConstants.*;
+
 import org.libreccm.core.User;
 import org.libreccm.core.Group;
 
@@ -43,7 +45,7 @@ import javax.persistence.TemporalType;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "workflow_user_tasks", schema = "ccm_core")
+@Table(name = "workflow_user_tasks", schema = DB_SCHEMA)
 //Can't reduce complexity yet
 @SuppressWarnings({"PMD.CyclomaticComplexity",
                    "PMD.StdCyclomaticComplexity",
@@ -77,7 +79,7 @@ public class UserTask extends Task implements Serializable {
 
     @OneToMany
     @JoinTable(name = "workflow_user_task_assigned_users",
-               schema = "ccm_core",
+               schema = DB_SCHEMA,
                joinColumns = {
                    @JoinColumn(name = "user_task_id")},
                inverseJoinColumns = {
@@ -86,7 +88,7 @@ public class UserTask extends Task implements Serializable {
 
     @OneToMany
     @JoinTable(name = "workflow_user_task_assigned_groups",
-               schema = "ccm_core",
+               schema = DB_SCHEMA,
                joinColumns = {
                    @JoinColumn(name = "user_task_id")},
                inverseJoinColumns = {

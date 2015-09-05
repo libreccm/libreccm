@@ -18,6 +18,8 @@
  */
 package org.libreccm.notification;
 
+import static org.libreccm.core.CoreConstants.*;
+
 import org.libreccm.core.Subject;
 import org.libreccm.messaging.Message;
 
@@ -44,7 +46,7 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "queue_items", schema = "ccm_core")
+@Table(name = "queue_items", schema = DB_SCHEMA)
 //Can't reduce complexity yet
 @SuppressWarnings({"PMD.CyclomaticComplexity",
                    "PMD.StdCyclomaticComplexity",

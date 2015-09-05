@@ -18,8 +18,11 @@
  */
 package org.libreccm.core;
 
+import static org.libreccm.core.CoreConstants.*;
+
 import java.io.Serializable;
 import java.util.Objects;
+
 import javax.persistence.AssociationOverride;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -30,6 +33,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Table;
+
 import org.libreccm.l10n.LocalizedString;
 
 /**
@@ -37,7 +41,7 @@ import org.libreccm.l10n.LocalizedString;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "resource_types", schema = "ccm_core")
+@Table(name = "resource_types", schema = DB_SCHEMA)
 @Inheritance(strategy = InheritanceType.JOINED)
 @SuppressWarnings({"PMD.CyclomaticComplexity",
                    "PMD.StdCyclomaticComplexity",
@@ -59,7 +63,7 @@ public class ResourceType implements Serializable {
     @AssociationOverride(
         name = "values",
         joinTable = @JoinTable(name = "resource_type_descriptions",
-                               schema = "ccm_core",
+                               schema = DB_SCHEMA,
                                joinColumns = {
                                    @JoinColumn(name = "resource_type_id")}))
     private LocalizedString description;

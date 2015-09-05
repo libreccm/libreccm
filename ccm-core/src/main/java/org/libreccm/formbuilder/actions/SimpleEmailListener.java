@@ -5,6 +5,8 @@
  */
 package org.libreccm.formbuilder.actions;
 
+import static org.libreccm.core.CoreConstants.*;
+
 import java.io.Serializable;
 
 import javax.persistence.Column;
@@ -20,7 +22,7 @@ import java.util.Objects;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "formbuilder_simple_email_listeners", schema = "ccm_core")
+@Table(name = "formbuilder_simple_email_listeners", schema = DB_SCHEMA)
 public class SimpleEmailListener
     extends ProcessListener
     implements Serializable {

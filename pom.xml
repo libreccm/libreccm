@@ -39,8 +39,8 @@
         <module>ccm-shortcuts</module>
         <module>ccm-testutils</module>
         <module>ccm-docrepo</module>
-    <module>ccm-test-bundle</module>
-  </modules>
+        <module>ccm-test-bundle-wildfly8</module>
+    </modules>
 
     <!--<repositories>
         <repository>
@@ -153,7 +153,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-pmd-plugin</artifactId>
-                    <version>3.4</version>
+                    <version>3.5</version>
                     <configuration>
                         <linkXref>true</linkXref>
                         <sourceEncoding>utf-8</sourceEncoding>

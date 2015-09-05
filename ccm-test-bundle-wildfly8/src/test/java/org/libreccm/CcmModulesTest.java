@@ -35,7 +35,6 @@ import static org.hamcrest.CoreMatchers.*;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.CleanupUsingScript;
-import org.jboss.arquillian.persistence.CreateSchema;
 import org.jboss.arquillian.persistence.PersistenceTest;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
@@ -55,8 +54,11 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.libreccm.core.CcmCore;
+import org.libreccm.core.User;
 import org.libreccm.core.modules.ModuleStatus;
 import org.libreccm.tests.categories.IntegrationTest;
+
+import javax.persistence.TypedQuery;
 
 /**
  *
@@ -112,7 +114,6 @@ public class CcmModulesTest {
             .addAsLibraries(libs)
             .addPackage(IntegrationTest.class.getPackage())
             .setWebXML(new File("src/main/webapp/WEB-INF/web.xml"))
-            //.addAsWebInfResource("test-persistence.xml", "persistence.xml")
             .addAsResource("test-persistence.xml", "META-INF/persistence.xml")
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
@@ -120,6 +121,8 @@ public class CcmModulesTest {
     @Test
     @CleanupUsingScript("clean_schema.sql")
     public void verifyModules() throws SQLException {
+        
+        //Extract JDBC connnection from EntityManager
         final Object dataSourceObj = entityManager.getEntityManagerFactory()
                 .getProperties().get("javax.persistence.jtaDataSource");
         assertThat(dataSourceObj, is(instanceOf(DataSource.class)));
@@ -128,6 +131,7 @@ public class CcmModulesTest {
         final Connection connection = dataSource.getConnection();
         assertThat(connection, is(instanceOf(Connection.class)));
 
+        //Check if the ccm_core.ccm_modules table exists.
         final ResultSet ccmObjectTable = connection.getMetaData()
                 .getTables(null, "ccm_core", "ccm_objects", null);
         if (!ccmObjectTable.next()) {
@@ -135,6 +139,7 @@ public class CcmModulesTest {
                          + "Table does not exist?");
         }
 
+        //Check of the ccm_core.installed_modules exists
         final ResultSet installedModulesTable = connection.getMetaData()
                 .getTables(null, "ccm_core", "installed_modules", null);
         if (!installedModulesTable.next()) {
@@ -142,6 +147,8 @@ public class CcmModulesTest {
                          + "Table does not exist?");
         }
 
+        //Check if the ccm-core module is registered in the 
+        //ccm_core.installed_modules table
         final Statement statement = connection.createStatement();
         final ResultSet installedModules = statement.executeQuery(
                 "SELECT module_id, module_class_name, status "
@@ -161,6 +168,23 @@ public class CcmModulesTest {
                    is(equalTo(CcmCore.class.getName())));
         assertThat(modulesData.get(0).getStatus(),
                    is(equalTo(ModuleStatus.INSTALLED.toString())));
+        
+        //Check if the public user is registed.
+        final TypedQuery<User> userQuery = entityManager.createQuery(
+            "SELECT u FROM User u WHERE u.screenName = 'public-user'", 
+            User.class);
+        final List<User> users = userQuery.getResultList();
+        
+        assertThat(users.size(), is(1));
+        assertThat(users.get(0).getScreenName(), is(equalTo("public-user")));
+        assertThat(users.get(0).getName(), is(not(nullValue())));
+        assertThat(users.get(0).getName().getFamilyName(), is(equalTo("ccm")));
+        assertThat(users.get(0).getName().getGivenName(), 
+                   is(equalTo("public user")));
+        assertThat(users.get(0).getEmailAddresses().size(), is(1));
+        assertThat(users.get(0).getEmailAddresses().get(0).getAddress(),
+                   is(equalTo("public-user@localhost")));
+        
     }
 
     private void createInstalledModuleListEntry(

@@ -18,6 +18,8 @@
  */
 package org.libreccm.web;
 
+import static org.libreccm.core.CoreConstants.*;
+
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -34,7 +36,7 @@ import javax.persistence.UniqueConstraint;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "hosts", schema = "ccm_core",
+@Table(name = "hosts", schema = DB_SCHEMA,
        uniqueConstraints = {
            @UniqueConstraint(columnNames = {"server_name", "server_port"})})
 @SuppressWarnings("PMD.ShortClassName") //Host is perfectly fine as class name...

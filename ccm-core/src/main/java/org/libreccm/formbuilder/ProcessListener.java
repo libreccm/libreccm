@@ -19,6 +19,9 @@
 package org.libreccm.formbuilder;
 
 import org.libreccm.core.CcmObject;
+
+import static org.libreccm.core.CoreConstants.*;
+
 import org.libreccm.l10n.LocalizedString;
 
 import java.io.Serializable;
@@ -37,7 +40,7 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "formbuilder_process_listeners", schema = "ccm_core")
+@Table(name = "formbuilder_process_listeners", schema = DB_SCHEMA)
 public class ProcessListener extends CcmObject implements Serializable {
 
     private static final long serialVersionUID = -3029184333026605708L;
@@ -46,7 +49,7 @@ public class ProcessListener extends CcmObject implements Serializable {
         name = "values",
         joinTable = @JoinTable(
             name = "formbuilder_process_listener_names",
-            schema = "ccm_core",
+            schema = DB_SCHEMA,
             joinColumns = {
                 @JoinColumn(name = "process_listener_id")}))
     private LocalizedString name;
@@ -55,7 +58,7 @@ public class ProcessListener extends CcmObject implements Serializable {
         name = "values",
         joinTable = @JoinTable(
             name = "formbuilder_process_listener_descriptions",
-            schema = "ccm_core",
+            schema = DB_SCHEMA,
             joinColumns = {
                 @JoinColumn(name = "process_listener_id")}))
 

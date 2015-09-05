@@ -47,7 +47,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "permissions", schema = "ccm_core")
+@Table(name = "permissions", schema = DB_SCHEMA)
 @NamedQueries({
     @NamedQuery(name = "findPermissionsForSubject",
                 query = "SELECT p FROM Permission p WHERE p.grantee = :subject"),

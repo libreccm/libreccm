@@ -19,6 +19,8 @@
 package org.libreccm.formbuilder;
 
 
+import static org.libreccm.core.CoreConstants.*;
+
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -31,7 +33,7 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "formbuilder_widget_labels", schema = "ccm_core")
+@Table(name = "formbuilder_widget_labels", schema = DB_SCHEMA)
 public class WidgetLabel extends Component implements Serializable {
 
     private static final long serialVersionUID = -2939505715812565159L;

@@ -18,6 +18,8 @@
  */
 package org.libreccm.search.lucene;
 
+import static org.libreccm.core.CoreConstants.*;
+
 import org.libreccm.core.Subject;
 
 import java.io.Serializable;
@@ -41,7 +43,7 @@ import javax.persistence.TemporalType;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "lucene_documents", schema = "ccm_core")
+@Table(name = "lucene_documents", schema = DB_SCHEMA)
 //Can't reduce complexity yet. Not sure what to do about the God class warning.
 //Maybe we have to put some of the properties into an extra class.
 @SuppressWarnings({"PMD.CyclomaticComplexity",

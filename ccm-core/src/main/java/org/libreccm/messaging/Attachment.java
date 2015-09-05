@@ -18,6 +18,8 @@
  */
 package org.libreccm.messaging;
 
+import static org.libreccm.core.CoreConstants.*;
+
 import org.libreccm.jpa.utils.MimeTypeConverter;
 
 import java.io.Serializable;
@@ -41,7 +43,7 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "attachments", schema = "ccm_core")
+@Table(name = "attachments", schema = DB_SCHEMA)
 public class Attachment implements Serializable {
 
     private static final long serialVersionUID = 2063934721452863106L;

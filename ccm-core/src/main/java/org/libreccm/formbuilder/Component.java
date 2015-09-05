@@ -19,6 +19,9 @@
 package org.libreccm.formbuilder;
 
 import org.libreccm.core.CcmObject;
+
+import static org.libreccm.core.CoreConstants.*;
+
 import org.libreccm.l10n.LocalizedString;
 
 import java.io.Serializable;
@@ -41,7 +44,7 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "formbuilder_components", schema = "ccm_core")
+@Table(name = "formbuilder_components", schema = DB_SCHEMA)
 //Can't reduce complexity yet
 @SuppressWarnings({"PMD.CyclomaticComplexity",
                    "PMD.StdCyclomaticComplexity",
@@ -57,7 +60,7 @@ public class Component extends CcmObject implements Serializable {
     @AssociationOverride(
         name = "values",
         joinTable = @JoinTable(name = "formbuilder_component_descriptions",
-                               schema = "ccm_core",
+                               schema = DB_SCHEMA,
                                joinColumns = {
                                    @JoinColumn(name = "component_id")}))
     private LocalizedString description;
