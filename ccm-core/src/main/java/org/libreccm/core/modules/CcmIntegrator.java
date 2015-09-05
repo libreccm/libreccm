@@ -182,13 +182,16 @@ public class CcmIntegrator implements Integrator {
                     flyway.info().current().getVersion());
 
         if (newModule) {
-            final Statement statement = connection.createStatement();
-            statement.execute(String.format(
-                "INSERT INTO ccm_core.installed_modules "
-                    + "(module_id, module_class_name, status) "
-                    + "VALUES (%d, '%s', 'NEW')",
-                module.getName().hashCode(),
-                module.getName()));
+            try (Statement statement = connection.createStatement()) {
+                statement.execute(String.format(
+                    "INSERT INTO ccm_core.installed_modules "
+                        + "(module_id, module_class_name, status) "
+                        + "VALUES (%d, '%s', 'NEW')",
+                    module.getName().hashCode(),
+                    module.getName()));
+            } catch (SQLException ex) {
+                throw new IntegrationException("Failed to integrate.", ex);
+            }
         }
     }
 
@@ -196,7 +199,7 @@ public class CcmIntegrator implements Integrator {
     public void integrate(final MetadataImplementor metadata,
                           final SessionFactoryImplementor sessionFactory,
                           final SessionFactoryServiceRegistry registry) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //Nothing
     }
 
     @Override
@@ -218,41 +221,52 @@ public class CcmIntegrator implements Integrator {
                 final ModuleInfo moduleInfo = new ModuleInfo();
                 moduleInfo.load(module);
 
-                final Statement query = connection.createStatement();
-                final ResultSet result = query.executeQuery(
-                    String.format("SELECT module_class_name, status "
-                                      + "FROM ccm_core.installed_modules "
-                                      + "WHERE module_class_name = '%s'",
-                                  module.getClass().getName()));
-                System.out.printf("Checking status of module %s...\n",
-                                  module.getClass().getName());
+                try (Statement query = connection.createStatement();
+                     ResultSet result = query.executeQuery(
+                         String.format("SELECT module_class_name, status "
+                                           + "FROM ccm_core.installed_modules "
+                                           + "WHERE module_class_name = '%s'",
+                                       module.getClass().getName()))) {
 
-                if (result.next() && ModuleStatus.UNINSTALL.toString().equals(
-                    result.getString("status"))) {
+                    System.out.printf("Checking status of module %s...%n",
+                                      module.getClass().getName());
 
-                    LOGGER.info("Removing schema for module %s...",
-                                module.getClass().getName());
-                    final Flyway flyway = new Flyway();
-                    flyway.setDataSource(dataSource);
-                    flyway.setSchemas(getSchemaName(moduleInfo));
-                    flyway.setLocations(getLocation(moduleInfo, connection));
-                    LOGGER.warn("Deleting schema for module {}...",
-                                moduleInfo.getModuleName());
-                    flyway.clean();
+                    if (result.next() && ModuleStatus.UNINSTALL.toString()
+                        .equals(
+                            result.getString("status"))) {
 
-                    final Statement statement = connection.createStatement();
-                    statement.addBatch(String.format(
-                        "DELETE FROM ccm_core.installed_modules "
-                            + "WHERE module_class_name = '%s'",
-                        module.getClass().getName()));
-                    statement.executeBatch();
-                    LOGGER.info("Done.");
+                        LOGGER.info("Removing schema for module %s...",
+                                    module.getClass().getName());
+                        final Flyway flyway = new Flyway();
+                        flyway.setDataSource(dataSource);
+                        flyway.setSchemas(getSchemaName(moduleInfo));
+                        flyway.setLocations(getLocation(moduleInfo, connection));
+                        LOGGER.warn("Deleting schema for module {}...",
+                                    moduleInfo.getModuleName());
+                        flyway.clean();
+
+                        try (final Statement statement = connection
+                            .createStatement()) {
+                            statement.addBatch(String.format(
+                                "DELETE FROM ccm_core.installed_modules "
+                                    + "WHERE module_class_name = '%s'",
+                                module.getClass().getName()));
+                            statement.executeBatch();
+                            LOGGER.info("Done.");
+                        } catch (SQLException ex) {
+                            throw new IntegrationException(
+                                "Failed to desintegrate", ex);
+                        }
+                    }
+
+                } catch (SQLException ex) {
+                    throw new IntegrationException("Failed to desintegrate.");
                 }
 
             }
         } catch (SQLException ex) {
             LOGGER.error("Desintegration failed: ", ex);
-            System.err.println("Desintration failed");
+            System.err.println("Desintegration failed");
             ex.printStackTrace(System.err);
             System.err.println();
             SQLException next = ex.getNextException();
@@ -262,13 +276,8 @@ public class CcmIntegrator implements Integrator {
                 next = next.getNextException();
             }
 
-            if (next == null) {
-                throw new IntegrationException(
-                    "Failed to desintegrate. No root cause.");
-            } else {
-                throw new IntegrationException(
-                    "Failed to desintegrate. No root cause.");
-            }
+            throw new IntegrationException("Failed to desintegrate.");
+
         } finally {
             JdbcUtils.closeConnection(connection);
         }

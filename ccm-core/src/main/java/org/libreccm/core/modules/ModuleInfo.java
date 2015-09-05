@@ -202,20 +202,19 @@ public class ModuleInfo {
         LOGGER.info("Trying to retrieve module info for module {} from {}...",
                     moduleClass.getName(),
                     path);
-        final InputStream stream = moduleClass.getResourceAsStream(path);
-        if (stream == null) {
-            LOGGER.warn("No module info for {} found at {}",
-                        moduleClass.getName(),
-                        path);
-        } else {
-            try {
+        try (final InputStream stream = moduleClass.getResourceAsStream(path)) {
+            if (stream == null) {
+                LOGGER.warn("No module info for {} found at {}",
+                            moduleClass.getName(),
+                            path);
+            } else {
                 moduleInfo.load(stream);
-            } catch (IOException ex) {
-                LOGGER.error("Failed to read module info for {} at {}.",
-                             moduleClass.getName(),
-                             path);
-                LOGGER.error("Cause: ", ex);
             }
+        } catch (IOException ex) {
+            LOGGER.error("Failed to read module info for {} at {}.",
+                         moduleClass.getName(),
+                         path);
+            LOGGER.error("Cause: ", ex);
         }
 
         return moduleInfo;
@@ -224,12 +223,15 @@ public class ModuleInfo {
     private String readModuleName(final Class<? extends CcmModule> moduleClass,
                                   final Module annotation,
                                   final Properties moduleInfo) {
-        @SuppressWarnings("PMD.LongVariable")
+        @SuppressWarnings(
+            "PMD.LongVariable")
         final boolean annotationHasModuleName = annotation.name() != null
-                                              && !annotation.name().isEmpty();
+                                                    && !annotation.name()
+            .isEmpty();
         @SuppressWarnings("PMD.LongVariable")
-        final boolean moduleInfoHasModuleName = moduleInfo.getProperty(ARTIFACT_ID)
-                                              != null && !moduleInfo
+        final boolean moduleInfoHasModuleName = moduleInfo.getProperty(
+            ARTIFACT_ID)
+                                                    != null && !moduleInfo
             .getProperty(ARTIFACT_ID).isEmpty();
 
         if (annotationHasModuleName) {
@@ -250,14 +252,18 @@ public class ModuleInfo {
         final Module annotation,
         final Properties moduleInfo) {
 
-        @SuppressWarnings("PMD.LongVariable")
-        final boolean annotationHasPackageName = annotation.packageName() != null
-                                               && !annotation.packageName()
+        @SuppressWarnings(
+            "PMD.LongVariable")
+        final boolean annotationHasPackageName = annotation.packageName()
+                                                 != null
+                                                     && !annotation
+            .packageName()
             .isEmpty();
         @SuppressWarnings("PMD.LongVariable")
-        final boolean moduleInfoHasPackageName = moduleInfo.getProperty(GROUP_ID)
-                                               != null
-                                               && !moduleInfo.getProperty(
+        final boolean moduleInfoHasPackageName = moduleInfo
+            .getProperty(GROUP_ID)
+                                                     != null
+                                                     && !moduleInfo.getProperty(
                 GROUP_ID).isEmpty();
         if (annotationHasPackageName) {
             return annotation.packageName();
@@ -281,10 +287,13 @@ public class ModuleInfo {
 
         @SuppressWarnings("PMD.LongVariable")
         final boolean annotationHasVersion = annotation.version() != null
-                                           && !annotation.version().isEmpty();
+                                                 && !annotation.version()
+            .isEmpty();
         @SuppressWarnings("PMD.LongVariable")
-        final boolean moduleInfoHasVersion = moduleInfo.getProperty(VERSION) != null
-                                           && !moduleInfo.getProperty(VERSION)
+        final boolean moduleInfoHasVersion = moduleInfo.getProperty(VERSION)
+                                             != null
+                                                 && !moduleInfo.getProperty(
+                VERSION)
             .isEmpty();
 
         if (annotationHasVersion) {
