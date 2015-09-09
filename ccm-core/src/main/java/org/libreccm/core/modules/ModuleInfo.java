@@ -255,15 +255,13 @@ public class ModuleInfo {
         @SuppressWarnings(
             "PMD.LongVariable")
         final boolean annotationHasPackageName = annotation.packageName()
-                                                 != null
+                                                     != null
                                                      && !annotation
             .packageName()
             .isEmpty();
         @SuppressWarnings("PMD.LongVariable")
         final boolean moduleInfoHasPackageName = moduleInfo
-            .getProperty(GROUP_ID)
-                                                     != null
-                                                     && !moduleInfo.getProperty(
+            .getProperty(GROUP_ID) != null && !moduleInfo.getProperty(
                 GROUP_ID).isEmpty();
         if (annotationHasPackageName) {
             return annotation.packageName();
@@ -271,7 +269,8 @@ public class ModuleInfo {
             return String.format("%s/%s",
                                  moduleInfo.getProperty(GROUP_ID),
                                  moduleInfo.
-                                 getProperty(ARTIFACT_ID));
+                                 getProperty(ARTIFACT_ID).replace("-",
+                                                                  "_"));
         } else {
             LOGGER.warn("The module data package was specified by the module "
                             + "annotation nore was an group id found in the module info"
@@ -291,7 +290,7 @@ public class ModuleInfo {
             .isEmpty();
         @SuppressWarnings("PMD.LongVariable")
         final boolean moduleInfoHasVersion = moduleInfo.getProperty(VERSION)
-                                             != null
+                                                 != null
                                                  && !moduleInfo.getProperty(
                 VERSION)
             .isEmpty();

@@ -45,7 +45,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "subjects", schema = DB_SCHEMA)
+@Table(name = "SUBJECTS", schema = DB_SCHEMA)
 @Inheritance(strategy = InheritanceType.JOINED)
 @XmlRootElement(name = "subject", namespace = CORE_XML_NS)
 public class Subject implements Serializable {
@@ -53,7 +53,7 @@ public class Subject implements Serializable {
     private static final long serialVersionUID = 6303836654273293979L;
 
     @Id
-    @Column(name = "subject_id")
+    @Column(name = "SUBJECT_ID")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long subjectId;
 

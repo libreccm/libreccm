@@ -48,7 +48,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "ccm_privileges", schema = DB_SCHEMA)
+@Table(name = "CCM_PRIVILEGES", schema = DB_SCHEMA)
 @NamedQueries({
     @NamedQuery(name = "findPrivilegeByName",
                 query = "SELECT p FROM Privilege p "
@@ -58,7 +58,7 @@ import javax.xml.bind.annotation.XmlRootElement;
                 + "      JOIN p.grantedPrivilege g "
                 + "      WHERE g.label = :label")
 })
-@XmlRootElement(name = "privilege", namespace = CORE_XML_NS)
+@XmlRootElement(name = "PRIVILEGE", namespace = CORE_XML_NS)
 public class Privilege implements Serializable {
 
     private static final long serialVersionUID = -3986038536996049440L;
@@ -73,7 +73,7 @@ public class Privilege implements Serializable {
      * ID for the privilege.
      */
     @Id
-    @Column(name = "privilege_id")
+    @Column(name = "PRIVILEGE_ID")
     @GeneratedValue(strategy = GenerationType.AUTO)
     @XmlElement(name = "privilege-id", namespace = CORE_XML_NS)
     private long privilegeId;
@@ -81,7 +81,7 @@ public class Privilege implements Serializable {
     /**
      * The label of the {@code Privilege}.
      */
-    @Column(name = "label", length = 255, nullable = false, unique = true)
+    @Column(name = "LABEL", length = 255, nullable = false, unique = true)
     @XmlElement(name = "label", namespace = CORE_XML_NS)
     private String label;
 

@@ -37,12 +37,12 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "portals", schema = DB_SCHEMA)
+@Table(name = "PORTALS", schema = DB_SCHEMA)
 public class Portal extends Resource implements Serializable {
 
     private static final long serialVersionUID = -5492307663469206053L;
 
-    @Column(name = "template")
+    @Column(name = "TEMPLATE")
     private boolean template;
 
     @OneToMany(mappedBy = "portal")

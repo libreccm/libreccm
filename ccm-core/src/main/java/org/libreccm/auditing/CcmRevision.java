@@ -38,13 +38,13 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "ccm_revisions", schema = DB_SCHEMA)
+@Table(name = "CCM_REVISIONS", schema = DB_SCHEMA)
 @RevisionEntity()
 public class CcmRevision extends DefaultRevisionEntity {
 
     private static final long serialVersionUID = -3458682765535922544L;
 
-    @Column(name = "user_name")
+    @Column(name = "USER_NAME")
     private String userName;
 
     public String getUserName() {

@@ -45,7 +45,7 @@ import org.libreccm.web.Application;
  * @author <a href="jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "domain_ownerships", schema = DB_SCHEMA)
+@Table(name = "DOMAIN_OWNERSHIPS", schema = DB_SCHEMA)
 public class DomainOwnership implements Serializable {
 
     private static final long serialVersionUID = 201504301305L;
@@ -54,7 +54,7 @@ public class DomainOwnership implements Serializable {
      * The ID of this domain ownership.
      */
     @Id
-    @Column(name = "ownership_id")
+    @Column(name = "OWNERSHIP_ID")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long ownershipId;
 
@@ -73,21 +73,21 @@ public class DomainOwnership implements Serializable {
     /**
      * The context for the domain mapping.
      */
-    @Column(name = "context")
+    @Column(name = "CONTEXT")
     private String context;
 
     /**
      * Defines the order in which the owning {@link CcmObject}s of a 
      * {@link Domain} are shown.
      */
-    @Column(name = "owner_order")
+    @Column(name = "OWNER_ORDER")
     private long ownerOrder;
 
     /**
      * Defines the order in which the {@link Domain}s owned by a 
      * {@link CcmObject} are shown.
      */
-    @Column(name = "domain_order")
+    @Column(name = "DOMAIN_ORDER")
     private long domainOrder;
 
     public long getOwnershipId() {

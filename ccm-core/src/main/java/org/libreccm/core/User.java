@@ -57,7 +57,7 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "ccm_users", schema = DB_SCHEMA)
+@Table(name = "CCM_USERS", schema = DB_SCHEMA)
 @NamedQueries({
     @NamedQuery(name = "findUserByScreenName",
                 query = "SELECT u FROM User u WHERE u.screenName = :screenname"),
@@ -81,11 +81,11 @@ public class User extends Subject implements Serializable {
      */
     @Embedded
     @AssociationOverride(
-            name = "user_names",
-            joinTable = @JoinTable(name = "user_names",
+            name = "USER_NAMES",
+            joinTable = @JoinTable(name = "USER_NAMES",
                                    schema = DB_SCHEMA,
                                    joinColumns = {
-                                       @JoinColumn(name = " user_id")}))
+                                       @JoinColumn(name = "USER_ID")}))
     @XmlElement(name = "person-name", namespace = CORE_XML_NS)
     private PersonName name;
 
@@ -96,16 +96,16 @@ public class User extends Subject implements Serializable {
      * the system if configured so, otherwise the email address of the user is
      * used).
      */
-    @Column(name = "screen_name", length = 255, nullable = false, unique = true)
+    @Column(name = "SCREEN_NAME", length = 255, nullable = false, unique = true)
     @NotBlank
     @XmlElement(name = "screen-name", namespace = CORE_XML_NS)
     private String screenName;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_email_addresses",
+    @CollectionTable(name = "USER_EMAIL_ADDRESSES",
                      schema = DB_SCHEMA,
                      joinColumns = {
-                         @JoinColumn(name = "user_id")})
+                         @JoinColumn(name = "USER_ID")})
     @Size(min = 1)
     @XmlElementWrapper(name = "email-addresses", namespace = CORE_XML_NS)
     @XmlElement(name = "email-address", namespace = CORE_XML_NS)
@@ -115,7 +115,7 @@ public class User extends Subject implements Serializable {
      * A user can be banned which means that he or she can't login into the
      * system anymore.
      */
-    @Column(name = "banned")
+    @Column(name = "BANNED")
     @XmlElement(name = "banned", namespace = CORE_XML_NS)
     private boolean banned;
 
@@ -123,21 +123,21 @@ public class User extends Subject implements Serializable {
      * An alias for the user used in an another system for SSO, for example
      * LDAP.
      */
-    @Column(name = "sso_login", length = 512)
+    @Column(name = "SSO_LOGIN", length = 512)
     @XmlElement(name = "sso-login", namespace = CORE_XML_NS)
     private String ssoLogin;
 
     /**
      * The hashed password of the user.
      */
-    @Column(name = "password", length = 2048)
+    @Column(name = "PASSWORD", length = 2048)
     @XmlTransient
     private String password;
 
     /**
      * The salt used to hash the password.
      */
-    @Column(name = "salt", length = 2048)
+    @Column(name = "SALT", length = 2048)
     @XmlTransient
     private String salt;
 
@@ -148,7 +148,7 @@ public class User extends Subject implements Serializable {
      * administrator.
      *
      */
-    @Column(name = "hash_algorithm", length = 64)
+    @Column(name = "HASH_ALGORITHM", length = 64)
     @XmlTransient
     private String hashAlgorithm;
 
@@ -156,7 +156,7 @@ public class User extends Subject implements Serializable {
      * Indicates that the user should be forced to change his or her password on
      * the next login.
      */
-    @Column(name = "password_reset_required")
+    @Column(name = "PASSWORD_RESET_REQUIRED")
     //Can't shorten the name without making the name cryptic.
     @SuppressWarnings("PMD.LongVariable")
     private boolean passwordResetRequired;
@@ -164,14 +164,14 @@ public class User extends Subject implements Serializable {
     /**
      * Question the recover a forgotten password.
      */
-    @Column(name = "password_question", length = 2048)
+    @Column(name = "PASSWORD_QUESTION", length = 2048)
     @XmlElement(name = "password-question", namespace = CORE_XML_NS)
     private String passwordQuestion;
 
     /**
      * Answer the the {@link #passwordQuestion}.
      */
-    @Column(name = "password_answer", length = 2048)
+    @Column(name = "PASSWORD_ANSWER", length = 2048)
     @XmlElement(name = "password-answer", namespace = CORE_XML_NS)
     private String passwordAnswer;
 

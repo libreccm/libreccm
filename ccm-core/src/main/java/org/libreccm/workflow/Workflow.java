@@ -45,32 +45,32 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "workflows", schema = DB_SCHEMA)
+@Table(name = "WORKFLOWS", schema = DB_SCHEMA)
 public class Workflow implements Serializable {
 
     private static final long serialVersionUID = 4322500264543325829L;
 
     @Id
-    @Column(name = "workflow_id")
+    @Column(name = "WORKFLOW_ID")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long workflowId;
 
     @Embedded
     @AssociationOverride(
-        name = "values",
-        joinTable = @JoinTable(name = "workflow_names",
+        name = "VALUES",
+        joinTable = @JoinTable(name = "WORKFLOW_NAMES",
                                schema = DB_SCHEMA,
                                joinColumns = {
-                                   @JoinColumn(name = "workflow_id")}))
+                                   @JoinColumn(name = "WORKFLOW_ID")}))
     private LocalizedString name;
 
     @Embedded
     @AssociationOverride(
-        name = "values",
-        joinTable = @JoinTable(name = "workflow_descriptions",
+        name = "VALUES",
+        joinTable = @JoinTable(name = "WORKFLOW_DESCRIPTIONS",
                                schema = DB_SCHEMA,
                                joinColumns = {
-                                   @JoinColumn(name = "workflow_id")
+                                   @JoinColumn(name = "WORKFLOW_ID")
                                }))
     private LocalizedString description;
 

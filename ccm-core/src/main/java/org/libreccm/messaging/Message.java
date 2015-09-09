@@ -48,7 +48,7 @@ import javax.persistence.TemporalType;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "messages", schema = DB_SCHEMA)
+@Table(name = "MESSAGES", schema = DB_SCHEMA)
 //Can't reduce complexity yet
 @SuppressWarnings({"PMD.CyclomaticComplexity",
                    "PMD.StdCyclomaticComplexity",
@@ -58,25 +58,25 @@ public class Message extends CcmObject implements Serializable {
     private static final long serialVersionUID = -9143137794418932025L;
 
     @OneToOne
-    @JoinColumn(name = "sender_id")
+    @JoinColumn(name = "SENDER_ID")
     private Subject sender;
 
-    @Column(name = "subject")
+    @Column(name = "SUBJECT")
     private String subject;
 
-    @Column(name = "body")
+    @Column(name = "BODY")
     private String body;
 
-    @Column(name = "body_mime_type")
+    @Column(name = "BODY_MIME_TYPE")
     @Convert(converter = MimeTypeConverter.class)
     private MimeType bodyMimeType;
 
-    @Column(name = "sent")
+    @Column(name = "SENT")
     @Temporal(TemporalType.TIMESTAMP)
     private Date sent;
 
     @ManyToOne
-    @JoinColumn(name = "in_reply_to_id")
+    @JoinColumn(name = "IN_REPLY_TO_ID")
     private Message inReplyTo;
 
     @OneToMany(mappedBy = "inReplyTo")

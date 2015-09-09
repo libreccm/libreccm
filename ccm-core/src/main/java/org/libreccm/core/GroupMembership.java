@@ -40,14 +40,14 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "group_memberships", schema = DB_SCHEMA)
+@Table(name = "GROUP_MEMBERSHIPS", schema = DB_SCHEMA)
 @XmlRootElement(name = "group-membership", namespace = CORE_XML_NS)
 public class GroupMembership implements Serializable {
 
     private static final long serialVersionUID = 1897274442468035089L;
 
     @Id
-    @Column(name = "membership_id")
+    @Column(name = "MEMBERSHIP_ID")
     @GeneratedValue(strategy = GenerationType.AUTO)
     @XmlElement(name = "membership-id", namespace = CORE_XML_NS)
     private long membershipId;

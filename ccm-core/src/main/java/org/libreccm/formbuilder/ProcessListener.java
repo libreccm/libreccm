@@ -40,37 +40,37 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "formbuilder_process_listeners", schema = DB_SCHEMA)
+@Table(name = "FORMBUILDER_PROCESS_LISTENERS", schema = DB_SCHEMA)
 public class ProcessListener extends CcmObject implements Serializable {
 
     private static final long serialVersionUID = -3029184333026605708L;
 
     @AssociationOverride(
-        name = "values",
+        name = "VALUES",
         joinTable = @JoinTable(
-            name = "formbuilder_process_listener_names",
+            name = "FORMBUILDER_PROCESS_LISTENER_NAMES",
             schema = DB_SCHEMA,
             joinColumns = {
-                @JoinColumn(name = "process_listener_id")}))
+                @JoinColumn(name = "PROCESS_LISTENER_ID")}))
     private LocalizedString name;
 
     @AssociationOverride(
-        name = "values",
+        name = "VALUES",
         joinTable = @JoinTable(
-            name = "formbuilder_process_listener_descriptions",
+            name = "FORMBUILDER_PROCESS_LISTENER_DESCRIPTIONS",
             schema = DB_SCHEMA,
             joinColumns = {
-                @JoinColumn(name = "process_listener_id")}))
+                @JoinColumn(name = "PROCESS_LISTENER_ID")}))
 
     private LocalizedString description;
 
-    @Column(name = "listener_class")
+    @Column(name = "LISTENER_CLASS")
     private String listenerClass;
 
     @ManyToOne
     private FormSection formSection;
 
-    @Column(name = "process_listener_order")
+    @Column(name = "PROCESS_LISTENER_ORDER")
     private long order;
 
     public LocalizedString getName() {

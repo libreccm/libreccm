@@ -53,19 +53,19 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "applications", schema = DB_SCHEMA)
+@Table(name = "APPLICATIONS", schema = DB_SCHEMA)
 @XmlRootElement(name = "application", namespace = WEB_XML_NS)
 public class Application extends Resource implements Serializable {
 
     private static final long serialVersionUID = 9205226362368890784L;
 
-    @Column(name = "primary_url", length = 1024, nullable = false)
+    @Column(name = "PRIMARY_URL", length = 1024, nullable = false)
     @Convert(converter = UriConverter.class)
     @XmlElement(name = "primary-url", namespace = WEB_XML_NS)
     private URI primaryUrl;
 
     @OneToOne
-    @JoinColumn(name = "container_group_id")
+    @JoinColumn(name = "CONTAINER_GROUP_ID")
     @XmlElement(name = "container-group", namespace = WEB_XML_NS)
     private Group containerGroup;
 

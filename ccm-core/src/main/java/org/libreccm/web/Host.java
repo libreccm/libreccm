@@ -36,23 +36,23 @@ import javax.persistence.UniqueConstraint;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "hosts", schema = DB_SCHEMA,
+@Table(name = "HOSTS", schema = DB_SCHEMA,
        uniqueConstraints = {
-           @UniqueConstraint(columnNames = {"server_name", "server_port"})})
+           @UniqueConstraint(columnNames = {"SERVER_NAME", "SERVER_PORT"})})
 @SuppressWarnings("PMD.ShortClassName") //Host is perfectly fine as class name...
 public class Host implements Serializable {
 
     private static final long serialVersionUID = 8727376444061847375L;
 
     @Id
-    @Column(name = "host_id")
+    @Column(name = "HOST_ID")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long hostId;
 
-    @Column(name = "server_name", length = 512)
+    @Column(name = "SERVER_NAME", length = 512)
     private String serverName;
 
-    @Column(name = "server_port")
+    @Column(name = "SERVER_PORT")
     private long serverPort;
 
     public long getHostId() {

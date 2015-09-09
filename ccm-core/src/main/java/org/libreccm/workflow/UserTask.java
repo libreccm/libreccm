@@ -45,7 +45,7 @@ import javax.persistence.TemporalType;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "workflow_user_tasks", schema = DB_SCHEMA)
+@Table(name = "WORKFLOW_USER_TASKS", schema = DB_SCHEMA)
 //Can't reduce complexity yet
 @SuppressWarnings({"PMD.CyclomaticComplexity",
                    "PMD.StdCyclomaticComplexity",
@@ -54,45 +54,45 @@ public class UserTask extends Task implements Serializable {
 
     private static final long serialVersionUID = 4188064584389893019L;
 
-    @Column(name = "locked")
+    @Column(name = "LOCKED")
     private boolean locked;
 
     @OneToOne
-    @JoinColumn(name = "locking_user_id")
+    @JoinColumn(name = "LOCKING_USER_ID")
     private User lockingUser;
 
-    @Column(name = "start_date")
+    @Column(name = "START_DATE")
     @Temporal(TemporalType.TIMESTAMP)
     private Date startDate;
 
-    @Column(name = "due_date")
+    @Column(name = "DUE_DATE")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dueDate;
 
-    @Column(name = "duration_minutes")
+    @Column(name = "DURATION_MINUTES")
     private long durationMinutes;
 
     @OneToOne
-    @JoinColumn(name = "notification_sender")
+    @JoinColumn(name = "NOTIFICATION_SENDER")
     @SuppressWarnings("PMD.LongVariable") //Shorter name would not be descriptive
     private User notificationSender;
 
     @OneToMany
-    @JoinTable(name = "workflow_user_task_assigned_users",
+    @JoinTable(name = "WORKFLOW_USER_TASK_ASSIGNED_USERS",
                schema = DB_SCHEMA,
                joinColumns = {
-                   @JoinColumn(name = "user_task_id")},
+                   @JoinColumn(name = "USER_TASK_ID")},
                inverseJoinColumns = {
-                   @JoinColumn(name = "assigned_user_id")})
+                   @JoinColumn(name = "ASSIGNED_USER_ID")})
     private List<User> assignedUsers;
 
     @OneToMany
-    @JoinTable(name = "workflow_user_task_assigned_groups",
+    @JoinTable(name = "WORKFLOW_USER_TASK_ASSIGNED_GROUPS",
                schema = DB_SCHEMA,
                joinColumns = {
-                   @JoinColumn(name = "user_task_id")},
+                   @JoinColumn(name = "USER_TASK_ID")},
                inverseJoinColumns = {
-                   @JoinColumn(name = "assigned_group_id")})
+                   @JoinColumn(name = "ASSIGNED_GROUP_ID")})
     private List<Group> assignedGroups;
 
     public UserTask() {

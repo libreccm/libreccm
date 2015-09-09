@@ -20,7 +20,8 @@
         -->
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
             
-        <jta-data-source>java:/comp/env/jdbc/org/libreccm/ccm-test-bundle/h2-mem</jta-data-source>
+        <jta-data-source>java:/comp/env/jdbc/org/libreccm/ccm-test-bundle/h2mem</jta-data-source>
+        <!--<jta-data-source>java:/comp/env/jdbc/org/libreccm/ccm-test-bundle/h2</jta-data-source>-->
         <properties>
             <property name="hibernate.hbm2ddl.auto" value=""/>
             <property name="hibernate.show_sql" value="true"/>

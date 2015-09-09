@@ -40,9 +40,13 @@ import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
+import org.jboss.shrinkwrap.resolver.api.maven.MavenResolvedArtifact;
 import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
+import org.jboss.shrinkwrap.resolver.api.maven.coordinate.MavenCoordinates;
+import org.jboss.shrinkwrap.resolver.api.maven.coordinate.MavenDependencyExclusion;
 import org.junit.After;
 import org.junit.AfterClass;
 
@@ -101,30 +105,53 @@ public class CcmModulesTest {
             .loadPomFromFile("pom.xml");
         final PomEquippedResolveStage dependencies = pom
             .importCompileAndRuntimeDependencies();
-        final File[] libs = dependencies.resolve().withTransitivity().asFile();
+        //final File[] libs = dependencies.resolve().withTransitivity().asFile();
+        final MavenResolvedArtifact[] artifacts = dependencies.resolve()
+            .withTransitivity().asResolvedArtifact();
 
-        for (File lib : libs) {
-            System.err.printf("Adding file '%s' to test archive...%n",
-                              lib.getName());
+//        for (File lib : libs) {
+//            System.err.printf("Adding file '%s' to test archive...%n",
+//                              lib.getName());
+//        }
+        final WebArchive webArchive = ShrinkWrap.create(
+            WebArchive.class, "LibreCCM-org.libreccm.CcmModulesTest.war");
+        for (final MavenResolvedArtifact artifact : artifacts) {
+            final JavaArchive archive = artifact.as(JavaArchive.class);
+
+            if (archive.getName().startsWith("ccm-core")) {
+                archive.delete("META-INF/persistence.xml");
+            }
+
+            System.err.printf("Adding archive '%s' to test archive...%n",
+                              archive.getName());
+
+            webArchive.addAsLibrary(archive);
         }
 
-        return ShrinkWrap
-            .create(WebArchive.class,
-                    "LibreCCM-org.libreccm.CcmModulesTest.war")
-            .addAsLibraries(libs)
-            .addPackage(IntegrationTest.class.getPackage())
+        webArchive.addPackage(IntegrationTest.class.getPackage())
             .setWebXML(new File("src/main/webapp/WEB-INF/web.xml"))
             .addAsResource("test-persistence.xml", "META-INF/persistence.xml")
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+
+        return webArchive;
+
+//        return ShrinkWrap
+//            .create(WebArchive.class,
+//                    "LibreCCM-org.libreccm.CcmModulesTest.war")
+//            .addAsLibraries(libs)
+//            .addPackage(IntegrationTest.class.getPackage())
+//            .setWebXML(new File("src/main/webapp/WEB-INF/web.xml"))
+//            .addAsResource("test-persistence.xml", "META-INF/persistence.xml")
+//            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test
     @CleanupUsingScript("clean_schema.sql")
     public void verifyModules() throws SQLException {
-        
+
         //Extract JDBC connnection from EntityManager
         final Object dataSourceObj = entityManager.getEntityManagerFactory()
-                .getProperties().get("javax.persistence.jtaDataSource");
+            .getProperties().get("javax.persistence.jtaDataSource");
         assertThat(dataSourceObj, is(instanceOf(DataSource.class)));
 
         final DataSource dataSource = (DataSource) dataSourceObj;
@@ -132,28 +159,57 @@ public class CcmModulesTest {
         assertThat(connection, is(instanceOf(Connection.class)));
 
         //Check if the ccm_core.ccm_modules table exists.
-        final ResultSet ccmObjectTable = connection.getMetaData()
+        final ResultSet installedModules;
+        if ("H2".equals(connection.getMetaData().getDatabaseProductName())) {
+            final ResultSet ccmObjectTable = connection.getMetaData()
+                .getTables(null, "CCM_CORE", "CCM_OBJECTS", null);
+            if (!ccmObjectTable.next()) {
+                fail("No metadata for table ccm_core.ccm_objects returned. "
+                         + "Table does not exist?");
+            }
+
+            //Check of the ccm_core.installed_modules exists
+            final ResultSet installedModulesTable = connection.getMetaData()
+                .getTables(null, "CCM_CORE", "INSTALLED_MODULES", null);
+            if (!installedModulesTable.next()) {
+                fail(
+                    "No metadata for table ccm_core.installed_modules returned. "
+                    + "Table does not exist?");
+            }
+
+            //Check if the ccm-core module is registered in the 
+            //ccm_core.installed_modules table
+            final Statement statement = connection.createStatement();
+            installedModules = statement.executeQuery(
+                "SELECT MODULE_ID, MODULE_CLASS_NAME, STATUS "
+                    + "FROM CCM_CORE.INSTALLED_MODULES"
+                    + " ORDER BY MODULE_CLASS_NAME");
+        } else {
+            final ResultSet ccmObjectTable = connection.getMetaData()
                 .getTables(null, "ccm_core", "ccm_objects", null);
-        if (!ccmObjectTable.next()) {
-            fail("No metadata for table ccm_core.ccm_objects returned. "
+            if (!ccmObjectTable.next()) {
+                fail("No metadata for table ccm_core.ccm_objects returned. "
                          + "Table does not exist?");
-        }
-
-        //Check of the ccm_core.installed_modules exists
-        final ResultSet installedModulesTable = connection.getMetaData()
+            }
+            
+            //Check of the ccm_core.installed_modules exists
+            final ResultSet installedModulesTable = connection.getMetaData()
                 .getTables(null, "ccm_core", "installed_modules", null);
-        if (!installedModulesTable.next()) {
-            fail("No metadata for table ccm_core.installed_modules returned. "
-                         + "Table does not exist?");
-        }
-
-        //Check if the ccm-core module is registered in the 
-        //ccm_core.installed_modules table
-        final Statement statement = connection.createStatement();
-        final ResultSet installedModules = statement.executeQuery(
+            if (!installedModulesTable.next()) {
+                fail(
+                    "No metadata for table ccm_core.installed_modules returned. "
+                    + "Table does not exist?");
+            }
+            
+            //Check if the ccm-core module is registered in the 
+            //ccm_core.installed_modules table
+            final Statement statement = connection.createStatement();
+            installedModules = statement.executeQuery(
                 "SELECT module_id, module_class_name, status "
-                        + "FROM ccm_core.installed_modules"
-                        + " ORDER BY module_class_name");
+                    + "FROM ccm_core.installed_modules"
+                    + " ORDER BY module_class_name");
+
+        }
         final List<InstalledModuleData> modulesData = new ArrayList<>();
         while (installedModules.next()) {
             createInstalledModuleListEntry(installedModules, modulesData);
@@ -163,44 +219,44 @@ public class CcmModulesTest {
 
         assertThat(Integer.toString(modulesData.get(0).getModuleId()),
                    is(equalTo(Integer.toString(CcmCore.class.getName().
-                                           hashCode()))));
+                               hashCode()))));
         assertThat(modulesData.get(0).getModuleClassName(),
                    is(equalTo(CcmCore.class.getName())));
         assertThat(modulesData.get(0).getStatus(),
                    is(equalTo(ModuleStatus.INSTALLED.toString())));
-        
+
         //Check if the public user is registed.
         final TypedQuery<User> userQuery = entityManager.createQuery(
-            "SELECT u FROM User u WHERE u.screenName = 'public-user'", 
+            "SELECT u FROM User u WHERE u.screenName = 'public-user'",
             User.class);
         final List<User> users = userQuery.getResultList();
-        
+
         assertThat(users.size(), is(1));
         assertThat(users.get(0).getScreenName(), is(equalTo("public-user")));
         assertThat(users.get(0).getName(), is(not(nullValue())));
         assertThat(users.get(0).getName().getFamilyName(), is(equalTo("ccm")));
-        assertThat(users.get(0).getName().getGivenName(), 
+        assertThat(users.get(0).getName().getGivenName(),
                    is(equalTo("public user")));
         assertThat(users.get(0).getEmailAddresses().size(), is(1));
         assertThat(users.get(0).getEmailAddresses().get(0).getAddress(),
                    is(equalTo("public-user@localhost")));
-        
+
     }
 
     private void createInstalledModuleListEntry(
-            final ResultSet resultSet, final List<InstalledModuleData> modulesData)
-            throws SQLException {
+        final ResultSet resultSet, final List<InstalledModuleData> modulesData)
+        throws SQLException {
 
         final InstalledModuleData moduleData = new InstalledModuleData();
         moduleData.setModuleId(resultSet.getInt("module_id"));
         moduleData.setModuleClassName(resultSet.getString("module_class_name"));
         moduleData.setStatus(resultSet.getString("status"));
-        
+
         modulesData.add(moduleData);
     }
-    
+
     private class InstalledModuleData {
-        
+
         private int moduleId;
         private String moduleClassName;
         private String status;
@@ -228,6 +284,7 @@ public class CcmModulesTest {
         public void setStatus(final String status) {
             this.status = status;
         }
-        
+
     }
+
 }

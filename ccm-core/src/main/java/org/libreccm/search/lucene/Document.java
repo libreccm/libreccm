@@ -43,7 +43,7 @@ import javax.persistence.TemporalType;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "lucene_documents", schema = DB_SCHEMA)
+@Table(name = "LUCENE_DOCUMENTS", schema = DB_SCHEMA)
 //Can't reduce complexity yet. Not sure what to do about the God class warning.
 //Maybe we have to put some of the properties into an extra class.
 @SuppressWarnings({"PMD.CyclomaticComplexity",
@@ -55,56 +55,56 @@ public class Document implements Serializable {
     private static final long serialVersionUID = 3363154040440909619L;
 
     @Id
-    @Column(name = "document_id")
+    @Column(name = "DOCUMENT_ID")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long documentId;
 
-    @Column(name = "type")
+    @Column(name = "TYPE")
     private String type;
 
-    @Column(name = "type_specific_info", length = 512)
+    @Column(name = "TYPE_SPECIFIC_INFO", length = 512)
     private String typeSpecificInfo;
 
-    @Column(name = "document_timestamp")
+    @Column(name = "DOCUMENT_TIMESTAMP")
     @Temporal(TemporalType.TIMESTAMP)
     private Date timeStamp;
 
-    @Column(name = "dirty")
+    @Column(name = "DIRTY")
     private long dirty;
 
-    @Column(name = "document_language", length = 8)
+    @Column(name = "DOCUMENT_LANGUAGE", length = 8)
     private String language;
 
-    @Column(name = "country", length = 8)
+    @Column(name = "COUNTRY", length = 8)
     private String country;
 
-    @Column(name = "title", length = 4096)
+    @Column(name = "TITLE", length = 4096)
     private String title;
 
-    @Column(name = "summary", length = 4096)
+    @Column(name = "SUMMARY", length = 4096)
     private String summary;
 
-    @Column(name = "content")
+    @Column(name = "CONTENT")
     @Lob
     private String content;
 
-    @Column(name = "created")
+    @Column(name = "CREATED")
     @Temporal(TemporalType.TIMESTAMP)
     private Date created;
 
     @OneToOne
-    @JoinColumn(name = "created_by_party_id")
+    @JoinColumn(name = "CREATED_BY_PARTY_ID")
     private Subject createdBy;
 
-    @Column(name = "last_modified")
+    @Column(name = "LAST_MODIFIED")
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastModified;
 
     @OneToOne
-    @JoinColumn(name = "last_modified_by")
+    @JoinColumn(name = "LAST_MODIFIED_BY")
     private Subject lastModifiedBy;
 
-    @Column(name = "content_section", length = 512)
+    @Column(name = "CONTENT_SECTION", length = 512)
     private String contentSection;
 
     public Document() {

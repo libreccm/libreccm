@@ -55,8 +55,8 @@ public class LocalizedString implements Serializable {
      * The localised values of the string.
      */
     @ElementCollection
-    @MapKeyColumn(name = "locale")
-    @Column(name = "localized_value")
+    @MapKeyColumn(name = "LOCALE")
+    @Column(name = "LOCALIZED_VALUE")
     @Lob
     @XmlElementWrapper(name = "values", namespace = L10N_XML_NS)
     @XmlElement(name = "value", namespace = L10N_XML_NS)

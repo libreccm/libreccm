@@ -44,7 +44,7 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "formbuilder_components", schema = DB_SCHEMA)
+@Table(name = "FORMBUILDER_COMPONENTS", schema = DB_SCHEMA)
 //Can't reduce complexity yet
 @SuppressWarnings({"PMD.CyclomaticComplexity",
                    "PMD.StdCyclomaticComplexity",
@@ -53,22 +53,22 @@ public class Component extends CcmObject implements Serializable {
 
     private static final long serialVersionUID = 1787173100367982069L;
 
-    @Column(name = "admin_name")
+    @Column(name = "ADMIN_NAME")
     private String adminName;
 
     @Embedded
     @AssociationOverride(
-        name = "values",
-        joinTable = @JoinTable(name = "formbuilder_component_descriptions",
+        name = "VALUES",
+        joinTable = @JoinTable(name = "FORMBUILDER_COMPONENT_DESCRIPTIONS",
                                schema = DB_SCHEMA,
                                joinColumns = {
-                                   @JoinColumn(name = "component_id")}))
+                                   @JoinColumn(name = "COMPONENT_ID")}))
     private LocalizedString description;
 
-    @Column(name = "attribute_string")
+    @Column(name = "ATTRIBUTE_STRING")
     private String attributeString;
 
-    @Column(name = "active")
+    @Column(name = "ACTIVE")
     private boolean active;
 
     @ManyToOne
@@ -77,10 +77,10 @@ public class Component extends CcmObject implements Serializable {
     @OneToMany(mappedBy = "parentComponent")
     private List<Component> childComponents;
 
-    @Column(name = "component_order")
+    @Column(name = "COMPONENT_ORDER")
     private long componentOrder;
 
-    @Column(name = "selected")
+    @Column(name = "SELECTED")
     private boolean selected;
 
     public String getAdminName() {

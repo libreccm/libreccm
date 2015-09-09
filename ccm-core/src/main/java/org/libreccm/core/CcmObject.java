@@ -61,7 +61,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  */
 @Entity
-@Table(name = "ccm_objects", schema = DB_SCHEMA)
+@Table(name = "CCM_OBJECTS", schema = DB_SCHEMA)
 @Inheritance(strategy = InheritanceType.JOINED)
 @XmlRootElement(name = "ccm-object", namespace = CORE_XML_NS)
 //False warning (?). Because this class has been migrated from the old PDL style
@@ -77,7 +77,7 @@ public class CcmObject implements Serializable {
      * necessary to define an additional ID on classes which extend this class.
      */
     @Id
-    @Column(name = "object_id")
+    @Column(name = "OBJECT_ID")
     @GeneratedValue(strategy = GenerationType.AUTO)
     @XmlElement(name = "object-id", namespace = CORE_XML_NS)
     private long objectId;
@@ -85,7 +85,7 @@ public class CcmObject implements Serializable {
     /**
      * A human readable name identifying this {@code CcmObject}
      */
-    @Column(name = "display_name")
+    @Column(name = "DISPLAY_NAME")
     @XmlElement(name = "display-name", namespace = CORE_XML_NS)
     private String displayName;
 

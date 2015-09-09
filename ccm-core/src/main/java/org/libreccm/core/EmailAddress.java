@@ -50,17 +50,17 @@ public class EmailAddress implements Serializable {
 
     private static final long serialVersionUID = -4076089589412432766L;
 
-    @Column(name = "email_address", length = 512, nullable = false)
+    @Column(name = "EMAIL_ADDRESS", length = 512, nullable = false)
     @XmlElement(name = "address", namespace = CORE_XML_NS, required = true)
     @NotBlank
     @Email
     private String address;
 
-    @Column(name = "bouncing")
+    @Column(name = "BOUNCING")
     @XmlElement(name = "bouncing", namespace = CORE_XML_NS)
     private boolean bouncing;
 
-    @Column(name = "verified")
+    @Column(name = "VERIFIED")
     @XmlElement(name = "verified", namespace = CORE_XML_NS)
     private boolean verified;
 

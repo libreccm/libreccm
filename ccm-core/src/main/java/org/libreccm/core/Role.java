@@ -49,7 +49,7 @@ import javax.persistence.NamedQuery;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "ccm_roles", schema = DB_SCHEMA)
+@Table(name = "CCM_ROLES", schema = DB_SCHEMA)
 @NamedQueries({
     @NamedQuery(name = "findRolesForName",
                 query = "SELECT r FROM Role r "
@@ -70,23 +70,23 @@ public class Role implements Serializable {
     private static final long serialVersionUID = 3314358449751376350L;
 
     @Id
-    @Column(name = "role_id")
+    @Column(name = "ROLE_ID")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long roleId;
 
-    @Column(name = "name", length = 512)
+    @Column(name = "NAME", length = 512)
     @NotBlank
     private String name;
 
     @ManyToOne
-    @JoinColumn(name = "source_group_id")
+    @JoinColumn(name = "SOURCE_GROUP_ID")
     private Group sourceGroup;
 
     @OneToOne
-    @JoinColumn(name = "implicit_group_id")
+    @JoinColumn(name = "IMPLICIT_GROUP_ID")
     private Group implicitGroup;
 
-    @Column(name = "description")
+    @Column(name = "DESCRIPTION")
     private String description;
 
     public Role() {

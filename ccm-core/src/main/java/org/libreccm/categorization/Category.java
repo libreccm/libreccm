@@ -61,7 +61,7 @@ import javax.validation.constraints.Pattern;
  * @apiviz.composedOf org.libreccm.categorization.Categorization
  */
 @Entity
-@Table(name = "categories", schema = DB_SCHEMA)
+@Table(name = "CATEGORIES", schema = DB_SCHEMA)
 @NamedQueries({
     @NamedQuery(name = "topLevelCategories", 
                 query = "SELECT c FROM Category c WHERE c.parentCategory IS NULL")
@@ -74,14 +74,14 @@ public class Category extends CcmObject implements Serializable {
      * A unique ID for the category. This ID will be the same even the same
      * category system/domain is used in different installations.
      */
-    @Column(name = "unique_id", nullable = false)
+    @Column(name = "UNIQUE_ID", nullable = false)
     private String uniqueId;
 
     /**
      * The name of the category. This is used as URL stub, therefore only the
      * characters a to z, A to Z and 0 to 9 are allowed.
      */
-    @Column(name = "name", nullable = false)
+    @Column(name = "NAME", nullable = false)
     @NotBlank
     @Pattern(regexp = "[\\w-.]*")
     private String name;
@@ -91,11 +91,11 @@ public class Category extends CcmObject implements Serializable {
      */
     @Embedded
     @AssociationOverride(
-            name = "values",
-            joinTable = @JoinTable(name = "category_titles", 
+            name = "VALUES",
+            joinTable = @JoinTable(name = "CATEGORY_TITLES", 
                                    schema = DB_SCHEMA,
                                    joinColumns = {
-                                       @JoinColumn(name = "object_id")}
+                                       @JoinColumn(name = "OBJECT_ID")}
             ))
     private LocalizedString title;
 
@@ -104,11 +104,11 @@ public class Category extends CcmObject implements Serializable {
      */
     @Embedded
     @AssociationOverride(
-            name = "values",
-            joinTable = @JoinTable(name = "category_descriptions",
+            name = "VALUES",
+            joinTable = @JoinTable(name = "CATEGORY_DESCRIPTIONS",
                                    schema = DB_SCHEMA,
                                    joinColumns = {
-                                       @JoinColumn(name = "object_id")}
+                                       @JoinColumn(name = "OBJECT_ID")}
             ))
     private LocalizedString description;
 
@@ -116,21 +116,21 @@ public class Category extends CcmObject implements Serializable {
      * Defines if the category is enabled. If the category is <em>not</em>
      * enabled, the category can't be used in any way.
      */
-    @Column(name = "enabled")
+    @Column(name = "ENABLED")
     private boolean enabled;
 
     /**
      * Defines if the category is visible. A category which is <em>not</em>
      * visible should be only visible in the backend but not in the frontend.
      */
-    @Column(name = "visible")
+    @Column(name = "VISIBLE")
     private boolean visible;
 
     /**
      * Defines if the category is abstract. It is not possible to add objects to
      * an abstract category.
      */
-    @Column(name = "abstract_category")
+    @Column(name = "ABSTRACT_CATEGORY")
     private boolean abstractCategory;
 
     /**
@@ -150,13 +150,13 @@ public class Category extends CcmObject implements Serializable {
      * of domain every category has a parent category.
      */
     @ManyToOne
-    @JoinColumn(name = "parent_category_id")
+    @JoinColumn(name = "PARENT_CATEGORY_ID")
     private Category parentCategory;
 
     /**
      * Numeric value to define the order of the categories.
      */
-    @Column(name = "category_order")
+    @Column(name = "CATEGORY_ORDER")
     private long categoryOrder;
 
     public Category() {

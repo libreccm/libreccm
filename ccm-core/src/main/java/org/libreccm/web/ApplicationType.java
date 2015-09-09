@@ -41,7 +41,7 @@ import org.libreccm.core.ResourceType;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "application_types", schema = DB_SCHEMA)
+@Table(name = "APPLICATION_TYPES", schema = DB_SCHEMA)
 @SuppressWarnings("PMD.LongVariable")
 public class ApplicationType extends ResourceType implements Serializable {
 
@@ -49,16 +49,16 @@ public class ApplicationType extends ResourceType implements Serializable {
     private static final String PMD_LONG_VARIABLE = "PMD.LongVariable";
 
     @OneToMany
-    @JoinColumn(name = "relevant_privilege_id")
+    @JoinColumn(name = "RELEVANT_PRIVILEGE_ID")
     @SuppressWarnings(PMD_LONG_VARIABLE)
     private List<Privilege> relevantPrivileges;
 
     @ManyToOne
-    @JoinColumn(name = "container_group_id")
+    @JoinColumn(name = "CONTAINER_GROUP_ID")
     private Group containerGroup;
 
     @ManyToOne
-    @JoinColumn(name = "provider_app_type_id")
+    @JoinColumn(name = "PROVIDER_APP_TYPE_ID")
     @SuppressWarnings(PMD_LONG_VARIABLE)
     private ApplicationType providerApplicationType;
 

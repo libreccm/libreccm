@@ -35,15 +35,15 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "formbuilder_listeners", schema = DB_SCHEMA)
+@Table(name = "FORMBUILDER_LISTENERS", schema = DB_SCHEMA)
 public class Listener extends CcmObject implements Serializable {
 
     private static final long serialVersionUID = 9030104813240364500L;
 
-    @Column(name = "class_name")
+    @Column(name = "CLASS_NAME")
     private String className;
 
-    @Column(name = "attribute_string")
+    @Column(name = "ATTRIBUTE_STRING")
     private String attributeString;
 
     @ManyToOne

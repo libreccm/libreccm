@@ -36,12 +36,12 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "formbuilder_formsections", schema = DB_SCHEMA)
+@Table(name = "FORMBUILDER_FORMSECTIONS", schema = DB_SCHEMA)
 public class FormSection extends Component implements Serializable {
 
     private static final long serialVersionUID = -3195157282292906945L;
 
-    @Column(name = "formsection_action")
+    @Column(name = "FORMSECTION_ACTION")
     private String action;
 
     @OneToMany(mappedBy = "formSection")

@@ -34,21 +34,21 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "formbuilder_metaobjects", schema = DB_SCHEMA)
+@Table(name = "FORMBUILDER_METAOBJECTS", schema = DB_SCHEMA)
 public class MetaObject extends CcmObject implements Serializable {
 
     private static final long serialVersionUID = -3770682858640493776L;
 
-    @Column(name = "pretty_name")
+    @Column(name = "PRETTY_NAME")
     private String prettyName;
 
-    @Column(name = "pretty_plural")
+    @Column(name = "PRETTY_PLURAL")
     private String prettyPlural;
 
-    @Column(name = "class_name")
+    @Column(name = "CLASS_NAME")
     private String className;
 
-    @Column(name = "properties_form")
+    @Column(name = "PROPERTIES_FORM")
     private String propertiesForm;
 
     public String getPrettyName() {

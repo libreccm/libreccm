@@ -56,7 +56,7 @@ import javax.persistence.TemporalType;
  *
  */
 @Entity
-@Table(name = "resources", schema = DB_SCHEMA)
+@Table(name = "RESOURCES", schema = DB_SCHEMA)
 public class Resource extends CcmObject implements Serializable {
 
     private static final long serialVersionUID = 7345482620613842781L;
@@ -66,11 +66,11 @@ public class Resource extends CcmObject implements Serializable {
      */
     @Embedded
     @AssociationOverride(
-        name = "values",
-        joinTable = @JoinTable(name = "resource_titles",
+        name = "VALUES",
+        joinTable = @JoinTable(name = "RESOURCE_TITLES",
                                schema = DB_SCHEMA,
                                joinColumns = {
-                                   @JoinColumn(name = "object_id")}))
+                                   @JoinColumn(name = "OBJECT_ID")}))
     private LocalizedString title;
 
     /**
@@ -78,11 +78,11 @@ public class Resource extends CcmObject implements Serializable {
      */
     @Embedded
     @AssociationOverride(
-        name = "values",
-        joinTable = @JoinTable(name = "resource_descriptions",
+        name = "VALUES",
+        joinTable = @JoinTable(name = "RESOURCE_DESCRIPTIONS",
                                schema = DB_SCHEMA,
                                joinColumns = {
-                                   @JoinColumn(name = "object_id")}))
+                                   @JoinColumn(name = "OBJECT_ID")}))
     private LocalizedString description;
 
     @ManyToOne
@@ -91,7 +91,7 @@ public class Resource extends CcmObject implements Serializable {
     /**
      * Date on which the resource was created.
      */
-    @Column(name = "created")
+    @Column(name = "CREATED")
     @Temporal(TemporalType.TIMESTAMP)
     private Date created;
 

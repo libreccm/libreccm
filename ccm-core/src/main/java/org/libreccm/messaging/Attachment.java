@@ -43,31 +43,31 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "attachments", schema = DB_SCHEMA)
+@Table(name = "ATTACHMENTS", schema = DB_SCHEMA)
 public class Attachment implements Serializable {
 
     private static final long serialVersionUID = 2063934721452863106L;
 
     @Id
-    @Column(name = "attachment_id")
+    @Column(name = "ATTACHMENT_ID")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long attachmentId;
 
     @ManyToOne
-    @JoinColumn(name = "message_id")
+    @JoinColumn(name = "MESSAGE_ID")
     private Message message;
 
-    @Column(name = "mime_type")
+    @Column(name = "MIME_TYPE")
     @Convert(converter = MimeTypeConverter.class)
     private MimeType mimeType;
 
-    @Column(name = "title")
+    @Column(name = "TITLE")
     private String title;
 
-    @Column(name = "description")
+    @Column(name = "DESCRIPTION")
     private String description;
 
-    @Column(name = "attachment_data")
+    @Column(name = "ATTACHMENT_DATA")
     @Lob
     private byte[] data;
 

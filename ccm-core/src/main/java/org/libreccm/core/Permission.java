@@ -47,7 +47,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "permissions", schema = DB_SCHEMA)
+@Table(name = "PERMISSIONS", schema = DB_SCHEMA)
 @NamedQueries({
     @NamedQuery(name = "findPermissionsForSubject",
                 query = "SELECT p FROM Permission p WHERE p.grantee = :subject"),
@@ -100,7 +100,7 @@ public class Permission implements Serializable {
      * The database id of the permission.
      */
     @Id
-    @Column(name = "permission_id")
+    @Column(name = "PERMISSION_ID")
     @GeneratedValue(strategy = GenerationType.AUTO)
     @XmlElement(name = "permission-id", namespace = CORE_XML_NS)
     private long permissionId;
@@ -111,14 +111,14 @@ public class Permission implements Serializable {
      * {@link User}s in that have the permission.
      */
     @ManyToOne
-    @JoinColumn(name = "grantee_id")
+    @JoinColumn(name = "GRANTEE_ID")
     private Subject grantee;
 
     /**
      * The {@link Privilege} granted by this {@code Permission}.
      */
     @OneToOne
-    @JoinColumn(name = "granted_privilege_id")
+    @JoinColumn(name = "GRANTED_PRIVILEGE_ID")
     @XmlElement(name = "privilege", namespace = CORE_XML_NS)
     private Privilege grantedPrivilege;
 
@@ -128,7 +128,7 @@ public class Permission implements Serializable {
      * <strong>all</strong> objects.
      */
     @ManyToOne
-    @JoinColumn(name = "object_id")
+    @JoinColumn(name = "OBJECT_ID")
     private CcmObject object;
 
     /**
@@ -137,7 +137,7 @@ public class Permission implements Serializable {
      * process.
      */
     @ManyToOne
-    @JoinColumn(name = "creation_user_id")
+    @JoinColumn(name = "CREATION_USER_ID")
     @XmlElement(name = "creation-user", namespace = CORE_XML_NS)
     private User creationUser;
 
@@ -146,7 +146,7 @@ public class Permission implements Serializable {
      * property can be {@code null} if this {@code Permission} was created by a
      * system process.
      */
-    @Column(name = "creation_date")
+    @Column(name = "CREATION_DATE")
     @Temporal(TemporalType.TIMESTAMP)
     @XmlElement(name = "creation-date", namespace = CORE_XML_NS)
     private Date creationDate;
@@ -156,7 +156,7 @@ public class Permission implements Serializable {
      * property can be {@code null} if this {@code Permission} was created by a
      * system process.
      */
-    @Column(name = "creation_ip")
+    @Column(name = "CREATION_IP")
     @XmlElement(name = "creation-ip", namespace = CORE_XML_NS)
     private String creationIp;
 

@@ -21,14 +21,14 @@ import org.libreccm.formbuilder.ProcessListener;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "formbuilder_confirm_redirect_listeners", schema = DB_SCHEMA)
+@Table(name = "FORMBUILDER_CONFIRM_REDIRECT_LISTENERS", schema = DB_SCHEMA)
 public class ConfirmRedirectListener
     extends ProcessListener
     implements Serializable {
 
     private static final long serialVersionUID = 7891034630202555922L;
 
-    @Column(name = "url")
+    @Column(name = "URL")
     private String url;
 
     public String getUrl() {

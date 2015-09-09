@@ -15,18 +15,21 @@ import javax.persistence.Table;
 
 import org.libreccm.formbuilder.ProcessListener;
 
+import javax.persistence.Column;
+
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "formbuilder_remote_server_post_listener", schema = DB_SCHEMA)
+@Table(name = "FORMBUILDER_REMOTE_SERVER_POST_LISTENER", schema = DB_SCHEMA)
 public class RemoteServerPostListener
         extends ProcessListener
         implements Serializable {
 
     private static final long serialVersionUID = 7095242410811956838L;
 
+    @Column(name = "REMOTE_URL", length = 2048)
     private String remoteUrl;
 
     public String getRemoteUrl() {

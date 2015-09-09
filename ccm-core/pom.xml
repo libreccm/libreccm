@@ -262,7 +262,7 @@
                 <configuration>
                     <dialects>
                         <param>h2</param>
-                        <param>mysql5_innodb</param>
+                        <!--<param>mysql5_innodb</param>-->
                         <param>oracle10g</param>
                         <param>postgresql9</param>
                     </dialects>
@@ -593,8 +593,8 @@
                         <configuration>
                             <dialects>
                                 <param>h2</param>
-                                <param>mysql5_innodb</param>
                                 <param>postgresql9</param>
+                                <param>oracle10g</param>
                             </dialects>
                             <packages>
                                 <param>org.libreccm</param>

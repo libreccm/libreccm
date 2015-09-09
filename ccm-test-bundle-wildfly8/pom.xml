@@ -62,6 +62,16 @@
             <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jboss.shrinkwrap.resolver</groupId>
+            <artifactId>shrinkwrap-resolver-spi</artifactId>
+            <scope>test</scope>
+        </dependency>
+         <dependency>
+            <groupId>org.jboss.shrinkwrap.resolver</groupId>
+            <artifactId>shrinkwrap-resolver-impl-maven-archive</artifactId>
+            <scope>test</scope>
+        </dependency>
         
     </dependencies>
     
@@ -351,7 +361,7 @@
                 </testResources>
                 
                 <plugins>
-                    <plugin>
+                    <!--<plugin>
                         <groupId>de.jpdigital</groupId>
                         <artifactId>hibernate4-ddl-maven-plugin</artifactId>
                         <configuration>
@@ -373,7 +383,7 @@
                                 <phase>process-classes</phase>
                             </execution>
                         </executions>
-                    </plugin>
+                    </plugin>-->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>

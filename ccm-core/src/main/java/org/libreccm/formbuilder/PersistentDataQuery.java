@@ -39,30 +39,30 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "formbuilder_data_queries", schema = DB_SCHEMA)
+@Table(name = "FORMBUILDER_DATA_QUERIES", schema = DB_SCHEMA)
 public class PersistentDataQuery extends CcmObject implements Serializable {
 
     private static final long serialVersionUID = -7344153915501267752L;
 
-    @Column(name = "query_id")
+    @Column(name = "QUERY_ID")
     private String queryId;
 
     @AssociationOverride(
-        name = "values",
+        name = "VALUES",
         joinTable = @JoinTable(
-            name = "formbuilder_data_query_names",
+            name = "FORMBUILDER_DATA_QUERY_NAMES",
             schema = DB_SCHEMA,
             joinColumns = {
-                @JoinColumn(name = "data_query_id")}))
+                @JoinColumn(name = "DATA_QUERY_ID")}))
     private LocalizedString name;
 
     @AssociationOverride(
-        name = "values",
+        name = "VALUES",
         joinTable = @JoinTable(
-            name = "formbuilder_data_query_descriptions",
+            name = "FORMBUILDER_DATA_QUERY_DESCRIPTIONS",
             schema = DB_SCHEMA,
             joinColumns = {
-                @JoinColumn(name = "data_query_id")}))
+                @JoinColumn(name = "DATA_QUERY_ID")}))
     private LocalizedString description;
 
     public String getQueryId() {

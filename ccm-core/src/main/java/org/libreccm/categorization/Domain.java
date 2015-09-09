@@ -73,7 +73,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "category_domains", schema = DB_SCHEMA)
+@Table(name = "CATEGORY_DOMAINS", schema = DB_SCHEMA)
 @XmlRootElement(name = "domain", namespace = CAT_XML_NS)
 public class Domain extends CcmObject implements Serializable {
 
@@ -84,7 +84,7 @@ public class Domain extends CcmObject implements Serializable {
      * without special characters or spaces, for example {@code APLAWS-NAV} or
      * {@code MYNAV}.
      */
-    @Column(name = "domain_key", nullable = false, unique = true, length = 255)
+    @Column(name = "DOMAIN_KEY", nullable = false, unique = true, length = 255)
     @NotBlank
     @Pattern(regexp = "[\\w-.]*")
     @XmlElement(name = "domain-key", namespace = CAT_XML_NS)
@@ -102,7 +102,7 @@ public class Domain extends CcmObject implements Serializable {
      * http://example.org/domains/example-nav
      * </pre>
      */
-    @Column(name = "uri", nullable = false, unique = true, length = 1024)
+    @Column(name = "URI", nullable = false, unique = true, length = 1024)
     @Convert(converter = UriConverter.class)
     @NotBlank
     @URL
@@ -115,11 +115,11 @@ public class Domain extends CcmObject implements Serializable {
      */
     @Embedded
     @AssociationOverride(
-        name = "values",
-        joinTable = @JoinTable(name = "domain_titles",
+        name = "VALUES",
+        joinTable = @JoinTable(name = "DOMAIN_TITLES",
                                schema = DB_SCHEMA,
                                joinColumns = {
-                                   @JoinColumn(name = "object_id")}))
+                                   @JoinColumn(name = "OBJECT_ID")}))
     @XmlElement(name = "title", namespace = CAT_XML_NS)
     private LocalizedString title;
 
@@ -128,18 +128,18 @@ public class Domain extends CcmObject implements Serializable {
      */
     @Embedded
     @AssociationOverride(
-        name = "values",
-        joinTable = @JoinTable(name = "domain_descriptions",
+        name = "VALUES",
+        joinTable = @JoinTable(name = "DOMAIN_DESCRIPTIONS",
                                schema = DB_SCHEMA,
                                joinColumns = {
-                                   @JoinColumn(name = "object_id")}))
+                                   @JoinColumn(name = "OBJECT_ID")}))
     @XmlElement(name = "description", namespace = CAT_XML_NS)
     private LocalizedString description;
 
     /**
      * A version string for the {@code Domain}.
      */
-    @Column(name = "version", nullable = false)
+    @Column(name = "VERSION", nullable = false)
     @NotBlank
     @XmlElement(name = "version", namespace = CAT_XML_NS)
     private String version;
@@ -147,7 +147,7 @@ public class Domain extends CcmObject implements Serializable {
     /**
      * A timestamp for the release date of the {@code Domain}.
      */
-    @Column(name = "released")
+    @Column(name = "RELEASED")
     @Temporal(TemporalType.TIMESTAMP)
     @XmlElement(name = "released", namespace = CAT_XML_NS)
     private Date released;
@@ -156,7 +156,7 @@ public class Domain extends CcmObject implements Serializable {
      * The root category of the domain.
      */
     @ManyToOne
-    @JoinColumn(name = "root_category_id")
+    @JoinColumn(name = "ROOT_CATEGORY_ID")
     @XmlElement(name = "root", namespace = CAT_XML_NS)
     private Category root;
 

@@ -34,7 +34,7 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "installed_modules", schema = DB_SCHEMA)
+@Table(name = "INSTALLED_MODULES", schema = DB_SCHEMA)
 public class InstalledModule implements Serializable {
 
     private static final long serialVersionUID = 6240025652113643164L;
@@ -46,13 +46,13 @@ public class InstalledModule implements Serializable {
      * particular) accept long varchar fields as primary keys.
      */
     @Id
-    @Column(name = "module_id")
+    @Column(name = "MODULE_ID")
     private int moduleId;
 
-    @Column(name = "module_class_name", length = 2048, unique = true)
+    @Column(name = "MODULE_CLASS_NAME", length = 2048, unique = true)
     private String moduleClassName;
 
-    @Column(name = "status")
+    @Column(name = "STATUS")
     @Enumerated(EnumType.STRING)
     private ModuleStatus status;
 

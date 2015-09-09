@@ -41,21 +41,21 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "inits", schema = DB_SCHEMA)
+@Table(name = "INITS", schema = DB_SCHEMA)
 public class Initalizer implements Serializable {
 
     private static final long serialVersionUID = 9150623897315380159L;
 
     @Id
-    @Column(name = "initializer_id")
+    @Column(name = "INITIALIZER_ID")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long initializerId;
 
-    @Column(name = "class_name")
+    @Column(name = "CLASS_NAME")
     private String className;
 
     @ManyToOne
-    @JoinColumn(name = "required_by_id")
+    @JoinColumn(name = "REQUIRED_BY_ID")
     private Initalizer requiredBy;
 
     @OneToMany(mappedBy = "requiredBy")

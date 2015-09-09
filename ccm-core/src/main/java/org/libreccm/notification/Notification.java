@@ -70,7 +70,7 @@ import javax.persistence.TemporalType;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "notifications", schema = DB_SCHEMA)
+@Table(name = "NOTIFICATIONS", schema = DB_SCHEMA)
 //Can't reduce complexity yet. Not sure what to do about the God class warning.
 //Maybe we have to put some of the properties into an extra class.
 @SuppressWarnings({"PMD.CyclomaticComplexity",
@@ -82,44 +82,44 @@ public class Notification extends CcmObject implements Serializable {
     private static final long serialVersionUID = -6052859580690813506L;
 
     @OneToOne
-    @JoinColumn(name = "receiver_id")
+    @JoinColumn(name = "RECEIVER_ID")
     private Subject receiver;
 
     @OneToOne
-    @JoinColumn(name = "digest_id")
+    @JoinColumn(name = "DIGEST_ID")
     private Digest digest;
 
     @OneToOne
-    @JoinColumn(name = "message_id")
+    @JoinColumn(name = "MESSAGE_ID")
     private Message message;
 
-    @Column(name = "header", length = 4096)
+    @Column(name = "HEADER", length = 4096)
     private String header;
 
-    @Column(name = "signature", length = 4096)
+    @Column(name = "SIGNATURE", length = 4096)
     private String signature;
 
-    @Column(name = "expand_group")
+    @Column(name = "EXPAND_GROUP")
     private boolean expandGroup;
 
-    @Column(name = "request_date")
+    @Column(name = "REQUEST_DATE")
     @Temporal(TemporalType.TIMESTAMP)
     private Date requestDate;
 
-    @Column(name = "fulfill_date")
+    @Column(name = "FULFILL_DATE")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fulfillDate;
 
-    @Column(name = "status", length = 32)
+    @Column(name = "STATUS", length = 32)
     private String status;
 
-    @Column(name = "max_retries")
+    @Column(name = "MAX_RETRIES")
     private long maxRetries;
 
-    @Column(name = "expunge")
+    @Column(name = "EXPUNGE")
     private boolean expunge;
 
-    @Column(name = "expunge_message")
+    @Column(name = "EXPUNGE_MESSAGE")
     private boolean expungeMessage;
 
     public Subject getReceiver() {
@@ -308,10 +308,7 @@ public class Notification extends CcmObject implements Serializable {
         if (expunge != other.isExpunge()) {
             return false;
         }
-        if (expungeMessage != other.isExpungeMessage()) {
-            return false;
-        }
-        return true;
+        return expungeMessage == other.isExpungeMessage();
     }
 
     @Override

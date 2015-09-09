@@ -152,7 +152,7 @@ public class ModuleManager {
                               node.getModule().getClass().getName());
             final InstalledModule installedModule = entityManager.find(
                 InstalledModule.class, node.
-                getModule().getClass().getName());
+                getModule().getClass().getName().hashCode());
             LOGGER.info("Status of module {} ({}): {}",
                         node.getModuleInfo().getModuleName(),
                         node.getModule().getClass().getName(),

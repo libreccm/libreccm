@@ -32,15 +32,15 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "formbuilder_data_driven_selects", schema = DB_SCHEMA)
+@Table(name = "FORMBUILDER_DATA_DRIVEN_SELECTS", schema = DB_SCHEMA)
 public class DataDrivenSelect extends Widget implements Serializable {
 
     private static final long serialVersionUID = -4477753441663454661L;
 
-    @Column(name = "multiple")
+    @Column(name = "MULTIPLE")
     private boolean multiple;
 
-    @Column(name = "query")
+    @Column(name = "QUERY")
     private String query;
 
     public boolean isMultiple() {

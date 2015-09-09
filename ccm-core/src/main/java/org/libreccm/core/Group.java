@@ -46,7 +46,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "ccm_groups", schema = DB_SCHEMA)
+@Table(name = "CCM_GROUPS", schema = DB_SCHEMA)
 @NamedQueries({
     @NamedQuery(name = "findGroupByName", 
                 query = "SELECT g FROM Group g WHERE g.name = :groupName")
@@ -59,7 +59,7 @@ public class Group extends Subject implements Serializable {
     /**
      * The name of the {@code Group}. Must be unique.
      */
-    @Column(name = "name", length = 512, unique = true, nullable = false)
+    @Column(name = "NAME", length = 512, unique = true, nullable = false)
     @NotBlank
     @XmlElement(name = "name", namespace = CORE_XML_NS)
     private String name;

@@ -34,6 +34,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
+import java.util.Locale;
 import java.util.ServiceLoader;
 
 import javax.sql.DataSource;
@@ -111,9 +112,12 @@ public class CcmIntegrator implements Integrator {
         throws SQLException {
 
         switch (connection.getMetaData().getDatabaseProductName()) {
-            case "MySQL":
-                buffer.append("/mysql");
+            case "H2":
+                buffer.append("/h2");
                 break;
+//            case "MySQL":
+//                buffer.append("/mysql");
+//                break;
             case "PostgreSQL":
                 buffer.append("/pgsql");
                 break;
@@ -160,7 +164,12 @@ public class CcmIntegrator implements Integrator {
 
         final Flyway flyway = new Flyway();
         flyway.setDataSource(dataSource);
-        flyway.setSchemas(getSchemaName(moduleInfo));
+        if ("H2".equals(connection.getMetaData().getDatabaseProductName())) {
+            flyway
+                .setSchemas(getSchemaName(moduleInfo).toUpperCase(Locale.ROOT));
+        } else {
+            flyway.setSchemas(getSchemaName(moduleInfo));
+        }
         flyway.setLocations(getLocation(moduleInfo, connection));
 
         final MigrationInfo current = flyway.info().current();

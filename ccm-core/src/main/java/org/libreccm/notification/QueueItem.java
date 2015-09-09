@@ -46,7 +46,7 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "queue_items", schema = DB_SCHEMA)
+@Table(name = "QUEUE_ITEMS", schema = DB_SCHEMA)
 //Can't reduce complexity yet
 @SuppressWarnings({"PMD.CyclomaticComplexity",
                    "PMD.StdCyclomaticComplexity",
@@ -56,31 +56,31 @@ public class QueueItem implements Serializable {
     private static final long serialVersionUID = 396330385592074013L;
 
     @Id
-    @Column(name = "queue_item_id")
+    @Column(name = "QUEUE_ITEM_ID")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long queueItemId;
 
     @OneToOne
-    @JoinColumn(name = "receiver_id")
+    @JoinColumn(name = "RECEIVER_ID")
     private Subject receiver;
 
-    @Column(name = "retry_count")
+    @Column(name = "RETRY_COUNT")
     private long retryCount;
 
-    @Column(name = "successful_sended")
+    @Column(name = "SUCCESSFUL_SENDED")
     private boolean successful;
 
-    @Column(name = "receiver_address", length = 512)
+    @Column(name = "RECEIVER_ADDRESS", length = 512)
     private String receiverAddress;
 
-    @Column(name = "header", length = 4096)
+    @Column(name = "HEADER", length = 4096)
     private String header;
 
-    @Column(name = "signature", length = 4096)
+    @Column(name = "SIGNATURE", length = 4096)
     private String signature;
 
     @OneToOne
-    @JoinColumn(name = "message_id")
+    @JoinColumn(name = "MESSAGE_ID")
     private Message message;
 
     public long getQueueItemId() {

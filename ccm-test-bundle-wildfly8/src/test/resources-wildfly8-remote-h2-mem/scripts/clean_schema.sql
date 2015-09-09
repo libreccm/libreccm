@@ -3,4 +3,6 @@
 
 DROP SCHEMA IF EXISTS ccm_core;
 
+DROP TABLE IF EXISTS schema_version;
+
 DROP SEQUENCE IF EXISTS hibernate_sequence;

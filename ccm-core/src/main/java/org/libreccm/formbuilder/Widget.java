@@ -36,18 +36,18 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "formbuilder_widgets", schema = DB_SCHEMA)
+@Table(name = "FORMBUILDER_WIDGETS", schema = DB_SCHEMA)
 public class Widget extends Component implements Serializable {
 
     private static final long serialVersionUID = 1057792450655098288L;
 
-    @Column(name = "parameter_name")
+    @Column(name = "PARAMETER_NAME")
     private String parameterName;
 
-    @Column(name = "parameter_model")
+    @Column(name = "PARAMETER_MODEL")
     private String parameterModel;
 
-    @Column(name = "default_value")
+    @Column(name = "DEFAULT_VALUE")
     private String defaultValue;
 
     @OneToOne

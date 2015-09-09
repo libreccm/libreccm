@@ -46,7 +46,7 @@ import javax.persistence.JoinColumn;
  * @apiviz.has org.libreccm.core.CcmObject
  */
 @Entity
-@Table(name = "categorizations", schema = DB_SCHEMA)
+@Table(name = "CATEGORIZATIONS", schema = DB_SCHEMA)
 public class Categorization implements Serializable {
 
     private static final long serialVersionUID = 201504301320L;
@@ -55,7 +55,7 @@ public class Categorization implements Serializable {
      * The ID of the categorisation object.
      */
     @Id
-    @Column(name = "categorization_id")
+    @Column(name = "CATEGORIZATION_ID")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long categorizationId;
 
@@ -63,35 +63,35 @@ public class Categorization implements Serializable {
      * The category to which this {@code Categorization} object belongs.
      */
     @ManyToOne
-    @JoinColumn(name = "category_id")
+    @JoinColumn(name = "CATEGORY_ID")
     private Category category;
 
     /**
      * The categorised object.
      */
     @ManyToOne
-    @JoinColumn(name = "object_id")
+    @JoinColumn(name = "OBJECT_ID")
     private CcmObject categorizedObject;
 
     /**
      * If the categorised object is the index object of the category this
      * property is set to {@code true}.
      */
-    @Column(name = "category_index")
+    @Column(name = "CATEGORY_INDEX")
     private boolean index;
 
     /**
      * Defines the order in which the categories assigned the the categorised 
      * object are shown.
      */
-    @Column(name = "category_order")
+    @Column(name = "CATEGORY_ORDER")
     private long categoryOrder;
 
     /**
      * Defines the order in which the objects assigned to the category are 
      * shown.
      */
-    @Column(name = "object_order")
+    @Column(name = "OBJECT_ORDER")
     private long objectOrder;
 
     public long getCategorizationId() {

@@ -22,17 +22,17 @@ import java.util.Objects;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "formbuilder_simple_email_listeners", schema = DB_SCHEMA)
+@Table(name = "FORMBUILDER_SIMPLE_EMAIL_LISTENERS", schema = DB_SCHEMA)
 public class SimpleEmailListener
     extends ProcessListener
     implements Serializable {
 
     private static final long serialVersionUID = -5004346250775992079L;
 
-    @Column(name = "recipient")
+    @Column(name = "RECIPIENT")
     private String recipient;
 
-    @Column(name = "subject")
+    @Column(name = "SUBJECT")
     private String subject;
 
     public String getRecipient() {

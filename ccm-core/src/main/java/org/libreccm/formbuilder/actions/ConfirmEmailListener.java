@@ -22,20 +22,20 @@ import org.libreccm.formbuilder.ProcessListener;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "formbuilder_confirm_email_listener", schema = DB_SCHEMA)
+@Table(name = "FORMBUILDER_CONFIRM_EMAIL_LISTENER", schema = DB_SCHEMA)
 public class ConfirmEmailListener
     extends ProcessListener
     implements Serializable {
 
     private static final long serialVersionUID = -7009695795355273248L;
 
-    @Column(name = "from_email")
+    @Column(name = "FROM_EMAIL")
     private String fromEmail;
 
-    @Column(name = "subject")
+    @Column(name = "SUBJECT")
     private String subject;
 
-    @Column(name = "body")
+    @Column(name = "BODY")
     @Lob
     private String body;
 

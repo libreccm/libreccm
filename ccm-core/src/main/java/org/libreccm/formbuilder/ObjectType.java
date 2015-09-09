@@ -34,15 +34,15 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "formbuilder_object_types", schema = DB_SCHEMA)
+@Table(name = "FORMBUILDER_OBJECT_TYPES", schema = DB_SCHEMA)
 public class ObjectType extends CcmObject implements Serializable {
 
     private static final long serialVersionUID = 5236718507025096569L;
 
-    @Column(name = "app_name")
+    @Column(name = "APP_NAME")
     private String appName;
 
-    @Column(name = "class_name")
+    @Column(name = "CLASS_NAME")
     private String className;
 
     public String getAppName() {

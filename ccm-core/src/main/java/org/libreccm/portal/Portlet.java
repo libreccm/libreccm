@@ -37,19 +37,19 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "portlets", schema = DB_SCHEMA)
+@Table(name = "PORTLETS", schema = DB_SCHEMA)
 public class Portlet extends Resource implements Serializable {
 
     private static final long serialVersionUID = -5718126018588744104L;
 
     @ManyToOne
-    @JoinColumn(name = "portal_id")
+    @JoinColumn(name = "PORTAL_ID")
     private Portal portal;
 
-    @Column(name = "cell_number")
+    @Column(name = "CELL_NUMBER")
     private long cellNumber;
 
-    @Column(name = "sort_key")
+    @Column(name = "SORT_KEY")
     private long sortKey;
 
     public Portal getPortal() {

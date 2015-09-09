@@ -41,7 +41,7 @@ import org.libreccm.l10n.LocalizedString;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "resource_types", schema = DB_SCHEMA)
+@Table(name = "RESOURCE_TYPES", schema = DB_SCHEMA)
 @Inheritance(strategy = InheritanceType.JOINED)
 @SuppressWarnings({"PMD.CyclomaticComplexity",
                    "PMD.StdCyclomaticComplexity",
@@ -53,31 +53,31 @@ public class ResourceType implements Serializable {
     private static final long serialVersionUID = 4563584142251370627L;
 
     @Id
-    @Column(name = "resource_type_id")
+    @Column(name = "RESOURCE_TYPE_ID")
     private long resourceTypeId;
 
-    @Column(name = "title", length = 254, nullable = false)
+    @Column(name = "TITLE", length = 254, nullable = false)
     private String title;
 
     @Embedded
     @AssociationOverride(
-        name = "values",
-        joinTable = @JoinTable(name = "resource_type_descriptions",
+        name = "VALUES",
+        joinTable = @JoinTable(name = "RESOURCE_TYPE_DESCRIPTIONS",
                                schema = DB_SCHEMA,
                                joinColumns = {
-                                   @JoinColumn(name = "resource_type_id")}))
+                                   @JoinColumn(name = "RESOURCE_TYPE_ID")}))
     private LocalizedString description;
 
-    @Column(name = "workspace_app")
+    @Column(name = "WORKSPACE_APP")
     private boolean workspaceApplication;
 
-    @Column(name = "full_page_view")
+    @Column(name = "FULL_PAGE_VIEW")
     private boolean viewableAsFullPage;
 
-    @Column(name = "embedded_view")
+    @Column(name = "EMBEDDED_VIEW")
     private boolean viewableAsEmbedded;
 
-    @Column(name = "singleton")
+    @Column(name = "SINGLETON")
     private boolean singleton;
 
     public ResourceType() {

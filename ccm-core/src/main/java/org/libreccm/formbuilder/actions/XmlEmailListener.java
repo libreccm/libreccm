@@ -21,15 +21,15 @@ import org.libreccm.formbuilder.ProcessListener;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "formbuilder_xml_email_listeners", schema = DB_SCHEMA)
+@Table(name = "FORMBUILDER_XML_EMAIL_LISTENERS", schema = DB_SCHEMA)
 public class XmlEmailListener extends ProcessListener implements Serializable {
 
     private static final long serialVersionUID = -4607965414018004925L;
 
-    @Column(name = "recipient")
+    @Column(name = "RECIPIENT")
     private String recipient;
 
-    @Column(name = "subject")
+    @Column(name = "SUBJECT")
     private String subject;
 
     public String getRecipient() {

@@ -49,7 +49,7 @@ import javax.persistence.TemporalType;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "digests", schema = DB_SCHEMA)
+@Table(name = "DIGESTS", schema = DB_SCHEMA)
 //Can't reduce complexity yet
 @SuppressWarnings({"PMD.CyclomaticComplexity",
                    "PMD.StdCyclomaticComplexity",
@@ -59,25 +59,25 @@ public class Digest extends CcmObject implements Serializable {
     private static final long serialVersionUID = -3526066971290670390L;
 
     @OneToOne
-    @JoinColumn(name = "from_party_id")
+    @JoinColumn(name = "FROM_PARTY_ID")
     private Subject fromParty;
 
-    @Column(name = "subject", length = 255, nullable = false)
+    @Column(name = "SUBJECT", length = 255, nullable = false)
     private String subject;
 
-    @Column(name = "header", length = 4096, nullable = false)
+    @Column(name = "HEADER", length = 4096, nullable = false)
     private String header;
 
-    @Column(name = "digest_separator", length = 128, nullable = false)
+    @Column(name = "DIGEST_SEPARATOR", length = 128, nullable = false)
     private String separator;
 
-    @Column(name = "signature", length = 4096, nullable = false)
+    @Column(name = "SIGNATURE", length = 4096, nullable = false)
     private String signature;
 
-    @Column(name = "frequency")
+    @Column(name = "FREQUENCY")
     private Integer frequency;
 
-    @Column(name = "next_run")
+    @Column(name = "NEXT_RUN")
     @Temporal(TemporalType.TIMESTAMP)
     private Date nextRun;
 

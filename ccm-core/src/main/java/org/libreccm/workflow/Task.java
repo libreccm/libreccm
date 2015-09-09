@@ -50,7 +50,7 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "workflow_tasks", schema = DB_SCHEMA)
+@Table(name = "WORKFLOW_TASKS", schema = DB_SCHEMA)
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 //Can't reduce complexity yet, Task is a fine name
 @SuppressWarnings({"PMD.CyclomaticComplexity",
@@ -64,56 +64,56 @@ public class Task implements Serializable {
     private static final long serialVersionUID = 8161343036908150426L;
 
     @Id
-    @Column(name = "task_id")
+    @Column(name = "TASK_ID")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long taskId;
 
     @Embedded
     @AssociationOverride(
-            name = "values",
-            joinTable = @JoinTable(name = "workflow_task_labels",
+            name = "VALUES",
+            joinTable = @JoinTable(name = "WORKFLOW_TASK_LABELS",
                                    schema = DB_SCHEMA,
                                    joinColumns = {
-                                       @JoinColumn(name = "task_id")}))
+                                       @JoinColumn(name = "TASK_ID")}))
     private LocalizedString label;
 
     @Embedded
     @AssociationOverride(
-            name = "values",
-            joinTable = @JoinTable(name = "workflow_tasks_descriptions",
+            name = "VALUES",
+            joinTable = @JoinTable(name = "WORKFLOW_TASKS_DESCRIPTIONS",
                                    schema = DB_SCHEMA,
                                    joinColumns = {
-                                       @JoinColumn(name = "task_id")}))
+                                       @JoinColumn(name = "TASK_ID")}))
     private LocalizedString description;
 
-    @Column(name = "active")
+    @Column(name = "ACTIVE")
     private boolean active;
 
-    @Column(name = "task_state", length = 512)
+    @Column(name = "TASK_STATE", length = 512)
     private String taskState;
 
     @ManyToOne
-    @JoinColumn(name = "workflow_id")
+    @JoinColumn(name = "WORKFLOW_ID")
     private Workflow workflow;
 
     @ManyToMany(mappedBy = "dependsOn")
     private List<Task> dependentTasks;
 
     @ManyToMany
-    @JoinTable(name = "workflow_task_dependencies",
+    @JoinTable(name = "WORKFLOW_TASK_DEPENDENCIES",
                schema = DB_SCHEMA,
                joinColumns = {
-                   @JoinColumn(name = "depends_on_task_id")},
+                   @JoinColumn(name = "DEPENDS_ON_TASK_ID")},
                inverseJoinColumns = {
-                   @JoinColumn(name = "dependent_task_id")})
+                   @JoinColumn(name = "DEPENDENT_TASK_ID")})
     private List<Task> dependsOn;
 
     @ElementCollection
-    @JoinTable(name = "workflow_task_comments",
+    @JoinTable(name = "WORKFLOW_TASK_COMMENTS",
                schema = DB_SCHEMA,
                joinColumns = {
-                   @JoinColumn(name = "task_id")})
-    @Column(name = "comment")
+                   @JoinColumn(name = "TASK_ID")})
+    @Column(name = "COMMENT")
     @Lob
     private List<String> comments;
 

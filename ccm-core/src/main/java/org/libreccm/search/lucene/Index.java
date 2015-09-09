@@ -39,21 +39,21 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "lucene_indexes", schema = DB_SCHEMA)
+@Table(name = "LUCENE_INDEXES", schema = DB_SCHEMA)
 public class Index implements Serializable {
 
     private static final long serialVersionUID = 3197625173477366719L;
 
     @Id
-    @Column(name = "index_id")
+    @Column(name = "INDEX_ID")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long indexId;
 
     @OneToOne
-    @JoinColumn(name = "host_id")
+    @JoinColumn(name = "HOST_ID")
     private Host host;
 
-    @Column(name = "lucene_index_id")
+    @Column(name = "LUCENE_INDEX_ID")
     private long luceneIndexId;
 
     public Index() {

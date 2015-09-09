@@ -37,20 +37,20 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "formbuilder_options", schema = DB_SCHEMA)
+@Table(name = "FORMBUILDER_OPTIONS", schema = DB_SCHEMA)
 public class Option extends Component implements Serializable {
 
     private static final long serialVersionUID = -7528058391772415511L;
 
-    @Column(name = "parameter_value")
+    @Column(name = "PARAMETER_VALUE")
     private String parameterValue;
 
     @AssociationOverride(
-        name = "values",
-        joinTable = @JoinTable(name = "formbuilder_option_labels",
+        name = "VALUES",
+        joinTable = @JoinTable(name = "FORMBUILDER_OPTION_LABELS",
                                schema = DB_SCHEMA,
                                joinColumns = {
-                                   @JoinColumn(name = "option_id")}))
+                                   @JoinColumn(name = "OPTION_ID")}))
     private LocalizedString label;
 
     public String getParameterValue() {
