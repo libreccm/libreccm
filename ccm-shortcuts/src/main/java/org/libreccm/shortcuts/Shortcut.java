@@ -35,7 +35,7 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "shortcuts")
+@Table(schema ="ccm_shortcuts", name = "shortcuts")
 public class Shortcut implements Serializable {
 
     private static final long serialVersionUID = -5674633339633714327L;
