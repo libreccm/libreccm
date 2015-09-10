@@ -31,7 +31,7 @@ import java.util.Objects;
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  */
 @Entity
-@Table(schema = "ccm-docrepo", name = "blob_objects")
+@Table(schema = "CCM_DOCREPO", name = "BLOB_OBJECTS")
 public class BlobObject implements Serializable {
     private static final long serialVersionUID = -7468014879548796218L;
 
@@ -40,14 +40,14 @@ public class BlobObject implements Serializable {
      * necessary to define an additional ID on classes which extend this class.
      */
     @Id
-    @Column(name = "blob_object_id")
+    @Column(name = "BLOB_OBJECT_ID")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long blobObjectId;
 
     /**
      * The Content of the blob-object.
      */
-    @Column(name = "content")
+    @Column(name = "CONTENT")
     @NotEmpty
     private Blob content;
 

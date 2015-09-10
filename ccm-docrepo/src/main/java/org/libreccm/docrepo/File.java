@@ -19,8 +19,6 @@
 package org.libreccm.docrepo;
 
 import javax.persistence.Entity;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 /**
@@ -28,11 +26,7 @@ import javax.persistence.Table;
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  */
 @Entity
-@Table(schema = "ccm-docrepo", name = "files")
-@NamedQueries({
-        @NamedQuery(name = "getFileRevisionBlob",
-                    query = "")
-})
+@Table(schema = "CCM_DOCREPO", name = "FILES")
 public class File extends ResourceImpl {
     private static final long serialVersionUID = -504220783419811504L;
 

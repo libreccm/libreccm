@@ -28,7 +28,7 @@ import javax.persistence.Table;
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  */
 @Entity
-@Table(schema = "ccm-docrepo", name = "recent_updated_docs_portlets")
+@Table(schema = "CCM_DOCREPO", name = "RECENT_UPDATED_DOCS_PORTLETS")
 public class RecentUpdatedDocsPortlet extends Portlet {
     private static final long serialVersionUID = -4091024367070127101L;
 

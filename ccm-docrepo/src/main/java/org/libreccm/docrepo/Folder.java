@@ -26,7 +26,7 @@ import javax.persistence.Table;
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  */
 @Entity
-@Table(schema = "ccm-docrepo", name = "folders")
+@Table(schema = "CCM_DOCREPO", name = "FOLDERS")
 public class Folder extends ResourceImpl {
     private static final long serialVersionUID = 1561466556458872622L;
 

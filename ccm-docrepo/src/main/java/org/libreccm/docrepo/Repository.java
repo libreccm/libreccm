@@ -22,8 +22,6 @@ import org.libreccm.web.Application;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 /**
@@ -31,18 +29,14 @@ import javax.persistence.Table;
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  */
 @Entity
-@Table(schema = "ccm-docrepo", name = "repositories")
-@NamedQueries({
-        @NamedQuery(name = "getRepositoryRoots",
-                    query = "")
-})
+@Table(schema = "CCM_DOCREPO", name = "REPOSITORIES")
 public class Repository extends Application {
     private static final long serialVersionUID = 6673243021462798036L;
 
-    @Column(name = "root_id")
+    @Column(name = "ROOT_ID")
     private long rootId;
 
-    @Column(name = "owner_id")
+    @Column(name = "OWNER_ID")
     private long ownerId;
 
     public Repository() {

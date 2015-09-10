@@ -18,12 +18,63 @@
  */
 package org.libreccm.docrepo;
 
-import java.io.Serializable;
+import org.hibernate.validator.constraints.NotBlank;
+import org.libreccm.core.CcmObject;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import java.sql.Date;
 
 /**
  *
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  */
-public class ResourceImpl implements Serializable{
+@Entity
+@Table(schema = "CCM_DOCREPO", name = "RESOURCE_IMPL")
+public class ResourceImpl extends CcmObject {
     private static final long serialVersionUID = -910317798106611214L;
+
+    @Column(name = "NAME")
+    @NotBlank
+    private String name;
+
+    @Column(name = "DESCRIPTION")
+    private String description;
+
+    @Column(name = "IS_FOLDER")
+    @NotBlank
+    private boolean isFolder;
+
+    @Column(name = "PATH")
+    @NotBlank
+    private String path;
+
+    @Column(name = "MIME_TYPE")
+    private String mimeType;
+
+    @Column(name = "SIZE")
+    private long size;
+
+    @Column(name = "CREATION_DATE")
+    @NotBlank
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date creationDate;
+
+    @Column(name = "CREATION_IP")
+    private String creationIp;
+
+    @Column(name = "LAST_MODIFIED_DATE")
+    @NotBlank
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastModifiedDate;
+
+    @Column(name = "LAST_MODIFIED_IP")
+    private String lastModifiedIp;
+
+    public ResourceImpl() {
+        super();
+    }
 }
