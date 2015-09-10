@@ -19,8 +19,13 @@ How JPA is used in LibreCCM
     {{{./ccm-core/apidocs/index.html?org/libreccm/core/CcmObject.html}CcmObject}}.
     Usually we customise the table name to use underscores instead of camel case
     in the database. Also we usually customise the names of columns the use
-    underscores and only lower case letters. For examples look at the various 
-    examples in the code.
+    underscores. 
+   
+    <<Important: To ensure compatibility with the supported 
+    databases (H2, PostgresSQL and Oracle for now) use only uppercase letters 
+    for database objects like schemas, tables and columns.>>
+    
+    For examples look at the various examples in the code.
 
     Each entity may be accompanied by one or two helper classes. There should
     be an {{{Repository_classes}repository}} class for every entity. 
