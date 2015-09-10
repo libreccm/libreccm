@@ -107,7 +107,7 @@ public class Permission implements Serializable {
 
     /**
      * The {@link Subject} (a {@link User} or a {@link Group}) to which the
-     * permission is granted. If the permission is granted to a {@link Group} a
+     * permission is granted. If the permission is granted to a {@link Group} all
      * {@link User}s in that have the permission.
      */
     @ManyToOne
