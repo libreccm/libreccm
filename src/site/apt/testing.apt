@@ -40,14 +40,8 @@ Testing LibreCCM
 
     At the moment the following profiles are provided:
 
-    [wildfly8-embedded] Uses an embedded Wildfly 8 server and the integrated H2
-    database-
-
     [wildfly8-remote-h2-mem] Uses a remote Wildfly 8 application server and
     a in memory H2 database
-
-    [wildfly8-remote-mysql] Uses a remote Wildfly 8 application server and
-    a MySQL or MariaDB database.
 
     [wildfly8-remote-pgsql] Uses a remote Wildfly 8 application server and
     a PostgreSQL database.
@@ -61,11 +55,6 @@ Testing LibreCCM
 
     [wildfly8-remote-oracle] Will use a remote Wildfly 8 server and a Oracle 
     database.
-
-    [tomee17-embedded] Will use a embedded TomEE application server, version 1.7
-    
-    [tomee17-remote-mysql] Will use a remote TomEE application server and a
-    MySQL/MariaDB database.
     
     [tomee17-remote-pgsql] Will use a remote TomEE application server and a 
     PostgreSQL database.
@@ -96,8 +85,6 @@ Testing LibreCCM
 
     [java:/comp/env/jdbc/org/libreccm/ccm-core/h2-mem] A in memory database 
     using the H2 database which is part of Wildfly.
-
-    [java:/comp/env/jdbc/org/libreccm/ccm-core/mysql] MySQL database
 
     [java:/comp/env/jdbc/org/libreccm/ccm-core/pgsql] PostgresSQL database
 

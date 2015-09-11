@@ -10,7 +10,47 @@ The module system of LibreCCM
 
     The functionality of LibreCCM is organised in modules which can bundled to
     serve specific needs. The bundling is done by special modules which packaged
-    as WAR files. A module itself is packaged as JAR file. 
+    as WAR files. A module itself is packaged as JAR file. The module system 
+    provides several features like automatic database migrations. 
 
-    The module system provides several features like automatic database 
-    migrations.
+    We are not using OSGi here because OSGi would add another layer of 
+    complexity. Also OSGi does to integrate well with some of the Java EE 
+    technologies.
+
+    The module system is build around the classes in the 
+    {{{file:///home/jensp/pwi/libreccm/ccm/ccm_ng/target/staging/ccm-core/apidocs/index.html?org/libreccm/modules/package-summary.html}org.libreccm.modules}} package.
+
+    When the LibreCCM application is started by the Application Server two 
+    things will happen. First the 
+    {{{file:///home/jensp/pwi/libreccm/ccm/ccm_ng/target/staging/ccm-core/apidocs/index.html?org/libreccm/modules/CcmIntegrator.html}CcmIntegrator}}
+    is executed. The integrator checks for new or updated modules and executes
+    DB migrations if necessary. We are using the 
+    {{{http://www.flyway.org}Flyway}} framework for this. We have
+    to execute these migrations before the Application Server starts the JPA
+    Persistence Unit and the JPA provider validates the database structure.
+    Unfortunately the JPA specification does not provide a hook for doing
+    such things. Therefore we have to use a Hibernate specific API for that.
+
+    Secondly the 
+    {{{file:///home/jensp/pwi/libreccm/ccm/ccm_ng/target/staging/ccm-core/apidocs/index.html?org/libreccm/modules/CcmModuleContextListener.html}CcmModuleContextListener}}
+    is called when the <<<ServletContext>>> is initialised. The 
+    <<<CcmModuleContextListener>>> is an ordinary <<<ServletContextListener>>>.
+    We use the new annotations (<<<@WebListener>>>) to register the listener.
+    The <<<CcmModuleContextListener>>> checks for new modules and executes
+    the <<<install>>> method of these modules. After that for each module
+    the <<<init>>> method of the module is called. When the application is
+    shutdown the <<<shutdown>>> method of each module is called. If the module
+    is marked for uninstall the <<<uninstall>>> method of the module is called 
+    also. 
+
+    The <<<CcmIntegrator>>> is also called on shutdown and checks for modules
+    marked to be deinstalled. If there are such modules the database for the
+    module is cleaned by Flyway.
+
+    The database tables for each module live in their own schema (namespace) in
+    the the database. This makes it easier to manage them using Flyway. Each 
+    schema contains a <<<schema_version>>> table which is used by Flyway to 
+    keep track of the migrations applied to the schema. Because MySQL and its 
+    descendents like MariaDB implement schemas wrong (as databases) we can't 
+    support MySQL as database for now. This kind of implementation causes
+    all sort of silly problems.
