@@ -18,12 +18,12 @@
  */
 package org.libreccm.core;
 
-import org.libreccm.core.modules.CcmModule;
-import org.libreccm.core.modules.InitEvent;
-import org.libreccm.core.modules.InstallEvent;
-import org.libreccm.core.modules.Module;
-import org.libreccm.core.modules.ShutdownEvent;
-import org.libreccm.core.modules.UnInstallEvent;
+import org.libreccm.modules.CcmModule;
+import org.libreccm.modules.InitEvent;
+import org.libreccm.modules.InstallEvent;
+import org.libreccm.modules.Module;
+import org.libreccm.modules.ShutdownEvent;
+import org.libreccm.modules.UnInstallEvent;
 
 import javax.persistence.EntityManager;
 
@@ -46,7 +46,7 @@ import javax.persistence.EntityManager;
                     org.libreccm.core.Role.class,
                     org.libreccm.core.Subject.class,
                     org.libreccm.core.User.class,
-                    org.libreccm.core.modules.InstalledModule.class,
+                    org.libreccm.modules.InstalledModule.class,
                     org.libreccm.formbuilder.Component.class,
                     org.libreccm.formbuilder.DataDrivenSelect.class,
                     org.libreccm.formbuilder.FormSection.class,

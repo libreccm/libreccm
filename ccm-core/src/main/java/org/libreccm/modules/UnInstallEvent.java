@@ -16,38 +16,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.core.modules;
+package org.libreccm.modules;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class ModuleManagerException extends RuntimeException {
-
-    /**
-     * Creates a new instance of <code>ModuleManagerException</code> without
-     * detail message.
-     */
-    public ModuleManagerException() {
-        //Nothing
-    }
-
-    /**
-     * Constructs an instance of <code>ModuleManagerException</code> with the
-     * specified detail message.
-     *
-     * @param msg the detail message.
-     */
-    public ModuleManagerException(final String msg) {
-        super(msg);
-    }
-
-    public ModuleManagerException(final Throwable cause) {
-        super(cause);
-    }
-
-    public ModuleManagerException(final String msg, final Throwable cause) {
-        super(msg, cause);
-    }
-
+public class UnInstallEvent extends ModuleEvent {
+    
 }

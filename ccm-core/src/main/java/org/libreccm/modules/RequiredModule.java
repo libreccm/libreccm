@@ -16,12 +16,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.core.modules;
+package org.libreccm.modules;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class ShutdownEvent extends ModuleEvent {
-
+public @interface RequiredModule {
+    
+    Class<? extends CcmModule> module();
+    
+    String minVersion() default "";
+    
+    String maxVersion() default "";
+    
 }

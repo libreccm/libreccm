@@ -16,12 +16,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.core.modules;
+package org.libreccm.modules;
 
 /**
- *
+ * Enumeration describing the status of a module.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class InitEvent extends ModuleEvent {
-    
+public enum ModuleStatus {
+
+    /**
+     * Marks a module as new. This state should be set by the DB migration
+     */
+    NEW,
+    /**
+     * Marks a module as installed and ready to use.
+     */
+    INSTALLED,
+    /**
+     * Marks a module be scheduled for uninstall. When the application is
+     * shutdown the module is removed from the database. Before starting the
+     * applications again the module classes (JAR) should be removed. Otherwise
+     * the module will be reinstalled.
+     */
+    UNINSTALL
+
 }

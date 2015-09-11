@@ -16,15 +16,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.core.modules;
+package org.libreccm.modules;
 
 import javax.inject.Inject;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.libreccm.core.modules.ModuleManager;
+import org.libreccm.modules.ModuleManager;
 
 /**
  *

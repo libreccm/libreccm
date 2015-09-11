@@ -16,32 +16,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.core.modules;
-
-import javax.persistence.EntityManager;
+package org.libreccm.modules;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-class ModuleEvent {
-    
-    private EntityManager entityManager;
-    
-    ModuleEvent() {
-        //Nothing for now
-    }
-    
-    ModuleEvent(final EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
-    
-    public EntityManager getEntityManager() {
-        return entityManager;
-    }
-    
-    public void setEntityManager(final EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
+public class InitEvent extends ModuleEvent {
     
 }

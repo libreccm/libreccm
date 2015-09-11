@@ -192,6 +192,7 @@
                     <packages>
                         <param>org.libreccm</param>
                     </packages>
+                    <persistenceXml>src/main/resources/persistence-build.xml</persistenceXml>
                     <useEnvers>true</useEnvers>
                 </configuration>
                 <executions>

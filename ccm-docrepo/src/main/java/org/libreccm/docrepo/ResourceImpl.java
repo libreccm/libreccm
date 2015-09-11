@@ -21,12 +21,14 @@ package org.libreccm.docrepo;
 import org.hibernate.validator.constraints.NotBlank;
 import org.libreccm.core.CcmObject;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import java.sql.Date;
+
 
 /**
  *

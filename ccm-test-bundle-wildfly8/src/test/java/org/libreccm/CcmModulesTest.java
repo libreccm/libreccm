@@ -45,8 +45,6 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.jboss.shrinkwrap.resolver.api.maven.MavenResolvedArtifact;
 import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
-import org.jboss.shrinkwrap.resolver.api.maven.coordinate.MavenCoordinates;
-import org.jboss.shrinkwrap.resolver.api.maven.coordinate.MavenDependencyExclusion;
 import org.junit.After;
 import org.junit.AfterClass;
 
@@ -59,7 +57,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.libreccm.core.CcmCore;
 import org.libreccm.core.User;
-import org.libreccm.core.modules.ModuleStatus;
+import org.libreccm.modules.ModuleStatus;
 import org.libreccm.tests.categories.IntegrationTest;
 
 import javax.persistence.TypedQuery;

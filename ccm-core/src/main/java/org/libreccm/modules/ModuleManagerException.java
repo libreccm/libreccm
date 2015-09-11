@@ -16,42 +16,38 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.core.modules.dependencytree.test.cycle;
-
-import org.libreccm.modules.CcmModule;
-import org.libreccm.modules.InitEvent;
-import org.libreccm.modules.InstallEvent;
-import org.libreccm.modules.Module;
-import org.libreccm.modules.RequiredModule;
-import org.libreccm.modules.ShutdownEvent;
-import org.libreccm.modules.UnInstallEvent;
+package org.libreccm.modules;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@Module(requiredModules = {
-    @RequiredModule(module = TestModuleRoot.class)})
-public class TestModuleA implements CcmModule {
+public class ModuleManagerException extends RuntimeException {
 
-    @Override
-    public void install(final InstallEvent event) {
+    /**
+     * Creates a new instance of <code>ModuleManagerException</code> without
+     * detail message.
+     */
+    public ModuleManagerException() {
         //Nothing
     }
 
-    @Override
-    public void init(final InitEvent event) {
-        //Nothing
+    /**
+     * Constructs an instance of <code>ModuleManagerException</code> with the
+     * specified detail message.
+     *
+     * @param msg the detail message.
+     */
+    public ModuleManagerException(final String msg) {
+        super(msg);
     }
 
-    @Override
-    public void shutdown(final ShutdownEvent event) {
-        //Nothing
+    public ModuleManagerException(final Throwable cause) {
+        super(cause);
     }
 
-    @Override
-    public void uninstall(final UnInstallEvent event) {
-        //Nothing
+    public ModuleManagerException(final String msg, final Throwable cause) {
+        super(msg, cause);
     }
 
 }

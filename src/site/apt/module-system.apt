@@ -8,4 +8,9 @@
 
 The module system of LibreCCM
 
-    Lorem ipsum
+    The functionality of LibreCCM is organised in modules which can bundled to
+    serve specific needs. The bundling is done by special modules which packaged
+    as WAR files. A module itself is packaged as JAR file. 
+
+    The module system provides several features like automatic database 
+    migrations.

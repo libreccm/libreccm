@@ -16,18 +16,39 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.core.modules;
+package org.libreccm.modules;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public @interface RequiredModule {
-    
-    Class<? extends CcmModule> module();
-    
-    String minVersion() default "";
-    
-    String maxVersion() default "";
-    
+public class IntegrationException extends RuntimeException {
+
+    private static final long serialVersionUID = -8505205543077310805L;
+
+    /**
+     * Creates a new instance of <code>IntegrationException</code> without
+     * detail message.
+     */
+    public IntegrationException() {
+        super();
+    }
+
+    /**
+     * Constructs an instance of <code>IntegrationException</code> with the
+     * specified detail message.
+     *
+     * @param msg the detail message.
+     */
+    public IntegrationException(final String msg) {
+        super(msg);
+    }
+
+    public IntegrationException(final Throwable cause) {
+        super(cause);
+    }
+
+    public IntegrationException(final String msg, final Throwable cause) {
+        super(msg, cause);
+    }
 }

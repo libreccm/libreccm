@@ -16,16 +16,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.core.modules;
+package org.libreccm.modules;
 
-import org.libreccm.core.modules.dependencytree.test.valid.TestModuleB;
-import org.libreccm.core.modules.dependencytree.test.valid.TestModuleC;
-import org.libreccm.core.modules.dependencytree.test.valid.TestModuleA;
-import org.libreccm.core.modules.dependencytree.test.valid.TestModuleRoot;
+import org.libreccm.modules.CcmModule;
+import org.libreccm.modules.Module;
+import org.libreccm.modules.ModuleStatus;
+import org.libreccm.modules.TreeNode;
+import org.libreccm.modules.DependencyException;
+import org.libreccm.modules.UnInstallEvent;
+import org.libreccm.modules.InitEvent;
+import org.libreccm.modules.ShutdownEvent;
+import org.libreccm.modules.ModuleInfo;
+import org.libreccm.modules.IntegrationException;
+import org.libreccm.modules.InstallEvent;
+import org.libreccm.modules.RequiredModule;
+import org.libreccm.modules.DependencyTreeManager;
 
 import static org.hamcrest.Matchers.*;
 
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.container.test.api.ShouldThrowException;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
@@ -42,6 +52,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+import org.libreccm.core.modules.dependencytree.test.cycle.TestModuleA;
+import org.libreccm.core.modules.dependencytree.test.cycle.TestModuleB;
+import org.libreccm.core.modules.dependencytree.test.cycle.TestModuleC;
+import org.libreccm.core.modules.dependencytree.test.cycle.TestModuleRoot;
 import org.libreccm.tests.categories.IntegrationTest;
 
 import java.io.File;
@@ -54,11 +68,11 @@ import java.util.List;
  */
 @Category(IntegrationTest.class)
 @RunWith(Arquillian.class)
-public class DependencyTreeManagerTest {
+public class DependencyTreeManagerCycleTest {
 
     private transient Iterable<CcmModule> modules;
 
-    public DependencyTreeManagerTest() {
+    public DependencyTreeManagerCycleTest() {
     }
 
     @BeforeClass
@@ -76,7 +90,6 @@ public class DependencyTreeManagerTest {
         moduleList.add(new TestModuleA());
         moduleList.add(new TestModuleB());
         moduleList.add(new TestModuleC());
-
         modules = moduleList;
     }
 
@@ -100,7 +113,7 @@ public class DependencyTreeManagerTest {
 
         return ShrinkWrap
             .create(WebArchive.class,
-                    "LibreCCM-org.libreccm.modules.dependencytree.DependencyTreeManagerTest.war")
+                    "LibreCCM-org.libreccm.modules.dependencytree.DependencyTreeManagerCycleTest.war")
             .addPackage(org.libreccm.tests.categories.IntegrationTest.class
                 .getPackage())
             .addClass(DependencyTreeManager.class)
@@ -124,17 +137,17 @@ public class DependencyTreeManagerTest {
             .addAsWebInfResource("test-web.xml", "web.xml")
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
             .addAsResource(
-                "module-info/dependency-tree-manager-test/module-root.properties",
-                "module-info/org.libreccm.core.modules.dependencytree.test.valid.TestModuleRoot.properties")
+                "module-info/dependency-tree-manager-cycle-test/module-root.properties",
+                "module-info/org.libreccm.core.modules.dependencytree.test.cycle.TestModuleRoot.properties")
             .addAsResource(
-                "module-info/dependency-tree-manager-test/module-a.properties",
-                "module-info/org.libreccm.core.modules.dependencytree.test.valid.TestModuleA.properties")
+                "module-info/dependency-tree-manager-cycle-test/module-a.properties",
+                "module-info/org.libreccm.core.modules.dependencytree.test.cycle.TestModuleA.properties")
             .addAsResource(
-                "module-info/dependency-tree-manager-test/module-b.properties",
-                "module-info/org.libreccm.core.modules.dependencytree.test.valid.TestModuleB.properties")
+                "module-info/dependency-tree-manager-cycle-test/module-b.properties",
+                "module-info/org.libreccm.core.modules.dependencytree.test.cycle.TestModuleB.properties")
             .addAsResource(
-                "module-info/dependency-tree-manager-test/module-c.properties",
-                "module-info/org.libreccm.core.modules.dependencytree.test.valid.TestModuleC.properties");
+                "module-info/dependency-tree-manager-cycle-test/module-c.properties",
+                "module-info/org.libreccm.core.modules.dependencytree.test.cycle.TestModuleC.properties");
     }
 
     @Test
@@ -152,23 +165,13 @@ public class DependencyTreeManagerTest {
                                                   TestModuleC.class));
     }
 
-    @Test
+    @Test(expected = DependencyException.class)
+    @ShouldThrowException(DependencyException.class)
     public void verifyModuleOrder() throws DependencyException {
         final DependencyTreeManager treeManager = new DependencyTreeManager();
 
         final List<TreeNode> tree = treeManager.generateTree(modules);
-        final List<TreeNode> ordered = treeManager.orderModules(tree);
-
-        final List<String> modulesInOrder = new ArrayList<>();
-        for (final TreeNode node : ordered) {
-            modulesInOrder.add(node.getModuleInfo().getModuleName());
-        }
-
-        assertThat(modulesInOrder,
-                   contains("test-module-root",
-                            "test-module-a",
-                            "test-module-b",
-                            "test-module-c"));
+        treeManager.orderModules(tree);
     }
 
 }

@@ -18,13 +18,13 @@
  */
 package org.libreccm.core.modules.dependencytree.test.cycle;
 
-import org.libreccm.core.modules.CcmModule;
-import org.libreccm.core.modules.InitEvent;
-import org.libreccm.core.modules.InstallEvent;
-import org.libreccm.core.modules.Module;
-import org.libreccm.core.modules.RequiredModule;
-import org.libreccm.core.modules.ShutdownEvent;
-import org.libreccm.core.modules.UnInstallEvent;
+import org.libreccm.modules.CcmModule;
+import org.libreccm.modules.InitEvent;
+import org.libreccm.modules.InstallEvent;
+import org.libreccm.modules.Module;
+import org.libreccm.modules.RequiredModule;
+import org.libreccm.modules.ShutdownEvent;
+import org.libreccm.modules.UnInstallEvent;
 
 /**
  *
