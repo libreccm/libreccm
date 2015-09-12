@@ -18,21 +18,21 @@ The module system of LibreCCM
     technologies.
 
     The module system is build around the classes in the 
-    {{{file:///home/jensp/pwi/libreccm/ccm/ccm_ng/target/staging/ccm-core/apidocs/index.html?org/libreccm/modules/package-summary.html}org.libreccm.modules}} package.
+    {{{./ccm-core/apidocs/index.html?org/libreccm/modules/package-summary.html}org.libreccm.modules}} package.
 
     When the LibreCCM application is started by the Application Server two 
     things will happen. First the 
-    {{{file:///home/jensp/pwi/libreccm/ccm/ccm_ng/target/staging/ccm-core/apidocs/index.html?org/libreccm/modules/CcmIntegrator.html}CcmIntegrator}}
+    {{{./ccm-core/apidocs/index.html?org/libreccm/modules/CcmIntegrator.html}CcmIntegrator}}
     is executed. The integrator checks for new or updated modules and executes
     DB migrations if necessary. We are using the 
-    {{{http://www.flyway.org}Flyway}} framework for this. We have
+    {{{http://www.flywaydb.org}Flyway}} framework for this. We have
     to execute these migrations before the Application Server starts the JPA
     Persistence Unit and the JPA provider validates the database structure.
     Unfortunately the JPA specification does not provide a hook for doing
     such things. Therefore we have to use a Hibernate specific API for that.
 
     Secondly the 
-    {{{file:///home/jensp/pwi/libreccm/ccm/ccm_ng/target/staging/ccm-core/apidocs/index.html?org/libreccm/modules/CcmModuleContextListener.html}CcmModuleContextListener}}
+    {{{./ccm-core/apidocs/index.html?org/libreccm/modules/CcmModuleContextListener.html}CcmModuleContextListener}}
     is called when the <<<ServletContext>>> is initialised. The 
     <<<CcmModuleContextListener>>> is an ordinary <<<ServletContextListener>>>.
     We use the new annotations (<<<@WebListener>>>) to register the listener.

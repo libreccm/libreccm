@@ -8,4 +8,91 @@
 
 Anatomy of a LibreCCM module
 
-    Lorem ipsum dolor
+    A LibreCCM module contains of several files which are used by the module 
+    system to locate the module and to install and run the module. If you use
+    the <<<ccm-module>>> archetype for creating  module all these files are 
+    already in place. Some of the files need to be customising of course.
+
+    Each module must contain a class which implements the 
+    {{{../ccm-core/apidocs/index.html?org/libreccm/modules/CcmModule.html}CcmModule}} 
+    interface. The {{{../ccm-core/apidocs/index.html?org/libreccm/modules/ModuleManager.html}ModuleManager}} 
+    and other classes of the module system use the <<<ServiceLoader>>> to locate
+    the available modules. Therefore for each implementation there must be
+    a file <<<META-INF/services/org.libreccm.modules.CcmModule>>> 
+    (in the Maven sources this file is located at 
+    <<<src/main/resources/META-INF/services>>>)which contains
+    a line with the implementation. 
+
+    Additionally there must be a module info 
+    file which contains informations about the module. This file is found in
+    the <<<module-info>>> directory (<<</src/main/resources/module-info>>> in
+    the sources). The name of the file is the fully qualified name or the
+    class implementing the <<<CcmModule>>> interface, followed by the 
+    <<<.properties>>> extension. For example if the module class is 
+    <<<org.libreccm.example.Module>>> the module info file is 
+    <<<module-info/org.libreccm.example.Module.properties>>>. The file itself
+    contains four properties:
+
+    * groupId
+
+    * artifactId
+
+    * version
+
+    * build.date
+
+    []
+
+    The first three properties are equal to the properties in the <<<pom.xml>>>
+    of the module. It is not necessary to maintain the file manually. Instead
+    Maven can put the correct values in. The module info file should like this:
+
+--------------------------------------------------------------------------------
+groupId=${project.groupId}
+artifactId=${project.artifactId}
+version=${project.version}
+build.date=${timestamp}
+--------------------------------------------------------------------------------
+
+    In the <<<pom.xml>>> of the module resource filtering must be enabled:
+
+--------------------------------------------------------------------------------
+<project ...>
+    ...
+    <build>
+        ...
+
+        <resources>
+            <directory>src/main/resources</directory>
+            <filtering>true</filtering>
+        </resources>
+
+        ...
+    </build>
+    ...
+</project>
+--------------------------------------------------------------------------------
+
+    Also the build timestamp property needs to be set:
+
+--------------------------------------------------------------------------------
+<project ...>
+    ...
+    <properties>
+        ...
+        <timestamp>${maven.build.timestamp}</timestamp>
+        <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss'Z'Z</maven.build.timestamp.format>
+    </properties>
+    ...
+</project>
+--------------------------------------------------------------------------------
+
+    The DB migrations for a module must be located in 
+    <<<db/migrations/$groupId/$artifactId>>>. Please note that hyphens in the 
+    artifact id are replaced with underscores because hyphens are not allowed
+    in the names of Java packages. Migrations can either be written 
+    in SQL or in Java. In most cases SQL should be sufficient. For each 
+    supported database there is subdirectory/subpackage named for the database 
+    management systems supported by LibreCCM.  At the moment this will be 
+    <<<h2>>>, <<<oracle>>> and <<<pgsql>>>. If you used the archetype to create
+    the module project empty files for the initial migration are already there.
