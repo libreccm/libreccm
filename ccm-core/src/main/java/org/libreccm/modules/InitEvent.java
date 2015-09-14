@@ -19,7 +19,11 @@
 package org.libreccm.modules;
 
 /**
- *
+ * Event object for the module initialisation.
+ * 
+ * @see ModuleEvent
+ * 
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class InitEvent extends ModuleEvent {

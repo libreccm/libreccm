@@ -21,7 +21,9 @@ package org.libreccm.modules;
 import javax.persistence.EntityManager;
 
 /**
- *
+ * Base class for the module lifecycle events. Provides access to the JPA
+ * {@code EntityManager}.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class ModuleEvent {

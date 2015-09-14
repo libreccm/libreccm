@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- *
  * Represents a node in the dependency tree. This class is <strong>not</strong>
  * part of the public API.
  *
@@ -32,11 +31,26 @@ import java.util.Objects;
  */
 final class TreeNode {
 
+    /**
+     * The module class of the module represented by this node.
+     */
     private CcmModule module;
+    /**
+     * The module info for the module.
+     */
     private ModuleInfo moduleInfo;
+    /**
+     * The modules depending on the module represented by this tree node.
+     */
     private List<TreeNode> dependentModules;
+    /**
+     * The modules the module represented by this tree node depends on.
+     */
     private List<TreeNode> dependsOn;
 
+    /**
+     * Creates a new empty tree node.
+     */
     public TreeNode() {
         super();
 
@@ -44,6 +58,12 @@ final class TreeNode {
         dependsOn = new ArrayList<>();
     }
 
+    /**
+     * Creates a tree node for the provided module. Them module info for the
+     * module is loaded automatically.
+     * 
+     * @param module 
+     */
     public TreeNode(final CcmModule module) {
         this();
 

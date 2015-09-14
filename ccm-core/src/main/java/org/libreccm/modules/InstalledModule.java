@@ -30,7 +30,9 @@ import javax.persistence.Table;
 import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 
 /**
- *
+ * A JPA entity bean for for installed modules table for use in the LibreCCM 
+ * administration UI.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
@@ -49,9 +51,15 @@ public class InstalledModule implements Serializable {
     @Column(name = "MODULE_ID")
     private int moduleId;
 
+    /**
+     * The fully qualified name of the module class.
+     */
     @Column(name = "MODULE_CLASS_NAME", length = 2048, unique = true)
     private String moduleClassName;
 
+    /**
+     * The status of the module.
+     */
     @Column(name = "STATUS")
     @Enumerated(EnumType.STRING)
     private ModuleStatus status;

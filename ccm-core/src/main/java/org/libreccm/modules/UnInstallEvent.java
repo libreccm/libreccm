@@ -19,7 +19,9 @@
 package org.libreccm.modules;
 
 /**
- *
+ * Event object for the module deinstallation.
+ * 
+ * @see ModuleEvent
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class UnInstallEvent extends ModuleEvent {

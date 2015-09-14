@@ -19,16 +19,20 @@
 package org.libreccm.modules;
 
 /**
- *
+ * Thrown by the {@link ModuleManager} if something goes wrong.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class ModuleManagerException extends RuntimeException {
+
+    private static final long serialVersionUID = 1426939919890655697L;
 
     /**
      * Creates a new instance of <code>ModuleManagerException</code> without
      * detail message.
      */
     public ModuleManagerException() {
+        super();
         //Nothing
     }
 

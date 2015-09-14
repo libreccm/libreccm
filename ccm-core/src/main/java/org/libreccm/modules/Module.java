@@ -26,7 +26,7 @@ import static java.lang.annotation.ElementType.*;
 import java.lang.annotation.Target;
 
 /**
- * Annotation for describing some meta of a module.
+ * Annotation for describing some meta data of a module.
  * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */

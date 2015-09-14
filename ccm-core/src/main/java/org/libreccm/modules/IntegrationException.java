@@ -19,7 +19,8 @@
 package org.libreccm.modules;
 
 /**
- *
+ * Thrown if an error occurs in the {@link CcmIntegrator}.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class IntegrationException extends RuntimeException {

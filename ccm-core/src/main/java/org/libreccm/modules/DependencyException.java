@@ -19,7 +19,9 @@
 package org.libreccm.modules;
 
 /**
- *
+ * Thrown by the {@link DependencyTreeManager} if something is wrong with the 
+ * dependency tree.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class DependencyException extends Exception {
@@ -32,7 +34,7 @@ public class DependencyException extends Exception {
      */
     public DependencyException() {
         super();
-        //Nothin more
+        //Nothing more
     }
 
     /**

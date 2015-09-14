@@ -25,10 +25,14 @@ import javax.servlet.annotation.WebListener;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.libreccm.modules.ModuleManager;
 
 /**
- *
+ * An implementation of the {@link ServletContextListener} interface for 
+ * initialising the modules.
+ * 
+ * The real work is done by the {@link ModuleManager}. This class only delegates
+ * to the {@code ModuleManager}.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @WebListener

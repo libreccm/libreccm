@@ -41,14 +41,33 @@ public interface CcmModule {
 
     /**
      * An implementation of this method is called after the module is installed.
+     * 
+     * This method can be used to create initial data. 
      *
-     * @param event
+     * @param event @see InstallEvent
      */
     void install(InstallEvent event);
 
+    /**
+     * Called each time the application is restarted. 
+     * 
+     * @param event @see InitEvent
+     */
     void init(InitEvent event);
 
+    /**
+     * Called each time the application is shutdown.
+     * 
+     * @param event @see ShutdownEvent
+     */
     void shutdown(ShutdownEvent event);
 
+    /**
+     * Called if the module is uninstalled. The implementation of this
+     * method should remove all data created by the {@link #install(InstallEvent)}
+     * method.
+     * 
+     * @param event @see UnInstallEvent
+     */
     void uninstall(UnInstallEvent event);
 }

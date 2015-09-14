@@ -19,15 +19,31 @@
 package org.libreccm.modules;
 
 /**
- *
+ * Annotation for describing a dependency relation between a module and another
+ * module.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public @interface RequiredModule {
     
+    /**
+     * The module class required by the module.
+     * 
+     * @return 
+     */
     Class<? extends CcmModule> module();
     
+    /**
+     * The minimal version required by the module.
+     * @return 
+     */
     String minVersion() default "";
     
+    /**
+     * The maximum version required by the module.
+     * 
+     * @return 
+     */
     String maxVersion() default "";
     
 }
