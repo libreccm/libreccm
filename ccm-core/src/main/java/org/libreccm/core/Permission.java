@@ -42,7 +42,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * Represents a {@link Privilege} granted to a {@link Subject} on an 
- * {@link CcmObject} or all {@link CcmObjects}.
+ * {@link CcmObject} or all {@link CcmObject}s.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */

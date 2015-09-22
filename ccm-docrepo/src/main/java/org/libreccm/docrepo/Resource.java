@@ -26,6 +26,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -46,6 +48,11 @@ import java.util.List;
  */
 @Entity
 @Table(schema = "CCM_DOCREPO", name = "RESOURCES")
+@NamedQueries({
+        @NamedQuery(name = "findChildrenByParent",
+                query = "SELECT r FROM Resource r WHERE r.parent = :parentID"),
+        @NamedQuery(name = "findResourceByPath",
+                query = "SELECT r FROM Resource r WHERE r.path = :pathName")})
 public abstract class Resource extends CcmObject {
 
     private static final long serialVersionUID = -910317798106611214L;

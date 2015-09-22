@@ -18,13 +18,12 @@
  */
 package org.libreccm.core;
 
-import java.util.List;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import java.util.List;
 
 /**
- * This class provides methods for managing {@link Permissions}.
+ * This class provides methods for managing {@link Permission}s.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */

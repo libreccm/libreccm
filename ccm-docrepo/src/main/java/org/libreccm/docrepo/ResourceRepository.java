@@ -22,7 +22,7 @@ package org.libreccm.docrepo;
 import org.libreccm.auditing.AbstractAuditedEntityRepository;
 
 /**
- *
+ * Repository class for retrieving, storing and deleting {@code Resource}s.
  *
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  */
@@ -30,16 +30,18 @@ public class ResourceRepository extends AbstractAuditedEntityRepository<Long, Re
 
     @Override
     public Long getEntityId(Resource entity) {
-        return null;
+        return entity.getObjectId();
     }
 
     @Override
     public Class<Resource> getEntityClass() {
-        return null;
+        return Resource.class;
     }
 
     @Override
     public boolean isNew(Resource entity) {
         return false;
     }
+
+
 }
