@@ -27,12 +27,15 @@ import java.sql.Blob;
 import java.util.Objects;
 
 /**
+ * Entity class for a blob object in the doc-repository. Instances of this class
+ * will be persisted into the database.
  *
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  */
 @Entity
 @Table(schema = "CCM_DOCREPO", name = "BLOB_OBJECTS")
 public class BlobObject implements Serializable {
+
     private static final long serialVersionUID = -7468014879548796218L;
 
     /**

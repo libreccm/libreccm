@@ -25,17 +25,26 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 /**
+ * Entity class of a repository for documents. Instances will be persisted into the
+ * database. Instance variables are inherited from {@link Application}.
  *
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  */
 @Entity
 @Table(schema = "CCM_DOCREPO", name = "REPOSITORIES")
 public class Repository extends Application {
+
     private static final long serialVersionUID = 6673243021462798036L;
 
+    /**
+     * The root of the repository.
+     */
     @Column(name = "ROOT_ID")
     private long rootId;
 
+    /**
+     * The owner of the repository.
+     */
     @Column(name = "OWNER_ID")
     private long ownerId;
 

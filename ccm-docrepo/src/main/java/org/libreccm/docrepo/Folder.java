@@ -22,12 +22,15 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 /**
+ * Entity class of a folder in the doc-repository. Instances will be persisted
+ * into the database. Instance variables are inherited from {@link ResourceImpl}.
  *
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  */
 @Entity
 @Table(schema = "CCM_DOCREPO", name = "FOLDERS")
 public class Folder extends ResourceImpl {
+
     private static final long serialVersionUID = 1561466556458872622L;
 
     public Folder() {

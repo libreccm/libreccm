@@ -24,15 +24,19 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 /**
+ * Entity class for a portlet of recent updated documents in the doc-repository.
+ * Instances will be persisted into the database. Instance variables are inherited
+ * form {@link Portlet}.
  *
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  */
 @Entity
-@Table(schema = "CCM_DOCREPO", name = "RECENT_UPDATED_DOCS_PORTLETS")
-public class RecentUpdatedDocsPortlet extends Portlet {
+@Table(schema = "CCM_DOCREPO", name = "REC_UPD_DOCS_PORTLETS")
+public class RecUpdDocsPortlet extends Portlet {
+
     private static final long serialVersionUID = -4091024367070127101L;
 
-    public RecentUpdatedDocsPortlet() {
+    public RecUpdDocsPortlet() {
         super();
     }
 }
