@@ -33,6 +33,9 @@ public class File extends Resource {
 
     private static final long serialVersionUID = -504220783419811504L;
 
+    /**
+     * Constructor calls the super-class-constructor of {@link Resource}.
+     */
     public File() {
         super();
     }

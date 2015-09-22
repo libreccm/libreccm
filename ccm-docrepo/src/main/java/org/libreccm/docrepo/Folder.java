@@ -33,6 +33,9 @@ public class Folder extends Resource {
 
     private static final long serialVersionUID = 1561466556458872622L;
 
+    /**
+     * Constructor calls the super-class-constructor of {@link Resource}.
+     */
     public Folder() {
         super();
     }

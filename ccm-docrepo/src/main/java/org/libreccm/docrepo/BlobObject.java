@@ -21,7 +21,13 @@ package org.libreccm.docrepo;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.sql.Blob;
 import java.util.Objects;
@@ -48,11 +54,23 @@ public class BlobObject implements Serializable {
     private long blobObjectId;
 
     /**
-     * The Content of the blob-object.
+     * The Content of the {@code BlobObject}.
      */
     @Column(name = "CONTENT")
     @NotEmpty
     private Blob content;
+
+    /**
+     * The {@link Resource} assigned to the {@code BlobObject}.
+     */
+    @OneToOne(mappedBy = "content")
+    @NotEmpty
+    private Resource resource;
+
+    /**
+     * Constructor.
+     */
+    public BlobObject() {}
 
     //> Begin GETTER & SETTER
 
@@ -70,6 +88,14 @@ public class BlobObject implements Serializable {
 
     public void setContent(Blob content) {
         this.content = content;
+    }
+
+    public Resource getResource() {
+        return resource;
+    }
+
+    public void setResource(Resource resource) {
+        this.resource = resource;
     }
 
     //< End GETTER & SETTER
@@ -114,4 +140,6 @@ public class BlobObject implements Serializable {
                             blobObjectId,
                             content.toString());
     }
+
+
 }

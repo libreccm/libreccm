@@ -20,15 +20,19 @@ package org.libreccm.docrepo;
 
 import org.hibernate.validator.constraints.NotBlank;
 import org.libreccm.core.CcmObject;
+import org.libreccm.core.User;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -47,46 +51,53 @@ public abstract class Resource extends CcmObject {
     private static final long serialVersionUID = -910317798106611214L;
 
     /**
-     * Name of the resource.
+     * Name of the {@code Resource}.
      */
     @Column(name = "NAME")
     @NotBlank
     private String name;
 
     /**
-     * Description of the resource.
+     * Description of the {@code Resource}.
      */
     @Column(name = "DESCRIPTION")
     private String description;
 
     /**
-     * Flag, wheather the resource is a folder or not.
+     * Flag, wheather the {@code Resource} is a {@link Folder} or not.
      */
     @Column(name = "IS_FOLDER")
     @NotBlank
     private boolean isFolder;
 
     /**
-     * Path to the resource
+     * Path to the {@code Resource}.
      */
     @Column(name = "PATH")
     @NotBlank
     private String path;
 
     /**
-     * Mime-type of the resource
+     * Mime-type of the {@code Resource}.
      */
     @Column(name = "MIME_TYPE")
     private String mimeType;
 
     /**
-     * Size of the resource.
+     * Size of the {@code Resource}.
      */
     @Column(name = "SIZE")
     private long size;
 
     /**
-     * Creation date of the resource.
+     * Content of the {@code Resource} as a {@link BlobObject}.
+     */
+    @OneToOne
+    @JoinColumn(name = "CONTENT_ID")
+    private BlobObject content;
+
+    /**
+     * Creation date of the {@code Resource}.
      */
     @Column(name = "CREATION_DATE")
     @NotBlank
@@ -94,13 +105,7 @@ public abstract class Resource extends CcmObject {
     private Date creationDate;
 
     /**
-     * Creation ip of the resource.
-     */
-    @Column(name = "CREATION_IP")
-    private String creationIp;
-
-    /**
-     * Date of the latest modification of the resource.
+     * Date of the latest modification of the {@code Resource}.
      */
     @Column(name = "LAST_MODIFIED_DATE")
     @NotBlank
@@ -108,18 +113,47 @@ public abstract class Resource extends CcmObject {
     private Date lastModifiedDate;
 
     /**
-     * Ip of the latest modification of the resource.
+     * Creation ip of the {@code Resource}.
+     */
+    @Column(name = "CREATION_IP")
+    private String creationIp;
+
+    /**
+     * Ip of the latest modification of the {@code Resource}.
      */
     @Column(name = "LAST_MODIFIED_IP")
     private String lastModifiedIp;
 
-    @OneToOne
-    @JoinColumn(name = "CONTENT_RESOURCE_ID")
-    private Resource contentResource;
+    /**
+     * The {@link User}, who created the {@code Resource}.
+     */
+    @ManyToOne
+    @JoinColumn(name = "CREATION_USER_ID")
+    private User creationUser;
 
+    /**
+     * The {@link User}, who last modified the {@code Resource}.
+     */
+    @ManyToOne
+    @JoinColumn(name = "LAST_MODIFIED_USER_ID")
+    private User lastModifiedUser;
 
+    /**
+     * The parent-{@code Resource} of the {@code Resource}.
+     */
+    @ManyToOne
+    @JoinColumn(name = "PARENT_ID")
+    private Resource parent;
 
+    /**
+     * The child-{@code Resource}s of the {@code Resource}.
+     */
+    @OneToMany(mappedBy = "parent")
+    private List<Resource> immediateChildren;
 
+    /**
+     * Constructor calls the super-class-constructor of {@link CcmObject}.
+     */
     public Resource() {
         super();
     }
@@ -174,20 +208,20 @@ public abstract class Resource extends CcmObject {
         this.size = size;
     }
 
+    public BlobObject getContent() {
+        return content;
+    }
+
+    public void setContent(BlobObject content) {
+        this.content = content;
+    }
+
     public Date getCreationDate() {
         return creationDate;
     }
 
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
-    }
-
-    public String getCreationIp() {
-        return creationIp;
-    }
-
-    public void setCreationIp(String creationIp) {
-        this.creationIp = creationIp;
     }
 
     public Date getLastModifiedDate() {
@@ -198,12 +232,52 @@ public abstract class Resource extends CcmObject {
         this.lastModifiedDate = lastModifiedDate;
     }
 
+    public String getCreationIp() {
+        return creationIp;
+    }
+
+    public void setCreationIp(String creationIp) {
+        this.creationIp = creationIp;
+    }
+
     public String getLastModifiedIp() {
         return lastModifiedIp;
     }
 
     public void setLastModifiedIp(String lastModifiedIp) {
         this.lastModifiedIp = lastModifiedIp;
+    }
+
+    public User getCreationUser() {
+        return creationUser;
+    }
+
+    public void setCreationUser(User creationUser) {
+        this.creationUser = creationUser;
+    }
+
+    public User getLastModifiedUser() {
+        return lastModifiedUser;
+    }
+
+    public void setLastModifiedUser(User lastModifiedUser) {
+        this.lastModifiedUser = lastModifiedUser;
+    }
+
+    public Resource getParent() {
+        return parent;
+    }
+
+    public void setParent(Resource parent) {
+        this.parent = parent;
+    }
+
+    public List<Resource> getImmediateChildren() {
+        return immediateChildren;
+    }
+
+    public void setImmediateChildren(List<Resource> immediateChildren) {
+        this.immediateChildren = immediateChildren;
     }
 
     //< End GETTER & SETTER

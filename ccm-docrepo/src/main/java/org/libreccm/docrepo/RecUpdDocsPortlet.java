@@ -36,6 +36,9 @@ public class RecUpdDocsPortlet extends Portlet {
 
     private static final long serialVersionUID = -4091024367070127101L;
 
+    /**
+     * Constructor calls the super-class-constructor of {@link Portlet}.
+     */
     public RecUpdDocsPortlet() {
         super();
     }

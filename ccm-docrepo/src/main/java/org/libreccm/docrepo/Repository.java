@@ -48,6 +48,9 @@ public class Repository extends Application {
     @Column(name = "OWNER_ID")
     private long ownerId;
 
+    /**
+     * Constructor calls the super-class-constructor of {@link Application}.
+     */
     public Repository() {
         super();
     }
