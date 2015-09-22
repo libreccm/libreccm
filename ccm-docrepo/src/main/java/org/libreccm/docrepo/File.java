@@ -23,13 +23,13 @@ import javax.persistence.Table;
 
 /**
  * Entity class for a file in the doc-repository. Instances will be persisted
- * into the database. Instance variables are inherited from {@link ResourceImpl}.
+ * into the database. Instance variables are inherited from {@link Resource}.
  *
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  */
 @Entity
 @Table(schema = "CCM_DOCREPO", name = "FILES")
-public class File extends ResourceImpl {
+public class File extends Resource {
 
     private static final long serialVersionUID = -504220783419811504L;
 

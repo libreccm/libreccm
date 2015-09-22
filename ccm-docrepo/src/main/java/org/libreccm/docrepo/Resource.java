@@ -21,13 +21,14 @@ package org.libreccm.docrepo;
 import org.hibernate.validator.constraints.NotBlank;
 import org.libreccm.core.CcmObject;
 
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import java.util.Date;
 
 
 /**
@@ -40,8 +41,8 @@ import javax.persistence.TemporalType;
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  */
 @Entity
-@Table(schema = "CCM_DOCREPO", name = "RESOURCE_IMPL")
-public abstract class ResourceImpl extends CcmObject {
+@Table(schema = "CCM_DOCREPO", name = "RESOURCES")
+public abstract class Resource extends CcmObject {
 
     private static final long serialVersionUID = -910317798106611214L;
 
@@ -112,7 +113,14 @@ public abstract class ResourceImpl extends CcmObject {
     @Column(name = "LAST_MODIFIED_IP")
     private String lastModifiedIp;
 
-    public ResourceImpl() {
+    @OneToOne
+    @JoinColumn(name = "CONTENT_RESOURCE_ID")
+    private Resource contentResource;
+
+
+
+
+    public Resource() {
         super();
     }
 

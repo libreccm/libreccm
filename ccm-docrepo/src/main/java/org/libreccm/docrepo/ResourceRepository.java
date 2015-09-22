@@ -18,22 +18,28 @@
  */
 package org.libreccm.docrepo;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+
+import org.libreccm.auditing.AbstractAuditedEntityRepository;
 
 /**
- * Entity class of a folder in the doc-repository. Instances will be persisted
- * into the database. Instance variables are inherited from {@link Resource}.
+ *
  *
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  */
-@Entity
-@Table(schema = "CCM_DOCREPO", name = "FOLDERS")
-public class Folder extends Resource {
+public class ResourceRepository extends AbstractAuditedEntityRepository<Long, Resource> {
 
-    private static final long serialVersionUID = 1561466556458872622L;
+    @Override
+    public Long getEntityId(Resource entity) {
+        return null;
+    }
 
-    public Folder() {
-        super();
+    @Override
+    public Class<Resource> getEntityClass() {
+        return null;
+    }
+
+    @Override
+    public boolean isNew(Resource entity) {
+        return false;
     }
 }
