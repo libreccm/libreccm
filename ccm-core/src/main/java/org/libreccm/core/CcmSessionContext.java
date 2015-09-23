@@ -53,6 +53,10 @@ public class CcmSessionContext implements Serializable {
         this.effectiveSubject = effectiveSubject;
     }
     
+    public boolean isLoggedIn() {
+        return currentSubject != null;
+    }
+    
     /**
      * Execute code under different privileges. Useful if no current user is 
      * available, for example in the startup phase. 

@@ -183,18 +183,6 @@ public class User extends Subject implements Serializable {
     @XmlElement(name = "group-membership", namespace = CORE_XML_NS)
     private List<GroupMembership> groupMemberships;
 
-    /**
-     * The {@link Resource}s created by the {@code User}.
-     */
-    @OneToMany(mappedBy = "creationUser")
-    private List<Resource> createdResources;
-
-    /**
-     * The {@link Resource}s modified by the {@code User}.
-     */
-    @OneToMany(mappedBy = "lastModifiedUser")
-    private List<Resource> modifiedResources;
-
     public User() {
         super();
 
@@ -320,22 +308,6 @@ public class User extends Subject implements Serializable {
     protected void removeGroupMembership(
             final GroupMembership groupMembership) {
         groupMemberships.remove(groupMembership);
-    }
-
-    public List<Resource> getCreatedResources() {
-        return createdResources;
-    }
-
-    public void setCreatedResources(List<Resource> createdResources) {
-        this.createdResources = createdResources;
-    }
-
-    public List<Resource> getModifiedResources() {
-        return modifiedResources;
-    }
-
-    public void setModifiedResources(List<Resource> modifiedResources) {
-        this.modifiedResources = modifiedResources;
     }
 
     @Override
