@@ -57,8 +57,9 @@ public class BlobObject implements Serializable {
      * The Content of the {@code BlobObject}.
      */
     @Column(name = "CONTENT")
+    @Lob
     @NotEmpty
-    private Blob content;
+    private byte[] content;
 
     /**
      * The {@link Resource} assigned to the {@code BlobObject}.
