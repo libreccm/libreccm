@@ -33,8 +33,8 @@ Testing LibreCCM
 --------------------------------------------------------------------------------
 
     are only executed when special Maven profiles are used. These profiles are
-    used to control against which Application server Arquillan should run its 
-    tests. 
+    used to control which Application server Arquillan should use to run the  
+    integration tests. 
 
 * Available profiles
 
@@ -62,7 +62,7 @@ Testing LibreCCM
 * Structure of the profiles
 
     For each profile their is separate resource directory in the 
-    <<<src/test/resources>>> directory of the module which at least 
+    <<<src/test>>> directory of the module which at least 
     contains these files: 
     
     [arquillian.xml] Configuration file for Arquillian.
@@ -73,20 +73,61 @@ Testing LibreCCM
     is that the <<<test-persistence.xml>>> configures Hibernate to automatically
     drop the database and recreate the schema. The production 
     <<<persistence.xml>>> is configured to only verify the schema. Schema
-    creation and migrations are done by LibreCCM.
+    creation and migrations are done by LibreCCM using the Flyway framework.
 
 * Preparing the remote Application Servers
 
-** Wildfly 8
+** Wildfly 8.2.x
 
-    For using the remote profiles you have to install a Wildfly application
-    server on the system you want to run the tests on an configure these 
-    datasources:
+    For using the remote profiles you have to install a 
+    {{{http://wildfly.org/}Wildfly application server}}
+    on the system you want to run the tests on. At them moment we recommend to 
+    use version 8.2.1. The installation is 
+    described in the {{{https://docs.jboss.org/author/display/WFLY8/Getting+Started+Guide}Wildfly documentation}}.
 
-    [java:/comp/env/jdbc/org/libreccm/ccm-core/h2-mem] A in memory database 
-    using the H2 database which is part of Wildfly.
+    If you want to use the <<<wildfly8-remote-h2-mem>>> profile you have to 
+    create a new datasource in Wildfly. The easiest way to do that is the use
+    Admin UI of Wildfly. Open the Admin UI in your browser, go the 
+    <<<Configuration>>>, <<<Connector>>>, <<<Datasource>>> and create a new 
+    datasource with these properties:
+    
+    [JNDI name] <<<java:/comp/env/jdbc/org/libreccm/ccm-core/h2-mem>>>
 
-    [java:/comp/env/jdbc/org/libreccm/ccm-core/pgsql] PostgresSQL database
+    [Name] <<<ccm-core-h2-mem-testdb>>>
+
+    [Connection URL] <<<jdbc:h2:mem:ccc-testdb>>>
+
+    [Username] <<<sa>>>
+
+    [Password] can be empty
+
+    This uses the the H2 database engine which bundled with Wildfly. The 
+    database is an in memory database which exists only in the RAM.
+
+    If you want to use the <<<wildfly8-remote-pgsql>>> some more steps are 
+    necessary. First you need a working PostgreSQL installation. We recommend
+    version 9.4. Create a new database user <<<ccm>>> with a password and a new
+    database <<<ccm-testdb>>> which is owned by the user you just created.
+
+    Download the {{{https://jdbc.postgresql.org/}JDBC driver for PostgreSQL}}. 
+    Open the Admin UI of your Wildfly installation and and to <<<Deployments>>>.
+    Click the <<<Add>> button and select the file of the PostgreSQL JDBC driver.
+    Click next and check the <<<Enable>>> checkbox of the next page, then click 
+    <<<Save>>>. You should now see the deployed driver in the list of 
+    deployments.
+
+    Then go to <<<Configuration>>>, <<<Connector>>>, <<<Datasource>>> and create a new 
+    datasource with these properties:
+    
+    [JNDI name] <<<java:/comp/env/jdbc/org/libreccm/ccm-core/pgsql>>>
+
+    [Name] <<<ccm-core-pgsql-testdb>>>
+
+    [Connection URL] <<<jdbc:postgresql://your-pgsql-server/ccm-testdb>>>
+
+    [Username] <<<ccm>>>
+
+    [Password] <<<your-password>>>
 
     Please note that the database is recreated after each test. Therefore
     you should not use a production database.
