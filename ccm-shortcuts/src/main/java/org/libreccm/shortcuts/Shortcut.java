@@ -29,27 +29,28 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import org.libreccm.core.CcmObject;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(schema ="ccm_shortcuts", name = "shortcuts")
+@Table(schema ="CCM_SHORTCUTS", name = "SHORTCUTS")
 public class Shortcut implements Serializable {
 
     private static final long serialVersionUID = -5674633339633714327L;
     
     @Id
-    @Column(name = "shortcut_id")
+    @Column(name = "SHORTCUTS_ID")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long shortcutId;
 
-    @Column(name = "url_key", length = 1024)
+    @Column(name = "URL_KEY", length = 1024)
     @NotEmpty
     private String urlKey;
 
-    @Column(name = "redirect", length = 1024)
+    @Column(name = "REDIRECT", length = 1024)
     @NotEmpty
     private String redirect;
 

@@ -27,7 +27,7 @@ import org.libreccm.web.Application;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(schema ="ccm_shortcuts", name = "shortcuts_app")
+@Table(schema ="CCM_SHORTCUTS", name = "SHORTCUTS_APP")
 public class Shortcuts extends Application {
     private static final long serialVersionUID = -6793265996161649637L;
     
