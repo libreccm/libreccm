@@ -45,14 +45,17 @@ import java.util.List;
  *                                                          {@link Folder}
  *
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
+ * @version 01/10/2015
  */
 @Entity(name = "DocRepoResource")
 @Table(schema = "CCM_DOCREPO", name = "RESOURCES")
 @NamedQueries({
-        @NamedQuery(name = "findChildrenByParent",
-                query = "SELECT r FROM DocRepoResource r WHERE r.parent = :parentID"),
         @NamedQuery(name = "findResourceByPath",
-                query = "SELECT r FROM DocRepoResource r WHERE r.path = :pathName")})
+                query = "SELECT r FROM DocRepoResource r WHERE r.path = :pathName"),
+        @NamedQuery(name = "findCreatedResourcesFromUser",
+                query = "SELECT r FROM DocRepoResource r WHERE r.creationUser = :user"),
+        @NamedQuery(name = "findModifiedResourcesFromUser",
+                query = "SELECT r FROM DocRepoResource r WHERE r.lastModifiedUser = :user")})
 public abstract class Resource extends CcmObject {
 
     private static final long serialVersionUID = -910317798106611214L;
@@ -60,7 +63,7 @@ public abstract class Resource extends CcmObject {
     /**
      * Name of the {@code Resource}.
      */
-    @Column(name = "NAME")
+    @Column(name = "NAME", length = 512, unique = true, nullable = false)
     @NotBlank
     private String name;
 
@@ -80,7 +83,7 @@ public abstract class Resource extends CcmObject {
     /**
      * Path to the {@code Resource}.
      */
-    @Column(name = "PATH")
+    @Column(name = "PATH", unique = true)
     @NotBlank
     private String path;
 

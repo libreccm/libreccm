@@ -29,6 +29,7 @@ import javax.persistence.Table;
  * database. Instance variables are inherited from {@link Application}.
  *
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
+ * @version 01/10/2015
  */
 @Entity
 @Table(schema = "CCM_DOCREPO", name = "REPOSITORIES")

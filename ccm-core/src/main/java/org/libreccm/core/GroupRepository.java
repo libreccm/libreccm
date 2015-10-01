@@ -18,12 +18,11 @@
  */
 package org.libreccm.core;
 
-import java.util.List;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import java.util.List;
 
 /**
  * A repository class for retrieving, storing and deleting {@link Group}s.
@@ -59,7 +58,7 @@ public class GroupRepository extends AbstractEntityRepository<Long, Group> {
         final List<Group> result = query.getResultList();
 
         //Check if result list is empty and if not return the first element.
-        //If their ist a result than there can only be one because the 
+        //If their is a result than there can only be one because the
         //name column of group has a unique constraint.
         if (result.isEmpty()) {
             return null;

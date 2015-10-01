@@ -18,12 +18,11 @@
  */
 package org.libreccm.core;
 
-import java.util.List;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import java.util.List;
 
 /**
  * Repository class for retrieving, storing and deleting permissions.
@@ -57,7 +56,7 @@ public class PermissionRepository
     @Override
     public boolean isNew(final Permission entity) {
         if (entity == null) {
-            throw new IllegalArgumentException("Entity to save can't be null");
+            throw new IllegalArgumentException("Entity to save can't be null.");
         }
         return entity.getPermissionId() == 0;
     }

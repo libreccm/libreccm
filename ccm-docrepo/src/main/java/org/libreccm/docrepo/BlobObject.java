@@ -26,6 +26,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.io.Serializable;
@@ -37,6 +38,7 @@ import java.util.Objects;
  * will be persisted into the database.
  *
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
+ * @version 01/10/2015
  */
 @Entity
 @Table(schema = "CCM_DOCREPO", name = "BLOB_OBJECTS")
@@ -83,11 +85,11 @@ public class BlobObject implements Serializable {
         this.blobObjectId = blobObjectId;
     }
 
-    public Blob getContent() {
+    public byte[] getContent() {
         return content;
     }
 
-    public void setContent(Blob content) {
+    public void setContent(byte[] content) {
         this.content = content;
     }
 

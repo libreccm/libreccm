@@ -18,26 +18,23 @@
  */
 package org.libreccm.docrepo;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 
 /**
- * Entity class of a folder in the doc-repository. Instances will be persisted
- * into the database. Instance variables are inherited from {@link Resource}.
+ * Manager class for complex operations on {@code Resource}-objects.
  *
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  * @version 01/10/2015
  */
-@Entity
-@Table(schema = "CCM_DOCREPO", name = "FOLDERS")
-public class Folder extends Resource {
+@RequestScoped
+public class ResourceManager {
 
-    private static final long serialVersionUID = 1561466556458872622L;
+    @Inject
+    private transient ResourceRepository resourceRepository;
 
-    /**
-     * Constructor calls the super-class-constructor of {@link Resource}.
-     */
-    public Folder() {
-        super();
-    }
+
+
+
+
 }

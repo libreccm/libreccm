@@ -29,6 +29,7 @@ import javax.persistence.Table;
  * form {@link Portlet}.
  *
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
+ * @version 01/10/2015
  */
 @Entity
 @Table(schema = "CCM_DOCREPO", name = "REC_UPD_DOCS_PORTLETS")
