@@ -21,7 +21,7 @@ package com.arsdigita.templating;
 
 import com.arsdigita.web.Web;
 
-import org.libreccm.web.Application;
+import org.libreccm.web.CcmApplication;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -48,7 +48,7 @@ public class ApplicationOIDPatternGenerator implements PatternGenerator {
     public String[] generateValues(String key,
                                    HttpServletRequest req) {
 
-        final Application application = Web.getWebContext().getApplication();
+        final CcmApplication application = Web.getWebContext().getApplication();
         
         if (application != null) {
             String[] oid = new String[1];

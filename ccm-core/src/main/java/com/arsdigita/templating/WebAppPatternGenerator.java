@@ -23,7 +23,7 @@ import com.arsdigita.web.Web;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
-import org.libreccm.web.Application;
+import org.libreccm.web.CcmApplication;
 
 /**
  * Generates a set of patterns corresponding to the current web application
@@ -52,7 +52,7 @@ public class WebAppPatternGenerator implements PatternGenerator {
     public String[] generateValues(String key,
                                    HttpServletRequest req) {
 
-        Application app = Web.getWebContext().getApplication();
+        CcmApplication app = Web.getWebContext().getApplication();
         String ctx = (app == null) ? null : "";
 
         if (app == null || ctx == null || "".equals(ctx)) {

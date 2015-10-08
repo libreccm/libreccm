@@ -18,7 +18,7 @@
  */
 package org.libreccm.docrepo;
 
-import org.libreccm.web.Application;
+import org.libreccm.web.CcmApplication;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -26,14 +26,14 @@ import javax.persistence.Table;
 
 /**
  * Entity class of a repository for documents. Instances will be persisted into the
- * database. Instance variables are inherited from {@link Application}.
+ * database. Instance variables are inherited from {@link CcmApplication}.
  *
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  * @version 01/10/2015
  */
 @Entity
 @Table(schema = "CCM_DOCREPO", name = "REPOSITORIES")
-public class Repository extends Application {
+public class Repository extends CcmApplication {
 
     private static final long serialVersionUID = 6673243021462798036L;
 
@@ -50,7 +50,7 @@ public class Repository extends Application {
     private long ownerId;
 
     /**
-     * Constructor calls the super-class-constructor of {@link Application}.
+     * Constructor calls the super-class-constructor of {@link CcmApplication}.
      */
     public Repository() {
         super();

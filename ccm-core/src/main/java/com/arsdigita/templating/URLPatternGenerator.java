@@ -27,7 +27,7 @@ import com.arsdigita.web.Web;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
-import org.libreccm.web.Application;
+import org.libreccm.web.CcmApplication;
 
 
 /**
@@ -155,7 +155,7 @@ public class URLPatternGenerator implements PatternGenerator {
     private String getBasePath() {
 
         // retrieve the application of the request
-        Application app = Web.getWebContext().getApplication();
+        CcmApplication app = Web.getWebContext().getApplication();
         if (app == null) {
             return "/";
         } else {

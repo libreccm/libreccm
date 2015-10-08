@@ -24,7 +24,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.libreccm.tests.categories.UnitTest;
-import org.libreccm.web.Application;
+import org.libreccm.web.CcmApplication;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -68,11 +68,11 @@ public class EqualsAndHashCodeTest {
         final Domain domain2 = new Domain();
         domain2.setDomainKey("Domain Two");
 
-        final Application application1 = new Application();
-        application1.setPrimaryUrl(new URI("http://application-one.exampl.org"));
+        final CcmApplication application1 = new CcmApplication();
+        application1.setPrimaryUrl("http://application-one.exampl.org");
 
-        final Application application2 = new Application();
-        application2.setPrimaryUrl(new URI("http://application-two.exampl.org"));
+        final CcmApplication application2 = new CcmApplication();
+        application2.setPrimaryUrl("http://application-two.exampl.org");
 
         EqualsVerifier
             .forClass(entityClass)
@@ -81,7 +81,7 @@ public class EqualsAndHashCodeTest {
             .withRedefinedSuperclass()
             .withPrefabValues(Category.class, category1, category2)
             .withPrefabValues(Domain.class, domain1, domain2)
-            .withPrefabValues(Application.class, application1, application2)
+            .withPrefabValues(CcmApplication.class, application1, application2)
             .verify();
     }
 

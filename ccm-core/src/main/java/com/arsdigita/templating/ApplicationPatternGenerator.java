@@ -26,8 +26,7 @@ import com.arsdigita.web.Web;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
-import org.libreccm.web.Application;
-import org.libreccm.web.ApplicationType;
+import org.libreccm.web.CcmApplication;
 
 /**
  * Generates a set of pattern values based on the application key, eg
@@ -41,7 +40,7 @@ public class ApplicationPatternGenerator implements PatternGenerator {
     private static final Logger s_log = Logger.getLogger(PatternGenerator.class);
 
     /**
-     * Implementation iof the Interface class.
+     * Implementation of the Interface class.
      *
      * @param key
      * @param req
@@ -54,10 +53,9 @@ public class ApplicationPatternGenerator implements PatternGenerator {
 
         s_log.debug("Processing Application with key: " + key);
 
-        final Application app = Web.getWebContext().getApplication();
+        final CcmApplication app = Web.getWebContext().getApplication();
         if (app != null) {
-            String[] returnValue = {((ApplicationType) app.getResourceType())
-                .getTitle()};
+            String[] returnValue = {app.getApplicationType()};
             s_log.debug("Found application >>" + returnValue
                             + "<< in Application.");
             return returnValue;

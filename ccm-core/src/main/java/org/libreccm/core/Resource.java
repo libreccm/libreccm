@@ -21,7 +21,7 @@ package org.libreccm.core;
 import static org.libreccm.core.CoreConstants.*;
 
 import org.libreccm.l10n.LocalizedString;
-import org.libreccm.web.Application;
+import org.libreccm.web.CcmApplication;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -43,7 +43,7 @@ import javax.persistence.TemporalType;
 
 /**
  * The {@code Resource} class is a base class for several other classes, for
- * example the {@link Application} class.
+ * example the {@link CcmApplication} class.
  *
  * Resources can be nested, a resource can have multiple child resources.
  *

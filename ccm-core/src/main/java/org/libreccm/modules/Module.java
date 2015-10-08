@@ -18,6 +18,8 @@
  */
 package org.libreccm.modules;
 
+import org.libreccm.web.ApplicationType;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -66,6 +68,14 @@ public @interface Module {
      * @return An array of the dependencies of the module.
      */
     RequiredModule[] requiredModules() default {};
+    
+    /**
+     * ApplicationType types provided by the annotated module.
+     * 
+     * @return An array containing the type descriptions for all application 
+     * types provided by the annotated module.
+     */
+    ApplicationType[] applicationTypes() default {};
     
     /**
      * The JPA entities provided by the annotated module.

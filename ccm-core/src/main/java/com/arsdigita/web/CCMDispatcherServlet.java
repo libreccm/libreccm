@@ -23,7 +23,7 @@ import com.arsdigita.util.Assert;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.libreccm.web.Application;
+import org.libreccm.web.CcmApplication;
 import org.libreccm.web.ApplicationRepository;
 import org.libreccm.web.ServletPath;
 
@@ -239,7 +239,7 @@ public class CCMDispatcherServlet extends BaseServlet {
                         path + "' ***");
         }
 
-        final Application application = appRepository
+        final CcmApplication application = appRepository
             .retrieveApplicationForPath(path);
         
         if (application == null) {
@@ -278,7 +278,7 @@ public class CCMDispatcherServlet extends BaseServlet {
          * 
          * @param app 
          */
-        ApplicationSpec(Application app) {
+        ApplicationSpec(CcmApplication app) {
             if ( app == null ) { throw new NullPointerException("app"); }
 
             m_id              = app.getObjectId();

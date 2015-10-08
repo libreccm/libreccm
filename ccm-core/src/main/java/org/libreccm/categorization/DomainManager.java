@@ -18,14 +18,14 @@
  */
 package org.libreccm.categorization;
 
-import org.libreccm.web.Application;
+import org.libreccm.web.CcmApplication;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
 /**
  * Provides several methods when managing the relations between {@link Domain}s
- * and their owning {@link Application}s.
+ * and their owning {@link CcmApplication}s.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -36,46 +36,46 @@ public class DomainManager {
     private transient DomainRepository domainRepo;
 
     /**
-     * Adds a {@code Application} to the owners of a {@link Domain}. If the
-     * provided {@code Application} is already an owner of the provided
+     * Adds a {@code CcmApplication} to the owners of a {@link Domain}. If the
+     * provided {@code CcmApplication} is already an owner of the provided
      * {@code Domain} the method does nothing.
      *
-     * @param application The {@code Application} to add to the owners of the
+     * @param application The {@code CcmApplication} to add to the owners of the
      *                    {@code Domain}.
      * @param domain      The {@code Domain} to which owners the
-     *                    {@code Application is added}.
+     *                    {@code CcmApplication is added}.
      */
-    public void addDomainOwner(final Application application,
+    public void addDomainOwner(final CcmApplication application,
                                final Domain domain) {
         // TODO implement method
         throw new UnsupportedOperationException();
     }
 
     /**
-     * Removes a {@code Application} from the owners of a {@code Domain}. If the
-     * provided {@code Application} is not an owner of the provided
+     * Removes a {@code CcmApplication} from the owners of a {@code Domain}. If the
+     * provided {@code CcmApplication} is not an owner of the provided
      * {@code Domain} the method does nothing.
      *
-     * @param application The {@code Application} to remove from the owners of
+     * @param application The {@code CcmApplication} to remove from the owners of
      *                    the provided {@code Domain}.
      * @param domain      The {@code Domain} from which owners the provided
-     *                    {@code Application} should be removed.
+     *                    {@code CcmApplication} should be removed.
      */
-    public void removeDomainOwner(final Application application,
+    public void removeDomainOwner(final CcmApplication application,
                                   final Domain domain) {
         // TODO implement method
         throw new UnsupportedOperationException();
     }
 
     /**
-     * Determines if a {@link Application} is an owner of {@link Domain}.
+     * Determines if a {@link CcmApplication} is an owner of {@link Domain}.
      * 
-     * @param application The {@code Application} to test.
+     * @param application The {@code CcmApplication} to test.
      * @param domain The {@code Domain} to test.
-     * @return {@code true} if the provided {@code Application} is an owner 
+     * @return {@code true} if the provided {@code CcmApplication} is an owner 
      * of the provided {@code Domain}, {@code false} otherwise.
      */
-    public boolean isDomainOwner(final Application application,
+    public boolean isDomainOwner(final CcmApplication application,
                                  final Domain domain) {
         // TODO implement method
         throw new UnsupportedOperationException();

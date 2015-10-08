@@ -18,14 +18,14 @@
  */
 package com.arsdigita.web;
 
-// import com.arsdigita.web.Application;
+// import com.arsdigita.web.CcmApplication;
 import com.arsdigita.util.Assert;
 import com.arsdigita.util.Record;
 
 import org.apache.log4j.Logger;
 import org.libreccm.core.CcmSessionContext;
 import org.libreccm.core.User;
-import org.libreccm.web.Application;
+import org.libreccm.web.CcmApplication;
 
 /**
  * <p>
@@ -51,7 +51,7 @@ public final class WebContext extends Record {
      */
     private static final Logger s_log = Logger.getLogger(WebContext.class);
 
-    private Application m_application = null;
+    private CcmApplication m_application = null;
     private URL m_requestURL = null;
 
     /**
@@ -90,7 +90,7 @@ public final class WebContext extends Record {
      * @param app
      * @param requestURL
      */
-    final void init(final Application app, final URL requestURL) {
+    final void init(final CcmApplication app, final URL requestURL) {
         setApplication(app);
         setRequestURL(requestURL);
     }
@@ -114,7 +114,7 @@ public final class WebContext extends Record {
      *
      * @return
      */
-    public final Application getApplication() {
+    public final CcmApplication getApplication() {
         return m_application;
     }
 
@@ -122,7 +122,7 @@ public final class WebContext extends Record {
      *
      * @param app
      */
-    final void setApplication(final Application app) {
+    final void setApplication(final CcmApplication app) {
         m_application = app;
 
         mutated("Application");

@@ -38,7 +38,7 @@ public class ToStringTest extends ToStringVerifier {
     @Parameterized.Parameters(name = "{0}")
     public static Collection<Class<?>> data() {
         return Arrays.asList(new Class<?>[]{
-            Application.class,
+            CcmApplication.class,
             Host.class
         });
     }

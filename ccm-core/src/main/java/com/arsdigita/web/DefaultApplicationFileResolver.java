@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.RequestDispatcher;
 
 import org.apache.log4j.Logger;
-import org.libreccm.web.Application;
+import org.libreccm.web.CcmApplication;
 
 
 /**
@@ -70,7 +70,7 @@ public class DefaultApplicationFileResolver implements ApplicationFileResolver {
     public RequestDispatcher resolve(String templatePath,
                                      HttpServletRequest sreq,
                                      HttpServletResponse sresp,
-                                     Application app) {
+                                     CcmApplication app) {
 
         String pathInfo = sreq.getPathInfo();  // effectively provides an url
         if (s_log.isDebugEnabled()) {          // with application part stripped

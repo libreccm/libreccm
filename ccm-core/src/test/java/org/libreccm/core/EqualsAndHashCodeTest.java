@@ -26,7 +26,6 @@ import org.libreccm.tests.categories.UnitTest;
 
 import java.util.Arrays;
 import java.util.Collection;
-import org.libreccm.web.ApplicationType;
 
 /**
  *

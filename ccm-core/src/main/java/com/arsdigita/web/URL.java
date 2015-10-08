@@ -28,7 +28,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
-import org.libreccm.web.Application;
+import org.libreccm.web.CcmApplication;
 
 /**
  * <p>
@@ -778,7 +778,7 @@ public class URL {
      * indicating that the URL has no query string.</p>
      *
      * @param sreq     the servlet request
-     * @param app      the <code>Application</code> to dispatch to
+     * @param app      the <code>CcmApplication</code> to dispatch to
      * @param pathInfo a <code>String</code> of extra path info for the
      *                 application
      * @param params   a <code>ParameterMap</code> of parameters to use
@@ -787,7 +787,7 @@ public class URL {
      *         <code>pathInfo</code>
      */
     public static final URL there(final HttpServletRequest sreq,
-                                  final Application app,
+                                  final CcmApplication app,
                                   final String pathInfo,
                                   final ParameterMap params) {
         if (Assert.isEnabled() && pathInfo != null) {
@@ -809,7 +809,7 @@ public class URL {
      * specified application.
      *
      * @param sreq     the servlet request
-     * @param app      the <code>Application</code> to dispatch to
+     * @param app      the <code>CcmApplication</code> to dispatch to
      * @param pathInfo a <code>String</code> of extra path info for the
      *                 application
      *
@@ -817,7 +817,7 @@ public class URL {
      *         <code>pathInfo</code>
      */
     public static final URL there(final HttpServletRequest sreq,
-                                  final Application app,
+                                  final CcmApplication app,
                                   final String pathInfo) {
         if (Assert.isEnabled() && pathInfo != null) {
             Assert.isTrue(pathInfo.startsWith("/"),
@@ -868,7 +868,7 @@ public class URL {
      * <code>HttpServletRequest</code> object as it will ignore any Host header
      * given by the client.</p>
      */
-    public static final URL there(final Application app,
+    public static final URL there(final CcmApplication app,
                                   final String pathInfo,
                                   final ParameterMap params) {
         return URL.there(app.getPrimaryUrl() + pathInfo, params);
@@ -877,7 +877,7 @@ public class URL {
     public static final URL here(final HttpServletRequest sreq,
                                  final String pathInfo,
                                  final ParameterMap params) {
-        final Application app = Web.getWebContext().getApplication();
+        final CcmApplication app = Web.getWebContext().getApplication();
 
         Assert.exists(app, "Application app");
 
@@ -886,7 +886,7 @@ public class URL {
 
     public static final URL here(final HttpServletRequest sreq,
                                  final String pathInfo) {
-        final Application app = Web.getWebContext().getApplication();
+        final CcmApplication app = Web.getWebContext().getApplication();
 
         Assert.exists(app, "Application app");
 

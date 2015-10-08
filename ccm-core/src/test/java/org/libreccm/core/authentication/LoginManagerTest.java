@@ -116,7 +116,7 @@ public class LoginManagerTest {
             .create(WebArchive.class,
                     "LibreCCM-org.libreccm.core.authentication.LoginManagerTest.war")
             .addPackage(CcmObject.class.getPackage())
-            .addPackage(org.libreccm.web.Application.class.getPackage())
+            .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
             .addPackage(org.libreccm.categorization.Category.class.
                 getPackage())
             .addPackage(org.libreccm.l10n.LocalizedString.class.getPackage())

@@ -18,7 +18,7 @@
  */
 package com.arsdigita.web;
 
-import org.libreccm.web.Application;
+import org.libreccm.web.CcmApplication;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,6 +45,6 @@ public interface ApplicationFileResolver {
     RequestDispatcher resolve(String templatePath,
                               HttpServletRequest sreq,
                               HttpServletResponse sresp,
-                              Application app);
+                              CcmApplication app);
 
 }

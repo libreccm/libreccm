@@ -58,17 +58,24 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "APPLICATIONS", schema = DB_SCHEMA)
 @NamedQueries({
     @NamedQuery(name = "retrieveApplicationForPath",
-                query = "SELECT a FROM Application a WHERE a.primaryUrl = :path")
+                query = "SELECT a FROM CcmApplication a "
+                            + "      WHERE a.primaryUrl = :path"),
+    @NamedQuery(name = "Application.findByType",
+                query = "SELECT A FROM CcmApplication a "
+                            + "WHERE a.applicationType = :type")
 })
 @XmlRootElement(name = "application", namespace = WEB_XML_NS)
-public class Application extends Resource implements Serializable {
+public class CcmApplication extends Resource implements Serializable {
 
     private static final long serialVersionUID = 9205226362368890784L;
 
+    @Column(name = "APPLICATION_TYPE", length = 1024, nullable = false)
+    @XmlElement(name = "application-type", namespace = WEB_XML_NS)
+    private String applicationType;
+
     @Column(name = "PRIMARY_URL", length = 1024, nullable = false)
-    @Convert(converter = UriConverter.class)
     @XmlElement(name = "primary-url", namespace = WEB_XML_NS)
-    private URI primaryUrl;
+    private String primaryUrl;
 
     @OneToOne
     @JoinColumn(name = "CONTAINER_GROUP_ID")
@@ -83,16 +90,24 @@ public class Application extends Resource implements Serializable {
     @XmlElement(name = "domain", namespace = WEB_XML_NS)
     private List<DomainOwnership> domains;
 
-    public Application() {
+    public CcmApplication() {
         super();
         domains = new ArrayList<>();
     }
-    
-    public URI getPrimaryUrl() {
+
+    public String getApplicationType() {
+        return applicationType;
+    }
+
+    public void setApplicationType(final String applicationType) {
+        this.applicationType = applicationType;
+    }
+
+    public String getPrimaryUrl() {
         return primaryUrl;
     }
 
-    public void setPrimaryUrl(final URI primaryUrl) {
+    public void setPrimaryUrl(final String primaryUrl) {
         this.primaryUrl = primaryUrl;
     }
 
@@ -106,10 +121,10 @@ public class Application extends Resource implements Serializable {
 
     /**
      * Gets an <strong>unmodifiable</strong> list of the domains which are owned
-     * by the {@code Application}.
+     * by the {@code CcmApplication}.
      *
      * @return An unmodifiable list of the domain ownerships of this
-     *         {@code Application}. Might be {@code null} or empty.
+     *         {@code CcmApplication}. Might be {@code null} or empty.
      */
     public List<DomainOwnership> getDomains() {
         return Collections.unmodifiableList(domains);
@@ -164,11 +179,11 @@ public class Application extends Resource implements Serializable {
             return false;
         }
 
-        if (!(obj instanceof Application)) {
+        if (!(obj instanceof CcmApplication)) {
             return false;
         }
 
-        final Application other = (Application) obj;
+        final CcmApplication other = (CcmApplication) obj;
         if (!other.canEqual(this)) {
             return false;
         }
@@ -181,7 +196,7 @@ public class Application extends Resource implements Serializable {
 
     @Override
     public boolean canEqual(final Object obj) {
-        return obj instanceof Application;
+        return obj instanceof CcmApplication;
     }
 
     @Override

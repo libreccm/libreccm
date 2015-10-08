@@ -1,11 +1,3 @@
-
-    create table ccm_core.application_types (
-        resource_type_id int8 not null,
-        container_group_id int8,
-        provider_app_type_id int8,
-        primary key (resource_type_id)
-    );
-
     create table ccm_core.applications (
         primary_url varchar(1024) not null,
         object_id int8 not null,
@@ -603,21 +595,6 @@
     alter table ccm_core.workflow_user_task_assigned_users 
         add constraint UK_h62r6cqjp2tdnhscfkgwfupwj  unique (assigned_user_id);
 
-    alter table ccm_core.application_types 
-        add constraint FK_r9rd4iekfy3m8r1a1gto4t39 
-        foreign key (container_group_id) 
-        references ccm_core.ccm_groups;
-
-    alter table ccm_core.application_types 
-        add constraint FK_i44k6al7mr4u1c76iudglds39 
-        foreign key (provider_app_type_id) 
-        references ccm_core.application_types;
-
-    alter table ccm_core.application_types 
-        add constraint FK_41e4vrshljdkymnhb4cbkroa1 
-        foreign key (resource_type_id) 
-        references ccm_core.resource_types;
-
     alter table ccm_core.applications 
         add constraint FK_kr3wur06hmironiamv0rn38nu 
         foreign key (container_group_id) 
@@ -677,11 +654,6 @@
         add constraint FK_7a2nhf8gj3lns0preesnlok8o 
         foreign key (subject_id) 
         references ccm_core.subjects;
-
-    alter table ccm_core.ccm_privileges 
-        add constraint FK_g06a7mpltqti17tvibm2j7ti8 
-        foreign key (relevant_privilege_id) 
-        references ccm_core.application_types;
 
     alter table ccm_core.ccm_roles 
         add constraint FK_ice2oswni34d2xx80cf81v2cv 

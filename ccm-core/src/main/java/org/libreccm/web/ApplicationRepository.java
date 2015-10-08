@@ -20,7 +20,10 @@ package org.libreccm.web;
 
 import org.libreccm.core.AbstractEntityRepository;
 
+import java.util.List;
+
 import javax.enterprise.context.RequestScoped;
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 
 /**
@@ -29,24 +32,52 @@ import javax.persistence.TypedQuery;
  */
 @RequestScoped
 public class ApplicationRepository
-    extends AbstractEntityRepository<Long, Application> {
+    extends AbstractEntityRepository<Long, CcmApplication> {
 
     @Override
-    public Class<Application> getEntityClass() {
-        return Application.class;
+    public Class<CcmApplication> getEntityClass() {
+        return CcmApplication.class;
     }
 
     @Override
-    public boolean isNew(final Application application) {
+    public boolean isNew(final CcmApplication application) {
         return application.getObjectId() == 0;
     }
 
-    public Application retrieveApplicationForPath(final String path) {
-        final TypedQuery<Application> query = getEntityManager()
-            .createNamedQuery(
-                "retrieveApplicationForPath", Application.class);
+    /**
+     * Retrieve the application mounted at the provided {@code path}.
+     *
+     * @param path The path on which the application is mounted.
+     *
+     * @return The application mounted at {@code path} or {@code null} if there
+     *         is no application mounted at that {@code path}.
+     */
+    public CcmApplication retrieveApplicationForPath(final String path) {
+        final TypedQuery<CcmApplication> query = getEntityManager()
+            .createNamedQuery("retrieveApplicationForPath", CcmApplication.class);
+        query.setParameter("path", path);
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException ex) {
+            return null;
+        }
+    }
 
-        return query.getSingleResult();
+    /**
+     * Find all applications of the specific {@code type}.
+     *
+     * @param type The type of the application.
+     *
+     * @return A list of the installed applications of the provided
+     *         {@code type}.
+     */
+    public List<CcmApplication> findByType(final String type) {
+        final TypedQuery<CcmApplication> query = getEntityManager()
+            .createNamedQuery(
+                "Application.findByType", CcmApplication.class);
+        query.setParameter("type", type);
+
+        return query.getResultList();
     }
 
 }

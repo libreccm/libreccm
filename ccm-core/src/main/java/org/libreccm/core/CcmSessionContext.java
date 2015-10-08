@@ -23,7 +23,7 @@ import java.io.Serializable;
 import javax.enterprise.context.SessionScoped;
 
 /**
- * This bean stores several datas about the current session, for example the
+ * This bean stores several data about the current session, for example the
  * current party.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>

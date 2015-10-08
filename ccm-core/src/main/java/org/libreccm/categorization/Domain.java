@@ -29,7 +29,7 @@ import static org.libreccm.core.CoreConstants.*;
 
 import org.libreccm.jpa.utils.UriConverter;
 import org.libreccm.l10n.LocalizedString;
-import org.libreccm.web.Application;
+import org.libreccm.web.CcmApplication;
 
 import java.io.Serializable;
 import java.net.URI;
@@ -65,9 +65,9 @@ import javax.xml.bind.annotation.XmlRootElement;
  * as well as the {@code CategoryPurpose} entity from the old
  * {@code ccm-core module}.
  *
- * A {@code Domain} can be mapped to multiple {@link Application}s. Normally 
+ * A {@code Domain} can be mapped to multiple {@link CcmApplication}s. Normally 
  * This is used to make a {@code Domain} available in the application. The
- * {@link Application}s to which a {@code Domain} is mapped are called
+ * {@link CcmApplication}s to which a {@code Domain} is mapped are called
  * <em>owners</em> of the domain.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>

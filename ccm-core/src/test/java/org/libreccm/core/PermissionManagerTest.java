@@ -130,7 +130,7 @@ public class PermissionManagerTest {
                     String.format("LibreCCM-%s.war",
                                   PermissionManagerTest.class.getName()))
             .addPackage(User.class.getPackage())
-            .addPackage(org.libreccm.web.Application.class.getPackage())
+            .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
             .addPackage(org.libreccm.categorization.Category.class.
                 getPackage())
             .addPackage(org.libreccm.l10n.LocalizedString.class.getPackage()).

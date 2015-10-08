@@ -20,7 +20,8 @@ package org.libreccm.shortcuts;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import org.libreccm.web.Application;
+
+import org.libreccm.web.CcmApplication;
 
 /**
  *
@@ -28,7 +29,7 @@ import org.libreccm.web.Application;
  */
 @Entity
 @Table(schema ="CCM_SHORTCUTS", name = "SHORTCUTS_APP")
-public class Shortcuts extends Application {
+public class Shortcuts extends CcmApplication {
     private static final long serialVersionUID = -6793265996161649637L;
     
 //    private String shortcutAppName;

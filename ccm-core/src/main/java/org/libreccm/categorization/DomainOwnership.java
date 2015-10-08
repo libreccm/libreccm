@@ -33,7 +33,7 @@ import org.libreccm.core.CcmObject;
 
 import static org.libreccm.core.CoreConstants.*;
 
-import org.libreccm.web.Application;
+import org.libreccm.web.CcmApplication;
 
 
 /**
@@ -62,7 +62,7 @@ public class DomainOwnership implements Serializable {
      * The {@link CcmObject} owning the {@link Domain}.
      */
     @ManyToOne(optional = false)
-    private Application owner;
+    private CcmApplication owner;
 
     /**
      * The {@link Domain} owned by the {@link CcmObject}.
@@ -98,11 +98,11 @@ public class DomainOwnership implements Serializable {
         this.ownershipId = ownershipId;
     }
 
-    public Application getOwner() {
+    public CcmApplication getOwner() {
         return owner;
     }
 
-    protected void setOwner(final Application owner) {
+    protected void setOwner(final CcmApplication owner) {
         this.owner = owner;
     }
 

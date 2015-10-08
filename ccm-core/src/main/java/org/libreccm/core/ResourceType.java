@@ -37,9 +37,18 @@ import javax.persistence.Table;
 import org.libreccm.l10n.LocalizedString;
 
 /**
- *
+ * This class is a port of the old {@code ResourceType} entity. 
+ * 
+ * @deprecated The real purpose of this class is not clear. Also the 
+ * informations provided by the entities of this class are all quite static or
+ * can be interfered from the classes itself. In modern Java most if not all the
+ * informations provided by the entities of this class would be expressed as 
+ * annotations. At the moment it is not clear of we can remove this class 
+ * completely therefore it is still here but will maybe removed very soon.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
+@Deprecated
 @Entity
 @Table(name = "RESOURCE_TYPES", schema = DB_SCHEMA)
 @Inheritance(strategy = InheritanceType.JOINED)

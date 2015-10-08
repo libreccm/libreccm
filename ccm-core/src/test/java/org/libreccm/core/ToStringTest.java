@@ -26,7 +26,6 @@ import org.libreccm.tests.categories.UnitTest;
 
 import java.util.Arrays;
 import java.util.Collection;
-import org.libreccm.web.ApplicationType;
 
 /**
  *
@@ -39,7 +38,6 @@ public class ToStringTest extends ToStringVerifier {
     @Parameterized.Parameters(name = "{0}")
     public static Collection<Class<?>> data() {
         return Arrays.asList(new Class<?>[]{
-            ApplicationType.class,
             CcmObject.class,
             EmailAddress.class,
             GroupMembership.class,

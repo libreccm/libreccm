@@ -22,7 +22,7 @@ package com.arsdigita.web;
 import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.web.Application;
+import org.libreccm.web.CcmApplication;
 import org.libreccm.web.ApplicationRepository;
 
 import java.io.IOException;
@@ -103,7 +103,7 @@ public abstract class BaseApplicationServlet extends BaseServlet {
                              final HttpServletResponse response)
         throws ServletException, IOException {
 
-        final Application app = getApplication(request);
+        final CcmApplication app = getApplication(request);
 
         if (app == null) {
             response.sendError(404, "Application not found");
@@ -141,7 +141,7 @@ public abstract class BaseApplicationServlet extends BaseServlet {
      */
     protected abstract void doService(final HttpServletRequest sreq,
                                       final HttpServletResponse sresp,
-                                      final Application app)
+                                      final CcmApplication app)
         throws ServletException, IOException;
 
     /**
@@ -150,7 +150,7 @@ public abstract class BaseApplicationServlet extends BaseServlet {
      *
      * @return
      */
-    private Application getApplication(final HttpServletRequest request) {
+    private CcmApplication getApplication(final HttpServletRequest request) {
         s_log.debug("Resolving the application that will handle this request");
 
         Long appId = (Long) request.getAttribute(APPLICATION_ID_ATTRIBUTE);
@@ -197,7 +197,7 @@ public abstract class BaseApplicationServlet extends BaseServlet {
      * @return
      */
 //    private RequestContext makeLegacyContext(HttpServletRequest sreq,
-//                                             final Application app,
+//                                             final CcmApplication app,
 //                                             final UserContext uc) {
 //        s_log.debug("Setting up a legacy context object");
 //

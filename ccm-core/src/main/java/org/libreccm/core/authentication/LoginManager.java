@@ -84,6 +84,10 @@ public class LoginManager {
         }
     }
     
+    public void logout() {
+        sessionContext.setCurrentSubject(null);
+    }
+    
     private static class LoginCallbackHandler implements CallbackHandler {
 
         private final transient String username;
