@@ -48,7 +48,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @Table(name = "CCM_GROUPS", schema = DB_SCHEMA)
 @NamedQueries({
-    @NamedQuery(name = "findGroupByName", 
+    @NamedQuery(name = "Group.findGroupByName", 
                 query = "SELECT g FROM Group g WHERE g.name = :groupName")
 })
 @XmlRootElement(name = "user-group", namespace = CORE_XML_NS)

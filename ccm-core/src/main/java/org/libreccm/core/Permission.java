@@ -49,17 +49,17 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @Table(name = "PERMISSIONS", schema = DB_SCHEMA)
 @NamedQueries({
-    @NamedQuery(name = "findPermissionsForSubject",
+    @NamedQuery(name = "Permission.findPermissionsForSubject",
                 query = "SELECT p FROM Permission p WHERE p.grantee = :subject"),
-    @NamedQuery(name = "findPermissionsForUser",
+    @NamedQuery(name = "Permission.findPermissionsForUser",
                 query = "SELECT p FROM Permission p "
                                 + "WHERE p.grantee = :user "
                                 + "   OR p.grantee IN (SELECT g "
                                 + "                    FROM Group g JOIN g.members m"
                         + "                            WHERE m.user = :user)"),
-    @NamedQuery(name = "findPermissionsForCcmObject",
+    @NamedQuery(name = "Permission.findPermissionsForCcmObject",
                 query = "SELECT p FROM Permission p WHERE p.object = :object"),
-    @NamedQuery(name = "findPermissionsForUserPrivilegeAndObject",
+    @NamedQuery(name = "Permission.findPermissionsForUserPrivilegeAndObject",
                 query = "SELECT p FROM Permission p "
                                 + "WHERE (p.grantee = :user"
                                 + "       OR p.grantee IN (SELECT g "
@@ -67,7 +67,7 @@ import javax.xml.bind.annotation.XmlRootElement;
                         + "                                WHERE m.user = :user))"
                         + "                AND p.grantedPrivilege = :privilege"
                                 + "        AND p.object = :object"),
-    @NamedQuery(name = "findWildcardPermissionsForUserPrivilegeAndObject",
+    @NamedQuery(name = "Permission.findWildcardPermissionsForUserPrivilegeAndObject",
                 query = "SELECT p FROM Permission p "
                                 + "WHERE (p.grantee = :user"
                                 + "       OR p.grantee IN (SELECT g "
@@ -75,12 +75,12 @@ import javax.xml.bind.annotation.XmlRootElement;
                         + "                                WHERE m.user = :user))"
                         + "                AND p.grantedPrivilege = :privilege"
                                 + "        AND p.object IS NULL"),
-    @NamedQuery(name = "findPermissionsForSubjectPrivilegeAndObject",
+    @NamedQuery(name = "Permission.findPermissionsForSubjectPrivilegeAndObject",
                 query = "SELECT p FROM Permission p "
                                 + "WHERE p.grantee          = :subject"
                                 + "  AND p.grantedPrivilege = :privilege"
                                 + "  AND p.object           = :object"),
-    @NamedQuery(name = "findWildcardPermissionsForSubjectPrivilegeAndObject",
+    @NamedQuery(name = "Permission.findWildcardPermissionsForSubjectPrivilegeAndObject",
                 query = "SELECT p FROM Permission p "
                                 + "WHERE p.grantee          = :subject"
                                 + "  AND p.grantedPrivilege = :privilege"

@@ -51,15 +51,15 @@ import javax.persistence.NamedQuery;
 @Entity
 @Table(name = "CCM_ROLES", schema = DB_SCHEMA)
 @NamedQueries({
-    @NamedQuery(name = "findRolesForName",
+    @NamedQuery(name = "Role.findRolesForName",
                 query = "SELECT r FROM Role r "
                             + "WHERE r.name = :roleName "
                             + "ORDER BY r.name"),
-    @NamedQuery(name = "findRolesForSourceGroup",
+    @NamedQuery(name = "Role.findRolesForSourceGroup",
                 query = "SELECT r FROM Role r "
                             + "WHERE r.sourceGroup = :sourceGroup "
                             + "ORDER BY r.name"),
-    @NamedQuery(name = "findRolesForImplicitGroup",
+    @NamedQuery(name = "Role.findRolesForImplicitGroup",
                 query = "SELECT r FROM Role r "
                             + "WHERE r.implicitGroup = :implicitGroup "
                             + "ORDER BY r.name")

@@ -50,7 +50,7 @@ public class CategoryRepository extends AbstractEntityRepository<Long, Category>
      */
     public List<Category> getTopLevelCategories() {
         final TypedQuery<Category> query = getEntityManager().createNamedQuery(
-            "topLevelCategories", Category.class);
+            "Category.topLevelCategories", Category.class);
         
         return query.getResultList();
     }

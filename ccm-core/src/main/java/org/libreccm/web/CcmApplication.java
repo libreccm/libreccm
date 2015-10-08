@@ -28,17 +28,14 @@ import static org.libreccm.core.CoreConstants.*;
 
 import org.libreccm.core.Resource;
 import org.libreccm.core.Group;
-import org.libreccm.jpa.utils.UriConverter;
 
 import java.io.Serializable;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Column;
-import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
@@ -57,10 +54,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @Table(name = "APPLICATIONS", schema = DB_SCHEMA)
 @NamedQueries({
-    @NamedQuery(name = "retrieveApplicationForPath",
+    @NamedQuery(name = "CcmApplication.retrieveApplicationForPath",
                 query = "SELECT a FROM CcmApplication a "
                             + "      WHERE a.primaryUrl = :path"),
-    @NamedQuery(name = "Application.findByType",
+    @NamedQuery(name = "CcmApplication.Application.findByType",
                 query = "SELECT A FROM CcmApplication a "
                             + "WHERE a.applicationType = :type")
 })

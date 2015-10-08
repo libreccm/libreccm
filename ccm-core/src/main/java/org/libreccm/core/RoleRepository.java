@@ -56,7 +56,7 @@ public class RoleRepository extends AbstractEntityRepository<Long, Role> {
      */
     public List<Role> findRolesForName(final String roleName) {
         final TypedQuery<Role> query = entityManager.createNamedQuery(
-            "findRolesForName", Role.class);
+            "Role.findRolesForName", Role.class);
         query.setParameter("roleName", roleName);
 
         return query.getResultList();
@@ -64,7 +64,7 @@ public class RoleRepository extends AbstractEntityRepository<Long, Role> {
     
     public List<Role> findRolesForSourceGroup(final Group group) {
         final TypedQuery<Role> query = entityManager.createNamedQuery(
-            "findRolesForSourceGroup", Role.class);
+            "Role.findRolesForSourceGroup", Role.class);
         query.setParameter("sourceGroup", group);
         
         return query.getResultList();
@@ -72,7 +72,7 @@ public class RoleRepository extends AbstractEntityRepository<Long, Role> {
     
     public List<Role> findRolesForImplicitGroup(final Group group) {
         final TypedQuery<Role> query = entityManager.createNamedQuery(
-            "findRolesForImplicitGroup", Role.class);
+            "Role.findRolesForImplicitGroup", Role.class);
         query.setParameter("implicitGroup", group);
         
         return query.getResultList();

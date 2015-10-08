@@ -50,19 +50,19 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @Table(name = "CCM_PRIVILEGES", schema = DB_SCHEMA)
 @NamedQueries({
-    @NamedQuery(name = "findPrivilegeByName",
+    @NamedQuery(name = "Privilege.findPrivilegeByName",
                 query = "SELECT p FROM Privilege p "
                             + "WHERE p.label = :label"),
-    @NamedQuery(name = "isPrivilegeInUse",
+    @NamedQuery(name = "Privilege.isPrivilegeInUse",
                 query = "SELECT COUNT(p) FROM Permission p "
-                + "      JOIN p.grantedPrivilege g "
-                + "      WHERE g.label = :label")
+                            + "      JOIN p.grantedPrivilege g "
+                            + "      WHERE g.label = :label")
 })
 @XmlRootElement(name = "PRIVILEGE", namespace = CORE_XML_NS)
 public class Privilege implements Serializable {
 
     private static final long serialVersionUID = -3986038536996049440L;
-    
+
     /**
      * Constant for the {@code admin} privilege because this privilege is used
      * very often.

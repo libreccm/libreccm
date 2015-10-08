@@ -81,7 +81,7 @@ public class PermissionRepository
         }
 
         final TypedQuery<Permission> query = entityManager.createNamedQuery(
-            "findPermissionsForSubject", Permission.class);
+            "Permission.findPermissionsForSubject", Permission.class);
         query.setParameter("subject", subject);
 
         return query.getResultList();
@@ -106,7 +106,7 @@ public class PermissionRepository
         }
 
         final TypedQuery<Permission> query = entityManager.createNamedQuery(
-            "findPermissionsForUser", Permission.class);
+            "Permission.findPermissionsForUser", Permission.class);
         query.setParameter("user", user);
 
         return query.getResultList();
@@ -126,7 +126,7 @@ public class PermissionRepository
         }
 
         final TypedQuery<Permission> query = entityManager.createNamedQuery(
-            "findPermissionsForCcmObject", Permission.class);
+            "Permission.findPermissionsForCcmObject", Permission.class);
         query.setParameter("object", object);
 
         return query.getResultList();
@@ -150,12 +150,12 @@ public class PermissionRepository
         final TypedQuery<Permission> query;
         if (object == null) {
             query = entityManager.createNamedQuery(
-                "findWildcardPermissionsForUserPrivilegeAndObject",
+                "Permission.findWildcardPermissionsForUserPrivilegeAndObject",
                 Permission.class);
 
         } else {
             query = entityManager.createNamedQuery(
-                "findPermissionsForUserPrivilegeAndObject", Permission.class);
+                "Permission.findPermissionsForUserPrivilegeAndObject", Permission.class);
             query.setParameter("object", object);
         }
 
@@ -184,11 +184,11 @@ public class PermissionRepository
 
         if (object == null) {
             query = entityManager.createNamedQuery(
-                "findWildcardPermissionsForSubjectPrivilegeAndObject",
+                "Permission.findWildcardPermissionsForSubjectPrivilegeAndObject",
                 Permission.class);
         } else {
             query = entityManager.createNamedQuery(
-                "findPermissionsForSubjectPrivilegeAndObject", Permission.class);
+                "Permission.findPermissionsForSubjectPrivilegeAndObject", Permission.class);
 
             query.setParameter("object", object);
         }

@@ -59,9 +59,9 @@ import javax.xml.bind.annotation.XmlTransient;
 @Entity
 @Table(name = "CCM_USERS", schema = DB_SCHEMA)
 @NamedQueries({
-    @NamedQuery(name = "findUserByScreenName",
+    @NamedQuery(name = "User.findUserByScreenName",
                 query = "SELECT u FROM User u WHERE u.screenName = :screenname"),
-    @NamedQuery(name = "findUserByEmailAddress",
+    @NamedQuery(name = "User.findUserByEmailAddress",
                 query = "SELECT u FROM User u JOIN u.emailAddresses e "
                                 + "WHERE e.address = :emailAddress")})
 @XmlRootElement(name = "user", namespace = CORE_XML_NS)

@@ -91,7 +91,7 @@ public class UserRepository extends AbstractEntityRepository<Long, User> {
      */
     public User findByScreenName(final String screenname) {
         final TypedQuery<User> query = getEntityManager().createNamedQuery(
-            "findUserByScreenName", User.class);
+            "User.findUserByScreenName", User.class);
         query.setParameter("screenname", screenname);
 
         final List<User> result = query.getResultList();
@@ -131,7 +131,7 @@ public class UserRepository extends AbstractEntityRepository<Long, User> {
      */
     public User findByEmailAddress(final String emailAddress) {
         final TypedQuery<User> query = getEntityManager().createNamedQuery(
-            "findUserByEmailAddress", User.class);
+            "User.findUserByEmailAddress", User.class);
         query.setParameter("emailAddress", emailAddress);
 
         final List<User> result = query.getResultList();

@@ -52,7 +52,7 @@ public class GroupRepository extends AbstractEntityRepository<Long, Group> {
 
     public Group findByGroupName(final String groupName) {
         final TypedQuery<Group> query = entityManager.createNamedQuery(
-            "findGroupByName", Group.class);
+            "Group.findGroupByName", Group.class);
         query.setParameter("groupName", groupName);
 
         final List<Group> result = query.getResultList();

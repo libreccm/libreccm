@@ -54,7 +54,8 @@ public class ApplicationRepository
      */
     public CcmApplication retrieveApplicationForPath(final String path) {
         final TypedQuery<CcmApplication> query = getEntityManager()
-            .createNamedQuery("retrieveApplicationForPath", CcmApplication.class);
+            .createNamedQuery("CcmApplication.retrieveApplicationForPath",
+                              CcmApplication.class);
         query.setParameter("path", path);
         try {
             return query.getSingleResult();
@@ -73,8 +74,8 @@ public class ApplicationRepository
      */
     public List<CcmApplication> findByType(final String type) {
         final TypedQuery<CcmApplication> query = getEntityManager()
-            .createNamedQuery(
-                "Application.findByType", CcmApplication.class);
+            .createNamedQuery("CcmApplication.Application.findByType",
+                              CcmApplication.class);
         query.setParameter("type", type);
 
         return query.getResultList();

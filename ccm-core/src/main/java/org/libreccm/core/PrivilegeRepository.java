@@ -50,7 +50,7 @@ public class PrivilegeRepository {
      */
     public Privilege retrievePrivilege(final String label) {
         final TypedQuery<Privilege> query = entityManager.createNamedQuery(
-            "findPrivilegeByName", Privilege.class);
+            "Privilege.findPrivilegeByName", Privilege.class);
         query.setParameter("label", label);
 
         try {
@@ -111,7 +111,7 @@ public class PrivilegeRepository {
      */
     public boolean isPrivilegeInUse(final String label) {
         final TypedQuery<Long> query = entityManager.createNamedQuery(
-            "isPrivilegeInUse", Long.class);
+            "Privilege.isPrivilegeInUse", Long.class);
         query.setParameter("label", label);
 
         final Long result = query.getSingleResult();

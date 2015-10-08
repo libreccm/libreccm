@@ -63,11 +63,11 @@ import javax.validation.constraints.Pattern;
 @Entity
 @Table(name = "CATEGORIES", schema = DB_SCHEMA)
 @NamedQueries({
-    @NamedQuery(name = "topLevelCategories", 
+    @NamedQuery(name = "Category.topLevelCategories", 
                 query = "SELECT c FROM Category c WHERE c.parentCategory IS NULL")
 })
 public class Category extends CcmObject implements Serializable {
-
+    
     private static final long serialVersionUID = -7250208963391878547L;
 
     /**
@@ -76,7 +76,7 @@ public class Category extends CcmObject implements Serializable {
      */
     @Column(name = "UNIQUE_ID", nullable = false)
     private String uniqueId;
-
+    
     /**
      * The name of the category. This is used as URL stub, therefore only the
      * characters a to z, A to Z and 0 to 9 are allowed.
