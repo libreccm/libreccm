@@ -7,8 +7,10 @@
     
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <timestamp>${maven.build.timestamp}</timestamp>
+        <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss'Z'Z</maven.build.timestamp.format>
     </properties>
-    
+        
     <parent>
         <groupId>org.libreccm</groupId>
         <artifactId>libreccm-parent</artifactId>
@@ -205,6 +207,11 @@
             </plugin>
                 
         </plugins>
+        
+         <resources>
+            <directory>src/main/resources</directory>
+            <filtering>true</filtering>
+        </resources>
         
     </build>
     
