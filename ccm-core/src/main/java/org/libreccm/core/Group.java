@@ -18,7 +18,7 @@
  */
 package org.libreccm.core;
 
-import static org.libreccm.core.CoreConstants.*; 
+import static org.libreccm.core.CoreConstants.*;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -42,14 +42,17 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * A {@code Group} is collection of {@link User}s.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
 @Table(name = "CCM_GROUPS", schema = DB_SCHEMA)
 @NamedQueries({
-    @NamedQuery(name = "Group.findGroupByName", 
-                query = "SELECT g FROM Group g WHERE g.name = :groupName")
+    @NamedQuery(name = "Group.findGroupByName",
+                query = "SELECT g FROM Group g WHERE g.name = :groupName"),
+    @NamedQuery(name = "Group.searchGroupByName",
+                query = "SELECT g FROM Group g "
+                            + "WHERE LOWER(g.name) LIKE '%:groupName%'")
 })
 @XmlRootElement(name = "user-group", namespace = CORE_XML_NS)
 public class Group extends Subject implements Serializable {
@@ -69,11 +72,11 @@ public class Group extends Subject implements Serializable {
      */
     @OneToMany(mappedBy = "sourceGroup")
     @XmlElementWrapper(name = "roles", namespace = CORE_XML_NS)
-    @XmlElement(name ="role", namespace = CORE_XML_NS)
+    @XmlElement(name = "role", namespace = CORE_XML_NS)
     private List<Role> roles;
 
     /**
-     * The members of the group. For adding or removing members the methods 
+     * The members of the group. For adding or removing members the methods
      * provided by the {@link GroupManager} should be used.
      */
     @OneToMany(mappedBy = "group")
@@ -160,7 +163,7 @@ public class Group extends Subject implements Serializable {
             return false;
         }
 
-         return Objects.equals(this.name, other.getName());
+        return Objects.equals(this.name, other.getName());
     }
 
     @Override
