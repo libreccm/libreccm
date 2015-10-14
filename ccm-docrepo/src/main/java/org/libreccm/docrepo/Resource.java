@@ -50,11 +50,11 @@ import java.util.List;
 @Entity(name = "DocRepoResource")
 @Table(schema = "CCM_DOCREPO", name = "RESOURCES")
 @NamedQueries({
-        @NamedQuery(name = "findResourceByPath",
+        @NamedQuery(name = "DocRepo.findResourceByPath",
                 query = "SELECT r FROM DocRepoResource r WHERE r.path = :pathName"),
-        @NamedQuery(name = "findCreatedResourcesFromUser",
+        @NamedQuery(name = "DocRepo.findCreatedResourcesFromUser",
                 query = "SELECT r FROM DocRepoResource r WHERE r.creationUser = :user"),
-        @NamedQuery(name = "findModifiedResourcesFromUser",
+        @NamedQuery(name = "DocRepo.findModifiedResourcesFromUser",
                 query = "SELECT r FROM DocRepoResource r WHERE r.lastModifiedUser = :user")})
 public abstract class Resource extends CcmObject {
 

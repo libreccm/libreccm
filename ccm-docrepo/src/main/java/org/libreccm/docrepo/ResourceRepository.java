@@ -69,7 +69,7 @@ public class ResourceRepository extends AbstractAuditedEntityRepository<Long, Re
      */
     public Resource findByPathName(final String pathName) {
         final TypedQuery<Resource> query = entityManager.createNamedQuery(
-                "findResourceByPath", Resource.class);
+                "DocRepo.findResourceByPath", Resource.class);
         query.setParameter("pathName", pathName);
 
         final List<Resource> result = query.getResultList();
@@ -90,7 +90,7 @@ public class ResourceRepository extends AbstractAuditedEntityRepository<Long, Re
      */
     public List<Resource> findForCreator(final User creator) {
         final TypedQuery<Resource> query = entityManager.createNamedQuery(
-                "findCreatedResourcesFromUser", Resource.class);
+                "DocRepo.findCreatedResourcesFromUser", Resource.class);
         query.setParameter("user", creator);
 
         return query.getResultList();
@@ -106,7 +106,7 @@ public class ResourceRepository extends AbstractAuditedEntityRepository<Long, Re
      */
     public List<Resource> findForModifier(final User modifier) {
         final TypedQuery<Resource> query = entityManager.createNamedQuery(
-                "findModifiedResourcesFromUser", Resource.class);
+                "DocRepo.findModifiedResourcesFromUser", Resource.class);
         query.setParameter("user", modifier);
 
         return query.getResultList();
