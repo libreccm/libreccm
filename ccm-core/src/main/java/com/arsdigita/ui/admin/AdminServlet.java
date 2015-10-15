@@ -224,13 +224,13 @@ public class AdminServlet extends BaseApplicationServlet implements
         /*
          * Create application administration panel
          */
-        // ToDo tabbedPane.addTab(APPLICATIONS_TAB_TITLE,
-        // ToDo                   new ApplicationsAdministrationTab());
+        tabbedPane.addTab(APPLICATIONS_TAB_TITLE,
+                           new ApplicationsAdministrationTab());
 
 //        browsePane.setTabbedPane(tabbedPane);
 //        browsePane.setGroupAdministrationTab(groupAdminTab);      
         //Add System information tab
-        // ToDo tabbedPane.addTab(SYSINFO_TAB_TITLE, new SystemInformationTab());
+        tabbedPane.addTab(SYSINFO_TAB_TITLE, new SystemInformationTab());
 
         page.add(tabbedPane);
         page.lock();
