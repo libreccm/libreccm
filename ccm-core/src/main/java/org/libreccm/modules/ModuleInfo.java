@@ -283,7 +283,7 @@ public class ModuleInfo {
                                  getProperty(ARTIFACT_ID).replace("-",
                                                                   "_"));
         } else {
-            LOGGER.warn("The module data package was specified by the module "
+            LOGGER.warn("The module data package was not specified by the module "
                                 + "annotation nore was an group id found in the module info"
                         + "file. Creating data package name from the name of the "
                         + "module class.");

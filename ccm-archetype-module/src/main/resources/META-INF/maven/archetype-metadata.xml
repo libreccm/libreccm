@@ -1,0 +1,38 @@
+<archetype-descriptor xmlns="http://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.0.0" 
+                      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                      xsi:schemaLocation="http://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.0.0 http://maven.apache.org/xsd/archetype-descriptor-1.0.0.xsd"
+  name="LibreCCM Module Archetype" 
+  partial="false" >
+
+    <requiredProperties>
+        <requiredProperty key="moduleClassName">
+            <defaultValue>${artifactId}</defaultValue>
+        </requiredProperty>
+    </requiredProperties>
+
+    <!--<requiredProperties>
+        <requiredProperty key="groupId">
+            <defaultValue>de.jpdigital.sandbox</defaultValue>
+        </requiredProperty>
+        <requiredProperty key="artifactId" />
+    </requiredProperties>-->
+
+    <fileSets>
+        <fileSet filtered="false" packaged="true">
+            <directory>src/main/java</directory>
+        </fileSet>
+        <fileSet filtered="false" packaged="true">
+            <directory>src/main/resources/db/migrations</directory>
+        </fileSet>
+        <fileSet filtered="true" packaged="false">
+            <directory>src/main/resources/META-INF</directory>
+        </fileSet>
+        <fileSet filtered="false" packaged="false">
+            <directory>src/main/resources/module-info</directory>
+        </fileSet>
+        <fileSet filtered="false" packaged="true">
+            <directory>src/test/java</directory>
+        </fileSet>
+    </fileSets>
+
+</archetype-descriptor>

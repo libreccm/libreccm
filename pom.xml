@@ -39,8 +39,13 @@
         <module>ccm-shortcuts</module>
         <module>ccm-testutils</module>
         <module>ccm-docrepo</module>
+        
+        <!-- Bundle modules -->
         <module>ccm-test-bundle-wildfly8</module>
-    </modules>
+
+        <!-- Archetypes -->
+        <module>ccm-archetype-module</module>
+  </modules>
 
     <!--<repositories>
         <repository>
