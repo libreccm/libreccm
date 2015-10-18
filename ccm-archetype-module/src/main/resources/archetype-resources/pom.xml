@@ -15,7 +15,7 @@
     <artifactId>${artifactId}</artifactId>
     <version>${version}</version>
    
-    <name>${moduleName}</name>
+    <name>${artifactId}</name>
 
     <dependencies>
         <dependency>

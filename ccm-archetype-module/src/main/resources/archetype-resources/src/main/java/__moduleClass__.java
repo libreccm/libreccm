@@ -1,18 +1,19 @@
 /**
  * Add your license here, for example LGPL
  */
-package ${packageName}
+package ${package};
 
 import org.libreccm.modules.CcmModule;
 import org.libreccm.modules.InitEvent;
 import org.libreccm.modules.InstallEvent;
 import org.libreccm.modules.Module;
+import org.libreccm.modules.RequiredModule;
 import org.libreccm.modules.ShutdownEvent;
 import org.libreccm.modules.UnInstallEvent;
 
-@Module(moduleDataPackage=${packageName}, 
-        requiredModules = {@RequiredModule = org.libreccm.core.CcmCore})
-public ${moduleClassName} implements CcmModule {
+@Module(packageName="${package}", 
+        requiredModules = {@RequiredModule(module = org.libreccm.core.CcmCore)})
+public class ${moduleClass} implements CcmModule {
 
     @Override
     public void install(final InstallEvent event) {

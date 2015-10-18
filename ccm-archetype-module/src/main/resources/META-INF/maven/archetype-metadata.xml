@@ -5,7 +5,7 @@
   partial="false" >
 
     <requiredProperties>
-        <requiredProperty key="moduleClassName">
+        <requiredProperty key="moduleClass">
             <defaultValue>${artifactId}</defaultValue>
         </requiredProperty>
     </requiredProperties>
@@ -18,7 +18,7 @@
     </requiredProperties>-->
 
     <fileSets>
-        <fileSet filtered="false" packaged="true">
+        <fileSet filtered="true" packaged="true">
             <directory>src/main/java</directory>
         </fileSet>
         <fileSet filtered="false" packaged="true">
@@ -30,7 +30,7 @@
         <fileSet filtered="false" packaged="false">
             <directory>src/main/resources/module-info</directory>
         </fileSet>
-        <fileSet filtered="false" packaged="true">
+        <fileSet filtered="true" packaged="true">
             <directory>src/test/java</directory>
         </fileSet>
     </fileSets>

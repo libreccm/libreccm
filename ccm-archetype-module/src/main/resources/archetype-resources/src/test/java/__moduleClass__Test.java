@@ -1,7 +1,7 @@
 /*
  * ToDo: Add your license
  */
-package ${packageName};
+package ${package};
 
 import static org.hamcrest.CoreMatchers.*;
 
@@ -38,12 +38,12 @@ import javax.persistence.PersistenceContext;
 
 import static org.junit.Assert.*;
 
-@Category(IntegrationTest.class}
+@Category(IntegrationTest.class)
 @RunWith(Arquillian.class)
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
 @CreateSchema({"create_${artifactId}_schema.sql"})
-public class ${moduleClassName}Test {
+public class ${moduleClass}Test {
 
     @PersistenceContext(name = "LibreCCM")
     private transient EntityManager entityManager;
@@ -80,10 +80,10 @@ public class ${moduleClassName}Test {
 
         return ShrinkWrap
             .create(WebArchive.class,
-                    "LibreCCM-${packageName}.${moduleClassName}Test.war")
-            .addPackage(${moduleClassName}.class.getPackage())
+                    "LibreCCM-${package}.${moduleClass}Test.war")
+            .addPackage(${moduleClass}.class.getPackage())
             .addAsLibraries(libs)
-            .addAsResource("test-persistence.xml,
+            .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")
             .addAsWebInfResource("test-web.xml", "WEB-INF/web.xml")
             .addAsWebInfResource(EmptyAsset.INSTANCE, "WEB-INF/beans.xml");
