@@ -1,0 +1,34 @@
+<archetype-descriptor xmlns="http://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.0.0" 
+                      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                      xsi:schemaLocation="http://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.0.0 http://maven.apache.org/xsd/archetype-descriptor-1.0.0.xsd"
+    name = "LibreCCM CMS Contenttypes Archetype"
+    partial="false">
+
+    <requiredProperties>
+        <requiredProperty key="typeName">
+            <defaultValue>${artifactId}</defaultValue>
+        </requiredProperty>
+        <requiredProperty key="schemaName">
+            <defaultValue>${artifactId}</defaultValue>
+        </requiredProperty>
+    </requiredProperties>
+
+    <fileSets>
+        <fileSet filtered="true" packaged="true">
+            <directory>src/main/java</directory>            
+        </fileSet>
+        <fileSet filtered="false" packaged="true">
+            <directory>src/main/resources/db/migrations</directory>
+        </fileSet>
+        <fileSet filtered="true" packaged="false">
+            <directory>src/main/resources/META-INF</directory>
+        </fileSet>
+        <fileSet filtered="false" packaged="false">
+            <directory>src/main/resources/module-info</directory>
+        </fileSet>
+        <fileSet filtered="true" packaged="true">
+            <directory>src/test/java</directory>
+        </fileSet>
+    </fileSets>
+
+</archetype-descriptor>

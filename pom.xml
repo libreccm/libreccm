@@ -46,6 +46,7 @@
         <!-- Archetypes -->
         <module>ccm-archetype-module</module>
     <module>ccm-cms</module>
+    <module>ccm-cms-archetype-contenttype</module>
   </modules>
 
     <!--<repositories>

@@ -19,7 +19,7 @@
     <artifactId>ccm-cms</artifactId>
     <version>7.0.0-SNAPSHOT</version>
    
-    <name>ccm-cms</name>
+    <name>LibreCCM CMS</name>
 
     <dependencies>
         <dependency>
