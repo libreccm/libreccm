@@ -18,3 +18,10 @@ To include integration tests into the reports
 
 The available profiles are listed in the documentation.
 
+To install the archetypes in your local Maven repository run
+
+mvn [clean] install -pl $archetype-module
+
+for example
+
+mvn clean install -pl ccm-cms-archetypes-contenttype
