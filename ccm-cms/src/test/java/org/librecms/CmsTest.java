@@ -1,7 +1,9 @@
 /*
  * ToDo: Add your license
  */
-package org.libreccm.cms;
+package org.librecms;
+
+import org.librecms.Cms;
 
 import static org.hamcrest.CoreMatchers.*;
 

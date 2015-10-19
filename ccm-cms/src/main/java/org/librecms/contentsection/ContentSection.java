@@ -16,9 +16,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.cms.contentsection;
+package org.librecms.contentsection;
 
-import static org.libreccm.cms.CmsConstants.*;
+import static org.librecms.CmsConstants.*;
 
 import org.libreccm.core.Group;
 import org.libreccm.web.CcmApplication;

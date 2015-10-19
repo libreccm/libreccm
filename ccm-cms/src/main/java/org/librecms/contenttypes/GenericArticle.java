@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.cms.contenttypes;
+package org.librecms.contenttypes;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -28,9 +28,9 @@ import javax.persistence.JoinTable;
 import javax.persistence.Table;
 import org.hibernate.envers.Audited;
 
-import static org.libreccm.cms.CmsConstants.*;
+import static org.librecms.CmsConstants.*;
 
-import org.libreccm.cms.contentsection.ContentItem;
+import org.librecms.contentsection.ContentItem;
 import org.libreccm.l10n.LocalizedString;
 
 /**

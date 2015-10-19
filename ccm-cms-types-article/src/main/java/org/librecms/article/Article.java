@@ -22,13 +22,13 @@ import static org.librecms.article.ArticleConstants.*;
 
 import org.hibernate.envers.Audited;
 
-import org.libreccm.cms.contentsection.ContentItem;
+import org.librecms.contentsection.ContentItem;
 
 import java.io.Serializable;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import org.libreccm.cms.contenttypes.GenericArticle;
+import org.librecms.contenttypes.GenericArticle;
 
 /**
  * This type simply exposes the {@link GenericArticle} type from the

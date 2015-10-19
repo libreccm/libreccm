@@ -16,20 +16,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.cms;
+package org.librecms.contentsection;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class CmsConstants {
+public enum ContentItemVersion {
     
-    public static final String CMS_XML_NS = "http://cms.libreccm.org";
-    
-    public static final String DB_SCHEMA = "CCM_CMS";
-    
-    private CmsConstants() {
-        //Nothing
-    }
+    DRAFT,
+    LIVE
     
 }

@@ -1,7 +1,7 @@
 /**
  * Add your license here, for example LGPL
  */
-package org.libreccm.cms;
+package org.librecms;
 
 import org.libreccm.modules.CcmModule;
 import org.libreccm.modules.InitEvent;

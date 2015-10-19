@@ -16,11 +16,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.cms.contentsection;
+package org.librecms.contentsection;
 
 import org.hibernate.envers.Audited;
 
-import static org.libreccm.cms.CmsConstants.*;
+import static org.librecms.CmsConstants.*;
 
 import org.libreccm.core.CcmObject;
 import org.libreccm.l10n.LocalizedString;
