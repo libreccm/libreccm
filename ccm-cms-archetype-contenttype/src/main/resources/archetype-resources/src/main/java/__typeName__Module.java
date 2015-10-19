@@ -13,7 +13,7 @@ import org.libreccm.modules.UnInstallEvent;
 
 @Module(packageName="${package}", 
         requiredModules = {@RequiredModule(module = org.libreccm.core.CcmCore)})
-public class ${moduleClass} implements CcmModule {
+public class ${typeName}Module implements CcmModule {
 
     @Override
     public void install(final InstallEvent event) {

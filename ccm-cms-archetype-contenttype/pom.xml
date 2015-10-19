@@ -4,17 +4,16 @@
          xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.libreccm</groupId>
-    <artifactId>libreccm-parent</artifactId>
-    <version>7.0.0-SNAPSHOT</version>
-  </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.libreccm</groupId>
+        <artifactId>libreccm-parent</artifactId>
+        <version>7.0.0-SNAPSHOT</version>
+    </parent>
 
-  <groupId>org.libreccm.cms</groupId>
-  <artifactId>ccm-cms-archetype-contenttype</artifactId>
-  <version>7.0.0-SNAPSHOT</version>
-  <name>LibreCCM CMS Archetype for Contenttypes</name>
+    <groupId>org.librecms</groupId>
+    <artifactId>ccm-cms-archetype-contenttype</artifactId>
+    <name>LibreCCM CMS Archetype for Contenttypes</name>
   
-  <url>http://cms.libreccm.org</url>
+    <url>http://cms.libreccm.org</url>
 </project>

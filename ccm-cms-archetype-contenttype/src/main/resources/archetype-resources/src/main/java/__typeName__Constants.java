@@ -1,6 +1,6 @@
 package ${package};
 
-public ${typeName}Constants {
+public class ${typeName}Constants {
 
     public static final String DB_SCHEMA = "${schemaName}";
 

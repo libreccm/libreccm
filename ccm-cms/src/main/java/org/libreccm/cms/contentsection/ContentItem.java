@@ -43,6 +43,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 /**
+ * Base type for all content item types. Specifies some common properties.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -53,45 +54,70 @@ public class ContentItem extends CcmObject implements Serializable {
 
     private static final long serialVersionUID = 5897287630227129653L;
 
+    /**
+     * The name of the content item which is used to generate the URL of the
+     * content item. We are using a {@link LocalizedString} here to make it
+     * possible to generate localised URLs. Therefore only characters allowed in
+     * URLs should be used here.
+     */
     @Embedded
     @AssociationOverride(
-        name = "VALUES",
-        joinTable = @JoinTable(name = "CONTENT_ITEM_NAMES",
-                               schema = DB_SCHEMA,
-                               joinColumns = {
-                                   @JoinColumn(name = "OBJECT_ID")}
-        ))
+            name = "VALUES",
+            joinTable = @JoinTable(name = "CONTENT_ITEM_NAMES",
+                                   schema = DB_SCHEMA,
+                                   joinColumns = {
+                                       @JoinColumn(name = "OBJECT_ID")}
+            ))
     private LocalizedString name;
 
+    /**
+     * The content type associated with the content item.
+     */
     @OneToOne
     private ContentType contentType;
 
+    /**
+     * The human readable title of the content item.
+     */
     @Embedded
     @AssociationOverride(
-        name = "VALUES",
-        joinTable = @JoinTable(name = "CONTENT_ITEM_TITLES",
-                               schema = DB_SCHEMA,
-                               joinColumns = {
-                                   @JoinColumn(name = "OBJECT_ID")}
-        ))
+            name = "VALUES",
+            joinTable = @JoinTable(name = "CONTENT_ITEM_TITLES",
+                                   schema = DB_SCHEMA,
+                                   joinColumns = {
+                                       @JoinColumn(name = "OBJECT_ID")}
+            ))
     private LocalizedString title;
 
+    /**
+     * A short text which describes the content of the content item.
+     */
     @Embedded
     @AssociationOverride(
-        name = "VALUES",
-        joinTable = @JoinTable(name = "CONTENT_ITEM_DESCRIPTIONS",
-                               schema = DB_SCHEMA,
-                               joinColumns = {
-                                   @JoinColumn(name = "OBJECT_ID")}
-        ))
+            name = "VALUES",
+            joinTable = @JoinTable(name = "CONTENT_ITEM_DESCRIPTIONS",
+                                   schema = DB_SCHEMA,
+                                   joinColumns = {
+                                       @JoinColumn(name = "OBJECT_ID")}
+            ))
     private LocalizedString description;
 
+    /**
+     * The version/publishing state of the content item.
+     */
     @Enumerated(EnumType.STRING)
     private ContentItemVersion version;
 
+    /**
+     * The launch date of the content item (date when the item is made public)
+     */
     @Temporal(TemporalType.DATE)
     private Date launchDate;
 
+    /**
+     * String with the IDs (separated by slashes) of the ancestors of the
+     * content item (aka the path of the content item).
+     */
     @Column(name = "ancestors", length = 1024)
     private String ancestors;
 
@@ -211,10 +237,10 @@ public class ContentItem extends CcmObject implements Serializable {
     @Override
     public String toString(final String data) {
         return String.format(", name = {}, "
-                                 + "contentType = {}, "
-                                 + "title = {}, "
-                                 + "version = %s,"
-                                 + "launchDate = %s%s",
+                                     + "contentType = {}, "
+                                     + "title = {}, "
+                                     + "version = %s,"
+                                     + "launchDate = %s%s",
                              Objects.toString(name),
                              Objects.toString(contentType),
                              Objects.toString(description),

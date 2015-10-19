@@ -8,17 +8,18 @@
     <groupId>org.libreccm</groupId>
     <version>7.0.0-SNAPSHOT</version>
   </parent>
-
+ 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <timestamp>${maven.build.timestamp}</timestamp>
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss'Z'Z</maven.build.timestamp.format>
     </properties>
-    
+
+  
     <groupId>org.librecms</groupId>
-    <artifactId>ccm-cms</artifactId>
-   
-    <name>LibreCMS</name>
+    <artifactId>ccm-cms-types-article</artifactId>
+
+    <name>LibreCMS Contenttype Article</name>
 
     <dependencies>
         <dependency>
@@ -36,10 +37,17 @@
         </dependency>
 
         <dependency>
+            <groupId>org.librecms</groupId>
+            <artifactId>ccm-cms</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
@@ -68,7 +76,7 @@
             <version>${project.parent.version}</version>
             <scope>test</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>nl.jqno.equalsverifier</groupId>
             <artifactId>equalsverifier</artifactId>
@@ -105,7 +113,7 @@
     </dependencies>
 
     <build>
-        <finalName>ccm-cms</finalName>
+        <finalName>ccm-cms-types-article</finalName>
 
         <plugins>
             <plugin>

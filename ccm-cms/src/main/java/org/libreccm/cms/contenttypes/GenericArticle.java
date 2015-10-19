@@ -34,7 +34,10 @@ import org.libreccm.cms.contentsection.ContentItem;
 import org.libreccm.l10n.LocalizedString;
 
 /**
- *
+ * Base class for article like content items. These items usually contain a 
+ * short introduction text (the description) and a longer text containing 
+ * the more detailed content. 
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity

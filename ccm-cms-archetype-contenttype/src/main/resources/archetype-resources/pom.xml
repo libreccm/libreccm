@@ -32,6 +32,13 @@
             <version>${project.parent.version}</version>
             <scope>provided</scope>
         </dependency>
+        
+        <dependency>
+            <groupId>org.librecms</groupId>
+            <artifactId>ccm-cms</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -314,5 +321,4 @@
             </plugin>
         </plugins>
     </reporting>
-<
 </project>
