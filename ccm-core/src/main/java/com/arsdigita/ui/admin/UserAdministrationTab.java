@@ -63,21 +63,21 @@ class UserAdministrationTab extends LayoutPanel {
         sections.setClassAttr("navbar");        
         setLeft(sections);
        
-        final UserBrowsePane browsePane = new UserBrowsePane();
-        final UserSummarySection summarySection = new UserSummarySection(
-                this, browsePane);
-        final UserSearchSection searchSection = new UserSearchSection(
-                this, browsePane);
-        final UserCreateSection createSection = new UserCreateSection(this);
-        
-        browsePane.setTabbedPane(parent);
-        browsePane.setGroupAdministrationTab(groupAdminTab);
-        
+//        final UserBrowsePane browsePane = new UserBrowsePane();
+//        final UserSummarySection summarySection = new UserSummarySection(
+//                this, browsePane);
+//        final UserSearchSection searchSection = new UserSearchSection(
+//                this, browsePane);
+//        final UserCreateSection createSection = new UserCreateSection(this);
+//        
+//        browsePane.setTabbedPane(parent);
+//        browsePane.setGroupAdministrationTab(groupAdminTab);
+//        
         final BoxPanel body = new BoxPanel();
-        addSection(USER_TAB_SUMMARY, summarySection, body);
-        addSection(USER_TAB_BROWSE, browsePane, body);
-        addSection(USER_TAB_SEARCH, searchSection, body);
-        addSection(USER_TAB_CREATE_USER, createSection, body);              
+//        addSection(USER_TAB_SUMMARY, summarySection, body);
+//        addSection(USER_TAB_BROWSE, browsePane, body);
+//        addSection(USER_TAB_SEARCH, searchSection, body);
+//        addSection(USER_TAB_CREATE_USER, createSection, body);              
         
         setBody(body);
     }
