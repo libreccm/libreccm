@@ -73,13 +73,13 @@ class UserAdministrationTab extends LayoutPanel {
 //        browsePane.setTabbedPane(parent);
 //        browsePane.setGroupAdministrationTab(groupAdminTab);
 //        
-        final BoxPanel body = new BoxPanel();
-//        addSection(USER_TAB_SUMMARY, summarySection, body);
-//        addSection(USER_TAB_BROWSE, browsePane, body);
-//        addSection(USER_TAB_SEARCH, searchSection, body);
-//        addSection(USER_TAB_CREATE_USER, createSection, body);              
-        
-        setBody(body);
+////        final BoxPanel body = new BoxPanel();
+//////        addSection(USER_TAB_SUMMARY, summarySection, body);
+//////        addSection(USER_TAB_BROWSE, browsePane, body);
+//////        addSection(USER_TAB_SEARCH, searchSection, body);
+//////        addSection(USER_TAB_CREATE_USER, createSection, body);              
+//        
+//        setBody(body);
     }
      
      /**
