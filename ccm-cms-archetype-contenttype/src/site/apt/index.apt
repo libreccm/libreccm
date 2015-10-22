@@ -1,0 +1,61 @@
+            ------------------------------------
+            LibreCMS Archetype for Content Types
+            ------------------------------------
+                    Jens Pelzetter
+            ------------------------------------
+                      2015-10-22
+            ------------------------------------
+
+LibreCMS Archetype for Content Types
+
+    This archetype can be used.to create a skeleton for content type for
+    LibreCMS. The archetype requires the following properties:
+
+* Installation
+
+    At the moment it is necessary to install the archetype manually using
+
+--------------------------------------------------------------------------------
+    mvn install -pl ccm-cms-archetype-contenttype
+--------------------------------------------------------------------------------
+
+* Usage
+    
+    There are different ways to use an archetype to create a new module. The 
+    simplest way is use the archetype is to run the following command:
+
+----------------------------------------------------------------------------
+    mvn archetype:generate -DarchetypeGroupId=org.librecms -DarchetypeArtifactId=ccm-cms-archetype-contenttype
+--------------------------------------------------------------------------------
+
+    Maven will than ask for all required properties needed for creating a new
+    content type. The following properties are required:
+
+    [groupId] The <<<groupId>>> of the new content type module
+    [artifactId] The <<<artifactId>>> of the new content type module. It is
+                 recommended (for official modules mandatory) to use the 
+                 following pattern for the <<<artifactId>>>: 
+                 <<<ccm-cms-types-$typename>>>. For special branches like
+                 APLAWS+ or ScientificCMS the pattern might differ.
+    [package] The package for the classes of the new content type module. 
+              Defaults to the <<<groupId>>>. It is recommanded to place all 
+              classes belonging to a content type into a separate package. For 
+              example for the content <<<ccm-cms-types-foo>>> all classes 
+              belonging to that content type should be placed into the package
+              <<<org.librecms.contenttypes.foo>>>.
+    [typeName] The name of the type. Must be a valid class name. If the 
+               recommended pattern for the <<<artifactId>>> is used the last 
+               token of the <<<artifactId>>> (with a capitalised
+               first letter) should be used. For instance the type name of
+               <<<ccm-cms-types-foo>>> should be <<<Foo>>>.
+    [schemaName] The name of the database schema used to store the tables for
+                 the module. Defaults to the <<<artifactId>>>. It is recommended
+                 to customise the <<<schemaName>>> to avoid problems with SQL. 
+                 For example all dashes should be replaced with underscores. 
+                 Also the name of the schema should be shortened. For the 
+                 content type <<<ccm-cms-types-foo>>> a valid schema names would 
+                 be <<<ccm_cms_types_foo>>>, <<<cms_foo>>> or 
+                 <<<cms_types_foo>>>.
+
+
+    
