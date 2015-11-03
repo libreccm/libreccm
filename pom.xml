@@ -48,6 +48,8 @@
     <module>ccm-cms</module>
     <module>ccm-cms-archetype-contenttype</module>
     <module>ccm-cms-types-article</module>
+    <module>ccm-cms-types-agenda</module>
+    <module>ccm-cms-types-decisiontree</module>
   </modules>
 
     <!--<repositories>
