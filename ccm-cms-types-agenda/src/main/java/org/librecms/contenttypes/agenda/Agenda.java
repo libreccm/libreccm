@@ -29,6 +29,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.libreccm.l10n.LocalizedString;
 import org.librecms.contentsection.ContentItem;
 
@@ -64,6 +65,7 @@ public class Agenda extends ContentItem implements Serializable {
      */
     @Column(name = "AGENDADATE")
     @Temporal(javax.persistence.TemporalType.DATE)
+    @NotEmpty
     private Date agendaDate;
 
     /**
@@ -103,11 +105,11 @@ public class Agenda extends ContentItem implements Serializable {
     //getter and setter:
     
     public Date getAgendaDate() {
-        return agendaDate;
+        return  new Date(agendaDate.getTime());
     }
 
     public void setAgendaDate(Date agendaDate) {
-        this.agendaDate = agendaDate;
+        this.agendaDate =  new Date(agendaDate.getTime());
     }
 
     public LocalizedString getLocation() {
