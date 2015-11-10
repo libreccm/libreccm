@@ -49,7 +49,6 @@
     <module>ccm-cms-archetype-contenttype</module>
     <module>ccm-cms-types-article</module>
     <module>ccm-cms-types-agenda</module>
-    <module>ccm-cms-types-decisiontree</module>
     <module>ccm-cms-types-bookmark</module>
     <module>ccm-cms-types-event</module>
     <module>ccm-cms-types-minutes</module>
