@@ -81,11 +81,11 @@ public class FileActionPane extends ColumnPanel implements Constants {
                     file = (File) resourceRepository.findById(fileId);
                     if (file == null) {
                         log.error(String.format("Couldn't find the file %d in" +
-                                " the database", fileId));
+                                " the database.", fileId));
                     }
                 } catch(CdiLookupException ex) {
                     log.error("Failed to find bean for the " +
-                            "ResourceRepository", ex);
+                            "ResourceRepository.", ex);
                 }
                 return file;
             }
@@ -183,7 +183,8 @@ public class FileActionPane extends ColumnPanel implements Constants {
 //                ex.run();
 
             } catch (CdiLookupException ex) {
-                log.error("Failed to find bean for the ResourceRepository.", ex);
+                log.error("Failed to find bean for the " +
+                        "ResourceRepository.", ex);
             }
 
             try {

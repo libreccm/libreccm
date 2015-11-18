@@ -67,7 +67,7 @@ import java.util.ArrayList;
  */
 public class BrowsePane extends ModalContainer implements Constants, ChangeListener, RequestListener {
 
-    //private static final Logger logger = Logger.getLogger(BrowsePane.class);
+    //private static final Logger log = Logger.getLogger(BrowsePane.class);
 
     private Component m_folderContent;
     private Component m_destinationFolderPanel;

@@ -195,6 +195,7 @@ public class DestinationFolderForm extends Form implements FormInitListener,
 
             Folder folder = (Folder) resourceRepository.findById(folderId);
             if (folder == null) {
+                isError = true;
                 log.error(String.format("Couldn't find folder %d in the " +
                         "database.", folderId));
             }
@@ -205,9 +206,9 @@ public class DestinationFolderForm extends Form implements FormInitListener,
 
                 Resource resource = resourceRepository.findById(resourceId);
                 if (resource == null) {
+                    errorList.add(resourceString);
                     log.debug(String.format("Couldn't find selected resource " +
                             "%d in the database.", resourceId));
-                    errorList.add(resourceString);
                     continue;
                 }
 
@@ -220,9 +221,9 @@ public class DestinationFolderForm extends Form implements FormInitListener,
                 }
             }
         } catch (CdiLookupException ex) {
-            log.error("Failed to find bean for either ResourceRepository or " +
-                    "ResourceManager", ex);
             isError = true;
+            log.error("Failed to find bean for either ResourceRepository or " +
+                    "ResourceManager.", ex);
         }
 
         if (isError) {
@@ -288,7 +289,7 @@ public class DestinationFolderForm extends Form implements FormInitListener,
                 sourceFolder = (Folder) resourceRepository.findById
                         (sourceFolderId);
             } catch (CdiLookupException ex) {
-                log.error("Failed to find bean for the ResourceRepository", ex);
+                log.error("Failed to find bean for the ResourceRepository.", ex);
             }
 
             if (sourceFolder != null) {
@@ -318,7 +319,7 @@ public class DestinationFolderForm extends Form implements FormInitListener,
                 }
             } else {
                 log.error(String.format("Couldn't find the source folder %d " +
-                        "in the database", sourceFolderId));
+                        "in the database.", sourceFolderId));
             }
         }
 
