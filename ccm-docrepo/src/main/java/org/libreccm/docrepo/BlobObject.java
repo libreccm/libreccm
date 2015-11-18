@@ -64,7 +64,7 @@ public class BlobObject implements Serializable {
     private byte[] content;
 
     /**
-     * The {@link Resource} assigned to the {@code BlobObject}.
+     * The {@link Resource} the {@code BlobObject} was assigned to.
      */
     @OneToOne(mappedBy = "content")
     @NotEmpty

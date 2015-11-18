@@ -38,7 +38,13 @@
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
-        
+
+        <dependency>
+            <groupId>org.libreccm</groupId>
+            <artifactId>ccm-docrepo</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
@@ -173,7 +179,7 @@
             <artifactId>h2</artifactId>
             <scope>test</scope>
         </dependency>
-        
+
     </dependencies>
     
     <build>

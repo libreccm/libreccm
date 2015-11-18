@@ -18,9 +18,9 @@
  */
 package com.arsdigita.bebop;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * A variable whose value is local to each request. Objects that need to store
@@ -67,7 +67,7 @@ public class RequestLocal {
     // way
     private Map getMap(HttpServletRequest request) {
         // This lock is paranoid.  We can remove it if we know that only one
-        // thread will be touching a request object at a time.  (Seems likely,
+        // thread will be touching a request object at a time. (Seems likely,
         // but, like I said, I'm paranoid.)
         synchronized (request) {
             Map result = (Map)request.getAttribute(ATTRIBUTE_KEY);

@@ -19,6 +19,7 @@
 package org.libreccm.docrepo;
 
 import javax.persistence.Entity;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 /**
@@ -35,9 +36,27 @@ public class Folder extends Resource {
     private static final long serialVersionUID = 1561466556458872622L;
 
     /**
+     * The {@link Repository} this {@code Folder} is assigned to as root.
+     */
+    @OneToOne(mappedBy = "rootFolder")
+    private Repository repository;
+
+    /**
      * Constructor calls the super-class-constructor of {@link Resource}.
      */
     public Folder() {
         super();
     }
+
+    //> Begin GETTER & SETTER
+
+    public Repository getRepository() {
+        return repository;
+    }
+
+    public void setRepository(Repository repository) {
+        this.repository = repository;
+    }
+
+    //< End GETTER & SETTER
 }

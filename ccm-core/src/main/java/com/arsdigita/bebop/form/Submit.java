@@ -66,7 +66,7 @@ public class Submit extends Widget {
      *
      * @param name the button's name
      * @param label the label displayed on the button
-     * @deprecated use Submit(name, GlobalizedMessage instead
+     * @deprecated use Submit(name, GlobalizedMessage) instead
      */
     public Submit(String name, String label) {
         super(name);
@@ -207,7 +207,7 @@ public class Submit extends Widget {
      * Return <code>true</code> if the user clicked on this submit button to
      * submit the form in which the button is contained.
      *
-     * @param state the state of the current request
+     * @param ps the state of the current request
      * @return <code>true</code> if the user clicked this button to submit
      * the enclosing form.
      */

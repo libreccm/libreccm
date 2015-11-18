@@ -18,15 +18,19 @@
  */
 package org.libreccm.docrepo;
 
+import org.libreccm.core.User;
 import org.libreccm.web.CcmApplication;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 /**
- * Entity class of a repository for documents. Instances will be persisted into the
- * database. Instance variables are inherited from {@link CcmApplication}.
+ * Entity class of a repository for documents. Instances will be persisted into
+ * the database. Instance variables are inherited from {@link CcmApplication}.
  *
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  * @version 01/10/2015
@@ -38,16 +42,24 @@ public class Repository extends CcmApplication {
     private static final long serialVersionUID = 6673243021462798036L;
 
     /**
-     * The root of the repository.
+     * Name des {@code Repository}s.
      */
-    @Column(name = "ROOT_ID")
-    private long rootId;
+    @Column(name = "NAME")
+    private String name;
 
     /**
-     * The owner of the repository.
+     * The root of the {@code Repository}.
      */
-    @Column(name = "OWNER_ID")
-    private long ownerId;
+    @OneToOne
+    @JoinColumn(name = "ROOT_FOLDER")
+    private Folder rootFolder;
+
+    /**
+     * The owner of the {@code Repository}.
+     */
+    @ManyToOne
+    @JoinColumn(name = "OWNER")
+    private User owner;
 
     /**
      * Constructor calls the super-class-constructor of {@link CcmApplication}.
@@ -58,20 +70,28 @@ public class Repository extends CcmApplication {
 
     //> Begin GETTER & SETTER
 
-    public long getRootId() {
-        return rootId;
+    public String getName() {
+        return name;
     }
 
-    public void setRootId(long rootId) {
-        this.rootId = rootId;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public long getOwnerId() {
-        return ownerId;
+    public Folder getRootFolder() {
+        return rootFolder;
     }
 
-    public void setOwnerId(long ownerId) {
-        this.ownerId = ownerId;
+    public void setRootFolder(Folder root_folder) {
+        this.rootFolder = root_folder;
+    }
+
+    public User getOwner() {
+        return owner;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
     }
 
     //< End GETTER & SETTER

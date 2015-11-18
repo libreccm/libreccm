@@ -18,6 +18,8 @@
  */
 package org.libreccm.docrepo;
 
+import org.apache.log4j.Logger;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
@@ -29,11 +31,26 @@ import javax.inject.Inject;
  */
 @RequestScoped
 public class ResourceManager {
+    private static final Logger log = Logger.getLogger(ResourceManager.class);
 
     @Inject
     private transient ResourceRepository resourceRepository;
 
+    public void copyToFolder(Resource original, Folder folder) {
+        Resource copy = original.isFolder() ? new Folder() : new File();
+        copy.setName(original.getName());
+        copy.setDescription(original.getDescription());
+        copy.setIsFolder(original.isFolder());
+        copy.setPath(String.format("%s/%s", folder.getPath(), copy.getName()));
+        copy.setMimeType(original.getMimeType());
+        copy.setSize(original.getSize());
+        copy.setContent(original.getContent());
 
+        copy.setParent(folder);
+        copy.setImmediateChildren(original.getImmediateChildren());
+
+        resourceRepository.save(copy);
+    }
 
 
 

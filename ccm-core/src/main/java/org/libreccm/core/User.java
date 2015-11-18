@@ -18,37 +18,36 @@
  */
 package org.libreccm.core;
 
-import static org.libreccm.core.CoreConstants.*;
-
-import java.io.Serializable;
-import java.util.Objects;
+import org.hibernate.validator.constraints.NotBlank;
+import org.libreccm.docrepo.Repository;
+import org.libreccm.docrepo.Resource;
 
 import javax.persistence.AssociationOverride;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
-
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.Table;
-
-import org.hibernate.validator.constraints.NotBlank;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import javax.persistence.CollectionTable;
-import javax.persistence.ElementCollection;
-import javax.persistence.FetchType;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+
+import static org.libreccm.core.CoreConstants.CORE_XML_NS;
+import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 
 /**
  * The {@code User} entity stores the name and the password of a user along with
@@ -183,6 +182,25 @@ public class User extends Subject implements Serializable {
     @XmlElement(name = "group-membership", namespace = CORE_XML_NS)
     private List<GroupMembership> groupMemberships;
 
+    /**
+     * The {@link Resource}s created by this {@code User}.
+     */
+    @OneToMany(mappedBy = "creationUser")
+    private List<Resource> createdResources;
+
+    /**
+     * The {@link Resource}s modified by this {@code User}.
+     */
+    @OneToMany(mappedBy = "lastModifiedUser")
+    private List<Resource> modifiedResources;
+
+    /**
+     * The {@link Repository}s owned by this {@code User}.
+     */
+    @OneToMany(mappedBy = "owner")
+    private List<Repository> repositories;
+
+
     public User() {
         super();
 
@@ -308,6 +326,30 @@ public class User extends Subject implements Serializable {
     protected void removeGroupMembership(
             final GroupMembership groupMembership) {
         groupMemberships.remove(groupMembership);
+    }
+
+    public List<Resource> getCreatedResources() {
+        return createdResources;
+    }
+
+    public void setCreatedResources(List<Resource> createdResources) {
+        this.createdResources = createdResources;
+    }
+
+    public List<Resource> getModifiedResources() {
+        return modifiedResources;
+    }
+
+    public void setModifiedResources(List<Resource> modifiedResources) {
+        this.modifiedResources = modifiedResources;
+    }
+
+    public List<Repository> getRepositories() {
+        return repositories;
+    }
+
+    public void setRepositories(List<Repository> repositories) {
+        this.repositories = repositories;
     }
 
     @Override

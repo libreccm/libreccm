@@ -291,4 +291,8 @@ public abstract class Resource extends CcmObject {
     }
 
     //< End GETTER & SETTER
+
+    public boolean isRoot() {
+        return isFolder() && getParent() == null;
+    }
 }
