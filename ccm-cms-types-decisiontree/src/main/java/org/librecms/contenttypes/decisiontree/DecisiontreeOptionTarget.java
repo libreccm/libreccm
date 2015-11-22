@@ -11,8 +11,10 @@ import javax.persistence.Embeddable;
 import org.libreccm.l10n.LocalizedString;
 
 /**
- *
- * @author koalamann
+ * Target of an option.
+ * 
+ * @author <a href="mailto:konerman@tzi.de">Alexander Konermann</a>
+ * @version 22/11/2015
  */
 @Embeddable
 public class DecisiontreeOptionTarget implements Serializable {

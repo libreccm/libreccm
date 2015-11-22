@@ -14,13 +14,18 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import org.hibernate.envers.Audited;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.libreccm.l10n.LocalizedString;
 
 /**
- *
- * @author koalamann
+ * DecisiontreeSection, which is part of a decisiontree.
+ * 
+ * @author <a href="mailto:konerman@tzi.de">Alexander Konermann</a>
+ * @version 22/11/2015
  */
 @Entity
+@Audited
 public class DecisiontreeSection implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -30,6 +35,7 @@ public class DecisiontreeSection implements Serializable {
     @Column(name = "SECTION_ID")
     private Long section_id;
 
+    @NotEmpty
     @Column(name = "PARAMETERNAME")
     private LocalizedString parameterName;
     
