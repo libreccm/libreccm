@@ -56,8 +56,8 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.libreccm.core.CcmCore;
-import org.libreccm.core.User;
 import org.libreccm.modules.ModuleStatus;
+import org.libreccm.security.User;
 import org.libreccm.tests.categories.IntegrationTest;
 
 import javax.persistence.TypedQuery;
@@ -230,10 +230,10 @@ public class CcmModulesTest {
         final List<User> users = userQuery.getResultList();
 
         assertThat(users.size(), is(1));
-        assertThat(users.get(0).getScreenName(), is(equalTo("public-user")));
+        assertThat(users.get(0).getName(), is(equalTo("public-user")));
         assertThat(users.get(0).getName(), is(not(nullValue())));
-        assertThat(users.get(0).getName().getFamilyName(), is(equalTo("ccm")));
-        assertThat(users.get(0).getName().getGivenName(),
+        assertThat(users.get(0).getFamilyName(), is(equalTo("ccm")));
+        assertThat(users.get(0).getGivenName(),
                    is(equalTo("public user")));
         assertThat(users.get(0).getEmailAddresses().size(), is(1));
         assertThat(users.get(0).getEmailAddresses().get(0).getAddress(),

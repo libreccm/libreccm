@@ -52,12 +52,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.core.CcmSessionContext;
-import org.libreccm.core.Subject;
-import org.libreccm.core.User;
-import org.libreccm.core.UserManager;
-import org.libreccm.core.UserRepository;
-import org.libreccm.core.authentication.LoginManager;
+import org.libreccm.security.User;
 
 import java.util.logging.Level;
 
@@ -132,25 +127,25 @@ public class ChangePasswordForm extends Form
         add(m_returnURL);
 
         final CdiUtil cdiUtil = new CdiUtil();
-        final CcmSessionContext sessionContext;
-        try {
-            sessionContext = cdiUtil.findBean(CcmSessionContext.class);
-        } catch (CdiLookupException ex) {
-            throw new UncheckedWrapperException("");
-        }
-        final Subject subject = sessionContext.getCurrentSubject();
-        if (subject != null && subject instanceof User) {
-            final User user = (User) subject;
-            final Label greeting = new Label(
-                LoginHelper.getMessage(
-                    "login.changePasswortForm.greeting",
-                    new Object[]{String.format("%s %s",
-                                               user.getName().getGivenName(),
-                                               user.getName().getFamilyName())}));
-            greeting.setFontWeight(Label.BOLD);
-            greeting.setClassAttr("greeting");
-            add(greeting);
-        }
+//        final CcmSessionContext sessionContext;
+//        try {
+//            sessionContext = cdiUtil.findBean(CcmSessionContext.class);
+//        } catch (CdiLookupException ex) {
+//            throw new UncheckedWrapperException("");
+//        }
+//        final Subject subject = sessionContext.getCurrentSubject();
+//        if (subject != null && subject instanceof User) {
+//            final User user = (User) subject;
+//            final Label greeting = new Label(
+//                LoginHelper.getMessage(
+//                    "login.changePasswortForm.greeting",
+//                    new Object[]{String.format("%s %s",
+//                                               user.getName().getGivenName(),
+//                                               user.getName().getFamilyName())}));
+//            greeting.setFontWeight(Label.BOLD);
+//            greeting.setClassAttr("greeting");
+//            add(greeting);
+//        }
 
         add(new Label(LoginHelper.getMessage(
             "login.changePasswortForm.introText")));
@@ -199,7 +194,7 @@ public class ChangePasswordForm extends Form
                     state.getRequest()));
                 return;
             }
-            User user = m_listener.getUser(state);
+//            User user = m_listener.getUser(state);
 
             // get parameter values
             String oldPassword = (String) m_oldPassword.getValue(state);
@@ -207,33 +202,33 @@ public class ChangePasswordForm extends Form
             String confirmPassword = (String) m_confirmPassword.getValue(state);
 
             // check old password unless recovering
-            try {
-                    // The old password can never be null or contain leading or
-                // trailing slashes.
-                if (oldPassword == null
-                        || !oldPassword.trim().equals(oldPassword)) {
-                    data.addError(OLD_PASSWORD_PARAM_NAME, LoginHelper
-                                  .localize(
-                                      "login.changePasswordForm.badPasswordError",
-                                      state.getRequest()));
-                    return;
-                }
-
-                final CdiUtil cdiUtil = new CdiUtil();
-                final UserManager userManager = cdiUtil.findBean(
-                    UserManager.class);
-                if (!userManager.verifyPasswordForUser(
-                    user, oldPassword)) {
-                    data.addError(OLD_PASSWORD_PARAM_NAME,
-                                  LoginHelper.localize(
-                                      "login.changePasswordForm.badPasswordError",
-                                      state.getRequest()));
-                    return;
-                }
-            } catch (CdiLookupException ex) {
-                throw new UncheckedWrapperException(
-                    "Failed to lookup UserManager", ex);
-            }
+//            try {
+//                    // The old password can never be null or contain leading or
+//                // trailing slashes.
+//                if (oldPassword == null
+//                        || !oldPassword.trim().equals(oldPassword)) {
+//                    data.addError(OLD_PASSWORD_PARAM_NAME, LoginHelper
+//                                  .localize(
+//                                      "login.changePasswordForm.badPasswordError",
+//                                      state.getRequest()));
+//                    return;
+//                }
+//
+//                final CdiUtil cdiUtil = new CdiUtil();
+////                final UserManager userManager = cdiUtil.findBean(
+////                    UserManager.class);
+////                if (!userManager.verifyPasswordForUser(
+////                    user, oldPassword)) {
+////                    data.addError(OLD_PASSWORD_PARAM_NAME,
+////                                  LoginHelper.localize(
+////                                      "login.changePasswordForm.badPasswordError",
+////                                      state.getRequest()));
+////                    return;
+////                }
+//            } catch (CdiLookupException ex) {
+//                throw new UncheckedWrapperException(
+//                    "Failed to lookup UserManager", ex);
+//            }
 
             // check new password
             if (newPassword.equals(oldPassword)) {
@@ -272,54 +267,54 @@ public class ChangePasswordForm extends Form
                 state.getRequest()));
             return;
         }
-        User user = m_listener.getUser(state);
-
-        // set new password
-        try {
-            final CdiUtil cdiUtil = new CdiUtil();
-            final UserManager userManager = cdiUtil.findBean(UserManager.class);
-            final UserRepository userRepository = cdiUtil.findBean(
-                UserRepository.class);
-
-            String newPassword = (String) m_newPassword.getValue(state);
-            userManager.updatePassword(user, newPassword);
-            userRepository.save(user);
-
-            s_log.debug("committing password change");
-        } catch (CdiLookupException ex) {
-            throw new UncheckedWrapperException(
-                "Failed to lookup UserManager or UserRepository", ex);
-        }
+//        User user = m_listener.getUser(state);
+//
+//        // set new password
+//        try {
+//            final CdiUtil cdiUtil = new CdiUtil();
+//            final UserManager userManager = cdiUtil.findBean(UserManager.class);
+//            final UserRepository userRepository = cdiUtil.findBean(
+//                UserRepository.class);
+//
+//            String newPassword = (String) m_newPassword.getValue(state);
+//            userManager.updatePassword(user, newPassword);
+//            userRepository.save(user);
+//
+//            s_log.debug("committing password change");
+//        } catch (CdiLookupException ex) {
+//            throw new UncheckedWrapperException(
+//                "Failed to lookup UserManager or UserRepository", ex);
+//        }
 
         // mail report to user
-        if (!user.getEmailAddresses().isEmpty()) {
-
-            final HttpServletRequest req = state.getRequest();
-
-            final String to = user.getEmailAddresses().get(0).getAddress();
-            final String from = SecurityConfig.getConfig()
-                .getAdminContactEmail();
-            final String name = user.getName().getGivenName();
-            final String subject = LoginHelper.localize(
-                "login.changePasswordForm.mailSubject", req);
-            final String body = LoginHelper.localize(
-                "login.changePasswordForm.mailBody",
-                new Object[]{name},
-                req);
-
-            // try to send the message, but don't throw the exception
-            // if it fails so that the password change is comitted
-            // anyway.
-            try {
-                Mail.send(to, from, subject, body);
-            } catch (javax.mail.MessagingException e) {
-                s_log.error("Could not notify user of password change", e);
-            }
-        } else {
-            s_log.debug("Could not notify user of password change: "
-                            + "null email, user ID: "
-                            + user.getSubjectId());
-        }
+//        if (!user.getEmailAddresses().isEmpty()) {
+//
+//            final HttpServletRequest req = state.getRequest();
+//
+//            final String to = user.getEmailAddresses().get(0).getAddress();
+//            final String from = SecurityConfig.getConfig()
+//                .getAdminContactEmail();
+//            final String name = user.getName().getGivenName();
+//            final String subject = LoginHelper.localize(
+//                "login.changePasswordForm.mailSubject", req);
+//            final String body = LoginHelper.localize(
+//                "login.changePasswordForm.mailBody",
+//                new Object[]{name},
+//                req);
+//
+//            // try to send the message, but don't throw the exception
+//            // if it fails so that the password change is comitted
+//            // anyway.
+//            try {
+//                Mail.send(to, from, subject, body);
+//            } catch (javax.mail.MessagingException e) {
+//                s_log.error("Could not notify user of password change", e);
+//            }
+//        } else {
+//            s_log.debug("Could not notify user of password change: "
+//                            + "null email, user ID: "
+//                            + user.getSubjectId());
+//        }
 
         final HttpServletRequest req = state.getRequest();
 

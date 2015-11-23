@@ -70,7 +70,7 @@ public class ResourceType implements Serializable {
 
     @Embedded
     @AssociationOverride(
-        name = "VALUES",
+        name = "values",
         joinTable = @JoinTable(name = "RESOURCE_TYPE_DESCRIPTIONS",
                                schema = DB_SCHEMA,
                                joinColumns = {

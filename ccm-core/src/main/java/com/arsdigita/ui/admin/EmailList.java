@@ -35,8 +35,6 @@ import com.arsdigita.util.UncheckedWrapperException;
 import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.core.EmailAddress;
-import org.libreccm.core.User;
-import org.libreccm.core.UserRepository;
 
 import static com.arsdigita.ui.admin.AdminConstants.*;
 
@@ -105,28 +103,28 @@ class EmailList extends List
 
         final Long userId = (Long) state.getValue(USER_ID_PARAM);
         if (userId != null) {
-            final CdiUtil cdiUtil = new CdiUtil();
-            final UserRepository userRepository;
-            try {
-                userRepository = cdiUtil.findBean(UserRepository.class);
-            } catch(CdiLookupException ex) {
-                throw new UncheckedWrapperException(ex);
-            }
-            
-            final User user = userRepository.findById(userId);
-            if (user == null) {
-                return;
-            } else {
-                final String email = (String) getSelectedKey(state);
-                
-                for(EmailAddress addr : user.getEmailAddresses()) {
-                    if (addr.getAddress().equals(email)) {
-                        user.removeEmailAddress(addr);
-                    }
-                }
-                
-                userRepository.save(user);
-            }
+//            final CdiUtil cdiUtil = new CdiUtil();
+//            final UserRepository userRepository;
+//            try {
+//                userRepository = cdiUtil.findBean(UserRepository.class);
+//            } catch(CdiLookupException ex) {
+//                throw new UncheckedWrapperException(ex);
+//            }
+//            
+//            final User user = userRepository.findById(userId);
+//            if (user == null) {
+//                return;
+//            } else {
+//                final String email = (String) getSelectedKey(state);
+//                
+//                for(EmailAddress addr : user.getEmailAddresses()) {
+//                    if (addr.getAddress().equals(email)) {
+//                        user.removeEmailAddress(addr);
+//                    }
+//                }
+//                
+//                userRepository.save(user);
+//            }
         }
     }
 }
@@ -192,20 +190,22 @@ class EmailListModelBuilder extends LockableImpl
     @Override
     public ListModel makeModel(List l, PageState state) {
 
-        final Long userId = (Long) state.getValue(USER_ID_PARAM);
-        if (userId == null) {
-            return null;
-        } else {
-            final CdiUtil cdiUtil = new CdiUtil();
-            final UserRepository userRepository;
-            try {
-                userRepository = cdiUtil.findBean(UserRepository.class);
-            } catch(CdiLookupException ex) {
-                throw new UncheckedWrapperException(ex);
-            }
-            final User user = userRepository.findById(userId);
-            
-            return new EmailListModel(user.getEmailAddresses().iterator());
-        }
+        return null;
+        
+//        final Long userId = (Long) state.getValue(USER_ID_PARAM);
+//        if (userId == null) {
+//            return null;
+//        } else {
+//            final CdiUtil cdiUtil = new CdiUtil();
+//            final UserRepository userRepository;
+//            try {
+//                userRepository = cdiUtil.findBean(UserRepository.class);
+//            } catch(CdiLookupException ex) {
+//                throw new UncheckedWrapperException(ex);
+//            }
+//            final User user = userRepository.findById(userId);
+//            
+//            return new EmailListModel(user.getEmailAddresses().iterator());
+//        }
     }
 }

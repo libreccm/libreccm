@@ -1,0 +1,137 @@
+ccm_core.parties:
+    - party_id: -41001
+      name: jdoe
+    - party_id: -41002
+      name: mmuster
+    - party_id: -41003
+      name: joe
+    - party_id: -41004
+      name: public-user
+    - party_id: -41005
+      name: emuster
+    - party_id: -42001
+      name: group1
+    - party_id: -42002
+      name: group2
+    - party_id: -42003
+      name: group3
+ccm_core.users:
+    # John Doe
+    - banned: false
+      bouncing: false
+      email_address: john.doe@example.com
+      family_name: Doe
+      given_name: John
+      party_id: -41001
+      # foo123
+      password: $shiro1$SHA-512$500000$7xkDcZUN0/whJInHIvGsDw==$WhelBVmJU/cLV7lAkMOrE5B/mqCW0bUuid1WX+xBwzzAaekC5bYn9eeOFGJWhiDgmaC50ZCUmM96/iGsRoc4uA==
+      password_reset_required: false
+      verified: true
+    # Max Mustermann
+    - banned: false
+      bouncing: false
+      email_address: max.mustermann@example.org
+      family_name: Mustermann
+      given_name: Max
+      party_id: -41002
+      # foo123
+      password: $shiro1$SHA-512$500000$Y7CnccN1h25sR7KCElMOXg==$CVLWBhetodaEzzhDfGjRcCFZtSW02xOnjH7xhBx0lbxO66grKIt6LWmXoUhLEydce1JZ7cbzNLYOxIwwTeqi5Q==
+      password_reset_required: false
+      verified: true
+    # Joe Public
+    - banned: false
+      bouncing: false
+      email_address: joe.public@example.com
+      family_name: Public
+      given_name: Joe
+      party_id: -41003
+      password: $shiro1$SHA-512$500000$RUCYXAQt+XzUmj3x8oG5gw==$qU+lX160Jc6sNUOI9X85wlf2lzn4/hLJNURtjmw9LOYJ7vAqUFFmhyNCMxpzuHIpzeMELr+A0XReoSmtcZnOOw==
+      password_reset_required: false
+      verified: true
+    # Public user
+    - banned: false
+      bouncing: false
+      email_address: public-user@example.org
+      family_name: user
+      given_name: public
+      party_id: -41004
+      password_reset_required: false
+      verified: true
+    # Erik Mustermann (banned)
+    - banned: true
+      bouncing: false
+      email_address: erik.mustermann@example.org
+      family_name: Musterman
+      given_name: Erik
+      party_id: -41005
+      password: $shiro1$SHA-512$500000$RUCYXAQt+XzUmj3x8oG5gw==$qU+lX160Jc6sNUOI9X85wlf2lzn4/hLJNURtjmw9LOYJ7vAqUFFmhyNCMxpzuHIpzeMELr+A0XReoSmtcZnOOw==
+      password_reset_required: false
+      verified: true
+ccm_core.groups:
+    - party_id: -42001
+    - party_id: -42002
+    - party_id: -42003
+ccm_core.group_memberships:
+    # group1 <-> mmuster
+    - membership_id: -50001
+      group_id: -42001
+      member_id: -41002
+    # group2 <-> jdoe
+    - membership_id: -50002
+      group_id: -42002
+      member_id: -41001
+    # group3 <-> mmuster
+    - membership_id: -50003
+      group_id: -42003
+      member_id: -41002
+    # group3 <-> joe
+    - membership_id: -50004
+      group_id: -42003
+      member_id: -41003
+ccm_core.ccm_roles:
+    - role_id: -10001
+      name: role1
+    - role_id: -10002
+      name: role2
+    - role_id: -10003
+      name: public-role
+ccm_core.role_memberships:
+    # role1 <-> group1
+    - membership_id: -60001
+      role_id: -10001
+      member_id: -42001
+    # role2 <-> jdoe
+    - membership_id: -60002
+      role_id: -10002
+      member_id: -41001
+    # public-role <-> public-user
+    - membership_id: -60003
+      role_id: -10003
+      member_id: -41004
+ccm_core.ccm_objects:
+    - object_id: -20001
+      display_name: object1
+    - object_id: -20002
+      display_name: object2
+    - object_id: -20003
+      display_name: object3
+ccm_core.permissions:
+    # permission for privilege1 granted to role1
+    - permission_id: -30001
+      granted_privilege: privilege1
+      grantee_id: -10001
+    # permission for privilege2 granted on object1 to role1
+    - permission_id: -30002
+      granted_privilege: privilege2
+      object_id: -20001
+      grantee_id: -10001
+    # permission for privilege2 granted on object2 to role2
+    - permission_id: -30003
+      granted_privilege: privilege2
+      object_id: -20002
+      grantee_id: -10002
+    # permission for privilege3 granted on object1 to public-role
+    - permission_id: -30004
+      granted_privilege: privilege3
+      object_id: -20001
+      grantee_id: -10003

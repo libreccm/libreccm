@@ -32,22 +32,26 @@ LibreCMS Archetype for Content Types
     content type. The following properties are required:
 
     [groupId] The <<<groupId>>> of the new content type module
+
     [artifactId] The <<<artifactId>>> of the new content type module. It is
                  recommended (for official modules mandatory) to use the 
                  following pattern for the <<<artifactId>>>: 
                  <<<ccm-cms-types-$typename>>>. For special branches like
                  APLAWS+ or ScientificCMS the pattern might differ.
+    
     [package] The package for the classes of the new content type module. 
               Defaults to the <<<groupId>>>. It is recommanded to place all 
               classes belonging to a content type into a separate package. For 
               example for the content <<<ccm-cms-types-foo>>> all classes 
               belonging to that content type should be placed into the package
               <<<org.librecms.contenttypes.foo>>>.
+    
     [typeName] The name of the type. Must be a valid class name. If the 
                recommended pattern for the <<<artifactId>>> is used the last 
                token of the <<<artifactId>>> (with a capitalised
                first letter) should be used. For instance the type name of
                <<<ccm-cms-types-foo>>> should be <<<Foo>>>.
+    
     [schemaName] The name of the database schema used to store the tables for
                  the module. Defaults to the <<<artifactId>>>. It is recommended
                  to customise the <<<schemaName>>> to avoid problems with SQL. 

@@ -27,7 +27,6 @@ import org.libreccm.categorization.DomainOwnership;
 import static org.libreccm.core.CoreConstants.*;
 
 import org.libreccm.core.Resource;
-import org.libreccm.core.Group;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -74,11 +73,10 @@ public class CcmApplication extends Resource implements Serializable {
     @XmlElement(name = "primary-url", namespace = WEB_XML_NS)
     private String primaryUrl;
 
-    @OneToOne
-    @JoinColumn(name = "CONTAINER_GROUP_ID")
-    @XmlElement(name = "container-group", namespace = WEB_XML_NS)
-    private Group containerGroup;
-
+//    @OneToOne
+//    @JoinColumn(name = "CONTAINER_GROUP_ID")
+//    @XmlElement(name = "container-group", namespace = WEB_XML_NS)
+//    private Group containerGroup;
     /**
      * Category Domains owned by this {@code CcmObject}.
      */
@@ -108,14 +106,13 @@ public class CcmApplication extends Resource implements Serializable {
         this.primaryUrl = primaryUrl;
     }
 
-    public Group getContainerGroup() {
-        return containerGroup;
-    }
-
-    public void setContainerGroup(final Group containerGroup) {
-        this.containerGroup = containerGroup;
-    }
-
+//    public Group getContainerGroup() {
+//        return containerGroup;
+//    }
+//
+//    public void setContainerGroup(final Group containerGroup) {
+//        this.containerGroup = containerGroup;
+//    }
     /**
      * Gets an <strong>unmodifiable</strong> list of the domains which are owned
      * by the {@code CcmApplication}.
@@ -162,7 +159,7 @@ public class CcmApplication extends Resource implements Serializable {
     public int hashCode() {
         int hash = super.hashCode();
         hash = 97 * hash + Objects.hashCode(primaryUrl);
-        hash = 97 * hash + Objects.hashCode(containerGroup);
+//        hash = 97 * hash + Objects.hashCode(containerGroup);
         return hash;
     }
 
@@ -185,10 +182,7 @@ public class CcmApplication extends Resource implements Serializable {
             return false;
         }
 
-        if (!Objects.equals(primaryUrl, other.getPrimaryUrl())) {
-            return false;
-        }
-        return Objects.equals(containerGroup, other.getContainerGroup());
+        return Objects.equals(primaryUrl, other.getPrimaryUrl());
     }
 
     @Override
@@ -198,11 +192,15 @@ public class CcmApplication extends Resource implements Serializable {
 
     @Override
     public String toString(final String data) {
-        return super.toString(String.format(", primaryUrl = \"%s\", "
-                                                + "containerGroup = %s%s",
+        return super.toString(String.format(", primaryUrl = \"%s\"%s",
                                             primaryUrl,
-                                            Objects.toString(containerGroup),
                                             data));
+
+//        return super.toString(String.format(", primaryUrl = \"%s\", "
+//                                                + "containerGroup = %s%s",
+//                                            primaryUrl,
+//                                            Objects.toString(containerGroup),
+//                                            data));
     }
 
 }

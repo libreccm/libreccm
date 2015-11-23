@@ -34,7 +34,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.core.User;
+import org.libreccm.security.User;
 import org.libreccm.web.ApplicationRepository;
 import org.libreccm.web.CcmApplication;
 
@@ -157,7 +157,7 @@ public class UserInfo extends SimpleContainer {
 
                 // in any case: add basic user attributes
                 userElement.addAttribute("id",
-                                         Long.toString(user.getSubjectId()));
+                                         Long.toString(user.getPartyId()));
                 if (!user.getEmailAddresses().isEmpty()) {
                     userElement.addAttribute("email",
                                              user.getEmailAddresses().get(0)
@@ -165,9 +165,9 @@ public class UserInfo extends SimpleContainer {
                 }
                 userElement.addAttribute(
                     "name", String.format("%s %s",
-                                          user.getName().getGivenName(),
-                                          user.getName().getFamilyName()));
-                userElement.addAttribute("screenName", user.getScreenName());
+                                          user.getGivenName(),
+                                          user.getFamilyName()));
+                userElement.addAttribute("screenName", user.getName());
 
                 parent.addContent(userElement);
             }

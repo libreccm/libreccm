@@ -32,11 +32,6 @@ import com.arsdigita.xml.Document;
 
 import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.core.CcmSessionContext;
-import org.libreccm.core.PermissionManager;
-import org.libreccm.core.Privilege;
-import org.libreccm.core.PrivilegeRepository;
-import org.libreccm.core.Subject;
 import org.libreccm.web.CcmApplication;
 
 import java.io.IOException;
@@ -107,40 +102,40 @@ public class AdminServlet extends BaseApplicationServlet implements
         // ///////    Some preparational steps                   ///////////////
         /* Determine access privilege: only logged in users may access DS   */
         final CdiUtil cdiUtil = new CdiUtil();
-        final CcmSessionContext sessionContext;
-        try {
-            sessionContext = cdiUtil.findBean(
-                CcmSessionContext.class);
-        } catch (CdiLookupException ex) {
-            throw new UncheckedWrapperException(
-                "Failed to lookup session context", ex);
-        }
-        final Subject subject = sessionContext.getCurrentSubject();
-        if (subject == null) {
-            throw new LoginSignal(sreq);
-        }
-
-        final PrivilegeRepository privilegeRepository;
-        try {
-            privilegeRepository = cdiUtil.findBean(PrivilegeRepository.class);
-        } catch (CdiLookupException ex) {
-            throw new UncheckedWrapperException(
-                "Failed to lookup PrivilegeRepository", ex);
-        }
-        final Privilege adminPrivilege = privilegeRepository.retrievePrivilege(
-            "admin");
-
-        final PermissionManager permissionManager;
-        try {
-            permissionManager = cdiUtil.findBean(PermissionManager.class);
-        } catch (CdiLookupException ex) {
-            throw new UncheckedWrapperException(
-                "Failed to look up PermissionManager", ex);
-        }
+//        final CcmSessionContext sessionContext;
+//        try {
+//            sessionContext = cdiUtil.findBean(
+//                CcmSessionContext.class);
+//        } catch (CdiLookupException ex) {
+//            throw new UncheckedWrapperException(
+//                "Failed to lookup session context", ex);
+//        }
+//        final Subject subject = sessionContext.getCurrentSubject();
+//        if (subject == null) {
+//            throw new LoginSignal(sreq);
+//        }
+//
+//        final PrivilegeRepository privilegeRepository;
+//        try {
+//            privilegeRepository = cdiUtil.findBean(PrivilegeRepository.class);
+//        } catch (CdiLookupException ex) {
+//            throw new UncheckedWrapperException(
+//                "Failed to lookup PrivilegeRepository", ex);
+//        }
+//        final Privilege adminPrivilege = privilegeRepository.retrievePrivilege(
+//            "admin");
+//
+//        final PermissionManager permissionManager;
+//        try {
+//            permissionManager = cdiUtil.findBean(PermissionManager.class);
+//        } catch (CdiLookupException ex) {
+//            throw new UncheckedWrapperException(
+//                "Failed to look up PermissionManager", ex);
+//        }
         
-        if (!permissionManager.isPermitted(adminPrivilege, null, subject)) {
-            throw new AccessDeniedException("User is not an administrator");
-        }
+//        if (!permissionManager.isPermitted(adminPrivilege, null, subject)) {
+//            throw new AccessDeniedException("User is not an administrator");
+//        }
 
         /* Want admin to always show the latest stuff...                     */
         DispatcherHelper.cacheDisable(sresp);

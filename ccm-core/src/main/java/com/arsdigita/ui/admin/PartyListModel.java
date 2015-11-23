@@ -20,7 +20,7 @@ package com.arsdigita.ui.admin;
 
 import com.arsdigita.bebop.list.ListModel;
 
-import org.libreccm.core.Subject;
+import org.libreccm.security.Party;
 
 import java.util.List;
 
@@ -31,8 +31,8 @@ import java.util.List;
  */ 
 class PartyListModel implements ListModel {
 
-    private final List<Subject> m_parties;
-    private Subject m_currentParty = null;
+    private final List<Party> m_parties;
+    private Party m_currentParty = null;
     private int index = 0;
 
     /**
@@ -41,7 +41,7 @@ class PartyListModel implements ListModel {
      *
      * @param partys the partyCollection
      **/
-    public PartyListModel(final List<Subject> parties) {
+    public PartyListModel(final List<Party> parties) {
         m_parties = parties;
     }
 
@@ -68,7 +68,7 @@ class PartyListModel implements ListModel {
      **/
     @Override
     public String getKey() {
-        return Long.toString(m_currentParty.getSubjectId());
+        return Long.toString(m_currentParty.getPartyId());
     }
 
     /**
@@ -78,6 +78,6 @@ class PartyListModel implements ListModel {
      **/
     @Override
     public Object getElement() {
-        return m_currentParty.getSubjectId();
+        return m_currentParty.getPartyId();
     }
 }

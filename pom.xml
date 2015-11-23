@@ -38,23 +38,23 @@
         <module>ccm-core</module>
         <module>ccm-shortcuts</module>
         <module>ccm-testutils</module>
-        <module>ccm-docrepo</module>
+        <!--<module>ccm-docrepo</module>-->
         
         <!-- Bundle modules -->
         <module>ccm-test-bundle-wildfly8</module>
 
         <!-- Archetypes -->
         <module>ccm-archetype-module</module>
-    <module>ccm-cms</module>
-    <module>ccm-cms-archetype-contenttype</module>
-    <module>ccm-cms-types-article</module>
-    <module>ccm-cms-types-agenda</module>
-    <module>ccm-cms-types-bookmark</module>
-    <module>ccm-cms-types-event</module>
-    <module>ccm-cms-types-minutes</module>
-	<module>ccm-cms-types-decisiontree</module>
-    <module>ccm-cms-types-mparticle</module>
-  </modules>
+        <module>ccm-cms</module>
+        <module>ccm-cms-archetype-contenttype</module>
+        <module>ccm-cms-types-article</module>
+        <module>ccm-cms-types-agenda</module>
+        <module>ccm-cms-types-bookmark</module>
+        <module>ccm-cms-types-event</module>
+        <module>ccm-cms-types-minutes</module>
+        <!--<module>ccm-cms-types-decisiontree</module>-->
+        <module>ccm-cms-types-mparticle</module>
+    </modules>
 
     <!--<repositories>
         <repository>
@@ -220,7 +220,7 @@
                 <plugin>
                     <groupId>de.jpdigital</groupId>
                     <artifactId>hibernate4-ddl-maven-plugin</artifactId>
-                    <version>1.0.0-beta.1</version>
+                    <version>1.0.0-beta.2</version>
                 </plugin>
                 <!--<plugin>
                     <groupId>org.jboss.tattletale</groupId>
@@ -288,6 +288,13 @@
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-core</artifactId>
                 <version>3.2.1</version>
+            </dependency>
+            
+            <!-- Shiro lib for security stuff -->
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-core</artifactId>
+                <version>1.2.4</version>
             </dependency>
             
             <!-- 

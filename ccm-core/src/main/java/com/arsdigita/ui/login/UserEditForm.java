@@ -40,9 +40,7 @@ import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.core.EmailAddress;
-import org.libreccm.core.PersonName;
-import org.libreccm.core.User;
-import org.libreccm.core.UserRepository;
+import org.libreccm.security.User;
 
 import java.util.logging.Level;
 
@@ -69,19 +67,20 @@ public class UserEditForm extends UserForm
         @Override
         public Object initialValue(final PageState ps) {
             User result;
-            final long userId = m_listener.getUser(ps).getSubjectId();
-            final CdiUtil cdiUtil = new CdiUtil();
-            final UserRepository userRepository;
-            try {
-                userRepository = cdiUtil.findBean(UserRepository.class);
-            } catch (CdiLookupException ex) {
-                throw new UncheckedWrapperException(
-                    "Failed to lookup UserRepository.", ex);
-            }
-
-            result = userRepository.findById(userId);
-
-            return result;
+            final long userId = m_listener.getUser(ps).getPartyId();
+//            final CdiUtil cdiUtil = new CdiUtil();
+//            final UserRepository userRepository;
+//            try {
+//                userRepository = cdiUtil.findBean(UserRepository.class);
+//            } catch (CdiLookupException ex) {
+//                throw new UncheckedWrapperException(
+//                    "Failed to lookup UserRepository.", ex);
+//            }
+//
+//            result = userRepository.findById(userId);
+//
+//            return result;
+            throw new UnsupportedOperationException();
         }
 
     };
@@ -122,30 +121,30 @@ public class UserEditForm extends UserForm
                 "Failed to retrieve user from page state");
         }
 
-        final PersonName name = user.getName();
-        name.setGivenName((String) m_firstName.getValue(state));
-        name.setFamilyName((String) m_lastName.getValue(state));
-
-        user.setScreenName((String) m_screenName.getValue(state));
-
-        final EmailAddress newAddress = new EmailAddress();
-        newAddress.setAddress(data.get(FORM_EMAIL).toString());
-        if (user.getEmailAddresses().isEmpty()) {
-            user.addEmailAddress(newAddress);
-        } else {
-            if (!user.getEmailAddresses().get(0).equals(newAddress)) {
-                user.getEmailAddresses().get(0).setAddress(newAddress.getAddress());
-            }
-        }
-        
-        final CdiUtil cdiUtil = new CdiUtil();
-        final UserRepository userRepository;
-        try {
-            userRepository = cdiUtil.findBean(UserRepository.class);
-        } catch (CdiLookupException ex) {
-            throw new UncheckedWrapperException(
-                "Failed to lookup UserRepository", ex);
-        }
+//        final PersonName name = user.getName();
+//        name.setGivenName((String) m_firstName.getValue(state));
+//        name.setFamilyName((String) m_lastName.getValue(state));
+//
+//        user.setScreenName((String) m_screenName.getValue(state));
+//
+//        final EmailAddress newAddress = new EmailAddress();
+//        newAddress.setAddress(data.get(FORM_EMAIL).toString());
+//        if (user.getEmailAddresses().isEmpty()) {
+//            user.addEmailAddress(newAddress);
+//        } else {
+//            if (!user.getEmailAddresses().get(0).equals(newAddress)) {
+//                user.getEmailAddresses().get(0).setAddress(newAddress.getAddress());
+//            }
+//        }
+//        
+//        final CdiUtil cdiUtil = new CdiUtil();
+//        final UserRepository userRepository;
+//        try {
+//            userRepository = cdiUtil.findBean(UserRepository.class);
+//        } catch (CdiLookupException ex) {
+//            throw new UncheckedWrapperException(
+//                "Failed to lookup UserRepository", ex);
+//        }
         
         // redirect to workspace or return URL, if specified
         final HttpServletRequest req = state.getRequest();

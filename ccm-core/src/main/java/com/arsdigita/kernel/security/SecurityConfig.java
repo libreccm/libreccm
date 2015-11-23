@@ -26,8 +26,6 @@ import com.arsdigita.util.parameter.SpecificClassParameter;
 import com.arsdigita.util.parameter.StringArrayParameter;
 import com.arsdigita.util.parameter.StringParameter;
 
-import org.libreccm.core.authentication.LocalLoginModule;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -78,12 +76,6 @@ public class SecurityConfig extends AbstractConfig {
     private final Parameter m_cookieDomain = new StringParameter(
         "waf.cookie_domain", Parameter.OPTIONAL, null);
 
-    private final Parameter m_loginConfig = new StringArrayParameter(
-        "waf.login_config", Parameter.REQUIRED,
-        new String[]{
-            String.format("Register:%s:requisite",
-                          LocalLoginModule.class.getName())});
-
     private final Parameter m_adminEmail = new StringParameter(
         "waf.admin.contact_email", Parameter.OPTIONAL, null);
 
@@ -112,6 +104,12 @@ public class SecurityConfig extends AbstractConfig {
         "waf.security.salt_length", Parameter.REQUIRED, 256);
 
     /**
+     * Default number of hash iterations for new passwords.
+     */
+    private final Parameter m_hashIterations = new IntegerParameter(
+            "waf.security.hash_iterations", Parameter.REQUIRED, 50000);
+    
+    /**
      * Constructs an empty SecurityConfig object
      */
     public SecurityConfig() {
@@ -120,7 +118,6 @@ public class SecurityConfig extends AbstractConfig {
         register(m_excludedExtensions);
 
         register(m_cookieDomain);
-        register(m_loginConfig);
         register(m_cookieDurationMinutes);
         register(m_adminEmail);
         register(m_autoRegistrationOn);
@@ -129,6 +126,7 @@ public class SecurityConfig extends AbstractConfig {
 
         register(m_hashAlgorithm);
         register(m_saltLength);
+        register(m_hashIterations);
 
         loadInfo();
     }
@@ -172,10 +170,6 @@ public class SecurityConfig extends AbstractConfig {
 
     public String getCookieDomain() {
         return (String) get(m_cookieDomain);
-    }
-
-    String[] getLoginConfig() {
-        return (String[]) get(m_loginConfig);
     }
 
     Integer getCookieDurationMinutes() {
@@ -236,6 +230,10 @@ public class SecurityConfig extends AbstractConfig {
 
     public Integer getSaltLength() {
         return (Integer) get(m_saltLength);
+    }
+    
+    public Integer getHashIterations() {
+        return (Integer) get(m_hashIterations);
     }
 
 }

@@ -47,9 +47,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.core.User;
-import org.libreccm.core.UserManager;
-import org.libreccm.core.UserRepository;
+import org.libreccm.security.User;
 
 /**
  * Form used to update a user's password. It just provides form elements to
@@ -137,19 +135,19 @@ class UserPasswordForm extends Form
 
         final PageState state = event.getPageState();
 
-        final CdiUtil cdiUtil = new CdiUtil();
-        final UserRepository userRepository;
-        try {
-            userRepository = cdiUtil.findBean(UserRepository.class);
-        } catch(CdiLookupException ex) {
-            throw new UncheckedWrapperException(ex);
-        }
-        final User user = userRepository.findById((Long) state.getValue(
-            USER_ID_PARAM));
+//        final CdiUtil cdiUtil = new CdiUtil();
+//        final UserRepository userRepository;
+//        try {
+//            userRepository = cdiUtil.findBean(UserRepository.class);
+//        } catch(CdiLookupException ex) {
+//            throw new UncheckedWrapperException(ex);
+//        }
+//        final User user = userRepository.findById((Long) state.getValue(
+//            USER_ID_PARAM));
+//        
         
-        
-        m_question.setValue(state, user.getPasswordQuestion());
-        m_ssoLogin.setValue(state, user.getSsoLogin());
+//        m_question.setValue(state, user.getPasswordQuestion());
+//        m_ssoLogin.setValue(state, user.getSsoLogin());
 
         m_answer.setValue(state, "");
     }
@@ -164,18 +162,18 @@ class UserPasswordForm extends Form
         FormData data = event.getFormData();
         HttpServletRequest req = state.getRequest();
 
-        final CdiUtil cdiUtil = new CdiUtil();
-        final UserRepository userRepository;
-        try {
-            userRepository = cdiUtil.findBean(UserRepository.class);
-        } catch(CdiLookupException ex) {
-            throw new UncheckedWrapperException(ex);
-        }
-        final User user = userRepository.findById((Long) state.getValue(
-            USER_ID_PARAM));
-        if (user == null) {
-            return;
-        }
+//        final CdiUtil cdiUtil = new CdiUtil();
+//        final UserRepository userRepository;
+//        try {
+//            userRepository = cdiUtil.findBean(UserRepository.class);
+//        } catch(CdiLookupException ex) {
+//            throw new UncheckedWrapperException(ex);
+//        }
+//        final User user = userRepository.findById((Long) state.getValue(
+//            USER_ID_PARAM));
+//        if (user == null) {
+//            return;
+//        }
 
         try {
             // get parameter values
@@ -217,36 +215,36 @@ class UserPasswordForm extends Form
         final FormData data = event.getFormData();
 
         final CdiUtil cdiUtil = new CdiUtil();
-        final UserRepository userRepository;
-        final UserManager userManager;
-        try {
-            userRepository = cdiUtil.findBean(UserRepository.class);
-            userManager = cdiUtil.findBean(UserManager.class);
-        } catch(CdiLookupException ex) {
-            throw new UncheckedWrapperException(ex);
-        }
-        final User user = userRepository.findById((Long) state.getValue(
-            USER_ID_PARAM));
-        if (user == null) {
-            throw new FormProcessException(GlobalizationUtil.globalize(
-                "ui.admin.user.userpasswordform.retrieving_user_failed"));
-        }
+//        final UserRepository userRepository;
+//        final UserManager userManager;
+//        try {
+//            userRepository = cdiUtil.findBean(UserRepository.class);
+//            userManager = cdiUtil.findBean(UserManager.class);
+//        } catch(CdiLookupException ex) {
+//            throw new UncheckedWrapperException(ex);
+//        }
+//        final User user = userRepository.findById((Long) state.getValue(
+//            USER_ID_PARAM));
+//        if (user == null) {
+//            throw new FormProcessException(GlobalizationUtil.globalize(
+//                "ui.admin.user.userpasswordform.retrieving_user_failed"));
+//        }
         
-        userManager.updatePassword(user, (String) data.get(NEW_PASSWORD_PARAM_NAME));
-        user.setPasswordQuestion((String) m_question.getValue(state));
-        final String answer = (String) m_answer.getValue(state);
-        if (answer != null && answer.length() > 0) {
-            user.setPasswordAnswer(answer);
-        }
-        user.setSsoLogin((String) m_ssoLogin.getValue(state));
-        
-        userRepository.save(user);
+//        userManager.updatePassword(user, (String) data.get(NEW_PASSWORD_PARAM_NAME));
+//        user.setPasswordQuestion((String) m_question.getValue(state));
+//        final String answer = (String) m_answer.getValue(state);
+//        if (answer != null && answer.length() > 0) {
+//            user.setPasswordAnswer(answer);
+//        }
+//        user.setSsoLogin((String) m_ssoLogin.getValue(state));
+//        
+//        userRepository.save(user);
         
         BigDecimal id = (BigDecimal) state.getValue(USER_ID_PARAM);
 
         s_log.debug("Committed password change");
 
-        notifyUser(user);
+//        notifyUser(user);
         m_userBrowsePane.displayUserInfoPanel(state);
     }
 
@@ -269,7 +267,7 @@ class UserPasswordForm extends Form
 
         StringBuffer sb = new StringBuffer();
         sb.append("Dear ");
-        sb.append(user.getName().getGivenName());
+        sb.append(user.getGivenName());
         sb.append(":");
         sb.append(nl).append(nl);
         sb.append("Your password has been changed by the ");

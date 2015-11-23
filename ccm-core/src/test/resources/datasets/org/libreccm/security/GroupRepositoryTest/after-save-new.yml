@@ -1,0 +1,14 @@
+ccm_core.parties:
+    - party_id: -10
+      name: admins
+    - party_id: -20
+      name: users
+    - party_id: -30
+      name: editors
+    - party_id: -40
+      name: authors
+ccm_core.groups:
+    - party_id: -10
+    - party_id: -20
+    - party_id: -30
+    - party_id: -40

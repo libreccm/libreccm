@@ -20,8 +20,8 @@ package org.libreccm.notification;
 
 import static org.libreccm.core.CoreConstants.*;
 
-import org.libreccm.core.Subject;
 import org.libreccm.messaging.Message;
+import org.libreccm.security.Party;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -62,7 +62,7 @@ public class QueueItem implements Serializable {
 
     @OneToOne
     @JoinColumn(name = "RECEIVER_ID")
-    private Subject receiver;
+    private Party receiver;
 
     @Column(name = "RETRY_COUNT")
     private long retryCount;
@@ -91,11 +91,11 @@ public class QueueItem implements Serializable {
         this.queueItemId = queueItemId;
     }
 
-    public Subject getReceiver() {
+    public Party getReceiver() {
         return receiver;
     }
 
-    public void setReceiver(final Subject receiver) {
+    public void setReceiver(final Party receiver) {
         this.receiver = receiver;
     }
 

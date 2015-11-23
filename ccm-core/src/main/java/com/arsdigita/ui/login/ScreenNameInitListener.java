@@ -26,8 +26,6 @@ import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.web.Web;
 
 import org.apache.log4j.Logger;
-import org.libreccm.core.CcmSessionContext;
-import org.libreccm.core.User;
 
 
 // Note: Previously used SiteNodeRequestContext, nows using KernelRequestContext
@@ -62,17 +60,17 @@ public class ScreenNameInitListener implements FormInitListener {
         PageState state = event.getPageState();
         FormData data = event.getFormData();
         s_log.debug("START");
-        final CcmSessionContext ctx = Web.getUserContext();
-        if (!ctx.isLoggedIn()) {
-            s_log.debug("FAILURE not logged in");
-            return;
-        }
-        final User user = (User) ctx.getCurrentSubject();
-        if (user.getScreenName() == null) {
-            s_log.debug("FAILURE null screen name");
-            return;
-        }
-        data.put(m_param.getName(), user.getScreenName());
-        s_log.debug("SUCCESS");
+//        final CcmSessionContext ctx = Web.getUserContext();
+//        if (!ctx.isLoggedIn()) {
+//            s_log.debug("FAILURE not logged in");
+//            return;
+//        }
+//        final User user = (User) ctx.getCurrentSubject();
+//        if (user.getScreenName() == null) {
+//            s_log.debug("FAILURE null screen name");
+//            return;
+//        }
+//        data.put(m_param.getName(), user.getScreenName());
+//        s_log.debug("SUCCESS");
     }
 }

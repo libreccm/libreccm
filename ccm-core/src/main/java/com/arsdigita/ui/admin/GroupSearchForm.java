@@ -42,8 +42,6 @@ import com.arsdigita.util.UncheckedWrapperException;
 
 import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.core.Group;
-import org.libreccm.core.GroupRepository;
 
 import java.util.Collections;
 
@@ -60,7 +58,7 @@ public class GroupSearchForm extends Form implements FormProcessListener,
 
     private ExistingGroupAddPane parentPane;
     private TextField m_search;
-    private List<Group> results = null;
+//    private List<Group> results = null;
 
     private static final Logger s_log = Logger.getLogger(GroupSearchForm.class);
 
@@ -91,27 +89,27 @@ public class GroupSearchForm extends Form implements FormProcessListener,
         throws FormProcessException {
         PageState state = event.getPageState();
 
-        Group parent = parentPane.getParentGroup(state);
-        String search = (String) m_search.getValue(state);
-
-        final CdiUtil cdiUtil = new CdiUtil();
-        final GroupRepository groupRepository;
-        try {
-            groupRepository = cdiUtil.findBean(GroupRepository.class);
-        } catch (CdiLookupException ex) {
-            throw new UncheckedWrapperException(
-                "Failed to lookup GroupRepository", ex);
-        }
-        results = groupRepository.searchGroupByName(search);
-        
-
-        if (results.isEmpty()) {
-            parentPane.showNoResults(state);
-        } else {
-            // put search string into Page
-            state.setValue(getSearchString(), m_search.getValue(state));
-            parentPane.showGroups(state);
-        }
+//        Group parent = parentPane.getParentGroup(state);
+//        String search = (String) m_search.getValue(state);
+//
+//        final CdiUtil cdiUtil = new CdiUtil();
+//        final GroupRepository groupRepository;
+//        try {
+//            groupRepository = cdiUtil.findBean(GroupRepository.class);
+//        } catch (CdiLookupException ex) {
+//            throw new UncheckedWrapperException(
+//                "Failed to lookup GroupRepository", ex);
+//        }
+//        results = groupRepository.searchGroupByName(search);
+//        
+//
+//        if (results.isEmpty()) {
+//            parentPane.showNoResults(state);
+//        } else {
+//            // put search string into Page
+//            state.setValue(getSearchString(), m_search.getValue(state));
+//            parentPane.showGroups(state);
+//        }
 
     }
 
@@ -122,9 +120,9 @@ public class GroupSearchForm extends Form implements FormProcessListener,
      *
      * @return 
      */
-    public List<Group> getResults() {
-        return Collections.unmodifiableList(results);
-    }
+//    public List<Group> getResults() {
+//        return Collections.unmodifiableList(results);
+//    }
 
     private ParameterModel getSearchString() {
         return parentPane.getSearchString();

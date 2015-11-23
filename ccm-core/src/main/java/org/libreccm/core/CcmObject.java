@@ -23,6 +23,7 @@ import static org.libreccm.core.CoreConstants.*;
 import org.libreccm.categorization.Categorization;
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryManager;
+import org.libreccm.security.Permission;
 
 import java.io.Serializable;
 import java.util.ArrayList;

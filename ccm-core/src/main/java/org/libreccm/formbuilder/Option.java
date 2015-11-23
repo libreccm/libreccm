@@ -46,7 +46,7 @@ public class Option extends Component implements Serializable {
     private String parameterValue;
 
     @AssociationOverride(
-        name = "VALUES",
+        name = "values",
         joinTable = @JoinTable(name = "FORMBUILDER_OPTION_LABELS",
                                schema = DB_SCHEMA,
                                joinColumns = {

@@ -20,8 +20,8 @@ package org.libreccm.workflow;
 
 import static org.libreccm.core.CoreConstants.*;
 
-import org.libreccm.core.User;
-import org.libreccm.core.Group;
+import org.libreccm.security.Group;
+import org.libreccm.security.User;
 
 import java.io.Serializable;
 import java.util.ArrayList;

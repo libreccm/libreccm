@@ -45,9 +45,7 @@ import javax.mail.internet.InternetAddress;
 import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.core.PersonName;
-import org.libreccm.core.User;
-import org.libreccm.core.UserRepository;
+import org.libreccm.security.User;
 
 /**
  * Common code for user new / add / edit forms.
@@ -245,10 +243,8 @@ public abstract class UserForm extends Form
             throw new FormProcessException(LoginGlobalizationUtil.globalize(
                 "login.userForm.couldnt_load_user"));
         }
-
-        PersonName name = user.getName();
-        m_firstName.setValue(state, name.getGivenName());
-        m_lastName.setValue(state, name.getFamilyName());
+        m_firstName.setValue(state, user.getGivenName());
+        m_lastName.setValue(state, user.getFamilyName());
 
         InternetAddress address;
         try {
@@ -264,7 +260,7 @@ public abstract class UserForm extends Form
         }
 
         m_email.setValue(state, address);
-        m_screenName.setValue(state, user.getScreenName());
+        m_screenName.setValue(state, user.getName());
 
     }
 
@@ -319,24 +315,24 @@ public abstract class UserForm extends Form
             final boolean checkPrimaryEmail = KernelConfig.getConfig()
                 .emailIsPrimaryIdentifier();
 
-            final UserRepository userRepo;
-            try {
-                final CdiUtil cdiUtil = new CdiUtil();
-                userRepo = cdiUtil.findBean(
-                    UserRepository.class);
-            } catch (CdiLookupException ex) {
-                throw new FormProcessException(ex);
-            }
+//            final UserRepository userRepo;
+//            try {
+//                final CdiUtil cdiUtil = new CdiUtil();
+//                userRepo = cdiUtil.findBean(
+//                    UserRepository.class);
+//            } catch (CdiLookupException ex) {
+//                throw new FormProcessException(ex);
+//            }
 
-            final User userByEmail = userRepo.findByEmailAddress(email);
-            if (userByEmail != null && checkPrimaryEmail) {
-                data.addError(FORM_EMAIL, ERROR_DUPLICATE_EMAIL);
-            }
-
-            final User userByScreenname = userRepo.findByScreenName(screenName);
-            if (userByScreenname != null) {
-                data.addError(FORM_SCREEN_NAME, ERROR_DUPLICATE_SN);
-            }
+//            final User userByEmail = userRepo.findByEmailAddress(email);
+//            if (userByEmail != null && checkPrimaryEmail) {
+//                data.addError(FORM_EMAIL, ERROR_DUPLICATE_EMAIL);
+//            }
+//
+//            final User userByScreenname = userRepo.findByScreenName(screenName);
+//            if (userByScreenname != null) {
+//                data.addError(FORM_SCREEN_NAME, ERROR_DUPLICATE_SN);
+//            }
 
         } finally {
             // if the form has errors, clear the password fields so we don't

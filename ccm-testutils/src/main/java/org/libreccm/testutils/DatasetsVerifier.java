@@ -40,8 +40,11 @@ import org.h2.tools.RunScript;
 import org.jboss.arquillian.persistence.dbunit.dataset.json.JsonDataSet;
 import org.junit.runners.Parameterized;
 
+import static org.libreccm.testutils.DatasetType.*;
+
+import org.jboss.arquillian.persistence.dbunit.dataset.yaml.YamlDataSet;
+
 import java.nio.charset.StandardCharsets;
-import java.sql.Statement;
 
 /**
  *
@@ -85,6 +88,10 @@ public class DatasetsVerifier {
         return new String[]{};
     }
 
+    public DatasetType getDatasetType() {
+        return JSON;
+    }
+
     @Test
     @edu.umd.cs.findbugs.annotations.SuppressWarnings(
         value = "DMI_EMPTY_DB_PASSWORD",
@@ -97,10 +104,10 @@ public class DatasetsVerifier {
         //try-with-resources block to ensure that the connection is closed.
         final StringBuffer buffer = new StringBuffer("jdbc:h2:mem:testdatabase");
         //Create schema if necssary
-        if(getSchemas().length > 0) {
+        if (getSchemas().length > 0) {
             buffer.append(";INIT=");
-            for(final String schema : getSchemas()) {
-                buffer.append(String.format("CREATE SCHEMA IF NOT EXISTS %s;", 
+            for (final String schema : getSchemas()) {
+                buffer.append(String.format("CREATE SCHEMA IF NOT EXISTS %s;",
                                             schema));
             }
         }
@@ -115,8 +122,21 @@ public class DatasetsVerifier {
             connection.commit();
 
             //Get dataset to test
-            final IDataSet dataSet = new JsonDataSet(getClass()
-                .getResourceAsStream(datasetPath));
+            final IDataSet dataSet;
+            switch(getDatasetType()) {
+                case JSON:
+                    dataSet = new JsonDataSet(getClass()
+                    .getResourceAsStream(datasetPath));
+                    break;
+                case YAML:
+                    dataSet = new YamlDataSet(getClass()
+                    .getResourceAsStream(datasetPath));
+                    break;
+                default:
+                    throw new IllegalArgumentException(String.format(
+                    "Unsupported DatasetType \"%s\"",
+                    getDatasetType()));
+            }
 
             //Create DBUnit DB connection
             final IDatabaseConnection dbUnitConn

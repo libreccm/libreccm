@@ -18,8 +18,8 @@ import com.arsdigita.util.UncheckedWrapperException;
 
 import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.core.Group;
-import org.libreccm.core.GroupRepository;
+//import org.libreccm.core.Group;
+//import org.libreccm.core.GroupRepository;
 
 import static com.arsdigita.ui.admin.AdminConstants.*;
 
@@ -52,25 +52,27 @@ public class ExistingGroupAddPane extends SimpleContainer implements
         @Override
         protected Object initialValue(final PageState ps) {
             String key = (String) groupTree.getSelectedKey(ps);
-
-            Group group = null;
-
-            if (key != null) {
-                final Long id = new Long(key);
-
-                final CdiUtil cdiUtil = new CdiUtil();
-                final GroupRepository groupRepository;
-                try {
-                    groupRepository = cdiUtil.findBean(GroupRepository.class);
-                } catch (CdiLookupException ex) {
-                    throw new UncheckedWrapperException(
-                        "Failed to lookup GroupRepository", ex);
-                }
-                
-                group = groupRepository.findById(id);
-            }
+//
+//            Group group = null;
+//
+//            if (key != null) {
+//                final Long id = new Long(key);
+//
+//                final CdiUtil cdiUtil = new CdiUtil();
+//                final GroupRepository groupRepository;
+//                try {
+//                    groupRepository = cdiUtil.findBean(GroupRepository.class);
+//                } catch (CdiLookupException ex) {
+//                    throw new UncheckedWrapperException(
+//                        "Failed to lookup GroupRepository", ex);
+//                }
+//                
+//                group = groupRepository.findById(id);
+//            }
+//            
+//            return group;
             
-            return group;
+            return null;
         }
 
     };
@@ -197,8 +199,8 @@ public class ExistingGroupAddPane extends SimpleContainer implements
      *
      * @return
      */
-    public Group getParentGroup(PageState ps) {
-        return (Group) parentGroup.get(ps);
-    }
+//    public Group getParentGroup(PageState ps) {
+//        return (Group) parentGroup.get(ps);
+//    }
 
 }

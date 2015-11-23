@@ -115,7 +115,7 @@ public class Domain extends CcmObject implements Serializable {
      */
     @Embedded
     @AssociationOverride(
-        name = "VALUES",
+        name = "values",
         joinTable = @JoinTable(name = "DOMAIN_TITLES",
                                schema = DB_SCHEMA,
                                joinColumns = {
@@ -128,7 +128,7 @@ public class Domain extends CcmObject implements Serializable {
      */
     @Embedded
     @AssociationOverride(
-        name = "VALUES",
+        name = "values",
         joinTable = @JoinTable(name = "DOMAIN_DESCRIPTIONS",
                                schema = DB_SCHEMA,
                                joinColumns = {

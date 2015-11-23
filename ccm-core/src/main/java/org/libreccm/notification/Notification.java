@@ -22,8 +22,8 @@ import org.libreccm.core.CcmObject;
 
 import static org.libreccm.core.CoreConstants.*;
 
-import org.libreccm.core.Subject;
 import org.libreccm.messaging.Message;
+import org.libreccm.security.Party;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -83,7 +83,7 @@ public class Notification extends CcmObject implements Serializable {
 
     @OneToOne
     @JoinColumn(name = "RECEIVER_ID")
-    private Subject receiver;
+    private Party receiver;
 
     @OneToOne
     @JoinColumn(name = "DIGEST_ID")
@@ -122,11 +122,11 @@ public class Notification extends CcmObject implements Serializable {
     @Column(name = "EXPUNGE_MESSAGE")
     private boolean expungeMessage;
 
-    public Subject getReceiver() {
+    public Party getReceiver() {
         return receiver;
     }
 
-    public void setReceiver(final Subject receiver) {
+    public void setReceiver(final Party receiver) {
         this.receiver = receiver;
     }
 

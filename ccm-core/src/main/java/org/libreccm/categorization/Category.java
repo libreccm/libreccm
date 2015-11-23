@@ -91,7 +91,7 @@ public class Category extends CcmObject implements Serializable {
      */
     @Embedded
     @AssociationOverride(
-            name = "VALUES",
+            name = "values",
             joinTable = @JoinTable(name = "CATEGORY_TITLES", 
                                    schema = DB_SCHEMA,
                                    joinColumns = {
@@ -104,7 +104,7 @@ public class Category extends CcmObject implements Serializable {
      */
     @Embedded
     @AssociationOverride(
-            name = "VALUES",
+            name = "values",
             joinTable = @JoinTable(name = "CATEGORY_DESCRIPTIONS",
                                    schema = DB_SCHEMA,
                                    joinColumns = {

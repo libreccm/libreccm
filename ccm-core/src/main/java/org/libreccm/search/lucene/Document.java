@@ -20,7 +20,7 @@ package org.libreccm.search.lucene;
 
 import static org.libreccm.core.CoreConstants.*;
 
-import org.libreccm.core.Subject;
+import org.libreccm.security.User;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -94,7 +94,7 @@ public class Document implements Serializable {
 
     @OneToOne
     @JoinColumn(name = "CREATED_BY_PARTY_ID")
-    private Subject createdBy;
+    private User createdBy;
 
     @Column(name = "LAST_MODIFIED")
     @Temporal(TemporalType.TIMESTAMP)
@@ -102,7 +102,7 @@ public class Document implements Serializable {
 
     @OneToOne
     @JoinColumn(name = "LAST_MODIFIED_BY")
-    private Subject lastModifiedBy;
+    private User lastModifiedBy;
 
     @Column(name = "CONTENT_SECTION", length = 512)
     private String contentSection;
@@ -215,11 +215,11 @@ public class Document implements Serializable {
         }
     }
 
-    public Subject getCreatedBy() {
+    public User getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(final Subject createdBy) {
+    public void setCreatedBy(final User createdBy) {
         this.createdBy = createdBy;
     }
 
@@ -239,11 +239,11 @@ public class Document implements Serializable {
         }
     }
 
-    public Subject getLastModifiedBy() {
+    public User getLastModifiedBy() {
         return lastModifiedBy;
     }
 
-    public void setLastModifiedBy(final Subject lastModifiedBy) {
+    public void setLastModifiedBy(final User lastModifiedBy) {
         this.lastModifiedBy = lastModifiedBy;
     }
 

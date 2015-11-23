@@ -47,14 +47,9 @@ import org.apache.log4j.Logger;
 import org.dom4j.util.UserDataDocumentFactory;
 import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.core.CcmSessionContext;
+
 import org.libreccm.core.EmailAddress;
-import org.libreccm.core.PermissionManager;
-import org.libreccm.core.PersonName;
-import org.libreccm.core.User;
-import org.libreccm.core.UserManager;
-import org.libreccm.core.UserRepository;
-import org.libreccm.core.authentication.LoginManager;
+import org.libreccm.security.User;
 
 /**
  * Creates a new user. Collects user's basic info, such as email, password,
@@ -155,88 +150,88 @@ public class UserNewForm extends UserForm implements FormInitListener,
 
         final Exception[] formExceptions = new Exception[]{null};
 
-        final CdiUtil cdiUtil = new CdiUtil();
-        final CcmSessionContext sessionContext;
-        try {
-            sessionContext = cdiUtil.findBean(CcmSessionContext.class);
-        } catch (CdiLookupException ex) {
-            throw new UncheckedWrapperException(
-                "Failed to lookup CcmSessionContext", ex);
-        }
+//        final CdiUtil cdiUtil = new CdiUtil();
+//        final CcmSessionContext sessionContext;
+//        try {
+//            sessionContext = cdiUtil.findBean(CcmSessionContext.class);
+//        } catch (CdiLookupException ex) {
+//            throw new UncheckedWrapperException(
+//                "Failed to lookup CcmSessionContext", ex);
+//        }
+//
+//        final UserRepository userRepository;
+//        try {
+//            userRepository = cdiUtil.findBean(UserRepository.class);
+//        } catch (CdiLookupException ex) {
+//            throw new UncheckedWrapperException(
+//                "Failed to lookup UserRepository", ex);
+//        }
+//
+//        final User systemUser = userRepository.retrieveSystemUser();
+//
+//        sessionContext.sudo(systemUser, new Runnable() {
 
-        final UserRepository userRepository;
-        try {
-            userRepository = cdiUtil.findBean(UserRepository.class);
-        } catch (CdiLookupException ex) {
-            throw new UncheckedWrapperException(
-                "Failed to lookup UserRepository", ex);
-        }
-
-        final User systemUser = userRepository.retrieveSystemUser();
-
-        sessionContext.sudo(systemUser, new Runnable() {
-
-            @Override
-            public void run() {
-                final User user = new User();
-                final PersonName userName = new PersonName();
-                userName.setGivenName(firstName);
-                userName.setFamilyName(lastName);
-                final EmailAddress emailAddress = new EmailAddress();
-                emailAddress.setAddress(email);
-                user.addEmailAddress(emailAddress);
-                if (!KernelConfig.getConfig().emailIsPrimaryIdentifier()) {
-                    user.setScreenName(screenName);
-                }
-                userRepository.save(user);
-
-//                final PermissionManager permissionManager;
+//            @Override
+//            public void run() {
+//                final User user = new User();
+//                final PersonName userName = new PersonName();
+//                userName.setGivenName(firstName);
+//                userName.setFamilyName(lastName);
+//                final EmailAddress emailAddress = new EmailAddress();
+//                emailAddress.setAddress(email);
+//                user.addEmailAddress(emailAddress);
+//                if (!KernelConfig.getConfig().emailIsPrimaryIdentifier()) {
+//                    user.setScreenName(screenName);
+//                }
+//                userRepository.save(user);
+//
+////                final PermissionManager permissionManager;
+////                try {
+////                    permissionManager = cdiUtil
+////                        .findBean(PermissionManager.class);
+////                } catch (CdiLookupException ex) {
+////                    throw new UncheckedWrapperException(
+////                        "Failed to lookup PermissionManager", ex);
+////                }
+////                
+////                permissionManager.grantPermission(null, null, user);
+//                final UserManager userManager;
 //                try {
-//                    permissionManager = cdiUtil
-//                        .findBean(PermissionManager.class);
+//                    userManager = cdiUtil.findBean(UserManager.class);
 //                } catch (CdiLookupException ex) {
 //                    throw new UncheckedWrapperException(
-//                        "Failed to lookup PermissionManager", ex);
+//                        "Failed to lookup UserManager", ex);
 //                }
-//                
-//                permissionManager.grantPermission(null, null, user);
-                final UserManager userManager;
-                try {
-                    userManager = cdiUtil.findBean(UserManager.class);
-                } catch (CdiLookupException ex) {
-                    throw new UncheckedWrapperException(
-                        "Failed to lookup UserManager", ex);
-                }
-                userManager.updatePassword(user, password);
-                user.setPasswordQuestion(question);
-                user.setPasswordAnswer(answer);
-            }
+//                userManager.updatePassword(user, password);
+//                user.setPasswordQuestion(question);
+//                user.setPasswordAnswer(answer);
+//            }
+//
+//        });
 
-        });
-
-        try {
-            // finally log the user in (sets the
-            // appropriate session or permanent cookie)
-            String loginName = email;
-            if (!KernelConfig.getConfig().emailIsPrimaryIdentifier()) {
-                loginName = screenName;
-            }
-
-            final LoginManager loginManager;
-            try {
-                loginManager = cdiUtil.findBean(LoginManager.class);
-            } catch (CdiLookupException ex) {
-                throw new UncheckedWrapperException(
-                    "Failed to lookup LoginManager", ex);
-            }
-
-            loginManager.login(loginName, password);
-            
-        } catch (LoginException e) {
-            // ERROR: login failed for new user
-            s_log.error("login failed for new user", e);
-            throw new FormProcessException(e);
-        }
+//        try {
+//            // finally log the user in (sets the
+//            // appropriate session or permanent cookie)
+//            String loginName = email;
+//            if (!KernelConfig.getConfig().emailIsPrimaryIdentifier()) {
+//                loginName = screenName;
+//            }
+//
+//            final LoginManager loginManager;
+//            try {
+//                loginManager = cdiUtil.findBean(LoginManager.class);
+//            } catch (CdiLookupException ex) {
+//                throw new UncheckedWrapperException(
+//                    "Failed to lookup LoginManager", ex);
+//            }
+//
+//            loginManager.login(loginName, password);
+//            
+//        } catch (LoginException e) {
+//            // ERROR: login failed for new user
+//            s_log.error("login failed for new user", e);
+//            throw new FormProcessException(e);
+//        }
 
         // redirect to workspace or return URL, if specified
         final HttpServletRequest req = state.getRequest();

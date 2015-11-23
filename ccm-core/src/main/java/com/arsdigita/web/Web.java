@@ -30,7 +30,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
-import org.libreccm.core.CcmSessionContext;
 
 /**
  * An entry point for functions of the web package.
@@ -78,17 +77,14 @@ public class Web {
      * Static Initializer block.
      */
     static void init(final HttpServletRequest sreq,
-                     final ServletContext sc,
-                     final CcmSessionContext uc) {
+                     final ServletContext sc) {
 
         Assert.exists(sreq, HttpServletRequest.class);
         Assert.exists(sc, ServletContext.class);
-        Assert.exists(uc, CcmSessionContext.class);
 
         s_request.set(sreq);
         s_servletContext.set(sc);
         s_contextPath = CCMDispatcherServlet.getContextPath();
-        s_userContext.set(uc);
     }
 
     /**
@@ -129,15 +125,6 @@ public class Web {
      */
     public static ServletContext getServletContext() {
         return (ServletContext) s_servletContext.get();
-    }
-
-    /**
-     * Gets the user context object of the current thread.
-     *
-     * @return The current <code>UserContext</code> object; it can be null
-     */
-    public static CcmSessionContext getUserContext() {
-        return (CcmSessionContext) s_userContext.get();
     }
 
         /**

@@ -1,0 +1,100 @@
+ccm_core.parties:
+    # John Doe
+    - party_id: -10
+      name: jdoe
+    # Max Muster
+    - party_id: -20
+      name: mmuster
+    # Joe Public
+    - party_id: -30
+      name: joe
+    # group1
+    - party_id: -100
+      name: group1
+    # group2
+    - party_id: -200
+      name: group2
+    # group3
+    - party_id: -300
+      name: group3
+ccm_core.users:
+    # John Doe
+    - banned: false
+      bouncing: false
+      email_address: john.doe@example.com
+      family_name: Doe
+      given_name: John
+      party_id: -10
+      # foo123
+      password: $shiro1$SHA-512$500000$7xkDcZUN0/whJInHIvGsDw==$WhelBVmJU/cLV7lAkMOrE5B/mqCW0bUuid1WX+xBwzzAaekC5bYn9eeOFGJWhiDgmaC50ZCUmM96/iGsRoc4uA==
+      password_reset_required: false
+      verified: true
+    # Max Mustermann
+    - banned: false
+      bouncing: false
+      email_address: max.mustermann@example.org
+      family_name: Mustermann
+      given_name: Max
+      party_id: -20
+      # foo123
+      password: $shiro1$SHA-512$500000$Y7CnccN1h25sR7KCElMOXg==$CVLWBhetodaEzzhDfGjRcCFZtSW02xOnjH7xhBx0lbxO66grKIt6LWmXoUhLEydce1JZ7cbzNLYOxIwwTeqi5Q==
+      password_reset_required: false
+      verified: true
+    # Joe Public
+    - banned: false
+      bouncing: false
+      email_address: joe.public@example.com
+      family_name: Public
+      given_name: Joe
+      party_id: -30
+      password: $shiro1$SHA-512$500000$RUCYXAQt+XzUmj3x8oG5gw==$qU+lX160Jc6sNUOI9X85wlf2lzn4/hLJNURtjmw9LOYJ7vAqUFFmhyNCMxpzuHIpzeMELr+A0XReoSmtcZnOOw==
+      password_reset_required: false
+      verified: true
+ccm_core.groups:
+    # group1
+    - party_id: -100
+    # group2
+    - party_id: -200
+    # group3
+    - party_id: -300
+ccm_core.group_memberships:
+    # group1 <-> mmuster
+    - membership_id: -1000
+      group_id: -100
+      member_id: -20
+    # group2 <-> jdoe
+    - membership_id: -1100
+      group_id: -200
+      member_id: -10
+    # group3 <-> mmuster
+    - membership_id: -1200
+      group_id: -300
+      member_id: -20
+    # group3 <-> joe
+    - membership_id: -1300
+      group_id: -300
+      member_id: -30
+ccm_core.ccm_roles: 
+    - role_id: -2000
+      name: role1
+    - role_id: -2100
+      name: role2
+    - role_id: -2200
+      name: role3
+ccm_core.role_memberships:
+    # role1 <-> jdoe
+    - membership_id: -3000
+      role_id: -2000
+      member_id: -10
+    # role1 <-> group3
+    - membership_id: -3100
+      role_id: -2000
+      member_id: -300
+    # role2 <-> group1
+    - membership_id: -3200
+      role_id: -2100
+      member_id: -100
+    # role3 <-> joe
+    - membership_id: -3300
+      role_id: -2200
+      member_id: -30

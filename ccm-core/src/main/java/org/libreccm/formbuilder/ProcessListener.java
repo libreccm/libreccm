@@ -46,7 +46,7 @@ public class ProcessListener extends CcmObject implements Serializable {
     private static final long serialVersionUID = -3029184333026605708L;
 
     @AssociationOverride(
-        name = "VALUES",
+        name = "values",
         joinTable = @JoinTable(
             name = "FORMBUILDER_PROCESS_LISTENER_NAMES",
             schema = DB_SCHEMA,
@@ -55,7 +55,7 @@ public class ProcessListener extends CcmObject implements Serializable {
     private LocalizedString name;
 
     @AssociationOverride(
-        name = "VALUES",
+        name = "values",
         joinTable = @JoinTable(
             name = "FORMBUILDER_PROCESS_LISTENER_DESCRIPTIONS",
             schema = DB_SCHEMA,

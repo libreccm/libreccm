@@ -40,16 +40,17 @@ public class ToStringTest extends ToStringVerifier {
         return Arrays.asList(new Class<?>[]{
             CcmObject.class,
             EmailAddress.class,
-            GroupMembership.class,
-            Subject.class,
-            Permission.class,
-            PersonName.class,
-            Privilege.class,
+//            GroupMembership.class,
+//            Subject.class,
+//            Permission.class,
+//            PersonName.class,
+//            Privilege.class,
             Resource.class,
             ResourceType.class,
-            Role.class,
-            User.class,
-            Group.class});
+//            Role.class,
+//            User.class,
+//            Group.class
+        });
     }
 
     public ToStringTest(final Class<?> entityClass) {

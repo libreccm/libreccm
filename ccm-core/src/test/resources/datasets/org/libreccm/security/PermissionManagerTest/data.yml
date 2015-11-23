@@ -1,0 +1,24 @@
+ccm_core.ccm_roles:
+    - role_id: -10001
+      name: role1
+    - role_id: -10002
+      name: role2
+ccm_core.ccm_objects:
+    - object_id: -20001
+      display_name: object1
+    - object_id: -20002
+      display_name: object2
+    - object_id: -20003
+      display_name: object3
+ccm_core.permissions:
+    - permission_id: -30001
+      granted_privilege: privilege1
+      grantee_id: -10001
+    - permission_id: -30002
+      granted_privilege: privilege2
+      object_id: -20001
+      grantee_id: -10001
+    - permission_id: -30003
+      granted_privilege: privilege2
+      object_id: -20002
+      grantee_id: -10002

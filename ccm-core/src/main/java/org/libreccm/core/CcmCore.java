@@ -24,6 +24,8 @@ import org.libreccm.modules.InstallEvent;
 import org.libreccm.modules.Module;
 import org.libreccm.modules.ShutdownEvent;
 import org.libreccm.modules.UnInstallEvent;
+import org.libreccm.security.SystemUsersSetup;
+import org.libreccm.security.User;
 
 import javax.persistence.EntityManager;
 
@@ -37,15 +39,8 @@ import javax.persistence.EntityManager;
                     org.libreccm.categorization.Domain.class,
                     org.libreccm.categorization.DomainOwnership.class,
                     org.libreccm.core.CcmObject.class,
-                    org.libreccm.core.Group.class,
-                    org.libreccm.core.GroupMembership.class,
-                    org.libreccm.core.Permission.class,
-                    org.libreccm.core.Privilege.class,
                     org.libreccm.core.Resource.class,
                     org.libreccm.core.ResourceType.class,
-                    org.libreccm.core.Role.class,
-                    org.libreccm.core.Subject.class,
-                    org.libreccm.core.User.class,
                     org.libreccm.modules.InstalledModule.class,
                     org.libreccm.formbuilder.Component.class,
                     org.libreccm.formbuilder.DataDrivenSelect.class,
@@ -86,17 +81,8 @@ public class CcmCore implements CcmModule {
     public void install(final InstallEvent event) {
         final EntityManager entityManager = event.getEntityManager();
 
-        final User user = new User();
-        user.setScreenName("public-user");
-        final PersonName name = new PersonName();
-        name.setFamilyName("ccm");
-        name.setGivenName("public user");
-        user.setName(name);
-        final EmailAddress email = new EmailAddress();
-        email.setAddress("public-user@localhost");
-        user.addEmailAddress(email);
-
-        entityManager.persist(user);
+        final SystemUsersSetup systemUsersSetup = new SystemUsersSetup(entityManager);
+        systemUsersSetup.setupSystemUsers();
     }
 
     @Override

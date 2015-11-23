@@ -20,12 +20,13 @@ package org.libreccm.docrepo;
 
 
 import org.libreccm.auditing.AbstractAuditedEntityRepository;
-import org.libreccm.core.User;
+import org.libreccm.security.User;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+
 import java.util.List;
 
 /**

@@ -64,13 +64,7 @@ import java.util.ArrayList;
 import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.core.CcmSessionContext;
-import org.libreccm.core.Group;
-import org.libreccm.core.GroupMembership;
-import org.libreccm.core.GroupRepository;
-import org.libreccm.core.Subject;
-import org.libreccm.core.User;
-import org.libreccm.core.UserRepository;
+import org.libreccm.security.User;
 
 /**
  * This pane contains three main segmented panel which only one is visible at
@@ -120,27 +114,27 @@ class UserBrowsePane extends SegmentedPanel
 
     @Override
     public void actionPerformed(final ActionEvent event) {
-        final PageState state = event.getPageState();
-        final CdiUtil cdiUtil = new CdiUtil();
-        final CcmSessionContext sessionContext;
-        try {
-            sessionContext = cdiUtil.findBean(CcmSessionContext.class);
-        } catch (CdiLookupException ex) {
-            throw new UncheckedWrapperException(ex);
-        }
-
-        final Subject subject = sessionContext.getCurrentSubject();
-
-        final Long userID = (Long) state.getValue(USER_ID_PARAM);
-
-        // Bug #167607 remove link for current user
-        if (m_userInfoPanel.isVisible(state)) {
-            if (subject.getSubjectId() == userID) {
-                m_extremeActionPanel.setVisible(state, false);
-            } else {
-                m_extremeActionPanel.setVisible(state, true);
-            }
-        }
+//        final PageState state = event.getPageState();
+//        final CdiUtil cdiUtil = new CdiUtil();
+//        final CcmSessionContext sessionContext;
+//        try {
+//            sessionContext = cdiUtil.findBean(CcmSessionContext.class);
+//        } catch (CdiLookupException ex) {
+//            throw new UncheckedWrapperException(ex);
+//        }
+//
+//        final Subject subject = sessionContext.getCurrentSubject();
+//
+//        final Long userID = (Long) state.getValue(USER_ID_PARAM);
+//
+//        // Bug #167607 remove link for current user
+//        if (m_userInfoPanel.isVisible(state)) {
+//            if (subject.getSubjectId() == userID) {
+//                m_extremeActionPanel.setVisible(state, false);
+//            } else {
+//                m_extremeActionPanel.setVisible(state, true);
+//            }
+//        }
     }
 
     /**
@@ -154,20 +148,22 @@ class UserBrowsePane extends SegmentedPanel
             protected Object initialValue(final PageState state) {
                 final Long id = (Long) state.getValue(USER_ID_PARAM);
 
-                final CdiUtil cdiUtil = new CdiUtil();
-                final UserRepository userRepository;
-                try {
-                    userRepository = cdiUtil.findBean(UserRepository.class);
-                } catch (CdiLookupException ex) {
-                    throw new UncheckedWrapperException(ex);
-                }
-
-                final User user = userRepository.findById(id);
-                if (user == null) {
-                    throw new UncheckedWrapperException(String.format(
-                        "Failed to retrieve user: %d", id));
-                }
-                return user;
+//                final CdiUtil cdiUtil = new CdiUtil();
+//                final UserRepository userRepository;
+//                try {
+//                    userRepository = cdiUtil.findBean(UserRepository.class);
+//                } catch (CdiLookupException ex) {
+//                    throw new UncheckedWrapperException(ex);
+//                }
+//
+//                final User user = userRepository.findById(id);
+//                if (user == null) {
+//                    throw new UncheckedWrapperException(String.format(
+//                        "Failed to retrieve user: %d", id));
+//                }
+//                return user;
+                
+                throw new UnsupportedOperationException();
             }
 
         };
@@ -240,7 +236,7 @@ class UserBrowsePane extends SegmentedPanel
                 final PageState state = event.getPageState();
                 final User user = getUser(state);
 
-                target.setLabel(user.getScreenName());
+                target.setLabel(user.getName());
             }
 
         });
@@ -258,7 +254,7 @@ class UserBrowsePane extends SegmentedPanel
                 final PageState state = event.getPageState();
                 final User user = getUser(state);
 
-                target.setLabel(user.getScreenName());
+                target.setLabel(user.getName());
             }
 
         });
@@ -436,15 +432,15 @@ class UserBrowsePane extends SegmentedPanel
                 final PageState state = event.getPageState();
                 final User user = getUser(state);
 
-                final CdiUtil cdiUtil = new CdiUtil();
-                final UserRepository userRepository;
-                try {
-                    userRepository = cdiUtil.findBean(UserRepository.class);
-                } catch (CdiLookupException ex) {
-                    throw new UncheckedWrapperException(ex);
-                }
+//                final CdiUtil cdiUtil = new CdiUtil();
+//                final UserRepository userRepository;
+//                try {
+//                    userRepository = cdiUtil.findBean(UserRepository.class);
+//                } catch (CdiLookupException ex) {
+//                    throw new UncheckedWrapperException(ex);
+//                }
 
-                userRepository.delete(user);
+//                userRepository.delete(user);
 
                 displayUserBrowsePanel(state);
 
@@ -475,18 +471,18 @@ class UserBrowsePane extends SegmentedPanel
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                PageState state = e.getPageState();
-                User user = getUser(state);
-                user.setBanned(true);
-
-                final CdiUtil cdiUtil = new CdiUtil();
-                final UserRepository userRepository;
-                try {
-                    userRepository = cdiUtil.findBean(UserRepository.class);
-                } catch (CdiLookupException ex) {
-                    throw new UncheckedWrapperException(ex);
-                }
-                userRepository.save(user);
+//                PageState state = e.getPageState();
+//                User user = getUser(state);
+//                user.setBanned(true);
+//
+//                final CdiUtil cdiUtil = new CdiUtil();
+//                final UserRepository userRepository;
+//                try {
+//                    userRepository = cdiUtil.findBean(UserRepository.class);
+//                } catch (CdiLookupException ex) {
+//                    throw new UncheckedWrapperException(ex);
+//                }
+//                userRepository.save(user);
             } // End ActionPerformed method
 
         } // End of new ActionListener definition
@@ -509,18 +505,18 @@ class UserBrowsePane extends SegmentedPanel
         unbanLink.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                PageState state = e.getPageState();
-                User user = getUser(state);
-                user.setBanned(false);
-
-                final CdiUtil cdiUtil = new CdiUtil();
-                final UserRepository userRepository;
-                try {
-                    userRepository = cdiUtil.findBean(UserRepository.class);
-                } catch (CdiLookupException ex) {
-                    throw new UncheckedWrapperException(ex);
-                }
-                userRepository.save(user);
+//                PageState state = e.getPageState();
+//                User user = getUser(state);
+//                user.setBanned(false);
+//
+//                final CdiUtil cdiUtil = new CdiUtil();
+//                final UserRepository userRepository;
+//                try {
+//                    userRepository = cdiUtil.findBean(UserRepository.class);
+//                } catch (CdiLookupException ex) {
+//                    throw new UncheckedWrapperException(ex);
+//                }
+//                userRepository.save(user);
             } // End ActionPerformed method
 
         } // End of new ActionListener definition
@@ -581,14 +577,15 @@ class UserBrowsePane extends SegmentedPanel
         @Override
         public ListModel makeModel(final List list, final PageState state) {
             final User user = getUser(state);
-            final java.util.List<GroupMembership> memberships = user
-                .getGroupMemberships();
-            final java.util.List<Subject> groups = new ArrayList<>();
-            for (GroupMembership membership : memberships) {
-                groups.add(membership.getGroup());
-            }
+//            final java.util.List<GroupMembership> memberships = user
+//                .getGroupMemberships();
+//            final java.util.List<Subject> groups = new ArrayList<>();
+//            for (GroupMembership membership : memberships) {
+//                groups.add(membership.getGroup());
+//            }
 
-            return new PartyListModel(groups);
+//            return new PartyListModel(groups);
+            throw new UnsupportedOperationException();
         }
 
     }
@@ -696,16 +693,16 @@ class UserBrowsePane extends SegmentedPanel
                 String id = (String) m_groupList.getSelectedKey(ps);
                 if (id != null) {
                     final CdiUtil cdiUtil = new CdiUtil();
-                    final GroupRepository groupRepository;
-                    try {
-                        groupRepository = cdiUtil
-                            .findBean(GroupRepository.class);
-                    } catch (CdiLookupException ex) {
-                        throw new UncheckedWrapperException(ex);
-                    }
-                    final Group group = groupRepository.findById(Long.parseLong(
-                        id));
-                    m_groupAdministrationTab.setGroup(ps, group);
+//                    final GroupRepository groupRepository;
+//                    try {
+//                        groupRepository = cdiUtil
+//                            .findBean(GroupRepository.class);
+//                    } catch (CdiLookupException ex) {
+//                        throw new UncheckedWrapperException(ex);
+//                    }
+//                    final Group group = groupRepository.findById(Long.parseLong(
+//                        id));
+//                    m_groupAdministrationTab.setGroup(ps, group);
                     m_groupAdministrationTab.displayGroupInfoPanel(ps);
                     m_tabbedPane.setSelectedIndex(ps, GROUP_TAB_INDEX);
                 } else {
@@ -733,14 +730,16 @@ class UserTableModel implements TableModel {
 
     public UserTableModel() {
         final CdiUtil cdiUtil = new CdiUtil();
-        final UserRepository userRepository;
-        try {
-            userRepository = cdiUtil.findBean(UserRepository.class);
-        } catch (CdiLookupException ex) {
-            throw new UncheckedWrapperException(ex);
-        }
+//        final UserRepository userRepository;
+//        try {
+//            userRepository = cdiUtil.findBean(UserRepository.class);
+//        } catch (CdiLookupException ex) {
+//            throw new UncheckedWrapperException(ex);
+//        }
 
-        users = userRepository.findAll();
+//        users = userRepository.findAll();
+        
+        users = null;
     }
 
     @Override
@@ -752,26 +751,28 @@ class UserTableModel implements TableModel {
     public Object getElementAt(final int columnIndex) {
         final User user = users.get(index);
         
-        if (columnIndex == 0) {
-            return user.getSubjectId();
-        } else if (columnIndex == 1) {
-            return String.format("%s %s", 
-                                 user.getName().getGivenName(), 
-                                 user.getName().getFamilyName());
-        } else if (columnIndex == 2) {
-            return user.getScreenName();
-        } else if (columnIndex == 3) {
-            return user.getEmailAddresses().get(0).getAddress();
-        } else if (columnIndex == 4) {
-            return user.getSsoLogin();
-        } else {
-            return null;
-        }
+//        if (columnIndex == 0) {
+//            return user.getSubjectId();
+//        } else if (columnIndex == 1) {
+//            return String.format("%s %s", 
+//                                 user.getName().getGivenName(), 
+//                                 user.getName().getFamilyName());
+//        } else if (columnIndex == 2) {
+//            return user.getScreenName();
+//        } else if (columnIndex == 3) {
+//            return user.getEmailAddresses().get(0).getAddress();
+//        } else if (columnIndex == 4) {
+//            return user.getSsoLogin();
+//        } else {
+//            return null;
+//        }
+        
+        return null;
     }
 
     @Override
     public Object getKeyAt(final int columnIndex) {
-        return users.get(index).getSubjectId();
+        return users.get(index).getPartyId();
     }
 
     @Override

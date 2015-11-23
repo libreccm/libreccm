@@ -1,0 +1,20 @@
+ccm_core.parties:
+    # John Doe
+    - party_id: -10
+      name: johndoe
+    - party_id: -20
+      name: managers
+ccm_core.groups:
+    - party_id: -20
+ccm_core.users:
+    # John Doe
+    - banned: false
+      bouncing: false
+      email_address: john.doe@example.com
+      family_name: Doe
+      given_name: John
+      party_id: -10
+      # foo123
+      password: $shiro1$SHA-512$500000$7xkDcZUN0/whJInHIvGsDw==$WhelBVmJU/cLV7lAkMOrE5B/mqCW0bUuid1WX+xBwzzAaekC5bYn9eeOFGJWhiDgmaC50ZCUmM96/iGsRoc4uA==
+      password_reset_required: false
+      verified: true

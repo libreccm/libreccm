@@ -30,8 +30,7 @@ import com.arsdigita.util.UncheckedWrapperException;
 import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.core.CcmSessionContext;
-import org.libreccm.core.User;
+import org.libreccm.security.User;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -72,15 +71,17 @@ public class UserAuthenticationListener implements RequestListener {
         // Note: aborts processing with an internal error if user not logged in!
         //       Not suiteable just to check log in status.
         final CdiUtil cdiUtil = new CdiUtil();
-        try {
-            final CcmSessionContext context = cdiUtil.findBean(
-                CcmSessionContext.class);
-
-            return (User) context.getCurrentSubject();
-        } catch (CdiLookupException ex) {
-            throw new UncheckedWrapperException(
-                "Failed get get CcmSessionContext.", ex);
-        }
+//        try {
+//            final CcmSessionContext context = cdiUtil.findBean(
+//                CcmSessionContext.class);
+//
+//            return (User) context.getCurrentSubject();
+//        } catch (CdiLookupException ex) {
+//            throw new UncheckedWrapperException(
+//                "Failed get get CcmSessionContext.", ex);
+//        }
+        
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -91,7 +92,8 @@ public class UserAuthenticationListener implements RequestListener {
      * @return true if the user is logged in
      */
     public boolean isLoggedIn(final PageState state) {
-        return Web.getUserContext().isLoggedIn();
+//        return Web.getUserContext().isLoggedIn();
+        return false;
     }
 
     /**
@@ -104,19 +106,19 @@ public class UserAuthenticationListener implements RequestListener {
     public void pageRequested(final RequestEvent event) {
         PageState state = event.getPageState();
 
-        final CcmSessionContext sessionContext;
-        try {
-            final CdiUtil cdiUtil = new CdiUtil();
-            sessionContext = cdiUtil.findBean(
-                CcmSessionContext.class);
-        } catch (CdiLookupException ex) {
-            throw new UncheckedWrapperException(
-                "Failed to lookup CcmSessionContext", ex);
-        }
-        if (!sessionContext.isLoggedIn()) {
-            s_log.debug("User is not logged in");
-            redirectToLoginPage(state);
-        }
+//        final CcmSessionContext sessionContext;
+//        try {
+//            final CdiUtil cdiUtil = new CdiUtil();
+//            sessionContext = cdiUtil.findBean(
+//                CcmSessionContext.class);
+//        } catch (CdiLookupException ex) {
+//            throw new UncheckedWrapperException(
+//                "Failed to lookup CcmSessionContext", ex);
+//        }
+//        if (!sessionContext.isLoggedIn()) {
+//            s_log.debug("User is not logged in");
+//            redirectToLoginPage(state);
+//        }
     }
 
     /**

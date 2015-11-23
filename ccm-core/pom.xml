@@ -40,12 +40,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.libreccm</groupId>
-            <artifactId>ccm-docrepo</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
         </dependency>
@@ -175,11 +169,16 @@
         </dependency>
         
         <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-core</artifactId>
+        </dependency>
+        
+        <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>test</scope>
         </dependency>
-
+        
     </dependencies>
     
     <build>
@@ -968,11 +967,11 @@
                     <!--<version>0.7.5.201505241946</version>-->
                     <scope>test</scope>
                 </dependency>
-                <!--<dependency>
+                <dependency>
                     <groupId>org.jboss.arquillian.extension</groupId>
                     <artifactId>arquillian-jacoco</artifactId>
                     <version>1.0.0.Alpha8</version>
-                </dependency>-->
+                </dependency>
             </dependencies>
             
             <build>

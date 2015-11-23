@@ -62,9 +62,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.core.User;
-import org.libreccm.core.UserManager;
-import org.libreccm.core.UserRepository;
 
 import java.security.SecureRandom;
 
@@ -167,31 +164,31 @@ public class RecoverPasswordPanel extends SimpleContainer
             final String email = ((InternetAddress) data.get(FORM_EMAIL))
                 .getAddress();
             final long userID;
-            try {
-                final CdiUtil cdiUtil = new CdiUtil();
-                final UserRepository userRepository = cdiUtil.findBean(
-                    UserRepository.class);
-                final User user = userRepository.findByEmailAddress(email);
-                if (user == null) {
-                    data.addError(FORM_EMAIL,
-                                  (String) ERROR_BAD_EMAIL.localize(event
-                                      .getPageState().getRequest()));
-                    return;
-                }
-                userID = user.getSubjectId();
-                event.getPageState().setValue(USERID_PARAM, userID);
-
-                if (userID != 0) {
-                    if (user.isBanned()) {
-                        data.addError(FORM_EMAIL, (String) ERROR_BANNED_EMAIL
-                                      .localize(event.getPageState()
-                                          .getRequest()));
-                    }
-                }
-            } catch (CdiLookupException ex) {
-                throw new UncheckedWrapperException(
-                    "Failed to lookup UserRepository", ex);
-            }
+//            try {
+//                final CdiUtil cdiUtil = new CdiUtil();
+//                final UserRepository userRepository = cdiUtil.findBean(
+//                    UserRepository.class);
+//                final User user = userRepository.findByEmailAddress(email);
+//                if (user == null) {
+//                    data.addError(FORM_EMAIL,
+//                                  (String) ERROR_BAD_EMAIL.localize(event
+//                                      .getPageState().getRequest()));
+//                    return;
+//                }
+//                userID = user.getSubjectId();
+//                event.getPageState().setValue(USERID_PARAM, userID);
+//
+//                if (userID != 0) {
+//                    if (user.isBanned()) {
+//                        data.addError(FORM_EMAIL, (String) ERROR_BANNED_EMAIL
+//                                      .localize(event.getPageState()
+//                                          .getRequest()));
+//                    }
+//                }
+//            } catch (CdiLookupException ex) {
+//                throw new UncheckedWrapperException(
+//                    "Failed to lookup UserRepository", ex);
+//            }
             // if the user exists, we need to make sure they are not banned.
 
         }
@@ -228,27 +225,27 @@ public class RecoverPasswordPanel extends SimpleContainer
                         throw new IllegalStateException(
                             "userID must not be 0");
                     }
-                    try {
-                        final CdiUtil cdiUtil = new CdiUtil();
-                        final UserRepository userRepository = cdiUtil.findBean(
-                            UserRepository.class);
-                        final User user = userRepository.findById(userID);
-                        if (user == null) {
-                            throw new IllegalStateException(
-                                "userID must be a valid user");
-                        }
-
-                        String theQuestion = user.getPasswordQuestion();
-                        if (theQuestion == null) {
-                            throw new IllegalStateException(
-                                "password question must not be null "
-                                    + "(userID == " + userID + ")");
-                        }
-                        label.setLabel(theQuestion);
-                    } catch (CdiLookupException ex) {
-                        throw new UncheckedWrapperException(
-                            "Failed to lookup user repository", ex);
-                    }
+//                    try {
+//                        final CdiUtil cdiUtil = new CdiUtil();
+////                        final UserRepository userRepository = cdiUtil.findBean(
+////                            UserRepository.class);
+////                        final User user = userRepository.findById(userID);
+////                        if (user == null) {
+////                            throw new IllegalStateException(
+////                                "userID must be a valid user");
+////                        }
+//
+//                        String theQuestion = user.getPasswordQuestion();
+//                        if (theQuestion == null) {
+//                            throw new IllegalStateException(
+//                                "password question must not be null "
+//                                    + "(userID == " + userID + ")");
+//                        }
+//                        label.setLabel(theQuestion);
+//                    } catch (CdiLookupException ex) {
+//                        throw new UncheckedWrapperException(
+//                            "Failed to lookup user repository", ex);
+//                    }
                 }
 
             });
@@ -276,25 +273,25 @@ public class RecoverPasswordPanel extends SimpleContainer
                 throw new IllegalStateException("userID must not be 0");
             }
 
-            try {
-                final CdiUtil cdiUtil = new CdiUtil();
-                final UserRepository userRepository = cdiUtil.findBean(
-                    UserRepository.class);
-                final User user = userRepository.findById(userID);
-                if (user == null) {
-                    throw new IllegalStateException(
-                        "userID must be a valid user");
-                }
-                final String correctAnswer = user.getPasswordAnswer();
-                if (!correctAnswer.equals(answer)) {
-                    data.addError(FORM_PASSWORD_ANSWER,
-                                  (String) ERROR_BAD_ANSWER.localize(event
-                                      .getPageState().getRequest()));
-                }
-            } catch (CdiLookupException ex) {
-                throw new UncheckedWrapperException(
-                    "Failed to lookup UserRepository", ex);
-            }
+//            try {
+//                final CdiUtil cdiUtil = new CdiUtil();
+//                final UserRepository userRepository = cdiUtil.findBean(
+//                    UserRepository.class);
+//                final User user = userRepository.findById(userID);
+//                if (user == null) {
+//                    throw new IllegalStateException(
+//                        "userID must be a valid user");
+//                }
+//                final String correctAnswer = user.getPasswordAnswer();
+//                if (!correctAnswer.equals(answer)) {
+//                    data.addError(FORM_PASSWORD_ANSWER,
+//                                  (String) ERROR_BAD_ANSWER.localize(event
+//                                      .getPageState().getRequest()));
+//                }
+//            } catch (CdiLookupException ex) {
+//                throw new UncheckedWrapperException(
+//                    "Failed to lookup UserRepository", ex);
+//            }
 
         }
 
@@ -310,40 +307,40 @@ public class RecoverPasswordPanel extends SimpleContainer
                 throw new IllegalStateException("userID must not be 0");
             }
 
-            final CdiUtil cdiUtil = new CdiUtil();
-            final UserRepository userRepository;
-            try {
-                userRepository = cdiUtil.findBean(UserRepository.class);
-            } catch (CdiLookupException ex) {
-                throw new UncheckedWrapperException(
-                    "Failed to lookup UserRepository", ex);
-            }
-            final User user = userRepository.findById(userID);
-            if (user == null) {
-                throw new IllegalStateException("userID must be a valid user");
-            }
+//            final CdiUtil cdiUtil = new CdiUtil();
+//            final UserRepository userRepository;
+//            try {
+//                userRepository = cdiUtil.findBean(UserRepository.class);
+//            } catch (CdiLookupException ex) {
+//                throw new UncheckedWrapperException(
+//                    "Failed to lookup UserRepository", ex);
+//            }
+//            final User user = userRepository.findById(userID);
+//            if (user == null) {
+//                throw new IllegalStateException("userID must be a valid user");
+//            }
 
-            if (user.getEmailAddresses().isEmpty()) {
-                mailFailed(event, "null email, user ID: " + user.getSubjectId());
-                return;
-            }
-
-            String to = user.getEmailAddresses().get(0).getAddress();
-            String from = Mail.getConfig().getDefaultFrom();
-            // AFAICT this value below is hard coded to "" !
-            //KernelHelper.getSystemAdministratorEmailAddress();
-            String subject = LoginHelper.localize(
-                "login.recoverPassword.mailSubject", req);
-            String body = getNotification(user, event, req);
-
+//            if (user.getEmailAddresses().isEmpty()) {
+//                mailFailed(event, "null email, user ID: " + user.getSubjectId());
+//                return;
+//            }
+//
+//            String to = user.getEmailAddresses().get(0).getAddress();
+//            String from = Mail.getConfig().getDefaultFrom();
+//            // AFAICT this value below is hard coded to "" !
+//            //KernelHelper.getSystemAdministratorEmailAddress();
+//            String subject = LoginHelper.localize(
+//                "login.recoverPassword.mailSubject", req);
+//            String body = getNotification(user, event, req);
+//
             // send the message and set next panel to "mail sent" page
-            try {
-                Mail.send(to, from, subject, body);
-                event.getPageState().setValue(DISPLAY_PARAM, MailSentPane.class
-                                              .getName());
-            } catch (MessagingException e) {
-                mailFailed(event, e.toString());
-            }
+//            try {
+//                Mail.send(to, from, subject, body);
+//                event.getPageState().setValue(DISPLAY_PARAM, MailSentPane.class
+//                                              .getName());
+//            } catch (MessagingException e) {
+//                mailFailed(event, e.toString());
+//            }
         }
 
     }
@@ -376,32 +373,32 @@ public class RecoverPasswordPanel extends SimpleContainer
      * Constructs the notification to send users when recovering a password.
      *
      */
-    private static String getNotification(final User user,
-                                          final FormSectionEvent event,
-                                          final HttpServletRequest req) {
-        final CdiUtil cdiUtil = new CdiUtil();
-        final UserManager userManager;
-        final UserRepository userRepository;
-        try {
-            userManager = cdiUtil.findBean(UserManager.class);
-            userRepository = cdiUtil.findBean(UserRepository.class);
-        } catch (CdiLookupException ex) {
-            throw new UncheckedWrapperException(
-                "Failed to lookup UserRepository or UserManager", ex);
-        }
-
-        final String name = user.getName().getGivenName();
-        String tmpPassword = RandomStringUtils.random(
-            16, 0, 0, false, false, null, new SecureRandom());
-
-        userManager.updatePassword(user, tmpPassword);
-        user.setPasswordResetRequired(true);
-        userRepository.save(user);
-
-        return LoginHelper.localize("login.recoverPassword.mailBody",
-                                    new Object[]{name, tmpPassword},
-                                    req);
-    }
+//    private static String getNotification(final User user,
+//                                          final FormSectionEvent event,
+//                                          final HttpServletRequest req) {
+//        final CdiUtil cdiUtil = new CdiUtil();
+//        final UserManager userManager;
+//        final UserRepository userRepository;
+//        try {
+//            userManager = cdiUtil.findBean(UserManager.class);
+//            userRepository = cdiUtil.findBean(UserRepository.class);
+//        } catch (CdiLookupException ex) {
+//            throw new UncheckedWrapperException(
+//                "Failed to lookup UserRepository or UserManager", ex);
+//        }
+//
+//        final String name = user.getName().getGivenName();
+//        String tmpPassword = RandomStringUtils.random(
+//            16, 0, 0, false, false, null, new SecureRandom());
+//
+//        userManager.updatePassword(user, tmpPassword);
+//        user.setPasswordResetRequired(true);
+//        userRepository.save(user);
+//
+//        return LoginHelper.localize("login.recoverPassword.mailBody",
+//                                    new Object[]{name, tmpPassword},
+//                                    req);
+//    }
 
     /**
      * Displays a message that password recovery information couldn't be sent.

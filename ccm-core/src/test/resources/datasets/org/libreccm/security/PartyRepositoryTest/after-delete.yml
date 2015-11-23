@@ -1,0 +1,7 @@
+ccm_core.parties:
+    - party_id: -20
+      name: admins
+ccm_core.groups:
+    - party_id: -20
+ccm_core.users:
+    

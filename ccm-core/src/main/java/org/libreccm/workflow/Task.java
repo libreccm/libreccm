@@ -70,7 +70,7 @@ public class Task implements Serializable {
 
     @Embedded
     @AssociationOverride(
-            name = "VALUES",
+            name = "values",
             joinTable = @JoinTable(name = "WORKFLOW_TASK_LABELS",
                                    schema = DB_SCHEMA,
                                    joinColumns = {
@@ -79,7 +79,7 @@ public class Task implements Serializable {
 
     @Embedded
     @AssociationOverride(
-            name = "VALUES",
+            name = "values",
             joinTable = @JoinTable(name = "WORKFLOW_TASKS_DESCRIPTIONS",
                                    schema = DB_SCHEMA,
                                    joinColumns = {

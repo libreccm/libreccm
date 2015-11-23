@@ -66,7 +66,7 @@ public class Resource extends CcmObject implements Serializable {
      */
     @Embedded
     @AssociationOverride(
-        name = "VALUES",
+        name = "values",
         joinTable = @JoinTable(name = "RESOURCE_TITLES",
                                schema = DB_SCHEMA,
                                joinColumns = {
@@ -78,7 +78,7 @@ public class Resource extends CcmObject implements Serializable {
      */
     @Embedded
     @AssociationOverride(
-        name = "VALUES",
+        name = "values",
         joinTable = @JoinTable(name = "RESOURCE_DESCRIPTIONS",
                                schema = DB_SCHEMA,
                                joinColumns = {

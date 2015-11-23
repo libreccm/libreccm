@@ -19,9 +19,6 @@
 package org.libreccm.auditing;
 
 import org.hibernate.envers.RevisionListener;
-import org.libreccm.core.CcmSessionContext;
-import org.libreccm.core.Subject;
-import org.libreccm.core.User;
 
 import javax.inject.Inject;
 
@@ -32,8 +29,8 @@ import javax.inject.Inject;
  */
 public class CcmRevisionListener implements RevisionListener {
 
-    @Inject
-    private transient CcmSessionContext sessionContext;
+//    @Inject
+//    private transient CcmSessionContext sessionContext;
 
     @Override
     public void newRevision(final Object revisionEntity) {
@@ -44,11 +41,13 @@ public class CcmRevisionListener implements RevisionListener {
         }
 
         final CcmRevision revision = (CcmRevision) revisionEntity;
-        final Subject subject = sessionContext.getCurrentSubject();
-        if (subject instanceof User) {
-            final User user = (User) subject;
-            revision.setUserName(user.getScreenName());
-        }
+        //ToDo: Add code using Shiro Subject
+        
+//        final Subject subject = sessionContext.getCurrentSubject();
+//        if (subject instanceof User) {
+//            final User user = (User) subject;
+//            revision.setUserName(user.getScreenName());
+//        }
     }
 
 }

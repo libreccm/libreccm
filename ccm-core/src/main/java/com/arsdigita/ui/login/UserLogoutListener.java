@@ -25,7 +25,6 @@ import com.arsdigita.util.UncheckedWrapperException;
 import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.core.authentication.LoginManager;
 
 /**
  * An ActionListener that logs out the user.
@@ -47,14 +46,14 @@ public class UserLogoutListener implements ActionListener {
     @Override
     public void actionPerformed(final ActionEvent event) {
         final CdiUtil cdiUtil = new CdiUtil();
-        final LoginManager loginManager;
-        try {
-            loginManager = cdiUtil.findBean(LoginManager.class);
-        } catch (CdiLookupException ex) {
-            throw new UncheckedWrapperException("Failed to lookup LoginManager",
-                                                ex);
-        }
-        loginManager.logout();
+//        final LoginManager loginManager;
+//        try {
+//            loginManager = cdiUtil.findBean(LoginManager.class);
+//        } catch (CdiLookupException ex) {
+//            throw new UncheckedWrapperException("Failed to lookup LoginManager",
+//                                                ex);
+//        }
+//        loginManager.logout();
     }
 
 }

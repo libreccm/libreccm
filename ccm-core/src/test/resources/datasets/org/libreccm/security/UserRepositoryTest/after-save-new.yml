@@ -1,0 +1,56 @@
+ccm_core.parties:
+    # John Doe
+    - party_id: -10
+      name: jdoe
+    # mmuster
+    - party_id: -20
+      name: mmuster
+    # Jdoe Public
+    - party_id: -30
+      name: joe
+    # Jane Doe
+    - party_id: -40
+      name: jane
+ccm_core.users:
+    # John Doe
+    - party_id: -10
+      banned: false
+      bouncing: false
+      email_address: john.doe@example.com
+      family_name: Doe
+      given_name: John
+      # foo123
+      password: $shiro1$SHA-512$500000$7xkDcZUN0/whJInHIvGsDw==$WhelBVmJU/cLV7lAkMOrE5B/mqCW0bUuid1WX+xBwzzAaekC5bYn9eeOFGJWhiDgmaC50ZCUmM96/iGsRoc4uA==
+      password_reset_required: false
+      verified: true
+    # Max Mustermann
+    - party_id: -20
+      banned: false
+      bouncing: false
+      email_address: max.mustermann@example.org
+      family_name: Mustermann
+      given_name: Max
+      # foo123
+      password: $shiro1$SHA-512$500000$Y7CnccN1h25sR7KCElMOXg==$CVLWBhetodaEzzhDfGjRcCFZtSW02xOnjH7xhBx0lbxO66grKIt6LWmXoUhLEydce1JZ7cbzNLYOxIwwTeqi5Q==
+      password_reset_required: false
+      verified: true
+    # Joe Public
+    - party_id: -30
+      banned: false
+      bouncing: false
+      email_address: joe.public@example.com
+      family_name: Public
+      given_name: Joe
+      password: $shiro1$SHA-512$500000$RUCYXAQt+XzUmj3x8oG5gw==$qU+lX160Jc6sNUOI9X85wlf2lzn4/hLJNURtjmw9LOYJ7vAqUFFmhyNCMxpzuHIpzeMELr+A0XReoSmtcZnOOw==
+      password_reset_required: false
+      verified: true
+    # Jane Doe
+    - party_id: -40
+      banned: false
+      bouncing: false
+      email_address: jane.doe@example.org
+      family_name: Doe
+      given_name: Jane
+      password: $shiro1$SHA-512$500000$24lA090z7GKYr4VFlZ6t4A==$/heoTHPA5huT1UfJ8Q+waXEG6AjUKhFYLFrj7KW/l0/z9O+QkiZTtfPfbcPblgjcEvrROMEIoQY4Z65S7rFLQg==
+      password_reset_required: false
+      verified: false

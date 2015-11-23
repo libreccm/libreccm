@@ -20,7 +20,7 @@ package org.librecms.contentsection;
 
 import static org.librecms.CmsConstants.*;
 
-import org.libreccm.core.Group;
+import org.libreccm.security.Role;
 import org.libreccm.web.CcmApplication;
 
 import java.io.Serializable;
@@ -57,10 +57,10 @@ public class ContentSection extends CcmApplication implements Serializable {
     private String xmlGeneratorClass;
 
     @OneToOne
-    private Group staffGroup;
+    private Role staffGroup;
 
     @OneToOne
-    private Group viewersGroup;
+    private Role viewersGroup;
 
     @Column(name = "default_locale", length = 10)
     private String defaultLocale;
@@ -107,19 +107,19 @@ public class ContentSection extends CcmApplication implements Serializable {
         this.xmlGeneratorClass = xmlGeneratorClass;
     }
 
-    public Group getStaffGroup() {
+    public Role getStaffGroup() {
         return staffGroup;
     }
 
-    public void setStaffGroup(final Group staffGroup) {
+    public void setStaffGroup(final Role staffGroup) {
         this.staffGroup = staffGroup;
     }
 
-    public Group getViewersGroup() {
+    public Role getViewersGroup() {
         return viewersGroup;
     }
 
-    public void setViewersGroup(final Group viewersGroup) {
+    public void setViewersGroup(final Role viewersGroup) {
         this.viewersGroup = viewersGroup;
     }
 

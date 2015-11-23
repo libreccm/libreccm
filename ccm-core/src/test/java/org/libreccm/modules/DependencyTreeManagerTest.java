@@ -18,23 +18,10 @@
  */
 package org.libreccm.modules;
 
-import org.libreccm.modules.CcmModule;
-import org.libreccm.modules.Module;
-import org.libreccm.modules.ModuleStatus;
-import org.libreccm.modules.TreeNode;
-import org.libreccm.modules.DependencyException;
-import org.libreccm.modules.UnInstallEvent;
-import org.libreccm.modules.InitEvent;
-import org.libreccm.modules.ShutdownEvent;
-import org.libreccm.modules.ModuleInfo;
-import org.libreccm.modules.IntegrationException;
-import org.libreccm.modules.InstallEvent;
-import org.libreccm.modules.RequiredModule;
-import org.libreccm.modules.DependencyTreeManager;
-import org.libreccm.core.modules.dependencytree.test.valid.TestModuleB;
-import org.libreccm.core.modules.dependencytree.test.valid.TestModuleC;
-import org.libreccm.core.modules.dependencytree.test.valid.TestModuleA;
-import org.libreccm.core.modules.dependencytree.test.valid.TestModuleRoot;
+import org.libreccm.modules.dependencytree.test.valid.TestModuleB;
+import org.libreccm.modules.dependencytree.test.valid.TestModuleC;
+import org.libreccm.modules.dependencytree.test.valid.TestModuleA;
+import org.libreccm.modules.dependencytree.test.valid.TestModuleRoot;
 
 import static org.hamcrest.Matchers.*;
 
@@ -56,6 +43,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.libreccm.tests.categories.IntegrationTest;
+import org.libreccm.web.ApplicationType;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -133,21 +121,22 @@ public class DependencyTreeManagerTest {
             .addClass(TestModuleA.class)
             .addClass(TestModuleB.class)
             .addClass(TestModuleC.class)
+            .addClass(ApplicationType.class)
             .addAsLibraries(libs)
             .addAsWebInfResource("test-web.xml", "web.xml")
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
             .addAsResource(
                 "module-info/dependency-tree-manager-test/module-root.properties",
-                "module-info/org.libreccm.core.modules.dependencytree.test.valid.TestModuleRoot.properties")
+                "module-info/org.libreccm.modules.dependencytree.test.valid.TestModuleRoot.properties")
             .addAsResource(
                 "module-info/dependency-tree-manager-test/module-a.properties",
-                "module-info/org.libreccm.core.modules.dependencytree.test.valid.TestModuleA.properties")
+                "module-info/org.libreccm.modules.dependencytree.test.valid.TestModuleA.properties")
             .addAsResource(
                 "module-info/dependency-tree-manager-test/module-b.properties",
-                "module-info/org.libreccm.core.modules.dependencytree.test.valid.TestModuleB.properties")
+                "module-info/org.libreccm.modules.dependencytree.test.valid.TestModuleB.properties")
             .addAsResource(
                 "module-info/dependency-tree-manager-test/module-c.properties",
-                "module-info/org.libreccm.core.modules.dependencytree.test.valid.TestModuleC.properties");
+                "module-info/org.libreccm.modules.dependencytree.test.valid.TestModuleC.properties");
     }
 
     @Test

@@ -18,6 +18,13 @@
  */
 package com.arsdigita.kernel;
 
+import com.arsdigita.runtime.AbstractConfig;
+import com.arsdigita.util.JavaPropertyReader;
+import com.arsdigita.util.parameter.AbstractParameter;
+import com.arsdigita.web.CCMApplicationContextListener;
+import com.arsdigita.xml.XML;
+import com.arsdigita.xml.formatters.DateFormatter;
+
 import java.io.File;
 
 import static org.hamcrest.Matchers.*;
@@ -36,7 +43,14 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+import org.libreccm.categorization.Categorization;
+import org.libreccm.core.CcmObject;
+import org.libreccm.jpa.EntityManagerProducer;
+import org.libreccm.jpa.utils.UriConverter;
+import org.libreccm.l10n.LocalizedString;
+import org.libreccm.security.Permission;
 import org.libreccm.tests.categories.IntegrationTest;
+import org.libreccm.web.ApplicationRepository;
 
 import java.util.StringTokenizer;
 
@@ -86,33 +100,37 @@ public class KernelConfigTest {
         return ShrinkWrap
             .create(WebArchive.class,
                     "LibreCCM-com.arsdigita.kernel.KernelConfigTest.war")
-            //.addPackage(CcmObject.class.getPackage())
-            .addPackage(com.arsdigita.kernel.KernelConfig.class.getPackage())
-            .addPackage(com.arsdigita.runtime.AbstractConfig.class.getPackage())
-            .addPackage(com.arsdigita.util.parameter.AbstractParameter.class.
-                getPackage())
-            .addPackage(com.arsdigita.util.JavaPropertyReader.class.
-                getPackage())
-            .addPackage(com.arsdigita.web.CCMApplicationContextListener.class
-                .getPackage())
-            .addPackage(com.arsdigita.xml.XML.class.getPackage())
-            .addPackage(com.arsdigita.xml.formatters.DateFormatter.class
-                .getPackage())
-            .addPackage(org.libreccm.tests.categories.IntegrationTest.class
-                .getPackage())
+            .addPackage(CcmObject.class.getPackage())
+            .addPackage(Categorization.class.getPackage())
+            .addPackage(Permission.class.getPackage())
+            .addPackage(LocalizedString.class.getPackage())
+            .addPackage(UriConverter.class.getPackage())
+            .addPackage(ApplicationRepository.class.getPackage())
+            .addPackage(EntityManagerProducer.class.getPackage())
+            .addPackage(KernelConfig.class.getPackage())
+            .addPackage(AbstractConfig.class.getPackage())
+            .addPackage(AbstractParameter.class.getPackage())
+            .addPackage(JavaPropertyReader.class.getPackage())
+            .addPackage(CCMApplicationContextListener.class.getPackage())
+            .addPackage(XML.class.getPackage())
+            .addPackage(DateFormatter.class.getPackage())
+            .addPackage(IntegrationTest.class.getPackage())
             .addAsLibraries(libs)
             .addAsResource(
-                "configtests/com/arsdigita/kernel/KernelConfigTest/ccm-core.config",
+                "configs/com/arsdigita/kernel/KernelConfigTest/ccm-core.config",
                 "ccm-core.config")
             .addAsWebInfResource(
-                "configtests/com/arsdigita/kernel/KernelConfigTest/registry.properties",
+                "configs/com/arsdigita/kernel/KernelConfigTest/registry.properties",
                 "conf/registry/registry.properties")
             .addAsWebInfResource(
-                "configtests/com/arsdigita/kernel/KernelConfigTest/kernel.properties",
+                "configs/com/arsdigita/kernel/KernelConfigTest/kernel.properties",
                 "conf/registry/ccm-core/kernel.properties")
             .addAsResource(
                 "com/arsdigita/kernel/KernelConfig_parameter.properties",
                 "com/arsdigita/kernel/KernelConfig_parameter.properties")
+            .addAsResource("test-persistence.xml",
+                           "META-INF/persistence.xml")
+            .addAsWebInfResource("test-web.xml", "WEB-INF/web.xml")
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 

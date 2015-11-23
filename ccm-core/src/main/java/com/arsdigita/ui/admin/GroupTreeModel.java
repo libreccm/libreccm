@@ -26,8 +26,7 @@ import com.arsdigita.util.UncheckedWrapperException;
 
 import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.core.Group;
-import org.libreccm.core.GroupRepository;
+import org.libreccm.security.Group;
 
 import java.math.BigDecimal;
 
@@ -106,25 +105,27 @@ public class GroupTreeModel implements TreeModel {
     @Override
     public Iterator<Group> getChildren(final TreeNode node,
                                        final PageState state) {
-
-        if (node instanceof RootTreeNode) {
-
-            final CdiUtil cdiUtil = new CdiUtil();
-            final GroupRepository groupRepository;
-            try {
-                groupRepository = cdiUtil.findBean(GroupRepository.class);
-            } catch (CdiLookupException ex) {
-                throw new UncheckedWrapperException(
-                    "Failed to lookup GroupRepository", ex);
-            }
-            final List<Group> groups = groupRepository.findAll();
-
-            return groups.iterator();
-        } else {
-            return null;
-        }
+//
+//        if (node instanceof RootTreeNode) {
+//
+//            final CdiUtil cdiUtil = new CdiUtil();
+//            final GroupRepository groupRepository;
+//            try {
+//                groupRepository = cdiUtil.findBean(GroupRepository.class);
+//            } catch (CdiLookupException ex) {
+//                throw new UncheckedWrapperException(
+//                    "Failed to lookup GroupRepository", ex);
+//            }
+//            final List<Group> groups = groupRepository.findAll();
+//
+//            return groups.iterator();
+//        } else {
+//            return null;
+//        }
+        
+        throw new UnsupportedOperationException();
     }
-
+//
 }
 
 class RootTreeNode implements TreeNode {
@@ -147,7 +148,7 @@ class GroupTreeNode implements TreeNode {
     private String m_name;
 
     public GroupTreeNode(Group group) {
-        m_key = Long.toString(group.getSubjectId());
+//        m_key = Long.toString(group.getSubjectId());
         m_name = group.getName();
     }
 

@@ -25,6 +25,7 @@ import org.junit.runners.Parameterized;
 import java.beans.IntrospectionException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
@@ -53,19 +54,20 @@ import java.lang.reflect.Modifier;
  * }
  * </code>
  * </pre>
- * 
- * An example can be found in the ccm-core module: <a href="../../../../../ccm-core/xref-test/org/libreccm/core/ToStringTest.html"><code>ToStringTest</code></a>
+ *
+ * An example can be found in the ccm-core module:
+ * <a href="../../../../../ccm-core/xref-test/org/libreccm/core/ToStringTest.html"><code>ToStringTest</code></a>
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class ToStringVerifier {
-
+    
     private final transient Class<?> entityClass;
-
+    
     public ToStringVerifier(final Class<?> entityClass) {
         this.entityClass = entityClass;
     }
-
+    
     @Test
     //We want to test if there occurs an NPE therefore we need catch the NPE.
     @SuppressWarnings({"PMD.AvoidCatchingNPE",
@@ -75,8 +77,25 @@ public class ToStringVerifier {
                                         IllegalAccessException,
                                         IllegalArgumentException,
                                         InvocationTargetException {
-        final Object obj = entityClass.newInstance();
-
+        final Object obj;
+        try {
+            final Constructor<?> constructor = entityClass
+                .getDeclaredConstructor();
+            constructor.setAccessible(true);
+            
+            obj = constructor.newInstance();
+        } catch (NoSuchMethodException ex) {
+            final StringWriter stringWriter = new StringWriter();
+            final PrintWriter printWriter = new PrintWriter(stringWriter);
+            ex.printStackTrace(printWriter);
+            
+            Assert.fail(String.format("Class \"%s\" does not provide a "
+                                          + "parameterless constructor:%n%s",
+                                      entityClass.getName(),
+                                      stringWriter.toString()));
+            return;
+        }
+        
         final Field[] fields = entityClass.getDeclaredFields();
         for (final Field field : fields) {
             if (!Modifier.isStatic(field.getModifiers())
@@ -85,7 +104,7 @@ public class ToStringVerifier {
                 field.set(obj, null);
             }
         }
-
+        
         try {
             obj.toString();
         } catch (NullPointerException ex) {
@@ -97,8 +116,8 @@ public class ToStringVerifier {
                     + "is not null safe:%n %s",
                 entityClass.getName(),
                 strWriter.toString()));
-
+            
         }
     }
-
+    
 }

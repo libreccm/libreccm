@@ -28,8 +28,6 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
 import org.apache.log4j.Logger;
-import org.libreccm.core.CcmSessionContext;
-import org.libreccm.core.User;
 
 /**
  * Initializes the value of the given parameter to the current user's email
@@ -55,40 +53,40 @@ public class EmailInitListener implements FormInitListener {
 
         s_log.debug("START");
 
-        final CcmSessionContext ctx = Web.getUserContext();
+//        final CcmSessionContext ctx = Web.getUserContext();
 
-        if (!ctx.isLoggedIn()) {
-            s_log.debug("FAILURE not logged in");
-            return;
-        }
+//        if (!ctx.isLoggedIn()) {
+//            s_log.debug("FAILURE not logged in");
+//            return;
+//        }
+//
+//        User user = (User) ctx.getCurrentSubject();
 
-        User user = (User) ctx.getCurrentSubject();
-
-        if (user == null) {
-            s_log.debug("FAILURE no such user");
-            return;
-        }
-
-        if (user.getEmailAddresses().isEmpty()
-                || user.getEmailAddresses().get(0) == null) {
-            s_log.debug("FAILURE null primary email");
-            return;
-        }
-
-        if (user.getEmailAddresses().get(0).getAddress() == null
-                || user.getEmailAddresses().get(0).getAddress().isEmpty()) {
-            s_log.debug("FAILURE null email address");
-            return;
-        }
-
-        try {
-            InternetAddress addr = new InternetAddress(user.getEmailAddresses()
-                .get(0).getAddress());
-            data.put(m_param.getName(), addr);
-        } catch (AddressException e) {
-            s_log.debug("FAILURE badly formed address");
-            return;
-        }
+//        if (user == null) {
+//            s_log.debug("FAILURE no such user");
+//            return;
+//        }
+//
+//        if (user.getEmailAddresses().isEmpty()
+//                || user.getEmailAddresses().get(0) == null) {
+//            s_log.debug("FAILURE null primary email");
+//            return;
+//        }
+//
+//        if (user.getEmailAddresses().get(0).getAddress() == null
+//                || user.getEmailAddresses().get(0).getAddress().isEmpty()) {
+//            s_log.debug("FAILURE null email address");
+//            return;
+//        }
+//
+//        try {
+//            InternetAddress addr = new InternetAddress(user.getEmailAddresses()
+//                .get(0).getAddress());
+//            data.put(m_param.getName(), addr);
+//        } catch (AddressException e) {
+//            s_log.debug("FAILURE badly formed address");
+//            return;
+//        }
 
         s_log.debug("SUCCESS");
     }

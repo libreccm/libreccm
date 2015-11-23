@@ -32,8 +32,8 @@ import com.arsdigita.util.UncheckedWrapperException;
 
 import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.core.Group;
-import org.libreccm.core.GroupRepository;
+//import org.libreccm.core.Group;
+//import org.libreccm.core.GroupRepository;
 
 import static com.arsdigita.ui.admin.AdminConstants.*;
 
@@ -68,22 +68,22 @@ class GroupEditForm extends GroupForm implements FormInitListener,
         final PageState state = event.getPageState();
         final Long id = (Long) state.getValue(USER_ID_PARAM);
 
-        if (id != null) {
-            final CdiUtil cdiUtil = new CdiUtil();
-            final GroupRepository groupRepository;
-
-            try {
-                groupRepository = cdiUtil.findBean(
-                    GroupRepository.class);
-            } catch (CdiLookupException ex) {
-                throw new UncheckedWrapperException(
-                    "Failed to lookup GroupRepository", ex);
-            }
-
-            final Group group = groupRepository.findById(id);
-
-            m_name.setValue(state, group.getName());
-        }
+//        if (id != null) {
+//            final CdiUtil cdiUtil = new CdiUtil();
+//            final GroupRepository groupRepository;
+//
+//            try {
+//                groupRepository = cdiUtil.findBean(
+//                    GroupRepository.class);
+//            } catch (CdiLookupException ex) {
+//                throw new UncheckedWrapperException(
+//                    "Failed to lookup GroupRepository", ex);
+//            }
+//
+//            final Group group = groupRepository.findById(id);
+//
+//            m_name.setValue(state, group.getName());
+//        }
     }
 
     /**
@@ -96,31 +96,31 @@ class GroupEditForm extends GroupForm implements FormInitListener,
         final PageState state = event.getPageState();
         final Long id = (Long) state.getValue(GROUP_ID_PARAM);
         final CdiUtil cdiUtil = new CdiUtil();
-        final GroupRepository groupRepository;
-        try {
-            groupRepository = cdiUtil.findBean(GroupRepository.class);
-        } catch (CdiLookupException ex) {
-            throw new UncheckedWrapperException(
-                "Failed to lookup GroupRepository", ex);
-        }
+//        final GroupRepository groupRepository;
+//        try {
+//            groupRepository = cdiUtil.findBean(GroupRepository.class);
+//        } catch (CdiLookupException ex) {
+//            throw new UncheckedWrapperException(
+//                "Failed to lookup GroupRepository", ex);
+//        }
 
         if (id == null) {
             throw new FormProcessException(GlobalizationUtil.globalize(
                 "ui.admin.groups.ID_is_null"));
         }
 
-        final Group group = groupRepository.findById(id);
-        if (group == null) {
-            throw new FormProcessException(GlobalizationUtil.globalize(
-                "ui.admin.groups.couldnt_find_specified_group"));
-        }
-        
-
-        final String name = (String) m_name.getValue(state);
-        group.setName(name);
-
-        groupRepository.save(group);
-
+//        final Group group = groupRepository.findById(id);
+//        if (group == null) {
+//            throw new FormProcessException(GlobalizationUtil.globalize(
+//                "ui.admin.groups.couldnt_find_specified_group"));
+//        }
+//        
+//
+//        final String name = (String) m_name.getValue(state);
+//        group.setName(name);
+//
+//        groupRepository.save(group);
+//
         if (m_parent != null) {
             m_parent.displayGroupInfoPanel(state);
         }

@@ -22,7 +22,7 @@ import org.libreccm.core.CcmObject;
 
 import static org.libreccm.core.CoreConstants.*;
 
-import org.libreccm.core.Subject;
+import org.libreccm.security.Party;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -60,7 +60,7 @@ public class Digest extends CcmObject implements Serializable {
 
     @OneToOne
     @JoinColumn(name = "FROM_PARTY_ID")
-    private Subject fromParty;
+    private Party fromParty;
 
     @Column(name = "SUBJECT", length = 255, nullable = false)
     private String subject;
@@ -81,19 +81,19 @@ public class Digest extends CcmObject implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date nextRun;
 
-    public Subject getFromParty() {
+    public Party getFromParty() {
         return fromParty;
     }
 
-    public void setFromParty(final Subject fromParty) {
+    public void setFromParty(final Party fromParty) {
         this.fromParty = fromParty;
     }
 
-    public String getSubject() {
+    public String getParty() {
         return subject;
     }
 
-    public void setSubject(final String subject) {
+    public void setParty(final String subject) {
         this.subject = subject;
     }
 
@@ -185,7 +185,7 @@ public class Digest extends CcmObject implements Serializable {
         if (!Objects.equals(fromParty, other.getFromParty())) {
             return false;
         }
-        if (!Objects.equals(subject, other.getSubject())) {
+        if (!Objects.equals(subject, other.getParty())) {
             return false;
         }
         if (!Objects.equals(header, other.getHeader())) {

@@ -48,7 +48,7 @@ public class PersistentDataQuery extends CcmObject implements Serializable {
     private String queryId;
 
     @AssociationOverride(
-        name = "VALUES",
+        name = "values",
         joinTable = @JoinTable(
             name = "FORMBUILDER_DATA_QUERY_NAMES",
             schema = DB_SCHEMA,
@@ -57,7 +57,7 @@ public class PersistentDataQuery extends CcmObject implements Serializable {
     private LocalizedString name;
 
     @AssociationOverride(
-        name = "VALUES",
+        name = "values",
         joinTable = @JoinTable(
             name = "FORMBUILDER_DATA_QUERY_DESCRIPTIONS",
             schema = DB_SCHEMA,

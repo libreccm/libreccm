@@ -37,7 +37,7 @@ import com.arsdigita.bebop.form.Option;
 import com.arsdigita.bebop.form.OptionGroup;
 import com.arsdigita.bebop.form.Submit;
 
-import org.libreccm.core.Group;
+import org.libreccm.security.Group;
 
 import java.util.List;
 
@@ -147,18 +147,18 @@ public class SelectGroups {
             PageState state = e.getPageState();
             OptionGroup cbg = (CheckboxGroup) e.getTarget();
 
-            List<Group> results = searchForm.getResults();
+//            List<Group> results = searchForm.getResults();
 
             String groupID;
             String groupName;
             Group child;
             
-            for(Group group : results) {
-                child = group;
-                groupID = Long.toString(child.getSubjectId());
-                groupName = child.getName();
-                cbg.addOption(new Option(groupID, groupName));
-            }
+//            for(Group group : results) {
+//                child = group;
+//                groupID = Long.toString(child.getSubjectId());
+//                groupName = child.getName();
+//                cbg.addOption(new Option(groupID, groupName));
+//            }
         }
 
     }

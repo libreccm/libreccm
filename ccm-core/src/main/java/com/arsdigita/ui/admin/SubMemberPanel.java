@@ -34,12 +34,6 @@ import com.arsdigita.util.UncheckedWrapperException;
 
 import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.core.Group;
-import org.libreccm.core.GroupManager;
-import org.libreccm.core.GroupMembership;
-import org.libreccm.core.GroupRepository;
-import org.libreccm.core.User;
-import org.libreccm.core.UserRepository;
 
 import static com.arsdigita.ui.admin.AdminConstants.*;
 
@@ -71,8 +65,8 @@ class SubMemberPanel extends BoxPanel {
                     
                     final BoxPanel panel = new BoxPanel(BoxPanel.HORIZONTAL);
 
-                    Label label = new Label(((User) value).getScreenName());
-                    panel.add(label);
+//                    Label label = new Label(((User) value).getScreenName());
+//                    panel.add(label);
 
                     ControlLink removeLink = new ControlLink(REMOVE_SUBMEMBER_LABEL);
                     removeLink.setClassAttr("actionLink");
@@ -91,23 +85,23 @@ class SubMemberPanel extends BoxPanel {
                     if (key != null) {
                         final Long userID = new Long(key);
                         final CdiUtil cdiUtil = new CdiUtil();
-                        final UserRepository userRepository;
-                        final GroupManager groupManager;
-                        final GroupRepository groupRepository;
-                        try {
-                            userRepository = cdiUtil.findBean(UserRepository.class);
-                            groupManager = cdiUtil.findBean(GroupManager.class);
-                            groupRepository = cdiUtil.findBean(GroupRepository.class);
-                        } catch(CdiLookupException ex) {
-                            throw new UncheckedWrapperException(ex);
-                        }
-                        
-                        final User user = userRepository.findById(userID);
-                        final Group group = m_mainTab.getGroup(state);
-                        if (group != null) {
-                            groupManager.removeUserFromGroup(user, group);
-                            groupRepository.save(group);
-                        }
+//                        final UserRepository userRepository;
+//                        final GroupManager groupManager;
+//                        final GroupRepository groupRepository;
+//                        try {
+//                            userRepository = cdiUtil.findBean(UserRepository.class);
+//                            groupManager = cdiUtil.findBean(GroupManager.class);
+//                            groupRepository = cdiUtil.findBean(GroupRepository.class);
+//                        } catch(CdiLookupException ex) {
+//                            throw new UncheckedWrapperException(ex);
+//                        }
+//                        
+//                        final User user = userRepository.findById(userID);
+//                        final Group group = m_mainTab.getGroup(state);
+//                        if (group != null) {
+//                            groupManager.removeUserFromGroup(user, group);
+//                            groupRepository.save(group);
+//                        }
                     }
 
                 }
@@ -127,47 +121,47 @@ class SubMemberListModelBuilder extends LockableImpl
     @Override
     public ListModel makeModel(final List list, final PageState state) {
 
-        final Group group = m_mainTab.getGroup(state);
-        final java.util.List<GroupMembership> members;
-        if (group == null) {
-            members = null;
-        } else {
-            members = group.getMembers();
-        }
+//        final Group group = m_mainTab.getGroup(state);
+//        final java.util.List<GroupMembership> members;
+//        if (group == null) {
+//            members = null;
+//        } else {
+//            members = group.getMembers();
+//        }
         
-        return new SubMemberListModel(members);
-
+//        return new SubMemberListModel(members);
+        throw new UnsupportedOperationException();
 
     }
 }
 
-class SubMemberListModel implements ListModel {
-
-    private final java.util.List<GroupMembership> members;
-    private int index;
-    
-
-    public SubMemberListModel(final java.util.List<GroupMembership> members) {
-        this.members = members;
-    }
-
-    @Override
-    public Object getElement() {
-        return members.get(index);
-    }
-
-    @Override
-    public String getKey() {
-        return Long.toString(members.get(index).getMembershipId());
-    }
-
-    @Override
-    public boolean next() {
-        if (index < members.size()) {
-            index++;
-            return true;
-        } else {
-            return false;
-        }
-    }
-}
+//class SubMemberListModel implements ListModel {
+//
+////    private final java.util.List<GroupMembership> members;
+//    private int index;
+//    
+//
+//    public SubMemberListModel(final java.util.List<GroupMembership> members) {
+//        this.members = members;
+//    }
+//
+//    @Override
+//    public Object getElement() {
+//        return members.get(index);
+//    }
+//
+//    @Override
+//    public String getKey() {
+//        return Long.toString(members.get(index).getMembershipId());
+//    }
+//
+//    @Override
+//    public boolean next() {
+//        if (index < members.size()) {
+//            index++;
+//            return true;
+//        } else {
+//            return false;
+//        }
+//    }
+//}

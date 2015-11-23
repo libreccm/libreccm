@@ -18,7 +18,7 @@
  */
 package org.libreccm.docrepo;
 
-import org.libreccm.core.User;
+import org.libreccm.security.User;
 import org.libreccm.web.CcmApplication;
 
 import javax.persistence.Column;
@@ -57,8 +57,8 @@ public class Repository extends CcmApplication {
     /**
      * The owner of the {@code Repository}.
      */
-    @ManyToOne
-    @JoinColumn(name = "OWNER")
+    @OneToOne
+    @JoinColumn(name = "OWNER_ID")
     private User owner;
 
     /**

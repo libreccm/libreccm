@@ -1,0 +1,7 @@
+ccm_core.ccm_roles:
+    - role_id: -10
+      name: administrator
+    - role_id: -20
+      name: writer
+    - role_id: -30
+      name: reader

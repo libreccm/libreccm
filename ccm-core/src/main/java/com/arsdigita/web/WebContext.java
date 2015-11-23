@@ -23,8 +23,6 @@ import com.arsdigita.util.Assert;
 import com.arsdigita.util.Record;
 
 import org.apache.log4j.Logger;
-import org.libreccm.core.CcmSessionContext;
-import org.libreccm.core.User;
 import org.libreccm.web.CcmApplication;
 
 /**
@@ -98,16 +96,6 @@ public final class WebContext extends Record {
     final void clear() {
         m_application = null;
         m_requestURL = null;
-    }
-
-    public final User getUser() {
-        CcmSessionContext context = Web.getUserContext();
-
-        if (context == null || !context.isLoggedIn()) {
-            return null;
-        } else {
-            return (User) context.getCurrentSubject();
-        }
     }
 
     /**

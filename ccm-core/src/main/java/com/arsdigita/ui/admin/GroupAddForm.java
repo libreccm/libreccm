@@ -28,8 +28,6 @@ import com.arsdigita.util.UncheckedWrapperException;
 
 import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.core.Group;
-import org.libreccm.core.GroupRepository;
 
 import static com.arsdigita.ui.admin.AdminConstants.*;
 
@@ -63,56 +61,58 @@ class GroupAddForm extends GroupForm implements FormProcessListener {
     public void process(final FormSectionEvent event)
         throws FormProcessException {
 
-        PageState ps = event.getPageState();
-
-        // Get super parent group.
-        String key = (String) m_groupTree.getSelectedKey(ps);
-
-        final Group parentGroup = null;
-//        if (key != null) {
-//            BigDecimal parentID = new BigDecimal(key);
+//        PageState ps = event.getPageState();
 //
-//            try {
-//                parentGroup = new Group(parentID);
-//            } catch (DataObjectNotFoundException exc) {
-//                // Parent group does not exist.
-//                // This is normal behavior with the new group
-//                // been add with no parent.
-//            }
+//        // Get super parent group.
+//        String key = (String) m_groupTree.getSelectedKey(ps);
+//
+//        final Group parentGroup = null;
+////        if (key != null) {
+////            BigDecimal parentID = new BigDecimal(key);
+////
+////            try {
+////                parentGroup = new Group(parentID);
+////            } catch (DataObjectNotFoundException exc) {
+////                // Parent group does not exist.
+////                // This is normal behavior with the new group
+////                // been add with no parent.
+////            }
+////        }
+//
+//        final Group group = new Group();
+//
+//        String name = (String) m_name.getValue(ps);
+//        group.setName(name);
+//
+//        // Workaround for bug #189720: there is no way to remove a
+//        // Party's primary email address, so we set it directly to
+//        // null if it's value on the form is null.
+////        InternetAddress email = (InternetAddress) m_email.getValue(ps);
+////        if (email != null) {
+////            group.setPrimaryEmail(new EmailAddress(email.getAddress()));
+////        } else {
+////            //group.set("primaryEmail", null);
+////            group.setPrimaryEmail(null);
+////        }
+//        final CdiUtil cdiUtil = new CdiUtil();
+//        final GroupRepository groupRepository;
+//        try {
+//            groupRepository = cdiUtil.findBean(GroupRepository.class);
+//        } catch (CdiLookupException ex) {
+//            throw new UncheckedWrapperException(
+//                "Failed to lookup GroupRepository", ex);
 //        }
-
-        final Group group = new Group();
-
-        String name = (String) m_name.getValue(ps);
-        group.setName(name);
-
-        // Workaround for bug #189720: there is no way to remove a
-        // Party's primary email address, so we set it directly to
-        // null if it's value on the form is null.
-//        InternetAddress email = (InternetAddress) m_email.getValue(ps);
-//        if (email != null) {
-//            group.setPrimaryEmail(new EmailAddress(email.getAddress()));
-//        } else {
-//            //group.set("primaryEmail", null);
-//            group.setPrimaryEmail(null);
+//        groupRepository.save(group);
+//
+////        if (parentGroup != null) {
+////            parentGroup.addSubgroup(group);
+////            parentGroup.save();
+////        }
+//        if (m_groupTab != null) {
+//            m_groupTab.setGroup(ps, group);
 //        }
-        final CdiUtil cdiUtil = new CdiUtil();
-        final GroupRepository groupRepository;
-        try {
-            groupRepository = cdiUtil.findBean(GroupRepository.class);
-        } catch (CdiLookupException ex) {
-            throw new UncheckedWrapperException(
-                "Failed to lookup GroupRepository", ex);
-        }
-        groupRepository.save(group);
-
-//        if (parentGroup != null) {
-//            parentGroup.addSubgroup(group);
-//            parentGroup.save();
-//        }
-        if (m_groupTab != null) {
-            m_groupTab.setGroup(ps, group);
-        }
+        
+        throw new UnsupportedOperationException();
     }
 
 }

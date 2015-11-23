@@ -53,8 +53,6 @@ import java.util.ArrayList;
 import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.core.Group;
-import org.libreccm.core.GroupRepository;
 
 /**
  * Constructs the panel for administration of groups.
@@ -102,31 +100,31 @@ class GroupAdministrationTab extends LayoutPanel implements AdminConstants,
      *
      * @return
      */
-    public Group getGroup(final PageState state) {
-        return (Group) requestLocalGroup.get(state);
-    }
+//    public Group getGroup(final PageState state) {
+//        return (Group) requestLocalGroup.get(state);
+//    }
 
-    public void setGroup(final PageState state, final Group group) {
-        final String groupId = Long.toString(group.getSubjectId());
-        requestLocalGroup.set(state, group);
-        groupTree.setSelectedKey(state, groupId);
-
-        if (!"-1".equals(groupId)) {
-            expandGroups(state, group);
-            groupTree.expand("-1", state);
-        }
-    }
-
-    private void expandGroups(final PageState state, final Group group) {
-//        groupTree.expand(Long.toString(group.getSubjectId()), state);
+//    public void setGroup(final PageState state, final Group group) {
+//        final String groupId = Long.toString(group.getSubjectId());
+//        requestLocalGroup.set(state, group);
+//        groupTree.setSelectedKey(state, groupId);
 //
-//        final List< superGroups = group.getSupergroups();
-//        Group superGroup;
-//        while (superGroups.next()) {
-//            superGroup = (Group) superGroups.getDomainObject();
-//            expandGroups(state, superGroup);
+//        if (!"-1".equals(groupId)) {
+//            expandGroups(state, group);
+//            groupTree.expand("-1", state);
 //        }
-    }
+//    }
+
+//    private void expandGroups(final PageState state, final Group group) {
+////        groupTree.expand(Long.toString(group.getSubjectId()), state);
+////
+////        final List< superGroups = group.getSupergroups();
+////        Group superGroup;
+////        while (superGroups.next()) {
+////            superGroup = (Group) superGroups.getDomainObject();
+////            expandGroups(state, superGroup);
+////        }
+//    }
 
     /**
      * Constructor
@@ -141,26 +139,26 @@ class GroupAdministrationTab extends LayoutPanel implements AdminConstants,
 
             @Override
             protected Object initialValue(final PageState state) {
-                String key = (String) groupTree.getSelectedKey(state);
+//                String key = (String) groupTree.getSelectedKey(state);
 
-                Group group;
-                if (key != null) {
-                    final long id = Long.parseLong(key);
-
-                    final CdiUtil cdiUtil = new CdiUtil();
-                    final GroupRepository groupRepository;
-                    try {
-                        groupRepository = cdiUtil
-                            .findBean(GroupRepository.class);
-                    } catch (CdiLookupException ex) {
-                        throw new UncheckedWrapperException(
-                            "Failed to lookup GroupRepository", ex);
-                    }
-
-                    group = groupRepository.findById(id);
-
-                    return group;
-                }
+//                Group group;
+//                if (key != null) {
+//                    final long id = Long.parseLong(key);
+//
+//                    final CdiUtil cdiUtil = new CdiUtil();
+//                    final GroupRepository groupRepository;
+//                    try {
+//                        groupRepository = cdiUtil
+//                            .findBean(GroupRepository.class);
+//                    } catch (CdiLookupException ex) {
+//                        throw new UncheckedWrapperException(
+//                            "Failed to lookup GroupRepository", ex);
+//                    }
+//
+//                    group = groupRepository.findById(id);
+//
+//                    return group;
+//                }
                 return null;
             }
 
@@ -268,11 +266,11 @@ class GroupAdministrationTab extends LayoutPanel implements AdminConstants,
 
             @Override
             public void prepare(final PrintEvent event) {
-                final Label target = (Label) event.getTarget();
-                final PageState state = event.getPageState();
-                final Group group = getGroup(state);
-
-                target.setLabel(group.getName());
+//                final Label target = (Label) event.getTarget();
+//                final PageState state = event.getPageState();
+//                final Group group = getGroup(state);
+//
+//                target.setLabel(group.getName());
             }
 
         });
@@ -351,13 +349,14 @@ class GroupAdministrationTab extends LayoutPanel implements AdminConstants,
                                           final String key,
                                           final int index,
                                           final boolean isSelected) {
-                final BoxPanel b = new BoxPanel(BoxPanel.HORIZONTAL);
-                b.add(new Label(((Group) value).getName()));
-                final ControlLink removeLink = new ControlLink(
-                    REMOVE_SUBGROUP_LABEL);
-                removeLink.setClassAttr("actionLink");
-                b.add(removeLink);
-                return b;
+                throw new UnsupportedOperationException();
+//                final BoxPanel b = new BoxPanel(BoxPanel.HORIZONTAL);
+//                b.add(new Label(((Group) value).getName()));
+//                final ControlLink removeLink = new ControlLink(
+//                    REMOVE_SUBGROUP_LABEL);
+//                removeLink.setClassAttr("actionLink");
+//                b.add(removeLink);
+//                return b;
             }
 
         });
@@ -371,24 +370,24 @@ class GroupAdministrationTab extends LayoutPanel implements AdminConstants,
                     .getSelectedKey(state);
 
                 if (key != null) {
-                    final Long groupId = Long.parseLong(key);
-                    final CdiUtil cdiUtil = new CdiUtil();
-                    final GroupRepository groupRepository;
-                    try {
-                        groupRepository = cdiUtil
-                            .findBean(GroupRepository.class);
-                    } catch (CdiLookupException ex) {
-                        throw new UncheckedWrapperException(
-                            "Failed to lookup GroupRepository", ex);
-                    }
-
-                    final Group group = groupRepository.findById(groupId);
-                    final Group parent = getGroup(state);
-                    if (parent != null) {
-                        groupRepository.save(parent);
-                    }
-
-                    final BigDecimal groupID = new BigDecimal(key);
+//                    final Long groupId = Long.parseLong(key);
+//                    final CdiUtil cdiUtil = new CdiUtil();
+//                    final GroupRepository groupRepository;
+//                    try {
+//                        groupRepository = cdiUtil
+//                            .findBean(GroupRepository.class);
+//                    } catch (CdiLookupException ex) {
+//                        throw new UncheckedWrapperException(
+//                            "Failed to lookup GroupRepository", ex);
+//                    }
+//
+//                    final Group group = groupRepository.findById(groupId);
+//                    final Group parent = getGroup(state);
+//                    if (parent != null) {
+//                        groupRepository.save(parent);
+//                    }
+//
+//                    final BigDecimal groupID = new BigDecimal(key);
 //                    try {
 //                        final Group group = new Group(groupID);
 //                        final Group parent = getGroup(state);
@@ -530,24 +529,24 @@ class GroupAdministrationTab extends LayoutPanel implements AdminConstants,
         final ActionLink deleteLink = new ActionLink(DELETE_GROUP_LABEL);
         deleteLink.setClassAttr("actionLink");
         deleteLink.setConfirmation(GROUP_DELETE_CONFIRMATION);
-        deleteLink.addActionListener(new ActionListener() {
+//        deleteLink.addActionListener(new ActionListener() {
+//
+//            @Override
+//            public void actionPerformed(final ActionEvent event) {
+//
+//                PageState ps = event.getPageState();
 
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-
-                PageState ps = event.getPageState();
-
-                final Group group = (Group) requestLocalGroup.get(ps);
-                if (group != null) {
-                    final CdiUtil cdiUtil = new CdiUtil();
-                    final GroupRepository groupRepository;
-                    try {
-                        groupRepository = cdiUtil.findBean(GroupRepository.class);
-                    } catch(CdiLookupException ex) {
-                        throw new UncheckedWrapperException(ex);
-                    }
+//                final Group group = (Group) requestLocalGroup.get(ps);
+//                if (group != null) {
+//                    final CdiUtil cdiUtil = new CdiUtil();
+//                    final GroupRepository groupRepository;
+//                    try {
+//                        groupRepository = cdiUtil.findBean(GroupRepository.class);
+//                    } catch(CdiLookupException ex) {
+//                        throw new UncheckedWrapperException(ex);
+//                    }
                     
-                    groupRepository.delete(group);
+//                    groupRepository.delete(group);
                     
 //                    try {
 //                        group.delete();
@@ -556,16 +555,17 @@ class GroupAdministrationTab extends LayoutPanel implements AdminConstants,
 //                        LOGGER.warn("Error deleting subgroup", exc);
 //                        displayDeleteFailedPanel(ps);
 //                    }
-                }
+//                }
                 // Select root node
 
-            }
-
-        });
-        body.add(deleteLink);
-        return main.addSegment(GROUP_EXTREME_ACTIONS_HEADER,
-                               body);
-
+//            }
+//
+//        });
+//        body.add(deleteLink);
+//        return main.addSegment(GROUP_EXTREME_ACTIONS_HEADER,
+//                               body);
+        
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -624,7 +624,7 @@ class SubGroupListModelBuilder extends LockableImpl implements ListModelBuilder 
     }
 
     public ListModel makeModel(final List list, final PageState state) {
-        final Group group = parent.getGroup(state);
+//        final Group group = parent.getGroup(state);
 
 //        if (group != null) {
 //            return new SubGroupListModel(group.getSubgroups());

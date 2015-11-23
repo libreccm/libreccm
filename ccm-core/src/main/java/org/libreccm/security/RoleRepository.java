@@ -1,0 +1,66 @@
+/*
+ * Copyright (C) 2015 LibreCCM Foundation.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301  USA
+ */
+package org.libreccm.security;
+
+import java.util.List;
+import javax.enterprise.context.RequestScoped;
+import javax.persistence.TypedQuery;
+import org.libreccm.core.AbstractEntityRepository;
+
+/**
+ * Repository class for {@link Role} entities.
+ * 
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
+ */
+@RequestScoped
+public class RoleRepository extends AbstractEntityRepository<Long, Role> {
+
+    @Override
+    public Class<Role> getEntityClass() {
+        return Role.class;
+    }
+
+    @Override
+    public boolean isNew(final Role entity) {
+        if (entity == null) {
+            throw new IllegalArgumentException("Can't save null.");
+        }
+        return entity.getRoleId() == 0;
+    }
+
+    /**
+     * Finds a role a its name.
+     * 
+     * @param name The name of the role to retrieve.
+     * @return The role identified by the provided {@code name} or {@code null}
+     * if there is no matching role.
+     */
+    public Role findByName(final String name) {
+        final TypedQuery<Role> query = getEntityManager().createNamedQuery(
+                "Role.findByName", Role.class);
+        query.setParameter("name", name);
+        final List<Role> result = query.getResultList();
+        if (result.isEmpty()) {
+            return null;
+        } else {
+            return result.get(0);
+        }
+    }
+
+}

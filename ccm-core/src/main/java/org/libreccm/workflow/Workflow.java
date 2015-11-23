@@ -57,7 +57,7 @@ public class Workflow implements Serializable {
 
     @Embedded
     @AssociationOverride(
-        name = "VALUES",
+        name = "values",
         joinTable = @JoinTable(name = "WORKFLOW_NAMES",
                                schema = DB_SCHEMA,
                                joinColumns = {
@@ -66,7 +66,7 @@ public class Workflow implements Serializable {
 
     @Embedded
     @AssociationOverride(
-        name = "VALUES",
+        name = "values",
         joinTable = @JoinTable(name = "WORKFLOW_DESCRIPTIONS",
                                schema = DB_SCHEMA,
                                joinColumns = {

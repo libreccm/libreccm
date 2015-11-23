@@ -45,8 +45,6 @@ import com.arsdigita.util.UncheckedWrapperException;
 
 import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.core.User;
-import org.libreccm.core.UserRepository;
 
 import java.io.UncheckedIOException;
 import java.math.BigDecimal;
@@ -245,36 +243,36 @@ class UserForm extends Form implements FormValidationListener, AdminConstants {
          * Verify that primary email and screen name are unique
          */
         final CdiUtil cdiUtil = new CdiUtil();
-        final UserRepository userRepository;
-        try {
-            userRepository = cdiUtil.findBean(UserRepository.class);
-        } catch (CdiLookupException ex) {
-            throw new UncheckedWrapperException(ex);
-        }
-
-        final String screenName = (String) m_screenName.getValue(ps);
-        final User userByScreenname = userRepository.findByScreenName(
-            screenName);
-        final String email;
-        if (m_primaryEmail.getValue(ps) != null) {
-            email = ((InternetAddress) m_primaryEmail.getValue(ps)).getAddress();
-        } else {
-            email = null;
-        }
-        final User userByEmail = userRepository.findByEmailAddress(email);
-
-        if (userByScreenname != null && screenName != null && screenName.equals(
-            userByScreenname.getScreenName())) {
-            data.addError(USER_FORM_INPUT_SCREEN_NAME,
-                          USER_FORM_ERROR_SCREEN_NAME_NOT_UNIQUE);
-        }
-        
-        if (userByEmail != null 
-            && email != null 
-            && email.equals(userByEmail.getEmailAddresses().get(0).getAddress())) {
-             data.addError(USER_FORM_INPUT_PRIMARY_EMAIL,
-                           USER_FORM_ERROR_PRIMARY_EMAIL_NOT_UNIQUE);
-        }
+//        final UserRepository userRepository;
+//        try {
+//            userRepository = cdiUtil.findBean(UserRepository.class);
+//        } catch (CdiLookupException ex) {
+//            throw new UncheckedWrapperException(ex);
+//        }
+//
+//        final String screenName = (String) m_screenName.getValue(ps);
+//        final User userByScreenname = userRepository.findByScreenName(
+//            screenName);
+//        final String email;
+//        if (m_primaryEmail.getValue(ps) != null) {
+//            email = ((InternetAddress) m_primaryEmail.getValue(ps)).getAddress();
+//        } else {
+//            email = null;
+//        }
+//        final User userByEmail = userRepository.findByEmailAddress(email);
+//
+//        if (userByScreenname != null && screenName != null && screenName.equals(
+//            userByScreenname.getScreenName())) {
+//            data.addError(USER_FORM_INPUT_SCREEN_NAME,
+//                          USER_FORM_ERROR_SCREEN_NAME_NOT_UNIQUE);
+//        }
+//        
+//        if (userByEmail != null 
+//            && email != null 
+//            && email.equals(userByEmail.getEmailAddresses().get(0).getAddress())) {
+//             data.addError(USER_FORM_INPUT_PRIMARY_EMAIL,
+//                           USER_FORM_ERROR_PRIMARY_EMAIL_NOT_UNIQUE);
+//        }
     }
 
     /**

@@ -63,8 +63,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.core.CcmSessionContext;
-import org.libreccm.core.authentication.LoginManager;
 
 import java.util.logging.Level;
 
@@ -334,35 +332,35 @@ public class UserLoginForm extends Form
         throws FormProcessException {
         PageState state = event.getPageState();
 
-        try {
-            final CcmSessionContext ctx = Web.getUserContext();
-            final String username;
-            if (KernelConfig.getConfig().emailIsPrimaryIdentifier()) {
-                username = ((InternetAddress) m_loginName.getValue(state)).
-                    getAddress();
-            } else {
-                username = (String) m_loginName.getValue(state);
-            }
-
-            final String password = ((String)m_password.getValue(state)).trim();
-            boolean forever = getPersistentLoginValue(event.getPageState(),
-                                                      false);
-            // attempt to log in user
-            final CdiUtil cdiUtil = new CdiUtil();
-            final LoginManager loginManager;
-            try {
-                loginManager = cdiUtil.findBean(LoginManager.class);
-            } catch (CdiLookupException ex) {
-                throw new UncheckedWrapperException(
-                    "Failed to lookup LoginManager", ex);
-            }
-            loginManager.login(username, password);
-            onLoginSuccess(event);
-        } catch (FailedLoginException e) {
-            onLoginFail(event, e);
-        } catch (LoginException e) {
-            onLoginException(event, e);
-        }
+//        try {
+//            final CcmSessionContext ctx = Web.getUserContext();
+//            final String username;
+//            if (KernelConfig.getConfig().emailIsPrimaryIdentifier()) {
+//                username = ((InternetAddress) m_loginName.getValue(state)).
+//                    getAddress();
+//            } else {
+//                username = (String) m_loginName.getValue(state);
+//            }
+//
+//            final String password = ((String)m_password.getValue(state)).trim();
+//            boolean forever = getPersistentLoginValue(event.getPageState(),
+//                                                      false);
+//            // attempt to log in user
+//            final CdiUtil cdiUtil = new CdiUtil();
+//            final LoginManager loginManager;
+//            try {
+//                loginManager = cdiUtil.findBean(LoginManager.class);
+//            } catch (CdiLookupException ex) {
+//                throw new UncheckedWrapperException(
+//                    "Failed to lookup LoginManager", ex);
+//            }
+//            loginManager.login(username, password);
+//            onLoginSuccess(event);
+//        } catch (FailedLoginException e) {
+//            onLoginFail(event, e);
+//        } catch (LoginException e) {
+//            onLoginException(event, e);
+//        }
     }
 
     /**
