@@ -42,7 +42,7 @@ import javax.servlet.http.HttpServlet;
 public class ApplicationManager {
 
     @Inject
-    private transient EntityManager entityManager;
+    private EntityManager entityManager;
 
     private Map<String, ApplicationType> applicationTypes;
 

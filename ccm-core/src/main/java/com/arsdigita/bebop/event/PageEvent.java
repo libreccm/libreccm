@@ -34,7 +34,7 @@ import java.util.EventObject;
  */
 public class PageEvent extends EventObject {
 
-    private transient PageState _state;
+    private PageState _state;
 
     /**
      * Construct a new <code>PageEvent</code>.

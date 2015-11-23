@@ -38,7 +38,7 @@ public class CdiUtil {
 
     private final static Logger LOGGER = LogManager.getLogger(CdiUtil.class);
 
-    private final transient BeanManager beanManager;
+    private final BeanManager beanManager;
 
     public CdiUtil() {
         beanManager = CDI.current().getBeanManager();

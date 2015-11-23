@@ -35,7 +35,7 @@ import javax.persistence.EntityManager;
 public class DomainRepository extends AbstractEntityRepository<Long, Domain> {
 
     @Inject
-    private transient EntityManager entityManager;
+    private EntityManager entityManager;
     
     @Override
     public Class<Domain> getEntityClass() {

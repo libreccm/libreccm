@@ -36,7 +36,7 @@ public class CategoryManager {
      * A {@link CategoryRepository} instance used to interact with the database.
      */
     @Inject
-    private transient CategoryRepository categoryRepo;
+    private CategoryRepository categoryRepo;
 
     /**
      * Assigns an category to an object. The object is added at the position

@@ -33,7 +33,7 @@ import javax.inject.Inject;
 public class DomainManager {
 
     @Inject
-    private transient DomainRepository domainRepo;
+    private DomainRepository domainRepo;
 
     /**
      * Adds a {@code CcmApplication} to the owners of a {@link Domain}. If the

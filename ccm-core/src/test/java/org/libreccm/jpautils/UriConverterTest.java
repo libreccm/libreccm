@@ -53,7 +53,7 @@ public class UriConverterTest {
     private static final String HTTP = "http";
     private static final String FILE = "file";
 
-    private transient UriConverter uriConverter;
+    private UriConverter uriConverter;
 
     public UriConverterTest() {
     }

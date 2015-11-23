@@ -77,10 +77,10 @@ public class UserRepositoryTest {
     private static final String JDOE = "jdoe";
 
     @Inject
-    private transient UserRepository userRepository;
+    private UserRepository userRepository;
 
     @PersistenceContext
-    private transient EntityManager entityManager;
+    private EntityManager entityManager;
 
     public UserRepositoryTest() {
     }

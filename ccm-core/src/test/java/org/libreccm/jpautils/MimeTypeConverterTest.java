@@ -49,7 +49,7 @@ public class MimeTypeConverterTest {
     public static final String VIDEO_MP4
                                = "video/mp4";
 
-    private transient MimeTypeConverter mimeTypeConverter;
+    private MimeTypeConverter mimeTypeConverter;
     
     public MimeTypeConverterTest() {
     }

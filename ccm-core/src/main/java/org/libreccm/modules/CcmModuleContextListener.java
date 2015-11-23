@@ -42,7 +42,7 @@ public class CcmModuleContextListener implements ServletContextListener {
             CcmModuleContextListener.class);
 
     @Inject
-    private transient ModuleManager moduleManager;
+    private ModuleManager moduleManager;
 
     @Override
     public void contextInitialized(final ServletContextEvent event) {

@@ -68,7 +68,7 @@ import org.junit.runners.Parameterized;
  */
 public class EqualsVerifier {
     
-    private final transient Class<?> entityClass;
+    private final Class<?> entityClass;
     
     public EqualsVerifier(final Class<?> entityClass) {
         this.entityClass = entityClass;

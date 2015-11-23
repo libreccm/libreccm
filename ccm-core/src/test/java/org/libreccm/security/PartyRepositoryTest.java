@@ -75,10 +75,10 @@ public class PartyRepositoryTest {
     private static final String MANAGERS = "managers";
 
     @Inject
-    private transient PartyRepository partyRepository;
+    private PartyRepository partyRepository;
 
     @PersistenceContext
-    private transient EntityManager entityManager;
+    private EntityManager entityManager;
 
     public PartyRepositoryTest() {
     }

@@ -292,7 +292,6 @@
                         <ruleset>/rulesets/java/empty.xml</ruleset>
                         <ruleset>/rulesets/java/finalizers.xml</ruleset>
                         <ruleset>/rulesets/java/imports.xml</ruleset>
-                        <ruleset>/rulesets/java/javabeans.xml</ruleset>
                         <ruleset>/rulesets/java/junit.xml</ruleset>
                         <ruleset>/rulesets/java/naming.xml</ruleset>
                         <ruleset>/rulesets/java/optimizations.xml</ruleset>

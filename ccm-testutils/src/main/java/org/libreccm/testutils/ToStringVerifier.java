@@ -62,7 +62,7 @@ import java.lang.reflect.Modifier;
  */
 public class ToStringVerifier {
     
-    private final transient Class<?> entityClass;
+    private final Class<?> entityClass;
     
     public ToStringVerifier(final Class<?> entityClass) {
         this.entityClass = entityClass;

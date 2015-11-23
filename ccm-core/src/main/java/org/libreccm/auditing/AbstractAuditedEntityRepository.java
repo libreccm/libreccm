@@ -35,7 +35,7 @@ public abstract class AbstractAuditedEntityRepository<K, T>
     extends AbstractEntityRepository<K, T> {
 
     @Inject
-    private transient AuditReader auditReader;
+    private AuditReader auditReader;
 
     public abstract K getEntityId(final T entity);
 

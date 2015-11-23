@@ -42,7 +42,7 @@ public abstract class AbstractEntityRepository<K, E> {
      * CDI.
      */
     @Inject
-    private transient EntityManager entityManager;
+    private EntityManager entityManager;
 
     /**
      * Getter method for retrieving the injected {@link EntityManager}.

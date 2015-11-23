@@ -74,7 +74,7 @@ import javax.persistence.TypedQuery;
 public class CcmModulesTest {
 
     @PersistenceContext(name = "LibreCCM")
-    private transient EntityManager entityManager;
+    private EntityManager entityManager;
 
     public CcmModulesTest() {
 

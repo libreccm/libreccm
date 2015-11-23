@@ -38,10 +38,10 @@ public class PermissionChecker {
      * The current subject as provided by {@link Shiro#getSubject()}.
      */
     @Inject
-    private transient Subject subject;
+    private Subject subject;
 
     @Inject
-    private transient Shiro shiro;
+    private Shiro shiro;
 
     /**
      * Checks if the current subject has a permission granting the provided

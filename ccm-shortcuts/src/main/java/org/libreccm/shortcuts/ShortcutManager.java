@@ -38,7 +38,7 @@ public class ShortcutManager {
      * {@link ShortcutRepository} for interacting with the database.
      */
     @Inject
-    private transient ShortcutRepository shortcutRepository;
+    private ShortcutRepository shortcutRepository;
 
     /**
      * Creates a Shortcut

@@ -58,7 +58,7 @@ import java.util.List;
 @RunWith(Arquillian.class)
 public class DependencyTreeManagerCycleTest {
 
-    private transient Iterable<CcmModule> modules;
+    private Iterable<CcmModule> modules;
 
     public DependencyTreeManagerCycleTest() {
     }

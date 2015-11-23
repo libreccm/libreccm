@@ -65,10 +65,10 @@ import static org.junit.Assert.*;
 public class CcmObjectRepositoryTest {
     
     @Inject
-    private transient CcmObjectRepository ccmObjectRepository;
+    private CcmObjectRepository ccmObjectRepository;
     
     @PersistenceContext(name = "LibreCCM")
-    private transient EntityManager entityManager;
+    private EntityManager entityManager;
     
     public CcmObjectRepositoryTest() {
     }

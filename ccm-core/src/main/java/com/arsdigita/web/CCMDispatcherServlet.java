@@ -65,7 +65,7 @@ public class CCMDispatcherServlet extends BaseServlet {
     private static String s_contextPath;
 
     @Inject
-    private transient ApplicationRepository appRepository;
+    private ApplicationRepository appRepository;
 
     /**
      * Servlet initializer uses the extension point of parent class.

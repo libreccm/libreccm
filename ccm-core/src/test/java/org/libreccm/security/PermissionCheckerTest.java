@@ -79,16 +79,16 @@ import static org.junit.Assert.*;
 public class PermissionCheckerTest {
 
     @Inject
-    private transient Subject subject;
+    private Subject subject;
 
     @Inject
-    private transient Shiro shiro;
+    private Shiro shiro;
 
     @Inject
-    private transient PermissionChecker permissionChecker;
+    private PermissionChecker permissionChecker;
 
     @Inject
-    private transient CcmObjectRepository objectRepository;
+    private CcmObjectRepository objectRepository;
 
     public PermissionCheckerTest() {
     }

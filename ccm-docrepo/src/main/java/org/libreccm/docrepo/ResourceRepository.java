@@ -39,7 +39,7 @@ import java.util.List;
 public class ResourceRepository extends AbstractAuditedEntityRepository<Long, Resource> {
 
     @Inject
-    private transient EntityManager entityManager;
+    private EntityManager entityManager;
 
     @Override
     public Long getEntityId(Resource entity) {

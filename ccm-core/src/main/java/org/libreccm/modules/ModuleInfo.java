@@ -57,23 +57,23 @@ public class ModuleInfo {
     /**
      * The name of the module (artifact id).
      */
-    private transient String moduleName;
+    private String moduleName;
     /**
      * The data package of the module (group id).
      */
-    private transient String moduleDataPackage;
+    private String moduleDataPackage;
     /**
      * The entities provided by the module.
      */
-    private transient Class<?>[] moduleEntities;
+    private Class<?>[] moduleEntities;
     /**
      * The version of the module.
      */
-    private transient String moduleVersion;
+    private String moduleVersion;
     /**
      * The modules required by the described module.
      */
-    private transient RequiredModule[] requiredModules;
+    private RequiredModule[] requiredModules;
 
     public ModuleInfo() {
         //Nothing

@@ -72,10 +72,10 @@ public class RoleRepositoryTest {
     private static final String READER = "reader";
 
     @Inject
-    private transient RoleRepository roleRepository;
+    private RoleRepository roleRepository;
 
     @PersistenceContext
-    private transient EntityManager entityManager;
+    private EntityManager entityManager;
 
     public RoleRepositoryTest() {
     }

@@ -72,7 +72,7 @@ import java.nio.charset.StandardCharsets;
  */
 public class DatasetsVerifier {
 
-    private final transient String datasetPath;
+    private final String datasetPath;
 
     public DatasetsVerifier(final String datasetsPath) {
         this.datasetPath = datasetsPath;

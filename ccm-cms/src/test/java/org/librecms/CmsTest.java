@@ -48,7 +48,7 @@ import static org.junit.Assert.*;
 public class CmsTest {
 
     @PersistenceContext(name = "LibreCCM")
-    private transient EntityManager entityManager;
+    private EntityManager entityManager;
 
     @BeforeClass
     public static void setUpClass() {

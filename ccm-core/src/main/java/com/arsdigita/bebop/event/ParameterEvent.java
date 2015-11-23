@@ -38,8 +38,8 @@ import java.util.EventObject;
 public class ParameterEvent extends EventObject {
 
     /* The request specific data about the event */
-    private transient ParameterData m_data;
-    private transient PageState m_state;
+    private ParameterData m_data;
+    private PageState m_state;
 
     /**
      * Construct a <code>ParameterEvent</code>

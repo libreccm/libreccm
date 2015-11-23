@@ -34,7 +34,7 @@ public class ResourceManager {
     private static final Logger log = Logger.getLogger(ResourceManager.class);
 
     @Inject
-    private transient ResourceRepository resourceRepository;
+    private ResourceRepository resourceRepository;
 
     public void copyToFolder(Resource original, Folder folder) {
         Resource copy = original.isFolder() ? new Folder() : new File();

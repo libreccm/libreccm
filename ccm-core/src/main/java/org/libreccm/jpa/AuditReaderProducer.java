@@ -32,7 +32,7 @@ import javax.persistence.EntityManager;
 public class AuditReaderProducer {
     
     @Inject
-    private transient EntityManager entityManager;
+    private EntityManager entityManager;
     
     @Produces
     public AuditReader auditReader() {

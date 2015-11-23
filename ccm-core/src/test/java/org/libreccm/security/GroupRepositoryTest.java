@@ -74,10 +74,10 @@ public class GroupRepositoryTest {
     private static final String NONE = "none";
 
     @Inject
-    private transient GroupRepository groupRepository;
+    private GroupRepository groupRepository;
 
     @PersistenceContext
-    private transient EntityManager entityManager;
+    private EntityManager entityManager;
 
     public GroupRepositoryTest() {
 

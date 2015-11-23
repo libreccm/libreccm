@@ -29,9 +29,6 @@ import javax.inject.Inject;
  */
 public class CcmRevisionListener implements RevisionListener {
 
-//    @Inject
-//    private transient CcmSessionContext sessionContext;
-
     @Override
     public void newRevision(final Object revisionEntity) {
         if (!(revisionEntity instanceof CcmRevision)) {
