@@ -26,6 +26,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import org.hibernate.envers.Audited;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.libreccm.l10n.LocalizedString;
 import static org.librecms.CmsConstants.DB_SCHEMA;
 
@@ -49,9 +50,11 @@ public class ArticleSection implements Serializable {
     @Column(name = "TITLE")
     private LocalizedString title;
 
+    @NotEmpty
     @Column(name = "RANK")
     private int rank;
 
+    @NotEmpty
     @Column(name = "PAGEBREAK")
     private boolean pageBreak;
 
