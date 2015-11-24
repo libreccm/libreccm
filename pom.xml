@@ -54,10 +54,10 @@
         <module>ccm-cms-types-minutes</module>
         <module>ccm-cms-types-decisiontree</module>
         <module>ccm-cms-types-mparticle</module>
-		<module>ccm-cms-types-glossaryitem</module>
-		<module>ccm-cms-types-faqitem</module>
-		<module>ccm-cms-types-externallink</module>
-		<module>ccm-cms-types-newsitem</module>
+        <module>ccm-cms-types-glossaryitem</module>
+        <module>ccm-cms-types-faqitem</module>
+        <module>ccm-cms-types-externallink</module>
+        <module>ccm-cms-types-newsitem</module>
     </modules>
 
     <!--<repositories>

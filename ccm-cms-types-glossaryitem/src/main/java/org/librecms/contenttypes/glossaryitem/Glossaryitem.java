@@ -6,8 +6,7 @@ package org.librecms.contenttypes.glossaryitem;
 import static org.librecms.contenttypes.glossaryitem.GlossaryitemConstants.*;
 
 import org.hibernate.envers.Audited;
-
-import org.libreccm.cms.contentsection.ContentItem;
+import org.librecms.contentsection.ContentItem;
 
 import java.io.Serializable;
 

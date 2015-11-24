@@ -11,8 +11,9 @@ import org.libreccm.modules.RequiredModule;
 import org.libreccm.modules.ShutdownEvent;
 import org.libreccm.modules.UnInstallEvent;
 
-@Module(packageName="org.librecms.contenttypes.externallink", 
-        requiredModules = {@RequiredModule(module = org.libreccm.core.CcmCore)})
+@Module(packageName = "org.librecms.contenttypes.externallink",
+        requiredModules = {
+            @RequiredModule(module = org.libreccm.core.CcmCore.class)})
 public class ExternallinkModule implements CcmModule {
 
     @Override
@@ -23,7 +24,7 @@ public class ExternallinkModule implements CcmModule {
     @Override
     public void init(final InitEvent event) {
         //ToDo Add initialisation logic necessary for your module
-    }   
+    }
 
     @Override
     public void shutdown(final ShutdownEvent event) {
@@ -34,6 +35,5 @@ public class ExternallinkModule implements CcmModule {
     public void uninstall(final UnInstallEvent event) {
         //ToDo Remove module data
     }
-
 
 }

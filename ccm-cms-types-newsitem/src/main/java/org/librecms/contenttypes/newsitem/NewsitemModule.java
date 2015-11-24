@@ -12,7 +12,7 @@ import org.libreccm.modules.ShutdownEvent;
 import org.libreccm.modules.UnInstallEvent;
 
 @Module(packageName="org.librecms.contenttypes.newsitem", 
-        requiredModules = {@RequiredModule(module = org.libreccm.core.CcmCore)})
+        requiredModules = {@RequiredModule(module = org.libreccm.core.CcmCore.class)})
 public class NewsitemModule implements CcmModule {
 
     @Override

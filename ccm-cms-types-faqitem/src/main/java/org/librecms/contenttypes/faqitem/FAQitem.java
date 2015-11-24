@@ -3,16 +3,15 @@
  */
 package org.librecms.contenttypes.faqitem;
 
-import static org.librecms.contenttypes.faqitem.FAQitemConstants.*;
-
 import org.hibernate.envers.Audited;
-
-import org.libreccm.cms.contentsection.ContentItem;
+import org.librecms.contentsection.ContentItem;
 
 import java.io.Serializable;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+
+import static org.librecms.contenttypes.faqitem.FAQitemConstants.*;
 
 @Entity
 @Audited

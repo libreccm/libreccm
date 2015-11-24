@@ -12,7 +12,7 @@ import org.libreccm.modules.ShutdownEvent;
 import org.libreccm.modules.UnInstallEvent;
 
 @Module(packageName="org.librecms.contenttypes.glossaryitem", 
-        requiredModules = {@RequiredModule(module = org.libreccm.core.CcmCore)})
+        requiredModules = {@RequiredModule(module = org.libreccm.core.CcmCore.class)})
 public class GlossaryitemModule implements CcmModule {
 
     @Override

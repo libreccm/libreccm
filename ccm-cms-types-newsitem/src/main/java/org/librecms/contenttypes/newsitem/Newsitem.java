@@ -7,7 +7,7 @@ import static org.librecms.contenttypes.newsitem.NewsitemConstants.*;
 
 import org.hibernate.envers.Audited;
 
-import org.libreccm.cms.contentsection.ContentItem;
+import org.librecms.contentsection.ContentItem;
 
 import java.io.Serializable;
 

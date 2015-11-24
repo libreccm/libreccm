@@ -7,7 +7,7 @@ import static ${package}.${typeName}Constants.*;
 
 import org.hibernate.envers.Audited;
 
-import org.libreccm.cms.contentsection.ContentItem;
+import org.libreccm.contentsection.ContentItem;
 
 import java.io.Serializable;
 
