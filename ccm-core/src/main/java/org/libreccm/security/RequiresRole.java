@@ -25,6 +25,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * This annotation is used together with the {@link AuthorizationRequired}
+ * annotation to limit access to methods based on the roles assigned to a user.
+ * To call a method annotation with this annotation the current subject must be
+ * assigned to the role provided by this annotation.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -32,7 +36,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface RequiresRole {
-    
+
     String value();
-    
+
 }

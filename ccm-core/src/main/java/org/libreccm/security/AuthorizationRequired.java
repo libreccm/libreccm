@@ -27,6 +27,8 @@ import java.lang.annotation.Target;
 import javax.interceptor.InterceptorBinding;
 
 /**
+ * Use this annotation to secure a method by the
+ * {@link AuthorizationInterceptor}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */

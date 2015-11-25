@@ -18,6 +18,8 @@
  */
 package org.libreccm.security;
 
+import org.libreccm.core.CcmObject;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
@@ -25,6 +27,17 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * This annotation is used together with the {@link AuthorizationRequired}
+ * annotation to limit access to methods based on the permissions granted to a
+ * user. The annotation can be used to annotation an method or a parameter of
+ * the type {@link CcmObject}.
+ *
+ * If used on the method level the current subject must have a permission
+ * granting the privilege provided by this annotation to call the method.
+ *
+ * If used on a parameter of type {@link CcmObject} the current subject must
+ * have a permission granting the privilege provided by this annotation for the
+ * particular instance of {@code CcmObject}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -32,7 +45,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface RequiresPrivilege {
-    
+
     String value();
-    
+
 }
