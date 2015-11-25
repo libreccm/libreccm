@@ -29,20 +29,31 @@ import org.libreccm.core.CcmObject;
 import java.util.Iterator;
 
 /**
+ * Iterator implementation for {@link CcmObject}s which checks if the current
+ * subject is permitted to access an object before returning it.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @param <E>
  */
 public class SecuredIterator<E extends CcmObject> implements Iterator<E> {
-    
-    private static final Logger LOGGER = LogManager.getLogger(SecuredIterator.class);
-    
+
+    private static final Logger LOGGER = LogManager.getLogger(
+        SecuredIterator.class);
+
     private final Iterator<E> iterator;
-    
+
     private final Class<E> clazz;
-    
+
     private final String requiredPrivilege;
-    
+
+    /**
+     * Create a new secured iterator which secures the provided iterator.
+     *
+     * @param iterator          The iterator to secure.
+     * @param clazz             The base class of the objects returned by the
+     *                          iterator.
+     * @param requiredPrivilege The privilege required to access the objects.
+     */
     public SecuredIterator(final Iterator<E> iterator,
                            final Class<E> clazz,
                            final String requiredPrivilege) {
@@ -50,23 +61,43 @@ public class SecuredIterator<E extends CcmObject> implements Iterator<E> {
         this.clazz = clazz;
         this.requiredPrivilege = requiredPrivilege;
     }
-    
+
+    /**
+     * @inheritDoc
+     *
+     * @return @inheritDoc
+     */
     @Override
     public boolean hasNext() {
         return iterator.hasNext();
     }
-    
+
+    /**
+     * Returns the next object of the current subject it permitted to access it
+     * or a special "Access denied" object if not.
+     *
+     * The method gets the next object from the wrapped {@code Iterator} and
+     * checks if the current subject has a permission granting the privilege
+     * provided to the constructor on the object. If the current subject is
+     * permitted to access the object the object is returned. Otherwise a
+     * placeholder object is created using the {@link Class#newInstance()}
+     * method on the {@code Class} provided to the constructor. The
+     * {@link CcmObject#displayName} of these placeholder objects is set the
+     * {@code Access denied}.
+     *
+     * @return The next object or a special "Access denied" placeholder object.
+     */
     @Override
     public E next() {
         final CdiUtil cdiUtil = new CdiUtil();
-        final PermissionChecker permissionChecker ;
+        final PermissionChecker permissionChecker;
         try {
             permissionChecker = cdiUtil.findBean(
                 PermissionChecker.class);
         } catch (CdiLookupException ex) {
             throw new UncheckedWrapperException(ex);
         }
-        
+
         final E object = iterator.next();
         if (permissionChecker.isPermitted(requiredPrivilege, object)) {
             return object;
@@ -74,13 +105,14 @@ public class SecuredIterator<E extends CcmObject> implements Iterator<E> {
             try {
                 final E placeholder = clazz.newInstance();
                 placeholder.setDisplayName("Access denied");
-                
+
                 return placeholder;
             } catch (InstantiationException | IllegalAccessException ex) {
-                LOGGER.error("Failed to create placeholder object. Returing null.", ex);
+                LOGGER.error(
+                    "Failed to create placeholder object. Returing null.", ex);
                 return null;
-            } 
+            }
         }
     }
-    
+
 }
