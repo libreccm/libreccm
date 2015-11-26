@@ -37,14 +37,9 @@ import java.util.Iterator;
  */
 public class SecuredIterator<E extends CcmObject> implements Iterator<E> {
 
-    private static final Logger LOGGER = LogManager.getLogger(
-        SecuredIterator.class);
-
     private final Iterator<E> iterator;
-
-    private final Class<E> clazz;
-
-    private final String requiredPrivilege;
+    
+    private final SecuredHelper<E> securedHelper;
 
     /**
      * Create a new secured iterator which secures the provided iterator.
@@ -58,8 +53,7 @@ public class SecuredIterator<E extends CcmObject> implements Iterator<E> {
                            final Class<E> clazz,
                            final String requiredPrivilege) {
         this.iterator = iterator;
-        this.clazz = clazz;
-        this.requiredPrivilege = requiredPrivilege;
+        this.securedHelper = new SecuredHelper<>(clazz, requiredPrivilege);
     }
 
     /**
@@ -89,30 +83,7 @@ public class SecuredIterator<E extends CcmObject> implements Iterator<E> {
      */
     @Override
     public E next() {
-        final CdiUtil cdiUtil = new CdiUtil();
-        final PermissionChecker permissionChecker;
-        try {
-            permissionChecker = cdiUtil.findBean(
-                PermissionChecker.class);
-        } catch (CdiLookupException ex) {
-            throw new UncheckedWrapperException(ex);
-        }
-
-        final E object = iterator.next();
-        if (permissionChecker.isPermitted(requiredPrivilege, object)) {
-            return object;
-        } else {
-            try {
-                final E placeholder = clazz.newInstance();
-                placeholder.setDisplayName("Access denied");
-
-                return placeholder;
-            } catch (InstantiationException | IllegalAccessException ex) {
-                LOGGER.error(
-                    "Failed to create placeholder object. Returing null.", ex);
-                return null;
-            }
-        }
+        return securedHelper.canAccess(iterator.next());
     }
 
 }

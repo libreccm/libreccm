@@ -44,14 +44,17 @@ public class SecuredCollection<E extends CcmObject> implements Collection<E> {
 
     private final Class<E> clazz;
 
-    private final String privilege;
+    private final String requiredPrivilege;
+    
+    private final SecuredHelper<E> securedHelper;
 
     public SecuredCollection(final Collection<E> collection,
                              final Class<E> clazz,
-                             final String privilege) {
+                             final String requiredPrivilege) {
         this.collection = collection;
         this.clazz = clazz;
-        this.privilege = privilege;
+        this.requiredPrivilege = requiredPrivilege;
+        this.securedHelper = new SecuredHelper<>(clazz, requiredPrivilege);
     }
 
     @Override
@@ -71,7 +74,7 @@ public class SecuredCollection<E extends CcmObject> implements Collection<E> {
 
     @Override
     public Iterator<E> iterator() {
-        return new SecuredIterator<>(collection.iterator(), clazz, privilege);
+        return new SecuredIterator<>(collection.iterator(), clazz, requiredPrivilege);
     }
 
     @Override
@@ -88,8 +91,8 @@ public class SecuredCollection<E extends CcmObject> implements Collection<E> {
 
         final Object[] objects = collection.toArray();
         for (int i = 0; i < objects.length; i++) {
-            if (!permissionChecker.isPermitted(privilege, (E) objects[i])) {
-                objects[i] = generateAccessDeniedObject(clazz);
+            if (!permissionChecker.isPermitted(requiredPrivilege, (E) objects[i])) {
+                objects[i] = securedHelper.generateAccessDeniedObject();
             }
         }
         
@@ -110,8 +113,8 @@ public class SecuredCollection<E extends CcmObject> implements Collection<E> {
         
         final T[] objects = collection.toArray(array);
         for(int i = 0; i < objects.length; i++) {
-            if (!permissionChecker.isPermitted(privilege, (CcmObject) objects[i])) {
-                objects[i] = (T) generateAccessDeniedObject(clazz);
+            if (!permissionChecker.isPermitted(requiredPrivilege, (CcmObject) objects[i])) {
+                objects[i] = (T) securedHelper.generateAccessDeniedObject();
             }
         }
         return objects;
@@ -153,18 +156,18 @@ public class SecuredCollection<E extends CcmObject> implements Collection<E> {
         collection.clear();
     }
 
-    private E generateAccessDeniedObject(final Class<E> clazz) {
-        final E placeholder;
-        try {
-            placeholder = clazz.newInstance();
-            placeholder.setDisplayName("Access denied");
-
-            return placeholder;
-        } catch (InstantiationException | IllegalAccessException ex) {
-            LOGGER.error(
-                "Failed to create placeholder object. Returing null.", ex);
-            return null;
-        }
-    }
+//    private E generateAccessDeniedObject(final Class<E> clazz) {
+//        final E placeholder;
+//        try {
+//            placeholder = clazz.newInstance();
+//            placeholder.setDisplayName("Access denied");
+//
+//            return placeholder;
+//        } catch (InstantiationException | IllegalAccessException ex) {
+//            LOGGER.error(
+//                "Failed to create placeholder object. Returing null.", ex);
+//            return null;
+//        }
+//    }
 
 }

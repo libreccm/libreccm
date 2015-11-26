@@ -93,7 +93,11 @@ public class SecuredIteratorTest {
     @Inject
     private CcmObjectRepository objectRepository;
 
-    private List<CcmObject> list;
+    //private List<CcmObject> list;
+
+    private Iterator<CcmObject> iterator1;
+    private Iterator<CcmObject> iterator2;
+    private Iterator<CcmObject> iterator3;
 
     public SecuredIteratorTest() {
     }
@@ -112,10 +116,20 @@ public class SecuredIteratorTest {
         final CcmObject object2 = objectRepository.findById(-20002L);
         final CcmObject object3 = objectRepository.findById(-20003L);
 
-        list = new ArrayList<>();
+        final List<CcmObject> list = new ArrayList<>();
         list.add(object1);
         list.add(object2);
         list.add(object3);
+
+        iterator1 = new SecuredIterator<>(list.iterator(),
+                                          CcmObject.class,
+                                          "privilege1");
+        iterator2 = new SecuredIterator<>(list.iterator(),
+                                          CcmObject.class,
+                                          "privilege2");
+        iterator3 = new SecuredIterator<>(list.iterator(),
+                                          CcmObject.class,
+                                          "privilege3");
     }
 
     @After
@@ -125,10 +139,10 @@ public class SecuredIteratorTest {
     @Deployment
     public static WebArchive createDeployment() {
         final PomEquippedResolveStage pom = Maven
-            .resolver()
-            .loadPomFromFile("pom.xml");
+                .resolver()
+                .loadPomFromFile("pom.xml");
         final PomEquippedResolveStage dependencies = pom.
-            importCompileAndRuntimeDependencies();
+                importCompileAndRuntimeDependencies();
         final File[] libs = dependencies.resolve().withTransitivity().asFile();
 
         for (File lib : libs) {
@@ -137,73 +151,66 @@ public class SecuredIteratorTest {
         }
 
         return ShrinkWrap
-            .create(WebArchive.class,
-                    "LibreCCM-org.libreccm.security.SecuredIteratorTest.war")
-            .addPackage(User.class.getPackage())
-            .addPackage(CcmObject.class.getPackage())
-            .addPackage(Categorization.class.getPackage())
-            .addPackage(LocalizedString.class.getPackage())
-            .addPackage(CcmApplication.class.getPackage())
-            .addPackage(EntityManagerProducer.class.getPackage())
-            .addPackage(MimeTypeConverter.class.getPackage())
-            .addPackage(EqualsVerifier.class.getPackage())
-            .addPackage(IntegrationTest.class.getPackage())
-            .addPackage(KernelConfig.class.getPackage())
-            .addPackage(SecurityConfig.class.getPackage())
-            .addPackage(AbstractConfig.class.getPackage())
-            .addPackage(AbstractParameterContext.class.getPackage())
-            .addPackage(UncheckedWrapperException.class.getPackage())
-            .addPackage(CCMApplicationContextListener.class.getPackage())
-            .addPackage(XML.class.getPackage())
-            .addPackage(DateTimeFormatter.class.getPackage())
-            .addPackage(CdiUtil.class.getPackage())
-            .addAsLibraries(libs)
-            .addAsResource("test-persistence.xml",
-                           "META-INF/persistence.xml")
-            .addAsResource("com/arsdigita/kernel/"
-                               + "KernelConfig_parameter.properties",
-                           "com/arsdigita/kernel/"
-                               + "KernelConfig_parameter.properties")
-            .addAsResource("com/arsdigita/kernel/security/"
-                               + "SecurityConfig_parameter.properties",
-                           "com/arsdigita/kernel/security/"
-                               + "SecurityConfig_parameter.properties")
-            .addAsWebInfResource(
-                "configs/org/libreccm/security/UserManagerTest/"
-                    + "registry.properties",
-                "conf/registry/registry.properties")
-            .addAsResource(
-                "configs/org/libreccm/security/UserManagerTest/ccm-core.config",
-                "ccm-core.config")
-            .addAsResource(
-                "configs/org/libreccm/security/ShiroTest/shiro.ini",
-                "shiro.ini")
-            .addAsResource(
-                "configs/org/libreccm/security/ShiroTest/log4j2.xml",
-                "log4j2.xml")
-            .addAsWebInfResource(
-                "configs/org/libreccm/security/ShiroTest/"
-                    + "kernel.properties",
-                "conf/registry/ccm-core/kernel.properties")
-            .addAsWebInfResource(
-                "configs/org/libreccm//security/ShiroTest/"
-                    + "security.properties",
-                "conf/registry/ccm-core/security.properties")
-            .addAsWebInfResource("test-web.xml", "web.xml")
-            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+                .create(WebArchive.class,
+                        "LibreCCM-org.libreccm.security.SecuredIteratorTest.war").
+                addPackage(User.class.getPackage())
+                .addPackage(CcmObject.class.getPackage())
+                .addPackage(Categorization.class.getPackage())
+                .addPackage(LocalizedString.class.getPackage())
+                .addPackage(CcmApplication.class.getPackage())
+                .addPackage(EntityManagerProducer.class.getPackage())
+                .addPackage(MimeTypeConverter.class.getPackage())
+                .addPackage(EqualsVerifier.class.getPackage())
+                .addPackage(IntegrationTest.class.getPackage())
+                .addPackage(KernelConfig.class.getPackage())
+                .addPackage(SecurityConfig.class.getPackage())
+                .addPackage(AbstractConfig.class.getPackage())
+                .addPackage(AbstractParameterContext.class.getPackage())
+                .addPackage(UncheckedWrapperException.class.getPackage())
+                .addPackage(CCMApplicationContextListener.class.getPackage())
+                .addPackage(XML.class.getPackage())
+                .addPackage(DateTimeFormatter.class.getPackage())
+                .addPackage(CdiUtil.class.getPackage())
+                .addAsLibraries(libs)
+                .addAsResource("test-persistence.xml",
+                               "META-INF/persistence.xml")
+                .addAsResource("com/arsdigita/kernel/"
+                                       + "KernelConfig_parameter.properties",
+                               "com/arsdigita/kernel/"
+                                       + "KernelConfig_parameter.properties")
+                .addAsResource("com/arsdigita/kernel/security/"
+                                       + "SecurityConfig_parameter.properties",
+                               "com/arsdigita/kernel/security/"
+                                       + "SecurityConfig_parameter.properties")
+                .addAsWebInfResource(
+                        "configs/org/libreccm/security/UserManagerTest/"
+                                + "registry.properties",
+                        "conf/registry/registry.properties")
+                .addAsResource(
+                        "configs/org/libreccm/security/UserManagerTest/ccm-core.config",
+                        "ccm-core.config")
+                .addAsResource(
+                        "configs/org/libreccm/security/ShiroTest/shiro.ini",
+                        "shiro.ini")
+                .addAsResource(
+                        "configs/org/libreccm/security/ShiroTest/log4j2.xml",
+                        "log4j2.xml")
+                .addAsWebInfResource(
+                        "configs/org/libreccm/security/ShiroTest/"
+                                + "kernel.properties",
+                        "conf/registry/ccm-core/kernel.properties")
+                .addAsWebInfResource(
+                        "configs/org/libreccm//security/ShiroTest/"
+                                + "security.properties",
+                        "conf/registry/ccm-core/security.properties")
+                .addAsWebInfResource("test-web.xml", "web.xml")
+                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test
     @UsingDataSet("datasets/org/libreccm/security/ShiroTest/data.yml")
     @InSequence(100)
     public void checkSecuredIteratorJdoe() {
-        final SecuredIterator<CcmObject> iterator1 = new SecuredIterator<>(
-            list.iterator(), CcmObject.class, "privilege1");
-        final SecuredIterator<CcmObject> iterator2 = new SecuredIterator<>(
-            list.iterator(), CcmObject.class, "privilege2");
-        final SecuredIterator<CcmObject> iterator3 = new SecuredIterator<>(
-            list.iterator(), CcmObject.class, "privilege3");
-
         final UsernamePasswordToken token = new UsernamePasswordToken("jdoe",
                                                                       "foo123");
         token.setRememberMe(true);
@@ -239,13 +246,6 @@ public class SecuredIteratorTest {
     @UsingDataSet("datasets/org/libreccm/security/ShiroTest/data.yml")
     @InSequence(200)
     public void checkSecuredIteratorMmuster() {
-        final SecuredIterator<CcmObject> iterator1 = new SecuredIterator<>(
-            list.iterator(), CcmObject.class, "privilege1");
-        final SecuredIterator<CcmObject> iterator2 = new SecuredIterator<>(
-            list.iterator(), CcmObject.class, "privilege2");
-        final SecuredIterator<CcmObject> iterator3 = new SecuredIterator<>(
-            list.iterator(), CcmObject.class, "privilege3");
-
         final UsernamePasswordToken token = new UsernamePasswordToken("mmuster",
                                                                       "foo123");
         token.setRememberMe(true);
@@ -280,13 +280,6 @@ public class SecuredIteratorTest {
     @UsingDataSet("datasets/org/libreccm/security/ShiroTest/data.yml")
     @InSequence(300)
     public void checkSecuredIteratorPublicUser() {
-        final SecuredIterator<CcmObject> iterator1 = new SecuredIterator<>(
-            list.iterator(), CcmObject.class, "privilege1");
-        final SecuredIterator<CcmObject> iterator2 = new SecuredIterator<>(
-            list.iterator(), CcmObject.class, "privilege2");
-        final SecuredIterator<CcmObject> iterator3 = new SecuredIterator<>(
-            list.iterator(), CcmObject.class, "privilege3");
-
         final List<CcmObject> list1 = new ArrayList<>();
         while (iterator1.hasNext()) {
             list1.add(iterator1.next());
@@ -316,13 +309,6 @@ public class SecuredIteratorTest {
     @UsingDataSet("datasets/org/libreccm/security/ShiroTest/data.yml")
     @InSequence(400)
     public void checkSecuredIteratorSystemUser() {
-        final SecuredIterator<CcmObject> iterator1 = new SecuredIterator<>(
-            list.iterator(), CcmObject.class, "privilege1");
-        final SecuredIterator<CcmObject> iterator2 = new SecuredIterator<>(
-            list.iterator(), CcmObject.class, "privilege2");
-        final SecuredIterator<CcmObject> iterator3 = new SecuredIterator<>(
-            list.iterator(), CcmObject.class, "privilege3");
-
         shiro.getSystemUser().execute(new Callable<Boolean>() {
 
             @Override
