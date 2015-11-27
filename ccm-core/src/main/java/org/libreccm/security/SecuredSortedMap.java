@@ -18,70 +18,68 @@
  */
 package org.libreccm.security;
 
-import java.util.Comparator;
-import java.util.Set;
-import java.util.SortedSet;
 import org.libreccm.core.CcmObject;
+
+import java.util.Comparator;
+import java.util.SortedMap;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
- * @param <E>
+ * @param <K>
+ * @param <V>
  */
-public class SecuredSortedSet<E extends CcmObject>
-        extends SecuredSet<E>
-        implements SortedSet<E> {
+public class SecuredSortedMap<K, V extends CcmObject>
+    extends SecuredMap<K, V>
+    implements SortedMap<K, V> {
 
-    private final SortedSet<E> set;
-    private final Class<E> clazz;
+    private final SortedMap<K, V> sortedMap;
+    private final Class<V> clazz;
     private final String requiredPrivilege;
-    private final SecuredHelper<E> securedHelper;
 
-    public SecuredSortedSet(final SortedSet<E> set,
-                            final Class<E> clazz,
+    public SecuredSortedMap(final SortedMap<K, V> sortedMap,
+                            final Class<V> clazz,
                             final String requiredPrivilege) {
-        super(set, clazz, requiredPrivilege);
-        this.set = set;
+        super(sortedMap, clazz, requiredPrivilege);
+        this.sortedMap = sortedMap;
         this.clazz = clazz;
         this.requiredPrivilege = requiredPrivilege;
-        this.securedHelper = new SecuredHelper<>(clazz, requiredPrivilege);
     }
 
     @Override
-    public Comparator<? super E> comparator() {
-        return set.comparator();
+    public Comparator<? super K> comparator() {
+        return sortedMap.comparator();
     }
 
     @Override
-    public SortedSet<E> subSet(final E fromElement,
-                               final E toElement) {
-        return new SecuredSortedSet<>(set.subSet(fromElement, toElement),
+    public SortedMap<K, V> subMap(final K fromKey, final K toKey) {
+        return new SecuredSortedMap<>(sortedMap.subMap(fromKey, toKey),
                                       clazz,
                                       requiredPrivilege);
     }
 
     @Override
-    public SortedSet<E> headSet(final E toElement) {
-        return new SecuredSortedSet<>(set.headSet(toElement),
+    public SortedMap<K, V> headMap(final K toKey) {
+        return new SecuredSortedMap<>(sortedMap.headMap(toKey),
                                       clazz,
                                       requiredPrivilege);
     }
 
     @Override
-    public SortedSet<E> tailSet(final E fromElement) {
-        return new SecuredSortedSet<>(set.tailSet(fromElement),
+    public SortedMap<K, V> tailMap(final K fromKey) {
+        return new SecuredSortedMap<>(sortedMap.tailMap(fromKey),
                                       clazz,
                                       requiredPrivilege);
     }
 
     @Override
-    public E first() {
-        return securedHelper.canAccess(set.first());
+    public K firstKey() {
+        return sortedMap.firstKey();
     }
 
     @Override
-    public E last() {
-        return securedHelper.canAccess(set.last());
+    public K lastKey() {
+        return sortedMap.lastKey();
     }
 
 }
