@@ -32,8 +32,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.apache.shiro.subject.Subject;
 import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.security.Shiro;
 import org.libreccm.security.User;
 import org.libreccm.web.ApplicationRepository;
 import org.libreccm.web.CcmApplication;
@@ -214,7 +216,17 @@ public class UserInfo extends SimpleContainer {
         if (!isLoggedIn(state)) {
             throw new IllegalStateException("user is not logged in");
         }
-        return m_listener.getUser(state);
+        
+        final User user;
+        try {
+            final CdiUtil cdiUtil = new CdiUtil();
+            final Shiro shiro = cdiUtil.findBean(Shiro.class);
+            user = shiro.getUser();
+        } catch(CdiLookupException ex) {
+            throw new UncheckedWrapperException(ex);
+        }
+        
+        return user;
     }
 
 }

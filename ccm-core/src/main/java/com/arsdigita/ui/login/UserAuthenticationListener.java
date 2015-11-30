@@ -33,6 +33,7 @@ import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.User;
 
 import javax.servlet.http.HttpServletRequest;
+import org.apache.shiro.subject.Subject;
 
 /**
  * A RequestListener that redirects the user to register if not logged in. The
@@ -51,7 +52,7 @@ import javax.servlet.http.HttpServletRequest;
 public class UserAuthenticationListener implements RequestListener {
 
     private static final Logger s_log = Logger.getLogger(
-        UserAuthenticationListener.class);
+            UserAuthenticationListener.class);
 
     /**
      * If the user is logged in, returns the User object.
@@ -61,27 +62,24 @@ public class UserAuthenticationListener implements RequestListener {
      * @return the User object for the logged in user
      *
      * @throws IllegalStateException if user is not logged in. Call isLoggedIn()
-     *                               to check for this case.
+     * to check for this case.
      */
-    public User getUser(final PageState state) {
+    public Subject getUser(final PageState state) {
         if (!isLoggedIn(state)) {
             throw new IllegalStateException("User is not logged in");
         }
 
         // Note: aborts processing with an internal error if user not logged in!
         //       Not suiteable just to check log in status.
-        final CdiUtil cdiUtil = new CdiUtil();
-//        try {
-//            final CcmSessionContext context = cdiUtil.findBean(
-//                CcmSessionContext.class);
-//
-//            return (User) context.getCurrentSubject();
-//        } catch (CdiLookupException ex) {
-//            throw new UncheckedWrapperException(
-//                "Failed get get CcmSessionContext.", ex);
-//        }
-        
-        throw new UnsupportedOperationException();
+        final Subject subject;
+        try {
+            final CdiUtil cdiUtil = new CdiUtil();
+            subject = cdiUtil.findBean(Subject.class);
+        } catch (CdiLookupException ex) {
+            throw new UncheckedWrapperException(ex);
+        }
+
+        return subject;
     }
 
     /**
@@ -92,8 +90,7 @@ public class UserAuthenticationListener implements RequestListener {
      * @return true if the user is logged in
      */
     public boolean isLoggedIn(final PageState state) {
-//        return Web.getUserContext().isLoggedIn();
-        return false;
+        return getUser(state).isAuthenticated();
     }
 
     /**
@@ -105,26 +102,18 @@ public class UserAuthenticationListener implements RequestListener {
     @Override
     public void pageRequested(final RequestEvent event) {
         PageState state = event.getPageState();
-
-//        final CcmSessionContext sessionContext;
-//        try {
-//            final CdiUtil cdiUtil = new CdiUtil();
-//            sessionContext = cdiUtil.findBean(
-//                CcmSessionContext.class);
-//        } catch (CdiLookupException ex) {
-//            throw new UncheckedWrapperException(
-//                "Failed to lookup CcmSessionContext", ex);
-//        }
-//        if (!sessionContext.isLoggedIn()) {
-//            s_log.debug("User is not logged in");
-//            redirectToLoginPage(state);
-//        }
+        
+        if (!isLoggedIn(state)) {
+            s_log.debug("User is not logged in");
+            redirectToLoginPage(state);
+            
+        }
     }
 
     /**
      * Redirects the client to the login page.
-     * 
-     * @param state 
+     *
+     * @param state
      */
     private void redirectToLoginPage(final PageState state) {
         HttpServletRequest req = state.getRequest();

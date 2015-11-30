@@ -23,11 +23,17 @@ import com.arsdigita.bebop.FormData;
 import com.arsdigita.bebop.event.FormInitListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.bebop.parameters.EmailParameter;
+import com.arsdigita.util.UncheckedWrapperException;
 
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
 import org.apache.log4j.Logger;
+import org.apache.shiro.subject.Subject;
+import org.libreccm.cdi.utils.CdiLookupException;
+import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.security.Shiro;
+import org.libreccm.security.User;
 
 /**
  * Initializes the value of the given parameter to the current user's email
@@ -40,7 +46,7 @@ import org.apache.log4j.Logger;
 public class EmailInitListener implements FormInitListener {
 
     private static final Logger s_log = Logger.getLogger(EmailInitListener.class
-        .getName());
+            .getName());
 
     private EmailParameter m_param;
 
@@ -53,41 +59,37 @@ public class EmailInitListener implements FormInitListener {
 
         s_log.debug("START");
 
-//        final CcmSessionContext ctx = Web.getUserContext();
+        final Subject subject;
+        final Shiro shiro;
+        try {
+            final CdiUtil cdiUtil = new CdiUtil();
+            subject = cdiUtil.findBean(Subject.class);
+            shiro = cdiUtil.findBean(Shiro.class);
+        } catch (CdiLookupException ex) {
+            throw new UncheckedWrapperException(ex);
+        }
 
-//        if (!ctx.isLoggedIn()) {
-//            s_log.debug("FAILURE not logged in");
-//            return;
-//        }
-//
-//        User user = (User) ctx.getCurrentSubject();
+        if (!subject.isAuthenticated()) {
+            s_log.debug("FAILURE not logged in");
+            return;
+        }
 
-//        if (user == null) {
-//            s_log.debug("FAILURE no such user");
-//            return;
-//        }
-//
-//        if (user.getEmailAddresses().isEmpty()
-//                || user.getEmailAddresses().get(0) == null) {
-//            s_log.debug("FAILURE null primary email");
-//            return;
-//        }
-//
-//        if (user.getEmailAddresses().get(0).getAddress() == null
-//                || user.getEmailAddresses().get(0).getAddress().isEmpty()) {
-//            s_log.debug("FAILURE null email address");
-//            return;
-//        }
-//
-//        try {
-//            InternetAddress addr = new InternetAddress(user.getEmailAddresses()
-//                .get(0).getAddress());
-//            data.put(m_param.getName(), addr);
-//        } catch (AddressException e) {
-//            s_log.debug("FAILURE badly formed address");
-//            return;
-//        }
+        final User user = shiro.getUser();
 
+        if (user == null) {
+            s_log.debug("FAILURE no such user");
+            return;
+        }
+
+        if (user.getPrimaryEmailAddress() == null) {
+            s_log.debug("FAILURE null primary email");
+            return;
+        }
+        
+        
+
+        data.put(m_param.getName(), user.getPrimaryEmailAddress().getAddress());
+        
         s_log.debug("SUCCESS");
     }
 

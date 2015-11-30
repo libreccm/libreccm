@@ -88,5 +88,5 @@ public class UserRepository extends AbstractEntityRepository<Long, User> {
             return result.get(0);
         }
     }
-
+    
 }

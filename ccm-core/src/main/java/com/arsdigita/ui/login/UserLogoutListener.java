@@ -23,6 +23,7 @@ import com.arsdigita.bebop.event.ActionListener;
 import com.arsdigita.util.UncheckedWrapperException;
 
 import org.apache.log4j.Logger;
+import org.apache.shiro.subject.Subject;
 import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
 
@@ -35,7 +36,7 @@ import org.libreccm.cdi.utils.CdiUtil;
 public class UserLogoutListener implements ActionListener {
 
     private static final Logger s_log = Logger.getLogger(
-        UserLogoutListener.class);
+            UserLogoutListener.class);
 
     /**
      * Logs out the user.
@@ -45,15 +46,16 @@ public class UserLogoutListener implements ActionListener {
      */
     @Override
     public void actionPerformed(final ActionEvent event) {
-        final CdiUtil cdiUtil = new CdiUtil();
-//        final LoginManager loginManager;
-//        try {
-//            loginManager = cdiUtil.findBean(LoginManager.class);
-//        } catch (CdiLookupException ex) {
-//            throw new UncheckedWrapperException("Failed to lookup LoginManager",
-//                                                ex);
-//        }
-//        loginManager.logout();
+
+        final Subject subject;
+        try {
+            final CdiUtil cdiUtil = new CdiUtil();
+            subject = cdiUtil.findBean(Subject.class);
+        } catch (CdiLookupException ex) {
+            throw new UncheckedWrapperException(ex);
+        }
+        
+        subject.logout();
     }
 
 }

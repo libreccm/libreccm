@@ -18,9 +18,11 @@
  */
 package org.libreccm.security;
 
+import com.arsdigita.kernel.KernelConfig;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
 import javax.inject.Named;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -44,6 +46,9 @@ public class Shiro {
 
     private static final Logger LOGGER = LogManager.getLogger(
             Shiro.class);
+
+    @Inject
+    private UserRepository userRepository;
 
     /**
      * Path to the Shiro INI file.
@@ -92,11 +97,26 @@ public class Shiro {
     }
 
     public Subject getPublicUser() {
-        return buildInternalSubject("public-user");
+        if (KernelConfig.getConfig().emailIsPrimaryIdentifier()) {
+            return buildInternalSubject("public-user@localhost");
+        } else {
+            return buildInternalSubject("public-user");
+        }
     }
 
     public Subject getSystemUser() {
         return buildInternalSubject("system-user");
+    }
+
+    public User getUser() {
+        final KernelConfig kernelConfig = KernelConfig.getConfig();
+        if (kernelConfig.emailIsPrimaryIdentifier()) {
+            return userRepository.findByEmailAddress((String) getSubject().
+                    getPrincipal());
+        } else {
+            return userRepository.findByName((String) getSubject().
+                    getPrincipal());
+        }
     }
 
     private Subject buildInternalSubject(final String userName) {

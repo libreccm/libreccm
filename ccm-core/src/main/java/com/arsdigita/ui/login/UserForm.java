@@ -39,13 +39,11 @@ import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.util.UncheckedWrapperException;
 
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-
 import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.User;
+import org.libreccm.security.UserRepository;
 
 /**
  * Common code for user new / add / edit forms.
@@ -55,12 +53,12 @@ import org.libreccm.security.User;
  *
  */
 public abstract class UserForm extends Form
-    implements LoginConstants, FormInitListener, FormValidationListener {
+        implements LoginConstants, FormInitListener, FormValidationListener {
 
-    private static final Logger s_log = Logger.getLogger(UserForm.class
-        .getName());
+    private static final Logger LOGGER = Logger.getLogger(UserForm.class
+            .getName());
 
-    private boolean m_newUser;
+    private final boolean m_newUser;
 
     protected TextField m_firstName;
     protected TextField m_lastName;
@@ -73,19 +71,15 @@ public abstract class UserForm extends Form
     protected TextField m_answer;
 
     protected Label m_securitySectionHeader = new Label(LoginHelper
-        .getMessage("login.userNewForm.securitySectionHeader"), false);
+            .getMessage("login.userNewForm.securitySectionHeader"), false);
     protected Label m_securityBlurb = new Label(LoginHelper
-        .getMessage("login.userNewForm.securityBlurb"));
+            .getMessage("login.userNewForm.securityBlurb"));
     protected Label m_passwordBlurb = new Label(LoginHelper
-        .getMessage("login.userNewForm.passwordBlurb"));
+            .getMessage("login.userNewForm.passwordBlurb"));
     protected Label m_passwordLabel = new Label(PASSWORD);
     protected Label m_confirmationLabel = new Label(PASSWORD_CONFIRMATION);
-    protected Label m_questionBlurb = new Label(LoginHelper
-        .getMessage("login.userNewForm.questionBlurb"));
-    protected Label m_questionLabel = new Label(PASSWORD_QUESTION);
-    protected Label m_answerLabel = new Label(PASSWORD_ANSWER);
     protected PasswordValidationListener m_passwordValidationListener
-                                             = new PasswordValidationListener();
+                                         = new PasswordValidationListener();
     protected NotEmptyValidationListener m_confirmationNotEmptyValidationListener
                                          = new NotEmptyValidationListener();
     protected Submit m_submit = new Submit(SUBMIT);
@@ -102,8 +96,13 @@ public abstract class UserForm extends Form
     /**
      * Create a UserForm with the given name and panel.
      *
+     * @param name
+     * @param panel
+     * @param newUser
      */
-    public UserForm(String name, Container panel, boolean newUser) {
+    public UserForm(final String name,
+                    final Container panel,
+                    final boolean newUser) {
         super(name, panel);
 
         m_newUser = newUser;
@@ -114,7 +113,7 @@ public abstract class UserForm extends Form
 
         if (m_newUser) {
             m_profilePart.add(new Label(LoginHelper
-                .getMessage("login.userNewForm.aboutYouSectionHeader"),
+                    .getMessage("login.userNewForm.aboutYouSectionHeader"),
                                         false), ColumnPanel.FULL_WIDTH);
         }
 
@@ -126,7 +125,7 @@ public abstract class UserForm extends Form
         m_firstName.setSize(20);
         m_firstName.addValidationListener(new NotEmptyValidationListener());
         m_firstName.addValidationListener(new StringLengthValidationListener(
-            MAX_NAME_LEN));
+                MAX_NAME_LEN));
 
         m_profilePart.add(m_firstNameLabel);
         m_profilePart.add(m_firstName);
@@ -136,7 +135,7 @@ public abstract class UserForm extends Form
         m_lastName.setSize(25);
         m_lastName.addValidationListener(new NotEmptyValidationListener());
         m_lastName.addValidationListener(new StringLengthValidationListener(
-            MAX_NAME_LEN));
+                MAX_NAME_LEN));
 
         m_profilePart.add(m_lastNameLabel);
         m_profilePart.add(m_lastName);
@@ -169,15 +168,15 @@ public abstract class UserForm extends Form
         // add(new Label(""));
         if (m_newUser) {
             m_securityPart.add(new Label(LoginHelper
-                .getMessage("login.userNewForm.securitySectionHeader"),
+                    .getMessage("login.userNewForm.securitySectionHeader"),
                                          false), ColumnPanel.FULL_WIDTH);
 
             m_securityPart.add(new Label(LoginHelper
-                .getMessage("login.userNewForm.securityBlurb")),
+                    .getMessage("login.userNewForm.securityBlurb")),
                                ColumnPanel.FULL_WIDTH);
 
             m_securityPart.add(new Label(LoginHelper
-                .getMessage("login.userNewForm.passwordBlurb")),
+                    .getMessage("login.userNewForm.passwordBlurb")),
                                ColumnPanel.FULL_WIDTH);
 
             // Password
@@ -189,32 +188,15 @@ public abstract class UserForm extends Form
 
             // Password confirmation
             m_confirm = new Password(new StringParameter(
-                FORM_PASSWORD_CONFIRMATION));
+                    FORM_PASSWORD_CONFIRMATION));
             m_confirm.addValidationListener(new NotEmptyValidationListener());
 
             m_securityPart.add(m_confirmationLabel);
             m_securityPart.add(m_confirm);
 
             m_securityPart.add(new Label(LoginHelper
-                .getMessage("login.userNewForm.questionBlurb")),
+                    .getMessage("login.userNewForm.questionBlurb")),
                                ColumnPanel.FULL_WIDTH);
-
-            // Password question
-            m_question = new TextField(new StringParameter(
-                FORM_PASSWORD_QUESTION));
-            m_question.setSize(30);
-            m_question.addValidationListener(new NotEmptyValidationListener());
-
-            m_securityPart.add(m_questionLabel);
-            m_securityPart.add(m_question);
-
-            // Password answer
-            m_answer = new TextField(new StringParameter(FORM_PASSWORD_ANSWER));
-            m_answer.setSize(30);
-            m_answer.addValidationListener(new NotEmptyValidationListener());
-
-            m_securityPart.add(m_answerLabel);
-            m_securityPart.add(m_answer);
         }
 
         // Submit
@@ -234,32 +216,18 @@ public abstract class UserForm extends Form
      *
      */
     @Override
-    public void init(FormSectionEvent event)
-        throws FormProcessException {
-        PageState state = event.getPageState();
+    public void init(final FormSectionEvent event)
+            throws FormProcessException {
+        final PageState state = event.getPageState();
 
-        User user = getUser(state);
+        final User user = getUser(state);
         if (user == null) {
             throw new FormProcessException(LoginGlobalizationUtil.globalize(
-                "login.userForm.couldnt_load_user"));
+                    "login.userForm.couldnt_load_user"));
         }
         m_firstName.setValue(state, user.getGivenName());
         m_lastName.setValue(state, user.getFamilyName());
-
-        InternetAddress address;
-        try {
-            address = new InternetAddress(user.getEmailAddresses().get(0)
-                .toString());
-        } catch (AddressException e) {
-            String[] errorMsg = new String[1];
-            errorMsg[0] = user.getEmailAddresses().get(0).toString();
-            throw new FormProcessException(
-                "Email address is bad: " + user.getEmailAddresses().get(0),
-                LoginHelper.getMessage("login.error.badEmail", errorMsg)
-            );
-        }
-
-        m_email.setValue(state, address);
+        m_email.setValue(state, user.getPrimaryEmailAddress().getAddress());
         m_screenName.setValue(state, user.getName());
 
     }
@@ -269,7 +237,7 @@ public abstract class UserForm extends Form
      *
      * @param state
      * @return the current user, if the form should not be initialised with user
-     *         data.
+     * data.
      */
     protected abstract User getUser(final PageState state);
 
@@ -284,9 +252,19 @@ public abstract class UserForm extends Form
      */
     @Override
     public void validate(final FormSectionEvent event)
-        throws FormProcessException {
-        PageState state = event.getPageState();
-        FormData data = event.getFormData();
+            throws FormProcessException {
+
+        final PageState state = event.getPageState();
+        final FormData data = event.getFormData();
+
+        final UserRepository userRepository;
+        try {
+            final CdiUtil cdiUtil = new CdiUtil();
+            userRepository = cdiUtil.findBean(UserRepository.class);
+        } catch (CdiLookupException ex) {
+            throw new UncheckedWrapperException(ex);
+        }
+
         try {
             if (m_newUser) {
                 // Verify that password and confirmation match
@@ -294,46 +272,33 @@ public abstract class UserForm extends Form
                 String confirm = (String) m_confirm.getValue(state);
 
                 if ((password != null) && (confirm != null)
-                        && !password.equals(confirm)) {
+                            && !password.equals(confirm)) {
                     data.addError(FORM_PASSWORD_CONFIRMATION,
                                   ERROR_MISMATCH_PASSWORD);
                 }
             }
 
-            String email = null;
-            if (m_email.getValue(state) != null) {
-                InternetAddress address = (InternetAddress) m_email
-                    .getValue(state);
-                email = address.getAddress();
+            //Verify that primary email and screen name are unique
+            final User user = getUser(state);
+
+            final String oldScreenName = user.getName();
+            final String screenName = (String) m_screenName.getValue(state);
+            if (screenName != null && !screenName.equals(oldScreenName)) {
+                final User result = userRepository.findByName(screenName);
+                if (result != null) {
+                    data.addError(FORM_SCREEN_NAME, ERROR_DUPLICATE_SN);
+                }
             }
 
-            final String screenName = (String) m_screenName.getValue(state);
-
-            // If this query returns with any rows we have a duplicate
-            // screen name, email address, or both.  Check the results and
-            // produce appropriate error messages.
-            final boolean checkPrimaryEmail = KernelConfig.getConfig()
-                .emailIsPrimaryIdentifier();
-
-//            final UserRepository userRepo;
-//            try {
-//                final CdiUtil cdiUtil = new CdiUtil();
-//                userRepo = cdiUtil.findBean(
-//                    UserRepository.class);
-//            } catch (CdiLookupException ex) {
-//                throw new FormProcessException(ex);
-//            }
-
-//            final User userByEmail = userRepo.findByEmailAddress(email);
-//            if (userByEmail != null && checkPrimaryEmail) {
-//                data.addError(FORM_EMAIL, ERROR_DUPLICATE_EMAIL);
-//            }
-//
-//            final User userByScreenname = userRepo.findByScreenName(screenName);
-//            if (userByScreenname != null) {
-//                data.addError(FORM_SCREEN_NAME, ERROR_DUPLICATE_SN);
-//            }
-
+            final String oldEmail = user.getPrimaryEmailAddress().getAddress();
+            final String email = (String) m_email.getValue(state);
+            if (KernelConfig.getConfig().emailIsPrimaryIdentifier()
+                        && email != null && !email.equals(oldEmail)) {
+                final User result = userRepository.findByEmailAddress(email);
+                if (result != null) {
+                    data.addError(FORM_EMAIL, ERROR_DUPLICATE_EMAIL);
+                }
+            }
         } finally {
             // if the form has errors, clear the password fields so we don't
             // send the passwords back over the network

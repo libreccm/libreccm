@@ -187,11 +187,14 @@ public class LoginServlet extends BebopApplicationServlet {
                             "changepassword"));
         disableClientCaching(CHANGE_USER_PASSWORD_PATH_INFO);
 
+        //Disabled until we decide what procedure we will use in the future.
+        //Certainly not the old question/answer approach because it not secure
+        //and not user friendly.
         /* Build the password recover page, retrieve its URL and store in map */
-        put(RECOVER_USER_PASSWORD_PATH_INFO,
-            buildSimplePage("login.recoverPasswordPage.title",
-                            new RecoverPasswordPanel(),
-                            "recoverpassword"));
+//        put(RECOVER_USER_PASSWORD_PATH_INFO,
+//            buildSimplePage("login.recoverPasswordPage.title",
+//                            new RecoverPasswordPanel(),
+//                            "recoverpassword"));
 
         // Build the login expire page, retrieve its URL and store in map
         put(LOGIN_EXPIRED_PATH_INFO, buildExpiredPage());

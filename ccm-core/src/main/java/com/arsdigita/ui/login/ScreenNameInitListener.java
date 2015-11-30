@@ -23,9 +23,15 @@ import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.event.FormInitListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.bebop.parameters.StringParameter;
+import com.arsdigita.util.UncheckedWrapperException;
 import com.arsdigita.web.Web;
 
 import org.apache.log4j.Logger;
+import org.apache.shiro.subject.Subject;
+import org.libreccm.cdi.utils.CdiLookupException;
+import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.security.Shiro;
+import org.libreccm.security.User;
 
 
 // Note: Previously used SiteNodeRequestContext, nows using KernelRequestContext
@@ -60,17 +66,29 @@ public class ScreenNameInitListener implements FormInitListener {
         PageState state = event.getPageState();
         FormData data = event.getFormData();
         s_log.debug("START");
-//        final CcmSessionContext ctx = Web.getUserContext();
-//        if (!ctx.isLoggedIn()) {
-//            s_log.debug("FAILURE not logged in");
-//            return;
-//        }
-//        final User user = (User) ctx.getCurrentSubject();
-//        if (user.getScreenName() == null) {
-//            s_log.debug("FAILURE null screen name");
-//            return;
-//        }
-//        data.put(m_param.getName(), user.getScreenName());
-//        s_log.debug("SUCCESS");
+        
+        final Subject subject;
+        final Shiro shiro;
+        try {
+            final CdiUtil cdiUtil = new CdiUtil();
+            subject = cdiUtil.findBean(Subject.class);
+            shiro = cdiUtil.findBean(Shiro.class);
+        } catch(CdiLookupException ex) {
+            throw new UncheckedWrapperException(ex);
+        }
+        
+        if (!subject.isAuthenticated()) {
+            s_log.debug("FAILURE not logged in");
+            return;
+        }
+
+        final User user = shiro.getUser();
+        if (user.getName() == null) {
+            s_log.debug("FAILURE null screen name");
+            return;
+        }
+        
+        data.put(m_param.getName(), user.getName());
+        s_log.debug("SUCCESS");
     }
 }
