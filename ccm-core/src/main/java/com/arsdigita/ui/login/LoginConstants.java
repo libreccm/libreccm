@@ -47,7 +47,7 @@ public interface LoginConstants {
         .getMessage("login.passwordQuestion");
     public final static GlobalizedMessage PASSWORD_ANSWER = LoginHelper
         .getMessage("login.passwordAnswer");
-    public final static GlobalizedMessage URL = LoginHelper.getMessage(
+    public final static GlobalizedMessage URL_MSG = LoginHelper.getMessage(
         "login.url");
     public final static GlobalizedMessage BIO = LoginHelper.getMessage(
         "login.bio");
@@ -95,5 +95,14 @@ public interface LoginConstants {
 
     public final static int TIMESTAMP_LIFETIME_SECS = 300;
     public final static int MAX_NAME_LEN = 60;
+    
+    /** URL_MSG stub of Login page in ServletPath format (with leading slash and
+  without trailing slash                                                */
+    // Don't modify without adapting instantiation in Loader class and 
+    // updating existing databases (table applications)!
+    public final static String LOGIN_PAGE_URL = "/register";
+    
+    public final static String LOGIN_SERVLET_PATH = "/login/*";
+
 
 }

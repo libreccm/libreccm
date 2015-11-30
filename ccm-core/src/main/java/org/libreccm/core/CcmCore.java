@@ -18,6 +18,8 @@
  */
 package org.libreccm.core;
 
+import com.arsdigita.ui.login.LoginApplicationCreator;
+import com.arsdigita.ui.login.LoginServlet;
 import org.libreccm.modules.CcmModule;
 import org.libreccm.modules.InitEvent;
 import org.libreccm.modules.InstallEvent;
@@ -28,12 +30,18 @@ import org.libreccm.security.SystemUsersSetup;
 import org.libreccm.security.User;
 
 import javax.persistence.EntityManager;
+import org.libreccm.web.ApplicationType;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@Module(entities = {org.libreccm.auditing.CcmRevision.class,
+@Module(applicationTypes = {@ApplicationType(name = "Login", 
+                                             description = "Login Application",
+                                             singleton = true,
+                                             creator = LoginApplicationCreator.class,
+                                             servlet = LoginServlet.class)},
+        entities = {org.libreccm.auditing.CcmRevision.class,
                     org.libreccm.categorization.Categorization.class,
                     org.libreccm.categorization.Category.class,
                     org.libreccm.categorization.Domain.class,

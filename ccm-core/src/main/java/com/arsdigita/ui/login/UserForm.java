@@ -85,7 +85,7 @@ public abstract class UserForm extends Form
     protected Submit m_submit = new Submit(SUBMIT);
     protected Label m_firstNameLabel = new Label(FIRST_NAME);
     protected Label m_lastNameLabel = new Label(LAST_NAME);
-    protected Label m_urlLabel = new Label(URL);
+    protected Label m_urlLabel = new Label(URL_MSG);
     protected Label m_screenNameLabel = new Label(SCREEN_NAME);
     protected Label m_emailLabel = new Label(PRIMARY_EMAIL);
 

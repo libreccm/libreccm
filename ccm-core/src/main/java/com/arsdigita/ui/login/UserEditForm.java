@@ -46,7 +46,7 @@ import org.libreccm.security.UserRepository;
 
 /**
  * Edits a user. If returnURL is passed in to the form, then redirects to that
- * URL; otherwise redirects to the user workspace.
+ URL_MSG; otherwise redirects to the user workspace.
  *
  *
  * @author Sameer Ajmani
@@ -85,7 +85,7 @@ public class UserEditForm extends UserForm
 
         addProcessListener(this);
 
-        // export return URL
+        // export return URL_MSG
         m_returnURL = new Hidden(new URLParameter(
             LoginHelper.RETURN_URL_PARAM_NAME));
         m_returnURL.setPassIn(true);
@@ -131,7 +131,7 @@ public class UserEditForm extends UserForm
         user.setPrimaryEmailAddress(newAddress);
         userRepository.save(user);
         
-        // redirect to workspace or return URL, if specified
+        // redirect to workspace or return URL_MSG, if specified
         final HttpServletRequest req = state.getRequest();
         final String path = UI.getWorkspaceURL();
         final URL fallback = com.arsdigita.web.URL.there(req, path);

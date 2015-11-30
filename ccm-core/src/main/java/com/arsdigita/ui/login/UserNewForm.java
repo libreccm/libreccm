@@ -55,9 +55,9 @@ import org.libreccm.security.UserRepository;
 
 /**
  * Creates a new user. Collects user's basic info, such as email, password,
- * first name, last name, etc; then tries to create the user in the database. If
- * returnURL is passed in to the form, then redirects to that URL; otherwise
- * redirects to the user workspace.
+ first name, last name, etc; then tries to create the user in the database. If
+ returnURL is passed in to the form, then redirects to that URL_MSG; otherwise
+ redirects to the user workspace.
  *
  *
  * @author Michael Bryzek
@@ -96,7 +96,7 @@ public class UserNewForm extends UserForm implements FormInitListener,
         addValidationListener(this);
         addProcessListener(this);
 
-        // save return URL
+        // save return URL_MSG
         m_returnURL = new Hidden(new URLParameter(
                 LoginHelper.RETURN_URL_PARAM_NAME));
         m_returnURL.setPassIn(true);
@@ -206,7 +206,7 @@ public class UserNewForm extends UserForm implements FormInitListener,
             throw new FormProcessException(ex);
         }
 
-        // redirect to workspace or return URL, if specified
+        // redirect to workspace or return URL_MSG, if specified
         final HttpServletRequest req = state.getRequest();
         final String url = UI.getWorkspaceURL();
         final URL fallback = com.arsdigita.web.URL.there(req, url);

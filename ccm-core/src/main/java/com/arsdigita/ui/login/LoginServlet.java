@@ -41,21 +41,23 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
+import static com.arsdigita.ui.login.LoginConstants.*;
+
 /**
  * Login Application Servlet class, central entry point to create and process
  * the Login application UI.
  *
  * It manages user registration page, new user page, user workspace, logout, and
- * permissions admin pages.
- *
- * It just defines a mapping URL <-> various pages and uses the super class to
- * actually server the pages. Additionally is provides service methods to expose
- * various properties, especially the URL's of public subpages (e.g. logout) and
- * initializes the creation of the UI.
+ permissions admin pages.
+
+ It just defines a mapping URL_MSG <-> various pages and uses the super class to
+ actually server the pages. Additionally is provides service methods to expose
+ various properties, especially the URL_MSG's of public subpages (e.g. logout) and
+ initializes the creation of the UI.
  *
  * @author Peter Boy <pboy@barkhof.uni-bremen.de>
  */
-@WebServlet(urlPatterns = {"/register*"})
+@WebServlet(urlPatterns = {LOGIN_SERVLET_PATH})
 public class LoginServlet extends BebopApplicationServlet {
 
     private static final long serialVersionUID = 7783916040158924516L;
@@ -114,16 +116,8 @@ public class LoginServlet extends BebopApplicationServlet {
     public static final String LOGOUT_PATH_INFO = "/logout/";
 
     /**
-     * URL stub of Login page in ServletPath format (with leading slash and
-     * without trailing slash
-     */
-    // Don't modify without adapting instantiation in Loader class and 
-    // updating existing databases (table applications)!
-    public static final String LOGIN_PAGE_URL = "/register";
-
-    /**
-     * Base URL of the Login application for internal use, fetched from Login
-     * domain class.
+     * Base URL_MSG of the Login application for internal use, fetched from Login
+ domain class.
      */
     private final static String s_loginURL = LOGIN_PAGE_URL;
 
@@ -133,8 +127,8 @@ public class LoginServlet extends BebopApplicationServlet {
     public static final String APPLICATION_NAME = "login";
 
     /**
-     * User extension point used to create the pages to server and setup a URL -
-     * page mapping.
+     * User extension point used to create the pages to server and setup a URL_MSG -
+ page mapping.
      *
      * @throws ServletException
      */
@@ -190,13 +184,13 @@ public class LoginServlet extends BebopApplicationServlet {
         //Disabled until we decide what procedure we will use in the future.
         //Certainly not the old question/answer approach because it not secure
         //and not user friendly.
-        /* Build the password recover page, retrieve its URL and store in map */
+        /* Build the password recover page, retrieve its URL_MSG and store in map */
 //        put(RECOVER_USER_PASSWORD_PATH_INFO,
 //            buildSimplePage("login.recoverPasswordPage.title",
 //                            new RecoverPasswordPanel(),
 //                            "recoverpassword"));
 
-        // Build the login expire page, retrieve its URL and store in map
+        // Build the login expire page, retrieve its URL_MSG and store in map
         put(LOGIN_EXPIRED_PATH_INFO, buildExpiredPage());
 
         /* Create Logout Page and add to the page map                         */
@@ -325,15 +319,15 @@ public class LoginServlet extends BebopApplicationServlet {
     }
 
     /**
-     * Provides an (absolute) URL to a user profile editig page. It is relative
-     * to document root without any constant prefix if there is one configured.
-     *
-     * XXX This implementation starts with a leading slash and ends with a
-     * slash. In previous configurations String urls began without a slash in
-     * order to be able to provide a full URL which also contains the context
-     * part. Since version 5.2 the context part is handled by (new) dispatcher.
-     * The leading slash it API change! It's impacts have to be checked.
-     * (2011-02)
+     * Provides an (absolute) URL_MSG to a user profile editig page. It is relative
+ to document root without any constant prefix if there is one configured.
+
+ XXX This implementation starts with a leading slash and ends with a
+ slash. In previous configurations String urls began without a slash in
+ order to be able to provide a full URL_MSG which also contains the context
+ part. Since version 5.2 the context part is handled by (new) dispatcher.
+ The leading slash it API change! It's impacts have to be checked.
+ (2011-02)
      *
      * @return url to EditUserProfile page as String
      */
@@ -346,16 +340,16 @@ public class LoginServlet extends BebopApplicationServlet {
     }
 
     /**
-     * Provides an (absolute URL) to an optional new user registration page
-     * (accessible only if activated). It is relative to document root without
-     * any constant prefix if there is one configured.
-     *
-     * XXX This implementation starts with a leading slash and ends with a
-     * slash. In previous configurations String urls began without a slash in
-     * order to be able to provide a full URL which also contains the context
-     * part. Since version 5.2 the context part is handled by (new) dispatcher.
-     * The leading slash it API change! It's impacts have to be checked.
-     * (2011-02)
+     * Provides an (absolute URL_MSG) to an optional new user registration page
+ (accessible only if activated). It is relative to document root without
+ any constant prefix if there is one configured.
+
+ XXX This implementation starts with a leading slash and ends with a
+ slash. In previous configurations String urls began without a slash in
+ order to be able to provide a full URL_MSG which also contains the context
+ part. Since version 5.2 the context part is handled by (new) dispatcher.
+ The leading slash it API change! It's impacts have to be checked.
+ (2011-02)
      *
      * @return url to new user registration page as String
      */
@@ -364,16 +358,16 @@ public class LoginServlet extends BebopApplicationServlet {
     }
 
     /**
-     * Provides an absolute URL (leading slash) for a password recovery page. It
-     * is relative to document root without any constant prefix if there is one
-     * configured.
-     *
-     * XXX This implementation starts with a leading slash and ends with a
-     * slash. In previous configurations String urls began without a slash in
-     * order to be able to provide a full URL which also contains the context
-     * part. Since version 5.2 the context part is handled by (new) dispatcher.
-     * The leading slash it API change! It's impacts have tp be checked.
-     * (2011-02)
+     * Provides an absolute URL_MSG (leading slash) for a password recovery page. It
+ is relative to document root without any constant prefix if there is one
+ configured.
+
+ XXX This implementation starts with a leading slash and ends with a
+ slash. In previous configurations String urls began without a slash in
+ order to be able to provide a full URL_MSG which also contains the context
+ part. Since version 5.2 the context part is handled by (new) dispatcher.
+ The leading slash it API change! It's impacts have tp be checked.
+ (2011-02)
      *
      * @return url String for new user registration page as String
      */
@@ -382,16 +376,16 @@ public class LoginServlet extends BebopApplicationServlet {
     }
 
     /**
-     * Provides an absolute URL (leading slash) for a cookie explanation page.
+     * Provides an absolute URL_MSG (leading slash) for a cookie explanation page.
      * It is relative to document root without any constant prefix if there is
-     * one configured.
-     *
-     * XXX This implementation starts with a leading slash and ends with a
-     * slash. In previous configurations String urls began without a slash in
-     * order to be able to provide a full URL which also contains the context
-     * part. Since version 5.2 the context part is handled by (new) dispatcher.
-     * The leading slash it API change! It's impacts have tp be checked.
-     * (2011-02)
+ one configured.
+
+ XXX This implementation starts with a leading slash and ends with a
+ slash. In previous configurations String urls began without a slash in
+ order to be able to provide a full URL_MSG which also contains the context
+ part. Since version 5.2 the context part is handled by (new) dispatcher.
+ The leading slash it API change! It's impacts have tp be checked.
+ (2011-02)
      *
      * @return url String for new user registration page as String
      */
@@ -400,16 +394,16 @@ public class LoginServlet extends BebopApplicationServlet {
     }
 
     /**
-     * Provides an absolute URL (leading slash) for a login expired info page.
+     * Provides an absolute URL_MSG (leading slash) for a login expired info page.
      * It is relative to document root without any constant prefix if there is
-     * one configured.
-     *
-     * XXX This implementation starts with a leading slash and ends with a
-     * slash. In previous configurations String urls began without a slash in
-     * order to be able to provide a full URL which also contains the context
-     * part. Since version 5.2 the context part is handled by (new) dispatcher.
-     * The leading slash it API change! It's impacts have tp be checked.
-     * (2011-02)
+ one configured.
+
+ XXX This implementation starts with a leading slash and ends with a
+ slash. In previous configurations String urls began without a slash in
+ order to be able to provide a full URL_MSG which also contains the context
+ part. Since version 5.2 the context part is handled by (new) dispatcher.
+ The leading slash it API change! It's impacts have tp be checked.
+ (2011-02)
      *
      * @return url String for new user registration page as String
      */
@@ -418,18 +412,18 @@ public class LoginServlet extends BebopApplicationServlet {
     }
 
     /**
-     * Provides an absolute URL (leading slash) for the system logout page. It
-     * is relative to document root without any constant prefix if there is one
-     * configured.
+     * Provides an absolute URL_MSG (leading slash) for the system logout page. It
+ is relative to document root without any constant prefix if there is one
+ configured.
+
+ XXX This implementation starts with a leading slash and ends with a
+ slash. In previous configurations String urls began without a slash in
+ order to be able to provide a full URL_MSG which also contains the context
+ part. Since version 5.2 the context part is handled by (new) dispatcher.
+ The leading slash it API change! It's impacts have tp be checked.
+ (2011-02)
      *
-     * XXX This implementation starts with a leading slash and ends with a
-     * slash. In previous configurations String urls began without a slash in
-     * order to be able to provide a full URL which also contains the context
-     * part. Since version 5.2 the context part is handled by (new) dispatcher.
-     * The leading slash it API change! It's impacts have tp be checked.
-     * (2011-02)
-     *
-     * @return URL for logout page as String
+     * @return URL_MSG for logout page as String
      */
     public static String getLogoutPageURL() {
         return s_loginURL + LOGOUT_PATH_INFO;

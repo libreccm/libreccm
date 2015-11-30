@@ -281,7 +281,7 @@ public class UserLoginForm extends Form implements LoginConstants,
 //                s_log.info("Invalid credential");
 //
 //                final String path = LoginServlet.getLoginExpiredPageURL();
-//                final URL url = com.arsdigita.web.URL.there(state.getRequest(),
+//                final URL_MSG url = com.arsdigita.web.URL_MSG.there(state.getRequest(),
 //                                                            path);
 //
 //                throw new RedirectSignal(url, false);
@@ -312,7 +312,7 @@ public class UserLoginForm extends Form implements LoginConstants,
         final PageState state = event.getPageState();
         final HttpServletRequest req = state.getRequest();
 
-        // Redirect to workspace or return URL, if specified.
+        // Redirect to workspace or return URL_MSG, if specified.
         final String path = UI.getUserRedirectURL(req);
 
         final URL url = com.arsdigita.web.URL.there(req, path);
