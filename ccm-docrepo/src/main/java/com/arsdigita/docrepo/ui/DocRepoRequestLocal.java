@@ -37,7 +37,8 @@ import org.libreccm.docrepo.ResourceRepository;
 public class DocRepoRequestLocal extends RequestLocal
         implements Constants {
 
-    Logger log = Logger.getLogger(DocRepoRequestLocal.class);
+    private static final Logger log = Logger.getLogger(
+            DocRepoRequestLocal.class);
 
     @Override
     protected Object initialValue(PageState state) {

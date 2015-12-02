@@ -60,7 +60,8 @@ import java.util.List;
 public class DestinationFolderForm extends Form implements FormInitListener,
         FormProcessListener, Constants {
 
-    private static final Logger log = Logger.getLogger(DestinationFolderForm.class);
+    private static final Logger log = Logger.getLogger(
+            DestinationFolderForm.class);
 
     private Hidden m_resourceList;
     private ExpandedFolderTree m_radioGroup;

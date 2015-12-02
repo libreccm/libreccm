@@ -36,7 +36,8 @@ import org.apache.log4j.Logger;
  */
 public class FileInfoHistoryPane extends SimpleContainer implements Constants {
 
-    private static Logger log = Logger.getLogger(FileInfoHistoryPane.class);
+    private static final Logger log = Logger.getLogger(
+            FileInfoHistoryPane.class);
 
     private Component m_history;
     // share file instance for all sub components
