@@ -41,8 +41,9 @@
         <!--<module>ccm-docrepo</module>-->
         
         <!-- Bundle modules -->
+        <module>ccm-bundle-devel</module>
         <module>ccm-test-bundle-wildfly8</module>
-
+        
         <!-- Archetypes -->
         <module>ccm-archetype-module</module>
         <module>ccm-cms</module>

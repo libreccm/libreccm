@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <timestamp>${maven.build.timestamp}</timestamp>
+        <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss'Z'Z</maven.build.timestamp.format>
+        <wildfly.swarm.version>1.0.0.Alpha5</wildfly.swarm.version>
+    </properties>
+    
+    <parent>
+        <groupId>org.libreccm</groupId>
+        <artifactId>libreccm-parent</artifactId>
+        <version>7.0.0-SNAPSHOT</version>
+    </parent>
+    
+    <groupId>org.libreccm</groupId>
+    <artifactId>ccm-bundle-devel</artifactId>
+
+    <name>LibreCCM Devel Bundle</name>
+
+    <licenses>
+        <license>
+            <name>Lesser GPL 2.1</name>
+            <url>http://www.gnu.org/licenses/old-licenses/lgpl-2.1</url>
+        </license>
+    </licenses>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.libreccm</groupId>
+            <artifactId>ccm-core</artifactId>
+            <version>7.0.0-SNAPSHOT</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.wildfly.swarm</groupId>
+            <artifactId>wildfly-swarm-undertow</artifactId>
+            <version>${wildfly.swarm.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.wildfly.swarm</groupId>
+            <artifactId>wildfly-swarm-jpa</artifactId>
+            <version>${wildfly.swarm.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.wildfly.swarm</groupId>
+            <artifactId>wildfly-swarm-datasources</artifactId>
+            <version>${wildfly.swarm.version}</version>
+        </dependency>
+        
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.wildfly.swarm</groupId>
+                <artifactId>wildfly-swarm-plugin</artifactId>
+                <version>${wildfly.swarm.version}</version>
+                <configuration>
+                    <mainClass>org.libreccm.wildfly.swarm.Bundle</mainClass>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>package</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
