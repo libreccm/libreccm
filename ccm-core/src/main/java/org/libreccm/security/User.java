@@ -59,9 +59,9 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "User.findByName",
                 query = "SELECT u FROM User u WHERE u.name = :name"),
     @NamedQuery(name = "User.findByEmailAddress",
-                query = "SELECT u FROM User u "
-                            + "WHERE u.primaryEmailAddress.address = :emailAddress"
-    )})
+                query = "SELECT u FROM User u WHERE " +
+                        "u.primaryEmailAddress.address = :emailAddress")
+})
 @XmlRootElement(name = "user", namespace = CORE_XML_NS)
 //Supressing a few warnings from PMD because they misleading here.
 //User is perfectly fine class name, and the complexity is not to high...

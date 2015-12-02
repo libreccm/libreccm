@@ -52,11 +52,17 @@ import java.util.List;
 @Table(schema = "CCM_DOCREPO", name = "RESOURCES")
 @NamedQueries({
         @NamedQuery(name = "DocRepo.findResourceByPath",
-                query = "SELECT r FROM DocRepoResource r WHERE r.path = :pathName"),
+                    query = "SELECT r FROM DocRepoResource r WHERE " +
+                            "r.path = :pathName"),
+        @NamedQuery(name = "DocRepo.findResourcesByName",
+                    query = "SELECT r FROM DocRepoResource r WHERE " +
+                            "r.name = :name"),
         @NamedQuery(name = "DocRepo.findCreatedResourcesFromUser",
-                query = "SELECT r FROM DocRepoResource r WHERE r.creationUser = :user"),
+                    query = "SELECT r FROM DocRepoResource r WHERE " +
+                            "r.creationUser = :user"),
         @NamedQuery(name = "DocRepo.findModifiedResourcesFromUser",
-                query = "SELECT r FROM DocRepoResource r WHERE r.lastModifiedUser = :user")})
+                    query = "SELECT r FROM DocRepoResource r WHERE " +
+                            "r.lastModifiedUser = :user")})
 public abstract class Resource extends CcmObject {
 
     private static final long serialVersionUID = -910317798106611214L;
@@ -295,5 +301,9 @@ public abstract class Resource extends CcmObject {
 
     public boolean isRoot() {
         return isFolder() && getParent() == null;
+    }
+
+    public boolean isFile() {
+        return !isFolder();
     }
 }

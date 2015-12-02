@@ -56,7 +56,6 @@ public class ResourceRepository extends AbstractAuditedEntityRepository<Long, Re
         if (entity == null) {
             throw new IllegalArgumentException("Entity to save can't be null.");
         }
-
         return entity.getObjectId() == 0;
     }
 
@@ -113,4 +112,18 @@ public class ResourceRepository extends AbstractAuditedEntityRepository<Long, Re
         return query.getResultList();
     }
 
+    /**
+     * Retrieve all {@link Resource}s with the given name.
+     *
+     * @param name The name for the searched {@link Resource}
+     * @return  The {@link Resource}s with the given name, if there aren't
+     *          any an {@code EmptyList}
+     */
+    public List<Resource> findByName(final String name) {
+        final TypedQuery<Resource> query = entityManager.createNamedQuery(
+                "DocRepo.findResourcesByName", Resource.class);
+        query.setParameter("name", name);
+
+        return query.getResultList();
+    }
 }

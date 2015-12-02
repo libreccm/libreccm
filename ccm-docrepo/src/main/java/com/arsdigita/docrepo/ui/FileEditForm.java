@@ -21,6 +21,7 @@ package com.arsdigita.docrepo.ui;
 import com.arsdigita.bebop.ColumnPanel;
 import com.arsdigita.bebop.Form;
 import com.arsdigita.bebop.FormData;
+import com.arsdigita.bebop.FormProcessException;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.SimpleContainer;
@@ -33,13 +34,14 @@ import com.arsdigita.bebop.form.TextArea;
 import com.arsdigita.bebop.form.TextField;
 import com.arsdigita.bebop.parameters.NotEmptyValidationListener;
 import com.arsdigita.bebop.parameters.StringParameter;
+import com.arsdigita.docrepo.util.GlobalizationUtil;
 import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.docrepo.File;
+import org.libreccm.docrepo.Resource;
+import org.libreccm.docrepo.ResourceManager;
 import org.libreccm.docrepo.ResourceRepository;
-
-import javax.servlet.http.HttpServletRequest;
 
 //import com.arsdigita.docrepo.File;
 //import com.arsdigita.docrepo.Folder;
@@ -134,13 +136,48 @@ public class FileEditForm extends Form implements FormValidationListener,
     }
 
     /**
+     * Tests if the new name already exists in the current folder when event
+     * has been triggered. Is been called before processed.
+     *
+     * @param event The event
+     *
+     * @throws FormProcessException
+     */
+    public void validate(FormSectionEvent event) throws FormProcessException {
+        PageState state = event.getPageState();
+        FormData data = event.getFormData();
+
+        Long resourceId = (Long) state.getValue(FILE_ID_PARAM);
+        File file = null;
+        ResourceManager resourceManager = null;
+        final CdiUtil cdiUtil = new CdiUtil();
+        final ResourceRepository resourceRepository;
+        try {
+            resourceRepository = cdiUtil.findBean(ResourceRepository.class);
+            Resource resource = resourceRepository.findById(resourceId);
+            file = resource.isFile() ? (File) resource : null;
+            resourceManager = cdiUtil.findBean(ResourceManager.class);
+        } catch (CdiLookupException ex) {
+            log.error("Failed to find bean for the ResourceManager.", ex);
+        }
+
+        if (resourceManager != null && file != null) {
+            String fname = (String) data.get(FILE_EDIT_FNAME);
+
+            if (!resourceManager.isValidNewResourceName(fname, file)) {
+                throw new FormProcessException(GlobalizationUtil.globalize(
+                        "ui.file.name.invalid"));
+            }
+        }
+    }
+
+    /**
      * Read form and update when event has been triggered.+
      *
      * @param event The event
      */
     public void process(FormSectionEvent event) {
         PageState state = event.getPageState();
-        HttpServletRequest req = state.getRequest();
         FormData data = event.getFormData();
 
         String fname = (String) data.get(FILE_EDIT_FNAME);
@@ -155,8 +192,6 @@ public class FileEditForm extends Form implements FormValidationListener,
             if (file != null) {
                 file.setName(fname);
                 file.setDescription(fdesc);
-                // Todo: How to change?
-                //file.applyTag(FILE_EDIT_ACTION_DESCRIPTION.localize(req).toString());
                 resourceRepository.save(file);
             } else {
                 log. error(String.format("Couldn't find file %d in the " +
@@ -166,15 +201,5 @@ public class FileEditForm extends Form implements FormValidationListener,
             log.error("Failed to find bean for ResourceRepository.", ex);
         }
         m_parent.displayPropertiesAndActions(state);
-    }
-
-    /**
-     * Tests if the new name already exists in the current folder when event
-     * has been triggered.
-     *
-     * @param event The event
-     */
-    public void validate(FormSectionEvent event) {
-        // Todo: redundant i think
     }
 }

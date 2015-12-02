@@ -167,6 +167,7 @@ public class DestinationFolderForm extends Form implements FormInitListener,
      * Processes the destination folder form after it has been triggered.
      *
      * @param event The section event to be triggered
+     *
      * @throws FormProcessException
      */
     public void process(FormSectionEvent event) throws FormProcessException {
@@ -296,11 +297,10 @@ public class DestinationFolderForm extends Form implements FormInitListener,
                 HashMap map = new HashMap();
                 map.put(new Long("-1"), treeElement);
 
-                // Todo: beibehalten?
-                Repository repository = (Repository) Web.getWebContext().getApplication();
+                Repository repository = (Repository) Web.
+                        getWebContext().getApplication();
 
                 Folder rootFolder = repository.getRootFolder();
-                // Todo: Method getSubFolders?
                 List<Resource> resources = rootFolder.getImmediateChildren();
 
                 for (Resource resource : resources) {

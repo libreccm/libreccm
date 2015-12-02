@@ -18,13 +18,15 @@
  */
 package org.libreccm.docrepo;
 
+import org.hibernate.validator.constraints.NotBlank;
 import org.libreccm.security.User;
 import org.libreccm.web.CcmApplication;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -37,6 +39,10 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(schema = "CCM_DOCREPO", name = "REPOSITORIES")
+@NamedQueries({
+        @NamedQuery(name = "DocRepo.findRepositoriesForOwner",
+                    query = "SELECT r FROM Repository r WHERE r.owner = :owner")
+})
 public class Repository extends CcmApplication {
 
     private static final long serialVersionUID = 6673243021462798036L;
@@ -44,21 +50,24 @@ public class Repository extends CcmApplication {
     /**
      * Name des {@code Repository}s.
      */
-    @Column(name = "NAME")
+    @Column(name = "NAME", length = 512, unique = true, nullable = false)
+    @NotBlank
     private String name;
 
     /**
      * The root of the {@code Repository}.
      */
     @OneToOne
-    @JoinColumn(name = "ROOT_FOLDER")
+    @JoinColumn(name = "ROOT_FOLDER_ID", unique = true, nullable = false)
+    @NotBlank
     private Folder rootFolder;
 
     /**
      * The owner of the {@code Repository}.
      */
     @OneToOne
-    @JoinColumn(name = "OWNER_ID")
+    @JoinColumn(name = "OWNER_ID", nullable = false)
+    @NotBlank
     private User owner;
 
     /**
