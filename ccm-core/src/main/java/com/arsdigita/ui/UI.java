@@ -18,7 +18,9 @@
 
 package com.arsdigita.ui;
 
+import com.arsdigita.ui.login.LoginConstants;
 import com.arsdigita.ui.login.LoginServlet;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -179,7 +181,7 @@ public abstract class UI {
      * @deprecated use Login.getLoginPageURL()() instead
      */
     public static String getLoginPageURL() {
-        return LoginServlet.LOGIN_PAGE_URL;
+        return LoginConstants.LOGIN_PAGE_URL;
     }
 
     /**

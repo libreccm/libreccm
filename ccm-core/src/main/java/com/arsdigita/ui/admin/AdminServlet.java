@@ -30,8 +30,10 @@ import com.arsdigita.web.BaseApplicationServlet;
 import com.arsdigita.web.LoginSignal;
 import com.arsdigita.xml.Document;
 
+import org.apache.shiro.subject.Subject;
 import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.security.PermissionChecker;
 import org.libreccm.web.CcmApplication;
 
 import java.io.IOException;
@@ -39,8 +41,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import static com.arsdigita.ui.login.LoginConstants.*;
 
 /**
  * Web Developer Support Application Servlet class, central entry point to
@@ -57,6 +62,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Jens Pelzetter
  * @author pb
  */
+@WebServlet(urlPatterns = {LOGIN_SERVLET_PATH})
 public class AdminServlet extends BaseApplicationServlet implements
     AdminConstants {
 
@@ -100,42 +106,25 @@ public class AdminServlet extends BaseApplicationServlet implements
                                 final CcmApplication app) throws
         ServletException, IOException {
         // ///////    Some preparational steps                   ///////////////
-        /* Determine access privilege: only logged in users may access DS   */
+        /* Determine access privilege: only logged in users may access   */
         final CdiUtil cdiUtil = new CdiUtil();
-//        final CcmSessionContext sessionContext;
-//        try {
-//            sessionContext = cdiUtil.findBean(
-//                CcmSessionContext.class);
-//        } catch (CdiLookupException ex) {
-//            throw new UncheckedWrapperException(
-//                "Failed to lookup session context", ex);
-//        }
-//        final Subject subject = sessionContext.getCurrentSubject();
-//        if (subject == null) {
-//            throw new LoginSignal(sreq);
-//        }
-//
-//        final PrivilegeRepository privilegeRepository;
-//        try {
-//            privilegeRepository = cdiUtil.findBean(PrivilegeRepository.class);
-//        } catch (CdiLookupException ex) {
-//            throw new UncheckedWrapperException(
-//                "Failed to lookup PrivilegeRepository", ex);
-//        }
-//        final Privilege adminPrivilege = privilegeRepository.retrievePrivilege(
-//            "admin");
-//
-//        final PermissionManager permissionManager;
-//        try {
-//            permissionManager = cdiUtil.findBean(PermissionManager.class);
-//        } catch (CdiLookupException ex) {
-//            throw new UncheckedWrapperException(
-//                "Failed to look up PermissionManager", ex);
-//        }
+        final Subject subject;
+        final PermissionChecker permissionChecker;
+        try {
+            subject = cdiUtil.findBean(Subject.class);
+            permissionChecker = cdiUtil.findBean(PermissionChecker.class);
+        } catch (CdiLookupException ex) {
+            throw new UncheckedWrapperException(ex);
+        }
         
-//        if (!permissionManager.isPermitted(adminPrivilege, null, subject)) {
-//            throw new AccessDeniedException("User is not an administrator");
-//        }
+        if (!subject.isAuthenticated()) {
+            throw new LoginSignal(sreq);
+        }
+        
+        /* Determine access privilege: Admin privileges must be granted     */
+        if (!permissionChecker.isPermitted("admin")) {
+            throw new AccessDeniedException("User is not an administrator");
+        }
 
         /* Want admin to always show the latest stuff...                     */
         DispatcherHelper.cacheDisable(sresp);
@@ -220,7 +209,7 @@ public class AdminServlet extends BaseApplicationServlet implements
          * Create application administration panel
          */
         tabbedPane.addTab(APPLICATIONS_TAB_TITLE,
-                           new ApplicationsAdministrationTab());
+                          new ApplicationsAdministrationTab());
 
 //        browsePane.setTabbedPane(tabbedPane);
 //        browsePane.setGroupAdministrationTab(groupAdminTab);      

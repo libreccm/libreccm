@@ -402,4 +402,9 @@ interface AdminConstants {
 
     String SEARCH_QUERY = "query";
 
+    public final static String ADMIN_PAGE_URL = "/admin";
+    
+    public final static String ADMIN_SERVLET = "/admin/*";
+    
+    
 }

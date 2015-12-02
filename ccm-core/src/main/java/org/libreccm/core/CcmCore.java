@@ -18,8 +18,11 @@
  */
 package org.libreccm.core;
 
+import com.arsdigita.ui.admin.AdminApplicationCreator;
+import com.arsdigita.ui.admin.AdminServlet;
 import com.arsdigita.ui.login.LoginApplicationCreator;
 import com.arsdigita.ui.login.LoginServlet;
+
 import org.libreccm.modules.CcmModule;
 import org.libreccm.modules.InitEvent;
 import org.libreccm.modules.InstallEvent;
@@ -27,20 +30,26 @@ import org.libreccm.modules.Module;
 import org.libreccm.modules.ShutdownEvent;
 import org.libreccm.modules.UnInstallEvent;
 import org.libreccm.security.SystemUsersSetup;
-import org.libreccm.security.User;
 
 import javax.persistence.EntityManager;
+
 import org.libreccm.web.ApplicationType;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@Module(applicationTypes = {@ApplicationType(name = "Login", 
-                                             description = "Login Application",
-                                             singleton = true,
-                                             creator = LoginApplicationCreator.class,
-                                             servlet = LoginServlet.class)},
+@Module(applicationTypes = {
+    @ApplicationType(name = "Login",
+                     description = "Login Application",
+                     singleton = true,
+                     creator = LoginApplicationCreator.class,
+                     servlet = LoginServlet.class),
+    @ApplicationType(name = "CCM Admin",
+                     description = "Site-wide admin application",
+                     singleton = true,
+                     creator = AdminApplicationCreator.class,
+                     servlet = AdminServlet.class)},
         entities = {org.libreccm.auditing.CcmRevision.class,
                     org.libreccm.categorization.Categorization.class,
                     org.libreccm.categorization.Category.class,
@@ -89,7 +98,8 @@ public class CcmCore implements CcmModule {
     public void install(final InstallEvent event) {
         final EntityManager entityManager = event.getEntityManager();
 
-        final SystemUsersSetup systemUsersSetup = new SystemUsersSetup(entityManager);
+        final SystemUsersSetup systemUsersSetup = new SystemUsersSetup(
+            entityManager);
         systemUsersSetup.setupSystemUsers();
     }
 
