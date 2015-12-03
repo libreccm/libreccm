@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html [<!ENTITY nbsp '&#160;'>
+                <!ENTITY shy '&#173;'>
+                <!ENTITY ndash '&#8211;'>]>
+<html>
+    <head>
+        <title>General structure</title>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    </head>
+    <body>
+        <h1>General structure</h1>
+        <main>
+            <p>
+                There some options for using Foundry. The easiest way is to use a version/package of 
+                LibreCCM which includes Foundry. In this case Foundry is installed in the 
+                <code>/themes/foundry</code> folder. There should also be a second folder named
+                <code>/themes/foundry-base</code> which includes a basic child theme.
+            </p>
+            <p>
+                Foundry supports a an parent/child theme approach. This means that the logic 
+                part of Foundry (the XSL part) is only installed in <code>/themes/foundry</code> and
+                is updated together with the normal upgrades of CCM. A child only contains 
+                the templates, CSS files, static texts and configurations files for a theme. Custom
+                extensions are not supported yet. 
+            </p>
+            <p>
+                A complete Foundry theme consists of the following top level folders and files:
+            </p>
+            <dl id="foundry-structure-folders">
+                <dt>conf</dt>
+                <dd>Contains configuration files for the theme</dd>
+                <dt>doc</dt>
+                <dd>Static parts of the documentation of Foundry, for example this text</dd>
+                <dt>fonts</dt>
+                <dd>Web fonts for the theme</dd>
+                <dt>foundry</dt>
+                <dd>
+                    This folder contains the logic parts (the XSL) of Foundry. The internal 
+                    structure is described in the <a href="#developer-manual">Developer Manual</a>.
+                </dd>
+                <dt>images</dt>
+                <dd>Static images for the theme</dd>
+                <dt>libs</dt>
+                <dd>
+                    Additional JavaScript libraries. jQuery and some other JavaScript libraries are 
+                    provided by CCM itself, and can be 
+                    included using special elements like the 
+                    <a href="#load-jquery"><code>load-jquery</code></a> element. 
+                </dd>
+                <dt>scripts</dt>
+                <dd>JavaScripts needed in the theme. </dd>
+                <dt>styles</dt>
+                <dd>
+                    The CSS styles for the theme. More information about them can be found in the 
+                    <a href="#css-files">CSS files</a> section.
+                </dd>
+                <dt>templates</dt>
+                <dd>
+                    The layout templates for the theme. A detailed description can be found in the
+                    <a href="#layout-templates">Layout templates</a> section.
+                </dd>
+                <dt>texts</dt>
+                <dd>Static texts for the theme</dd>
+                <dt>user</dt>
+                <dd>Custom extensions (XSL) for theme. Not supported yet.</dd>
+            </dl>
+            <p>
+                Foundry also supports a parent &ndash; child &ndash; grandchild structure. This is 
+                maybe useful 
+                when you have themes which only differ in details like logos but use the same 
+                general structure. Most tags which are used to include resources like images,
+                CSS files etc. support the attribute <code>origin</code> which can have three 
+                values:
+            </p>
+            <dl>
+                <dt>Not set</dt>
+                <dd>The resource is loaded from the current theme</dd>
+                <dt><code>master</code></dt>
+                <dd>
+                    If the current theme is a master/parent theme the resource is loaded from the 
+                    current theme. If the current theme is a child theme the resource is loaded
+                    from the master theme.
+                </dd>
+                <dt><code>internal</code></dt>
+                <dd>
+                    The file is loaded from the <code>foundry</code>. If the theme is a child
+                    theme is file is loaded from the Foundry master in <code>/themes/foundry</code>.
+                </dd>
+            </dl>
+            <p>
+                The recommend way for creating a team using Foundry is to create a new child theme:
+            </p>
+            <ol>
+                <li>To do so create a new theme using the CCM Theme director.</li> 
+                <li>
+                    Copy the contents of the <code>themes/foundry-base</code> folder to the folder 
+                    created by the new theme
+                    in <code>themes/devel-themedir/</code>.
+                </li>
+                <li>
+                    Customise the theme
+                </li>
+            </ol>
+        </main>
+    </body>
+</html>

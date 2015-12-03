@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<content-item-layout>
+   
+    <div class="journal">
+    
+        <include file="fragments/edit-link.xml"/>
+    
+        <dl>
+            <if-property name="issn">
+                <dt>
+                    <show-text module="scipublications">issn</show-text>
+                </dt>
+                <dd>
+                    <show-property name="issn"/>
+                </dd>
+            </if-property>
+            <if-property name="firstYear">
+                <dt>
+                    <show-text module="scipublications">journal-first-year</show-text>
+                </dt>
+                <dd>
+                    <show-property name="firstYear"/>
+                </dd>
+            </if-property>
+            <if-property name="lastYear">
+                <dt>
+                    <show-text module="scipublications">journal-last-year</show-text>
+                </dt>
+                <dd>
+                    <show-property name="lastYear"/>
+                </dd>
+            </if-property>
+        </dl>
+    
+        <div class="journal-abstract">
+            <show-property name="abstract"/>
+        </div>
+    
+        <scipublications>
+            <articles>
+                <h2 class="subheading">
+                    <show-text module="scipublications">
+                        journal-articles
+                    </show-text>
+                </h2>
+                <ul class="articles">
+                    <article-item>
+                        <li>
+                            <content-item mode="list"/>
+                        </li>
+                    </article-item>
+                </ul>
+            </articles>
+        </scipublications>
+    
+    </div>
+</content-item-layout>

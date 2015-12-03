@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE stylesheet [<!ENTITY nbsp '&#160;'>
+                      <!ENTITY shy '&#173;'>
+                      <!ENTITY times '&#xD7;'>]>
+<content-item-layout>
+
+    <div class="service">
+        <include file="fragments/edit-link.xml"/>
+    
+        <if-property name="summary">
+            <div class="lead">
+                <show-property name="summary"/>
+            </div>
+        </if-property>
+
+        <include file="fragments/assets/image-attachments.xml"/>
+
+        <include file="fragments/assets/notes.xml"/>
+        
+        <dl>
+            <if-property name="servicesProvided">
+                <dt>
+                    <show-text module="service">services-provided</show-text>
+                </dt>
+                <dd>
+                    <show-property name="servicesProvided"/>
+                </dd>
+            </if-property>
+            <if-property name="openingTimes">
+                <dt>
+                    <show-text module="service">opening-times</show-text>
+                </dt>
+                <dd>
+                    <show-property name="openingTimes"/>
+                </dd>
+            </if-property>
+            <if-property name="address">
+                <dt>
+                    <show-text module="service">address</show-text>
+                </dt>
+                <dd>
+                    <show-property name="address"/>
+                </dd>
+            </if-property>
+            <if-property name="contacts">
+                <dt>
+                    <show-text module="service">contacts</show-text>
+                </dt>
+                <dd>
+                    <show-property name="contacts"/>
+                </dd>
+            </if-property>
+        </dl>
+    
+        <include file="fragments/assets/related-links-and-file-attachments.xml" />
+    
+    </div>
+</content-item-layout>

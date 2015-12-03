@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+    This file defines the HTML representation for the edit link. It can be
+    included into other layout templates using the <include> element.
+-->
+<fragment-layout>
+    <edit-link>
+        <div class="edit-link">
+            <a>
+                <span class="glyphicon glyphicon-pencil"></span>
+            </a>
+        </div>
+    </edit-link>
+</fragment-layout>

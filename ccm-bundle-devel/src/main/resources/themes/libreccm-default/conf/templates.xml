@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    This file assigned the layout templates from the templates directory
+    to an application or content item.
+-->
+<templates>
+    <!--- 
+        The entries in the applications element configure which layout is 
+        used for which application.
+    -->
+    <applications>
+        <!--
+            <application name = "" page-class=""></application>
+        -->
+        <application name="admin" origin="internal">admin-layout.xml</application>
+        <application name="forum">forum.xml</application>
+        <application name="login" origin="internal">admin-layout.xml</application>
+        <application name="navigation" class="portalPage">portal-workspace.xml</application>
+        <application name="navigation" class="portalGridPage">portal-workspace-grid.xml</application>
+        <!--<application name="navigation" class="simplePage">nav-default.xml</application>-->
+        <application name="navigation" class="simplePage">navigation.xml</application>
+        <application name="navigation" class="sitemapPage">sitemap.xml</application>
+        <application name="navigation" class="welcomePage">welcome.xml</application>
+        <application name="none" class="cms-admin" origin="internal">admin-layout.xml</application>
+        <application name="portal">portal-workspace.xml</application>
+        <!-- 
+            If there is no entry for the current application use the default 
+            layout.
+        -->
+        <default>default-layout.xml</default>
+    </applications>
+    
+    <!-- 
+        The entries in the content-items element are used to configure which 
+        template is used for which content type. You can also configure
+        a templates for specific content items. For detailed explantation
+        please refer to the Foundry documentation.
+        
+        There are three different part. The entries in the detail element control
+        which templates are used for the default view, the entires in the list
+        element control which templates to use for the list view. The entries
+        in the link element control which template to use for the link view.
+    -->
+    <content-items>
+        <detail>
+            <content-item content-type="com.arsdigita.cms.contenttypes.Address">
+                content-items/address-detail.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.Agenda">
+                content-items/agenda-detail.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.Article">
+                content-items/article-detail.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.ArticleInCollectedVolume">
+                content-items/scipublications-detail.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.ArticleInJournal">
+                content-items/scipublications-detail.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.Bookmark">
+                content-items/bookmark-detail.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.CollectedVolume">
+                content-items/scipublications-detail.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.Contact">
+                content-items/contact-detail.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.DecisionTree">
+                content-items/decisiontree-detail.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.Event">
+                content-items/event-detail.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.Expertise">
+                content-items/scipublications-detail.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.FileStorageItem">
+                content-items/fsi-detail.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.formbuilder.FormItem">
+                content-items/formitem-detail.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.GreyLiterature">
+                content-items/scipublications-detail.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.Image">
+                content-items/image-detail.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.Journal">
+                content-items/journal-detail.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.InProceedings">
+                content-items/scipublications-detail.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.InternetArticle">
+                content-items/scipublications-detail.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.Job">
+                content-items/job-detail.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.LegalNotice">
+                content-items/legalnotice-detail.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.Minutes">
+                content-items/minutes-detail.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.Monograph">
+                content-items/scipublications-detail.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.MultiPartArticle">
+                content-items/mpa-detail.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.NewsItem">
+                content-items/news-detail.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.Person">
+                content-items/person-detail.xml
+            </content-item>
+             <content-item content-type="com.arsdigita.cms.contenttypes.PressRelease">
+                content-items/pressrelease-detail.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.Proceedings">
+                content-items/scipublications-detail.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.Review">
+                content-items/scipublications-detail.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.Service">
+                content-items/service-detail.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.SciAuthor">
+                content-items/person-detail.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.SciDepartment">
+                content-items/scidepartment-detail.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.SciMember">
+                content-items/person-detail.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.SciInstitute">
+                content-items/sciinstitute-detail.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.SciProject">
+                content-items/sciproject-detail.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.Series">
+                content-items/series-detail.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.SimpleAddress">
+                content-items/simpleaddress-detail.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.SiteProxy">
+                content-items/siteproxy-detail.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.WorkingPaper">
+                content-items/scipublications-detail.xml
+            </content-item>
+            <default>content-items/detail-default.xml</default>
+        </detail>
+        <link>
+            <default>content-items/link-default.xml</default>
+        </link>
+        <list>
+            <content-item content-type="com.arsdigita.cms.contenttypes.Article">
+                content-items/article-list.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.ArticleInCollectedVolume">
+                content-items/scipublications-list.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.ArticleInJournal">
+                content-items/scipublications-list.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.Bookmark">
+                content-items/bookmark-list.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.CollectedVolume">
+                content-items/scipublications-list.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.Event">
+                content-items/event-list.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.Expertise">
+                content-items/scipublications-list.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.FileStorageItem">
+                content-items/fsi-list.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.GreyLiterature">
+                content-items/scipublications-list.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.InProceedings">
+                content-items/scipublications-list.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.InternetArticle">
+                content-items/scipublications-list.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.Job">
+                content-items/job-list.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.Journal">
+                content-items/journal-list.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.NewsItem">
+                content-items/news-list.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.Person">
+                content-items/person-list.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.Person"
+                          style="sciproject-member">
+                content-items/sciproject-member.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.Person"
+                          style="sciproject-memberlist">
+                content-items/sciproject-memberlist.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.PressRelease">
+                content-items/pressrelease-list.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.Proceedings">
+                content-items/scipublications-list.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.Monograph">
+                content-items/scipublications-list.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.MultiPartArticle">
+                content-items/mpa-list.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.Review">
+                content-items/scipublications-list.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.SciAuthor">
+                content-items/person-list.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.SciAuthor"
+                          style="sciproject-member">
+                content-items/sciproject-member.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.SciAuthor"
+                          style="sciproject-memberlist">
+                content-items/sciproject-memberlist.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.SciDepartment">
+                content-items/scidepartment-list.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.SciInstitute">
+                content-items/sciinstitute-list.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.SciMember">
+                content-items/person-list.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.SciMember"
+                          style="sciproject-member">
+                content-items/sciproject-member.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.SciMember"
+                          style="sciproject-memberlist">
+                content-items/sciproject-memberlist.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.SciProject">
+                content-items/sciproject-list.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.Series">
+                content-items/series-list.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.WorkingPaper">
+                content-items/scipublications-list.xml
+            </content-item>
+            <default>content-items/list-default.xml</default>
+        </list>
+    </content-items>
+    
+    <!-- 
+        These entries control which template is used to display a which portlet
+        type.
+     -->
+    <portlets>
+        <portlet class="com.arsdigita.cms.ui.portlet.ContentItemPortletRenderer">
+            portlets/contentitem.xml
+        </portlet>
+        <portlet class="com.arsdigita.navigation.ui.portlet.ItemListPortletRenderer">
+            portlets/item-list.xml
+        </portlet>
+        <portlet class="com.arsdigita.portalworkspace.ui.portlet.FreeformHTMLPortletRenderer">
+            portlets/freeform-html.xml
+        </portlet>
+        <portlet class="com.arsdigita.portalworkspace.ui.SimplePortlet">
+            portlets/simple-portlet.xml
+        </portlet>
+        <!--<default>
+            
+        </default>-->
+    </portlets>
+</templates>

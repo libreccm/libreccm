@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE stylesheet [<!ENTITY nbsp '&#160;'>
+                      <!ENTITY thinsp '&#8201;'>]>
+<content-item-layout>
+    
+    <scipublications>
+        <div class="scipublication">
+        
+            <include file="fragments/edit-link.xml"/>
+        
+            <div class="data">
+                <dl>
+                    <authors>
+                        <dt>
+                            <show-text module="scipublications">authors</show-text>
+                        </dt>
+                        <dd>
+                            <author>
+                                <a>
+                                    <surname after=", "/>
+                                    <givenname/>
+                                    <editor before=" " text="editor-suffix"/>
+                                </a>
+                                <separator>; </separator>
+                            </author>
+                        </dd>
+                    </authors>
+                    <dt>
+                        <show-text module="scipublications">year</show-text>
+                    </dt>
+                    <dd>
+                        <year-of-publication/>
+                    </dd>
+                    <if-year-first-published>
+                        <dt>
+                            <show-text module="scipublications">year-first-published</show-text>
+                        </dt>
+                        <dd>
+                            <year-first-published/>
+                        </dd>
+                    </if-year-first-published>
+                    <if-collected-volume>
+                        <dt>
+                            <show-text module="scipublications">collected-volume</show-text>
+                        </dt>
+                        <dd>
+                            <content-item mode="list"/>
+                        </dd>
+                    </if-collected-volume>
+                    <if-proceedings>
+                        <dt>
+                            <show-text module="scipublications">proceedings</show-text>
+                        </dt>
+                        <dd>
+                            <content-item mode="list"/>
+                        </dd>
+                    </if-proceedings>
+                    <if-journal>
+                        <dt>
+                            <show-text module="scipublications">journal</show-text>
+                        </dt>
+                        <dd>
+                            <journal-href>
+                                <a>
+                                    <journal-title/>
+                                </a>
+                            </journal-href>
+                            <space/>
+                            <volume/>
+                            <space/>
+                            <issue/>
+                        </dd>
+                    </if-journal>
+                    <if-name-of-conference>
+                        <dt>
+                            <show-text module="scipublications">conference</show-text>
+                        </dt>
+                        <dd>
+                            <name-of-conference/>
+                            <if-place-of-conference>
+                                <show-characters>, </show-characters>
+                                <place-of-conference/>
+                            </if-place-of-conference>
+                            <space/>
+                            <date-from-of-conference/>
+                            <show-characters> -</show-characters>
+                            <data-to-of-conference/>
+                        </dd>
+                    </if-name-of-conference>
+                    <if-last-accessed>
+                        <dt>
+                            <show-text module="scipublications">last-accessed</show-text>
+                        </dt>
+                        <dd>
+                            <last-accessed>
+                                <date-format default="true">
+                                    <iso-date/>
+                                </date-format>
+                                <date-format lang="de">
+                                    <day zero="true"/>.&thinsp;
+                                    <month-name/>&thinsp;
+                                    <year/>
+                                </date-format>
+                                <date-format lang="en">
+                                    <month/>/<day/>/<year/>
+                                </date-format>
+                            </last-accessed>
+                        </dd>
+                    </if-last-accessed>
+                    <publisher>
+                        <dt>
+                            <show-text module="scipublications">publisher</show-text>
+                        </dt>
+                        <dd>
+                            <publisher-place after=": "/>
+                            <name />
+                        </dd>
+                    </publisher>
+                    <if-organization>
+                        <dt>
+                            <show-text module="scipublications">organization</show-text>
+                        </dt>
+                        <dd>
+                            <organization/>
+                        </dd>
+                    </if-organization>
+                    <if-orderer>
+                        <dt>
+                            <show-text module="scipublications">orderer</show-text>
+                        </dt>
+                        <dd>
+                            <orderer/>
+                        </dd>
+                    </if-orderer>
+                    <if-place>
+                        <dt>
+                            <show-text module="scipublications">place</show-text>
+                        </dt>
+                        <dd>
+                            <place/>
+                        </dd>
+                    </if-place>
+                    <if-number-of-pages>
+                        <dt>
+                            <show-text module="scipublications">number-of-pages</show-text>
+                        </dt>
+                        <dd>
+                            <number-of-pages/>
+                        </dd>
+                    </if-number-of-pages>
+                    <if-pages-from>
+                        <dt>
+                            <show-text module="scipublications">page-range</show-text>
+                        </dt>
+                        <dd>
+                            <pages-from/>
+                            <space/>
+                            <show-text module="scipublications">page-range-to</show-text>
+                            <space/>
+                            <pages-to/>
+                        </dd>
+                    </if-pages-from>
+                    <if-volume>
+                        <dt>
+                            <show-text module="scipublications">volume</show-text>
+                        </dt>
+                        <dd>
+                            <volume/>
+                            <if-number-of-volumes>
+                                / <number-of-volumes/>
+                            </if-number-of-volumes>
+                        </dd>
+                    </if-volume>
+                    <if-number>
+                        <dt>
+                            <show-text module="scipublications">number</show-text>
+                        </dt>
+                        <dd>
+                            <number/>
+                        </dd>
+                    </if-number>
+                    <if-edition>
+                        <dt>
+                            <show-text module="scipublications">edition</show-text>
+                        </dt>
+                        <dd>
+                            <edition/>
+                        </dd>
+                    </if-edition>
+                    <if-isbn>
+                        <dt>
+                            <show-text module="scipublications">isbn</show-text>
+                        </dt>
+                        <dd>
+                            <isbn/>
+                        </dd>
+                    </if-isbn>
+                    <if-issn>
+                        <dt>
+                            <show-text module="scipublications">issn</show-text>
+                        </dt>
+                        <dd>
+                            <issn/>
+                        </dd>
+                    </if-issn>
+                    <if-url>
+                        <dt>
+                            <show-text module="scipublications">url</show-text>
+                        </dt>
+                        <dd>
+                            <url-href>
+                                <a>
+                                    <url/>
+                                </a>
+                            </url-href>
+                        </dd>
+                    </if-url>
+                    <if-urn>
+                        <dt>
+                            <show-text module="scipublications">urn</show-text>
+                        </dt>
+                        <dd>
+                            <urn-href>
+                                <a>
+                                    <urn/>
+                                </a>
+                            </urn-href>
+                        </dd>
+                    </if-urn>
+                    <if-doi>
+                        <dt>
+                            <show-text module="scipublications">url</show-text>
+                        </dt>
+                        <dd>
+                            <doi-href>
+                                <a>
+                                    <doi/>
+                                </a>
+                            </doi-href>
+                        </dd>
+                    </if-doi>
+                    <publication-series>
+                        <dt>
+                            <show-text module="scipublications">series</show-text>
+                        </dt>
+                        <dd>
+                            <series>
+                                <a>
+                                    <series-name/>
+                                    <space/>
+                                    <series-volume/>
+                                </a>
+                            </series>
+                        </dd>
+                    </publication-series>
+                    <if-reviewed>
+                        <dt>
+                            <show-text module="scipublications">reviewed</show-text>
+                        </dt>
+                        <dd>
+                    
+                        </dd>
+                    </if-reviewed>
+                </dl>
+                
+                <export-links>
+                    <div class="scipublications export-links">
+                        <h2 class="subheading">
+                            <show-text module="scipublications">
+                                export
+                            </show-text>
+                        </h2>
+            
+                        <ul class="scipublications export-links">
+                            <export-link>
+                                <li>
+                                    <a>
+                                        <export-link-formatname/>
+                                    </a>
+                                </li>
+                            </export-link>
+                        </ul>
+                    </div>
+                </export-links>
+    
+            </div>
+            
+            <h2 class="subheading">
+                <show-text module="scipublications">abstract</show-text>
+            </h2>
+            <include file="fragments/assets/image-attachments.xml"/>
+            <include file="fragments/assets/notes.xml"/>
+            <div class="abstract textinfo">
+                <abstract/>
+            </div>
+        
+            <if-misc>
+                <h2 class="subheading">
+                    <show-text module="scipublications">misc</show-text>
+                </h2>
+                <div class="misc textinfo">
+                    <misc/>
+                </div>
+            </if-misc>
+            
+            <library-signatures>
+                <h2 class="subheading">
+                    <show-text module="scipublications">
+                        library-signatures
+                    </show-text>
+                </h2>
+                <table class="library-signatures">
+                    <tr>
+                        <th>
+                            <show-text module="scipublications">
+                                library-signature-library
+                            </show-text>
+                        </th>
+                        <th>
+                            <show-text module="scipublications">
+                                library-signature-signature
+                            </show-text>
+                        </th>
+                        <th>
+                            <show-text module="scipublications">
+                                library-signature-misc
+                            </show-text>
+                        </th>
+                    </tr>
+                    <signature>
+                        <tr>
+                            <td>
+                                <library/>
+                            </td>
+                            <td>
+                                <library-link>
+                                    <a>
+                                        <signature-text/>
+                                    </a>
+                                </library-link>
+                            </td>
+                            <td>
+                                <signature-misc/>
+                            </td>
+                        </tr>
+                    </signature>
+                </table>
+            </library-signatures>
+        
+            <articles>
+                <h2 class="subheading">
+                    <show-text module="scipublications">
+                        collected-volume-articles
+                    </show-text>
+                </h2>
+                <ul class="articles">
+                    <article-item>
+                        <li>
+                            <content-item mode="list"/>
+                        </li>
+                    </article-item>
+                </ul>
+            </articles>
+        
+            <proceedings-papers>
+                <h2 class="subheading">
+                    <show-text module="scipublications">
+                        proceedings-papers
+                    </show-text>
+                </h2>
+                <ul class="articles">
+                    <paper>
+                        <li>
+                            <content-item mode="list"/>
+                        </li>
+                    </paper>
+                </ul>
+            </proceedings-papers>
+        
+            <include file="fragments/assets/related-links-and-file-attachments.xml" />
+        
+        </div>
+    </scipublications>
+</content-item-layout>

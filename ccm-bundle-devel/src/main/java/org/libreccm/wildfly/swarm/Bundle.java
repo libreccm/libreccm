@@ -52,59 +52,48 @@ public class Bundle {
         final Container container = new Container();
 
         final JDBCDriverConfigurator configurator
-                                         = new JDBCDriverConfigurator() {
+                                     = (driver) -> {
+                    driver.driverDatasourceClassName(config.getProperty(
+                            "db.driver.datasource.classname"));
+                    driver.xaDatasourceClass(config.getProperty(
+                            "db.xa.datasource.classname"));
+                    driver.driverModuleName("db.driver.module.name");
+                };
 
-            @Override
-            public void configure(final JDBCDriver driver) {
-                driver.driverDatasourceClassName(config.getProperty(
-                    "db.driver.datasource.classname"));
-                driver.xaDatasourceClass(config.getProperty(
-                    "db.xa.datasource.classname"));
-                driver.driverModuleName("db.driver.module.name");
-            }
-
-        };
-
-        final DataSourceConfigurator<?> dsConfigurator
-                                            = new DataSourceConfigurator() {
-
-            @Override
-            public void configure(final DataSource dataSource) {
-                dataSource.driverName("db-driver");
-                dataSource.connectionUrl(
+        final DataSourceConfigurator<?> dsConfigurator = (dataSource) -> {
+            dataSource.driverName("db-driver");
+            dataSource.connectionUrl(
                     config.getProperty("db.connection.url"));
-                dataSource.userName(config.getProperty("db.user.name"));
-                dataSource.password(config.getProperty("db.password"));
-            }
-
+            dataSource.userName(config.getProperty("db.user.name"));
+            dataSource.password(config.getProperty("db.password"));
         };
 
         container.fraction(new DatasourcesFraction().jdbcDriver("db-driver",
                                                                 configurator)
-            .dataSource("java:/comp/env/jdbc/ccm-core/db", dsConfigurator));
+                .dataSource("java:/comp/env/jdbc/ccm-core/db", dsConfigurator));
 
         container.fraction(new JPAFraction().inhibitDefaultDatasource()
-            .defaultDatasource("java:/comp/env/jdbc/ccm-core/db"));
+                .defaultDatasource("java:/comp/env/jdbc/ccm-core/db"));
 
         //Remove when CCM installer is available
         setup(config);
-        
+
         container.start();
 
         final WARArchive deployment = ShrinkWrap.create(WARArchive.class);
         deployment.addAsWebInfResource(
-            new ClassLoaderAsset(
-                "META-INF/persistence.xml",
-                Bundle.class.getClassLoader()),
-            "classes/META-INF/persistence.xml");
+                new ClassLoaderAsset(
+                        "META-INF/persistence.xml",
+                        Bundle.class.getClassLoader()),
+                "classes/META-INF/persistence.xml");
         deployment.addAllDependencies();
-
+        deployment.addAsResource("/themes");
         container.deploy(deployment);
     }
 
     private static Properties getConfiguration() throws IOException {
         final String defaultConfig = String.format(
-            "%s/configuration.properties", System.getProperty("user.dir"));
+                "%s/configuration.properties", System.getProperty("user.dir"));
         final String config = System.getProperty("ccm.config", defaultConfig);
 
         final FileInputStream stream = new FileInputStream(config);
@@ -116,7 +105,7 @@ public class Bundle {
 
     private static Properties getSetupParameters() throws IOException {
         final String defaultParameters = String.format(
-            "%s/setup.properties", System.getProperty("user.dir"));
+                "%s/setup.properties", System.getProperty("user.dir"));
         final String parameters = System.getProperty("ccm.setup.parameters",
                                                      defaultParameters);
 
@@ -129,51 +118,51 @@ public class Bundle {
     }
 
     private static void setup(final Properties config) throws
-        ClassNotFoundException, SQLException, IOException {
+            ClassNotFoundException, SQLException, IOException {
 
         final Properties setupParameters = getSetupParameters();
 
         Class.forName("org.h2.Driver");
         try (final Connection connection = DriverManager.getConnection(config
-            .getProperty("db.connection.url"));
+                .getProperty("db.connection.url"));
              final Statement statement = connection.createStatement()) {
 
             final ResultSet result = statement.executeQuery(
-                "SELECT COUNT(*) FROM USERS WHERE NAME NOT LIKE 'public-user'");
+                    "SELECT COUNT(*) FROM USERS WHERE NAME NOT LIKE 'public-user'");
             result.next();
             final int numberOfUsers = result.getInt(1);
             result.close();
 
             if (numberOfUsers <= 0) {
                 final String adminName = setupParameters.getProperty(
-                    "admin.name");
+                        "admin.name");
                 final String adminEmail = setupParameters.getProperty(
-                    "admin.email");
+                        "admin.email");
                 final String adminGivenName = setupParameters.getProperty(
-                    "admin.givenname");
+                        "admin.givenname");
                 final String adminFamilyName = setupParameters.getProperty(
-                    "admin.familyname");
+                        "admin.familyname");
                 final String adminPassword = setupParameters.getProperty(
-                    "admin.password");
+                        "admin.password");
 
                 statement.executeUpdate(String.format(
-                    "INSERT INTO PARTIES(PARTY_ID, NAME) "
-                        + "VALUES(-10, '%s')",
-                    adminName));
+                        "INSERT INTO PARTIES(PARTY_ID, NAME) "
+                                + "VALUES(-10, '%s')",
+                        adminName));
                 statement.executeUpdate(String.format(
-                    "INSERT INTO USERS(PARTY_ID, GIVEN_NAME, FAMILY_NAME, EMAIL_ADDRESS, PASSWORD) "
-                    + "VALUES (-10, '%s', '%s', '%s', '%s'),",
-                    adminGivenName,
-                    adminFamilyName,
-                    adminEmail,
-                    adminPassword
+                        "INSERT INTO USERS(PARTY_ID, GIVEN_NAME, FAMILY_NAME, EMAIL_ADDRESS, PASSWORD) "
+                        + "VALUES (-10, '%s', '%s', '%s', '%s'),",
+                        adminGivenName,
+                        adminFamilyName,
+                        adminEmail,
+                        adminPassword
                 ));
                 statement.executeUpdate("INSERT INTO CCM_ROLES(roleId, name) "
-                                            + "VALUES(-10, 'admin'");
+                                                + "VALUES(-10, 'admin'");
                 statement.executeUpdate("INSERT INTO ROLE_MEMBERSHIPS("
-                                            + "MEMBERSHIP_ID, MEMBER_ID, ROLE_ID) "
+                                                + "MEMBERSHIP_ID, MEMBER_ID, ROLE_ID) "
                                         + "VALUES(-10, -10, 10)");
-                
+
                 statement.close();
             }
 

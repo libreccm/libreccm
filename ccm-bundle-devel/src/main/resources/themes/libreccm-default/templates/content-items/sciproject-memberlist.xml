@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<content-item-layout>
+    
+    <person>
+        <person-homepage-link>
+            <a>
+                <content-item-title/>
+            </a>
+        </person-homepage-link>
+    </person>
+    
+
+</content-item-layout>

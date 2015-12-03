@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<page-layout extends="layout.xml">
+    
+    <!-- 
+        This layout template extends the default.xml layout template. It is 
+        used for all applications which have no specific layout template 
+        assigned in the conf/templates.xml file.
+    -->
+    
+    <!-- 
+        The content of this block element is inserted in the default-layout.xml
+        at the place of the <insert-block name="content"/> tag.
+    -->
+    <block name="content">
+        <main role="main">
+            <h1>
+                <show-page-title/>
+            </h1>
+            
+            <content-item mode="detail"/>
+        </main>
+        
+        <navigation min-level="2" max-level="99">
+            <nav class="subnav">
+                <navigation-links>
+                    <ul>
+                        <navigation-link>
+                            <li role="presentation">
+                                <a>
+                                    <navigation-link-label/>
+                                </a>
+                                <navigation-sublinks/>
+                            </li>
+                        </navigation-link>
+                    </ul>
+                </navigation-links>
+            </nav>
+        </navigation>
+    </block>
+    
+</page-layout>

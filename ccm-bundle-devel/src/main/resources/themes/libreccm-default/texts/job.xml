@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<foundry:static-texts xmlns:foundry="http://foundry.libreccm.org">
+    <text id="closing-date">
+        <translation lang="de">Closing date</translation>
+        <translation lang="en">Bewerbungsschluss</translation>
+    </text>
+    <text id="contact-details">
+        <translation lang="de">Kontakt</translation>
+        <translation lang="en">Contact</translation>
+    </text>
+    <text id="department">
+        <translation lang="de">Abteilung</translation>
+        <translation lang="en">Department</translation>
+    </text>
+    <text id="grade">
+        <translation lang="de">Stufe</translation>
+        <translation lang="en">Grade</translation>
+    </text>
+    <text id="person-specification">
+        <translation lang="de">Persönliche Anforderungen</translation>
+        <translation lang="en">Personal requirements</translation>
+    </text>
+    <text id="ref-number">
+        <translation lang="de">Referenznummer</translation>
+        <translation lang="en">Reference</translation>
+    </text>
+    <text id="salary">
+        <translation lang="de">Gehalt</translation>
+        <translation lang="en">Salary</translation>
+    </text>
+</foundry:static-texts>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<content-item-layout>
+
+    <div>
+        <include file="fragments/edit-link.xml"/>
+    
+        <div class="lead">
+            <mpa-summary/>
+        </div>
+    
+        <include file="fragments/assets/image-attachments.xml"/>
+
+        <include file="fragments/assets/notes.xml"/>
+    
+        <mpa-sections>
+            <ul class="mpa-toc">
+                <mpa-section>
+                    <li>
+                        <a>
+                            <mpa-section-title/>
+                        </a>
+                    </li>
+                </mpa-section>
+            </ul>
+        </mpa-sections>
+    
+        <mpa-current-sections>
+            <mpa-current-section>
+                <h2>
+                    <mpa-current-section-title/>
+                </h2>
+                <div class="main">
+                    <mpa-current-section-content/>
+                </div>
+            </mpa-current-section>
+        </mpa-current-sections>
+    
+        <ul class="mpa-paginator pager">
+            <mpa-prev-page-link>
+                <li>
+                    <a class="prev">
+                        <show-text module="mpa">mpa/prev-page-link</show-text>
+                    </a>
+                </li>
+            </mpa-prev-page-link>
+            <mpa-all-sections-link>
+                <li>
+                    <a class="all">
+                        <show-text module="mpa">mpa/all-sections</show-text>
+                    </a>
+                </li>
+            </mpa-all-sections-link>
+            <mpa-next-page-link>
+                <li>
+                    <a class="next">
+                        <show-text module="mpa">mpa/next-page-link</show-text>
+                    </a>
+                </li>
+            </mpa-next-page-link>
+        </ul>
+    
+        <include file="fragments/assets/related-links-and-file-attachments.xml" />
+        
+    </div>
+    
+</content-item-layout>

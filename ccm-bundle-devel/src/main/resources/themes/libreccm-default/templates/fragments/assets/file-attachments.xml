@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+    This fragment defines the HTML output for of File Attachments. A detailed 
+    explanation of the tags can be found in the Foundry documentation.
+-->
+<fragment-layout>
+    <file-attachments>
+        <ul class="file-attachments">
+            <file-attachment>
+                <caption-layout>
+                    <li class="caption">
+                        <strong>
+                            <file-name/>
+                        </strong>
+                        <p>
+                            <file-description/>
+                        </p>
+                    </li>
+                </caption-layout>
+                <file-layout>
+                    <li class="file-attachment">
+                        <a>
+                            <span class="fa fa-download"/>
+                            <file-name/> (<file-size unit="KiB" format="0"/>)
+                        </a>
+                        <p>
+                            <file-description/>
+                        </p>
+                    </li>
+                </file-layout>
+            </file-attachment>
+        </ul>
+    </file-attachments>
+</fragment-layout>

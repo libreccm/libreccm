@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<content-item-layout>
+    
+    <div class="form-description lead">
+            <form-description/>
+        </div>
+    
+    <div class="formitem">
+        <include file="fragments/edit-link.xml"/>
+    
+        <include file="fragments/assets/image-attachments.xml"/>
+
+        <include file="fragments/assets/notes.xml"/>
+    
+        <form-components/>
+        
+        <include file="fragments/assets/related-links-and-file-attachments.xml" />
+
+    </div>
+</content-item-layout>
