@@ -20,8 +20,6 @@ package org.libreccm.security;
 
 import com.arsdigita.util.UncheckedWrapperException;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.core.CcmObject;
@@ -30,24 +28,59 @@ import java.util.Collection;
 import java.util.Iterator;
 
 /**
+ * A decorator for collections which checks if the current user is permitted to
+ * access the objects in the collection before returning them.
+ *
+ * This implementation of the {@link Collection} interface decorates a given
+ * collection. The methods which manipulate the collection are simply calling
+ * the methods of decorated collection. The methods which retrieve objects from
+ * the collection are first calling the method of the decorated collection, and
+ * check if the current subject is permitted to access the object. If the
+ * current subject is permitted to access the object the object is returned.
+ * Otherwise the object is replaced with a virtual object were the
+ * {@link CcmObject#displayName} property is set to {@code Access Denied}. 
+ * Methods which return arrays or collections of objects from the decorated 
+ * collection check each object in the array or collection and replace the
+ * objects which the current subject is not permitted to access with a 
+ * <em>Access denied</em> object.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  *
- * @param <E>
+ * @param <E> Type of the objects in the collection. Must extend 
+ * {@link CcmObject}.
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public class SecuredCollection<E extends CcmObject> implements Collection<E> {
 
-    private static final Logger LOGGER = LogManager.getLogger(
-        SecuredCollection.class);
-
+    /**
+     * The decorated collection.
+     */
     private final Collection<E> collection;
 
+    /**
+     * The class of the objects in the collection. Required for creating the 
+     * virtual <em>Access denied</em> object
+     */
     private final Class<E> clazz;
 
+    /**
+     * The privilege required for accessing the objects in the collection.
+     */
     private final String requiredPrivilege;
-    
+
+    /**
+     * Helper class for creating the <em>Access denied</em> object.
+     */
     private final SecuredHelper<E> securedHelper;
 
+    /**
+     * Create a new secured collection for the provided collection.
+     * 
+     * @param collection The collection to secure.
+     * @param clazz The class of the objects in the collection.
+     * @param requiredPrivilege The privilege required to access the objects
+     * in the collection.
+     */
     public SecuredCollection(final Collection<E> collection,
                              final Class<E> clazz,
                              final String requiredPrivilege) {
@@ -74,7 +107,8 @@ public class SecuredCollection<E extends CcmObject> implements Collection<E> {
 
     @Override
     public Iterator<E> iterator() {
-        return new SecuredIterator<>(collection.iterator(), clazz, requiredPrivilege);
+        return new SecuredIterator<>(collection.iterator(), clazz,
+                                     requiredPrivilege);
     }
 
     @Override
@@ -91,16 +125,17 @@ public class SecuredCollection<E extends CcmObject> implements Collection<E> {
 
         final Object[] objects = collection.toArray();
         for (int i = 0; i < objects.length; i++) {
-            if (!permissionChecker.isPermitted(requiredPrivilege, (E) objects[i])) {
+            if (!permissionChecker
+                .isPermitted(requiredPrivilege, (E) objects[i])) {
                 objects[i] = securedHelper.generateAccessDeniedObject();
             }
         }
-        
+
         return objects;
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "PMD.UseVarargs"})
     public <T> T[] toArray(final T[] array) {
         final PermissionChecker permissionChecker;
         final CdiUtil cdiUtil = new CdiUtil();
@@ -110,10 +145,11 @@ public class SecuredCollection<E extends CcmObject> implements Collection<E> {
         } catch (CdiLookupException ex) {
             throw new UncheckedWrapperException(ex);
         }
-        
+
         final T[] objects = collection.toArray(array);
-        for(int i = 0; i < objects.length; i++) {
-            if (!permissionChecker.isPermitted(requiredPrivilege, (CcmObject) objects[i])) {
+        for (int i = 0; i < objects.length; i++) {
+            if (!permissionChecker.isPermitted(requiredPrivilege,
+                                               (CcmObject) objects[i])) {
                 objects[i] = (T) securedHelper.generateAccessDeniedObject();
             }
         }
@@ -155,19 +191,5 @@ public class SecuredCollection<E extends CcmObject> implements Collection<E> {
     public void clear() {
         collection.clear();
     }
-
-//    private E generateAccessDeniedObject(final Class<E> clazz) {
-//        final E placeholder;
-//        try {
-//            placeholder = clazz.newInstance();
-//            placeholder.setDisplayName("Access denied");
-//
-//            return placeholder;
-//        } catch (InstantiationException | IllegalAccessException ex) {
-//            LOGGER.error(
-//                "Failed to create placeholder object. Returing null.", ex);
-//            return null;
-//        }
-//    }
 
 }

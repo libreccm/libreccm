@@ -24,20 +24,44 @@ import java.util.NavigableMap;
 import java.util.NavigableSet;
 
 /**
- *
+ * A decorator for {@link NavigableMap} which checks if the current subject is
+ * permitted to access the values of the decorated map before returning them.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
- * @param <K>
- * @param <V>
+ * 
+ * @param <K> Type of the keys. 
+ * @param <V> Type of the values.
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public class SecuredNavigableMap<K, V extends CcmObject>
     extends SecuredSortedMap<K, V>
     implements NavigableMap<K, V> {
 
+    /**
+     * The decorated navigable map.
+     */
     private final NavigableMap<K, V> navigableMap;
+    /**
+     * Class of the values.
+     */
     private final Class<V> clazz;
+    /**
+     * The privilege required to access the values of the decorated map.
+     */
     private final String requiredPrivilege;
+    /**
+     * {@link SecuredHelper} used by the decorator.
+     */
     private final SecuredHelper<V> securedHelper;
 
+    /**
+     * Creates a new secured navigable map.
+     * 
+     * @param navigableMap The navigable map to secure.
+     * @param clazz The class of the values of the navigable map.
+     * @param requiredPrivilege The privilege required to access the objects of
+     * the navigable map.
+     */
     public SecuredNavigableMap(final NavigableMap<K, V> navigableMap,
                                final Class<V> clazz,
                                final String requiredPrivilege) {

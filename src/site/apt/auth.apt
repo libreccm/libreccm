@@ -1,0 +1,97 @@
+        --------------------------------------------
+        Authentication and Authorisation in LibreCCM
+        --------------------------------------------
+             Jens Pelzetter
+        --------------------------------------------
+                2015-12-04
+        --------------------------------------------
+
+Authentication and Authorisation in LibreCCM
+
+    LibreCCM uses {{{http://shiro.apache.org}Apache Shiro}} as the foundation
+    for its authentication and authorisation system. All classes related to
+    authentication and authorisation are provided by the 
+    {{{ccm-core/apidocs/index.html?org/libreccm/security/package-summary.html}org.libreccm.security}}
+    from the CCM Core module. 
+
+* Definitions
+
+    [User] A user is person (or a system) which accesses LibreCCM.
+    
+    [Group] A collection of users. A user can be member of multiple groups.
+    
+    [Role] A role is basically a collection of permissions and tasks (workflows)
+           which can be assigned a user or group.
+    
+    [Permission] Grants a certain privilege to a role. Permissions are either
+                 systemwide permissions or permissions granting a certain 
+                 privilege on a certain CcmObject.
+    
+    [Privilege] Describes an action.
+    
+* Managing permissions, roles, users and groups.
+
+    Permissions are granted and revoked using the 
+    {{{ccm-core/apidocs/index.html?org/libreccm/security/PermissionManager.html}PermissionManager}}
+    class. This class is a CDI bean which can be injected or manually retrieved 
+    using the {{{ccm-core/apidocs/index.html?org/libreccm/cdi/utils/CdiUtil.html}CdiUtil}}
+    utility.
+    
+    Users, Groups and Roles are managed using the repository and manager classes
+    provided by the {{{ccm-core/apidocs/index.html?org/libreccm/security/package-summary.html}org.libreccm.security}}
+    package. Most module developers will not have to deal with these classes. 
+    Only if the module wants to create special roles it might be necessary 
+    for a module to use the {{{ccm-core/apidocs/index.html?org/libreccm/security/RoleManager.html}RoleManager}}
+    or the {{{ccm-core/apidocs/index.html?org/libreccm/security/RoleRepository.html}RoleRepository}}.
+
+* Validating permissions
+
+    Validating permissions can be done in various ways. For CDI enabled beans
+    an Interceptor is provided for securing methods. Also a class for checking 
+    permissions is provided which can be injected using CDI or retrieved
+    using {{{ccm-core/apidocs/index.html?org/libreccm/cdi/utils/CdiUtil.html}CdiUtil}}
+    utility.
+    
+** Using the CDI interceptor
+    
+    A method is secured by
+    annotating the method with the <<<@AuthorizationRequired>>> annotation. 
+    Additional at least one of the annotations <<<@RequiresRole>>> and 
+    <<<@RequiresPrivilege>>> must be used. 
+    
+    The <<<@{{{ccm-core/apidocs/index.html?org/libreccm/security/RequiresRole.html}RequiresRole}}>>>
+    annotation can only be used on method. If the current subject is not 
+    authenticated (not logged in) or does not have the role given by the
+    annotation the interceptor will throw an <<<AuthorizationException>>>. 
+        
+    The <<<@{{{ccm-core/apidocs/index.html?org/libreccm/security/RequiresPrivilege.html}RequiresPrivilege}}>>>
+    annotation can be used at the method or on a parameter of the type 
+    <<<CcmObject>>> of the secured method. If the annotation is put on a method
+    the current subject must be authenticated and have a permission granting
+    the user the given privilege.
+        
+    If the annotation is used on a method parameter the current user must be 
+    authenticated and have a permission which grants the user the given 
+    privilege on the object with which the method is called. 
+    
+    If the current subject does have appropriate permissions an 
+    <<<AuthorizationException>>> is thrown. 
+        
+    Under the hood the interceptor uses the <<<PermissionChecker>>> class which
+    is described in the next section.
+        
+** Using the <<<PermissionChecker>>>
+    
+    An instance of the 
+    <<<@{{{ccm-core/apidocs/index.html?org/libreccm/security/PermissionChecker.html}PermisssionChecker}}>>>
+    can be obtained by injection or by manual lookup. The <<<PermissionChecker>>>
+    provides various methods for checking permissions. Details can be found in
+    the JavaDoc.
+
+** Secured collections
+
+    Methods in the repository classes often return collections. To make securing
+    these collections easy the {{{ccm-core/apidocs/index.html?org/libreccm/security/package-summary.html}org.libreccm.security}}
+    package provides decorators for the collections from the Java Standard API
+    which check if the current subject is permitted to access an object before
+    returning it. Details can be found in the JavaDoc of the decorators.

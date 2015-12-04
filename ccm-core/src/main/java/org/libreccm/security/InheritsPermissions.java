@@ -21,7 +21,13 @@ package org.libreccm.security;
 import org.libreccm.core.CcmObject;
 
 /**
- *
+ * Subclasses of {@link CcmObject} can implement this interface to inherit 
+ * the permissions of their parent object. This annotation is processed by the 
+ * {@link PermissionChecker}. 
+ * 
+ * @see PermissionChecker#checkPermission(java.lang.String, org.libreccm.core.CcmObject) 
+ * @see PermissionChecker#isPermitted(java.lang.String, org.libreccm.core.CcmObject) 
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public interface InheritsPermissions {

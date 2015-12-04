@@ -43,7 +43,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * A permission grants a privilege on an object or systemwide to {@link Role}.
+ * A permission grants a privilege on an object or system wide to {@link Role}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */

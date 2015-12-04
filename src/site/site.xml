@@ -24,6 +24,8 @@
                       href="module-system/anatomy.html"/>
             </item>
             <item name="How LibreCCM uses JPA" href="entities.html"/>
+            <item name="Authentication and Authorization" 
+                  href="auth.html"/>
         </menu>
         
         <menu ref="modules"/>

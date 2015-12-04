@@ -65,7 +65,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @XmlRootElement(name = "user", namespace = CORE_XML_NS)
 //Supressing a few warnings from PMD because they misleading here.
 //User is perfectly fine class name, and the complexity is not to high...
-@SuppressWarnings({"PMD.ShortClassName"})
+@SuppressWarnings({"PMD.ShortClassName", "PMD.LongVariable"})
 public class User extends Party implements Serializable {
 
     private static final long serialVersionUID = 4035223413596611393L;
@@ -97,7 +97,6 @@ public class User extends Party implements Serializable {
                                }))
     @NotNull
     @XmlElement(name = "primary-email-address", namespace = CORE_XML_NS)
-    @SuppressWarnings("PMD.LongVariable")
     private EmailAddress primaryEmailAddress;
 
     /**
@@ -136,7 +135,6 @@ public class User extends Party implements Serializable {
      */
     @Column(name = "PASSWORD_RESET_REQUIRED")
     //Can't shorten the name without making the name cryptic.
-    @SuppressWarnings("PMD.LongVariable")
     private boolean passwordResetRequired;
 
     /**
@@ -216,7 +214,6 @@ public class User extends Party implements Serializable {
         return passwordResetRequired;
     }
 
-    @SuppressWarnings("PMD.LongVariable")
     protected void setPasswordResetRequired(final boolean passwordResetRequired) {
         this.passwordResetRequired = passwordResetRequired;
     }

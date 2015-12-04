@@ -74,6 +74,8 @@ public class AuthorizationInterceptor {
      * @throws Exception If any exception occurs.
      */
     @AroundInvoke
+    // throws Exception necessary because InvocationContext#proceed has also throws Exception
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException") 
     public Object intercept(final InvocationContext context) throws Exception {
         LOGGER.debug("Intercepting method invocation");
 
@@ -123,6 +125,7 @@ public class AuthorizationInterceptor {
      * @param parameter The parameter to check.
      * @param annotations All annotations of the parameter.
      */
+    @SuppressWarnings("PMD.UseVarargs")
     private void checkParameterPermission(final Object parameter,
                                           final Annotation[] annotations) {
         if (parameter instanceof CcmObject
@@ -131,7 +134,7 @@ public class AuthorizationInterceptor {
             final CcmObject object = (CcmObject) parameter;
 
             String requiredPrivilege = null;
-            for (Annotation annotation : annotations) {
+            for (final Annotation annotation : annotations) {
                 if (annotation instanceof RequiresPrivilege) {
                     requiredPrivilege = ((RequiresPrivilege) annotation).value();
                     break;

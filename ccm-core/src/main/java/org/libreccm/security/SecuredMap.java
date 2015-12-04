@@ -18,30 +18,49 @@
  */
 package org.libreccm.security;
 
-import com.arsdigita.util.UncheckedWrapperException;
-
-import org.libreccm.cdi.utils.CdiLookupException;
-import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.core.CcmObject;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 /**
+ * Decorator for {@link Map} which checks if the current subject is permitted to
+ * access the values of the decorated map before returning them. The keys used
+ * by the map are not checked.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
- * @param <K>
- * @param <V>
+ *
+ * @param <K> Type of the keys
+ * @param <V> Type of the values.
  */
 public class SecuredMap<K, V extends CcmObject> implements Map<K, V> {
 
+    /**
+     * The decorated map.
+     */
     private final Map<K, V> map;
+    /**
+     * Class of the values in map.
+     */
     private final Class<V> clazz;
+    /**
+     * The privilege required to access the values of the map.
+     */
     private final String requiredPrivilege;
+    /**
+     * {@link SecuredHelper} used by the map.
+     */
     private final SecuredHelper<V> securedHelper;
 
+    /**
+     * Creates a new secured map.
+     *
+     * @param map               The map to secure.
+     * @param clazz             Class of the values in the map.
+     * @param requiredPrivilege The privilege required to access the values of
+     *                          the map.
+     */
     public SecuredMap(final Map<K, V> map,
                       final Class<V> clazz,
                       final String requiredPrivilege) {

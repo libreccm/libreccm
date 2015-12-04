@@ -22,15 +22,26 @@ import java.util.Set;
 import org.libreccm.core.CcmObject;
 
 /**
+ * A decorator for {@link Set} which checks if the current subject is permitted
+ * to access the objects from the decorated set before returning them.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
- * @param <E>
+ *
+ * @param <E> Type of the objects in the set.
  */
 public class SecuredSet<E extends CcmObject>
-        extends SecuredCollection<E>
-        implements Set<E> {
+    extends SecuredCollection<E>
+    implements Set<E> {
 
-    public SecuredSet(final Set<E> set, 
+    /**
+     * Creates a new secured set.
+     *
+     * @param set               The {@link Set} to secure.
+     * @param clazz             Class of the objects in the set.
+     * @param requiredPrivilege Privilege required to access the objects in the
+     *                          set.
+     */
+    public SecuredSet(final Set<E> set,
                       final Class<E> clazz,
                       final String requiredPrivilege) {
         super(set, clazz, requiredPrivilege);

@@ -24,19 +24,40 @@ import java.util.Comparator;
 import java.util.SortedMap;
 
 /**
+ * A decorator for {@link SortedMap} which checks if the current subject is
+ * permitted to access the values from the decorated sorted map before returning
+ * them.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
- * @param <K>
- * @param <V>
+ *
+ * @param <K> Type of the keys.
+ * @param <V> Type of the values.
  */
 public class SecuredSortedMap<K, V extends CcmObject>
     extends SecuredMap<K, V>
     implements SortedMap<K, V> {
 
+    /**
+     * The decorated sorted map.
+     */
     private final SortedMap<K, V> sortedMap;
+    /**
+     * Class of the values of the decorated sorted map.
+     */
     private final Class<V> clazz;
+    /**
+     * Privilege required to access the values of the decorated sorted map.
+     */
     private final String requiredPrivilege;
 
+    /**
+     * Creates new secured sorted map.
+     *
+     * @param sortedMap         The map to secure.
+     * @param clazz             Class of the values.
+     * @param requiredPrivilege Privilege required to access the values of the
+     *                          secured sorted map.
+     */
     public SecuredSortedMap(final SortedMap<K, V> sortedMap,
                             final Class<V> clazz,
                             final String requiredPrivilege) {

@@ -35,7 +35,13 @@ class SecuredHelper<E extends CcmObject> {
     private final static Logger LOGGER = LogManager.getLogger(
             SecuredHelper.class);
 
+    /**
+     * Class of the objects in the collection.
+     */
     private final Class<E> clazz;
+    /**
+     * Privilege required to access the objects in the collection.
+     */
     private final String requiredPrivilege;
 
     protected SecuredHelper(final Class<E> clazz,
@@ -51,8 +57,8 @@ class SecuredHelper<E extends CcmObject> {
      * @param object The object to check.
      * @return The provided {@code object} if the current subject has the
      * permission to access it with the provided {@code privilege}. Otherwise a
-     * placeholder object is returned whichs {@link CcmObject#displayName}
-     * property is set to {@code Access denied}.
+     * placeholder object is returned. The {@link CcmObject#displayName}
+     * property of these object is set to {@code Access denied}.
      */
     protected E canAccess(final E object) {
         if (object == null) {
@@ -76,7 +82,7 @@ class SecuredHelper<E extends CcmObject> {
     }
 
     /**
-     * Helper method for creating an "Access denied" placeholder object.
+     * Helper method for creating an <em>Access denied</em> placeholder object.
      *
      * @return An object of the provided {@link #clazz} with it's
      * {@link CcmObject#displayName} property set to {@code Access denied}.

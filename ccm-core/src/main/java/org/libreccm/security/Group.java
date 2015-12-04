@@ -36,7 +36,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * A group is bascially a collection of users. 
+ * A group is basically a collection of users. 
  * 
  * Group extends the {@link Party} class. Therefore {@link Role}s can be 
  * assigned to a group. When a {@link Role} is assigned to a group each member
@@ -112,6 +112,14 @@ public class Group extends Party implements Serializable {
     public boolean canEqual(final Object obj) {
         return obj instanceof Group;
     }
+
+    @Override
+    @SuppressWarnings("PMD.UselessOverridingMethod")
+    public int hashCode() {
+        return super.hashCode();
+    }
+    
+    
 
     @Override
     public String toString(final String data) {

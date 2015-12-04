@@ -24,15 +24,31 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
+ * A decorator for an iterator of {@link Map.Entry} objects which returns
+ * {@link SecuredEntry} objects. Used by the {@link SecuredMap}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class SecuredEntryIterator<E extends Map.Entry<K, V>, K, V extends CcmObject>
     implements Iterator<E> {
 
+    /**
+     * The decorated iterator.
+     */
     private final Iterator<E> iterator;
+    /**
+     * The {@link SecuredHelper} for creating the virtual <em>Access denied</em>
+     * object. Provided by the {@link SecuredMap} creating the iterator.
+     */
     private final SecuredHelper<V> securedHelper;
 
+    /**
+     * Creates a new secured iterator for entries.
+     *
+     * @param iterator      The iterator to secure.
+     * @param securedHelper The {@link SecuredHelper} for creating the virtual
+     *                      <em>Access denied</em> object.
+     */
     public SecuredEntryIterator(final Iterator<E> iterator,
                                 final SecuredHelper<V> securedHelper) {
         this.iterator = iterator;

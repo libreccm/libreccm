@@ -23,16 +23,39 @@ import org.libreccm.core.CcmObject;
 import java.util.Map;
 
 /**
- *
+ * A decorator for {@link Map.Entry} which checks if the current subject is
+ * permitted to access the value before returning it. If the current subject
+ * is not permitted to access the value it is replaced with an virtual 
+ * <em>Access Denied</em> which is an object of the same class as the value.
+ * 
+ * This class is not intended for direct use and is therefore only accessible 
+ * from the {@code org.libreccm.security} package. The class is used by the
+ * {@link SecuredMap}.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
- * @param <K>
- * @param <V>
+ * @param <K> The type of the key of the entry.
+ * @param <V> The type of the value of the entry.
  */
 class SecuredEntry<K, V extends CcmObject> implements Map.Entry<K, V> {
 
+    /**
+     * The decorated entry.
+     */
     private final Map.Entry<K, V> entry;
+    /**
+     * {@link SecuredHelper} for creating the virtual <em>Access denied</em> 
+     * object. Provided by the {@link SecuredMap} which creates the 
+     * {@code SecuredEntry}.
+     */
     private final SecuredHelper<V> securedHelper;
 
+    /**
+     * Creates a new secured entry.
+     * 
+     * @param entry The entry to secure.
+     * @param securedHelper The {@link SecuredHelper} for creating the 
+     * virtual <em>Access denied</em> object.
+     */
     public SecuredEntry(final Map.Entry<K, V> entry,
                         final SecuredHelper<V> securedHelper) {
         this.entry = entry;

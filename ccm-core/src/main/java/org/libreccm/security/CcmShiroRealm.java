@@ -39,16 +39,19 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.CDI;
 
 /**
- * Implementation of the Shiro's {@link AuthorizingRealm} to provide Shiro with
- * the users, groups, roles and permissions stored in CCM's database.
+ * Implementation of Shiro's {@link AuthorizingRealm} to provide Shiro with the
+ * users, groups, roles and permissions stored in CCM's database.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
+@SuppressWarnings({"PMD.CyclomaticComplexity",
+                   "PMD.ModifiedCyclomaticComplexity",
+                   "PMD.StdCyclomaticComplexity"})
 public class CcmShiroRealm extends AuthorizingRealm {
 
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(
-            final PrincipalCollection principals) {
+        final PrincipalCollection principals) {
 
         // Get the pricipal (object identifing the user).
         final Object principal = principals.getPrimaryPrincipal();
@@ -56,9 +59,9 @@ public class CcmShiroRealm extends AuthorizingRealm {
         // This realm expects the principal to be a string.
         if (!(principal instanceof String)) {
             throw new AuthenticationException(String.format(
-                    "Can' process principal of "
-                            + "type \"%s\".",
-                    principal.getClass().getName()));
+                "Can' process principal of "
+                    + "type \"%s\".",
+                principal.getClass().getName()));
         }
         // Convert the pricipal to a string.
         final String userIdentifier = (String) principal;
@@ -70,30 +73,31 @@ public class CcmShiroRealm extends AuthorizingRealm {
             final RoleRepository roleRepository;
             final BeanManager beanManager = CDI.current().getBeanManager();
             final Set<Bean<?>> beans = beanManager.
-                    getBeans(RoleRepository.class);
+                getBeans(RoleRepository.class);
             final Iterator<Bean<?>> iterator = beans.iterator();
             if (iterator.hasNext()) {
                 @SuppressWarnings("unchecked")
-                final Bean<RoleRepository> bean = (Bean<RoleRepository>) iterator.
-                        next();
+                final Bean<RoleRepository> bean
+                                           = (Bean<RoleRepository>) iterator.
+                    next();
                 final CreationalContext<RoleRepository> ctx = beanManager.
-                        createCreationalContext(bean);
+                    createCreationalContext(bean);
 
                 roleRepository = (RoleRepository) beanManager.getReference(
-                        bean, RoleRepository.class, ctx);
+                    bean, RoleRepository.class, ctx);
             } else {
                 throw new AuthenticationException(
-                        "Failed to retrieve RoleRepository");
+                    "Failed to retrieve RoleRepository");
             }
-            
+
             final List<Role> roles = roleRepository.findAll();
-            
+
             final SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-            for(final Role role : roles) {
+            for (final Role role : roles) {
                 info.addRole(role.getName());
             }
             info.addStringPermission("*");
-            
+
             return info;
         }
 
@@ -110,7 +114,7 @@ public class CcmShiroRealm extends AuthorizingRealm {
 
             // Add the permissions assigned to the role to the AuthorizatonInfo. 
             for (final Permission permission : roleMembership.getRole()
-                    .getPermissions()) {
+                .getPermissions()) {
                 info.addStringPermission(permissionToString(permission));
             }
         }
@@ -119,13 +123,13 @@ public class CcmShiroRealm extends AuthorizingRealm {
         for (final GroupMembership membership : user.getGroupMemberships()) {
             // Get the roles assigned to the group
             for (final RoleMembership roleMembership : membership.getGroup()
-                    .getRoleMemberships()) {
+                .getRoleMemberships()) {
                 // Add the role to the AuthorizationInfo
                 info.addRole(roleMembership.getRole().getName());
                 // Add the permissions assigned to the role to the 
                 // AuthorizationInfo
                 for (final Permission permission : roleMembership.getRole()
-                        .getPermissions()) {
+                    .getPermissions()) {
                     info.addStringPermission(permissionToString(permission));
                 }
             }
@@ -136,8 +140,8 @@ public class CcmShiroRealm extends AuthorizingRealm {
 
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(
-            final AuthenticationToken token)
-            throws AuthenticationException {
+        final AuthenticationToken token)
+        throws AuthenticationException {
 
         // Get the pricipal identifing the user
         final Object principal = token.getPrincipal();
@@ -145,9 +149,9 @@ public class CcmShiroRealm extends AuthorizingRealm {
         // This realm expects the pricipal to be a string
         if (!(principal instanceof String)) {
             throw new AuthenticationException(String.format(
-                    "Can' process authentication token with a principal of "
-                            + "type \"%s\".",
-                    principal.getClass().getName()));
+                "Can' process authentication token with a principal of "
+                    + "type \"%s\".",
+                principal.getClass().getName()));
         }
 
         // Convert the pricipal to a string.
@@ -168,9 +172,11 @@ public class CcmShiroRealm extends AuthorizingRealm {
      * address of the user.
      *
      * @param userIdentifier The identifier of the user.
+     *
      * @return The User identified by the provided {@code userIdentifier}.
+     *
      * @throws AuthenticationException if no user for the provided identifier
-     * could be retrieved.
+     *                                 could be retrieved.
      */
     private User findUser(final String userIdentifier) {
         // For some reason we can't use the the CdiUtil class here, therefore
@@ -178,20 +184,20 @@ public class CcmShiroRealm extends AuthorizingRealm {
         final UserRepository userRepository;
         final BeanManager beanManager = CDI.current().getBeanManager();
         final Set<Bean<?>> beans = beanManager.getBeans(
-                UserRepository.class);
+            UserRepository.class);
         final Iterator<Bean<?>> iterator = beans.iterator();
         if (iterator.hasNext()) {
             @SuppressWarnings("unchecked")
             final Bean<UserRepository> bean = (Bean<UserRepository>) iterator
-                    .next();
+                .next();
             final CreationalContext<UserRepository> ctx = beanManager
-                    .createCreationalContext(bean);
+                .createCreationalContext(bean);
 
             userRepository = (UserRepository) beanManager.getReference(
-                    bean, UserRepository.class, ctx);
+                bean, UserRepository.class, ctx);
         } else {
             throw new AuthenticationException(
-                    "Failed to retrieve UserRepository.");
+                "Failed to retrieve UserRepository.");
         }
 
         // Depending of the configuration of CCM use the appropriate method
@@ -207,9 +213,9 @@ public class CcmShiroRealm extends AuthorizingRealm {
         // If no matching user is found throw an AuthenticationException
         if (user == null) {
             throw new AuthenticationException(String.format(
-                    "No user identified by principal \"%s\" was found. Primary user "
-                    + "identifier is \"%s\".",
-                    userIdentifier, config.getPrimaryUserIdentifier()));
+                "No user identified by principal \"%s\" was found. Primary user "
+                + "identifier is \"%s\".",
+                userIdentifier, config.getPrimaryUserIdentifier()));
         }
 
         return user;
@@ -220,6 +226,7 @@ public class CcmShiroRealm extends AuthorizingRealm {
      * used by Shiro.
      *
      * @param permission The permission to convert.
+     *
      * @return A Shiro permission string.
      */
     private String permissionToString(final Permission permission) {

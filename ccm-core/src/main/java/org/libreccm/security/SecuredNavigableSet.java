@@ -23,19 +23,44 @@ import java.util.NavigableSet;
 import org.libreccm.core.CcmObject;
 
 /**
+ * A decorated for {@link NavigableSet} which checks if the current subject is
+ * permitted to access the objects from the decorated navigable set before
+ * returning them.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
- * @param <E>
+ * 
+ * @param <E> Type of the objects in the navigable set.
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public class SecuredNavigableSet<E extends CcmObject>
-        extends SecuredSortedSet<E>
-        implements NavigableSet<E> {
+    extends SecuredSortedSet<E>
+    implements NavigableSet<E> {
 
+    /**
+     * The decorated navigable set.
+     */
     private final NavigableSet<E> set;
+    /**
+     * Class of the objects in the navigable set.
+     */
     private final Class<E> clazz;
+    /**
+     * The privilege required to access the objects of the navigable set.
+     */
     private final String requiredPrivilege;
+    /**
+     * {@link SecuredHelper} used by this decorator.
+     */
     private final SecuredHelper<E> securedHelper;
 
+    /**
+     * Creates a new secured navigable set.
+     *
+     * @param set               The set to secure.
+     * @param clazz             Class of the objects in the set.
+     * @param requiredPrivilege The privilege required to access the objects in
+     *                          the set.
+     */
     public SecuredNavigableSet(final NavigableSet<E> set,
                                final Class<E> clazz,
                                final String requiredPrivilege) {

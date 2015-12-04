@@ -19,25 +19,38 @@
 package org.libreccm.security;
 
 import java.util.ListIterator;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
 import org.libreccm.core.CcmObject;
 
 /**
+ * A decorator for {@link ListIterator} which checks if the current subject is
+ * permitted to access an object from the list the iterator iterates over before
+ * returning it.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @param <E>
  */
 public class SecuredListIterator<E extends CcmObject>
-        extends SecuredIterator<E>
-        implements ListIterator<E> {
+    extends SecuredIterator<E>
+    implements ListIterator<E> {
 
-    private final static Logger LOGGER = LogManager.getLogger(
-            SecuredListIterator.class);
-
+    /**
+     * The decorated {@link ListIterator}.
+     */
     private final ListIterator<E> iterator;
+    /**
+     * {@link SecuredHelper} used by this iterator.
+     */
     private final SecuredHelper<E> securedHelper;
 
+    /**
+     * Creates a new secured list iterator.
+     *
+     * @param iterator          The iterator to secure.
+     * @param clazz             The class of the objects in the list.
+     * @param requiredPrivilege The privilege required to access the objects in
+     *                          list.
+     */
     public SecuredListIterator(final ListIterator<E> iterator,
                                final Class<E> clazz,
                                final String requiredPrivilege) {

@@ -19,24 +19,48 @@
 package org.libreccm.security;
 
 import java.util.Comparator;
-import java.util.Set;
 import java.util.SortedSet;
+
 import org.libreccm.core.CcmObject;
 
 /**
+ * Decorator for {@link SortedSet} which checks if the current subject is
+ * permitted to access the objects from the decorated sorted set before
+ * returning them.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
- * @param <E>
+ *
+ * @param <E> Type of the objects in the decorated sorted set.
  */
 public class SecuredSortedSet<E extends CcmObject>
-        extends SecuredSet<E>
-        implements SortedSet<E> {
+    extends SecuredSet<E>
+    implements SortedSet<E> {
 
+    /**
+     * The decorated sorted set.
+     */
     private final SortedSet<E> set;
+    /**
+     * The class of the objects in the decorated sorted set.
+     */
     private final Class<E> clazz;
+    /**
+     * The privilege required to access the objects in the decorated set.
+     */
     private final String requiredPrivilege;
+    /**
+     * {@link SecuredHelper} used by this decorator.
+     */
     private final SecuredHelper<E> securedHelper;
 
+    /**
+     * Creates new secured sorted set.
+     *
+     * @param set               The sorted set to secure.
+     * @param clazz             The class of the objects in the set.
+     * @param requiredPrivilege The privilege required to access the objects in
+     *                          the set.
+     */
     public SecuredSortedSet(final SortedSet<E> set,
                             final Class<E> clazz,
                             final String requiredPrivilege) {

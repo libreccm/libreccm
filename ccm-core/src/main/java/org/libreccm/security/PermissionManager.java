@@ -37,8 +37,11 @@ import javax.enterprise.context.RequestScoped;
 @RequestScoped
 public class PermissionManager {
 
+    @SuppressWarnings("PMD.LongVariable")
     private static final String QUERY_PARAM_OBJECT = "object";
+    @SuppressWarnings("PMD.LongVariable")
     private static final String QUERY_PARAM_GRANTEE = "grantee";
+    @SuppressWarnings("PMD.LongVariable")
     private static final String QUERY_PARAM_PRIVILEGE = "privilege";
 
     

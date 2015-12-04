@@ -24,19 +24,43 @@ import java.util.ListIterator;
 import org.libreccm.core.CcmObject;
 
 /**
+ * A decorator for {@link List}s of {@link CcmObject}s which checks if the
+ * current subject is permitted to access the objects in the list before
+ * returning them.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
- * @param <E>
+ *
+ * @param <E> The type of the objects in the list.
  */
 public class SecuredList<E extends CcmObject>
-        extends SecuredCollection<E>
-        implements List<E> {
+    extends SecuredCollection<E>
+    implements List<E> {
 
+    /**
+     * The decorated list.
+     */
     private final List<E> list;
+    /**
+     * The class of the objects in the list.
+     */
     private final Class<E> clazz;
+    /**
+     * The privilege required to access the objects in the list.
+     */
     private final String requiredPrivilege;
+    /**
+     * {@link SecuredHelper} used by the list.
+     */
     private final SecuredHelper<E> securedHelper;
 
+    /**
+     * Creates a new secured list.
+     *
+     * @param list              The {@link List} to secure.
+     * @param clazz             Class of the objects in the list.
+     * @param requiredPrivilege The privilege required to access the objects in
+     *                          the list.
+     */
     public SecuredList(final List<E> list,
                        final Class<E> clazz,
                        final String requiredPrivilege) {
