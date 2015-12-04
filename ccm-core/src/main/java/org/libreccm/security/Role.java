@@ -21,6 +21,7 @@ package org.libreccm.security;
 import static org.libreccm.core.CoreConstants.*;
 
 import org.hibernate.validator.constraints.NotBlank;
+import org.libreccm.workflow.TaskAssignment;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -92,6 +93,9 @@ public class Role implements Serializable {
     @XmlElement(name = "permission", namespace = CORE_XML_NS)
     private List<Permission> permissions = new ArrayList<>();
 
+    @OneToMany(mappedBy = "role")
+    private List<TaskAssignment> assignedTasks;
+    
     protected Role() {
         super();
     }
@@ -150,6 +154,26 @@ public class Role implements Serializable {
 
     protected void removePermission(final Permission permission) {
         permissions.remove(permission);
+    }
+    
+    public List<TaskAssignment> assignedTasks() {
+        if (assignedTasks == null) {
+            return null;
+        } else {
+            return Collections.unmodifiableList(assignedTasks);
+        }
+    }
+    
+    protected void setAssignedTasks(final List<TaskAssignment> assignedTasks) {
+        this.assignedTasks = assignedTasks;
+    }
+    
+    protected void addAssignedTask(final TaskAssignment taskAssignment) {
+        assignedTasks.add(taskAssignment);
+    }
+    
+    protected void removeAssignedTask(final TaskAssignment taskAssignment) {
+        assignedTasks.remove(taskAssignment);
     }
 
     @Override

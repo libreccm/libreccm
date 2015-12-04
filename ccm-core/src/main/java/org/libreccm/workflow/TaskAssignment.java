@@ -16,9 +16,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.security;
+package org.libreccm.workflow;
 
 import static org.libreccm.core.CoreConstants.*;
+
+import org.libreccm.security.Role;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -30,53 +32,45 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
- * Association class representing the association between a {@link Role} and a
- * {@code Party}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "ROLE_MEMBERSHIPS", schema = DB_SCHEMA)
-@NamedQueries({
-    @NamedQuery(name = "RoleMembership.findByRoleAndMember",
-                query = "SELECT m FROM RoleMembership m "
-                            + "WHERE m.member = :member AND m.role = :role")
-})
-@XmlRootElement(name = "role-membership", namespace = CORE_XML_NS)
-public class RoleMembership implements Serializable {
+@Table(name = "TASK_ASSIGNMENTS", schema = DB_SCHEMA)
+public class TaskAssignment implements Serializable {
 
-    private static final long serialVersionUID = -3049727720697964793L;
+    private static final long serialVersionUID = -4427537363301565707L;
 
     @Id
-    @Column(name = "MEMBERSHIP_ID")
+    @Column(name = "TASK_ASSIGNMENT_ID")
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @XmlElement(name = "membership-id", namespace = CORE_XML_NS)
-    private long membershipId;
+    private long taskAssignmentId;
+
+    @ManyToOne
+    @JoinColumn(name = "TASK_ID")
+    private UserTask task;
 
     @ManyToOne
     @JoinColumn(name = "ROLE_ID")
-    @XmlTransient
     private Role role;
 
-    @ManyToOne
-    @JoinColumn(name = "MEMBER_ID")
-    @XmlTransient
-    private Party member;
-
-    public long getMembershipId() {
-        return membershipId;
+    public long getTaskAssignmentId() {
+        return taskAssignmentId;
     }
 
-    protected void setMembershipId(final long membershipId) {
-        this.membershipId = membershipId;
+    protected void setTaskAssignmentId(final long taskAssignmentId) {
+        this.taskAssignmentId = taskAssignmentId;
+    }
+
+    public UserTask getTask() {
+        return task;
+    }
+
+    protected void setTask(final UserTask task) {
+        this.task = task;
     }
 
     public Role getRole() {
@@ -87,21 +81,13 @@ public class RoleMembership implements Serializable {
         this.role = role;
     }
 
-    public Party getMember() {
-        return member;
-    }
-
-    protected void setMember(final Party member) {
-        this.member = member;
-    }
-
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 37 * hash
-                   + (int) (membershipId ^ (membershipId >>> 32));
-        hash = 37 * hash + Objects.hashCode(role);
-        hash = 37 * hash + Objects.hashCode(member);
+        int hash = 7;
+        hash = 67 * hash
+                   + (int) (taskAssignmentId ^ (taskAssignmentId >>> 32));
+        hash = 67 * hash + Objects.hashCode(task);
+        hash = 67 * hash + Objects.hashCode(role);
         return hash;
     }
 
@@ -111,37 +97,37 @@ public class RoleMembership implements Serializable {
             return false;
         }
 
-        if (!(obj instanceof RoleMembership)) {
+        if (!(obj instanceof TaskAssignment)) {
             return false;
         }
-        final RoleMembership other = (RoleMembership) obj;
+        final TaskAssignment other = (TaskAssignment) obj;
         if (!other.canEqual(this)) {
             return false;
         }
 
-        if (membershipId != other.getMembershipId()) {
+        if (taskAssignmentId != other.getTaskAssignmentId()) {
             return false;
         }
-        if (!Objects.equals(role, other.getRole())) {
+        if (!Objects.equals(task, other.getTask())) {
             return false;
         }
-        return Objects.equals(member, other.getMember());
+        return Objects.equals(role, other.getRole());
     }
 
     public boolean canEqual(final Object obj) {
-        return obj instanceof RoleMembership;
+        return obj instanceof TaskAssignment;
     }
 
     @Override
     public String toString() {
         return String.format("%s{ "
-                                 + "membershipId = %d, "
-                                 + "user = %s, "
-                                 + "role = %s "
+                                 + "taskAssignmentId = %d, "
+                                 + "task = %s, "
+                                 + "role = %s"
                                  + " }",
                              super.toString(),
-                             membershipId,
-                             Objects.toString(member),
+                             taskAssignmentId,
+                             Objects.toString(task),
                              Objects.toString(role));
     }
 

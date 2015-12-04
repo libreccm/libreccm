@@ -39,6 +39,7 @@ public class ToStringTest extends ToStringVerifier {
     public static Collection<Class<?>> data() {
         return Arrays.asList(new Class<?>[]{
             Task.class,
+            TaskAssignment.class,
             UserTask.class,
             Workflow.class
         });

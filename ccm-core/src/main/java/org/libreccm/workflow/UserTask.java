@@ -21,6 +21,7 @@ package org.libreccm.workflow;
 import static org.libreccm.core.CoreConstants.*;
 
 import org.libreccm.security.Group;
+import org.libreccm.security.Role;
 import org.libreccm.security.User;
 
 import java.io.Serializable;
@@ -34,6 +35,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -77,28 +79,12 @@ public class UserTask extends Task implements Serializable {
     @SuppressWarnings("PMD.LongVariable") //Shorter name would not be descriptive
     private User notificationSender;
 
-    @OneToMany
-    @JoinTable(name = "WORKFLOW_USER_TASK_ASSIGNED_USERS",
-               schema = DB_SCHEMA,
-               joinColumns = {
-                   @JoinColumn(name = "USER_TASK_ID")},
-               inverseJoinColumns = {
-                   @JoinColumn(name = "ASSIGNED_USER_ID")})
-    private List<User> assignedUsers;
-
-    @OneToMany
-    @JoinTable(name = "WORKFLOW_USER_TASK_ASSIGNED_GROUPS",
-               schema = DB_SCHEMA,
-               joinColumns = {
-                   @JoinColumn(name = "USER_TASK_ID")},
-               inverseJoinColumns = {
-                   @JoinColumn(name = "ASSIGNED_GROUP_ID")})
-    private List<Group> assignedGroups;
+    @OneToMany(mappedBy = "task")
+    private List<TaskAssignment> assignments;
 
     public UserTask() {
         super();
-        assignedUsers = new ArrayList<>();
-        assignedGroups = new ArrayList<>();
+        assignments = new ArrayList<>();
     }
 
     public boolean isLocked() {
@@ -166,44 +152,24 @@ public class UserTask extends Task implements Serializable {
         this.notificationSender = notificationSender;
     }
 
-    public List<User> getAssignedUsers() {
-        if (assignedUsers == null) {
+    public List<TaskAssignment> getAssignments() {
+        if (assignments == null) {
             return null;
         } else {
-            return Collections.unmodifiableList(assignedUsers);
+            return Collections.unmodifiableList(assignments);
         }
     }
 
-    protected void setAssignedUsers(final List<User> assignedUsers) {
-        this.assignedUsers = assignedUsers;
+    protected void setAssignments(final List<TaskAssignment> assignments) {
+        this.assignments = assignments;
     }
-
-    protected void addAssignedUser(final User user) {
-        assignedUsers.add(user);
+    
+    protected void addAssignment(final TaskAssignment assignment) {
+        assignments.add(assignment);
     }
-
-    protected void removeAssignedUser(final User user) {
-        assignedUsers.remove(user);
-    }
-
-    public List<Group> getAssignedGroups() {
-        if (assignedGroups == null) {
-            return null;
-        } else {
-            return Collections.unmodifiableList(assignedGroups);
-        }
-    }
-
-    protected void setAssignedGroups(final List<Group> assignedGroups) {
-        this.assignedGroups = assignedGroups;
-    }
-
-    protected void addAssignedGroup(final Group group) {
-        assignedGroups.add(group);
-    }
-
-    protected void removeAssignedGroup(final Group group) {
-        assignedGroups.remove(group);
+    
+    protected void removeAssignment(final TaskAssignment assignment) {
+        assignments.remove(assignment);
     }
 
     @Override
@@ -214,7 +180,7 @@ public class UserTask extends Task implements Serializable {
         hash = 37 * hash + Objects.hashCode(startDate);
         hash = 37 * hash + Objects.hashCode(dueDate);
         hash
-        = 37 * hash + (int) (durationMinutes ^ (durationMinutes >>> 32));
+            = 37 * hash + (int) (durationMinutes ^ (durationMinutes >>> 32));
         hash = 37 * hash + Objects.hashCode(notificationSender);
         return hash;
     }
@@ -223,7 +189,7 @@ public class UserTask extends Task implements Serializable {
     //Can't reduce complexity yet
     @SuppressWarnings({"PMD.CyclomaticComplexity",
                        "PMD.StdCyclomaticComplexity",
-                       "PMD.ModifiedCyclomaticComplexity", 
+                       "PMD.ModifiedCyclomaticComplexity",
                        "PMD.NPathComplexity"})
     public boolean equals(final Object obj) {
         if (obj == null) {
@@ -268,11 +234,11 @@ public class UserTask extends Task implements Serializable {
     @Override
     public String toString(final String data) {
         return super.toString(String.format(", locked = %b, "
-                                                    + "lockingUser = %s, "
-                                                    + "startDate = %tF %<tT,"
-                                                    + "dueDate = %tF %<tT, "
-                                                    + "durationMinutes = %d, "
-                                                    + "notificationSender = %s%s",
+                                                + "lockingUser = %s, "
+                                                + "startDate = %tF %<tT,"
+                                                + "dueDate = %tF %<tT, "
+                                                + "durationMinutes = %d, "
+                                                + "notificationSender = %s%s",
                                             locked,
                                             Objects.toString(lockingUser),
                                             startDate,
