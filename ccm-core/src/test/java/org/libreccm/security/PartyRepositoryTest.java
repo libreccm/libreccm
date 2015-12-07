@@ -45,9 +45,13 @@ import org.junit.runner.RunWith;
 import org.libreccm.categorization.Categorization;
 import org.libreccm.core.CcmObject;
 import org.libreccm.core.EmailAddress;
+import org.libreccm.jpa.EntityManagerProducer;
+import org.libreccm.jpa.utils.MimeTypeConverter;
 import org.libreccm.l10n.LocalizedString;
 import org.libreccm.tests.categories.IntegrationTest;
+import org.libreccm.testutils.EqualsVerifier;
 import org.libreccm.web.CcmApplication;
+import org.libreccm.workflow.Workflow;
 
 import java.io.File;
 import java.util.List;
@@ -121,14 +125,11 @@ public class PartyRepositoryTest {
             .addPackage(Categorization.class.getPackage())
             .addPackage(LocalizedString.class.getPackage())
             .addPackage(CcmApplication.class.getPackage())
-            .addPackage(org.libreccm.jpa.EntityManagerProducer.class
-                .getPackage())
-            .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
-                .getPackage())
-            .addPackage(org.libreccm.testutils.EqualsVerifier.class.
-                getPackage())
-            .addPackage(org.libreccm.tests.categories.IntegrationTest.class
-                .getPackage())
+            .addPackage(Workflow.class.getPackage())
+            .addPackage(EntityManagerProducer.class.getPackage())
+            .addPackage(MimeTypeConverter.class.getPackage())
+            .addPackage(EqualsVerifier.class.getPackage())
+            .addPackage(IntegrationTest.class.getPackage())
             .addAsLibraries(libs)
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")
@@ -160,7 +161,7 @@ public class PartyRepositoryTest {
         assertThat(jdoe.getGivenName(), is(equalTo("John")));
         assertThat(jdoe.getPassword(),
                    is(equalTo(
-                           "$shiro1$SHA-512$500000$7xkDcZUN0/whJInHIvGsDw==$WhelBVmJU/cLV7lAkMOrE5B/mqCW0bUuid1WX+xBwzzAaekC5bYn9eeOFGJWhiDgmaC50ZCUmM96/iGsRoc4uA==")));
+                       "$shiro1$SHA-512$500000$7xkDcZUN0/whJInHIvGsDw==$WhelBVmJU/cLV7lAkMOrE5B/mqCW0bUuid1WX+xBwzzAaekC5bYn9eeOFGJWhiDgmaC50ZCUmM96/iGsRoc4uA==")));
 
         assertThat(admins, is(not(nullValue())));
         assertThat(admins.getPartyId(), is(-20L));
@@ -181,13 +182,13 @@ public class PartyRepositoryTest {
         assertThat(jdoe.getGivenName(), is(equalTo("John")));
         assertThat(jdoe.getPassword(),
                    is(equalTo(
-                           "$shiro1$SHA-512$500000$7xkDcZUN0/whJInHIvGsDw==$WhelBVmJU/cLV7lAkMOrE5B/mqCW0bUuid1WX+xBwzzAaekC5bYn9eeOFGJWhiDgmaC50ZCUmM96/iGsRoc4uA==")));
+                       "$shiro1$SHA-512$500000$7xkDcZUN0/whJInHIvGsDw==$WhelBVmJU/cLV7lAkMOrE5B/mqCW0bUuid1WX+xBwzzAaekC5bYn9eeOFGJWhiDgmaC50ZCUmM96/iGsRoc4uA==")));
 
         assertThat(admins, is(not(nullValue())));
         assertThat(admins.getPartyId(), is(-20L));
         assertThat(admins.getName(), is(equalTo(ADMINS)));
     }
-    
+
     @Test
     @UsingDataSet("datasets/org/libreccm/security/PartyRepositoryTest/data.yml")
     @InSequence(200)
@@ -238,10 +239,10 @@ public class PartyRepositoryTest {
     public void saveChangedParty() {
         final Party user = partyRepository.findById(-10L);
         final Party group = partyRepository.findById(-20L);
-        
+
         user.setName("johndoe");
         group.setName("managers");
-        
+
         partyRepository.save(user);
         partyRepository.save(group);
     }
@@ -252,8 +253,8 @@ public class PartyRepositoryTest {
     public void saveNullValue() {
         partyRepository.save(null);
     }
-    
-        @Test
+
+    @Test
     @UsingDataSet("datasets/org/libreccm/security/PartyRepositoryTest/data.yml")
     @ShouldMatchDataSet(value = "datasets/org/libreccm/security/"
                                     + "PartyRepositoryTest/after-delete.yml",
@@ -271,4 +272,5 @@ public class PartyRepositoryTest {
     public void deleteNullValue() {
         partyRepository.delete(null);
     }
+
 }

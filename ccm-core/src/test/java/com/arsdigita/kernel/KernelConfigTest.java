@@ -51,6 +51,7 @@ import org.libreccm.l10n.LocalizedString;
 import org.libreccm.security.Permission;
 import org.libreccm.tests.categories.IntegrationTest;
 import org.libreccm.web.ApplicationRepository;
+import org.libreccm.workflow.Workflow;
 
 import java.util.StringTokenizer;
 
@@ -104,6 +105,7 @@ public class KernelConfigTest {
             .addPackage(Categorization.class.getPackage())
             .addPackage(Permission.class.getPackage())
             .addPackage(LocalizedString.class.getPackage())
+            .addPackage(Workflow.class.getPackage())
             .addPackage(UriConverter.class.getPackage())
             .addPackage(ApplicationRepository.class.getPackage())
             .addPackage(EntityManagerProducer.class.getPackage())
@@ -131,6 +133,7 @@ public class KernelConfigTest {
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")
             .addAsWebInfResource("test-web.xml", "WEB-INF/web.xml")
+            .addAsResource("configs/shiro.ini", "shiro.ini")
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 

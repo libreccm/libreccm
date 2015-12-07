@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<foundry:static-texts xmlns:foundry="http://foundry.libreccm.org">
+    <text id="cancel">
+        <translation lang="de">Abbrechen</translation>
+        <translation lang="en">Cancel</translation>
+    </text>
+    <text id="submit">
+        <translation lang="de">Weiter</translation>
+        <translation lang="en">Next</translation>
+    </text>
+</foundry:static-texts>

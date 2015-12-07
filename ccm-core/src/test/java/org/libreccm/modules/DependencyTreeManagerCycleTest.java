@@ -18,7 +18,6 @@
  */
 package org.libreccm.modules;
 
-
 import static org.hamcrest.Matchers.*;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -102,8 +101,7 @@ public class DependencyTreeManagerCycleTest {
         return ShrinkWrap
             .create(WebArchive.class,
                     "LibreCCM-org.libreccm.modules.dependencytree.DependencyTreeManagerCycleTest.war")
-            .addPackage(org.libreccm.tests.categories.IntegrationTest.class
-                .getPackage())
+            .addPackage(IntegrationTest.class.getPackage())
             .addClass(DependencyTreeManager.class)
             .addClass(DependencyException.class)
             .addClass(IntegrationException.class)

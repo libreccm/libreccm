@@ -112,10 +112,10 @@ public class CcmIntegrator implements Integrator {
             //Migrate the modules
             for (final TreeNode node : orderedNodes) {
                 migrateModule(node.getModule().getClass(), dataSource);
-
-                for (Class<?> entity : node.getModuleInfo().getModuleEntities()) {
-                    configuration.addAnnotatedClass(entity);
-                }
+                
+//                for (Class<?> entity : node.getModuleInfo().getModuleEntities()) {
+//                    configuration.addAnnotatedClass(entity);
+//                }
             }
 
             //Build Hibernate mappings for the entities.

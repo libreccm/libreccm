@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<page-layout>
+    <head>
+        <title>
+            <separator>: </separator>
+            <show-text>layout/page/head/title</show-text>
+            <show-page-title/>
+        </title>
+        <load-css-files/>
+        <load-jquery/>
+        <script src="scripts/category-step.js" origin="internal"/>
+        <script src="scripts/dcp.js" origin="internal"/>
+    </head>
+    <body id="cms-page">
+        <div id="cms-header" class="header-height">
+            <div class="min-width">
+                <div class="logo">
+                    <!--<img src-static="foundry/images/scientificcms_logo.png"/>-->
+                    <site-logo/>
+                </div>
+                
+                <div id="userwidget" class="cmsHeaderMenu">
+                    <div class="cms-greeting">
+                        <cms-greeting>
+                            <cms-greeting-static-text/>
+                            &#160;
+                            <span class="cms-username">
+                                <user-name/>
+                            </span>
+                        </cms-greeting>
+                    </div>
+                    <show-cms-global-navigation>
+                        <show-change-password-link/>
+                        <show-logout-link/>
+                    </show-cms-global-navigation>
+                    
+                </div>
+            </div>
+        </div>
+        <div id="cms-breadcrumbs" class="min-width">
+            <show-bebop-contextbar>
+                <separator> -&gt; </separator>
+            </show-bebop-contextbar>
+        </div>
+        <div id="tabs">
+            <show-tabbed-pane class="min-width"/>
+        </div>
+        <div id="cms-content" class="min-width header-height">
+            <div id="left">
+                <div class="column-head">
+                    <show-content-type/>
+                </div>
+                <div class="column-content">
+                    <show-left-column/>
+                </div>
+            </div>
+            <div id="right">
+                <div class="column-head">
+                    <div class="content-title">
+                        <show-bebop-page-title/>
+                    </div>
+                    <div id="content-view-menu">
+                        <show-cms-content-view-menu/>
+                        <show-cms-global-navigation>
+                            <show-preview-link/>
+                        </show-cms-global-navigation>
+                    </div>
+                </div>
+                <div id="content" class="column-content">
+                    <show-body-column/>
+                </div>
+            </div>
+            <div class="end-float"/>
+        </div>
+        
+        <div id="cms-footer">
+            <div class="min-width">
+                <show-system-information/>
+                <show-cms-global-navigation>
+                    <show-contentcenter-link/>
+                    <show-workspace-link/>
+                    <show-admincenter-link/>
+                </show-cms-global-navigation>
+                <show-cms-global-navigation>
+                    <use-help-link/>
+                </show-cms-global-navigation>
+            </div>
+        </div>
+    </body>
+</page-layout>

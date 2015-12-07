@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<content-item-layout>
+    <!-- 
+    To use the Bookmark URL in the list view instead of the URL to the
+    detail view create a for the category with a DataCollectionDefinition
+    which contains the bookmark url property and wrap the <a> element below
+    with <bookmark-url>.
+    -->
+    
+    <a>
+        <content-item-title/>
+    </a>    
+    <div class="lead">    
+        <show-property name="description"/>
+    </div>
+</content-item-layout>

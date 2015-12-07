@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" 
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0                              http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -44,7 +41,8 @@
         <!--<module>ccm-docrepo</module>-->
         
         <!-- Bundle modules -->
-        <module>ccm-bundle-devel</module>
+        <module>ccm-bundle-devel-swarm</module>
+        <module>ccm-bundle-devel-wildfly</module>
         <module>ccm-test-bundle-wildfly8</module>
         
         <!-- Archetypes -->
@@ -62,7 +60,7 @@
         <module>ccm-cms-types-faqitem</module>
         <module>ccm-cms-types-externallink</module>
         <module>ccm-cms-types-newsitem</module>
-    </modules>
+  </modules>
 
     <pluginRepositories>
         <pluginRepository>

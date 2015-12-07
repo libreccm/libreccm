@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<foundry:static-texts xmlns:foundry="http://foundry.libreccm.org">
+    
+    <text id="language/de">
+        <translation lang="de">Deutsch</translation>
+        <translation lang="en">German</translation>
+    </text>
+    
+    <text id="language/en">
+        <translation lang="de">Englisch</translation>
+        <translation lang="en">English</translation>
+    </text>
+    
+    <text id="layout/page/head/title">
+        <translation lang="de">Foundry</translation>
+        <translation lang="en">Foundry</translation>
+    </text>
+    
+    <text id="layout/page/skipnav/link">
+        <translation lang="de">Navigation überspringen</translation>
+        <translation lang="en">Skip navigation</translation>
+    </text>
+    
+    <text id="time/am">
+        <translation lang="de">a.m.</translation>
+        <translation lang="en">a.m.</translation>
+    </text>
+
+    <text id="time/pm">
+        <translation lang="de">p.m.</translation>
+        <translation lang="en">p.m.</translation>
+    </text>
+            
+</foundry:static-texts>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<portlet-layout>
+    
+    <div class="portlet portlet-freeform-html">
+        <portlet-freeform-html-content/>
+    </div>
+    
+</portlet-layout>

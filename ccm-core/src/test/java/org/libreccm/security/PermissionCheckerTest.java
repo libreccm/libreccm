@@ -26,9 +26,12 @@ import com.arsdigita.util.parameter.AbstractParameterContext;
 import com.arsdigita.web.CCMApplicationContextListener;
 import com.arsdigita.xml.XML;
 import com.arsdigita.xml.formatters.DateTimeFormatter;
+
 import java.io.File;
 import java.util.concurrent.Callable;
+
 import javax.inject.Inject;
+
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.subject.Subject;
@@ -63,6 +66,7 @@ import org.libreccm.tests.categories.IntegrationTest;
 
 import org.libreccm.testutils.EqualsVerifier;
 import org.libreccm.web.CcmApplication;
+import org.libreccm.workflow.Workflow;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -112,10 +116,10 @@ public class PermissionCheckerTest {
     @Deployment
     public static WebArchive createDeployment() {
         final PomEquippedResolveStage pom = Maven
-                .resolver()
-                .loadPomFromFile("pom.xml");
+            .resolver()
+            .loadPomFromFile("pom.xml");
         final PomEquippedResolveStage dependencies = pom.
-                importCompileAndRuntimeDependencies();
+            importCompileAndRuntimeDependencies();
         final File[] libs = dependencies.resolve().withTransitivity().asFile();
 
         for (File lib : libs) {
@@ -124,59 +128,58 @@ public class PermissionCheckerTest {
         }
 
         return ShrinkWrap
-                .create(WebArchive.class,
-                        "LibreCCM-org.libreccm.security.PermissionCheckerTest.war")
-                .addPackage(User.class.getPackage())
-                .addPackage(CcmObject.class.getPackage())
-                .addPackage(Categorization.class.getPackage())
-                .addPackage(LocalizedString.class.getPackage())
-                .addPackage(CcmApplication.class.getPackage())
-                .addPackage(EntityManagerProducer.class.getPackage())
-                .addPackage(MimeTypeConverter.class.getPackage())
-                .addPackage(EqualsVerifier.class.getPackage())
-                .addPackage(IntegrationTest.class.getPackage())
-                .addPackage(KernelConfig.class.getPackage())
-                .addPackage(SecurityConfig.class.getPackage())
-                .addPackage(AbstractConfig.class.getPackage())
-                .addPackage(AbstractParameterContext.class.getPackage())
-                .addPackage(UncheckedWrapperException.class.getPackage())
-                .addPackage(CCMApplicationContextListener.class.getPackage())
-                .addPackage(XML.class.getPackage())
-                .addPackage(DateTimeFormatter.class.getPackage())
-                .addAsLibraries(libs)
-                .addAsResource("test-persistence.xml",
-                               "META-INF/persistence.xml")
-                .addAsResource("com/arsdigita/kernel/"
-                                       + "KernelConfig_parameter.properties",
-                               "com/arsdigita/kernel/"
-                                       + "KernelConfig_parameter.properties")
-                .addAsResource("com/arsdigita/kernel/security/"
-                                       + "SecurityConfig_parameter.properties",
-                               "com/arsdigita/kernel/security/"
-                                       + "SecurityConfig_parameter.properties")
-                .addAsWebInfResource(
-                        "configs/org/libreccm/security/UserManagerTest/"
-                                + "registry.properties",
-                        "conf/registry/registry.properties")
-                .addAsResource(
-                        "configs/org/libreccm/security/UserManagerTest/ccm-core.config",
-                        "ccm-core.config")
-                .addAsResource(
-                        "configs/org/libreccm/security/ShiroTest/shiro.ini",
-                        "shiro.ini")
-                .addAsResource(
-                        "configs/org/libreccm/security/ShiroTest/log4j2.xml",
-                        "log4j2.xml")
-                .addAsWebInfResource(
-                        "configs/org/libreccm/security/ShiroTest/"
-                                + "kernel.properties",
-                        "conf/registry/ccm-core/kernel.properties")
-                .addAsWebInfResource(
-                        "configs/org/libreccm//security/ShiroTest/"
-                                + "security.properties",
-                        "conf/registry/ccm-core/security.properties")
-                .addAsWebInfResource("test-web.xml", "web.xml")
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+            .create(WebArchive.class,
+                    "LibreCCM-org.libreccm.security.PermissionCheckerTest.war")
+            .addPackage(User.class.getPackage())
+            .addPackage(CcmObject.class.getPackage())
+            .addPackage(Categorization.class.getPackage())
+            .addPackage(LocalizedString.class.getPackage())
+            .addPackage(CcmApplication.class.getPackage())
+            .addPackage(Workflow.class.getPackage())
+            .addPackage(EntityManagerProducer.class.getPackage())
+            .addPackage(MimeTypeConverter.class.getPackage())
+            .addPackage(EqualsVerifier.class.getPackage())
+            .addPackage(IntegrationTest.class.getPackage())
+            .addPackage(KernelConfig.class.getPackage())
+            .addPackage(SecurityConfig.class.getPackage())
+            .addPackage(AbstractConfig.class.getPackage())
+            .addPackage(AbstractParameterContext.class.getPackage())
+            .addPackage(UncheckedWrapperException.class.getPackage())
+            .addPackage(CCMApplicationContextListener.class.getPackage())
+            .addPackage(XML.class.getPackage())
+            .addPackage(DateTimeFormatter.class.getPackage())
+            .addAsLibraries(libs)
+            .addAsResource("test-persistence.xml",
+                           "META-INF/persistence.xml")
+            .addAsResource("com/arsdigita/kernel/"
+                               + "KernelConfig_parameter.properties",
+                           "com/arsdigita/kernel/"
+                               + "KernelConfig_parameter.properties")
+            .addAsResource("com/arsdigita/kernel/security/"
+                               + "SecurityConfig_parameter.properties",
+                           "com/arsdigita/kernel/security/"
+                               + "SecurityConfig_parameter.properties")
+            .addAsWebInfResource(
+                "configs/org/libreccm/security/UserManagerTest/"
+                    + "registry.properties",
+                "conf/registry/registry.properties")
+            .addAsResource(
+                "configs/org/libreccm/security/UserManagerTest/ccm-core.config",
+                "ccm-core.config")
+            .addAsResource("configs/shiro.ini", "shiro.ini")
+            .addAsResource(
+                "configs/org/libreccm/security/ShiroTest/log4j2.xml",
+                "log4j2.xml")
+            .addAsWebInfResource(
+                "configs/org/libreccm/security/ShiroTest/"
+                    + "kernel.properties",
+                "conf/registry/ccm-core/kernel.properties")
+            .addAsWebInfResource(
+                "configs/org/libreccm//security/ShiroTest/"
+                    + "security.properties",
+                "conf/registry/ccm-core/security.properties")
+            .addAsWebInfResource("test-web.xml", "web.xml")
+            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test
@@ -211,6 +214,7 @@ public class PermissionCheckerTest {
         final CcmObject object3 = objectRepository.findById(-20003L);
 
         shiro.getSystemUser().execute(new Callable<Boolean>() {
+
             @Override
             public Boolean call() {
                 assertThat(permissionChecker.isPermitted("privilege1"),
@@ -232,6 +236,7 @@ public class PermissionCheckerTest {
 
                 return false;
             }
+
         });
 
     }
@@ -336,18 +341,21 @@ public class PermissionCheckerTest {
         final CcmObject object3 = objectRepository.findById(-20003L);
 
         shiro.getSystemUser().execute(new Callable<Boolean>() {
+
             @Override
             public Boolean call() {
                 permissionChecker.checkPermission("privilege1");
                 permissionChecker.checkPermission("privilege2");
                 permissionChecker.checkPermission("privilege3");
-                
+
                 permissionChecker.checkPermission("privilege1", object3);
                 permissionChecker.checkPermission("privilege2", object1);
                 permissionChecker.checkPermission("privilege3", object2);
 
                 return false;
             }
+
         });
     }
+
 }

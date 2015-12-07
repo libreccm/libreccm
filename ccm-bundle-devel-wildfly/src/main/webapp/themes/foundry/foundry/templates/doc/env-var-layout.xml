@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doc-envvar-layout>
+    <section class="template-tag">
+        <h1>
+            <doc-env-var-name/>
+        </h1>
+        
+        <div>
+            <doc-env-var-desc/>
+        </div>
+        
+        <doc-see-also-link-list>
+            <div>
+                <h2>See also</h2>
+                <ul>
+                    <doc-see-also-link>
+                        <li>
+                            <a>
+                                <doc-see-also-link-title/>
+                            </a>
+                        </li>
+                    </doc-see-also-link>
+                </ul>
+            </div>
+        </doc-see-also-link-list>
+        
+    </section>
+</doc-envvar-layout>

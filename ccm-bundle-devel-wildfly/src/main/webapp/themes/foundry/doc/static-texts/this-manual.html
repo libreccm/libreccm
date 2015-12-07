@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Foundry Documentation - CSS files</title>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    </head>
+    <body>
+        <h1>About this manual</h1>
+        <main>
+            <p>
+                This manual is separated into two parts. The <a href="#user-manual">first part</a> is 
+                for designers and administrators (called users in the context of this manual). It
+                describes the structure of the templates in Foundry, how CSS files are implemented
+                and how Frameworks like <a href="http://getbootstrap.com">Bootstrap</a>, 
+                <a href="http://www.yaml.de">YAML</a> or <a href="http://jquery.com">jQuery</a> 
+                can be integrated into a Foundry theme. The first part also contains a reference
+                part which describes all elements/tags which can be used in the templates. 
+                If you are viewing this documentation using an URL like 
+                <code>/themes/foundry/doc/</code> this reference is created on the fly from the 
+                XSL files.
+            </p>
+            <p>
+                The <a href="#developer-manual">second part</a> is for developers which want to 
+                extend Foundry. It describes the 
+                structure of Foundry, how support for content types (the most common task) can be 
+                added, how the documentation system works and which XPath functions and XSL helper 
+                templates are available. Developers should also read the first part because the
+                first part includes informations about the general structure of Foundry.
+            </p>
+            <p>
+                In the manual the following terms a used quite often:
+            </p>
+            <dl>
+                <dt>context prefix</dt>
+                <dd>
+                    The context in which CCM is installed in the Servlet container. If CCM is 
+                    installed in the root context the context prefix is empty.
+                </dd>
+                <dt>theme prefix</dt>
+                <dd>
+                    The URL part of accessing resources inside the theme. For example for theme
+                    called <code>foo</code> the theme prefix is 
+                    <code>/themes/published-themedir/foo</code> is published theme is used an if 
+                    CCM is installed in the root context.
+                </dd>
+                <dt>dispatcher prefix</dt>
+                <dd>
+                    The URL for creating links to other CCM resources like content items. Depends
+                    on the context in which CCM is installed and if development theme or the 
+                    published theme is used.
+                </dd>
+                <dt>data tree</dt>
+                <dd>The XML created by CCM containing all data of the current page.</dd>
+                <dt>Layout tree</dt>
+                <dd>The XML of layout template in processing.</dd>
+            </dl>
+        </main>
+    </body>
+</html>

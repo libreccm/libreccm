@@ -20,6 +20,7 @@ package org.libreccm.security;
 
 import java.io.File;
 import java.util.List;
+
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -53,9 +54,13 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.libreccm.categorization.Categorization;
 import org.libreccm.core.CcmObject;
+import org.libreccm.jpa.EntityManagerProducer;
+import org.libreccm.jpa.utils.MimeTypeConverter;
 import org.libreccm.l10n.LocalizedString;
 import org.libreccm.tests.categories.IntegrationTest;
+import org.libreccm.testutils.EqualsVerifier;
 import org.libreccm.web.CcmApplication;
+import org.libreccm.workflow.Workflow;
 
 /**
  *
@@ -102,10 +107,10 @@ public class GroupRepositoryTest {
     @Deployment
     public static WebArchive createDeployment() {
         final PomEquippedResolveStage pom = Maven
-                .resolver()
-                .loadPomFromFile("pom.xml");
+            .resolver()
+            .loadPomFromFile("pom.xml");
         final PomEquippedResolveStage dependencies = pom.
-                importCompileAndRuntimeDependencies();
+            importCompileAndRuntimeDependencies();
         final File[] libs = dependencies.resolve().withTransitivity().asFile();
 
         for (File lib : libs) {
@@ -114,26 +119,23 @@ public class GroupRepositoryTest {
         }
 
         return ShrinkWrap
-                .create(WebArchive.class,
-                        "LibreCCM-org.libreccm.security.UserRepositoryTest.war")
-                .addPackage(User.class.getPackage())
-                .addPackage(CcmObject.class.getPackage())
-                .addPackage(Categorization.class.getPackage())
-                .addPackage(LocalizedString.class.getPackage())
-                .addPackage(CcmApplication.class.getPackage())
-                .addPackage(org.libreccm.jpa.EntityManagerProducer.class
-                        .getPackage())
-                .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
-                        .getPackage())
-                .addPackage(org.libreccm.testutils.EqualsVerifier.class.
-                        getPackage())
-                .addPackage(org.libreccm.tests.categories.IntegrationTest.class
-                        .getPackage())
-                .addAsLibraries(libs)
-                .addAsResource("test-persistence.xml",
-                               "META-INF/persistence.xml")
-                .addAsWebInfResource("test-web.xml", "WEB-INF/web.xml")
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "WEB-INF/beans.xml");
+            .create(WebArchive.class,
+                    "LibreCCM-org.libreccm.security.UserRepositoryTest.war")
+            .addPackage(User.class.getPackage())
+            .addPackage(CcmObject.class.getPackage())
+            .addPackage(Categorization.class.getPackage())
+            .addPackage(LocalizedString.class.getPackage())
+            .addPackage(CcmApplication.class.getPackage())
+            .addPackage(Workflow.class.getPackage())
+            .addPackage(EntityManagerProducer.class.getPackage())
+            .addPackage(MimeTypeConverter.class.getPackage())
+            .addPackage(EqualsVerifier.class.getPackage())
+            .addPackage(IntegrationTest.class.getPackage())
+            .addAsLibraries(libs)
+            .addAsResource("test-persistence.xml",
+                           "META-INF/persistence.xml")
+            .addAsWebInfResource("test-web.xml", "WEB-INF/web.xml")
+            .addAsWebInfResource(EmptyAsset.INSTANCE, "WEB-INF/beans.xml");
     }
 
     @Test
@@ -203,7 +205,7 @@ public class GroupRepositoryTest {
     @Test
     @UsingDataSet("datasets/org/libreccm/security/GroupRepositoryTest/data.yml")
     @ShouldMatchDataSet(value = "datasets/org/libreccm/security/"
-                                        + "GroupRepositoryTest/after-save-new.yml",
+                                    + "GroupRepositoryTest/after-save-new.yml",
                         excludeColumns = {"party_id"})
     @InSequence(400)
     public void saveNewGroup() {
@@ -216,7 +218,7 @@ public class GroupRepositoryTest {
     @Test
     @UsingDataSet("datasets/org/libreccm/security/GroupRepositoryTest/data.yml")
     @ShouldMatchDataSet(value = "datasets/org/libreccm/security/"
-                                        + "GroupRepositoryTest/after-save-changed.yml",
+                                    + "GroupRepositoryTest/after-save-changed.yml",
                         excludeColumns = {"party_id"})
     @InSequence(500)
     public void saveChangedGroup() {
@@ -232,20 +234,19 @@ public class GroupRepositoryTest {
     public void saveNullValue() {
         groupRepository.save(null);
     }
-    
+
     @Test
     @UsingDataSet("datasets/org/libreccm/security/GroupRepositoryTest/data.yml")
     @ShouldMatchDataSet(value = "datasets/org/libreccm/security/"
-                                        + "GroupRepositoryTest/after-delete.yml",
+                                    + "GroupRepositoryTest/after-delete.yml",
                         excludeColumns = {"party_id"})
     @InSequence(700)
     public void deleteUser() {
         final Group group = groupRepository.findByName(USERS);
-        
+
         groupRepository.delete(group);
     }
-    
-    
+
     @Test(expected = IllegalArgumentException.class)
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(800)

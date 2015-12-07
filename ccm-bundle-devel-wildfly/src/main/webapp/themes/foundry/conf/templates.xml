@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates>
+    <applications>
+        <!--
+            <application name = "" page-class=""></application>
+        -->
+        <application name="admin" origin="internal">admin-layout.xml</application>
+        <application name="login" origin="internal">admin-layout.xml</application>
+        <application name="navigation" class="portalPage">portal-workspace.xml</application>
+        <application name="navigation" class="portalGridPage">portal-workspace-grid.xml</application>
+        <application name="none" class="cms-admin" origin="internal">admin-layout.xml</application>
+        <application name="portal">portal-workspace.xml</application>
+        <default>default-layout.xml</default>
+    </applications>
+    
+    <content-items>
+        <detail>
+            <content-item content-type="com.arsdigita.cms.contenttypes.Article">
+                content-items/article-detail.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.Bookmark">
+                content-items/bookmark-detail.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.Event">
+                content-items/event-detail.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.MultiPartArticle">
+                content-items/mpa-detail.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.NewsItem">
+                content-items/news-detail.xml
+            </content-item>
+            <default>content-items/detail-default.xml</default>
+        </detail>
+        <link>
+            <default>content-items/link-default.xml</default>
+        </link>
+        <list>
+            <content-item content-type="com.arsdigita.cms.contenttypes.Article">
+                content-items/article-list.xml
+            </content-item>
+            <content-item content-type="com.arsdigita.cms.contenttypes.MultiPartArticle">
+                content-items/mpa-list.xml
+            </content-item>
+            <default>content-items/list-default.xml</default>
+        </list>
+    </content-items>
+    
+    <portlets>
+        <portlet class="com.arsdigita.cms.ui.portlet.ContentItemPortletRenderer">
+            portlets/contentitem.xml
+        </portlet>
+        <portlet class="com.arsdigita.navigation.ui.portlet.ItemListPortletRenderer">
+            portlets/item-list.xml
+        </portlet>
+        <portlet class="com.arsdigita.portalworkspace.ui.portlet.FreeformHTMLPortletRenderer">
+            portlets/freeform-html.xml
+        </portlet>
+        <!--<default>
+            
+        </default>-->
+    </portlets>
+</templates>

@@ -42,7 +42,15 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+import org.libreccm.categorization.Categorization;
+import org.libreccm.jpa.EntityManagerProducer;
+import org.libreccm.jpa.utils.MimeTypeConverter;
+import org.libreccm.l10n.LocalizedString;
+import org.libreccm.security.Permission;
 import org.libreccm.tests.categories.IntegrationTest;
+import org.libreccm.testutils.EqualsVerifier;
+import org.libreccm.web.CcmApplication;
+import org.libreccm.workflow.Workflow;
 
 import java.io.File;
 import java.util.List;
@@ -63,32 +71,32 @@ import static org.junit.Assert.*;
 @Transactional(TransactionMode.COMMIT)
 @CreateSchema({"create_ccm_core_schema.sql"})
 public class CcmObjectRepositoryTest {
-    
+
     @Inject
     private CcmObjectRepository ccmObjectRepository;
-    
+
     @PersistenceContext(name = "LibreCCM")
     private EntityManager entityManager;
-    
+
     public CcmObjectRepositoryTest() {
     }
-    
+
     @BeforeClass
     public static void setUpClass() {
     }
-    
+
     @AfterClass
     public static void tearDownClass() {
     }
-    
+
     @Before
     public void setUp() {
     }
-    
+
     @After
     public void tearDown() {
     }
-    
+
     @Deployment
     public static WebArchive createDeployment() {
         final PomEquippedResolveStage pom = Maven
@@ -97,48 +105,44 @@ public class CcmObjectRepositoryTest {
         final PomEquippedResolveStage dependencies = pom
             .importCompileAndRuntimeDependencies();
         final File[] libs = dependencies.resolve().withTransitivity().asFile();
-        
+
         for (File lib : libs) {
             System.err.printf("Adding file '%s' to test archive...%n",
                               lib.getName());
         }
-        
+
         return ShrinkWrap
             .create(WebArchive.class,
                     "LibreCCM-org.libreccm.core.CcmObjectRepositoryTest.war")
             .addPackage(CcmObject.class.getPackage())
-            .addPackage(org.libreccm.security.Permission.class.getPackage())
-            .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
-            .addPackage(org.libreccm.categorization.Category.class.
-                getPackage())
-            .addPackage(org.libreccm.l10n.LocalizedString.class.getPackage())
-            .addPackage(org.libreccm.jpa.EntityManagerProducer.class
-                .getPackage())
-            .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
-                .getPackage())
-            .addPackage(org.libreccm.testutils.EqualsVerifier.class.
-                getPackage())
-            .addPackage(org.libreccm.tests.categories.IntegrationTest.class
-                .getPackage())
+            .addPackage(Permission.class.getPackage())
+            .addPackage(CcmApplication.class.getPackage())
+            .addPackage(Categorization.class.getPackage())
+            .addPackage(LocalizedString.class.getPackage())
+            .addPackage(Workflow.class.getPackage())
+            .addPackage(EntityManagerProducer.class.getPackage())
+            .addPackage(MimeTypeConverter.class.getPackage())
+            .addPackage(EqualsVerifier.class.getPackage())
+            .addPackage(IntegrationTest.class.getPackage())
             .addAsLibraries(libs)
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")
             .addAsWebInfResource("test-web.xml", "WEB-INF/web.xml")
             .addAsWebInfResource(EmptyAsset.INSTANCE, "WEB-INF/beans.xml");
     }
-    
+
     @Test
     @InSequence(1)
     public void repoIsInjected() {
         assertThat(ccmObjectRepository, is(not((nullValue()))));
     }
-    
+
     @Test
     @InSequence(2)
     public void entityManagerIsInjected() {
         assertThat(entityManager, is(not((nullValue()))));
     }
-    
+
     @Test
     @UsingDataSet(
         "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.yml")
@@ -146,7 +150,7 @@ public class CcmObjectRepositoryTest {
     public void datasetOnly() {
         System.out.println("Dataset loaded successfully.");
     }
-    
+
     @Test
     @UsingDataSet(
         "datasets/org/libreccm/core/CcmObjectRepositoryTest/after-save-changed.yml")
@@ -154,7 +158,7 @@ public class CcmObjectRepositoryTest {
     public void datasetOnly2() {
         System.out.println("Dataset loaded successfully.");
     }
-    
+
     @Test
     @UsingDataSet(
         "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.yml")
@@ -164,22 +168,22 @@ public class CcmObjectRepositoryTest {
         final CcmObject obj2 = entityManager.find(CcmObject.class, -20L);
         final CcmObject obj3 = entityManager.find(CcmObject.class, -30L);
         final CcmObject none = entityManager.find(CcmObject.class, -999L);
-        
+
         assertThat(obj1, is(not(nullValue())));
         assertThat(obj1.getObjectId(), is(-10L));
         assertThat(obj1.getDisplayName(), is(equalTo("Test Object 1")));
-        
+
         assertThat(obj2, is(not(nullValue())));
         assertThat(obj2.getObjectId(), is(-20L));
         assertThat(obj2.getDisplayName(), is(equalTo("Test Object 2")));
-        
+
         assertThat(obj3, is(not(nullValue())));
         assertThat(obj3.getObjectId(), is(-30L));
         assertThat(obj3.getDisplayName(), is(equalTo("Test Object 3")));
-        
+
         assertThat(none, is(nullValue()));
     }
-    
+
     @Test
     @UsingDataSet(
         "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.yml")
@@ -193,22 +197,22 @@ public class CcmObjectRepositoryTest {
                                                   new Long(-30L));
         final CcmObject none = entityManager.find(CcmObject.class, new Long(
                                                   -999L));
-        
+
         assertThat(obj1, is(not(nullValue())));
         assertThat(obj1.getObjectId(), is(-10L));
         assertThat(obj1.getDisplayName(), is(equalTo("Test Object 1")));
-        
+
         assertThat(obj2, is(not(nullValue())));
         assertThat(obj2.getObjectId(), is(-20L));
         assertThat(obj2.getDisplayName(), is(equalTo("Test Object 2")));
-        
+
         assertThat(obj3, is(not(nullValue())));
         assertThat(obj3.getObjectId(), is(-30L));
         assertThat(obj3.getDisplayName(), is(equalTo("Test Object 3")));
-        
+
         assertThat(none, is(nullValue()));
     }
-    
+
     @Test
     @UsingDataSet(
         "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.yml")
@@ -218,32 +222,32 @@ public class CcmObjectRepositoryTest {
         final CcmObject obj2 = ccmObjectRepository.findById(-20L);
         final CcmObject obj3 = ccmObjectRepository.findById(-30L);
         final CcmObject none = ccmObjectRepository.findById(-999L);
-        
+
         assertThat(obj1, is(not(nullValue())));
         assertThat(obj1.getObjectId(), is(-10L));
         assertThat(obj1.getDisplayName(), is(equalTo("Test Object 1")));
-        
+
         assertThat(obj2, is(not(nullValue())));
         assertThat(obj2.getObjectId(), is(-20L));
         assertThat(obj2.getDisplayName(), is(equalTo("Test Object 2")));
-        
+
         assertThat(obj3, is(not(nullValue())));
         assertThat(obj3.getObjectId(), is(-30L));
         assertThat(obj3.getDisplayName(), is(equalTo("Test Object 3")));
-        
+
         assertThat(none, is(nullValue()));
     }
-    
+
     @Test
     @UsingDataSet(
         "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.yml")
     @InSequence(10)
     public void findAllCcmObjects() {
         final List<CcmObject> objects = ccmObjectRepository.findAll();
-        
+
         assertThat(objects.size(), is(3));
     }
-    
+
     @Test
     @UsingDataSet(
         "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.yml")
@@ -254,10 +258,10 @@ public class CcmObjectRepositoryTest {
     public void saveNewCcmObject() {
         final CcmObject obj = new CcmObject();
         obj.setDisplayName("Test Object 4");
-        
+
         ccmObjectRepository.save(obj);
     }
-    
+
     @Test
     @UsingDataSet(
         "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.yml")
@@ -268,17 +272,17 @@ public class CcmObjectRepositoryTest {
     public void saveChangedCcmObject() {
         final CcmObject obj = ccmObjectRepository.findById(-20L);
         obj.setDisplayName("Second Test Object");
-        
+
         ccmObjectRepository.save(obj);
     }
-    
+
     @Test(expected = IllegalArgumentException.class)
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(500)
     public void saveNullValue() {
         ccmObjectRepository.save(null);
     }
-    
+
     @Test
     @UsingDataSet(
         "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.yml")
@@ -288,15 +292,15 @@ public class CcmObjectRepositoryTest {
     @InSequence(600)
     public void deleteCcmObject() {
         final CcmObject obj = ccmObjectRepository.findById(-20L);
-        
+
         ccmObjectRepository.delete(obj);
     }
-    
+
     @Test(expected = IllegalArgumentException.class)
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(700)
     public void deleteNullValue() {
         ccmObjectRepository.delete(null);
     }
-    
+
 }

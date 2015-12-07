@@ -102,8 +102,7 @@ public class DependencyTreeManagerTest {
         return ShrinkWrap
             .create(WebArchive.class,
                     "LibreCCM-org.libreccm.modules.dependencytree.DependencyTreeManagerTest.war")
-            .addPackage(org.libreccm.tests.categories.IntegrationTest.class
-                .getPackage())
+            .addPackage(IntegrationTest.class.getPackage())
             .addClass(DependencyTreeManager.class)
             .addClass(DependencyException.class)
             .addClass(IntegrationException.class)

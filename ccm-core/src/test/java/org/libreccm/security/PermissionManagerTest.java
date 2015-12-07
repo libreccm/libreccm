@@ -58,6 +58,7 @@ import org.libreccm.l10n.LocalizedString;
 import org.libreccm.tests.categories.IntegrationTest;
 import org.libreccm.testutils.EqualsVerifier;
 import org.libreccm.web.CcmApplication;
+import org.libreccm.workflow.Workflow;
 
 import java.io.File;
 
@@ -132,6 +133,7 @@ public class PermissionManagerTest {
             .addPackage(Categorization.class.getPackage())
             .addPackage(LocalizedString.class.getPackage())
             .addPackage(CcmApplication.class.getPackage())
+            .addPackage(Workflow.class.getPackage())
             .addPackage(EntityManagerProducer.class.getPackage())
             .addPackage(MimeTypeConverter.class.getPackage())
             .addPackage(EqualsVerifier.class.getPackage())
@@ -158,10 +160,7 @@ public class PermissionManagerTest {
             .addAsResource(
                 "configs/org/libreccm/security/UserManagerTest/ccm-core.config",
                 "ccm-core.config")
-            //                .addAsWebInfResource(
-            //                        "datasets/org/libreccm//security/UserManagerTest/"
-            //                                + "security.properties",
-            //                        "conf/registry/ccm-core/security.properties")
+            .addAsResource("configs/shiro.ini", "shiro.ini")
             .addAsWebInfResource("test-web.xml", "web.xml")
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }

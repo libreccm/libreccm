@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<foundry:static-texts xmlns:foundry="http://foundry.libreccm.org">
+    <text id="SubmitFilters">
+        <translation lang="de">Anwenden</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sortAndListFilterList">
+        <translation lang="de">Liste filtern und sortieren</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="filterList">
+        <translation lang="de">Liste filtern</translation>
+        <translation lang="en"></translation>
+    </text>
+    
+    <text id="keywords">
+        <translation lang="de">Schlagworte</translation>
+        <translation lang="en"></translation>
+    </text>
+    
+    <text id="memberListsortAndFilterList">
+        <translation lang="de">Mitgliederliste filtern</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="memberListfilterList">
+        <translation lang="de">Mitgliederliste filtern</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="memberListSubmitFilters">
+        <translation lang="de">Fitern</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="memberListsurname">
+        <translation lang="de">Familienname</translation>
+        <translation lang="en"></translation>
+    </text>
+    
+    <text id="SciPublicationsListsortAndFilterList">
+        <translation lang="de">Publikationen filtern und sortieren</translation>
+        <translation lang="en">Publikationen filtern und sortieren</translation>
+    </text>
+    <text id="SciPublicationsListfilterList">
+        <translation lang="de">Publikationen filtern</translation>
+        <translation lang="en">Filter publications</translation>
+    </text>
+    <text id="SciPublicationsListsortList">
+        <translation lang="de">Publikationen sortieren</translation>
+        <translation lang="en">Sort publications</translation>
+    </text>
+    <text id="SciPublicationsListSubmitFilters">
+        <translation lang="de">Publikationen filtern</translation>
+        <translation lang="en">Filter publications</translation>
+    </text>
+    <text id="SciPublicationsListSortList">
+        <translation lang="de">Publikationen sortieren</translation>
+        <translation lang="en">Sort publications</translation>
+    </text>
+    <text id="SciPublicationsListtitle">
+        <translation lang="de">Nach Titel filtern</translation>
+        <translation lang="en">Filter by title</translation>
+    </text>
+    <text id="SciPublicationsListauthorsStr">
+        <translation lang="de">Nach Autor filtern</translation>
+        <translation lang="en">Filter by author</translation>
+    </text>
+    <text id="SciPublicationsListyearOfPublication">
+        <translation lang="de">Erscheinungsjahr</translation>
+        <translation lang="en">Year</translation>
+    </text>
+    <text id="SciPublicationsListyearOfPublicationAll">
+        <translation lang="de">Alle</translation>
+        <translation lang="en">All</translation>
+    </text>
+    <text id="SciPublicationsListSortBy">
+        <translation lang="de">Sortieren nach</translation>
+        <translation lang="en">Sort by</translation>
+    </text>
+    <text id="SciPublicationsListSortBytitle">
+        <translation lang="de">Titel</translation>
+        <translation lang="en">Title</translation>
+    </text>
+    <text id="SciPublicationsListSortByyearAsc">
+        <translation lang="de">Jahr (aufsteigend)</translation>
+        <translation lang="en">Year (ascending)</translation>
+    </text>
+    <text id="SciPublicationsListSortByyearDesc">
+        <translation lang="de">Jahr (absteigend)</translation>
+        <translation lang="en">Year (descending)</translation>
+    </text>
+    <text id="SciPublicationsListSortByauthors">
+        <translation lang="de">Autoren</translation>
+        <translation lang="en">Authors</translation>
+    </text>
+    <text id="SciPublicationsListkeywords">
+        <translation lang="de">Schlagwörter</translation>
+        <translation lang="en">Keywords</translation>
+    </text>
+    
+    <text id="SciProjectListsortAndFilterList">
+        <translation lang="de">Projekte filtern und sortieren</translation>
+        <translation lang="en">Filter and sort projects</translation>
+    </text>
+    <text id="SciProjectListfilterList">
+        <translation lang="de">Projekte filtern</translation>
+        <translation lang="en">Filter projects</translation>
+    </text>
+    <text id="SciProjectListsortList">
+        <translation lang="de">Projekte sortieren</translation>
+        <translation lang="en">Sort projects</translation>
+    </text>
+    <text id="SciProjectListSubmitFilters">
+        <translation lang="de">Projekte filtern</translation>
+        <translation lang="en">Filter projects</translation>
+    </text>
+    <text id="SciProjectListSortList">
+        <translation lang="de">Projekte sortieren</translation>
+        <translation lang="en">Sort projects</translation>
+    </text>
+    <text id="SciProjectListtitle">
+        <translation lang="de">Nach Titel filtern</translation>
+        <translation lang="en">Filter by title</translation>
+    </text>
+    <text id="SciProjectListprojectstatus">
+        <translation lang="de">Nach Status filtern</translation>
+        <translation lang="en">Filter by status</translation>
+    </text>
+    <text id="SciProjectListprojectstatusongoing">
+        <translation lang="de">Laufende Projekte</translation>
+        <translation lang="en">Current projects</translation>
+    </text>
+    <text id="SciProjectListprojectstatusfinished">
+        <translation lang="de">Abgeschlossene Projekte</translation>
+        <translation lang="en">Finished projects</translation>
+    </text>
+    <text id="SciProjectListprojectstatusAll">
+        <translation lang="de">Alle Projekte</translation>
+        <translation lang="en">All projects</translation>
+    </text>
+    <text id="SciProjectListSortBytitle">
+        <translation lang="de">Titel</translation>
+        <translation lang="en">Title</translation>
+    </text>
+
+    <text id="projectListsortAndFilterList">
+        <translation lang="de">Projekt filtern</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="projectListfilterList">
+        <translation lang="de"> </translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="projectListtitle">
+        <translation lang="de">Titel des Projektes</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="projectListresearchfield">
+        <translation lang="de">Forschungsfeld</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="projectListSubmitFilters">
+        <translation lang="de">Filter anwenden</translation>
+        <translation lang="en"></translation>
+    </text>
+
+    <text id="sciOrganizationPublicationssortAndFilterList">
+        <translation lang="de"></translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciOrganizationPublicationsfilterList">
+        <translation lang="de">Publikationen filtern</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciOrganizationPublicationssortList">
+        <translation lang="de">Publikationen sortieren</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciOrganizationPublicationsSubmitFilters">
+        <translation lang="de">Publikationen filtern</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciOrganizationPublicationstitle">
+        <translation lang="de">Nach Titel filtern</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciOrganizationPublicationsauthors">
+        <translation lang="de">Nach Autor filtern</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciOrganizationPublicationsyearOfPublication">
+        <translation lang="de">Nach Erscheinungjahr filtern</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciOrganizationPublicationsyearOfPublicationAll">
+        <translation lang="de">Alle</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciOrganizationPublicationsSortBy">
+        <translation lang="de">Sortieren nach</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciOrganizationPublicationsSortBytitle">
+        <translation lang="de">Titel</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciOrganizationPublicationsSortByyearAsc">
+        <translation lang="de">Jahr (aufsteigend)</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciOrganizationPublicationsSortByyearDesc">
+        <translation lang="de">Jahr (absteigend)</translation>
+        <translation lang="en"></translation>
+    </text>    
+    <text id="sciOrganizationPublicationsSortList">
+        <translation lang="de">Publikationen sortieren</translation>
+        <translation lang="en"></translation>
+    </text>    
+
+    <text id="sciOrganizationProjectssortAndFilterList">
+        <translation lang="de">Projekte filtern und sortieren</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciOrganizationProjectsfilterList">
+        <translation lang="de">Projekte filtern</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciOrganizationProjectssortList">
+        <translation lang="de">Projekte sortieren</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciOrganizationProjectsSubmitFilters">
+        <translation lang="de">Projekte filtern</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciOrganizationProjectsSortList">
+        <translation lang="de">Projekte sortieren</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciOrganizationProjectstitle">
+        <translation lang="de">Nach Titel filtern</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciOrganizationProjectsprojectstatus">
+        <translation lang="de">Nach Status filtern</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciOrganizationProjectsprojectstatusongoing">
+        <translation lang="de">Laufende Projekte</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciOrganizationProjectsprojectstatusfinished">
+        <translation lang="de">Abgeschlossene Projekte</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciOrganizationProjectsprojectstatusAll">
+        <translation lang="de">Alle Projekte</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciOrganizationProjectsSortBytitle">
+        <translation lang="de">Titel</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciOrganizationPublicationstypeAll">
+        <translation lang="de">Alle</translation>
+    </text>
+    <text id="sciOrganizationPublicationstypecom.arsdigita.cms.contenttypes.CollectedVolume">
+        <translation lang="de">Sammelband</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciOrganizationPublicationstypecom.arsdigita.cms.contenttypes.GreyLiterature">
+        <translation lang="de">Sonstiges</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciOrganizationPublicationstypecom.arsdigita.cms.contenttypes.Monograph">
+        <translation lang="de">Monographie</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciOrganizationPublicationstypecom.arsdigita.cms.contenttypes.WorkingPaper">
+        <translation lang="de">Arbeitspapier</translation>
+        <translation lang="en"></translation>
+    </text>
+
+    <text id="sciOrganizationPublicationstypecom.arsdigita.cms.contenttypes.ArticleInJournal">
+        <translation lang="de">Zeitschriftenbeitrag</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciOrganizationPublicationstypecom.arsdigita.cms.contenttypes.CollectedVolume">
+        <translation lang="de">Sammelband</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciOrganizationPublicationstypecom.arsdigita.cms.contenttypes.GreyLiterature">
+        <translation lang="de">Sonstiges</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciOrganizationPublicationstypecom.arsdigita.cms.contenttypes.Monograph">
+        <translation lang="de">Monographie</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciOrganizationPublicationstypecom.arsdigita.cms.contenttypes.WorkingPaper">
+        <translation lang="de">Arbeitspapier</translation>
+        <translation lang="en"></translation>
+    </text>
+
+    <text id="sciDepartmentPublicationssortAndFilterList">
+        <translation lang="de"></translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciDepartmentPublicationsfilterList">
+        <translation lang="de">Publikationen filtern</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciDepartmentPublicationssortList">
+        <translation lang="de">Publikationen sortieren</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciDepartmentPublicationsSubmitFilters">
+        <translation lang="de">Publikationen filtern</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciDepartmentPublicationstitle">
+        <translation lang="de">Nach Titel filtern</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciDepartmentPublicationsauthors">
+        <translation lang="de">Nach Autor filtern</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciDepartmentPublicationsyearOfPublication">
+        <translation lang="de">Nach Erscheinungjahr filtern</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciDepartmentPublicationsyearOfPublicationAll">
+        <translation lang="de">Alle</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciDepartmentPublicationsSortBy">
+        <translation lang="de">Sortieren nach</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciDepartmentPublicationsSortBytitle">
+        <translation lang="de">Titel</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciDepartmentPublicationsSortByyearAsc">
+        <translation lang="de">Jahr (aufsteigend)</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciDepartmentPublicationsSortByyearDesc">
+        <translation lang="de">Jahr (absteigend)</translation>
+        <translation lang="en"></translation>
+    </text>    
+    <text id="sciDepartmentPublicationsSortList">
+        <translation lang="de">Publikationen sortieren</translation>
+        <translation lang="en"></translation>
+    </text>    
+
+    <text id="sciDepartmentProjectssortAndFilterList">
+        <translation lang="de">Projekte filtern und sortieren</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciDepartmentProjectsfilterList">
+        <translation lang="de">Projekte filtern</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciDepartmentProjectssortList">
+        <translation lang="de">Projekte sortieren</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciDepartmentProjectsSubmitFilters">
+        <translation lang="de">Projekte filtern</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciDepartmentProjectsSortList">
+        <translation lang="de">Projekte sortieren</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciDepartmentProjectstitle">
+        <translation lang="de">Nach Titel filtern</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciDepartmentProjectsprojectstatus">
+        <translation lang="de">Nach Status filtern</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciDepartmentProjectsprojectstatusongoing">
+        <translation lang="de">Laufende Projekte</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciDepartmentProjectsprojectstatusfinished">
+        <translation lang="de">Abgeschlossene Projekte</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciDepartmentProjectsprojectstatusAll">
+        <translation lang="de">Alle Projekte</translation>
+        <translation lang="en"></translation>
+    </text>
+    <text id="sciDepartmentProjectsSortBytitle">
+        <translation lang="de">Titel</translation>
+        <translation lang="en"></translation>
+    </text>
+
+</foundry:static-texts>

@@ -62,6 +62,7 @@ import org.libreccm.tests.categories.IntegrationTest;
 
 import org.libreccm.testutils.EqualsVerifier;
 import org.libreccm.web.CcmApplication;
+import org.libreccm.workflow.Workflow;
 
 import java.io.File;
 
@@ -131,6 +132,7 @@ public class AuthorizationInterceptorTest {
             .addPackage(Categorization.class.getPackage())
             .addPackage(LocalizedString.class.getPackage())
             .addPackage(CcmApplication.class.getPackage())
+            .addPackage(Workflow.class.getPackage())
             .addPackage(EntityManagerProducer.class.getPackage())
             .addPackage(MimeTypeConverter.class.getPackage())
             .addPackage(EqualsVerifier.class.getPackage())
@@ -162,9 +164,7 @@ public class AuthorizationInterceptorTest {
             .addAsResource(
                 "configs/org/libreccm/security/UserManagerTest/ccm-core.config",
                 "ccm-core.config")
-            .addAsResource(
-                "configs/org/libreccm/security/ShiroTest/shiro.ini",
-                "shiro.ini")
+            .addAsResource("configs/shiro.ini", "shiro.ini")
             .addAsResource(
                 "configs/org/libreccm/security/ShiroTest/log4j2.xml",
                 "log4j2.xml")

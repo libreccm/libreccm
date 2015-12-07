@@ -53,6 +53,7 @@ import org.libreccm.l10n.LocalizedString;
 import org.libreccm.security.Permission;
 import org.libreccm.tests.categories.IntegrationTest;
 import org.libreccm.web.ApplicationRepository;
+import org.libreccm.workflow.Workflow;
 
 import java.io.File;
 import java.util.List;
@@ -106,6 +107,7 @@ public class SecurityConfigTest {
             .addPackage(Categorization.class.getPackage())
             .addPackage(Permission.class.getPackage())
             .addPackage(LocalizedString.class.getPackage())
+            .addPackage(Workflow.class.getPackage())
             .addPackage(UriConverter.class.getPackage())
             .addPackage(ApplicationRepository.class.getPackage())
             .addPackage(EntityManagerProducer.class.getPackage())
@@ -140,6 +142,7 @@ public class SecurityConfigTest {
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")
             .addAsWebInfResource("test-web.xml", "WEB-INF/web.xml")
+            .addAsResource("configs/shiro.ini", "shiro.ini")
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
@@ -147,10 +150,6 @@ public class SecurityConfigTest {
     public void verifySecurityConfig() {
         final SecurityConfig securityConfig = SecurityConfig.getConfig();
 
-//        final String[] loginConfig = securityConfig.getLoginConfig();
-//        assertThat(loginConfig.length, is(1));
-//        assertThat(loginConfig[0], is(equalTo(
-//                   "Register:com.arsdigita.kernel.security.LocalLoginModule:requisite")));
         final List<String> excludedExtensions = securityConfig
             .getExcludedExtensions();
         assertThat(excludedExtensions.size(), is(4));

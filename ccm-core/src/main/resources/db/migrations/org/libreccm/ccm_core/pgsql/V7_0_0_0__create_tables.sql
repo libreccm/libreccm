@@ -1,5 +1,3 @@
-create schema ccm_core;
-
     create table CCM_CORE.APPLICATIONS (
         APPLICATION_TYPE varchar(1024) not null,
         PRIMARY_URL varchar(1024) not null,

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<content-item-layout>
+    <a>
+        <content-item-title/>
+    </a>
+    <div class="lead">
+        <!--<div>
+            <show-property name="addendum"/>
+        </div>-->
+        <div>
+            <show-property name="instituteShortDescription"/>
+        </div>
+    </div>
+</content-item-layout>

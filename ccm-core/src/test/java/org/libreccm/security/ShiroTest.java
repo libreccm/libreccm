@@ -33,6 +33,7 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import java.io.File;
 
 import javax.inject.Inject;
+
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 
@@ -66,6 +67,7 @@ import org.libreccm.l10n.LocalizedString;
 import org.libreccm.tests.categories.IntegrationTest;
 import org.libreccm.testutils.EqualsVerifier;
 import org.libreccm.web.CcmApplication;
+import org.libreccm.workflow.Workflow;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -106,10 +108,10 @@ public class ShiroTest {
     @Deployment
     public static WebArchive createDeployment() {
         final PomEquippedResolveStage pom = Maven
-                .resolver()
-                .loadPomFromFile("pom.xml");
+            .resolver()
+            .loadPomFromFile("pom.xml");
         final PomEquippedResolveStage dependencies = pom.
-                importCompileAndRuntimeDependencies();
+            importCompileAndRuntimeDependencies();
         final File[] libs = dependencies.resolve().withTransitivity().asFile();
 
         for (File lib : libs) {
@@ -118,59 +120,58 @@ public class ShiroTest {
         }
 
         return ShrinkWrap
-                .create(WebArchive.class,
-                        "LibreCCM-org.libreccm.security.ShiroTest.war")
-                .addPackage(User.class.getPackage())
-                .addPackage(CcmObject.class.getPackage())
-                .addPackage(Categorization.class.getPackage())
-                .addPackage(LocalizedString.class.getPackage())
-                .addPackage(CcmApplication.class.getPackage())
-                .addPackage(EntityManagerProducer.class.getPackage())
-                .addPackage(MimeTypeConverter.class.getPackage())
-                .addPackage(EqualsVerifier.class.getPackage())
-                .addPackage(IntegrationTest.class.getPackage())
-                .addPackage(KernelConfig.class.getPackage())
-                .addPackage(SecurityConfig.class.getPackage())
-                .addPackage(AbstractConfig.class.getPackage())
-                .addPackage(AbstractParameterContext.class.getPackage())
-                .addPackage(UncheckedWrapperException.class.getPackage())
-                .addPackage(CCMApplicationContextListener.class.getPackage())
-                .addPackage(XML.class.getPackage())
-                .addPackage(DateTimeFormatter.class.getPackage())
-                .addAsLibraries(libs)
-                .addAsResource("test-persistence.xml",
-                               "META-INF/persistence.xml")
-                .addAsResource("com/arsdigita/kernel/"
-                                       + "KernelConfig_parameter.properties",
-                               "com/arsdigita/kernel/"
-                                       + "KernelConfig_parameter.properties")
-                .addAsResource("com/arsdigita/kernel/security/"
-                                       + "SecurityConfig_parameter.properties",
-                               "com/arsdigita/kernel/security/"
-                                       + "SecurityConfig_parameter.properties")
-                .addAsWebInfResource(
-                        "configs/org/libreccm/security/UserManagerTest/"
-                                + "registry.properties",
-                        "conf/registry/registry.properties")
-                .addAsResource(
-                        "configs/org/libreccm/security/UserManagerTest/ccm-core.config",
-                        "ccm-core.config")
-                .addAsResource(
-                        "configs/org/libreccm/security/ShiroTest/shiro.ini",
-                        "shiro.ini")
-                .addAsResource(
-                        "configs/org/libreccm/security/ShiroTest/log4j2.xml",
-                        "log4j2.xml")
-                .addAsWebInfResource(
-                        "configs/org/libreccm/security/ShiroTest/"
-                                + "kernel.properties",
-                        "conf/registry/ccm-core/kernel.properties")
-                .addAsWebInfResource(
-                        "configs/org/libreccm//security/ShiroTest/"
-                                + "security.properties",
-                        "conf/registry/ccm-core/security.properties")
-                .addAsWebInfResource("test-web.xml", "web.xml")
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+            .create(WebArchive.class,
+                    "LibreCCM-org.libreccm.security.ShiroTest.war")
+            .addPackage(User.class.getPackage())
+            .addPackage(CcmObject.class.getPackage())
+            .addPackage(Categorization.class.getPackage())
+            .addPackage(LocalizedString.class.getPackage())
+            .addPackage(CcmApplication.class.getPackage())
+            .addPackage(Workflow.class.getPackage())
+            .addPackage(EntityManagerProducer.class.getPackage())
+            .addPackage(MimeTypeConverter.class.getPackage())
+            .addPackage(EqualsVerifier.class.getPackage())
+            .addPackage(IntegrationTest.class.getPackage())
+            .addPackage(KernelConfig.class.getPackage())
+            .addPackage(SecurityConfig.class.getPackage())
+            .addPackage(AbstractConfig.class.getPackage())
+            .addPackage(AbstractParameterContext.class.getPackage())
+            .addPackage(UncheckedWrapperException.class.getPackage())
+            .addPackage(CCMApplicationContextListener.class.getPackage())
+            .addPackage(XML.class.getPackage())
+            .addPackage(DateTimeFormatter.class.getPackage())
+            .addAsLibraries(libs)
+            .addAsResource("test-persistence.xml",
+                           "META-INF/persistence.xml")
+            .addAsResource("com/arsdigita/kernel/"
+                               + "KernelConfig_parameter.properties",
+                           "com/arsdigita/kernel/"
+                               + "KernelConfig_parameter.properties")
+            .addAsResource("com/arsdigita/kernel/security/"
+                               + "SecurityConfig_parameter.properties",
+                           "com/arsdigita/kernel/security/"
+                               + "SecurityConfig_parameter.properties")
+            .addAsWebInfResource(
+                "configs/org/libreccm/security/UserManagerTest/"
+                    + "registry.properties",
+                "conf/registry/registry.properties")
+            .addAsResource(
+                "configs/org/libreccm/security/UserManagerTest/ccm-core.config",
+                "ccm-core.config")
+            .addAsResource("configs/shiro.ini", "shiro.ini")
+            .addAsResource(
+                "configs/org/libreccm/security/ShiroTest/log4j2.xml",
+                "log4j2.xml")
+            .addAsWebInfResource(
+                "configs/org/libreccm/security/ShiroTest/"
+                    + "kernel.properties",
+                "conf/registry/ccm-core/kernel.properties")
+            .addAsWebInfResource(
+                "configs/org/libreccm//security/ShiroTest/"
+                    + "security.properties",
+                "conf/registry/ccm-core/security.properties")
+            .addAsWebInfResource("test-web.xml", "web.xml")
+            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test
@@ -285,8 +286,8 @@ public class ShiroTest {
     @InSequence(600)
     public void userWithoutPasswordCantLogin() {
         final UsernamePasswordToken token = new UsernamePasswordToken(
-                "public-user",
-                "foo123");
+            "public-user",
+            "foo123");
         token.setRememberMe(true);
 
         subject.login(token);
@@ -298,8 +299,8 @@ public class ShiroTest {
     @InSequence(700)
     public void userWithoutPasswordCantLoginWithEmptyPassword() {
         final UsernamePasswordToken token = new UsernamePasswordToken(
-                "public-user",
-                "");
+            "public-user",
+            "");
         token.setRememberMe(true);
 
         subject.login(token);
@@ -311,8 +312,8 @@ public class ShiroTest {
     @InSequence(800)
     public void unknownUser() {
         final UsernamePasswordToken token = new UsernamePasswordToken(
-                "unknown-user",
-                "foo123");
+            "unknown-user",
+            "foo123");
         token.setRememberMe(true);
 
         subject.login(token);
@@ -324,8 +325,8 @@ public class ShiroTest {
     @InSequence(810)
     public void nullUser() {
         final UsernamePasswordToken token = new UsernamePasswordToken(
-                null,
-                "foo123");
+            null,
+            "foo123");
         token.setRememberMe(true);
 
         subject.login(token);
@@ -337,8 +338,8 @@ public class ShiroTest {
     @InSequence(820)
     public void emptyUser() {
         final UsernamePasswordToken token = new UsernamePasswordToken(
-                "",
-                "foo123");
+            "",
+            "foo123");
         token.setRememberMe(true);
 
         subject.login(token);
@@ -349,41 +350,42 @@ public class ShiroTest {
     @InSequence(900)
     public void publicUser() {
         final PrincipalCollection principals = new SimplePrincipalCollection(
-                "public-user", "CcmShiroRealm");
+            "public-user", "CcmShiroRealm");
         final Subject publicUser = new Subject.Builder()
-                .principals(principals)
-                .authenticated(true)
-                .buildSubject();
-        
+            .principals(principals)
+            .authenticated(true)
+            .buildSubject();
+
         assertThat(publicUser.hasRole("role1"), is(false));
         assertThat(publicUser.hasRole("role2"), is(false));
         assertThat(publicUser.hasRole("public-role"), is(true));
-        
+
         assertThat(publicUser.isPermitted("privilege1"), is(false));
         assertThat(publicUser.isPermitted("privilege2:-20001"), is(false));
         assertThat(publicUser.isPermitted("privilege2:-20002"), is(false));
         assertThat(publicUser.isPermitted("privilege3:-20001"), is(true));
     }
-    
+
     @Test
     @UsingDataSet("datasets/org/libreccm/security/ShiroTest/data.yml")
     @InSequence(910)
     public void systemUser() {
         final PrincipalCollection principals = new SimplePrincipalCollection(
-                "system-user", "CcmShiroRealm");
+            "system-user", "CcmShiroRealm");
         final Subject publicUser = new Subject.Builder()
-                .principals(principals)
-                .authenticated(true)
-                .buildSubject();
-        
+            .principals(principals)
+            .authenticated(true)
+            .buildSubject();
+
         assertThat(publicUser.hasRole("role1"), is(true));
         assertThat(publicUser.hasRole("role2"), is(true));
         assertThat(publicUser.hasRole("public-role"), is(true));
-        
+
         assertThat(publicUser.isPermitted("privilege1"), is(true));
         assertThat(publicUser.isPermitted("privilege2:-20001"), is(true));
         assertThat(publicUser.isPermitted("privilege2:-20002"), is(true));
         assertThat(publicUser.isPermitted("privilege3:-20001"), is(true));
-        
+
     }
+
 }

@@ -26,11 +26,14 @@ import com.arsdigita.util.parameter.AbstractParameterContext;
 import com.arsdigita.web.CCMApplicationContextListener;
 import com.arsdigita.xml.XML;
 import com.arsdigita.xml.formatters.DateTimeFormatter;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
+
 import javax.inject.Inject;
+
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -64,6 +67,7 @@ import org.libreccm.tests.categories.IntegrationTest;
 
 import org.libreccm.testutils.EqualsVerifier;
 import org.libreccm.web.CcmApplication;
+import org.libreccm.workflow.Workflow;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -135,10 +139,10 @@ public class SecuredCollectionTest {
     @Deployment
     public static WebArchive createDeployment() {
         final PomEquippedResolveStage pom = Maven
-                .resolver()
-                .loadPomFromFile("pom.xml");
+            .resolver()
+            .loadPomFromFile("pom.xml");
         final PomEquippedResolveStage dependencies = pom.
-                importCompileAndRuntimeDependencies();
+            importCompileAndRuntimeDependencies();
         final File[] libs = dependencies.resolve().withTransitivity().asFile();
 
         for (File lib : libs) {
@@ -147,60 +151,59 @@ public class SecuredCollectionTest {
         }
 
         return ShrinkWrap
-                .create(WebArchive.class,
-                        "LibreCCM-org.libreccm.security.SecuredCollectionTest.war").
-                addPackage(User.class.getPackage())
-                .addPackage(CcmObject.class.getPackage())
-                .addPackage(Categorization.class.getPackage())
-                .addPackage(LocalizedString.class.getPackage())
-                .addPackage(CcmApplication.class.getPackage())
-                .addPackage(EntityManagerProducer.class.getPackage())
-                .addPackage(MimeTypeConverter.class.getPackage())
-                .addPackage(EqualsVerifier.class.getPackage())
-                .addPackage(IntegrationTest.class.getPackage())
-                .addPackage(KernelConfig.class.getPackage())
-                .addPackage(SecurityConfig.class.getPackage())
-                .addPackage(AbstractConfig.class.getPackage())
-                .addPackage(AbstractParameterContext.class.getPackage())
-                .addPackage(UncheckedWrapperException.class.getPackage())
-                .addPackage(CCMApplicationContextListener.class.getPackage())
-                .addPackage(XML.class.getPackage())
-                .addPackage(DateTimeFormatter.class.getPackage())
-                .addPackage(CdiUtil.class.getPackage())
-                .addAsLibraries(libs)
-                .addAsResource("test-persistence.xml",
-                               "META-INF/persistence.xml")
-                .addAsResource("com/arsdigita/kernel/"
-                                       + "KernelConfig_parameter.properties",
-                               "com/arsdigita/kernel/"
-                                       + "KernelConfig_parameter.properties")
-                .addAsResource("com/arsdigita/kernel/security/"
-                                       + "SecurityConfig_parameter.properties",
-                               "com/arsdigita/kernel/security/"
-                                       + "SecurityConfig_parameter.properties")
-                .addAsWebInfResource(
-                        "configs/org/libreccm/security/UserManagerTest/"
-                                + "registry.properties",
-                        "conf/registry/registry.properties")
-                .addAsResource(
-                        "configs/org/libreccm/security/UserManagerTest/ccm-core.config",
-                        "ccm-core.config")
-                .addAsResource(
-                        "configs/org/libreccm/security/ShiroTest/shiro.ini",
-                        "shiro.ini")
-                .addAsResource(
-                        "configs/org/libreccm/security/ShiroTest/log4j2.xml",
-                        "log4j2.xml")
-                .addAsWebInfResource(
-                        "configs/org/libreccm/security/ShiroTest/"
-                                + "kernel.properties",
-                        "conf/registry/ccm-core/kernel.properties")
-                .addAsWebInfResource(
-                        "configs/org/libreccm//security/ShiroTest/"
-                                + "security.properties",
-                        "conf/registry/ccm-core/security.properties")
-                .addAsWebInfResource("test-web.xml", "web.xml")
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+            .create(WebArchive.class,
+                    "LibreCCM-org.libreccm.security.SecuredCollectionTest.war").
+            addPackage(User.class.getPackage())
+            .addPackage(CcmObject.class.getPackage())
+            .addPackage(Categorization.class.getPackage())
+            .addPackage(LocalizedString.class.getPackage())
+            .addPackage(CcmApplication.class.getPackage())
+            .addPackage(Workflow.class.getPackage())
+            .addPackage(EntityManagerProducer.class.getPackage())
+            .addPackage(MimeTypeConverter.class.getPackage())
+            .addPackage(EqualsVerifier.class.getPackage())
+            .addPackage(IntegrationTest.class.getPackage())
+            .addPackage(KernelConfig.class.getPackage())
+            .addPackage(SecurityConfig.class.getPackage())
+            .addPackage(AbstractConfig.class.getPackage())
+            .addPackage(AbstractParameterContext.class.getPackage())
+            .addPackage(UncheckedWrapperException.class.getPackage())
+            .addPackage(CCMApplicationContextListener.class.getPackage())
+            .addPackage(XML.class.getPackage())
+            .addPackage(DateTimeFormatter.class.getPackage())
+            .addPackage(CdiUtil.class.getPackage())
+            .addAsLibraries(libs)
+            .addAsResource("test-persistence.xml",
+                           "META-INF/persistence.xml")
+            .addAsResource("com/arsdigita/kernel/"
+                               + "KernelConfig_parameter.properties",
+                           "com/arsdigita/kernel/"
+                               + "KernelConfig_parameter.properties")
+            .addAsResource("com/arsdigita/kernel/security/"
+                               + "SecurityConfig_parameter.properties",
+                           "com/arsdigita/kernel/security/"
+                               + "SecurityConfig_parameter.properties")
+            .addAsWebInfResource(
+                "configs/org/libreccm/security/UserManagerTest/"
+                    + "registry.properties",
+                "conf/registry/registry.properties")
+            .addAsResource(
+                "configs/org/libreccm/security/UserManagerTest/ccm-core.config",
+                "ccm-core.config")
+            .addAsResource("configs/shiro.ini", "shiro.ini")
+            .addAsResource(
+                "configs/org/libreccm/security/ShiroTest/log4j2.xml",
+                "log4j2.xml")
+            .addAsWebInfResource(
+                "configs/org/libreccm/security/ShiroTest/"
+                    + "kernel.properties",
+                "conf/registry/ccm-core/kernel.properties")
+            .addAsWebInfResource(
+                "configs/org/libreccm//security/ShiroTest/"
+                    + "security.properties",
+                "conf/registry/ccm-core/security.properties")
+            .addAsWebInfResource("test-web.xml", "web.xml")
+            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test
@@ -341,6 +344,7 @@ public class SecuredCollectionTest {
     @InSequence(400)
     public void checkToArraySystemUser() {
         shiro.getSystemUser().execute(new Callable<Boolean>() {
+
             @Override
             public Boolean call() throws Exception {
                 final Object[] array1 = collection1.toArray();
@@ -381,6 +385,7 @@ public class SecuredCollectionTest {
 
                 return false;
             }
+
         });
     }
 
@@ -468,6 +473,7 @@ public class SecuredCollectionTest {
     @InSequence(700)
     public void checkToArrayTypeSystemUser() {
         shiro.getSystemUser().execute(new Callable<Boolean>() {
+
             @Override
             public Boolean call() throws Exception {
                 CcmObject[] array1 = new CcmObject[3];
@@ -499,6 +505,8 @@ public class SecuredCollectionTest {
 
                 return false;
             }
+
         });
     }
+
 }

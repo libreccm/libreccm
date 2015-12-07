@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<foundry:static-texts xmlns:foundry="http://foundry.libreccm.org">
+    <text id="contact">
+        <translation lang="de">Kontakt</translation>
+        <translation lang="en">Contact</translation>
+    </text>
+    <text id="desc">
+        <translation lang="de">Beschreibung</translation>
+        <translation lang="en">Description</translation>
+    </text>
+    <text id="funding">
+        <translation lang="de">Finanzierung</translation>
+        <translation lang="en">Funding</translation>
+    </text>
+    <text id="funding-volume">
+        <translation lang="de">Volumen</translation>
+        <translation lang="en">Volume</translation>
+    </text>
+    <text id="lifespan">
+        <translation lang="de">Laufzeit</translation>
+        <translation lang="en">Life span</translation>
+    </text>
+    <text id="lifespan-to">
+        <translation lang="de">bis</translation>
+        <translation lang="en">to</translation>
+    </text>
+    <text id="members">
+        <translation lang="de">Mitglieder</translation>
+        <translation lang="en">Members</translation>
+    </text>
+    <text id="head">
+        <translation lang="de">Projektleitung</translation>
+        <translation lang="en">Project Coordiation</translation>
+    </text>
+    <text id="sponsor">
+        <translation lang="de">Drittmittelgeber</translation>
+        <translation lang="en">Sponsors</translation>
+    </text>
+    <text id="summary">
+        <translation lang="de">Überblick</translation>
+        <translation lang="en">Summary</translation>
+    </text>
+</foundry:static-texts>
