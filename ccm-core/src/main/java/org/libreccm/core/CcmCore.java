@@ -18,6 +18,7 @@
  */
 package org.libreccm.core;
 
+import com.arsdigita.runtime.ConfigRegistry;
 import com.arsdigita.ui.admin.AdminApplicationCreator;
 import com.arsdigita.ui.admin.AdminServlet;
 import com.arsdigita.ui.login.LoginApplicationCreator;
@@ -101,6 +102,10 @@ public class CcmCore implements CcmModule {
         final SystemUsersSetup systemUsersSetup = new SystemUsersSetup(
             entityManager);
         systemUsersSetup.setupSystemUsers();
+
+        final ConfigRegistry configRegistry = new ConfigRegistry();
+        configRegistry.initialize("ccm-core");
+
     }
 
     @Override
