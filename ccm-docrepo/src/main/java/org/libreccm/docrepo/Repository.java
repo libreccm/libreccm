@@ -27,8 +27,10 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import java.util.List;
 
 /**
  * Entity class of a repository for documents. Instances will be persisted into
@@ -71,6 +73,13 @@ public class Repository extends CcmApplication {
     private User owner;
 
     /**
+     * All {@link Resource}s contained in this {@code Repository}.
+     */
+    @OneToMany(mappedBy = "repository")
+    private List<Resource> resources;
+
+
+    /**
      * Constructor calls the super-class-constructor of {@link CcmApplication}.
      */
     public Repository() {
@@ -101,6 +110,14 @@ public class Repository extends CcmApplication {
 
     public void setOwner(User owner) {
         this.owner = owner;
+    }
+
+    public List<Resource> getResources() {
+        return resources;
+    }
+
+    public void setResources(List<Resource> resources) {
+        this.resources = resources;
     }
 
     //< End GETTER & SETTER

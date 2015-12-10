@@ -22,6 +22,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.libreccm.core.CcmObject;
 import org.libreccm.security.User;
 
+import javax.activation.MimeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -33,7 +34,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
 import java.util.Date;
 import java.util.List;
 
@@ -98,7 +98,7 @@ public abstract class Resource extends CcmObject {
      * Mime-type of the {@code Resource}.
      */
     @Column(name = "MIME_TYPE")
-    private String mimeType;
+    private MimeType mimeType;
 
     /**
      * Size of the {@code Resource}.
@@ -169,6 +169,13 @@ public abstract class Resource extends CcmObject {
     private List<Resource> immediateChildren;
 
     /**
+     * The {@link Repository} containing this {@code Resource}.
+     */
+    @ManyToOne
+    @JoinColumn(name = "REPOSITORY_ID")
+    private Repository repository;
+
+    /**
      * Constructor calls the super-class-constructor of {@link CcmObject}.
      */
     public Resource() {
@@ -209,11 +216,11 @@ public abstract class Resource extends CcmObject {
         this.path = path;
     }
 
-    public String getMimeType() {
+    public MimeType getMimeType() {
         return mimeType;
     }
 
-    public void setMimeType(String mimeType) {
+    public void setMimeType(MimeType mimeType) {
         this.mimeType = mimeType;
     }
 
@@ -295,6 +302,14 @@ public abstract class Resource extends CcmObject {
 
     public void setImmediateChildren(List<Resource> immediateChildren) {
         this.immediateChildren = immediateChildren;
+    }
+
+    public Repository getRepository() {
+        return repository;
+    }
+
+    public void setRepository(Repository repository) {
+        this.repository = repository;
     }
 
     //< End GETTER & SETTER

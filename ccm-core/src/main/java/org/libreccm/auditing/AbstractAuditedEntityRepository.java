@@ -19,15 +19,18 @@
 package org.libreccm.auditing;
 
 import org.hibernate.envers.AuditReader;
+import org.hibernate.envers.exception.NotAuditedException;
 import org.hibernate.envers.query.AuditEntity;
 import org.hibernate.envers.query.AuditQuery;
 import org.libreccm.core.AbstractEntityRepository;
 
 import javax.inject.Inject;
+import java.util.List;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
+ * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
  * @param <K> Primary key of the entity.
  * @param <T> Type of the entity
  */
@@ -56,6 +59,26 @@ public abstract class AbstractAuditedEntityRepository<K, T>
                 result.getClass().getName())
             );
         }
+    }
+
+    /**
+     * Retrieves the number of revisions for a given entity.
+     *
+     * @param entity The entity
+     * @param objectId The primary key
+     *
+     * @return A list of revision numbers, at which the entity was modified,
+     *         sorted in ascending order (so older revisions come first).
+     *
+     * @throws NotAuditedException When entities of the given class are not audited.
+     * @throws IllegalArgumentException If cls or primaryKey is null.
+     * @throws IllegalStateException If the associated entity manager is closed.
+     */
+    public List<Number> retrieveRevisionNumbersOfEntity(final T entity,
+                                                        Long objectId)
+            throws IllegalArgumentException, NotAuditedException,
+            IllegalStateException {
+        return auditReader.getRevisions(entity.getClass(), objectId);
     }
 
 }

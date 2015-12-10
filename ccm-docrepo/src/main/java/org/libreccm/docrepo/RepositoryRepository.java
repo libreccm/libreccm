@@ -72,4 +72,5 @@ public class RepositoryRepository extends
 
         return query.getResultList();
     }
+
 }

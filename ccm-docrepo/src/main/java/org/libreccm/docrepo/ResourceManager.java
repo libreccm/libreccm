@@ -21,6 +21,7 @@ package org.libreccm.docrepo;
 import org.apache.log4j.Logger;
 import org.apache.oro.text.perl.Perl5Util;
 
+import javax.activation.MimetypesFileTypeMap;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
@@ -95,8 +96,12 @@ public class ResourceManager {
         boolean validName = !(perl5Util.match(INVALID_START_PATTERN, name) ||
                                 perl5Util.match(INVALID_NAME_PATTERN, name));
 
-        // checks duplication of the name, database access (mind performance)
+        // checks duplication of the name; database access (mind performance)
         validName &= resourceRepository.findByName(name).isEmpty();
+
+        // checks that the name corresponds to a compatible MIME type
+        validName &= new MimetypesFileTypeMap().getContentType(name).equals
+                (resource.getMimeType().toString());
 
         return validName;
     }
