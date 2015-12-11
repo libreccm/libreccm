@@ -180,6 +180,9 @@ public class ConfigRegistry {
         }
 
         InputStream is = m_loader.getResourceAsStream(key + ".config");
+        if (is == null) {
+            throw new UncheckedWrapperException(String.format("No .config for key '%s' found", key));
+        }
         if (is != null) {
             try {
                 XML.parse(is, new ConfigRegistryParser());

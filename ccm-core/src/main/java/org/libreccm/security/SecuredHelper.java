@@ -19,6 +19,9 @@
 package org.libreccm.security;
 
 import com.arsdigita.util.UncheckedWrapperException;
+
+import static org.libreccm.core.CoreConstants.*;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.cdi.utils.CdiLookupException;
@@ -90,8 +93,8 @@ class SecuredHelper<E extends CcmObject> {
     protected E generateAccessDeniedObject() {
         try {
             final E placeholder = clazz.newInstance();
-            placeholder.setDisplayName("Access denied");
-
+            placeholder.setDisplayName(ACCESS_DENIED);
+            
             return placeholder;
         } catch (InstantiationException | IllegalAccessException ex) {
             LOGGER.error(

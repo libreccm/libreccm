@@ -32,7 +32,7 @@ import java.util.Iterator;
 public class SecuredIterator<E extends CcmObject> implements Iterator<E> {
 
     private final Iterator<E> iterator;
-    
+
     private final SecuredHelper<E> securedHelper;
 
     /**
@@ -62,7 +62,7 @@ public class SecuredIterator<E extends CcmObject> implements Iterator<E> {
 
     /**
      * Returns the next object of the current subject it permitted to access it
-     * or a special "Access denied" object if not.
+     * or a special <i>Access denied</i> object if not.
      *
      * The method gets the next object from the wrapped {@code Iterator} and
      * checks if the current subject has a permission granting the privilege
@@ -73,7 +73,8 @@ public class SecuredIterator<E extends CcmObject> implements Iterator<E> {
      * {@link CcmObject#displayName} of these placeholder objects is set the
      * {@code Access denied}.
      *
-     * @return The next object or a special "Access denied" placeholder object.
+     * @return The next object or a special <i>Access denied</i> placeholder
+     *         object.
      */
     @Override
     public E next() {

@@ -46,19 +46,6 @@ import javax.servlet.annotation.WebListener;
  * expecially setting the runtime context (file locations) and (in the future)
  * the database connection.
  *
- * The methods of this classes are by definition only invoked by the Servlet
- * container / web application server, not by any Servlet or java class of the
- * application itself! Invocation is managed by the deployment descriptor.
- *
- * Note! Don't forget to configure it in web.xml deployment descriptor!
- * <listener>
- * <listener-class>
- * com.arsdigita.runtime.CCMApplicationContextListener
- * </listener-class>
- * </listener>
- * According to the 2.3 specification these tags must be placed after the filter
- * tags and before the Servlet tags!
- *
  * @author pboy
  * @author Jens Pelzetter <a href="mailto:jens.pelzetter@googlemail.com">Jens
  * Pelzetter</a>
@@ -66,7 +53,7 @@ import javax.servlet.annotation.WebListener;
 @WebListener
 public class CCMApplicationContextListener implements ServletContextListener {
 
-    public static final Logger logger = LogManager.getLogger(
+    public static final Logger LOGGER = LogManager.getLogger(
         CCMApplicationContextListener.class);
 
     @Override
@@ -75,7 +62,7 @@ public class CCMApplicationContextListener implements ServletContextListener {
         
         final String appBase = context.getRealPath("/");
         
-        logger.info(String.format("Setting base directory to %s", appBase));
+        LOGGER.info(String.format("Setting base directory to %s", appBase));
         CCMResourceManager.setBaseDirectory(appBase);
     }
 

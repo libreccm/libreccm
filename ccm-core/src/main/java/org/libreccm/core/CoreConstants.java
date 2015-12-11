@@ -20,17 +20,31 @@ package org.libreccm.core;
 
 /**
  * Some constants for the Core package
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public final class CoreConstants {
-    
+
+    /**
+     * XML namespace used for XML created by and from classes in the ccm-core
+     * module.
+     */
     public static final String CORE_XML_NS = "http://core.libreccm.org";
-    
+
+    /**
+     * Name of the database schema (namespace) for the tables storing the
+     * entities from the ccm-core module.
+     */
     public static final String DB_SCHEMA = "CCM_CORE";
-    
+
+    /**
+     * String used as display name for the virtual <i>Access denied</i> objects
+     * in the security API.
+     */
+    public static final String ACCESS_DENIED = "Access denied";
+
     private CoreConstants() {
         //Nothing
     }
-    
+
 }

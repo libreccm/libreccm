@@ -19,6 +19,10 @@
 package org.libreccm.core;
 
 
+
+
+import static org.libreccm.core.CoreConstants.*;
+
 import javax.enterprise.context.RequestScoped;
 
 /**
@@ -39,6 +43,12 @@ public class CcmObjectRepository extends AbstractEntityRepository<Long, CcmObjec
         if (entity == null) {
             throw new IllegalArgumentException("Can't save null.");
         }
+        
+        if (ACCESS_DENIED.equals(entity.getDisplayName())) {
+            throw new IllegalArgumentException(
+                "Can't save the Access Denied object.");
+        }
+        
         return entity.getObjectId() == 0;
     }
 
