@@ -20,8 +20,6 @@ package org.libreccm.workflow;
 
 import static org.libreccm.core.CoreConstants.*;
 
-import org.libreccm.security.Group;
-import org.libreccm.security.Role;
 import org.libreccm.security.User;
 
 import java.io.Serializable;
@@ -34,8 +32,6 @@ import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;

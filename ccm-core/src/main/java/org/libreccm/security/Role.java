@@ -56,7 +56,7 @@ import javax.xml.bind.annotation.XmlRootElement;
                             + "WHERE r.name = :name")
 })
 @XmlRootElement(name = "role", namespace = CORE_XML_NS)
-@SuppressWarnings({"PMD.ShortClassName"})
+@SuppressWarnings({"PMD.ShortClassName", "PMD.TooManyMethods"})
 public class Role implements Serializable {
 
     private static final long serialVersionUID = -7121296514181469687L;
@@ -156,7 +156,7 @@ public class Role implements Serializable {
         permissions.remove(permission);
     }
     
-    public List<TaskAssignment> assignedTasks() {
+    public List<TaskAssignment> getAssignedTasks() {
         if (assignedTasks == null) {
             return null;
         } else {

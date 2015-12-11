@@ -39,8 +39,9 @@ public class SystemUsersSetup {
 
     private static final Logger LOGGER = LogManager.getLogger(
         SystemUsersSetup.class);
-    
-    private static final String DEFAULT_ADMIN_PW = "$shiro1$SHA-512$500000$MFPkVikNoRrBZ8R8CxQIHA==$UvgO2K+poSRGw5co63P3ygpWsX7H9N0TgqdrZPBqdXv6Q+/OCL/qOocVbg65/Yjv5hyri6A3zhw7K8mEgpISoA==";
+
+    private static final String DEFAULT_ADMIN_PW
+                                    = "$shiro1$SHA-512$500000$MFPkVikNoRrBZ8R8CxQIHA==$UvgO2K+poSRGw5co63P3ygpWsX7H9N0TgqdrZPBqdXv6Q+/OCL/qOocVbg65/Yjv5hyri6A3zhw7K8mEgpISoA==";
 
     private final EntityManager entityManager;
 
@@ -65,24 +66,31 @@ public class SystemUsersSetup {
         admin.setPrimaryEmailAddress(adminEmail);
 
         String adminPassword = DEFAULT_ADMIN_PW;
-        final InputStream inputStream = getClass().getResourceAsStream(
-            "/integration.properties");
-        if (inputStream == null) {
-            LOGGER.warn("No integration.properties file found. Using default "
-                            + "password (see documentation)");
-        } else {
-            final Properties properties = new Properties();
-            try {
-                properties.load(inputStream);
-                final String password = properties.getProperty("admin.password");
-                if((password != null) && !password.isEmpty()) {
-                    adminPassword = password;
+        try (final InputStream inputStream = getClass().getResourceAsStream(
+            "/integration.properties")) {
+            if (inputStream == null) {
+                LOGGER.warn(
+                    "No integration.properties file found. Using default "
+                        + "password (see documentation)");
+            } else {
+                final Properties properties = new Properties();
+                try {
+                    properties.load(inputStream);
+                    final String password = properties.getProperty(
+                        "admin.password");
+                    if (password != null && !password.isEmpty()) {
+                        adminPassword = password;
+                    }
+                } catch (IOException ex) {
+                    LOGGER.warn("Failed to load integration.properties. "
+                                    + "Using default password.",
+                                ex);
                 }
-            } catch (IOException ex) {
-                LOGGER.warn("Failed to load integration.properties. "
-                                + "Using default password.",
-                            ex);
             }
+        } catch (IOException ex) {
+            LOGGER.warn("Exception while reading integration.properties file."
+                            + "Using default password for admin account. ",
+                        ex);
         }
         admin.setPassword(adminPassword);
 
@@ -92,7 +100,7 @@ public class SystemUsersSetup {
         final RoleMembership membership = new RoleMembership();
         membership.setRole(adminRole);
         membership.setMember(admin);
-        
+
         final Permission adminPermission = new Permission();
         adminPermission.setGrantee(adminRole);
         adminPermission.setGrantedPrivilege("*");
@@ -105,7 +113,7 @@ public class SystemUsersSetup {
         entityManager.persist(membership);
         entityManager.persist(adminPermission);
     }
-    
+
     private void createPublicUser() {
         final User user = new User();
         user.setName("public-user");

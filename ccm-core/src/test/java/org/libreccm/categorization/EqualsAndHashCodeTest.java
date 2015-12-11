@@ -26,7 +26,6 @@ import org.junit.runners.Parameterized;
 import org.libreccm.tests.categories.UnitTest;
 import org.libreccm.web.CcmApplication;
 
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collection;

@@ -20,7 +20,6 @@ package org.libreccm.auditing;
 
 import org.hibernate.envers.RevisionListener;
 
-import javax.inject.Inject;
 
 /**
  * {@link RevisionListener} setting the user for the {@link CcmRevision} entity.

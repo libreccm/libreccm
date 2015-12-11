@@ -211,8 +211,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.3</version>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                     <optimize>true</optimize>
                     <debug>true</debug>
                     <encoding>${project.build.sourceEncoding}</encoding>
@@ -426,7 +426,9 @@
                         <exclude>**/AbstractConfig.java</exclude>
                         <exclude>**/AbstractParameter.java</exclude>
                         <exclude>**/AbstractParameterContext.java</exclude>
+                        <exclude>**/AbstractSingleSelectionModel.java</exclude>
                         <exclude>**/Assert.java</exclude>
+                        <exclude>**/bebop/**</exclude>
                         <exclude>**/CCMApplicationContextListener.java</exclude>
                         <exclude>**/CCMResourceManager.java</exclude>
                         <exclude>**/Classes.java</exclude>
@@ -440,6 +442,7 @@
                         <exclude>**/DateFormatter.java</exclude>
                         <exclude>**/DateFormatterConfig.java</exclude>
                         <exclude>**/DateTimeFormatter.java</exclude>
+                        <exclude>**/dispatcher/**</exclude>
                         <exclude>**/DispatcherConfig.java</exclude>
                         <exclude>**/Document.java</exclude>
                         <exclude>**/Element.java</exclude>
@@ -451,12 +454,15 @@
                         <exclude>**/FileParameter.java</exclude>
                         <exclude>**/FormBuilderConfig.java</exclude>
                         <exclude>**/FullDateFormatter.java</exclude>
+                        <exclude>**/globalization/**</exclude>
                         <exclude>**/GlobalizationConfig.java</exclude>
                         <exclude>**/IntegerParameter.java</exclude>
                         <exclude>**/JavaPropertyReader.java</exclude>
                         <exclude>**/JavaPropertyWriter.java</exclude>
+                        <exclude>**/kernel/**</exclude>
                         <exclude>**/KernelConfig.java</exclude>
                         <exclude>**/LockableImpl.java</exclude>
+                        <exclude>**/mail/**</exclude>
                         <exclude>**/MailConfig.java</exclude>
                         <exclude>**/MapParameter.java</exclude>
                         <exclude>**/NotificationConfig.java</exclude>
@@ -470,20 +476,25 @@
                         <exclude>**/SingletonParameter.java</exclude>
                         <exclude>**/SpecificClassParameter.java</exclude>
                         <exclude>**/StringParameter.java</exclude>
+                        <exclude>**/templating/**</exclude>
+                        <exclude>**/toolbox/**</exclude>
                         <exclude>**/TimeFormatter.java</exclude>
+                        <exclude>**/ui/**</exclude>
                         <exclude>**/UIConfig.java</exclude>
                         <exclude>**/UncheckedWrapperException.java</exclude>
+                        <exclude>**/util/**</exclude>
+                        <exclude>**/web/**</exclude>
                         <exclude>**/WorkflowConfig.java</exclude>
                         <exclude>**/XML.java</exclude>
                         <exclude>**/XMLConfig.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>
-            <plugin>
+            <!--<plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>javancss-maven-plugin</artifactId>
                 <version>2.1</version>
-            </plugin>
+            </plugin>-->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>jdepend-maven-plugin</artifactId>

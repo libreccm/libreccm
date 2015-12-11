@@ -79,10 +79,9 @@ public class ToStringVerifier {
                                         InvocationTargetException {
         final Object obj;
         try {
-            final Constructor<?> constructor = entityClass
-                .getDeclaredConstructor();
+            final Constructor<?> constructor = entityClass.asSubclass(
+                entityClass).getDeclaredConstructor();
             constructor.setAccessible(true);
-            
             obj = constructor.newInstance();
         } catch (NoSuchMethodException ex) {
             final StringWriter stringWriter = new StringWriter();

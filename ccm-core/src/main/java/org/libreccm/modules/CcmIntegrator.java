@@ -54,7 +54,7 @@ import javax.sql.DataSource;
 public class CcmIntegrator implements Integrator {
 
     private static final Logger LOGGER = LogManager.getLogger(
-            CcmIntegrator.class);
+        CcmIntegrator.class);
 
     /**
      * Service loader containing all modules. Initialised by the
@@ -80,8 +80,7 @@ public class CcmIntegrator implements Integrator {
         modules = ServiceLoader.load(CcmModule.class);
         for (final CcmModule module : modules) {
             LOGGER.info("Found module class {}...", module.getClass().getName());
-            final ModuleInfo moduleInfo = new ModuleInfo();
-            moduleInfo.load(module);
+            final ModuleInfo moduleInfo = loadModuleInfo(module);
             LOGGER.info("Found module {}.", moduleInfo.getModuleName());
         }
 
@@ -89,14 +88,14 @@ public class CcmIntegrator implements Integrator {
         try {
             //Create dependency tree for the modules
             final DependencyTreeManager treeManager
-                                        = new DependencyTreeManager();
+                                            = new DependencyTreeManager();
             final List<TreeNode> tree = treeManager.generateTree(modules);
             final List<TreeNode> orderedNodes = treeManager.orderModules(tree);
 
             //Get DataSource and Connection from the sessionFactory of 
             //Hibernate.
             final DataSource dataSource = (DataSource) sessionFactory.
-                    getProperties().get("javax.persistence.jtaDataSource");
+                getProperties().get("javax.persistence.jtaDataSource");
             connection = dataSource.getConnection();
 
             //Migrate tables and sequences which don't belong to a module 
@@ -104,7 +103,7 @@ public class CcmIntegrator implements Integrator {
             final Flyway flyway = new Flyway();
             flyway.setDataSource(dataSource);
             final StringBuffer buffer = new StringBuffer(
-                    "db/migrations/org/libreccm/base");
+                "db/migrations/org/libreccm/base");
             appendDbLocation(buffer, connection);
             flyway.setLocations(buffer.toString());
             flyway.migrate();
@@ -112,7 +111,7 @@ public class CcmIntegrator implements Integrator {
             //Migrate the modules
             for (final TreeNode node : orderedNodes) {
                 migrateModule(node.getModule().getClass(), dataSource);
-                
+
 //                for (Class<?> entity : node.getModuleInfo().getModuleEntities()) {
 //                    configuration.addAnnotatedClass(entity);
 //                }
@@ -131,11 +130,26 @@ public class CcmIntegrator implements Integrator {
     }
 
     /**
+     * Helper method for loading the module info for a module.
+     *
+     * @param module The module for which the module is loaded.
+     *
+     * @return The {@link ModuleInfo} object for the module
+     */
+    private ModuleInfo loadModuleInfo(final CcmModule module) {
+        final ModuleInfo moduleInfo = new ModuleInfo();
+        moduleInfo.load(module);
+
+        return moduleInfo;
+    }
+
+    /**
      * Private helper method to get the database schema name of a module. The
      * name is then name of the module in lower case with all hyphens replaced
      * with underscores.
      *
      * @param moduleInfo The module info object for the module
+     *
      * @return The database schema name of the module.
      */
     private String getSchemaName(final ModuleInfo moduleInfo) {
@@ -167,14 +181,16 @@ public class CcmIntegrator implements Integrator {
      * If the database is not supported an {@link IntegrationException} will be
      * thrown.
      *
-     * @param buffer Buffer for the location string.
+     * @param buffer     Buffer for the location string.
      * @param connection The JDBC connection object.
-     * @throws SQLException If an error occurs while accessing the database.
+     *
+     * @throws SQLException         If an error occurs while accessing the
+     *                              database.
      * @throws IntegrationException If the database is not supported yet.
      */
     private void appendDbLocation(final StringBuffer buffer,
                                   final Connection connection)
-            throws SQLException {
+        throws SQLException {
 
         switch (connection.getMetaData().getDatabaseProductName()) {
             case "H2":
@@ -185,9 +201,9 @@ public class CcmIntegrator implements Integrator {
                 break;
             default:
                 throw new IntegrationException(String.format(
-                        "Integration failed. Database \"%s\" is not supported yet.",
-                        connection.getMetaData().
-                        getDatabaseProductName()));
+                    "Integration failed. Database \"%s\" is not supported yet.",
+                    connection.getMetaData().
+                    getDatabaseProductName()));
         }
     }
 
@@ -196,15 +212,17 @@ public class CcmIntegrator implements Integrator {
      *
      * @param moduleInfo The module info object of the module.
      * @param connection The database connection.
+     *
      * @return The location of the database migrations for a specific module.
+     *
      * @throws SQLException If an error on the JDBC site occurs.
      */
     private String getLocation(final ModuleInfo moduleInfo,
                                final Connection connection)
-            throws SQLException {
+        throws SQLException {
 
         final StringBuffer buffer = new StringBuffer(
-                "classpath:/db/migrations/");
+            "classpath:/db/migrations/");
         buffer.append(moduleInfo.getModuleDataPackage());
         appendDbLocation(buffer, connection);
 
@@ -214,66 +232,68 @@ public class CcmIntegrator implements Integrator {
     /**
      * Helper method for executing the migrations for a module.
      *
-     * @param module The module for which the migrations are executed.
+     * @param module     The module for which the migrations are executed.
      * @param dataSource The JDBC data source for connecting to the database.
+     *
      * @throws SQLException If an error occurs while applying the migrations.
      */
     private void migrateModule(final Class<? extends CcmModule> module,
                                final DataSource dataSource) throws SQLException {
         //Get the JDBC connection from the DataSource
-        final Connection connection = dataSource.getConnection();
+        try (final Connection connection = dataSource.getConnection()) {
 
-        //Load the module info for the module
-        final ModuleInfo moduleInfo = new ModuleInfo();
-        moduleInfo.load(module);
+            //Load the module info for the module
+            final ModuleInfo moduleInfo = new ModuleInfo();
+            moduleInfo.load(module);
 
-        //Create a Flyway instance for the the module.
-        final Flyway flyway = new Flyway();
-        flyway.setDataSource(dataSource);
-        //Set schema correctly for the different databases. Necessary because
-        //different RDBMS handle case different.
-        if ("H2".equals(connection.getMetaData().getDatabaseProductName())) {
-            flyway
+            //Create a Flyway instance for the the module.
+            final Flyway flyway = new Flyway();
+            flyway.setDataSource(dataSource);
+            //Set schema correctly for the different databases. Necessary because
+            //different RDBMS handle case different.
+            if ("H2".equals(connection.getMetaData().getDatabaseProductName())) {
+                flyway
                     .setSchemas(getSchemaName(moduleInfo).toUpperCase(
-                                    Locale.ROOT));
-        } else {
-            flyway.setSchemas(getSchemaName(moduleInfo));
-        }
-        flyway.setLocations(getLocation(moduleInfo, connection));
+                        Locale.ROOT));
+            } else {
+                flyway.setSchemas(getSchemaName(moduleInfo));
+            }
+            flyway.setLocations(getLocation(moduleInfo, connection));
 
-        //Get current migrations info
-        final MigrationInfo current = flyway.info().current();
-        boolean newModule;
-        if (current == null) {
-            LOGGER.info("No version, database schema is considered empty.");
-            newModule = true;
-        } else {
-            LOGGER.info("Current version of schema {} in database is {}",
+            //Get current migrations info
+            final MigrationInfo current = flyway.info().current();
+            boolean newModule;
+            if (current == null) {
+                LOGGER.info("No version, database schema is considered empty.");
+                newModule = true;
+            } else {
+                LOGGER.info("Current version of schema {} in database is {}",
+                            getSchemaName(moduleInfo),
+                            current.getVersion());
+                newModule = false;
+            }
+
+            //Execute migrations. Flyway will check if there any migrations to apply.
+            flyway.migrate();
+
+            LOGGER.info("Migrated schema {} in database to version {}",
                         getSchemaName(moduleInfo),
-                        current.getVersion());
-            newModule = false;
-        }
+                        flyway.info().current().getVersion());
 
-        //Execute migrations. Flyway will check if there any migrations to apply.
-        flyway.migrate();
-
-        LOGGER.info("Migrated schema {} in database to version {}",
-                    getSchemaName(moduleInfo),
-                    flyway.info().current().getVersion());
-
-        //If a new module was installed register the module in the 
-        //installed_modules table with the new status. The ModuleManager will
-        //call the install method of them module.
-        if (newModule) {
-            try (Statement statement = connection.createStatement()) {
-                statement.execute(String.format(
+            //If a new module was installed register the module in the 
+            //installed_modules table with the new status. The ModuleManager will
+            //call the install method of them module.
+            if (newModule) {
+                try (Statement statement = connection.createStatement()) {
+                    statement.execute(String.format(
                         "INSERT INTO ccm_core.installed_modules "
-                                + "(module_id, module_class_name, status) "
-                                + "VALUES (%d, '%s', 'NEW')",
+                            + "(module_id, module_class_name, status) "
+                            + "VALUES (%d, '%s', 'NEW')",
                         module.getName().hashCode(),
                         module.getName()));
-            } catch (SQLException ex) {
-                throw new IntegrationException("Failed to integrate.", ex);
+                } catch (SQLException ex) {
+                    throw new IntegrationException("Failed to integrate.", ex);
+                }
             }
         }
     }
@@ -303,22 +323,21 @@ public class CcmIntegrator implements Integrator {
 
             //Get JDBC connection
             final DataSource dataSource = (DataSource) sessionFactory
-                    .getProperties().get("javax.persistence.jtaDataSource");
+                .getProperties().get("javax.persistence.jtaDataSource");
             connection = dataSource.getConnection();
             System.out.println("checking modules...");
             LOGGER.info("Checking modules...");
 
             for (final CcmModule module : modules) {
-                final ModuleInfo moduleInfo = new ModuleInfo();
-                moduleInfo.load(module);
+                final ModuleInfo moduleInfo = loadModuleInfo(module);
 
                 try (Statement query = connection.createStatement();
                      //Check status of each module
                      ResultSet result = query.executeQuery(
-                             String.format("SELECT module_class_name, status "
-                                                   + "FROM ccm_core.installed_modules "
+                         String.format("SELECT module_class_name, status "
+                                           + "FROM ccm_core.installed_modules "
                                            + "WHERE module_class_name = '%s'",
-                                           module.getClass().getName()))) {
+                                       module.getClass().getName()))) {
 
                     System.out.printf("Checking status of module %s...%n",
                                       module.getClass().getName());
@@ -326,37 +345,16 @@ public class CcmIntegrator implements Integrator {
                     //If there modules marked for uninstall remove the schema 
                     //of the module from the database.
                     if (result.next() && ModuleStatus.UNINSTALL.toString()
-                            .equals(result.getString("status"))) {
-
-                        LOGGER.info("Removing schema for module %s...",
-                                    module.getClass().getName());
-                        final Flyway flyway = new Flyway();
-                        flyway.setDataSource(dataSource);
-                        flyway.setSchemas(getSchemaName(moduleInfo));
-                        flyway.setLocations(getLocation(moduleInfo, connection));
-                        LOGGER.warn("Deleting schema for module {}...",
-                                    moduleInfo.getModuleName());
-                        flyway.clean();
-
-                        //Delete the module from the installed modules table.
-                        try (final Statement statement = connection
-                                .createStatement()) {
-                            statement.addBatch(String.format(
-                                    "DELETE FROM ccm_core.installed_modules "
-                                            + "WHERE module_class_name = '%s'",
-                                    module.getClass().getName()));
-                            statement.executeBatch();
-                            LOGGER.info("Done.");
-                        } catch (SQLException ex) {
-                            throw new IntegrationException(
-                                    "Failed to desintegrate", ex);
-                        }
+                        .equals(result.getString("status"))) {
+                        uninstallModule(connection,
+                                        dataSource,
+                                        module,
+                                        moduleInfo);
                     }
-
                 } catch (SQLException ex) {
-                    throw new IntegrationException("Failed to desintegrate.");
+                    throw new IntegrationException("Failed to desintegrate.",
+                                                   ex);
                 }
-
             }
         } catch (SQLException ex) {
             LOGGER.error("Desintegration failed: ", ex);
@@ -370,10 +368,40 @@ public class CcmIntegrator implements Integrator {
                 next = next.getNextException();
             }
 
-            throw new IntegrationException("Failed to desintegrate.");
+            throw new IntegrationException("Failed to desintegrate.", ex);
 
         } finally {
             JdbcUtils.closeConnection(connection);
+        }
+    }
+
+    private void uninstallModule(final Connection connection,
+                                 final DataSource dataSource,
+                                 final CcmModule module,
+                                 final ModuleInfo moduleInfo)
+        throws SQLException {
+        LOGGER.info("Removing schema for module %s...",
+                    module.getClass().getName());
+        final Flyway flyway = new Flyway();
+        flyway.setDataSource(dataSource);
+        flyway.setSchemas(getSchemaName(moduleInfo));
+        flyway.setLocations(getLocation(moduleInfo, connection));
+        LOGGER.warn("Deleting schema for module {}...",
+                    moduleInfo.getModuleName());
+        flyway.clean();
+
+        //Delete the module from the installed modules table.
+        try (final Statement statement = connection
+            .createStatement()) {
+            statement.addBatch(String.format(
+                "DELETE FROM ccm_core.installed_modules "
+                    + "WHERE module_class_name = '%s'",
+                module.getClass().getName()));
+            statement.executeBatch();
+            LOGGER.info("Done.");
+        } catch (SQLException ex) {
+            throw new IntegrationException(
+                "Failed to desintegrate", ex);
         }
     }
 

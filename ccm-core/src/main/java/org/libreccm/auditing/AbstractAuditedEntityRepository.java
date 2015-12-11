@@ -75,7 +75,7 @@ public abstract class AbstractAuditedEntityRepository<K, T>
      * @throws IllegalStateException If the associated entity manager is closed.
      */
     public List<Number> retrieveRevisionNumbersOfEntity(final T entity,
-                                                        Long objectId)
+                                                        final Long objectId)
             throws IllegalArgumentException, NotAuditedException,
             IllegalStateException {
         return auditReader.getRevisions(entity.getClass(), objectId);

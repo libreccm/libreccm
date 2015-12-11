@@ -20,12 +20,9 @@ package org.libreccm.modules;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Properties;
 
 import org.apache.logging.log4j.LogManager;
