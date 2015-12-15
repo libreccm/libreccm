@@ -22,11 +22,13 @@ import static org.libreccm.core.CoreConstants.*;
 
 import java.io.Serializable;
 import java.util.Collections;
-import java.util.List;
+import java.util.Set;
 import java.util.Objects;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.Table;
 
 /**
@@ -36,24 +38,27 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "CONF_ENTRIES_ENUM", schema = DB_SCHEMA)
 public class EnumConfigurationEntry
-    extends AbstractConfigurationEntry<List<String>> implements Serializable {
+    extends AbstractConfigurationEntry<Set<String>> implements Serializable {
 
     private static final long serialVersionUID = 8506016944203102813L;
 
     @ElementCollection
-    private List<String> value;
+    @JoinTable(name = "ENUM_CONFIGURATION_ENTRIES_VALUES",
+               schema = DB_SCHEMA,
+               joinColumns = {@JoinColumn(name = "ENUM_ID")})
+    private Set<String> value;
 
     @Override
-    public List<String> getValue() {
+    public Set<String> getValue() {
         if (value == null) {
             return null;
         } else {
-            return Collections.unmodifiableList(value);
+            return Collections.unmodifiableSet(value);
         }
     }
 
     @Override
-    public void setValue(final List<String> value) {
+    public void setValue(final Set<String> value) {
         this.value = value;
     }
 

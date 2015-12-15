@@ -21,7 +21,6 @@ package org.libreccm.security;
 import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.kernel.security.SecurityConfig;
 import com.arsdigita.runtime.AbstractConfig;
-import com.arsdigita.util.UncheckedWrapperException;
 import com.arsdigita.util.parameter.AbstractParameterContext;
 import com.arsdigita.web.CCMApplicationContextListener;
 import com.arsdigita.xml.XML;
@@ -64,7 +63,6 @@ import java.io.File;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -142,7 +140,6 @@ public class PermissionManagerTest {
             .addPackage(SecurityConfig.class.getPackage())
             .addPackage(AbstractConfig.class.getPackage())
             .addPackage(AbstractParameterContext.class.getPackage())
-            .addPackage(UncheckedWrapperException.class.getPackage())
             .addPackage(CCMApplicationContextListener.class.getPackage())
             .addPackage(XML.class.getPackage())
             .addPackage(DateTimeFormatter.class.getPackage())

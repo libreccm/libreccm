@@ -64,7 +64,9 @@ import javax.validation.constraints.Pattern;
 @Table(name = "CATEGORIES", schema = DB_SCHEMA)
 @NamedQueries({
     @NamedQuery(name = "Category.topLevelCategories", 
-                query = "SELECT c FROM Category c WHERE c.parentCategory IS NULL")
+                query = "SELECT c FROM Category c WHERE c.parentCategory IS NULL"),
+    @NamedQuery(name = "Category.findByName",
+                query = "SELECT c FROM Category c WHERE c.name = :name")
 })
 public class Category extends CcmObject implements Serializable {
     
@@ -165,6 +167,10 @@ public class Category extends CcmObject implements Serializable {
         description = new LocalizedString();
         objects = new ArrayList<>();
         subCategories = new ArrayList<>();
+        enabled = true;
+        visible= true;
+        abstractCategory = false;
+        categoryOrder = 0;
     }
 
     public String getUniqueId() {

@@ -56,13 +56,11 @@ import com.arsdigita.web.RedirectSignal;
 import static com.arsdigita.ui.admin.AdminConstants.*;
 
 import com.arsdigita.util.LockableImpl;
-import com.arsdigita.util.UncheckedWrapperException;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
-import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.User;
 
@@ -117,11 +115,8 @@ class UserBrowsePane extends SegmentedPanel
 //        final PageState state = event.getPageState();
 //        final CdiUtil cdiUtil = new CdiUtil();
 //        final CcmSessionContext sessionContext;
-//        try {
+
 //            sessionContext = cdiUtil.findBean(CcmSessionContext.class);
-//        } catch (CdiLookupException ex) {
-//            throw new UncheckedWrapperException(ex);
-//        }
 //
 //        final Subject subject = sessionContext.getCurrentSubject();
 //
@@ -150,11 +145,8 @@ class UserBrowsePane extends SegmentedPanel
 
 //                final CdiUtil cdiUtil = new CdiUtil();
 //                final UserRepository userRepository;
-//                try {
+
 //                    userRepository = cdiUtil.findBean(UserRepository.class);
-//                } catch (CdiLookupException ex) {
-//                    throw new UncheckedWrapperException(ex);
-//                }
 //
 //                final User user = userRepository.findById(id);
 //                if (user == null) {
@@ -356,12 +348,9 @@ class UserBrowsePane extends SegmentedPanel
 //
 //                final CdiUtil cdiUtil = new CdiUtil();
 //                final LoginManager loginManager;
-//                try {
+
 //                    loginManager = cdiUtil.findBean(
 //                    LoginManager.class);
-//                } catch(CdiLookupException ex) {
-//                    throw new UncheckedWrapperException(ex);
-//                }
 //                
 //                loginManager.login(CLASS, CLASS);
 //
@@ -434,11 +423,8 @@ class UserBrowsePane extends SegmentedPanel
 
 //                final CdiUtil cdiUtil = new CdiUtil();
 //                final UserRepository userRepository;
-//                try {
+
 //                    userRepository = cdiUtil.findBean(UserRepository.class);
-//                } catch (CdiLookupException ex) {
-//                    throw new UncheckedWrapperException(ex);
-//                }
 
 //                userRepository.delete(user);
 
@@ -477,11 +463,8 @@ class UserBrowsePane extends SegmentedPanel
 //
 //                final CdiUtil cdiUtil = new CdiUtil();
 //                final UserRepository userRepository;
-//                try {
+
 //                    userRepository = cdiUtil.findBean(UserRepository.class);
-//                } catch (CdiLookupException ex) {
-//                    throw new UncheckedWrapperException(ex);
-//                }
 //                userRepository.save(user);
             } // End ActionPerformed method
 
@@ -511,11 +494,8 @@ class UserBrowsePane extends SegmentedPanel
 //
 //                final CdiUtil cdiUtil = new CdiUtil();
 //                final UserRepository userRepository;
-//                try {
+
 //                    userRepository = cdiUtil.findBean(UserRepository.class);
-//                } catch (CdiLookupException ex) {
-//                    throw new UncheckedWrapperException(ex);
-//                }
 //                userRepository.save(user);
             } // End ActionPerformed method
 
@@ -694,12 +674,9 @@ class UserBrowsePane extends SegmentedPanel
                 if (id != null) {
                     final CdiUtil cdiUtil = new CdiUtil();
 //                    final GroupRepository groupRepository;
-//                    try {
+
 //                        groupRepository = cdiUtil
 //                            .findBean(GroupRepository.class);
-//                    } catch (CdiLookupException ex) {
-//                        throw new UncheckedWrapperException(ex);
-//                    }
 //                    final Group group = groupRepository.findById(Long.parseLong(
 //                        id));
 //                    m_groupAdministrationTab.setGroup(ps, group);
@@ -731,11 +708,8 @@ class UserTableModel implements TableModel {
     public UserTableModel() {
         final CdiUtil cdiUtil = new CdiUtil();
 //        final UserRepository userRepository;
-//        try {
+
 //            userRepository = cdiUtil.findBean(UserRepository.class);
-//        } catch (CdiLookupException ex) {
-//            throw new UncheckedWrapperException(ex);
-//        }
 
 //        users = userRepository.findAll();
         

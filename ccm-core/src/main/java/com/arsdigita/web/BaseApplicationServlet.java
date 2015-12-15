@@ -18,9 +18,7 @@
  */
 package com.arsdigita.web;
 
-
 import org.apache.log4j.Logger;
-import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.web.CcmApplication;
 import org.libreccm.web.ApplicationRepository;
@@ -39,7 +37,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * <p>
  * Most CCM applications will extend this class by implementing
- * {@link #doService(HttpServletRequest,HttpServletResponse,Application)} to
+ * {@link #doService(HttpServletRequest,HttpServletResponse,CcmApplication)} to
  * perform application-private dispatch to UI code.</p>
  *
  * <p>
@@ -91,7 +89,7 @@ public abstract class BaseApplicationServlet extends BaseServlet {
     /**
      * <p>
      * Augments the context of the request and delegates to {@link
-     * #doService(HttpServletRequest,HttpServletResponse,Application)}.</p>
+     * #doService(HttpServletRequest,HttpServletResponse,CcmApplication)}.</p>
      *
      * @throws javax.servlet.ServletException
      * @throws java.io.IOException
@@ -119,7 +117,6 @@ public abstract class BaseApplicationServlet extends BaseServlet {
 //
 //        final ServletException[] servletException = {null};
 //        final IOException[] ioException = {null};
-
         doService(request, response, app);
     }
 
@@ -178,22 +175,17 @@ public abstract class BaseApplicationServlet extends BaseServlet {
         }
 
         final CdiUtil cdiUtil = new CdiUtil();
-        try {
-            final ApplicationRepository appRepo = cdiUtil.findBean(
-                ApplicationRepository.class);
-            
-            return appRepo.findById(appId);
-        } catch (CdiLookupException ex) {
-            throw new IllegalStateException(String.format(
-                "Failed to retrieve application %d from the database.", appId));
-        }
+        final ApplicationRepository appRepo = cdiUtil.findBean(
+            ApplicationRepository.class);
+        return appRepo.findById(appId);
     }
-    
-        /**
-     * 
+
+    /**
+     *
      * @param sreq
      * @param app
      * @param uc
+     *
      * @return
      */
 //    private RequestContext makeLegacyContext(HttpServletRequest sreq,
@@ -212,6 +204,4 @@ public abstract class BaseApplicationServlet extends BaseServlet {
 //
 //        return krc;
 //    }
-
-
 }

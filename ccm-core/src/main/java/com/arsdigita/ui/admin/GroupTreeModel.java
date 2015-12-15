@@ -22,16 +22,10 @@ import com.arsdigita.bebop.PageState;
 
 import com.arsdigita.bebop.tree.TreeModel;
 import com.arsdigita.bebop.tree.TreeNode;
-import com.arsdigita.util.UncheckedWrapperException;
 
-import org.libreccm.cdi.utils.CdiLookupException;
-import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.Group;
 
-import java.math.BigDecimal;
-
 import java.util.Iterator;
-import java.util.List;
 
 /**
  *
@@ -110,12 +104,8 @@ public class GroupTreeModel implements TreeModel {
 //
 //            final CdiUtil cdiUtil = new CdiUtil();
 //            final GroupRepository groupRepository;
-//            try {
+
 //                groupRepository = cdiUtil.findBean(GroupRepository.class);
-//            } catch (CdiLookupException ex) {
-//                throw new UncheckedWrapperException(
-//                    "Failed to lookup GroupRepository", ex);
-//            }
 //            final List<Group> groups = groupRepository.findAll();
 //
 //            return groups.iterator();

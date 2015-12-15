@@ -1,0 +1,55 @@
+ccm_core.ccm_objects:
+        - object_id: -1000
+          display_name: test
+        - object_id: -2000
+          display_name: test_root
+        - object_id: -2100
+          display_name: foo
+        - object_id: -2200
+          display_name: bar
+        - object_id: -3100
+          display_name: object1
+        - object_id: -3200
+          display_name: object2
+        - object_id: -3300
+          display_name: object3
+
+ccm_core.categories:
+        - object_id: -2000
+          unique_id: test0001
+          name: test-root
+          enabled: true
+          visible: true
+          abstract_category: false
+          category_order: 0
+        - object_id: -2100
+          unique_id: test0002
+          name: foo
+          parent_category_id: -2000
+          enabled: true
+          visible: true
+          abstract_category: false
+          category_order: 0
+        - object_id: -2200
+          unique_id: test0003
+          name: bar
+          parent_category_id: -2100
+          enabled: true
+          visible: true
+          abstract_category: false
+          category_order: 0
+
+ccm_core.category_domains:
+        - object_id: -1000
+          domain_key: test
+          root_category_id: -2000
+          uri: http://libreccm.org/test
+          version: 1.0
+
+ccm_core.categorizations:
+    - categorization_id: -10100
+      category_id: -2200
+      object_id: -3300
+      category_order: 1
+      object_order: 1
+      category_index: false

@@ -22,7 +22,6 @@ import com.arsdigita.bebop.ActionLink;
 import com.arsdigita.bebop.BoxPanel;
 import com.arsdigita.bebop.ColumnPanel;
 import com.arsdigita.bebop.Component;
-import com.arsdigita.bebop.ControlLink;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.List;
 import com.arsdigita.bebop.Page;
@@ -45,14 +44,11 @@ import com.arsdigita.toolbox.ui.LayoutPanel;
 import static com.arsdigita.ui.admin.AdminConstants.*;
 
 import com.arsdigita.util.LockableImpl;
-import com.arsdigita.util.UncheckedWrapperException;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
-import org.libreccm.cdi.utils.CdiLookupException;
-import org.libreccm.cdi.utils.CdiUtil;
 
 /**
  * Constructs the panel for administration of groups.
@@ -147,13 +143,9 @@ class GroupAdministrationTab extends LayoutPanel implements AdminConstants,
 //
 //                    final CdiUtil cdiUtil = new CdiUtil();
 //                    final GroupRepository groupRepository;
-//                    try {
+
 //                        groupRepository = cdiUtil
 //                            .findBean(GroupRepository.class);
-//                    } catch (CdiLookupException ex) {
-//                        throw new UncheckedWrapperException(
-//                            "Failed to lookup GroupRepository", ex);
-//                    }
 //
 //                    group = groupRepository.findById(id);
 //
@@ -373,13 +365,9 @@ class GroupAdministrationTab extends LayoutPanel implements AdminConstants,
 //                    final Long groupId = Long.parseLong(key);
 //                    final CdiUtil cdiUtil = new CdiUtil();
 //                    final GroupRepository groupRepository;
-//                    try {
+
 //                        groupRepository = cdiUtil
 //                            .findBean(GroupRepository.class);
-//                    } catch (CdiLookupException ex) {
-//                        throw new UncheckedWrapperException(
-//                            "Failed to lookup GroupRepository", ex);
-//                    }
 //
 //                    final Group group = groupRepository.findById(groupId);
 //                    final Group parent = getGroup(state);
@@ -540,11 +528,8 @@ class GroupAdministrationTab extends LayoutPanel implements AdminConstants,
 //                if (group != null) {
 //                    final CdiUtil cdiUtil = new CdiUtil();
 //                    final GroupRepository groupRepository;
-//                    try {
+
 //                        groupRepository = cdiUtil.findBean(GroupRepository.class);
-//                    } catch(CdiLookupException ex) {
-//                        throw new UncheckedWrapperException(ex);
-//                    }
                     
 //                    groupRepository.delete(group);
                     

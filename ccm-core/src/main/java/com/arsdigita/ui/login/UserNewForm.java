@@ -32,9 +32,9 @@ import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.bebop.parameters.URLParameter;
 import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.ui.UI;
-import com.arsdigita.util.UncheckedWrapperException;
 import com.arsdigita.web.URL;
 import com.arsdigita.web.ReturnSignal;
+
 import java.util.concurrent.Callable;
 
 import static com.arsdigita.ui.login.LoginConstants.*;
@@ -46,18 +46,16 @@ import org.apache.log4j.Logger;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
-import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.Shiro;
 import org.libreccm.security.User;
 import org.libreccm.security.UserManager;
-import org.libreccm.security.UserRepository;
 
 /**
  * Creates a new user. Collects user's basic info, such as email, password,
- first name, last name, etc; then tries to create the user in the database. If
- returnURL is passed in to the form, then redirects to that URL_MSG; otherwise
- redirects to the user workspace.
+ * first name, last name, etc; then tries to create the user in the database. If
+ * returnURL is passed in to the form, then redirects to that URL_MSG; otherwise
+ * redirects to the user workspace.
  *
  *
  * @author Michael Bryzek
@@ -98,7 +96,7 @@ public class UserNewForm extends UserForm implements FormInitListener,
 
         // save return URL_MSG
         m_returnURL = new Hidden(new URLParameter(
-                LoginHelper.RETURN_URL_PARAM_NAME));
+            LoginHelper.RETURN_URL_PARAM_NAME));
         m_returnURL.setPassIn(true);
         add(m_returnURL);
 
@@ -116,7 +114,7 @@ public class UserNewForm extends UserForm implements FormInitListener,
 
     @Override
     public void init(final FormSectionEvent event)
-            throws FormProcessException {
+        throws FormProcessException {
         PageState state = event.getPageState();
         // clear passwords from form data
         m_password.setValue(state, "");
@@ -133,11 +131,11 @@ public class UserNewForm extends UserForm implements FormInitListener,
 
     @Override
     public void process(final FormSectionEvent event)
-            throws FormProcessException {
+        throws FormProcessException {
         PageState state = event.getPageState();
 
         final InternetAddress address = (InternetAddress) m_email
-                .getValue(state);
+            .getValue(state);
         final String email = address.getAddress();
 
         // TODO: set additional emails
@@ -153,26 +151,17 @@ public class UserNewForm extends UserForm implements FormInitListener,
 
         final Exception[] formExceptions = new Exception[]{null};
 
-        final Shiro shiro;
-        try {
-            final CdiUtil cdiUtil = new CdiUtil();
-            shiro = cdiUtil.findBean(Shiro.class);
-        } catch (CdiLookupException ex) {
-            throw new UncheckedWrapperException(ex);
-        }
+        final CdiUtil cdiUtil = new CdiUtil();
+        final Shiro shiro = cdiUtil.findBean(Shiro.class);
 
         shiro.getSystemUser().execute(new Callable<Void>() {
+
             @Override
             public Void call() throws Exception {
 
-                final UserManager userManager;
-                try {
-                    final CdiUtil cdiUtil = new CdiUtil();
-                    userManager = cdiUtil.findBean(UserManager.class);
-                } catch (CdiLookupException ex) {
-                    throw new UncheckedWrapperException(ex);
-                }
-
+                final CdiUtil cdiUtil = new CdiUtil();
+                final UserManager userManager = cdiUtil.findBean(
+                    UserManager.class);
                 userManager.createUser(firstName,
                                        lastName,
                                        screenName,
@@ -181,6 +170,7 @@ public class UserNewForm extends UserForm implements FormInitListener,
 
                 return null;
             }
+
         });
 
         try {
@@ -191,7 +181,6 @@ public class UserNewForm extends UserForm implements FormInitListener,
                 loginName = screenName;
             }
 
-            final CdiUtil cdiUtil = new CdiUtil();
             final Subject subject = cdiUtil.findBean(Subject.class);
 
             if (subject.isAuthenticated()) {
@@ -199,9 +188,9 @@ public class UserNewForm extends UserForm implements FormInitListener,
             }
 
             final UsernamePasswordToken token = new UsernamePasswordToken(
-                    loginName, password);
+                loginName, password);
             subject.login(token);
-        } catch (CdiLookupException | AuthenticationException ex) {
+        } catch (AuthenticationException ex) {
             s_log.error("login failed for new user", ex);
             throw new FormProcessException(ex);
         }

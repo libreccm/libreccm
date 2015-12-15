@@ -20,11 +20,9 @@ package com.arsdigita.ui.login;
 
 import com.arsdigita.bebop.event.ActionEvent;
 import com.arsdigita.bebop.event.ActionListener;
-import com.arsdigita.util.UncheckedWrapperException;
 
 import org.apache.log4j.Logger;
 import org.apache.shiro.subject.Subject;
-import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
 
 /**
@@ -47,14 +45,8 @@ public class UserLogoutListener implements ActionListener {
     @Override
     public void actionPerformed(final ActionEvent event) {
 
-        final Subject subject;
-        try {
-            final CdiUtil cdiUtil = new CdiUtil();
-            subject = cdiUtil.findBean(Subject.class);
-        } catch (CdiLookupException ex) {
-            throw new UncheckedWrapperException(ex);
-        }
-        
+        final CdiUtil cdiUtil = new CdiUtil();
+        final Subject subject = cdiUtil.findBean(Subject.class);
         subject.logout();
     }
 

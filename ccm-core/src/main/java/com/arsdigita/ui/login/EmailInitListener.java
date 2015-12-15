@@ -18,19 +18,13 @@
  */
 package com.arsdigita.ui.login;
 
-import com.arsdigita.web.Web;
 import com.arsdigita.bebop.FormData;
 import com.arsdigita.bebop.event.FormInitListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.bebop.parameters.EmailParameter;
-import com.arsdigita.util.UncheckedWrapperException;
-
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
 
 import org.apache.log4j.Logger;
 import org.apache.shiro.subject.Subject;
-import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.Shiro;
 import org.libreccm.security.User;
@@ -59,16 +53,10 @@ public class EmailInitListener implements FormInitListener {
 
         s_log.debug("START");
 
-        final Subject subject;
-        final Shiro shiro;
-        try {
-            final CdiUtil cdiUtil = new CdiUtil();
-            subject = cdiUtil.findBean(Subject.class);
-            shiro = cdiUtil.findBean(Shiro.class);
-        } catch (CdiLookupException ex) {
-            throw new UncheckedWrapperException(ex);
-        }
-
+        final CdiUtil cdiUtil = new CdiUtil();
+        final Subject subject = cdiUtil.findBean(Subject.class);
+        final Shiro shiro = cdiUtil.findBean(Shiro.class);
+        
         if (!subject.isAuthenticated()) {
             s_log.debug("FAILURE not logged in");
             return;

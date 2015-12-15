@@ -37,10 +37,8 @@ import com.arsdigita.bebop.parameters.NotEmptyValidationListener;
 import com.arsdigita.bebop.parameters.StringLengthValidationListener;
 import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.kernel.KernelConfig;
-import com.arsdigita.util.UncheckedWrapperException;
 
 import org.apache.log4j.Logger;
-import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.User;
 import org.libreccm.security.UserRepository;
@@ -257,14 +255,9 @@ public abstract class UserForm extends Form
         final PageState state = event.getPageState();
         final FormData data = event.getFormData();
 
-        final UserRepository userRepository;
-        try {
-            final CdiUtil cdiUtil = new CdiUtil();
-            userRepository = cdiUtil.findBean(UserRepository.class);
-        } catch (CdiLookupException ex) {
-            throw new UncheckedWrapperException(ex);
-        }
-
+        final CdiUtil cdiUtil = new CdiUtil();
+        final UserRepository userRepository = cdiUtil.findBean(UserRepository.class);
+        
         try {
             if (m_newUser) {
                 // Verify that password and confirmation match

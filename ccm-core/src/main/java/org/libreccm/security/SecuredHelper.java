@@ -18,13 +18,11 @@
  */
 package org.libreccm.security;
 
-import com.arsdigita.util.UncheckedWrapperException;
 
 import static org.libreccm.core.CoreConstants.*;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.core.CcmObject;
 
@@ -69,14 +67,9 @@ class SecuredHelper<E extends CcmObject> {
         }
         
         final CdiUtil cdiUtil = new CdiUtil();
-        final PermissionChecker permissionChecker;
-        try {
-            permissionChecker = cdiUtil.findBean(
+        final PermissionChecker permissionChecker = cdiUtil.findBean(
                     PermissionChecker.class);
-        } catch (CdiLookupException ex) {
-            throw new UncheckedWrapperException(ex);
-        }
-
+        
         if (permissionChecker.isPermitted(requiredPrivilege, object)) {
             return object;
         } else {

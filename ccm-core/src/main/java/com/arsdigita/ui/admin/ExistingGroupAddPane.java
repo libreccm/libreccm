@@ -1,6 +1,5 @@
 package com.arsdigita.ui.admin;
 
-import java.math.BigDecimal;
 
 import org.apache.log4j.Logger;
 
@@ -14,10 +13,6 @@ import com.arsdigita.bebop.SimpleContainer;
 import com.arsdigita.bebop.Tree;
 import com.arsdigita.bebop.parameters.ParameterModel;
 import com.arsdigita.bebop.parameters.StringParameter;
-import com.arsdigita.util.UncheckedWrapperException;
-
-import org.libreccm.cdi.utils.CdiLookupException;
-import org.libreccm.cdi.utils.CdiUtil;
 //import org.libreccm.core.Group;
 //import org.libreccm.core.GroupRepository;
 
@@ -60,12 +55,8 @@ public class ExistingGroupAddPane extends SimpleContainer implements
 //
 //                final CdiUtil cdiUtil = new CdiUtil();
 //                final GroupRepository groupRepository;
-//                try {
+
 //                    groupRepository = cdiUtil.findBean(GroupRepository.class);
-//                } catch (CdiLookupException ex) {
-//                    throw new UncheckedWrapperException(
-//                        "Failed to lookup GroupRepository", ex);
-//                }
 //                
 //                group = groupRepository.findById(id);
 //            }

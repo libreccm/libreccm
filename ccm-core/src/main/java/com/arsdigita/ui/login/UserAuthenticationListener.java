@@ -25,14 +25,12 @@ import com.arsdigita.kernel.security.Util;
 
 import com.arsdigita.web.Web;
 import com.arsdigita.web.LoginSignal;
-import com.arsdigita.util.UncheckedWrapperException;
 
 import org.apache.log4j.Logger;
-import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.security.User;
 
 import javax.servlet.http.HttpServletRequest;
+
 import org.apache.shiro.subject.Subject;
 
 /**
@@ -52,7 +50,7 @@ import org.apache.shiro.subject.Subject;
 public class UserAuthenticationListener implements RequestListener {
 
     private static final Logger s_log = Logger.getLogger(
-            UserAuthenticationListener.class);
+        UserAuthenticationListener.class);
 
     /**
      * If the user is logged in, returns the User object.
@@ -62,22 +60,15 @@ public class UserAuthenticationListener implements RequestListener {
      * @return the User object for the logged in user
      *
      * @throws IllegalStateException if user is not logged in. Call isLoggedIn()
-     * to check for this case.
+     *                               to check for this case.
      */
     public Subject getUser(final PageState state) {
         if (!isLoggedIn(state)) {
             throw new IllegalStateException("User is not logged in");
         }
 
-        // Note: aborts processing with an internal error if user not logged in!
-        //       Not suiteable just to check log in status.
-        final Subject subject;
-        try {
-            final CdiUtil cdiUtil = new CdiUtil();
-            subject = cdiUtil.findBean(Subject.class);
-        } catch (CdiLookupException ex) {
-            throw new UncheckedWrapperException(ex);
-        }
+        final CdiUtil cdiUtil = new CdiUtil();
+        final Subject subject = cdiUtil.findBean(Subject.class);
 
         return subject;
     }
@@ -102,11 +93,11 @@ public class UserAuthenticationListener implements RequestListener {
     @Override
     public void pageRequested(final RequestEvent event) {
         PageState state = event.getPageState();
-        
+
         if (!isLoggedIn(state)) {
             s_log.debug("User is not logged in");
             redirectToLoginPage(state);
-            
+
         }
     }
 

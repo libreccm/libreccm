@@ -25,13 +25,11 @@ import com.arsdigita.dispatcher.AccessDeniedException;
 import com.arsdigita.dispatcher.DispatcherHelper;
 import com.arsdigita.templating.Templating;
 import com.arsdigita.util.Assert;
-import com.arsdigita.util.UncheckedWrapperException;
 import com.arsdigita.web.BaseApplicationServlet;
 import com.arsdigita.web.LoginSignal;
 import com.arsdigita.xml.Document;
 
 import org.apache.shiro.subject.Subject;
-import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.PermissionChecker;
 import org.libreccm.web.CcmApplication;
@@ -108,14 +106,8 @@ public class AdminServlet extends BaseApplicationServlet implements
         // ///////    Some preparational steps                   ///////////////
         /* Determine access privilege: only logged in users may access   */
         final CdiUtil cdiUtil = new CdiUtil();
-        final Subject subject;
-        final PermissionChecker permissionChecker;
-        try {
-            subject = cdiUtil.findBean(Subject.class);
-            permissionChecker = cdiUtil.findBean(PermissionChecker.class);
-        } catch (CdiLookupException ex) {
-            throw new UncheckedWrapperException(ex);
-        }
+        final Subject subject = cdiUtil.findBean(Subject.class);
+        final PermissionChecker permissionChecker = cdiUtil.findBean(PermissionChecker.class);
         
         if (!subject.isAuthenticated()) {
             throw new LoginSignal(sreq);

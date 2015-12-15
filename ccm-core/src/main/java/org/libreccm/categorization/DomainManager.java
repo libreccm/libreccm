@@ -22,6 +22,8 @@ import org.libreccm.web.CcmApplication;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import org.libreccm.web.ApplicationRepository;
 
 /**
  * Provides several methods when managing the relations between {@link Domain}s
@@ -33,7 +35,13 @@ import javax.inject.Inject;
 public class DomainManager {
 
     @Inject
+    private ApplicationRepository applicationRepo;
+    
+    @Inject
     private DomainRepository domainRepo;
+    
+    @Inject
+    private EntityManager entityManager;
 
     /**
      * Adds a {@code CcmApplication} to the owners of a {@link Domain}. If the
@@ -47,8 +55,18 @@ public class DomainManager {
      */
     public void addDomainOwner(final CcmApplication application,
                                final Domain domain) {
-        // TODO implement method
-        throw new UnsupportedOperationException();
+        final DomainOwnership ownership = new DomainOwnership();
+        ownership.setDomain(domain);
+        ownership.setOwner(application);
+        ownership.setOwnerOrder(domain.getOwners().size() + 1);
+        ownership.setDomainOrder(application.getDomains().size() + 1);
+        
+        application.addDomain(ownership);
+        domain.addOwner(ownership);
+        
+        entityManager.persist(ownership);
+        applicationRepo.save(application);
+        domainRepo.save(domain);
     }
 
     /**

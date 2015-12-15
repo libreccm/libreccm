@@ -45,7 +45,7 @@ public class CdiUtil {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T findBean(final Class<T> beanType) throws CdiLookupException {
+    public <T> T findBean(final Class<T> beanType) {
         final Set<Bean<?>> beans = beanManager.getBeans(beanType);
         final Iterator<Bean<?>> iterator = beans.iterator();
         if (iterator.hasNext()) {
@@ -58,7 +58,7 @@ public class CdiUtil {
         } else {
             LOGGER.error(new ParameterizedMessage(
                 "No CDI Bean for type {0} found.", beanType.getName()));
-            throw new CdiLookupException(String.format(
+            throw new IllegalStateException(String.format(
                 "No CDI Bean for type \"%s\" found", beanType.getName()));
         }
     }

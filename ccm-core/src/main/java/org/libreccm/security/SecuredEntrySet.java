@@ -18,9 +18,6 @@
  */
 package org.libreccm.security;
 
-import com.arsdigita.util.UncheckedWrapperException;
-
-import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.core.CcmObject;
 
@@ -93,15 +90,10 @@ class SecuredEntrySet<E extends Map.Entry<K, V>, K, V extends CcmObject>
     @Override
     @SuppressWarnings("unchecked")
     public Object[] toArray() {
-        final PermissionChecker permissionChecker;
         final CdiUtil cdiUtil = new CdiUtil();
-        try {
-            permissionChecker = cdiUtil.findBean(
+        final PermissionChecker permissionChecker = cdiUtil.findBean(
                 PermissionChecker.class);
-        } catch (CdiLookupException ex) {
-            throw new UncheckedWrapperException(ex);
-        }
-
+        
         final Object[] entries = set.toArray();
         for (int i = 0; i < entries.length; i++) {
             final E entry = (E) entries[i];
@@ -117,15 +109,10 @@ class SecuredEntrySet<E extends Map.Entry<K, V>, K, V extends CcmObject>
     @Override
     @SuppressWarnings({"unchecked", "PMD.UseVarargs"})
     public <T> T[] toArray(final T[] array) {
-        final PermissionChecker permissionChecker;
         final CdiUtil cdiUtil = new CdiUtil();
-        try {
-            permissionChecker = cdiUtil.findBean(
+        final PermissionChecker permissionChecker = cdiUtil.findBean(
                 PermissionChecker.class);
-        } catch (CdiLookupException ex) {
-            throw new UncheckedWrapperException(ex);
-        }
-
+        
         final E[] entries = (E[]) set.toArray(array);
         for (int i = 0; i < entries.length; i++) {
             if (!permissionChecker.isPermitted(requiredPrivilege,

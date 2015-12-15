@@ -18,7 +18,6 @@
  */
 package com.arsdigita.ui.admin;
 
-import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -38,12 +37,6 @@ import com.arsdigita.bebop.parameters.StringParameter;
 
 import static com.arsdigita.ui.admin.AdminConstants.*;
 
-import com.arsdigita.util.UncheckedWrapperException;
-
-import org.libreccm.cdi.utils.CdiLookupException;
-import org.libreccm.cdi.utils.CdiUtil;
-
-import java.util.Collections;
 
 /**
  * @author cgyg9330
@@ -94,12 +87,7 @@ public class GroupSearchForm extends Form implements FormProcessListener,
 //
 //        final CdiUtil cdiUtil = new CdiUtil();
 //        final GroupRepository groupRepository;
-//        try {
 //            groupRepository = cdiUtil.findBean(GroupRepository.class);
-//        } catch (CdiLookupException ex) {
-//            throw new UncheckedWrapperException(
-//                "Failed to lookup GroupRepository", ex);
-//        }
 //        results = groupRepository.searchGroupByName(search);
 //        
 //

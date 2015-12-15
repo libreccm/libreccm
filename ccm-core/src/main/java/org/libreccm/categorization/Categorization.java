@@ -35,18 +35,26 @@ import static org.libreccm.core.CoreConstants.*;
 import java.util.Objects;
 
 import javax.persistence.JoinColumn;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 
 /**
- * Association class describing the association between a category and an 
- * object. Instances of these class should not created manually. 
- * The methods provided by the {@link CategoryManager} take care of that.
- * 
+ * Association class describing the association between a category and an
+ * object. Instances of these class should not created manually. The methods
+ * provided by the {@link CategoryManager} take care of that.
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
- * 
+ *
  * @apiviz.has org.libreccm.core.CcmObject
  */
 @Entity
 @Table(name = "CATEGORIZATIONS", schema = DB_SCHEMA)
+@NamedQueries({
+    @NamedQuery(name = "Categorization.find",
+                query = "SELECT c FROM Categorization c "
+                                + "WHERE c.category = :category "
+                                + "AND c.categorizedObject = :object")
+})
 public class Categorization implements Serializable {
 
     private static final long serialVersionUID = 201504301320L;
@@ -81,19 +89,25 @@ public class Categorization implements Serializable {
     private boolean index;
 
     /**
-     * Defines the order in which the categories assigned the the categorised 
+     * Defines the order in which the categories assigned the the categorised
      * object are shown.
      */
     @Column(name = "CATEGORY_ORDER")
     private long categoryOrder;
 
     /**
-     * Defines the order in which the objects assigned to the category are 
+     * Defines the order in which the objects assigned to the category are
      * shown.
      */
     @Column(name = "OBJECT_ORDER")
     private long objectOrder;
 
+    public Categorization() {
+        index = false;
+        categoryOrder = 0;
+        objectOrder = 0;
+    }
+    
     public long getCategorizationId() {
         return categorizationId;
     }
@@ -146,7 +160,7 @@ public class Categorization implements Serializable {
     public int hashCode() {
         int hash = 7;
         hash
-            = 89 * hash + (int) (categorizationId ^ (categorizationId >>> 32));
+        = 89 * hash + (int) (categorizationId ^ (categorizationId >>> 32));
         hash = 89 * hash + Objects.hashCode(category);
         hash = 89 * hash + Objects.hashCode(categorizedObject);
         hash = 89 * hash + (index ? 1 : 0);
@@ -156,7 +170,7 @@ public class Categorization implements Serializable {
     }
 
     @Override
-     //No chance to make this method less complex, therefore suppress warning
+    //No chance to make this method less complex, therefore suppress warning
     @SuppressWarnings("PMD.NPathComplexity")
     public boolean equals(final Object obj) {
         if (obj == null) {
@@ -201,13 +215,13 @@ public class Categorization implements Serializable {
 
     public String toString(final String data) {
         return String.format("%s{ "
-                                 + "categorizationId = %d, "
-                                 + "category = %s, "
-                                 + "categorizedObject = %s, "
-                                 + "index = %b,"
-                                 + "categoryOrder = %d, "
-                                 + "objectOrder = %d"
-                                 + "%s }",
+                                     + "categorizationId = %d, "
+                                     + "category = %s, "
+                                     + "categorizedObject = %s, "
+                                     + "index = %b,"
+                                     + "categoryOrder = %d, "
+                                     + "objectOrder = %d"
+                                     + "%s }",
                              super.toString(),
                              categorizationId,
                              Objects.toString(category),

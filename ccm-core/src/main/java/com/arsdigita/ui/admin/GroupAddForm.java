@@ -19,21 +19,13 @@
 package com.arsdigita.ui.admin;
 
 import com.arsdigita.bebop.FormProcessException;
-import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.Tree;
 
 import com.arsdigita.bebop.event.FormProcessListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
-import com.arsdigita.util.UncheckedWrapperException;
-
-import org.libreccm.cdi.utils.CdiLookupException;
-import org.libreccm.cdi.utils.CdiUtil;
 
 import static com.arsdigita.ui.admin.AdminConstants.*;
 
-import java.math.BigDecimal;
-
-import javax.mail.internet.InternetAddress;
 
 /**
  * Add group form.
@@ -96,12 +88,8 @@ class GroupAddForm extends GroupForm implements FormProcessListener {
 ////        }
 //        final CdiUtil cdiUtil = new CdiUtil();
 //        final GroupRepository groupRepository;
-//        try {
+
 //            groupRepository = cdiUtil.findBean(GroupRepository.class);
-//        } catch (CdiLookupException ex) {
-//            throw new UncheckedWrapperException(
-//                "Failed to lookup GroupRepository", ex);
-//        }
 //        groupRepository.save(group);
 //
 ////        if (parentGroup != null) {

@@ -38,14 +38,12 @@ import com.arsdigita.mail.Mail;
 import static com.arsdigita.ui.admin.AdminConstants.*;
 
 import com.arsdigita.ui.login.PasswordValidationListener;
-import com.arsdigita.util.UncheckedWrapperException;
 
 import java.math.BigDecimal;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
-import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.User;
 
@@ -137,11 +135,8 @@ class UserPasswordForm extends Form
 
 //        final CdiUtil cdiUtil = new CdiUtil();
 //        final UserRepository userRepository;
-//        try {
+
 //            userRepository = cdiUtil.findBean(UserRepository.class);
-//        } catch(CdiLookupException ex) {
-//            throw new UncheckedWrapperException(ex);
-//        }
 //        final User user = userRepository.findById((Long) state.getValue(
 //            USER_ID_PARAM));
 //        
@@ -164,11 +159,8 @@ class UserPasswordForm extends Form
 
 //        final CdiUtil cdiUtil = new CdiUtil();
 //        final UserRepository userRepository;
-//        try {
+
 //            userRepository = cdiUtil.findBean(UserRepository.class);
-//        } catch(CdiLookupException ex) {
-//            throw new UncheckedWrapperException(ex);
-//        }
 //        final User user = userRepository.findById((Long) state.getValue(
 //            USER_ID_PARAM));
 //        if (user == null) {
@@ -217,12 +209,9 @@ class UserPasswordForm extends Form
         final CdiUtil cdiUtil = new CdiUtil();
 //        final UserRepository userRepository;
 //        final UserManager userManager;
-//        try {
+
 //            userRepository = cdiUtil.findBean(UserRepository.class);
 //            userManager = cdiUtil.findBean(UserManager.class);
-//        } catch(CdiLookupException ex) {
-//            throw new UncheckedWrapperException(ex);
-//        }
 //        final User user = userRepository.findById((Long) state.getValue(
 //            USER_ID_PARAM));
 //        if (user == null) {

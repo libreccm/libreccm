@@ -18,12 +18,13 @@
  */
 package com.arsdigita.ui.admin.applications;
 
+import com.arsdigita.bebop.PropertySheet;
 import com.arsdigita.bebop.PropertySheetModel;
 import com.arsdigita.ui.admin.GlobalizationUtil;
 import com.arsdigita.globalization.GlobalizedMessage;
-import com.arsdigita.util.UncheckedWrapperException;
+
 import java.util.List;
-import org.libreccm.cdi.utils.CdiLookupException;
+
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.web.ApplicationRepository;
 import org.libreccm.web.ApplicationType;
@@ -48,7 +49,7 @@ public class ApplicationInfoPropertySheetModel implements PropertySheetModel {
     private int currentIndex = -1;
 
     public ApplicationInfoPropertySheetModel(
-            final ApplicationType applicationType) {
+        final ApplicationType applicationType) {
         this.applicationType = applicationType;
     }
 
@@ -70,24 +71,24 @@ public class ApplicationInfoPropertySheetModel implements PropertySheetModel {
         switch (currentIndex) {
             case APP_TITLE:
                 return (String) GlobalizationUtil.globalize(
-                        "ui.admin.applications.ApplicationInfoSection.title.label").
-                        localize();
+                    "ui.admin.applications.ApplicationInfoSection.title.label").
+                    localize();
             case APP_CLASS:
                 return (String) GlobalizationUtil.globalize(
-                        "ui.admin.applications.ApplicationInfoSection.app_class.label").
-                        localize();
+                    "ui.admin.applications.ApplicationInfoSection.app_class.label")
+                    .localize();
             case APP_SINGLETON:
                 return (String) GlobalizationUtil.globalize(
-                        "ui.admin.applications.ApplicationInfoSection.singleton.label").
-                        localize();
+                    "ui.admin.applications.ApplicationInfoSection.singleton.label")
+                    .localize();
             case APP_DESC:
                 return (String) GlobalizationUtil.globalize(
-                        "ui.admin.applications.ApplicationInfoSection.desc.label").
-                        localize();
+                    "ui.admin.applications.ApplicationInfoSection.desc.label").
+                    localize();
             case SINGLETON_PATH:
                 return (String) GlobalizationUtil.globalize(
-                        "ui.admin.applications.ApplicationInfoSection.singleton_instance.path.label").
-                        localize();
+                    "ui.admin.applications.ApplicationInfoSection.singleton_instance.path.label")
+                    .localize();
             default:
                 return "unknown";
         }
@@ -97,19 +98,19 @@ public class ApplicationInfoPropertySheetModel implements PropertySheetModel {
         switch (currentIndex) {
             case APP_TITLE:
                 return GlobalizationUtil.globalize(
-                        "ui.admin.applications.ApplicationInfoSection.title.label");
+                    "ui.admin.applications.ApplicationInfoSection.title.label");
             case APP_CLASS:
                 return GlobalizationUtil.globalize(
-                        "ui.admin.applications.ApplicationInfoSection.app_class.label");
+                    "ui.admin.applications.ApplicationInfoSection.app_class.label");
             case APP_SINGLETON:
                 return GlobalizationUtil.globalize(
-                        "ui.admin.applications.ApplicationInfoSection.singleton.label");
+                    "ui.admin.applications.ApplicationInfoSection.singleton.label");
             case APP_DESC:
                 return GlobalizationUtil.globalize(
-                        "ui.admin.applications.ApplicationInfoSection.desc.label");
+                    "ui.admin.applications.ApplicationInfoSection.desc.label");
             case SINGLETON_PATH:
                 return GlobalizationUtil.globalize(
-                        "ui.admin.applications.ApplicationInfoSection.singleton_instance.path.label");
+                    "ui.admin.applications.ApplicationInfoSection.singleton_instance.path.label");
             default:
                 return GlobalizationUtil.globalize("unknown");
         }
@@ -125,33 +126,29 @@ public class ApplicationInfoPropertySheetModel implements PropertySheetModel {
             case APP_SINGLETON:
                 if (applicationType.singleton()) {
                     return (String) GlobalizationUtil.globalize(
-                            "ui.admin.applications.ApplicationInfoSection.singleton.yes").
-                            localize();
+                        "ui.admin.applications.ApplicationInfoSection.singleton.yes")
+                        .localize();
                 } else {
                     return (String) GlobalizationUtil.globalize(
-                            "ui.admin.applications.ApplicationInfoSection.singleton.no").
-                            localize();
+                        "ui.admin.applications.ApplicationInfoSection.singleton.no")
+                        .localize();
                 }
             case APP_DESC:
                 return applicationType.description();
             case SINGLETON_PATH:
                 final String path;
                 final CdiUtil cdiUtil = new CdiUtil();
-                final ApplicationRepository appRepo;
-                try {
-                    appRepo = cdiUtil.findBean(ApplicationRepository.class);
-                } catch (CdiLookupException ex) {
-                    throw new UncheckedWrapperException(ex);
-                }
+                final ApplicationRepository appRepo = cdiUtil.findBean(
+                    ApplicationRepository.class);
                 final List<CcmApplication> instances
-                                           = appRepo.findByType(
-                                applicationType.name());
+                                               = appRepo.findByType(
+                        applicationType.name());
                 if (instances.isEmpty()) {
                     path = "";
                 } else {
                     path = instances.get(0).getPrimaryUrl();
                 }
-                
+
                 return path;
             default:
                 return "";

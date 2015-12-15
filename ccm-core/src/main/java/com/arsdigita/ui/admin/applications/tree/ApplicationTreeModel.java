@@ -22,11 +22,11 @@ import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.tree.TreeModel;
 import com.arsdigita.bebop.tree.TreeNode;
 import com.arsdigita.ui.admin.ApplicationsAdministrationTab;
-import com.arsdigita.util.UncheckedWrapperException;
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import org.libreccm.cdi.utils.CdiLookupException;
+
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.web.ApplicationManager;
 import org.libreccm.web.ApplicationRepository;
@@ -34,9 +34,11 @@ import org.libreccm.web.ApplicationType;
 import org.libreccm.web.CcmApplication;
 
 /**
- * A {@link TreeModel} for the tree of applications in {@link ApplicationsAdministrationTab}. The tree consists of two
- * different types of nodes: Nodes for {@link ApplicationTypes} and nodes for {@link Application} instances.
- * 
+ * A {@link TreeModel} for the tree of applications in
+ * {@link ApplicationsAdministrationTab}. The tree consists of two different
+ * types of nodes: Nodes for {@link ApplicationTypes} and nodes for
+ * {@link CCmApplication} instances.
+ *
  * @author Jens Pelzetter <jens@jp-digital.de>
  * @version $Id: ApplicationTreeModel.java 2406 2013-10-31 19:52:22Z jensp $
  */
@@ -56,7 +58,8 @@ public class ApplicationTreeModel implements TreeModel {
         if (node instanceof RootTreeNode) {
             return true;
         } else if (node instanceof ApplicationTypeTreeNode) {
-            final ApplicationTypeTreeNode typeTreeNode = (ApplicationTypeTreeNode) node;
+            final ApplicationTypeTreeNode typeTreeNode
+                                              = (ApplicationTypeTreeNode) node;
 
             //if (typeTreeNode.getApplicationType().isSingleton()) {
             if (typeTreeNode.isSingleton()) {
@@ -64,14 +67,15 @@ public class ApplicationTreeModel implements TreeModel {
             } else {
                 //return !retrieveApplicationInstances(typeTreeNode.getApplicationType()).isEmpty();
                 //return !retrieveApplicationInstances(typeTreeNode.getApplicationType()).isEmpty();
-                return !retrieveApplicationInstances(typeTreeNode.getObjecType()).isEmpty();
+                return !retrieveApplicationInstances(typeTreeNode.getObjecType())
+                    .isEmpty();
             }
         } else if (node instanceof ApplicationInstanceTreeNode) {
             return false;
         } else {
             throw new IllegalArgumentException(
-                    "The ApplicationTreeModel can only work with ApplicationTypeTreeNodes and"
-                    + "ApplicationInstanceTreeNodes.");
+                "The ApplicationTreeModel can only work with ApplicationTypeTreeNodes and"
+                + "ApplicationInstanceTreeNodes.");
         }
     }
 
@@ -79,63 +83,49 @@ public class ApplicationTreeModel implements TreeModel {
     public Iterator getChildren(final TreeNode node, final PageState state) {
         if (node instanceof RootTreeNode) {
             final CdiUtil cdiUtil = new CdiUtil();
-            final ApplicationManager appManager;
-            try {
-                appManager = cdiUtil.findBean(ApplicationManager.class);
-            } catch(CdiLookupException ex) {
-                throw new UncheckedWrapperException(ex);
-            } 
-            
-            final Collection<ApplicationType> appTypes = appManager.getApplicationTypes().values();
-            
+            final ApplicationManager appManager = cdiUtil.findBean(
+                ApplicationManager.class);
+
+            final Collection<ApplicationType> appTypes = appManager
+                .getApplicationTypes().values();
+
             return new AppTypesIterator(appTypes);
         } else if (node instanceof ApplicationTypeTreeNode) {
-            final ApplicationTypeTreeNode typeTreeNode = (ApplicationTypeTreeNode) node;
+            final ApplicationTypeTreeNode typeTreeNode
+                                              = (ApplicationTypeTreeNode) node;
 
             final CdiUtil cdiUtil = new CdiUtil();
-            final ApplicationRepository appRepo;
-            try {
-                appRepo = cdiUtil.findBean(ApplicationRepository.class);
-            } catch(CdiLookupException ex) {
-                throw new UncheckedWrapperException(ex);
-            }
-            
+            final ApplicationRepository appRepo = cdiUtil.findBean(
+                ApplicationRepository.class);
+
             final List<CcmApplication> applications = appRepo.findByType(
-                    typeTreeNode.getObjecType());
+                typeTreeNode.getObjecType());
 
             return new AppIterator(applications);
         } else if (node instanceof ApplicationInstanceTreeNode) {
             return null;
         } else {
             throw new IllegalArgumentException(
-                    "The ApplicationTreeModel can only work with ApplicationTypeTreeNodes and"
-                    + "ApplicationInstanceTreeNodes.");
+                "The ApplicationTreeModel can only work with ApplicationTypeTreeNodes and"
+                + "ApplicationInstanceTreeNodes.");
         }
     }
 
     private List<CcmApplication> retrieveApplicationInstances(
-            final ApplicationType applicationType) {
+        final ApplicationType applicationType) {
         final CdiUtil cdiUtil = new CdiUtil();
-        final ApplicationRepository appRepo;
-        try {
-            appRepo = cdiUtil.findBean(ApplicationRepository.class);
-        } catch(CdiLookupException ex) {
-            throw new UncheckedWrapperException(ex);
-        }
-        
+        final ApplicationRepository appRepo = cdiUtil.findBean(
+            ApplicationRepository.class);
+
         return appRepo.findByType(applicationType.name());
     }
 
     private List<CcmApplication> retrieveApplicationInstances(
-            final String appObjectType) {
+        final String appObjectType) {
         final CdiUtil cdiUtil = new CdiUtil();
-        final ApplicationRepository appRepo;
-        try {
-            appRepo = cdiUtil.findBean(ApplicationRepository.class);
-        } catch(CdiLookupException ex) {
-            throw new UncheckedWrapperException(ex);
-        }
-        
+        final ApplicationRepository appRepo = cdiUtil.findBean(
+            ApplicationRepository.class);
+
         return appRepo.findByType(appObjectType);
     }
 
@@ -206,4 +196,5 @@ public class ApplicationTreeModel implements TreeModel {
         }
 
     }
+
 }

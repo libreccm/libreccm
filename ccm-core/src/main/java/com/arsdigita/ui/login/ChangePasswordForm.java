@@ -36,29 +36,21 @@ import com.arsdigita.bebop.form.Hidden;
 import com.arsdigita.bebop.form.Password;
 import com.arsdigita.bebop.form.Submit;
 import com.arsdigita.bebop.parameters.NotNullValidationListener;
-import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.bebop.parameters.URLParameter;
 import com.arsdigita.kernel.KernelConfig;
-import com.arsdigita.kernel.security.SecurityConfig;
 import com.arsdigita.ui.UI;
-import com.arsdigita.web.Web;
 import com.arsdigita.web.URL;
 import com.arsdigita.web.ReturnSignal;
-import com.arsdigita.mail.Mail;
-import com.arsdigita.util.UncheckedWrapperException;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
-import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.User;
 
-import java.util.logging.Level;
 import org.apache.shiro.subject.Subject;
 import org.libreccm.security.Shiro;
 import org.libreccm.security.UserManager;
-import org.libreccm.security.UserRepository;
 
 /**
  * A Form that allows a user to change their password by entering their old
@@ -131,14 +123,8 @@ public class ChangePasswordForm extends Form
         add(m_returnURL);
 
         final CdiUtil cdiUtil = new CdiUtil();
-        final Subject subject;
-        final Shiro shiro;
-        try {
-            subject = cdiUtil.findBean(Subject.class);
-            shiro = cdiUtil.findBean(Shiro.class);
-        } catch (CdiLookupException ex) {
-            throw new UncheckedWrapperException(ex);
-        }
+        final Subject subject = cdiUtil.findBean(Subject.class);
+        final Shiro shiro = cdiUtil.findBean(Shiro.class);
 
         final KernelConfig kernelConfig = KernelConfig.getConfig();
         final User user = shiro.getUser();
@@ -207,15 +193,9 @@ public class ChangePasswordForm extends Form
             String confirmPassword = (String) m_confirmPassword.getValue(state);
         
             //check oldPassword
-            final Shiro shiro;
-            final UserManager userManager;
-            try { 
-                final CdiUtil cdiUtil = new CdiUtil();
-                shiro = cdiUtil.findBean(Shiro.class);
-                userManager = cdiUtil.findBean(UserManager.class);
-            } catch(CdiLookupException ex) {
-                throw new UncheckedWrapperException(ex);
-            }
+            final CdiUtil cdiUtil = new CdiUtil();
+            final Shiro shiro = cdiUtil.findBean(Shiro.class);
+            final UserManager userManager = cdiUtil.findBean(UserManager.class);
             
             final User user = shiro.getUser();
             if (!userManager.verifyPassword(user, oldPassword)) {
@@ -261,16 +241,9 @@ public class ChangePasswordForm extends Form
             return;
         }
         
-        final UserManager userManager;
-        final Shiro shiro;
-        try {
-            final CdiUtil cdiUtil = new CdiUtil();
-            userManager = cdiUtil.findBean(UserManager.class);
-            shiro = cdiUtil.findBean(Shiro.class);
-        } catch(CdiLookupException ex) {
-            throw new UncheckedWrapperException(ex);
-        } 
-        
+        final CdiUtil cdiUtil = new CdiUtil();
+        final UserManager userManager = cdiUtil.findBean(UserManager.class);
+        final Shiro shiro = cdiUtil.findBean(Shiro.class); 
         final User user = shiro.getUser();
         
         final String newPassword = (String) m_newPassword.getValue(state);

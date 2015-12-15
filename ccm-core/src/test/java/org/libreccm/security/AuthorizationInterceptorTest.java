@@ -21,7 +21,6 @@ package org.libreccm.security;
 import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.kernel.security.SecurityConfig;
 import com.arsdigita.runtime.AbstractConfig;
-import com.arsdigita.util.UncheckedWrapperException;
 import com.arsdigita.util.parameter.AbstractParameterContext;
 import com.arsdigita.web.CCMApplicationContextListener;
 import com.arsdigita.xml.XML;
@@ -40,7 +39,6 @@ import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
@@ -141,7 +139,6 @@ public class AuthorizationInterceptorTest {
             .addPackage(SecurityConfig.class.getPackage())
             .addPackage(AbstractConfig.class.getPackage())
             .addPackage(AbstractParameterContext.class.getPackage())
-            .addPackage(UncheckedWrapperException.class.getPackage())
             .addPackage(CCMApplicationContextListener.class.getPackage())
             .addPackage(XML.class.getPackage())
             .addPackage(DateTimeFormatter.class.getPackage())

@@ -18,6 +18,8 @@
  */
 package org.libreccm.configuration;
 
+import static org.libreccm.core.CoreConstants.*;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -31,7 +33,7 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "CONF_ENTRIES_BIG_DECIMAL")
+@Table(name = "CONF_ENTRIES_BIG_DECIMAL", schema = DB_SCHEMA)
 public class BigDecimalConfigurationEntry
     extends AbstractConfigurationEntry<BigDecimal> implements Serializable {
 

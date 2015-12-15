@@ -35,11 +35,11 @@ import com.arsdigita.ui.admin.applications.BaseApplicationPane;
 import com.arsdigita.ui.admin.applications.MultiInstanceApplicationPane;
 import com.arsdigita.ui.admin.applications.SingletonApplicationPane;
 import com.arsdigita.ui.admin.applications.tree.ApplicationTreeModelBuilder;
-import com.arsdigita.util.UncheckedWrapperException;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import org.libreccm.cdi.utils.CdiLookupException;
+
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.web.ApplicationRepository;
 import org.libreccm.web.ApplicationType;
@@ -52,13 +52,13 @@ import org.libreccm.web.CcmApplication;
  * @author Jens Pelzetter
  */
 public class ApplicationsAdministrationTab extends LayoutPanel implements
-        AdminConstants {
+    AdminConstants {
 
     private final Tree applicationTree;
     private final Map<String, BaseApplicationPane> appPanes
-                                                   = new HashMap<>();
-    private final Map<String, ApplicationInstancePane> instancePanes
                                                        = new HashMap<>();
+    private final Map<String, ApplicationInstancePane> instancePanes
+                                                           = new HashMap<>();
     private final BoxPanel appPanel;
 
     /**
@@ -79,21 +79,16 @@ public class ApplicationsAdministrationTab extends LayoutPanel implements
         setLeft(applicationTree);
 
         final CdiUtil cdiUtil = new CdiUtil();
-        final org.libreccm.web.ApplicationManager appManager;
-        try {
-            appManager = cdiUtil.findBean(
-                    org.libreccm.web.ApplicationManager.class);
-        } catch (CdiLookupException ex) {
-            throw new UncheckedWrapperException(ex);
-        }
+        final org.libreccm.web.ApplicationManager appManager = cdiUtil.findBean(
+            org.libreccm.web.ApplicationManager.class);
 
         final Collection<ApplicationType> applicationTypes = appManager.
-                getApplicationTypes().values();
+            getApplicationTypes().values();
 
         final Map<String, ApplicationManager<?>> appManagers
-                                                 = ApplicationManagers.
-                getInstance().
-                getApplicationManagers();
+                                                     = ApplicationManagers.
+            getInstance().
+            getApplicationManagers();
 
         for (ApplicationType appType : applicationTypes) {
             if (appType.singleton()) {
@@ -110,7 +105,7 @@ public class ApplicationsAdministrationTab extends LayoutPanel implements
         }
 
         for (Map.Entry<String, ApplicationInstancePane> entry : instancePanes.
-                entrySet()) {
+            entrySet()) {
             appPanel.add(entry.getValue());
         }
 
@@ -128,18 +123,18 @@ public class ApplicationsAdministrationTab extends LayoutPanel implements
             pane = new SingletonApplicationPane(applicationType, null);
         } else {
             pane = new SingletonApplicationPane(
-                    applicationType, appManagers.get(appObjectType).
-                    getApplicationAdminForm());
+                applicationType, appManagers.get(appObjectType).
+                getApplicationAdminForm());
         }
         appPanes.put(appObjectType, pane);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     private void createAppPane(
-            final ApplicationType applicationType,
-            final Map<String, ApplicationManager<?>> appManagers) {
+        final ApplicationType applicationType,
+        final Map<String, ApplicationManager<?>> appManagers) {
         final ApplicationManager<?> appManager = appManagers.get(
-                applicationType.name());
+            applicationType.name());
         final Form createForm;
         if (appManager == null) {
             createForm = null;
@@ -147,24 +142,25 @@ public class ApplicationsAdministrationTab extends LayoutPanel implements
             createForm = appManager.getApplicationCreateForm();
         }
 
-        final MultiInstanceApplicationPane<?> appPane = new MultiInstanceApplicationPane(
+        final MultiInstanceApplicationPane<?> appPane
+                                                  = new MultiInstanceApplicationPane(
                 applicationType, createForm);
         appPanes.put(applicationType.name(), appPane);
         createInstancePane(applicationType, appManagers);
     }
 
     private void createInstancePane(
-            final ApplicationType applicationType,
-            final Map<String, ApplicationManager<?>> managementForms) {
+        final ApplicationType applicationType,
+        final Map<String, ApplicationManager<?>> managementForms) {
         final ApplicationManager<?> manager = managementForms.get(
-                applicationType.name());
+            applicationType.name());
         final ApplicationInstancePane instPane;
         if (manager == null) {
             instPane = new ApplicationInstancePane(new Placeholder());
         } else {
             instPane = new ApplicationInstancePane(managementForms.get(
-                    applicationType.name()).
-                    getApplicationAdminForm());
+                applicationType.name()).
+                getApplicationAdminForm());
         }
 
         instancePanes.put(applicationType.name(), instPane);
@@ -178,7 +174,7 @@ public class ApplicationsAdministrationTab extends LayoutPanel implements
             page.setVisibleDefault(entry.getValue(), false);
         }
         for (Map.Entry<String, ApplicationInstancePane> entry : instancePanes.
-                entrySet()) {
+            entrySet()) {
             page.setVisibleDefault(entry.getValue(), false);
         }
     }
@@ -189,7 +185,7 @@ public class ApplicationsAdministrationTab extends LayoutPanel implements
             entry.getValue().setVisible(state, false);
         }
         for (Map.Entry<String, ApplicationInstancePane> entry : instancePanes.
-                entrySet()) {
+            entrySet()) {
             entry.getValue().setVisible(state, false);
         }
 
@@ -207,7 +203,7 @@ public class ApplicationsAdministrationTab extends LayoutPanel implements
             final PageState state = event.getPageState();
 
             final String selectedKey = (String) applicationTree.getSelectedKey(
-                    state);
+                state);
             if (selectedKey != null) {
                 if (selectedKey.contains(".")) {
                     // Selected key is a classname and therefore the key of an ApplicationPane
@@ -218,20 +214,16 @@ public class ApplicationsAdministrationTab extends LayoutPanel implements
                 } else {
                     // Selected key is the name of a instance pane
                     final CdiUtil cdiUtil = new CdiUtil();
-                    final ApplicationRepository appRepo;
-                    try {
-                        appRepo = cdiUtil.findBean(ApplicationRepository.class);
-                    } catch (CdiLookupException ex) {
-                        throw new UncheckedWrapperException(ex);
-                    }
-                    
+                    final ApplicationRepository appRepo = cdiUtil.findBean(
+                        ApplicationRepository.class);
+
                     final CcmApplication application = appRepo
-                            .retrieveApplicationForPath(selectedKey);
-                    
+                        .retrieveApplicationForPath(selectedKey);
+
                     final ApplicationInstancePane pane;
                     if (application != null) {
                         pane = instancePanes.get(application.getClass().
-                                getName());
+                            getName());
                         if (pane != null) {
                             pane.setApplication(application);
                         }
@@ -253,9 +245,10 @@ public class ApplicationsAdministrationTab extends LayoutPanel implements
         public Placeholder() {
             super();
             final Label label = new Label(GlobalizationUtil.globalize(
-                    "ui.admin.applications.placeholder"));
+                "ui.admin.applications.placeholder"));
             add(label);
         }
 
     }
+
 }

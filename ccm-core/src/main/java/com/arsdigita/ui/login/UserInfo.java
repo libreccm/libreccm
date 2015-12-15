@@ -24,7 +24,6 @@ import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.SimpleComponent;
 import com.arsdigita.bebop.SimpleContainer;
 import com.arsdigita.dispatcher.DispatcherHelper;
-import com.arsdigita.util.UncheckedWrapperException;
 import com.arsdigita.web.URL;
 import com.arsdigita.xml.Element;
 
@@ -32,8 +31,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.apache.shiro.subject.Subject;
-import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.Shiro;
 import org.libreccm.security.User;
@@ -109,15 +106,9 @@ public class UserInfo extends SimpleContainer {
                     m_contentCenters = new ArrayList<>();
 
                     final CdiUtil cdiUtil = new CdiUtil();
-                    final ApplicationRepository appRepo;
-                    try {
-                        appRepo = cdiUtil.findBean(
+                    final ApplicationRepository appRepo = cdiUtil.findBean(
                             ApplicationRepository.class);
-                    } catch (CdiLookupException ex) {
-                        throw new UncheckedWrapperException(
-                            "Failed to lookup ApplicationRepository", ex);
-                    }
-
+                    
                     m_contentCenters = appRepo.findByType(
                         "com.arsdigita.cms.ContentCenter");
                 }
@@ -217,14 +208,9 @@ public class UserInfo extends SimpleContainer {
             throw new IllegalStateException("user is not logged in");
         }
         
-        final User user;
-        try {
-            final CdiUtil cdiUtil = new CdiUtil();
-            final Shiro shiro = cdiUtil.findBean(Shiro.class);
-            user = shiro.getUser();
-        } catch(CdiLookupException ex) {
-            throw new UncheckedWrapperException(ex);
-        }
+        final CdiUtil cdiUtil = new CdiUtil();
+        final Shiro shiro = cdiUtil.findBean(Shiro.class);
+        final User user = shiro.getUser();
         
         return user;
     }

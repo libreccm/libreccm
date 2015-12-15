@@ -5,6 +5,7 @@ DROP SEQUENCE IF EXISTS hibernate_sequence;
 CREATE SCHEMA ccm_core;
 
 
+
     create table CCM_CORE.APPLICATIONS (
         APPLICATION_TYPE varchar(1024) not null,
         PRIMARY_URL varchar(1024) not null,
@@ -54,7 +55,7 @@ CREATE SCHEMA ccm_core;
     create table CCM_CORE.CATEGORY_DOMAINS (
         DOMAIN_KEY varchar(255) not null,
         RELEASED timestamp,
-        URI varchar(1024) not null,
+        URI varchar(1024),
         VERSION varchar(255) not null,
         OBJECT_ID int8 not null,
         ROOT_CATEGORY_ID int8,
@@ -83,8 +84,61 @@ CREATE SCHEMA ccm_core;
 
     create table CCM_CORE.CCM_ROLES (
         ROLE_ID int8 not null,
-        name varchar(512) not null,
+        NAME varchar(512) not null,
         primary key (ROLE_ID)
+    );
+
+    create table CCM_CORE.CONFIGURATION_ENTRIES (
+        comment varchar(2048),
+        OBJECT_ID int8 not null,
+        primary key (OBJECT_ID)
+    );
+
+    create table CCM_CORE.CONF_ENTRIES_BIG_DECIMAL (
+        entry_value numeric(19, 2),
+        OBJECT_ID int8 not null,
+        primary key (OBJECT_ID)
+    );
+
+    create table CCM_CORE.CONF_ENTRIES_BOOLEAN (
+        entry_value boolean,
+        OBJECT_ID int8 not null,
+        primary key (OBJECT_ID)
+    );
+
+    create table CCM_CORE.CONF_ENTRIES_DOUBLE (
+        entry_value float8,
+        OBJECT_ID int8 not null,
+        primary key (OBJECT_ID)
+    );
+
+    create table CCM_CORE.CONF_ENTRIES_ENUM (
+        OBJECT_ID int8 not null,
+        primary key (OBJECT_ID)
+    );
+
+    create table CCM_CORE.CONF_ENTRIES_INTEGER (
+        entry_value int8,
+        OBJECT_ID int8 not null,
+        primary key (OBJECT_ID)
+    );
+
+    create table CCM_CORE.CONF_ENTRIES_L10N_STRING (
+        OBJECT_ID int8 not null,
+        primary key (OBJECT_ID)
+    );
+
+    create table CCM_CORE.CONF_ENTRIES_L10N_STR_VALUES (
+        ENTRY_ID int8 not null,
+        LOCALIZED_VALUE text,
+        LOCALE varchar(255) not null,
+        primary key (ENTRY_ID, LOCALE)
+    );
+
+    create table CCM_CORE.CONF_ENTRIES_STRING (
+        entry_value varchar(1024),
+        OBJECT_ID int8 not null,
+        primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.DIGESTS (
@@ -121,6 +175,11 @@ CREATE SCHEMA ccm_core;
         LOCALIZED_VALUE text,
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
+    );
+
+    create table CCM_CORE.ENUM_CONFIGURATION_ENTRIES_VALUES (
+        ENUM_ID int8 not null,
+        value varchar(255)
     );
 
     create table CCM_CORE.FORMBUILDER_COMPONENTS (
@@ -466,6 +525,13 @@ CREATE SCHEMA ccm_core;
         primary key (MEMBERSHIP_ID)
     );
 
+    create table CCM_CORE.TASK_ASSIGNMENTS (
+        TASK_ASSIGNMENT_ID int8 not null,
+        ROLE_ID int8,
+        TASK_ID int8,
+        primary key (TASK_ASSIGNMENT_ID)
+    );
+
     create table CCM_CORE.THREADS (
         OBJECT_ID int8 not null,
         ROOT_ID int8,
@@ -557,16 +623,6 @@ CREATE SCHEMA ccm_core;
         primary key (TASK_ID)
     );
 
-    create table CCM_CORE.WORKFLOW_USER_TASK_ASSIGNED_GROUPS (
-        USER_TASK_ID int8 not null,
-        ASSIGNED_GROUP_ID int8 not null
-    );
-
-    create table CCM_CORE.WORKFLOW_USER_TASK_ASSIGNED_USERS (
-        USER_TASK_ID int8 not null,
-        ASSIGNED_USER_ID int8 not null
-    );
-
     alter table CCM_CORE.CATEGORY_DOMAINS 
         add constraint UK_mb1riernf8a88u3mwl0bgfj8y  unique (DOMAIN_KEY);
 
@@ -578,12 +634,6 @@ CREATE SCHEMA ccm_core;
 
     alter table CCM_CORE.INSTALLED_MODULES 
         add constraint UK_11imwgfojyi4hpr18uw9g3jvx  unique (MODULE_CLASS_NAME);
-
-    alter table CCM_CORE.WORKFLOW_USER_TASK_ASSIGNED_GROUPS 
-        add constraint UK_q9evs4qcfhr79fha7xgk057wo  unique (ASSIGNED_GROUP_ID);
-
-    alter table CCM_CORE.WORKFLOW_USER_TASK_ASSIGNED_USERS 
-        add constraint UK_bb9rm595xsbrpyx95lmwnlg76  unique (ASSIGNED_USER_ID);
 
     alter table CCM_CORE.APPLICATIONS 
         add constraint FK_sn1sqtx94nhxgv282ymoqiock 
@@ -635,6 +685,51 @@ CREATE SCHEMA ccm_core;
         foreign key (OBJECT_ID) 
         references CCM_CORE.CATEGORIES;
 
+    alter table CCM_CORE.CONFIGURATION_ENTRIES 
+        add constraint FK_8u6h7p0gs4ybf0ju240mggb73 
+        foreign key (OBJECT_ID) 
+        references CCM_CORE.CCM_OBJECTS;
+
+    alter table CCM_CORE.CONF_ENTRIES_BIG_DECIMAL 
+        add constraint FK_3tnub4je6c2bwi0c3p9m2n6d1 
+        foreign key (OBJECT_ID) 
+        references CCM_CORE.CONFIGURATION_ENTRIES;
+
+    alter table CCM_CORE.CONF_ENTRIES_BOOLEAN 
+        add constraint FK_d79uxyam5uhhmw3ijw3c14gk2 
+        foreign key (OBJECT_ID) 
+        references CCM_CORE.CONFIGURATION_ENTRIES;
+
+    alter table CCM_CORE.CONF_ENTRIES_DOUBLE 
+        add constraint FK_l5qxx6wfngl2hvnqaq77oin1s 
+        foreign key (OBJECT_ID) 
+        references CCM_CORE.CONFIGURATION_ENTRIES;
+
+    alter table CCM_CORE.CONF_ENTRIES_ENUM 
+        add constraint FK_blwwj2ht4wbg82meuuxf0t7kk 
+        foreign key (OBJECT_ID) 
+        references CCM_CORE.CONFIGURATION_ENTRIES;
+
+    alter table CCM_CORE.CONF_ENTRIES_INTEGER 
+        add constraint FK_reo0efdw6evf11viwlse1w27 
+        foreign key (OBJECT_ID) 
+        references CCM_CORE.CONFIGURATION_ENTRIES;
+
+    alter table CCM_CORE.CONF_ENTRIES_L10N_STRING 
+        add constraint FK_dbvyqoliuh0d7bl6ksng4abe 
+        foreign key (OBJECT_ID) 
+        references CCM_CORE.CONFIGURATION_ENTRIES;
+
+    alter table CCM_CORE.CONF_ENTRIES_L10N_STR_VALUES 
+        add constraint FK_ftb5yqeoli1m932yp3p8ho74g 
+        foreign key (ENTRY_ID) 
+        references CCM_CORE.CONF_ENTRIES_L10N_STRING;
+
+    alter table CCM_CORE.CONF_ENTRIES_STRING 
+        add constraint FK_j31m640x2cn0xl5jcbik06708 
+        foreign key (OBJECT_ID) 
+        references CCM_CORE.CONFIGURATION_ENTRIES;
+
     alter table CCM_CORE.DIGESTS 
         add constraint FK_3xrcpufumqnh4ke4somt89rvh 
         foreign key (FROM_PARTY_ID) 
@@ -664,6 +759,11 @@ CREATE SCHEMA ccm_core;
         add constraint FK_98kfhafuv6lmhnpkhurwp9bgm 
         foreign key (OBJECT_ID) 
         references CCM_CORE.CATEGORY_DOMAINS;
+
+    alter table CCM_CORE.ENUM_CONFIGURATION_ENTRIES_VALUES 
+        add constraint FK_ao3evxajxd8y4gy5a6e8ua49j 
+        foreign key (ENUM_ID) 
+        references CCM_CORE.CONF_ENTRIES_ENUM;
 
     alter table CCM_CORE.FORMBUILDER_COMPONENTS 
         add constraint FK_72108sd6vsqt88g3fb4kl6o81 
@@ -955,6 +1055,16 @@ CREATE SCHEMA ccm_core;
         foreign key (ROLE_ID) 
         references CCM_CORE.CCM_ROLES;
 
+    alter table CCM_CORE.TASK_ASSIGNMENTS 
+        add constraint FK_klh64or0yq26c63181j1tps2o 
+        foreign key (ROLE_ID) 
+        references CCM_CORE.CCM_ROLES;
+
+    alter table CCM_CORE.TASK_ASSIGNMENTS 
+        add constraint FK_fu6ukne6hj8ihlfxtmp17xpfj 
+        foreign key (TASK_ID) 
+        references CCM_CORE.WORKFLOW_USER_TASKS;
+
     alter table CCM_CORE.THREADS 
         add constraint FK_oopqroe5a8fg932teo0cyifcv 
         foreign key (ROOT_ID) 
@@ -1004,25 +1114,5 @@ CREATE SCHEMA ccm_core;
         add constraint FK_bg60xxg9kerqsxyphbfxulg8y 
         foreign key (WORKFLOW_ID) 
         references CCM_CORE.WORKFLOWS;
-
-    alter table CCM_CORE.WORKFLOW_USER_TASK_ASSIGNED_GROUPS 
-        add constraint FK_q9evs4qcfhr79fha7xgk057wo 
-        foreign key (ASSIGNED_GROUP_ID) 
-        references CCM_CORE.GROUPS;
-
-    alter table CCM_CORE.WORKFLOW_USER_TASK_ASSIGNED_GROUPS 
-        add constraint FK_lqtfvnswn0k8kjghoi4jk3qfe 
-        foreign key (USER_TASK_ID) 
-        references CCM_CORE.WORKFLOW_USER_TASKS;
-
-    alter table CCM_CORE.WORKFLOW_USER_TASK_ASSIGNED_USERS 
-        add constraint FK_bb9rm595xsbrpyx95lmwnlg76 
-        foreign key (ASSIGNED_USER_ID) 
-        references CCM_CORE.USERS;
-
-    alter table CCM_CORE.WORKFLOW_USER_TASK_ASSIGNED_USERS 
-        add constraint FK_7qgn3rbw4wgpd77hhqogfh53x 
-        foreign key (USER_TASK_ID) 
-        references CCM_CORE.WORKFLOW_USER_TASKS;
 
     create sequence hibernate_sequence start 1 increment 1;

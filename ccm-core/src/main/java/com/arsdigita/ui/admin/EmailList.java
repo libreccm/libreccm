@@ -30,15 +30,11 @@ import com.arsdigita.bebop.list.ListCellRenderer;
 import com.arsdigita.bebop.list.ListModel;
 import com.arsdigita.bebop.list.ListModelBuilder;
 import com.arsdigita.util.LockableImpl;
-import com.arsdigita.util.UncheckedWrapperException;
 
-import org.libreccm.cdi.utils.CdiLookupException;
-import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.core.EmailAddress;
 
 import static com.arsdigita.ui.admin.AdminConstants.*;
 
-import java.math.BigDecimal;
 import java.util.Iterator;
 
 /**
@@ -105,11 +101,8 @@ class EmailList extends List
         if (userId != null) {
 //            final CdiUtil cdiUtil = new CdiUtil();
 //            final UserRepository userRepository;
-//            try {
+
 //                userRepository = cdiUtil.findBean(UserRepository.class);
-//            } catch(CdiLookupException ex) {
-//                throw new UncheckedWrapperException(ex);
-//            }
 //            
 //            final User user = userRepository.findById(userId);
 //            if (user == null) {
@@ -198,11 +191,8 @@ class EmailListModelBuilder extends LockableImpl
 //        } else {
 //            final CdiUtil cdiUtil = new CdiUtil();
 //            final UserRepository userRepository;
-//            try {
+
 //                userRepository = cdiUtil.findBean(UserRepository.class);
-//            } catch(CdiLookupException ex) {
-//                throw new UncheckedWrapperException(ex);
-//            }
 //            final User user = userRepository.findById(userId);
 //            
 //            return new EmailListModel(user.getEmailAddresses().iterator());

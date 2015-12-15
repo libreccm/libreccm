@@ -26,13 +26,10 @@ import com.arsdigita.bebop.BoxPanel;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.list.ListCellRenderer;
 import com.arsdigita.bebop.Component;
-import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.ControlLink;
 import com.arsdigita.bebop.event.ActionListener;
 import com.arsdigita.bebop.event.ActionEvent;
-import com.arsdigita.util.UncheckedWrapperException;
 
-import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
 
 import static com.arsdigita.ui.admin.AdminConstants.*;
@@ -88,13 +85,10 @@ class SubMemberPanel extends BoxPanel {
 //                        final UserRepository userRepository;
 //                        final GroupManager groupManager;
 //                        final GroupRepository groupRepository;
-//                        try {
+
 //                            userRepository = cdiUtil.findBean(UserRepository.class);
 //                            groupManager = cdiUtil.findBean(GroupManager.class);
 //                            groupRepository = cdiUtil.findBean(GroupRepository.class);
-//                        } catch(CdiLookupException ex) {
-//                            throw new UncheckedWrapperException(ex);
-//                        }
 //                        
 //                        final User user = userRepository.findById(userID);
 //                        final Group group = m_mainTab.getGroup(state);

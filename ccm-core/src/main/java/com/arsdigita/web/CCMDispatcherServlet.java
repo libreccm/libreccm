@@ -21,7 +21,6 @@ package com.arsdigita.web;
 import com.arsdigita.dispatcher.DispatcherHelper;
 import com.arsdigita.ui.UI;
 import com.arsdigita.util.Assert;
-import com.arsdigita.util.UncheckedWrapperException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,9 +38,8 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.shiro.subject.Subject;
-import org.libreccm.cdi.utils.CdiLookupException;
-import org.libreccm.cdi.utils.CdiUtil;
 
 /**
  * <p>The CCM main dispatcher.  This servlet serves as the main servlet / main

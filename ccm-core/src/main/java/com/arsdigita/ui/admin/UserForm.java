@@ -33,7 +33,6 @@ import com.arsdigita.bebop.parameters.EmailParameter;
 import com.arsdigita.bebop.parameters.NotEmptyValidationListener;
 import com.arsdigita.bebop.parameters.StringLengthValidationListener;
 import com.arsdigita.bebop.parameters.StringParameter;
-import com.arsdigita.bebop.parameters.URLParameter;
 import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.kernel.security.SecurityConfig;
 
@@ -41,15 +40,11 @@ import static com.arsdigita.ui.admin.AdminConstants.*;
 
 import com.arsdigita.ui.login.PasswordValidationListener;
 import com.arsdigita.util.StringUtils;
-import com.arsdigita.util.UncheckedWrapperException;
 
-import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
 
-import java.io.UncheckedIOException;
 import java.math.BigDecimal;
 
-import javax.mail.internet.InternetAddress;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -244,11 +239,8 @@ class UserForm extends Form implements FormValidationListener, AdminConstants {
          */
         final CdiUtil cdiUtil = new CdiUtil();
 //        final UserRepository userRepository;
-//        try {
+
 //            userRepository = cdiUtil.findBean(UserRepository.class);
-//        } catch (CdiLookupException ex) {
-//            throw new UncheckedWrapperException(ex);
-//        }
 //
 //        final String screenName = (String) m_screenName.getValue(ps);
 //        final User userByScreenname = userRepository.findByScreenName(

@@ -36,7 +36,6 @@ import com.arsdigita.web.ReturnSignal;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.core.EmailAddress;
 import org.libreccm.security.User;
@@ -46,7 +45,7 @@ import org.libreccm.security.UserRepository;
 
 /**
  * Edits a user. If returnURL is passed in to the form, then redirects to that
- URL_MSG; otherwise redirects to the user workspace.
+ * URL_MSG; otherwise redirects to the user workspace.
  *
  *
  * @author Sameer Ajmani
@@ -66,15 +65,10 @@ public class UserEditForm extends UserForm
 
         @Override
         public Object initialValue(final PageState ps) {
-            final User result;
-            try {
-                final CdiUtil cdiUtil = new CdiUtil();
-                final Shiro shiro = cdiUtil.findBean(Shiro.class);
-                result = shiro.getUser();
-            } catch(CdiLookupException ex) {
-                throw new UncheckedWrapperException(ex);
-            }
-            
+            final CdiUtil cdiUtil = new CdiUtil();
+            final Shiro shiro = cdiUtil.findBean(Shiro.class);
+            final User result = shiro.getUser();
+
             return result;
         }
 
@@ -109,14 +103,10 @@ public class UserEditForm extends UserForm
         FormData data = event.getFormData();
         PageState state = event.getPageState();
 
-        final UserRepository userRepository;
-        try {
-            final CdiUtil cdiUtil = new CdiUtil();
-            userRepository = cdiUtil.findBean(UserRepository.class);
-        } catch(CdiLookupException ex) {
-            throw new UncheckedWrapperException(ex);
-        }
-        
+        final CdiUtil cdiUtil = new CdiUtil();
+        final UserRepository userRepository = cdiUtil.findBean(
+            UserRepository.class);
+
         User user = getUser(state);
         if (user == null) {
             throw new UncheckedWrapperException(
@@ -130,7 +120,7 @@ public class UserEditForm extends UserForm
         newAddress.setAddress(data.get(FORM_EMAIL).toString());
         user.setPrimaryEmailAddress(newAddress);
         userRepository.save(user);
-        
+
         // redirect to workspace or return URL_MSG, if specified
         final HttpServletRequest req = state.getRequest();
         final String path = UI.getWorkspaceURL();

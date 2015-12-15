@@ -140,7 +140,7 @@ public class CcmApplication extends Resource implements Serializable {
      *
      * @param domain The domain ownership to add.
      */
-    protected void addDomain(final DomainOwnership domain) {
+    public void addDomain(final DomainOwnership domain) {
         domains.add(domain);
     }
 
@@ -151,7 +151,7 @@ public class CcmApplication extends Resource implements Serializable {
      *
      * @param domain The domain to remove.
      */
-    protected void removeDomain(final DomainOwnership domain) {
+    public void removeDomain(final DomainOwnership domain) {
         domains.remove(domain);
     }
 

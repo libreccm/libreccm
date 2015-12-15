@@ -181,7 +181,7 @@ public class CcmObject implements Serializable {
      *
      * @param category The domain ownership to add.
      */
-    protected void addCategory(final Categorization category) {
+    public void addCategory(final Categorization category) {
         categories.add(category);
     }
 
@@ -192,7 +192,7 @@ public class CcmObject implements Serializable {
      *
      * @param category The assigned category to remove.
      */
-    protected void removeCategory(final Categorization category) {
+    public void removeCategory(final Categorization category) {
         categories.remove(category);
     }
 

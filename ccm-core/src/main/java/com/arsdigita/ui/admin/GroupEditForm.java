@@ -23,14 +23,9 @@ import com.arsdigita.bebop.event.FormProcessListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.bebop.PageState;
 
-import java.math.BigDecimal;
-
-import javax.mail.internet.InternetAddress;
 
 import com.arsdigita.bebop.FormProcessException;
-import com.arsdigita.util.UncheckedWrapperException;
 
-import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
 //import org.libreccm.core.Group;
 //import org.libreccm.core.GroupRepository;
@@ -72,13 +67,9 @@ class GroupEditForm extends GroupForm implements FormInitListener,
 //            final CdiUtil cdiUtil = new CdiUtil();
 //            final GroupRepository groupRepository;
 //
-//            try {
+
 //                groupRepository = cdiUtil.findBean(
 //                    GroupRepository.class);
-//            } catch (CdiLookupException ex) {
-//                throw new UncheckedWrapperException(
-//                    "Failed to lookup GroupRepository", ex);
-//            }
 //
 //            final Group group = groupRepository.findById(id);
 //
@@ -97,12 +88,7 @@ class GroupEditForm extends GroupForm implements FormInitListener,
         final Long id = (Long) state.getValue(GROUP_ID_PARAM);
         final CdiUtil cdiUtil = new CdiUtil();
 //        final GroupRepository groupRepository;
-//        try {
 //            groupRepository = cdiUtil.findBean(GroupRepository.class);
-//        } catch (CdiLookupException ex) {
-//            throw new UncheckedWrapperException(
-//                "Failed to lookup GroupRepository", ex);
-//        }
 
         if (id == null) {
             throw new FormProcessException(GlobalizationUtil.globalize(

@@ -18,9 +18,6 @@
  */
 package org.libreccm.security;
 
-import com.arsdigita.util.UncheckedWrapperException;
-
-import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.core.CcmObject;
 
@@ -38,16 +35,16 @@ import java.util.Iterator;
  * check if the current subject is permitted to access the object. If the
  * current subject is permitted to access the object the object is returned.
  * Otherwise the object is replaced with a virtual object were the
- * {@link CcmObject#displayName} property is set to {@code Access Denied}. 
- * Methods which return arrays or collections of objects from the decorated 
+ * {@link CcmObject#displayName} property is set to {@code Access Denied}.
+ * Methods which return arrays or collections of objects from the decorated
  * collection check each object in the array or collection and replace the
- * objects which the current subject is not permitted to access with a 
+ * objects which the current subject is not permitted to access with a
  * <em>Access denied</em> object.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  *
- * @param <E> Type of the objects in the collection. Must extend 
- * {@link CcmObject}.
+ * @param <E> Type of the objects in the collection. Must extend
+ *            {@link CcmObject}.
  */
 @SuppressWarnings("PMD.TooManyMethods")
 public class SecuredCollection<E extends CcmObject> implements Collection<E> {
@@ -58,7 +55,7 @@ public class SecuredCollection<E extends CcmObject> implements Collection<E> {
     private final Collection<E> collection;
 
     /**
-     * The class of the objects in the collection. Required for creating the 
+     * The class of the objects in the collection. Required for creating the
      * virtual <em>Access denied</em> object
      */
     private final Class<E> clazz;
@@ -75,11 +72,11 @@ public class SecuredCollection<E extends CcmObject> implements Collection<E> {
 
     /**
      * Create a new secured collection for the provided collection.
-     * 
-     * @param collection The collection to secure.
-     * @param clazz The class of the objects in the collection.
-     * @param requiredPrivilege The privilege required to access the objects
-     * in the collection.
+     *
+     * @param collection        The collection to secure.
+     * @param clazz             The class of the objects in the collection.
+     * @param requiredPrivilege The privilege required to access the objects in
+     *                          the collection.
      */
     public SecuredCollection(final Collection<E> collection,
                              final Class<E> clazz,
@@ -114,14 +111,9 @@ public class SecuredCollection<E extends CcmObject> implements Collection<E> {
     @Override
     @SuppressWarnings("unchecked")
     public Object[] toArray() {
-        final PermissionChecker permissionChecker;
         final CdiUtil cdiUtil = new CdiUtil();
-        try {
-            permissionChecker = cdiUtil.findBean(
-                PermissionChecker.class);
-        } catch (CdiLookupException ex) {
-            throw new UncheckedWrapperException(ex);
-        }
+        final PermissionChecker permissionChecker = cdiUtil.findBean(
+            PermissionChecker.class);
 
         final Object[] objects = collection.toArray();
         for (int i = 0; i < objects.length; i++) {
@@ -137,14 +129,9 @@ public class SecuredCollection<E extends CcmObject> implements Collection<E> {
     @Override
     @SuppressWarnings({"unchecked", "PMD.UseVarargs"})
     public <T> T[] toArray(final T[] array) {
-        final PermissionChecker permissionChecker;
         final CdiUtil cdiUtil = new CdiUtil();
-        try {
-            permissionChecker = cdiUtil.findBean(
-                PermissionChecker.class);
-        } catch (CdiLookupException ex) {
-            throw new UncheckedWrapperException(ex);
-        }
+        final PermissionChecker permissionChecker = cdiUtil.findBean(
+            PermissionChecker.class);
 
         final T[] objects = collection.toArray(array);
         for (int i = 0; i < objects.length; i++) {

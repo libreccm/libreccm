@@ -47,6 +47,8 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -74,6 +76,12 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Entity
 @Table(name = "CATEGORY_DOMAINS", schema = DB_SCHEMA)
+@NamedQueries({
+    @NamedQuery(name="Domain.findByKey", 
+                query = "SELECT d FROM Domain d WHERE d.domainKey = :key"),
+    @NamedQuery(name="Domain.findByUri",
+                query = "SELECT d FROM Domain d WHERE d.uri = :uri")
+})
 @XmlRootElement(name = "domain", namespace = CAT_XML_NS)
 public class Domain extends CcmObject implements Serializable {
 
@@ -102,9 +110,8 @@ public class Domain extends CcmObject implements Serializable {
      * http://example.org/domains/example-nav
      * </pre>
      */
-    @Column(name = "URI", nullable = false, unique = true, length = 1024)
+    @Column(name = "URI", nullable = true, unique = true, length = 1024)
     @Convert(converter = UriConverter.class)
-    @NotBlank
     @URL
     @XmlElement(name = "uri", namespace = CAT_XML_NS)
     private URI uri;

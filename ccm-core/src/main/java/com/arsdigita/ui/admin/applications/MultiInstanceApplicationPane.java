@@ -27,10 +27,10 @@ import com.arsdigita.bebop.table.TableModel;
 import com.arsdigita.bebop.table.TableModelBuilder;
 import com.arsdigita.ui.admin.GlobalizationUtil;
 import com.arsdigita.util.LockableImpl;
-import com.arsdigita.util.UncheckedWrapperException;
+
 import java.util.ArrayList;
 import java.util.List;
-import org.libreccm.cdi.utils.CdiLookupException;
+
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.web.ApplicationRepository;
 import org.libreccm.web.ApplicationType;
@@ -137,12 +137,7 @@ public class MultiInstanceApplicationPane<T extends CcmApplication>
                                               final String appType) {
             this.table = table;
             final CdiUtil cdiUtil = new CdiUtil();
-            final ApplicationRepository appRepo;
-            try {
-                appRepo = cdiUtil.findBean(ApplicationRepository.class);
-            } catch (CdiLookupException ex) {
-                throw new UncheckedWrapperException(ex);
-            }
+            final ApplicationRepository appRepo = cdiUtil.findBean(ApplicationRepository.class);
             final List<CcmApplication> applications = appRepo.
                     findByType(appType);
             for (CcmApplication application : applications) {
