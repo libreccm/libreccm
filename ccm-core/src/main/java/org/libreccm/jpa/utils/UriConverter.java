@@ -24,10 +24,10 @@ import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
 /**
- * A converter for converting URI properties to String. JPA does not support
- * URI as type and will store them as LOBs without this converter. The converter
- * is automatically applied to all URI properties.
- * 
+ * A converter for converting URI properties to String. JPA does not support URI
+ * as type and will store them as LOBs without this converter. The converter is
+ * automatically applied to all URI properties.
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Converter(autoApply = true)
@@ -35,31 +35,41 @@ public class UriConverter implements AttributeConverter<URI, String> {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @param attribute {@inheritDoc}
+     *
      * @return {@inheritDoc}
      */
     @Override
     public String convertToDatabaseColumn(final URI attribute) {
-        return attribute.toString();
+        if (attribute == null) {
+            return null;
+        } else {
+            return attribute.toString();
+        }
     }
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @param dbData {@inheritDoc}
-     * @return  {@inheritDoc}
+     *
+     * @return {@inheritDoc}
      */
     @Override
     public URI convertToEntityAttribute(final String dbData) {
+        if (dbData == null || dbData.isEmpty()) {
+            return null;
+        }
+        
         try {
             return new URI(dbData);
         } catch (URISyntaxException ex) {
             throw new IllegalArgumentException(
-                    String.format("Failed to convert String value '%s' from "
-                                          + "database to an URI.",
-                                  dbData),
-                    ex);
+                String.format("Failed to convert String value '%s' from "
+                                  + "database to an URI.",
+                              dbData),
+                ex);
         }
     }
 

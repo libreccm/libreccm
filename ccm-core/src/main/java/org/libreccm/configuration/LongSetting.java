@@ -38,7 +38,7 @@ public class LongSetting
 
     private static final long serialVersionUID = 818622372461020368L;
     
-    @Column(name = "entry_value")
+    @Column(name = "setting_value")
     private long value;
 
     @Override

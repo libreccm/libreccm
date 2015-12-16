@@ -38,7 +38,7 @@ public class DoubleSetting
 
     private static final long serialVersionUID = -6944518527865528160L;
 
-    @Column(name = "entry_value")
+    @Column(name = "setting_value")
     private double value;
 
     @Override

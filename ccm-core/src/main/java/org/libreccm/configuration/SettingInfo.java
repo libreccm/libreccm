@@ -133,7 +133,7 @@ public final class SettingInfo {
         if (obj == null) {
             return false;
         }
-        if (obj instanceof SettingInfo) {
+        if (!(obj instanceof SettingInfo)) {
             return false;
         }
         final SettingInfo other = (SettingInfo) obj;

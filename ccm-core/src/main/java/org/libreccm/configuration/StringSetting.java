@@ -39,7 +39,7 @@ public class StringSetting
 
     private static final long serialVersionUID = -8564570962027541731L;
     
-    @Column(name = "entry_value", length = 1024)
+    @Column(name = "setting_value", length = 1024)
     private String value;
     
     @Override

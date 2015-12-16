@@ -120,7 +120,7 @@ public final class ConfigurationInfo {
         if (obj == null) {
             return false;
         }
-        if (obj instanceof ConfigurationInfo) {
+        if (!(obj instanceof ConfigurationInfo)) {
             return false;
         }
         final ConfigurationInfo other = (ConfigurationInfo) obj;
@@ -140,6 +140,7 @@ public final class ConfigurationInfo {
                                  + "descBundle = \"%s\", "
                                  + "descKey = \"%s\""
                                  + " }",
+                             super.toString(),
                              name,
                              descBundle,
                              descKey);

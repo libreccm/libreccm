@@ -146,7 +146,7 @@ public class Domain extends CcmObject implements Serializable {
     /**
      * A version string for the {@code Domain}.
      */
-    @Column(name = "VERSION", nullable = false)
+    @Column(name = "VERSION", nullable = true)
     @NotBlank
     @XmlElement(name = "version", namespace = CAT_XML_NS)
     private String version;

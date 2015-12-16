@@ -45,7 +45,7 @@ public class EnumSetting
     private static final long serialVersionUID = 8506016944203102813L;
 
     @ElementCollection
-    @JoinTable(name = "ENUM_CONFIGURATION_ENTRIES_VALUES",
+    @JoinTable(name = "SETTINGS_ENUM_VALUES",
                schema = DB_SCHEMA,
                joinColumns = {@JoinColumn(name = "ENUM_ID")})
     private Set<String> value;

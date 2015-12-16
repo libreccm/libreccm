@@ -356,20 +356,35 @@ public class ConfigurationManager {
      */
     public <T> AbstractSetting<T> findSetting(final String name,
                                               final Class<T> clazz) {
-        final String[] tokens = name.split(".");
+        LOGGER.debug(String.format(
+            "Trying to find setting \"%s\" of type \"%s\"",
+            name,
+            clazz.getName()));
+        final String[] tokens = name.split("\\.");
+        LOGGER.debug(String.format("Setting name \"%s\" has %d tokens.",
+                                   name,
+                                   tokens.length));
         final String[] categoryTokens = Arrays.copyOfRange(tokens,
                                                            0,
                                                            tokens.length - 1);
         final String categoryPath = String.join(".", categoryTokens);
+        LOGGER.debug(String.format("categoryPath for setting is \"%s\".",
+                                   categoryPath));
 
         final Domain registry = domainRepository
             .findByDomainKey(REGISTRY_DOMAIN);
         final Category category = categoryRepository.findByPath(registry,
                                                                 categoryPath);
         if (category == null) {
+            LOGGER.warn(String.format(String.format(
+                "Category \"%s\" for setting \"%s\" not found.",
+                categoryPath,
+                name)));
             return null;
         }
 
+        LOGGER.debug(String.format("Category has %d objects. Filtering.",
+                                   category.getObjects().size()));
         final Optional<Categorization> result = category
             .getObjects()
             .stream()
@@ -391,16 +406,24 @@ public class ConfigurationManager {
                                              = (AbstractSetting<T>) entry;
                 return resultEntry;
             } else {
+                LOGGER.warn(String.format("Setting \"%s\" found but is not of "
+                                              + "the requested type \"%s\".",
+                                          name,
+                                          clazz.getName()));
                 return null;
             }
         } else {
+            LOGGER.warn(String.format(
+                "Setting \"%s\" was not found in category \"%s\".",
+                name,
+                categoryPath));
             return null;
         }
     }
 
     /**
      * Low level method of saving a setting.
-     * 
+     *
      * @param setting The setting to save.
      */
     public void saveSetting(final AbstractSetting<?> setting) {
@@ -594,6 +617,9 @@ public class ConfigurationManager {
                                                            settingType);
             if (setting != null) {
                 try {
+                    LOGGER.debug("Setting \"%s\" found. Value: %s",
+                                 settingPath,
+                                 setting.getValue().toString());
                     field.set(conf, setting.getValue());
                 } catch (IllegalAccessException ex) {
                     LOGGER.warn(String.format(

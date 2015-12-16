@@ -49,7 +49,7 @@ public class LocalizedStringSetting
     @Embedded
     @AssociationOverride(
         name = "values",
-        joinTable = @JoinTable(name = "CONF_ENTRIES_L10N_STR_VALUES",
+        joinTable = @JoinTable(name = "SETTINGS_L10N_STR_VALUES",
                                schema = DB_SCHEMA,
                                joinColumns = {
                                    @JoinColumn(name = "ENTRY_ID")}))

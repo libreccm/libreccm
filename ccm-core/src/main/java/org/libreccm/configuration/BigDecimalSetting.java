@@ -42,7 +42,7 @@ public class BigDecimalSetting
 
     private static final long serialVersionUID = 1869044294174385532L;
 
-    @Column(name = "entry_value")
+    @Column(name = "setting_value")
     private BigDecimal value;
 
     @Override

@@ -16,7 +16,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.core;
+package org.libreccm.configuration;
+
+import static org.libreccm.testutils.DatasetType.*;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -26,6 +28,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.libreccm.tests.categories.UnitTest;
+import org.libreccm.testutils.DatasetType;
 import org.libreccm.testutils.DatasetsVerifier;
 
 import java.util.Arrays;
@@ -38,40 +41,41 @@ import java.util.Collection;
 @RunWith(Parameterized.class)
 @Category(UnitTest.class)
 public class DatasetsTest extends DatasetsVerifier {
-    
+
     @Parameterized.Parameters(name = "Dataset {0}")
     public static Collection<String> data() {
         return Arrays.asList(new String[]{
-            "/datasets/org/libreccm/core/CcmObjectRepositoryTest/data.json",
-            "/datasets/org/libreccm/core/CcmObjectRepositoryTest/after-delete.json",
-            "/datasets/org/libreccm/core/CcmObjectRepositoryTest/after-save-changed.json",
-            "/datasets/org/libreccm/core/CcmObjectRepositoryTest/after-save-new.json",
-        });
+            "/datasets/org/libreccm/configuration/ConfigurationManagerTest/data.yml"});
     }
-    
+
     public DatasetsTest(final String datasetPath) {
-        super(datasetPath);
+        super(datasetPath);;
     }
-    
+
     @Override
     public String[] getSchemas() {
-        return new String[]{ "ccm_core" };
+        return new String[]{"ccm_core"};
     }
-    
+
+    @Override
+    public DatasetType getDatasetType() {
+        return YAML;
+    }
+
     @BeforeClass
     public static void setUpClass() {
     }
-    
+
     @AfterClass
     public static void tearDownClass() {
     }
-    
+
     @Before
     public void setUp() {
     }
-    
+
     @After
     public void tearDown() {
     }
-    
+
 }

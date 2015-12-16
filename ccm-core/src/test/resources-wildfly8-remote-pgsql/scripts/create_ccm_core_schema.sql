@@ -5,7 +5,6 @@ DROP SEQUENCE IF EXISTS hibernate_sequence;
 CREATE SCHEMA ccm_core;
 
 
-
     create table CCM_CORE.APPLICATIONS (
         APPLICATION_TYPE varchar(1024) not null,
         PRIMARY_URL varchar(1024) not null,
@@ -56,7 +55,7 @@ CREATE SCHEMA ccm_core;
         DOMAIN_KEY varchar(255) not null,
         RELEASED timestamp,
         URI varchar(1024),
-        VERSION varchar(255) not null,
+        VERSION varchar(255),
         OBJECT_ID int8 not null,
         ROOT_CATEGORY_ID int8,
         primary key (OBJECT_ID)
@@ -86,13 +85,6 @@ CREATE SCHEMA ccm_core;
         ROLE_ID int8 not null,
         NAME varchar(512) not null,
         primary key (ROLE_ID)
-    );
-
-    create table CCM_CORE.CONF_ENTRIES_L10N_STR_VALUES (
-        ENTRY_ID int8 not null,
-        LOCALIZED_VALUE text,
-        LOCALE varchar(255) not null,
-        primary key (ENTRY_ID, LOCALE)
     );
 
     create table CCM_CORE.DIGESTS (
@@ -129,11 +121,6 @@ CREATE SCHEMA ccm_core;
         LOCALIZED_VALUE text,
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
-    );
-
-    create table CCM_CORE.ENUM_CONFIGURATION_ENTRIES_VALUES (
-        ENUM_ID int8 not null,
-        value varchar(255)
     );
 
     create table CCM_CORE.FORMBUILDER_COMPONENTS (
@@ -486,19 +473,19 @@ CREATE SCHEMA ccm_core;
     );
 
     create table CCM_CORE.SETTINGS_BIG_DECIMAL (
-        entry_value numeric(19, 2),
+        setting_value numeric(19, 2),
         OBJECT_ID int8 not null,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.SETTINGS_BOOLEAN (
-        entry_value boolean,
+        setting_value boolean,
         OBJECT_ID int8 not null,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.SETTINGS_DOUBLE (
-        entry_value float8,
+        setting_value float8,
         OBJECT_ID int8 not null,
         primary key (OBJECT_ID)
     );
@@ -508,19 +495,31 @@ CREATE SCHEMA ccm_core;
         primary key (OBJECT_ID)
     );
 
+    create table CCM_CORE.SETTINGS_ENUM_VALUES (
+        ENUM_ID int8 not null,
+        value varchar(255)
+    );
+
     create table CCM_CORE.SETTINGS_L10N_STRING (
         OBJECT_ID int8 not null,
         primary key (OBJECT_ID)
     );
 
+    create table CCM_CORE.SETTINGS_L10N_STR_VALUES (
+        ENTRY_ID int8 not null,
+        LOCALIZED_VALUE text,
+        LOCALE varchar(255) not null,
+        primary key (ENTRY_ID, LOCALE)
+    );
+
     create table CCM_CORE.SETTINGS_LONG (
-        entry_value int8,
+        setting_value int8,
         OBJECT_ID int8 not null,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.SETTINGS_STRING (
-        entry_value varchar(1024),
+        setting_value varchar(1024),
         OBJECT_ID int8 not null,
         primary key (OBJECT_ID)
     );
@@ -685,11 +684,6 @@ CREATE SCHEMA ccm_core;
         foreign key (OBJECT_ID) 
         references CCM_CORE.CATEGORIES;
 
-    alter table CCM_CORE.CONF_ENTRIES_L10N_STR_VALUES 
-        add constraint FK_ftb5yqeoli1m932yp3p8ho74g 
-        foreign key (ENTRY_ID) 
-        references CCM_CORE.SETTINGS_L10N_STRING;
-
     alter table CCM_CORE.DIGESTS 
         add constraint FK_3xrcpufumqnh4ke4somt89rvh 
         foreign key (FROM_PARTY_ID) 
@@ -719,11 +713,6 @@ CREATE SCHEMA ccm_core;
         add constraint FK_98kfhafuv6lmhnpkhurwp9bgm 
         foreign key (OBJECT_ID) 
         references CCM_CORE.CATEGORY_DOMAINS;
-
-    alter table CCM_CORE.ENUM_CONFIGURATION_ENTRIES_VALUES 
-        add constraint FK_ao3evxajxd8y4gy5a6e8ua49j 
-        foreign key (ENUM_ID) 
-        references CCM_CORE.SETTINGS_ENUM;
 
     alter table CCM_CORE.FORMBUILDER_COMPONENTS 
         add constraint FK_72108sd6vsqt88g3fb4kl6o81 
@@ -1040,10 +1029,20 @@ CREATE SCHEMA ccm_core;
         foreign key (OBJECT_ID) 
         references CCM_CORE.SETTINGS;
 
+    alter table CCM_CORE.SETTINGS_ENUM_VALUES 
+        add constraint FK_sq653hqyeeklci0y7pvoxf5ha 
+        foreign key (ENUM_ID) 
+        references CCM_CORE.SETTINGS_ENUM;
+
     alter table CCM_CORE.SETTINGS_L10N_STRING 
         add constraint FK_evnyfg9udprxmbginhc4o0is9 
         foreign key (OBJECT_ID) 
         references CCM_CORE.SETTINGS;
+
+    alter table CCM_CORE.SETTINGS_L10N_STR_VALUES 
+        add constraint FK_t21obt5do2tjhskjxgxd5143r 
+        foreign key (ENTRY_ID) 
+        references CCM_CORE.SETTINGS_L10N_STRING;
 
     alter table CCM_CORE.SETTINGS_LONG 
         add constraint FK_2l4bw7pbq3koj81cjyoqpenjj 

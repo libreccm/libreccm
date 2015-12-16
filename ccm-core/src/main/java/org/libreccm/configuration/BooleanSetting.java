@@ -38,7 +38,7 @@ public class BooleanSetting
 
     private static final long serialVersionUID = -1724350134756734938L;
 
-    @Column(name = "entry_value")
+    @Column(name = "setting_value")
     private boolean value;
 
     @Override

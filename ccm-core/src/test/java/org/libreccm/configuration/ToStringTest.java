@@ -40,10 +40,12 @@ public class ToStringTest extends ToStringVerifier {
         return Arrays.asList(new Class<?>[]{
             BigDecimalSetting.class,
             BooleanSetting.class,
+            ConfigurationInfo.class,
             DoubleSetting.class,
             EnumSetting.class,
             LocalizedStringSetting.class,
             LongSetting.class,
+            SettingInfo.class,
             StringSetting.class
         });
     }
