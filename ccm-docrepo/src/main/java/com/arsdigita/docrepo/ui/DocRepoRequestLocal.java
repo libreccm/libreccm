@@ -20,12 +20,14 @@ package com.arsdigita.docrepo.ui;
 
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.RequestLocal;
+import com.arsdigita.docrepo.util.GlobalizationUtil;
 import org.apache.log4j.Logger;
-import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.docrepo.File;
 import org.libreccm.docrepo.Resource;
 import org.libreccm.docrepo.ResourceRepository;
+
+import java.util.Arrays;
 
 /**
  * Same as the {@link RequestLocal} but overrides the
@@ -41,18 +43,22 @@ public class DocRepoRequestLocal extends RequestLocal
             DocRepoRequestLocal.class);
 
     @Override
-    protected Object initialValue(PageState state) {
+    protected File initialValue(PageState state) {
         Long id = (Long) state.getValue(FILE_ID_PARAM);
-        File file = null;
+
         final CdiUtil cdiUtil = new CdiUtil();
-        final ResourceRepository resourceRepository;
-        try {
-            resourceRepository = cdiUtil.findBean(ResourceRepository.class);
-            Resource resource = resourceRepository.findById(id);
-            file = resource.isFile() ? (File) resource : null;
-        } catch(CdiLookupException ex) {
-            log.error("Failed to find bean for the ResourceRepository.", ex);
+        final ResourceRepository resourceRepository = cdiUtil.findBean(
+                ResourceRepository.class);
+        final Resource resource = resourceRepository.findById(id);
+
+        File file = resource != null && resource.isFile() ? (File) resource :
+                null;
+
+        if (file == null) {
+            log.error(GlobalizationUtil.globalize("db.notfound.file",
+                    Arrays.asList(id).toArray()));
         }
+
         return file;
     }
 }

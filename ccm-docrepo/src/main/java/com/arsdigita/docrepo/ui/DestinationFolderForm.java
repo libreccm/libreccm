@@ -36,7 +36,6 @@ import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.web.Web;
 import com.arsdigita.xml.Element;
 import org.apache.log4j.Logger;
-import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.docrepo.Folder;
 import org.libreccm.docrepo.Repository;
@@ -45,6 +44,7 @@ import org.libreccm.docrepo.ResourceManager;
 import org.libreccm.docrepo.ResourceRepository;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -189,43 +189,37 @@ public class DestinationFolderForm extends Form implements FormInitListener,
         }
 
         final CdiUtil cdiUtil = new CdiUtil();
-        final ResourceRepository resourceRepository;
-        final ResourceManager resourceManager;
-        try {
-            resourceRepository = cdiUtil.findBean(ResourceRepository.class);
-            resourceManager = cdiUtil.findBean(ResourceManager.class);
+        final ResourceRepository resourceRepository = cdiUtil.findBean(
+                ResourceRepository.class);
+        final ResourceManager resourceManager = cdiUtil.findBean(
+                ResourceManager.class);
 
-            Folder folder = (Folder) resourceRepository.findById(folderId);
-            if (folder == null) {
-                isError = true;
-                log.error(String.format("Couldn't find folder %d in the " +
-                        "database.", folderId));
-            }
-
-            String[] resourceStrings = (String[]) m_resourceList.getValue(state);
-            for (String resourceString : resourceStrings) {
-                Long resourceId = Long.valueOf(resourceString);
-
-                Resource resource = resourceRepository.findById(resourceId);
-                if (resource == null) {
-                    errorList.add(resourceString);
-                    log.debug(String.format("Couldn't find selected resource " +
-                            "%d in the database.", resourceId));
-                    continue;
-                }
-
-                // Knowledge, weather its a folder or a file is not necessary
-                if (isCopy) {
-                    resourceManager.copyToFolder(resource, folder);
-                } else {
-                    resource.setParent(folder);
-                    resourceRepository.save(resource);
-                }
-            }
-        } catch (CdiLookupException ex) {
+        final Folder folder = (Folder) resourceRepository.findById(folderId);
+        if (folder == null) {
             isError = true;
-            log.error("Failed to find bean for either ResourceRepository or " +
-                    "ResourceManager.", ex);
+            log.error(GlobalizationUtil.globalize("db.notfound.folder",
+                    Arrays.asList(folderId).toArray()));
+        }
+
+        String[] resourceStrings = (String[]) m_resourceList.getValue(state);
+        for (String resourceString : resourceStrings) {
+            Long resourceId = Long.valueOf(resourceString);
+
+            Resource resource = resourceRepository.findById(resourceId);
+            if (resource == null) {
+                errorList.add(resourceString);
+                log.debug(GlobalizationUtil.globalize("db.notfound.resource",
+                        Arrays.asList(resourceId).toArray()));
+                continue;
+            }
+
+            // Knowledge, weather it's a folder or a file is not necessary
+            if (isCopy) {
+                resourceManager.copyToFolder(resource, folder);
+            } else {
+                resource.setParent(folder);
+                resourceRepository.save(resource);
+            }
         }
 
         if (isError) {
@@ -280,19 +274,13 @@ public class DestinationFolderForm extends Form implements FormInitListener,
         public void generateXML(PageState state, Element parent) {
             Element treeElement = parent.newChildElement("bebop:tree", BEBOP_XML_NS);
 
-            // Todo: notwendig?
-            Folder sourceFolder = null;
             Long sourceFolderId = (m_parent.getFolderID(state)).longValue();
 
             final CdiUtil cdiUtil = new CdiUtil();
-            final ResourceRepository resourceRepository;
-            try {
-                resourceRepository = cdiUtil.findBean(ResourceRepository.class);
-                sourceFolder = (Folder) resourceRepository.findById
-                        (sourceFolderId);
-            } catch (CdiLookupException ex) {
-                log.error("Failed to find bean for the ResourceRepository.", ex);
-            }
+            final ResourceRepository resourceRepository = cdiUtil.findBean(
+                    ResourceRepository.class);
+            final Folder sourceFolder = (Folder) resourceRepository.findById(
+                    sourceFolderId);
 
             if (sourceFolder != null) {
                 HashMap map = new HashMap();
@@ -319,8 +307,8 @@ public class DestinationFolderForm extends Form implements FormInitListener,
                     }
                 }
             } else {
-                log.error(String.format("Couldn't find the source folder %d " +
-                        "in the database.", sourceFolderId));
+                log.error(GlobalizationUtil.globalize("db.notfound.folder",
+                        Arrays.asList(sourceFolderId).toArray()));
             }
         }
 

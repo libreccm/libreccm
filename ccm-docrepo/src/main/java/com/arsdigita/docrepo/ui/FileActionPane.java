@@ -29,15 +29,16 @@ import com.arsdigita.bebop.event.ActionListener;
 import com.arsdigita.bebop.event.PrintEvent;
 import com.arsdigita.bebop.event.PrintListener;
 import com.arsdigita.dispatcher.DispatcherHelper;
+import com.arsdigita.docrepo.util.GlobalizationUtil;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.web.Web;
 import org.apache.log4j.Logger;
-import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.docrepo.File;
 import org.libreccm.docrepo.ResourceRepository;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 
 /**
@@ -69,24 +70,19 @@ public class FileActionPane extends ColumnPanel implements Constants {
         m_parent = parent;
 
         m_fileData = new RequestLocal() {
-            protected Object initialValue(PageState state) {
-                File file = null;
+            protected File initialValue(PageState state) {
                 Long fileId = (Long) state.getValue
                         (FILE_ID_PARAM);
 
                 final CdiUtil cdiUtil = new CdiUtil();
-                final ResourceRepository resourceRepository;
-                try {
-                    resourceRepository = cdiUtil.findBean(ResourceRepository.class);
-                    file = (File) resourceRepository.findById(fileId);
-                    if (file == null) {
-                        log.error(String.format("Couldn't find the file %d in" +
-                                " the database.", fileId));
-                    }
-                } catch(CdiLookupException ex) {
-                    log.error("Failed to find bean for the " +
-                            "ResourceRepository.", ex);
+                final ResourceRepository resourceRepository = cdiUtil
+                        .findBean(ResourceRepository.class);
+                final File file = (File) resourceRepository.findById(fileId);
+                if (file == null) {
+                    log.error(GlobalizationUtil.globalize("db.notfound.file",
+                            Arrays.asList(fileId).toArray()));
                 }
+
                 return file;
             }
         };
@@ -169,9 +165,8 @@ public class FileActionPane extends ColumnPanel implements Constants {
             Long parentFolderId = file.getParent().getObjectId();
 
             final CdiUtil cdiUtil = new CdiUtil();
-            final ResourceRepository resourceRepository;
-            try {
-                resourceRepository = cdiUtil.findBean(ResourceRepository.class);
+            final ResourceRepository resourceRepository = cdiUtil.findBean
+                    (ResourceRepository.class);
 
                 // Todo: replace KernelExcursion
 //                KernelExcursion ex = new KernelExcursion() {
@@ -181,11 +176,6 @@ public class FileActionPane extends ColumnPanel implements Constants {
 //                    }
 //                };
 //                ex.run();
-
-            } catch (CdiLookupException ex) {
-                log.error("Failed to find bean for the " +
-                        "ResourceRepository.", ex);
-            }
 
             try {
                 String appURI = getRedirectURI(state);

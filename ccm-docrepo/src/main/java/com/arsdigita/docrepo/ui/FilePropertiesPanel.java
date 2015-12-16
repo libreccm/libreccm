@@ -27,7 +27,6 @@ import com.arsdigita.xml.Element;
 import org.apache.log4j.Logger;
 import org.apache.shiro.authz.AuthorizationException;
 import org.hibernate.envers.exception.NotAuditedException;
-import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.docrepo.File;
 import org.libreccm.docrepo.Resource;
@@ -76,9 +75,6 @@ public class FilePropertiesPanel extends SimpleComponent implements Constants {
             // checks if the subject has permissions granting the privilege to
             // 'read' the file
             permissionChecker.checkPermission("read", file);
-        } catch (CdiLookupException ex) {
-            log.error(GlobalizationUtil.globalize("beanFinder.fail" +
-                    ".resourceRepository"), ex);
         } catch (AuthorizationException authEx) {
             log.error(GlobalizationUtil.globalize("ui.file.failure.privilege.read"),
                     authEx);

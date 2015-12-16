@@ -46,7 +46,6 @@ import com.arsdigita.bebop.parameters.BigDecimalParameter;
 import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.xml.Element;
-import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.docrepo.File;
 import org.libreccm.docrepo.Resource;
@@ -161,28 +160,24 @@ public class BrowsePane extends ModalContainer implements Constants, ChangeListe
         // need this only when coming from 1-file page
         if (fileId != null) {
             final CdiUtil cdiUtil = new CdiUtil();
-            final ResourceRepository resourceRepository;
-            try {
-                resourceRepository = cdiUtil.findBean(ResourceRepository.class);
-                File file = (File) resourceRepository.findById(fileId);
-                Resource parent = file.getParent();
-                key = Long.toString(parent.getObjectId());
+            final ResourceRepository resourceRepository = cdiUtil.findBean(
+                    ResourceRepository.class);
+            final File file = (File) resourceRepository.findById(fileId);
 
-                while (!parent.isRoot()) {
-                    parent = parent.getParent();
-                    String nextKey = Long.toString(parent.getObjectId());
-                    m_tree.expand(nextKey, state);
-                }
+            Resource parent = file.getParent();
+            key = Long.toString(parent.getObjectId());
 
-                // to display this file's folder in the table
-                m_tree.setSelectedKey(state, key);
-
-                // now wipe out file param to avoid trouble elsewhere
-                state.setValue(m_fileIdParam, null);
-            } catch (CdiLookupException e) {
-                throw new IllegalStateException(String.format(
-                        "Failed to retrieve file %d from the database.", fileId));
+            while (!parent.isRoot()) {
+                parent = parent.getParent();
+                String nextKey = Long.toString(parent.getObjectId());
+                m_tree.expand(nextKey, state);
             }
+
+            // to display this file's folder in the table
+            m_tree.setSelectedKey(state, key);
+
+            // now wipe out file param to avoid trouble elsewhere
+            state.setValue(m_fileIdParam, null);
         }
 
         // finally expand selected folder

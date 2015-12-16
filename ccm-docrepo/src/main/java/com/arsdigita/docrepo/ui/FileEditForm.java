@@ -36,12 +36,13 @@ import com.arsdigita.bebop.parameters.NotEmptyValidationListener;
 import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.docrepo.util.GlobalizationUtil;
 import org.apache.log4j.Logger;
-import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.docrepo.File;
 import org.libreccm.docrepo.Resource;
 import org.libreccm.docrepo.ResourceManager;
 import org.libreccm.docrepo.ResourceRepository;
+
+import java.util.Arrays;
 
 //import com.arsdigita.docrepo.File;
 //import com.arsdigita.docrepo.Folder;
@@ -124,15 +125,17 @@ public class FileEditForm extends Form implements FormValidationListener,
 
         Long fileId = (Long) state.getValue(FILE_ID_PARAM);
         final CdiUtil cdiUtil = new CdiUtil();
-        final ResourceRepository resourceRepository;
-        try {
-            resourceRepository = cdiUtil.findBean(ResourceRepository.class);
-            File file = (File) resourceRepository.findById(fileId);
-            data.put(FILE_EDIT_FNAME, file.getName());
-            data.put(FILE_EDIT_DESCRIPTION, file.getDescription());
-        } catch (CdiLookupException ex) {
-            log.error("Failed to find bean for ResourceRepository.", ex);
+        final ResourceRepository resourceRepository = cdiUtil.findBean(
+                ResourceRepository.class);
+        final File file = (File) resourceRepository.findById(fileId);
+        if (file == null) {
+            log.error(GlobalizationUtil.globalize("db.notfound.file",
+                    Arrays.asList(fileId).toArray()));
         }
+
+        data.put(FILE_EDIT_FNAME, file.getName());
+        data.put(FILE_EDIT_DESCRIPTION, file.getDescription());
+
     }
 
     /**
@@ -148,18 +151,15 @@ public class FileEditForm extends Form implements FormValidationListener,
         FormData data = event.getFormData();
 
         Long resourceId = (Long) state.getValue(FILE_ID_PARAM);
-        File file = null;
-        ResourceManager resourceManager = null;
+
         final CdiUtil cdiUtil = new CdiUtil();
-        final ResourceRepository resourceRepository;
-        try {
-            resourceRepository = cdiUtil.findBean(ResourceRepository.class);
-            Resource resource = resourceRepository.findById(resourceId);
-            file = resource.isFile() ? (File) resource : null;
-            resourceManager = cdiUtil.findBean(ResourceManager.class);
-        } catch (CdiLookupException ex) {
-            log.error("Failed to find bean for the ResourceManager.", ex);
-        }
+        final ResourceRepository resourceRepository = cdiUtil.findBean(
+                ResourceRepository.class);
+        final ResourceManager resourceManager = cdiUtil.findBean(
+                ResourceManager.class);
+
+        final Resource resource = resourceRepository.findById(resourceId);
+        final File file = resource.isFile() ? (File) resource : null;
 
         if (resourceManager != null && file != null) {
             String fname = (String) data.get(FILE_EDIT_FNAME);
@@ -185,21 +185,18 @@ public class FileEditForm extends Form implements FormValidationListener,
 
         Long fileId = (Long) state.getValue(FILE_ID_PARAM);
         final CdiUtil cdiUtil = new CdiUtil();
-        final ResourceRepository resourceRepository;
-        try {
-            resourceRepository = cdiUtil.findBean(ResourceRepository.class);
-            File file = (File) resourceRepository.findById(fileId);
-            if (file != null) {
-                file.setName(fname);
-                file.setDescription(fdesc);
-                resourceRepository.save(file);
-            } else {
-                log. error(String.format("Couldn't find file %d in the " +
-                        "database.", fileId));
-            }
-        } catch (CdiLookupException ex) {
-            log.error("Failed to find bean for ResourceRepository.", ex);
+        final ResourceRepository resourceRepository = cdiUtil.findBean(
+                ResourceRepository.class);
+        File file = (File) resourceRepository.findById(fileId);
+        if (file != null) {
+            file.setName(fname);
+            file.setDescription(fdesc);
+            resourceRepository.save(file);
+        } else {
+            log. error(String.format("Couldn't find file %d in the " +
+                    "database.", fileId));
         }
+
         m_parent.displayPropertiesAndActions(state);
     }
 }
