@@ -19,6 +19,8 @@
 package org.libreccm.docrepo;
 
 import org.libreccm.auditing.AbstractAuditedEntityRepository;
+import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.security.PermissionChecker;
 import org.libreccm.security.User;
 
 import javax.enterprise.context.RequestScoped;
@@ -26,6 +28,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Repository class for retrieving, storing and deleting {@code Repository}s.
@@ -59,6 +62,22 @@ public class RepositoryRepository extends
     }
 
     /**
+     * Checks if the current subject has permissions grating him the
+     * privilege to read the requested {@link Repository}(s) and removes the
+     * ones he is not allowed to access.
+     *
+     * @param repositories The requested {@link Resource}s, found in the database
+     * @return A list of {@link Resource}s the subject is allowed to access
+     */
+    private List<Repository> permissionFilter(List<Repository> repositories) {
+        final CdiUtil cdiUtil = new CdiUtil();
+        final PermissionChecker permissionChecker = cdiUtil.findBean(
+                PermissionChecker.class);
+        return repositories.stream().filter(repository -> permissionChecker
+                .isPermitted("read", repository)).collect(Collectors.toList());
+    }
+
+    /**
      * Retrieve all {@link Repository}s a given {@link User} ownes.
      *
      * @param owner The owner of the {@link Repository}s
@@ -70,7 +89,7 @@ public class RepositoryRepository extends
                 "DocRepo.findRepositoriesForOwner", Repository.class);
         query.setParameter("owner", owner);
 
-        return query.getResultList();
+        return permissionFilter(query.getResultList());
     }
 
 }

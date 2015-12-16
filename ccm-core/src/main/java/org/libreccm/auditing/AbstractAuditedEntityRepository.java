@@ -70,14 +70,13 @@ public abstract class AbstractAuditedEntityRepository<K, T>
      * @return A list of revision numbers, at which the entity was modified,
      *         sorted in ascending order (so older revisions come first).
      *
-     * @throws NotAuditedException When entities of the given class are not audited.
+     * @throws NotAuditedException When entities of the given class are not
+     * audited.
      * @throws IllegalArgumentException If cls or primaryKey is null.
      * @throws IllegalStateException If the associated entity manager is closed.
      */
     public List<Number> retrieveRevisionNumbersOfEntity(final T entity,
-                                                        final Long objectId)
-            throws IllegalArgumentException, NotAuditedException,
-            IllegalStateException {
+                                                        final Long objectId) {
         return auditReader.getRevisions(entity.getClass(), objectId);
     }
 

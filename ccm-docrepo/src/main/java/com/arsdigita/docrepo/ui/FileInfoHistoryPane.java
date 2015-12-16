@@ -24,7 +24,7 @@ import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.RequestLocal;
 import com.arsdigita.bebop.SegmentedPanel;
 import com.arsdigita.bebop.SimpleContainer;
-import com.arsdigita.docrepo.File;
+import org.libreccm.docrepo.File;
 import org.apache.log4j.Logger;
 
 /**

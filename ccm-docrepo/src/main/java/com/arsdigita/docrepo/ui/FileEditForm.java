@@ -44,8 +44,6 @@ import org.libreccm.docrepo.ResourceRepository;
 
 import java.util.Arrays;
 
-//import com.arsdigita.docrepo.File;
-//import com.arsdigita.docrepo.Folder;
 
 /**
  * This component allows to change the file name and the description of a

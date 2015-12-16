@@ -29,7 +29,6 @@ import com.arsdigita.bebop.event.ActionListener;
 import com.arsdigita.bebop.event.PrintEvent;
 import com.arsdigita.bebop.event.PrintListener;
 import com.arsdigita.dispatcher.DispatcherHelper;
-import com.arsdigita.docrepo.util.GlobalizationUtil;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.web.Web;
 import org.apache.log4j.Logger;
@@ -38,7 +37,6 @@ import org.libreccm.docrepo.File;
 import org.libreccm.docrepo.ResourceRepository;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 
 /**
@@ -69,23 +67,7 @@ public class FileActionPane extends ColumnPanel implements Constants {
 
         m_parent = parent;
 
-        m_fileData = new RequestLocal() {
-            protected File initialValue(PageState state) {
-                Long fileId = (Long) state.getValue
-                        (FILE_ID_PARAM);
-
-                final CdiUtil cdiUtil = new CdiUtil();
-                final ResourceRepository resourceRepository = cdiUtil
-                        .findBean(ResourceRepository.class);
-                final File file = (File) resourceRepository.findById(fileId);
-                if (file == null) {
-                    log.error(GlobalizationUtil.globalize("db.notfound.file",
-                            Arrays.asList(fileId).toArray()));
-                }
-
-                return file;
-            }
-        };
+        m_fileData = new DocRepoRequestLocal();
 
         m_newVersion = addActionLink(FILE_NEW_VERSION_LINK);
 

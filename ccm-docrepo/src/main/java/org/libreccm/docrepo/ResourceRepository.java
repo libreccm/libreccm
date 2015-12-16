@@ -20,14 +20,17 @@ package org.libreccm.docrepo;
 
 
 import org.libreccm.auditing.AbstractAuditedEntityRepository;
+import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.security.PermissionChecker;
 import org.libreccm.security.User;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Repository class for retrieving, storing and deleting {@code Resource}s.
@@ -60,6 +63,35 @@ public class ResourceRepository extends AbstractAuditedEntityRepository<Long, Re
     }
 
     /**
+     * Checks if the current subject has permissions grating him the
+     * privilege to read the requested {@link Resource}(s) and removes the
+     * ones he is not allowed to access.
+     *
+     * @param resources The requested {@link Resource}s, found in the database
+     * @return A list of {@link Resource}s the subject is allowed to access
+     */
+    private List<Resource> permissionFilter(List<Resource> resources) {
+        final CdiUtil cdiUtil = new CdiUtil();
+        final PermissionChecker permissionChecker = cdiUtil.findBean(
+                PermissionChecker.class);
+        return resources.stream().filter(resource -> permissionChecker
+                .isPermitted("read", resource)).collect(Collectors.toList());
+    }
+
+    /**
+     * Checks if the current subject has permissions grating him the
+     * privilege to read the one requested {@link Resource} and removes it if
+     * he is not allowed to access.
+     *
+     * @param resource The requested {@link Resource}, found in the database
+     * @return A list of at most one {@link Resource} the subject is allowed to
+     * access
+     */
+    private Resource permissionFilter(Resource resource) {
+        return permissionFilter(Arrays.asList(resource)).get(0);
+    }
+
+    /**
      * Retrieve a {@code Resource} by its {@code path}.
      *
      * @param pathName  The {@code path} to the {@code Resource}.
@@ -72,12 +104,7 @@ public class ResourceRepository extends AbstractAuditedEntityRepository<Long, Re
                 "DocRepo.findResourceByPath", Resource.class);
         query.setParameter("pathName", pathName);
 
-        final List<Resource> result = query.getResultList();
-
-        //Check if the result list is empty and if not return the first
-        //element. If their is a result than there can only be one because
-        //the path column of resource has a unique constraint.
-        return result.isEmpty() ? null : result.get(0);
+        return permissionFilter(query.getSingleResult());
     }
 
     /**
@@ -93,7 +120,7 @@ public class ResourceRepository extends AbstractAuditedEntityRepository<Long, Re
                 "DocRepo.findCreatedResourcesFromUser", Resource.class);
         query.setParameter("user", creator);
 
-        return query.getResultList();
+        return permissionFilter(query.getResultList());
     }
 
     /**
@@ -109,7 +136,7 @@ public class ResourceRepository extends AbstractAuditedEntityRepository<Long, Re
                 "DocRepo.findModifiedResourcesFromUser", Resource.class);
         query.setParameter("user", modifier);
 
-        return query.getResultList();
+        return permissionFilter(query.getResultList());
     }
 
     /**
@@ -124,6 +151,6 @@ public class ResourceRepository extends AbstractAuditedEntityRepository<Long, Re
                 "DocRepo.findResourcesByName", Resource.class);
         query.setParameter("name", name);
 
-        return query.getResultList();
+        return permissionFilter(query.getResultList());
     }
 }
