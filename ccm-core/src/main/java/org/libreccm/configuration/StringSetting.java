@@ -21,80 +21,75 @@ package org.libreccm.configuration;
 import static org.libreccm.core.CoreConstants.*;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
 /**
- *
+ * A setting for storing a string value.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "CONF_ENTRIES_BOOLEAN", schema = DB_SCHEMA)
-public class BooleanConfigurationEntry
-    extends AbstractConfigurationEntry<Boolean> implements Serializable {
+@Table(name = "SETTINGS_STRING", schema = DB_SCHEMA)
+public class StringSetting 
+    extends AbstractSetting<String> implements Serializable {
 
-    private static final long serialVersionUID = -1724350134756734938L;
-
-    @Column(name = "entry_value")
-    private boolean value;
-
+    private static final long serialVersionUID = -8564570962027541731L;
+    
+    @Column(name = "entry_value", length = 1024)
+    private String value;
+    
     @Override
-    public Boolean getValue() {
+    public String getValue() {
         return value;
     }
-
+    
     @Override
-    public void setValue(final Boolean value) {
-        this.value = value;
-    }
-
-    public boolean isValue() {
-        return value;
-    }
-
-    public void setValue(final boolean value) {
+    public void setValue(final String value) {
         this.value = value;
     }
 
     @Override
     public int hashCode() {
         int hash = super.hashCode();
-        hash = 89 * hash + (this.value ? 1 : 0);
+        hash = 67 * hash + Objects.hashCode(value);
         return hash;
     }
 
     @Override
     public boolean equals(final Object obj) {
-        if (!(super.equals(obj))) {
+        if (!super.equals(obj)) {
             return false;
         }
-
+        
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof BooleanConfigurationEntry)) {
+        
+        if (!(obj instanceof StringSetting)) {
             return false;
         }
-        final BooleanConfigurationEntry other = (BooleanConfigurationEntry) obj;
+        final StringSetting other = (StringSetting) obj;
         if (!other.canEqual(this)) {
             return false;
         }
-
-        return value == other.getValue();
+        
+        return Objects.equals(value, other.getValue());
     }
-
+    
     @Override
     public boolean canEqual(final Object obj) {
-        return obj instanceof BooleanConfigurationEntry;
+        return obj instanceof StringSetting;
     }
-
+    
     @Override
     public String toString(final String data) {
-        return super.toString(String.format(", value = %b%s",
+        return super.toString(String.format(", value = %s%s",
                                             value,
                                             data));
     }
-
+    
 }

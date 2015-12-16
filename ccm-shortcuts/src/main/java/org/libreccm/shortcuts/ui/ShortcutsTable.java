@@ -38,7 +38,6 @@ import com.arsdigita.bebop.ControlLink;
 import com.arsdigita.util.UncheckedWrapperException;
 import com.arsdigita.bebop.Component;
 import java.util.List;
-import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.shortcuts.ShortcutRepository;
 
@@ -49,7 +48,8 @@ import org.libreccm.shortcuts.ShortcutRepository;
 public class ShortcutsTable extends Table {
 
     private static final Category log
-            = Category.getInstance(ShortcutsTable.class.getName());
+                                      = Category.getInstance(
+            ShortcutsTable.class.getName());
 
     public static final String headers[] = {"URL Key", "Redirect", "", ""};
 
@@ -57,28 +57,27 @@ public class ShortcutsTable extends Table {
         super(new ShortcutsModelBuilder(), headers);
         setDefaultCellRenderer(new ShortcutsCellRenderer());
         final CdiUtil cdiUtil = new CdiUtil();
-        final ShortcutRepository shortcutsRepo;
-        try {
-            shortcutsRepo = cdiUtil.findBean(ShortcutRepository.class);
-        } catch (CdiLookupException ex) {
-            throw new UncheckedWrapperException(ex);
-        }
+        final ShortcutRepository shortcutsRepo = cdiUtil.findBean(
+            ShortcutRepository.class);
 
         addTableActionListener(new TableActionListener() {
+
             public void cellSelected(TableActionEvent e) {
                 selected_shortcut.clearSelection(e.getPageState());
                 String row = (String) e.getRowKey();
                 if (e.getColumn().intValue() == 2) {
                     // edit selected
                     log.debug("selected edit shortcut " + row);
-                    selected_shortcut.setSelectedKey(e.getPageState(), new BigDecimal(row));
+                    selected_shortcut.setSelectedKey(e.getPageState(),
+                                                     new BigDecimal(row));
 
                 } else if (e.getColumn().intValue() == 3) {
                     // delete selected
                     log.fatal("selected delete shortcut " + row);
 
                     Shortcut shortcut = shortcutsRepo.findById(
-                            (Long) selected_shortcut.getSelectedKey(e.getPageState()));
+                        (Long) selected_shortcut
+                        .getSelectedKey(e.getPageState()));
 
                     if (shortcut != null) {
                         log.info("delete shortcut " + shortcut.getUrlKey());
@@ -89,11 +88,12 @@ public class ShortcutsTable extends Table {
 
             public void headSelected(TableActionEvent e) {
             }
+
         });
     }
 
     protected static class ShortcutsModelBuilder extends LockableImpl implements
-            TableModelBuilder {
+        TableModelBuilder {
 
         public TableModel makeModel(Table table, PageState ps) {
             return new ShortcutsModel();
@@ -133,14 +133,17 @@ public class ShortcutsTable extends Table {
                 Long id = m_shortcut.getShortcutId();
                 return id;
             }
+
         }
+
     }
 
     protected static class ShortcutsCellRenderer implements TableCellRenderer {
 
         public Component getComponent(Table table, PageState state,
-                Object value, boolean isSelected, Object key, int row,
-                int column) {
+                                      Object value, boolean isSelected,
+                                      Object key, int row,
+                                      int column) {
             Shortcut shortcut = (Shortcut) value;
 
             switch (column) {
@@ -158,5 +161,7 @@ public class ShortcutsTable extends Table {
                     throw new UncheckedWrapperException("Column out of bounds");
             }
         }
+
     }
+
 }

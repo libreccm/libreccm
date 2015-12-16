@@ -38,13 +38,13 @@ public class ToStringTest extends ToStringVerifier {
     @Parameterized.Parameters(name = "{0}")
     public static Collection<Class<?>> data() {
         return Arrays.asList(new Class<?>[]{
-            BigDecimalConfigurationEntry.class,
-            BooleanConfigurationEntry.class,
-            DoubleConfigurationEntry.class,
-            EnumConfigurationEntry.class,
-            LocalizedStringConfigurationEntry.class,
-            LongConfigurationEntry.class,
-            StringConfigurationEntry.class
+            BigDecimalSetting.class,
+            BooleanSetting.class,
+            DoubleSetting.class,
+            EnumSetting.class,
+            LocalizedStringSetting.class,
+            LongSetting.class,
+            StringSetting.class
         });
     }
     

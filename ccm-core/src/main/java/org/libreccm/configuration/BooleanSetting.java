@@ -20,86 +20,81 @@ package org.libreccm.configuration;
 
 import static org.libreccm.core.CoreConstants.*;
 
-import org.libreccm.l10n.LocalizedString;
-
 import java.io.Serializable;
-import java.util.Objects;
 
-import javax.persistence.AssociationOverride;
-import javax.persistence.Embedded;
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.Table;
 
 /**
- *
+ * Setting for storing a boolean value.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "CONF_ENTRIES_L10N_STRING", schema = DB_SCHEMA)
-public class LocalizedStringConfigurationEntry
-    extends AbstractConfigurationEntry<LocalizedString> implements Serializable {
+@Table(name = "SETTINGS_BOOLEAN", schema = DB_SCHEMA)
+public class BooleanSetting
+    extends AbstractSetting<Boolean> implements Serializable {
 
-    private static final long serialVersionUID = -5854552013878000164L;
+    private static final long serialVersionUID = -1724350134756734938L;
 
-    @Embedded
-    @AssociationOverride(
-        name = "values",
-        joinTable = @JoinTable(name = "CONF_ENTRIES_L10N_STR_VALUES",
-                               schema = DB_SCHEMA,
-                               joinColumns = {
-                                   @JoinColumn(name = "ENTRY_ID")}))
-    private LocalizedString value;
+    @Column(name = "entry_value")
+    private boolean value;
 
     @Override
-    public LocalizedString getValue() {
+    public Boolean getValue() {
         return value;
     }
 
     @Override
-    public void setValue(final LocalizedString value) {
+    public void setValue(final Boolean value) {
+        this.value = value;
+    }
+
+    public boolean isValue() {
+        return value;
+    }
+
+    public void setValue(final boolean value) {
         this.value = value;
     }
 
     @Override
     public int hashCode() {
         int hash = super.hashCode();
-        hash = 53 * hash + Objects.hashCode(value);
+        hash = 89 * hash + (this.value ? 1 : 0);
         return hash;
     }
 
     @Override
     public boolean equals(final Object obj) {
-        if (!super.equals(obj)) {
+        if (!(super.equals(obj))) {
             return false;
         }
 
         if (obj == null) {
             return false;
         }
-
-        if (!(obj instanceof LocalizedStringConfigurationEntry)) {
+        if (!(obj instanceof BooleanSetting)) {
             return false;
         }
-        final LocalizedStringConfigurationEntry other
-                                                    = (LocalizedStringConfigurationEntry) obj;
+        final BooleanSetting other = (BooleanSetting) obj;
         if (!other.canEqual(this)) {
             return false;
         }
 
-        return Objects.equals(value, other.getValue());
+        return value == other.getValue();
     }
 
     @Override
     public boolean canEqual(final Object obj) {
-        return obj instanceof LocalizedStringConfigurationEntry;
+        return obj instanceof BooleanSetting;
     }
 
     @Override
     public String toString(final String data) {
-        return super.toString(String.format(", value = %s%s",
-                                            Objects.toString(value),
+        return super.toString(String.format(", value = %b%s",
+                                            value,
                                             data));
     }
 

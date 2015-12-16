@@ -20,40 +20,64 @@ package org.libreccm.configuration;
 
 import static org.libreccm.core.CoreConstants.*;
 
+import org.hibernate.validator.constraints.NotBlank;
+import org.libreccm.core.CcmObject;
+
 import java.io.Serializable;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.validation.constraints.Pattern;
 
 /**
- *
+ * Abstract base class for all settings.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
+ * @param <T> The value type of the setting.
  */
 @Entity
-@Table(name = "CONF_ENTRIES_INTEGER", schema = DB_SCHEMA)
-public class LongConfigurationEntry 
-    extends AbstractConfigurationEntry<Long> implements Serializable{
+@Table(name = "SETTINGS", schema = DB_SCHEMA)
+public abstract class AbstractSetting<T>
+    extends CcmObject implements Serializable {
 
-    private static final long serialVersionUID = 818622372461020368L;
-    
-    @Column(name = "entry_value")
-    private long value;
+    private static final long serialVersionUID = -839223659103128135L;
 
-    @Override
-    public Long getValue() {
-        return value;
+    /**
+     * The name of the setting. The string must be a valid URL fragment.
+     */
+    @Column(name = "name", nullable = false, length = 512)
+    @NotBlank
+    @Pattern(regexp = "[\\w-.]*")
+    private String name;
+
+    public String getName() {
+        return name;
     }
 
-    @Override
-    public void setValue(final Long value) {
-        this.value = value;
+    public void setName(final String name) {
+        this.name = name;
     }
+
+    /**
+     * Getter for the value of the setting.
+     * 
+     * @return The value of the setting.
+     */
+    public abstract T getValue();
+
+    /**
+     * Setter for the value of the setting.
+     * 
+     * @param value The new value of the setting.
+     */
+    public abstract void setValue(T value);
 
     @Override
     public int hashCode() {
         int hash = super.hashCode();
-        hash = 89 * hash + Long.hashCode(value);
+        hash = 47 * hash + Objects.hashCode(name);
         return hash;
     }
 
@@ -62,32 +86,34 @@ public class LongConfigurationEntry
         if (!super.equals(obj)) {
             return false;
         }
-        
+
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof LongConfigurationEntry)) {
+
+        if (!(obj instanceof AbstractSetting)) {
             return false;
         }
-        final LongConfigurationEntry other
-                                         = (LongConfigurationEntry) obj;
+
+        final AbstractSetting<?> other
+                                                = (AbstractSetting) obj;
         if (!other.canEqual(this)) {
             return false;
         }
-        
-        return this.value == other.getValue();
+
+        return Objects.equals(name, other.getName());
     }
-    
+
     @Override
     public boolean canEqual(final Object obj) {
-        return obj instanceof LongConfigurationEntry;
+        return obj instanceof AbstractSetting;
     }
-    
+
     @Override
     public String toString(final String data) {
-        return super.toString(String.format(", value = %d%s",
-                                            value,
+        return super.toString(String.format(", name = \"%s\"%s",
+                                            name,
                                             data));
     }
-    
+
 }

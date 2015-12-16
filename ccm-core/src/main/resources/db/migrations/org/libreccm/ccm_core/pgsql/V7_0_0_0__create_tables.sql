@@ -81,57 +81,11 @@
         primary key (ROLE_ID)
     );
 
-    create table CCM_CORE.CONFIGURATION_ENTRIES (
-        comment varchar(2048),
-        OBJECT_ID int8 not null,
-        primary key (OBJECT_ID)
-    );
-
-    create table CCM_CORE.CONF_ENTRIES_BIG_DECIMAL (
-        entry_value numeric(19, 2),
-        OBJECT_ID int8 not null,
-        primary key (OBJECT_ID)
-    );
-
-    create table CCM_CORE.CONF_ENTRIES_BOOLEAN (
-        entry_value boolean,
-        OBJECT_ID int8 not null,
-        primary key (OBJECT_ID)
-    );
-
-    create table CCM_CORE.CONF_ENTRIES_DOUBLE (
-        entry_value float8,
-        OBJECT_ID int8 not null,
-        primary key (OBJECT_ID)
-    );
-
-    create table CCM_CORE.CONF_ENTRIES_ENUM (
-        OBJECT_ID int8 not null,
-        primary key (OBJECT_ID)
-    );
-
-    create table CCM_CORE.CONF_ENTRIES_INTEGER (
-        entry_value int8,
-        OBJECT_ID int8 not null,
-        primary key (OBJECT_ID)
-    );
-
-    create table CCM_CORE.CONF_ENTRIES_L10N_STRING (
-        OBJECT_ID int8 not null,
-        primary key (OBJECT_ID)
-    );
-
     create table CCM_CORE.CONF_ENTRIES_L10N_STR_VALUES (
         ENTRY_ID int8 not null,
         LOCALIZED_VALUE text,
         LOCALE varchar(255) not null,
         primary key (ENTRY_ID, LOCALE)
-    );
-
-    create table CCM_CORE.CONF_ENTRIES_STRING (
-        entry_value varchar(1024),
-        OBJECT_ID int8 not null,
-        primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.DIGESTS (
@@ -518,6 +472,52 @@
         primary key (MEMBERSHIP_ID)
     );
 
+    create table CCM_CORE.SETTINGS (
+        name varchar(512) not null,
+        OBJECT_ID int8 not null,
+        primary key (OBJECT_ID)
+    );
+
+    create table CCM_CORE.SETTINGS_BIG_DECIMAL (
+        entry_value numeric(19, 2),
+        OBJECT_ID int8 not null,
+        primary key (OBJECT_ID)
+    );
+
+    create table CCM_CORE.SETTINGS_BOOLEAN (
+        entry_value boolean,
+        OBJECT_ID int8 not null,
+        primary key (OBJECT_ID)
+    );
+
+    create table CCM_CORE.SETTINGS_DOUBLE (
+        entry_value float8,
+        OBJECT_ID int8 not null,
+        primary key (OBJECT_ID)
+    );
+
+    create table CCM_CORE.SETTINGS_ENUM (
+        OBJECT_ID int8 not null,
+        primary key (OBJECT_ID)
+    );
+
+    create table CCM_CORE.SETTINGS_L10N_STRING (
+        OBJECT_ID int8 not null,
+        primary key (OBJECT_ID)
+    );
+
+    create table CCM_CORE.SETTINGS_LONG (
+        entry_value int8,
+        OBJECT_ID int8 not null,
+        primary key (OBJECT_ID)
+    );
+
+    create table CCM_CORE.SETTINGS_STRING (
+        entry_value varchar(1024),
+        OBJECT_ID int8 not null,
+        primary key (OBJECT_ID)
+    );
+
     create table CCM_CORE.TASK_ASSIGNMENTS (
         TASK_ASSIGNMENT_ID int8 not null,
         ROLE_ID int8,
@@ -678,50 +678,10 @@
         foreign key (OBJECT_ID) 
         references CCM_CORE.CATEGORIES;
 
-    alter table CCM_CORE.CONFIGURATION_ENTRIES 
-        add constraint FK_8u6h7p0gs4ybf0ju240mggb73 
-        foreign key (OBJECT_ID) 
-        references CCM_CORE.CCM_OBJECTS;
-
-    alter table CCM_CORE.CONF_ENTRIES_BIG_DECIMAL 
-        add constraint FK_3tnub4je6c2bwi0c3p9m2n6d1 
-        foreign key (OBJECT_ID) 
-        references CCM_CORE.CONFIGURATION_ENTRIES;
-
-    alter table CCM_CORE.CONF_ENTRIES_BOOLEAN 
-        add constraint FK_d79uxyam5uhhmw3ijw3c14gk2 
-        foreign key (OBJECT_ID) 
-        references CCM_CORE.CONFIGURATION_ENTRIES;
-
-    alter table CCM_CORE.CONF_ENTRIES_DOUBLE 
-        add constraint FK_l5qxx6wfngl2hvnqaq77oin1s 
-        foreign key (OBJECT_ID) 
-        references CCM_CORE.CONFIGURATION_ENTRIES;
-
-    alter table CCM_CORE.CONF_ENTRIES_ENUM 
-        add constraint FK_blwwj2ht4wbg82meuuxf0t7kk 
-        foreign key (OBJECT_ID) 
-        references CCM_CORE.CONFIGURATION_ENTRIES;
-
-    alter table CCM_CORE.CONF_ENTRIES_INTEGER 
-        add constraint FK_reo0efdw6evf11viwlse1w27 
-        foreign key (OBJECT_ID) 
-        references CCM_CORE.CONFIGURATION_ENTRIES;
-
-    alter table CCM_CORE.CONF_ENTRIES_L10N_STRING 
-        add constraint FK_dbvyqoliuh0d7bl6ksng4abe 
-        foreign key (OBJECT_ID) 
-        references CCM_CORE.CONFIGURATION_ENTRIES;
-
     alter table CCM_CORE.CONF_ENTRIES_L10N_STR_VALUES 
         add constraint FK_ftb5yqeoli1m932yp3p8ho74g 
         foreign key (ENTRY_ID) 
-        references CCM_CORE.CONF_ENTRIES_L10N_STRING;
-
-    alter table CCM_CORE.CONF_ENTRIES_STRING 
-        add constraint FK_j31m640x2cn0xl5jcbik06708 
-        foreign key (OBJECT_ID) 
-        references CCM_CORE.CONFIGURATION_ENTRIES;
+        references CCM_CORE.SETTINGS_L10N_STRING;
 
     alter table CCM_CORE.DIGESTS 
         add constraint FK_3xrcpufumqnh4ke4somt89rvh 
@@ -756,7 +716,7 @@
     alter table CCM_CORE.ENUM_CONFIGURATION_ENTRIES_VALUES 
         add constraint FK_ao3evxajxd8y4gy5a6e8ua49j 
         foreign key (ENUM_ID) 
-        references CCM_CORE.CONF_ENTRIES_ENUM;
+        references CCM_CORE.SETTINGS_ENUM;
 
     alter table CCM_CORE.FORMBUILDER_COMPONENTS 
         add constraint FK_72108sd6vsqt88g3fb4kl6o81 
@@ -1047,6 +1007,46 @@
         add constraint FK_eykbm84ndwgpqsr48wekhdoqj 
         foreign key (ROLE_ID) 
         references CCM_CORE.CCM_ROLES;
+
+    alter table CCM_CORE.SETTINGS 
+        add constraint FK_3k0t3in140j6wj6eq5olwjgu 
+        foreign key (OBJECT_ID) 
+        references CCM_CORE.CCM_OBJECTS;
+
+    alter table CCM_CORE.SETTINGS_BIG_DECIMAL 
+        add constraint FK_9mbdc1rjkm80edyuijnkwl6ak 
+        foreign key (OBJECT_ID) 
+        references CCM_CORE.SETTINGS;
+
+    alter table CCM_CORE.SETTINGS_BOOLEAN 
+        add constraint FK_1mjjvpjxpwicyv8im6mumc7ug 
+        foreign key (OBJECT_ID) 
+        references CCM_CORE.SETTINGS;
+
+    alter table CCM_CORE.SETTINGS_DOUBLE 
+        add constraint FK_kejnkuyk89tw59xg550kugwb5 
+        foreign key (OBJECT_ID) 
+        references CCM_CORE.SETTINGS;
+
+    alter table CCM_CORE.SETTINGS_ENUM 
+        add constraint FK_fgrfc2qbl2f2t1l0ku8wo2e5r 
+        foreign key (OBJECT_ID) 
+        references CCM_CORE.SETTINGS;
+
+    alter table CCM_CORE.SETTINGS_L10N_STRING 
+        add constraint FK_evnyfg9udprxmbginhc4o0is9 
+        foreign key (OBJECT_ID) 
+        references CCM_CORE.SETTINGS;
+
+    alter table CCM_CORE.SETTINGS_LONG 
+        add constraint FK_2l4bw7pbq3koj81cjyoqpenjj 
+        foreign key (OBJECT_ID) 
+        references CCM_CORE.SETTINGS;
+
+    alter table CCM_CORE.SETTINGS_STRING 
+        add constraint FK_naonte6jut7b842icvp9ahino 
+        foreign key (OBJECT_ID) 
+        references CCM_CORE.SETTINGS;
 
     alter table CCM_CORE.TASK_ASSIGNMENTS 
         add constraint FK_klh64or0yq26c63181j1tps2o 

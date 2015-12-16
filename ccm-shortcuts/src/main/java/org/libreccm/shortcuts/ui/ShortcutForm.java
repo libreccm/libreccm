@@ -45,13 +45,12 @@ import com.arsdigita.util.UncheckedWrapperException;
 import org.apache.log4j.Category;
 import org.apache.oro.text.perl.Perl5Util;
 import org.apache.oro.text.perl.MalformedPerl5PatternException;
-import org.libreccm.cdi.utils.CdiLookupException;
 import org.libreccm.cdi.utils.CdiUtil;
 
 public class ShortcutForm extends Form {
 
     private static final Category log = Category.getInstance(ShortcutForm.class
-            .getName());
+        .getName());
 
     private ParameterSingleSelectionModel m_selected_shortcut;
 
@@ -66,52 +65,56 @@ public class ShortcutForm extends Form {
         m_selected_shortcut = selected_shortcut;
 
         TrimmedStringParameter urlKeyParameter = new TrimmedStringParameter(
-                "url");
+            "url");
         urlKeyParameter.addParameterListener(new NotEmptyValidationListener());
         m_url = new TextField(urlKeyParameter);
 
         TrimmedStringParameter redirectParameter = new TrimmedStringParameter(
-                "redirect");
+            "redirect");
         redirectParameter
-                .addParameterListener(new NotEmptyValidationListener());
+            .addParameterListener(new NotEmptyValidationListener());
 
         m_redirect = new TextField(redirectParameter);
 
         urlKeyParameter.addParameterListener(new ParameterListener() {
+
             @Override
             public void validate(ParameterEvent e) throws FormProcessException {
                 ParameterData data = e.getParameterData();
 
                 String key = (String) data.getValue();
                 if (key == null) {
-                    return; // Something else will handle
-                }				// this
+                    return; // Something else will handle  this
+                }
 
                 Perl5Util perl = new Perl5Util();
                 try {
                     if (!perl.match("/^(\\/[-a-zA-Z0-9_.]+)+\\/?$/", key)) {
                         data.addError(GlobalizationUtil.globalize(
-                                "shortcuts.ui.invalid_key_descr"));
+                            "shortcuts.ui.invalid_key_descr"));
                         throw new FormProcessException(
-                                "Invalid key",
-                                GlobalizationUtil.globalize("shortcuts.ui.invalid_key")
+                            "Invalid key",
+                            GlobalizationUtil.globalize(
+                                "shortcuts.ui.invalid_key")
                         );
                     }
                 } catch (MalformedPerl5PatternException ex) {
                     throw new UncheckedWrapperException("bad regex", ex);
                 }
             }
+
         });
 
         redirectParameter.addParameterListener(new ParameterListener() {
+
             @Override
             public void validate(ParameterEvent e) throws FormProcessException {
                 ParameterData data = e.getParameterData();
 
                 String url = (String) data.getValue();
                 if (url == null) {
-                    return; // Something else will handle
-                }				// this
+                    return; // Something else will handle this
+                }
 
                 url = url.toLowerCase();
 
@@ -131,11 +134,13 @@ public class ShortcutForm extends Form {
                 }
 
                 data
-                        .addError("You must enter an absolute path "
-                                + "(starting with '/') or a fully "
-                                + "qualified URL (starting with 'http://' or 'https://')");
-                throw new FormProcessException(GlobalizationUtil.globalize("shortcuts.ui.invalid_key"));
+                    .addError("You must enter an absolute path "
+                                  + "(starting with '/') or a fully "
+                                  + "qualified URL (starting with 'http://' or 'https://')");
+                throw new FormProcessException(GlobalizationUtil.globalize(
+                    "shortcuts.ui.invalid_key"));
             }
+
         });
 
         add(new Label("URL Key:"));
@@ -157,14 +162,10 @@ public class ShortcutForm extends Form {
         public void init(FormSectionEvent ev) throws FormProcessException {
             final PageState state = ev.getPageState();
             final CdiUtil cdiUtil = new CdiUtil();
-            final ShortcutRepository shortcutsRepo;
-            try {
-                shortcutsRepo = cdiUtil.findBean(ShortcutRepository.class);
-            } catch (CdiLookupException ex) {
-                throw new UncheckedWrapperException(ex);
-            }
+            final ShortcutRepository shortcutsRepo = cdiUtil.findBean(ShortcutRepository.class);
+            
             Long shortcutKey = (Long) m_selected_shortcut
-                    .getSelectedKey(state);
+                .getSelectedKey(state);
             if (shortcutKey == null) {
                 log.debug("init form for empty shortcut");
                 m_url.setValue(state, null);
@@ -177,10 +178,11 @@ public class ShortcutForm extends Form {
                 m_redirect.setValue(state, shortcut.getRedirect());
             }
         }
+
     }
 
     private class ShortcutFormValidationListener implements
-            FormValidationListener {
+        FormValidationListener {
 
         @Override
         public void validate(FormSectionEvent e) throws FormProcessException {
@@ -189,7 +191,7 @@ public class ShortcutForm extends Form {
 
             // get currently edited shortcut
             Long shortcutKey = (Long) m_selected_shortcut
-                    .getSelectedKey(state);
+                .getSelectedKey(state);
 
 //TODO: maybe adjust url. see com-arsdigita.shortcuts.ShortcutUtil.cleanURLKey()
             String key = (String) m_url.getValue(state);
@@ -199,10 +201,11 @@ public class ShortcutForm extends Form {
 
                 if (target != null) {
                     m_url.addError(GlobalizationUtil.globalize(
-                            "shortcuts.ui.key_already_exists"));
+                        "shortcuts.ui.key_already_exists"));
                     throw new FormProcessException(
-                            "duplicate key",
-                            GlobalizationUtil.globalize("shortcuts.ui.duplicate_key")
+                        "duplicate key",
+                        GlobalizationUtil
+                        .globalize("shortcuts.ui.duplicate_key")
                     );
                 }
             }
@@ -210,6 +213,7 @@ public class ShortcutForm extends Form {
             int index = key.indexOf("/", 2);
             String base = key.substring(0, index + 1);
         }
+
     }
 
     private class ShortcutFormProcessListener implements FormProcessListener {
@@ -219,12 +223,7 @@ public class ShortcutForm extends Form {
             ShortcutManager shortcutMgr = new ShortcutManager();
             PageState state = e.getPageState();
             final CdiUtil cdiUtil = new CdiUtil();
-            final ShortcutRepository shortcutsRepo;
-            try {
-                shortcutsRepo = cdiUtil.findBean(ShortcutRepository.class);
-            } catch (CdiLookupException ex) {
-                throw new UncheckedWrapperException(ex);
-            }
+            final ShortcutRepository shortcutsRepo = cdiUtil.findBean(ShortcutRepository.class);
 
             Long shortcutKey = (Long) m_selected_shortcut.getSelectedKey(state);
 
@@ -247,11 +246,11 @@ public class ShortcutForm extends Form {
             }
 
 //            ShortcutUtil.repopulateShortcuts();
-
             m_redirect.setValue(state, "");
             m_url.setValue(state, "");
             m_selected_shortcut.clearSelection(state);
         }
+
     }
 
 }

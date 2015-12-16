@@ -19,7 +19,8 @@
 package org.libreccm.configuration;
 
 /**
- *
+ * Some constants for the configuration system.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class ConfigurationConstants {

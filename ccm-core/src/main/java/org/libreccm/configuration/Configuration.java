@@ -40,7 +40,7 @@ public @interface Configuration {
      * 
      * @return Name of the configuration.
      */
-    String name() default "";
+    //String name() default "";
     
     /**
      * Points to the {@link ResourceBundle} containing the descriptions

@@ -21,41 +21,40 @@ package org.libreccm.configuration;
 import static org.libreccm.core.CoreConstants.*;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
 /**
- *
+ * Setting for storing a long value.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "CONF_ENTRIES_BIG_DECIMAL", schema = DB_SCHEMA)
-public class BigDecimalConfigurationEntry
-    extends AbstractConfigurationEntry<BigDecimal> implements Serializable {
+@Table(name = "SETTINGS_LONG", schema = DB_SCHEMA)
+public class LongSetting 
+    extends AbstractSetting<Long> implements Serializable{
 
-    private static final long serialVersionUID = 1869044294174385532L;
+    private static final long serialVersionUID = 818622372461020368L;
     
     @Column(name = "entry_value")
-    private BigDecimal value;
-    
+    private long value;
+
     @Override
-    public BigDecimal getValue() {
+    public Long getValue() {
         return value;
     }
-    
+
     @Override
-    public void setValue(final BigDecimal value) {
+    public void setValue(final Long value) {
         this.value = value;
     }
 
     @Override
     public int hashCode() {
         int hash = super.hashCode();
-        hash = 79 * hash + Objects.hashCode(value);
+        hash = 89 * hash + Long.hashCode(value);
         return hash;
     }
 
@@ -68,30 +67,28 @@ public class BigDecimalConfigurationEntry
         if (obj == null) {
             return false;
         }
-        
-        if (!(obj instanceof BigDecimalConfigurationEntry)) {
+        if (!(obj instanceof LongSetting)) {
             return false;
         }
-        final BigDecimalConfigurationEntry other
-                                           = (BigDecimalConfigurationEntry) obj;
+        final LongSetting other
+                                         = (LongSetting) obj;
         if (!other.canEqual(this)) {
             return false;
         }
-         
-        return Objects.equals(value, other.getValue());
+        
+        return this.value == other.getValue();
     }
-
+    
     @Override
     public boolean canEqual(final Object obj) {
-        return obj instanceof BigDecimalConfigurationEntry;
+        return obj instanceof LongSetting;
     }
     
     @Override
     public String toString(final String data) {
-        return super.toString(String.format(", value = %s%s",
+        return super.toString(String.format(", value = %d%s",
                                             value,
                                             data));
     }
-
-
+    
 }

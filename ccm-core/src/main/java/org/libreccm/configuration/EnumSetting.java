@@ -32,13 +32,15 @@ import javax.persistence.JoinTable;
 import javax.persistence.Table;
 
 /**
- *
+ * A setting class for storing a list a strings. This can be used to generate
+ * enums which can be configured by the administrator.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "CONF_ENTRIES_ENUM", schema = DB_SCHEMA)
-public class EnumConfigurationEntry
-    extends AbstractConfigurationEntry<Set<String>> implements Serializable {
+@Table(name = "SETTINGS_ENUM", schema = DB_SCHEMA)
+public class EnumSetting
+    extends AbstractSetting<Set<String>> implements Serializable {
 
     private static final long serialVersionUID = 8506016944203102813L;
 
@@ -86,10 +88,10 @@ public class EnumConfigurationEntry
             return false;
         }
 
-        if (!(obj instanceof EnumConfigurationEntry)) {
+        if (!(obj instanceof EnumSetting)) {
             return false;
         }
-        final EnumConfigurationEntry other = (EnumConfigurationEntry) obj;
+        final EnumSetting other = (EnumSetting) obj;
         if (!other.canEqual(this)) {
             return false;
         }
@@ -99,7 +101,7 @@ public class EnumConfigurationEntry
 
     @Override
     public boolean canEqual(final Object obj) {
-        return obj instanceof EnumConfigurationEntry;
+        return obj instanceof EnumSetting;
     }
 
     @Override

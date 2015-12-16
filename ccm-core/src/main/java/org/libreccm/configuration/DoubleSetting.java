@@ -20,46 +20,41 @@ package org.libreccm.configuration;
 
 import static org.libreccm.core.CoreConstants.*;
 
-import org.libreccm.core.CcmObject;
-
 import java.io.Serializable;
-import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
 /**
- *
+ * A setting for storing a double value.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
- * @param <T>
  */
 @Entity
-@Table(name = "CONFIGURATION_ENTRIES", schema = DB_SCHEMA)
-public abstract class AbstractConfigurationEntry<T>
-    extends CcmObject implements Serializable {
+@Table(name = "SETTINGS_DOUBLE", schema = DB_SCHEMA)
+public class DoubleSetting
+    extends AbstractSetting<Double> implements Serializable {
 
-    private static final long serialVersionUID = -839223659103128135L;
+    private static final long serialVersionUID = -6944518527865528160L;
 
-    @Column(name = "comment", length = 2048)
-    private String comment;
+    @Column(name = "entry_value")
+    private double value;
 
-    public String getComment() {
-        return comment;
+    @Override
+    public Double getValue() {
+        return value;
     }
 
-    public void setComment(final String comment) {
-        this.comment = comment;
+    @Override
+    public void setValue(final Double value) {
+        this.value = value;
     }
-
-    public abstract T getValue();
-
-    public abstract void setValue(T value);
 
     @Override
     public int hashCode() {
         int hash = super.hashCode();
-        hash = 47 * hash + Objects.hashCode(comment);
+        hash = 71 * hash + Double.hashCode(value);
         return hash;
     }
 
@@ -72,29 +67,27 @@ public abstract class AbstractConfigurationEntry<T>
         if (obj == null) {
             return false;
         }
-
-        if (!(obj instanceof AbstractConfigurationEntry)) {
+        if (!(obj instanceof DoubleSetting)) {
             return false;
         }
-
-        final AbstractConfigurationEntry<?> other
-                                            = (AbstractConfigurationEntry) obj;
+        final DoubleSetting other = (DoubleSetting) obj;
         if (!other.canEqual(this)) {
             return false;
         }
 
-        return Objects.equals(comment, other.getComment());
+        return Double.doubleToLongBits(value) == Double.doubleToLongBits(other
+            .getValue());
     }
 
     @Override
     public boolean canEqual(final Object obj) {
-        return obj instanceof AbstractConfigurationEntry;
+        return obj instanceof DoubleSetting;
     }
 
     @Override
     public String toString(final String data) {
-        return super.toString(String.format(", comment = \"%s\"%s",
-                                            comment,
+        return super.toString(String.format(", value = %f%s",
+                                            value,
                                             data));
     }
 
