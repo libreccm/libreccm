@@ -13,5 +13,9 @@
                 level="debug">
             <AppenderRef ref="Console"/>
         </Logger>
+        <Logger name="org.libreccm.categorization.CategoryRepository"
+                level="debug">
+            <AppenderRef ref="Console"/>
+        </Logger>
     </Loggers>
 </Configuration>

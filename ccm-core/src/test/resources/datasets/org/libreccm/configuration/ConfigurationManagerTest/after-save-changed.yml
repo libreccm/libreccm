@@ -1,0 +1,135 @@
+ccm_core.ccm_objects:
+    - object_id: -1000
+      display_name: registry
+    - object_id: -2000
+      display_name: registry_root
+    - object_id: -2100
+      display_name: org
+    - object_id: -2200
+      display_name: libreccm
+    - object_id: -2300
+      display_name: configuration
+    - object_id: -2400
+      display_name: ExampleConfiguration
+    - object_id: -3100
+      display_name: price
+    - object_id: -3200
+      display_name: enabled
+    - object_id: -3300
+      display_name: minTemperature
+    - object_id: -3400
+      display_name: itemsPerPage
+    - object_id: -3500
+      display_name: helpUri
+
+ccm_core.categories:
+    - object_id: -2000
+      unique_id: bb93a964-bf66-424c-a22d-074d001db3b8
+      name: registry-root
+      enabled: true
+      visible: true
+      abstract_category: false
+      category_order: 0
+    - object_id: -2100
+      unique_id: 62c22973-a078-47bc-8267-bef879c7566e
+      name: org
+      enabled: true
+      visible: true
+      abstract_category: false
+      parent_category_id: -2000
+      category_order: 1
+    - object_id: -2200
+      unique_id: a8fbf310-7cb9-47dd-81d5-a16b80e96446
+      name: libreccm
+      enabled: true
+      visible: true
+      abstract_category: false
+      parent_category_id: -2100
+      category_order: 1
+    - object_id: -2300
+      unique_id: 61c30c73-857a-49ff-8272-c9fb038d3e35
+      name: configuration
+      enabled: true
+      visible: true
+      abstract_category: false
+      parent_category_id: -2200
+      category_order: 1
+    - object_id: -2400
+      unique_id: bf5d295c-6ad3-4484-a1e6-5641cea037b3
+      name: ExampleConfiguration
+      enabled: true
+      visible: true
+      abstract_category: false
+      parent_category_id: -2300
+      category_order: 1
+
+ccm_core.category_domains:
+    - object_id: -1000
+      domain_key: registry
+      root_category_id: -2000
+      version: 1.0
+
+ccm_core.categorizations:
+    - categorization_id: -10100
+      category_id: -2400
+      object_id: -3100
+      category_order: 1
+      object_order: 1
+      category_index: false
+    - categorization_id: -10200
+      category_id: -2400
+      object_id: -3200
+      category_order: 1
+      object_order: 2
+      category_index: false
+    - categorization_id: -10300
+      category_id: -2400
+      object_id: -3300
+      category_order: 1
+      object_order: 3
+      category_index: false
+    - categorization_id: -10400
+      category_id: -2400
+      object_id: -3400
+      category_order: 1
+      object_order: 4
+      category_index: false
+    - categorization_id: -10500
+      category_id: -2400
+      object_id: -3500
+      category_order: 1
+      object_order: 5
+      category_index: false
+
+ccm_core.settings:
+    - object_id: -3100
+      name: price
+    - object_id: -3200
+      name: enabled
+    - object_id: -3300
+      name: minTemperature
+    - object_id: -3400
+      name: itemsPerPage
+    - object_id: -3500
+      name: helpUrl
+
+ccm_core.settings_big_decimal:
+    - object_id: -3100
+      setting_value: 109.99
+
+ccm_core.settings_boolean:
+    - object_id: -3200
+      setting_value: true
+
+ccm_core.settings_double:
+    - object_id: -3300
+      setting_value: 23.5
+
+ccm_core.settings_long:
+    - object_id: -3400
+      setting_value: 30
+    
+ccm_core.settings_string:
+    - object_id: -3500
+      setting_value: http://www.example.org
+

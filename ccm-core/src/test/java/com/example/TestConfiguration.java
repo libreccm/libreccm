@@ -16,69 +16,37 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.configuration;
+package com.example;
 
-import java.math.BigDecimal;
+import org.libreccm.configuration.Configuration;
+import org.libreccm.configuration.Setting;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Configuration
-public class ExampleConfiguration {
+public class TestConfiguration {
     
     @Setting
-    private BigDecimal price;
+    private Boolean enabled = false;
     
     @Setting
-    private Boolean enabled;
-    
-    @Setting
-    private Double minTemperature;
-    
-    @Setting
-    private Long itemsPerPage;
-    
-    @Setting
-    private String helpUrl;
+    private Long itemsPerPage = 40L;
 
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(final BigDecimal price) {
-        this.price = price;
-    }
-
-    public boolean isEnabled() {
+    public Boolean getEnabled() {
         return enabled;
     }
 
-    public void setEnabled(final boolean enabled) {
+    public void setEnabled(final Boolean enabled) {
         this.enabled = enabled;
     }
 
-    public double getMinTemperature() {
-        return minTemperature;
-    }
-
-    public void setMinTemperature(final double minTemperature) {
-        this.minTemperature = minTemperature;
-    }
-
-    public long getItemsPerPage() {
+    public Long getItemsPerPage() {
         return itemsPerPage;
     }
 
-    public void setItemsPerPage(final long itemsPerPage) {
+    public void setItemsPerPage(final Long itemsPerPage) {
         this.itemsPerPage = itemsPerPage;
-    }
-
-    public String getHelpUrl() {
-        return helpUrl;
-    }
-
-    public void setHelpUrl(final String helpUrl) {
-        this.helpUrl = helpUrl;
     }
 }

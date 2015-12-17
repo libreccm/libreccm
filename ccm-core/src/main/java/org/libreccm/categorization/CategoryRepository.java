@@ -27,6 +27,8 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -34,6 +36,9 @@ import javax.persistence.TypedQuery;
  */
 @RequestScoped
 public class CategoryRepository extends AbstractEntityRepository<Long, Category> {
+
+    private static final Logger LOGGER = LogManager.getLogger(
+            CategoryRepository.class);
 
     @Inject
     private DomainRepository domainRepo;
@@ -56,7 +61,7 @@ public class CategoryRepository extends AbstractEntityRepository<Long, Category>
      */
     public List<Category> getTopLevelCategories() {
         final TypedQuery<Category> query = getEntityManager().createNamedQuery(
-            "Category.topLevelCategories", Category.class);
+                "Category.topLevelCategories", Category.class);
 
         return query.getResultList();
     }
@@ -69,14 +74,14 @@ public class CategoryRepository extends AbstractEntityRepository<Long, Category>
         final String[] tokens = path.split(":");
         if (tokens.length > 2) {
             throw new InvalidCategoryPathException(
-                "The provided path is invalid: More than one colon found. "
-                    + "Valid path format: domainKey:path");
+                    "The provided path is invalid: More than one colon found. "
+                            + "Valid path format: domainKey:path");
         }
 
         if (tokens.length < 2) {
             throw new InvalidCategoryPathException(
-                "The provided path is invalid: No domain found in path. "
-                    + "Valid path format: domainKey:path");
+                    "The provided path is invalid: No domain found in path. "
+                            + "Valid path format: domainKey:path");
         }
 
         final Domain domain;
@@ -84,11 +89,11 @@ public class CategoryRepository extends AbstractEntityRepository<Long, Category>
             domain = domainRepo.findByDomainKey(tokens[0]);
         } catch (NoResultException ex) {
             throw new InvalidCategoryPathException(String.format(
-                "No domain identified by the key '%s' found.",
-                tokens[0]),
+                    "No domain identified by the key '%s' found.",
+                    tokens[0]),
                                                    ex);
         }
-        
+
         return findByPath(domain, tokens[1]);
     }
 
@@ -111,15 +116,20 @@ public class CategoryRepository extends AbstractEntityRepository<Long, Category>
                                                       normalizedPath.length());
         }
 
+        LOGGER.debug(String.format(
+                "Trying to find category with path \"%s\" in "
+                        + "domain \"%s\".",
+                normalizedPath,
+                domain.getDomainKey()));
         final String[] tokens = normalizedPath.split("/");
         Category current = domain.getRoot();
         for (String token : tokens) {
             final Optional<Category> result = current.getSubCategories()
-                .stream()
-                .filter((c) -> {
-                    return c.getName().equals(token);
-                })
-                .findFirst();
+                    .stream()
+                    .filter((c) -> {
+                        return c.getName().equals(token);
+                    })
+                    .findFirst();
             if (result.isPresent()) {
                 current = result.get();
             } else {
@@ -135,7 +145,7 @@ public class CategoryRepository extends AbstractEntityRepository<Long, Category>
      * subcategory or the an {@link Domain} as root category.
      *
      * @return A list of all orphaned categories. Normally this list should be
-     *         empty.
+     * empty.
      */
     public List<Category> getOrphanedCategories() {
         // TODO implement method

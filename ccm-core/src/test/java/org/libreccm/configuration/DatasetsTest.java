@@ -45,6 +45,8 @@ public class DatasetsTest extends DatasetsVerifier {
     @Parameterized.Parameters(name = "Dataset {0}")
     public static Collection<String> data() {
         return Arrays.asList(new String[]{
+            "/datasets/org/libreccm/configuration/ConfigurationManagerTest/after-save-changed.yml",
+            "/datasets/org/libreccm/configuration/ConfigurationManagerTest/after-save-new.yml",
             "/datasets/org/libreccm/configuration/ConfigurationManagerTest/data.yml"});
     }
 
