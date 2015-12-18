@@ -21,15 +21,15 @@ ccm_core.ccm_objects:
       display_name: itemsPerPage
     - object_id: -3500
       display_name: helpUri
-    - object_id: -2500
+    - object_id: 1
       display_name: com
-    - object_id: -2600
+    - object_id: 2
       display_name: example
-    - object_id: -2700
+    - object_id: 3
       display_name: TestConfiguration
-    - object_id: -3600
+    - object_id: 5
       display_name: enabled
-    - object_id: -3700
+    - object_id: 7
       display_name: itemsPerPage
 
 ccm_core.categories:
@@ -72,29 +72,26 @@ ccm_core.categories:
       abstract_category: false
       parent_category_id: -2300
       category_order: 1
-    - object_id: -2500
-      unique_id: 36223799-5df7-4875-8191-f1ced0965237
+    - object_id: 1
       name: com
       enabled: true
       visible: true
       abstract_category: false
       parent_category_id: -2000
       category_order: 1
-    - object_id: -2600
-      unique_id: 22f6f7c6-2ca1-457b-9b3f-185a2c6f39be
+    - object_id: 2
       name: example
       enabled: true
       visible: true
       abstract_category: false
-      parent_category_id: -2500
+      parent_category_id: 1
       category_order: 1
-    - object_id: -2700
-      unique_id: af6c0e93-d60b-4c5f-8fe4-5f82a7f8f923
+    - object_id: 3
       name: TestConfiguration
       enabled: true
       visible: true
       abstract_category: false
-      parent_category_id: -2600
+      parent_category_id: 2
       category_order: 1
 
 ccm_core.category_domains:
@@ -104,23 +101,11 @@ ccm_core.category_domains:
       version: 1.0
 
 ccm_core.categorizations:
-    - categorization_id: -10100
+    - categorization_id: -10500
       category_id: -2400
-      object_id: -3100
+      object_id: -3500
       category_order: 1
-      object_order: 1
-      category_index: false
-    - categorization_id: -10200
-      category_id: -2400
-      object_id: -3200
-      category_order: 1
-      object_order: 2
-      category_index: false
-    - categorization_id: -10300
-      category_id: -2400
-      object_id: -3300
-      category_order: 1
-      object_order: 3
+      object_order: 5
       category_index: false
     - categorization_id: -10400
       category_id: -2400
@@ -128,27 +113,51 @@ ccm_core.categorizations:
       category_order: 1
       object_order: 4
       category_index: false
-    - categorization_id: -10500
+    - categorization_id: -10300
       category_id: -2400
-      object_id: -3500
+      object_id: -3300
       category_order: 1
-      object_order: 5
+      object_order: 3
+      category_index: false
+    - categorization_id: -10200
+      category_id: -2400
+      object_id: -3200
+      category_order: 1
+      object_order: 2
+      category_index: false
+    - categorization_id: -10100
+      category_id: -2400
+      object_id: -3100
+      category_order: 1
+      object_order: 1
+      category_index: false
+    - categorization_id: 4
+      category_id: 3
+      object_id: 5
+      category_order: 1
+      object_order: 1
+      category_index: false
+    - categorization_id: 6
+      category_id: 3
+      object_id: 7
+      category_order: 1
+      object_order: 2
       category_index: false
 
 ccm_core.settings:
-    - object_id: -3100
-      name: price
-    - object_id: -3200
-      name: enabled
+    - object_id: -3500
+      name: helpUrl
     - object_id: -3300
       name: minTemperature
     - object_id: -3400
       name: itemsPerPage
-    - object_id: -3500
-      name: helpUrl
-    - object_id: -3600
+    - object_id: -3200
       name: enabled
-    - object_id: -3700
+    - object_id: -3100
+      name: price
+    - object_id: 5
+      name: enabled
+    - object_id: 7
       name: itemsPerPage
 
 ccm_core.settings_big_decimal:
@@ -158,7 +167,7 @@ ccm_core.settings_big_decimal:
 ccm_core.settings_boolean:
     - object_id: -3200
       setting_value: true
-    - object_id: -3600
+    - object_id: 5
       setting_value: false
 
 ccm_core.settings_double:
@@ -168,7 +177,7 @@ ccm_core.settings_double:
 ccm_core.settings_long:
     - object_id: -3400
       setting_value: 20
-    - object_id: -3700
+    - object_id: 7
       setting_value: 40
     
 ccm_core.settings_string:

@@ -27,8 +27,10 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.message.FormattedMessage;
 
 /**
  *
@@ -124,9 +126,18 @@ public class CategoryRepository extends AbstractEntityRepository<Long, Category>
         final String[] tokens = normalizedPath.split("/");
         Category current = domain.getRoot();
         for (String token : tokens) {
+            if (current.getSubCategories() == null) {
+                LOGGER.error(new FormattedMessage("#findByPath(Domain, String): current category \"%s\" has no sub categories", current.getName()));
+            }
             final Optional<Category> result = current.getSubCategories()
                     .stream()
                     .filter((c) -> {
+                        LOGGER.debug(new FormattedMessage(
+                            "#findByPath(Domain, String): c = %s", c.toString()));
+                        LOGGER.debug(new FormattedMessage(
+                            "#findByPath(Domain, String): c.getName = \"%s\"", c.getName()));
+                        LOGGER.debug(new FormattedMessage(
+                            "#findByPath(Domain, String): token = \"%s\"", token));
                         return c.getName().equals(token);
                     })
                     .findFirst();

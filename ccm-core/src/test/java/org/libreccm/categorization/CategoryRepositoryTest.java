@@ -175,6 +175,17 @@ public class CategoryRepositoryTest {
         assertThat(notFound, is(nullValue()));
     }
 
+    @Test
+    @UsingDataSet(
+        "datasets/org/libreccm/categorization/CategoryRepositoryTest/data.yml")
+    @InSequence(1150)
+    public void findByPathStringNotExisting() {
+        final Category doesNotExist = categoryRepo.findByPath(
+            "test:/does/not/exist");
+
+        assertThat(doesNotExist, is(nullValue()));
+    }
+
     @Test(expected = InvalidCategoryPathException.class)
     @UsingDataSet(
         "datasets/org/libreccm/categorization/CategoryRepositoryTest/data.yml")
@@ -217,6 +228,19 @@ public class CategoryRepositoryTest {
     @Test
     @UsingDataSet(
         "datasets/org/libreccm/categorization/CategoryRepositoryTest/data.yml")
+    @InSequence(1150)
+    public void findByPathDomainStringNotExisting() {
+        final Domain domain = domainRepo.findByDomainKey("test");
+
+        final Category doesNotExist = categoryRepo.findByPath(domain,
+                                                              "/does/not/exist");
+
+        assertThat(doesNotExist, is(nullValue()));
+    }
+
+    @Test
+    @UsingDataSet(
+        "datasets/org/libreccm/categorization/CategoryRepositoryTest/data.yml")
     @ShouldMatchDataSet(
         value = "datasets/org/libreccm/categorization/CategoryRepositoryTest/"
                     + "after-save-new-category.yml",
@@ -227,7 +251,7 @@ public class CategoryRepositoryTest {
         category.setDisplayName("new-category");
         category.setName("new-category");
         category.setUniqueId("new0001");
-        
+
         categoryRepo.save(category);
     }
 

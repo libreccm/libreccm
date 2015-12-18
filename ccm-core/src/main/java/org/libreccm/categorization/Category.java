@@ -76,7 +76,7 @@ public class Category extends CcmObject implements Serializable {
      * A unique ID for the category. This ID will be the same even the same
      * category system/domain is used in different installations.
      */
-    @Column(name = "UNIQUE_ID", nullable = false)
+    @Column(name = "UNIQUE_ID")
     private String uniqueId;
     
     /**
@@ -371,8 +371,7 @@ public class Category extends CcmObject implements Serializable {
                                                     + "title = %s, "
                                                     + "enabled = %b, "
                                                     + "visible = %b, "
-                                                    + "abstractCategory = %b, "
-                                                    + "parentCategory = %s, "
+                                                    + "abstractCategory = %s, "
                                                     + "categoryOrder = %d%s",
                                             uniqueId,
                                             name,
@@ -380,7 +379,6 @@ public class Category extends CcmObject implements Serializable {
                                             enabled,
                                             visible,
                                             abstractCategory,
-                                            Objects.toString(parentCategory),
                                             categoryOrder,
                                             data));
     }

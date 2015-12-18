@@ -42,6 +42,7 @@ public class DatasetsTest extends DatasetsVerifier {
         return Arrays.asList(new String[]{
             "/datasets/org/libreccm/categorization/CategoryManagerTest/after-add-obj-to-category.yml",
             "/datasets/org/libreccm/categorization/CategoryManagerTest/after-add-subcategory.yml",
+            "/datasets/org/libreccm/categorization/CategoryManagerTest/after-create-multiple-categories.yml",
             "/datasets/org/libreccm/categorization/CategoryManagerTest/after-remove-obj-from-category.yml",
             "/datasets/org/libreccm/categorization/CategoryManagerTest/after-remove-subcategory.yml",
             "/datasets/org/libreccm/categorization/CategoryManagerTest/data.yml",

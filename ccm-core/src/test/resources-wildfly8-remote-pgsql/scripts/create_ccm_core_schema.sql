@@ -27,7 +27,7 @@ CREATE SCHEMA ccm_core;
         CATEGORY_ORDER int8,
         ENABLED boolean,
         NAME varchar(255) not null,
-        UNIQUE_ID varchar(255) not null,
+        UNIQUE_ID varchar(255),
         VISIBLE boolean,
         OBJECT_ID int8 not null,
         PARENT_CATEGORY_ID int8,
