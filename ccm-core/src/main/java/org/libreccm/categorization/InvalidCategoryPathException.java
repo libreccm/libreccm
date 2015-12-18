@@ -31,6 +31,7 @@ public class InvalidCategoryPathException extends RuntimeException {
      * without detail message.
      */
     public InvalidCategoryPathException() {
+        super();
     }
 
     /**

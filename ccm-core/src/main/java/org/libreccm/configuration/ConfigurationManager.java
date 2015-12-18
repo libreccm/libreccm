@@ -42,14 +42,9 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.apache.logging.log4j.message.FormattedMessage;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 import java.util.StringJoiner;
 
 /**
@@ -357,7 +352,7 @@ public class ConfigurationManager {
                         ex);
         }
 
-        settingInfo.setConfigurationClass(configuration.getName());
+        settingInfo.setConfClass(configuration.getName());
 
         settingInfo.setDescBundle(descBundle);
         settingInfo.setDescKey(settingAnnotation.descKey());
@@ -780,64 +775,4 @@ public class ConfigurationManager {
 
         return category;
     }
-
-    private Category createCategoryIfNotExists(final String categoryPath) {
-        LOGGER.debug(String.format("Checking if category \"%s\" exists. If not "
-                                       + "the category will be created.",
-                                   categoryPath));
-
-        final Domain registry = domainRepository.
-            findByDomainKey(REGISTRY_DOMAIN);
-        final Category root = registry.getRoot();
-        final String[] tokens = categoryPath.split("\\.");
-
-        Category category = categoryRepository.findByPath(registry,
-                                                          categoryPath);
-        if (category == null) {
-            LOGGER.debug(String.format(
-                "Category \"%s\" was not found. Creating category.",
-                categoryPath));
-            category = new Category();
-            category.setName(tokens[tokens.length - 1]);
-            category.setUniqueId(UUID.randomUUID().toString());
-            category.setEnabled(true);
-            category.setVisible(true);
-            category.setAbstractCategory(false);
-            categoryRepository.save(category);
-            entityManager.flush();
-            if (tokens.length > 1) {
-                final StringBuilder parentPath = new StringBuilder();
-                for (int i = 0; i < tokens.length - 1; i++) {
-                    if (i > 0) {
-                        parentPath.append('.');
-                    }
-                    parentPath.append(tokens);
-                }
-                final Category parent = categoryRepository.findByPath(
-                    registry,
-                    parentPath.toString());
-                if (parent == null) {
-                    throw new IllegalStateException(String.format(
-                        "Parent category \"%s\" for new category \"%s\" "
-                            + "does not exist, but should. Can't continue.",
-                        parentPath.toString(),
-                        categoryPath));
-                }
-                categoryManager.addSubCategoryToCategory(category, parent);
-                LOGGER.debug(new FormattedMessage(
-                    "Created category \"%s\" as child of category \"%s\".",
-                    categoryPath,
-                    parent.getName()));
-            } else {
-                categoryManager.addSubCategoryToCategory(category, root);
-                LOGGER.debug(new FormattedMessage(
-                    "Created category \"%s\" as child of the registry root "
-                        + "category.",
-                    categoryPath));
-            }
-        }
-
-        return category;
-    }
-
 }

@@ -21,6 +21,7 @@ package org.libreccm.security;
 import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.kernel.security.SecurityConfig;
 import com.arsdigita.runtime.AbstractConfig;
+import com.arsdigita.util.UncheckedWrapperException;
 import com.arsdigita.util.parameter.AbstractParameterContext;
 import com.arsdigita.web.CCMApplicationContextListener;
 import com.arsdigita.xml.XML;
@@ -153,6 +154,7 @@ public class PermissionCheckerTest {
             .addPackage(XML.class.getPackage())
             .addPackage(DateTimeFormatter.class.getPackage())
             .addPackage(CdiUtil.class.getPackage())
+            .addPackage(UncheckedWrapperException.class.getPackage())
             .addAsLibraries(libs)
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")
@@ -435,23 +437,24 @@ public class PermissionCheckerTest {
                 results.add(result1);
                 results.add(result2);
                 results.add(result3);
-                
+
                 return results;
             }
+
         });
-        
+
         final CcmObject result1 = results.get(0);
         final CcmObject result2 = results.get(1);
         final CcmObject result3 = results.get(2);
-        
+
         assertThat(result1.getDisplayName(), is(equalTo("object1")));
         assertThat(permissionChecker.isAccessDeniedObject(result1), is(false));
         assertThat(result1, is(equalTo(object1)));
-        
+
         assertThat(result2.getDisplayName(), is(equalTo("object2")));
         assertThat(permissionChecker.isAccessDeniedObject(result2), is(false));
         assertThat(result2, is(equalTo(object2)));
-        
+
         assertThat(result3.getDisplayName(), is(equalTo("object3")));
         assertThat(permissionChecker.isAccessDeniedObject(result3), is(false));
         assertThat(result3, is(equalTo(object3)));

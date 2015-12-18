@@ -36,7 +36,7 @@ public class CcmRevisionListener implements RevisionListener {
                 CcmRevision.class.getName()));
         }
 
-        final CcmRevision revision = (CcmRevision) revisionEntity;
+//        final CcmRevision revision = (CcmRevision) revisionEntity;
         //ToDo: Add code using Shiro Subject
         
 //        final Subject subject = sessionContext.getCurrentSubject();

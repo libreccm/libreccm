@@ -63,7 +63,7 @@ public final class ConfigurationInfo {
         return name;
     }
 
-    protected void setName(final String name) {
+    void setName(final String name) {
         this.name = name;
     }
 
@@ -71,7 +71,7 @@ public final class ConfigurationInfo {
         return descBundle;
     }
 
-    protected void setDescBundle(final String descBundle) {
+    void setDescBundle(final String descBundle) {
         this.descBundle = descBundle;
     }
 
@@ -83,7 +83,7 @@ public final class ConfigurationInfo {
         return descKey;
     }
 
-    protected void setDescKey(final String descKey) {
+    void setDescKey(final String descKey) {
         this.descKey = descKey;
     }
 
@@ -95,11 +95,11 @@ public final class ConfigurationInfo {
         return Collections.unmodifiableNavigableMap(settings);
     }
 
-    protected void setSettings(final NavigableMap<String, SettingInfo> settings) {
+    void setSettings(final NavigableMap<String, SettingInfo> settings) {
         this.settings = settings;
     }
 
-    protected void addSetting(final SettingInfo info) {
+    void addSetting(final SettingInfo info) {
         settings.put(info.getName(), info);
     }
 

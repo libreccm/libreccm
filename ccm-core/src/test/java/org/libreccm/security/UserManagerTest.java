@@ -21,6 +21,7 @@ package org.libreccm.security;
 import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.kernel.security.SecurityConfig;
 import com.arsdigita.runtime.AbstractConfig;
+import com.arsdigita.util.UncheckedWrapperException;
 import com.arsdigita.util.parameter.AbstractParameterContext;
 import com.arsdigita.web.CCMApplicationContextListener;
 import com.arsdigita.xml.XML;
@@ -79,32 +80,32 @@ import static org.junit.Assert.*;
 @Transactional(TransactionMode.COMMIT)
 @CreateSchema({"create_ccm_core_schema.sql"})
 public class UserManagerTest {
-    
+
     @Inject
     private UserManager userManager;
-    
+
     @Inject
     private UserRepository userRepository;
-    
+
     public UserManagerTest() {
     }
-    
+
     @BeforeClass
     public static void setUpClass() {
     }
-    
+
     @AfterClass
     public static void tearDownClass() {
     }
-    
+
     @Before
     public void setUp() {
     }
-    
+
     @After
     public void tearDown() {
     }
-    
+
     @Deployment
     public static WebArchive createDeployment() {
         final PomEquippedResolveStage pom = Maven
@@ -113,12 +114,12 @@ public class UserManagerTest {
         final PomEquippedResolveStage dependencies = pom.
             importCompileAndRuntimeDependencies();
         final File[] libs = dependencies.resolve().withTransitivity().asFile();
-        
+
         for (File lib : libs) {
             System.err.printf("Adding file '%s' to test archive...%n",
                               lib.getName());
         }
-        
+
         return ShrinkWrap
             .create(WebArchive.class,
                     "LibreCCM-org.libreccm.security.UserManagerTest.war")
@@ -139,6 +140,7 @@ public class UserManagerTest {
             .addPackage(CCMApplicationContextListener.class.getPackage())
             .addPackage(XML.class.getPackage())
             .addPackage(DateTimeFormatter.class.getPackage())
+            .addPackage(UncheckedWrapperException.class.getPackage())
             .addAsLibraries(libs)
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")
@@ -161,19 +163,19 @@ public class UserManagerTest {
             .addAsWebInfResource("test-web.xml", "web.xml")
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
-    
+
     @Test
     @InSequence(100)
     public void userManagerIsInjected() {
         assertThat(userManager, is(not(nullValue())));
     }
-    
+
     @Test
     @InSequence(110)
     public void userRepositoryIsInjected() {
         assertThat(userRepository, is(not(nullValue())));
     }
-    
+
     @Test
     @UsingDataSet("datasets/org/libreccm/security/UserManagerTest/data.yml")
     @InSequence(200)
@@ -181,12 +183,12 @@ public class UserManagerTest {
         final User jdoe = userRepository.findByName("jdoe");
         final User mmuster = userRepository.findByName("mmuster");
         final User joe = userRepository.findByName("joe");
-        
+
         assertThat(userManager.verifyPassword(jdoe, "foo123"), is(true));
         assertThat(userManager.verifyPassword(mmuster, "foo123"), is(true));
         assertThat(userManager.verifyPassword(joe, "foo123"), is(true));
     }
-    
+
     @Test
     @UsingDataSet("datasets/org/libreccm/security/UserManagerTest/data.yml")
     @ShouldMatchDataSet(
@@ -200,11 +202,11 @@ public class UserManagerTest {
                                "jane",
                                "jane.doe@example.org",
                                "foo456");
-        
+
         final User jane2 = userRepository.findByName("jane");
         assertThat(userManager.verifyPassword(jane2, "foo456"), is(true));
     }
-    
+
     @Test(expected = ArquillianProxyException.class)
     @UsingDataSet("datasets/org/libreccm/security/UserManagerTest/data.yml")
     @ShouldThrowException(ConstraintViolationException.class)
@@ -217,22 +219,22 @@ public class UserManagerTest {
                                "foo456");
         fail();
     }
-    
+
     @Test
     @UsingDataSet("datasets/org/libreccm/security/UserManagerTest/data.yml")
     @InSequence(500)
     public void updatePassword() {
         final User jdoe = userRepository.findByName("jdoe");
         userManager.updatePassword(jdoe, "foo456");
-        
+
         final User jdoe2 = userRepository.findByName("jdoe");
         assertThat(userManager.verifyPassword(jdoe, "foo456"), is(true));
         assertThat(userManager.verifyPassword(jdoe2, "foo456"), is(true));
-        
+
         assertThat(userManager.verifyPassword(jdoe, "foo123"), is(false));
         assertThat(userManager.verifyPassword(jdoe2, "foo123"), is(false));
     }
-    
+
     @Test(expected = ArquillianProxyException.class)
     @UsingDataSet("datasets/org/libreccm/security/UserManagerTest/data.yml")
     @ShouldThrowException(ConstraintViolationException.class)
@@ -241,5 +243,5 @@ public class UserManagerTest {
         userManager.updatePassword(null, "foo");
         fail();
     }
-    
+
 }

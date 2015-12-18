@@ -21,6 +21,7 @@ package org.libreccm.security;
 import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.kernel.security.SecurityConfig;
 import com.arsdigita.runtime.AbstractConfig;
+import com.arsdigita.util.UncheckedWrapperException;
 import com.arsdigita.util.parameter.AbstractParameterContext;
 import com.arsdigita.web.CCMApplicationContextListener;
 import com.arsdigita.xml.XML;
@@ -138,6 +139,7 @@ public class GroupManagerTest {
             .addPackage(CCMApplicationContextListener.class.getPackage())
             .addPackage(XML.class.getPackage())
             .addPackage(DateTimeFormatter.class.getPackage())
+            .addPackage(UncheckedWrapperException.class.getPackage())
             .addAsLibraries(libs)
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")
@@ -242,24 +244,24 @@ public class GroupManagerTest {
         groupManager.removeMemberFromGroup(jdoe, admins);
         groupManager.removeMemberFromGroup(mmuster, users);
     }
-    
+
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet("datasets/org/libreccm/security/GroupManagerTest/data.yml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(310)
     public void removeUserNullFromGroup() {
         final Group admins = groupRepository.findByName("admins");
-        
+
         groupManager.removeMemberFromGroup(null, admins);
     }
-    
+
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet("datasets/org/libreccm/security/GroupManagerTest/data.yml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(320)
     public void removeUserFromGroupNull() {
         final User jdoe = userRepository.findByName("jdoe");
-        
+
         groupManager.removeMemberFromGroup(jdoe, null);
     }
 
@@ -271,7 +273,8 @@ public class GroupManagerTest {
     public void removeUserGroupNotAMember() {
         final Group admins = groupRepository.findByName("admins");
         final User mmuster = userRepository.findByName("mmuster");
-        
+
         groupManager.removeMemberFromGroup(mmuster, admins);
     }
+
 }

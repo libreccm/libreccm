@@ -23,7 +23,7 @@ package org.libreccm.configuration;
  * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class ConfigurationConstants {
+public final class ConfigurationConstants {
     
     public static final String REGISTRY_DOMAIN = "registry";
     

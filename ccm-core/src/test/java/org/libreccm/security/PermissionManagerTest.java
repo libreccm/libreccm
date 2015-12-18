@@ -21,6 +21,7 @@ package org.libreccm.security;
 import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.kernel.security.SecurityConfig;
 import com.arsdigita.runtime.AbstractConfig;
+import com.arsdigita.util.UncheckedWrapperException;
 import com.arsdigita.util.parameter.AbstractParameterContext;
 import com.arsdigita.web.CCMApplicationContextListener;
 import com.arsdigita.xml.XML;
@@ -143,6 +144,7 @@ public class PermissionManagerTest {
             .addPackage(CCMApplicationContextListener.class.getPackage())
             .addPackage(XML.class.getPackage())
             .addPackage(DateTimeFormatter.class.getPackage())
+            .addPackage(UncheckedWrapperException.class.getPackage())
             .addAsLibraries(libs)
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")

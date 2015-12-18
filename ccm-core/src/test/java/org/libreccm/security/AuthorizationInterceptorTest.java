@@ -21,6 +21,7 @@ package org.libreccm.security;
 import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.kernel.security.SecurityConfig;
 import com.arsdigita.runtime.AbstractConfig;
+import com.arsdigita.util.UncheckedWrapperException;
 import com.arsdigita.util.parameter.AbstractParameterContext;
 import com.arsdigita.web.CCMApplicationContextListener;
 import com.arsdigita.xml.XML;
@@ -124,7 +125,7 @@ public class AuthorizationInterceptorTest {
 
         return ShrinkWrap
             .create(WebArchive.class,
-                    "LibreCCM-org.libreccm.security.PermissionCheckerTest.war")
+                    "LibreCCM-org.libreccm.security.AuthorizationInterceptorTest.war")
             .addPackage(User.class.getPackage())
             .addPackage(CcmObject.class.getPackage())
             .addPackage(Categorization.class.getPackage())
@@ -143,6 +144,7 @@ public class AuthorizationInterceptorTest {
             .addPackage(XML.class.getPackage())
             .addPackage(DateTimeFormatter.class.getPackage())
             .addPackage(LabBean.class.getPackage())
+            .addPackage(UncheckedWrapperException.class.getPackage())
             .addAsLibraries(libs)
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")

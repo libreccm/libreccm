@@ -39,7 +39,7 @@ public class ApplicationConfiguration {
      * configuration stores settings.
      */
     @Setting
-    private String applicationInstance;
+    private String appInstance;
 
     /**
      * The fully qualified name of the application class.
@@ -47,12 +47,12 @@ public class ApplicationConfiguration {
     @Setting
     private String applicationClass;
 
-    public String getApplicationInstance() {
-        return applicationInstance;
+    public String getAppInstance() {
+        return appInstance;
     }
 
-    public void setApplicationInstance(final String applicationInstance) {
-        this.applicationInstance = applicationInstance;
+    public void setAppInstance(final String appInstance) {
+        this.appInstance = appInstance;
     }
 
     public Class<CcmApplication> getApplicationClass() {
@@ -77,13 +77,13 @@ public class ApplicationConfiguration {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 79 * hash + Objects.hashCode(applicationInstance);
+        hash = 79 * hash + Objects.hashCode(appInstance);
         hash = 79 * hash + Objects.hashCode(applicationClass);
         return hash;
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -100,14 +100,10 @@ public class ApplicationConfiguration {
             return false;
         }
 
-        if (!Objects.equals(applicationInstance, other.getApplicationInstance())) {
+        if (!Objects.equals(appInstance, other.getAppInstance())) {
             return false;
         }
-        if (Objects.equals(applicationClass, other.getApplicationClass())) {
-        } else {
-            return false;
-        }
-        return true;
+        return Objects.equals(applicationClass, other.getApplicationClass().getName());
     }
 
     public boolean canEqual(final Object obj) {
@@ -125,7 +121,7 @@ public class ApplicationConfiguration {
                                  + "applicationClass = \"%s\"%s"
                                  + " }",
                              super.toString(),
-                             applicationInstance,
+                             appInstance,
                              applicationClass,
                              data);
     }

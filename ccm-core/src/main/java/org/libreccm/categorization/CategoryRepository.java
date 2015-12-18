@@ -126,9 +126,9 @@ public class CategoryRepository extends AbstractEntityRepository<Long, Category>
         final String[] tokens = normalizedPath.split("/");
         Category current = domain.getRoot();
         for (String token : tokens) {
-            if (current.getSubCategories() == null) {
-                LOGGER.error(new FormattedMessage("#findByPath(Domain, String): current category \"%s\" has no sub categories", current.getName()));
-            }
+//            if (current.getSubCategories() == null) {
+//                LOGGER.error(new FormattedMessage("#findByPath(Domain, String): current category \"%s\" has no sub categories", current.getName()));
+//            }
             final Optional<Category> result = current.getSubCategories()
                     .stream()
                     .filter((c) -> {

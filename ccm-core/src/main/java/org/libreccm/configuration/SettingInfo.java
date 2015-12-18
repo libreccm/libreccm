@@ -45,7 +45,7 @@ public final class SettingInfo {
     /**
      * The configuration class to which the setting belongs.
      */
-    private String configurationClass;
+    private String confClass;
 
     /**
      * ResourceBundle with the description of the setting.
@@ -61,7 +61,7 @@ public final class SettingInfo {
         return name;
     }
 
-    protected void setName(final String name) {
+    void setName(final String name) {
         this.name = name;
     }
 
@@ -69,7 +69,7 @@ public final class SettingInfo {
         return valueType;
     }
 
-    protected void setValueType(final String valueType) {
+    void setValueType(final String valueType) {
         this.valueType = valueType;
     }
 
@@ -77,23 +77,23 @@ public final class SettingInfo {
         return defaultValue;
     }
 
-    protected void setDefaultValue(final String defaultValue) {
+    void setDefaultValue(final String defaultValue) {
         this.defaultValue = defaultValue;
     }
 
-    public String getConfigurationClass() {
-        return configurationClass;
+    public String getConfClass() {
+        return confClass;
     }
 
-    protected void setConfigurationClass(final String configurationClass) {
-        this.configurationClass = configurationClass;
+    void setConfClass(final String confClass) {
+        this.confClass = confClass;
     }
 
     public String getDescBundle() {
         return descBundle;
     }
 
-    protected void setDescBundle(final String descBundle) {
+    void setDescBundle(final String descBundle) {
         this.descBundle = descBundle;
     }
 
@@ -105,7 +105,7 @@ public final class SettingInfo {
         return descKey;
     }
 
-    protected void setDescKey(final String descKey) {
+    void setDescKey(final String descKey) {
         this.descKey = descKey;
     }
 
@@ -119,13 +119,14 @@ public final class SettingInfo {
         hash = 79 * hash + Objects.hashCode(name);
         hash = 79 * hash + Objects.hashCode(valueType);
         hash = 79 * hash + Objects.hashCode(defaultValue);
-        hash = 79 * hash + Objects.hashCode(configurationClass);
+        hash = 79 * hash + Objects.hashCode(confClass);
         hash = 79 * hash + Objects.hashCode(descBundle);
         hash = 79 * hash + Objects.hashCode(descKey);
         return hash;
     }
 
     @Override
+    @SuppressWarnings("PMD.NPathComplexity")
     public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
@@ -146,7 +147,7 @@ public final class SettingInfo {
         if (!Objects.equals(defaultValue, other.getDefaultValue())) {
             return false;
         }
-        if (!Objects.equals(configurationClass, other.getConfigurationClass())) {
+        if (!Objects.equals(confClass, other.getConfClass())) {
             return false;
         }
 
@@ -171,7 +172,7 @@ public final class SettingInfo {
                              name,
                              valueType,
                              defaultValue,
-                             configurationClass,
+                             confClass,
                              descBundle,
                              descKey);
     }
