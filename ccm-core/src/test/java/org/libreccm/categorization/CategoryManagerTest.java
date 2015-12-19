@@ -237,46 +237,44 @@ public class CategoryManagerTest {
         categoryManager.removeSubCategoryFromCategory(bar, foo);
     }
 
-    // Fails for unknown reasons when executed after the other tests in this
-    // Test suite, but works when executed stand alone. To be investigated.
-//    @Test
-//    @UsingDataSet(
-//        "datasets/org/libreccm/categorization/CategoryManagerTest/data.yml")
-//    @ShouldMatchDataSet(
-//        value = "datasets/org/libreccm/categorization/CategoryManagerTest/"
-//                    + "after-create-multiple-categories.yml")
-//    @InSequence(3100)
-//    public void createMultipleCategories() {
-//        final Domain domain = domainRepo.findByDomainKey("test");
-//        final Category root = domain.getRoot();
-//
-//        final Category com = new Category();
-//        com.setName("com");
-//        com.setDisplayName("com");
-//        com.setUniqueId("com");
-//        categoryRepo.save(com);
-//        categoryManager.addSubCategoryToCategory(com, root);
-//
-//        final Category example = new Category();
-//        example.setName("example");
-//        example.setDisplayName("example");
-//        example.setUniqueId("example");
-//        categoryRepo.save(example);
-//        categoryManager.addSubCategoryToCategory(example, com);
-//
-//        final Category categories = new Category();
-//        categories.setName("categories");
-//        categories.setDisplayName("categories");
-//        categories.setUniqueId("categories");
-//        categoryRepo.save(categories);
-//        categoryManager.addSubCategoryToCategory(categories, example);
-//
-//        final Category test = new Category();
-//        test.setName("test");
-//        test.setDisplayName("test");
-//        test.setUniqueId("test");
-//        categoryRepo.save(test);
-//        categoryManager.addSubCategoryToCategory(test, categories);
-//    }
+    @Test
+    @UsingDataSet(
+        "datasets/org/libreccm/categorization/CategoryManagerTest/data.yml")
+    @ShouldMatchDataSet(
+        value = "datasets/org/libreccm/categorization/CategoryManagerTest/"
+                    + "after-create-multiple-categories.yml")
+    @InSequence(3100)
+    public void createMultipleCategories() {
+        final Domain domain = domainRepo.findByDomainKey("test");
+        final Category root = domain.getRoot();
+
+        final Category com = new Category();
+        com.setName("com");
+        com.setDisplayName("com");
+        com.setUniqueId("com");
+        categoryRepo.save(com);
+        categoryManager.addSubCategoryToCategory(com, root);
+
+        final Category example = new Category();
+        example.setName("example");
+        example.setDisplayName("example");
+        example.setUniqueId("example");
+        categoryRepo.save(example);
+        categoryManager.addSubCategoryToCategory(example, com);
+
+        final Category categories = new Category();
+        categories.setName("categories");
+        categories.setDisplayName("categories");
+        categories.setUniqueId("categories");
+        categoryRepo.save(categories);
+        categoryManager.addSubCategoryToCategory(categories, example);
+
+        final Category test = new Category();
+        test.setName("test");
+        test.setDisplayName("test");
+        test.setUniqueId("test");
+        categoryRepo.save(test);
+        categoryManager.addSubCategoryToCategory(test, categories);
+    }
 
 }
