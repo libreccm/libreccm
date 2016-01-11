@@ -5,7 +5,7 @@
 package com.arsdigita.globalization;
 
 import com.arsdigita.dispatcher.DispatcherHelper;
-import com.arsdigita.kernel.KernelConfig;
+import com.arsdigita.kernel.LegacyKernelConfig;
 import java.util.Enumeration;
 import javax.servlet.ServletRequest;
 import java.util.Locale;
@@ -19,7 +19,7 @@ import javax.servlet.http.HttpSession;
  */
 public class GlobalizationHelper {
 
-    public static final String LANG_INDEPENDENT = KernelConfig.getConfig().getLanguagesIndependentCode();
+    public static final String LANG_INDEPENDENT = LegacyKernelConfig.getConfig().getLanguagesIndependentCode();
     private static final String LANG_PARAM = "lang";
     
     // Don't instantiate
@@ -34,7 +34,7 @@ public class GlobalizationHelper {
      * @return The negotiated locale
      */
     public static java.util.Locale getNegotiatedLocale() {
-        KernelConfig kernelConfig = KernelConfig.getConfig();
+        LegacyKernelConfig kernelConfig = LegacyKernelConfig.getConfig();
 
         // Set the preferedLocale to the default locale (first entry in the config parameter list)
         java.util.Locale preferedLocale = getPrefferedLocale();
@@ -81,7 +81,7 @@ public class GlobalizationHelper {
 //        
 //    }
     private static Locale getPrefferedLocale() {
-        KernelConfig kernelConfig = KernelConfig.getConfig();
+        LegacyKernelConfig kernelConfig = LegacyKernelConfig.getConfig();
         java.util.Locale preferedLocale = new java.util.Locale(kernelConfig.getDefaultLanguage(), "", "");
         return preferedLocale;
     }

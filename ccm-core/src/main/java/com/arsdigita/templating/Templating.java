@@ -18,7 +18,7 @@
 package com.arsdigita.templating;
 
 import com.arsdigita.bebop.Bebop;
-import com.arsdigita.kernel.KernelConfig;
+import com.arsdigita.kernel.LegacyKernelConfig;
 import com.arsdigita.util.Assert;
 import com.arsdigita.util.ExceptionUnwrapper;
 import com.arsdigita.util.Exceptions;
@@ -193,7 +193,7 @@ public class Templating {
                 template = new XSLTemplate(source);
             }
 
-        } else if (KernelConfig.getConfig().isDebugEnabled()
+        } else if (LegacyKernelConfig.getConfig().isDebugEnabled()
                        && template.isModified()) {
             // XXX referencing Kernel above is a broken dependency.
             // Debug mode should be captured at a lower level,

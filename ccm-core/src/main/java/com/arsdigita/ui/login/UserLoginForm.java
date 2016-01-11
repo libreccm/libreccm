@@ -42,7 +42,7 @@ import com.arsdigita.bebop.parameters.EmailParameter;
 import com.arsdigita.bebop.parameters.NotNullValidationListener;
 import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.bebop.parameters.URLParameter;
-import com.arsdigita.kernel.KernelConfig;
+import com.arsdigita.kernel.LegacyKernelConfig;
 import com.arsdigita.kernel.security.SecurityConfig;
 import com.arsdigita.ui.UI;
 
@@ -158,7 +158,7 @@ public class UserLoginForm extends Form implements LoginConstants,
             "login.userRegistrationForm.cookieOption"));
         Option opt = new Option(FORM_PERSISTENT_LOGIN_P_DEFAULT, optLabel);
         m_isPersistent.addOption(opt);
-        if (KernelConfig.getConfig().isLoginRemembered()) {
+        if (LegacyKernelConfig.getConfig().isLoginRemembered()) {
             m_isPersistent.setOptionSelected(FORM_PERSISTENT_LOGIN_P_DEFAULT);
         }
         cookiePanel.add(m_isPersistent);
@@ -192,7 +192,7 @@ public class UserLoginForm extends Form implements LoginConstants,
             "subsite:loginPromptMsg",
             LoginServlet.SUBSITE_NS_URI);
 
-        if (KernelConfig.getConfig().emailIsPrimaryIdentifier()) {
+        if (LegacyKernelConfig.getConfig().emailIsPrimaryIdentifier()) {
             loginMessage.setClassAttr("email");
         } else {
             loginMessage.setClassAttr("screenName");
@@ -200,7 +200,7 @@ public class UserLoginForm extends Form implements LoginConstants,
 
         add(loginMessage);
 
-        if (KernelConfig.getConfig().emailIsPrimaryIdentifier()) {
+        if (LegacyKernelConfig.getConfig().emailIsPrimaryIdentifier()) {
             add(new Label(LoginHelper.getMessage(
                 "login.userRegistrationForm.email")));
             m_loginName = new TextField(new EmailParameter(FORM_LOGIN));
@@ -228,7 +228,7 @@ public class UserLoginForm extends Form implements LoginConstants,
     public void init(FormSectionEvent event)
         throws FormProcessException {
         s_log.info("In init");
-        if (KernelConfig.getConfig().isSSOenabled()) {
+        if (LegacyKernelConfig.getConfig().isSSOenabled()) {
             // try SSO login
             s_log.info("trying SSO");
 //            try {
@@ -349,7 +349,7 @@ public class UserLoginForm extends Form implements LoginConstants,
 //        try {
 //            final CcmSessionContext ctx = Web.getUserContext();
 //            final String username;
-//            if (KernelConfig.getConfig().emailIsPrimaryIdentifier()) {
+//            if (LegacyKernelConfig.getConfig().emailIsPrimaryIdentifier()) {
 //                username = ((InternetAddress) m_loginName.getValue(state)).
 //                    getAddress();
 //            } else {

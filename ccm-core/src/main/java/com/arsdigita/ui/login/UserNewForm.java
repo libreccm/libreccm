@@ -30,7 +30,7 @@ import com.arsdigita.bebop.form.Hidden;
 import com.arsdigita.bebop.parameters.ArrayParameter;
 import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.bebop.parameters.URLParameter;
-import com.arsdigita.kernel.KernelConfig;
+import com.arsdigita.kernel.LegacyKernelConfig;
 import com.arsdigita.ui.UI;
 import com.arsdigita.web.URL;
 import com.arsdigita.web.ReturnSignal;
@@ -121,7 +121,7 @@ public class UserNewForm extends UserForm implements FormInitListener,
         m_confirm.setValue(state, "");
         String loginName = (String) m_loginName.getValue(state);
         if (loginName != null) {
-            if (KernelConfig.getConfig().emailIsPrimaryIdentifier()) {
+            if (LegacyKernelConfig.getConfig().emailIsPrimaryIdentifier()) {
                 m_email.setValue(state, loginName);
             } else {
                 m_screenName.setValue(state, loginName);
@@ -143,7 +143,7 @@ public class UserNewForm extends UserForm implements FormInitListener,
         final String firstName = (String) m_firstName.getValue(state);
         final String lastName = (String) m_lastName.getValue(state);
         final String screenName;
-        if (KernelConfig.getConfig().emailIsPrimaryIdentifier()) {
+        if (LegacyKernelConfig.getConfig().emailIsPrimaryIdentifier()) {
             screenName = null;
         } else {
             screenName = (String) m_screenName.getValue(state);
@@ -175,7 +175,7 @@ public class UserNewForm extends UserForm implements FormInitListener,
 
         try {
             final String loginName;
-            if (KernelConfig.getConfig().emailIsPrimaryIdentifier()) {
+            if (LegacyKernelConfig.getConfig().emailIsPrimaryIdentifier()) {
                 loginName = email;
             } else {
                 loginName = screenName;

@@ -18,7 +18,7 @@
  */
 package com.arsdigita.kernel.security;
 
-import com.arsdigita.kernel.KernelConfig;
+import com.arsdigita.kernel.LegacyKernelConfig;
 import com.arsdigita.runtime.AbstractConfig;
 import com.arsdigita.util.JavaPropertyReader;
 import com.arsdigita.util.parameter.AbstractParameter;
@@ -111,7 +111,7 @@ public class SecurityConfigTest {
             .addPackage(UriConverter.class.getPackage())
             .addPackage(ApplicationRepository.class.getPackage())
             .addPackage(EntityManagerProducer.class.getPackage())
-            .addPackage(KernelConfig.class.getPackage())
+            .addPackage(LegacyKernelConfig.class.getPackage())
             .addPackage(SecurityConfig.class.getPackage())
             .addPackage(AbstractConfig.class.getPackage())
             .addPackage(AbstractParameter.class.getPackage())

@@ -1,203 +1,214 @@
 /*
- * Copyright (C) 2002-2004 Red Hat Inc. All Rights Reserved.
+ * Copyright (C) 2016 LibreCCM Foundation.
  *
  * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public License
- * as published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- *
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301  USA
  */
 package com.arsdigita.kernel;
 
-import com.arsdigita.runtime.AbstractConfig;
-import com.arsdigita.util.parameter.BooleanParameter;
-import com.arsdigita.util.parameter.EnumerationParameter;
-import com.arsdigita.util.parameter.Parameter;
-import com.arsdigita.util.parameter.StringParameter;
-import java.util.StringTokenizer;
-
-import org.apache.log4j.Logger;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+import org.libreccm.configuration.Configuration;
+import org.libreccm.configuration.Setting;
 
 /**
- * @author Justin Ross
- * @see com.arsdigita.kernel.Kernel
- * @version $Id$
+ *
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public final class KernelConfig extends AbstractConfig {
+@Configuration(descBundle = "com.arsdigita.kernel.KernelConfigDescription",
+               descKey = "kernel.config.description")
+public final class KernelConfig {
 
-    /** A logger instance.  */
-    private static final Logger s_log = Logger.getLogger(KernelConfig.class);
+    @Setting(descKey = "kernel.config.debug_enabled")
+    private boolean debugEnabled = false;
 
-    /** Singelton config object.  */
-    private static KernelConfig s_conf;
+    @Setting(descKey = "kernel.config.webdev_support_enabled")
+    private boolean webdevSupportEnabled = false;
 
-    /**
-     * Gain a KernelConfig object.
-     *
-     * Singelton pattern, don't instantiate a KernelConfig object using the
-     * constructor directly!
-     * @return
-     */
-    public static synchronized KernelConfig getConfig() {
-        if (s_conf == null) {
-            s_conf = new KernelConfig();
-            s_conf.load();
-        }
+    @Setting(descKey = "kernel.config.data_permission_check_enabled")
+    private boolean dataPermissionCheckEnabled = true;
 
-        return s_conf;
-    }
+    @Setting(descKey = "kernel.config.primary_user_identifier")
+    private String primaryUserIdentifier = "email";
 
-    /**  TODO: should be renamed waf.kernel.debug"                           */
-    private static Parameter m_debug = new BooleanParameter
-            ("waf.debug", Parameter.REQUIRED, Boolean.FALSE);
-    /** Whether WEB development support should be activated (true) or not. */
-    // Handled in OLD initializer c.ad.webdevsupport.LegacyInitializer
-    private static Parameter m_webdevSupport = new BooleanParameter
-            ("waf.webdev_support", Parameter.REQUIRED, Boolean.FALSE);
-    private final Parameter m_permissions = new BooleanParameter
-            ("waf.kernel.data_permission_check_enabled", Parameter.REQUIRED,
-             Boolean.TRUE);
-    /** User Login by screen name or email address                           */
-    private final EnumerationParameter m_identifier = new EnumerationParameter
-            ("waf.kernel.primary_user_identifier", Parameter.REQUIRED,
-             "email");
-    /** 
-     *                                                                        */
-    private final Parameter m_SSO = new BooleanParameter
-            ("waf.kernel.sso_login", Parameter.REQUIRED, Boolean.FALSE);
+    @Setting(descKey = "kernel.config.sso_enabled")
+    private boolean ssoEnabled = false;
 
-    /** 
-     *                                                                        */
-    private final Parameter m_remember = new BooleanParameter
-            ("waf.kernel.remember_login", Parameter.REQUIRED, Boolean.TRUE);
+    @Setting(descKey = "kernel.config.remember_login_enabled")
+    private boolean rememberLoginEnabled = true;
 
-    /** 
-     *                                                                        */
-    private final Parameter m_secureLogin = new BooleanParameter
-        	("waf.kernel.secure_login", Parameter.REQUIRED, Boolean.FALSE);
+    @Setting(descKey = "kernel_config.secure_login_enabled")
+    private boolean secureLoginEnabled = false;
 
-    /** String containing the supported languages.
-        The first one is considered default.                                 */
-    private final Parameter m_supportedLanguages = new StringParameter
-            ("waf.kernel.supported_languages", Parameter.REQUIRED,
-             "en,de,fr,nl,it,pt,es");
-    private final Parameter m_languageIndependentItems = new BooleanParameter
-            ("waf.kernel.language_independent_items", Parameter.REQUIRED, Boolean.FALSE);
-    private final Parameter m_languageIndependentCode = new StringParameter
-            ("waf.kernel.language_independent_code", Parameter.OPTIONAL,
-             "--");
+    @Setting(descKey = "kernel.config.supported_languages")
+    private Set<String> supportedLanguages = new HashSet<>(
+            Arrays.asList(new String[]{"en"}));
 
-    /**
-     * Constructor
-     */
     public KernelConfig() {
+        super();
 
-        // Add recognised Login user identification to enumeration parameter
-        m_identifier.put("email", "email");
-        m_identifier.put("screen_name", "screenName");
-  
-
-        register(m_debug);
-        register(m_webdevSupport);
-        register(m_permissions);
-        register(m_identifier);
-        register(m_SSO);
-        register(m_remember);
-        register(m_secureLogin);
-        register(m_supportedLanguages);
-        register(m_languageIndependentItems);
-        register(m_languageIndependentCode);
-
-        loadInfo();
     }
 
-    
-    public final boolean isDebugEnabled() {
-        return ((Boolean) get(m_debug)).booleanValue();
+    public boolean isDebugEnabled() {
+        return debugEnabled;
     }
 
-    /**
-     * Return true, if WEB developer support should be activated.
-     */
-    public final boolean isWebdevSupportActive() {
-        return ((Boolean) get(m_webdevSupport)).booleanValue();
+    public void setDebugEnabled(final boolean debugEnabled) {
+        this.debugEnabled = debugEnabled;
     }
 
-    public final boolean isDataPermissionCheckEnabled() {
-        return ((Boolean) get(m_permissions)).booleanValue();
+    public boolean isWebdevSupportEnabled() {
+        return webdevSupportEnabled;
     }
 
-    public final String getPrimaryUserIdentifier() {
-        return (String) get(m_identifier);
-    }
-    
-    public final boolean emailIsPrimaryIdentifier() {
-        return "email".equals(get(m_identifier));
-    }
-    
-    public final boolean screenNameIsPrimaryIdentifier() {
-        return !emailIsPrimaryIdentifier();
-    }
-    
-    public final boolean isSSOenabled() {
-        return ((Boolean) get(m_SSO)).booleanValue();
+    public void setWebdevSupportEnabled(final boolean webdevSupportEnabled) {
+        this.webdevSupportEnabled = webdevSupportEnabled;
     }
 
-    // XXX Move this to WebConfig.
-    public final boolean isLoginRemembered() {
-        return ((Boolean) get(m_remember)).booleanValue();
-    }
-    
-    public final boolean isSecureLoginRequired() {
-        return ((Boolean) get(m_secureLogin)).booleanValue();
+    public boolean isDataPermissionCheckEnabled() {
+        return dataPermissionCheckEnabled;
     }
 
-    /**
-     * Returns the defaultLanguage flag.
-     */
-    public final String getDefaultLanguage() {
-        return ((String) get(m_supportedLanguages)).trim().substring(0, 2);
+    public void setDataPermissionCheckEnabled(
+            final boolean dataPermissionCheckEnabled) {
+        this.dataPermissionCheckEnabled = dataPermissionCheckEnabled;
     }
 
-    /**
-     * Returns the supportedLanguages as String.
-     */
-    public final String getSupportedLanguages() {
-        return (String) get(m_supportedLanguages);
+    public String getPrimaryUserIdentifier() {
+        return primaryUserIdentifier;
     }
 
-    /**
-     * Returns the supportedLanguages as StringTokenizer.
-     */
-    public final StringTokenizer getSupportedLanguagesTokenizer() {
-        return new StringTokenizer(this.getSupportedLanguages(), ",", false);
+    public void setPrimaryUserIdentifier(final String primaryUserIdentifier) {
+        if ("screen_name".equals(primaryUserIdentifier)
+                    || "email".equals(primaryUserIdentifier)) {
+            this.primaryUserIdentifier = primaryUserIdentifier;
+        } else {
+            throw new IllegalArgumentException(
+                    "Primary user identifier can only be \"screen_name\" or "
+                            + "\"email\"");
+        }
     }
 
-    /**
-     * Returns the languagesIndependentCode as String.
-     */
-    public final String getLanguagesIndependentCode() {
-        return (String) get(m_languageIndependentCode);
+    public boolean isSsoEnabled() {
+        return ssoEnabled;
     }
 
-    /**
-     * Return true, if language lang is part of supported langs
-     */
-    public final boolean hasLanguage(String lang) {
-        return ((String) get(m_supportedLanguages)).contains(lang);
+    public void setSsoEnabled(final boolean ssoEnabled) {
+        this.ssoEnabled = ssoEnabled;
     }
 
-    public final boolean languageIndependentItems() {
-        return ((Boolean) get(m_languageIndependentItems)).booleanValue();
+    public boolean isRememberLoginEnabled() {
+        return rememberLoginEnabled;
     }
 
+    public void setRememberLoginEnabled(final boolean rememberLoginEnabled) {
+        this.rememberLoginEnabled = rememberLoginEnabled;
+    }
+
+    public boolean isSecureLoginEnabled() {
+        return secureLoginEnabled;
+    }
+
+    public void setSecureLoginEnabled(final boolean secureLoginEnabled) {
+        this.secureLoginEnabled = secureLoginEnabled;
+    }
+
+    public Set<String> getSupportedLanguages() {
+        return supportedLanguages;
+    }
+
+    public void setSupportedLanguages(final Set<String> supportedLanguages) {
+        this.supportedLanguages = supportedLanguages;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 61 * hash + (debugEnabled ? 1 : 0);
+        hash = 61 * hash + (webdevSupportEnabled ? 1 : 0);
+        hash = 61 * hash + (dataPermissionCheckEnabled ? 1 : 0);
+        hash = 61 * hash + Objects.hashCode(primaryUserIdentifier);
+        hash = 61 * hash + (ssoEnabled ? 1 : 0);
+        hash = 61 * hash + (rememberLoginEnabled ? 1 : 0);
+        hash = 61 * hash + (secureLoginEnabled ? 1 : 0);
+        hash = 61 * hash + Objects.hashCode(supportedLanguages);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof KernelConfig)) {
+            return false;
+        }
+        final KernelConfig other = (KernelConfig) obj;
+        if (debugEnabled != other.debugEnabled) {
+            return false;
+        }
+        if (webdevSupportEnabled != other.webdevSupportEnabled) {
+            return false;
+        }
+        if (dataPermissionCheckEnabled != other.dataPermissionCheckEnabled) {
+            return false;
+        }
+        if (ssoEnabled != other.ssoEnabled) {
+            return false;
+        }
+        if (rememberLoginEnabled != other.rememberLoginEnabled) {
+            return false;
+        }
+        if (secureLoginEnabled != other.secureLoginEnabled) {
+            return false;
+        }
+        if (!Objects.equals(primaryUserIdentifier,
+                            other.primaryUserIdentifier)) {
+            return false;
+        }
+        return Objects.equals(supportedLanguages, other.supportedLanguages);
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder builder = new StringBuilder();
+        supportedLanguages.forEach(s -> builder.append(s));
+
+        return String.format("%s{ "
+                                     + "debugEnabled = %b, "
+                                     + "webdevSupportEnabled = %b, "
+                                     + "dataPermissionCheckEnabled = %b, "
+                                     + "primaryUserIdentifier = \"%s\", "
+                                     + "ssoEnabled = %b, "
+                                     + "rememberLoginEnabeled = %b, "
+                                     + "secureLoginEnabled = %b, "
+                                     + "supportedLanguages = \"%s\""
+                                     + " }",
+                             super.toString(),
+                             debugEnabled,
+                             webdevSupportEnabled,
+                             dataPermissionCheckEnabled,
+                             primaryUserIdentifier,
+                             ssoEnabled,
+                             rememberLoginEnabled,
+                             secureLoginEnabled,
+                             builder.toString());
+    }
 }

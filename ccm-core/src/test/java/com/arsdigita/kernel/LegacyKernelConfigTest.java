@@ -63,9 +63,9 @@ import static org.junit.Assert.*;
  */
 @RunWith(Arquillian.class)
 @Category(IntegrationTest.class)
-public class KernelConfigTest {
+public class LegacyKernelConfigTest {
 
-    public KernelConfigTest() {
+    public LegacyKernelConfigTest() {
     }
 
     @BeforeClass
@@ -109,7 +109,7 @@ public class KernelConfigTest {
             .addPackage(UriConverter.class.getPackage())
             .addPackage(ApplicationRepository.class.getPackage())
             .addPackage(EntityManagerProducer.class.getPackage())
-            .addPackage(KernelConfig.class.getPackage())
+            .addPackage(LegacyKernelConfig.class.getPackage())
             .addPackage(AbstractConfig.class.getPackage())
             .addPackage(AbstractParameter.class.getPackage())
             .addPackage(JavaPropertyReader.class.getPackage())
@@ -139,7 +139,7 @@ public class KernelConfigTest {
 
     @Test
     public void verifyKernelConfig() {
-        final KernelConfig kernelConfig = KernelConfig.getConfig();
+        final LegacyKernelConfig kernelConfig = LegacyKernelConfig.getConfig();
 
         assertThat(kernelConfig.isDebugEnabled(),
                    is(true));

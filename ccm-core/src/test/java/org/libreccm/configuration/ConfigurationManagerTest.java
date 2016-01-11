@@ -161,6 +161,9 @@ public class ConfigurationManagerTest {
         assertThat(configuration.getItemsPerPage(), is(20L));
         assertThat(configuration.getHelpUrl(),
                    is(equalTo("http://www.example.org")));
+//        assertThat(configuration.getLanguages().size(), is(2));
+//        assertThat(configuration.getLanguages(), hasItem("de")); 
+//        assertThat(configuration.getLanguages(), hasItem("en")); 
     }
 
     @Test
@@ -173,13 +176,13 @@ public class ConfigurationManagerTest {
     public void saveConfiguration() {
         final ExampleConfiguration configuration = configurationManager
                 .findConfiguration(ExampleConfiguration.class);
-        
+
         configuration.setPrice(new BigDecimal("109.99"));
         configuration.setItemsPerPage(30L);
-        
+
         configurationManager.saveConfiguration(configuration);
     }
-    
+
     @Test
     @UsingDataSet(
             "datasets/org/libreccm/configuration/ConfigurationManagerTest/data.yml")
@@ -187,10 +190,10 @@ public class ConfigurationManagerTest {
     public void loadNewConfiguration() {
         final TestConfiguration configuration = configurationManager
                 .findConfiguration(TestConfiguration.class);
-        
+
         assertThat(configuration, is(nullValue()));
     }
-    
+
     @Test
     @UsingDataSet(
             "datasets/org/libreccm/configuration/ConfigurationManagerTest/data.yml")

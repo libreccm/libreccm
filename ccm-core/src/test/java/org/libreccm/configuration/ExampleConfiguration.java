@@ -19,6 +19,7 @@
 package org.libreccm.configuration;
 
 import java.math.BigDecimal;
+import java.util.Set;
 
 /**
  *
@@ -41,6 +42,9 @@ public class ExampleConfiguration {
     
     @Setting
     private String helpUrl;
+    
+//    @Setting
+//    private Set<String> languages;
 
     public BigDecimal getPrice() {
         return price;
@@ -81,4 +85,12 @@ public class ExampleConfiguration {
     public void setHelpUrl(final String helpUrl) {
         this.helpUrl = helpUrl;
     }
+    
+//    public Set<String> getLanguages() {
+//        return languages;
+//    }
+//    
+//    private void setLanguages(final Set<String> languages) {
+//        this.languages = languages;
+//    }
 }

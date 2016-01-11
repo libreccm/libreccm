@@ -132,3 +132,12 @@ ccm_core.settings_long:
 ccm_core.settings_string:
     - object_id: -3500
       setting_value: http://www.example.org
+      
+ccm_core.settings_enum:
+    - object_id: -3600
+
+ccm_core.settings_values:
+    - enum_id: -3600
+      value: de
+    - enum_id: -3600
+      value: en

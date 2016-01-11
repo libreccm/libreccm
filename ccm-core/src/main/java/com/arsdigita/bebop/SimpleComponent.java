@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.Iterator;
 
 import com.arsdigita.bebop.util.Attributes;
-import com.arsdigita.kernel.KernelConfig;
+import com.arsdigita.kernel.LegacyKernelConfig;
 import com.arsdigita.util.Assert;
 import com.arsdigita.xml.Element;
 
@@ -294,7 +294,7 @@ public class SimpleComponent extends Completable
         if (m_attr != null) {
             m_attr.exportAttributes(target);
         }
-        if (KernelConfig.getConfig().isDebugEnabled() ||
+        if (LegacyKernelConfig.getConfig().isDebugEnabled() ||
                 Bebop.getConfig().showClassName()) {
             target.addAttribute("bebop:classname", getClass().getName(),
                                 BEBOP_XML_NS);

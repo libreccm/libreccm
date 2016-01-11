@@ -18,7 +18,7 @@
  */
 package com.arsdigita.web;
 
-import com.arsdigita.kernel.KernelConfig;
+import com.arsdigita.kernel.LegacyKernelConfig;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -48,7 +48,7 @@ public abstract class Debugger {
 
     public static class DebugParameterListener implements ParameterListener {
         public void run(HttpServletRequest sreq, ParameterMap map) {
-            if (KernelConfig.getConfig().isDebugEnabled()) {
+            if (LegacyKernelConfig.getConfig().isDebugEnabled()) {
                 final String value = sreq.getParameter(DEBUG_PARAMETER);
 
                 if (value != null) {
@@ -86,7 +86,7 @@ public abstract class Debugger {
     private static class DebuggerListLocal extends InternalRequestLocal {
         @Override
         protected Object initialValue() {
-            if (KernelConfig.getConfig().isDebugEnabled()) {
+            if (LegacyKernelConfig.getConfig().isDebugEnabled()) {
                 return new ArrayList();
             } else {
                 return null;
@@ -95,7 +95,7 @@ public abstract class Debugger {
 
         @Override
         protected void clearValue() {
-            if (KernelConfig.getConfig().isDebugEnabled()) {
+            if (LegacyKernelConfig.getConfig().isDebugEnabled()) {
                 ArrayList list = (ArrayList) get();
                 list.clear();
             }

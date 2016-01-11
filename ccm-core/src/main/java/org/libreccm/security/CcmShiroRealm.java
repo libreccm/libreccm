@@ -18,7 +18,7 @@
  */
 package org.libreccm.security;
 
-import com.arsdigita.kernel.KernelConfig;
+import com.arsdigita.kernel.LegacyKernelConfig;
 
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -202,7 +202,7 @@ public class CcmShiroRealm extends AuthorizingRealm {
 
         // Depending of the configuration of CCM use the appropriate method
         // for finding the user in the database.
-        final KernelConfig config = KernelConfig.getConfig();
+        final LegacyKernelConfig config = LegacyKernelConfig.getConfig();
         final User user;
         if ("email".equals(config.getPrimaryUserIdentifier())) {
             user = userRepository.findByEmailAddress(userIdentifier);

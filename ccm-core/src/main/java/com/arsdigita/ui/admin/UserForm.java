@@ -33,7 +33,7 @@ import com.arsdigita.bebop.parameters.EmailParameter;
 import com.arsdigita.bebop.parameters.NotEmptyValidationListener;
 import com.arsdigita.bebop.parameters.StringLengthValidationListener;
 import com.arsdigita.bebop.parameters.StringParameter;
-import com.arsdigita.kernel.KernelConfig;
+import com.arsdigita.kernel.LegacyKernelConfig;
 import com.arsdigita.kernel.security.SecurityConfig;
 
 import static com.arsdigita.ui.admin.AdminConstants.*;
@@ -158,7 +158,7 @@ class UserForm extends Form implements FormValidationListener, AdminConstants {
         // Screen name
         m_screenName = new TextField(new StringParameter(
             USER_FORM_INPUT_SCREEN_NAME));
-        if (KernelConfig.getConfig().screenNameIsPrimaryIdentifier()) {
+        if (LegacyKernelConfig.getConfig().screenNameIsPrimaryIdentifier()) {
             m_screenName.addValidationListener(new NotEmptyValidationListener());
         }
         add(USER_FORM_LABEL_SCREEN_NAME);
