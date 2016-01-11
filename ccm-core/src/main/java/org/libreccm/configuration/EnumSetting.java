@@ -55,7 +55,7 @@ public class EnumSetting
         if (value == null) {
             return null;
         } else {
-            return Collections.unmodifiableSet(value);
+            return value;
         }
     }
 

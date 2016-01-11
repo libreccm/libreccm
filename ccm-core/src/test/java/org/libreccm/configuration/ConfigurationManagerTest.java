@@ -161,9 +161,9 @@ public class ConfigurationManagerTest {
         assertThat(configuration.getItemsPerPage(), is(20L));
         assertThat(configuration.getHelpUrl(),
                    is(equalTo("http://www.example.org")));
-//        assertThat(configuration.getLanguages().size(), is(2));
-//        assertThat(configuration.getLanguages(), hasItem("de")); 
-//        assertThat(configuration.getLanguages(), hasItem("en")); 
+        assertThat(configuration.getLanguages().size(), is(2));
+        assertThat(configuration.getLanguages(), hasItem("de")); 
+        assertThat(configuration.getLanguages(), hasItem("en")); 
     }
 
     @Test
@@ -179,6 +179,7 @@ public class ConfigurationManagerTest {
 
         configuration.setPrice(new BigDecimal("109.99"));
         configuration.setItemsPerPage(30L);
+        configuration.addLanguage("es");
 
         configurationManager.saveConfiguration(configuration);
     }

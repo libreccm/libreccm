@@ -21,6 +21,8 @@ ccm_core.ccm_objects:
       display_name: itemsPerPage
     - object_id: -3500
       display_name: helpUri
+    - object_id: -3600
+      display_name: languages
     - object_id: 1
       display_name: com
     - object_id: 2
@@ -131,6 +133,12 @@ ccm_core.categorizations:
       category_order: 1
       object_order: 1
       category_index: false
+    - categorization_id: -10600
+      category_id: -2400
+      object_id: -3600
+      category_order: 1
+      object_order: 6
+      category_index: false
     - categorization_id: 4
       category_id: 3
       object_id: 5
@@ -145,6 +153,8 @@ ccm_core.categorizations:
       category_index: false
 
 ccm_core.settings:
+    - object_id: -3600
+      name: languages
     - object_id: -3500
       name: helpUrl
     - object_id: -3300
@@ -183,4 +193,12 @@ ccm_core.settings_long:
 ccm_core.settings_string:
     - object_id: -3500
       setting_value: http://www.example.org
+      
+ccm_core.settings_enum:
+    - object_id: -3600
 
+ccm_core.settings_enum_values:
+    - enum_id: -3600
+      value: de
+    - enum_id: -3600
+      value: en
