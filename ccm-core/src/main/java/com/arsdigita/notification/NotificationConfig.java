@@ -1,190 +1,176 @@
 /*
- * Copyright (C) 2011 pboy (pboy@barkhof.uni-bremen.de) All Rights Reserved.
+ * Copyright (C) 2016 LibreCCM Foundation.
  *
  * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public License
- * as published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- *
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301  USA
  */
 package com.arsdigita.notification;
 
-import com.arsdigita.runtime.AbstractConfig;
-import com.arsdigita.util.parameter.IntegerParameter;
-import com.arsdigita.util.parameter.Parameter;
+import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.configuration.Configuration;
+import org.libreccm.configuration.ConfigurationManager;
+import org.libreccm.configuration.Setting;
 
-import org.apache.log4j.Logger;
+import java.util.Objects;
 
 /**
- * NotificationConfig
  *
- * @author Peter Boy &lt;pboy@barkhof.uni-bremen.de&gt;
- * @version $Id: NotificationConfig.java   $
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class NotificationConfig extends AbstractConfig {
+@Configuration(
+    descBundle = "com.arsdigita.notification.NotificationConfigDescription",
+    descKey = "notification.config.description")
+public final class NotificationConfig {
 
-    /** Private Logger instance.  */
-    private static final Logger s_log = Logger.getLogger(NotificationConfig.class);
+    @Setting(descKey = "notification.config.request_manager_delay")
+    private Integer requestManagerDelay = 900;
 
-    /** Private Object to hold one's own instance to return to users. */
-    private static NotificationConfig s_conf;
+    @Setting(descKey = "notification.config.request_manager_period")
+    private Integer requestManagerPeriod = 900;
 
-    /**
-     * Returns the singleton configuration record for the content section
-     * environment.
-     *
-     * @return The <code>ContentSectionConfig</code> record; it cannot be null
-     */
-    public static synchronized NotificationConfig getInstance() {
-        if (s_conf == null) {
-            s_conf = new NotificationConfig();
-            s_conf.load();
-        }
+    @Setting(descKey = "notification.config.digest_queue_delay")
+    private Integer digestQueueDelay = 900;
 
-        return s_conf;
+    @Setting(descKey = "notification.config.digest_queue_period")
+    private Integer digestQueuePeriod = 900;
+
+    @Setting(descKey = "notification.config.simple_queue_delay")
+    private Integer simpleQueueDelay = 900;
+
+    @Setting(descKey = "notification.config.simple_queue_period")
+    private Integer simpleQueuePeriod = 900;
+
+    public static NotificationConfig getConfig() {
+        final CdiUtil cdiUtil = new CdiUtil();
+        final ConfigurationManager confManager = cdiUtil.findBean(
+            ConfigurationManager.class);
+        return confManager.findConfiguration(NotificationConfig.class);
     }
 
-
-// /////////////////////////////////////////////////////////////////////////////
-//
-// Set of parameters controlling Overdue Task alerts:
-// Currently there is no way to persist it nor to persist on a per section base.
-// Therefore Initializer has to create overdue task alert mechanism using a
-// configuration applied to every content section.
-//
-// /////////////////////////////////////////////////////////////////////////////
-
-
-
-    /**
-     * Request manager's delay in seconds.
-     */
-    private IntegerParameter m_requestManagerDelay = new IntegerParameter
-        ("waf.notification.request_manager_delay", Parameter.REQUIRED,
-        new Integer(900));
-    
-    /**
-     * Request manager's period in seconds
-     */
-    private IntegerParameter m_requestManagerPeriod = new IntegerParameter
-        ("waf.notification.request_manager_period", Parameter.REQUIRED,
-        new Integer(900));
-
-    /**
-     * Digest queue's delay in seconds.
-     */
-    private IntegerParameter m_digestQueueDelay = new IntegerParameter
-        ("waf.notification.digest_queue_delay", Parameter.REQUIRED,
-        new Integer(900));
-
-    /**
-     * Digest queue's period in seconds
-     */
-    private IntegerParameter m_digestQueuePeriod = new IntegerParameter
-        ("waf.notification.digest_queue_period", Parameter.REQUIRED,
-        new Integer(900));
-
-    /**
-     * Simple queue's delay in seconds.
-     */
-    private IntegerParameter m_simpleQueueDelay = new IntegerParameter
-        ("waf.notification.simple_queue_delay", Parameter.REQUIRED,
-        new Integer(900));
-
-    /**
-     * Simple queue's period in seconds
-     */
-    private IntegerParameter m_simpleQueuePeriod = new IntegerParameter
-        ("waf.notification.simple_queue_period", Parameter.REQUIRED,
-        new Integer(900));
-
-    /**
-     * Constructor.
-     * Do not use it directly! Singleton design pattern!
-     */
     public NotificationConfig() {
-        s_log.debug("Executing NotificationConfig Constructor.");
-        register(m_requestManagerDelay);
-        register(m_requestManagerPeriod);
-        register(m_simpleQueueDelay);
-        register(m_simpleQueuePeriod);
-        register(m_digestQueueDelay);
-        register(m_digestQueuePeriod);
-        s_log.debug("NotificationConfig register executed.");
-        
-        s_log.debug("Executing NotificationConfig loadinfo.");
-        loadInfo();
-        s_log.debug("Leaving NotificationConfig Constructor.");
-    }
-    
-
-    /**
-     * Retrieve request manager's delay in seconds.
-     * @return  delay, in seconds. 
-     */
-    public int getRequestManagerDelay() {
-        s_log.debug("m_requestManagerDelay retrieved.");
-        // return ((Integer) get(m_requestManagerDelay)).intValue();
-        return 900;
+        super();
     }
 
-    /**
-     * Retrieve request manager's period in seconds
-     * @return  period, in seconds
-     */
-    public int getRequestManagerPeriod() {
-        s_log.debug("m_requestManagerPeriod retrieved.");
-        // return ((Integer) get(m_requestManagerPeriod)).intValue();
-        return 900;
+    public Integer getRequestManagerDelay() {
+        return requestManagerDelay;
     }
 
-    /**
-     * Retrieve digest queue's delay in seconds.
-     * @return  delay, in seconds.
-     */
-    public int getDigestQueueDelay() {
-        s_log.debug("m_digestQueueDelay retrieved.");
-        // return ((Integer) get(m_digestQueueDelay)).intValue();
-        return 900;
+    public void setRequestManagerDelay(final Integer requestManagerDelay) {
+        this.requestManagerDelay = requestManagerDelay;
     }
 
-    /**
-     * Retrieve digest queue's period in seconds
-     * @return  period, in seconds
-     */
-    public int getDigestQueuePeriod() {
-        s_log.debug("m_digestQueuePeriod retrieved.");
-        // return ((Integer) get(m_digestQueuePeriod)).intValue();
-        return 900;
+    public Integer getRequestManagerPeriod() {
+        return requestManagerPeriod;
     }
 
-    /**
-     * Retrieve simple queue's delay in seconds.
-     * @return  delay, in seconds.
-     */
-    public int getSimpleQueueDelay() {
-        s_log.debug("m_simpleQueueDelay retrieved.");
-        // return ((Integer) get(m_simpleQueueDelay)).intValue();
-        return 900;
+    public void setRequestManagerPeriod(final Integer requestManagerPeriod) {
+        this.requestManagerPeriod = requestManagerPeriod;
     }
 
-    /**
-     * Retrieve simple queue's period in seconds
-     * @return  period, in seconds
-     */
-    public int getSimpleQueuePeriod() {
-        s_log.debug("m_simpleQueuePeriod retrieved.");
-        // return ((Integer) get(m_simpleQueuePeriod)).intValue();
-        return 900;
+    public Integer getDigestQueueDelay() {
+        return digestQueueDelay;
+    }
+
+    public void setDigestQueueDelay(final Integer digestQueueDelay) {
+        this.digestQueueDelay = digestQueueDelay;
+    }
+
+    public Integer getDigestQueuePeriod() {
+        return digestQueuePeriod;
+    }
+
+    public void setDigestQueuePeriod(final Integer digestQueuePeriod) {
+        this.digestQueuePeriod = digestQueuePeriod;
+    }
+
+    public Integer getSimpleQueueDelay() {
+        return simpleQueueDelay;
+    }
+
+    public void setSimpleQueueDelay(final Integer simpleQueueDelay) {
+        this.simpleQueueDelay = simpleQueueDelay;
+    }
+
+    public Integer getSimpleQueuePeriod() {
+        return simpleQueuePeriod;
+    }
+
+    public void setSimpleQueuePeriod(final Integer simpleQueuePeriod) {
+        this.simpleQueuePeriod = simpleQueuePeriod;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 89 * hash + Objects.hashCode(requestManagerDelay);
+        hash = 89 * hash + Objects.hashCode(requestManagerPeriod);
+        hash = 89 * hash + Objects.hashCode(digestQueueDelay);
+        hash = 89 * hash + Objects.hashCode(digestQueuePeriod);
+        hash = 89 * hash + Objects.hashCode(simpleQueueDelay);
+        hash = 89 * hash + Objects.hashCode(simpleQueuePeriod);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof NotificationConfig)) {
+            return false;
+        }
+        final NotificationConfig other = (NotificationConfig) obj;
+        if (!Objects.equals(requestManagerDelay, other.getRequestManagerDelay())) {
+            return false;
+        }
+        if (!Objects.equals(requestManagerPeriod,
+                            other.getRequestManagerPeriod())) {
+            return false;
+        }
+        if (!Objects.equals(digestQueueDelay, other.getDigestQueueDelay())) {
+            return false;
+        }
+        if (!Objects.equals(digestQueuePeriod, other.getDigestQueuePeriod())) {
+            return false;
+        }
+        if (!Objects.equals(simpleQueueDelay, other.getSimpleQueueDelay())) {
+            return false;
+        }
+        return Objects.equals(simpleQueuePeriod, other.getSimpleQueuePeriod());
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s{ "
+                                 + "requestManagerDelay = %d, "
+                                 + "requestManagerPeriod = %d, "
+                                 + "digestQueueDelay = %d, "
+                                 + "digestQueuePeriod = %d, "
+                                 + "simpleQueueDelay = %d, "
+                                 + "simpleQueuePeriod = %d"
+                                 + " }",
+                             super.toString(),
+                             requestManagerDelay,
+                             requestManagerPeriod,
+                             digestQueueDelay,
+                             digestQueuePeriod,
+                             simpleQueueDelay,
+                             simpleQueuePeriod);
     }
 
 }

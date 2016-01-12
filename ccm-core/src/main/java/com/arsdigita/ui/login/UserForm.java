@@ -36,7 +36,7 @@ import com.arsdigita.bebop.parameters.EmailParameter;
 import com.arsdigita.bebop.parameters.NotEmptyValidationListener;
 import com.arsdigita.bebop.parameters.StringLengthValidationListener;
 import com.arsdigita.bebop.parameters.StringParameter;
-import com.arsdigita.kernel.LegacyKernelConfig;
+import com.arsdigita.kernel.KernelConfig;
 
 import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
@@ -285,7 +285,7 @@ public abstract class UserForm extends Form
 
             final String oldEmail = user.getPrimaryEmailAddress().getAddress();
             final String email = (String) m_email.getValue(state);
-            if (LegacyKernelConfig.getConfig().emailIsPrimaryIdentifier()
+            if (KernelConfig.getConfig().emailIsPrimaryIdentifier()
                         && email != null && !email.equals(oldEmail)) {
                 final User result = userRepository.findByEmailAddress(email);
                 if (result != null) {

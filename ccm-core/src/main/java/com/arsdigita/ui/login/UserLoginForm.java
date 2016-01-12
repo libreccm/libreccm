@@ -42,7 +42,7 @@ import com.arsdigita.bebop.parameters.EmailParameter;
 import com.arsdigita.bebop.parameters.NotNullValidationListener;
 import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.bebop.parameters.URLParameter;
-import com.arsdigita.kernel.LegacyKernelConfig;
+import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.kernel.security.SecurityConfig;
 import com.arsdigita.ui.UI;
 
@@ -61,6 +61,7 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.libreccm.cdi.utils.CdiUtil;
 
 import org.apache.shiro.subject.Subject;
+import org.libreccm.configuration.ConfigurationManager;
 
 /**
  * A Bebop form that accepts login and password from the user and attempts to
@@ -133,6 +134,8 @@ public class UserLoginForm extends Form implements LoginConstants,
         addValidationListener(this);
         addProcessListener(this);
 
+        final KernelConfig kernelConfig = KernelConfig.getConfig();
+
         m_autoRegistrationOn = autoRegistrationOn;
 
         m_timestamp = new Hidden(new StringParameter(FORM_TIMESTAMP));
@@ -158,7 +161,7 @@ public class UserLoginForm extends Form implements LoginConstants,
             "login.userRegistrationForm.cookieOption"));
         Option opt = new Option(FORM_PERSISTENT_LOGIN_P_DEFAULT, optLabel);
         m_isPersistent.addOption(opt);
-        if (LegacyKernelConfig.getConfig().isLoginRemembered()) {
+        if (kernelConfig.isRememberLoginEnabled()) {
             m_isPersistent.setOptionSelected(FORM_PERSISTENT_LOGIN_P_DEFAULT);
         }
         cookiePanel.add(m_isPersistent);
@@ -192,7 +195,9 @@ public class UserLoginForm extends Form implements LoginConstants,
             "subsite:loginPromptMsg",
             LoginServlet.SUBSITE_NS_URI);
 
-        if (LegacyKernelConfig.getConfig().emailIsPrimaryIdentifier()) {
+        final KernelConfig kernelConfig = KernelConfig.getConfig();
+
+        if (kernelConfig.emailIsPrimaryIdentifier()) {
             loginMessage.setClassAttr("email");
         } else {
             loginMessage.setClassAttr("screenName");
@@ -200,7 +205,7 @@ public class UserLoginForm extends Form implements LoginConstants,
 
         add(loginMessage);
 
-        if (LegacyKernelConfig.getConfig().emailIsPrimaryIdentifier()) {
+        if (kernelConfig.emailIsPrimaryIdentifier()) {
             add(new Label(LoginHelper.getMessage(
                 "login.userRegistrationForm.email")));
             m_loginName = new TextField(new EmailParameter(FORM_LOGIN));
@@ -228,7 +233,10 @@ public class UserLoginForm extends Form implements LoginConstants,
     public void init(FormSectionEvent event)
         throws FormProcessException {
         s_log.info("In init");
-        if (LegacyKernelConfig.getConfig().isSSOenabled()) {
+
+        final KernelConfig kernelConfig = KernelConfig.getConfig();
+
+        if (kernelConfig.isSsoEnabled()) {
             // try SSO login
             s_log.info("trying SSO");
 //            try {
@@ -345,32 +353,6 @@ public class UserLoginForm extends Form implements LoginConstants,
         } catch (AuthenticationException ex) {
             onLoginFail(event, ex);
         }
-
-//        try {
-//            final CcmSessionContext ctx = Web.getUserContext();
-//            final String username;
-//            if (LegacyKernelConfig.getConfig().emailIsPrimaryIdentifier()) {
-//                username = ((InternetAddress) m_loginName.getValue(state)).
-//                    getAddress();
-//            } else {
-//                username = (String) m_loginName.getValue(state);
-//            }
-//
-//            final String password = ((String)m_password.getValue(state)).trim();
-//            boolean forever = getPersistentLoginValue(event.getPageState(),
-//                                                      false);
-//            // attempt to log in user
-//            final CdiUtil cdiUtil = new CdiUtil();
-//            final LoginManager loginManager;
-
-//                loginManager = cdiUtil.findBean(LoginManager.class);
-//            loginManager.login(username, password);
-//            onLoginSuccess(event);
-//        } catch (FailedLoginException e) {
-//            onLoginFail(event, e);
-//        } catch (LoginException e) {
-//            onLoginException(event, e);
-//        }
     }
 
     /**

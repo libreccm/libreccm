@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 LibreCCM Foundation.
+ * Copyright (C) 2016 LibreCCM Foundation.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,11 +20,8 @@ package org.libreccm.configuration;
 
 import static org.libreccm.core.CoreConstants.*;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.Objects;
 
 import javax.persistence.ElementCollection;
@@ -34,96 +31,91 @@ import javax.persistence.JoinTable;
 import javax.persistence.Table;
 
 /**
- * A setting class for storing a list a strings. This can be used to generate
- * enums which can be configured by the administrator.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "SETTINGS_ENUM", schema = DB_SCHEMA)
-public class EnumSetting
-    extends AbstractSetting<Set<String>> implements Serializable {
+@Table(name = "SETTINGS_STRING_LIST", schema = DB_SCHEMA)
+public class StringListSetting extends AbstractSetting<List<String>> {
 
-    private static final long serialVersionUID = 8506016944203102813L;
-
+    private static final long serialVersionUID = 7093818804712916413L;
+    
     @ElementCollection
-    @JoinTable(name = "SETTINGS_ENUM_VALUES",
+    @JoinTable(name = "SETTINGS_STRING_LIST",
                schema = DB_SCHEMA,
-               joinColumns = {@JoinColumn(name = "ENUM_ID")})
-    private Set<String> value;
-
+               joinColumns = {@JoinColumn(name = "LIST_ID")})
+    private List<String> value;
+    
     @Override
-    public Set<String> getValue() {
+    public List<String> getValue() {
         if (value == null) {
             return null;
         } else {
-            return new HashSet<>(value);
+            return new ArrayList<>(value);
         }
     }
-
+    
     @Override
-    public void setValue(final Set<String> value) {
+    public void setValue(final List<String> value) {
         this.value = value;
     }
-
-    public void addEnumValue(final String value) {
+    
+    public void addListValue(final String value) {
         this.value.add(value);
     }
-
-    public void removeEnumValue(final String value) {
+    
+    public void removeListValue(final String value) {
         this.value.remove(value);
     }
 
     @Override
     public int hashCode() {
-        int hash = super.hashCode();
-        hash = 89 * hash + Objects.hashCode(value);
+        int hash = 7;
+        hash = 41 * hash + Objects.hashCode(value);
         return hash;
     }
 
     @Override
-    public boolean equals(final Object obj) {
-        if (!super.equals(obj)) {
-            return false;
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
         }
         if (obj == null) {
             return false;
         }
-
-        if (!(obj instanceof EnumSetting)) {
+        if (!(obj instanceof StringListSetting)) {
             return false;
         }
-        final EnumSetting other = (EnumSetting) obj;
+        final StringListSetting other = (StringListSetting) obj;
         if (!other.canEqual(this)) {
             return false;
         }
-
+        
         return Objects.equals(value, other.getValue());
     }
-
+    
     @Override
     public boolean canEqual(final Object obj) {
-        return obj instanceof EnumSetting;
+        return obj instanceof StringListSetting;
     }
-
+    
     @Override
     public String toString(final String data) {
-        final StringBuffer enumValues = new StringBuffer();
-        enumValues.append("{ ");
+        final StringBuilder listValues = new StringBuilder();
+        listValues.append("{ ");
         if (value != null) {
-            final List<String> values = new ArrayList<>(value);
-            values.forEach((String v) -> {
-                enumValues.append('\"').append(v).append('\"');
-                if (values.indexOf(v) != values.size()- 1) {
-                    enumValues.append(", ");
+            value.forEach((String v) -> {
+                listValues.append('\"').append(v).append('\"');
+                if (value.indexOf(v) != value.size() - 1) {
+                    listValues.append(", ");
                 }
             });
         }
-        enumValues.append(" }");
-
+        listValues.append(" }");
+        
         return super.toString(String.format(", value = %s%s",
-                                            enumValues.toString(),
+                                            listValues.toString(),
                                             data));
     }
-
+    
 }

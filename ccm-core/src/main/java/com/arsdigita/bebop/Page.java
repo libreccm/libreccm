@@ -26,7 +26,7 @@ import com.arsdigita.bebop.parameters.BitSetParameter;
 import com.arsdigita.bebop.parameters.ParameterModel;
 import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.bebop.util.Traversal;
-import com.arsdigita.kernel.LegacyKernelConfig;
+import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.util.Assert;
 import com.arsdigita.util.SystemInformation;
 import com.arsdigita.xml.Document;
@@ -625,7 +625,7 @@ public class Page extends SimpleComponent implements Container {
             m_panel.generateXML(state, page);
         }
 
-        if (LegacyKernelConfig.getConfig().isDebugEnabled()
+        if (KernelConfig.getConfig().isDebugEnabled()
                 && debugStructure(state.getRequest())) {
 
             Element structure = page.newChildElement("bebop:structure",

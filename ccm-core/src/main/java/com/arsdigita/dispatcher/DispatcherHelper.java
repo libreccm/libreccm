@@ -19,7 +19,7 @@
 package com.arsdigita.dispatcher;
 
 //import com.arsdigita.kernel.Kernel;
-import com.arsdigita.kernel.LegacyKernelConfig;
+import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.util.Assert;
 import com.arsdigita.util.ParameterProvider;
 import com.arsdigita.util.StringUtils;
@@ -1135,7 +1135,7 @@ public final class DispatcherHelper implements DispatcherConstants {
      * @return The negotiated locale
      */
     public static Locale getNegotiatedLocale() {
-        LegacyKernelConfig kernelConfig = LegacyKernelConfig.getConfig();
+        final KernelConfig kernelConfig = KernelConfig.getConfig();
 
         // Set the preferedLocale to the default locale (first entry in the 
         // config parameter list)

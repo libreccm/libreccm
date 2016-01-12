@@ -37,7 +37,7 @@ import com.arsdigita.bebop.form.Password;
 import com.arsdigita.bebop.form.Submit;
 import com.arsdigita.bebop.parameters.NotNullValidationListener;
 import com.arsdigita.bebop.parameters.URLParameter;
-import com.arsdigita.kernel.LegacyKernelConfig;
+import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.ui.UI;
 import com.arsdigita.web.URL;
 import com.arsdigita.web.ReturnSignal;
@@ -126,7 +126,7 @@ public class ChangePasswordForm extends Form
         final Subject subject = cdiUtil.findBean(Subject.class);
         final Shiro shiro = cdiUtil.findBean(Shiro.class);
 
-        final LegacyKernelConfig kernelConfig = LegacyKernelConfig.getConfig();
+        final KernelConfig kernelConfig = KernelConfig.getConfig();
         final User user = shiro.getUser();
         
         final Label greeting = new Label(LoginHelper.getMessage(

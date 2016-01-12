@@ -45,6 +45,7 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.message.FormattedMessage;
 
+import java.util.Set;
 import java.util.StringJoiner;
 
 /**
@@ -497,11 +498,13 @@ public class ConfigurationManager {
         } else if (Double.class.getName().equals(valueTypeName)) {
             return (AbstractSetting<T>) new DoubleSetting();
         } else if (List.class.getName().equals(valueTypeName)) {
-            return (AbstractSetting<T>) new EnumSetting();
+            return (AbstractSetting<T>) new StringListSetting();
         } else if (LocalizedString.class.getName().equals(valueTypeName)) {
             return (AbstractSetting<T>) new LocalizedStringSetting();
         } else if (Long.class.getName().equals(valueTypeName)) {
             return (AbstractSetting<T>) new LongSetting();
+        } else if (Set.class.getName().equals(valueTypeName)) {
+            return (AbstractSetting<T>) new EnumSetting();
         } else if (String.class.getName().equals(valueTypeName)) {
             return (AbstractSetting<T>) new StringSetting();
         } else {

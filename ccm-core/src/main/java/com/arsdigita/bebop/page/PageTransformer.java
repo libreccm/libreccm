@@ -22,7 +22,7 @@ import com.arsdigita.bebop.Bebop;
 import com.arsdigita.dispatcher.DispatcherHelper;
 import com.arsdigita.globalization.Globalization;
 import com.arsdigita.globalization.GlobalizationHelper;
-import com.arsdigita.kernel.LegacyKernelConfig;
+import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.templating.PresentationManager;
 import com.arsdigita.templating.Templating;
 import com.arsdigita.templating.XSLParameterGenerator;
@@ -454,7 +454,7 @@ public class PageTransformer implements PresentationManager {
                 }
 
                 // copy and paste from BasePresentationManager
-                if (LegacyKernelConfig.getConfig().isDebugEnabled()) {
+                if (KernelConfig.getConfig().isDebugEnabled()) {
                     Document origDoc = (Document) req.getAttribute(
                         "com.arsdigita.xml.Document");
                     Debugger.addDebugger(new TransformationDebugger(template.

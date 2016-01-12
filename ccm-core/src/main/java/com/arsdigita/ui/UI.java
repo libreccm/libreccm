@@ -42,17 +42,17 @@ public abstract class UI {
     private static final UIConfig s_config = UIConfig.getConfig();
 
     /** URL for systems public top level page (entry or start page).          */
-    private static final String s_rootPageURL = s_config.getRootPage();
+    private static final String s_rootPageURL = s_config.getRootPageUrl();
     /** URL to page a user should be redirected to after login.               */
-    private static final String s_userRedirectURL = s_config.getUserRedirect();
+    private static final String s_userRedirectURL = s_config.getUserRedirectUrl();
     /** (Absolute) URL for workspace page.                                    */
-    private static final String s_workspaceURL = s_config.getWorkspace();
+    private static final String s_workspaceURL = s_config.getWorkspaceUrl();
 
 
     /**
      * Provides a handle to the UI config record.
      * 
-     * @return Instance of UIConfig
+     * @return Instance of LegacyUIConfig
      */
     public static UIConfig getConfig() {
         return s_config;

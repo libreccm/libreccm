@@ -524,6 +524,13 @@ CREATE SCHEMA ccm_core;
         primary key (OBJECT_ID)
     );
 
+    create table CCM_CORE.SETTINGS_STRING_LIST (
+        OBJECT_ID int8 not null,
+        LIST_ID int8 not null,
+        value varchar(255),
+        primary key (OBJECT_ID)
+    );
+
     create table CCM_CORE.TASK_ASSIGNMENTS (
         TASK_ASSIGNMENT_ID int8 not null,
         ROLE_ID int8,
@@ -1053,6 +1060,16 @@ CREATE SCHEMA ccm_core;
         add constraint FK_naonte6jut7b842icvp9ahino 
         foreign key (OBJECT_ID) 
         references CCM_CORE.SETTINGS;
+
+    alter table CCM_CORE.SETTINGS_STRING_LIST 
+        add constraint FK_34s3comqq4mhy9kcr04iavfef 
+        foreign key (OBJECT_ID) 
+        references CCM_CORE.SETTINGS;
+
+    alter table CCM_CORE.SETTINGS_STRING_LIST 
+        add constraint FK_obwiaa74lrjqjlpjidjltysoq 
+        foreign key (LIST_ID) 
+        references CCM_CORE.SETTINGS_STRING_LIST;
 
     alter table CCM_CORE.TASK_ASSIGNMENTS 
         add constraint FK_klh64or0yq26c63181j1tps2o 

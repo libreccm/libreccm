@@ -18,12 +18,14 @@
  */
 package org.libreccm.security;
 
-import com.arsdigita.kernel.LegacyKernelConfig;
+import com.arsdigita.kernel.KernelConfig;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
@@ -97,7 +99,7 @@ public class Shiro {
     }
 
     public Subject getPublicUser() {
-        if (LegacyKernelConfig.getConfig().emailIsPrimaryIdentifier()) {
+        if (KernelConfig.getConfig().emailIsPrimaryIdentifier()) {
             return buildInternalSubject("public-user@localhost");
         } else {
             return buildInternalSubject("public-user");
@@ -109,7 +111,7 @@ public class Shiro {
     }
 
     public User getUser() {
-        final LegacyKernelConfig kernelConfig = LegacyKernelConfig.getConfig();
+        final KernelConfig kernelConfig = KernelConfig.getConfig();
         if (kernelConfig.emailIsPrimaryIdentifier()) {
             return userRepository.findByEmailAddress((String) getSubject().
                     getPrincipal());

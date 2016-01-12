@@ -18,12 +18,15 @@
  */
 package com.arsdigita.kernel;
 
+import org.libreccm.cdi.utils.CdiUtil;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
 import org.libreccm.configuration.Configuration;
+import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.configuration.Setting;
 
 import java.util.StringJoiner;
@@ -36,6 +39,9 @@ import java.util.StringJoiner;
                descKey = "kernel.config.description")
 public final class KernelConfig {
 
+    private static final String EMAIL = "email";
+    private static final String SCREEN_NAME = "screen_name";
+
     @Setting(descKey = "kernel.config.debug_enabled")
     private boolean debugEnabled = false;
 
@@ -46,7 +52,7 @@ public final class KernelConfig {
     private boolean dataPermissionCheckEnabled = true;
 
     @Setting(descKey = "kernel.config.primary_user_identifier")
-    private String primaryUserIdentifier = "email";
+    private String primaryUserIdentifier = EMAIL;
 
     @Setting(descKey = "kernel.config.sso_enabled")
     private boolean ssoEnabled = false;
@@ -63,6 +69,13 @@ public final class KernelConfig {
 
     @Setting(descKey = "kernel.config.default_language")
     private String defaultLanguage = "en";
+
+    public static KernelConfig getConfig() {
+        final CdiUtil cdiUtil = new CdiUtil();
+        final ConfigurationManager confManager = cdiUtil.findBean(
+            ConfigurationManager.class);
+        return confManager.findConfiguration(KernelConfig.class);
+    }
 
     public KernelConfig() {
         super();
@@ -98,14 +111,22 @@ public final class KernelConfig {
     }
 
     public void setPrimaryUserIdentifier(final String primaryUserIdentifier) {
-        if ("screen_name".equals(primaryUserIdentifier)
-                || "email".equals(primaryUserIdentifier)) {
+        if (SCREEN_NAME.equals(primaryUserIdentifier)
+                || EMAIL.equals(primaryUserIdentifier)) {
             this.primaryUserIdentifier = primaryUserIdentifier;
         } else {
             throw new IllegalArgumentException(
                 "Primary user identifier can only be \"screen_name\" or "
                     + "\"email\"");
         }
+    }
+
+    public boolean emailIsPrimaryIdentifier() {
+        return EMAIL.equals(primaryUserIdentifier);
+    }
+    
+    public boolean screenNameIsPrimaryIdentifier() {
+        return SCREEN_NAME.equals(primaryUserIdentifier);
     }
 
     public boolean isSsoEnabled() {
@@ -154,6 +175,10 @@ public final class KernelConfig {
 
     public void removeSupportedLanguage(final String language) {
         supportedLanguages.remove(language);
+    }
+
+    public boolean hasLanguage(final String language) {
+        return supportedLanguages.contains(language);
     }
 
     public String getDefaultLanguage() {
@@ -231,7 +256,7 @@ public final class KernelConfig {
 
     @Override
     public String toString() {
-        final StringJoiner joiner = new StringJoiner(",");
+        final StringJoiner joiner = new StringJoiner(", ");
         if (supportedLanguages != null) {
             supportedLanguages.forEach(s -> joiner.add(s));
         }
