@@ -22,6 +22,7 @@ import static org.libreccm.core.CoreConstants.*;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.Objects;
 
@@ -55,7 +56,7 @@ public class EnumSetting
         if (value == null) {
             return null;
         } else {
-            return value;
+            return new HashSet<>(value);
         }
     }
 

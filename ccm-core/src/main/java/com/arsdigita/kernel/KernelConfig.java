@@ -22,8 +22,11 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+
 import org.libreccm.configuration.Configuration;
 import org.libreccm.configuration.Setting;
+
+import java.util.StringJoiner;
 
 /**
  *
@@ -56,11 +59,13 @@ public final class KernelConfig {
 
     @Setting(descKey = "kernel.config.supported_languages")
     private Set<String> supportedLanguages = new HashSet<>(
-            Arrays.asList(new String[]{"en"}));
+        Arrays.asList(new String[]{"en"}));
+
+    @Setting(descKey = "kernel.config.default_language")
+    private String defaultLanguage = "en";
 
     public KernelConfig() {
         super();
-
     }
 
     public boolean isDebugEnabled() {
@@ -84,7 +89,7 @@ public final class KernelConfig {
     }
 
     public void setDataPermissionCheckEnabled(
-            final boolean dataPermissionCheckEnabled) {
+        final boolean dataPermissionCheckEnabled) {
         this.dataPermissionCheckEnabled = dataPermissionCheckEnabled;
     }
 
@@ -94,12 +99,12 @@ public final class KernelConfig {
 
     public void setPrimaryUserIdentifier(final String primaryUserIdentifier) {
         if ("screen_name".equals(primaryUserIdentifier)
-                    || "email".equals(primaryUserIdentifier)) {
+                || "email".equals(primaryUserIdentifier)) {
             this.primaryUserIdentifier = primaryUserIdentifier;
         } else {
             throw new IllegalArgumentException(
-                    "Primary user identifier can only be \"screen_name\" or "
-                            + "\"email\"");
+                "Primary user identifier can only be \"screen_name\" or "
+                    + "\"email\"");
         }
     }
 
@@ -128,11 +133,44 @@ public final class KernelConfig {
     }
 
     public Set<String> getSupportedLanguages() {
-        return supportedLanguages;
+        if (supportedLanguages == null) {
+            return null;
+        } else {
+            return new HashSet<>(supportedLanguages);
+        }
     }
 
     public void setSupportedLanguages(final Set<String> supportedLanguages) {
         this.supportedLanguages = supportedLanguages;
+    }
+
+    public void addSupportedLanguage(final String language) {
+        if (language == null) {
+            throw new IllegalArgumentException("Language can't be null.");
+        }
+
+        supportedLanguages.add(language);
+    }
+
+    public void removeSupportedLanguage(final String language) {
+        supportedLanguages.remove(language);
+    }
+
+    public String getDefaultLanguage() {
+        return defaultLanguage;
+    }
+
+    public void setDefaultLanguage(final String defaultLanguage) {
+        if (defaultLanguage == null) {
+            throw new IllegalArgumentException("Default language can't be null");
+        }
+
+        if (!supportedLanguages.contains(defaultLanguage)) {
+            throw new IllegalArgumentException(
+                "Default language must be one of the supported languages");
+        }
+
+        this.defaultLanguage = defaultLanguage;
     }
 
     @Override
@@ -146,6 +184,7 @@ public final class KernelConfig {
         hash = 61 * hash + (rememberLoginEnabled ? 1 : 0);
         hash = 61 * hash + (secureLoginEnabled ? 1 : 0);
         hash = 61 * hash + Objects.hashCode(supportedLanguages);
+        hash = 61 * hash + Objects.hashCode(defaultLanguage);
         return hash;
     }
 
@@ -161,46 +200,53 @@ public final class KernelConfig {
             return false;
         }
         final KernelConfig other = (KernelConfig) obj;
-        if (debugEnabled != other.debugEnabled) {
+        if (debugEnabled != other.isDebugEnabled()) {
             return false;
         }
-        if (webdevSupportEnabled != other.webdevSupportEnabled) {
+        if (webdevSupportEnabled != other.isWebdevSupportEnabled()) {
             return false;
         }
-        if (dataPermissionCheckEnabled != other.dataPermissionCheckEnabled) {
+        if (dataPermissionCheckEnabled != other.isDataPermissionCheckEnabled()) {
             return false;
         }
-        if (ssoEnabled != other.ssoEnabled) {
+        if (ssoEnabled != other.isSsoEnabled()) {
             return false;
         }
-        if (rememberLoginEnabled != other.rememberLoginEnabled) {
+        if (rememberLoginEnabled != other.isRememberLoginEnabled()) {
             return false;
         }
-        if (secureLoginEnabled != other.secureLoginEnabled) {
+        if (secureLoginEnabled != other.isSecureLoginEnabled()) {
             return false;
         }
         if (!Objects.equals(primaryUserIdentifier,
-                            other.primaryUserIdentifier)) {
+                            other.getPrimaryUserIdentifier())) {
             return false;
         }
-        return Objects.equals(supportedLanguages, other.supportedLanguages);
+        if (!Objects.equals(supportedLanguages, other.getSupportedLanguages())) {
+            return false;
+        }
+
+        return Objects.equals(defaultLanguage, other.getDefaultLanguage());
     }
 
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        supportedLanguages.forEach(s -> builder.append(s));
+        final StringJoiner joiner = new StringJoiner(",");
+        if (supportedLanguages != null) {
+            supportedLanguages.forEach(s -> joiner.add(s));
+        }
 
         return String.format("%s{ "
-                                     + "debugEnabled = %b, "
-                                     + "webdevSupportEnabled = %b, "
-                                     + "dataPermissionCheckEnabled = %b, "
-                                     + "primaryUserIdentifier = \"%s\", "
-                                     + "ssoEnabled = %b, "
-                                     + "rememberLoginEnabeled = %b, "
-                                     + "secureLoginEnabled = %b, "
-                                     + "supportedLanguages = \"%s\""
-                                     + " }",
+                                 + "debugEnabled = %b, "
+                                 + "webdevSupportEnabled = %b, "
+                                 + "dataPermissionCheckEnabled = %b, "
+                                 + "primaryUserIdentifier = \"%s\", "
+                                 + "ssoEnabled = %b, "
+                                 + "rememberLoginEnabeled = %b, "
+                                 + "secureLoginEnabled = %b, "
+                                 + "supportedLanguages = \"%s\", "
+                                 + "defaultLanguage = \"%s\""
+                                 + " }",
                              super.toString(),
                              debugEnabled,
                              webdevSupportEnabled,
@@ -209,6 +255,8 @@ public final class KernelConfig {
                              ssoEnabled,
                              rememberLoginEnabled,
                              secureLoginEnabled,
-                             builder.toString());
+                             joiner.toString(),
+                             defaultLanguage);
     }
+
 }
