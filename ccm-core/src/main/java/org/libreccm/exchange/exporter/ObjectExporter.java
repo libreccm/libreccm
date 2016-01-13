@@ -25,7 +25,9 @@ import org.libreccm.security.User;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Main class for exporting database objects as .csv-textfiles. Subclasses
@@ -101,15 +103,43 @@ public abstract class ObjectExporter<T> {
      * @return  A list of strings containing all database information of the
      *          wanted object class.
      */
-    public abstract List<String[]> asList(List<T> exportObjects);
+    private List<String[]> asList(List<T> exportObjects) {
+        List<String[]> exportList = new ArrayList<>();
+
+        exportList.add(getClassName());
+        exportList.add(getAttributeNames());
+        exportList.addAll(exportObjects.stream().map(
+                this::reduceToStrings).collect(Collectors.toList()));
+
+        return exportList;
+    }
+
+    /**
+     * Abstract method to get the class name for the first line in the
+     * .csv-textfile.
+     *
+     * @return A list containing just one string, the class name
+     */
+    protected abstract String[] getClassName();
+
+    /**
+     * Abstract method to get the class header for the secfirstond line in the
+     * .csv-textfile.
+     *
+     * @return A list of strings representing the object attributes
+     */
+    protected abstract String[] getAttributeNames();
 
     /**
      * Abstract method to reduce the types of a single export object to
-     * strings.
+     * strings. Implementing subclass has to pay attention to attribute
+     * fields containing null values. Null values are not always forbidden,
+     * but when reducing to strings it will cause a NullPointerException, if
+     * not handled accurately.
      *
      * @param exportObject A single exportObject
      * @return  A list of strings representing the parameters of the
      *          export object
      */
-    protected abstract String[] reduceToString(T exportObject);
+    protected abstract String[] reduceToStrings(T exportObject);
 }
