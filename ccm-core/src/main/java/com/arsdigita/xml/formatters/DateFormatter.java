@@ -36,8 +36,7 @@ public class DateFormatter implements Formatter {
 
     public static final DateFormatterConfig getConfig() {
         if (m_config == null) {
-            m_config = new DateFormatterConfig();
-            m_config.load();
+            m_config = DateFormatterConfig.getConfig();
         }
         return m_config;
     }

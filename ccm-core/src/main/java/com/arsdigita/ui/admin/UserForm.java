@@ -122,7 +122,7 @@ class UserForm extends Form implements FormValidationListener, AdminConstants {
             = new TextField(new StringParameter(USER_FORM_INPUT_QUESTION));
         m_question.setSize(50);
 
-        if (securityConfig.getEnableQuestion()) {
+        if (securityConfig.isPasswordRecoveryEnabled()) {
             add(USER_FORM_LABEL_QUESTION);
             add(m_question);
         }
@@ -131,7 +131,7 @@ class UserForm extends Form implements FormValidationListener, AdminConstants {
         m_answer = new TextField(new StringParameter(USER_FORM_INPUT_ANSWER));
         m_answer.setSize(50);
 
-        if (securityConfig.getEnableQuestion()) {
+        if (securityConfig.isPasswordRecoveryEnabled()) {
             add(USER_FORM_LABEL_ANSWER);
             add(m_answer);
         }
@@ -211,7 +211,7 @@ class UserForm extends Form implements FormValidationListener, AdminConstants {
             }
         }
 
-        if (securityConfig.getEnableQuestion()) {
+        if (securityConfig.isPasswordRecoveryEnabled()) {
             // If the password answer is anything but null, make sure it
             // contains some non-whitespace characters
             String answer = (String) m_answer.getValue(ps);
@@ -285,14 +285,14 @@ class UserForm extends Form implements FormValidationListener, AdminConstants {
 
         USER_FORM_LABEL_PASSWORD.setVisible(state, isVisible);
         USER_FORM_LABEL_PASSWORD_CONFIRMATION.setVisible(state, isVisible);
-        if (securityConfig.getEnableQuestion()) {
+        if (securityConfig.isPasswordRecoveryEnabled()) {
             USER_FORM_LABEL_QUESTION.setVisible(state, isVisible);
             USER_FORM_LABEL_ANSWER.setVisible(state, isVisible);
         }
 
         m_password.setVisible(state, isVisible);
         m_confirmPassword.setVisible(state, isVisible);
-        if (securityConfig.getEnableQuestion()) {
+        if (securityConfig.isPasswordRecoveryEnabled()) {
             m_question.setVisible(state, isVisible);
             m_answer.setVisible(state, isVisible);
         }

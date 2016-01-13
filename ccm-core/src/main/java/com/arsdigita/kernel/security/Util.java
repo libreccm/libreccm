@@ -23,9 +23,6 @@ import com.arsdigita.util.Classes;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.login.LoginException;
-import javax.servlet.http.HttpServletRequest;
 
 /**
  *
@@ -33,7 +30,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class Util {
 
-    private static SecurityConfig s_conf = SecurityConfig.getConfig();
+    private static final SecurityConfig s_conf = SecurityConfig.getConfig();
 
     private static SecurityHelper s_helper = null;
 

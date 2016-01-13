@@ -156,23 +156,15 @@ public class SecurityConfigTest {
         assertThat(excludedExtensions.get(2), is(equalTo(".png")));
         assertThat(excludedExtensions.get(3), is(equalTo(".pdf")));
 
-        assertThat(securityConfig.getCookieDurationMinutes(), is(nullValue()));
+        assertThat(securityConfig.isAutoRegistrationEnabled(), is(false));
 
-        assertThat(securityConfig.getCookieDomain(),
-                   is(equalTo(".example.org")));
+        assertThat(securityConfig.isPasswordRecoveryEnabled(), is(true));
 
-        assertThat(securityConfig.getAdminContactEmail(),
-                   is(equalTo("admin@example.org")));
+        assertThat(securityConfig.getHashAlgorithm(), is(equalTo("SHA-512")));
 
-        assertThat(securityConfig.isAutoRegistrationOn(), is(false));
-
-        assertThat(securityConfig.isUserBanOn(), is(true));
-
-        assertThat(securityConfig.getEnableQuestion(), is(false));
-
-        assertThat(securityConfig.getHashAlgorithm(), is(equalTo("SHA-256")));
-
-        assertThat(securityConfig.getSaltLength(), is(128));
+        assertThat(securityConfig.getSaltLength(), is(256));
+        
+        assertThat(securityConfig.getHashIterations(), is(50000));
     }
 
 }

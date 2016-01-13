@@ -61,7 +61,6 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.libreccm.cdi.utils.CdiUtil;
 
 import org.apache.shiro.subject.Subject;
-import org.libreccm.configuration.ConfigurationManager;
 
 /**
  * A Bebop form that accepts login and password from the user and attempts to
@@ -173,7 +172,7 @@ public class UserLoginForm extends Form implements LoginConstants,
 
         add(new Submit(SUBMIT), ColumnPanel.CENTER | ColumnPanel.FULL_WIDTH);
 
-        if (securityConfig.getEnableQuestion()) {
+        if (securityConfig.isPasswordRecoveryEnabled()) {
             add(new DynamicLink("login.userRegistrationForm.forgotPasswordLink",
                                 LoginServlet.getRecoverPasswordPageURL()));
         }

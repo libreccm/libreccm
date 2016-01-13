@@ -19,11 +19,13 @@
 package org.libreccm.security;
 
 import com.arsdigita.kernel.security.SecurityConfig;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.executable.ValidateOnExecution;
+
 import org.apache.shiro.authc.credential.PasswordMatcher;
 import org.apache.shiro.authc.credential.PasswordService;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
@@ -127,7 +129,7 @@ public class UserManager {
      * @return The hashed password.b
      */
     private String hashPassword(final String password) {
-        //Get the values from the SecurityConfig
+        //Get the values from the LegacySecurityConfig
         final String hashAlgo = SecurityConfig.getConfig().getHashAlgorithm();
         final int iterations = SecurityConfig.getConfig().getHashIterations();
 
@@ -149,7 +151,7 @@ public class UserManager {
 
     /**
      * Helper method for generating a random salt. The length of the generated
-     * salt is configured in the {@link SecurityConfig}.
+     * salt is configured in the {@link LegacySecurityConfig}.
      *
      * @return A new random salt.
      */
