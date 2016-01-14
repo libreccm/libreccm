@@ -62,7 +62,7 @@ public class Tree extends SimpleComponent implements Resettable {
         Logger.getLogger(Tree.class);
 
     private static final boolean s_selectAttributeEnabled =
-        Bebop.getConfig().treeSelectAttributeEnabled();
+        BebopConfig.getConfig().isTreeSelectEnabled();
 
     // Any node id in the currentState is equivalent
     // to that node being expanded.  If node id is

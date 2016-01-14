@@ -18,7 +18,7 @@
  */
 package com.arsdigita.bebop.page;
 
-import com.arsdigita.bebop.Bebop;
+import com.arsdigita.bebop.BebopConfig;
 import com.arsdigita.dispatcher.DispatcherHelper;
 import com.arsdigita.globalization.Globalization;
 import com.arsdigita.globalization.GlobalizationHelper;
@@ -84,199 +84,199 @@ public class PageTransformer implements PresentationManager {
         registerXSLParameterGenerator("contextPath",
                                       new XSLParameterGenerator() {
 
-                                          @Override
-                                          public String generateValue(
-                                              HttpServletRequest request) {
-                                                  return request
-                                                  .getContextPath();
-                                              }
+                                  @Override
+                                  public String generateValue(
+                                          HttpServletRequest request) {
+                                      return request
+                                              .getContextPath();
+                                  }
 
-                                      });
+                              });
 
         registerXSLParameterGenerator("root-context-prefix",
                                       new XSLParameterGenerator() {
 
-                                          @Override
-                                          public String generateValue(
-                                              HttpServletRequest request) {
-                                                  return Web.getConfig()
-                                                  .getDispatcherContextPath();
-                                              }
+                                  @Override
+                                  public String generateValue(
+                                          HttpServletRequest request) {
+                                      return Web.getConfig()
+                                              .getDispatcherContextPath();
+                                  }
 
-                                      });
+                              });
 
         registerXSLParameterGenerator("context-prefix",
                                       new XSLParameterGenerator() {
 
-                                          @Override
-                                          public String generateValue(
-                                              HttpServletRequest request) {
-                                                  return Web.getWebContext()
-                                                  .getRequestURL()
-                                                  .getContextPath();
-                                              }
+                                  @Override
+                                  public String generateValue(
+                                          HttpServletRequest request) {
+                                      return Web.getWebContext()
+                                              .getRequestURL()
+                                              .getContextPath();
+                                  }
 
-                                      });
+                              });
 
         registerXSLParameterGenerator("internal-theme",
                                       new XSLParameterGenerator() {
 
-                                          @Override
-                                          public String generateValue(
-                                              HttpServletRequest request) {
-                                                  return Web.getWebContext()
-                                                  .getRequestURL()
-                                                  .getContextPath()
-                                                             + com.arsdigita.web.URL.INTERNAL_THEME_DIR;
-                                              }
+                                  @Override
+                                  public String generateValue(
+                                          HttpServletRequest request) {
+                                      return Web.getWebContext()
+                                              .getRequestURL()
+                                              .getContextPath()
+                                                     + com.arsdigita.web.URL.INTERNAL_THEME_DIR;
+                                  }
 
-                                      });
+                              });
 
         registerXSLParameterGenerator("dispatcher-prefix",
                                       new XSLParameterGenerator() {
 
-                                          @Override
-                                          public String generateValue(
-                                              HttpServletRequest request) {
-                                                  return com.arsdigita.web.URL
-                                                  .getDispatcherPath();
-                                              }
+                                  @Override
+                                  public String generateValue(
+                                          HttpServletRequest request) {
+                                      return com.arsdigita.web.URL
+                                              .getDispatcherPath();
+                                  }
 
-                                      });
+                              });
 
         registerXSLParameterGenerator("dcp-on-buttons",
                                       new XSLParameterGenerator() {
 
-                                          @Override
-                                          public String generateValue(
-                                              HttpServletRequest request) {
-                                                  if (Bebop.getConfig()
-                                                  .doubleClickProtectionOnButtons()) {
-                                                      return "true";
-                                                  } else {
-                                                      return null;
-                                                  }
+                                  @Override
+                                  public String generateValue(
+                                          HttpServletRequest request) {
+                                      if (BebopConfig.getConfig()
+                                              .getDcpOnButtons()) {
+                                          return "true";
+                                      } else {
+                                          return null;
+                                      }
 
-                                              }
+                                  }
 
-                                      });
+                              });
 
         registerXSLParameterGenerator("dcp-on-links",
                                       new XSLParameterGenerator() {
 
-                                          @Override
-                                          public String generateValue(
-                                              HttpServletRequest request) {
-                                                  if (Bebop.getConfig()
-                                                  .doubleClickProtectionOnLinks()) {
-                                                      return "true";
-                                                  } else {
-                                                      return null;
-                                                  }
+                                  @Override
+                                  public String generateValue(
+                                          HttpServletRequest request) {
+                                      if (BebopConfig.getConfig()
+                                              .getDcpOnLinks()) {
+                                          return "true";
+                                      } else {
+                                          return null;
+                                      }
 
-                                              }
+                                  }
 
-                                      });
+                              });
 
         registerXSLParameterGenerator("user-agent",
                                       new XSLParameterGenerator() {
 
-                                          @Override
-                                          public String generateValue(
-                                              HttpServletRequest request) {
-                                                  return request.getHeader(
-                                                      "User-Agent");
-                                              }
+                                  @Override
+                                  public String generateValue(
+                                          HttpServletRequest request) {
+                                      return request.getHeader(
+                                              "User-Agent");
+                                  }
 
-                                      });
+                              });
 
         registerXSLParameterGenerator("negotiated-language",
                                       new XSLParameterGenerator() {
 
-                                          @Override
-                                          public String generateValue(
-                                              HttpServletRequest request) {
-                                                  return GlobalizationHelper
-                                                  .getNegotiatedLocale()
-                                                  .getLanguage();
-                                              }
+                                  @Override
+                                  public String generateValue(
+                                          HttpServletRequest request) {
+                                      return GlobalizationHelper
+                                              .getNegotiatedLocale()
+                                              .getLanguage();
+                                  }
 
-                                      });
+                              });
 
         registerXSLParameterGenerator("selected-language",
                                       new XSLParameterGenerator() {
 
-                                          @Override
-                                          public String generateValue(
-                                              HttpServletRequest request) {
-                                                  Locale selectedLocale
-                                                         = com.arsdigita.globalization.GlobalizationHelper
-                                                  .getSelectedLocale(request);
-                                                  return (selectedLocale != null)
-                                                         ? selectedLocale
-                                                      .toString() : "";
-                                              }
+                                  @Override
+                                  public String generateValue(
+                                          HttpServletRequest request) {
+                                      Locale selectedLocale
+                                             = com.arsdigita.globalization.GlobalizationHelper.
+                                              getSelectedLocale(request);
+                                      return (selectedLocale != null)
+                                             ? selectedLocale
+                                              .toString() : "";
+                                  }
 
-                                      });
+                              });
 
         registerXSLParameterGenerator("request-scheme",
                                       new XSLParameterGenerator() {
 
-                                          @Override
-                                          public String generateValue(
-                                              HttpServletRequest request) {
-                                                  return request.getScheme();
-                                              }
+                                  @Override
+                                  public String generateValue(
+                                          HttpServletRequest request) {
+                                      return request.getScheme();
+                                  }
 
-                                      });
+                              });
 
         registerXSLParameterGenerator("server-name",
                                       new XSLParameterGenerator() {
 
-                                          @Override
-                                          public String generateValue(
-                                              HttpServletRequest request) {
-                                                  return request.getServerName();
-                                              }
+                                  @Override
+                                  public String generateValue(
+                                          HttpServletRequest request) {
+                                      return request.getServerName();
+                                  }
 
-                                      });
+                              });
 
         registerXSLParameterGenerator("server-port",
                                       new XSLParameterGenerator() {
 
-                                          @Override
-                                          public String generateValue(
-                                              HttpServletRequest request) {
-                                                  return Integer.toString(
-                                                      request.getServerPort());
-                                              }
+                                  @Override
+                                  public String generateValue(
+                                          HttpServletRequest request) {
+                                      return Integer.toString(
+                                              request.getServerPort());
+                                  }
 
-                                      });
+                              });
 
         registerXSLParameterGenerator("host",
                                       new XSLParameterGenerator() {
 
-                                          @Override
-                                          public String generateValue(
-                                              HttpServletRequest request) {
-                                                  if (request.getServerPort()
-                                                      == 80) {
-                                                      return String.format(
-                                                          "%s://%s", request
-                                                          .getScheme(), request
-                                                          .getServerName());
-                                                  } else {
-                                                      return String.format(
-                                                          "%s://%s:%d",
-                                                          request.getScheme(),
-                                                          request
-                                                          .getServerName(),
-                                                          request
-                                                          .getServerPort());
-                                                  }
-                                              }
+                                  @Override
+                                  public String generateValue(
+                                          HttpServletRequest request) {
+                                      if (request.getServerPort()
+                                                  == 80) {
+                                          return String.format(
+                                                  "%s://%s", request
+                                                  .getScheme(), request
+                                                  .getServerName());
+                                      } else {
+                                          return String.format(
+                                                  "%s://%s:%d",
+                                                  request.getScheme(),
+                                                  request
+                                                  .getServerName(),
+                                                  request
+                                                  .getServerPort());
+                                      }
+                                  }
 
-                                      });
+                              });
 
         s_log.debug("Static initalizer finished.");
     }
@@ -343,7 +343,7 @@ public class PageTransformer implements PresentationManager {
 
             try {
                 return new PrintWriter(new OutputStreamWriter(resp.
-                    getOutputStream(),
+                        getOutputStream(),
                                                               charset));
             } catch (IOException ex) {
                 throw new UncheckedWrapperException(ex);
@@ -372,11 +372,11 @@ public class PageTransformer implements PresentationManager {
      * always be passed to XSLT, which is the value of
      * <code>req.getWebContextPath()</code>.
      *
-     * @param doc    the Bebop page to serve
-     * @param req    the servlet request
-     * @param resp   the servlet response
+     * @param doc the Bebop page to serve
+     * @param req the servlet request
+     * @param resp the servlet response
      * @param params a set of name-value pairs to pass as parameters to the
-     *               Transformer
+     * Transformer
      */
     public void servePage(final Document doc,
                           final HttpServletRequest req,
@@ -393,24 +393,24 @@ public class PageTransformer implements PresentationManager {
 
         try {
             final String charset = Globalization
-                .getDefaultCharset(DispatcherHelper.getNegotiatedLocale());
+                    .getDefaultCharset(DispatcherHelper.getNegotiatedLocale());
 
             final String output = req.getParameter("output");
             s_log.info("output=" + output);
 
             if (output == null) {
 
-                boolean fancyErrors = Bebop.getConfig().wantFancyXSLErrors()
-                                          || Boolean.TRUE.equals(req
-                        .getAttribute(
-                            FANCY_ERRORS));
+                boolean fancyErrors
+                        = BebopConfig.getConfig().getFancyErrors()
+                                  || Boolean.TRUE.equals(req.getAttribute(
+                                FANCY_ERRORS));
 
                 // Get the stylesheet transformer object corresponding to the
                 // current request.
                 final XSLTemplate template = Templating.getTemplate(
-                    req,
-                    fancyErrors,
-                    !Boolean.TRUE.equals(req.getAttribute(CACHE_XSL_NONE)));
+                        req,
+                        fancyErrors,
+                        !Boolean.TRUE.equals(req.getAttribute(CACHE_XSL_NONE)));
 
                 final PrintWriter writer = getWriter(resp, "text/html", charset);
 
@@ -450,15 +450,15 @@ public class PageTransformer implements PresentationManager {
                                  new StreamResult(writer));
                 } catch (TransformerException ex) {
                     throw new UncheckedWrapperException(
-                        "cannot transform document", ex);
+                            "cannot transform document", ex);
                 }
 
                 // copy and paste from BasePresentationManager
                 if (KernelConfig.getConfig().isDebugEnabled()) {
                     Document origDoc = (Document) req.getAttribute(
-                        "com.arsdigita.xml.Document");
+                            "com.arsdigita.xml.Document");
                     Debugger.addDebugger(new TransformationDebugger(template.
-                        getSource(), template.getDependents()));
+                            getSource(), template.getDependents()));
                     writer.print(Debugger.getDebugging(req));
                 }
 
@@ -478,11 +478,11 @@ public class PageTransformer implements PresentationManager {
                     // current request.
                     template = Templating.getTemplate(req,
                                                       Boolean.TRUE.equals(req
-                                                          .getAttribute(
-                                                              PageTransformer.FANCY_ERRORS)),
+                                                              .getAttribute(
+                                                                      PageTransformer.FANCY_ERRORS)),
                                                       !Boolean.TRUE.equals(req
-                                                          .getAttribute(
-                                                              PageTransformer.CACHE_XSL_NONE)));
+                                                              .getAttribute(
+                                                                      PageTransformer.CACHE_XSL_NONE)));
                     endTransaction(req);
                 } finally {
                 }
@@ -490,7 +490,7 @@ public class PageTransformer implements PresentationManager {
                 try {
                     Date now = new Date();
                     SimpleDateFormat fmt = new SimpleDateFormat(
-                        "yyyy-MM-dd-HH-mm");
+                            "yyyy-MM-dd-HH-mm");
                     String prefix = "waf-xsl-" + fmt.format(now);
 
                     final OutputStream os = resp.getOutputStream();
@@ -509,7 +509,7 @@ public class PageTransformer implements PresentationManager {
                 }
             } else {
                 throw new IllegalStateException(output
-                                                    + " is an unknown output");
+                                                        + " is an unknown output");
             }
         } finally {
         }
@@ -524,9 +524,9 @@ public class PageTransformer implements PresentationManager {
     private void endTransaction(final HttpServletRequest req) {
         // There is no longer any need for a database handle.
         if (req.getAttribute(PageContext.EXCEPTION) == null) {
-            
+
         } else {
-            
+
         }
     }
 
@@ -577,7 +577,7 @@ public class PageTransformer implements PresentationManager {
                                               HttpServletRequest request) {
         XSLParameterGenerator generator
                               = (XSLParameterGenerator) s_XSLParameters
-            .get(name);
+                .get(name);
         if (generator != null) {
             return generator.generateValue(request);
         } else {
@@ -600,7 +600,7 @@ public class PageTransformer implements PresentationManager {
             final Map.Entry entry = (Map.Entry) entries.next();
 
             String value = ((XSLParameterGenerator) entry.getValue()).
-                generateValue(request);
+                    generateValue(request);
             if (value == null) {
                 // XSL does not like nulls
                 value = "";

@@ -18,7 +18,7 @@
  */
 package com.arsdigita.bebop.parameters;
 
-import com.arsdigita.bebop.Bebop;
+import com.arsdigita.bebop.BebopConfig;
 import com.arsdigita.bebop.event.ParameterEvent;
 import com.arsdigita.bebop.event.ParameterListener;
 import com.arsdigita.util.StringUtils;
@@ -102,7 +102,7 @@ public class TidyHTMLValidationListener implements ParameterListener {
     private static Properties getJTidyProperties() {
         if (s_tidyProperties == null) {
             s_tidyProperties = new LockableProperties();
-            String path = Bebop.getConfig().getTidyConfigFile();
+            String path = BebopConfig.getConfig().getTidyConfigFile();
             
             InputStream is = TidyHTMLValidationListener.class.getClassLoader
                 ().getResourceAsStream(path);

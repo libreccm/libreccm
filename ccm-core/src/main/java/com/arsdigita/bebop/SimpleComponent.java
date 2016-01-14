@@ -295,7 +295,7 @@ public class SimpleComponent extends Completable
             m_attr.exportAttributes(target);
         }
         if (KernelConfig.getConfig().isDebugEnabled() ||
-                Bebop.getConfig().showClassName()) {
+                BebopConfig.getConfig().getShowClassName()) {
             target.addAttribute("bebop:classname", getClass().getName(),
                                 BEBOP_XML_NS);
         }

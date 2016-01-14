@@ -170,7 +170,7 @@ public class PageFactory {
         if (initialized) {
             return;
         }
-        setPageClass(Bebop.getConfig().getBasePageClass());
+        setPageClass(BebopConfig.getConfig().getBasePageClass());
     }
 
     /**

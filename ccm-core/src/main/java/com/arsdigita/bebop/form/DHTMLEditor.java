@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import com.arsdigita.bebop.Bebop;
+import com.arsdigita.bebop.BebopConfig;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.parameters.ParameterModel;
 import com.arsdigita.bebop.parameters.StringParameter;
@@ -182,12 +182,13 @@ public class DHTMLEditor extends TextArea {
     }
 
     public String getEditorURL() {
-        return Bebop.getConfig().getDHTMLEditorSrcFile().substring(
-            0, Bebop.getConfig().getDHTMLEditorSrcFile().lastIndexOf("/") + 1);
+        return BebopConfig.getConfig().getDhtmlEditorSrcFile().substring(
+            0, 
+            BebopConfig.getConfig().getDhtmlEditorSrcFile().lastIndexOf("/") + 1);
     }
 
     public String getEditorSrc() {
-        return Bebop.getConfig().getDHTMLEditorSrcFile();
+        return BebopConfig.getConfig().getDhtmlEditorSrcFile();
     }
 
     /**
@@ -264,7 +265,7 @@ public class DHTMLEditor extends TextArea {
      */
     @Override
     protected String getElementTag() {
-        return Bebop.getConfig().getDHTMLEditor();
+        return BebopConfig.getConfig().getDefaultDhtmlEditor();
     }
 
     /**

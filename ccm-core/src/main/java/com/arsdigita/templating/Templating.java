@@ -17,7 +17,7 @@
  */
 package com.arsdigita.templating;
 
-import com.arsdigita.bebop.Bebop;
+import com.arsdigita.bebop.BebopConfig;
 import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.util.Assert;
 import com.arsdigita.util.ExceptionUnwrapper;
@@ -49,8 +49,8 @@ import org.apache.log4j.Logger;
  * An entry-point class for the functions of the templating package. The class
  * manages access to all theme files (XSL as well as css, pirctures, etc).
  *
- * This class maintains a cache of <code>XSLTemplate</code> objects, managed
- * via the <code>getTemplate</code> and <code>purgeTemplate</code> methods.
+ * This class maintains a cache of <code>XSLTemplate</code> objects, managed via
+ * the <code>getTemplate</code> and <code>purgeTemplate</code> methods.
  *
  * @author Dan Berrange
  * @author Justin Ross &lt;jross@redhat.com&gt;
@@ -58,21 +58,26 @@ import org.apache.log4j.Logger;
  */
 public class Templating {
 
-    /** Internal logger instance to faciliate debugging. Enable logging output
-     *  by editing /WEB-INF/conf/log4j.properties int hte runtime environment
-     *  and set com.arsdigita.templating.Templating=DEBUG by uncommenting it 
-     *  or adding the line.                                                   */
+    /**
+     * Internal logger instance to faciliate debugging. Enable logging output by
+     * editing /WEB-INF/conf/log4j.properties int hte runtime environment and
+     * set com.arsdigita.templating.Templating=DEBUG by uncommenting it or
+     * adding the line.
+     */
     private static final Logger s_log = Logger.getLogger(Templating.class);
 
-    /** This is the name of the attribute that is set in the request whose
-     *  value, if present, is a collection of TransformerExceptions that
-     *  can be used to produce a "pretty" error.                              */
+    /**
+     * This is the name of the attribute that is set in the request whose value,
+     * if present, is a collection of TransformerExceptions that can be used to
+     * produce a "pretty" error.
+     */
     public static final String FANCY_ERROR_COLLECTION = "fancyErrorCollection";
 
-
-    /** Config object containing various parameter                            */
+    /**
+     * Config object containing various parameter
+     */
     private static final TemplatingConfig s_config = TemplatingConfig
-                                                     .getInstanceOf();
+            .getInstanceOf();
 
     static {
         s_log.debug("Static initalizer starting...");
@@ -81,15 +86,14 @@ public class Templating {
                 TransformerException.class,
                 new ExceptionUnwrapper() {
 
-                    @Override
-                    public Throwable unwrap(Throwable t) {
-                        TransformerException ex = (TransformerException) t;
-                        return ex.getCause();
-                    }
-                });
+            @Override
+            public Throwable unwrap(Throwable t) {
+                TransformerException ex = (TransformerException) t;
+                return ex.getCause();
+            }
+        });
 
         // now we initiate the CacheTable here
-
         // default cache size used to be 50, which is too high I reckon,
         // each template can eat up to 4 megs
         Integer setting = s_config.getCacheSize();
@@ -112,17 +116,16 @@ public class Templating {
 
     /**
      * Returns a new instance of the current presentation manager class. This is
-     * an object which has the 
-     * {@link com.arsdigita.templating.PresentationManager PresentationManager} 
-     * interface which can be used to transform an XML document into an output 
+     * an object which has the
+     * {@link com.arsdigita.templating.PresentationManager PresentationManager}
+     * interface which can be used to transform an XML document into an output
      * stream.
      *
      * As of version 6.6.0 the bebop framework is the only instance to provide
      * an implementation. To avoid class hierachie kludge we directly return the
      * bebop config here.
      *
-     * @return an instance of the <code>PresentationManager</code>
-     * interface
+     * @return an instance of the <code>PresentationManager</code> interface
      */
     /* NON Javadoc
      * Used to be deprecated up to version 6.6.0. Reverted to non-deprecated.
@@ -134,17 +137,22 @@ public class Templating {
      * instead.
      */
     public static PresentationManager getPresentationManager() {
-        return Bebop.getConfig().getPresentationManager();
+        try {
+            return (PresentationManager) BebopConfig.getConfig().
+                    getPresenterClass().newInstance();
+        } catch (IllegalAccessException | InstantiationException ex) {
+            throw new UncheckedWrapperException(ex);
+        }
     }
 
     /**
      * Retrieves an XSL template. If the template is already loaded in the
-     * cache, it will be returned.  If the template has been modified since
-     * it was first generated, it will be regenerated first.
+     * cache, it will be returned. If the template has been modified since it
+     * was first generated, it will be regenerated first.
      *
-     * @param  source the <code>URL</code> to the top-level template resource
+     * @param source the <code>URL</code> to the top-level template resource
      * @return an <code>XSLTemplate</code> instance representing
-     *         <code>source</code>
+     * <code>source</code>
      */
     public static synchronized XSLTemplate getTemplate(final URL source) {
         return getTemplate(source, false, true);
@@ -152,19 +160,18 @@ public class Templating {
 
     /**
      * Retrieves an XSL template. If the template is already loaded in the
-     * cache, it will be returned.  If the template has been modified since
-     * it was first generated, it will be regenerated first.
+     * cache, it will be returned. If the template has been modified since it
+     * was first generated, it will be regenerated first.
      *
-     * @param  source the <code>URL</code> to the top-level template resource
-     * @param  fancyErrors Should this place any xsl errors in the request
-     *                     for use by another class.  If this is true, the
-     *                     the errors are stored for later use.
-     * @param  useCache Should the templates be pulled from cache, if available?
-     *                  True means they are pulled from cache.  False means
-     *                  they are pulled from the disk.  If this is false
-     *                  the pages are also not placed in the cache.
+     * @param source the <code>URL</code> to the top-level template resource
+     * @param fancyErrors Should this place any xsl errors in the request for
+     * use by another class. If this is true, the the errors are stored for
+     * later use.
+     * @param useCache Should the templates be pulled from cache, if available?
+     * True means they are pulled from cache. False means they are pulled from
+     * the disk. If this is false the pages are also not placed in the cache.
      * @return an <code>XSLTemplate</code> instance representing
-     *         <code>source</code>
+     * <code>source</code>
      */
     public static synchronized XSLTemplate getTemplate(final URL source,
                                                        boolean fancyErrors,
@@ -177,11 +184,11 @@ public class Templating {
         Assert.exists(source, URL.class);
 
         XSLTemplate template = null;
-        
+
         if (template == null) {
             if (s_log.isInfoEnabled()) {
                 s_log.info("The template for URL " + source + " is not "
-                           + "cached; creating and caching it now");
+                                   + "cached; creating and caching it now");
             }
 
             if (fancyErrors) {
@@ -194,14 +201,14 @@ public class Templating {
             }
 
         } else if (KernelConfig.getConfig().isDebugEnabled()
-                       && template.isModified()) {
+                           && template.isModified()) {
             // XXX referencing Kernel above is a broken dependency.
             // Debug mode should be captured at a lower level,
             // probably on UtilConfig.
 
             if (s_log.isInfoEnabled()) {
                 s_log.info("Template " + template + " has been modified; "
-                           + "recreating it from scratch");
+                                   + "recreating it from scratch");
             }
 
             if (fancyErrors) {
@@ -220,7 +227,7 @@ public class Templating {
     /**
      * Resolves and retrieves the template for the given request.
      *
-     * @param  sreq The current request object
+     * @param sreq The current request object
      * @return The resolved <code>XSLTemplate</code> instance
      */
     public static XSLTemplate getTemplate(final HttpServletRequest sreq) {
@@ -231,13 +238,12 @@ public class Templating {
      * Resolves the template for the given request to an URL.
      *
      * @param sreq The current request object
-     * @param fancyErrors Should this place any xsl errors in the request
-     *                    for use by another class.  If this is true, the
-     *                    the errors are stored for later use.
+     * @param fancyErrors Should this place any xsl errors in the request for
+     * use by another class. If this is true, the the errors are stored for
+     * later use.
      * @param useCache Should the templates be pulled from cache, if available?
-     *                 True means they are pulled from cache.  False means
-     *                 they are pulled from the disk.  If this is false
-     *                 the pages are also not placed in the cache.
+     * True means they are pulled from cache. False means they are pulled from
+     * the disk. If this is false the pages are also not placed in the cache.
      * @return The resolved <code>XSLTemplate</code> instance
      */
     public static XSLTemplate getTemplate(final HttpServletRequest sreq,
@@ -253,12 +259,10 @@ public class Templating {
     }
 
     /**
-     * Removes an XSL template from the internal cache.  The template
-     * for <code>source</code> will be regenerated on the next request
-     * for it.
+     * Removes an XSL template from the internal cache. The template for
+     * <code>source</code> will be regenerated on the next request for it.
      *
-     * @param source the <code>URL</code> to the top-level template
-     * resource
+     * @param source the <code>URL</code> to the top-level template resource
      */
     public static synchronized void purgeTemplate(final URL source) {
         if (s_log.isDebugEnabled()) {
@@ -269,8 +273,8 @@ public class Templating {
     }
 
     /**
-     * Removes all cached template objects.  All template objects will
-     * be regenerated on-demand as each gets requested.
+     * Removes all cached template objects. All template objects will be
+     * regenerated on-demand as each gets requested.
      */
     public static synchronized void purgeTemplates() {
         if (s_log.isDebugEnabled()) {
@@ -318,14 +322,14 @@ public class Templating {
     }
 
     /**
-     * Transforms an URL, that refers to a local resource inside the running
-     * CCM web application. NON-local URLs remain unmodified. 
-     * 
-     * In case of a virtual path "/resource" it is short-circuiting access to 
-     * the resource servlet. All other http:// URLs are transformed into file:// 
-     * for XSLT validation to work for these resources. It has the added benefit 
+     * Transforms an URL, that refers to a local resource inside the running CCM
+     * web application. NON-local URLs remain unmodified.
+     *
+     * In case of a virtual path "/resource" it is short-circuiting access to
+     * the resource servlet. All other http:// URLs are transformed into file://
+     * for XSLT validation to work for these resources. It has the added benefit
      * of speeding up loading of XSL...
-     * 
+     *
      * Currently the direct file access method is perferred! As soon as we
      * refactor to directly access the published XSL files in the database and
      * to avoid the unnecessary intermediate step via the file system, we have
@@ -335,19 +339,21 @@ public class Templating {
     static URL transformURL(URL url) {
         HttpHost self = Web.getConfig().getHost();
 
-        /** Indicates whether url refers to a local resource inside the
-         *  running CCM web application (inside it's webapp context)          */
+        /**
+         * Indicates whether url refers to a local resource inside the running
+         * CCM web application (inside it's webapp context)
+         */
         Boolean isLocal = false;
-        /** Contains the transformed "localized" path to url, i.e. without 
-         *  host part.                                                        */
+        /**
+         * Contains the transformed "localized" path to url, i.e. without host
+         * part.
+         */
         String localPath = "";
-        
+
         // Check if the url refers to our own host
-        if (self.getName().equals(url.getHost()) 
-            && ( (self.getPort() == url.getPort()) 
-                 || (url.getPort()== -1 && self.getPort()== 80)
-               )
-           ) {
+        if (self.getName().equals(url.getHost())
+                    && ((self.getPort() == url.getPort())
+                        || (url.getPort() == -1 && self.getPort() == 80))) {
             // host part denotes to a local resource, cut off host part.
             localPath = url.getPath();
             isLocal = true;
@@ -365,17 +371,16 @@ public class Templating {
             s_log.debug("Installation context is >" + installContext + "<.");
         }
         if (!installContext.equals("")) {
-                // CCM is installed into a non-ROOT context
-                if (localPath.startsWith(installContext)) {
-                    // remove webapp context part
-                    localPath = localPath.substring(installContext.length()); 
-                    if (s_log.isDebugEnabled()) {
-                        s_log.debug("WebApp context removed: >>" + 
-                                    localPath + "<<");
-                    }
+            // CCM is installed into a non-ROOT context
+            if (localPath.startsWith(installContext)) {
+                // remove webapp context part
+                localPath = localPath.substring(installContext.length());
+                if (s_log.isDebugEnabled()) {
+                    s_log.debug("WebApp context removed: >>" + localPath + "<<");
                 }
+            }
         }
-        
+
         if (isLocal) {
             // url specifies the running CCM host and port (or port isn't
             // specified in url and default for running CCM host
@@ -385,52 +390,50 @@ public class Templating {
                 localPath = localPath.substring("/resource".length()); //remove virtual part
                 URL newURL = Web.findResource(localPath); //without host part here!
                 if (s_log.isDebugEnabled()) {
-                    s_log.debug("Transforming resource " + url + " to " + newURL);
+                    s_log.
+                            debug("Transforming resource " + url + " to "
+                                          + newURL);
                 }
                 return newURL;
             } else {
                 // A real path to disk
                 final String filename = Web.getServletContext()
-                                           .getRealPath(localPath);
+                        .getRealPath(localPath);
                 File file = new File(filename);
                 if (file.exists()) {
                     try {
                         URL newURL = file.toURL();
                         if (s_log.isDebugEnabled()) {
                             s_log.debug("Transforming resource " + url + " to "
-                                        + newURL);
+                                                + newURL);
                         }
                         return newURL;
                     } catch (MalformedURLException ex) {
                         throw new UncheckedWrapperException(ex);
                     }
-                } else {
-                    if (s_log.isDebugEnabled()) {
-                        s_log.debug("File " + filename
-                                    + " doesn't exist on disk");
-                    }
+                } else if (s_log.isDebugEnabled()) {
+                    s_log.debug("File " + filename
+                                        + " doesn't exist on disk");
                 }
             }
-        } else {
-            // url is not the (local) running CCM host, no transformation
-            // is done
-            if (s_log.isDebugEnabled()) {
+        } else // url is not the (local) running CCM host, no transformation
+        // is done
+         if (s_log.isDebugEnabled()) {
                 s_log.debug("URL " + url + " is not local");
             }
-        }
 
         return url;  // returns the original, unmodified url here
     }
 }
 
 /**
- * 
+ *
  * @author pb
  */
 class LoggingErrorListener implements ErrorListener {
 
-    private static final Logger s_log =
-                                Logger.getLogger(LoggingErrorListener.class);
+    private static final Logger s_log
+                                = Logger.getLogger(LoggingErrorListener.class);
     private final ArrayList m_errors;
 
     LoggingErrorListener() {
@@ -458,7 +461,8 @@ class LoggingErrorListener implements ErrorListener {
 
     private void log(Level level, TransformerException ex) {
         s_log.log(level, "Transformer " + level + ": "
-                         + ex.getLocationAsString() + ": " + ex.getMessage(),
+                                 + ex.getLocationAsString() + ": " + ex.
+                  getMessage(),
                   ex);
         m_errors.add(ex);
     }
