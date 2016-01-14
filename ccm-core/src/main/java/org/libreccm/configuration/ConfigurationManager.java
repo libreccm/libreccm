@@ -272,8 +272,21 @@ public class ConfigurationManager {
 
         final ConfigurationInfo confInfo = new ConfigurationInfo();
         confInfo.setName(configuration.getClass().getName());
-        confInfo.setDescBundle(annotation.descBundle());
-        confInfo.setDescKey(annotation.descKey());
+        if (annotation.descBundle() == null
+                || annotation.descBundle().isEmpty()) {
+            confInfo.setDescBundle(String.join("",
+                                               configuration.getClass()
+                                               .getName(),
+                                               "Description"));
+        } else {
+            confInfo.setDescBundle(annotation.descBundle());
+        }
+        if (annotation.descKey() == null
+                || annotation.descKey().isEmpty()) {
+            confInfo.setDescKey("description");
+        } else {
+            confInfo.setDescKey(annotation.descKey());
+        }
 
         final Field[] fields = configuration.getDeclaredFields();
         for (final Field field : fields) {
@@ -313,7 +326,15 @@ public class ConfigurationManager {
 
         final Configuration confAnnotation = configuration.getAnnotation(
             Configuration.class);
-        final String descBundle = confAnnotation.descBundle();
+        final String descBundle;
+        if (confAnnotation.descBundle() == null
+                || confAnnotation.descBundle().isEmpty()) {
+            descBundle = String.join("",
+                                     configuration.getClass().getName(),
+                                     "Description");
+        } else {
+            descBundle = confAnnotation.descBundle();
+        }
 
         final Field field;
         try {
@@ -356,7 +377,12 @@ public class ConfigurationManager {
         settingInfo.setConfClass(configuration.getName());
 
         settingInfo.setDescBundle(descBundle);
-        settingInfo.setDescKey(settingAnnotation.descKey());
+        if (settingAnnotation.descKey() == null
+                || settingAnnotation.descKey().isEmpty()) {
+            settingInfo.setDescKey(field.getName());
+        } else {
+            settingInfo.setDescKey(settingAnnotation.descKey());
+        }
 
         return settingInfo;
     }
@@ -778,4 +804,5 @@ public class ConfigurationManager {
 
         return category;
     }
+
 }

@@ -30,6 +30,7 @@ import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.configuration.Setting;
 
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -124,7 +125,7 @@ public final class KernelConfig {
     public boolean emailIsPrimaryIdentifier() {
         return EMAIL.equals(primaryUserIdentifier);
     }
-    
+
     public boolean screenNameIsPrimaryIdentifier() {
         return SCREEN_NAME.equals(primaryUserIdentifier);
     }
@@ -256,32 +257,28 @@ public final class KernelConfig {
 
     @Override
     public String toString() {
-        final StringJoiner joiner = new StringJoiner(", ");
-        if (supportedLanguages != null) {
-            supportedLanguages.forEach(s -> joiner.add(s));
-        }
-
-        return String.format("%s{ "
-                                 + "debugEnabled = %b, "
-                                 + "webdevSupportEnabled = %b, "
-                                 + "dataPermissionCheckEnabled = %b, "
-                                 + "primaryUserIdentifier = \"%s\", "
-                                 + "ssoEnabled = %b, "
-                                 + "rememberLoginEnabeled = %b, "
-                                 + "secureLoginEnabled = %b, "
-                                 + "supportedLanguages = \"%s\", "
-                                 + "defaultLanguage = \"%s\""
-                                 + " }",
-                             super.toString(),
-                             debugEnabled,
-                             webdevSupportEnabled,
-                             dataPermissionCheckEnabled,
-                             primaryUserIdentifier,
-                             ssoEnabled,
-                             rememberLoginEnabled,
-                             secureLoginEnabled,
-                             joiner.toString(),
-                             defaultLanguage);
+        return String.format(
+            "%s{ "
+                + "debugEnabled = %b, "
+                + "webdevSupportEnabled = %b, "
+                + "dataPermissionCheckEnabled = %b, "
+                + "primaryUserIdentifier = \"%s\", "
+                + "ssoEnabled = %b, "
+                + "rememberLoginEnabeled = %b, "
+                + "secureLoginEnabled = %b, "
+                + "supportedLanguages = { \"%s\" }, "
+                + "defaultLanguage = \"%s\""
+                + " }",
+            super.toString(),
+            debugEnabled,
+            webdevSupportEnabled,
+            dataPermissionCheckEnabled,
+            primaryUserIdentifier,
+            ssoEnabled,
+            rememberLoginEnabled,
+            secureLoginEnabled,
+            supportedLanguages.stream().collect(Collectors.joining(", ")),
+            defaultLanguage);
     }
 
 }

@@ -76,16 +76,7 @@ public class Mail implements MessageType {
      */
     private static final Logger s_log =
                                 Logger.getLogger(Mail.class);
-    private static MailConfig s_config;
 
-    public static MailConfig getConfig() {
-        if (s_config == null) {
-            s_config = new MailConfig();
-            s_config.load("ccm-core/mail.properties");
-            s_config.require("javamail.properties");
-        }
-        return s_config;
-    }
     private static final InternetAddress[] EMPTY_ADDRESS_LIST =
                                            new InternetAddress[0];
     /**
@@ -293,7 +284,7 @@ public class Mail implements MessageType {
 
         // Write a copy of the message into the log file
 
-        if (getConfig().isDebug()) {
+        if (MailConfig.getConfig().isDebug()) {
             if (msg != null) {
                 try {
                     ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -717,7 +708,8 @@ public class Mail implements MessageType {
         if (s_session == null) {
 
             // Set up the properties
-            Properties props = new Properties(getConfig().getJavamail());
+            Properties props = new Properties(
+                MailConfig.getConfig().getJavaMailProperties());
 
             // Check for overrides of the server information
             if (s_host != null) {
@@ -729,7 +721,7 @@ public class Mail implements MessageType {
 
             // Set up the session
             s_session = Session.getInstance(props, null);
-            s_session.setDebug(getConfig().isDebug());
+            s_session.setDebug(MailConfig.getConfig().isDebug());
         }
 
         return s_session;

@@ -23,15 +23,19 @@ import com.arsdigita.bebop.util.BebopConstants;
 import com.arsdigita.templating.PresentationManager;
 import com.arsdigita.ui.SimplePage;
 import com.arsdigita.util.UncheckedWrapperException;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.StringJoiner;
+
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.Configuration;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.configuration.Setting;
+
+import java.util.stream.Collectors;
 
 /**
  *
@@ -40,165 +44,167 @@ import org.libreccm.configuration.Setting;
 @Configuration(descBundle = "com.arsdigita.bebop.BebopConfigDescription",
                descKey = "bebop.config.description")
 public final class BebopConfig {
-    
+
     @Setting(descKey = "bebop.config.presenter_class_name")
     private String presenterClassName = PageTransformer.class.getName();
-    
+
     @Setting(descKey = "bebop.config.base_page_name")
     private String basePageClassName = SimplePage.class.getName();
-    
+
     @Setting(descKey = "bebop.config.tidy_config_file")
     private String tidyConfigFile
-                   = "com/arsdigita/bebop/parameters/tidy.properties";
-    
+                       = "com/arsdigita/bebop/parameters/tidy.properties";
+
     @Setting(descKey = "bebop.config.fancy_errors")
     private Boolean fancyErrors = false;
-    
+
     @Setting(descKey = "bebop.config.dcp_on_buttons")
     private Boolean dcpOnButtons = true;
-    
+
     @Setting(descKey = "bebop.config.dcp_on_links")
     private Boolean dcpOnLinks = false;
-    
+
     @Setting(descKey = "bebop.config.tree_select_enabled")
     private Boolean treeSelectEnabled = false;
-    
+
     @Setting(descKey = "bebop.config.dhtml_editors")
     private Set<String> dhtmlEditors = new HashSet<>(
-            Arrays.asList(new String[]{BebopConstants.BEBOP_XINHAEDITOR,
-                                       BebopConstants.BEBOP_FCKEDITOR,
-                                       BebopConstants.BEBOP_DHTMLEDITOR}));
-    
+        Arrays.asList(new String[]{BebopConstants.BEBOP_XINHAEDITOR,
+                                   BebopConstants.BEBOP_FCKEDITOR,
+                                   BebopConstants.BEBOP_DHTMLEDITOR}));
+
     @Setting(descKey = "bebop.config.default_dhtml_editor")
     private String defaultDhtmlEditor = BebopConstants.BEBOP_XINHAEDITOR;
-    
+
     @Setting(descKey = "bebop.config.dhtml_editor_srcfile")
     private String dhtmlEditorSrcFile = "/assets/xinha/XinhaLoader.js";
-    
+
     @Setting(descKey = "bebop.config.show_class_name")
     private Boolean showClassName = false;
-    
+
     public static BebopConfig getConfig() {
         final CdiUtil cdiUtil = new CdiUtil();
         final ConfigurationManager confManager = cdiUtil.findBean(
-                ConfigurationManager.class);
+            ConfigurationManager.class);
         return confManager.findConfiguration(BebopConfig.class);
     }
-    
+
     public String getPresenterClassName() {
         return presenterClassName;
     }
-    
+
+    @SuppressWarnings("unchecked")
     public Class<PresentationManager> getPresenterClass() {
         try {
             return (Class<PresentationManager>) Class.
-                    forName(presenterClassName);
+                forName(presenterClassName);
         } catch (ClassNotFoundException ex) {
             throw new UncheckedWrapperException(ex);
         }
     }
-    
+
     public void setPresenterClassName(final String presenterClassName) {
         this.presenterClassName = presenterClassName;
     }
-    
+
     public void setPresenterClass(
-            final Class<PresentationManager> presenterClass) {
+        final Class<PresentationManager> presenterClass) {
         setPresenterClassName(presenterClass.getName());
     }
-    
+
     public String getBasePageClassName() {
         return basePageClassName;
     }
-    
+
+    @SuppressWarnings("unchecked")
     public Class<BasePage> getBasePageClass() {
         try {
-            return (Class<BasePage>)Class.forName(basePageClassName);
+            return (Class<BasePage>) Class.forName(basePageClassName);
         } catch (ClassNotFoundException ex) {
             throw new UncheckedWrapperException(ex);
         }
     }
-    
+
     public void setBasePageClassName(final String basePageClassName) {
         this.basePageClassName = basePageClassName;
     }
-    
+
     public void setBasePageClass(final Class<BasePage> basePageClass) {
         setBasePageClassName(basePageClass.getName());
     }
-    
+
     public String getTidyConfigFile() {
         return tidyConfigFile;
     }
-    
+
     public void setTidyConfigFile(final String tidyConfigFile) {
         this.tidyConfigFile = tidyConfigFile;
     }
-    
+
     public Boolean getFancyErrors() {
         return fancyErrors;
     }
-    
+
     public void setFancyErrors(final Boolean fancyErrors) {
         this.fancyErrors = fancyErrors;
     }
-    
+
     public Boolean getDcpOnButtons() {
         return dcpOnButtons;
     }
-    
+
     public void setDcpOnButtons(final Boolean dcpOnButtons) {
         this.dcpOnButtons = dcpOnButtons;
     }
-    
+
     public Boolean getDcpOnLinks() {
         return dcpOnLinks;
     }
-    
+
     public void setDcpOnLinks(final Boolean dcpOnLinks) {
         this.dcpOnLinks = dcpOnLinks;
     }
-    
+
     public Boolean isTreeSelectEnabled() {
         return treeSelectEnabled;
     }
-    
+
     public void setTreeSelectEnabled(final Boolean treeSelectEnabled) {
         this.treeSelectEnabled = treeSelectEnabled;
     }
-    
+
     public Set<String> getDhtmlEditors() {
         return new HashSet<>(dhtmlEditors);
     }
-    
+
     public void setDhtmlEditors(final Set<String> dhtmlEditors) {
         this.dhtmlEditors = dhtmlEditors;
     }
-    
+
     public String getDefaultDhtmlEditor() {
         return defaultDhtmlEditor;
     }
-    
+
     public void setDefaultDhtmlEditor(final String defaultDhtmlEditor) {
         this.defaultDhtmlEditor = defaultDhtmlEditor;
     }
-    
+
     public String getDhtmlEditorSrcFile() {
         return dhtmlEditorSrcFile;
     }
-    
+
     public void setDhtmlEditorSrcFile(final String dhtmlEditorSrcFile) {
         this.dhtmlEditorSrcFile = dhtmlEditorSrcFile;
     }
-    
+
     public Boolean getShowClassName() {
         return showClassName;
     }
-    
+
     public void setShowClassName(final Boolean showClassName) {
         this.showClassName = showClassName;
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 7;
@@ -213,7 +219,7 @@ public final class BebopConfig {
         hash = 89 * hash + Objects.hashCode(showClassName);
         return hash;
     }
-    
+
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
@@ -252,32 +258,31 @@ public final class BebopConfig {
         }
         return Objects.equals(showClassName, other.getShowClassName());
     }
-    
+
     @Override
     public String toString() {
-        final StringJoiner joiner = new StringJoiner(", ");
-        dhtmlEditors.forEach(s -> joiner.add(s));
-        
-        return String.format("%s{ "
-                                     + "tidyConfigFile = %s, "
-                                     + "fancyErrors = %b, "
-                                     + "dcpOnButtons = %b, "
-                                     + "dcpOnLinks = %b, "
-                                     + "treeSelectEnabled = %b, "
-                                     + "dhtmlEditors = { %s }, "
-                                     + "defaultDhtmlEditor = %s, "
-                                     + "dhtmlEditorSrcFile = %s, "
-                                     + "showClassName = %b"
-                                     + " }",
-                             super.toString(),
-                             tidyConfigFile,
-                             fancyErrors,
-                             dcpOnButtons,
-                             dcpOnLinks,
-                             treeSelectEnabled,
-                             joiner.toString(),
-                             defaultDhtmlEditor,
-                             dhtmlEditorSrcFile,
-                             showClassName);
+        return String.format(
+            "%s{ "
+                + "tidyConfigFile = %s, "
+                + "fancyErrors = %b, "
+                + "dcpOnButtons = %b, "
+                + "dcpOnLinks = %b, "
+                + "treeSelectEnabled = %b, "
+                + "dhtmlEditors = { %s }, "
+                + "defaultDhtmlEditor = %s, "
+                + "dhtmlEditorSrcFile = %s, "
+                + "showClassName = %b"
+                + " }",
+            super.toString(),
+            tidyConfigFile,
+            fancyErrors,
+            dcpOnButtons,
+            dcpOnLinks,
+            treeSelectEnabled,
+            dhtmlEditors.stream().collect(Collectors.joining(", ")),
+            defaultDhtmlEditor,
+            dhtmlEditorSrcFile,
+            showClassName);
     }
+
 }

@@ -1,157 +1,162 @@
 /*
- * Copyright (C) 2003-2004 Red Hat Inc. All Rights Reserved.
+ * Copyright (C) 2016 LibreCCM Foundation.
  *
  * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public License
- * as published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- *
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301  USA
  */
 package com.arsdigita.mail;
 
-import com.arsdigita.runtime.AbstractConfig;
-import com.arsdigita.util.parameter.BooleanParameter;
-import com.arsdigita.util.parameter.ErrorList;
-import com.arsdigita.util.parameter.Parameter;
-import com.arsdigita.util.parameter.ParameterError;
-import com.arsdigita.util.parameter.StringParameter;
-import com.arsdigita.util.parameter.URLParameter;
 import com.arsdigita.util.UncheckedWrapperException;
+
+import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.configuration.Configuration;
+import org.libreccm.configuration.ConfigurationManager;
+import org.libreccm.configuration.Setting;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Objects;
 import java.util.Properties;
 
 /**
- * MailConfig
  *
- * @author Rafael H. Schloming &lt;rhs@mit.edu&gt;
- * @version $Revision: #7 $ $Date: 2004/08/16 $
- * @version $Id: MailConfig.java 1513 2007-03-22 09:09:03Z chrisgilbert23 $
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public final class MailConfig extends AbstractConfig {
+@Configuration
+public final class MailConfig {
 
-    private Properties m_props;
+    @Setting
+    private Boolean debug = false;
 
-    private final Parameter m_debug = new BooleanParameter
-        ("waf.mail.debug", Parameter.OPTIONAL, Boolean.FALSE);
+    @Setting
+    private String javaMailPropertiesFile = null;
 
-    private final Parameter m_javamail = new PropertyFileParameter
-        ("waf.mail.javamail.configuration", Parameter.OPTIONAL, null);
+    @Setting
+    private String defaultFrom = "";
 
-    /* used by Mail when the user is not logged in. */
-    private final Parameter m_defaultFrom = new StringParameter
-        ("waf.mail.default_from", Parameter.OPTIONAL, "");
+    @Setting
+    private Boolean sendHtml = false;
 
-    private final Parameter m_sendHTML = new BooleanParameter
-    ("waf.mail.send_html_mail", Parameter.OPTIONAL, Boolean.FALSE);
-
-    
-    /**
-     * Constructor registers the parameter ands loads values from config file.
-     * 
-     */
-    public MailConfig() {
-        register(m_javamail);
-        register(m_debug);
-        register(m_defaultFrom);
-        register(m_sendHTML);
-
-        loadInfo();
+    public static MailConfig getConfig() {
+        final CdiUtil cdiUtil = new CdiUtil();
+        final ConfigurationManager confManager = cdiUtil.findBean(
+            ConfigurationManager.class);
+        return confManager.findConfiguration(MailConfig.class);
     }
 
-    public Properties getJavamail() {
-        if (m_props == null) {
-            URL propsFile = (URL) get(m_javamail);
-            if (propsFile == null) {
-                m_props = new Properties();
-                m_props.put("mail.transport.protocol", "smtp");
-                m_props.put("mail.smtp.host", "localhost");
-            } else {
-                try {
-                    m_props = PropertyFileParameter.getProperties(propsFile);
-                } catch (IOException ioe) {
-                    throw new UncheckedWrapperException
-                        ("unable to retrieve properties file from "
-                         + propsFile, ioe);
-                }
-            }
-        }
-
-        return m_props;
+    public Boolean isDebug() {
+        return debug;
     }
 
-    /**
-     * 
-     * @return 
-     */
-    public String getDefaultFrom() {
-        String from  = (String) get(m_defaultFrom);
-//TODO:  usage of arsdigita.web.Web, not sure if the class will be kept in ccm_ng
-        
-//        if (null == from) 
-//           from = "notloggedin@" + Web.getConfig().getServer().getName();
-
-        return from;
+    public void setDebug(final Boolean debug) {
+        this.debug = debug;
     }
 
-    /**
-     * 
-     * @return 
-     */
-    public boolean isDebug() {
-        return get(m_debug).equals(Boolean.TRUE);
+    public String getJavaMailPropertiesFile() {
+        return javaMailPropertiesFile;
     }
 
-    /**
-     * determine whether messages with mime type text/html
-     * should be sent as html emails (with plain text alternative) or
-     * just sent as translated plain text
-     * @return
-     */
-    public boolean sendHTMLMessageAsHTMLEmail () {
-    	return ((Boolean)get(m_sendHTML)).booleanValue();
-    }
+    public Properties getJavaMailProperties() {
+        final Properties properties = new Properties();
 
-
-
-    /**
-     * 
-     */
-    private static class PropertyFileParameter extends URLParameter {
-        PropertyFileParameter(String name, int multiplicity, Object defaalt) {
-            super(name, multiplicity, defaalt);
-        }
-
-        @Override
-        protected void doValidate(Object value, ErrorList errors) {
-            super.doValidate(value, errors);
-
-            if (!errors.isEmpty()) {
-                return;
-            }
-
+        if (javaMailPropertiesFile == null
+                || javaMailPropertiesFile.isEmpty()) {
+            properties.put("mail.transport.protocol", "smtp");
+            properties.put("mail.smtp.host", "localhost");
+        } else {
             try {
-                getProperties((URL) value);
-            } catch (IOException ioe) {
-                errors.add(new ParameterError(this, ioe));
+                properties.load(new URL(javaMailPropertiesFile).openStream());
+            } catch (IOException ex) {
+                throw new UncheckedWrapperException(String.format(
+                    "Unable to retrieve properties for JavaMail from \"%s\".",
+                    javaMailPropertiesFile));
             }
         }
 
-        public static Properties getProperties(URL url) throws IOException {
-            Properties props = new Properties();
-            props.load(url.openStream());
-            return props;
+        return properties;
+    }
+
+    public void setJavaMailPropertiesFile(final String javaMailPropertiesFile) {
+        this.javaMailPropertiesFile = javaMailPropertiesFile;
+    }
+
+    public String getDefaultFrom() {
+        return defaultFrom;
+    }
+
+    public void setDefaultFrom(final String defaultFrom) {
+        this.defaultFrom = defaultFrom;
+    }
+
+    public Boolean getSendHtml() {
+        return sendHtml;
+    }
+
+    public void setSendHtml(final Boolean sendHtml) {
+        this.sendHtml = sendHtml;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 67 * hash + Objects.hashCode(debug);
+        hash = 67 * hash + Objects.hashCode(javaMailPropertiesFile);
+        hash = 67 * hash + Objects.hashCode(defaultFrom);
+        hash = 67 * hash + Objects.hashCode(sendHtml);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
         }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof MailConfig)) {
+            return false;
+        }
+        final MailConfig other = (MailConfig) obj;
+        if (!Objects.equals(javaMailPropertiesFile,
+                            other.getJavaMailPropertiesFile())) {
+            return false;
+        }
+        if (!Objects.equals(defaultFrom, other.getDefaultFrom())) {
+            return false;
+        }
+        if (!Objects.equals(debug, other.isDebug())) {
+            return false;
+        }
+        return Objects.equals(sendHtml, other.getSendHtml());
+    }
+
+    @Override
+    public String toString() {
+        return String.format(
+            "%s{ "
+                + "debug = %b, "
+                + "javaMailPropertiesFile = \"%s\", "
+                + "defaultFrom = \"%s\", "
+                + "sendHtml = %b"
+                + " }",
+            super.toString(),
+            debug,
+            javaMailPropertiesFile,
+            defaultFrom,
+            sendHtml);
     }
 
 }

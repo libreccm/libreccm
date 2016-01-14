@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -160,24 +161,22 @@ public final class SecurityConfig {
 
     @Override
     public String toString() {
-        final StringJoiner joiner = new StringJoiner(", ");
-        excludedExtensions.forEach(s -> joiner.add(s));
-
-        return String.format("%s{ "
-                                 + "excludedExtensions = { %s }, "
-                                 + "autoRegistrationEnabled = %b, "
-                                 + "passwordRecoveryEnabled = %b, "
-                                 + "hashAlgorithm = \"%s\", "
-                                 + "saltLength = %d, "
-                                 + "hashIterations = %d"
-                                 + " }",
-                             super.toString(),
-                             joiner.toString(),
-                             autoRegistrationEnabled,
-                             passwordRecoveryEnabled,
-                             hashAlgorithm,
-                             saltLength,
-                             hashIterations);
+        return String.format(
+            "%s{ "
+                + "excludedExtensions = { %s }, "
+                + "autoRegistrationEnabled = %b, "
+                + "passwordRecoveryEnabled = %b, "
+                + "hashAlgorithm = \"%s\", "
+                + "saltLength = %d, "
+                + "hashIterations = %d"
+                + " }",
+            super.toString(),
+            excludedExtensions.stream().collect(Collectors.joining(", ")),
+            autoRegistrationEnabled,
+            passwordRecoveryEnabled,
+            hashAlgorithm,
+            saltLength,
+            hashIterations);
     }
 
 }
