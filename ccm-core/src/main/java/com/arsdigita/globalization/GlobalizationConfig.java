@@ -1,104 +1,84 @@
 /*
- * Copyright (C) 2010 pboy (pboy@barkhof.uni-bremen.de) All Rights Reserved.
+ * Copyright (C) 2016 LibreCCM Foundation.
  *
  * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public License
- * as published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- *
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301  USA
  */
-
 package com.arsdigita.globalization;
 
-import com.arsdigita.runtime.AbstractConfig;
-import com.arsdigita.util.parameter.StringParameter;
-import com.arsdigita.util.parameter.Parameter;
-
-import org.apache.log4j.Logger;
-
+import java.util.Objects;
+import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.configuration.Configuration;
+import org.libreccm.configuration.ConfigurationManager;
+import org.libreccm.configuration.Setting;
 
 /**
- * A configuration record for configuration of the core globalization package
  *
- * Accessors of this class may return null. Developers should take care
- * to trap null return values in their code.
- *
- * @author Peter Boy &lt;pboy@barkhof.uni-bremen.de&gt;
- * @version $Id: $
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class GlobalizationConfig extends AbstractConfig {
+@Configuration(
+        descBundle = "com.arsdigita.globalization.GlobalizationConfigDescription",
+        descKey = "globalization.config.description")
+public class GlobalizationConfig {
 
-    /** A logger instance.  */
-    private static final Logger s_log = Logger.getLogger(GlobalizationConfig.class);
+    @Setting(descKey = "globalization.config.default_charset")
+    private String defaultCharset = "UTF-8";
 
-    /** Singelton config object.  */
-    private static GlobalizationConfig s_conf;
-
-    /**
-     * Gain a UIConfig object.
-     *
-     * Singelton pattern, don't instantiate a lifecacle object using the
-     * constructor directly!
-     * @return
-     */
-    public static synchronized GlobalizationConfig getConfig() {
-        if (s_conf == null) {
-            s_conf = new GlobalizationConfig();
-            s_conf.load();
-        }
-
-        return s_conf;
+    public static GlobalizationConfig getConfig() {
+        final CdiUtil cdiUtil = new CdiUtil();
+        final ConfigurationManager confManager = cdiUtil.findBean(
+                ConfigurationManager.class);
+        return confManager.findConfiguration(GlobalizationConfig.class);
     }
 
-
-
-    /**
-     * Default character set for locales not explicitly listed above in the
-     * locales parameter.
-     * This parameter is read each time the system starts. Therefore, modifications
-     * will take effect after a CCM restart.
-     */
-    // In OLD initializer: DEFAULT_CHARSET as String
-    private final Parameter m_defaultCharset =
-            new StringParameter(
-                    "core.globalization.default_charset",
-                    Parameter.REQUIRED, "UTF-8");
-
-
-    /**
-     * Constructs an empty RuntimeConfig object.
-     *
-     */
-    public GlobalizationConfig() {
-    // pboy: According to the comment for the getConfig() method a singleton
-    // pattern is to be used. Therefore the constructor should be changed to
-    // private!
-    // private GlobalizationConfig() {
-        register(m_defaultCharset);
-
-        loadInfo();
-
-    }
-
-    
-
-    /**
-     * Retrieve the default char set to be used for locales not explicitly
-     * listed in the supported locales list.
-     *
-     * @return root page url
-     */
     public String getDefaultCharset() {
-        return (String)get(m_defaultCharset) ;
+        return defaultCharset;
     }
 
+    public void setDefaultCharset(final String defaultCharset) {
+        this.defaultCharset = defaultCharset;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 43 * hash + Objects.hashCode(defaultCharset);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof GlobalizationConfig)) {
+            return false;
+        }
+        final GlobalizationConfig other = (GlobalizationConfig) obj;
+        return Objects.equals(defaultCharset, other.defaultCharset);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s{ "
+                                     + "defaultCharset = \"%s\""
+                                     + " }",
+                             super.toString(),
+                             defaultCharset);
+    }
 }

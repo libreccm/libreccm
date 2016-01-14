@@ -69,7 +69,6 @@ public final class DispatcherHelper implements DispatcherConstants {
     private static String s_staticURL;
     private static boolean s_cachingActive;
     private static int s_defaultExpiry;
-    private static DispatcherConfig s_config;
     public static SimpleDateFormat rfc1123_formatter;
     private static boolean initialized = false;
 
@@ -81,11 +80,9 @@ public final class DispatcherHelper implements DispatcherConstants {
         rfc1123_formatter = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");
         rfc1123_formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
 
-        // set the defaults
-        s_config = getConfig();
-        s_staticURL = s_config.getStaticURLPrefix();
-        s_defaultExpiry = s_config.getDefaultExpiryTime().intValue();
-        s_cachingActive = s_config.isCachingActive();
+        s_staticURL = DispatcherConfig.getConfig().getStaticUrlPrefix();
+        s_defaultExpiry = DispatcherConfig.getConfig().getDefaultExpiry();
+        s_cachingActive = DispatcherConfig.getConfig().isCachingActive();
 
         initialized = true;
     }
@@ -1113,18 +1110,6 @@ public final class DispatcherHelper implements DispatcherConstants {
     public static void cacheForWorld(HttpServletResponse response,
                                      Date expiry) {
         cacheForWorld(response, (int) ((expiry.getTime() - (new Date()).getTime()) / 1000l));
-    }
-
-    /**
-     * This returns a reference to the dispatcher configuration file
-     * @return 
-     */
-    public static DispatcherConfig getConfig() {
-        if (s_config == null) {
-            s_config = new DispatcherConfig();
-            s_config.load();
-        }
-        return s_config;
     }
 
     /**

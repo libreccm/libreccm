@@ -1,106 +1,134 @@
 /*
- * Copyright (C) 2003-2004 Red Hat Inc. All Rights Reserved.
+ * Copyright (C) 2016 LibreCCM Foundation.
  *
  * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public License
- * as published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- *
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301  USA
  */
 package com.arsdigita.dispatcher;
 
-import com.arsdigita.runtime.AbstractConfig;
-import com.arsdigita.util.parameter.BooleanParameter;
-import com.arsdigita.util.parameter.IntegerParameter;
-import com.arsdigita.util.parameter.Parameter;
-import com.arsdigita.util.parameter.StringParameter;
-import org.apache.log4j.Logger;
+import java.util.Objects;
+import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.configuration.Configuration;
+import org.libreccm.configuration.ConfigurationManager;
+import org.libreccm.configuration.Setting;
 
 /**
- * @author Randy Graebner
- * @version $Id: DispatcherConfig.java 1169 2006-06-14 13:08:25Z fabrice $
+ *
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public final class DispatcherConfig extends AbstractConfig {
+@Configuration(descBundle = "com.arsdigita.dispatcher.DispatcherConfigDescription",
+               descKey = "dispatcher.config.description")
+public final class DispatcherConfig {
 
-    private static final Logger s_log = Logger.getLogger(DispatcherConfig.class);
+    @Setting(descKey = "dispatcher.config.caching_active")
+    private Boolean cachingActive = true;
 
-    private final Parameter m_cachingActive;
-    private final Parameter m_defaultExpiry;
-    private final Parameter m_staticURLPrefix;
+    @Setting(descKey = "dispatcher.config.default_expiry")
+    private Integer defaultExpiry = 259200;
 
-    /** Default top-level container for all Bebop components and containersPage
-     *  to use for dispatching Bebop pages. A custom installation may provide 
-     *  it's own implementation. Use with care because all pages inherit from
-     *  this class! 
-     *  Default is {@see com.arsdigita.bebop.Page}                            */
-    private final Parameter m_defaultPageClass= new 
-            StringParameter("waf.dispatcher.default_page_class",
-                            Parameter.OPTIONAL,
-                            "com.arsdigita.bebop.Page");
+    @Setting(descKey = "dispatcher.config.static_url_prefix")
+    private String staticUrlPrefix = "/STATICII/";
 
-    public DispatcherConfig() {
-        m_cachingActive = new BooleanParameter
-            ("waf.dispatcher.is_caching_active", 
-             Parameter.REQUIRED, Boolean.TRUE);
+    @Setting(descKey = "dispatcher.config.default_page_class")
+    private String defaultPageClass = "com.arsdigita.bebop.Page";
 
-        // defaults to three days 
-        m_defaultExpiry = new IntegerParameter
-            ("waf.dispatcher.default_expiry", Parameter.REQUIRED,
-             new Integer(259200));
-
-        m_staticURLPrefix = new StringParameter
-            ("waf.dispatcher.static_url_prefix", Parameter.REQUIRED,
-             "/STATICII/");
-
-        register(m_staticURLPrefix);
-        register(m_cachingActive);
-        register(m_defaultExpiry);
-        register(m_defaultPageClass);
-
-        loadInfo();
+    public static DispatcherConfig getConfig() {
+        final CdiUtil cdiUtil = new CdiUtil();
+        final ConfigurationManager confManager = cdiUtil.findBean(
+                ConfigurationManager.class);
+        return confManager.findConfiguration(DispatcherConfig.class);
     }
 
-    /**
-     *  Get the URL for static items
-     */
-    public String getStaticURLPrefix() {
-        return (String)get(m_staticURLPrefix);
+    public Boolean isCachingActive() {
+        return cachingActive;
     }
 
-    /**
-     *  This returns Boolean.TRUE if the caching is active
-     */
-    public Boolean getCachingActive() {
-        return (Boolean)get(m_cachingActive);
+    public void setCachingActive(final Boolean cachingActive) {
+        this.cachingActive = cachingActive;
     }
 
-    public boolean isCachingActive() {
-        return Boolean.TRUE.equals(getCachingActive());
+    public Integer getDefaultExpiry() {
+        return defaultExpiry;
     }
 
-    /**
-     *  This returns the number of seconds something is cached for
-     */
-    public Integer getDefaultExpiryTime() {
-        return (Integer)get(m_defaultExpiry);
+    public void setDefaultExpiry(final Integer defaultExpiry) {
+        this.defaultExpiry = defaultExpiry;
     }
-    
-    /**
-     * Retrieve the top-level container for all Bebop components and 
-     * containersPage to use by dispatcher.
-     * Most installation should use the provided default implementation in
-     * {@see com.arsdigita.bebop.Page}
-     */ 
+
+    public String getStaticUrlPrefix() {
+        return staticUrlPrefix;
+    }
+
+    public void setStaticUrlPrefix(final String staticUrlPrefix) {
+        this.staticUrlPrefix = staticUrlPrefix;
+    }
+
     public String getDefaultPageClass() {
-    	return (String)get(m_defaultPageClass);
+        return defaultPageClass;
+    }
+
+    public void setDefaultPageClass(final String defaultPageClass) {
+        this.defaultPageClass = defaultPageClass;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + Objects.hashCode(cachingActive);
+        hash = 97 * hash + Objects.hashCode(defaultExpiry);
+        hash = 97 * hash + Objects.hashCode(staticUrlPrefix);
+        hash = 97 * hash + Objects.hashCode(defaultPageClass);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof DispatcherConfig)) {
+            return false;
+        }
+        final DispatcherConfig other = (DispatcherConfig) obj;
+        if (!Objects.equals(staticUrlPrefix, other.getStaticUrlPrefix())) {
+            return false;
+        }
+        if (!Objects.equals(defaultPageClass, other.getDefaultPageClass())) {
+            return false;
+        }
+        if (!Objects.equals(cachingActive, other.isCachingActive())) {
+            return false;
+        }
+        return Objects.equals(defaultExpiry, other.getDefaultExpiry());
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s{ "
+                                     + "cachingActive = %b, "
+                                     + "defaultExpiry = %d, "
+                                     + "staticUrlPrefix  = \"%s\", "
+                                     + "defaultPageClass = \"%s\""
+                                     + " }",
+                             super.toString(),
+                             cachingActive,
+                             defaultExpiry,
+                             staticUrlPrefix,
+                             defaultPageClass);
     }
 }

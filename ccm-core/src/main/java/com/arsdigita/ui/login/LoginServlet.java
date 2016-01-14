@@ -29,7 +29,6 @@ import com.arsdigita.bebop.event.ActionEvent;
 import com.arsdigita.bebop.event.ActionListener;
 import com.arsdigita.bebop.page.BebopApplicationServlet;
 import com.arsdigita.dispatcher.DispatcherConfig;
-import com.arsdigita.dispatcher.DispatcherHelper;
 import com.arsdigita.kernel.security.SecurityConfig;
 import com.arsdigita.ui.UI;
 import com.arsdigita.web.ReturnSignal;
@@ -227,7 +226,7 @@ public class LoginServlet extends BebopApplicationServlet {
      */
     private static Page checkForPageSubClass() {
         //check to see if there is subclass of Page defined in Config
-        DispatcherConfig dc = DispatcherHelper.getConfig();
+        DispatcherConfig dc = DispatcherConfig.getConfig();
         String pageClass = dc.getDefaultPageClass();
         Page p = null;
         if (!pageClass.equals("com.arsdigita.bebop.Page")) {
