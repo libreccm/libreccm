@@ -41,6 +41,13 @@ public @interface Setting {
     String name() default "";
     
     /**
+     * Key for the localised label for the setting.
+     * 
+     * @return Key for the localised label for the setting.
+     */
+    String labelKey() default "";
+    
+    /**
      * Key of description of the setting.
      * 
      * @return Key of description of the setting.

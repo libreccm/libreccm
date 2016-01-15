@@ -33,24 +33,23 @@ import java.util.StringJoiner;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@Configuration(descBundle = "com.arsdigita.ui.UIConfigDescription",
-               descKey = "ui.config.description")
+@Configuration
 public final class UIConfig {
 
-    @Setting(descKey = "ui.config.default_layout")
+    @Setting
     private List<String> defaultLayout = Arrays.asList(new String[]{
         "top:com.arsdigita.ui.UserBanner",
         "bottom:com.arsdigita.ui.SiteBanner",
         "bottom:com.arsdigita.ui.DebugPanel"
     });
 
-    @Setting(descKey = "ui.config.root_page_url")
+    @Setting
     private String rootPageUrl = "/register/";
 
-    @Setting(descKey = "ui.config.user_redirect_url")
+    @Setting
     private String userRedirectUrl = "/permissions/";
 
-    @Setting(descKey = "ui.config.workspace_url")
+    @Setting
     private String workspaceUrl = "pvt/";
 
     public static UIConfig getConfig() {

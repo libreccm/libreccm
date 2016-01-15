@@ -377,9 +377,20 @@ public class ConfigurationManager {
         settingInfo.setConfClass(configuration.getName());
 
         settingInfo.setDescBundle(descBundle);
+        
+        if (settingAnnotation.labelKey() == null
+            || settingAnnotation.labelKey().isEmpty()) {
+            settingInfo.setLabelKey(String.join(".", field.getName(),
+                                                     "label"));
+        } else {
+            settingInfo.setLabelKey(name);
+        }
+        
         if (settingAnnotation.descKey() == null
                 || settingAnnotation.descKey().isEmpty()) {
-            settingInfo.setDescKey(field.getName());
+            settingInfo.setDescKey(String.join(".", 
+                                               field.getName(),
+                                               "descripotion"));
         } else {
             settingInfo.setDescKey(settingAnnotation.descKey());
         }

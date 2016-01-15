@@ -29,18 +29,16 @@ import java.util.Objects;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@Configuration(
-    descBundle = "com.arsdigita.formbuilder.FormBuilderConfigDescription",
-    descKey = "formbuilder.config.description")
+@Configuration
 public final class FormBuilderConfig {
 
-    @Setting(descKey = "formbuilder.config.actions_help_url")
+    @Setting
     private String actionsHelpUrl;
 
-    @Setting(descKey = "formbuilder.config.controls_help_url")
+    @Setting
     private String controlsHelpUrl;
 
-    @Setting(descKey = "formbuilder.config.interpolate_email_actions")
+    @Setting
     private Boolean interpolateEmailActions;
 
     public static FormBuilderConfig getConfig() {

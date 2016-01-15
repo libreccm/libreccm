@@ -41,45 +41,45 @@ import java.util.stream.Collectors;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@Configuration(descBundle = "com.arsdigita.bebop.BebopConfigDescription",
-               descKey = "bebop.config.description")
+@Configuration(
+    descKey = "bebop.config.description")
 public final class BebopConfig {
 
-    @Setting(descKey = "bebop.config.presenter_class_name")
+    @Setting
     private String presenterClassName = PageTransformer.class.getName();
 
-    @Setting(descKey = "bebop.config.base_page_name")
+    @Setting
     private String basePageClassName = SimplePage.class.getName();
 
-    @Setting(descKey = "bebop.config.tidy_config_file")
+    @Setting
     private String tidyConfigFile
                        = "com/arsdigita/bebop/parameters/tidy.properties";
 
-    @Setting(descKey = "bebop.config.fancy_errors")
+    @Setting
     private Boolean fancyErrors = false;
 
-    @Setting(descKey = "bebop.config.dcp_on_buttons")
+    @Setting
     private Boolean dcpOnButtons = true;
 
-    @Setting(descKey = "bebop.config.dcp_on_links")
+    @Setting
     private Boolean dcpOnLinks = false;
 
-    @Setting(descKey = "bebop.config.tree_select_enabled")
+    @Setting
     private Boolean treeSelectEnabled = false;
 
-    @Setting(descKey = "bebop.config.dhtml_editors")
+    @Setting
     private Set<String> dhtmlEditors = new HashSet<>(
         Arrays.asList(new String[]{BebopConstants.BEBOP_XINHAEDITOR,
                                    BebopConstants.BEBOP_FCKEDITOR,
                                    BebopConstants.BEBOP_DHTMLEDITOR}));
 
-    @Setting(descKey = "bebop.config.default_dhtml_editor")
+    @Setting
     private String defaultDhtmlEditor = BebopConstants.BEBOP_XINHAEDITOR;
 
-    @Setting(descKey = "bebop.config.dhtml_editor_srcfile")
+    @Setting
     private String dhtmlEditorSrcFile = "/assets/xinha/XinhaLoader.js";
 
-    @Setting(descKey = "bebop.config.show_class_name")
+    @Setting
     private Boolean showClassName = false;
 
     public static BebopConfig getConfig() {

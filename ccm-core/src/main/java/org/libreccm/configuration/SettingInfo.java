@@ -53,6 +53,11 @@ public final class SettingInfo {
     private String descBundle;
 
     /**
+     * Key for the localised label of the setting
+     */
+    private String labelKey;
+
+    /**
      * Key of the description of the setting.
      */
     private String descKey;
@@ -101,6 +106,14 @@ public final class SettingInfo {
         return ResourceBundle.getBundle(descBundle, locale);
     }
 
+    public String getLabelKey() {
+        return labelKey;
+    }
+
+    void setLabelKey(final String labelKey) {
+        this.labelKey = labelKey;
+    }
+
     public String getDescKey() {
         return descKey;
     }
@@ -121,6 +134,7 @@ public final class SettingInfo {
         hash = 79 * hash + Objects.hashCode(defaultValue);
         hash = 79 * hash + Objects.hashCode(confClass);
         hash = 79 * hash + Objects.hashCode(descBundle);
+        hash = 79 * hash + Objects.hashCode(labelKey);
         hash = 79 * hash + Objects.hashCode(descKey);
         return hash;
     }
@@ -155,6 +169,10 @@ public final class SettingInfo {
             return false;
         }
 
+        if (!Objects.equals(labelKey, other.getLabelKey())) {
+            return false;
+        }
+
         return Objects.equals(descKey, other.getDescKey());
     }
 
@@ -166,6 +184,7 @@ public final class SettingInfo {
                                  + "defaultValue = \"%s\", "
                                  + "configurationClass = \"%s\", "
                                  + "descBundle = \"%s\","
+                                 + "labelKey = \"%s\", "
                                  + "descKey = \"%s\""
                                  + " }",
                              super.toString(),
@@ -174,6 +193,7 @@ public final class SettingInfo {
                              defaultValue,
                              confClass,
                              descBundle,
+                             labelKey,
                              descKey);
     }
 

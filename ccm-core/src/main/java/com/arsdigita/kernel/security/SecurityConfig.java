@@ -27,35 +27,32 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@Configuration(
-    descBundle = "com.arsdigita.kernel.security.SecurityConfigDescription",
-    descKey = "security.config.description")
+@Configuration
 public final class SecurityConfig {
 
-    @Setting(descKey = "security.confg.excluded_extensions")
+    @Setting
     private List<String> excludedExtensions = Arrays.asList(
         new String[]{".jpg", ".gif", ".png", ".pdf"});
 
-    @Setting(descKey = "security.config.auto_registration_enabled")
+    @Setting
     private Boolean autoRegistrationEnabled = false;
 
-    @Setting(descKey = "security.config.password_recovery_enabled")
+    @Setting
     private Boolean passwordRecoveryEnabled = true;
 
-    @Setting(descKey = "security.config.hash_algorithm")
+    @Setting
     private String hashAlgorithm = "SHA-512";
 
-    @Setting(descKey = "security.config.salt_length")
+    @Setting
     private Integer saltLength = 256;
 
-    @Setting(descKey = "security.config.hash_iterations")
+    @Setting
     private Integer hashIterations = 50000;
 
     public static SecurityConfig getConfig() {

@@ -29,46 +29,44 @@ import org.libreccm.configuration.Configuration;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.configuration.Setting;
 
-import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@Configuration(descBundle = "com.arsdigita.kernel.KernelConfigDescription",
-               descKey = "kernel.config.description")
+@Configuration
 public final class KernelConfig {
 
     private static final String EMAIL = "email";
     private static final String SCREEN_NAME = "screen_name";
 
-    @Setting(descKey = "kernel.config.debug_enabled")
+    @Setting
     private boolean debugEnabled = false;
 
-    @Setting(descKey = "kernel.config.webdev_support_enabled")
+    @Setting
     private boolean webdevSupportEnabled = false;
 
-    @Setting(descKey = "kernel.config.data_permission_check_enabled")
+    @Setting
     private boolean dataPermissionCheckEnabled = true;
 
-    @Setting(descKey = "kernel.config.primary_user_identifier")
+    @Setting
     private String primaryUserIdentifier = EMAIL;
 
-    @Setting(descKey = "kernel.config.sso_enabled")
+    @Setting
     private boolean ssoEnabled = false;
 
-    @Setting(descKey = "kernel.config.remember_login_enabled")
+    @Setting
     private boolean rememberLoginEnabled = true;
 
-    @Setting(descKey = "kernel_config.secure_login_enabled")
+    @Setting
     private boolean secureLoginEnabled = false;
 
-    @Setting(descKey = "kernel.config.supported_languages")
+    @Setting
     private Set<String> supportedLanguages = new HashSet<>(
         Arrays.asList(new String[]{"en"}));
 
-    @Setting(descKey = "kernel.config.default_language")
+    @Setting
     private String defaultLanguage = "en";
 
     public static KernelConfig getConfig() {

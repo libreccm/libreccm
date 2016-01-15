@@ -29,27 +29,25 @@ import java.util.Objects;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@Configuration(
-    descBundle = "com.arsdigita.notification.NotificationConfigDescription",
-    descKey = "notification.config.description")
+@Configuration
 public final class NotificationConfig {
 
-    @Setting(descKey = "notification.config.request_manager_delay")
+    @Setting
     private Integer requestManagerDelay = 900;
 
-    @Setting(descKey = "notification.config.request_manager_period")
+    @Setting
     private Integer requestManagerPeriod = 900;
 
-    @Setting(descKey = "notification.config.digest_queue_delay")
+    @Setting
     private Integer digestQueueDelay = 900;
 
-    @Setting(descKey = "notification.config.digest_queue_period")
+    @Setting
     private Integer digestQueuePeriod = 900;
 
-    @Setting(descKey = "notification.config.simple_queue_delay")
+    @Setting
     private Integer simpleQueueDelay = 900;
 
-    @Setting(descKey = "notification.config.simple_queue_period")
+    @Setting
     private Integer simpleQueuePeriod = 900;
 
     public static NotificationConfig getConfig() {

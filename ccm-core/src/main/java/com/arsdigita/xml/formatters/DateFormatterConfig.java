@@ -29,12 +29,10 @@ import java.util.Objects;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@Configuration(
-    descBundle = "com.arsdigita.xml.formatters.DataFormatterDescription",
-    descKey = "dataformatter.config.description")
+@Configuration
 public final class DateFormatterConfig {
 
-    @Setting(descKey = "dateformatter.config.locale")
+    @Setting
     private String locale = null;
 
     public static DateFormatterConfig getConfig() {
