@@ -1,122 +1,177 @@
 /*
- * Copyright (C) 2003-2004 Red Hat Inc. All Rights Reserved.
+ * Copyright (C) 2016 LibreCCM Foundation.
  *
  * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public License
- * as published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- *
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301  USA
  */
 package com.arsdigita.templating;
 
-import com.arsdigita.runtime.AbstractConfig;
-import com.arsdigita.util.parameter.Parameter;
-import com.arsdigita.util.parameter.IntegerParameter;
-import com.arsdigita.util.parameter.SingletonParameter;
-import com.arsdigita.util.parameter.StringParameter;
-import org.apache.log4j.Logger;
+import com.arsdigita.util.UncheckedWrapperException;
+import com.arsdigita.web.ApplicationFileResolver;
+
+import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.configuration.Configuration;
+import org.libreccm.configuration.ConfigurationManager;
+import org.libreccm.configuration.Setting;
+
+import java.util.Objects;
 
 /**
- * @author Justin Ross
- * @version $Id$
+ *
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public final class TemplatingConfig extends AbstractConfig {
+@Configuration
+public final class TemplatingConfig {
 
-    /** Internal logger instance to faciliate debugging. Enable logging output
-     *  by editing /WEB-INF/conf/log4j.properties int hte runtime environment
-     *  and set com.arsdigita.templating.TemplatingConfig=DEBUG by uncommenting 
-     *  it                                                                    */
-    private static final Logger s_log = Logger.getLogger
-        (TemplatingConfig.class);
+    @Setting
+    private String stylesheetPaths = "/WEB-INF/resources/stylesheet-paths.txt";
 
-    /** Singelton config object.  */
-    private static TemplatingConfig s_conf;
-    /**
-     * Gain a WorkspaceConfig object.
-     *
-     * Singelton pattern, don't instantiate a config object using the
-     * constructor directly!
-     * @return
-     */
-    public static synchronized TemplatingConfig getInstanceOf() {
-        if (s_conf == null) {
-            s_conf = new TemplatingConfig();
-            s_conf.load();
+    @Setting
+    private String stylesheetResolverClass = PatternStylesheetResolver.class
+        .getName();
+
+    @Setting
+    private Integer stylesheetCacheSize = 10;
+
+    @Setting
+    private Integer stylesheetCacheAge = 3600;
+
+    public static TemplatingConfig getConfig() {
+        final CdiUtil cdiUtil = new CdiUtil();
+        final ConfigurationManager confManager = cdiUtil.findBean(
+            ConfigurationManager.class);
+        return confManager.findConfiguration(TemplatingConfig.class);
+    }
+
+    public String getStylesheetPaths() {
+        return stylesheetPaths;
+    }
+
+    public void setStylesheetPaths(final String stylesheetPaths) {
+        this.stylesheetPaths = stylesheetPaths;
+    }
+
+    public String getStylesheetResolverClass() {
+        return stylesheetResolverClass;
+    }
+
+    public StylesheetResolver getStylesheetResolver() {
+
+        try {
+            @SuppressWarnings("unchecked")
+            final Class<StylesheetResolver> clazz
+                                                = (Class<StylesheetResolver>) Class
+                .forName(stylesheetResolverClass);
+            return clazz.newInstance();
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
+            throw new UncheckedWrapperException(
+                "Unable to create configured StylesheetResolver.",
+                ex);
+        }
+    }
+
+    public void setStylesheetResolverClass(
+        final String stylesheetResolverClass) {
+        try {
+            final Class<?> clazz = Class.forName(stylesheetResolverClass);
+            if (!StylesheetResolver.class.isAssignableFrom(clazz)) {
+                throw new IllegalArgumentException(String.format(
+                    "Provided class \"%s\" is not an "
+                        + "implementation of the interface \"%s\".",
+                    stylesheetResolverClass,
+                    StylesheetResolver.class.getName()));
+            }
+        } catch (ClassNotFoundException ex) {
+            throw new IllegalArgumentException(
+                String.format("Unable to retrieve class \"%s\".",
+                              stylesheetResolverClass),
+                ex);
         }
 
-        return s_conf;
+        this.stylesheetResolverClass = stylesheetResolverClass;
     }
 
-    /** Fully qualified path string to file contain the pattern file for
-        {@link com.arsdigita.templating.PatternStylesheetResolver 
-        PatternStylesheetResolver}                                           */
-    private final Parameter m_paths = new StringParameter
-            ("waf.templating.stylesheet_paths", Parameter.REQUIRED,
-             "/WEB-INF/resources/stylesheet-paths.txt");
-
-    /** Specifies class for the implementation of StylesheetResolver Interface
-        to resolve a modules stylesheet.                                     */
-    private final Parameter m_resolver  = new SingletonParameter
-            ("waf.templating.stylesheet_resolver", Parameter.REQUIRED,
-             new PatternStylesheetResolver());
-
-    /** Specifies number of stylesheets cached.                              */
-    private final Parameter m_cacheSize = new IntegerParameter
-            ("waf.templating.stylesheet_cache_size", Parameter.OPTIONAL,
-             null);
-
-    /** Duration of stylesheet cache in seconds                             */
-    private final Parameter m_cacheAge = new IntegerParameter
-            ("waf.templating.stylesheet_cache_age", Parameter.OPTIONAL,
-             null);
-
-    public TemplatingConfig() {
-
-        register(m_paths);
-        register(m_resolver);
-        register(m_cacheSize);
-        register(m_cacheAge);
-
-        loadInfo();
+    public Integer getStylesheetCacheSize() {
+        return stylesheetCacheSize;
     }
 
-    /** 
-     * Get name and location of stylesheet pattern file.
-     * 
-     * @return String with fully qualified file name
-     */
-    final String getStylesheetPaths() {
-        return (String) get(m_paths);
+    public void setStylesheetCacheSize(final Integer stylesheetCacheSize) {
+        this.stylesheetCacheSize = stylesheetCacheSize;
     }
 
-    /**
-     * Gets the stylesheet resolver.  This value is set via the
-     * <code>com.arsdigita.templating.stylesheet_resolver</code>
-     * system property.
-     * @return 
-     */
-    public final StylesheetResolver getStylesheetResolver() {
-        return (StylesheetResolver) get(m_resolver);
+    public Integer getStylesheetCacheAge() {
+        return stylesheetCacheAge;
     }
 
-    /** Can be null.
-     * @return  */
-    public final Integer getCacheSize() {
-        return (Integer) get(m_cacheSize);
+    public void setStylesheetCacheAge(final Integer stylesheetCacheAge) {
+        this.stylesheetCacheAge = stylesheetCacheAge;
     }
 
-    /** Can be null.
-     * @return  */
-    public final Integer getCacheAge() {
-        return (Integer) get(m_cacheAge);
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 23 * hash + Objects.hashCode(stylesheetPaths);
+        hash = 23 * hash + Objects.hashCode(stylesheetResolverClass);
+        hash = 23 * hash + Objects.hashCode(stylesheetCacheSize);
+        hash = 23 * hash + Objects.hashCode(stylesheetCacheAge);
+        return hash;
     }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (obj instanceof TemplatingConfig) {
+            return false;
+        }
+        final TemplatingConfig other = (TemplatingConfig) obj;
+        if (!Objects.equals(stylesheetPaths, other.getStylesheetPaths())) {
+            return false;
+        }
+        if (!Objects.equals(stylesheetResolverClass,
+                            other.getStylesheetResolverClass())) {
+            return false;
+        }
+        if (!Objects.equals(stylesheetCacheSize,
+                            other.getStylesheetCacheSize())) {
+            return false;
+        }
+        if (!Objects.equals(stylesheetCacheAge,
+                            other.getStylesheetCacheAge())) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s{ "
+                                 + "stylesheetPaths = \"%s\", "
+                                 + "stylesheetResolverClass = \"%s\", "
+                                 + "stylesheetCacheSize = %d, "
+                                 + "stylesheetCacheAge = %d"
+                                 + " }",
+                             super.toString(),
+                             stylesheetPaths,
+                             stylesheetResolverClass,
+                             stylesheetCacheSize,
+                             stylesheetCacheAge);
+    }
+
 }

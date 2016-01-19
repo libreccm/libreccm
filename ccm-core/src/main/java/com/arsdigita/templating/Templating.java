@@ -77,38 +77,39 @@ public class Templating {
      * Config object containing various parameter
      */
     private static final TemplatingConfig s_config = TemplatingConfig
-            .getInstanceOf();
+        .getConfig();
 
     static {
         s_log.debug("Static initalizer starting...");
 
         Exceptions.registerUnwrapper(
-                TransformerException.class,
-                new ExceptionUnwrapper() {
+            TransformerException.class,
+            new ExceptionUnwrapper() {
 
             @Override
             public Throwable unwrap(Throwable t) {
                 TransformerException ex = (TransformerException) t;
                 return ex.getCause();
             }
+
         });
 
         // now we initiate the CacheTable here
         // default cache size used to be 50, which is too high I reckon,
         // each template can eat up to 4 megs
-        Integer setting = s_config.getCacheSize();
+        Integer setting = s_config.getStylesheetCacheSize();
         int cacheSize = (setting == null ? 10 : setting.intValue());
 
-        setting = s_config.getCacheAge();
+        setting = s_config.getStylesheetCacheAge();
         int cacheAge = (setting == null ? 60 * 60 * 24 * 3 : setting.intValue());
 
         s_log.debug("Static initalizer finished...");
     }
 
     /**
-     * Gets the <code>TemplatingConfig</code> record.
+     * Gets the <code>LegacyTemplatingConfig</code> record.
      *
-     * @return The <code>TemplatingConfig</code> of this runtime
+     * @return The <code>LegacyTemplatingConfig</code> of this runtime
      */
     public static TemplatingConfig getConfig() {
         return s_config;
@@ -139,7 +140,7 @@ public class Templating {
     public static PresentationManager getPresentationManager() {
         try {
             return (PresentationManager) BebopConfig.getConfig().
-                    getPresenterClass().newInstance();
+                getPresenterClass().newInstance();
         } catch (IllegalAccessException | InstantiationException ex) {
             throw new UncheckedWrapperException(ex);
         }
@@ -151,8 +152,9 @@ public class Templating {
      * was first generated, it will be regenerated first.
      *
      * @param source the <code>URL</code> to the top-level template resource
+     *
      * @return an <code>XSLTemplate</code> instance representing
-     * <code>source</code>
+     *         <code>source</code>
      */
     public static synchronized XSLTemplate getTemplate(final URL source) {
         return getTemplate(source, false, true);
@@ -163,15 +165,18 @@ public class Templating {
      * cache, it will be returned. If the template has been modified since it
      * was first generated, it will be regenerated first.
      *
-     * @param source the <code>URL</code> to the top-level template resource
+     * @param source      the <code>URL</code> to the top-level template
+     *                    resource
      * @param fancyErrors Should this place any xsl errors in the request for
-     * use by another class. If this is true, the the errors are stored for
-     * later use.
-     * @param useCache Should the templates be pulled from cache, if available?
-     * True means they are pulled from cache. False means they are pulled from
-     * the disk. If this is false the pages are also not placed in the cache.
+     *                    use by another class. If this is true, the the errors
+     *                    are stored for later use.
+     * @param useCache    Should the templates be pulled from cache, if
+     *                    available? True means they are pulled from cache.
+     *                    False means they are pulled from the disk. If this is
+     *                    false the pages are also not placed in the cache.
+     *
      * @return an <code>XSLTemplate</code> instance representing
-     * <code>source</code>
+     *         <code>source</code>
      */
     public static synchronized XSLTemplate getTemplate(final URL source,
                                                        boolean fancyErrors,
@@ -188,7 +193,7 @@ public class Templating {
         if (template == null) {
             if (s_log.isInfoEnabled()) {
                 s_log.info("The template for URL " + source + " is not "
-                                   + "cached; creating and caching it now");
+                               + "cached; creating and caching it now");
             }
 
             if (fancyErrors) {
@@ -201,14 +206,14 @@ public class Templating {
             }
 
         } else if (KernelConfig.getConfig().isDebugEnabled()
-                           && template.isModified()) {
+                       && template.isModified()) {
             // XXX referencing Kernel above is a broken dependency.
             // Debug mode should be captured at a lower level,
             // probably on UtilConfig.
 
             if (s_log.isInfoEnabled()) {
                 s_log.info("Template " + template + " has been modified; "
-                                   + "recreating it from scratch");
+                               + "recreating it from scratch");
             }
 
             if (fancyErrors) {
@@ -228,6 +233,7 @@ public class Templating {
      * Resolves and retrieves the template for the given request.
      *
      * @param sreq The current request object
+     *
      * @return The resolved <code>XSLTemplate</code> instance
      */
     public static XSLTemplate getTemplate(final HttpServletRequest sreq) {
@@ -237,13 +243,15 @@ public class Templating {
     /**
      * Resolves the template for the given request to an URL.
      *
-     * @param sreq The current request object
+     * @param sreq        The current request object
      * @param fancyErrors Should this place any xsl errors in the request for
-     * use by another class. If this is true, the the errors are stored for
-     * later use.
-     * @param useCache Should the templates be pulled from cache, if available?
-     * True means they are pulled from cache. False means they are pulled from
-     * the disk. If this is false the pages are also not placed in the cache.
+     *                    use by another class. If this is true, the the errors
+     *                    are stored for later use.
+     * @param useCache    Should the templates be pulled from cache, if
+     *                    available? True means they are pulled from cache.
+     *                    False means they are pulled from the disk. If this is
+     *                    false the pages are also not placed in the cache.
+     *
      * @return The resolved <code>XSLTemplate</code> instance
      */
     public static XSLTemplate getTemplate(final HttpServletRequest sreq,
@@ -286,6 +294,7 @@ public class Templating {
      * Generates a stream containing imports for a number of URLs.
      *
      * @param paths An iterator of <code>java.net.URL</code> objects
+     *
      * @return a virtual XSL file
      */
     public static InputStream multiplexXSLFiles(Iterator paths) {
@@ -298,8 +307,8 @@ public class Templating {
             URL path = (URL) paths.next();
 
             Element imp = root.newChildElement(
-                    "xsl:import",
-                    "http://www.w3.org/1999/XSL/Transform");
+                "xsl:import",
+                "http://www.w3.org/1999/XSL/Transform");
             imp.addAttribute("href", path.toString());
 
             if (s_log.isInfoEnabled()) {
@@ -352,8 +361,8 @@ public class Templating {
 
         // Check if the url refers to our own host
         if (self.getName().equals(url.getHost())
-                    && ((self.getPort() == url.getPort())
-                        || (url.getPort() == -1 && self.getPort() == 80))) {
+                && ((self.getPort() == url.getPort())
+                    || (url.getPort() == -1 && self.getPort() == 80))) {
             // host part denotes to a local resource, cut off host part.
             localPath = url.getPath();
             isLocal = true;
@@ -391,21 +400,21 @@ public class Templating {
                 URL newURL = Web.findResource(localPath); //without host part here!
                 if (s_log.isDebugEnabled()) {
                     s_log.
-                            debug("Transforming resource " + url + " to "
-                                          + newURL);
+                        debug("Transforming resource " + url + " to "
+                                  + newURL);
                 }
                 return newURL;
             } else {
                 // A real path to disk
                 final String filename = Web.getServletContext()
-                        .getRealPath(localPath);
+                    .getRealPath(localPath);
                 File file = new File(filename);
                 if (file.exists()) {
                     try {
                         URL newURL = file.toURL();
                         if (s_log.isDebugEnabled()) {
                             s_log.debug("Transforming resource " + url + " to "
-                                                + newURL);
+                                            + newURL);
                         }
                         return newURL;
                     } catch (MalformedURLException ex) {
@@ -413,17 +422,20 @@ public class Templating {
                     }
                 } else if (s_log.isDebugEnabled()) {
                     s_log.debug("File " + filename
-                                        + " doesn't exist on disk");
+                                    + " doesn't exist on disk");
                 }
             }
         } else // url is not the (local) running CCM host, no transformation
         // is done
-         if (s_log.isDebugEnabled()) {
+        {
+            if (s_log.isDebugEnabled()) {
                 s_log.debug("URL " + url + " is not local");
             }
+        }
 
         return url;  // returns the original, unmodified url here
     }
+
 }
 
 /**
@@ -433,7 +445,8 @@ public class Templating {
 class LoggingErrorListener implements ErrorListener {
 
     private static final Logger s_log
-                                = Logger.getLogger(LoggingErrorListener.class);
+                                    = Logger.getLogger(
+            LoggingErrorListener.class);
     private final ArrayList m_errors;
 
     LoggingErrorListener() {
@@ -461,9 +474,10 @@ class LoggingErrorListener implements ErrorListener {
 
     private void log(Level level, TransformerException ex) {
         s_log.log(level, "Transformer " + level + ": "
-                                 + ex.getLocationAsString() + ": " + ex.
+                             + ex.getLocationAsString() + ": " + ex.
                   getMessage(),
                   ex);
         m_errors.add(ex);
     }
+
 }

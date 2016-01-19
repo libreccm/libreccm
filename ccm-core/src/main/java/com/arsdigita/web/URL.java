@@ -120,7 +120,7 @@ import org.libreccm.web.CcmApplication;
  *
  * <p>
  * Those methods not taking an <code>HttpServletRequest</code> use the scheme,
- * server name, and port defined in <code>WebConfig</code>.</p>
+ * server name, and port defined in <code>LegacyWebConfig</code>.</p>
  *
  * <p>
  * All static create methods taking a <code>ParameterMap</code> take null to
@@ -136,7 +136,7 @@ import org.libreccm.web.CcmApplication;
  * @see com.arsdigita.web.DispatcherServlet
  * @see com.arsdigita.web.LoginSignal
  * @see com.arsdigita.web.ReturnSignal
- * @see com.arsdigita.web.WebConfig
+ * @see com.arsdigita.web.LegacyWebConfig
  * @see com.arsdigita.web.Application
  * @author Justin Ross
  * &lt;<a href="mailto:jross@redhat.com">jross@redhat.com</a>&gt;
@@ -612,7 +612,7 @@ public class URL {
      * @return a <code>URL</code> to your server's root path
      */
     public static final URL root() {
-        final WebConfig config = Web.getConfig();
+        final LegacyWebConfig config = Web.getConfig();
 
         URL url = new URL(config.getDefaultScheme(),
                           config.getServer().getName(),
@@ -679,7 +679,7 @@ public class URL {
     public static final URL there(final HttpServletRequest sreq,
                                   final String path,
                                   final ParameterMap params) {
-        final WebConfig config = Web.getConfig();
+        final LegacyWebConfig config = Web.getConfig();
 
         Assert.exists(sreq, "HttpServletRequest sreq");
         Assert.exists(config, "WebConfig config");
@@ -715,7 +715,7 @@ public class URL {
     public static final URL dynamicHostThere(final HttpServletRequest sreq,
                                              final String path,
                                              final ParameterMap params) {
-        final WebConfig config = Web.getConfig();
+        final LegacyWebConfig config = Web.getConfig();
         DynamicHostProvider provider = Web.getConfig().getDynamicHostProvider();
 
         if (provider == null) {
@@ -755,7 +755,7 @@ public class URL {
      */
     public static final URL there(final HttpServletRequest sreq,
                                   final String path) {
-        final WebConfig config = Web.getConfig();
+        final LegacyWebConfig config = Web.getConfig();
 
         Assert.exists(sreq, "HttpServletRequest sreq");
         Assert.exists(config, "WebConfig config");
@@ -847,7 +847,7 @@ public class URL {
      */
     public static final URL there(final String path,
                                   final ParameterMap params) {
-        final WebConfig config = Web.getConfig();
+        final LegacyWebConfig config = Web.getConfig();
 
         return new URL(config.getDefaultScheme(),
                        config.getServer().getName(),
@@ -949,7 +949,7 @@ public class URL {
      * @return
      */
     public static String getDispatcherPath() {
-        final WebConfig config = Web.getConfig();
+        final LegacyWebConfig config = Web.getConfig();
         final HttpServletRequest req = Web.getRequest();
 
         final String context = config.getDispatcherContextPath();

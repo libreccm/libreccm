@@ -43,15 +43,15 @@ import org.apache.log4j.Logger;
 /**
  * <p>
  * This stylesheet resolver is used by the <code>*PresentationManager</code>
- * class to work out which XSLT stylesheet to apply to the current Bebop
- * XML output.
+ * class to work out which XSLT stylesheet to apply to the current Bebop XML
+ * output.
  * </p>
  *
  * <p>
- * This particular stylesheet resolver uses a flat file containing a list
- * of stylesheet patterns, one per line. The file is called
- * <code>WEB-INF/resources/stylesheet-paths.txt</code>.
- * Such a file could look like this:
+ * This particular stylesheet resolver uses a flat file containing a list of
+ * stylesheet patterns, one per line. The file is called
+ * <code>WEB-INF/resources/stylesheet-paths.txt</code>. Such a file could look
+ * like this:
  * </p>
  *
  * <pre>
@@ -71,57 +71,57 @@ import org.apache.log4j.Logger;
  * </p>
  *
  * <p>
- * The patterns, such as <code>::vhost::</code>, are substituted
- * for string values:
+ * The patterns, such as <code>::vhost::</code>, are substituted for string
+ * values:
  * </p>
  *
  * <table border="1">
  * <tr> <th> Pattern </th> <th> Meaning </th> <th> Examples </th> </tr>
  * <tr>
- *   <td> <code>::host::</code> </td>
- *   <td> Host name </td>
- *   <td> <code>www.aplaws.org</code> </td>
+ * <td> <code>::host::</code> </td>
+ * <td> Host name </td>
+ * <td> <code>www.aplaws.org</code> </td>
  * </tr>
  * <tr>
- *   <td> <code>::vhost::</code> </td>
- *   <td> Virtual hostname. </td>
- *   <td> <code>business.camden.gov.uk</code> </td>
+ * <td> <code>::vhost::</code> </td>
+ * <td> Virtual hostname. </td>
+ * <td> <code>business.camden.gov.uk</code> </td>
  * </tr>
  * <tr>
- *   <td> <code>::webapp::</code> </td>
- *   <td> Current web application name (ie. context or document root) </td>
- *   <td> <code>ccm</code> </td>
+ * <td> <code>::webapp::</code> </td>
+ * <td> Current web application name (ie. context or document root) </td>
+ * <td> <code>ccm</code> </td>
  * </tr>
  * <tr>
- *   <td> <code>::application::</code> </td>
- *   <td> Current CCM Application name </td>
- *   <td> <code>navigation</code> </td>
+ * <td> <code>::application::</code> </td>
+ * <td> Current CCM Application name </td>
+ * <td> <code>navigation</code> </td>
  * </tr>
  * <tr>
- *   <td> <code>::url::</code> </td>
- *   <td> URL stub  of the current applications name tree</td>
- *   <td> <code>admin</code> </td>
+ * <td> <code>::url::</code> </td>
+ * <td> URL stub of the current applications name tree</td>
+ * <td> <code>admin</code> </td>
  * </tr>
  * <tr>
- *   <td> <code>::prefix::</code> </td>
- *   <td> ??</td>
- *   <td> <code>??</code> </td>
+ * <td> <code>::prefix::</code> </td>
+ * <td> ??</td>
+ * <td> <code>??</code> </td>
  * </tr>
  * <tr>
- *   <td> <code>::outputtype::</code> </td>
- *   <td> Output format. </td>
- *   <td> <code>text_html</code> </td>
+ * <td> <code>::outputtype::</code> </td>
+ * <td> Output format. </td>
+ * <td> <code>text_html</code> </td>
  * </tr>
  * <tr>
- *   <td> <code>::locale::</code> </td>
- *   <td> Current locale </td>
- *   <td> <code>fr_FR</code> </td>
+ * <td> <code>::locale::</code> </td>
+ * <td> Current locale </td>
+ * <td> <code>fr_FR</code> </td>
  * </tr>
- * <tr>clear 
- * 
- *   <td> <code>::outputtype::</code> </td>
- *   <td> Output format. </td>
- *   <td> <code>text_html</code> </td>
+ * <tr>clear
+ *
+ * <td> <code>::outputtype::</code> </td>
+ * <td> Output format. </td>
+ * <td> <code>text_html</code> </td>
  * </tr>
  * </table>
  *
@@ -140,38 +140,38 @@ import org.apache.log4j.Logger;
  * The resolver looks at each stylesheet in turn, and the first one which
  * actually exists on disk is returned.
  * </p>
- * 
- * Developer may customize the process by writing a custom pattern generator
- * and add it in a custom integration package  Initializer (e.g. ccm-ldn-aplaws)
- * by following code:
- *      // Register additional PatternStyleSheetResolver for Web app.    
- *      PatternStylesheetResolver.registerPatternGenerator(
- *          "[myKey]",
- *          new [My]PatternGenerator()
- *      );
- * 
+ *
+ * Developer may customize the process by writing a custom pattern generator and
+ * add it in a custom integration package Initializer (e.g. ccm-ldn-aplaws) by
+ * following code: // Register additional PatternStyleSheetResolver for Web app.
+ * PatternStylesheetResolver.registerPatternGenerator( "[myKey]", new
+ * [My]PatternGenerator() );
+ *
  *
  * @author Richard W.M. Jones
  */
 public class PatternStylesheetResolver implements StylesheetResolver {
 
-    /** Internal logger instance to faciliate debugging. Enable logging output
-     *  by editing /WEB-INF/conf/log4j.properties int the runtime environment
-     *  and set com.arsdigita.templating.PatternStylesheetResolver=DEBUG 
-     *  by uncommenting or adding the line.                                                   */
-    private static final Logger s_log = Logger.getLogger
-                                        (PatternStylesheetResolver.class);
+    /**
+     * Internal logger instance to faciliate debugging. Enable logging output by
+     * editing /WEB-INF/conf/log4j.properties int the runtime environment and
+     * set com.arsdigita.templating.PatternStylesheetResolver=DEBUG by
+     * uncommenting or adding the line.
+     */
+    private static final Logger s_log = Logger.getLogger(
+        PatternStylesheetResolver.class);
 
-    /** List of registered pattern generators which are queried in turn. */
+    /**
+     * List of registered pattern generators which are queried in turn.
+     */
     private static final HashMap s_generators = new HashMap();
-
 
     /**
      * Registers a new pattern generator for the given key.
      *
      * @param key the key as it appears in the pattern string
-     * @param gen a pattern generator for producing values to be
-     * substituted for <code>key</code>
+     * @param gen a pattern generator for producing values to be substituted for
+     *            <code>key</code>
      */
     public static void registerPatternGenerator(String key,
                                                 PatternGenerator gen) {
@@ -182,39 +182,38 @@ public class PatternStylesheetResolver implements StylesheetResolver {
      * at load time.                                                          */
     static {
         s_log.debug("Static initalizer starting...");
-        registerPatternGenerator
-            ("locale", new LocalePatternGenerator());
-        registerPatternGenerator
-            ("url", new URLPatternGenerator());
-        registerPatternGenerator
-            ("application", new ApplicationPatternGenerator());
-        registerPatternGenerator
-            ("outputtype", new OutputTypePatternGenerator());
-        registerPatternGenerator
-            ("prefix", new PrefixPatternGenerator());
-        registerPatternGenerator
-            ("webapp", new WebAppPatternGenerator());
-        registerPatternGenerator
-            ("host", new HostPatternGenerator());
+        registerPatternGenerator("locale", new LocalePatternGenerator());
+        registerPatternGenerator("url", new URLPatternGenerator());
+        registerPatternGenerator("application",
+                                 new ApplicationPatternGenerator());
+        registerPatternGenerator("outputtype", new OutputTypePatternGenerator());
+        registerPatternGenerator("prefix", new PrefixPatternGenerator());
+        registerPatternGenerator("webapp", new WebAppPatternGenerator());
+        registerPatternGenerator("host", new HostPatternGenerator());
         s_log.debug("Static initalizer finished.");
     }
 
-    /** Complete path to the file specifing stylesheet patterns. Configurable
-     *  by configuration option in TemplatingConfig                           */
+    /**
+     * Complete path to the file specifying stylesheet patterns. Configurable by
+     * configuration option in TemplatingConfig
+     */
     private String m_path = null;
-    /** A List of Lists each of its lists containing one pattern to resolve 
-     *  a probably appropriate stylesheet to apply. (i.e. one row of the 
-     *  file m_path above)                                                    */
+    /**
+     * A List of Lists each of its lists containing one pattern to resolve a
+     * probably appropriate stylesheet to apply. (i.e. one row of the file
+     * m_path above)
+     */
     private List m_paths = null;
 
     /**
-     * 
+     *
      * @param request
-     * @return 
+     *
+     * @return
      */
     @Override
     public URL resolve(HttpServletRequest request) {
-        synchronized(this) {
+        synchronized (this) {
             if (m_paths == null) {
                 loadPaths(Templating.getConfig().getStylesheetPaths());
             }
@@ -226,7 +225,7 @@ public class PatternStylesheetResolver implements StylesheetResolver {
         Iterator it = m_paths.iterator();
         while (it.hasNext()) {
             List pathList = (List) it.next();
-            String[] bits = (String[])pathList.toArray(
+            String[] bits = (String[]) pathList.toArray(
                 new String[pathList.size()]
             );
             expandPlaceholders(bits, paths, values, request);
@@ -234,7 +233,7 @@ public class PatternStylesheetResolver implements StylesheetResolver {
 
         Iterator files = paths.iterator();
         while (files.hasNext()) {
-            String[] bits = (String[])files.next();
+            String[] bits = (String[]) files.next();
 
             String resource = StringUtils.join(bits, "");
             // UGLY HACK
@@ -242,10 +241,10 @@ public class PatternStylesheetResolver implements StylesheetResolver {
             // the root webapp) the provided string contains a "//" as there is
             // a slash before as well as after the placeholder in the pattern
             // string. It's ugly so we'll replace it.
-            resource = resource.replace("//","/");
+            resource = resource.replace("//", "/");
             // The hack destroys the http protocol as well so we need another hack
-            resource = resource.replace("http:/","http://");
-            
+            resource = resource.replace("http:/", "http://");
+
             if (s_log.isInfoEnabled()) {
                 s_log.info("Looking to see if resource " + resource + " exists");
             }
@@ -259,11 +258,11 @@ public class PatternStylesheetResolver implements StylesheetResolver {
             }
 
             if (s_log.isInfoEnabled()) {
-            	s_log.info("origURL is " + origURL);
+                s_log.info("origURL is " + origURL);
             }
-            
-            final URL xfrmedURL = (origURL==null) ? null : Templating
-                                                           .transformURL(origURL);
+
+            final URL xfrmedURL = (origURL == null) ? null : Templating
+                .transformURL(origURL);
 
             if (s_log.isInfoEnabled()) {
                 s_log.info("Transformed resource is " + xfrmedURL);
@@ -288,21 +287,21 @@ public class PatternStylesheetResolver implements StylesheetResolver {
                 }
                 // fall through & try next pattern
             } catch (IOException ex) {
-                throw new UncheckedWrapperException("cannot open stream " + 
-                                                    resource, ex);
+                throw new UncheckedWrapperException("cannot open stream "
+                                                    + resource, ex);
             }
         }
 
-        throw new RuntimeException("no path to XSL stylesheet found; " + 
-                                   "try modifying " + m_path);
+        throw new RuntimeException("no path to XSL stylesheet found; "
+                                   + "try modifying " + m_path);
     }
 
     /**
-     * 
+     *
      * @param inBits
      * @param paths
      * @param values
-     * @param request 
+     * @param request
      */
     private void expandPlaceholders(String[] inBits,
                                     ArrayList paths,
@@ -310,31 +309,31 @@ public class PatternStylesheetResolver implements StylesheetResolver {
                                     HttpServletRequest request) {
         LinkedList queue = new LinkedList();
         if (s_log.isDebugEnabled()) {
-            s_log.debug("Queue initial entry "  + StringUtils.join(inBits, ""));
+            s_log.debug("Queue initial entry " + StringUtils.join(inBits, ""));
         }
         queue.add(inBits);
         while (!queue.isEmpty()) {
-            String[] bits = (String[])queue.removeFirst();
+            String[] bits = (String[]) queue.removeFirst();
             if (s_log.isDebugEnabled()) {
                 s_log.debug("Process queue entry " + StringUtils.join(bits, ""));
             }
             boolean clean = true;
-            for (int i = 0 ; i < bits.length && clean ; i++) {
+            for (int i = 0; i < bits.length && clean; i++) {
                 if (bits[i].startsWith("::") && bits[i].endsWith("::")) {
                     clean = false;
                     String[] vals = getValues(bits[i]
-                                              .substring(2, bits[i].length()-2),
+                        .substring(2, bits[i].length() - 2),
                                               values,
                                               request);
                     if (vals != null) {
-                        for (int k = 0 ; k < vals.length ; k++) {
+                        for (int k = 0; k < vals.length; k++) {
                             String[] newBits = new String[bits.length];
                             // In case the pattern for an element is an empty
                             // string (e.g. for the ROOT webapp) the slash before
                             // as well as after the placeholder are added 
                             // resulting in a "//" which does no harm but is
                             // ugly.
-                            for (int j = 0 ; j < bits.length ; j++) {
+                            for (int j = 0; j < bits.length; j++) {
                                 if (j == i) {
                                     newBits[j] = vals[k];
                                 } else {
@@ -342,8 +341,8 @@ public class PatternStylesheetResolver implements StylesheetResolver {
                                 }
                             }
                             if (s_log.isDebugEnabled()) {
-                                s_log.debug("Requeue "  +
-                                            StringUtils.join(newBits, ""));
+                                s_log.debug("Requeue " + StringUtils.join(
+                                    newBits, ""));
                             }
                             queue.add(newBits);
                         }
@@ -353,8 +352,8 @@ public class PatternStylesheetResolver implements StylesheetResolver {
 
             if (clean) {
                 if (s_log.isDebugEnabled()) {
-                    s_log.debug("Finished expanding placeholders in "  +
-                                StringUtils.join(bits, ""));
+                    s_log.debug("Finished expanding placeholders in "
+                                + StringUtils.join(bits, ""));
                 }
                 paths.add(bits);
             }
@@ -362,11 +361,12 @@ public class PatternStylesheetResolver implements StylesheetResolver {
     }
 
     /**
-     * 
+     *
      * @param key
      * @param values
      * @param request
-     * @return 
+     *
+     * @return
      */
     private String[] getValues(String key,
                                HashMap values,
@@ -374,11 +374,11 @@ public class PatternStylesheetResolver implements StylesheetResolver {
         if (s_log.isDebugEnabled()) {
             s_log.debug("Lookup placeholder keys for " + key);
         }
-        String[] vals = (String[])values.get(key);
+        String[] vals = (String[]) values.get(key);
         if (vals == null) {
             PatternGenerator gen = (PatternGenerator) s_generators.get(key);
             if (gen == null) {
-                return new String[] {};
+                return new String[]{};
             }
             vals = gen.generateValues(key, request);
             values.put(key, vals);
@@ -387,8 +387,8 @@ public class PatternStylesheetResolver implements StylesheetResolver {
     }
 
     /**
-     * 
-     * @param path 
+     *
+     * @param path
      */
     private void loadPaths(String path) {
         if (s_log.isInfoEnabled()) {
@@ -404,8 +404,8 @@ public class PatternStylesheetResolver implements StylesheetResolver {
             s_log.debug("stream.available is " + stream.available());
             m_paths = new ArrayList();
 
-            LineNumberReader file = new LineNumberReader
-                                        (new InputStreamReader(stream));
+            LineNumberReader file = new LineNumberReader(new InputStreamReader(
+                stream));
             String line;
             int lineNum;
             while ((line = file.readLine()) != null) {
@@ -428,7 +428,7 @@ public class PatternStylesheetResolver implements StylesheetResolver {
                 "cannot read XSLT paths from " + path, ex);
 
         } catch (Exception e) {
-        	s_log.debug("loadPaths threw exception " + e);
+            s_log.debug("loadPaths threw exception " + e);
         }
     }
 
