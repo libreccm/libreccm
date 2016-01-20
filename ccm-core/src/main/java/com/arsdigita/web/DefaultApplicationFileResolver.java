@@ -18,12 +18,12 @@
  */
 package com.arsdigita.web;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.RequestDispatcher;
-
 import org.apache.log4j.Logger;
 import org.libreccm.web.CcmApplication;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 
 /**

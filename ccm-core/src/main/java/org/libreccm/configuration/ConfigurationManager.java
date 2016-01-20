@@ -18,21 +18,17 @@
  */
 package org.libreccm.configuration;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-
-import org.libreccm.categorization.CategoryManager;
-import org.libreccm.categorization.Domain;
-import org.libreccm.categorization.DomainRepository;
-
 import static org.libreccm.configuration.ConfigurationConstants.*;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.message.FormattedMessage;
 import org.libreccm.categorization.Categorization;
 import org.libreccm.categorization.Category;
+import org.libreccm.categorization.CategoryManager;
 import org.libreccm.categorization.CategoryRepository;
+import org.libreccm.categorization.Domain;
+import org.libreccm.categorization.DomainRepository;
 import org.libreccm.core.CcmObject;
 import org.libreccm.l10n.LocalizedString;
 import org.libreccm.web.CcmApplication;
@@ -42,11 +38,12 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-
-import org.apache.logging.log4j.message.FormattedMessage;
-
 import java.util.Set;
 import java.util.StringJoiner;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
 
 /**
  * Maps between configuration classes and the values stored in the registry.

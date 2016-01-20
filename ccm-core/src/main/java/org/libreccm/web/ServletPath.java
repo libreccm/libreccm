@@ -47,6 +47,6 @@ import javax.servlet.annotation.WebServlet;
 @Target({ElementType.TYPE})
 public @interface ServletPath {
 
-    String value() default URL.SERVLET_DIR + "/legacy-adapter";
+    String value() default "/templates/servlet/legacy-adapter";
     
 }

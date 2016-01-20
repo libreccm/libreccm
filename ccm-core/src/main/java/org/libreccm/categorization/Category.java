@@ -18,33 +18,29 @@
  */
 package org.libreccm.categorization;
 
+import static org.libreccm.core.CoreConstants.*;
+
 import org.hibernate.validator.constraints.NotBlank;
 import org.libreccm.core.CcmObject;
-
-import static org.libreccm.core.CoreConstants.*;
+import org.libreccm.l10n.LocalizedString;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.AssociationOverride;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
-
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.Table;
-
-import org.libreccm.l10n.LocalizedString;
-
-import java.util.Collections;
-import java.util.Objects;
-
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.Pattern;
 
 /**

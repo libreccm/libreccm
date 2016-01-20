@@ -29,8 +29,6 @@ import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.StringJoiner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -74,7 +72,7 @@ public final class WebConfig {
     private Boolean deactiveCacheHostNotifications = false;
 
     @Setting
-    private String dynamicHostProvider;
+    private String dynamicHostProviderClass;
 
     public static WebConfig getConfig() {
         final CdiUtil cdiUtil = new CdiUtil();
@@ -93,6 +91,14 @@ public final class WebConfig {
 
     public String getServer() {
         return server;
+    }
+
+    public String getServerName() {
+        return server.split(":")[0];
+    }
+
+    public Integer getServerPort() {
+        return Integer.parseInt(server.split(":")[1]);
     }
 
     public void setServer(
@@ -120,6 +126,14 @@ public final class WebConfig {
 
     public String getSecureServer() {
         return secureServer;
+    }
+
+    public String getSecureServerName() {
+        return secureServer.split(":")[0];
+    }
+
+    public Integer getSecureServerPort() {
+        return Integer.parseInt(secureServer.split(":")[1]);
     }
 
     public void setSecureServer(
@@ -157,9 +171,17 @@ public final class WebConfig {
         return host;
     }
 
+    public String getHostName() {
+        return host.split(":")[0];
+    }
+    
+    public Integer getHostPort() {
+        return Integer.parseInt(host.split(":")[1]);
+    }
+    
     public void setHost(
         @Pattern(regexp = "[\\w-.]*:[0-9]{1,5}") final String host) {
-        
+
         final Method method;
         try {
             method = getClass().getMethod("setHost", String.class);
@@ -243,12 +265,46 @@ public final class WebConfig {
         this.deactiveCacheHostNotifications = deactiveCacheHostNotifications;
     }
 
-    public String getDynamicHostProvider() {
-        return dynamicHostProvider;
+    public String getDynamicHostProviderClass() {
+        return dynamicHostProviderClass;
     }
 
-    public void setDynamicHostProvider(final String dynamicHostProvider) {
-        this.dynamicHostProvider = dynamicHostProvider;
+    public DynamicHostProvider getDynamicHostProvider() {
+        try {
+            @SuppressWarnings("unchecked")
+            final Class<DynamicHostProvider> clazz
+                                                 = (Class<DynamicHostProvider>) Class
+                .forName(dynamicHostProviderClass);
+            return clazz.newInstance();
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
+            throw new UncheckedWrapperException(
+                String.format("Failed to create instance of DynamicHostProvider"
+                                  + "implenentation \"%s\".",
+                              dynamicHostProviderClass),
+                ex);
+        }
+    }
+
+    public void setDynamicHostProviderClass(
+        final String dynamicHostProviderClass) {
+
+        try {
+            final Class<?> clazz = Class.forName(dynamicHostProviderClass);
+            if (!DynamicHostProvider.class.isAssignableFrom(clazz)) {
+                throw new IllegalArgumentException(
+                    String.format("Provided class \"%s\" is not an"
+                                      + "implementation of the interface \"%s\".",
+                                  dynamicHostProviderClass,
+                                  DynamicHostProvider.class.getName()));
+            }
+        } catch (ClassNotFoundException ex) {
+            throw new IllegalArgumentException(
+                String.format("Unable to retrieve class \"%s\".",
+                              dynamicHostProviderClass),
+                ex);
+        }
+
+        this.dynamicHostProviderClass = dynamicHostProviderClass;
     }
 
     private Set<ConstraintViolation<WebConfig>> validateHostParameter(

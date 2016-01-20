@@ -91,6 +91,10 @@ public class WebConfigTest {
 
         assertThat(webConfig.getHost(),
                    is(equalTo("zeus.example.org:8080")));
+        assertThat(webConfig.getHostName(),
+                   is(equalTo("zeus.example.org")));
+        assertThat(webConfig.getHostPort(),
+                   is(equalTo(8080)));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -129,6 +133,10 @@ public class WebConfigTest {
 
         assertThat(webConfig.getServer(),
                    is(equalTo("zeus.example.org:8080")));
+        assertThat(webConfig.getServerName(),
+                   is(equalTo("zeus.example.org")));
+        assertThat(webConfig.getServerPort(),
+                   is(equalTo(8080)));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -167,6 +175,10 @@ public class WebConfigTest {
 
         assertThat(webConfig.getSecureServer(),
                    is(equalTo("zeus.example.org:8080")));
+        assertThat(webConfig.getSecureServerName(),
+                   is(equalTo("zeus.example.org")));
+        assertThat(webConfig.getSecureServerPort(),
+                   is(equalTo(8080)));
     }
 
     @Test(expected = IllegalArgumentException.class)

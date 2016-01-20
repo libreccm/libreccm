@@ -19,7 +19,6 @@
 package org.libreccm.security;
 
 import com.arsdigita.kernel.security.SecurityConfig;
-import com.arsdigita.runtime.AbstractConfig;
 import com.arsdigita.util.UncheckedWrapperException;
 import com.arsdigita.util.parameter.AbstractParameterContext;
 import com.arsdigita.web.CCMApplicationContextListener;
@@ -136,7 +135,6 @@ public class AuthorizationInterceptorTest {
             .addPackage(EqualsVerifier.class.getPackage())
             .addPackage(IntegrationTest.class.getPackage())
             .addPackage(SecurityConfig.class.getPackage())
-            .addPackage(AbstractConfig.class.getPackage())
             .addPackage(AbstractParameterContext.class.getPackage())
             .addPackage(CCMApplicationContextListener.class.getPackage())
             .addPackage(XML.class.getPackage())

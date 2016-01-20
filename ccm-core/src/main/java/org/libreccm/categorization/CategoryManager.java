@@ -18,19 +18,18 @@
  */
 package org.libreccm.categorization;
 
-import java.util.List;
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.libreccm.core.CcmObject;
+import org.libreccm.core.CcmObjectRepository;
+
+import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.libreccm.core.CcmObjectRepository;
 
 /**
  * The {@code CategoryManager} provides several helper methods for managing

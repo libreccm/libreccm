@@ -25,6 +25,7 @@ import com.arsdigita.util.Exceptions;
 import com.arsdigita.util.UncheckedWrapperException;
 import com.arsdigita.util.servlet.HttpHost;
 import com.arsdigita.web.Web;
+import com.arsdigita.web.WebConfig;
 import com.arsdigita.xml.Document;
 import com.arsdigita.xml.Element;
 
@@ -346,7 +347,9 @@ public class Templating {
      * to a servlet which manages database retrieval.
      */
     static URL transformURL(URL url) {
-        HttpHost self = Web.getConfig().getHost();
+        final WebConfig webConfig = WebConfig.getConfig();
+        final HttpHost self = new HttpHost(webConfig.getHostName(),
+                                           webConfig.getHostPort());
 
         /**
          * Indicates whether url refers to a local resource inside the running
@@ -427,11 +430,9 @@ public class Templating {
             }
         } else // url is not the (local) running CCM host, no transformation
         // is done
-        {
-            if (s_log.isDebugEnabled()) {
+         if (s_log.isDebugEnabled()) {
                 s_log.debug("URL " + url + " is not local");
             }
-        }
 
         return url;  // returns the original, unmodified url here
     }

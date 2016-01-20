@@ -18,7 +18,6 @@
  */
 package com.arsdigita.kernel.security;
 
-import com.arsdigita.runtime.AbstractConfig;
 import com.arsdigita.util.JavaPropertyReader;
 import com.arsdigita.util.parameter.AbstractParameter;
 import com.arsdigita.web.CCMApplicationContextListener;
@@ -111,7 +110,6 @@ public class SecurityConfigTest {
             .addPackage(ApplicationRepository.class.getPackage())
             .addPackage(EntityManagerProducer.class.getPackage())
             .addPackage(SecurityConfig.class.getPackage())
-            .addPackage(AbstractConfig.class.getPackage())
             .addPackage(AbstractParameter.class.getPackage())
             .addPackage(JavaPropertyReader.class.getPackage())
             .addPackage(CCMApplicationContextListener.class.getPackage())

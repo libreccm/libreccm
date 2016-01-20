@@ -18,18 +18,16 @@
  */
 package org.libreccm.categorization;
 
-import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.URL;
-
 import static org.libreccm.categorization.CategorizationConstants.*;
-
-import org.libreccm.core.CcmObject;
-
 import static org.libreccm.core.CoreConstants.*;
 
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.URL;
+import org.libreccm.core.CcmObject;
 import org.libreccm.jpa.utils.UriConverter;
 import org.libreccm.l10n.LocalizedString;
 import org.libreccm.web.CcmApplication;
+import org.omg.CORBA.DomainManager;
 
 import java.io.Serializable;
 import java.net.URI;
@@ -54,9 +52,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Pattern;
-
-import org.omg.CORBA.DomainManager;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;

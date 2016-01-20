@@ -18,25 +18,23 @@
  */
 package org.libreccm.categorization;
 
+import static org.libreccm.core.CoreConstants.*;
+
+import org.libreccm.core.CcmObject;
+
 import java.io.Serializable;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
-import org.libreccm.core.CcmObject;
-
-import static org.libreccm.core.CoreConstants.*;
-
-import java.util.Objects;
-
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 
 /**
  * Association class describing the association between a category and an

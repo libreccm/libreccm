@@ -18,12 +18,12 @@
  */
 package org.libreccm.categorization;
 
+import org.libreccm.web.ApplicationRepository;
 import org.libreccm.web.CcmApplication;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import org.libreccm.web.ApplicationRepository;
 
 /**
  * Provides several methods when managing the relations between {@link Domain}s

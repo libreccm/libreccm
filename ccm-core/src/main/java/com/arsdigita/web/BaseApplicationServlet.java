@@ -20,8 +20,8 @@ package com.arsdigita.web;
 
 import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.web.CcmApplication;
 import org.libreccm.web.ApplicationRepository;
+import org.libreccm.web.CcmApplication;
 
 import java.io.IOException;
 

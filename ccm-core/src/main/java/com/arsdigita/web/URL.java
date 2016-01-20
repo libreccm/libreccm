@@ -612,11 +612,11 @@ public class URL {
      * @return a <code>URL</code> to your server's root path
      */
     public static final URL root() {
-        final LegacyWebConfig config = Web.getConfig();
+        final WebConfig config = Web.getConfig();
 
         URL url = new URL(config.getDefaultScheme(),
-                          config.getServer().getName(),
-                          config.getServer().getPort(),
+                          config.getServerName(),
+                          config.getServerPort(),
                           "",
                           "/",
                           null,
@@ -679,7 +679,7 @@ public class URL {
     public static final URL there(final HttpServletRequest sreq,
                                   final String path,
                                   final ParameterMap params) {
-        final LegacyWebConfig config = Web.getConfig();
+        final WebConfig config = Web.getConfig();
 
         Assert.exists(sreq, "HttpServletRequest sreq");
         Assert.exists(config, "WebConfig config");
@@ -693,7 +693,7 @@ public class URL {
         return new URL(sreq.getScheme(),
                        host.getName(),
                        host.getPort(),
-                       config.getDispatcherContextPath(),
+                       CCMDispatcherServlet.getContextPath(),
                        config.getDispatcherServletPath(),
                        path,
                        params);
@@ -715,9 +715,8 @@ public class URL {
     public static final URL dynamicHostThere(final HttpServletRequest sreq,
                                              final String path,
                                              final ParameterMap params) {
-        final LegacyWebConfig config = Web.getConfig();
+        final WebConfig config = Web.getConfig();
         DynamicHostProvider provider = Web.getConfig().getDynamicHostProvider();
-
         if (provider == null) {
             return there(sreq, path, params);
         }
@@ -734,7 +733,7 @@ public class URL {
         return new URL(sreq.getScheme(),
                        provider.getName(),
                        provider.getPort(),
-                       config.getDispatcherContextPath(),
+                       CCMDispatcherServlet.getContextPath(),
                        config.getDispatcherServletPath(),
                        path,
                        params);
@@ -755,7 +754,7 @@ public class URL {
      */
     public static final URL there(final HttpServletRequest sreq,
                                   final String path) {
-        final LegacyWebConfig config = Web.getConfig();
+        final WebConfig config = Web.getConfig();
 
         Assert.exists(sreq, "HttpServletRequest sreq");
         Assert.exists(config, "WebConfig config");
@@ -765,7 +764,7 @@ public class URL {
         return new URL(sreq.getScheme(),
                        host.getName(),
                        host.getPort(),
-                       config.getDispatcherContextPath(),
+                       CCMDispatcherServlet.getContextPath(),
                        config.getDispatcherServletPath(),
                        path,
                        (ParameterMap) s_empty.get());
@@ -847,11 +846,11 @@ public class URL {
      */
     public static final URL there(final String path,
                                   final ParameterMap params) {
-        final LegacyWebConfig config = Web.getConfig();
+        final WebConfig config = Web.getConfig();
 
         return new URL(config.getDefaultScheme(),
-                       config.getServer().getName(),
-                       config.getServer().getPort(),
+                       config.getServerName(),
+                       config.getServerPort(),
                        "",
                        config.getDispatcherServletPath(),
                        path,
@@ -949,10 +948,10 @@ public class URL {
      * @return
      */
     public static String getDispatcherPath() {
-        final LegacyWebConfig config = Web.getConfig();
+        final WebConfig config = Web.getConfig();
         final HttpServletRequest req = Web.getRequest();
 
-        final String context = config.getDispatcherContextPath();
+        final String context = CCMDispatcherServlet.getContextPath();
         final String servlet = config.getDispatcherServletPath();
 
         if (req == null) {

@@ -18,6 +18,11 @@
  */
 package org.libreccm.categorization;
 
+import static org.libreccm.core.CoreConstants.*;
+
+import org.libreccm.core.CcmObject;
+import org.libreccm.web.CcmApplication;
+
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -28,12 +33,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import org.libreccm.core.CcmObject;
-
-import static org.libreccm.core.CoreConstants.*;
-
-import org.libreccm.web.CcmApplication;
 
 
 /**

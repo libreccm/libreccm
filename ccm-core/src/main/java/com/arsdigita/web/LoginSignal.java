@@ -19,7 +19,6 @@
 package com.arsdigita.web;
 
 import javax.servlet.http.HttpServletRequest;
-import org.apache.log4j.Logger;
 
 /**
  * <p>

@@ -18,14 +18,6 @@
  */
 package org.libreccm.security;
 
-import com.arsdigita.kernel.security.SecurityConfig;
-import com.arsdigita.runtime.AbstractConfig;
-import com.arsdigita.util.UncheckedWrapperException;
-import com.arsdigita.util.parameter.AbstractParameterContext;
-import com.arsdigita.web.CCMApplicationContextListener;
-import com.arsdigita.xml.XML;
-import com.arsdigita.xml.formatters.DateTimeFormatter;
-
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 
@@ -58,15 +50,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
-import org.libreccm.categorization.Categorization;
-import org.libreccm.core.CcmObject;
-import org.libreccm.jpa.EntityManagerProducer;
-import org.libreccm.jpa.utils.MimeTypeConverter;
-import org.libreccm.l10n.LocalizedString;
 import org.libreccm.tests.categories.IntegrationTest;
-import org.libreccm.testutils.EqualsVerifier;
-import org.libreccm.web.CcmApplication;
-import org.libreccm.workflow.Workflow;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -121,53 +105,54 @@ public class ShiroTest {
         return ShrinkWrap
             .create(WebArchive.class,
                     "LibreCCM-org.libreccm.security.ShiroTest.war")
-            .addPackage(User.class.getPackage())
-            .addPackage(CcmObject.class.getPackage())
-            .addPackage(Categorization.class.getPackage())
-            .addPackage(LocalizedString.class.getPackage())
-            .addPackage(CcmApplication.class.getPackage())
-            .addPackage(Workflow.class.getPackage())
-            .addPackage(EntityManagerProducer.class.getPackage())
-            .addPackage(MimeTypeConverter.class.getPackage())
-            .addPackage(EqualsVerifier.class.getPackage())
-            .addPackage(IntegrationTest.class.getPackage())
-            .addPackage(SecurityConfig.class.getPackage())
-            .addPackage(AbstractConfig.class.getPackage())
-            .addPackage(AbstractParameterContext.class.getPackage())
-            .addPackage(CCMApplicationContextListener.class.getPackage())
-            .addPackage(XML.class.getPackage())
-            .addPackage(DateTimeFormatter.class.getPackage())
-            .addPackage(UncheckedWrapperException.class.getPackage())
+            .addPackage("org.libreccm.cdi.utils") //Checked
+            .addPackage("org.libreccm.categorization") //Checked
+            .addPackage("org.libreccm.configuration") //Checked
+            .addPackage("org.libreccm.core") //Checked
+            .addPackage("org.libreccm.jpa") //Checked
+            .addPackage("org.libreccm.jpa.utils") //Checked
+            .addPackage("org.libreccm.l10n") //Checked
+            .addPackage("org.libreccm.modules") //Checked
+            .addPackage("org.libreccm.security") //Checked
+            .addPackage("org.libreccm.tests.categories") //Checked
+            .addPackage("org.libreccm.testutils") //Checked
+            .addPackage("org.libreccm.web") //Checked
+            .addPackage("org.libreccm.workflow") //Checked
+            .addPackage("com.arsdigita.kernel") //Checked
+            .addPackage("com.arsdigita.kernel.security") //Checked
+            .addPackage("com.arsdigita.util") //Checked
+            .addPackage("com.arsdigita.util.parameter") //Checked
+            //            .addPackage(CcmCore.class.getPackage())
+            //            .addPackage(CcmModule.class.getPackage())
+            //            .addPackage(CcmObject.class.getPackage())
+            //            .addPackage(CdiUtil.class.getPackage())
+            //            .addPackage(Categorization.class.getPackage())
+            //            .addPackage(Configuration.class.getPackage())
+            //            .addPackage(LocalizedString.class.getPackage())
+            //            .addPackage(CcmApplication.class.getPackage())
+            //            .addPackage(Workflow.class.getPackage())
+            //            .addPackage(EntityManagerProducer.class.getPackage())
+            //            .addPackage(MimeTypeConverter.class.getPackage())
+            //            .addPackage(EqualsVerifier.class.getPackage())
+            //            .addPackage(IntegrationTest.class.getPackage())
+            //            .addPackage(SecurityConfig.class.getPackage())
+            //            .addPackage(CCMApplicationContextListener.class.getPackage())
+            //            .addPackage(XML.class.getPackage())
+            //            .addPackage(DateTimeFormatter.class.getPackage())
+            //            .addPackage(AbstractParameterContext.class.getPackage())
+            //            .addPackage(UncheckedWrapperException.class.getPackage())
+            //            .addPackage(CCMResourceManager.class.getPackage())
+            //            .addPackage(DispatcherHelper.class.getPackage())
+            //            .addPackage(UI.class.getPackage())
+            //            .addPackage(KernelConfig.class.getPackage())
+            //            .addPackage(BasePage.class.getPackage())
             .addAsLibraries(libs)
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")
-            .addAsResource("com/arsdigita/kernel/"
-                               + "KernelConfig_parameter.properties",
-                           "com/arsdigita/kernel/"
-                               + "KernelConfig_parameter.properties")
-            .addAsResource("com/arsdigita/kernel/security/"
-                               + "SecurityConfig_parameter.properties",
-                           "com/arsdigita/kernel/security/"
-                               + "SecurityConfig_parameter.properties")
-            .addAsWebInfResource(
-                "configs/org/libreccm/security/UserManagerTest/"
-                    + "registry.properties",
-                "conf/registry/registry.properties")
-            .addAsResource(
-                "configs/org/libreccm/security/UserManagerTest/ccm-core.config",
-                "ccm-core.config")
             .addAsResource("configs/shiro.ini", "shiro.ini")
             .addAsResource(
                 "configs/org/libreccm/security/ShiroTest/log4j2.xml",
                 "log4j2.xml")
-            .addAsWebInfResource(
-                "configs/org/libreccm/security/ShiroTest/"
-                    + "kernel.properties",
-                "conf/registry/ccm-core/kernel.properties")
-            .addAsWebInfResource(
-                "configs/org/libreccm//security/ShiroTest/"
-                    + "security.properties",
-                "conf/registry/ccm-core/security.properties")
             .addAsWebInfResource("test-web.xml", "web.xml")
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }

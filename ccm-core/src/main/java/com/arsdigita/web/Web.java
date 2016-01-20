@@ -47,7 +47,7 @@ public class Web {
      */
     private static final Logger s_log = Logger.getLogger(Web.class);
 
-    private static final LegacyWebConfig s_config = LegacyWebConfig.getInstanceOf();
+    private static final WebConfig s_config = WebConfig.getConfig();
 
     private static final ThreadLocal s_request = new InternalRequestLocal();
     private static final ThreadLocal s_servletContext
@@ -90,9 +90,9 @@ public class Web {
     /**
      * Provide the configuration record for code in the web package.
      *
-     * @return A <code>LegacyWebConfig</code> configuration record; it cannot be null
+     * @return A <code>WebConfig</code> configuration record; it cannot be null
      */
-    public static LegacyWebConfig getConfig() {
+    public static WebConfig getConfig() {
         return s_config;
     }
 
