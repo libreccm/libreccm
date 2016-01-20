@@ -16,13 +16,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.exchange.exporter;
+package org.libreccm.portation.exporter;
 
 import com.opencsv.CSVWriter;
-import org.apache.commons.lang.NullArgumentException;
 import org.apache.log4j.Logger;
 import org.libreccm.security.User;
 
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,7 +31,8 @@ import java.util.stream.Collectors;
 
 /**
  * Main class for exporting database objects as .csv-textfiles. Subclasses
- * are required to implement the method {@code asList} matching their own
+ * are required to implement the methods {@code getClassName}, {@code
+ * getAttributeNames} and {@code reduceToStrings} matching their own
  * needs. This is necessary, because every object class stored in the
  * database has its own parameters which refer sometimes to other object
  * classes. But these other object classes do not need to be exported in
@@ -44,7 +45,7 @@ public abstract class ObjectExporter<T> {
 
     private static final Logger log = Logger.getLogger(ObjectExporter.class);
 
-    private String filename = "ccm_ng-defaultExportFilename.csv";
+    private String filename = null;
     private char separator  = ',';
 
     //> Begin GETTER & SETTER
@@ -77,27 +78,30 @@ public abstract class ObjectExporter<T> {
      * {@link User}s, as a .csv-textfile with the specified {@code filename}.
      *
      * @param exportObjects List of objects of type {@code T} to be exported
+     * @throws FileNotFoundException
      */
-    public void export(List<T> exportObjects) throws NullArgumentException {
-        CSVWriter csvWriter = null;
-        if (filename == null) {
-            throw new NullArgumentException(filename);
-        }
+    public void exportToCSV(List<T> exportObjects) throws
+            FileNotFoundException {
         try {
-            csvWriter = new CSVWriter(new FileWriter(filename),
+            CSVWriter csvWriter = new CSVWriter(new FileWriter(filename),
                     separator);
             csvWriter.writeAll(asList(exportObjects));
             csvWriter.close();
+            log.info(String.format("The given objects have been successfully " +
+                    "exported into " +
+                    "the file %s.", filename));
         } catch (IOException e) {
-            //Todo: what to do
-            e.printStackTrace();
+            log.error(String.format("A FileWriter with the name %s has not " +
+                    "been able to be created.", filename));
+
+            // Todo: throw Exception to modify in ui
+            throw new FileNotFoundException();
         }
     }
 
     /**
-     * Abstract method to force extending subclasses to implement this
-     * method, so the needed list for the export is matching their special
-     * needs.
+     * Transforms the list of export objects into a list of {@link String}s
+     * by calling the overriding methods declared as abstract in this class.
      *
      * @param exportObjects List of objects of type {@code T} to be exported
      * @return  A list of strings containing all database information of the
@@ -123,8 +127,8 @@ public abstract class ObjectExporter<T> {
     protected abstract String[] getClassName();
 
     /**
-     * Abstract method to get the class header for the secfirstond line in the
-     * .csv-textfile.
+     * Abstract method to get the class header for the first and second line in
+     * the .csv-textfile.
      *
      * @return A list of strings representing the object attributes
      */

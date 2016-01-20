@@ -19,8 +19,10 @@
 package org.libreccm.docrepo;
 
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import java.util.List;
 
 /**
  * Entity class of a folder in the doc-repository. Instances will be persisted
@@ -36,10 +38,16 @@ public class Folder extends Resource {
     private static final long serialVersionUID = 1561466556458872622L;
 
     /**
+     * The child-{@code Resource}s of the {@code Resource}.
+     */
+    @OneToMany(mappedBy = "parent")
+    private List<Resource> immediateChildren;
+
+    /**
      * The {@link Repository} this {@code Folder} is assigned to as root.
      */
     @OneToOne(mappedBy = "rootFolder")
-    private Repository repository;
+    private Repository rootAssignedRepository;
 
     /**
      * Constructor calls the super-class-constructor of {@link Resource}.
@@ -50,13 +58,22 @@ public class Folder extends Resource {
 
     //> Begin GETTER & SETTER
 
-    public Repository getRepository() {
-        return repository;
+    public List<Resource> getImmediateChildren() {
+        return immediateChildren;
     }
 
-    public void setRepository(Repository repository) {
-        this.repository = repository;
+    public void setImmediateChildren(List<Resource> immediateChildren) {
+        this.immediateChildren = immediateChildren;
     }
+
+    public Repository getRootAssignedRepository() {
+        return rootAssignedRepository;
+    }
+
+    public void setRootAssignedRepository(Repository rootAssignedRepository) {
+        this.rootAssignedRepository = rootAssignedRepository;
+    }
+
 
     //< End GETTER & SETTER
 }

@@ -64,11 +64,11 @@ public class BlobObject implements Serializable {
     private byte[] content;
 
     /**
-     * The {@link Resource} the {@code BlobObject} was assigned to.
+     * The {@link File} the {@code BlobObject} was assigned to.
      */
     @OneToOne(mappedBy = "content")
     @NotEmpty
-    private Resource resource;
+    private File file;
 
     /**
      * Constructor.
@@ -93,12 +93,12 @@ public class BlobObject implements Serializable {
         this.content = content;
     }
 
-    public Resource getResource() {
-        return resource;
+    public File getFile() {
+        return file;
     }
 
-    public void setResource(Resource resource) {
-        this.resource = resource;
+    public void setFile(File file) {
+        this.file = file;
     }
 
     //< End GETTER & SETTER

@@ -19,6 +19,8 @@
 package org.libreccm.docrepo;
 
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 /**
@@ -35,10 +37,28 @@ public class File extends Resource {
     private static final long serialVersionUID = -504220783419811504L;
 
     /**
+     * Content of the {@code Resource} as a {@link BlobObject}.
+     */
+    @OneToOne
+    @JoinColumn(name = "CONTENT_ID")
+    private BlobObject content;
+
+    /**
      * Constructor calls the super-class-constructor of {@link Resource}.
      */
     public File() {
         super();
     }
 
+    //> Begin GETTER & SETTER
+
+    public BlobObject getContent() {
+        return content;
+    }
+
+    public void setContent(BlobObject content) {
+        this.content = content;
+    }
+
+    //< End GETTER & SETTER
 }

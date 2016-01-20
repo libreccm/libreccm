@@ -39,26 +39,61 @@ public class ResourceManager {
     private ResourceRepository resourceRepository;
 
     /**
-     * Copies a given {@link Resource} to a given {@link Folder}.
+     * Copies a given {@link File} to a given {@link Folder}.
      *
      * @param original The {@link Resource} to be copied
      * @param folder The {@link Folder} to copy to
      */
     public void copyToFolder(Resource original, Folder folder) {
-        Resource copy = original.isFolder() ? new Folder() : new File();
+        Resource copy = original instanceof File ?
+                copyFileSpecifics(new File(), (File) original) :
+                copyFolderSpecifics(new Folder(), (Folder) original);
+
         copy.setName(original.getName());
         copy.setDescription(original.getDescription());
-        copy.setIsFolder(original.isFolder());
         copy.setPath(String.format("%s/%s", folder.getPath(), copy.getName()));
         copy.setMimeType(original.getMimeType());
         copy.setSize(original.getSize());
-        copy.setContent(original.getContent());
-
+        copy.setCreationDate(original.getCreationDate());
+        copy.setLastModifiedDate(original.getLastModifiedDate());
+        copy.setCreationIp(original.getCreationIp());
+        copy.setLastModifiedIp(original.getLastModifiedIp());
+        copy.setCreationUser(original.getCreationUser());
+        copy.setLastModifiedUser(original.getLastModifiedUser());
         copy.setParent(folder);
-        copy.setImmediateChildren(original.getImmediateChildren());
+        copy.setRepository(folder.getRepository());
 
         resourceRepository.save(copy);
     }
+
+    /**
+     * Helper method to copy the {@link File} specific data to the copy.
+     *
+     * @param copy The copied {@link File}
+     * @param original The originl {@link File}
+     * @return  A {@link Resource} with the file-specific data from the
+     *          original {@link File}
+     */
+    private Resource copyFileSpecifics(File copy, File original) {
+        copy.setContent(original.getContent());
+        return copy;
+    }
+
+    /**
+     * Helper method to copy the {@link Folder} specific data to the copy.
+     *
+     * @param copy The copied {@link Folder}
+     * @param original The originl {@link Folder}
+     * @return  A {@link Resource} with the folder-specific data from the
+     *          original {@link Folder}
+     */
+    private Resource copyFolderSpecifics(Folder copy, Folder original) {
+        copy.setImmediateChildren(original.getImmediateChildren());
+        copy.setRootAssignedRepository(original.getRootAssignedRepository());
+        return copy;
+    }
+
+
 
     /**
      * Determines weather the given name is a valid new name for the also

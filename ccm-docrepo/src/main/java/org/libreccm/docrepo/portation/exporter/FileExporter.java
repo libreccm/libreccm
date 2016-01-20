@@ -16,23 +16,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.exchange.exporter.docrepo.exchange.exporter;
+package org.libreccm.docrepo.portation.exporter;
 
-import org.libreccm.exchange.exporter.ObjectExporter;
-import org.libreccm.exchange.exporter.docrepo.Resource;
+import org.libreccm.docrepo.File;
+import org.libreccm.portation.exporter.ObjectExporter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Exporter class for resources. Implements the abstract method of its super.
+ * Exporter class for {@link File}s. Implements the abstract method of its
+ * super.
  *
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  * @version 13/01/2016
  */
-public class ResourceExporter extends ObjectExporter<Resource> {
+public class FileExporter extends ObjectExporter<File> {
     @Override
     protected String[] getClassName() {
-        return new String[] {Resource.class.getName()};
+        return new String[] {File.class.getName()};
     }
 
     @Override
@@ -40,14 +42,13 @@ public class ResourceExporter extends ObjectExporter<Resource> {
         return new String[] {
                 "name",
                 "description",
-                "isFolder",
                 "path",
                 "mimeType",
                 "size",
                 "blobObject_ID",
                 "creationDate",
                 "lastModifiedDate",
-                "creationIP",
+                "creationIp",
                 "lastModifiedIp",
                 "creator_ID",
                 "modifier_ID",
@@ -56,28 +57,35 @@ public class ResourceExporter extends ObjectExporter<Resource> {
         };
     }
 
+    // Todo: change ID to UUID
     @Override
-    protected String[] reduceToStrings(Resource exportObject) {
-        ArrayList<String> list = new ArrayList<>();
+    protected String[] reduceToStrings(File exportObject) {
+        List<String> list = new ArrayList<>();
+
         list.add(exportObject.getName());
         list.add(exportObject.getDescription());
-        list.add(String.valueOf(exportObject.isFolder()));
         list.add(exportObject.getPath());
         list.add(exportObject.getMimeType() != null ?
                  exportObject.getMimeType().toString() : "");
         list.add(String.valueOf(exportObject.getSize()));
-        list.add(String.valueOf(exportObject.getContent().getBlobObjectId()));
+        list.add(exportObject.getContent() != null ? String.valueOf(
+                 exportObject.getContent().getBlobObjectId()) : "");
         list.add(exportObject.getCreationDate() != null ?
                  exportObject.getCreationDate().toString() : "");
         list.add(exportObject.getLastModifiedDate() != null ?
                  exportObject.getLastModifiedDate().toString() : "");
         list.add(exportObject.getCreationIp());
         list.add(exportObject.getLastModifiedIp());
-        list.add(exportObject.getCreationUser().getName());
-        list.add(exportObject.getLastModifiedUser().getName());
-        list.add(String.valueOf(exportObject.getParent().getObjectId()));
-        list.add(String.valueOf(exportObject.getRepository().getObjectId()));
+        list.add(exportObject.getCreationUser() != null ? String.valueOf(
+                 exportObject.getCreationUser().getPartyId()) : "");
+        list.add(exportObject.getLastModifiedUser() != null ? String.valueOf(
+                 exportObject.getLastModifiedUser().getPartyId()) : "");
+        list.add(exportObject.getParent() != null ? String.valueOf(
+                 exportObject.getParent().getObjectId()) : "");
+        list.add(exportObject.getRepository() != null ? String.valueOf(
+                 exportObject.getRepository().getObjectId()) : "");
 
-        return (String[]) list.toArray();
+        String[] array = new String[list.size()];
+        return list.toArray(array);
     }
 }

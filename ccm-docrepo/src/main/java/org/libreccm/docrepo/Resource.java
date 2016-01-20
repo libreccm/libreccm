@@ -29,13 +29,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import java.util.Date;
-import java.util.List;
 
 
 /**
@@ -81,13 +78,6 @@ public abstract class Resource extends CcmObject {
     private String description;
 
     /**
-     * Flag, wheather the {@code Resource} is a {@link Folder} or not.
-     */
-    @Column(name = "IS_FOLDER")
-    @NotBlank
-    private boolean isFolder;
-
-    /**
      * Path to the {@code Resource}.
      */
     @Column(name = "PATH", unique = true)
@@ -105,13 +95,6 @@ public abstract class Resource extends CcmObject {
      */
     @Column(name = "SIZE")
     private long size;
-
-    /**
-     * Content of the {@code Resource} as a {@link BlobObject}.
-     */
-    @OneToOne
-    @JoinColumn(name = "CONTENT_ID")
-    private BlobObject content;
 
     /**
      * Creation date of the {@code Resource}.
@@ -160,13 +143,7 @@ public abstract class Resource extends CcmObject {
      */
     @ManyToOne
     @JoinColumn(name = "PARENT_ID")
-    private Resource parent;
-
-    /**
-     * The child-{@code Resource}s of the {@code Resource}.
-     */
-    @OneToMany(mappedBy = "parent")
-    private List<Resource> immediateChildren;
+    private Folder parent;
 
     /**
      * The {@link Repository} containing this {@code Resource}.
@@ -200,14 +177,6 @@ public abstract class Resource extends CcmObject {
         this.description = description;
     }
 
-    public boolean isFolder() {
-        return isFolder;
-    }
-
-    public void setIsFolder(boolean isFolder) {
-        this.isFolder = isFolder;
-    }
-
     public String getPath() {
         return path;
     }
@@ -230,14 +199,6 @@ public abstract class Resource extends CcmObject {
 
     public void setSize(long size) {
         this.size = size;
-    }
-
-    public BlobObject getContent() {
-        return content;
-    }
-
-    public void setContent(BlobObject content) {
-        this.content = content;
     }
 
     public Date getCreationDate() {
@@ -292,16 +253,8 @@ public abstract class Resource extends CcmObject {
         return parent;
     }
 
-    public void setParent(Resource parent) {
+    public void setParent(Folder parent) {
         this.parent = parent;
-    }
-
-    public List<Resource> getImmediateChildren() {
-        return immediateChildren;
-    }
-
-    public void setImmediateChildren(List<Resource> immediateChildren) {
-        this.immediateChildren = immediateChildren;
     }
 
     public Repository getRepository() {
@@ -313,12 +266,4 @@ public abstract class Resource extends CcmObject {
     }
 
     //< End GETTER & SETTER
-
-    public boolean isRoot() {
-        return isFolder() && getParent() == null;
-    }
-
-    public boolean isFile() {
-        return !isFolder();
-    }
 }

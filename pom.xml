@@ -38,7 +38,7 @@
         <module>ccm-core</module>
         <module>ccm-shortcuts</module>
         <module>ccm-testutils</module>
-        <!--<module>ccm-docrepo</module>-->
+        <module>ccm-docrepo</module>
         
         <!-- Bundle modules -->
         <module>ccm-bundle-devel-swarm</module>

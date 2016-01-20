@@ -39,7 +39,8 @@ import java.util.stream.Collectors;
  * @version 01/10/2015
  */
 @RequestScoped
-public class ResourceRepository extends AbstractAuditedEntityRepository<Long, Resource> {
+public class ResourceRepository extends
+        AbstractAuditedEntityRepository<Long, Resource> {
 
     @Inject
     private EntityManager entityManager;
