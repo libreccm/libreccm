@@ -109,12 +109,26 @@ ccm_core.role_memberships:
       role_id: -10003
       member_id: -41004
 ccm_core.ccm_objects:
+    - object_id: -100
+      display_name: registry
+    - object_id: -200
+      display_name: registry-root
+    - object_id: -201
+      display_name: com
+    - object_id: -202
+      display_name: arsdigita
+    - object_id: -203
+      display_name: kernel
+    - object_id: -204
+      display_name: KernelConfig
     - object_id: -20001
       display_name: object1
     - object_id: -20002
       display_name: object2
     - object_id: -20003
       display_name: object3
+    - object_id: -301
+      display_name: screenName
 ccm_core.permissions:
     # permission for privilege1 granted to role1
     - permission_id: -30001
@@ -135,3 +149,61 @@ ccm_core.permissions:
       granted_privilege: privilege3
       object_id: -20001
       grantee_id: -10003
+ccm_core.categories:
+    - object_id: -200
+      unique_id: bb93a964-bf66-424c-a22d-074d001db3b8
+      name: registry-root
+      enabled: true
+      visible: true
+      abstract_category: false
+      category_order: 0
+    - object_id: -201
+      unique_id: 35ac50aa-7062-47b9-808d-ac830050d373
+      parent_category_id: -200
+      name: com
+      enabled: true
+      visible: true
+      abstract_category: false
+      category_order: 1
+    - object_id: -202
+      unique_id: 28f09d9d-a7fc-4dc3-a53e-670822fa5480
+      parent_category_id: -201
+      name: arsdigita
+      enabled: true
+      visible: true
+      abstract_category: false
+      category_order: 1
+    - object_id: -203
+      unique_id: 58c0b235-8762-4ab7-9232-a5a0e39c3a01
+      parent_category_id: -202
+      name: kernel
+      enabled: true
+      visible: true
+      abstract_category: false
+      category_order: 1
+    - object_id: -204
+      unique_id: c1a45148-df0a-486f-b4f1-c5a6659081c2
+      parent_category_id: -203
+      name: KernelConfig
+      enabled: true
+      visible: true
+      abstract_category: false
+      category_order: 1
+ccm_core.category_domains:
+    - object_id: -100
+      domain_key: registry
+      root_category_id: -200
+      version: 1.0
+ccm_core.settings:
+    - object_id: -301
+      name: primaryUserIdentifier
+ccm_core.settings_string:
+    - object_id: -301
+      setting_value: screen_name
+ccm_core.categorizations:
+    - categorization_id: -900
+      category_id: -204
+      object_id: -301
+      category_index: false
+      category_order: 1
+      object_order: 1

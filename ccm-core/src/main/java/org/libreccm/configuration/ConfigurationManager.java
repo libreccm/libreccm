@@ -675,10 +675,6 @@ public class ConfigurationManager {
         final Category category = categoryRepository.findByPath(registry,
                                                                 confName);
 
-        if (category == null) {
-            return null;
-        }
-
         final T conf;
         try {
             conf = confClass.newInstance();
@@ -688,6 +684,10 @@ public class ConfigurationManager {
                 confClass.getName()),
                         ex);
             return null;
+        }
+        
+        if (category == null) {
+            return conf;
         }
 
         final Field[] fields = confClass.getDeclaredFields();

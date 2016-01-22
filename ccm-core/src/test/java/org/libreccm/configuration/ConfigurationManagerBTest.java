@@ -67,12 +67,12 @@ import static org.junit.Assert.*;
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
 @CreateSchema({"create_ccm_core_schema.sql"})
-public class ConfigurationManagerTest {
+public class ConfigurationManagerBTest {
 
     @Inject
     private ConfigurationManager configurationManager;
 
-    public ConfigurationManagerTest() {
+    public ConfigurationManagerBTest() {
     }
 
     @BeforeClass
@@ -107,19 +107,26 @@ public class ConfigurationManagerTest {
 
         return ShrinkWrap
             .create(WebArchive.class,
-                    "LibreCCM-org.libreccm.categorization.ConfigurationManagerTest.war")
-            .addPackage(CcmObject.class.getPackage())
-            .addPackage(Permission.class.getPackage())
-            .addPackage(CcmApplication.class.getPackage())
-            .addPackage(Categorization.class.getPackage())
-            .addPackage(Configuration.class.getPackage())
-            .addPackage(LocalizedString.class.getPackage())
-            .addPackage(Workflow.class.getPackage())
-            .addPackage(EntityManagerProducer.class.getPackage())
-            .addPackage(MimeTypeConverter.class.getPackage())
-            .addPackage(EqualsVerifier.class.getPackage())
-            .addPackage(IntegrationTest.class.getPackage())
-            .addPackage(TestConfiguration.class.getPackage())
+                    "LibreCCM-org.libreccm.categorization.ConfigurationManagerBTest.war")
+            .addPackage("org.libreccm.categorization")
+            .addPackage("org.libreccm.configuration")
+            .addPackage("org.libreccm.core")
+            .addPackage("org.libreccm.jpa")
+            .addPackage("org.libreccm.jpa.utils")
+            .addPackage("org.libreccm.l10n")
+            .addPackage("org.libreccm.security")
+            .addPackage("org.libreccm.tests.categories")
+            .addPackage("org.libreccm.testutils")
+            .addPackage("org.libreccm.web")
+            .addPackage("org.libreccm.workflow")
+            .addPackage("com.example")
+            //--
+            .addPackage("org.libreccm.cdi.utils")
+            .addPackage("org.libreccm.modules")
+            .addPackage("com.arsdigita.kernel")
+            .addPackage("com.arsdigita.kernel.security")
+            .addPackage("com.arsdigita.util")
+            .addPackage("com.arsdigita.util.parameter")
             .addAsLibraries(libs)
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")

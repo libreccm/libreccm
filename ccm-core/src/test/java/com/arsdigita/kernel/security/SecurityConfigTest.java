@@ -61,7 +61,7 @@ import java.util.List;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RunWith(Arquillian.class)
-@Category(IntegrationTest.class)
+//@Category(IntegrationTest.class)
 public class SecurityConfigTest {
 
     public SecurityConfigTest() {
