@@ -112,9 +112,9 @@ public class AuthorizationInterceptorTest {
             .addPackage(org.libreccm.categorization.Categorization.class
                 .getPackage())
             .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
-            .addPackage(org.libreccm.core.CcmObject.class.getPackage())
             .addPackage(org.libreccm.configuration.ConfigurationManager.class
                 .getPackage())
+            .addPackage(org.libreccm.core.CcmObject.class.getPackage())
             .addPackage(org.libreccm.jpa.EntityManagerProducer.class
                 .getPackage())
             .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
@@ -123,9 +123,9 @@ public class AuthorizationInterceptorTest {
             .addPackage(org.libreccm.security.User.class.getPackage())
             .addPackage(org.libreccm.security.authorization.LabBean.class
                 .getPackage())
-            .addPackage(org.libreccm.testutils.EqualsVerifier.class.getPackage())
             .addPackage(org.libreccm.tests.categories.IntegrationTest.class
                 .getPackage())
+            .addPackage(org.libreccm.testutils.EqualsVerifier.class.getPackage())
             .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
             .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
             .addPackage(com.arsdigita.kernel.security.SecurityConfig.class

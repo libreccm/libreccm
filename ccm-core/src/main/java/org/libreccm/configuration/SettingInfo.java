@@ -155,16 +155,40 @@ public final class SettingInfo {
         if (!Objects.equals(name, other.getName())) {
             return false;
         }
-        if (!Objects.equals(valueType, other.getValueType())) {
-            return false;
-        }
-        if (!Objects.equals(defaultValue, other.getDefaultValue())) {
+//        if (!Objects.equals(valueType, other.getValueType())) {
+//            return false;
+//        }
+//        if (!Objects.equals(defaultValue, other.getDefaultValue())) {
+//            return false;
+//        }
+        if (!equalsValueProps(other)) {
             return false;
         }
         if (!Objects.equals(confClass, other.getConfClass())) {
             return false;
         }
 
+//        if (!Objects.equals(descBundle, other.getDescBundle())) {
+//            return false;
+//        }
+//
+//        if (!Objects.equals(labelKey, other.getLabelKey())) {
+//            return false;
+//        }
+//
+//        return Objects.equals(descKey, other.getDescKey());
+        return equalsDescProps(other);
+    }
+
+    private boolean equalsValueProps(final SettingInfo other) {
+        if (!Objects.equals(valueType, other.getValueType())) {
+            return false;
+        }
+
+        return Objects.equals(defaultValue, other.getDefaultValue());
+    }
+
+    private boolean equalsDescProps(final SettingInfo other) {
         if (!Objects.equals(descBundle, other.getDescBundle())) {
             return false;
         }

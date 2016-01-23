@@ -68,6 +68,7 @@ public final class XmlConfig {
     private String saxParser = "xerces";
 
     @Setting
+    @SuppressWarnings("PMD.LongVariable")
     private Boolean fullTimeFormatterEnabled = false;
 
     public static XmlConfig getConfig() {
@@ -100,11 +101,11 @@ public final class XmlConfig {
      * Returns the class name of the default {@link TransformerFactory}. This
      * method encapsulates the default value so that is easy to change. The
      * method is only for use by the classes in the {@code com.arsdigita.xml}
-     * package, therefore the method is {@code protected}.
+     * package, therefore the method is visible for the package.
      *
      * @return
      */
-    protected String getDefaultXslTransformerFactoryClassname() {
+    String getDefaultXslTransformerFactoryClassname() {
         return SAXON;
     }
 
@@ -127,11 +128,10 @@ public final class XmlConfig {
      */
     public String getDomBuilderFactoryClassname() {
 
-        switch(domBuilder) {
-            case "resin":
+        if ("resin".equals(domBuilder)) {
             return DOM_RESIN;
-            default:
-                return getDefaultDomBuilderFactoryClassname();
+        } else {
+            return getDefaultDomBuilderFactoryClassname();
         }
     }
     
@@ -139,11 +139,11 @@ public final class XmlConfig {
      * Returns the class name of the default {@link DocumentBuilderFactory}. 
      * This method encapsulates the default value so that is easy to change. The method is only for 
      * use by the classes in the {@code com.arsdigita.xml} package, therefore the method is 
-     * {@code protected}.
+     * only accessible from the package.
      * 
      * @return 
      */
-    protected String getDefaultDomBuilderFactoryClassname() {
+    String getDefaultDomBuilderFactoryClassname() {
         return DOM_XERCES;
     }
 
@@ -167,23 +167,22 @@ public final class XmlConfig {
      */
     public String getSaxParserFactoryClassname() {
 
-        switch(saxParser) {
-            case "resin":
-                return SAX_RESIN;
-            default:
-                return getDefaultSaxParserFactoryClassname();
-        } 
+        if ("resin".equals(saxParser)) {
+            return SAX_RESIN;
+        } else {
+            return getDefaultSaxParserFactoryClassname();
+        }
     }
 
     /**
      * Returns the class name of the default {@link SAXParserFactory}. 
      * This method encapsulates the default value so that is easy to change. The method is only for 
      * use by the classes in the {@code com.arsdigita.xml} package, therefore the method is 
-     * {@code protected}.
+     * only visible in the package.
      * 
      * @return 
      */
-    protected String getDefaultSaxParserFactoryClassname() {
+    String getDefaultSaxParserFactoryClassname() {
         return SAX_XERCES;
     }
 
@@ -196,6 +195,7 @@ public final class XmlConfig {
         return fullTimeFormatterEnabled;
     }
 
+    @SuppressWarnings("PMD.LongVariable")
     public void setFullTimeFormatterEnabled(
         final Boolean fullTimeFormatterEnabled) {
         this.fullTimeFormatterEnabled = fullTimeFormatterEnabled;

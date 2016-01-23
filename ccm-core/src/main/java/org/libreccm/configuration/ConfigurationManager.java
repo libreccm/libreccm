@@ -51,6 +51,11 @@ import javax.persistence.EntityManager;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
+@SuppressWarnings({"PMD.GodClass",
+                   "PMD.TooManyMethods",
+                   "PMD.LongVariable",
+                   "PMD.ModifiedCyclomaticComplexity",
+                   "PMD.StandardCyclomaticComplexity",})
 public class ConfigurationManager {
 
     private static final Logger LOGGER = LogManager.getLogger(
@@ -307,6 +312,9 @@ public class ConfigurationManager {
      *
      * @return The {@link SettingInfo} for the provided configuration class.
      */
+    @SuppressWarnings({"PMD.NPathComplexity",
+                       "PMD.CyclomaticComplexity",
+                       "PMD.StandardCyclomaticComplexity"})
     public SettingInfo getSettingInfo(final Class<?> configuration,
                                       final String name) {
         if (configuration == null) {
@@ -374,18 +382,18 @@ public class ConfigurationManager {
         settingInfo.setConfClass(configuration.getName());
 
         settingInfo.setDescBundle(descBundle);
-        
+
         if (settingAnnotation.labelKey() == null
-            || settingAnnotation.labelKey().isEmpty()) {
+                || settingAnnotation.labelKey().isEmpty()) {
             settingInfo.setLabelKey(String.join(".", field.getName(),
-                                                     "label"));
+                                                "label"));
         } else {
             settingInfo.setLabelKey(name);
         }
-        
+
         if (settingAnnotation.descKey() == null
                 || settingAnnotation.descKey().isEmpty()) {
-            settingInfo.setDescKey(String.join(".", 
+            settingInfo.setDescKey(String.join(".",
                                                field.getName(),
                                                "descripotion"));
         } else {
@@ -578,25 +586,6 @@ public class ConfigurationManager {
             setting.setDisplayName(settingName);
             final Category category = findCategoryForNewSetting(configuration);
             categoryManager.addObjectToCategory(setting, category);
-
-//            final Domain registry = domainRepository
-//                    .findByDomainKey(REGISTRY_DOMAIN);
-//            Category category = categoryRepository
-//                    .findByPath(registry, configuration.getClass().getName());
-//            if (category == null) {
-//                final String[] tokens = configuration.getClass().getName().
-//                        split("\\.");
-//                final StringBuilder categoryPath = new StringBuilder(
-//                        configuration.getClass().getName().length());
-//                for (String token : tokens) {
-//                    if (categoryPath.length() > 0) {
-//                        categoryPath.append('.');
-//                    }
-//                    categoryPath.append(token);
-//                    category = createCategoryIfNotExists(categoryPath.toString());
-//                }
-//            }
-//            categoryManager.addObjectToCategory(setting, category);
         }
 
         LOGGER.debug(String.format("New value of setting \"%s\" is: \"%s\"",
@@ -685,7 +674,7 @@ public class ConfigurationManager {
                         ex);
             return null;
         }
-        
+
         if (category == null) {
             return conf;
         }
@@ -705,17 +694,16 @@ public class ConfigurationManager {
                                                            settingType);
             if (setting != null) {
                 try {
-                    LOGGER.debug(String.
-                        format("Setting \"%s\" found. Value: %s",
-                               settingPath,
-                               setting.getValue().toString()));
+                    LOGGER.debug("Setting \"{}\" found. Value: %s",
+                                 settingPath,
+                                 setting.getValue().toString());
                     field.set(conf, setting.getValue());
                 } catch (IllegalAccessException ex) {
-                    LOGGER.warn(String.format(
-                        "Failed to set value of configuration class \"%s\". "
+                    LOGGER.warn(
+                        "Failed to set value of configuration class \"{}\". "
                             + "Ignoring.",
-                        confClass.getName()),
-                                ex);
+                        confClass.getName(),
+                        ex);
                 }
             }
         }
@@ -724,10 +712,9 @@ public class ConfigurationManager {
     }
 
     private Category findCategoryForNewSetting(final Object configuration) {
-        LOGGER.debug(new FormattedMessage(
-            "#findCategoryForNewSetting: Looking for category for "
-                + "configuration \"%s\"...",
-            configuration.getClass().getName()));
+        LOGGER.debug("#findCategoryForNewSetting: Looking for category for "
+                         + "configuration \"{}\"...",
+                     configuration.getClass().getName());
         final String categoryPath = configuration.getClass().getName();
         final String[] tokens = categoryPath.split("\\.");
         final Domain registry = domainRepository
@@ -739,20 +726,20 @@ public class ConfigurationManager {
         final boolean[] exists = new boolean[tokens.length];
         for (int i = 0; i < tokens.length; i++) {
             final String path = buildCategoryPath(tokens, i);
-            LOGGER.debug(new FormattedMessage(
-                "#findCategoryForNewSetting: Checking if category \"%s\" exists.",
-                path));
+            LOGGER.debug("#findCategoryForNewSetting: "
+                             + "Checking if category \"{}\" exists.",
+                         path);
             final Category category = categoryRepository.findByPath(registry,
                                                                     path);
             if (category == null) {
-                LOGGER.debug(new FormattedMessage(
-                    "#findCategoryForNewSetting: Category \"%s\" does not exist.",
-                    path));
+                LOGGER.debug("#findCategoryForNewSetting: "
+                                 + "Category \"{}\" does not exist.",
+                             path);
                 exists[i] = false;
             } else {
-                LOGGER.debug(new FormattedMessage(
-                    "#findCategoryForNewSetting: Category \"%s\" exists.",
-                    path));
+                LOGGER.debug(
+                    "#findCategoryForNewSetting: Category \"{}\" exists.",
+                    path);
                 exists[i] = true;
                 categories[i] = category;
             }
@@ -761,33 +748,34 @@ public class ConfigurationManager {
         LOGGER.debug(
             "#findCategoryForNewSetting: Creating missing categories...");
         for (int i = 0; i < tokens.length; i++) {
-            LOGGER.debug(new FormattedMessage(
-                "#findCategoryForNewSetting: Checking for category \"%s\"...",
-                tokens[i]));
+            LOGGER.debug(
+                "#findCategoryForNewSetting: Checking for category \"{}\"...",
+                tokens[i]);
             if (!exists[i]) {
 
                 if (i == 0) {
-                    LOGGER.debug(new FormattedMessage(
-                        "#findCategoryForNewSetting: Category \"%s\" does not exist, "
-                        + "creating as subcategory of the registry root category.",
-                        tokens[i]));
+                    LOGGER.debug("#findCategoryForNewSetting: "
+                                     + "Category \"{}\" does not exist, "
+                                     + "creating as subcategory of the registry "
+                                 + "root category.",
+                                 tokens[i]);
                     categories[i] = createNewCategory(tokens[i],
                                                       registry.getRoot());
                 } else {
-                    LOGGER.debug(new FormattedMessage(
-                        "#findCategoryForNewSetting: Category \"%s\" does not exist, "
-                        + "creating as subcategory of \"%s\"",
-                        tokens[i],
-                        categories[i - 1].getName()));
+                    LOGGER.debug("#findCategoryForNewSetting: "
+                                     + "Category \"{}\" does not exist, "
+                                     + "creating as subcategory of \"{}\"",
+                                 tokens[i],
+                                 categories[i - 1].getName());
                     categories[i] = createNewCategory(tokens[i],
                                                       categories[i - 1]);
                 }
             }
         }
 
-        LOGGER.debug(new FormattedMessage(
-            "#findCategoryForNewSetting: Found/Created category \"%s\".",
-            categoryPath));
+        LOGGER.debug("#findCategoryForNewSetting: "
+                         + "Found/Created category \"{}\".",
+                     categoryPath);
         return categories[categories.length - 1];
     }
 

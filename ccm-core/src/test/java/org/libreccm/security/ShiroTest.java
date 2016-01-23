@@ -105,47 +105,25 @@ public class ShiroTest {
         return ShrinkWrap
             .create(WebArchive.class,
                     "LibreCCM-org.libreccm.security.ShiroTest.war")
-            .addPackage("org.libreccm.cdi.utils") //Checked
-            .addPackage("org.libreccm.categorization") //Checked
-            .addPackage("org.libreccm.configuration") //Checked
-            .addPackage("org.libreccm.core") //Checked
-            .addPackage("org.libreccm.jpa") //Checked
-            .addPackage("org.libreccm.jpa.utils") //Checked
-            .addPackage("org.libreccm.l10n") //Checked
-            .addPackage("org.libreccm.modules") //Checked
-            .addPackage("org.libreccm.security") //Checked
-            .addPackage("org.libreccm.tests.categories") //Checked
-            .addPackage("org.libreccm.testutils") //Checked
-            .addPackage("org.libreccm.web") //Checked
-            .addPackage("org.libreccm.workflow") //Checked
-            .addPackage("com.arsdigita.kernel") //Checked
-            .addPackage("com.arsdigita.kernel.security") //Checked
-            .addPackage("com.arsdigita.util") //Checked
-            .addPackage("com.arsdigita.util.parameter") //Checked
-            //            .addPackage(CcmCore.class.getPackage())
-            //            .addPackage(CcmModule.class.getPackage())
-            //            .addPackage(CcmObject.class.getPackage())
-            //            .addPackage(CdiUtil.class.getPackage())
-            //            .addPackage(Categorization.class.getPackage())
-            //            .addPackage(Configuration.class.getPackage())
-            //            .addPackage(LocalizedString.class.getPackage())
-            //            .addPackage(CcmApplication.class.getPackage())
-            //            .addPackage(Workflow.class.getPackage())
-            //            .addPackage(EntityManagerProducer.class.getPackage())
-            //            .addPackage(MimeTypeConverter.class.getPackage())
-            //            .addPackage(EqualsVerifier.class.getPackage())
-            //            .addPackage(IntegrationTest.class.getPackage())
-            //            .addPackage(SecurityConfig.class.getPackage())
-            //            .addPackage(CCMApplicationContextListener.class.getPackage())
-            //            .addPackage(XML.class.getPackage())
-            //            .addPackage(DateTimeFormatter.class.getPackage())
-            //            .addPackage(AbstractParameterContext.class.getPackage())
-            //            .addPackage(UncheckedWrapperException.class.getPackage())
-            //            .addPackage(CCMResourceManager.class.getPackage())
-            //            .addPackage(DispatcherHelper.class.getPackage())
-            //            .addPackage(UI.class.getPackage())
-            //            .addPackage(KernelConfig.class.getPackage())
-            //            .addPackage(BasePage.class.getPackage())
+            .addPackage(org.libreccm.categorization.Category.class.getPackage())
+            .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
+            .addPackage(org.libreccm.configuration.Configuration.class
+                .getPackage())
+            .addPackage(org.libreccm.core.CcmObject.class.getPackage())
+            .addPackage(org.libreccm.jpa.EntityManagerProducer.class
+                .getPackage())
+            .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
+                .getPackage())
+            .addPackage(org.libreccm.l10n.LocalizedString.class.getPackage())
+            .addPackage(org.libreccm.security.User.class.getPackage())
+            .addPackage(org.libreccm.tests.categories.IntegrationTest.class
+                .getPackage())
+            .addPackage(org.libreccm.testutils.EqualsVerifier.class.getPackage())
+            .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
+            .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
+            .addPackage(com.arsdigita.kernel.KernelConfig.class.getPackage())
+            .addPackage(com.arsdigita.kernel.security.SecurityConfig.class
+                .getPackage())
             .addAsLibraries(libs)
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")

@@ -39,6 +39,7 @@ public final class FormBuilderConfig {
     private String controlsHelpUrl;
 
     @Setting
+    @SuppressWarnings("PMD.LongVariable")
     private Boolean interpolateEmailActions;
 
     public static FormBuilderConfig getConfig() {
@@ -68,6 +69,7 @@ public final class FormBuilderConfig {
         return interpolateEmailActions;
     }
 
+    @SuppressWarnings("PMD.LongVariable")
     public void setInterpolateEmailActions(final Boolean interpolateEmailActions) {
         this.interpolateEmailActions = interpolateEmailActions;
     }

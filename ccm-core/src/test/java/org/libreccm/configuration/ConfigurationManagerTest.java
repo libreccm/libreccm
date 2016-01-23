@@ -53,7 +53,11 @@ import java.io.File;
 import java.math.BigDecimal;
 
 import javax.inject.Inject;
+
 import org.jboss.arquillian.persistence.ShouldMatchDataSet;
+import org.libreccm.categorization.Category;
+
+import javax.persistence.TypedQuery;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -192,7 +196,9 @@ public class ConfigurationManagerTest {
         final TestConfiguration configuration = configurationManager
             .findConfiguration(TestConfiguration.class);
 
-        assertThat(configuration, is(nullValue()));
+        assertThat(configuration, is(not(nullValue())));
+        assertThat(configuration.getEnabled(), is(false));
+        assertThat(configuration.getItemsPerPage(), is(40L));
     }
 
     @Test

@@ -120,36 +120,27 @@ public class GroupManagerTest {
         return ShrinkWrap
             .create(WebArchive.class,
                     "LibreCCM-org.libreccm.security.GroupManagerTest.war")
-            .addPackage(User.class.getPackage())
-            .addPackage(CcmObject.class.getPackage())
-            .addPackage(Categorization.class.getPackage())
-            .addPackage(LocalizedString.class.getPackage())
-            .addPackage(CcmApplication.class.getPackage())
-            .addPackage(Workflow.class.getPackage())
-            .addPackage(EntityManagerProducer.class.getPackage())
-            .addPackage(MimeTypeConverter.class.getPackage())
-            .addPackage(EqualsVerifier.class.getPackage())
-            .addPackage(IntegrationTest.class.getPackage())
-            .addPackage(SecurityConfig.class.getPackage())
-            .addPackage(AbstractParameterContext.class.getPackage())
-            .addPackage(CCMApplicationContextListener.class.getPackage())
-            .addPackage(XML.class.getPackage())
-            .addPackage(DateTimeFormatter.class.getPackage())
-            .addPackage(UncheckedWrapperException.class.getPackage())
+            .addPackage(org.libreccm.categorization.Categorization.class
+                .getPackage())
+            .addPackage(org.libreccm.core.CcmObject.class.getPackage())
+            .addPackage(org.libreccm.jpa.EntityManagerProducer.class
+                .getPackage())
+            .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
+                .getPackage())
+            .addPackage(org.libreccm.l10n.LocalizedString.class.getPackage())
+            .addPackage(org.libreccm.security.User.class.getPackage())
+            .addPackage(org.libreccm.tests.categories.IntegrationTest.class
+                .getPackage())
+            .addPackage(org.libreccm.testutils.EqualsVerifier.class.getPackage())
+            .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
+            .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
+            .addPackage(com.arsdigita.kernel.security.SecurityConfig.class
+                .getPackage())
+            .addPackage(com.arsdigita.util.UncheckedWrapperException.class
+                .getPackage())
             .addAsLibraries(libs)
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")
-            .addAsResource("com/arsdigita/kernel/security/"
-                               + "SecurityConfig_parameter.properties",
-                           "com/arsdigita/kernel/security/"
-                               + "SecurityConfig_parameter.properties")
-            .addAsWebInfResource(
-                "configs/org/libreccm/security/UserManagerTest/"
-                    + "registry.properties",
-                "conf/registry/registry.properties")
-            .addAsResource(
-                "configs/org/libreccm/security/UserManagerTest/ccm-core.config",
-                "ccm-core.config")
             .addAsWebInfResource("test-web.xml", "web.xml")
             .addAsResource("configs/shiro.ini", "shiro.ini")
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");

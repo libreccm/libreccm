@@ -255,6 +255,13 @@ public final class KernelConfig {
 
     @Override
     public String toString() {
+        final String languages;
+        if (supportedLanguages == null) {
+            languages = "";
+        } else {
+            languages = supportedLanguages.stream().collect(Collectors.joining(", "));
+        }
+        
         return String.format(
             "%s{ "
                 + "debugEnabled = %b, "
@@ -275,7 +282,8 @@ public final class KernelConfig {
             ssoEnabled,
             rememberLoginEnabled,
             secureLoginEnabled,
-            supportedLanguages.stream().collect(Collectors.joining(", ")),
+            //supportedLanguages == null ? "" : supportedLanguages.stream().collect(Collectors.joining(", ")),
+            languages,
             defaultLanguage);
     }
 
