@@ -42,6 +42,13 @@
             <groupId>org.libreccm</groupId>
             <artifactId>ccm-core</artifactId>
             <version>${project.parent.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.libreccm</groupId>
+            <artifactId>ccm-testutils</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>test</scope>
         </dependency>
         
         <dependency>
@@ -125,7 +132,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.3</version>
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
@@ -138,7 +144,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.18.1</version>
                 <configuration>
                     <groups>org.libreccm.tests.categories.UnitTest</groups>
                 </configuration>
@@ -147,7 +152,6 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.7.5.201505241946</version>
                 <executions>
                     <execution>
                         <id>default-prepare-agent</id>
@@ -258,7 +262,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-report-plugin</artifactId>
-                <version>2.18.1</version>
+                <version>2.19.1</version>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
@@ -268,12 +272,12 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
-                <version>3.0.1</version>
+                <version>3.0.3</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
-                <version>3.4</version>
+                <version>3.6</version>
                 <configuration>
                     <linkXref>true</linkXref>
                     <sourceEncoding>utf-8</sourceEncoding>
@@ -299,15 +303,15 @@
                     </rulesets>
                 </configuration>
             </plugin>
-            <plugin>
+            <!--<plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>javancss-maven-plugin</artifactId>
                 <version>2.1</version>
-            </plugin>
+            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>2.8</version>
+                <version>2.8.1</version>
                 <reportSets>
                     <reportSet>
                         <reports>
@@ -328,5 +332,86 @@
 
         </plugins>
     </reporting>
+    
+    <profiles>
+        <profile>
+            <id>wildfly-remote-h2-mem</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.wildfly</groupId>
+                    <artifactId>wildfly-arquillian-container-remote</artifactId>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>org.jacoco.core</artifactId>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.jboss.arquillian.extension</groupId>
+                    <artifactId>arquillian-jacoco</artifactId>
+                    <version>1.0.0.Alpha8</version>
+                </dependency>
+            </dependencies>
+            
+            <build>
+                <testResources>
+                    <testResource>
+                        <directory>src/test/resources</directory>
+                    </testResource>
+                    <testResource>
+                        <directory>src/test/resources-wildfly-remote-h2-mem</directory>
+                    </testResource>
+                    <testResource>
+                        <directory>${project.build.directory}/generated-resources</directory>
+                    </testResource>
+                </testResources>
+                
+                <plugins>
+                    <plugin>
+                        <groupId>de.jpdigital</groupId>
+                        <artifactId>hibernate4-ddl-maven-plugin</artifactId>
+                        <configuration>
+                            <dialects>
+                                <param>h2</param>
+                                <param>mysql5_innodb</param>
+                                <param>postgresql9</param>
+                            </dialects>
+                            <packages>
+                                <param>org.libreccm</param>
+                            </packages>
+                            <useEnvers>true</useEnvers>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>gen-ddl</goal>
+                                </goals>
+                                <phase>process-classes</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>2.19.1</version>
+                        <configuration>
+                            <forkMode>always</forkMode>
+                            <forkCount>999</forkCount>
+                            <reuseForks>true</reuseForks>
+                            <systemPropertyVariables>
+                                <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+                            </systemPropertyVariables>
+                            <redirectTestOutputToFile>false</redirectTestOutputToFile>
+                            <groups>
+                                org.libreccm.tests.categories.UnitTest,
+                                org.libreccm.tests.categories.IntegrationTest
+                            </groups>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
     
 </project>
