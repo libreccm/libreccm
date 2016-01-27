@@ -20,16 +20,23 @@ package com.arsdigita.web;
 
 import com.arsdigita.util.UncheckedWrapperException;
 
-import org.libreccm.cdi.utils.CdiUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.message.ParameterizedMessage;
 import org.libreccm.configuration.Configuration;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.configuration.Setting;
 
 import java.lang.reflect.Method;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.StringJoiner;
 
+import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.inject.spi.CDI;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.ValidatorFactory;
@@ -42,6 +49,8 @@ import javax.validation.executable.ExecutableValidator;
  */
 @Configuration
 public final class WebConfig {
+
+    private static final Logger LOGGER = LogManager.getLogger(WebConfig.class);
 
     @Setting
     private String defaultScheme = "http";
@@ -75,9 +84,33 @@ public final class WebConfig {
     private String dynamicHostProviderClass;
 
     public static WebConfig getConfig() {
-        final CdiUtil cdiUtil = new CdiUtil();
-        final ConfigurationManager confManager = cdiUtil.findBean(
+        final BeanManager beanManager = CDI.current().getBeanManager();
+        final Set<Bean<?>> beans = beanManager.getBeans(
             ConfigurationManager.class);
+        final Iterator<Bean<?>> iterator = beans.iterator();
+        final ConfigurationManager confManager;
+        if (iterator.hasNext()) {
+            @SuppressWarnings("unchecked")
+            final Bean<ConfigurationManager> bean
+                                                 = (Bean<ConfigurationManager>) iterator
+                .next();
+            final CreationalContext<ConfigurationManager> ctx = beanManager
+                .createCreationalContext(bean);
+
+            confManager = (ConfigurationManager) beanManager.getReference(
+                bean, ConfigurationManager.class, ctx);
+        } else {
+            LOGGER.error(new ParameterizedMessage(
+                "No CDI Bean for type {} found.",
+                ConfigurationManager.class.getName()));
+            throw new IllegalStateException(String.format(
+                "No CDI Bean for type \"%s\" found",
+                ConfigurationManager.class.getName()));
+        }
+
+//        final CdiUtil cdiUtil = new CdiUtil();
+//        final ConfigurationManager confManager = cdiUtil.findBean(
+//            ConfigurationManager.class);
         return confManager.findConfiguration(WebConfig.class);
     }
 
@@ -174,11 +207,11 @@ public final class WebConfig {
     public String getHostName() {
         return host.split(":")[0];
     }
-    
+
     public Integer getHostPort() {
         return Integer.parseInt(host.split(":")[1]);
     }
-    
+
     public void setHost(
         @Pattern(regexp = "[\\w-.]*:[0-9]{1,5}") final String host) {
 

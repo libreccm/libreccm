@@ -100,7 +100,7 @@ public interface LoginConstants {
   without trailing slash                                                */
     // Don't modify without adapting instantiation in Loader class and 
     // updating existing databases (table applications)!
-    public final static String LOGIN_PAGE_URL = "/register";
+    public final static String LOGIN_PAGE_URL = "/register/";
     
     public final static String LOGIN_SERVLET_PATH = "/login/*";
 

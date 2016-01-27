@@ -20,8 +20,10 @@ package org.libreccm.core;
 
 import com.arsdigita.ui.admin.AdminApplicationCreator;
 import com.arsdigita.ui.admin.AdminServlet;
+import com.arsdigita.ui.admin.AdminApplicationSetup;
 import com.arsdigita.ui.login.LoginApplicationCreator;
 import com.arsdigita.ui.login.LoginServlet;
+import com.arsdigita.ui.login.LoginApplicationSetup;
 
 import org.libreccm.modules.CcmModule;
 import org.libreccm.modules.InitEvent;
@@ -40,12 +42,12 @@ import org.libreccm.web.ApplicationType;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Module(applicationTypes = {
-    @ApplicationType(name = "Login",
+    @ApplicationType(name = LoginApplicationSetup.LOGIN_APP_NAME,
                      description = "Login Application",
                      singleton = true,
                      creator = LoginApplicationCreator.class,
                      servlet = LoginServlet.class),
-    @ApplicationType(name = "CCM Admin",
+    @ApplicationType(name = AdminApplicationSetup.ADMIN_APP_NAME,
                      description = "Site-wide admin application",
                      singleton = true,
                      creator = AdminApplicationCreator.class,
@@ -102,7 +104,11 @@ public class CcmCore implements CcmModule {
                 entityManager);
         systemUsersSetup.setupSystemUsers();
 
+        final AdminApplicationSetup adminSetup = new AdminApplicationSetup(entityManager);
+        adminSetup.setup();
         
+        final LoginApplicationSetup loginSetup = new LoginApplicationSetup(entityManager);
+        loginSetup.setup();
     }
 
     @Override

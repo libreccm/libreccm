@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<fragment-layout>
-    <div>
-        <strong>included from <code>fragments/footer.xml</code></strong>
-    </div>
-</fragment-layout>

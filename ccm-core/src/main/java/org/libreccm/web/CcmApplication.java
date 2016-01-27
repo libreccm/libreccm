@@ -53,7 +53,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "CcmApplication.retrieveApplicationForPath",
                 query = "SELECT a FROM CcmApplication a "
-                            + "      WHERE a.primaryUrl = :path"),
+                            + "WHERE a.primaryUrl = :path"),
     @NamedQuery(name = "CcmApplication.Application.findByType",
                 query = "SELECT A FROM CcmApplication a "
                             + "WHERE a.applicationType = :type")

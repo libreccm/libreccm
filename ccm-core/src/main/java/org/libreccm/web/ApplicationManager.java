@@ -22,6 +22,7 @@ import org.libreccm.modules.CcmModule;
 import org.libreccm.modules.Module;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
@@ -44,7 +45,7 @@ public class ApplicationManager {
     @Inject
     private EntityManager entityManager;
 
-    private Map<String, ApplicationType> applicationTypes;
+    private Map<String, ApplicationType> applicationTypes = new HashMap<>();
 
     @PostConstruct
     private void loadApplicationTypes() {
@@ -91,7 +92,8 @@ public class ApplicationManager {
 
     public CcmApplication findApplicationByPath(final String path) {
         final TypedQuery<CcmApplication> query = entityManager.createNamedQuery(
-            "retrieveApplicationForPath", CcmApplication.class);
+            "CcmApplication.retrieveApplicationForPath", CcmApplication.class);
+        query.setParameter("path", path);
         final List<CcmApplication> result = query.getResultList();
         if (result.isEmpty()) {
             return null;
