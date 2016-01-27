@@ -20,6 +20,8 @@ package org.libreccm.docrepo;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -30,8 +32,22 @@ import javax.persistence.Table;
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  * @version 01/10/2015
  */
-@Entity
+@Entity(name = "DocRepoFile")
 @Table(schema = "CCM_DOCREPO", name = "FILES")
+@NamedQueries({
+        @NamedQuery(name = "DocRepo.findFileByName",
+                query = "SELECT r FROM DocRepoFile r WHERE " +
+                        "r.name = :name"),
+        @NamedQuery(name = "DocRepo.findFileByPath",
+                query = "SELECT r FROM DocRepoFile r WHERE " +
+                        "r.path = :pathName"),
+        @NamedQuery(name = "DocRepo.findCreatedFileFromUser",
+                query = "SELECT r FROM DocRepoFile r WHERE " +
+                        "r.creationUser = :user"),
+        @NamedQuery(name = "DocRepo.findModifiedFileFromUser",
+                query = "SELECT r FROM DocRepoFile r WHERE " +
+                        "r.lastModifiedUser = :user")
+})
 public class File extends Resource {
 
     private static final long serialVersionUID = -504220783419811504L;
@@ -61,4 +77,28 @@ public class File extends Resource {
     }
 
     //< End GETTER & SETTER
+
+    /**
+     * Returns the attribute names of this object class as a list of strings.
+     *
+     * @return List of strings with the attribute names of this class
+     */
+    public static String[] getAttributeNames() {
+        return new String[] {
+                "name",
+                "description",
+                "path",
+                "mimeType",
+                "size",
+                "blobObject_ID",
+                "creationDate",
+                "lastModifiedDate",
+                "creationIp",
+                "lastModifiedIp",
+                "creator_ID",
+                "modifier_ID",
+                "parent_ID",
+                "repo_ID"
+        };
+    }
 }

@@ -27,8 +27,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -45,21 +43,8 @@ import java.util.Date;
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  * @version 01/10/2015
  */
-@Entity(name = "DocRepoResource")
+@Entity
 @Table(schema = "CCM_DOCREPO", name = "RESOURCES")
-@NamedQueries({
-        @NamedQuery(name = "DocRepo.findResourceByPath",
-                    query = "SELECT r FROM DocRepoResource r WHERE " +
-                            "r.path = :pathName"),
-        @NamedQuery(name = "DocRepo.findResourcesByName",
-                    query = "SELECT r FROM DocRepoResource r WHERE " +
-                            "r.name = :name"),
-        @NamedQuery(name = "DocRepo.findCreatedResourcesFromUser",
-                    query = "SELECT r FROM DocRepoResource r WHERE " +
-                            "r.creationUser = :user"),
-        @NamedQuery(name = "DocRepo.findModifiedResourcesFromUser",
-                    query = "SELECT r FROM DocRepoResource r WHERE " +
-                            "r.lastModifiedUser = :user")})
 public abstract class Resource extends CcmObject {
 
     private static final long serialVersionUID = -910317798106611214L;
@@ -249,7 +234,7 @@ public abstract class Resource extends CcmObject {
         this.lastModifiedUser = lastModifiedUser;
     }
 
-    public Resource getParent() {
+    public Folder getParent() {
         return parent;
     }
 

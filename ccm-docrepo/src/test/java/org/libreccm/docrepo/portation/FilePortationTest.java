@@ -19,16 +19,24 @@
 package org.libreccm.docrepo.portation;
 
 import org.apache.log4j.Logger;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.persistence.CreateSchema;
+import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
+import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.runner.RunWith;
+import org.libreccm.core.CcmObjectRepository;
 import org.libreccm.docrepo.File;
+import org.libreccm.docrepo.ResourceRepository;
 import org.libreccm.docrepo.portation.exporter.FileExporter;
 import org.libreccm.docrepo.portation.importer.FileImporter;
+import org.libreccm.tests.categories.IntegrationTest;
 import org.libreccm.tests.categories.UnitTest;
 
-import java.io.FileNotFoundException;
-import java.util.Arrays;
+import javax.inject.Inject;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -37,13 +45,26 @@ import java.util.List;
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  * @version 13/01/2016
  */
-@Category(UnitTest.class)
+@Category(IntegrationTest.class)
+@RunWith(Arquillian.class)
+@Transactional(TransactionMode.COMMIT)
+@CreateSchema({"create_ccm_docrepo_schema.sql"})
 public class FilePortationTest {
 
     private static final Logger log = Logger.getLogger(FilePortationTest.class);
+
+    @Inject
+    private FileExporter fileExporter;
+
+    @Inject
+    private FileImporter fileImporter;
+
+    @Inject
+    private ResourceRepository ccmObjectRepository;
+
     private static File file;
     private static String filename =
-            "src/test/java/org/libreccm/docrepo/portation/exportTest.csv";
+            "src/test/java/org/libreccm/docrepo/portation/csv/exportTest.csv";
 
     @BeforeClass
     public static void createResource() {
@@ -57,25 +78,14 @@ public class FilePortationTest {
 
     @Test
     public void csvShouldBeCreated() {
-        FileExporter fileExporter = new FileExporter();
         fileExporter.setFilename(filename);
-        try {
-            fileExporter.exportToCSV(Arrays.asList(file));
-        } catch (FileNotFoundException e) {
-            log.error("Error exporting files.");
-        }
+        fileExporter.exportToCSV(Collections.singletonList(file));
     }
 
     @Test
     public void fileShouldBeCreated() {
-        FileImporter fileImporter = new FileImporter();
         fileImporter.setFilename(filename);
-        List<File> files;
-        try {
-            files = fileImporter.importFromCSV();
-            log.info(files.toString());
-        } catch (FileNotFoundException e) {
-            log.error("Error exporting files.");
-        }
+        List<File> files = fileImporter.importFromCSV();
+        log.info(files.toString());
     }
 }

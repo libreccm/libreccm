@@ -19,8 +19,9 @@
 package org.libreccm.docrepo.portation.exporter;
 
 import org.libreccm.docrepo.File;
-import org.libreccm.portation.exporter.ObjectExporter;
+import org.libreccm.portation.exporter.AbstractExporter;
 
+import javax.enterprise.context.RequestScoped;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +32,9 @@ import java.util.List;
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  * @version 13/01/2016
  */
-public class FileExporter extends ObjectExporter<File> {
+@RequestScoped
+public class FileExporter extends AbstractExporter<File> {
+
     @Override
     protected String[] getClassName() {
         return new String[] {File.class.getName()};
@@ -39,22 +42,7 @@ public class FileExporter extends ObjectExporter<File> {
 
     @Override
     protected String[] getAttributeNames() {
-        return new String[] {
-                "name",
-                "description",
-                "path",
-                "mimeType",
-                "size",
-                "blobObject_ID",
-                "creationDate",
-                "lastModifiedDate",
-                "creationIp",
-                "lastModifiedIp",
-                "creator_ID",
-                "modifier_ID",
-                "parent_ID",
-                "repo_ID"
-        };
+        return File.getAttributeNames();
     }
 
     // Todo: change ID to UUID
@@ -66,7 +54,7 @@ public class FileExporter extends ObjectExporter<File> {
         list.add(exportObject.getDescription());
         list.add(exportObject.getPath());
         list.add(exportObject.getMimeType() != null ?
-                 exportObject.getMimeType().toString() : "");
+                 exportObject.getMimeType().getPrimaryType() : "");
         list.add(String.valueOf(exportObject.getSize()));
         list.add(exportObject.getContent() != null ? String.valueOf(
                  exportObject.getContent().getBlobObjectId()) : "");

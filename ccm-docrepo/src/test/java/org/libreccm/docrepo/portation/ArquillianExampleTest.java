@@ -5,9 +5,6 @@
  */
 package org.libreccm.docrepo.portation;
 
-import java.io.File;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
@@ -26,20 +23,20 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
-import org.libreccm.categorization.Categorization;
-import org.libreccm.core.CcmObject;
 import org.libreccm.core.CcmObjectRepository;
 import org.libreccm.jpa.EntityManagerProducer;
 import org.libreccm.jpa.utils.MimeTypeConverter;
 import org.libreccm.l10n.LocalizedString;
-import org.libreccm.security.Permission;
 import org.libreccm.tests.categories.IntegrationTest;
 import org.libreccm.testutils.EqualsVerifier;
-import org.libreccm.web.CcmApplication;
 import org.libreccm.workflow.Workflow;
 
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import java.io.File;
+
 import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 /**
  *
@@ -115,6 +112,7 @@ public class ArquillianExampleTest {
     //
     // @Test
     // public void hello() {}
+
     @Test
     @InSequence(1)
     public void entityManagerIsInjected() {

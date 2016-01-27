@@ -19,6 +19,8 @@
 package org.libreccm.docrepo;
 
 import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -31,8 +33,22 @@ import java.util.List;
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  * @version 01/10/2015
  */
-@Entity
+@Entity(name = "DocRepoFolder")
 @Table(schema = "CCM_DOCREPO", name = "FOLDERS")
+@NamedQueries({
+        @NamedQuery(name = "DocRepo.findFolderByName",
+                query = "SELECT r FROM DocRepoFolder r WHERE " +
+                        "r.name = :name"),
+        @NamedQuery(name = "DocRepo.findFolderByPath",
+                query = "SELECT r FROM DocRepoFolder r WHERE " +
+                        "r.path = :pathName"),
+        @NamedQuery(name = "DocRepo.findCreatedFolderFromUser",
+                query = "SELECT r FROM DocRepoFolder r WHERE " +
+                        "r.creationUser = :user"),
+        @NamedQuery(name = "DocRepo.findModifiedFolderFromUser",
+                query = "SELECT r FROM DocRepoFolder r WHERE " +
+                        "r.lastModifiedUser = :user")
+})
 public class Folder extends Resource {
 
     private static final long serialVersionUID = 1561466556458872622L;

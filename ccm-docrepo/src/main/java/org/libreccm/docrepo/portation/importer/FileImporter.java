@@ -18,7 +18,6 @@
  */
 package org.libreccm.docrepo.portation.importer;
 
-import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.docrepo.BlobObject;
 import org.libreccm.docrepo.BlobObjectRepository;
@@ -27,12 +26,13 @@ import org.libreccm.docrepo.Folder;
 import org.libreccm.docrepo.Repository;
 import org.libreccm.docrepo.RepositoryRepository;
 import org.libreccm.docrepo.ResourceRepository;
-import org.libreccm.portation.importer.ObjectImporter;
+import org.libreccm.portation.importer.AbstractImporter;
 import org.libreccm.security.User;
 import org.libreccm.security.UserRepository;
 
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
+import javax.enterprise.context.RequestScoped;
 import java.util.Date;
 
 /**
@@ -42,28 +42,12 @@ import java.util.Date;
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  * @version 20/01/2016
  */
-public class FileImporter extends ObjectImporter<File> {
-
-    private static final Logger log = Logger.getLogger(FileImporter.class);
+@RequestScoped
+public class FileImporter extends AbstractImporter<File> {
 
     @Override
     protected boolean checkAttributeNames(String[] attributeNames) {
-        return attributeNames.equals(new String[] {
-                "name",
-                "description",
-                "path",
-                "mimeType",
-                "size",
-                "blobObject_ID",
-                "creationDate",
-                "lastModifiedDate",
-                "creationIp",
-                "lastModifiedIp",
-                "creator_ID",
-                "modifier_ID",
-                "parent_ID",
-                "repo_ID"
-        });
+        return attributeNames.equals(File.getAttributeNames());
     }
 
     @Override
@@ -78,9 +62,7 @@ public class FileImporter extends ObjectImporter<File> {
         MimeType mimeType = new MimeType();
         try {
             mimeType.setPrimaryType(importStrings[3]);
-        } catch (MimeTypeParseException e) {
-            log.warn(String.format("Unable to cast %s to a MimeType.",
-                    importStrings[3]));
+        } catch (MimeTypeParseException ignored) {
         }
         file.setMimeType(mimeType);
 
@@ -132,7 +114,7 @@ public class FileImporter extends ObjectImporter<File> {
             file.setRepository(repository);
         }
 
-        //resourceRepository.save(file);
+        resourceRepository.save(file);
         return file;
     }
 }

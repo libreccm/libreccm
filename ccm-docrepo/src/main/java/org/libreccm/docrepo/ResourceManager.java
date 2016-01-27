@@ -18,11 +18,9 @@
  */
 package org.libreccm.docrepo;
 
-import org.apache.log4j.Logger;
 import org.apache.oro.text.perl.Perl5Util;
 
 import javax.activation.MimetypesFileTypeMap;
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
 /**
@@ -31,69 +29,55 @@ import javax.inject.Inject;
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  * @version 01/10/2015
  */
-@RequestScoped
-public class ResourceManager {
-    private static final Logger log = Logger.getLogger(ResourceManager.class);
+public abstract class ResourceManager<T extends Resource> {
 
     @Inject
-    private ResourceRepository resourceRepository;
+    private FileRepository fileRepository;
+
+    @Inject
+    private FolderRepository folderRepository;
 
     /**
-     * Copies a given {@link File} to a given {@link Folder}.
+     * Makes a copy of a given {@link Resource}.
      *
-     * @param original The {@link Resource} to be copied
-     * @param folder The {@link Folder} to copy to
+     * @param original  The {@link Resource} to be copied
+     * @param copy      The {@code copy} of the given {@code original}
+     *                  {@link Resource}
      */
-    public void copyToFolder(Resource original, Folder folder) {
-        Resource copy = original instanceof File ?
-                copyFileSpecifics(new File(), (File) original) :
-                copyFolderSpecifics(new Folder(), (Folder) original);
-
+    public void copy(T original, T copy) {
         copy.setName(original.getName());
         copy.setDescription(original.getDescription());
-        copy.setPath(String.format("%s/%s", folder.getPath(), copy.getName()));
+        copy.setPath(String.format("%s/%s", original.getPath(), copy.getName()));
         copy.setMimeType(original.getMimeType());
         copy.setSize(original.getSize());
+        // for file: setContent
         copy.setCreationDate(original.getCreationDate());
         copy.setLastModifiedDate(original.getLastModifiedDate());
         copy.setCreationIp(original.getCreationIp());
         copy.setLastModifiedIp(original.getLastModifiedIp());
         copy.setCreationUser(original.getCreationUser());
         copy.setLastModifiedUser(original.getLastModifiedUser());
-        copy.setParent(folder);
-        copy.setRepository(folder.getRepository());
-
-        resourceRepository.save(copy);
+        if (copy.getParent() == null)
+            copy.setParent(original.getParent());
+        copy.setRepository(original.getRepository());
+        // for folder: setImmediateChildren
+        // for folder: setRootAssignedRepository
     }
 
     /**
-     * Helper method to copy the {@link File} specific data to the copy.
+     * Overloads previous method and sets a new parent (aka location) before
+     * calling the method to copy the {@code original} {@link Resource} into
+     * the {@code copy}.
      *
-     * @param copy The copied {@link File}
-     * @param original The originl {@link File}
-     * @return  A {@link Resource} with the file-specific data from the
-     *          original {@link File}
+     * @param original  The {@link Resource} to be copied
+     * @param copy      The {@code copy} of the given {@code original}
+     *                  {@link Resource}
+     * @param newParent The new parent of the copy. Equals an new location
      */
-    private Resource copyFileSpecifics(File copy, File original) {
-        copy.setContent(original.getContent());
-        return copy;
+    public void copy(T original, T copy, Folder newParent) {
+        copy.setParent(newParent);
+        copy(original, copy);
     }
-
-    /**
-     * Helper method to copy the {@link Folder} specific data to the copy.
-     *
-     * @param copy The copied {@link Folder}
-     * @param original The originl {@link Folder}
-     * @return  A {@link Resource} with the folder-specific data from the
-     *          original {@link Folder}
-     */
-    private Resource copyFolderSpecifics(Folder copy, Folder original) {
-        copy.setImmediateChildren(original.getImmediateChildren());
-        copy.setRootAssignedRepository(original.getRootAssignedRepository());
-        return copy;
-    }
-
-
 
     /**
      * Determines weather the given name is a valid new name for the also
@@ -113,7 +97,7 @@ public class ResourceManager {
      *
      * @return true for a system-valid resource name, otherwise false
      */
-    public boolean isValidNewResourceName(String name, Resource resource) {
+    public boolean isValidNewResourceName(String name, T resource) {
         Perl5Util perl5Util = new Perl5Util();
 
         final String INVALID_START_PATTERN = "/^[.]+/";
@@ -132,7 +116,8 @@ public class ResourceManager {
                                 perl5Util.match(INVALID_NAME_PATTERN, name));
 
         // checks duplication of the name; database access (mind performance)
-        validName &= resourceRepository.findByName(name).isEmpty();
+        validName &= (fileRepository.findByName(name).isEmpty() &
+                     folderRepository.findByName(name).isEmpty());
 
         // checks that the name corresponds to a compatible MIME type
         validName &= new MimetypesFileTypeMap().getContentType(name).equals

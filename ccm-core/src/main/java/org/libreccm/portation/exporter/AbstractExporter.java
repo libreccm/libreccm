@@ -22,7 +22,6 @@ import com.opencsv.CSVWriter;
 import org.apache.log4j.Logger;
 import org.libreccm.security.User;
 
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -41,9 +40,9 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  * @version 13/01/2016
  */
-public abstract class ObjectExporter<T> {
+public abstract class AbstractExporter<T> {
 
-    private static final Logger log = Logger.getLogger(ObjectExporter.class);
+    private static final Logger log = Logger.getLogger(AbstractExporter.class);
 
     private String filename = null;
     private char separator  = ',';
@@ -71,17 +70,15 @@ public abstract class ObjectExporter<T> {
     /**
      * Empty constructor.
      */
-    public ObjectExporter() {}
+    public AbstractExporter() {}
 
     /**
      * Exports a list of objects of type {@code T}, e.g. a list of
      * {@link User}s, as a .csv-textfile with the specified {@code filename}.
      *
      * @param exportObjects List of objects of type {@code T} to be exported
-     * @throws FileNotFoundException
      */
-    public void exportToCSV(List<T> exportObjects) throws
-            FileNotFoundException {
+    public void exportToCSV(List<T> exportObjects) {
         try {
             CSVWriter csvWriter = new CSVWriter(new FileWriter(filename),
                     separator);
@@ -93,9 +90,6 @@ public abstract class ObjectExporter<T> {
         } catch (IOException e) {
             log.error(String.format("A FileWriter with the name %s has not " +
                     "been able to be created.", filename));
-
-            // Todo: throw Exception to modify in ui
-            throw new FileNotFoundException();
         }
     }
 

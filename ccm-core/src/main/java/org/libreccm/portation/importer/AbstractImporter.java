@@ -21,7 +21,6 @@ package org.libreccm.portation.importer;
 import com.opencsv.CSVReader;
 import org.apache.log4j.Logger;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
@@ -38,9 +37,9 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  * @version 07/01/2016
  */
-public abstract class ObjectImporter<T> {
+public abstract class AbstractImporter<T> {
 
-    private static final Logger log = Logger.getLogger(ObjectImporter.class);
+    private static final Logger log = Logger.getLogger(AbstractImporter.class);
 
     private String filename = null;
     private char separator = ',';
@@ -68,15 +67,16 @@ public abstract class ObjectImporter<T> {
     /**
      * Empty constructor.
      */
-    public ObjectImporter() {}
+    public AbstractImporter() {}
 
     /**
      * Imports object information as {@link String} from a .csv-textfile as new
      * objects of type {@code T} into the database.
      *
-     * @throws FileNotFoundException
+     * @return  A list of objects of type {@code T} having been imported from a
+     *          .csv-textfile.
      */
-    public List<T> importFromCSV() throws FileNotFoundException {
+    public List<T> importFromCSV() {
         try {
             CSVReader csvReader = new CSVReader(new FileReader(filename),
                     separator);
@@ -96,9 +96,7 @@ public abstract class ObjectImporter<T> {
             log.error(String.format("Either a FileReader with the name %s has " +
                     "not been able to be created or the file could not be " +
                     "read.", filename));
-
-            // Todo: throw Exception to modify in ui
-            throw new FileNotFoundException();
+            return null;
         }
     }
 

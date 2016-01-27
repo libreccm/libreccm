@@ -24,11 +24,10 @@ import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.PermissionChecker;
 import org.libreccm.security.User;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,25 +37,26 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  * @version 01/10/2015
  */
-@RequestScoped
-public class ResourceRepository extends
-        AbstractAuditedEntityRepository<Long, Resource> {
+public abstract class ResourceRepository<T extends Resource> extends
+        AbstractAuditedEntityRepository<Long, T> {
+
+    protected Class classOfT;
 
     @Inject
-    private EntityManager entityManager;
+    protected EntityManager entityManager;
 
     @Override
-    public Long getEntityId(Resource entity) {
+    public Long getEntityId(T entity) {
         return entity.getObjectId();
     }
 
     @Override
-    public Class<Resource> getEntityClass() {
-        return Resource.class;
+    public Class<T> getEntityClass() {
+        return classOfT;
     }
 
     @Override
-    public boolean isNew(Resource entity) {
+    public boolean isNew(T entity) {
         if (entity == null) {
             throw new IllegalArgumentException("Entity to save can't be null.");
         }
@@ -71,7 +71,7 @@ public class ResourceRepository extends
      * @param resources The requested {@link Resource}s, found in the database
      * @return A list of {@link Resource}s the subject is allowed to access
      */
-    private List<Resource> permissionFilter(List<Resource> resources) {
+    private List<T> permissionFilter(List<T> resources) {
         final CdiUtil cdiUtil = new CdiUtil();
         final PermissionChecker permissionChecker = cdiUtil.findBean(
                 PermissionChecker.class);
@@ -88,56 +88,8 @@ public class ResourceRepository extends
      * @return A list of at most one {@link Resource} the subject is allowed to
      * access
      */
-    private Resource permissionFilter(Resource resource) {
-        return permissionFilter(Arrays.asList(resource)).get(0);
-    }
-
-    /**
-     * Retrieve a {@code Resource} by its {@code path}.
-     *
-     * @param pathName  The {@code path} to the {@code Resource}.
-     *
-     * @return  The {@code Resource} identified by the given {@code path}, if there is
-     *          such a {@code Resource}, {@code null} if not.
-     */
-    public Resource findByPathName(final String pathName) {
-        final TypedQuery<Resource> query = entityManager.createNamedQuery(
-                "DocRepo.findResourceByPath", Resource.class);
-        query.setParameter("pathName", pathName);
-
-        return permissionFilter(query.getSingleResult());
-    }
-
-    /**
-     * Retrieve the {@code Resource}s, a given {@link User} created.
-     *
-     * @param creator   The {@link User}, who created the {@code Resource}s.
-     *
-     * @return  The {@code Resource}s, created by the given {@link User}, if there
-     *          are such {@code Resource}s, {@code EmptyList} if not.
-     */
-    public List<Resource> findForCreator(final User creator) {
-        final TypedQuery<Resource> query = entityManager.createNamedQuery(
-                "DocRepo.findCreatedResourcesFromUser", Resource.class);
-        query.setParameter("user", creator);
-
-        return permissionFilter(query.getResultList());
-    }
-
-    /**
-     * Retrieve the {@code Resource}s, a given {@link User} last modified.
-     *
-     * @param modifier  The {@link User}, who last modified the {@code Resource}s.
-     *
-     * @return  The {@code Resource}s, last modified by the given {@link User}, if
-     *          there are such {@code Resource}s, {@code EmptyList} if not.
-     */
-    public List<Resource> findForModifier(final User modifier) {
-        final TypedQuery<Resource> query = entityManager.createNamedQuery(
-                "DocRepo.findModifiedResourcesFromUser", Resource.class);
-        query.setParameter("user", modifier);
-
-        return permissionFilter(query.getResultList());
+    private T permissionFilter(T resource) {
+        return permissionFilter(Collections.singletonList(resource)).get(0);
     }
 
     /**
@@ -147,11 +99,91 @@ public class ResourceRepository extends
      * @return  The {@link Resource}s with the given name, if there aren't
      *          any an {@code EmptyList}
      */
-    public List<Resource> findByName(final String name) {
-        final TypedQuery<Resource> query = entityManager.createNamedQuery(
-                "DocRepo.findResourcesByName", Resource.class);
-        query.setParameter("name", name);
+    public List<T> findByName(final String name) {
+        final TypedQuery<T> query = getFindByNameQuery();
+                query.setParameter("name", name);
 
         return permissionFilter(query.getResultList());
     }
+
+    /**
+     * Abstract method to get a {@link TypedQuery}, specifically implemented
+     * in the subclasses matching their own database requests, finding the
+     * {@code T}-typed objects by name.
+     *
+     * @return A {@link TypedQuery} to find objects by name
+     */
+    protected abstract TypedQuery<T> getFindByNameQuery();
+
+    /**
+     * Retrieve a {@code Resource} by its {@code path}.
+     *
+     * @param pathName  The {@code path} to the {@code Resource}.
+     *
+     * @return  The {@code Resource} identified by the given {@code path}, if
+     *          there is such a {@code Resource}, {@code null} if not.
+     */
+    public T findByPathName(final String pathName) {
+        final TypedQuery<T> query = getFindByPathNameQuery();
+        query.setParameter("pathName", pathName);
+
+        return permissionFilter(query.getSingleResult());
+    }
+
+    /**
+     * Abstract method to get a {@link TypedQuery}, specifically implemented
+     * in the subclasses matching their own database requests, finding the
+     * {@code T}-typed objects by path name.
+     *
+     * @return A {@link TypedQuery} to find objects by path name
+     */
+    protected abstract TypedQuery<T> getFindByPathNameQuery();
+
+    /**
+     * Retrieve the {@code Resource}s, a given {@link User} created.
+     *
+     * @param creator   The {@link User}, who created the {@code Resource}s.
+     *
+     * @return  The {@code Resource}s, created by the given {@link User}, if
+     *          there are such {@code Resource}s, {@code EmptyList} if not.
+     */
+    public List<T> findForCreator(final User creator) {
+        final TypedQuery<T> query = getFindForCreatorQuery();
+        query.setParameter("user", creator);
+
+        return permissionFilter(query.getResultList());
+    }
+
+    /**
+     * Abstract method to get a {@link TypedQuery}, specifically implemented
+     * in the subclasses matching their own database requests, finding the
+     * {@code T}-typed objects created by a given/set {@link User}.
+     *
+     * @return A {@link TypedQuery} to find objects for creator.
+     */
+    protected abstract TypedQuery<T> getFindForCreatorQuery();
+
+    /**
+     * Retrieve the {@code Resource}s, a given {@link User} last modified.
+     *
+     * @param modifier The {@link User} who last modified the {@code Resource}s.
+     *
+     * @return  The {@code Resource}s, last modified by the given {@link User},
+     *          if there are such {@code Resource}s, {@code EmptyList} if not.
+     */
+    public List<T> findForModifier(final User modifier) {
+        final TypedQuery<T> query = getFindForModifierQuery();
+        query.setParameter("user", modifier);
+
+        return permissionFilter(query.getResultList());
+    }
+
+    /**
+     * Abstract method to get a {@link TypedQuery}, specifically implemented
+     * in the subclasses matching their own database requests, finding the
+     * {@code T}-typed objects last modified for a given/set {@link User}.
+     *
+     * @return A {@link TypedQuery} to find objects for last modifier.
+     */
+    protected abstract TypedQuery<T> getFindForModifierQuery();
 }
