@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
 
+import javax.enterprise.inject.spi.CDI;
+
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
@@ -50,12 +52,14 @@ public final class UIConfig {
     private String userRedirectUrl = "/permissions/";
 
     @Setting
-    private String workspaceUrl = "pvt/";
+    private String workspaceUrl = "/pvt/";
 
     public static UIConfig getConfig() {
-        final CdiUtil cdiUtil = new CdiUtil();
-        final ConfigurationManager confManager = cdiUtil.findBean(
-            ConfigurationManager.class);
+//        final CdiUtil cdiUtil = new CdiUtil();
+//        final ConfigurationManager confManager = cdiUtil.findBean(
+//            ConfigurationManager.class);
+        final ConfigurationManager confManager = CDI.current().select(
+        ConfigurationManager.class).get();
         return confManager.findConfiguration(UIConfig.class);
     }
 

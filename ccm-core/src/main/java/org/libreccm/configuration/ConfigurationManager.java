@@ -52,7 +52,7 @@ public class ConfigurationManager {
 
     @Inject
     private SettingConverter settingConverter;
-    
+
     @Inject
     private CategoryManager categoryManager;
 
@@ -269,7 +269,6 @@ public class ConfigurationManager {
 //                "No setting type for value type \"%s\".", valueTypeName));
 //        }
 //    }
-
     /**
      * Sets a value on a setting in the registry.
      *
@@ -348,8 +347,7 @@ public class ConfigurationManager {
             return null;
         }
 
-        final Domain registry = domainRepo
-            .findByDomainKey(REGISTRY_DOMAIN);
+        final Domain registry = domainRepo.findByDomainKey(REGISTRY_DOMAIN);
         if (categoryRepo.findByPath(registry, confName) == null) {
             return conf;
         }
@@ -453,7 +451,7 @@ public class ConfigurationManager {
                      categoryPath);
         return categories[categories.length - 1];
     }
-    
+
     private String buildCategoryPath(final String[] tokens,
                                      final int index) {
         final StringJoiner joiner = new StringJoiner(".");

@@ -18,10 +18,10 @@
  */
 package com.arsdigita.ui.login;
 
+import org.libreccm.modules.InstallEvent;
 import org.libreccm.web.AbstractCcmApplicationSetup;
 import org.libreccm.web.CcmApplication;
 
-import javax.persistence.EntityManager;
 
 /**
  *
@@ -31,8 +31,8 @@ public class LoginApplicationSetup extends AbstractCcmApplicationSetup {
 
     public static final String LOGIN_APP_NAME = "Login";
 
-    public LoginApplicationSetup(final EntityManager entityManager) {
-        super(entityManager);
+    public LoginApplicationSetup(final InstallEvent event) {
+        super(event);
     }
 
     @Override

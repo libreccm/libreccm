@@ -24,13 +24,11 @@ import static org.libreccm.core.CoreConstants.*;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.URL;
 import org.libreccm.core.CcmObject;
-import org.libreccm.jpa.utils.UriConverter;
 import org.libreccm.l10n.LocalizedString;
 import org.libreccm.web.CcmApplication;
 import org.omg.CORBA.DomainManager;
 
 import java.io.Serializable;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -39,14 +37,17 @@ import java.util.Objects;
 
 import javax.persistence.AssociationOverride;
 import javax.persistence.Column;
-import javax.persistence.Convert;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
+import javax.persistence.NamedEntityGraphs;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.NamedSubgraph;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -62,7 +63,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * as well as the {@code CategoryPurpose} entity from the old
  * {@code ccm-core module}.
  *
- * A {@code Domain} can be mapped to multiple {@link CcmApplication}s. Normally 
+ * A {@code Domain} can be mapped to multiple {@link CcmApplication}s. Normally
  * This is used to make a {@code Domain} available in the application. The
  * {@link CcmApplication}s to which a {@code Domain} is mapped are called
  * <em>owners</em> of the domain.
@@ -72,10 +73,23 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @Table(name = "CATEGORY_DOMAINS", schema = DB_SCHEMA)
 @NamedQueries({
-    @NamedQuery(name="Domain.findByKey", 
+    @NamedQuery(name = "Domain.findByKey",
                 query = "SELECT d FROM Domain d WHERE d.domainKey = :key"),
-    @NamedQuery(name="Domain.findByUri",
+    @NamedQuery(name = "Domain.findByUri",
                 query = "SELECT d FROM Domain d WHERE d.uri = :uri")
+})
+@NamedEntityGraphs({
+    @NamedEntityGraph(
+        name = "Domain.allCategories",
+        attributeNodes = {
+            @NamedAttributeNode(value = "root",
+                                subgraph = "subCategories")},
+        subgraphs = {
+            @NamedSubgraph(
+                name = "subCategories",
+                attributeNodes = {
+                    @NamedAttributeNode("subCategories")
+                })})
 })
 @XmlRootElement(name = "domain", namespace = CAT_XML_NS)
 public class Domain extends CcmObject implements Serializable {
@@ -106,10 +120,9 @@ public class Domain extends CcmObject implements Serializable {
      * </pre>
      */
     @Column(name = "URI", nullable = true, unique = true, length = 1024)
-    @Convert(converter = UriConverter.class)
     @URL
     @XmlElement(name = "uri", namespace = CAT_XML_NS)
-    private URI uri;
+    private String uri;
 
     /**
      * A human readable title for the {@code Domain}. The title can be
@@ -184,11 +197,11 @@ public class Domain extends CcmObject implements Serializable {
         this.domainKey = domainKey;
     }
 
-    public URI getUri() {
+    public String getUri() {
         return uri;
     }
 
-    public void setUri(final URI uri) {
+    public void setUri(final String uri) {
         this.uri = uri;
     }
 

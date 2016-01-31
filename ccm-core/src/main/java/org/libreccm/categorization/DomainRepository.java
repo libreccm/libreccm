@@ -24,6 +24,7 @@ import java.net.URI;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
@@ -61,6 +62,10 @@ public class DomainRepository extends AbstractEntityRepository<Long, Domain> {
         final TypedQuery<Domain> query = entityManager.createNamedQuery(
             "Domain.findByKey", Domain.class);
         query.setParameter("key", domainKey);
+        
+        final EntityGraph<?> graph = entityManager.getEntityGraph(
+            "Domain.allCategories");
+        query.setHint("javax.persistence.fetchgraph", graph);
 
         try {
             return query.getSingleResult();

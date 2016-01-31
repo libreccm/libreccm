@@ -36,12 +36,43 @@ public class DomainManager {
 
     @Inject
     private ApplicationRepository applicationRepo;
-    
+
     @Inject
     private DomainRepository domainRepo;
     
     @Inject
+    private CategoryRepository categoryRepo;
+
+    @Inject
     private EntityManager entityManager;
+
+    /**
+     * Creates a new domain with the provided key (name) and a root category
+     * with the provided name. The domain and the root category can be further
+     * customised after the creation.
+     *
+     * @param domainKey The key (name) of the new domain.
+     * @param rootCategoryName The name of the root category of the new domain.
+     * @return The new domain.
+     */
+    public Domain createDomain(final String domainKey,
+                                  final String rootCategoryName) {
+        final Domain domain = new Domain();
+        domain.setDomainKey(domainKey);
+        domain.setVersion("1.0");
+        domain.setDisplayName(domainKey);
+       
+        final Category root = new Category();
+        root.setName(rootCategoryName);
+        root.setDisplayName(rootCategoryName);
+        
+        domain.setRoot(root);
+        
+        categoryRepo.save(root);
+        domainRepo.save(domain);
+        
+        return domain;
+    }
 
     /**
      * Adds a {@code CcmApplication} to the owners of a {@link Domain}. If the
@@ -49,9 +80,9 @@ public class DomainManager {
      * {@code Domain} the method does nothing.
      *
      * @param application The {@code CcmApplication} to add to the owners of the
-     *                    {@code Domain}.
-     * @param domain      The {@code Domain} to which owners the
-     *                    {@code CcmApplication is added}.
+     * {@code Domain}.
+     * @param domain The {@code Domain} to which owners the
+     * {@code CcmApplication is added}.
      */
     public void addDomainOwner(final CcmApplication application,
                                final Domain domain) {
@@ -60,24 +91,24 @@ public class DomainManager {
         ownership.setOwner(application);
         ownership.setOwnerOrder(domain.getOwners().size() + 1);
         ownership.setDomainOrder(application.getDomains().size() + 1);
-        
+
         application.addDomain(ownership);
         domain.addOwner(ownership);
-        
+
         entityManager.persist(ownership);
         applicationRepo.save(application);
         domainRepo.save(domain);
     }
 
     /**
-     * Removes a {@code CcmApplication} from the owners of a {@code Domain}. If the
-     * provided {@code CcmApplication} is not an owner of the provided
+     * Removes a {@code CcmApplication} from the owners of a {@code Domain}. If
+     * the provided {@code CcmApplication} is not an owner of the provided
      * {@code Domain} the method does nothing.
      *
-     * @param application The {@code CcmApplication} to remove from the owners of
-     *                    the provided {@code Domain}.
-     * @param domain      The {@code Domain} from which owners the provided
-     *                    {@code CcmApplication} should be removed.
+     * @param application The {@code CcmApplication} to remove from the owners
+     * of the provided {@code Domain}.
+     * @param domain The {@code Domain} from which owners the provided
+     * {@code CcmApplication} should be removed.
      */
     public void removeDomainOwner(final CcmApplication application,
                                   final Domain domain) {
@@ -87,10 +118,10 @@ public class DomainManager {
 
     /**
      * Determines if a {@link CcmApplication} is an owner of {@link Domain}.
-     * 
+     *
      * @param application The {@code CcmApplication} to test.
      * @param domain The {@code Domain} to test.
-     * @return {@code true} if the provided {@code CcmApplication} is an owner 
+     * @return {@code true} if the provided {@code CcmApplication} is an owner
      * of the provided {@code Domain}, {@code false} otherwise.
      */
     public boolean isDomainOwner(final CcmApplication application,

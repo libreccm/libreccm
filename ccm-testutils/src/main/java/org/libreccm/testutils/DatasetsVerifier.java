@@ -42,6 +42,7 @@ import org.junit.runners.Parameterized;
 
 import static org.libreccm.testutils.DatasetType.*;
 
+import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.jboss.arquillian.persistence.dbunit.dataset.yaml.YamlDataSet;
 
 import java.nio.charset.StandardCharsets;
@@ -124,6 +125,11 @@ public class DatasetsVerifier {
             //Get dataset to test
             final IDataSet dataSet;
             switch(getDatasetType()) {
+                case FLAT_XML:
+                    final FlatXmlDataSetBuilder builder = new FlatXmlDataSetBuilder();
+                    dataSet = builder.build(getClass().getResourceAsStream(
+                        datasetPath));
+                    break;
                 case JSON:
                     dataSet = new JsonDataSet(getClass()
                     .getResourceAsStream(datasetPath));

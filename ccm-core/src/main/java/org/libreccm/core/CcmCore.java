@@ -25,6 +25,7 @@ import com.arsdigita.ui.login.LoginApplicationCreator;
 import com.arsdigita.ui.login.LoginServlet;
 import com.arsdigita.ui.login.LoginApplicationSetup;
 
+import org.libreccm.categorization.RegistrySetup;
 import org.libreccm.modules.CcmModule;
 import org.libreccm.modules.InitEvent;
 import org.libreccm.modules.InstallEvent;
@@ -33,7 +34,6 @@ import org.libreccm.modules.ShutdownEvent;
 import org.libreccm.modules.UnInstallEvent;
 import org.libreccm.security.SystemUsersSetup;
 
-import javax.persistence.EntityManager;
 
 import org.libreccm.web.ApplicationType;
 
@@ -98,16 +98,19 @@ public class CcmCore implements CcmModule {
 
     @Override
     public void install(final InstallEvent event) {
-        final EntityManager entityManager = event.getEntityManager();
+//        final EntityManager entityManager = event.getEntityManager();
 
         final SystemUsersSetup systemUsersSetup = new SystemUsersSetup(
-                entityManager);
+                event);
         systemUsersSetup.setupSystemUsers();
 
-        final AdminApplicationSetup adminSetup = new AdminApplicationSetup(entityManager);
+        final RegistrySetup registrySetup = new RegistrySetup(event);
+        registrySetup.setup();
+        
+        final AdminApplicationSetup adminSetup = new AdminApplicationSetup(event);
         adminSetup.setup();
         
-        final LoginApplicationSetup loginSetup = new LoginApplicationSetup(entityManager);
+        final LoginApplicationSetup loginSetup = new LoginApplicationSetup(event);
         loginSetup.setup();
     }
 

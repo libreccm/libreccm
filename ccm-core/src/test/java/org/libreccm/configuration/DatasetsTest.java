@@ -47,11 +47,12 @@ public class DatasetsTest extends DatasetsVerifier {
         return Arrays.asList(new String[]{
             "/datasets/org/libreccm/configuration/ConfigurationManagerTest/after-save-changed.yml",
             "/datasets/org/libreccm/configuration/ConfigurationManagerTest/after-save-new.yml",
-            "/datasets/org/libreccm/configuration/ConfigurationManagerTest/data.yml"});
+            "/datasets/org/libreccm/configuration/ConfigurationManagerTest/data.yml",
+        });
     }
 
     public DatasetsTest(final String datasetPath) {
-        super(datasetPath);;
+        super(datasetPath);
     }
 
     @Override

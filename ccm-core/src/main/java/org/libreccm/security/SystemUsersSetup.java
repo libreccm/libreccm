@@ -22,6 +22,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.core.CcmCore;
 import org.libreccm.core.EmailAddress;
+import org.libreccm.modules.InstallEvent;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,8 +46,8 @@ public class SystemUsersSetup {
 
     private final EntityManager entityManager;
 
-    public SystemUsersSetup(final EntityManager entityManager) {
-        this.entityManager = entityManager;
+    public SystemUsersSetup(final InstallEvent event) {
+        this.entityManager = event.getEntityManager();
     }
 
     public void setupSystemUsers() {

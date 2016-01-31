@@ -55,9 +55,6 @@ import java.math.BigDecimal;
 import javax.inject.Inject;
 
 import org.jboss.arquillian.persistence.ShouldMatchDataSet;
-import org.libreccm.categorization.Category;
-
-import javax.persistence.TypedQuery;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;

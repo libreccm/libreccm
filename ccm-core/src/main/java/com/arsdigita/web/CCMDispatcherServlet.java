@@ -41,6 +41,16 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.subject.Subject;
 import org.libreccm.web.ApplicationManager;
+import org.libreccm.web.ApplicationType;
+
+import java.util.Iterator;
+import java.util.Set;
+
+import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.inject.spi.CDI;
+import javax.servlet.http.HttpServlet;
 
 /**
  * <p>
@@ -138,10 +148,10 @@ public class CCMDispatcherServlet extends BaseServlet {
 
             if (subject.isAuthenticated()) {
                 // User is logged in, redirect to user redirect page
-                throw new RedirectSignal(URL.there(request,
-                                                   UI
-                                                   .getUserRedirectURL(request)),
-                                         false);
+                throw new RedirectSignal(
+                    URL.there(request,
+                              UI.getUserRedirectURL(request)),
+                    false);
             } else {
                 // User is *not* logged in, display public front page
                 throw new RedirectSignal(URL.there(request,
@@ -206,7 +216,9 @@ public class CCMDispatcherServlet extends BaseServlet {
                     BaseApplicationServlet.APPLICATION_ID_ATTRIBUTE,
                     spec.getAppID());
                 request.setAttribute(DISPATCHED_ATTRIBUTE, Boolean.TRUE);
-                forward(spec.getTypeContextPath(), spec.target(path), request,
+                forward(spec.getTypeContextPath(),
+                        spec.target(path),
+                        request,
                         response);
                 // return true;
             }
@@ -266,7 +278,7 @@ public class CCMDispatcherServlet extends BaseServlet {
         LOGGER.debug("forwarding from context \"{}\" to context \"{}\"...",
                      getServletContext(), context);
 
-        forward(context.getRequestDispatcher(target),
+        forward(getServletContext().getRequestDispatcher(target),
                 request,
                 response);
     }
@@ -304,8 +316,6 @@ public class CCMDispatcherServlet extends BaseServlet {
                          path);
         }
 
-//        final CcmApplication application = appRepository
-//            .retrieveApplicationForPath(path);
         final CcmApplication application = appManager
             .findApplicationByPath(path);
 
@@ -313,7 +323,7 @@ public class CCMDispatcherServlet extends BaseServlet {
             LOGGER.warn("No application found for path \"{}\".", path);
             return null;
         } else {
-            return new ApplicationSpec(application);
+            return new ApplicationSpec(application, appManager);
         }
     }
 
@@ -338,12 +348,16 @@ public class CCMDispatcherServlet extends BaseServlet {
         private final String m_instanceURI;
         private final String m_typeURI;
         private final String m_typeContextPath;
+        private final ApplicationManager appManager;
 
         /**
          *
          * @param app
          */
-        ApplicationSpec(CcmApplication app) {
+        ApplicationSpec(final CcmApplication app, 
+                        final ApplicationManager appManager) {
+            this.appManager = appManager;
+            
             if (app == null) {
                 throw new NullPointerException("app");
             }
@@ -356,9 +370,56 @@ public class CCMDispatcherServlet extends BaseServlet {
                     .getAnnotation(ServletPath.class)
                     .value();
             } else {
-                m_typeURI = URL.SERVLET_DIR + "/legacy-adapter";
+//                final ApplicationManager appManager = CDI.current().select(
+//                    ApplicationManager.class).get();
+//                final BeanManager beanManager = CDI.current().getBeanManager();
+//                final Set<Bean<?>> beans = beanManager.getBeans(
+//                    ApplicationManager.class);
+//                final Iterator<Bean<?>> iterator = beans.iterator();
+//                final ApplicationManager appManager;
+//                if (iterator.hasNext()) {
+//                    @SuppressWarnings("unchecked")
+//                    final Bean<ApplicationManager> bean
+//                                                   = (Bean<ApplicationManager>) iterator
+//                        .next();
+//                    final CreationalContext<ApplicationManager> ctx
+//                                                                = beanManager
+//                        .createCreationalContext(bean);
+//
+//                    appManager = (ApplicationManager) beanManager.getReference(
+//                        bean, ApplicationManager.class, ctx);
+//                } else {
+//                    LOGGER.error("Failed to find {}.",
+//                                 ApplicationManager.class.getName());
+//                    throw new IllegalArgumentException(String.format(
+//                        "Failed to find %s",
+//                        ApplicationManager.class.getName()));
+//                }
+
+                final ApplicationType appType = appManager.getApplicationTypes()
+                    .get(app.getApplicationType());
+                final Class<? extends HttpServlet> appServletClass = appType
+                    .servlet();
+                final WebServlet servletAnnotation = appServletClass
+                    .getAnnotation(WebServlet.class);
+                if (servletAnnotation != null
+                        && servletAnnotation.urlPatterns() != null
+                        && servletAnnotation.urlPatterns().length > 0) {
+                    if (servletAnnotation.urlPatterns()[0].endsWith("*")) {
+                        m_typeURI = servletAnnotation
+                            .urlPatterns()[0]
+                            .substring(0,
+                                       servletAnnotation
+                                       .urlPatterns()[0]
+                                       .length() - 1);
+                    } else {
+                        m_typeURI = servletAnnotation.urlPatterns()[0];
+                    }
+                } else {
+                    m_typeURI = "";
+                }
             }
-            
+
             m_typeContextPath = "";
 
             if (Assert.isEnabled()) {

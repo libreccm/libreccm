@@ -44,12 +44,6 @@
             <version>${project.parent.version}</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>org.libreccm</groupId>
-            <artifactId>ccm-testutils</artifactId>
-            <version>${project.parent.version}</version>
-            <scope>test</scope>
-        </dependency>
         
         <dependency>
             <groupId>org.hibernate</groupId>

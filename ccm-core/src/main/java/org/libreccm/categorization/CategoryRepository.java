@@ -84,14 +84,11 @@ public class CategoryRepository extends AbstractEntityRepository<Long, Category>
                     + "Valid path format: domainKey:path");
         }
 
-        final Domain domain;
-        try {
-            domain = domainRepo.findByDomainKey(tokens[0]);
-        } catch (NoResultException ex) {
+        final Domain domain = domainRepo.findByDomainKey(tokens[0]);
+        if (domain == null) {
             throw new InvalidCategoryPathException(String.format(
                 "No domain identified by the key '%s' found.",
-                tokens[0]),
-                                                   ex);
+                tokens[0]));
         }
 
         return findByPath(domain, tokens[1]);

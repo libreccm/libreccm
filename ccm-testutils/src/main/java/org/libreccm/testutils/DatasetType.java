@@ -23,6 +23,7 @@ package org.libreccm.testutils;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public enum DatasetType {
+    FLAT_XML,
     JSON,
     YAML
 }

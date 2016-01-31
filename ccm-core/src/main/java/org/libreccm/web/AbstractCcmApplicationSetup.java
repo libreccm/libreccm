@@ -18,6 +18,8 @@
  */
 package org.libreccm.web;
 
+import org.libreccm.modules.InstallEvent;
+
 import javax.persistence.EntityManager;
 
 /**
@@ -28,8 +30,8 @@ public abstract class AbstractCcmApplicationSetup {
     
     private final EntityManager entityManager;
     
-    public AbstractCcmApplicationSetup(final EntityManager entityManager) {
-        this.entityManager = entityManager;
+    public AbstractCcmApplicationSetup(final InstallEvent event) {
+        this.entityManager = event.getEntityManager();
     }
     
     protected EntityManager getEntityManager() {

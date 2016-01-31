@@ -547,10 +547,8 @@ class GroupAdministrationTab extends LayoutPanel implements AdminConstants,
 //
 //        });
 //        body.add(deleteLink);
-//        return main.addSegment(GROUP_EXTREME_ACTIONS_HEADER,
-//                               body);
-        
-        throw new UnsupportedOperationException();
+        return main.addSegment(GROUP_EXTREME_ACTIONS_HEADER,
+                               body);
     }
 
     /**

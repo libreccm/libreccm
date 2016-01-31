@@ -18,6 +18,7 @@
  */
 package com.arsdigita.ui.admin;
 
+import org.libreccm.modules.InstallEvent;
 import org.libreccm.web.CcmApplication;
 import org.libreccm.web.AbstractCcmApplicationSetup;
 
@@ -31,8 +32,8 @@ public class AdminApplicationSetup extends AbstractCcmApplicationSetup {
     
     public static final String ADMIN_APP_NAME = "CcmAdmin";
     
-    public AdminApplicationSetup(final EntityManager entityManager) {
-        super(entityManager);
+    public AdminApplicationSetup(final InstallEvent event) {
+        super(event);
     }
 
     @Override
