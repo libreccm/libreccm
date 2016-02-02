@@ -43,7 +43,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import static com.arsdigita.ui.login.LoginConstants.*;
+import static com.arsdigita.ui.admin.AdminConstants.*;
 
 /**
  * Web Developer Support Application Servlet class, central entry point to
@@ -60,7 +60,7 @@ import static com.arsdigita.ui.login.LoginConstants.*;
  * @author Jens Pelzetter
  * @author pb
  */
-@WebServlet(urlPatterns = {LOGIN_SERVLET_PATH})
+@WebServlet(urlPatterns = {ADMIN_SERVLET_PATH})
 public class AdminServlet extends BaseApplicationServlet implements
     AdminConstants {
 

@@ -404,7 +404,7 @@ interface AdminConstants {
 
     public final static String ADMIN_PAGE_URL = "/admin/";
     
-    public final static String ADMIN_SERVLET = "/admin/*";
+    public final static String ADMIN_SERVLET_PATH = "/admin/*";
     
     
 }
