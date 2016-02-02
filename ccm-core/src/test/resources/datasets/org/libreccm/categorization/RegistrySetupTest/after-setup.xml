@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dataset>
+    <ccm_core.ccm_objects object_id="-10"
+                          display_name="registry" />
+    <ccm_core.ccm_objects object_id="-20"
+                          display_name="registry-root" />
+    <ccm_core.categories object_id="-20"
+                         name="registry-root" />
+    <ccm_core.category_domains object_id="-10"
+                               domain_key="registry"
+                               root_category_id="-20" />
+</dataset>
