@@ -25,6 +25,7 @@ import org.libreccm.web.CcmApplication;
 
 import java.io.IOException;
 
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -86,6 +87,12 @@ public abstract class BaseApplicationServlet extends BaseServlet {
      */
     public static final String APPLICATION_ID_PARAMETER = "app-id";
 
+    /**
+     * {@link ApplicationRepository} provided by CDI.
+     */
+    @Inject
+    private ApplicationRepository appRepository;
+    
     /**
      * <p>
      * Augments the context of the request and delegates to {@link
@@ -174,10 +181,7 @@ public abstract class BaseApplicationServlet extends BaseServlet {
                             + "database");
         }
 
-        final CdiUtil cdiUtil = new CdiUtil();
-        final ApplicationRepository appRepo = cdiUtil.findBean(
-            ApplicationRepository.class);
-        return appRepo.findById(appId);
+        return appRepository.findById(appId);
     }
 
     /**

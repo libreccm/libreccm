@@ -66,19 +66,19 @@ import org.libreccm.security.UserManager;
  *
  */
 public class ChangePasswordForm extends Form
-        implements FormProcessListener,
-                   FormValidationListener {
+    implements FormProcessListener,
+               FormValidationListener {
 
     private static final Logger s_log = Logger.getLogger(
-            ChangePasswordForm.class.getName());
+        ChangePasswordForm.class.getName());
     final static String CHANGE_PASSWORD_FORM_NAME = "change-password";
     final static String OLD_PASSWORD_PARAM_NAME = "old-password";
     final static String NEW_PASSWORD_PARAM_NAME = "new-password";
     final static String CONFIRM_PASSWORD_PARAM_NAME = "confirm-password";
     final static String RETURN_URL_PARAM_NAME
-                        = LoginHelper.RETURN_URL_PARAM_NAME;
+                            = LoginHelper.RETURN_URL_PARAM_NAME;
     private final UserAuthenticationListener m_listener
-                                             = new UserAuthenticationListener();
+                                                 = new UserAuthenticationListener();
     private Hidden m_returnURL;
 //    private Hidden m_recovery;
     private Label m_oldPasswordLabel;
@@ -128,22 +128,31 @@ public class ChangePasswordForm extends Form
 
         final KernelConfig kernelConfig = KernelConfig.getConfig();
         final User user = shiro.getUser();
-        
-        final Label greeting = new Label(LoginHelper.getMessage(
+
+        final Label greeting;
+        if (user == null) {
+            greeting = new Label(LoginHelper.getMessage(
                 "login.changePasswordForm.greeting",
-                new Object[]{String.format("%s %s", 
+                new Object[]{String.format("%s %s",
+                                           "",
+                                           "")}));
+        } else {
+            greeting = new Label(LoginHelper.getMessage(
+                "login.changePasswordForm.greeting",
+                new Object[]{String.format("%s %s",
                                            user.getGivenName(),
                                            user.getFamilyName())}));
+        }
         greeting.setFontWeight(Label.BOLD);
         greeting.setClassAttr("greeting");
         add(greeting);
 
         add(new Label(LoginHelper.getMessage(
-                "login.changePasswortForm.introText")));
+            "login.changePasswortForm.introText")));
 
         // old password
         m_oldPasswordLabel = new Label(LoginHelper.getMessage(
-                "login.changePasswordForm.oldPasswordLabel"));
+            "login.changePasswordForm.oldPasswordLabel"));
         add(m_oldPasswordLabel);
         m_oldPassword = new Password(OLD_PASSWORD_PARAM_NAME);
         // don't use NotNullValidationListener because
@@ -153,14 +162,14 @@ public class ChangePasswordForm extends Form
         // new password
         Object[] params = new Object[]{PasswordValidationListener.MIN_LENGTH};
         add(new Label(LoginHelper.getMessage(
-                "login.changePasswordForm.newPasswordLabel", params)));
+            "login.changePasswordForm.newPasswordLabel", params)));
         m_newPassword = new Password(NEW_PASSWORD_PARAM_NAME);
         m_newPassword.addValidationListener(new PasswordValidationListener());
         add(m_newPassword);
 
         // confirm new password
         add(new Label(LoginHelper.getMessage(
-                "login.changePasswordForm.confirmPasswordLabel")));
+            "login.changePasswordForm.confirmPasswordLabel")));
         m_confirmPassword = new Password(CONFIRM_PASSWORD_PARAM_NAME);
         // don't use PasswordValidationListener to avoid duplicate errors
         m_confirmPassword.addValidationListener(new NotNullValidationListener());
@@ -173,7 +182,7 @@ public class ChangePasswordForm extends Form
 
     @Override
     public void validate(final FormSectionEvent event)
-            throws FormProcessException {
+        throws FormProcessException {
         PageState state = event.getPageState();
         FormData data = event.getFormData();
         try {
@@ -181,8 +190,8 @@ public class ChangePasswordForm extends Form
             if (!m_listener.isLoggedIn(state)) {
                 // this error should never appear
                 data.addError(LoginHelper.localize(
-                        "login.changePasswordForm.noUserError",
-                        state.getRequest()));
+                    "login.changePasswordForm.noUserError",
+                    state.getRequest()));
                 return;
             }
 //            User user = m_listener.getUser(state);
@@ -191,18 +200,18 @@ public class ChangePasswordForm extends Form
             String oldPassword = (String) m_oldPassword.getValue(state);
             String newPassword = (String) m_newPassword.getValue(state);
             String confirmPassword = (String) m_confirmPassword.getValue(state);
-        
+
             //check oldPassword
             final CdiUtil cdiUtil = new CdiUtil();
             final Shiro shiro = cdiUtil.findBean(Shiro.class);
             final UserManager userManager = cdiUtil.findBean(UserManager.class);
-            
+
             final User user = shiro.getUser();
             if (!userManager.verifyPassword(user, oldPassword)) {
                 data.addError(OLD_PASSWORD_PARAM_NAME, LoginHelper.getMessage(
                               "login.changePasswordForm.badPasswordError"));
             }
-            
+
             // check new password
             if (newPassword.equals(oldPassword)) {
                 data.addError(NEW_PASSWORD_PARAM_NAME, LoginHelper.localize(
@@ -228,7 +237,7 @@ public class ChangePasswordForm extends Form
 
     @Override
     public void process(final FormSectionEvent event)
-            throws FormProcessException {
+        throws FormProcessException {
         PageState state = event.getPageState();
         FormData data = event.getFormData();
 
@@ -236,19 +245,19 @@ public class ChangePasswordForm extends Form
         if (!m_listener.isLoggedIn(state)) {
             // this error should never appear (checked in validate)
             data.addError(LoginHelper.localize(
-                    "login.changePasswordForm.noUserError",
-                    state.getRequest()));
+                "login.changePasswordForm.noUserError",
+                state.getRequest()));
             return;
         }
-        
+
         final CdiUtil cdiUtil = new CdiUtil();
         final UserManager userManager = cdiUtil.findBean(UserManager.class);
-        final Shiro shiro = cdiUtil.findBean(Shiro.class); 
+        final Shiro shiro = cdiUtil.findBean(Shiro.class);
         final User user = shiro.getUser();
-        
+
         final String newPassword = (String) m_newPassword.getValue(state);
         userManager.updatePassword(user, newPassword);
-        
+
         final HttpServletRequest req = state.getRequest();
 
         final String path = UI.getWorkspaceURL(req);

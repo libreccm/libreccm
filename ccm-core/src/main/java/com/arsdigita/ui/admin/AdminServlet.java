@@ -18,6 +18,7 @@
  */
 package com.arsdigita.ui.admin;
 
+import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.Page;
 import com.arsdigita.bebop.PageFactory;
 import com.arsdigita.bebop.TabbedPane;
@@ -31,6 +32,7 @@ import com.arsdigita.xml.Document;
 
 import org.apache.shiro.subject.Subject;
 import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.security.PermissionChecker;
 import org.libreccm.web.CcmApplication;
 
@@ -38,6 +40,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -61,10 +64,12 @@ import static com.arsdigita.ui.admin.AdminConstants.*;
  * @author pb
  */
 @WebServlet(urlPatterns = {ADMIN_SERVLET_PATH})
-public class AdminServlet extends BaseApplicationServlet implements
-    AdminConstants {
+public class AdminServlet 
+    extends BaseApplicationServlet
+    implements AdminConstants {
 
     private static final long serialVersionUID = -3912367600768871630L;
+    
     /**
      * Logger instance for debugging
      */
@@ -82,7 +87,7 @@ public class AdminServlet extends BaseApplicationServlet implements
      */
     @Override
     public void doInit() throws ServletException {
-        addPage("/", buildAdminIndexPage());     // index page at address ~/ds
+        //addPage("/", buildAdminIndexPage());     // index page at address ~/ds
         //  addPage("/index.jsp", buildIndexPage()); // index page at address ~/ds
 
     }
@@ -107,12 +112,13 @@ public class AdminServlet extends BaseApplicationServlet implements
         /* Determine access privilege: only logged in users may access   */
         final CdiUtil cdiUtil = new CdiUtil();
         final Subject subject = cdiUtil.findBean(Subject.class);
-        final PermissionChecker permissionChecker = cdiUtil.findBean(PermissionChecker.class);
-        
+        final PermissionChecker permissionChecker = cdiUtil.findBean(
+            PermissionChecker.class);
+
         if (!subject.isAuthenticated()) {
             throw new LoginSignal(sreq);
         }
-        
+
         /* Determine access privilege: Admin privileges must be granted     */
         if (!permissionChecker.isPermitted("admin")) {
             throw new AccessDeniedException("User is not an administrator");
@@ -133,13 +139,18 @@ public class AdminServlet extends BaseApplicationServlet implements
             pathInfo = pathInfo.substring(0, pathInfo.length() - 1);
         }
 
-        final Page page = pages.get(pathInfo);
-        if (page == null) {
-            sresp.sendError(404, "No such page for path " + pathInfo);
-        } else {
-            final Document doc = page.buildDocument(sreq, sresp);
-            Templating.getPresentationManager().servePage(doc, sreq, sresp);
-        }
+//        final Page page = pages.get(pathInfo);
+//        if (page == null) {
+//            sresp.sendError(404, "No such page for path " + pathInfo);
+//        } else {
+//            final Document doc = page.buildDocument(sreq, sresp);
+//            Templating.getPresentationManager().servePage(doc, sreq, sresp);
+//        }
+        final Page page = new Page();
+        page.add(new Label("admin"));
+
+        final Document doc = page.buildDocument(sreq, sresp);
+        Templating.getPresentationManager().servePage(doc, sreq, sresp);
     }
 
     /**

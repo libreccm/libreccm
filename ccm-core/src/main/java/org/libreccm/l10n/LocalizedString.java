@@ -31,6 +31,7 @@ import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Embeddable;
+import javax.persistence.FetchType;
 import javax.persistence.Lob;
 import javax.persistence.MapKeyColumn;
 import javax.xml.bind.annotation.XmlElement;
@@ -54,7 +55,7 @@ public class LocalizedString implements Serializable {
     /**
      * The localised values of the string.
      */
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @MapKeyColumn(name = "LOCALE")
     @Column(name = "LOCALIZED_VALUE")
     @Lob

@@ -47,11 +47,10 @@ public class Web {
      */
     private static final Logger s_log = Logger.getLogger(Web.class);
 
-    private static final WebConfig s_config = WebConfig.getConfig();
-
+//    private static final WebConfig s_config = WebConfig.getConfig();
     private static final ThreadLocal s_request = new InternalRequestLocal();
     private static final ThreadLocal s_servletContext
-                                     = new InternalRequestLocal();
+                                         = new InternalRequestLocal();
     private static final ThreadLocal s_userContext = new InternalRequestLocal();
     private static ThreadLocal s_context;
 
@@ -93,7 +92,8 @@ public class Web {
      * @return A <code>WebConfig</code> configuration record; it cannot be null
      */
     public static WebConfig getConfig() {
-        return s_config;
+//        return s_config;
+        return WebConfig.getConfig();
     }
 
     /**
@@ -127,26 +127,25 @@ public class Web {
         return (ServletContext) s_servletContext.get();
     }
 
-        /**
-     * Gets the webapp context path portion of the WEB application where this 
-     * CCM instance is executed. (I.e. where the WEB-INF directory is located 
-     * in the servlet container webapps directory, known as ServletContext in
-     * the Servlet API)
+    /**
+     * Gets the webapp context path portion of the WEB application where this
+     * CCM instance is executed. (I.e. where the WEB-INF directory is located in
+     * the servlet container webapps directory, known as ServletContext in the
+     * Servlet API)
      *
-     * @return web context path portion as a String, may be used to construct
-     *         a URL (NOT the RealPath!). The ROOT context returns an empty
+     * @return web context path portion as a String, may be used to construct a
+     *         URL (NOT the RealPath!). The ROOT context returns an empty
      *         String("").
      */
     public static String getWebappContextPath() {
-            return (String) s_contextPath;
+        return (String) s_contextPath;
     }
 
     /**
-     * Sets the webapp context path portion of the WEB application where this 
-     * CCM instance is executed. (I.e. where the WEB-INF directory is located 
-     * in the servlet container webapps directory, known as ServletContext in
-     * the Servlet API)
-     * Meant to be executed by CCMDispatcherServlet only.
+     * Sets the webapp context path portion of the WEB application where this
+     * CCM instance is executed. (I.e. where the WEB-INF directory is located in
+     * the servlet container webapps directory, known as ServletContext in the
+     * Servlet API) Meant to be executed by CCMDispatcherServlet only.
      *
      * @param contextPath
      */
@@ -154,7 +153,6 @@ public class Web {
         s_contextPath = contextPath;
     }
 
-    
     /**
      * Processes an URL String trying to identify a corresponding recource which
      * is mapped to the given path String. The method ensures that the resource
@@ -249,10 +247,8 @@ public class Web {
                                 s_log.debug("Got URL " + url + " for " + path);
                             }
                             return url;   // Return adjusted resourcePath url
-                        } else {
-                            if (s_log.isDebugEnabled()) {
-                                s_log.debug("No URL present for " + path);
-                            }
+                        } else if (s_log.isDebugEnabled()) {
+                            s_log.debug("No URL present for " + path);
                         }
                     } catch (MalformedURLException exc) {
                         if (s_log.isDebugEnabled()) {
@@ -282,7 +278,7 @@ public class Web {
                 if (!ctxPath.startsWith("/")) {
                     ctxPath = "/" + ctxPath;
                 }
-                    // No trailing slash allowed by servlet API!
+                // No trailing slash allowed by servlet API!
                 // if (!ctxPath.endsWith("/")) {
                 //     ctxPath = ctxPath + "/";
                 // }
@@ -299,10 +295,8 @@ public class Web {
                                 s_log.debug("Got URL " + url + " for " + path);
                             }
                             return url;   // Return adjusted resourcePath url
-                        } else {
-                            if (s_log.isDebugEnabled()) {
-                                s_log.debug("No URL present for " + path);
-                            }
+                        } else if (s_log.isDebugEnabled()) {
+                            s_log.debug("No URL present for " + path);
                         }
                     } catch (MalformedURLException ex) {
                         if (s_log.isDebugEnabled()) {

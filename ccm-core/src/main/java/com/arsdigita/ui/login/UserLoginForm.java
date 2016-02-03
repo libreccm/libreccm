@@ -100,7 +100,7 @@ public class UserLoginForm extends Form implements LoginConstants,
     private TextField m_loginName;
     private final Password m_password;
     private final boolean m_autoRegistrationOn;
-    private final SecurityConfig securityConfig = SecurityConfig.getConfig();
+    private final SecurityConfig securityConfig;// = SecurityConfig.getConfig();
 
     /**
      * Default constructor delegates to a constructor which creates a LoginForm
@@ -128,6 +128,8 @@ public class UserLoginForm extends Form implements LoginConstants,
                          final boolean autoRegistrationOn) {
         super(FORM_NAME, panel);
 
+        securityConfig = SecurityConfig.getConfig();
+        
         setMethod(Form.POST);
         addInitListener(this);
         addValidationListener(this);

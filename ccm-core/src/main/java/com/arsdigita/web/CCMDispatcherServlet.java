@@ -40,6 +40,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.subject.Subject;
+import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.web.ApplicationManager;
 import org.libreccm.web.ApplicationType;
 

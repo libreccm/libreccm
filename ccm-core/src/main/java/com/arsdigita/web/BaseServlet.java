@@ -86,11 +86,23 @@ public abstract class BaseServlet extends HttpServlet {
     private void internalService(final HttpServletRequest request,
                                  final HttpServletResponse response)
         throws ServletException, IOException {
-        //This method was present in the old implemention and was responsible
-        //for managing the application managed transactions. Because we now use
-        //container managed transactions we may don't need this method anymore.
 
-        doService(request, response);
+        Web.init(request, getServletContext());
+        Web.getWebContext().setRequestURL(getRequestURL(request));
+
+        try {
+            doService(request, response);
+        } catch (RedirectSignal signal) {
+            redirect(response, signal);
+        } catch (ServletException ex) {
+            final RedirectSignal signal = findRedirectSignal(ex);
+            
+            if (signal == null) {
+                throw ex;
+            } else {
+                redirect(response, signal);
+            }
+        }
     }
 
     /**
@@ -107,15 +119,15 @@ public abstract class BaseServlet extends HttpServlet {
      * @throws java.io.IOException
      */
     protected abstract void doService(final HttpServletRequest request,
-                             final HttpServletResponse response)
+                                      final HttpServletResponse response)
         throws ServletException, IOException;
 
     /**
      * <p>
      * Processes HTTP GET requests.</p>
      *
-     * @param request 
-     * @param response 
+     * @param request
+     * @param response
      *
      * @throws javax.servlet.ServletException
      * @throws java.io.IOException
@@ -130,30 +142,66 @@ public abstract class BaseServlet extends HttpServlet {
                     request.getPathInfo(),
                     getServletConfig().getServletName(),
                     getClass().getName());
-        
+
         internalService(request, response);
     }
-    
-        /**
-     * <p>Processes HTTP POST requests.</p>
-     * 
-     * @param request 
-     * @param response 
+
+    /**
+     * <p>
+     * Processes HTTP POST requests.</p>
+     *
+     * @param request
+     * @param response
+     *
      * @throws javax.servlet.ServletException
      * @throws java.io.IOException
      *
-     * @see javax.servlet.http.HttpServlet#doPost(HttpServletRequest,HttpServletResponse)
+     * @see
+     * javax.servlet.http.HttpServlet#doPost(HttpServletRequest,HttpServletResponse)
      */
-    @Override    
+    @Override
     protected final void doPost(final HttpServletRequest request,
                                 final HttpServletResponse response)
-            throws ServletException, IOException {
+        throws ServletException, IOException {
         LOGGER.info("Serving POST request path %s with servlet %s (class: %s)",
-                   request.getPathInfo(),
-                   getServletConfig().getServletName(),
-                   getClass().getName());
-        
+                    request.getPathInfo(),
+                    getServletConfig().getServletName(),
+                    getClass().getName());
+
         internalService(request, response);
+    }
+
+    private URL getRequestURL(final HttpServletRequest request) {
+        URL url = (URL) request.getAttribute(REQUEST_URL_ATTRIBUTE);
+
+        if (url == null) {
+            url = new URL(request);
+        }
+
+        return url;
+    }
+
+    private RedirectSignal findRedirectSignal(final ServletException ex) {
+        Throwable root = ex.getRootCause();
+
+        while (root instanceof ServletException) {
+            root = ((ServletException) root).getRootCause();
+        }
+
+        if (root instanceof RedirectSignal) {
+            return (RedirectSignal) root;
+        } else {
+            return null;
+        }
+    }
+
+    private void redirect(final HttpServletResponse response,
+                          final RedirectSignal redirectSignal)
+        throws IOException {
+        final String url = response.encodeRedirectURL(redirectSignal
+            .getDestinationURL());
+
+        response.sendRedirect(url);
     }
 
 }

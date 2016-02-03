@@ -35,7 +35,9 @@ import com.arsdigita.web.ReturnSignal;
 import com.arsdigita.web.URL;
 
 import org.apache.log4j.Logger;
+import org.libreccm.configuration.ConfigurationManager;
 
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -125,6 +127,9 @@ public class LoginServlet extends BebopApplicationServlet {
 
     public static final String APPLICATION_NAME = "login";
 
+    @Inject
+    private ConfigurationManager confManager;
+
     /**
      * User extension point used to create the pages to server and setup a
      * URL_MSG - page mapping.
@@ -133,6 +138,9 @@ public class LoginServlet extends BebopApplicationServlet {
      */
     @Override
     public void doInit() throws ServletException {
+        final SecurityConfig securityConfig = confManager.findConfiguration(
+            SecurityConfig.class);
+
         // Allow world caching for pages without authentication,
         // ie, /register, /register/explain-persistent-cookies,
         // /register/login-expired, /register/recover-password
@@ -145,8 +153,7 @@ public class LoginServlet extends BebopApplicationServlet {
         put("/",
             buildSimplePage(
                 "login.userRegistrationForm.title",
-                new UserLoginForm(SecurityConfig.getConfig()
-                    .isAutoRegistrationEnabled()),
+                new UserLoginForm(securityConfig.isAutoRegistrationEnabled()),
                 "login"));
         disableClientCaching("/");
 
