@@ -1,0 +1,1802 @@
+/*
+    Colour definitions. This is a LESS feature called variables which 
+    allows you to define commonly used values in a single location. The LESS
+    compiler will replace each use of a variable with the value defined here.
+*/
+/*@color-subnav-link-hover: #ff7600;*/
+/*@color-subnav-link-hover-background: #7f7f7f;*/
+/*
+Font definitions
+----------------
+
+We are using some Webfonts. The fonts are from the Fontsquirrel 
+(http://www.fontsquirrel.com/) website.
+*/
+@font-face {
+  font-family: 'Text';
+  src: url('../fonts/PTS55F-webfont.eot');
+  src: url('../fonts/PTS55F-webfont.eot?#iefix') format('embedded-opentype'), url('../fonts/PTS55F-webfont.woff') format('woff'), url('../fonts/PTS55F-webfont.ttf') format('truetype'), url('../fonts/PTS55F-webfont.svg#pt_sansregular') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Text';
+  src: url('../fonts/PTS56F-webfont.eot');
+  src: url('../fonts/PTS56F-webfont.eot?#iefix') format('embedded-opentype'), url('../fonts/PTS56F-webfont.woff') format('woff'), url('../fonts/PTS56F-webfont.ttf') format('truetype'), url('../fonts/PTS56F-webfont.svg#pt_sansitalic') format('svg');
+  font-weight: normal;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'Text';
+  src: url('../fonts/PTS75F-webfont.eot');
+  src: url('../fonts/PTS75F-webfont.eot?#iefix') format('embedded-opentype'), url('../fonts/PTS75F-webfont.woff') format('woff'), url('../fonts/PTS75F-webfont.ttf') format('truetype'), url('../fonts/PTS75F-webfont.svg#pt_sansbold') format('svg');
+  font-weight: bold;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Text';
+  src: url('../fonts/PTS76F-webfont.eot');
+  src: url('../fonts/PTS76F-webfont.eot?#iefix') format('embedded-opentype'), url('../fonts/PTS76F-webfont.woff') format('woff'), url('../fonts/PTS76F-webfont.ttf') format('truetype'), url('../fonts/PTS76F-webfont.svg#pt_sansbold_italic') format('svg');
+  font-weight: bold;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'TextCond';
+  src: url('../fonts/PTN57F-webfont.eot');
+  src: url('../fonts/PTN57F-webfont.eot?#iefix') format('embedded-opentype'), url('../fonts/PTN57F-webfont.woff') format('woff'), url('../fonts/PTN57F-webfont.ttf') format('truetype'), url('../fonts/PTN57F-webfont.svg#pt_narrowregular') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'TextCond';
+  src: url('../fonts/PTN77F-webfont.eot');
+  src: url('../fonts/PTN77F-webfont.eot?#iefix') format('embedded-opentype'), url('../fonts/PTN77F-webfont.woff') format('woff'), url('../fonts/PTN77F-webfont.ttf') format('truetype'), url('../fonts/PTN77F-webfont.svg#pt_narrowbold') format('svg');
+  font-weight: bold;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Caption';
+  src: url('../fonts/PTC55F-webfont.eot');
+  src: url('../fonts/PTC55F-webfont.eot?#iefix') format('embedded-opentype'), url('../fonts/PTC55F-webfont.woff') format('woff'), url('../fonts/PTC55F-webfont.ttf') format('truetype'), url('../fonts/PTC55F-webfont.svg#pt_sans_captionregular') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Caption';
+  src: url('../fonts/PTC75F-webfont.eot');
+  src: url('../fonts/PTC75F-webfont.eot?#iefix') format('embedded-opentype'), url('../fonts/PTC75F-webfont.woff') format('woff'), url('../fonts/PTC75F-webfont.ttf') format('truetype'), url('../fonts/PTC75F-webfont.svg#pt_sans_captionbold') format('svg');
+  font-weight: normal;
+  font-style: italic;
+}
+/*
+@font-face {
+    font-family: 'Title';
+    src: url('../fonts/TrajanPro-Regular.eot');
+    src: url('../fonts/TrajanPro-Regular.eot?#iefix') format('embedded-opentype'),
+        url('../fonts/TrajanPro-Regular.woff') format('woff'),
+        url('../fonts/TrajanPro-Regular.ttf') format('truetype'),
+        url('../fonts/TrajanPro-Regular.svg#TrajanPro-Regular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+*/
+@font-face {
+  font-family: 'Title';
+  src: url('../fonts/Cinzel-Regular.eot');
+  src: url('../fonts/Cinzel-Regular.eot?#iefix') format('embedded-opentype'), url('../fonts/Cinzel-Regular.woff') format('woff'), url('../fonts/Cinzel-Regular.ttf') format('truetype'), url('../fonts/Cinzel-Regular.svg#Cinzel-Regular') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Special';
+  src: url('../fonts/Georgia-webfont.eot');
+  src: url('../fonts/Georgia-webfont.eot?#iefix') format('embedded-opentype'), url('../fonts/Georgia-webfont.woff') format('woff'), url('../fonts/Georgia-webfont.ttf') format('truetype'), url('../fonts/Georgia-webfont.svg#Georgia-webfont') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+@media screen {
+  /*
+    Styles for Screenreaders
+    */
+  /*
+    Hide text for other media than screenreaders. We can't simply use display:none
+    because display:none is interpreted by screenreaders and hides for them also. 
+    The approach here is the same as used in Bootstrap, with some refinements.
+    References:
+    
+    http://webaim.org/techniques/css/invisiblecontent/
+    
+    
+    */
+  * {
+    box-sizing: border-box;
+  }
+  .hidden.accessibility {
+    position: absolute;
+    top: auto;
+    left: -99999em;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  html {
+    margin: 0;
+    position: relative;
+  }
+  body {
+    /*
+       Textured background from subtlepatterns.com
+        */
+    background-image: url("../images/foil.png");
+    margin: 0 0 12em 0;
+    min-height: 100%;
+    padding: 0;
+  }
+  body div#cookie-notice {
+    display: none;
+  }
+  body.cookie-notice div#cookie-notice {
+    background-color: #fff;
+    /*background-color: rgba(255,255,255,0.9);*/
+    border: 2px solid #213175;
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    /*height: 4em;*/
+    /*width: 100%;*/
+    margin: 0.5em;
+    padding: 1em 2em;
+  }
+  body.cookie-notice div#cookie-notice a {
+    margin-left: 0.5em;
+    text-decoration: none;
+  }
+  body.cookie-notice div#cookie-notice a:link,
+  body.cookie-notice div#cookie-notice a:visited {
+    color: #213175;
+  }
+  body.cookie-notice div#cookie-notice a:active,
+  body.cookie-notice div#cookie-notice a:focus,
+  body.cookie-notice div#cookie-notice a:hover {
+    color: #084590;
+  }
+  body.cookie-notice div#cookie-notice button {
+    background-color: #f2f2f2;
+    border: 1px solid #213175;
+    border-radius: 0.25em;
+    color: #213175;
+    font-weight: bold;
+    margin-left: 0.5em;
+  }
+  header {
+    margin: 0;
+    padding: 0;
+    /*
+        Styles for the blue bar in the header containing the language selector
+        and the service menu.
+        */
+  }
+  header #service-panel {
+    background-image: -ie-linear-gradient(top, #715c92 5%, #213175 95%);
+    background-image: -moz-linear-gradient(top, #715c92 5%, #213175 95%);
+    background-image: -o-linear-gradient(top, #715c92 5%, #213175 95%);
+    background-image: -webkit-linear-gradient(top, #715c92 5%, #213175 95%);
+    background-image: linear-gradient(top, #715c92 5%, #213175 95%);
+    box-shadow: 0 0 20px 0 #4a4a4a;
+    color: #ffffff;
+    font-family: "Special", serif;
+    font-variant: small-caps;
+    height: 3.5em;
+    margin: 0;
+    padding: 0;
+  }
+  header #service-panel #service-panel-wrapper {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 80em;
+  }
+  header #service-panel #service-panel-wrapper div#language-switcher {
+    position: relative;
+  }
+  header #service-panel #service-panel-wrapper div#language-switcher button {
+    background-color: transparent;
+    border: 1px solid #ffffff;
+    border-radius: 0.5em;
+    color: #ffffff;
+    font-size: 1.5em;
+    margin-top: 0.5em;
+    margin-left: 0.5em;
+  }
+  header #service-panel #service-panel-wrapper div#language-switcher button span.fa {
+    margin-right: 0.4em;
+  }
+  header #service-panel #service-panel-wrapper div#language-switcher ul {
+    display: none;
+    background-color: #213175;
+    z-index: 999;
+  }
+  header #service-panel #service-panel-wrapper div#shortcuts ul {
+    display: none;
+  }
+  header #service-panel #service-panel-wrapper ul {
+    list-style: none;
+    margin: 0;
+    padding-left: 1em;
+    padding-right: 1em;
+  }
+  header #service-panel #service-panel-wrapper ul li a {
+    text-decoration: none;
+  }
+  header #service-panel #service-panel-wrapper ul li a:link,
+  header #service-panel #service-panel-wrapper ul li a:visited {
+    background-color: transparent;
+    color: #ffffff;
+  }
+  header #service-panel #service-panel-wrapper ul li a:active,
+  header #service-panel #service-panel-wrapper ul li a:focus,
+  header #service-panel #service-panel-wrapper ul li a:hover {
+    background-color: transparent;
+    color: #ff9840;
+  }
+  header .header-logo {
+    background-color: #ffffff;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+  }
+  header .header-logo img {
+    margin-top: 1em;
+  }
+  header .header-logo p {
+    color: #1e3175;
+    font-family: "Title", serif;
+    font-size: 2.5em;
+    font-variant: small-caps;
+    margin: 0 1em 0 0.6em;
+    text-align: center;
+  }
+  nav#main-navigation {
+    background-color: transparent;
+    border: none;
+    margin-bottom: 0;
+    padding-top: 0.25em;
+    padding-bottom: 0;
+    width: 100%;
+    background-image: -ie-linear-gradient(top, #715c92 5%, #213175 95%);
+    background-image: -moz-linear-gradient(top, #715c92 5%, #213175 95%);
+    background-image: -o-linear-gradient(top, #715c92 5%, #213175 95%);
+    background-image: -webkit-linear-gradient(top, #715c92 5%, #213175 95%);
+    background-image: linear-gradient(top, #715c92 5%, #213175 95%);
+    border-bottom: 2px solid #e7e6ee;
+  }
+  nav#main-navigation div#nav-wrapper {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 80em;
+    padding-bottom: 0.5em;
+    text-align: center;
+  }
+  nav#main-navigation div#nav-wrapper button {
+    background-color: transparent;
+    border: 1px solid #ffffff;
+    border-radius: 0.2em;
+    color: #ffffff;
+    font-size: 2em;
+    margin-top: 0.5em;
+    margin-left: 0.5em;
+  }
+  nav#main-navigation div#nav-wrapper button span.fa {
+    margin-right: 0.4em;
+  }
+  nav#main-navigation div#nav-wrapper ul {
+    display: none;
+    list-style: none;
+    margin-top: 0.75em;
+    margin-bottom: 0.75em;
+    padding-left: 0;
+    text-align: center;
+  }
+  nav#main-navigation div#nav-wrapper ul li.active {
+    border: 1px solid #ff9840;
+    border-radius: 0.5em;
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+  }
+  nav#main-navigation div#nav-wrapper ul li.active > a:link,
+  nav#main-navigation div#nav-wrapper ul li.active > a:visited {
+    color: #ff9840;
+  }
+  nav#main-navigation div#nav-wrapper ul li a {
+    font-family: 'TextCond', sans-serif;
+    font-size: 1.4em;
+    font-variant: small-caps;
+    font-weight: bold;
+    margin-left: 0.2em;
+    padding: 0.2em 0.25em;
+    text-decoration: none;
+  }
+  nav#main-navigation div#nav-wrapper ul li a:link,
+  nav#main-navigation div#nav-wrapper ul li a:visited {
+    color: #ffffff;
+  }
+  nav#main-navigation div#nav-wrapper ul li a:active,
+  nav#main-navigation div#nav-wrapper ul li a:focus,
+  nav#main-navigation div#nav-wrapper ul li a:hover {
+    background-color: transparent;
+    color: #ff9840;
+  }
+  div#breadcrumbs-top {
+    background-color: #f2f2f2;
+    background-image: url("../images/foil.png");
+    font-size: 1.2em;
+    padding-top: 1em;
+  }
+  div#breadcrumbs-top div#breadcrumbs-top-wrapper {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 80em;
+    padding-bottom: 0.6em;
+  }
+  div#breadcrumbs-top div#breadcrumbs-top-wrapper .breadcrumb-prefix {
+    font-family: 'TextCond', sans-serif;
+    font-size: 0.9em;
+    font-variant: small-caps;
+    margin-right: 0.6em;
+    padding-top: 0.6em;
+  }
+  div#breadcrumbs-top div#breadcrumbs-top-wrapper ol {
+    display: inline;
+    list-style: none;
+    padding-left: 0;
+  }
+  div#breadcrumbs-top div#breadcrumbs-top-wrapper ol li {
+    display: inline;
+    font-family: 'TextCond', sans-serif;
+    font-size: 0.9em;
+    padding-left: 0;
+  }
+  div#breadcrumbs-top div#breadcrumbs-top-wrapper ol li a:link,
+  div#breadcrumbs-top div#breadcrumbs-top-wrapper ol li a:visited {
+    color: #337ab7;
+  }
+  div#breadcrumbs-top div#breadcrumbs-top-wrapper ol li a:active,
+  div#breadcrumbs-top div#breadcrumbs-top-wrapper ol li a:focus,
+  div#breadcrumbs-top div#breadcrumbs-top-wrapper ol li a:hover {
+    color: #23527c;
+  }
+  div#breadcrumbs-top div#breadcrumbs-top-wrapper ol li + li::before {
+    color: #555555;
+    content: "/ ";
+    padding-left: 0.4em;
+    padding-right: 0.4em;
+  }
+  div#main-wrapper {
+    margin-left: 1em;
+    margin-right: 1em;
+  }
+  .mixin-main {
+    background-color: #f2f2f2;
+    border-radius: 0 0 0.5em 0.5em;
+    box-shadow: 0.1em 0.2em 0.35em 0 rgba(0, 0, 0, 0.35);
+    padding: 1em;
+  }
+  main div.address {
+    background-color: #f2f2f2;
+    border-radius: 0 0 0.5em 0.5em;
+    box-shadow: 0.1em 0.2em 0.35em 0 rgba(0, 0, 0, 0.35);
+    padding: 1em;
+    font-family: 'Text', sans-serif;
+    margin-bottom: 2em;
+  }
+  main div.address pre.addresstext {
+    font-family: 'Text', sans-serif;
+    margin-top: 0;
+  }
+  main div.agenda dl,
+  main div.contact dl,
+  main div.job dl,
+  main div.minutes dl,
+  main div.person dl,
+  main div.service dl {
+    background-color: #f2f2f2;
+    border-radius: 0 0 0.5em 0.5em;
+    box-shadow: 0.1em 0.2em 0.35em 0 rgba(0, 0, 0, 0.35);
+    padding: 1em;
+    font-family: 'text', sans-serif;
+  }
+  main div.agenda dl dt,
+  main div.contact dl dt,
+  main div.job dl dt,
+  main div.minutes dl dt,
+  main div.person dl dt,
+  main div.service dl dt {
+    font-weight: bold;
+  }
+  main div.agenda dl dd,
+  main div.contact dl dd,
+  main div.job dl dd,
+  main div.minutes dl dd,
+  main div.person dl dd,
+  main div.service dl dd {
+    margin-left: 0;
+    margin-bottom: 0.5em;
+  }
+  main div.agenda dl dd.description-of-minutes pre,
+  main div.contact dl dd.description-of-minutes pre,
+  main div.job dl dd.description-of-minutes pre,
+  main div.minutes dl dd.description-of-minutes pre,
+  main div.person dl dd.description-of-minutes pre,
+  main div.service dl dd.description-of-minutes pre {
+    margin-top: 0;
+    font-family: 'Test';
+  }
+  main div.agenda dl dd a,
+  main div.contact dl dd a,
+  main div.job dl dd a,
+  main div.minutes dl dd a,
+  main div.person dl dd a,
+  main div.service dl dd a {
+    text-decoration: none;
+  }
+  main div.agenda dl dd a:link,
+  main div.contact dl dd a:link,
+  main div.job dl dd a:link,
+  main div.minutes dl dd a:link,
+  main div.person dl dd a:link,
+  main div.service dl dd a:link,
+  main div.agenda dl dd a:visited,
+  main div.contact dl dd a:visited,
+  main div.job dl dd a:visited,
+  main div.minutes dl dd a:visited,
+  main div.person dl dd a:visited,
+  main div.service dl dd a:visited {
+    color: #213175;
+  }
+  main div.agenda dl dd a:active,
+  main div.contact dl dd a:active,
+  main div.job dl dd a:active,
+  main div.minutes dl dd a:active,
+  main div.person dl dd a:active,
+  main div.service dl dd a:active,
+  main div.agenda dl dd a:focus,
+  main div.contact dl dd a:focus,
+  main div.job dl dd a:focus,
+  main div.minutes dl dd a:focus,
+  main div.person dl dd a:focus,
+  main div.service dl dd a:focus,
+  main div.agenda dl dd a:hover,
+  main div.contact dl dd a:hover,
+  main div.job dl dd a:hover,
+  main div.minutes dl dd a:hover,
+  main div.person dl dd a:hover,
+  main div.service dl dd a:hover {
+    color: #084590;
+  }
+  main div.bookmark-url {
+    background-color: #f2f2f2;
+    border-radius: 0 0 0.5em 0.5em;
+    box-shadow: 0.1em 0.2em 0.35em 0 rgba(0, 0, 0, 0.35);
+    padding: 1em;
+    font-family: 'Text', sans-serif;
+    margin-bottom: 2em;
+  }
+  main div.bookmark-url a:link,
+  main div.bookmark-url a:visited {
+    color: #213175;
+  }
+  main div.bookmark-url a:active,
+  main div.bookmark-url a:focus,
+  main div.bookmark-url a:hover {
+    color: #084590;
+  }
+  main div.contact div.person {
+    background-color: #f2f2f2;
+    border-radius: 0 0 0.5em 0.5em;
+    box-shadow: 0.1em 0.2em 0.35em 0 rgba(0, 0, 0, 0.35);
+    padding: 1em;
+  }
+  main div.contact div.address {
+    background-color: #f2f2f2;
+    border-radius: 0 0 0.5em 0.5em;
+    box-shadow: 0.1em 0.2em 0.35em 0 rgba(0, 0, 0, 0.35);
+    padding: 1em;
+    margin-bottom: 2em;
+  }
+  main div.contact div.address pre.addresstext {
+    font-family: 'Text', sans-serif;
+    margin-top: 0;
+  }
+  main div.decisiontree div.main h2 {
+    margin-top: 0em;
+  }
+  main div.decisiontree div.section-instructions {
+    margin-bottom: 1em;
+  }
+  main div.decisiontree form div.submit-cancel-section {
+    margin-top: 1em;
+  }
+  main div.decisiontree form div.submit-cancel-section input[type="submit"] {
+    background-color: #f2f2f2;
+    border: 1px solid #213175;
+    border-radius: 0.3em;
+    color: #213175;
+    font-weight: bold;
+    padding: 0.2em 0.4em;
+  }
+  main div.decisiontree form div.submit-cancel-section input[type="submit"]:focus,
+  main div.decisiontree form div.submit-cancel-section input[type="submit"]:hover {
+    border-color: #084590;
+    color: #084590;
+  }
+  main div.decisiontree form div.submit-cancel-section input[type="submit"]:first-child {
+    margin-right: 1em;
+  }
+  main div.formitem {
+    background-color: #f2f2f2;
+    border-radius: 0 0 0.5em 0.5em;
+    box-shadow: 0.1em 0.2em 0.35em 0 rgba(0, 0, 0, 0.35);
+    padding: 1em;
+    margin-bottom: 2em;
+  }
+  main div.formitem span.label {
+    display: block;
+    font-weight: bold;
+  }
+  main div.formitem span.label.mandatory::after {
+    content: "*";
+    font-weight: bold;
+  }
+  main div.fsi-desc {
+    background-color: #f2f2f2;
+    border-radius: 0 0 0.5em 0.5em;
+    box-shadow: 0.1em 0.2em 0.35em 0 rgba(0, 0, 0, 0.35);
+    padding: 1em;
+  }
+  main div.fsi-links {
+    /*.mixin-main();*/
+    margin-top: 2em;
+    margin-bottom: 2em;
+    text-align: center;
+  }
+  main div.fsi-links a {
+    background-color: #f2f2f2;
+    border-radius: 0 0 0.5em 0.5em;
+    box-shadow: 0.1em 0.2em 0.35em 0 rgba(0, 0, 0, 0.35);
+    padding: 1em;
+    margin-left: 4em;
+    margin-right: 4em;
+    padding-left: 2em;
+    padding-right: 2em;
+    text-decoration: none;
+  }
+  main div.fsi-links a:link,
+  main div.fsi-links a:visited {
+    color: #213175;
+  }
+  main div.fsi-links a:active,
+  main div.fsi-links a:focus,
+  main div.fsi-links a:hover {
+    color: #084590;
+  }
+  main div.fsi-links a.stream::before,
+  main div.fsi-links a.download::before {
+    font-family: "FontAwesome";
+  }
+  main div.fsi-links a.stream::before {
+    content: "\f06e";
+  }
+  main div.fsi-links a.download::before {
+    content: "\f019";
+  }
+  main div.government-uid {
+    background-color: #f2f2f2;
+    border-radius: 0 0 0.5em 0.5em;
+    box-shadow: 0.1em 0.2em 0.35em 0 rgba(0, 0, 0, 0.35);
+    padding: 1em;
+    margin-bottom: 1em;
+  }
+  main div.image div.image-data {
+    background-color: #f2f2f2;
+    border-radius: 0 0 0.5em 0.5em;
+    box-shadow: 0.1em 0.2em 0.35em 0 rgba(0, 0, 0, 0.35);
+    padding: 1em;
+    display: -webkit-flex;
+    display: flex;
+    margin-bottom: 2em;
+  }
+  main div.image div.image-data a.thumbnail {
+    -webkit-flex: 1;
+    flex: 1;
+    text-align: center;
+  }
+  main div.image div.image-data table {
+    -webkit-flex: 1;
+    flex: 1;
+    border: none;
+  }
+  main div.image div.image-data table td,
+  main div.image div.image-data table th,
+  main div.image div.image-data table tr {
+    border: none;
+  }
+  main div.image div.image-data table th {
+    text-align: left;
+    font-weight: bold;
+  }
+  main div.image div.image-data table td {
+    padding-left: 0.5em;
+  }
+  main div.lead {
+    background-color: #f2f2f2;
+    border-radius: 0 0 0.5em 0.5em;
+    box-shadow: 0.1em 0.2em 0.35em 0 rgba(0, 0, 0, 0.35);
+    padding: 1em;
+    font-weight: bold;
+    margin-bottom: 1em;
+  }
+  main div.lead,
+  main div.main {
+    font-family: 'Text', sans-serif;
+  }
+  main div.main {
+    background-color: #f2f2f2;
+    border-radius: 0.5em;
+    box-shadow: 0.1em 0.2em 0.35em 0 rgba(0, 0, 0, 0.35);
+    margin-bottom: 3em;
+    padding: 1em;
+  }
+  main div.nav-quicklinks {
+    background-color: #f2f2f2;
+    border-radius: 0 0 0.5em 0.5em;
+    box-shadow: 0.1em 0.2em 0.35em 0 rgba(0, 0, 0, 0.35);
+    padding: 1em;
+    margin-bottom: 2em;
+  }
+  main div.news-date {
+    background-color: #f2f2f2;
+    border: 1px solid #213175;
+    border-radius: 0.4em;
+    color: #213175;
+    float: right;
+    font-weight: bold;
+    margin: 0.3em;
+    padding: 0.5em;
+  }
+  main div.notes {
+    border: thin ridge #c0c0c0;
+    border-radius: 0.5em;
+    float: right;
+    font-size: 0.85em;
+    margin: 1em;
+    padding: 1em;
+    width: 18em;
+  }
+  main div.person div.address {
+    background-color: #f2f2f2;
+    border-radius: 0 0 0.5em 0.5em;
+    box-shadow: 0.1em 0.2em 0.35em 0 rgba(0, 0, 0, 0.35);
+    padding: 1em;
+    margin-bottom: 2em;
+  }
+  main div.person div.address p {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+  main div.person div.address pre {
+    margin-top: 0;
+  }
+  main div.pressrelease div.contactinfo {
+    background-color: #f2f2f2;
+    border-radius: 0 0 0.5em 0.5em;
+    box-shadow: 0.1em 0.2em 0.35em 0 rgba(0, 0, 0, 0.35);
+    padding: 1em;
+    border-top-left-radius: 0;
+  }
+  main div.pressrelease div.referencecode {
+    background-color: #f2f2f2;
+    border-radius: 0 0 0.5em 0.5em;
+    box-shadow: 0.1em 0.2em 0.35em 0 rgba(0, 0, 0, 0.35);
+    padding: 1em;
+    margin-top: 1em;
+    margin-bottom: 2em;
+  }
+  main div.related-links-file-attachments {
+    margin-top: 0;
+  }
+  main div.related-links-file-attachments ul.related-links {
+    border-bottom-left-radius: 0.5em;
+    border-bottom-right-radius: 0;
+  }
+  main div.related-links-file-attachments ul.file-attachments {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0.5em;
+  }
+  main div.scipublication dl,
+  main div.journal dl {
+    background-color: #f2f2f2;
+    border-radius: 0 0 0.5em 0.5em;
+    box-shadow: 0.1em 0.2em 0.35em 0 rgba(0, 0, 0, 0.35);
+    padding: 1em;
+  }
+  main div.scipublication dl dt,
+  main div.journal dl dt {
+    font-weight: bold;
+    margin-bottom: 0.2em;
+  }
+  main div.scipublication dl dd,
+  main div.journal dl dd {
+    margin-left: 0;
+    margin-bottom: 0.7em;
+  }
+  main div.scipublication dl dd a,
+  main div.journal dl dd a {
+    text-decoration: none;
+  }
+  main div.scipublication dl dd a:link,
+  main div.journal dl dd a:link,
+  main div.scipublication dl dd a:visited,
+  main div.journal dl dd a:visited {
+    color: #213175;
+  }
+  main div.scipublication dl dd a:active,
+  main div.journal dl dd a:active,
+  main div.scipublication dl dd a:focus,
+  main div.journal dl dd a:focus,
+  main div.scipublication dl dd a:hover,
+  main div.journal dl dd a:hover {
+    color: #084590;
+  }
+  main div.scipublication div:last-child,
+  main div.journal div:last-child,
+  main div.scipublication table:last-child,
+  main div.journal table:last-child,
+  main div.scipublication ul:last-child,
+  main div.journal ul:last-child {
+    margin-bottom: 2em;
+  }
+  main div.scipublication div.export-links,
+  main div.journal div.export-links {
+    margin-top: 0;
+  }
+  main div.scipublication div.export-links h2,
+  main div.journal div.export-links h2 {
+    border-top-left-radius: 0.5em;
+    border-top-right-radius: 0.5em;
+    padding-left: 0.3em;
+    padding-right: 0.3em;
+  }
+  main div.scipublication div.export-links ul,
+  main div.journal div.export-links ul {
+    background-color: #f2f2f2;
+    border-radius: 0 0 0.5em 0.5em;
+    box-shadow: 0.1em 0.2em 0.35em 0 rgba(0, 0, 0, 0.35);
+    padding: 1em;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    list-style: none;
+    text-align: center;
+  }
+  main div.scipublication div.export-links ul li,
+  main div.journal div.export-links ul li {
+    line-height: 1.3em;
+  }
+  main div.scipublication div.export-links ul li a,
+  main div.journal div.export-links ul li a {
+    text-decoration: none;
+  }
+  main div.scipublication div.export-links ul li a:link,
+  main div.journal div.export-links ul li a:link,
+  main div.scipublication div.export-links ul li a:visited,
+  main div.journal div.export-links ul li a:visited {
+    color: #213175;
+  }
+  main div.scipublication div.export-links ul li a:active,
+  main div.journal div.export-links ul li a:active,
+  main div.scipublication div.export-links ul li a:focus,
+  main div.journal div.export-links ul li a:focus,
+  main div.scipublication div.export-links ul li a:hover,
+  main div.journal div.export-links ul li a:hover {
+    color: #084590;
+  }
+  main div.scipublication div.journal-abstract,
+  main div.journal div.journal-abstract {
+    background-color: #f2f2f2;
+    border-radius: 0 0 0.5em 0.5em;
+    box-shadow: 0.1em 0.2em 0.35em 0 rgba(0, 0, 0, 0.35);
+    padding: 1em;
+  }
+  main div.scipublication div.textinfo,
+  main div.journal div.textinfo {
+    background-color: #f2f2f2;
+    border-radius: 0 0 0.5em 0.5em;
+    box-shadow: 0.1em 0.2em 0.35em 0 rgba(0, 0, 0, 0.35);
+    padding: 1em;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
+  main div.scipublication ul.articles,
+  main div.journal ul.articles {
+    background-color: #f2f2f2;
+    border-radius: 0 0 0.5em 0.5em;
+    box-shadow: 0.1em 0.2em 0.35em 0 rgba(0, 0, 0, 0.35);
+    padding: 1em;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    list-style: none;
+  }
+  main div.scipublication ul.articles li,
+  main div.journal ul.articles li {
+    margin-bottom: 0.8em;
+  }
+  main div.scipublication ul.articles li a,
+  main div.journal ul.articles li a {
+    text-decoration: none;
+  }
+  main div.scipublication ul.articles li a:link,
+  main div.journal ul.articles li a:link,
+  main div.scipublication ul.articles li a:visited,
+  main div.journal ul.articles li a:visited {
+    color: #213175;
+  }
+  main div.scipublication ul.articles li a:active,
+  main div.journal ul.articles li a:active,
+  main div.scipublication ul.articles li a:hover,
+  main div.journal ul.articles li a:hover,
+  main div.scipublication ul.articles li a:focus,
+  main div.journal ul.articles li a:focus {
+    color: #084590;
+  }
+  main div.scipublication ul.articles li:last-child,
+  main div.journal ul.articles li:last-child {
+    margin-bottom: 0;
+  }
+  main div.scipublication table.library-signatures,
+  main div.journal table.library-signatures {
+    background-color: #f2f2f2;
+    border-radius: 0 0 0.5em 0.5em;
+    box-shadow: 0.1em 0.2em 0.35em 0 rgba(0, 0, 0, 0.35);
+    padding: 1em;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    width: 100%;
+  }
+  main div.scipublication table.library-signatures tr td a,
+  main div.journal table.library-signatures tr td a {
+    text-decoration: none;
+  }
+  main div.scipublication table.library-signatures tr td a:link,
+  main div.journal table.library-signatures tr td a:link,
+  main div.scipublication table.library-signatures tr td a:visited,
+  main div.journal table.library-signatures tr td a:visited {
+    color: #213175;
+  }
+  main div.scipublication table.library-signatures tr td a:active,
+  main div.journal table.library-signatures tr td a:active,
+  main div.scipublication table.library-signatures tr td a:hover,
+  main div.journal table.library-signatures tr td a:hover,
+  main div.scipublication table.library-signatures tr td a:focus,
+  main div.journal table.library-signatures tr td a:focus {
+    color: #084590;
+  }
+  main div.sciorga div.tab {
+    background-color: #f2f2f2;
+    border-radius: 0 0 0.5em 0.5em;
+    box-shadow: 0.1em 0.2em 0.35em 0 rgba(0, 0, 0, 0.35);
+    padding: 1em;
+    border-top-left-radius: 0;
+    margin-bottom: 2em;
+  }
+  main div.sciorga div.tab div.addendum,
+  main div.sciorga div.tab div.shortdesc {
+    font-weight: bold;
+    margin-bottom: 1em;
+  }
+  main div.sciorga div.tab div.members a,
+  main div.sciorga div.tab div.scicontact a,
+  main div.sciorga div.tab div.funding a {
+    text-decoration: none;
+  }
+  main div.sciorga div.tab div.members a:link,
+  main div.sciorga div.tab div.scicontact a:link,
+  main div.sciorga div.tab div.funding a:link,
+  main div.sciorga div.tab div.members a:visited,
+  main div.sciorga div.tab div.scicontact a:visited,
+  main div.sciorga div.tab div.funding a:visited {
+    color: #213175;
+  }
+  main div.sciorga div.tab div.members a:active,
+  main div.sciorga div.tab div.scicontact a:active,
+  main div.sciorga div.tab div.funding a:active,
+  main div.sciorga div.tab div.members a:focus,
+  main div.sciorga div.tab div.scicontact a:focus,
+  main div.sciorga div.tab div.funding a:focus,
+  main div.sciorga div.tab div.members a:hover,
+  main div.sciorga div.tab div.scicontact a:hover,
+  main div.sciorga div.tab div.funding a:hover {
+    color: #084590;
+  }
+  main div.sciorga div.tab div.members dl dt,
+  main div.sciorga div.tab div.scicontact dl dt,
+  main div.sciorga div.tab div.funding dl dt {
+    font-weight: bold;
+  }
+  main div.sciorga div.tab div.members dl dd,
+  main div.sciorga div.tab div.scicontact dl dd,
+  main div.sciorga div.tab div.funding dl dd {
+    margin-left: 0;
+  }
+  main div.sciorga div.tab div.members h2,
+  main div.sciorga div.tab div.scicontact h2,
+  main div.sciorga div.tab div.funding h2 {
+    font-size: 1.5em;
+    margin-bottom: 0.5em;
+  }
+  main div.sciorga div.tab div.members ul,
+  main div.sciorga div.tab div.scicontact ul,
+  main div.sciorga div.tab div.funding ul {
+    list-style: none;
+    margin-top: 0;
+    padding-left: 0;
+  }
+  main div.sciorga div.tab div.members ul li a,
+  main div.sciorga div.tab div.scicontact ul li a,
+  main div.sciorga div.tab div.funding ul li a {
+    text-decoration: none;
+  }
+  main div.sciorga div.tab div.members ul li a:link,
+  main div.sciorga div.tab div.scicontact ul li a:link,
+  main div.sciorga div.tab div.funding ul li a:link,
+  main div.sciorga div.tab div.members ul li a:visited,
+  main div.sciorga div.tab div.scicontact ul li a:visited,
+  main div.sciorga div.tab div.funding ul li a:visited {
+    color: #213175;
+  }
+  main div.sciorga div.tab div.members ul li a:active,
+  main div.sciorga div.tab div.scicontact ul li a:active,
+  main div.sciorga div.tab div.funding ul li a:active,
+  main div.sciorga div.tab div.members ul li a:focus,
+  main div.sciorga div.tab div.scicontact ul li a:focus,
+  main div.sciorga div.tab div.funding ul li a:focus,
+  main div.sciorga div.tab div.members ul li a:hover,
+  main div.sciorga div.tab div.scicontact ul li a:hover,
+  main div.sciorga div.tab div.funding ul li a:hover {
+    color: #084590;
+  }
+  main div.sciorga div.tab span.key {
+    font-weight: bold;
+  }
+  main div.sciorga ul.nav.nav-tabs {
+    /*background-color: @color-nav-background2;
+
+                border-top-left-radius: 0.5em;
+                border-top-right-radius: 0.5em;*/
+    list-style: none;
+    margin-bottom: 0;
+    padding: 0;
+  }
+  main div.sciorga ul.nav.nav-tabs li {
+    background-color: #213175;
+    border-top-left-radius: 0.5em;
+    border-top-right-radius: 0.5em;
+    box-shadow: 0.2em 0 0 0 rgba(0, 0, 0, 0.35);
+    display: inline-block;
+    margin-left: 0;
+    margin-right: 0;
+    /*padding: 0.6em 1em;*/
+  }
+  main div.sciorga ul.nav.nav-tabs li a {
+    display: inline-block;
+    font-weight: bold;
+    padding: 0.6em 1em;
+    text-decoration: none;
+  }
+  main div.sciorga ul.nav.nav-tabs li a:link,
+  main div.sciorga ul.nav.nav-tabs li a:visited {
+    color: #ffffff;
+  }
+  main div.sciorga ul.nav.nav-tabs li a:active,
+  main div.sciorga ul.nav.nav-tabs li a:focus,
+  main div.sciorga ul.nav.nav-tabs li a:hover {
+    color: #ff9840;
+  }
+  main div.sciorga ul.nav.nav-tabs li.active {
+    background-color: #f2f2f2;
+  }
+  main div.sciorga ul.nav.nav-tabs li.active a:link,
+  main div.sciorga ul.nav.nav-tabs li.active a:visited {
+    color: #084590;
+  }
+  main div.sciorga ul.nav.nav-tabs li.active a:active,
+  main div.sciorga ul.nav.nav-tabs li.active a:focus,
+  main div.sciorga ul.nav.nav-tabs li.active a:hover {
+    color: #084590;
+  }
+  main div.series div.abstract {
+    background-color: #f2f2f2;
+    border-radius: 0 0 0.5em 0.5em;
+    box-shadow: 0.1em 0.2em 0.35em 0 rgba(0, 0, 0, 0.35);
+    padding: 1em;
+    margin-bottom: 1em;
+  }
+  main div.series ul.articles {
+    margin-top: 0;
+  }
+  main div.series form {
+    background-color: #f2f2f2;
+    box-shadow: 0.1em 0.2em 0.35em 0 rgba(0, 0, 0, 0.35);
+    padding: 1em;
+    margin-bottom: 0;
+  }
+  main div.series form label {
+    display: block;
+    font-weight: bold;
+    margin-top: 0.5em;
+  }
+  main div.service {
+    margin-bottom: 2em;
+  }
+  main dl.event-details {
+    background-color: #f2f2f2;
+    border-radius: 0 0 0.5em 0.5em;
+    box-shadow: 0.1em 0.2em 0.35em 0 rgba(0, 0, 0, 0.35);
+    padding: 1em;
+  }
+  main dl.event-details dt {
+    font-weight: bold;
+  }
+  main dl.event-details dd {
+    margin-left: 0;
+    margin-bottom: 1em;
+    padding-left: 0;
+  }
+  main h1 {
+    color: #1e3175;
+    font-family: "Caption", sans-serif;
+    font-size: 2em;
+    font-weight: normal;
+    margin-top: 1em;
+  }
+  main h2 {
+    font-size: 1.8em;
+  }
+  main h2.subheading {
+    background-color: #213175;
+    border-top-left-radius: 1em;
+    border-top-right-radius: 1em;
+    box-shadow: 0.1em 0.2em 0.35em 0 rgba(0, 0, 0, 0.35);
+    color: #ffffff;
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 0;
+    padding-top: 0.4em;
+    padding-bottom: 0.4em;
+    text-align: center;
+  }
+  main h2.subheading + ul {
+    margin-top: 0;
+  }
+  main h3 {
+    font-size: 1.6em;
+  }
+  main h4 {
+    font-size: 1.4em;
+  }
+  main h5 {
+    font-size: 1.2em;
+  }
+  main h6 {
+    font-size: 1.0em;
+    font-weight: bold;
+  }
+  main figure {
+    margin: 0;
+    padding: 0;
+  }
+  main figure figure {
+    float: left;
+    margin: 1em 1.5em 1.5em 1em;
+    position: relative;
+    width: 150px;
+  }
+  main figure figure + figure {
+    display: none;
+  }
+  main figure.multiple a::after,
+  main figure.single a::after {
+    background-color: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(0, 0, 0, 0.75);
+    color: #fff;
+    font-family: "FontAwesome";
+    padding: 0.1em 0.2em;
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+  main figure.multiple a:after {
+    content: "\f03e";
+  }
+  main figure.single a::after {
+    content: "\f002";
+  }
+  main ul.item-list,
+  main ul.news-list,
+  main ul.related-links,
+  main ul.file-attachments {
+    /*background-color: @color-main-background;*/
+    background-color: #f2f2f2;
+    border-radius: 0 0 0.5em 0.5em;
+    box-shadow: 0.1em 0.2em 0.35em 0 rgba(0, 0, 0, 0.35);
+    padding: 1em;
+    border-bottom-left-radius: 0.5em;
+    border-bottom-right-radius: 0.5em;
+    /*box-shadow: 0.1em 0.2em 0.35em 0 rgba(0, 0, 0, 0.35);*/
+    list-style: none;
+    margin-top: 0;
+    margin-bottom: 3em;
+    /*padding: 1em;*/
+  }
+  main ul.item-list li,
+  main ul.news-list li,
+  main ul.related-links li,
+  main ul.file-attachments li {
+    /*position: relative;*/
+    padding-top: 0.5em;
+  }
+  main ul.item-list li a,
+  main ul.news-list li a,
+  main ul.related-links li a,
+  main ul.file-attachments li a {
+    font-size: 1.2em;
+    font-weight: bold;
+    text-decoration: none;
+  }
+  main ul.item-list li a:link,
+  main ul.news-list li a:link,
+  main ul.related-links li a:link,
+  main ul.file-attachments li a:link,
+  main ul.item-list li a:visited,
+  main ul.news-list li a:visited,
+  main ul.related-links li a:visited,
+  main ul.file-attachments li a:visited {
+    color: #213175;
+  }
+  main ul.item-list li a:active,
+  main ul.news-list li a:active,
+  main ul.related-links li a:active,
+  main ul.file-attachments li a:active,
+  main ul.item-list li a:focus,
+  main ul.news-list li a:focus,
+  main ul.related-links li a:focus,
+  main ul.file-attachments li a:focus,
+  main ul.item-list li a:hover,
+  main ul.news-list li a:hover,
+  main ul.related-links li a:hover,
+  main ul.file-attachments li a:hover {
+    color: #084590;
+  }
+  main ul.item-list li .event-date,
+  main ul.news-list li .event-date,
+  main ul.related-links li .event-date,
+  main ul.file-attachments li .event-date {
+    border: thin solid #1e3175;
+    float: left;
+    font-weight: bold;
+    margin-right: 0.75em;
+    vertical-align: middle;
+  }
+  main ul.item-list li .event-date div,
+  main ul.news-list li .event-date div,
+  main ul.related-links li .event-date div,
+  main ul.file-attachments li .event-date div {
+    text-align: center;
+  }
+  main ul.item-list li .event-date .day,
+  main ul.news-list li .event-date .day,
+  main ul.related-links li .event-date .day,
+  main ul.file-attachments li .event-date .day {
+    background-color: #1e3175;
+    color: #fff;
+    padding: 0.3em 0.75em 0.1em 0.75em;
+  }
+  main ul.item-list li .event-date .month,
+  main ul.news-list li .event-date .month,
+  main ul.related-links li .event-date .month,
+  main ul.file-attachments li .event-date .month {
+    background-color: #fff;
+    color: #1e3175;
+    padding: 0.1em 0.75em 0.3em 0.75em;
+  }
+  main ul.item-list li .lead,
+  main ul.news-list li .lead,
+  main ul.related-links li .lead,
+  main ul.file-attachments li .lead {
+    background-color: transparent;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
+    font-weight: normal;
+  }
+  main ul.item-list li .news-date,
+  main ul.news-list li .news-date,
+  main ul.related-links li .news-date,
+  main ul.file-attachments li .news-date {
+    border: thin solid #1e3175;
+    border-radius: 0.75em;
+    color: #1e3175;
+    float: right;
+    font-weight: bold;
+    height: 1.5em;
+    line-height: 1em;
+    padding: 0.3em 0.75em;
+    /*position: absolute;
+                    right: 0;
+                    top: 0.5em;*/
+    vertical-align: middle;
+  }
+  main ul.item-list li div.person-list dl,
+  main ul.news-list li div.person-list dl,
+  main ul.related-links li div.person-list dl,
+  main ul.file-attachments li div.person-list dl {
+    margin-top: 0.3em;
+  }
+  main ul.item-list li div.person-list dl dt,
+  main ul.news-list li div.person-list dl dt,
+  main ul.related-links li div.person-list dl dt,
+  main ul.file-attachments li div.person-list dl dt {
+    display: inline-block;
+    font-weight: bold;
+  }
+  main ul.item-list li div.person-list dl dt::after,
+  main ul.news-list li div.person-list dl dt::after,
+  main ul.related-links li div.person-list dl dt::after,
+  main ul.file-attachments li div.person-list dl dt::after {
+    content: ": ";
+  }
+  main ul.item-list li div.person-list dl dd,
+  main ul.news-list li div.person-list dl dd,
+  main ul.related-links li div.person-list dl dd,
+  main ul.file-attachments li div.person-list dl dd {
+    display: inline-block;
+    margin-left: 0;
+    margin-right: 1em;
+  }
+  main ul.item-list li div.person-list dl dd a,
+  main ul.news-list li div.person-list dl dd a,
+  main ul.related-links li div.person-list dl dd a,
+  main ul.file-attachments li div.person-list dl dd a {
+    font-size: 1em;
+    font-weight: normal;
+  }
+  main ul.item-list li div.sciproject-list div.lifespan,
+  main ul.news-list li div.sciproject-list div.lifespan,
+  main ul.related-links li div.sciproject-list div.lifespan,
+  main ul.file-attachments li div.sciproject-list div.lifespan {
+    margin-top: 0.3em;
+  }
+  main ul.item-list li div.sciproject-list div.lifespan span.lifespan-text,
+  main ul.news-list li div.sciproject-list div.lifespan span.lifespan-text,
+  main ul.related-links li div.sciproject-list div.lifespan span.lifespan-text,
+  main ul.file-attachments li div.sciproject-list div.lifespan span.lifespan-text {
+    font-weight: bold;
+  }
+  main ul.item-list li div.sciproject-list div.lifespan span.lifespan-text::after,
+  main ul.news-list li div.sciproject-list div.lifespan span.lifespan-text::after,
+  main ul.related-links li div.sciproject-list div.lifespan span.lifespan-text::after,
+  main ul.file-attachments li div.sciproject-list div.lifespan span.lifespan-text::after {
+    content: ": ";
+  }
+  main ul.item-list li div.sciproject-list div.members,
+  main ul.news-list li div.sciproject-list div.members,
+  main ul.related-links li div.sciproject-list div.members,
+  main ul.file-attachments li div.sciproject-list div.members {
+    margin-top: 0.4em;
+  }
+  main ul.item-list li div.sciproject-list div.lead,
+  main ul.news-list li div.sciproject-list div.lead,
+  main ul.related-links li div.sciproject-list div.lead,
+  main ul.file-attachments li div.sciproject-list div.lead {
+    margin-top: 0.3em;
+  }
+  main ul.item-list li span.fa,
+  main ul.news-list li span.fa,
+  main ul.related-links li span.fa,
+  main ul.file-attachments li span.fa {
+    margin-right: 0.4em;
+  }
+  main ul.item-list li:nth-last-child(n+2),
+  main ul.news-list li:nth-last-child(n+2),
+  main ul.related-links li:nth-last-child(n+2),
+  main ul.file-attachments li:nth-last-child(n+2) {
+    border-bottom: 1px solid #ddd;
+  }
+  main ul.mpa-paginator {
+    list-style: none;
+    text-align: center;
+    margin-bottom: 3em;
+  }
+  main ul.mpa-paginator li {
+    background-color: #f2f2f2;
+    border-radius: 0 0 0.5em 0.5em;
+    box-shadow: 0.1em 0.2em 0.35em 0 rgba(0, 0, 0, 0.35);
+    padding: 1em;
+    display: inline;
+    margin-left: 1em;
+    margin-right: 1em;
+    padding-left: 2em;
+    padding-right: 2em;
+  }
+  main ul.mpa-paginator li a {
+    text-decoration: none;
+  }
+  main ul.mpa-paginator li a:link,
+  main ul.mpa-paginator li a:visited {
+    color: #213175;
+  }
+  main ul.mpa-paginator li a:active,
+  main ul.mpa-paginator li a:focus,
+  main ul.mpa-paginator li a:hover {
+    color: #084590;
+  }
+  main ul.mpa-paginator li a::after,
+  main ul.mpa-paginator li a::before {
+    font-family: "FontAwesome";
+  }
+  main ul.mpa-paginator li a.prev::before {
+    content: "\f0a8";
+    margin-right: 0.2em;
+  }
+  main ul.mpa-paginator li a.next::after {
+    content: "\f0a9";
+    margin-left: 0.2em;
+  }
+  main ul.mpa-toc {
+    background-color: #f2f2f2;
+    border-radius: 0 0 0.5em 0.5em;
+    box-shadow: 0.1em 0.2em 0.35em 0 rgba(0, 0, 0, 0.35);
+    padding: 1em;
+    /*background-color: @color-nav-background2;*/
+    border-top-left-radius: 0.5em;
+    border-top-right-radius: 0.5em;
+    /*box-shadow: 0.1em 0.2em 0.35em 0 rgba(0, 0, 0, 0.35);*/
+    -moz-column-count: 2;
+    -webkit-column-count: 2;
+    column-count: 2;
+    list-style: none;
+    /*padding: 1em;*/
+  }
+  main ul.mpa-toc li {
+    /*display: inline;*/
+  }
+  main ul.mpa-toc li a {
+    font-weight: bold;
+    text-decoration: none;
+  }
+  main ul.mpa-toc li a:link,
+  main ul.mpa-toc li a:visited {
+    /*color: @color-nav;*/
+    color: #213175;
+  }
+  main ul.mpa-toc li a:active,
+  main ul.mpa-toc li a:focus,
+  main ul.mpa-toc li a:hover {
+    /*color: @color-nav-active;*/
+    color: #084590;
+  }
+  main ul.mpa-toc li.active a {
+    /*color: @color-nav-active;*/
+    color: #084590;
+  }
+  main ul.sitemap {
+    background-color: #f2f2f2;
+    border-radius: 0 0 0.5em 0.5em;
+    box-shadow: 0.1em 0.2em 0.35em 0 rgba(0, 0, 0, 0.35);
+    padding: 1em;
+    list-style: none;
+  }
+  main ul.sitemap ul {
+    list-style: none;
+  }
+  main ul.sitemap li a:link {
+    color: #213175;
+  }
+  main ul.sitemap li a:visited {
+    color: #2865a0;
+  }
+  main ul.sitemap li a:active,
+  main ul.sitemap li a:focus,
+  main ul.sitemap li a:hover {
+    color: #084590;
+  }
+  main.welcome aside {
+    /*ul {
+                margin-top: 0;
+            }*/
+  }
+  nav.subnav {
+    display: none;
+    font-family: 'Text', sans-serif;
+    font-size: 1.15em;
+    font-weight: normal;
+    margin-left: 2em;
+    padding-top: 1em;
+  }
+  nav.subnav ul {
+    background-color: #f2f2f2;
+    border-radius: 0.5em;
+    list-style: none;
+    padding-left: 0;
+  }
+  nav.subnav ul li {
+    width: 100%;
+  }
+  nav.subnav ul li a {
+    border-radius: 0.5em;
+    display: block;
+    line-height: 2em;
+    padding: 0.2em 1em;
+    position: relative;
+    text-decoration: none;
+    width: 100%;
+  }
+  nav.subnav ul li a:link,
+  nav.subnav ul li a:visited {
+    color: #4a4a4a;
+  }
+  nav.subnav ul li a:active,
+  nav.subnav ul li a:focus,
+  nav.subnav ul li a:hover {
+    background-color: #213175;
+    color: #ffffff;
+  }
+  nav.subnav ul li.active > a {
+    background-color: #213175;
+    color: #ffffff;
+  }
+  nav.subnav ul li.active ul {
+    margin-left: 2em;
+  }
+  footer {
+    background-image: -moz-linear-gradient(90deg, #414042 0%, #8a8989 100%);
+    background-image: -ms-linear-gradient(90deg, #414042 0%, #8a8989 100%);
+    background-image: -webkit-linear-gradient(90deg, #414042 0%, #8a8989 100%);
+    background-image: linear-gradient(0deg, #414042 0%, #8a8989 100%);
+    border-top: 3px solid #959595;
+    font-size: 1em;
+    height: 12em;
+    width: 100%;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+  }
+  footer #footer-wrapper {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 80em;
+    position: relative;
+  }
+  footer #footer-wrapper #breadcrumbs-bottom {
+    font-size: 1.2em;
+    padding-top: 1em;
+  }
+  footer #footer-wrapper #breadcrumbs-bottom .breadcrumb-prefix {
+    color: #ffffff;
+    font-family: 'TextCond', sans-serif;
+    font-size: 0.9em;
+    font-variant: small-caps;
+    margin-right: 0.6em;
+    padding-top: 0.6em;
+  }
+  footer #footer-wrapper #breadcrumbs-bottom ol {
+    display: inline;
+    list-style: none;
+    padding-left: 0;
+  }
+  footer #footer-wrapper #breadcrumbs-bottom ol li {
+    display: inline;
+    font-family: 'TextCond', sans-serif;
+    font-size: 0.9em;
+    padding-left: 0;
+  }
+  footer #footer-wrapper #breadcrumbs-bottom ol li a {
+    text-decoration: none;
+  }
+  footer #footer-wrapper #breadcrumbs-bottom ol li a:link,
+  footer #footer-wrapper #breadcrumbs-bottom ol li a:visited {
+    color: #ffffff;
+  }
+  footer #footer-wrapper #breadcrumbs-bottom ol li a:active,
+  footer #footer-wrapper #breadcrumbs-bottom ol li a:focus,
+  footer #footer-wrapper #breadcrumbs-bottom ol li a:hover {
+    color: #ff9840;
+  }
+  footer #footer-wrapper #breadcrumbs-bottom ol li + li::before {
+    color: #ffffff;
+    content: "/ ";
+    padding-left: 0.4em;
+    padding-right: 0.4em;
+  }
+  footer #footer-wrapper div#footer-logo-wrapper {
+    margin-top: 2em;
+  }
+  footer #footer-wrapper div#footer-logo-wrapper a {
+    text-decoration: none;
+  }
+  footer #footer-wrapper div#footer-logo-wrapper a:link img,
+  footer #footer-wrapper div#footer-logo-wrapper a:visited img {
+    filter: url(../images/filters.svg#grayscale);
+  }
+  footer #footer-wrapper div#footer-logo-wrapper a:active img,
+  footer #footer-wrapper div#footer-logo-wrapper a:focus img,
+  footer #footer-wrapper div#footer-logo-wrapper a:hover img {
+    filter: none;
+  }
+  footer #footer-wrapper div#footer-logo-wrapper a img {
+    max-width: 130px;
+  }
+  footer #footer-wrapper ul#footer-links {
+    list-style: none;
+    position: absolute;
+    top: 2em;
+    right: 0;
+  }
+  footer #footer-wrapper ul#footer-links li {
+    display: inline;
+  }
+  footer #footer-wrapper ul#footer-links li a {
+    background-color: transparent;
+    font-family: 'TextCond', sans-serif;
+    font-variant: small-caps;
+    text-decoration: none;
+  }
+  footer #footer-wrapper ul#footer-links li a:link,
+  footer #footer-wrapper ul#footer-links li a:visited {
+    color: #ffffff;
+  }
+  footer #footer-wrapper ul#footer-links li a:active,
+  footer #footer-wrapper ul#footer-links li a:focus,
+  footer #footer-wrapper ul#footer-links li a:hover {
+    color: #ff9840;
+  }
+  footer #footer-wrapper ul#footer-links li:first-child {
+    margin-right: 0.6em;
+  }
+}
+@media screen and (max-width: 350px) {
+  header .header-logo img {
+    max-width: 90%;
+  }
+}
+@media screen and (max-width: 30em) {
+  header #shortcuts {
+    display: none;
+  }
+  nav#main-navigation ul {
+    display: none;
+  }
+  div#breadcrumbs-top {
+    display: none;
+  }
+}
+@media screen and (min-width: 60em) {
+  nav#main-navigation div#nav-wrapper {
+    text-align: center;
+  }
+  nav#main-navigation div#nav-wrapper ul {
+    display: inline;
+  }
+  nav#main-navigation div#nav-wrapper ul li.active {
+    border: none;
+  }
+  nav#main-navigation div#nav-wrapper ul ul {
+    display: none;
+  }
+  nav.subnav {
+    display: block;
+  }
+}
+@media screen and (min-width: 64em) {
+  header #service-panel {
+    height: 2.8em;
+  }
+  header #service-panel #service-panel-wrapper {
+    display: flex;
+  }
+  header #service-panel #service-panel-wrapper div {
+    padding-top: 0.8em;
+  }
+  header #service-panel #service-panel-wrapper div#language-switcher {
+    flex: 1;
+  }
+  header #service-panel #service-panel-wrapper div#language-switcher button {
+    display: none;
+  }
+  header #service-panel #service-panel-wrapper div#language-switcher ul {
+    background-color: transparent;
+    display: block;
+    margin-left: 0;
+    padding-left: 0;
+  }
+  header #service-panel #service-panel-wrapper div#language-switcher ul li {
+    margin-left: 1em;
+  }
+  header #service-panel #service-panel-wrapper div#shortcuts {
+    flex: 1;
+    text-align: right;
+  }
+  header #service-panel #service-panel-wrapper div#shortcuts button {
+    display: none;
+  }
+  header #service-panel #service-panel-wrapper div#shortcuts ul {
+    display: block;
+    margin-right: 0;
+    padding-right: 0;
+  }
+  header #service-panel #service-panel-wrapper div#shortcuts ul li {
+    margin-right: 1em;
+  }
+  header #service-panel #service-panel-wrapper div ul li {
+    display: inline-block;
+  }
+  nav#main-navigation button {
+    display: none;
+  }
+  nav#main-navigation ul {
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 0;
+    padding-right: 0;
+    list-style: none;
+  }
+  nav#main-navigation ul li {
+    display: inline;
+  }
+  div#breadcrumbs-top {
+    font-size: 1em;
+    padding-left: 0;
+  }
+  div#main-wrapper {
+    display: -webkit-flex;
+    display: flex;
+    max-width: 80em;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  div#main-wrapper main {
+    -webkit-flex: 3;
+    flex: 3;
+  }
+  div#main-wrapper main div.related-links-file-attachments {
+    display: -webkit-flex;
+    display: flex;
+  }
+  div#main-wrapper main div.related-links-file-attachments ul {
+    -webkit-flex: 1;
+    flex: 1;
+  }
+  div#main-wrapper nav.subnav {
+    -webkit-flex: 1;
+    flex: 1;
+  }
+  main dl.event-details {
+    -moz-column-count: 2;
+    -webkit-column-count: 2;
+    column-count: 2;
+  }
+  main div.scipublication div.data {
+    display: -webkit-flex;
+    display: flex;
+  }
+  main div.scipublication div.data dl {
+    -webkit-flex: 3;
+    flex: 3;
+    -moz-column-count: 2;
+    -webkit-column-count: 2;
+    column-count: 2;
+  }
+  main div.scipublication div.data div.export-links {
+    -webkit-flex: 1;
+    flex: 1;
+    order: 2;
+    margin-left: 2em;
+  }
+  main.welcome {
+    display: -webkit-flex;
+    display: flex;
+  }
+  main.welcome div#left {
+    -webkit-flex: 3;
+    flex: 3;
+  }
+  main.welcome aside {
+    margin-top: 1em;
+    margin-left: 2em;
+    -webkit-flex: 1;
+    flex: 1;
+  }
+}
+@media screen and (max-width: 80em) {
+  div#breadcrumbs-top {
+    margin-left: 1em;
+    margin-right: 1em;
+  }
+  div#main-wrapper {
+    margin-left: 1em;
+    margin-right: 1em;
+  }
+}
+@media print {
+  div#foundry-debug-panel {
+    display: none;
+  }
+  div#cookie-notice {
+    display: none;
+  }
+  div#service-panel {
+    display: none;
+  }
+  div.header-logo {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+  }
+  div.header-logo p {
+    color: #1e3175;
+    font-family: "Title", serif;
+    font-size: 2.5em;
+    font-variant: small-caps;
+    margin: 0 1em 0 0.6em;
+    text-align: center;
+  }
+  div#breadcrumbs-top {
+    background-color: #f2f2f2;
+    background-image: url("../images/foil.png");
+    font-size: 1.2em;
+    padding-top: 1em;
+  }
+  div#breadcrumbs-top div#breadcrumbs-top-wrapper {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 80em;
+    padding-bottom: 0.6em;
+  }
+  div#breadcrumbs-top div#breadcrumbs-top-wrapper .breadcrumb-prefix {
+    font-family: 'TextCond', sans-serif;
+    font-size: 0.9em;
+    font-variant: small-caps;
+    margin-right: 0.6em;
+    padding-top: 0.6em;
+  }
+  div#breadcrumbs-top div#breadcrumbs-top-wrapper ol {
+    display: inline;
+    list-style: none;
+    padding-left: 0;
+  }
+  div#breadcrumbs-top div#breadcrumbs-top-wrapper ol li {
+    display: inline;
+    font-family: 'TextCond', sans-serif;
+    font-size: 0.9em;
+    padding-left: 0;
+  }
+  div#breadcrumbs-top div#breadcrumbs-top-wrapper ol li a:link,
+  div#breadcrumbs-top div#breadcrumbs-top-wrapper ol li a:visited {
+    color: #337ab7;
+  }
+  div#breadcrumbs-top div#breadcrumbs-top-wrapper ol li a:active,
+  div#breadcrumbs-top div#breadcrumbs-top-wrapper ol li a:focus,
+  div#breadcrumbs-top div#breadcrumbs-top-wrapper ol li a:hover {
+    color: #23527c;
+  }
+  div#breadcrumbs-top div#breadcrumbs-top-wrapper ol li + li::before {
+    color: #555555;
+    content: "/ ";
+    padding-left: 0.4em;
+    padding-right: 0.4em;
+  }
+  nav {
+    display: none;
+  }
+  footer {
+    display: none;
+  }
+}

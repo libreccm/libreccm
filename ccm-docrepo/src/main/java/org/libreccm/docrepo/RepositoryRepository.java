@@ -66,8 +66,8 @@ public class RepositoryRepository extends
      * privilege to read the requested {@link Repository}(s) and removes the
      * ones he is not allowed to access.
      *
-     * @param repositories The requested {@link Resource}s, found in the database
-     * @return A list of {@link Resource}s the subject is allowed to access
+     * @param repositories The requested {@link AbstractResource}s, found in the database
+     * @return A list of {@link AbstractResource}s the subject is allowed to access
      */
     private List<Repository> permissionFilter(List<Repository> repositories) {
         final CdiUtil cdiUtil = new CdiUtil();

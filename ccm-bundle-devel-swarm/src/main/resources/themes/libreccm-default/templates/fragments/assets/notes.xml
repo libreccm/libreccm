@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<fragment-layout>
+    <divIfNotEmpty class="notes">
+        <notes>
+            <note>
+                <div>
+                    <note-content/>
+                </div>
+            </note>
+        </notes>
+    </divIfNotEmpty>
+</fragment-layout>

@@ -73,10 +73,10 @@ public class Repository extends CcmApplication {
     private User owner;
 
     /**
-     * All {@link Resource}s contained in this {@code Repository}.
+     * All {@link AbstractResource}s contained in this {@code Repository}.
      */
     @OneToMany(mappedBy = "repository")
-    private List<Resource> resources;
+    private List<AbstractResource> abstractResources;
 
 
     /**
@@ -112,12 +112,12 @@ public class Repository extends CcmApplication {
         this.owner = owner;
     }
 
-    public List<Resource> getResources() {
-        return resources;
+    public List<AbstractResource> getAbstractResources() {
+        return abstractResources;
     }
 
-    public void setResources(List<Resource> resources) {
-        this.resources = resources;
+    public void setAbstractResources(List<AbstractResource> abstractResources) {
+        this.abstractResources = abstractResources;
     }
 
     //< End GETTER & SETTER

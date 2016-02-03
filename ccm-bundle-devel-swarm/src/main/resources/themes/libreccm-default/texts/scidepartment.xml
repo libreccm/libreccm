@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<foundry:static-texts xmlns:foundry="http://foundry.libreccm.org">
+    <text id="contact">
+        <translation lang="de">Kontakt</translation>
+        <translation lang="en">Contact</translation>
+    </text>
+    <text id="desc">
+        <translation lang="de">Beschreibung</translation>
+        <translation lang="en">Description</translation>
+    </text>
+    <text id="head">
+        <translation lang="de">Abteilungsleitung</translation>
+        <translation lang="en">Head of department</translation>
+    </text>
+    <text id="members">
+        <translation lang="de">Mitglieder</translation>
+        <translation lang="en">Members</translation>
+    </text>
+    <text id="projects">
+        <translation lang="de">Projekte</translation>
+        <translation lang="en">Projects</translation>
+    </text>
+    <text id="secretariat">
+        <translation lang="de">Sekretariat</translation>
+        <translation lang="en">Office</translation>
+    </text>
+    <text id="summary">
+        <translation lang="de">Überblick</translation>
+        <translation lang="en">Summary</translation>
+    </text>
+    <text id="vicehead">
+        <translation lang="de">Stellvertretende Abteilungsleitung</translation>
+        <translation lang="en">Vice head of department</translation>
+    </text>
+</foundry:static-texts>

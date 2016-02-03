@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE stylesheet [<!ENTITY nbsp '&#160;'>
+                      <!ENTITY shy '&#173;'>
+                      <!ENTITY ndash '&#8211;'>]>
+<content-item-layout>
+    
+    <person>
+        <div class="person-list">
+            <person-homepage-link>
+                <a>
+                    <!--<person-titlepre post="&#x20;"/>
+                    <person-givenname post="&#x20;"/>
+                    <person-surname/>
+                    <person-titlepost pre=",&#x20;"/>-->
+                    <content-item-title/>
+                </a>
+            </person-homepage-link>
+            <person-contact-entries>
+                <dl>
+                    <contact-entry key="office">
+                        <dt>
+                            <contact-entry-label/>
+                        </dt>
+                        <dd>
+                            <contact-entry-value/>
+                        </dd>
+                    </contact-entry>
+                    <contact-entry key="phone_office">
+                        <dt>
+                            <contact-entry-label/>
+                        </dt>
+                        <dd>
+                            <contact-entry-value/>
+                        </dd>
+                    </contact-entry>
+                    <contact-entry key="email">
+                        <dt>
+                            <contact-entry-label/>
+                        </dt>
+                        <dd>
+                            <contact-entry-value/>
+                        </dd>
+                    </contact-entry>
+                    <contact-entry key="fax">
+                        <dt>
+                            <contact-entry-label/>
+                        </dt>
+                        <dd>
+                            <contact-entry-value/>
+                        </dd>
+                    </contact-entry>
+                </dl>
+            </person-contact-entries>
+        </div>
+    </person>
+</content-item-layout>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<page-layout extends="layout.xml">
+
+    <!--
+        The layout defined by this template is used for the navigation 
+        application. This template extends the default-layout.xml layout.
+    -->
+    
+    <!-- This is the part which is inserted in the default-layout.xml -->
+    <block name="content">
+        <main role="main" class="welcome">
+            
+            <div id="left">
+                <h1>
+                    <show-page-title/>
+                </h1>
+            
+                <content-item mode="detail"/>
+            
+                <object-list id="newsList">
+                    <h2 class="subheading">
+                        <show-text>layout/page/main/newsList</show-text>
+                    </h2>
+                    <ul class="news-list">
+                        <object-list-item>
+                            <li>
+                                <content-item mode="list"/>
+                            </li>
+                        </object-list-item>
+                    </ul>
+                    <paginator>
+                        <ul class="pager">
+                            <prev-page-link>
+                                <li>
+                                    <a>
+                                        <show-text>object-list/prev</show-text>
+                                    </a>
+                                </li>
+                            </prev-page-link>
+                            <li>
+                                <show-text>object-list/page</show-text>
+                                <space/>
+                                <current-page/>
+                                <space/>
+                                <show-text>object-list/of</show-text>
+                                <space/>
+                                <page-count/>
+                            </li>
+                            <next-page-link>
+                                <li>
+                                    <a>
+                                        <show-text>object-list/next</show-text>
+                                    </a>
+                                </li>
+                            </next-page-link>
+                        </ul>
+                    </paginator>
+                </object-list>
+                
+                <include file="fragments/navigation-quick-links.xml" />
+            </div>
+        
+            <aside>
+                <object-list id="eventList">
+                    <h2 class="subheading">
+                        <show-text>layout/page/event-list</show-text>
+                    </h2>
+                    <ul class="events item-list">
+                        <object-list-item>
+                            <li>
+                                <content-item mode="list"/>
+                            </li>
+                        </object-list-item>
+                    </ul>
+                </object-list>
+                    
+                <object-list id="itemList">
+                    <h2 class="subheading">
+                        <show-text>layout/page/object-list</show-text>
+                    </h2>
+                    <ul class="item-list">
+                        <object-list-item>
+                            <li>
+                                <content-item mode="list"/>
+                            </li>
+                        </object-list-item>
+                    </ul>
+                </object-list>
+            </aside>
+        
+            
+        
+        </main>
+        
+        
+        
+        
+    </block>
+    
+    
+</page-layout>

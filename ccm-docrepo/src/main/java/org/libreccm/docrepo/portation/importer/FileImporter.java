@@ -22,10 +22,11 @@ import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.docrepo.BlobObject;
 import org.libreccm.docrepo.BlobObjectRepository;
 import org.libreccm.docrepo.File;
+import org.libreccm.docrepo.FileRepository;
 import org.libreccm.docrepo.Folder;
+import org.libreccm.docrepo.FolderRepository;
 import org.libreccm.docrepo.Repository;
 import org.libreccm.docrepo.RepositoryRepository;
-import org.libreccm.docrepo.ResourceRepository;
 import org.libreccm.portation.importer.AbstractImporter;
 import org.libreccm.security.User;
 import org.libreccm.security.UserRepository;
@@ -33,6 +34,7 @@ import org.libreccm.security.UserRepository;
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
 import javax.enterprise.context.RequestScoped;
+import java.util.Arrays;
 import java.util.Date;
 
 /**
@@ -47,7 +49,7 @@ public class FileImporter extends AbstractImporter<File> {
 
     @Override
     protected boolean checkAttributeNames(String[] attributeNames) {
-        return attributeNames.equals(File.getAttributeNames());
+        return Arrays.equals(attributeNames, File.getAttributeNames());
     }
 
     @Override
@@ -77,13 +79,9 @@ public class FileImporter extends AbstractImporter<File> {
         }
 
         Date date = new Date(Long.valueOf(importStrings[6]));
-        if (date != null) {
-            file.setCreationDate(date);
-        }
+        file.setCreationDate(date);
         date = new Date(Long.valueOf(importStrings[7]));
-        if (date != null) {
-            file.setLastModifiedDate(date);
-        }
+        file.setLastModifiedDate(date);
 
         file.setCreationIp(importStrings[8]);
         file.setLastModifiedIp(importStrings[9]);
@@ -98,10 +96,10 @@ public class FileImporter extends AbstractImporter<File> {
             file.setLastModifiedUser(user);
         }
 
-        ResourceRepository resourceRepository = cdiUtil.findBean
-                (ResourceRepository.class);
-        Folder folder = (Folder) resourceRepository.findById(Long.valueOf
-                (importStrings[12]));
+        FolderRepository folderRepository = cdiUtil.findBean(
+                FolderRepository.class);
+        Folder folder = folderRepository.findById(Long.valueOf(
+                importStrings[12]));
         if (folder != null) {
             file.setParent(folder);
         }
@@ -114,7 +112,8 @@ public class FileImporter extends AbstractImporter<File> {
             file.setRepository(repository);
         }
 
-        resourceRepository.save(file);
+        FileRepository fileRepository = cdiUtil.findBean(FileRepository.class);
+        fileRepository.save(file);
         return file;
     }
 }

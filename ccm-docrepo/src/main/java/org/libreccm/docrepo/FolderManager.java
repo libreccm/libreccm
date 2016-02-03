@@ -28,7 +28,7 @@ import javax.inject.Inject;
  * @version 27.01.2016
  */
 @RequestScoped
-public class FolderManager extends ResourceManager<Folder> {
+public class FolderManager extends AbstractResourceManager<Folder> {
 
     @Inject
     private FolderRepository folderRepository;

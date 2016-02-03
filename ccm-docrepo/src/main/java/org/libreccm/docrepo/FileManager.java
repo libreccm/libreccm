@@ -28,7 +28,7 @@ import javax.inject.Inject;
  * @version 27.01.2016
  */
 @RequestScoped
-public class FileManager extends ResourceManager<File> {
+public class FileManager extends AbstractResourceManager<File> {
 
     @Inject
     private FileRepository fileRepository;

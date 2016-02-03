@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doc-function-layout>
+    <section class="function">
+        <h1>
+            Function <code><doc-function-name/></code>
+        </h1>
+        
+        <div>
+            <doc-function-desc/>
+        </div>
+        
+        <doc-function-params>
+            <h2>Parameters</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Mandatory</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <doc-function-param>
+                        <tr>
+                            <td>
+                                <doc-function-param-name/>
+                            </td>
+                            <td>
+                                <doc-function-param-mandatory/>
+                            </td>
+                            <td>
+                                <code><doc-function-param-type/></code>
+                            </td>
+                            <td>
+                                <doc-function-param-desc/>
+                            </td>
+                        </tr>
+                    </doc-function-param>
+                </tbody>
+            </table>
+        </doc-function-params>
+        <div>
+            <h2>Result</h2>
+            <h3>Result type</h3>
+            <p>    
+                <code><doc-function-result-type/></code>
+            </p>
+            <h3>Description</h3>
+            <div>
+                <doc-function-result-desc/>
+            </div>
+        </div>
+        
+        <doc-see-also-link-list>
+            <div>
+                <h2>See also</h2>
+                <ul>
+                    <doc-see-also-link>
+                        <li>
+                            <a>
+                                <doc-see-also-link-title/>
+                            </a>
+                        </li>
+                    </doc-see-also-link>
+                </ul>
+            </div>
+        </doc-see-also-link-list>
+        
+    </section>
+</doc-function-layout>

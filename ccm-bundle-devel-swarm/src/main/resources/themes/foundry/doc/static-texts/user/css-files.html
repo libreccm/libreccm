@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Foundry Documentation - CSS files</title>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    </head>
+    <body>
+        <h1>CSS files</h1>
+        <main>
+            <p>
+                The system for loading CSS files is similar to the system for finding layout 
+                templates. Which CSS files are loaded for a page is determined by the 
+                <code>conf/css-files.xml</code>. The root element of this file is an 
+                <code>css-files</code> element. This element has multiple <code>application</code>
+                child elements. Each <code>application</code> has an mandatory attribute 
+                <code>name</code> which contains the name of the application for which the CSS files 
+                named in the element are loaded. To further distinguish between pages provided by the 
+                same application the optional attribute <code>class</code> can be used.
+                There should be also an <code>default</code> 
+                element which determines the CSS files to load when no matching 
+                <code>application</code> element is found.
+            </p>
+            <p>
+                Some pages have no application name in the data tree XML. In this cases to name of 
+                the application is set to <code>none</code>.
+            </p>
+            <p>
+                Each <code>application</code> element and the <code>default</code> element 
+                in <code>css-files.xml</code> can contain multiple <code>css-file</code> element. 
+                Each of the <code>css-file</code> elements defines a single XML to load.
+            </p>
+            <p>
+                The <code>css-file</code> element has two optional attributes:
+            </p>
+            <dl>
+                <dt>media</dt>
+                <dd>
+                    The media type, for example <code>screen</code> or <code>print</code> for 
+                    which the CSS file is used. The value of this attribute will appear in the
+                    media attribute of the <code>link</code> element which is generated in the HTML
+                    to load the CSS file.
+                </dd>
+                <dt>origin</dt>
+                <dd>
+                    The origin of the CSS file. If not set the file is loaded from the current 
+                    theme. If set to <code>master</code> the file is loaded from the master theme 
+                    if the current theme is a child theme. If set to <code>internal</code> the 
+                    file is loaded from the internal directory for CSS files, either from the
+                    current theme (if the current theme is a master theme) or from the Foundry
+                    master theme installed at <code>/themes/foundry</code>.
+                </dd>
+            </dl>
+        </main>
+    </body>
+</html>

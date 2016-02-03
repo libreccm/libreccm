@@ -27,7 +27,7 @@ import javax.persistence.Table;
 
 /**
  * Entity class for a file in the doc-repository. Instances will be persisted
- * into the database. Instance variables are inherited from {@link Resource}.
+ * into the database. Instance variables are inherited from {@link AbstractResource}.
  *
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  * @version 01/10/2015
@@ -48,19 +48,19 @@ import javax.persistence.Table;
                 query = "SELECT r FROM DocRepoFile r WHERE " +
                         "r.lastModifiedUser = :user")
 })
-public class File extends Resource {
+public class File extends AbstractResource {
 
     private static final long serialVersionUID = -504220783419811504L;
 
     /**
-     * Content of the {@code Resource} as a {@link BlobObject}.
+     * Content of the {@code AbstractResource} as a {@link BlobObject}.
      */
     @OneToOne
     @JoinColumn(name = "CONTENT_ID")
     private BlobObject content;
 
     /**
-     * Constructor calls the super-class-constructor of {@link Resource}.
+     * Constructor calls the super-class-constructor of {@link AbstractResource}.
      */
     public File() {
         super();

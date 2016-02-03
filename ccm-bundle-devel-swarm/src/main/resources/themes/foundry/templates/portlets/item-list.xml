@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<portlet-layout>
+    
+    <portlet-item-list>
+        <ul>
+            <object-list-item>
+                <li>
+                    <content-item mode="list"/>
+                </li>
+            </object-list-item>
+        </ul>
+    </portlet-item-list>
+
+</portlet-layout>

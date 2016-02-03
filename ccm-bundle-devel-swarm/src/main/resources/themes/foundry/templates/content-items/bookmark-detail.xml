@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<content-item-layout>
+    <h2>
+        <bookmark-link>
+            <a>
+                <content-item-title/>
+            </a>
+        </bookmark-link>
+    </h2>
+    <div>
+        <bookmark-description/>
+    </div>
+</content-item-layout>

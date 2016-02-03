@@ -1,0 +1,12 @@
+            --------------
+                Overview
+            --------------
+            Jens Pelzetter
+            --------------
+              2015-06-29
+            --------------
+
+LibreCCM Test Bundle for Wildfly 8
+
+    This bundle/WAR module is used to test the module system of LibreCCM with
+    Wildfly 8.

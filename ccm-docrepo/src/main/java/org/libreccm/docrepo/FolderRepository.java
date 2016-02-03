@@ -28,7 +28,7 @@ import javax.persistence.TypedQuery;
  * @version 27.01.2016
  */
 @RequestScoped
-public class FolderRepository extends ResourceRepository<Folder> {
+public class FolderRepository extends AbstractResourceRepository<Folder> {
 
     public FolderRepository() {
         classOfT = Folder.class;

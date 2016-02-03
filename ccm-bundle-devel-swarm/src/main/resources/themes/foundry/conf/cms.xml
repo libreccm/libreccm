@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<foundry:configuration xmlns:foundry="http://foundry.libreccm.org">
+    
+    <setting id="content-view-menu/layout">horizontal</setting>
+    <setting id="category-step-summary/show-delete-link">false</setting>
+    
+    <setting id="summary/show-comments">yes</setting>
+    <setting id="summary/show-none-comment">yes</setting>
+    
+</foundry:configuration>

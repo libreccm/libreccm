@@ -28,7 +28,7 @@ import java.util.List;
 
 /**
  * Entity class of a folder in the doc-repository. Instances will be persisted
- * into the database. Instance variables are inherited from {@link Resource}.
+ * into the database. Instance variables are inherited from {@link AbstractResource}.
  *
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  * @version 01/10/2015
@@ -49,15 +49,15 @@ import java.util.List;
                 query = "SELECT r FROM DocRepoFolder r WHERE " +
                         "r.lastModifiedUser = :user")
 })
-public class Folder extends Resource {
+public class Folder extends AbstractResource {
 
     private static final long serialVersionUID = 1561466556458872622L;
 
     /**
-     * The child-{@code Resource}s of the {@code Resource}.
+     * The child-{@code AbstractResource}s of the {@code AbstractResource}.
      */
     @OneToMany(mappedBy = "parent")
-    private List<Resource> immediateChildren;
+    private List<AbstractResource> immediateChildren;
 
     /**
      * The {@link Repository} this {@code Folder} is assigned to as root.
@@ -66,7 +66,7 @@ public class Folder extends Resource {
     private Repository rootAssignedRepository;
 
     /**
-     * Constructor calls the super-class-constructor of {@link Resource}.
+     * Constructor calls the super-class-constructor of {@link AbstractResource}.
      */
     public Folder() {
         super();
@@ -74,11 +74,11 @@ public class Folder extends Resource {
 
     //> Begin GETTER & SETTER
 
-    public List<Resource> getImmediateChildren() {
+    public List<AbstractResource> getImmediateChildren() {
         return immediateChildren;
     }
 
-    public void setImmediateChildren(List<Resource> immediateChildren) {
+    public void setImmediateChildren(List<AbstractResource> immediateChildren) {
         this.immediateChildren = immediateChildren;
     }
 
