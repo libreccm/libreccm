@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<content-item-layout>
-    <a>
-        <content-item-title/>
-    </a>
-    <div class="lead">
-        <show-property name="abstract"/>
-    </div>
-</content-item-layout>

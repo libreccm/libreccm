@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<content-item-layout>
-    
-    <include file="fragments/edit-link.xml"/>
-    
-    <div>
-        <siteproxy-content/>
-    </div>
-</content-item-layout>
