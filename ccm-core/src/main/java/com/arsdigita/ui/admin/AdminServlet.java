@@ -31,20 +31,21 @@ import com.arsdigita.web.LoginSignal;
 import com.arsdigita.xml.Document;
 
 import org.apache.shiro.subject.Subject;
-import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.security.PermissionChecker;
 import org.libreccm.web.CcmApplication;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import javax.enterprise.inject.spi.CDI;
 
-import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import
+
+ javax.servlet.http.HttpServletResponse;
+import org.libreccm.cdi.utils.CdiUtil;
 
 import static com.arsdigita.ui.admin.AdminConstants.*;
 
@@ -111,7 +112,8 @@ public class AdminServlet
         // ///////    Some preparational steps                   ///////////////
         /* Determine access privilege: only logged in users may access   */
         final CdiUtil cdiUtil = new CdiUtil();
-        final Subject subject = cdiUtil.findBean(Subject.class);
+//        final Subject subject = cdiUtil.findBean(Subject.class);
+        final Subject subject = CDI.current().select(Subject.class).get();
         final PermissionChecker permissionChecker = cdiUtil.findBean(
             PermissionChecker.class);
 

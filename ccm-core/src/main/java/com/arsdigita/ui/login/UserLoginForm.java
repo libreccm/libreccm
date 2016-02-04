@@ -45,6 +45,7 @@ import com.arsdigita.bebop.parameters.URLParameter;
 import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.kernel.security.SecurityConfig;
 import com.arsdigita.ui.UI;
+import com.arsdigita.util.UncheckedWrapperException;
 
 import static com.arsdigita.ui.login.LoginConstants.*;
 
@@ -52,6 +53,12 @@ import com.arsdigita.web.ParameterMap;
 import com.arsdigita.web.RedirectSignal;
 import com.arsdigita.web.ReturnSignal;
 import com.arsdigita.web.URL;
+import java.util.Iterator;
+import java.util.Set;
+import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.inject.spi.CDI;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -61,6 +68,7 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.libreccm.cdi.utils.CdiUtil;
 
 import org.apache.shiro.subject.Subject;
+import org.libreccm.configuration.ConfigurationManager;
 
 /**
  * A Bebop form that accepts login and password from the user and attempts to
@@ -128,14 +136,34 @@ public class UserLoginForm extends Form implements LoginConstants,
                          final boolean autoRegistrationOn) {
         super(FORM_NAME, panel);
 
-        securityConfig = SecurityConfig.getConfig();
-        
+//        final ConfigurationManager confManager = CDI.current().select(
+//                ConfigurationManager.class).get();
+        final BeanManager beanManager = CDI.current().getBeanManager();
+        final Set<Bean<?>> beans = beanManager.getBeans(
+                ConfigurationManager.class);
+        final Iterator<Bean<?>> iterator = beans.iterator();
+        final ConfigurationManager confManager;
+        if (iterator.hasNext()) {
+            final Bean<ConfigurationManager> bean = (Bean<ConfigurationManager>) iterator.
+                    next();
+            final CreationalContext<ConfigurationManager> ctx = beanManager.
+                    createCreationalContext(bean);
+
+            confManager = (ConfigurationManager) beanManager.getReference(
+                    bean, ConfigurationManager.class, ctx);
+        } else {
+            throw new UncheckedWrapperException(
+                    "Failed to lookup ConfigurationManager");
+        }
+        securityConfig = confManager.findConfiguration(SecurityConfig.class);
+
         setMethod(Form.POST);
         addInitListener(this);
         addValidationListener(this);
         addProcessListener(this);
 
-        final KernelConfig kernelConfig = KernelConfig.getConfig();
+        final KernelConfig kernelConfig = confManager.findConfiguration(
+                KernelConfig.class);
 
         m_autoRegistrationOn = autoRegistrationOn;
 
@@ -143,14 +171,14 @@ public class UserLoginForm extends Form implements LoginConstants,
         add(m_timestamp);
 
         m_returnURL = new Hidden(new URLParameter(
-            LoginHelper.RETURN_URL_PARAM_NAME));
+                LoginHelper.RETURN_URL_PARAM_NAME));
         m_returnURL.setPassIn(true);
         add(m_returnURL);
 
         setupLogin();
 
         add(new Label(LoginHelper.getMessage(
-            "login.userRegistrationForm.password")));
+                "login.userRegistrationForm.password")));
         m_password = new Password(new StringParameter(FORM_PASSWORD));
         // Since new users should not enter a password, allow null.
         //m_password.addValidationListener(new NotNullValidationListener());
@@ -159,7 +187,7 @@ public class UserLoginForm extends Form implements LoginConstants,
         SimpleContainer cookiePanel = new BoxPanel(BoxPanel.HORIZONTAL);
         m_isPersistent = new CheckboxGroup(FORM_PERSISTENT_LOGIN_P);
         Label optLabel = new Label(LoginHelper.getMessage(
-            "login.userRegistrationForm.cookieOption"));
+                "login.userRegistrationForm.cookieOption"));
         Option opt = new Option(FORM_PERSISTENT_LOGIN_P_DEFAULT, optLabel);
         m_isPersistent.addOption(opt);
         if (kernelConfig.isRememberLoginEnabled()) {
@@ -168,8 +196,8 @@ public class UserLoginForm extends Form implements LoginConstants,
         cookiePanel.add(m_isPersistent);
 
         cookiePanel.add(new DynamicLink(
-            "login.userRegistrationForm.explainCookieLink",
-            LoginServlet.getCookiesExplainPageURL()));
+                "login.userRegistrationForm.explainCookieLink",
+                LoginServlet.getCookiesExplainPageURL()));
         add(cookiePanel);
 
         add(new Submit(SUBMIT), ColumnPanel.CENTER | ColumnPanel.FULL_WIDTH);
@@ -193,8 +221,8 @@ public class UserLoginForm extends Form implements LoginConstants,
      */
     private void setupLogin() {
         SimpleContainer loginMessage = new SimpleContainer(
-            "subsite:loginPromptMsg",
-            LoginServlet.SUBSITE_NS_URI);
+                "subsite:loginPromptMsg",
+                LoginServlet.SUBSITE_NS_URI);
 
         final KernelConfig kernelConfig = KernelConfig.getConfig();
 
@@ -208,17 +236,17 @@ public class UserLoginForm extends Form implements LoginConstants,
 
         if (kernelConfig.emailIsPrimaryIdentifier()) {
             add(new Label(LoginHelper.getMessage(
-                "login.userRegistrationForm.email")));
+                    "login.userRegistrationForm.email")));
             m_loginName = new TextField(new EmailParameter(FORM_LOGIN));
             addInitListener(new EmailInitListener((EmailParameter) m_loginName.
-                getParameterModel()));
+                    getParameterModel()));
         } else {
             add(new Label(LoginHelper.getMessage(
-                "login.userRegistrationForm.screenName")));
+                    "login.userRegistrationForm.screenName")));
             m_loginName = new TextField(new StringParameter(FORM_LOGIN));
             addInitListener(new ScreenNameInitListener(
-                (StringParameter) m_loginName.
-                getParameterModel()));
+                    (StringParameter) m_loginName.
+                    getParameterModel()));
         }
         m_loginName.addValidationListener(new NotNullValidationListener());
         add(m_loginName);
@@ -232,7 +260,7 @@ public class UserLoginForm extends Form implements LoginConstants,
      */
     @Override
     public void init(FormSectionEvent event)
-        throws FormProcessException {
+            throws FormProcessException {
         s_log.info("In init");
 
         final KernelConfig kernelConfig = KernelConfig.getConfig();
@@ -242,7 +270,7 @@ public class UserLoginForm extends Form implements LoginConstants,
             s_log.info("trying SSO");
 //            try {
             throw new UnsupportedOperationException(
-                "SSO currently not supported");
+                    "SSO currently not supported");
 //                Web.getUserContext().loginSSO();
 //                s_log.info("loginSSO ok, now processing redirect_url");
 //                process(event);
@@ -273,7 +301,7 @@ public class UserLoginForm extends Form implements LoginConstants,
      */
     @Override
     public void validate(FormSectionEvent event)
-        throws FormProcessException {
+            throws FormProcessException {
 
         s_log.debug("In validate");
 
@@ -312,7 +340,7 @@ public class UserLoginForm extends Form implements LoginConstants,
      */
     @Override
     public void process(final FormSectionEvent event)
-        throws FormProcessException {
+            throws FormProcessException {
         s_log.debug("In process");
 
         final PageState state = event.getPageState();
@@ -338,15 +366,15 @@ public class UserLoginForm extends Form implements LoginConstants,
      *
      */
     protected void loginUser(final FormSectionEvent event)
-        throws FormProcessException {
+            throws FormProcessException {
         PageState state = event.getPageState();
 
         final CdiUtil cdiUtil = new CdiUtil();
         final Subject subject = cdiUtil.findBean(Subject.class);
 
         final UsernamePasswordToken token = new UsernamePasswordToken(
-            (String) m_loginName.getValue(state),
-            (String) m_password.getValue(state)
+                (String) m_loginName.getValue(state),
+                (String) m_password.getValue(state)
         );
         token.setRememberMe(getPersistentLoginValue(state, false));
         try {
@@ -365,7 +393,7 @@ public class UserLoginForm extends Form implements LoginConstants,
      *
      */
     protected void onLoginSuccess(final FormSectionEvent event)
-        throws FormProcessException {
+            throws FormProcessException {
         // do nothing
     }
 
@@ -394,7 +422,7 @@ public class UserLoginForm extends Form implements LoginConstants,
      */
     protected void onLoginFail(final FormSectionEvent event,
                                final AuthenticationException ex)
-        throws FormProcessException {
+            throws FormProcessException {
         s_log.debug("Login fail");
         event.getFormData().addError(ERROR_LOGIN_FAIL);
     }

@@ -399,8 +399,8 @@ public class PatternStylesheetResolver implements StylesheetResolver {
         try {
             // Read the source file.
             ClassLoader cload = Thread.currentThread().getContextClassLoader();
-            InputStream stream = cload.getResourceAsStream(path.substring(1));
-            s_log.debug("got stream using path " + path.substring(1));
+            InputStream stream = cload.getResourceAsStream(path.substring(0));
+            s_log.debug("got stream using path " + path.substring(0));
             s_log.debug("stream.available is " + stream.available());
             m_paths = new ArrayList();
 

@@ -19,40 +19,45 @@
 package com.arsdigita.util;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
 /**
- * Provides the system name of the CCM Spin off (eg aplaws or ScientificCMS) and the version number.
- * It's primary use is to provide the theme engine with that information for display. The data 
- * displayed is stored in the /WEB-INF/systeminformation.properties, which is usually provided by
- * the bundle. The ccm-sci-bundle for example provides this file, which can be found in 
- * {@code ccm-sci-bundle/web/WEB-INF} directory. At the moment it is necessary to update this 
- * (these) file(s) manually.
- * 
- * A {@code systeminformations.properties} should contain at least these three properties:
+ * Provides the system name of the CCM Spin off (eg aplaws or ScientificCMS) and
+ * the version number. It's primary use is to provide the theme engine with that
+ * information for display. The data displayed is stored in the
+ * /WEB-INF/systeminformation.properties, which is usually provided by the
+ * bundle. The ccm-sci-bundle for example provides this file, which can be found
+ * in {@code ccm-sci-bundle/web/WEB-INF} directory. At the moment it is
+ * necessary to update this (these) file(s) manually.
+ *
+ * A {@code systeminformations.properties} should contain at least these three
+ * properties:
  * <dl>
- *     <dt>version</dt>
- *     <dd>The version of the specific CCM distribution.</dd>
- *     <dt>appname</dt>
- *     <dd>The name of the CCM distribution, for example <strong>ScientificCMS</strong>
- *     <dt>apphomepage</dt>
- *     <dd>
-           The URL of the website of the CCM distribution, for example 
- *         {@code http://www.scientificcms.org}
- *     </dd>
+ * <dt>version</dt>
+ * <dd>The version of the specific CCM distribution.</dd>
+ * <dt>appname</dt>
+ * <dd>The name of the CCM distribution, for example
+ * <strong>ScientificCMS</strong>
+ * <dt>apphomepage</dt>
+ * <dd>
+ * The URL of the website of the CCM distribution, for example
+ * {@code http://www.scientificcms.org}
+ * </dd>
  * </dl>
- * 
+ *
  *
  * @author Jens Pelzetter
  * @version $Id$
  */
-public class SystemInformation { 
+public class SystemInformation {
 
     /**
-     * Map containing all informations provided by the {@code systeminformation.properties} file.
+     * Map containing all informations provided by the
+     * {@code systeminformation.properties} file.
      */
     private final Map<String, String> sysInfo = new HashMap<String, String>();
     /**
@@ -61,18 +66,28 @@ public class SystemInformation {
     private final static SystemInformation INSTANCE = new SystemInformation();
 
     /**
-     * The constructor takes care of loading the data from the properties file and placing them into 
-     * {@code HashMap}.
+     * The constructor takes care of loading the data from the properties file
+     * and placing them into {@code HashMap}.
      */
     public SystemInformation() {
 
         final Properties properties = new Properties();
         try {
-            properties.load(getClass().getResourceAsStream(
-                "/WEB-INF/systeminformation.properties"));
+            final InputStream stream = getClass().getResourceAsStream(
+                    "WEB-INF/systeminformation.properties");
+            if (stream == null) {
+                properties.put("version", "");
+                properties.put("appname", "LibreCCM");
+                properties.put("apphomepage", "http://www.libreccm.org");
+            } else {
+                properties.load(stream);
+            }
+//            properties.load(getClass().getResourceAsStream(
+//                    "WEB-INF/systeminformation.properties"));
         } catch (IOException ex) {
             throw new UncheckedWrapperException(ex);
         }
+
         for (String key : properties.stringPropertyNames()) {
             sysInfo.put(key, properties.getProperty(key));
         }
@@ -97,7 +112,8 @@ public class SystemInformation {
      */
     final public String get(final String key) throws IllegalArgumentException {
         if (key == null || key.isEmpty()) {
-            throw new IllegalArgumentException("Parameter key must not be null or empty.");
+            throw new IllegalArgumentException(
+                    "Parameter key must not be null or empty.");
         }
         return sysInfo.get(key);
     }
