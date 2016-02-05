@@ -59,7 +59,7 @@ public class SystemInformation {
      * Map containing all informations provided by the
      * {@code systeminformation.properties} file.
      */
-    private final Map<String, String> sysInfo = new HashMap<String, String>();
+    private final Map<String, String> sysInfo = new HashMap<>();
     /**
      * The one and only instance of this class
      */
@@ -74,7 +74,7 @@ public class SystemInformation {
         final Properties properties = new Properties();
         try {
             final InputStream stream = getClass().getResourceAsStream(
-                    "WEB-INF/systeminformation.properties");
+                    "systeminformation.properties");
             if (stream == null) {
                 properties.put("version", "");
                 properties.put("appname", "LibreCCM");

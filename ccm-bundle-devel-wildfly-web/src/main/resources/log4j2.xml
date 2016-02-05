@@ -11,7 +11,9 @@
         </Root>
         <Logger name="com.arsdigita.packaging.Config"
                 level="debug">
-            
+        </Logger>
+        <Logger name="com.arsdigita.templating.PatternStylesheetResolver"
+                level="debug">
         </Logger>
         <Logger name="com.arsdigita.web.CCMDispatcherServlet"
                 level="debug">

@@ -106,7 +106,7 @@ public final class XmlConfig {
      * @return
      */
     String getDefaultXslTransformerFactoryClassname() {
-        return SAXON;
+        return SAXON_HE;
     }
 
     public void setXslTransformer(final String xslTransformer) {

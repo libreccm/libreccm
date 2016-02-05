@@ -56,16 +56,16 @@ public final class WebConfig {
     private String defaultScheme = "http";
 
     @Setting
-    private String server;
+    private String server = "localhost:8080";
 
     @Setting
-    private String secureServer;
+    private String secureServer = "localhost:8443";
 
     @Setting
-    private String siteName;
+    private String siteName = "LibreCCM";
 
     @Setting
-    private String host;
+    private String host = "localhost:8080";
 
     @Setting
     private Set<String> secureRequiredFor = new HashSet<>();

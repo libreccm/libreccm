@@ -21,7 +21,7 @@ http://::host::/::webapp::/themes/::themedir::/::theme::/start.xsl
 
 # Theme with single entry point (e.g Mandalay) unmanaged default
 #http://::host::/resource/::webapp::/themes/mandalay/start.xsl
-http://::host::/::webapp::/themes/foundry-base/start.xsl
+http://::host::/::webapp::/themes/libreccm-default/start.xsl
 
 
 

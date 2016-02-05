@@ -36,7 +36,7 @@ import java.util.Objects;
 public final class TemplatingConfig {
 
     @Setting
-    private String stylesheetPaths = "/WEB-INF/resources/stylesheet-paths.txt";
+    private String stylesheetPaths = "stylesheet-paths.txt";
 
     @Setting
     private String stylesheetResolverClass = PatternStylesheetResolver.class

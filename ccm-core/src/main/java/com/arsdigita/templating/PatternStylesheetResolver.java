@@ -21,6 +21,9 @@ package com.arsdigita.templating;
 import com.arsdigita.util.StringUtils;
 import com.arsdigita.util.UncheckedWrapperException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.LineNumberReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -38,7 +41,7 @@ import java.util.LinkedList;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
+
 
 /**
  * <p>
@@ -158,7 +161,7 @@ public class PatternStylesheetResolver implements StylesheetResolver {
      * set com.arsdigita.templating.PatternStylesheetResolver=DEBUG by
      * uncommenting or adding the line.
      */
-    private static final Logger s_log = Logger.getLogger(
+    private static final Logger s_log = LogManager.getLogger(
         PatternStylesheetResolver.class);
 
     /**
@@ -288,12 +291,12 @@ public class PatternStylesheetResolver implements StylesheetResolver {
                 // fall through & try next pattern
             } catch (IOException ex) {
                 throw new UncheckedWrapperException("cannot open stream "
-                                                    + resource, ex);
+                                                        + resource, ex);
             }
         }
 
         throw new RuntimeException("no path to XSL stylesheet found; "
-                                   + "try modifying " + m_path);
+                                       + "try modifying " + m_path);
     }
 
     /**
@@ -353,7 +356,7 @@ public class PatternStylesheetResolver implements StylesheetResolver {
             if (clean) {
                 if (s_log.isDebugEnabled()) {
                     s_log.debug("Finished expanding placeholders in "
-                                + StringUtils.join(bits, ""));
+                                    + StringUtils.join(bits, ""));
                 }
                 paths.add(bits);
             }
@@ -413,13 +416,15 @@ public class PatternStylesheetResolver implements StylesheetResolver {
                 // Ignore blank lines and comments.
                 line = line.trim();
                 s_log.debug("line is " + line);
-                if ("".equals(line) || line.startsWith("#")
-                        || line.startsWith("!") || line.startsWith("//")) {
+                if ("".equals(line)
+                        || line.startsWith("#")
+                        || line.startsWith("!")
+                        || line.startsWith("//")) {
                     continue;
                 }
 
                 // Split up the line.
-                List list = StringUtils.splitUp(line, "/::\\w+::/");
+                List list = StringUtils.splitUp(line, "::\\w+::");
                 // Save the split line.
                 m_paths.add(list);
             }

@@ -144,6 +144,7 @@ public class UserLoginForm extends Form implements LoginConstants,
         final Iterator<Bean<?>> iterator = beans.iterator();
         final ConfigurationManager confManager;
         if (iterator.hasNext()) {
+            @SuppressWarnings("unchecked")
             final Bean<ConfigurationManager> bean = (Bean<ConfigurationManager>) iterator.
                     next();
             final CreationalContext<ConfigurationManager> ctx = beanManager.
