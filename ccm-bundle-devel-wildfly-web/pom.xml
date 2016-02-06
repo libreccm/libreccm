@@ -36,6 +36,11 @@
             <artifactId>ccm-theme-foundry</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
+        
+        <dependency>
+            <groupId>net.sf.saxon</groupId>
+            <artifactId>Saxon-HE</artifactId>
+        </dependency>
     </dependencies>
     
     <!--<dependencies>
