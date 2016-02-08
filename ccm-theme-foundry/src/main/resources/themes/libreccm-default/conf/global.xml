@@ -17,6 +17,6 @@
     
     <setting id="log-level">warn</setting>
     
-    <setting id="site-logo">images/cms-logo.png</setting>
+    <setting id="site-logo">images/libreccm.png</setting>
     
 </foundry:configuration>

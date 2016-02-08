@@ -41,8 +41,9 @@ public class SystemUsersSetup {
     private static final Logger LOGGER = LogManager.getLogger(
         SystemUsersSetup.class);
 
+    //Default password is "libreccm"
     private static final String DEFAULT_ADMIN_PW
-                                    = "$shiro1$SHA-512$500000$MFPkVikNoRrBZ8R8CxQIHA==$UvgO2K+poSRGw5co63P3ygpWsX7H9N0TgqdrZPBqdXv6Q+/OCL/qOocVbg65/Yjv5hyri6A3zhw7K8mEgpISoA==";
+                                    = "$shiro1$SHA-512$500000$MFPkVikNoRrBZ8R8CxQIHA==$ybEECtSPukmXDbV27a3LnWktFsh9lQl2ZYqCUtV0NF9G35Rt0+Tzp1msNLBQUVv15SrsdFgBSfhgWfZFyTva+Q==";
 
     private final EntityManager entityManager;
 

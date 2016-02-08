@@ -94,7 +94,7 @@ processor, some are read from the configuration files of Foundry and some are de
         </foundry:doc-desc>
     </foundry:doc>
     <xsl:param name="theme-prefix" 
-               select="concat($context-prefix, 'themes/libreccm-default/')"/>
+               select="concat($context-prefix, '/themes/libreccm-default')"/>
     
     <foundry:doc section="devel" type="env-var">
         <foundry:doc-desc>
