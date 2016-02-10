@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<content-item-layout>
+    <h2>
+        <content-item-title/>
+    </h2>
+    <div>
+        <show-property name="pageDescription"/>
+    </div>
+</content-item-layout>

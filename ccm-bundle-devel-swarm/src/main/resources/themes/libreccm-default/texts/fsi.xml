@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<foundry:static-texts xmlns:foundry="http://foundry.libreccm.org">
+    <text id="links/download">
+        <translation lang="de">Herunterladen</translation>
+        <translation lang="en">Download</translation>
+    </text>
+    <text id="links/view">
+        <translation lang="de">Ansehen</translation>
+        <translation lang="en">View</translation>
+    </text>
+</foundry:static-texts>

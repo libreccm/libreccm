@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<foundry:static-texts xmlns:foundry="http://foundry.libreccm.org">
+     <text id="email">
+        <translation lang="de">E-Mail</translation>
+        <translation lang="en">eMail</translation>
+    </text>
+    <text id="fax">
+        <translation lang="de">Fax</translation>
+        <translation lang="en">Fax</translation>
+    </text>
+    <text id="mobile">
+        <translation lang="de">Mobil</translation>
+        <translation lang="en">Mobile</translation>
+    </text>
+    <text id="phone">
+        <translation lang="de">Telefon</translation>
+        <translation lang="en">Phone</translation>
+    </text>
+     <text id="uri">
+        <translation lang="de">Web</translation>
+        <translation lang="en">Web</translation>
+    </text>
+</foundry:static-texts>

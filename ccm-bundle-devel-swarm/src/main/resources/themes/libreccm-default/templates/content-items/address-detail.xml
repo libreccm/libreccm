@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE stylesheet [<!ENTITY nbsp '&#160;'>]>
+<content-item-layout>
+        
+    <div class="address">
+        <include file="fragments/edit-link.xml"/>
+    
+        <pre class="addresstext">
+            <show-property name="address"/>
+        </pre>
+    
+        <div class="location">
+            <span id="postal-code">
+                <show-property name="postalCode"/>
+            </span>
+            <space/>
+            <span id="city">
+                <show-property name="city"/>
+            </span>
+        </div>
+        
+        <div class="country">
+            <show-property name="country"/>
+        </div>
+    
+        <include file="fragments/assets/image-attachments.xml"/>
+
+        <include file="fragments/assets/notes.xml"/>
+    
+        <include file="fragments/assets/related-links-and-file-attachments.xml" />
+
+    </div>
+</content-item-layout>

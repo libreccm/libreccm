@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<foundry:static-texts xmlns:foundry="http://foundry.libreccm.org">
+    <text id="actionItem">
+        <translation lang="de">Aktionselement</translation>
+        <translation lang="en">Action item</translation>
+    </text>
+    <text id="attendees">
+        <translation lang="de">Teilnehmer</translation>
+        <translation lang="en">Attendees</translation>
+    </text>
+    <text id="description-of-minutes">
+        <translation lang="de">Tagesordnung</translation>
+        <translation lang="en">Agenda</translation>
+    </text>
+    <text id="number">
+        <translation lang="de">Referenz</translation>
+        <translation lang="en">Reference</translation>
+    </text>
+</foundry:static-texts>

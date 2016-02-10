@@ -39,8 +39,6 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.libreccm.docrepo.File;
 import org.libreccm.docrepo.FileRepository;
-import org.libreccm.docrepo.portation.exporter.FileExporter;
-import org.libreccm.docrepo.portation.importer.FileImporter;
 import org.libreccm.jpa.EntityManagerProducer;
 import org.libreccm.jpa.utils.MimeTypeConverter;
 import org.libreccm.l10n.LocalizedString;
@@ -49,12 +47,9 @@ import org.libreccm.testutils.EqualsVerifier;
 import org.libreccm.workflow.Workflow;
 
 import javax.inject.Inject;
-import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 
 import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -72,17 +67,12 @@ public class FilePortationTest {
     private static final Logger log = Logger.getLogger(FilePortationTest.class);
 
     @Inject
-    private FileExporter fileExporter;
-
-    @Inject
-    private FileImporter fileImporter;
-
-    @Inject
     private FileRepository fileRepository;
 
     private static File file;
     private static String filename =
-            "src/test/java/org/libreccm/docrepo/portation/csv/exportTest.csv";
+            "src/test/resources/datasets/org/libreccm/docrepo" +
+                    "/FilePortationTest/csv/exportTest.csv";
 
     public FilePortationTest() {
     }
@@ -158,8 +148,7 @@ public class FilePortationTest {
         if (old.exists())
             old.delete();
 
-        fileExporter.setFilename(filename);
-        fileExporter.exportToCSV(Collections.singletonList(file));
+        // TODO: test file export
 
         java.io.File file = new java.io.File(filename);
         assertTrue(file.exists() && !file.isDirectory());
@@ -167,26 +156,11 @@ public class FilePortationTest {
 
     @Test
     public void docrepoFileShouldBeCreated() {
-        fileImporter.setFilename(filename);
-        List<File> files = fileImporter.importFromCSV();
-        assertEquals(file, files.get(0));
-    }
-
-
-    @Test
-    @InSequence(1)
-    public void fileExporterIsInjected() {
-        assertThat(fileExporter, is(not(nullValue())));
+        // TODO: test file import
     }
 
     @Test
-    @InSequence(2)
-    public void fileImporterIsInjected() {
-        assertThat(fileImporter, is(not(nullValue())));
-    }
-
-    @Test
-    @InSequence(3)
+    @InSequence(10)
     public void repoIsInjected() {
         assertThat(fileRepository, is(not(nullValue())));
     }

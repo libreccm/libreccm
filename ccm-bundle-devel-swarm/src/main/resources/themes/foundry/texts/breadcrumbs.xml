@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<foundry:static-texts xmlns:foundry="http://foundry.libreccm.org">
+    <text id="root">
+        <translation lang="de">Start</translation>
+        <translation lang="en">Start</translation>
+    </text>
+</foundry:static-texts>

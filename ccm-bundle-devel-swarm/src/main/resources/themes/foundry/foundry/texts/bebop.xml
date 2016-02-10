@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<foundry:static-texts xmlns:foundry="http://foundry.libreccm.org">
+    <text id="double-click-protection/wait-message">
+        <translation lang="de">Bitte warten...</translation>
+        <translation lang="en">Please wait...</translation>
+    </text>
+</foundry:static-texts>

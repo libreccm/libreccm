@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE stylesheet [<!ENTITY nbsp '&#160;'>
+                      <!ENTITY shy '&#173;'>
+                      <!ENTITY times '&#xD7;'>]>
+<content-item-layout>
+
+    <div class="contact">
+        <include file="fragments/edit-link.xml"/>
+
+        <div class="person">
+            <contact-person>
+                <if-titlepre>
+                    <titlepre/>
+                    <space/>
+                </if-titlepre>
+                <givenname/>
+                <if-surname>
+                    <space/>
+                    <surname/>
+                </if-surname>
+                <if-titlepost>
+                    <space/>
+                    <titlepost/>
+                </if-titlepost>
+            </contact-person>
+        </div>
+
+        <include file="fragments/assets/image-attachments.xml"/>
+
+        <include file="fragments/assets/notes.xml"/>
+    
+        <contact-entries>
+            <dl>
+                <contact-entry key="email">
+                    <dt>
+                        <contact-entry-label/>
+                    </dt>
+                    <dd>
+                        <contact-entry-value/>
+                    </dd>
+                </contact-entry>
+                <contact-entry key="phone_office">
+                    <dt>
+                        <contact-entry-label/>
+                    </dt>
+                    <dd>
+                        <contact-entry-value/>
+                    </dd>
+                </contact-entry>
+                <contact-entry key="phone_mobile">
+                    <dt>
+                        <contact-entry-label/>
+                    </dt>
+                    <dd>
+                        <contact-entry-value/>
+                    </dd>
+                </contact-entry>
+                <contact-entry key="phone_private">
+                    <dt>
+                        <contact-entry-label/>
+                    </dt>
+                    <dd>
+                        <contact-entry-value/>
+                    </dd>
+                </contact-entry>
+                <contact-entry key="fax">
+                    <dt>
+                        <contact-entry-label/>
+                    </dt>
+                    <dd>
+                        <contact-entry-value/>
+                    </dd>
+                </contact-entry>
+                <contact-entry key="im">
+                    <dt>
+                        <contact-entry-label/>
+                    </dt>
+                    <dd>
+                        <contact-entry-value/>
+                    </dd>
+                </contact-entry>
+                <contact-entry key="office">
+                    <dt>
+                        <contact-entry-label/>
+                    </dt>
+                    <dd>
+                        <contact-entry-value/>
+                    </dd>
+                </contact-entry>
+                <contact-entry key="visiting_hours">
+                    <dt>
+                        <contact-entry-label/>
+                    </dt>
+                    <dd>
+                        <contact-entry-value/>
+                    </dd>
+                </contact-entry>
+                <contact-entry key="homepage">
+                    <dt>
+                        <contact-entry-label/>
+                    </dt>
+                    <dd>
+                        <contact-entry-value/>
+                    </dd>
+                </contact-entry>
+            </dl>
+        </contact-entries>
+        
+        <contact-address>
+            <div class="address">
+                <pre class="addresstext">
+                    <address-text/>
+                </pre>
+            
+                <div id="location">
+                    <span id="postal-code">
+                        <postal-code/>
+                    </span>
+                    <space/>
+                    <span id="city">
+                        <city/>
+                    </span>
+                </div>
+            
+                <div id="country">
+                    <country/>
+                </div>
+            </div>
+        </contact-address>
+        
+        <include file="fragments/assets/related-links-and-file-attachments.xml" />
+    
+    </div>
+</content-item-layout>

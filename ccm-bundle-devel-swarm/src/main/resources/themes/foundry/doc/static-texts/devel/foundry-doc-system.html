@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html [<!ENTITY nbsp '&#160;'>
+                <!ENTITY shy '&#173;'>
+                <!ENTITY ndash '&#8211;'>]>
+<html>
+    <head>
+        <title>The documentation system of Foundry</title>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    </head>
+    <body>
+        <h1>The documentation system of Foundry</h1>
+        <main>
+            <h2>Overview</h2>
+            <p>
+                Foundry comes with a documentation system which creates the reference documentations 
+                for template tags and helper functions on the fly. The documentation system &ndash; 
+                which you using at the moment by the way &ndash; consists of three parts:
+            </p>
+            <ul>
+                <li>
+                    An <code>index.jsp</code> file in the <code>doc</code> directory which invokes the 
+                    XSL transformer. Using an JSP here has the advantage that the behaviour is similar 
+                    to an <code>index.html</code>. 
+                </li>
+                <li>
+                    Some XSL templates.
+                </li>
+                <li>
+                    And the documentation itself which consists of some XML files, some static texts
+                    and the documentation in the other templates.
+                </li>
+            </ul>
+            <p>
+                The general structure of the documentation is defined by the 
+                <code>doc/foundry-documentation.xml</code> file. This file is the entry point for the
+                XSL processor. The chapters of the documentation are defined by the 
+                <code>foundry:doc-chapter</code> elements. The sections of the chapters are defined using
+                <code>foundry:doc-section</code> elements. The section which use static texts have
+                a <code>static</code>. The value of the <code>static</code> attribute is the name of the
+                file to include from the <code>doc/static-texts</code> directory. These files are normal
+                HTML files in XML syntax. They must have a <code>main</code> element. Only the content
+                of the <code>main</code> element is included into the documentation.
+            </p>
+            <p>
+                Sections which are generated on the fly from the XSL files of Foundry have a 
+                <code>generate</code> attribute. The <code>generate</code> attribute controls which 
+                documentations appear in the section.
+            </p>
+
+            <h2>Documentation inside XSL templates</h2>
+            <p>
+                Templates, functions and global variables are documented using the 
+                <code>foundry:doc</code> element which is placed in the XSL directly before the element
+                to document. The <code>foundry:doc</code> element has two mandatory attributes. The
+                <code>section</code> elements is used to control in which section the documentation
+                appears. The second attribute is the <code>type</code> attribute. This attribute is
+                used to format the documentation. The possible values are:
+            </p>
+            <dl>
+                <dt><code>template-tag</code></dt>
+                <dd>
+                    The following XSL template is a tag which can be used in the layout templates.
+                </dd>
+                <dt><code>env-var</code></dt>
+                <dd>
+                    The following <code>xsl:variable</code> or <code>xsl:param</code> defines
+                    a global variable.
+                </dd>
+                <dt><code>function</code></dt>
+                <dd>
+                    The following <code>xsl:function</code> is a helper function which can be used
+                    in the implementation of template tags.
+                </dd>
+                <dt><code>function-template</code></dt>
+                <dd>
+                    The following <code>xsl:template</code> is a helper template.
+                </dd>
+            </dl>
+            <p>
+                A <code>foundry:doc</code> element can have to following child elements:
+            </p>
+            <dl>
+                <dt><code>foundry:doc-desc</code></dt>
+                <dd>
+                    A text describing the template, function or variable. The must be structured
+                    using HTML elements like <code>p</code>, even it is only a single paragraph.
+                    Otherwise the text is not copied into the documentation. Look at one of the
+                    XSL files of Foundry for an example.
+                </dd>
+                <dt><code>foundry:doc-attributes</code></dt>
+                <dd>
+                    Surrounds the documentation for attributes which can be used on a template tag.
+                    The individual attributes are documented by <code>foundry:doc-attribute</code> 
+                    elements. The <code>foundry:doc-attribute</code> has a mandatory attribute 
+                    <code>name</code> which contains the name of the attribute. The documentation of
+                    the attribute must be enclosed in HTML elements. Look at one of the
+                    XSL files of Foundry for an example.
+                </dd>
+                <dt><code>foundry:doc-parameters</code></dt>
+                <dd>
+                    Surrounds the documentation for parameters which can be used on a function.
+                    The individual parameters are documented by <code>foundry:doc-parameter</code> 
+                    elements. The <code>foundry:doc-parameter</code> has a mandatory parameter 
+                    <code>name</code> which contains the name of the parameter. The documentation of
+                    the parameter must be enclosed in HTML elements. Look at one of the
+                    XSL files of Foundry for an example.
+                </dd>
+                <dt><code>foundry:doc-see-also</code></dt>
+                <dd>
+                    Contains links to other parts of the documentation or the external resources.
+                    The links are defined using <code>foundry:doc-link</code> attributes. Each
+                    <code>foundry:doc-link</code> has a <code>href</code> attribute which the link.
+                    The description of the link is the content of the element.
+                </dd>
+            </dl>
+        </main>
+    </body>
+</html>

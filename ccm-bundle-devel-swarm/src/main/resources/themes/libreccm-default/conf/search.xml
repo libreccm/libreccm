@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<foundry:configuration xmlns:foundry="http://foundry.libreccm.org">
+    
+    <setting id="graphic-score-width">50</setting>
+    <setting id="graphic-score-height">10</setting>
+    <setting id="filter/show-category-filter">yes</setting>
+    <setting id="filter/show-creation-date-filter">yes</setting>
+    <setting id="filter/show-creation-user-filter">yes</setting>
+    <setting id="filter/show-content-type-filter">yes</setting>
+    <setting id="filter/show-host-filter">yes</setting>
+    <setting id="filter/show-last-editor-filter">yes</setting>
+    <setting id="filter/show-last-modified-date-filter">yes</setting>
+    <setting id="filter/show-launch-date-filter">yes</setting>
+    <setting id="filter/show-object-type-filter">yes</setting>
+    <setting id="show-addition-filter">yes</setting>
+    <setting id="show-graphic-score">yes</setting>
+    <setting id="show-query-prefix">yes</setting>
+    <setting id="show-score">yes</setting>
+    <setting id="show-search-form-in-result-list">yes</setting>
+    <setting id="show-summary">yes</setting>
+    
+</foundry:configuration>

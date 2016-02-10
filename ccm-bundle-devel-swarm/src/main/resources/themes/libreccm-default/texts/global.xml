@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<foundry:static-texts xmlns:foundry="http://foundry.libreccm.org">
+    
+    <text id="accessibility/back-to-start-page">
+        <translation lang="de">Zurück zur Startseite</translation>
+        <translation lang="en">Back to start page</translation>
+    </text>
+    
+    <text id="cookie-notice">
+        <translation lang="de">
+            Diese Webseite verwendet Cookies. 
+            Mit der Nutzung dieser Webseite erklären Sie sich mit der Verwendung
+            von Cookies einverstanden.
+        </translation>
+        <translation lang="en">
+            This Website uses Cookies. By using this website you accept the
+            usage of Cookies.
+        </translation>
+    </text>
+    
+    <text id="cookie-notice/more">
+        <translation lang="de">Klicken Sie hier um mehr zu erfahren.</translation>
+        <translation lang="en">Click here to learn more.</translation>
+    </text>
+    
+    <text id="cookie-notice/understand">
+        <translation lang="de">Verstanden</translation>
+        <translation lang="en">Accepted</translation>
+    </text>
+    
+    <text id="image-carousel/next">
+        <translation lang="de">Weiter</translation>
+        <translation lang="en">Next</translation>
+    </text>
+    
+    <text id="image-carousel/prev">
+        <translation lang="de">Zurück</translation>
+        <translation lang="en">Previous</translation>
+    </text>
+    
+    <text id="language/de">
+        <translation lang="de">Deutsch</translation>
+        <translation lang="en">German</translation>
+    </text>
+    
+    <text id="language/en">
+        <translation lang="de">Englisch</translation>
+        <translation lang="en">English</translation>
+    </text>
+    
+    <text id="layout/navbar/text">
+        <translation lang="de">Libre Blue Theme für LibreCCM</translation>
+        <translation lang="en">Libre Blue theme for LibreCCM</translation>
+    </text>
+    
+    <text id="layout/page/head/title">
+        <translation lang="de">LibreCMS</translation>
+        <translation lang="en">LibreCMS</translation>
+    </text>
+    
+    <text id="layout/page/header/language-switcher">
+        <translation lang="de">Sprache wählen</translation>
+        <translation lang="en">Select language</translation>
+    </text>
+    
+    <text id="layout/page/header/shortcuts">
+        <translation lang="de">Schnellzugriff</translation>
+        <translation lang="en">Shortcuts</translation>
+    </text>
+    
+    <text id="layout/page/main/file-attachments">
+        <translation lang="de">Weitere Informationen</translation>
+        <translation lang="en">Related Links and Attachments</translation>
+    </text>
+    
+    <text id="layout/page/main/related-links-and-attachments">
+        <translation lang="de">Weitere Informationen</translation>
+        <translation lang="en">Related Links and Attachments</translation>
+    </text>
+    
+    <text id="layout/page/main/related-links">
+        <translation lang="de">Weitere Informationen</translation>
+        <translation lang="en">Related Links and Attachments</translation>
+    </text>
+    
+    <text id="layout/page/main/newsList">
+        <translation lang="de">News</translation>
+        <translation lang="en">News</translation>
+    </text>
+	
+    <text id="layout/page/event-list">
+        <translation lang="de">Upcoming Events</translation>
+        <translation lang="en">Upcoming Events</translation>
+    </text>
+	
+    <text id="layout/page/object-list">
+        <translation lang="de">Related Articles</translation>
+        <translation lang="en">Related Articles</translation>
+    </text>
+	
+    <text id="layout/page/footer/breadcrumbs">
+        <translation lang="de">Sie sind hier: </translation>
+        <translation lang="en">You are here: </translation>
+    </text>
+    
+    <text id="layout/page/footer/webmaster">
+        <translation lang="de">Webmaster</translation>
+        <translation lang="en">Webmaster</translation>
+    </text>
+    
+    <text id="layout/page/footer/impressum">
+        <translation lang="de">Impressum</translation>
+        <translation lang="en">Legal notice</translation>
+    </text>
+    
+    <text id="layout/page/skipnav/link">
+        <translation lang="de">Navigation überspringen</translation>
+        <translation lang="en">Skip navigation</translation>
+    </text>
+    
+    <text id="layout/page/title/sitemap">
+        <translation lang="de">Sitemap</translation>
+        <translation lang="en">Sitemap</translation>
+    </text>
+    
+    <text id="layout/service-links/sitemap">
+        <translation lang="de">Sitemap</translation>
+        <translation lang="en">Sitemap</translation>
+    </text>
+    
+    <text id="layout/service-links/contact">
+        <translation lang="de">Kontakt</translation>
+        <translation lang="en">Contact</translation>
+    </text>
+    
+    <text id="layout/service-links/privacy">
+        <translation lang="de">Datenschutz</translation>
+        <translation lang="en">Privacy</translation>
+    </text>
+    
+    <text id="layout/service-links/help">
+        <translation lang="de">Hilfe</translation>
+        <translation lang="en">Help</translation>
+    </text>
+    
+    <text id="layout/sr-only/toggle-main-nav">
+        <translation lang="de">Hauptnavigation umschalten</translation>
+        <translation lang="en">Toggle main navigation</translation>
+    </text>
+    
+    <text id="object-list/next">
+        <translation lang="de">Weiter</translation>
+        <translation lang="en">Next</translation>
+    </text>
+    
+    <text id="object-list/of">
+        <translation lang="de">von</translation>
+        <translation lang="en">of</translation>
+    </text>
+    
+    <text id="object-list/prev">
+        <translation lang="de">Zurück</translation>
+        <translation lang="en">Previous</translation>
+    </text>
+    
+    <text id="object-list/page">
+        <translation lang="de">Seite</translation>
+        <translation lang="en">Page</translation>
+    </text>
+   
+    <text id="page/layout/nav-quicklinks">
+        <translation lang="de">Quicklinks</translation>
+        <translation lang="en">Quicklinks</translation>
+    </text>
+
+    <text id="time/am">
+        <translation lang="de">a.m.</translation>
+        <translation lang="en">a.m.</translation>
+    </text>
+
+    <text id="time/pm">
+        <translation lang="de">p.m.</translation>
+        <translation lang="en">p.m.</translation>
+    </text>
+            
+</foundry:static-texts>

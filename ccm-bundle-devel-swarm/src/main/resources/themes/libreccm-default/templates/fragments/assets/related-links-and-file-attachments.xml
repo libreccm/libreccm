@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+    This fragment defines the HTML output for related links and file attachments. 
+    A detailed explanation of the tags can be found in the Foundry documentation.
+-->
+<fragment-layout>
+    <if-related-links-or-file-attachments>
+        <both>
+            <h2 class="subheading">
+                <show-text>layout/page/main/related-links-and-attachments</show-text>
+            </h2>
+            <div class="related-links-file-attachments">
+                <include file="fragments/assets/related-links.xml"/>
+                <include file="fragments/assets/file-attachments.xml"/>
+            </div>
+        </both>
+        <files-only>
+            <h2 class="subheading">
+                <show-text>layout/page/main/file-attachments</show-text>
+            </h2>
+            <include file="fragments/assets/file-attachments.xml"/>
+        </files-only>
+        <links-only>
+            <h2 class="subheading">
+                <show-text>layout/page/main/related-links</show-text>
+            </h2>
+            <include file="fragments/assets/related-links.xml"/>
+        </links-only>
+    </if-related-links-or-file-attachments>
+</fragment-layout>

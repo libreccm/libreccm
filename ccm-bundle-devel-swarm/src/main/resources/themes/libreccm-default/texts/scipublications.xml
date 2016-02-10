@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<foundry:static-texts xmlns:foundry="http://foundry.libreccm.org">
+    <text id="abstract">
+        <translation lang="de">Zusammenfassung</translation>
+        <translation lang="en">Abstract</translation>
+    </text>
+    <text id="authors">
+        <translation lang="de">Autorinnen/Autoren</translation>
+        <translation lang="en">Authors</translation>
+    </text>
+    <text id="conference">
+        <translation lang="de">Konferenz</translation>
+        <translation lang="en">Conference</translation>
+    </text>
+    <text id="collected-volume">
+        <translation lang="de">In Sammelband</translation>
+        <translation lang="en">In collected volume</translation>
+    </text>
+    <text id="collected-volume-articles">
+        <translation lang="de">Artikel in diesem Sammelband</translation>
+        <translation lang="en">Articles in this collected volume</translation>
+    </text>
+    <text id="edition">
+        <translation lang="de">Auflage</translation>
+        <translation lang="en">Edition</translation>
+    </text>
+    <text id="DOI">
+        <translation lang="de">DOI</translation>
+        <translation lang="en">DOI</translation>
+    </text>
+    <text id="export">
+        <translation lang="de">Exportiere Publikation als</translation>
+        <translation lang="en">Export publication as</translation>
+    </text>
+    <text id="editor-suffix">
+        <translation lang="de">(Hrsg.)</translation>
+        <translation lang="en">(ed.)</translation>
+    </text>
+    <text id="in">
+        <translation lang="de">In: </translation>
+        <translation lang="en">In: </translation>
+    </text>
+    <text id="isbn">
+        <translation lang="de">ISBN</translation>
+        <translation lang="en">ISBN</translation>
+    </text>
+    <text id="issn">
+        <translation lang="de">ISSN</translation>
+        <translation lang="en">ISSN</translation>
+    </text>
+    <text id="journal">
+        <translation lang="de">Erschienen in</translation>
+        <translation lang="en">Published in</translation>
+    </text>
+    <text id="journal-articles">
+        <translation lang="de">Artikel in dieser Zeitschrift</translation>
+        <translation lang="en">Articles in this journal</translation>
+    </text>
+    <text id="journal-first-year">
+        <translation lang="de">Zuerst erschienen</translation>
+        <translation lang="en">First published</translation>
+    </text>
+    <text id="journal-last-year">
+        <translation lang="de">Zuletzt erschienen</translation>
+        <translation lang="en">Last published</translation>
+    </text>
+    <text id="last-accessed">
+        <translation lang="de">Letzter Zugriff</translation>
+        <translation lang="en">Last accessed</translation>
+    </text>
+    <text id="library-signatures">
+        <translation lang="de">Verfügbar in folgenden Bibliotheken</translation>
+        <translation lang="en">Available in these libraries</translation> 
+    </text>
+    <text id="library-signature-library">
+        <translation lang="de">Bibliothek</translation>
+        <translation lang="en">Library</translation>
+    </text>
+    <text id="library-signature-signature">
+        <translation lang="de">Signatur</translation>
+        <translation lang="en">Signature</translation>
+    </text>
+    <text id="library-signature-misc">
+        <translation lang="de">Weitere Angaben</translation>
+        <translation lang="en">Miscellaneous</translation>
+    </text>
+    <text id="misc">
+        <translation lang="de">Weitere Angaben</translation>
+        <translation lang="en">Miscellaneous</translation>
+    </text>
+    <text id="number">
+        <translation lang="de">Nummer</translation>
+        <translation lang="en">Number</translation>
+    </text>
+    <text id="number-of-pages">
+        <translation lang="de">Anzahl der Seiten</translation>
+        <translation lang="en">Number of pages</translation>
+    </text>
+    <text id="orderer">
+        <translation lang="de">Auftraggeber</translation>
+        <translation lang="en">Orderer</translation>
+    </text>
+    <text id="organization">
+        <translation lang="de">Organisation</translation>
+        <translation lang="en">Organisation</translation>
+    </text>
+    <text id="proceedings">
+        <translation lang="de">In Tagungsband</translation>
+        <translation lang="en">In proceedings</translation>
+    </text>
+    <text id="proceedings-papers">
+        <translation lang="de">Beiträge in diesem Tagungsband</translation>
+        <translation lang="en">Papers of these proceedings</translation>
+    </text>
+    <text id="reviewed">
+        <translation lang="de">Reviewed</translation>
+        <translation lang="en">Reviewed</translation>
+    </text>
+    <text id="series">
+        <translation lang="de">Erschienen in der Reihe</translation>
+        <translation lang="en">Published in series</translation>
+    </text>
+    <text id="series-volumes">
+        <translation lang="de">Bände dieser Reihe</translation>
+        <translation lang="en">Volumes of this series</translation>
+    </text>
+    <text id="volume">
+        <translation lang="de">Band</translation>
+        <translation lang="en">Volume</translation>
+    </text>
+    <text id="page-range">
+        <translation lang="de">Seiten</translation>
+        <translation lang="en">Pages</translation>
+    </text>
+    <text id="page-range-to">
+        <translation lang="de">bis</translation>
+        <translation lang="en">to</translation>
+    </text>
+    <text id="place">
+        <translation lang="de">Erscheinungsort</translation>
+        <translation lang="en">Place of publication</translation>
+    </text>
+    <text id="publisher">
+        <translation lang="de">Verlag</translation>
+        <translation lang="en">Publisher</translation>
+    </text>
+    <text id="url">
+        <translation lang="de">URL</translation>
+        <translation lang="en">URL</translation>
+    </text>
+    <text id="urn">
+        <translation lang="de">URN</translation>
+        <translation lang="en">URN</translation>
+    </text>
+    <text id="year">
+        <translation lang="de">Jahr</translation>
+        <translation lang="en">Year</translation>
+    </text>
+    <text id="year-first-published">
+        <translation lang="de">Erste Veröffentlichung</translation>
+        <translation lang="en">First published</translation>
+    </text>
+</foundry:static-texts>

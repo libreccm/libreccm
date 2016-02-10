@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doc-chapter-layout>
+    <article>
+        <!--<doc-chapter-id/>-->
+        <h1>
+            <doc-chapter-title/>
+        </h1>
+    
+        <doc-sections/>
+    </article>
+</doc-chapter-layout>

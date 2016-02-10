@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>The overall structure of foundry</title>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    </head>
+    <body>
+        <h1>The overall structure of foundry</h1>
+        <main>
+            <h2>Top level structure</h2>
+            <p>
+                Foundry supports two kinds of themes: Parent themes and child themes. Parent themes
+                are also called master themes.
+                Normally there
+                should be only one parent theme in a CCM installation at <code>/themes/foundry</code>. 
+                All other themes should be child themes. An example for a child theme should also be
+                installed at <code>/themes/foundry-base</code>. 
+            </p>
+            <p>
+                A complete Foundry theme (a parent theme) contains of the following directories:
+            </p>
+            <dl>
+                <dt><code>conf</code></dt>
+                <dd>
+                    Configuration files for the theme.
+                </dd>
+                <dt><code>doc</code></dt>
+                <dd>
+                    The documentation of Foundry. The document you reading at the moment is 
+                    generated using these files.
+                </dd>
+                <dt><code>fonts</code></dt>
+                <dd>
+                    Webfonts used in the theme.
+                </dd>
+                <dt><code>foundry</code></dt>
+                <dd>
+                    The directory contains the XSL files which contain the logic part of Foundry.
+                </dd>
+                <dt><code>images</code></dt>
+                <dd>
+                    Static images for the theme.
+                </dd>
+                <dt><code>libs</code></dt>
+                <dd>
+                    Additional JavaScript libraries, for example jQuery plugins.
+                </dd>
+                <dt><code>scripts</code></dt>
+                <dd>
+                    Custom JavaScripts
+                </dd>
+                <dt><code>styles</code></dt>
+                <dd>
+                    CSS files
+                </dd>
+                <dt><code>templates</code></dt>
+                <dd>
+                    The layout templates
+                </dd>
+                <dt><code>texts</code></dt>
+                <dd>
+                    Static texts for the theme
+                </dd>
+                <dt><code>user</code></dt>
+                <dd>
+                    Custom extensions. Not supported yet.
+                </dd>
+            </dl>
+            <p>
+                A child theme has only the directories which contain files which the designer needs
+                to change. These are:
+            </p>
+            <ul>
+                <li><code>conf</code></li>
+                <li><code>fonts</code></li>
+                <li><code>images</code></li>
+                <li><code>libs</code></li>
+                <li><code>scripts</code></li>
+                <li><code>styles</code></li>
+                <li><code>templates</code></li>
+                <li><code>texts</code></li>
+            </ul>
+            <p>
+                The <code>foundry</code> directory contains the following files and directories:
+            </p>
+            <dl>
+                <dt><code>fonts</code></dt>
+                <dd>Webfonts used internally, for example for the Content Center.</dd>
+                <dt><code>images</code></dt>
+                <dd>Images used internally.</dd>
+                <dt><code>lib</code></dt>
+                <dd>The XSL files from Foundry.</dd>
+                <dt><code>scripts</code></dt>
+                <dd>Java Scripts used internally.</dd>
+                <dt><code>styles</code></dt>
+                <dd>CSS files for internal templates like the Content Center</dd>
+                <dt><code>templates</code></dt>
+                <dd>Internal templates for example for the Content Center.</dd>
+                <dt><code>texts</code></dt>
+                <dd>Internal texts</dd>
+                <dt><code>main.xsl</code></dt>
+                <dd>
+                    Entry point. The <code>start.xsl</code> in the base directory acts only as 
+                    entry point for the XSL processor and delegates all work to the 
+                    <code>main.xsl</code>.
+                </dd>
+                <dt><code>lib.xsl</code></dt>
+                <dd>
+                    A simple import file which imports the XSL files from the lib directory.
+                </dd>
+            </dl>
+            <p>
+                The <code>main.xsl</code> file contains the <code>xsl:output</code> element 
+                which tells the XSL processor that we want to create HTML. There is only two 
+                XSL templates in the <code>main.xsl</code> file along with some helper functions. 
+                This first template is the entry point for CCM and
+                matches the <code>bebop:page</code> element which is the root element of the 
+                data tree XML created by CCM. The template processes the 
+                <code>conf/templates.xsl</code> file calls the XSL templates for parsing the 
+                layout templates.
+            </p>
+            <p>
+                The second templates is the entry point for the documentation system Foundry.
+            </p>
+            
+            <h2>The lib directory</h2>
+            <p>
+                The <code>lib</code> is the core part of Foundry and contains the following 
+                sub directories and files:
+            </p>
+            <dl>
+                <dt><code>bebop</code></dt>
+                <dd>
+                    XSL files for creating the backend UI. The XSL files were taken from Mandalay
+                    and have only been adapted to work inside Foundry.
+                </dd>
+                <dt><code>search</code></dt>
+                <dd>XSL files for the various search applications.</dd>
+                <dt><code>template-tags</code></dt>
+                <dd>
+                    XSL files implementing the tags which can be used in the templates.
+                </dd>
+                <dt><code>template-tags</code></dt>
+                <dd>
+                    This directory contains the XSL files which implement the tags which can be used
+                    in the layout templates.
+                </dd>
+                <dt><code>bebop.xsl</code></dt>
+                <dd>
+                    Imports the files from the <code>bebop</code> directory.
+                </dd>
+                <dt><code>global-vars.xsl</code></dt>
+                <dd>
+                    These file is very important. It defines various global variables like the
+                    <code>theme-prefix</code> or the <code>context-prefix</code> variables. A 
+                    complete list can be found in the 
+                    <a href="#devel-lib-global-vars.xsl">reference part</a>.
+                </dd>
+                <dt><code>search.xsl</code></dt>
+                <dd>Import file for the XSL files in the <code>search</code> directory.</dd>
+                <dt><code>template-parser.xsl</code></dt>
+                <dd>
+                    This file contains the XSL templates for parsing the layout templates.
+                </dd>
+                <dt><code>template-tags.xsl</code></dt>
+                <dd>
+                    Import file for the XSL files in the <code>template-tags</code> directory.
+                </dd>
+                <dt><code>utils.xsl</code></dt>
+                <dd>
+                    Helper functions. A complete list is available in the 
+                    <a href="#devel-lib-utils.xsl">reference part</a>.
+                </dd>
+            </dl>
+            
+            <h2>Template tags</h2>
+            <p>
+                The <code>template-tags</code> directory contains the XSL file which are 
+                implementing the tags which can be used in the layout templates. For a complete
+                list please refer to the 
+                <a href="#template-tags-reference">Template Tags Reference</a> in the user manual.
+            </p>
+        </main>
+    </body>
+</html>
