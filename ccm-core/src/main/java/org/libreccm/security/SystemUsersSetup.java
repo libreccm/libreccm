@@ -64,7 +64,7 @@ public class SystemUsersSetup {
         admin.setFamilyName("LibreCCM");
         admin.setGivenName("System Administrator");
         final EmailAddress adminEmail = new EmailAddress();
-        adminEmail.setAddress("admin@localhost");
+        adminEmail.setAddress("admin@libreccm.example");
         admin.setPrimaryEmailAddress(adminEmail);
 
         String adminPassword = DEFAULT_ADMIN_PW;

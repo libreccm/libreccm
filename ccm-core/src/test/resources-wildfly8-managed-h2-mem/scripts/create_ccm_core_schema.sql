@@ -82,6 +82,7 @@ CREATE SCHEMA ccm_core;
     create table ccm_core.ccm_objects (
         object_id bigint not null,
         display_name varchar(255),
+        uuid varchar(255) not null,
         primary key (object_id)
     );
 

@@ -914,7 +914,7 @@ public class URL {
     static URL login(final HttpServletRequest sreq) {
         //Replace register eventuelly...
         return URL.excursion(sreq, 
-                             "/register",
+                             "/register/",
                              (ParameterMap) s_empty.get());
     }
 

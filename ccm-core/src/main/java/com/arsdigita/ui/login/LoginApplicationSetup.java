@@ -18,6 +18,7 @@
  */
 package com.arsdigita.ui.login;
 
+import java.util.UUID;
 import org.libreccm.modules.InstallEvent;
 import org.libreccm.web.AbstractCcmApplicationSetup;
 import org.libreccm.web.CcmApplication;
@@ -38,6 +39,7 @@ public class LoginApplicationSetup extends AbstractCcmApplicationSetup {
     @Override
     public void setup() {
         final CcmApplication login = new CcmApplication();
+        login.setUuid(UUID.randomUUID().toString());
         login.setApplicationType(LOGIN_APP_NAME);
         login.setPrimaryUrl(LoginConstants.LOGIN_PAGE_URL);
 

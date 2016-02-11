@@ -18,6 +18,7 @@
  */
 package org.libreccm.categorization;
 
+import java.util.UUID;
 import org.libreccm.configuration.ConfigurationConstants;
 import org.libreccm.modules.InstallEvent;
 
@@ -39,9 +40,11 @@ public class RegistrySetup {
         final Domain registry = new Domain();
         registry.setDomainKey(ConfigurationConstants.REGISTRY_DOMAIN);
         registry.setVersion("1.0");
+        registry.setUuid(UUID.randomUUID().toString());
         registry.setDisplayName(ConfigurationConstants.REGISTRY_DOMAIN);
         
         final Category root = new Category();
+        root.setUuid(UUID.randomUUID().toString());
         root.setName(ConfigurationConstants.REGISTRY_DOMAIN + "-root");
         root.setDisplayName(ConfigurationConstants.REGISTRY_DOMAIN + "-root");
         

@@ -18,6 +18,7 @@
  */
 package com.arsdigita.ui.admin;
 
+import java.util.UUID;
 import org.libreccm.modules.InstallEvent;
 import org.libreccm.web.CcmApplication;
 import org.libreccm.web.AbstractCcmApplicationSetup;
@@ -39,6 +40,7 @@ public class AdminApplicationSetup extends AbstractCcmApplicationSetup {
     @Override
     public void setup() {
         final CcmApplication admin = new CcmApplication();
+        admin.setUuid(UUID.randomUUID().toString());
         admin.setApplicationType(ADMIN_APP_NAME);
         admin.setPrimaryUrl(AdminConstants.ADMIN_PAGE_URL);
         

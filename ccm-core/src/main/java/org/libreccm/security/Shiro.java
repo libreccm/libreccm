@@ -19,80 +19,40 @@
 package org.libreccm.security;
 
 import com.arsdigita.kernel.KernelConfig;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.RequestScoped;
-import javax.enterprise.inject.Default;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.inject.Singleton;
-import javax.servlet.ServletContext;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.config.IniSecurityManagerFactory;
 import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.web.env.EnvironmentLoader;
-import org.apache.shiro.web.env.WebEnvironment;
 
 /**
  * This application scoped CDI bean acts as bridge between CDI and Shiro. It
  * initialises the Shiro environment and provides the Shiro
  * {@link SecurityManager} and the current Shiro {@link Subject} via CDI
  * producer methods.
+ * 
+ * This class is based on the implementation for the upcoming CDI integration
+ * of Shiro discussed at https://issues.apache.org/jira/browse/SHIRO-337 and
+ * the implementation which can be found at https://github.com/hwellmann/shiro 
+ * (commit 8a40df0).
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @ApplicationScoped
-//@Singleton
 public class Shiro {
-
-    private static final Logger LOGGER = LogManager.getLogger(
-            Shiro.class);
-
-    @Inject
-    private ServletContext servletContext;
 
     @Inject
     private UserRepository userRepository;
-
-    /**
-     * Path to the Shiro INI file.
-     */
-    private static final String INI_FILE = "classpath:shiro.ini";
-
-    /**
-     * The Shiro {@code SecurityManager}.
-     */
-    private SecurityManager securityManager;
-
-    /**
-     * Initialises Shiro. The CDI container will call this method after creating
-     * an instance of this bean.
-     */
-    @PostConstruct
-    public void init() {
-//        LOGGER.debug("Shiro initialising...");
-//        securityManager = new IniSecurityManagerFactory(
-//                INI_FILE)
-//                .createInstance();
-//        LOGGER.debug("Shiro SecurityManager created sucessfully.");
-//        SecurityUtils.setSecurityManager(securityManager);
-//        LOGGER.debug("Shiro initialised successfully.");
-        //securityManager = SecurityUtils.getSecurityManager();
-
-        final WebEnvironment environment = (WebEnvironment) servletContext.
-                getAttribute(EnvironmentLoader.ENVIRONMENT_ATTRIBUTE_KEY);
-
-        securityManager = environment.getSecurityManager();
-        SecurityUtils.setSecurityManager(securityManager);
-    }
 
     /**
      * Provides access Shiro's {@link SecurityManager}.
@@ -102,12 +62,7 @@ public class Shiro {
     @Produces
     @Named("securityManager")
     public SecurityManager getSecurityManager() {
-        return securityManager;
-//        return SecurityUtils.getSecurityManager();
-//        final WebEnvironment environment = (WebEnvironment) servletContext.
-//                getAttribute(EnvironmentLoader.ENVIRONMENT_ATTRIBUTE_KEY);
-//
-//        return environment.getSecurityManager();
+        return proxy(SecurityManager.class, new SubjectInvocationHandler());
     }
 
     /**
@@ -118,7 +73,12 @@ public class Shiro {
      */
     @Produces
     public Subject getSubject() {
-        return SecurityUtils.getSubject();
+        return proxy(Subject.class, new SubjectInvocationHandler());
+    }
+
+    @Produces
+    public Session getSession() {
+        return proxy(Session.class, new SessionInvocationHandler());
     }
 
     public Subject getPublicUser() {
@@ -153,6 +113,61 @@ public class Shiro {
                 .buildSubject();
 
         return publicUser;
+    }
+
+    private <T> T proxy(final Class<T> clazz, final InvocationHandler handler) {
+        return (T) Proxy.newProxyInstance(getClass().getClassLoader(),
+                                          new Class<?>[]{clazz},
+                                          handler);
+    }
+
+    private static abstract class Handler implements InvocationHandler {
+
+        public abstract Object handlerInvoke(Object proxy,
+                                             Method method,
+                                             Object[] args) throws Throwable;
+
+        @Override
+        public Object invoke(final Object proxy,
+                             final Method method,
+                             Object[] args) throws Throwable {
+            try {
+                return handlerInvoke(proxy, method, args);
+            } catch (InvocationTargetException ex) {
+                throw ex.getTargetException();
+            }
+        }
+    }
+
+    private static class SubjectInvocationHandler extends Handler {
+
+        @Override
+        public Object handlerInvoke(final Object proxy,
+                                    final Method method,
+                                    final Object[] args) throws Throwable {
+            return method.invoke(SecurityUtils.getSubject(), args);
+        }
+    }
+
+    private static class SecurityManagerInvocationHandler extends Handler {
+
+        @Override
+        public Object handlerInvoke(final Object proxy,
+                                    final Method method,
+                                    final Object[] args) throws Throwable {
+            return method.invoke(SecurityUtils.getSecurityManager(), args);
+        }
+
+    }
+
+    private class SessionInvocationHandler extends Handler {
+
+        @Override
+        public Object handlerInvoke(final Object proxy,
+                                    final Method method,
+                                    final Object[] args) throws Throwable {
+            return method.invoke(SecurityUtils.getSubject().getSession(), args);
+        }
     }
 
 }
