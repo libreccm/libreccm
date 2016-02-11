@@ -1,14 +1,19 @@
 ccm_core.ccm_objects:
         - object_id: -1000
           display_name: test
+          uuid: d76c9183-5558-4ca6-bd56-3cdd8bdadad6
         - object_id: -2000
           display_name: test_root
+          uuid: 1d533dba-08f2-4d65-948a-3bba953dabab
         - object_id: -2100
           display_name: foo
+          uuid: a83d238a-1df7-4b54-a886-a93f4e816888
         - object_id: -2200
           display_name: bar
+          uuid: 7fd42bcd-c49f-4d8a-be1c-fd88f2e9a7c0
         - object_id: -2300
           display_name: new-category
+          uuid: dfe81433-de5c-47f2-aaf6-5013636211ee
 
 ccm_core.categories:
         - object_id: -2000

@@ -6,10 +6,13 @@ ccm_core.ccm_roles:
 ccm_core.ccm_objects:
     - object_id: -20001
       display_name: object1
+      uuid: 17239bc1-5db3-4448-b37c-cac0fddd7342
     - object_id: -20002
       display_name: object2
+      uuid: 686a5d09-36ec-46ba-9c97-a5d6db4b9008
     - object_id: -20003
       display_name: object3
+      uuid: 1c31700a-f9db-4188-812f-12dba4186c75
 ccm_core.permissions:
     - permission_id: -30001
       granted_privilege: privilege1

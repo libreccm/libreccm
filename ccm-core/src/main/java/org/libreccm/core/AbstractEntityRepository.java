@@ -18,10 +18,12 @@
  */
 package org.libreccm.core;
 
-
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
+import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -29,13 +31,15 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 /**
- * A base class providing common method needed by every repository. 
- * 
+ * A base class providing common method needed by every repository.
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @param <K> Type of the primary key of the entity
  * @param <E> Type of the entity.
  */
 public abstract class AbstractEntityRepository<K, E> {
+
+    static final String FETCH_GRAPH_HINT_KEY = "javax.persistence.fetchgraph";
 
     /**
      * The {@link EntityManager} instance to use. Provided by the container via
@@ -46,7 +50,7 @@ public abstract class AbstractEntityRepository<K, E> {
 
     /**
      * Getter method for retrieving the injected {@link EntityManager}.
-     * 
+     *
      * @return The {@code EntityManager} used by the repository.
      */
     protected EntityManager getEntityManager() {
@@ -54,19 +58,19 @@ public abstract class AbstractEntityRepository<K, E> {
     }
 
     /**
-     * The class of entities for which this repository can be used. 
-     * For creating a repository class overwrite this method.
-     * 
-     * @return The {@code Class} of the Entity which are managed by this 
+     * The class of entities for which this repository can be used. For creating
+     * a repository class overwrite this method.
+     *
+     * @return The {@code Class} of the Entity which are managed by this
      * repository.
      */
     public abstract Class<E> getEntityClass();
 
     /**
      * Finds an entity by it ID.
-     * 
+     *
      * @param entityId The ID of the entity to retrieve.
-     * 
+     *
      * @return The entity identified by the provided ID of {@code null} if there
      * is no such entity.
      */
@@ -74,20 +78,32 @@ public abstract class AbstractEntityRepository<K, E> {
         return entityManager.find(getEntityClass(), entityId);
     }
 
+    public E findById(final K entityId, final String entityGraphName) {
+        final EntityGraph<E> entityGraph = (EntityGraph<E>) entityManager.
+                getEntityGraph(entityGraphName);
+        return findById(entityId, entityGraph);
+    }
+
+    public E findById(final K entityId, final EntityGraph<E> entityGraph) {
+        final Map<String, Object> hints = new HashMap<>();
+        hints.put(FETCH_GRAPH_HINT_KEY, entityGraph);
+        return entityManager.find(getEntityClass(), entityId, hints);
+    }
+
     /**
-     * Finds all instances of the entity of the type this repository is 
-     * responsible for. 
-     * 
-     * @return The list of entities in the database which are of the type 
+     * Finds all instances of the entity of the type this repository is
+     * responsible for.
+     *
+     * @return The list of entities in the database which are of the type
      * provided by {@link #getEntityClass()}.
      */
     public List<E> findAll() {
         // We are using the Critiera API here because otherwise we can't 
         // pass the type of the entity dynmacially.
         final CriteriaBuilder criteriaBuilder = entityManager
-            .getCriteriaBuilder();
+                .getCriteriaBuilder();
         final CriteriaQuery<E> criteriaQuery = criteriaBuilder.createQuery(
-            getEntityClass());
+                getEntityClass());
         final Root<E> root = criteriaQuery.from(getEntityClass());
         criteriaQuery.select(root);
 
@@ -97,18 +113,18 @@ public abstract class AbstractEntityRepository<K, E> {
     }
 
     /**
-     * Used by {@link #save(java.lang.Object)} to determine if the provided 
+     * Used by {@link #save(java.lang.Object)} to determine if the provided
      * entity is a a new one.
-     * 
+     *
      * @param entity The entity to check.
-     * @return {@code true} if the entity is new (isn't in the database yet), 
+     * @return {@code true} if the entity is new (isn't in the database yet),
      * {@code false} otherwise.
      */
     public abstract boolean isNew(final E entity);
 
     /**
      * Save a new or changed entity.
-     * 
+     *
      * @param entity The entity to save.
      */
     public void save(final E entity) {
@@ -121,7 +137,7 @@ public abstract class AbstractEntityRepository<K, E> {
 
     /**
      * Deletes an entity from the database.
-     * 
+     *
      * @param entity The entity to delete.
      */
     public void delete(final E entity) {

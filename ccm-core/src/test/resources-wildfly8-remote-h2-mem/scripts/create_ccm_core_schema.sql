@@ -70,6 +70,7 @@ CREATE SCHEMA ccm_core;
     create table CCM_CORE.CCM_OBJECTS (
         OBJECT_ID bigint not null,
         DISPLAY_NAME varchar(255),
+        UUID varchar(255) not null,
         primary key (OBJECT_ID)
     );
 

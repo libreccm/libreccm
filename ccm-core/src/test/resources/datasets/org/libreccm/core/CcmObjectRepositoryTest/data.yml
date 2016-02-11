@@ -1,7 +1,10 @@
 ccm_core.ccm_objects:
     - object_id: -10
       display_name: Test Object 1
+      uuid: 14c5303e-19b7-4710-939d-7e7d5eeef155
     - object_id: -20
       display_name: Test Object 2
+      uuid: 921bc481-cd82-4138-9791-6df2cfbbebde
     - object_id: -30
       display_name: Test Object 3
+      uuid: 6ad52a5f-31a1-4686-affc-c36741e7e949

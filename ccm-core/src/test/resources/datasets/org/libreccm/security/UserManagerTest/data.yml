@@ -44,16 +44,22 @@ ccm_core.users:
 ccm_core.ccm_objects:
     - object_id: -100
       display_name: registry
+      uuid: d6186227-7c90-42e6-a5d0-ca274b622df7
     - object_id: -200
       display_name: registry-root
+      uuid: c4a64ce4-242a-443a-b5bd-e84d34203e3a
     - object_id: -201
       display_name: com
+      uuid: 8388e1e3-5878-464a-a9fe-95e95c9331a6
     - object_id: -202
       display_name: arsdigita
+      uuid: b2ba60a1-34a0-459e-b6d2-d1be04c0bf3f
     - object_id: -203
       display_name: kernel
+      uuid: bcba7ad2-22a1-4c94-a5f1-aefc25091038
     - object_id: -204
       display_name: KernelConfig
+      uuid: 5643aea7-0abb-4060-bf3d-7365e2a02757
 ccm_core.categories:
     - object_id: -200
       unique_id: bb93a964-bf66-424c-a22d-074d001db3b8

@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -40,6 +41,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -69,7 +71,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 //persistence system we can't yet refactor it to make PMD happy. Also I think
 //this is a false warning.
 @SuppressWarnings("PMD.TooManyMethods")
-public class CcmObject implements Serializable {
+public class CcmObject implements Identifiable, Serializable {
 
     private static final long serialVersionUID = 201504261329L;
 
@@ -83,6 +85,11 @@ public class CcmObject implements Serializable {
     @XmlElement(name = "object-id", namespace = CORE_XML_NS)
     private long objectId;
 
+    @Column(name = "UUID", nullable = false)
+    @NotNull
+    @XmlElement(name = "uuid")
+    private String uuid;
+    
     /**
      * A human readable name identifying this {@code CcmObject}
      */
@@ -119,6 +126,15 @@ public class CcmObject implements Serializable {
 
     public void setObjectId(final long objectId) {
         this.objectId = objectId;
+    }
+    
+    @Override
+    public String getUuid() {
+        return uuid;
+    }
+    
+    public void setUuid(final String uuid) {
+        this.uuid = uuid;
     }
 
     public String getDisplayName() {

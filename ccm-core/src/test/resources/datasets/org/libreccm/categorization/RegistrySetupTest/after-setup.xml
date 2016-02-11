@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <dataset>
     <ccm_core.ccm_objects object_id="-10"
-                          display_name="registry" />
+                          display_name="registry"
+                          uuid="a53b066b-6101-405f-8ba5-b46f1c9d2b51"    />
     <ccm_core.ccm_objects object_id="-20"
-                          display_name="registry-root" />
+                          display_name="registry-root"
+                          uuid="0b5eb4c6-3fa7-4c92-88df-0077faa4bbc7"    />
     <ccm_core.categories object_id="-20"
                          name="registry-root" />
     <ccm_core.category_domains object_id="-10"

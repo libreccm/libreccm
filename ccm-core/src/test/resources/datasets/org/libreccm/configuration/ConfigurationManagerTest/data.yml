@@ -1,28 +1,40 @@
 ccm_core.ccm_objects:
     - object_id: -1000
       display_name: registry
+      uuid: f815d6f8-f915-4399-b16c-2e2dd76f4128
     - object_id: -2000
       display_name: registry_root
+      uuid: 1e5b1732-0a15-49b8-b4a6-8aae1a003147
     - object_id: -2100
       display_name: org
+      uuid: 5b75da38-6615-4197-9527-3b56eff4c9d2
     - object_id: -2200
       display_name: libreccm
+      uuid: 103c7730-3cb0-4189-8314-b7527e707b0e
     - object_id: -2300
       display_name: configuration
+      uuid: bbc0d0ab-a191-4e40-824e-ccb959e06ba2
     - object_id: -2400
       display_name: ExampleConfiguration
+      uuid: ba898441-5a44-48eb-8ece-c5b25d4b9dcb
     - object_id: -3100
       display_name: price
+      uuid: a5feb3a6-356a-4280-bbd2-921d7dc37250
     - object_id: -3200
       display_name: enabled
+      uuid: 02184f7a-cc2b-44d6-a9b5-f11b0f77ae21
     - object_id: -3300
       display_name: minTemperature
+      uuid: 8c12c6e9-6263-42d1-b2d2-c172066f6304
     - object_id: -3400
       display_name: itemsPerPage
+      uuid: 5a729224-b0b1-41d3-b383-b42de185d91c
     - object_id: -3500
       display_name: helpUri
+      uuid: 70d0b967-a38f-4d3e-806c-c640bd114472
     - object_id: -3600
       display_name: languages
+      uuid: 19b3cdac-3ca4-44c0-9b06-dca8e5ae505f
 
 ccm_core.categories:
     - object_id: -2000

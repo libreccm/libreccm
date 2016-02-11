@@ -1,26 +1,37 @@
 ccm_core.ccm_objects:
         - object_id: -1000
           display_name: test
+          uuid: 3b7c7685-340b-48d2-8f27-781a04833634
         - object_id: -2000
           display_name: test_root
+          uuid: 35a74731-d700-431a-b0cf-6d548f3d77c9
         - object_id: -2100
           display_name: foo
+          uuid: 6b5e0a4b-6a09-4108-ac43-f46b59bc2bc6
         - object_id: -2200
           display_name: bar
+          uuid: 0482f4e1-d1f0-44a1-8bef-2b978e00e9a8
         - object_id: -3100
           display_name: object1
+          uuid: b82ea94b-875b-46b1-9078-40e457f25868
         - object_id: -3200
           display_name: object2
+          uuid: 06a838e5-d396-49e4-bcf2-1dabed441406
         - object_id: -3300
           display_name: object3
+          uuid: 95f03070-9ea1-4e33-8e1b-8108075aac28
         - object_id: 1
           display_name: com
+          uuid: 4f77ec24-b4c2-4023-a6b9-50a33d6f7cef
         - object_id: 2
           display_name: example
+          uuid: 58e81db1-d99f-4ba6-8bad-2abe72bfaa98
         - object_id: 3
           display_name: categories
+          uuid: 0ca06e59-466c-41f2-9c37-c40fba388081
         - object_id: 4
           display_name: test
+          uuid: 59aa434c-0220-4841-bf3f-f58d311607aa
 
 ccm_core.categories:
         - object_id: -2000
