@@ -62,7 +62,8 @@ public class Shiro {
     @Produces
     @Named("securityManager")
     public SecurityManager getSecurityManager() {
-        return proxy(SecurityManager.class, new SubjectInvocationHandler());
+        return proxy(SecurityManager.class, 
+                     new SecurityManagerInvocationHandler());
     }
 
     /**
@@ -115,6 +116,7 @@ public class Shiro {
         return publicUser;
     }
 
+    @SuppressWarnings("unchecked")
     private <T> T proxy(final Class<T> clazz, final InvocationHandler handler) {
         return (T) Proxy.newProxyInstance(getClass().getClassLoader(),
                                           new Class<?>[]{clazz},

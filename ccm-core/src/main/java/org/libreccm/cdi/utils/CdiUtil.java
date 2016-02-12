@@ -29,6 +29,8 @@ import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.CDI;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
 /**
  *
@@ -43,7 +45,24 @@ public class CdiUtil {
     public CdiUtil() {
         beanManager = CDI.current().getBeanManager();
     }
+    
+    private CdiUtil(final BeanManager beanManager)  {
+        this.beanManager = beanManager;
+    }
 
+    public static CdiUtil createCdiUtil() {
+        try {
+        final InitialContext context = new InitialContext();
+            final BeanManager beanManager = (BeanManager) context.lookup(
+                "java:comp/BeanManager");
+            return new CdiUtil(beanManager);
+        } catch(NamingException ex) {
+            throw new IllegalStateException("Unable to lookup BeanManager.", ex);
+        }
+            
+        
+    }
+    
     @SuppressWarnings("unchecked")
     public <T> T findBean(final Class<T> beanType) {
         final Set<Bean<?>> beans = beanManager.getBeans(beanType);

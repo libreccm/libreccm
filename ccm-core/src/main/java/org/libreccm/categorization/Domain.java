@@ -24,9 +24,9 @@ import static org.libreccm.core.CoreConstants.*;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.URL;
 import org.libreccm.core.CcmObject;
+import org.libreccm.core.DefaultEntityGraph;
 import org.libreccm.l10n.LocalizedString;
 import org.libreccm.web.CcmApplication;
-import org.omg.CORBA.DomainManager;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -91,6 +91,7 @@ import javax.xml.bind.annotation.XmlRootElement;
                     @NamedAttributeNode("subCategories")
                 })})
 })
+@DefaultEntityGraph("Domain.allCategories")
 @XmlRootElement(name = "domain", namespace = CAT_XML_NS)
 public class Domain extends CcmObject implements Serializable {
 

@@ -21,8 +21,10 @@ package org.libreccm.security;
 import org.libreccm.core.AbstractEntityRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
+import javax.persistence.EntityGraph;
 import javax.persistence.TypedQuery;
 
 /**
@@ -52,20 +54,59 @@ public class UserRepository extends AbstractEntityRepository<Long, User> {
      * @param name The name of the user to find.
      *
      * @return The user identified by the provided name. If there are multiple
-     * user matching the user name (should be possible) the first one is
-     * returned. If there is no matching user {@code null} is returned.
+     *         user matching the user name (should be possible) the first one is
+     *         returned. If there is no matching user {@code null} is returned.
      */
     public User findByName(final String name) {
         final TypedQuery<User> query = getEntityManager().createNamedQuery(
-                "User.findByName",
-                User.class);
+            "User.findByName", User.class);
+        applyDefaultEntityGraph(query);
         query.setParameter("name", name);
-        final List<User> result = query.getResultList();
-        if (result.isEmpty()) {
-            return null;
-        } else {
-            return result.get(0);
-        }
+
+        return getSingleResultOrNull(query);
+
+//        final List<User> result = query.getResultList();
+//        if (result.isEmpty()) {
+//            return null;
+//        } else {
+//            return result.get(0);
+//        }
+    }
+
+    /**
+     * Finds a user by its name and applies the given named entity graph to the
+     * query.
+     *
+     * @param name            The name of the user to find.
+     * @param entityGraphName The named entity graph to use.
+     *
+     * @return The user identified by the provided name. If there are multiple
+     *         user matching the user name (should be possible) the first one is
+     *         returned. If there is no matching user {@code null} is returned.
+     */
+    public User findByName(final String name, final String entityGraphName) {
+        @SuppressWarnings("unchecked")
+        final EntityGraph<User> entityGraph
+                                    = (EntityGraph<User>) getEntityManager()
+            .getEntityGraph(entityGraphName);
+        return findByName(name, entityGraph);
+    }
+
+    public User findByName(final String name,
+                           final EntityGraph<User> entityGraph) {
+        final TypedQuery<User> query = getEntityManager().createNamedQuery(
+            "User.findByName", User.class);
+        query.setParameter("name", name);
+        query.setHint(FETCH_GRAPH_HINT_KEY, entityGraph);
+
+        return getSingleResultOrNull(query);
+
+//        final List<User> result = query.getResultList();
+//        if (result.isEmpty()) {
+//            return null;
+//        } else {
+//            return result.get(0);
+//        }
     }
 
     /**
@@ -74,19 +115,42 @@ public class UserRepository extends AbstractEntityRepository<Long, User> {
      * @param emailAddress The email address which identifies the user.
      *
      * @return The user identified by the provided email address. If there are
-     * multiple matching users only the first one is returned. If there is no
-     * matching user {@code null} is returned.
+     *         multiple matching users only the first one is returned. If there
+     *         is no matching user {@code null} is returned.
      */
     public User findByEmailAddress(final String emailAddress) {
         final TypedQuery<User> query = getEntityManager().createNamedQuery(
-                "User.findByEmailAddress", User.class);
+            "User.findByEmailAddress", User.class);
         query.setParameter("emailAddress", emailAddress);
-        final List<User> result = query.getResultList();
-        if (result.isEmpty()) {
-            return null;
-        } else {
-            return result.get(0);
-        }
+        applyDefaultEntityGraph(query);
+
+        return getSingleResultOrNull(query);
+
+//        final List<User> result = query.getResultList();
+//        if (result.isEmpty()) {
+//            return null;
+//        } else {
+//            return result.get(0);
+//        }
     }
-    
+
+    public User findByEmailAddress(final String emailAddress,
+                                   final String entityGraphName) {
+        @SuppressWarnings("unchecked")
+        final EntityGraph<User> entityGraph
+                                    = (EntityGraph<User>) getEntityManager()
+            .getEntityGraph(entityGraphName);
+        return findByEmailAddress(emailAddress, entityGraph);
+    }
+
+    public User findByEmailAddress(final String emailAddress,
+                                   final EntityGraph<User> entityGraph) {
+        final TypedQuery<User> query = getEntityManager().createNamedQuery(
+            "User.findByEmailAddress", User.class);
+        query.setParameter("emailAddress", emailAddress);
+        query.setHint(FETCH_GRAPH_HINT_KEY, entityGraph);
+        
+        return getSingleResultOrNull(query);
+    }
+
 }

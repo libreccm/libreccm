@@ -30,6 +30,8 @@ import com.arsdigita.web.BaseApplicationServlet;
 import com.arsdigita.web.LoginSignal;
 import com.arsdigita.xml.Document;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.shiro.subject.Subject;
 import org.libreccm.security.PermissionChecker;
 import org.libreccm.web.CcmApplication;
@@ -37,15 +39,16 @@ import org.libreccm.web.CcmApplication;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.enterprise.inject.spi.CDI;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
-import
+import javax.servlet.http.HttpServletResponse;
 
- javax.servlet.http.HttpServletResponse;
 import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.configuration.ConfigurationManager;
 
 import static com.arsdigita.ui.admin.AdminConstants.*;
 
@@ -65,12 +68,14 @@ import static com.arsdigita.ui.admin.AdminConstants.*;
  * @author pb
  */
 @WebServlet(urlPatterns = {ADMIN_SERVLET_PATH})
-public class AdminServlet 
+public class AdminServlet
     extends BaseApplicationServlet
     implements AdminConstants {
 
     private static final long serialVersionUID = -3912367600768871630L;
     
+    private static final Logger LOGGER = LogManager.getLogger(AdminServlet.class);
+
     /**
      * Logger instance for debugging
      */
@@ -111,21 +116,40 @@ public class AdminServlet
         ServletException, IOException {
         // ///////    Some preparational steps                   ///////////////
         /* Determine access privilege: only logged in users may access   */
-        final CdiUtil cdiUtil = new CdiUtil();
+//        final CdiUtil cdiUtil = new CdiUtil();
 //        final Subject subject = cdiUtil.findBean(Subject.class);
         final Subject subject = CDI.current().select(Subject.class).get();
-        final PermissionChecker permissionChecker = cdiUtil.findBean(
-            PermissionChecker.class);
+//        final PermissionChecker permissionChecker = cdiUtil.findBean(
+//            PermissionChecker.class);
+        final PermissionChecker permissionChecker = CDI.current().select(
+            PermissionChecker.class).get();
 
+        final ConfigurationManager confManager = CDI.current().select(ConfigurationManager.class).get();
+        if (confManager == null) {
+            throw new IllegalStateException();
+        }
+        
+        LOGGER.debug("Checking if subject {} is authenticated...", 
+                     subject.toString());
+        LOGGER.debug("Current session is: {}", sreq.getSession().getId());
+        LOGGER.debug("Current Shiro session is {}", 
+                     subject.getSession().getId().toString());
         if (!subject.isAuthenticated()) {
+            LOGGER.debug("Subject {} is not authenticated, redirecting to login...",
+                         subject.toString());
             throw new LoginSignal(sreq);
         }
 
+        
         /* Determine access privilege: Admin privileges must be granted     */
+        LOGGER.debug("Subject is loggedin, checking if subject has required permissions...");
         if (!permissionChecker.isPermitted("admin")) {
+            LOGGER.debug("Subject does *not* have required permissions. "
+                + "Access denied.");
             throw new AccessDeniedException("User is not an administrator");
         }
-
+        
+        LOGGER.debug("Serving admin page...");
         /* Want admin to always show the latest stuff...                     */
         DispatcherHelper.cacheDisable(sresp);
 

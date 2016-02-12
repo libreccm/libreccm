@@ -143,25 +143,27 @@ public class UserLoginForm extends Form implements LoginConstants,
 
 //        final ConfigurationManager confManager = CDI.current().select(
 //                ConfigurationManager.class).get();
-        final BeanManager beanManager = CDI.current().getBeanManager();
-        final Set<Bean<?>> beans = beanManager.getBeans(
-            ConfigurationManager.class);
-        final Iterator<Bean<?>> iterator = beans.iterator();
-        final ConfigurationManager confManager;
-        if (iterator.hasNext()) {
-            @SuppressWarnings("unchecked")
-            final Bean<ConfigurationManager> bean
-                                             = (Bean<ConfigurationManager>) iterator
-                .next();
-            final CreationalContext<ConfigurationManager> ctx = beanManager.
-                createCreationalContext(bean);
-
-            confManager = (ConfigurationManager) beanManager.getReference(
-                bean, ConfigurationManager.class, ctx);
-        } else {
-            throw new UncheckedWrapperException(
-                "Failed to lookup ConfigurationManager");
-        }
+//        final BeanManager beanManager = CDI.current().getBeanManager();
+//        final Set<Bean<?>> beans = beanManager.getBeans(
+//            ConfigurationManager.class);
+//        final Iterator<Bean<?>> iterator = beans.iterator();
+//        final ConfigurationManager confManager;
+//        if (iterator.hasNext()) {
+//            @SuppressWarnings("unchecked")
+//            final Bean<ConfigurationManager> bean
+//                                                 = (Bean<ConfigurationManager>) iterator
+//                .next();
+//            final CreationalContext<ConfigurationManager> ctx = beanManager.
+//                createCreationalContext(bean);
+//
+//            confManager = (ConfigurationManager) beanManager.getReference(
+//                bean, ConfigurationManager.class, ctx);
+//        } else {
+//            throw new UncheckedWrapperException(
+//                "Failed to lookup ConfigurationManager");
+//        }
+        final ConfigurationManager confManager = CdiUtil.createCdiUtil()
+            .findBean(ConfigurationManager.class);
         securityConfig = confManager.findConfiguration(SecurityConfig.class);
 
         setMethod(Form.POST);
@@ -385,12 +387,19 @@ public class UserLoginForm extends Form implements LoginConstants,
         );
         token.setRememberMe(getPersistentLoginValue(state, false));
         try {
+            LOGGER.debug("Trying to login user {}...", subject.toString());
             subject.login(token);
         } catch (AuthenticationException ex) {
             onLoginFail(event, ex);
         }
 
         LOGGER.debug("User {} logged in successfully.", token.getUsername());
+        LOGGER.debug("subject = {}", subject.toString());
+        LOGGER.debug("Current session is: {}",
+                     state.getRequest().getSession().getId());
+        LOGGER.debug("Current Shiro session is {}",
+                     subject.getSession().getId().toString());
+
     }
 
     /**

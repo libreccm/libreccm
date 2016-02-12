@@ -56,9 +56,8 @@ public final class SecurityConfig {
     private Integer hashIterations = 50000;
 
     public static SecurityConfig getConfig() {
-        final CdiUtil cdiUtil = new CdiUtil();
-        final ConfigurationManager confManager = cdiUtil.findBean(
-            ConfigurationManager.class);
+        final ConfigurationManager confManager = CdiUtil.createCdiUtil()
+            .findBean(ConfigurationManager.class);
         return confManager.findConfiguration(SecurityConfig.class);
     }
 

@@ -18,13 +18,18 @@
  */
 package org.libreccm.core;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -39,7 +44,11 @@ import javax.persistence.criteria.Root;
  */
 public abstract class AbstractEntityRepository<K, E> {
 
-    static final String FETCH_GRAPH_HINT_KEY = "javax.persistence.fetchgraph";
+    private static final Logger LOGGER = LogManager.getLogger(
+        AbstractEntityRepository.class);
+
+    protected static final String FETCH_GRAPH_HINT_KEY
+                                      = "javax.persistence.fetchgraph";
 
     /**
      * The {@link EntityManager} instance to use. Provided by the container via
@@ -58,11 +67,98 @@ public abstract class AbstractEntityRepository<K, E> {
     }
 
     /**
+     * Create an {@link EntityGraph} for the entity class of this repository.
+     *
+     * For more details about entity graphs/fetch graphs refer to the JPA
+     * documentation. Internally this method uses
+     * {@link EntityManager#createEntityGraph(java.lang.Class)}.
+     *
+     * @return An EntityGraph for this entity graph.
+     */
+    public EntityGraph<E> createEntityGraph() {
+        return entityManager.createEntityGraph(getEntityClass());
+    }
+
+    protected void applyDefaultEntityGraph(final TypedQuery<E> query) {
+        if (getEntityClass().isAnnotationPresent(DefaultEntityGraph.class)) {
+            LOGGER.debug("The following EntityGraphs are available for the "
+                + "entity class {}:", 
+                         getEntityClass().getName());
+            getEntityManager().getEntityGraphs(getEntityClass()).stream()
+                .forEach(g -> LOGGER.debug("\t{}", g.getName()));
+            LOGGER.debug("Entity class {} has default entity graphs:", 
+                         getEntityClass().getName());
+            LOGGER.debug("Applying entity graph {}",
+                         getEntityClass().getAnnotation(
+                             DefaultEntityGraph.class).value());
+            query.setHint(FETCH_GRAPH_HINT_KEY,
+                          entityManager.getEntityGraph(
+                          getEntityClass().getAnnotation(
+                              DefaultEntityGraph.class).value()));
+        }
+    }
+
+    /**
+     * Helper method for retrieving a single result from a query.
+     *
+     * @param query The query from which the result is retrieved.
+     *
+     * @return A first result or the query or {@code null} of there is no
+     *         result.
+     */
+    protected E getSingleResultOrNull(final TypedQuery<E> query) {
+        final List<E> result = query.getResultList();
+        if (result.isEmpty()) {
+            return null;
+        } else {
+            return result.get(0);
+        }
+    }
+
+    /**
+     * Helper method for retrieving a single result from a query. In contrast to
+     * {@link #getSingleResultOrNull(javax.persistence.TypedQuery)} this method
+     * return an {@link Optional} for the result.
+     *
+     * @param query The query from which the result is retrieved.
+     *
+     * @return An {@link Optional} instance wrapping the first result of the
+     *         query. If there is no result the {@code Optional} is empty.
+     */
+    protected Optional<E> getSingleResult(final TypedQuery<E> query) {
+        final List<E> result = query.getResultList();
+        if (result.isEmpty()) {
+            return Optional.empty();
+        } else {
+            return Optional.of(result.get(0));
+        }
+    }
+
+    /**
+     * Creates a mutable copy of a named entity graph which an be further
+     * customised.
+     *
+     * Internally this method uses
+     * {@link EntityManager#createEntityGraph(java.lang.String)}.
+     *
+     * @param entityGraphName The name of the named entity graph.
+     *
+     * @return A mutable copy of the named entity graph identified by the
+     *         provided name or {@code null} if there is no such named entity
+     *         graph.
+     */
+    @SuppressWarnings("unchecked")
+    public EntityGraph<E> createEntityGraph(final String entityGraphName) {
+        return (EntityGraph<E>) entityManager.createEntityGraph(
+            entityGraphName);
+    }
+
+    /**
      * The class of entities for which this repository can be used. For creating
      * a repository class overwrite this method.
      *
      * @return The {@code Class} of the Entity which are managed by this
-     * repository.
+     *         repository.
      */
     public abstract Class<E> getEntityClass();
 
@@ -72,15 +168,21 @@ public abstract class AbstractEntityRepository<K, E> {
      * @param entityId The ID of the entity to retrieve.
      *
      * @return The entity identified by the provided ID of {@code null} if there
-     * is no such entity.
+     *         is no such entity.
      */
     public E findById(final K entityId) {
-        return entityManager.find(getEntityClass(), entityId);
+        if (getEntityClass().isAnnotationPresent(DefaultEntityGraph.class)) {
+            return findById(entityId, getEntityClass().getAnnotation(
+                            DefaultEntityGraph.class).value());
+        } else {
+            return entityManager.find(getEntityClass(), entityId);
+        }
     }
 
     public E findById(final K entityId, final String entityGraphName) {
+        @SuppressWarnings("unchecked")
         final EntityGraph<E> entityGraph = (EntityGraph<E>) entityManager.
-                getEntityGraph(entityGraphName);
+            getEntityGraph(entityGraphName);
         return findById(entityId, entityGraph);
     }
 
@@ -95,15 +197,15 @@ public abstract class AbstractEntityRepository<K, E> {
      * responsible for.
      *
      * @return The list of entities in the database which are of the type
-     * provided by {@link #getEntityClass()}.
+     *         provided by {@link #getEntityClass()}.
      */
     public List<E> findAll() {
         // We are using the Critiera API here because otherwise we can't 
         // pass the type of the entity dynmacially.
         final CriteriaBuilder criteriaBuilder = entityManager
-                .getCriteriaBuilder();
+            .getCriteriaBuilder();
         final CriteriaQuery<E> criteriaQuery = criteriaBuilder.createQuery(
-                getEntityClass());
+            getEntityClass());
         final Root<E> root = criteriaQuery.from(getEntityClass());
         criteriaQuery.select(root);
 
@@ -117,8 +219,9 @@ public abstract class AbstractEntityRepository<K, E> {
      * entity is a a new one.
      *
      * @param entity The entity to check.
+     *
      * @return {@code true} if the entity is new (isn't in the database yet),
-     * {@code false} otherwise.
+     *         {@code false} otherwise.
      */
     public abstract boolean isNew(final E entity);
 

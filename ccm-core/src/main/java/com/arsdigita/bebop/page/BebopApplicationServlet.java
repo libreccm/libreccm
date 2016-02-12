@@ -25,7 +25,9 @@ import com.arsdigita.util.Assert;
 import com.arsdigita.web.BaseApplicationServlet;
 import com.arsdigita.xml.Document;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.shiro.subject.Subject;
 import org.libreccm.web.CcmApplication;
 
 import java.io.IOException;
@@ -34,6 +36,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.enterprise.inject.spi.CDI;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -61,7 +64,7 @@ public class BebopApplicationServlet extends BaseApplicationServlet {
 
     private static final long serialVersionUID = -6004503025521189639L;
 
-    private static final Logger s_log = Logger.getLogger(
+    private static final Logger LOGGER = LogManager.getLogger(
         BebopApplicationServlet.class);
 
     /**
@@ -149,6 +152,11 @@ public class BebopApplicationServlet extends BaseApplicationServlet {
         final String pathInfo = sreq.getPathInfo();
         Assert.exists(pathInfo, "String pathInfo");
 
+        final Subject subject = CDI.current().select(Subject.class).get();
+        LOGGER.debug("Current session is: {}", sreq.getSession().getId());
+        LOGGER.debug("Current Shiro session is {}", 
+                     subject.getSession().getId().toString());
+        
         final Page page = (Page) m_pages.get(pathInfo);
 
         if (page == null) {

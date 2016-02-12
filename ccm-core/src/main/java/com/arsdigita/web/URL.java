@@ -21,14 +21,27 @@ package com.arsdigita.web;
 import com.arsdigita.dispatcher.DispatcherHelper;
 //import com.arsdigita.kernel.security.Util;
 import com.arsdigita.util.Assert;
+import com.arsdigita.util.UncheckedWrapperException;
 import com.arsdigita.util.servlet.HttpHost;
+
+import oracle.jrockit.jfr.tools.ConCatRepository;
 
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
+import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.web.CcmApplication;
+
+import java.util.Iterator;
+import java.util.Set;
+
+import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
 /**
  * <p>
@@ -516,8 +529,8 @@ public class URL {
      * starts with a "/". For example, <code>"/ccm/forum/thread.jsp"</code>.</p>
      *
      * <p>
-     * This method is defined to return the equivalent of      * <code>getWebContextPath() + getServletPath() +
- getPathInfo()</code>.</p>
+     * This method is defined to return the equivalent of * <code>getWebContextPath() + getServletPath() +
+     * getPathInfo()</code>.</p>
      *
      * @see javax.servlet.http.HttpServletRequest#getRequestURI()
      * @return a <code>String</code> comprised of the context path, servlet
@@ -679,7 +692,37 @@ public class URL {
     public static final URL there(final HttpServletRequest sreq,
                                   final String path,
                                   final ParameterMap params) {
-        final WebConfig config = Web.getConfig();
+        final BeanManager beanManager;
+        try {
+            final InitialContext context = new InitialContext();
+            beanManager = (BeanManager) context.lookup(
+                "java:comp/BeanManager");
+
+        } catch (NamingException ex) {
+            throw new UncheckedWrapperException(ex);
+        }
+
+        final Set<Bean<?>> beans = beanManager.getBeans(
+            ConfigurationManager.class);
+        final Iterator<Bean<?>> iterator = beans.iterator();
+        final ConfigurationManager confManager;
+        if (iterator.hasNext()) {
+            @SuppressWarnings("unchecked")
+            final Bean<ConfigurationManager> bean
+                                                 = (Bean<ConfigurationManager>) iterator
+                .next();
+            final CreationalContext<ConfigurationManager> ctx = beanManager
+                .createCreationalContext(bean);
+            confManager = (ConfigurationManager) beanManager.getReference(
+                bean, ConfigurationManager.class, ctx);
+        } else {
+            throw new IllegalStateException("No configuration manager");
+        }
+
+//        final ConfigurationManager confManager = CDI.current().select(
+//            ConfigurationManager.class).get();
+        final WebConfig config = confManager.findConfiguration(WebConfig.class);
+//        final WebConfig config = Web.getConfig();
 
         Assert.exists(sreq, "HttpServletRequest sreq");
         Assert.exists(config, "WebConfig config");
@@ -797,8 +840,8 @@ public class URL {
         if (pathInfo == null) {
             return URL.there(sreq, app.getPrimaryUrl().toString(), params);
         } else {
-            return URL.there(sreq, app.getPrimaryUrl().toString() + pathInfo, 
-                                   params);
+            return URL.there(sreq, app.getPrimaryUrl().toString() + pathInfo,
+                             params);
         }
     }
 
@@ -913,7 +956,7 @@ public class URL {
 
     static URL login(final HttpServletRequest sreq) {
         //Replace register eventuelly...
-        return URL.excursion(sreq, 
+        return URL.excursion(sreq,
                              "/register/",
                              (ParameterMap) s_empty.get());
     }

@@ -20,6 +20,8 @@ package org.libreccm.security;
 
 import static org.libreccm.core.CoreConstants.*;
 
+import org.libreccm.core.DefaultEntityGraph;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,6 +35,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
+import javax.persistence.NamedEntityGraphs;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -56,6 +61,12 @@ import javax.xml.bind.annotation.XmlElementWrapper;
     @NamedQuery(name = "Party.findByName",
                 query = "SELECT p FROM Party p WHERE p.name = :name")
 })
+@NamedEntityGraphs({
+    @NamedEntityGraph(name = "Party.withRoleMemberships",
+                      attributeNodes = @NamedAttributeNode(
+                          value = "roleMemberships"))
+})
+@DefaultEntityGraph("Party.withRoleMemberships")
 public class Party implements Serializable {
 
     private static final long serialVersionUID = 3319997992281332204L;

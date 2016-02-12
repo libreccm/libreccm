@@ -20,6 +20,7 @@ package org.libreccm.security;
 
 import static org.libreccm.core.CoreConstants.*;
 
+import org.libreccm.core.DefaultEntityGraph;
 import org.libreccm.core.EmailAddress;
 
 import java.io.Serializable;
@@ -37,9 +38,13 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
+import javax.persistence.NamedEntityGraphs;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlElement;
@@ -59,9 +64,18 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "User.findByName",
                 query = "SELECT u FROM User u WHERE u.name = :name"),
     @NamedQuery(name = "User.findByEmailAddress",
-                query = "SELECT u FROM User u WHERE " +
-                        "u.primaryEmailAddress.address = :emailAddress")
+                query = "SELECT u FROM User u WHERE "
+                            + "u.primaryEmailAddress.address = :emailAddress")
 })
+@NamedEntityGraphs({
+    @NamedEntityGraph(name = "User.withGroupAndRoleMemberships",
+                      attributeNodes = {
+                          @NamedAttributeNode(
+                              value = "groupMemberships"),
+                          @NamedAttributeNode(
+                              value = "roleMemberships")})
+})
+@DefaultEntityGraph("User.withGroupAndRoleMemberships")
 @XmlRootElement(name = "user", namespace = CORE_XML_NS)
 //Supressing a few warnings from PMD because they misleading here.
 //User is perfectly fine class name, and the complexity is not to high...
@@ -112,9 +126,9 @@ public class User extends Party implements Serializable {
     private List<EmailAddress> emailAddresses;
 
     /**
-     * A user can be banned which means that he or she can't login into
-     * the system anymore. We use this approach rather than simply deleting users
-     * to preserve the edit history of several objects.
+     * A user can be banned which means that he or she can't login into the
+     * system anymore. We use this approach rather than simply deleting users to
+     * preserve the edit history of several objects.
      */
     @Column(name = "BANNED")
     @XmlElement(name = "banned", namespace = CORE_XML_NS)

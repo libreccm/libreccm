@@ -7,6 +7,12 @@
     
     <display-name>LibreCCM Devel Bundle for Wildfly</display-name>
 
+    <!-- No JSESSIONID!!! -->
+    <session-config>
+        <tracking-mode>COOKIE</tracking-mode>
+        <!--<tracking-mode>URL</tracking-mode>-->
+    </session-config>
+
     <filter>
         <filter-name>ShiroFilter</filter-name>
         <filter-class>org.apache.shiro.web.servlet.ShiroFilter</filter-class>
@@ -15,10 +21,10 @@
     <filter-mapping>
         <filter-name>ShiroFilter</filter-name>
         <url-pattern>/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher> 
+        <!--<dispatcher>REQUEST</dispatcher> 
         <dispatcher>FORWARD</dispatcher> 
         <dispatcher>INCLUDE</dispatcher> 
-        <dispatcher>ERROR</dispatcher>
+        <dispatcher>ERROR</dispatcher>-->
     </filter-mapping>
 
     <listener>

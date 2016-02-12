@@ -122,7 +122,7 @@ public class ChangePasswordForm extends Form
         m_returnURL.setPassIn(true);
         add(m_returnURL);
 
-        final CdiUtil cdiUtil = new CdiUtil();
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final Subject subject = cdiUtil.findBean(Subject.class);
         final Shiro shiro = cdiUtil.findBean(Shiro.class);
 

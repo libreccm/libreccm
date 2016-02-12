@@ -70,9 +70,11 @@ public final class KernelConfig {
     private String defaultLanguage = "en";
 
     public static KernelConfig getConfig() {
-        final CdiUtil cdiUtil = new CdiUtil();
-        final ConfigurationManager confManager = cdiUtil.findBean(
-            ConfigurationManager.class);
+//        final CdiUtil cdiUtil = new CdiUtil();
+//        final ConfigurationManager confManager = cdiUtil.findBean(
+//            ConfigurationManager.class);
+        final ConfigurationManager confManager = CdiUtil.createCdiUtil()
+            .findBean(ConfigurationManager.class);
         return confManager.findConfiguration(KernelConfig.class);
     }
 
@@ -259,9 +261,10 @@ public final class KernelConfig {
         if (supportedLanguages == null) {
             languages = "";
         } else {
-            languages = supportedLanguages.stream().collect(Collectors.joining(", "));
+            languages = supportedLanguages.stream().collect(Collectors.joining(
+                ", "));
         }
-        
+
         return String.format(
             "%s{ "
                 + "debugEnabled = %b, "

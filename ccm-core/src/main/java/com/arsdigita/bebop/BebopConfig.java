@@ -28,7 +28,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import java.util.StringJoiner;
 
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.Configuration;
@@ -83,9 +82,8 @@ public final class BebopConfig {
     private Boolean showClassName = false;
 
     public static BebopConfig getConfig() {
-        final CdiUtil cdiUtil = new CdiUtil();
-        final ConfigurationManager confManager = cdiUtil.findBean(
-            ConfigurationManager.class);
+        final ConfigurationManager confManager = CdiUtil.createCdiUtil()
+            .findBean(ConfigurationManager.class);
         return confManager.findConfiguration(BebopConfig.class);
     }
 
