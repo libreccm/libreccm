@@ -21,10 +21,10 @@ package org.libreccm.security;
 import static org.libreccm.core.CoreConstants.*;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
@@ -65,21 +65,21 @@ public class Group extends Party implements Serializable {
     @OneToMany(mappedBy = "group")
     @XmlElementWrapper(name = "group-memberships", namespace = CORE_XML_NS)
     @XmlElement(name = "group-membership", namespace = CORE_XML_NS)
-    private List<GroupMembership> memberships = new ArrayList<>();
+    private Set<GroupMembership> memberships = new HashSet<>();
 
     protected Group() {
         super();
     }
 
-    public List<GroupMembership> getMemberships() {
+    public Set<GroupMembership> getMemberships() {
         if (memberships == null) {
             return null;
         } else {
-            return Collections.unmodifiableList(memberships);
+            return Collections.unmodifiableSet(memberships);
         }
     }
 
-    protected void setMemberships(final List<GroupMembership> memberships) {
+    protected void setMemberships(final Set<GroupMembership> memberships) {
         this.memberships = memberships;
     }
 

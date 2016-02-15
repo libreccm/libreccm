@@ -67,8 +67,7 @@ public class UserAuthenticationListener implements RequestListener {
             throw new IllegalStateException("User is not logged in");
         }
 
-        final CdiUtil cdiUtil = new CdiUtil();
-        final Subject subject = cdiUtil.findBean(Subject.class);
+        final Subject subject = CdiUtil.createCdiUtil().findBean(Subject.class);
 
         return subject;
     }

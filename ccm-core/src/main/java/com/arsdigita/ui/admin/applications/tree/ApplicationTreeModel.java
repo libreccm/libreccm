@@ -82,9 +82,8 @@ public class ApplicationTreeModel implements TreeModel {
     @Override
     public Iterator getChildren(final TreeNode node, final PageState state) {
         if (node instanceof RootTreeNode) {
-            final CdiUtil cdiUtil = new CdiUtil();
-            final ApplicationManager appManager = cdiUtil.findBean(
-                ApplicationManager.class);
+            final ApplicationManager appManager = CdiUtil.createCdiUtil()
+                .findBean(ApplicationManager.class);
 
             final Collection<ApplicationType> appTypes = appManager
                 .getApplicationTypes().values();
@@ -94,9 +93,8 @@ public class ApplicationTreeModel implements TreeModel {
             final ApplicationTypeTreeNode typeTreeNode
                                               = (ApplicationTypeTreeNode) node;
 
-            final CdiUtil cdiUtil = new CdiUtil();
-            final ApplicationRepository appRepo = cdiUtil.findBean(
-                ApplicationRepository.class);
+            final ApplicationRepository appRepo = CdiUtil.createCdiUtil()
+                .findBean(ApplicationRepository.class);
 
             final List<CcmApplication> applications = appRepo.findByType(
                 typeTreeNode.getObjecType());
@@ -113,8 +111,7 @@ public class ApplicationTreeModel implements TreeModel {
 
     private List<CcmApplication> retrieveApplicationInstances(
         final ApplicationType applicationType) {
-        final CdiUtil cdiUtil = new CdiUtil();
-        final ApplicationRepository appRepo = cdiUtil.findBean(
+        final ApplicationRepository appRepo = CdiUtil.createCdiUtil().findBean(
             ApplicationRepository.class);
 
         return appRepo.findByType(applicationType.name());
@@ -122,8 +119,7 @@ public class ApplicationTreeModel implements TreeModel {
 
     private List<CcmApplication> retrieveApplicationInstances(
         final String appObjectType) {
-        final CdiUtil cdiUtil = new CdiUtil();
-        final ApplicationRepository appRepo = cdiUtil.findBean(
+        final ApplicationRepository appRepo = CdiUtil.createCdiUtil().findBean(
             ApplicationRepository.class);
 
         return appRepo.findByType(appObjectType);

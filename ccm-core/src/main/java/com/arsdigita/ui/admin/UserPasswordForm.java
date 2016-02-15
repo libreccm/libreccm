@@ -133,7 +133,7 @@ class UserPasswordForm extends Form
 
         final PageState state = event.getPageState();
 
-//        final CdiUtil cdiUtil = new CdiUtil();
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
 //        final UserRepository userRepository;
 
 //            userRepository = cdiUtil.findBean(UserRepository.class);
@@ -157,7 +157,7 @@ class UserPasswordForm extends Form
         FormData data = event.getFormData();
         HttpServletRequest req = state.getRequest();
 
-//        final CdiUtil cdiUtil = new CdiUtil();
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
 //        final UserRepository userRepository;
 
 //            userRepository = cdiUtil.findBean(UserRepository.class);
@@ -206,7 +206,7 @@ class UserPasswordForm extends Form
         final PageState state = event.getPageState();
         final FormData data = event.getFormData();
 
-        final CdiUtil cdiUtil = new CdiUtil();
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
 //        final UserRepository userRepository;
 //        final UserManager userManager;
 

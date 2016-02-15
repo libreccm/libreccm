@@ -22,20 +22,16 @@ import com.arsdigita.util.UncheckedWrapperException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.message.ParameterizedMessage;
+import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.Configuration;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.configuration.Setting;
 
 import java.lang.reflect.Method;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.StringJoiner;
 
-import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.CDI;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -84,36 +80,9 @@ public final class WebConfig {
     private String dynamicHostProviderClass;
 
     public static WebConfig getConfig() {
-        final ConfigurationManager confManager = CDI.current().select(
-            ConfigurationManager.class).get();
 
-//        final BeanManager beanManager = CDI.current().getBeanManager();
-//        final Set<Bean<?>> beans = beanManager.getBeans(
-//            ConfigurationManager.class);
-//        final Iterator<Bean<?>> iterator = beans.iterator();
-//        final ConfigurationManager confManager;
-//        if (iterator.hasNext()) {
-//            @SuppressWarnings("unchecked")
-//            final Bean<ConfigurationManager> bean
-//                                                 = (Bean<ConfigurationManager>) iterator
-//                .next();
-//            final CreationalContext<ConfigurationManager> ctx = beanManager
-//                .createCreationalContext(bean);
-//
-//            confManager = (ConfigurationManager) beanManager.getReference(
-//                bean, ConfigurationManager.class, ctx);
-//        } else {
-//            LOGGER.error(new ParameterizedMessage(
-//                "No CDI Bean for type {} found.",
-//                ConfigurationManager.class.getName()));
-//            throw new IllegalStateException(String.format(
-//                "No CDI Bean for type \"%s\" found",
-//                ConfigurationManager.class.getName()));
-//        }
-
-//        final CdiUtil cdiUtil = new CdiUtil();
-//        final ConfigurationManager confManager = cdiUtil.findBean(
-//            ConfigurationManager.class);
+        final ConfigurationManager confManager = CdiUtil.createCdiUtil()
+            .findBean(ConfigurationManager.class);
         return confManager.findConfiguration(WebConfig.class);
     }
 

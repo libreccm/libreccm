@@ -18,7 +18,6 @@
  */
 package org.libreccm.security;
 
-
 import static org.libreccm.core.CoreConstants.*;
 
 import org.apache.logging.log4j.LogManager;
@@ -34,7 +33,7 @@ import org.libreccm.core.CcmObject;
 class SecuredHelper<E extends CcmObject> {
 
     private final static Logger LOGGER = LogManager.getLogger(
-            SecuredHelper.class);
+        SecuredHelper.class);
 
     /**
      * Class of the objects in the collection.
@@ -56,20 +55,21 @@ class SecuredHelper<E extends CcmObject> {
      * object with the provided privilege.
      *
      * @param object The object to check.
+     *
      * @return The provided {@code object} if the current subject has the
-     * permission to access it with the provided {@code privilege}. Otherwise a
-     * placeholder object is returned. The {@link CcmObject#displayName}
-     * property of these object is set to {@code Access denied}.
+     *         permission to access it with the provided {@code privilege}.
+     *         Otherwise a placeholder object is returned. The
+     *         {@link CcmObject#displayName} property of these object is set to
+     *         {@code Access denied}.
      */
     protected E canAccess(final E object) {
         if (object == null) {
             return null;
         }
-        
-        final CdiUtil cdiUtil = new CdiUtil();
-        final PermissionChecker permissionChecker = cdiUtil.findBean(
-                    PermissionChecker.class);
-        
+
+        final PermissionChecker permissionChecker = CdiUtil.createCdiUtil()
+            .findBean(PermissionChecker.class);
+
         if (permissionChecker.isPermitted(requiredPrivilege, object)) {
             return object;
         } else {
@@ -81,17 +81,18 @@ class SecuredHelper<E extends CcmObject> {
      * Helper method for creating an <em>Access denied</em> placeholder object.
      *
      * @return An object of the provided {@link #clazz} with it's
-     * {@link CcmObject#displayName} property set to {@code Access denied}.
+     *         {@link CcmObject#displayName} property set to
+     *         {@code Access denied}.
      */
     protected E generateAccessDeniedObject() {
         try {
             final E placeholder = clazz.newInstance();
             placeholder.setDisplayName(ACCESS_DENIED);
-            
+
             return placeholder;
         } catch (InstantiationException | IllegalAccessException ex) {
             LOGGER.error(
-                    "Failed to create placeholder object. Returing null.", ex);
+                "Failed to create placeholder object. Returing null.", ex);
             return null;
         }
     }

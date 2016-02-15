@@ -137,9 +137,8 @@ public class ApplicationInfoPropertySheetModel implements PropertySheetModel {
                 return applicationType.description();
             case SINGLETON_PATH:
                 final String path;
-                final CdiUtil cdiUtil = new CdiUtil();
-                final ApplicationRepository appRepo = cdiUtil.findBean(
-                    ApplicationRepository.class);
+                final ApplicationRepository appRepo = CdiUtil.createCdiUtil()
+                    .findBean(ApplicationRepository.class);
                 final List<CcmApplication> instances
                                                = appRepo.findByType(
                         applicationType.name());

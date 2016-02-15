@@ -37,7 +37,6 @@ import org.libreccm.security.User;
 import org.libreccm.web.ApplicationRepository;
 import org.libreccm.web.CcmApplication;
 
-
 /**
  * A reusable Bebop component to display the primary attributes of the currently
  * logged in user. Users can extend this class to provide information about
@@ -105,10 +104,9 @@ public class UserInfo extends SimpleContainer {
 
                     m_contentCenters = new ArrayList<>();
 
-                    final CdiUtil cdiUtil = new CdiUtil();
-                    final ApplicationRepository appRepo = cdiUtil.findBean(
-                            ApplicationRepository.class);
-                    
+                    final ApplicationRepository appRepo = CdiUtil
+                        .createCdiUtil().findBean(ApplicationRepository.class);
+
                     m_contentCenters = appRepo.findByType(
                         "com.arsdigita.cms.ContentCenter");
                 }
@@ -185,6 +183,7 @@ public class UserInfo extends SimpleContainer {
 
     /**
      * @param state
+     *
      * @return true if the user is logged in
      *
      */
@@ -194,6 +193,7 @@ public class UserInfo extends SimpleContainer {
 
     /**
      * @param state
+     *
      * @return the User object for which we are generating information
      *
      * @throws IllegalStateException if user is not logged in. Call
@@ -207,11 +207,10 @@ public class UserInfo extends SimpleContainer {
         if (!isLoggedIn(state)) {
             throw new IllegalStateException("user is not logged in");
         }
-        
-        final CdiUtil cdiUtil = new CdiUtil();
-        final Shiro shiro = cdiUtil.findBean(Shiro.class);
+
+        final Shiro shiro = CdiUtil.createCdiUtil().findBean(Shiro.class);
         final User user = shiro.getUser();
-        
+
         return user;
     }
 

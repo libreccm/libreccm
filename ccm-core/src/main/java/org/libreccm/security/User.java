@@ -26,8 +26,10 @@ import org.libreccm.core.EmailAddress;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.AssociationOverride;
 import javax.persistence.CollectionTable;
@@ -43,8 +45,8 @@ import javax.persistence.NamedEntityGraph;
 import javax.persistence.NamedEntityGraphs;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.NamedSubgraph;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlElement;
@@ -68,12 +70,28 @@ import javax.xml.bind.annotation.XmlTransient;
                             + "u.primaryEmailAddress.address = :emailAddress")
 })
 @NamedEntityGraphs({
-    @NamedEntityGraph(name = "User.withGroupAndRoleMemberships",
-                      attributeNodes = {
-                          @NamedAttributeNode(
-                              value = "groupMemberships"),
-                          @NamedAttributeNode(
-                              value = "roleMemberships")})
+    @NamedEntityGraph(
+        name = "User.withGroupAndRoleMemberships",
+        attributeNodes = {
+            @NamedAttributeNode(
+                value = "groupMemberships"),
+            @NamedAttributeNode(
+                value = "roleMemberships",
+                subgraph = "role")},
+        subgraphs = {
+            @NamedSubgraph(
+                name = "role",
+                attributeNodes = {
+                    @NamedAttributeNode(value = "role",
+                                        subgraph = "permissions")
+                }),
+            @NamedSubgraph(
+                name = "permissions",
+                attributeNodes = {
+                    @NamedAttributeNode(value = "permissions")}
+            )
+        })
+
 })
 @DefaultEntityGraph("User.withGroupAndRoleMemberships")
 @XmlRootElement(name = "user", namespace = CORE_XML_NS)
@@ -157,7 +175,7 @@ public class User extends Party implements Serializable {
     @OneToMany(mappedBy = "member")
     @XmlElementWrapper(name = "group-memberships", namespace = CORE_XML_NS)
     @XmlElement(name = "group-membership", namespace = CORE_XML_NS)
-    private List<GroupMembership> groupMemberships = new ArrayList<>();
+    private Set<GroupMembership> groupMemberships = new HashSet<>();
 
     protected User() {
         super();
@@ -232,12 +250,12 @@ public class User extends Party implements Serializable {
         this.passwordResetRequired = passwordResetRequired;
     }
 
-    public List<GroupMembership> getGroupMemberships() {
-        return Collections.unmodifiableList(groupMemberships);
+    public Set<GroupMembership> getGroupMemberships() {
+        return Collections.unmodifiableSet(groupMemberships);
     }
 
     protected void setGroupMemberships(
-        final List<GroupMembership> groupMemberships) {
+        final Set<GroupMembership> groupMemberships) {
         this.groupMemberships = groupMemberships;
     }
 

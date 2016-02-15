@@ -29,17 +29,16 @@ import org.libreccm.configuration.Setting;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Configuration(
-        descBundle = "com.arsdigita.globalization.GlobalizationConfigDescription",
-        descKey = "globalization.config.description")
+    descBundle = "com.arsdigita.globalization.GlobalizationConfigDescription",
+    descKey = "globalization.config.description")
 public class GlobalizationConfig {
 
     @Setting(descKey = "globalization.config.default_charset")
     private String defaultCharset = "UTF-8";
 
     public static GlobalizationConfig getConfig() {
-        final CdiUtil cdiUtil = new CdiUtil();
-        final ConfigurationManager confManager = cdiUtil.findBean(
-                ConfigurationManager.class);
+        final ConfigurationManager confManager = CdiUtil.createCdiUtil()
+            .findBean(ConfigurationManager.class);
         return confManager.findConfiguration(GlobalizationConfig.class);
     }
 
@@ -76,9 +75,10 @@ public class GlobalizationConfig {
     @Override
     public String toString() {
         return String.format("%s{ "
-                                     + "defaultCharset = \"%s\""
-                                     + " }",
+                                 + "defaultCharset = \"%s\""
+                                 + " }",
                              super.toString(),
                              defaultCharset);
     }
+
 }

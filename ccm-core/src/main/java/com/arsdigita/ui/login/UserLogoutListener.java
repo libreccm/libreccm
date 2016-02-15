@@ -34,7 +34,7 @@ import org.libreccm.cdi.utils.CdiUtil;
 public class UserLogoutListener implements ActionListener {
 
     private static final Logger s_log = Logger.getLogger(
-            UserLogoutListener.class);
+        UserLogoutListener.class);
 
     /**
      * Logs out the user.
@@ -44,9 +44,7 @@ public class UserLogoutListener implements ActionListener {
      */
     @Override
     public void actionPerformed(final ActionEvent event) {
-
-        final CdiUtil cdiUtil = new CdiUtil();
-        final Subject subject = cdiUtil.findBean(Subject.class);
+        final Subject subject = CdiUtil.createCdiUtil().findBean(Subject.class);
         subject.logout();
     }
 

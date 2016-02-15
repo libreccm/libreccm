@@ -116,13 +116,10 @@ public class AdminServlet
         ServletException, IOException {
         // ///////    Some preparational steps                   ///////////////
         /* Determine access privilege: only logged in users may access   */
-//        final CdiUtil cdiUtil = new CdiUtil();
-//        final Subject subject = cdiUtil.findBean(Subject.class);
-        final Subject subject = CDI.current().select(Subject.class).get();
-//        final PermissionChecker permissionChecker = cdiUtil.findBean(
-//            PermissionChecker.class);
-        final PermissionChecker permissionChecker = CDI.current().select(
-            PermissionChecker.class).get();
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final Subject subject = cdiUtil.findBean(Subject.class);
+        final PermissionChecker permissionChecker = cdiUtil.findBean(
+            PermissionChecker.class);
 
         final ConfigurationManager confManager = CDI.current().select(ConfigurationManager.class).get();
         if (confManager == null) {
@@ -172,9 +169,11 @@ public class AdminServlet
 //            final Document doc = page.buildDocument(sreq, sresp);
 //            Templating.getPresentationManager().servePage(doc, sreq, sresp);
 //        }
-        final Page page = new Page();
+        final Page page = PageFactory.buildPage("admin", "LibreCCM NG Admin");
         page.add(new Label("admin"));
 
+        page.lock();
+        
         final Document doc = page.buildDocument(sreq, sresp);
         Templating.getPresentationManager().servePage(doc, sreq, sresp);
     }

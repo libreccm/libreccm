@@ -202,7 +202,7 @@ public class ChangePasswordForm extends Form
             String confirmPassword = (String) m_confirmPassword.getValue(state);
 
             //check oldPassword
-            final CdiUtil cdiUtil = new CdiUtil();
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final Shiro shiro = cdiUtil.findBean(Shiro.class);
             final UserManager userManager = cdiUtil.findBean(UserManager.class);
 
@@ -250,7 +250,7 @@ public class ChangePasswordForm extends Form
             return;
         }
 
-        final CdiUtil cdiUtil = new CdiUtil();
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final UserManager userManager = cdiUtil.findBean(UserManager.class);
         final Shiro shiro = cdiUtil.findBean(Shiro.class);
         final User user = shiro.getUser();

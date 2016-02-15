@@ -72,9 +72,8 @@ public final class XmlConfig {
     private Boolean fullTimeFormatterEnabled = false;
 
     public static XmlConfig getConfig() {
-        final CdiUtil cdiUtil = new CdiUtil();
-        final ConfigurationManager confManager = cdiUtil.findBean(
-            ConfigurationManager.class);
+        final ConfigurationManager confManager = CdiUtil.createCdiUtil()
+            .findBean(ConfigurationManager.class);
         return confManager.findConfiguration(XmlConfig.class);
     }
 
@@ -117,11 +116,11 @@ public final class XmlConfig {
         return domBuilder;
     }
 
-        /**
+    /**
      * Returns the Document Builder factory class name to use
      *
      * The method assures that the return value is a valid class name.
-     * 
+     *
      * Not used at the moment.
      *
      * @return String Document Builder factory class name
@@ -134,20 +133,19 @@ public final class XmlConfig {
             return getDefaultDomBuilderFactoryClassname();
         }
     }
-    
+
     /**
-     * Returns the class name of the default {@link DocumentBuilderFactory}. 
-     * This method encapsulates the default value so that is easy to change. The method is only for 
-     * use by the classes in the {@code com.arsdigita.xml} package, therefore the method is 
-     * only accessible from the package.
-     * 
-     * @return 
+     * Returns the class name of the default {@link DocumentBuilderFactory}.
+     * This method encapsulates the default value so that is easy to change. The
+     * method is only for use by the classes in the {@code com.arsdigita.xml}
+     * package, therefore the method is only accessible from the package.
+     *
+     * @return
      */
     String getDefaultDomBuilderFactoryClassname() {
         return DOM_XERCES;
     }
 
-    
     public void setDomBuilder(final String domBuilder) {
         this.domBuilder = domBuilder;
     }
@@ -156,11 +154,11 @@ public final class XmlConfig {
         return saxParser;
     }
 
-        /**
+    /**
      * Returns the Sax Parser factory class name to use.
      *
      * The method assures that the return value is a valid class name.
-     * 
+     *
      * Not used at the moment.
      *
      * @return String Sax Parser factory class name
@@ -175,18 +173,17 @@ public final class XmlConfig {
     }
 
     /**
-     * Returns the class name of the default {@link SAXParserFactory}. 
-     * This method encapsulates the default value so that is easy to change. The method is only for 
-     * use by the classes in the {@code com.arsdigita.xml} package, therefore the method is 
-     * only visible in the package.
-     * 
-     * @return 
+     * Returns the class name of the default {@link SAXParserFactory}. This
+     * method encapsulates the default value so that is easy to change. The
+     * method is only for use by the classes in the {@code com.arsdigita.xml}
+     * package, therefore the method is only visible in the package.
+     *
+     * @return
      */
     String getDefaultSaxParserFactoryClassname() {
         return SAX_XERCES;
     }
 
-    
     public void setSaxParser(final String saxParser) {
         this.saxParser = saxParser;
     }

@@ -70,9 +70,6 @@ public final class KernelConfig {
     private String defaultLanguage = "en";
 
     public static KernelConfig getConfig() {
-//        final CdiUtil cdiUtil = new CdiUtil();
-//        final ConfigurationManager confManager = cdiUtil.findBean(
-//            ConfigurationManager.class);
         final ConfigurationManager confManager = CdiUtil.createCdiUtil()
             .findBean(ConfigurationManager.class);
         return confManager.findConfiguration(KernelConfig.class);

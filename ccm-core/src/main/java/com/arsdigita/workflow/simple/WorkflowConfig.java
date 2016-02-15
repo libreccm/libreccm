@@ -39,9 +39,8 @@ public final class WorkflowConfig {
     private String alertsSender;
 
     public static WorkflowConfig getConfig() {
-        final CdiUtil cdiUtil = new CdiUtil();
-        final ConfigurationManager confManager = cdiUtil.findBean(
-            ConfigurationManager.class);
+        final ConfigurationManager confManager = CdiUtil.createCdiUtil()
+            .findBean(ConfigurationManager.class);
         return confManager.findConfiguration(WorkflowConfig.class);
     }
 

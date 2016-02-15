@@ -37,6 +37,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.enterprise.inject.spi.CDI;
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -66,6 +67,9 @@ public class BebopApplicationServlet extends BaseApplicationServlet {
 
     private static final Logger LOGGER = LogManager.getLogger(
         BebopApplicationServlet.class);
+    
+    @Inject
+    private Subject subject;
 
     /**
      * URL (pathinfo) -> Page object mapping. Based on it (and the http request
@@ -152,7 +156,7 @@ public class BebopApplicationServlet extends BaseApplicationServlet {
         final String pathInfo = sreq.getPathInfo();
         Assert.exists(pathInfo, "String pathInfo");
 
-        final Subject subject = CDI.current().select(Subject.class).get();
+        //final Subject subject = CDI.current().select(Subject.class).get();
         LOGGER.debug("Current session is: {}", sreq.getSession().getId());
         LOGGER.debug("Current Shiro session is {}", 
                      subject.getSession().getId().toString());

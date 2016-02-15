@@ -141,27 +141,6 @@ public class UserLoginForm extends Form implements LoginConstants,
                          final boolean autoRegistrationOn) {
         super(FORM_NAME, panel);
 
-//        final ConfigurationManager confManager = CDI.current().select(
-//                ConfigurationManager.class).get();
-//        final BeanManager beanManager = CDI.current().getBeanManager();
-//        final Set<Bean<?>> beans = beanManager.getBeans(
-//            ConfigurationManager.class);
-//        final Iterator<Bean<?>> iterator = beans.iterator();
-//        final ConfigurationManager confManager;
-//        if (iterator.hasNext()) {
-//            @SuppressWarnings("unchecked")
-//            final Bean<ConfigurationManager> bean
-//                                                 = (Bean<ConfigurationManager>) iterator
-//                .next();
-//            final CreationalContext<ConfigurationManager> ctx = beanManager.
-//                createCreationalContext(bean);
-//
-//            confManager = (ConfigurationManager) beanManager.getReference(
-//                bean, ConfigurationManager.class, ctx);
-//        } else {
-//            throw new UncheckedWrapperException(
-//                "Failed to lookup ConfigurationManager");
-//        }
         final ConfigurationManager confManager = CdiUtil.createCdiUtil()
             .findBean(ConfigurationManager.class);
         securityConfig = confManager.findConfiguration(SecurityConfig.class);
@@ -378,8 +357,7 @@ public class UserLoginForm extends Form implements LoginConstants,
         throws FormProcessException {
         PageState state = event.getPageState();
 
-        final CdiUtil cdiUtil = new CdiUtil();
-        final Subject subject = cdiUtil.findBean(Subject.class);
+        final Subject subject = CdiUtil.createCdiUtil().findBean(Subject.class);
 
         final UsernamePasswordToken token = new UsernamePasswordToken(
             m_loginName.getValue(state).toString(),
@@ -389,11 +367,12 @@ public class UserLoginForm extends Form implements LoginConstants,
         try {
             LOGGER.debug("Trying to login user {}...", subject.toString());
             subject.login(token);
+            LOGGER.debug("User {} logged in successfully.", token.getUsername());
         } catch (AuthenticationException ex) {
             onLoginFail(event, ex);
+            LOGGER.debug("Login failed.", ex);
         }
 
-        LOGGER.debug("User {} logged in successfully.", token.getUsername());
         LOGGER.debug("subject = {}", subject.toString());
         LOGGER.debug("Current session is: {}",
                      state.getRequest().getSession().getId());

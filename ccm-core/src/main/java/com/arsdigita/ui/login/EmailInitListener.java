@@ -53,7 +53,7 @@ public class EmailInitListener implements FormInitListener {
 
         s_log.debug("START");
 
-        final CdiUtil cdiUtil = new CdiUtil();
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final Subject subject = cdiUtil.findBean(Subject.class);
         final Shiro shiro = cdiUtil.findBean(Shiro.class);
         

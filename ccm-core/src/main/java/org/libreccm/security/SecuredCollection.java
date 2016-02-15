@@ -111,9 +111,8 @@ public class SecuredCollection<E extends CcmObject> implements Collection<E> {
     @Override
     @SuppressWarnings("unchecked")
     public Object[] toArray() {
-        final CdiUtil cdiUtil = new CdiUtil();
-        final PermissionChecker permissionChecker = cdiUtil.findBean(
-            PermissionChecker.class);
+        final PermissionChecker permissionChecker = CdiUtil.createCdiUtil()
+            .findBean(PermissionChecker.class);
 
         final Object[] objects = collection.toArray();
         for (int i = 0; i < objects.length; i++) {
@@ -129,9 +128,8 @@ public class SecuredCollection<E extends CcmObject> implements Collection<E> {
     @Override
     @SuppressWarnings({"unchecked", "PMD.UseVarargs"})
     public <T> T[] toArray(final T[] array) {
-        final CdiUtil cdiUtil = new CdiUtil();
-        final PermissionChecker permissionChecker = cdiUtil.findBean(
-            PermissionChecker.class);
+        final PermissionChecker permissionChecker = CdiUtil.createCdiUtil()
+            .findBean(PermissionChecker.class);
 
         final T[] objects = collection.toArray(array);
         for (int i = 0; i < objects.length; i++) {

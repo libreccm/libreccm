@@ -136,8 +136,8 @@ public class MultiInstanceApplicationPane<T extends CcmApplication>
         public ApplicationInstancesTableModel(final Table table,
                                               final String appType) {
             this.table = table;
-            final CdiUtil cdiUtil = new CdiUtil();
-            final ApplicationRepository appRepo = cdiUtil.findBean(ApplicationRepository.class);
+            final ApplicationRepository appRepo = CdiUtil.createCdiUtil()
+                .findBean(ApplicationRepository.class);
             final List<CcmApplication> applications = appRepo.
                     findByType(appType);
             for (CcmApplication application : applications) {

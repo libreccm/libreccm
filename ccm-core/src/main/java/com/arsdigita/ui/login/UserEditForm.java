@@ -65,8 +65,7 @@ public class UserEditForm extends UserForm
 
         @Override
         public Object initialValue(final PageState ps) {
-            final CdiUtil cdiUtil = new CdiUtil();
-            final Shiro shiro = cdiUtil.findBean(Shiro.class);
+            final Shiro shiro = CdiUtil.createCdiUtil().findBean(Shiro.class);
             final User result = shiro.getUser();
 
             return result;
@@ -103,8 +102,7 @@ public class UserEditForm extends UserForm
         FormData data = event.getFormData();
         PageState state = event.getPageState();
 
-        final CdiUtil cdiUtil = new CdiUtil();
-        final UserRepository userRepository = cdiUtil.findBean(
+        final UserRepository userRepository = CdiUtil.createCdiUtil().findBean(
             UserRepository.class);
 
         User user = getUser(state);

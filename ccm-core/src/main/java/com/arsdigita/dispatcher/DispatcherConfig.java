@@ -44,9 +44,8 @@ public final class DispatcherConfig {
     private String defaultPageClass = "com.arsdigita.bebop.Page";
 
     public static DispatcherConfig getConfig() {
-        final CdiUtil cdiUtil = new CdiUtil();
-        final ConfigurationManager confManager = cdiUtil.findBean(
-                ConfigurationManager.class);
+        final ConfigurationManager confManager = CdiUtil.createCdiUtil()
+            .findBean(ConfigurationManager.class);
         return confManager.findConfiguration(DispatcherConfig.class);
     }
 
@@ -119,15 +118,16 @@ public final class DispatcherConfig {
     @Override
     public String toString() {
         return String.format("%s{ "
-                                     + "cachingActive = %b, "
-                                     + "defaultExpiry = %d, "
-                                     + "staticUrlPrefix  = \"%s\", "
-                                     + "defaultPageClass = \"%s\""
-                                     + " }",
+                                 + "cachingActive = %b, "
+                                 + "defaultExpiry = %d, "
+                                 + "staticUrlPrefix  = \"%s\", "
+                                 + "defaultPageClass = \"%s\""
+                                 + " }",
                              super.toString(),
                              cachingActive,
                              defaultExpiry,
                              staticUrlPrefix,
                              defaultPageClass);
     }
+
 }

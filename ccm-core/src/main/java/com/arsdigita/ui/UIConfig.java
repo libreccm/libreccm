@@ -55,11 +55,9 @@ public final class UIConfig {
     private String workspaceUrl = "/pvt/";
 
     public static UIConfig getConfig() {
-//        final CdiUtil cdiUtil = new CdiUtil();
-//        final ConfigurationManager confManager = cdiUtil.findBean(
-//            ConfigurationManager.class);
-        final ConfigurationManager confManager = CDI.current().select(
-        ConfigurationManager.class).get();
+        final ConfigurationManager confManager = CdiUtil.createCdiUtil()
+            .findBean(ConfigurationManager.class);
+
         return confManager.findConfiguration(UIConfig.class);
     }
 

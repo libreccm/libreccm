@@ -113,7 +113,7 @@ class UserBrowsePane extends SegmentedPanel
     @Override
     public void actionPerformed(final ActionEvent event) {
 //        final PageState state = event.getPageState();
-//        final CdiUtil cdiUtil = new CdiUtil();
+//        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
 //        final CcmSessionContext sessionContext;
 
 //            sessionContext = cdiUtil.findBean(CcmSessionContext.class);
@@ -143,7 +143,7 @@ class UserBrowsePane extends SegmentedPanel
             protected Object initialValue(final PageState state) {
                 final Long id = (Long) state.getValue(USER_ID_PARAM);
 
-//                final CdiUtil cdiUtil = new CdiUtil();
+//                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
 //                final UserRepository userRepository;
 
 //                    userRepository = cdiUtil.findBean(UserRepository.class);
@@ -346,7 +346,7 @@ class UserBrowsePane extends SegmentedPanel
                 final PageState state = event.getPageState();
 //                final BigDecimal id = (BigDecimal) state.getValue(USER_ID_PARAM);
 //
-//                final CdiUtil cdiUtil = new CdiUtil();
+//                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
 //                final LoginManager loginManager;
 
 //                    loginManager = cdiUtil.findBean(
@@ -421,7 +421,7 @@ class UserBrowsePane extends SegmentedPanel
                 final PageState state = event.getPageState();
                 final User user = getUser(state);
 
-//                final CdiUtil cdiUtil = new CdiUtil();
+//                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
 //                final UserRepository userRepository;
 
 //                    userRepository = cdiUtil.findBean(UserRepository.class);
@@ -461,7 +461,7 @@ class UserBrowsePane extends SegmentedPanel
 //                User user = getUser(state);
 //                user.setBanned(true);
 //
-//                final CdiUtil cdiUtil = new CdiUtil();
+//                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
 //                final UserRepository userRepository;
 
 //                    userRepository = cdiUtil.findBean(UserRepository.class);
@@ -492,7 +492,7 @@ class UserBrowsePane extends SegmentedPanel
 //                User user = getUser(state);
 //                user.setBanned(false);
 //
-//                final CdiUtil cdiUtil = new CdiUtil();
+//                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
 //                final UserRepository userRepository;
 
 //                    userRepository = cdiUtil.findBean(UserRepository.class);
@@ -672,7 +672,7 @@ class UserBrowsePane extends SegmentedPanel
                 PageState ps = event.getPageState();
                 String id = (String) m_groupList.getSelectedKey(ps);
                 if (id != null) {
-                    final CdiUtil cdiUtil = new CdiUtil();
+                    final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
 //                    final GroupRepository groupRepository;
 
 //                        groupRepository = cdiUtil
@@ -706,7 +706,7 @@ class UserTableModel implements TableModel {
     private int index = 0;
 
     public UserTableModel() {
-        final CdiUtil cdiUtil = new CdiUtil();
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
 //        final UserRepository userRepository;
 
 //            userRepository = cdiUtil.findBean(UserRepository.class);

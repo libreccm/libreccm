@@ -50,9 +50,8 @@ public final class MailConfig {
     private Boolean sendHtml = false;
 
     public static MailConfig getConfig() {
-        final CdiUtil cdiUtil = new CdiUtil();
-        final ConfigurationManager confManager = cdiUtil.findBean(
-            ConfigurationManager.class);
+        final ConfigurationManager confManager = CdiUtil.createCdiUtil()
+            .findBean(ConfigurationManager.class);
         return confManager.findConfiguration(MailConfig.class);
     }
 

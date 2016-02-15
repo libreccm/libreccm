@@ -64,7 +64,7 @@ class GroupEditForm extends GroupForm implements FormInitListener,
         final Long id = (Long) state.getValue(USER_ID_PARAM);
 
 //        if (id != null) {
-//            final CdiUtil cdiUtil = new CdiUtil();
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
 //            final GroupRepository groupRepository;
 //
 
@@ -86,7 +86,7 @@ class GroupEditForm extends GroupForm implements FormInitListener,
 
         final PageState state = event.getPageState();
         final Long id = (Long) state.getValue(GROUP_ID_PARAM);
-        final CdiUtil cdiUtil = new CdiUtil();
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
 //        final GroupRepository groupRepository;
 //            groupRepository = cdiUtil.findBean(GroupRepository.class);
 

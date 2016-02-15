@@ -81,7 +81,7 @@ class SubMemberPanel extends BoxPanel {
 
                     if (key != null) {
                         final Long userID = new Long(key);
-                        final CdiUtil cdiUtil = new CdiUtil();
+                        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
 //                        final UserRepository userRepository;
 //                        final GroupManager groupManager;
 //                        final GroupRepository groupRepository;

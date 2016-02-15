@@ -237,7 +237,7 @@ class UserForm extends Form implements FormValidationListener, AdminConstants {
         /**
          * Verify that primary email and screen name are unique
          */
-        final CdiUtil cdiUtil = new CdiUtil();
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
 //        final UserRepository userRepository;
 
 //            userRepository = cdiUtil.findBean(UserRepository.class);

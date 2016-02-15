@@ -51,10 +51,10 @@ import org.libreccm.security.UserRepository;
  *
  */
 public abstract class UserForm extends Form
-        implements LoginConstants, FormInitListener, FormValidationListener {
+    implements LoginConstants, FormInitListener, FormValidationListener {
 
     private static final Logger LOGGER = Logger.getLogger(UserForm.class
-            .getName());
+        .getName());
 
     private final boolean m_newUser;
 
@@ -69,15 +69,15 @@ public abstract class UserForm extends Form
     protected TextField m_answer;
 
     protected Label m_securitySectionHeader = new Label(LoginHelper
-            .getMessage("login.userNewForm.securitySectionHeader"), false);
+        .getMessage("login.userNewForm.securitySectionHeader"), false);
     protected Label m_securityBlurb = new Label(LoginHelper
-            .getMessage("login.userNewForm.securityBlurb"));
+        .getMessage("login.userNewForm.securityBlurb"));
     protected Label m_passwordBlurb = new Label(LoginHelper
-            .getMessage("login.userNewForm.passwordBlurb"));
+        .getMessage("login.userNewForm.passwordBlurb"));
     protected Label m_passwordLabel = new Label(PASSWORD);
     protected Label m_confirmationLabel = new Label(PASSWORD_CONFIRMATION);
     protected PasswordValidationListener m_passwordValidationListener
-                                         = new PasswordValidationListener();
+                                             = new PasswordValidationListener();
     protected NotEmptyValidationListener m_confirmationNotEmptyValidationListener
                                          = new NotEmptyValidationListener();
     protected Submit m_submit = new Submit(SUBMIT);
@@ -111,7 +111,7 @@ public abstract class UserForm extends Form
 
         if (m_newUser) {
             m_profilePart.add(new Label(LoginHelper
-                    .getMessage("login.userNewForm.aboutYouSectionHeader"),
+                .getMessage("login.userNewForm.aboutYouSectionHeader"),
                                         false), ColumnPanel.FULL_WIDTH);
         }
 
@@ -123,7 +123,7 @@ public abstract class UserForm extends Form
         m_firstName.setSize(20);
         m_firstName.addValidationListener(new NotEmptyValidationListener());
         m_firstName.addValidationListener(new StringLengthValidationListener(
-                MAX_NAME_LEN));
+            MAX_NAME_LEN));
 
         m_profilePart.add(m_firstNameLabel);
         m_profilePart.add(m_firstName);
@@ -133,7 +133,7 @@ public abstract class UserForm extends Form
         m_lastName.setSize(25);
         m_lastName.addValidationListener(new NotEmptyValidationListener());
         m_lastName.addValidationListener(new StringLengthValidationListener(
-                MAX_NAME_LEN));
+            MAX_NAME_LEN));
 
         m_profilePart.add(m_lastNameLabel);
         m_profilePart.add(m_lastName);
@@ -166,15 +166,15 @@ public abstract class UserForm extends Form
         // add(new Label(""));
         if (m_newUser) {
             m_securityPart.add(new Label(LoginHelper
-                    .getMessage("login.userNewForm.securitySectionHeader"),
+                .getMessage("login.userNewForm.securitySectionHeader"),
                                          false), ColumnPanel.FULL_WIDTH);
 
             m_securityPart.add(new Label(LoginHelper
-                    .getMessage("login.userNewForm.securityBlurb")),
+                .getMessage("login.userNewForm.securityBlurb")),
                                ColumnPanel.FULL_WIDTH);
 
             m_securityPart.add(new Label(LoginHelper
-                    .getMessage("login.userNewForm.passwordBlurb")),
+                .getMessage("login.userNewForm.passwordBlurb")),
                                ColumnPanel.FULL_WIDTH);
 
             // Password
@@ -186,14 +186,14 @@ public abstract class UserForm extends Form
 
             // Password confirmation
             m_confirm = new Password(new StringParameter(
-                    FORM_PASSWORD_CONFIRMATION));
+                FORM_PASSWORD_CONFIRMATION));
             m_confirm.addValidationListener(new NotEmptyValidationListener());
 
             m_securityPart.add(m_confirmationLabel);
             m_securityPart.add(m_confirm);
 
             m_securityPart.add(new Label(LoginHelper
-                    .getMessage("login.userNewForm.questionBlurb")),
+                .getMessage("login.userNewForm.questionBlurb")),
                                ColumnPanel.FULL_WIDTH);
         }
 
@@ -215,13 +215,13 @@ public abstract class UserForm extends Form
      */
     @Override
     public void init(final FormSectionEvent event)
-            throws FormProcessException {
+        throws FormProcessException {
         final PageState state = event.getPageState();
 
         final User user = getUser(state);
         if (user == null) {
             throw new FormProcessException(LoginGlobalizationUtil.globalize(
-                    "login.userForm.couldnt_load_user"));
+                "login.userForm.couldnt_load_user"));
         }
         m_firstName.setValue(state, user.getGivenName());
         m_lastName.setValue(state, user.getFamilyName());
@@ -234,8 +234,9 @@ public abstract class UserForm extends Form
      * Gets the current user for initialising the form.
      *
      * @param state
+     *
      * @return the current user, if the form should not be initialised with user
-     * data.
+     *         data.
      */
     protected abstract User getUser(final PageState state);
 
@@ -246,18 +247,19 @@ public abstract class UserForm extends Form
      * users.
      *
      * @param event
+     *
      * @throws com.arsdigita.bebop.FormProcessException
      */
     @Override
     public void validate(final FormSectionEvent event)
-            throws FormProcessException {
+        throws FormProcessException {
 
         final PageState state = event.getPageState();
         final FormData data = event.getFormData();
 
-        final CdiUtil cdiUtil = new CdiUtil();
-        final UserRepository userRepository = cdiUtil.findBean(UserRepository.class);
-        
+        final UserRepository userRepository = CdiUtil.createCdiUtil().findBean(
+            UserRepository.class);
+
         try {
             if (m_newUser) {
                 // Verify that password and confirmation match
@@ -265,7 +267,7 @@ public abstract class UserForm extends Form
                 String confirm = (String) m_confirm.getValue(state);
 
                 if ((password != null) && (confirm != null)
-                            && !password.equals(confirm)) {
+                        && !password.equals(confirm)) {
                     data.addError(FORM_PASSWORD_CONFIRMATION,
                                   ERROR_MISMATCH_PASSWORD);
                 }
@@ -286,7 +288,7 @@ public abstract class UserForm extends Form
             final String oldEmail = user.getPrimaryEmailAddress().getAddress();
             final String email = (String) m_email.getValue(state);
             if (KernelConfig.getConfig().emailIsPrimaryIdentifier()
-                        && email != null && !email.equals(oldEmail)) {
+                    && email != null && !email.equals(oldEmail)) {
                 final User result = userRepository.findByEmailAddress(email);
                 if (result != null) {
                     data.addError(FORM_EMAIL, ERROR_DUPLICATE_EMAIL);

@@ -36,6 +36,7 @@ import com.arsdigita.web.URL;
 
 import org.apache.log4j.Logger;
 import org.libreccm.configuration.ConfigurationManager;
+import org.libreccm.security.UserRepository;
 
 import javax.inject.Inject;
 import javax.servlet.ServletException;
@@ -129,6 +130,9 @@ public class LoginServlet extends BebopApplicationServlet {
 
     @Inject
     private ConfigurationManager confManager;
+    
+    @Inject
+    private UserRepository userRepository;
 
     /**
      * User extension point used to create the pages to server and setup a
@@ -140,6 +144,10 @@ public class LoginServlet extends BebopApplicationServlet {
     public void doInit() throws ServletException {
         final SecurityConfig securityConfig = confManager.findConfiguration(
             SecurityConfig.class);
+        
+        if (userRepository == null) {
+            throw new IllegalStateException("User repository is not available.");
+        }
 
         // Allow world caching for pages without authentication,
         // ie, /register, /register/explain-persistent-cookies,

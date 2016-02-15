@@ -90,10 +90,9 @@ class SecuredEntrySet<E extends Map.Entry<K, V>, K, V extends CcmObject>
     @Override
     @SuppressWarnings("unchecked")
     public Object[] toArray() {
-        final CdiUtil cdiUtil = new CdiUtil();
-        final PermissionChecker permissionChecker = cdiUtil.findBean(
-                PermissionChecker.class);
-        
+        final PermissionChecker permissionChecker = CdiUtil.createCdiUtil()
+            .findBean(PermissionChecker.class);
+
         final Object[] entries = set.toArray();
         for (int i = 0; i < entries.length; i++) {
             final E entry = (E) entries[i];
@@ -109,10 +108,9 @@ class SecuredEntrySet<E extends Map.Entry<K, V>, K, V extends CcmObject>
     @Override
     @SuppressWarnings({"unchecked", "PMD.UseVarargs"})
     public <T> T[] toArray(final T[] array) {
-        final CdiUtil cdiUtil = new CdiUtil();
-        final PermissionChecker permissionChecker = cdiUtil.findBean(
-                PermissionChecker.class);
-        
+        final PermissionChecker permissionChecker = CdiUtil.createCdiUtil()
+            .findBean(PermissionChecker.class);
+
         final E[] entries = (E[]) set.toArray(array);
         for (int i = 0; i < entries.length; i++) {
             if (!permissionChecker.isPermitted(requiredPrivilege,

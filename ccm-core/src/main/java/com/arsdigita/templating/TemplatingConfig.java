@@ -49,9 +49,8 @@ public final class TemplatingConfig {
     private Integer stylesheetCacheAge = 3600;
 
     public static TemplatingConfig getConfig() {
-        final CdiUtil cdiUtil = new CdiUtil();
-        final ConfigurationManager confManager = cdiUtil.findBean(
-            ConfigurationManager.class);
+        final ConfigurationManager confManager = CdiUtil.createCdiUtil()
+            .findBean(ConfigurationManager.class);
         return confManager.findConfiguration(TemplatingConfig.class);
     }
 

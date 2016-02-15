@@ -78,7 +78,7 @@ public class ApplicationsAdministrationTab extends LayoutPanel implements
 
         setLeft(applicationTree);
 
-        final CdiUtil cdiUtil = new CdiUtil();
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final org.libreccm.web.ApplicationManager appManager = cdiUtil.findBean(
             org.libreccm.web.ApplicationManager.class);
 
@@ -213,7 +213,7 @@ public class ApplicationsAdministrationTab extends LayoutPanel implements
                     }
                 } else {
                     // Selected key is the name of a instance pane
-                    final CdiUtil cdiUtil = new CdiUtil();
+                    final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
                     final ApplicationRepository appRepo = cdiUtil.findBean(
                         ApplicationRepository.class);
 

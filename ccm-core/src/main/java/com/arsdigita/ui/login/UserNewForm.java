@@ -151,7 +151,7 @@ public class UserNewForm extends UserForm implements FormInitListener,
 
         final Exception[] formExceptions = new Exception[]{null};
 
-        final CdiUtil cdiUtil = new CdiUtil();
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final Shiro shiro = cdiUtil.findBean(Shiro.class);
 
         shiro.getSystemUser().execute(new Callable<Void>() {
@@ -159,9 +159,8 @@ public class UserNewForm extends UserForm implements FormInitListener,
             @Override
             public Void call() throws Exception {
 
-                final CdiUtil cdiUtil = new CdiUtil();
-                final UserManager userManager = cdiUtil.findBean(
-                    UserManager.class);
+                final UserManager userManager = CdiUtil.createCdiUtil()
+                    .findBean(UserManager.class);
                 userManager.createUser(firstName,
                                        lastName,
                                        screenName,

@@ -23,10 +23,10 @@ import static org.libreccm.core.CoreConstants.*;
 import org.libreccm.core.DefaultEntityGraph;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -91,7 +91,7 @@ public class Party implements Serializable {
     @OneToMany(mappedBy = "member")
     @XmlElementWrapper(name = "role-memberships", namespace = CORE_XML_NS)
     @XmlElement(name = "role-membership", namespace = CORE_XML_NS)
-    private List<RoleMembership> roleMemberships = new ArrayList<>();
+    private Set<RoleMembership> roleMemberships = new HashSet<>();
 
     protected Party() {
         super();
@@ -113,15 +113,15 @@ public class Party implements Serializable {
         this.name = name;
     }
 
-    public List<RoleMembership> getRoleMemberships() {
+    public Set<RoleMembership> getRoleMemberships() {
         if (roleMemberships == null) {
             return null;
         } else {
-            return Collections.unmodifiableList(roleMemberships);
+            return Collections.unmodifiableSet(roleMemberships);
         }
     }
 
-    protected void setRoleMemberships(final List<RoleMembership> roleMemberships) {
+    protected void setRoleMemberships(final Set<RoleMembership> roleMemberships) {
         this.roleMemberships = roleMemberships;
     }
 

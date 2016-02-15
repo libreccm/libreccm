@@ -51,9 +51,8 @@ public final class NotificationConfig {
     private Integer simpleQueuePeriod = 900;
 
     public static NotificationConfig getConfig() {
-        final CdiUtil cdiUtil = new CdiUtil();
-        final ConfigurationManager confManager = cdiUtil.findBean(
-            ConfigurationManager.class);
+        final ConfigurationManager confManager = CdiUtil.createCdiUtil()
+            .findBean(ConfigurationManager.class);
         return confManager.findConfiguration(NotificationConfig.class);
     }
 

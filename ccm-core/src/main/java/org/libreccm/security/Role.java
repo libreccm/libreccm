@@ -26,8 +26,10 @@ import org.libreccm.workflow.TaskAssignment;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -83,7 +85,7 @@ public class Role implements Serializable {
     @OneToMany(mappedBy = "role")
     @XmlElementWrapper(name = "role-memberships", namespace = CORE_XML_NS)
     @XmlElement(name = "role-membership", namespace = CORE_XML_NS)
-    private List<RoleMembership> memberships = new ArrayList<>();
+    private Set<RoleMembership> memberships = new HashSet<>();
     
     /**
      * Permissions granted to the role.
@@ -116,15 +118,15 @@ public class Role implements Serializable {
         this.name = name;
     }
 
-    public List<RoleMembership> getMemberships() {
+    public Set<RoleMembership> getMemberships() {
         if (memberships == null) {
             return null;
         } else {
-            return Collections.unmodifiableList(memberships);
+            return Collections.unmodifiableSet(memberships);
         }
     }
     
-    protected void setMemberships(final List<RoleMembership> memberships) {
+    protected void setMemberships(final Set<RoleMembership> memberships) {
         this.memberships = memberships;
     }
     

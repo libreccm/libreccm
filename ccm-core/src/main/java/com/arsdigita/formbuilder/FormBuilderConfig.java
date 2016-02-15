@@ -43,9 +43,8 @@ public final class FormBuilderConfig {
     private Boolean interpolateEmailActions;
 
     public static FormBuilderConfig getConfig() {
-        final CdiUtil cdiUtil = new CdiUtil();
-        final ConfigurationManager confManager = cdiUtil.findBean(
-            ConfigurationManager.class);
+        final ConfigurationManager confManager = CdiUtil.createCdiUtil()
+            .findBean(ConfigurationManager.class);
         return confManager.findConfiguration(FormBuilderConfig.class);
     }
 
