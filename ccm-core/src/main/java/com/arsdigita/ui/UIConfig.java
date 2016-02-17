@@ -18,8 +18,11 @@
  */
 package com.arsdigita.ui;
 
+import com.arsdigita.bebop.Component;
+
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.Configuration;
+import org.libreccm.configuration.ConfigurationException;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.configuration.Setting;
 
@@ -37,66 +40,91 @@ import javax.enterprise.inject.spi.CDI;
  */
 @Configuration
 public final class UIConfig {
-
+    
     @Setting
     private List<String> defaultLayout = Arrays.asList(new String[]{
         "top:com.arsdigita.ui.UserBanner",
         "bottom:com.arsdigita.ui.SiteBanner",
         "bottom:com.arsdigita.ui.DebugPanel"
     });
-
+    
     @Setting
     private String rootPageUrl = "/register/";
-
+    
     @Setting
     private String userRedirectUrl = "/permissions/";
-
+    
     @Setting
     private String workspaceUrl = "/pvt/";
-
+    
     public static UIConfig getConfig() {
         final ConfigurationManager confManager = CdiUtil.createCdiUtil()
             .findBean(ConfigurationManager.class);
-
+        
         return confManager.findConfiguration(UIConfig.class);
     }
-
+    
     public UIConfig() {
         super();
     }
-
+    
     public List<String> getDefaultLayout() {
         return new ArrayList<>(defaultLayout);
     }
-
+    
     public void setDefaultLayout(final List<String> defaultLayout) {
         this.defaultLayout = defaultLayout;
     }
-
+    
+    public SimplePageLayout buildDefaultLayout() {
+        final SimplePageLayout layout = new SimplePageLayout();
+        
+        defaultLayout.forEach(c -> {
+            final String[] tokens = c.split(":");
+            if (tokens.length != 2) {
+                throw new ConfigurationException(
+                    "Default layout not provided in the correct format.");
+            }
+            
+            Class<?> clazz;
+            try {
+                clazz = Class.forName(tokens[1]);
+            } catch (ClassNotFoundException ex) {
+                throw new ConfigurationException(String.format(
+                    "Component \"%s\" not found.", tokens[1]),
+                                                 ex);
+            }
+            
+            layout.addComponent(clazz, tokens[0]);
+        });
+        
+        return layout;
+    }
+    
     public String getRootPageUrl() {
         return rootPageUrl;
     }
-
+    
     public void setRootPageUrl(final String rootPageUrl) {
         this.rootPageUrl = rootPageUrl;
     }
-
+    
     public String getUserRedirectUrl() {
         return userRedirectUrl;
     }
-
+    
     public void setUserRedirectUrl(final String userRedirectUrl) {
         this.userRedirectUrl = userRedirectUrl;
     }
-
+    
     public String getWorkspaceUrl() {
         return workspaceUrl;
     }
-
+    
     public void setWorkspaceUrl(final String workspaceUrl) {
         this.workspaceUrl = workspaceUrl;
     }
-
+    
     @Override
     public int hashCode() {
         int hash = 7;
@@ -106,7 +134,7 @@ public final class UIConfig {
         hash = 31 * hash + Objects.hashCode(workspaceUrl);
         return hash;
     }
-
+    
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
@@ -130,14 +158,14 @@ public final class UIConfig {
         }
         return Objects.equals(defaultLayout, other.getDefaultLayout());
     }
-
+    
     @Override
     public String toString() {
         final StringJoiner joiner = new StringJoiner(", ");
         if (defaultLayout != null) {
             defaultLayout.forEach(s -> joiner.add(s));
         }
-
+        
         return String.format("%s{ "
                                  + "defaultLayout = \"%s\", "
                                  + "rootPageUrl = \"%s\", "
@@ -150,5 +178,5 @@ public final class UIConfig {
                              userRedirectUrl,
                              workspaceUrl);
     }
-
+    
 }

@@ -18,7 +18,6 @@
  */
 package org.libreccm.docrepo;
 
-
 import org.libreccm.auditing.AbstractAuditedEntityRepository;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.PermissionChecker;
@@ -32,13 +31,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Repository class for retrieving, storing and deleting {@code AbstractResource}s.
+ * Repository class for retrieving, storing and deleting
+ * {@code AbstractResource}s.
  *
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  * @version 01/10/2015
  */
-public abstract class AbstractResourceRepository<T extends AbstractResource> extends
-        AbstractAuditedEntityRepository<Long, T> {
+public abstract class AbstractResourceRepository<T extends AbstractResource>
+    extends
+    AbstractAuditedEntityRepository<Long, T> {
 
     protected Class classOfT;
 
@@ -64,29 +65,33 @@ public abstract class AbstractResourceRepository<T extends AbstractResource> ext
     }
 
     /**
-     * Checks if the current subject has permissions grating him the
-     * privilege to read the requested {@link AbstractResource}(s) and removes the
-     * ones he is not allowed to access.
+     * Checks if the current subject has permissions grating him the privilege
+     * to read the requested {@link AbstractResource}(s) and removes the ones he
+     * is not allowed to access.
      *
-     * @param resources The requested {@link AbstractResource}s, found in the database
-     * @return A list of {@link AbstractResource}s the subject is allowed to access
+     * @param resources The requested {@link AbstractResource}s, found in the
+     *                  database
+     *
+     * @return A list of {@link AbstractResource}s the subject is allowed to
+     *         access
      */
     private List<T> permissionFilter(List<T> resources) {
-        final CdiUtil cdiUtil = new CdiUtil();
-        final PermissionChecker permissionChecker = cdiUtil.findBean(
-                PermissionChecker.class);
+        final PermissionChecker permissionChecker = CdiUtil.createCdiUtil()
+            .findBean(PermissionChecker.class);
         return resources.stream().filter(resource -> permissionChecker
-                .isPermitted("read", resource)).collect(Collectors.toList());
+            .isPermitted("read", resource)).collect(Collectors.toList());
     }
 
     /**
-     * Checks if the current subject has permissions grating him the
-     * privilege to read the one requested {@link AbstractResource} and removes it if
-     * he is not allowed to access.
+     * Checks if the current subject has permissions grating him the privilege
+     * to read the one requested {@link AbstractResource} and removes it if he
+     * is not allowed to access.
      *
-     * @param resource The requested {@link AbstractResource}, found in the database
-     * @return A list of at most one {@link AbstractResource} the subject is allowed to
-     * access
+     * @param resource The requested {@link AbstractResource}, found in the
+     *                 database
+     *
+     * @return A list of at most one {@link AbstractResource} the subject is
+     *         allowed to access
      */
     private T permissionFilter(T resource) {
         return permissionFilter(Collections.singletonList(resource)).get(0);
@@ -96,19 +101,20 @@ public abstract class AbstractResourceRepository<T extends AbstractResource> ext
      * Retrieve all {@link AbstractResource}s with the given name.
      *
      * @param name The name for the searched {@link AbstractResource}
-     * @return  The {@link AbstractResource}s with the given name, if there aren't
-     *          any an {@code EmptyList}
+     *
+     * @return The {@link AbstractResource}s with the given name, if there
+     *         aren't any an {@code EmptyList}
      */
     public List<T> findByName(final String name) {
         final TypedQuery<T> query = getFindByNameQuery();
-                query.setParameter("name", name);
+        query.setParameter("name", name);
 
         return permissionFilter(query.getResultList());
     }
 
     /**
-     * Abstract method to get a {@link TypedQuery}, specifically implemented
-     * in the subclasses matching their own database requests, finding the
+     * Abstract method to get a {@link TypedQuery}, specifically implemented in
+     * the subclasses matching their own database requests, finding the
      * {@code T}-typed objects by name.
      *
      * @return A {@link TypedQuery} to find objects by name
@@ -118,10 +124,11 @@ public abstract class AbstractResourceRepository<T extends AbstractResource> ext
     /**
      * Retrieve a {@code AbstractResource} by its {@code path}.
      *
-     * @param pathName  The {@code path} to the {@code AbstractResource}.
+     * @param pathName The {@code path} to the {@code AbstractResource}.
      *
-     * @return  The {@code AbstractResource} identified by the given {@code path}, if
-     *          there is such a {@code AbstractResource}, {@code null} if not.
+     * @return The {@code AbstractResource} identified by the given
+     *         {@code path}, if there is such a {@code AbstractResource},
+     *         {@code null} if not.
      */
     public T findByPathName(final String pathName) {
         final TypedQuery<T> query = getFindByPathNameQuery();
@@ -131,8 +138,8 @@ public abstract class AbstractResourceRepository<T extends AbstractResource> ext
     }
 
     /**
-     * Abstract method to get a {@link TypedQuery}, specifically implemented
-     * in the subclasses matching their own database requests, finding the
+     * Abstract method to get a {@link TypedQuery}, specifically implemented in
+     * the subclasses matching their own database requests, finding the
      * {@code T}-typed objects by path name.
      *
      * @return A {@link TypedQuery} to find objects by path name
@@ -142,10 +149,12 @@ public abstract class AbstractResourceRepository<T extends AbstractResource> ext
     /**
      * Retrieve the {@code AbstractResource}s, a given {@link User} created.
      *
-     * @param creator   The {@link User}, who created the {@code AbstractResource}s.
+     * @param creator The {@link User}, who created the
+     *                {@code AbstractResource}s.
      *
-     * @return  The {@code AbstractResource}s, created by the given {@link User}, if
-     *          there are such {@code AbstractResource}s, {@code EmptyList} if not.
+     * @return The {@code AbstractResource}s, created by the given {@link User},
+     *         if there are such {@code AbstractResource}s, {@code EmptyList} if
+     *         not.
      */
     public List<T> findForCreator(final User creator) {
         final TypedQuery<T> query = getFindForCreatorQuery();
@@ -155,8 +164,8 @@ public abstract class AbstractResourceRepository<T extends AbstractResource> ext
     }
 
     /**
-     * Abstract method to get a {@link TypedQuery}, specifically implemented
-     * in the subclasses matching their own database requests, finding the
+     * Abstract method to get a {@link TypedQuery}, specifically implemented in
+     * the subclasses matching their own database requests, finding the
      * {@code T}-typed objects created by a given/set {@link User}.
      *
      * @return A {@link TypedQuery} to find objects for creator.
@@ -164,12 +173,15 @@ public abstract class AbstractResourceRepository<T extends AbstractResource> ext
     protected abstract TypedQuery<T> getFindForCreatorQuery();
 
     /**
-     * Retrieve the {@code AbstractResource}s, a given {@link User} last modified.
+     * Retrieve the {@code AbstractResource}s, a given {@link User} last
+     * modified.
      *
-     * @param modifier The {@link User} who last modified the {@code AbstractResource}s.
+     * @param modifier The {@link User} who last modified the
+     *                 {@code AbstractResource}s.
      *
-     * @return  The {@code AbstractResource}s, last modified by the given {@link User},
-     *          if there are such {@code AbstractResource}s, {@code EmptyList} if not.
+     * @return The {@code AbstractResource}s, last modified by the given
+     *         {@link User}, if there are such {@code AbstractResource}s,
+     *         {@code EmptyList} if not.
      */
     public List<T> findForModifier(final User modifier) {
         final TypedQuery<T> query = getFindForModifierQuery();
@@ -179,11 +191,12 @@ public abstract class AbstractResourceRepository<T extends AbstractResource> ext
     }
 
     /**
-     * Abstract method to get a {@link TypedQuery}, specifically implemented
-     * in the subclasses matching their own database requests, finding the
+     * Abstract method to get a {@link TypedQuery}, specifically implemented in
+     * the subclasses matching their own database requests, finding the
      * {@code T}-typed objects last modified for a given/set {@link User}.
      *
      * @return A {@link TypedQuery} to find objects for last modifier.
      */
     protected abstract TypedQuery<T> getFindForModifierQuery();
+
 }

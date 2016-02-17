@@ -56,9 +56,8 @@ public class ShortcutsTable extends Table {
     public ShortcutsTable(final ParameterSingleSelectionModel selected_shortcut) {
         super(new ShortcutsModelBuilder(), headers);
         setDefaultCellRenderer(new ShortcutsCellRenderer());
-        final CdiUtil cdiUtil = new CdiUtil();
-        final ShortcutRepository shortcutsRepo = cdiUtil.findBean(
-            ShortcutRepository.class);
+        final ShortcutRepository shortcutsRepo = CdiUtil.createCdiUtil()
+            .findBean(ShortcutRepository.class);
 
         addTableActionListener(new TableActionListener() {
 

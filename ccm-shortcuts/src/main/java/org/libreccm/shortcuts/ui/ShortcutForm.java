@@ -161,9 +161,9 @@ public class ShortcutForm extends Form {
         @Override
         public void init(FormSectionEvent ev) throws FormProcessException {
             final PageState state = ev.getPageState();
-            final CdiUtil cdiUtil = new CdiUtil();
-            final ShortcutRepository shortcutsRepo = cdiUtil.findBean(ShortcutRepository.class);
-            
+            final ShortcutRepository shortcutsRepo = CdiUtil.createCdiUtil()
+                .findBean(ShortcutRepository.class);
+
             Long shortcutKey = (Long) m_selected_shortcut
                 .getSelectedKey(state);
             if (shortcutKey == null) {
@@ -222,8 +222,8 @@ public class ShortcutForm extends Form {
         public void process(FormSectionEvent e) throws FormProcessException {
             ShortcutManager shortcutMgr = new ShortcutManager();
             PageState state = e.getPageState();
-            final CdiUtil cdiUtil = new CdiUtil();
-            final ShortcutRepository shortcutsRepo = cdiUtil.findBean(ShortcutRepository.class);
+            final ShortcutRepository shortcutsRepo = CdiUtil.createCdiUtil()
+                .findBean(ShortcutRepository.class);
 
             Long shortcutKey = (Long) m_selected_shortcut.getSelectedKey(state);
 

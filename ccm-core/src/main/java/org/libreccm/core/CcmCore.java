@@ -18,6 +18,9 @@
  */
 package org.libreccm.core;
 
+import com.arsdigita.ui.SimplePage;
+import com.arsdigita.ui.UIConfig;
+import com.arsdigita.ui.UiInitializer;
 import com.arsdigita.ui.admin.AdminApplicationCreator;
 import com.arsdigita.ui.admin.AdminServlet;
 import com.arsdigita.ui.admin.AdminApplicationSetup;
@@ -116,7 +119,6 @@ public class CcmCore implements CcmModule {
 
     @Override
     public void init(final InitEvent event) {
-        //Nothing
     }
 
     @Override

@@ -28,6 +28,7 @@ import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.libreccm.cdi.utils.CdiUtil;
 
 import java.util.Iterator;
 import java.util.List;
@@ -37,6 +38,7 @@ import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.CDI;
+import javax.naming.InitialContext;
 
 /**
  * Implementation of Shiro's {@link AuthorizingRealm} to provide Shiro with the
@@ -70,26 +72,34 @@ public class CcmShiroRealm extends AuthorizingRealm {
         if ("system-user".equals(userIdentifier)) {
             // The system user is a virtual user which has all roles and all
             // privileges
+//            final RoleRepository roleRepository;
+//            final BeanManager beanManager = CDI.current().getBeanManager();
+//            final Set<Bean<?>> beans = beanManager.
+//                getBeans(RoleRepository.class);
+//            final Iterator<Bean<?>> iterator = beans.iterator();
+//            if (iterator.hasNext()) {
+//                @SuppressWarnings("unchecked")
+//                final Bean<RoleRepository> bean
+//                                               = (Bean<RoleRepository>) iterator
+//                    .next();
+//                final CreationalContext<RoleRepository> ctx = beanManager.
+//                    createCreationalContext(bean);
+//
+//                roleRepository = (RoleRepository) beanManager.getReference(
+//                    bean, RoleRepository.class, ctx);
+//            } else {
+//                throw new AuthenticationException(
+//                    "Failed to retrieve RoleRepository");
+//            }
+
             final RoleRepository roleRepository;
-            final BeanManager beanManager = CDI.current().getBeanManager();
-            final Set<Bean<?>> beans = beanManager.
-                getBeans(RoleRepository.class);
-            final Iterator<Bean<?>> iterator = beans.iterator();
-            if (iterator.hasNext()) {
-                @SuppressWarnings("unchecked")
-                final Bean<RoleRepository> bean
-                                           = (Bean<RoleRepository>) iterator.
-                    next();
-                final CreationalContext<RoleRepository> ctx = beanManager.
-                    createCreationalContext(bean);
-
-                roleRepository = (RoleRepository) beanManager.getReference(
-                    bean, RoleRepository.class, ctx);
-            } else {
+            try {
+                roleRepository = CdiUtil.createCdiUtil()
+                    .findBean(RoleRepository.class);
+            } catch (IllegalStateException ex) {
                 throw new AuthenticationException(
-                    "Failed to retrieve RoleRepository");
+                    "Failed to retrieve RoleRepository", ex);
             }
-
             final List<Role> roles = roleRepository.findAll();
 
             final SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
@@ -182,28 +192,36 @@ public class CcmShiroRealm extends AuthorizingRealm {
         // For some reason we can't use the the CdiUtil class here, therefore
         // we have to do the lookup for the UserRepository be ourself.
         final UserRepository userRepository;
-        final BeanManager beanManager = CDI.current().getBeanManager();
-        final Set<Bean<?>> beans = beanManager.getBeans(
-            UserRepository.class);
-        final Iterator<Bean<?>> iterator = beans.iterator();
-        if (iterator.hasNext()) {
-            @SuppressWarnings("unchecked")
-            final Bean<UserRepository> bean = (Bean<UserRepository>) iterator
-                .next();
-            final CreationalContext<UserRepository> ctx = beanManager
-                .createCreationalContext(bean);
-
-            userRepository = (UserRepository) beanManager.getReference(
-                bean, UserRepository.class, ctx);
-        } else {
+//        final BeanManager beanManager = CDI.current().getBeanManager();
+//        final Set<Bean<?>> beans = beanManager.getBeans(
+//            UserRepository.class);
+//        final Iterator<Bean<?>> iterator = beans.iterator();
+//        if (iterator.hasNext()) {
+//            @SuppressWarnings("unchecked")
+//            final Bean<UserRepository> bean = (Bean<UserRepository>) iterator
+//                .next();
+//            final CreationalContext<UserRepository> ctx = beanManager
+//                .createCreationalContext(bean);
+//
+//            userRepository = (UserRepository) beanManager.getReference(
+//                bean, UserRepository.class, ctx);
+        try {
+            userRepository = CdiUtil.createCdiUtil().findBean(
+                UserRepository.class);
+        } catch (IllegalStateException ex) {
             throw new AuthenticationException(
-                "Failed to retrieve UserRepository.");
+                "Failed to retrieve UserRepository.", ex);
         }
 
+//        } else {
+//            throw new AuthenticationException(
+//                "Failed to retrieve UserRepository.");
+//        }
         // Depending of the configuration of CCM use the appropriate method
         // for finding the user in the database.
         final KernelConfig config = KernelConfig.getConfig();
         final User user;
+
         if ("email".equals(config.getPrimaryUserIdentifier())) {
             user = userRepository.findByEmailAddress(userIdentifier);
         } else {
@@ -211,7 +229,8 @@ public class CcmShiroRealm extends AuthorizingRealm {
         }
 
         // If no matching user is found throw an AuthenticationException
-        if (user == null) {
+        if (user
+                == null) {
             throw new AuthenticationException(String.format(
                 "No user identified by principal \"%s\" was found. Primary user "
                 + "identifier is \"%s\".",
@@ -219,6 +238,7 @@ public class CcmShiroRealm extends AuthorizingRealm {
         }
 
         return user;
+
     }
 
     /**

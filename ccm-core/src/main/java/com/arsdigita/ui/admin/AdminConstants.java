@@ -23,11 +23,11 @@ import com.arsdigita.bebop.parameters.BigDecimalParameter;
 import com.arsdigita.globalization.GlobalizedMessage;
 
 /**
- * Centralize place for all constants used in the admin UI.
- *
+ * Centralised place for all constants used in the administration UI.
+ * 
  * @author David Dao
- * @version $Revision$ $Date$
  */
+@Deprecated
 interface AdminConstants {
 
     /**
@@ -61,6 +61,8 @@ interface AdminConstants {
     Label USER_TAB_TITLE = new Label(new GlobalizedMessage("ui.admin.tab.user",
                                                            BUNDLE_NAME));
 
+    
+    
     Label GROUP_TAB_TITLE = new Label(new GlobalizedMessage("ui.admin.tab.group",
                                                             BUNDLE_NAME));
 

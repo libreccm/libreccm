@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
  */
 @RequestScoped
 public class RepositoryRepository extends
-        AbstractAuditedEntityRepository<Long, Repository> {
+    AbstractAuditedEntityRepository<Long, Repository> {
 
     @Inject
     private EntityManager entityManager;
@@ -62,19 +62,21 @@ public class RepositoryRepository extends
     }
 
     /**
-     * Checks if the current subject has permissions grating him the
-     * privilege to read the requested {@link Repository}(s) and removes the
-     * ones he is not allowed to access.
+     * Checks if the current subject has permissions grating him the privilege
+     * to read the requested {@link Repository}(s) and removes the ones he is
+     * not allowed to access.
      *
-     * @param repositories The requested {@link AbstractResource}s, found in the database
-     * @return A list of {@link AbstractResource}s the subject is allowed to access
+     * @param repositories The requested {@link AbstractResource}s, found in the
+     *                     database
+     *
+     * @return A list of {@link AbstractResource}s the subject is allowed to
+     *         access
      */
     private List<Repository> permissionFilter(List<Repository> repositories) {
-        final CdiUtil cdiUtil = new CdiUtil();
-        final PermissionChecker permissionChecker = cdiUtil.findBean(
-                PermissionChecker.class);
+        final PermissionChecker permissionChecker = CdiUtil.createCdiUtil()
+            .findBean(PermissionChecker.class);
         return repositories.stream().filter(repository -> permissionChecker
-                .isPermitted("read", repository)).collect(Collectors.toList());
+            .isPermitted("read", repository)).collect(Collectors.toList());
     }
 
     /**
@@ -86,7 +88,7 @@ public class RepositoryRepository extends
      */
     public List<Repository> findForOwner(User owner) {
         final TypedQuery<Repository> query = entityManager.createNamedQuery(
-                "DocRepo.findRepositoriesForOwner", Repository.class);
+            "DocRepo.findRepositoriesForOwner", Repository.class);
         query.setParameter("owner", owner);
 
         return permissionFilter(query.getResultList());
