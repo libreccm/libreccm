@@ -1454,12 +1454,12 @@
                     <xsl:value-of select="foundry:get-static-text('', ./@title, false())"/>
                 </xsl:attribute>
             </xsl:if>
-            <xsl:if test="$width &gt; 0">
+            <xsl:if test="$width != '' and $width &gt; 0">
                 <xsl:attribute name="width">
                     <xsl:value-of select="$width"/>
                 </xsl:attribute>
             </xsl:if>
-            <xsl:if test="$height &gt; 0">
+            <xsl:if test="$height != '' and $height &gt; 0">
                 <xsl:attribute name="height">
                     <xsl:value-of select="$height"/>
                 </xsl:attribute>
@@ -2183,9 +2183,14 @@
                 <xsl:with-param name="copy-attributes" 
                                 select="'autofocus disabled multiple required size'"/>
             </xsl:call-template>
-            <xsl:if test="$name != ''">
-                <xsl:attribute name="name" select="$name"/>
-            </xsl:if>
+            <xsl:choose>
+                <xsl:when test="$name != ''">
+                    <xsl:attribute name="name" select="$name"/>
+                </xsl:when>
+                <xsl:when test="./@name">
+                    <xsl:attribute name="name" select="./@name"/>
+                </xsl:when>
+            </xsl:choose>
             <xsl:if test="$disabled = true()">
                 <xsl:attribute name="disabled" select="'disabled'"/>
             </xsl:if>

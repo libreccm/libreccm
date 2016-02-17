@@ -196,10 +196,21 @@
     </foundry:doc>
     <xsl:template match="content-item-layout//*[ends-with(name(), 'contact-entries')]//contact-entry//contact-entry-value-as-link">
         <xsl:param name="value" tunnel="yes"/>
-        
-        <xsl:apply-templates>
-            <xsl:with-param name="href" tunnel="yes" select="$value"/>
-        </xsl:apply-templates>
+       
+        <xsl:choose>
+            <xsl:when test="contains($value, '@')">
+                <xsl:apply-templates>
+                    <xsl:with-param name="href" 
+                                    tunnel="yes"
+                                    select="concat('mailto:', $value)"/>
+                </xsl:apply-templates>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:apply-templates>
+                    <xsl:with-param name="href" tunnel="yes" select="$value"/>
+                </xsl:apply-templates>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
 
     <foundry:doc section="user" type="template-tag">

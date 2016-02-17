@@ -48,7 +48,17 @@
         </foundry:doc-see-also>
     </foundry:doc>
     <xsl:template match="show-page-title">
-        <xsl:value-of select="foundry:title()"/>
+        <xsl:variable name="useCategoryMenu" 
+                      select="if(./@useCategoryMenu) 
+                              then ./@useCategoryMenu
+                              else 'categoryMenu'"/>
+        <xsl:variable name="useRootCategoryIndexItemTitle"
+                      select="if(./@useRootIndexItemCategoryTitle) 
+                              then foundry:boolean(./@useRootCategoryIndexItemTitle)
+                              else false()"/>
+
+        <xsl:value-of select="foundry:title($useCategoryMenu, 
+                                            $useRootCategoryIndexItemTitle)"/>
     </xsl:template>
     
     <foundry:doc section="user"

@@ -215,9 +215,9 @@
         
         <xsl:variable name="images-layout-tree" select="current()"/>
         
-        <xsl:message>
+        <!--<xsl:message>
             <xsl:value-of select="concat('imageAttachment id = ', $contentitem-tree/nav:attribute[@name='imageAttachments.image.id'][position() = 1])"/>
-        </xsl:message>
+        </xsl:message>-->
         
         <xsl:apply-templates select="$images-layout-tree/*">
             <xsl:with-param name="src"

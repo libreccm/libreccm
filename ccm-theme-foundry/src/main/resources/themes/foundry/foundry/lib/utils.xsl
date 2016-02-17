@@ -946,6 +946,9 @@
     </xsl:function>
     
     <xsl:function name="foundry:title" as="xs:string">
+        <xsl:param name="useCategoryMenu"/>
+        <xsl:param name="useRootCategoryIndexItemTitle"/>
+
         <xsl:choose>
             <!-- Use fixed title for some special content items -->
             <xsl:when test="$data-tree//cms:contentPanel">
@@ -983,11 +986,11 @@
             <!-- Title for content section-->
             <xsl:otherwise>
                 <xsl:choose>
-                    <xsl:when test="$data-tree/nav:categoryMenu//nav:category[@isSelected='true']">
-                        <xsl:for-each select="$data-tree/nav:categoryMenu//nav:category[@isSelected='true']">
+                    <xsl:when test="$data-tree/nav:categoryMenu[@id=$useCategoryMenu]//nav:category[@isSelected='true']">
+                        <xsl:for-each select="$data-tree/nav:categoryMenu[@id=$useCategoryMenu]//nav:category[@isSelected='true']">
                             <xsl:choose>
                                 <!-- Special rule: Use content item title for root-page in navigation -->
-                                <xsl:when test="position() = last() and position() = 1">
+                                <xsl:when test="position() = last() and position() = 1 and $useRootCategoryIndexItemTitle">
                                     <xsl:choose>
                                         <xsl:when test="$data-tree//title">
                                             <xsl:variable name="page-title">

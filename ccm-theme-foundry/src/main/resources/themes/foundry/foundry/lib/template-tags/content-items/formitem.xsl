@@ -75,6 +75,22 @@
                        else $data-tree//cms:item/@formAction}"
               accept-charset="utf-8">
             
+            <xsl:if test="$contentitem-tree/honeypot">
+                <div class="formitem-hidden">
+                    <label for="{$contentitem-tree/honeypot/@name}">
+                        <xsl:value-of select="foundry:get-static-text('form-item', 'honeypot-label')"/>
+                    </label>
+                    
+                    <input type="text" name="{$contentitem-tree/honeypot/@name}"/>            
+                </div>
+            </xsl:if>
+
+            <xsl:if test="$contentitem-tree/minTimeCheck">
+                <input type="hidden" 
+                       name="minTimeCheck" 
+                       value="{$contentitem-tree/minTimeCheck/@generated}"/>
+            </xsl:if>
+
             <xsl:if test="not($contentitem-tree/remote = 'true')">
                 <input type="hidden" 
                        value="visited"

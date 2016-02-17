@@ -854,7 +854,7 @@
                 <xsl:variable name="minute">
                     <xsl:choose>
                         <xsl:when test="string-length($minute-value) &lt; 2">
-                            <xsl:value-of select="concat('0', $hour-value)"/>
+                            <xsl:value-of select="concat('0', $minute-value)"/>
                         </xsl:when>
                         <xsl:otherwise>
                             <xsl:value-of select="$minute-value"/>
