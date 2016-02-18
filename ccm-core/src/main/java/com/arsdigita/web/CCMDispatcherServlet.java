@@ -46,6 +46,7 @@ import org.libreccm.web.ApplicationType;
 
 import java.util.Iterator;
 import java.util.Set;
+import java.util.StringJoiner;
 
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
@@ -96,11 +97,11 @@ public class CCMDispatcherServlet extends BaseServlet {
     private static final long serialVersionUID = 5292817856022435529L;
 
     private static final Logger LOGGER = LogManager.getLogger(
-        CCMDispatcherServlet.class);
+            CCMDispatcherServlet.class);
 
     private static final String DISPATCHED_ATTRIBUTE
-                                    = CCMDispatcherServlet.class
-        .getName() + ".dispatched";
+                                = CCMDispatcherServlet.class
+            .getName() + ".dispatched";
 
     /**
      * String containing the web context path portion of the WEB application
@@ -140,19 +141,19 @@ public class CCMDispatcherServlet extends BaseServlet {
     @Override
     protected void doService(final HttpServletRequest request,
                              final HttpServletResponse response)
-        throws ServletException, IOException {
+            throws ServletException, IOException {
 
         //This part replaces the index.jsp file
         if (request.getPathInfo() == null
-                || request.getPathInfo().isEmpty()
-                || "/".equals(request.getPathInfo())) {
+                    || request.getPathInfo().isEmpty()
+                    || "/".equals(request.getPathInfo())) {
 
             if (subject.isAuthenticated()) {
                 // User is logged in, redirect to user redirect page
                 throw new RedirectSignal(
-                    URL.there(request,
-                              UI.getUserRedirectURL(request)),
-                    false);
+                        URL.there(request,
+                                  UI.getUserRedirectURL(request)),
+                        false);
             } else {
                 // User is *not* logged in, display public front page
                 throw new RedirectSignal(URL.there(request,
@@ -184,11 +185,11 @@ public class CCMDispatcherServlet extends BaseServlet {
                 response.sendRedirect(response.encodeRedirectURL(uri + "/"));
             } else {
                 response.sendRedirect(response
-                    .encodeRedirectURL(uri + "/?" + query));
+                        .encodeRedirectURL(uri + "/?" + query));
             }
         } else {
             LOGGER.debug("Storing the path elements of the current request as "
-                             + "the original path elements");
+                                 + "the original path elements");
 
             request.setAttribute(BaseServlet.REQUEST_URL_ATTRIBUTE,
                                  new URL(request));
@@ -205,17 +206,17 @@ public class CCMDispatcherServlet extends BaseServlet {
                 // we have to create a 404 page here!
                 String requestUri = request.getRequestURI(); // same as ctx.getRemainingURLPart()
                 response.sendError(404, requestUri
-                                            + " not found on this server.");
+                                                + " not found on this server.");
             } else {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Found application {}; "
-                                     + "dispatching to its servlet",
+                                         + "dispatching to its servlet",
                                  spec.getAppID());
                 }
 
                 request.setAttribute(
-                    BaseApplicationServlet.APPLICATION_ID_ATTRIBUTE,
-                    spec.getAppID());
+                        BaseApplicationServlet.APPLICATION_ID_ATTRIBUTE,
+                        spec.getAppID());
                 request.setAttribute(DISPATCHED_ATTRIBUTE, Boolean.TRUE);
                 forward(spec.getTypeContextPath(),
                         spec.target(path),
@@ -243,12 +244,12 @@ public class CCMDispatcherServlet extends BaseServlet {
 
         if (path.lastIndexOf(".") < path.lastIndexOf("/")) {
             LOGGER.debug("The last fragment of the path has no '.', so we "
-                             + "assume a directory was requested; a trailing "
-                             + "slash is required");
+                                 + "assume a directory was requested; a trailing "
+                         + "slash is required");
             return true;
         } else {
             LOGGER.debug("The last fragment of the path appears to be a file "
-                             + "name; no trailing slash is needed");
+                                 + "name; no trailing slash is needed");
             return false;
         }
     }
@@ -257,7 +258,7 @@ public class CCMDispatcherServlet extends BaseServlet {
                          final String target,
                          final HttpServletRequest request,
                          final HttpServletResponse response)
-        throws ServletException, IOException {
+            throws ServletException, IOException {
 
         LOGGER.debug("Forwarding by path to target \"{}\"...", target);
         LOGGER.debug("The context path is: {}", contextPath);
@@ -274,7 +275,7 @@ public class CCMDispatcherServlet extends BaseServlet {
         }
 
         final ServletContext context = getServletContext().getContext(
-            forwardContextPath);
+                forwardContextPath);
 
         LOGGER.debug("forwarding from context \"{}\" to context \"{}\"...",
                      getServletContext(), context);
@@ -287,19 +288,19 @@ public class CCMDispatcherServlet extends BaseServlet {
     private void forward(final RequestDispatcher dispatcher,
                          final HttpServletRequest request,
                          final HttpServletResponse response)
-        throws ServletException, IOException {
+            throws ServletException, IOException {
         LOGGER.debug("Checking if this request need to be forwarded or "
-                         + "included: {}", request);
+                             + "included: {}", request);
 
         if (request.getAttribute("javax.servlet.include.request_uri") == null) {
             LOGGER.debug("The attribute javax.servlet.include.request_uri "
-                             + "is not set; forwarding {}",
+                                 + "is not set; forwarding {}",
                          request);
 
             dispatcher.forward(request, response);
         } else {
             LOGGER.debug("The attribute javax.servlet.include.request_uri "
-                             + "is set; including {}",
+                                 + "is set; including {}",
                          request);
             dispatcher.include(request, response);
         }
@@ -317,15 +318,43 @@ public class CCMDispatcherServlet extends BaseServlet {
                          path);
         }
 
-        final CcmApplication application = appManager
-            .findApplicationByPath(path);
+        final String pathTokens[];
+        if (path.startsWith("/")) {
+            pathTokens = path.substring(1).split("/");
+        } else {
+            pathTokens = path.split("/");
+        }
+        CcmApplication application = null;
+        for (int i = pathTokens.length; i > 0; i--) {
+            final String currentPath = generatePath(i, pathTokens);
+            LOGGER.debug("Trying path '{}'...", currentPath);
+            application = appManager.findApplicationByPath(currentPath);
 
+            if (application != null) {
+                LOGGER.debug("Found application for path '{}'.", currentPath);
+                break;
+            }
+        }
+
+//        final CcmApplication application = appManager
+//            .findApplicationByPath(path);
         if (application == null) {
             LOGGER.warn("No application found for path \"{}\".", path);
             return null;
         } else {
             return new ApplicationSpec(application, appManager);
         }
+    }
+
+    private String generatePath(final int index, final String[] pathTokens) {
+        final StringBuffer buffer = new StringBuffer();
+        buffer.append('/');
+        for (int i = 0; i < index; i++) {
+            buffer.append(pathTokens[i]);
+            buffer.append('/');
+        }
+
+        return buffer.toString();
     }
 
     public static String getContextPath() {
@@ -355,10 +384,10 @@ public class CCMDispatcherServlet extends BaseServlet {
          *
          * @param app
          */
-        ApplicationSpec(final CcmApplication app, 
+        ApplicationSpec(final CcmApplication app,
                         final ApplicationManager appManager) {
             this.appManager = appManager;
-            
+
             if (app == null) {
                 throw new NullPointerException("app");
             }
@@ -367,9 +396,9 @@ public class CCMDispatcherServlet extends BaseServlet {
             m_instanceURI = app.getPrimaryUrl();
             if (app.getClass().isAnnotationPresent(ServletPath.class)) {
                 m_typeURI = app
-                    .getClass()
-                    .getAnnotation(ServletPath.class)
-                    .value();
+                        .getClass()
+                        .getAnnotation(ServletPath.class)
+                        .value();
             } else {
 //                final ApplicationManager appManager = CDI.current().select(
 //                    ApplicationManager.class).get();
@@ -398,21 +427,21 @@ public class CCMDispatcherServlet extends BaseServlet {
 //                }
 
                 final ApplicationType appType = appManager.getApplicationTypes()
-                    .get(app.getApplicationType());
+                        .get(app.getApplicationType());
                 final Class<? extends HttpServlet> appServletClass = appType
-                    .servlet();
+                        .servlet();
                 final WebServlet servletAnnotation = appServletClass
-                    .getAnnotation(WebServlet.class);
+                        .getAnnotation(WebServlet.class);
                 if (servletAnnotation != null
-                        && servletAnnotation.urlPatterns() != null
-                        && servletAnnotation.urlPatterns().length > 0) {
+                            && servletAnnotation.urlPatterns() != null
+                            && servletAnnotation.urlPatterns().length > 0) {
                     if (servletAnnotation.urlPatterns()[0].endsWith("*")) {
                         m_typeURI = servletAnnotation
-                            .urlPatterns()[0]
-                            .substring(0,
-                                       servletAnnotation
-                                       .urlPatterns()[0]
-                                       .length() - 1);
+                                .urlPatterns()[0]
+                                .substring(0,
+                                           servletAnnotation
+                                           .urlPatterns()[0]
+                                           .length() - 1);
                     } else {
                         m_typeURI = servletAnnotation.urlPatterns()[0];
                     }
@@ -446,7 +475,7 @@ public class CCMDispatcherServlet extends BaseServlet {
          * executing in no specific context but CCM's default.
          *
          * @return The context path of the application's url, "" in case of
-         *         executing in the ROOT context.
+         * executing in the ROOT context.
          */
         String getTypeContextPath() {
             if (m_typeContextPath.equals("")) {
@@ -467,7 +496,7 @@ public class CCMDispatcherServlet extends BaseServlet {
         String target(final String path) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Building the target path from the request "
-                                 + "path '{}' and the spec {}",
+                                     + "path '{}' and the spec {}",
                              path,
                              this);
             }
@@ -503,8 +532,8 @@ public class CCMDispatcherServlet extends BaseServlet {
             ApplicationSpec other = (ApplicationSpec) obj;
             return m_id == other.getAppID() && equal(m_instanceURI,
                                                      other.m_instanceURI)
-                       && equal(m_typeURI, other.m_typeURI) && equal(
-                m_typeContextPath, other.m_typeContextPath);
+                           && equal(m_typeURI, other.m_typeURI) && equal(
+                    m_typeContextPath, other.m_typeContextPath);
 
         }
 

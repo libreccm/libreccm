@@ -76,7 +76,7 @@ public class UserBanner extends SimpleComponent {
                 contentElem.addAttribute("screenName", user.getName());
                 contentElem.addAttribute("primaryEmail",
                                          user.getPrimaryEmailAddress()
-                                         .toString());
+                                         .getAddress());
                 contentElem.addAttribute("userID",
                                          Long.toString(user.getPartyId()));
             }

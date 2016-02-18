@@ -441,7 +441,8 @@ public class LoginServlet extends BebopApplicationServlet {
      * @return URL_MSG for logout page as String
      */
     public static String getLogoutPageURL() {
-        return s_loginURL + LOGOUT_PATH_INFO;
+        return s_loginURL.substring(0, 
+                                    s_loginURL.length() - 1) + LOGOUT_PATH_INFO;
     }
 
 }
