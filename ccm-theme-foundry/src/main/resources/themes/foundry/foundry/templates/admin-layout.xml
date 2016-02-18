@@ -30,8 +30,10 @@
                         </cms-greeting>
                     </div>
                     <show-cms-global-navigation>
-                        <show-change-password-link/>
-                        <show-logout-link/>
+                        <div class="cms-global-navigation">
+                            <show-change-password-link></show-change-password-link>
+                            <show-logout-link/>
+                        </div>
                     </show-cms-global-navigation>
                     
                 </div>
@@ -62,7 +64,9 @@
                     <div id="content-view-menu">
                         <show-cms-content-view-menu/>
                         <show-cms-global-navigation>
+                            <div class="cms-global-navigation">                            
                             <show-preview-link/>
+                            </div>
                         </show-cms-global-navigation>
                     </div>
                 </div>
@@ -77,12 +81,16 @@
             <div class="min-width">
                 <show-system-information/>
                 <show-cms-global-navigation>
+                    <div class="cms-global-navigation">
                     <show-contentcenter-link/>
                     <show-workspace-link/>
                     <show-admincenter-link/>
+                    </div>
                 </show-cms-global-navigation>
                 <show-cms-global-navigation>
+                    <div class="cms-global-navigation">
                     <use-help-link/>
+                    </div>
                 </show-cms-global-navigation>
             </div>
         </div>

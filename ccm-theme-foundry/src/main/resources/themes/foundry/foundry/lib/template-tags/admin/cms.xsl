@@ -31,37 +31,44 @@
                 version="2.0">
 
     <xsl:template match="show-cms-global-navigation">
-        <div class="cms-global-navigation">
-            <xsl:choose>
+        <!--<div class="cms-global-navigation">-->
+            <!--<xsl:choose>
                 <xsl:when test="*">
                     <xsl:apply-templates/>
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:apply-templates select="$data-tree/cms:globalNavigation"/>
                 </xsl:otherwise>
-            </xsl:choose>
-        </div>
+            </xsl:choose>-->
+            <!--<pre>
+                show-cms-global-navigation
+                <xsl:value-of select="count(./show-change-password-link)"/>
+            </pre>-->
+            <xsl:if test="$data-tree/cms:globalNavigation or $data-tree/ui:userBanner">
+               <xsl:apply-templates />
+           </xsl:if>
+       <!--</div>-->
     </xsl:template>
-    
-    <xsl:template match="show-cms-global-navigation/show-contentcenter-link">
-        <xsl:apply-templates select="$data-tree/cms:globalNavigation/cms:contentCenter"/>
+
+    <xsl:template match="show-cms-global-navigation//show-contentcenter-link">
+        <xsl:apply-templates select="$data-tree/cms:globalNavigation/cms:contentCenter"/>    
     </xsl:template>
   
-    <xsl:template match="show-cms-global-navigation/show-admincenter-link">
+    <xsl:template match="show-cms-global-navigation//show-admincenter-link">
         <xsl:apply-templates select="$data-tree/cms:globalNavigation/cms:adminCenter"/>
     </xsl:template>
   
-    <xsl:template match="show-cms-global-navigation/show-workspace-link">
+    <xsl:template match="show-cms-global-navigation//show-workspace-link">
         <xsl:apply-templates select="$data-tree/cms:globalNavigation/cms:workspace"/>
     </xsl:template>
-    
-    <xsl:template match="show-cms-global-navigation/show-change-password-link">
-        <xsl:choose>
+                            
+    <xsl:template match="show-cms-global-navigation//show-change-password-link">                            
+       <xsl:choose>
             <xsl:when test="$data-tree/cms:globalNavigation">
-                <xsl:apply-templates select="$data-tree/cms:globalNavigation/cms:changePassword"/>
+               <xsl:apply-templates select="$data-tree/cms:globalNavigation/cms:changePassword"/>
             </xsl:when>
             <xsl:when test="$data-tree/ui:userBanner">
-                <span class="cms-global-navigation-change-password">
+               <span class="cms-global-navigation-change-password">
                     <a href="{$data-tree/ui:userBanner/@changePasswordURL}">
                         <xsl:apply-templates select="$data-tree/ui:userBanner/@changePasswordLabel"/>
                     </a>
@@ -70,8 +77,8 @@
         </xsl:choose>
     </xsl:template>
   
-    <xsl:template match="show-cms-global-navigation/show-logout-link">
-        <xsl:choose>
+    <xsl:template match="show-cms-global-navigation//show-logout-link">
+       <xsl:choose>
             <xsl:when test="$data-tree/cms:globalNavigation">
                 <xsl:apply-templates select="$data-tree/cms:globalNavigation/cms:signOut"/>
             </xsl:when>
@@ -132,8 +139,8 @@
     </xsl:template>
 
     <xsl:template name="cms:globalNavigationEntry">
-        <a href="{@href}">
-            <xsl:value-of select="@title"/>
+       <a href="{./@href}">
+            <xsl:value-of select="./@title"/>
         </a>
     </xsl:template>
     

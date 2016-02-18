@@ -88,7 +88,7 @@
             </p>
         </foundry:doc-desc>
     </foundry:doc>
-    <xsl:template match="show-change-password-link">
+    <xsl:template match="user-banner-show-change-password-link">
         <a href="{$data-tree/ui:userBanner/@changePasswordURL}">
             <xsl:value-of select="if (./@label) 
                                   then foundry:get-static-text('user-banner', ./@label)
@@ -109,7 +109,7 @@
             </p>
         </foundry:doc-desc>
     </foundry:doc>
-    <xsl:template match="show-login-link">
+    <xsl:template match="user-banner-show-login-link">
         <a href="{$data-tree/ui:userBanner/@loginExcursionURL}">
             <xsl:value-of select="if (./@label) 
                                   then foundry:get-static-text('user-banner', ./@label)
@@ -130,7 +130,7 @@
             </p>
         </foundry:doc-desc>
     </foundry:doc>
-    <xsl:template match="show-logout-link">
+    <xsl:template match="user-banner-show-logout-link">
         <a href="{$data-tree/ui:userBanner/@logoutURL}">
             <xsl:value-of select="if (./@label) 
                                   then foundry:get-static-text('user-banner', ./@label)
