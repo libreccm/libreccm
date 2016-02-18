@@ -69,13 +69,13 @@ import static com.arsdigita.ui.admin.AdminUiConstants.*;
  */
 @WebServlet(urlPatterns = {ADMIN_SERVLET_PATH})
 public class AdminServlet
-    extends BaseApplicationServlet
-    implements AdminConstants {
+        extends BaseApplicationServlet
+        implements AdminConstants {
 
     private static final long serialVersionUID = -3912367600768871630L;
 
     private static final Logger LOGGER = LogManager
-        .getLogger(AdminServlet.class);
+            .getLogger(AdminServlet.class);
 
     /**
      * Logger instance for debugging
@@ -105,36 +105,41 @@ public class AdminServlet
 
         adminPage.add(new UserBanner());
         adminPage.add(new SiteBanner());
-        
+
         //Create tab bar
         final TabbedPane tabbedPane = new TabbedPane();
         tabbedPane.setIdAttr("page-body");
 
         tabbedPane.addTab(
-            new Label(new GlobalizedMessage("ui.admin.tab.applications",
-                                            BUNDLE_NAME)),
-            new ApplicationsAdminTab());
+                new Label(new GlobalizedMessage("ui.admin.tab.applications",
+                                                BUNDLE_NAME)),
+                new ApplicationsAdminTab());
 
         tabbedPane.addTab(
-            new Label(new GlobalizedMessage(
-                "ui.admin.tab.users_groups_roles.title",
-                BUNDLE_NAME)),
-            new UsersGroupsRolesTab());
+                new Label(new GlobalizedMessage(
+                        "ui.admin.tab.users_groups_roles.title",
+                        BUNDLE_NAME)),
+                new UsersGroupsRolesTab());
 
         tabbedPane.addTab(
-            new Label(new GlobalizedMessage("ui.admin.tab.categories.title",
-                                            BUNDLE_NAME)),
-            new CategoriesAdminTab());
+                new Label(new GlobalizedMessage("ui.admin.tab.categories.title",
+                                                BUNDLE_NAME)),
+                new CategoriesAdminTab());
 
         tabbedPane.addTab(
-            new Label(new GlobalizedMessage("ui.admin.tab.registry.title",
-                                            BUNDLE_NAME)),
-            new RegistryAdminTab());
-        
+                new Label(new GlobalizedMessage("ui.admin.tab.workflows.title",
+                                                BUNDLE_NAME)),
+                new WorkflowAdminTab());
+
         tabbedPane.addTab(
-            new Label(new GlobalizedMessage("ui.admin.tab.sysinfo.title",
-                                            BUNDLE_NAME)),
-            new SystemInformationTab());
+                new Label(new GlobalizedMessage("ui.admin.tab.registry.title",
+                                                BUNDLE_NAME)),
+                new RegistryAdminTab());
+
+        tabbedPane.addTab(
+                new Label(new GlobalizedMessage("ui.admin.tab.sysinfo.title",
+                                                BUNDLE_NAME)),
+                new SystemInformationTab());
 
         //page.add(new Label("admin"));
         adminPage.add(tabbedPane);
@@ -158,16 +163,16 @@ public class AdminServlet
     public final void doService(final HttpServletRequest sreq,
                                 final HttpServletResponse sresp,
                                 final CcmApplication app) throws
-        ServletException, IOException {
+            ServletException, IOException {
         // ///////    Some preparational steps                   ///////////////
         /* Determine access privilege: only logged in users may access   */
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final Subject subject = cdiUtil.findBean(Subject.class);
         final PermissionChecker permissionChecker = cdiUtil.findBean(
-            PermissionChecker.class);
+                PermissionChecker.class);
 
         final ConfigurationManager confManager = CDI.current().select(
-            ConfigurationManager.class).get();
+                ConfigurationManager.class).get();
         if (confManager == null) {
             throw new IllegalStateException();
         }
@@ -179,17 +184,17 @@ public class AdminServlet
                      subject.getSession().getId().toString());
         if (!subject.isAuthenticated()) {
             LOGGER.debug(
-                "Subject {} is not authenticated, redirecting to login...",
-                subject.toString());
+                    "Subject {} is not authenticated, redirecting to login...",
+                    subject.toString());
             throw new LoginSignal(sreq);
         }
 
         /* Determine access privilege: Admin privileges must be granted     */
         LOGGER.debug(
-            "Subject is loggedin, checking if subject has required permissions...");
+                "Subject is loggedin, checking if subject has required permissions...");
         if (!permissionChecker.isPermitted("admin")) {
             LOGGER.debug("Subject does *not* have required permissions. "
-                             + "Access denied.");
+                                 + "Access denied.");
             throw new AccessDeniedException("User is not an administrator");
         }
 
@@ -223,7 +228,7 @@ public class AdminServlet
      * Adds one pair of Url - Page to the internal hash map, used as a cache.
      *
      * @param pathInfo url stub for a page to display
-     * @param page     Page object to display
+     * @param page Page object to display
      */
 //    private void addPage(final String pathInfo, final Page page) {
 //        Assert.exists(pathInfo, String.class);
