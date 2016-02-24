@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<foundry:static-texts xmlns:foundry="http://foundry.libreccm.org">
+    
+    <text id="query">
+        <translation lang="de">Suche:</translation>
+        <translation lang="en">Search:</translation>
+    </text>
+    
+    <text id="additionalFilters">
+        <translation lang="de">Zusätzliche Kriterien:</translation>
+        <translation lang="en">Additional Filters:</translation>
+    </text>
+    
+    <text id="listheader/score">
+        <translation lang="de">Wertung</translation>
+        <translation lang="en">Evaluation</translation>
+    </text>
+    
+    <text id="listheader/title">
+        <translation lang="de">Titel</translation>
+        <translation lang="en">Title</translation>
+    </text>
+    
+    <text id="listheader/summary">
+        <translation lang="de">Zusammenfassung</translation>
+        <translation lang="en">Abstract</translation>
+    </text>
+    
+    <text id="listheader/addlink">
+        <translation lang="de"> </translation>
+        <translation lang="en"> </translation>
+    </text>
+    
+    <text id="resultlist/header">
+        <translation lang="de"> Suchergebnis</translation>
+        <translation lang="en"> Search result</translation>
+    </text>
+    
+    <text id="resultlist/select">
+        <translation lang="de"> Auswählen</translation>
+        <translation lang="en"> Choose</translation>
+    </text>
+    
+    <text id="searchfilter/types">
+        <translation lang="de">Typ:</translation>
+        <translation lang="en">Type:</translation>
+    </text>
+    
+    <text id="searchfilter/sites">
+        <translation lang="de">Server:</translation>
+        <translation lang="en">Server:</translation>
+    </text>
+    
+    <text id="searchfilter/categories">
+        <translation lang="de">Kategorien:</translation>
+        <translation lang="en">Categories:</translation>
+    </text>
+    
+    <text id="searchfilter/searchRecursiv">
+        <translation lang="de">Unterkategorien durchsuchen</translation>
+        <translation lang="en">Search subcategories</translation>
+    </text>
+    
+    <text id="searchFilter/creationDate">
+        <translation lang="de">Erstellt am:</translation>
+        <translation lang="en">Created:</translation>
+    </text>
+    
+    <text id="searchfilter/creationUser">
+        <translation lang="de">Erstellt von:</translation>
+        <translation lang="en">Created by:</translation>
+    </text>
+    
+    <text id="searchfilter/lastModUser">
+        <translation lang="de">Geändert von:</translation>
+        <translation lang="en">Edited by:</translation>
+    </text>
+    
+    <text id="searchfilter/launchDate">
+        <translation lang="de">Publiziert am:</translation>
+        <translation lang="en">Published at:</translation>
+    </text>
+    
+    <text id="searchfilter/lastModDate">
+        <translation lang="de">Geändert am:</translation>
+        <translation lang="en">Edited at:</translation>
+    </text>
+    
+    <text id="searchfilter/creationDate">
+        <translation lang="de">Erstellt am:</translation>
+        <translation lang="en">Created at</translation>
+    </text>
+    
+    <text id="searchfilter/dateRange/day">
+        <translation lang="de">Tag</translation>
+        <translation lang="en">Day</translation>
+    </text>
+    
+    <text id="searchfilter/dateRange/month">
+        <translation lang="de">Monat</translation>
+        <translation lang="en">Month</translation>
+    </text>
+    
+    <text id="searchfilter/dateRange/year">
+        <translation lang="de">Jahr</translation>
+        <translation lang="en">Year</translation>
+    </text>
+    
+    <text id="searchfilter/dateRange/from">
+        <translation lang="de">Von:</translation>
+        <translation lang="en">From:</translation>
+    </text>
+    
+    <text id="searchfilter/dateRange/to">
+        <translation lang="de">Bis:</translation>
+        <translation lang="en">To:</translation>
+    </text>
+    
+</foundry:static-texts>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<page-layout>
+    <head>
+        <title>
+            <separator>: </separator>
+            <show-text>layout/page/head/title</show-text>
+            <show-page-title/>
+        </title>
+        <load-css-files/>
+    </head>
+    <body>
+        <nav>
+            <navigation-home-link>
+                <a>
+                    <navigation-title/>
+                </a>
+            </navigation-home-link>
+            <language-selector>
+                <ul>
+                    <language>
+                        <li>
+                            <a>
+                                <span>
+                                    <language-name/>
+                                </span>
+                            </a>
+                        </li>
+                    </language>
+                </ul>
+            </language-selector>
+            <h1>
+                <show-text>layout/page/head/title</show-text>: <show-page-title/>
+            </h1>
+            <navigation>
+                <div class="nav-wrapper">
+                    <navigation-links>
+                        <ul>
+                            <navigation-link>
+                                <li>
+                                    <a>
+                                        <navigation-link-label/>
+                                    </a>
+                                    <navigation-sublinks/>
+                                </li>
+                            </navigation-link>
+                        </ul>
+                    </navigation-links>
+                </div>
+            </navigation>
+            <breadcrumbs>
+                <div id="breadcrumbs">
+                    <breadcrumb-link>
+                        <a>
+                            <breadcrumb-label mode="mark"/>
+                        </a>
+                    </breadcrumb-link>
+                </div>
+                <breadcrumb-separator>
+                    <span class="breadcrumb-separator">/</span>
+                </breadcrumb-separator>
+            </breadcrumbs>
+        </nav>
+        <main>
+            <div>
+                <content-item/>
+            </div>
+            <div>
+                <image-attachments>
+                    <image-attachment from="2" to="3">
+                        <img width="320" height="240"/>
+                    </image-attachment>
+                </image-attachments>
+            </div>
+            <div id="item-list-wrapper">
+                <object-list id="itemList">
+                    <ul>
+                        <object-list-item>
+                            <li>
+                                <content-item mode="list"/>
+                            </li>
+                        </object-list-item>
+                    </ul>
+                </object-list>
+            </div>
+            <div id="news-list-wrapper">
+                <object-list id="newsList">
+                    <ul>
+                        <object-list-item>
+                            <li>
+                                <pre>news-item</pre>
+                            </li>
+                        </object-list-item>
+                    </ul>
+                </object-list>
+            </div>
+        </main>
+        <aside>
+            <related-links>
+                <ul>
+                    <related-link>
+                        <internal>
+                            <li>
+                                <content-item mode="link"/>
+                            </li>
+                        </internal>
+                        <external>
+                            <li>
+                                <a>
+                                    <related-link-title/>
+                                </a>
+                            </li>
+                        </external>
+                    </related-link>
+                </ul>
+            </related-links>
+            <notes>
+                <div id="notes">
+                    <note>
+                        <div class="note">
+                            <note-content/>
+                        </div>
+                    </note>
+                </div>
+            </notes>
+        </aside>
+        <footer>
+            <include file="fragments/footer.xml"/>
+            
+            <include file="fragments/libreccm.xml" internal="yes"/>
+        </footer>
+    </body>
+</page-layout>

@@ -20,6 +20,7 @@ package org.libreccm.docrepo;
 
 import org.hibernate.validator.constraints.NotBlank;
 import org.libreccm.core.CcmObject;
+import org.libreccm.core.Identifiable;
 import org.libreccm.security.User;
 
 import javax.activation.MimeType;

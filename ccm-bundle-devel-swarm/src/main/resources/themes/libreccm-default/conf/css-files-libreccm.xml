@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    This file controls which CSS files are included for which application.
+    For more details please refer to the Foundry documentation which should
+    available at $address-of-your-ccm-installation/themes/foundry/doc/index.jsp
+    
+    If you only provide a file (a path without a slash in it) Foundry expects
+    the css file to be found in the styles directory. If you provide a path
+    with at least one slash in it Foundry uses that relative to the themes root
+    directory.
+    
+    For example the file public.css is expected to be found at 
+    styles/public.css. The file /bootstrap/css/bootstrap.min.css is expected to
+    be found at bootstrap/css/bootstrap.min.css.
+    
+    If you want to limit the CSS file to a specific media type you can use the 
+    media attribute. In that case, the file is expected in the sub folder
+    of the styles folder with the name of the media type. For example
+    
+    <css-file media="screen">portal.css</css-file>
+    
+    In this case Foundry expects to find the portal.css file at 
+    styles/screen/portal.css.
+    
+    If you want to use the Less style language you can also set the attribute
+    less to true. If the also set the setting less-onthefly in conf/global.xml
+    to true, Foundry will include the Less JavaScript file and transform the
+    Less file on the fly to CSS if your are in the debug/development mode. If 
+    you enable this feature you have to provide the filename without the 
+    extension. Foundry will add the extension depending if the theme is viewed
+    in development or producation mode. In development mode, .less is added, in 
+    producation mode .css.
+    
+    The last attribute is the origin attribute. If set to internal the CSS
+    file is not loaded from the theme but from Foundry itself. In this theme
+    this feature is used for the CSS file for the admin applications.
+-->
+<css-files>
+    <!-- CSS file used for admin applications like the Content Centre -->
+    <application name="admin">
+        <css-file origin="internal">admin.css</css-file>
+    </application>
+    <application name="login">
+        <!-- CSS file used for the Login application -->
+        <css-file origin="internal">admin.css</css-file>
+    </application>
+    <application name="navigation">
+        <!-- 
+            Include CSS files for the navigation application. For our own
+            CSS file we are using the Less stylesheet language as described 
+            above.
+        -->
+        <css-file>fancybox/jquery.fancybox.css?v=2.1.5</css-file>
+        <css-file>fancybox/helpers/jquery.fancybox-buttons.css?v=1.0.5</css-file>
+        <css-file>fancybox/helpers/jquery.fancybox-thumbs.css?v=1.0.7</css-file>
+        <css-file>font-awesome/css/font-awesome.min.css</css-file>
+        <css-file less="true">libreccm</css-file>
+    </application>
+    <application name="navigation" class="portalGridPage">
+        <!-- 
+            For a portalGridPage we use the same CSS files as for normal 
+            navigation pages, but add the portal.css file.
+        -->
+        <css-file>fancybox/jquery.fancybox.css?v=2.1.5</css-file>
+        <css-file>fancybox/helpers/jquery.fancybox-buttons.css?v=1.0.5</css-file>
+        <css-file>fancybox/helpers/jquery.fancybox-thumbs.css?v=1.0.7</css-file>
+        <css-file>font-awesome/css/font-awesome.min.css</css-file>
+        <css-file media="screen">portal.css</css-file>
+        <css-file less="true">libreccm</css-file>
+    </application>
+    <application name="none" class="cms-admin">
+        <!-- Other admin applications -->
+        <css-file origin="internal">admin.css</css-file>
+    </application>
+    <application name="portal">
+        <!-- Portal pages -->
+        <css-file>fancybox/jquery.fancybox.css?v=2.1.5</css-file>
+        <css-file>fancybox/helpers/jquery.fancybox-buttons.css?v=1.0.5</css-file>
+        <css-file>fancybox/helpers/jquery.fancybox-thumbs.css?v=1.0.7</css-file>
+        <css-file>font-awesome/css/font-awesome.min.css</css-file>
+        <css-file origin="internal">portal.css</css-file>
+        <css-file less="true">libreccm</css-file>
+    </application>
+    <default>
+        <!-- 
+            If there is no entry for the current application we load the 
+            default CSS files and our own.
+        -->
+        <css-file>fancybox/jquery.fancybox.css?v=2.1.5</css-file>
+        <css-file>fancybox/helpers/jquery.fancybox-buttons.css?v=1.0.5</css-file>
+        <css-file>fancybox/helpers/jquery.fancybox-thumbs.css?v=1.0.7</css-file>
+        <css-file>font-awesome/css/font-awesome.min.css</css-file>
+        <css-file less="true">libreccm</css-file>
+    </default>
+</css-files>

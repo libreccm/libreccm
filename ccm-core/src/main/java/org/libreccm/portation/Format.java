@@ -23,5 +23,5 @@ package org.libreccm.portation;
  * @version created the 03.02.2016
  */
 public enum Format {
-    CSV
+    CSV, XML, JSON
 }

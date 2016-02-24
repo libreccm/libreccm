@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE stylesheet [<!ENTITY nbsp '&#160;'>
+                      <!ENTITY thinsp '&#8201;'>]>
+<content-item-layout>
+    <div class="sciproject-list">
+        <a>
+            <content-item-title/>
+        </a>
+        <orgaunit>
+            <div class="lifespan">
+                <span class="lifespan-text">
+                    <show-text module="sciproject">lifespan</show-text>
+                </span>
+                <space/>
+                <sciproject-begin>
+                    <date-format default="true">
+                        <iso-date/>
+                    </date-format>
+                    <date-format lang="de">
+                        <day zero="true"/>.&thinsp;
+                        <month-name/>&thinsp;
+                        <year/>
+                    </date-format>
+                    <date-format lang="en">
+                        <month/>/<day/>/<year/>
+                    </date-format>
+                </sciproject-begin>
+                <space/>
+                <span>
+                    <show-text module="sciproject">lifespan-to</show-text>
+                </span>
+                <space/>
+                <sciproject-end>
+                    <date-format default="true">
+                        <iso-date/>
+                    </date-format>
+                    <date-format lang="de">
+                        <day zero="true"/>.&thinsp;
+                        <month-name/>&thinsp;
+                        <year/>
+                    </date-format>
+                    <date-format lang="en">
+                        <month/>/<day/>/<year/>
+                    </date-format>
+                </sciproject-end>
+            </div>
+            <div class="members">
+                <members>
+                    <member separator="; ">
+                        <span class="member">
+                            <surname after=", "/>
+                            <givenname/>
+                        </span>
+                    </member>
+                </members>
+            </div>
+            <div class="lead">
+                <!--<show-property name="projectShortDesc"/>-->
+                <sciproject-shortdesc/>
+            </div>
+        </orgaunit>
+    </div>
+</content-item-layout>

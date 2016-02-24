@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<foundry:static-texts xmlns:foundry="http://foundry.libreccm.org">
+
+    <text id="navbar/prev/link">
+        <translation lang="de">Zurück </translation>
+        <translation lang="en">Back </translation>
+    </text>
+    <text id="navbar/prev/title">
+        <translation lang="de">Zurück</translation>
+        <translation lang="en">Back</translation>
+    </text>
+    <text id="navbar/prev/accesskey">
+        <translation lang="de">&lt;</translation>
+        <translation lang="en">&lt;</translation>
+    </text>
+    <text id="navbar/next/link">
+        <translation lang="de"> Weiter </translation>
+        <translation lang="en"> Continue </translation>
+    </text>
+    <text id="navbar/next/title">
+        <translation lang="de">Weiter</translation>
+        <translation lang="en">Continue</translation>
+    </text>
+    <text id="navbar/next/accesskey">
+        <translation lang="de">&gt;</translation>
+        <translation lang="en">&gt;</translation>
+    </text>
+    <text id="navbar/pageNumber/prefix">
+        <translation lang="de">Seite </translation>
+        <translation lang="en">Page </translation>
+    </text>
+    <text id="navbar/pageNumber/separator">
+        <translation lang="de"> von </translation>
+        <translation lang="en"> from </translation>
+    </text>
+    <text id="navbar/separator">
+        <translation lang="de"> </translation>
+        <translation lang="en"> </translation>
+    </text>
+
+    <text id="header/resultinfo/text/begin">
+        <translation lang="de"> Zeige Ergebnisse </translation>
+        <translation lang="en"> Show results </translation>
+    </text>
+    <text id="header/resultinfo/text/inbetween1">
+        <translation lang="de"> bis </translation>
+        <translation lang="en"> to </translation>
+    </text>
+    <text id="header/resultinfo/text/inbetween2">
+        <translation lang="de"> von </translation>
+        <translation lang="en"> from </translation>
+    </text>
+    <text id="header/resultinfo/text/end">
+        <translation lang="de">.</translation>
+        <translation lang="en">.</translation>
+    </text>
+
+    <text id="header/pageinfo/text/begin">
+        <translation lang="de"> Zeige </translation>
+        <translation lang="en"> Showing </translation>
+    </text>
+    <text id="header/pageinfo/text/end">
+        <translation lang="de"> Ergebnisse pro Seite </translation>
+        <translation lang="en"> results per page.</translation>
+    </text>
+
+</foundry:static-texts>

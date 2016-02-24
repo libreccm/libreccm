@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<content-item-layout>
+    <div class="scidepartment-list">
+        <a>
+            <content-item-title/>
+        </a>
+        <div class="lead">
+            <!--<div>
+                <show-property name="addendum"/>
+            </div>-->
+            <div>
+                <show-property name="departmentShortDescription"/>
+            </div>
+            <div>
+                <orgaunit>
+                    <dl>
+                        <department-heads>
+                            <dt>
+                                <show-text module="scidepartment">head</show-text>
+                            </dt>
+                            <dd>
+                                <department-head>
+                                    <content-item mode="list"/>
+                                </department-head>
+                            </dd>
+                        </department-heads>
+                        <department-viceheads>
+                            <dt>
+                                <show-text module="scidepartment">vicehead</show-text>
+                            </dt>
+                            <dd>
+                                <department-vicehead>
+                                    <content-item mode="list"/>
+                                </department-vicehead>
+                            </dd>
+                        </department-viceheads>
+                        <department-secretariats>
+                            <dt>
+                                <show-text module="scidepartment">secretariat</show-text>
+                            </dt>
+                            <dd>
+                                <department-secretariat>
+                                    <content-item mode="list"/>
+                                </department-secretariat>
+                            </dd>
+                        </department-secretariats>
+                    </dl>
+                </orgaunit>
+            </div>
+        </div>
+    </div>
+</content-item-layout>

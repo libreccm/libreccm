@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<content-item-layout>
+
+    <div class="decisiontree">
+        <include file="fragments/edit-link.xml"/>
+    
+        <div class="lead">
+            <show-property name="pageDescription"/>
+        </div>
+
+        <include file="fragments/assets/image-attachments.xml"/>
+
+        <include file="fragments/assets/notes.xml"/>
+
+        <div class="main">
+            <decisiontree-current-section>
+                <h2>
+                    <section-title/>
+                </h2>
+            
+                <div class="section-instructions">
+                    <section-instructions/>
+                </div>
+
+                <options>
+                    <class-form>decisiontree-section</class-form>
+                    <class-formgroup>form-group</class-formgroup>
+                    <class-label>option-label</class-label>
+                    <class-input>option-input</class-input>
+                    <class-buttons>submit-cancel-section</class-buttons>
+                    <class-cancel>btn btn-default decisiontree-cancel</class-cancel>
+                    <class-submit>btn btn-default decisiontree-submit</class-submit>
+                </options>
+
+            </decisiontree-current-section>
+        </div>
+
+        <include file="fragments/assets/related-links-and-file-attachments.xml" />
+        
+    </div>
+
+</content-item-layout>

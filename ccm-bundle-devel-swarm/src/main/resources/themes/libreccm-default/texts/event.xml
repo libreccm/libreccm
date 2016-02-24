@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<foundry:static-texts xmlns:foundry="http://foundry.libreccm.org">
+    <text id="start-date">
+        <translation lang="de">Beginn</translation>
+        <translation lang="en">Begin</translation>
+    </text>
+    
+    <text id="end-date">
+        <translation lang="de">Ende</translation>
+        <translation lang="en">End</translation>
+    </text>
+    
+    <text id="date-addendum">
+        <translation lang="de">Terminzusatz</translation>
+        <translation lang="en">Addendum</translation>
+    </text>
+    
+    <text id="location">
+        <translation lang="de">Veranstaltungsort</translation>
+        <translation lang="en">Location</translation>
+    </text>
+    
+    <text id="main-contributor">
+        <translation lang="de">Veranstalter</translation>
+        <translation lang="en">Hosted by</translation>
+    </text>
+    
+    <text id="event-type">
+        <translation lang="de">Art der Veranstaltung</translation>
+        <translation lang="en">Type of event</translation>
+    </text>
+    
+    <text id="to">
+        <translation lang="de"> - </translation>
+        <translation lang="en"> - </translation>
+    </text>
+            
+</foundry:static-texts>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<page-layout extends="layout.xml">
+    
+    <!-- 
+        This layout template extends the default.xml layout template. 
+    -->
+    
+    <!-- 
+        The content of this block element is inserted in the default-layout.xml
+        at the place of the <insert-block name="content"/> tag.
+    -->
+    <block name="content">
+        <div class="container">
+            <div>
+                <h1>
+                    <!-- 
+                        Show the forum title.
+                    -->
+                    <show-forum-name/>
+                </h1>
+            
+                <div class="lead forum-introduction">
+                    <show-forum-introduction/>
+                </div>
+            
+                <forum-tabs>
+                    <ul>
+                        <forum-tab>
+                            <li>
+                                <a>
+                                    <tab-label/>
+                                </a>
+                            </li>
+                        </forum-tab>
+                    </ul>
+                </forum-tabs>
+            
+                <forum-options>
+                    <forum-option>
+                        <a>
+                            <option-label/>
+                        </a>
+                    </forum-option>
+                </forum-options>
+            
+                <forum-current-tab>
+                
+                    <forum-tab mode="threads">
+                        <forum-threads>
+                            <ul>
+                                <forum-thread>
+                                    <li>
+                                        <h3>
+                                            <a>
+                                                <subject/>
+                                            </a>
+                                        </h3>
+                                        <div>
+                                            <thread-body/>
+                                        </div>
+                                    </li>
+                                </forum-thread>
+                            </ul>
+                        </forum-threads>
+                    </forum-tab>
+                
+                    <forum-tab mode="topics">
+                        <pre>topics</pre>
+                    </forum-tab>
+                
+                    <forum-tab mode="alerts">
+                        <pre>alerts</pre>
+                    </forum-tab>
+                
+                    <forum-tab mode="setup">
+                        <pre>setup</pre>
+                    </forum-tab>
+                
+                    <forum-tab mode="permissions">
+                        <pre>permissions</pre>
+                    </forum-tab>
+                
+                    <forum-tab mode="categories">
+                        <pre>categories</pre>
+                    </forum-tab>
+                
+                </forum-current-tab>
+            </div>
+        </div>
+    </block>
+    
+</page-layout>

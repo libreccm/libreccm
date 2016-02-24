@@ -20,6 +20,7 @@ package org.libreccm.docrepo;
 
 
 import org.hibernate.validator.constraints.NotEmpty;
+import org.libreccm.core.Identifiable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -29,6 +30,8 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlElement;
 import java.io.Serializable;
 import java.sql.Blob;
 import java.util.Objects;
@@ -42,9 +45,17 @@ import java.util.Objects;
  */
 @Entity
 @Table(schema = "CCM_DOCREPO", name = "BLOB_OBJECTS")
-public class BlobObject implements Serializable {
+public class BlobObject implements Identifiable, Serializable {
 
     private static final long serialVersionUID = -7468014879548796218L;
+
+    /**
+     * The uuid of a {@code BlobObject}.
+     */
+    @Column(name = "UUID", nullable = false)
+    @NotNull
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private String uuid;
 
     /**
      * The ID/primary key for the {@code BlobObject}. Please note that it is not
@@ -76,6 +87,11 @@ public class BlobObject implements Serializable {
     public BlobObject() {}
 
     //> Begin GETTER & SETTER
+
+    @Override
+    public String getUuid() {
+        return uuid;
+    }
 
     public long getBlobObjectId() {
         return blobObjectId;
@@ -133,6 +149,7 @@ public class BlobObject implements Serializable {
         return obj instanceof BlobObject;
     }
 
+
     @Override
     public String toString() {
         return String.format("%s{ "
@@ -143,6 +160,4 @@ public class BlobObject implements Serializable {
                             blobObjectId,
                             content.toString());
     }
-
-
 }

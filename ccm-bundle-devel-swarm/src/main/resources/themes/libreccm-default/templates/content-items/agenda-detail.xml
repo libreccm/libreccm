@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE stylesheet [<!ENTITY nbsp '&#160;'>
+                      <!ENTITY shy '&#173;'>
+                      <!ENTITY thinsp '&#8201;'>
+                      <!ENTITY times '&#xD7;'>]>
+<content-item-layout>
+
+    <div class="agenda">
+        <include file="fragments/edit-link.xml"/>
+    
+        <div class="lead">
+            <show-property name="summary"/>
+        </div>
+        
+        <dl>
+            <dt>
+                <show-text module="agenda">date</show-text>
+            </dt>
+            <dd>
+                <show-date-property name="agendaDate">
+                    <date-format default="true">
+                        <iso-date/>
+                    </date-format>
+                    <date-format lang="de">
+                        <day zero="true"/>.&thinsp;
+                        <month-name/>&thinsp;
+                        <year/>
+                    </date-format>
+                    <date-format lang="en">
+                        <month/>/<day/>/<year/>
+                    </date-format>
+                </show-date-property>
+            </dd>
+            <dt>
+                <show-text module="agenda">attendees</show-text>
+            </dt>
+            <dd>
+                <show-property name="attendees"/>
+            </dd>
+            <dt>
+                <show-text module="agenda">subject-items</show-text>
+            </dt>
+            <dd>
+                <show-property name="subjectItems"/>
+            </dd>
+            <dt>
+                <show-text module="agenda">contact-info</show-text>
+            </dt>
+            <dd>
+                <show-property name="contactInfo"/>
+            </dd>
+        </dl>
+    
+        <include file="fragments/assets/image-attachments.xml"/>
+
+        <include file="fragments/assets/notes.xml"/>
+    
+        <div class="main">
+            <main-text/>
+        </div>
+    
+        <include file="fragments/assets/related-links-and-file-attachments.xml" />
+    
+    </div>
+</content-item-layout>
