@@ -1,0 +1,9 @@
+Dies ist ein Test.
+
+Diese Datei liegt im Module 
+
+ccm-core 
+
+in 
+
+/themes/test/ccm-core.txt

@@ -26,9 +26,9 @@ import com.arsdigita.bebop.parameters.ParameterData;
 import com.arsdigita.bebop.parameters.ParameterModel;
 import com.arsdigita.bebop.parameters.ParameterModelWrapper;
 import com.arsdigita.bebop.util.BebopConstants;
-import com.arsdigita.globalization.GlobalizationHelper;
 import com.arsdigita.util.Assert;
 import com.arsdigita.xml.Element;
+
 import java.text.Collator;
 
 import java.util.Iterator;
@@ -41,6 +41,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
 import org.apache.log4j.Logger;
+import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.l10n.GlobalizationHelper;
 
 /**
  * A class representing any widget that contains a list of options.
@@ -56,13 +58,12 @@ public abstract class OptionGroup extends Widget implements BebopConstants {
     private static final Logger LOGGER = Logger.getLogger(OptionGroup.class);
 
     /**
-     * The XML element to be used by individual options belonging to this group. 
-     * This variable has to be initialized by every subclass of OptionGroup. 
-     * LEGACY: An abstract method would be the better design, but changing it 
+     * The XML element to be used by individual options belonging to this group.
+     * This variable has to be initialized by every subclass of OptionGroup.
+     * LEGACY: An abstract method would be the better design, but changing it
      * would break the API.
      */
     //protected String m_xmlElement;
-
     // this only needs to be an ArrayList for multiple selection option groups
     private List<String> m_selected;
     private List<Option> m_options;
@@ -82,20 +83,23 @@ public abstract class OptionGroup extends Widget implements BebopConstants {
     // this is only used for single selection option groups
 
     private final static String TOO_MANY_OPTIONS_SELECTED
-                                = "Only one option may be selected by default on this option group.";
+                                    = "Only one option may be selected by default on this option group.";
 
-
-    /** request-local copy of selected elements, options                     */
+    /**
+     * request-local copy of selected elements, options
+     */
     private final RequestLocal m_requestOptions = new RequestLocal() {
+
         @Override
         public Object initialValue(final PageState state) {
             return new ArrayList<Option>();
         }
+
     };
 
     /**
-     * 
-     * @return 
+     *
+     * @return
      */
     @Override
     public final boolean isCompound() {
@@ -104,6 +108,7 @@ public abstract class OptionGroup extends Widget implements BebopConstants {
 
     /**
      * The ParameterModel for multiple OptionGroups is always an array parameter
+     *
      * @param model
      *
      * @param model
@@ -150,9 +155,10 @@ public abstract class OptionGroup extends Widget implements BebopConstants {
     public abstract String getOptionXMLElement();
 
     /**
-     * This {@link Comparator} implementation is used to sort the list of options alphabetical. If
-     * the sorting is ascending or descending depends on the selected sort mode. The Comparator
-     * needs the {@link PageState} for retrieving the localised labels from the options.
+     * This {@link Comparator} implementation is used to sort the list of
+     * options alphabetical. If the sorting is ascending or descending depends
+     * on the selected sort mode. The Comparator needs the {@link PageState} for
+     * retrieving the localised labels from the options.
      */
     private class AlphabeticalSortComparator implements Comparator<Option> {
 
@@ -196,7 +202,8 @@ public abstract class OptionGroup extends Widget implements BebopConstants {
             //Depending on the sort mode we compare label1 with label2 (ascending) or label2 with
             //label1 (descending).
             final Collator collator = Collator
-                .getInstance(GlobalizationHelper.getNegotiatedLocale());
+                .getInstance(CdiUtil.createCdiUtil().findBean(
+                    GlobalizationHelper.class).getNegotiatedLocale());
             if (sortMode == SortMode.ALPHABETICAL_ASCENDING) {
                 return collator.compare(label1, label2);
             } else if (sortMode == SortMode.ALPHABETICAL_DESENDING) {
@@ -209,8 +216,8 @@ public abstract class OptionGroup extends Widget implements BebopConstants {
     }
 
     /**
-     * Returns an Iterator of all the default Options in this group, plus any request-specific
-     * options.
+     * Returns an Iterator of all the default Options in this group, plus any
+     * request-specific options.
      *
      * @param state
      *
@@ -220,7 +227,8 @@ public abstract class OptionGroup extends Widget implements BebopConstants {
         List<Option> allOptions = new ArrayList<Option>();
         allOptions.addAll(m_options);
         List<Option> requestOptions = (List<Option>) m_requestOptions.get(state);
-        for (Iterator<Option> iterator = requestOptions.iterator(); iterator.hasNext();) {
+        for (Iterator<Option> iterator = requestOptions.iterator(); iterator
+             .hasNext();) {
             final Option option = iterator.next();
             if (!allOptions.contains(option)) {
                 allOptions.add(option);
@@ -237,8 +245,9 @@ public abstract class OptionGroup extends Widget implements BebopConstants {
     /**
      * Adds a new option.
      *
-     * @param option The {@link Option} to be added. Note: the argument is modified and associated
-     *               with this OptionGroup, regardless of what its group was.
+     * @param option The {@link Option} to be added. Note: the argument is
+     *               modified and associated with this OptionGroup, regardless
+     *               of what its group was.
      */
     public void addOption(final Option option) {
         addOption(option, null, false);
@@ -246,9 +255,9 @@ public abstract class OptionGroup extends Widget implements BebopConstants {
 
     /**
      * Adds a new option.
-     * 
+     *
      * @param opt
-     * @param ps 
+     * @param ps
      */
     public void addOption(final Option option, final PageState state) {
         addOption(option, state, false);
@@ -257,8 +266,9 @@ public abstract class OptionGroup extends Widget implements BebopConstants {
     /**
      * Adds a new option at the beginning of the list.
      *
-     * @param option The {@link Option} to be added. Note: the argument is modified and associated
-     *               with this OptionGroup, regardless of what its group was.
+     * @param option The {@link Option} to be added. Note: the argument is
+     *               modified and associated with this OptionGroup, regardless
+     *               of what its group was.
      */
     public void prependOption(final Option option) {
         addOption(option, null, true);
@@ -273,15 +283,19 @@ public abstract class OptionGroup extends Widget implements BebopConstants {
     }
 
     /**
-     * Adds a new option for the scope of the current request, or to the page 
-     * as a whole if there is no current request.
+     * Adds a new option for the scope of the current request, or to the page as
+     * a whole if there is no current request.
      *
-     * @param option  The {@link Option} to be added. Note: the argument is modified and associated
-     *                with this OptionGroup, regardless of what its group was.
-     * @param state   the current page state. if ps is null, adds option to the default option list.
-     * @param prepend If true, prepend option to the list instead of appending it
+     * @param option  The {@link Option} to be added. Note: the argument is
+     *                modified and associated with this OptionGroup, regardless
+     *                of what its group was.
+     * @param state   the current page state. if ps is null, adds option to the
+     *                default option list.
+     * @param prepend If true, prepend option to the list instead of appending
+     *                it
      */
-    public void addOption(final Option option, final PageState state, final boolean prepend) {
+    public void addOption(final Option option, final PageState state,
+                          final boolean prepend) {
         List<Option> list = m_options;
         if (state == null) {
             Assert.isUnlocked(this);
@@ -312,11 +326,12 @@ public abstract class OptionGroup extends Widget implements BebopConstants {
     }
 
     /**
-     * Removes the first option whose key is isEqual to the key that is 
-     * passed in.
+     * Removes the first option whose key is isEqual to the key that is passed
+     * in.
+     *
      * @param key
-     * @param state   the current page state. if ps is null, adds option to 
-     *                the default option list.
+     * @param state the current page state. if ps is null, adds option to the
+     *              default option list.
      */
     public void removeOption(final String key, final PageState state) {
         // This is not an entirely efficient technique. A more
@@ -345,10 +360,12 @@ public abstract class OptionGroup extends Widget implements BebopConstants {
      *
      * @param label
      * @param width  The width, in characters, of the "Other" entry area
-     * @param height The height, in characters, of the "Other" entry area. If this is 1 then a
-     *               TextField is used. Otherwise a TextArea is used.
+     * @param height The height, in characters, of the "Other" entry area. If
+     *               this is 1 then a TextField is used. Otherwise a TextArea is
+     *               used.
      */
-    public void addOtherOption(final String label, final int width, final int height) {
+    public void addOtherOption(final String label, final int width,
+                               final int height) {
         Assert.isUnlocked(this);
 
         final Option otherOption = new Option(OTHER_OPTION, label);
@@ -383,12 +400,14 @@ public abstract class OptionGroup extends Widget implements BebopConstants {
         setParameterModel(new ParameterModelWrapper(model) {
 
             @Override
-            public ParameterData createParameterData(final HttpServletRequest request,
-                                                     Object defaultValue,
-                                                     boolean isSubmission) {
+            public ParameterData createParameterData(
+                final HttpServletRequest request,
+                Object defaultValue,
+                boolean isSubmission) {
 
                 final String[] values = request.getParameterValues(getName());
-                String[] otherValues = request.getParameterValues(getName() + ".other");
+                String[] otherValues = request.getParameterValues(getName()
+                                                                  + ".other");
 
                 String other = (null == otherValues) ? null : otherValues[0];
 
@@ -402,7 +421,8 @@ public abstract class OptionGroup extends Widget implements BebopConstants {
 
                 LOGGER.debug("createParameterData in OptionGroup");
 
-                return super.createParameterData(new HttpServletRequestWrapper(request) {
+                return super.createParameterData(new HttpServletRequestWrapper(
+                    request) {
 
                     @Override
                     public String[] getParameterValues(String key) {
@@ -426,10 +446,10 @@ public abstract class OptionGroup extends Widget implements BebopConstants {
     }
 
     /**
-     * Make an option selected by default. Updates the parameter model for 
-     * the option group accordingly.
+     * Make an option selected by default. Updates the parameter model for the
+     * option group accordingly.
      *
-     * @param value the value of the option to be added to the 
+     * @param value the value of the option to be added to the
      *              by-default-selected set.
      */
     public void setOptionSelected(final String value) {
@@ -466,13 +486,13 @@ public abstract class OptionGroup extends Widget implements BebopConstants {
     }
 
     /**
-     * Whether this a multiple (and not single) selection option group. 
-     * Note that this should really be declared abstract, but we can't because 
-     * it used to be in the direct subclass Select and making it abstract could 
+     * Whether this a multiple (and not single) selection option group. Note
+     * that this should really be declared abstract, but we can't because it
+     * used to be in the direct subclass Select and making it abstract could
      * break other subclasses that don't declare isMultiple. So we have a
      * trivial implementation instead.
      *
-     * @return true if this OptionGroup can have more than one selected option; 
+     * @return true if this OptionGroup can have more than one selected option;
      *         false otherwise.
      */
     public boolean isMultiple() {
@@ -524,13 +544,14 @@ public abstract class OptionGroup extends Widget implements BebopConstants {
      */
     @Override
     public void generateWidget(final PageState state, final Element parent) {
-        final Element optionGroup = parent.newChildElement(getElementTag(), BEBOP_XML_NS);
+        final Element optionGroup = parent.newChildElement(getElementTag(),
+                                                           BEBOP_XML_NS);
         optionGroup.addAttribute("name", getName());
         optionGroup.addAttribute("class", getName().replace(".", " "));
         // Localized title for this option group
         if (getLabel() != null) {
-            optionGroup.addAttribute("label", (String)getLabel()
-                                              .localize(state.getRequest()));
+            optionGroup.addAttribute("label", (String) getLabel()
+                                     .localize(state.getRequest()));
         }
         if (isMultiple()) {
             optionGroup.addAttribute("multiple", "multiple");
@@ -545,7 +566,7 @@ public abstract class OptionGroup extends Widget implements BebopConstants {
 
         //If the sort mode is not {@code NO_SORT}, sort the the list.
         if (sortMode != SortMode.NO_SORT) {
-            
+
             //If exclude first is sest to true the first option should stay on the top.
             //We simply remove the first option from our list and generate the XML for it here.
             if (excludeFirst && !options.isEmpty()) {

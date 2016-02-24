@@ -22,8 +22,12 @@ import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+
 import javax.servlet.http.HttpServletRequest;
+
 import org.apache.log4j.Logger;
+import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.l10n.GlobalizationHelper;
 
 /**
  * <p>
@@ -209,8 +213,8 @@ public class GlobalizedMessage {
      * GlobalizedObject?
      */
     public Object localize() {
-        return localize(com.arsdigita.globalization.GlobalizationHelper
-                .getNegotiatedLocale());
+        return localize(CdiUtil.createCdiUtil().findBean(
+                    GlobalizationHelper.class).getNegotiatedLocale());
     }
 
     /**
@@ -232,8 +236,8 @@ public class GlobalizedMessage {
      * GlobalizedObject?
      */
     public Object localize(final HttpServletRequest request) {
-        return localize(com.arsdigita.globalization.GlobalizationHelper
-                .getNegotiatedLocale());
+        return localize(CdiUtil.createCdiUtil().findBean(
+                    GlobalizationHelper.class).getNegotiatedLocale());
     }
 
     /**

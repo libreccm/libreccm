@@ -19,14 +19,17 @@ import javax.servlet.http.HttpSession;
 
 /**
  *
+ * @deprecated Replaced by {@link org.libreccm.l10n.GlobalizationHelper}
+ * 
  * @author Sören Bernstein <quasi@quasiweb.de>
  */
-public class GlobalizationHelper {
+@Deprecated
+public class LegacyGlobalizationHelper {
 
     private static final String LANG_PARAM = "lang";
 
     // Don't instantiate
-    private GlobalizationHelper() {
+    private LegacyGlobalizationHelper() {
     }
 
     /**
@@ -36,14 +39,14 @@ public class GlobalizationHelper {
      *
      * @return The negotiated locale
      */
-    public static java.util.Locale getNegotiatedLocale() {
+    public static Locale getNegotiatedLocale() {
         final KernelConfig kernelConfig = KernelConfig.getConfig();
 
         // Set the preferedLocale to the default locale (first entry in the config parameter list)
-        java.util.Locale preferedLocale = getPrefferedLocale();
+        Locale preferedLocale = getPrefferedLocale();
 
         // The ACCEPTED_LANGUAGES from the client
-        Enumeration<java.util.Locale> locales = null;
+        Enumeration<Locale> locales = null;
 
         // Try to get the RequestContext
         try {
@@ -53,7 +56,7 @@ public class GlobalizationHelper {
                                       .getRequest());
 
             // Get the selected locale from the request, if any
-            java.util.Locale selectedLocale = getSelectedLocale(request);
+            Locale selectedLocale = getSelectedLocale(request);
             if (selectedLocale != null && kernelConfig.hasLanguage(
                 selectedLocale.getLanguage())) {
                 preferedLocale = selectedLocale;
@@ -65,7 +68,7 @@ public class GlobalizationHelper {
                 while (locales.hasMoreElements()) {
 
                     // Test if the current locale is listed in the supported locales list
-                    java.util.Locale curLocale = (Locale) locales.nextElement();
+                    Locale curLocale = (Locale) locales.nextElement();
                     if (kernelConfig.hasLanguage(curLocale.getLanguage())) {
                         preferedLocale = curLocale;
                         break;
@@ -82,13 +85,13 @@ public class GlobalizationHelper {
         }
     }
 
-//    public static java.util.Locale getSystemLocale() {
+//    public static Locale getSystemLocale() {
 //        
 //    }
     private static Locale getPrefferedLocale() {
         final KernelConfig kernelConfig = KernelConfig.getConfig();
 
-        java.util.Locale preferedLocale = new java.util.Locale(kernelConfig
+        Locale preferedLocale = new Locale(kernelConfig
             .getDefaultLanguage(), "", "");
         return preferedLocale;
     }
@@ -96,12 +99,12 @@ public class GlobalizationHelper {
     /**
      * Get the selected (as in fixed) locale from the ServletRequest
      *
-     * @return the selected locale as java.util.Locale or null if not defined
+     * @return the selected locale as Locale or null if not defined
      */
     public static Locale getSelectedLocale(ServletRequest request) {
 
         // Return value
-        java.util.Locale selectedLocale = null;
+        Locale selectedLocale = null;
 
         // Access current HttpSession or create a new one, if none exist
         HttpSession session = ((HttpServletRequest) request).getSession(true);
@@ -132,19 +135,19 @@ public class GlobalizationHelper {
      *
      * @param lang A string encoded locale, as provided by browsers
      *
-     * @return A java.util.Locale representation of the language string
+     * @return A Locale representation of the language string
      */
-    private static java.util.Locale scanLocale(String lang) {
+    private static Locale scanLocale(String lang) {
 
         // Protect against empty lang string
         if ((lang != null) && !(lang.isEmpty())) {
             // Split the string and create the Locale object
             StringTokenizer paramValues = new StringTokenizer(lang, "_");
             if (paramValues.countTokens() > 1) {
-                return new java.util.Locale(paramValues.nextToken(), paramValues
+                return new Locale(paramValues.nextToken(), paramValues
                                             .nextToken());
             } else {
-                return new java.util.Locale(paramValues.nextToken());
+                return new Locale(paramValues.nextToken());
             }
         }
 

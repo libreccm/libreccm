@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package com.arsdigita.ui.admin;
+package com.arsdigita.ui.admin.usersgroupsroles;
 
 import com.arsdigita.bebop.BoxPanel;
 import com.arsdigita.bebop.Component;
@@ -25,6 +25,7 @@ import com.arsdigita.bebop.List;
 import com.arsdigita.bebop.Page;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.Resettable;
+import com.arsdigita.bebop.SimpleContainer;
 import com.arsdigita.bebop.list.ListModel;
 import com.arsdigita.bebop.list.ListModelBuilder;
 import com.arsdigita.globalization.GlobalizedMessage;
@@ -60,8 +61,8 @@ public class UsersGroupsRolesTab extends LayoutPanel {
         });
         sections.setClassAttr("navbar");
 
-        final BoxPanel usersPanel = new BoxPanel();
-        usersPanel.add(new Label("Users Panel"));
+//        final BoxPanel usersPanel = new BoxPanel();
+//        usersPanel.add(new Label("Users Panel"));
 
         final BoxPanel groupsPanel = new BoxPanel();
         groupsPanel.add(new Label("Groups Panel"));
@@ -73,24 +74,34 @@ public class UsersGroupsRolesTab extends LayoutPanel {
         addSection(
             new Label(new GlobalizedMessage(
                 "ui.admin.users_groups_roles.users.title",
-                BUNDLE_NAME)),
-            usersPanel,
+                ADMIN_BUNDLE)),
+            new UserAdmin(),
             body);
         addSection(
             new Label(new GlobalizedMessage(
                 "ui.admin.users_groups_roles.groups.title",
-                BUNDLE_NAME)),
+                ADMIN_BUNDLE)),
             groupsPanel,
             body);
         addSection(
             new Label(new GlobalizedMessage(
                 "ui.admin.users_roles_roles.users.title",
-                BUNDLE_NAME)),
+                ADMIN_BUNDLE)),
             rolesPanel,
             body);
         
         setLeft(sections);
         setBody(body);
+    }
+    
+    private SimpleContainer buildUserAdmin() {
+        final BoxPanel panel = new BoxPanel();
+        
+        
+        
+        panel.add(new Label("User Admin"));
+            
+        return panel;
     }
 
     private void addSection(final Label label,

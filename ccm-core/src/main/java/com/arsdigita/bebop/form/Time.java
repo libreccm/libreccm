@@ -29,9 +29,12 @@ import com.arsdigita.bebop.parameters.ParameterModel;
 import com.arsdigita.bebop.parameters.TimeParameter;
 
 import com.arsdigita.bebop.util.BebopConstants;
-import com.arsdigita.globalization.GlobalizationHelper;
 import com.arsdigita.util.Assert;
 import com.arsdigita.xml.Element;
+
+import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.l10n.GlobalizationHelper;
+
 import java.text.DateFormat;
 
 import java.text.DateFormatSymbols;
@@ -64,9 +67,11 @@ public class Time extends Widget implements BebopConstants {
             super(name);
             this.parent = parent;
             if (has12HourClock()) {
-                this.addValidationListener(new NumberInRangeValidationListener(1, 12));
+                this.addValidationListener(
+                    new NumberInRangeValidationListener(1, 12));
             } else {
-                this.addValidationListener(new NumberInRangeValidationListener(1, 24));
+                this.addValidationListener(
+                    new NumberInRangeValidationListener(1, 24));
             }
         }
 
@@ -87,6 +92,7 @@ public class Time extends Widget implements BebopConstants {
                 return parent.getFragmentValue(ps, Calendar.HOUR_OF_DAY);
             }
         }
+
     }
 
     private class MinuteFragment extends TextField {
@@ -96,7 +102,8 @@ public class Time extends Widget implements BebopConstants {
         public MinuteFragment(String name, Time parent) {
             super(name);
             this.parent = parent;
-            this.addValidationListener(new NumberInRangeValidationListener(0, 59));
+            this.addValidationListener(
+                new NumberInRangeValidationListener(0, 59));
         }
 
         @Override
@@ -120,6 +127,7 @@ public class Time extends Widget implements BebopConstants {
                 return min.toString();
             }
         }
+
     }
 
     private class SecondFragment extends TextField {
@@ -129,7 +137,8 @@ public class Time extends Widget implements BebopConstants {
         public SecondFragment(String name, Time parent) {
             super(name);
             this.parent = parent;
-            this.addValidationListener(new NumberInRangeValidationListener(0, 59));
+            this.addValidationListener(
+                new NumberInRangeValidationListener(0, 59));
         }
 
         @Override
@@ -153,6 +162,7 @@ public class Time extends Widget implements BebopConstants {
                 return sec.toString();
             }
         }
+
     }
 
     private class AmPmFragment extends SingleSelect {
@@ -177,20 +187,26 @@ public class Time extends Widget implements BebopConstants {
         public Object getValue(PageState ps) {
             return parent.getFragmentValue(ps, Calendar.AM_PM);
         }
+
     }
 
-    /** Constructor. */
+    /**
+     * Constructor.
+     */
     public Time(ParameterModel model) {
         this(model, false);
     }
 
-    /** Constructor. */
+    /**
+     * Constructor.
+     */
     public Time(ParameterModel model, boolean showSeconds) {
         super(model);
 
-        if (!(model instanceof TimeParameter || model instanceof DateTimeParameter)) {
+        if (!(model instanceof TimeParameter
+              || model instanceof DateTimeParameter)) {
             throw new IllegalArgumentException(
-                    "The Time widget " + model.getName()
+                "The Time widget " + model.getName()
                     + " must be backed by a TimeParameter parameter model");
         }
 
@@ -232,14 +248,16 @@ public class Time extends Widget implements BebopConstants {
         this(new TimeParameter(name));
     }
 
-    /** Returns a string naming the type of this widget. */
+    /**
+     * Returns a string naming the type of this widget.
+     */
     public String getType() {
         return "time";
     }
 
     /**
-     * Sets the <tt>MAXLENGTH</tt> attributes for the <tt>INPUT</tt> tag
-     * used to render this form element.
+     * Sets the <tt>MAXLENGTH</tt> attributes for the <tt>INPUT</tt> tag used to
+     * render this form element.
      */
     public void setMaxLength(int length) {
         setAttribute("MAXLENGTH", String.valueOf(length));
@@ -249,7 +267,9 @@ public class Time extends Widget implements BebopConstants {
         return true;
     }
 
-    /** The XML tag for this derived class of Widget. */
+    /**
+     * The XML tag for this derived class of Widget.
+     */
     @Override
     protected String getElementTag() {
         return BEBOP_TIME;
@@ -309,12 +329,12 @@ public class Time extends Widget implements BebopConstants {
     }
 
     /**
-     * Sets the Form Object for this Widget. This method will throw an
-     * exception if the _form pointer is already set. To explicity
-     * change the _form pointer the developer must first call
-     * setForm(null)
+     * Sets the Form Object for this Widget. This method will throw an exception
+     * if the _form pointer is already set. To explicity change the _form
+     * pointer the developer must first call setForm(null)
      *
      * @param the <code>Form</code> Object for this Widget.
+     *
      * @exception IllegalStateException if form already set.
      */
     @Override
@@ -347,9 +367,12 @@ public class Time extends Widget implements BebopConstants {
     }
 
     private boolean has12HourClock() {
-        Locale locale = GlobalizationHelper.getNegotiatedLocale();
-        DateFormat format_12Hour = DateFormat.getTimeInstance(DateFormat.SHORT, Locale.US);
-        DateFormat format_locale = DateFormat.getTimeInstance(DateFormat.SHORT, locale);
+        Locale locale = CdiUtil.createCdiUtil().findBean(
+            GlobalizationHelper.class).getNegotiatedLocale();
+        DateFormat format_12Hour = DateFormat.getTimeInstance(DateFormat.SHORT,
+                                                              Locale.US);
+        DateFormat format_locale = DateFormat.getTimeInstance(DateFormat.SHORT,
+                                                              locale);
 
         String midnight = "";
         try {
@@ -359,4 +382,5 @@ public class Time extends Widget implements BebopConstants {
 
         return midnight.contains("12");
     }
+
 }

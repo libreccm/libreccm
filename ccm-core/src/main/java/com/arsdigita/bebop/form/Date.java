@@ -30,15 +30,21 @@ import com.arsdigita.bebop.parameters.ParameterData;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.Form;
 import com.arsdigita.bebop.FormData;
-import com.arsdigita.bebop.parameters.*;
+import com.arsdigita.bebop.parameters.DateTimeParameter;
+import com.arsdigita.bebop.parameters.IncompleteDateParameter;
+import com.arsdigita.bebop.parameters.NotNullValidationListener;
+
 // This interface contains the XML element name of this class
 // in a constant which is used when generating XML
 import com.arsdigita.bebop.util.BebopConstants;
 
-import com.arsdigita.globalization.GlobalizationHelper;
 import com.arsdigita.bebop.util.GlobalizationUtil;
 
 import com.arsdigita.xml.Element;
+
+import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.l10n.GlobalizationHelper;
+
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
@@ -203,7 +209,8 @@ public class Date extends Widget implements BebopConstants {
     public Date(ParameterModel model) {
         super(model);
 
-        if (!(model instanceof DateParameter || model instanceof DateTimeParameter)) {
+        if (!(model instanceof DateParameter
+              || model instanceof DateTimeParameter)) {
             throw new IllegalArgumentException(
                 "The Date widget " + model.getName()
                     + " must be backed by a DateParameter parmeter model");
@@ -254,9 +261,12 @@ public class Date extends Widget implements BebopConstants {
                 // Create an empty year entry to unset a date, if either
                 //      a) skipYearAllowed is true
                 //      b) skipDayAllowed is true and skipMonthAllowed is true, to unset a date
-                if (((IncompleteDateParameter) this.getParameterModel()).isSkipYearAllowed()
-                        || (((IncompleteDateParameter) this.getParameterModel()).isSkipDayAllowed()
-                            && ((IncompleteDateParameter) this.getParameterModel())
+                if (((IncompleteDateParameter) this.getParameterModel())
+                    .isSkipYearAllowed()
+                        || (((IncompleteDateParameter) this.getParameterModel())
+                            .isSkipDayAllowed()
+                            && ((IncompleteDateParameter) this
+                                .getParameterModel())
                             .isSkipMonthAllowed())) {
                     m_year.addOption(new Option("", ""));
                 }
@@ -266,7 +276,7 @@ public class Date extends Widget implements BebopConstants {
                     m_year.addOption(new Option(String.valueOf(year)));
                 }
             } else {
-                for(int year = m_year_end; year >= m_year_begin; year--) {
+                for (int year = m_year_end; year >= m_year_begin; year--) {
                     m_year.addOption(new Option(String.valueOf(year)));
                 }
             }
@@ -305,8 +315,8 @@ public class Date extends Widget implements BebopConstants {
     }
 
     /**
-     * Sets the <tt>MAXLENGTH</tt> attribute for the <tt>INPUT</tt> tag used to render this form
-     * element.
+     * Sets the <tt>MAXLENGTH</tt> attribute for the <tt>INPUT</tt> tag used to
+     * render this form element.
      *
      * @param length
      */
@@ -344,7 +354,8 @@ public class Date extends Widget implements BebopConstants {
         Element date = parent.newChildElement(getElementTag(), BEBOP_XML_NS);
         date.addAttribute("name", getParameterModel().getName());
         if (getLabel() != null) {
-            date.addAttribute("label", (String) getLabel().localize(ps.getRequest()));
+            date.addAttribute("label", (String) getLabel().localize(ps
+                              .getRequest()));
         }
         exportAttributes(date);
         generateDescriptionXML(ps, date);
@@ -360,7 +371,8 @@ public class Date extends Widget implements BebopConstants {
     public void generateLocalizedWidget(PageState ps, Element date) {
 
         Locale defaultLocale = Locale.getDefault();
-        Locale locale = GlobalizationHelper.getNegotiatedLocale();
+        Locale locale = CdiUtil.createCdiUtil().findBean(
+            GlobalizationHelper.class).getNegotiatedLocale();
 
         // Get the current Pattern
         // XXX This is really, really, really, really, really, really bad
@@ -418,9 +430,9 @@ public class Date extends Widget implements BebopConstants {
     }
 
     /**
-     * Sets the Form Object for this Widget. This method will throw an exception if the _form
-     * pointer is already set. To explicity change the _form pointer the developer must first call
-     * setForm(null)
+     * Sets the Form Object for this Widget. This method will throw an exception
+     * if the _form pointer is already set. To explicity change the _form
+     * pointer the developer must first call setForm(null)
      *
      * @param f the <code>Form</code> Object for this Widget.
      *
@@ -458,7 +470,8 @@ public class Date extends Widget implements BebopConstants {
 
     private void populateMonthOptions() {
 
-        Locale locale = GlobalizationHelper.getNegotiatedLocale();
+        Locale locale = CdiUtil.createCdiUtil().findBean(
+            GlobalizationHelper.class).getNegotiatedLocale();
 
         if (m_locale == null || (locale != null && !m_locale.equals(locale))) {
 
@@ -468,7 +481,8 @@ public class Date extends Widget implements BebopConstants {
             m_month.clearOptions();
 
             if (this.getParameterModel() instanceof IncompleteDateParameter) {
-                if (((IncompleteDateParameter) this.getParameterModel()).isSkipMonthAllowed()) {
+                if (((IncompleteDateParameter) this.getParameterModel())
+                    .isSkipMonthAllowed()) {
                     m_month.addOption(new Option("", ""));
                 }
             }
@@ -480,7 +494,8 @@ public class Date extends Widget implements BebopConstants {
                     m_month.addOption(new Option(String.valueOf(i), months[i]));
                 }
             }
-            m_locale = GlobalizationHelper.getNegotiatedLocale();
+            m_locale = CdiUtil.createCdiUtil().findBean(
+                GlobalizationHelper.class).getNegotiatedLocale();
         }
     }
 

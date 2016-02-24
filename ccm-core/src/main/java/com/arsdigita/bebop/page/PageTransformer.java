@@ -21,7 +21,6 @@ package com.arsdigita.bebop.page;
 import com.arsdigita.bebop.BebopConfig;
 import com.arsdigita.dispatcher.DispatcherHelper;
 import com.arsdigita.globalization.Globalization;
-import com.arsdigita.globalization.GlobalizationHelper;
 import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.templating.PresentationManager;
 import com.arsdigita.templating.Templating;
@@ -56,6 +55,8 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.log4j.Logger;
+import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.l10n.GlobalizationHelper;
 
 /**
  * A class for managing and obtaining a Stylesheet based on the current
@@ -197,7 +198,9 @@ public class PageTransformer implements PresentationManager {
                                       @Override
                                       public String generateValue(
                                           HttpServletRequest request) {
-                                          return GlobalizationHelper
+                                          return CdiUtil.createCdiUtil()
+                                              .findBean(
+                                                  GlobalizationHelper.class)
                                               .getNegotiatedLocale()
                                               .getLanguage();
                                       }
@@ -211,8 +214,10 @@ public class PageTransformer implements PresentationManager {
                                       public String generateValue(
                                           HttpServletRequest request) {
                                           Locale selectedLocale
-                                                     = com.arsdigita.globalization.GlobalizationHelper
-                                              .getSelectedLocale(request);
+                                                     = CdiUtil.createCdiUtil()
+                                              .findBean(
+                                                  GlobalizationHelper.class)
+                                              .getSelectedLocale();
                                           return (selectedLocale != null)
                                                      ? selectedLocale
                                               .toString() : "";

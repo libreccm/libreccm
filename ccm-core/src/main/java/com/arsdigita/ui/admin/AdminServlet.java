@@ -18,6 +18,7 @@
  */
 package com.arsdigita.ui.admin;
 
+import com.arsdigita.ui.admin.usersgroupsroles.UsersGroupsRolesTab;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.Page;
 import com.arsdigita.bebop.PageFactory;

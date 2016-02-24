@@ -64,7 +64,7 @@ public final class KernelConfig {
 
     @Setting
     private Set<String> supportedLanguages = new HashSet<>(
-        Arrays.asList(new String[]{"en"}));
+        Arrays.asList(new String[]{"en", "de"}));
 
     @Setting
     private String defaultLanguage = "en";
