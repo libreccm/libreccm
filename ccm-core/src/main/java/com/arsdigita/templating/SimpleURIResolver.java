@@ -18,6 +18,8 @@
  */
 package com.arsdigita.templating;
 
+import org.apache.logging.log4j.LogManager;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -32,7 +34,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.URIResolver;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 /**
  * An implementation of the URIResolver interface that keeps track of all the
@@ -44,7 +46,7 @@ import org.apache.log4j.Logger;
  */
 final class SimpleURIResolver implements URIResolver {
 
-    private static final Logger s_log = Logger.getLogger
+    private static final Logger s_log = LogManager.getLogger
                                                (SimpleURIResolver.class);
 
     private final Set m_uniqueStylesheetURIs;

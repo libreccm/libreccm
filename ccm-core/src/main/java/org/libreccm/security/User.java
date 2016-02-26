@@ -67,7 +67,14 @@ import javax.xml.bind.annotation.XmlTransient;
                 query = "SELECT u FROM User u WHERE u.name = :name"),
     @NamedQuery(name = "User.findByEmailAddress",
                 query = "SELECT u FROM User u WHERE "
-                            + "u.primaryEmailAddress.address = :emailAddress")
+                            + "u.primaryEmailAddress.address = :emailAddress"),
+    @NamedQuery(
+        name = "User.filterByNameAndEmail",
+        query = "SELECT u FROM User u WHERE "
+                    + "LOWER(u.name) LIKE CONCAT(LOWER(:term), '%') "
+                    + "OR LOWER(u.givenName) LIKE CONCAT(LOWER(:term), '%') "
+                    + "OR LOWER(u.familyName) LIKE CONCAT(LOWER(:term), '%') "
+                    + "OR LOWER(u.primaryEmailAddress.address) LIKE CONCAT('%', LOWER(:term), '%')")
 })
 @NamedEntityGraphs({
     @NamedEntityGraph(

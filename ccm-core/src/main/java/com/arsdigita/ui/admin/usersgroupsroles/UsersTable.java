@@ -18,9 +18,17 @@
  */
 package com.arsdigita.ui.admin.usersgroupsroles;
 
+import com.arsdigita.bebop.Component;
+import com.arsdigita.bebop.ControlLink;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.PageState;
+import com.arsdigita.bebop.ParameterSingleSelectionModel;
 import com.arsdigita.bebop.Table;
+import com.arsdigita.bebop.event.TableActionAdapter;
+import com.arsdigita.bebop.event.TableActionEvent;
+import com.arsdigita.bebop.event.TableActionListener;
+import com.arsdigita.bebop.form.TextField;
+import com.arsdigita.bebop.table.TableCellRenderer;
 import com.arsdigita.bebop.table.TableColumn;
 import com.arsdigita.bebop.table.TableColumnModel;
 import com.arsdigita.bebop.table.TableModel;
@@ -52,8 +60,15 @@ public class UsersTable extends Table {
     private static final int COL_PRIMARY_EMAIL = 3;
     private static final int COL_BANNED = 4;
 
-    public UsersTable() {
+    private final TextField usersTableFilter;
+    private final ParameterSingleSelectionModel<String> selectedUserId;
+
+    public UsersTable(final TextField usersTableFilter,
+                      final ParameterSingleSelectionModel<String> selectedUserId) {
         super();
+
+        this.usersTableFilter = usersTableFilter;
+        this.selectedUserId = selectedUserId;
 
         setEmptyView(new Label(new GlobalizedMessage(
             "ui.admin.users.table.no_users", ADMIN_BUNDLE)));
@@ -79,7 +94,36 @@ public class UsersTable extends Table {
             COL_BANNED,
             new Label(new GlobalizedMessage(
                 "ui.admin.users.table.banned", ADMIN_BUNDLE))));
+        
+        columnModel.get(COL_SCREEN_NAME).setCellRenderer(new TableCellRenderer() {
 
+            @Override
+            public Component getComponent(final Table table, 
+                                          final PageState state,
+                                          final Object value, 
+                                          final boolean isSelected,
+                                          final Object key, 
+                                          final int row, 
+                                          final int column) {
+                return new ControlLink((String) value);
+            }
+        });
+        
+        addTableActionListener(new TableActionListener() {
+
+            @Override
+            public void cellSelected(final TableActionEvent event) {
+                final String key = (String) event.getRowKey();
+                
+                selectedUserId.setSelectedKey(event.getPageState(), key);
+            }
+
+            @Override
+            public void headSelected(final TableActionEvent event) {
+                //Nothing
+            }
+        });
+        
         setModelBuilder(new UsersTableModelBuilder());
     }
 
@@ -90,7 +134,7 @@ public class UsersTable extends Table {
         public TableModel makeModel(final Table table, final PageState state) {
             table.getRowSelectionModel().clearSelection(state);
 
-            return new UsersTableModel();
+            return new UsersTableModel(state);
         }
 
     }
@@ -100,12 +144,24 @@ public class UsersTable extends Table {
         private final List<User> users;
         private int index = -1;
 
-        public UsersTableModel() {
+        public UsersTableModel(final PageState state) {
             LOGGER.debug("Creating UsersTableModel...");
+            final String filterTerm = (String) usersTableFilter
+                .getValue(state);
+            LOGGER.debug("Value of filter is: \"{}\"", filterTerm);
             final UserRepository userRepository = CdiUtil.createCdiUtil()
                 .findBean(UserRepository.class);
-            users = userRepository.findAll();
-            LOGGER.debug("Found {} users in database.", users.size());
+            if (filterTerm == null || filterTerm.isEmpty()) {
+                users = userRepository.findAll();
+                LOGGER.debug("Found {} users in database.", users.size());
+            } else {
+                users = userRepository.filtered(filterTerm);
+                LOGGER.debug("Found {} users in database which match the "
+                                 + "filter \"{}\".",
+                             users.size(),
+                             filterTerm);
+            }
+
         }
 
         @Override

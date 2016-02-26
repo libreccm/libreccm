@@ -82,19 +82,19 @@ public abstract class AbstractEntityRepository<K, E> {
     protected void applyDefaultEntityGraph(final TypedQuery<E> query) {
         if (getEntityClass().isAnnotationPresent(DefaultEntityGraph.class)) {
             LOGGER.debug("The following EntityGraphs are available for the "
-                + "entity class {}:", 
+                             + "entity class {}:",
                          getEntityClass().getName());
             getEntityManager().getEntityGraphs(getEntityClass()).stream()
                 .forEach(g -> LOGGER.debug("\t{}", g.getName()));
-            LOGGER.debug("Entity class {} has default entity graphs:", 
+            LOGGER.debug("Entity class {} has default entity graphs:",
                          getEntityClass().getName());
             LOGGER.debug("Applying entity graph {}",
                          getEntityClass().getAnnotation(
                              DefaultEntityGraph.class).value());
             query.setHint(FETCH_GRAPH_HINT_KEY,
                           entityManager.getEntityGraph(
-                          getEntityClass().getAnnotation(
-                              DefaultEntityGraph.class).value()));
+                              getEntityClass().getAnnotation(
+                                  DefaultEntityGraph.class).value()));
         }
     }
 
@@ -202,14 +202,59 @@ public abstract class AbstractEntityRepository<K, E> {
     public List<E> findAll() {
         // We are using the Critiera API here because otherwise we can't 
         // pass the type of the entity dynmacially.
+        return executeCriteriaQuery(createCriteriaQuery());
+    }
+
+    public List<E> findAll(final String entityGraphName) {
+        @SuppressWarnings("unchecked")
+        final EntityGraph<E> entityGraph = (EntityGraph<E>) entityManager
+            .getEntityGraph(
+                entityGraphName);
+
+        return findAll(entityGraph);
+    }
+
+    public List<E> findAll(final EntityGraph<E> entityGraph) {
+        // We are using the Critiera API here because otherwise we can't 
+        // pass the type of the entity dynmacially.
+        return executeCriteriaQuery(createCriteriaQuery(), entityGraph);
+    }
+
+    public CriteriaQuery<E> createCriteriaQuery() {
         final CriteriaBuilder criteriaBuilder = entityManager
             .getCriteriaBuilder();
         final CriteriaQuery<E> criteriaQuery = criteriaBuilder.createQuery(
             getEntityClass());
         final Root<E> root = criteriaQuery.from(getEntityClass());
-        criteriaQuery.select(root);
+        return criteriaQuery.select(root);
+    }
 
+    public CriteriaBuilder getCriteriaBuilder() {
+        return entityManager.getCriteriaBuilder();
+    }
+
+    public List<E> executeCriteriaQuery(final CriteriaQuery<E> criteriaQuery) {
+        if (hasDefaultEntityGraph()) {
+            return executeCriteriaQuery(criteriaQuery, getDefaultEntityGraph());
+        } else {
+           final TypedQuery<E> query = entityManager.createQuery(criteriaQuery);
+           return query.getResultList();
+        }
+    }
+
+    public List<E> executeCriteriaQuery(final CriteriaQuery<E> criteriaQuery,
+                                        final String graphName) {
+        @SuppressWarnings("unchecked")
+        final EntityGraph<E> entityGraph = (EntityGraph< E>) entityManager
+            .getEntityGraph(
+                graphName);
+        return executeCriteriaQuery(criteriaQuery, entityGraph);
+    }
+
+    public List<E> executeCriteriaQuery(final CriteriaQuery<E> criteriaQuery,
+                                        final EntityGraph<E> entityGraph) {
         final TypedQuery<E> query = entityManager.createQuery(criteriaQuery);
+        query.setHint(FETCH_GRAPH_HINT_KEY, entityGraph);
 
         return query.getResultList();
     }
@@ -249,6 +294,21 @@ public abstract class AbstractEntityRepository<K, E> {
         }
 
         entityManager.remove(entity);
+    }
+
+    protected boolean hasDefaultEntityGraph() {
+        return getEntityClass().isAnnotationPresent(DefaultEntityGraph.class);
+    }
+
+    protected String getDefaultEntityGraph() {
+        if (hasDefaultEntityGraph()) {
+            return getEntityClass().getAnnotation(DefaultEntityGraph.class)
+                .value();
+        } else {
+            throw new IllegalArgumentException(String.format(
+                "Entity class \"%s\" has no DefaultEntityGraph!",
+                getEntityClass().getName()));
+        }
     }
 
 }

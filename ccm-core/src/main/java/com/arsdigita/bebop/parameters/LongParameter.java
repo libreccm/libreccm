@@ -32,6 +32,7 @@ public class LongParameter extends NumberParameter {
         super(name);
     }
 
+    @Override
     public Object unmarshal(String encoded) {
         try {
             return new Long(encoded);
@@ -43,6 +44,7 @@ public class LongParameter extends NumberParameter {
         }
     }
 
+    @Override
     public Class getValueClass() {
         return Long.class;
     }

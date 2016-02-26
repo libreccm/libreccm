@@ -20,6 +20,7 @@ package com.arsdigita.ui.admin;
 
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.parameters.BigDecimalParameter;
+import com.arsdigita.bebop.parameters.LongParameter;
 import com.arsdigita.globalization.GlobalizedMessage;
 
 /**
@@ -100,11 +101,11 @@ interface AdminConstants {
     /**
      * Global state parameters.
      */
-    BigDecimalParameter GROUP_ID_PARAM = new BigDecimalParameter("group_id");
+    LongParameter GROUP_ID_PARAM = new LongParameter("group_id");
 
-    BigDecimalParameter APPLICATIONS_ID_PARAM = new BigDecimalParameter("application_id");
+    LongParameter APPLICATIONS_ID_PARAM = new LongParameter("application_id");
 
-    BigDecimalParameter USER_ID_PARAM = new BigDecimalParameter("user_id");
+    LongParameter USER_ID_PARAM = new LongParameter("user_id");
 
     /**
      * User summary panel.

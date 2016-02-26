@@ -26,20 +26,28 @@ import com.arsdigita.bebop.event.EventListenerList;
 import com.arsdigita.util.Assert;
 import com.arsdigita.util.Lockable;
 
-/**
- * A standard implementation of <code>SingleSelectionModel</code> and 
- * <code>Lockable</code>.  Those wishing to define a SingleSelectionModel 
- * will ordinarily want to extend this class.
- *
- * @version $Id: AbstractSingleSelectionModel.java 287 2005-02-22 00:29:02Z sskracic $
- */
-public abstract class AbstractSingleSelectionModel
-    implements SingleSelectionModel, Lockable {
+import java.util.stream.Stream;
 
-    private EventListenerList m_listeners;
+/**
+ * A standard implementation of <code>SingleSelectionModel</code> and
+ * <code>Lockable</code>. Those wishing to define a SingleSelectionModel will
+ * ordinarily want to extend this class.
+ *
+ * jensp: Added generics and Java 8 streams instead of using an iterator.
+ *
+ * @param <T>
+ *
+ * @author Unknown
+ * @author Jens Pelzetter (jensp)
+ */
+public abstract class AbstractSingleSelectionModel<T>
+    implements SingleSelectionModel<T>, Lockable {
+
+    private final EventListenerList m_listeners;
     private boolean m_locked;
 
-    /** Creates a new AbstractSingleSelectionModel.
+    /**
+     * Creates a new AbstractSingleSelectionModel.
      */
     public AbstractSingleSelectionModel() {
         m_listeners = new EventListenerList();
@@ -49,51 +57,57 @@ public abstract class AbstractSingleSelectionModel
      * Returns <code>true</code> if there is a selected element.
      *
      * @param state the state of the current request
+     *
      * @return <code>true</code> if there is a selected component;
-     * <code>false</code> otherwise.
+     *         <code>false</code> otherwise.
      */
-    public boolean isSelected(PageState state) {
+    @Override
+    public boolean isSelected(final PageState state) {
         return getSelectedKey(state) != null;
     }
 
-    public abstract Object getSelectedKey(PageState state);
+    @Override
+    public abstract T getSelectedKey(final PageState state);
 
-    public abstract void setSelectedKey(PageState state, Object key);
+    @Override
+    public abstract void setSelectedKey(final PageState state, final T key);
 
-    public void clearSelection(PageState state) {
+    @Override
+    public void clearSelection(final PageState state) {
         setSelectedKey(state, null);
     }
 
     // Selection change events
-
-    public void addChangeListener(ChangeListener l) {
+    @Override
+    public void addChangeListener(final ChangeListener changeListener) {
         Assert.isUnlocked(this);
-        m_listeners.add(ChangeListener.class, l);
+        m_listeners.add(ChangeListener.class, changeListener);
     }
 
-    public void removeChangeListener(ChangeListener l) {
+    @Override
+    public void removeChangeListener(final ChangeListener changeListener) {
         Assert.isUnlocked(this);
-        m_listeners.remove(ChangeListener.class, l);
+        m_listeners.remove(ChangeListener.class, changeListener);
     }
 
-    protected void fireStateChanged(PageState state) {
-        Iterator i = m_listeners.getListenerIterator(ChangeListener.class);
-        ChangeEvent e = null;
-
-        while (i.hasNext()) {
-            if ( e == null ) {
-                e = new ChangeEvent(this, state);
-            }
-            ((ChangeListener) i.next()).stateChanged(e);
+    protected void fireStateChanged(final PageState state) {
+        final ChangeEvent event = new ChangeEvent(this, state);
+        final Iterator<ChangeListener> iterator = m_listeners
+            .getListenerIterator(ChangeListener.class);
+        while(iterator.hasNext()) {
+            iterator.next().stateChanged(event);
         }
     }
 
     // implement Lockable
+    @Override
     public void lock() {
         m_locked = true;
     }
 
+    @Override
     public final boolean isLocked() {
         return m_locked;
     }
+
 }

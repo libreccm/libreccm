@@ -28,22 +28,25 @@ import java.util.NoSuchElementException;
  */
 public class EventListenerList extends javax.swing.event.EventListenerList {
 
+    private static final long serialVersionUID = -1930203818146602205L;
+
     /**
      * Append all the event listeners from <code>l</code>.
      *
-     * @param l The list of listeners to copy from
+     * @param list The list of listeners to copy from
      *
      * @pre l != null
      */
-    public void addAll(EventListenerList l) {
+    public void addAll(final EventListenerList list) {
 
-        if ( l.listenerList.length == 0 )
+        if ( list.listenerList.length == 0 ) {
             return;
+        }
 
-        Object[] tmp = new Object[listenerList.length + l.listenerList.length];
+        Object[] tmp = new Object[listenerList.length + list.listenerList.length];
         System.arraycopy(listenerList, 0, tmp, 0, listenerList.length);
-        System.arraycopy(l.listenerList, 0,
-                         tmp, listenerList.length, l.listenerList.length);
+        System.arraycopy(list.listenerList, 0,
+                         tmp, listenerList.length, list.listenerList.length);
         listenerList = tmp;
     }
 
@@ -53,15 +56,17 @@ public class EventListenerList extends javax.swing.event.EventListenerList {
      * {@link javax.swing.event.EventListenerList Swing's
      * <code>EventListenerList</code>}.
      *
-     * @param t The class of the event listeners that should be returned
+     * @param <T>
+     * @param type The class of the event listeners that should be returned
+     * @return 
      *
      * @pre t != null
      * */
-    public Iterator getListenerIterator(final Class t) {
-        return new EventListenerIterator(t);
+    public <T> Iterator<T> getListenerIterator(final Class<T> type) {
+        return new EventListenerIterator<>(type);
     }
 
-    private class EventListenerIterator implements Iterator {
+    private class EventListenerIterator<T> implements Iterator<T> {
 
         /**
          * The listener we will return with the next call to next().
@@ -69,31 +74,35 @@ public class EventListenerList extends javax.swing.event.EventListenerList {
          * matching listeners have been returned, in which case _next
          * is -1
          * */
-        private int _count;
-        private int _next;
-        private Class _t;
+        private final int count;
+        private int next;
+        private final Class<T> type;
 
-        EventListenerIterator(Class t) {
+        EventListenerIterator(Class<T> type) {
 
-            _count = getListenerList().length;
-            _next = -2;
-            _t = t;
+            count = getListenerList().length;
+            next = -2;
+            this.type = type;
             findNext();
         }
 
+        @Override
         public boolean hasNext() {
-            return (_next < _count);
+            return (next < count);
         }
 
-        public Object next() throws NoSuchElementException {
+        @Override
+        @SuppressWarnings("unchecked")
+        public T next() throws NoSuchElementException {
             if ( ! hasNext() ) {
                 throw new NoSuchElementException("Iterator exhausted");
             }
-            int result = _next;
+            int result = next;
             findNext();
-            return getListenerList()[result+1];
+            return (T) getListenerList()[result+1];
         }
 
+        @Override
         public void remove() throws UnsupportedOperationException {
             throw new UnsupportedOperationException("Removal not supported");
         }
@@ -108,14 +117,14 @@ public class EventListenerList extends javax.swing.event.EventListenerList {
          * */
         private void findNext() {
 
-            for (int i = _next+2; i<_count; i+=2) {
+            for (int i = next+2; i<count; i+=2) {
 
-                if (getListenerList()[i] == _t) {
-                    _next = i;
+                if (getListenerList()[i] == type) {
+                    next = i;
                     return;
                 }
             }
-            _next = _count;
+            next = count;
         }
     }
 }

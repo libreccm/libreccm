@@ -33,6 +33,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 
+import java.util.Objects;
+
 /**
  *    Represents the abstract model for a form parameter object.  This
  *    class must be subclassed for each specific data type.
@@ -494,5 +496,25 @@ public abstract class ParameterModel implements Lockable {
             }
         }
         return false;
+    }
+    
+    @Override
+    public boolean equals(final Object other) {
+        if (other == null) {
+            return false;
+        }
+        
+        if (!(other instanceof ParameterModel)) {
+            return false;
+        }
+        
+        return m_name.equals(((ParameterModel) other).getName());
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 73 * hash + Objects.hashCode(this.m_name);
+        return hash;
     }
 }

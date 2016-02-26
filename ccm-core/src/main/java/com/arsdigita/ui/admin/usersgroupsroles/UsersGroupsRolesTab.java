@@ -94,16 +94,6 @@ public class UsersGroupsRolesTab extends LayoutPanel {
         setBody(body);
     }
     
-    private SimpleContainer buildUserAdmin() {
-        final BoxPanel panel = new BoxPanel();
-        
-        
-        
-        panel.add(new Label("User Admin"));
-            
-        return panel;
-    }
-
     private void addSection(final Label label,
                             final Component component,
                             final BoxPanel panel) {

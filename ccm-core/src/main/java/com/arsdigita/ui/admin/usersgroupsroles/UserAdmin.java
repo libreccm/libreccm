@@ -18,19 +18,64 @@
  */
 package com.arsdigita.ui.admin.usersgroupsroles;
 
+import com.arsdigita.bebop.ActionLink;
 import com.arsdigita.bebop.BoxPanel;
+import com.arsdigita.bebop.Form;
+import com.arsdigita.bebop.PageState;
+import com.arsdigita.bebop.ParameterSingleSelectionModel;
+import com.arsdigita.bebop.Text;
+import com.arsdigita.bebop.event.PrintEvent;
+import com.arsdigita.bebop.form.Submit;
+import com.arsdigita.bebop.form.TextField;
+import com.arsdigita.bebop.parameters.LongParameter;
+import com.arsdigita.globalization.GlobalizedMessage;
+
+import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class UserAdmin extends BoxPanel {
-    
+
+    private final ParameterSingleSelectionModel<String> selectedUserId;
+    private final TextField usersTableFilter;
+
     public UserAdmin() {
         super();
-        
+
         //add(new Label("User Admin class"));
-        add(new UsersTable());
+        final Form filterForm = new Form("usersTableFilterForm");
+        usersTableFilter = new TextField("usersTableFilter");
+        usersTableFilter.setLabel(new GlobalizedMessage(
+            "ui.admin.users.table.filter.term", ADMIN_BUNDLE));
+        filterForm.add(usersTableFilter);
+        filterForm.add(new Submit(new GlobalizedMessage(
+            "ui.admin.users.table.filter.submit", ADMIN_BUNDLE)));
+        final ActionLink clearLink = new ActionLink(new GlobalizedMessage(
+            "ui.admin.users.table.filter.clear", ADMIN_BUNDLE));
+        clearLink.addActionListener((e) -> {
+            final PageState state = e.getPageState();
+            usersTableFilter.setValue(state, null);
+        });
+        filterForm.add(clearLink);
+        add(filterForm);
+
+        selectedUserId = new ParameterSingleSelectionModel<>(USER_ID_PARAM);
+
+        final UsersTable usersTable = new UsersTable(usersTableFilter,
+                                                     selectedUserId);
+        add(usersTable);
+
+        final Text text = new Text();
+        text.setPrintListener((final PrintEvent e) -> {
+            final Text target = (Text) e.getTarget();
+            final PageState state = e.getPageState();
+            if (selectedUserId.isSelected(state)) {
+                target.setText(selectedUserId.getSelectedKey(state));
+            }
+        });
+        add(text);
     }
-    
+
 }

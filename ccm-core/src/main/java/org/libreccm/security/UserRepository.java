@@ -21,9 +21,7 @@ package org.libreccm.security;
 import org.libreccm.core.AbstractEntityRepository;
 
 import java.util.List;
-import java.util.Optional;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.persistence.EntityGraph;
 import javax.persistence.TypedQuery;
@@ -126,13 +124,6 @@ public class UserRepository extends AbstractEntityRepository<Long, User> {
         applyDefaultEntityGraph(query);
 
         return getSingleResultOrNull(query);
-
-//        final List<User> result = query.getResultList();
-//        if (result.isEmpty()) {
-//            return null;
-//        } else {
-//            return result.get(0);
-//        }
     }
 
     public User findByEmailAddress(final String emailAddress,
@@ -150,8 +141,16 @@ public class UserRepository extends AbstractEntityRepository<Long, User> {
             "User.findByEmailAddress", User.class);
         query.setParameter("emailAddress", emailAddress);
         query.setHint(FETCH_GRAPH_HINT_KEY, entityGraph);
-        
+
         return getSingleResultOrNull(query);
+    }
+
+    public List<User> filtered(final String term) {
+        final TypedQuery<User> query = getEntityManager().createNamedQuery(
+            "User.filterByNameAndEmail", User.class);
+        query.setParameter("term", term);
+        
+        return query.getResultList();
     }
 
 }

@@ -29,7 +29,7 @@ import com.arsdigita.xml.Element;
  * of certain parts of the screen. Therefore the label has to use a 
  * GlobalizedMessage for the information presented. 
  * 
- * A Label is meant to provide semantically relevant informatin and may not be
+ * A Label is meant to provide semantically relevant information and may not be
  * used for fixed arbitrary Text. Use Embedded instead. 
  * 
  * (Previous usage: can be used to generate either some static, fixed

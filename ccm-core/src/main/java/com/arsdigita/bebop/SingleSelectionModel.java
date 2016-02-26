@@ -38,10 +38,14 @@ import com.arsdigita.bebop.parameters.ParameterModel;
  * key's <code>toString</code> method produces a representation of the key
  * that can be used in URL strings and hidden form controls.
  *
+ * Edit for CCM NG: Added generics.
+ * 
+ * @param <T> Type for the key
+ * 
  * @author David Lutterkort 
- * @version $Id: SingleSelectionModel.java 287 2005-02-22 00:29:02Z sskracic $
+ * @author Jens Pelzetter
  */
-public interface SingleSelectionModel {
+public interface SingleSelectionModel<T> {
 
     /**
      * Returns <code>true</code> if there is a selected element.
@@ -58,7 +62,7 @@ public interface SingleSelectionModel {
      * @param state a <code>PageState</code> value
      * @return a <code>String</code> value.
      */
-    Object getSelectedKey(PageState state);
+    T getSelectedKey(PageState state);
 
     /**
      * Sets the selected key. If <code>key</code> is not in the collection of
@@ -70,7 +74,7 @@ public interface SingleSelectionModel {
      * @throws IllegalArgumentException if the supplied <code>key</code> can not
      * be selected in the context of the current request.
      */
-    void setSelectedKey(PageState state, Object key);
+    void setSelectedKey(PageState state, T key);
 
     /**
      * Clears the selection.
@@ -84,16 +88,16 @@ public interface SingleSelectionModel {
      * Adds a change listener to the model. The listener's
      * <code>stateChanged</code> method is called whenever the selected key changes.
      *
-     * @param l a listener to notify when the selected key changes
+     * @param changeListener a listener to notify when the selected key changes
      */
-    void addChangeListener(ChangeListener l);
+    void addChangeListener(ChangeListener changeListener);
 
     /**
      * Removes a change listener from the model.
      *
-     * @param l the listener to remove
+     * @param changeListener the listener to remove
      */
-    void removeChangeListener(ChangeListener l);
+    void removeChangeListener(ChangeListener changeListener);
 
     /**
      * Returns the state parameter that will be used to keep track
