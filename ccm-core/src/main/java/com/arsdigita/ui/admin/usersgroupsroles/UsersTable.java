@@ -24,7 +24,6 @@ import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.ParameterSingleSelectionModel;
 import com.arsdigita.bebop.Table;
-import com.arsdigita.bebop.event.TableActionAdapter;
 import com.arsdigita.bebop.event.TableActionEvent;
 import com.arsdigita.bebop.event.TableActionListener;
 import com.arsdigita.bebop.form.TextField;
@@ -63,7 +62,8 @@ public class UsersTable extends Table {
     private final TextField usersTableFilter;
     private final ParameterSingleSelectionModel<String> selectedUserId;
 
-    public UsersTable(final TextField usersTableFilter,
+    public UsersTable(final UserAdmin parent,
+                      final TextField usersTableFilter,
                       final ParameterSingleSelectionModel<String> selectedUserId) {
         super();
 
@@ -71,51 +71,56 @@ public class UsersTable extends Table {
         this.selectedUserId = selectedUserId;
 
         setEmptyView(new Label(new GlobalizedMessage(
-            "ui.admin.users.table.no_users", ADMIN_BUNDLE)));
+                "ui.admin.users.table.no_users", ADMIN_BUNDLE)));
 
         final TableColumnModel columnModel = getColumnModel();
         columnModel.add(new TableColumn(
-            COL_SCREEN_NAME,
-            new Label(new GlobalizedMessage("ui.admin.users.table.screenname",
-                                            ADMIN_BUNDLE))));
+                COL_SCREEN_NAME,
+                new Label(new GlobalizedMessage(
+                        "ui.admin.users.table.screenname",
+                        ADMIN_BUNDLE))));
         columnModel.add(new TableColumn(
-            COL_GIVEN_NAME,
-            new Label(new GlobalizedMessage("ui.admin.users.table.givenname",
-                                            ADMIN_BUNDLE))));
+                COL_GIVEN_NAME,
+                new Label(
+                        new GlobalizedMessage("ui.admin.users.table.givenname",
+                                              ADMIN_BUNDLE))));
         columnModel.add(new TableColumn(
-            COL_FAMILY_NAME,
-            new Label(new GlobalizedMessage("ui.admin.users.table.familyname",
-                                            ADMIN_BUNDLE))));
+                COL_FAMILY_NAME,
+                new Label(new GlobalizedMessage(
+                        "ui.admin.users.table.familyname",
+                        ADMIN_BUNDLE))));
         columnModel.add(new TableColumn(
-            COL_PRIMARY_EMAIL,
-            new Label(new GlobalizedMessage(
-                "ui.admin.users.table.primary_email", ADMIN_BUNDLE))));
+                COL_PRIMARY_EMAIL,
+                new Label(new GlobalizedMessage(
+                        "ui.admin.users.table.primary_email", ADMIN_BUNDLE))));
         columnModel.add(new TableColumn(
-            COL_BANNED,
-            new Label(new GlobalizedMessage(
-                "ui.admin.users.table.banned", ADMIN_BUNDLE))));
-        
-        columnModel.get(COL_SCREEN_NAME).setCellRenderer(new TableCellRenderer() {
+                COL_BANNED,
+                new Label(new GlobalizedMessage(
+                        "ui.admin.users.table.banned", ADMIN_BUNDLE))));
+
+        columnModel.get(COL_SCREEN_NAME).setCellRenderer(
+                new TableCellRenderer() {
 
             @Override
-            public Component getComponent(final Table table, 
+            public Component getComponent(final Table table,
                                           final PageState state,
-                                          final Object value, 
+                                          final Object value,
                                           final boolean isSelected,
-                                          final Object key, 
-                                          final int row, 
+                                          final Object key,
+                                          final int row,
                                           final int column) {
                 return new ControlLink((String) value);
             }
         });
-        
+
         addTableActionListener(new TableActionListener() {
 
             @Override
             public void cellSelected(final TableActionEvent event) {
+                final PageState state = event.getPageState();
                 final String key = (String) event.getRowKey();
-                
-                selectedUserId.setSelectedKey(event.getPageState(), key);
+                selectedUserId.setSelectedKey(state, key);
+                parent.showUserDetails(state);
             }
 
             @Override
@@ -123,12 +128,12 @@ public class UsersTable extends Table {
                 //Nothing
             }
         });
-        
+
         setModelBuilder(new UsersTableModelBuilder());
     }
 
     private class UsersTableModelBuilder extends LockableImpl
-        implements TableModelBuilder {
+            implements TableModelBuilder {
 
         @Override
         public TableModel makeModel(final Table table, final PageState state) {
@@ -147,17 +152,17 @@ public class UsersTable extends Table {
         public UsersTableModel(final PageState state) {
             LOGGER.debug("Creating UsersTableModel...");
             final String filterTerm = (String) usersTableFilter
-                .getValue(state);
+                    .getValue(state);
             LOGGER.debug("Value of filter is: \"{}\"", filterTerm);
             final UserRepository userRepository = CdiUtil.createCdiUtil()
-                .findBean(UserRepository.class);
+                    .findBean(UserRepository.class);
             if (filterTerm == null || filterTerm.isEmpty()) {
                 users = userRepository.findAll();
                 LOGGER.debug("Found {} users in database.", users.size());
             } else {
                 users = userRepository.filtered(filterTerm);
                 LOGGER.debug("Found {} users in database which match the "
-                                 + "filter \"{}\".",
+                                     + "filter \"{}\".",
                              users.size(),
                              filterTerm);
             }
@@ -198,7 +203,7 @@ public class UsersTable extends Table {
                     return user.getName();
                 default:
                     throw new IllegalArgumentException(
-                        "No a valid column index.");
+                            "No a valid column index.");
             }
         }
 

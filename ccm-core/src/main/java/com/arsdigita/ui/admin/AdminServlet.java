@@ -100,9 +100,9 @@ public class AdminServlet
         //  addPage("/index.jsp", buildIndexPage()); // index page at address ~/ds
 
         adminPage = PageFactory.buildPage("admin", "LibreCCM NG Admin");
-        adminPage.addGlobalStateParam(USER_ID_PARAM);
-        adminPage.addGlobalStateParam(GROUP_ID_PARAM);
-        adminPage.addGlobalStateParam(APPLICATIONS_ID_PARAM);
+//        adminPage.addGlobalStateParam(USER_ID_PARAM);
+//        adminPage.addGlobalStateParam(GROUP_ID_PARAM);
+//        adminPage.addGlobalStateParam(APPLICATIONS_ID_PARAM);
 
         adminPage.add(new UserBanner());
         adminPage.add(new SiteBanner());
