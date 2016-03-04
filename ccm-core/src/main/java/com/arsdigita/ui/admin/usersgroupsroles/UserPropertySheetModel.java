@@ -54,7 +54,7 @@ public class UserPropertySheetModel implements PropertySheetModel {
         if (selectedUser == null) {
             return false;
         }
-        
+
         if (propertyIterator.hasNext()) {
             currentProperty = propertyIterator.next();
             return true;
@@ -74,11 +74,10 @@ public class UserPropertySheetModel implements PropertySheetModel {
     }
 
     private GlobalizedMessage generateGlobalizedLabel(
-            final UserProperty property) {
-        return new GlobalizedMessage(
-                String.join("ui.admin.user.property_sheet.",
-                            property.toString().toLowerCase()),
-                ADMIN_BUNDLE);
+        final UserProperty property) {
+        final String key = String.join("", "ui.admin.user.property_sheet.",
+                                       property.toString().toLowerCase());
+        return new GlobalizedMessage(key, ADMIN_BUNDLE);
     }
 
     @Override

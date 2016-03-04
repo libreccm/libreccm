@@ -24,12 +24,14 @@ import com.arsdigita.bebop.Form;
 import com.arsdigita.bebop.Page;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.ParameterSingleSelectionModel;
+import com.arsdigita.bebop.PropertySheet;
 import com.arsdigita.bebop.Text;
-import com.arsdigita.bebop.event.PrintEvent;
 import com.arsdigita.bebop.form.Submit;
 import com.arsdigita.bebop.form.TextField;
 import com.arsdigita.bebop.parameters.LongParameter;
 import com.arsdigita.globalization.GlobalizedMessage;
+
+import org.dom4j.tree.BackedList;
 
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
@@ -42,14 +44,21 @@ public class UserAdmin extends BoxPanel {
     private final LongParameter userIdParameter;
     private final ParameterSingleSelectionModel<String> selectedUserId;
     private final TextField usersTableFilter;
-    final BoxPanel usersTablePanel;
+    private final BoxPanel usersTablePanel;
     private final UsersTable usersTable;
-    private final UserDetails userDetails;
+    private final ActionLink backToUsersTable;
+    private final PropertySheet userProperties;
+    private final BoxPanel actionLinks;
+//    private final UserDetails userDetails;
+    private final BoxPanel userDetails;
 
     public UserAdmin() {
         super();
 
+        setIdAttr("userAdmin");
+        
         usersTablePanel = new BoxPanel();
+        usersTablePanel.setIdAttr("usersTablePanel");
         
         final Form filterForm = new Form("usersTableFilterForm");
         usersTableFilter = new TextField("usersTableFilter");
@@ -86,8 +95,54 @@ public class UserAdmin extends BoxPanel {
 //        });
 //        add(text);
 
-        userDetails = new UserDetails(this, selectedUserId);
-        add(new UserDetails(this, selectedUserId));
+//        userDetails = new UserDetails(this, selectedUserId);
+//        add(new UserDetails(this, selectedUserId));
+    
+        userDetails = new BoxPanel();
+        userDetails.setIdAttr("userDetails");
+
+        backToUsersTable = new ActionLink(new GlobalizedMessage(
+            "ui.admin.user_details.back", ADMIN_BUNDLE));
+        backToUsersTable.setIdAttr("userDetailsBackLink");
+        backToUsersTable.addActionListener(
+            e -> closeUserDetails(e.getPageState()));
+        userDetails.add(backToUsersTable);
+        
+        userProperties = new PropertySheet(new UserPropertySheetModelBuilder(
+            this, selectedUserId));
+        userProperties.setIdAttr("userProperties");
+        userDetails.add(userProperties);
+        
+        actionLinks = new BoxPanel(BoxPanel.HORIZONTAL);
+        actionLinks.setIdAttr("userDetailsActionLinks");
+        final ActionLink editUserDetailsLink = new ActionLink(
+            new GlobalizedMessage("ui.admin.user_details.edit", ADMIN_BUNDLE));
+        editUserDetailsLink.addActionListener(e -> {
+            //ToDo
+        });
+        actionLinks.add(editUserDetailsLink);
+        actionLinks.add(new Text(" | "));
+        
+        final ActionLink setPasswordLink = new ActionLink(
+            new GlobalizedMessage("ui.admin.user_details.set_password", 
+                ADMIN_BUNDLE));
+        setPasswordLink.addActionListener(e -> {
+            //ToDo
+        });
+        actionLinks.add(setPasswordLink);
+        actionLinks.add(new Text(" | "));
+        
+        final ActionLink generatePasswordLink = new ActionLink(
+        new GlobalizedMessage("ui.admin.user_details.generate_password", 
+            ADMIN_BUNDLE));
+        generatePasswordLink.addActionListener(e -> {
+            //ToDo
+        });
+        actionLinks.add(generatePasswordLink);
+        
+        userDetails.add(actionLinks);
+        
+        add(userDetails);
     }
 
     @Override
@@ -99,7 +154,7 @@ public class UserAdmin extends BoxPanel {
         page.setVisibleDefault(usersTablePanel, true);
         page.setVisibleDefault(userDetails, false);
     }
-    
+
     protected void showUserDetails(final PageState state) {
         usersTablePanel.setVisible(state, false);
         userDetails.setVisible(state, true);

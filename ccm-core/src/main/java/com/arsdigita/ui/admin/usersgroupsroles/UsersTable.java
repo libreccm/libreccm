@@ -67,6 +67,8 @@ public class UsersTable extends Table {
                       final ParameterSingleSelectionModel<String> selectedUserId) {
         super();
 
+        setIdAttr("usersTable");
+        
         this.usersTableFilter = usersTableFilter;
         this.selectedUserId = selectedUserId;
 

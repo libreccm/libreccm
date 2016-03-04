@@ -25,7 +25,6 @@ import com.arsdigita.bebop.List;
 import com.arsdigita.bebop.Page;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.Resettable;
-import com.arsdigita.bebop.SimpleContainer;
 import com.arsdigita.bebop.list.ListModel;
 import com.arsdigita.bebop.list.ListModelBuilder;
 import com.arsdigita.globalization.GlobalizedMessage;
@@ -109,7 +108,9 @@ public class UsersGroupsRolesTab extends LayoutPanel {
         Assert.isUnlocked(this);
         
         components.forEach(c -> page.setVisibleDefault(c, false));
-        page.setVisibleDefault(components.get(0), true);
+        //page.setVisibleDefault(components.get(0), true);
+        
+        
     }
 
     public void setSection(final int index, final PageState state) {
@@ -134,7 +135,11 @@ public class UsersGroupsRolesTab extends LayoutPanel {
         @Override
         public ListModel makeModel(final List list,
                                    final PageState state) {
-            sections.setSelectedKey(state, String.valueOf(0));
+            if (sections.getSelectedKey(state) == null) {
+                sections.setSelectedKey(state, String.valueOf(0));
+            }
+            
+            //sections.setSelectedKey(state, String.valueOf(0));
             return new SectionsListModel(state);
         }
 
