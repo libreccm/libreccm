@@ -18,13 +18,10 @@
  */
 package org.libreccm.portation;
 
-import com.fasterxml.jackson.dataformat.csv.CsvMapper;
-import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import org.apache.log4j.Logger;
 import org.libreccm.core.Identifiable;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -37,33 +34,30 @@ import java.util.List;
  * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
  * @version created the 2/10/16
  */
-public abstract class AbstractMarshaller<T extends Identifiable> {
+public abstract class AbstractMarshaller<I extends Identifiable> {
 
     private static final Logger log = Logger.getLogger(AbstractMarshaller.class);
+
+    private Format format;
 
     private File exportFile;
     private List<File> importFiles;
 
-    private Format format;
-
     // CSV specifics
-    private CsvMapper mapper;
-    private CsvSchema schema;
 
     // JSON specifics
 
-
     // XML specifics
 
-
+    /**
+     *
+     * @param format
+     */
     private void init(final Format format) {
         this.format = format;
 
         switch (this.format) {
             case CSV:
-                mapper = new CsvMapper();
-                schema = getCsvSchema();
-                schema = mapper.schemaFor(getClassT());
                 break;
 
             case JSON:
@@ -88,30 +82,13 @@ public abstract class AbstractMarshaller<T extends Identifiable> {
     }
 
 
-    /* CSV Export/Import */
-
     /**
-     * Main export method. Exports a list of same typed objects to CSV
-     * strings and writes them into the same file with a name specific to
-     * their class.
-     *
-     * TODO: throw exception for ui
-     * TODO: error message not with uuid
      *
      * @param exportObjects List of {@code T}-tpyed objects being exported
      */
-    public void exportEntities(final List<T> exportObjects) {
+    public void exportEntities(final List<I> exportObjects) {
         switch (format) {
             case CSV:
-                exportObjects.forEach(t -> {
-                    try {
-                        mapper.writer(schema).writeValue(exportFile, t);
-                    } catch (IOException e) {
-                        log.error(String.format("Error writing object with UUID " +
-                                        "%d to CSV-file with the name %s.",
-                                1234, exportFile.getName()));
-                    }
-                });
                 break;
 
             case JSON:
@@ -127,27 +104,12 @@ public abstract class AbstractMarshaller<T extends Identifiable> {
     }
 
     /**
-     * Main import method. Imports a list of string representing object of
-     * the same type ({@code T}) from a CSV-file and parses them into the
-     * corresponding objects.
-     *
-     * TODO: throw exception for ui
-     * TODO: error message not with uuid
      *
      * @return List of {@code T}-typed objects being imported
      */
-    public List<T> importEntities() {
+    public List<I> importEntities() {
         switch (format) {
             case CSV:
-                /*List<T> importObjects = new ArrayList<>();
-                try {
-                    mapper.readerFor(getClassT()).with(schema).readValues(file)
-                            .forEachRemaining(t -> importObjects.add((T) t));
-                } catch (IOException e) {
-                    log.error(String.format("Error reading object with UUID %d from " +
-                            "CSV-file with the name %s.", 1234, file.getName()));
-                }
-                return importObjects;*/
                 break;
 
             case JSON:
@@ -161,30 +123,5 @@ public abstract class AbstractMarshaller<T extends Identifiable> {
         }
         return null;
     }
-
-    /**
-     * Abstract method to get the class of the extending subclass fulfilling
-     * the generic type {@code T}.
-     *
-     * @return Class of the extending subclass.
-     */
-    protected abstract Class getClassT();
-
-    /**
-     * Abstract method to get the CSV schema needed for both ex- and
-     * importation specific to every extending subclass.
-     *
-     * @return The CSV schema specific to the implementing subclass
-     */
-    protected abstract CsvSchema getCsvSchema();
-
-
-    /* JSON Export/Import */
-
-
-
-    /* XML Export/Import */
-
-
 
 }

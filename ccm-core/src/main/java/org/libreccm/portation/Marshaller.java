@@ -27,12 +27,15 @@ import javax.faces.bean.RequestScoped;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 /**
+ * Central class for exporting and importing objects of this system stored in
+ * the database. Retrieves all available implementations of
+ * {@link AbstractMarshaller} using CDI. The implementations have to be CDI
+ * beans of course. Also they must be annotated with the {@link Marshals}
+ * annotation.
  *
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  * @version created the 03.02.2016
@@ -45,72 +48,95 @@ public class Marshaller {
     private Instance<AbstractMarshaller<? extends Identifiable>>
             marshallerInstances;
 
+    // Assigns lists with objects of the same type as values to their typ as
+    // key.
+    private Map<Class<? extends Identifiable>, List<Identifiable>> classListMap;
+
 
     /**
+     * Main export method. Organizes the objects into list of the same type
+     * and calls a second export method for each list.
      *
-     * @param objects
-     * @param format
-     * @param filename
+     * @param objects All objects to be exported
+     * @param format The export style/format e.g. CSV or JSON
+     * @param filename The name of the file to be exported to
      */
-    @SuppressWarnings("unchecked")
-    public void exportObjects(List<? extends
-            Identifiable> objects, Format format, String filename) {
+    public void exportObjects(List<Identifiable> objects, Format format,
+                               String filename) {
+        putObjects(objects);
 
-        List<List<? extends Identifiable>> objectsByClass = new ArrayList<>();
-        Queue<Class<? extends Identifiable>> queue = new LinkedList<>();
-
-        // Splits list of all entities into lists of the same entity class
-        while (!objects.isEmpty()) {
-            Class<? extends Identifiable> clazz = objects.get(0).getClass();
-            objectsByClass.add(objects.stream()
-                    .filter(t -> t.getClass() == clazz)
-                    .collect(Collectors.toList()));
-            queue.add(clazz);
-        }
-
-        // Exports list of the same class
-        for (List objectList : objectsByClass) {
-            final Instance<AbstractMarshaller<? extends Identifiable>>
-                    marshallerInstance = marshallerInstances.select(new
-                    MarshalsLiteral(queue.peek()));
-
-            if (marshallerInstance.isUnsatisfied()) {
-                // If there are no marshals we have a problem...
-                throw new IllegalArgumentException(String.format("No " +
-                        "marshaller for \"%s\" found.", queue.peek()
-                        .getName()));
-            } else if (marshallerInstance.isAmbiguous()) {
-                // If there is more than one marshaller something is wrong...
-                throw new IllegalArgumentException(String.format("More than " +
-                        "one marshaller for \"%s\" found.", queue.peek()
-                        .getName()));
-            } else {
-                // Gets the marshaller and calls the export method
-                final Iterator<AbstractMarshaller<? extends Identifiable>> it =
-                        marshallerInstance.iterator();
-
-                AbstractMarshaller<? extends Identifiable> marshaller = it
-                        .next();
-                marshaller.init(format, filename);
-                marshaller.exportEntities(objectList);
-            }
-            queue.remove();
+        for (Map.Entry<Class<? extends Identifiable>, List<Identifiable>>
+            classListEntry : classListMap.entrySet()) {
+            exportList( classListEntry.getValue(), classListEntry.getKey(),
+                    format, filename);
         }
     }
-
-    private <T extends Identifiable> List<T> getListForClass(List<? extends
-            Identifiable> objList, Class<T> objClass) {
-
-        return null;
-        //objList.stream().filter(obj -> obj.getClass() == objClass)
-        //        .collect(Collectors.toList());
-    }
-
-
-
 
     /**
+     * Organizes a list of different {@link Identifiable} objects into a map
+     * assigning lists of the same type to their type as values to a key. The
+     * type which all objects of that list have in common is their key.
+     * That opens the possibility of being certain of the objects types in
+     * the list. Guarantied through this implementation.
      *
+     * @param objects list of all objects being organized
+     */
+    private void putObjects(List<Identifiable> objects) {
+        for (Identifiable object : objects) {
+            Class<? extends Identifiable> type = object.getClass();
+
+            if (classListMap.containsKey(type)) {
+                classListMap.get(type).add(object);
+            } else {
+                List<Identifiable> values = new ArrayList<>();
+                values.add(object);
+                classListMap.put(type, values);
+            }
+        }
+    }
+
+    /**
+     * Selects the right marshaller for the given type, initializes that
+     * marshaller for the given export wishes and calls the export method of
+     * that marshaller upon the given list of same typed objects.
+     *
+     * @param list List of objects to be exported of the same type
+     * @param type The class of the type
+     * @param format The export style
+     * @param filename The filename
+     * @param <I> The type
+     */
+    private <I extends Identifiable> void exportList(List<I> list, Class<?
+            extends I> type, Format format, String filename) {
+
+        final Instance<AbstractMarshaller<? extends Identifiable>>
+                marshallerInstance = marshallerInstances.select(new
+                MarshalsLiteral(type));
+
+        if (marshallerInstance.isUnsatisfied()) {
+            //If there are no marshallers we have a problem...
+            throw new IllegalArgumentException(String.format(
+                    "No marshallers for \"%s\" found.", type.getName()));
+        } else if (marshallerInstance.isAmbiguous()) {
+            //If there is more than one marshaller something is wrong...
+            throw new IllegalArgumentException(String.format(
+                    "More than one marshaller for \"%s\" found.", type
+                            .getName()));
+        } else {
+            // Get the marshaller for this list and call the export method.
+            final Iterator<AbstractMarshaller<? extends Identifiable>>
+                    iterator = marshallerInstance.iterator();
+            @SuppressWarnings("unchecked")
+            final AbstractMarshaller<I> marshaller = (AbstractMarshaller<I>)
+                    iterator.next();
+
+            marshaller.init(format, filename);
+            marshaller.exportEntities(list);
+        }
+    }
+
+    /**
+     * {@link AnnotationLiteral} used for filtering the available marshallers.
      */
     private class MarshalsLiteral extends AnnotationLiteral<Marshals>
             implements Marshals {

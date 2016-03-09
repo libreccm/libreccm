@@ -18,7 +18,6 @@
  */
 package org.libreccm.docrepo;
 
-import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import org.libreccm.portation.AbstractMarshaller;
 import org.libreccm.portation.Marshals;
 
@@ -29,31 +28,4 @@ import org.libreccm.portation.Marshals;
 @Marshals(AbstractResource.class)
 public class AbstractResourceMarshaller extends AbstractMarshaller<AbstractResource> {
 
-    @Override
-    protected Class getClassT() {
-        return AbstractResource.class;
-    }
-
-    @Override
-    protected CsvSchema getCsvSchema() {
-        return CsvSchema.builder()
-                .addColumn("object_ID", CsvSchema.ColumnType.NUMBER)
-                .addColumn("displayName")
-                .addColumn("permissions", CsvSchema.ColumnType.ARRAY)
-                .addColumn("categories", CsvSchema.ColumnType.ARRAY)
-                .addColumn("name")
-                .addColumn("description")
-                .addColumn("path")
-                .addColumn("mimeType")
-                .addColumn("size", CsvSchema.ColumnType.NUMBER)
-                .addColumn("creationDate", CsvSchema.ColumnType.NUMBER)
-                .addColumn("lastModifiedDate", CsvSchema.ColumnType.NUMBER)
-                .addColumn("creationIp")
-                .addColumn("lastModifiedIp")
-                .addColumn("creationUser")
-                .addColumn("lastModifiedUser")
-                .addColumn("parent")
-                .addColumn("repository")
-                .build();
-    }
 }

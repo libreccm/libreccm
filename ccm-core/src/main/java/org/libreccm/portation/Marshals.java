@@ -27,7 +27,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- *
+ * Qualifier annotation for implementations of {@link AbstractMarshaller}. The
+ * value is the implementation of {@link Identifiable} for which the annotated
+ * {@link AbstractMarshaller} implementation exports and imports its instances.
  *
  * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
  * @version created the 2/24/16
