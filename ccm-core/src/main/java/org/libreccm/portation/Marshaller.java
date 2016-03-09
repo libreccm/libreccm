@@ -67,7 +67,7 @@ public class Marshaller {
 
         for (Map.Entry<Class<? extends Identifiable>, List<Identifiable>>
             classListEntry : classListMap.entrySet()) {
-            exportList( classListEntry.getValue(), classListEntry.getKey(),
+            exportList(classListEntry.getValue(), classListEntry.getKey(),
                     format, filename);
         }
     }
@@ -130,8 +130,26 @@ public class Marshaller {
             final AbstractMarshaller<I> marshaller = (AbstractMarshaller<I>)
                     iterator.next();
 
-            marshaller.init(format, filename);
+            marshaller.init(format, filename + "__" + type.toString());
             marshaller.exportList(list);
+        }
+    }
+
+
+    public <I extends Identifiable> void importObjects(
+            List<String> filenames, Format format) {
+        for (String filename : filenames) {
+            String[] splitFilename = filename.split("__");
+            String className =
+                    splitFilename[splitFilename.length].split(".")[0];
+
+            try {
+                Class objectClass = Class.forName(className);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+
+            Class[] subclasses = Identifiable.class.getClasses();
         }
     }
 

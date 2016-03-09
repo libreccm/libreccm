@@ -58,9 +58,9 @@ public abstract class AbstractMarshaller<I extends Identifiable> {
 
 
 
-    public void init(final Format format, String baseFileName) {
+    public void init(final Format format, String filename) {
         this.format = format;
-        this.filename = baseFileName;
+        this.filename = filename;
 
         switch (this.format) {
             case XML:
@@ -83,7 +83,7 @@ public abstract class AbstractMarshaller<I extends Identifiable> {
 
 
     public void exportList(final List<I> exportList) {
-        File file = new File(filename + "_" + getObjectClass().toString());
+        File file = new File(filename);
         FileWriter fileWriter = null;
 
         try {
