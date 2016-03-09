@@ -36,6 +36,7 @@ public class UserPropertySheetModel implements PropertySheetModel {
         USER_NAME,
         FAMILY_NAME,
         GIVEN_NAME,
+        PASSWORD_SET,
         BANNED,
         PASSWORD_RESET_REQUIRED,
     }
@@ -89,6 +90,10 @@ public class UserPropertySheetModel implements PropertySheetModel {
                 return selectedUser.getFamilyName();
             case GIVEN_NAME:
                 return selectedUser.getGivenName();
+            case PASSWORD_SET:
+                return Boolean.toString(
+                    (selectedUser.getPassword() != null
+                     && !selectedUser.getPassword().isEmpty()));
             case BANNED:
                 return Boolean.toString(selectedUser.isBanned());
             case PASSWORD_RESET_REQUIRED:
