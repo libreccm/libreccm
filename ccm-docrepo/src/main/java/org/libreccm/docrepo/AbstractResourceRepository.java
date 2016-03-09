@@ -38,8 +38,7 @@ import java.util.stream.Collectors;
  * @version 01/10/2015
  */
 public abstract class AbstractResourceRepository<T extends AbstractResource>
-    extends
-    AbstractAuditedEntityRepository<Long, T> {
+    extends AbstractAuditedEntityRepository<Long, T> {
 
     protected Class classOfT;
 

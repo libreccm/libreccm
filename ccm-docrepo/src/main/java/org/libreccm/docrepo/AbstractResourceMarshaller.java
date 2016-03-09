@@ -28,4 +28,13 @@ import org.libreccm.portation.Marshals;
 @Marshals(AbstractResource.class)
 public class AbstractResourceMarshaller extends AbstractMarshaller<AbstractResource> {
 
+    @Override
+    protected Class<AbstractResource> getObjectClass() {
+        return null;
+    }
+
+    @Override
+    protected void insertObjectIntoDB(AbstractResource object) {
+
+    }
 }

@@ -18,10 +18,18 @@
  */
 package org.libreccm.portation;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.apache.log4j.Logger;
 import org.libreccm.core.Identifiable;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -39,31 +47,33 @@ public abstract class AbstractMarshaller<I extends Identifiable> {
     private static final Logger log = Logger.getLogger(AbstractMarshaller.class);
 
     private Format format;
+    private String filename;
 
-    private File exportFile;
-    private List<File> importFiles;
-
-    // CSV specifics
+    // XML specifics
+    ObjectMapper xmlMapper;
 
     // JSON specifics
 
-    // XML specifics
+    // CSV specifics
 
-    /**
-     *
-     * @param format
-     */
-    private void init(final Format format) {
+
+
+    public void init(final Format format, String baseFileName) {
         this.format = format;
+        this.filename = baseFileName;
 
         switch (this.format) {
-            case CSV:
+            case XML:
+                // for additional configuration
+                JacksonXmlModule module = new JacksonXmlModule();
+                module.setDefaultUseWrapper(false);
+                xmlMapper = new XmlMapper(module);
                 break;
 
             case JSON:
                 break;
 
-            case XML:
+            case CSV:
                 break;
 
             default:
@@ -71,57 +81,101 @@ public abstract class AbstractMarshaller<I extends Identifiable> {
         }
     }
 
-    public void init(final Format format, final String filename) {
-        exportFile = new File(filename);
-        init(format);
-    }
 
-    public void init(final Format format, final List<String> filenames) {
-        filenames.forEach(fname -> importFiles.add(new File(fname)));
-        init(format);
-    }
+    public void exportList(final List<I> exportList) {
+        File file = new File(filename + "_" + getObjectClass().toString());
+        FileWriter fileWriter = null;
 
-
-    /**
-     *
-     * @param exportObjects List of {@code T}-tpyed objects being exported
-     */
-    public void exportEntities(final List<I> exportObjects) {
-        switch (format) {
-            case CSV:
-                break;
-
-            case JSON:
-                break;
-
-            case XML:
-                break;
-
-            default:
-                break;
+        try {
+            fileWriter = new FileWriter(file);
+        } catch (IOException e) {
+            log.error(String.format("Unable open a fileWriter for the file " +
+                    "with the name %s.", file.getName()));
         }
 
+        if (fileWriter != null) {
+            for (I object : exportList) {
+                String line = null;
+
+                switch (format) {
+                    case XML:
+                        try {
+                            line = xmlMapper.writeValueAsString(object);
+                        } catch (JsonProcessingException e) {
+                            log.error(String.format("Unable to write object %s " +
+                                    "as XML string.", object.getUuid()));
+                        }
+                        break;
+
+                    case JSON:
+                        break;
+
+                    case CSV:
+                        break;
+
+                    default:
+                        break;
+                }
+
+                if (line != null) {
+                    try {
+                        fileWriter.write(line);
+                        fileWriter.write(System.getProperty("line.separator"));
+                    } catch (IOException e) {
+                        log.error(String.format("Unable to write to file with the" +
+                                " name %s.", file.getName()));
+                    }
+                }
+            }
+        }
     }
 
-    /**
-     *
-     * @return List of {@code T}-typed objects being imported
-     */
+    protected abstract Class<I> getObjectClass();
+    protected abstract void insertObjectIntoDB(I object);
+
     public List<I> importEntities() {
-        switch (format) {
-            case CSV:
-                break;
+        List<I> objects = new ArrayList<>();
 
-            case JSON:
-                break;
+        File file = new File(filename);
+        List<String> lines = null;
 
-            case XML:
-                break;
-
-            default:
-                break;
+        try {
+            lines = Files.readAllLines(file.toPath());
+        } catch (IOException e) {
+            log.error(String.format("Unable to read lines of the file with " +
+                    "name %s.", file.getName()));
         }
-        return null;
+
+        if (lines != null) {
+            for (String line : lines) {
+                I object = null;
+
+                switch (format) {
+                    case XML:
+                        try {
+                            object = xmlMapper.readValue(line, getObjectClass());
+                        } catch (IOException e) {
+                            log.error(String.format("Unable to read object " +
+                                    "from XML string:\n \"%s\"", line));
+                        }
+                        break;
+
+                    case JSON:
+                        break;
+
+                    case CSV:
+                        break;
+
+                    default:
+                        break;
+                }
+
+                objects.add(object);
+                insertObjectIntoDB(object);
+            }
+        }
+
+        return objects;
     }
 
 }

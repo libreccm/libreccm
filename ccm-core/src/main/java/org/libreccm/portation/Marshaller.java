@@ -131,7 +131,7 @@ public class Marshaller {
                     iterator.next();
 
             marshaller.init(format, filename);
-            marshaller.exportEntities(list);
+            marshaller.exportList(list);
         }
     }
 

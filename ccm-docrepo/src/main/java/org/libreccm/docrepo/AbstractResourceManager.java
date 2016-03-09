@@ -18,8 +18,6 @@
  */
 package org.libreccm.docrepo;
 
-import org.apache.oro.text.perl.Perl5Util;
-
 import javax.activation.MimetypesFileTypeMap;
 import javax.inject.Inject;
 
@@ -98,22 +96,23 @@ public abstract class AbstractResourceManager<T extends AbstractResource> {
      * @return true for a system-valid resource name, otherwise false
      */
     public boolean isValidNewResourceName(String name, T resource) {
-        Perl5Util perl5Util = new Perl5Util();
-
         final String INVALID_START_PATTERN = "/^[.]+/";
         final String INVALID_NAME_PATTERN = "/[^a-zA-Z0-9\\_\\.\\-\\ ]+/";
         final String EXTENSION_PATTERN = "/^([^\\.].*)(\\.\\w+)$/";
 
         // adds an extension if non-existent
-        if (!perl5Util.match(EXTENSION_PATTERN, name)) {
-            if (perl5Util.match(EXTENSION_PATTERN, resource.getName())) {
-                name += perl5Util.group(2);
+        if (name.matches(EXTENSION_PATTERN)) {
+            if (resource.getName().matches(EXTENSION_PATTERN)) {
+                // TODO: what to do here?
+                //name += perl5Util.group(2);
+                name.isEmpty();
             }
         }
 
+
         // checks pattern of the name
-        boolean validName = !(perl5Util.match(INVALID_START_PATTERN, name) ||
-                                perl5Util.match(INVALID_NAME_PATTERN, name));
+        boolean validName = !(name.matches(INVALID_START_PATTERN) || name
+                .matches(INVALID_NAME_PATTERN));
 
         // checks duplication of the name; database access (mind performance)
         validName &= (fileRepository.findByName(name).isEmpty() &&
