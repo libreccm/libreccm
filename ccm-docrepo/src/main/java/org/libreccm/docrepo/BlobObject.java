@@ -34,6 +34,7 @@ import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlElement;
 import java.io.Serializable;
 import java.sql.Blob;
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -142,7 +143,7 @@ public class BlobObject implements Identifiable, Serializable {
         }
 
         return blobObjectId == other.getBlobObjectId() &&
-                Objects.equals(content, other.getContent());
+                Arrays.equals(content, other.getContent());
     }
 
     public boolean canEqual(final Object obj) {
@@ -152,12 +153,7 @@ public class BlobObject implements Identifiable, Serializable {
 
     @Override
     public String toString() {
-        return String.format("%s{ "
-                                + "blobObjectId = %d, "
-                                + "content = %s, "
-                                + " }",
-                            super.toString(),
-                            blobObjectId,
-                            content.toString());
+        return String.format("%s{blobObjectId = %d, content = %s}", super
+                .toString(), blobObjectId, Arrays.toString(content));
     }
 }

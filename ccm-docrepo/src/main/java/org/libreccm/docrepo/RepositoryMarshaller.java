@@ -19,15 +19,29 @@
 package org.libreccm.docrepo;
 
 import org.libreccm.portation.AbstractMarshaller;
+import org.libreccm.portation.Marshals;
+
+import javax.faces.bean.RequestScoped;
+import javax.inject.Inject;
 
 /**
- * Abstract Marshaller class for importing and exporting the {@code
- * AbstractResource}s.
- *
  * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
- * @version created the 2/10/16
+ * @version created the 3/16/16
  */
-public abstract class AbstractResourceMarshaller<R extends AbstractResource>
-    extends AbstractMarshaller<R> {
+@RequestScoped
+@Marshals(Repository.class)
+public class RepositoryMarshaller extends AbstractMarshaller<Repository> {
 
+    @Inject
+    private RepositoryRepository repositoryRepository;
+
+    @Override
+    protected Class<Repository> getObjectClass() {
+        return Repository.class;
+    }
+
+    @Override
+    protected void insertIntoDb(Repository object) {
+        repositoryRepository.save(object);
+    }
 }

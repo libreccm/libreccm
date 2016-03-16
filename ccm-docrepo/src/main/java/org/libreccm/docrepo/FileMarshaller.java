@@ -18,16 +18,32 @@
  */
 package org.libreccm.docrepo;
 
-import org.libreccm.portation.AbstractMarshaller;
+import org.libreccm.portation.Marshals;
+
+import javax.faces.bean.RequestScoped;
+import javax.inject.Inject;
 
 /**
- * Abstract Marshaller class for importing and exporting the {@code
- * AbstractResource}s.
+ * Marshaller class for importing and exporting {@code File}s from the
+ * system into a specified file and the other way around.
  *
  * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
- * @version created the 2/10/16
+ * @version created the 3/16/16
  */
-public abstract class AbstractResourceMarshaller<R extends AbstractResource>
-    extends AbstractMarshaller<R> {
+@RequestScoped
+@Marshals(File.class)
+public class FileMarshaller extends AbstractResourceMarshaller<File> {
 
+    @Inject
+    private FileRepository fileRepository;
+
+    @Override
+    protected Class<File> getObjectClass() {
+        return File.class;
+    }
+
+    @Override
+    protected void insertIntoDb(File object) {
+        fileRepository.save(object);
+    }
 }

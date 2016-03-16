@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Repository class for retrieving, storing and deleting
+ * Abstract Repository class for retrieving, storing and deleting
  * {@code AbstractResource}s.
  *
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
