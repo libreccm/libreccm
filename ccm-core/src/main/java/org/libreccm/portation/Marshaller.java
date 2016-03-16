@@ -100,11 +100,14 @@ public class Marshaller {
      * marshaller for the given export wishes and calls the export method of
      * that marshaller upon the given list of same typed objects.
      *
+     * Naming convention for the export file name:
+     *      <basic file name>__<type/class name>.<format>
+     *
      * @param list List of objects to be exported of the same type
      * @param type The class of the type
      * @param format The export style
      * @param filename The filename
-     * @param <I> The type
+     * @param <I> The type of the current marshaller
      */
     private <I extends Identifiable> void exportList(List<I> list, Class<?
             extends I> type, Format format, String filename) {
@@ -135,7 +138,20 @@ public class Marshaller {
         }
     }
 
-
+    /**
+     * Selects the right marshaller for each file being imported depending on
+     * the filename. Therefore the filename has to contain the name of the
+     * class this file stores objects for. The marshaller will then be
+     * initialized and be called for importing the objects contained in the
+     * file being processed.
+     *
+     * Naming convention for the import file name:
+     *      <basic file name>__<type/class name>.<format>
+     *
+     * @param filenames List of filenames for the files wishing to be imported
+     * @param format The import style
+     * @param <I> The type of the current marshaller
+     */
     public <I extends Identifiable> void importObjects(
             List<String> filenames, Format format) {
         for (String filename : filenames) {
@@ -144,12 +160,37 @@ public class Marshaller {
                     splitFilename[splitFilename.length].split(".")[0];
 
             try {
-                Class objectClass = Class.forName(className);
+                Class clazz = Class.forName(className);
+                @SuppressWarnings("unchecked")
+                Class<I> type = clazz.asSubclass(Identifiable.class);
+
+                final Instance<AbstractMarshaller<? extends Identifiable>>
+                        marshallerInstance = marshallerInstances.select(new
+                        MarshalsLiteral(type));
+
+                if (marshallerInstance.isUnsatisfied()) {
+                    //If there are no marshallers we have a problem...
+                    throw new IllegalArgumentException(String.format(
+                            "No marshallers for \"%s\" found.", type.getName()));
+                } else if (marshallerInstance.isAmbiguous()) {
+                    //If there is more than one marshaller something is wrong...
+                    throw new IllegalArgumentException(String.format(
+                            "More than one marshaller for \"%s\" found.", type
+                                    .getName()));
+                } else {
+                    // Get the marshaller for this list and call the export method.
+                    final Iterator<AbstractMarshaller<? extends Identifiable>>
+                            iterator = marshallerInstance.iterator();
+                    @SuppressWarnings("unchecked")
+                    final AbstractMarshaller<I> marshaller = (AbstractMarshaller<I>)
+                            iterator.next();
+
+                    marshaller.init(format, filename);
+                    marshaller.importEntities();
+                }
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
-
-            Class[] subclasses = Identifiable.class.getClasses();
         }
     }
 
@@ -172,3 +213,4 @@ public class Marshaller {
         }
     }
 }
+
