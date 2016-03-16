@@ -38,22 +38,26 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.libreccm.docrepo.File;
-import org.libreccm.docrepo.FileRepository;
+import org.libreccm.docrepo.FileMarshaller;
 import org.libreccm.jpa.EntityManagerProducer;
 import org.libreccm.jpa.utils.MimeTypeConverter;
 import org.libreccm.l10n.LocalizedString;
+import org.libreccm.portation.Format;
 import org.libreccm.tests.categories.IntegrationTest;
 import org.libreccm.testutils.EqualsVerifier;
 import org.libreccm.workflow.Workflow;
 
 import javax.inject.Inject;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 /**
+ *
+ *
  *
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  * @version 13/01/2016
@@ -67,15 +71,11 @@ public class FilePortationTest {
     private static final Logger log = Logger.getLogger(FilePortationTest.class);
 
     @Inject
-    private FileRepository fileRepository;
+    private FileMarshaller fileMarshaller;
 
     private static File file;
-    private static String filename =
-            "src/test/resources/datasets/org/libreccm/docrepo" +
-                    "/FilePortationTest/csv/exportTest.csv";
-
-    public FilePortationTest() {
-    }
+    private static String filePath =
+        "src/test/resources/datasets/org/libreccm/docrepo/FilePortationTest/";
 
     @BeforeClass
     public static void setUpClass() {
@@ -137,21 +137,13 @@ public class FilePortationTest {
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "WEB-INF/beans.xml");
     }
 
-    // TODO add test methods here.
-    // The methods must be annotated with annotation @Test. For example:
-    //
-    // @Test
-    // public void hello() {}
+
     @Test
-    public void csvShouldBeCreated() {
-        java.io.File old = new java.io.File(filename);
-        if (old.exists())
-            old.delete();
+    public void xmlShouldBeCreated() {
+        fileMarshaller.prepare(Format.XML, filePath + "test1.xml");
+        List<File> fileList = Collections.singletonList(file);
 
-        // TODO: test file export
-
-        java.io.File file = new java.io.File(filename);
-        assertTrue(file.exists() && !file.isDirectory());
+        fileMarshaller.exportList(fileList);
     }
 
     @Test
@@ -162,6 +154,6 @@ public class FilePortationTest {
     @Test
     @InSequence(10)
     public void repoIsInjected() {
-        assertThat(fileRepository, is(not(nullValue())));
+        assertThat(fileMarshaller, is(not(nullValue())));
     }
 }
