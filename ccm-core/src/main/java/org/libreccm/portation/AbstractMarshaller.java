@@ -29,7 +29,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -58,7 +57,7 @@ public abstract class AbstractMarshaller<I extends Identifiable> {
 
 
 
-    public void init(final Format format, String filename) {
+    public void prepare(final Format format, String filename) {
         this.format = format;
         this.filename = filename;
 
@@ -88,12 +87,7 @@ public abstract class AbstractMarshaller<I extends Identifiable> {
 
         try {
             fileWriter = new FileWriter(file);
-        } catch (IOException e) {
-            log.error(String.format("Unable open a fileWriter for the file " +
-                    "with the name %s.", file.getName()));
-        }
 
-        if (fileWriter != null) {
             for (I object : exportList) {
                 String line = null;
 
@@ -127,15 +121,19 @@ public abstract class AbstractMarshaller<I extends Identifiable> {
                     }
                 }
             }
+
+            fileWriter.close();
+        } catch (IOException e) {
+            log.error(String.format("Unable open a fileWriter for the file " +
+                    "with the name %s.", file.getName()));
         }
+
     }
 
     protected abstract Class<I> getObjectClass();
-    protected abstract void insertObjectIntoDB(I object);
+    protected abstract void insertIntoDb(I object);
 
-    public List<I> importEntities() {
-        List<I> objects = new ArrayList<>();
-
+    public void importFile() {
         File file = new File(filename);
         List<String> lines = null;
 
@@ -170,12 +168,8 @@ public abstract class AbstractMarshaller<I extends Identifiable> {
                         break;
                 }
 
-                objects.add(object);
-                insertObjectIntoDB(object);
+                insertIntoDb(object);
             }
         }
-
-        return objects;
     }
-
 }
