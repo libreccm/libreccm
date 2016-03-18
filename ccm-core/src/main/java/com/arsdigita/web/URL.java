@@ -24,8 +24,6 @@ import com.arsdigita.util.Assert;
 import com.arsdigita.util.UncheckedWrapperException;
 import com.arsdigita.util.servlet.HttpHost;
 
-import oracle.jrockit.jfr.tools.ConCatRepository;
-
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
