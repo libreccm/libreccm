@@ -23,6 +23,8 @@ package org.libreccm.core;
 
 import static org.libreccm.core.CoreConstants.*;
 
+import java.util.UUID;
+
 import javax.enterprise.context.RequestScoped;
 
 /**
@@ -52,6 +54,9 @@ public class CcmObjectRepository extends AbstractEntityRepository<Long, CcmObjec
         return entity.getObjectId() == 0;
     }
 
-    
+    @Override
+    public void initNewEntity(final CcmObject entity) {
+        entity.setUuid(UUID.randomUUID().toString());
+    }
 
 }

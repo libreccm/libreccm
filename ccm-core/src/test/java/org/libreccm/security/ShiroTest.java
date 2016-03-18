@@ -115,6 +115,12 @@ public class ShiroTest {
             .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
                 .getPackage())
             .addPackage(org.libreccm.l10n.LocalizedString.class.getPackage())
+            .addClass(org.libreccm.modules.CcmModule.class)
+            .addClass(org.libreccm.modules.ModuleEvent.class)
+            .addClass(org.libreccm.modules.InitEvent.class)
+            .addClass(org.libreccm.modules.InstallEvent.class)
+            .addClass(org.libreccm.modules.UnInstallEvent.class)
+            .addClass(org.libreccm.modules.ShutdownEvent.class)
             .addPackage(org.libreccm.security.User.class.getPackage())
             .addPackage(org.libreccm.tests.categories.IntegrationTest.class
                 .getPackage())
@@ -124,6 +130,7 @@ public class ShiroTest {
             .addPackage(com.arsdigita.kernel.KernelConfig.class.getPackage())
             .addPackage(com.arsdigita.kernel.security.SecurityConfig.class
                 .getPackage())
+            .addClass(org.libreccm.security.authorization.LabBean.class)
             .addAsLibraries(libs)
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")

@@ -26,7 +26,7 @@ import javax.persistence.EntityManager;
  * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-class ModuleEvent {
+public class ModuleEvent {
     
     private EntityManager entityManager;
     

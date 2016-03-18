@@ -202,8 +202,9 @@ public class ConfigurationManagerTest {
     @UsingDataSet(
         "datasets/org/libreccm/configuration/ConfigurationManagerTest/data.yml")
     @ShouldMatchDataSet(
-        "datasets/org/libreccm/configuration/ConfigurationManagerTest/"
-            + "after-save-new.yml")
+        value = "datasets/org/libreccm/configuration/"
+                    + "ConfigurationManagerTest/after-save-new.yml",
+        excludeColumns = {"object_id", "uuid"})
     @InSequence(2200)
     public void saveNewConfiguration() {
         configurationManager.saveConfiguration(new TestConfiguration());

@@ -18,7 +18,6 @@
  */
 package org.libreccm.core;
 
-import static org.libreccm.core.CoreConstants.*;
 
 import static org.hamcrest.CoreMatchers.*;
 
@@ -255,7 +254,7 @@ public class CcmObjectRepositoryTest {
         "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.yml")
     @ShouldMatchDataSet(value
                             = "datasets/org/libreccm/core/CcmObjectRepositoryTest/after-save-new.yml",
-                        excludeColumns = {"object_id"})
+                        excludeColumns = {"object_id", "uuid"})
     @InSequence(300)
     public void saveNewCcmObject() {
         final CcmObject obj = new CcmObject();

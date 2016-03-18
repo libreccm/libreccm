@@ -24,10 +24,10 @@ import org.libreccm.core.AbstractEntityRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 
 /**
@@ -53,6 +53,11 @@ public class CategoryRepository extends AbstractEntityRepository<Long, Category>
         return entity.getObjectId() == 0;
     }
 
+    @Override
+    public void initNewEntity(final Category category) {
+        category.setUuid(UUID.randomUUID().toString());
+    }
+    
     /**
      * Retrieves a list of all top level categories (Categories without a parent
      * category).

@@ -50,7 +50,7 @@ public class CCMTransformerFactory extends TransformerFactory {
         super();
 
         //Get an XMLConfig instance
-        final XmlConfig config = XmlConfig.getConfig();
+        final XmlConfig config = retrieveXmlConfig();
         //Get the classname
         final String classname = config.getXslTransformerFactoryClassname();
         LOGGER.warn(String.format("XSL Transformer Factory classname is %s",
@@ -68,6 +68,18 @@ public class CCMTransformerFactory extends TransformerFactory {
                 config.getDefaultXslTransformerFactoryClassname(), null);
         } else {
             factory = TransformerFactory.newInstance(classname, null);
+        }
+
+    }
+
+    private XmlConfig retrieveXmlConfig() {
+        try {
+            return XmlConfig.getConfig();
+        } catch (IllegalStateException ex) {
+            LOGGER.warn(
+                "Failed to access registry (CDI container not available?).",
+                ex);
+            return new XmlConfig();
         }
     }
 

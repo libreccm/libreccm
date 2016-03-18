@@ -201,7 +201,7 @@ public class CategoryManagerTest {
     @ShouldMatchDataSet(
         value = "datasets/org/libreccm/categorization/"
                     + "CategoryManagerTest/after-add-subcategory.yml",
-        excludeColumns = {"object_id"})
+        excludeColumns = {"object_id", "uuid"})
     @InSequence(2100)
     public void addSubCategoryToCategory() {
         final Category category = new Category();
@@ -242,7 +242,8 @@ public class CategoryManagerTest {
         "datasets/org/libreccm/categorization/CategoryManagerTest/data.yml")
     @ShouldMatchDataSet(
         value = "datasets/org/libreccm/categorization/CategoryManagerTest/"
-                    + "after-create-multiple-categories.yml")
+                    + "after-create-multiple-categories.yml",
+        excludeColumns = {"object_id", "uuid"})
     @InSequence(3100)
     public void createMultipleCategories() {
         final Domain domain = domainRepo.findByDomainKey("test");

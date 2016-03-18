@@ -284,7 +284,7 @@
                             <goal>report</goal>
                         </goals>
                     </execution>
-                    <execution>
+                    <!--<execution>
                         <id>default-check</id>
                         <goals>
                             <goal>check</goal>
@@ -303,7 +303,7 @@
                                 </rule>
                             </rules>
                         </configuration>
-                    </execution>
+                    </execution>-->
                 </executions>
             </plugin>
             <plugin>
@@ -1004,6 +1004,10 @@
                     <groupId>org.jboss.arquillian.extension</groupId>
                     <artifactId>arquillian-jacoco</artifactId>
                     <version>1.0.0.Alpha8</version>
+                </dependency>
+                <dependency>
+                    <groupId>net.sf.saxon</groupId>
+                    <artifactId>Saxon-HE</artifactId>
                 </dependency>
             </dependencies>
             

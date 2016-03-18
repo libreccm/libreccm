@@ -54,8 +54,6 @@ public class CdiUtil {
         } catch(NamingException ex) {
             throw new IllegalStateException("Unable to lookup BeanManager.", ex);
         }
-            
-        
     }
     
     @SuppressWarnings("unchecked")

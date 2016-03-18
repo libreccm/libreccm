@@ -29,7 +29,6 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -277,12 +276,24 @@ public abstract class AbstractEntityRepository<K, E> {
      */
     public void save(final E entity) {
         if (isNew(entity)) {
+            initNewEntity(entity);
             entityManager.persist(entity);
         } else {
             entityManager.merge(entity);
         }
     }
 
+    /**
+     * Overwrite this method to initialise new entities with default values. 
+     * One example is assigning a (random) UUID to new entity which implements
+     * the {@link Identifiable} interface.
+     * 
+     * @param entity The entity to init.
+     */
+    public void initNewEntity(final E entity) {
+        //Empty default implementation
+    }
+    
     /**
      * Deletes an entity from the database.
      *
