@@ -18,8 +18,6 @@
  */
 package org.libreccm.categorization;
 
-import org.libreccm.categorization.RegistrySetup;
-import com.example.TestConfiguration;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
@@ -39,24 +37,14 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.libreccm.categorization.Categorization;
-import org.libreccm.core.CcmObject;
-import org.libreccm.jpa.EntityManagerProducer;
-import org.libreccm.jpa.utils.MimeTypeConverter;
-import org.libreccm.l10n.LocalizedString;
 import org.libreccm.modules.InstallEvent;
-import org.libreccm.security.Permission;
 import org.libreccm.tests.categories.IntegrationTest;
-import org.libreccm.testutils.EqualsVerifier;
-import org.libreccm.web.CcmApplication;
-import org.libreccm.workflow.Workflow;
 
 import java.io.File;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
-import org.libreccm.configuration.Configuration;
 
 
 /**
@@ -131,7 +119,7 @@ public class RegistrySetupTest {
     @Test
     @ShouldMatchDataSet(value = 
         "datasets/org/libreccm/categorization/RegistrySetupTest/after-setup.xml",
-        excludeColumns = {"object_id", "root_category_id"})
+        excludeColumns = {"object_id", "root_category_id", "uuid"})
     @InSequence(100)
     public void setupRegistry() {
         final InstallEvent installEvent = new InstallEvent();

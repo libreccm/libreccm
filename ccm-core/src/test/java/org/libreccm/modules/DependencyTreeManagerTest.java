@@ -43,7 +43,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.libreccm.tests.categories.IntegrationTest;
-import org.libreccm.web.ApplicationType;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -102,27 +101,31 @@ public class DependencyTreeManagerTest {
         return ShrinkWrap
             .create(WebArchive.class,
                     "LibreCCM-org.libreccm.modules.dependencytree.DependencyTreeManagerTest.war")
-            .addPackage(IntegrationTest.class.getPackage())
-            .addClass(DependencyTreeManager.class)
-            .addClass(DependencyException.class)
-            .addClass(IntegrationException.class)
-            .addClass(TreeNode.class)
-            .addClass(CcmModule.class)
-            .addClass(ModuleInfo.class)
-            .addClass(ModuleStatus.class)
-            .addClass(Module.class)
-            .addClass(RequiredModule.class)
-            .addClass(InitEvent.class)
-            .addClass(InstallEvent.class)
-            .addClass(ShutdownEvent.class)
-            .addClass(UnInstallEvent.class)
-            .addClass(TestModuleRoot.class)
-            .addClass(TestModuleA.class)
-            .addClass(TestModuleB.class)
-            .addClass(TestModuleC.class)
-            .addClass(ApplicationType.class)
+            .addPackage(org.libreccm.tests.categories.IntegrationTest.class
+                .getPackage())
+            .addClass(org.libreccm.modules.DependencyTreeManager.class)
+            .addClass(org.libreccm.modules.DependencyException.class)
+            .addClass(org.libreccm.modules.IntegrationException.class)
+            .addClass(org.libreccm.modules.TreeNode.class)
+            .addClass(org.libreccm.modules.CcmModule.class)
+            .addClass(org.libreccm.modules.ModuleInfo.class)
+            .addClass(org.libreccm.modules.ModuleStatus.class)
+            .addClass(org.libreccm.modules.Module.class)
+            .addClass(org.libreccm.modules.RequiredModule.class)
+            .addClass(org.libreccm.modules.InitEvent.class)
+            .addClass(org.libreccm.modules.InstallEvent.class)
+            .addClass(org.libreccm.modules.ShutdownEvent.class)
+            .addClass(org.libreccm.modules.UnInstallEvent.class)
+            .addClass(
+                org.libreccm.modules.dependencytree.test.valid.TestModuleRoot.class)
+            .addClass(
+                org.libreccm.modules.dependencytree.test.valid.TestModuleA.class)
+            .addClass(
+                org.libreccm.modules.dependencytree.test.valid.TestModuleB.class)
+            .addClass(
+                org.libreccm.modules.dependencytree.test.valid.TestModuleC.class)
+            .addClass(org.libreccm.web.ApplicationType.class)
             .addAsLibraries(libs)
-            .addAsWebInfResource("test-web.xml", "web.xml")
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
             .addAsResource(
                 "module-info/dependency-tree-manager-test/module-root.properties",
