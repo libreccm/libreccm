@@ -244,7 +244,7 @@ public class CategoryRepositoryTest {
     @ShouldMatchDataSet(
         value = "datasets/org/libreccm/categorization/CategoryRepositoryTest/"
                     + "after-save-new-category.yml",
-        excludeColumns = {"object_id"})
+        excludeColumns = {"object_id", "uuid"})
     @InSequence(3100)
     public void saveNewCategory() {
         final Category category = new Category();
