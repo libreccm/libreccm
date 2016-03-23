@@ -225,11 +225,11 @@ public class User extends Party implements Serializable {
         this.emailAddresses = emailAddresses;
     }
 
-    protected void addEmailAddress(final EmailAddress emailAddress) {
+    public void addEmailAddress(final EmailAddress emailAddress) {
         emailAddresses.add(emailAddress);
     }
 
-    protected void removeEmailAddress(final EmailAddress emailAddress) {
+    public void removeEmailAddress(final EmailAddress emailAddress) {
         emailAddresses.remove(emailAddress);
     }
 

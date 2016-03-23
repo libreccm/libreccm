@@ -72,15 +72,26 @@ public final class MailConfig {
 
         if (javaMailPropertiesFile == null
                 || javaMailPropertiesFile.isEmpty()) {
-            properties.put("mail.transport.protocol", "smtp");
-            properties.put("mail.smtp.host", "localhost");
+            if (System.getProperty("ccm.mail.config") == null) {
+                properties.put("mail.transport.protocol", "smtp");
+                properties.put("mail.smtp.host", "localhost");
+            } else {
+                try {
+                    properties.load(new URL(System
+                        .getProperty("ccm.mail.config")).openStream());
+                } catch (IOException ex) {
+                    throw new UncheckedWrapperException(String.format(
+                        "Unable to retrieve properties for JavaMail from \"%s\".",
+                        System.getProperty("ccm.mail.config")), ex);
+                }
+            }
         } else {
             try {
                 properties.load(new URL(javaMailPropertiesFile).openStream());
             } catch (IOException ex) {
                 throw new UncheckedWrapperException(String.format(
                     "Unable to retrieve properties for JavaMail from \"%s\".",
-                    javaMailPropertiesFile));
+                    javaMailPropertiesFile), ex);
             }
         }
 

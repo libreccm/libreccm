@@ -42,7 +42,7 @@ public class UserEmailTableModel implements TableModel {
     protected static final int COL_DELETE = 4;
 
     private final List<EmailAddress> emailAddresses;
-    private int index;
+    private int index = -1;
     private boolean finished;
 
     public UserEmailTableModel(final User user) {
@@ -56,12 +56,18 @@ public class UserEmailTableModel implements TableModel {
 
     @Override
     public boolean nextRow() {
-        if (index < emailAddresses.size()) {
-            index++;
-            return true;
-        } else {
+        if (emailAddresses == null || emailAddresses.isEmpty()) {
             return false;
         }
+//        if (index < emailAddresses.size()) {
+//            index++;
+//            return true;
+//        } else {
+//            return false;
+//        }
+
+        index++;
+        return index < emailAddresses.size();
     }
 
     @Override

@@ -33,6 +33,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import javax.transaction.Transactional;
 
 /**
  * A base class providing common method needed by every repository.
@@ -274,6 +275,7 @@ public abstract class AbstractEntityRepository<K, E> {
      *
      * @param entity The entity to save.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public void save(final E entity) {
         if (isNew(entity)) {
             initNewEntity(entity);
