@@ -237,7 +237,7 @@ public class User extends Party implements Serializable {
         return banned;
     }
 
-    protected void setBanned(final boolean banned) {
+    public void setBanned(final boolean banned) {
         this.banned = banned;
     }
 
@@ -253,7 +253,7 @@ public class User extends Party implements Serializable {
         return passwordResetRequired;
     }
 
-    protected void setPasswordResetRequired(final boolean passwordResetRequired) {
+    public void setPasswordResetRequired(final boolean passwordResetRequired) {
         this.passwordResetRequired = passwordResetRequired;
     }
 

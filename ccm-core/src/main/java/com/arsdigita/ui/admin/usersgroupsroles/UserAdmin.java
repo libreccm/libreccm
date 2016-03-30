@@ -23,6 +23,7 @@ import com.arsdigita.bebop.BoxPanel;
 import com.arsdigita.bebop.Component;
 import com.arsdigita.bebop.ControlLink;
 import com.arsdigita.bebop.Form;
+import com.arsdigita.bebop.FormData;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.Page;
 import com.arsdigita.bebop.PageState;
@@ -35,6 +36,8 @@ import com.arsdigita.bebop.event.TableActionEvent;
 import com.arsdigita.bebop.event.TableActionListener;
 import com.arsdigita.bebop.form.CheckboxGroup;
 import com.arsdigita.bebop.form.Option;
+import com.arsdigita.bebop.form.OptionGroup;
+import com.arsdigita.bebop.form.Password;
 import com.arsdigita.bebop.form.Submit;
 import com.arsdigita.bebop.form.TextField;
 import com.arsdigita.bebop.parameters.NotEmptyValidationListener;
@@ -44,6 +47,7 @@ import com.arsdigita.bebop.table.TableColumn;
 import com.arsdigita.bebop.table.TableColumnModel;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.mail.Mail;
+import com.arsdigita.ui.login.UserForm;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -76,6 +80,8 @@ public class UserAdmin extends BoxPanel {
     private final UsersTable usersTable;
     private final ActionLink backToUsersTable;
     private final PropertySheet userProperties;
+    private final Form userEditForm;
+    private final Form passwordSetForm;
     private final BoxPanel actionLinks;
 //    private final UserDetails userDetails;
     private final BoxPanel userDetails;
@@ -144,12 +150,173 @@ public class UserAdmin extends BoxPanel {
         userProperties.setIdAttr("userProperties");
         userDetails.add(userProperties);
         
+        userEditForm = new Form("userEditForm");
+        final TextField username = new TextField("username");
+        username.setLabel(new GlobalizedMessage(
+            "ui.admin.user_edit.username.label", ADMIN_BUNDLE));
+        username.addValidationListener(new NotEmptyValidationListener(
+            new GlobalizedMessage("ui.admin.user_edit.username.error.not_empty",
+                                  ADMIN_BUNDLE)));
+        userEditForm.add(username);
+        final TextField familyName = new TextField("familyName");
+        familyName.setLabel(new GlobalizedMessage(
+            "ui.admin.user_edit.familyname.label", ADMIN_BUNDLE));
+        familyName.addValidationListener(new NotEmptyValidationListener(
+            new GlobalizedMessage(
+                "ui.admin.user_edit.familyname.error_not_empty",
+                ADMIN_BUNDLE)));
+        userEditForm.add(familyName);
+        final TextField givenName = new TextField("givenName");
+        givenName.setLabel(new GlobalizedMessage(
+            "ui.admin.user_edit.givenname.label", ADMIN_BUNDLE));
+        givenName.addValidationListener(new NotEmptyValidationListener(
+            new GlobalizedMessage(
+                "ui.admin.user_edit.givenname.error.not_empty",
+                ADMIN_BUNDLE)));
+        userEditForm.add(givenName);
+        final CheckboxGroup banned = new CheckboxGroup("banned");
+        banned.addOption(new Option(
+            "banned",
+            new Label(new GlobalizedMessage("ui.admin.user_edit.banned.label",
+                                            ADMIN_BUNDLE))));
+        userEditForm.add(banned);
+        final CheckboxGroup passwordResetRequired = new CheckboxGroup(
+            "password_reset_required");
+        passwordResetRequired.addOption(new Option(
+            "password_reset_required",
+            new Label(new GlobalizedMessage(
+                "ui.admin.user_edit.password_reset_required.label",
+                ADMIN_BUNDLE))
+        ));
+        userEditForm.add(passwordResetRequired);
+        final SaveCancelSection userEditFormSaveCancel = new SaveCancelSection();
+        userEditForm.add(userEditFormSaveCancel);
+        userEditForm.addInitListener(e -> {
+            final PageState state = e.getPageState();
+            
+            final String userIdStr = selectedUserId.getSelectedKey(state);
+            final UserRepository userRepository = CdiUtil.createCdiUtil()
+                .findBean(UserRepository.class);
+            final User user = userRepository.findById(Long.parseLong(userIdStr));
+            
+            username.setValue(state, user.getName());
+            familyName.setValue(state, user.getFamilyName());
+            givenName.setValue(state, user.getGivenName());
+            if (user.isBanned()) {
+                banned.setValue(state, "banned");
+            }
+            if (user.isPasswordResetRequired()) {
+                passwordResetRequired.setValue(state,
+                                               "password_reset_required");
+            }
+        });
+        userEditForm.addProcessListener(e -> {
+            final PageState state = e.getPageState();
+            
+            if (userEditFormSaveCancel.getSaveButton().isSelected(state)) {
+                final String userIdStr = selectedUserId.getSelectedKey(state);
+                final UserRepository userRepository = CdiUtil.createCdiUtil()
+                    .findBean(UserRepository.class);
+                final User user = userRepository.findById(Long.parseLong(
+                    userIdStr));
+                
+                if (!user.getName().equals(username.getValue(state))) {
+                    user.setName((String) username.getValue(state));
+                }
+                if (!user.getFamilyName().equals(familyName.getValue(state))) {
+                    user.setFamilyName((String) familyName.getValue(state));
+                }
+                if (!user.getGivenName().equals(givenName.getValue(state))) {
+                    user.setGivenName((String) familyName.getValue(state));
+                }
+                
+                if ("banned".equals(banned.getValue(state)) && !user.isBanned()) {
+                    user.setBanned(true);
+                } else {
+                    user.setBanned(false);
+                }
+                
+                if ("password_reset_required".equals(passwordResetRequired
+                    .getValue(
+                        state))
+                        && !user.isPasswordResetRequired()) {
+                    user.setPasswordResetRequired(true);
+                } else {
+                    user.setPasswordResetRequired(false);
+                }
+                
+                userRepository.save(user);
+            }
+            closeUserEditForm(state);
+        });
+        add(userEditForm);
+        
+        passwordSetForm = new Form("password_set_form");
+        final Password newPassword = new Password("new_password");
+        newPassword.setLabel(new GlobalizedMessage(
+            "ui.admin.user_set_password.new_password.label", ADMIN_BUNDLE));
+        newPassword.addValidationListener(new NotEmptyValidationListener(
+            new GlobalizedMessage(
+                "ui.admin.set_password.new_password.error.not_empty",
+                ADMIN_BUNDLE)));
+        passwordSetForm.add(newPassword);
+        final Password passwordConfirm = new Password("password_confirm");
+        passwordConfirm.addValidationListener(new NotEmptyValidationListener(
+            new GlobalizedMessage(
+                "ui.admin.set_password.password_confirm.error.not_empty",
+                ADMIN_BUNDLE)));
+        passwordSetForm.add(newPassword);
+        passwordConfirm.setLabel(new GlobalizedMessage(
+            "ui.admin.user_set_password.confirm_password.label",
+            ADMIN_BUNDLE
+        ));
+        passwordSetForm.add(passwordConfirm);
+        final SaveCancelSection passwordSetFormSaveCancel
+                                    = new SaveCancelSection();
+        passwordSetForm.add(passwordSetFormSaveCancel);
+        passwordSetForm.addValidationListener(e -> {
+            final PageState state = e.getPageState();
+            
+            if (passwordSetFormSaveCancel.getSaveButton().isSelected(state)) {
+                final FormData formData = e.getFormData();
+                
+                final String password = (String) newPassword.getValue(state);
+                final String confirm = (String) passwordConfirm.getValue(state);
+                
+                if (!password.equals(confirm)) {
+                    formData.addError(new GlobalizedMessage(
+                        "ui.admin.user_set_password.error.do_not_match",
+                        ADMIN_BUNDLE));
+                }
+            }
+        });
+        passwordSetForm.addProcessListener(e -> {
+            final PageState state = e.getPageState();
+            
+            if (passwordSetFormSaveCancel.getSaveButton().isSelected(state)) {
+                final String userIdStr = selectedUserId.getSelectedKey(state);
+                final String password = (String) newPassword.getValue(state);
+                
+                final UserRepository userRepository = CdiUtil.createCdiUtil()
+                    .findBean(UserRepository.class);
+                final User user = userRepository.findById(Long.parseLong(
+                    userIdStr));
+                
+                final UserManager userManager = CdiUtil.createCdiUtil()
+                    .findBean(
+                        UserManager.class);
+                userManager.updatePassword(user, password);
+            }
+            closePasswordSetForm(state);
+        });
+        add(passwordSetForm);
+        
         actionLinks = new BoxPanel(BoxPanel.HORIZONTAL);
         actionLinks.setIdAttr("userDetailsActionLinks");
         final ActionLink editUserDetailsLink = new ActionLink(
             new GlobalizedMessage("ui.admin.user_details.edit", ADMIN_BUNDLE));
         editUserDetailsLink.addActionListener(e -> {
-            //ToDo
+            showUserEditForm(e.getPageState());
         });
         actionLinks.add(editUserDetailsLink);
         actionLinks.add(new Text(" | "));
@@ -158,7 +325,7 @@ public class UserAdmin extends BoxPanel {
             new GlobalizedMessage("ui.admin.user_details.set_password",
                                   ADMIN_BUNDLE));
         setPasswordLink.addActionListener(e -> {
-            //ToDo
+            showPasswordSetForm(e.getPageState());
         });
         actionLinks.add(setPasswordLink);
         actionLinks.add(new Text(" | "));
@@ -170,13 +337,14 @@ public class UserAdmin extends BoxPanel {
             "ui.admin.user_details.generate_password.confirm",
             ADMIN_BUNDLE));
         generatePasswordLink.addActionListener(e -> {
-            final UserRepository userRepository = CdiUtil.createCdiUtil().findBean(UserRepository.class);
+            final UserRepository userRepository = CdiUtil.createCdiUtil()
+                .findBean(UserRepository.class);
             final User user = userRepository.findById(Long.parseLong(
                 selectedUserId.getSelectedKey(e.getPageState())));
             
             final Mail mail = new Mail(
-                user.getPrimaryEmailAddress().getAddress(), 
-                "libreccm.example", 
+                user.getPrimaryEmailAddress().getAddress(),
+                "libreccm.example",
                 "New password has been generated.");
             mail.setBody("Das eine Test-Email");
             
@@ -311,7 +479,7 @@ public class UserAdmin extends BoxPanel {
                         link.setConfirmation(new GlobalizedMessage(
                             "ui.admin.user.email_addresses.delete.confirm",
                             ADMIN_BUNDLE));
-                    }                    
+                    }
                     return link;
                 }
                 
@@ -508,12 +676,16 @@ public class UserAdmin extends BoxPanel {
         
         page.setVisibleDefault(usersTablePanel, true);
         page.setVisibleDefault(userDetails, false);
+        page.setVisibleDefault(userEditForm, false);
+        page.setVisibleDefault(passwordSetForm, false);
         page.setVisibleDefault(emailForm, false);
     }
     
     protected void showUserDetails(final PageState state) {
         usersTablePanel.setVisible(state, false);
         userDetails.setVisible(state, true);
+        userEditForm.setVisible(state, false);
+        passwordSetForm.setVisible(state, false);
         emailForm.setVisible(state, false);
     }
     
@@ -521,12 +693,48 @@ public class UserAdmin extends BoxPanel {
         selectedUserId.clearSelection(state);
         usersTablePanel.setVisible(state, true);
         userDetails.setVisible(state, false);
+        userEditForm.setVisible(state, false);
+        passwordSetForm.setVisible(state, false);
+        emailForm.setVisible(state, false);
+    }
+    
+    protected void showUserEditForm(final PageState state) {
+        usersTablePanel.setVisible(state, false);
+        userDetails.setVisible(state, false);
+        userEditForm.setVisible(state, true);
+        passwordSetForm.setVisible(state, false);
+        emailForm.setVisible(state, false);
+    }
+    
+    protected void closeUserEditForm(final PageState state) {
+        usersTablePanel.setVisible(state, false);
+        userDetails.setVisible(state, true);
+        userEditForm.setVisible(state, false);
+        passwordSetForm.setVisible(state, false);
+        emailForm.setVisible(state, false);
+    }
+    
+    protected void showPasswordSetForm(final PageState state) {
+        usersTablePanel.setVisible(state, false);
+        userDetails.setVisible(state, false);
+        userEditForm.setVisible(state, false);
+        passwordSetForm.setVisible(state, true);
+        emailForm.setVisible(state, false);
+    }
+    
+    protected void closePasswordSetForm(final PageState state) {
+        usersTablePanel.setVisible(state, false);
+        userDetails.setVisible(state, true);
+        userEditForm.setVisible(state, false);
+        passwordSetForm.setVisible(state, false);
         emailForm.setVisible(state, false);
     }
     
     protected void showEmailForm(final PageState state) {
         usersTablePanel.setVisible(state, false);
         userDetails.setVisible(state, false);
+        userEditForm.setVisible(state, false);
+        passwordSetForm.setVisible(state, false);
         emailForm.setVisible(state, true);
     }
     
@@ -534,6 +742,8 @@ public class UserAdmin extends BoxPanel {
         selectedEmailAddress.clearSelection(state);
         usersTablePanel.setVisible(state, false);
         userDetails.setVisible(state, true);
+        userEditForm.setVisible(state, false);
+        passwordSetForm.setVisible(state, false);
         emailForm.setVisible(state, false);
     }
     
