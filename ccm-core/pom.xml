@@ -330,6 +330,7 @@
                         <param>org.libreccm.web</param>
                         <param>org.libreccm.workflow</param>
                     </packages>
+                    <persistenceXml>${basedir}/src/main/resources/META-INF/persistence-ddl.xml</persistenceXml>
                     <useEnvers>true</useEnvers>
                 </configuration>
                 <executions>
@@ -656,6 +657,7 @@
                                 <param>org.libreccm</param>
                             </packages>
                             <useEnvers>true</useEnvers>
+                            <persistenceXml>${basedir}/src/main/resources/META-INF/persistence-ddl.xml</persistenceXml>
                         </configuration>
                         <executions>
                             <execution>

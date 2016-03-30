@@ -42,6 +42,7 @@ public class EqualsAndHashCodeTest extends EqualsVerifier {
             GroupMembership.class,
             Party.class,
             Permission.class,
+            OneTimeAuthToken.class,
             Role.class,
             RoleMembership.class,
             User.class

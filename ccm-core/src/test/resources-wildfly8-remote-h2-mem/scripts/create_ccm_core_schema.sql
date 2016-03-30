@@ -629,17 +629,26 @@ CREATE SCHEMA ccm_core;
         primary key (TASK_ID)
     );
 
-    alter table CCM_CORE.CATEGORY_DOMAINS 
-        add constraint UK_mb1riernf8a88u3mwl0bgfj8y  unique (DOMAIN_KEY);
+    create table ONE_TIME_AUTH_TOKENS (
+        TOKEN_ID bigint not null,
+        PURPOSE varchar(255),
+        TOKEN varchar(255),
+        VALID_UNIT date,
+        USER_ID bigint,
+        primary key (TOKEN_ID)
+    );
 
     alter table CCM_CORE.CATEGORY_DOMAINS 
-        add constraint UK_i1xqotjvml7i6ro2jq22fxf5g  unique (URI);
+        add constraint UK_mb1riernf8a88u3mwl0bgfj8y unique (DOMAIN_KEY);
+
+    alter table CCM_CORE.CATEGORY_DOMAINS 
+        add constraint UK_i1xqotjvml7i6ro2jq22fxf5g unique (URI);
 
     alter table CCM_CORE.HOSTS 
-        add constraint UK_9ramlv6uxwt13v0wj7q0tucsx  unique (SERVER_NAME, SERVER_PORT);
+        add constraint UK_9ramlv6uxwt13v0wj7q0tucsx unique (SERVER_NAME, SERVER_PORT);
 
     alter table CCM_CORE.INSTALLED_MODULES 
-        add constraint UK_11imwgfojyi4hpr18uw9g3jvx  unique (MODULE_CLASS_NAME);
+        add constraint UK_11imwgfojyi4hpr18uw9g3jvx unique (MODULE_CLASS_NAME);
 
     alter table CCM_CORE.APPLICATIONS 
         add constraint FK_sn1sqtx94nhxgv282ymoqiock 
@@ -1130,5 +1139,10 @@ CREATE SCHEMA ccm_core;
         add constraint FK_bg60xxg9kerqsxyphbfxulg8y 
         foreign key (WORKFLOW_ID) 
         references CCM_CORE.WORKFLOWS;
+
+    alter table ONE_TIME_AUTH_TOKENS 
+        add constraint FK_fvr3t6w3nsm3u29mjuh4tplno 
+        foreign key (USER_ID) 
+        references CCM_CORE.USERS;
 
     create sequence hibernate_sequence start with 1 increment by 1;

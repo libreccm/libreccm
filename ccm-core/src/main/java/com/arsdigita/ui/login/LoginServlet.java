@@ -98,6 +98,8 @@ public class LoginServlet extends BebopApplicationServlet {
     public static final String RECOVER_USER_PASSWORD_PATH_INFO
                                    = "/recover-password/";
 
+    public static final String VERIFY_EMAIL = "/verify-email/";
+    
     /**
      * PathInfo into the Login application to access the (optional) newUser
      * page. Ends with "/" because it is a servlet/directory
