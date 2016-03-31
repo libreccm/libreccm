@@ -34,6 +34,8 @@ DELETE FROM ccm_core.group_memberships;
 
 DELETE FROM ccm_core.groups;
 
+DELETE FROM ccm_core.one_time_auth_tokens;
+
 DELETE FROM ccm_core.users;
 
 DELETE FROM ccm_core.user_email_addresses;

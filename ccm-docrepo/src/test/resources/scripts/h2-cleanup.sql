@@ -42,4 +42,6 @@ DELETE FROM ccm_core.parties;
 
 DELETE FROM ccm_core.ccm_roles;
 
+DELETE FROM ccm_core.one_time_auth_tokens;
+
 ALTER SEQUENCE hibernate_sequence RESTART WITH 1;

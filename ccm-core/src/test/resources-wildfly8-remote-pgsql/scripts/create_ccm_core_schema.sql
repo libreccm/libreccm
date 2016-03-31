@@ -629,11 +629,11 @@ CREATE SCHEMA ccm_core;
         primary key (TASK_ID)
     );
 
-    create table ONE_TIME_AUTH_TOKENS (
+    create table CCM_CORE.ONE_TIME_AUTH_TOKENS (
         TOKEN_ID int8 not null,
         PURPOSE varchar(255),
         TOKEN varchar(255),
-        VALID_UNIT date,
+        VALID_UNTIL timestamp,
         USER_ID int8,
         primary key (TOKEN_ID)
     );
@@ -1140,7 +1140,7 @@ CREATE SCHEMA ccm_core;
         foreign key (WORKFLOW_ID) 
         references CCM_CORE.WORKFLOWS;
 
-    alter table ONE_TIME_AUTH_TOKENS 
+    alter table CCM_CORE.ONE_TIME.AUTH_TOKENS 
         add constraint FK_fvr3t6w3nsm3u29mjuh4tplno 
         foreign key (USER_ID) 
         references CCM_CORE.USERS;

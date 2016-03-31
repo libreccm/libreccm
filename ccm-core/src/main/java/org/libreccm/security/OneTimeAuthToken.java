@@ -19,7 +19,6 @@
 package org.libreccm.security;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Objects;
 
@@ -31,17 +30,27 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import static org.libreccm.core.CoreConstants.*;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "ONE_TIME_AUTH_TOKENS")
+@Table(name = "ONE_TIME_AUTH_TOKENS", schema = DB_SCHEMA)
+@NamedQueries({
+    @NamedQuery(
+            name = "OneTimeAuthToken.findByUserAndPurpose",
+            query = "SELECT t FROM OneTimeAuthToken t "
+                            + "WHERE t.user = :user AND t.purpose = :purpose "
+                            + "ORDER BY t.validUntil")})
 public class OneTimeAuthToken implements Serializable {
 
     private static final long serialVersionUID = -9088185274208292873L;
@@ -58,8 +67,8 @@ public class OneTimeAuthToken implements Serializable {
     @Column(name = "TOKEN", length = 255)
     private String token;
 
-    @Column(name = "VALID_UNIT")
-    @Temporal(TemporalType.DATE)
+    @Column(name = "VALID_UNTIL")
+    @Temporal(TemporalType.TIMESTAMP)
     private Date validUntil;
 
     @Column(name = "PURPOSE")
@@ -91,7 +100,11 @@ public class OneTimeAuthToken implements Serializable {
     }
 
     public Date getValidUntil() {
-        return new Date(validUntil.getTime());
+        if (validUntil == null) {
+            return null;
+        } else {
+            return new Date(validUntil.getTime());
+        }
     }
 
     public void setValidUntil(final Date validUntil) {
@@ -155,10 +168,10 @@ public class OneTimeAuthToken implements Serializable {
 
     public String toString(final String data) {
         return String.format("%s{ "
-                                 + "tokenId = %d, "
-                                 + "user = { %s }, "
-                                 + "validUnit = %tF %<tT%s"
-                                 + " }",
+                                     + "tokenId = %d, "
+                                     + "user = { %s }, "
+                                     + "validUnit = %tF %<tT%s"
+                                     + " }",
                              super.toString(),
                              tokenId,
                              Objects.toString(user),

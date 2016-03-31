@@ -36,9 +36,15 @@ public final class OneTimeAuthConfig {
     @Setting
     private int tokenValid = 3600;
 
+    /**
+     * Length of the one time auth token (characters)
+     */
+    @Setting
+    private int tokenLength = 64;
+
     public static OneTimeAuthConfig getConfig() {
         final ConfigurationManager confManager = CdiUtil.createCdiUtil()
-            .findBean(ConfigurationManager.class);
+                .findBean(ConfigurationManager.class);
         return confManager.findConfiguration(OneTimeAuthConfig.class);
     }
 
@@ -54,10 +60,19 @@ public final class OneTimeAuthConfig {
         this.tokenValid = tokenValid;
     }
 
+    public int getTokenLength() {
+        return tokenLength;
+    }
+
+    public void setTokenLength(final int tokenLength) {
+        this.tokenLength = tokenLength;
+    }
+
     @Override
     public int hashCode() {
         int hash = 7;
         hash = 79 * hash + tokenValid;
+        hash = 79 * hash + tokenLength;
         return hash;
     }
 
@@ -73,15 +88,22 @@ public final class OneTimeAuthConfig {
             return false;
         }
         final OneTimeAuthConfig other = (OneTimeAuthConfig) obj;
-        return this.tokenValid == other.getTokenValid();
+        if (tokenValid != other.getTokenValid()) {
+            return false;
+        }
+
+        return this.tokenLength == other.getTokenLength();
     }
 
     @Override
     public String toString() {
         return String.format("%s{ "
-                                 + "tokenValid = %d"
-                                 + " }",
-                             tokenValid);
+                                     + "tokenValid = %d,"
+                                     + "tokenLength = %d"
+                                     + " }",
+                             super.toString(),
+                             tokenValid,
+                             tokenLength);
     }
 
 }

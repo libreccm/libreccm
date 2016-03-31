@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dataset>
+    
+    <ccm_core.ccm_objects object_id="-1000"
+                          display_name="registry"
+                          uuid="f815d6f8-f915-4399-b16c-2e2dd76f4128"/>
+    <ccm_core.ccm_objects object_id="-2000"
+                          display_name="registry_root"
+                          uuid="1e5b1732-0a15-49b8-b4a6-8aae1a003147"/>
+    
+    <ccm_core.categories object_id="-2000"
+                         unique_id="bb93a964-bf66-424c-a22d-074d001db3b8"
+                         name="registry-root"
+                         enabled="true"
+                         visible="true"
+                         abstract_category="false"
+                         category_order="0"/>
+    
+    <ccm_core.category_domains object_id="-1000"
+                               domain_key="registry"
+                               root_category_id="-2000"
+                               version="1.0"/>
+    
+    <ccm_core.parties party_id="-10"
+                      name="jdoe"/>
+    <ccm_core.parties party_id="-20"
+                      name="mmuster"/>
+    
+    <ccm_core.users party_id="-10"
+                    family_name="Doe"
+                    given_name="John"
+                    email_address="john.doe@example.com"
+                    password="$shiro1$SHA-512$500000$7xkDcZUN0/whJInHIvGsDw==$WhelBVmJU/cLV7lAkMOrE5B/mqCW0bUuid1WX+xBwzzAaekC5bYn9eeOFGJWhiDgmaC50ZCUmM96/iGsRoc4uA=="
+                    bouncing="false"
+                    banned="false"
+                    password_reset_required="false"
+                    verified="true"/>
+    <ccm_core.users party_id="-20"
+                    family_name="Mustermann"
+                    given_name="Max"
+                    email_address="max.muster@example.org"
+                    password="$shiro1$SHA-512$500000$Y7CnccN1h25sR7KCElMOXg==$CVLWBhetodaEzzhDfGjRcCFZtSW02xOnjH7xhBx0lbxO66grKIt6LWmXoUhLEydce1JZ7cbzNLYOxIwwTeqi5Q=="
+                    bouncing="false"
+                    banned="false"
+                    password_reset_required="false"
+                    verified="true"/>
+     
+    <ccm_core.one_time_auth_tokens token_id="-100"
+                                   user_id="-10"
+                                   token="biXOpuxIPXuRgx9jhk1PzZVIeKGaTmg2qTKoTQ4tl9iiweQ0e5mfmdFI1KjDwjPi"
+                                   valid_until="2032-04-01 12:00:00"
+                                   purpose="EMAIL_VERIFICATION"/>
+</dataset>
