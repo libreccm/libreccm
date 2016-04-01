@@ -24,8 +24,10 @@ import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Optional;
+
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.ShouldThrowException;
 import org.jboss.arquillian.junit.Arquillian;
@@ -48,15 +50,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
-import org.libreccm.categorization.Categorization;
-import org.libreccm.core.CcmObject;
-import org.libreccm.jpa.EntityManagerProducer;
-import org.libreccm.jpa.utils.MimeTypeConverter;
-import org.libreccm.l10n.LocalizedString;
 import org.libreccm.tests.categories.IntegrationTest;
-import org.libreccm.testutils.EqualsVerifier;
-import org.libreccm.web.CcmApplication;
-import org.libreccm.workflow.Workflow;
+
+import java.util.List;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -77,9 +73,6 @@ public class OneTimeAuthManagerTest {
 
     @Inject
     private UserRepository userRepository;
-
-    @Inject
-    private EntityManager entityManager;
 
     public OneTimeAuthManagerTest() {
 
@@ -206,13 +199,14 @@ public class OneTimeAuthManagerTest {
     public void retrieveTokenForUser() {
         final User jdoe = userRepository.findByName("jdoe");
 
-        final Optional<OneTimeAuthToken> result = oneTimeAuthManager.
+        final List<OneTimeAuthToken> result = oneTimeAuthManager.
             retrieveForUser(
                 jdoe, OneTimeAuthTokenPurpose.EMAIL_VERIFICATION);
 
-        assertThat(result.isPresent(), is(true));
+        assertThat(result, is(not(nullValue())));
+        assertThat(result, is(not(empty())));
 
-        final OneTimeAuthToken token = result.get();
+        final OneTimeAuthToken token = result.get(0);
         assertThat(token.getUser(), is(not(nullValue())));
         assertThat(token.getUser().getName(), is(equalTo("jdoe")));
         assertThat(token.getToken(), is(equalTo(
@@ -226,11 +220,11 @@ public class OneTimeAuthManagerTest {
     public void retrieveNotExistingTokenForUser() {
         final User mmuster = userRepository.findByName("mmuster");
 
-        final Optional<OneTimeAuthToken> result = oneTimeAuthManager.
+        final List<OneTimeAuthToken> result = oneTimeAuthManager.
             retrieveForUser(
                 mmuster, OneTimeAuthTokenPurpose.EMAIL_VERIFICATION);
 
-        assertThat(result.isPresent(), is(false));
+        assertThat(result, is(empty()));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -308,12 +302,12 @@ public class OneTimeAuthManagerTest {
     public void isValid() {
         final User jdoe = userRepository.findByName("jdoe");
 
-        final Optional<OneTimeAuthToken> result = oneTimeAuthManager.
+        final List<OneTimeAuthToken> result = oneTimeAuthManager.
             retrieveForUser(
                 jdoe, OneTimeAuthTokenPurpose.EMAIL_VERIFICATION);
 
-        assertThat(result.isPresent(), is(true));
-        assertThat(oneTimeAuthManager.isValid(result.get()), is(true));
+        assertThat(result, is(not(empty())));
+        assertThat(oneTimeAuthManager.isValid(result.get(0)), is(true));
     }
 
     @Test
@@ -323,12 +317,12 @@ public class OneTimeAuthManagerTest {
     public void isInvalid() {
         final User jdoe = userRepository.findByName("jdoe");
 
-        final Optional<OneTimeAuthToken> result = oneTimeAuthManager.
+        final List<OneTimeAuthToken> result = oneTimeAuthManager.
             retrieveForUser(
                 jdoe, OneTimeAuthTokenPurpose.EMAIL_VERIFICATION);
 
-        assertThat(result.isPresent(), is(true));
-        final OneTimeAuthToken token = result.get();
+        assertThat(result, is(not(empty())));
+        final OneTimeAuthToken token = result.get(0);
 
         final LocalDateTime date = LocalDateTime
             .now(ZoneOffset.UTC).minus(1800, ChronoUnit.SECONDS);
@@ -357,12 +351,12 @@ public class OneTimeAuthManagerTest {
     public void invalidateToken() {
         final User jdoe = userRepository.findByName("jdoe");
 
-        final Optional<OneTimeAuthToken> result = oneTimeAuthManager.
+        final List<OneTimeAuthToken> result = oneTimeAuthManager.
             retrieveForUser(
                 jdoe, OneTimeAuthTokenPurpose.EMAIL_VERIFICATION);
 
-        assertThat(result.isPresent(), is(true));
-        oneTimeAuthManager.invalidate(result.get());
+        assertThat(result, is(not(empty())));
+        oneTimeAuthManager.invalidate(result.get(0));
     }
 
     @Test(expected = IllegalArgumentException.class)

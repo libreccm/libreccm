@@ -51,28 +51,28 @@ public class OneTimeAuthManager {
      *
      * This method generates the token <em>and</em> saves it in the database.
      *
-     * @param user The user for which the one time auth token is generated.
+     * @param user    The user for which the one time auth token is generated.
      * @param purpose The purpose for which the token is generated.
      *
      * @return The one time auth token.
      */
     public OneTimeAuthToken createForUser(
-            final User user, final OneTimeAuthTokenPurpose purpose) {
+        final User user, final OneTimeAuthTokenPurpose purpose) {
         if (user == null || purpose == null) {
             throw new IllegalArgumentException(
-                    "user and purpose and mandatory for creating a one "
-                            + "time auth token.");
+                "user and purpose and mandatory for creating a one "
+                    + "time auth token.");
         }
 
         final OneTimeAuthConfig config = configurationManager.findConfiguration(
-                OneTimeAuthConfig.class);
+            OneTimeAuthConfig.class);
 
         final OneTimeAuthToken token = new OneTimeAuthToken();
         token.setUser(user);
         token.setPurpose(purpose);
 
         final String tokenStr = RandomStringUtils.randomAscii(config.
-                getTokenLength());
+            getTokenLength());
         token.setToken(tokenStr);
 
         final LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
@@ -90,64 +90,67 @@ public class OneTimeAuthManager {
      * Retrieves the one time auth token for the provided user and purpose. This
      * method does <strong>not</strong> not check of the token is still valid!
      *
-     * @param user The user for which the token is retrieved.
+     * @param user    The user for which the token is retrieved.
      * @param purpose The purpose of the token to retrieve.
      *
      * @return The one time auth token for the provided user and purpose or
-     * {@code null} if there is no such token.
+     *         {@code null} if there is no such token.
      */
-    public Optional<OneTimeAuthToken> retrieveForUser(
-            final User user, final OneTimeAuthTokenPurpose purpose) {
+    public List<OneTimeAuthToken> retrieveForUser(
+        final User user, final OneTimeAuthTokenPurpose purpose) {
         if (user == null || purpose == null) {
             throw new IllegalArgumentException(
-                    "user and purpose and mandatory for retrieving a one "
-                            + "time auth token.");
+                "user and purpose and mandatory for retrieving a one "
+                    + "time auth token.");
         }
 
-        final TypedQuery query = entityManager.createNamedQuery(
-                "OneTimeAuthToken.findByUserAndPurpose", OneTimeAuthToken.class);
+        final TypedQuery<OneTimeAuthToken> query = entityManager
+            .createNamedQuery("OneTimeAuthToken.findByUserAndPurpose",
+                              OneTimeAuthToken.class);
         query.setParameter("user", user);
         query.setParameter("purpose", purpose);
 
-        final List<OneTimeAuthToken> queryResult = query.getResultList();
-        if (queryResult.isEmpty()) {
-            return Optional.empty();
-        } else {
-            return Optional.of(queryResult.get(0));
-        }
+        return query.getResultList();
     }
 
     /**
-     * Checks of there is a valid one time auth token for the provided user and
-     * purpose.
+     * Checks of there is a {@link OneTimeAuthToken} which has not been expired
+     * for the provided user and purpose.
      *
-     * @param user The user.
+     * @param user    The user.
      * @param purpose The purpose of the token.
      *
      * @return {@code true} if there is a valid token for the provided user and
-     * purpose, {@code false} if not.
+     *         purpose, {@code false} if not.
      */
     public boolean validTokenExistsForUser(
-            final User user, final OneTimeAuthTokenPurpose purpose) {
+        final User user, final OneTimeAuthTokenPurpose purpose) {
         if (user == null || purpose == null) {
             throw new IllegalArgumentException(
-                    "user and purpose and mandatory for validiting a one time "
-                            + "auth token.");
+                "user and purpose and mandatory for validiting a one time "
+                    + "auth token.");
         }
 
-        final Optional<OneTimeAuthToken> token = retrieveForUser(user, purpose);
-        if (token.isPresent()) {
-            return isValid(token.get());
-        } else {
+        final List<OneTimeAuthToken> tokens = retrieveForUser(user, purpose);
+        if (tokens == null || tokens.isEmpty()) {
             return false;
+        } else {
+            boolean result = false;
+            for(OneTimeAuthToken token : tokens) {
+                if (isValid(token)) {
+                    result = true;
+                    break;
+                }
+            }
+            return result;
         }
     }
 
     /**
-     * Validates a {@link OneTimeAuthToken}.
-     * 
-     * @param token The token to valid.
-     * 
+     * Checks of the provided @link OneTimeAuthToken} is not expired.
+     *
+     * @param token The token to validate.
+     *
      * @return {@code true} if the token is valid, {@code false} if not.
      */
     public boolean isValid(final OneTimeAuthToken token) {
@@ -156,22 +159,22 @@ public class OneTimeAuthManager {
         }
 
         final LocalDateTime validUntil = LocalDateTime.
-                ofInstant(token.getValidUntil().toInstant(),
-                          ZoneOffset.UTC);
+            ofInstant(token.getValidUntil().toInstant(),
+                      ZoneOffset.UTC);
         final LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
         return validUntil.isAfter(now);
     }
 
     /**
      * Invalides (deletes) a {@link OneTimeAuthToken}.
-     * 
+     *
      * @param token The token to invalidate.
      */
     public void invalidate(final OneTimeAuthToken token) {
         if (token == null) {
             throw new IllegalArgumentException("Can't invalidate a token null");
         }
-        
+
         entityManager.remove(token);
     }
 

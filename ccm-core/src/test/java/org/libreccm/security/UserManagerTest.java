@@ -18,18 +18,11 @@
  */
 package org.libreccm.security;
 
-import com.arsdigita.kernel.security.SecurityConfig;
-import com.arsdigita.util.UncheckedWrapperException;
-import com.arsdigita.util.parameter.AbstractParameterContext;
-import com.arsdigita.web.CCMApplicationContextListener;
-import com.arsdigita.xml.XML;
-import com.arsdigita.xml.formatters.DateTimeFormatter;
 
 import java.io.File;
 
 import javax.inject.Inject;
 
-import nl.jqno.equalsverifier.EqualsVerifier;
 import org.hibernate.exception.ConstraintViolationException;
 
 import static org.hamcrest.Matchers.*;
@@ -57,14 +50,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
-import org.libreccm.categorization.Categorization;
-import org.libreccm.core.CcmObject;
-import org.libreccm.jpa.EntityManagerProducer;
-import org.libreccm.jpa.utils.MimeTypeConverter;
-import org.libreccm.l10n.LocalizedString;
 import org.libreccm.tests.categories.IntegrationTest;
-import org.libreccm.web.CcmApplication;
-import org.libreccm.workflow.Workflow;
 
 import static org.junit.Assert.*;
 
