@@ -35,15 +35,31 @@ import java.util.Objects;
 public final class EmailTemplates {
 
     @Setting
+    private LocalizedStringSetting emailVerificationSubject;
+
+    @Setting
     private LocalizedStringSetting emailVerificationMail;
+
+    @Setting
+    private LocalizedStringSetting passwordRecoverSubject;
 
     @Setting
     private LocalizedStringSetting passwordRecoverMail;
 
     @Setting
+    private LocalizedStringSetting accountActivationSubject;
+
+    @Setting
     private LocalizedStringSetting accountActivationMail;
 
     public EmailTemplates() {
+        emailVerificationSubject = new LocalizedStringSetting();
+        emailVerificationSubject.setValue(new LocalizedString());
+        emailVerificationSubject.getValue().addValue(
+            Locale.ENGLISH, "Email verification");
+        emailVerificationSubject.getValue().addValue(
+            Locale.GERMAN, "Prüfung ihrer E-Mail-Adresse");
+
         emailVerificationMail = new LocalizedStringSetting();
         emailVerificationMail.setValue(new LocalizedString());
         emailVerificationMail.getValue().addValue(
@@ -65,6 +81,13 @@ public final class EmailTemplates {
                 + "Bitte beachten Sie, dass Sie den Prozess bis zu folgendem "
                 + "Zeitpunkt abschließen müssen: ${expires_date}");
 
+        passwordRecoverSubject = new LocalizedStringSetting();
+        passwordRecoverSubject.setValue(new LocalizedString());
+        passwordRecoverSubject.getValue().addValue(
+            Locale.ENGLISH, "Information regarding your password");
+        passwordRecoverSubject.getValue().addValue(
+            Locale.GERMAN, "Zurücksetzen ihres Passwortes");
+
         passwordRecoverMail = new LocalizedStringSetting();
         passwordRecoverMail.setValue(new LocalizedString());
         passwordRecoverMail.getValue().addValue(
@@ -85,6 +108,13 @@ public final class EmailTemplates {
                 + "\n\n"
                 + "Bitte beachten Sie, dass den den Prozess bis zu folgenden "
                 + "Zeitpunkt abschließen müsssen: ${expires_date}");
+
+        accountActivationSubject = new LocalizedStringSetting();
+        accountActivationSubject.setValue(new LocalizedString());
+        accountActivationSubject.getValue().addValue(
+            Locale.ENGLISH, "Activate your account");
+        accountActivationSubject.getValue().addValue(
+            Locale.GERMAN, "Aktivieren Sie Ihr Benutzerkonto");
 
         accountActivationMail = new LocalizedStringSetting();
         accountActivationMail.setValue(new LocalizedString());
@@ -108,13 +138,31 @@ public final class EmailTemplates {
 
     }
 
+    public LocalizedStringSetting getEmailVerificationSubject() {
+        return emailVerificationSubject;
+    }
+
+    public void setEmailVerificationSubject(
+        final LocalizedStringSetting emailVerificationSubject) {
+        this.emailVerificationSubject = emailVerificationSubject;
+    }
+
     public LocalizedStringSetting getEmailVerificationMail() {
         return emailVerificationMail;
     }
 
     public void setEmailVerificationMail(
-        LocalizedStringSetting emailVerificationMail) {
+        final LocalizedStringSetting emailVerificationMail) {
         this.emailVerificationMail = emailVerificationMail;
+    }
+
+    public LocalizedStringSetting getPasswordRecoverSubject() {
+        return passwordRecoverSubject;
+    }
+
+    public void setPasswordRecoverSubject(
+        LocalizedStringSetting passwordRecoverSubject) {
+        this.passwordRecoverSubject = passwordRecoverSubject;
     }
 
     public LocalizedStringSetting getPasswordRecoverMail() {
@@ -124,6 +172,15 @@ public final class EmailTemplates {
     public void setPasswordRecoverMail(
         LocalizedStringSetting passwordRecoverMail) {
         this.passwordRecoverMail = passwordRecoverMail;
+    }
+
+    public LocalizedStringSetting getAccountActivationSubject() {
+        return accountActivationSubject;
+    }
+
+    public void setAccountActivationSubject(
+        final LocalizedStringSetting accountActivationSubject) {
+        this.accountActivationSubject = accountActivationSubject;
     }
 
     public LocalizedStringSetting getAccountActivationMail() {
@@ -138,8 +195,11 @@ public final class EmailTemplates {
     @Override
     public int hashCode() {
         int hash = 5;
+        hash = 53 * hash + Objects.hashCode(emailVerificationSubject);
         hash = 53 * hash + Objects.hashCode(emailVerificationMail);
+        hash = 53 * hash + Objects.hashCode(passwordRecoverSubject);
         hash = 53 * hash + Objects.hashCode(passwordRecoverMail);
+        hash = 53 * hash * Objects.hashCode(accountActivationSubject);
         hash = 53 * hash + Objects.hashCode(accountActivationMail);
         return hash;
     }
@@ -156,28 +216,46 @@ public final class EmailTemplates {
             return false;
         }
         final EmailTemplates other = (EmailTemplates) obj;
+        if (!Objects.equals(emailVerificationSubject,
+                            other.getEmailVerificationSubject())) {
+            return false;
+        }
         if (!Objects.equals(emailVerificationMail,
                             other.getEmailVerificationMail())) {
+            return false;
+        }
+        if (!Objects.equals(passwordRecoverSubject,
+                            other.getPasswordRecoverSubject())) {
             return false;
         }
         if (!Objects.equals(passwordRecoverMail,
                             other.getPasswordRecoverMail())) {
             return false;
         }
-        return Objects.equals(accountActivationMail,
-                              other.getAccountActivationMail());
+        if (!Objects.equals(accountActivationMail,
+                            other.getAccountActivationMail())) {
+            return false;
+        }
+        return Objects.equals(accountActivationSubject, other
+                              .getAccountActivationSubject());
     }
 
     @Override
     public String toString() {
         return String.format("%s{ "
+                                 + "emailVerificationSubject = { %s }, "
                                  + "emailVerificationMail = { %s }, "
+                                 + "passwordRecoverSubject = { %s }"
                                  + "passwordRecoverMail = { %s }, "
+                                 + "accountActivationSubject = { %s }"
                                  + "accountActivationMail = { %s }"
                                  + " }",
                              super.toString(),
+                             Objects.toString(emailVerificationSubject),
                              Objects.toString(emailVerificationMail),
+                             Objects.toString(passwordRecoverSubject),
                              Objects.toString(passwordRecoverMail),
+                             Objects.toString(accountActivationSubject),
                              Objects.toString(accountActivationMail));
     }
 

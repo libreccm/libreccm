@@ -61,6 +61,9 @@ public final class KernelConfig {
 
     @Setting
     private boolean secureLoginEnabled = false;
+    
+    @Setting
+    private String systemEmailAddress = "libreccm@example.org"; 
 
     @Setting
     private Set<String> supportedLanguages = new HashSet<>(
@@ -196,6 +199,14 @@ public final class KernelConfig {
         this.defaultLanguage = defaultLanguage;
     }
 
+    public String getSystemEmailAddress() {
+        return systemEmailAddress;
+    }
+
+    public void setSystemEmailAddress(final String systemEmailAddress) {
+        this.systemEmailAddress = systemEmailAddress;
+    }
+    
     @Override
     public int hashCode() {
         int hash = 7;
@@ -208,6 +219,7 @@ public final class KernelConfig {
         hash = 61 * hash + (secureLoginEnabled ? 1 : 0);
         hash = 61 * hash + Objects.hashCode(supportedLanguages);
         hash = 61 * hash + Objects.hashCode(defaultLanguage);
+        hash = 61 * hash + Objects.hashCode(systemEmailAddress);
         return hash;
     }
 
@@ -249,7 +261,12 @@ public final class KernelConfig {
             return false;
         }
 
-        return Objects.equals(defaultLanguage, other.getDefaultLanguage());
+        if (!Objects.equals(defaultLanguage, other.getDefaultLanguage())) {
+            return false;
+        }
+        
+        return Objects.equals(systemEmailAddress, 
+                              other.getSystemEmailAddress());
     }
 
     @Override
@@ -272,7 +289,8 @@ public final class KernelConfig {
                 + "rememberLoginEnabeled = %b, "
                 + "secureLoginEnabled = %b, "
                 + "supportedLanguages = { \"%s\" }, "
-                + "defaultLanguage = \"%s\""
+                + "defaultLanguage = \"%s\", "
+                + "systemEmailAddress = \"%s\""
                 + " }",
             super.toString(),
             debugEnabled,
@@ -284,7 +302,8 @@ public final class KernelConfig {
             secureLoginEnabled,
             //supportedLanguages == null ? "" : supportedLanguages.stream().collect(Collectors.joining(", ")),
             languages,
-            defaultLanguage);
+            defaultLanguage,
+            systemEmailAddress);
     }
 
 }

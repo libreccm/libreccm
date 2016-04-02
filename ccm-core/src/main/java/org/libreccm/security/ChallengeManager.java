@@ -19,6 +19,7 @@
 package org.libreccm.security;
 
 import com.arsdigita.kernel.KernelConfig;
+import com.arsdigita.mail.Mail;
 
 import org.apache.commons.lang.text.StrSubstitutor;
 import org.libreccm.configuration.ConfigurationManager;
@@ -34,6 +35,7 @@ import java.util.Objects;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.mail.MessagingException;
 import javax.servlet.ServletContext;
 
 /**
@@ -69,8 +71,13 @@ public class ChallengeManager {
         return createMail(user, OneTimeAuthTokenPurpose.EMAIL_VERIFICATION);
     }
 
-    public void sendEmailVerification(final User user) {
-        throw new UnsupportedOperationException();
+    public void sendEmailVerification(final User user)
+        throws MessagingException {
+        final String text = createEmailVerification(user);
+        sendMessage(
+            user,
+            retrieveEmailSubject(OneTimeAuthTokenPurpose.EMAIL_VERIFICATION),
+            text);
     }
 
     public void finishEmailVerification(final User user,
@@ -100,8 +107,13 @@ public class ChallengeManager {
         return createMail(user, OneTimeAuthTokenPurpose.ACCOUNT_ACTIVATION);
     }
 
-    public void sendAccountActivation(final User user) {
-        throw new UnsupportedOperationException();
+    public void sendAccountActivation(final User user)
+        throws MessagingException {
+        final String text = createEmailVerification(user);
+        sendMessage(
+            user,
+            retrieveEmailSubject(OneTimeAuthTokenPurpose.ACCOUNT_ACTIVATION),
+            text);
     }
 
     public void finishAccountActivation(final User user,
@@ -130,8 +142,13 @@ public class ChallengeManager {
         return createMail(user, OneTimeAuthTokenPurpose.RECOVER_PASSWORD);
     }
 
-    public void sendPasswordRecover(final User user) {
-
+    public void sendPasswordRecover(final User user)
+        throws MessagingException {
+        final String text = createEmailVerification(user);
+        sendMessage(
+            user, 
+            retrieveEmailSubject(OneTimeAuthTokenPurpose.RECOVER_PASSWORD), 
+            text);
     }
 
     public void finishPasswordRecover(final User user,
@@ -187,6 +204,40 @@ public class ChallengeManager {
 
         final StrSubstitutor substitutor = new StrSubstitutor(values);
         return substitutor.replace(template);
+    }
+
+    private String retrieveEmailSubject(final OneTimeAuthTokenPurpose purpose) {
+        final Locale locale = globalizationHelper.getNegotiatedLocale();
+
+        final EmailTemplates emailTemplates = configurationManager
+            .findConfiguration(EmailTemplates.class);
+        final LocalizedStringSetting setting;
+        switch (purpose) {
+            case ACCOUNT_ACTIVATION:
+                setting = emailTemplates.getAccountActivationSubject();
+                break;
+            case EMAIL_VERIFICATION:
+                setting = emailTemplates.getEmailVerificationSubject();
+                break;
+            case RECOVER_PASSWORD:
+                setting = emailTemplates.getPasswordRecoverSubject();
+                break;
+            default:
+                throw new IllegalArgumentException(String.format(
+                    "Unsupported value \"%s\" for purpose.",
+                    purpose.toString()));
+        }
+
+        final LocalizedString localizedString = setting.getValue();
+        if (localizedString.hasValue(locale)) {
+            return localizedString.getValue(locale);
+        } else {
+            final KernelConfig kernelConfig = configurationManager
+                .findConfiguration(KernelConfig.class);
+            final Locale defaultLocale = new Locale(kernelConfig
+                .getDefaultLanguage());
+            return localizedString.getValue(defaultLocale);
+        }
     }
 
     private String retrieveEmailTemplate(
@@ -254,6 +305,19 @@ public class ChallengeManager {
         }
 
         return false;
+    }
+
+    private void sendMessage(final User user,
+                             final String subject,
+                             final String text) throws MessagingException {
+        final KernelConfig kernelConfig = configurationManager
+            .findConfiguration(KernelConfig.class);
+
+        final Mail mail = new Mail(user.getPrimaryEmailAddress().getAddress(),
+                                   kernelConfig.getSystemEmailAddress(),
+                                   "email verification");
+        mail.setBody(text);
+        mail.send();
     }
 
 }
