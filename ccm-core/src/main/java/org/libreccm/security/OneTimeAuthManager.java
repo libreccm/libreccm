@@ -22,13 +22,14 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
+
 import org.libreccm.configuration.ConfigurationManager;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+
 import org.apache.commons.lang.RandomStringUtils;
 
 /**
