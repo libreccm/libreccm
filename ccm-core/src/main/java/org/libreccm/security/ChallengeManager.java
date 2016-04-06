@@ -39,6 +39,34 @@ import javax.mail.MessagingException;
 import javax.servlet.ServletContext;
 
 /**
+ * A service class for managing several so called challenges. These challenges
+ * are using a {@link OneTimeAuthToken} and are used to verify email addresses
+ * and recover passwords.
+ *
+ * For each challenge type there are three methods:
+ *
+ * <ul>
+ * <li>a {@code create} method returning a string with the text to be send to
+ * the user</li>
+ * <li>a {@code send} method which creates a challenge using the create method
+ * and sends it to the user per email</li>
+ * <li>a {@code finish} method which accepts a {@link OneTimeAuthToken} and
+ * executes the final action of the challenge</li>
+ * </ul>
+ *
+ * The {@code create} method are {@code public} to provide maximum flexibility
+ * for the users of the class.
+ *
+ * The texts used by this class can be customised using the
+ * {@link EmailTemplates} configuration. Each template supports two
+ * placeholders:
+ *
+ * <dl>
+ * <dt><code>link</code></dt>
+ * <dd>The link to the page for submitting the {@link OneTimeAuthToken}</dd>
+ * <dt><code>expires_date</code></dt>
+ * <dd>The time on which the {@link OneTimeAuthToken} expires.</dd>
+ * </dl>
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -146,8 +174,8 @@ public class ChallengeManager {
         throws MessagingException {
         final String text = createEmailVerification(user);
         sendMessage(
-            user, 
-            retrieveEmailSubject(OneTimeAuthTokenPurpose.RECOVER_PASSWORD), 
+            user,
+            retrieveEmailSubject(OneTimeAuthTokenPurpose.RECOVER_PASSWORD),
             text);
     }
 
@@ -297,8 +325,12 @@ public class ChallengeManager {
 
         for (OneTimeAuthToken token : tokens) {
             if (oneTimeAuthManager.isValid(token)) {
-                oneTimeAuthManager.invalidate(token);
-                return true;
+                //A token which still valid is not deleted, therefore we can't
+                //combine the two conditions.
+                if (oneTimeAuthManager.verify(token, submittedToken)) {
+                    oneTimeAuthManager.invalidate(token);
+                    return true;
+                }
             } else {
                 oneTimeAuthManager.invalidate(token);
             }

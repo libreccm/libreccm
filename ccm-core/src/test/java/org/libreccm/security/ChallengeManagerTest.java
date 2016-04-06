@@ -28,7 +28,6 @@ import org.jboss.arquillian.persistence.ShouldMatchDataSet;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
-import org.jboss.shrinkwrap.api.IllegalArchivePathException;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -318,7 +317,7 @@ public class ChallengeManagerTest {
     @UsingDataSet("datasets/org/libreccm/security/ChallengeManagerTest/data.xml")
     @ShouldMatchDataSet(
         value = "datasets/org/libreccm/security/ChallengeManagerTest/"
-                    + "after-create-password-recover.xml",
+                    + "after-create-password-recovery.xml",
         excludeColumns = {"token_id", "token", "valid_until"})
     @InSequence(3100)
     public void createPasswordRecover() {
@@ -352,10 +351,10 @@ public class ChallengeManagerTest {
 
     @Test
     @UsingDataSet("datasets/org/libreccm/security/ChallengeManagerTest/"
-                      + "finish-password-recover.xml")
+                      + "finish-password-recovery.xml")
     @ShouldMatchDataSet(
         value = "datasets/org/libreccm/security/ChallengeManagerTest/"
-                    + "after-finish-password-recover.xml",
+                    + "after-finish-password-recovery.xml",
         excludeColumns = "password")
     @InSequence(3300)
     public void finishPasswordRecover() throws ChallengeFailedException {
@@ -371,10 +370,10 @@ public class ChallengeManagerTest {
 
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet("datasets/org/libreccm/security/ChallengeManagerTest/"
-                      + "finish-password-recover.xml")
+                      + "finish-password-recovery.xml")
     @ShouldMatchDataSet(
         value = "datasets/org/libreccm/security/ChallengeManagerTest/"
-                    + "finish-password-recover.xml")
+                    + "finish-password-recovery.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(3400)
     public void finishPasswordRecoverNullUser() throws ChallengeFailedException {
@@ -386,10 +385,10 @@ public class ChallengeManagerTest {
 
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet("datasets/org/libreccm/security/ChallengeManagerTest/"
-                      + "finish-password-recover.xml")
+                      + "finish-password-recovery.xml")
     @ShouldMatchDataSet(
         value = "datasets/org/libreccm/security/ChallengeManagerTest/"
-                    + "finish-password-recover.xml")
+                    + "finish-password-recovery.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(3400)
     public void finishPasswordRecoverNullToken()
@@ -401,10 +400,10 @@ public class ChallengeManagerTest {
 
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet("datasets/org/libreccm/security/ChallengeManagerTest/"
-                      + "finish-password-recover.xml")
+                      + "finish-password-recovery.xml")
     @ShouldMatchDataSet(
         value = "datasets/org/libreccm/security/ChallengeManagerTest/"
-                    + "finish-password-recover.xml")
+                    + "finish-password-recovery.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(3500)
     public void finishPasswordRecoverNullPassword()
@@ -418,10 +417,10 @@ public class ChallengeManagerTest {
 
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet("datasets/org/libreccm/security/ChallengeManagerTest/"
-                      + "finish-password-recover.xml")
+                      + "finish-password-recovery.xml")
     @ShouldMatchDataSet(
         value = "datasets/org/libreccm/security/ChallengeManagerTest/"
-                    + "finish-password-recover.xml")
+                    + "finish-password-recovery.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(3600)
     public void finishPasswordRecoverEmptyPassword()

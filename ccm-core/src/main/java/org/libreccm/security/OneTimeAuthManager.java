@@ -33,6 +33,7 @@ import javax.persistence.TypedQuery;
 import org.apache.commons.lang.RandomStringUtils;
 
 /**
+ * This class manages the generation and delation of {@link OneTimeAuthToken}s.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -137,7 +138,7 @@ public class OneTimeAuthManager {
             return false;
         } else {
             boolean result = false;
-            for(OneTimeAuthToken token : tokens) {
+            for (OneTimeAuthToken token : tokens) {
                 if (isValid(token)) {
                     result = true;
                     break;
@@ -167,7 +168,32 @@ public class OneTimeAuthManager {
     }
 
     /**
-     * Invalides (deletes) a {@link OneTimeAuthToken}.
+     * Verifies a submitted token against a token from the database.
+     *
+     *
+     * @param token          The token against which the submitted token is
+     *                       verified.
+     * @param submittedToken The submitted token.
+     *
+     * @return {@code true} if the submitted token is valid and matches {@link token},
+     * {@code false} if not.
+     */
+    public boolean verify(final OneTimeAuthToken token,
+                          final String submittedToken) {
+        if (token == null || submittedToken == null) {
+            throw new IllegalArgumentException(
+                "token or submittedToken can't be null");
+        }
+
+        if (!isValid(token)) {
+            return false;
+        }
+
+        return token.getToken().equals(submittedToken);
+    }
+
+    /**
+     * Invaliades (deletes) a {@link OneTimeAuthToken}.
      *
      * @param token The token to invalidate.
      */

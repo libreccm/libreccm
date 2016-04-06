@@ -36,7 +36,6 @@ import com.arsdigita.bebop.event.TableActionEvent;
 import com.arsdigita.bebop.event.TableActionListener;
 import com.arsdigita.bebop.form.CheckboxGroup;
 import com.arsdigita.bebop.form.Option;
-import com.arsdigita.bebop.form.OptionGroup;
 import com.arsdigita.bebop.form.Password;
 import com.arsdigita.bebop.form.Submit;
 import com.arsdigita.bebop.form.TextField;
@@ -47,12 +46,12 @@ import com.arsdigita.bebop.table.TableColumn;
 import com.arsdigita.bebop.table.TableColumnModel;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.mail.Mail;
-import com.arsdigita.ui.login.UserForm;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.core.EmailAddress;
+import org.libreccm.security.ChallengeManager;
 import org.libreccm.security.User;
 import org.libreccm.security.UserManager;
 import org.libreccm.security.UserRepository;
@@ -68,9 +67,9 @@ import static com.arsdigita.ui.admin.AdminUiConstants.*;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class UserAdmin extends BoxPanel {
-    
+
     private static final Logger LOGGER = LogManager.getLogger(UserAdmin.class);
-    
+
     private final StringParameter userIdParameter;
     private final StringParameter emailParameter;
     private final ParameterSingleSelectionModel<String> selectedUserId;
@@ -86,15 +85,15 @@ public class UserAdmin extends BoxPanel {
 //    private final UserDetails userDetails;
     private final BoxPanel userDetails;
     private final Form emailForm;
-    
+
     public UserAdmin() {
         super();
-        
+
         setIdAttr("userAdmin");
-        
+
         usersTablePanel = new BoxPanel();
         usersTablePanel.setIdAttr("usersTablePanel");
-        
+
         final Form filterForm = new Form("usersTableFilterForm");
         usersTableFilter = new TextField("usersTableFilter");
         usersTableFilter.setLabel(new GlobalizedMessage(
@@ -110,7 +109,7 @@ public class UserAdmin extends BoxPanel {
         });
         filterForm.add(clearLink);
         usersTablePanel.add(filterForm);
-        
+
         userIdParameter = new StringParameter("selected_user_id");
         selectedUserId = new ParameterSingleSelectionModel<>(userIdParameter);
         //selectedUserId = new ParameterSingleSelectionModel<>(USER_ID_PARAM);
@@ -118,10 +117,10 @@ public class UserAdmin extends BoxPanel {
         emailParameter = new StringParameter("selected_email_address");
         selectedEmailAddress = new ParameterSingleSelectionModel<>(
             emailParameter);
-        
+
         usersTable = new UsersTable(this, usersTableFilter, selectedUserId);
         usersTablePanel.add(usersTable);
-        
+
         add(usersTablePanel);
 
 //        final Text text = new Text();
@@ -137,19 +136,19 @@ public class UserAdmin extends BoxPanel {
 //        add(new UserDetails(this, selectedUserId));
         userDetails = new BoxPanel();
         userDetails.setIdAttr("userDetails");
-        
+
         backToUsersTable = new ActionLink(new GlobalizedMessage(
             "ui.admin.user_details.back", ADMIN_BUNDLE));
         backToUsersTable.setIdAttr("userDetailsBackLink");
         backToUsersTable.addActionListener(
             e -> closeUserDetails(e.getPageState()));
         userDetails.add(backToUsersTable);
-        
+
         userProperties = new PropertySheet(new UserPropertySheetModelBuilder(
             this, selectedUserId));
         userProperties.setIdAttr("userProperties");
         userDetails.add(userProperties);
-        
+
         userEditForm = new Form("userEditForm");
         final TextField username = new TextField("username");
         username.setLabel(new GlobalizedMessage(
@@ -193,12 +192,12 @@ public class UserAdmin extends BoxPanel {
         userEditForm.add(userEditFormSaveCancel);
         userEditForm.addInitListener(e -> {
             final PageState state = e.getPageState();
-            
+
             final String userIdStr = selectedUserId.getSelectedKey(state);
             final UserRepository userRepository = CdiUtil.createCdiUtil()
                 .findBean(UserRepository.class);
             final User user = userRepository.findById(Long.parseLong(userIdStr));
-            
+
             username.setValue(state, user.getName());
             familyName.setValue(state, user.getFamilyName());
             givenName.setValue(state, user.getGivenName());
@@ -212,14 +211,14 @@ public class UserAdmin extends BoxPanel {
         });
         userEditForm.addProcessListener(e -> {
             final PageState state = e.getPageState();
-            
+
             if (userEditFormSaveCancel.getSaveButton().isSelected(state)) {
                 final String userIdStr = selectedUserId.getSelectedKey(state);
                 final UserRepository userRepository = CdiUtil.createCdiUtil()
                     .findBean(UserRepository.class);
                 final User user = userRepository.findById(Long.parseLong(
                     userIdStr));
-                
+
                 if (!user.getName().equals(username.getValue(state))) {
                     user.setName((String) username.getValue(state));
                 }
@@ -229,13 +228,13 @@ public class UserAdmin extends BoxPanel {
                 if (!user.getGivenName().equals(givenName.getValue(state))) {
                     user.setGivenName((String) familyName.getValue(state));
                 }
-                
+
                 if ("banned".equals(banned.getValue(state)) && !user.isBanned()) {
                     user.setBanned(true);
                 } else {
                     user.setBanned(false);
                 }
-                
+
                 if ("password_reset_required".equals(passwordResetRequired
                     .getValue(
                         state))
@@ -244,13 +243,13 @@ public class UserAdmin extends BoxPanel {
                 } else {
                     user.setPasswordResetRequired(false);
                 }
-                
+
                 userRepository.save(user);
             }
             closeUserEditForm(state);
         });
         add(userEditForm);
-        
+
         passwordSetForm = new Form("password_set_form");
         final Password newPassword = new Password("new_password");
         newPassword.setLabel(new GlobalizedMessage(
@@ -276,13 +275,13 @@ public class UserAdmin extends BoxPanel {
         passwordSetForm.add(passwordSetFormSaveCancel);
         passwordSetForm.addValidationListener(e -> {
             final PageState state = e.getPageState();
-            
+
             if (passwordSetFormSaveCancel.getSaveButton().isSelected(state)) {
                 final FormData formData = e.getFormData();
-                
+
                 final String password = (String) newPassword.getValue(state);
                 final String confirm = (String) passwordConfirm.getValue(state);
-                
+
                 if (!password.equals(confirm)) {
                     formData.addError(new GlobalizedMessage(
                         "ui.admin.user_set_password.error.do_not_match",
@@ -292,16 +291,16 @@ public class UserAdmin extends BoxPanel {
         });
         passwordSetForm.addProcessListener(e -> {
             final PageState state = e.getPageState();
-            
+
             if (passwordSetFormSaveCancel.getSaveButton().isSelected(state)) {
                 final String userIdStr = selectedUserId.getSelectedKey(state);
                 final String password = (String) newPassword.getValue(state);
-                
+
                 final UserRepository userRepository = CdiUtil.createCdiUtil()
                     .findBean(UserRepository.class);
                 final User user = userRepository.findById(Long.parseLong(
                     userIdStr));
-                
+
                 final UserManager userManager = CdiUtil.createCdiUtil()
                     .findBean(
                         UserManager.class);
@@ -310,7 +309,7 @@ public class UserAdmin extends BoxPanel {
             closePasswordSetForm(state);
         });
         add(passwordSetForm);
-        
+
         actionLinks = new BoxPanel(BoxPanel.HORIZONTAL);
         actionLinks.setIdAttr("userDetailsActionLinks");
         final ActionLink editUserDetailsLink = new ActionLink(
@@ -320,7 +319,7 @@ public class UserAdmin extends BoxPanel {
         });
         actionLinks.add(editUserDetailsLink);
         actionLinks.add(new Text(" | "));
-        
+
         final ActionLink setPasswordLink = new ActionLink(
             new GlobalizedMessage("ui.admin.user_details.set_password",
                                   ADMIN_BUNDLE));
@@ -329,7 +328,7 @@ public class UserAdmin extends BoxPanel {
         });
         actionLinks.add(setPasswordLink);
         actionLinks.add(new Text(" | "));
-        
+
         final ActionLink generatePasswordLink = new ActionLink(
             new GlobalizedMessage("ui.admin.user_details.generate_password",
                                   ADMIN_BUNDLE));
@@ -337,26 +336,22 @@ public class UserAdmin extends BoxPanel {
             "ui.admin.user_details.generate_password.confirm",
             ADMIN_BUNDLE));
         generatePasswordLink.addActionListener(e -> {
-            final UserRepository userRepository = CdiUtil.createCdiUtil()
-                .findBean(UserRepository.class);
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final UserRepository userRepository = cdiUtil.findBean(
+                UserRepository.class);
             final User user = userRepository.findById(Long.parseLong(
                 selectedUserId.getSelectedKey(e.getPageState())));
-            
-            final Mail mail = new Mail(
-                user.getPrimaryEmailAddress().getAddress(),
-                "libreccm.example",
-                "New password has been generated.");
-            mail.setBody("Das eine Test-Email");
-            
+            final ChallengeManager challengeManager = cdiUtil.findBean(
+                ChallengeManager.class);
             try {
-                mail.send();
+                challengeManager.sendPasswordRecover(user);
             } catch (MessagingException ex) {
                 LOGGER.error("Failed to send email to user.", ex);
             }
         });
         actionLinks.add(generatePasswordLink);
         userDetails.add(actionLinks);
-        
+
         final Table primaryEmailTable = new Table();
         primaryEmailTable.setModelBuilder(
             new UserPrimaryEmailTableModelBuilder(selectedUserId));
@@ -385,7 +380,7 @@ public class UserAdmin extends BoxPanel {
         primaryEmailTableColModel.get(
             UserPrimaryEmailTableModel.COL_ACTION).setCellRenderer(
                 new TableCellRenderer() {
-                
+
                 @Override
                 public Component getComponent(final Table table,
                                               final PageState state,
@@ -394,29 +389,29 @@ public class UserAdmin extends BoxPanel {
                                               final Object key,
                                               final int row,
                                               final int column) {
-                    return new ControlLink((Label) value);
+                    return new ControlLink((Component) value);
                 }
-                
+
             });
-        
+
         primaryEmailTable.addTableActionListener(new TableActionListener() {
-            
+
             @Override
             public void cellSelected(final TableActionEvent event) {
                 final String key = (String) event.getRowKey();
                 selectedEmailAddress.setSelectedKey(event.getPageState(), key);
                 showEmailForm(event.getPageState());
             }
-            
+
             @Override
             public void headSelected(final TableActionEvent event) {
                 //Nothing
             }
-            
+
         });
-        
+
         userDetails.add(primaryEmailTable);
-        
+
         final Table emailTable = new Table();
         emailTable.setModelBuilder(
             new UserEmailTableModelBuilder(selectedUserId));
@@ -449,7 +444,7 @@ public class UserAdmin extends BoxPanel {
                 ADMIN_BUNDLE))));
         emailTableColumnModel.get(UserEmailTableModel.COL_EDIT).setCellRenderer(
             new TableCellRenderer() {
-            
+
             @Override
             public Component getComponent(final Table table,
                                           final PageState state,
@@ -460,12 +455,12 @@ public class UserAdmin extends BoxPanel {
                                           final int column) {
                 return new ControlLink((Component) value);
             }
-            
+
         });
         emailTableColumnModel.get(UserEmailTableModel.COL_DELETE)
             .setCellRenderer(
                 new TableCellRenderer() {
-                
+
                 @Override
                 public Component getComponent(final Table table,
                                               final PageState state,
@@ -482,16 +477,16 @@ public class UserAdmin extends BoxPanel {
                     }
                     return link;
                 }
-                
+
             });
         emailTable.addTableActionListener(new TableActionListener() {
-            
+
             @Override
             public void cellSelected(final TableActionEvent event) {
                 final PageState state = event.getPageState();
-                
+
                 final String key = (String) event.getRowKey();
-                
+
                 switch (event.getColumn()) {
                     case UserEmailTableModel.COL_EDIT:
                         selectedEmailAddress.setSelectedKey(state, key);
@@ -511,32 +506,32 @@ public class UserAdmin extends BoxPanel {
                                 break;
                             }
                         }
-                        
+
                         if (email != null) {
                             user.removeEmailAddress(email);
                             userRepository.save(user);
                         }
                 }
             }
-            
+
             @Override
             public void headSelected(final TableActionEvent event) {
                 //Nothing
             }
-            
+
         });
         emailTable.setEmptyView(new Label(new GlobalizedMessage(
             "ui.admin.user.email_addresses.none", ADMIN_BUNDLE)));
-        
+
         userDetails.add(emailTable);
-        
+
         final ActionLink addEmailLink = new ActionLink(new GlobalizedMessage(
             "ui.admin.user.email_addresses.add", ADMIN_BUNDLE));
         addEmailLink.addActionListener(e -> {
             showEmailForm(e.getPageState());
         });
         userDetails.add(addEmailLink);
-        
+
         emailForm = new Form("email_form");
 //        emailForm.add(new Label(new GlobalizedMessage(
 //            "ui.admin.user.email_form.address",
@@ -564,12 +559,12 @@ public class UserAdmin extends BoxPanel {
                            "ui.admin.user.email_form.bouncing",
                            ADMIN_BUNDLE))));
         emailForm.add(emailFormBouncing);
-        
+
         emailForm.add(new SaveCancelSection());
-        
+
         emailForm.addInitListener(e -> {
             final PageState state = e.getPageState();
-            
+
             final String selected = selectedEmailAddress.getSelectedKey(state);
             final String userIdStr = selectedUserId.getSelectedKey(state);
             if (selected != null && !selected.isEmpty()) {
@@ -588,7 +583,7 @@ public class UserAdmin extends BoxPanel {
                         }
                     }
                 }
-                
+
                 if (email != null) {
                     emailFormAddress.setValue(state, email.getAddress());
                     if (email.isVerified()) {
@@ -600,13 +595,13 @@ public class UserAdmin extends BoxPanel {
                 }
             }
         });
-        
+
         emailForm.addProcessListener(e -> {
             final PageState state = e.getPageState();
-            
+
             final String selected = selectedEmailAddress.getSelectedKey(state);
             final String userIdStr = selectedUserId.getSelectedKey(state);
-            
+
             final UserRepository userRepository = CdiUtil.createCdiUtil()
                 .findBean(UserRepository.class);
             final User user = userRepository.findById(Long.parseLong(
@@ -626,10 +621,10 @@ public class UserAdmin extends BoxPanel {
                     }
                 }
             }
-            
+
             if (email != null) {
                 email.setAddress((String) emailFormAddress.getValue(state));
-                
+
                 final String[] verifiedValues = (String[]) emailFormVerified
                     .getValue(state);
                 if (verifiedValues != null && verifiedValues.length > 0) {
@@ -641,7 +636,7 @@ public class UserAdmin extends BoxPanel {
                 } else {
                     email.setVerified(false);
                 }
-                
+
                 final String[] bouncingValues = (String[]) emailFormBouncing
                     .getValue(state);
                 if (bouncingValues != null && bouncingValues.length > 0) {
@@ -654,33 +649,33 @@ public class UserAdmin extends BoxPanel {
                     email.setBouncing(false);
                 }
             }
-            
+
             userRepository.save(user);
             closeEmailForm(e.getPageState());
         });
-        
+
         emailForm.addCancelListener(e -> closeEmailForm(e.getPageState()));
-        
+
         add(emailForm);
-        
+
         add(userDetails);
-        
+
     }
-    
+
     @Override
     public void register(final Page page) {
         super.register(page);
-        
+
         page.addGlobalStateParam(userIdParameter);
         page.addGlobalStateParam(emailParameter);
-        
+
         page.setVisibleDefault(usersTablePanel, true);
         page.setVisibleDefault(userDetails, false);
         page.setVisibleDefault(userEditForm, false);
         page.setVisibleDefault(passwordSetForm, false);
         page.setVisibleDefault(emailForm, false);
     }
-    
+
     protected void showUserDetails(final PageState state) {
         usersTablePanel.setVisible(state, false);
         userDetails.setVisible(state, true);
@@ -688,7 +683,7 @@ public class UserAdmin extends BoxPanel {
         passwordSetForm.setVisible(state, false);
         emailForm.setVisible(state, false);
     }
-    
+
     protected void closeUserDetails(final PageState state) {
         selectedUserId.clearSelection(state);
         usersTablePanel.setVisible(state, true);
@@ -697,7 +692,7 @@ public class UserAdmin extends BoxPanel {
         passwordSetForm.setVisible(state, false);
         emailForm.setVisible(state, false);
     }
-    
+
     protected void showUserEditForm(final PageState state) {
         usersTablePanel.setVisible(state, false);
         userDetails.setVisible(state, false);
@@ -705,7 +700,7 @@ public class UserAdmin extends BoxPanel {
         passwordSetForm.setVisible(state, false);
         emailForm.setVisible(state, false);
     }
-    
+
     protected void closeUserEditForm(final PageState state) {
         usersTablePanel.setVisible(state, false);
         userDetails.setVisible(state, true);
@@ -713,7 +708,7 @@ public class UserAdmin extends BoxPanel {
         passwordSetForm.setVisible(state, false);
         emailForm.setVisible(state, false);
     }
-    
+
     protected void showPasswordSetForm(final PageState state) {
         usersTablePanel.setVisible(state, false);
         userDetails.setVisible(state, false);
@@ -721,7 +716,7 @@ public class UserAdmin extends BoxPanel {
         passwordSetForm.setVisible(state, true);
         emailForm.setVisible(state, false);
     }
-    
+
     protected void closePasswordSetForm(final PageState state) {
         usersTablePanel.setVisible(state, false);
         userDetails.setVisible(state, true);
@@ -729,7 +724,7 @@ public class UserAdmin extends BoxPanel {
         passwordSetForm.setVisible(state, false);
         emailForm.setVisible(state, false);
     }
-    
+
     protected void showEmailForm(final PageState state) {
         usersTablePanel.setVisible(state, false);
         userDetails.setVisible(state, false);
@@ -737,7 +732,7 @@ public class UserAdmin extends BoxPanel {
         passwordSetForm.setVisible(state, false);
         emailForm.setVisible(state, true);
     }
-    
+
     protected void closeEmailForm(final PageState state) {
         selectedEmailAddress.clearSelection(state);
         usersTablePanel.setVisible(state, false);
@@ -746,5 +741,5 @@ public class UserAdmin extends BoxPanel {
         passwordSetForm.setVisible(state, false);
         emailForm.setVisible(state, false);
     }
-    
+
 }

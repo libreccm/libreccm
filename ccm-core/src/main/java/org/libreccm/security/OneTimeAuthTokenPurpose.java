@@ -19,7 +19,8 @@
 package org.libreccm.security;
 
 /**
- *
+ * A enumeration used to described the purpose of {@link OneTimeAuthToken}.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public enum OneTimeAuthTokenPurpose {

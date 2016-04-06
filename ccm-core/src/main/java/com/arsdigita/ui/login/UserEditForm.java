@@ -38,6 +38,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.core.EmailAddress;
+import org.libreccm.security.ChallengeManager;
 import org.libreccm.security.User;
 
 import org.libreccm.security.Shiro;
@@ -114,9 +115,17 @@ public class UserEditForm extends UserForm
         user.setGivenName((String) m_firstName.getValue(state));
         user.setFamilyName((String) m_lastName.getValue(state));
         user.setName((String) m_screenName.getValue(state));
-        final EmailAddress newAddress = new EmailAddress();
-        newAddress.setAddress(data.get(FORM_EMAIL).toString());
-        user.setPrimaryEmailAddress(newAddress);
+        final String emailValue = (String) data.get(FORM_EMAIL);
+        if (!emailValue.equals(user.getPrimaryEmailAddress().getAddress())) {
+            final EmailAddress newAddress = new EmailAddress();
+            newAddress.setAddress(data.get(FORM_EMAIL).toString());
+            newAddress.setVerified(false);
+            user.setPrimaryEmailAddress(newAddress);
+
+            final ChallengeManager challengeManager = CdiUtil.createCdiUtil()
+                .findBean(ChallengeManager.class);
+            challengeManager.createEmailVerification(user);
+        }
         userRepository.save(user);
 
         // redirect to workspace or return URL_MSG, if specified

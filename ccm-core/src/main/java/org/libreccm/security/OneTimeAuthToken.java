@@ -40,6 +40,25 @@ import javax.persistence.TemporalType;
 import static org.libreccm.core.CoreConstants.*;
 
 /**
+ * The {@code OneTimeAuthToken} is used as a one time authentication mechanism
+ * for several purposes. Usually a {@link OneTimeAuthToken} is used together
+ * with a challenge created by the {@link ChallengeManager}. The supported
+ * purposes at the moment are:
+ * <dl>
+ * <dt>account activation</dt>
+ * <dd>If user registration is enabled a new user will receive an email from the
+ * system with a {@link OneTimeAuthToken}. This token is used to verify the
+ * email address of the user and to complete the registration process.
+ * </dd>
+ * <dt>Email verification</dt>
+ * <dd>The systems sends a mail to an email address containing a
+ * {@link OneTimeAuthToken}. The user must confirm his/her email address by
+ * submitting the {@link OneTimeAuthToken} to the system.</dd>
+ * <dt>Password recover</dt>
+ * <dd>Sometimes users forget their password. To recover their password they
+ * must first request a {@link OneTimeAuthToken}. After they submitted this
+ * token to the system they can change their password.</dd>
+ * </dl>
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -47,10 +66,10 @@ import static org.libreccm.core.CoreConstants.*;
 @Table(name = "ONE_TIME_AUTH_TOKENS", schema = DB_SCHEMA)
 @NamedQueries({
     @NamedQuery(
-            name = "OneTimeAuthToken.findByUserAndPurpose",
-            query = "SELECT t FROM OneTimeAuthToken t "
-                            + "WHERE t.user = :user AND t.purpose = :purpose "
-                            + "ORDER BY t.validUntil")})
+        name = "OneTimeAuthToken.findByUserAndPurpose",
+        query = "SELECT t FROM OneTimeAuthToken t "
+                    + "WHERE t.user = :user AND t.purpose = :purpose "
+                    + "ORDER BY t.validUntil")})
 public class OneTimeAuthToken implements Serializable {
 
     private static final long serialVersionUID = -9088185274208292873L;
@@ -168,10 +187,10 @@ public class OneTimeAuthToken implements Serializable {
 
     public String toString(final String data) {
         return String.format("%s{ "
-                                     + "tokenId = %d, "
-                                     + "user = { %s }, "
-                                     + "validUnit = %tF %<tT%s"
-                                     + " }",
+                                 + "tokenId = %d, "
+                                 + "user = { %s }, "
+                                 + "validUnit = %tF %<tT%s"
+                                 + " }",
                              super.toString(),
                              tokenId,
                              Objects.toString(user),

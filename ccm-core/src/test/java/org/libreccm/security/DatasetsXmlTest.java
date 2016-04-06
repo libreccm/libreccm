@@ -42,9 +42,14 @@ public class DatasetsXmlTest extends DatasetsVerifier {
     public static Collection<String> data() {
         return Arrays.asList(new String[]{
             "/datasets/org/libreccm/security/ChallengeManagerTest/data.xml",
-            "/datasets/org/libreccm/security/ChallengeManagerTest/after-create-email-verification.xml",
+            
             "/datasets/org/libreccm/security/ChallengeManagerTest/after-create-account-activation.xml",
+            "/datasets/org/libreccm/security/ChallengeManagerTest/after-create-email-verification.xml",
             "/datasets/org/libreccm/security/ChallengeManagerTest/after-create-password-recovery.xml",
+            
+            "/datasets/org/libreccm/security/ChallengeManagerTest/after-finish-account-activation.xml",
+            "/datasets/org/libreccm/security/ChallengeManagerTest/after-finish-email-verification.xml",
+            "/datasets/org/libreccm/security/ChallengeManagerTest/after-finish-password-recovery.xml",
             
             "/datasets/org/libreccm/security/OneTimeAuthManagerTest/data.xml",
             "/datasets/org/libreccm/security/OneTimeAuthManagerTest/after-create.xml",

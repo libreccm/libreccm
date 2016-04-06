@@ -94,15 +94,10 @@ public class ChangePasswordForm extends Form
     public void register(final Page page) {
         super.register(page);
         page.addRequestListener(m_listener);
-        page.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-                PageState state = event.getPageState();
-                m_oldPasswordLabel.setVisible(state, true);
-                m_oldPassword.setVisible(state, true);
-            }
-
+        page.addActionListener((final ActionEvent event) -> {
+            PageState state = event.getPageState();
+            m_oldPasswordLabel.setVisible(state, true);
+            m_oldPassword.setVisible(state, true);
         });
     }
 
@@ -123,10 +118,7 @@ public class ChangePasswordForm extends Form
         add(m_returnURL);
 
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-        final Subject subject = cdiUtil.findBean(Subject.class);
         final Shiro shiro = cdiUtil.findBean(Shiro.class);
-
-        final KernelConfig kernelConfig = KernelConfig.getConfig();
         final User user = shiro.getUser();
 
         final Label greeting;

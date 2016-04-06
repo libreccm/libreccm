@@ -25,7 +25,6 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.Startup;
-import javax.ejb.Stateless;
 import javax.ejb.Timeout;
 import javax.ejb.TimerConfig;
 import javax.ejb.TimerService;
@@ -35,7 +34,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
 /**
- *
+ * This EJB uses the {@link TimerService} to run a cleanup task periodically to 
+ * remove all expired {@link OneTimeAuthToken}s. The task period is the same 
+ * as the time a {@link OneTimeAuthToken} is valid.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Singleton
@@ -49,7 +51,7 @@ public class OneTimeAuthTokenCleaner {
     private ConfigurationManager configurationManager;
 
     @Inject
-    EntityManager entityManager;
+    private EntityManager entityManager;
 
     @Inject
     private OneTimeAuthManager oneTimeAuthManager;

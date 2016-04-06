@@ -73,48 +73,69 @@ public class LoginServlet extends BebopApplicationServlet {
     // Define various URLs to subpages of Login to manage administrative tasks.
     // ////////////////////////////////////////////////////////////////////////
     /**
-     * PathInfo into the Login application to access the (optional) newUser *
+     * PathInfo into the Login application to access the <em>edit profile</em>
      * page. Ends with "/" because it is a servlet/directory
      */
     public static final String EDIT_USER_PROFILE_PATH_INFO = "/edit-profile/";
 
     /**
-     * PathInfo into the Login application to access the (optional) newUser *
+     * PathInfo into the Login application to access the (optional) <em>new
+     * user</em>
      * page. Ends with "/" because it is a servlet/directory
      */
     public static final String NEW_USER_PATH_INFO = "/new-user/";
 
     /**
-     * PathInfo into the Login application to access the (optional) newUser *
-     * page. Ends with "/" because it is a servlet/directory
+     * PathInfo into the Login application to access the activate account page.
+     * Ends with "/" because it is a servlet/directory
+     */
+    public static final String ACTIVATE_ACCOUNT_PATH_INFO = "/active-account/";
+
+    /**
+     * PathInfo into the Login application to access the <em>change
+     * password</em> page. Ends with "/" because it is a servlet/directory
      */
     public static final String CHANGE_USER_PASSWORD_PATH_INFO
                                    = "/change-password/";
 
     /**
-     * PathInfo into the Login application to access the (optional) newUser
-     * page. Ends with "/" because it is a servlet/directory
+     * PathInfo into the Login application to access the <em>recover
+     * password</em> page. Ends with "/" because it is a servlet/directory.
      */
     public static final String RECOVER_USER_PASSWORD_PATH_INFO
                                    = "/recover-password/";
 
-    public static final String VERIFY_EMAIL = "/verify-email/";
-    
     /**
-     * PathInfo into the Login application to access the (optional) newUser
+     * PathInfo into the Login application to access the <em>password reset</em>
+     * page which allows the user to replace a forgotten password with a new one
+     * (using a previously requested one time auth token). Ends with "/" because
+     * it is a servlet/directory
+     */
+    public static final String RESET_USER_PASSWORD_PATH_INFO = "/reset-password";
+
+    /**
+     * PathInfo into the Login application to access the <em>verify email</em>
      * page. Ends with "/" because it is a servlet/directory
+     */
+    public static final String VERIFY_EMAIL = "/verify-email/";
+
+    /**
+     * PathInfo into the Login application to access the (optional) <em>explain
+     * persistent</em> cookies page page. Ends with "/" because it is a
+     * servlet/directory
      */
     public static final String EXPLAIN_PERSISTENT_COOKIES_PATH_INFO
                                    = "/explain-persistent-cookies/";
 
     /**
-     * PathInfo into the Login application to access the (optional) newUser
+     * PathInfo into the Login application to access the <em>login
+     * expired-page</em>
      * page. Ends with "/" because it is a servlet/directory
      */
     public static final String LOGIN_EXPIRED_PATH_INFO = "/login-expired/";
 
     /**
-     * PathInfo into the Login application to access the (optional) newUser
+     * PathInfo into the Login application to access the <em>logout</em>
      * page. Ends with "/" because it is a servlet/directory
      */
     public static final String LOGOUT_PATH_INFO = "/logout/";
@@ -123,7 +144,7 @@ public class LoginServlet extends BebopApplicationServlet {
      * Base URL_MSG of the Login application for internal use, fetched from
      * Login domain class.
      */
-    private final static String s_loginURL = LOGIN_PAGE_URL;
+    private final static String LOGIN_URL = LOGIN_PAGE_URL;
 
     // define namespace URI
     final static String SUBSITE_NS_URI = "http://www.arsdigita.com/subsite/1.0";
@@ -132,7 +153,7 @@ public class LoginServlet extends BebopApplicationServlet {
 
     @Inject
     private ConfigurationManager confManager;
-    
+
     @Inject
     private UserRepository userRepository;
 
@@ -146,7 +167,7 @@ public class LoginServlet extends BebopApplicationServlet {
     public void doInit() throws ServletException {
         final SecurityConfig securityConfig = confManager.findConfiguration(
             SecurityConfig.class);
-        
+
         if (userRepository == null) {
             throw new IllegalStateException("User repository is not available.");
         }
@@ -159,7 +180,8 @@ public class LoginServlet extends BebopApplicationServlet {
 
         /* Create and add login page (index page of Login application) to the
          * page map. KernelSecurityConfig determines whether to create a link
-         * to a NewUserRegistrationForm or to skip.*/
+         * to a NewUserRegistrationForm or to skip.
+         */
         put("/",
             buildSimplePage(
                 "login.userRegistrationForm.title",
@@ -167,23 +189,31 @@ public class LoginServlet extends BebopApplicationServlet {
                 "login"));
         disableClientCaching("/");
 
-        /* Create and add userEditPage to the page map.                       */
+        /* Create and add userEditPage to the page map. */
         put(EDIT_USER_PROFILE_PATH_INFO,
             buildSimplePage("login.userEditPage.title",
                             new UserEditForm(), "edit"));
         disableClientCaching(EDIT_USER_PROFILE_PATH_INFO);
 
         /* Determines if a NewUserRegistrationForm has to be created by quering
-         * Kernel.getSecurityConfig() and acts appropriately                  */
+         * Kernel.getSecurityConfig() and acts appropriately
+         */
         if (SecurityConfig.getConfig().isAutoRegistrationEnabled()) {
             put(NEW_USER_PATH_INFO,
                 buildSimplePage("login.userNewForm.title",
                                 new UserNewForm(),
                                 "register"));
             disableClientCaching(NEW_USER_PATH_INFO);
+
+            put(ACTIVATE_ACCOUNT_PATH_INFO,
+                buildSimplePage("login.userActiveActivateAccount.title",
+                                new UserAccountActivationForm(),
+                                "activate"));
+            disableClientCaching(ACTIVATE_ACCOUNT_PATH_INFO);
         }
 
-        /* Create ExplainPersistentCookiesPage and add to the page map        */
+        /* Create ExplainPersistentCookiesPage and add to the page map
+         */
         put(EXPLAIN_PERSISTENT_COOKIES_PATH_INFO,
             buildSimplePage("login.explainCookiesPage.title",
                             new ElementComponent(
@@ -191,25 +221,30 @@ public class LoginServlet extends BebopApplicationServlet {
                                 SUBSITE_NS_URI),
                             "cookies"));
 
-        /* Create ChangeUserPasswordPage and add to the page map              */
+        //Create ChangeUserPasswordPage and add to the page map              
         put(CHANGE_USER_PASSWORD_PATH_INFO,
             buildSimplePage("login.changePasswordPage.title",
                             new ChangePasswordForm(),
                             "changepassword"));
         disableClientCaching(CHANGE_USER_PASSWORD_PATH_INFO);
 
-        //Disabled until we decide what procedure we will use in the future.
-        //Certainly not the old question/answer approach because it not secure
-        //and not user friendly.
-        /* Build the password recover page, retrieve its URL_MSG and store in map */
-//        put(RECOVER_USER_PASSWORD_PATH_INFO,
-//            buildSimplePage("login.recoverPasswordPage.title",
-//                            new RecoverPasswordPanel(),
-//                            "recoverpassword"));
+        //Build the password recover page.
+        put(RECOVER_USER_PASSWORD_PATH_INFO,
+            buildSimplePage("login.recoverPasswordPage.title",
+                            new RecoverPasswordForm(),
+                            "recover-password"));
+
+        // Build the reset password page.
+        put(RESET_USER_PASSWORD_PATH_INFO,
+            buildSimplePage("login.resetPasswordPage.title",
+                            new ResetPasswordForm(),
+                            "reset-password"));
+        
         // Build the login expire page, retrieve its URL_MSG and store in map
         put(LOGIN_EXPIRED_PATH_INFO, buildExpiredPage());
 
-        /* Create Logout Page and add to the page map                         */
+        /* Create Logout Page and add to the page map
+         */
         put(LOGOUT_PATH_INFO, buildLogOutPage());
         disableClientCaching(LOGOUT_PATH_INFO);
 
@@ -335,7 +370,7 @@ public class LoginServlet extends BebopApplicationServlet {
     }
 
     /**
-     * Provides an (absolute) URL_MSG to a user profile editig page. It is
+     * Provides an (absolute) URL_MSG to a user profile edit page. It is
      * relative to document root without any constant prefix if there is one
      * configured.
      *
@@ -349,11 +384,11 @@ public class LoginServlet extends BebopApplicationServlet {
      * @return url to EditUserProfile page as String
      */
     public static String getEditUserProfilePageURL() {
-        return s_loginURL + EDIT_USER_PROFILE_PATH_INFO;
+        return LOGIN_URL + EDIT_USER_PROFILE_PATH_INFO;
     }
 
     public static String getChangePasswordPageURL() {
-        return s_loginURL + CHANGE_USER_PASSWORD_PATH_INFO;
+        return LOGIN_URL + CHANGE_USER_PASSWORD_PATH_INFO;
     }
 
     /**
@@ -371,7 +406,7 @@ public class LoginServlet extends BebopApplicationServlet {
      * @return url to new user registration page as String
      */
     public static String getNewUserPageURL() {
-        return s_loginURL + NEW_USER_PATH_INFO;
+        return LOGIN_URL + NEW_USER_PATH_INFO;
     }
 
     /**
@@ -389,7 +424,7 @@ public class LoginServlet extends BebopApplicationServlet {
      * @return url String for new user registration page as String
      */
     public static String getRecoverPasswordPageURL() {
-        return s_loginURL + RECOVER_USER_PASSWORD_PATH_INFO;
+        return LOGIN_URL + RECOVER_USER_PASSWORD_PATH_INFO;
     }
 
     /**
@@ -407,7 +442,7 @@ public class LoginServlet extends BebopApplicationServlet {
      * @return url String for new user registration page as String
      */
     public static String getCookiesExplainPageURL() {
-        return s_loginURL + EXPLAIN_PERSISTENT_COOKIES_PATH_INFO;
+        return LOGIN_URL + EXPLAIN_PERSISTENT_COOKIES_PATH_INFO;
     }
 
     /**
@@ -425,7 +460,7 @@ public class LoginServlet extends BebopApplicationServlet {
      * @return url String for new user registration page as String
      */
     public static String getLoginExpiredPageURL() {
-        return s_loginURL + LOGIN_EXPIRED_PATH_INFO;
+        return LOGIN_URL + LOGIN_EXPIRED_PATH_INFO;
     }
 
     /**
@@ -443,8 +478,8 @@ public class LoginServlet extends BebopApplicationServlet {
      * @return URL_MSG for logout page as String
      */
     public static String getLogoutPageURL() {
-        return s_loginURL.substring(0, 
-                                    s_loginURL.length() - 1) + LOGOUT_PATH_INFO;
+        return LOGIN_URL.substring(0,
+                                   LOGIN_URL.length() - 1) + LOGOUT_PATH_INFO;
     }
 
 }
