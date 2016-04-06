@@ -49,8 +49,8 @@ import java.util.ArrayList;
 class UserAdministrationTab extends LayoutPanel {
 
     private final List sections;
-    private final java.util.List<Component> components = new ArrayList<Component>();
-    private final java.util.List<Label> keys = new ArrayList<Label>();    
+    private final java.util.List<Component> components = new ArrayList<>();
+    private final java.util.List<Label> keys = new ArrayList<>();    
     private final GlobalizedMessage title = USER_NAVBAR_TITLE;
 
     public UserAdministrationTab(final TabbedPane parent, final GroupAdministrationTab groupAdminTab) {

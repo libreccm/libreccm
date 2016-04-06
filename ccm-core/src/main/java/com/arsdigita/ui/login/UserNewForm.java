@@ -96,10 +96,10 @@ public class UserNewForm extends Form {
             "login.form.new_user.username.label", LOGIN_BUNDLE));
         userName.setHint(new GlobalizedMessage(
             "login.form.new_user.username.hint", LOGIN_BUNDLE));
-        userName.setMaxLength(256);
+        userName.setMaxLength(32);
         userName.setSize(32);
         userName.addValidationListener(new NotEmptyValidationListener());
-        userName.addValidationListener(new StringLengthValidationListener(256));
+        userName.addValidationListener(new StringLengthValidationListener(32));
         formPanel.add(userName);
 
         givenName = new TextField(GIVEN_NAME);
@@ -199,8 +199,7 @@ public class UserNewForm extends Form {
                     UserRepository.class);
                 //check if there is already an account for the provided email
                 if (userRepository.findByEmailAddress((String) data.get(
-                    EMAIL))
-                        != null) {
+                    EMAIL)) != null) {
                     data.addError(new GlobalizedMessage(
                         "login.form.new_user.error.email_already_registered",
                         LOGIN_BUNDLE));
