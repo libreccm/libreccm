@@ -628,6 +628,15 @@ CREATE SCHEMA ccm_docrepo;
         primary key (TASK_ID)
     );
 
+    create table CCM_CORE.ONE_TIME_AUTH_TOKENS (
+        TOKEN_ID bigint not null,
+        PURPOSE varchar(255),
+        TOKEN varchar(255),
+        VALID_UNTIL timestamp,
+        USER_ID bigint,
+        primary key (TOKEN_ID)
+    );
+
     create table CCM_DOCREPO.BLOB_OBJECTS (
         BLOB_OBJECT_ID bigint not null,
         CONTENT blob,
@@ -1249,5 +1258,10 @@ CREATE SCHEMA ccm_docrepo;
         add constraint FK_f600trvtav1r0n6oy7nri9wry 
         foreign key (OBJECT_ID) 
         references CCM_CORE.CCM_OBJECTS;
+
+    alter table CCM_CORE.ONE_TIME_AUTH_TOKENS 
+        add constraint FK_fvr3t6w3nsm3u29mjuh4tplno 
+        foreign key (USER_ID) 
+        references CCM_CORE.USERS;
 
     create sequence hibernate_sequence start with 1 increment by 1;

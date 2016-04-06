@@ -30,6 +30,7 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
+import org.jboss.shrinkwrap.resolver.api.maven.ScopeType;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -48,6 +49,7 @@ import org.libreccm.testutils.EqualsVerifier;
 import org.libreccm.workflow.Workflow;
 
 import javax.inject.Inject;
+
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -74,8 +76,8 @@ public class FilePortationTest {
     private FileMarshaller fileMarshaller;
 
     private static File file;
-    private static String filePath =
-        "src/test/resources/datasets/org/libreccm/docrepo/FilePortationTest/";
+    private static String filePath
+                              = "src/test/resources/datasets/org/libreccm/docrepo/FilePortationTest/";
 
     @BeforeClass
     public static void setUpClass() {
@@ -106,37 +108,59 @@ public class FilePortationTest {
     @Deployment
     public static WebArchive createDeployment() {
         final PomEquippedResolveStage pom = Maven
-                .resolver()
-                .loadPomFromFile("pom.xml");
+            .resolver()
+            .loadPomFromFile("pom.xml");
         final PomEquippedResolveStage dependencies = pom
-                .importCompileAndRuntimeDependencies();
-        final java.io.File[] libs = dependencies.resolve().withTransitivity().asFile();
+            .importCompileAndRuntimeDependencies();
+        final java.io.File[] libs = dependencies.resolve().withTransitivity()
+            .asFile();
 
         for (java.io.File lib : libs) {
             System.err.printf("Adding file '%s' to test archive...%n",
-                    lib.getName());
+                              lib.getName());
+        }
+
+        final PomEquippedResolveStage corePom = Maven.resolver()
+            .loadPomFromFile("../ccm-core/pom.xml");
+        final PomEquippedResolveStage coreDependencies = corePom
+            .importCompileAndRuntimeDependencies();
+        final java.io.File[] coreLibs = coreDependencies.resolve().withoutTransitivity().asFile();
+        for(java.io.File lib : coreLibs) {
+            System.err.printf("Adding file '%s' to test archive...%n",
+                              lib.getName());
         }
 
         return ShrinkWrap
-                .create(WebArchive.class,
-                        "LibreCCM-org.libreccm.docrepo.ArquillianExampleTest.war")
-                .addPackage(org.libreccm.core.CcmObject.class.getPackage())
-                .addPackage(org.libreccm.security.Permission.class.getPackage())
-                .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
-                .addPackage(org.libreccm.categorization.Categorization.class.getPackage())
-                .addPackage(LocalizedString.class.getPackage())
-                .addPackage(Workflow.class.getPackage())
-                .addPackage(EntityManagerProducer.class.getPackage())
-                .addPackage(MimeTypeConverter.class.getPackage())
-                .addPackage(EqualsVerifier.class.getPackage())
-                .addPackage(IntegrationTest.class.getPackage())
-                .addAsLibraries(libs)
-                .addAsResource("test-persistence.xml",
-                        "META-INF/persistence.xml")
-                .addAsWebInfResource("test-web.xml", "WEB-INF/web.xml")
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "WEB-INF/beans.xml");
+            .create(WebArchive.class,
+                    "LibreCCM-org.libreccm.docrepo.FilePortationTest.war")
+            .addPackage(
+                org.libreccm.auditing.AbstractAuditedEntityRepository.class
+                .getPackage())
+            .addPackage(org.libreccm.core.CcmObject.class.getPackage())
+            .addPackage(org.libreccm.categorization.Categorization.class
+                .getPackage())
+            .addPackage(org.libreccm.docrepo.FileMarshaller.class.getPackage())
+            .addPackage(org.libreccm.jpa.EntityManagerProducer.class
+                .getPackage())
+            .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
+                .getPackage())
+            .addPackage(org.libreccm.l10n.LocalizedString.class.getPackage())
+            .addPackage(org.libreccm.portal.Portlet.class.getPackage())
+            .addPackage(org.libreccm.portation.AbstractMarshaller.class
+                .getPackage())
+            .addPackage(org.libreccm.security.Permission.class.getPackage())
+            .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
+            .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
+            .addPackage(org.libreccm.testutils.EqualsVerifier.class.getPackage())
+            .addPackage(org.libreccm.tests.categories.IntegrationTest.class
+                .getPackage())
+            .addAsLibraries(libs)
+            .addAsLibraries(coreLibs)
+            .addAsResource("test-persistence.xml",
+                           "META-INF/persistence.xml")
+            .addAsWebInfResource("test-web.xml", "WEB-INF/web.xml")
+            .addAsWebInfResource(EmptyAsset.INSTANCE, "WEB-INF/beans.xml");
     }
-
 
     @Test
     public void xmlShouldBeCreated() {
@@ -156,4 +180,5 @@ public class FilePortationTest {
     public void repoIsInjected() {
         assertThat(fileMarshaller, is(not(nullValue())));
     }
+
 }
