@@ -38,16 +38,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.libreccm.categorization.Categorization;
-import org.libreccm.core.CcmObject;
-import org.libreccm.jpa.EntityManagerProducer;
-import org.libreccm.jpa.utils.MimeTypeConverter;
-import org.libreccm.l10n.LocalizedString;
-import org.libreccm.security.Permission;
 import org.libreccm.tests.categories.IntegrationTest;
-import org.libreccm.testutils.EqualsVerifier;
-import org.libreccm.web.CcmApplication;
-import org.libreccm.workflow.Workflow;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -95,10 +86,10 @@ public class ConfigurationManagerTest {
     @Deployment
     public static WebArchive createDeployment() {
         final PomEquippedResolveStage pom = Maven
-            .resolver()
-            .loadPomFromFile("pom.xml");
+                .resolver()
+                .loadPomFromFile("pom.xml");
         final PomEquippedResolveStage dependencies = pom
-            .importCompileAndRuntimeDependencies();
+                .importCompileAndRuntimeDependencies();
         final File[] libs = dependencies.resolve().withTransitivity().asFile();
 
         for (File lib : libs) {
@@ -107,29 +98,36 @@ public class ConfigurationManagerTest {
         }
 
         return ShrinkWrap
-            .create(WebArchive.class,
-                    "LibreCCM-org.libreccm.categorization.ConfigurationManagerTest.war")
-            .addPackage(CcmObject.class.getPackage())
-            .addPackage(Permission.class.getPackage())
-            .addPackage(CcmApplication.class.getPackage())
-            .addPackage(Categorization.class.getPackage())
-            .addPackage(Configuration.class.getPackage())
-            .addPackage(LocalizedString.class.getPackage())
-            .addPackage(Workflow.class.getPackage())
-            .addPackage(EntityManagerProducer.class.getPackage())
-            .addPackage(MimeTypeConverter.class.getPackage())
-            .addPackage(EqualsVerifier.class.getPackage())
-            .addPackage(IntegrationTest.class.getPackage())
-            .addPackage(TestConfiguration.class.getPackage())
-            .addAsLibraries(libs)
-            .addAsResource("test-persistence.xml",
-                           "META-INF/persistence.xml")
-            .addAsResource(
-                "configs/org/libreccm/configuration/ConfigurationManagerTest/"
-                    + "log4j2.xml",
-                "log4j2.xml")
-            .addAsWebInfResource("test-web.xml", "WEB-INF/web.xml")
-            .addAsWebInfResource(EmptyAsset.INSTANCE, "WEB-INF/beans.xml");
+                .create(WebArchive.class,
+                        "LibreCCM-org.libreccm.categorization."
+                                + "ConfigurationManagerTest.war")
+                .addPackage(org.libreccm.categorization.Categorization.class.
+                        getPackage())
+                .addPackage(org.libreccm.configuration.Configuration.class.
+                        getPackage())
+                .addPackage(org.libreccm.core.CcmObject.class.getPackage())
+                .addPackage(org.libreccm.jpa.EntityManagerProducer.class.
+                        getPackage())
+                .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class.
+                        getPackage())
+                .addPackage(org.libreccm.l10n.LocalizedString.class
+                        .getPackage())
+                .addPackage(org.libreccm.security.Permission.class.getPackage())
+                .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
+                .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
+                .addPackage(org.libreccm.tests.categories.IntegrationTest.class.
+                        getPackage())
+                .addPackage(org.libreccm.testutils.EqualsVerifier.class.
+                        getPackage())
+                .addAsLibraries(libs)
+                .addAsResource("test-persistence.xml",
+                               "META-INF/persistence.xml")
+                .addAsResource(
+                        "configs/org/libreccm/configuration/ConfigurationManagerTest/"
+                        + "log4j2.xml",
+                        "log4j2.xml")
+                .addAsWebInfResource("test-web.xml", "WEB-INF/web.xml")
+                .addAsWebInfResource(EmptyAsset.INSTANCE, "WEB-INF/beans.xml");
     }
 
     @Test
@@ -140,7 +138,7 @@ public class ConfigurationManagerTest {
 
     @Test
     @UsingDataSet(
-        "datasets/org/libreccm/configuration/ConfigurationManagerTest/data.yml")
+            "datasets/org/libreccm/configuration/ConfigurationManagerTest/data.yml")
     @InSequence(2)
     public void datasetOnly() {
         System.out.println("Dataset loaded successfully.");
@@ -148,11 +146,11 @@ public class ConfigurationManagerTest {
 
     @Test
     @UsingDataSet(
-        "datasets/org/libreccm/configuration/ConfigurationManagerTest/data.yml")
+            "datasets/org/libreccm/configuration/ConfigurationManagerTest/data.yml")
     @InSequence(1100)
     public void loadConfiguration() {
         final ExampleConfiguration configuration = configurationManager
-            .findConfiguration(ExampleConfiguration.class);
+                .findConfiguration(ExampleConfiguration.class);
 
         assertThat(configuration, is(not(nullValue())));
         assertThat(configuration.getPrice(),
@@ -169,14 +167,14 @@ public class ConfigurationManagerTest {
 
     @Test
     @UsingDataSet(
-        "datasets/org/libreccm/configuration/ConfigurationManagerTest/data.yml")
+            "datasets/org/libreccm/configuration/ConfigurationManagerTest/data.yml")
     @ShouldMatchDataSet(
-        "datasets/org/libreccm/configuration/ConfigurationManagerTest/"
-            + "after-save-changed.yml")
+            "datasets/org/libreccm/configuration/ConfigurationManagerTest/"
+                    + "after-save-changed.yml")
     @InSequence(1200)
     public void saveConfiguration() {
         final ExampleConfiguration configuration = configurationManager
-            .findConfiguration(ExampleConfiguration.class);
+                .findConfiguration(ExampleConfiguration.class);
 
         configuration.setPrice(new BigDecimal("109.99"));
         configuration.setItemsPerPage(30L);
@@ -187,11 +185,11 @@ public class ConfigurationManagerTest {
 
     @Test
     @UsingDataSet(
-        "datasets/org/libreccm/configuration/ConfigurationManagerTest/data.yml")
+            "datasets/org/libreccm/configuration/ConfigurationManagerTest/data.yml")
     @InSequence(2100)
     public void loadNewConfiguration() {
         final TestConfiguration configuration = configurationManager
-            .findConfiguration(TestConfiguration.class);
+                .findConfiguration(TestConfiguration.class);
 
         assertThat(configuration, is(not(nullValue())));
         assertThat(configuration.getEnabled(), is(false));
@@ -200,11 +198,11 @@ public class ConfigurationManagerTest {
 
     @Test
     @UsingDataSet(
-        "datasets/org/libreccm/configuration/ConfigurationManagerTest/data.yml")
+            "datasets/org/libreccm/configuration/ConfigurationManagerTest/data.yml")
     @ShouldMatchDataSet(
-        value = "datasets/org/libreccm/configuration/"
-                    + "ConfigurationManagerTest/after-save-new.yml",
-        excludeColumns = {"object_id", "uuid"})
+            value = "datasets/org/libreccm/configuration/"
+                            + "ConfigurationManagerTest/after-save-new.yml",
+            excludeColumns = {"object_id", "uuid"})
     @InSequence(2200)
     public void saveNewConfiguration() {
         configurationManager.saveConfiguration(new TestConfiguration());

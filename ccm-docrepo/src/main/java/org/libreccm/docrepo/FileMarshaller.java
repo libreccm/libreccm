@@ -18,16 +18,17 @@
  */
 package org.libreccm.docrepo;
 
+import javax.enterprise.context.RequestScoped;
 import org.libreccm.portation.Marshals;
 
-import javax.faces.bean.RequestScoped;
+
 import javax.inject.Inject;
 
 /**
  * Marshaller class for importing and exporting {@code File}s from the
  * system into a specified file and the other way around.
  *
- * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
+ * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  * @version created the 3/16/16
  */
 @RequestScoped

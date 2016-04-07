@@ -18,6 +18,7 @@
  */
 package org.libreccm.jpa;
 
+import javax.enterprise.context.ApplicationScoped;
 import org.hibernate.envers.AuditReader;
 import org.hibernate.envers.AuditReaderFactory;
 
@@ -29,6 +30,8 @@ import javax.persistence.EntityManager;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
+@ApplicationScoped
+@SuppressWarnings("PMD.UnusedPrivateField")
 public class AuditReaderProducer {
     
     @Inject
