@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
 
 /**
  * Manager class providing methods for adding and removing members to and from
@@ -88,6 +89,7 @@ public class GroupManager {
      * @param member The user to remove from the group.
      * @param group The group from which the user is removed.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public void removeMemberFromGroup(final User member, final Group group) {
         if (member == null) {
             throw new IllegalArgumentException(

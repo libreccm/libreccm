@@ -36,6 +36,7 @@ import java.util.Optional;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 
 /**
  * Manages settings in the registry. Normally there should be no need to use
@@ -248,6 +249,7 @@ public class SettingManager {
      *
      * @param setting The setting to save.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public void saveSetting(final AbstractSetting<?> setting) {
         if (setting.getObjectId() == 0) {
             entityManager.persist(setting);

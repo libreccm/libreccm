@@ -770,12 +770,12 @@ public class UserAdmin extends BoxPanel {
                 "ui.admin.new_user_form.password_options.send_password.label",
                 ADMIN_BUNDLE)));
         passwordOptionsGroup.addOption(sendPasswordOption);
-        newUserForm.add(passwordOptionsGroup);
+        form.add(passwordOptionsGroup);
 
         final SaveCancelSection saveCancelSection = new SaveCancelSection();
-        newUserForm.add(saveCancelSection);
+        form.add(saveCancelSection);
 
-        newUserForm.addValidationListener(e -> {
+        form.addValidationListener(e -> {
             final PageState state = e.getPageState();
 
             if (saveCancelSection.getSaveButton().isSelected(state)) {
@@ -868,7 +868,7 @@ public class UserAdmin extends BoxPanel {
             }
         });
 
-        return newUserForm;
+        return form;
     }
 
     @Override

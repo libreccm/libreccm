@@ -29,6 +29,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
 
 import org.apache.commons.lang.RandomStringUtils;
 
@@ -58,6 +59,7 @@ public class OneTimeAuthManager {
      *
      * @return The one time auth token.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public OneTimeAuthToken createForUser(
         final User user, final OneTimeAuthTokenPurpose purpose) {
         if (user == null || purpose == null) {
@@ -73,7 +75,7 @@ public class OneTimeAuthManager {
         token.setUser(user);
         token.setPurpose(purpose);
 
-        final String tokenStr = RandomStringUtils.randomAscii(config.
+        final String tokenStr = RandomStringUtils.randomAlphanumeric(config.
             getTokenLength());
         token.setToken(tokenStr);
 
@@ -197,6 +199,7 @@ public class OneTimeAuthManager {
      *
      * @param token The token to invalidate.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public void invalidate(final OneTimeAuthToken token) {
         if (token == null) {
             throw new IllegalArgumentException("Can't invalidate a token null");

@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
 
 /**
  * Manager for roles providing methods for assigning the role the {@link Party}
@@ -52,6 +53,7 @@ public class RoleManager {
      * @param role  The role to assign.
      * @param party The party which to which to role is assigned.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public void assignRoleToParty(final Role role, final Party party) {
         if (role == null) {
             throw new IllegalArgumentException("Can't add party to null role");
@@ -85,6 +87,7 @@ public class RoleManager {
      * @param role
      * @param party
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public void removeRoleFromParty(final Role role, final Party party) {
         if (role == null) {
             throw new IllegalArgumentException("Can't add party to null role");

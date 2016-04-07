@@ -32,6 +32,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
 
 /**
  * This EJB uses the {@link TimerService} to run a cleanup task periodically to 
@@ -67,6 +68,7 @@ public class OneTimeAuthTokenCleaner {
     }
 
     @Timeout
+    @Transactional(Transactional.TxType.REQUIRED)
     public void cleanupTokens() {
         final TypedQuery<OneTimeAuthToken> query = entityManager.createQuery(
             "SELECT t FROM OneTimeAuthToken t", OneTimeAuthToken.class);

@@ -33,13 +33,18 @@ import com.arsdigita.bebop.parameters.NotEmptyValidationListener;
 import com.arsdigita.bebop.parameters.StringLengthValidationListener;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.kernel.security.SecurityConfig;
+import com.arsdigita.web.RedirectSignal;
+import com.arsdigita.web.URL;
 
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.security.ChallengeManager;
+import org.libreccm.security.Shiro;
 import org.libreccm.security.User;
 import org.libreccm.security.UserManager;
 import org.libreccm.security.UserRepository;
+
+import java.util.concurrent.Callable;
 
 import javax.mail.MessagingException;
 
@@ -176,6 +181,16 @@ public class UserNewForm extends Form {
     }
 
     private void addListeners() {
+        addSubmissionListener(e -> {
+            final PageState state = e.getPageState();
+
+            if (saveCancelSection.getCancelButton().isSelected(state)) {
+                throw new RedirectSignal(URL.there(state.getRequest(),
+                                                   LOGIN_PAGE_URL),
+                                         false);
+            }
+        });
+
         addValidationListener(e -> {
             final PageState state = e.getPageState();
 
@@ -234,40 +249,46 @@ public class UserNewForm extends Form {
                 final FormData data = e.getFormData();
 
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-                final UserRepository userRepository = cdiUtil.findBean(
-                    UserRepository.class);
-                final UserManager userManager = cdiUtil.findBean(
-                    UserManager.class);
 
-                final String givenNameData = (String) data.get(GIVEN_NAME);
-                final String familyNameData = (String) data
-                    .get(FAMILY_NAME);
-                final String username = (String) data.get(USERNAME);
-                final String emailAddress = (String) data.get(EMAIL);
-                final String passwordData = (String) data.get(PASSWORD);
-                final User user = userManager.createUser(givenNameData,
-                                                         familyNameData,
-                                                         username,
-                                                         emailAddress,
-                                                         passwordData);
-                user.setBanned(true);
-                userRepository.save(user);
+                final Shiro shiro = cdiUtil.findBean(Shiro.class);
+                shiro.getSystemUser().execute(() -> {
+                    final UserRepository userRepository = cdiUtil.findBean(
+                        UserRepository.class);
+                    final UserManager userManager = cdiUtil.findBean(
+                        UserManager.class);
 
-                //challenge erzeugen
-                final ChallengeManager challengeManager = cdiUtil.findBean(
-                    ChallengeManager.class);
-                try {
-                    challengeManager.sendAccountActivation(user);
-                } catch (MessagingException ex) {
-                    throw new FormProcessException(
-                        "Failed to send account activation challenge.",
-                        new GlobalizedMessage(
-                            "login.form_new_user.error.creating_challenge_failed",
-                            LOGIN_BUNDLE), ex);
-                }
+                    final String givenNameData = (String) data.get(
+                        GIVEN_NAME);
+                    final String familyNameData = (String) data
+                        .get(FAMILY_NAME);
+                    final String username = (String) data.get(USERNAME);
+                    final String emailAddress = (String) data.get(EMAIL);
+                    final String passwordData = (String) data.get(PASSWORD);
+                    final User user = userManager.createUser(givenNameData,
+                                                             familyNameData,
+                                                             username,
+                                                             emailAddress,
+                                                             passwordData);
+                    user.setBanned(true);
+                    userRepository.save(user);
 
-                formPanel.setVisible(state, false);
-                finishedMessagePanel.setVisible(state, true);
+                    //challenge erzeugen
+                    final ChallengeManager challengeManager = cdiUtil
+                        .findBean(ChallengeManager.class);
+                    try {
+                        challengeManager.sendAccountActivation(user);
+                    } catch (MessagingException ex) {
+                        throw new FormProcessException(
+                            "Failed to send account activation challenge.",
+                            new GlobalizedMessage(
+                                "login.form_new_user.error.creating_challenge_failed",
+                                LOGIN_BUNDLE), ex);
+                    }
+
+                    formPanel.setVisible(state, false);
+                    finishedMessagePanel.setVisible(state, true);
+                    return null;
+                });
             }
         });
     }

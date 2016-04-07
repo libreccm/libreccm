@@ -34,6 +34,7 @@ import java.lang.reflect.Field;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 
 /**
  *
@@ -163,6 +164,7 @@ public class ApplicationConfigurationManager {
      * @param valueType     The type of the value of the setting.
      * @param value         The value to set.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     private <T> void setSettingValue(final Object configuration,
                                      final CcmApplication instance,
                                      final String settingName,

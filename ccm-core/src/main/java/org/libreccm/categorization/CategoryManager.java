@@ -30,6 +30,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
 
 /**
  * The {@code CategoryManager} provides several helper methods for managing
@@ -72,6 +73,7 @@ public class CategoryManager {
      * @param category The category to which the object should be assigned. Can
      *                 never be {@code null}.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public void addObjectToCategory(final CcmObject object,
                                     final Category category) {
         if (object == null) {
@@ -118,6 +120,7 @@ public class CategoryManager {
      *                                              object is <em>not</em>
      * assigned to the provided category.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public void removeObjectFromCategory(final CcmObject object,
                                          final Category category)
         throws ObjectNotAssignedToCategoryException {

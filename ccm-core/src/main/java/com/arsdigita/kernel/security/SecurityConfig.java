@@ -41,7 +41,7 @@ public final class SecurityConfig {
         new String[]{".jpg", ".gif", ".png", ".pdf"});
 
     @Setting
-    private Boolean autoRegistrationEnabled = false;
+    private Boolean autoRegistrationEnabled = true;
 
     @Setting
     private Boolean passwordRecoveryEnabled = true;

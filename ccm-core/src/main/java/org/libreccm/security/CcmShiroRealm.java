@@ -30,15 +30,7 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.libreccm.cdi.utils.CdiUtil;
 
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
-
-import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.enterprise.inject.spi.CDI;
-import javax.naming.InitialContext;
 
 /**
  * Implementation of Shiro's {@link AuthorizingRealm} to provide Shiro with the

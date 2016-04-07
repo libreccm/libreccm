@@ -28,6 +28,7 @@ import javax.persistence.TypedQuery;
 import org.libreccm.core.CcmObject;
 
 import javax.enterprise.context.RequestScoped;
+import javax.transaction.Transactional;
 
 /**
  * Manager class for granting and revoking permissions.
@@ -56,6 +57,7 @@ public class PermissionManager {
      * @param grantee The role to which the privilege is granted.
      * @param object The object on which the privilege is granted.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public void grantPrivilege(final String privilege,
                                final Role grantee,
                                final CcmObject object) {
@@ -91,6 +93,7 @@ public class PermissionManager {
      * @param privilege The privilege to grant.
      * @param grantee The role to which the privilege is granted.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public void grantPrivilege(final String privilege,
                                final Role grantee) {
         if (privilege == null || privilege.isEmpty()) {
@@ -121,6 +124,7 @@ public class PermissionManager {
      * @param grantee The role to which the privilege was granted.
      * @param object The object on which the privilege was granted.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public void revokePrivilege(final String privilege,
                                 final Role grantee,
                                 final CcmObject object) {
@@ -159,6 +163,7 @@ public class PermissionManager {
      * @param privilege The privilege granted by the permission to revoke.
      * @param grantee The role to which the privilege was granted.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public void revokePrivilege(final String privilege,
                                 final Role grantee) {
         if (privilege == null || privilege.isEmpty()) {
@@ -193,6 +198,7 @@ public class PermissionManager {
      * @param source
      * @param target 
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public void copyPermissions(final CcmObject source,
                                 final CcmObject target) {
         if (source == null) {

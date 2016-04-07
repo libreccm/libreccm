@@ -347,7 +347,7 @@ public class ChallengeManager {
 
         final Mail mail = new Mail(user.getPrimaryEmailAddress().getAddress(),
                                    kernelConfig.getSystemEmailAddress(),
-                                   "email verification");
+                                   subject);
         mail.setBody(text);
         mail.send();
     }

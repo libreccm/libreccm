@@ -35,6 +35,7 @@ import java.util.StringJoiner;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 
 /**
  * Maps between configuration classes and the values stored in the registry.
@@ -278,6 +279,7 @@ public class ConfigurationManager {
      * @param valueType     The type of the value of the setting.
      * @param value         The value to set.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     private <T> void setSettingValue(final Object configuration,
                                      final String settingName,
                                      final Class<T> valueType,

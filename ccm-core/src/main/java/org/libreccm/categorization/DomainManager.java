@@ -24,6 +24,7 @@ import org.libreccm.web.CcmApplication;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 
 /**
  * Provides several methods when managing the relations between {@link Domain}s
@@ -84,6 +85,7 @@ public class DomainManager {
      * @param domain The {@code Domain} to which owners the
      * {@code CcmApplication is added}.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public void addDomainOwner(final CcmApplication application,
                                final Domain domain) {
         final DomainOwnership ownership = new DomainOwnership();
