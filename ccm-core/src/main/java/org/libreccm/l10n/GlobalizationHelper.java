@@ -44,7 +44,7 @@ import javax.servlet.http.HttpSession;
  * language.
  * </li>
  * <li>
- * If there is a parameter {@code lang} for the current request, use that 
+ * If there is a parameter {@code lang} for the current request, use that
  * language <em>and</em> store the selected language in the session.
  * </li>
  * <li>
@@ -54,10 +54,11 @@ import javax.servlet.http.HttpSession;
  * </li>
  * </ol>
  *
- * A historic note: This CDI bean replaces the old {@code GlobalizationHelper} class which used
- * static methods and relied on the old {@code DispatcherHelper} for getting the
- * current request. In a CDI environment we can simply inject the current request
- * and don't need to bother with static methods etc. 
+ * A historic note: This CDI bean replaces the old {@code GlobalizationHelper}
+ * class which used static methods and relied on the old
+ * {@code DispatcherHelper} for getting the current request. In a CDI
+ * environment we can simply inject the current request and don't need to bother
+ * with static methods etc.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -73,14 +74,13 @@ public class GlobalizationHelper {
     private ConfigurationManager confManager;
 
 //    private final KernelConfig kernelConfig;
-
 //    public GlobalizationHelper() {
 //        kernelConfig = confManager.findConfiguration(KernelConfig.class);
 //    }
-
     public Locale getNegotiatedLocale() {
-        final KernelConfig kernelConfig = confManager.findConfiguration(KernelConfig.class);
-        
+        final KernelConfig kernelConfig = confManager.findConfiguration(
+            KernelConfig.class);
+
         Locale preferred = new Locale(kernelConfig.getDefaultLanguage());
 
         final Locale selectedLocale = getSelectedLocale();
@@ -91,7 +91,7 @@ public class GlobalizationHelper {
             while (acceptedLocales.hasMoreElements()) {
                 final Locale current = acceptedLocales.nextElement();
                 if (kernelConfig.hasLanguage(current.getLanguage())) {
-                    preferred = current;
+                    preferred = new Locale(current.getLanguage());
                     break;
                 }
             }

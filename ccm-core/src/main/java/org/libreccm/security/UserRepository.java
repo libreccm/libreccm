@@ -149,7 +149,13 @@ public class UserRepository extends AbstractEntityRepository<Long, User> {
         final TypedQuery<User> query = getEntityManager().createNamedQuery(
             "User.filterByNameAndEmail", User.class);
         query.setParameter("term", term);
-        
+
+        return query.getResultList();
+    }
+    
+    public List<User> findAllOrderdByUsername() {
+        final TypedQuery<User> query = getEntityManager().createNamedQuery(
+            "User.findAllOrderedByUsername", User.class);
         return query.getResultList();
     }
 

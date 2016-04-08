@@ -20,12 +20,12 @@ package com.arsdigita.ui.admin.usersgroupsroles;
 
 import com.arsdigita.bebop.ActionLink;
 import com.arsdigita.bebop.BoxPanel;
+import com.arsdigita.bebop.ColumnPanel;
 import com.arsdigita.bebop.Component;
 import com.arsdigita.bebop.ControlLink;
 import com.arsdigita.bebop.Form;
 import com.arsdigita.bebop.FormData;
 import com.arsdigita.bebop.FormProcessException;
-import com.arsdigita.bebop.FormSection;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.Page;
 import com.arsdigita.bebop.PageState;
@@ -49,15 +49,29 @@ import com.arsdigita.bebop.table.TableCellRenderer;
 import com.arsdigita.bebop.table.TableColumn;
 import com.arsdigita.bebop.table.TableColumnModel;
 import com.arsdigita.globalization.GlobalizedMessage;
+import com.arsdigita.util.UncheckedWrapperException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.core.EmailAddress;
 import org.libreccm.security.ChallengeManager;
+import org.libreccm.security.Group;
+import org.libreccm.security.GroupManager;
+import org.libreccm.security.GroupRepository;
 import org.libreccm.security.User;
 import org.libreccm.security.UserManager;
 import org.libreccm.security.UserRepository;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TooManyListenersException;
+import java.util.TreeSet;
+import java.util.logging.Level;
+import java.util.stream.IntStream;
+import java.util.stream.StreamSupport;
 
 import javax.mail.MessagingException;
 
@@ -86,6 +100,7 @@ public class UserAdmin extends BoxPanel {
 //    private final UserDetails userDetails;
     private final BoxPanel userDetails;
     private final Form emailForm;
+    private final Form editGroupMembershipsForm;
     private final Form newUserForm;
 
     public UserAdmin() {
@@ -132,17 +147,6 @@ public class UserAdmin extends BoxPanel {
 
         add(usersTablePanel);
 
-//        final Text text = new Text();
-//        text.setPrintListener((final PrintEvent e) -> {
-//            final Text target = (Text) e.getTarget();
-//            final PageState state = e.getPageState();
-//            if (selectedUserId.isSelected(state)) {
-//                target.setText(selectedUserId.getSelectedKey(state));
-//            }
-//        });
-//        add(text);
-//        userDetails = new UserDetails(this, selectedUserId);
-//        add(new UserDetails(this, selectedUserId));
         userDetails = new BoxPanel();
         userDetails.setIdAttr("userDetails");
 
@@ -533,6 +537,71 @@ public class UserAdmin extends BoxPanel {
 
         userDetails.add(emailTable);
 
+        final Table groupsRolesTable = new Table();
+        groupsRolesTable.setModelBuilder(new UserGroupsRolesTableModelBuilder(
+            selectedUserId));
+        final TableColumnModel groupsRolesColModel = groupsRolesTable
+            .getColumnModel();
+        groupsRolesColModel.add(new TableColumn(
+            UserGroupsRolesTableModel.COL_LABEL));
+        groupsRolesColModel
+            .add(new TableColumn(UserGroupsRolesTableModel.COL_VALUE));
+        groupsRolesColModel.add(
+            new TableColumn(UserGroupsRolesTableModel.COL_ACTION));
+        groupsRolesColModel.get(UserGroupsRolesTableModel.COL_ACTION)
+            .setCellRenderer(new TableCellRenderer() {
+
+                @Override
+                public Component getComponent(final Table table,
+                                              final PageState state,
+                                              final Object value,
+                                              final boolean isSelected,
+                                              final Object key,
+                                              final int row,
+                                              final int column) {
+                    switch (row) {
+                        case UserGroupsRolesTableModel.ROW_GROUPS: {
+                            return new ControlLink((Component) value);
+                        }
+                        case UserGroupsRolesTableModel.ROW_ROLES: {
+                            return new ControlLink((Component) value);
+                        }
+                        case UserGroupsRolesTableModel.ROW_ALL_ROLES:
+                            return new Text("");
+                        default:
+                            throw new IllegalArgumentException();
+                    }
+                }
+
+            });
+        groupsRolesTable.addTableActionListener(new TableActionListener() {
+
+            @Override
+            public void cellSelected(final TableActionEvent event) {
+                final int selectedRow = Integer.parseInt((String) event
+                    .getRowKey());
+                final PageState state = event.getPageState();
+
+                switch (selectedRow) {
+                    case UserGroupsRolesTableModel.ROW_GROUPS:
+                        showEditGroupMembershipsForm(state);
+                        break;
+                    case UserGroupsRolesTableModel.ROW_ROLES:
+                        //ToDo
+                        break;
+                }
+            }
+
+            @Override
+            public void headSelected(final TableActionEvent event) {
+                //Nothing
+            }
+
+        }
+        );
+
+        userDetails.add(groupsRolesTable);
+
         final ActionLink addEmailLink = new ActionLink(new GlobalizedMessage(
             "ui.admin.user.email_addresses.add", ADMIN_BUNDLE));
         addEmailLink.addActionListener(e -> {
@@ -541,9 +610,6 @@ public class UserAdmin extends BoxPanel {
         userDetails.add(addEmailLink);
 
         emailForm = new Form("email_form");
-//        emailForm.add(new Label(new GlobalizedMessage(
-//            "ui.admin.user.email_form.address",
-//            ADMIN_BUNDLE)));
         final TextField emailFormAddress = new TextField("email_form_address");
         emailFormAddress.setLabel(new GlobalizedMessage(
             "ui.admin.user.email_form.address", ADMIN_BUNDLE));
@@ -668,13 +734,17 @@ public class UserAdmin extends BoxPanel {
 
         add(userDetails);
 
+        editGroupMembershipsForm = buildEditGroupMembershipsForm();
+        add(editGroupMembershipsForm);
+
         newUserForm = buildNewUserForm();
+        add(newUserForm);
     }
-    
+
     private void setBasicProperties() {
-         setIdAttr("userAdmin");
+        setIdAttr("userAdmin");
     }
-    
+
     private Form buildNewUserForm() {
         final Form form = new Form("new_user_form");
 
@@ -722,11 +792,24 @@ public class UserAdmin extends BoxPanel {
             .addValidationListener(new StringLengthValidationListener(256));
         form.add(emailField);
 
-        final FormSection setPasswordSection = new FormSection(new BoxPanel(
-            BoxPanel.VERTICAL));
-        setPasswordSection.setLabel(new GlobalizedMessage(
-            "ui.admin.new_user_form.password_options.set_password.label",
-            ADMIN_BUNDLE));
+        final String passwordOptions = "passwordOptions";
+        final String optionSetPassword = "setPassword";
+        final String optionSendPassword = "sendPassword";
+        final RadioGroup passwordOptionsGroup = new RadioGroup(passwordOptions);
+        final Option sendPasswordOption = new Option(
+            optionSendPassword,
+            new Label(new GlobalizedMessage(
+                "ui.admin.new_user_form.password_options.send_password.label",
+                ADMIN_BUNDLE)));
+        passwordOptionsGroup.addOption(sendPasswordOption);
+        final Option setPasswordOption = new Option(
+            optionSetPassword,
+            new Label(new GlobalizedMessage(
+                "ui.admin.new_user_form.password_options.set_password",
+                ADMIN_BUNDLE)));
+        passwordOptionsGroup.addOption(setPasswordOption);
+        form.add(passwordOptionsGroup);
+
         final String password = "password";
         final String passwordConfirmation = "passwordConfirmation";
         final Password passwordField = new Password(password);
@@ -738,7 +821,7 @@ public class UserAdmin extends BoxPanel {
         passwordField.addValidationListener(new NotEmptyValidationListener());
         passwordField.addValidationListener(new StringLengthValidationListener(
             256));
-        setPasswordSection.add(passwordField);
+        form.add(passwordField);
         final Password passwordConfirmationField = new Password(
             passwordConfirmation);
         passwordConfirmationField.setLabel(new GlobalizedMessage(
@@ -750,27 +833,7 @@ public class UserAdmin extends BoxPanel {
             new NotEmptyValidationListener());
         passwordConfirmationField.addValidationListener(
             new StringLengthValidationListener(256));
-        setPasswordSection.add(passwordConfirmationField);
-
-        final String passwordOptions = "passwordOptions";
-        final String optionSetPassword = "setPassword";
-        final String optionSendPassword = "sendPassword";
-        final RadioGroup passwordOptionsGroup = new RadioGroup(passwordOptions);
-//        final Option setPasswordOption = new Option(
-//            optionSetPassword,
-//            new Label(new GlobalizedMessage(
-//                "ui.admin.new_user_form.password_options.set_password",
-//                ADMIN_BUNDLE)));
-        final Option setPasswordOption = new Option(
-            optionSetPassword, setPasswordSection);
-        passwordOptionsGroup.addOption(setPasswordOption);
-        final Option sendPasswordOption = new Option(
-            optionSendPassword,
-            new Label(new GlobalizedMessage(
-                "ui.admin.new_user_form.password_options.send_password.label",
-                ADMIN_BUNDLE)));
-        passwordOptionsGroup.addOption(sendPasswordOption);
-        form.add(passwordOptionsGroup);
+        form.add(passwordConfirmationField);
 
         final SaveCancelSection saveCancelSection = new SaveCancelSection();
         form.add(saveCancelSection);
@@ -871,6 +934,156 @@ public class UserAdmin extends BoxPanel {
         return form;
     }
 
+    private Form buildEditGroupMembershipsForm() {
+        final Form form = new Form("edit-usergroupmemberships-form");
+
+        final BoxPanel links = new BoxPanel(BoxPanel.VERTICAL);
+        final Label header = new Label(e -> {
+            final PageState state = e.getPageState();
+            final Label target = (Label) e.getTarget();
+
+            final String userIdStr = selectedUserId.getSelectedKey(state);
+            final UserRepository userRepository = CdiUtil.createCdiUtil()
+                .findBean(UserRepository.class);
+            final User user = userRepository.findById(Long.parseLong(userIdStr));
+
+            target.setLabel(new GlobalizedMessage(
+                "ui.admin.user.edit_group_memberships", ADMIN_BUNDLE,
+                new String[]{user.getName()}));
+        });
+        links.add(header);
+
+        final ActionLink backLink = new ActionLink(new GlobalizedMessage(
+            "ui.admin.user.edit_group_memberships.back_to_user_details",
+            ADMIN_BUNDLE));
+        backLink.addActionListener(e -> {
+            closeEditGroupMembershipsForm(e.getPageState());
+        });
+        links.add(backLink);
+
+        form.add(links);
+
+        final String groupsSelector = "groupsselector";
+        final CheckboxGroup groups = new CheckboxGroup(groupsSelector);
+        try {
+            groups.addPrintListener(e -> {
+//                final PageState state = e.getPageState();
+                final CheckboxGroup target = (CheckboxGroup) e.getTarget();
+                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+//                final UserRepository userRepository = cdiUtil.findBean(
+//                    UserRepository.class);
+                final GroupRepository groupRepository = cdiUtil.findBean(
+                    GroupRepository.class);
+
+                target.clearOptions();
+
+                final SortedSet<Group> allGroups = new TreeSet<>(
+                    (g1, g2) -> {
+                        return g1.getName().compareTo(g2.getName());
+                    });
+                allGroups.addAll(groupRepository.findAll());
+//                final List<Group> assignedGroups = new ArrayList<>();
+//                final User user = userRepository.findById(Long.parseLong(
+//                    selectedUserId.getSelectedKey(state)));
+//                user.getGroupMemberships().forEach(m -> {
+//                    assignedGroups.add(m.getGroup());
+//                });
+
+                allGroups.forEach(g -> {
+                    final Option option = new Option(
+                        Long.toString(g.getPartyId()), new Text(g.getName()));
+                    target.addOption(option);
+//                    if (assignedGroups.contains(g)) {
+//                        target.setOptionSelected(option);
+//                    }
+                });
+            });
+        } catch (TooManyListenersException ex) {
+            throw new UncheckedWrapperException(ex);
+        }
+        form.add(groups);
+
+        final SaveCancelSection saveCancelSection = new SaveCancelSection();
+        form.add(saveCancelSection);
+
+        form.addInitListener(e -> {
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final UserRepository userRepository = cdiUtil.findBean(
+                UserRepository.class);
+
+            final PageState state = e.getPageState();
+
+            final User user = userRepository.findById(Long.parseLong(
+                selectedUserId.getSelectedKey(state)));
+            final List<Group> assignedGroups = new ArrayList<>();
+            user.getGroupMemberships().forEach(m -> {
+                assignedGroups.add(m.getGroup());
+            });
+
+            final String[] selectedGroups = new String[assignedGroups.size()];
+            IntStream.range(0, assignedGroups.size()).forEach(i -> {
+                selectedGroups[i] = Long.toString(assignedGroups.get(i)
+                    .getPartyId());
+            });
+
+            groups.setValue(state, selectedGroups);
+        });
+
+        form.addProcessListener(e -> {
+            final PageState state = e.getPageState();
+            if (saveCancelSection.getSaveButton().isSelected(state)) {
+                final FormData data = e.getFormData();
+
+                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+                final UserRepository userRepository = cdiUtil.findBean(
+                    UserRepository.class);
+                final GroupRepository groupRepository = cdiUtil.findBean(
+                    GroupRepository.class);
+                final GroupManager groupManager = cdiUtil.findBean(
+                    GroupManager.class);
+
+                final String[] selectedGroupIds = (String[]) data.get(
+                    groupsSelector);
+
+                final User user = userRepository.findById(Long.parseLong(
+                    selectedUserId.getSelectedKey(state)));
+                final List<Group> selectedGroups = new ArrayList<>();
+                if (selectedGroupIds != null) {
+                    for (String selectedGroupId : selectedGroupIds) {
+                        final Group group = groupRepository.findById(Long
+                            .parseLong(
+                                selectedGroupId));
+                        selectedGroups.add(group);
+                    }
+                }
+                final List<Group> assignedGroups = new ArrayList<>();
+                user.getGroupMemberships().forEach(m -> {
+                    assignedGroups.add(m.getGroup());
+                });
+
+                //First check for newly added groups
+                selectedGroups.forEach(g -> {
+                    if (!assignedGroups.contains(g)) {
+                        groupManager.addMemberToGroup(user, g);
+                    }
+                });
+
+                //Than check for removed groups
+                assignedGroups.forEach(g -> {
+                    if (!selectedGroups.contains(g)) {
+                        final Group group = groupRepository.findById(
+                            g.getPartyId());
+                        groupManager.removeMemberFromGroup(user, group);
+                    }
+                });
+            }
+
+            closeEditGroupMembershipsForm(state);
+        });
+
+        return form;
+    }
+
     @Override
     public void register(final Page page) {
         super.register(page);
@@ -883,6 +1096,7 @@ public class UserAdmin extends BoxPanel {
         page.setVisibleDefault(userEditForm, false);
         page.setVisibleDefault(passwordSetForm, false);
         page.setVisibleDefault(emailForm, false);
+        page.setVisibleDefault(editGroupMembershipsForm, false);
         page.setVisibleDefault(newUserForm, false);
     }
 
@@ -892,6 +1106,7 @@ public class UserAdmin extends BoxPanel {
         userEditForm.setVisible(state, false);
         passwordSetForm.setVisible(state, false);
         emailForm.setVisible(state, false);
+        editGroupMembershipsForm.setVisible(state, false);
         newUserForm.setVisible(state, false);
     }
 
@@ -902,6 +1117,7 @@ public class UserAdmin extends BoxPanel {
         userEditForm.setVisible(state, false);
         passwordSetForm.setVisible(state, false);
         emailForm.setVisible(state, false);
+        editGroupMembershipsForm.setVisible(state, false);
         newUserForm.setVisible(state, false);
     }
 
@@ -911,6 +1127,7 @@ public class UserAdmin extends BoxPanel {
         userEditForm.setVisible(state, true);
         passwordSetForm.setVisible(state, false);
         emailForm.setVisible(state, false);
+        editGroupMembershipsForm.setVisible(state, false);
         newUserForm.setVisible(state, false);
     }
 
@@ -920,6 +1137,7 @@ public class UserAdmin extends BoxPanel {
         userEditForm.setVisible(state, false);
         passwordSetForm.setVisible(state, false);
         emailForm.setVisible(state, false);
+        editGroupMembershipsForm.setVisible(state, false);
         newUserForm.setVisible(state, false);
     }
 
@@ -929,6 +1147,7 @@ public class UserAdmin extends BoxPanel {
         userEditForm.setVisible(state, false);
         passwordSetForm.setVisible(state, true);
         emailForm.setVisible(state, false);
+        editGroupMembershipsForm.setVisible(state, false);
         newUserForm.setVisible(state, false);
     }
 
@@ -938,6 +1157,7 @@ public class UserAdmin extends BoxPanel {
         userEditForm.setVisible(state, false);
         passwordSetForm.setVisible(state, false);
         emailForm.setVisible(state, false);
+        editGroupMembershipsForm.setVisible(state, false);
         newUserForm.setVisible(state, false);
     }
 
@@ -947,6 +1167,7 @@ public class UserAdmin extends BoxPanel {
         userEditForm.setVisible(state, false);
         passwordSetForm.setVisible(state, false);
         emailForm.setVisible(state, true);
+        editGroupMembershipsForm.setVisible(state, false);
         newUserForm.setVisible(state, false);
     }
 
@@ -957,6 +1178,28 @@ public class UserAdmin extends BoxPanel {
         userEditForm.setVisible(state, false);
         passwordSetForm.setVisible(state, false);
         emailForm.setVisible(state, false);
+        editGroupMembershipsForm.setVisible(state, false);
+        newUserForm.setVisible(state, false);
+    }
+
+    protected void showEditGroupMembershipsForm(final PageState state) {
+        usersTablePanel.setVisible(state, false);
+        userDetails.setVisible(state, false);
+        userEditForm.setVisible(state, false);
+        passwordSetForm.setVisible(state, false);
+        emailForm.setVisible(state, false);
+        editGroupMembershipsForm.setVisible(state, true);
+        newUserForm.setVisible(state, false);
+    }
+
+    protected void closeEditGroupMembershipsForm(final PageState state) {
+        selectedEmailAddress.clearSelection(state);
+        usersTablePanel.setVisible(state, false);
+        userDetails.setVisible(state, true);
+        userEditForm.setVisible(state, false);
+        passwordSetForm.setVisible(state, false);
+        emailForm.setVisible(state, false);
+        editGroupMembershipsForm.setVisible(state, false);
         newUserForm.setVisible(state, false);
     }
 
@@ -967,6 +1210,7 @@ public class UserAdmin extends BoxPanel {
         userEditForm.setVisible(state, false);
         passwordSetForm.setVisible(state, false);
         emailForm.setVisible(state, false);
+        editGroupMembershipsForm.setVisible(state, false);
         newUserForm.setVisible(state, true);
     }
 
@@ -977,6 +1221,7 @@ public class UserAdmin extends BoxPanel {
         userEditForm.setVisible(state, false);
         passwordSetForm.setVisible(state, false);
         emailForm.setVisible(state, false);
+        editGroupMembershipsForm.setVisible(state, false);
         newUserForm.setVisible(state, false);
     }
 

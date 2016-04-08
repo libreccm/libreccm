@@ -53,6 +53,7 @@ public class GroupManager {
      * @param user The user to add to a group.
      * @param group  The group to which the user is added.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public void addMemberToGroup(final User user, final Group group) {
         if (user == null) {
             throw new IllegalArgumentException(

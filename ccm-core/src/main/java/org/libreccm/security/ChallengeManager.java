@@ -20,8 +20,13 @@ package org.libreccm.security;
 
 import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.mail.Mail;
+import com.arsdigita.ui.login.LoginConstants;
+import com.arsdigita.web.ParameterMap;
+import com.arsdigita.web.URL;
 
 import org.apache.commons.lang.text.StrSubstitutor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.configuration.LocalizedStringSetting;
 import org.libreccm.l10n.GlobalizationHelper;
@@ -37,6 +42,9 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.mail.MessagingException;
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+
+import static com.arsdigita.ui.login.LoginServlet.*;
 
 /**
  * A service class for managing several so called challenges. These challenges
@@ -73,6 +81,9 @@ import javax.servlet.ServletContext;
 @RequestScoped
 public class ChallengeManager {
 
+    private static final Logger LOGGER = LogManager.getLogger(
+        ChallengeManager.class);
+
     @Inject
     private GlobalizationHelper globalizationHelper;
 
@@ -89,7 +100,7 @@ public class ChallengeManager {
     private UserManager userManager;
 
     @Inject
-    private ServletContext servletContext;
+    private HttpServletRequest request;
 
     public String createEmailVerification(final User user) {
         if (user == null) {
@@ -137,7 +148,7 @@ public class ChallengeManager {
 
     public void sendAccountActivation(final User user)
         throws MessagingException {
-        final String text = createEmailVerification(user);
+        final String text = createAccountActivation(user);
         sendMessage(
             user,
             retrieveEmailSubject(OneTimeAuthTokenPurpose.ACCOUNT_ACTIVATION),
@@ -172,7 +183,7 @@ public class ChallengeManager {
 
     public void sendPasswordRecover(final User user)
         throws MessagingException {
-        final String text = createEmailVerification(user);
+        final String text = createPasswordRecover(user);
         sendMessage(
             user,
             retrieveEmailSubject(OneTimeAuthTokenPurpose.RECOVER_PASSWORD),
@@ -211,13 +222,13 @@ public class ChallengeManager {
         final String path;
         switch (purpose) {
             case ACCOUNT_ACTIVATION:
-                path = "activate-account";
+                path = ACTIVATE_ACCOUNT_PATH_INFO;
                 break;
             case EMAIL_VERIFICATION:
-                path = "verify-email";
+                path = VERIFY_EMAIL_PATH_INFO;
                 break;
             case RECOVER_PASSWORD:
-                path = "recover-password";
+                path = RESET_USER_PASSWORD_PATH_INFO;
                 break;
             default:
                 throw new IllegalArgumentException(String.format(
@@ -225,17 +236,28 @@ public class ChallengeManager {
                     purpose.toString()));
         }
         values.put("link",
-                   String.format("%s/%s/register/%s",
-                                 servletContext.getVirtualServerName(),
-                                 servletContext.getContextPath(),
-                                 path));
+                   URL.there(request,
+                             LoginConstants.LOGIN_PATH + path, null)
+                   .getURL());
+
+        final ParameterMap params = new ParameterMap();
+        params.setParameter("email", user.getPrimaryEmailAddress().getAddress());
+        params.setParameter("token", token.getToken());
+        values.put("full_link",
+                   URL.there(request,
+                             LoginConstants.LOGIN_PATH + path, params)
+                   .getURL());
+
+        values.put("token", token.getToken());
 
         final StrSubstitutor substitutor = new StrSubstitutor(values);
         return substitutor.replace(template);
     }
 
     private String retrieveEmailSubject(final OneTimeAuthTokenPurpose purpose) {
+        LOGGER.debug("Retreving email subject...");
         final Locale locale = globalizationHelper.getNegotiatedLocale();
+        LOGGER.debug("Negoiated locale is {}.", locale.toString());
 
         final EmailTemplates emailTemplates = configurationManager
             .findConfiguration(EmailTemplates.class);

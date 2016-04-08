@@ -20,6 +20,8 @@ package org.libreccm.security;
 
 import static org.libreccm.core.CoreConstants.*;
 
+import org.libreccm.core.DefaultEntityGraph;
+
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashSet;
@@ -27,8 +29,12 @@ import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.Entity;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
+import javax.persistence.NamedEntityGraphs;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.NamedSubgraph;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlElement;
@@ -36,12 +42,12 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * A group is basically a collection of users. 
- * 
- * Group extends the {@link Party} class. Therefore {@link Role}s can be 
+ * A group is basically a collection of users.
+ *
+ * Group extends the {@link Party} class. Therefore {@link Role}s can be
  * assigned to a group. When a {@link Role} is assigned to a group each member
  * of the group gets the role and the permissions associated with that role.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
@@ -53,6 +59,29 @@ import javax.xml.bind.annotation.XmlRootElement;
                 query = "SELECT g FROM Group g "
                             + "WHERE LOWER(g.name) LIKE '%:name%'")
 })
+@NamedEntityGraphs({
+    @NamedEntityGraph(
+        name = "Group.withMembersAndRoleMemberships",
+        attributeNodes = {
+            @NamedAttributeNode(
+                value = "memberships"),
+            @NamedAttributeNode(
+                value = "roleMemberships",
+                subgraph = "role")},
+        subgraphs = {
+            @NamedSubgraph(
+                name = "role",
+                attributeNodes = {
+                    @NamedAttributeNode(value = "role",
+                                        subgraph = "permissions")
+                }),
+            @NamedSubgraph(
+                name = "permissions",
+                attributeNodes = {
+                    @NamedAttributeNode(value = "permissions")})
+        })
+})
+@DefaultEntityGraph("Group.withMembersAndRoleMemberships")
 @XmlRootElement(name = "user-group", namespace = CORE_XML_NS)
 public class Group extends Party implements Serializable {
 
@@ -118,8 +147,6 @@ public class Group extends Party implements Serializable {
     public int hashCode() {
         return super.hashCode();
     }
-    
-    
 
     @Override
     public String toString(final String data) {

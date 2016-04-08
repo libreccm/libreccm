@@ -23,6 +23,7 @@ import com.arsdigita.bebop.Form;
 import com.arsdigita.bebop.FormData;
 import com.arsdigita.bebop.FormProcessException;
 import com.arsdigita.bebop.Label;
+import com.arsdigita.bebop.Link;
 import com.arsdigita.bebop.Page;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.SaveCancelSection;
@@ -30,6 +31,7 @@ import com.arsdigita.bebop.form.TextField;
 import com.arsdigita.bebop.parameters.NotEmptyValidationListener;
 import com.arsdigita.bebop.parameters.StringLengthValidationListener;
 import com.arsdigita.globalization.GlobalizedMessage;
+import com.arsdigita.web.URL;
 
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.ConfigurationManager;
@@ -43,6 +45,8 @@ import org.libreccm.security.User;
 import org.libreccm.security.UserRepository;
 
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
 
 import static com.arsdigita.ui.login.LoginConstants.*;
 
@@ -102,11 +106,30 @@ public class UserAccountActivationForm extends Form {
         successPanel = new BoxPanel(BoxPanel.VERTICAL);
         successPanel.add(new Label(new GlobalizedMessage(
             "login.form.account_activation.success", LOGIN_BUNDLE)));
-
+        successPanel.add(new Link(new Label(
+            new GlobalizedMessage("login.form.account_activation.success.login",
+                                  LOGIN_BUNDLE)),
+                                  URL.there(LOGIN_PAGE_URL, null).getURL()));
         add(successPanel);
     }
 
     private void addListeners() {
+        addInitListener(e -> {
+            final PageState state = e.getPageState();
+            final HttpServletRequest request = state.getRequest();
+
+            final String paramEmail = request.getParameter("email");
+            final String paramToken = request.getParameter("token");
+
+            if (paramEmail != null) {
+                email.setValue(state, paramEmail);
+            }
+
+            if (paramToken != null) {
+                authToken.setValue(state, paramToken);
+            }
+        });
+
         addValidationListener(e -> {
             final PageState state = e.getPageState();
 
@@ -193,7 +216,6 @@ public class UserAccountActivationForm extends Form {
 
                 formPanel.setVisible(state, false);
                 successPanel.setVisible(state, true);
-                data.clear();
             }
         });
     }

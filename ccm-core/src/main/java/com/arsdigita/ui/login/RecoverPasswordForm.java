@@ -32,6 +32,8 @@ import com.arsdigita.bebop.parameters.NotEmptyValidationListener;
 import com.arsdigita.bebop.parameters.StringLengthValidationListener;
 import com.arsdigita.globalization.GlobalizedMessage;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.ChallengeManager;
 import org.libreccm.security.User;
@@ -47,6 +49,9 @@ import static com.arsdigita.ui.login.LoginServlet.*;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class RecoverPasswordForm extends Form {
+
+    private static final Logger LOGGER = LogManager.getLogger(
+        RecoverPasswordForm.class);
 
     private static final String EMAIL = "email";
 
@@ -93,6 +98,7 @@ public class RecoverPasswordForm extends Form {
                     LOGIN_BUNDLE)),
             LOGIN_PAGE_URL + RESET_USER_PASSWORD_PATH_INFO);
         finishedMessagePanel.add(link);
+        add(finishedMessagePanel);
     }
 
     private void addListeners() {
@@ -155,9 +161,14 @@ public class RecoverPasswordForm extends Form {
                     }
                 }
 
+                if (user == null) {
+                    LOGGER.warn(
+                        "Password recover requested for not existing user {}.",
+                        data.get(EMAIL));
+                }
+
                 formPanel.setVisible(state, false);
                 finishedMessagePanel.setVisible(state, true);
-                data.clear();
             }
         }
         );

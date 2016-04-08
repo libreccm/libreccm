@@ -74,7 +74,13 @@ import javax.xml.bind.annotation.XmlTransient;
                     + "LOWER(u.name) LIKE CONCAT(LOWER(:term), '%') "
                     + "OR LOWER(u.givenName) LIKE CONCAT(LOWER(:term), '%') "
                     + "OR LOWER(u.familyName) LIKE CONCAT(LOWER(:term), '%') "
-                    + "OR LOWER(u.primaryEmailAddress.address) LIKE CONCAT('%', LOWER(:term), '%')")
+                    + "OR LOWER(u.primaryEmailAddress.address) LIKE CONCAT('%', LOWER(:term), '%')"),
+    @NamedQuery(
+        name = "User.findAllOrderedByUsername",
+        query = "SELECT u FROM User u ORDER BY u.name, "
+                    + "                        u.familyName, "
+                    + "                        u.givenName, "
+                    + "                        u.primaryEmailAddress.address")
 })
 @NamedEntityGraphs({
     @NamedEntityGraph(
@@ -98,7 +104,6 @@ import javax.xml.bind.annotation.XmlTransient;
                     @NamedAttributeNode(value = "permissions")}
             )
         })
-
 })
 @DefaultEntityGraph("User.withGroupAndRoleMemberships")
 @XmlRootElement(name = "user", namespace = CORE_XML_NS)

@@ -109,6 +109,8 @@ public interface LoginConstants {
     // Don't modify without adapting instantiation in Loader class and 
     // updating existing databases (table applications)!
     public static final String LOGIN_PAGE_URL = "/register/";
+    
+    public static final String LOGIN_PATH = "/register";
 
     public static final String LOGIN_SERVLET_PATH = "/login/*";
 

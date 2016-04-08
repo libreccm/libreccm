@@ -205,7 +205,11 @@ public class OneTimeAuthManager {
             throw new IllegalArgumentException("Can't invalidate a token null");
         }
 
-        entityManager.remove(token);
+        //Ensure that we have a none detached instance
+        final OneTimeAuthToken delete = entityManager.find(
+            OneTimeAuthToken.class, token.getTokenId());
+        
+        entityManager.remove(delete);
     }
 
 }

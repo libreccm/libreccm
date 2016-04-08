@@ -108,16 +108,25 @@ public class LoginServlet extends BebopApplicationServlet {
     /**
      * PathInfo into the Login application to access the <em>password reset</em>
      * page which allows the user to replace a forgotten password with a new one
-     * (using a previously requested one time auth token). Ends with "/" because
-     * it is a servlet/directory
+     * (using a previously requested one time authentication token). Ends with
+     * "/" because it is a servlet/directory
      */
-    public static final String RESET_USER_PASSWORD_PATH_INFO = "/reset-password";
+    public static final String RESET_USER_PASSWORD_PATH_INFO = "/reset-password/";
 
     /**
      * PathInfo into the Login application to access the <em>verify email</em>
-     * page. Ends with "/" because it is a servlet/directory
+     * page (not implemted yet!). Ends with "/" because it is a
+     * servlet/directory
      */
-    public static final String VERIFY_EMAIL = "/verify-email/";
+    public static final String VERIFY_EMAIL_PATH_INFO = "/verify-email/";
+
+    /**
+     * PathInfo into the Login application to access the <em>confirm email</em>
+     * page which allows the user to confirm his/her email address by submitting
+     * a previously requested one time authentication token (not implemented!).
+     * Ends with "/" because it is a servlet/directory
+     */
+    public static final String CONFIRM_EMAIL_PATH_INFO = "/verify-email/";
 
     /**
      * PathInfo into the Login application to access the (optional) <em>explain
@@ -239,7 +248,7 @@ public class LoginServlet extends BebopApplicationServlet {
             buildSimplePage("login.resetPasswordPage.title",
                             new ResetPasswordForm(),
                             "reset-password"));
-        
+
         // Build the login expire page, retrieve its URL_MSG and store in map
         put(LOGIN_EXPIRED_PATH_INFO, buildExpiredPage());
 

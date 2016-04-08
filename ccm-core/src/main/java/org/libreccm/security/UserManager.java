@@ -53,12 +53,13 @@ public class UserManager {
      * Creates a new user and saves the user in the database. The method also
      * creates the password hash.
      *
-     * @param givenName The given name of the new user.
-     * @param familyName The family name of the new user.
-     * @param name The name of the new user.
+     * @param givenName    The given name of the new user.
+     * @param familyName   The family name of the new user.
+     * @param name         The name of the new user.
      * @param emailAddress The email address of the new user.
-     * @param password The password of the new user. The password is hashed
-     * using the algorithm configured in the {@link SecurityConfig}.
+     * @param password     The password of the new user. The password is hashed
+     *                     using the algorithm configured in the
+     *                     {@link SecurityConfig}.
      *
      * @return The new user.
      */
@@ -77,7 +78,11 @@ public class UserManager {
         email.setAddress(emailAddress);
         user.setPrimaryEmailAddress(email);
         email.setVerified(true);
-        user.setPassword(hashPassword(password));
+        if (password == null) {
+            user.setPassword(null);
+        } else {
+            user.setPassword(hashPassword(password));
+        }
 
         userRepository.save(user);
 
@@ -90,11 +95,11 @@ public class UserManager {
      * the user can't login or that the authentication for this user is done by
      * an external system.
      *
-     * @param user The user which password should be upgraded.
+     * @param user        The user which password should be upgraded.
      * @param newPassword The new password. The password is hashed using the
-     * algorithm configured in the {@link SecurityConfig}.
+     *                    algorithm configured in the {@link SecurityConfig}.
      */
-    public void updatePassword(@NotNull final User user, 
+    public void updatePassword(@NotNull final User user,
                                final String newPassword) {
         user.setPassword(hashPassword(newPassword));
 
@@ -105,11 +110,11 @@ public class UserManager {
      * Verifies the password of a user. This can be useful if you want to verify
      * the password of a user already logged in again.
      *
-     * @param user The user against which the password is verified.
+     * @param user     The user against which the password is verified.
      * @param password The password to verify.
      *
      * @return {@code true} if the provided passworda matches the password from
-     * the database, {@code false} otherwise.
+     *         the database, {@code false} otherwise.
      */
     public boolean verifyPassword(final User user, final String password) {
         //Create a new Shiro PasswordMatcher instance
@@ -142,9 +147,10 @@ public class UserManager {
         //We want to use the Shiro1 format for storing the password. This
         //format includes the algorithm used, the salt and the number of 
         //iterations used and the hashed password in special formatted string.
-        final HashFormatFactory hashFormatFactory = new DefaultHashFormatFactory();
+        final HashFormatFactory hashFormatFactory
+                                = new DefaultHashFormatFactory();
         final HashFormat hashFormat = hashFormatFactory.getInstance(
-                Shiro1CryptFormat.class.getName());
+            Shiro1CryptFormat.class.getName());
 
         return hashFormat.format(hash);
     }
@@ -160,11 +166,13 @@ public class UserManager {
 
         if (generatedSaltSize % 8 != 0) {
             throw new IllegalArgumentException(
-                    "Salt length is not a multipe of 8");
+                "Salt length is not a multipe of 8");
         }
 
-        final SecureRandomNumberGenerator generator = new SecureRandomNumberGenerator();
+        final SecureRandomNumberGenerator generator
+                                          = new SecureRandomNumberGenerator();
         final int byteSize = generatedSaltSize / 8; //generatedSaltSize is in *bits* - convert to byte size:
         return generator.nextBytes(byteSize);
     }
+
 }

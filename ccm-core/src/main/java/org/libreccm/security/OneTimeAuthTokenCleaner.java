@@ -74,7 +74,10 @@ public class OneTimeAuthTokenCleaner {
 //        final long interval = 60 * 60 * 1000;
 
         LOGGER.debug("Creating interval for {} s.", interval / 1000);
-        timerService.createIntervalTimer(interval, interval, new TimerConfig());
+        LOGGER.debug("First run cleaning process will be executed in 5 min.");
+        timerService.createIntervalTimer(5 * 60 * 1000, 
+                                         interval, 
+                                         new TimerConfig());
     }
 
     @Timeout
@@ -88,7 +91,7 @@ public class OneTimeAuthTokenCleaner {
         LOGGER.debug("Found {} one time auth tokens.", tokens.size());
         if (LOGGER.isDebugEnabled()) {
             final LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
-            LOGGER.debug("Current time is: {}", now);
+            LOGGER.debug("Current time (UTC) is: {}", now);
             tokens.forEach(t -> {
                 if (oneTimeAuthManager.isValid(t)) {
                     LOGGER.debug("OneTimeAuthToken with id {} is still valid. "
@@ -97,7 +100,7 @@ public class OneTimeAuthTokenCleaner {
                                  t.getValidUntil());
                 } else {
                     LOGGER.debug("OneTimeAuthToken with id {} is invalid. "
-                        + "Expires at {}.",
+                        + "Expires at {} UTC.",
                                  t.getTokenId(),
                                  t.getValidUntil());
                 }
@@ -107,7 +110,7 @@ public class OneTimeAuthTokenCleaner {
         tokens.stream()
             .filter((token) -> (!oneTimeAuthManager.isValid(token)))
             .forEach((token) -> {
-                LOGGER.debug("Token with id {} expired at {}. "
+                LOGGER.debug("Token with id {} expired at {} UTC. "
                     + "Invalidating token.",
                              token.getTokenId(), token.getValidUntil());
                 oneTimeAuthManager.invalidate(token);

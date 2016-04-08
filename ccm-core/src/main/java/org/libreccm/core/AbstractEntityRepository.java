@@ -32,6 +32,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
@@ -208,8 +209,7 @@ public abstract class AbstractEntityRepository<K, E> {
     public List<E> findAll(final String entityGraphName) {
         @SuppressWarnings("unchecked")
         final EntityGraph<E> entityGraph = (EntityGraph<E>) entityManager
-            .getEntityGraph(
-                entityGraphName);
+            .getEntityGraph(entityGraphName);
 
         return findAll(entityGraph);
     }
@@ -237,8 +237,8 @@ public abstract class AbstractEntityRepository<K, E> {
         if (hasDefaultEntityGraph()) {
             return executeCriteriaQuery(criteriaQuery, getDefaultEntityGraph());
         } else {
-           final TypedQuery<E> query = entityManager.createQuery(criteriaQuery);
-           return query.getResultList();
+            final TypedQuery<E> query = entityManager.createQuery(criteriaQuery);
+            return query.getResultList();
         }
     }
 
@@ -286,16 +286,16 @@ public abstract class AbstractEntityRepository<K, E> {
     }
 
     /**
-     * Overwrite this method to initialise new entities with default values. 
-     * One example is assigning a (random) UUID to new entity which implements
-     * the {@link Identifiable} interface.
-     * 
+     * Overwrite this method to initialise new entities with default values. One
+     * example is assigning a (random) UUID to new entity which implements the
+     * {@link Identifiable} interface.
+     *
      * @param entity The entity to init.
      */
     public void initNewEntity(final E entity) {
         //Empty default implementation
     }
-    
+
     /**
      * Deletes an entity from the database.
      *

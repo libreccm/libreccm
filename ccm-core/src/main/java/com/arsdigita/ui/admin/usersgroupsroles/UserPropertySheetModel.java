@@ -20,8 +20,10 @@ package com.arsdigita.ui.admin.usersgroupsroles;
 
 import com.arsdigita.bebop.PropertySheetModel;
 import com.arsdigita.globalization.GlobalizedMessage;
+
 import java.util.Arrays;
 import java.util.Iterator;
+
 import org.libreccm.security.User;
 
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
@@ -38,7 +40,7 @@ public class UserPropertySheetModel implements PropertySheetModel {
         GIVEN_NAME,
         PASSWORD_SET,
         BANNED,
-        PASSWORD_RESET_REQUIRED,
+        PASSWORD_RESET_REQUIRED
     }
 
     private final User selectedUser;
@@ -102,5 +104,4 @@ public class UserPropertySheetModel implements PropertySheetModel {
                 return "";
         }
     }
-
 }

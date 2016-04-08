@@ -159,7 +159,7 @@ public class UsersTable extends Table {
             final UserRepository userRepository = CdiUtil.createCdiUtil()
                     .findBean(UserRepository.class);
             if (filterTerm == null || filterTerm.isEmpty()) {
-                users = userRepository.findAll();
+                users = userRepository.findAllOrderdByUsername();
                 LOGGER.debug("Found {} users in database.", users.size());
             } else {
                 users = userRepository.filtered(filterTerm);
