@@ -29,14 +29,15 @@
         </Logger>
         <Logger name="com.arsdigita.web.CCMDispatcherServlet"
                 level="debug">
-            
         </Logger>
         <Logger name="org.libreccm.core.AbstractEntityRepository"
                 level="debug">
         </Logger>
+        <Logger name="org.libreccm.security.OneTimeAuthTokenCleaner"
+                level="debug">
+        </Logger>
         <Logger name="org.libreccm.security.Shiro"
                 level="debug">
-            
         </Logger>
     </Loggers>
 </Configuration>
