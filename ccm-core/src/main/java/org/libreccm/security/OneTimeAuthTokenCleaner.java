@@ -28,8 +28,10 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.ejb.DependsOn;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
+import javax.ejb.Stateless;
 import javax.ejb.Timeout;
 import javax.ejb.TimerConfig;
 import javax.ejb.TimerService;
@@ -45,8 +47,9 @@ import javax.transaction.Transactional;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@Startup
+//@Startup
 @Singleton
+//@Stateless
 public class OneTimeAuthTokenCleaner {
 
     private static final Logger LOGGER = LogManager.getLogger(
@@ -75,7 +78,7 @@ public class OneTimeAuthTokenCleaner {
 
         LOGGER.debug("Creating interval for {} s.", interval / 1000);
         LOGGER.debug("First run cleaning process will be executed in 5 min.");
-        timerService.createIntervalTimer(5 * 60 * 1000, 
+        timerService.createIntervalTimer(interval, 
                                          interval, 
                                          new TimerConfig());
     }
