@@ -23,10 +23,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
-import java.util.Optional;
 
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.ShouldThrowException;
@@ -126,6 +124,7 @@ public class OneTimeAuthManagerTest {
                 getPackage())
             .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class.
                 getPackage())
+            .addClass(com.arsdigita.kernel.security.SecurityConfig.class)
             .addPackage(org.libreccm.testutils.EqualsVerifier.class.
                 getPackage())
             .addPackage(org.libreccm.tests.categories.IntegrationTest.class.

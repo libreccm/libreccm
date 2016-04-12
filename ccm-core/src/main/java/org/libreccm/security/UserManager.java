@@ -134,9 +134,10 @@ public class UserManager {
      * @return The hashed password.b
      */
     private String hashPassword(final String password) {
-        //Get the values from the LegacySecurityConfig
-        final String hashAlgo = SecurityConfig.getConfig().getHashAlgorithm();
-        final int iterations = SecurityConfig.getConfig().getHashIterations();
+        //Get the values from the SecurityConfig
+        final SecurityConfig securityConfig = SecurityConfig.getConfig();
+        final String hashAlgo = securityConfig.getHashAlgorithm();
+        final int iterations = securityConfig.getHashIterations();
 
         //Create the hash using Shiro's SimpleHash class
         final SimpleHash hash = new SimpleHash(hashAlgo,
@@ -145,7 +146,7 @@ public class UserManager {
                                                iterations);
 
         //We want to use the Shiro1 format for storing the password. This
-        //format includes the algorithm used, the salt and the number of 
+        //format includes the algorithm used, the salt, the number of 
         //iterations used and the hashed password in special formatted string.
         final HashFormatFactory hashFormatFactory
                                 = new DefaultHashFormatFactory();
