@@ -21,6 +21,7 @@ package org.libreccm.security;
 import static org.libreccm.core.CoreConstants.*;
 
 import org.hibernate.validator.constraints.NotBlank;
+import org.libreccm.core.DefaultEntityGraph;
 import org.libreccm.workflow.TaskAssignment;
 
 import java.io.Serializable;
@@ -36,6 +37,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
+import javax.persistence.NamedEntityGraphs;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -47,7 +51,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * A role is basically a collection a {@link Permission}s and {@code Task}s.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
@@ -57,6 +61,14 @@ import javax.xml.bind.annotation.XmlRootElement;
                 query = "SELECT r FROM Role r "
                             + "WHERE r.name = :name")
 })
+@NamedEntityGraphs({
+    @NamedEntityGraph(
+        name = "Role.withMembers",
+        attributeNodes = {
+            @NamedAttributeNode(value = "memberships")
+        })
+})
+@DefaultEntityGraph("Role.withMembers")
 @XmlRootElement(name = "role", namespace = CORE_XML_NS)
 @SuppressWarnings({"PMD.ShortClassName", "PMD.TooManyMethods"})
 public class Role implements Serializable {
@@ -86,7 +98,7 @@ public class Role implements Serializable {
     @XmlElementWrapper(name = "role-memberships", namespace = CORE_XML_NS)
     @XmlElement(name = "role-membership", namespace = CORE_XML_NS)
     private Set<RoleMembership> memberships = new HashSet<>();
-    
+
     /**
      * Permissions granted to the role.
      */
@@ -97,7 +109,7 @@ public class Role implements Serializable {
 
     @OneToMany(mappedBy = "role")
     private List<TaskAssignment> assignedTasks;
-    
+
     protected Role() {
         super();
     }
@@ -125,19 +137,19 @@ public class Role implements Serializable {
             return Collections.unmodifiableSet(memberships);
         }
     }
-    
+
     protected void setMemberships(final Set<RoleMembership> memberships) {
         this.memberships = memberships;
     }
-    
+
     protected void addMembership(final RoleMembership membership) {
         memberships.add(membership);
     }
-    
+
     protected void removeMembership(final RoleMembership membership) {
         memberships.remove(membership);
     }
-    
+
     public List<Permission> getPermissions() {
         if (permissions == null) {
             return null;
@@ -157,7 +169,7 @@ public class Role implements Serializable {
     protected void removePermission(final Permission permission) {
         permissions.remove(permission);
     }
-    
+
     public List<TaskAssignment> getAssignedTasks() {
         if (assignedTasks == null) {
             return null;
@@ -165,15 +177,15 @@ public class Role implements Serializable {
             return Collections.unmodifiableList(assignedTasks);
         }
     }
-    
+
     protected void setAssignedTasks(final List<TaskAssignment> assignedTasks) {
         this.assignedTasks = assignedTasks;
     }
-    
+
     protected void addAssignedTask(final TaskAssignment taskAssignment) {
         assignedTasks.add(taskAssignment);
     }
-    
+
     protected void removeAssignedTask(final TaskAssignment taskAssignment) {
         assignedTasks.remove(taskAssignment);
     }

@@ -77,7 +77,8 @@ public class OneTimeAuthTokenCleaner {
 //        final long interval = 60 * 60 * 1000;
 
         LOGGER.debug("Creating interval for {} s.", interval / 1000);
-        LOGGER.debug("First run cleaning process will be executed in 5 min.");
+//        LOGGER.debug("First run cleaning process will be executed in {} s.",
+//                     interval / 1000);
         timerService.createIntervalTimer(interval, 
                                          interval, 
                                          new TimerConfig());

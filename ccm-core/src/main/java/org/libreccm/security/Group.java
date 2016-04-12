@@ -63,11 +63,9 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedEntityGraph(
         name = "Group.withMembersAndRoleMemberships",
         attributeNodes = {
-            @NamedAttributeNode(
-                value = "memberships"),
-            @NamedAttributeNode(
-                value = "roleMemberships",
-                subgraph = "role")},
+            @NamedAttributeNode(value = "memberships"),
+            @NamedAttributeNode(value = "roleMemberships",
+                                subgraph = "role")},
         subgraphs = {
             @NamedSubgraph(
                 name = "role",
