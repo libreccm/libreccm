@@ -16,14 +16,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package com.arsdigita.ui.admin.usersgroupsroles;
+package com.arsdigita.ui.admin.usersgroupsroles.users;
 
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.ParameterSingleSelectionModel;
-import com.arsdigita.bebop.PropertySheet;
-import com.arsdigita.bebop.PropertySheetModel;
-import com.arsdigita.bebop.PropertySheetModelBuilder;
+import com.arsdigita.bebop.Table;
+import com.arsdigita.bebop.table.TableModel;
+import com.arsdigita.bebop.table.TableModelBuilder;
 import com.arsdigita.util.LockableImpl;
+
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.User;
 import org.libreccm.security.UserRepository;
@@ -32,32 +33,30 @@ import org.libreccm.security.UserRepository;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class UserPropertySheetModelBuilder
-    extends LockableImpl implements PropertySheetModelBuilder {
+public class UserPrimaryEmailTableModelBuilder extends LockableImpl
+    implements TableModelBuilder {
 
     private final ParameterSingleSelectionModel<String> selectedUserId;
 
-    public UserPropertySheetModelBuilder(
-        final UserAdmin parent,
+    public UserPrimaryEmailTableModelBuilder(
         final ParameterSingleSelectionModel<String> selectedUserId) {
         this.selectedUserId = selectedUserId;
     }
 
     @Override
-    public PropertySheetModel makeModel(final PropertySheet sheet,
-                                        final PageState state) {
+    public TableModel makeModel(final Table table, final PageState state) {
         final String userIdStr = selectedUserId.getSelectedKey(state);
         final User selectedUser;
         if (userIdStr == null || userIdStr.isEmpty()) {
             selectedUser = null;
         } else {
-            final UserRepository userRepository = CdiUtil.createCdiUtil().
-                findBean(UserRepository.class);
+            final UserRepository userRepository = CdiUtil.createCdiUtil()
+                .findBean(UserRepository.class);
             final long userId = Long.parseLong(userIdStr);
             selectedUser = userRepository.findById(userId);
         }
-
-        return new UserPropertySheetModel(selectedUser);
+        
+        return new UserPrimaryEmailTableModel(selectedUser);
     }
 
 }

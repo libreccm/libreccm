@@ -36,21 +36,13 @@ import org.junit.runner.RunWith;
 import org.libreccm.docrepo.File;
 import org.libreccm.docrepo.FileMarshaller;
 import org.libreccm.docrepo.FileRepository;
-import org.libreccm.portation.Format;
 import org.libreccm.portation.Marshals;
 import org.libreccm.tests.categories.IntegrationTest;
 
 import javax.inject.Inject;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 /**
  *
@@ -160,6 +152,8 @@ public class FilePortationTest {
                 .getPackage())
             .addAsLibraries(libs)
             .addAsLibraries(coreLibs)
+            .addAsResource("META-INF/jboss-deployment-structure.xml", 
+                           "META-INF/jboss-deployment-structure.xml")
             .addAsResource("test-persistence.xml", "META-INF/persistence.xml")
             .addAsWebInfResource("test-web.xml", "WEB-INF/web.xml")
             .addAsWebInfResource(EmptyAsset.INSTANCE, "WEB-INF/beans.xml");

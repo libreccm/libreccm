@@ -18,6 +18,7 @@
  */
 package com.arsdigita.ui.admin.usersgroupsroles;
 
+import com.arsdigita.ui.admin.usersgroupsroles.users.UserAdmin;
 import com.arsdigita.bebop.BoxPanel;
 import com.arsdigita.bebop.Component;
 import com.arsdigita.bebop.Label;
@@ -29,6 +30,7 @@ import com.arsdigita.bebop.list.ListModel;
 import com.arsdigita.bebop.list.ListModelBuilder;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.toolbox.ui.LayoutPanel;
+import com.arsdigita.ui.admin.usersgroupsroles.groups.GroupAdmin;
 import com.arsdigita.util.Assert;
 import com.arsdigita.util.LockableImpl;
 
@@ -63,8 +65,8 @@ public class UsersGroupsRolesTab extends LayoutPanel {
 //        final BoxPanel usersPanel = new BoxPanel();
 //        usersPanel.add(new Label("Users Panel"));
 
-        final BoxPanel groupsPanel = new BoxPanel();
-        groupsPanel.add(new Label("Groups Panel"));
+//        final BoxPanel groupsPanel = new BoxPanel();
+//        groupsPanel.add(new Label("Groups Panel"));
 
         final BoxPanel rolesPanel = new BoxPanel();
         rolesPanel.add(new Label("Roles Panel"));
@@ -80,7 +82,7 @@ public class UsersGroupsRolesTab extends LayoutPanel {
             new Label(new GlobalizedMessage(
                 "ui.admin.users_groups_roles.groups.title",
                 ADMIN_BUNDLE)),
-            groupsPanel,
+            new GroupAdmin(),
             body);
         addSection(
             new Label(new GlobalizedMessage(

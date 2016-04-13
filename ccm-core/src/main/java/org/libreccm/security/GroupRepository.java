@@ -81,4 +81,11 @@ public class GroupRepository extends AbstractEntityRepository<Long, Group> {
         return query.getResultList();
     }
 
+    
+    
+    public List<Group> findAllOrderedByGroupName() {
+        final TypedQuery<Group> query = getEntityManager().createNamedQuery(
+                "Group.findAllOrderedByGroupName", Group.class);
+        return query.getResultList();
+    }
 }

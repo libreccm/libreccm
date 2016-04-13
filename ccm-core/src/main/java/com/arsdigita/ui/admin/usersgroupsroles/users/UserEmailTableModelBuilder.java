@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package com.arsdigita.ui.admin.usersgroupsroles;
+package com.arsdigita.ui.admin.usersgroupsroles.users;
 
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.ParameterSingleSelectionModel;
@@ -33,16 +33,16 @@ import org.libreccm.security.UserRepository;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class UserPrimaryEmailTableModelBuilder extends LockableImpl
-    implements TableModelBuilder {
+public class UserEmailTableModelBuilder extends LockableImpl 
+    implements TableModelBuilder{
 
     private final ParameterSingleSelectionModel<String> selectedUserId;
-
-    public UserPrimaryEmailTableModelBuilder(
+    
+    public UserEmailTableModelBuilder(
         final ParameterSingleSelectionModel<String> selectedUserId) {
         this.selectedUserId = selectedUserId;
     }
-
+    
     @Override
     public TableModel makeModel(final Table table, final PageState state) {
         final String userIdStr = selectedUserId.getSelectedKey(state);
@@ -56,7 +56,7 @@ public class UserPrimaryEmailTableModelBuilder extends LockableImpl
             selectedUser = userRepository.findById(userId);
         }
         
-        return new UserPrimaryEmailTableModel(selectedUser);
+        return new UserEmailTableModel(selectedUser);
     }
-
+    
 }
