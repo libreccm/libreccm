@@ -98,7 +98,7 @@ public class Group extends Party implements Serializable {
     @XmlElement(name = "group-membership", namespace = CORE_XML_NS)
     private Set<GroupMembership> memberships = new HashSet<>();
 
-    protected Group() {
+    public Group() {
         super();
     }
 
