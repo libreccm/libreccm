@@ -48,6 +48,7 @@ public class GroupAdmin extends BoxPanel {
     private final BoxPanel groupsTablePanel;
     private final GroupsTable groupsTable;
     private final GroupForm groupForm;
+    private final GroupDetails groupDetails;
 
     public GroupAdmin() {
         super();
@@ -91,6 +92,9 @@ public class GroupAdmin extends BoxPanel {
         
         groupForm = new GroupForm(this, selectedGroupId);
         add(groupForm);
+        
+        groupDetails = new GroupDetails(this, selectedGroupId);
+        add(groupDetails);
 
     }
 
@@ -102,6 +106,7 @@ public class GroupAdmin extends BoxPanel {
 
         page.setVisibleDefault(groupsTablePanel, true);
         page.setVisibleDefault(groupForm, false);
+        page.setVisibleDefault(groupDetails, false);
     }
 
     private void setBasicProperties() {
@@ -112,11 +117,14 @@ public class GroupAdmin extends BoxPanel {
     protected void showGroupDetails(final PageState state) {
         groupsTablePanel.setVisible(state, false);
         groupForm.setVisible(state, false);
+        groupDetails.setVisible(state, true);
     }
     
     protected void hideGroupDetails(final PageState state) {
+        selectedGroupId.clearSelection(state);
         groupsTablePanel.setVisible(state, true);
         groupForm.setVisible(state, false);
+        groupDetails.setVisible(state, false);
     }
     
     protected void showGroupForm(final PageState state) {

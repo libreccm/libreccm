@@ -159,7 +159,7 @@ public class UserAdmin extends BoxPanel {
         userDetails.add(backToUsersTable);
 
         userProperties = new PropertySheet(new UserPropertySheetModelBuilder(
-            this, selectedUserId));
+            selectedUserId));
         userProperties.setIdAttr("userProperties");
         userDetails.add(userProperties);
 
