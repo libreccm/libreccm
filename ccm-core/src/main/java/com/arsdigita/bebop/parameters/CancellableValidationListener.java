@@ -47,6 +47,7 @@ import com.arsdigita.bebop.event.ParameterListener;
  *
  *
  */
+@Deprecated //Does not work. Do not use
 public class CancellableValidationListener implements ParameterListener {
 
     private RequestLocal m_isCancel;
@@ -65,6 +66,7 @@ public class CancellableValidationListener implements ParameterListener {
         m_listener = l;
     }
 
+    @Override
     public void validate(ParameterEvent evt) throws FormProcessException {
         PageState ps = evt.getPageState();
         Boolean b = (Boolean) m_isCancel.get(ps);

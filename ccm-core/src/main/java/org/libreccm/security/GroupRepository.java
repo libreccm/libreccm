@@ -19,9 +19,13 @@
 package org.libreccm.security;
 
 import java.util.List;
+
 import javax.enterprise.context.RequestScoped;
 import javax.persistence.TypedQuery;
+
 import org.libreccm.core.AbstractEntityRepository;
+
+import javax.transaction.Transactional;
 
 /**
  * Repository for groups.
@@ -87,5 +91,18 @@ public class GroupRepository extends AbstractEntityRepository<Long, Group> {
         final TypedQuery<Group> query = getEntityManager().createNamedQuery(
                 "Group.findAllOrderedByGroupName", Group.class);
         return query.getResultList();
+    }
+    
+    @Override
+    @Transactional(Transactional.TxType.REQUIRED)
+    public void delete(final Group entity) {
+        final Group delete = getEntityManager().find(Group.class, 
+                                                     entity.getPartyId());
+        
+        delete.getMemberships().forEach(m -> {
+            getEntityManager().remove(m);
+        });
+        
+        getEntityManager().remove(getEntityManager().merge(entity));
     }
 }

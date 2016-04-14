@@ -23,13 +23,10 @@ import com.arsdigita.bebop.FormData;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.ParameterSingleSelectionModel;
-import com.arsdigita.bebop.RequestLocal;
 import com.arsdigita.bebop.SaveCancelSection;
 import com.arsdigita.bebop.form.TextField;
-import com.arsdigita.bebop.parameters.CancellableValidationListener;
-import com.arsdigita.bebop.parameters.NotEmptyValidationListener;
-import com.arsdigita.bebop.parameters.StringInRangeValidationListener;
 import com.arsdigita.globalization.GlobalizedMessage;
+
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.Group;
 import org.libreccm.security.GroupRepository;
@@ -50,8 +47,9 @@ public class GroupForm extends Form {
     private final SaveCancelSection saveCancelSection;
 
     public GroupForm(
-            final GroupAdmin groupAdmin,
-            final ParameterSingleSelectionModel<String> selectedGroupId) {
+        final GroupAdmin groupAdmin,
+        final ParameterSingleSelectionModel<String> selectedGroupId) {
+        
         super("groupform");
 
         this.groupAdmin = groupAdmin;
@@ -63,42 +61,20 @@ public class GroupForm extends Form {
             final Label target = (Label) e.getTarget();
 
             final String selectedGroupIdStr = selectedGroupId.getSelectedKey(
-                    state);
+                state);
             if (selectedGroupIdStr == null || selectedGroupIdStr.isEmpty()) {
                 target.setLabel(new GlobalizedMessage(
-                        "ui.admin.group.create_new",
-                        ADMIN_BUNDLE));
+                    "ui.admin.group.create_new",
+                    ADMIN_BUNDLE));
             } else {
                 target.setLabel(new GlobalizedMessage("ui.admin.group.edit",
                                                       ADMIN_BUNDLE));
             }
         }));
 
-        final RequestLocal cancelled = new RequestLocal() {
-            @Override
-            public Object initialValue(final PageState state) {
-                return !saveCancelSection.getSaveButton().isSelected(state);
-            }
-        };
-
         groupName = new TextField(GROUP_NAME);
         groupName.setLabel(new GlobalizedMessage("ui.admin.group.name",
                                                  ADMIN_BUNDLE));
-        groupName.addValidationListener(new CancellableValidationListener(
-                new NotEmptyValidationListener(
-                        new GlobalizedMessage(
-                                "ui.admin.group.name.error.notempty",
-                                ADMIN_BUNDLE)),
-                cancelled));
-        groupName.addValidationListener(
-                new CancellableValidationListener(
-                        new StringInRangeValidationListener(
-                                1,
-                                256,
-                                new GlobalizedMessage(
-                                        "ui.admin.group.name.error.length",
-                                        ADMIN_BUNDLE)),
-                        cancelled));
 
         add(groupName);
 
@@ -113,14 +89,27 @@ public class GroupForm extends Form {
 
                 final String groupNameData = data.getString(GROUP_NAME);
 
+                if (groupNameData == null || groupNameData.isEmpty()) {
+                    data.addError(GROUP_NAME, new GlobalizedMessage(
+                                  "ui.admin.group.name.error.notempty",
+                                  ADMIN_BUNDLE));
+                    return;
+                }
+
+                if (groupNameData.length() > 256) {
+                    data.addError(GROUP_NAME, new GlobalizedMessage(
+                                  "ui.admin.group.name.error.length",
+                                  ADMIN_BUNDLE));
+                }
+
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
                 final GroupRepository groupRepository = cdiUtil.findBean(
-                        GroupRepository.class);
+                    GroupRepository.class);
 
                 if (groupRepository.findByName(groupNameData) != null) {
-                    data.addError(new GlobalizedMessage(
-                            "ui.admin.group.error.name_already_in_use",
-                            ADMIN_BUNDLE));
+                    data.addError(GROUP_NAME, new GlobalizedMessage(
+                                  "ui.admin.group.error.name_already_in_use",
+                                  ADMIN_BUNDLE));
                 }
             }
         });
@@ -129,15 +118,15 @@ public class GroupForm extends Form {
             final PageState state = e.getPageState();
 
             final String selectedGroupIdStr = selectedGroupId.getSelectedKey(
-                    state);
+                state);
 
             if (selectedGroupIdStr != null && !selectedGroupIdStr.isEmpty()) {
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
                 final GroupRepository groupRepository = cdiUtil.findBean(
-                        GroupRepository.class);
+                    GroupRepository.class);
 
                 final Group group = groupRepository.findById(Long.parseLong(
-                        selectedGroupIdStr));
+                    selectedGroupIdStr));
                 groupName.setValue(state, group.getName());
             }
         });
@@ -151,19 +140,19 @@ public class GroupForm extends Form {
 
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
                 final GroupRepository groupRepository = cdiUtil.findBean(
-                        GroupRepository.class);
+                    GroupRepository.class);
 
                 final String selectedGroupIdStr = selectedGroupId.
-                        getSelectedKey(state);
+                    getSelectedKey(state);
                 if (selectedGroupIdStr == null
-                            || selectedGroupIdStr.isEmpty()) {
+                        || selectedGroupIdStr.isEmpty()) {
                     final Group group = new Group();
                     group.setName(groupNameData);
 
                     groupRepository.save(group);
                 } else {
                     final Group group = groupRepository.findById(Long.parseLong(
-                            selectedGroupIdStr));
+                        selectedGroupIdStr));
                     group.setName(groupNameData);
 
                     groupRepository.save(group);

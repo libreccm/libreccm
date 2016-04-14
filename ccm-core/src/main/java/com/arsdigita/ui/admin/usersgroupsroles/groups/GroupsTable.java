@@ -58,9 +58,9 @@ public class GroupsTable extends Table {
     private final ParameterSingleSelectionModel<String> selectedGroupId;
 
     public GroupsTable(
-            final GroupAdmin parent,
-            final TextField groupsTableFilter,
-            final ParameterSingleSelectionModel<String> selectedGroupId) {
+        final GroupAdmin parent,
+        final TextField groupsTableFilter,
+        final ParameterSingleSelectionModel<String> selectedGroupId) {
         super();
 
         setIdAttr("groupsTable");
@@ -69,20 +69,21 @@ public class GroupsTable extends Table {
         this.selectedGroupId = selectedGroupId;
 
         setEmptyView(new Label(new GlobalizedMessage(
-                "ui.admin.groups.table.no_groups", ADMIN_BUNDLE)));
+            "ui.admin.groups.table.no_groups", ADMIN_BUNDLE)));
 
         final TableColumnModel columnModel = getColumnModel();
         columnModel.add(new TableColumn(
-                COL_GROUP_NAME,
-                new Label(new GlobalizedMessage("ui.admin.groups.table.name",
-                                                ADMIN_BUNDLE))));
+            COL_GROUP_NAME,
+            new Label(new GlobalizedMessage("ui.admin.groups.table.name",
+                                            ADMIN_BUNDLE))));
         columnModel.add(new TableColumn(
-                COL_DELETE,
-                new Label(new GlobalizedMessage("ui.admin.groups.table.delete",
-                                                ADMIN_BUNDLE))));
+            COL_DELETE,
+            new Label(new GlobalizedMessage("ui.admin.groups.table.delete",
+                                            ADMIN_BUNDLE))));
 
         columnModel.get(COL_GROUP_NAME).setCellRenderer(
-                new TableCellRenderer() {
+            new TableCellRenderer() {
+
             @Override
             public Component getComponent(final Table table,
                                           final PageState state,
@@ -93,28 +94,64 @@ public class GroupsTable extends Table {
                                           final int column) {
                 return new ControlLink((String) value);
             }
+
+        });
+
+        columnModel.get(COL_DELETE).setCellRenderer(new TableCellRenderer() {
+
+            @Override
+            public Component getComponent(final Table table,
+                                          final PageState state,
+                                          final Object value,
+                                          final boolean isSelected,
+                                          final Object key,
+                                          final int row,
+                                          final int column) {
+                final ControlLink link = new ControlLink((Component) value);
+                link.setConfirmation(new GlobalizedMessage(
+                    "ui.admin.group.delete.confirm", ADMIN_BUNDLE));
+                return link;
+            }
+
         });
 
         addTableActionListener(new TableActionListener() {
+
             @Override
             public void cellSelected(final TableActionEvent event) {
                 final PageState state = event.getPageState();
                 final String key = (String) event.getRowKey();
-                selectedGroupId.setSelectedKey(state, key);
-                parent.showGroupDetails(state);
+
+                switch (event.getColumn()) {
+                    case COL_GROUP_NAME:
+                        selectedGroupId.setSelectedKey(state, key);
+                        parent.showGroupDetails(state);
+                        break;
+                    case COL_DELETE:
+                        final GroupRepository groupRepository = CdiUtil
+                            .createCdiUtil().findBean(GroupRepository.class);
+                        final Group group = groupRepository.findById(
+                            Long.parseLong(key));
+                        groupRepository.delete(group);
+                        break;
+                    default:
+                        throw new IllegalArgumentException(
+                            "Invalid value for column.");
+                }
             }
 
             @Override
             public void headSelected(final TableActionEvent event) {
                 //Nothing
             }
+
         });
 
         setModelBuilder(new GroupsTableModelBuilder());
     }
 
     private class GroupsTableModelBuilder extends LockableImpl
-            implements TableModelBuilder {
+        implements TableModelBuilder {
 
         @Override
         public TableModel makeModel(final Table table,
@@ -123,6 +160,7 @@ public class GroupsTable extends Table {
 
             return new GroupsTableModel(state);
         }
+
     }
 
     private class GroupsTableModel implements TableModel {
@@ -135,14 +173,14 @@ public class GroupsTable extends Table {
             final String filterTerm = (String) groupsTableFilter.getValue(state);
             LOGGER.debug("Value of filter is: \"{}\"", filterTerm);
             final GroupRepository groupRepository = CdiUtil.createCdiUtil().
-                    findBean(GroupRepository.class);
+                findBean(GroupRepository.class);
             if (filterTerm == null || filterTerm.isEmpty()) {
                 groups = groupRepository.findAllOrderedByGroupName();
                 LOGGER.debug("Found {} groups in database.", groups.size());
             } else {
                 groups = groupRepository.searchGroupByName(filterTerm);
                 LOGGER.debug("Found {} groups in database which match the "
-                                     + "filter \"{}\".",
+                                 + "filter \"{}\".",
                              groups.size(),
                              filterTerm);
             }
@@ -171,10 +209,10 @@ public class GroupsTable extends Table {
                     return group.getName();
                 case COL_DELETE:
                     return new Label(new GlobalizedMessage(
-                            "ui.admin.groups.table.delete", ADMIN_BUNDLE));
+                        "ui.admin.groups.table.delete", ADMIN_BUNDLE));
                 default:
                     throw new IllegalArgumentException(
-                            "Not a valid column index");
+                        "Not a valid column index");
             }
         }
 

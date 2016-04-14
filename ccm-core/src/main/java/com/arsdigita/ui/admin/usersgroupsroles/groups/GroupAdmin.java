@@ -28,7 +28,7 @@ import com.arsdigita.bebop.form.Submit;
 import com.arsdigita.bebop.form.TextField;
 import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.globalization.GlobalizedMessage;
-import com.arsdigita.ui.login.UserForm;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

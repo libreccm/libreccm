@@ -301,12 +301,14 @@ public abstract class AbstractEntityRepository<K, E> {
      *
      * @param entity The entity to delete.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public void delete(final E entity) {
         if (entity == null) {
             throw new IllegalArgumentException("Can't delete a null entity.");
         }
-
-        entityManager.remove(entity);
+        
+        //We need to make sure we use a none detached entity, therefore the merge
+        entityManager.remove(entityManager.merge(entity));
     }
 
     protected boolean hasDefaultEntityGraph() {

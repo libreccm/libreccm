@@ -660,7 +660,7 @@ table.dataTable{
 
 table * table ,form table {
     border-style: none;
-    width: auto;
+    /*width: auto;*/
     margin: 0;
 }
 
