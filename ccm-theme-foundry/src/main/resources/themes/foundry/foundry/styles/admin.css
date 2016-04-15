@@ -660,7 +660,7 @@ table.dataTable{
 
 table * table ,form table {
     border-style: none;
-    /*width: auto;*/
+    width: auto;
     margin: 0;
 }
 
@@ -1806,4 +1806,37 @@ span#quickLinksCascade {
 
 .wysiwyg ul {
     list-style: disc inside;
+}
+
+.wysiwyg div.image {
+    border: 1px solid #999;
+
+    margin-bottom: 0.5em;
+}
+
+.wysiwyg div.image span.caption {
+    display: block;
+}
+
+.wysiwyg div.image.left {
+    float: left;
+
+    margin-right: 1em;
+}
+
+.wysiwyg div.image.right {
+    float: right;
+
+    margin-left: 1em;
+}
+
+.wysiwg div.image.center {
+    text-align: center;    
+}
+
+.wysiwg div.image.center span.caption {
+    margin-left: auto;
+    margin-right: auto;
+
+    text-align: left;
 }

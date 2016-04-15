@@ -65,53 +65,57 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "User.findByName",
                 query = "SELECT u FROM User u WHERE u.name = :name "
-                                + "ORDER BY u.name, "
-                                + "         u.familyName, "
-                                + "         u.givenName, "
-                                + "         u.primaryEmailAddress.address"),
+                            + "ORDER BY u.name, "
+                            + "         u.familyName, "
+                            + "         u.givenName, "
+                            + "         u.primaryEmailAddress.address"),
     @NamedQuery(name = "User.findByEmailAddress",
                 query = "SELECT u FROM User u WHERE "
-                                + "u.primaryEmailAddress.address = :emailAddress "
-                        + "ORDER BY u.name, "
-                                + " u.familyName, "
-                                + " u.givenName, "
-                                + " u.primaryEmailAddress.address"),
+                            + "u.primaryEmailAddress.address = :emailAddress "
+                            + "ORDER BY u.name, "
+                            + " u.familyName, "
+                            + " u.givenName, "
+                            + " u.primaryEmailAddress.address"),
     @NamedQuery(
-            name = "User.filterByNameAndEmail",
-            query = "SELECT u FROM User u WHERE "
-                            + "LOWER(u.name) LIKE CONCAT(LOWER(:term), '%') "
-                            + "OR LOWER(u.givenName) LIKE CONCAT(LOWER(:term), '%') "
+        name = "User.filterByNameAndEmail",
+        query = "SELECT u FROM User u WHERE "
+                    + "LOWER(u.name) LIKE CONCAT(LOWER(:term), '%') "
+                    + "OR LOWER(u.givenName) LIKE CONCAT(LOWER(:term), '%') "
                     + "OR LOWER(u.familyName) LIKE CONCAT(LOWER(:term), '%') "
-                            + "OR LOWER(u.primaryEmailAddress.address) LIKE CONCAT('%', LOWER(:term), '%')"),
+                    + "OR LOWER(u.primaryEmailAddress.address) LIKE CONCAT('%', LOWER(:term), '%') "
+                + "ORDER BY u.name,"
+                    + "u.familyName, "
+                    + "u.givenName, "
+                    + "u.primaryEmailAddress.address"),
     @NamedQuery(
-            name = "User.findAllOrderedByUsername",
-            query = "SELECT u FROM User u ORDER BY u.name, "
-                            + "                    u.familyName, "
-                            + "                    u.givenName, "
-                            + "                    u.primaryEmailAddress.address")
+        name = "User.findAllOrderedByUsername",
+        query = "SELECT u FROM User u ORDER BY u.name, "
+                    + "                    u.familyName, "
+                    + "                    u.givenName, "
+                    + "                    u.primaryEmailAddress.address")
 })
 @NamedEntityGraphs({
     @NamedEntityGraph(
-            name = "User.withGroupAndRoleMemberships",
-            attributeNodes = {
-                @NamedAttributeNode(
-                        value = "groupMemberships"),
-                @NamedAttributeNode(
-                        value = "roleMemberships",
-                        subgraph = "role")},
-            subgraphs = {
-                @NamedSubgraph(
-                        name = "role",
-                        attributeNodes = {
-                            @NamedAttributeNode(value = "role",
-                                                subgraph = "permissions")
-                        }),
-                @NamedSubgraph(
-                        name = "permissions",
-                        attributeNodes = {
-                            @NamedAttributeNode(value = "permissions")}
-                )
-            })
+        name = "User.withGroupAndRoleMemberships",
+        attributeNodes = {
+            @NamedAttributeNode(
+                value = "groupMemberships"),
+            @NamedAttributeNode(
+                value = "roleMemberships",
+                subgraph = "role")},
+        subgraphs = {
+            @NamedSubgraph(
+                name = "role",
+                attributeNodes = {
+                    @NamedAttributeNode(value = "role",
+                                        subgraph = "permissions")
+                }),
+            @NamedSubgraph(
+                name = "permissions",
+                attributeNodes = {
+                    @NamedAttributeNode(value = "permissions")}
+            )
+        })
 })
 @DefaultEntityGraph("User.withGroupAndRoleMemberships")
 @XmlRootElement(name = "user", namespace = CORE_XML_NS)
@@ -141,12 +145,12 @@ public class User extends Party implements Serializable {
      */
     @Embedded
     @AssociationOverride(
-            name = "USER_PRIMARY_EMAIL_ADDRESSES",
-            joinTable = @JoinTable(name = "USER_PRIMARY_EMAIL_ADDRESSES",
-                                   schema = DB_SCHEMA,
-                                   joinColumns = {
-                                       @JoinColumn(name = "USER_ID")
-                                   }))
+        name = "USER_PRIMARY_EMAIL_ADDRESSES",
+        joinTable = @JoinTable(name = "USER_PRIMARY_EMAIL_ADDRESSES",
+                               schema = DB_SCHEMA,
+                               joinColumns = {
+                                   @JoinColumn(name = "USER_ID")
+                               }))
     @NotNull
     @XmlElement(name = "primary-email-address", namespace = CORE_XML_NS)
     private EmailAddress primaryEmailAddress;
@@ -275,7 +279,7 @@ public class User extends Party implements Serializable {
     }
 
     protected void setGroupMemberships(
-            final Set<GroupMembership> groupMemberships) {
+        final Set<GroupMembership> groupMemberships) {
         this.groupMemberships = groupMemberships;
     }
 
@@ -284,7 +288,7 @@ public class User extends Party implements Serializable {
     }
 
     protected void removeGroupMembership(
-            final GroupMembership groupMembership) {
+        final GroupMembership groupMembership) {
         groupMemberships.remove(groupMembership);
     }
 
@@ -332,19 +336,19 @@ public class User extends Party implements Serializable {
     @Override
     public String toString(final String data) {
         return super.toString(String.format(
-                ", givenName = \"%s\", "
-                        + "familyName = \"%s\", "
-                        + "primaryEmailAddress = { %s }, "
-                        + "emailAddresses = { %s }, "
-                        + "banned = %b, "
-                        + "passwordResetRequired = %b%s",
-                givenName,
-                familyName,
-                Objects.toString(primaryEmailAddress),
-                Objects.toString(emailAddresses),
-                banned,
-                passwordResetRequired,
-                data
+            ", givenName = \"%s\", "
+                + "familyName = \"%s\", "
+                + "primaryEmailAddress = { %s }, "
+                + "emailAddresses = { %s }, "
+                + "banned = %b, "
+                + "passwordResetRequired = %b%s",
+            givenName,
+            familyName,
+            Objects.toString(primaryEmailAddress),
+            Objects.toString(emailAddresses),
+            banned,
+            passwordResetRequired,
+            data
         ));
     }
 

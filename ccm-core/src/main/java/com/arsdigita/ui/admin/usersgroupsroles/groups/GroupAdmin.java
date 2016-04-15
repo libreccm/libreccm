@@ -21,6 +21,7 @@ package com.arsdigita.ui.admin.usersgroupsroles.groups;
 import com.arsdigita.bebop.ActionLink;
 import com.arsdigita.bebop.BoxPanel;
 import com.arsdigita.bebop.Form;
+import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.Page;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.ParameterSingleSelectionModel;
@@ -40,8 +41,6 @@ import static com.arsdigita.ui.admin.AdminUiConstants.*;
  */
 public class GroupAdmin extends BoxPanel {
 
-    private final static Logger LOGGER = LogManager.getLogger(GroupAdmin.class);
-
     private final StringParameter groupIdParameter;
     private final ParameterSingleSelectionModel<String> selectedGroupId;
     private final TextField groupsTableFilter;
@@ -49,11 +48,17 @@ public class GroupAdmin extends BoxPanel {
     private final GroupsTable groupsTable;
     private final GroupForm groupForm;
     private final GroupDetails groupDetails;
+    private final GroupAddMemberForm groupAddMemberForm;
 
     public GroupAdmin() {
         super();
 
         setBasicProperties();
+
+        final Label heading = new Label(new GlobalizedMessage(
+            "ui.admin.groups.heading", ADMIN_BUNDLE));
+        heading.setClassAttr("heading");
+        add(heading);
 
         groupsTablePanel = new BoxPanel();
         groupsTablePanel.setIdAttr("groupsTablePanel");
@@ -61,12 +66,12 @@ public class GroupAdmin extends BoxPanel {
         final Form filterForm = new Form("groupsTableFilterForm");
         groupsTableFilter = new TextField("groupsTableFilter");
         groupsTableFilter.setLabel(new GlobalizedMessage(
-                "ui.admin.groups.table.filter.term", ADMIN_BUNDLE));
+            "ui.admin.groups.table.filter.term", ADMIN_BUNDLE));
         filterForm.add(groupsTableFilter);
         filterForm.add(new Submit(new GlobalizedMessage(
-                "ui.admin.groups.filter.submit", ADMIN_BUNDLE)));
+            "ui.admin.groups.filter.submit", ADMIN_BUNDLE)));
         final ActionLink clearLink = new ActionLink(new GlobalizedMessage(
-                "ui.admin.groups.table.filter.clear", ADMIN_BUNDLE));
+            "ui.admin.groups.table.filter.clear", ADMIN_BUNDLE));
         clearLink.addActionListener(e -> {
             final PageState state = e.getPageState();
             groupsTableFilter.setValue(state, null);
@@ -76,25 +81,28 @@ public class GroupAdmin extends BoxPanel {
 
         groupIdParameter = new StringParameter("selected_group_id");
         selectedGroupId = new ParameterSingleSelectionModel<>(
-                groupIdParameter);
+            groupIdParameter);
 
         groupsTable = new GroupsTable(this, groupsTableFilter, selectedGroupId);
         groupsTablePanel.add(groupsTable);
 
         final ActionLink addNewGroupLink = new ActionLink(new GlobalizedMessage(
-                "ui.admin.new_group_link", ADMIN_BUNDLE));
+            "ui.admin.new_group_link", ADMIN_BUNDLE));
         addNewGroupLink.addActionListener(e -> {
             showGroupForm(e.getPageState());
         });
         groupsTablePanel.add(addNewGroupLink);
 
         add(groupsTablePanel);
-        
+
         groupForm = new GroupForm(this, selectedGroupId);
         add(groupForm);
-        
+
         groupDetails = new GroupDetails(this, selectedGroupId);
         add(groupDetails);
+
+        groupAddMemberForm = new GroupAddMemberForm(this, selectedGroupId);
+        add(groupAddMemberForm);
 
     }
 
@@ -107,6 +115,7 @@ public class GroupAdmin extends BoxPanel {
         page.setVisibleDefault(groupsTablePanel, true);
         page.setVisibleDefault(groupForm, false);
         page.setVisibleDefault(groupDetails, false);
+        page.setVisibleDefault(groupAddMemberForm, false);
     }
 
     private void setBasicProperties() {
@@ -118,24 +127,47 @@ public class GroupAdmin extends BoxPanel {
         groupsTablePanel.setVisible(state, false);
         groupForm.setVisible(state, false);
         groupDetails.setVisible(state, true);
+        groupAddMemberForm.setVisible(state, false);
     }
-    
+
     protected void hideGroupDetails(final PageState state) {
         selectedGroupId.clearSelection(state);
         groupsTablePanel.setVisible(state, true);
         groupForm.setVisible(state, false);
         groupDetails.setVisible(state, false);
+        groupAddMemberForm.setVisible(state, false);
     }
-    
+
     protected void showGroupForm(final PageState state) {
         groupsTablePanel.setVisible(state, false);
         groupForm.setVisible(state, true);
+        groupDetails.setVisible(state, false);
+        groupAddMemberForm.setVisible(state, false);
     }
-    
+
     protected void hideGroupForm(final PageState state) {
-        groupsTablePanel.setVisible(state, true);
+        //If we want to show the groups table or the group details depends
+        //if a group is selected or not.
+        boolean groupSelected = selectedGroupId.isSelected(state);
+
+        groupsTablePanel.setVisible(state, !groupSelected);
         groupForm.setVisible(state, false);
+        groupDetails.setVisible(state, groupSelected);
+        groupAddMemberForm.setVisible(state, false);
     }
-    
+
+    protected void showGroupMemberAddForm(final PageState state) {
+        groupsTablePanel.setVisible(state, false);
+        groupForm.setVisible(state, false);
+        groupDetails.setVisible(state, false);
+        groupAddMemberForm.setVisible(state, true);
+    }
+
+    protected void hideGroupMemberAddForm(final PageState state) {
+        groupsTablePanel.setVisible(state, false);
+        groupForm.setVisible(state, false);
+        groupDetails.setVisible(state, true);
+        groupAddMemberForm.setVisible(state, false);
+    }
 
 }

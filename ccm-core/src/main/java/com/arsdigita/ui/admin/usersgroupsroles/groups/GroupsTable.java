@@ -61,9 +61,11 @@ public class GroupsTable extends Table {
         final GroupAdmin parent,
         final TextField groupsTableFilter,
         final ParameterSingleSelectionModel<String> selectedGroupId) {
+        
         super();
 
         setIdAttr("groupsTable");
+        setStyleAttr("width: 30em");
 
         this.groupsTableFilter = groupsTableFilter;
         this.selectedGroupId = selectedGroupId;

@@ -159,7 +159,7 @@ public class GroupForm extends Form {
                 }
             }
 
-            groupAdmin.hideGroupDetails(state);
+            groupAdmin.hideGroupForm(state);
         });
 
     }

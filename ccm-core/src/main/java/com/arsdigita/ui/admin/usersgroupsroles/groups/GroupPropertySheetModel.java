@@ -22,9 +22,15 @@ import com.arsdigita.bebop.PropertySheetModel;
 import com.arsdigita.globalization.GlobalizedMessage;
 
 import org.libreccm.security.Group;
+import org.libreccm.security.Role;
+import org.libreccm.security.RoleMembership;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.StringJoiner;
+import java.util.TreeSet;
 
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
@@ -35,7 +41,8 @@ import static com.arsdigita.ui.admin.AdminUiConstants.*;
 class GroupPropertySheetModel implements PropertySheetModel {
 
     private static enum GroupProperty {
-        GROUP_NAME;
+        GROUP_NAME,
+        ROLES
     }
 
     private final Group selectedGroup;
@@ -84,9 +91,26 @@ class GroupPropertySheetModel implements PropertySheetModel {
         switch (currentProperty) {
             case GROUP_NAME:
                 return selectedGroup.getName();
+            case ROLES:
+                return retrieveRoles();
             default:
                 return "";
         }
+    }
+
+    private String retrieveRoles() {
+        final Set<RoleMembership> roleMemberships = selectedGroup
+            .getRoleMemberships();
+        
+        final SortedSet<String> roles = new TreeSet<>((r1, r2) -> {
+            return r1.compareTo(r2);
+        });
+        
+        roleMemberships.forEach(m -> {
+            roles.add(m.getRole().getName());
+        });
+        
+        return String.join(", ", roles.toArray(new String[roles.size()]));
     }
 
 }

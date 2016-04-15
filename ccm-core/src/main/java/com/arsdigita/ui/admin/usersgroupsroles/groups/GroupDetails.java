@@ -20,9 +20,15 @@ package com.arsdigita.ui.admin.usersgroupsroles.groups;
 
 import com.arsdigita.bebop.ActionLink;
 import com.arsdigita.bebop.BoxPanel;
+import com.arsdigita.bebop.Label;
+import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.ParameterSingleSelectionModel;
 import com.arsdigita.bebop.PropertySheet;
 import com.arsdigita.globalization.GlobalizedMessage;
+
+import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.security.Group;
+import org.libreccm.security.GroupRepository;
 
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
@@ -37,18 +43,55 @@ public class GroupDetails extends BoxPanel {
         final ParameterSingleSelectionModel<String> selectedGroupId) {
         super(BoxPanel.VERTICAL);
 
+        
         final ActionLink backLink = new ActionLink(new GlobalizedMessage(
             "ui.admin.group_details.back", ADMIN_BUNDLE));
+        backLink.setClassAttr("back-link");
         backLink.addActionListener(e -> {
             groupAdmin.hideGroupDetails(e.getPageState());
         });
         add(backLink);
+
+        final Label header = new Label();
+        header.setClassAttr("heading");
+        header.addPrintListener(e -> {
+            final PageState state = e.getPageState();
+            final Label target = (Label) e.getTarget();
+            final GroupRepository groupRepository = CdiUtil.createCdiUtil()
+                .findBean(GroupRepository.class);
+            final Group group = groupRepository.findById(Long.parseLong(
+                selectedGroupId.getSelectedKey(state)));
+            target.setLabel(new GlobalizedMessage(
+                "ui.admin.group_details.header",
+                ADMIN_BUNDLE, new String[]{group.getName()}));
+        });
+        add(header);
 
         final PropertySheet propertySheet = new PropertySheet(
             new GroupPropertySheetModelBuilder(selectedGroupId));
 
         add(propertySheet);
 
+        final BoxPanel links = new BoxPanel(BoxPanel.HORIZONTAL);
+        final ActionLink editProperties = new ActionLink(new GlobalizedMessage(
+            "ui.admin.group_details.edit_properties", ADMIN_BUNDLE));
+        editProperties.addActionListener(e -> {
+            groupAdmin.showGroupForm(e.getPageState());
+        });
+        links.add(editProperties);
+
+        add(links);
+
+        final GroupMembersTable membersTable = new GroupMembersTable(
+            selectedGroupId);
+        add(membersTable);
+
+        final ActionLink addMember = new ActionLink(new GlobalizedMessage(
+            "ui.admin.group_details.add_member", ADMIN_BUNDLE));
+        addMember.addActionListener(e -> {
+            groupAdmin.showGroupMemberAddForm(e.getPageState());
+        });
+        add(addMember);
     }
 
 }
