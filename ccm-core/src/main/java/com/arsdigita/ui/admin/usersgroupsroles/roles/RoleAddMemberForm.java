@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package com.arsdigita.ui.admin.usersgroupsroles.groups;
+package com.arsdigita.ui.admin.usersgroupsroles.roles;
 
 import com.arsdigita.bebop.ActionLink;
 import com.arsdigita.bebop.Component;
@@ -40,10 +40,12 @@ import com.arsdigita.util.LockableImpl;
 
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.Group;
-import org.libreccm.security.GroupManager;
-import org.libreccm.security.GroupRepository;
+import org.libreccm.security.Party;
+import org.libreccm.security.PartyRepository;
+import org.libreccm.security.Role;
+import org.libreccm.security.RoleManager;
+import org.libreccm.security.RoleRepository;
 import org.libreccm.security.User;
-import org.libreccm.security.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,99 +56,83 @@ import static com.arsdigita.ui.admin.AdminUiConstants.*;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class GroupAddMemberForm extends Form {
+public class RoleAddMemberForm extends Form {
 
     private static final String MEMBER_NAME = "membername";
 
     private static final int COL_MEMBER_NAME = 0;
-    private static final int COL_MEMBER_FAMILY_NAME = 1;
-    private static final int COL_MEMBER_GIVEN_NAME = 2;
-    private static final int COL_MEMBER_EMAIL = 3;
-    private static final int COL_MEMBER_ADD = 4;
+    private static final int COL_MEMBER_TYPE = 1;
+    private static final int COL_MEMBER_ADD = 2;
 
     private final TextField memberName;
 
-    public GroupAddMemberForm(
-        final GroupAdmin groupAdmin,
-        final ParameterSingleSelectionModel<String> selectedGroupId) {
+    public RoleAddMemberForm(
+        final RoleAdmin roleAdmin,
+        final ParameterSingleSelectionModel<String> selectedRoleId) {
 
-        super("groupAddMemberForm");
+        super("roleAddMemberForm");
 
-        final ActionLink backToGroup = new ActionLink(new GlobalizedMessage(
-            "ui.admin.group_details.add_member.back", ADMIN_BUNDLE));
-        backToGroup.addActionListener(e -> {
-            groupAdmin.hideGroupMemberAddForm(e.getPageState());
+        final ActionLink backToRole = new ActionLink(new GlobalizedMessage(
+            "ui.admin.role_members.add.back", ADMIN_BUNDLE));
+        backToRole.addActionListener(e -> {
+            roleAdmin.hideRoleMemberAddForm(e.getPageState());
         });
-        add(backToGroup);
+        add(backToRole);
 
-        final Label header = new Label();
-        header.setClassAttr("heading");
-        header.addPrintListener(e -> {
+        final Label heading = new Label();
+        heading.setClassAttr("heading");
+        heading.addPrintListener(e -> {
             final PageState state = e.getPageState();
             final Label target = (Label) e.getTarget();
 
-            final GroupRepository groupRepository = CdiUtil.createCdiUtil()
-                .findBean(GroupRepository.class);
-            final Group group = groupRepository.findById(Long.parseLong(
-                selectedGroupId.getSelectedKey(state)));
+            final RoleRepository roleRepository = CdiUtil.createCdiUtil()
+                .findBean(RoleRepository.class);
+            final Role role = roleRepository.findById(Long.parseLong(
+                selectedRoleId.getSelectedKey(state)));
 
             target.setLabel(new GlobalizedMessage(
-                "ui.admin.group_details.add_member.header",
+                "ui.admin.role_members.add.heading",
                 ADMIN_BUNDLE,
-                new String[]{group.getName()}));
-
+                new String[]{role.getName()}));
         });
-        add(header);
+        add(heading);
 
         memberName = new TextField(MEMBER_NAME);
         memberName.setLabel(new GlobalizedMessage(
-            "ui.admin.group_details.add_member.find", ADMIN_BUNDLE));
+            "ui.admin.role_members.add.find", ADMIN_BUNDLE));
         add(memberName);
 
         final Submit submit = new Submit(new GlobalizedMessage(
-            "ui.admin.group_details.add_member.search", ADMIN_BUNDLE));
+            "ui.admin.role_members.add.search", ADMIN_BUNDLE));
         add(submit);
 
-        add(new UsersToAddTable(groupAdmin, selectedGroupId));
+        add(new PartiesToAdd(roleAdmin, selectedRoleId));
     }
 
-    private class UsersToAddTable extends Table {
+    private class PartiesToAdd extends Table {
 
-        public UsersToAddTable(
-            final GroupAdmin groupAdmin,
-            final ParameterSingleSelectionModel<String> selectedGroupId) {
+        public PartiesToAdd(
+            final RoleAdmin roleAdmin,
+            final ParameterSingleSelectionModel<String> selectedRoleId) {
 
             super();
 
             setEmptyView(new Label(new GlobalizedMessage(
-                "ui.admin.group_details.add_member.table.empty", ADMIN_BUNDLE)));
+                "ui.admin.role_members.add.table.empty", ADMIN_BUNDLE)));
 
             final TableColumnModel columnModel = getColumnModel();
             columnModel.add(new TableColumn(
                 COL_MEMBER_NAME,
                 new Label(new GlobalizedMessage(
-                    "ui.admin.group_details.add_member.table.name",
-                    ADMIN_BUNDLE))));
+                    "ui.admin.role_members.add.table.name", ADMIN_BUNDLE))));
             columnModel.add(new TableColumn(
-                COL_MEMBER_FAMILY_NAME,
+                COL_MEMBER_TYPE,
                 new Label(new GlobalizedMessage(
-                    "ui.admin.group_details.add_member.table.family_name",
-                    ADMIN_BUNDLE))));
-            columnModel.add(new TableColumn(
-                COL_MEMBER_GIVEN_NAME,
-                new Label(new GlobalizedMessage(
-                    "ui.admin.group_details.add_member.table.given_name",
-                    ADMIN_BUNDLE))));
-            columnModel.add(new TableColumn(
-                COL_MEMBER_EMAIL,
-                new Label(new GlobalizedMessage(
-                    "ui.admin.group_details.add_member.table.email",
-                    ADMIN_BUNDLE))));
+                    "ui.admin.role_members.add.table.type", ADMIN_BUNDLE))));
             columnModel.add(new TableColumn(
                 COL_MEMBER_ADD,
                 new Label(new GlobalizedMessage(
-                    "ui.admin.group_details.add_member.table.add",
-                    ADMIN_BUNDLE))));
+                    "ui.admin.role_members.add.table.add", ADMIN_BUNDLE))));
 
             columnModel.get(COL_MEMBER_ADD).setCellRenderer(
                 new TableCellRenderer() {
@@ -175,93 +161,97 @@ public class GroupAddMemberForm extends Form {
                     switch (event.getColumn()) {
                         case COL_MEMBER_ADD:
                             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-                            final UserRepository userRepository = cdiUtil
-                                .findBean(UserRepository.class);
-                            final GroupRepository groupRepository = cdiUtil
-                                .findBean(GroupRepository.class);
-                            final GroupManager groupManager = cdiUtil.findBean(
-                                GroupManager.class);
-                            final User user = userRepository.findById(Long
-                                .parseLong(key));
-                            final Group group = groupRepository.findById(
+                            final PartyRepository partyRepository = cdiUtil
+                                .findBean(PartyRepository.class);
+                            final RoleRepository roleRepository = cdiUtil
+                                .findBean(RoleRepository.class);
+                            final RoleManager roleManager = cdiUtil.findBean(
+                                RoleManager.class);
+                            final Party party = partyRepository.findById(
+                                Long.parseLong(key));
+                            final Role role = roleRepository.findById(
                                 Long.parseLong(
-                                    selectedGroupId.getSelectedKey(state)));
-                            groupManager.addMemberToGroup(user, group);
-                            groupAdmin.hideGroupMemberAddForm(state);
+                                    selectedRoleId.getSelectedKey(state)));
+                            roleManager.assignRoleToParty(role, party);
+                            roleAdmin.hideRoleMemberAddForm(state);
                             break;
                         default:
                             throw new IllegalArgumentException(
                                 "Invalid value for column");
                     }
-
                 }
 
                 @Override
                 public void headSelected(final TableActionEvent event) {
-                    // Nothing
+                    //Nothing
                 }
 
             });
 
-            setModelBuilder(new UsersToAddTableModelBuilder());
+            setModelBuilder(new PartiesToAddTableModelBuilder());
         }
 
     }
 
-    private class UsersToAddTableModelBuilder extends LockableImpl
+    private class PartiesToAddTableModelBuilder extends LockableImpl
         implements TableModelBuilder {
 
         @Override
         public TableModel makeModel(final Table table,
                                     final PageState state) {
-            return new UsersToAddTableModel(state);
+            return new PartiesToAddTableModel(state);
         }
 
     }
 
-    private class UsersToAddTableModel implements TableModel {
+    private class PartiesToAddTableModel implements TableModel {
 
-        private final List<User> users;
+        private final List<Party> parties;
         private int index = -1;
 
-        public UsersToAddTableModel(final PageState state) {
+        public PartiesToAddTableModel(final PageState state) {
             final String term = (String) memberName.getValue(state);
             if (term == null || term.isEmpty()) {
-                users = new ArrayList<>();
+                parties = new ArrayList<>();
             } else {
-                final UserRepository userRepository = CdiUtil.createCdiUtil()
-                    .findBean(UserRepository.class);
-                users = userRepository.filtered(term);
+                final PartyRepository partyRepository = CdiUtil.createCdiUtil()
+                    .findBean(PartyRepository.class);
+                parties = partyRepository.searchByName(term);
             }
         }
 
         @Override
         public int getColumnCount() {
-            return 5;
+            return 3;
         }
 
         @Override
         public boolean nextRow() {
             index++;
-            return index < users.size();
+            return index < parties.size();
         }
 
         @Override
         public Object getElementAt(final int columnIndex) {
-            final User user = users.get(index);
+            final Party party = parties.get(index);
             switch (columnIndex) {
                 case COL_MEMBER_NAME:
-                    return user.getName();
-                case COL_MEMBER_FAMILY_NAME:
-                    return user.getFamilyName();
-                case COL_MEMBER_GIVEN_NAME:
-                    return user.getGivenName();
-                case COL_MEMBER_EMAIL:
-                    return user.getPrimaryEmailAddress().getAddress();
+                    return party.getName();
+                case COL_MEMBER_TYPE:
+                    if (party instanceof User) {
+                        return new Label(new GlobalizedMessage(
+                            "ui.admin.role_members.type.user",
+                            ADMIN_BUNDLE));
+                    } else if (party instanceof Group) {
+                        return new Label(new GlobalizedMessage(
+                            "ui.admin.role_members.type.group",
+                            ADMIN_BUNDLE));
+                    } else {
+                        return "?";
+                    }
                 case COL_MEMBER_ADD:
                     return new Label(new GlobalizedMessage(
-                        "ui.admin.group_details.add_member.table.add",
-                        ADMIN_BUNDLE));
+                        "ui.admin.role_members.table.add"));
                 default:
                     throw new IllegalArgumentException(
                         "Not a valid column index");
@@ -270,7 +260,7 @@ public class GroupAddMemberForm extends Form {
 
         @Override
         public Object getKeyAt(final int columnIndex) {
-            return users.get(index).getPartyId();
+            return parties.get(index).getPartyId();
         }
 
     }

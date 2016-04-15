@@ -58,8 +58,14 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 @Table(name = "PARTIES", schema = DB_SCHEMA)
 @Inheritance(strategy = InheritanceType.JOINED)
 @NamedQueries({
-    @NamedQuery(name = "Party.findByName",
-                query = "SELECT p FROM Party p WHERE p.name = :name")
+    @NamedQuery(
+        name = "Party.findByName",
+        query = "SELECT p FROM Party p WHERE p.name = :name"),
+    @NamedQuery(
+        name = "Party.searchByName",
+        query = "SELECT p FROM Party p "
+                    + "WHERE LOWER(p.name) LIKE CONCAT(LOWER(:term), '%') "
+                    + "ORDER BY p.name")
 })
 @NamedEntityGraphs({
     @NamedEntityGraph(name = "Party.withRoleMemberships",
@@ -77,7 +83,7 @@ public class Party implements Serializable {
     private long partyId;
 
     /**
-     * The name of the party. Must only contain the letters a to z and A to Z, 
+     * The name of the party. Must only contain the letters a to z and A to Z,
      * the numbers 0 to 9 the {@code -} (dash) and the {@code _} (underscore).
      */
     @Column(name = "NAME", length = 256, nullable = false)

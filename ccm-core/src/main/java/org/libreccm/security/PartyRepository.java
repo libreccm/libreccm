@@ -28,7 +28,7 @@ import javax.persistence.TypedQuery;
 
 /**
  * Repository class for parties.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
@@ -49,21 +49,29 @@ public class PartyRepository extends AbstractEntityRepository<Long, Party> {
 
     /**
      * Finds a party (which can be a user or group) by its name.
-     * 
+     *
      * @param name
-     * @return 
+     *
+     * @return
      */
     public Party findByName(final String name) {
         final TypedQuery<Party> query = getEntityManager().createNamedQuery(
             "Party.findByName", Party.class);
         query.setParameter("name", name);
-        
+
         final List<Party> result = query.getResultList();
         if (result.isEmpty()) {
             return null;
         } else {
             return result.get(0);
         }
+    }
+
+    public List<Party> searchByName(final String term) {
+        final TypedQuery<Party> query = getEntityManager().createNamedQuery(
+            "Party.searchByName", Party.class);
+        query.setParameter("term", term);
+        return query.getResultList();
     }
 
 }

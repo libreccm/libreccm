@@ -59,7 +59,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "Role.findByName",
                 query = "SELECT r FROM Role r "
-                            + "WHERE r.name = :name")
+                            + "WHERE r.name = :name"),
+    @NamedQuery(
+        name = "Role.findAllOrderedByRoleName",
+        query = "SELECT r FROM Role r ORDER BY r.name"),
+    @NamedQuery(
+        name = "Role.searchByName",
+        query = "SELECT r FROM Role r WHERE LOWER(r.name) LIKE CONCAT(LOWER(:name), '%') "
+                    + "ORDER BY r.name ")
 })
 @NamedEntityGraphs({
     @NamedEntityGraph(
@@ -110,7 +117,7 @@ public class Role implements Serializable {
     @OneToMany(mappedBy = "role")
     private List<TaskAssignment> assignedTasks;
 
-    protected Role() {
+    public Role() {
         super();
     }
 

@@ -30,9 +30,6 @@ import com.arsdigita.bebop.form.TextField;
 import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.globalization.GlobalizedMessage;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
@@ -51,7 +48,7 @@ public class GroupAdmin extends BoxPanel {
     private final GroupAddMemberForm groupAddMemberForm;
 
     public GroupAdmin() {
-        super();
+        super(BoxPanel.VERTICAL);
 
         setBasicProperties();
 
@@ -69,7 +66,7 @@ public class GroupAdmin extends BoxPanel {
             "ui.admin.groups.table.filter.term", ADMIN_BUNDLE));
         filterForm.add(groupsTableFilter);
         filterForm.add(new Submit(new GlobalizedMessage(
-            "ui.admin.groups.filter.submit", ADMIN_BUNDLE)));
+            "ui.admin.groups.table.filter.submit", ADMIN_BUNDLE)));
         final ActionLink clearLink = new ActionLink(new GlobalizedMessage(
             "ui.admin.groups.table.filter.clear", ADMIN_BUNDLE));
         clearLink.addActionListener(e -> {
@@ -146,8 +143,8 @@ public class GroupAdmin extends BoxPanel {
     }
 
     protected void hideGroupForm(final PageState state) {
-        //If we want to show the groups table or the group details depends
-        //if a group is selected or not.
+        //We want to show the groups table if no group is selected and the
+        //group details if a group is selected.
         boolean groupSelected = selectedGroupId.isSelected(state);
 
         groupsTablePanel.setVisible(state, !groupSelected);

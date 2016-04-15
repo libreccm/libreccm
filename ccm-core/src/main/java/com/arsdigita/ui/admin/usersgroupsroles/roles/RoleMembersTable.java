@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package com.arsdigita.ui.admin.usersgroupsroles.groups;
+package com.arsdigita.ui.admin.usersgroupsroles.roles;
 
 import com.arsdigita.bebop.Component;
 import com.arsdigita.bebop.ControlLink;
@@ -36,10 +36,12 @@ import com.arsdigita.util.LockableImpl;
 
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.Group;
-import org.libreccm.security.GroupManager;
-import org.libreccm.security.GroupRepository;
+import org.libreccm.security.Party;
+import org.libreccm.security.PartyRepository;
+import org.libreccm.security.Role;
+import org.libreccm.security.RoleManager;
+import org.libreccm.security.RoleRepository;
 import org.libreccm.security.User;
-import org.libreccm.security.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,49 +52,34 @@ import static com.arsdigita.ui.admin.AdminUiConstants.*;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class GroupMembersTable extends Table {
+public class RoleMembersTable extends Table {
 
     private static final int COL_MEMBER_NAME = 0;
-    private static final int COL_MEMBER_FAMILY_NAME = 1;
-    private static final int COL_MEMBER_GIVEN_NAME = 2;
-    private static final int COL_MEMBER_EMAIL = 3;
-    private static final int COL_MEMBER_REMOVE = 4;
+    private static final int COL_MEMBER_TYPE = 1;
+    private static final int COL_MEMBER_REMOVE = 2;
 
-    public GroupMembersTable(
-        final ParameterSingleSelectionModel<String> selectedGroupId) {
+    public RoleMembersTable(
+        final ParameterSingleSelectionModel<String> selectedRoleId) {
 
         super();
-        setIdAttr("groupMembersTable");
+        setIdAttr("roleMembersTable");
 
         setEmptyView(new Label(new GlobalizedMessage(
-            "ui.admin.group_details.members.none", ADMIN_BUNDLE)));
+            "ui.admin.role_members.none", ADMIN_BUNDLE)));
 
         final TableColumnModel columnModel = getColumnModel();
         columnModel.add(new TableColumn(
             COL_MEMBER_NAME,
-            new Label(new GlobalizedMessage(
-                "ui.admin.group_details.members_table.cols.name",
-                ADMIN_BUNDLE))));
+            new Label(new GlobalizedMessage("ui.admin.role_members.name",
+                                            ADMIN_BUNDLE))));
         columnModel.add(new TableColumn(
-            COL_MEMBER_FAMILY_NAME,
-            new Label(new GlobalizedMessage(
-                "ui.admin.group_details.members_table.cols.family_name",
-                ADMIN_BUNDLE))));
-        columnModel.add(new TableColumn(
-            COL_MEMBER_GIVEN_NAME,
-            new Label(new GlobalizedMessage(
-                "ui.admin.group_details.members_table.cols.given_name",
-                ADMIN_BUNDLE))));
-        columnModel.add(new TableColumn(
-            COL_MEMBER_EMAIL,
-            new Label(new GlobalizedMessage(
-                "ui.admin.group_details.members_table.cols.email",
-                ADMIN_BUNDLE))));
+            COL_MEMBER_TYPE,
+            new Label(new GlobalizedMessage("ui.admin.role_members.type",
+                                            ADMIN_BUNDLE))));
         columnModel.add(new TableColumn(
             COL_MEMBER_REMOVE,
-            new Label(new GlobalizedMessage(
-                "ui.admin.group_details.members_table.cols.remove",
-                ADMIN_BUNDLE))));
+            new Label(new GlobalizedMessage("ui.admin.role_members.remove",
+                                            ADMIN_BUNDLE))));
 
         columnModel.get(COL_MEMBER_REMOVE).setCellRenderer(
             new TableCellRenderer() {
@@ -107,7 +94,7 @@ public class GroupMembersTable extends Table {
                                           final int column) {
                 final ControlLink link = new ControlLink((Component) value);
                 link.setConfirmation(new GlobalizedMessage(
-                    "ui.admin.group_details.members_table.member.remove",
+                    "ui.admin.role_members.remove_member.confirm",
                     ADMIN_BUNDLE));
                 return link;
             }
@@ -124,18 +111,17 @@ public class GroupMembersTable extends Table {
                 switch (event.getColumn()) {
                     case COL_MEMBER_REMOVE:
                         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-                        final UserRepository userRepository = cdiUtil
-                            .findBean(UserRepository.class);
-                        final GroupRepository groupRepository = cdiUtil
-                            .findBean(GroupRepository.class);
-                        final GroupManager groupManager = cdiUtil.findBean(
-                            GroupManager.class);
-                        final User user = userRepository.findById(Long
+                        final PartyRepository partyRepository = cdiUtil
+                            .findBean(PartyRepository.class);
+                        final RoleRepository roleRepository = cdiUtil.findBean(
+                            RoleRepository.class);
+                        final RoleManager roleManager = cdiUtil.findBean(
+                            RoleManager.class);
+                        final Party party = partyRepository.findById(Long
                             .parseLong(key));
-                        final Group group = groupRepository.findById(
-                            Long.parseLong(
-                                selectedGroupId.getSelectedKey(state)));
-                        groupManager.removeMemberFromGroup(user, group);
+                        final Role role = roleRepository.findById(
+                            Long.parseLong(selectedRoleId.getSelectedKey(state)));
+                        roleManager.removeRoleFromParty(role, party);
                         break;
                     default:
                         throw new IllegalArgumentException(
@@ -150,46 +136,47 @@ public class GroupMembersTable extends Table {
 
         });
 
-        setModelBuilder(new GroupMembersTableModelBuilder(selectedGroupId));
+        setModelBuilder(new RoleMembersTableModelBuilder(selectedRoleId));
     }
 
-    private class GroupMembersTableModelBuilder extends LockableImpl
+    private class RoleMembersTableModelBuilder extends LockableImpl
         implements TableModelBuilder {
 
-        private final ParameterSingleSelectionModel<String> selectedGroupId;
+        private final ParameterSingleSelectionModel<String> selectedRoleId;
 
-        public GroupMembersTableModelBuilder(
-            final ParameterSingleSelectionModel<String> selectedGroupId) {
+        public RoleMembersTableModelBuilder(
+            final ParameterSingleSelectionModel<String> selectedRoleId) {
 
-            this.selectedGroupId = selectedGroupId;
+            this.selectedRoleId = selectedRoleId;
         }
 
         @Override
-        public TableModel makeModel(final Table table, final PageState state) {
+        public TableModel makeModel(final Table table,
+                                    final PageState state) {
             table.getRowSelectionModel().clearSelection(state);
 
-            return new GroupMembersTableModel(selectedGroupId, state);
+            return new RoleMembersTableModel(selectedRoleId, state);
         }
 
     }
 
-    private class GroupMembersTableModel implements TableModel {
+    private class RoleMembersTableModel implements TableModel {
 
-        private final List<User> members;
+        private final List<Party> members;
         private int index = -1;
 
-        public GroupMembersTableModel(
-            final ParameterSingleSelectionModel<String> selectedGroupId,
+        public RoleMembersTableModel(
+            final ParameterSingleSelectionModel<String> selectedRoleId,
             final PageState state) {
 
-            final GroupRepository groupRepository = CdiUtil.createCdiUtil()
-                .findBean(GroupRepository.class);
-            final Group group = groupRepository.findById(Long.parseLong(
-                selectedGroupId.getSelectedKey(state)));
+            final RoleRepository roleRepository = CdiUtil.createCdiUtil()
+                .findBean(RoleRepository.class);
+            final Role role = roleRepository.findById(Long.parseLong(
+                selectedRoleId.getSelectedKey(state)));
 
             members = new ArrayList<>();
 
-            group.getMemberships().forEach(m -> {
+            role.getMemberships().forEach(m -> {
                 members.add(m.getMember());
             });
 
@@ -200,7 +187,7 @@ public class GroupMembersTable extends Table {
 
         @Override
         public int getColumnCount() {
-            return 5;
+            return 3;
         }
 
         @Override
@@ -211,24 +198,30 @@ public class GroupMembersTable extends Table {
 
         @Override
         public Object getElementAt(final int columnIndex) {
-            final User member = members.get(index);
+            final Party member = members.get(index);
             switch (columnIndex) {
                 case COL_MEMBER_NAME:
                     return member.getName();
-                case COL_MEMBER_FAMILY_NAME:
-                    return member.getFamilyName();
-                case COL_MEMBER_GIVEN_NAME:
-                    return member.getGivenName();
-                case COL_MEMBER_EMAIL:
-                    return member.getPrimaryEmailAddress().getAddress();
+                case COL_MEMBER_TYPE:
+                    if (member instanceof User) {
+                        return new Label(new GlobalizedMessage(
+                            "ui.admin.role_members.type.user",
+                            ADMIN_BUNDLE));
+                    } else if (member instanceof Group) {
+                        return new Label(new GlobalizedMessage(
+                            "ui.admin.role_members.type.group",
+                            ADMIN_BUNDLE));
+                    } else {
+                        return "?";
+                    }
                 case COL_MEMBER_REMOVE:
                     return new Label(new GlobalizedMessage(
-                        "ui.admin.group_details.members_table.remove",
-                        ADMIN_BUNDLE));
+                        "ui.admin.role_members.remove", ADMIN_BUNDLE));
                 default:
                     throw new IllegalArgumentException(
                         "Not a valid column index");
             }
+
         }
 
         @Override

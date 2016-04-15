@@ -105,7 +105,7 @@ public class UserAdmin extends BoxPanel {
     private final Form newUserForm;
 
     public UserAdmin() {
-        super();
+        super(BoxPanel.VERTICAL);
 
         setBasicProperties();
 

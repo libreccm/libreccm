@@ -103,6 +103,6 @@ public class GroupRepository extends AbstractEntityRepository<Long, Group> {
             getEntityManager().remove(m);
         });
         
-        getEntityManager().remove(getEntityManager().merge(entity));
+        getEntityManager().remove(delete);
     }
 }

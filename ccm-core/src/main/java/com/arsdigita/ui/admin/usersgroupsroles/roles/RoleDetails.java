@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package com.arsdigita.ui.admin.usersgroupsroles.groups;
+package com.arsdigita.ui.admin.usersgroupsroles.roles;
 
 import com.arsdigita.bebop.ActionLink;
 import com.arsdigita.bebop.BoxPanel;
@@ -27,8 +27,8 @@ import com.arsdigita.bebop.PropertySheet;
 import com.arsdigita.globalization.GlobalizedMessage;
 
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.security.Group;
-import org.libreccm.security.GroupRepository;
+import org.libreccm.security.Role;
+import org.libreccm.security.RoleRepository;
 
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
@@ -36,62 +36,67 @@ import static com.arsdigita.ui.admin.AdminUiConstants.*;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class GroupDetails extends BoxPanel {
+public class RoleDetails extends BoxPanel {
 
-    public GroupDetails(
-        final GroupAdmin groupAdmin,
-        final ParameterSingleSelectionModel<String> selectedGroupId) {
-        
+    public RoleDetails(
+        final RoleAdmin roleAdmin,
+        final ParameterSingleSelectionModel<String> selectedRoleId) {
+
         super(BoxPanel.VERTICAL);
 
         final ActionLink backLink = new ActionLink(new GlobalizedMessage(
-            "ui.admin.group_details.back", ADMIN_BUNDLE));
+            "ui.admin.role_details.back", ADMIN_BUNDLE));
         backLink.setClassAttr("back-link");
         backLink.addActionListener(e -> {
-            groupAdmin.hideGroupDetails(e.getPageState());
+            roleAdmin.hideRoleDetails(e.getPageState());
         });
         add(backLink);
 
-        final Label header = new Label();
-        header.setClassAttr("heading");
-        header.addPrintListener(e -> {
+        final Label heading = new Label();
+        heading.setClassAttr("heading");
+        heading.addPrintListener(e -> {
             final PageState state = e.getPageState();
             final Label target = (Label) e.getTarget();
-            final GroupRepository groupRepository = CdiUtil.createCdiUtil()
-                .findBean(GroupRepository.class);
-            final Group group = groupRepository.findById(Long.parseLong(
-                selectedGroupId.getSelectedKey(state)));
+            final RoleRepository roleRepository = CdiUtil.createCdiUtil()
+                .findBean(RoleRepository.class);
+            final Role role = roleRepository.findById(Long.parseLong(
+                selectedRoleId.getSelectedKey(state)));
             target.setLabel(new GlobalizedMessage(
-                "ui.admin.group_details.header",
-                ADMIN_BUNDLE, 
-                new String[]{group.getName()}));
+                "ui.admin.role_details.heading",
+                ADMIN_BUNDLE,
+                new String[]{role.getName()}));
         });
-        add(header);
+        add(heading);
 
         final PropertySheet propertySheet = new PropertySheet(
-            new GroupPropertySheetModelBuilder(selectedGroupId));
-
+            new RolePropertySheetModelBuilder(selectedRoleId));
         add(propertySheet);
 
         final BoxPanel links = new BoxPanel(BoxPanel.HORIZONTAL);
+        
         final ActionLink editProperties = new ActionLink(new GlobalizedMessage(
-            "ui.admin.group_details.edit_properties", ADMIN_BUNDLE));
+        "ui.admin.role_details.edit_properties", ADMIN_BUNDLE));
         editProperties.addActionListener(e -> {
-            groupAdmin.showGroupForm(e.getPageState());
+            roleAdmin.showRoleForm(e.getPageState());
         });
         links.add(editProperties);
-        add(links);
-
-        final GroupMembersTable membersTable = new GroupMembersTable(
-            selectedGroupId);
-        add(membersTable);
-
-        final ActionLink addMember = new ActionLink(new GlobalizedMessage(
-            "ui.admin.group_details.add_member", ADMIN_BUNDLE));
-        addMember.addActionListener(e -> {
-            groupAdmin.showGroupMemberAddForm(e.getPageState());
+        
+        final ActionLink manageMembers = new ActionLink(new GlobalizedMessage(
+            "ui.admin.role_details.manage_members", ADMIN_BUNDLE));
+        manageMembers.addActionListener(e -> {
+            roleAdmin.showRoleMembersPanel(e.getPageState());
         });
-        add(addMember);
+        links.add(manageMembers);
+        
+          
+        final ActionLink managePermissions = new ActionLink(new GlobalizedMessage(
+            "ui.admin.role_details.manage_permissions", ADMIN_BUNDLE));
+        managePermissions.addActionListener(e -> {
+            roleAdmin.showRolePermissionsPanel(e.getPageState());
+        });
+        links.add(managePermissions);
+        
+        add(links);
     }
 
 }

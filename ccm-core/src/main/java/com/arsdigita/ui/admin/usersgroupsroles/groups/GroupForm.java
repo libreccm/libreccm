@@ -41,8 +41,6 @@ public class GroupForm extends Form {
 
     private static final String GROUP_NAME = "groupname";
 
-    private final GroupAdmin groupAdmin;
-    private final ParameterSingleSelectionModel<String> selectedGroupId;
     private final TextField groupName;
     private final SaveCancelSection saveCancelSection;
 
@@ -52,10 +50,7 @@ public class GroupForm extends Form {
         
         super("groupform");
 
-        this.groupAdmin = groupAdmin;
-        this.selectedGroupId = selectedGroupId;
-
-        add(new Label(e -> {
+        final Label heading = new Label(e -> {
             final PageState state = e.getPageState();
 
             final Label target = (Label) e.getTarget();
@@ -70,7 +65,9 @@ public class GroupForm extends Form {
                 target.setLabel(new GlobalizedMessage("ui.admin.group.edit",
                                                       ADMIN_BUNDLE));
             }
-        }));
+        });
+        heading.setClassAttr("heading");
+        add(heading);
 
         groupName = new TextField(GROUP_NAME);
         groupName.setLabel(new GlobalizedMessage("ui.admin.group.name",

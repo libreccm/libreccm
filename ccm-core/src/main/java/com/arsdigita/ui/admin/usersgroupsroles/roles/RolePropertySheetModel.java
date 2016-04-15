@@ -16,19 +16,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package com.arsdigita.ui.admin.usersgroupsroles.groups;
+package com.arsdigita.ui.admin.usersgroupsroles.roles;
 
 import com.arsdigita.bebop.PropertySheetModel;
 import com.arsdigita.globalization.GlobalizedMessage;
 
-import org.libreccm.security.Group;
-import org.libreccm.security.RoleMembership;
+import org.libreccm.security.Role;
 
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
@@ -36,25 +32,24 @@ import static com.arsdigita.ui.admin.AdminUiConstants.*;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-class GroupPropertySheetModel implements PropertySheetModel {
+public class RolePropertySheetModel implements PropertySheetModel {
 
-    private static enum GroupProperty {
-        GROUP_NAME,
-        ROLES
+    private static enum RoleProperty {
+        ROLE_NAME
     }
 
-    private final Group selectedGroup;
-    private final Iterator<GroupProperty> propertyIterator;
-    private GroupProperty currentProperty;
+    private final Role selectedRole;
+    private final Iterator<RoleProperty> propertyIterator;
+    private RoleProperty currentProperty;
 
-    public GroupPropertySheetModel(final Group selectedGroup) {
-        this.selectedGroup = selectedGroup;
-        propertyIterator = Arrays.asList(GroupProperty.values()).iterator();
+    public RolePropertySheetModel(final Role selectedRole) {
+        this.selectedRole = selectedRole;
+        propertyIterator = Arrays.asList(RoleProperty.values()).iterator();
     }
 
     @Override
     public boolean nextRow() {
-        if (selectedGroup == null) {
+        if (selectedRole == null) {
             return false;
         }
 
@@ -77,39 +72,22 @@ class GroupPropertySheetModel implements PropertySheetModel {
     }
 
     private GlobalizedMessage generateGlobalizedLabel(
-        final GroupProperty property) {
+        final RoleProperty roleProperty) {
 
-        final String key = String.join("", 
-                                       "ui.admin.group.property_sheet.",
-                                       property.toString().toLowerCase());
+        final String key = String.join("",
+                                       "ui.admin.role.property_sheet.",
+                                       roleProperty.toString().toLowerCase());
         return new GlobalizedMessage(key, ADMIN_BUNDLE);
     }
 
     @Override
     public String getValue() {
-        switch (currentProperty) {
-            case GROUP_NAME:
-                return selectedGroup.getName();
-            case ROLES:
-                return retrieveRoles();
+        switch(currentProperty) {
+            case ROLE_NAME:
+                return selectedRole.getName();
             default:
                 return "";
         }
-    }
-
-    private String retrieveRoles() {
-        final Set<RoleMembership> roleMemberships = selectedGroup
-            .getRoleMemberships();
-        
-        final SortedSet<String> roles = new TreeSet<>((r1, r2) -> {
-            return r1.compareTo(r2);
-        });
-        
-        roleMemberships.forEach(m -> {
-            roles.add(m.getRole().getName());
-        });
-        
-        return String.join(", ", roles.toArray(new String[roles.size()]));
     }
 
 }

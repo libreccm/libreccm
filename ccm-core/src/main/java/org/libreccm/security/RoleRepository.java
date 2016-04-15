@@ -19,13 +19,17 @@
 package org.libreccm.security;
 
 import java.util.List;
+
 import javax.enterprise.context.RequestScoped;
 import javax.persistence.TypedQuery;
+
 import org.libreccm.core.AbstractEntityRepository;
+
+import javax.transaction.Transactional;
 
 /**
  * Repository class for {@link Role} entities.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
@@ -46,14 +50,15 @@ public class RoleRepository extends AbstractEntityRepository<Long, Role> {
 
     /**
      * Finds a role a its name.
-     * 
+     *
      * @param name The name of the role to retrieve.
+     *
      * @return The role identified by the provided {@code name} or {@code null}
-     * if there is no matching role.
+     *         if there is no matching role.
      */
     public Role findByName(final String name) {
         final TypedQuery<Role> query = getEntityManager().createNamedQuery(
-                "Role.findByName", Role.class);
+            "Role.findByName", Role.class);
         query.setParameter("name", name);
         final List<Role> result = query.getResultList();
         if (result.isEmpty()) {
@@ -61,6 +66,32 @@ public class RoleRepository extends AbstractEntityRepository<Long, Role> {
         } else {
             return result.get(0);
         }
+    }
+
+    public List<Role> findAllOrderedByRoleName() {
+        final TypedQuery<Role> query = getEntityManager().createNamedQuery(
+            "Role.findAllOrderedByRoleName", Role.class);
+        return query.getResultList();
+    }
+
+    public List<Role> searchByName(final String name) {
+        final TypedQuery<Role> query = getEntityManager().createNamedQuery(
+            "Role.searchByName", Role.class);
+        query.setParameter("name", name);
+        return query.getResultList();
+    }
+
+    @Override
+    @Transactional(Transactional.TxType.REQUIRED)
+    public void delete(final Role role) {
+        final Role delete = getEntityManager().find(Role.class,
+                                                    role.getRoleId());
+        
+        delete.getMemberships().forEach(m -> {
+            getEntityManager().remove(m);
+        });
+        
+        getEntityManager().remove(delete);
     }
 
 }

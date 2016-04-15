@@ -50,6 +50,16 @@ public class PermissionManager {
     private EntityManager entityManager;
 
     /**
+     * Retrieves a permission by its ID. Useful for UI classes.
+     * 
+     * @param permissionId The id of the permission to retrieve.
+     * @return The permission identified by the provided {@code permissionId).
+     */
+    public Permission findById(final long permissionId) {
+        return entityManager.find(Permission.class, permissionId);
+    }
+    
+    /**
      * Grants a privilege on an object to a role.  If the privilege was already 
      * granted, the method does nothing.
      * 
