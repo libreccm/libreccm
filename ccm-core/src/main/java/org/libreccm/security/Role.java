@@ -65,22 +65,32 @@ import javax.xml.bind.annotation.XmlRootElement;
         query = "SELECT r FROM Role r ORDER BY r.name"),
     @NamedQuery(
         name = "Role.searchByName",
-        query = "SELECT r FROM Role r WHERE LOWER(r.name) LIKE CONCAT(LOWER(:name), '%') "
-                    + "ORDER BY r.name ")
+        query
+            = "SELECT r FROM Role r WHERE LOWER(r.name) LIKE CONCAT(LOWER(:name), '%') "
+              + "ORDER BY r.name ")
 })
 @NamedEntityGraphs({
     @NamedEntityGraph(
-        name = "Role.withMembers",
+        name = Role.ENTITY_GRPAH_WITH_MEMBERS,
         attributeNodes = {
-            @NamedAttributeNode(value = "memberships")
+            @NamedAttributeNode(value = "memberships"),}),
+    @NamedEntityGraph(
+        name = Role.ENTITY_GRPAH_WITH_PERMISSIONS,
+        attributeNodes = {
+            @NamedAttributeNode(value = "permissions")
         })
 })
-@DefaultEntityGraph("Role.withMembers")
+@DefaultEntityGraph(Role.ENTITY_GRPAH_WITH_MEMBERS)
 @XmlRootElement(name = "role", namespace = CORE_XML_NS)
 @SuppressWarnings({"PMD.ShortClassName", "PMD.TooManyMethods"})
 public class Role implements Serializable {
 
     private static final long serialVersionUID = -7121296514181469687L;
+
+    public static final String ENTITY_GRPAH_WITH_MEMBERS
+                               = "Role.withMembers";
+    public static final String ENTITY_GRPAH_WITH_PERMISSIONS
+                               = "Role.withPermissions";
 
     @Id
     @Column(name = "ROLE_ID")

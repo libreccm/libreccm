@@ -173,8 +173,9 @@ public class RolePermissionsTable extends Table {
 
             final RoleRepository roleRepository = CdiUtil.createCdiUtil()
                 .findBean(RoleRepository.class);
-            final Role role = roleRepository.findById(Long.parseLong(
-                selectedRoleId.getSelectedKey(state)));
+            final Role role = roleRepository.findById(
+                Long.parseLong(selectedRoleId.getSelectedKey(state)),
+                Role.ENTITY_GRPAH_WITH_PERMISSIONS);
 
             permissions = new ArrayList<>(role.getPermissions());
 

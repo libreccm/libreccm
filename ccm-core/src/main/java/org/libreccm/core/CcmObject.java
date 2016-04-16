@@ -39,6 +39,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -66,6 +68,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @Table(name = "CCM_OBJECTS", schema = DB_SCHEMA)
 @Inheritance(strategy = InheritanceType.JOINED)
+@NamedQueries({
+    @NamedQuery(name = "CcmObject.findById",
+                query = "SELECT o FROM CcmObject o WHERE o.objectId = :id")
+})
 @XmlRootElement(name = "ccm-object", namespace = CORE_XML_NS)
 //False warning (?). Because this class has been migrated from the old PDL style
 //persistence system we can't yet refactor it to make PMD happy. Also I think

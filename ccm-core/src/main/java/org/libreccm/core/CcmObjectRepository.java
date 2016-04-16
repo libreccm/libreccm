@@ -18,18 +18,17 @@
  */
 package org.libreccm.core;
 
-
-
-
 import static org.libreccm.core.CoreConstants.*;
 
 import java.util.UUID;
 
 import javax.enterprise.context.RequestScoped;
+import javax.persistence.NoResultException;
+import javax.persistence.TypedQuery;
 
 /**
- * A repository class for {@link CcmObject}. 
- * 
+ * A repository class for {@link CcmObject}.
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
@@ -45,18 +44,30 @@ public class CcmObjectRepository extends AbstractEntityRepository<Long, CcmObjec
         if (entity == null) {
             throw new IllegalArgumentException("Can't save null.");
         }
-        
+
         if (ACCESS_DENIED.equals(entity.getDisplayName())) {
             throw new IllegalArgumentException(
                 "Can't save the Access Denied object.");
         }
-        
+
         return entity.getObjectId() == 0;
     }
 
     @Override
     public void initNewEntity(final CcmObject entity) {
         entity.setUuid(UUID.randomUUID().toString());
+    }
+
+    public CcmObject findObjectById(final long objectId) {
+        final TypedQuery<CcmObject> query = getEntityManager().createNamedQuery(
+            "CcmObject.findById", CcmObject.class);
+        query.setParameter("id", objectId);
+
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException ex) {
+            return null;
+        }
     }
 
 }

@@ -46,6 +46,7 @@ public class RoleAdmin extends BoxPanel {
     private final BoxPanel roleMembersPanel;
     private final RoleAddMemberForm roleAddMemberForm;
     private final BoxPanel rolePermissionsPanel;
+    private final RolePermissionsForm rolePermissionsForm;
 
     public RoleAdmin() {
         super(BoxPanel.VERTICAL);
@@ -116,7 +117,10 @@ public class RoleAdmin extends BoxPanel {
         final Label rolePermissionsHeading = new Label(new GlobalizedMessage(
             "ui.admin.role_permissions.heading",
             ADMIN_BUNDLE));
+        rolePermissionsHeading.setClassAttr("heading");
         rolePermissionsPanel.add(rolePermissionsHeading);
+        rolePermissionsPanel.add(new Label(new GlobalizedMessage(
+            "ui.admin.role_permissions.note", ADMIN_BUNDLE)));
         rolePermissionsPanel.add(new RolePermissionsTable(selectedRoleId));
         final ActionLink addRolePermission = new ActionLink(
             new GlobalizedMessage(
@@ -126,6 +130,9 @@ public class RoleAdmin extends BoxPanel {
         });
         rolePermissionsPanel.add(addRolePermission);
         add(rolePermissionsPanel);
+        
+        rolePermissionsForm = new RolePermissionsForm(this, selectedRoleId);
+        add(rolePermissionsForm);
     }
 
     @Override
@@ -140,6 +147,7 @@ public class RoleAdmin extends BoxPanel {
         page.setVisibleDefault(roleMembersPanel, false);
         page.setVisibleDefault(roleAddMemberForm, false);
         page.setVisibleDefault(rolePermissionsPanel, false);
+        page.setVisibleDefault(rolePermissionsForm, false);
     }
 
     protected void showRoleDetails(final PageState state) {
@@ -149,6 +157,7 @@ public class RoleAdmin extends BoxPanel {
         roleMembersPanel.setVisible(state, true);
         roleAddMemberForm.setVisible(state, false);
         rolePermissionsPanel.setVisible(state, false);
+        rolePermissionsForm.setVisible(state, false);
     }
 
     protected void hideRoleDetails(final PageState state) {
@@ -160,6 +169,7 @@ public class RoleAdmin extends BoxPanel {
         roleMembersPanel.setVisible(state, false);
         roleAddMemberForm.setVisible(state, false);
         rolePermissionsPanel.setVisible(state, false);
+        rolePermissionsForm.setVisible(state, false);
     }
 
     protected void showRoleForm(final PageState state) {
@@ -169,6 +179,7 @@ public class RoleAdmin extends BoxPanel {
         roleMembersPanel.setVisible(state, false);
         roleAddMemberForm.setVisible(state, false);
         rolePermissionsPanel.setVisible(state, false);
+        rolePermissionsForm.setVisible(state, false);
     }
 
     protected void hideRoleForm(final PageState state) {
@@ -182,6 +193,7 @@ public class RoleAdmin extends BoxPanel {
         roleMembersPanel.setVisible(state, roleSelected);
         roleAddMemberForm.setVisible(state, false);
         rolePermissionsPanel.setVisible(state, false);
+        rolePermissionsForm.setVisible(state, false);
     }
 
     protected void showRoleMemberAddForm(final PageState state) {
@@ -191,17 +203,19 @@ public class RoleAdmin extends BoxPanel {
         roleMembersPanel.setVisible(state, false);
         roleAddMemberForm.setVisible(state, true);
         rolePermissionsPanel.setVisible(state, false);
+        rolePermissionsForm.setVisible(state, false);
     }
-    
+
     protected void showRoleMembersPanel(final PageState state) {
-         rolesTablePanel.setVisible(state, false);
+        rolesTablePanel.setVisible(state, false);
         roleForm.setVisible(state, false);
         roleDetails.setVisible(state, true);
         roleMembersPanel.setVisible(state, true);
         roleAddMemberForm.setVisible(state, false);
         rolePermissionsPanel.setVisible(state, false);
+        rolePermissionsForm.setVisible(state, false);
     }
-    
+
     protected void hideRoleMemberAddForm(final PageState state) {
         rolesTablePanel.setVisible(state, false);
         roleForm.setVisible(state, false);
@@ -209,6 +223,7 @@ public class RoleAdmin extends BoxPanel {
         roleMembersPanel.setVisible(state, true);
         roleAddMemberForm.setVisible(state, false);
         rolePermissionsPanel.setVisible(state, false);
+        rolePermissionsForm.setVisible(state, false);
     }
 
     protected void showRolePermissionsPanel(final PageState state) {
@@ -218,6 +233,7 @@ public class RoleAdmin extends BoxPanel {
         roleMembersPanel.setVisible(state, false);
         roleAddMemberForm.setVisible(state, false);
         rolePermissionsPanel.setVisible(state, true);
+        rolePermissionsForm.setVisible(state, false);
     }
 
 //    protected void hideRolePermissionsPanel(final PageState state) {
@@ -228,13 +244,24 @@ public class RoleAdmin extends BoxPanel {
 //        roleAddMemberForm.setVisible(state, false);
 //        rolePermissionsPanel.setVisible(state, false);
 //    }
-
     protected void showRolePermissionAddForm(final PageState state) {
-
+         rolesTablePanel.setVisible(state, false);
+        roleForm.setVisible(state, false);
+        roleDetails.setVisible(state, false);
+        roleMembersPanel.setVisible(state, false);
+        roleAddMemberForm.setVisible(state, false);
+        rolePermissionsPanel.setVisible(state, false);
+        rolePermissionsForm.setVisible(state, true);
     }
 
     protected void hideRolePermissionAddForm(final PageState state) {
-
+         rolesTablePanel.setVisible(state, false);
+        roleForm.setVisible(state, false);
+        roleDetails.setVisible(state, true);
+        roleMembersPanel.setVisible(state, false);
+        roleAddMemberForm.setVisible(state, false);
+        rolePermissionsPanel.setVisible(state, true);
+        rolePermissionsForm.setVisible(state, false);
     }
 
 }
