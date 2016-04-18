@@ -92,13 +92,10 @@ public class UserAdmin extends BoxPanel {
     private final TextField usersTableFilter;
     private final BoxPanel usersTablePanel;
     private final UsersTable usersTable;
-    private final ActionLink backToUsersTable;
-    private final PropertySheet userProperties;
     private final Form userEditForm;
     private final Form passwordSetForm;
     private final BoxPanel actionLinks;
-//    private final UserDetails userDetails;
-    private final BoxPanel userDetails;
+    private final UserDetails userDetails;
     private final Form emailForm;
     private final Form editGroupMembershipsForm;
     private final Form editRoleMembershipsForm;
@@ -148,20 +145,7 @@ public class UserAdmin extends BoxPanel {
 
         add(usersTablePanel);
 
-        userDetails = new BoxPanel();
-        userDetails.setIdAttr("userDetails");
-
-        backToUsersTable = new ActionLink(new GlobalizedMessage(
-            "ui.admin.user_details.back", ADMIN_BUNDLE));
-        backToUsersTable.setIdAttr("userDetailsBackLink");
-        backToUsersTable.addActionListener(
-            e -> closeUserDetails(e.getPageState()));
-        userDetails.add(backToUsersTable);
-
-        userProperties = new PropertySheet(new UserPropertySheetModelBuilder(
-            selectedUserId));
-        userProperties.setIdAttr("userProperties");
-        userDetails.add(userProperties);
+        userDetails = new UserDetails(this, selectedUserId);
 
         userEditForm = new Form("userEditForm");
         final TextField username = new TextField("username");
