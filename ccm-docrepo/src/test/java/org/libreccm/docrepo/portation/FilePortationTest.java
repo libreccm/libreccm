@@ -18,6 +18,7 @@
  */
 package org.libreccm.docrepo.portation;
 
+import org.apache.log4j.Logger;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
@@ -30,21 +31,24 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
-import org.junit.*;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.libreccm.docrepo.File;
 import org.libreccm.docrepo.FileMarshaller;
 import org.libreccm.docrepo.FileRepository;
-import org.libreccm.portation.Format;
 import org.libreccm.portation.Marshals;
 import org.libreccm.tests.categories.IntegrationTest;
 
 import javax.inject.Inject;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
+import java.util.Date;
+import java.util.UUID;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
@@ -63,6 +67,7 @@ import static org.junit.Assert.assertTrue;
 @Transactional(TransactionMode.COMMIT)
 @CreateSchema({"create_ccm_docrepo_schema.sql"})
 public class FilePortationTest {
+    private static final Logger log = Logger.getLogger(FilePortationTest.class);
 
     @Inject
     private FileRepository fileRepository;
@@ -89,13 +94,6 @@ public class FilePortationTest {
 
     @Before
     public void setUp() {
-//        file = new File();
-//        file.setName("testname");
-//        file.setDescription("this is a text description");
-//        file.setPath("test/path");
-//        file.setCreationDate(new Date());
-//        file.setLastModifiedDate(new Date());
-//        fileRepository.save(file);
     }
 
     @After
@@ -172,9 +170,25 @@ public class FilePortationTest {
     }
 
     @Test
-    @InSequence(20)
+    @InSequence(11)
     public void fileRepositoryIsInjected() {
          assertThat(fileRepository, is(not(nullValue())));
+    }
+
+    @Test
+    @InSequence(20)
+    public void fileShouldBeCreated() {
+        file = new File();
+        file.setUuid(UUID.randomUUID().toString());
+        file.setName("testname");
+        file.setDescription("this is a text description");
+        file.setPath(filePath + "test2.txt");
+        file.setCreationDate(new Date());
+        file.setLastModifiedDate(new Date());
+        if (fileRepository != null && file != null) {
+            log.info("HELLOOOOOO!!");
+            fileRepository.save(file);
+        }
     }
 
     @Test
@@ -190,17 +204,19 @@ public class FilePortationTest {
     @InSequence(200)
     public void aFileShouldBeCreated() {
         java.io.File file = new java.io.File(filePath + "test.txt");
-        FileWriter fileWriter = null;
-        try {
-            fileWriter = new FileWriter(file);
-            System.out.print("\n\n\n\n\n\n\n\n\n\n Fehler \n\n\n\n\n\n\n\n\n\n");
-            fileWriter.write("bloß ein test! - tosmers");
-            fileWriter.flush();
-            fileWriter.close();
-        } catch (IOException e) {
-            System.out.print("\n\n\n\n\n\n\n\n\n\n Fehler \n\n\n\n\n\n\n\n\n\n");
+        if (!file.exists()) {
+            FileWriter fileWriter = null;
+            try {
+                fileWriter = new FileWriter(file);
+                log.info("\n\n\n\n\n\n\n\n\n\n Success \n\n\n\n\n\n\n\n\n\n");
+                fileWriter.write("bloß ein test! - tosmers");
+                fileWriter.flush();
+                fileWriter.close();
+            } catch (IOException e) {
+                log.error("\n\n\n\n\n\n\n\n\n\n Fehler \n\n\n\n\n\n\n\n\n\n");
+            }
+            assertTrue(file.exists());
         }
-        assertTrue(file.exists());
     }
 
 }

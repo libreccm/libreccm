@@ -19,6 +19,8 @@
 package org.libreccm.docrepo;
 
 import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -34,6 +36,7 @@ import javax.persistence.Table;
  */
 @Entity(name = "DocRepoFile")
 @Table(schema = "CCM_DOCREPO", name = "FILES")
+
 @NamedQueries({
         @NamedQuery(name = "DocRepo.findFileByName",
                 query = "SELECT r FROM DocRepoFile r WHERE " +
@@ -78,27 +81,4 @@ public class File extends AbstractResource {
 
     //< End GETTER & SETTER
 
-    /**
-     * Returns the attribute names of this object class as a list of strings.
-     *
-     * @return List of strings with the attribute names of this class
-     */
-    public static String[] getAttributeNames() {
-        return new String[] {
-                "name",
-                "description",
-                "path",
-                "mimeType",
-                "size",
-                "blobObject_ID",
-                "creationDate",
-                "lastModifiedDate",
-                "creationIp",
-                "lastModifiedIp",
-                "creator_ID",
-                "modifier_ID",
-                "parent_ID",
-                "repo_ID"
-        };
-    }
 }

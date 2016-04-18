@@ -18,19 +18,11 @@
  */
 package org.libreccm.core;
 
-import static org.libreccm.core.CoreConstants.*;
-
+import org.hibernate.annotations.GenericGenerator;
 import org.libreccm.categorization.Categorization;
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryManager;
 import org.libreccm.security.Permission;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -47,6 +39,14 @@ import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+
+import static org.libreccm.core.CoreConstants.CORE_XML_NS;
+import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 
 /**
  * Root class of all entities in LibreCCM which need categorisation and
@@ -91,7 +91,12 @@ public class CcmObject implements Identifiable, Serializable {
     @XmlElement(name = "object-id", namespace = CORE_XML_NS)
     private long objectId;
 
-    @Column(name = "UUID", nullable = false)
+    /**
+     *
+     */
+    @Column(name = "UUID", unique = true)
+    //@GeneratedValue(generator="uuid", strategy = GenerationType.AUTO)
+    //@GenericGenerator(name = "uuid", strategy = "uuid2")
     @NotNull
     @XmlElement(name = "uuid")
     private String uuid;

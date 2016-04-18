@@ -18,12 +18,13 @@
  */
 package org.libreccm.docrepo;
 
+import org.apache.log4j.Logger;
 import org.hibernate.validator.constraints.NotBlank;
 import org.libreccm.core.CcmObject;
-import org.libreccm.core.Identifiable;
 import org.libreccm.security.User;
 
 import javax.activation.MimeType;
+import javax.activation.MimeTypeParseException;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -31,8 +32,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
-
 
 /**
  * Abstract entity class of a resource. Instances will be persisted into the
@@ -47,6 +48,7 @@ import java.util.Date;
 @Entity
 @Table(schema = "CCM_DOCREPO", name = "RESOURCES")
 public abstract class AbstractResource extends CcmObject {
+    private static final Logger log = Logger.getLogger(AbstractResource.class);
 
     private static final long serialVersionUID = -910317798106611214L;
 
@@ -74,7 +76,7 @@ public abstract class AbstractResource extends CcmObject {
      * Mime-type of the {@code AbstractResource}.
      */
     @Column(name = "MIME_TYPE")
-    private MimeType mimeType;
+    private String mimeType;
 
     /**
      * Size of the {@code AbstractResource}.
@@ -85,16 +87,16 @@ public abstract class AbstractResource extends CcmObject {
     /**
      * Creation date of the {@code AbstractResource}.
      */
-    @Column(name = "CREATION_DATE")
-    @NotBlank
+    @Column(name = "CREATION_DATE", nullable = false)
+    @NotNull
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
 
     /**
      * Date of the latest modification of the {@code AbstractResource}.
      */
-    @Column(name = "LAST_MODIFIED_DATE")
-    @NotBlank
+    @Column(name = "LAST_MODIFIED_DATE", nullable = false)
+    @NotNull
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastModifiedDate;
 
@@ -172,11 +174,18 @@ public abstract class AbstractResource extends CcmObject {
     }
 
     public MimeType getMimeType() {
-        return mimeType;
+        MimeType mimeType = null;
+        try {
+            mimeType = new MimeType(this.mimeType);
+        } catch (MimeTypeParseException e) {
+            log.error("Error on parsing the db-string for mimeType to actual" +
+                    "MimeType", e);
+        }
+        return mimeType != null ? mimeType : null;
     }
 
     public void setMimeType(MimeType mimeType) {
-        this.mimeType = mimeType;
+        this.mimeType = mimeType.toString();
     }
 
     public long getSize() {

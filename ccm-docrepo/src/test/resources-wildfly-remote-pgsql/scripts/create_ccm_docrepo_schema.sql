@@ -72,6 +72,7 @@ CREATE SCHEMA ccm_docrepo;
     create table CCM_CORE.CCM_OBJECTS (
         OBJECT_ID bigint not null,
         DISPLAY_NAME varchar(255),
+        UUID varchar(255) not null,
         primary key (OBJECT_ID)
     );
 
@@ -675,7 +676,7 @@ CREATE SCHEMA ccm_docrepo;
         DESCRIPTION varchar(255),
         LAST_MODIFIED_DATE timestamp,
         LAST_MODIFIED_IP varchar(255),
-        MIME_TYPE binary(255),
+        MIME_TYPE varchar(255),
         NAME varchar(512) not null,
         PATH varchar(255),
         SIZE bigint,
