@@ -36,13 +36,19 @@ import org.junit.runner.RunWith;
 import org.libreccm.docrepo.File;
 import org.libreccm.docrepo.FileMarshaller;
 import org.libreccm.docrepo.FileRepository;
+import org.libreccm.portation.Format;
 import org.libreccm.portation.Marshals;
 import org.libreccm.tests.categories.IntegrationTest;
 
 import javax.inject.Inject;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 /**
  *
@@ -65,9 +71,9 @@ public class FilePortationTest {
     @Marshals(File.class)
     private FileMarshaller fileMarshaller;
 
-//    private static File file;
-//    private static String filePath
-//                          = "/home/tosmers/Svn/libreccm/ccm_ng/ccm-docrepo/src/test/resources/datasets/org/libreccm/docrepo/FilePortationTest/";
+    private static File file;
+    private static String filePath =
+            "/home/tosmers/Svn/libreccm/ccm_ng/ccm-docrepo/src/test/resources/datasets/org/libreccm/docrepo/FilePortationTest/";
 
     @BeforeClass
     public static void setUpClass() {
@@ -183,18 +189,18 @@ public class FilePortationTest {
     @Test
     @InSequence(200)
     public void aFileShouldBeCreated() {
-//        java.io.File file = new java.io.File(filePath + "test.txt");
-//        FileWriter fileWriter = null;
-//        try {
-//            fileWriter = new FileWriter(file);
-//            System.out.print("\n\n\n\n\n\n\n\n\n\n Fehler \n\n\n\n\n\n\n\n\n\n");
-//            fileWriter.write("bloß ein test! - tosmers");
-//            fileWriter.flush();
-//            fileWriter.close();
-//        } catch (IOException e) {
-//            System.out.print("\n\n\n\n\n\n\n\n\n\n Fehler \n\n\n\n\n\n\n\n\n\n");
-//        }
-//        assertTrue(file.exists());
+        java.io.File file = new java.io.File(filePath + "test.txt");
+        FileWriter fileWriter = null;
+        try {
+            fileWriter = new FileWriter(file);
+            System.out.print("\n\n\n\n\n\n\n\n\n\n Fehler \n\n\n\n\n\n\n\n\n\n");
+            fileWriter.write("bloß ein test! - tosmers");
+            fileWriter.flush();
+            fileWriter.close();
+        } catch (IOException e) {
+            System.out.print("\n\n\n\n\n\n\n\n\n\n Fehler \n\n\n\n\n\n\n\n\n\n");
+        }
+        assertTrue(file.exists());
     }
 
 }
