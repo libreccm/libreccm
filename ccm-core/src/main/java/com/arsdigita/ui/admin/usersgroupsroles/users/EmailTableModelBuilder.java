@@ -30,7 +30,8 @@ import org.libreccm.security.User;
 import org.libreccm.security.UserRepository;
 
 /**
- *
+ * Model builder for the {@link EmailTableModel}.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class EmailTableModelBuilder extends LockableImpl

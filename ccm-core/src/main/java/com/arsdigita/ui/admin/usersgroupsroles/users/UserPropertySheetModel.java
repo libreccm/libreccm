@@ -29,6 +29,11 @@ import org.libreccm.security.User;
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
+ * Model for the user properties sheet in the {@link UserDetails}. the
+ * {@link UserProperty} enum contains the properties the show. The
+ * {@link #nextRow()} method iterators over this properties and sets the
+ * {@link #currentProperty} field. The {@link #getValue()} returns the value for
+ * the current property.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -104,4 +109,5 @@ class UserPropertySheetModel implements PropertySheetModel {
                 return "";
         }
     }
+
 }

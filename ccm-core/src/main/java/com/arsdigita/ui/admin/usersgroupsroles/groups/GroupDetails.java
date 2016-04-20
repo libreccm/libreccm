@@ -33,7 +33,9 @@ import org.libreccm.security.GroupRepository;
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
- *
+ * Panel which contains several components showing the properties of a group 
+ * including a table of the members of the group.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class GroupDetails extends BoxPanel {

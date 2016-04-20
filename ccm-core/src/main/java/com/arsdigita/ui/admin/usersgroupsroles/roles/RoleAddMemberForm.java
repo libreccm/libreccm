@@ -53,7 +53,8 @@ import java.util.List;
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
- *
+ * Form for adding members (users or groups) to a role.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class RoleAddMemberForm extends Form {

@@ -33,7 +33,8 @@ import com.arsdigita.globalization.GlobalizedMessage;
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
- *
+ * UI for managing roles.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class RoleAdmin extends BoxPanel {

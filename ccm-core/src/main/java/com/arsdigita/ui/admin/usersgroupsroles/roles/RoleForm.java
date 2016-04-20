@@ -34,7 +34,11 @@ import org.libreccm.security.RoleRepository;
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
- *
+ * Form for creating new roles and editing existing roles. If a role
+ * is selected the form is populated with the values of an existing role. When
+ * the form is submitted either a new role is created or an existing group
+ * is updated.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class RoleForm extends Form {

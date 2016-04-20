@@ -30,7 +30,8 @@ import org.libreccm.security.User;
 import org.libreccm.security.UserRepository;
 
 /**
- *
+ * Model builder for the {@link GroupsRolesTableModel}.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class GroupsRolesTableModelBuilder extends LockableImpl 

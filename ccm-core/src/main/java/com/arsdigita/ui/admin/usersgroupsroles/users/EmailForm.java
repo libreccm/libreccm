@@ -38,7 +38,8 @@ import org.libreccm.security.UserRepository;
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
- *
+ * Form for editing and adding email addresses to a user.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class EmailForm extends Form {

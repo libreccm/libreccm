@@ -47,7 +47,8 @@ import java.util.List;
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
- *
+ * Table which all members of a group.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class GroupMembersTable extends Table {

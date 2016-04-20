@@ -38,6 +38,10 @@ import org.libreccm.security.RoleRepository;
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
+ * A basic form for add permissions to role. Usually the applications should
+ * provide better and more comfortable forms for editing their specific
+ * permissions. This form is provided to give the administrator the possibility
+ * to manage permissions in a generic way.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */

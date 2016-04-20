@@ -31,7 +31,12 @@ import com.arsdigita.bebop.table.TableColumn;
 import com.arsdigita.bebop.table.TableColumnModel;
 
 /**
- *
+ * Table showing the roles and groups of a user. The table has three rows. The
+ * first one show the groups to which the user is assigned. The second row
+ * shows all roles to which are <strong>directly</strong> assigned to a user.
+ * The third row shows all roles which are assigned to the user, either directly
+ * or via one of the groups the user is assigned to.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class GroupsRolesTable extends Table {

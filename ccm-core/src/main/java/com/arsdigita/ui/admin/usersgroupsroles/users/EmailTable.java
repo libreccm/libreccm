@@ -39,7 +39,9 @@ import org.libreccm.security.UserRepository;
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
- *
+ * Table showing the additional email addresses associated with a user. 
+ * Please note that the additional email addresses property will maybe removed.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class EmailTable extends Table {

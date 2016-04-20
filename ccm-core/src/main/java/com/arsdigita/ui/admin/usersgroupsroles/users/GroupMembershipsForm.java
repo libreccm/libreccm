@@ -50,7 +50,8 @@ import java.util.stream.IntStream;
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
- *
+ * Form for editing the group memberships of a user.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class GroupMembershipsForm extends Form {

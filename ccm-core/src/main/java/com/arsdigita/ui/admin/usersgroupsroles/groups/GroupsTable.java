@@ -44,7 +44,8 @@ import org.libreccm.security.GroupRepository;
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
- *
+ * Table listing all groups.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class GroupsTable extends Table {

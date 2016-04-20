@@ -29,8 +29,6 @@ import com.arsdigita.bebop.form.Option;
 import com.arsdigita.bebop.form.Password;
 import com.arsdigita.bebop.form.RadioGroup;
 import com.arsdigita.bebop.form.TextField;
-import com.arsdigita.bebop.parameters.NotEmptyValidationListener;
-import com.arsdigita.bebop.parameters.StringLengthValidationListener;
 import com.arsdigita.globalization.GlobalizedMessage;
 
 import org.apache.logging.log4j.util.Strings;
@@ -45,7 +43,8 @@ import javax.mail.MessagingException;
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
- *
+ * Form for creating new users.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class NewUserForm extends Form {

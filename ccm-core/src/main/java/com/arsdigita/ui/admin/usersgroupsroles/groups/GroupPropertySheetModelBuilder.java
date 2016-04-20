@@ -30,6 +30,8 @@ import org.libreccm.security.Group;
 import org.libreccm.security.GroupRepository;
 
 /**
+ * Model builder for the group property sheet creating the
+ * {@link GroupPropertySheetModel}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -58,4 +60,5 @@ class GroupPropertySheetModelBuilder
 
         return new GroupPropertySheetModel(selectedGroup);
     }
+
 }

@@ -27,7 +27,8 @@ import com.arsdigita.globalization.GlobalizedMessage;
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
- *
+ * Displays the properties of a user.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class UserDetails extends BoxPanel {

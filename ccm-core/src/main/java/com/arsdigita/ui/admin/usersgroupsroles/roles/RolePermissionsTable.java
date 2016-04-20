@@ -47,7 +47,8 @@ import java.util.List;
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
- *
+ * Table displaying all permissions granted to a role.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class RolePermissionsTable extends Table {

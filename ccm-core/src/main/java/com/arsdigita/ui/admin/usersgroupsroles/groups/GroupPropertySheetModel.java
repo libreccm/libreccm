@@ -33,11 +33,22 @@ import java.util.TreeSet;
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
+ * The model for the property sheet of a group. The {@link GroupProperty} enum
+ * contains a list of all rows of the property sheet. The {@link #nextRow()}
+ * method of this model uses an iterator to iterate over the values of the enum
+ * and sets value of the {@link #currentProperty} field. Based on the value of
+ * the {@link #currentProperty} field the {@link #getValue()} method decides
+ * which information is shown.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class GroupPropertySheetModel implements PropertySheetModel {
 
+    /**
+     * An enum which identifies the rows of the property sheet. The
+     * {@link #nextRow()} method uses an iterator to iterate over all values the
+     * property.
+     */
     private static enum GroupProperty {
         GROUP_NAME,
         ROLES
@@ -79,7 +90,7 @@ class GroupPropertySheetModel implements PropertySheetModel {
     private GlobalizedMessage generateGlobalizedLabel(
         final GroupProperty property) {
 
-        final String key = String.join("", 
+        final String key = String.join("",
                                        "ui.admin.group.property_sheet.",
                                        property.toString().toLowerCase());
         return new GlobalizedMessage(key, ADMIN_BUNDLE);
@@ -97,18 +108,27 @@ class GroupPropertySheetModel implements PropertySheetModel {
         }
     }
 
+    /**
+     * Helper method for retrieving all roles assigned to group. The roles are 
+     * retrieved from the selected group, their names are than put into a sorted
+     * set which sorted alphabetically and the passed to a {@link StringJoiner}
+     * which creates a string which all roles separated by a comma.
+     * 
+     * @return A string containing the names of all roles assigned to the group
+     * in alphabetical order separated by a comma.
+     */
     private String retrieveRoles() {
         final Set<RoleMembership> roleMemberships = selectedGroup
             .getRoleMemberships();
-        
+
         final SortedSet<String> roles = new TreeSet<>((r1, r2) -> {
             return r1.compareTo(r2);
         });
-        
+
         roleMemberships.forEach(m -> {
             roles.add(m.getRole().getName());
         });
-        
+
         return String.join(", ", roles.toArray(new String[roles.size()]));
     }
 

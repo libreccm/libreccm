@@ -33,24 +33,50 @@ import com.arsdigita.globalization.GlobalizedMessage;
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
+ * UI for managing the groups (collections of users) in the system.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class GroupAdmin extends BoxPanel {
 
+    /**
+     * Parameter for the currently selected group.
+     */
     private final StringParameter groupIdParameter;
+    /**
+     * Model for the current selected group.
+     */
     private final ParameterSingleSelectionModel<String> selectedGroupId;
+    /**
+     * Text field for the filter UI for filtering the groups table.
+     */
     private final TextField groupsTableFilter;
+    /**
+     * The panel containing the groups table and some supporting UI elements.
+     */
     private final BoxPanel groupsTablePanel;
+    /**
+     * The groups table itself.
+     */
     private final GroupsTable groupsTable;
+    /**
+     * The form for creating new groups and editing the properties of existing
+     * groups.
+     */
     private final GroupForm groupForm;
+    /**
+     * The component which displays the details of a group.
+     */
     private final GroupDetails groupDetails;
+    /**
+     * The form for adding members to a group.
+     */
     private final GroupAddMemberForm groupAddMemberForm;
 
     public GroupAdmin() {
         super(BoxPanel.VERTICAL);
 
-        setBasicProperties();
+        setIdAttr("groupAdmin");
 
         final Label heading = new Label(new GlobalizedMessage(
             "ui.admin.groups.heading", ADMIN_BUNDLE));
@@ -103,6 +129,12 @@ public class GroupAdmin extends BoxPanel {
 
     }
 
+    /**
+     * Register the top level components of the UI in the page. Otherwise we
+     * can't control their visibility.
+     *
+     * @param page
+     */
     @Override
     public void register(final Page page) {
         super.register(page);
@@ -115,11 +147,11 @@ public class GroupAdmin extends BoxPanel {
         page.setVisibleDefault(groupAddMemberForm, false);
     }
 
-    private void setBasicProperties() {
-        setIdAttr("groupAdmin");
-
-    }
-
+    /**
+     * Sets the groups details visible and all other components invisible.
+     *
+     * @param state The current {@link PageState}.
+     */
     protected void showGroupDetails(final PageState state) {
         groupsTablePanel.setVisible(state, false);
         groupForm.setVisible(state, false);
@@ -127,6 +159,12 @@ public class GroupAdmin extends BoxPanel {
         groupAddMemberForm.setVisible(state, false);
     }
 
+    /**
+     * Sets the groups details invisible and sets the groups table visible. Also
+     * clears the {@link #selectedGroupId}.
+     *
+     * @param state The current {@link PageState}.
+     */
     protected void hideGroupDetails(final PageState state) {
         selectedGroupId.clearSelection(state);
         groupsTablePanel.setVisible(state, true);
@@ -135,6 +173,12 @@ public class GroupAdmin extends BoxPanel {
         groupAddMemberForm.setVisible(state, false);
     }
 
+    /**
+     * Shows the form for creating new groups or editing the properties of
+     * existing groups.
+     *
+     * @param state The current {@link PageState}.
+     */
     protected void showGroupForm(final PageState state) {
         groupsTablePanel.setVisible(state, false);
         groupForm.setVisible(state, true);
@@ -142,6 +186,12 @@ public class GroupAdmin extends BoxPanel {
         groupAddMemberForm.setVisible(state, false);
     }
 
+    /**
+     * Hides the group form and shows the groups table or the groups details
+     * depending of a group is selected or not.
+     *
+     * @param state The current {@link PageState}.
+     */
     protected void hideGroupForm(final PageState state) {
         //We want to show the groups table if no group is selected and the
         //group details if a group is selected.
@@ -153,6 +203,11 @@ public class GroupAdmin extends BoxPanel {
         groupAddMemberForm.setVisible(state, false);
     }
 
+    /**
+     * Shows the form for adding a member to a group. A group must be selected.
+     *
+     * @param state The current {@link PageState}.
+     */
     protected void showGroupMemberAddForm(final PageState state) {
         groupsTablePanel.setVisible(state, false);
         groupForm.setVisible(state, false);
@@ -160,6 +215,11 @@ public class GroupAdmin extends BoxPanel {
         groupAddMemberForm.setVisible(state, true);
     }
 
+    /**
+     * Hides the form for adding members to a group and shows the group details.
+     *
+     * @param state The current {@link PageState}.
+     */
     protected void hideGroupMemberAddForm(final PageState state) {
         groupsTablePanel.setVisible(state, false);
         groupForm.setVisible(state, false);

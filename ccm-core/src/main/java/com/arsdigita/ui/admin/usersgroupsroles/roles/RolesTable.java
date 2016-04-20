@@ -44,7 +44,8 @@ import java.util.List;
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
- *
+ * Filterable table showing all roles.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class RolesTable extends Table {

@@ -34,6 +34,15 @@ import org.libreccm.security.GroupRepository;
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
+ * Form used for creating new groups and editing the properties of existing
+ * groups.
+ *
+ * If a group is selected (the provided {@link ParameterSingleSelectionModel}
+ * has a none null value) the group identified by that ID is loaded and the
+ * values are put into the fields and the changes are written back to the group
+ * when the form is submitted.
+ *
+ * If no group is selected a new group is created when the form is submitted.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -47,7 +56,7 @@ class GroupForm extends Form {
     public GroupForm(
         final GroupAdmin groupAdmin,
         final ParameterSingleSelectionModel<String> selectedGroupId) {
-        
+
         super("groupform");
 
         final Label heading = new Label(e -> {

@@ -34,7 +34,8 @@ import com.arsdigita.globalization.GlobalizedMessage;
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
- *
+ * Table showing the primary email of an user.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class PrimaryEmailTable extends Table {

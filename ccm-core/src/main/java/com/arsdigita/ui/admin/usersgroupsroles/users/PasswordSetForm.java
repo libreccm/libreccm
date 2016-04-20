@@ -24,7 +24,6 @@ import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.ParameterSingleSelectionModel;
 import com.arsdigita.bebop.SaveCancelSection;
 import com.arsdigita.bebop.form.Password;
-import com.arsdigita.bebop.parameters.NotEmptyValidationListener;
 import com.arsdigita.globalization.GlobalizedMessage;
 
 import org.apache.logging.log4j.util.Strings;
@@ -36,7 +35,8 @@ import org.libreccm.security.UserRepository;
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
- *
+ * Form for setting the password of a user.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class PasswordSetForm extends Form {

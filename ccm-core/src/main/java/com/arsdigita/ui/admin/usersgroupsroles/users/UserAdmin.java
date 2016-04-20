@@ -18,55 +18,15 @@
  */
 package com.arsdigita.ui.admin.usersgroupsroles.users;
 
-import com.arsdigita.bebop.ActionLink;
 import com.arsdigita.bebop.BoxPanel;
-import com.arsdigita.bebop.Form;
-import com.arsdigita.bebop.FormData;
-import com.arsdigita.bebop.FormProcessException;
-import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.Page;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.ParameterSingleSelectionModel;
-import com.arsdigita.bebop.SaveCancelSection;
-import com.arsdigita.bebop.Text;
-import com.arsdigita.bebop.form.CheckboxGroup;
-import com.arsdigita.bebop.form.Option;
-import com.arsdigita.bebop.form.Password;
-import com.arsdigita.bebop.form.RadioGroup;
-import com.arsdigita.bebop.form.TextField;
-import com.arsdigita.bebop.parameters.NotEmptyValidationListener;
-import com.arsdigita.bebop.parameters.StringLengthValidationListener;
 import com.arsdigita.bebop.parameters.StringParameter;
-import com.arsdigita.globalization.GlobalizedMessage;
-import com.arsdigita.util.UncheckedWrapperException;
-
-import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.core.EmailAddress;
-import org.libreccm.security.ChallengeManager;
-import org.libreccm.security.Group;
-import org.libreccm.security.GroupManager;
-import org.libreccm.security.GroupRepository;
-import org.libreccm.security.Role;
-import org.libreccm.security.RoleManager;
-import org.libreccm.security.RoleRepository;
-import org.libreccm.security.User;
-import org.libreccm.security.UserManager;
-import org.libreccm.security.UserRepository;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.SortedSet;
-import java.util.TooManyListenersException;
-import java.util.TreeSet;
-import java.util.stream.IntStream;
-
-import javax.mail.MessagingException;
-
-import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
- *
+ * UI for managing users.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class UserAdmin extends BoxPanel {

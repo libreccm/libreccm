@@ -33,7 +33,8 @@ import org.libreccm.security.RoleRepository;
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
- *
+ * Shows the properties of a role including the members of the role.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class RoleDetails extends BoxPanel {

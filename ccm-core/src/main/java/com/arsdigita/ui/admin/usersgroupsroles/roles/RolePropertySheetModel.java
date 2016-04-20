@@ -29,7 +29,12 @@ import java.util.Iterator;
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
- *
+ * The model for the property sheet of a role. The {@link RoleProperty}
+ * enum contains all properties which are shown in the property sheet. The 
+ * {@link #nextRow()} method iterates over these properties and sets the 
+ * value {@link #currentProperty} field. The {@link #getValue()} method 
+ * returns the value for the {@code currentProperty}.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class RolePropertySheetModel implements PropertySheetModel {

@@ -27,7 +27,8 @@ import org.libreccm.security.User;
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
- *
+ * Model for the {@link PrimaryEmailTable}.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class PrimaryEmailTableModel implements TableModel {

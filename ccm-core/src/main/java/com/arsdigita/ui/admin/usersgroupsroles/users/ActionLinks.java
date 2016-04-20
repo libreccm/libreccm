@@ -36,20 +36,22 @@ import javax.mail.MessagingException;
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
+ * A panel contains several action links used in the {@link UserDetails}
+ * component.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class ActionLinks extends BoxPanel {
 
     private static final Logger LOGGER = LogManager.getLogger(ActionLinks.class);
-    
+
     public ActionLinks(final UserAdmin userAdmin,
                        final ParameterSingleSelectionModel<String> selectedUserId) {
 
         super(BoxPanel.HORIZONTAL);
 
         setIdAttr("userDetailsActionLinks");
-        
+
         final ActionLink editUserDetailsLink = new ActionLink(
             new GlobalizedMessage("ui.admin.user_details.edit", ADMIN_BUNDLE));
         editUserDetailsLink.addActionListener(e -> {

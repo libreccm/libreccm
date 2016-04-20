@@ -19,6 +19,7 @@
 package com.arsdigita.ui.admin.usersgroupsroles.groups;
 
 import com.arsdigita.bebop.ActionLink;
+import com.arsdigita.bebop.BoxPanel;
 import com.arsdigita.bebop.Component;
 import com.arsdigita.bebop.ControlLink;
 import com.arsdigita.bebop.Form;
@@ -51,7 +52,12 @@ import java.util.List;
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
- *
+ * Form for adding a new member to group. The form contains a form for searching
+ * members (uses the user name, the family name, the given name and the primary 
+ * email address). After a search term was send, a table with all matching users
+ * is displayed. The table also contains an action link for adding a user to the
+ * group which is currently selected..
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class GroupAddMemberForm extends Form {
@@ -72,16 +78,17 @@ class GroupAddMemberForm extends Form {
 
         super("groupAddMemberForm");
 
+        final BoxPanel links = new BoxPanel(BoxPanel.VERTICAL);
         final ActionLink backToGroup = new ActionLink(new GlobalizedMessage(
             "ui.admin.group_details.add_member.back", ADMIN_BUNDLE));
         backToGroup.addActionListener(e -> {
             groupAdmin.hideGroupMemberAddForm(e.getPageState());
         });
-        add(backToGroup);
+        links.add(backToGroup);
 
-        final Label header = new Label();
-        header.setClassAttr("heading");
-        header.addPrintListener(e -> {
+        final Label heading = new Label();
+        heading.setClassAttr("heading");
+        heading.addPrintListener(e -> {
             final PageState state = e.getPageState();
             final Label target = (Label) e.getTarget();
 
@@ -96,7 +103,9 @@ class GroupAddMemberForm extends Form {
                 new String[]{group.getName()}));
 
         });
-        add(header);
+        links.add(heading);
+        
+        add(links);
 
         memberName = new TextField(MEMBER_NAME);
         memberName.setLabel(new GlobalizedMessage(

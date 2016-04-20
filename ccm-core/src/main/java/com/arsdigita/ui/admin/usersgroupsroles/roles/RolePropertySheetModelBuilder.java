@@ -30,7 +30,8 @@ import org.libreccm.security.Role;
 import org.libreccm.security.RoleRepository;
 
 /**
- *
+ * Model builder for the {@link RolePropertySheetModel}.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class RolePropertySheetModelBuilder extends LockableImpl

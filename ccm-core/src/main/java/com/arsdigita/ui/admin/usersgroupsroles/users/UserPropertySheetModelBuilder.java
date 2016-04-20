@@ -29,7 +29,8 @@ import org.libreccm.security.User;
 import org.libreccm.security.UserRepository;
 
 /**
- *
+ * Model builder for the {@link UserPropertySheetModelBuilder}.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class UserPropertySheetModelBuilder

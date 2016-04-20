@@ -37,6 +37,8 @@ import org.libreccm.security.UserRepository;
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
+ * Form for editing the properties of a user. There separate forms for some
+ * properties like the password, the group memberships or the role memberships.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */

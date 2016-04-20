@@ -30,7 +30,8 @@ import com.arsdigita.globalization.GlobalizedMessage;
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
- *
+ * Panel containing the {@link UsersTable} and the filter form for the table.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class UsersTablePanel extends BoxPanel {

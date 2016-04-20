@@ -40,7 +40,14 @@ import java.util.ArrayList;
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
- *
+ * Root component of the administration UI for users, groups and roles.
+ * This class creates the menu on the left side and connects the menu with the
+ * specific UIs for users, groups and roles. 
+ * 
+ * @see UserAdmin
+ * @see GroupAdmin
+ * @see RoleAdmin
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class UsersGroupsRolesTab extends LayoutPanel {
@@ -62,15 +69,6 @@ public class UsersGroupsRolesTab extends LayoutPanel {
             setSection(selectedIndex, state);
         });
         sections.setClassAttr("navbar");
-
-//        final BoxPanel usersPanel = new BoxPanel();
-//        usersPanel.add(new Label("Users Panel"));
-
-//        final BoxPanel groupsPanel = new BoxPanel();
-//        groupsPanel.add(new Label("Groups Panel"));
-
-//        final BoxPanel rolesPanel = new BoxPanel();
-//        rolesPanel.add(new Label("Roles Panel"));
 
         final BoxPanel body = new BoxPanel();
         addSection(
@@ -96,6 +94,13 @@ public class UsersGroupsRolesTab extends LayoutPanel {
         setBody(body);
     }
     
+    /**
+     * Helper method for adding a section
+     * 
+     * @param label The label of the section.
+     * @param component The component which provides the section.
+     * @param panel The panel to which the component is added.
+     */
     private void addSection(final Label label,
                             final Component component,
                             final BoxPanel panel) {
@@ -105,17 +110,25 @@ public class UsersGroupsRolesTab extends LayoutPanel {
         panel.add(component);
         keys.add(label);
     }
-    
+
+    /**
+     * Register the components in the page
+     * 
+     * @param page The Admin UI page.
+     */
     @Override
     public void register(final Page page) {
         Assert.isUnlocked(this);
         
         components.forEach(c -> page.setVisibleDefault(c, false));
-        //page.setVisibleDefault(components.get(0), true);
-        
-        
     }
 
+    /**
+     * Sets the current section.
+     * 
+     * @param index The index of the section.
+     * @param state The page state.
+     */
     public void setSection(final int index, final PageState state) {
         sections.setSelectedKey(state, String.valueOf(index));
         for(int i = 0; i < components.size(); i++) {
@@ -132,6 +145,9 @@ public class UsersGroupsRolesTab extends LayoutPanel {
         }
     }
 
+    /**
+     * Model Builder for the section list.
+     */
     private class SectionsListModelBuilder extends LockableImpl
         implements ListModelBuilder {
 
@@ -142,12 +158,14 @@ public class UsersGroupsRolesTab extends LayoutPanel {
                 sections.setSelectedKey(state, String.valueOf(0));
             }
             
-            //sections.setSelectedKey(state, String.valueOf(0));
             return new SectionsListModel(state);
         }
 
     }
 
+    /**
+     * Model for the section list.
+     */
     private class SectionsListModel implements ListModel {
 
         private int index = -1;

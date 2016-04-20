@@ -32,7 +32,8 @@ import java.util.Set;
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
- *
+ * Model for the {@link GroupsRolesTable}. 
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class GroupsRolesTableModel implements TableModel {
