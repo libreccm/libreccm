@@ -47,7 +47,7 @@ import static com.arsdigita.ui.admin.AdminUiConstants.*;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class RolesTable extends Table {
+class RolesTable extends Table {
 
     private static final int COL_ROLE_NAME = 0;
     private static final int COL_DELETE = 1;

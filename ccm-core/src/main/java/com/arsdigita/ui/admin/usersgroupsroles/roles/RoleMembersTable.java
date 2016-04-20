@@ -52,7 +52,7 @@ import static com.arsdigita.ui.admin.AdminUiConstants.*;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class RoleMembersTable extends Table {
+class RoleMembersTable extends Table {
 
     private static final int COL_MEMBER_NAME = 0;
     private static final int COL_MEMBER_TYPE = 1;

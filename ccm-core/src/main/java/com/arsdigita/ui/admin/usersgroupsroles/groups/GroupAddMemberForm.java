@@ -54,7 +54,7 @@ import static com.arsdigita.ui.admin.AdminUiConstants.*;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class GroupAddMemberForm extends Form {
+class GroupAddMemberForm extends Form {
 
     private static final String MEMBER_NAME = "membername";
 

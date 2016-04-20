@@ -32,7 +32,7 @@ import static com.arsdigita.ui.admin.AdminUiConstants.*;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class UserPropertySheetModel implements PropertySheetModel {
+class UserPropertySheetModel implements PropertySheetModel {
 
     private static enum UserProperty {
         USER_NAME,

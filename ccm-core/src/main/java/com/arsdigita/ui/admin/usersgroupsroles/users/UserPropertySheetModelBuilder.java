@@ -32,7 +32,7 @@ import org.libreccm.security.UserRepository;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class UserPropertySheetModelBuilder
+class UserPropertySheetModelBuilder
     extends LockableImpl implements PropertySheetModelBuilder {
 
     private final ParameterSingleSelectionModel<String> selectedUserId;

@@ -33,20 +33,20 @@ import org.libreccm.security.UserRepository;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class UserGroupsRolesTableModelBuilder extends LockableImpl 
-    implements TableModelBuilder{
+class EmailTableModelBuilder extends LockableImpl
+    implements TableModelBuilder {
 
     private final ParameterSingleSelectionModel<String> selectedUserId;
-    
-    public UserGroupsRolesTableModelBuilder(
+
+    public EmailTableModelBuilder(
         final ParameterSingleSelectionModel<String> selectedUserId) {
         this.selectedUserId = selectedUserId;
     }
-    
+
     @Override
     public TableModel makeModel(final Table table, final PageState state) {
         final String userIdStr = selectedUserId.getSelectedKey(state);
-        final User selectedUser ;
+        final User selectedUser;
         if (userIdStr == null || userIdStr.isEmpty()) {
             selectedUser = null;
         } else {
@@ -55,9 +55,8 @@ public class UserGroupsRolesTableModelBuilder extends LockableImpl
             final long userId = Long.parseLong(userIdStr);
             selectedUser = userRepository.findById(userId);
         }
-        
-        return new UserGroupsRolesTableModel(selectedUser);
+
+        return new EmailTableModel(selectedUser);
     }
-    
-    
+
 }

@@ -49,7 +49,7 @@ import static com.arsdigita.ui.admin.AdminUiConstants.*;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class UsersTable extends Table {
+class UsersTable extends Table {
 
     private static final Logger LOGGER = LogManager.getLogger(UsersTable.class);
 

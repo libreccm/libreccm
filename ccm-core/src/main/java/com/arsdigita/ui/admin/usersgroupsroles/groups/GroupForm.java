@@ -37,7 +37,7 @@ import static com.arsdigita.ui.admin.AdminUiConstants.*;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class GroupForm extends Form {
+class GroupForm extends Form {
 
     private static final String GROUP_NAME = "groupname";
 

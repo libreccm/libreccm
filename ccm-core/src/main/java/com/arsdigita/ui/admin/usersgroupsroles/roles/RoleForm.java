@@ -37,7 +37,7 @@ import static com.arsdigita.ui.admin.AdminUiConstants.*;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class RoleForm extends Form {
+class RoleForm extends Form {
 
     private static final String ROLE_NAME = "rolename";
 

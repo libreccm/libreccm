@@ -50,7 +50,7 @@ import static com.arsdigita.ui.admin.AdminUiConstants.*;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class RolePermissionsTable extends Table {
+class RolePermissionsTable extends Table {
 
     private static final int COL_PRIVILEGE = 0;
     private static final int COL_ON_OBJECT = 1;

@@ -30,11 +30,12 @@ import static com.arsdigita.ui.admin.AdminUiConstants.*;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class UserDetails extends BoxPanel {
+class UserDetails extends BoxPanel {
 
     public UserDetails(
         final UserAdmin userAdmin,
-        final ParameterSingleSelectionModel<String> selectedUserId) {
+        final ParameterSingleSelectionModel<String> selectedUserId,
+        final ParameterSingleSelectionModel<String> selectedEmailAddress) {
 
         super(BoxPanel.VERTICAL);
 
@@ -52,6 +53,21 @@ public class UserDetails extends BoxPanel {
             new UserPropertySheetModelBuilder(selectedUserId));
         userProperties.setIdAttr("userProperties");
         add(userProperties);
+
+        add(new ActionLinks(userAdmin, selectedUserId));
+        add(new PrimaryEmailTable(userAdmin,
+                                  selectedUserId,
+                                  selectedEmailAddress));
+        add(new EmailTable(userAdmin, selectedUserId, selectedEmailAddress));
+        final ActionLink addEmailLink = new ActionLink(new GlobalizedMessage(
+            "ui.admin.user.email_addresses.add", ADMIN_BUNDLE));
+        addEmailLink.addActionListener(e -> {
+            userAdmin.showEmailForm(e.getPageState());
+        });
+        add(addEmailLink);
+
+        add(new GroupsRolesTable(userAdmin, selectedUserId));
+
     }
 
 }

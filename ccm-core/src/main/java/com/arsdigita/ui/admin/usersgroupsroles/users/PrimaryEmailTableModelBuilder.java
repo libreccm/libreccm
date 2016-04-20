@@ -33,12 +33,12 @@ import org.libreccm.security.UserRepository;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class UserPrimaryEmailTableModelBuilder extends LockableImpl
+class PrimaryEmailTableModelBuilder extends LockableImpl
     implements TableModelBuilder {
 
     private final ParameterSingleSelectionModel<String> selectedUserId;
 
-    public UserPrimaryEmailTableModelBuilder(
+    public PrimaryEmailTableModelBuilder(
         final ParameterSingleSelectionModel<String> selectedUserId) {
         this.selectedUserId = selectedUserId;
     }
@@ -56,7 +56,7 @@ public class UserPrimaryEmailTableModelBuilder extends LockableImpl
             selectedUser = userRepository.findById(userId);
         }
         
-        return new UserPrimaryEmailTableModel(selectedUser);
+        return new PrimaryEmailTableModel(selectedUser);
     }
 
 }

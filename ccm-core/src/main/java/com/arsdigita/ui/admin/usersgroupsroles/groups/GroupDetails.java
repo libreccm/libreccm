@@ -36,7 +36,7 @@ import static com.arsdigita.ui.admin.AdminUiConstants.*;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class GroupDetails extends BoxPanel {
+class GroupDetails extends BoxPanel {
 
     public GroupDetails(
         final GroupAdmin groupAdmin,

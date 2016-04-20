@@ -33,7 +33,7 @@ import static com.arsdigita.ui.admin.AdminUiConstants.*;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class UserEmailTableModel implements TableModel {
+class EmailTableModel implements TableModel {
 
     protected static final int COL_ADDRESS = 0;
     protected static final int COL_VERIFIED = 1;
@@ -45,7 +45,7 @@ public class UserEmailTableModel implements TableModel {
     private int index = -1;
     private boolean finished;
 
-    public UserEmailTableModel(final User user) {
+    public EmailTableModel(final User user) {
         this.emailAddresses = user.getEmailAddresses();
     }
 

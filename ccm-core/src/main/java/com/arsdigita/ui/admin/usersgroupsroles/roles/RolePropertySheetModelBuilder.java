@@ -33,7 +33,7 @@ import org.libreccm.security.RoleRepository;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class RolePropertySheetModelBuilder extends LockableImpl
+class RolePropertySheetModelBuilder extends LockableImpl
     implements PropertySheetModelBuilder {
 
     private final ParameterSingleSelectionModel<String> selectedRoleId;

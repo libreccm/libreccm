@@ -35,7 +35,7 @@ import static com.arsdigita.ui.admin.AdminUiConstants.*;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class UserGroupsRolesTableModel implements TableModel {
+class GroupsRolesTableModel implements TableModel {
 
     protected static final int COL_LABEL = 0;
     protected static final int COL_VALUE = 1;
@@ -49,7 +49,7 @@ public class UserGroupsRolesTableModel implements TableModel {
 
     private final User user;
 
-    public UserGroupsRolesTableModel(final User user) {
+    public GroupsRolesTableModel(final User user) {
         this.user = user;
     }
 

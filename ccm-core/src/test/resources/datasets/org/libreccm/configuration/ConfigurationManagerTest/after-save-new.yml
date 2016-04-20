@@ -40,7 +40,7 @@ ccm_core.ccm_objects:
       uuid: 9383ffe3-132e-484d-940c-dc9b9da5c6ef
     - object_id: 2
       display_name: example
-      uuid: 19b3cdac-3ca4-44c0-9b06-dca8e5ae505f
+      uuid: 74528919-5a63-4433-8e7a-4c719d30b7da
     - object_id: 3
       display_name: TestConfiguration
       uuid: ce6a424e-03e0-4297-9b2b-2bb7c42a43d3
