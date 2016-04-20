@@ -305,7 +305,7 @@ public abstract class AbstractEntityRepository<K, E> {
         if (entity == null) {
             throw new IllegalArgumentException("Can't delete a null entity.");
         }
-        
+
         //We need to make sure we use a none detached entity, therefore the merge
         entityManager.remove(entityManager.merge(entity));
     }

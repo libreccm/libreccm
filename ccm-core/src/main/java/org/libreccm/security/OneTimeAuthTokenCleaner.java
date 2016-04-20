@@ -28,10 +28,7 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import javax.ejb.DependsOn;
 import javax.ejb.Singleton;
-import javax.ejb.Startup;
-import javax.ejb.Stateless;
 import javax.ejb.Timeout;
 import javax.ejb.TimerConfig;
 import javax.ejb.TimerService;
@@ -66,6 +63,9 @@ public class OneTimeAuthTokenCleaner {
 
     @Inject
     private OneTimeAuthManager oneTimeAuthManager;
+    
+    @Inject
+    private UserRepository userRepository;
 
     @PostConstruct
     public void init() {
@@ -79,8 +79,8 @@ public class OneTimeAuthTokenCleaner {
         LOGGER.debug("Creating interval for {} s.", interval / 1000);
 //        LOGGER.debug("First run cleaning process will be executed in {} s.",
 //                     interval / 1000);
-        timerService.createIntervalTimer(interval, 
-                                         interval, 
+        timerService.createIntervalTimer(interval,
+                                         interval,
                                          new TimerConfig());
     }
 
@@ -99,25 +99,30 @@ public class OneTimeAuthTokenCleaner {
             tokens.forEach(t -> {
                 if (oneTimeAuthManager.isValid(t)) {
                     LOGGER.debug("OneTimeAuthToken with id {} is still valid. "
-                        + "Expires at {}.",
+                                     + "Expires at {}.",
                                  t.getTokenId(),
                                  t.getValidUntil());
                 } else {
                     LOGGER.debug("OneTimeAuthToken with id {} is invalid. "
-                        + "Expires at {} UTC.",
+                                     + "Expires at {} UTC.",
                                  t.getTokenId(),
                                  t.getValidUntil());
                 }
             });
         }
-        
+
         tokens.stream()
             .filter((token) -> (!oneTimeAuthManager.isValid(token)))
             .forEach((token) -> {
                 LOGGER.debug("Token with id {} expired at {} UTC. "
-                    + "Invalidating token.",
+                                 + "Invalidating token.",
                              token.getTokenId(), token.getValidUntil());
                 oneTimeAuthManager.invalidate(token);
+                if (token.getPurpose()
+                    == OneTimeAuthTokenPurpose.ACCOUNT_ACTIVATION) {
+                    final User user = token.getUser();
+                    userRepository.delete(user);
+                }
             });
     }
 

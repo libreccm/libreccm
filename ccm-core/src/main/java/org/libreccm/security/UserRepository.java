@@ -25,6 +25,7 @@ import java.util.List;
 import javax.enterprise.context.RequestScoped;
 import javax.persistence.EntityGraph;
 import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
 
 /**
  * Repository for user objects.
@@ -159,4 +160,21 @@ public class UserRepository extends AbstractEntityRepository<Long, User> {
         return query.getResultList();
     }
 
+    @Override
+    @Transactional
+    public void delete(final User entity) {
+        final User delete = getEntityManager().find(User.class,
+                                                    entity.getPartyId());
+        
+        delete.getGroupMemberships().forEach(m -> {
+            getEntityManager().remove(m);
+        });
+        
+        delete.getRoleMemberships().forEach(m -> {
+            getEntityManager().remove(m);
+        });
+        
+        getEntityManager().remove(delete);
+    }
+    
 }

@@ -36,9 +36,11 @@ import com.arsdigita.kernel.security.SecurityConfig;
 import com.arsdigita.web.RedirectSignal;
 import com.arsdigita.web.URL;
 
+import org.apache.logging.log4j.util.Strings;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.security.ChallengeManager;
+import org.libreccm.security.RegistrationManager;
 import org.libreccm.security.Shiro;
 import org.libreccm.security.User;
 import org.libreccm.security.UserManager;
@@ -82,17 +84,6 @@ public class UserNewForm extends Form {
         addListeners();
     }
 
-//    public UserNewForm(String name) {
-//        super(name);
-//        addWidgets();
-//        addListeners();
-//    }
-//
-//    public UserNewForm(final String name, final Container container) {
-//        super(name, container);
-//        addWidgets();
-//        addListeners();
-//    }
     private void addWidgets() {
         formPanel = new BoxPanel(BoxPanel.VERTICAL);
 
@@ -103,8 +94,6 @@ public class UserNewForm extends Form {
             "login.form.new_user.username.hint", LOGIN_BUNDLE));
         userName.setMaxLength(32);
         userName.setSize(32);
-        userName.addValidationListener(new NotEmptyValidationListener());
-        userName.addValidationListener(new StringLengthValidationListener(32));
         formPanel.add(userName);
 
         givenName = new TextField(GIVEN_NAME);
@@ -114,8 +103,6 @@ public class UserNewForm extends Form {
             "login.form.new_user.givenname.hint", LOGIN_BUNDLE));
         givenName.setMaxLength(256);
         givenName.setSize(32);
-        givenName.addValidationListener(new NotEmptyValidationListener());
-        givenName.addValidationListener(new StringLengthValidationListener(256));
         formPanel.add(givenName);
 
         familyName = new TextField(FAMILY_NAME);
@@ -125,9 +112,6 @@ public class UserNewForm extends Form {
             "login.form.new_user.familyname.hint", LOGIN_BUNDLE));
         familyName.setMaxLength(256);
         familyName.setSize(32);
-        familyName.addValidationListener(new NotEmptyValidationListener());
-        familyName.addValidationListener(
-            new StringLengthValidationListener(256));
         formPanel.add(familyName);
 
         email = new TextField(EMAIL);
@@ -137,8 +121,6 @@ public class UserNewForm extends Form {
                                             LOGIN_BUNDLE));
         email.setMaxLength(256);
         email.setSize(48);
-        email.addValidationListener(new NotEmptyValidationListener());
-        email.addValidationListener(new StringLengthValidationListener(256));
         formPanel.add(email);
 
         password = new Password(PASSWORD);
@@ -148,7 +130,6 @@ public class UserNewForm extends Form {
             "login.form.new_user.password.hint", LOGIN_BUNDLE));
         password.setMaxLength(256);
         password.setSize(32);
-        password.addValidationListener(new NotEmptyValidationListener());
         formPanel.add(password);
 
         passwordConfirm = new Password(PASSWORD_CONFIRMATION);
@@ -158,7 +139,6 @@ public class UserNewForm extends Form {
             "login.form.new_user.password_confirmation.hint", LOGIN_BUNDLE));
         passwordConfirm.setMaxLength(256);
         passwordConfirm.setSize(32);
-        passwordConfirm.addValidationListener(new NotEmptyValidationListener());
         formPanel.add(passwordConfirm);
 
         saveCancelSection = new SaveCancelSection();
@@ -210,34 +190,129 @@ public class UserNewForm extends Form {
                     return;
                 }
 
+                final String userNameData = data.getString(USERNAME);
+                final String givenNameData = data.getString(GIVEN_NAME);
+                final String familyNameData = data.getString(FAMILY_NAME);
+                final String emailData = data.getString(EMAIL);
+                final String passwordData = data.getString(PASSWORD);
+                final String passwordConfirmationData = data.getString(
+                    PASSWORD_CONFIRMATION);
+
+                if (Strings.isBlank(userNameData)) {
+                    data.addError(
+                        USERNAME,
+                        new GlobalizedMessage(
+                            "login.form.new_user.error.username.is_blank",
+                            LOGIN_BUNDLE));
+                    return;
+                }
+                if (userNameData != null && userNameData.length() > 32) {
+                    data.addError(
+                        USERNAME,
+                        new GlobalizedMessage(
+                            "login.form.new_user.error.username.too_long",
+                            LOGIN_BUNDLE));
+                    return;
+                }
+
+                if (Strings.isBlank(givenNameData)) {
+                    data.addError(
+                        GIVEN_NAME,
+                        new GlobalizedMessage(
+                            "login.form.new_user.error.givenname.is_blank",
+                            LOGIN_BUNDLE));
+                    return;
+                }
+                if (givenNameData != null && givenNameData.length() > 256) {
+                    data.addError(
+                        GIVEN_NAME,
+                        new GlobalizedMessage(
+                            "login.form.new_user.error.givename.too_long",
+                            LOGIN_BUNDLE));
+                    return;
+                }
+
+                if (Strings.isBlank(familyNameData)) {
+                    data.addError(
+                        FAMILY_NAME,
+                        new GlobalizedMessage(
+                            "login.form.new_user.error.familyname.is_blank",
+                            LOGIN_BUNDLE));
+                    return;
+                }
+                if (familyNameData != null && familyNameData.length() > 256) {
+                    data.addError(
+                        FAMILY_NAME,
+                        new GlobalizedMessage(
+                            "login.form.new_user.error.familyname.too_long",
+                            LOGIN_BUNDLE));
+                    return;
+                }
+
+                if (Strings.isBlank(emailData)) {
+                    data.addError(
+                        EMAIL,
+                        new GlobalizedMessage(
+                            "login.form.new_user.error.email.is_blank",
+                            LOGIN_BUNDLE));
+                    return;
+                }
+                if (emailData != null && emailData.length() > 256) {
+                    data.addError(
+                        EMAIL,
+                        new GlobalizedMessage(
+                            "login.form.new_user.error.email.too_long",
+                            LOGIN_BUNDLE));
+                    return;
+                }
+
+                if (Strings.isBlank(passwordData)) {
+                    data.addError(
+                        PASSWORD,
+                        new GlobalizedMessage(
+                            "login.form.new_user.error.password.is_blank",
+                            LOGIN_BUNDLE));
+                    return;
+                }
+
+                if (Strings.isBlank(passwordConfirmationData)) {
+                    data.addError(
+                        PASSWORD_CONFIRMATION,
+                        new GlobalizedMessage(
+                            "login.form.new_user.error.password.is_blank",
+                            LOGIN_BUNDLE));
+                    return;
+                }
+
                 final UserRepository userRepository = cdiUtil.findBean(
                     UserRepository.class);
                 //check if there is already an account for the provided email
-                if (userRepository.findByEmailAddress((String) data.get(
-                    EMAIL)) != null) {
-                    data.addError(new GlobalizedMessage(
-                        "login.form.new_user.error.email_already_registered",
-                        LOGIN_BUNDLE));
+                if (userRepository.findByEmailAddress(emailData) != null) {
+                    data.addError(
+                        EMAIL,
+                        new GlobalizedMessage(
+                            "login.form.new_user.error.email_already_registered",
+                            LOGIN_BUNDLE));
                     return;
                 }
 
                 //check if username is already in use
-                if (userRepository.findByName((String) data.get(USERNAME))
-                        != null) {
-                    data.addError(new GlobalizedMessage(
-                        "login.form.new_user.error.username_already_in_use",
-                        LOGIN_BUNDLE));
+                if (userRepository.findByName(userNameData) != null) {
+                    data.addError(
+                        USERNAME,
+                        new GlobalizedMessage(
+                            "login.form.new_user.error.username_already_in_use",
+                            LOGIN_BUNDLE));
+                    return;
                 }
 
                 //Check if password and confirmation match
-                final String passwordData = (String) data.get(PASSWORD);
-                final String confirmation = (String) data.get(
-                    PASSWORD_CONFIRMATION);
-
-                if (!passwordData.equals(confirmation)) {
-                    data.addError(new GlobalizedMessage(
-                        "login.form.new_user.error.passwords_do_not_match",
-                        LOGIN_BUNDLE));
+                if (!passwordData.equals(passwordConfirmationData)) {
+                    data.addError(
+                        PASSWORD,
+                        new GlobalizedMessage(
+                            "login.form.new_user.error.passwords_do_not_match",
+                            LOGIN_BUNDLE));
                 }
             }
         });
@@ -252,31 +327,48 @@ public class UserNewForm extends Form {
 
                 final Shiro shiro = cdiUtil.findBean(Shiro.class);
                 shiro.getSystemUser().execute(() -> {
-                    final UserRepository userRepository = cdiUtil.findBean(
-                        UserRepository.class);
-                    final UserManager userManager = cdiUtil.findBean(
-                        UserManager.class);
+//                    final UserRepository userRepository = cdiUtil.findBean(
+//                        UserRepository.class);
+//                    final UserManager userManager = cdiUtil.findBean(
+//                        UserManager.class);
+//
+//                    final String givenNameData = (String) data.get(
+//                        GIVEN_NAME);
+//                    final String familyNameData = (String) data
+//                        .get(FAMILY_NAME);
+//                    final String username = (String) data.get(USERNAME);
+//                    final String emailAddress = (String) data.get(EMAIL);
+//                    final String passwordData = (String) data.get(PASSWORD);
+//                    final User user = userManager.createUser(givenNameData,
+//                                                             familyNameData,
+//                                                             username,
+//                                                             emailAddress,
+//                                                             passwordData);
+//                    user.setBanned(true);
+//                    userRepository.save(user);
+//
+//                    //challenge erzeugen
+//                    final ChallengeManager challengeManager = cdiUtil
+//                        .findBean(ChallengeManager.class);
+//                    try {
+//                        challengeManager.sendAccountActivation(user);
+//                    } catch (MessagingException ex) {
+//                        throw new FormProcessException(
+//                            "Failed to send account activation challenge.",
+//                            new GlobalizedMessage(
+//                                "login.form_new_user.error.creating_challenge_failed",
+//                                LOGIN_BUNDLE), ex);
+//                    }
 
-                    final String givenNameData = (String) data.get(
-                        GIVEN_NAME);
-                    final String familyNameData = (String) data
-                        .get(FAMILY_NAME);
-                    final String username = (String) data.get(USERNAME);
-                    final String emailAddress = (String) data.get(EMAIL);
-                    final String passwordData = (String) data.get(PASSWORD);
-                    final User user = userManager.createUser(givenNameData,
-                                                             familyNameData,
-                                                             username,
-                                                             emailAddress,
-                                                             passwordData);
-                    user.setBanned(true);
-                    userRepository.save(user);
-
-                    //challenge erzeugen
-                    final ChallengeManager challengeManager = cdiUtil
-                        .findBean(ChallengeManager.class);
+                    final RegistrationManager registrationManager = cdiUtil
+                        .findBean(RegistrationManager.class);
                     try {
-                        challengeManager.sendAccountActivation(user);
+                        registrationManager.registerUser(
+                            data.getString(USERNAME),
+                            data.getString(FAMILY_NAME),
+                            data.getString(GIVEN_NAME),
+                            data.getString(EMAIL),
+                            data.getString(PASSWORD));
                     } catch (MessagingException ex) {
                         throw new FormProcessException(
                             "Failed to send account activation challenge.",

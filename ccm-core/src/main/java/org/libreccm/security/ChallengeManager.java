@@ -41,7 +41,6 @@ import java.util.Objects;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.mail.MessagingException;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import static com.arsdigita.ui.login.LoginServlet.*;
@@ -102,6 +101,13 @@ public class ChallengeManager {
     @Inject
     private HttpServletRequest request;
 
+    /**
+     * Creates a email verification challenge.
+     *
+     * @param user The user for which the challenge is created.
+     *
+     * @return The text of the challenge mail.
+     */
     public String createEmailVerification(final User user) {
         if (user == null) {
             throw new IllegalArgumentException(
@@ -110,6 +116,15 @@ public class ChallengeManager {
         return createMail(user, OneTimeAuthTokenPurpose.EMAIL_VERIFICATION);
     }
 
+    /**
+     * Creates a email verification challenge and sends it to the user per email
+     * using the users primary email address.
+     *
+     * @param user The user to which the challenge is send.
+     *
+     * @throws MessagingException If there is a problem sending the email to the
+     *                            user.
+     */
     public void sendEmailVerification(final User user)
         throws MessagingException {
         final String text = createEmailVerification(user);
@@ -119,6 +134,17 @@ public class ChallengeManager {
             text);
     }
 
+    /**
+     * Finishes a email verification challenge. Checks if the submitted token
+     * matches the token stored in the database and removes the challenge from
+     * the database.
+     *
+     * @param user           The user which submitted the request.
+     * @param submittedToken The token submitted by the user.
+     *
+     * @throws ChallengeFailedException If the provided token does not match the
+     *                                  stored token.
+     */
     public void finishEmailVerification(final User user,
                                         final String submittedToken)
         throws ChallengeFailedException {
@@ -138,6 +164,14 @@ public class ChallengeManager {
         }
     }
 
+    /**
+     * Creates an account activation challenge. This is used for example when a
+     * new users is registered using the login application.
+     *
+     * @param user The user for which the challenge is created.
+     *
+     * @return The challenge message.
+     */
     public String createAccountActivation(final User user) {
         if (user == null) {
             throw new IllegalArgumentException(
@@ -146,6 +180,14 @@ public class ChallengeManager {
         return createMail(user, OneTimeAuthTokenPurpose.ACCOUNT_ACTIVATION);
     }
 
+    /**
+     * Creates a account activation challenge and sends it to the user by email.
+     *
+     * @param user The user to which the challenge is send.
+     *
+     * @throws MessagingException If something goes wrong when sending the
+     *                            message.
+     */
     public void sendAccountActivation(final User user)
         throws MessagingException {
         final String text = createAccountActivation(user);
@@ -155,6 +197,17 @@ public class ChallengeManager {
             text);
     }
 
+    /**
+     * Finishes an account activation challenge. If the submitted token matches
+     * the stored token the {@code banned} status for the user is set to
+     * {@link false}.
+     *
+     * @param user           The user which submitted the request.
+     * @param submittedToken The submitted token.
+     *
+     * @throws ChallengeFailedException If the submitted token does not match
+     *                                  the stored token.
+     */
     public void finishAccountActivation(final User user,
                                         final String submittedToken)
         throws ChallengeFailedException {
@@ -173,6 +226,13 @@ public class ChallengeManager {
         }
     }
 
+    /**
+     * Creates a password recover challenge for a user.
+     *
+     * @param user The user for which the password recover challenge is created.
+     *
+     * @return The challenge message.
+     */
     public String createPasswordRecover(final User user) {
         if (user == null) {
             throw new IllegalArgumentException(
@@ -181,6 +241,15 @@ public class ChallengeManager {
         return createMail(user, OneTimeAuthTokenPurpose.RECOVER_PASSWORD);
     }
 
+    /**
+     * Creates a password recover challenge for the provided author and sends it
+     * the user via email.
+     *
+     * @param user The user for which the challenge is created.
+     *
+     * @throws MessagingException If something goes wrong when sending the
+     *                            message.
+     */
     public void sendPasswordRecover(final User user)
         throws MessagingException {
         final String text = createPasswordRecover(user);
@@ -190,6 +259,18 @@ public class ChallengeManager {
             text);
     }
 
+    /**
+     * Finishes a password recover challenge. If the submitted token matches to
+     * stored token the password of the user is set to the provided new
+     * password.
+     *
+     * @param user           The user which submitted the request.
+     * @param submittedToken The submitted token.
+     * @param newPassword    The new password.
+     *
+     * @throws ChallengeFailedException If the submitted token does not match
+     *                                  the stored token.
+     */
     public void finishPasswordRecover(final User user,
                                       final String submittedToken,
                                       final String newPassword)
@@ -211,6 +292,15 @@ public class ChallengeManager {
         }
     }
 
+    /**
+     * A helper method for creating the emails send the the {@code send*}
+     * methods.
+     *
+     * @param user    The user to which the mail is send.
+     * @param purpose The purpose of the challenge.
+     *
+     * @return The text of the mail.
+     */
     private String createMail(final User user,
                               final OneTimeAuthTokenPurpose purpose) {
         final OneTimeAuthToken token = oneTimeAuthManager.createForUser(
@@ -254,6 +344,14 @@ public class ChallengeManager {
         return substitutor.replace(template);
     }
 
+    /**
+     * Helper method for retrieving the email subject from the
+     * {@link EmailTemplates} configuration.
+     *
+     * @param purpose The purpose of the challenge.
+     *
+     * @return The subject for the challenge mail for the provided purpose.
+     */
     private String retrieveEmailSubject(final OneTimeAuthTokenPurpose purpose) {
         LOGGER.debug("Retreving email subject...");
         final Locale locale = globalizationHelper.getNegotiatedLocale();
@@ -290,6 +388,13 @@ public class ChallengeManager {
         }
     }
 
+    /**
+     * Helper method for retrieving the email template.
+     *
+     * @param purpose The purpose of the challenge.
+     *
+     * @return The template for the challenge message for the provided purpose.
+     */
     private String retrieveEmailTemplate(
         final OneTimeAuthTokenPurpose purpose) {
 
@@ -326,6 +431,19 @@ public class ChallengeManager {
         }
     }
 
+    /**
+     * Helper method for validating a submitted token and deleting the
+     * {@link OneTimeAuthToken} for the challenge.
+     *
+     * @param user           The user which submitted the challenge.
+     * @param submittedToken The token submitted by the user.
+     * @param purpose        The purpose of the challenge.
+     *
+     * @return {@code true} If the provided token matches the stored token,
+     *         {@code false} if not.
+     *
+     * @throws ChallengeFailedException
+     */
     private boolean finishChallenge(final User user,
                                     final String submittedToken,
                                     final OneTimeAuthTokenPurpose purpose)
@@ -361,6 +479,15 @@ public class ChallengeManager {
         return false;
     }
 
+    /**
+     * Helper method for sending emails.
+     * 
+     * @param user The user to which the mail is send.
+     * @param subject The subject of the mail.
+     * @param text The text (body) of the mail.
+     * 
+     * @throws MessagingException If something goes wrong when sending the mail.
+     */
     private void sendMessage(final User user,
                              final String subject,
                              final String text) throws MessagingException {
