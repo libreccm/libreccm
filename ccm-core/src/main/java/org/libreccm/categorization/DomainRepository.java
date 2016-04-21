@@ -21,6 +21,7 @@ package org.libreccm.categorization;
 import org.libreccm.core.AbstractEntityRepository;
 
 import java.net.URI;
+import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -88,6 +89,14 @@ public class DomainRepository extends AbstractEntityRepository<Long, Domain> {
         query.setParameter("uri", uri);
 
         return query.getSingleResult();
+    }
+    
+    public List<Domain> search(final String term) {
+        final TypedQuery<Domain> query = entityManager.createNamedQuery(
+                "Domain.search", Domain.class);
+        query.setParameter("term", term);
+        
+        return query.getResultList();
     }
 
 }

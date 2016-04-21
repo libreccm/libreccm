@@ -76,20 +76,26 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Domain.findByKey",
                 query = "SELECT d FROM Domain d WHERE d.domainKey = :key"),
     @NamedQuery(name = "Domain.findByUri",
-                query = "SELECT d FROM Domain d WHERE d.uri = :uri")
+                query = "SELECT d FROM Domain d WHERE d.uri = :uri"),
+    @NamedQuery(
+            name = "Domain.search",
+            query
+            = "SELECT d FROM Domain d "
+                      + "WHERE d.domainKey LIKE CONCAT (LOWER(:term), '%') "
+                      + "OR d.uri LIKE CONCAT (LOWER(:term), '%')")
 })
 @NamedEntityGraphs({
     @NamedEntityGraph(
-        name = "Domain.allCategories",
-        attributeNodes = {
-            @NamedAttributeNode(value = "root",
-                                subgraph = "subCategories")},
-        subgraphs = {
-            @NamedSubgraph(
-                name = "subCategories",
-                attributeNodes = {
-                    @NamedAttributeNode("subCategories")
-                })})
+            name = "Domain.allCategories",
+            attributeNodes = {
+                @NamedAttributeNode(value = "root",
+                                    subgraph = "subCategories")},
+            subgraphs = {
+                @NamedSubgraph(
+                        name = "subCategories",
+                        attributeNodes = {
+                            @NamedAttributeNode("subCategories")
+                        })})
 })
 @DefaultEntityGraph("Domain.allCategories")
 @XmlRootElement(name = "domain", namespace = CAT_XML_NS)
@@ -131,11 +137,11 @@ public class Domain extends CcmObject implements Serializable {
      */
     @Embedded
     @AssociationOverride(
-        name = "values",
-        joinTable = @JoinTable(name = "DOMAIN_TITLES",
-                               schema = DB_SCHEMA,
-                               joinColumns = {
-                                   @JoinColumn(name = "OBJECT_ID")}))
+            name = "values",
+            joinTable = @JoinTable(name = "DOMAIN_TITLES",
+                                   schema = DB_SCHEMA,
+                                   joinColumns = {
+                                       @JoinColumn(name = "OBJECT_ID")}))
     @XmlElement(name = "title", namespace = CAT_XML_NS)
     private LocalizedString title;
 
@@ -144,11 +150,11 @@ public class Domain extends CcmObject implements Serializable {
      */
     @Embedded
     @AssociationOverride(
-        name = "values",
-        joinTable = @JoinTable(name = "DOMAIN_DESCRIPTIONS",
-                               schema = DB_SCHEMA,
-                               joinColumns = {
-                                   @JoinColumn(name = "OBJECT_ID")}))
+            name = "values",
+            joinTable = @JoinTable(name = "DOMAIN_DESCRIPTIONS",
+                                   schema = DB_SCHEMA,
+                                   joinColumns = {
+                                       @JoinColumn(name = "OBJECT_ID")}))
     @XmlElement(name = "description", namespace = CAT_XML_NS)
     private LocalizedString description;
 
@@ -363,19 +369,19 @@ public class Domain extends CcmObject implements Serializable {
     @Override
     public String toString(final String data) {
         return String.format(
-            ", domainKey = \"%s\", "
-                + "uri = \"%s\", "
-                + "title = \"%s\", "
-                + "version = \"%s\", "
-                + "released = %tF %<tT, "
-                + "root = \"%s\"%s",
-            domainKey,
-            Objects.toString(uri),
-            Objects.toString(title),
-            version,
-            released,
-            Objects.toString(root),
-            data
+                ", domainKey = \"%s\", "
+                        + "uri = \"%s\", "
+                        + "title = \"%s\", "
+                        + "version = \"%s\", "
+                        + "released = %tF %<tT, "
+                        + "root = \"%s\"%s",
+                domainKey,
+                Objects.toString(uri),
+                Objects.toString(title),
+                version,
+                released,
+                Objects.toString(root),
+                data
         );
     }
 

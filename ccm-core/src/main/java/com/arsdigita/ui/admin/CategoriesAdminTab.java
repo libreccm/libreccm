@@ -25,6 +25,7 @@ import com.arsdigita.toolbox.ui.LayoutPanel;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
+@Deprecated
 public class CategoriesAdminTab extends LayoutPanel {
 
     public CategoriesAdminTab() {
