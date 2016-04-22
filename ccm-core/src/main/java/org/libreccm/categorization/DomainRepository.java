@@ -19,9 +19,11 @@
 package org.libreccm.categorization;
 
 import org.libreccm.core.AbstractEntityRepository;
+import org.libreccm.core.DefaultEntityGraph;
 
 import java.net.URI;
 import java.util.List;
+import java.util.UUID;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -51,6 +53,39 @@ public class DomainRepository extends AbstractEntityRepository<Long, Domain> {
         return entity.getObjectId() == 0;
     }
 
+    @Override
+    public void initNewEntity(final Domain domain) {
+        domain.setUuid(UUID.randomUUID().toString());
+    }
+
+    @Override
+    public List<Domain> findAll() {
+        if (getEntityClass().isAnnotationPresent(DefaultEntityGraph.class)) {
+            return findAll(getEntityClass().getAnnotation(
+                DefaultEntityGraph.class).value());
+        } else {
+            final TypedQuery<Domain> query = getEntityManager()
+                .createNamedQuery("Domain.findAll", Domain.class);
+            return query.getResultList();
+        }
+    }
+
+    @Override
+    public List<Domain> findAll(final String entityGraphName) {
+        @SuppressWarnings("unchecked")
+        final EntityGraph<Domain> entityGraph = (EntityGraph<Domain>) entityManager.
+            getEntityGraph(entityGraphName);
+        return findAll(entityGraph);
+    }
+
+    @Override
+    public List<Domain> findAll(final EntityGraph<Domain> entityGraph) {
+        final TypedQuery<Domain> query = getEntityManager()
+                .createNamedQuery("Domain.findAll", Domain.class);
+        query.setHint(FETCH_GRAPH_HINT_KEY, entityGraph);
+        return query.getResultList();
+    }
+
     /**
      * Find the {@link Domain} identified by the provided {@code domainKey}.
      *
@@ -63,7 +98,7 @@ public class DomainRepository extends AbstractEntityRepository<Long, Domain> {
         final TypedQuery<Domain> query = entityManager.createNamedQuery(
             "Domain.findByKey", Domain.class);
         query.setParameter("key", domainKey);
-        
+
         final EntityGraph<?> graph = entityManager.getEntityGraph(
             "Domain.allCategories");
         query.setHint("javax.persistence.fetchgraph", graph);
@@ -90,12 +125,15 @@ public class DomainRepository extends AbstractEntityRepository<Long, Domain> {
 
         return query.getSingleResult();
     }
-    
+
     public List<Domain> search(final String term) {
         final TypedQuery<Domain> query = entityManager.createNamedQuery(
-                "Domain.search", Domain.class);
+            "Domain.search", Domain.class);
         query.setParameter("term", term);
-        
+        final EntityGraph<?> graph = entityManager.getEntityGraph(
+            "Domain.withOwners");
+        query.setHint("javax.persistence.fetchgraph", graph);
+
         return query.getResultList();
     }
 

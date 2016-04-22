@@ -182,7 +182,7 @@ public class DomainsTable extends Table {
             final DomainRepository domainRepository = cdiUtil.findBean(
                     DomainRepository.class);
             if (Strings.isBlank(filterTerm)) {
-                domains = domainRepository.findAll();
+                domains = domainRepository.findAll("Domain.withOwners");
                 LOGGER.debug("Found {} domains in the database.",
                              domains.size());
             } else {

@@ -40,7 +40,7 @@ public class DomainManager {
 
     @Inject
     private DomainRepository domainRepo;
-    
+
     @Inject
     private CategoryRepository categoryRepo;
 
@@ -52,26 +52,27 @@ public class DomainManager {
      * with the provided name. The domain and the root category can be further
      * customised after the creation.
      *
-     * @param domainKey The key (name) of the new domain.
+     * @param domainKey        The key (name) of the new domain.
      * @param rootCategoryName The name of the root category of the new domain.
+     *
      * @return The new domain.
      */
     public Domain createDomain(final String domainKey,
-                                  final String rootCategoryName) {
+                               final String rootCategoryName) {
         final Domain domain = new Domain();
         domain.setDomainKey(domainKey);
         domain.setVersion("1.0");
         domain.setDisplayName(domainKey);
-       
+
         final Category root = new Category();
         root.setName(rootCategoryName);
         root.setDisplayName(rootCategoryName);
-        
+
         domain.setRoot(root);
-        
+
         categoryRepo.save(root);
         domainRepo.save(domain);
-        
+
         return domain;
     }
 
@@ -81,9 +82,9 @@ public class DomainManager {
      * {@code Domain} the method does nothing.
      *
      * @param application The {@code CcmApplication} to add to the owners of the
-     * {@code Domain}.
-     * @param domain The {@code Domain} to which owners the
-     * {@code CcmApplication is added}.
+     *                    {@code Domain}.
+     * @param domain      The {@code Domain} to which owners the
+     *                    {@code CcmApplication is added}.
      */
     @Transactional(Transactional.TxType.REQUIRED)
     public void addDomainOwner(final CcmApplication application,
@@ -108,9 +109,9 @@ public class DomainManager {
      * {@code Domain} the method does nothing.
      *
      * @param application The {@code CcmApplication} to remove from the owners
-     * of the provided {@code Domain}.
-     * @param domain The {@code Domain} from which owners the provided
-     * {@code CcmApplication} should be removed.
+     *                    of the provided {@code Domain}.
+     * @param domain      The {@code Domain} from which owners the provided
+     *                    {@code CcmApplication} should be removed.
      */
     public void removeDomainOwner(final CcmApplication application,
                                   final Domain domain) {
@@ -122,9 +123,10 @@ public class DomainManager {
      * Determines if a {@link CcmApplication} is an owner of {@link Domain}.
      *
      * @param application The {@code CcmApplication} to test.
-     * @param domain The {@code Domain} to test.
+     * @param domain      The {@code Domain} to test.
+     *
      * @return {@code true} if the provided {@code CcmApplication} is an owner
-     * of the provided {@code Domain}, {@code false} otherwise.
+     *         of the provided {@code Domain}, {@code false} otherwise.
      */
     public boolean isDomainOwner(final CcmApplication application,
                                  final Domain domain) {
