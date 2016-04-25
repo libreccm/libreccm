@@ -31,24 +31,22 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.libreccm.docrepo.File;
 import org.libreccm.docrepo.FileMarshaller;
 import org.libreccm.docrepo.FileRepository;
+import org.libreccm.portation.Format;
 import org.libreccm.portation.Marshals;
 import org.libreccm.tests.categories.IntegrationTest;
 
 import javax.inject.Inject;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Date;
-import java.util.UUID;
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
@@ -179,7 +177,6 @@ public class FilePortationTest {
     @InSequence(20)
     public void fileShouldBeCreated() {
         file = new File();
-        file.setUuid(UUID.randomUUID().toString());
         file.setName("testname");
         file.setDescription("this is a text description");
         file.setPath(filePath + "test2.txt");
@@ -194,10 +191,10 @@ public class FilePortationTest {
     @Test
     @InSequence(100)
     public void xmlShouldBeCreated() {
-//        fileMarshaller.prepare(Format.XML, filePath + "test1.xml");
-//        List<File> fileList = Collections.singletonList(file);
-//
-//        fileMarshaller.exportList(fileList);
+        fileMarshaller.prepare(Format.XML, filePath + "test1.xml");
+        List<File> fileList = Collections.singletonList(file);
+
+        fileMarshaller.exportList(fileList);
     }
 
     @Test

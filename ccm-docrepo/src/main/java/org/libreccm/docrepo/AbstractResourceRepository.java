@@ -28,6 +28,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -198,4 +199,10 @@ public abstract class AbstractResourceRepository<T extends AbstractResource>
      */
     protected abstract TypedQuery<T> getFindForModifierQuery();
 
+
+    //Todo
+    @Override
+    public void initNewEntity(final T entity) {
+        entity.setUuid(UUID.randomUUID().toString());
+    }
 }

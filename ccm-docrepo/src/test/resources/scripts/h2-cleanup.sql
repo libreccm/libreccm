@@ -1,3 +1,13 @@
+DELETE FROM ccm_docrepo.blob_objects;
+
+DELETE FROM ccm_docrepo.files;
+
+DELETE FROM ccm_docrepo.folders;
+
+DELETE FROM ccm_docrepo.resources;
+
+DELETE FROM ccm_docrepo.repositories;
+
 DELETE FROM ccm_core.settings_big_decimal;
 
 DELETE FROM ccm_core.settings_boolean;
