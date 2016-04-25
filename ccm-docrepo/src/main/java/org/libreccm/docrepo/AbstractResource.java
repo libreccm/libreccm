@@ -23,8 +23,6 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.libreccm.core.CcmObject;
 import org.libreccm.security.User;
 
-import javax.activation.MimeType;
-import javax.activation.MimeTypeParseException;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -173,19 +171,20 @@ public abstract class AbstractResource extends CcmObject {
         this.path = path;
     }
 
-    public MimeType getMimeType() {
-        MimeType mimeType = null;
-        try {
-            mimeType = new MimeType(this.mimeType);
-        } catch (MimeTypeParseException e) {
-            log.error("Error on parsing the db-string for mimeType to actual" +
-                    "MimeType", e);
-        }
-        return mimeType != null ? mimeType : null;
+    public String getMimeType() {
+//        MimeType mimeType = null;
+//        try {
+//            mimeType = new MimeType(this.mimeType);
+//        } catch (MimeTypeParseException e) {
+//            log.error("Error on parsing the db-string for mimeType to actual" +
+//                    "MimeType", e);
+//        }
+//        return mimeType != null ? mimeType : null;
+        return mimeType;
     }
 
-    public void setMimeType(MimeType mimeType) {
-        this.mimeType = mimeType.toString();
+    public void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
     }
 
     public long getSize() {

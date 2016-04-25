@@ -133,7 +133,8 @@ public class Marshaller {
             final AbstractMarshaller<I> marshaller = (AbstractMarshaller<I>)
                     iterator.next();
 
-            marshaller.prepare(format, filename + "__" + type.toString());
+            marshaller.prepare(format, filename + "__" + type.toString(),
+                    false);
             marshaller.exportList(list);
         }
     }
@@ -185,7 +186,7 @@ public class Marshaller {
                     final AbstractMarshaller<I> marshaller = (AbstractMarshaller<I>)
                             iterator.next();
 
-                    marshaller.prepare(format, filename);
+                    marshaller.prepare(format, filename, false);
                     marshaller.importFile();
                 }
             } catch (ClassNotFoundException e) {

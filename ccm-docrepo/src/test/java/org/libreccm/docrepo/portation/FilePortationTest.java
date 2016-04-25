@@ -31,7 +31,11 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
-import org.junit.*;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.libreccm.docrepo.File;
@@ -77,6 +81,11 @@ public class FilePortationTest {
     private static File file;
     private static String filePath =
             "/home/tosmers/Svn/libreccm/ccm_ng/ccm-docrepo/src/test/resources/datasets/org/libreccm/docrepo/FilePortationTest/";
+
+    private static final String f1Txt = "test1.txt";
+    private static final String f2Xml = "test2.xml";
+    private static final String f3Xml = "test3.xml";
+    private static final String f4Xml = "test4.xml";
 
     @BeforeClass
     public static void setUpClass() {
@@ -179,41 +188,67 @@ public class FilePortationTest {
         file = new File();
         file.setName("testname");
         file.setDescription("this is a text description");
-        file.setPath(filePath + "test2.txt");
+        file.setPath(filePath + "filename.txt");
         file.setCreationDate(new Date());
         file.setLastModifiedDate(new Date());
         if (fileRepository != null && file != null) {
-            log.info("HELLOOOOOO!!");
+            log.info("A dummy for Docrepo.File has been prepared...");
             fileRepository.save(file);
         }
     }
 
     @Test
-    @InSequence(100)
-    public void xmlShouldBeCreated() {
-        fileMarshaller.prepare(Format.XML, filePath + "test1.xml");
-        List<File> fileList = Collections.singletonList(file);
-
-        fileMarshaller.exportList(fileList);
+    @InSequence(30)
+    public void initialCleanUp() {
+        java.io.File file1 = new java.io.File(filePath + f1Txt);
+        java.io.File file2 = new java.io.File(filePath + f2Xml);
+        file1.delete();
+        file2.delete();
+        assertTrue(!file1.exists()
+                && !file2.exists());
     }
 
     @Test
-    @InSequence(200)
+    @InSequence(100)
     public void aFileShouldBeCreated() {
-        java.io.File file = new java.io.File(filePath + "test.txt");
+        java.io.File file = new java.io.File(filePath + f1Txt);
         if (!file.exists()) {
             FileWriter fileWriter = null;
             try {
                 fileWriter = new FileWriter(file);
-                log.info("\n\n\n\n\n\n\n\n\n\n Success \n\n\n\n\n\n\n\n\n\n");
+                log.info(String.format("%s has successfully been created.",
+                        f1Txt));
                 fileWriter.write("bloß ein test! - tosmers");
                 fileWriter.flush();
                 fileWriter.close();
             } catch (IOException e) {
-                log.error("\n\n\n\n\n\n\n\n\n\n Fehler \n\n\n\n\n\n\n\n\n\n");
+                log.error(String.format("%s could not be created.", f1Txt));
             }
-            assertTrue(file.exists());
         }
+        assertTrue(file.exists());
     }
 
+    @Test
+    @InSequence(200)
+    public void xmlShouldBeCreated() {
+        fileMarshaller.prepare(Format.XML, filePath + f2Xml, false);
+        List<File> fileList = Collections.singletonList(file);
+        fileMarshaller.exportList(fileList);
+
+        fileMarshaller.prepare(Format.XML, filePath + f3Xml, true);
+        fileMarshaller.exportList(fileList);
+    }
+
+
+    @Test
+    @InSequence(300)
+    public void objectShouldBeImported() {
+        log.info("\n\n\n" + file.toString() + "\n\n\n");
+        fileMarshaller.prepare(Format.XML, filePath + f2Xml, false);
+        List<File> objects = fileMarshaller.importFile();
+        objects.forEach(l -> log.info("\n\n\n" + l.toString() + "\n\n\n"));
+
+        fileMarshaller.prepare(Format.XML, filePath + f4Xml, true);
+        fileMarshaller.exportList(objects);
+    }
 }

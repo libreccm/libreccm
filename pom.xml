@@ -9,7 +9,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!--<ccm.version>7.0.0-SNAPSHOT</ccm.version>-->
-        <jackson-core-version>2.6.0</jackson-core-version>
+        <jackson-core-version>2.4.5</jackson-core-version>
     </properties>
 
     <groupId>org.libreccm</groupId>

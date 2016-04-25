@@ -18,8 +18,8 @@
  */
 package org.libreccm.portation;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.apache.log4j.Logger;
@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -57,7 +58,8 @@ public abstract class AbstractMarshaller<I extends Identifiable> {
 
 
 
-    public void prepare(final Format format, String filename) {
+    public void prepare(final Format format, String filename, boolean
+            indentation) {
         this.format = format;
         this.filename = filename;
 
@@ -67,6 +69,9 @@ public abstract class AbstractMarshaller<I extends Identifiable> {
                 JacksonXmlModule module = new JacksonXmlModule();
                 module.setDefaultUseWrapper(false);
                 xmlMapper = new XmlMapper(module);
+                if (indentation) {
+                    xmlMapper.enable(SerializationFeature.INDENT_OUTPUT);
+                }
                 break;
 
             case JSON:
@@ -87,7 +92,11 @@ public abstract class AbstractMarshaller<I extends Identifiable> {
 
         try {
             fileWriter = new FileWriter(file);
-
+        } catch (IOException e) {
+            log.error(String.format("Unable to open a fileWriter for the file" +
+                    " with the name %s.", file.getName()));
+        }
+        if (fileWriter != null) {
             for (I object : exportList) {
                 String line = null;
 
@@ -95,9 +104,11 @@ public abstract class AbstractMarshaller<I extends Identifiable> {
                     case XML:
                         try {
                             line = xmlMapper.writeValueAsString(object);
-                        } catch (JsonProcessingException e) {
-                            log.error(String.format("Unable to write object %s " +
-                                    "as XML string.", object.getUuid()));
+                            //log.info(line);
+                        } catch (IOException e) {
+                            log.error(String.format("Unable to write objetct " +
+                                    "of class %s as XML string with name %s.",
+                                    object.getClass(), file.getName()), e);
                         }
                         break;
 
@@ -122,21 +133,23 @@ public abstract class AbstractMarshaller<I extends Identifiable> {
                 }
             }
 
-            fileWriter.close();
-        } catch (IOException e) {
-            log.error(String.format("Unable open a fileWriter for the file " +
-                    "with the name %s.", file.getName()));
-        }
+            try {
+                fileWriter.close();
+            } catch (IOException e) {
+                log.error(String.format("Unable to close a fileWriter for the" +
+                        " file with the name %s.", file.getName()));
+            }
 
+        }
     }
 
     protected abstract Class<I> getObjectClass();
     protected abstract void insertIntoDb(I object);
 
-    public void importFile() {
+    public List<I> importFile() {
         File file = new File(filename);
-        List<String> lines = null;
 
+        List<String> lines = null;
         try {
             lines = Files.readAllLines(file.toPath());
         } catch (IOException e) {
@@ -144,17 +157,17 @@ public abstract class AbstractMarshaller<I extends Identifiable> {
                     "name %s.", file.getName()));
         }
 
+        List<I> objects = new ArrayList<I>();
         if (lines != null) {
             for (String line : lines) {
                 I object = null;
-
                 switch (format) {
                     case XML:
                         try {
                             object = xmlMapper.readValue(line, getObjectClass());
                         } catch (IOException e) {
-                            log.error(String.format("Unable to read object " +
-                                    "from XML string:\n \"%s\"", line));
+                            log.error(String.format("Unable to read objects " +
+                                    "from XML line:\n \"%s\"", line), e);
                         }
                         break;
 
@@ -168,8 +181,12 @@ public abstract class AbstractMarshaller<I extends Identifiable> {
                         break;
                 }
 
+                assert object != null;
                 insertIntoDb(object);
+                objects.add(object);
             }
         }
+        return objects;
     }
+
 }
