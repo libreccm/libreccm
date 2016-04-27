@@ -18,7 +18,6 @@
  */
 package com.arsdigita.ui.admin.categories;
 
-import com.arsdigita.bebop.BoxPanel;
 import com.arsdigita.bebop.Component;
 import com.arsdigita.bebop.ControlLink;
 import com.arsdigita.bebop.Label;
@@ -28,7 +27,6 @@ import com.arsdigita.bebop.Table;
 import com.arsdigita.bebop.Text;
 import com.arsdigita.bebop.event.TableActionEvent;
 import com.arsdigita.bebop.event.TableActionListener;
-import com.arsdigita.bebop.form.TextField;
 import com.arsdigita.bebop.table.TableCellRenderer;
 import com.arsdigita.bebop.table.TableColumn;
 import com.arsdigita.bebop.table.TableColumnModel;
@@ -37,19 +35,13 @@ import com.arsdigita.bebop.table.TableModelBuilder;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.util.LockableImpl;
 
-import java.util.List;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.util.Strings;
 import org.libreccm.categorization.Domain;
 import org.libreccm.categorization.DomainRepository;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.configuration.ConfigurationConstants;
-import org.libreccm.l10n.GlobalizationHelper;
-import org.libreccm.l10n.LocalizedString;
 
-import javax.swing.text.html.StyleSheet;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
@@ -57,60 +49,51 @@ import static com.arsdigita.ui.admin.AdminUiConstants.*;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class DomainsTable extends Table {
+public class DomainDescriptionTable extends Table {
 
-    private final static Logger LOGGER = LogManager.getLogger(
-        DomainsTable.class);
-
-    private static final int COL_DOMAIN_KEY = 0;
-    private static final int COL_DOMAIN_URI = 1;
-    private static final int COL_DOMAIN_TITLE = 2;
-    private static final int COL_DOMAIN_DEL = 3;
+    private static final int COL_LOCALE = 0;
+    private static final int COL_VALUE = 1;
+    private static final int COL_DEL = 2;
 
     private final CategoriesTab categoriesTab;
     private final ParameterSingleSelectionModel<String> selectedDomainId;
-    private final TextField domainsFilter;
+    private final ParameterSingleSelectionModel<String> selectedLanguage;
 
-    public DomainsTable(
+    public DomainDescriptionTable(
         final CategoriesTab categoriesTab,
         final ParameterSingleSelectionModel<String> selectedDomainId,
-        final TextField domainsFilter) {
-        super();
+        final ParameterSingleSelectionModel<String> selectedLanguage) {
 
-        setIdAttr("domainsTable");
+        super();
 
         this.categoriesTab = categoriesTab;
         this.selectedDomainId = selectedDomainId;
-        this.domainsFilter = domainsFilter;
+        this.selectedLanguage = selectedLanguage;
+
+        setIdAttr("domainDescriptionTable");
 
         setEmptyView(new Label(new GlobalizedMessage(
-            "ui.admin.categories.domains.none",
+            "ui.admin.categories.domain_details.description.none",
             ADMIN_BUNDLE)));
 
         final TableColumnModel columnModel = getColumnModel();
         columnModel.add(new TableColumn(
-            COL_DOMAIN_KEY,
+            COL_LOCALE,
             new Label(new GlobalizedMessage(
-                "ui,admin.categories.domains.table.col_key",
+                "ui.admin.categories.domain_details.description.col_lang",
                 ADMIN_BUNDLE))));
         columnModel.add(new TableColumn(
-            COL_DOMAIN_URI,
+            COL_VALUE,
             new Label(new GlobalizedMessage(
-                "ui,admin.categories.domains.table.col_uri",
+                "ui.admin.categories.domain_details.description.col_value",
                 ADMIN_BUNDLE))));
         columnModel.add(new TableColumn(
-            COL_DOMAIN_TITLE,
+            COL_DEL,
             new Label(new GlobalizedMessage(
-                "ui,admin.categories.domains.table.col_title",
-                ADMIN_BUNDLE))));
-        columnModel.add(new TableColumn(
-            COL_DOMAIN_DEL,
-            new Label(new GlobalizedMessage(
-                "ui,admin.categories.domains.table.col_del",
+                "ui.admin.categories.domain_details.description.col_del",
                 ADMIN_BUNDLE))));
 
-        columnModel.get(COL_DOMAIN_KEY).setCellRenderer(
-            new TableCellRenderer() {
+        columnModel.get(COL_LOCALE).setCellRenderer(new TableCellRenderer() {
 
             @Override
             public Component getComponent(final Table table,
@@ -125,28 +108,7 @@ public class DomainsTable extends Table {
 
         });
 
-        columnModel.get(COL_DOMAIN_TITLE).setCellRenderer(
-            new TableCellRenderer() {
-
-            @Override
-            public Component getComponent(final Table table,
-                                          final PageState state,
-                                          final Object value,
-                                          final boolean isSelected,
-                                          final Object key,
-                                          final int row,
-                                          final int column) {
-                final LocalizedString title = (LocalizedString) value;
-                final GlobalizationHelper globalizationHelper = CdiUtil.
-                    createCdiUtil().findBean(GlobalizationHelper.class);
-                return new Text(title.getValue(globalizationHelper.
-                    getNegotiatedLocale()));
-            }
-
-        });
-
-        columnModel.get(COL_DOMAIN_DEL).setCellRenderer(
-            new TableCellRenderer() {
+        columnModel.get(COL_DEL).setCellRenderer(new TableCellRenderer() {
 
             @Override
             public Component getComponent(final Table table,
@@ -161,7 +123,8 @@ public class DomainsTable extends Table {
                 } else {
                     final ControlLink link = new ControlLink((Component) value);
                     link.setConfirmation(new GlobalizedMessage(
-                        "ui.admin.categories.domains.table.del_confirm",
+                        "ui.admin.categories.domain_details.description"
+                            + ".del_confirm",
                         ADMIN_BUNDLE));
                     return link;
                 }
@@ -176,12 +139,23 @@ public class DomainsTable extends Table {
                 final PageState state = event.getPageState();
 
                 switch (event.getColumn()) {
-                    case COL_DOMAIN_KEY:
-                        selectedDomainId.setSelectedKey(state,
+                    case COL_LOCALE:
+                        selectedLanguage.setSelectedKey(state,
                                                         event.getRowKey());
-                        categoriesTab.showDomainDetails(state);
+                        categoriesTab.showDomainDescriptionForm(state);
                         break;
-                    case COL_DOMAIN_DEL:
+                    case COL_DEL:
+                        final Locale locale = new Locale((String) event
+                            .getRowKey());
+                        final DomainRepository domainRepository = CdiUtil
+                            .createCdiUtil().findBean(DomainRepository.class);
+                        final Domain domain = domainRepository.findById(
+                            Long.parseLong(selectedDomainId
+                                .getSelectedKey(state)));
+                        domain.getDescription().removeValue(locale);
+
+                        domainRepository.save(domain);
+
                         break;
                 }
             }
@@ -193,10 +167,12 @@ public class DomainsTable extends Table {
 
         });
 
-        setModelBuilder(new DomainsTableModelBuilder());
+        setModelBuilder(new DomainDescriptionTableModelBuilder());
+
     }
 
-    private class DomainsTableModelBuilder extends LockableImpl
+    private class DomainDescriptionTableModelBuilder
+        extends LockableImpl
         implements TableModelBuilder {
 
         @Override
@@ -204,90 +180,64 @@ public class DomainsTable extends Table {
                                     final PageState state) {
             table.getRowSelectionModel().clearSelection(state);
 
-            return new DomainsTableModel(state);
+            return new DomainDescriptionTableModel(state);
         }
 
     }
 
-    private class DomainsTableModel implements TableModel {
+    private class DomainDescriptionTableModel implements TableModel {
 
-        private final List<Domain> domains;
+        private final Domain selectedDomain;
+        private final List<Locale> locales;
         private int index = -1;
 
-        public DomainsTableModel(final PageState state) {
-            LOGGER.debug("Creating DomainsTableModel");
-            final String filterTerm = (String) domainsFilter.getValue(state);
-            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final DomainRepository domainRepository = cdiUtil.findBean(
-                DomainRepository.class);
-            if (Strings.isBlank(filterTerm)) {
-                domains = domainRepository.findAll("Domain.withOwners");
-                LOGGER.debug("Found {} domains in the database.",
-                             domains.size());
-            } else {
-                domains = domainRepository.search(filterTerm);
-                LOGGER.debug("Found {} domain which match the "
-                                 + "filter \"{}\".",
-                             domains.size(),
-                             filterTerm);
-            }
+        public DomainDescriptionTableModel(final PageState state) {
+            final DomainRepository domainRepository = CdiUtil.createCdiUtil()
+                .findBean(DomainRepository.class);
+            selectedDomain = domainRepository.findById(
+                Long.parseLong(selectedDomainId.getSelectedKey(state)));
+
+            locales = new ArrayList<>();
+            locales.addAll(selectedDomain.getDescription()
+                .getAvailableLocales());
+            locales.sort((l1, l2) -> {
+                return l1.toString().compareTo(l2.toString());
+            });
         }
 
         @Override
         public int getColumnCount() {
-            return 4;
+            return 3;
         }
 
         @Override
         public boolean nextRow() {
             index++;
-            return index < domains.size();
+            return index < locales.size();
         }
 
         @Override
         public Object getElementAt(final int columnIndex) {
-            LOGGER.debug("Getting element for index {}, column {}...",
-                         index,
-                         columnIndex);
-            final Domain domain = domains.get(index);
+            final Locale locale = locales.get(index);
+
             switch (columnIndex) {
-                case COL_DOMAIN_KEY:
-                    return domain.getDomainKey();
-                case COL_DOMAIN_URI:
-                    return domain.getUri();
-                case COL_DOMAIN_TITLE:
-                    return domain.getTitle();
-                case COL_DOMAIN_DEL:
-                    if (isDeleteable(domain)) {
-                        return new Label(new GlobalizedMessage(
-                            "ui.admin.categories.domains.table.del",
-                            ADMIN_BUNDLE));
-                    } else {
-                        return null;
-                    }
+                case COL_LOCALE:
+                    return locale.toString();
+                case COL_VALUE:
+                    return selectedDomain.getDescription().getValue(locale);
+                case COL_DEL:
+                    return new Label(new GlobalizedMessage(
+                        "ui.admin.categories.domain_details.description.del", 
+                        ADMIN_BUNDLE));
                 default:
                     throw new IllegalArgumentException(
                         "Not a valid column index");
             }
-
         }
 
         @Override
         public Object getKeyAt(final int columnIndex) {
-            return domains.get(index).getObjectId();
-        }
-
-        private boolean isDeleteable(final Domain domain) {
-            if (ConfigurationConstants.REGISTRY_DOMAIN.equals(domain.
-                getDomainKey())) {
-                return false;
-            }
-
-            if (domain.getOwners() != null && !domain.getOwners().isEmpty()) {
-                return false;
-            }
-
-            return true;
+            return locales.get(index);
         }
 
     }

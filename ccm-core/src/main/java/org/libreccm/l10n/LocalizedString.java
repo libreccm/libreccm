@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Embeddable;
@@ -58,6 +59,7 @@ public class LocalizedString implements Serializable {
     @ElementCollection(fetch = FetchType.EAGER)
     @MapKeyColumn(name = "LOCALE")
     @Column(name = "LOCALIZED_VALUE")
+    @Basic
     @Lob
     @XmlElementWrapper(name = "values", namespace = L10N_XML_NS)
     @XmlElement(name = "value", namespace = L10N_XML_NS)

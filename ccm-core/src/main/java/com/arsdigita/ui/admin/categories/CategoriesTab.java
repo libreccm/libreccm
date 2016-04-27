@@ -43,13 +43,19 @@ public class CategoriesTab extends LayoutPanel {
     protected static final String DOMAINS_FILTER = "domainsFilter";
 
     private final StringParameter domainIdParameter;
+    private final StringParameter languageParameter;
     private final ParameterSingleSelectionModel<String> selectedDomainId;
+    private final ParameterSingleSelectionModel<String> selectedLanguage;
 
     private final Label domainsFilterFormHeader;
     private final Form domainsFilterForm;
     private final BoxPanel domainsTablePanel;
-    
+
     private final DomainForm domainForm;
+
+    private final DomainDetails domainDetails;
+    private final DomainTitleForm domainTitleForm;
+    private final DomainDescriptionForm domainDescriptionForm;
 
     public CategoriesTab() {
         super();
@@ -57,19 +63,24 @@ public class CategoriesTab extends LayoutPanel {
         setClassAttr("sidebarNavPanel");
 
         domainIdParameter = new StringParameter("selected_domain_id");
-        selectedDomainId = new ParameterSingleSelectionModel<>(domainIdParameter);
+        selectedDomainId
+            = new ParameterSingleSelectionModel<>(domainIdParameter);
+
+        languageParameter = new StringParameter("selected_language");
+        selectedLanguage
+            = new ParameterSingleSelectionModel<>(languageParameter);
 
         domainsFilterFormHeader = new Label(new GlobalizedMessage(
-                "ui.admin.categories.domains.table.filter.header",
-                ADMIN_BUNDLE));
+            "ui.admin.categories.domains.table.filter.header",
+            ADMIN_BUNDLE));
         domainsFilterForm = new Form("domainFilterForm");
         final TextField domainsFilter = new TextField(DOMAINS_FILTER);
         domainsFilterForm.add(domainsFilter);
         domainsFilterForm.add(new Submit(new GlobalizedMessage(
-                "ui.admin.categories.domains.table.filter", ADMIN_BUNDLE)));
+            "ui.admin.categories.domains.table.filter", ADMIN_BUNDLE)));
         final ActionLink clearLink = new ActionLink(new GlobalizedMessage(
-                "ui.admin.categories.domains.table.filter.clear",
-                ADMIN_BUNDLE));
+            "ui.admin.categories.domains.table.filter.clear",
+            ADMIN_BUNDLE));
         clearLink.addActionListener(e -> {
             final PageState state = e.getPageState();
             domainsFilter.setValue(state, null);
@@ -80,29 +91,43 @@ public class CategoriesTab extends LayoutPanel {
         left.addSegment(domainsFilterFormHeader, domainsFilterForm);
 
         setLeft(left);
-        
+
         final BoxPanel body = new BoxPanel(BoxPanel.VERTICAL);
 
         final DomainsTable domainsTable = new DomainsTable(
-                selectedDomainId, domainsFilter);
+            this, selectedDomainId, domainsFilter);
         domainsTable.setStyleAttr("min-width: 30em;");
         domainsTablePanel = new BoxPanel(BoxPanel.VERTICAL);
         domainsTablePanel.add(domainsTable);
         final ActionLink addDomain = new ActionLink(new GlobalizedMessage(
-                "ui.admin.categories.domains.create_new", ADMIN_BUNDLE));
+            "ui.admin.categories.domains.create_new", ADMIN_BUNDLE));
         addDomain.addActionListener(e -> {
-            showNewDomainForm(e.getPageState());
+            showDomainForm(e.getPageState());
         });
         domainsTablePanel.add(addDomain);
-        
+
         body.add(domainsTablePanel);
-        
+
         domainForm = new DomainForm(this, selectedDomainId);
         body.add(domainForm);
-        
+
+        domainDetails = new DomainDetails(this,
+                                          selectedDomainId,
+                                          selectedLanguage);
+        body.add(domainDetails);
+
+        domainTitleForm = new DomainTitleForm(this,
+                                              selectedDomainId,
+                                              selectedLanguage);
+        body.add(domainTitleForm);
+
+        domainDescriptionForm = new DomainDescriptionForm(this,
+                                                          selectedDomainId,
+                                                          selectedLanguage);
+        body.add(domainDescriptionForm);
+
         setBody(body);
-        
-        
+
     }
 
     @Override
@@ -110,11 +135,15 @@ public class CategoriesTab extends LayoutPanel {
         super.register(page);
 
         page.addGlobalStateParam(domainIdParameter);
-        
+        page.addGlobalStateParam(languageParameter);
+
         page.setVisibleDefault(domainsFilterFormHeader, true);
         page.setVisibleDefault(domainsFilterForm, true);
         page.setVisibleDefault(domainsTablePanel, true);
         page.setVisibleDefault(domainForm, false);
+        page.setVisibleDefault(domainDetails, false);
+        page.setVisibleDefault(domainTitleForm, false);
+        page.setVisibleDefault(domainDescriptionForm, false);
     }
 
     protected void showDomainsTable(final PageState state) {
@@ -122,20 +151,88 @@ public class CategoriesTab extends LayoutPanel {
         domainsFilterForm.setVisible(state, true);
         domainsTablePanel.setVisible(state, true);
         domainForm.setVisible(state, false);
+        domainDetails.setVisible(state, false);
+        domainTitleForm.setVisible(state, false);
+        domainDescriptionForm.setVisible(state, false);
     }
 
-    protected void showNewDomainForm(final PageState state) {
+    protected void showDomainForm(final PageState state) {
         domainsFilterFormHeader.setVisible(state, false);
         domainsFilterForm.setVisible(state, false);
         domainsTablePanel.setVisible(state, false);
         domainForm.setVisible(state, true);
+        domainDetails.setVisible(state, false);
+        domainTitleForm.setVisible(state, false);
+        domainDescriptionForm.setVisible(state, false);
     }
 
-    protected void hideNewDomainForm(final PageState state) {
+    protected void hideDomainForm(final PageState state) {
+        if (selectedDomainId.getSelectedKey(state) == null) {
+            domainsFilterFormHeader.setVisible(state, true);
+            domainsFilterForm.setVisible(state, true);
+            domainsTablePanel.setVisible(state, true);
+            domainForm.setVisible(state, false);
+            domainDetails.setVisible(state, false);
+            domainTitleForm.setVisible(state, false);
+            domainDescriptionForm.setVisible(state, false);
+        } else {
+            showDomainDetails(state);
+        }
+
+    }
+
+    protected void showDomainDetails(final PageState state) {
+        domainsFilterFormHeader.setVisible(state, false);
+        domainsFilterForm.setVisible(state, false);
+        domainsTablePanel.setVisible(state, false);
+        domainForm.setVisible(state, false);
+        domainDetails.setVisible(state, true);
+        domainTitleForm.setVisible(state, false);
+        domainDescriptionForm.setVisible(state, false);
+    }
+
+    protected void hideDomainDetails(final PageState state) {
+        selectedDomainId.clearSelection(state);
+
         domainsFilterFormHeader.setVisible(state, true);
         domainsFilterForm.setVisible(state, true);
         domainsTablePanel.setVisible(state, true);
         domainForm.setVisible(state, false);
+        domainDetails.setVisible(state, false);
+        domainTitleForm.setVisible(state, false);
+        domainDescriptionForm.setVisible(state, false);
+    }
+
+    protected void showDomainTitleForm(final PageState state) {
+        domainsFilterFormHeader.setVisible(state, false);
+        domainsFilterForm.setVisible(state, false);
+        domainsTablePanel.setVisible(state, false);
+        domainForm.setVisible(state, false);
+        domainDetails.setVisible(state, false);
+        domainTitleForm.setVisible(state, true);
+        domainDescriptionForm.setVisible(state, false);
+    }
+
+    protected void hideDomainTitleForm(final PageState state) {
+        selectedLanguage.clearSelection(state);
+
+        showDomainDetails(state);
+    }
+
+    protected void showDomainDescriptionForm(final PageState state) {
+        domainsFilterFormHeader.setVisible(state, false);
+        domainsFilterForm.setVisible(state, false);
+        domainsTablePanel.setVisible(state, false);
+        domainForm.setVisible(state, false);
+        domainDetails.setVisible(state, false);
+        domainTitleForm.setVisible(state, false);
+        domainDescriptionForm.setVisible(state, true);
+    }
+
+    protected void hideDomainDescriptionForm(final PageState state) {
+        selectedLanguage.clearSelection(state);
+
+        showDomainDetails(state);
     }
 
 }

@@ -170,6 +170,7 @@ public abstract class AbstractEntityRepository<K, E> {
      * @return The entity identified by the provided ID of {@code null} if there
      *         is no such entity.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public E findById(final K entityId) {
         if (getEntityClass().isAnnotationPresent(DefaultEntityGraph.class)) {
             return findById(entityId, getEntityClass().getAnnotation(
@@ -179,6 +180,7 @@ public abstract class AbstractEntityRepository<K, E> {
         }
     }
 
+    @Transactional(Transactional.TxType.REQUIRED)
     public E findById(final K entityId, final String entityGraphName) {
         @SuppressWarnings("unchecked")
         final EntityGraph<E> entityGraph = (EntityGraph<E>) entityManager.
@@ -186,6 +188,7 @@ public abstract class AbstractEntityRepository<K, E> {
         return findById(entityId, entityGraph);
     }
 
+    @Transactional(Transactional.TxType.REQUIRED)
     public E findById(final K entityId, final EntityGraph<E> entityGraph) {
         final Map<String, Object> hints = new HashMap<>();
         hints.put(FETCH_GRAPH_HINT_KEY, entityGraph);
@@ -199,12 +202,14 @@ public abstract class AbstractEntityRepository<K, E> {
      * @return The list of entities in the database which are of the type
      *         provided by {@link #getEntityClass()}.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public List<E> findAll() {
         // We are using the Critiera API here because otherwise we can't 
         // pass the type of the entity dynmacially.
         return executeCriteriaQuery(createCriteriaQuery());
     }
 
+    @Transactional(Transactional.TxType.REQUIRED)
     public List<E> findAll(final String entityGraphName) {
         @SuppressWarnings("unchecked")
         final EntityGraph<E> entityGraph = (EntityGraph<E>) entityManager
@@ -213,6 +218,7 @@ public abstract class AbstractEntityRepository<K, E> {
         return findAll(entityGraph);
     }
 
+    @Transactional(Transactional.TxType.REQUIRED)
     public List<E> findAll(final EntityGraph<E> entityGraph) {
         // We are using the Critiera API here because otherwise we can't 
         // pass the type of the entity dynmacially.

@@ -31,6 +31,7 @@ import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
 
 /**
  * A repository for executing CRUD operations on {@link Domain} objects.
@@ -59,6 +60,7 @@ public class DomainRepository extends AbstractEntityRepository<Long, Domain> {
     }
 
     @Override
+    @Transactional(Transactional.TxType.REQUIRED)
     public List<Domain> findAll() {
         if (getEntityClass().isAnnotationPresent(DefaultEntityGraph.class)) {
             return findAll(getEntityClass().getAnnotation(
@@ -71,6 +73,7 @@ public class DomainRepository extends AbstractEntityRepository<Long, Domain> {
     }
 
     @Override
+    @Transactional(Transactional.TxType.REQUIRED)
     public List<Domain> findAll(final String entityGraphName) {
         @SuppressWarnings("unchecked")
         final EntityGraph<Domain> entityGraph = (EntityGraph<Domain>) entityManager.
@@ -79,6 +82,7 @@ public class DomainRepository extends AbstractEntityRepository<Long, Domain> {
     }
 
     @Override
+    @Transactional(Transactional.TxType.REQUIRED)
     public List<Domain> findAll(final EntityGraph<Domain> entityGraph) {
         final TypedQuery<Domain> query = getEntityManager()
                 .createNamedQuery("Domain.findAll", Domain.class);

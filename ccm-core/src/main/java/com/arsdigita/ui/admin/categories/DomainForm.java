@@ -35,6 +35,8 @@ import org.libreccm.categorization.DomainManager;
 import org.libreccm.categorization.DomainRepository;
 import org.libreccm.cdi.utils.CdiUtil;
 
+import java.util.Locale;
+
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
@@ -211,7 +213,7 @@ public class DomainForm extends Form {
                 domainRepository.save(domain);
             }
 
-            categoriesTab.hideNewDomainForm(state);
+            categoriesTab.hideDomainForm(state);
         });
 
     }
