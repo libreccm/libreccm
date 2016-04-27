@@ -49,7 +49,7 @@ import static com.arsdigita.ui.admin.AdminUiConstants.*;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class DomainTitleTable extends Table {
+class DomainTitleTable extends Table {
 
     private static final int COL_LOCALE = 0;
     private static final int COL_VALUE = 1;

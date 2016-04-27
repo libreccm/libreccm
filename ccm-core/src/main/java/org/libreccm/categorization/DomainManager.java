@@ -21,9 +21,12 @@ package org.libreccm.categorization;
 import org.libreccm.web.ApplicationRepository;
 import org.libreccm.web.CcmApplication;
 
+import java.util.List;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
 /**
@@ -57,6 +60,7 @@ public class DomainManager {
      *
      * @return The new domain.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public Domain createDomain(final String domainKey,
                                final String rootCategoryName) {
         final Domain domain = new Domain();
@@ -113,10 +117,31 @@ public class DomainManager {
      * @param domain      The {@code Domain} from which owners the provided
      *                    {@code CcmApplication} should be removed.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public void removeDomainOwner(final CcmApplication application,
                                   final Domain domain) {
-        // TODO implement method
-        throw new UnsupportedOperationException();
+        final CcmApplication owner = applicationRepo.findById(
+            application.getObjectId(), "CcmApplication.withDomains");
+        final Domain ownedDomain = domainRepo.findById(
+            domain.getObjectId(), "Domain.withOwners");
+
+        final TypedQuery<DomainOwnership> query = entityManager
+            .createNamedQuery("DomainOwnership.findByOwnerAndDomain",
+                              DomainOwnership.class);
+        query.setParameter("owner", owner);
+        query.setParameter("domain", ownedDomain);
+
+        final List<DomainOwnership> result = query.getResultList();
+
+        if (result != null) {
+            result.forEach(o -> {
+                ownedDomain.removeOwner(o);
+                owner.removeDomain(o);
+                entityManager.remove(o);
+                domainRepo.save(ownedDomain);
+                applicationRepo.save(owner);
+            });
+        }
     }
 
     /**
@@ -128,10 +153,18 @@ public class DomainManager {
      * @return {@code true} if the provided {@code CcmApplication} is an owner
      *         of the provided {@code Domain}, {@code false} otherwise.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public boolean isDomainOwner(final CcmApplication application,
                                  final Domain domain) {
-        // TODO implement method
-        throw new UnsupportedOperationException();
+        final TypedQuery<DomainOwnership> query = entityManager
+            .createNamedQuery("DomainOwnership.findByOwnerAndDomain",
+                              DomainOwnership.class);
+        query.setParameter("owner", application);
+        query.setParameter("domain", domain);
+
+        final List<DomainOwnership> result = query.getResultList();
+
+        return (result != null && !result.isEmpty());
     }
 
 }

@@ -32,19 +32,26 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
-
 /**
- * Association class for the association between a {@link Domain} and a 
+ * Association class for the association between a {@link Domain} and a
  * {@link CcmObject}. Instances of this class should not be created manually.
- * Instead the methods provided by the {@link DomainManager} manager class 
+ * Instead the methods provided by the {@link DomainManager} manager class
  * should be used.
- * 
+ *
  * @author <a href="jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
 @Table(name = "DOMAIN_OWNERSHIPS", schema = DB_SCHEMA)
+@NamedQueries({
+    @NamedQuery(
+        name = "DomainOwnership.findByOwnerAndDomain",
+        query = "SELECT o FROM DomainOwnership o "
+                    + "WHERE o.owner = :owner AND o.domain = :domain")
+})
 public class DomainOwnership implements Serializable {
 
     private static final long serialVersionUID = 201504301305L;
@@ -76,14 +83,14 @@ public class DomainOwnership implements Serializable {
     private String context;
 
     /**
-     * Defines the order in which the owning {@link CcmObject}s of a 
+     * Defines the order in which the owning {@link CcmObject}s of a
      * {@link Domain} are shown.
      */
     @Column(name = "OWNER_ORDER")
     private long ownerOrder;
 
     /**
-     * Defines the order in which the {@link Domain}s owned by a 
+     * Defines the order in which the {@link Domain}s owned by a
      * {@link CcmObject} are shown.
      */
     @Column(name = "DOMAIN_ORDER")
@@ -181,7 +188,7 @@ public class DomainOwnership implements Serializable {
         if (domainOrder != other.getDomainOrder()) {
             return false;
         }
-        
+
         return ownerOrder == other.getOwnerOrder();
     }
 
@@ -196,13 +203,13 @@ public class DomainOwnership implements Serializable {
 
     public String toString(final String data) {
         return String.format("%s{ "
-                                     + "ownershipId = %d, "
-                                     + "owner = %s, "
-                                     + "domain = %s, "
-                                     + "context = \"%s\", "
-                                     + "domainOrder = %d"
-                                     + "ownerOrder = %d"
-                                     + "%s }",
+                                 + "ownershipId = %d, "
+                                 + "owner = %s, "
+                                 + "domain = %s, "
+                                 + "context = \"%s\", "
+                                 + "domainOrder = %d"
+                                 + "ownerOrder = %d"
+                                 + "%s }",
                              super.toString(),
                              ownershipId,
                              Objects.toString(owner),
@@ -212,4 +219,5 @@ public class DomainOwnership implements Serializable {
                              ownerOrder,
                              data);
     }
+
 }

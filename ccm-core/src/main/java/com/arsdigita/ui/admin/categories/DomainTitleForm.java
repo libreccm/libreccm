@@ -42,7 +42,7 @@ import static com.arsdigita.ui.admin.AdminUiConstants.*;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class DomainTitleForm extends Form {
+class DomainTitleForm extends Form {
 
     private static final String LOCALIZED_DOMAIN_TITLE = "title";
 

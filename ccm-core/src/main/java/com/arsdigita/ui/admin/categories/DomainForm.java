@@ -35,15 +35,13 @@ import org.libreccm.categorization.DomainManager;
 import org.libreccm.categorization.DomainRepository;
 import org.libreccm.cdi.utils.CdiUtil;
 
-import java.util.Locale;
-
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class DomainForm extends Form {
+class DomainForm extends Form {
 
     private static final String RELEASED = "released";
     private static final String VERSION = "version";

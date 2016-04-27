@@ -18,7 +18,6 @@
  */
 package com.arsdigita.ui.admin.categories;
 
-import com.arsdigita.bebop.BoxPanel;
 import com.arsdigita.bebop.Component;
 import com.arsdigita.bebop.ControlLink;
 import com.arsdigita.bebop.Label;
@@ -49,15 +48,13 @@ import org.libreccm.configuration.ConfigurationConstants;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.l10n.LocalizedString;
 
-import javax.swing.text.html.StyleSheet;
-
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class DomainsTable extends Table {
+class DomainsTable extends Table {
 
     private final static Logger LOGGER = LogManager.getLogger(
         DomainsTable.class);

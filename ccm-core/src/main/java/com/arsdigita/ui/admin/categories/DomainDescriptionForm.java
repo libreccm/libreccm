@@ -27,7 +27,6 @@ import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.ParameterSingleSelectionModel;
 import com.arsdigita.bebop.SaveCancelSection;
 import com.arsdigita.bebop.form.TextArea;
-import com.arsdigita.bebop.form.TextField;
 import com.arsdigita.globalization.GlobalizedMessage;
 
 import org.apache.logging.log4j.util.Strings;
@@ -43,7 +42,7 @@ import static com.arsdigita.ui.admin.AdminUiConstants.*;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class DomainDescriptionForm extends Form {
+class DomainDescriptionForm extends Form {
 
     private static final String LOCALIZED_DOMAIN_DESC = "description";
 

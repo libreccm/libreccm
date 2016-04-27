@@ -36,6 +36,9 @@ import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
+import javax.persistence.NamedEntityGraphs;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -57,6 +60,13 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "CcmApplication.Application.findByType",
                 query = "SELECT A FROM CcmApplication a "
                             + "WHERE a.applicationType = :type")
+})
+@NamedEntityGraphs({
+    @NamedEntityGraph(
+        name = "CcmApplication.withDomains",
+        attributeNodes = {
+            @NamedAttributeNode(value = "domains")
+        })
 })
 @XmlRootElement(name = "application", namespace = WEB_XML_NS)
 public class CcmApplication extends Resource implements Serializable {

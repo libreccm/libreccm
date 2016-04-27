@@ -34,7 +34,7 @@ import org.libreccm.cdi.utils.CdiUtil;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class DomainPropertySheetModelBuilder
+class DomainPropertySheetModelBuilder
     extends LockableImpl
     implements PropertySheetModelBuilder {
 

@@ -23,7 +23,6 @@ import com.arsdigita.bebop.BoxPanel;
 import com.arsdigita.bebop.Form;
 import com.arsdigita.bebop.FormData;
 import com.arsdigita.bebop.Label;
-import com.arsdigita.bebop.Page;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.ParameterSingleSelectionModel;
 import com.arsdigita.bebop.PropertySheet;
@@ -45,13 +44,12 @@ import java.util.Set;
 import java.util.TooManyListenersException;
 
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
-import static org.bouncycastle.asn1.x500.style.RFC4519Style.*;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class DomainDetails extends SegmentedPanel {
+class DomainDetails extends SegmentedPanel {
 
     private final CategoriesTab categoriesTab;
     private final ParameterSingleSelectionModel<String> selectedDomainId;
@@ -118,11 +116,15 @@ public class DomainDetails extends SegmentedPanel {
                 ADMIN_BUNDLE)),
             descPanel);
 
+        final BoxPanel mappingsPanel = new BoxPanel(BoxPanel.VERTICAL);
+        mappingsPanel.add(new DomainMappingsTable(categoriesTab,
+                                                  selectedDomainId));
+        mappingsPanel.add(new DomainMappingAddForm(selectedDomainId));
         addSegment(
             new Label(new GlobalizedMessage(
                 "ui.admin.categories.domain_details.mappings",
                 ADMIN_BUNDLE)),
-            new Text("domain_mappings_placeholder"));
+            mappingsPanel);
     }
 
     private class DomainTitleAddForm extends Form {
