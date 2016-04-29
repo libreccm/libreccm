@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 LibreCCM Foundation.
+ * Copyright (C) 2016 LibreCCM Foundation.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,27 +18,16 @@
  */
 package org.libreccm.configuration;
 
-import static org.libreccm.configuration.ConfigurationConstants.*;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.message.FormattedMessage;
-import org.libreccm.categorization.Category;
-import org.libreccm.categorization.CategoryManager;
-import org.libreccm.categorization.CategoryRepository;
-import org.libreccm.categorization.Domain;
-import org.libreccm.categorization.DomainRepository;
-
 import java.lang.reflect.Field;
-import java.util.StringJoiner;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
- * Maps between configuration classes and the values stored in the registry.
+ * Maps between configuration classes and the settings stored in the database.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -46,7 +35,7 @@ import javax.transaction.Transactional;
 public class ConfigurationManager {
 
     private static final Logger LOGGER = LogManager.getLogger(
-        ConfigurationManager.class);
+            ConfigurationManager.class);
 
     @Inject
     private SettingManager settingManager;
@@ -55,25 +44,16 @@ public class ConfigurationManager {
     private SettingConverter settingConverter;
 
     @Inject
-    private CategoryManager categoryManager;
-
-    @Inject
-    private CategoryRepository categoryRepo;
-
-    @Inject
-    private DomainRepository domainRepo;
-
-    @Inject
     private EntityManager entityManager;
 
     /**
      * Load all settings of the provided configuration class.
      *
-     * @param <T>       Type of the configuration class.
+     * @param <T> Type of the configuration class.
      * @param confClass The configuration class.
      *
      * @return An instance of the configuration class with all settings set to
-     *         the values stored in the registry.
+     * the values stored in the registry.
      */
     public <T> T findConfiguration(final Class<T> confClass) {
         if (confClass == null) {
@@ -82,9 +62,9 @@ public class ConfigurationManager {
 
         if (confClass.getAnnotation(Configuration.class) == null) {
             throw new IllegalArgumentException(String.format(
-                "Provided class \"%s\" is not annotated with \"%s\".",
-                confClass.getName(),
-                Configuration.class.getName()));
+                    "Provided class \"%s\" is not annotated with \"%s\".",
+                    confClass.getName(),
+                    Configuration.class.getName()));
         }
 
         final String confName = confClass.getName();
@@ -97,13 +77,11 @@ public class ConfigurationManager {
      * registry.
      *
      * @param configuration The configuration to save. The class of the provided
-     *                      object must be annotation with
-     *                      {@link Configuration}.
+     * object must be annotation with {@link Configuration}.
      *
      * @throws IllegalArgumentException If the {@code configuration} parameter
-     *                                  is {@code null} or if the class of the
-     *                                  provided object is not annotation with
-     *                                  {@link Configuration}.
+     * is {@code null} or if the class of the provided object is not annotation
+     * with {@link Configuration}.
      */
     public void saveConfiguration(final Object configuration) {
         if (configuration == null) {
@@ -112,10 +90,10 @@ public class ConfigurationManager {
 
         if (configuration.getClass().getAnnotation(Configuration.class) == null) {
             throw new IllegalArgumentException(String.format(
-                "The class \"%s\" of the provided object is not annotated "
-                    + "with \"%s\".",
-                configuration.getClass().getName(),
-                Configuration.class.getName()));
+                    "The class \"%s\" of the provided object is not annotated "
+                            + "with \"%s\".",
+                    configuration.getClass().getName(),
+                    Configuration.class.getName()));
         }
 
         LOGGER.debug(String.format("Saving configuration \"%s\"...",
@@ -126,10 +104,10 @@ public class ConfigurationManager {
 
             if (field.getAnnotation(Setting.class) == null) {
                 LOGGER.debug(String.format(
-                    "Field \"%s\" of class \"%s\" is not "
-                        + "a setting. Ignoring it.",
-                    configuration.getClass().getName(),
-                    field.getName()));
+                        "Field \"%s\" of class \"%s\" is not "
+                                + "a setting. Ignoring it.",
+                        configuration.getClass().getName(),
+                        field.getName()));
                 continue;
             }
 
@@ -140,16 +118,16 @@ public class ConfigurationManager {
                                 field.get(configuration));
             } catch (IllegalAccessException ex) {
                 LOGGER.error(String.format(
-                    "Failed to write setting value for setting \"%s\" "
-                        + "of configuration \"%s\"",
-                    getSettingName(field),
-                    configuration.getClass().getName()),
+                        "Failed to write setting value for setting \"%s\" "
+                                + "of configuration \"%s\"",
+                        getSettingName(field),
+                        configuration.getClass().getName()),
                              ex);
                 throw new IllegalStateException(String.format(
-                    "Failed to write setting value for setting \"%s\" "
-                        + "of configuration \"%s\"",
-                    getSettingName(field),
-                    configuration.getClass().getName()),
+                        "Failed to write setting value for setting \"%s\" "
+                                + "of configuration \"%s\"",
+                        getSettingName(field),
+                        configuration.getClass().getName()),
                                                 ex);
             }
         }
@@ -161,28 +139,30 @@ public class ConfigurationManager {
      * @param configuration The configuration for which the info is generated.
      *
      * @return a {@link ConfigurationInfo} instance describing the provided
-     *         configuration.
+     * configuration.
      */
-    public ConfigurationInfo getConfigurationInfo(final Class<?> configuration) {
+    public ConfigurationInfo getConfigurationInfo(
+            final Class<?> configuration) {
+
         if (configuration == null) {
             throw new IllegalArgumentException("Configuration can't be null");
         }
 
         if (configuration.getAnnotation(Configuration.class) == null) {
             throw new IllegalArgumentException(String.format(
-                "The class \"%s\" of the provided object is not annotated "
-                    + "with \"%s\".",
-                configuration.getClass().getName(),
-                Configuration.class.getName()));
+                    "The class \"%s\" of the provided object is not annotated "
+                            + "with \"%s\".",
+                    configuration.getClass().getName(),
+                    Configuration.class.getName()));
         }
 
         final Configuration annotation = configuration.getAnnotation(
-            Configuration.class);
+                Configuration.class);
 
         final ConfigurationInfo confInfo = new ConfigurationInfo();
         confInfo.setName(configuration.getClass().getName());
         if (annotation.descBundle() == null
-                || annotation.descBundle().isEmpty()) {
+                    || annotation.descBundle().isEmpty()) {
             confInfo.setDescBundle(String.join("",
                                                configuration.getClass()
                                                .getName(),
@@ -191,7 +171,7 @@ public class ConfigurationManager {
             confInfo.setDescBundle(annotation.descBundle());
         }
         if (annotation.descKey() == null
-                || annotation.descKey().isEmpty()) {
+                    || annotation.descKey().isEmpty()) {
             confInfo.setDescKey("description");
         } else {
             confInfo.setDescKey(annotation.descKey());
@@ -202,7 +182,7 @@ public class ConfigurationManager {
             field.setAccessible(true);
             if (field.getAnnotation(Setting.class) != null) {
                 confInfo.addSetting(settingManager.getSettingInfo(
-                    configuration, field.getName()));
+                        configuration, field.getName()));
             }
         }
 
@@ -218,11 +198,11 @@ public class ConfigurationManager {
      * @param field The setting field.
      *
      * @return The name of the field or if the {@link Setting} annotation of the
-     *         field has a name value, the value of that field.
+     * field has a name value, the value of that field.
      */
     String getSettingName(final Field field) {
         LOGGER.debug(String.format("Trying to get setting name from field: "
-                                       + "\"%s\"",
+                                           + "\"%s\"",
                                    field.getName()));
         final Setting annotation = field.getAnnotation(Setting.class);
 
@@ -236,13 +216,13 @@ public class ConfigurationManager {
     /**
      * Create a setting instance of a specific value type.
      *
-     * @param <T>       Type variable.
+     * @param <T> Type variable.
      * @param valueType The type of the value of the setting to create.
      *
      * @return An setting instance of the provided value type.
      *
      * @throws IllegalArgumentException If there is not setting type for the
-     *                                  provided value type.
+     * provided value type.
      */
 //    @SuppressWarnings("unchecked")
 //    <T> AbstractSetting<T> createSettingForValueType(
@@ -273,85 +253,71 @@ public class ConfigurationManager {
     /**
      * Sets a value on a setting in the registry.
      *
-     * @param <T>           The value type of the setting.
+     * @param <T> The value type of the setting.
      * @param configuration The configuration to which the settings belongs.
-     * @param settingName   The name of the setting.
-     * @param valueType     The type of the value of the setting.
-     * @param value         The value to set.
+     * @param settingName The name of the setting.
+     * @param valueType The type of the value of the setting.
+     * @param value The value to set.
      */
     @Transactional(Transactional.TxType.REQUIRED)
     private <T> void setSettingValue(final Object configuration,
                                      final String settingName,
                                      final Class<T> valueType,
                                      final Object value) {
-        final String settingPath = String.format(
-            "%s.%s",
-            configuration.getClass().getName(),
-            settingName);
-        LOGGER.debug(new FormattedMessage(
-            "Saving setting \"%s\" of type \"%s\"...",
-            settingPath,
-            valueType.getName()));
-        AbstractSetting<T> setting = settingManager.findSetting(settingPath,
+        final String confClassName = configuration.getClass().getName();
+
+        AbstractSetting<T> setting = settingManager.findSetting(confClassName,
+                                                                settingName,
                                                                 valueType);
         if (setting == null) {
-            LOGGER.debug(String.format("Setting \"%s\" does not yet exist in "
-                                           + "database. Creating new setting.",
-                                       settingPath));
+            LOGGER.debug(String.format(
+                    "Setting \"%s#%s\" does not yet exist in "
+                            + "database. Creating new setting.",
+                    confClassName,
+                    settingName));
             setting = settingConverter.createSettingForValueType(valueType);
-            setting.setName(settingName);
-            setting.setDisplayName(settingName);
-            final Category category = findCategoryForNewSetting(configuration);
-            categoryManager.addObjectToCategory(setting, category);
         }
+        setting.setConfigurationClass(confClassName);
+        setting.setName(settingName);
 
-        LOGGER.debug(String.format("New value of setting \"%s\" is: \"%s\"",
-                                   settingPath,
-                                   value.toString()));
+        LOGGER.debug(String.format(
+                "New value of setting \"%s#%s\" is: \"%s\"",
+                confClassName,
+                settingName,
+                value.toString()));
         @SuppressWarnings("unchecked")
         final T settingValue = (T) value;
         setting.setValue(settingValue);
-        LOGGER.debug(String.format("Value of setting \"%s\" is now: \"%s\"",
-                                   settingPath,
-                                   setting.getValue().toString()));
-
+        LOGGER.debug(String.format(
+                "Value of setting \"%s#%s\" is now: \"%s\"",
+                confClassName,
+                settingName,
+                setting.getValue().toString()
+        ));
         LOGGER.debug("Saving changed setting to DB...");
-        entityManager.merge(setting);
-        entityManager.flush();
+        settingManager.saveSetting(setting);
     }
 
     /**
-     * Helper method for loading a configuration from the registry.
+     * Helper method for loading a configuration from the database.
      *
-     * @param <T>       The type of the configuration.
-     * @param confName  The fully qualified name of the configuration in the
-     *                  registry. For normal configuration this is the fully
-     *                  qualified name of the configuration class. For
-     *                  application instance configurations this is the fully
-     *                  qualified name of the configuration class joined with
-     *                  the primary URL of the application instance, separated
-     *                  with a dot.
+     * @param <T> The type of the configuration.
      * @param confClass The configuration class.
      *
      * @return An instance of the configuration class with all setting fields
-     *         set to the values stored in the registry.
+     * set to the values stored in the registry.
      */
-    <T> T findConfiguration(final String confName,
-                            final Class<T> confClass) {
+    <T> T findConfiguration(final String confName, final Class<T> confClass) {
         final T conf;
+
         try {
             conf = confClass.newInstance();
         } catch (InstantiationException | IllegalAccessException ex) {
             LOGGER.warn(String.format(
-                "Failed to instantiate configuration \"%s\".",
-                confClass.getName()),
+                    "Failed to instantiate configuration \"%s\".",
+                    confClass.getName()),
                         ex);
             return null;
-        }
-
-        final Domain registry = domainRepo.findByDomainKey(REGISTRY_DOMAIN);
-        if (categoryRepo.findByPath(registry, confName) == null) {
-            return conf;
         }
 
         final Field[] fields = confClass.getDeclaredFields();
@@ -361,119 +327,29 @@ public class ConfigurationManager {
                 continue;
             }
 
-            final String settingPath = String.format("%s.%s",
-                                                     confClass.getName(),
-                                                     getSettingName(field));
+            final String settingName = getSettingName(field);
+
             final Class<?> settingType = field.getType();
             final AbstractSetting<?> setting = settingManager.findSetting(
-                settingPath, settingType);
+                    confName, settingName, settingType);
             if (setting != null) {
                 try {
-                    LOGGER.debug("Setting \"{}\" found. Value: %s",
-                                 settingPath,
+                    LOGGER.debug("Setting \"{}#{}\" found. Value: {}",
+                                 confName,
+                                 settingName,
                                  setting.getValue().toString());
                     field.set(conf, setting.getValue());
                 } catch (IllegalAccessException ex) {
                     LOGGER.warn(
-                        "Failed to set value of configuration class \"{}\". "
+                            "Failed to set value of configuration class \"{}\". "
                             + "Ignoring.",
-                        confClass.getName(),
-                        ex);
+                            confClass.getName(),
+                            ex);
                 }
             }
         }
 
         return conf;
-    }
-
-    private Category findCategoryForNewSetting(final Object configuration) {
-        LOGGER.debug("#findCategoryForNewSetting: Looking for category for "
-                         + "configuration \"{}\"...",
-                     configuration.getClass().getName());
-        final String categoryPath = configuration.getClass().getName();
-        final String[] tokens = categoryPath.split("\\.");
-        final Domain registry = domainRepo
-            .findByDomainKey(REGISTRY_DOMAIN);
-
-        final Category[] categories = new Category[tokens.length];
-
-        //Check which of the categories in the categoryPath exist already
-        final boolean[] exists = new boolean[tokens.length];
-        for (int i = 0; i < tokens.length; i++) {
-            final String path = buildCategoryPath(tokens, i);
-            LOGGER.debug("#findCategoryForNewSetting: "
-                             + "Checking if category \"{}\" exists.",
-                         path);
-            final Category category = categoryRepo.findByPath(registry,
-                                                              path);
-            if (category == null) {
-                LOGGER.debug("#findCategoryForNewSetting: "
-                                 + "Category \"{}\" does not exist.",
-                             path);
-                exists[i] = false;
-            } else {
-                LOGGER.debug(
-                    "#findCategoryForNewSetting: Category \"{}\" exists.",
-                    path);
-                exists[i] = true;
-                categories[i] = category;
-            }
-        }
-
-        LOGGER.debug(
-            "#findCategoryForNewSetting: Creating missing categories...");
-        for (int i = 0; i < tokens.length; i++) {
-            LOGGER.debug(
-                "#findCategoryForNewSetting: Checking for category \"{}\"...",
-                tokens[i]);
-            if (!exists[i]) {
-
-                if (i == 0) {
-                    LOGGER.debug("#findCategoryForNewSetting: "
-                                     + "Category \"{}\" does not exist, "
-                                     + "creating as subcategory of the registry "
-                                 + "root category.",
-                                 tokens[i]);
-                    categories[i] = createNewCategory(tokens[i],
-                                                      registry.getRoot());
-                } else {
-                    LOGGER.debug("#findCategoryForNewSetting: "
-                                     + "Category \"{}\" does not exist, "
-                                     + "creating as subcategory of \"{}\"",
-                                 tokens[i],
-                                 categories[i - 1].getName());
-                    categories[i] = createNewCategory(tokens[i],
-                                                      categories[i - 1]);
-                }
-            }
-        }
-
-        LOGGER.debug("#findCategoryForNewSetting: "
-                         + "Found/Created category \"{}\".",
-                     categoryPath);
-        return categories[categories.length - 1];
-    }
-
-    private String buildCategoryPath(final String[] tokens,
-                                     final int index) {
-        final StringJoiner joiner = new StringJoiner(".");
-        for (int i = 0; i <= index; i++) {
-            joiner.add(tokens[i]);
-        }
-
-        return joiner.toString();
-    }
-
-    private Category createNewCategory(final String name,
-                                       final Category parent) {
-        final Category category = new Category();
-        category.setName(name);
-        category.setDisplayName(name);
-        categoryRepo.save(category);
-        entityManager.flush();
-        categoryManager.addSubCategoryToCategory(category, parent);
-
-        return category;
     }
 
 }

@@ -28,17 +28,16 @@ import javax.persistence.Table;
 
 /**
  * Setting for storing a long value.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "SETTINGS_LONG", schema = DB_SCHEMA)
-public class LongSetting 
-    extends AbstractSetting<Long> implements Serializable{
+public class LongSetting
+        extends AbstractSetting<Long> implements Serializable {
 
-    private static final long serialVersionUID = 818622372461020368L;
-    
-    @Column(name = "setting_value")
+    private static final long serialVersionUID = -5806336428735880767L;
+
+    @Column(name = "SETTING_VALUE_LONG")
     private long value;
 
     @Override
@@ -63,7 +62,7 @@ public class LongSetting
         if (!super.equals(obj)) {
             return false;
         }
-        
+
         if (obj == null) {
             return false;
         }
@@ -71,24 +70,24 @@ public class LongSetting
             return false;
         }
         final LongSetting other
-                                         = (LongSetting) obj;
+                          = (LongSetting) obj;
         if (!other.canEqual(this)) {
             return false;
         }
-        
+
         return this.value == other.getValue();
     }
-    
+
     @Override
     public boolean canEqual(final Object obj) {
         return obj instanceof LongSetting;
     }
-    
+
     @Override
     public String toString(final String data) {
         return super.toString(String.format(", value = %d%s",
                                             value,
                                             data));
     }
-    
+
 }

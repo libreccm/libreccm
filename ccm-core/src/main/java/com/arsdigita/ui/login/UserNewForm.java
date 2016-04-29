@@ -29,8 +29,6 @@ import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.SaveCancelSection;
 import com.arsdigita.bebop.form.Password;
 import com.arsdigita.bebop.form.TextField;
-import com.arsdigita.bebop.parameters.NotEmptyValidationListener;
-import com.arsdigita.bebop.parameters.StringLengthValidationListener;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.kernel.security.SecurityConfig;
 import com.arsdigita.web.RedirectSignal;
@@ -39,14 +37,10 @@ import com.arsdigita.web.URL;
 import org.apache.logging.log4j.util.Strings;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.ConfigurationManager;
-import org.libreccm.security.ChallengeManager;
 import org.libreccm.security.RegistrationManager;
 import org.libreccm.security.Shiro;
-import org.libreccm.security.User;
-import org.libreccm.security.UserManager;
 import org.libreccm.security.UserRepository;
 
-import java.util.concurrent.Callable;
 
 import javax.mail.MessagingException;
 

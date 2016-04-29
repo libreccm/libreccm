@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 LibreCCM Foundation.
+ * Copyright (C) 2016 LibreCCM Foundation.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,14 +18,22 @@
  */
 package org.libreccm.configuration;
 
+import org.libreccm.configuration.StringSetting;
+import org.libreccm.configuration.LocalizedStringSetting;
+import org.libreccm.configuration.ConfigurationInfo;
+import org.libreccm.configuration.EnumSetting;
+import org.libreccm.configuration.DoubleSetting;
+import org.libreccm.configuration.BigDecimalSetting;
+import org.libreccm.configuration.LongSetting;
+import org.libreccm.configuration.SettingInfo;
+import org.libreccm.configuration.BooleanSetting;
+import java.util.Arrays;
+import java.util.Collection;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.libreccm.tests.categories.UnitTest;
 import org.libreccm.testutils.ToStringVerifier;
-
-import java.util.Arrays;
-import java.util.Collection;
 
 /**
  *
@@ -34,7 +42,7 @@ import java.util.Collection;
 @RunWith(Parameterized.class)
 @Category(UnitTest.class)
 public class ToStringTest extends ToStringVerifier {
-    
+
     @Parameterized.Parameters(name = "{0}")
     public static Collection<Class<?>> data() {
         return Arrays.asList(new Class<?>[]{
@@ -49,9 +57,9 @@ public class ToStringTest extends ToStringVerifier {
             StringSetting.class
         });
     }
-    
+
     public ToStringTest(final Class<?> entityClass) {
         super(entityClass);
     }
-    
+
 }

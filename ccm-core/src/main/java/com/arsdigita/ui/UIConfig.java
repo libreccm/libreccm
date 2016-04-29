@@ -18,7 +18,6 @@
  */
 package com.arsdigita.ui;
 
-import com.arsdigita.bebop.Component;
 
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.Configuration;
@@ -32,7 +31,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
 
-import javax.enterprise.inject.spi.CDI;
 
 /**
  *

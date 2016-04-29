@@ -1,162 +1,33 @@
-ccm_core.ccm_objects:
-    - object_id: -1000
-      display_name: registry
-      uuid: f815d6f8-f915-4399-b16c-2e2dd76f4128
-    - object_id: -2000
-      display_name: registry_root
-      uuid: 1e5b1732-0a15-49b8-b4a6-8aae1a003147
-    - object_id: -2100
-      display_name: org
-      uuid: 5b75da38-6615-4197-9527-3b56eff4c9d2
-    - object_id: -2200
-      display_name: libreccm
-      uuid: 103c7730-3cb0-4189-8314-b7527e707b0e
-    - object_id: -2300
-      display_name: configuration
-      uuid: bbc0d0ab-a191-4e40-824e-ccb959e06ba2
-    - object_id: -2400
-      display_name: ExampleConfiguration
-      uuid: ba898441-5a44-48eb-8ece-c5b25d4b9dcb
-    - object_id: -3100
-      display_name: price
-      uuid: a5feb3a6-356a-4280-bbd2-921d7dc37250
-    - object_id: -3200
-      display_name: enabled
-      uuid: 02184f7a-cc2b-44d6-a9b5-f11b0f77ae21
-    - object_id: -3300
-      display_name: minTemperature
-      uuid: 8c12c6e9-6263-42d1-b2d2-c172066f6304
-    - object_id: -3400
-      display_name: itemsPerPage
-      uuid: 5a729224-b0b1-41d3-b383-b42de185d91c
-    - object_id: -3500
-      display_name: helpUri
-      uuid: 70d0b967-a38f-4d3e-806c-c640bd114472
-    - object_id: -3600
-      display_name: languages
-      uuid: 19b3cdac-3ca4-44c0-9b06-dca8e5ae505f
-
-ccm_core.categories:
-    - object_id: -2000
-      unique_id: bb93a964-bf66-424c-a22d-074d001db3b8
-      name: registry-root
-      enabled: true
-      visible: true
-      abstract_category: false
-      category_order: 0
-    - object_id: -2100
-      unique_id: 62c22973-a078-47bc-8267-bef879c7566e
-      name: org
-      enabled: true
-      visible: true
-      abstract_category: false
-      parent_category_id: -2000
-      category_order: 1
-    - object_id: -2200
-      unique_id: a8fbf310-7cb9-47dd-81d5-a16b80e96446
-      name: libreccm
-      enabled: true
-      visible: true
-      abstract_category: false
-      parent_category_id: -2100
-      category_order: 1
-    - object_id: -2300
-      unique_id: 61c30c73-857a-49ff-8272-c9fb038d3e35
-      name: configuration
-      enabled: true
-      visible: true
-      abstract_category: false
-      parent_category_id: -2200
-      category_order: 1
-    - object_id: -2400
-      unique_id: bf5d295c-6ad3-4484-a1e6-5641cea037b3
-      name: ExampleConfiguration
-      enabled: true
-      visible: true
-      abstract_category: false
-      parent_category_id: -2300
-      category_order: 1
-
-ccm_core.category_domains:
-    - object_id: -1000
-      domain_key: registry
-      root_category_id: -2000
-      version: 1.0
-
-ccm_core.categorizations:
-    - categorization_id: -10100
-      category_id: -2400
-      object_id: -3100
-      category_order: 1
-      object_order: 1
-      category_index: false
-    - categorization_id: -10200
-      category_id: -2400
-      object_id: -3200
-      category_order: 1
-      object_order: 2
-      category_index: false
-    - categorization_id: -10300
-      category_id: -2400
-      object_id: -3300
-      category_order: 1
-      object_order: 3
-      category_index: false
-    - categorization_id: -10400
-      category_id: -2400
-      object_id: -3400
-      category_order: 1
-      object_order: 4
-      category_index: false
-    - categorization_id: -10500
-      category_id: -2400
-      object_id: -3500
-      category_order: 1
-      object_order: 5
-      category_index: false
-    - categorization_id: -10600
-      category_id: -2400
-      object_id: -3600
-      category_order: 1
-      object_order: 6
-      category_index: false
-
 ccm_core.settings:
-    - object_id: -3100
+    - setting_id: -3100
+      configuration_class: org.libreccm.configuration.ExampleConfiguration
       name: price
-    - object_id: -3200
+      dtype: BigDecimalSetting
+      setting_value_big_decimal: 98.99
+    - setting_id: -3200
+      configuration_class: org.libreccm.configuration.ExampleConfiguration
       name: enabled
-    - object_id: -3300
+      dtype: BooleanSetting
+      setting_value_boolean: true
+    - setting_id: -3300
+      configuration_class: org.libreccm.configuration.ExampleConfiguration
       name: minTemperature
-    - object_id: -3400
+      dtype: DoubleSetting
+      setting_value_double: 23.5
+    - setting_id: -3400
+      configuration_class: org.libreccm.configuration.ExampleConfiguration
       name: itemsPerPage
-    - object_id: -3500
+      dtype: LongSetting
+      setting_value_long: 20
+    - setting_id: -3500
+      configuration_class: org.libreccm.configuration.ExampleConfiguration
       name: helpUrl
-    - object_id: -3600
+      dtype: StringSetting
+      setting_value_string: http://www.example.org
+    - setting_id: -3600
+      configuration_class: org.libreccm.configuration.ExampleConfiguration
       name: languages
-
-ccm_core.settings_big_decimal:
-    - object_id: -3100
-      setting_value: 98.99
-
-ccm_core.settings_boolean:
-    - object_id: -3200
-      setting_value: true
-
-ccm_core.settings_double:
-    - object_id: -3300
-      setting_value: 23.5
-
-ccm_core.settings_long:
-    - object_id: -3400
-      setting_value: 20
-    
-ccm_core.settings_string:
-    - object_id: -3500
-      setting_value: http://www.example.org
-      
-ccm_core.settings_enum:
-    - object_id: -3600
+      dtype: EnumSetting
 
 ccm_core.settings_enum_values:
     - enum_id: -3600

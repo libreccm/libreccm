@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 LibreCCM Foundation.
+ * Copyright (C) 2016 LibreCCM Foundation.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -28,22 +28,22 @@ import java.util.Set;
  */
 @Configuration
 public class ExampleConfiguration {
-    
+
     @Setting
     private BigDecimal price;
-    
+
     @Setting
     private Boolean enabled;
-    
+
     @Setting
     private Double minTemperature;
-    
+
     @Setting
     private Long itemsPerPage;
-    
+
     @Setting
     private String helpUrl;
-    
+
     @Setting
     private Set<String> languages;
 
@@ -86,20 +86,21 @@ public class ExampleConfiguration {
     public void setHelpUrl(final String helpUrl) {
         this.helpUrl = helpUrl;
     }
-    
+
     public Set<String> getLanguages() {
         return Collections.unmodifiableSet(languages);
     }
-    
+
     private void setLanguages(final Set<String> languages) {
         this.languages = languages;
     }
-    
+
     public void addLanguage(final String language) {
         languages.add(language);
     }
-    
+
     public void removeLanguage(final String language) {
         languages.remove(language);
     }
+
 }

@@ -40,18 +40,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.subject.Subject;
-import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.web.ApplicationManager;
 import org.libreccm.web.ApplicationType;
 
-import java.util.Iterator;
-import java.util.Set;
-import java.util.StringJoiner;
-
-import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.enterprise.inject.spi.CDI;
 import javax.servlet.http.HttpServlet;
 
 /**

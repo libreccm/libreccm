@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 LibreCCM Foundation.
+ * Copyright (C) 2016 LibreCCM Foundation.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,27 +18,21 @@
  */
 package org.libreccm.configuration;
 
-import static org.libreccm.core.CoreConstants.*;
-
 import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Table;
 
 /**
- * Setting for storing a boolean value.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "SETTINGS_BOOLEAN", schema = DB_SCHEMA)
 public class BooleanSetting
-    extends AbstractSetting<Boolean> implements Serializable {
+        extends AbstractSetting<Boolean> implements Serializable {
 
-    private static final long serialVersionUID = -1724350134756734938L;
+    private static final long serialVersionUID = 4970829365710856701L;
 
-    @Column(name = "setting_value")
+    @Column(name = "SETTING_VALUE_BOOLEAN")
     private boolean value;
 
     @Override
@@ -51,18 +45,10 @@ public class BooleanSetting
         this.value = value;
     }
 
-    public boolean isValue() {
-        return value;
-    }
-
-    public void setValue(final boolean value) {
-        this.value = value;
-    }
-
     @Override
     public int hashCode() {
         int hash = super.hashCode();
-        hash = 89 * hash + (this.value ? 1 : 0);
+        hash = 89 * hash + (value ? 1 : 0);
         return hash;
     }
 

@@ -30,29 +30,27 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.Table;
 
 /**
  * A setting which stores a {@link LocalizedString} . This can be used for
  * storing values for text in the user interface which should be customisable by
  * the administrator.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "SETTINGS_L10N_STRING", schema = DB_SCHEMA)
 public class LocalizedStringSetting
-    extends AbstractSetting<LocalizedString> implements Serializable {
+        extends AbstractSetting<LocalizedString> implements Serializable {
 
-    private static final long serialVersionUID = -5854552013878000164L;
+    private static final long serialVersionUID = 667750736151545279L;
 
     @Embedded
     @AssociationOverride(
-        name = "values",
-        joinTable = @JoinTable(name = "SETTINGS_L10N_STR_VALUES",
-                               schema = DB_SCHEMA,
-                               joinColumns = {
-                                   @JoinColumn(name = "ENTRY_ID")}))
+            name = "values",
+            joinTable = @JoinTable(name = "SETTINGS_L10N_STR_VALUES",
+                                   schema = DB_SCHEMA,
+                                   joinColumns = {
+                                       @JoinColumn(name = "ENTRY_ID")}))
     private LocalizedString value;
 
     @Override
@@ -86,7 +84,7 @@ public class LocalizedStringSetting
             return false;
         }
         final LocalizedStringSetting other
-                                                    = (LocalizedStringSetting) obj;
+                                     = (LocalizedStringSetting) obj;
         if (!other.canEqual(this)) {
             return false;
         }

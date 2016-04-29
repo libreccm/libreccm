@@ -18,9 +18,6 @@
  */
 package org.libreccm.core;
 
-import com.arsdigita.ui.SimplePage;
-import com.arsdigita.ui.UIConfig;
-import com.arsdigita.ui.UiInitializer;
 import com.arsdigita.ui.admin.AdminApplicationCreator;
 import com.arsdigita.ui.admin.AdminServlet;
 import com.arsdigita.ui.admin.AdminApplicationSetup;
@@ -28,7 +25,6 @@ import com.arsdigita.ui.login.LoginApplicationCreator;
 import com.arsdigita.ui.login.LoginServlet;
 import com.arsdigita.ui.login.LoginApplicationSetup;
 
-import org.libreccm.categorization.RegistrySetup;
 import org.libreccm.modules.CcmModule;
 import org.libreccm.modules.InitEvent;
 import org.libreccm.modules.InstallEvent;
@@ -107,9 +103,6 @@ public class CcmCore implements CcmModule {
                 event);
         systemUsersSetup.setupSystemUsers();
 
-        final RegistrySetup registrySetup = new RegistrySetup(event);
-        registrySetup.setup();
-        
         final AdminApplicationSetup adminSetup = new AdminApplicationSetup(event);
         adminSetup.setup();
         

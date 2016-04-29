@@ -18,14 +18,12 @@
  */
 package org.libreccm.configuration;
 
-import static org.libreccm.core.CoreConstants.*;
 
 import java.io.Serializable;
 import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Table;
 
 /**
  * A setting for storing a string value.
@@ -33,13 +31,12 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "SETTINGS_STRING", schema = DB_SCHEMA)
 public class StringSetting 
     extends AbstractSetting<String> implements Serializable {
 
     private static final long serialVersionUID = -8564570962027541731L;
     
-    @Column(name = "setting_value", length = 1024)
+    @Column(name = "SETTING_VALUE_STRING", length = 1024)
     private String value;
     
     @Override

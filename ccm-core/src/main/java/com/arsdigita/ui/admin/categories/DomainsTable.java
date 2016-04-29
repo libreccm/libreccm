@@ -44,7 +44,6 @@ import org.apache.logging.log4j.util.Strings;
 import org.libreccm.categorization.Domain;
 import org.libreccm.categorization.DomainRepository;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.configuration.ConfigurationConstants;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.l10n.LocalizedString;
 
@@ -275,16 +274,7 @@ class DomainsTable extends Table {
         }
 
         private boolean isDeleteable(final Domain domain) {
-            if (ConfigurationConstants.REGISTRY_DOMAIN.equals(domain.
-                getDomainKey())) {
-                return false;
-            }
-
-            if (domain.getOwners() != null && !domain.getOwners().isEmpty()) {
-                return false;
-            }
-
-            return true;
+            return !(domain.getOwners() != null && !domain.getOwners().isEmpty());
         }
 
     }

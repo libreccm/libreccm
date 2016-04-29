@@ -109,24 +109,6 @@ ccm_core.role_memberships:
       role_id: -10003
       member_id: -41004
 ccm_core.ccm_objects:
-    - object_id: -100
-      display_name: registry
-      uuid: ab0688be-5b4c-479b-a2a3-3919181bc1ff
-    - object_id: -200
-      display_name: registry-root
-      uuid: 281570ba-b6b6-4d32-a018-5ab6ad0e6200
-    - object_id: -201
-      display_name: com
-      uuid: babf3f56-2119-4521-b6af-d6c3e88fd96e
-    - object_id: -202
-      display_name: arsdigita
-      uuid: f9aac564-bf4f-4a66-8382-3562ce3c8717
-    - object_id: -203
-      display_name: kernel
-      uuid: 5d017f89-b5ea-4381-9bb7-0bc72b5289a9
-    - object_id: -204
-      display_name: KernelConfig
-      uuid: 8dfd244f-d74b-493f-8254-62df65ebef35
     - object_id: -20001
       display_name: object1
       uuid: d05fb5f0-7b66-470d-b4f7-d14f4d08d4b6
@@ -136,9 +118,6 @@ ccm_core.ccm_objects:
     - object_id: -20003
       display_name: object3
       uuid: 142041c0-163f-4359-931a-1faf465ee564
-    - object_id: -301
-      display_name: screenName
-      uuid: 56e14b70-8025-4f1d-a16d-a5ac34658f92
 ccm_core.permissions:
     # permission for privilege1 granted to role1
     - permission_id: -30001
@@ -159,61 +138,9 @@ ccm_core.permissions:
       granted_privilege: privilege3
       object_id: -20001
       grantee_id: -10003
-ccm_core.categories:
-    - object_id: -200
-      unique_id: bb93a964-bf66-424c-a22d-074d001db3b8
-      name: registry-root
-      enabled: true
-      visible: true
-      abstract_category: false
-      category_order: 0
-    - object_id: -201
-      unique_id: 35ac50aa-7062-47b9-808d-ac830050d373
-      parent_category_id: -200
-      name: com
-      enabled: true
-      visible: true
-      abstract_category: false
-      category_order: 1
-    - object_id: -202
-      unique_id: 28f09d9d-a7fc-4dc3-a53e-670822fa5480
-      parent_category_id: -201
-      name: arsdigita
-      enabled: true
-      visible: true
-      abstract_category: false
-      category_order: 1
-    - object_id: -203
-      unique_id: 58c0b235-8762-4ab7-9232-a5a0e39c3a01
-      parent_category_id: -202
-      name: kernel
-      enabled: true
-      visible: true
-      abstract_category: false
-      category_order: 1
-    - object_id: -204
-      unique_id: c1a45148-df0a-486f-b4f1-c5a6659081c2
-      parent_category_id: -203
-      name: KernelConfig
-      enabled: true
-      visible: true
-      abstract_category: false
-      category_order: 1
-ccm_core.category_domains:
-    - object_id: -100
-      domain_key: registry
-      root_category_id: -200
-      version: 1.0
 ccm_core.settings:
-    - object_id: -301
+    - setting_id: -301
+      configuration_class: com.arsdigita.kernel.KernelConfig
       name: primaryUserIdentifier
-ccm_core.settings_string:
-    - object_id: -301
-      setting_value: screen_name
-ccm_core.categorizations:
-    - categorization_id: -900
-      category_id: -204
-      object_id: -301
-      category_index: false
-      category_order: 1
-      object_order: 1
+      dtype: StringSetting
+      setting_value_string: screen_name

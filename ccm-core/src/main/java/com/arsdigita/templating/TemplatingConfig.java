@@ -19,7 +19,6 @@
 package com.arsdigita.templating;
 
 import com.arsdigita.util.UncheckedWrapperException;
-import com.arsdigita.web.ApplicationFileResolver;
 
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.Configuration;

@@ -26,6 +26,7 @@ import com.arsdigita.bebop.Page;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.ParameterSingleSelectionModel;
 import com.arsdigita.bebop.SegmentedPanel;
+import com.arsdigita.bebop.Tree;
 import com.arsdigita.bebop.form.Submit;
 import com.arsdigita.bebop.form.TextField;
 import com.arsdigita.bebop.parameters.StringParameter;
@@ -57,6 +58,9 @@ public class CategoriesTab extends LayoutPanel {
     private final DomainTitleForm domainTitleForm;
     private final DomainDescriptionForm domainDescriptionForm;
 
+    private final Label categoriesTreeHeader;
+    private final BoxPanel categoriesTreePanel;
+
     public CategoriesTab() {
         super();
 
@@ -64,43 +68,64 @@ public class CategoriesTab extends LayoutPanel {
 
         domainIdParameter = new StringParameter("selected_domain_id");
         selectedDomainId
-            = new ParameterSingleSelectionModel<>(domainIdParameter);
+        = new ParameterSingleSelectionModel<>(domainIdParameter);
 
         languageParameter = new StringParameter("selected_language");
         selectedLanguage
-            = new ParameterSingleSelectionModel<>(languageParameter);
+        = new ParameterSingleSelectionModel<>(languageParameter);
+
+        final SegmentedPanel left = new SegmentedPanel();
 
         domainsFilterFormHeader = new Label(new GlobalizedMessage(
-            "ui.admin.categories.domains.table.filter.header",
-            ADMIN_BUNDLE));
+                "ui.admin.categories.domains.table.filter.header",
+                ADMIN_BUNDLE));
         domainsFilterForm = new Form("domainFilterForm");
         final TextField domainsFilter = new TextField(DOMAINS_FILTER);
         domainsFilterForm.add(domainsFilter);
         domainsFilterForm.add(new Submit(new GlobalizedMessage(
-            "ui.admin.categories.domains.table.filter", ADMIN_BUNDLE)));
+                "ui.admin.categories.domains.table.filter", ADMIN_BUNDLE)));
         final ActionLink clearLink = new ActionLink(new GlobalizedMessage(
-            "ui.admin.categories.domains.table.filter.clear",
-            ADMIN_BUNDLE));
+                "ui.admin.categories.domains.table.filter.clear",
+                ADMIN_BUNDLE));
         clearLink.addActionListener(e -> {
             final PageState state = e.getPageState();
             domainsFilter.setValue(state, null);
         });
         domainsFilterForm.add(clearLink);
-
-        final SegmentedPanel left = new SegmentedPanel();
         left.addSegment(domainsFilterFormHeader, domainsFilterForm);
+
+        categoriesTreeHeader = new Label(new GlobalizedMessage(
+                "ui.admin.categories.tree.header",
+                ADMIN_BUNDLE));
+        categoriesTreePanel = new BoxPanel(BoxPanel.VERTICAL);
+        final Tree categoriesTree = new Tree(new CategoriesTreeModelBuilder(
+                selectedDomainId));
+        categoriesTree.addActionListener(e -> {
+
+        });
+        final ActionLink backToDomain = new ActionLink(new GlobalizedMessage(
+                "ui.admin.categories.tree.back", 
+                ADMIN_BUNDLE));
+        backToDomain.addActionListener(e -> {
+            final PageState state = e.getPageState();
+            categoriesTree.getSelectionModel().clearSelection(state);
+            showDomainDetails(state);
+        });
+        categoriesTreePanel.add(backToDomain);
+        categoriesTreePanel.add(categoriesTree);
+        left.addSegment(categoriesTreeHeader, categoriesTreePanel);
 
         setLeft(left);
 
         final BoxPanel body = new BoxPanel(BoxPanel.VERTICAL);
 
         final DomainsTable domainsTable = new DomainsTable(
-            this, selectedDomainId, domainsFilter);
+                this, selectedDomainId, domainsFilter);
         domainsTable.setStyleAttr("min-width: 30em;");
         domainsTablePanel = new BoxPanel(BoxPanel.VERTICAL);
         domainsTablePanel.add(domainsTable);
         final ActionLink addDomain = new ActionLink(new GlobalizedMessage(
-            "ui.admin.categories.domains.create_new", ADMIN_BUNDLE));
+                "ui.admin.categories.domains.create_new", ADMIN_BUNDLE));
         addDomain.addActionListener(e -> {
             showDomainForm(e.getPageState());
         });
@@ -144,6 +169,8 @@ public class CategoriesTab extends LayoutPanel {
         page.setVisibleDefault(domainDetails, false);
         page.setVisibleDefault(domainTitleForm, false);
         page.setVisibleDefault(domainDescriptionForm, false);
+        page.setVisibleDefault(categoriesTreeHeader, false);
+        page.setVisibleDefault(categoriesTreePanel, false);
     }
 
     protected void showDomainsTable(final PageState state) {
@@ -154,6 +181,9 @@ public class CategoriesTab extends LayoutPanel {
         domainDetails.setVisible(state, false);
         domainTitleForm.setVisible(state, false);
         domainDescriptionForm.setVisible(state, false);
+        categoriesTreeHeader.setVisible(state, false);
+        categoriesTreePanel.setVisible(state, false);
+
     }
 
     protected void showDomainForm(final PageState state) {
@@ -164,6 +194,8 @@ public class CategoriesTab extends LayoutPanel {
         domainDetails.setVisible(state, false);
         domainTitleForm.setVisible(state, false);
         domainDescriptionForm.setVisible(state, false);
+        categoriesTreeHeader.setVisible(state, false);
+        categoriesTreePanel.setVisible(state, false);
     }
 
     protected void hideDomainForm(final PageState state) {
@@ -175,6 +207,8 @@ public class CategoriesTab extends LayoutPanel {
             domainDetails.setVisible(state, false);
             domainTitleForm.setVisible(state, false);
             domainDescriptionForm.setVisible(state, false);
+            categoriesTreeHeader.setVisible(state, false);
+            categoriesTreePanel.setVisible(state, false);
         } else {
             showDomainDetails(state);
         }
@@ -189,6 +223,8 @@ public class CategoriesTab extends LayoutPanel {
         domainDetails.setVisible(state, true);
         domainTitleForm.setVisible(state, false);
         domainDescriptionForm.setVisible(state, false);
+        categoriesTreeHeader.setVisible(state, true);
+        categoriesTreePanel.setVisible(state, true);
     }
 
     protected void hideDomainDetails(final PageState state) {
@@ -201,6 +237,8 @@ public class CategoriesTab extends LayoutPanel {
         domainDetails.setVisible(state, false);
         domainTitleForm.setVisible(state, false);
         domainDescriptionForm.setVisible(state, false);
+        categoriesTreeHeader.setVisible(state, false);
+        categoriesTreePanel.setVisible(state, false);
     }
 
     protected void showDomainTitleForm(final PageState state) {
@@ -211,6 +249,8 @@ public class CategoriesTab extends LayoutPanel {
         domainDetails.setVisible(state, false);
         domainTitleForm.setVisible(state, true);
         domainDescriptionForm.setVisible(state, false);
+        categoriesTreeHeader.setVisible(state, false);
+        categoriesTreePanel.setVisible(state, false);
     }
 
     protected void hideDomainTitleForm(final PageState state) {
@@ -227,6 +267,8 @@ public class CategoriesTab extends LayoutPanel {
         domainDetails.setVisible(state, false);
         domainTitleForm.setVisible(state, false);
         domainDescriptionForm.setVisible(state, true);
+        categoriesTreeHeader.setVisible(state, false);
+        categoriesTreePanel.setVisible(state, false);
     }
 
     protected void hideDomainDescriptionForm(final PageState state) {

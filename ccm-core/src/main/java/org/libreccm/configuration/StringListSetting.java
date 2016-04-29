@@ -28,14 +28,12 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.Table;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "SETTINGS_STRING_LIST", schema = DB_SCHEMA)
 public class StringListSetting extends AbstractSetting<List<String>> {
 
     private static final long serialVersionUID = 7093818804712916413L;

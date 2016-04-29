@@ -129,14 +129,14 @@ public class AdminServlet
                 new CategoriesTab());
 
         tabbedPane.addTab(
-                new Label(new GlobalizedMessage("ui.admin.tab.workflows.title",
-                                                BUNDLE_NAME)),
-                new WorkflowAdminTab());
-
-        tabbedPane.addTab(
                 new Label(new GlobalizedMessage("ui.admin.tab.registry.title",
                                                 BUNDLE_NAME)),
                 new RegistryAdminTab());
+
+        tabbedPane.addTab(
+                new Label(new GlobalizedMessage("ui.admin.tab.workflows.title",
+                                                BUNDLE_NAME)),
+                new WorkflowAdminTab());
 
         tabbedPane.addTab(
                 new Label(new GlobalizedMessage("ui.admin.tab.sysinfo.title",

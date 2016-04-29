@@ -31,25 +31,24 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.Table;
 
 /**
  * A setting class for storing a list a strings. This can be used to generate
  * enums which can be configured by the administrator.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "SETTINGS_ENUM", schema = DB_SCHEMA)
 public class EnumSetting
-    extends AbstractSetting<Set<String>> implements Serializable {
+        extends AbstractSetting<Set<String>> implements Serializable {
 
-    private static final long serialVersionUID = 8506016944203102813L;
+    private static final long serialVersionUID = 1763168269981687340L;
 
     @ElementCollection
     @JoinTable(name = "SETTINGS_ENUM_VALUES",
                schema = DB_SCHEMA,
-               joinColumns = {@JoinColumn(name = "ENUM_ID")})
+               joinColumns = {
+                   @JoinColumn(name = "ENUM_ID")})
     private Set<String> value;
 
     @Override
@@ -114,7 +113,7 @@ public class EnumSetting
             final List<String> values = new ArrayList<>(value);
             values.forEach((String v) -> {
                 enumValues.append('\"').append(v).append('\"');
-                if (values.indexOf(v) != values.size()- 1) {
+                if (values.indexOf(v) != values.size() - 1) {
                     enumValues.append(", ");
                 }
             });

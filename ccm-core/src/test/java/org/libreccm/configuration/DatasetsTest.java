@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 LibreCCM Foundation.
+ * Copyright (C) 2016 LibreCCM Foundation.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,8 +18,8 @@
  */
 package org.libreccm.configuration;
 
-import static org.libreccm.testutils.DatasetType.*;
-
+import java.util.Arrays;
+import java.util.Collection;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -31,8 +31,7 @@ import org.libreccm.tests.categories.UnitTest;
 import org.libreccm.testutils.DatasetType;
 import org.libreccm.testutils.DatasetsVerifier;
 
-import java.util.Arrays;
-import java.util.Collection;
+import static org.libreccm.testutils.DatasetType.*;
 
 /**
  *
@@ -41,7 +40,7 @@ import java.util.Collection;
 @RunWith(Parameterized.class)
 @Category(UnitTest.class)
 public class DatasetsTest extends DatasetsVerifier {
-
+    
     @Parameterized.Parameters(name = "Dataset {0}")
     public static Collection<String> data() {
         return Arrays.asList(new String[]{
@@ -80,5 +79,5 @@ public class DatasetsTest extends DatasetsVerifier {
     @After
     public void tearDown() {
     }
-
+    
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 LibreCCM Foundation.
+ * Copyright (C) 2016 LibreCCM Foundation.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,31 +18,23 @@
  */
 package org.libreccm.configuration;
 
-import static org.libreccm.core.CoreConstants.*;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Objects;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Table;
 
 /**
- * Setting storing a {@link BigDecimal} value. If the precision of
- * {@code BigDecimal} is not required {@link LongSetting} or
- * {@link DoubleSetting} should be used.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "SETTINGS_BIG_DECIMAL", schema = DB_SCHEMA)
 public class BigDecimalSetting
-    extends AbstractSetting<BigDecimal> implements Serializable {
+        extends AbstractSetting<BigDecimal> implements Serializable {
 
-    private static final long serialVersionUID = 1869044294174385532L;
+    private static final long serialVersionUID = -2663272970053572444L;
 
-    @Column(name = "setting_value")
+    @Column(name = "SETTING_VALUE_BIG_DECIMAL")
     private BigDecimal value;
 
     @Override
@@ -58,7 +50,7 @@ public class BigDecimalSetting
     @Override
     public int hashCode() {
         int hash = super.hashCode();
-        hash = 79 * hash + Objects.hashCode(value);
+        hash = 47 * hash + Objects.hashCode(value);
         return hash;
     }
 
@@ -71,17 +63,15 @@ public class BigDecimalSetting
         if (obj == null) {
             return false;
         }
-
-        if (!(obj instanceof BigDecimalSetting)) {
+        if (!(obj instanceof AbstractSetting)) {
             return false;
         }
-        final BigDecimalSetting other
-                                    = (BigDecimalSetting) obj;
+        final BigDecimalSetting other = (BigDecimalSetting) obj;
         if (!other.canEqual(this)) {
             return false;
         }
 
-        return Objects.equals(value, other.getValue());
+        return Objects.equals(value, other.value);
     }
 
     @Override
@@ -95,5 +85,4 @@ public class BigDecimalSetting
                                             value,
                                             data));
     }
-
 }

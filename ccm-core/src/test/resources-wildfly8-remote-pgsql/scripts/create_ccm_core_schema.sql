@@ -4,6 +4,7 @@ DROP SEQUENCE IF EXISTS hibernate_sequence;
 
 CREATE SCHEMA ccm_core;
 
+
     create table CCM_CORE.APPLICATIONS (
         APPLICATION_TYPE varchar(1024) not null,
         PRIMARY_URL varchar(1024) not null,
@@ -70,7 +71,7 @@ CREATE SCHEMA ccm_core;
     create table CCM_CORE.CCM_OBJECTS (
         OBJECT_ID int8 not null,
         DISPLAY_NAME varchar(255),
-        UUID varchar(255) not null,
+        UUID varchar(255),
         primary key (OBJECT_ID)
     );
 
@@ -377,6 +378,15 @@ CREATE SCHEMA ccm_core;
         primary key (OBJECT_ID)
     );
 
+    create table CCM_CORE.ONE_TIME_AUTH_TOKENS (
+        TOKEN_ID int8 not null,
+        PURPOSE varchar(255),
+        TOKEN varchar(255),
+        VALID_UNTIL timestamp,
+        USER_ID int8,
+        primary key (TOKEN_ID)
+    );
+
     create table CCM_CORE.PARTIES (
         PARTY_ID int8 not null,
         NAME varchar(256) not null,
@@ -467,42 +477,21 @@ CREATE SCHEMA ccm_core;
     );
 
     create table CCM_CORE.SETTINGS (
-        name varchar(512) not null,
-        OBJECT_ID int8 not null,
-        primary key (OBJECT_ID)
-    );
-
-    create table CCM_CORE.SETTINGS_BIG_DECIMAL (
-        setting_value numeric(19, 2),
-        OBJECT_ID int8 not null,
-        primary key (OBJECT_ID)
-    );
-
-    create table CCM_CORE.SETTINGS_BOOLEAN (
-        setting_value boolean,
-        OBJECT_ID int8 not null,
-        primary key (OBJECT_ID)
-    );
-
-    create table CCM_CORE.SETTINGS_DOUBLE (
-        setting_value float8,
-        OBJECT_ID int8 not null,
-        primary key (OBJECT_ID)
-    );
-
-    create table CCM_CORE.SETTINGS_ENUM (
-        OBJECT_ID int8 not null,
-        primary key (OBJECT_ID)
+        DTYPE varchar(31) not null,
+        SETTING_ID int8 not null,
+        CONFIGURATION_CLASS varchar(512) not null,
+        NAME varchar(512) not null,
+        SETTING_VALUE_LONG int8,
+        SETTING_VALUE_STRING varchar(1024),
+        SETTING_VALUE_BOOLEAN boolean,
+        SETTING_VALUE_BIG_DECIMAL numeric(19, 2),
+        SETTING_VALUE_DOUBLE float8,
+        primary key (SETTING_ID)
     );
 
     create table CCM_CORE.SETTINGS_ENUM_VALUES (
         ENUM_ID int8 not null,
         value varchar(255)
-    );
-
-    create table CCM_CORE.SETTINGS_L10N_STRING (
-        OBJECT_ID int8 not null,
-        primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.SETTINGS_L10N_STR_VALUES (
@@ -512,23 +501,9 @@ CREATE SCHEMA ccm_core;
         primary key (ENTRY_ID, LOCALE)
     );
 
-    create table CCM_CORE.SETTINGS_LONG (
-        setting_value int8,
-        OBJECT_ID int8 not null,
-        primary key (OBJECT_ID)
-    );
-
-    create table CCM_CORE.SETTINGS_STRING (
-        setting_value varchar(1024),
-        OBJECT_ID int8 not null,
-        primary key (OBJECT_ID)
-    );
-
     create table CCM_CORE.SETTINGS_STRING_LIST (
-        OBJECT_ID int8 not null,
         LIST_ID int8 not null,
-        value varchar(255),
-        primary key (OBJECT_ID)
+        value varchar(255)
     );
 
     create table CCM_CORE.TASK_ASSIGNMENTS (
@@ -629,26 +604,23 @@ CREATE SCHEMA ccm_core;
         primary key (TASK_ID)
     );
 
-    create table CCM_CORE.ONE_TIME_AUTH_TOKENS (
-        TOKEN_ID int8 not null,
-        PURPOSE varchar(255),
-        TOKEN varchar(255),
-        VALID_UNTIL timestamp,
-        USER_ID int8,
-        primary key (TOKEN_ID)
-    );
-
     alter table CCM_CORE.CATEGORY_DOMAINS 
         add constraint UK_mb1riernf8a88u3mwl0bgfj8y unique (DOMAIN_KEY);
 
     alter table CCM_CORE.CATEGORY_DOMAINS 
         add constraint UK_i1xqotjvml7i6ro2jq22fxf5g unique (URI);
 
+    alter table CCM_CORE.CCM_OBJECTS 
+        add constraint UK_1cm71jlagvyvcnkqvxqyit3wx unique (UUID);
+
     alter table CCM_CORE.HOSTS 
         add constraint UK_9ramlv6uxwt13v0wj7q0tucsx unique (SERVER_NAME, SERVER_PORT);
 
     alter table CCM_CORE.INSTALLED_MODULES 
         add constraint UK_11imwgfojyi4hpr18uw9g3jvx unique (MODULE_CLASS_NAME);
+
+    alter table CCM_CORE.SETTINGS 
+        add constraint UK_5whinfxdaepqs09e5ia9y71uk unique (CONFIGURATION_CLASS, NAME);
 
     alter table CCM_CORE.APPLICATIONS 
         add constraint FK_sn1sqtx94nhxgv282ymoqiock 
@@ -940,6 +912,11 @@ CREATE SCHEMA ccm_core;
         foreign key (OBJECT_ID) 
         references CCM_CORE.CCM_OBJECTS;
 
+    alter table CCM_CORE.ONE_TIME_AUTH_TOKENS 
+        add constraint FK_fvr3t6w3nsm3u29mjuh4tplno 
+        foreign key (USER_ID) 
+        references CCM_CORE.USERS;
+
     alter table CCM_CORE.PERMISSIONS 
         add constraint FK_7f7dd6k54fi1vy3llbvrer061 
         foreign key (CREATION_USER_ID) 
@@ -1020,65 +997,20 @@ CREATE SCHEMA ccm_core;
         foreign key (ROLE_ID) 
         references CCM_CORE.CCM_ROLES;
 
-    alter table CCM_CORE.SETTINGS 
-        add constraint FK_3k0t3in140j6wj6eq5olwjgu 
-        foreign key (OBJECT_ID) 
-        references CCM_CORE.CCM_OBJECTS;
-
-    alter table CCM_CORE.SETTINGS_BIG_DECIMAL 
-        add constraint FK_9mbdc1rjkm80edyuijnkwl6ak 
-        foreign key (OBJECT_ID) 
-        references CCM_CORE.SETTINGS;
-
-    alter table CCM_CORE.SETTINGS_BOOLEAN 
-        add constraint FK_1mjjvpjxpwicyv8im6mumc7ug 
-        foreign key (OBJECT_ID) 
-        references CCM_CORE.SETTINGS;
-
-    alter table CCM_CORE.SETTINGS_DOUBLE 
-        add constraint FK_kejnkuyk89tw59xg550kugwb5 
-        foreign key (OBJECT_ID) 
-        references CCM_CORE.SETTINGS;
-
-    alter table CCM_CORE.SETTINGS_ENUM 
-        add constraint FK_fgrfc2qbl2f2t1l0ku8wo2e5r 
-        foreign key (OBJECT_ID) 
-        references CCM_CORE.SETTINGS;
-
     alter table CCM_CORE.SETTINGS_ENUM_VALUES 
         add constraint FK_sq653hqyeeklci0y7pvoxf5ha 
         foreign key (ENUM_ID) 
-        references CCM_CORE.SETTINGS_ENUM;
-
-    alter table CCM_CORE.SETTINGS_L10N_STRING 
-        add constraint FK_evnyfg9udprxmbginhc4o0is9 
-        foreign key (OBJECT_ID) 
         references CCM_CORE.SETTINGS;
 
     alter table CCM_CORE.SETTINGS_L10N_STR_VALUES 
         add constraint FK_t21obt5do2tjhskjxgxd5143r 
         foreign key (ENTRY_ID) 
-        references CCM_CORE.SETTINGS_L10N_STRING;
-
-    alter table CCM_CORE.SETTINGS_LONG 
-        add constraint FK_2l4bw7pbq3koj81cjyoqpenjj 
-        foreign key (OBJECT_ID) 
-        references CCM_CORE.SETTINGS;
-
-    alter table CCM_CORE.SETTINGS_STRING 
-        add constraint FK_naonte6jut7b842icvp9ahino 
-        foreign key (OBJECT_ID) 
-        references CCM_CORE.SETTINGS;
-
-    alter table CCM_CORE.SETTINGS_STRING_LIST 
-        add constraint FK_34s3comqq4mhy9kcr04iavfef 
-        foreign key (OBJECT_ID) 
         references CCM_CORE.SETTINGS;
 
     alter table CCM_CORE.SETTINGS_STRING_LIST 
         add constraint FK_obwiaa74lrjqjlpjidjltysoq 
         foreign key (LIST_ID) 
-        references CCM_CORE.SETTINGS_STRING_LIST;
+        references CCM_CORE.SETTINGS;
 
     alter table CCM_CORE.TASK_ASSIGNMENTS 
         add constraint FK_klh64or0yq26c63181j1tps2o 
@@ -1139,10 +1071,5 @@ CREATE SCHEMA ccm_core;
         add constraint FK_bg60xxg9kerqsxyphbfxulg8y 
         foreign key (WORKFLOW_ID) 
         references CCM_CORE.WORKFLOWS;
-
-    alter table CCM_CORE.ONE_TIME.AUTH_TOKENS 
-        add constraint FK_fvr3t6w3nsm3u29mjuh4tplno 
-        foreign key (USER_ID) 
-        references CCM_CORE.USERS;
 
     create sequence hibernate_sequence start 1 increment 1;

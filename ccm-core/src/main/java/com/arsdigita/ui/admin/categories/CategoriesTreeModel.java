@@ -75,7 +75,7 @@ public class CategoriesTreeModel implements TreeModel {
 
         @Override
         public Object getKey() {
-            return category.getObjectId();
+            return Long.toString(category.getObjectId());
         }
 
         @Override

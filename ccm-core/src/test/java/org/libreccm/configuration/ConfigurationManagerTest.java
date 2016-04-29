@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 LibreCCM Foundation.
+ * Copyright (C) 2016 LibreCCM Foundation.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,11 +19,15 @@
 package org.libreccm.configuration;
 
 import com.example.TestConfiguration;
+import java.io.File;
+import java.math.BigDecimal;
+import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
 import org.jboss.arquillian.persistence.CreateSchema;
 import org.jboss.arquillian.persistence.PersistenceTest;
+import org.jboss.arquillian.persistence.ShouldMatchDataSet;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
@@ -37,15 +41,9 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.libreccm.tests.categories.IntegrationTest;
-
-import java.io.File;
-import java.math.BigDecimal;
-
-import javax.inject.Inject;
-
-import org.jboss.arquillian.persistence.ShouldMatchDataSet;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -54,7 +52,7 @@ import static org.junit.Assert.*;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@org.junit.experimental.categories.Category(IntegrationTest.class)
+@Category(IntegrationTest.class)
 @RunWith(Arquillian.class)
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
@@ -65,6 +63,7 @@ public class ConfigurationManagerTest {
     private ConfigurationManager configurationManager;
 
     public ConfigurationManagerTest() {
+
     }
 
     @BeforeClass
@@ -99,7 +98,7 @@ public class ConfigurationManagerTest {
 
         return ShrinkWrap
                 .create(WebArchive.class,
-                        "LibreCCM-org.libreccm.categorization."
+                        "LibreCCM-org.libreccm.configuration."
                                 + "ConfigurationManagerTest.war")
                 .addPackage(org.libreccm.categorization.Categorization.class.
                         getPackage())
@@ -119,6 +118,7 @@ public class ConfigurationManagerTest {
                         getPackage())
                 .addPackage(org.libreccm.testutils.EqualsVerifier.class.
                         getPackage())
+                .addClass(com.example.TestConfiguration.class)
                 .addAsLibraries(libs)
                 .addAsResource("test-persistence.xml",
                                "META-INF/persistence.xml")
@@ -202,7 +202,7 @@ public class ConfigurationManagerTest {
     @ShouldMatchDataSet(
             value = "datasets/org/libreccm/configuration/"
                             + "ConfigurationManagerTest/after-save-new.yml",
-            excludeColumns = {"object_id", "uuid"})
+            excludeColumns = {"setting_id"})
     @InSequence(2200)
     public void saveNewConfiguration() {
         configurationManager.saveConfiguration(new TestConfiguration());

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 LibreCCM Foundation.
+ * Copyright (C) 2016 LibreCCM Foundation.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,27 +18,21 @@
  */
 package org.libreccm.configuration;
 
-import static org.libreccm.core.CoreConstants.*;
-
 import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Table;
 
 /**
- * A setting for storing a double value.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "SETTINGS_DOUBLE", schema = DB_SCHEMA)
 public class DoubleSetting
-    extends AbstractSetting<Double> implements Serializable {
+        extends AbstractSetting<Double> implements Serializable {
 
-    private static final long serialVersionUID = -6944518527865528160L;
+    private static final long serialVersionUID = 4698940335480821950L;
 
-    @Column(name = "setting_value")
+    @Column(name = "SETTING_VALUE_DOUBLE")
     private double value;
 
     @Override
@@ -76,7 +70,7 @@ public class DoubleSetting
         }
 
         return Double.doubleToLongBits(value) == Double.doubleToLongBits(other
-            .getValue());
+                .getValue());
     }
 
     @Override

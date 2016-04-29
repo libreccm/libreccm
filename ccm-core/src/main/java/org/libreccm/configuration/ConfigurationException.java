@@ -19,6 +19,8 @@
 
 package org.libreccm.configuration;
 
+import org.libreccm.configuration.*;
+
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>

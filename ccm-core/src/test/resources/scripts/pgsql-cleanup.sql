@@ -1,20 +1,10 @@
-DELETE FROM ccm_core.settings_big_decimal;
-
-DELETE FROM ccm_core.settings_boolean;
-
-DELETE FROM ccm_core.settings_double;
-
-DELETE FROM ccm_core.settings_enum_values;
-
-DELETE FROM ccm_core.settings_enum;
-
-DELETE FROM ccm_core.settings_l10n_string;
+DELETE FROM ccm_core.settings_string_list;
 
 DELETE FROM ccm_core.settings_l10n_str_values;
 
-DELETE FROM ccm_core.settings_long;
+DELETE FROM ccm_core.settings_enum_values;
 
-DELETE FROM ccm_core.settings_string;
+DELETE FROM ccm_core.settings_enum_values;
 
 DELETE FROM ccm_core.settings;
 

@@ -32,7 +32,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.StringJoiner;
 
-import javax.enterprise.inject.spi.CDI;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.ValidatorFactory;
