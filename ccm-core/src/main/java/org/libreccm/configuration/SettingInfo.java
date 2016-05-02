@@ -114,6 +114,10 @@ public final class SettingInfo {
     void setLabelKey(final String labelKey) {
         this.labelKey = labelKey;
     }
+    
+    public String getLabel(final Locale locale) {
+        return getDescriptionBundle(locale).getString(labelKey);
+    }
 
     public String getDescKey() {
         return descKey;

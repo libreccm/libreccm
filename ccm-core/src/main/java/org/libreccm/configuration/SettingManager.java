@@ -20,13 +20,18 @@ package org.libreccm.configuration;
 
 import java.lang.reflect.Field;
 import java.util.List;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.util.Strings;
+
+import java.util.ArrayList;
 
 /**
  *
@@ -43,18 +48,55 @@ import org.apache.logging.log4j.Logger;
 public class SettingManager {
 
     private static final Logger LOGGER = LogManager.getLogger(
-            SettingManager.class);
+        SettingManager.class);
 
     @Inject
     private EntityManager entityManager;
 
     /**
+     * Get the names of all settings of a configuration class.
+     *
+     * @param configuration The configuration class for which the settings are
+     *                      retrieved.
+     *
+     * @return A list with the names of all settings provided by the
+     *         configuration class.
+     */
+    public List<String> getAllSettings(final Class<?> configuration) {
+        if (configuration == null) {
+            throw new IllegalArgumentException("Configuration can't be null");
+        }
+
+        if (configuration.getAnnotation(Configuration.class) == null) {
+            throw new IllegalArgumentException(String.format(
+                "The class \"%s\" of the provided object is not annotated "
+                    + "with \"%s\".",
+                configuration.getClass().getName(),
+                Configuration.class.getName()));
+        }
+
+        final List<String> settings = new ArrayList<>();
+        final Field[] fields = configuration.getDeclaredFields();
+        for (Field field : fields) {
+            if (field.getAnnotation(Setting.class) != null) {
+                settings.add(field.getName());
+            }
+        }
+
+        settings.sort((s1, s2) -> {
+            return s1.compareTo(s2);
+        });
+
+        return settings;
+    }
+
+    /**
      * Create a {@link SettingInfo} instance for a setting.
      *
      * @param configuration The configuration class to which the settings
-     * belongs.
-     * @param name The name of the setting for which the {@link SettingInfo} is
-     * generated.
+     *                      belongs.
+     * @param name          The name of the setting for which the
+     *                      {@link SettingInfo} is generated.
      *
      * @return The {@link SettingInfo} for the provided configuration class.
      */
@@ -62,18 +104,18 @@ public class SettingManager {
                        "PMD.CyclomaticComplexity",
                        "PMD.StandardCyclomaticComplexity"})
     public SettingInfo getSettingInfo(
-            final Class<?> configuration,
-            final String name) {
+        final Class<?> configuration,
+        final String name) {
         if (configuration == null) {
             throw new IllegalArgumentException("Configuration can't be null");
         }
 
         if (configuration.getAnnotation(Configuration.class) == null) {
             throw new IllegalArgumentException(String.format(
-                    "The class \"%s\" of the provided object is not annotated "
-                            + "with \"%s\".",
-                    configuration.getClass().getName(),
-                    Configuration.class.getName()));
+                "The class \"%s\" of the provided object is not annotated "
+                    + "with \"%s\".",
+                configuration.getClass().getName(),
+                Configuration.class.getName()));
         }
 
         final Field field;
@@ -81,10 +123,10 @@ public class SettingManager {
             field = configuration.getDeclaredField(name);
         } catch (SecurityException | NoSuchFieldException ex) {
             LOGGER.warn(String.format(
-                    "Failed to generate SettingInfo for field \"%s\" of "
-                            + "configuration \"%s\". Ignoring field.",
-                    configuration.getClass().getName(),
-                    name),
+                "Failed to generate SettingInfo for field \"%s\" of "
+                    + "configuration \"%s\". Ignoring field.",
+                configuration.getClass().getName(),
+                name),
                         ex);
             return null;
         }
@@ -96,7 +138,7 @@ public class SettingManager {
         final Setting settingAnnotation = field.getAnnotation(Setting.class);
         final SettingInfo settingInfo = new SettingInfo();
         if (settingAnnotation.name() == null
-                    || settingAnnotation.name().isEmpty()) {
+                || settingAnnotation.name().isEmpty()) {
             settingInfo.setName(field.getName());
         } else {
             settingInfo.setName(settingAnnotation.name());
@@ -109,7 +151,7 @@ public class SettingManager {
             settingInfo.setDefaultValue(field.get(conf).toString());
         } catch (InstantiationException | IllegalAccessException ex) {
             LOGGER.warn(String.format("Failed to create instance of \"%s\" to "
-                                              + "get default values.",
+                                          + "get default values.",
                                       configuration.getName()),
                         ex);
         }
@@ -117,16 +159,14 @@ public class SettingManager {
         settingInfo.setConfClass(configuration.getName());
         settingInfo.setDescBundle(getDescBundle(configuration));
 
-        if (settingAnnotation.labelKey() == null
-                    || settingAnnotation.labelKey().isEmpty()) {
+        if (Strings.isBlank(settingAnnotation.labelKey())) {
             settingInfo.setLabelKey(String.join(".", field.getName(),
                                                 "label"));
         } else {
             settingInfo.setLabelKey(name);
         }
 
-        if (settingAnnotation.descKey() == null
-                    || settingAnnotation.descKey().isEmpty()) {
+        if (Strings.isBlank(settingAnnotation.descKey())) {
             settingInfo.setDescKey(String.join(".",
                                                field.getName(),
                                                "descripotion"));
@@ -140,25 +180,25 @@ public class SettingManager {
     /**
      * A low level method for finding a setting in the registry.
      *
-     * @param <T> Type of the value of the setting
+     * @param <T>      Type of the value of the setting
      * @param confName Name of the configuration to which the setting belongs
-     * @param name The fully qualified name of the setting.
-     * @param clazz The class of the setting.
+     * @param name     The fully qualified name of the setting.
+     * @param clazz    The class of the setting.
      *
      * @return The requested setting if it exists in the registry, {@code null}
-     * otherwise.
+     *         otherwise.
      */
     public <T> AbstractSetting<T> findSetting(final String confName,
                                               final String name,
                                               final Class<T> clazz) {
         LOGGER.debug(String.format(
-                "Trying to find setting \"%s\" of type \"%s\"",
-                name,
-                clazz.getName()));
+            "Trying to find setting \"%s\" of type \"%s\"",
+            name,
+            clazz.getName()));
 
         final TypedQuery<AbstractSetting> query = entityManager.
-                createNamedQuery("AbstractSetting.findByClassAndName",
-                                 AbstractSetting.class);
+            createNamedQuery("AbstractSetting.findByClassAndName",
+                             AbstractSetting.class);
         query.setParameter("class", confName);
         query.setParameter("name", name);
         final List<AbstractSetting> result = query.getResultList();
@@ -185,9 +225,9 @@ public class SettingManager {
 
     private String getDescBundle(final Class<?> configuration) {
         final Configuration confAnnotation = configuration.getAnnotation(
-                Configuration.class);
+            Configuration.class);
         if (confAnnotation.descBundle() == null
-                    || confAnnotation.descBundle().isEmpty()) {
+                || confAnnotation.descBundle().isEmpty()) {
             return String.join("",
                                configuration.getClass().getName(),
                                "Description");
@@ -195,4 +235,5 @@ public class SettingManager {
             return confAnnotation.descBundle();
         }
     }
+
 }

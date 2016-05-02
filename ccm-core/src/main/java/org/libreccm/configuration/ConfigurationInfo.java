@@ -26,8 +26,7 @@ import java.util.ResourceBundle;
 import java.util.TreeMap;
 
 /**
- * Describes a configuration. Useful for generating user
- * interfaces.
+ * Describes a configuration. Useful for generating user interfaces.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -43,6 +42,8 @@ public final class ConfigurationInfo {
      * its settings.
      */
     private String descBundle;
+
+    private String titleKey;
 
     /**
      * The key for the description of the configuration in the resource bundle.
@@ -79,6 +80,14 @@ public final class ConfigurationInfo {
         return ResourceBundle.getBundle(descBundle);
     }
 
+    public String getTitleKey() {
+        return titleKey;
+    }
+
+    void setTitleKey(final String titleKey) {
+        this.titleKey = titleKey;
+    }
+
     public String getDescKey() {
         return descKey;
     }
@@ -87,6 +96,10 @@ public final class ConfigurationInfo {
         this.descKey = descKey;
     }
 
+    public String getTitle(final Locale locale) {
+        return getDescriptionBundle(locale).getString(titleKey);
+    }
+    
     public String getDescription(final Locale locale) {
         return getDescriptionBundle(locale).getString(descKey);
     }

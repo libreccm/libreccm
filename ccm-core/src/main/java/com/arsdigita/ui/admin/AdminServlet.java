@@ -129,7 +129,7 @@ public class AdminServlet
                 new CategoriesTab());
 
         tabbedPane.addTab(
-                new Label(new GlobalizedMessage("ui.admin.tab.registry.title",
+                new Label(new GlobalizedMessage("ui.admin.tab.configuration.title",
                                                 BUNDLE_NAME)),
                 new RegistryAdminTab());
 

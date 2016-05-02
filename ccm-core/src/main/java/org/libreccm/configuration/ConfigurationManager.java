@@ -19,12 +19,21 @@
 package org.libreccm.configuration;
 
 import java.lang.reflect.Field;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
+
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.util.Strings;
+import org.libreccm.modules.CcmModule;
+import org.libreccm.modules.Module;
+
+import java.util.Arrays;
+import java.util.ServiceLoader;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * Maps between configuration classes and the settings stored in the database.
@@ -43,9 +52,37 @@ public class ConfigurationManager {
     @Inject
     private SettingConverter settingConverter;
 
-    @Inject
-    private EntityManager entityManager;
+    /**
+     * Finds all configuration classes listed by the installed modules.
+     * 
+     * @return A sorted set containing all configuration classes. 
+     * 
+     * @see Module#configurations() 
+     */
+    public SortedSet<Class<?>> findAllConfigurations() {
+         final ServiceLoader<CcmModule> modules = ServiceLoader.load(
+            CcmModule.class);
+         
+         final SortedSet<Class<?>> configurations = new TreeSet<>((c1, c2) -> {
+             return c1.getName().compareTo(c2.getName());
+         });
+         
+         for(CcmModule module : modules) {
+             final Module annotation = module.getClass().getAnnotation(
+                 Module.class);
+             
+             if (annotation == null) {
+                 continue;
+             }
+             
+             Arrays.stream(annotation.configurations()).forEach(c -> {
+                 configurations.add(c);
+             });
+         }
 
+         return configurations;
+    }
+    
     /**
      * Load all settings of the provided configuration class.
      *
@@ -170,8 +207,12 @@ public class ConfigurationManager {
         } else {
             confInfo.setDescBundle(annotation.descBundle());
         }
-        if (annotation.descKey() == null
-                    || annotation.descKey().isEmpty()) {
+        if (Strings.isBlank(annotation.titleKey())) {
+            confInfo.setTitleKey("title");
+        } else {
+            confInfo.setTitleKey(annotation.titleKey());
+        }
+        if (Strings.isBlank(annotation.descKey())) {
             confInfo.setDescKey("description");
         } else {
             confInfo.setDescKey(annotation.descKey());

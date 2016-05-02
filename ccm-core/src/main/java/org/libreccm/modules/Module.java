@@ -18,6 +18,8 @@
  */
 package org.libreccm.modules;
 
+import org.libreccm.configuration.Configuration;
+import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.web.ApplicationType;
 
 import java.lang.annotation.Retention;
@@ -29,59 +31,63 @@ import java.lang.annotation.Target;
 
 /**
  * Annotation for describing some meta data of a module.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Target({TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Module {
-    
-        /**
-     * Name of the module, overriding the name provided by the pom.xml and the 
-     * module info file of the module. 
-     * 
-     * @return The name of the module, overriding the value provided by the 
-     * module-info file.
+
+    /**
+     * Name of the module, overriding the name provided by the pom.xml and the
+     * module info file of the module.
+     *
+     * @return The name of the module, overriding the value provided by the
+     *         module-info file.
      */
     String name() default "";
 
-        /**
-     * Package name of resources of the package like DB migrations, overriding 
-     * default value constructed from the group id and the artifact id of the 
+    /**
+     * Package name of resources of the package like DB migrations, overriding
+     * default value constructed from the group id and the artifact id of the
      * module.
-     * 
-     * @return The package name for resources of the module. 
+     *
+     * @return The package name for resources of the module.
      */
     String packageName() default "";
 
-        /**
-     * The version of module, overriding the value provided by the module info 
+    /**
+     * The version of module, overriding the value provided by the module info
      * file of the module.
-     * 
-     * @return  The version of the module.
+     *
+     * @return The version of the module.
      */
     String version() default "";
 
     /**
      * Modules required by the annotated module.
-     * 
+     *
      * @return An array of the dependencies of the module.
      */
     RequiredModule[] requiredModules() default {};
-    
+
     /**
      * ApplicationType types provided by the annotated module.
-     * 
-     * @return An array containing the type descriptions for all application 
-     * types provided by the annotated module.
+     *
+     * @return An array containing the type descriptions for all application
+     *         types provided by the annotated module.
      */
     ApplicationType[] applicationTypes() default {};
-    
+
     /**
-     * The JPA entities provided by the annotated module.
+     * Configuration classes provided by the module.
+     *
+     * @return An array containing all configuration classes provided by the
+     *         module.
      * 
-     * @return An array with the JPA entity classes of the annotated module.
+     * @see Configuration
+     * @see ConfigurationManager
      */
-    Class<?>[] entities() default {};
+    Class<?>[] configurations() default {};
 
 }

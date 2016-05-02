@@ -60,10 +60,6 @@ public class ModuleInfo {
      */
     private String moduleDataPackage;
     /**
-     * The entities provided by the module.
-     */
-    private Class<?>[] moduleEntities;
-    /**
      * The version of the module.
      */
     private String moduleVersion;
@@ -129,10 +125,6 @@ public class ModuleInfo {
         return moduleVersion;
     }
 
-    public List<Class<?>> getModuleEntities() {
-        return Collections.unmodifiableList(Arrays.asList(moduleEntities));
-    }
-
     public List<RequiredModule> getRequiredModules() {
         return Collections.unmodifiableList(Arrays.asList(requiredModules));
     }
@@ -168,7 +160,6 @@ public class ModuleInfo {
         LOGGER.info("Module version is \"{}.\"", moduleVersion);
 
         requiredModules = annotation.requiredModules();
-        moduleEntities = annotation.entities();
     }
 
     /**
