@@ -52,6 +52,8 @@ public class ConfigurationTab extends LayoutPanel {
     private final Form confClassesFilterForm;
     private final ConfigurationsTable configurationsTable;
 
+    private final ConfigurationTable configurationTable;
+
     public ConfigurationTab() {
         super();
 
@@ -90,6 +92,11 @@ public class ConfigurationTab extends LayoutPanel {
             this, selectedConf, confClassesFilter);
         body.add(configurationsTable);
 
+        configurationTable = new ConfigurationTable(this,
+                                                    selectedConf,
+                                                    selectedSetting);
+        body.add(configurationTable);
+
         setBody(body);
     }
 
@@ -97,9 +104,14 @@ public class ConfigurationTab extends LayoutPanel {
     public void register(final Page page) {
         super.register(page);
 
+        page.addGlobalStateParam(selectedConfParam);
+        page.addGlobalStateParam(selectedSettingParam);
+        
         page.setVisibleDefault(confClassesFilterHeading, true);
         page.setVisibleDefault(confClassesFilterForm, true);
         page.setVisibleDefault(configurationsTable, true);
+        
+        page.setVisibleDefault(configurationTable, false);
     }
 
     protected void showConfigurationsTable(final PageState state) {
@@ -116,12 +128,51 @@ public class ConfigurationTab extends LayoutPanel {
 
     protected void showConfiguration(final PageState state) {
         hideConfigurationsTable(state);
-
+        
+        configurationTable.setVisible(state, true);
     }
 
     protected void hideConfiguration(final PageState state) {
-
+        configurationTable.setVisible(state, false);
+        
         showConfigurationsTable(state);
     }
-
+    
+    protected void showBigDecimalSettingForm(final PageState state) {
+        
+    }
+    
+    protected void showBooleanSettingForm(final PageState state) {
+        
+    }
+    
+    protected void showDoubleSettingForm(final PageState state) {
+        
+    }
+    
+    protected void showEnumSettingForm(final PageState state) {
+        
+    }
+    
+    protected void showLocalizedStringSettingForm(final PageState state) {
+        
+    }
+    
+    protected void showLongSettingForm(final PageState state) {
+        
+    }
+    
+    protected void showStringListSettingForm(final PageState state) {
+        
+    }
+    
+    protected void showStringSettingForm(final PageState state) {
+        
+    }
+    
+    protected void hideSettingForms(final PageState state) {
+        
+        
+        showConfiguration(state);
+    }
 }

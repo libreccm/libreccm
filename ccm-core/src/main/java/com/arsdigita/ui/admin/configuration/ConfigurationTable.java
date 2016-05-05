@@ -44,7 +44,6 @@ import org.libreccm.configuration.SettingManager;
 import org.libreccm.l10n.GlobalizationHelper;
 
 import java.util.List;
-import java.util.logging.Level;
 
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
