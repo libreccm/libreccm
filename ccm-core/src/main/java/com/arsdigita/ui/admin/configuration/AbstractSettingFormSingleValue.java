@@ -51,7 +51,8 @@ import static com.arsdigita.ui.admin.AdminUiConstants.*;
  */
 public abstract class AbstractSettingFormSingleValue<T> extends Form {
 
-    private static final Logger LOGGER = LogManager.getLogger(AbstractSettingFormSingleValue.class);
+    private static final Logger LOGGER = LogManager.getLogger(
+        AbstractSettingFormSingleValue.class);
 
     private static final String VALUE_FIELD = "valueField";
 
@@ -80,7 +81,9 @@ public abstract class AbstractSettingFormSingleValue<T> extends Form {
 
         addValidationListener(new ValidationListener());
 
-        addProcessListener(new ProcessListener(selectedConf, selectedSetting));
+        addProcessListener(new ProcessListener(configurationTab,
+                                               selectedConf,
+                                               selectedSetting));
 
     }
 
@@ -121,9 +124,9 @@ public abstract class AbstractSettingFormSingleValue<T> extends Form {
 
             final Object config = confManager.findConfiguration(confClass);
 
-            final BigDecimal value;
+            final Object value;
             try {
-                value = (BigDecimal) confClass.getField(selectedSetting
+                value = confClass.getField(selectedSetting
                     .getSelectedKey(state)).get(config);
             } catch (NoSuchFieldException | SecurityException |
                      IllegalAccessException | ClassCastException ex) {
@@ -168,12 +171,15 @@ public abstract class AbstractSettingFormSingleValue<T> extends Form {
 
     private class ProcessListener implements FormProcessListener {
 
+        private final ConfigurationTab configurationTab;
         private final ParameterSingleSelectionModel<String> selectedConf;
         private final ParameterSingleSelectionModel<String> selectedSetting;
 
         public ProcessListener(
+            final ConfigurationTab configurationTab,
             final ParameterSingleSelectionModel<String> selectedConf,
             final ParameterSingleSelectionModel<String> selectedSetting) {
+            this.configurationTab = configurationTab;
             this.selectedConf = selectedConf;
             this.selectedSetting = selectedSetting;
         }
@@ -222,6 +228,7 @@ public abstract class AbstractSettingFormSingleValue<T> extends Form {
 
             try {
                 field.set(config, value);
+                configurationTab.hideSettingForms(state);
             } catch (IllegalArgumentException | IllegalAccessException ex) {
                 throw new FormProcessException(
                     String.format(

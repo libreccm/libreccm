@@ -20,25 +20,23 @@ package com.arsdigita.ui.admin.configuration;
 
 import com.arsdigita.bebop.ParameterSingleSelectionModel;
 
-import java.math.BigDecimal;
-
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class SettingFormBigDecimal
-    extends AbstractSettingFormSingleValue<BigDecimal> {
+public class SettingFormString extends AbstractSettingFormSingleValue<String> {
 
-    public SettingFormBigDecimal(
+    public SettingFormString(
         final ConfigurationTab configurationTab,
         final ParameterSingleSelectionModel<String> selectedConf,
         final ParameterSingleSelectionModel<String> selectedSetting) {
+        
         super(configurationTab, selectedConf, selectedSetting);
     }
 
     @Override
-    BigDecimal convertValue(final String valueData) {
-        return new BigDecimal(valueData);
+    String convertValue(final String valueData) {
+        return valueData;
     }
 
 }

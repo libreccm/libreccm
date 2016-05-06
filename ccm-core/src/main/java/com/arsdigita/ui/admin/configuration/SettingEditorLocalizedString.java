@@ -1,0 +1,396 @@
+/*p
+ * Copyright (C) 2016 LibreCCM Foundation.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301  USA
+ */
+package com.arsdigita.ui.admin.configuration;
+
+import com.arsdigita.bebop.ActionLink;
+import com.arsdigita.bebop.BoxPanel;
+import com.arsdigita.bebop.Component;
+import com.arsdigita.bebop.ControlLink;
+import com.arsdigita.bebop.Form;
+import com.arsdigita.bebop.Label;
+import com.arsdigita.bebop.PageState;
+import com.arsdigita.bebop.ParameterSingleSelectionModel;
+import com.arsdigita.bebop.Table;
+import com.arsdigita.bebop.Text;
+import com.arsdigita.bebop.event.TableActionEvent;
+import com.arsdigita.bebop.event.TableActionListener;
+import com.arsdigita.bebop.form.Option;
+import com.arsdigita.bebop.form.Select;
+import com.arsdigita.bebop.form.SingleSelect;
+import com.arsdigita.bebop.form.TextField;
+import com.arsdigita.bebop.table.TableCellRenderer;
+import com.arsdigita.bebop.table.TableColumn;
+import com.arsdigita.bebop.table.TableColumnModel;
+import com.arsdigita.bebop.table.TableModel;
+import com.arsdigita.bebop.table.TableModelBuilder;
+import com.arsdigita.globalization.GlobalizedMessage;
+import com.arsdigita.kernel.KernelConfig;
+import com.arsdigita.util.LockableImpl;
+import com.arsdigita.util.UncheckedWrapperException;
+
+import com.sun.javafx.scene.control.skin.VirtualFlow;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.configuration.ConfigurationManager;
+import org.libreccm.l10n.LocalizedString;
+import sun.util.resources.cldr.gv.LocaleNames_gv;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+import java.util.TooManyListenersException;
+
+import static com.arsdigita.ui.admin.AdminUiConstants.*;
+
+/**
+ *
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
+ */
+public class SettingEditorLocalizedString extends BoxPanel {
+
+    private final static Logger LOGGER = LogManager.getLogger(
+        SettingEditorLocalizedString.class);
+
+    private static final int COL_LOCALE = 0;
+    private static final int COL_VALUE = 1;
+    private static final int COL_EDIT = 2;
+    private static final int COL_DEL = 3;
+
+    private static final String LOCALE_SELECT = "localeSelect";
+    private static final String VALUE = "value";
+
+    private final ConfigurationTab configurationTab;
+    private final ParameterSingleSelectionModel<String> selectedConf;
+    private final ParameterSingleSelectionModel<String> selectedSetting;
+    private final ParameterSingleSelectionModel<String> selectedValue;
+
+    public SettingEditorLocalizedString(
+        final ConfigurationTab configurationTab,
+        final ParameterSingleSelectionModel<String> selectedConf,
+        final ParameterSingleSelectionModel<String> selectedSetting,
+        final ParameterSingleSelectionModel<String> selectedValue) {
+
+        super(BoxPanel.VERTICAL);
+
+        this.configurationTab = configurationTab;
+        this.selectedConf = selectedConf;
+        this.selectedSetting = selectedSetting;
+        this.selectedValue = selectedValue;
+
+        final ActionLink backLink = new ActionLink(new GlobalizedMessage(
+            "ui.admin.configuration.setting.localized_string.back",
+            ADMIN_BUNDLE));
+        backLink.addActionListener(e -> {
+            configurationTab.hideSettingForms(e.getPageState());
+        });
+        add(backLink);
+
+        add(new SettingFormHeader(selectedConf, selectedSetting));
+
+        add(new ValuesTable());
+
+        final Form form = new Form("settingLocalizedStringForm");
+
+        final SingleSelect localeSelect = new SingleSelect(LOCALE_SELECT);
+        localeSelect.setLabel(new GlobalizedMessage(
+            "ui.admin.configuration.setting.localized_string.locale.label",
+            ADMIN_BUNDLE));
+        try {
+            localeSelect.addPrintListener(e -> {
+                final PageState state = e.getPageState();
+                if (selectedValue.getSelectedKey(state) == null) {
+                    final ConfigurationManager confManager = CdiUtil
+                        .createCdiUtil().findBean(ConfigurationManager.class);
+
+                    final Class<?> confClass;
+                    try {
+                        confClass = Class
+                            .forName(selectedConf.getSelectedKey(state));
+                    } catch (ClassNotFoundException ex) {
+                        throw new UncheckedWrapperException(ex);
+                    }
+
+                    final Object config = confManager.findConfiguration(
+                        confClass);
+
+                    final LocalizedString value;
+                    try {
+                        value = (LocalizedString) confClass.getField(
+                            selectedSetting.getSelectedKey(state)).get(config);
+                    } catch (NoSuchFieldException | SecurityException | IllegalAccessException | ClassCastException ex) {
+                        LOGGER.warn(
+                            "Failed to read setting {} from configuration {}",
+                            selectedSetting.getSelectedKey(state),
+                            selectedConf.getSelectedKey(state));
+                        LOGGER.warn(ex);
+                        throw new UncheckedWrapperException(
+                            String.format(
+                                "Failed to read setting %s from configuration %s",
+                                selectedSetting.getSelectedKey(state),
+                                selectedConf.getSelectedKey(state)),
+                            ex);
+                    }
+
+                    final Set<String> supportedLanguages = KernelConfig
+                        .getConfig().getSupportedLanguages();
+                    final Set<String> assignedLanguages = new HashSet<>();
+                    value.getAvailableLocales().forEach(l -> {
+                        assignedLanguages.add(l.toString());
+                    });
+
+                    final SingleSelect target = (SingleSelect) e.getTarget();
+
+                    target.clearOptions();
+
+                    supportedLanguages.forEach(l -> {
+                        if (!assignedLanguages.contains(l)) {
+                            target.addOption(new Option(l, new Text(l)));
+                        }
+                    });
+                } else {
+                    final SingleSelect target = (SingleSelect) e.getTarget();
+
+                    target.clearOptions();
+
+                    final String language = selectedValue.getSelectedKey(state);
+                    target.addOption(new Option(language, new Text(language)));
+                }
+            });
+        } catch (TooManyListenersException ex) {
+            //We are in big trouble...
+            throw new UncheckedWrapperException(ex);
+        }
+        form.add(localeSelect);
+
+        final TextField localizedValue = new TextField(VALUE);
+        localizedValue.setLabel(new GlobalizedMessage(
+            "ui.admin.configuration.setting.localized_string.value.label",
+            ADMIN_BUNDLE));
+        form.add(localizedValue);
+
+        form.addInitListener(e -> {
+            //ToDo
+        });
+        
+        form.addProcessListener(e -> {
+            //ToDo
+        });
+        
+        //Form 
+        //process: if value is selected update selected value
+        //         if no value is selected add new setting
+        add(form);
+
+    }
+
+    private class ValuesTable extends Table {
+
+        public ValuesTable() {
+
+            super();
+
+            setIdAttr("localizedStringSettingValues");
+
+            setEmptyView(new Label(new GlobalizedMessage(
+                "ui.admin.categories.setting.localized_string.no_values",
+                ADMIN_BUNDLE)));
+
+            final TableColumnModel columnModel = getColumnModel();
+            columnModel.add(new TableColumn(
+                COL_LOCALE,
+                new Label(new GlobalizedMessage(
+                    "ui.admin.categories.setting.localized_string.col_lang",
+                    ADMIN_BUNDLE))));
+            columnModel.add(new TableColumn(
+                COL_VALUE,
+                new Label(new GlobalizedMessage(
+                    "ui.admin.categories.setting.localized_string.col_value",
+                    ADMIN_BUNDLE))));
+            columnModel.add(new TableColumn(
+                COL_EDIT,
+                new Label(new GlobalizedMessage(
+                    "ui.admin.categories.setting.localized_string.col_del",
+                    ADMIN_BUNDLE))));
+            columnModel.add(new TableColumn(
+                COL_DEL,
+                new Label(new GlobalizedMessage(
+                    "ui.admin.categories.setting.localized_string.col_del",
+                    ADMIN_BUNDLE))));
+
+            columnModel.get(COL_EDIT).setCellRenderer(new TableCellRenderer() {
+
+                @Override
+                public Component getComponent(final Table table,
+                                              final PageState state,
+                                              final Object value,
+                                              final boolean isSelected,
+                                              final Object key,
+                                              final int row,
+                                              final int column) {
+                    return new ControlLink((String) value);
+                }
+
+            });
+
+            columnModel.get(COL_DEL).setCellRenderer(new TableCellRenderer() {
+
+                @Override
+                public Component getComponent(final Table table,
+                                              final PageState state,
+                                              final Object value,
+                                              final boolean isSelected,
+                                              final Object key,
+                                              final int row,
+                                              final int column) {
+                    if (value == null) {
+                        return new Text("");
+                    } else {
+                        final ControlLink link = new ControlLink(
+                            (Component) value);
+                        link.setConfirmation(new GlobalizedMessage(
+                            "ui.admin.categories.setting.localized_string.del_confirm",
+                            ADMIN_BUNDLE));
+                        return link;
+                    }
+                }
+
+            });
+
+            addTableActionListener(new TableActionListener() {
+
+                @Override
+                public void cellSelected(final TableActionEvent event) {
+                    final PageState state = event.getPageState();
+
+                    selectedValue.setSelectedKey(state, event.getRowKey());
+                }
+
+                @Override
+                public void headSelected(final TableActionEvent event) {
+                    //Nothing
+                }
+
+            });
+
+            setModelBuilder(new ValuesTableModelBuilder());
+        }
+
+    }
+
+    private class ValuesTableModelBuilder
+        extends LockableImpl
+        implements TableModelBuilder {
+
+        @Override
+        public TableModel makeModel(final Table table,
+                                    final PageState state) {
+            table.getRowSelectionModel().clearSelection(state);
+
+            return new ValuesTableModel(state);
+        }
+
+    }
+
+    private class ValuesTableModel implements TableModel {
+
+        private final LocalizedString value;
+        private final List<Locale> locales;
+        private int index = -1;
+
+        public ValuesTableModel(final PageState state) {
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+
+            final Class<?> confClass;
+            try {
+                confClass = Class
+                    .forName(selectedConf.getSelectedKey(state));
+            } catch (ClassNotFoundException ex) {
+                throw new UncheckedWrapperException(ex);
+            }
+
+            final ConfigurationManager confManager = cdiUtil.findBean(
+                ConfigurationManager.class);
+
+            final Object config = confManager.findConfiguration(confClass);
+
+            try {
+                value = (LocalizedString) confClass.getField(selectedSetting
+                    .getSelectedKey(state)).get(config);
+
+                locales = new ArrayList<>();
+                locales.addAll(value.getAvailableLocales());
+                locales.sort((s1, s2) -> {
+                    return s1.toString().compareTo(s2.toString());
+                });
+            } catch (NoSuchFieldException | SecurityException |
+                     IllegalAccessException | ClassCastException ex) {
+                LOGGER.warn("Failed to read setting {} from configuration {}",
+                            selectedSetting.getSelectedKey(state),
+                            selectedConf.getSelectedKey(state));
+                LOGGER.warn(ex);
+                throw new UncheckedWrapperException(ex);
+            }
+        }
+
+        @Override
+        public int getColumnCount() {
+            return 4;
+        }
+
+        @Override
+        public boolean nextRow() {
+            index++;
+            return index < locales.size();
+        }
+
+        @Override
+        public Object getElementAt(final int columnIndex) {
+            final Locale locale = locales.get(index);
+
+            switch (columnIndex) {
+                case COL_LOCALE:
+                    return locale.toString();
+                case COL_VALUE:
+                    return value.getValue(locale);
+                case COL_EDIT:
+                    return new Label(new GlobalizedMessage(
+                        "ui.admin.configuration.setting.localized_string.value.edit",
+                        ADMIN_BUNDLE));
+                case COL_DEL:
+                    return new Label(new GlobalizedMessage(
+                        "ui.admin.categories.setting.localized_string.title.del",
+                        ADMIN_BUNDLE
+                    ));
+                default:
+                    throw new IllegalArgumentException(
+                        "Not a valid column index");
+            }
+        }
+
+        @Override
+        public Object getKeyAt(final int columnIndex) {
+            return locales.get(index);
+        }
+
+    }
+
+}
