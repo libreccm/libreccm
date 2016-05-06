@@ -32,7 +32,7 @@ import com.arsdigita.bebop.form.TextField;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.util.UncheckedWrapperException;
 import java.lang.reflect.Field;
-
+import java.util.Objects;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
@@ -43,28 +43,25 @@ import org.libreccm.configuration.SettingInfo;
 import org.libreccm.configuration.SettingManager;
 import org.libreccm.l10n.GlobalizationHelper;
 
-import java.math.BigDecimal;
-import java.util.Objects;
-
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class SettingFormBigDecimal extends Form {
+public class SettingFormLong extends Form {
 
     private static final Logger LOGGER = LogManager.getLogger(
-            SettingFormBigDecimal.class);
+            SettingFormLong.class);
 
     private static final String VALUE_FIELD = "valueField";
 
-    public SettingFormBigDecimal(
+    public SettingFormLong(
             final ConfigurationTab configurationTab,
             final ParameterSingleSelectionModel<String> selectedConf,
             final ParameterSingleSelectionModel<String> selectedSetting) {
 
-        super("settingFormBigDecimal", new BoxPanel(BoxPanel.VERTICAL));
+        super("settingBoolean", new BoxPanel(BoxPanel.VERTICAL));
 
         final Label heading = new Label(e -> {
             final PageState state = e.getPageState();
@@ -158,9 +155,9 @@ public class SettingFormBigDecimal extends Form {
 
             final Object config = confManager.findConfiguration(confClass);
 
-            final BigDecimal value;
+            final Long value;
             try {
-                value = (BigDecimal) confClass.getField(selectedSetting
+                value = (Long) confClass.getField(selectedSetting
                         .getSelectedKey(state)).get(config);
             } catch (NoSuchFieldException | SecurityException |
                      IllegalAccessException | ClassCastException ex) {
@@ -202,9 +199,9 @@ public class SettingFormBigDecimal extends Form {
 
             final Object config = confManager.findConfiguration(confClass);
 
-            final BigDecimal value;
+            final Long value;
             try {
-                value = (BigDecimal) confClass.getField(selectedSetting
+                value = (Long) confClass.getField(selectedSetting
                         .getSelectedKey(state)).get(config);
             } catch (NoSuchFieldException | SecurityException |
                      IllegalAccessException | ClassCastException ex) {
@@ -231,12 +228,12 @@ public class SettingFormBigDecimal extends Form {
             }
 
             try {
-                final BigDecimal value = new BigDecimal(valueData);
-                LOGGER.debug("New value {} is a valid BigDecimal.", value);
+                final Long value = new Long(valueData);
+                LOGGER.debug("New value {} is a valid Long.", value);
             } catch (NumberFormatException ex) {
                 data.addError(VALUE_FIELD,
                               new GlobalizedMessage(
-                                      "ui.admin.configuration.setting.error.not_a_bigdecimal",
+                                      "ui.admin.configuration.setting.error.not_a_long",
                                       ADMIN_BUNDLE));
             }
         });
@@ -275,14 +272,14 @@ public class SettingFormBigDecimal extends Form {
                                 ADMIN_BUNDLE),
                         ex);
             }
-            
+
             final String valueData = data.getString(VALUE_FIELD);
-            final BigDecimal value = new BigDecimal(valueData);
-            
+            final Long value = new Long(valueData);
+
             try {
                 field.set(config, value);
             } catch (IllegalArgumentException | IllegalAccessException ex) {
-                 throw new FormProcessException(
+                throw new FormProcessException(
                         String.format(
                                 "Failed to change value of field \"%s\" "
                                         + "of configuration class \"%s\".",

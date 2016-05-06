@@ -351,6 +351,44 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>de.jpdigital</groupId>
+                <artifactId>hibernate5-ddl-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <configuration>
+                    <outputDirectory>target/generated-resources/hibernate5/sql/ddl/auto</outputDirectory>
+                    <dialects>
+                        <param>h2</param>
+                        <!--<param>mysql5_innodb</param>-->
+                        <param>oracle10g</param>
+                        <param>postgresql9</param>
+                    </dialects>
+                    <packages>
+                        <param>org.libreccm.categorization</param>
+                        <param>org.libreccm.core</param>
+                        <param>org.libreccm.formbuilder</param>
+                        <param>org.libreccm.jpa</param>
+                        <param>org.libreccm.l10n</param>
+                        <param>org.libreccm.messaging</param>
+                        <param>org.libreccm.notification</param>
+                        <param>org.libreccm.portal</param>
+                        <param>org.libreccm.runtime</param>
+                        <param>org.libreccm.search.lucene</param>
+                        <param>org.libreccm.web</param>
+                        <param>org.libreccm.workflow</param>
+                    </packages>
+                    <persistenceXml>${basedir}/src/main/resources/META-INF/persistence-ddl.xml</persistenceXml>
+                    <useEnvers>true</useEnvers>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>gen-ddl</goal>
+                        </goals>
+                        <phase>process-classes</phase>
+                    </execution>
+                </executions>
+            </plugin>
             <!--<plugin>
                 <groupId>org.jboss.tattletale</groupId>
                 <artifactId>tattletale-maven</artifactId>
