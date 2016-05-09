@@ -23,15 +23,16 @@ import com.arsdigita.bebop.BoxPanel;
 import com.arsdigita.bebop.Component;
 import com.arsdigita.bebop.ControlLink;
 import com.arsdigita.bebop.Form;
+import com.arsdigita.bebop.FormData;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.ParameterSingleSelectionModel;
+import com.arsdigita.bebop.SaveCancelSection;
 import com.arsdigita.bebop.Table;
 import com.arsdigita.bebop.Text;
 import com.arsdigita.bebop.event.TableActionEvent;
 import com.arsdigita.bebop.event.TableActionListener;
 import com.arsdigita.bebop.form.Option;
-import com.arsdigita.bebop.form.Select;
 import com.arsdigita.bebop.form.SingleSelect;
 import com.arsdigita.bebop.form.TextField;
 import com.arsdigita.bebop.table.TableCellRenderer;
@@ -44,13 +45,12 @@ import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.util.LockableImpl;
 import com.arsdigita.util.UncheckedWrapperException;
 
-import com.sun.javafx.scene.control.skin.VirtualFlow;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.ConfigurationManager;
+import org.libreccm.configuration.SettingManager;
 import org.libreccm.l10n.LocalizedString;
-import sun.util.resources.cldr.gv.LocaleNames_gv;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -58,6 +58,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TooManyListenersException;
+import java.util.logging.Level;
 
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
@@ -74,9 +75,6 @@ public class SettingEditorLocalizedString extends BoxPanel {
     private static final int COL_VALUE = 1;
     private static final int COL_EDIT = 2;
     private static final int COL_DEL = 3;
-
-    private static final String LOCALE_SELECT = "localeSelect";
-    private static final String VALUE = "value";
 
     private final ConfigurationTab configurationTab;
     private final ParameterSingleSelectionModel<String> selectedConf;
@@ -108,97 +106,7 @@ public class SettingEditorLocalizedString extends BoxPanel {
 
         add(new ValuesTable());
 
-        final Form form = new Form("settingLocalizedStringForm");
-
-        final SingleSelect localeSelect = new SingleSelect(LOCALE_SELECT);
-        localeSelect.setLabel(new GlobalizedMessage(
-            "ui.admin.configuration.setting.localized_string.locale.label",
-            ADMIN_BUNDLE));
-        try {
-            localeSelect.addPrintListener(e -> {
-                final PageState state = e.getPageState();
-                if (selectedValue.getSelectedKey(state) == null) {
-                    final ConfigurationManager confManager = CdiUtil
-                        .createCdiUtil().findBean(ConfigurationManager.class);
-
-                    final Class<?> confClass;
-                    try {
-                        confClass = Class
-                            .forName(selectedConf.getSelectedKey(state));
-                    } catch (ClassNotFoundException ex) {
-                        throw new UncheckedWrapperException(ex);
-                    }
-
-                    final Object config = confManager.findConfiguration(
-                        confClass);
-
-                    final LocalizedString value;
-                    try {
-                        value = (LocalizedString) confClass.getField(
-                            selectedSetting.getSelectedKey(state)).get(config);
-                    } catch (NoSuchFieldException | SecurityException | IllegalAccessException | ClassCastException ex) {
-                        LOGGER.warn(
-                            "Failed to read setting {} from configuration {}",
-                            selectedSetting.getSelectedKey(state),
-                            selectedConf.getSelectedKey(state));
-                        LOGGER.warn(ex);
-                        throw new UncheckedWrapperException(
-                            String.format(
-                                "Failed to read setting %s from configuration %s",
-                                selectedSetting.getSelectedKey(state),
-                                selectedConf.getSelectedKey(state)),
-                            ex);
-                    }
-
-                    final Set<String> supportedLanguages = KernelConfig
-                        .getConfig().getSupportedLanguages();
-                    final Set<String> assignedLanguages = new HashSet<>();
-                    value.getAvailableLocales().forEach(l -> {
-                        assignedLanguages.add(l.toString());
-                    });
-
-                    final SingleSelect target = (SingleSelect) e.getTarget();
-
-                    target.clearOptions();
-
-                    supportedLanguages.forEach(l -> {
-                        if (!assignedLanguages.contains(l)) {
-                            target.addOption(new Option(l, new Text(l)));
-                        }
-                    });
-                } else {
-                    final SingleSelect target = (SingleSelect) e.getTarget();
-
-                    target.clearOptions();
-
-                    final String language = selectedValue.getSelectedKey(state);
-                    target.addOption(new Option(language, new Text(language)));
-                }
-            });
-        } catch (TooManyListenersException ex) {
-            //We are in big trouble...
-            throw new UncheckedWrapperException(ex);
-        }
-        form.add(localeSelect);
-
-        final TextField localizedValue = new TextField(VALUE);
-        localizedValue.setLabel(new GlobalizedMessage(
-            "ui.admin.configuration.setting.localized_string.value.label",
-            ADMIN_BUNDLE));
-        form.add(localizedValue);
-
-        form.addInitListener(e -> {
-            //ToDo
-        });
-        
-        form.addProcessListener(e -> {
-            //ToDo
-        });
-        
-        //Form 
-        //process: if value is selected update selected value
-        //         if no value is selected add new setting
-        add(form);
+        add(new ValueForm());
 
     }
 
@@ -389,6 +297,255 @@ public class SettingEditorLocalizedString extends BoxPanel {
         @Override
         public Object getKeyAt(final int columnIndex) {
             return locales.get(index);
+        }
+
+    }
+
+    private class ValueForm extends Form {
+
+        private static final String LOCALE_SELECT = "localeSelect";
+        private static final String VALUE = "value";
+
+        private final SingleSelect localeSelect;
+
+        public ValueForm() {
+            super("settingLocalizedStringValueForm");
+
+            localeSelect = new SingleSelect(LOCALE_SELECT);
+            localeSelect.setLabel(new GlobalizedMessage(
+                "ui.admin.configuration.setting.localized_string.locale.label",
+                ADMIN_BUNDLE));
+
+            try {
+                localeSelect.addPrintListener(e -> {
+                    final PageState state = e.getPageState();
+
+                    if (selectedValue.getSelectedKey(state) == null) {
+                        final ConfigurationManager confManager = CdiUtil
+                            .createCdiUtil()
+                            .findBean(ConfigurationManager.class);
+
+                        final Class<?> confClass;
+                        try {
+                            confClass = Class
+                                .forName(selectedConf.getSelectedKey(state));
+                        } catch (ClassNotFoundException ex) {
+                            throw new UncheckedWrapperException(ex);
+                        }
+
+                        final Object config = confManager.findConfiguration(
+                            confClass);
+
+                        final LocalizedString value;
+                        try {
+                            value = (LocalizedString) confClass.getField(
+                                selectedSetting.getSelectedKey(state)).get(
+                                config);
+                        } catch (NoSuchFieldException | SecurityException | IllegalAccessException | ClassCastException ex) {
+                            LOGGER.warn(
+                                "Failed to read setting {} from configuration {}",
+                                selectedSetting.getSelectedKey(state),
+                                selectedConf.getSelectedKey(state));
+                            LOGGER.warn(ex);
+                            throw new UncheckedWrapperException(
+                                String.format(
+                                    "Failed to read setting %s from configuration %s",
+                                    selectedSetting.getSelectedKey(state),
+                                    selectedConf.getSelectedKey(state)),
+                                ex);
+                        }
+
+                        final Set<String> supportedLanguages = KernelConfig
+                            .getConfig().getSupportedLanguages();
+                        final Set<String> assignedLanguages = new HashSet<>();
+                        value.getAvailableLocales().forEach(l -> {
+                            assignedLanguages.add(l.toString());
+                        });
+
+                        final SingleSelect target = (SingleSelect) e.getTarget();
+
+                        target.clearOptions();
+
+                        supportedLanguages.forEach(l -> {
+                            if (!assignedLanguages.contains(l)) {
+                                target.addOption(new Option(l, new Text(l)));
+                            }
+                        });
+                    } else {
+                        final SingleSelect target = (SingleSelect) e.getTarget();
+
+                        target.clearOptions();
+
+                        final String language = selectedValue.getSelectedKey(
+                            state);
+                        target.addOption(
+                            new Option(language, new Text(language)));
+                    }
+                });
+            } catch (TooManyListenersException ex) {
+                //We are in big trouble...
+                throw new UncheckedWrapperException(ex);
+            }
+
+            add(localeSelect);
+
+            final TextField localizedValue = new TextField(VALUE);
+            localizedValue.setLabel(new GlobalizedMessage(
+                "ui.admin.configuration.setting.localized_string.value.label",
+                ADMIN_BUNDLE));
+            add(localizedValue);
+
+            final SaveCancelSection saveCancelSection = new SaveCancelSection();
+            add(saveCancelSection);
+
+            addInitListener(e -> {
+                final PageState state = e.getPageState();
+                if (selectedValue.getSelectedKey(state) != null) {
+                    final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+
+                    final Class<?> confClass;
+                    try {
+                        confClass = Class
+                            .forName(selectedConf.getSelectedKey(state));
+                    } catch (ClassNotFoundException ex) {
+                        throw new UncheckedWrapperException(ex);
+                    }
+
+                    final ConfigurationManager confManager = cdiUtil.findBean(
+                        ConfigurationManager.class);
+
+                    final Object config = confManager.findConfiguration(
+                        confClass);
+
+                    try {
+                        final LocalizedString localizedStr
+                                                  = (LocalizedString) confClass
+                            .getField(
+                                selectedSetting.getSelectedKey(state)).get(
+                            config);
+
+                        final String value = localizedStr.getValue(new Locale(
+                            selectedValue.getSelectedKey(state)));
+
+                        localizedValue.setValue(state, value);
+
+                    } catch (NoSuchFieldException | SecurityException |
+                             IllegalAccessException | ClassCastException ex) {
+                        LOGGER.warn(
+                            "Failed to read setting {} from configuration {}",
+                            selectedSetting.getSelectedKey(state),
+                            selectedConf.getSelectedKey(state));
+                        LOGGER.warn(ex);
+
+                        throw new UncheckedWrapperException(ex);
+                    }
+                }
+            });
+
+            addProcessListener(e -> {
+                final PageState state = e.getPageState();
+                if (saveCancelSection.getSaveButton().isSelected(state)) {
+                    final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+
+                    final Class<?> confClass;
+                    try {
+                        confClass = Class
+                            .forName(selectedConf.getSelectedKey(state));
+                    } catch (ClassNotFoundException ex) {
+                        throw new UncheckedWrapperException(ex);
+                    }
+
+                    final ConfigurationManager confManager = cdiUtil.findBean(
+                        ConfigurationManager.class);
+
+                    final Object config = confManager.findConfiguration(
+                        confClass);
+
+                    final LocalizedString localizedStr;
+                    try {
+                        final Object value = confClass.getField(selectedSetting
+                            .getSelectedKey(state)).get(config);
+
+                        if (value == null) {
+                            localizedStr = new LocalizedString();
+                            confClass.getField(selectedSetting.getSelectedKey(
+                                state)).set(config, localizedStr);
+                        } else {
+                            localizedStr = (LocalizedString) value;
+                        }
+                    } catch (NoSuchFieldException | SecurityException | IllegalAccessException | ClassCastException ex) {
+                        LOGGER.warn(
+                            "Failed to read setting {} from configuration {}",
+                            selectedSetting.getSelectedKey(state),
+                            selectedConf.getSelectedKey(state));
+                        LOGGER.warn(ex);
+
+                        throw new UncheckedWrapperException(ex);
+                    }
+
+                    final FormData data = e.getFormData();
+                    final Locale locale = new Locale(data.getString(
+                        LOCALE_SELECT));
+                    final String valueData = data.getString(VALUE);
+                    localizedStr.addValue(locale, valueData);
+                }
+            });
+        }
+
+        @Override
+        public boolean isVisible(final PageState state) {
+            if (super.isVisible(state)) {
+
+                if (selectedValue.getSelectedKey(state) == null) {
+                    return true;
+                } else {
+                    final ConfigurationManager confManager = CdiUtil
+                        .createCdiUtil()
+                        .findBean(ConfigurationManager.class);
+
+                    final Class<?> confClass;
+                    try {
+                        confClass = Class
+                            .forName(selectedConf.getSelectedKey(state));
+                    } catch (ClassNotFoundException ex) {
+                        throw new UncheckedWrapperException(ex);
+                    }
+
+                    final Object config = confManager.findConfiguration(
+                        confClass);
+
+                    final LocalizedString value;
+                    try {
+                        value = (LocalizedString) confClass.getField(
+                            selectedSetting.getSelectedKey(state)).get(
+                            config);
+                    } catch (NoSuchFieldException | SecurityException | IllegalAccessException | ClassCastException ex) {
+                        LOGGER.warn(
+                            "Failed to read setting {} from configuration {}",
+                            selectedSetting.getSelectedKey(state),
+                            selectedConf.getSelectedKey(state));
+                        LOGGER.warn(ex);
+                        throw new UncheckedWrapperException(
+                            String.format(
+                                "Failed to read setting %s from configuration %s",
+                                selectedSetting.getSelectedKey(state),
+                                selectedConf.getSelectedKey(state)),
+                            ex);
+                    }
+
+                    final Set<String> supportedLanguages = KernelConfig
+                        .getConfig().getSupportedLanguages();
+                    final Set<String> assignedLanguages = new HashSet<>();
+                    value.getAvailableLocales().forEach(l -> {
+                        assignedLanguages.add(l.toString());
+                    });
+
+                    return !assignedLanguages.equals(supportedLanguages);
+                }
+
+            } else {
+                return false;
+            }
         }
 
     }
