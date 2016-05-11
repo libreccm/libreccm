@@ -23,6 +23,11 @@ import nl.jqno.equalsverifier.Warning;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.libreccm.core.CcmObject;
+import org.libreccm.security.Group;
+import org.libreccm.security.Permission;
+import org.libreccm.security.Role;
+import org.libreccm.security.User;
 import org.libreccm.tests.categories.UnitTest;
 import org.libreccm.web.CcmApplication;
 
@@ -73,6 +78,32 @@ public class EqualsAndHashCodeTest {
         final CcmApplication application2 = new CcmApplication();
         application2.setPrimaryUrl("http://application-two.exampl.org");
 
+        final CcmObject ccmObject1 = new CcmObject();
+        ccmObject1.setObjectId(-100);
+        ccmObject1.setDisplayName("Object 1");
+        
+        final CcmObject ccmObject2 = new CcmObject();
+        ccmObject1.setObjectId(-200);
+        ccmObject1.setDisplayName("Object 2");
+        
+        final Role role1 = new Role();
+        role1.setName("role1");
+        
+        final Role role2 = new Role();
+        role2.setName("role2");
+        
+        final Group group1 = new Group();
+        group1.setName("group1");
+        
+        final Group group2 = new Group();
+        group2.setName("group2");
+        
+        final User user1 = new TestUser();
+        user1.setName("user1");
+        
+        final User user2 = new TestUser();
+        user2.setName("user2");
+        
         EqualsVerifier
             .forClass(entityClass)
             .suppress(Warning.STRICT_INHERITANCE)
@@ -81,7 +112,21 @@ public class EqualsAndHashCodeTest {
             .withPrefabValues(Category.class, category1, category2)
             .withPrefabValues(Domain.class, domain1, domain2)
             .withPrefabValues(CcmApplication.class, application1, application2)
+            .withPrefabValues(CcmObject.class, ccmObject1, ccmObject2)
+            .withPrefabValues(Role.class, role1, role2)
+            .withPrefabValues(Group.class, group1, group2)
+            .withPrefabValues(User.class, user1, user2)
             .verify();
+    }
+    
+    private class TestUser extends User {
+
+        private static final long serialVersionUID = -9052762220990453621L;
+        
+        protected TestUser() {
+            super();
+        }
+        
     }
 
 }

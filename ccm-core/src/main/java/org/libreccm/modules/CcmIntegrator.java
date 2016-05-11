@@ -23,10 +23,10 @@ import org.apache.logging.log4j.Logger;
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.MigrationInfo;
 import org.flywaydb.core.internal.util.jdbc.JdbcUtils;
+import org.hibernate.boot.Metadata;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.integrator.spi.Integrator;
-import org.hibernate.metamodel.source.MetadataImplementor;
 import org.hibernate.service.spi.SessionFactoryServiceRegistry;
 
 import java.sql.Connection;
@@ -67,15 +67,14 @@ public class CcmIntegrator implements Integrator {
      * Checks for new and updated modules when the persistence unit is started.
      * If there are updates the necessary database migrations are executed.
      *
-     * @param configuration
+     * @param metadata
      * @param sessionFactory
      * @param registry
      */
     @Override
-    public void integrate(final Configuration configuration,
+    public void integrate(final Metadata metadata,
                           final SessionFactoryImplementor sessionFactory,
                           final SessionFactoryServiceRegistry registry) {
-        //Find all modules in the classpath
         LOGGER.info("Retrieving modules...");
         modules = ServiceLoader.load(CcmModule.class);
         for (final CcmModule module : modules) {
@@ -116,9 +115,6 @@ public class CcmIntegrator implements Integrator {
 //                    configuration.addAnnotatedClass(entity);
 //                }
             }
-
-            //Build Hibernate mappings for the entities.
-            configuration.buildMappings();
 
         } catch (DependencyException | SQLException ex) {
             throw new IntegrationException("Failed to integrate modules", ex);
@@ -296,13 +292,6 @@ public class CcmIntegrator implements Integrator {
                 }
             }
         }
-    }
-
-    @Override
-    public void integrate(final MetadataImplementor metadata,
-                          final SessionFactoryImplementor sessionFactory,
-                          final SessionFactoryServiceRegistry registry) {
-        //Nothing
     }
 
     /**
