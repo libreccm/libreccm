@@ -48,11 +48,23 @@ public class ConfigurationTab extends LayoutPanel {
     private final StringParameter selectedSettingParam;
     private final ParameterSingleSelectionModel<String> selectedSetting;
 
+    private final StringParameter selectedValueParam;
+    private final ParameterSingleSelectionModel<String> selectedValue;
+
     private final Label confClassesFilterHeading;
     private final Form confClassesFilterForm;
     private final ConfigurationsTable configurationsTable;
 
     private final ConfigurationTable configurationTable;
+
+    private final SettingFormBoolean settingFormBoolean;
+    private final SettingFormLong settingFormLong;
+    private final SettingFormDouble settingFormDouble;
+    private final SettingFormBigDecimal settingFormBigDecimal;
+    private final SettingFormString settingFormString;
+    private final SettingEditorLocalizedString settingEditorLocalizedString;
+    private final SettingEditorStringList settingEditorStringList;
+    private final SettingEditorEnum settingEditorEnum;
 
     public ConfigurationTab() {
         super();
@@ -65,6 +77,9 @@ public class ConfigurationTab extends LayoutPanel {
         selectedSettingParam = new StringParameter("selectedSetting");
         selectedSetting = new ParameterSingleSelectionModel<>(
             selectedSettingParam);
+
+        selectedValueParam = new StringParameter("selectedValue");
+        selectedValue = new ParameterSingleSelectionModel<>(selectedValueParam);
 
         final SegmentedPanel left = new SegmentedPanel();
 
@@ -97,6 +112,43 @@ public class ConfigurationTab extends LayoutPanel {
                                                     selectedSetting);
         body.add(configurationTable);
 
+        settingFormBoolean = new SettingFormBoolean(this,
+                                                    selectedConf,
+                                                    selectedSetting);
+        body.add(settingFormBoolean);
+
+        settingFormLong = new SettingFormLong(this,
+                                              selectedConf,
+                                              selectedSetting);
+        body.add(settingFormLong);
+
+        settingFormDouble = new SettingFormDouble(this,
+                                                  selectedConf,
+                                                  selectedSetting);
+        body.add(settingFormDouble);
+
+        settingFormBigDecimal = new SettingFormBigDecimal(this,
+                                                          selectedConf,
+                                                          selectedSetting);
+        body.add(settingFormBigDecimal);
+
+        settingFormString = new SettingFormString(this,
+                                                  selectedConf,
+                                                  selectedSetting);
+        body.add(settingFormString);
+
+        settingEditorLocalizedString = new SettingEditorLocalizedString(
+            this, selectedConf, selectedSetting, selectedValue);
+        body.add(settingEditorLocalizedString);
+
+        settingEditorStringList = new SettingEditorStringList(
+            this, selectedConf, selectedSetting, selectedValue);
+        body.add(settingEditorStringList);
+
+        settingEditorEnum = new SettingEditorEnum(
+            this, selectedConf, selectedSetting, selectedValue);
+        body.add(settingEditorEnum);
+
         setBody(body);
     }
 
@@ -106,18 +158,39 @@ public class ConfigurationTab extends LayoutPanel {
 
         page.addGlobalStateParam(selectedConfParam);
         page.addGlobalStateParam(selectedSettingParam);
-        
+        page.addGlobalStateParam(selectedValueParam);
+
         page.setVisibleDefault(confClassesFilterHeading, true);
         page.setVisibleDefault(confClassesFilterForm, true);
         page.setVisibleDefault(configurationsTable, true);
-        
+
         page.setVisibleDefault(configurationTable, false);
+
+        page.setVisibleDefault(settingFormBoolean, false);
+        page.setVisibleDefault(settingFormLong, false);
+        page.setVisibleDefault(settingFormDouble, false);
+        page.setVisibleDefault(settingFormBigDecimal, false);
+        page.setVisibleDefault(settingFormString, false);
+        page.setVisibleDefault(settingEditorLocalizedString, false);
+        page.setVisibleDefault(settingEditorStringList, false);
+        page.setVisibleDefault(settingEditorEnum, false);
     }
 
     protected void showConfigurationsTable(final PageState state) {
         confClassesFilterHeading.setVisible(state, true);
         confClassesFilterForm.setVisible(state, true);
         configurationsTable.setVisible(state, true);
+
+        configurationTable.setVisible(state, false);
+
+        settingFormBoolean.setVisible(state, false);
+        settingFormLong.setVisible(state, false);
+        settingFormDouble.setVisible(state, false);
+        settingFormBigDecimal.setVisible(state, false);
+        settingFormString.setVisible(state, false);
+        settingEditorLocalizedString.setVisible(state, false);
+        settingEditorStringList.setVisible(state, false);
+        settingEditorEnum.setVisible(state, false);
     }
 
     protected void hideConfigurationsTable(final PageState state) {
@@ -128,51 +201,175 @@ public class ConfigurationTab extends LayoutPanel {
 
     protected void showConfiguration(final PageState state) {
         hideConfigurationsTable(state);
-        
+        hideSettingForms(state);
+
         configurationTable.setVisible(state, true);
     }
 
     protected void hideConfiguration(final PageState state) {
         configurationTable.setVisible(state, false);
+
+        selectedConf.clearSelection(state);
         
         showConfigurationsTable(state);
     }
-    
+
     protected void showBigDecimalSettingForm(final PageState state) {
-        
+        confClassesFilterHeading.setVisible(state, false);
+        confClassesFilterForm.setVisible(state, false);
+        configurationsTable.setVisible(state, false);
+
+        configurationTable.setVisible(state, false);
+
+        settingFormBoolean.setVisible(state, false);
+        settingFormLong.setVisible(state, false);
+        settingFormDouble.setVisible(state, false);
+        settingFormBigDecimal.setVisible(state, true);
+        settingFormString.setVisible(state, false);
+        settingEditorLocalizedString.setVisible(state, false);
+        settingEditorStringList.setVisible(state, false);
+        settingEditorEnum.setVisible(state, false);
     }
-    
+
     protected void showBooleanSettingForm(final PageState state) {
-        
+        confClassesFilterHeading.setVisible(state, false);
+        confClassesFilterForm.setVisible(state, false);
+        configurationsTable.setVisible(state, false);
+
+        configurationTable.setVisible(state, false);
+
+        settingFormBoolean.setVisible(state, true);
+        settingFormLong.setVisible(state, false);
+        settingFormDouble.setVisible(state, false);
+        settingFormBigDecimal.setVisible(state, false);
+        settingFormString.setVisible(state, false);
+        settingEditorLocalizedString.setVisible(state, false);
+        settingEditorStringList.setVisible(state, false);
+        settingEditorEnum.setVisible(state, false);
     }
-    
+
     protected void showDoubleSettingForm(final PageState state) {
-        
+        confClassesFilterHeading.setVisible(state, false);
+        confClassesFilterForm.setVisible(state, false);
+        configurationsTable.setVisible(state, false);
+
+        configurationTable.setVisible(state, false);
+
+        settingFormBoolean.setVisible(state, false);
+        settingFormLong.setVisible(state, false);
+        settingFormDouble.setVisible(state, true);
+        settingFormBigDecimal.setVisible(state, false);
+        settingFormString.setVisible(state, false);
+        settingEditorLocalizedString.setVisible(state, false);
+        settingEditorStringList.setVisible(state, false);
+        settingEditorEnum.setVisible(state, false);
     }
-    
+
     protected void showEnumSettingForm(final PageState state) {
-        
+        confClassesFilterHeading.setVisible(state, false);
+        confClassesFilterForm.setVisible(state, false);
+        configurationsTable.setVisible(state, false);
+
+        configurationTable.setVisible(state, false);
+
+        settingFormBoolean.setVisible(state, false);
+        settingFormLong.setVisible(state, false);
+        settingFormDouble.setVisible(state, false);
+        settingFormBigDecimal.setVisible(state, false);
+        settingFormString.setVisible(state, false);
+        settingEditorLocalizedString.setVisible(state, false);
+        settingEditorStringList.setVisible(state, false);
+        settingEditorEnum.setVisible(state, true);
     }
-    
+
     protected void showLocalizedStringSettingForm(final PageState state) {
-        
+        confClassesFilterHeading.setVisible(state, false);
+        confClassesFilterForm.setVisible(state, false);
+        configurationsTable.setVisible(state, false);
+
+        configurationTable.setVisible(state, false);
+
+        settingFormBoolean.setVisible(state, false);
+        settingFormLong.setVisible(state, false);
+        settingFormDouble.setVisible(state, false);
+        settingFormBigDecimal.setVisible(state, false);
+        settingFormString.setVisible(state, false);
+        settingEditorLocalizedString.setVisible(state, true);
+        settingEditorStringList.setVisible(state, false);
+        settingEditorEnum.setVisible(state, false);
     }
-    
+
     protected void showLongSettingForm(final PageState state) {
-        
+        confClassesFilterHeading.setVisible(state, false);
+        confClassesFilterForm.setVisible(state, false);
+        configurationsTable.setVisible(state, false);
+
+        configurationTable.setVisible(state, false);
+
+        settingFormBoolean.setVisible(state, false);
+        settingFormLong.setVisible(state, true);
+        settingFormDouble.setVisible(state, false);
+        settingFormBigDecimal.setVisible(state, false);
+        settingFormString.setVisible(state, false);
+        settingEditorLocalizedString.setVisible(state, false);
+        settingEditorStringList.setVisible(state, false);
+        settingEditorEnum.setVisible(state, false);
     }
-    
+
     protected void showStringListSettingForm(final PageState state) {
-        
+        confClassesFilterHeading.setVisible(state, false);
+        confClassesFilterForm.setVisible(state, false);
+        configurationsTable.setVisible(state, false);
+
+        configurationTable.setVisible(state, false);
+
+        settingFormBoolean.setVisible(state, false);
+        settingFormLong.setVisible(state, false);
+        settingFormDouble.setVisible(state, false);
+        settingFormBigDecimal.setVisible(state, false);
+        settingFormString.setVisible(state, false);
+        settingEditorLocalizedString.setVisible(state, false);
+        settingEditorStringList.setVisible(state, true);
+        settingEditorEnum.setVisible(state, false);
     }
-    
+
     protected void showStringSettingForm(final PageState state) {
-        
+        confClassesFilterHeading.setVisible(state, false);
+        confClassesFilterForm.setVisible(state, false);
+        configurationsTable.setVisible(state, false);
+
+        configurationTable.setVisible(state, false);
+
+        settingFormBoolean.setVisible(state, false);
+        settingFormLong.setVisible(state, false);
+        settingFormDouble.setVisible(state, false);
+        settingFormBigDecimal.setVisible(state, false);
+        settingFormString.setVisible(state, true);
+        settingEditorLocalizedString.setVisible(state, false);
+        settingEditorStringList.setVisible(state, false);
+        settingEditorEnum.setVisible(state, false);
     }
-    
+
     protected void hideSettingForms(final PageState state) {
+        confClassesFilterHeading.setVisible(state, false);
+        confClassesFilterForm.setVisible(state, false);
+        configurationsTable.setVisible(state, false);
+
+        configurationTable.setVisible(state, false);
+
+        settingFormBoolean.setVisible(state, false);
+        settingFormLong.setVisible(state, false);
+        settingFormDouble.setVisible(state, false);
+        settingFormBigDecimal.setVisible(state, false);
+        settingFormString.setVisible(state, false);
+        settingEditorLocalizedString.setVisible(state, false);
+        settingEditorStringList.setVisible(state, false);
+        settingEditorEnum.setVisible(state, false);
         
+        selectedSetting.clearSelection(state);
+        selectedValue.clearSelection(state);
         
         showConfiguration(state);
     }
+
 }
