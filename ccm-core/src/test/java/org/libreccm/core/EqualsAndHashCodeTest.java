@@ -24,11 +24,11 @@ import org.libreccm.tests.categories.UnitTest;
 
 import java.util.Arrays;
 import java.util.Collection;
+
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.Test;
 import org.libreccm.categorization.Category;
-import org.libreccm.categorization.Domain;
 import org.libreccm.security.Group;
 import org.libreccm.security.Role;
 import org.libreccm.security.User;

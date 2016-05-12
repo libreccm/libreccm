@@ -18,11 +18,13 @@
  */
 package org.libreccm.search.lucene;
 
-import org.junit.experimental.categories.Category;
+import nl.jqno.equalsverifier.Warning;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.libreccm.security.Group;
+import org.libreccm.security.User;
 import org.libreccm.tests.categories.UnitTest;
-import org.libreccm.testutils.EqualsVerifier;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -32,8 +34,10 @@ import java.util.Collection;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RunWith(Parameterized.class)
-@Category(UnitTest.class)
-public class EqualsAndHashCodeTest extends EqualsVerifier {
+@org.junit.experimental.categories.Category(UnitTest.class)
+public class EqualsAndHashCodeTest {
+
+    private final Class<?> entityClass;
 
     @Parameterized.Parameters(name = "{0}")
     public static Collection<Class<?>> data() {
@@ -44,7 +48,52 @@ public class EqualsAndHashCodeTest extends EqualsVerifier {
     }
 
     public EqualsAndHashCodeTest(final Class<?> entityClass) {
-        super(entityClass);
+        this.entityClass = entityClass;
+    }
+
+    @Test
+    public void verifyEqualsAndHashCode() {
+        final Document document1 = new Document();
+        document1.setTitle("document1");
+
+        final Document document2 = new Document();
+        document2.setTitle("document2");
+
+        final Group group1 = new Group();
+        group1.setName("group1");
+
+        final Group group2 = new Group();
+        group2.setName("group2");
+
+        final User user1 = new TestUser();
+        user1.setName("user1");
+
+        final User user2 = new TestUser();
+        user2.setName("user2");
+
+        nl.jqno.equalsverifier.EqualsVerifier
+            .forClass(entityClass)
+            .suppress(Warning.STRICT_INHERITANCE)
+            .suppress(Warning.NONFINAL_FIELDS)
+            .suppress(Warning.ALL_FIELDS_SHOULD_BE_USED)
+            .withPrefabValues(Group.class, group1, group2)
+            .withPrefabValues(Document.class, document1, document2)
+            .withPrefabValues(User.class, user1, user2)
+            .verify();
+    }
+
+    /**
+     * {@link User} has a protected constructor, so have have do this to create
+     * users for the test...
+     */
+    private class TestUser extends User {
+
+        private static final long serialVersionUID = -9052762220990453621L;
+
+        protected TestUser() {
+            super();
+        }
+
     }
 
 }

@@ -62,6 +62,7 @@ public class EqualsAndHashCodeTest {
             .forClass(entityClass)
             .suppress(Warning.STRICT_INHERITANCE)
             .suppress(Warning.NONFINAL_FIELDS)
+            .suppress(Warning.ALL_FIELDS_SHOULD_BE_USED)
             .withRedefinedSuperclass()
             .withPrefabValues(Initalizer.class, initalizer1, initalizer2)
             .verify();

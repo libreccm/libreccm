@@ -68,21 +68,64 @@ import org.junit.runners.Parameterized;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class EqualsVerifier {
-    
+
     private final Class<?> entityClass;
-    
+
     public EqualsVerifier(final Class<?> entityClass) {
         this.entityClass = entityClass;
     }
-    
+
+    /**
+     * Overwrite this methods to suppress warnings from the
+     * {@link nl.jqno.equalsverifier.EqualsVerifier}. Per default the following 
+     * warnings are suppressed:
+     * 
+     * <ul>
+     *  <li>{@code Warning.Warning.STRICT_INHERITANCE}</li>
+     *  <li>{@code Warning.NONFINAL_FIELDS}</li>
+     *  <li>{@code Warning.ALL_FIELDS_SHOULD_BE_USED}</li>
+     * </ul>
+     *
+     * @param verifier The verifier to which the suppression are added.
+     */
+    protected void addSuppressWarnings(
+        final nl.jqno.equalsverifier.EqualsVerifier<?> verifier) {
+
+        verifier
+            .suppress(Warning.STRICT_INHERITANCE)
+            .suppress(Warning.NONFINAL_FIELDS)
+            .suppress(Warning.ALL_FIELDS_SHOULD_BE_USED);
+    }
+
+    /**
+     * Use this method to add prefab values to the verifier.
+     * 
+     * @param verifier The verifier to which the prefab values are added.
+     */
+    protected void addPrefabValues(
+        final nl.jqno.equalsverifier.EqualsVerifier<?> verifier) {
+        //Nothing here
+    }
+
     @Test
     public void verifyEqualsAndHashCode() {
-        nl.jqno.equalsverifier.EqualsVerifier
-                .forClass(entityClass)
-                .suppress(Warning.STRICT_INHERITANCE)
-                .suppress(Warning.NONFINAL_FIELDS)
-                .suppress(Warning.ALL_FIELDS_SHOULD_BE_USED)
-                .withRedefinedSuperclass()
-                .verify();
+        nl.jqno.equalsverifier.EqualsVerifier<?> verifier
+                                                     = nl.jqno.equalsverifier.EqualsVerifier
+            .forClass(entityClass)
+            .withRedefinedSuperclass();
+
+        addSuppressWarnings(verifier);
+        addPrefabValues(verifier);
+
+        verifier.verify();
+
+//        nl.jqno.equalsverifier.EqualsVerifier
+//            .forClass(entityClass)
+//            .suppress(Warning.STRICT_INHERITANCE)
+//            .suppress(Warning.NONFINAL_FIELDS)
+//            .suppress(Warning.ALL_FIELDS_SHOULD_BE_USED)
+//            .withRedefinedSuperclass()
+//            .verify();
     }
+
 }
