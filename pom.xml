@@ -542,7 +542,8 @@
             <dependency>
                 <groupId>nl.jqno.equalsverifier</groupId>
                 <artifactId>equalsverifier</artifactId>
-                <version>1.7.8</version>
+                <!--<version>1.7.8</version>-->
+                <version>2.0.2</version>
             </dependency>
             
             <!-- h2 database in used to check some database related things -->

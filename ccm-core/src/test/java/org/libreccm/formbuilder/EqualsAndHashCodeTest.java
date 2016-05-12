@@ -64,38 +64,39 @@ public class EqualsAndHashCodeTest {
     public void verifyEqualsAndHashCode() {
         final Component component1 = new Component();
         component1.setAdminName("Component One");
-        
+
         final Component component2 = new Component();
         component2.setAdminName("Component Two");
-        
+
         final WidgetLabel widgetLabel1 = new WidgetLabel();
         widgetLabel1.setAdminName("WidgetLabel One");
-        
+
         final WidgetLabel widgetLabel2 = new WidgetLabel();
         widgetLabel2.setAdminName("WidgetLabel Two");
-        
+
         final Widget widget1 = new Widget();
         widget1.setAdminName("Widget 1");
-        
+
         final Widget widget2 = new Widget();
         widget2.setAdminName("Widget 2");
-        
+
         final FormSection formSection1 = new FormSection();
         formSection1.setAdminName("FormSection One");
-        
+
         final FormSection formSection2 = new FormSection();
         formSection2.setAdminName("FormSection Two");
-        
+
         EqualsVerifier
-            .forClass(entityClass)
-            .suppress(Warning.STRICT_INHERITANCE)
-            .suppress(Warning.NONFINAL_FIELDS)
-            .withRedefinedSuperclass()
-            .withPrefabValues(Component.class, component1, component2)
-            .withPrefabValues(WidgetLabel.class, widgetLabel1, widgetLabel2)
-            .withPrefabValues(Widget.class, widget1, widget2)
-            .withPrefabValues(FormSection.class, formSection1, formSection2)
-            .verify();
+                .forClass(entityClass)
+                .suppress(Warning.STRICT_INHERITANCE)
+                .suppress(Warning.NONFINAL_FIELDS)
+                .suppress(Warning.ALL_FIELDS_SHOULD_BE_USED)
+                .withRedefinedSuperclass()
+                .withPrefabValues(Component.class, component1, component2)
+                .withPrefabValues(WidgetLabel.class, widgetLabel1, widgetLabel2)
+                .withPrefabValues(Widget.class, widget1, widget2)
+                .withPrefabValues(FormSection.class, formSection1, formSection2)
+                .verify();
     }
 
 }

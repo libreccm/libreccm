@@ -43,6 +43,10 @@ public final class ConfigurationInfo {
      */
     private String descBundle;
 
+    /**
+     * Key for the localised title of the configuration class in the resource
+     * bundle.
+     */
     private String titleKey;
 
     /**
@@ -99,7 +103,7 @@ public final class ConfigurationInfo {
     public String getTitle(final Locale locale) {
         return getDescriptionBundle(locale).getString(titleKey);
     }
-    
+
     public String getDescription(final Locale locale) {
         return getDescriptionBundle(locale).getString(descKey);
     }
@@ -121,6 +125,7 @@ public final class ConfigurationInfo {
         int hash = 3;
         hash = 59 * hash + Objects.hashCode(name);
         hash = 59 * hash + Objects.hashCode(descBundle);
+        hash = 59 * hash + Objects.hashCode(titleKey);
         hash = 59 * hash + Objects.hashCode(descKey);
         return hash;
     }
@@ -143,19 +148,26 @@ public final class ConfigurationInfo {
         if (!Objects.equals(descBundle, other.getDescBundle())) {
             return false;
         }
+
+        if (!Objects.equals(titleKey, other.getTitleKey())) {
+            return false;
+        }
+
         return Objects.equals(descKey, other.getDescKey());
     }
 
     @Override
     public String toString() {
         return String.format("%s{ "
-                                 + "name = \"%s\", "
-                                 + "descBundle = \"%s\", "
-                                 + "descKey = \"%s\""
-                                 + " }",
+                                     + "name = \"%s\", "
+                                     + "descBundle = \"%s\", "
+                                     + "titleKey = \"%s\", "
+                                     + "descKey = \"%s\""
+                                     + " }",
                              super.toString(),
                              name,
                              descBundle,
+                             titleKey,
                              descKey);
     }
 

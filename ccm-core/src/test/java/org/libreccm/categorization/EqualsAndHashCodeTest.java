@@ -25,7 +25,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.libreccm.core.CcmObject;
 import org.libreccm.security.Group;
-import org.libreccm.security.Permission;
 import org.libreccm.security.Role;
 import org.libreccm.security.User;
 import org.libreccm.tests.categories.UnitTest;
@@ -108,6 +107,7 @@ public class EqualsAndHashCodeTest {
             .forClass(entityClass)
             .suppress(Warning.STRICT_INHERITANCE)
             .suppress(Warning.NONFINAL_FIELDS)
+            .suppress(Warning.ALL_FIELDS_SHOULD_BE_USED)
             .withRedefinedSuperclass()
             .withPrefabValues(Category.class, category1, category2)
             .withPrefabValues(Domain.class, domain1, domain2)
@@ -119,6 +119,10 @@ public class EqualsAndHashCodeTest {
             .verify();
     }
     
+    /**
+     * {@link User} has a protected constructor, so have have do this to create 
+     * users for the test...
+     */
     private class TestUser extends User {
 
         private static final long serialVersionUID = -9052762220990453621L;
