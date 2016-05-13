@@ -28,6 +28,7 @@ import org.libreccm.security.Group;
 import org.libreccm.security.Role;
 import org.libreccm.security.User;
 import org.libreccm.tests.categories.UnitTest;
+import org.libreccm.testutils.EqualsVerifier;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -38,9 +39,7 @@ import java.util.Collection;
  */
 @RunWith(Parameterized.class)
 @org.junit.experimental.categories.Category(UnitTest.class)
-public class EqualsAndHashCodeTest {
-
-    private final Class<?> entityClass;
+public class EqualsAndHashCodeTest extends EqualsVerifier {
 
     @Parameterized.Parameters(name = "{0}")
     public static Collection<Class<?>> data() {
@@ -52,11 +51,13 @@ public class EqualsAndHashCodeTest {
     }
 
     public EqualsAndHashCodeTest(final Class<?> entityClass) {
-        this.entityClass = entityClass;
+        super(entityClass);
     }
 
-    @Test
-    public void verifyEqualsAndHashCode() {
+    @Override
+    protected void addPrefabValues(
+        final nl.jqno.equalsverifier.EqualsVerifier<?> verifier) {
+
         final Message message1 = new Message();
         message1.setSubject("Message One");
 
@@ -101,20 +102,15 @@ public class EqualsAndHashCodeTest {
         final Category category2 = new Category();
         category2.setName("Category Two");
 
-        nl.jqno.equalsverifier.EqualsVerifier
-            .forClass(entityClass)
-            .suppress(Warning.STRICT_INHERITANCE)
-            .suppress(Warning.NONFINAL_FIELDS)
-            .suppress(Warning.ALL_FIELDS_SHOULD_BE_USED)
-            .withRedefinedSuperclass()
+        verifier
             .withPrefabValues(Message.class, message1, message2)
             .withPrefabValues(Group.class, group1, group2)
             .withPrefabValues(MessageThread.class, thread1, thread2)
             .withPrefabValues(CcmObject.class, ccmObject1, ccmObject2)
             .withPrefabValues(User.class, user1, user2)
             .withPrefabValues(Role.class, role1, role2)
-            .withPrefabValues(Category.class, category1, category2)
-            .verify();
+            .withPrefabValues(Category.class, category1, category2);
+
     }
 
     /**

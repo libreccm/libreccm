@@ -18,7 +18,6 @@
  */
 package org.libreccm.portal;
 
-import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,6 +28,7 @@ import org.libreccm.core.Resource;
 import org.libreccm.security.Role;
 import org.libreccm.security.User;
 import org.libreccm.tests.categories.UnitTest;
+import org.libreccm.testutils.EqualsVerifier;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -39,9 +39,7 @@ import java.util.Collection;
  */
 @RunWith(Parameterized.class)
 @org.junit.experimental.categories.Category(UnitTest.class)
-public class EqualsAndHashCodeTest {
-
-    private final Class<?> entityClass;
+public class EqualsAndHashCodeTest extends EqualsVerifier {
 
     @Parameterized.Parameters(name = "{0}")
     public static Collection<Class<?>> data() {
@@ -51,12 +49,14 @@ public class EqualsAndHashCodeTest {
         });
     }
 
-    public EqualsAndHashCodeTest(final Class<?> entityTest) {
-        this.entityClass = entityTest;
+    public EqualsAndHashCodeTest(final Class<?> entityClass) {
+        super(entityClass);
     }
 
-    @Test
-    public void verifyEqualsAndHashCode() {
+    @Override
+    protected void addPrefabValues(
+        final nl.jqno.equalsverifier.EqualsVerifier<?> verifier) {
+
         final Portal portal1 = new Portal();
         portal1.setDisplayName("Portal One");
 
@@ -94,20 +94,15 @@ public class EqualsAndHashCodeTest {
 
         final Category category2 = new Category();
         category2.setName("Category Two");
-
-        EqualsVerifier
-            .forClass(entityClass)
-            .suppress(Warning.STRICT_INHERITANCE)
-            .suppress(Warning.NONFINAL_FIELDS)
-            .suppress(Warning.ALL_FIELDS_SHOULD_BE_USED)
-            .withRedefinedSuperclass()
+        
+        verifier
             .withPrefabValues(Portal.class, portal1, portal2)
             .withPrefabValues(Resource.class, resource1, resource2)
             .withPrefabValues(CcmObject.class, ccmObject1, ccmObject2)
             .withPrefabValues(Role.class, role1, role2)
             .withPrefabValues(User.class, user1, user2)
-            .withPrefabValues(Category.class, category1, category2)
-            .verify();
+            .withPrefabValues(Category.class, category1, category2);
+        
     }
 
     /**

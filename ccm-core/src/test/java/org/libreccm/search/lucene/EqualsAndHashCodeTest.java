@@ -18,13 +18,12 @@
  */
 package org.libreccm.search.lucene;
 
-import nl.jqno.equalsverifier.Warning;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.libreccm.security.Group;
 import org.libreccm.security.User;
 import org.libreccm.tests.categories.UnitTest;
+import org.libreccm.testutils.EqualsVerifier;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -35,9 +34,7 @@ import java.util.Collection;
  */
 @RunWith(Parameterized.class)
 @org.junit.experimental.categories.Category(UnitTest.class)
-public class EqualsAndHashCodeTest {
-
-    private final Class<?> entityClass;
+public class EqualsAndHashCodeTest extends EqualsVerifier {
 
     @Parameterized.Parameters(name = "{0}")
     public static Collection<Class<?>> data() {
@@ -48,11 +45,12 @@ public class EqualsAndHashCodeTest {
     }
 
     public EqualsAndHashCodeTest(final Class<?> entityClass) {
-        this.entityClass = entityClass;
+        super(entityClass);
     }
 
-    @Test
-    public void verifyEqualsAndHashCode() {
+    @Override
+    protected void addPrefabValues(
+        final nl.jqno.equalsverifier.EqualsVerifier<?> verifier) {
         final Document document1 = new Document();
         document1.setTitle("document1");
 
@@ -71,15 +69,11 @@ public class EqualsAndHashCodeTest {
         final User user2 = new TestUser();
         user2.setName("user2");
 
-        nl.jqno.equalsverifier.EqualsVerifier
-            .forClass(entityClass)
-            .suppress(Warning.STRICT_INHERITANCE)
-            .suppress(Warning.NONFINAL_FIELDS)
-            .suppress(Warning.ALL_FIELDS_SHOULD_BE_USED)
+        verifier
             .withPrefabValues(Group.class, group1, group2)
             .withPrefabValues(Document.class, document1, document2)
-            .withPrefabValues(User.class, user1, user2)
-            .verify();
+            .withPrefabValues(User.class, user1, user2);
+
     }
 
     /**

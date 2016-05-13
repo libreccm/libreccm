@@ -18,13 +18,10 @@
  */
 package org.libreccm.runtime;
 
-import nl.jqno.equalsverifier.EqualsVerifier;
-import nl.jqno.equalsverifier.Warning;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.libreccm.tests.categories.UnitTest;
+import org.libreccm.testutils.EqualsVerifier;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -34,10 +31,8 @@ import java.util.Collection;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RunWith(Parameterized.class)
-@Category(UnitTest.class)
-public class EqualsAndHashCodeTest {
-
-    private final Class<?> entityClass;
+@org.junit.experimental.categories.Category(UnitTest.class)
+public class EqualsAndHashCodeTest extends EqualsVerifier {
 
     @Parameterized.Parameters(name = "{0}")
     public static Collection<Class<?>> data() {
@@ -47,25 +42,22 @@ public class EqualsAndHashCodeTest {
     }
 
     public EqualsAndHashCodeTest(final Class<?> entityClass) {
-        this.entityClass = entityClass;
+        super(entityClass);
     }
 
-    @Test
-    public void verifyEqualsAndHashCode() {
+    @Override
+    protected void addPrefabValues(
+        final nl.jqno.equalsverifier.EqualsVerifier<?> verifier) {
+
         final Initalizer initalizer1 = new Initalizer();
         initalizer1.setClassName("org.example.foo.Initalizer");
-        
+
         final Initalizer initalizer2 = new Initalizer();
         initalizer2.setClassName("org.example.bar.Initalizer");
-        
-        EqualsVerifier
-            .forClass(entityClass)
-            .suppress(Warning.STRICT_INHERITANCE)
-            .suppress(Warning.NONFINAL_FIELDS)
-            .suppress(Warning.ALL_FIELDS_SHOULD_BE_USED)
-            .withRedefinedSuperclass()
-            .withPrefabValues(Initalizer.class, initalizer1, initalizer2)
-            .verify();
+
+        verifier
+            .withPrefabValues(Initalizer.class, initalizer1, initalizer2);
+
     }
 
 }

@@ -18,8 +18,6 @@
  */
 package org.libreccm.l10n;
 
-import nl.jqno.equalsverifier.Warning;
-import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -36,9 +34,7 @@ import java.util.Collection;
  */
 @RunWith(Parameterized.class)
 @Category(UnitTest.class)
-public class EqualsAndHashCodeTest {
-
-    private final Class<?> entityClass;
+public class EqualsAndHashCodeTest extends EqualsVerifier {
 
     @Parameterized.Parameters(name = "{0}")
     public static Collection<Class<?>> data() {
@@ -48,26 +44,20 @@ public class EqualsAndHashCodeTest {
     }
 
     public EqualsAndHashCodeTest(final Class<?> entityClass) {
-        this.entityClass = entityClass;
+        super(entityClass);
     }
 
-    @Test
-    public void verifyEqualsAndHashCode() {
+    @Override
+    protected void addPrefabValues(
+        final nl.jqno.equalsverifier.EqualsVerifier<?> verifier) {
         final Message message1 = new Message();
         message1.setSubject("Message One");
-        
+
         final Message message2 = new Message();
         message2.setSubject("Message Two");
-        
-        nl.jqno.equalsverifier.EqualsVerifier
-            .forClass(entityClass)
-            .suppress(Warning.STRICT_INHERITANCE)
-            .suppress(Warning.NONFINAL_FIELDS)
-            .withRedefinedSuperclass()
-            .withPrefabValues(Message.class, message1, message2)
-            .verify();
-    }
 
-    
+        verifier
+            .withPrefabValues(Message.class, message1, message2);
+    }
 
 }
