@@ -57,6 +57,13 @@ public class CcmIntegrator implements Integrator {
         CcmIntegrator.class);
 
     /**
+     * Name of the property which is used to retrieve the data source in use
+     * from Hibernate.
+     */
+    private static final String DATASOURCE_PROPERTY
+                                    = "hibernate.connection.datasource";
+
+    /**
      * Service loader containing all modules. Initialised by the
      * {@link #integrate(Configuration, SessionFactoryImplementor, SessionFactoryServiceRegistry)}
      * method.
@@ -91,10 +98,13 @@ public class CcmIntegrator implements Integrator {
             final List<TreeNode> tree = treeManager.generateTree(modules);
             final List<TreeNode> orderedNodes = treeManager.orderModules(tree);
 
-            //Get DataSource and Connection from the sessionFactory of 
-            //Hibernate.
+//            //Get DataSource and Connection from the sessionFactory of 
+//            //Hibernate.
             final DataSource dataSource = (DataSource) sessionFactory.
-                getProperties().get("javax.persistence.jtaDataSource");
+                getProperties().get(DATASOURCE_PROPERTY);
+            if (dataSource == null) {
+                throw new IllegalStateException("No data source available.");
+            }
             connection = dataSource.getConnection();
 
             //Migrate tables and sequences which don't belong to a module 
@@ -312,7 +322,7 @@ public class CcmIntegrator implements Integrator {
 
             //Get JDBC connection
             final DataSource dataSource = (DataSource) sessionFactory
-                .getProperties().get("javax.persistence.jtaDataSource");
+                .getProperties().get(DATASOURCE_PROPERTY);
             connection = dataSource.getConnection();
             System.out.println("checking modules...");
             LOGGER.info("Checking modules...");

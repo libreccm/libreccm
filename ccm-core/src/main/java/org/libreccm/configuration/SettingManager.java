@@ -32,6 +32,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  *
@@ -130,7 +131,10 @@ public class SettingManager {
                         ex);
             return null;
         }
-
+        
+        //Make the field accessible even if it has a private modifier
+        field.setAccessible(true);
+            
         if (field.getAnnotation(Setting.class) == null) {
             return null;
         }
@@ -148,7 +152,7 @@ public class SettingManager {
 
         try {
             final Object conf = configuration.newInstance();
-            settingInfo.setDefaultValue(field.get(conf).toString());
+            settingInfo.setDefaultValue(Objects.toString(field.get(conf)));
         } catch (InstantiationException | IllegalAccessException ex) {
             LOGGER.warn(String.format("Failed to create instance of \"%s\" to "
                                           + "get default values.",

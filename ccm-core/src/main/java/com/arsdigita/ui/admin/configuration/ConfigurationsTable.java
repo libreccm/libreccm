@@ -163,7 +163,12 @@ public class ConfigurationsTable extends Table {
                     final ConfigurationInfo info = confManager
                         .getConfigurationInfo(c);
 //                    return c.getName().startsWith(filterTerm);
-                    return info.getTitle(negoiatedLocale).startsWith(filterTerm);
+                    if (filterTerm == null || filterTerm.isEmpty()) {
+                        return true;
+                    } else {
+                        return info.getTitle(negoiatedLocale).startsWith(
+                            filterTerm);
+                    }
                 })
                 .collect(Collectors.toCollection(ArrayList::new));
             configurations.sort((c1, c2) -> {

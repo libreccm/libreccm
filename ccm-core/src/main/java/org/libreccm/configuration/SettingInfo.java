@@ -18,8 +18,11 @@
  */
 package org.libreccm.configuration;
 
-import org.libreccm.configuration.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.Locale;
+import java.util.MissingResourceException;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
@@ -30,6 +33,8 @@ import java.util.ResourceBundle;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public final class SettingInfo {
+
+    private static final Logger LOGGER = LogManager.getLogger(SettingInfo.class);
 
     /**
      * The fully qualified name of the setting.
@@ -104,7 +109,14 @@ public final class SettingInfo {
     }
 
     public ResourceBundle getDescriptionBundle(final Locale locale) {
-        return ResourceBundle.getBundle(descBundle, locale);
+        try {
+            return ResourceBundle.getBundle(descBundle, locale);
+        } catch (MissingResourceException ex) {
+            LOGGER.warn("Failed to find bundle for base name '{}'"
+                            + " and locale '{}'.",
+                        descBundle, locale);
+            return null;
+        }
     }
 
     public String getLabelKey() {
@@ -114,9 +126,24 @@ public final class SettingInfo {
     void setLabelKey(final String labelKey) {
         this.labelKey = labelKey;
     }
-    
+
     public String getLabel(final Locale locale) {
-        return getDescriptionBundle(locale).getString(labelKey);
+        final ResourceBundle bundle = getDescriptionBundle(locale);
+
+        if (bundle == null) {
+            return name;
+        } else {
+            try {
+                return bundle.getString(labelKey);
+            } catch (MissingResourceException ex) {
+                LOGGER.warn("Can't find resource for bundle '{}', "
+                                + "key '{}' and locale '{}'.",
+                            descBundle,
+                            labelKey,
+                            locale);
+                return name;
+            }
+        }
     }
 
     public String getDescKey() {
@@ -128,7 +155,22 @@ public final class SettingInfo {
     }
 
     public String getDescription(final Locale locale) {
-        return getDescriptionBundle(locale).getString(descKey);
+        final ResourceBundle bundle = getDescriptionBundle(locale);
+
+        if (bundle == null) {
+            return "";
+        } else {
+            try {
+                return bundle.getString(descKey);
+            } catch (MissingResourceException ex) {
+                LOGGER.warn("Can't find resource for bundle '{}', "
+                                + "key '{}' and locale '{}'.",
+                            descBundle,
+                            descKey,
+                            locale);
+                return "";
+            }
+        }
     }
 
     @Override

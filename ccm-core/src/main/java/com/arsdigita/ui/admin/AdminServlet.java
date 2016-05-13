@@ -30,6 +30,7 @@ import com.arsdigita.templating.Templating;
 import com.arsdigita.ui.SiteBanner;
 import com.arsdigita.ui.UserBanner;
 import com.arsdigita.ui.admin.categories.CategoriesTab;
+import com.arsdigita.ui.admin.configuration.ConfigurationTab;
 import com.arsdigita.web.BaseApplicationServlet;
 import com.arsdigita.web.LoginSignal;
 import com.arsdigita.xml.Document;
@@ -131,7 +132,7 @@ public class AdminServlet
         tabbedPane.addTab(
                 new Label(new GlobalizedMessage("ui.admin.tab.configuration.title",
                                                 BUNDLE_NAME)),
-                new RegistryAdminTab());
+                new ConfigurationTab());
 
         tabbedPane.addTab(
                 new Label(new GlobalizedMessage("ui.admin.tab.workflows.title",
