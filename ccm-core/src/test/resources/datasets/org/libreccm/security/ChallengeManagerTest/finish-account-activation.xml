@@ -48,7 +48,7 @@
     <ccm_core.one_time_auth_tokens 
         token_id="-100"
         user_id="-20"
-        token="biXOpuxIPXuRgx9jhk1PzZVIeKGaTmg2qTKoTQ4tl9iiweQ0e5mfmdFI1KjDwjPi"
+        token="$shiro1$SHA-512$50000$AAAA$6JQocy+TmRhqAqZqNMiQj0zUtBAB3L86p9WWJ2phheqfP2lwireuwm73/3/tz+zfckLad/qClxHe1qtV9crYYQ=="
         valid_until="2032-04-01 12:00:00"
         purpose="ACCOUNT_ACTIVATION"/>
     

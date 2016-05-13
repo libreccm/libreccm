@@ -18,7 +18,6 @@
  */
 package org.libreccm.core;
 
-
 import static org.hamcrest.CoreMatchers.*;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -115,16 +114,22 @@ public class CcmObjectRepositoryTest {
         return ShrinkWrap
             .create(WebArchive.class,
                     "LibreCCM-org.libreccm.core.CcmObjectRepositoryTest.war")
-            .addPackage(CcmObject.class.getPackage())
-            .addPackage(Permission.class.getPackage())
-            .addPackage(CcmApplication.class.getPackage())
-            .addPackage(Categorization.class.getPackage())
-            .addPackage(LocalizedString.class.getPackage())
-            .addPackage(Workflow.class.getPackage())
-            .addPackage(EntityManagerProducer.class.getPackage())
-            .addPackage(MimeTypeConverter.class.getPackage())
-            .addPackage(EqualsVerifier.class.getPackage())
-            .addPackage(IntegrationTest.class.getPackage())
+            .addPackage(org.libreccm.categorization.Categorization.class
+                .getPackage())
+            .addPackage(org.libreccm.configuration.Configuration.class.
+                getPackage())
+            .addPackage(org.libreccm.core.CcmObject.class.getPackage())
+            .addPackage(org.libreccm.jpa.EntityManagerProducer.class
+                .getPackage())
+            .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
+                .getPackage())
+            .addPackage(org.libreccm.l10n.LocalizedString.class.getPackage())
+            .addPackage(org.libreccm.security.Permission.class.getPackage())
+            .addPackage(org.libreccm.testutils.EqualsVerifier.class.getPackage())
+            .addPackage(org.libreccm.tests.categories.IntegrationTest.class
+                .getPackage())
+            .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
+            .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
             .addAsLibraries(libs)
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")

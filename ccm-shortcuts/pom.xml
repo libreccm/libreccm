@@ -184,11 +184,10 @@
             </plugin>
             <plugin>
                 <groupId>de.jpdigital</groupId>
-                <artifactId>hibernate4-ddl-maven-plugin</artifactId>
+                <artifactId>hibernate5-ddl-maven-plugin</artifactId>
                 <configuration>
                     <dialects>
                         <param>h2</param>
-                        <param>mysql5_innodb</param>
                         <param>oracle10g</param>
                         <param>postgresql9</param>
                     </dialects>

@@ -84,6 +84,10 @@ public class RoleRepository extends AbstractEntityRepository<Long, Role> {
     @Override
     @Transactional(Transactional.TxType.REQUIRED)
     public void delete(final Role role) {
+        if (role == null) {
+            throw new IllegalArgumentException("Can't delete null.");
+        }
+        
         final Role delete = getEntityManager().find(Role.class,
                                                     role.getRoleId());
         

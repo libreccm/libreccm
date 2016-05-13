@@ -96,6 +96,10 @@ public class GroupRepository extends AbstractEntityRepository<Long, Group> {
     @Override
     @Transactional(Transactional.TxType.REQUIRED)
     public void delete(final Group entity) {
+        if (entity == null) {
+            throw new IllegalArgumentException("Can't delete null");
+        }
+        
         final Group delete = getEntityManager().find(Group.class, 
                                                      entity.getPartyId());
         

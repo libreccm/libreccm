@@ -229,7 +229,7 @@ public class UserRepositoryTest {
         final User user = userRepository.findByEmailAddress(
             "max.mustermann@example.org");
 
-        assertThat(user.getPartyId(), is(-20L));
+        assertThat(user.getPartyId(), is(-30L));
     }
 
     @Test

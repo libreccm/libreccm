@@ -163,6 +163,10 @@ public class UserRepository extends AbstractEntityRepository<Long, User> {
     @Override
     @Transactional
     public void delete(final User entity) {
+        if (entity == null) { 
+            throw new IllegalArgumentException("Can't delete null");
+        }
+        
         final User delete = getEntityManager().find(User.class,
                                                     entity.getPartyId());
         
