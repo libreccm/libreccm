@@ -63,6 +63,7 @@ public class ConfigurationTable extends Table {
     private static final int COL_EDIT_SETTING = 3;
 
     private ParameterSingleSelectionModel<String> selectedConf;
+    private ParameterSingleSelectionModel<String> selectedSetting;
 
     public ConfigurationTable(
             final ConfigurationTab configurationTab,
@@ -74,6 +75,7 @@ public class ConfigurationTable extends Table {
         setIdAttr("configurationTable");
 
         this.selectedConf = selectedConf;
+        this.selectedSetting = selectedSetting;
 
         setEmptyView(new Label(new GlobalizedMessage(
                 "ui.admin.configuration.settings.none", ADMIN_BUNDLE)));
@@ -126,6 +128,37 @@ public class ConfigurationTable extends Table {
                     final String settingName = (String) event.getRowKey();
                     selectedSetting.setSelectedKey(state, settingName);
 
+                    switch (getTypeOfSelectedSetting(state)) {
+                        case "boolean":
+                            LOGGER.debug("Setting is of type boolean");
+                            break;
+                        case "long":
+                            LOGGER.debug("Setting is of type long");
+                            break;
+                        case "double":
+                            LOGGER.debug("Setting is of type double");
+                            break;
+                        case "java.math.BigDecimal":
+                            LOGGER.debug("Setting is of type BigDecimal");
+                            break;
+                        case "org.libreccm.l10n.LocalizedString":
+                            LOGGER.debug("Setting is of type LocalizedString");
+                            break;
+                        case "java.lang.String":
+                            LOGGER.debug("Setting is of type String");
+                            break;
+                        case "java.util.Set":
+                            LOGGER.debug("Setting is of type Enum");
+                            break;
+                        case "java.util.List":
+                            LOGGER.debug("Setting is of type List");
+                            break;
+                        default:
+                            throw new IllegalArgumentException(String.format(
+                                    "Unknown setting type \"%s\".",
+                                    getTypeOfSelectedSetting(state)));
+                    }
+
                 }
             }
 
@@ -137,6 +170,29 @@ public class ConfigurationTable extends Table {
         });
 
         setModelBuilder(new ConfigurationTableModelBuilder());
+    }
+
+    private String getTypeOfSelectedSetting(final PageState state) {
+        final Class<?> confClass;
+        try {
+            confClass = Class.forName(selectedConf.getSelectedKey(state));
+        } catch (ClassNotFoundException ex) {
+            LOGGER.error("Configuration class '{}' not found.",
+                         selectedConf.getSelectedKey(state));
+            throw new UncheckedWrapperException(String.format(
+                    "Configuration class '%s not found'",
+                    selectedConf.getSelectedKey(state)), ex);
+        }
+
+        final SettingManager settingManager = CdiUtil.createCdiUtil().findBean(
+                SettingManager.class);
+        final SettingInfo info = settingManager.getSettingInfo(confClass,
+                                                               selectedSetting.
+                                                               getSelectedKey(
+                                                                       state));
+
+        return info.getValueType();
+
     }
 
     private class ConfigurationTableModelBuilder
