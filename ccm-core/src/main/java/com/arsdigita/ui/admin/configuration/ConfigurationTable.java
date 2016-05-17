@@ -34,6 +34,7 @@ import com.arsdigita.bebop.table.TableModelBuilder;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.util.LockableImpl;
 import com.arsdigita.util.UncheckedWrapperException;
+import java.lang.reflect.Field;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -54,7 +55,7 @@ import static com.arsdigita.ui.admin.AdminUiConstants.*;
 public class ConfigurationTable extends Table {
 
     private static final Logger LOGGER = LogManager.getLogger(
-        ConfigurationTable.class);
+            ConfigurationTable.class);
 
     private static final int COL_SETTING_LABEL = 0;
     private static final int COL_SETTING_VALUE = 1;
@@ -64,9 +65,9 @@ public class ConfigurationTable extends Table {
     private ParameterSingleSelectionModel<String> selectedConf;
 
     public ConfigurationTable(
-        final ConfigurationTab configurationTab,
-        final ParameterSingleSelectionModel<String> selectedConf,
-        final ParameterSingleSelectionModel<String> selectedSetting) {
+            final ConfigurationTab configurationTab,
+            final ParameterSingleSelectionModel<String> selectedConf,
+            final ParameterSingleSelectionModel<String> selectedSetting) {
 
         super();
 
@@ -75,32 +76,32 @@ public class ConfigurationTable extends Table {
         this.selectedConf = selectedConf;
 
         setEmptyView(new Label(new GlobalizedMessage(
-            "ui.admin.configuration.settings.none", ADMIN_BUNDLE)));
+                "ui.admin.configuration.settings.none", ADMIN_BUNDLE)));
 
         final TableColumnModel columnModel = getColumnModel();
         columnModel.add(new TableColumn(
-            COL_SETTING_LABEL,
-            new Label(new GlobalizedMessage(
-                "ui.admin.configuration.settings.table.col_setting_label.header",
-                ADMIN_BUNDLE))));
+                COL_SETTING_LABEL,
+                new Label(new GlobalizedMessage(
+                        "ui.admin.configuration.settings.table.col_setting_label.header",
+                        ADMIN_BUNDLE))));
         columnModel.add(new TableColumn(
-            COL_SETTING_VALUE,
-            new Label(new GlobalizedMessage(
-                "ui.admin.configuration.settings.table.col_setting_value.header",
-                ADMIN_BUNDLE))));
+                COL_SETTING_VALUE,
+                new Label(new GlobalizedMessage(
+                        "ui.admin.configuration.settings.table.col_setting_value.header",
+                        ADMIN_BUNDLE))));
         columnModel.add(new TableColumn(
-            COL_SETTING_DESC,
-            new Label(new GlobalizedMessage(
-                "ui.admin.configuration.settings.table.col_setting_desc.header",
-                ADMIN_BUNDLE))));
+                COL_SETTING_DESC,
+                new Label(new GlobalizedMessage(
+                        "ui.admin.configuration.settings.table.col_setting_desc.header",
+                        ADMIN_BUNDLE))));
         columnModel.add(new TableColumn(
-            COL_EDIT_SETTING,
-            new Label(new GlobalizedMessage(
-                "ui.admin.configuration.settings.table.col_edit_setting.header",
-                ADMIN_BUNDLE))));
+                COL_EDIT_SETTING,
+                new Label(new GlobalizedMessage(
+                        "ui.admin.configuration.settings.table.col_edit_setting.header",
+                        ADMIN_BUNDLE))));
 
         columnModel.get(COL_EDIT_SETTING).setCellRenderer(
-            new TableCellRenderer() {
+                new TableCellRenderer() {
 
             @Override
             public Component getComponent(final Table table,
@@ -110,7 +111,7 @@ public class ConfigurationTable extends Table {
                                           final Object key,
                                           final int row,
                                           final int column) {
-                return new ControlLink((String) value);
+                return new ControlLink((Component) value);
             }
 
         });
@@ -124,6 +125,7 @@ public class ConfigurationTable extends Table {
                 if (event.getColumn() == COL_EDIT_SETTING) {
                     final String settingName = (String) event.getRowKey();
                     selectedSetting.setSelectedKey(state, settingName);
+
                 }
             }
 
@@ -138,12 +140,12 @@ public class ConfigurationTable extends Table {
     }
 
     private class ConfigurationTableModelBuilder
-        extends LockableImpl implements TableModelBuilder {
+            extends LockableImpl implements TableModelBuilder {
 
         @Override
         public TableModel makeModel(final Table table, final PageState state) {
             final ConfigurationManager confManager = CdiUtil.createCdiUtil()
-                .findBean(ConfigurationManager.class);
+                    .findBean(ConfigurationManager.class);
             final Class<?> confClass;
             try {
                 confClass = Class.forName(selectedConf.getSelectedKey(state));
@@ -151,12 +153,12 @@ public class ConfigurationTable extends Table {
                 LOGGER.error("Configuration class '{}' not found.",
                              selectedConf.getSelectedKey(state));
                 throw new UncheckedWrapperException(String.format(
-                    "Configuration class '%s not found'",
-                    selectedConf.getSelectedKey(state)), ex);
+                        "Configuration class '%s not found'",
+                        selectedConf.getSelectedKey(state)), ex);
             }
 
             final Object configuration = confManager
-                .findConfiguration(confClass);
+                    .findConfiguration(confClass);
 
             return new ConfigurationTableModel(configuration, state);
         }
@@ -201,30 +203,36 @@ public class ConfigurationTable extends Table {
         public Object getElementAt(final int columnIndex) {
             final String setting = settings.get(index);
             final SettingInfo settingInfo = settingManager.getSettingInfo(
-                configuration.getClass(), setting);
+                    configuration.getClass(), setting);
 
             switch (columnIndex) {
                 case COL_SETTING_LABEL:
                     return settingInfo.getLabel(globalizationHelper
-                        .getNegotiatedLocale());
+                            .getNegotiatedLocale());
                 case COL_SETTING_VALUE: {
                     try {
-                        return configuration.getClass().getField(setting).get(
-                            configuration);
-                    } catch (NoSuchFieldException | SecurityException | IllegalAccessException ex) {
+                        final Field field = configuration.getClass().
+                                getDeclaredField(setting);
+                        field.setAccessible(true);
+                        return field.get(configuration);
+//                        return configuration.getClass().
+//                                getDeclaredField(setting).get(configuration);
+                    } catch (NoSuchFieldException |
+                             SecurityException |
+                             IllegalAccessException ex) {
                         LOGGER.error("Failed to read value from configuration.",
                                      ex);
                         return new Label(new GlobalizedMessage(
-                            "ui.admin.configuration.settings.read_error",
-                            ADMIN_BUNDLE));
+                                "ui.admin.configuration.settings.read_error",
+                                ADMIN_BUNDLE));
                     }
                 }
                 case COL_SETTING_DESC:
                     return settingInfo.getDescription(globalizationHelper
-                        .getNegotiatedLocale());
+                            .getNegotiatedLocale());
                 case COL_EDIT_SETTING:
                     return new Label(new GlobalizedMessage(
-                        "ui.admin.configuration.settings.edit", ADMIN_BUNDLE));
+                            "ui.admin.configuration.settings.edit", ADMIN_BUNDLE));
                 default:
                     throw new IllegalArgumentException("Illegal column index");
             }

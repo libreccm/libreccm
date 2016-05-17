@@ -55,6 +55,7 @@ public class ConfigurationTab extends LayoutPanel {
     private final Form confClassesFilterForm;
     private final ConfigurationsTable configurationsTable;
 
+    private final ActionLink configurationBackLink;
     private final ConfigurationTable configurationTable;
 
     private final SettingFormBoolean settingFormBoolean;
@@ -76,7 +77,7 @@ public class ConfigurationTab extends LayoutPanel {
 
         selectedSettingParam = new StringParameter("selectedSetting");
         selectedSetting = new ParameterSingleSelectionModel<>(
-            selectedSettingParam);
+                selectedSettingParam);
 
         selectedValueParam = new StringParameter("selectedValue");
         selectedValue = new ParameterSingleSelectionModel<>(selectedValueParam);
@@ -84,15 +85,15 @@ public class ConfigurationTab extends LayoutPanel {
         final SegmentedPanel left = new SegmentedPanel();
 
         confClassesFilterHeading = new Label(new GlobalizedMessage(
-            "ui.admin.configuration.classes.filter.heading", ADMIN_BUNDLE));
+                "ui.admin.configuration.classes.filter.heading", ADMIN_BUNDLE));
 
         confClassesFilterForm = new Form("confClassesForm");
         final TextField confClassesFilter = new TextField(CONF_CLASSES_FILTER);
         confClassesFilterForm.add(confClassesFilter);
         confClassesFilterForm.add(new Submit(new GlobalizedMessage(
-            "ui.admin.configuration.classes.filter.submit", ADMIN_BUNDLE)));
+                "ui.admin.configuration.classes.filter.submit", ADMIN_BUNDLE)));
         final ActionLink clearLink = new ActionLink(new GlobalizedMessage(
-            "ui.admin.configuration.classes.filter.clear", ADMIN_BUNDLE));
+                "ui.admin.configuration.classes.filter.clear", ADMIN_BUNDLE));
         clearLink.addActionListener(e -> {
             final PageState state = e.getPageState();
             confClassesFilter.setValue(state, null);
@@ -104,9 +105,17 @@ public class ConfigurationTab extends LayoutPanel {
 
         final BoxPanel body = new BoxPanel(BoxPanel.VERTICAL);
         configurationsTable = new ConfigurationsTable(
-            this, selectedConf, confClassesFilter);
+                this, selectedConf, confClassesFilter);
         body.add(configurationsTable);
 
+        configurationBackLink = new ActionLink(new GlobalizedMessage(
+                "ui.admin.configuration.back_to_configurations",
+                ADMIN_BUNDLE));
+        configurationBackLink.addActionListener(e -> {
+            final PageState state = e.getPageState();
+            hideConfiguration(state);
+        });
+        body.add(configurationBackLink);
         configurationTable = new ConfigurationTable(this,
                                                     selectedConf,
                                                     selectedSetting);
@@ -138,15 +147,15 @@ public class ConfigurationTab extends LayoutPanel {
         body.add(settingFormString);
 
         settingEditorLocalizedString = new SettingEditorLocalizedString(
-            this, selectedConf, selectedSetting, selectedValue);
+                this, selectedConf, selectedSetting, selectedValue);
         body.add(settingEditorLocalizedString);
 
         settingEditorStringList = new SettingEditorStringList(
-            this, selectedConf, selectedSetting, selectedValue);
+                this, selectedConf, selectedSetting, selectedValue);
         body.add(settingEditorStringList);
 
         settingEditorEnum = new SettingEditorEnum(
-            this, selectedConf, selectedSetting, selectedValue);
+                this, selectedConf, selectedSetting, selectedValue);
         body.add(settingEditorEnum);
 
         setBody(body);
@@ -164,6 +173,7 @@ public class ConfigurationTab extends LayoutPanel {
         page.setVisibleDefault(confClassesFilterForm, true);
         page.setVisibleDefault(configurationsTable, true);
 
+        page.setVisibleDefault(configurationBackLink, false);
         page.setVisibleDefault(configurationTable, false);
 
         page.setVisibleDefault(settingFormBoolean, false);
@@ -203,14 +213,16 @@ public class ConfigurationTab extends LayoutPanel {
         hideConfigurationsTable(state);
         hideSettingForms(state);
 
+        configurationBackLink.setVisible(state, true);
         configurationTable.setVisible(state, true);
     }
 
     protected void hideConfiguration(final PageState state) {
+        configurationBackLink.setVisible(state, false);
         configurationTable.setVisible(state, false);
 
         selectedConf.clearSelection(state);
-        
+
         showConfigurationsTable(state);
     }
 
@@ -365,11 +377,9 @@ public class ConfigurationTab extends LayoutPanel {
         settingEditorLocalizedString.setVisible(state, false);
         settingEditorStringList.setVisible(state, false);
         settingEditorEnum.setVisible(state, false);
-        
+
         selectedSetting.clearSelection(state);
         selectedValue.clearSelection(state);
-        
-        showConfiguration(state);
     }
 
 }

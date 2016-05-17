@@ -106,6 +106,8 @@ public class ConfigurationsTable extends Table {
                 if (event.getColumn() == COL_TITLE) {
                     final String confClassName = (String) event.getRowKey();
                     selectedConf.setSelectedKey(state, confClassName);
+                    
+                    configurationTab.showConfiguration(state);
                 }
             }
 
