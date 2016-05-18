@@ -55,7 +55,8 @@ public class ConfigurationManager {
     /**
      * Finds all configuration classes listed by the installed modules.
      *
-     * @return A sorted set containing all configuration classes.
+     * @return A sorted set (see {@link SortedSet}) containing all configuration
+     *         classes.
      *
      * @see Module#configurations()
      */
@@ -256,43 +257,6 @@ public class ConfigurationManager {
         }
     }
 
-    /**
-     * Create a setting instance of a specific value type.
-     *
-     * @param <T>       Type variable.
-     * @param valueType The type of the value of the setting to create.
-     *
-     * @return An setting instance of the provided value type.
-     *
-     * @throws IllegalArgumentException If there is not setting type for the
-     *                                  provided value type.
-     */
-//    @SuppressWarnings("unchecked")
-//    <T> AbstractSetting<T> createSettingForValueType(
-//        final Class<T> valueType) {
-//
-//        final String valueTypeName = valueType.getName();
-//        if (BigDecimal.class.getName().equals(valueTypeName)) {
-//            return (AbstractSetting<T>) new BigDecimalSetting();
-//        } else if (Boolean.class.getName().equals(valueTypeName)) {
-//            return (AbstractSetting<T>) new BooleanSetting();
-//        } else if (Double.class.getName().equals(valueTypeName)) {
-//            return (AbstractSetting<T>) new DoubleSetting();
-//        } else if (List.class.getName().equals(valueTypeName)) {
-//            return (AbstractSetting<T>) new StringListSetting();
-//        } else if (LocalizedString.class.getName().equals(valueTypeName)) {
-//            return (AbstractSetting<T>) new LocalizedStringSetting();
-//        } else if (Long.class.getName().equals(valueTypeName)) {
-//            return (AbstractSetting<T>) new LongSetting();
-//        } else if (Set.class.getName().equals(valueTypeName)) {
-//            return (AbstractSetting<T>) new EnumSetting();
-//        } else if (String.class.getName().equals(valueTypeName)) {
-//            return (AbstractSetting<T>) new StringSetting();
-//        } else {
-//            throw new IllegalArgumentException(String.format(
-//                "No setting type for value type \"%s\".", valueTypeName));
-//        }
-//    }
     /**
      * Sets a value on a setting in the registry.
      *

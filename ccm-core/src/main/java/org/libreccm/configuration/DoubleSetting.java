@@ -19,16 +19,22 @@
 package org.libreccm.configuration;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
 /**
+ * Setting for values for type double (rational numbers). Be aware: Because how
+ * double values are handled by Java (and all other programming languages) the
+ * precision of a value of the type {@code double} can be guaranteed. If full
+ * precision is required use {@link BigDecimal} and {@link BigDecimalSetting}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
 public class DoubleSetting
-        extends AbstractSetting<Double> implements Serializable {
+    extends AbstractSetting<Double> implements Serializable {
 
     private static final long serialVersionUID = 4698940335480821950L;
 
@@ -70,7 +76,7 @@ public class DoubleSetting
         }
 
         return Double.doubleToLongBits(value) == Double.doubleToLongBits(other
-                .getValue());
+            .getValue());
     }
 
     @Override

@@ -41,7 +41,9 @@ import org.libreccm.configuration.ConfigurationManager;
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
- *
+ * A subclass of {@link AbstractSettingFormSingleValue} for editing the value
+ * of a {@code boolean}.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class SettingFormBoolean extends Form {
@@ -59,7 +61,9 @@ public class SettingFormBoolean extends Form {
 
         super("settingFormBoolean", new BoxPanel(BoxPanel.VERTICAL));
 
-        add(new SettingFormHeader(selectedConf, selectedSetting));
+        add(new SettingFormHeader(configurationTab,
+                                  selectedConf,
+                                  selectedSetting));
 
         add(new SettingFormCurrentValuePanel(selectedConf, selectedSetting));
 
@@ -70,6 +74,7 @@ public class SettingFormBoolean extends Form {
                        new Label(new GlobalizedMessage(
                            "ui.admin.configuration.setting.edit.new_value",
                            ADMIN_BUNDLE))));
+        add(valueFieldGroup);
 
         final SaveCancelSection saveCancelSection = new SaveCancelSection();
         add(saveCancelSection);
@@ -93,10 +98,14 @@ public class SettingFormBoolean extends Form {
 
             final Boolean value;
             try {
-                value = (Boolean) confClass.getField(selectedSetting
-                    .getSelectedKey(state)).get(config);
-            } catch (NoSuchFieldException | SecurityException |
-                     IllegalAccessException | ClassCastException ex) {
+                final Field field = confClass.getDeclaredField(selectedSetting
+                    .getSelectedKey(state));
+                field.setAccessible(true);
+                value = (Boolean) field.get(config);
+            } catch (NoSuchFieldException |
+                     SecurityException |
+                     IllegalAccessException |
+                     ClassCastException ex) {
                 LOGGER.warn("Failed to read setting {} from configuration {}",
                             selectedSetting.getSelectedKey(state),
                             selectedConf.getSelectedKey(state));
@@ -111,63 +120,72 @@ public class SettingFormBoolean extends Form {
 
         addProcessListener(e -> {
             final PageState state = e.getPageState();
-            final FormData data = e.getFormData();
-            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            if (saveCancelSection.getSaveButton().isSelected(state)) {
+                final FormData data = e.getFormData();
+                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
 
-            final Class<?> confClass;
-            try {
-                confClass = Class
-                    .forName(selectedConf.getSelectedKey(state));
-            } catch (ClassNotFoundException ex) {
-                throw new UncheckedWrapperException(ex);
-            }
+                final Class<?> confClass;
+                try {
+                    confClass = Class
+                        .forName(selectedConf.getSelectedKey(state));
+                } catch (ClassNotFoundException ex) {
+                    throw new UncheckedWrapperException(ex);
+                }
 
-            final ConfigurationManager confManager = cdiUtil.findBean(
-                ConfigurationManager.class);
-            final String settingName = selectedSetting.getSelectedKey(state);
+                final ConfigurationManager confManager = cdiUtil.findBean(
+                    ConfigurationManager.class);
+                final String settingName = selectedSetting.getSelectedKey(state);
 
-            final Object config = confManager.findConfiguration(confClass);
+                final Object config = confManager.findConfiguration(confClass);
 
-            final Field field;
-            try {
-                field = confClass.getField(settingName);
-            } catch (NoSuchFieldException | SecurityException ex) {
-                throw new FormProcessException(
-                    String.format(
-                        "Failed to retrieve field \"%s\" "
-                            + "from configuration class \"%s\".",
-                        settingName,
-                        confClass.getName()),
-                    new GlobalizedMessage(
-                        "ui.admin.configuration.setting.failed_to_set_value",
-                        ADMIN_BUNDLE),
-                    ex);
-            }
+                final Field field;
+                try {
+                    field = confClass.getDeclaredField(settingName);
+                    field.setAccessible(true);
+                } catch (NoSuchFieldException |
+                         SecurityException ex) {
+                    throw new FormProcessException(
+                        String.format(
+                            "Failed to retrieve field \"%s\" "
+                                + "from configuration class \"%s\".",
+                            settingName,
+                            confClass.getName()),
+                        new GlobalizedMessage(
+                            "ui.admin.configuration.setting.failed_to_set_value",
+                            ADMIN_BUNDLE),
+                        ex);
+                }
 
-            try {
-                final String[] valueData = (String[]) data.
-                    get(VALUE_FIELD_GROUP);
-                if (valueData != null && valueData.length > 0) {
-                    if (VALUE_FIELD.equals(valueData[0])) {
-                        field.set(config, Boolean.TRUE);
+                try {
+                    final String[] valueData = (String[]) data.
+                        get(VALUE_FIELD_GROUP);
+                    if (valueData != null && valueData.length > 0) {
+                        if (VALUE_FIELD.equals(valueData[0])) {
+                            field.set(config, Boolean.TRUE);
+                        } else {
+                            field.set(config, Boolean.FALSE);
+                        }
                     } else {
                         field.set(config, Boolean.FALSE);
                     }
+                    confManager.saveConfiguration(config);
                     configurationTab.hideSettingForms(state);
+                } catch (IllegalArgumentException | IllegalAccessException ex) {
+                    LOGGER.error(ex);
+                    throw new FormProcessException(
+                        String.format(
+                            "Failed to change value of field \"%s\" "
+                                + "of configuration class \"%s\".",
+                            settingName,
+                            confClass.getName()),
+                        new GlobalizedMessage(
+                            "ui.admin.configuration.setting.failed_to_set_value",
+                            ADMIN_BUNDLE),
+                        ex);
                 }
-            } catch (IllegalArgumentException | IllegalAccessException ex) {
-                throw new FormProcessException(
-                    String.format(
-                        "Failed to change value of field \"%s\" "
-                            + "of configuration class \"%s\".",
-                        settingName,
-                        confClass.getName()),
-                    new GlobalizedMessage(
-                        "ui.admin.configuration.setting.failed_to_set_value",
-                        ADMIN_BUNDLE),
-                    ex);
             }
 
+            configurationTab.hideSettingForms(state);
         });
 
     }

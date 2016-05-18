@@ -19,10 +19,9 @@
 
 package org.libreccm.configuration;
 
-import org.libreccm.configuration.*;
-
 /**
- *
+ * Exception type which can be used in configuration classes to indicate errors.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class ConfigurationException extends RuntimeException {
@@ -35,7 +34,6 @@ public class ConfigurationException extends RuntimeException {
     public ConfigurationException() {
         super();
     }
-
 
     /**
      * Constructs an instance of <code>ConfigurationException</code> with the specified detail message.

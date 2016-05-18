@@ -18,13 +18,11 @@
  */
 package org.libreccm.configuration;
 
-import static org.libreccm.core.CoreConstants.*;
 
 import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Table;
 
 /**
  * Setting for storing a long value.

@@ -159,10 +159,10 @@ public final class UIConfig {
     
     @Override
     public String toString() {
-        final StringJoiner joiner = new StringJoiner(", ");
-        if (defaultLayout != null) {
-            defaultLayout.forEach(s -> joiner.add(s));
-        }
+//        final StringJoiner joiner = new StringJoiner(", ");
+//        if (defaultLayout != null) {
+//            defaultLayout.forEach(s -> joiner.add(s));
+//        }
         
         return String.format("%s{ "
                                  + "defaultLayout = \"%s\", "

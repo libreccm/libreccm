@@ -34,7 +34,7 @@ import javax.persistence.JoinTable;
 /**
  * A setting which stores a {@link LocalizedString} . This can be used for
  * storing values for text in the user interface which should be customisable by
- * the administrator.
+ * the administrator. It is also useful for storing email templates.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */

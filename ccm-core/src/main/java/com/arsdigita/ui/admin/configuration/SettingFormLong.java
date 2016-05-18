@@ -21,7 +21,9 @@ package com.arsdigita.ui.admin.configuration;
 import com.arsdigita.bebop.ParameterSingleSelectionModel;
 
 /**
- *
+ * A subclass of {@link AbstractSettingFormSingleValue} for editing the value
+ * of a {@link LongSetting}.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class SettingFormLong extends AbstractSettingFormSingleValue<Long> {

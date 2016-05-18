@@ -25,31 +25,36 @@ import com.arsdigita.bebop.ParameterSingleSelectionModel;
 import com.arsdigita.bebop.Text;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.util.UncheckedWrapperException;
+
 import java.util.Objects;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.ConfigurationManager;
 
+import java.lang.reflect.Field;
+
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
- *
+ * A panel which show the current value of a (single value) setting.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class SettingFormCurrentValuePanel extends GridPanel {
 
     private final static Logger LOGGER = LogManager.getLogger(
-            SettingFormCurrentValuePanel.class);
+        SettingFormCurrentValuePanel.class);
 
     public SettingFormCurrentValuePanel(
-            final ParameterSingleSelectionModel<String> selectedConf,
-            final ParameterSingleSelectionModel<String> selectedSetting) {
+        final ParameterSingleSelectionModel<String> selectedConf,
+        final ParameterSingleSelectionModel<String> selectedSetting) {
         super(2);
 
         add(new Label(new GlobalizedMessage(
-                "ui.admin.configuration.setting.edit.current_value",
-                ADMIN_BUNDLE)));
+            "ui.admin.configuration.setting.edit.current_value",
+            ADMIN_BUNDLE)));
 
         add(new Text(e -> {
             final PageState state = e.getPageState();
@@ -60,21 +65,24 @@ public class SettingFormCurrentValuePanel extends GridPanel {
             final Class<?> confClass;
             try {
                 confClass = Class
-                        .forName(selectedConf.getSelectedKey(state));
+                    .forName(selectedConf.getSelectedKey(state));
             } catch (ClassNotFoundException ex) {
                 throw new UncheckedWrapperException(ex);
             }
 
             final ConfigurationManager confManager = cdiUtil.findBean(
-                    ConfigurationManager.class);
+                ConfigurationManager.class);
 
             final Object config = confManager.findConfiguration(confClass);
 
             final Object value;
             try {
-                value = confClass.getField(selectedSetting
-                        .getSelectedKey(state)).get(config);
-            } catch (NoSuchFieldException | SecurityException |
+                final Field field = confClass.getDeclaredField(selectedSetting
+                    .getSelectedKey(state));
+                field.setAccessible(true);
+                value = field.get(config);
+            } catch (NoSuchFieldException |
+                     SecurityException |
                      IllegalAccessException ex) {
                 LOGGER.warn("Failed to read setting {} from configuration {}",
                             selectedSetting.getSelectedKey(state),

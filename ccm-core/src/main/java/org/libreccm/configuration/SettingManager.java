@@ -192,6 +192,8 @@ public class SettingManager {
      * @return The requested setting if it exists in the registry, {@code null}
      *         otherwise.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
+    @SuppressWarnings("unchecked")
     public <T> AbstractSetting<T> findSetting(final String confName,
                                               final String name,
                                               final Class<T> clazz) {
@@ -233,7 +235,7 @@ public class SettingManager {
         if (confAnnotation.descBundle() == null
                 || confAnnotation.descBundle().isEmpty()) {
             return String.join("",
-                               configuration.getClass().getName(),
+                               configuration.getName(),
                                "Description");
         } else {
             return confAnnotation.descBundle();

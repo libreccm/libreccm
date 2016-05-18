@@ -50,6 +50,10 @@ import java.util.stream.Collectors;
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
+ * This table lists all available configuration classes together with their
+ * descriptions (if any). If there is localised title for the configuration this
+ * title is used, otherwise the fully qualified name of the configuration is
+ * used.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -106,7 +110,7 @@ public class ConfigurationsTable extends Table {
                 if (event.getColumn() == COL_TITLE) {
                     final String confClassName = (String) event.getRowKey();
                     selectedConf.setSelectedKey(state, confClassName);
-                    
+
                     configurationTab.showConfiguration(state);
                 }
             }

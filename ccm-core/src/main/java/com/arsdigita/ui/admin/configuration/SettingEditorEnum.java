@@ -18,7 +18,6 @@
  */
 package com.arsdigita.ui.admin.configuration;
 
-import com.arsdigita.bebop.ActionLink;
 import com.arsdigita.bebop.BoxPanel;
 import com.arsdigita.bebop.Component;
 import com.arsdigita.bebop.ControlLink;
@@ -46,7 +45,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.ConfigurationManager;
+import org.libreccm.configuration.EnumSetting;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -55,6 +56,10 @@ import java.util.Set;
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
+ * Editor for {@link EnumSetting}s. The editor consists of the usual header (see
+ * {@link SettingFormHeader}) which is used by all setting forms/editors, a
+ * table which displays all current values together with links for editing and
+ * deleting the values and a form for adding and editing values.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -85,15 +90,9 @@ public class SettingEditorEnum extends BoxPanel {
         this.selectedSetting = selectedSetting;
         this.selectedValue = selectedValue;
 
-        final ActionLink backLink = new ActionLink(new GlobalizedMessage(
-            "ui.admin.configuration.setting.localized_string.back",
-            ADMIN_BUNDLE));
-        backLink.addActionListener(e -> {
-            configurationTab.hideSettingForms(e.getPageState());
-        });
-        add(backLink);
-
-        add(new SettingFormHeader(selectedConf, selectedSetting));
+        add(new SettingFormHeader(configurationTab,
+                                  selectedConf,
+                                  selectedSetting));
 
         add(new ValuesTable());
 
@@ -194,10 +193,14 @@ public class SettingEditorEnum extends BoxPanel {
 
                     final Set<String> values;
                     try {
-                        values = (Set<String>) confClass.getField(
-                            selectedSetting.getSelectedKey(state)).get(config);
-                    } catch (NoSuchFieldException | SecurityException |
-                             IllegalAccessException | ClassCastException ex) {
+                        final Field field = confClass.getDeclaredField(
+                            selectedSetting.getSelectedKey(state));
+                        field.setAccessible(true);
+                        values = (Set<String>) field.get(config);
+                    } catch (NoSuchFieldException |
+                             SecurityException |
+                             IllegalAccessException |
+                             ClassCastException ex) {
                         LOGGER.warn(
                             "Failed to read setting {} from configuration {}",
                             selectedSetting.getSelectedKey(state),
@@ -274,14 +277,17 @@ public class SettingEditorEnum extends BoxPanel {
             final Object config = confManager.findConfiguration(confClass);
             try {
                 @SuppressWarnings("unchecked")
-                final Set<String> valuesSet = (Set<String>) confClass.getField(
-                    selectedSetting
-                    .getSelectedKey(state)).get(config);
+                final Field field = confClass.getDeclaredField(selectedSetting
+                    .getSelectedKey(state));
+                field.setAccessible(true);
+                final Set<String> valuesSet = (Set<String>) field.get(config);
 
                 values = new ArrayList<>(valuesSet);
 
-            } catch (NoSuchFieldException | SecurityException |
-                     IllegalAccessException | ClassCastException ex) {
+            } catch (NoSuchFieldException |
+                     SecurityException |
+                     IllegalAccessException |
+                     ClassCastException ex) {
                 LOGGER.warn("Failed to read setting {} from configuration {}",
                             selectedSetting.getSelectedKey(state),
                             selectedConf.getSelectedKey(state));
@@ -378,18 +384,23 @@ public class SettingEditorEnum extends BoxPanel {
 
                     final Set<String> enumSetting;
                     try {
-                        final Object value = confClass.getField(selectedSetting
-                            .getSelectedKey(state)).get(config);
+                        final Field field = confClass.getDeclaredField(
+                            selectedSetting.getSelectedKey(state));
+                        field.setAccessible(true);
+                        final Object value = field.get(config);
 
                         if (value == null) {
                             enumSetting = new HashSet<>();
-                            confClass.getField(selectedSetting.getSelectedKey(
-                                state)).set(config, enumSetting);
+                            confClass.getDeclaredField(selectedSetting
+                                .getSelectedKey(state)).set(config,
+                                                            enumSetting);
                         } else {
                             enumSetting = (Set<String>) value;
                         }
-                    } catch (NoSuchFieldException | SecurityException |
-                             IllegalAccessException | ClassCastException ex) {
+                    } catch (NoSuchFieldException |
+                             SecurityException |
+                             IllegalAccessException |
+                             ClassCastException ex) {
                         LOGGER.warn(
                             "Failed to read setting {} from configuration {}",
                             selectedSetting.getSelectedKey(state),
@@ -411,6 +422,9 @@ public class SettingEditorEnum extends BoxPanel {
                     }
                     confManager.saveConfiguration(config);
                 }
+
+                selectedValue.clearSelection(state);
+                valueField.setValue(state, null);
             });
         }
 

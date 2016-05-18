@@ -18,6 +18,7 @@
  */
 package com.arsdigita.ui.admin.configuration;
 
+import com.arsdigita.bebop.ActionLink;
 import com.arsdigita.bebop.BoxPanel;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.PageState;
@@ -38,16 +39,28 @@ import org.libreccm.l10n.GlobalizationHelper;
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
+ * Header used by all setting forms/editors. The header contains a link to go
+ * back to the list of settings and heading for contains the title of the
+ * configuration class and the label of the setting which is edited.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class SettingFormHeader extends BoxPanel {
 
     public SettingFormHeader(
+        final ConfigurationTab configurationTab,
         final ParameterSingleSelectionModel<String> selectedConf,
         final ParameterSingleSelectionModel<String> selectedSetting) {
 
         super(BoxPanel.VERTICAL);
+
+        final ActionLink backLink = new ActionLink(new GlobalizedMessage(
+            "ui.admin.configuration.setting.edit.back", ADMIN_BUNDLE));
+        backLink.addActionListener(e -> {
+            final PageState state = e.getPageState();
+            configurationTab.hideSettingForms(state);
+        });
+        add(backLink);
 
         final Label heading = new Label(new HeadingPrintListener(
             selectedConf, selectedSetting));

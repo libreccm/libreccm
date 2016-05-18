@@ -25,7 +25,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 
 /**
- *
+ * Setting for values of type {@link BigDecimal}. Use this for rational numbers
+ * if precision is required.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity

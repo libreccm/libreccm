@@ -18,7 +18,6 @@
  */
 package com.arsdigita.ui.admin.configuration;
 
-import com.arsdigita.bebop.ActionLink;
 import com.arsdigita.bebop.BoxPanel;
 import com.arsdigita.bebop.Component;
 import com.arsdigita.bebop.ControlLink;
@@ -46,13 +45,19 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.ConfigurationManager;
+import org.libreccm.configuration.EnumSetting;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
+ * Editor for {@link EnumSetting}s. The editor consists of the usual header (see
+ * {@link SettingFormHeader}) which is used by all setting forms/editors, a
+ * table which displays all current values together with links for moving,
+ * editing and deleting the values and a form for adding and editing values.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -85,15 +90,9 @@ public class SettingEditorStringList extends BoxPanel {
         this.selectedSetting = selectedSetting;
         this.selectedValue = selectedValue;
 
-        final ActionLink backLink = new ActionLink(new GlobalizedMessage(
-            "ui.admin.configuration.setting.localized_string.back",
-            ADMIN_BUNDLE));
-        backLink.addActionListener(e -> {
-            configurationTab.hideSettingForms(e.getPageState());
-        });
-        add(backLink);
-
-        add(new SettingFormHeader(selectedConf, selectedSetting));
+        add(new SettingFormHeader(configurationTab,
+                                  selectedConf,
+                                  selectedSetting));
 
         add(new ValuesTable());
 
@@ -153,7 +152,7 @@ public class SettingEditorStringList extends BoxPanel {
                     if (row > 0) {
                         return new ControlLink((Component) value);
                     } else {
-                        return null;
+                        return new Text("");
                     }
                 }
 
@@ -162,6 +161,7 @@ public class SettingEditorStringList extends BoxPanel {
             columnModel.get(COL_DOWN).setCellRenderer(new TableCellRenderer() {
 
                 @Override
+                @SuppressWarnings("unchecked")
                 public Component getComponent(final Table table,
                                               final PageState state,
                                               final Object value,
@@ -188,9 +188,14 @@ public class SettingEditorStringList extends BoxPanel {
 
                     final List<String> values;
                     try {
-                        values = (List<String>) confClass.getField(
-                            selectedSetting.getSelectedKey(state)).get(config);
-                    } catch (NoSuchFieldException | SecurityException | IllegalAccessException | ClassCastException ex) {
+                        final Field field = confClass.getDeclaredField(
+                            selectedSetting.getSelectedKey(state));
+                        field.setAccessible(true);
+                        values = (List<String>) field.get(config);
+                    } catch (NoSuchFieldException |
+                             SecurityException |
+                             IllegalAccessException |
+                             ClassCastException ex) {
                         LOGGER.warn(
                             "Failed to read setting {} from configuration {}",
                             selectedSetting.getSelectedKey(state),
@@ -203,7 +208,7 @@ public class SettingEditorStringList extends BoxPanel {
                     if (row < values.size()) {
                         return new ControlLink((Component) value);
                     } else {
-                        return null;
+                        return new Text("");
                     }
                 }
 
@@ -251,6 +256,7 @@ public class SettingEditorStringList extends BoxPanel {
             addTableActionListener(new TableActionListener() {
 
                 @Override
+                @SuppressWarnings("unchecked")
                 public void cellSelected(final TableActionEvent event) {
                     final PageState state = event.getPageState();
 
@@ -273,8 +279,10 @@ public class SettingEditorStringList extends BoxPanel {
 
                     final List<String> values;
                     try {
-                        values = (List<String>) confClass.getField(
-                            selectedSetting.getSelectedKey(state)).get(config);
+                        final Field field = confClass.getDeclaredField(
+                            selectedSetting.getSelectedKey(state));
+                        field.setAccessible(true);
+                        values = (List<String>) field.get(config);
                     } catch (NoSuchFieldException | SecurityException |
                              IllegalAccessException | ClassCastException ex) {
                         LOGGER.warn(
@@ -289,7 +297,8 @@ public class SettingEditorStringList extends BoxPanel {
                     switch (event.getColumn()) {
                         case COL_UP: {
 
-                            final int currentIndex = (int) event.getRowKey();
+                            final int currentIndex = Integer.parseInt(
+                                (String) event.getRowKey());
                             final int previousIndex = currentIndex - 1;
 
                             final String currentValue = values.get(currentIndex);
@@ -305,7 +314,8 @@ public class SettingEditorStringList extends BoxPanel {
                         }
                         case COL_DOWN: {
 
-                            final int currentIndex = (int) event.getRowKey();
+                            final int currentIndex = Integer.parseInt(
+                                (String) event.getRowKey());
                             final int nextIndex = currentIndex + 1;
 
                             final String currentValue = values.get(currentIndex);
@@ -324,7 +334,8 @@ public class SettingEditorStringList extends BoxPanel {
                             break;
                         }
                         case COL_DEL: {
-                            values.remove((int) event.getRowKey());
+                            values.remove(Integer.parseInt((String) event
+                                .getRowKey()));
 
                             confManager.saveConfiguration(config);
 
@@ -365,6 +376,7 @@ public class SettingEditorStringList extends BoxPanel {
         private final List<String> values;
         private int index = -1;
 
+        @SuppressWarnings("unchecked")
         public ValuesTableModel(final PageState state) {
 
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
@@ -383,10 +395,14 @@ public class SettingEditorStringList extends BoxPanel {
             final Object config = confManager.findConfiguration(confClass);
 
             try {
-                values = (List<String>) confClass.getField(selectedSetting
-                    .getSelectedKey(state)).get(config);
-            } catch (NoSuchFieldException | SecurityException |
-                     IllegalAccessException | ClassCastException ex) {
+                final Field field = confClass.getDeclaredField(selectedSetting
+                    .getSelectedKey(state));
+                field.setAccessible(true);
+                values = (List<String>) field.get(config);
+            } catch (NoSuchFieldException |
+                     SecurityException |
+                     IllegalAccessException |
+                     ClassCastException ex) {
                 LOGGER.warn("Failed to read setting {} from configuration {}",
                             selectedSetting.getSelectedKey(state),
                             selectedConf.getSelectedKey(state));
@@ -480,8 +496,10 @@ public class SettingEditorStringList extends BoxPanel {
 
                     try {
                         @SuppressWarnings("unchecked")
-                        final List<String> stringList = (List<String>) confClass
-                            .getField(selectedSetting.getSelectedKey(state))
+                        final Field field = confClass.getDeclaredField(
+                            selectedSetting.getSelectedKey(state));
+                        field.setAccessible(true);
+                        final List<String> stringList = (List<String>) field
                             .get(config);
 
                         final String str = stringList.get(Integer.parseInt(
@@ -525,18 +543,21 @@ public class SettingEditorStringList extends BoxPanel {
 
                     final List<String> stringList;
                     try {
-                        final Object value = confClass.getField(selectedSetting
-                            .getSelectedKey(state)).get(config);
+                        final Field field = confClass.getDeclaredField(
+                            selectedSetting.getSelectedKey(state));
+                        field.setAccessible(true);
+                        final Object value = field.get(config);
 
                         if (value == null) {
                             stringList = new ArrayList<>();
-                            confClass.getField(selectedSetting.getSelectedKey(
-                                state)).set(config, stringList);
+                            field.set(config, stringList);
                         } else {
                             stringList = (List<String>) value;
                         }
-                    } catch (NoSuchFieldException | SecurityException |
-                             IllegalAccessException | ClassCastException ex) {
+                    } catch (NoSuchFieldException |
+                             SecurityException |
+                             IllegalAccessException |
+                             ClassCastException ex) {
                         LOGGER.warn(
                             "Failed to read setting {} from configuration {}",
                             selectedSetting.getSelectedKey(state),
@@ -559,6 +580,9 @@ public class SettingEditorStringList extends BoxPanel {
 
                     confManager.saveConfiguration(config);
                 }
+
+                selectedValue.clearSelection(state);
+                valueField.setValue(state, null);
             });
         }
 

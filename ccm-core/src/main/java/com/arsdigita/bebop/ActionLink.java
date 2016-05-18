@@ -47,7 +47,7 @@ public class ActionLink extends ControlLink {
     /**
      * The value for the XML type attribute for an {@link ActionLink}.
      */
-    protected final String TYPE_ACTION = "action";
+    protected static final String TYPE_ACTION = "action";
 
     /**
      * Constructs a new ActionLink. The link encapsulates

@@ -180,15 +180,14 @@ public class LocalizedString implements Serializable {
         if (!other.canEqual(this)) {
             return false;
         }
-        
+
         return Objects.equals(values, other.getValues());
     }
 
     public boolean canEqual(final Object obj) {
         return obj instanceof LocalizedString;
     }
-    
-    
+
     @Override
     public String toString() {
         return String.format(

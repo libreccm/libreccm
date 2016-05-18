@@ -23,7 +23,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 
 /**
- *
+ * Setting of boolean values.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity

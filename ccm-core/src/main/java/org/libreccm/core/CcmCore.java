@@ -18,18 +18,12 @@
  */
 package org.libreccm.core;
 
-import com.arsdigita.bebop.BebopConfig;
-import com.arsdigita.kernel.KernelConfig;
-import com.arsdigita.mail.MailConfig;
-import com.arsdigita.notification.NotificationConfig;
 import com.arsdigita.ui.admin.AdminApplicationCreator;
 import com.arsdigita.ui.admin.AdminServlet;
 import com.arsdigita.ui.admin.AdminApplicationSetup;
 import com.arsdigita.ui.login.LoginApplicationCreator;
 import com.arsdigita.ui.login.LoginServlet;
 import com.arsdigita.ui.login.LoginApplicationSetup;
-import com.arsdigita.workflow.simple.WorkflowConfig;
-import com.arsdigita.xml.XmlConfig;
 
 import org.libreccm.modules.CcmModule;
 import org.libreccm.modules.InitEvent;
@@ -37,8 +31,6 @@ import org.libreccm.modules.InstallEvent;
 import org.libreccm.modules.Module;
 import org.libreccm.modules.ShutdownEvent;
 import org.libreccm.modules.UnInstallEvent;
-import org.libreccm.security.EmailTemplates;
-import org.libreccm.security.OneTimeAuthConfig;
 import org.libreccm.security.SystemUsersSetup;
 
 import org.libreccm.web.ApplicationType;
@@ -72,6 +64,7 @@ import org.libreccm.web.ApplicationType;
             com.arsdigita.workflow.simple.WorkflowConfig.class,
             com.arsdigita.xml.XmlConfig.class,
             com.arsdigita.xml.formatters.DateFormatterConfig.class,
+            org.libreccm.configuration.ExampleConfiguration.class,
             org.libreccm.security.EmailTemplates.class,
             org.libreccm.security.OneTimeAuthConfig.class,
         })

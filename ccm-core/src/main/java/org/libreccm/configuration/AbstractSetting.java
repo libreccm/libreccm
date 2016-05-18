@@ -60,13 +60,16 @@ public abstract class AbstractSetting<T> implements Serializable {
 
     private static final long serialVersionUID = 1631163618980178142L;
 
+    /**
+     * Database ID of the setting (primary key).
+     */
     @Column(name = "SETTING_ID")
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long settingId;
 
     /**
-     * This configuration class this setting belongs to
+     * This configuration class this setting belongs to.
      */
     @Column(name = "CONFIGURATION_CLASS", nullable = false, length = 512)
     @NotBlank

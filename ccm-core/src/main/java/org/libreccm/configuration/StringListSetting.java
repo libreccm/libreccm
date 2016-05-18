@@ -26,11 +26,14 @@ import java.util.Objects;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 
 /**
- *
+ * Setting for a list of strings. In contrast to the {@link EnumSetting} which
+ * uses a {@link java.util.Set} a list maintains the order of its elements.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
@@ -38,12 +41,15 @@ public class StringListSetting extends AbstractSetting<List<String>> {
 
     private static final long serialVersionUID = 7093818804712916413L;
     
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @JoinTable(name = "SETTINGS_STRING_LIST",
                schema = DB_SCHEMA,
                joinColumns = {@JoinColumn(name = "LIST_ID")})
     private List<String> value;
     
+    /**
+     * Returns a <em>copy</em> of the list managed by this setting.
+     */
     @Override
     public List<String> getValue() {
         if (value == null) {
@@ -53,15 +59,30 @@ public class StringListSetting extends AbstractSetting<List<String>> {
         }
     }
     
+    /**
+     * Replaces the list managed by this setting.
+     * 
+     * @param value 
+     */
     @Override
     public void setValue(final List<String> value) {
         this.value = value;
     }
     
+    /**
+     * Adds a value to the list.
+     * 
+     * @param value The value to add.
+     */
     public void addListValue(final String value) {
         this.value.add(value);
     }
     
+    /**
+     * Removes a value from the list.
+     * 
+     * @param value the value to add.
+     */
     public void removeListValue(final String value) {
         this.value.remove(value);
     }

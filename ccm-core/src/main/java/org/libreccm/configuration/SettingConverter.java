@@ -18,6 +18,8 @@
  */
 package org.libreccm.configuration;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.libreccm.l10n.LocalizedString;
 
 import java.math.BigDecimal;
@@ -29,24 +31,35 @@ import java.util.Set;
 import javax.enterprise.context.RequestScoped;
 
 /**
- * Helper class for converting values to settings.
+ * Helper class for converting values to settings of the appropriate type.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
 class SettingConverter {
 
+    private static final Logger LOGGER = LogManager.getLogger(
+        SettingConverter.class);
+
+    /**
+     * Stores a map of the Java types and the corresponding subtypes
+     * {@link AbstractSetting}. We are using a map here to avoid a large if or
+     * switch statement. 
+     */
     private final Map<String, Class<? extends AbstractSetting<?>>> typeMap;
 
     public SettingConverter() {
         typeMap = new HashMap<>();
         typeMap.put(BigDecimal.class.getName(), BigDecimalSetting.class);
         typeMap.put(Boolean.class.getName(), BooleanSetting.class);
+        typeMap.put("boolean", BooleanSetting.class);
         typeMap.put(Double.class.getName(), DoubleSetting.class);
+        typeMap.put("double", DoubleSetting.class);
         typeMap.put(List.class.getName(), StringListSetting.class);
         typeMap.put(LocalizedString.class.getName(),
                     LocalizedStringSetting.class);
         typeMap.put(Long.class.getName(), LongSetting.class);
+        typeMap.put("long", LongSetting.class);
         typeMap.put(Set.class.getName(), EnumSetting.class);
         typeMap.put(String.class.getName(), StringSetting.class);
     }
@@ -68,14 +81,17 @@ class SettingConverter {
         final String valueTypeName = valueType.getName();
         final Class<? extends AbstractSetting<?>> clazz = typeMap.get(
             valueTypeName);
-        
+
         if (clazz == null) {
-             throw new IllegalArgumentException(String.format(
+            LOGGER.error("No setting type for value type \"{}\".",
+                         valueTypeName);
+            throw new IllegalArgumentException(String.format(
                 "No setting type for value type \"%s\".", valueTypeName));
         } else {
             try {
                 return (AbstractSetting<T>) clazz.newInstance();
             } catch (InstantiationException | IllegalAccessException ex) {
+                LOGGER.error("Failed to create setting instance.", ex);
                 throw new IllegalStateException(
                     "Failed to create setting instance.", ex);
             }

@@ -29,11 +29,12 @@ import java.util.Objects;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 
 /**
- * A setting class for storing a list a strings. This can be used to generate
+ * A setting class for storing a set of strings. This can be used to generate
  * enums which can be configured by the administrator.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
@@ -44,7 +45,7 @@ public class EnumSetting
 
     private static final long serialVersionUID = 1763168269981687340L;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @JoinTable(name = "SETTINGS_ENUM_VALUES",
                schema = DB_SCHEMA,
                joinColumns = {

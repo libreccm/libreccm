@@ -34,6 +34,7 @@ import com.arsdigita.bebop.table.TableModelBuilder;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.util.LockableImpl;
 import com.arsdigita.util.UncheckedWrapperException;
+
 import java.lang.reflect.Field;
 
 import org.apache.logging.log4j.LogManager;
@@ -43,19 +44,27 @@ import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.configuration.SettingInfo;
 import org.libreccm.configuration.SettingManager;
 import org.libreccm.l10n.GlobalizationHelper;
+import org.libreccm.l10n.LocalizedString;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
+ * This table lists all settings of a configuration class. The table shows the
+ * current value and the description of each setting. If there is localised
+ * label for the setting this label is used, otherwise the name of the setting
+ * is used.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class ConfigurationTable extends Table {
 
     private static final Logger LOGGER = LogManager.getLogger(
-            ConfigurationTable.class);
+        ConfigurationTable.class);
 
     private static final int COL_SETTING_LABEL = 0;
     private static final int COL_SETTING_VALUE = 1;
@@ -66,9 +75,9 @@ public class ConfigurationTable extends Table {
     private ParameterSingleSelectionModel<String> selectedSetting;
 
     public ConfigurationTable(
-            final ConfigurationTab configurationTab,
-            final ParameterSingleSelectionModel<String> selectedConf,
-            final ParameterSingleSelectionModel<String> selectedSetting) {
+        final ConfigurationTab configurationTab,
+        final ParameterSingleSelectionModel<String> selectedConf,
+        final ParameterSingleSelectionModel<String> selectedSetting) {
 
         super();
 
@@ -78,32 +87,32 @@ public class ConfigurationTable extends Table {
         this.selectedSetting = selectedSetting;
 
         setEmptyView(new Label(new GlobalizedMessage(
-                "ui.admin.configuration.settings.none", ADMIN_BUNDLE)));
+            "ui.admin.configuration.settings.none", ADMIN_BUNDLE)));
 
         final TableColumnModel columnModel = getColumnModel();
         columnModel.add(new TableColumn(
-                COL_SETTING_LABEL,
-                new Label(new GlobalizedMessage(
-                        "ui.admin.configuration.settings.table.col_setting_label.header",
-                        ADMIN_BUNDLE))));
+            COL_SETTING_LABEL,
+            new Label(new GlobalizedMessage(
+                "ui.admin.configuration.settings.table.col_setting_label.header",
+                ADMIN_BUNDLE))));
         columnModel.add(new TableColumn(
-                COL_SETTING_VALUE,
-                new Label(new GlobalizedMessage(
-                        "ui.admin.configuration.settings.table.col_setting_value.header",
-                        ADMIN_BUNDLE))));
+            COL_SETTING_VALUE,
+            new Label(new GlobalizedMessage(
+                "ui.admin.configuration.settings.table.col_setting_value.header",
+                ADMIN_BUNDLE))));
         columnModel.add(new TableColumn(
-                COL_SETTING_DESC,
-                new Label(new GlobalizedMessage(
-                        "ui.admin.configuration.settings.table.col_setting_desc.header",
-                        ADMIN_BUNDLE))));
+            COL_SETTING_DESC,
+            new Label(new GlobalizedMessage(
+                "ui.admin.configuration.settings.table.col_setting_desc.header",
+                ADMIN_BUNDLE))));
         columnModel.add(new TableColumn(
-                COL_EDIT_SETTING,
-                new Label(new GlobalizedMessage(
-                        "ui.admin.configuration.settings.table.col_edit_setting.header",
-                        ADMIN_BUNDLE))));
+            COL_EDIT_SETTING,
+            new Label(new GlobalizedMessage(
+                "ui.admin.configuration.settings.table.col_edit_setting.header",
+                ADMIN_BUNDLE))));
 
         columnModel.get(COL_EDIT_SETTING).setCellRenderer(
-                new TableCellRenderer() {
+            new TableCellRenderer() {
 
             @Override
             public Component getComponent(final Table table,
@@ -131,32 +140,41 @@ public class ConfigurationTable extends Table {
                     switch (getTypeOfSelectedSetting(state)) {
                         case "boolean":
                             LOGGER.debug("Setting is of type boolean");
+                            configurationTab.showBooleanSettingForm(state);
                             break;
                         case "long":
                             LOGGER.debug("Setting is of type long");
+                            configurationTab.showLongSettingForm(state);
                             break;
                         case "double":
                             LOGGER.debug("Setting is of type double");
+                            configurationTab.showDoubleSettingForm(state);
                             break;
                         case "java.math.BigDecimal":
                             LOGGER.debug("Setting is of type BigDecimal");
+                            configurationTab.showBigDecimalSettingForm(state);
                             break;
                         case "org.libreccm.l10n.LocalizedString":
                             LOGGER.debug("Setting is of type LocalizedString");
+                            configurationTab.showLocalizedStringSettingForm(
+                                state);
                             break;
                         case "java.lang.String":
                             LOGGER.debug("Setting is of type String");
+                            configurationTab.showStringSettingForm(state);
                             break;
                         case "java.util.Set":
                             LOGGER.debug("Setting is of type Enum");
+                            configurationTab.showEnumSettingForm(state);
                             break;
                         case "java.util.List":
                             LOGGER.debug("Setting is of type List");
+                            configurationTab.showStringListSettingForm(state);
                             break;
                         default:
                             throw new IllegalArgumentException(String.format(
-                                    "Unknown setting type \"%s\".",
-                                    getTypeOfSelectedSetting(state)));
+                                "Unknown setting type \"%s\".",
+                                getTypeOfSelectedSetting(state)));
                     }
 
                 }
@@ -180,28 +198,28 @@ public class ConfigurationTable extends Table {
             LOGGER.error("Configuration class '{}' not found.",
                          selectedConf.getSelectedKey(state));
             throw new UncheckedWrapperException(String.format(
-                    "Configuration class '%s not found'",
-                    selectedConf.getSelectedKey(state)), ex);
+                "Configuration class '%s not found'",
+                selectedConf.getSelectedKey(state)), ex);
         }
 
         final SettingManager settingManager = CdiUtil.createCdiUtil().findBean(
-                SettingManager.class);
+            SettingManager.class);
         final SettingInfo info = settingManager.getSettingInfo(confClass,
                                                                selectedSetting.
                                                                getSelectedKey(
-                                                                       state));
+                                                                   state));
 
         return info.getValueType();
 
     }
 
     private class ConfigurationTableModelBuilder
-            extends LockableImpl implements TableModelBuilder {
+        extends LockableImpl implements TableModelBuilder {
 
         @Override
         public TableModel makeModel(final Table table, final PageState state) {
             final ConfigurationManager confManager = CdiUtil.createCdiUtil()
-                    .findBean(ConfigurationManager.class);
+                .findBean(ConfigurationManager.class);
             final Class<?> confClass;
             try {
                 confClass = Class.forName(selectedConf.getSelectedKey(state));
@@ -209,12 +227,12 @@ public class ConfigurationTable extends Table {
                 LOGGER.error("Configuration class '{}' not found.",
                              selectedConf.getSelectedKey(state));
                 throw new UncheckedWrapperException(String.format(
-                        "Configuration class '%s not found'",
-                        selectedConf.getSelectedKey(state)), ex);
+                    "Configuration class '%s not found'",
+                    selectedConf.getSelectedKey(state)), ex);
             }
 
             final Object configuration = confManager
-                    .findConfiguration(confClass);
+                .findConfiguration(confClass);
 
             return new ConfigurationTableModel(configuration, state);
         }
@@ -259,43 +277,73 @@ public class ConfigurationTable extends Table {
         public Object getElementAt(final int columnIndex) {
             final String setting = settings.get(index);
             final SettingInfo settingInfo = settingManager.getSettingInfo(
-                    configuration.getClass(), setting);
+                configuration.getClass(), setting);
 
             switch (columnIndex) {
                 case COL_SETTING_LABEL:
                     return settingInfo.getLabel(globalizationHelper
-                            .getNegotiatedLocale());
+                        .getNegotiatedLocale());
                 case COL_SETTING_VALUE: {
                     try {
                         final Field field = configuration.getClass().
-                                getDeclaredField(setting);
+                            getDeclaredField(setting);
                         field.setAccessible(true);
-                        return field.get(configuration);
-//                        return configuration.getClass().
-//                                getDeclaredField(setting).get(configuration);
+                        return buildValueColumn(settingInfo,
+                                                field.get(configuration));
                     } catch (NoSuchFieldException |
                              SecurityException |
                              IllegalAccessException ex) {
                         LOGGER.error("Failed to read value from configuration.",
                                      ex);
                         return new Label(new GlobalizedMessage(
-                                "ui.admin.configuration.settings.read_error",
-                                ADMIN_BUNDLE));
+                            "ui.admin.configuration.settings.read_error",
+                            ADMIN_BUNDLE));
                     }
                 }
                 case COL_SETTING_DESC:
                     return settingInfo.getDescription(globalizationHelper
-                            .getNegotiatedLocale());
+                        .getNegotiatedLocale());
                 case COL_EDIT_SETTING:
                     return new Label(new GlobalizedMessage(
-                            "ui.admin.configuration.settings.edit", ADMIN_BUNDLE));
+                        "ui.admin.configuration.settings.edit", ADMIN_BUNDLE));
                 default:
                     throw new IllegalArgumentException("Illegal column index");
             }
         }
 
+        private String buildValueColumn(final SettingInfo settingInfo,
+                                        final Object settingValue) {
+            switch (settingInfo.getValueType()) {
+                case "java.util.List": {
+                    @SuppressWarnings("unchecked")
+                    final List<String> value = (List<String>) settingValue;
+                    return String.join(", ", value);
+                }
+                case "java.util.Set": {
+                    @SuppressWarnings("unchecked")
+                    final Set<String> value = (Set<String>) settingValue;
+                    return String.join(", ", value);
+                }
+                case "org.libreccm.l10n.LocalizedString": {
+                    final LocalizedString value = (LocalizedString) settingValue;
+                    final List<String> entries = new ArrayList<>();
+                    value.getValues().entrySet().forEach(e -> {
+                        entries.add(String.format("%s: %s",
+                                                  e.getKey(),
+                                                  e.getValue()));
+                    });
+
+                    return String.join("; ", entries);
+                }
+                default: {
+                    return Objects.toString(settingValue);
+                }
+            }
+        }
+
         @Override
-        public Object getKeyAt(final int columnIndex) {
+        public Object getKeyAt(final int columnIndex
+        ) {
             return settings.get(index);
         }
 

@@ -20,10 +20,14 @@ package com.arsdigita.ui.admin.configuration;
 
 import com.arsdigita.bebop.ParameterSingleSelectionModel;
 
+import org.libreccm.configuration.BigDecimalSetting;
+
 import java.math.BigDecimal;
 
 /**
- *
+ * A subclass of {@link AbstractSettingFormSingleValue} for editing the value
+ * of a {@link BigDecimalSetting}.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class SettingFormBigDecimal
