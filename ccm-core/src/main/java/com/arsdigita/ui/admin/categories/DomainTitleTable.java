@@ -53,16 +53,17 @@ class DomainTitleTable extends Table {
 
     private static final int COL_LOCALE = 0;
     private static final int COL_VALUE = 1;
-    private static final int COL_DEL = 2;
+    private static final int COL_EDIT = 2;
+    private static final int COL_DEL = 3;
 
     private final CategoriesTab categoriesTab;
     private final ParameterSingleSelectionModel<String> selectedDomainId;
     private final ParameterSingleSelectionModel<String> selectedLanguage;
 
     public DomainTitleTable(
-        final CategoriesTab categoriesTab,
-        final ParameterSingleSelectionModel<String> selectedDomainId,
-        final ParameterSingleSelectionModel<String> selectedLanguage) {
+            final CategoriesTab categoriesTab,
+            final ParameterSingleSelectionModel<String> selectedDomainId,
+            final ParameterSingleSelectionModel<String> selectedLanguage) {
 
         super();
 
@@ -73,26 +74,31 @@ class DomainTitleTable extends Table {
         setIdAttr("domainTitleTable");
 
         setEmptyView(new Label(new GlobalizedMessage(
-            "ui.admin.categories.domain_details.title.none", ADMIN_BUNDLE)));
+                "ui.admin.categories.domain_details.title.none", ADMIN_BUNDLE)));
 
         final TableColumnModel columnModel = getColumnModel();
         columnModel.add(new TableColumn(
-            COL_LOCALE,
-            new Label(new GlobalizedMessage(
-                "ui.admin.categories.domain_details.title.col_lang",
-                ADMIN_BUNDLE))));
+                COL_LOCALE,
+                new Label(new GlobalizedMessage(
+                        "ui.admin.categories.domain_details.title.col_lang",
+                        ADMIN_BUNDLE))));
         columnModel.add(new TableColumn(
-            COL_VALUE,
-            new Label(new GlobalizedMessage(
-                "ui.admin.categories.domain_details.title.col_value",
-                ADMIN_BUNDLE))));
+                COL_VALUE,
+                new Label(new GlobalizedMessage(
+                        "ui.admin.categories.domain_details.title.col_value",
+                        ADMIN_BUNDLE))));
         columnModel.add(new TableColumn(
-            COL_DEL,
-            new Label(new GlobalizedMessage(
-                "ui.admin.categories.domain_details.title.col_del",
-                ADMIN_BUNDLE))));
+                COL_EDIT,
+                new Label(new GlobalizedMessage(
+                        "ui.admin.categories.domain_details.title.col_edit",
+                        ADMIN_BUNDLE))));
+        columnModel.add(new TableColumn(
+                COL_DEL,
+                new Label(new GlobalizedMessage(
+                        "ui.admin.categories.domain_details.title.col_del",
+                        ADMIN_BUNDLE))));
 
-        columnModel.get(COL_LOCALE).setCellRenderer(new TableCellRenderer() {
+        columnModel.get(COL_EDIT).setCellRenderer(new TableCellRenderer() {
 
             @Override
             public Component getComponent(final Table table,
@@ -102,7 +108,7 @@ class DomainTitleTable extends Table {
                                           final Object key,
                                           final int row,
                                           final int column) {
-                return new ControlLink((String) value);
+                return new ControlLink((Component) value);
             }
 
         });
@@ -122,8 +128,8 @@ class DomainTitleTable extends Table {
                 } else {
                     final ControlLink link = new ControlLink((Component) value);
                     link.setConfirmation(new GlobalizedMessage(
-                        "ui.admin.categories.domain_details.title.del_confirm",
-                        ADMIN_BUNDLE));
+                            "ui.admin.categories.domain_details.title.del_confirm",
+                            ADMIN_BUNDLE));
                     return link;
                 }
             }
@@ -137,23 +143,24 @@ class DomainTitleTable extends Table {
                 final PageState state = event.getPageState();
 
                 switch (event.getColumn()) {
-                    case COL_LOCALE:
+                    case COL_EDIT:
                         selectedLanguage.setSelectedKey(state,
                                                         event.getRowKey());
                         categoriesTab.showDomainTitleForm(state);
                         break;
                     case COL_DEL:
                         final Locale locale = new Locale((String) event
-                            .getRowKey());
+                                .getRowKey());
                         final DomainRepository domainRepository = CdiUtil
-                            .createCdiUtil().findBean(DomainRepository.class);
+                                .createCdiUtil().
+                                findBean(DomainRepository.class);
                         final Domain domain = domainRepository.findById(
-                            Long.parseLong(selectedDomainId
-                                .getSelectedKey(state)));
+                                Long.parseLong(selectedDomainId
+                                        .getSelectedKey(state)));
                         domain.getTitle().removeValue(locale);
-                        
+
                         domainRepository.save(domain);
-                        
+
                         break;
                 }
             }
@@ -169,8 +176,8 @@ class DomainTitleTable extends Table {
     }
 
     private class DomainTitleTableModelBuilder
-        extends LockableImpl
-        implements TableModelBuilder {
+            extends LockableImpl
+            implements TableModelBuilder {
 
         @Override
         public TableModel makeModel(final Table table, final PageState state) {
@@ -189,9 +196,9 @@ class DomainTitleTable extends Table {
 
         public DomainTitleTableModel(final PageState state) {
             final DomainRepository domainRepository = CdiUtil.createCdiUtil()
-                .findBean(DomainRepository.class);
+                    .findBean(DomainRepository.class);
             selectedDomain = domainRepository.findById(
-                Long.parseLong(selectedDomainId.getSelectedKey(state)));
+                    Long.parseLong(selectedDomainId.getSelectedKey(state)));
 
             locales = new ArrayList<>();
             locales.addAll(selectedDomain.getTitle().getAvailableLocales());
@@ -202,7 +209,7 @@ class DomainTitleTable extends Table {
 
         @Override
         public int getColumnCount() {
-            return 3;
+            return 4;
         }
 
         @Override
@@ -214,20 +221,25 @@ class DomainTitleTable extends Table {
         @Override
         public Object getElementAt(final int columnIndex) {
             final Locale locale = locales.get(index);
-            
+
             switch (columnIndex) {
                 case COL_LOCALE:
                     return locale.toString();
                 case COL_VALUE:
                     return selectedDomain.getTitle().getValue(locale);
+                case COL_EDIT:
+                    return new Label(new GlobalizedMessage(
+                            "ui.admin.categories.domain_details.title.edit",
+                            ADMIN_BUNDLE
+                    ));
                 case COL_DEL:
                     return new Label(new GlobalizedMessage(
-                        "ui.admin.categories.domain_details.title.del",
-                        ADMIN_BUNDLE
+                            "ui.admin.categories.domain_details.title.del",
+                            ADMIN_BUNDLE
                     ));
                 default:
                     throw new IllegalArgumentException(
-                        "Not a valid column index");
+                            "Not a valid column index");
             }
         }
 

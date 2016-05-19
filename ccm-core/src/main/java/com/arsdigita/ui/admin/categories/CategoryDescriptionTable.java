@@ -34,14 +34,12 @@ import com.arsdigita.bebop.table.TableModel;
 import com.arsdigita.bebop.table.TableModelBuilder;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.util.LockableImpl;
-
-import org.libreccm.categorization.Domain;
-import org.libreccm.categorization.DomainRepository;
-import org.libreccm.cdi.utils.CdiUtil;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import org.libreccm.categorization.Category;
+import org.libreccm.categorization.CategoryRepository;
+import org.libreccm.cdi.utils.CdiUtil;
 
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
@@ -49,7 +47,7 @@ import static com.arsdigita.ui.admin.AdminUiConstants.*;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-class DomainDescriptionTable extends Table {
+public class CategoryDescriptionTable extends Table {
 
     private static final int COL_LOCALE = 0;
     private static final int COL_VALUE = 1;
@@ -57,46 +55,46 @@ class DomainDescriptionTable extends Table {
     private static final int COL_DEL = 3;
 
     private final CategoriesTab categoriesTab;
-    private final ParameterSingleSelectionModel<String> selectedDomainId;
+    private final ParameterSingleSelectionModel<String> selectedCategoryId;
     private final ParameterSingleSelectionModel<String> selectedLanguage;
 
-    public DomainDescriptionTable(
+    public CategoryDescriptionTable(
             final CategoriesTab categoriesTab,
-            final ParameterSingleSelectionModel<String> selectedDomainId,
+            final ParameterSingleSelectionModel<String> selectedCategoryId,
             final ParameterSingleSelectionModel<String> selectedLanguage) {
 
         super();
 
         this.categoriesTab = categoriesTab;
-        this.selectedDomainId = selectedDomainId;
+        this.selectedCategoryId = selectedCategoryId;
         this.selectedLanguage = selectedLanguage;
 
-        setIdAttr("domainDescriptionTable");
+        setIdAttr("categoryDescriptionTable");
 
         setEmptyView(new Label(new GlobalizedMessage(
-                "ui.admin.categories.domain_details.description.none",
+                "ui.admin.categories.category_details.description.none",
                 ADMIN_BUNDLE)));
 
         final TableColumnModel columnModel = getColumnModel();
         columnModel.add(new TableColumn(
                 COL_LOCALE,
                 new Label(new GlobalizedMessage(
-                        "ui.admin.categories.domain_details.description.col_lang",
+                        "ui.admin.categories.category_details.description.col_lang",
                         ADMIN_BUNDLE))));
         columnModel.add(new TableColumn(
                 COL_VALUE,
                 new Label(new GlobalizedMessage(
-                        "ui.admin.categories.domain_details.description.col_value",
+                        "ui.admin.categories.category_details.description.col_value",
                         ADMIN_BUNDLE))));
         columnModel.add(new TableColumn(
                 COL_EDIT,
                 new Label(new GlobalizedMessage(
-                        "ui.admin.categories.domain_details.description.col_del",
+                        "ui.admin.categories.category_details.description.col_del",
                         ADMIN_BUNDLE))));
         columnModel.add(new TableColumn(
                 COL_DEL,
                 new Label(new GlobalizedMessage(
-                        "ui.admin.categories.domain_details.description.col_del",
+                        "ui.admin.categories.category_details.description.col_del",
                         ADMIN_BUNDLE))));
 
         columnModel.get(COL_EDIT).setCellRenderer(new TableCellRenderer() {
@@ -111,7 +109,6 @@ class DomainDescriptionTable extends Table {
                                           final int column) {
                 return new ControlLink((Component) value);
             }
-
         });
 
         columnModel.get(COL_DEL).setCellRenderer(new TableCellRenderer() {
@@ -129,17 +126,15 @@ class DomainDescriptionTable extends Table {
                 } else {
                     final ControlLink link = new ControlLink((Component) value);
                     link.setConfirmation(new GlobalizedMessage(
-                            "ui.admin.categories.domain_details.description"
+                            "ui.admin.categories.category_details.description"
                                     + ".del_confirm",
                             ADMIN_BUNDLE));
                     return link;
                 }
             }
-
         });
 
         addTableActionListener(new TableActionListener() {
-
             @Override
             public void cellSelected(final TableActionEvent event) {
                 final PageState state = event.getPageState();
@@ -148,20 +143,20 @@ class DomainDescriptionTable extends Table {
                     case COL_EDIT:
                         selectedLanguage.setSelectedKey(state,
                                                         event.getRowKey());
-                        categoriesTab.showDomainDescriptionForm(state);
+                        categoriesTab.showCategoryDescriptionForm(state);
                         break;
                     case COL_DEL:
                         final Locale locale = new Locale((String) event
                                 .getRowKey());
-                        final DomainRepository domainRepository = CdiUtil
-                                .createCdiUtil().
-                                findBean(DomainRepository.class);
-                        final Domain domain = domainRepository.findById(
-                                Long.parseLong(selectedDomainId
-                                        .getSelectedKey(state)));
-                        domain.getDescription().removeValue(locale);
+                        final CategoryRepository categoryRepository = CdiUtil.
+                                createCdiUtil().findBean(
+                                        CategoryRepository.class);
+                        final Category category = categoryRepository.findById(
+                                Long.parseLong(selectedCategoryId.
+                                        getSelectedKey(state)));
+                        category.getDescription().removeValue(locale);
 
-                        domainRepository.save(domain);
+                        categoryRepository.save(category);
 
                         break;
                 }
@@ -171,14 +166,12 @@ class DomainDescriptionTable extends Table {
             public void headSelected(final TableActionEvent event) {
                 //Nothing
             }
-
         });
 
-        setModelBuilder(new DomainDescriptionTableModelBuilder());
-
+        setModelBuilder(new CategoryDescriptionTableModelBuilder());
     }
 
-    private class DomainDescriptionTableModelBuilder
+    private class CategoryDescriptionTableModelBuilder
             extends LockableImpl
             implements TableModelBuilder {
 
@@ -187,29 +180,29 @@ class DomainDescriptionTable extends Table {
                                     final PageState state) {
             table.getRowSelectionModel().clearSelection(state);
 
-            return new DomainDescriptionTableModel(state);
+            return new CategoryDescriptionTableModel(state);
         }
-
     }
 
-    private class DomainDescriptionTableModel implements TableModel {
+    private class CategoryDescriptionTableModel implements TableModel {
 
-        private final Domain selectedDomain;
+        private final Category selectedCategory;
         private final List<Locale> locales;
         private int index = -1;
 
-        public DomainDescriptionTableModel(final PageState state) {
-            final DomainRepository domainRepository = CdiUtil.createCdiUtil()
-                    .findBean(DomainRepository.class);
-            selectedDomain = domainRepository.findById(
-                    Long.parseLong(selectedDomainId.getSelectedKey(state)));
+        public CategoryDescriptionTableModel(final PageState state) {
+            final CategoryRepository categoryRepository = CdiUtil.
+                    createCdiUtil().findBean(CategoryRepository.class);
+            selectedCategory = categoryRepository.findById(Long.parseLong(
+                    selectedCategoryId.getSelectedKey(state)));
 
             locales = new ArrayList<>();
-            locales.addAll(selectedDomain.getDescription()
-                    .getAvailableLocales());
+            locales.addAll(selectedCategory.getDescription().
+                    getAvailableLocales());
             locales.sort((l1, l2) -> {
                 return l1.toString().compareTo(l2.toString());
             });
+
         }
 
         @Override
@@ -231,14 +224,14 @@ class DomainDescriptionTable extends Table {
                 case COL_LOCALE:
                     return locale.toString();
                 case COL_VALUE:
-                    return selectedDomain.getDescription().getValue(locale);
+                    return selectedCategory.getDescription().getValue(locale);
                 case COL_EDIT:
                     return new Label(new GlobalizedMessage(
-                            "ui.admin.categories.domain_details.description.edit",
+                            "ui.admin.categories.category_details.description.edit",
                             ADMIN_BUNDLE));
                 case COL_DEL:
                     return new Label(new GlobalizedMessage(
-                            "ui.admin.categories.domain_details.description.del",
+                            "ui.admin.categories.category_details.description.del",
                             ADMIN_BUNDLE));
                 default:
                     throw new IllegalArgumentException(
@@ -252,5 +245,4 @@ class DomainDescriptionTable extends Table {
         }
 
     }
-
 }

@@ -44,8 +44,12 @@ public class CategoriesTab extends LayoutPanel {
     protected static final String DOMAINS_FILTER = "domainsFilter";
 
     private final StringParameter domainIdParameter;
-    private final StringParameter languageParameter;
     private final ParameterSingleSelectionModel<String> selectedDomainId;
+
+    private final StringParameter categoryIdParameter;
+    private final ParameterSingleSelectionModel<String> selectedCategoryId;
+
+    private final StringParameter languageParameter;
     private final ParameterSingleSelectionModel<String> selectedLanguage;
 
     private final Label domainsFilterFormHeader;
@@ -67,12 +71,16 @@ public class CategoriesTab extends LayoutPanel {
         setClassAttr("sidebarNavPanel");
 
         domainIdParameter = new StringParameter("selected_domain_id");
-        selectedDomainId
-        = new ParameterSingleSelectionModel<>(domainIdParameter);
+        selectedDomainId = new ParameterSingleSelectionModel<>(
+                domainIdParameter);
+
+        categoryIdParameter = new StringParameter("selected_category_id");
+        selectedCategoryId = new ParameterSingleSelectionModel<>(
+                categoryIdParameter);
 
         languageParameter = new StringParameter("selected_language");
-        selectedLanguage
-        = new ParameterSingleSelectionModel<>(languageParameter);
+        selectedLanguage = new ParameterSingleSelectionModel<>(
+                languageParameter);
 
         final SegmentedPanel left = new SegmentedPanel();
 
@@ -104,7 +112,7 @@ public class CategoriesTab extends LayoutPanel {
 
         });
         final ActionLink backToDomain = new ActionLink(new GlobalizedMessage(
-                "ui.admin.categories.tree.back", 
+                "ui.admin.categories.tree.back",
                 ADMIN_BUNDLE));
         backToDomain.addActionListener(e -> {
             final PageState state = e.getPageState();
@@ -160,6 +168,7 @@ public class CategoriesTab extends LayoutPanel {
         super.register(page);
 
         page.addGlobalStateParam(domainIdParameter);
+        page.addGlobalStateParam(categoryIdParameter);
         page.addGlobalStateParam(languageParameter);
 
         page.setVisibleDefault(domainsFilterFormHeader, true);
@@ -277,4 +286,42 @@ public class CategoriesTab extends LayoutPanel {
         showDomainDetails(state);
     }
 
+    protected void showCategoryDetails(final PageState state) {
+
+    }
+
+    protected void hideCategoryDetails(final PageState state) {
+
+    }
+
+    protected void showCategoryCreateForm(final PageState state) {
+
+    }
+
+    protected void hideCategoryCreateForm(final PageState state) {
+
+    }
+
+    protected void showCategoryEditForm(final PageState state) {
+
+    }
+
+    protected void hideCategoryEditForm(final PageState state) {
+
+    }
+
+    protected void showCategoryTitleForm(final PageState state) {
+
+    }
+
+    protected void hideCategoryTitleForm(final PageState state) {
+
+    }
+
+    protected void showCategoryDescriptionForm(final PageState state) {
+
+    }
+
+    protected void hideCategoryDescriptionForm(final PageState state) {
+    }
 }
