@@ -91,7 +91,7 @@ class DomainDescriptionTable extends Table {
         columnModel.add(new TableColumn(
                 COL_EDIT,
                 new Label(new GlobalizedMessage(
-                        "ui.admin.categories.domain_details.description.col_del",
+                        "ui.admin.categories.domain_details.description.col_edit",
                         ADMIN_BUNDLE))));
         columnModel.add(new TableColumn(
                 COL_DEL,

@@ -30,11 +30,10 @@ import com.arsdigita.bebop.form.TextArea;
 import com.arsdigita.globalization.GlobalizedMessage;
 
 import java.util.Locale;
+
 import org.apache.logging.log4j.util.Strings;
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryRepository;
-import org.libreccm.categorization.Domain;
-import org.libreccm.categorization.DomainRepository;
 import org.libreccm.cdi.utils.CdiUtil;
 
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
@@ -83,7 +82,7 @@ public class CategoryDescriptionForm extends Form {
 
             final Label target = (Label) e.getTarget();
 
-            if (selectedCategory.getTitle().hasValue(selectedLocale)) {
+            if (selectedCategory.getDescription().hasValue(selectedLocale)) {
                 target.setLabel(new GlobalizedMessage(
                         "ui.admin.categories.category.description.edit_for_lang",
                         ADMIN_BUNDLE,
@@ -102,7 +101,7 @@ public class CategoryDescriptionForm extends Form {
 
         description = new TextArea(LOCALIZED_CATEGORY_DESC);
         description.setLabel(new GlobalizedMessage(
-                "ui.admin.categories.domain.description.label", ADMIN_BUNDLE));
+                "ui.admin.categories.category.description.label", ADMIN_BUNDLE));
         description.setCols(60);
         description.setRows(10);
         add(description);
@@ -121,7 +120,7 @@ public class CategoryDescriptionForm extends Form {
             final Locale selectedLocale = new Locale(selectedLanguage
                     .getSelectedKey(state));
 
-            if (selectedCategory.getTitle().hasValue(selectedLocale)) {
+            if (selectedCategory.getDescription().hasValue(selectedLocale)) {
                 description.setValue(state, selectedCategory.getDescription()
                                      .getValue(selectedLocale));
             }

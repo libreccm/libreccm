@@ -22,6 +22,7 @@ import static org.libreccm.core.CoreConstants.*;
 
 import org.hibernate.validator.constraints.NotBlank;
 import org.libreccm.core.CcmObject;
+import org.libreccm.core.DefaultEntityGraph;
 import org.libreccm.l10n.LocalizedString;
 
 import java.io.Serializable;
@@ -37,8 +38,12 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
+import javax.persistence.NamedEntityGraphs;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.NamedSubgraph;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Pattern;
@@ -59,13 +64,34 @@ import javax.validation.constraints.Pattern;
 @Entity
 @Table(name = "CATEGORIES", schema = DB_SCHEMA)
 @NamedQueries({
-    @NamedQuery(name = "Category.topLevelCategories", 
-                query = "SELECT c FROM Category c WHERE c.parentCategory IS NULL"),
+    @NamedQuery(name = "Category.topLevelCategories",
+                query
+                    = "SELECT c FROM Category c WHERE c.parentCategory IS NULL"),
     @NamedQuery(name = "Category.findByName",
                 query = "SELECT c FROM Category c WHERE c.name = :name")
 })
+@NamedEntityGraphs({
+    @NamedEntityGraph(
+        name = "Category.withSubCategoriesAndObjects",
+        attributeNodes = {
+            @NamedAttributeNode(value = "subCategories",
+                                subgraph = "subCategories"),
+            @NamedAttributeNode(value = "objects")
+        },
+        subgraphs = {
+            @NamedSubgraph(
+                name = "subCategories",
+                attributeNodes = {
+                    @NamedAttributeNode("subCategories"),
+                    @NamedAttributeNode("objects")
+                }
+            )
+        }
+    )
+})
+@DefaultEntityGraph("Category.withSubCategoriesAndObjects")
 public class Category extends CcmObject implements Serializable {
-    
+
     private static final long serialVersionUID = -7250208963391878547L;
 
     /**
@@ -74,7 +100,7 @@ public class Category extends CcmObject implements Serializable {
      */
     @Column(name = "UNIQUE_ID")
     private String uniqueId;
-    
+
     /**
      * The name of the category. This is used as URL stub, therefore only the
      * characters a to z, A to Z and 0 to 9 are allowed.
@@ -89,12 +115,12 @@ public class Category extends CcmObject implements Serializable {
      */
     @Embedded
     @AssociationOverride(
-            name = "values",
-            joinTable = @JoinTable(name = "CATEGORY_TITLES", 
-                                   schema = DB_SCHEMA,
-                                   joinColumns = {
-                                       @JoinColumn(name = "OBJECT_ID")}
-            ))
+        name = "values",
+        joinTable = @JoinTable(name = "CATEGORY_TITLES",
+                               schema = DB_SCHEMA,
+                               joinColumns = {
+                                   @JoinColumn(name = "OBJECT_ID")}
+        ))
     private LocalizedString title;
 
     /**
@@ -102,12 +128,12 @@ public class Category extends CcmObject implements Serializable {
      */
     @Embedded
     @AssociationOverride(
-            name = "values",
-            joinTable = @JoinTable(name = "CATEGORY_DESCRIPTIONS",
-                                   schema = DB_SCHEMA,
-                                   joinColumns = {
-                                       @JoinColumn(name = "OBJECT_ID")}
-            ))
+        name = "values",
+        joinTable = @JoinTable(name = "CATEGORY_DESCRIPTIONS",
+                               schema = DB_SCHEMA,
+                               joinColumns = {
+                                   @JoinColumn(name = "OBJECT_ID")}
+        ))
     private LocalizedString description;
 
     /**
@@ -164,7 +190,7 @@ public class Category extends CcmObject implements Serializable {
         objects = new ArrayList<>();
         subCategories = new ArrayList<>();
         enabled = true;
-        visible= true;
+        visible = true;
         abstractCategory = false;
         categoryOrder = 0;
     }
@@ -316,7 +342,7 @@ public class Category extends CcmObject implements Serializable {
         if (!super.equals(obj)) {
             return false;
         }
-        
+
         if (obj == null) {
             return false;
         }
@@ -363,12 +389,12 @@ public class Category extends CcmObject implements Serializable {
     @Override
     public String toString(final String data) {
         return super.toString(String.format(", uniqueId = %s, "
-                                                    + "name = \"%s\", "
-                                                    + "title = %s, "
-                                                    + "enabled = %b, "
-                                                    + "visible = %b, "
-                                                    + "abstractCategory = %s, "
-                                                    + "categoryOrder = %d%s",
+                                                + "name = \"%s\", "
+                                                + "title = %s, "
+                                                + "enabled = %b, "
+                                                + "visible = %b, "
+                                                + "abstractCategory = %s, "
+                                                + "categoryOrder = %d%s",
                                             uniqueId,
                                             name,
                                             Objects.toString(title),

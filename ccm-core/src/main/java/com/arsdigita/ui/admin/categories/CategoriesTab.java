@@ -33,6 +33,8 @@ import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.toolbox.ui.LayoutPanel;
 
+import org.libreccm.categorization.Category;
+
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
@@ -65,6 +67,13 @@ public class CategoriesTab extends LayoutPanel {
     private final Label categoriesTreeHeader;
     private final BoxPanel categoriesTreePanel;
 
+    private final CategoryDetails categoryDetails;
+    private final CategoryTitleForm categoryTitleForm;
+    private final CategoryDescriptionForm categoryDescriptionForm;
+    private final CategoryCreateForm categoryCreateForm;
+    private final CategoryEditForm categoryEditForm;
+    private final CategoryMover categoryMover;
+
     public CategoriesTab() {
         super();
 
@@ -72,29 +81,29 @@ public class CategoriesTab extends LayoutPanel {
 
         domainIdParameter = new StringParameter("selected_domain_id");
         selectedDomainId = new ParameterSingleSelectionModel<>(
-                domainIdParameter);
+            domainIdParameter);
 
         categoryIdParameter = new StringParameter("selected_category_id");
         selectedCategoryId = new ParameterSingleSelectionModel<>(
-                categoryIdParameter);
+            categoryIdParameter);
 
         languageParameter = new StringParameter("selected_language");
         selectedLanguage = new ParameterSingleSelectionModel<>(
-                languageParameter);
+            languageParameter);
 
         final SegmentedPanel left = new SegmentedPanel();
 
         domainsFilterFormHeader = new Label(new GlobalizedMessage(
-                "ui.admin.categories.domains.table.filter.header",
-                ADMIN_BUNDLE));
+            "ui.admin.categories.domains.table.filter.header",
+            ADMIN_BUNDLE));
         domainsFilterForm = new Form("domainFilterForm");
         final TextField domainsFilter = new TextField(DOMAINS_FILTER);
         domainsFilterForm.add(domainsFilter);
         domainsFilterForm.add(new Submit(new GlobalizedMessage(
-                "ui.admin.categories.domains.table.filter", ADMIN_BUNDLE)));
+            "ui.admin.categories.domains.table.filter", ADMIN_BUNDLE)));
         final ActionLink clearLink = new ActionLink(new GlobalizedMessage(
-                "ui.admin.categories.domains.table.filter.clear",
-                ADMIN_BUNDLE));
+            "ui.admin.categories.domains.table.filter.clear",
+            ADMIN_BUNDLE));
         clearLink.addActionListener(e -> {
             final PageState state = e.getPageState();
             domainsFilter.setValue(state, null);
@@ -103,17 +112,29 @@ public class CategoriesTab extends LayoutPanel {
         left.addSegment(domainsFilterFormHeader, domainsFilterForm);
 
         categoriesTreeHeader = new Label(new GlobalizedMessage(
-                "ui.admin.categories.tree.header",
-                ADMIN_BUNDLE));
+            "ui.admin.categories.tree.header",
+            ADMIN_BUNDLE));
         categoriesTreePanel = new BoxPanel(BoxPanel.VERTICAL);
         final Tree categoriesTree = new Tree(new CategoriesTreeModelBuilder(
-                selectedDomainId));
-        categoriesTree.addActionListener(e -> {
+            selectedDomainId));
+        categoriesTree.addChangeListener(e -> {
+            final PageState state = e.getPageState();
 
+            selectedCategoryId.setSelectedKey(
+                state, (String) categoriesTree.getSelectedKey(state));
+
+            showCategoryDetails(state);
         });
+        selectedCategoryId.addChangeListener(e -> {
+            final PageState state = e.getPageState();
+
+            categoriesTree.setSelectedKey(state, selectedCategoryId
+                                          .getSelectedKey(state));
+        });
+
         final ActionLink backToDomain = new ActionLink(new GlobalizedMessage(
-                "ui.admin.categories.tree.back",
-                ADMIN_BUNDLE));
+            "ui.admin.categories.tree.back",
+            ADMIN_BUNDLE));
         backToDomain.addActionListener(e -> {
             final PageState state = e.getPageState();
             categoriesTree.getSelectionModel().clearSelection(state);
@@ -128,12 +149,12 @@ public class CategoriesTab extends LayoutPanel {
         final BoxPanel body = new BoxPanel(BoxPanel.VERTICAL);
 
         final DomainsTable domainsTable = new DomainsTable(
-                this, selectedDomainId, domainsFilter);
+            this, selectedDomainId, domainsFilter);
         domainsTable.setStyleAttr("min-width: 30em;");
         domainsTablePanel = new BoxPanel(BoxPanel.VERTICAL);
         domainsTablePanel.add(domainsTable);
         final ActionLink addDomain = new ActionLink(new GlobalizedMessage(
-                "ui.admin.categories.domains.create_new", ADMIN_BUNDLE));
+            "ui.admin.categories.domains.create_new", ADMIN_BUNDLE));
         addDomain.addActionListener(e -> {
             showDomainForm(e.getPageState());
         });
@@ -159,6 +180,33 @@ public class CategoriesTab extends LayoutPanel {
                                                           selectedLanguage);
         body.add(domainDescriptionForm);
 
+        categoryDetails = new CategoryDetails(this,
+                                              selectedDomainId,
+                                              selectedCategoryId,
+                                              selectedLanguage);
+        body.add(categoryDetails);
+
+        categoryTitleForm = new CategoryTitleForm(this,
+                                                  selectedCategoryId,
+                                                  selectedLanguage);
+        body.add(categoryTitleForm);
+
+        categoryDescriptionForm = new CategoryDescriptionForm(this,
+                                                              selectedCategoryId,
+                                                              selectedLanguage);
+        body.add(categoryDescriptionForm);
+
+        categoryCreateForm = new CategoryCreateForm(this, selectedCategoryId);
+        body.add(categoryCreateForm);
+
+        categoryEditForm = new CategoryEditForm(this, selectedCategoryId);
+        body.add(categoryEditForm);
+
+        categoryMover = new CategoryMover(this,
+                                          selectedDomainId,
+                                          selectedCategoryId);
+        body.add(categoryMover);
+
         setBody(body);
 
     }
@@ -178,8 +226,16 @@ public class CategoriesTab extends LayoutPanel {
         page.setVisibleDefault(domainDetails, false);
         page.setVisibleDefault(domainTitleForm, false);
         page.setVisibleDefault(domainDescriptionForm, false);
+
         page.setVisibleDefault(categoriesTreeHeader, false);
         page.setVisibleDefault(categoriesTreePanel, false);
+
+        page.setVisibleDefault(categoryDetails, false);
+        page.setVisibleDefault(categoryTitleForm, false);
+        page.setVisibleDefault(categoryDescriptionForm, false);
+        page.setVisibleDefault(categoryCreateForm, false);
+        page.setVisibleDefault(categoryEditForm, false);
+        page.setVisibleDefault(categoryMover, false);
     }
 
     protected void showDomainsTable(final PageState state) {
@@ -190,9 +246,16 @@ public class CategoriesTab extends LayoutPanel {
         domainDetails.setVisible(state, false);
         domainTitleForm.setVisible(state, false);
         domainDescriptionForm.setVisible(state, false);
+
         categoriesTreeHeader.setVisible(state, false);
         categoriesTreePanel.setVisible(state, false);
 
+        categoryDetails.setVisible(state, false);
+        categoryTitleForm.setVisible(state, false);
+        categoryDescriptionForm.setVisible(state, false);
+        categoryCreateForm.setVisible(state, false);
+        categoryEditForm.setVisible(state, false);
+        categoryMover.setVisible(state, false);
     }
 
     protected void showDomainForm(final PageState state) {
@@ -203,8 +266,16 @@ public class CategoriesTab extends LayoutPanel {
         domainDetails.setVisible(state, false);
         domainTitleForm.setVisible(state, false);
         domainDescriptionForm.setVisible(state, false);
+
         categoriesTreeHeader.setVisible(state, false);
         categoriesTreePanel.setVisible(state, false);
+
+        categoryDetails.setVisible(state, false);
+        categoryTitleForm.setVisible(state, false);
+        categoryDescriptionForm.setVisible(state, false);
+        categoryCreateForm.setVisible(state, false);
+        categoryEditForm.setVisible(state, false);
+        categoryMover.setVisible(state, false);
     }
 
     protected void hideDomainForm(final PageState state) {
@@ -216,8 +287,16 @@ public class CategoriesTab extends LayoutPanel {
             domainDetails.setVisible(state, false);
             domainTitleForm.setVisible(state, false);
             domainDescriptionForm.setVisible(state, false);
+
             categoriesTreeHeader.setVisible(state, false);
             categoriesTreePanel.setVisible(state, false);
+
+            categoryDetails.setVisible(state, false);
+            categoryTitleForm.setVisible(state, false);
+            categoryDescriptionForm.setVisible(state, false);
+            categoryCreateForm.setVisible(state, false);
+            categoryEditForm.setVisible(state, false);
+            categoryMover.setVisible(state, false);
         } else {
             showDomainDetails(state);
         }
@@ -232,8 +311,16 @@ public class CategoriesTab extends LayoutPanel {
         domainDetails.setVisible(state, true);
         domainTitleForm.setVisible(state, false);
         domainDescriptionForm.setVisible(state, false);
+
         categoriesTreeHeader.setVisible(state, true);
         categoriesTreePanel.setVisible(state, true);
+
+        categoryDetails.setVisible(state, false);
+        categoryTitleForm.setVisible(state, false);
+        categoryDescriptionForm.setVisible(state, false);
+        categoryCreateForm.setVisible(state, false);
+        categoryEditForm.setVisible(state, false);
+        categoryMover.setVisible(state, false);
     }
 
     protected void hideDomainDetails(final PageState state) {
@@ -246,8 +333,16 @@ public class CategoriesTab extends LayoutPanel {
         domainDetails.setVisible(state, false);
         domainTitleForm.setVisible(state, false);
         domainDescriptionForm.setVisible(state, false);
+
         categoriesTreeHeader.setVisible(state, false);
         categoriesTreePanel.setVisible(state, false);
+
+        categoryDetails.setVisible(state, false);
+        categoryTitleForm.setVisible(state, false);
+        categoryDescriptionForm.setVisible(state, false);
+        categoryCreateForm.setVisible(state, false);
+        categoryEditForm.setVisible(state, false);
+        categoryMover.setVisible(state, false);
     }
 
     protected void showDomainTitleForm(final PageState state) {
@@ -258,8 +353,16 @@ public class CategoriesTab extends LayoutPanel {
         domainDetails.setVisible(state, false);
         domainTitleForm.setVisible(state, true);
         domainDescriptionForm.setVisible(state, false);
+
         categoriesTreeHeader.setVisible(state, false);
         categoriesTreePanel.setVisible(state, false);
+
+        categoryDetails.setVisible(state, false);
+        categoryTitleForm.setVisible(state, false);
+        categoryDescriptionForm.setVisible(state, false);
+        categoryCreateForm.setVisible(state, false);
+        categoryEditForm.setVisible(state, false);
+        categoryMover.setVisible(state, false);
     }
 
     protected void hideDomainTitleForm(final PageState state) {
@@ -276,8 +379,16 @@ public class CategoriesTab extends LayoutPanel {
         domainDetails.setVisible(state, false);
         domainTitleForm.setVisible(state, false);
         domainDescriptionForm.setVisible(state, true);
+
         categoriesTreeHeader.setVisible(state, false);
         categoriesTreePanel.setVisible(state, false);
+
+        categoryDetails.setVisible(state, false);
+        categoryTitleForm.setVisible(state, false);
+        categoryDescriptionForm.setVisible(state, false);
+        categoryCreateForm.setVisible(state, false);
+        categoryEditForm.setVisible(state, false);
+        categoryMover.setVisible(state, false);
     }
 
     protected void hideDomainDescriptionForm(final PageState state) {
@@ -287,41 +398,157 @@ public class CategoriesTab extends LayoutPanel {
     }
 
     protected void showCategoryDetails(final PageState state) {
+        domainsFilterFormHeader.setVisible(state, false);
+        domainsFilterForm.setVisible(state, false);
+        domainsTablePanel.setVisible(state, false);
+        domainForm.setVisible(state, false);
+        domainDetails.setVisible(state, false);
+        domainTitleForm.setVisible(state, false);
+        domainDescriptionForm.setVisible(state, false);
 
+        categoriesTreeHeader.setVisible(state, true);
+        categoriesTreePanel.setVisible(state, true);
+
+        categoryDetails.setVisible(state, true);
+        categoryTitleForm.setVisible(state, false);
+        categoryDescriptionForm.setVisible(state, false);
+        categoryCreateForm.setVisible(state, false);
+        categoryEditForm.setVisible(state, false);
+        categoryMover.setVisible(state, false);
     }
 
     protected void hideCategoryDetails(final PageState state) {
+        selectedCategoryId.clearSelection(state);
 
+        showDomainDetails(state);
     }
 
     protected void showCategoryCreateForm(final PageState state) {
+        domainsFilterFormHeader.setVisible(state, false);
+        domainsFilterForm.setVisible(state, false);
+        domainsTablePanel.setVisible(state, false);
+        domainForm.setVisible(state, false);
+        domainDetails.setVisible(state, false);
+        domainTitleForm.setVisible(state, false);
+        domainDescriptionForm.setVisible(state, false);
 
+        categoriesTreeHeader.setVisible(state, false);
+        categoriesTreePanel.setVisible(state, false);
+
+        categoryDetails.setVisible(state, false);
+        categoryTitleForm.setVisible(state, false);
+        categoryDescriptionForm.setVisible(state, false);
+        categoryCreateForm.setVisible(state, true);
+        categoryEditForm.setVisible(state, false);
+        categoryMover.setVisible(state, false);
     }
 
     protected void hideCategoryCreateForm(final PageState state) {
-
+        //Show category details of new category (or the selected category if 
+        //creation was canceled
+        showCategoryDetails(state);
     }
 
     protected void showCategoryEditForm(final PageState state) {
+        domainsFilterFormHeader.setVisible(state, false);
+        domainsFilterForm.setVisible(state, false);
+        domainsTablePanel.setVisible(state, false);
+        domainForm.setVisible(state, false);
+        domainDetails.setVisible(state, false);
+        domainTitleForm.setVisible(state, false);
+        domainDescriptionForm.setVisible(state, false);
 
+        categoriesTreeHeader.setVisible(state, false);
+        categoriesTreePanel.setVisible(state, false);
+
+        categoryDetails.setVisible(state, false);
+        categoryTitleForm.setVisible(state, false);
+        categoryDescriptionForm.setVisible(state, false);
+        categoryCreateForm.setVisible(state, false);
+        categoryEditForm.setVisible(state, true);
+        categoryMover.setVisible(state, false);
     }
 
     protected void hideCategoryEditForm(final PageState state) {
-
+        //We want to go back to the details of the selected category, therefore
+        //we don't reset the selection.
+        showCategoryDetails(state);
     }
 
     protected void showCategoryTitleForm(final PageState state) {
+        domainsFilterFormHeader.setVisible(state, false);
+        domainsFilterForm.setVisible(state, false);
+        domainsTablePanel.setVisible(state, false);
+        domainForm.setVisible(state, false);
+        domainDetails.setVisible(state, false);
+        domainTitleForm.setVisible(state, false);
+        domainDescriptionForm.setVisible(state, false);
 
+        categoriesTreeHeader.setVisible(state, false);
+        categoriesTreePanel.setVisible(state, false);
+
+        categoryDetails.setVisible(state, false);
+        categoryTitleForm.setVisible(state, true);
+        categoryDescriptionForm.setVisible(state, false);
+        categoryCreateForm.setVisible(state, false);
+        categoryEditForm.setVisible(state, false);
+        categoryMover.setVisible(state, false);
     }
 
     protected void hideCategoryTitleForm(final PageState state) {
+        selectedLanguage.clearSelection(state);
 
+        showCategoryDetails(state);
     }
 
     protected void showCategoryDescriptionForm(final PageState state) {
+        domainsFilterFormHeader.setVisible(state, false);
+        domainsFilterForm.setVisible(state, false);
+        domainsTablePanel.setVisible(state, false);
+        domainForm.setVisible(state, false);
+        domainDetails.setVisible(state, false);
+        domainTitleForm.setVisible(state, false);
+        domainDescriptionForm.setVisible(state, false);
 
+        categoriesTreeHeader.setVisible(state, false);
+        categoriesTreePanel.setVisible(state, false);
+
+        categoryDetails.setVisible(state, false);
+        categoryTitleForm.setVisible(state, false);
+        categoryDescriptionForm.setVisible(state, true);
+        categoryCreateForm.setVisible(state, false);
+        categoryEditForm.setVisible(state, false);
+        categoryMover.setVisible(state, false);
     }
 
     protected void hideCategoryDescriptionForm(final PageState state) {
+        selectedLanguage.clearSelection(state);
+
+        showCategoryDetails(state);
     }
+
+    protected void showCategoryMover(final PageState state) {
+        domainsFilterFormHeader.setVisible(state, false);
+        domainsFilterForm.setVisible(state, false);
+        domainsTablePanel.setVisible(state, false);
+        domainForm.setVisible(state, false);
+        domainDetails.setVisible(state, false);
+        domainTitleForm.setVisible(state, false);
+        domainDescriptionForm.setVisible(state, false);
+
+        categoriesTreeHeader.setVisible(state, false);
+        categoriesTreePanel.setVisible(state, false);
+
+        categoryDetails.setVisible(state, false);
+        categoryTitleForm.setVisible(state, false);
+        categoryDescriptionForm.setVisible(state, false);
+        categoryCreateForm.setVisible(state, false);
+        categoryEditForm.setVisible(state, false);
+        categoryMover.setVisible(state, true);
+    }
+
+    protected void hideCategoryMover(final PageState state) {
+        showCategoryDetails(state);
+    }
+
 }

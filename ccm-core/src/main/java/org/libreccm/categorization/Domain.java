@@ -98,7 +98,10 @@ import javax.xml.bind.annotation.XmlRootElement;
                 name = "subCategories",
                 attributeNodes = {
                     @NamedAttributeNode("subCategories")
-                })}),
+                }
+            )
+        }
+    ),
     @NamedEntityGraph(
         name = "Domain.withOwners",
         attributeNodes = {

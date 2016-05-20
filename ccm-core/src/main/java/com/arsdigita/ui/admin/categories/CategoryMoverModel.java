@@ -27,6 +27,7 @@ import org.libreccm.categorization.CategoryRepository;
 import org.libreccm.categorization.Domain;
 import org.libreccm.cdi.utils.CdiUtil;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -34,12 +35,15 @@ import java.util.List;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class CategoriesTreeModel implements TreeModel {
+public class CategoryMoverModel implements TreeModel {
 
     private final Domain domain;
+    private final Category selectedCategory;
 
-    public CategoriesTreeModel(final Domain domain) {
+    public CategoryMoverModel(final Domain domain,
+                              final Category selectedCategory) {
         this.domain = domain;
+        this.selectedCategory = selectedCategory;
     }
 
     @Override
@@ -48,37 +52,53 @@ public class CategoriesTreeModel implements TreeModel {
             .findBean(CategoryRepository.class);
         final Category category = categoryRepository.findById(domain.getRoot()
             .getObjectId());
-        return new CategoryTreeNode(category);
+        return new CategoryMoverNode(category);
     }
 
-    @Override
-    public boolean hasChildren(final TreeNode node,
-                               final PageState state) {
+    /**
+     * Creates a list of the sub categories of the provided node
+     * <em>without</em>
+     * the selected category. This prevents the selected category and its sub
+     * categories from be added to tree. Therefore the user can't move a
+     * category beneath itself.
+     *
+     * @param node The current node.
+     *
+     * @return A list of the subcategories of the category managed by the
+     *         provided node.
+     */
+    private List<Category> getSubCategories(final TreeNode node) {
         final CategoryRepository categoryRepo = CdiUtil.createCdiUtil()
             .findBean(CategoryRepository.class);
         final Category category = categoryRepo.findById(
-            ((CategoryTreeNode) node).getCategory().getObjectId());
+            ((CategoryMoverNode) node).getCategory().getObjectId());
 
-        return (category.getSubCategories() != null
-                && !category.getSubCategories().isEmpty());
+        final List<Category> subCategories = new ArrayList<>();
+        category.getSubCategories().forEach(c -> {
+            if (!c.equals(selectedCategory)) {
+                subCategories.add(c);
+            }
+        });
+
+        return subCategories;
     }
 
     @Override
-    public Iterator getChildren(final TreeNode node,
-                                final PageState state) {
-        final CategoryRepository categoryRepo = CdiUtil.createCdiUtil()
-            .findBean(CategoryRepository.class);
-        final Category category = categoryRepo.findById(
-            ((CategoryTreeNode) node).getCategory().getObjectId());
-
-        return new SubCategoryNodesIterator(category.getSubCategories());
+    public boolean hasChildren(final TreeNode node, final PageState state) {
+        final List<Category> subCategories = getSubCategories(node);
+        return (subCategories != null && !subCategories.isEmpty()) ;
     }
 
-    private class CategoryTreeNode implements TreeNode {
+    @Override
+    public Iterator getChildren(final TreeNode node, final PageState state) {
+        return new SubCategoryNodesIterator(getSubCategories(node));
+    }
+
+    private class CategoryMoverNode implements TreeNode {
 
         private final Category category;
 
-        public CategoryTreeNode(final Category category) {
+        public CategoryMoverNode(final Category category) {
             this.category = category;
         }
 
@@ -99,7 +119,7 @@ public class CategoriesTreeModel implements TreeModel {
     }
 
     private class SubCategoryNodesIterator
-        implements Iterator<CategoryTreeNode> {
+        implements Iterator<CategoryMoverNode> {
 
         private final Iterator<Category> subCategoriesIterator;
 
@@ -113,8 +133,8 @@ public class CategoriesTreeModel implements TreeModel {
         }
 
         @Override
-        public CategoryTreeNode next() {
-            return new CategoryTreeNode(subCategoriesIterator.next());
+        public CategoryMoverNode next() {
+            return new CategoryMoverNode(subCategoriesIterator.next());
         }
 
     }

@@ -59,9 +59,9 @@ public class CategoryTitleTable extends Table {
     private final ParameterSingleSelectionModel<String> selectedLanguage;
 
     public CategoryTitleTable(
-            final CategoriesTab categoriesTab,
-            final ParameterSingleSelectionModel<String> selectedCategoryId,
-            final ParameterSingleSelectionModel<String> selectedLanguage) {
+        final CategoriesTab categoriesTab,
+        final ParameterSingleSelectionModel<String> selectedCategoryId,
+        final ParameterSingleSelectionModel<String> selectedLanguage) {
 
         super();
 
@@ -72,29 +72,29 @@ public class CategoryTitleTable extends Table {
         setIdAttr("categoryTitleTable");
 
         setEmptyView(new Label(new GlobalizedMessage(
-                "ui.admin.categories.category_details.title.none", ADMIN_BUNDLE)));
+            "ui.admin.categories.category_details.title.none", ADMIN_BUNDLE)));
 
         final TableColumnModel columnModel = getColumnModel();
         columnModel.add(new TableColumn(
-                COL_LOCALE,
-                new Label(new GlobalizedMessage(
-                        "ui.admin.categories.category_details.title.col_lang",
-                        ADMIN_BUNDLE))));
+            COL_LOCALE,
+            new Label(new GlobalizedMessage(
+                "ui.admin.categories.category_details.title.col_lang",
+                ADMIN_BUNDLE))));
         columnModel.add(new TableColumn(
-                COL_VALUE,
-                new Label(new GlobalizedMessage(
-                        "ui.admin.categories.category_details.title.col_value",
-                        ADMIN_BUNDLE))));
+            COL_VALUE,
+            new Label(new GlobalizedMessage(
+                "ui.admin.categories.category_details.title.col_value",
+                ADMIN_BUNDLE))));
         columnModel.add(new TableColumn(
-                COL_EDIT,
-                new Label(new GlobalizedMessage(
-                        "ui.admin.categories.category_details.title.col_edit",
-                        ADMIN_BUNDLE))));
+            COL_EDIT,
+            new Label(new GlobalizedMessage(
+                "ui.admin.categories.category_details.title.col_edit",
+                ADMIN_BUNDLE))));
         columnModel.add(new TableColumn(
-                COL_DEL,
-                new Label(new GlobalizedMessage(
-                        "ui.admin.categories.category_details.title.col_del",
-                        ADMIN_BUNDLE))));
+            COL_DEL,
+            new Label(new GlobalizedMessage(
+                "ui.admin.categories.category_details.title.col_del",
+                ADMIN_BUNDLE))));
 
         columnModel.get(COL_EDIT).setCellRenderer(new TableCellRenderer() {
 
@@ -126,14 +126,16 @@ public class CategoryTitleTable extends Table {
                 } else {
                     final ControlLink link = new ControlLink((Component) value);
                     link.setConfirmation(new GlobalizedMessage(
-                            "ui.admin.categories.category_details.title.del_confirm",
-                            ADMIN_BUNDLE));
+                        "ui.admin.categories.category_details.title.del_confirm",
+                        ADMIN_BUNDLE));
                     return link;
                 }
             }
+
         });
 
         addTableActionListener(new TableActionListener() {
+
             @Override
             public void cellSelected(final TableActionEvent event) {
                 final PageState state = event.getPageState();
@@ -146,13 +148,13 @@ public class CategoryTitleTable extends Table {
                         break;
                     case COL_DEL:
                         final Locale locale = new Locale((String) event.
-                                getRowKey());
+                            getRowKey());
                         final CategoryRepository categoryRepository = CdiUtil.
-                                createCdiUtil().findBean(
-                                        CategoryRepository.class);
+                            createCdiUtil().findBean(
+                                CategoryRepository.class);
                         final Category category = categoryRepository.findById(
-                                Long.parseLong(selectedCategoryId.
-                                        getSelectedKey(state)));
+                            Long.parseLong(selectedCategoryId.
+                                getSelectedKey(state)));
                         category.getTitle().removeValue(locale);
 
                         categoryRepository.save(category);
@@ -165,6 +167,7 @@ public class CategoryTitleTable extends Table {
             public void headSelected(final TableActionEvent event) {
                 //Nothing
             }
+
         });
 
         setModelBuilder(new CategoryTitleTableModelBuilder());
@@ -172,12 +175,11 @@ public class CategoryTitleTable extends Table {
     }
 
     private class CategoryTitleTableModelBuilder
-            extends LockableImpl
-            implements TableModelBuilder {
+        extends LockableImpl
+        implements TableModelBuilder {
 
         @Override
-        public TableModel makeModel(final Table table,
-                                    final PageState state) {
+        public TableModel makeModel(final Table table, final PageState state) {
             table.getRowSelectionModel().clearSelection(state);
 
             return new CategoryTitleTableModel(state);
@@ -193,12 +195,15 @@ public class CategoryTitleTable extends Table {
 
         public CategoryTitleTableModel(final PageState state) {
             final CategoryRepository categoryRepository = CdiUtil.
-                    createCdiUtil().findBean(CategoryRepository.class);
+                createCdiUtil().findBean(CategoryRepository.class);
             selectedCategory = categoryRepository.findById(Long.parseLong(
-                    selectedCategoryId.getSelectedKey(state)));
+                selectedCategoryId.getSelectedKey(state)));
 
             locales = new ArrayList<>();
-            locales.addAll(selectedCategory.getTitle().getAvailableLocales());
+            if (selectedCategory.getTitle() != null) {
+                locales.addAll(
+                    selectedCategory.getTitle().getAvailableLocales());
+            }
             locales.sort((l1, l2) -> {
                 return l1.toString().compareTo(l2.toString());
             });
@@ -226,17 +231,17 @@ public class CategoryTitleTable extends Table {
                     return selectedCategory.getTitle().getValue(locale);
                 case COL_EDIT:
                     return new Label(new GlobalizedMessage(
-                            "ui.admin.categories.category_details.title.edit",
-                            ADMIN_BUNDLE
+                        "ui.admin.categories.category_details.title.edit",
+                        ADMIN_BUNDLE
                     ));
                 case COL_DEL:
                     return new Label(new GlobalizedMessage(
-                            "ui.admin.categories.category_details.title.del",
-                            ADMIN_BUNDLE
+                        "ui.admin.categories.category_details.title.del",
+                        ADMIN_BUNDLE
                     ));
                 default:
                     throw new IllegalArgumentException(
-                            "Not a valid column index");
+                        "Not a valid column index");
             }
         }
 

@@ -57,7 +57,7 @@ public class CategoryRepository extends AbstractEntityRepository<Long, Category>
     public void initNewEntity(final Category category) {
         category.setUuid(UUID.randomUUID().toString());
     }
-    
+
     /**
      * Retrieves a list of all top level categories (Categories without a parent
      * category).
@@ -151,17 +151,4 @@ public class CategoryRepository extends AbstractEntityRepository<Long, Category>
 
         return current;
     }
-
-    /**
-     * Retrieves all categories which are not assigned to another category as
-     * subcategory or the an {@link Domain} as root category.
-     *
-     * @return A list of all orphaned categories. Normally this list should be
-     *         empty.
-     */
-    public List<Category> getOrphanedCategories() {
-        // TODO implement method
-        throw new UnsupportedOperationException();
-    }
-
 }

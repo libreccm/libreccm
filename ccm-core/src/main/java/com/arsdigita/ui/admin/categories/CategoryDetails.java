@@ -55,12 +55,13 @@ class CategoryDetails extends SegmentedPanel {
     private final ParameterSingleSelectionModel<String> selectedLanguage;
     private final CategoryTitleAddForm categoryTitleAddForm;
     private final CategoryDescriptionAddForm categoryDescriptionAddForm;
+    private final SubCategoriesTable subCategoriesTable;
 
     public CategoryDetails(
-            final CategoriesTab categoriesTab,
-            final ParameterSingleSelectionModel<String> selectedDomainId,
-            final ParameterSingleSelectionModel<String> selectedCategoryId,
-            final ParameterSingleSelectionModel<String> selectedLanguage) {
+        final CategoriesTab categoriesTab,
+        final ParameterSingleSelectionModel<String> selectedDomainId,
+        final ParameterSingleSelectionModel<String> selectedCategoryId,
+        final ParameterSingleSelectionModel<String> selectedLanguage) {
 
         this.categoriesTab = categoriesTab;
         this.selectedDomainId = selectedDomainId;
@@ -68,43 +69,86 @@ class CategoryDetails extends SegmentedPanel {
         this.selectedLanguage = selectedLanguage;
 
         final ActionLink backLink = new ActionLink(new GlobalizedMessage(
-                "ui.admin.categories.category_details.back", ADMIN_BUNDLE));
+            "ui.admin.categories.category_details.back", ADMIN_BUNDLE));
         backLink.addActionListener(e -> {
             final PageState state = e.getPageState();
             categoriesTab.hideCategoryDetails(state);
         });
         addSegment("category-details-back", backLink);
 
+        final Label heading = new Label(e -> {
+            final PageState state = e.getPageState();
+            final Label target = (Label) e.getTarget();
+
+            final CategoryRepository categoryRepo = CdiUtil.createCdiUtil()
+                .findBean(CategoryRepository.class);
+            final Category category = categoryRepo.findById(Long.parseLong(
+                selectedCategoryId.getSelectedKey(state)));
+
+            target.setLabel(new GlobalizedMessage(
+                "ui.admin.categories.category_details.heading",
+                ADMIN_BUNDLE,
+                new String[]{category.getName()}));
+
+        });
+        heading.setClassAttr("heading");
+        add(heading);
+
         final BoxPanel propertiesPanel = new BoxPanel(BoxPanel.VERTICAL);
         propertiesPanel.add(new PropertySheet(
-                new CategoryPropertySheetModelBuilder(selectedCategoryId)));
+            new CategoryPropertySheetModelBuilder(selectedCategoryId)));
         final ActionLink editBasicPropertiesLink = new ActionLink(
-                new GlobalizedMessage(
-                        "ui.admin.categories.category_details.basic_properties.edit",
-                        ADMIN_BUNDLE));
+            new GlobalizedMessage(
+                "ui.admin.categories.category_details.basic_properties.edit",
+                ADMIN_BUNDLE));
         editBasicPropertiesLink.addActionListener(e -> {
             final PageState state = e.getPageState();
             categoriesTab.showCategoryEditForm(state);
         });
         propertiesPanel.add(editBasicPropertiesLink);
+        final ActionLink moveLink = new ActionLink(new GlobalizedMessage(
+            "ui.admin.categories.category_details.move_category", ADMIN_BUNDLE)) {
+
+            @Override
+            public boolean isVisible(final PageState state) {
+                if (super.isVisible(state)) {
+                    final CategoryRepository categoryRepo = CdiUtil
+                        .createCdiUtil().findBean(CategoryRepository.class);
+                    final Category category = categoryRepo.findById(Long
+                        .parseLong(selectedCategoryId.getSelectedKey(state)));
+                    
+                    //If the category has no parent category it is the root
+                    //category of a domain and can't be moved
+                    return category.getParentCategory() != null;
+                } else {
+                    return false;
+                }
+            }
+
+        };
+        moveLink.addActionListener(e -> {
+            final PageState state = e.getPageState();
+            categoriesTab.showCategoryMover(state);
+        });
+        propertiesPanel.add(moveLink);
         addSegment(
-                new Label(new GlobalizedMessage(
-                        "ui.admin.categories.category_details.basic_properties",
-                        ADMIN_BUNDLE)),
-                propertiesPanel
+            new Label(new GlobalizedMessage(
+                "ui.admin.categories.category_details.basic_properties",
+                ADMIN_BUNDLE)),
+            propertiesPanel
         );
 
         final BoxPanel titlesPanel = new BoxPanel(BoxPanel.VERTICAL);
         titlesPanel.add(new CategoryTitleTable(categoriesTab,
-                                               selectedDomainId,
+                                               selectedCategoryId,
                                                selectedLanguage));
         categoryTitleAddForm = new CategoryTitleAddForm();
         titlesPanel.add(categoryTitleAddForm);
         addSegment(
-                new Label(new GlobalizedMessage(
-                        "ui.admin.categories.domain_details.domain_title",
-                        ADMIN_BUNDLE)),
-                titlesPanel);
+            new Label(new GlobalizedMessage(
+                "ui.admin.categories.category_details.category_title",
+                ADMIN_BUNDLE)),
+            titlesPanel);
 
         final BoxPanel descPanel = new BoxPanel(BoxPanel.VERTICAL);
         descPanel.add(new CategoryDescriptionTable(categoriesTab,
@@ -113,10 +157,29 @@ class CategoryDetails extends SegmentedPanel {
         categoryDescriptionAddForm = new CategoryDescriptionAddForm();
         descPanel.add(categoryDescriptionAddForm);
         addSegment(
-                new Label(new GlobalizedMessage(
-                        "ui.admin.categories.category_details.description",
-                        ADMIN_BUNDLE)),
-                descPanel);
+            new Label(new GlobalizedMessage(
+                "ui.admin.categories.category_details.description",
+                ADMIN_BUNDLE)),
+            descPanel);
+
+        final BoxPanel subCategoriesPanel = new BoxPanel(BoxPanel.VERTICAL);
+        subCategoriesTable = new SubCategoriesTable(categoriesTab,
+                                                    selectedCategoryId);
+        subCategoriesPanel.add(subCategoriesTable);
+        final ActionLink addSubCategory = new ActionLink(new GlobalizedMessage(
+            "ui.admin.categories.category_details.subcategories.add",
+            ADMIN_BUNDLE));
+        addSubCategory.addActionListener(e -> {
+            final PageState state = e.getPageState();
+
+            categoriesTab.showCategoryCreateForm(state);
+        });
+        subCategoriesPanel.add(addSubCategory);
+        addSegment(
+            new Label(new GlobalizedMessage(
+                "ui.admin.categories.category_details.subcategories.header",
+                ADMIN_BUNDLE)),
+            subCategoriesPanel);
     }
 
     private class CategoryTitleAddForm extends Form {
@@ -127,22 +190,22 @@ class CategoryDetails extends SegmentedPanel {
             super("categoryTitleAddForm", new BoxPanel(BoxPanel.HORIZONTAL));
 
             final SingleSelect titleSelectLang = new SingleSelect(
-                    TITLE_SELECT_LANG);
+                TITLE_SELECT_LANG);
             titleSelectLang.setLabel(new GlobalizedMessage(
-                    "ui.admin.categories.category_details.category_title.add.label",
-                    ADMIN_BUNDLE));
+                "ui.admin.categories.category_details.category_title.add.label",
+                ADMIN_BUNDLE));
             try {
                 titleSelectLang.addPrintListener(e -> {
                     final PageState state = e.getPageState();
 
                     final CategoryRepository categoryRepository = CdiUtil.
-                            createCdiUtil().findBean(CategoryRepository.class);
+                        createCdiUtil().findBean(CategoryRepository.class);
                     final Category category = categoryRepository.findById(
-                            Long.parseLong(selectedCategoryId.getSelectedKey(
-                                    state)));
+                        Long.parseLong(selectedCategoryId.getSelectedKey(
+                            state)));
                     final KernelConfig kernelConfig = KernelConfig.getConfig();
                     final Set<String> supportedLanguages = kernelConfig.
-                            getSupportedLanguages();
+                        getSupportedLanguages();
                     final Set<String> assignedLanguages = new HashSet<>();
                     category.getTitle().getAvailableLocales().forEach(l -> {
                         assignedLanguages.add(l.toString());
@@ -164,8 +227,8 @@ class CategoryDetails extends SegmentedPanel {
 
             add(titleSelectLang);
             add(new Submit(new GlobalizedMessage(
-                    "ui.admin.categories.category_details.category_title.add.submit",
-                    ADMIN_BUNDLE)));
+                "ui.admin.categories.category_details.category_title.add.submit",
+                ADMIN_BUNDLE)));
 
             addProcessListener(e -> {
                 final PageState state = e.getPageState();
@@ -182,13 +245,13 @@ class CategoryDetails extends SegmentedPanel {
         public boolean isVisible(final PageState state) {
             if (super.isVisible(state)) {
                 final CategoryRepository categoryRepository = CdiUtil.
-                        createCdiUtil().findBean(CategoryRepository.class);
+                    createCdiUtil().findBean(CategoryRepository.class);
                 final Category category = categoryRepository.findById(
-                        Long.parseLong(selectedCategoryId.getSelectedKey(
-                                state)));
+                    Long.parseLong(selectedCategoryId.getSelectedKey(
+                        state)));
                 final KernelConfig kernelConfig = KernelConfig.getConfig();
                 final Set<String> supportedLanguages = kernelConfig.
-                        getSupportedLanguages();
+                    getSupportedLanguages();
                 final Set<String> assignedLanguages = new HashSet<>();
                 category.getTitle().getAvailableLocales().forEach(l -> {
                     assignedLanguages.add(l.toString());
@@ -201,6 +264,7 @@ class CategoryDetails extends SegmentedPanel {
                 return false;
             }
         }
+
     }
 
     private class CategoryDescriptionAddForm extends Form {
@@ -211,27 +275,27 @@ class CategoryDetails extends SegmentedPanel {
             super("categoryAddDescLang", new BoxPanel(BoxPanel.HORIZONTAL));
 
             final SingleSelect descSelectLang = new SingleSelect(
-                    DESC_SELECT_LANG);
+                DESC_SELECT_LANG);
             descSelectLang.setLabel(new GlobalizedMessage(
-                    "ui.admin.categories.category_details.category_desc.add.label",
-                    ADMIN_BUNDLE));
+                "ui.admin.categories.category_details.category_desc.add.label",
+                ADMIN_BUNDLE));
             try {
                 descSelectLang.addPrintListener(e -> {
                     final PageState state = e.getPageState();
 
                     final CategoryRepository categoryRepository = CdiUtil.
-                            createCdiUtil().findBean(CategoryRepository.class);
+                        createCdiUtil().findBean(CategoryRepository.class);
                     final Category category = categoryRepository.findById(
-                            Long.parseLong(selectedCategoryId.getSelectedKey(
-                                    state)));
+                        Long.parseLong(selectedCategoryId.getSelectedKey(
+                            state)));
                     final KernelConfig kernelConfig = KernelConfig.getConfig();
                     final Set<String> supportedLanguages = kernelConfig.
-                            getSupportedLanguages();
+                        getSupportedLanguages();
                     final Set<String> assignedLanguages = new HashSet<>();
                     category.getDescription().getAvailableLocales().forEach(
-                            l -> {
-                                assignedLanguages.add(l.toString());
-                            });
+                        l -> {
+                            assignedLanguages.add(l.toString());
+                        });
 
                     final SingleSelect target = (SingleSelect) e.getTarget();
 
@@ -250,8 +314,8 @@ class CategoryDetails extends SegmentedPanel {
 
             add(descSelectLang);
             add(new Submit(new GlobalizedMessage(
-                    "ui.admin.categories.category_details.category_desc.add.submit",
-                    ADMIN_BUNDLE)));
+                "ui.admin.categories.category_details.category_desc.add.submit",
+                ADMIN_BUNDLE)));
 
             addProcessListener(e -> {
                 final PageState state = e.getPageState();
@@ -268,18 +332,18 @@ class CategoryDetails extends SegmentedPanel {
         public boolean isVisible(final PageState state) {
             if (super.isVisible(state)) {
                 final CategoryRepository categoryRepository = CdiUtil.
-                        createCdiUtil().findBean(CategoryRepository.class);
+                    createCdiUtil().findBean(CategoryRepository.class);
                 final Category category = categoryRepository.findById(
-                        Long.parseLong(selectedCategoryId.getSelectedKey(
-                                state)));
+                    Long.parseLong(selectedCategoryId.getSelectedKey(
+                        state)));
                 final KernelConfig kernelConfig = KernelConfig.getConfig();
                 final Set<String> supportedLanguages = kernelConfig.
-                        getSupportedLanguages();
+                    getSupportedLanguages();
                 final Set<String> assignedLanguages = new HashSet<>();
                 category.getDescription().getAvailableLocales().forEach(
-                        l -> {
-                            assignedLanguages.add(l.toString());
-                        });
+                    l -> {
+                        assignedLanguages.add(l.toString());
+                    });
 
                 //If all supported languages are assigned the form is not 
                 //visible
@@ -288,6 +352,7 @@ class CategoryDetails extends SegmentedPanel {
                 return false;
             }
         }
+
     }
 
 }

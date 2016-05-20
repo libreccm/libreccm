@@ -59,9 +59,9 @@ public class CategoryDescriptionTable extends Table {
     private final ParameterSingleSelectionModel<String> selectedLanguage;
 
     public CategoryDescriptionTable(
-            final CategoriesTab categoriesTab,
-            final ParameterSingleSelectionModel<String> selectedCategoryId,
-            final ParameterSingleSelectionModel<String> selectedLanguage) {
+        final CategoriesTab categoriesTab,
+        final ParameterSingleSelectionModel<String> selectedCategoryId,
+        final ParameterSingleSelectionModel<String> selectedLanguage) {
 
         super();
 
@@ -72,30 +72,30 @@ public class CategoryDescriptionTable extends Table {
         setIdAttr("categoryDescriptionTable");
 
         setEmptyView(new Label(new GlobalizedMessage(
-                "ui.admin.categories.category_details.description.none",
-                ADMIN_BUNDLE)));
+            "ui.admin.categories.category_details.description.none",
+            ADMIN_BUNDLE)));
 
         final TableColumnModel columnModel = getColumnModel();
         columnModel.add(new TableColumn(
-                COL_LOCALE,
-                new Label(new GlobalizedMessage(
-                        "ui.admin.categories.category_details.description.col_lang",
-                        ADMIN_BUNDLE))));
+            COL_LOCALE,
+            new Label(new GlobalizedMessage(
+                "ui.admin.categories.category_details.description.col_lang",
+                ADMIN_BUNDLE))));
         columnModel.add(new TableColumn(
-                COL_VALUE,
-                new Label(new GlobalizedMessage(
-                        "ui.admin.categories.category_details.description.col_value",
-                        ADMIN_BUNDLE))));
+            COL_VALUE,
+            new Label(new GlobalizedMessage(
+                "ui.admin.categories.category_details.description.col_value",
+                ADMIN_BUNDLE))));
         columnModel.add(new TableColumn(
-                COL_EDIT,
-                new Label(new GlobalizedMessage(
-                        "ui.admin.categories.category_details.description.col_del",
-                        ADMIN_BUNDLE))));
+            COL_EDIT,
+            new Label(new GlobalizedMessage(
+                "ui.admin.categories.category_details.description.col_edit",
+                ADMIN_BUNDLE))));
         columnModel.add(new TableColumn(
-                COL_DEL,
-                new Label(new GlobalizedMessage(
-                        "ui.admin.categories.category_details.description.col_del",
-                        ADMIN_BUNDLE))));
+            COL_DEL,
+            new Label(new GlobalizedMessage(
+                "ui.admin.categories.category_details.description.col_del",
+                ADMIN_BUNDLE))));
 
         columnModel.get(COL_EDIT).setCellRenderer(new TableCellRenderer() {
 
@@ -109,6 +109,7 @@ public class CategoryDescriptionTable extends Table {
                                           final int column) {
                 return new ControlLink((Component) value);
             }
+
         });
 
         columnModel.get(COL_DEL).setCellRenderer(new TableCellRenderer() {
@@ -126,15 +127,17 @@ public class CategoryDescriptionTable extends Table {
                 } else {
                     final ControlLink link = new ControlLink((Component) value);
                     link.setConfirmation(new GlobalizedMessage(
-                            "ui.admin.categories.category_details.description"
-                                    + ".del_confirm",
-                            ADMIN_BUNDLE));
+                        "ui.admin.categories.category_details.description"
+                            + ".del_confirm",
+                        ADMIN_BUNDLE));
                     return link;
                 }
             }
+
         });
 
         addTableActionListener(new TableActionListener() {
+
             @Override
             public void cellSelected(final TableActionEvent event) {
                 final PageState state = event.getPageState();
@@ -147,13 +150,13 @@ public class CategoryDescriptionTable extends Table {
                         break;
                     case COL_DEL:
                         final Locale locale = new Locale((String) event
-                                .getRowKey());
+                            .getRowKey());
                         final CategoryRepository categoryRepository = CdiUtil.
-                                createCdiUtil().findBean(
-                                        CategoryRepository.class);
+                            createCdiUtil().findBean(
+                                CategoryRepository.class);
                         final Category category = categoryRepository.findById(
-                                Long.parseLong(selectedCategoryId.
-                                        getSelectedKey(state)));
+                            Long.parseLong(selectedCategoryId.
+                                getSelectedKey(state)));
                         category.getDescription().removeValue(locale);
 
                         categoryRepository.save(category);
@@ -166,14 +169,15 @@ public class CategoryDescriptionTable extends Table {
             public void headSelected(final TableActionEvent event) {
                 //Nothing
             }
+
         });
 
         setModelBuilder(new CategoryDescriptionTableModelBuilder());
     }
 
     private class CategoryDescriptionTableModelBuilder
-            extends LockableImpl
-            implements TableModelBuilder {
+        extends LockableImpl
+        implements TableModelBuilder {
 
         @Override
         public TableModel makeModel(final Table table,
@@ -182,6 +186,7 @@ public class CategoryDescriptionTable extends Table {
 
             return new CategoryDescriptionTableModel(state);
         }
+
     }
 
     private class CategoryDescriptionTableModel implements TableModel {
@@ -192,13 +197,15 @@ public class CategoryDescriptionTable extends Table {
 
         public CategoryDescriptionTableModel(final PageState state) {
             final CategoryRepository categoryRepository = CdiUtil.
-                    createCdiUtil().findBean(CategoryRepository.class);
+                createCdiUtil().findBean(CategoryRepository.class);
             selectedCategory = categoryRepository.findById(Long.parseLong(
-                    selectedCategoryId.getSelectedKey(state)));
+                selectedCategoryId.getSelectedKey(state)));
 
             locales = new ArrayList<>();
-            locales.addAll(selectedCategory.getDescription().
-                    getAvailableLocales());
+            if (selectedCategory.getDescription() != null) {
+                locales.addAll(
+                    selectedCategory.getDescription().getAvailableLocales());
+            }
             locales.sort((l1, l2) -> {
                 return l1.toString().compareTo(l2.toString());
             });
@@ -227,15 +234,15 @@ public class CategoryDescriptionTable extends Table {
                     return selectedCategory.getDescription().getValue(locale);
                 case COL_EDIT:
                     return new Label(new GlobalizedMessage(
-                            "ui.admin.categories.category_details.description.edit",
-                            ADMIN_BUNDLE));
+                        "ui.admin.categories.category_details.description.edit",
+                        ADMIN_BUNDLE));
                 case COL_DEL:
                     return new Label(new GlobalizedMessage(
-                            "ui.admin.categories.category_details.description.del",
-                            ADMIN_BUNDLE));
+                        "ui.admin.categories.category_details.description.del",
+                        ADMIN_BUNDLE));
                 default:
                     throw new IllegalArgumentException(
-                            "Not a valid column index");
+                        "Not a valid column index");
             }
         }
 
@@ -245,4 +252,5 @@ public class CategoryDescriptionTable extends Table {
         }
 
     }
+
 }

@@ -23,6 +23,7 @@ import org.apache.logging.log4j.Logger;
 import org.libreccm.core.CcmObject;
 import org.libreccm.core.CcmObjectRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
@@ -186,11 +187,61 @@ public class CategoryManager {
      *                                              object is not assigned to
      *                                              the provided category.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public void increaseObjectOrder(final CcmObject object,
                                     final Category category)
         throws ObjectNotAssignedToCategoryException {
-        // TODO implement method
-        throw new UnsupportedOperationException();
+
+        if (object == null) {
+            throw new IllegalArgumentException("The object can't be null.");
+        }
+
+        if (category == null) {
+            throw new IllegalArgumentException("The category can't be null");
+        }
+
+        final Categorization categorization;
+        final Categorization nextCategorization;
+
+        Categorization current = null;
+        int index = 0;
+        final List<Categorization> objects = new ArrayList<>(category
+            .getObjects());
+        objects.sort((o1, o2) -> {
+            return Long.compare(o1.getObjectOrder(), o2.getObjectOrder());
+        });
+        while (index < objects.size()) {
+            current = objects.get(index);
+            if (current.getCategorizedObject().equals(object)) {
+                break;
+            }
+            index++;
+        }
+
+        categorization = current;
+        if ((index + 1) < objects.size()) {
+            nextCategorization = objects.get(index + 1);
+        } else {
+            //No next object, returning silently.
+            return;
+        }
+
+        if (categorization == null) {
+            //Object is not part of the category.
+            throw new ObjectNotAssignedToCategoryException(String.format(
+                "The object %s is not assigned to the category %s (UUID: %s).",
+                object.getUuid(),
+                category.getName(),
+                category.getUuid()));
+        }
+
+        final long order = categorization.getObjectOrder();
+        final long nextOrder = nextCategorization.getObjectOrder();
+
+        categorization.setObjectOrder(nextOrder);
+        nextCategorization.setObjectOrder(order);
+
+        categoryRepo.save(category);
     }
 
     /**
@@ -207,11 +258,61 @@ public class CategoryManager {
      *                                              object is not assigned to
      *                                              the provided category.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public void decreaseObjectOrder(final CcmObject object,
                                     final Category category)
         throws ObjectNotAssignedToCategoryException {
-        // TODO implement method
-        throw new UnsupportedOperationException();
+
+        if (object == null) {
+            throw new IllegalArgumentException("The object can't be null.");
+        }
+
+        if (category == null) {
+            throw new IllegalArgumentException("The category can't be null");
+        }
+
+        final Categorization categorization;
+        final Categorization prevCategorization;
+
+        Categorization current = null;
+        int index = 0;
+        final List<Categorization> objects = new ArrayList<>(category
+            .getObjects());
+        objects.sort((o1, o2) -> {
+            return Long.compare(o1.getObjectOrder(), o2.getObjectOrder());
+        });
+        while (index < objects.size()) {
+            current = objects.get(index);
+            if (current.getCategorizedObject().equals(object)) {
+                break;
+            }
+            index++;
+        }
+
+        categorization = current;
+        if ((index - 1) >= 0) {
+            prevCategorization = objects.get(index - 1);
+        } else {
+            //No previous object, returning silently.
+            return;
+        }
+
+        if (categorization == null) {
+            //Object is not part of the category.
+            throw new ObjectNotAssignedToCategoryException(String.format(
+                "The object %s is not assigned to the category %s (UUID: %s).",
+                object.getUuid(),
+                category.getName(),
+                category.getUuid()));
+        }
+
+        final long order = categorization.getObjectOrder();
+        final long prevOrder = prevCategorization.getObjectOrder();
+
+        categorization.setObjectOrder(prevOrder);
+        prevCategorization.setObjectOrder(order);
+
+        categoryRepo.save(category);
     }
 
     /**
@@ -229,14 +330,13 @@ public class CategoryManager {
      *                                              assigned to the provided
      *                                              category.
      */
-    public void swapObjects(final CcmObject objectA,
-                            final CcmObject objectB,
-                            final Category category)
-        throws ObjectNotAssignedToCategoryException {
-        // TODO implement method
-        throw new UnsupportedOperationException();
-    }
-
+//    public void swapObjects(final CcmObject objectA,
+//                            final CcmObject objectB,
+//                            final Category category)
+//        throws ObjectNotAssignedToCategoryException {
+//        // TODO implement method
+//        throw new UnsupportedOperationException();
+//    }
     /**
      * Adds a category as an subcategory to another category. If the category is
      * assigned to another category that association is removed.
@@ -246,20 +346,25 @@ public class CategoryManager {
      * @param parentCategory The category to which the category is added as
      *                       subcategory. Can't be {@code null}.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public void addSubCategoryToCategory(final Category subCategory,
                                          final Category parentCategory) {
-        if (subCategory.getParentCategory() != null) {
-            final Category oldParent = subCategory.getParentCategory();
-            removeSubCategoryFromCategory(subCategory, oldParent);
+        final Category sub = categoryRepo.findById(subCategory.getObjectId());
+        final Category parent = categoryRepo.findById(parentCategory
+            .getObjectId());
+
+        if (sub.getParentCategory() != null) {
+            final Category oldParent = sub.getParentCategory();
+            removeSubCategoryFromCategory(sub, oldParent);
         }
 
-        final int order = parentCategory.getCategories().size() + 1;
-        parentCategory.addSubCategory(subCategory);
-        subCategory.setParentCategory(parentCategory);
-        subCategory.setCategoryOrder(order);
+        final int order = parent.getSubCategories().size() + 1;
+        parent.addSubCategory(sub);
+        sub.setParentCategory(parent);
+        sub.setCategoryOrder(order);
 
-        categoryRepo.save(parentCategory);
-        categoryRepo.save(subCategory);
+        categoryRepo.save(parent);
+        categoryRepo.save(sub);
     }
 
     /**
@@ -275,6 +380,7 @@ public class CategoryManager {
      *                                  assigned to the provided parent
      *                                  category.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public void removeSubCategoryFromCategory(final Category subCategory,
                                               final Category parentCategory) {
 
@@ -314,10 +420,59 @@ public class CategoryManager {
      *                                  subcategory of the provided parent
      *                                  category.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public void increaseCategoryOrder(final Category subCategory,
                                       final Category parentCategory) {
-        // TODO implement method
-        throw new UnsupportedOperationException();
+
+        if (parentCategory == null) {
+            throw new IllegalArgumentException("parentCategory can't be null.");
+        }
+
+        if (subCategory == null) {
+            throw new IllegalArgumentException("subCategory can't be null.");
+        }
+
+        boolean found = false;
+        int index = 0;
+        final List<Category> subCategories = new ArrayList<>(parentCategory
+            .getSubCategories());
+        subCategories.sort((c1, c2) -> {
+            return Long.compare(c1.getCategoryOrder(), c2.getCategoryOrder());
+        });
+        while (index < subCategories.size()) {
+            if (subCategories.get(index).equals(subCategory)) {
+                found = true;
+                break;
+            }
+            index++;
+        }
+
+        if (!found) {
+            throw new IllegalArgumentException(String.format(
+                "The category %s (UUID: %s) is not a subcategory of the "
+                    + "category %s (UUID: %s)",
+                subCategory.getName(),
+                subCategory.getUuid(),
+                parentCategory.getName(),
+                parentCategory.getUuid()));
+        }
+
+        final Category nextCategory;
+        if ((index + 1) < subCategories.size()) {
+            nextCategory = subCategories.get(index + 1);
+        } else {
+            //No next category, returning sliently.
+            return;
+        }
+
+        final long order = subCategory.getCategoryOrder();
+        final long nextOrder = nextCategory.getCategoryOrder();
+
+        subCategory.setCategoryOrder(nextOrder);
+        nextCategory.setCategoryOrder(order);
+
+        categoryRepo.save(subCategory);
+        categoryRepo.save(nextCategory);
     }
 
     /**
@@ -337,8 +492,56 @@ public class CategoryManager {
      */
     public void decreaseCategoryOrder(final Category subCategory,
                                       final Category parentCategory) {
-        // TODO implement method
-        throw new UnsupportedOperationException();
+
+        if (parentCategory == null) {
+            throw new IllegalArgumentException("parentCategory can't be null.");
+        }
+
+        if (subCategory == null) {
+            throw new IllegalArgumentException("subCategory can't be null.");
+        }
+
+        boolean found = false;
+        int index = 0;
+        final List<Category> subCategories = new ArrayList<>(parentCategory
+            .getSubCategories());
+        subCategories.sort((c1, c2) -> {
+            return Long.compare(c1.getCategoryOrder(), c2.getCategoryOrder());
+        });
+        while (index < subCategories.size()) {
+            if (subCategories.get(index).equals(subCategory)) {
+                found = true;
+                break;
+            }
+            index++;
+        }
+
+        if (!found) {
+            throw new IllegalArgumentException(String.format(
+                "The category %s (UUID: %s) is not a subcategory of the "
+                    + "category %s (UUID: %s)",
+                subCategory.getName(),
+                subCategory.getUuid(),
+                parentCategory.getName(),
+                parentCategory.getUuid()));
+        }
+
+        final Category prevCategory;
+        if ((index - 1) >= 0) {
+            prevCategory = subCategories.get(index - 1);
+        } else {
+            //No previous object, returning silently
+            return;
+        }
+
+        final long order = subCategory.getCategoryOrder();
+        final long prevOrder = prevCategory.getCategoryOrder();
+
+        subCategory.setCategoryOrder(prevOrder);
+        prevCategory.setCategoryOrder(order);
+
+        categoryRepo.save(subCategory);
+        categoryRepo.save(prevCategory);
     }
 
     /**
@@ -353,11 +556,10 @@ public class CategoryManager {
      *                                  subcategories of the provided parent
      *                                  category.qq
      */
-    public void swapCategories(final Category subCategoryA,
-                               final Category subCategoryB,
-                               final Category parentCategory) {
-        // TODO implement method
-        throw new UnsupportedOperationException();
-    }
-
+//    public void swapCategories(final Category subCategoryA,
+//                               final Category subCategoryB,
+//                               final Category parentCategory) {
+//        // TODO implement method
+//        throw new UnsupportedOperationException();
+//    }
 }

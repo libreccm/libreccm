@@ -61,6 +61,7 @@ class DomainForm extends Form {
     public DomainForm(
         final CategoriesTab categoriesTab,
         final ParameterSingleSelectionModel<String> selectedDomainId) {
+        
         super("domainForm");
 
         this.selectedDomainId = selectedDomainId;

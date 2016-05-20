@@ -58,39 +58,56 @@ class DomainDetails extends SegmentedPanel {
     private final DomainDescriptionAddForm domainDescriptionAddForm;
 
     public DomainDetails(
-            final CategoriesTab categoriesTab,
-            final ParameterSingleSelectionModel<String> selectedDomainId,
-            final ParameterSingleSelectionModel<String> selectedLanguage) {
+        final CategoriesTab categoriesTab,
+        final ParameterSingleSelectionModel<String> selectedDomainId,
+        final ParameterSingleSelectionModel<String> selectedLanguage) {
 
         this.categoriesTab = categoriesTab;
         this.selectedDomainId = selectedDomainId;
         this.selectedLanguage = selectedLanguage;
 
         final ActionLink backLink = new ActionLink(new GlobalizedMessage(
-                "ui.admin.categories.domain_details.back", ADMIN_BUNDLE));
+            "ui.admin.categories.domain_details.back", ADMIN_BUNDLE));
         backLink.addActionListener(e -> {
             final PageState state = e.getPageState();
             categoriesTab.hideDomainDetails(state);
         });
         addSegment("domain-details-back", backLink);
 
+        final Label heading = new Label(e -> {
+            final PageState state = e.getPageState();
+            final Label target = (Label) e.getTarget();
+
+            final DomainRepository domainRepository = CdiUtil.createCdiUtil()
+                .findBean(DomainRepository.class);
+            final Domain domain = domainRepository.findById(Long.parseLong(
+                selectedDomainId.getSelectedKey(state)));
+
+            target.setLabel(new GlobalizedMessage(
+                "ui.admin.categories.domain.details.heading",
+                ADMIN_BUNDLE,
+                new String[]{domain.getDomainKey()}));
+        });
+        heading.setClassAttr("heading");
+        add(heading);
+
         final BoxPanel propertiesPanel = new BoxPanel(BoxPanel.VERTICAL);
         propertiesPanel.add(new PropertySheet(
-                new DomainPropertySheetModelBuilder(selectedDomainId)));
+            new DomainPropertySheetModelBuilder(selectedDomainId)));
         final ActionLink editBasicPropertiesLink = new ActionLink(
-                new GlobalizedMessage(
-                        "ui.admin.categories.domain_details.basic_properties.edit",
-                        ADMIN_BUNDLE));
+            new GlobalizedMessage(
+                "ui.admin.categories.domain_details.basic_properties.edit",
+                ADMIN_BUNDLE));
         editBasicPropertiesLink.addActionListener(e -> {
             final PageState state = e.getPageState();
             categoriesTab.showDomainForm(state);
         });
         propertiesPanel.add(editBasicPropertiesLink);
         addSegment(
-                new Label(new GlobalizedMessage(
-                        "ui.admin.categories.domain_details.basic_properties",
-                        ADMIN_BUNDLE)),
-                propertiesPanel);
+            new Label(new GlobalizedMessage(
+                "ui.admin.categories.domain_details.basic_properties",
+                ADMIN_BUNDLE)),
+            propertiesPanel);
 
         final BoxPanel titlesPanel = new BoxPanel(BoxPanel.VERTICAL);
         titlesPanel.add(new DomainTitleTable(categoriesTab,
@@ -99,10 +116,10 @@ class DomainDetails extends SegmentedPanel {
         domainTitleAddForm = new DomainTitleAddForm();
         titlesPanel.add(domainTitleAddForm);
         addSegment(
-                new Label(new GlobalizedMessage(
-                        "ui.admin.categories.domain_details.domain_title",
-                        ADMIN_BUNDLE)),
-                titlesPanel);
+            new Label(new GlobalizedMessage(
+                "ui.admin.categories.domain_details.domain_title",
+                ADMIN_BUNDLE)),
+            titlesPanel);
 
         final BoxPanel descPanel = new BoxPanel(BoxPanel.VERTICAL);
         descPanel.add(new DomainDescriptionTable(categoriesTab,
@@ -111,20 +128,20 @@ class DomainDetails extends SegmentedPanel {
         domainDescriptionAddForm = new DomainDescriptionAddForm();
         descPanel.add(domainDescriptionAddForm);
         addSegment(
-                new Label(new GlobalizedMessage(
-                        "ui.admin.categories.domain_details.description",
-                        ADMIN_BUNDLE)),
-                descPanel);
+            new Label(new GlobalizedMessage(
+                "ui.admin.categories.domain_details.description",
+                ADMIN_BUNDLE)),
+            descPanel);
 
         final BoxPanel mappingsPanel = new BoxPanel(BoxPanel.VERTICAL);
         mappingsPanel.add(new DomainMappingsTable(categoriesTab,
                                                   selectedDomainId));
         mappingsPanel.add(new DomainMappingAddForm(selectedDomainId));
         addSegment(
-                new Label(new GlobalizedMessage(
-                        "ui.admin.categories.domain_details.mappings",
-                        ADMIN_BUNDLE)),
-                mappingsPanel);
+            new Label(new GlobalizedMessage(
+                "ui.admin.categories.domain_details.mappings",
+                ADMIN_BUNDLE)),
+            mappingsPanel);
     }
 
     private class DomainTitleAddForm extends Form {
@@ -135,21 +152,21 @@ class DomainDetails extends SegmentedPanel {
             super("domainAddTitleLang", new BoxPanel(BoxPanel.HORIZONTAL));
 
             final SingleSelect titleSelectLang = new SingleSelect(
-                    TITLE_SELECT_LANG);
+                TITLE_SELECT_LANG);
             titleSelectLang.setLabel(new GlobalizedMessage(
-                    "ui.admin.categories.domain_details.domain_title.add.label",
-                    ADMIN_BUNDLE));
+                "ui.admin.categories.domain_details.domain_title.add.label",
+                ADMIN_BUNDLE));
             try {
                 titleSelectLang.addPrintListener(e -> {
                     final PageState state = e.getPageState();
 
                     final DomainRepository domainRepository = CdiUtil
-                            .createCdiUtil().findBean(DomainRepository.class);
+                        .createCdiUtil().findBean(DomainRepository.class);
                     final Domain domain = domainRepository.findById(Long
-                            .parseLong(selectedDomainId.getSelectedKey(state)));
+                        .parseLong(selectedDomainId.getSelectedKey(state)));
                     final KernelConfig kernelConfig = KernelConfig.getConfig();
                     final Set<String> supportedLanguages = kernelConfig
-                            .getSupportedLanguages();
+                        .getSupportedLanguages();
                     final Set<String> assignedLanguages = new HashSet<>();
                     domain.getTitle().getAvailableLocales().forEach(l -> {
                         assignedLanguages.add(l.toString());
@@ -171,8 +188,8 @@ class DomainDetails extends SegmentedPanel {
 
             add(titleSelectLang);
             add(new Submit(new GlobalizedMessage(
-                    "ui.admin.categories.domain_details.domain_title.add.submit",
-                    ADMIN_BUNDLE)));
+                "ui.admin.categories.domain_details.domain_title.add.submit",
+                ADMIN_BUNDLE)));
 
             addProcessListener(e -> {
                 final PageState state = e.getPageState();
@@ -189,13 +206,13 @@ class DomainDetails extends SegmentedPanel {
         public boolean isVisible(final PageState state) {
             if (super.isVisible(state)) {
                 final DomainRepository domainRepository = CdiUtil
-                        .createCdiUtil().findBean(DomainRepository.class);
+                    .createCdiUtil().findBean(DomainRepository.class);
                 final Domain domain = domainRepository.findById(Long
-                        .parseLong(
-                                selectedDomainId.getSelectedKey(state)));
+                    .parseLong(
+                        selectedDomainId.getSelectedKey(state)));
                 final KernelConfig kernelConfig = KernelConfig.getConfig();
                 final Set<String> supportedLanguages = kernelConfig
-                        .getSupportedLanguages();
+                    .getSupportedLanguages();
                 final Set<String> assignedLanguages = new HashSet<>();
                 domain.getTitle().getAvailableLocales().forEach(l -> {
                     assignedLanguages.add(l.toString());
@@ -219,22 +236,22 @@ class DomainDetails extends SegmentedPanel {
             super("domainAddDescLang", new BoxPanel(BoxPanel.HORIZONTAL));
 
             final SingleSelect descSelectLang = new SingleSelect(
-                    DESC_SELECT_LANG);
+                DESC_SELECT_LANG);
             descSelectLang.setLabel(new GlobalizedMessage(
-                    "ui.admin.categories.domain_details.domain_desc.add.label",
-                    ADMIN_BUNDLE));
+                "ui.admin.categories.domain_details.domain_desc.add.label",
+                ADMIN_BUNDLE));
             try {
                 descSelectLang.addPrintListener(e -> {
                     final PageState state = e.getPageState();
 
                     final DomainRepository domainRepository = CdiUtil
-                            .createCdiUtil().findBean(DomainRepository.class);
+                        .createCdiUtil().findBean(DomainRepository.class);
                     final Domain domain = domainRepository.findById(Long
-                            .parseLong(
-                                    selectedDomainId.getSelectedKey(state)));
+                        .parseLong(
+                            selectedDomainId.getSelectedKey(state)));
                     final KernelConfig kernelConfig = KernelConfig.getConfig();
                     final Set<String> supportedLanguages = kernelConfig
-                            .getSupportedLanguages();
+                        .getSupportedLanguages();
                     final Set<String> assignedLanguages = new HashSet<>();
                     domain.getDescription().getAvailableLocales().forEach(l -> {
                         assignedLanguages.add(l.toString());
@@ -256,8 +273,8 @@ class DomainDetails extends SegmentedPanel {
 
             add(descSelectLang);
             add(new Submit(new GlobalizedMessage(
-                    "ui.admin.categories.domain_details.domain_desc.add.submit",
-                    ADMIN_BUNDLE)));
+                "ui.admin.categories.domain_details.domain_desc.add.submit",
+                ADMIN_BUNDLE)));
 
             addProcessListener(e -> {
                 final PageState state = e.getPageState();
@@ -275,13 +292,13 @@ class DomainDetails extends SegmentedPanel {
         public boolean isVisible(final PageState state) {
             if (super.isVisible(state)) {
                 final DomainRepository domainRepository = CdiUtil
-                        .createCdiUtil().findBean(DomainRepository.class);
+                    .createCdiUtil().findBean(DomainRepository.class);
                 final Domain domain = domainRepository.findById(Long
-                        .parseLong(
-                                selectedDomainId.getSelectedKey(state)));
+                    .parseLong(
+                        selectedDomainId.getSelectedKey(state)));
                 final KernelConfig kernelConfig = KernelConfig.getConfig();
                 final Set<String> supportedLanguages = kernelConfig
-                        .getSupportedLanguages();
+                    .getSupportedLanguages();
                 final Set<String> assignedLanguages = new HashSet<>();
                 domain.getDescription().getAvailableLocales().forEach(l -> {
                     assignedLanguages.add(l.toString());
@@ -295,5 +312,7 @@ class DomainDetails extends SegmentedPanel {
                 return false;
             }
         }
+
     }
+
 }

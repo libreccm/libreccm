@@ -33,7 +33,10 @@ import static com.arsdigita.ui.admin.AdminUiConstants.*;
 public class CategoryPropertySheetModel implements PropertySheetModel {
 
     private static enum CategoryProperty {
-        NAME
+        NAME,
+        ENABLED,
+        VISIBLE,
+        ABSTRACT
     }
 
     private final Category selectedCategory;
@@ -84,9 +87,15 @@ public class CategoryPropertySheetModel implements PropertySheetModel {
         switch (currentProperty) {
             case NAME:
                 return selectedCategory.getName();
+            case ENABLED:
+                return Boolean.toString(selectedCategory.isEnabled());
+            case VISIBLE:
+                return Boolean.toString(selectedCategory.isVisible());
+            case ABSTRACT:
+                return Boolean.toString(selectedCategory.isAbstractCategory());
             default:
                 return "";
         }
     }
-
+    
 }
