@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package com.arsdigita.ui.admin;
+package com.arsdigita.ui.admin.applications;
 
 import org.libreccm.web.ApplicationCreator;
 import org.libreccm.web.ApplicationRepository;
@@ -26,7 +26,7 @@ import org.libreccm.web.CcmApplication;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
-import static com.arsdigita.ui.admin.AdminConstants.*;
+import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
  *

@@ -16,34 +16,36 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package com.arsdigita.ui.login;
+package com.arsdigita.ui.admin.applications;
 
 import java.util.UUID;
-import org.libreccm.modules.InstallEvent;
-import org.libreccm.web.AbstractCcmApplicationSetup;
-import org.libreccm.web.CcmApplication;
 
+import org.libreccm.modules.InstallEvent;
+import org.libreccm.web.CcmApplication;
+import org.libreccm.web.AbstractCcmApplicationSetup;
+
+import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class LoginApplicationSetup extends AbstractCcmApplicationSetup {
+public class AdminApplicationSetup extends AbstractCcmApplicationSetup {
 
-    public static final String LOGIN_APP_NAME = "Login";
+    public static final String ADMIN_APP_NAME = "CcmAdmin";
 
-    public LoginApplicationSetup(final InstallEvent event) {
+    public AdminApplicationSetup(final InstallEvent event) {
         super(event);
     }
 
     @Override
     public void setup() {
-        final CcmApplication login = new CcmApplication();
-        login.setUuid(UUID.randomUUID().toString());
-        login.setApplicationType(LoginConstants.LOGIN_APP_TYPE);
-        login.setPrimaryUrl(LoginConstants.LOGIN_PAGE_URL);
+        final CcmApplication admin = new CcmApplication();
+        admin.setUuid(UUID.randomUUID().toString());
+        admin.setApplicationType(ADMIN_APP_TYPE);
+        admin.setPrimaryUrl(ADMIN_PAGE_URL);
 
-        getEntityManager().persist(login);
+        getEntityManager().persist(admin);
     }
 
 }

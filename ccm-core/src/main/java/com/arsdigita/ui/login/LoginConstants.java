@@ -26,6 +26,8 @@ import com.arsdigita.globalization.GlobalizedMessage;
  */
 public interface LoginConstants {
 
+    public static final String LOGIN_APP_TYPE = "com.arsdigita.ui.Login";
+    
     public static final String LOGIN_BUNDLE
                                = "com.arsdigita.ui.login.LoginResources";
 

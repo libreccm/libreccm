@@ -19,8 +19,9 @@
 package com.arsdigita.ui.admin.applications;
 
 import com.arsdigita.bebop.Form;
-import com.arsdigita.ui.admin.ApplicationsAdministrationTab;
+
 import java.util.ServiceLoader;
+
 import org.libreccm.web.CcmApplication;
 
 /**

@@ -16,34 +16,41 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package com.arsdigita.ui.login;
+package com.arsdigita.ui.admin.applications;
 
-import java.util.UUID;
-import org.libreccm.modules.InstallEvent;
-import org.libreccm.web.AbstractCcmApplicationSetup;
+import com.arsdigita.bebop.tree.TreeNode;
+
+import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.web.CcmApplication;
-
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class LoginApplicationSetup extends AbstractCcmApplicationSetup {
+public class ApplicationInstanceTreeNode implements TreeNode {
 
-    public static final String LOGIN_APP_NAME = "Login";
+    private final CcmApplication application;
 
-    public LoginApplicationSetup(final InstallEvent event) {
-        super(event);
+    public ApplicationInstanceTreeNode(final CcmApplication application) {
+        this.application = application;
     }
 
     @Override
-    public void setup() {
-        final CcmApplication login = new CcmApplication();
-        login.setUuid(UUID.randomUUID().toString());
-        login.setApplicationType(LoginConstants.LOGIN_APP_TYPE);
-        login.setPrimaryUrl(LoginConstants.LOGIN_PAGE_URL);
+    public Object getKey() {
+        return application.getObjectId();
+    }
 
-        getEntityManager().persist(login);
+    @Override
+    public Object getElement() {
+        final GlobalizationHelper globalizationHelper = CdiUtil.createCdiUtil()
+            .findBean(GlobalizationHelper.class);
+        return application.getTitle().getValue(globalizationHelper
+            .getNegotiatedLocale());
+    }
+    
+    public CcmApplication getApplication() {
+        return application;
     }
 
 }

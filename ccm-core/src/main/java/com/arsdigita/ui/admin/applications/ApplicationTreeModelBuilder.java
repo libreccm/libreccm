@@ -16,34 +16,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package com.arsdigita.ui.login;
+package com.arsdigita.ui.admin.applications;
 
-import java.util.UUID;
-import org.libreccm.modules.InstallEvent;
-import org.libreccm.web.AbstractCcmApplicationSetup;
-import org.libreccm.web.CcmApplication;
-
+import com.arsdigita.bebop.PageState;
+import com.arsdigita.bebop.Tree;
+import com.arsdigita.bebop.tree.TreeModel;
+import com.arsdigita.bebop.tree.TreeModelBuilder;
+import com.arsdigita.util.LockableImpl;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class LoginApplicationSetup extends AbstractCcmApplicationSetup {
-
-    public static final String LOGIN_APP_NAME = "Login";
-
-    public LoginApplicationSetup(final InstallEvent event) {
-        super(event);
-    }
+public class ApplicationTreeModelBuilder 
+    extends LockableImpl implements TreeModelBuilder {
 
     @Override
-    public void setup() {
-        final CcmApplication login = new CcmApplication();
-        login.setUuid(UUID.randomUUID().toString());
-        login.setApplicationType(LoginConstants.LOGIN_APP_TYPE);
-        login.setPrimaryUrl(LoginConstants.LOGIN_PAGE_URL);
-
-        getEntityManager().persist(login);
+    public TreeModel makeModel(final Tree tree, 
+                               final PageState state) {
+        tree.expand("-1", state);
+        return new ApplicationTreeModel();
     }
-
+    
+    
+    
 }

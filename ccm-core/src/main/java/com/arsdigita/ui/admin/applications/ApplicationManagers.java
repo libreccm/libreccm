@@ -16,9 +16,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  */
-package com.arsdigita.ui.admin;
+package com.arsdigita.ui.admin.applications;
 
-import com.arsdigita.ui.admin.applications.ApplicationManager;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;

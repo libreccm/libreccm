@@ -26,9 +26,9 @@ import org.libreccm.web.ApplicationType;
  * Tree Node implementation for the Application Tree in the Application admin tab.
  *
  * @author Jens Pelzetter <jens@jp-digital.de>
- * @version $Id: ApplicationTypeTreeNode.java 2282 2013-08-01 10:45:42Z jensp $
+ * @version $Id: LegacyApplicationTypeTreeNode.java 2282 2013-08-01 10:45:42Z jensp $
  */
-public class ApplicationTypeTreeNode implements TreeNode {
+public class LegacyApplicationTypeTreeNode implements TreeNode {
 
     private final String name;
     private final String objectType;
@@ -38,7 +38,7 @@ public class ApplicationTypeTreeNode implements TreeNode {
     // isSingleton
     // getObjectType
 
-    public ApplicationTypeTreeNode(final ApplicationType applicationType) {
+    public LegacyApplicationTypeTreeNode(final ApplicationType applicationType) {
         //this.applicationType = applicationType;
         name = applicationType.name();
         objectType = applicationType.name();

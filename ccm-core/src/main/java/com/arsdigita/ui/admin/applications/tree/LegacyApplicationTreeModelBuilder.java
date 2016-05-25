@@ -22,7 +22,7 @@ import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.Tree;
 import com.arsdigita.bebop.tree.TreeModel;
 import com.arsdigita.bebop.tree.TreeModelBuilder;
-import com.arsdigita.ui.admin.ApplicationsAdministrationTab;
+import com.arsdigita.ui.admin.applications.ApplicationsAdministrationTab;
 import com.arsdigita.util.LockableImpl;
 
 /**
@@ -30,15 +30,15 @@ import com.arsdigita.util.LockableImpl;
  * applications tree used in {@link ApplicationsAdministrationTab}.
  *
  * @author Jens Pelzetter <jens@jp-digital.de>
- * @version $Id: ApplicationTreeModelBuilder.java 2294 2013-08-05 18:39:46Z
- * jensp $
+ * @version $Id: LegacyApplicationTreeModelBuilder.java 2294 2013-08-05 18:39:46Z
+ jensp $
  */
-public class ApplicationTreeModelBuilder extends LockableImpl
+public class LegacyApplicationTreeModelBuilder extends LockableImpl
         implements TreeModelBuilder {
 
     @Override
     public TreeModel makeModel(final Tree tree, final PageState state) {
         tree.expand("-1", state);
-        return new ApplicationTreeModel();
+        return new LegacyApplicationTreeModel();
     }
 }

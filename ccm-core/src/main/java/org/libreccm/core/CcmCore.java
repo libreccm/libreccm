@@ -18,12 +18,14 @@
  */
 package org.libreccm.core;
 
-import com.arsdigita.ui.admin.AdminApplicationCreator;
+import com.arsdigita.ui.admin.applications.AdminApplicationCreator;
 import com.arsdigita.ui.admin.AdminServlet;
-import com.arsdigita.ui.admin.AdminApplicationSetup;
+import com.arsdigita.ui.admin.AdminUiConstants;
+import com.arsdigita.ui.admin.applications.AdminApplicationSetup;
 import com.arsdigita.ui.login.LoginApplicationCreator;
 import com.arsdigita.ui.login.LoginServlet;
 import com.arsdigita.ui.login.LoginApplicationSetup;
+import com.arsdigita.ui.login.LoginConstants;
 
 import org.libreccm.modules.CcmModule;
 import org.libreccm.modules.InitEvent;
@@ -40,12 +42,12 @@ import org.libreccm.web.ApplicationType;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Module(applicationTypes = {
-    @ApplicationType(name = LoginApplicationSetup.LOGIN_APP_NAME,
+    @ApplicationType(name = LoginConstants.LOGIN_APP_TYPE,
                      description = "Login Application",
                      singleton = true,
                      creator = LoginApplicationCreator.class,
                      servlet = LoginServlet.class),
-    @ApplicationType(name = AdminApplicationSetup.ADMIN_APP_NAME,
+    @ApplicationType(name = AdminUiConstants.ADMIN_APP_TYPE,
                      description = "Site-wide admin application",
                      singleton = true,
                      creator = AdminApplicationCreator.class,

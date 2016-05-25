@@ -21,7 +21,7 @@ package com.arsdigita.ui.admin.applications.tree;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.tree.TreeModel;
 import com.arsdigita.bebop.tree.TreeNode;
-import com.arsdigita.ui.admin.ApplicationsAdministrationTab;
+import com.arsdigita.ui.admin.applications.ApplicationsAdministrationTab;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -40,11 +40,11 @@ import org.libreccm.web.CcmApplication;
  * {@link CCmApplication} instances.
  *
  * @author Jens Pelzetter <jens@jp-digital.de>
- * @version $Id: ApplicationTreeModel.java 2406 2013-10-31 19:52:22Z jensp $
+ * @version $Id: LegacyApplicationTreeModel.java 2406 2013-10-31 19:52:22Z jensp $
  */
-public class ApplicationTreeModel implements TreeModel {
+public class LegacyApplicationTreeModel implements TreeModel {
 
-    public ApplicationTreeModel() {
+    public LegacyApplicationTreeModel() {
         //Nothing        
     }
 
@@ -57,9 +57,9 @@ public class ApplicationTreeModel implements TreeModel {
     public boolean hasChildren(final TreeNode node, final PageState state) {
         if (node instanceof RootTreeNode) {
             return true;
-        } else if (node instanceof ApplicationTypeTreeNode) {
-            final ApplicationTypeTreeNode typeTreeNode
-                                              = (ApplicationTypeTreeNode) node;
+        } else if (node instanceof LegacyApplicationTypeTreeNode) {
+            final LegacyApplicationTypeTreeNode typeTreeNode
+                                              = (LegacyApplicationTypeTreeNode) node;
 
             //if (typeTreeNode.getApplicationType().isSingleton()) {
             if (typeTreeNode.isSingleton()) {
@@ -70,7 +70,7 @@ public class ApplicationTreeModel implements TreeModel {
                 return !retrieveApplicationInstances(typeTreeNode.getObjecType())
                     .isEmpty();
             }
-        } else if (node instanceof ApplicationInstanceTreeNode) {
+        } else if (node instanceof LegacyApplicationInstanceTreeNode) {
             return false;
         } else {
             throw new IllegalArgumentException(
@@ -89,9 +89,9 @@ public class ApplicationTreeModel implements TreeModel {
                 .getApplicationTypes().values();
 
             return new AppTypesIterator(appTypes);
-        } else if (node instanceof ApplicationTypeTreeNode) {
-            final ApplicationTypeTreeNode typeTreeNode
-                                              = (ApplicationTypeTreeNode) node;
+        } else if (node instanceof LegacyApplicationTypeTreeNode) {
+            final LegacyApplicationTypeTreeNode typeTreeNode
+                                              = (LegacyApplicationTypeTreeNode) node;
 
             final ApplicationRepository appRepo = CdiUtil.createCdiUtil()
                 .findBean(ApplicationRepository.class);
@@ -100,7 +100,7 @@ public class ApplicationTreeModel implements TreeModel {
                 typeTreeNode.getObjecType());
 
             return new AppIterator(applications);
-        } else if (node instanceof ApplicationInstanceTreeNode) {
+        } else if (node instanceof LegacyApplicationInstanceTreeNode) {
             return null;
         } else {
             throw new IllegalArgumentException(
@@ -143,7 +143,7 @@ public class ApplicationTreeModel implements TreeModel {
 
     }
 
-    private class AppTypesIterator implements Iterator<ApplicationTypeTreeNode> {
+    private class AppTypesIterator implements Iterator<LegacyApplicationTypeTreeNode> {
 
         private final Iterator<ApplicationType> appTypes;
 
@@ -157,8 +157,8 @@ public class ApplicationTreeModel implements TreeModel {
         }
 
         @Override
-        public ApplicationTypeTreeNode next() {
-            return new ApplicationTypeTreeNode(appTypes.next());
+        public LegacyApplicationTypeTreeNode next() {
+            return new LegacyApplicationTypeTreeNode(appTypes.next());
         }
 
         @Override
@@ -168,7 +168,7 @@ public class ApplicationTreeModel implements TreeModel {
 
     }
 
-    private class AppIterator implements Iterator<ApplicationInstanceTreeNode> {
+    private class AppIterator implements Iterator<LegacyApplicationInstanceTreeNode> {
 
         private final Iterator<CcmApplication> applications;
 
@@ -182,8 +182,8 @@ public class ApplicationTreeModel implements TreeModel {
         }
 
         @Override
-        public ApplicationInstanceTreeNode next() {
-            return new ApplicationInstanceTreeNode(applications.next());
+        public LegacyApplicationInstanceTreeNode next() {
+            return new LegacyApplicationInstanceTreeNode(applications.next());
         }
 
         @Override

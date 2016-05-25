@@ -22,27 +22,31 @@ import com.arsdigita.bebop.Form;
 
 import org.libreccm.web.CcmApplication;
 
-
 /**
- * An abstract class providing a default implementation of {@link ApplicationManager#getApplicationCreateForm()}.
- * 
- * @param <T> Type of the application for which this ApplicationManager provides the administration forms.
- * 
+ * An abstract class providing a default implementation of
+ * {@link ApplicationManager#getApplicationCreateForm()}.
+ *
+ * @param <T> Type of the application for which this ApplicationManager provides
+ *            the administration forms.
+ *
  * @author Jens Pelzetter <jens@jp-digital.de>
- * @version $Id$
+ * @version $Id: AbstractSingletonApplicationManager.java 3703 2015-10-21
+ * 08:52:39Z jensp $
  */
-public abstract class AbstractSingletonApplicationManager<T extends CcmApplication> implements ApplicationManager<T>{
-      
+public abstract class AbstractSingletonApplicationManager<T extends CcmApplication>
+    implements ApplicationManager<T> {
+
     /**
-     * Implementation of {@link ApplicationManager#getApplicationCreateForm()} 
+     * Implementation of {@link ApplicationManager#getApplicationCreateForm()}
      * for singleton applications.
-     * 
-     * @return {@code} null because it is not possible to create instances
-     * of singleton applications.
+     *
+     * @return {@code} null because it is not possible to create instances of
+     *         singleton applications.
      */
     @SuppressWarnings("PMD.EmptyMethodInAbstractClassShouldBeAbstract")
     @Override
     public final Form getApplicationCreateForm() {
         return null;
-    }                
+    }
+
 }

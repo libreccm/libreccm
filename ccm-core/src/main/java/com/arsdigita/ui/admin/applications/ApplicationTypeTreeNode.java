@@ -16,37 +16,36 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package com.arsdigita.ui.admin;
+package com.arsdigita.ui.admin.applications;
 
-import java.util.UUID;
-import org.libreccm.modules.InstallEvent;
-import org.libreccm.web.CcmApplication;
-import org.libreccm.web.AbstractCcmApplicationSetup;
+import com.arsdigita.bebop.tree.TreeNode;
 
-import javax.persistence.EntityManager;
+import org.libreccm.web.ApplicationType;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class AdminApplicationSetup extends AbstractCcmApplicationSetup {
-    
-    public static final String ADMIN_APP_NAME = "CcmAdmin";
-    
-    public AdminApplicationSetup(final InstallEvent event) {
-        super(event);
+public class ApplicationTypeTreeNode implements TreeNode {
+
+    private final ApplicationType applicationType;
+
+    public ApplicationTypeTreeNode(final ApplicationType applicationType) {
+        this.applicationType = applicationType;
     }
 
     @Override
-    public void setup() {
-        final CcmApplication admin = new CcmApplication();
-        admin.setUuid(UUID.randomUUID().toString());
-        admin.setApplicationType(ADMIN_APP_NAME);
-        admin.setPrimaryUrl(AdminConstants.ADMIN_PAGE_URL);
-        
-        getEntityManager().persist(admin);
+    public Object getKey() {
+        return applicationType.applicationClass().getName();
     }
-    
-    
+
+    @Override
+    public Object getElement() {
+        return applicationType.name();
+    }
+
+    public ApplicationType getApplicationType() {
+        return applicationType;
+    }
     
 }

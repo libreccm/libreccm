@@ -41,9 +41,8 @@ import org.xml.sax.SAXException;
 /**
  *
  * @author Jens Pelzetter <jens@jp-digital.de>
- * @version $Id: SystemInformationTab.java 2923 2014-10-27 18:55:26Z jensp $
  */
-public class SystemInformationTab extends LayoutPanel implements AdminConstants {
+public class SystemInformationTab extends LayoutPanel {
 
     public SystemInformationTab() {
         super();
@@ -273,9 +272,7 @@ public class SystemInformationTab extends LayoutPanel implements AdminConstants 
                 case SAX_PARSER_INDEX:
                     try {
                     return SAXParserFactory.newInstance().newSAXParser().getClass().getName();
-                    } catch(ParserConfigurationException ex) {
-                        return "???";
-                    } catch(SAXException ex) {
+                    } catch(ParserConfigurationException | SAXException ex) {
                         return "???";
                     }
                 default:

@@ -16,7 +16,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  */
-package com.arsdigita.ui.admin;
+package com.arsdigita.ui.admin.applications;
 
 import com.arsdigita.bebop.BoxPanel;
 import com.arsdigita.bebop.Form;
@@ -27,14 +27,9 @@ import com.arsdigita.bebop.SimpleContainer;
 import com.arsdigita.bebop.Tree;
 import com.arsdigita.bebop.event.ChangeEvent;
 import com.arsdigita.bebop.event.ChangeListener;
+import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.toolbox.ui.LayoutPanel;
-import com.arsdigita.ui.admin.applications.ApplicationInstanceAwareContainer;
-import com.arsdigita.ui.admin.applications.ApplicationInstancePane;
-import com.arsdigita.ui.admin.applications.ApplicationManager;
-import com.arsdigita.ui.admin.applications.BaseApplicationPane;
-import com.arsdigita.ui.admin.applications.MultiInstanceApplicationPane;
-import com.arsdigita.ui.admin.applications.SingletonApplicationPane;
-import com.arsdigita.ui.admin.applications.tree.ApplicationTreeModelBuilder;
+import com.arsdigita.ui.admin.applications.tree.LegacyApplicationTreeModelBuilder;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -45,14 +40,15 @@ import org.libreccm.web.ApplicationRepository;
 import org.libreccm.web.ApplicationType;
 import org.libreccm.web.CcmApplication;
 
+import static com.arsdigita.ui.admin.AdminUiConstants.*;
+
 /**
  * A tab for managing CcmApplication and application instances.
  *
  * @author pb
  * @author Jens Pelzetter
  */
-public class ApplicationsAdministrationTab extends LayoutPanel implements
-    AdminConstants {
+public class ApplicationsAdministrationTab extends LayoutPanel {
 
     private final Tree applicationTree;
     private final Map<String, BaseApplicationPane> appPanes
@@ -71,7 +67,7 @@ public class ApplicationsAdministrationTab extends LayoutPanel implements
         setClassAttr("sidebarNavPanel");
         setAttribute("navbar-title", "Sitemap");
 
-        applicationTree = new Tree(new ApplicationTreeModelBuilder());
+        applicationTree = new Tree(new LegacyApplicationTreeModelBuilder());
         applicationTree.addChangeListener(new TreeStateChangeListener());
 
         setClassAttr("navbar");
@@ -244,8 +240,8 @@ public class ApplicationsAdministrationTab extends LayoutPanel implements
 
         public Placeholder() {
             super();
-            final Label label = new Label(GlobalizationUtil.globalize(
-                "ui.admin.applications.placeholder"));
+            final Label label = new Label(new GlobalizedMessage(
+                "ui.admin.applications.placeholder", ADMIN_BUNDLE));
             add(label);
         }
 

@@ -19,14 +19,15 @@
 package com.arsdigita.ui.admin.applications.tree;
 
 import com.arsdigita.bebop.tree.TreeNode;
-import com.arsdigita.ui.admin.ApplicationsAdministrationTab;
+import com.arsdigita.ui.admin.applications.ApplicationsAdministrationTab;
+
 import org.libreccm.web.CcmApplication;
 
 /**
  * Tree Node for the application tree representing an instance of a application.
  *
  * @author Jens Pelzetter <jens@jp-digital.de>
- * @version $Id: ApplicationInstanceTreeNode.java 2282 2013-08-01 10:45:42Z jensp $
+ * @version $Id: LegacyApplicationInstanceTreeNode.java 2282 2013-08-01 10:45:42Z jensp $
  * 
  * @see ApplicationTreeModel
  * @see ApplicationTreeModelBuilder
@@ -34,7 +35,7 @@ import org.libreccm.web.CcmApplication;
  * @see ApplicationsAdministrationTab
  * @see TreeNode
  */
-public class ApplicationInstanceTreeNode implements TreeNode {
+public class LegacyApplicationInstanceTreeNode implements TreeNode {
     
     /**
      * The application instance represented by this {@code TreeNode}
@@ -49,7 +50,7 @@ public class ApplicationInstanceTreeNode implements TreeNode {
      * 
      * @param application The application instance to represent by this {@code TreeNode}
      */
-    public ApplicationInstanceTreeNode(final CcmApplication application) {
+    public LegacyApplicationInstanceTreeNode(final CcmApplication application) {
         //this.application = application;
         path = application.getPrimaryUrl();
         title = application.getTitle().getValue();

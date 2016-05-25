@@ -16,25 +16,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package com.arsdigita.ui.admin;
+package com.arsdigita.ui.admin.applications;
 
-import com.arsdigita.bebop.Label;
+import com.arsdigita.bebop.Tree;
 import com.arsdigita.toolbox.ui.LayoutPanel;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@Deprecated
-public class CategoriesAdminTab extends LayoutPanel {
-
-    public CategoriesAdminTab() {
+public class ApplicationsTab extends LayoutPanel {
+    
+    private final Tree applicationTree;
+    
+    public ApplicationsTab() {
         super();
-
-        setLeft(new Label("Categories Admin Tab Left"));
-
-        setBody(new Label("Categories Admin Tab Body"));
-
+        
+        setClassAttr("sidebarNavPanel");
+        
+        applicationTree = new Tree(new ApplicationTreeModelBuilder());
+        
+        setLeft(applicationTree);
+        
+        
     }
-
+    
 }

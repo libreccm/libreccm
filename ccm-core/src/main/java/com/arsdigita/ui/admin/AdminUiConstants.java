@@ -28,6 +28,8 @@ import com.arsdigita.globalization.GlobalizedMessage;
  */
 public final class AdminUiConstants {
 
+    public static final String ADMIN_APP_TYPE = "com.arsdigita.ui.Admin";
+    
     /**
      * The XML namespace used by administration components.
      */
