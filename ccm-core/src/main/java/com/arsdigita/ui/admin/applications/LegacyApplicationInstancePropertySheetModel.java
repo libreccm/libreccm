@@ -29,9 +29,9 @@ import org.libreccm.web.CcmApplication;
  * using a {@link PropertySheet}.
  * 
  * @author Jens Pelzetter <jens@jp-digital.de>
- * @version $Id: ApplicationInstancePropertySheetModel.java 2923 2014-10-27 18:55:26Z jensp $
+ * @version $Id: LegacyApplicationInstancePropertySheetModel.java 2923 2014-10-27 18:55:26Z jensp $
  */
-public class ApplicationInstancePropertySheetModel implements PropertySheetModel {
+public class LegacyApplicationInstancePropertySheetModel implements PropertySheetModel {
 
     private static final int INST_TITLE = 0;
     private static final int INST_PARENT = 1;
@@ -41,7 +41,7 @@ public class ApplicationInstancePropertySheetModel implements PropertySheetModel
     private int currentIndex = -1;
     
     
-    public ApplicationInstancePropertySheetModel(final CcmApplication application) {
+    public LegacyApplicationInstancePropertySheetModel(final CcmApplication application) {
         this.application = application;
     }
 

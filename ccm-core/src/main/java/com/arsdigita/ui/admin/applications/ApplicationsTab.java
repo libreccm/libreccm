@@ -18,7 +18,10 @@
  */
 package com.arsdigita.ui.admin.applications;
 
+import com.arsdigita.bebop.Page;
+import com.arsdigita.bebop.ParameterSingleSelectionModel;
 import com.arsdigita.bebop.Tree;
+import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.toolbox.ui.LayoutPanel;
 
 /**
@@ -26,19 +29,44 @@ import com.arsdigita.toolbox.ui.LayoutPanel;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class ApplicationsTab extends LayoutPanel {
-    
+
+    private final StringParameter selectedAppTypeParam;
+    private final ParameterSingleSelectionModel<String> selectedAppType;
+
+    private final StringParameter selectedAppInstanceParam;
+    private final ParameterSingleSelectionModel<String> selectedAppInstance;
+
     private final Tree applicationTree;
-    
+
     public ApplicationsTab() {
         super();
-        
+
         setClassAttr("sidebarNavPanel");
-        
+
+        selectedAppTypeParam = new StringParameter("selectedAppType");
+        selectedAppType = new ParameterSingleSelectionModel<>(
+                selectedAppTypeParam);
+
+        selectedAppInstanceParam = new StringParameter("selectedAppInstance");
+        selectedAppInstance = new ParameterSingleSelectionModel<>(
+                selectedAppInstanceParam);
+
         applicationTree = new Tree(new ApplicationTreeModelBuilder());
-        
+        applicationTree.addChangeListener(e -> {
+
+        });
+
         setLeft(applicationTree);
-        
-        
+
     }
-    
+
+    @Override
+    public void register(final Page page) {
+        super.register(page);
+        
+        page.addGlobalStateParam(selectedAppTypeParam);
+        page.addGlobalStateParam(selectedAppInstanceParam);
+
+    }
+
 }

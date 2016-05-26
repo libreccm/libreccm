@@ -51,9 +51,9 @@ import static com.arsdigita.ui.admin.AdminUiConstants.*;
 public class ApplicationsAdministrationTab extends LayoutPanel {
 
     private final Tree applicationTree;
-    private final Map<String, BaseApplicationPane> appPanes
+    private final Map<String, LegacyBaseApplicationPane> appPanes
                                                        = new HashMap<>();
-    private final Map<String, ApplicationInstancePane> instancePanes
+    private final Map<String, LegacyApplicationInstancePane> instancePanes
                                                            = new HashMap<>();
     private final BoxPanel appPanel;
 
@@ -96,11 +96,11 @@ public class ApplicationsAdministrationTab extends LayoutPanel {
 
         appPanel = new BoxPanel();
         appPanel.setClassAttr("main");
-        for (Map.Entry<String, BaseApplicationPane> entry : appPanes.entrySet()) {
+        for (Map.Entry<String, LegacyBaseApplicationPane> entry : appPanes.entrySet()) {
             appPanel.add(entry.getValue());
         }
 
-        for (Map.Entry<String, ApplicationInstancePane> entry : instancePanes.
+        for (Map.Entry<String, LegacyApplicationInstancePane> entry : instancePanes.
             entrySet()) {
             appPanel.add(entry.getValue());
         }
@@ -114,11 +114,11 @@ public class ApplicationsAdministrationTab extends LayoutPanel {
         final String appObjectType = applicationType.name();
 
         final ApplicationManager<?> manager = appManagers.get(appObjectType);
-        final SingletonApplicationPane pane;
+        final LegacySingletonApplicationPane pane;
         if (manager == null) {
-            pane = new SingletonApplicationPane(applicationType, null);
+            pane = new LegacySingletonApplicationPane(applicationType, null);
         } else {
-            pane = new SingletonApplicationPane(
+            pane = new LegacySingletonApplicationPane(
                 applicationType, appManagers.get(appObjectType).
                 getApplicationAdminForm());
         }
@@ -138,8 +138,8 @@ public class ApplicationsAdministrationTab extends LayoutPanel {
             createForm = appManager.getApplicationCreateForm();
         }
 
-        final MultiInstanceApplicationPane<?> appPane
-                                                  = new MultiInstanceApplicationPane(
+        final LegacyMultiInstanceApplicationPane<?> appPane
+                                                  = new LegacyMultiInstanceApplicationPane(
                 applicationType, createForm);
         appPanes.put(applicationType.name(), appPane);
         createInstancePane(applicationType, appManagers);
@@ -150,11 +150,11 @@ public class ApplicationsAdministrationTab extends LayoutPanel {
         final Map<String, ApplicationManager<?>> managementForms) {
         final ApplicationManager<?> manager = managementForms.get(
             applicationType.name());
-        final ApplicationInstancePane instPane;
+        final LegacyApplicationInstancePane instPane;
         if (manager == null) {
-            instPane = new ApplicationInstancePane(new Placeholder());
+            instPane = new LegacyApplicationInstancePane(new Placeholder());
         } else {
-            instPane = new ApplicationInstancePane(managementForms.get(
+            instPane = new LegacyApplicationInstancePane(managementForms.get(
                 applicationType.name()).
                 getApplicationAdminForm());
         }
@@ -166,10 +166,10 @@ public class ApplicationsAdministrationTab extends LayoutPanel {
     public void register(final Page page) {
         super.register(page);
 
-        for (Map.Entry<String, BaseApplicationPane> entry : appPanes.entrySet()) {
+        for (Map.Entry<String, LegacyBaseApplicationPane> entry : appPanes.entrySet()) {
             page.setVisibleDefault(entry.getValue(), false);
         }
-        for (Map.Entry<String, ApplicationInstancePane> entry : instancePanes.
+        for (Map.Entry<String, LegacyApplicationInstancePane> entry : instancePanes.
             entrySet()) {
             page.setVisibleDefault(entry.getValue(), false);
         }
@@ -177,10 +177,10 @@ public class ApplicationsAdministrationTab extends LayoutPanel {
 
     private void setPaneVisible(final SimpleContainer pane,
                                 final PageState state) {
-        for (Map.Entry<String, BaseApplicationPane> entry : appPanes.entrySet()) {
+        for (Map.Entry<String, LegacyBaseApplicationPane> entry : appPanes.entrySet()) {
             entry.getValue().setVisible(state, false);
         }
-        for (Map.Entry<String, ApplicationInstancePane> entry : instancePanes.
+        for (Map.Entry<String, LegacyApplicationInstancePane> entry : instancePanes.
             entrySet()) {
             entry.getValue().setVisible(state, false);
         }
@@ -203,7 +203,7 @@ public class ApplicationsAdministrationTab extends LayoutPanel {
             if (selectedKey != null) {
                 if (selectedKey.contains(".")) {
                     // Selected key is a classname and therefore the key of an ApplicationPane
-                    final BaseApplicationPane pane = appPanes.get(selectedKey);
+                    final LegacyBaseApplicationPane pane = appPanes.get(selectedKey);
                     if (pane != null) {
                         setPaneVisible(pane, state);
                     }
@@ -216,7 +216,7 @@ public class ApplicationsAdministrationTab extends LayoutPanel {
                     final CcmApplication application = appRepo
                         .retrieveApplicationForPath(selectedKey);
 
-                    final ApplicationInstancePane pane;
+                    final LegacyApplicationInstancePane pane;
                     if (application != null) {
                         pane = instancePanes.get(application.getClass().
                             getName());

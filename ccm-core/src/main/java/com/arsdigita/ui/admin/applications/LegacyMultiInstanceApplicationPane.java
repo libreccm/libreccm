@@ -38,7 +38,7 @@ import org.libreccm.web.CcmApplication;
 
 /**
  * Pane for multi instance applications. Additional to the data provided by
- * {@link BaseApplicationPane} it shows a table of all instances of the
+ * {@link LegacyBaseApplicationPane} it shows a table of all instances of the
  * application type and a form for creating new instances of the application
  * type.
  *
@@ -46,14 +46,14 @@ import org.libreccm.web.CcmApplication;
  * @author Jens Pelzetter <jens@jp-digital.de>
  * @version $Id$
  */
-public class MultiInstanceApplicationPane<T extends CcmApplication>
-        extends BaseApplicationPane {
+public class LegacyMultiInstanceApplicationPane<T extends CcmApplication>
+        extends LegacyBaseApplicationPane {
 
     private final static int COL_TITLE = 0;
     private final static int COL_URL = 1;
     private final static int COL_DESC = 2;
 
-    public MultiInstanceApplicationPane(final ApplicationType applicationType,
+    public LegacyMultiInstanceApplicationPane(final ApplicationType applicationType,
                                         final Form createForm) {
         super(applicationType);
 

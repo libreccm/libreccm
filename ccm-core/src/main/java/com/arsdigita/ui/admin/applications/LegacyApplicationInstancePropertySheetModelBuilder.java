@@ -26,23 +26,23 @@ import com.arsdigita.util.LockableImpl;
 import org.libreccm.web.CcmApplication;
 
 /**
- * {@link PropertySheetModelBuilder} implementation for the {@link ApplicationInstancePropertySheetModel}.
+ * {@link PropertySheetModelBuilder} implementation for the {@link LegacyApplicationInstancePropertySheetModel}.
  * 
  * @author Jens Pelzetter <jens@jp-digital.de>
- * @version $Id: ApplicationInstancePropertySheetModelBuilder.java 2293 2013-08-05 11:00:18Z jensp $
+ * @version $Id: LegacyApplicationInstancePropertySheetModelBuilder.java 2293 2013-08-05 11:00:18Z jensp $
  */
-public class ApplicationInstancePropertySheetModelBuilder 
+public class LegacyApplicationInstancePropertySheetModelBuilder 
 extends LockableImpl implements PropertySheetModelBuilder {
 
     private CcmApplication application;
     
-    public ApplicationInstancePropertySheetModelBuilder() {
+    public LegacyApplicationInstancePropertySheetModelBuilder() {
         super();                
     }
     
     @Override
     public PropertySheetModel makeModel(final PropertySheet sheet, final PageState state) {
-        return new ApplicationInstancePropertySheetModel(application);
+        return new LegacyApplicationInstancePropertySheetModel(application);
     }
     
     public void setApplication(final CcmApplication application) {

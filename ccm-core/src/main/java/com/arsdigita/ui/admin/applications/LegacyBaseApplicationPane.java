@@ -18,34 +18,30 @@
  */
 package com.arsdigita.ui.admin.applications;
 
-import com.arsdigita.bebop.PageState;
+import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.PropertySheet;
-import com.arsdigita.bebop.PropertySheetModel;
-import com.arsdigita.bebop.PropertySheetModelBuilder;
-import com.arsdigita.util.LockableImpl;
+import com.arsdigita.bebop.SegmentedPanel;
+import com.arsdigita.ui.admin.GlobalizationUtil;
 import org.libreccm.web.ApplicationType;
 
 /**
- * {@link PropertySheetModelBuilder} implementation for the the {@link ApplicationInfoPropertySheetModel}.
+ * Basic application pane containing the parts common for singleton and multi instance applications types. Shows 
+ * informations about a specific application type.
  * 
  * @author Jens Pelzetter <jens@jp-digital.de>
- * @version $Id: ApplicationInfoPropertySheetModelBuilder.java 2219 2013-06-19 08:16:11Z jensp $
+ * @version $Id$
  */
-public class ApplicationInfoPropertySheetModelBuilder 
-extends LockableImpl implements PropertySheetModelBuilder {
-    
-    private final ApplicationType applicationType;
-    
-    public ApplicationInfoPropertySheetModelBuilder(
-            final ApplicationType  applicationType) {
+public class LegacyBaseApplicationPane extends SegmentedPanel {
+  
+    public LegacyBaseApplicationPane(final ApplicationType applicationType) {
         super();
-        this.applicationType = applicationType;
+        
+        final PropertySheet appInfoPanel = new PropertySheet(
+                new LegacyApplicationInfoPropertySheetModelBuilder(
+                applicationType));                      
+        addSegment(new Label(GlobalizationUtil.globalize(
+                "ui.admin.applications.ApplicationInfoSection.heading")), 
+                   appInfoPanel);
     }
-    
-    @Override
-    public PropertySheetModel makeModel(final PropertySheet sheet, 
-                                        final PageState state) {
-        return new ApplicationInfoPropertySheetModel(applicationType);
-    }
-    
+
 }

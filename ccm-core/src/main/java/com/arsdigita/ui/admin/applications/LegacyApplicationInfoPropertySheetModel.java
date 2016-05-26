@@ -35,10 +35,10 @@ import org.libreccm.web.CcmApplication;
  * {@link ApplicationType} using a {@link PropertySheet}.
  *
  * @author Jens Pelzetter <jens@jp-digital.de>
- * @version $Id: ApplicationInfoPropertySheetModel.java 2220 2013-06-19
- * 15:26:58Z jensp $
+ * @version $Id: LegacyApplicationInfoPropertySheetModel.java 2220 2013-06-19
+ 15:26:58Z jensp $
  */
-public class ApplicationInfoPropertySheetModel implements PropertySheetModel {
+public class LegacyApplicationInfoPropertySheetModel implements PropertySheetModel {
 
     private static final int APP_TITLE = 0;
     private static final int APP_CLASS = 1;
@@ -48,7 +48,7 @@ public class ApplicationInfoPropertySheetModel implements PropertySheetModel {
     private final ApplicationType applicationType;
     private int currentIndex = -1;
 
-    public ApplicationInfoPropertySheetModel(
+    public LegacyApplicationInfoPropertySheetModel(
         final ApplicationType applicationType) {
         this.applicationType = applicationType;
     }

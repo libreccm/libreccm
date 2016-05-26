@@ -29,9 +29,9 @@ import org.libreccm.web.ApplicationType;
  * @author Jens Pelzetter <jens@jp-digital.de>
  * @version $Id$
  */
-public class SingletonApplicationPane extends BaseApplicationPane {
+public class LegacySingletonApplicationPane extends LegacyBaseApplicationPane {
 
-    public SingletonApplicationPane(final ApplicationType applicationType, final SimpleContainer appAdminPane) {
+    public LegacySingletonApplicationPane(final ApplicationType applicationType, final SimpleContainer appAdminPane) {
         super(applicationType);
 
         if (appAdminPane == null) {

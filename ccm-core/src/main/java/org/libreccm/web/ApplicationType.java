@@ -20,6 +20,7 @@ package org.libreccm.web;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import javax.servlet.annotation.WebServlet;
 
 import javax.servlet.http.HttpServlet;
 
@@ -29,18 +30,60 @@ import javax.servlet.http.HttpServlet;
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ApplicationType {
-    
+
+    /**
+     * The name of the application type.
+     *
+     * @return
+     */
     String name();
-    
+
+    /**
+     * A description of the application type.
+     *
+     * @return
+     */
     String description();
-    
+
+    /**
+     * The application type class. Default is {@link CcmApplication}. Most
+     * application types will no need to extend these class and can leave the 
+     * default has it is.
+     *
+     * @return
+     */
     Class<?> applicationClass() default CcmApplication.class;
-    
+
+    /**
+     * Is the application type a singleton application?
+     * 
+     * @return 
+     */
     boolean singleton() default false;
-    
+
+    /**
+     * Path to the primary Servlet of the application type. If the servlet class
+     * is provided and is annotated with the {@link WebServlet} annotation the
+     * path can be determined from the annotation. 
+     * 
+     * @return 
+     */
     String servletPath() default "";
-    
+
+    /**
+     * The primary servlet class of the application type.
+     * 
+     * @return 
+     */
     Class<? extends HttpServlet> servlet() default HttpServlet.class;
-    
+
+    /**
+     * The implementation of the {@link ApplicationCreator} interface for the 
+     * application type which is used to create the objects representing the
+     * application instances.
+     * 
+     * @return 
+     */
     Class<? extends ApplicationCreator> creator();
+
 }

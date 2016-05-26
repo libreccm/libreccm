@@ -36,19 +36,19 @@ import org.libreccm.web.CcmApplication;
  * @author Jens Pelzetter <jens@jp-digital.de>
  * @version $Id$
  */
-public class ApplicationInstancePane extends SegmentedPanel {
+public class LegacyApplicationInstancePane extends SegmentedPanel {
 
     private CcmApplication application;
     private final ApplicationInstanceAwareContainer appAdminPane;
-    private final ApplicationInstancePropertySheetModelBuilder modelBuilder;
+    private final LegacyApplicationInstancePropertySheetModelBuilder modelBuilder;
 
-    public ApplicationInstancePane(
+    public LegacyApplicationInstancePane(
             final ApplicationInstanceAwareContainer appAdminPane) {
 
         super();
         this.appAdminPane = appAdminPane;
 
-        modelBuilder = new ApplicationInstancePropertySheetModelBuilder();
+        modelBuilder = new LegacyApplicationInstancePropertySheetModelBuilder();
         final PropertySheet appInstInfoPanel = new PropertySheet(modelBuilder);
 
         addSegment(new Label(GlobalizationUtil.globalize(
