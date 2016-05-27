@@ -43,12 +43,12 @@ import org.libreccm.web.ApplicationType;
  */
 @Module(applicationTypes = {
     @ApplicationType(name = LoginConstants.LOGIN_APP_TYPE,
-                     description = "Login Application",
+                     descBundle = "com.arsdigita.ui.login.LoginResources",
                      singleton = true,
                      creator = LoginApplicationCreator.class,
                      servlet = LoginServlet.class),
     @ApplicationType(name = AdminUiConstants.ADMIN_APP_TYPE,
-                     description = "Site-wide admin application",
+                     descBundle = "com.arsdigita.ui.admin.AdminResources",
                      singleton = true,
                      creator = AdminApplicationCreator.class,
                      servlet = AdminServlet.class)},

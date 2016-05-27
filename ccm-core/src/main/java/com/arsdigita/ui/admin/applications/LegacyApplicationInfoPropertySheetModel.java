@@ -134,7 +134,7 @@ public class LegacyApplicationInfoPropertySheetModel implements PropertySheetMod
                         .localize();
                 }
             case APP_DESC:
-                return applicationType.description();
+                return applicationType.descKey();
             case SINGLETON_PATH:
                 final String path;
                 final ApplicationRepository appRepo = CdiUtil.createCdiUtil()

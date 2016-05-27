@@ -43,7 +43,7 @@ public class LegacyApplicationTypeTreeNode implements TreeNode {
         name = applicationType.name();
         objectType = applicationType.name();
         singleton = applicationType.singleton();
-        description = applicationType.description();
+        description = applicationType.descKey();
     }
     
     public String getName() {

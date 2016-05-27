@@ -18,6 +18,10 @@
  */
 package org.libreccm.web;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.util.Strings;
+import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.modules.CcmModule;
 import org.libreccm.modules.Module;
 
@@ -25,6 +29,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 import java.util.ServiceLoader;
 
 import javax.annotation.PostConstruct;
@@ -42,8 +48,14 @@ import javax.servlet.http.HttpServlet;
 @ApplicationScoped
 public class ApplicationManager {
 
+    private static final Logger LOGGER = LogManager.getLogger(
+        ApplicationManager.class);
+
     @Inject
     private EntityManager entityManager;
+
+    @Inject
+    private GlobalizationHelper globalizationHelper;
 
     private Map<String, ApplicationType> applicationTypes = new HashMap<>();
 
@@ -136,6 +148,29 @@ public class ApplicationManager {
         } else {
             return type.servletPath();
         }
+    }
+
+    public String getApplicationTypeDescription(
+        final ApplicationType applicationType) {
+
+        final String descBundle;
+        if (Strings.isBlank(applicationType.descBundle())) {
+            descBundle = String.join("", applicationType.name(), "Description");
+        } else {
+            descBundle = applicationType.descBundle();
+        }
+
+        final ResourceBundle bundle;
+        try {
+            bundle = ResourceBundle.getBundle(
+                descBundle, globalizationHelper.getNegotiatedLocale());
+        } catch (MissingResourceException ex) {
+            LOGGER.warn("Failed to find resource bundle '{}'.", ex);
+            
+            return "";
+        }
+        
+        return bundle.getString(applicationType.descKey());
     }
 
 }

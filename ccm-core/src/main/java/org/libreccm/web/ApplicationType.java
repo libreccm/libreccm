@@ -18,8 +18,10 @@
  */
 package org.libreccm.web;
 
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+
 import javax.servlet.annotation.WebServlet;
 
 import javax.servlet.http.HttpServlet;
@@ -39,15 +41,29 @@ public @interface ApplicationType {
     String name();
 
     /**
-     * A description of the application type.
+     * (Optional) Fully qualified name of a resource bundle containing a
+     * localised descKey of the application type. If not provided the
+     * {@link ApplicationManager} will use the default value which is the name
+     * of the descKey provided by {@link #name()} concatenated with
+     * {@code Description}. For example for an application with the name
+     * {@code org.example.ExampleApp} the default descKey bundle is
+     * {@code org.example.ExampleAppDescription}.
      *
      * @return
      */
-    String description();
+    String descBundle() default "";
+
+    /**
+     * The (optional) key for the description of the application in its resource
+     * bundle. Defaults to {@code application_title}
+     *
+     * @return
+     */
+    String descKey() default "application_title";
 
     /**
      * The application type class. Default is {@link CcmApplication}. Most
-     * application types will no need to extend these class and can leave the 
+     * application types will no need to extend these class and can leave the
      * default has it is.
      *
      * @return
@@ -56,34 +72,38 @@ public @interface ApplicationType {
 
     /**
      * Is the application type a singleton application?
-     * 
-     * @return 
+     *
+     * @return
      */
     boolean singleton() default false;
 
     /**
      * Path to the primary Servlet of the application type. If the servlet class
      * is provided and is annotated with the {@link WebServlet} annotation the
-     * path can be determined from the annotation. 
-     * 
-     * @return 
+     * path can be determined from the annotation.
+     *
+     * @return
      */
     String servletPath() default "";
 
     /**
      * The primary servlet class of the application type.
-     * 
-     * @return 
+     *
+     * @return
      */
     Class<? extends HttpServlet> servlet() default HttpServlet.class;
 
     /**
-     * The implementation of the {@link ApplicationCreator} interface for the 
+     * The implementation of the {@link ApplicationCreator} interface for the
      * application type which is used to create the objects representing the
      * application instances.
-     * 
-     * @return 
+     *
+     * @return
      */
     Class<? extends ApplicationCreator> creator();
+    
+    //Class<? extends AbstractApplicationTypePane> appTypePane default com.arsdigita.ui.admin.applications.DefaultApplicationTypePane.class;
+    
+    
 
 }

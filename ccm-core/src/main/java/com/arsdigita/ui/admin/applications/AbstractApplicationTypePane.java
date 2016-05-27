@@ -22,6 +22,7 @@ import com.arsdigita.bebop.ActionLink;
 import com.arsdigita.bebop.BoxPanel;
 import com.arsdigita.bebop.Page;
 import com.arsdigita.bebop.PageState;
+import com.arsdigita.bebop.ParameterSingleSelectionModel;
 import com.arsdigita.bebop.PropertySheet;
 import com.arsdigita.bebop.SimpleContainer;
 import com.arsdigita.globalization.GlobalizedMessage;
@@ -33,13 +34,19 @@ import static com.arsdigita.ui.admin.AdminUiConstants.*;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public abstract class AbstractApplicationTypePane extends BoxPanel {
-    
+
+    private final ParameterSingleSelectionModel<String> selectedAppType;
+
     private final SimpleContainer pane;
     private final PropertySheet propertySheet;
-    
-    public AbstractApplicationTypePane() {
+
+    public AbstractApplicationTypePane(
+        final ParameterSingleSelectionModel<String> selectedAppType) {
+
         super(BoxPanel.VERTICAL);
-        
+
+        this.selectedAppType = selectedAppType;
+
         final BoxPanel links = new BoxPanel(BoxPanel.HORIZONTAL);
         final ActionLink paneLink = new ActionLink(getPaneLabel());
         paneLink.addActionListener(e -> {
@@ -48,42 +55,43 @@ public abstract class AbstractApplicationTypePane extends BoxPanel {
         });
         links.add(paneLink);
         final ActionLink propertySheetLink = new ActionLink(
-                new GlobalizedMessage(
-                        "ui.admin.appliations.type_pane.info_sheet", 
-                        ADMIN_BUNDLE));
+            new GlobalizedMessage(
+                "ui.admin.appliations.type_pane.info_sheet",
+                ADMIN_BUNDLE));
         propertySheetLink.addActionListener(e -> {
             final PageState state = e.getPageState();
             showPropertySheet(state);
         });
         links.add(propertySheetLink);
         add(links);
-        
+
         pane = createPane();
         add(pane);
-        
-        
+
+        propertySheet = new PropertySheet(
+            new ApplicationTypePropertySheetModelBuilder(selectedAppType));
     }
-    
+
     protected abstract SimpleContainer createPane();
-    
+
     protected abstract GlobalizedMessage getPaneLabel();
-    
+
     @Override
     public void register(final Page page) {
         super.register(page);
-        
+
         page.setVisibleDefault(pane, true);
         page.setVisibleDefault(propertySheet, false);
     }
-    
+
     protected void showPane(final PageState state) {
         pane.setVisible(state, true);
         propertySheet.setVisible(state, false);
     }
-    
+
     protected void showPropertySheet(final PageState state) {
         pane.setVisible(state, false);
         propertySheet.setVisible(state, false);
     }
-    
+
 }

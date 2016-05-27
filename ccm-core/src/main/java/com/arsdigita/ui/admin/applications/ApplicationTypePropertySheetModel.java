@@ -20,7 +20,15 @@ package com.arsdigita.ui.admin.applications;
 
 import com.arsdigita.bebop.PropertySheetModel;
 import com.arsdigita.globalization.GlobalizedMessage;
+
+import com.fasterxml.jackson.databind.deser.CreatorProperty;
+import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.web.ApplicationType;
+
+import java.util.Arrays;
+import java.util.Iterator;
+
+import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
  *
@@ -29,44 +37,87 @@ import org.libreccm.web.ApplicationType;
 public class ApplicationTypePropertySheetModel implements PropertySheetModel {
 
     private static enum AppTypeProperty {
-        TITLE,
+        NAME,
         DESC,
         APP_CLASS,
+        CREATOR,
         SINGLETON,
         SERVLET_CLASS,
         SERVLET_PATH,
     }
-    
+
     private final ApplicationType applicationType;
+    private final Iterator<AppTypeProperty> propertyIterator;
     private AppTypeProperty currentProperty;
-    
+
     public ApplicationTypePropertySheetModel(
-            final ApplicationType applicationType) {
-        
+        final ApplicationType applicationType) {
+
         this.applicationType = applicationType;
-        
+        propertyIterator = Arrays.asList(AppTypeProperty.values()).iterator();
     }
-    
+
     @Override
     public boolean nextRow() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (applicationType == null) {
+            return false;
+        }
+
+        if (propertyIterator.hasNext()) {
+            currentProperty = propertyIterator.next();
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
     public String getLabel() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return currentProperty.toString();
+    }
+
+    private GlobalizedMessage generateGlobalizedLabel(
+        final AppTypeProperty property) {
+
+        final String key = String.join(
+            "",
+            "ui.admin.applications.type.property_sheet.",
+            property.toString().toLowerCase());
+        
+        return new GlobalizedMessage(key, ADMIN_BUNDLE);
     }
 
     @Override
     public GlobalizedMessage getGlobalizedLabel() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return generateGlobalizedLabel(currentProperty);
     }
 
     @Override
     public String getValue() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        switch(currentProperty) {
+            case NAME: 
+                return applicationType.name();
+            case DESC: 
+                return getAppTypeDesc();
+            case APP_CLASS:
+                return applicationType.applicationClass().getName();
+            case CREATOR:
+                return applicationType.creator().getName();
+            case SINGLETON:
+                return Boolean.toString(applicationType.singleton());
+            case SERVLET_CLASS:
+                return applicationType.servlet().getName();
+            case SERVLET_PATH:
+                return applicationType.servletPath();
+            default: 
+                return "";
+        }
     }
-    
-    
 
+    private String getAppTypeDesc() {
+        final org.libreccm.web.ApplicationManager appManager = CdiUtil.createCdiUtil().findBean(
+            org.libreccm.web.ApplicationManager.class);
+        
+        return appManager.getApplicationTypeDescription(applicationType);
+    }
 }

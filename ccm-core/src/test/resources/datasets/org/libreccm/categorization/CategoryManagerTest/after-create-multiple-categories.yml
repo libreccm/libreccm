@@ -64,7 +64,7 @@ ccm_core.categories:
           enabled: true
           visible: true
           abstract_category: false
-          category_order: 1
+          category_order: 2
         - object_id: 2
           unique_id: example
           name: example
