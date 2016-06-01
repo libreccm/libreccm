@@ -20,6 +20,7 @@ package com.arsdigita.ui.admin.applications;
 
 import com.arsdigita.bebop.tree.TreeNode;
 
+import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.web.ApplicationType;
 
 /**
@@ -36,16 +37,19 @@ public class ApplicationTypeTreeNode implements TreeNode {
 
     @Override
     public Object getKey() {
-        return applicationType.applicationClass().getName();
+        return applicationType.name();
     }
 
     @Override
     public Object getElement() {
-        return applicationType.name();
+        final org.libreccm.web.ApplicationManager appManager = CdiUtil
+            .createCdiUtil().findBean(org.libreccm.web.ApplicationManager.class);
+
+        return appManager.getApplicationTypeTitle(applicationType);
     }
 
     public ApplicationType getApplicationType() {
         return applicationType;
     }
-    
+
 }

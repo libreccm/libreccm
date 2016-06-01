@@ -54,13 +54,23 @@ public @interface ApplicationType {
     String descBundle() default "";
 
     /**
-     * The (optional) key for the description of the application in its resource
+     * The (optional) key for the title of the application in its resource
      * bundle. Defaults to {@code application_title}
      *
      * @return
+     * 
+     * @return 
      */
-    String descKey() default "application_title";
-
+    String titleKey() default "application_title";
+    
+    /**
+     * The (optional) key for the description of the application in its resource
+     * bundle. Defaults to {@code application_desc}
+     *
+     * @return
+     */
+    String descKey() default "application_desc";
+    
     /**
      * The application type class. Default is {@link CcmApplication}. Most
      * application types will no need to extend these class and can leave the

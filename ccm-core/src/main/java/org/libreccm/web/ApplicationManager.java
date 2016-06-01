@@ -150,6 +150,28 @@ public class ApplicationManager {
         }
     }
 
+    public String getApplicationTypeTitle(
+        final ApplicationType applicationType) {
+
+        final String descBundle;
+        if (Strings.isBlank(applicationType.descBundle())) {
+            descBundle = String.join("", applicationType.name(), "Description");
+        } else {
+            descBundle = applicationType.descBundle();
+        }
+
+        final ResourceBundle bundle;
+        try {
+            bundle = ResourceBundle.getBundle(
+                descBundle, globalizationHelper.getNegotiatedLocale());
+            return bundle.getString(applicationType.titleKey());
+        } catch (MissingResourceException ex) {
+            LOGGER.warn("Failed to find resource bundle '{}'.", ex);
+
+            return applicationType.name();
+        }
+    }
+
     public String getApplicationTypeDescription(
         final ApplicationType applicationType) {
 
@@ -164,13 +186,12 @@ public class ApplicationManager {
         try {
             bundle = ResourceBundle.getBundle(
                 descBundle, globalizationHelper.getNegotiatedLocale());
+            return bundle.getString(applicationType.descKey());
         } catch (MissingResourceException ex) {
             LOGGER.warn("Failed to find resource bundle '{}'.", ex);
-            
+
             return "";
         }
-        
-        return bundle.getString(applicationType.descKey());
     }
 
 }

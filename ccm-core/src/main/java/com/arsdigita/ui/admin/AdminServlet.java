@@ -29,6 +29,7 @@ import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.templating.Templating;
 import com.arsdigita.ui.SiteBanner;
 import com.arsdigita.ui.UserBanner;
+import com.arsdigita.ui.admin.applications.ApplicationsTab;
 import com.arsdigita.ui.admin.categories.CategoriesTab;
 import com.arsdigita.ui.admin.configuration.ConfigurationTab;
 import com.arsdigita.web.BaseApplicationServlet;
@@ -114,7 +115,7 @@ public class AdminServlet extends BaseApplicationServlet {
         tabbedPane.addTab(
             new Label(new GlobalizedMessage("ui.admin.tab.applications",
                                             ADMIN_BUNDLE)),
-            new ApplicationsAdminTab());
+            new ApplicationsTab());
 
         tabbedPane.addTab(
             new Label(new GlobalizedMessage(

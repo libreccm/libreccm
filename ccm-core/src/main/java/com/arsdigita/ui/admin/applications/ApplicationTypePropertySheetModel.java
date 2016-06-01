@@ -38,6 +38,7 @@ public class ApplicationTypePropertySheetModel implements PropertySheetModel {
 
     private static enum AppTypeProperty {
         NAME,
+        TITLE,
         DESC,
         APP_CLASS,
         CREATOR,
@@ -97,6 +98,8 @@ public class ApplicationTypePropertySheetModel implements PropertySheetModel {
         switch(currentProperty) {
             case NAME: 
                 return applicationType.name();
+            case TITLE:
+                return getAppTypeTitle();
             case DESC: 
                 return getAppTypeDesc();
             case APP_CLASS:
@@ -114,6 +117,13 @@ public class ApplicationTypePropertySheetModel implements PropertySheetModel {
         }
     }
 
+    private String getAppTypeTitle() {
+        final org.libreccm.web.ApplicationManager appManager = CdiUtil.createCdiUtil().findBean(
+            org.libreccm.web.ApplicationManager.class);
+        
+        return appManager.getApplicationTypeTitle(applicationType);
+    }
+    
     private String getAppTypeDesc() {
         final org.libreccm.web.ApplicationManager appManager = CdiUtil.createCdiUtil().findBean(
             org.libreccm.web.ApplicationManager.class);
