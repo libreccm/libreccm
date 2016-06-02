@@ -200,6 +200,11 @@
                     <artifactId>jacoco-maven-plugin</artifactId>
                     <version>0.7.6.201602180812</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.wildfly.plugins</groupId>
+                    <artifactId>wildfly-maven-plugin</artifactId>
+                    <version>1.1.0.Alpha8</version>
+                </plugin>
                 <!--<plugin>
                     <groupId>org.jboss.tattletale</groupId>
                     <artifactId>tattletale-maven</artifactId>
@@ -207,6 +212,16 @@
                 </plugin>-->
             </plugins>
         </pluginManagement>
+        
+        <plugins>
+            <plugin>
+                <groupId>org.wildfly.plugins</groupId>
+                <artifactId>wildfly-maven-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
     
     <dependencyManagement>
@@ -555,5 +570,5 @@
 
         </dependencies>
     </dependencyManagement>
-
+    
 </project>

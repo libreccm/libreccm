@@ -57,6 +57,29 @@
                     </modules>
                 </configuration>
             </plugin>
+            
+            <plugin>
+                <groupId>org.wildfly.plugins</groupId>
+                <artifactId>wildfly-maven-plugin</artifactId>
+                <configuration>
+                    <skip>false</skip>
+
+                    <address>subsystem=datasources,data-source=java:/comp/env/jdbc/libreccm/db</address>
+                    <resources>
+                        <resource>
+                            <properties>
+                                <jndi-name>java:/comp/env/jdbc/libreccm/db</jndi-name>
+                                <enabled>true</enabled>
+                                <connection-url>jdbc:h2:${project.build.directory}/libreccm-db</connection-url>
+                                <driver-class>org.h2.Driver</driver-class>
+                                <user-name>sa</user-name>
+                                <password>sa</password>
+                            </properties>
+                        </resource>
+                    </resources>
+                </configuration>
+                
+            </plugin>
         </plugins>
     </build>
 
