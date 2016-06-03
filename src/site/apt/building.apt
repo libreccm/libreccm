@@ -23,4 +23,33 @@ Building LibreCCM
 
     [Build or refresh project site] mvn clean site site:stage
 
-    [Create WAR files] ToDo
+    [Create EAR files] Due to certain limitations and restrictions for WAR files
+    regarding class paths etc. LibreCCM is now deployed as an Enterprise 
+    Archive. There will be several bundles. These are Maven modules which
+    are used to aggregate specific modules. Each bundle consists of two Maven
+    modules: The WAR module which creates the WAR file and the EAR module
+    which creates the final EAR file. The bundle are application server specific
+    and named using the following pattern: 
+    
+-----------------------------------------------
+ccm-bundle-${bundle-name}-${application-server}
+-----------------------------------------------
+
+    Where <<<${bundle-name}>>> is the name of the bundle and 
+    <<<${application-server}>>> is the application server for which the bundle
+    is optimised.
+
+    Because of some subtile differences, for example the JNDI names for
+    data sources, it is necessary to provide bundles for specific application
+    servers. A specific bundle including all its dependencies can be build by 
+    running
+
+---
+mvn package -pl ${bundle} -am
+---
+
+    Replace <<<${bundle}>>> with the name of the bundle to build, for example
+    <<<ccm-bundle-devel-wildfly>>> to build the development bundle for Wildfly. 
+    The <<<-am>>> parameter causes Maven to build are Maven modules required by
+    the bundle before the bundle is build. For specific informations about a
+    bundle please refer to the documentation of the bundle.

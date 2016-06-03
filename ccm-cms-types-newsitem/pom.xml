@@ -4,10 +4,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-    <artifactId>libreccm-parent</artifactId>
-    <groupId>org.libreccm</groupId>
-    <version>7.0.0-SNAPSHOT</version>
-  </parent>
+        <artifactId>libreccm-parent</artifactId>
+        <groupId>org.libreccm</groupId>
+        <version>7.0.0-SNAPSHOT</version>
+    </parent>
  
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -47,11 +47,24 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
+            <scope>provided</scope>
         </dependency>
-
+        
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-envers</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator-cdi</artifactId>
+            <scope>provided</scope>
         </dependency>
         
         <dependency>
@@ -139,7 +152,7 @@
                 </configuration>
             </plugin>
 
-             <plugin>
+            <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.7.5.201505241946</version>
@@ -312,7 +325,7 @@
                     <reportSet>
                         <reports>
                             <report>dependencies</report>
-                           <report>license</report>
+                            <report>license</report>
                         </reports>
                     </reportSet>
                 </reportSets>
