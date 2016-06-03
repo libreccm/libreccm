@@ -32,6 +32,10 @@ LibreCCM Bundle for Wildfly
     instance can either be provided on the command line when invoking Maven 
     or by setting the <<<JBOSS_HOME>>> environment variable.
 
+    When using the <<<h2>>> it is not necessary to install a Wildfly application
+    server first. The <wildfly-maven-plugin> will download the Wildfly 
+    application server and extract the server into the <<<target>>> directory.
+
     The <<<h2>>> and the <<<pgsql>>> profile add a user to the Wildfly server
     with the username <<<admin>>> and the password <<<admin123>>> which allow 
     the developer to access the management web UI of the Wildfly server.
@@ -54,6 +58,6 @@ LibreCCM Bundle for Wildfly
 
     ** Additional options
 
-    The <<<wildfly:run>>> goad of the <wildfly-maven-plugin> provides several 
+    The <<<wildfly:run>>> goal of the <wildfly-maven-plugin> provides several 
     other options. For a complete list please refer to the documentation of the
     {{{https://docs.jboss.org/wildfly/plugins/maven/latest/run-mojo.html}run goal}}.
