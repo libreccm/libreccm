@@ -58,40 +58,91 @@
                 </configuration>
             </plugin>
             
-            <plugin>
-                <groupId>org.wildfly.plugins</groupId>
-                <artifactId>wildfly-maven-plugin</artifactId>
-                <configuration>
-                    
-                    <version>10.0.0.Final</version>
-                    
-                    <skip>false</skip>
-                    
-                    <add-user>
-                        <users>
-                            <user>
-                                <username>admin</username>
-                                <password>admin1234</password>
-                            </user>
-                        </users>
-                    </add-user>
-
-                    <beforeDeployment>
-                        <commands>
-                            <command>data-source add --jndi-name=java:/comp/env/jdbc/libreccm/db --name=ccm-devel --connection-url=jdbc:h2:${project.build.directory}/libreccm-db;DB_CLOSE_ON_EXIT=FALSE --driver-name=h2 --driver-class=org.h2.Driver --user-name=sa --password=sa</command>
-                        </commands>
-                    </beforeDeployment>
-                </configuration>
-                
-            </plugin>
         </plugins>
     </build>
 
-    <!--<profiles>
+    <profiles>
         <profile>
             <id>h2</id>
             
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.wildfly.plugins</groupId>
+                        <artifactId>wildfly-maven-plugin</artifactId>
+                        
+                        <configuration>
+                            <version>10.0.0.Final</version>
+                            
+                            <skip>false</skip>
+
+                            <add-user>
+                                <users>
+                                    <user>
+                                        <username>admin</username>
+                                        <password>admin123</password>
+                                    </user>
+                                </users>
+                            </add-user>
+
+                            <beforeDeployment>
+                                <commands>
+                                    <command>data-source add --jndi-name=java:/comp/env/jdbc/libreccm/db --name=ccm-devel --connection-url=jdbc:h2:${project.build.directory}/libreccm-db;DB_CLOSE_ON_EXIT=FALSE --driver-name=h2 --driver-class=org.h2.Driver --user-name=sa --password=sa</command>
+                                </commands>
+                            </beforeDeployment>
+                            
+                        </configuration>
+                        
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
-    </profiles>-->
+        
+        <profile>
+            <id>pgsql</id>
+            
+            <dependencies>
+                <dependency>
+                    <groupId>org.postgresql</groupId>
+                    <artifactId>postgresql</artifactId>
+                    <version>9.4.1208</version>
+                </dependency>
+            </dependencies>
+            
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.wildfly.plugins</groupId>
+                        <artifactId>wildfly-maven-plugin</artifactId>
+                        
+                        <configuration>
+                            <version>10.0.0.Final</version>
+                            
+                            <skip>false</skip>
+                            
+                            <add-user>
+                                <users>
+                                    <user>
+                                        <username>admin</username>
+                                        <password>admin1234</password>
+                                    </user>
+                                </users>
+                            </add-user>
+                            
+                            <beforeDeployment>
+                                <commands>
+                                    <command>module add --name=org.postgres --resources=resources/postgresql-9.4.1208.jar --dependencies=javax.api,javax.transaction.api</command>
+                                    <command>/subsystem=datasources/jdbc-driver=postgres:add(driver-name="postgres",driver-module-name="org.postgres",driver-class-name=org.postgresql.Driver)</command>
+                                    <command>data-source add --jndi-name=java:/comp/env/jdbc/libreccm/db --name=libreccm-devel --connection-url=jdbc:postgresql://localhost:5432/libreccm-devel --driver-name=postgres --driver-class=org.postgresql.Driver --user-name=ccm --password=ccm47web</command>
+                                </commands>
+                            </beforeDeployment>
+                            
+                        </configuration>
+                        
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>
