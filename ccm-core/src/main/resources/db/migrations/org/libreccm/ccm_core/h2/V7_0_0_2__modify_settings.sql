@@ -37,7 +37,7 @@ alter table CCM_CORE.SETTINGS_STRING_LIST
     DROP COLUMN OBJECT_ID;
 
 alter table CCM_CORE.SETTINGS 
-    rename column OBJECT_ID to SETTING_ID;
+    alter column OBJECT_ID rename to SETTING_ID;
 
 alter table CCM_CORE.SETTINGS 
     add column DTYPE varchar(31) not null;

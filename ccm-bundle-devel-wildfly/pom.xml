@@ -62,25 +62,36 @@
                 <groupId>org.wildfly.plugins</groupId>
                 <artifactId>wildfly-maven-plugin</artifactId>
                 <configuration>
+                    
+                    <version>10.0.0.Final</version>
+                    
                     <skip>false</skip>
+                    
+                    <add-user>
+                        <users>
+                            <user>
+                                <username>admin</username>
+                                <password>admin1234</password>
+                            </user>
+                        </users>
+                    </add-user>
 
-                    <address>subsystem=datasources,data-source=java:/comp/env/jdbc/libreccm/db</address>
-                    <resources>
-                        <resource>
-                            <properties>
-                                <jndi-name>java:/comp/env/jdbc/libreccm/db</jndi-name>
-                                <enabled>true</enabled>
-                                <connection-url>jdbc:h2:${project.build.directory}/libreccm-db</connection-url>
-                                <driver-class>org.h2.Driver</driver-class>
-                                <user-name>sa</user-name>
-                                <password>sa</password>
-                            </properties>
-                        </resource>
-                    </resources>
+                    <beforeDeployment>
+                        <commands>
+                            <command>data-source add --jndi-name=java:/comp/env/jdbc/libreccm/db --name=ccm-devel --connection-url=jdbc:h2:${project.build.directory}/libreccm-db;DB_CLOSE_ON_EXIT=FALSE --driver-name=h2 --driver-class=org.h2.Driver --user-name=sa --password=sa</command>
+                        </commands>
+                    </beforeDeployment>
                 </configuration>
                 
             </plugin>
         </plugins>
     </build>
+
+    <!--<profiles>
+        <profile>
+            <id>h2</id>
+            
+        </profile>
+    </profiles>-->
 
 </project>
