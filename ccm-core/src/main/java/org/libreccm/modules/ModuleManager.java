@@ -187,8 +187,8 @@ public class ModuleManager {
             System.out.printf("Checking status of module %s%n",
                               node.getModule().getClass().getName());
             final InstalledModule installedModule = entityManager.find(
-                InstalledModule.class, node.
-                getModule().getClass().getName().hashCode());
+                InstalledModule.class,
+                node.getModule().getClass().getName().hashCode());
             LOGGER.info("Status of module {} ({}): {}",
                         node.getModuleInfo().getModuleName(),
                         node.getModule().getClass().getName(),

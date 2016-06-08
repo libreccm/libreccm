@@ -20,10 +20,18 @@ package org.libreccm.shortcuts;
 
 import org.libreccm.core.AbstractEntityRepository;
 
+import java.util.List;
+import java.util.Optional;
+
+import javax.enterprise.context.RequestScoped;
+import javax.persistence.NoResultException;
+import javax.persistence.TypedQuery;
+
 /**
  *
  * @author <a href="konerman@tzi.de">Alexander Konermann</a>
  */
+@RequestScoped
 public class ShortcutRepository extends AbstractEntityRepository<Long, Shortcut> {
 
     @Override
@@ -33,7 +41,41 @@ public class ShortcutRepository extends AbstractEntityRepository<Long, Shortcut>
 
     @Override
     public boolean isNew(final Shortcut entity) {
-         return entity.getShortcutId() == 0;
+        return entity.getShortcutId() == 0;
+    }
+
+    /**
+     * Finds the first shortcut with the specified urlKey.
+     *
+     * @param urlKey the wanted urlKey
+     *
+     * @return The shortcut with the specified urlKey if there is any.
+     */
+    public Optional<Shortcut> findByUrlKey(final String urlKey) {
+        final TypedQuery<Shortcut> query = getEntityManager().createNamedQuery(
+            "Shortcut.findByUrlKey", Shortcut.class);
+        query.setParameter("urlKey", urlKey);
+
+        try {
+            final Shortcut result = query.getSingleResult();
+            return Optional.of(result);
+        } catch (NoResultException ex) {
+            return Optional.empty();
+        }
     }
     
+    /**
+     * Finds all shortcuts which redirect to the provided target.
+     *
+     * @param redirect the wanted redirect
+     * @return List<Shortcut> a List of Shortcuts with the specified redirect
+     */
+    public List<Shortcut> findByRedirect(final String redirect) {
+        final TypedQuery<Shortcut> query = getEntityManager().createNamedQuery(
+            "Shortcut.findByRedirect", Shortcut.class);
+        query.setParameter("redirect", redirect);
+        
+        return query.getResultList();
+    }
+
 }

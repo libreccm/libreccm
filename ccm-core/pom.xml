@@ -1064,8 +1064,8 @@
                             <reuseForks>true</reuseForks>
                             <systemPropertyVariables>
                                 <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
-                                <jboss.home>${project.basedir}/target/wildfly-8.2.0.Final</jboss.home>
-                                <module.path>${project.basedir}/target/wildfly-8.2.0.Final/modules</module.path>
+                                <!--<jboss.home>${project.basedir}/target/wildfly-8.2.0.Final</jboss.home>
+                                <module.path>${project.basedir}/target/wildfly-8.2.0.Final/modules</module.path>-->
                             </systemPropertyVariables>
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <groups>
@@ -1150,8 +1150,8 @@
                             <reuseForks>true</reuseForks>
                             <systemPropertyVariables>
                                 <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
-                                <jboss.home>${project.basedir}/target/wildfly-8.2.0.Final</jboss.home>
-                                <module.path>${project.basedir}/target/wildfly-8.2.0.Final/modules</module.path>
+                                <!--<jboss.home>${project.basedir}/target/wildfly-8.2.0.Final</jboss.home>
+                                <module.path>${project.basedir}/target/wildfly-8.2.0.Final/modules</module.path>-->
                             </systemPropertyVariables>
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <groups>

@@ -28,25 +28,34 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import org.libreccm.core.CcmObject;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(schema ="CCM_SHORTCUTS", name = "SHORTCUTS")
+@Table(schema = "CCM_SHORTCUTS", name = "SHORTCUTS")
+@NamedQueries({
+    @NamedQuery(
+        name = "Shortcut.findByUrlKey",
+        query = "SELECT s FROM Shortcut s WHERE s.urlKey = :urlKey"),
+    @NamedQuery(
+        name = "Shortcut.findByRedirect",
+        query = "SELECT s FROM Shortcut s WHERE s.redirect = :redirect")
+})
 public class Shortcut implements Serializable {
 
     private static final long serialVersionUID = -5674633339633714327L;
-    
+
     @Id
     @Column(name = "SHORTCUTS_ID")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long shortcutId;
 
-    @Column(name = "URL_KEY", length = 1024)
+    @Column(name = "URL_KEY", length = 1024, unique = true)
     @NotEmpty
     private String urlKey;
 

@@ -42,15 +42,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
-import org.libreccm.categorization.Categorization;
-import org.libreccm.jpa.EntityManagerProducer;
-import org.libreccm.jpa.utils.MimeTypeConverter;
-import org.libreccm.l10n.LocalizedString;
-import org.libreccm.security.Permission;
 import org.libreccm.tests.categories.IntegrationTest;
-import org.libreccm.testutils.EqualsVerifier;
-import org.libreccm.web.CcmApplication;
-import org.libreccm.workflow.Workflow;
 
 import java.io.File;
 import java.util.List;

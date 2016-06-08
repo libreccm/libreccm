@@ -18,34 +18,45 @@
  */
 package org.libreccm.shortcuts;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
-import org.libreccm.web.CcmApplication;
+import org.libreccm.modules.CcmModule;
+import org.libreccm.modules.InitEvent;
+import org.libreccm.modules.InstallEvent;
+import org.libreccm.modules.Module;
+import org.libreccm.modules.ShutdownEvent;
+import org.libreccm.modules.UnInstallEvent;
+import org.libreccm.web.ApplicationType;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@Entity
-@Table(schema ="CCM_SHORTCUTS", name = "SHORTCUTS_APP")
-public class Shortcuts extends CcmApplication {
-    private static final long serialVersionUID = -6793265996161649637L;
-    
-//    private String shortcutAppName;
-    
-    public Shortcuts() {
-        super();
+@Module(applicationTypes = {
+    @ApplicationType(name = ShortcutsConstants.SHORTCUTS_APP_TYPE,
+                     descBundle = "org.libreccm.shortcuts.ShortcutsResources",
+                     singleton = true,
+                     creator = ShortcutsApplicationCreator.class)}
+)
+public class Shortcuts implements CcmModule {
+
+    @Override
+    public void install(final InstallEvent event) {
+        final ShortcutsSetup setup = new ShortcutsSetup(event);
+        setup.setup();
     }
 
-//    public String getShortcutAppName() {
-//        return shortcutAppName;
-//    }
-//
-//    public void setShortcutAppName(final String shortcutAppName) {
-//        this.shortcutAppName = shortcutAppName;
-//    }
-//    
-    
-    
+    @Override
+    public void init(final InitEvent event) {
+        //Nothing
+    }
+
+    @Override
+    public void shutdown(final ShutdownEvent event) {
+        //Nothing
+    }
+
+    @Override
+    public void uninstall(final UnInstallEvent event) {
+        //Nothing
+    }
+
 }

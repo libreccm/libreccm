@@ -41,7 +41,17 @@
             <groupId>net.sf.saxon</groupId>
             <artifactId>Saxon-HE</artifactId>
         </dependency>
+        
+        <!-- CCM modules -->
+        <dependency>
+            <groupId>org.libreccm</groupId>
+            <artifactId>ccm-shortcuts</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        
     </dependencies>
+    
+    
     
     <!--<dependencies>
         <dependency>

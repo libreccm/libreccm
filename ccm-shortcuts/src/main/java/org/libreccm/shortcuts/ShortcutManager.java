@@ -20,8 +20,7 @@ package org.libreccm.shortcuts;
 
 import java.net.URI;
 import java.net.URL;
-import java.util.Iterator;
-import java.util.List;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
@@ -33,7 +32,7 @@ import javax.inject.Inject;
  */
 @RequestScoped
 public class ShortcutManager {
-
+    
     /**
      * {@link ShortcutRepository} for interacting with the database.
      */
@@ -94,8 +93,8 @@ public class ShortcutManager {
     /**
      * checks if the given URL is valid
      *
-     * @param url the Url you want to validate
-     * @return true if you can succesfully connect to the url, therefore is
+     * @param url the URL you want to validate
+     * @return true if you can successfully connect to the url, therefore is
      * valid.
      */
     private boolean validateURL(final String url) {
@@ -104,44 +103,5 @@ public class ShortcutManager {
 
     }
 
-    /**
-     * Finds the first shortcut with the specified urlKey.
-     *
-     * @param urlKey the wanted urlKey
-     * @return Shortcut a shortcut with the specified urlKey
-     */
-    public Shortcut findByUrlKey(final String urlKey) {
-        //get all Shortcuts:
-        List shortcutlist = shortcutRepository.findAll();
-        //search for the right one:
-        Iterator<Shortcut> iterator = shortcutlist.iterator();
-        while (iterator.hasNext()) {
-            Shortcut shortcut = iterator.next();
-            if (shortcut.getUrlKey().equals(urlKey)) {
-                return shortcut;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Finds all shortcuts with the specified redirect.
-     *
-     * @param redirect the wanted redirect
-     * @return List<Shortcut> a List of Shortcuts with the specified redirect
-     */
-    public List<Shortcut> findByRedirect(final String redirect) {
-        //get all Shortcuts:
-        List shortcutlist = shortcutRepository.findAll();
-        //removes all shortcuts that don't fit
-        Iterator<Shortcut> iterator = shortcutlist.iterator();
-        while (iterator.hasNext()) {
-            Shortcut shortcut = iterator.next();
-            if (!shortcut.getRedirect().equals(redirect)) {
-                shortcutlist.remove(shortcut);
-            }
-        }
-        return shortcutlist;
-    }
+    
 }
