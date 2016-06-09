@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dataset>
+    <ccm_shortcuts.shortcuts shortcut_id="-10"
+                             url_key="mitglieder"
+                             redirect="/ccm/navigation/members" />
+    <ccm_shortcuts.shortcuts shortcut_id="-20"
+                             url_key="members"
+                             redirect="/ccm/navigation/members" />
+    <ccm_shortcuts.shortcuts shortcut_id="-30"
+                             url_key="privacy"
+                             redirect="/ccm/navigation/privacy" />
+    <ccm_shortcuts.shortcuts shortcut_id="-40"
+                             url_key="shop"
+                             redirect="http://www.example.com" />
+    <ccm_shortcuts.shortcuts shortcut_id="-50"
+                             url_key="datenschutz"
+                             redirect="/ccm/navigation/privacy" />
+</dataset>
+

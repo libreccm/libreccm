@@ -108,7 +108,10 @@ public class DatasetsVerifier {
         if (getSchemas().length > 0) {
             buffer.append(";INIT=");
             for (final String schema : getSchemas()) {
-                buffer.append(String.format("CREATE SCHEMA IF NOT EXISTS %s;",
+                if (buffer.length() > 0) {
+                    buffer.append("\\;");
+                }
+                buffer.append(String.format("CREATE SCHEMA IF NOT EXISTS %s",
                                             schema));
             }
         }

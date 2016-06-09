@@ -32,7 +32,7 @@ import javax.inject.Inject;
  */
 @RequestScoped
 public class ShortcutManager {
-    
+
     /**
      * {@link ShortcutRepository} for interacting with the database.
      */
@@ -42,11 +42,21 @@ public class ShortcutManager {
     /**
      * Creates a Shortcut
      *
-     * @param url
-     * @param redirect
+     * @param url The URL of the Shortcut. Can't be null.
+     * @param redirect The URL to which the Shortcut redirects. Can't be null.
      * @return the new Shortcut
      */
     public Shortcut createShortcut(final String url, final String redirect) {
+        if (url == null || url.trim().isEmpty()) {
+            throw new IllegalArgumentException(
+                    "The URL key of a Shortcut can't be empty");
+        }
+
+        if (redirect == null || redirect.trim().isEmpty()) {
+            throw new IllegalArgumentException(
+                    "The redirect target of a Shortcut can't be empty");
+        }
+
         Shortcut shortcut = new Shortcut();
         shortcut.setUrlKey(url);
         shortcut.setRedirect(redirect);
@@ -56,30 +66,50 @@ public class ShortcutManager {
     /**
      * Creates a Shortcut
      *
-     * @param url
-     * @param redirect
+     * @param url The URL of the Shortcut. Can't be null.
+     * @param redirect The URL to which the Shortcut redirects. Can't be null.
      * @return the new Shortcut
      */
-    public Shortcut createShortcut(final URL url, final URL redirect) {
-        Shortcut shortcut = new Shortcut();
-        shortcut.setUrlKey(url.toString());
-        shortcut.setRedirect(redirect.toString());
-        return shortcut;
-    }
+//    public Shortcut createShortcut(final URL url, final URL redirect) {
+//        if (url == null) {
+//            throw new IllegalArgumentException(
+//                    "The URL key of a Shortcut can't be empty");
+//        }
+//
+//        if (redirect == null) {
+//            throw new IllegalArgumentException(
+//                    "The redirect target of a Shortcut can't be empty");
+//        }
+//
+//        Shortcut shortcut = new Shortcut();
+//        shortcut.setUrlKey(url.toString());
+//        shortcut.setRedirect(redirect.toString());
+//        return shortcut;
+//    }
 
     /**
      * Creates a Shortcut
      *
-     * @param uri
-     * @param redirect
+     * @param uri The URI of the Shortcut. Can't be null.
+     * @param redirect The URI to which the Shortcut redirects. Can't be null.
      * @return the new Shortcut
      */
-    public Shortcut createShortcut(final URI uri, final URI redirect) {
-        Shortcut shortcut = new Shortcut();
-        shortcut.setUrlKey(uri.toString());
-        shortcut.setRedirect(redirect.toString());
-        return shortcut;
-    }
+//    public Shortcut createShortcut(final URI uri, final URI redirect) {
+//        if (uri == null) {
+//            throw new IllegalArgumentException(
+//                    "The URL key of a Shortcut can't be empty");
+//        }
+//
+//        if (redirect == null) {
+//            throw new IllegalArgumentException(
+//                    "The redirect target of a Shortcut can't be empty");
+//        }
+//
+//        Shortcut shortcut = new Shortcut();
+//        shortcut.setUrlKey(uri.toString());
+//        shortcut.setRedirect(redirect.toString());
+//        return shortcut;
+//    }
 
     /**
      * checks if the Shortcut exists.
@@ -87,6 +117,7 @@ public class ShortcutManager {
      * @return true if the Shortcut exists
      */
     private boolean testShortcut(final Shortcut shortcut) {
+        //ToDo
         return true;
     }
 
@@ -103,5 +134,4 @@ public class ShortcutManager {
 
     }
 
-    
 }

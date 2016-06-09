@@ -49,7 +49,7 @@ public class ShortcutRepository extends AbstractEntityRepository<Long, Shortcut>
      *
      * @param urlKey the wanted urlKey
      *
-     * @return The shortcut with the specified urlKey if there is any.
+     * @return The shortcut with the specified {@code urlKey} if there is any.
      */
     public Optional<Shortcut> findByUrlKey(final String urlKey) {
         final TypedQuery<Shortcut> query = getEntityManager().createNamedQuery(
@@ -68,7 +68,7 @@ public class ShortcutRepository extends AbstractEntityRepository<Long, Shortcut>
      * Finds all shortcuts which redirect to the provided target.
      *
      * @param redirect the wanted redirect
-     * @return List<Shortcut> a List of Shortcuts with the specified redirect
+     * @return a List of Shortcuts with the specified {@code redirect}
      */
     public List<Shortcut> findByRedirect(final String redirect) {
         final TypedQuery<Shortcut> query = getEntityManager().createNamedQuery(

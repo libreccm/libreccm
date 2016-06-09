@@ -44,14 +44,16 @@ import javax.persistence.Table;
         query = "SELECT s FROM Shortcut s WHERE s.urlKey = :urlKey"),
     @NamedQuery(
         name = "Shortcut.findByRedirect",
-        query = "SELECT s FROM Shortcut s WHERE s.redirect = :redirect")
+        query = "SELECT s FROM Shortcut s "
+        + "WHERE s.redirect = :redirect "
+        + "ORDER BY s.urlKey")
 })
 public class Shortcut implements Serializable {
 
     private static final long serialVersionUID = -5674633339633714327L;
 
     @Id
-    @Column(name = "SHORTCUTS_ID")
+    @Column(name = "SHORTCUT_ID")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long shortcutId;
 

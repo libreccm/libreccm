@@ -18,11 +18,25 @@
  */
 package org.libreccm.shortcuts;
 
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.IntStream;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.container.test.api.ShouldThrowException;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
 import org.jboss.arquillian.persistence.CreateSchema;
 import org.jboss.arquillian.persistence.PersistenceTest;
+import org.jboss.arquillian.persistence.ShouldMatchDataSet;
+import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -41,17 +55,6 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.libreccm.tests.categories.IntegrationTest;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.IntStream;
-
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import org.jboss.arquillian.persistence.UsingDataSet;
-
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
@@ -64,15 +67,15 @@ import static org.junit.Assert.*;
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
 @CreateSchema({"create_ccm_shortcuts_schema.sql"})
-public class ShortcutRepositoryTest {
+public class ShortcutManagerTest {
 
     @Inject
-    private ShortcutRepository shortcutRepository;
+    private ShortcutManager shortcutManager;
 
     @PersistenceContext
     private EntityManager entityManager;
 
-    public ShortcutRepositoryTest() {
+    public ShortcutManagerTest() {
     }
 
     @BeforeClass
@@ -149,8 +152,8 @@ public class ShortcutRepositoryTest {
 
     @Test
     @InSequence(1)
-    public void repoIsInjected() {
-        assertThat(shortcutRepository, is(not(nullValue())));
+    public void managerIsInjected() {
+        assertThat(shortcutManager, is(not(nullValue())));
     }
 
     @Test
@@ -161,78 +164,123 @@ public class ShortcutRepositoryTest {
 
     @Test
     @UsingDataSet(
-            "datasets/org/libreccm/shortcuts/ShortcutRepositoryTest/data.xml")
-    @InSequence(10)
-    public void findByUrlKey() {
-
-        final Optional<Shortcut> members = shortcutRepository.findByUrlKey(
-                "members");
-        final Optional<Shortcut> mitglieder = shortcutRepository.findByUrlKey(
-                "mitglieder");
-        final Optional<Shortcut> shop = shortcutRepository.findByUrlKey("shop");
-
-        assertThat(members.isPresent(), is(true));
-        assertThat(members.get().getUrlKey(), is(equalTo("members")));
-        assertThat(members.get().getRedirect(),
-                   is(equalTo("/ccm/navigation/members")));
-
-        assertThat(mitglieder.isPresent(), is(true));
-        assertThat(mitglieder.get().getUrlKey(), is(equalTo("mitglieder")));
-        assertThat(mitglieder.get().getRedirect(),
-                   is(equalTo("/ccm/navigation/members")));
-
-        assertThat(shop.isPresent(), is(true));
-        assertThat(shop.get().getUrlKey(),
-                   is(equalTo("shop")));
-        assertThat(shop.get().getRedirect(),
-                   is(equalTo("http://www.example.com")));
+            "datasets/org/libreccm/shortcuts/ShortcutManagerTest/data.xml")
+    @ShouldMatchDataSet(
+            value = "datasets/org/libreccm/shortcuts/ShortcutManagerTest/data.xml",
+            excludeColumns = {"shortcut_id"})
+    @InSequence(100)
+    public void createShortcutStringParams() {
+        shortcutManager.createShortcut("datenschutz",
+                                       "/ccm/navigation/privacy");
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     @UsingDataSet(
-            "datasets/org/libreccm/shortcuts/ShortcutRepositoryTest/data.xml")
-    @InSequence(10)
-    public void findByUrlKeyNotExisting() {
-        final Optional<Shortcut> result = shortcutRepository.findByUrlKey(
-                "foo");
-
-        assertThat(result, is(not(nullValue())));
-        assertThat(result.isPresent(), is(false));
+            "datasets/org/libreccm/shortcuts/ShortcutManagerTest/data.xml")
+    @ShouldThrowException(IllegalArgumentException.class)
+    @InSequence(110)
+    public void createShortcutStringParamsNullUrlKey() {
+        shortcutManager.createShortcut(null, "http://www.example.org");
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     @UsingDataSet(
-            "datasets/org/libreccm/shortcuts/ShortcutRepositoryTest/data.xml")
-    @InSequence(30)
-    public void findByRedirect() {
-
-        final List<Shortcut> toMembers = shortcutRepository.findByRedirect(
-                "/ccm/navigation/members");
-        assertThat(toMembers.size(), is(2));
-        assertThat(toMembers.get(0).getUrlKey(), is(equalTo("members")));
-        assertThat(toMembers.get(0).getRedirect(),
-                   is(equalTo("/ccm/navigation/members")));
-        assertThat(toMembers.get(1).getUrlKey(), is(equalTo("mitglieder")));
-        assertThat(toMembers.get(1).getRedirect(),
-                   is(equalTo("/ccm/navigation/members")));
-
-        final List<Shortcut> toExampleCom = shortcutRepository.findByRedirect(
-                "http://www.example.com");
-        assertThat(toExampleCom.size(), is(1));
-        assertThat(toExampleCom.get(0).getUrlKey(), is(equalTo("shop")));
-        assertThat(toExampleCom.get(0).getRedirect(),
-                   is(equalTo("http://www.example.com")));
+            "datasets/org/libreccm/shortcuts/ShortcutManagerTest/data.xml")
+    @ShouldThrowException(IllegalArgumentException.class)
+    @InSequence(120)
+    public void createShortcutStringParamsNullRedirect() {
+        shortcutManager.createShortcut("example", null);
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     @UsingDataSet(
-            "datasets/org/libreccm/shortcuts/ShortcutRepositoryTest/data.xml")
-    @InSequence(30)
-    public void findByRedirectNotExisting() {
-        final List<Shortcut> result = shortcutRepository.findByRedirect(
-                "http://www.example.org");
-
-        assertThat(result, is(not(nullValue())));
-        assertThat(result.isEmpty(), is(true));
+            "datasets/org/libreccm/shortcuts/ShortcutManagerTest/data.xml")
+    @ShouldThrowException(IllegalArgumentException.class)
+    @InSequence(140)
+    public void createShortcutStringParamsEmptyUrlKey() {
+        shortcutManager.createShortcut("  ", "http://www.example.org");
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    @UsingDataSet(
+            "datasets/org/libreccm/shortcuts/ShortcutManagerTest/data.xml")
+    @ShouldThrowException(IllegalArgumentException.class)
+    @InSequence(150)
+    public void createShortcutStringParamsEmptyRedirect() {
+        shortcutManager.createShortcut("example", " ");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    @UsingDataSet(
+            "datasets/org/libreccm/shortcuts/ShortcutManagerTest/data.xml")
+    @ShouldThrowException(IllegalArgumentException.class)
+    @InSequence(160)
+    public void createShortcutStringParamsEmptyParams() {
+        shortcutManager.createShortcut("", "");
+    }
+
+//    @Test
+//    @UsingDataSet(
+//            "datasets/org/libreccm/shortcuts/ShortcutManagerTest/data.xml")
+//    @ShouldMatchDataSet(
+//            value = "datasets/org/libreccm/shortcuts/ShortcutManagerTest/data.xml",
+//            excludeColumns = {"shortcut_id"})
+//    @InSequence(200)
+//    public void createShortcutUrlParams() throws MalformedURLException {
+//        final URL urlKey = new URL("datenschutz");
+//        final URL redirect = new URL("/ccm/navigation/privacy");
+//
+//        shortcutManager.createShortcut(urlKey, redirect);
+//    }
+//
+//    @Test(expected = IllegalArgumentException.class)
+//    @UsingDataSet(
+//            "datasets/org/libreccm/shortcuts/ShortcutManagerTest/data.xml")
+//    @ShouldThrowException(IllegalArgumentException.class)
+//    @InSequence(210)
+//    public void createShortcutUrlParamsNullUrlKey() throws MalformedURLException {
+//        shortcutManager.createShortcut(null, new URL("http://www.example.org"));
+//    }
+//
+//    @Test(expected = IllegalArgumentException.class)
+//    @UsingDataSet(
+//            "datasets/org/libreccm/shortcuts/ShortcutManagerTest/data.xml")
+//    @ShouldThrowException(IllegalArgumentException.class)
+//    @InSequence(220)
+//    public void createShortcutUrlParamsNullRedirect() throws
+//            MalformedURLException {
+//        shortcutManager.createShortcut(new URL("example"), null);
+//    }
+//
+//    @Test
+//    @UsingDataSet(
+//            "datasets/org/libreccm/shortcuts/ShortcutManagerTest/data.xml")
+//    @ShouldMatchDataSet(
+//            value = "datasets/org/libreccm/shortcuts/ShortcutManagerTest/data.xml",
+//            excludeColumns = {"shortcut_id"})
+//    @InSequence(300)
+//    public void createShortcutUriParams() throws URISyntaxException {
+//        final URI urlKey = new URI("datenschutz");
+//        final URI redirect = new URI("/ccm/navigation/privacy");
+//
+//        shortcutManager.createShortcut(urlKey, redirect);
+//    }
+//
+//    @Test(expected = IllegalArgumentException.class)
+//    @UsingDataSet(
+//            "datasets/org/libreccm/shortcuts/ShortcutManagerTest/data.xml")
+//    @ShouldThrowException(IllegalArgumentException.class)
+//    @InSequence(310)
+//    public void createShortcutUriParamsNullUrlKey() throws URISyntaxException {
+//        shortcutManager.createShortcut(null, new URI("http://www.example.org"));
+//    }
+//
+//    @Test(expected = IllegalArgumentException.class)
+//    @UsingDataSet(
+//            "datasets/org/libreccm/shortcuts/ShortcutManagerTest/data.xml")
+//    @ShouldThrowException(IllegalArgumentException.class)
+//    @InSequence(320)
+//    public void createShortcutUriParamsNullRedirect() throws URISyntaxException {
+//        shortcutManager.createShortcut(new URI("example"), null);
+//    }
 }

@@ -624,14 +624,15 @@ CREATE SCHEMA ccm_shortcuts;
         add constraint UK5whinfxdaepqs09e5ia9y71uk unique (CONFIGURATION_CLASS, NAME);
 
     create table CCM_SHORTCUTS.SHORTCUTS (
-        SHORTCUTS_ID bigint not null,
+        SHORTCUT_ID bigint not null,
         REDIRECT varchar(1024),
         URL_KEY varchar(1024),
-        primary key (SHORTCUTS_ID)
+        primary key (SHORTCUT_ID)
     );
 
     alter table CCM_SHORTCUTS.SHORTCUTS 
         add constraint UK_4otuwtog6qqdbg4e6p8xdpw8h unique (URL_KEY);
+
 create sequence hibernate_sequence start with 1 increment by 1;
 
     alter table CCM_CORE.APPLICATIONS 

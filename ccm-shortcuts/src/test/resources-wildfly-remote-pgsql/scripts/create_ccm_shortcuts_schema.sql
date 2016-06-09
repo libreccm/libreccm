@@ -624,10 +624,10 @@ CREATE SCHEMA ccm_shortcuts;
         add constraint UK5whinfxdaepqs09e5ia9y71uk unique (CONFIGURATION_CLASS, NAME);
 
     create table CCM_SHORTCUTS.SHORTCUTS (
-        SHORTCUTS_ID int8 not null,
+        SHORTCUT_ID int8 not null,
         REDIRECT varchar(1024),
         URL_KEY varchar(1024),
-        primary key (SHORTCUTS_ID)
+        primary key (SHORTCUT_ID)
     );
 
     alter table CCM_SHORTCUTS.SHORTCUTS 
