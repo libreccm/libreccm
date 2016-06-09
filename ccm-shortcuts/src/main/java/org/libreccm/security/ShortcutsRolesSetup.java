@@ -16,25 +16,35 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.shortcuts;
+package org.libreccm.security;
+
+import javax.persistence.EntityManager;
+import org.libreccm.shortcuts.ShortcutsConstants;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public final class ShortcutsConstants {
-    
-    /**
-     * Name of the shortcuts application type
-     */
-    public static final String SHORTCUTS_APP_TYPE
-                               = "org.libreccm.shortcuts.Shortcuts";
-    
-    /**
-     * Primary URL of the singleton Shortcuts application instance.
-     */
-    public static final String SHORTCUTS_PRIMARY_URL = "/shortcuts/";
-    
-    public static final String SHORTSCUT_MANAGE_PRIVILEGE = "manage_shortcuts";
-    
+public class ShortcutsRolesSetup {
+
+    private final EntityManager entityManager;
+
+    public ShortcutsRolesSetup(final EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
+
+    public void setupShortcutsRoles() {
+        final Role shortcutsManager = new Role();
+        shortcutsManager.setName("shortcuts-manager");
+        entityManager.persist(shortcutsManager);
+
+        final Permission permission = new Permission();
+        permission.setGrantee(shortcutsManager);
+        permission.setGrantedPrivilege(
+                ShortcutsConstants.SHORTSCUT_MANAGE_PRIVILEGE);
+        permission.setObject(null);
+        
+        entityManager.persist(permission);
+    }
+
 }

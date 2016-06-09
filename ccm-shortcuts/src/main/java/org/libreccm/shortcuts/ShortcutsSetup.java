@@ -18,16 +18,12 @@
  */
 package org.libreccm.shortcuts;
 
-import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.modules.InstallEvent;
-import org.libreccm.security.PermissionManager;
-import org.libreccm.security.Role;
-import org.libreccm.security.RoleManager;
-import org.libreccm.security.RoleRepository;
 import org.libreccm.web.AbstractCcmApplicationSetup;
 import org.libreccm.web.CcmApplication;
 
 import java.util.UUID;
+import org.libreccm.security.ShortcutsRolesSetup;
 
 /**
  *
@@ -47,16 +43,17 @@ public class ShortcutsSetup extends AbstractCcmApplicationSetup {
         shortcuts.setPrimaryUrl(ShortcutsConstants.SHORTCUTS_PRIMARY_URL);
         getEntityManager().persist(shortcuts);
 
-        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-        final RoleRepository roleRepository = cdiUtil.findBean(
-            RoleRepository.class);
-        final Role shortcutsManager = new Role();
-        shortcutsManager.setName("shortcuts-manager");
-        roleRepository.save(shortcutsManager);
+        final ShortcutsRolesSetup rolesSetup = new ShortcutsRolesSetup(
+                getEntityManager());
+        rolesSetup.setupShortcutsRoles();
 
-        final PermissionManager permissionManager = cdiUtil.findBean(
-            PermissionManager.class);
-        permissionManager.grantPrivilege("manage_shortcuts", shortcutsManager);
+//        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+//        final RoleRepository roleRepository = cdiUtil.findBean(
+//            RoleRepository.class);
+//        roleRepository.save(shortcutsManager);
+//        final PermissionManager permissionManager = cdiUtil.findBean(
+//            PermissionManager.class);
+//        permissionManager.grantPrivilege("manage_shortcuts", shortcutsManager);
     }
 
 }

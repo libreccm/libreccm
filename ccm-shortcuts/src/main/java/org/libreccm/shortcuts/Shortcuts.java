@@ -18,10 +18,12 @@
  */
 package org.libreccm.shortcuts;
 
+import org.libreccm.core.CcmCore;
 import org.libreccm.modules.CcmModule;
 import org.libreccm.modules.InitEvent;
 import org.libreccm.modules.InstallEvent;
 import org.libreccm.modules.Module;
+import org.libreccm.modules.RequiredModule;
 import org.libreccm.modules.ShutdownEvent;
 import org.libreccm.modules.UnInstallEvent;
 import org.libreccm.web.ApplicationType;
@@ -30,11 +32,15 @@ import org.libreccm.web.ApplicationType;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@Module(applicationTypes = {
-    @ApplicationType(name = ShortcutsConstants.SHORTCUTS_APP_TYPE,
-                     descBundle = "org.libreccm.shortcuts.ShortcutsResources",
-                     singleton = true,
-                     creator = ShortcutsApplicationCreator.class)}
+@Module(
+        requiredModules = {
+            @RequiredModule(module = CcmCore.class)
+        },
+        applicationTypes = {
+            @ApplicationType(name = ShortcutsConstants.SHORTCUTS_APP_TYPE,
+                             descBundle = "org.libreccm.shortcuts.ShortcutsResources",
+                             singleton = true,
+                             creator = ShortcutsApplicationCreator.class)}
 )
 public class Shortcuts implements CcmModule {
 

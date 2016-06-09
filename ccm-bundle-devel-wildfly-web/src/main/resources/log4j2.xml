@@ -36,6 +36,9 @@
         <Logger name="org.libreccm.core.AbstractEntityRepository"
                 level="debug">
         </Logger>
+        <Logger name="org.libreccm.modules.CcmIntegrator" 
+                level="debug">
+        </Logger>
         <Logger name="org.libreccm.security.OneTimeAuthTokenCleaner"
                 level="debug">
         </Logger>
