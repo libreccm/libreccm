@@ -40,8 +40,7 @@ import org.libreccm.web.ApplicationType;
             @ApplicationType(name = ShortcutsConstants.SHORTCUTS_APP_TYPE,
                              descBundle = "org.libreccm.shortcuts.ShortcutsResources",
                              singleton = true,
-                             creator = ShortcutsApplicationCreator.class)}
-)
+                             creator = ShortcutsApplicationCreator.class)})
 public class Shortcuts implements CcmModule {
 
     @Override

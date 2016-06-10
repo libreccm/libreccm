@@ -54,7 +54,7 @@ LibreCCM Bundle for Wildfly
 
     ** Profile generic
 
-    mvn -Djboss-as.home=/home/jensp/java-ee-servers/wildfly/wildfly-10.0.0.Final_ccm-runtime package wildfly:run -pl ccm-bundle-devel-wildfly -am -Pgeneric
+    mvn -Djboss-as.home=/home/mustermann/java-ee-servers/wildfly/wildfly-10.0.0.Final package wildfly:run -pl ccm-bundle-devel-wildfly -am -Pgeneric
 
     ** Additional options
 

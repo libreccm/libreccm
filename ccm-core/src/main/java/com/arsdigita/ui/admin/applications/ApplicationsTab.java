@@ -20,6 +20,7 @@ package com.arsdigita.ui.admin.applications;
 
 import com.arsdigita.bebop.ActionLink;
 import com.arsdigita.bebop.BoxPanel;
+import com.arsdigita.bebop.Form;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.Page;
 import com.arsdigita.bebop.PageState;
@@ -30,9 +31,17 @@ import com.arsdigita.bebop.Tree;
 import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.toolbox.ui.LayoutPanel;
+import com.arsdigita.util.UncheckedWrapperException;
 
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.web.ApplicationType;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
@@ -54,6 +63,9 @@ public class ApplicationsTab extends LayoutPanel {
     private final Text placeholderSingletonSettings;
     private final BoxPanel appInfo;
 
+    private final Map<String, AbstractAppInstanceForm> instanceForms;
+    private final Map<String, AbstractAppSettingsPane> settingsPanes;
+
     public ApplicationsTab() {
         super();
 
@@ -66,6 +78,9 @@ public class ApplicationsTab extends LayoutPanel {
         selectedAppInstanceParam = new StringParameter("selectedAppInstance");
         selectedAppInstance = new ParameterSingleSelectionModel<>(
             selectedAppInstanceParam);
+
+        instanceForms = new HashMap<>();
+        settingsPanes = new HashMap<>();
 
         applicationTree = new Tree(new ApplicationTreeModelBuilder());
         applicationTree.addChangeListener(e -> {
@@ -155,6 +170,39 @@ public class ApplicationsTab extends LayoutPanel {
         appInfo.add(appInfoSheet);
         managementPanel.add(appInfo);
 
+        final org.libreccm.web.ApplicationManager appManager = CdiUtil
+            .createCdiUtil().findBean(org.libreccm.web.ApplicationManager.class);
+        final Map<String, ApplicationType> appTypes = appManager
+            .getApplicationTypes();
+
+        appTypes.entrySet().forEach(e -> {
+            final String appTypeName = e.getKey();
+            final Class<? extends AbstractAppInstanceForm> instanceFormClass
+                                                               = e
+                .getValue().instanceForm();
+            final Class<? extends AbstractAppSettingsPane> settingsPaneClass
+                                                               = e
+                .getValue().settingsPane();
+            final boolean singleton = e.getValue().singleton();
+
+            if (singleton) {
+                final AbstractAppSettingsPane settingsPane = createSettingsPane(
+                    settingsPaneClass);
+                managementPanel.add(settingsPane);
+                settingsPanes.put(appTypeName, settingsPane);
+            } else {
+                final AbstractAppInstanceForm instanceForm = createInstanceForm(
+                    instanceFormClass);
+                managementPanel.add(instanceForm);
+                instanceForms.put(appTypeName, instanceForm);
+                final AbstractAppSettingsPane settingsPane = createSettingsPane(
+                    settingsPaneClass);
+                managementPanel.add(settingsPane);
+                settingsPanes.put(appTypeName, settingsPane);
+            }
+
+        });
+
         setBody(managementPanel);
 
     }
@@ -175,23 +223,33 @@ public class ApplicationsTab extends LayoutPanel {
 
     protected void showManagementLinks(final PageState state) {
         managementLinks.setVisible(state, true);
+        hideAllInstanceForms(state);
+        hideAllSettingsPanes(state);
     }
 
     protected void hideManagementLinks(final PageState state) {
         managementLinks.setVisible(state, false);
+        hideAllInstanceForms(state);
+        hideAllSettingsPanes(state);
     }
 
     protected void showInstances(final PageState state) {
         placeholderInstances.setVisible(state, true);
         placeholderSingletonSettings.setVisible(state, false);
         appInfo.setVisible(state, false);
+        hideAllInstanceForms(state);
+        hideAllSettingsPanes(state);
     }
 
     protected void hideInstances(final PageState state) {
+        hideAllInstanceForms(state);
+        hideAllSettingsPanes(state);
         placeholderInstances.setVisible(state, false);
     }
 
     protected void showSingletonAppSettings(final PageState state) {
+        hideAllInstanceForms(state);
+        hideAllSettingsPanes(state);
         placeholderInstances.setVisible(state, false);
         placeholderSingletonSettings.setVisible(state, true);
         appInfo.setVisible(state, false);
@@ -199,16 +257,78 @@ public class ApplicationsTab extends LayoutPanel {
 
     protected void hideSingletonAppSettings(final PageState state) {
         placeholderSingletonSettings.setVisible(state, false);
+        hideAllInstanceForms(state);
+        hideAllSettingsPanes(state);
     }
 
     protected void showAppInfo(final PageState state) {
         placeholderInstances.setVisible(state, false);
         placeholderSingletonSettings.setVisible(state, false);
+        hideAllInstanceForms(state);
+        hideAllSettingsPanes(state);
         appInfo.setVisible(state, true);
     }
 
     protected void hideAppInfo(final PageState state) {
+        hideAllInstanceForms(state);
+        hideAllSettingsPanes(state);
         appInfo.setVisible(state, false);
+    }
+
+    private void hideAllInstanceForms(final PageState state) {
+        instanceForms.values().forEach(f -> {
+            f.setVisible(state, false);
+        });
+    }
+
+    private void hideAllSettingsPanes(final PageState state) {
+        settingsPanes.values().forEach(p -> {
+            p.setVisible(state, false);
+        });
+    }
+
+    private AbstractAppInstanceForm createInstanceForm(
+        Class<? extends AbstractAppInstanceForm> instanceFormClass) {
+
+        try {
+            final Constructor<? extends AbstractAppInstanceForm> constructor
+                                                                     = instanceFormClass
+                .getConstructor(ParameterSingleSelectionModel.class,
+                                ParameterSingleSelectionModel.class);
+
+            return constructor.newInstance(selectedAppType,
+                                           selectedAppInstance);
+        } catch (NoSuchMethodException |
+                 SecurityException |
+                 InstantiationException |
+                 IllegalAccessException |
+                 IllegalArgumentException |
+                 InvocationTargetException ex) {
+            throw new UncheckedWrapperException(ex);
+        }
+
+    }
+
+    private AbstractAppSettingsPane createSettingsPane(
+        Class<? extends AbstractAppSettingsPane> settingsPaneClass) {
+
+        try {
+            final Constructor<? extends AbstractAppSettingsPane> constructor
+                                                                     = settingsPaneClass
+                .getDeclaredConstructor(ParameterSingleSelectionModel.class,
+                                        ParameterSingleSelectionModel.class);
+
+            return constructor.newInstance(selectedAppType,
+                                           selectedAppInstance);
+
+        } catch (NoSuchMethodException |
+                 SecurityException |
+                 InstantiationException |
+                 IllegalAccessException |
+                 IllegalArgumentException |
+                 InvocationTargetException ex) {
+            throw new UncheckedWrapperException(ex);
+        }
     }
 
     private class SingletonAppSettingsLink extends ActionLink {

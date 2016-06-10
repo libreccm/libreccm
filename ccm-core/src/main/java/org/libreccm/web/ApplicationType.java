@@ -18,6 +18,10 @@
  */
 package org.libreccm.web;
 
+import com.arsdigita.ui.admin.applications.AbstractAppInstanceForm;
+import com.arsdigita.ui.admin.applications.AbstractAppSettingsPane;
+import com.arsdigita.ui.admin.applications.DefaultApplicationInstanceForm;
+import com.arsdigita.ui.admin.applications.DefaultApplicationSettingsPane;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -58,11 +62,11 @@ public @interface ApplicationType {
      * bundle. Defaults to {@code application_title}
      *
      * @return
-     * 
-     * @return 
+     *
+     * @return
      */
     String titleKey() default "application_title";
-    
+
     /**
      * The (optional) key for the description of the application in its resource
      * bundle. Defaults to {@code application_desc}
@@ -70,7 +74,7 @@ public @interface ApplicationType {
      * @return
      */
     String descKey() default "application_desc";
-    
+
     /**
      * The application type class. Default is {@link CcmApplication}. Most
      * application types will no need to extend these class and can leave the
@@ -111,9 +115,9 @@ public @interface ApplicationType {
      * @return
      */
     Class<? extends ApplicationCreator> creator();
-    
-    //Class<? extends AbstractApplicationTypePane> appTypePane default com.arsdigita.ui.admin.applications.DefaultApplicationTypePane.class;
-    
-    
+
+    Class<? extends AbstractAppInstanceForm> instanceForm() default DefaultApplicationInstanceForm.class;
+
+    Class<? extends AbstractAppSettingsPane> settingsPane() default DefaultApplicationSettingsPane.class;
 
 }
