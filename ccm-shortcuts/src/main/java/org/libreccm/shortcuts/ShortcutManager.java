@@ -18,7 +18,6 @@
  */
 package org.libreccm.shortcuts;
 
-
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
 
@@ -41,10 +40,12 @@ public class ShortcutManager {
     private ShortcutRepository shortcutRepository;
 
     /**
-     * Creates a Shortcut
+     * Creates a new Shortcut. The Shortcut is automatically saved to the
+     * database.
      *
-     * @param url The URL of the Shortcut. Can't be null.
+     * @param url      The URL of the Shortcut. Can't be null.
      * @param redirect The URL to which the Shortcut redirects. Can't be null.
+     *
      * @return the new Shortcut
      */
     @AuthorizationRequired
@@ -52,25 +53,29 @@ public class ShortcutManager {
     public Shortcut createShortcut(final String url, final String redirect) {
         if (url == null || url.trim().isEmpty()) {
             throw new IllegalArgumentException(
-                    "The URL key of a Shortcut can't be empty");
+                "The URL key of a Shortcut can't be empty");
         }
 
         if (redirect == null || redirect.trim().isEmpty()) {
             throw new IllegalArgumentException(
-                    "The redirect target of a Shortcut can't be empty");
+                "The redirect target of a Shortcut can't be empty");
         }
 
         Shortcut shortcut = new Shortcut();
         shortcut.setUrlKey(url);
         shortcut.setRedirect(redirect);
+
+        shortcutRepository.save(shortcut);
+
         return shortcut;
     }
 
     /**
      * Creates a Shortcut
      *
-     * @param url The URL of the Shortcut. Can't be null.
+     * @param url      The URL of the Shortcut. Can't be null.
      * @param redirect The URL to which the Shortcut redirects. Can't be null.
+     *
      * @return the new Shortcut
      */
 //    public Shortcut createShortcut(final URL url, final URL redirect) {
@@ -89,12 +94,12 @@ public class ShortcutManager {
 //        shortcut.setRedirect(redirect.toString());
 //        return shortcut;
 //    }
-
     /**
      * Creates a Shortcut
      *
-     * @param uri The URI of the Shortcut. Can't be null.
+     * @param uri      The URI of the Shortcut. Can't be null.
      * @param redirect The URI to which the Shortcut redirects. Can't be null.
+     *
      * @return the new Shortcut
      */
 //    public Shortcut createShortcut(final URI uri, final URI redirect) {
@@ -113,7 +118,6 @@ public class ShortcutManager {
 //        shortcut.setRedirect(redirect.toString());
 //        return shortcut;
 //    }
-
     /**
      * checks if the Shortcut exists.
      *
@@ -128,8 +132,9 @@ public class ShortcutManager {
      * checks if the given URL is valid
      *
      * @param url the URL you want to validate
+     *
      * @return true if you can successfully connect to the url, therefore is
-     * valid.
+     *         valid.
      */
     private boolean validateURL(final String url) {
         //TODO

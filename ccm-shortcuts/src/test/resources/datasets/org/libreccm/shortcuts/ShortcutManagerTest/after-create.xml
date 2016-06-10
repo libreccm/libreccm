@@ -1,19 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <dataset>
+    <ccm_core.parties party_id="-100"
+                      name="public-user" />
+    <ccm_core.parties party_id="-110"
+                      name="jdoe" />
+    
+    <ccm_core.users party_id="-100" 
+                    given_name="public"
+                    family_name="user"
+                    email_address="public-user@localhost"
+                    banned="false"
+                    bouncing="false"
+                    verified="true"
+                    password_reset_required="false" />
+    <!-- Password is foo123 -->
+    <ccm_core.users party_id="-110" 
+                    given_name="John"
+                    family_name="Doe"
+                    email_address="john.doe@example.org"
+                    password="$shiro1$SHA-512$500000$Y7CnccN1h25sR7KCElMOXg==$CVLWBhetodaEzzhDfGjRcCFZtSW02xOnjH7xhBx0lbxO66grKIt6LWmXoUhLEydce1JZ7cbzNLYOxIwwTeqi5Q=="
+                    banned="false"
+                    bouncing="false"
+                    verified="true"
+                    password_reset_required="false" />
+    
+    <ccm_core.ccm_roles role_id="-200"
+                        name="shortcuts-manager"/>
+    
+    <ccm_core.role_memberships membership_id="-300" 
+                               role_id="-200" 
+                               member_id="-110" />
+    
+    <ccm_core.permissions permission_id="-400"
+                           granted_privilege="manage_shortcuts"
+                           grantee_id="-200" />
+    
     <ccm_shortcuts.shortcuts shortcut_id="-10"
-                             url_key="mitglieder"
+                             url_key="/mitglieder/"
                              redirect="/ccm/navigation/members" />
     <ccm_shortcuts.shortcuts shortcut_id="-20"
-                             url_key="members"
+                             url_key="/members/"
                              redirect="/ccm/navigation/members" />
     <ccm_shortcuts.shortcuts shortcut_id="-30"
-                             url_key="privacy"
+                             url_key="/privacy/"
                              redirect="/ccm/navigation/privacy" />
     <ccm_shortcuts.shortcuts shortcut_id="-40"
-                             url_key="shop"
+                             url_key="/shop/"
                              redirect="http://www.example.com" />
     <ccm_shortcuts.shortcuts shortcut_id="-50"
-                             url_key="datenschutz"
+                             url_key="/datenschutz/"
                              redirect="/ccm/navigation/privacy" />
 </dataset>
 

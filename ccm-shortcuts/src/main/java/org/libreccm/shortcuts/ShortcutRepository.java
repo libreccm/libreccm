@@ -18,6 +18,8 @@
  */
 package org.libreccm.shortcuts;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.libreccm.core.AbstractEntityRepository;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
@@ -35,6 +37,9 @@ import javax.persistence.TypedQuery;
  */
 @RequestScoped
 public class ShortcutRepository extends AbstractEntityRepository<Long, Shortcut> {
+
+    private static final Logger LOGGER = LogManager.getLogger(
+        ShortcutRepository.class);
 
     @Override
     public Class<Shortcut> getEntityClass() {
@@ -54,9 +59,11 @@ public class ShortcutRepository extends AbstractEntityRepository<Long, Shortcut>
      * @return The shortcut with the specified {@code urlKey} if there is any.
      */
     public Optional<Shortcut> findByUrlKey(final String urlKey) {
+        LOGGER.debug("Trying to find Shortcut for urlKey {}",
+                     cleanUrlKey(urlKey));
         final TypedQuery<Shortcut> query = getEntityManager().createNamedQuery(
             "Shortcut.findByUrlKey", Shortcut.class);
-        query.setParameter("urlKey", urlKey);
+        query.setParameter("urlKey", cleanUrlKey(urlKey));
 
         try {
             final Shortcut result = query.getSingleResult();
@@ -65,18 +72,19 @@ public class ShortcutRepository extends AbstractEntityRepository<Long, Shortcut>
             return Optional.empty();
         }
     }
-    
+
     /**
      * Finds all shortcuts which redirect to the provided target.
      *
      * @param redirect the wanted redirect
+     *
      * @return a List of Shortcuts with the specified {@code redirect}
      */
     public List<Shortcut> findByRedirect(final String redirect) {
         final TypedQuery<Shortcut> query = getEntityManager().createNamedQuery(
             "Shortcut.findByRedirect", Shortcut.class);
         query.setParameter("redirect", redirect);
-        
+
         return query.getResultList();
     }
 
@@ -84,13 +92,33 @@ public class ShortcutRepository extends AbstractEntityRepository<Long, Shortcut>
     @AuthorizationRequired
     @RequiresPrivilege(ShortcutsConstants.SHORTSCUT_MANAGE_PRIVILEGE)
     public void save(final Shortcut shortcut) {
+        //Cleanup the URL key
+        shortcut.setUrlKey(cleanUrlKey(shortcut.getUrlKey()));
+
         super.save(shortcut);
     }
-    
+
     @Override
     @AuthorizationRequired
     @RequiresPrivilege(ShortcutsConstants.SHORTSCUT_MANAGE_PRIVILEGE)
     public void delete(final Shortcut shortcut) {
         super.delete(shortcut);
     }
+
+    private String cleanUrlKey(final String urlKey) {
+        final StringBuffer result = new StringBuffer(urlKey.length());
+
+        if (!urlKey.startsWith("/")) {
+            result.append('/');
+        }
+
+        result.append(urlKey);
+
+        if (!urlKey.endsWith("/")) {
+            result.append('/');
+        }
+
+        return result.toString();
+    }
+
 }

@@ -177,7 +177,7 @@ public class ShortcutManagerTest {
     @UsingDataSet(
         "datasets/org/libreccm/shortcuts/ShortcutManagerTest/data.xml")
     @ShouldMatchDataSet(
-        value = "datasets/org/libreccm/shortcuts/ShortcutManagerTest/data.xml",
+        value = "datasets/org/libreccm/shortcuts/ShortcutManagerTest/after-create.xml",
         excludeColumns = {"shortcut_id"})
     @InSequence(100)
     public void createShortcutBySystemUser() {
@@ -195,7 +195,7 @@ public class ShortcutManagerTest {
     @UsingDataSet(
         "datasets/org/libreccm/shortcuts/ShortcutManagerTest/data.xml")
     @ShouldMatchDataSet(
-        value = "datasets/org/libreccm/shortcuts/ShortcutManagerTest/data.xml",
+        value = "datasets/org/libreccm/shortcuts/ShortcutManagerTest/after-create.xml",
         excludeColumns = {"shortcut_id"})
     @InSequence(110)
     public void createShortcutByAuthorizedUser() {
