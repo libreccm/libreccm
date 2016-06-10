@@ -19,6 +19,8 @@
 package org.libreccm.shortcuts;
 
 import org.libreccm.core.AbstractEntityRepository;
+import org.libreccm.security.AuthorizationRequired;
+import org.libreccm.security.RequiresPrivilege;
 
 import java.util.List;
 import java.util.Optional;
@@ -78,4 +80,17 @@ public class ShortcutRepository extends AbstractEntityRepository<Long, Shortcut>
         return query.getResultList();
     }
 
+    @Override
+    @AuthorizationRequired
+    @RequiresPrivilege(ShortcutsConstants.SHORTSCUT_MANAGE_PRIVILEGE)
+    public void save(final Shortcut shortcut) {
+        super.save(shortcut);
+    }
+    
+    @Override
+    @AuthorizationRequired
+    @RequiresPrivilege(ShortcutsConstants.SHORTSCUT_MANAGE_PRIVILEGE)
+    public void delete(final Shortcut shortcut) {
+        super.delete(shortcut);
+    }
 }

@@ -18,17 +18,19 @@
  */
 package org.libreccm.shortcuts;
 
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authz.UnauthorizedException;
+import org.apache.shiro.subject.Subject;
+
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
+
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.ShouldThrowException;
 import org.jboss.arquillian.junit.Arquillian;
@@ -40,7 +42,6 @@ import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
@@ -53,6 +54,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+import org.libreccm.security.Shiro;
 import org.libreccm.tests.categories.IntegrationTest;
 
 import static org.hamcrest.CoreMatchers.*;
@@ -71,6 +73,12 @@ public class ShortcutManagerTest {
 
     @Inject
     private ShortcutManager shortcutManager;
+
+    @Inject
+    private Shiro shiro;
+
+    @Inject
+    private Subject subject;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -97,21 +105,21 @@ public class ShortcutManagerTest {
     @Deployment
     public static WebArchive createDeployment() {
         final PomEquippedResolveStage pom = Maven
-                .resolver()
-                .loadPomFromFile("pom.xml");
+            .resolver()
+            .loadPomFromFile("pom.xml");
         final PomEquippedResolveStage dependencies = pom
-                .importCompileAndRuntimeDependencies();
+            .importCompileAndRuntimeDependencies();
         dependencies.addDependency(MavenDependencies.createDependency(
-                "org.libreccm:ccm-core", ScopeType.RUNTIME, false));
+            "org.libreccm:ccm-core", ScopeType.RUNTIME, false));
         dependencies.addDependency(MavenDependencies.createDependency(
-                "org.libreccm:ccm-testutils", ScopeType.RUNTIME, false));
+            "org.libreccm:ccm-testutils", ScopeType.RUNTIME, false));
         dependencies.addDependency(MavenDependencies.createDependency(
-                "net.sf.saxon:Saxon-HE", ScopeType.RUNTIME, false));
+            "net.sf.saxon:Saxon-HE", ScopeType.RUNTIME, false));
         dependencies.addDependency(MavenDependencies.createDependency(
-                "org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-impl-maven",
-                ScopeType.RUNTIME, false));
-        final File[] libsWithCcmCore = dependencies.resolve().withTransitivity().
-                asFile();
+            "org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-impl-maven",
+            ScopeType.RUNTIME, false));
+        final File[] libsWithCcmCore = dependencies.resolve().withTransitivity()
+            .asFile();
 
         final List<File> libsList = new ArrayList<>(libsWithCcmCore.length - 1);
         IntStream.range(0, libsWithCcmCore.length).forEach(i -> {
@@ -128,26 +136,29 @@ public class ShortcutManagerTest {
         }
 
         return ShrinkWrap.create(
-                WebArchive.class,
-                "LibreCCM-org.libreccm.shortcuts.ShortcutTest-web.war")
-                .addPackage(org.libreccm.categorization.Categorization.class
-                        .getPackage())
-                .addPackage(org.libreccm.configuration.Configuration.class
-                        .getPackage())
-                .addPackage(org.libreccm.core.CcmCore.class.getPackage())
-                .addPackage(org.libreccm.jpa.EntityManagerProducer.class
-                        .getPackage())
-                .addPackage(org.libreccm.l10n.LocalizedString.class
-                        .getPackage())
-                .addPackage(org.libreccm.security.Permission.class.getPackage())
-                .addPackage(org.libreccm.shortcuts.Shortcuts.class.getPackage())
-                .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
-                .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
-                .addAsLibraries(libs)
-                .addAsResource("test-persistence.xml",
-                               "META-INF/persistence.xml")
-                .addAsWebInfResource("test-web.xml", "WEB-INF/web.xml")
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "WEB-INF/beans.xml");
+            WebArchive.class,
+            "LibreCCM-org.libreccm.shortcuts.ShortcutTest-web.war")
+            .addPackage(org.libreccm.categorization.Categorization.class
+                .getPackage())
+            .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
+            .addPackage(org.libreccm.configuration.Configuration.class
+                .getPackage())
+            .addPackage(org.libreccm.core.CcmCore.class.getPackage())
+            .addPackage(org.libreccm.jpa.EntityManagerProducer.class
+                .getPackage())
+            .addPackage(org.libreccm.l10n.LocalizedString.class
+                .getPackage())
+            .addPackage(org.libreccm.security.Permission.class.getPackage())
+            .addPackage(org.libreccm.shortcuts.Shortcuts.class.getPackage())
+            .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
+            .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
+            .addClass(com.arsdigita.kernel.KernelConfig.class)
+            .addAsLibraries(libs)
+            .addAsResource("configs/shiro.ini", "shiro.ini")
+            .addAsResource("test-persistence.xml",
+                           "META-INF/persistence.xml")
+            .addAsWebInfResource("test-web.xml", "web.xml")
+            .addAsResource("test-beans.xml", "META-INF/beans.xml");
     }
 
     @Test
@@ -164,59 +175,129 @@ public class ShortcutManagerTest {
 
     @Test
     @UsingDataSet(
-            "datasets/org/libreccm/shortcuts/ShortcutManagerTest/data.xml")
+        "datasets/org/libreccm/shortcuts/ShortcutManagerTest/data.xml")
     @ShouldMatchDataSet(
-            value = "datasets/org/libreccm/shortcuts/ShortcutManagerTest/data.xml",
-            excludeColumns = {"shortcut_id"})
+        value = "datasets/org/libreccm/shortcuts/ShortcutManagerTest/data.xml",
+        excludeColumns = {"shortcut_id"})
     @InSequence(100)
-    public void createShortcutStringParams() {
+    public void createShortcutBySystemUser() {
+        final Subject systemUser = shiro.getSystemUser();
+        systemUser.execute(() -> {
+            shortcutManager.createShortcut("datenschutz",
+                                           "/ccm/navigation/privacy");
+
+            return null;
+        });
+
+    }
+
+    @Test
+    @UsingDataSet(
+        "datasets/org/libreccm/shortcuts/ShortcutManagerTest/data.xml")
+    @ShouldMatchDataSet(
+        value = "datasets/org/libreccm/shortcuts/ShortcutManagerTest/data.xml",
+        excludeColumns = {"shortcut_id"})
+    @InSequence(110)
+    public void createShortcutByAuthorizedUser() {
+        final UsernamePasswordToken token = new UsernamePasswordToken(
+            "john.doe@example.org", "foo123");
+        token.setRememberMe(true);
+        subject.login(token);
+
+        shortcutManager.createShortcut("datenschutz",
+                                       "/ccm/navigation/privacy");
+
+        subject.logout();
+    }
+
+    @Test(expected = UnauthorizedException.class)
+    @UsingDataSet(
+        "datasets/org/libreccm/shortcuts/ShortcutManagerTest/data.xml")
+    @ShouldThrowException(UnauthorizedException.class)
+    @InSequence(120)
+    public void createShortcutByUnAuthorizedUser() {
         shortcutManager.createShortcut("datenschutz",
                                        "/ccm/navigation/privacy");
     }
 
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet(
-            "datasets/org/libreccm/shortcuts/ShortcutManagerTest/data.xml")
+        "datasets/org/libreccm/shortcuts/ShortcutManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
-    @InSequence(110)
-    public void createShortcutStringParamsNullUrlKey() {
+    @InSequence(130)
+    public void createShortcutNullUrlKey() {
+        final UsernamePasswordToken token = new UsernamePasswordToken(
+            "john.doe@example.org", "foo123");
+        token.setRememberMe(true);
+        subject.login(token);
+
         shortcutManager.createShortcut(null, "http://www.example.org");
+
+        subject.logout();
     }
 
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet(
-            "datasets/org/libreccm/shortcuts/ShortcutManagerTest/data.xml")
+        "datasets/org/libreccm/shortcuts/ShortcutManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(120)
-    public void createShortcutStringParamsNullRedirect() {
+    public void createShortcutNullRedirect() {
+        final UsernamePasswordToken token = new UsernamePasswordToken(
+            "john.doe@example.org", "foo123");
+        token.setRememberMe(true);
+        subject.login(token);
+
         shortcutManager.createShortcut("example", null);
+
+        subject.logout();
     }
 
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet(
-            "datasets/org/libreccm/shortcuts/ShortcutManagerTest/data.xml")
+        "datasets/org/libreccm/shortcuts/ShortcutManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(140)
-    public void createShortcutStringParamsEmptyUrlKey() {
+    public void createShortcutEmptyUrlKey() {
+        final UsernamePasswordToken token = new UsernamePasswordToken(
+            "john.doe@example.org", "foo123");
+        token.setRememberMe(true);
+        subject.login(token);
+
         shortcutManager.createShortcut("  ", "http://www.example.org");
+
+        subject.logout();
     }
 
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet(
-            "datasets/org/libreccm/shortcuts/ShortcutManagerTest/data.xml")
+        "datasets/org/libreccm/shortcuts/ShortcutManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(150)
-    public void createShortcutStringParamsEmptyRedirect() {
+    public void createShortcutEmptyRedirect() {
+        final UsernamePasswordToken token = new UsernamePasswordToken(
+            "john.doe@example.org", "foo123");
+        token.setRememberMe(true);
+        subject.login(token);
+
         shortcutManager.createShortcut("example", " ");
+
+        subject.logout();
     }
 
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet(
-            "datasets/org/libreccm/shortcuts/ShortcutManagerTest/data.xml")
+        "datasets/org/libreccm/shortcuts/ShortcutManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(160)
-    public void createShortcutStringParamsEmptyParams() {
+    public void createShortcutEmptyParams() {
+        final UsernamePasswordToken token = new UsernamePasswordToken(
+            "john.doe@example.org", "foo123");
+        token.setRememberMe(true);
+        subject.login(token);
+
         shortcutManager.createShortcut("", "");
+
+        subject.logout();
     }
 
 //    @Test

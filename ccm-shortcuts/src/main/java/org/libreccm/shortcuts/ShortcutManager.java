@@ -18,8 +18,9 @@
  */
 package org.libreccm.shortcuts;
 
-import java.net.URI;
-import java.net.URL;
+
+import org.libreccm.security.AuthorizationRequired;
+import org.libreccm.security.RequiresPrivilege;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -46,6 +47,8 @@ public class ShortcutManager {
      * @param redirect The URL to which the Shortcut redirects. Can't be null.
      * @return the new Shortcut
      */
+    @AuthorizationRequired
+    @RequiresPrivilege(ShortcutsConstants.SHORTSCUT_MANAGE_PRIVILEGE)
     public Shortcut createShortcut(final String url, final String redirect) {
         if (url == null || url.trim().isEmpty()) {
             throw new IllegalArgumentException(
