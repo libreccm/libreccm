@@ -20,7 +20,9 @@ package org.libreccm.categorization;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.shiro.subject.Subject;
 import org.libreccm.core.AbstractEntityRepository;
+import org.libreccm.security.PermissionChecker;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,6 +31,7 @@ import java.util.UUID;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
 
 /**
  *
@@ -42,6 +45,12 @@ public class CategoryRepository extends AbstractEntityRepository<Long, Category>
 
     @Inject
     private DomainRepository domainRepo;
+    
+    @Inject
+    private PermissionChecker permissionChecker;
+    
+    @Inject
+    private Subject subject;
 
     @Override
     public Class<Category> getEntityClass() {
@@ -150,5 +159,17 @@ public class CategoryRepository extends AbstractEntityRepository<Long, Category>
         }
 
         return current;
+    }
+    
+    @Override
+    @Transactional(Transactional.TxType.REQUIRED)
+    public void save(final Category category) {
+        super.save(category);
+    }
+    
+    @Override
+    @Transactional(Transactional.TxType.REQUIRED)
+    public void delete(final Category category) {
+        super.save(category);
     }
 }

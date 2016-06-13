@@ -18,6 +18,8 @@
  */
 package org.libreccm.categorization;
 
+import org.libreccm.security.AuthorizationRequired;
+import org.libreccm.security.RequiresPrivilege;
 import org.libreccm.web.ApplicationRepository;
 import org.libreccm.web.CcmApplication;
 
@@ -60,6 +62,8 @@ public class DomainManager {
      *
      * @return The new domain.
      */
+    @AuthorizationRequired
+    @RequiresPrivilege(CategorizationConstants.MANAGE_DOMAINS_PRIVILEGE)
     @Transactional(Transactional.TxType.REQUIRED)
     public Domain createDomain(final String domainKey,
                                final String rootCategoryName) {
@@ -90,6 +94,8 @@ public class DomainManager {
      * @param domain      The {@code Domain} to which owners the
      *                    {@code CcmApplication is added}.
      */
+    @AuthorizationRequired
+    @RequiresPrivilege(CategorizationConstants.MANAGE_DOMAINS_PRIVILEGE)
     @Transactional(Transactional.TxType.REQUIRED)
     public void addDomainOwner(final CcmApplication application,
                                final Domain domain) {
@@ -117,6 +123,8 @@ public class DomainManager {
      * @param domain      The {@code Domain} from which owners the provided
      *                    {@code CcmApplication} should be removed.
      */
+    @AuthorizationRequired
+    @RequiresPrivilege(CategorizationConstants.MANAGE_DOMAINS_PRIVILEGE)
     @Transactional(Transactional.TxType.REQUIRED)
     public void removeDomainOwner(final CcmApplication application,
                                   final Domain domain) {

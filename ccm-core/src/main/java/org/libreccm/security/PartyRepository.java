@@ -25,6 +25,7 @@ import org.libreccm.core.AbstractEntityRepository;
 import java.util.List;
 
 import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
 
 /**
  * Repository class for parties.
@@ -74,4 +75,19 @@ public class PartyRepository extends AbstractEntityRepository<Long, Party> {
         return query.getResultList();
     }
 
+    @AuthorizationRequired
+    @RequiresPrivilege("admin")
+    @Transactional(Transactional.TxType.REQUIRED)
+    @Override
+    public void save(final Party party) {
+        super.save(party);
+    }
+    
+    @AuthorizationRequired
+    @RequiresPrivilege("admin")
+    @Transactional(Transactional.TxType.REQUIRED)
+    @Override
+    public void delete(final Party party) {
+        super.delete(party);
+    }
 }

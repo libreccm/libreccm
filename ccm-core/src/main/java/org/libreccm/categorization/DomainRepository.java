@@ -20,6 +20,8 @@ package org.libreccm.categorization;
 
 import org.libreccm.core.AbstractEntityRepository;
 import org.libreccm.core.DefaultEntityGraph;
+import org.libreccm.security.AuthorizationRequired;
+import org.libreccm.security.RequiresPrivilege;
 
 import java.net.URI;
 import java.util.List;
@@ -141,4 +143,19 @@ public class DomainRepository extends AbstractEntityRepository<Long, Domain> {
         return query.getResultList();
     }
 
+    @AuthorizationRequired
+    @RequiresPrivilege(CategorizationConstants.MANAGE_DOMAINS_PRIVILEGE)
+    @Transactional(Transactional.TxType.REQUIRED)
+    @Override
+    public void save(final Domain domain) {
+        super.save(domain);
+    }
+    
+    @AuthorizationRequired
+    @RequiresPrivilege(CategorizationConstants.MANAGE_DOMAINS_PRIVILEGE)
+    @Transactional(Transactional.TxType.REQUIRED)
+    @Override
+    public void delete(final Domain domain) {
+        super.delete(domain);
+    }
 }

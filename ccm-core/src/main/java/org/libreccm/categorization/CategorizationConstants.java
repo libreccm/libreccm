@@ -25,6 +25,8 @@ package org.libreccm.categorization;
 public final class CategorizationConstants {
     
     public static final String CAT_XML_NS = "http://categorization.libreccm.org";
+    public static final String MANAGE_CATEGORIES_PRIVILEGE = "manage_categories";
+    public static final String MANAGE_DOMAINS_PRIVILEGE = "manage_domains";
     
     private CategorizationConstants() {
         //Nothing

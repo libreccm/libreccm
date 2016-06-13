@@ -160,8 +160,18 @@ public class UserRepository extends AbstractEntityRepository<Long, User> {
         return query.getResultList();
     }
 
+    @AuthorizationRequired
+    @RequiresPrivilege("admin")
+    @Transactional(Transactional.TxType.REQUIRED)
     @Override
-    @Transactional
+    public void save(final User entity) {
+        super.save(entity);
+    }
+     
+    @AuthorizationRequired
+    @RequiresPrivilege("admin")
+    @Transactional(Transactional.TxType.REQUIRED)
+    @Override
     public void delete(final User entity) {
         if (entity == null) { 
             throw new IllegalArgumentException("Can't delete null");
