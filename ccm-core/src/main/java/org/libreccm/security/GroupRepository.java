@@ -85,28 +85,37 @@ public class GroupRepository extends AbstractEntityRepository<Long, Group> {
         return query.getResultList();
     }
 
-    
-    
     public List<Group> findAllOrderedByGroupName() {
         final TypedQuery<Group> query = getEntityManager().createNamedQuery(
-                "Group.findAllOrderedByGroupName", Group.class);
+            "Group.findAllOrderedByGroupName", Group.class);
         return query.getResultList();
     }
-    
-    @Override
+
+    @AuthorizationRequired
+    @RequiresPrivilege("admin")
     @Transactional(Transactional.TxType.REQUIRED)
+    @Override
+    public void save(final Group group) {
+        super.save(group);
+    }
+
+    @AuthorizationRequired
+    @RequiresPrivilege("admin")
+    @Transactional(Transactional.TxType.REQUIRED)
+    @Override
     public void delete(final Group entity) {
         if (entity == null) {
             throw new IllegalArgumentException("Can't delete null");
         }
-        
-        final Group delete = getEntityManager().find(Group.class, 
+
+        final Group delete = getEntityManager().find(Group.class,
                                                      entity.getPartyId());
-        
+
         delete.getMemberships().forEach(m -> {
             getEntityManager().remove(m);
         });
-        
+
         getEntityManager().remove(delete);
     }
+
 }

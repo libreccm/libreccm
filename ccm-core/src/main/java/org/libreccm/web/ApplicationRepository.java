@@ -18,13 +18,17 @@
  */
 package org.libreccm.web;
 
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.libreccm.core.AbstractEntityRepository;
+import org.libreccm.security.AuthorizationRequired;
+import org.libreccm.security.RequiresPrivilege;
 
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
 
 /**
  *
@@ -79,6 +83,22 @@ public class ApplicationRepository
         query.setParameter("type", type);
 
         return query.getResultList();
+    }
+    
+    @AuthorizationRequired
+    @RequiresPrivilege("admin")
+    @Transactional(Transactional.TxType.REQUIRED)
+    @Override
+    public void save(final CcmApplication application) {
+        super.save(application);
+    }
+    
+    @AuthorizationRequired
+    @RequiresPrivilege("admin")
+    @Transactional(Transactional.TxType.REQUIRED)
+    @Override
+    public void delete(final CcmApplication application) {
+        super.delete(application);
     }
 
 }

@@ -53,7 +53,9 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 /**
- *
+ * Tests for the {@link RoleRepository}. Note. We are not enabling the 
+ * {@link AuthorizationInterceptor} for this test. 
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Category(IntegrationTest.class)
@@ -126,10 +128,11 @@ public class RoleRepositoryTest {
             .addPackage(org.libreccm.tests.categories.IntegrationTest.class
                 .getPackage())
             .addAsLibraries(libs)
+            .addAsResource("configs/shiro.ini", "shiro.ini")
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")
-            .addAsWebInfResource("test-web.xml", "WEB-INF/web.xml")
-            .addAsWebInfResource(EmptyAsset.INSTANCE, "WEB-INF/beans.xml");
+            .addAsWebInfResource("test-web.xml", "web.xml")
+            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test

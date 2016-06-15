@@ -75,6 +75,9 @@ public class UserRepositoryTest {
     @Inject
     private UserRepository userRepository;
 
+    @Inject
+    private Shiro shiro;
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -127,14 +130,19 @@ public class UserRepositoryTest {
                 .getPackage())
             .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
                 .getPackage())
-            .addPackage(org.libreccm.testutils.EqualsVerifier.class.getPackage())
+            .addPackage(org.libreccm.testutils.EqualsVerifier.class
+                .getPackage())
             .addPackage(org.libreccm.tests.categories.IntegrationTest.class
                 .getPackage())
+            .addClass(com.arsdigita.kernel.security.SecurityConfig.class)
+            .addClass(com.arsdigita.kernel.KernelConfig.class)
+            .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
             .addAsLibraries(libs)
+            .addAsResource("configs/shiro.ini", "shiro.ini")
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")
-            .addAsWebInfResource("test-web.xml", "WEB-INF/web.xml")
-            .addAsWebInfResource(EmptyAsset.INSTANCE, "WEB-INF/beans.xml");
+            .addAsWebInfResource("test-web.xml", "web.xml")
+            .addAsWebInfResource("META-INF/beans.xml", "beans.xml");
     }
 
     @Test
@@ -264,7 +272,7 @@ public class UserRepositoryTest {
             "$shiro1$SHA-512$500000$24lA090z7GKYr4VFlZ6t4A==$/heoTHPA5huT1UfJ8Q+waXEG6AjUKhFYLFrj7KW/l0/z9O+QkiZTtfPfbcPblgjcEvrROMEIoQY4Z65S7rFLQg==");
         user.setPasswordResetRequired(false);
 
-        userRepository.save(user);
+        shiro.getSystemUser().execute(() -> userRepository.save(user));
     }
 
     @Test
@@ -286,14 +294,14 @@ public class UserRepositoryTest {
         emailAddress.setVerified(true);
         user.setPrimaryEmailAddress(emailAddress);
 
-        userRepository.save(user);
+        shiro.getSystemUser().execute(() -> userRepository.save(user));
     }
 
     @Test(expected = IllegalArgumentException.class)
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(700)
     public void saveNullValue() {
-        userRepository.save(null);
+        shiro.getSystemUser().execute(() -> userRepository.save(null));
     }
 
     @Test
@@ -305,14 +313,14 @@ public class UserRepositoryTest {
     public void deleteUser() {
         final User user = userRepository.findByName("mmuster");
 
-        userRepository.delete(user);
+        shiro.getSystemUser().execute(() -> userRepository.delete(user));
     }
 
     @Test(expected = IllegalArgumentException.class)
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(900)
     public void deleteNullValue() {
-        userRepository.delete(null);
+        shiro.getSystemUser().execute(() -> userRepository.delete(null));
     }
 
 }

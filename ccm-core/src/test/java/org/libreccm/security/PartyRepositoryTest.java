@@ -18,6 +18,7 @@
  */
 package org.libreccm.security;
 
+import org.apache.shiro.subject.Subject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.ShouldThrowException;
 import org.jboss.arquillian.junit.Arquillian;
@@ -29,7 +30,6 @@ import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
@@ -71,6 +71,9 @@ public class PartyRepositoryTest {
 
     @Inject
     private PartyRepository partyRepository;
+
+    @Inject
+    private Shiro shiro;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -115,23 +118,30 @@ public class PartyRepositoryTest {
             .addPackage(org.libreccm.core.CcmObject.class.getPackage())
             .addPackage(org.libreccm.categorization.Categorization.class
                 .getPackage())
-            .addPackage(org.libreccm.configuration.ConfigurationManager.class
+            .addPackage(
+                org.libreccm.configuration.ConfigurationManager.class
                 .getPackage())
-            .addPackage(org.libreccm.l10n.LocalizedString.class.getPackage())
+            .addPackage(org.libreccm.l10n.LocalizedString.class
+                .getPackage())
             .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
             .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
             .addPackage(org.libreccm.jpa.EntityManagerProducer.class
                 .getPackage())
             .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
                 .getPackage())
-            .addPackage(org.libreccm.testutils.EqualsVerifier.class.getPackage())
+            .addPackage(org.libreccm.testutils.EqualsVerifier.class.
+                getPackage())
             .addPackage(org.libreccm.tests.categories.IntegrationTest.class
                 .getPackage())
+            .addClass(com.arsdigita.kernel.security.SecurityConfig.class)
+            .addClass(com.arsdigita.kernel.KernelConfig.class)
+            .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
             .addAsLibraries(libs)
+            .addAsResource("configs/shiro.ini", "shiro.ini")
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")
-            .addAsWebInfResource("test-web.xml", "WEB-INF/web.xml")
-            .addAsWebInfResource(EmptyAsset.INSTANCE, "WEB-INF/beans.xml");
+            .addAsWebInfResource("test-web.xml", "web.xml")
+            .addAsWebInfResource("META-INF/beans.xml", "beans.xml");
     }
 
     @Test
@@ -218,12 +228,13 @@ public class PartyRepositoryTest {
             "$shiro1$SHA-512$500000$Y7CnccN1h25sR7KCElMOXg==$CVLWBhetodaEzzhDfGjRcCFZtSW02xOnjH7xhBx0lbxO66grKIt6LWmXoUhLEydce1JZ7cbzNLYOxIwwTeqi5Q==");
         mmuster.setPasswordResetRequired(false);
 
-        partyRepository.save(mmuster);
+        final Subject system = shiro.getSystemUser();
+        system.execute(() -> partyRepository.save(mmuster));
 
         final Group users = new Group();
         users.setName("users");
 
-        partyRepository.save(users);
+        system.execute(() -> partyRepository.save(users));
     }
 
     @Test
@@ -240,15 +251,17 @@ public class PartyRepositoryTest {
         user.setName("johndoe");
         group.setName("managers");
 
-        partyRepository.save(user);
-        partyRepository.save(group);
+        shiro.getSystemUser().execute(() -> {
+            partyRepository.save(user);
+            partyRepository.save(group);
+        });
     }
 
     @Test(expected = IllegalArgumentException.class)
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(500)
     public void saveNullValue() {
-        partyRepository.save(null);
+        shiro.getSystemUser().execute(() -> partyRepository.save(null));
     }
 
     @Test
@@ -260,14 +273,14 @@ public class PartyRepositoryTest {
     public void deleteParty() {
         final Party user = partyRepository.findById(-10L);
 
-        partyRepository.delete(user);
+        shiro.getSystemUser().execute(() -> partyRepository.delete(user));
     }
 
     @Test(expected = IllegalArgumentException.class)
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(700)
     public void deleteNullValue() {
-        partyRepository.delete(null);
+        shiro.getSystemUser().execute(() -> partyRepository.delete(null));
     }
 
 }

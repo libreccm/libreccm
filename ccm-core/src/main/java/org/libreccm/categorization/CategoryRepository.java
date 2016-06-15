@@ -22,7 +22,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.shiro.subject.Subject;
 import org.libreccm.core.AbstractEntityRepository;
+import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.PermissionChecker;
+import org.libreccm.security.RequiresPrivilege;
 
 import java.util.List;
 import java.util.Optional;
@@ -45,10 +47,10 @@ public class CategoryRepository extends AbstractEntityRepository<Long, Category>
 
     @Inject
     private DomainRepository domainRepo;
-    
+
     @Inject
     private PermissionChecker permissionChecker;
-    
+
     @Inject
     private Subject subject;
 
@@ -160,16 +162,22 @@ public class CategoryRepository extends AbstractEntityRepository<Long, Category>
 
         return current;
     }
-    
-    @Override
+
+    @AuthorizationRequired
+
     @Transactional(Transactional.TxType.REQUIRED)
-    public void save(final Category category) {
+    @Override
+    public void save(
+        @RequiresPrivilege("manage_categories") final Category category) {
         super.save(category);
     }
-    
-    @Override
+
+    @AuthorizationRequired
+    @RequiresPrivilege("manage_categories")
     @Transactional(Transactional.TxType.REQUIRED)
+    @Override
     public void delete(final Category category) {
         super.save(category);
     }
+
 }

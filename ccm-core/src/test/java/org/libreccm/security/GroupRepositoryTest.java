@@ -126,14 +126,16 @@ public class GroupRepositoryTest {
                 .getPackage())
             .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
                 .getPackage())
-            .addPackage(org.libreccm.testutils.EqualsVerifier.class.getPackage())
+            .addPackage(org.libreccm.testutils.EqualsVerifier.class
+                .getPackage())
             .addPackage(org.libreccm.tests.categories.IntegrationTest.class
                 .getPackage())
             .addAsLibraries(libs)
+            .addAsResource("configs/shiro.ini", "shiro.ini")
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")
-            .addAsWebInfResource("test-web.xml", "WEB-INF/web.xml")
-            .addAsWebInfResource(EmptyAsset.INSTANCE, "WEB-INF/beans.xml");
+            .addAsWebInfResource("test-web.xml", "web.xml")
+            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test

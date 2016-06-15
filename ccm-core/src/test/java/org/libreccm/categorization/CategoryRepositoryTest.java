@@ -18,6 +18,10 @@
  */
 package org.libreccm.categorization;
 
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authz.UnauthorizedException;
+import org.apache.shiro.subject.Subject;
+
 import java.io.File;
 
 import javax.inject.Inject;
@@ -34,8 +38,8 @@ import org.jboss.arquillian.persistence.ShouldMatchDataSet;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
+import org.jboss.sasl.util.UsernamePasswordHashUtil;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
@@ -45,7 +49,10 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.libreccm.security.Shiro;
 import org.libreccm.tests.categories.IntegrationTest;
+
+import javax.ws.rs.NotAuthorizedException;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -66,6 +73,12 @@ public class CategoryRepositoryTest {
 
     @Inject
     private DomainRepository domainRepo;
+    
+    @Inject
+    private Shiro shiro;
+    
+    @Inject
+    private Subject subject;
 
     @PersistenceContext(name = "LibreCCM")
     private EntityManager entityManager;
@@ -117,16 +130,21 @@ public class CategoryRepositoryTest {
                 .getPackage())
             .addPackage(org.libreccm.l10n.LocalizedString.class.getPackage())
             .addPackage(org.libreccm.security.Permission.class.getPackage())
-            .addPackage(org.libreccm.testutils.EqualsVerifier.class.getPackage())
+            .addPackage(org.libreccm.testutils.EqualsVerifier.class
+                .getPackage())
             .addPackage(org.libreccm.tests.categories.IntegrationTest.class
                 .getPackage())
             .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
             .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
+            .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
+            .addClass(com.arsdigita.kernel.KernelConfig.class)
+            .addClass(com.arsdigita.kernel.security.SecurityConfig.class)
             .addAsLibraries(libs)
+            .addAsResource("configs/shiro.ini", "shiro.ini")
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")
-            .addAsWebInfResource("test-web.xml", "WEB-INF/web.xml")
-            .addAsWebInfResource(EmptyAsset.INSTANCE, "WEB-INF/beans.xml");
+            .addAsWebInfResource("test-web.xml", "web.xml")
+            .addAsWebInfResource("META-INF/beans.xml", "beans.xml");
     }
 
     @Test
@@ -245,6 +263,44 @@ public class CategoryRepositoryTest {
         excludeColumns = {"object_id", "uuid"})
     @InSequence(3100)
     public void saveNewCategory() {
+        final Category category = new Category();
+        category.setDisplayName("new-category");
+        category.setName("new-category");
+        category.setUniqueId("new0001");
+
+        shiro.getSystemUser().execute(() -> categoryRepo.save(category));
+    }
+
+    @Test
+    @UsingDataSet(
+        "datasets/org/libreccm/categorization/CategoryRepositoryTest/data.yml")
+    @ShouldMatchDataSet(
+        value = "datasets/org/libreccm/categorization/CategoryRepositoryTest/"
+                    + "after-save-new-category.yml",
+        excludeColumns = {"object_id", "uuid"})
+    @InSequence(3200)
+    public void saveNewCategoryGlobalAuth() {
+        final UsernamePasswordToken token = new UsernamePasswordToken(
+            "john.doe@example.org", "foo123");
+        token.setRememberMe(true);
+        subject.login(token);
+        
+        final Category category = new Category();
+        category.setDisplayName("new-category");
+        category.setName("new-category");
+        category.setUniqueId("new0001");
+
+        categoryRepo.save(category);
+        
+        subject.logout();
+    }
+
+    @Test(expected = UnauthorizedException.class)
+    @UsingDataSet(
+        "datasets/org/libreccm/categorization/CategoryRepositoryTest/data.yml")
+    @ShouldThrowException(UnauthorizedException.class)
+    @InSequence(3400)
+    public void saveNewCategoryNotAuthorized() {
         final Category category = new Category();
         category.setDisplayName("new-category");
         category.setName("new-category");

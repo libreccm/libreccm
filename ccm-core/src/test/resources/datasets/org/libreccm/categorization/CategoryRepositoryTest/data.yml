@@ -43,4 +43,62 @@ ccm_core.category_domains:
           root_category_id: -2000
           uri: http://libreccm.org/test
           version: 1.0
+          
+ccm_core.parties:
+    - party_id: -100
+      name: public-user
+    - party_id: -200
+      name: jdoe
+    - party_id: -300
+      name: mmuster
+      
+ccm_core.users:
+    - party_id: -100
+      given_name: public
+      family_name: user
+      email_address: public-user@localhost
+      banned: false
+      bouncing: false
+      verified: true
+      password_reset_required: false
+    - party_id: -200
+      given_name: John
+      family_name: Doe
+      email_address: john.doe@example.org
+      password: $shiro1$SHA-512$500000$Y7CnccN1h25sR7KCElMOXg==$CVLWBhetodaEzzhDfGjRcCFZtSW02xOnjH7xhBx0lbxO66grKIt6LWmXoUhLEydce1JZ7cbzNLYOxIwwTeqi5Q==
+      banned: false
+      bouncing: false
+      verified: true
+      password_reset_required: false
+    - party_id: -300
+      given_name: Max
+      family_name: Mustermann
+      email_address: max.mustermann@example.org
+      password: $shiro1$SHA-512$500000$Y7CnccN1h25sR7KCElMOXg==$CVLWBhetodaEzzhDfGjRcCFZtSW02xOnjH7xhBx0lbxO66grKIt6LWmXoUhLEydce1JZ7cbzNLYOxIwwTeqi5Q==
+      banned: false
+      bouncing: false
+      verified: true
+      password_reset_required: false
 
+ccm_core.ccm_roles:
+    - role_id: -500
+      name: category_manager
+    - role_id: -510
+      name: category_manager_domain_test
+      
+ccm_core.role_memberships:
+    - membership_id: -600
+      role_id: -500
+      member_id: -200
+    - membership_id: -610
+      role_id: -510
+      member_id: -300
+      
+ccm_core.permissions:
+    - permission_id: -700
+      granted_privilege: manage_categories
+      grantee_id: -500
+    - permission_id: -710
+      granted_privilege: manage_categories
+      grantee_id: -510
+      object_id: -1000

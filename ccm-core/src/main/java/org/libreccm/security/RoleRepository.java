@@ -81,6 +81,16 @@ public class RoleRepository extends AbstractEntityRepository<Long, Role> {
         return query.getResultList();
     }
 
+    @AuthorizationRequired
+    @RequiresPrivilege("admin")
+    @Transactional(Transactional.TxType.REQUIRED)
+    @Override
+    public void save(final Role role) {
+        super.save(role);
+    }
+    
+    @AuthorizationRequired
+    @RequiresPrivilege("admin")
     @Override
     @Transactional(Transactional.TxType.REQUIRED)
     public void delete(final Role role) {
