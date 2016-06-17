@@ -172,18 +172,18 @@ public class ShortcutRepositoryTest {
         final Optional<Shortcut> shop = shortcutRepository.findByUrlKey("shop");
 
         assertThat(members.isPresent(), is(true));
-        assertThat(members.get().getUrlKey(), is(equalTo("members")));
+        assertThat(members.get().getUrlKey(), is(equalTo("/members/")));
         assertThat(members.get().getRedirect(),
                    is(equalTo("/ccm/navigation/members")));
 
         assertThat(mitglieder.isPresent(), is(true));
-        assertThat(mitglieder.get().getUrlKey(), is(equalTo("mitglieder")));
+        assertThat(mitglieder.get().getUrlKey(), is(equalTo("/mitglieder/")));
         assertThat(mitglieder.get().getRedirect(),
                    is(equalTo("/ccm/navigation/members")));
 
         assertThat(shop.isPresent(), is(true));
         assertThat(shop.get().getUrlKey(),
-                   is(equalTo("shop")));
+                   is(equalTo("/shop/")));
         assertThat(shop.get().getRedirect(),
                    is(equalTo("http://www.example.com")));
     }
@@ -209,17 +209,17 @@ public class ShortcutRepositoryTest {
         final List<Shortcut> toMembers = shortcutRepository.findByRedirect(
                 "/ccm/navigation/members");
         assertThat(toMembers.size(), is(2));
-        assertThat(toMembers.get(0).getUrlKey(), is(equalTo("members")));
+        assertThat(toMembers.get(0).getUrlKey(), is(equalTo("/members/")));
         assertThat(toMembers.get(0).getRedirect(),
                    is(equalTo("/ccm/navigation/members")));
-        assertThat(toMembers.get(1).getUrlKey(), is(equalTo("mitglieder")));
+        assertThat(toMembers.get(1).getUrlKey(), is(equalTo("/mitglieder/")));
         assertThat(toMembers.get(1).getRedirect(),
                    is(equalTo("/ccm/navigation/members")));
 
         final List<Shortcut> toExampleCom = shortcutRepository.findByRedirect(
                 "http://www.example.com");
         assertThat(toExampleCom.size(), is(1));
-        assertThat(toExampleCom.get(0).getUrlKey(), is(equalTo("shop")));
+        assertThat(toExampleCom.get(0).getUrlKey(), is(equalTo("/shop/")));
         assertThat(toExampleCom.get(0).getRedirect(),
                    is(equalTo("http://www.example.com")));
     }

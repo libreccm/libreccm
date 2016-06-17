@@ -18,10 +18,15 @@
  */
 package org.libreccm.categorization;
 
+import static org.libreccm.categorization.CategorizationConstants.*;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.core.CcmObject;
 import org.libreccm.core.CcmObjectRepository;
+import org.libreccm.security.AuthorizationRequired;
+import org.libreccm.security.RequiresPrivilege;
+import org.libreccm.security.Shiro;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,6 +62,9 @@ public class CategoryManager {
     @Inject
     private EntityManager entityManager;
 
+    @Inject
+    private Shiro shiro;
+
     /**
      * Assigns an category to an object.
      *
@@ -74,9 +82,13 @@ public class CategoryManager {
      * @param category The category to which the object should be assigned. Can
      *                 never be {@code null}.
      */
+    @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
-    public void addObjectToCategory(final CcmObject object,
-                                    final Category category) {
+    public void addObjectToCategory(
+        final CcmObject object,
+        @RequiresPrivilege(MANAGE_CATEGORY_OBJECTS_PRIVILEGE)
+        final Category category) {
+
         if (object == null) {
             throw new IllegalArgumentException(
                 "Null can't be added to a category.");
@@ -96,9 +108,15 @@ public class CategoryManager {
         object.addCategory(categorization);
         category.addObject(categorization);
 
-        entityManager.persist(categorization);
-        categoryRepo.save(category);
-        ccmObjectRepo.save(object);
+        // To saving a category requires the manage_category privilege which
+        // may has not been granted to a user which is allowed to assign objects
+        // to a category. Therefore we bypass the this authorisation check here
+        // by executing CategoryRepository#save(Category) as the system user.
+        shiro.getSystemUser().execute(() -> {
+            entityManager.persist(categorization);
+            categoryRepo.save(category);
+            ccmObjectRepo.save(object);
+        });
     }
 
     /**
@@ -121,9 +139,12 @@ public class CategoryManager {
      *                                              object is <em>not</em>
      * assigned to the provided category.
      */
+    @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
-    public void removeObjectFromCategory(final CcmObject object,
-                                         final Category category)
+    public void removeObjectFromCategory(
+        final CcmObject object,
+        @RequiresPrivilege(MANAGE_CATEGORY_OBJECTS_PRIVILEGE)
+        final Category category)
         throws ObjectNotAssignedToCategoryException {
 
         if (object == null) {
@@ -154,23 +175,25 @@ public class CategoryManager {
             return;
         }
 
-        object.removeCategory(categorization);
-        category.removeObject(categorization);
-        entityManager.remove(categorization);
-        categoryRepo.save(category);
-        ccmObjectRepo.save(object);
+        shiro.getSystemUser().execute(() -> {
+            object.removeCategory(categorization);
+            category.removeObject(categorization);
+            entityManager.remove(categorization);
+            categoryRepo.save(category);
+            ccmObjectRepo.save(object);
 
-        final List<Categorization> categories = object.getCategories();
-        for (int i = 0; i < categories.size(); i++) {
-            categories.get(i).setCategoryOrder(i);
-            entityManager.merge(categories.get(i));
-        }
+            final List<Categorization> categories = object.getCategories();
+            for (int i = 0; i < categories.size(); i++) {
+                categories.get(i).setCategoryOrder(i);
+                entityManager.merge(categories.get(i));
+            }
 
-        final List<Categorization> objects = category.getObjects();
-        for (int i = 0; i < objects.size(); i++) {
-            objects.get(i).setObjectOrder(i);
-            entityManager.merge(objects.get(i));
-        }
+            final List<Categorization> objects = category.getObjects();
+            for (int i = 0; i < objects.size(); i++) {
+                objects.get(i).setObjectOrder(i);
+                entityManager.merge(objects.get(i));
+            }
+        });
     }
 
     /**
@@ -187,9 +210,12 @@ public class CategoryManager {
      *                                              object is not assigned to
      *                                              the provided category.
      */
+    @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
-    public void increaseObjectOrder(final CcmObject object,
-                                    final Category category)
+    public void increaseObjectOrder(
+        final CcmObject object,
+        @RequiresPrivilege(MANAGE_CATEGORY_OBJECTS_PRIVILEGE)
+        final Category category)
         throws ObjectNotAssignedToCategoryException {
 
         if (object == null) {
@@ -241,7 +267,7 @@ public class CategoryManager {
         categorization.setObjectOrder(nextOrder);
         nextCategorization.setObjectOrder(order);
 
-        categoryRepo.save(category);
+        shiro.getSystemUser().execute(() -> categoryRepo.save(category));
     }
 
     /**
@@ -258,9 +284,12 @@ public class CategoryManager {
      *                                              object is not assigned to
      *                                              the provided category.
      */
+    @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
-    public void decreaseObjectOrder(final CcmObject object,
-                                    final Category category)
+    public void decreaseObjectOrder(
+        final CcmObject object,
+        @RequiresPrivilege(MANAGE_CATEGORY_OBJECTS_PRIVILEGE)
+        final Category category)
         throws ObjectNotAssignedToCategoryException {
 
         if (object == null) {
@@ -312,7 +341,7 @@ public class CategoryManager {
         categorization.setObjectOrder(prevOrder);
         prevCategorization.setObjectOrder(order);
 
-        categoryRepo.save(category);
+        shiro.getSystemUser().execute(() -> categoryRepo.save(category));
     }
 
     /**
@@ -346,9 +375,13 @@ public class CategoryManager {
      * @param parentCategory The category to which the category is added as
      *                       subcategory. Can't be {@code null}.
      */
+    @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
-    public void addSubCategoryToCategory(final Category subCategory,
-                                         final Category parentCategory) {
+    public void addSubCategoryToCategory(
+        final Category subCategory,
+        @RequiresPrivilege(MANAGE_CATEGORY_PRIVILEGE)
+        final Category parentCategory) {
+
         final Category sub = categoryRepo.findById(subCategory.getObjectId());
         final Category parent = categoryRepo.findById(parentCategory
             .getObjectId());
@@ -363,8 +396,10 @@ public class CategoryManager {
         sub.setParentCategory(parent);
         sub.setCategoryOrder(order);
 
-        categoryRepo.save(parent);
-        categoryRepo.save(sub);
+        shiro.getSystemUser().execute(() -> {
+            categoryRepo.save(parent);
+            categoryRepo.save(sub);
+        });
     }
 
     /**
@@ -380,9 +415,12 @@ public class CategoryManager {
      *                                  assigned to the provided parent
      *                                  category.
      */
+    @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
-    public void removeSubCategoryFromCategory(final Category subCategory,
-                                              final Category parentCategory) {
+    public void removeSubCategoryFromCategory(
+        final Category subCategory,
+        @RequiresPrivilege(MANAGE_CATEGORY_PRIVILEGE)
+        final Category parentCategory) {
 
         if (subCategory.getParentCategory() == null
                 || !subCategory.getParentCategory().equals(parentCategory)) {
@@ -401,8 +439,10 @@ public class CategoryManager {
             categoryRepo.save(subCategories.get(i));
         }
 
-        categoryRepo.save(parentCategory);
-        categoryRepo.save(subCategory);
+        shiro.getSystemUser().execute(() -> {
+            categoryRepo.save(parentCategory);
+            categoryRepo.save(subCategory);
+        });
     }
 
     /**
@@ -420,9 +460,12 @@ public class CategoryManager {
      *                                  subcategory of the provided parent
      *                                  category.
      */
+    @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
-    public void increaseCategoryOrder(final Category subCategory,
-                                      final Category parentCategory) {
+    public void increaseCategoryOrder(
+        final Category subCategory,
+        @RequiresPrivilege(MANAGE_CATEGORY_PRIVILEGE)
+        final Category parentCategory) {
 
         if (parentCategory == null) {
             throw new IllegalArgumentException("parentCategory can't be null.");
@@ -471,8 +514,10 @@ public class CategoryManager {
         subCategory.setCategoryOrder(nextOrder);
         nextCategory.setCategoryOrder(order);
 
-        categoryRepo.save(subCategory);
-        categoryRepo.save(nextCategory);
+        shiro.getSystemUser().execute(() -> {
+            categoryRepo.save(subCategory);
+            categoryRepo.save(nextCategory);
+        });
     }
 
     /**
@@ -490,8 +535,12 @@ public class CategoryManager {
      *                                  subcategory of the provided parent
      *                                  category.
      */
-    public void decreaseCategoryOrder(final Category subCategory,
-                                      final Category parentCategory) {
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public void decreaseCategoryOrder(
+        final Category subCategory,
+        @RequiresPrivilege(MANAGE_CATEGORY_PRIVILEGE)
+        final Category parentCategory) {
 
         if (parentCategory == null) {
             throw new IllegalArgumentException("parentCategory can't be null.");
@@ -540,26 +589,10 @@ public class CategoryManager {
         subCategory.setCategoryOrder(prevOrder);
         prevCategory.setCategoryOrder(order);
 
-        categoryRepo.save(subCategory);
-        categoryRepo.save(prevCategory);
+        shiro.getSystemUser().execute(() -> {
+            categoryRepo.save(subCategory);
+            categoryRepo.save(prevCategory);
+        });
     }
 
-    /**
-     * Swaps the values of the {@code order} properties of two categories.
-     *
-     * @param subCategoryA   The first category. Can't be {@code null}.
-     * @param subCategoryB   The second category. Can't be {@code null}.
-     * @param parentCategory The parent category of both subcategories. Can't be
-     *                       {@code null}.
-     *
-     * @throws IllegalArgumentException If one or both categories are not
-     *                                  subcategories of the provided parent
-     *                                  category.qq
-     */
-//    public void swapCategories(final Category subCategoryA,
-//                               final Category subCategoryB,
-//                               final Category parentCategory) {
-//        // TODO implement method
-//        throw new UnsupportedOperationException();
-//    }
 }

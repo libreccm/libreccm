@@ -38,7 +38,6 @@ import org.jboss.arquillian.persistence.ShouldMatchDataSet;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
-import org.jboss.sasl.util.UsernamePasswordHashUtil;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
@@ -51,8 +50,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.libreccm.security.Shiro;
 import org.libreccm.tests.categories.IntegrationTest;
-
-import javax.ws.rs.NotAuthorizedException;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;

@@ -21,9 +21,12 @@ package org.libreccm.web;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
+import org.libreccm.core.CoreConstants;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.modules.CcmModule;
 import org.libreccm.modules.Module;
+import org.libreccm.security.AuthorizationRequired;
+import org.libreccm.security.RequiresPrivilege;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -34,12 +37,14 @@ import java.util.ResourceBundle;
 import java.util.ServiceLoader;
 
 import javax.annotation.PostConstruct;
+import javax.ejb.TransactionAttribute;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
+import javax.transaction.Transactional;
 
 /**
  *
@@ -80,10 +85,14 @@ public class ApplicationManager {
         return Collections.unmodifiableMap(applicationTypes);
     }
 
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
+    @Transactional(Transactional.TxType.REQUIRED)
     public <T extends CcmApplication> T createInstance(
         final ApplicationType type,
         final String path,
         final Class<T> applicationClass) throws ApplicationCreateException {
+
         try {
             @SuppressWarnings("unchecked")
             final ApplicationCreator<T> creator = type.creator().newInstance();
@@ -98,6 +107,9 @@ public class ApplicationManager {
         }
     }
 
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
+    @Transactional(Transactional.TxType.REQUIRED)
     public void deleteInstance(final CcmApplication application) {
         entityManager.remove(application);
     }

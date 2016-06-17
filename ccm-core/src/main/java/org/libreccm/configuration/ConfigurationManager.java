@@ -27,8 +27,11 @@ import javax.transaction.Transactional;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.util.Strings;
+import org.libreccm.core.CoreConstants;
 import org.libreccm.modules.CcmModule;
 import org.libreccm.modules.Module;
+import org.libreccm.security.AuthorizationRequired;
+import org.libreccm.security.RequiresPrivilege;
 
 import java.util.Arrays;
 import java.util.ServiceLoader;
@@ -123,6 +126,9 @@ public class ConfigurationManager {
      *                                  provided object is not annotation with
      *                                  {@link Configuration}.
      */
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
+    @Transactional(Transactional.TxType.REQUIRED)
     public void saveConfiguration(final Object configuration) {
         if (configuration == null) {
             throw new IllegalArgumentException("Configuration can't be null");
@@ -266,6 +272,8 @@ public class ConfigurationManager {
      * @param valueType     The type of the value of the setting.
      * @param value         The value to set.
      */
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
     @Transactional(Transactional.TxType.REQUIRED)
     private <T> void setSettingValue(final Object configuration,
                                      final String settingName,

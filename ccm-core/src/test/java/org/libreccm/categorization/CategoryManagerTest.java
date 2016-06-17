@@ -18,7 +18,11 @@
  */
 package org.libreccm.categorization;
 
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authz.UnauthorizedException;
+import org.apache.shiro.subject.Subject;
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.container.test.api.ShouldThrowException;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
 import org.jboss.arquillian.persistence.CreateSchema;
@@ -28,7 +32,6 @@ import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
@@ -40,9 +43,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.libreccm.core.CcmObject;
 import org.libreccm.core.CcmObjectRepository;
+import org.libreccm.security.Shiro;
 import org.libreccm.tests.categories.IntegrationTest;
 
 import java.io.File;
+import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -74,6 +79,12 @@ public class CategoryManagerTest {
 
     @Inject
     private DomainRepository domainRepo;
+
+    @Inject
+    private Shiro shiro;
+
+    @Inject
+    private Subject subject;
 
     @PersistenceContext(name = "LibreCCM")
     private EntityManager entityManager;
@@ -125,16 +136,21 @@ public class CategoryManagerTest {
                 .getPackage())
             .addPackage(org.libreccm.l10n.LocalizedString.class.getPackage())
             .addPackage(org.libreccm.security.Permission.class.getPackage())
-            .addPackage(org.libreccm.testutils.EqualsVerifier.class.getPackage())
+            .addPackage(org.libreccm.testutils.EqualsVerifier.class
+                .getPackage())
             .addPackage(org.libreccm.tests.categories.IntegrationTest.class
                 .getPackage())
             .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
             .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
+            .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
+            .addClass(com.arsdigita.kernel.KernelConfig.class)
+            .addClass(com.arsdigita.kernel.security.SecurityConfig.class)
             .addAsLibraries(libs)
+            .addAsResource("configs/shiro.ini", "shiro.ini")
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")
-            .addAsWebInfResource("test-web.xml", "WEB-INF/web.xml")
-            .addAsWebInfResource(EmptyAsset.INSTANCE, "WEB-INF/beans.xml");
+            .addAsWebInfResource("test-web.xml", "web.xml")
+            .addAsWebInfResource("META-INF/beans.xml", "beans.xml");
     }
 
     @Test
@@ -165,7 +181,73 @@ public class CategoryManagerTest {
                     + "after-add-obj-to-category.yml",
         excludeColumns = {"categorization_id"})
     @InSequence(1100)
-    public void addObjectToCategory() {
+    public void addObjectToCategoryBySystemUser() {
+        final CcmObject object2 = ccmObjectRepo.findById(-3200L);
+        final Category foo = categoryRepo.findById(-2100L);
+
+        assertThat(object2, is(not(nullValue())));
+        assertThat(foo, is(not(nullValue())));
+
+        shiro.getSystemUser().execute(() -> categoryManager.addObjectToCategory(
+            object2, foo));
+    }
+
+    @Test
+    @UsingDataSet(
+        "datasets/org/libreccm/categorization/CategoryManagerTest/data.yml")
+    @ShouldMatchDataSet(
+        value = "datasets/org/libreccm/categorization/CategoryManagerTest/"
+                    + "after-add-obj-to-category.yml",
+        excludeColumns = {"categorization_id"})
+    @InSequence(1200)
+    public void addObjectToCategoryAuthByDomain() {
+        final CcmObject object2 = ccmObjectRepo.findById(-3200L);
+        final Category foo = categoryRepo.findById(-2100L);
+
+        assertThat(object2, is(not(nullValue())));
+        assertThat(foo, is(not(nullValue())));
+
+        final UsernamePasswordToken token = new UsernamePasswordToken(
+            "jane.doe@example.org", "foo123");
+        token.setRememberMe(true);
+        subject.login(token);
+
+        categoryManager.addObjectToCategory(object2, foo);
+
+        subject.logout();
+    }
+
+    @Test
+    @UsingDataSet(
+        "datasets/org/libreccm/categorization/CategoryManagerTest/data.yml")
+    @ShouldMatchDataSet(
+        value = "datasets/org/libreccm/categorization/CategoryManagerTest/"
+                    + "after-add-obj-to-category.yml",
+        excludeColumns = {"categorization_id"})
+    @InSequence(1300)
+    public void addObjectToCategoryAuthByCategory() {
+        final CcmObject object2 = ccmObjectRepo.findById(-3200L);
+        final Category foo = categoryRepo.findById(-2100L);
+
+        assertThat(object2, is(not(nullValue())));
+        assertThat(foo, is(not(nullValue())));
+
+        final UsernamePasswordToken token = new UsernamePasswordToken(
+            "mmuster@example.com", "foo123");
+        token.setRememberMe(true);
+        subject.login(token);
+
+        categoryManager.addObjectToCategory(object2, foo);
+
+        subject.logout();
+    }
+
+    @Test(expected = UnauthorizedException.class)
+    @UsingDataSet(
+        "datasets/org/libreccm/categorization/CategoryManagerTest/data.yml")
+    @ShouldThrowException(UnauthorizedException.class)
+    @InSequence(1400)
+    public void addObjectToCategoryNotAuthorized() {
         final CcmObject object2 = ccmObjectRepo.findById(-3200L);
         final Category foo = categoryRepo.findById(-2100L);
 
@@ -178,11 +260,86 @@ public class CategoryManagerTest {
     @Test
     @UsingDataSet(
         "datasets/org/libreccm/categorization/CategoryManagerTest/data.yml")
-    @ShouldMatchDataSet(value
-                            = "datasets/org/libreccm/categorization/CategoryManagerTest/after-remove-obj-from-category.yml",
-                        excludeColumns = {"categorization_id"})
-    @InSequence(1200)
-    public void removeObjectFromCategory()
+    @ShouldMatchDataSet(
+        value = "datasets/org/libreccm/categorization/CategoryManagerTest/"
+                    + "after-remove-obj-from-category.yml",
+        excludeColumns = {"categorization_id"})
+    @InSequence(2000)
+    public void removeObjectFromCategoryBySystemUser()
+        throws ObjectNotAssignedToCategoryException {
+
+        final CcmObject object1 = ccmObjectRepo.findById(-3100L);
+        final Category foo = categoryRepo.findById(-2100L);
+
+        assertThat(object1, is(not(nullValue())));
+        assertThat(foo, is(not(nullValue())));
+
+        shiro.getSystemUser().execute(() -> {
+            categoryManager.removeObjectFromCategory(object1, foo);
+            return null;
+        });
+    }
+
+    @Test
+    @UsingDataSet(
+        "datasets/org/libreccm/categorization/CategoryManagerTest/data.yml")
+    @ShouldMatchDataSet(
+        value = "datasets/org/libreccm/categorization/CategoryManagerTest/"
+                    + "after-remove-obj-from-category.yml",
+        excludeColumns = {"categorization_id"})
+    @InSequence(2100)
+    public void removeObjectFromCategoryAuthByDomain()
+        throws ObjectNotAssignedToCategoryException {
+
+        final CcmObject object1 = ccmObjectRepo.findById(-3100L);
+        final Category foo = categoryRepo.findById(-2100L);
+
+        assertThat(object1, is(not(nullValue())));
+        assertThat(foo, is(not(nullValue())));
+
+        final UsernamePasswordToken token = new UsernamePasswordToken(
+            "jane.doe@example.org", "foo123");
+        token.setRememberMe(true);
+        subject.login(token);
+
+        categoryManager.removeObjectFromCategory(object1, foo);
+
+        subject.logout();
+    }
+
+    @Test
+    @UsingDataSet(
+        "datasets/org/libreccm/categorization/CategoryManagerTest/data.yml")
+    @ShouldMatchDataSet(
+        value = "datasets/org/libreccm/categorization/CategoryManagerTest/"
+                    + "after-remove-obj-from-category.yml",
+        excludeColumns = {"categorization_id"})
+    @InSequence(2200)
+    public void removeObjectFromCategoryAuthByCategory()
+        throws ObjectNotAssignedToCategoryException {
+
+        final CcmObject object1 = ccmObjectRepo.findById(-3100L);
+        final Category foo = categoryRepo.findById(-2100L);
+
+        assertThat(object1, is(not(nullValue())));
+        assertThat(foo, is(not(nullValue())));
+
+        final UsernamePasswordToken token = new UsernamePasswordToken(
+            "mmuster@example.com", "foo123");
+        token.setRememberMe(true);
+        subject.login(token);
+
+        categoryManager.removeObjectFromCategory(object1, foo);
+
+        subject.logout();
+    }
+
+    @Test(expected = UnauthorizedException.class)
+    @UsingDataSet(
+        "datasets/org/libreccm/categorization/CategoryManagerTest/data.yml")
+    @ShouldThrowException(UnauthorizedException.class)
+    @InSequence(2300)
+    public void removeObjectFromCategoryNotAuthorized()
         throws ObjectNotAssignedToCategoryException {
 
         final CcmObject object1 = ccmObjectRepo.findById(-3100L);
@@ -201,8 +358,98 @@ public class CategoryManagerTest {
         value = "datasets/org/libreccm/categorization/"
                     + "CategoryManagerTest/after-add-subcategory.yml",
         excludeColumns = {"object_id", "uuid"})
-    @InSequence(2100)
-    public void addSubCategoryToCategory() {
+    @InSequence(3000)
+    public void addSubCategoryToCategoryBySystemUser() {
+        final Category category = new Category();
+        category.setName("category-new");
+        category.setDisplayName("category-new");
+        category.setUniqueId("catnew");
+        shiro.getSystemUser().execute(() -> categoryRepo.save(category));
+
+        final TypedQuery<Category> query = entityManager.createQuery(
+            "SELECT c FROM Category c WHERE c.name = :name",
+            Category.class);
+        query.setParameter("name", "category-new");
+        final Category sub = query.getSingleResult();
+
+        final Category foo = categoryRepo.findById(-2100L);
+
+        shiro.getSystemUser().execute(
+            () -> categoryManager.addSubCategoryToCategory(sub, foo));
+    }
+
+    @Test
+    @UsingDataSet(
+        "datasets/org/libreccm/categorization/CategoryManagerTest/data.yml")
+    @ShouldMatchDataSet(
+        value = "datasets/org/libreccm/categorization/"
+                    + "CategoryManagerTest/after-add-subcategory.yml",
+        excludeColumns = {"object_id", "uuid"})
+    @InSequence(3000)
+    public void addSubCategoryToCategoryAuthByDomain() {
+        final Category category = new Category();
+        category.setName("category-new");
+        category.setDisplayName("category-new");
+        category.setUniqueId("catnew");
+        shiro.getSystemUser().execute(() -> categoryRepo.save(category));
+
+        final TypedQuery<Category> query = entityManager.createQuery(
+            "SELECT c FROM Category c WHERE c.name = :name",
+            Category.class);
+        query.setParameter("name", "category-new");
+        final Category sub = query.getSingleResult();
+
+        final Category foo = categoryRepo.findById(-2100L);
+
+        final UsernamePasswordToken token = new UsernamePasswordToken(
+            "jane.doe@example.org", "foo123");
+        token.setRememberMe(true);
+        subject.login(token);
+
+        categoryManager.addSubCategoryToCategory(sub, foo);
+
+        subject.logout();
+    }
+
+    @Test
+    @UsingDataSet(
+        "datasets/org/libreccm/categorization/CategoryManagerTest/data.yml")
+    @ShouldMatchDataSet(
+        value = "datasets/org/libreccm/categorization/"
+                    + "CategoryManagerTest/after-add-subcategory.yml",
+        excludeColumns = {"object_id", "uuid"})
+    @InSequence(3000)
+    public void addSubCategoryToCategoryAuthByCategory() {
+        final Category category = new Category();
+        category.setName("category-new");
+        category.setDisplayName("category-new");
+        category.setUniqueId("catnew");
+        shiro.getSystemUser().execute(() -> categoryRepo.save(category));
+
+        final TypedQuery<Category> query = entityManager.createQuery(
+            "SELECT c FROM Category c WHERE c.name = :name",
+            Category.class);
+        query.setParameter("name", "category-new");
+        final Category sub = query.getSingleResult();
+
+        final Category foo = categoryRepo.findById(-2100L);
+
+        final UsernamePasswordToken token = new UsernamePasswordToken(
+            "mmuster@example.com", "foo123");
+        token.setRememberMe(true);
+        subject.login(token);
+
+        categoryManager.addSubCategoryToCategory(sub, foo);
+
+        subject.logout();
+    }
+
+    @Test(expected = UnauthorizedException.class)
+    @UsingDataSet(
+        "datasets/org/libreccm/categorization/CategoryManagerTest/data.yml")
+    @ShouldThrowException(UnauthorizedException.class)
+    @InSequence(3000)
+    public void addSubCategoryToCategoryNotAuthorized() {
         final Category category = new Category();
         category.setName("category-new");
         category.setDisplayName("category-new");
@@ -216,7 +463,6 @@ public class CategoryManagerTest {
         final Category sub = query.getSingleResult();
 
         final Category foo = categoryRepo.findById(-2100L);
-//        final Category sub = categoryRepo.findById(-2200L);
 
         categoryManager.addSubCategoryToCategory(sub, foo);
     }
@@ -228,8 +474,65 @@ public class CategoryManagerTest {
         value = "datasets/org/libreccm/categorization/"
                     + "CategoryManagerTest/after-remove-subcategory.yml",
         excludeColumns = {"categorization_id", "object_id"})
-    @InSequence(2200)
-    public void removeSubCategoryFromCategory() {
+    @InSequence(4000)
+    public void removeSubCategoryFromCategoryBySystemUser() {
+        final Category foo = categoryRepo.findById(-2100L);
+        final Category bar = categoryRepo.findById(-2200L);
+
+        shiro.getSystemUser().execute(
+            () -> categoryManager.removeSubCategoryFromCategory(bar, foo));
+    }
+
+    @Test
+    @UsingDataSet(
+        "datasets/org/libreccm/categorization/CategoryManagerTest/data.yml")
+    @ShouldMatchDataSet(
+        value = "datasets/org/libreccm/categorization/"
+                    + "CategoryManagerTest/after-remove-subcategory.yml",
+        excludeColumns = {"categorization_id", "object_id"})
+    @InSequence(4000)
+    public void removeSubCategoryFromCategoryAuthByDomain() {
+        final Category foo = categoryRepo.findById(-2100L);
+        final Category bar = categoryRepo.findById(-2200L);
+
+        final UsernamePasswordToken token = new UsernamePasswordToken(
+            "jane.doe@example.org", "foo123");
+        token.setRememberMe(true);
+        subject.login(token);
+
+        categoryManager.removeSubCategoryFromCategory(bar, foo);
+
+        subject.logout();
+    }
+
+    @Test
+    @UsingDataSet(
+        "datasets/org/libreccm/categorization/CategoryManagerTest/data.yml")
+    @ShouldMatchDataSet(
+        value = "datasets/org/libreccm/categorization/"
+                    + "CategoryManagerTest/after-remove-subcategory.yml",
+        excludeColumns = {"categorization_id", "object_id"})
+    @InSequence(4000)
+    public void removeSubCategoryFromCategoryAuthByCategory() {
+        final Category foo = categoryRepo.findById(-2100L);
+        final Category bar = categoryRepo.findById(-2200L);
+
+        final UsernamePasswordToken token = new UsernamePasswordToken(
+            "mmuster@example.com", "foo123");
+        token.setRememberMe(true);
+        subject.login(token);
+
+        categoryManager.removeSubCategoryFromCategory(bar, foo);
+
+        subject.logout();
+    }
+
+    @Test(expected = UnauthorizedException.class)
+    @UsingDataSet(
+        "datasets/org/libreccm/categorization/CategoryManagerTest/data.yml")
+    @ShouldThrowException(UnauthorizedException.class)
+    @InSequence(4000)
+    public void removeSubCategoryFromCategoryNotAuthorized() {
         final Category foo = categoryRepo.findById(-2100L);
         final Category bar = categoryRepo.findById(-2200L);
 
@@ -243,38 +546,41 @@ public class CategoryManagerTest {
         value = "datasets/org/libreccm/categorization/CategoryManagerTest/"
                     + "after-create-multiple-categories.yml",
         excludeColumns = {"object_id", "uuid"})
-    @InSequence(3100)
+    @InSequence(5000)
     public void createMultipleCategories() {
-        final Domain domain = domainRepo.findByDomainKey("test");
-        final Category root = domain.getRoot();
 
-        final Category com = new Category();
-        com.setName("com");
-        com.setDisplayName("com");
-        com.setUniqueId("com");
-        categoryRepo.save(com);
-        categoryManager.addSubCategoryToCategory(com, root);
+        shiro.getSystemUser().execute(() -> {
+            final Domain domain = domainRepo.findByDomainKey("test");
+            final Category root = domain.getRoot();
 
-        final Category example = new Category();
-        example.setName("example");
-        example.setDisplayName("example");
-        example.setUniqueId("example");
-        categoryRepo.save(example);
-        categoryManager.addSubCategoryToCategory(example, com);
+            final Category com = new Category();
+            com.setName("com");
+            com.setDisplayName("com");
+            com.setUniqueId("com");
+            categoryRepo.save(com);
+            categoryManager.addSubCategoryToCategory(com, root);
 
-        final Category categories = new Category();
-        categories.setName("categories");
-        categories.setDisplayName("categories");
-        categories.setUniqueId("categories");
-        categoryRepo.save(categories);
-        categoryManager.addSubCategoryToCategory(categories, example);
+            final Category example = new Category();
+            example.setName("example");
+            example.setDisplayName("example");
+            example.setUniqueId("example");
+            categoryRepo.save(example);
+            categoryManager.addSubCategoryToCategory(example, com);
 
-        final Category test = new Category();
-        test.setName("test");
-        test.setDisplayName("test");
-        test.setUniqueId("test");
-        categoryRepo.save(test);
-        categoryManager.addSubCategoryToCategory(test, categories);
+            final Category categories = new Category();
+            categories.setName("categories");
+            categories.setDisplayName("categories");
+            categories.setUniqueId("categories");
+            categoryRepo.save(categories);
+            categoryManager.addSubCategoryToCategory(categories, example);
+
+            final Category test = new Category();
+            test.setName("test");
+            test.setDisplayName("test");
+            test.setUniqueId("test");
+            categoryRepo.save(test);
+            categoryManager.addSubCategoryToCategory(test, categories);
+        });
     }
 
 }

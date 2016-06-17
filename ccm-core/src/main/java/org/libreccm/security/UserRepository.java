@@ -19,6 +19,7 @@
 package org.libreccm.security;
 
 import org.libreccm.core.AbstractEntityRepository;
+import org.libreccm.core.CoreConstants;
 
 import java.util.List;
 
@@ -161,7 +162,7 @@ public class UserRepository extends AbstractEntityRepository<Long, User> {
     }
 
     @AuthorizationRequired
-    @RequiresPrivilege("admin")
+    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public void save(final User entity) {
@@ -169,7 +170,7 @@ public class UserRepository extends AbstractEntityRepository<Long, User> {
     }
      
     @AuthorizationRequired
-    @RequiresPrivilege("admin")
+    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public void delete(final User entity) {

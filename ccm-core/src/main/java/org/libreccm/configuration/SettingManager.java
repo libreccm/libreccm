@@ -30,6 +30,9 @@ import javax.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
+import org.libreccm.core.CoreConstants;
+import org.libreccm.security.AuthorizationRequired;
+import org.libreccm.security.RequiresPrivilege;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -220,6 +223,8 @@ public class SettingManager {
      *
      * @param setting The setting to save.
      */
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
     @Transactional(Transactional.TxType.REQUIRED)
     public void saveSetting(final AbstractSetting<?> setting) {
         if (setting.getSettingId() == 0) {

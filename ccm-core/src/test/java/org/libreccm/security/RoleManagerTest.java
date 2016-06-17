@@ -18,6 +18,7 @@
  */
 package org.libreccm.security;
 
+import org.apache.shiro.subject.ExecutionException;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.ShouldThrowException;
 import org.jboss.arquillian.junit.Arquillian;
@@ -29,7 +30,6 @@ import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
@@ -68,6 +68,9 @@ public class RoleManagerTest {
 
     @Inject
     private PartyRepository partyRepository;
+
+    @Inject
+    private Shiro shiro;
 
     public RoleManagerTest() {
     }
@@ -118,7 +121,8 @@ public class RoleManagerTest {
             .addPackage(org.libreccm.security.User.class.getPackage())
             .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
             .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
-            .addPackage(org.libreccm.testutils.EqualsVerifier.class.getPackage())
+            .addPackage(org.libreccm.testutils.EqualsVerifier.class
+                .getPackage())
             .addPackage(org.libreccm.tests.categories.IntegrationTest.class
                 .getPackage())
             .addPackage(com.arsdigita.kernel.KernelConfig.class.getPackage())
@@ -126,12 +130,13 @@ public class RoleManagerTest {
                 .getPackage())
             .addPackage(com.arsdigita.util.UncheckedWrapperException.class
                 .getPackage())
+            .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
             .addAsLibraries(libs)
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")
             .addAsResource("configs/shiro.ini", "shiro.ini")
             .addAsWebInfResource("test-web.xml", "web.xml")
-            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+            .addAsWebInfResource("META-INF/beans.xml", "beans.xml");
     }
 
     @Test
@@ -153,28 +158,40 @@ public class RoleManagerTest {
         final Party joe = partyRepository.findByName("joe");
         final Party group1 = partyRepository.findByName("group1");
 
-        roleManager.assignRoleToParty(role1, joe);
-        roleManager.assignRoleToParty(role3, group1);
+        shiro.getSystemUser().execute(() -> {
+            roleManager.assignRoleToParty(role1, joe);
+            roleManager.assignRoleToParty(role3, group1);
+        });
     }
 
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet("datasets/org/libreccm/security/RoleManagerTest/data.yml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(210)
-    public void assignRoleNullToParty() {
+    public void assignRoleNullToParty() throws Throwable {
         final Party party = partyRepository.findByName("jdoe");
 
-        roleManager.assignRoleToParty(null, party);
+        try {
+            shiro.getSystemUser().execute(
+                () -> roleManager.assignRoleToParty(null, party));
+        } catch (ExecutionException ex) {
+            throw ex.getCause();
+        }
     }
 
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet("datasets/org/libreccm/security/RoleManagerTest/data.yml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(220)
-    public void assignRoleToPartyNull() {
+    public void assignRoleToPartyNull() throws Throwable {
         final Role role = roleRepository.findByName("role1");
 
-        roleManager.assignRoleToParty(role, null);
+        try {
+            shiro.getSystemUser().execute(
+                () -> roleManager.assignRoleToParty(role, null));
+        } catch (ExecutionException ex) {
+            throw ex.getCause();
+        }
     }
 
     @Test
@@ -186,7 +203,8 @@ public class RoleManagerTest {
         final Party jdoe = partyRepository.findByName("jdoe");
         final Role role1 = roleRepository.findByName("role1");
 
-        roleManager.assignRoleToParty(role1, jdoe);
+        shiro.getSystemUser().execute(
+            () -> roleManager.assignRoleToParty(role1, jdoe));
     }
 
     @Test
@@ -203,28 +221,39 @@ public class RoleManagerTest {
         final Party jdoe = partyRepository.findByName("jdoe");
         final Party group1 = partyRepository.findByName("group1");
 
-        roleManager.removeRoleFromParty(role1, jdoe);
-        roleManager.removeRoleFromParty(role2, group1);
+        shiro.getSystemUser().execute(() -> {
+            roleManager.removeRoleFromParty(role1, jdoe);
+            roleManager.removeRoleFromParty(role2, group1);
+        });
     }
 
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet("datasets/org/libreccm/security/RoleManagerTest/data.yml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(310)
-    public void removeRoleNullFromParty() {
+    public void removeRoleNullFromParty() throws Throwable {
         final Party party = partyRepository.findByName("jdoe");
 
-        roleManager.removeRoleFromParty(null, party);
+        try {
+            shiro.getSystemUser().execute(
+                () -> roleManager.removeRoleFromParty(null, party));
+        } catch (ExecutionException ex) {
+            throw ex.getCause();
+        }
     }
 
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet("datasets/org/libreccm/security/RoleManagerTest/data.yml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(220)
-    public void removeRoleFromPartyNull() {
+    public void removeRoleFromPartyNull() throws Throwable {
         final Role role = roleRepository.findByName("role1");
-
-        roleManager.removeRoleFromParty(role, null);
+        try {
+            shiro.getSystemUser().execute(
+                () -> roleManager.removeRoleFromParty(role, null));
+        } catch (ExecutionException ex) {
+            throw ex.getCause();
+        }
     }
 
     @Test
@@ -236,7 +265,8 @@ public class RoleManagerTest {
         final Role role2 = roleRepository.findByName("role2");
         final Party jdoe = partyRepository.findByName("jdoe");
 
-        roleManager.removeRoleFromParty(role2, jdoe);
+        shiro.getSystemUser().execute(
+            () -> roleManager.removeRoleFromParty(role2, jdoe));
     }
 
 }

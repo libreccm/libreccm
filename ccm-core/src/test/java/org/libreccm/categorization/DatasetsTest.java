@@ -46,7 +46,6 @@ public class DatasetsTest extends DatasetsVerifier {
             "/datasets/org/libreccm/categorization/CategoryManagerTest/after-remove-obj-from-category.yml",
             "/datasets/org/libreccm/categorization/CategoryManagerTest/after-remove-subcategory.yml",
             "/datasets/org/libreccm/categorization/CategoryManagerTest/data.yml",
-            "/datasets/org/libreccm/categorization/CategoryManagerTest/data2.yml",
             "/datasets/org/libreccm/categorization/CategoryRepositoryTest/data.yml",
             "/datasets/org/libreccm/categorization/CategoryRepositoryTest/after-save-new-category.yml"
         });

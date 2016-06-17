@@ -18,6 +18,7 @@
  */
 package org.libreccm.security;
 
+import org.apache.shiro.subject.ExecutionException;
 
 import java.io.File;
 
@@ -70,6 +71,9 @@ public class GroupManagerTest {
     @Inject
     private UserRepository userRepository;
 
+    @Inject
+    private Shiro shiro;
+
     public GroupManagerTest() {
     }
 
@@ -119,19 +123,23 @@ public class GroupManagerTest {
             .addPackage(org.libreccm.security.User.class.getPackage())
             .addPackage(org.libreccm.tests.categories.IntegrationTest.class
                 .getPackage())
-            .addPackage(org.libreccm.testutils.EqualsVerifier.class.getPackage())
+            .addPackage(org.libreccm.testutils.EqualsVerifier.class
+                .getPackage())
             .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
             .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
             .addPackage(com.arsdigita.kernel.security.SecurityConfig.class
                 .getPackage())
             .addPackage(com.arsdigita.util.UncheckedWrapperException.class
                 .getPackage())
+            .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
+            .addClass(com.arsdigita.kernel.KernelConfig.class)
+            .addClass(com.arsdigita.kernel.security.SecurityConfig.class)
             .addAsLibraries(libs)
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")
             .addAsWebInfResource("test-web.xml", "web.xml")
             .addAsResource("configs/shiro.ini", "shiro.ini")
-            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+            .addAsWebInfResource("META-INF/beans.xml", "beans.xml");
     }
 
     @Test
@@ -165,28 +173,40 @@ public class GroupManagerTest {
         final User jdoe = userRepository.findByName("jdoe");
         final User mmuster = userRepository.findByName("mmuster");
 
-        groupManager.addMemberToGroup(mmuster, admins);
-        groupManager.addMemberToGroup(jdoe, editors);
+        shiro.getSystemUser().execute(() -> {
+            groupManager.addMemberToGroup(mmuster, admins);
+            groupManager.addMemberToGroup(jdoe, editors);
+        });
     }
 
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet("datasets/org/libreccm/security/GroupManagerTest/data.yml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(210)
-    public void addNullUserToGroup() {
+    public void addNullUserToGroup() throws Throwable {
         final Group admins = groupRepository.findByName("admins");
 
-        groupManager.addMemberToGroup(null, admins);
+        try {
+            shiro.getSystemUser().execute(
+                () -> groupManager.addMemberToGroup(null, admins));
+        } catch (ExecutionException ex) {
+            throw ex.getCause();
+        }
     }
 
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet("datasets/org/libreccm/security/GroupManagerTest/data.yml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(220)
-    public void addUserToGroupNull() {
+    public void addUserToGroupNull() throws Throwable {
         final User jdoe = userRepository.findByName("jdoe");
 
-        groupManager.addMemberToGroup(jdoe, null);
+        try {
+            shiro.getSystemUser().execute(
+                () -> groupManager.addMemberToGroup(jdoe, null));
+        } catch (ExecutionException ex) {
+            throw ex.getCause();
+        }
     }
 
     @Test
@@ -198,7 +218,8 @@ public class GroupManagerTest {
         final Group admins = groupRepository.findByName("admins");
         final User jdoe = userRepository.findByName("jdoe");
 
-        groupManager.addMemberToGroup(jdoe, admins);
+        shiro.getSystemUser().execute(
+            () -> groupManager.addMemberToGroup(jdoe, admins));
     }
 
     @Test
@@ -216,28 +237,40 @@ public class GroupManagerTest {
         assertThat(admins.getMemberships().size(), is(1));
         assertThat(users.getMemberships().size(), is(2));
 
-        groupManager.removeMemberFromGroup(jdoe, admins);
-        groupManager.removeMemberFromGroup(mmuster, users);
+        shiro.getSystemUser().execute(() -> {
+            groupManager.removeMemberFromGroup(jdoe, admins);
+            groupManager.removeMemberFromGroup(mmuster, users);
+        });
     }
 
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet("datasets/org/libreccm/security/GroupManagerTest/data.yml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(310)
-    public void removeUserNullFromGroup() {
+    public void removeUserNullFromGroup() throws Throwable {
         final Group admins = groupRepository.findByName("admins");
 
-        groupManager.removeMemberFromGroup(null, admins);
+        try {
+            shiro.getSystemUser().execute(
+                () -> groupManager.removeMemberFromGroup(null, admins));
+        } catch (ExecutionException ex) {
+            throw ex.getCause();
+        }
     }
 
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet("datasets/org/libreccm/security/GroupManagerTest/data.yml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(320)
-    public void removeUserFromGroupNull() {
+    public void removeUserFromGroupNull() throws Throwable {
         final User jdoe = userRepository.findByName("jdoe");
 
-        groupManager.removeMemberFromGroup(jdoe, null);
+        try {
+            shiro.getSystemUser().execute(
+                () -> groupManager.removeMemberFromGroup(jdoe, null));
+        } catch (ExecutionException ex) {
+            throw ex.getCause();
+        }
     }
 
     @Test
@@ -249,7 +282,8 @@ public class GroupManagerTest {
         final Group admins = groupRepository.findByName("admins");
         final User mmuster = userRepository.findByName("mmuster");
 
-        groupManager.removeMemberFromGroup(mmuster, admins);
+        shiro.getSystemUser().execute(
+            () -> groupManager.removeMemberFromGroup(mmuster, admins));
     }
 
 }

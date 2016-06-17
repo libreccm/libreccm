@@ -18,6 +18,7 @@
  */
 package org.libreccm.security;
 
+import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.kernel.security.SecurityConfig;
 
 import javax.enterprise.context.RequestScoped;
@@ -34,8 +35,13 @@ import org.apache.shiro.crypto.hash.format.DefaultHashFormatFactory;
 import org.apache.shiro.crypto.hash.format.HashFormat;
 import org.apache.shiro.crypto.hash.format.HashFormatFactory;
 import org.apache.shiro.crypto.hash.format.Shiro1CryptFormat;
+import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ByteSource;
+import org.libreccm.configuration.ConfigurationManager;
+import org.libreccm.core.CoreConstants;
 import org.libreccm.core.EmailAddress;
+
+import javax.transaction.Transactional;
 
 /**
  * Provides various operations for user objects.
@@ -48,6 +54,18 @@ public class UserManager {
 
     @Inject
     private UserRepository userRepository;
+
+    @Inject
+    private Subject subject;
+
+    @Inject
+    private Shiro shiro;
+
+    @Inject
+    private PermissionChecker permissionChecker;
+
+    @Inject
+    private ConfigurationManager confManager;
 
     /**
      * Creates a new user and saves the user in the database. The method also
@@ -63,7 +81,10 @@ public class UserManager {
      *
      * @return The new user.
      */
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
     @ValidateOnExecution
+    @Transactional(Transactional.TxType.REQUIRED)
     public User createUser(final String givenName,
                            final String familyName,
                            @Pattern(regexp = "[a-zA-Z0-9\\-_]*")
@@ -93,17 +114,38 @@ public class UserManager {
      * Updates the password of a user. This method allows {@code null} as
      * password value. If a user has no password in the database this means that
      * the user can't login or that the authentication for this user is done by
-     * an external system.
+     * an external system. Only the user itself or user to which the
+     * {@code admin} privilege has been granted can update the password of user.
      *
      * @param user        The user which password should be upgraded.
      * @param newPassword The new password. The password is hashed using the
      *                    algorithm configured in the {@link SecurityConfig}.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public void updatePassword(@NotNull final User user,
                                final String newPassword) {
-        user.setPassword(hashPassword(newPassword));
+        // We can't use the authorisation annotations here because we have two 
+        // options. First we check if the current subject is the user whos
+        // password is updated. If not we check if the current subject has admin
+        // privileges.
+        final String userIdentifier;
+        final KernelConfig kernelConfig = confManager.findConfiguration(
+            KernelConfig.class);
+        if (kernelConfig.emailIsPrimaryIdentifier()) {
+            userIdentifier = user.getPrimaryEmailAddress().getAddress();
+        } else {
+            userIdentifier = user.getName();
+        }
 
-        userRepository.save(user);
+        if (subject.isAuthenticated()
+                && userIdentifier.equals(subject.getPrincipal())) {
+            user.setPassword(hashPassword(newPassword));
+            shiro.getSystemUser().execute(() -> userRepository.save(user));
+        } else {
+            permissionChecker.checkPermission(CoreConstants.ADMIN_PRIVILEGE);
+            user.setPassword(hashPassword(newPassword));
+            shiro.getSystemUser().execute(() -> userRepository.save(user));
+        }
     }
 
     /**
@@ -149,7 +191,7 @@ public class UserManager {
         //format includes the algorithm used, the salt, the number of 
         //iterations used and the hashed password in special formatted string.
         final HashFormatFactory hashFormatFactory
-                                = new DefaultHashFormatFactory();
+                                    = new DefaultHashFormatFactory();
         final HashFormat hashFormat = hashFormatFactory.getInstance(
             Shiro1CryptFormat.class.getName());
 
@@ -171,7 +213,7 @@ public class UserManager {
         }
 
         final SecureRandomNumberGenerator generator
-                                          = new SecureRandomNumberGenerator();
+                                              = new SecureRandomNumberGenerator();
         final int byteSize = generatedSaltSize / 8; //generatedSaltSize is in *bits* - convert to byte size:
         return generator.nextBytes(byteSize);
     }

@@ -24,6 +24,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.persistence.TypedQuery;
 
 import org.libreccm.core.AbstractEntityRepository;
+import org.libreccm.core.CoreConstants;
 
 import javax.transaction.Transactional;
 
@@ -92,7 +93,7 @@ public class GroupRepository extends AbstractEntityRepository<Long, Group> {
     }
 
     @AuthorizationRequired
-    @RequiresPrivilege("admin")
+    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public void save(final Group group) {
@@ -100,7 +101,7 @@ public class GroupRepository extends AbstractEntityRepository<Long, Group> {
     }
 
     @AuthorizationRequired
-    @RequiresPrivilege("admin")
+    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public void delete(final Group entity) {

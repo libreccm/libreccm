@@ -168,15 +168,20 @@ public class CategoryRepository extends AbstractEntityRepository<Long, Category>
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public void save(
-        @RequiresPrivilege("manage_categories") final Category category) {
+        @RequiresPrivilege(CategorizationConstants.MANAGE_CATEGORY_PRIVILEGE) 
+        final Category category) {
+        
         super.save(category);
     }
 
     @AuthorizationRequired
-    @RequiresPrivilege("manage_categories")
+
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
-    public void delete(final Category category) {
+    public void delete(
+        @RequiresPrivilege(CategorizationConstants.MANAGE_CATEGORY_PRIVILEGE) 
+        final Category category) {
+        
         super.save(category);
     }
 

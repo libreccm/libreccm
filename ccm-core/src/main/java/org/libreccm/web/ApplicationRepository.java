@@ -20,6 +20,7 @@ package org.libreccm.web;
 
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.libreccm.core.AbstractEntityRepository;
+import org.libreccm.core.CoreConstants;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
 
@@ -86,7 +87,7 @@ public class ApplicationRepository
     }
     
     @AuthorizationRequired
-    @RequiresPrivilege("admin")
+    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public void save(final CcmApplication application) {
@@ -94,7 +95,7 @@ public class ApplicationRepository
     }
     
     @AuthorizationRequired
-    @RequiresPrivilege("admin")
+    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public void delete(final CcmApplication application) {

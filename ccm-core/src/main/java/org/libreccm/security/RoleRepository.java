@@ -24,6 +24,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.persistence.TypedQuery;
 
 import org.libreccm.core.AbstractEntityRepository;
+import org.libreccm.core.CoreConstants;
 
 import javax.transaction.Transactional;
 
@@ -82,7 +83,7 @@ public class RoleRepository extends AbstractEntityRepository<Long, Role> {
     }
 
     @AuthorizationRequired
-    @RequiresPrivilege("admin")
+    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public void save(final Role role) {
@@ -90,7 +91,7 @@ public class RoleRepository extends AbstractEntityRepository<Long, Role> {
     }
     
     @AuthorizationRequired
-    @RequiresPrivilege("admin")
+    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
     @Override
     @Transactional(Transactional.TxType.REQUIRED)
     public void delete(final Role role) {

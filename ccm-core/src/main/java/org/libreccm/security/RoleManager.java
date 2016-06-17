@@ -18,6 +18,8 @@
  */
 package org.libreccm.security;
 
+import org.libreccm.core.CoreConstants;
+
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
@@ -53,6 +55,8 @@ public class RoleManager {
      * @param role  The role to assign.
      * @param party The party which to which to role is assigned.
      */
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
     @Transactional(Transactional.TxType.REQUIRED)
     public void assignRoleToParty(final Role role, final Party party) {
         if (role == null) {
@@ -87,6 +91,8 @@ public class RoleManager {
      * @param role
      * @param party
      */
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
     @Transactional(Transactional.TxType.REQUIRED)
     public void removeRoleFromParty(final Role role, final Party party) {
         if (role == null) {

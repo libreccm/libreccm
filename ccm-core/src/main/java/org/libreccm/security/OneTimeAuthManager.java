@@ -43,6 +43,7 @@ import org.apache.shiro.crypto.hash.format.HashFormat;
 import org.apache.shiro.crypto.hash.format.HashFormatFactory;
 import org.apache.shiro.crypto.hash.format.Shiro1CryptFormat;
 import org.apache.shiro.util.ByteSource;
+import org.libreccm.core.CoreConstants;
 
 /**
  * This class manages the generation and delation of {@link OneTimeAuthToken}s.
@@ -77,6 +78,8 @@ public class OneTimeAuthManager {
      *
      * @return The one time authentication token with the not hashed token.
      */
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.SYSTEM_PRIVILEGE)
     @Transactional(Transactional.TxType.REQUIRED)
     public OneTimeAuthToken createForUser(
         final User user, final OneTimeAuthTokenPurpose purpose) {
@@ -144,6 +147,8 @@ public class OneTimeAuthManager {
      * @return The one time auth token for the provided user and purpose or
      *         {@code null} if there is no such token.
      */
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.SYSTEM_PRIVILEGE)
     public List<OneTimeAuthToken> retrieveForUser(
         final User user, final OneTimeAuthTokenPurpose purpose) {
         if (user == null || purpose == null) {
@@ -171,6 +176,8 @@ public class OneTimeAuthManager {
      * @return {@code true} if there is a valid token for the provided user and
      *         purpose, {@code false} if not.
      */
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.SYSTEM_PRIVILEGE)
     public boolean validTokenExistsForUser(
         final User user, final OneTimeAuthTokenPurpose purpose) {
         if (user == null || purpose == null) {
@@ -201,6 +208,8 @@ public class OneTimeAuthManager {
      *
      * @return {@code true} if the token is valid, {@code false} if not.
      */
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.SYSTEM_PRIVILEGE)
     public boolean isValid(final OneTimeAuthToken token) {
         if (token == null) {
             throw new IllegalArgumentException("Can't validate a token null");
@@ -224,6 +233,8 @@ public class OneTimeAuthManager {
      * @return {@code true} if the submitted token is valid and matches {@link token},
      * {@code false} if not.
      */
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.SYSTEM_PRIVILEGE)
     public boolean verify(final OneTimeAuthToken token,
                           final String submittedToken) {
         if (token == null || submittedToken == null) {
@@ -253,6 +264,8 @@ public class OneTimeAuthManager {
      *
      * @param token The token to invalidate.
      */
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.SYSTEM_PRIVILEGE)
     @Transactional(Transactional.TxType.REQUIRED)
     public void invalidate(final OneTimeAuthToken token) {
         if (token == null) {

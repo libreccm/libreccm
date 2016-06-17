@@ -42,6 +42,16 @@ public final class CoreConstants {
      * in the security API.
      */
     public static final String ACCESS_DENIED = "Access denied";
+    
+    /**
+     * Constant for the {@code admin} privilege.
+     */
+    public static final String ADMIN_PRIVILEGE = "admin";
+    
+    /**
+     * Constant for the {@code system} privilege.
+     */
+    public static final String SYSTEM_PRIVILEGE = "system";
 
     private CoreConstants() {
         //Nothing

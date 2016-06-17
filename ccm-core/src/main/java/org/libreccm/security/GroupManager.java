@@ -18,6 +18,8 @@
  */
 package org.libreccm.security;
 
+import org.libreccm.core.CoreConstants;
+
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
@@ -53,6 +55,8 @@ public class GroupManager {
      * @param user The user to add to a group.
      * @param group  The group to which the user is added.
      */
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
     @Transactional(Transactional.TxType.REQUIRED)
     public void addMemberToGroup(final User user, final Group group) {
         if (user == null) {
@@ -90,6 +94,8 @@ public class GroupManager {
      * @param member The user to remove from the group.
      * @param group The group from which the user is removed.
      */
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
     @Transactional(Transactional.TxType.REQUIRED)
     public void removeMemberFromGroup(final User member, final Group group) {
         if (member == null) {

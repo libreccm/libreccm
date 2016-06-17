@@ -18,6 +18,7 @@
  */
 package org.libreccm.security;
 
+import org.apache.shiro.subject.ExecutionException;
 
 import java.io.File;
 
@@ -39,7 +40,6 @@ import org.jboss.arquillian.test.spi.ArquillianProxyException;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
@@ -70,6 +70,9 @@ public class UserManagerTest {
 
     @Inject
     private UserRepository userRepository;
+
+    @Inject
+    private Shiro shiro;
 
     public UserManagerTest() {
     }
@@ -123,18 +126,20 @@ public class UserManagerTest {
             .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
             .addPackage(org.libreccm.tests.categories.IntegrationTest.class
                 .getPackage())
-            .addPackage(org.libreccm.testutils.EqualsVerifier.class.getPackage())
+            .addPackage(org.libreccm.testutils.EqualsVerifier.class
+                .getPackage())
             .addPackage(com.arsdigita.kernel.KernelConfig.class.getPackage())
             .addPackage(com.arsdigita.kernel.security.SecurityConfig.class
                 .getPackage())
             .addPackage(com.arsdigita.util.UncheckedWrapperException.class
                 .getPackage())
+            .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
             .addAsLibraries(libs)
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")
             .addAsResource("configs/shiro.ini", "shiro.ini")
             .addAsWebInfResource("test-web.xml", "web.xml")
-            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+            .addAsWebInfResource("META-INF/beans.xml", "beans.xml");
     }
 
     @Test
@@ -170,11 +175,12 @@ public class UserManagerTest {
         excludeColumns = {"party_id", "password"})
     @InSequence(300)
     public void createUser() {
-        userManager.createUser("Jane",
-                               "Doe",
-                               "jane",
-                               "jane.doe@example.org",
-                               "foo456");
+        shiro.getSystemUser().execute(
+            () -> userManager.createUser("Jane",
+                                         "Doe",
+                                         "jane",
+                                         "jane.doe@example.org",
+                                         "foo456"));
 
         final User jane2 = userRepository.findByName("jane");
         assertThat(userManager.verifyPassword(jane2, "foo456"), is(true));
@@ -184,12 +190,17 @@ public class UserManagerTest {
     @UsingDataSet("datasets/org/libreccm/security/UserManagerTest/data.yml")
     @ShouldThrowException(ConstraintViolationException.class)
     @InSequence(400)
-    public void createUserWithInValidName() {
-        userManager.createUser("Jane",
-                               "Doe",
-                               "j#ne",
-                               "jane.doe@example.org",
-                               "foo456");
+    public void createUserWithInValidName() throws Throwable {
+        try {
+            shiro.getSystemUser().execute(
+                () -> userManager.createUser("Jane",
+                                             "Doe",
+                                             "j#ne",
+                                             "jane.doe@example.org",
+                                             "foo456"));
+        } catch (ExecutionException ex) {
+            throw ex.getCause();
+        }
         fail();
     }
 
@@ -198,7 +209,8 @@ public class UserManagerTest {
     @InSequence(500)
     public void updatePassword() {
         final User jdoe = userRepository.findByName("jdoe");
-        userManager.updatePassword(jdoe, "foo456");
+        shiro.getSystemUser().execute(
+            () -> userManager.updatePassword(jdoe, "foo456"));
 
         final User jdoe2 = userRepository.findByName("jdoe");
         assertThat(userManager.verifyPassword(jdoe, "foo456"), is(true));
@@ -212,8 +224,13 @@ public class UserManagerTest {
     @UsingDataSet("datasets/org/libreccm/security/UserManagerTest/data.yml")
     @ShouldThrowException(ConstraintViolationException.class)
     @InSequence(600)
-    public void updatePasswordNullUser() {
-        userManager.updatePassword(null, "foo");
+    public void updatePasswordNullUser() throws Throwable {
+        try {
+            shiro.getSystemUser().execute(
+                () -> userManager.updatePassword(null, "foo"));
+        } catch (ExecutionException ex) {
+            throw ex.getCause();
+        }
         fail();
     }
 

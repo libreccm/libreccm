@@ -24,6 +24,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.libreccm.core.CcmObject;
 import org.libreccm.core.DefaultEntityGraph;
 import org.libreccm.l10n.LocalizedString;
+import org.libreccm.security.InheritsPermissions;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -90,7 +91,8 @@ import javax.validation.constraints.Pattern;
     )
 })
 @DefaultEntityGraph("Category.withSubCategoriesAndObjects")
-public class Category extends CcmObject implements Serializable {
+public class Category extends CcmObject implements InheritsPermissions, 
+                                                   Serializable {
 
     private static final long serialVersionUID = -7250208963391878547L;
 
@@ -316,6 +318,12 @@ public class Category extends CcmObject implements Serializable {
 
     public void setCategoryOrder(final long categoryOrder) {
         this.categoryOrder = categoryOrder;
+    }
+    
+    
+    @Override
+    public CcmObject getParent() {
+        return getParentCategory();
     }
 
     @Override

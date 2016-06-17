@@ -18,6 +18,8 @@
  */
 package org.libreccm.security;
 
+import org.apache.shiro.subject.ExecutionException;
+
 import java.io.File;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -72,6 +74,9 @@ public class OneTimeAuthManagerTest {
     @Inject
     private UserRepository userRepository;
 
+    @Inject
+    private Shiro shiro;
+
     public OneTimeAuthManagerTest() {
 
     }
@@ -109,31 +114,34 @@ public class OneTimeAuthManagerTest {
         return ShrinkWrap
             .create(WebArchive.class,
                     "LibreCCM-org.libreccm.security.OneTimeAuthManagerTest.war")
-            .addPackage(org.libreccm.security.OneTimeAuthManager.class.
-                getPackage())
+            .addPackage(org.libreccm.security.OneTimeAuthManager.class
+                .getPackage())
             .addPackage(org.libreccm.core.CcmObject.class.getPackage())
-            .addPackage(org.libreccm.categorization.Categorization.class.
-                getPackage())
-            .addPackage(
-                org.libreccm.configuration.ConfigurationManager.class.
-                getPackage())
-            .addPackage(org.libreccm.l10n.LocalizedString.class.getPackage()).
-            addPackage(org.libreccm.web.CcmApplication.class.getPackage())
+            .addPackage(org.libreccm.categorization.Categorization.class
+                .getPackage())
+            .addPackage(org.libreccm.configuration.ConfigurationManager.class
+                .getPackage())
+            .addPackage(org.libreccm.l10n.LocalizedString.class.getPackage())
+            .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
             .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
-            .addPackage(org.libreccm.jpa.EntityManagerProducer.class.
-                getPackage())
-            .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class.
-                getPackage())
+            .addPackage(org.libreccm.jpa.EntityManagerProducer.class
+                .getPackage())
+            .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
+                .getPackage())
             .addClass(com.arsdigita.kernel.security.SecurityConfig.class)
-            .addPackage(org.libreccm.testutils.EqualsVerifier.class.
-                getPackage())
-            .addPackage(org.libreccm.tests.categories.IntegrationTest.class.
-                getPackage())
+            .addPackage(org.libreccm.testutils.EqualsVerifier.class
+                .getPackage())
+            .addPackage(org.libreccm.tests.categories.IntegrationTest.class
+                .getPackage())
+            .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
+            .addClass(com.arsdigita.kernel.KernelConfig.class)
+            .addClass(com.arsdigita.kernel.security.SecurityConfig.class)
             .addAsLibraries(libs)
+            .addAsResource("configs/shiro.ini", "shiro.ini")
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")
-            .addAsWebInfResource("test-web.xml", "WEB-INF/web.xml")
-            .addAsWebInfResource(EmptyAsset.INSTANCE, "WEB-INF/beans.xml");
+            .addAsWebInfResource("test-web.xml", "web.xml")
+            .addAsWebInfResource("META-INF/beans.xml", "beans.xml");
     }
 
     @Test
@@ -152,9 +160,11 @@ public class OneTimeAuthManagerTest {
     @InSequence(100)
     public void createTokenForUser() {
         final User mmuster = userRepository.findByName("mmuster");
-        final OneTimeAuthToken token = oneTimeAuthManager.createForUser(
-            mmuster,
-            OneTimeAuthTokenPurpose.EMAIL_VERIFICATION);
+        final OneTimeAuthToken token = shiro.getSystemUser().execute(() -> {
+            return oneTimeAuthManager.createForUser(
+                mmuster,
+                OneTimeAuthTokenPurpose.EMAIL_VERIFICATION);
+        });
 
         final LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
         final LocalDateTime tokenValidUntil = LocalDateTime.ofInstant(
@@ -176,9 +186,14 @@ public class OneTimeAuthManagerTest {
         "datasets/org/libreccm/security/OneTimeAuthManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(200)
-    public void createTokenNullUser() {
-        oneTimeAuthManager.createForUser(
-            null, OneTimeAuthTokenPurpose.RECOVER_PASSWORD);
+    public void createTokenNullUser() throws Throwable {
+        try {
+            shiro.getSystemUser().execute(
+                () -> oneTimeAuthManager.createForUser(
+                    null, OneTimeAuthTokenPurpose.RECOVER_PASSWORD));
+        } catch (ExecutionException ex) {
+            throw ex.getCause();
+        }
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -186,9 +201,14 @@ public class OneTimeAuthManagerTest {
         "datasets/org/libreccm/security/OneTimeAuthManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(300)
-    public void createTokenNullPurpose() {
+    public void createTokenNullPurpose() throws Throwable {
         final User user = new User();
-        oneTimeAuthManager.createForUser(user, null);
+        try {
+            shiro.getSystemUser().execute(() -> oneTimeAuthManager
+                .createForUser(user, null));
+        } catch (ExecutionException ex) {
+            throw ex.getCause();
+        }
     }
 
     @Test
@@ -198,9 +218,11 @@ public class OneTimeAuthManagerTest {
     public void retrieveTokenForUser() {
         final User jdoe = userRepository.findByName("jdoe");
 
-        final List<OneTimeAuthToken> result = oneTimeAuthManager.
-            retrieveForUser(
-                jdoe, OneTimeAuthTokenPurpose.EMAIL_VERIFICATION);
+        final List<OneTimeAuthToken> result = shiro.getSystemUser().execute(
+            () -> {
+                return oneTimeAuthManager.retrieveForUser(
+                    jdoe, OneTimeAuthTokenPurpose.EMAIL_VERIFICATION);
+            });
 
         assertThat(result, is(not(nullValue())));
         assertThat(result, is(not(empty())));
@@ -219,9 +241,11 @@ public class OneTimeAuthManagerTest {
     public void retrieveNotExistingTokenForUser() {
         final User mmuster = userRepository.findByName("mmuster");
 
-        final List<OneTimeAuthToken> result = oneTimeAuthManager.
-            retrieveForUser(
-                mmuster, OneTimeAuthTokenPurpose.EMAIL_VERIFICATION);
+        final List<OneTimeAuthToken> result = shiro.getSystemUser().execute(
+            () -> {
+                return oneTimeAuthManager.retrieveForUser(
+                    mmuster, OneTimeAuthTokenPurpose.EMAIL_VERIFICATION);
+            });
 
         assertThat(result, is(empty()));
     }
@@ -231,9 +255,14 @@ public class OneTimeAuthManagerTest {
         "datasets/org/libreccm/security/OneTimeAuthManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(600)
-    public void retrieveTokenNullUser() {
-        oneTimeAuthManager.retrieveForUser(
-            null, OneTimeAuthTokenPurpose.RECOVER_PASSWORD);
+    public void retrieveTokenNullUser() throws Throwable {
+        try {
+            shiro.getSystemUser().execute(
+                () -> oneTimeAuthManager.retrieveForUser(
+                    null, OneTimeAuthTokenPurpose.RECOVER_PASSWORD));
+        } catch (ExecutionException ex) {
+            throw ex.getCause();
+        }
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -241,10 +270,15 @@ public class OneTimeAuthManagerTest {
         "datasets/org/libreccm/security/OneTimeAuthManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(700)
-    public void retrieveTokenNullPurpose() {
+    public void retrieveTokenNullPurpose() throws Throwable {
         final User mmuster = userRepository.findByName("mmuster");
 
-        oneTimeAuthManager.retrieveForUser(mmuster, null);
+        try {
+            shiro.getSystemUser().execute(
+                () -> oneTimeAuthManager.retrieveForUser(mmuster, null));
+        } catch (ExecutionException ex) {
+            throw ex.getCause();
+        }
     }
 
     @Test
@@ -254,10 +288,11 @@ public class OneTimeAuthManagerTest {
     public void validTokenExistsForUser() {
         final User user = userRepository.findByName("jdoe");
 
-        assertThat(
-            oneTimeAuthManager.validTokenExistsForUser(
-                user, OneTimeAuthTokenPurpose.EMAIL_VERIFICATION),
-            is(true));
+        shiro.getSystemUser().execute(
+            () -> assertThat(
+                oneTimeAuthManager.validTokenExistsForUser(
+                    user, OneTimeAuthTokenPurpose.EMAIL_VERIFICATION),
+                is(true)));
     }
 
     @Test
@@ -267,10 +302,11 @@ public class OneTimeAuthManagerTest {
     public void validTokenDoesNotExist() {
         final User user = userRepository.findByName("mmuster");
 
-        assertThat(
-            oneTimeAuthManager.validTokenExistsForUser(
-                user, OneTimeAuthTokenPurpose.EMAIL_VERIFICATION),
-            is(false));
+        shiro.getSystemUser().execute(
+            () -> assertThat(
+                oneTimeAuthManager.validTokenExistsForUser(
+                    user, OneTimeAuthTokenPurpose.EMAIL_VERIFICATION),
+                is(false)));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -278,9 +314,14 @@ public class OneTimeAuthManagerTest {
         "datasets/org/libreccm/security/OneTimeAuthManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(1000)
-    public void validTokenNullUser() {
-        oneTimeAuthManager.validTokenExistsForUser(
-            null, OneTimeAuthTokenPurpose.EMAIL_VERIFICATION);
+    public void validTokenNullUser() throws Throwable {
+        try {
+            shiro.getSystemUser().execute(
+                () -> oneTimeAuthManager.validTokenExistsForUser(
+                    null, OneTimeAuthTokenPurpose.EMAIL_VERIFICATION));
+        } catch (ExecutionException ex) {
+            throw ex.getCause();
+        }
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -288,10 +329,14 @@ public class OneTimeAuthManagerTest {
         "datasets/org/libreccm/security/OneTimeAuthManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(1100)
-    public void validTokenNullPurpose() {
-        final User user = userRepository.findByName("mmuster");
-        oneTimeAuthManager.validTokenExistsForUser(
-            user, null);
+    public void validTokenNullPurpose() throws Throwable {
+        try {
+            final User user = userRepository.findByName("mmuster");
+            shiro.getSystemUser().execute(
+                () -> oneTimeAuthManager.validTokenExistsForUser(user, null));
+        } catch (ExecutionException ex) {
+            throw ex.getCause();
+        }
     }
 
     @Test
@@ -301,12 +346,15 @@ public class OneTimeAuthManagerTest {
     public void isValid() {
         final User jdoe = userRepository.findByName("jdoe");
 
-        final List<OneTimeAuthToken> result = oneTimeAuthManager.
-            retrieveForUser(
-                jdoe, OneTimeAuthTokenPurpose.EMAIL_VERIFICATION);
-
+        final List<OneTimeAuthToken> result = shiro.getSystemUser().execute(
+            () -> {
+                return oneTimeAuthManager.retrieveForUser(
+                    jdoe, OneTimeAuthTokenPurpose.EMAIL_VERIFICATION);
+            });
         assertThat(result, is(not(empty())));
-        assertThat(oneTimeAuthManager.isValid(result.get(0)), is(true));
+        shiro.getSystemUser().execute(
+            () -> assertThat(oneTimeAuthManager.isValid(result.get(0)),
+                             is(true)));
     }
 
     @Test
@@ -316,9 +364,11 @@ public class OneTimeAuthManagerTest {
     public void isInvalid() {
         final User jdoe = userRepository.findByName("jdoe");
 
-        final List<OneTimeAuthToken> result = oneTimeAuthManager.
-            retrieveForUser(
-                jdoe, OneTimeAuthTokenPurpose.EMAIL_VERIFICATION);
+        final List<OneTimeAuthToken> result = shiro.getSystemUser().execute(
+            () -> {
+                return oneTimeAuthManager.retrieveForUser(
+                    jdoe, OneTimeAuthTokenPurpose.EMAIL_VERIFICATION);
+            });
 
         assertThat(result, is(not(empty())));
         final OneTimeAuthToken token = result.get(0);
@@ -327,7 +377,8 @@ public class OneTimeAuthManagerTest {
             .now(ZoneOffset.UTC).minus(1800, ChronoUnit.SECONDS);
         token.setValidUntil(Date.from(date.toInstant(ZoneOffset.UTC)));
 
-        assertThat(oneTimeAuthManager.isValid(token), is(false));
+        shiro.getSystemUser().execute(
+            () -> assertThat(oneTimeAuthManager.isValid(token), is(false)));
 
     }
 
@@ -336,8 +387,13 @@ public class OneTimeAuthManagerTest {
         "datasets/org/libreccm/security/OneTimeAuthManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(1400)
-    public void isValidNullToken() {
-        oneTimeAuthManager.isValid(null);
+    public void isValidNullToken() throws Throwable {
+        try {
+            shiro.getSystemUser().execute(
+                () -> oneTimeAuthManager.isValid(null));
+        } catch (ExecutionException ex) {
+            throw ex.getCause();
+        }
     }
 
     @Test
@@ -350,12 +406,15 @@ public class OneTimeAuthManagerTest {
     public void invalidateToken() {
         final User jdoe = userRepository.findByName("jdoe");
 
-        final List<OneTimeAuthToken> result = oneTimeAuthManager.
-            retrieveForUser(
-                jdoe, OneTimeAuthTokenPurpose.EMAIL_VERIFICATION);
+        final List<OneTimeAuthToken> result = shiro.getSystemUser().execute(
+            () -> {
+                return oneTimeAuthManager.retrieveForUser(
+                    jdoe, OneTimeAuthTokenPurpose.EMAIL_VERIFICATION);
+            });
 
         assertThat(result, is(not(empty())));
-        oneTimeAuthManager.invalidate(result.get(0));
+        shiro.getSystemUser().execute(
+            () -> oneTimeAuthManager.invalidate(result.get(0)));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -364,7 +423,8 @@ public class OneTimeAuthManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(1400)
     public void invalidateNullToken() {
-        oneTimeAuthManager.invalidate(null);
+        shiro.getSystemUser().execute(
+            () -> oneTimeAuthManager.invalidate(null));
     }
 
 }

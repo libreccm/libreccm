@@ -18,17 +18,15 @@
  */
 package org.libreccm.security;
 
-import com.arsdigita.bebop.FormProcessException;
-import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.ui.login.UserNewForm;
 
 import org.apache.logging.log4j.util.Strings;
+import org.libreccm.core.CoreConstants;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.mail.MessagingException;
 
-import static com.arsdigita.ui.login.LoginConstants.*;
 
 /**
  * The CDI bean encapsulates all steps for registering a user, for example by a
@@ -83,6 +81,8 @@ public class RegistrationManager {
      *                                  activation challenge to the new user.
      * @throws IllegalArgumentException If the provided {@code user} is
      */
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.SYSTEM_PRIVILEGE)
     public void registerUser(final String userName,
                              final String familyName,
                              final String givenName,

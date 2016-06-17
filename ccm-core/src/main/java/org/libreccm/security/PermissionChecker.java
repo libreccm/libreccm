@@ -138,15 +138,19 @@ public class PermissionChecker {
         if (object instanceof InheritsPermissions) {
             final boolean result = isPermitted(privilege, object);
 
-            if (result) {
-                subject.checkPermission(generatePermissionString(privilege,
-                                                                 object));
-            } else if (((InheritsPermissions) object).getParent() == null) {
-                subject.checkPermission(generatePermissionString(privilege,
-                                                                 object));
-            } else {
-                checkPermission(privilege,
-                                ((InheritsPermissions) object).getParent());
+            if (!result) {
+                if (((InheritsPermissions) object).getParent() == null) {
+                    if (subject.isAuthenticated()) {
+                        subject.checkPermission(generatePermissionString(
+                            privilege, object));
+                    } else {
+                        shiro.getPublicUser().checkPermission(
+                            generatePermissionString(privilege, object));
+                    }
+                } else {
+                    checkPermission(privilege,
+                                    ((InheritsPermissions) object).getParent());
+                }
             }
         } else if (subject.isAuthenticated()) {
             subject.checkPermission(generatePermissionString(privilege, object));

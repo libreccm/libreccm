@@ -26,13 +26,14 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.libreccm.core.CcmObject;
+import org.libreccm.core.CoreConstants;
 
 import javax.enterprise.context.RequestScoped;
 import javax.transaction.Transactional;
 
 /**
  * Manager class for granting and revoking permissions.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
@@ -45,28 +46,30 @@ public class PermissionManager {
     @SuppressWarnings("PMD.LongVariable")
     private static final String QUERY_PARAM_PRIVILEGE = "privilege";
 
-    
     @Inject
     private EntityManager entityManager;
 
     /**
      * Retrieves a permission by its ID. Useful for UI classes.
-     * 
+     *
      * @param permissionId The id of the permission to retrieve.
+     *
      * @return The permission identified by the provided {@code permissionId).
      */
     public Permission findById(final long permissionId) {
         return entityManager.find(Permission.class, permissionId);
     }
-    
+
     /**
-     * Grants a privilege on an object to a role.  If the privilege was already 
+     * Grants a privilege on an object to a role. If the privilege was already
      * granted, the method does nothing.
-     * 
+     *
      * @param privilege The privilege to grant.
-     * @param grantee The role to which the privilege is granted.
-     * @param object The object on which the privilege is granted.
+     * @param grantee   The role to which the privilege is granted.
+     * @param object    The object on which the privilege is granted.
      */
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
     @Transactional(Transactional.TxType.REQUIRED)
     public void grantPrivilege(final String privilege,
                                final Role grantee,
@@ -80,7 +83,7 @@ public class PermissionManager {
             throw new IllegalArgumentException(
                 "Can't grant a permission to grantee null.");
         }
-        
+
         if (object == null) {
             throw new IllegalArgumentException(
                 "Can't grant a permission on object NULL.");
@@ -97,12 +100,14 @@ public class PermissionManager {
     }
 
     /**
-     * Grants a privilege to a role. If the privilege was already granted, the 
+     * Grants a privilege to a role. If the privilege was already granted, the
      * method does nothing.
-     * 
+     *
      * @param privilege The privilege to grant.
-     * @param grantee The role to which the privilege is granted.
+     * @param grantee   The role to which the privilege is granted.
      */
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
     @Transactional(Transactional.TxType.REQUIRED)
     public void grantPrivilege(final String privilege,
                                final Role grantee) {
@@ -127,13 +132,15 @@ public class PermissionManager {
     }
 
     /**
-     * Revokes the permissions granting a privilege on an object from a role.
-     * If no matching permission exists the method will do nothing.
-     * 
+     * Revokes the permissions granting a privilege on an object from a role. If
+     * no matching permission exists the method will do nothing.
+     *
      * @param privilege The privilege granted by the permission to revoke.
-     * @param grantee The role to which the privilege was granted.
-     * @param object The object on which the privilege was granted.
+     * @param grantee   The role to which the privilege was granted.
+     * @param object    The object on which the privilege was granted.
      */
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
     @Transactional(Transactional.TxType.REQUIRED)
     public void revokePrivilege(final String privilege,
                                 final Role grantee,
@@ -147,7 +154,7 @@ public class PermissionManager {
             throw new IllegalArgumentException(
                 "Can't revoke a permission from grantee null.");
         }
-        
+
         if (object == null) {
             throw new IllegalArgumentException(
                 "Can't revoke a permission from object NULL.");
@@ -165,14 +172,16 @@ public class PermissionManager {
             query.executeUpdate();
         }
     }
-    
-     /**
-     * Revokes the permissions granting a privilege from a role.
-     * If no matching permission exists the method will do nothing.
-     * 
+
+    /**
+     * Revokes the permissions granting a privilege from a role. If no matching
+     * permission exists the method will do nothing.
+     *
      * @param privilege The privilege granted by the permission to revoke.
-     * @param grantee The role to which the privilege was granted.
+     * @param grantee   The role to which the privilege was granted.
      */
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
     @Transactional(Transactional.TxType.REQUIRED)
     public void revokePrivilege(final String privilege,
                                 final Role grantee) {
@@ -199,15 +208,17 @@ public class PermissionManager {
     }
 
     /**
-     * Copy the permissions from on {@link CcmObject} to another. The 
-     * permissions granted on the {@code target} object will not be removed. 
-     * Instead the permissions from {@code source} object are added the the 
+     * Copy the permissions from on {@link CcmObject} to another. The
+     * permissions granted on the {@code target} object will not be removed.
+     * Instead the permissions from {@code source} object are added the the
      * permissions.
-     * 
-     * 
+     *
+     *
      * @param source
-     * @param target 
+     * @param target
      */
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
     @Transactional(Transactional.TxType.REQUIRED)
     public void copyPermissions(final CcmObject source,
                                 final CcmObject target) {
@@ -215,7 +226,7 @@ public class PermissionManager {
             throw new IllegalArgumentException(
                 "Can't copy permissions from source NULL.");
         }
-        
+
         if (target == null) {
             throw new IllegalArgumentException(
                 "Can't copy permissions to target NULL.");
@@ -236,12 +247,13 @@ public class PermissionManager {
     /**
      * Checks if a permission granting the provided {@code privilege} on the
      * provided {@code object} to the provided {@code role} exists.
-     * 
+     *
      * @param privilege The privilege granted by the permission.
-     * @param grantee The role to which the privilege was granted.
-     * @param object The object on which the privilege is granted.
+     * @param grantee   The role to which the privilege was granted.
+     * @param object    The object on which the privilege is granted.
+     *
      * @return {@code true} if there is a matching permission, {@code false} if
-     * not.
+     *         not.
      */
     private boolean existsPermission(final String privilege,
                                      final Role grantee,
@@ -256,13 +268,14 @@ public class PermissionManager {
     }
 
     /**
-     * Checks if a permission granting the provided {@code privilege}to the 
+     * Checks if a permission granting the provided {@code privilege}to the
      * provided {@code role} exists.
-     * 
+     *
      * @param privilege The privilege granted by the permission.
-     * @param grantee The role to which the privilege was granted.
+     * @param grantee   The role to which the privilege was granted.
+     *
      * @return {@code true} if there is a matching permission, {@code false} if
-     * not.
+     *         not.
      */
     private boolean existsPermission(final String privilege,
                                      final Role grantee) {

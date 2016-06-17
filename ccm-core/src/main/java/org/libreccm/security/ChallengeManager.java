@@ -29,6 +29,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.configuration.LocalizedStringSetting;
+import org.libreccm.core.CoreConstants;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.l10n.LocalizedString;
 
@@ -108,6 +109,8 @@ public class ChallengeManager {
      *
      * @return The text of the challenge mail.
      */
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.SYSTEM_PRIVILEGE)
     public String createEmailVerification(final User user) {
         if (user == null) {
             throw new IllegalArgumentException(
@@ -125,6 +128,8 @@ public class ChallengeManager {
      * @throws MessagingException If there is a problem sending the email to the
      *                            user.
      */
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.SYSTEM_PRIVILEGE)
     public void sendEmailVerification(final User user)
         throws MessagingException {
         final String text = createEmailVerification(user);
@@ -145,6 +150,8 @@ public class ChallengeManager {
      * @throws ChallengeFailedException If the provided token does not match the
      *                                  stored token.
      */
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.SYSTEM_PRIVILEGE)
     public void finishEmailVerification(final User user,
                                         final String submittedToken)
         throws ChallengeFailedException {
@@ -172,6 +179,8 @@ public class ChallengeManager {
      *
      * @return The challenge message.
      */
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.SYSTEM_PRIVILEGE)
     public String createAccountActivation(final User user) {
         if (user == null) {
             throw new IllegalArgumentException(
@@ -188,6 +197,8 @@ public class ChallengeManager {
      * @throws MessagingException If something goes wrong when sending the
      *                            message.
      */
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.SYSTEM_PRIVILEGE)
     public void sendAccountActivation(final User user)
         throws MessagingException {
         final String text = createAccountActivation(user);
@@ -208,6 +219,8 @@ public class ChallengeManager {
      * @throws ChallengeFailedException If the submitted token does not match
      *                                  the stored token.
      */
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.SYSTEM_PRIVILEGE)
     public void finishAccountActivation(final User user,
                                         final String submittedToken)
         throws ChallengeFailedException {
@@ -233,6 +246,8 @@ public class ChallengeManager {
      *
      * @return The challenge message.
      */
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.SYSTEM_PRIVILEGE)
     public String createPasswordRecover(final User user) {
         if (user == null) {
             throw new IllegalArgumentException(
@@ -250,6 +265,8 @@ public class ChallengeManager {
      * @throws MessagingException If something goes wrong when sending the
      *                            message.
      */
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.SYSTEM_PRIVILEGE)
     public void sendPasswordRecover(final User user)
         throws MessagingException {
         final String text = createPasswordRecover(user);
@@ -271,6 +288,8 @@ public class ChallengeManager {
      * @throws ChallengeFailedException If the submitted token does not match
      *                                  the stored token.
      */
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.SYSTEM_PRIVILEGE)
     public void finishPasswordRecover(final User user,
                                       final String submittedToken,
                                       final String newPassword)

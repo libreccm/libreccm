@@ -66,3 +66,73 @@ ccm_core.categorizations:
       category_order: 1
       object_order: 1
       category_index: false
+      
+ccm_core.parties:
+    - party_id: -3000
+      name: public-user
+    - party_id: -3100
+      name: jdoe
+    - party_id: -3200
+      name: mmuster
+
+ccm_core.users:
+    - party_id: -3000
+      given_name: public
+      family_name: user
+      email_address: public-user@localhost
+      banned: false
+      bouncing: false
+      verified: true
+      password_reset_required: false
+    - party_id: -3100
+      given_name: Jane
+      family_name: Doe
+      email_address: jane.doe@example.org
+      # foo123
+      password: $shiro1$SHA-512$500000$Y7CnccN1h25sR7KCElMOXg==$CVLWBhetodaEzzhDfGjRcCFZtSW02xOnjH7xhBx0lbxO66grKIt6LWmXoUhLEydce1JZ7cbzNLYOxIwwTeqi5Q==
+      banned: false
+      bouncing: false
+      verified: true
+      password_reset_required: false
+    - party_id: -3200
+      given_name: Maria
+      family_name: Muster
+      email_address: mmuster@example.com
+      # foo123
+      password: $shiro1$SHA-512$500000$Y7CnccN1h25sR7KCElMOXg==$CVLWBhetodaEzzhDfGjRcCFZtSW02xOnjH7xhBx0lbxO66grKIt6LWmXoUhLEydce1JZ7cbzNLYOxIwwTeqi5Q==
+      banned: false
+      bouncing: false
+      verified: true
+      password_reset_required: false
+
+ccm_core.ccm_roles:
+    - role_id: -4000
+      name: domain_test_category_manager
+    - role_id: -4100
+      name: category_foo_manager
+      
+ccm_core.role_memberships:
+    - membership_id: -5000
+      role_id: -4000
+      member_id: -3100
+    - membership_id: 5100
+      role_id: -4100
+      member_id: -3200
+      
+ccm_core.permissions:
+    - permission_id: -6000
+      granted_privilege: manage_category
+      grantee_id: -4000
+      object_id: -2000
+    - permission_id: -6100
+      granted_privilege: manage_category_objects
+      grantee_id: -4000
+      object_id: -2000
+    - permission_id: -6200
+      granted_privilege: manage_category
+      grantee_id: -4100
+      object_id: -2100
+    - permission_id: -6300
+      granted_privilege: manage_category_objects
+      grantee_id: -4100
+      object_id: -2100

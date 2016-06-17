@@ -21,6 +21,7 @@ package org.libreccm.security;
 import javax.enterprise.context.RequestScoped;
 
 import org.libreccm.core.AbstractEntityRepository;
+import org.libreccm.core.CoreConstants;
 
 import java.util.List;
 
@@ -76,7 +77,7 @@ public class PartyRepository extends AbstractEntityRepository<Long, Party> {
     }
 
     @AuthorizationRequired
-    @RequiresPrivilege("admin")
+    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public void save(final Party party) {
@@ -84,7 +85,7 @@ public class PartyRepository extends AbstractEntityRepository<Long, Party> {
     }
     
     @AuthorizationRequired
-    @RequiresPrivilege("admin")
+    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public void delete(final Party party) {
