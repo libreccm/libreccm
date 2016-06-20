@@ -178,11 +178,11 @@ public class ApplicationsTab extends LayoutPanel {
         appTypes.entrySet().forEach(e -> {
             final String appTypeName = e.getKey();
             final Class<? extends AbstractAppInstanceForm> instanceFormClass
-                                                               = e
-                .getValue().instanceForm();
+                                                               = e.getValue()
+                .instanceForm();
             final Class<? extends AbstractAppSettingsPane> settingsPaneClass
-                                                               = e
-                .getValue().settingsPane();
+                                                               = e.getValue()
+                .settingsPane();
             final boolean singleton = e.getValue().singleton();
 
             if (singleton) {

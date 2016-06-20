@@ -99,6 +99,10 @@
                                 </commands>
                             </beforeDeployment>
                             
+                            <java-opts>
+                                <java-opt>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8787</java-opt>
+                            </java-opts>
+                            
                         </configuration>
                         
                     </plugin>
@@ -153,6 +157,10 @@
                                 </commands>
                             </beforeDeployment>
                             
+                            <java-opts>
+                                <java-opt>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8787</java-opt>
+                            </java-opts>
+                            
                         </configuration>
                         
                     </plugin>
@@ -181,6 +189,10 @@
                             <version>${wildfly.version}</version>
                             
                             <skip>false</skip>
+                            
+                            <java-opts>
+                                <java-opt>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8787</java-opt>
+                            </java-opts>
                         </configuration>
                 </plugin>
             </plugins>
