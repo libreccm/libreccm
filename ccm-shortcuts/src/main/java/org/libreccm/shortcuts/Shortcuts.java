@@ -30,7 +30,9 @@ import org.libreccm.shortcuts.ui.ShortcutsSettingsPane;
 import org.libreccm.web.ApplicationType;
 
 /**
- *
+ * The {@code Shortcuts} module for CCM. Defines the {@code Shortcuts} 
+ * application and sets up the module when the module is installed.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Module(

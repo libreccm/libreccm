@@ -22,6 +22,9 @@ import javax.persistence.EntityManager;
 import org.libreccm.shortcuts.ShortcutsConstants;
 
 /**
+ * Setups the {@code shortcuts-manager} role. The
+ * {@link ShortcutsConstants#SHORTSCUT_MANAGE_PRIVILEGE} is granted to this
+ * role.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -41,9 +44,9 @@ public class ShortcutsRolesSetup {
         final Permission permission = new Permission();
         permission.setGrantee(shortcutsManager);
         permission.setGrantedPrivilege(
-                ShortcutsConstants.SHORTSCUT_MANAGE_PRIVILEGE);
+            ShortcutsConstants.SHORTSCUT_MANAGE_PRIVILEGE);
         permission.setObject(null);
-        
+
         entityManager.persist(permission);
     }
 

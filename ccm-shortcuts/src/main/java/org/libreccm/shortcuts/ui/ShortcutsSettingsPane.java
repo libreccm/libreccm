@@ -31,15 +31,32 @@ import com.arsdigita.ui.admin.applications.AbstractAppSettingsPane;
 import org.libreccm.shortcuts.ShortcutsConstants;
 
 /**
- *
+ * Pane which is used in the {@code /ccm/admin/} application for providing
+ * an admininstration UI for shortcuts.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class ShortcutsSettingsPane extends AbstractAppSettingsPane {
 
+    /**
+     * Parameter for the selected shortcut.
+     */
     private final StringParameter selectedShortcutParam;
+    /**
+     * Selection model for the selected shortcut.
+     */
     private final ParameterSingleSelectionModel<String> selectedShortcut;
+    /**
+     * Table listing all shortcuts.
+     */
     private final ShortcutsTable shortcutsTable;
+    /**
+     * Link for creating a new shortcut.
+     */
     private final ActionLink addShortcutLink;
+    /**
+     * Form for creating and editing shortcuts.
+     */
     private final ShortcutForm shortcutForm;
 
     public ShortcutsSettingsPane(

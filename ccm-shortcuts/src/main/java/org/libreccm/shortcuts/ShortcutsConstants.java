@@ -19,7 +19,8 @@
 package org.libreccm.shortcuts;
 
 /**
- *
+ * Constants for the {@code Shortcuts} module.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public final class ShortcutsConstants {
@@ -30,6 +31,10 @@ public final class ShortcutsConstants {
     public static final String SHORTCUTS_APP_TYPE
                                    = "org.libreccm.shortcuts.Shortcuts";
 
+    /**
+     * Resource bundle which provides the localised messages and labels for
+     * the UIs of the {@code Shortcuts} module.
+     */
     public static final String SHORTCUTS_BUNDLE
                                = "org.libreccm.shortcuts.ShortcutsResources";
 
@@ -38,8 +43,15 @@ public final class ShortcutsConstants {
      */
     public static final String SHORTCUTS_PRIMARY_URL = "/shortcuts/";
 
+    /**
+     * The privilege which must be granted to a user if the user wants to
+     * manage (create, edit, delete) shortcuts.
+     */
     public static final String SHORTSCUT_MANAGE_PRIVILEGE = "manage_shortcuts";
 
+    /**
+     * Private constructor to forbid creation of instances of this class.
+     */
     private ShortcutsConstants() {
         //Nothing
     }

@@ -33,7 +33,8 @@ import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
 /**
- *
+ * Repository class for {@link Shortcut} entities.
+ * 
  * @author <a href="konerman@tzi.de">Alexander Konermann</a>
  */
 @RequestScoped

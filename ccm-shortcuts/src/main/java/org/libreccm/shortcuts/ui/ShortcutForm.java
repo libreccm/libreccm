@@ -36,7 +36,8 @@ import java.util.Locale;
 import java.util.regex.Pattern;
 
 /**
- *
+ * For for creating and editing shortcuts.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class ShortcutForm extends Form {

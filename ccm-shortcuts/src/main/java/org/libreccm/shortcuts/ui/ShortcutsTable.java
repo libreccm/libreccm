@@ -42,6 +42,7 @@ import org.libreccm.shortcuts.ShortcutsConstants;
 import java.util.List;
 
 /**
+ * Table which lists all shortcuts.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */

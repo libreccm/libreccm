@@ -26,6 +26,10 @@ import java.util.UUID;
 import org.libreccm.security.ShortcutsRolesSetup;
 
 /**
+ * Setups the the {@code Shortcuts module}. Creates the singleton application
+ * instance for shortcuts and creates a role to which the
+ * {@code manage_shortcuts} is granted.
+ *
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -44,7 +48,7 @@ public class ShortcutsSetup extends AbstractCcmApplicationSetup {
         getEntityManager().persist(shortcuts);
 
         final ShortcutsRolesSetup rolesSetup = new ShortcutsRolesSetup(
-                getEntityManager());
+            getEntityManager());
         rolesSetup.setupShortcutsRoles();
 
 //        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();

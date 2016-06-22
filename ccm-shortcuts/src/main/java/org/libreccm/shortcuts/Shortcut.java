@@ -33,7 +33,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 /**
- *
+ * Entity representing a single shortcut.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
@@ -52,15 +53,24 @@ public class Shortcut implements Serializable {
 
     private static final long serialVersionUID = -5674633339633714327L;
 
+    /**
+     * Database internal ID of the shortcut.
+     */
     @Id
     @Column(name = "SHORTCUT_ID")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long shortcutId;
 
+    /**
+     * The URL to redirect (the URL which a visitor calls).
+     */
     @Column(name = "URL_KEY", length = 1024, unique = true)
     @NotEmpty
     private String urlKey;
 
+    /**
+     * The URL to which the requeset for {@link #urlKey} is redirected.
+     */
     @Column(name = "REDIRECT", length = 1024)
     @NotEmpty
     private String redirect;

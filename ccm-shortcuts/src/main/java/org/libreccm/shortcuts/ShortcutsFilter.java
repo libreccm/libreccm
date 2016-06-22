@@ -36,7 +36,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- *
+ * A Servlet filter which intercepts all requests to CCM and checks of there is
+ * a shortcut for the requested URL. If there is matching shortcut the request 
+ * is redirected to the URL specified in the matching shortcut. If no matching 
+ * shortcut is found the next filter in the filter chain is called.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @WebFilter(urlPatterns = {"/*"})
