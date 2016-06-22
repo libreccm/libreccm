@@ -1,4 +1,8 @@
 The Shortcuts module
 
-    This <Shortcuts> module (<<<ccm-shortucts>>> for <LibreCCM> is currently 
-    work in progress. More details will come soon.
+    This module provides a short URL facility for LibreCCM. A shortcut
+    consists of an (internal) URL to redirect and an target URL to which
+    the request is redirected. 
+
+    One common use case is to define shortcuts for several legally required
+    informations which redirect to the correct content item.
