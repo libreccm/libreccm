@@ -23,18 +23,25 @@ package org.libreccm.shortcuts;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public final class ShortcutsConstants {
-    
+
     /**
      * Name of the shortcuts application type
      */
     public static final String SHORTCUTS_APP_TYPE
-                               = "org.libreccm.shortcuts.Shortcuts";
-    
+                                   = "org.libreccm.shortcuts.Shortcuts";
+
+    public static final String SHORTCUTS_BUNDLE
+                               = "org.libreccm.shortcuts.ShortcutsResources";
+
     /**
      * Primary URL of the singleton Shortcuts application instance.
      */
     public static final String SHORTCUTS_PRIMARY_URL = "/shortcuts/";
-    
+
     public static final String SHORTSCUT_MANAGE_PRIVILEGE = "manage_shortcuts";
-    
+
+    private ShortcutsConstants() {
+        //Nothing
+    }
+
 }

@@ -20,7 +20,6 @@ package com.arsdigita.ui.admin.applications;
 
 import com.arsdigita.bebop.ActionLink;
 import com.arsdigita.bebop.BoxPanel;
-import com.arsdigita.bebop.Form;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.Page;
 import com.arsdigita.bebop.PageState;
@@ -40,8 +39,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
@@ -102,7 +99,14 @@ public class ApplicationsTab extends LayoutPanel {
                 final ApplicationType appType = appManager.getApplicationTypes()
                     .get(appTypeKey);
 
-                if (appType.singleton()) {
+                if (appType == null) {
+                    hideAllInstanceForms(state);
+                    hideAllSettingsPanes(state);
+                    hideAppInfo(state);
+                    hideInstances(state);
+                    hideManagementLinks(state);
+                    hideSingletonAppSettings(state);
+                } else if (appType.singleton()) {
                     showSingletonAppSettings(state);
                 } else {
                     showInstances(state);
@@ -219,6 +223,14 @@ public class ApplicationsTab extends LayoutPanel {
         page.setVisibleDefault(placeholderSingletonSettings, false);
         page.setVisibleDefault(appInfo, false);
 
+        settingsPanes.forEach((k, v) -> {
+            page.setVisibleDefault(v, false);
+        });
+
+        instanceForms.forEach((k, v) -> {
+            page.setVisibleDefault(v, false);
+        });
+
     }
 
     protected void showManagementLinks(final PageState state) {
@@ -251,7 +263,13 @@ public class ApplicationsTab extends LayoutPanel {
         hideAllInstanceForms(state);
         hideAllSettingsPanes(state);
         placeholderInstances.setVisible(state, false);
-        placeholderSingletonSettings.setVisible(state, true);
+        //placeholderSingletonSettings.setVisible(state, true);
+
+        final String appType = selectedAppType.getSelectedKey(state);
+        if (settingsPanes.containsKey(appType)) {
+            settingsPanes.get(appType).setVisible(state, true);
+        }
+
         appInfo.setVisible(state, false);
     }
 

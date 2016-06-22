@@ -26,6 +26,7 @@ import org.libreccm.modules.Module;
 import org.libreccm.modules.RequiredModule;
 import org.libreccm.modules.ShutdownEvent;
 import org.libreccm.modules.UnInstallEvent;
+import org.libreccm.shortcuts.ui.ShortcutsSettingsPane;
 import org.libreccm.web.ApplicationType;
 
 /**
@@ -38,8 +39,9 @@ import org.libreccm.web.ApplicationType;
         },
         applicationTypes = {
             @ApplicationType(name = ShortcutsConstants.SHORTCUTS_APP_TYPE,
-                             descBundle = "org.libreccm.shortcuts.ShortcutsResources",
+                             descBundle = ShortcutsConstants.SHORTCUTS_BUNDLE,
                              singleton = true,
+                             settingsPane = ShortcutsSettingsPane.class,
                              creator = ShortcutsApplicationCreator.class)})
 public class Shortcuts implements CcmModule {
 

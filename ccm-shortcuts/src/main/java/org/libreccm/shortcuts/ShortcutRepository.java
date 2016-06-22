@@ -30,6 +30,7 @@ import java.util.Optional;
 import javax.enterprise.context.RequestScoped;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
 
 /**
  *
@@ -91,6 +92,7 @@ public class ShortcutRepository extends AbstractEntityRepository<Long, Shortcut>
     @Override
     @AuthorizationRequired
     @RequiresPrivilege(ShortcutsConstants.SHORTSCUT_MANAGE_PRIVILEGE)
+    @Transactional(Transactional.TxType.REQUIRED)
     public void save(final Shortcut shortcut) {
         //Cleanup the URL key
         shortcut.setUrlKey(cleanUrlKey(shortcut.getUrlKey()));
@@ -101,6 +103,7 @@ public class ShortcutRepository extends AbstractEntityRepository<Long, Shortcut>
     @Override
     @AuthorizationRequired
     @RequiresPrivilege(ShortcutsConstants.SHORTSCUT_MANAGE_PRIVILEGE)
+    @Transactional(Transactional.TxType.REQUIRED)
     public void delete(final Shortcut shortcut) {
         super.delete(shortcut);
     }

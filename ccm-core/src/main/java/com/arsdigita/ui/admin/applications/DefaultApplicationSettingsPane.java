@@ -18,14 +18,20 @@
  */
 package com.arsdigita.ui.admin.applications;
 
+import com.arsdigita.bebop.Label;
+import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.ParameterSingleSelectionModel;
-import com.arsdigita.bebop.Text;
+import com.arsdigita.globalization.GlobalizedMessage;
+
+import org.libreccm.web.ApplicationType;
+
+import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class DefaultApplicationSettingsPane 
+public class DefaultApplicationSettingsPane
     extends AbstractAppSettingsPane {
 
     public DefaultApplicationSettingsPane(
@@ -33,13 +39,59 @@ public class DefaultApplicationSettingsPane
         final ParameterSingleSelectionModel<String> selectedAppInstance) {
 
         super(selectedAppType, selectedAppInstance);
+        
+        final Label label = new Label();
+        label.addPrintListener(e -> {
+            final PageState state = e.getPageState();
+            final ApplicationType appType = getSelectedAppType(state);
+            
+            final GlobalizedMessage message;
+            if (appType.singleton()) {
+                message = new GlobalizedMessage(
+                    "ui.admin.applications.settings.singleton.no_setting_for",
+                    ADMIN_BUNDLE,
+                    new String[]{appType.name()});
+            } else {
+                message = new GlobalizedMessage(
+                    "ui.admin.applications.settings.instance.no_setting_for",
+                    ADMIN_BUNDLE,
+                    new String[]{appType.name()});
+            }
+            
+            final Label target = (Label) e.getTarget();
+            target.setLabel(message);
+        });
+
+        add(label);
     }
 
     @Override
     protected void createWidgets() {
-        add(new Text(""));
+
+//        final Label label = new Label();
+//        label.addPrintListener(e -> {
+//            final PageState state = e.getPageState();
+//            final ApplicationType appType = getSelectedAppType(state);
+//            
+//            final GlobalizedMessage message;
+//            if (appType.singleton()) {
+//                message = new GlobalizedMessage(
+//                    "ui.admin.applications.settings.singleton.no_setting_for",
+//                    ADMIN_BUNDLE,
+//                    new String[]{appType.name()});
+//            } else {
+//                message = new GlobalizedMessage(
+//                    "ui.admin.applications.settings.instance.no_setting_for",
+//                    ADMIN_BUNDLE,
+//                    new String[]{appType.name()});
+//            }
+//            
+//            final Label target = (Label) e.getTarget();
+//            target.setLabel(message);
+//        });
+//
+//        add(label);
+
     }
-    
-    
 
 }

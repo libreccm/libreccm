@@ -23,6 +23,7 @@ import org.libreccm.security.RequiresPrivilege;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 
 /**
  * This class provides complex operations on {@link Shortcut} objects like
@@ -50,6 +51,7 @@ public class ShortcutManager {
      */
     @AuthorizationRequired
     @RequiresPrivilege(ShortcutsConstants.SHORTSCUT_MANAGE_PRIVILEGE)
+    @Transactional(Transactional.TxType.REQUIRED)
     public Shortcut createShortcut(final String url, final String redirect) {
         if (url == null || url.trim().isEmpty()) {
             throw new IllegalArgumentException(
