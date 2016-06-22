@@ -31,6 +31,7 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -38,10 +39,11 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class ShortcutFilter implements Filter {
+@WebFilter(urlPatterns = {"/*"})
+public class ShortcutsFilter implements Filter {
 
     private final static Logger LOGGER = LogManager.getLogger(
-        ShortcutFilter.class);
+        ShortcutsFilter.class);
 
     @Inject
     private ShortcutRepository shortcutRepository;
@@ -77,15 +79,14 @@ public class ShortcutFilter implements Filter {
             }
 
             final Optional<Shortcut> shortcut = shortcutRepository.findByUrlKey(
-                path);
+                cleanUrlKey(httpRequest, path));
 
             if (shortcut.isPresent()) {
                 LOGGER.debug("Found Shortcut for path {}: {}",
                              path,
                              shortcut.toString());
                 final StringBuffer targetBuffer = new StringBuffer(shortcut
-                    .get()
-                    .getRedirect());
+                    .get().getRedirect());
 
                 final String queryString = httpRequest.getQueryString();
                 if (queryString != null && !queryString.isEmpty()) {
@@ -112,6 +113,29 @@ public class ShortcutFilter implements Filter {
                              + "to next filter.");
             chain.doFilter(request, response);
         }
+    }
+
+    private String cleanUrlKey(final HttpServletRequest request,
+                               final String requestUri) {
+        String urlKey;
+        if (request.getContextPath() == null
+                || request.getContextPath().isEmpty()) {
+            urlKey = requestUri;
+        } else if (requestUri.startsWith(request.getContextPath())) {
+            urlKey = requestUri.substring(request.getContextPath().length());
+        } else {
+            urlKey = requestUri;
+        }
+
+        if (!urlKey.startsWith("/")) {
+            urlKey = String.join("", "/", urlKey);
+        }
+
+        if (!urlKey.endsWith("/")) {
+            urlKey = String.join("", urlKey, "/");
+        }
+
+        return urlKey;
     }
 
     @Override
