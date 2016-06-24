@@ -12,7 +12,10 @@ import org.libreccm.modules.ShutdownEvent;
 import org.libreccm.modules.UnInstallEvent;
 
 @Module(packageName = "org.libreccm.cms",
-        requiredModules = {@RequiredModule(module = org.libreccm.core.CcmCore.class)})
+        requiredModules = {
+            @RequiredModule(module = org.libreccm.core.CcmCore.class)
+        }
+)
 public class Cms implements CcmModule {
 
     @Override
@@ -23,7 +26,7 @@ public class Cms implements CcmModule {
     @Override
     public void init(final InitEvent event) {
         //ToDo Add initialisation logic necessary for your module
-    }   
+    }
 
     @Override
     public void shutdown(final ShutdownEvent event) {
@@ -34,6 +37,5 @@ public class Cms implements CcmModule {
     public void uninstall(final UnInstallEvent event) {
         //ToDo Remove module data
     }
-
 
 }

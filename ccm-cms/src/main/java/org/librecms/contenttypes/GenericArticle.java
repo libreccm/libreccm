@@ -42,7 +42,7 @@ import org.libreccm.l10n.LocalizedString;
  */
 @Entity
 @Audited
-@Table(name = "articles", schema = DB_SCHEMA)
+@Table(name = "ARTICLES", schema = DB_SCHEMA)
 public class GenericArticle extends ContentItem implements Serializable {
 
     private static final long serialVersionUID = -6737443527969703121L;

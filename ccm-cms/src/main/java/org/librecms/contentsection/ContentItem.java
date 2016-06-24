@@ -19,14 +19,18 @@
 package org.librecms.contentsection;
 
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.RelationTargetAuditMode;
 
 import static org.librecms.CmsConstants.*;
 
 import org.libreccm.core.CcmObject;
 import org.libreccm.l10n.LocalizedString;
+import org.librecms.attachments.AttachmentList;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.AssociationOverride;
@@ -37,6 +41,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -49,7 +54,7 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Audited
-@Table(name = "content_items", schema = DB_SCHEMA)
+@Table(name = "CONTENT_ITEMS", schema = DB_SCHEMA)
 public class ContentItem extends CcmObject implements Serializable {
 
     private static final long serialVersionUID = 5897287630227129653L;
@@ -62,18 +67,21 @@ public class ContentItem extends CcmObject implements Serializable {
      */
     @Embedded
     @AssociationOverride(
-            name = "VALUES",
-            joinTable = @JoinTable(name = "CONTENT_ITEM_NAMES",
-                                   schema = DB_SCHEMA,
-                                   joinColumns = {
-                                       @JoinColumn(name = "OBJECT_ID")}
-            ))
+        name = "values",
+        joinTable = @JoinTable(name = "CONTENT_ITEM_NAMES",
+                               schema = DB_SCHEMA,
+                               joinColumns = {
+                                   @JoinColumn(name = "OBJECT_ID")
+                               }
+        )
+    )
     private LocalizedString name;
 
     /**
      * The content type associated with the content item.
      */
     @OneToOne
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private ContentType contentType;
 
     /**
@@ -81,12 +89,14 @@ public class ContentItem extends CcmObject implements Serializable {
      */
     @Embedded
     @AssociationOverride(
-            name = "VALUES",
-            joinTable = @JoinTable(name = "CONTENT_ITEM_TITLES",
-                                   schema = DB_SCHEMA,
-                                   joinColumns = {
-                                       @JoinColumn(name = "OBJECT_ID")}
-            ))
+        name = "values",
+        joinTable = @JoinTable(name = "CONTENT_ITEM_TITLES",
+                               schema = DB_SCHEMA,
+                               joinColumns = {
+                                   @JoinColumn(name = "OBJECT_ID")
+                               }
+        )
+    )
     private LocalizedString title;
 
     /**
@@ -94,12 +104,12 @@ public class ContentItem extends CcmObject implements Serializable {
      */
     @Embedded
     @AssociationOverride(
-            name = "VALUES",
-            joinTable = @JoinTable(name = "CONTENT_ITEM_DESCRIPTIONS",
-                                   schema = DB_SCHEMA,
-                                   joinColumns = {
-                                       @JoinColumn(name = "OBJECT_ID")}
-            ))
+        name = "values",
+        joinTable = @JoinTable(name = "CONTENT_ITEM_DESCRIPTIONS",
+                               schema = DB_SCHEMA,
+                               joinColumns = {
+                                   @JoinColumn(name = "OBJECT_ID")}
+        ))
     private LocalizedString description;
 
     /**
@@ -118,9 +128,13 @@ public class ContentItem extends CcmObject implements Serializable {
      * String with the IDs (separated by slashes) of the ancestors of the
      * content item (aka the path of the content item).
      */
-    @Column(name = "ancestors", length = 1024)
+    @Column(name = "ANCESTORS", length = 1024)
     private String ancestors;
 
+    @OneToMany
+    @JoinColumn(name = "CONTENT_ITEM_ID")
+    private List<AttachmentList<?>> attachments;
+    
     public LocalizedString getName() {
         return name;
     }
@@ -162,11 +176,19 @@ public class ContentItem extends CcmObject implements Serializable {
     }
 
     public Date getLaunchDate() {
-        return new Date(launchDate.getTime());
+        if (launchDate == null) {
+            return null;
+        } else {
+            return new Date(launchDate.getTime());
+        }
     }
 
     public void setLaunchDate(final Date launchDate) {
-        this.launchDate = new Date(launchDate.getTime());
+        if (launchDate == null) {
+            this.launchDate = null;
+        } else {
+            this.launchDate = new Date(launchDate.getTime());
+        }
     }
 
     public String getAncestors() {
@@ -177,6 +199,14 @@ public class ContentItem extends CcmObject implements Serializable {
         this.ancestors = ancestors;
     }
 
+    public List<AttachmentList<?>> getAttachments() {
+        return Collections.unmodifiableList(attachments);
+    }
+    
+    protected void setAttachments(final List<AttachmentList<?>> attachments) {
+        this.attachments = attachments;
+    }
+    
     @Override
     public int hashCode() {
         int hash = super.hashCode();
@@ -236,16 +266,19 @@ public class ContentItem extends CcmObject implements Serializable {
 
     @Override
     public String toString(final String data) {
-        return String.format(", name = {}, "
-                                     + "contentType = {}, "
-                                     + "title = {}, "
-                                     + "version = %s,"
-                                     + "launchDate = %s%s",
-                             Objects.toString(name),
-                             Objects.toString(contentType),
-                             Objects.toString(description),
-                             Objects.toString(version),
-                             Objects.toString(launchDate));
+        return super.toString(String.format(", name = {}, "
+                                                + "contentType = {}, "
+                                                + "title = {}, "
+                                                + "description = {},"
+                                                + "version = %s,"
+                                                + "launchDate = %s%s",
+                                            Objects.toString(name),
+                                            Objects.toString(contentType),
+                                            Objects.toString(title),
+                                            Objects.toString(description),
+                                            Objects.toString(version),
+                                            Objects.toString(launchDate),
+                                            data));
     }
 
 }

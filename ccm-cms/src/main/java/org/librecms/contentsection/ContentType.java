@@ -41,12 +41,12 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "content_types", schema = DB_SCHEMA)
+@Table(name = "CONTENT_TYPES", schema = DB_SCHEMA)
 public class ContentType extends CcmObject implements Serializable {
 
     private static final long serialVersionUID = -2708659750560382851L;
 
-    @Column(name = "content_item_class", length = 1024)
+    @Column(name = "CONTENT_ITEM_CLASS", length = 1024)
     private String contentItemClass;
 
     @Embedded
@@ -69,10 +69,10 @@ public class ContentType extends CcmObject implements Serializable {
         ))
     private LocalizedString description;
 
-    @Column(name = "ancestors", length = 1024)
+    @Column(name = "ANCESTORS", length = 1024)
     private String ancestors;
 
-    @Column(name = "descendants", length = 1024)
+    @Column(name = "DESCENDANTS", length = 1024)
     private String descendants;
 
     @Enumerated(EnumType.STRING)

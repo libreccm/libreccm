@@ -18,7 +18,6 @@
  */
 package org.libreccm.core;
 
-import org.hibernate.annotations.GenericGenerator;
 import org.libreccm.categorization.Categorization;
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryManager;
@@ -39,6 +38,7 @@ import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,6 +47,8 @@ import java.util.Objects;
 
 import static org.libreccm.core.CoreConstants.CORE_XML_NS;
 import static org.libreccm.core.CoreConstants.DB_SCHEMA;
+
+import org.hibernate.envers.Audited;
 
 /**
  * Root class of all entities in LibreCCM which need categorisation and
@@ -105,6 +107,7 @@ public class CcmObject implements Identifiable, Serializable {
      * A human readable name identifying this {@code CcmObject}
      */
     @Column(name = "DISPLAY_NAME")
+    @Audited
     @XmlElement(name = "display-name", namespace = CORE_XML_NS)
     private String displayName;
 
@@ -364,11 +367,13 @@ public class CcmObject implements Identifiable, Serializable {
         return String.format(
             "%s{ "
                 + "objectId = %d, "
+                + "uuid = %s, "
                 + "displayName = \"%s\""
                 + "%s"
                 + " }",
             super.toString(),
             objectId,
+            uuid,
             displayName,
             data);
     }

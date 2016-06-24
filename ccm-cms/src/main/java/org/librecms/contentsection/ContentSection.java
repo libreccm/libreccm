@@ -18,16 +18,20 @@
  */
 package org.librecms.contentsection;
 
+import org.libreccm.categorization.Category;
+
 import static org.librecms.CmsConstants.*;
 
 import org.libreccm.security.Role;
 import org.libreccm.web.CcmApplication;
 
 import java.io.Serializable;
+import java.util.Locale;
 import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -36,36 +40,44 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "content_sections", schema = DB_SCHEMA)
+@Table(name = "CONTENT_SECTIONS", schema = DB_SCHEMA)
 public class ContentSection extends CcmApplication implements Serializable {
 
     private static final long serialVersionUID = -671718122153931727L;
 
-    @Column(name = "label", length = 512)
+    @Column(name = "LABEL", length = 512)
     private String label;
 
-    @Column(name = "page_resolver_class", length = 1024)
+    @OneToOne
+    @JoinColumn(name = "ROOT_DOCUMENTS_FOLDER_ID")
+    private Category rootDocumentsFolder;
+
+    @OneToOne
+    @JoinColumn(name = "ROOT_ASSETS_FOLDER_ID")
+    private Category rootAssetsFolder;
+
+    @Column(name = "PAGE_RESOLVER_CLASS", length = 1024)
     private String pageResolverClass;
 
-    @Column(name = "item_resolver_class", length = 1024)
+    @Column(name = "ITEM_RESOLVER_CLASS", length = 1024)
     private String itemResolverClass;
 
-    @Column(name = "template_resolver_class", length = 1024)
+    @Column(name = "TEMPLATE_RESOLVER_CLASS", length = 1024)
     private String templateResolverClass;
 
-    @Column(name = "xml_generator_class", length = 1024)
+    @Column(name = "XML_GENERATOR_CLASS", length = 1024)
     private String xmlGeneratorClass;
 
     @OneToOne
-    private Role staffGroup;
+    @JoinColumn(name = "STAFF_ROLE_ID")
+    private Role staffRole;
 
     @OneToOne
-    private Role viewersGroup;
+    @JoinColumn(name = "VIEWERS_ROLE_ID")
+    private Role viewersRole;
 
-    @Column(name = "default_locale", length = 10)
-    private String defaultLocale;
-    
-    
+    @Column(name = "DEFAULT_LOCALE")
+    private Locale defaultLocale;
 
     public String getLabel() {
         return label;
@@ -73,6 +85,22 @@ public class ContentSection extends CcmApplication implements Serializable {
 
     public void setLabel(final String label) {
         this.label = label;
+    }
+
+    public Category getRootDocumentsFolder() {
+        return rootDocumentsFolder;
+    }
+
+    protected void setRootDocumentFolder(final Category rootDocumentsFolder) {
+        this.rootDocumentsFolder = rootDocumentsFolder;
+    }
+
+    public Category getRootAssetsFolder() {
+        return rootAssetsFolder;
+    }
+
+    protected void setRootAssetsFolder(final Category rootAssetsFolder) {
+        this.rootAssetsFolder = rootAssetsFolder;
     }
 
     public String getPageResolverClass() {
@@ -107,27 +135,27 @@ public class ContentSection extends CcmApplication implements Serializable {
         this.xmlGeneratorClass = xmlGeneratorClass;
     }
 
-    public Role getStaffGroup() {
-        return staffGroup;
+    public Role getStaffRole() {
+        return staffRole;
     }
 
-    public void setStaffGroup(final Role staffGroup) {
-        this.staffGroup = staffGroup;
+    public void setStaffRole(final Role staffRole) {
+        this.staffRole = staffRole;
     }
 
-    public Role getViewersGroup() {
-        return viewersGroup;
+    public Role getViewersRole() {
+        return viewersRole;
     }
 
-    public void setViewersGroup(final Role viewersGroup) {
-        this.viewersGroup = viewersGroup;
+    public void setViewersRole(final Role viewersRole) {
+        this.viewersRole = viewersRole;
     }
 
-    public String getDefaultLocale() {
+    public Locale getDefaultLocale() {
         return defaultLocale;
     }
 
-    public void setDefaultLocale(final String defaultLocale) {
+    public void setDefaultLocale(final Locale defaultLocale) {
         this.defaultLocale = defaultLocale;
     }
 
@@ -135,6 +163,8 @@ public class ContentSection extends CcmApplication implements Serializable {
     public int hashCode() {
         int hash = super.hashCode();
         hash = 47 * hash + Objects.hashCode(label);
+        hash = 47 * hash + Objects.hashCode(rootDocumentsFolder);
+        hash = 47 * hash + Objects.hashCode(rootAssetsFolder);
         hash = 47 * hash + Objects.hashCode(pageResolverClass);
         hash = 47 * hash + Objects.hashCode(itemResolverClass);
         hash = 47 * hash + Objects.hashCode(templateResolverClass);
@@ -165,6 +195,12 @@ public class ContentSection extends CcmApplication implements Serializable {
         if (!Objects.equals(label, other.getLabel())) {
             return false;
         }
+        if (!Objects.equals(rootDocumentsFolder, other.getRootDocumentsFolder())) {
+            return false;
+        }
+        if (!Objects.equals(rootAssetsFolder, other.getRootAssetsFolder())) {
+            return false;
+        }
         if (!Objects.equals(pageResolverClass, other.getPageResolverClass())) {
             return false;
         }
@@ -188,19 +224,24 @@ public class ContentSection extends CcmApplication implements Serializable {
 
     @Override
     public String toString(final String data) {
-        return super.toString(String.format(", label = \"%s\", "
-                                                + "pageResolverClass = \"%s\", "
-                                                + "itemResolverClass = \"%s\", "
-                                                + "templateResolverClass = \"%s\", "
-                                            + "xmlGeneratorClass = \"%s\", "
-                                                + "defaultLocale = \"%s\"%s",
-                                            label,
-                                            pageResolverClass,
-                                            itemResolverClass,
-                                            templateResolverClass,
-                                            xmlGeneratorClass,
-                                            defaultLocale,
-                                            data));
+        return super.toString(String.format(
+            ", label = \"%s\", "
+                + "rootDocumentsFolder = \"%s\", "
+                + "rootAssetsFolder = \"%s\", "
+                + "pageResolverClass = \"%s\", "
+                + "itemResolverClass = \"%s\", "
+                + "templateResolverClass = \"%s\", "
+                + "xmlGeneratorClass = \"%s\", "
+                + "defaultLocale = \"%s\"%s",
+            label,
+            Objects.toString(rootDocumentsFolder),
+            Objects.toString(rootAssetsFolder),
+            pageResolverClass,
+            itemResolverClass,
+            templateResolverClass,
+            xmlGeneratorClass,
+            Objects.toString(defaultLocale),
+            data));
     }
 
 }
