@@ -53,7 +53,7 @@ public class Event extends GenericArticle implements Serializable {
      */
     @Embedded
     @AssociationOverride(
-            name = "VALUES",
+            name = "values",
             joinTable = @JoinTable(name = "EVENT_LEADS",
                                    schema = DB_SCHEMA,
                                    joinColumns = {

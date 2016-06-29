@@ -16,87 +16,81 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.librecms.contenttypes;
+package org.librecms.workflow;
+
+import org.libreccm.workflow.UserTask;
 
 import java.io.Serializable;
 import java.util.Objects;
-import javax.persistence.AssociationOverride;
-import javax.persistence.Embedded;
+
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import org.hibernate.envers.Audited;
 
-
-import org.librecms.contentsection.ContentItem;
-import org.libreccm.l10n.LocalizedString;
-
-import static org.libreccm.core.CoreConstants.*;
+import static org.librecms.CmsConstants.*;
 
 /**
- * Base class for article like content items. These items usually contain a 
- * short introduction text (the description) and a longer text containing 
- * the more detailed content. 
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Audited
-@Table(name = "GENERIC_ARTICLES", schema = DB_SCHEMA)
-public class GenericArticle extends ContentItem implements Serializable {
+@Table(name = "WORKFLOW_TASKS", schema = DB_SCHEMA)
+public class CmsTask extends UserTask implements Serializable {
 
-    private static final long serialVersionUID = -6737443527969703121L;
+    private static final long serialVersionUID = -3988352366529930659L;
     
-    @Embedded
-    @AssociationOverride(
-        name = "values",
-        joinTable = @JoinTable(name = "ARTICLE_TEXTS",
-                               schema = DB_SCHEMA,
-                               joinColumns = {
-                                   @JoinColumn(name = "OBJECT_ID")}
-        ))
-    private LocalizedString text;
+    @OneToOne
+    @JoinColumn(name = "TASK_TYPE_ID")
+    private CmsTaskType taskType;
 
-    public LocalizedString getText() {
-        return text;
+    public CmsTaskType getTaskType() {
+        return taskType;
     }
 
-    public void setText(final LocalizedString text) {
-        this.text = text;
+    public void setTaskType(final CmsTaskType taskType) {
+        this.taskType = taskType;
     }
 
     @Override
     public int hashCode() {
         int hash = super.hashCode();
-        hash = 17 * hash + Objects.hashCode(text);
+        hash = 79 * hash + Objects.hashCode(taskType);
         return hash;
     }
 
     @Override
     public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
         if (obj == null) {
             return false;
         }
-        
         if (!super.equals(obj)) {
             return false;
         }
         
-        if (!(obj instanceof GenericArticle)) {
+        if (obj instanceof CmsTask) {
             return false;
         }
-        final GenericArticle other = (GenericArticle) obj;
-        if(!other.canEqual(this)) {
+        final CmsTask other = (CmsTask) obj;
+        if (!other.canEqual(this)) {
             return false;
         }
         
-        return Objects.equals(text, other.getText());
+        return Objects.equals(taskType, other.taskType);
     }
     
     @Override
     public boolean canEqual(final Object obj) {
-        return obj instanceof GenericArticle;
+        return obj instanceof CmsTask;
     }
-
+    
+    @Override
+    public String toString(final String data) {
+        return super.toString(String.format(", taskType = %s%s",
+                                            Objects.toString(taskType),
+                                            data));
+    }
 }

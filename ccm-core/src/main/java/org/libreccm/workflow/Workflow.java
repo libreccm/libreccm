@@ -35,6 +35,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
@@ -46,6 +48,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "WORKFLOWS", schema = DB_SCHEMA)
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Workflow implements Serializable {
 
     private static final long serialVersionUID = 4322500264543325829L;
@@ -162,14 +165,19 @@ public class Workflow implements Serializable {
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
+        return toString("");
+    }
+
+    public String toString(final String data) {
         return String.format("%s{ "
                                  + "workflowId = %d, "
-                                 + "name = \"%s\""
+                                 + "name = \"%s\"%s"
                                  + " }",
                              super.toString(),
                              workflowId,
-                             name);
+                             name,
+                             data);
     }
-
+    
 }

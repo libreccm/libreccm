@@ -44,7 +44,8 @@ public class EqualsAndHashCodeTest extends EqualsVerifier {
             Task.class,
             TaskAssignment.class,
             UserTask.class,
-            Workflow.class
+            Workflow.class,
+            WorkflowTemplate.class
         });
     }
 

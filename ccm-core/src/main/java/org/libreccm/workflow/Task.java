@@ -51,7 +51,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "WORKFLOW_TASKS", schema = DB_SCHEMA)
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Inheritance(strategy = InheritanceType.JOINED)
 //Can't reduce complexity yet, Task is a fine name
 @SuppressWarnings({"PMD.CyclomaticComplexity",
                    "PMD.StdCyclomaticComplexity",

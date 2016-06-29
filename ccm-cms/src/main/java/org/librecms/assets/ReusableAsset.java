@@ -71,6 +71,9 @@ public class ReusableAsset<T extends Asset> extends CcmObject
         if (obj == null) {
             return false;
         }
+        if (!super.equals(obj)) {
+            return false;
+        }
         if (!(obj instanceof ReusableAsset)) {
             return false;
         }

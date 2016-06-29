@@ -52,7 +52,7 @@ import static org.librecms.CmsConstants.*;
  * @param <T>
  */
 @Entity
-@Table(schema = DB_SCHEMA, name = "attachment_lists")
+@Table(schema = DB_SCHEMA, name = "ATTACHMENT_LISTS")
 @Audited
 public class AttachmentList<T extends Asset> implements Identifiable,
                                                         List<ItemAttachment<T>>,
@@ -121,7 +121,11 @@ public class AttachmentList<T extends Asset> implements Identifiable,
     }
 
     public List<ItemAttachment<T>> getAttachments() {
-        return Collections.unmodifiableList(attachments);
+        if (attachments == null) {
+            return null;
+        } else {
+            return Collections.unmodifiableList(attachments);
+        }
     }
 
     public void setAttachments(List<ItemAttachment<T>> attachments) {

@@ -20,12 +20,16 @@ package org.librecms.assets;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.libreccm.categorization.Category;
+import org.libreccm.core.CcmObject;
+import org.libreccm.security.Group;
+import org.libreccm.security.Role;
+import org.libreccm.security.User;
 import org.libreccm.tests.categories.UnitTest;
 import org.libreccm.testutils.EqualsVerifier;
 
 import java.util.Arrays;
 import java.util.Collection;
-
 
 /**
  *
@@ -45,6 +49,65 @@ public class EqualsAndHashCodeTest extends EqualsVerifier {
 
     public EqualsAndHashCodeTest(final Class<?> clazz) {
         super(clazz);
+    }
+
+    @Override
+    protected void addPrefabValues(
+        final nl.jqno.equalsverifier.EqualsVerifier<?> verifier) {
+
+        final CcmObject object1 = new CcmObject();
+        object1.setDisplayName("Object 1");
+
+        final CcmObject object2 = new CcmObject();
+        object2.setDisplayName("Object 2");
+
+        final Role role1 = new Role();
+        role1.setName("Role 1");
+
+        final Role role2 = new Role();
+        role2.setName("Role 2");
+
+        final User user1 = new TestUser();
+        user1.setName("user1");
+
+        final User user2 = new TestUser();
+        user2.setName("user2");
+
+        final Group group1 = new Group();
+        group1.setName("group1");
+
+        final Group group2 = new Group();
+        group2.setName("group2");
+        
+          final Category category1 = new Category();
+        category1.setObjectId(-4100);
+        category1.setDisplayName("Category 1");
+
+        final Category category2 = new Category();
+        category2.setObjectId(-4200);
+        category2.setDisplayName("Category 2");
+
+        verifier
+            .withPrefabValues(CcmObject.class, object1, object2)
+            .withPrefabValues(Role.class, role1, role2)
+            .withPrefabValues(User.class, user1, user2)
+            .withPrefabValues(Group.class, group1, group2)
+            .withPrefabValues(Category.class, category1, category2);
+
+    }
+
+    /**
+     * {@link User} has a protected constructor, so have have do this to create
+     * users for the test...
+     */
+    private class TestUser extends User {
+
+        private static final long serialVersionUID = -9052762220990453621L;
+
+        protected TestUser() {
+            super();
+        }
+
     }
 
 }

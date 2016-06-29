@@ -44,7 +44,7 @@ public class Article extends GenericArticle implements Serializable {
 
     @Embedded
     @AssociationOverride(
-            name = "VALUES",
+            name = "values",
             joinTable = @JoinTable(name = "ARTICLE_LEADS",
                                    schema = DB_SCHEMA,
                                    joinColumns = {

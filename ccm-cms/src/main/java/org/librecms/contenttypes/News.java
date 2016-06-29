@@ -52,7 +52,7 @@ public class News extends GenericArticle implements Serializable {
      */
     @Embedded
     @AssociationOverride(
-            name = "VALUES",
+            name = "values",
             joinTable = @JoinTable(name = "NEWS_LEADS",
                                    schema = DB_SCHEMA,
                                    joinColumns = {
