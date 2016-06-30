@@ -15,7 +15,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
- */package org.librecms.assets;
+ */
+package org.librecms.assets;
 
 import org.hibernate.envers.Audited;
 import org.libreccm.core.Identifiable;
@@ -68,6 +69,10 @@ public class Asset implements Identifiable, Serializable {
     )
     private LocalizedString title;
 
+    public Asset() {
+        title = new LocalizedString();
+    }
+    
     public long getAssetId() {
         return assetId;
     }
