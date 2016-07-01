@@ -75,8 +75,7 @@ public class Lifecycle implements Serializable {
     @JoinColumn(name = "DEFINITION_ID")
     private LifecycleDefinition definition;
     
-    @OneToMany(mappedBy = "LIFECYCLE")
-    @JoinColumn(name = "LIFECYCLE_ID")
+    @OneToMany(mappedBy = "lifecycle")
     private List<Phase> phases;
 
     public Lifecycle() {

@@ -32,6 +32,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Table;
@@ -44,6 +46,7 @@ import static org.librecms.CmsConstants.*;
  */
 @Entity
 @Table(schema = DB_SCHEMA, name = "ASSETS")
+@Inheritance(strategy = InheritanceType.JOINED)
 @Audited
 public class Asset implements Identifiable, Serializable {
 

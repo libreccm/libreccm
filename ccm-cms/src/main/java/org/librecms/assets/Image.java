@@ -20,15 +20,15 @@ package org.librecms.assets;
 
 import java.io.Serializable;
 import java.util.Objects;
-import javax.persistence.AssociationOverride;
+
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.Table;
+
 import org.hibernate.envers.Audited;
-import org.libreccm.l10n.LocalizedString;
+
+import javax.persistence.OneToOne;
 
 import static org.librecms.CmsConstants.*;
 
@@ -49,21 +49,12 @@ public class Image extends BinaryAsset implements Serializable {
     @Column(name = "HEIGHT")
     private long height;
 
-    @Embedded
-    @AssociationOverride(
-            name = "values",
-            joinTable = @JoinTable(name = "IMAGE_COPYRIGHT_NOTICES",
-                                   schema = DB_SCHEMA,
-                                   joinColumns = {
-                                       @JoinColumn(name = "ASSET_ID")
-                                   }
-            )
-    )
-    private LocalizedString copyrightNotice;
+    @OneToOne
+    @JoinColumn(name = "LEGAL_METADATA_ID")
+    private LegalMetadata legalMetadata;
 
     public Image() {
         super();
-        copyrightNotice = new LocalizedString();
     }
 
     public long getWidth() {
@@ -82,12 +73,12 @@ public class Image extends BinaryAsset implements Serializable {
         this.height = height;
     }
 
-    public LocalizedString getCopyrightNotice() {
-        return copyrightNotice;
+    public LegalMetadata getLegalMetadata() {
+        return legalMetadata;
     }
 
-    public void setCopyrightNotice(final LocalizedString copyrightNotice) {
-        this.copyrightNotice = copyrightNotice;
+    public void setLegalMetadata(final LegalMetadata legalMetadata) {
+        this.legalMetadata = legalMetadata;
     }
 
     @Override
@@ -95,7 +86,7 @@ public class Image extends BinaryAsset implements Serializable {
         int hash = super.hashCode();
         hash = 89 * hash + (int) (width ^ (width >>> 32));
         hash = 89 * hash + (int) (height ^ (height >>> 32));
-        hash = 89 * hash + Objects.hashCode(copyrightNotice);
+        hash = 89 * hash + Objects.hashCode(legalMetadata);
         return hash;
     }
 
@@ -125,7 +116,7 @@ public class Image extends BinaryAsset implements Serializable {
         if (height != other.getHeight()) {
             return false;
         }
-        return Objects.equals(copyrightNotice, other.getCopyrightNotice());
+        return Objects.equals(legalMetadata, other.getLegalMetadata());
     }
 
     @Override
@@ -136,11 +127,11 @@ public class Image extends BinaryAsset implements Serializable {
     @Override
     public String toString(final String data) {
         return super.toString(String.format(", width = %d, "
-                                                    + "height = %d, "
-                                                    + "copyrightNotice = %s%s",
+                                                + "height = %d, "
+                                                + "legalMetadata = %s%s",
                                             width,
                                             height,
-                                            Objects.toString(copyrightNotice),
+                                            Objects.toString(legalMetadata),
                                             data));
     }
 

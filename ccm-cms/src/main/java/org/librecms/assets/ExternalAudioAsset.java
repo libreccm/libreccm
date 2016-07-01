@@ -23,7 +23,6 @@ import org.hibernate.envers.Audited;
 import java.io.Serializable;
 import java.util.Objects;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
@@ -36,37 +35,15 @@ import static org.librecms.CmsConstants.*;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "VIDEO_ASSET", schema = DB_SCHEMA)
+@Table(name = "EXTERNAL_AUDIO_ASSETS", schema = DB_SCHEMA)
 @Audited
-public class VideoAsset extends BinaryAsset implements Serializable {
+public class ExternalAudioAsset extends Bookmark implements Serializable {
 
-    private static final long serialVersionUID = -4377789857099678289L;
-
-    @Column(name = "WIDTH")
-    private long width;
-
-    @Column(name = "HEIGHT")
-    private long height;
+    private static final long serialVersionUID = 1190735204910197490L;
 
     @OneToOne
     @JoinColumn(name = "LEGAL_METADATA_ID")
     private LegalMetadata legalMetadata;
-
-    public long getWidth() {
-        return width;
-    }
-
-    public void setWidth(final long width) {
-        this.width = width;
-    }
-
-    public long getHeight() {
-        return height;
-    }
-
-    public void setHeight(final long height) {
-        this.height = height;
-    }
 
     public LegalMetadata getLegalMetadata() {
         return legalMetadata;
@@ -79,14 +56,12 @@ public class VideoAsset extends BinaryAsset implements Serializable {
     @Override
     public int hashCode() {
         int hash = super.hashCode();
-        hash = 97 * hash + (int) (width ^ (width >>> 32));
-        hash = 97 * hash + (int) (height ^ (height >>> 32));
-        hash = 97 * hash + Objects.hashCode(legalMetadata);
+        hash = 23 * hash + Objects.hashCode(legalMetadata);
         return hash;
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
@@ -97,18 +72,11 @@ public class VideoAsset extends BinaryAsset implements Serializable {
             return false;
         }
 
-        if (obj instanceof VideoAsset) {
+        if (!(obj instanceof ExternalVideoAsset)) {
             return false;
         }
-        final VideoAsset other = (VideoAsset) obj;
-        if (!other.canEqual(obj)) {
-            return false;
-        }
-
-        if (width != other.getWidth()) {
-            return false;
-        }
-        if (height != other.getHeight()) {
+        final ExternalVideoAsset other = (ExternalVideoAsset) obj;
+        if (!other.canEqual(this)) {
             return false;
         }
         return Objects.equals(legalMetadata, other.getLegalMetadata());
@@ -116,16 +84,12 @@ public class VideoAsset extends BinaryAsset implements Serializable {
 
     @Override
     public boolean canEqual(final Object obj) {
-        return obj instanceof VideoAsset;
+        return obj instanceof ExternalVideoAsset;
     }
 
     @Override
     public String toString(final String data) {
-        return super.toString(String.format(", width = %d, "
-                                                + "height = %d, "
-                                                + "legalMetadata = %s%s",
-                                            width,
-                                            height,
+        return super.toString(String.format(", legalMetadata = %s%s",
                                             Objects.toString(legalMetadata),
                                             data));
     }
