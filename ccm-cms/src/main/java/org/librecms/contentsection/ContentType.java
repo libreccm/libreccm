@@ -79,6 +79,7 @@ public class ContentType extends CcmObject implements Serializable {
     private ContentItemMode mode;
 
     //ToDo references for authoring kit etc
+
     public String getContentItemClass() {
         return contentItemClass;
     }

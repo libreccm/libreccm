@@ -36,6 +36,8 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 import static org.librecms.CmsConstants.*;
@@ -48,6 +50,17 @@ import static org.librecms.CmsConstants.*;
 @Table(schema = DB_SCHEMA, name = "ASSETS")
 @Inheritance(strategy = InheritanceType.JOINED)
 @Audited
+@NamedQueries({
+    @NamedQuery(name = "Asset.findByUuid",
+                query = "SELECT a FROM Asset a WHERE a.uuid = :uuid"),
+    @NamedQuery(name = "Asset.findByType",
+                query = "SELECT a FROM Asset a "
+                            + "WHERE TYPE(a) = :type"),
+    @NamedQuery(name = "Asset.findByUuidAndType",
+                query = "SELECT a FROM Asset a "
+                            + "WHERE a.uuid = :uuid "
+                            + "AND TYPE(a) = :type")
+})
 public class Asset implements Identifiable, Serializable {
 
     private static final long serialVersionUID = -3499741368562653529L;
@@ -75,7 +88,7 @@ public class Asset implements Identifiable, Serializable {
     public Asset() {
         title = new LocalizedString();
     }
-    
+
     public long getAssetId() {
         return assetId;
     }

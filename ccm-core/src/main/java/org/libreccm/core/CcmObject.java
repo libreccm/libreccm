@@ -72,7 +72,9 @@ import org.hibernate.envers.Audited;
 @Inheritance(strategy = InheritanceType.JOINED)
 @NamedQueries({
     @NamedQuery(name = "CcmObject.findById",
-                query = "SELECT o FROM CcmObject o WHERE o.objectId = :id")
+                query = "SELECT o FROM CcmObject o WHERE o.objectId = :id"),
+    @NamedQuery(name = "CcmObject.findByUuid",
+                query = "SELECT o FROM CcmObject o WHERE o.uuid = :uuid")
 })
 @XmlRootElement(name = "ccm-object", namespace = CORE_XML_NS)
 //False warning (?). Because this class has been migrated from the old PDL style

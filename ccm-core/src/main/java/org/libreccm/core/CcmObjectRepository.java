@@ -69,5 +69,17 @@ public class CcmObjectRepository extends AbstractEntityRepository<Long, CcmObjec
             return null;
         }
     }
+    
+    public CcmObject findObjectByUuid(final String uuid) {
+        final TypedQuery<CcmObject> query = getEntityManager().createNamedQuery(
+            "CcmObject.findByUuid", CcmObject.class);
+        query.setParameter("uuid", uuid);
+
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException ex) {
+            return null;
+        }
+    }
 
 }
