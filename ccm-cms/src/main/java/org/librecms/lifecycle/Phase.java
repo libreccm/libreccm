@@ -34,12 +34,14 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import static org.librecms.CmsConstants.*;
+
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "LIFECYLE_PHASES")
+@Table(name = "LIFECYLE_PHASES", schema = DB_SCHEMA)
 public class Phase implements Serializable {
 
     private static final long serialVersionUID = -1683874069942019941L;

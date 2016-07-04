@@ -21,6 +21,7 @@ package org.librecms.contenttypes;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
+
 import javax.persistence.AssociationOverride;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -30,12 +31,15 @@ import javax.persistence.JoinTable;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import org.libreccm.l10n.LocalizedString;
 
-import static org.libreccm.core.CoreConstants.*;
+import org.librecms.contentsection.ContentItem;
+
+import static org.librecms.CmsConstants.*;
 
 /**
  * @author <a href="mailto:konerman@tzi.de">Alexander Konermann</a>
@@ -44,7 +48,7 @@ import static org.libreccm.core.CoreConstants.*;
 @Entity
 @Audited
 @Table(name = "EVENTS", schema = DB_SCHEMA)
-public class Event extends GenericArticle implements Serializable {
+public class Event extends ContentItem implements Serializable {
 
     private static final long serialVersionUID = -9104886733503414635L;
 
@@ -53,13 +57,13 @@ public class Event extends GenericArticle implements Serializable {
      */
     @Embedded
     @AssociationOverride(
-            name = "values",
-            joinTable = @JoinTable(name = "EVENT_LEADS",
-                                   schema = DB_SCHEMA,
-                                   joinColumns = {
-                                       @JoinColumn(name = "OBJECT_ID")}
-            ))
-    private LocalizedString lead;
+        name = "values",
+        joinTable = @JoinTable(name = "EVENT_TEXTS",
+                               schema = DB_SCHEMA,
+                               joinColumns = {
+                                   @JoinColumn(name = "OBJECT_ID")}
+        ))
+    private LocalizedString text;
 
     @Column(name = "START_DATE", nullable = false)
     @Temporal(TemporalType.DATE)
@@ -75,12 +79,12 @@ public class Event extends GenericArticle implements Serializable {
      */
     @Embedded
     @AssociationOverride(
-            name = "VALUES",
-            joinTable = @JoinTable(name = "EVENT_DATES",
-                                   schema = DB_SCHEMA,
-                                   joinColumns = {
-                                       @JoinColumn(name = "OBJECT_ID")}
-            ))
+        name = "values",
+        joinTable = @JoinTable(name = "EVENT_DATES",
+                               schema = DB_SCHEMA,
+                               joinColumns = {
+                                   @JoinColumn(name = "OBJECT_ID")}
+        ))
     private LocalizedString eventDate;
 
     /**
@@ -88,12 +92,12 @@ public class Event extends GenericArticle implements Serializable {
      */
     @Embedded
     @AssociationOverride(
-            name = "VALUES",
-            joinTable = @JoinTable(name = "EVENT_LOCATIONS",
-                                   schema = DB_SCHEMA,
-                                   joinColumns = {
-                                       @JoinColumn(name = "OBJECT_ID")}
-            ))
+        name = "values",
+        joinTable = @JoinTable(name = "EVENT_LOCATIONS",
+                               schema = DB_SCHEMA,
+                               joinColumns = {
+                                   @JoinColumn(name = "OBJECT_ID")}
+        ))
     private LocalizedString location;
 
     /**
@@ -101,22 +105,22 @@ public class Event extends GenericArticle implements Serializable {
      */
     @Embedded
     @AssociationOverride(
-            name = "VALUES",
-            joinTable = @JoinTable(name = "EVENT_MAIN_CONTRIBUTORS",
-                                   schema = DB_SCHEMA,
-                                   joinColumns = {
-                                       @JoinColumn(name = "OBJECT_ID")}
-            ))
+        name = "values",
+        joinTable = @JoinTable(name = "EVENT_MAIN_CONTRIBUTORS",
+                               schema = DB_SCHEMA,
+                               joinColumns = {
+                                   @JoinColumn(name = "OBJECT_ID")}
+        ))
     private LocalizedString mainContributor;
 
     @Embedded
     @AssociationOverride(
-            name = "VALUES",
-            joinTable = @JoinTable(name = "EVENT_TYPES",
-                                   schema = DB_SCHEMA,
-                                   joinColumns = {
-                                       @JoinColumn(name = "OBJECT_ID")}
-            ))
+        name = "values",
+        joinTable = @JoinTable(name = "EVENT_TYPES",
+                               schema = DB_SCHEMA,
+                               joinColumns = {
+                                   @JoinColumn(name = "OBJECT_ID")}
+        ))
     private LocalizedString eventType;
 
     //ToDo: check if this is necessary or can be better handled using related links.
@@ -128,36 +132,36 @@ public class Event extends GenericArticle implements Serializable {
      */
     @Embedded
     @AssociationOverride(
-            name = "VALUES",
-            joinTable = @JoinTable(name = "EVENT_COSTS",
-                                   schema = DB_SCHEMA,
-                                   joinColumns = {
-                                       @JoinColumn(name = "OBJECT_ID")}
-            ))
+        name = "values",
+        joinTable = @JoinTable(name = "EVENT_COSTS",
+                               schema = DB_SCHEMA,
+                               joinColumns = {
+                                   @JoinColumn(name = "OBJECT_ID")}
+        ))
     private LocalizedString cost;
 
-    public LocalizedString getLead() {
-        return lead;
+    public LocalizedString getText() {
+        return text;
     }
 
-    public void setLead(final LocalizedString lead) {
-        this.lead = lead;
+    public void setText(final LocalizedString text) {
+        this.text = text;
     }
 
     public Date getStartDate() {
-        return startDate;
+        return new Date(startDate.getTime());
     }
 
     public void setStartDate(final Date startDate) {
-        this.startDate = startDate;
+        this.startDate = new Date(startDate.getTime());
     }
 
     public Date getEndDate() {
-        return endDate;
+        return new Date(endDate.getTime());
     }
 
     public void setEndDate(final Date endDate) {
-        this.endDate = endDate;
+        this.endDate = new Date(endDate.getTime());
     }
 
     public LocalizedString getEventDate() {
@@ -211,7 +215,7 @@ public class Event extends GenericArticle implements Serializable {
     @Override
     public int hashCode() {
         int hash = super.hashCode();
-        hash = 97 * hash + Objects.hashCode(lead);
+        hash = 97 * hash + Objects.hashCode(text);
         hash = 97 * hash + Objects.hashCode(startDate);
         hash = 97 * hash + Objects.hashCode(endDate);
         hash = 97 * hash + Objects.hashCode(eventDate);
@@ -245,7 +249,7 @@ public class Event extends GenericArticle implements Serializable {
         if (!Objects.equals(mapLink, other.getMapLink())) {
             return false;
         }
-        if (!Objects.equals(lead, other.getLead())) {
+        if (!Objects.equals(text, other.getText())) {
             return false;
         }
         if (!Objects.equals(startDate, other.getStartDate())) {
@@ -276,16 +280,16 @@ public class Event extends GenericArticle implements Serializable {
 
     @Override
     public String toString(final String data) {
-        return super.toString(String.format(", lead = %s, "
-                                                    + "startDate = %tF %<tT, "
-                                                    + "endDate = %tF %<tT, "
-                                                    + "eventDate = %s, "
-                                                    + "location = %s,"
-                                                    + "mainContributor, %s, "
-                                                    + "eventType = %s, "
-                                                    + "mapLink = \"%s\", "
-                                                    + "cost = %s%s",
-                                            Objects.toString(lead),
+        return super.toString(String.format(", text = %s, "
+                                                + "startDate = %tF %<tT, "
+                                                + "endDate = %tF %<tT, "
+                                                + "eventDate = %s, "
+                                                + "location = %s,"
+                                                + "mainContributor, %s, "
+                                                + "eventType = %s, "
+                                                + "mapLink = \"%s\", "
+                                                + "cost = %s%s",
+                                            Objects.toString(text),
                                             startDate,
                                             endDate,
                                             Objects.toString(eventDate),
@@ -296,4 +300,5 @@ public class Event extends GenericArticle implements Serializable {
                                             Objects.toString(cost),
                                             data));
     }
+
 }

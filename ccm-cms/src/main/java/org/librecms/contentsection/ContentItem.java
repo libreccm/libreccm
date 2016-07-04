@@ -20,9 +20,6 @@ package org.librecms.contentsection;
 
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
-
-import static org.librecms.CmsConstants.*;
-
 import org.libreccm.core.CcmObject;
 import org.libreccm.l10n.LocalizedString;
 import org.librecms.attachments.AttachmentList;
@@ -46,6 +43,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import static org.librecms.CmsConstants.*;
 
 /**
  * Base type for all content item types. Specifies some common properties.
@@ -134,7 +133,7 @@ public class ContentItem extends CcmObject implements Serializable {
     @OneToMany
     @JoinColumn(name = "CONTENT_ITEM_ID")
     private List<AttachmentList<?>> attachments;
-    
+
     public LocalizedString getName() {
         return name;
     }
@@ -202,11 +201,11 @@ public class ContentItem extends CcmObject implements Serializable {
     public List<AttachmentList<?>> getAttachments() {
         return Collections.unmodifiableList(attachments);
     }
-    
+
     protected void setAttachments(final List<AttachmentList<?>> attachments) {
         this.attachments = attachments;
     }
-    
+
     @Override
     public int hashCode() {
         int hash = super.hashCode();

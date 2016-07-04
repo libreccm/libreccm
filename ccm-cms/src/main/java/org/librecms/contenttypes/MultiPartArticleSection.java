@@ -18,8 +18,6 @@
  */
 package org.librecms.contenttypes;
 
-import static org.libreccm.core.CoreConstants.*;
-
 import org.hibernate.envers.Audited;
 import org.libreccm.l10n.LocalizedString;
 
@@ -37,6 +35,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Table;
 
+import static org.librecms.CmsConstants.*;
+
 /**
  * A section of a MultiPartArticle
  *
@@ -44,7 +44,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Audited
-@Table(name = "MULTIPART_ARTICLE_SECTIONS")
+@Table(name = "MULTIPART_ARTICLE_SECTIONS", schema = DB_SCHEMA)
 public class MultiPartArticleSection implements Serializable {
 
     private static final long serialVersionUID = 1109186628988745920L;

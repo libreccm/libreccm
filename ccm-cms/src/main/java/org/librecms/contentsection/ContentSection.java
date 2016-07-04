@@ -19,9 +19,6 @@
 package org.librecms.contentsection;
 
 import org.libreccm.categorization.Category;
-
-import static org.librecms.CmsConstants.*;
-
 import org.libreccm.security.Role;
 import org.libreccm.web.CcmApplication;
 
@@ -34,6 +31,8 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import static org.librecms.CmsConstants.*;
 
 /**
  *

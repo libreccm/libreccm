@@ -18,8 +18,6 @@
  */
 package org.librecms.contenttypes;
 
-import static org.libreccm.core.CoreConstants.*;
-
 import org.hibernate.envers.Audited;
 import org.libreccm.l10n.LocalizedString;
 import org.librecms.contentsection.ContentItem;
@@ -37,6 +35,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import static org.librecms.CmsConstants.*;
 
 /**
  *

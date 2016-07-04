@@ -20,16 +20,20 @@ package org.librecms.contenttypes;
 
 import java.io.Serializable;
 import java.util.Objects;
+
 import javax.persistence.AssociationOverride;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Table;
+
 import org.hibernate.envers.Audited;
 import org.libreccm.l10n.LocalizedString;
 
-import static org.libreccm.core.CoreConstants.*;
+import static org.librecms.CmsConstants.*;
+
+import org.librecms.contentsection.ContentItem;
 
 /**
  * @author <a href="mailto:konerman@tzi.de">Alexander Konermann</a>
@@ -38,32 +42,32 @@ import static org.libreccm.core.CoreConstants.*;
 @Entity
 @Audited
 @Table(name = "ARTICLES", schema = DB_SCHEMA)
-public class Article extends GenericArticle implements Serializable {
+public class Article extends ContentItem implements Serializable {
 
     private static final long serialVersionUID = 3832010184748095822L;
 
     @Embedded
     @AssociationOverride(
             name = "values",
-            joinTable = @JoinTable(name = "ARTICLE_LEADS",
+            joinTable = @JoinTable(name = "ARTICLE_TEXTS",
                                    schema = DB_SCHEMA,
                                    joinColumns = {
                                        @JoinColumn(name = "OBJECT_ID")}
             ))
-    private LocalizedString lead;
+    private LocalizedString text;
 
-    public LocalizedString getLead() {
-        return lead;
+    public LocalizedString getText() {
+        return text;
     }
 
-    public void setLead(final LocalizedString lead) {
-        this.lead = lead;
+    public void setText(final LocalizedString text) {
+        this.text = text;
     }
 
     @Override
     public int hashCode() {
         int hash = super.hashCode();
-        hash = 29 * hash + Objects.hashCode(lead);
+        hash = 29 * hash + Objects.hashCode(text);
         return hash;
     }
 
@@ -87,7 +91,7 @@ public class Article extends GenericArticle implements Serializable {
             return false;
         }
 
-        return Objects.equals(lead, other.getLead());
+        return Objects.equals(text, other.getText());
     }
 
     @Override
@@ -97,8 +101,8 @@ public class Article extends GenericArticle implements Serializable {
 
     @Override
     public String toString(final String data) {
-        return super.toString(String.format(", lead = %s%s",
-                                            Objects.toString(lead),
+        return super.toString(String.format(", text = %s%s",
+                                            Objects.toString(text),
                                             data));
     }
 

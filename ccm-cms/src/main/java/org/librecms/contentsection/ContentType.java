@@ -51,7 +51,7 @@ public class ContentType extends CcmObject implements Serializable {
 
     @Embedded
     @AssociationOverride(
-        name = "VALUES",
+        name = "values",
         joinTable = @JoinTable(name = "CONTENT_TYPE_LABELS",
                                schema = DB_SCHEMA,
                                joinColumns = {
@@ -61,7 +61,7 @@ public class ContentType extends CcmObject implements Serializable {
 
     @Embedded
     @AssociationOverride(
-        name = "VALUES",
+        name = "values",
         joinTable = @JoinTable(name = "CONTENT_TYPE_DESCRIPTIONS",
                                schema = DB_SCHEMA,
                                joinColumns = {

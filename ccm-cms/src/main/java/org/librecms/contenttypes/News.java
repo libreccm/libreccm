@@ -18,9 +18,15 @@
  */
 package org.librecms.contenttypes;
 
+import org.hibernate.envers.Audited;
+import org.hibernate.validator.constraints.NotEmpty;
+import org.libreccm.l10n.LocalizedString;
+import org.librecms.contentsection.ContentItem;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
+
 import javax.persistence.AssociationOverride;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -30,11 +36,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import org.hibernate.envers.Audited;
-import org.hibernate.validator.constraints.NotEmpty;
-import org.libreccm.l10n.LocalizedString;
 
-import static org.libreccm.core.CoreConstants.*;
+import static org.librecms.CmsConstants.*;
 
 /**
  * @author <a href="mailto:konerman@tzi.de">Alexander Konermann</a>
@@ -43,7 +46,7 @@ import static org.libreccm.core.CoreConstants.*;
 @Entity
 @Audited
 @Table(name = "NEWS", schema = DB_SCHEMA)
-public class News extends GenericArticle implements Serializable {
+public class News extends ContentItem implements Serializable {
 
     private static final long serialVersionUID = -4939565845920227974L;
 
@@ -53,12 +56,12 @@ public class News extends GenericArticle implements Serializable {
     @Embedded
     @AssociationOverride(
             name = "values",
-            joinTable = @JoinTable(name = "NEWS_LEADS",
+            joinTable = @JoinTable(name = "NEWS_TEXTS",
                                    schema = DB_SCHEMA,
                                    joinColumns = {
                                        @JoinColumn(name = "OBJECT_ID")}
             ))
-    private LocalizedString lead;
+    private LocalizedString text;
 
     /**
      * Release date of the news
@@ -76,12 +79,12 @@ public class News extends GenericArticle implements Serializable {
     @NotEmpty
     private boolean homepage;
 
-    public LocalizedString getLead() {
-        return lead;
+    public LocalizedString getText() {
+        return text;
     }
 
-    public void setLead(final LocalizedString lead) {
-        this.lead = lead;
+    public void setText(final LocalizedString text) {
+        this.text = text;
     }
 
     public Date getReleaseDate() {
@@ -103,7 +106,7 @@ public class News extends GenericArticle implements Serializable {
     @Override
     public int hashCode() {
         int hash = super.hashCode();
-        hash = 11 * hash + Objects.hashCode(this.lead);
+        hash = 11 * hash + Objects.hashCode(this.text);
         hash = 11 * hash + Objects.hashCode(this.releaseDate);
         hash = 11 * hash + (this.homepage ? 1 : 0);
         return hash;
@@ -130,7 +133,7 @@ public class News extends GenericArticle implements Serializable {
         if (homepage != other.isHomepage()) {
             return false;
         }
-        if (!Objects.equals(lead, other.getLead())) {
+        if (!Objects.equals(text, other.getText())) {
             return false;
         }
         return Objects.equals(releaseDate, other.getReleaseDate());
@@ -143,10 +146,10 @@ public class News extends GenericArticle implements Serializable {
 
     @Override
     public String toString(final String data) {
-        return super.toString(String.format(", lead = \"%s\", "
+        return super.toString(String.format(", text = %s, "
                                                     + "releaseDate = %tF %<tT, "
                                                     + "homepage = %b%d",
-                                            Objects.toString(lead),
+                                            Objects.toString(text),
                                             releaseDate,
                                             homepage,
                                             data));

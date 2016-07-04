@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.AssociationOverride;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
@@ -79,6 +80,12 @@ public class LegalMetadata extends Asset implements Serializable {
     private String creator;
 
     @ElementCollection
+    @CollectionTable(name = "LEGAL_METADATA_CONTRIBUTORS",
+                     schema = DB_SCHEMA,
+                     joinColumns = {
+                         @JoinColumn(name = "LEGAL_METADATA_ID")
+                     })
+    @Column(name  ="CONTRIBUTORS")
     private List<String> contributors;
 
     public LegalMetadata() {
