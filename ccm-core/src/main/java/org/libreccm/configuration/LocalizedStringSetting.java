@@ -53,6 +53,11 @@ public class LocalizedStringSetting
                                        @JoinColumn(name = "ENTRY_ID")}))
     private LocalizedString value;
 
+    public LocalizedStringSetting() {
+        super();
+        value = new LocalizedString();
+    }
+    
     @Override
     public LocalizedString getValue() {
         return value;

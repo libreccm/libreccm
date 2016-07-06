@@ -95,6 +95,9 @@ public class ConfigurationManager {
      *
      * @return An instance of the configuration class with all settings set to
      *         the values stored in the registry.
+     *
+     * @throws IllegalArgumentException if the provided class is not annotated
+     *                                  with {@link Configuration}.
      */
     public <T> T findConfiguration(final Class<T> confClass) {
         if (confClass == null) {

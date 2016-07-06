@@ -41,7 +41,7 @@ import javax.persistence.JoinTable;
  */
 @Entity
 public class EnumSetting
-        extends AbstractSetting<Set<String>> implements Serializable {
+    extends AbstractSetting<Set<String>> implements Serializable {
 
     private static final long serialVersionUID = 1763168269981687340L;
 
@@ -67,11 +67,16 @@ public class EnumSetting
     }
 
     public void addEnumValue(final String value) {
+        if (value == null) {
+            this.value = new HashSet<>();
+        }
         this.value.add(value);
     }
 
     public void removeEnumValue(final String value) {
-        this.value.remove(value);
+        if (this.value != null) {
+            this.value.remove(value);
+        }
     }
 
     @Override

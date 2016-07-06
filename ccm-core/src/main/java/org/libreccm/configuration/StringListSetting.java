@@ -33,22 +33,25 @@ import javax.persistence.JoinTable;
 /**
  * Setting for a list of strings. In contrast to the {@link EnumSetting} which
  * uses a {@link java.util.Set} a list maintains the order of its elements.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
 public class StringListSetting extends AbstractSetting<List<String>> {
 
     private static final long serialVersionUID = 7093818804712916413L;
-    
+
     @ElementCollection(fetch = FetchType.EAGER)
     @JoinTable(name = "SETTINGS_STRING_LIST",
                schema = DB_SCHEMA,
-               joinColumns = {@JoinColumn(name = "LIST_ID")})
+               joinColumns = {
+                   @JoinColumn(name = "LIST_ID")})
     private List<String> value;
-    
+
     /**
      * Returns a <em>copy</em> of the list managed by this setting.
+     *
+     * @return
      */
     @Override
     public List<String> getValue() {
@@ -58,33 +61,38 @@ public class StringListSetting extends AbstractSetting<List<String>> {
             return new ArrayList<>(value);
         }
     }
-    
+
     /**
      * Replaces the list managed by this setting.
-     * 
-     * @param value 
+     *
+     * @param value
      */
     @Override
     public void setValue(final List<String> value) {
         this.value = value;
     }
-    
+
     /**
      * Adds a value to the list.
-     * 
+     *
      * @param value The value to add.
      */
     public void addListValue(final String value) {
+        if (this.value == null) {
+            this.value = new ArrayList<>();
+        }
         this.value.add(value);
     }
-    
+
     /**
      * Removes a value from the list.
-     * 
+     *
      * @param value the value to add.
      */
     public void removeListValue(final String value) {
-        this.value.remove(value);
+        if (this.value != null) {
+            this.value.remove(value);
+        }
     }
 
     @Override
@@ -109,15 +117,15 @@ public class StringListSetting extends AbstractSetting<List<String>> {
         if (!other.canEqual(this)) {
             return false;
         }
-        
+
         return Objects.equals(value, other.getValue());
     }
-    
+
     @Override
     public boolean canEqual(final Object obj) {
         return obj instanceof StringListSetting;
     }
-    
+
     @Override
     public String toString(final String data) {
         final StringBuilder listValues = new StringBuilder();
@@ -131,10 +139,10 @@ public class StringListSetting extends AbstractSetting<List<String>> {
             });
         }
         listValues.append(" }");
-        
+
         return super.toString(String.format(", value = %s%s",
                                             listValues.toString(),
                                             data));
     }
-    
+
 }

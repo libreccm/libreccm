@@ -35,7 +35,6 @@ import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
@@ -160,8 +159,8 @@ public class ConfigurationManagerTest {
         "datasets/org/libreccm/configuration/ConfigurationManagerTest/data.yml")
     @InSequence(1100)
     public void loadConfiguration() {
-        final ExampleConfiguration configuration = configurationManager
-            .findConfiguration(ExampleConfiguration.class);
+        final TestExampleConfiguration configuration = configurationManager
+            .findConfiguration(TestExampleConfiguration.class);
 
         assertThat(configuration, is(not(nullValue())));
         assertThat(configuration.getPrice(),
@@ -184,8 +183,8 @@ public class ConfigurationManagerTest {
             + "after-save-changed.yml")
     @InSequence(1200)
     public void saveConfiguration() {
-        final ExampleConfiguration configuration = configurationManager
-            .findConfiguration(ExampleConfiguration.class);
+        final TestExampleConfiguration configuration = configurationManager
+            .findConfiguration(TestExampleConfiguration.class);
 
         configuration.setPrice(new BigDecimal("109.99"));
         configuration.setItemsPerPage(30L);

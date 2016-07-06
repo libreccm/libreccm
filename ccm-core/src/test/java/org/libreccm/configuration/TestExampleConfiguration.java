@@ -27,7 +27,7 @@ import java.util.Set;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Configuration
-public class ExampleConfiguration {
+public class TestExampleConfiguration {
 
     @Setting
     private BigDecimal price;

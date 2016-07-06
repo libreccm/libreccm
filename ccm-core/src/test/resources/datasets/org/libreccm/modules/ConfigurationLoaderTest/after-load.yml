@@ -1,0 +1,23 @@
+ccm_core.settings:
+    - setting_id: -100
+      configuration_class: org.libreccm.configuration.ExampleConfiguration
+      name: enabled
+      setting_value_boolean: true
+      dtype: BooleanSetting
+    - setting_id: -110
+      configuration_class: org.libreccm.configuration.ExampleConfiguration
+      name: itemsPerPage
+      setting_value_long: 100
+      dtype: LongSetting
+    - setting_id: -120
+      configuration_class: org.libreccm.configuration.ExampleConfiguration
+      name: title
+      dtype: LocalizedStringSetting
+ccm_core.settings_l10n_str_values:
+    - entry_id: -120
+      locale: de
+      localized_value: Versuch
+    - entry_id: -120
+      locale: en
+      localized_value: Test
+
