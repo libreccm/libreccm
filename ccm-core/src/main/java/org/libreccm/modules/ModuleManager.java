@@ -96,6 +96,10 @@ public class ModuleManager {
     @Transactional(Transactional.TxType.REQUIRED)
     public void initModules() {
         LOGGER.info("Initalising modules...");
+
+        final ConfigurationLoader confLoader = new ConfigurationLoader(
+            entityManager);
+
         //Initialise all modules in the correct order
         for (final TreeNode node : moduleNodes) {
 
@@ -111,6 +115,7 @@ public class ModuleManager {
             if (installedModule != null
                     && installedModule.getStatus() == ModuleStatus.NEW) {
                 node.getModule().install(installEvent);
+                confLoader.loadConfigurations(node.getModule());
                 installedModule.setStatus(ModuleStatus.INSTALLED);
                 entityManager.merge(installedModule);
             }

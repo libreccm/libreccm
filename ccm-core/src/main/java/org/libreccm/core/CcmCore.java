@@ -74,8 +74,6 @@ public class CcmCore implements CcmModule {
 
     @Override
     public void install(final InstallEvent event) {
-//        final EntityManager entityManager = event.getEntityManager();
-
         final SystemUsersSetup systemUsersSetup = new SystemUsersSetup(
             event);
         systemUsersSetup.setupSystemUsers();
@@ -87,6 +85,9 @@ public class CcmCore implements CcmModule {
         final LoginApplicationSetup loginSetup
                                     = new LoginApplicationSetup(event);
         loginSetup.setup();
+        
+        // Load category domains from bundle/classpath
+        // File format: JAXB (but Jackson for reading the XML)
     }
 
     @Override

@@ -18,6 +18,7 @@
  */
 package org.libreccm.categorization;
 
+import static org.libreccm.categorization.CategorizationConstants.*;
 import static org.libreccm.core.CoreConstants.*;
 
 import org.hibernate.validator.constraints.NotBlank;
@@ -48,6 +49,9 @@ import javax.persistence.NamedSubgraph;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Pattern;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * The category entity represents a single category. Each category is part of a
@@ -91,6 +95,7 @@ import javax.validation.constraints.Pattern;
     )
 })
 @DefaultEntityGraph("Category.withSubCategoriesAndObjects")
+@XmlRootElement(name = "category", namespace = CAT_XML_NS)
 public class Category extends CcmObject implements InheritsPermissions, 
                                                    Serializable {
 
@@ -101,6 +106,7 @@ public class Category extends CcmObject implements InheritsPermissions,
      * category system/domain is used in different installations.
      */
     @Column(name = "UNIQUE_ID")
+    @XmlElement(name = "unique-id", namespace = CAT_XML_NS)
     private String uniqueId;
 
     /**
@@ -110,6 +116,7 @@ public class Category extends CcmObject implements InheritsPermissions,
     @Column(name = "NAME", nullable = false)
     @NotBlank
     @Pattern(regexp = "[\\w-.]*")
+    @XmlElement(name  ="name", namespace = CAT_XML_NS)
     private String name;
 
     /**
@@ -123,6 +130,7 @@ public class Category extends CcmObject implements InheritsPermissions,
                                joinColumns = {
                                    @JoinColumn(name = "OBJECT_ID")}
         ))
+    @XmlElementWrapper(name = "title", namespace = CAT_XML_NS)
     private LocalizedString title;
 
     /**
@@ -136,6 +144,7 @@ public class Category extends CcmObject implements InheritsPermissions,
                                joinColumns = {
                                    @JoinColumn(name = "OBJECT_ID")}
         ))
+    @XmlElementWrapper(name = "title", namespace = CAT_XML_NS)
     private LocalizedString description;
 
     /**
@@ -143,6 +152,7 @@ public class Category extends CcmObject implements InheritsPermissions,
      * enabled, the category can't be used in any way.
      */
     @Column(name = "ENABLED")
+    @XmlElement(name = "enabled", namespace = CAT_XML_NS)
     private boolean enabled;
 
     /**
@@ -150,6 +160,7 @@ public class Category extends CcmObject implements InheritsPermissions,
      * visible should be only visible in the backend but not in the frontend.
      */
     @Column(name = "VISIBLE")
+    @XmlElement(name = "visible", namespace = CAT_XML_NS)
     private boolean visible;
 
     /**
@@ -157,18 +168,21 @@ public class Category extends CcmObject implements InheritsPermissions,
      * an abstract category.
      */
     @Column(name = "ABSTRACT_CATEGORY")
+    @XmlElement(name = "abstract", namespace = CAT_XML_NS)
     private boolean abstractCategory;
 
     /**
      * The objects assigned to this category.
      */
     @OneToMany(mappedBy = "category")
+    @XmlElementWrapper(name = "objects", namespace = CAT_XML_NS)
     private List<Categorization> objects;
 
     /**
      * The sub categories of this category.
      */
     @OneToMany(mappedBy = "parentCategory")
+    @XmlElementWrapper(name = "subcategories", namespace = CAT_XML_NS)
     private List<Category> subCategories;
 
     /**
@@ -183,6 +197,7 @@ public class Category extends CcmObject implements InheritsPermissions,
      * Numeric value to define the order of the categories.
      */
     @Column(name = "CATEGORY_ORDER")
+    @XmlElement(name = "order", namespace = CAT_XML_NS)
     private long categoryOrder;
 
     public Category() {

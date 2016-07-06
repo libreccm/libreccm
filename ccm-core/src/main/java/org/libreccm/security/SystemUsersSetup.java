@@ -21,6 +21,7 @@ package org.libreccm.security;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.core.CcmCore;
+import org.libreccm.core.CoreConstants;
 import org.libreccm.core.EmailAddress;
 import org.libreccm.modules.InstallEvent;
 
@@ -41,6 +42,12 @@ public class SystemUsersSetup {
     private static final Logger LOGGER = LogManager.getLogger(
         SystemUsersSetup.class);
 
+    private static final String ADMIN_NAME = "admin.name";
+    private static final String ADMIN_FAMILY_NAME = "admin.family_name";
+    private static final String ADMIN_GIVEN_NAME = "admin.given_name";
+    private static final String ADMIN_EMAIL_ADDRESS = "admin.email_address";
+    private static final String ADMIN_PASSWORD = "admin.password";
+
     //Default password is "libreccm"
     private static final String DEFAULT_ADMIN_PW
                                     = "$shiro1$SHA-512$500000$MFPkVikNoRrBZ8R8CxQIHA==$ybEECtSPukmXDbV27a3LnWktFsh9lQl2ZYqCUtV0NF9G35Rt0+Tzp1msNLBQUVv15SrsdFgBSfhgWfZFyTva+Q==";
@@ -59,41 +66,26 @@ public class SystemUsersSetup {
 
     private void createAdmin() {
         LOGGER.info("Creating admin user...");
-        final User admin = new User();
-        admin.setName("admin");
-        admin.setFamilyName("LibreCCM");
-        admin.setGivenName("System Administrator");
-        final EmailAddress adminEmail = new EmailAddress();
-        adminEmail.setAddress("admin@libreccm.example");
-        admin.setPrimaryEmailAddress(adminEmail);
 
-        String adminPassword = DEFAULT_ADMIN_PW;
-        try (final InputStream inputStream = getClass().getResourceAsStream(
-            "/integration.properties")) {
-            if (inputStream == null) {
-                LOGGER.warn(
-                    "No integration.properties file found. Using default "
-                        + "password (see documentation)");
-            } else {
-                final Properties properties = new Properties();
-                try {
-                    properties.load(inputStream);
-                    final String password = properties.getProperty(
-                        "admin.password");
-                    if (password != null && !password.isEmpty()) {
-                        adminPassword = password;
-                    }
-                } catch (IOException ex) {
-                    LOGGER.warn("Failed to load integration.properties. "
-                                    + "Using default password.",
-                                ex);
-                }
-            }
-        } catch (IOException ex) {
-            LOGGER.warn("Exception while reading integration.properties file."
-                            + "Using default password for admin account. ",
-                        ex);
-        }
+        final Properties integrationProps = getIntegrationProps();
+        final String adminName = integrationProps.getProperty(ADMIN_NAME,
+                                                              "admin");
+        final String adminFamilyName = integrationProps.getProperty(
+            ADMIN_FAMILY_NAME, "LibreCCM");
+        final String adminGivenName = integrationProps.getProperty(
+            ADMIN_GIVEN_NAME, "System Administrator");
+        final String adminEmailAddress = integrationProps.getProperty(
+            ADMIN_EMAIL_ADDRESS, "admin@libreccm.example");
+        final String adminPassword = integrationProps.getProperty(
+            ADMIN_PASSWORD, DEFAULT_ADMIN_PW);;
+
+        final User admin = new User();
+        admin.setName(adminName);
+        admin.setFamilyName(adminFamilyName);
+        admin.setGivenName(adminGivenName);
+        final EmailAddress adminEmail = new EmailAddress();
+        adminEmail.setAddress(adminEmailAddress);
+        admin.setPrimaryEmailAddress(adminEmail);
         admin.setPassword(adminPassword);
 
         final Role adminRole = new Role();
@@ -126,6 +118,22 @@ public class SystemUsersSetup {
         user.setPrimaryEmailAddress(email);
 
         entityManager.persist(user);
+    }
+
+    private Properties getIntegrationProps() {
+        try (final InputStream inputStream = getClass().getResourceAsStream(
+            CoreConstants.INTEGRATION_PROPS)) {
+            final Properties properties = new Properties();
+            if (inputStream == null) {
+                LOGGER.warn("No integration properties available.");
+                properties.load(inputStream);
+            }
+            return properties;
+        } catch (IOException ex) {
+            LOGGER.warn("Failed to load integration properties from bundle. "
+                            + "Using empty integration properties.", ex);
+            return new Properties();
+        }
     }
 
 }

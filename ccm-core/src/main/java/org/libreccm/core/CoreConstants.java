@@ -38,6 +38,12 @@ public final class CoreConstants {
     public static final String DB_SCHEMA = "CCM_CORE";
 
     /**
+     * Fully qualified name of file containing the integration properties of a 
+     * bundle. 
+     */
+    public static final String INTEGRATION_PROPS = "/integration.properties";
+    
+    /**
      * String used as display name for the virtual <i>Access denied</i> objects
      * in the security API.
      */

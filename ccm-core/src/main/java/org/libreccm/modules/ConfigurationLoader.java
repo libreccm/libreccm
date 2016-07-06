@@ -31,6 +31,7 @@ import org.libreccm.configuration.LongSetting;
 import org.libreccm.configuration.Setting;
 import org.libreccm.configuration.StringListSetting;
 import org.libreccm.configuration.StringSetting;
+import org.libreccm.core.CoreConstants;
 import org.libreccm.l10n.LocalizedString;
 
 import java.io.IOException;
@@ -43,8 +44,6 @@ import java.util.Properties;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import javax.transaction.Transaction;
 
 /**
  * A helper class used by the {@link ModuleManager} to load the initial
@@ -74,7 +73,7 @@ class ConfigurationLoader {
 
         integration = new Properties();
         try (final InputStream inputStream = getClass().getResourceAsStream(
-            "/integration.properties")) {
+            CoreConstants.INTEGRATION_PROPS)) {
 
             if (inputStream == null) {
                 LOGGER.warn("No integration properties found. Using empty "

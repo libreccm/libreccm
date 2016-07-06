@@ -69,11 +69,11 @@ public class ContentSection extends CcmApplication implements Serializable {
 
     @OneToOne
     @JoinColumn(name = "STAFF_ROLE_ID")
-    private Role staffRole;
+    private Role staffRole; //ToDo: Check if this is still necessary
 
     @OneToOne
     @JoinColumn(name = "VIEWERS_ROLE_ID")
-    private Role viewersRole;
+    private Role viewersRole; //ToDo: Check if this is still necessary
 
     @Column(name = "DEFAULT_LOCALE")
     private Locale defaultLocale;
