@@ -39,6 +39,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -68,6 +70,7 @@ import javax.xml.bind.annotation.XmlRootElement;
                             + "WHERE p.object = :object")
 })
 @XmlRootElement(name = "permission", namespace = CORE_XML_NS)
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Permission implements Serializable {
 
     private static final long serialVersionUID = -5178045844045517958L;

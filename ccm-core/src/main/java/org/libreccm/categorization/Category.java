@@ -130,7 +130,7 @@ public class Category extends CcmObject implements InheritsPermissions,
                                joinColumns = {
                                    @JoinColumn(name = "OBJECT_ID")}
         ))
-    @XmlElementWrapper(name = "title", namespace = CAT_XML_NS)
+    @XmlElement(name = "title", namespace = CAT_XML_NS)
     private LocalizedString title;
 
     /**
@@ -144,7 +144,7 @@ public class Category extends CcmObject implements InheritsPermissions,
                                joinColumns = {
                                    @JoinColumn(name = "OBJECT_ID")}
         ))
-    @XmlElementWrapper(name = "title", namespace = CAT_XML_NS)
+    @XmlElement(name = "description", namespace = CAT_XML_NS)
     private LocalizedString description;
 
     /**
@@ -183,6 +183,7 @@ public class Category extends CcmObject implements InheritsPermissions,
      */
     @OneToMany(mappedBy = "parentCategory")
     @XmlElementWrapper(name = "subcategories", namespace = CAT_XML_NS)
+    @XmlElement(name = "category")
     private List<Category> subCategories;
 
     /**

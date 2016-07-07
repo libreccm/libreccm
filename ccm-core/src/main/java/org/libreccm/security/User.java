@@ -49,6 +49,8 @@ import javax.persistence.NamedSubgraph;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -119,6 +121,7 @@ import javax.xml.bind.annotation.XmlTransient;
 })
 @DefaultEntityGraph("User.withGroupAndRoleMemberships")
 @XmlRootElement(name = "user", namespace = CORE_XML_NS)
+@XmlAccessorType(XmlAccessType.FIELD)
 //Supressing a few warnings from PMD because they misleading here.
 //User is perfectly fine class name, and the complexity is not to high...
 @SuppressWarnings({"PMD.ShortClassName", "PMD.LongVariable"})

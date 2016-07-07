@@ -26,6 +26,14 @@ import com.arsdigita.ui.login.LoginApplicationCreator;
 import com.arsdigita.ui.login.LoginServlet;
 import com.arsdigita.ui.login.LoginApplicationSetup;
 import com.arsdigita.ui.login.LoginConstants;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+import javax.persistence.EntityManager;
+import javax.xml.bind.JAXB;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.libreccm.categorization.Domain;
 
 import org.libreccm.modules.CcmModule;
 import org.libreccm.modules.InitEvent;
@@ -68,24 +76,47 @@ import org.libreccm.web.ApplicationType;
             com.arsdigita.xml.formatters.DateFormatterConfig.class,
             org.libreccm.configuration.ExampleConfiguration.class,
             org.libreccm.security.EmailTemplates.class,
-            org.libreccm.security.OneTimeAuthConfig.class,
-        })
+            org.libreccm.security.OneTimeAuthConfig.class,})
 public class CcmCore implements CcmModule {
+
+    private static final Logger LOGGER = LogManager.getLogger(CcmCore.class);
 
     @Override
     public void install(final InstallEvent event) {
+        LOGGER.info("Setting up system users...");
         final SystemUsersSetup systemUsersSetup = new SystemUsersSetup(
-            event);
+                event);
         systemUsersSetup.setupSystemUsers();
 
+        LOGGER.info("Setting up admin application (/ccm/admin/)...");
         final AdminApplicationSetup adminSetup
                                     = new AdminApplicationSetup(event);
         adminSetup.setup();
 
+        LOGGER.info("Setting up login application...");
         final LoginApplicationSetup loginSetup
                                     = new LoginApplicationSetup(event);
         loginSetup.setup();
-        
+
+        LOGGER.info("Importing category domains from bundle (if any)...");
+        final Properties integrationProps = new Properties();
+        try (final InputStream inputStream = getClass().getResourceAsStream(
+                CoreConstants.INTEGRATION_PROPS)) {
+            if (inputStream == null) {
+                LOGGER.warn("Integration properties file was not found.");
+            } else {
+                integrationProps.load(inputStream);
+            }
+        } catch (IOException ex) {
+            LOGGER.warn("Failed to read integration properties. "
+                                + "Using empty proeprties.");
+        }
+
+        if (integrationProps.containsKey("bundle.domains")) {
+            importDomains(integrationProps.getProperty("bundle.domains"),
+                          event.getEntityManager());
+        }
+
         // Load category domains from bundle/classpath
         // File format: JAXB (but Jackson for reading the XML)
     }
@@ -104,4 +135,32 @@ public class CcmCore implements CcmModule {
         //Nothing
     }
 
+    private void importDomains(final String domainFiles, 
+                               final EntityManager entityManager) {
+        final String[] tokens = domainFiles.split(",");
+
+        for (final String token : tokens) {
+            importDomain(token, entityManager);
+        }
+    }
+
+    private void importDomain(final String domainFile,
+                              final EntityManager entityManager) {
+        // ToDo Will be implemented when general importer is ready
+//        LOGGER.info("Importing category domain from {}...", domainFile);
+//        try (final InputStream inputStream = getClass().getResourceAsStream(
+//                domainFile)) {
+//            if (inputStream == null) {
+//                LOGGER.warn("Category domain file {} was not found. Ignoring.",
+//                            domainFile);
+//            } else {
+//                final Domain domain = JAXB.unmarshal(inputStream, Domain.class);
+//                entityManager.persist(domain);
+//            }
+//        } catch (IOException ex) {
+//            LOGGER.warn("Failed to load category domain file {}. "
+//                                + "Domain will not be imported.",
+//                        domainFile);
+//        }
+    }
 }

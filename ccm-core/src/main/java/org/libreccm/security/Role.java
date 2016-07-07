@@ -45,6 +45,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Pattern;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -82,6 +84,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 })
 @DefaultEntityGraph(Role.ENTITY_GRPAH_WITH_MEMBERS)
 @XmlRootElement(name = "role", namespace = CORE_XML_NS)
+@XmlAccessorType(XmlAccessType.FIELD)
 @SuppressWarnings({"PMD.ShortClassName", "PMD.TooManyMethods"})
 public class Role implements Serializable {
 
