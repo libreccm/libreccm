@@ -24,7 +24,6 @@ import org.libreccm.core.CcmObject;
 import org.libreccm.core.CoreConstants;
 import org.libreccm.modules.InstallEvent;
 import org.libreccm.security.ApplicationRoleSetup;
-import org.libreccm.security.Permission;
 import org.libreccm.security.Role;
 
 import java.io.IOException;
@@ -82,6 +81,20 @@ public abstract class AbstractCcmApplicationSetup {
         appRoleSetup.grantPermission(role, privilege, ccmObject);
     }
 
+    public void grantPermissions(final Role role, final String... privileges) {
+        for(final String privilege : privileges) {
+            grantPermission(role, privilege);
+        }
+    }
+    
+    public void grantPermissions(final Role role, 
+                                 final CcmObject ccmObject,
+                                 final String... privileges) {
+        for(final String privilege : privileges) {
+            grantPermission(role, privilege, ccmObject);
+        }
+    }
+    
     public abstract void setup();
 
 }
