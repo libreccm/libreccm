@@ -19,8 +19,12 @@
 package org.librecms.contentsection;
 
 import org.libreccm.core.AbstractEntityRepository;
+import org.libreccm.core.CoreConstants;
+import org.libreccm.security.AuthorizationRequired;
+import org.libreccm.security.RequiresPrivilege;
 
 import javax.enterprise.context.RequestScoped;
+import javax.transaction.Transactional;
 
 /**
  *
@@ -38,6 +42,22 @@ public class ContentSectionRepository
     @Override
     public boolean isNew(final ContentSection section) {
         return section.getObjectId() == 0;
+    }
+    
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
+    @Transactional(Transactional.TxType.REQUIRED)
+    @Override
+    public void save(final ContentSection section) {
+        super.save(section);
+    }
+    
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
+    @Transactional(Transactional.TxType.REQUIRED)
+    @Override
+    public void delete(final ContentSection section) {
+        super.delete(section);
     }
 
 }

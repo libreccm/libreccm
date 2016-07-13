@@ -23,12 +23,16 @@ import org.libreccm.security.Role;
 import org.libreccm.web.CcmApplication;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -43,6 +47,16 @@ import static org.librecms.CmsConstants.*;
 public class ContentSection extends CcmApplication implements Serializable {
 
     private static final long serialVersionUID = -671718122153931727L;
+    
+    protected static final String ROOT = "root";
+    protected static final String ASSETS = "assets";
+    protected static final String ALERT_RECIPIENT = "alert_recipient";
+    protected static final String AUTHOR = "author";
+    protected static final String EDITOR = "editor";
+    protected static final String MANAGER = "manager";
+    protected static final String PUBLISHER = "publisher";
+    protected static final String CONTENT_READER = "content_reader";
+    
 
     @Column(name = "LABEL", length = 512)
     private String label;
@@ -67,13 +81,16 @@ public class ContentSection extends CcmApplication implements Serializable {
     @Column(name = "XML_GENERATOR_CLASS", length = 1024)
     private String xmlGeneratorClass;
 
-    @OneToOne
-    @JoinColumn(name = "STAFF_ROLE_ID")
-    private Role staffRole; //ToDo: Check if this is still necessary
-
-    @OneToOne
-    @JoinColumn(name = "VIEWERS_ROLE_ID")
-    private Role viewersRole; //ToDo: Check if this is still necessary
+    @ManyToMany
+    @JoinTable(name = "CONTENT_SECTION_ROLES",
+               schema = DB_SCHEMA,
+               joinColumns = {
+                   @JoinColumn(name = "SECTION_ID")
+               },
+               inverseJoinColumns = {
+                   @JoinColumn(name = "ROLE_ID")
+               })
+    private List<Role> roles;
 
     @Column(name = "DEFAULT_LOCALE")
     private Locale defaultLocale;
@@ -134,20 +151,20 @@ public class ContentSection extends CcmApplication implements Serializable {
         this.xmlGeneratorClass = xmlGeneratorClass;
     }
 
-    public Role getStaffRole() {
-        return staffRole;
+    public List<Role> getRoles() {
+        return Collections.unmodifiableList(roles);
     }
 
-    public void setStaffRole(final Role staffRole) {
-        this.staffRole = staffRole;
+    protected void setRoles(final List<Role> roles) {
+        this.roles = roles;
     }
 
-    public Role getViewersRole() {
-        return viewersRole;
+    protected void addRole(final Role role) {
+        roles.add(role);
     }
 
-    public void setViewersRole(final Role viewersRole) {
-        this.viewersRole = viewersRole;
+    protected void removeRole(final Role role) {
+        roles.remove(role);
     }
 
     public Locale getDefaultLocale() {

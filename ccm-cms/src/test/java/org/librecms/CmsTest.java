@@ -3,18 +3,12 @@
  */
 package org.librecms;
 
-import org.librecms.Cms;
-
-import static org.hamcrest.CoreMatchers.*;
 
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.container.test.api.ShouldThrowException;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
 import org.jboss.arquillian.persistence.CreateSchema;
 import org.jboss.arquillian.persistence.PersistenceTest;
-import org.jboss.arquillian.persistence.ShouldMatchDataSet;
-import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -32,13 +26,10 @@ import org.junit.runner.RunWith;
 import org.libreccm.tests.categories.IntegrationTest;
 
 import java.io.File;
-import java.util.List;
 
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import static org.junit.Assert.*;
 
 @Category(IntegrationTest.class)
 @RunWith(Arquillian.class)

@@ -26,6 +26,7 @@ import org.libreccm.security.Role;
 import org.libreccm.web.AbstractCcmApplicationSetup;
 
 import static org.librecms.CmsConstants.*;
+import static org.librecms.contentsection.ContentSection.*;
 
 /**
  *
@@ -45,28 +46,28 @@ public class ContentSectionSetup extends AbstractCcmApplicationSetup {
 
     @Override
     public void setup() {
-        final String contentSectionNames;
+        final String sectionNames;
         if (getIntegrationProps().containsKey(INITIAL_CONTENT_SECTIONS)) {
-            contentSectionNames = getIntegrationProps().getProperty(
+            sectionNames = getIntegrationProps().getProperty(
                 INITIAL_CONTENT_SECTIONS);
         } else {
-            contentSectionNames = "info";
+            sectionNames = "info";
         }
 
-        for (final String contentSectionName : contentSectionNames.split(",")) {
+        for (final String contentSectionName : sectionNames.split(",")) {
             createContentSection(contentSectionName);
         }
     }
 
-    private void createContentSection(final String contentSectionName) {
+    private void createContentSection(final String sectionName) {
         final ContentSection section = new ContentSection();
-        section.setLabel(contentSectionName);
+        section.setLabel(sectionName);
 
         final Category rootFolder = new Category();
-        rootFolder.setName(String.format("%s_root", contentSectionName));
+        rootFolder.setName(String.format("%s_" + ROOT, sectionName));
 
         final Category rootAssetFolder = new Category();
-        rootFolder.setName(String.format("%s_assets", contentSectionName));
+        rootFolder.setName(String.format("%s_" + ASSETS, sectionName));
 
         section.setRootDocumentFolder(rootFolder);
         section.setRootAssetsFolder(rootAssetFolder);
@@ -76,17 +77,17 @@ public class ContentSectionSetup extends AbstractCcmApplicationSetup {
         getEntityManager().persist(rootAssetFolder);
 
         final Role alertRecipient = createRole(String.format(
-            "%s_alert_recipient", contentSectionName));
-        final Role author = createRole(String.format("%s_author",
-                                                     contentSectionName));
-        final Role editor = createRole(String.format("%s_editor",
-                                                     contentSectionName));
-        final Role manager = createRole(String.format("%s_manager",
-                                                      contentSectionName));
-        final Role publisher = createRole(String.format("%s_publisher",
-                                                        contentSectionName));
-        final Role contentReader = createRole(String.format("%s_content_reader",
-                                                            contentSectionName));
+            "%s_" + ALERT_RECIPIENT, sectionName));
+        final Role author = createRole(String.format("%s_" + AUTHOR,
+                                                     sectionName));
+        final Role editor = createRole(String.format("%s_" + EDITOR,
+                                                     sectionName));
+        final Role manager = createRole(String.format("%s_" + MANAGER,
+                                                      sectionName));
+        final Role publisher = createRole(String.format("%s_" + PUBLISHER,
+                                                        sectionName));
+        final Role contentReader = createRole(String.format(
+            "%s_" + CONTENT_READER, sectionName));
 
         grantPermissions(author,
                          rootFolder,
@@ -96,8 +97,8 @@ public class ContentSectionSetup extends AbstractCcmApplicationSetup {
                          PRIVILEGE_ITEMS_VIEW_PUBLISHED,
                          PRIVILEGE_ITEMS_PREVIEW);
 
-        grantPermissions(editor, 
-                         rootFolder, 
+        grantPermissions(editor,
+                         rootFolder,
                          PRIVILEGE_ITEMS_CATEGORIZE,
                          PRIVILEGE_ITEMS_CREATE_NEW,
                          PRIVILEGE_ITEMS_EDIT,
@@ -105,9 +106,9 @@ public class ContentSectionSetup extends AbstractCcmApplicationSetup {
                          PRIVILEGE_ITEMS_DELETE,
                          PRIVILEGE_ITEMS_VIEW_PUBLISHED,
                          PRIVILEGE_ITEMS_PREVIEW);
-        
+
         grantPermissions(manager,
-                         rootFolder, 
+                         rootFolder,
                          PRIVILEGE_ADMINISTER_ROLES,
                          PRIVILEGE_ADMINISTER_WORKFLOW,
                          PRIVILEGE_ADMINISTER_LIFECYLES,
@@ -121,9 +122,9 @@ public class ContentSectionSetup extends AbstractCcmApplicationSetup {
                          PRIVILEGE_ITEMS_DELETE,
                          PRIVILEGE_ITEMS_VIEW_PUBLISHED,
                          PRIVILEGE_ITEMS_PREVIEW);
-        
-        grantPermissions(editor, 
-                         rootFolder, 
+
+        grantPermissions(publisher,
+                         rootFolder,
                          PRIVILEGE_ITEMS_CATEGORIZE,
                          PRIVILEGE_ITEMS_CREATE_NEW,
                          PRIVILEGE_ITEMS_EDIT,
@@ -132,11 +133,10 @@ public class ContentSectionSetup extends AbstractCcmApplicationSetup {
                          PRIVILEGE_ITEMS_DELETE,
                          PRIVILEGE_ITEMS_VIEW_PUBLISHED,
                          PRIVILEGE_ITEMS_PREVIEW);
-        
-        grantPermissions(contentReader, 
-                        rootFolder, 
-                        PRIVILEGE_ITEMS_VIEW_PUBLISHED);
-        
+
+        grantPermissions(contentReader,
+                         rootFolder,
+                         PRIVILEGE_ITEMS_VIEW_PUBLISHED);
 
         getEntityManager().persist(alertRecipient);
         getEntityManager().persist(author);
