@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 LibreCCM Foundation.
+ * Copyright (C) 2016 LibreCCM Foundation.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package com.arsdigita.ui.login;
+package org.librecms.contentsection;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -25,29 +25,22 @@ import org.libreccm.web.ApplicationRepository;
 import org.libreccm.web.ApplicationType;
 import org.libreccm.web.CcmApplication;
 
-import static com.arsdigita.ui.login.LoginConstants.*;
-
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-public class LoginApplicationCreator
-        implements ApplicationCreator<CcmApplication> {
+public class ContentSectionCreator 
+        implements ApplicationCreator<CcmApplication>{ 
 
     @Inject
-    private ApplicationRepository appRepository;
-
+    private ApplicationRepository appRepo;
+    
     @Override
-    public CcmApplication createInstance(final String primaryUrl,
+    public CcmApplication createInstance(final String primaryUrl, 
                                          final ApplicationType type) {
-        if (!LOGIN_PAGE_URL.equals(primaryUrl)) {
-            throw new IllegalArgumentException(
-                    "Login is a singleton application"
-                            + "which is mounted at /login");
-        }
-
-        return appRepository.retrieveApplicationForPath(primaryUrl);
+        return appRepo.retrieveApplicationForPath(primaryUrl);
     }
-
+    
+    
 }

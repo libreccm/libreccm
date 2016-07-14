@@ -35,6 +35,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import org.libreccm.web.ApplicationType;
 
 import static org.librecms.CmsConstants.*;
 
@@ -44,10 +45,16 @@ import static org.librecms.CmsConstants.*;
  */
 @Entity
 @Table(name = "CONTENT_SECTIONS", schema = DB_SCHEMA)
+@ApplicationType(
+        name = CONTENT_SECTION_APP_TYPE,
+        descBundle = "org.librecms.contentsection.ContentSectionResources",
+        singleton = false,
+        creator = ContentSectionCreator.class,
+        servlet = ContentSectionServlet.class)
 public class ContentSection extends CcmApplication implements Serializable {
 
     private static final long serialVersionUID = -671718122153931727L;
-    
+
     protected static final String ROOT = "root";
     protected static final String ASSETS = "assets";
     protected static final String ALERT_RECIPIENT = "alert_recipient";
@@ -56,7 +63,6 @@ public class ContentSection extends CcmApplication implements Serializable {
     protected static final String MANAGER = "manager";
     protected static final String PUBLISHER = "publisher";
     protected static final String CONTENT_READER = "content_reader";
-    
 
     @Column(name = "LABEL", length = 512)
     private String label;
@@ -241,23 +247,23 @@ public class ContentSection extends CcmApplication implements Serializable {
     @Override
     public String toString(final String data) {
         return super.toString(String.format(
-            ", label = \"%s\", "
-                + "rootDocumentsFolder = \"%s\", "
-                + "rootAssetsFolder = \"%s\", "
-                + "pageResolverClass = \"%s\", "
-                + "itemResolverClass = \"%s\", "
-                + "templateResolverClass = \"%s\", "
-                + "xmlGeneratorClass = \"%s\", "
-                + "defaultLocale = \"%s\"%s",
-            label,
-            Objects.toString(rootDocumentsFolder),
-            Objects.toString(rootAssetsFolder),
-            pageResolverClass,
-            itemResolverClass,
-            templateResolverClass,
-            xmlGeneratorClass,
-            Objects.toString(defaultLocale),
-            data));
+                ", label = \"%s\", "
+                        + "rootDocumentsFolder = \"%s\", "
+                        + "rootAssetsFolder = \"%s\", "
+                        + "pageResolverClass = \"%s\", "
+                        + "itemResolverClass = \"%s\", "
+                        + "templateResolverClass = \"%s\", "
+                        + "xmlGeneratorClass = \"%s\", "
+                        + "defaultLocale = \"%s\"%s",
+                label,
+                Objects.toString(rootDocumentsFolder),
+                Objects.toString(rootAssetsFolder),
+                pageResolverClass,
+                itemResolverClass,
+                templateResolverClass,
+                xmlGeneratorClass,
+                Objects.toString(defaultLocale),
+                data));
     }
 
 }

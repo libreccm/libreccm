@@ -57,7 +57,8 @@ import static com.arsdigita.ui.login.LoginConstants.*;
  * expose various properties, especially the URL_MSG's of public subpages (e.g.
  * logout) and initializes the creation of the UI.
  *
- * @author Peter Boy <pboy@barkhof.uni-bremen.de>
+ * @author <a href="mailto:pboy@barkhof.uni-bremen.de">Peter Boy</a>
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @WebServlet(urlPatterns = {LOGIN_SERVLET_PATH})
 public class LoginServlet extends BebopApplicationServlet {

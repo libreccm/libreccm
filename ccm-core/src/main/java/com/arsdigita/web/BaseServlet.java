@@ -54,7 +54,7 @@ public abstract class BaseServlet extends HttpServlet {
      * @throws javax.servlet.ServletException
      */
     @Override
-    public final void init(final ServletConfig config) throws ServletException {
+    public void init(final ServletConfig config) throws ServletException {
         LOGGER.info("Initialising servlet %s (class: %s)...",
                     config.getServletName(),
                     getClass().getName());

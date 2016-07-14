@@ -28,6 +28,9 @@ public class CmsConstants {
 
     public static final String DB_SCHEMA = "CCM_CMS";
 
+    public static final String CONTENT_SECTION_APP_TYPE = "org.librecms.contentsection.ContentSection";
+    public static final String CONTENT_SECTION_SERVLET_PATH = "/templates/servlet/content-section/*";
+
     public static final String PRIVILEGE_ADMINISTER_CATEGORIES = "administer_categories";
     public static final String PRIVILEGE_ADMINISTER_CONTENT_TYPES = "administer_content_types";
     public static final String PRIVILEGE_ADMINISTER_LIFECYLES = "administer_lifecyles";
