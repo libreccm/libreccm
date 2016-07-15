@@ -127,6 +127,22 @@
     <build>
         <finalName>ccm-cms</finalName>
 
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+            </testResource>
+            <testResource>
+                <directory>${project.build.directory}/generated-resources</directory>
+            </testResource>
+        </testResources>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -218,12 +234,6 @@
             </plugin>
         </plugins>
 
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
     </build>
 
     <reporting>
@@ -334,4 +344,6 @@
             </plugin>
         </plugins>
     </reporting>
+    
+    
 </project>

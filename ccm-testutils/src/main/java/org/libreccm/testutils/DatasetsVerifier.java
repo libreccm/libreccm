@@ -46,6 +46,8 @@ import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.jboss.arquillian.persistence.dbunit.dataset.yaml.YamlDataSet;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  *
@@ -116,35 +118,39 @@ public class DatasetsVerifier {
             }
         }
         final String connectionStr = buffer.toString();
-        try (Connection connection = DriverManager.getConnection(
+        try (final Connection connection = DriverManager.getConnection(
             connectionStr, "sa", "")) {
             //Create DB tables etc 
-            final Path schemaPath = Paths.get(getClass().getResource(
-                "/sql/ddl/auto/h2.sql").toURI());
-            RunScript.execute(connection, Files.newBufferedReader(
-                              schemaPath, StandardCharsets.UTF_8));
+            for(final String ddlFile : getDdlFiles()) {
+                processDdlFile(connection, ddlFile);
+            }
+//            final Path schemaPath = Paths.get(getClass().getResource(
+//                "/sql/ddl/auto/h2.sql").toURI());
+//            RunScript.execute(connection, Files.newBufferedReader(
+//                              schemaPath, StandardCharsets.UTF_8));
             connection.commit();
 
             //Get dataset to test
             final IDataSet dataSet;
-            switch(getDatasetType()) {
+            switch (getDatasetType()) {
                 case FLAT_XML:
-                    final FlatXmlDataSetBuilder builder = new FlatXmlDataSetBuilder();
+                    final FlatXmlDataSetBuilder builder
+                                                    = new FlatXmlDataSetBuilder();
                     dataSet = builder.build(getClass().getResourceAsStream(
                         datasetPath));
                     break;
                 case JSON:
                     dataSet = new JsonDataSet(getClass()
-                    .getResourceAsStream(datasetPath));
+                        .getResourceAsStream(datasetPath));
                     break;
                 case YAML:
                     dataSet = new YamlDataSet(getClass()
-                    .getResourceAsStream(datasetPath));
+                        .getResourceAsStream(datasetPath));
                     break;
                 default:
                     throw new IllegalArgumentException(String.format(
-                    "Unsupported DatasetType \"%s\"",
-                    getDatasetType()));
+                        "Unsupported DatasetType \"%s\"",
+                        getDatasetType()));
             }
 
             //Create DBUnit DB connection
@@ -163,6 +169,20 @@ public class DatasetsVerifier {
             System.out.println("Dump after loading dataset...");
             verifyDumping(dbUnitConn);
         }
+    }
+
+    protected String[] getDdlFiles() {
+        return new String[]{"/sql/ddl/auto/h2.sql"};
+    }
+
+    private void processDdlFile(final Connection connection,
+                                final String ddlFile) throws URISyntaxException,
+                                                             SQLException,
+                                                             IOException {
+        final Path schemaPath = Paths.get(getClass().getResource(ddlFile)
+            .toURI());
+        RunScript.execute(connection, Files.newBufferedReader(
+                          schemaPath, StandardCharsets.UTF_8));
     }
 
     private void verifyDumping(final IDatabaseConnection connection)

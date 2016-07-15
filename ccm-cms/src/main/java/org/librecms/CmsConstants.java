@@ -38,7 +38,7 @@ public class CmsConstants {
     public static final String PRIVILEGE_ADMINISTER_WORKFLOW = "administer_workflow";
     public static final String PRIVILEGE_ITEMS_APPROVE = "approve_items";
     public static final String PRIVILEGE_ITEMS_PUBLISH = "publish_items";
-    public static final String PRIVILEGE_ITEMS_CATEGORIZE = "categories_items";
+    public static final String PRIVILEGE_ITEMS_CATEGORIZE = "categorize_items";
     public static final String PRIVILEGE_ITEMS_CREATE_NEW = "create_new_items";
     public static final String PRIVILEGE_ITEMS_DELETE = "delete_items";
     public static final String PRIVILEGE_ITEMS_EDIT = "edit_items";
