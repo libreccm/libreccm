@@ -24,6 +24,7 @@ import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
 
 import javax.enterprise.context.RequestScoped;
+import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
 /**
@@ -34,6 +35,20 @@ import javax.transaction.Transactional;
 public class ContentSectionRepository
     extends AbstractEntityRepository<Long, ContentSection> {
 
+    public ContentSection findByLabel(final String label) {
+        if (label == null || label.isEmpty()) {
+            throw new IllegalArgumentException(
+                "The label of a ContentSection can't be empty.");
+        }
+        
+        final TypedQuery<ContentSection> query = getEntityManager()
+            .createNamedQuery("ContentSection.findByLabel", 
+                              ContentSection.class);
+        query.setParameter("label", label);
+        
+        return query.getSingleResult();
+    }
+
     @Override
     public Class<ContentSection> getEntityClass() {
         return ContentSection.class;
@@ -43,7 +58,7 @@ public class ContentSectionRepository
     public boolean isNew(final ContentSection section) {
         return section.getObjectId() == 0;
     }
-    
+
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
     @Transactional(Transactional.TxType.REQUIRED)
@@ -51,7 +66,7 @@ public class ContentSectionRepository
     public void save(final ContentSection section) {
         super.save(section);
     }
-    
+
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
     @Transactional(Transactional.TxType.REQUIRED)

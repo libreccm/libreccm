@@ -39,12 +39,16 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+import org.libreccm.security.Role;
+import org.libreccm.security.RoleRepository;
 import org.libreccm.tests.categories.IntegrationTest;
 import org.librecms.Cms;
 
 import java.io.File;
 
-import static org.junit.Assert.*;
+import javax.inject.Inject;
+
+import static org.librecms.CmsConstants.*;
 
 /**
  *
@@ -56,6 +60,15 @@ import static org.junit.Assert.*;
 @Transactional(TransactionMode.COMMIT)
 @CreateSchema({"create_ccm_cms_schema.sql"})
 public class ContentSectionManagerTest {
+
+    @Inject
+    private ContentSectionRepository repository;
+
+    @Inject
+    private ContentSectionManager manager;
+
+    @Inject
+    private RoleRepository roleRepository;
 
     public ContentSectionManagerTest() {
     }
@@ -111,6 +124,7 @@ public class ContentSectionManagerTest {
         excludeColumns = {"section_id"})
     @InSequence(100)
     public void createSection() {
+        manager.createContentSection("test");
     }
 
     @Test
@@ -122,7 +136,9 @@ public class ContentSectionManagerTest {
         excludeColumns = {"section_id"})
     @InSequence(200)
     public void renameSection() {
-        //Rename main to content
+        final ContentSection section = repository.findByLabel("info");
+
+        manager.renameContentSection(section, "content");
     }
 
     @Test
@@ -134,9 +150,15 @@ public class ContentSectionManagerTest {
         excludeColumns = {"section_id"})
     @InSequence(300)
     public void addRole() {
+        final ContentSection section = repository.findByLabel("info");
 
+        manager.addRoleToContentSection(section,
+                                        "reviewer",
+                                        PRIVILEGE_ITEMS_VIEW_PUBLISHED,
+                                        PRIVILEGE_ITEMS_PREVIEW,
+                                        PRIVILEGE_ITEMS_APPROVE);
     }
-    
+
     @Test
     @UsingDataSet("datasets/org/librecms/contentsection/"
                       + "ContentSectionManagerTest/data.xml")
@@ -146,7 +168,10 @@ public class ContentSectionManagerTest {
         excludeColumns = {"section_id"})
     @InSequence(300)
     public void removeRole() {
+        final ContentSection section = repository.findByLabel("info");
+        final Role role = roleRepository.findByName("info_publisher");
 
+        manager.removeRoleFromContentSection(section, role);
     }
 
 }

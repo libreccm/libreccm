@@ -208,7 +208,7 @@ public class ContentSectionManager {
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
     @Transactional(Transactional.TxType.REQUIRED)
-    public void removeTypeToSection(final ContentType type,
+    public void removeTypeFromSection(final ContentType type,
                                     final ContentSection section) {
         throw new UnsupportedOperationException();
     }
