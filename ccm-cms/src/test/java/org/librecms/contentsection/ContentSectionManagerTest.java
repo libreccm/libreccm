@@ -122,7 +122,7 @@ public class ContentSectionManagerTest {
         excludeColumns = {"section_id"})
     @InSequence(200)
     public void renameSection() {
-
+        //Rename main to content
     }
 
     @Test

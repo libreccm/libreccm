@@ -43,8 +43,11 @@ public class DatasetsTest extends DatasetsVerifier {
     @Parameterized.Parameters(name = "Dataset {0}")
     public static Collection<String> data() {
         return Arrays.asList(new String[]{
-            "/datasets/org/librecms/contentsection/ContentSectionManagerTest/data.xml"
-        });
+            "/datasets/org/librecms/contentsection/ContentSectionManagerTest/data.xml",
+            "/datasets/org/librecms/contentsection/ContentSectionManagerTest/after-add-role.xml",
+            "/datasets/org/librecms/contentsection/ContentSectionManagerTest/after-create.xml",
+            "/datasets/org/librecms/contentsection/ContentSectionManagerTest/after-remove-role.xml",
+            "/datasets/org/librecms/contentsection/ContentSectionManagerTest/after-rename.xml" });
     }
 
     public DatasetsTest(final String datasetPath) {
@@ -55,7 +58,7 @@ public class DatasetsTest extends DatasetsVerifier {
     public DatasetType getDatasetType() {
         return DatasetType.FLAT_XML;
     }
-    
+
     @Override
     public String[] getSchemas() {
         return new String[]{"ccm_core", "ccm_cms"};
