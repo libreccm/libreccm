@@ -138,6 +138,7 @@ public class ShortcutManagerTest {
         return ShrinkWrap.create(
             WebArchive.class,
             "LibreCCM-org.libreccm.shortcuts.ShortcutTest-web.war")
+            .addPackage(org.libreccm.auditing.CcmRevision.class.getPackage())
             .addPackage(org.libreccm.categorization.Categorization.class
                 .getPackage())
             .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())

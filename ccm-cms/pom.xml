@@ -379,7 +379,7 @@
                         <directory>src/test/resources</directory>
                     </testResource>
                     <testResource>
-                        <directory>src/test/resources-wildfly8-remote-h2-mem</directory>
+                        <directory>src/test/resources-wildfly-remote-h2-mem</directory>
                     </testResource>
                     <testResource>
                         <directory>${project.build.directory}/generated-resources</directory>
@@ -465,7 +465,7 @@
                         <directory>src/test/resources</directory>
                     </testResource>
                     <testResource>
-                        <directory>src/test/resources-wildfly8-remote-pgsql</directory>
+                        <directory>src/test/resources-wildfly-remote-pgsql</directory>
                     </testResource>
                     <testResource>
                         <directory>${project.build.directory}/generated-resources</directory>

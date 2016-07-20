@@ -18,6 +18,9 @@
  */
 package org.librecms.contentsection;
 
+import com.arsdigita.ui.admin.applications.DefaultApplicationInstanceForm;
+import com.arsdigita.ui.admin.applications.DefaultApplicationSettingsPane;
+
 import org.libreccm.categorization.Category;
 import org.libreccm.security.Role;
 import org.libreccm.web.CcmApplication;
@@ -52,7 +55,7 @@ import static org.librecms.CmsConstants.*;
 @NamedQueries(
     @NamedQuery(
         name = "ContentSection.findByLabel",
-        query = "SELECT s FROM ContentSection s WHERE c.label = :label")
+        query = "SELECT s FROM ContentSection s WHERE s.label = :label")
 )
 @ApplicationType(
     name = CONTENT_SECTION_APP_TYPE,

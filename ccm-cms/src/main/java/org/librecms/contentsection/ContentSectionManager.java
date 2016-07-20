@@ -69,6 +69,11 @@ public class ContentSectionManager {
     @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
     @Transactional(Transactional.TxType.REQUIRED)
     public ContentSection createContentSection(final String name) {
+        if (name == null || name.isEmpty()) {
+            throw new IllegalArgumentException(
+                "The name of a ContentSection can't be blank.");
+        }
+
         final ContentSection section = new ContentSection();
         section.setLabel(name);
 
@@ -86,16 +91,16 @@ public class ContentSectionManager {
         categoryRepo.save(rootAssetFolder);
 
         addRoleToContentSection(section,
-                                String.format("%s_" + ALERT_RECIPIENT, name));
+                                ALERT_RECIPIENT);
         addRoleToContentSection(section,
-                                String.format("%s_" + AUTHOR, name),
+                                AUTHOR,
                                 PRIVILEGE_ITEMS_CATEGORIZE,
                                 PRIVILEGE_ITEMS_CREATE_NEW,
                                 PRIVILEGE_ITEMS_EDIT,
                                 PRIVILEGE_ITEMS_VIEW_PUBLISHED,
                                 PRIVILEGE_ITEMS_PREVIEW);
         addRoleToContentSection(section,
-                                String.format("%s_" + EDITOR, name),
+                                EDITOR,
                                 PRIVILEGE_ITEMS_CATEGORIZE,
                                 PRIVILEGE_ITEMS_CREATE_NEW,
                                 PRIVILEGE_ITEMS_EDIT,
@@ -104,7 +109,7 @@ public class ContentSectionManager {
                                 PRIVILEGE_ITEMS_VIEW_PUBLISHED,
                                 PRIVILEGE_ITEMS_PREVIEW);
         addRoleToContentSection(section,
-                                String.format("%s_" + MANAGER, name),
+                                MANAGER, name,
                                 PRIVILEGE_ADMINISTER_ROLES,
                                 PRIVILEGE_ADMINISTER_WORKFLOW,
                                 PRIVILEGE_ADMINISTER_LIFECYLES,
@@ -119,7 +124,7 @@ public class ContentSectionManager {
                                 PRIVILEGE_ITEMS_VIEW_PUBLISHED,
                                 PRIVILEGE_ITEMS_PREVIEW);
         addRoleToContentSection(section,
-                                String.format("%s_" + PUBLISHER, name),
+                                PUBLISHER, name,
                                 PRIVILEGE_ITEMS_CATEGORIZE,
                                 PRIVILEGE_ITEMS_CREATE_NEW,
                                 PRIVILEGE_ITEMS_EDIT,
@@ -129,7 +134,7 @@ public class ContentSectionManager {
                                 PRIVILEGE_ITEMS_VIEW_PUBLISHED,
                                 PRIVILEGE_ITEMS_PREVIEW);
         addRoleToContentSection(section,
-                                String.format("%s_" + CONTENT_READER, name),
+                                CONTENT_READER, name,
                                 PRIVILEGE_ITEMS_VIEW_PUBLISHED);
 
         return section;
@@ -209,7 +214,7 @@ public class ContentSectionManager {
     @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
     @Transactional(Transactional.TxType.REQUIRED)
     public void removeTypeFromSection(final ContentType type,
-                                    final ContentSection section) {
+                                      final ContentSection section) {
         throw new UnsupportedOperationException();
     }
 

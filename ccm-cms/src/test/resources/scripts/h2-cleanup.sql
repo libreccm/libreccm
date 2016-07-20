@@ -1,3 +1,5 @@
+DELETE FROM ccm_cms.content_sections;
+
 DELETE FROM ccm_core.settings_string_list;
 
 DELETE FROM ccm_core.settings_l10n_str_values;

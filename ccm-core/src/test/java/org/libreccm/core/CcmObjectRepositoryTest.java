@@ -106,6 +106,7 @@ public class CcmObjectRepositoryTest {
         return ShrinkWrap
             .create(WebArchive.class,
                     "LibreCCM-org.libreccm.core.CcmObjectRepositoryTest.war")
+            .addPackage(org.libreccm.auditing.CcmRevision.class.getPackage())
             .addPackage(org.libreccm.categorization.Categorization.class
                 .getPackage())
             .addPackage(org.libreccm.configuration.Configuration.class.
@@ -249,9 +250,10 @@ public class CcmObjectRepositoryTest {
     @Test
     @UsingDataSet(
         "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.yml")
-    @ShouldMatchDataSet(value
-                            = "datasets/org/libreccm/core/CcmObjectRepositoryTest/after-save-new.yml",
-                        excludeColumns = {"object_id", "uuid"})
+    @ShouldMatchDataSet(
+        value = "datasets/org/libreccm/core/CcmObjectRepositoryTest/"
+                    + "after-save-new.yml",
+        excludeColumns = {"object_id", "uuid"})
     @InSequence(300)
     public void saveNewCcmObject() {
         final CcmObject obj = new CcmObject();
@@ -263,9 +265,10 @@ public class CcmObjectRepositoryTest {
     @Test
     @UsingDataSet(
         "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.yml")
-    @ShouldMatchDataSet(value
-                            = "datasets/org/libreccm/core/CcmObjectRepositoryTest/after-save-changed.yml",
-                        excludeColumns = {"object_id"})
+    @ShouldMatchDataSet(
+        value = "datasets/org/libreccm/core/CcmObjectRepositoryTest/"
+                    + "after-save-changed.yml",
+        excludeColumns = {"object_id"})
     @InSequence(400)
     public void saveChangedCcmObject() {
         final CcmObject obj = ccmObjectRepository.findById(-20L);
@@ -284,9 +287,10 @@ public class CcmObjectRepositoryTest {
     @Test
     @UsingDataSet(
         "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.yml")
-    @ShouldMatchDataSet(value
-                            = "datasets/org/libreccm/core/CcmObjectRepositoryTest/after-delete.yml",
-                        excludeColumns = {"object_id"})
+    @ShouldMatchDataSet(
+        value = "datasets/org/libreccm/core/CcmObjectRepositoryTest/"
+                    + "after-delete.yml",
+        excludeColumns = {"object_id"})
     @InSequence(600)
     public void deleteCcmObject() {
         final CcmObject obj = ccmObjectRepository.findById(-20L);

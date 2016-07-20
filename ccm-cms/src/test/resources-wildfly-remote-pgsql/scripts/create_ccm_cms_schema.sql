@@ -1,3 +1,10 @@
+DROP SCHEMA IF EXISTS ccm_shortcuts;
+DROP SCHEMA IF EXISTS ccm_cms;
+
+DROP SEQUENCE IF EXISTS hibernate_sequence;
+
+CREATE SCHEMA ccm_core;
+CREATE SCHEMA ccm_cms;
 
     create table CCM_CMS.ARTICLE_LEADS (
         OBJECT_ID int8 not null,

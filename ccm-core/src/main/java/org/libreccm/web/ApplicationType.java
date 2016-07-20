@@ -92,7 +92,7 @@ public @interface ApplicationType {
     boolean singleton() default false;
 
     /**
-     * Path to the primary Servlet of the application type. If the servlet class
+     * Path to the primary Servlet of the application type. If the Servlet class
      * is provided and is annotated with the {@link WebServlet} annotation the
      * path can be determined from the annotation.
      *

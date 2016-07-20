@@ -355,7 +355,7 @@ public class CcmObject implements Identifiable, Serializable {
      * </pre>
      *
      * The content of the curly braces should be the string representation of
-     * the object. If the object is very complex it might be sufficent to
+     * the object. If the object is very complex it might be sufficient to
      * include only a subset of the objects properties.
      *
      * Likewise, strings would be enclosed by quotes. The value of date

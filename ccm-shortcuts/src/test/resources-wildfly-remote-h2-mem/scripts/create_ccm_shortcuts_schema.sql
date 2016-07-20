@@ -76,6 +76,14 @@ CREATE SCHEMA ccm_shortcuts;
         primary key (OBJECT_ID)
     );
 
+    create table CCM_CORE.CCM_OBJECTS_AUD (
+        OBJECT_ID bigint not null,
+        REV integer not null,
+        REVTYPE tinyint,
+        DISPLAY_NAME varchar(255),
+        primary key (OBJECT_ID, REV)
+    );
+
     create table CCM_CORE.CCM_REVISIONS (
         id integer not null,
         timestamp bigint not null,
@@ -482,10 +490,10 @@ CREATE SCHEMA ccm_shortcuts;
         SETTING_ID bigint not null,
         CONFIGURATION_CLASS varchar(512) not null,
         NAME varchar(512) not null,
-        SETTING_VALUE_BOOLEAN boolean,
-        SETTING_VALUE_LONG bigint,
-        SETTING_VALUE_STRING varchar(1024),
         SETTING_VALUE_DOUBLE double,
+        SETTING_VALUE_LONG bigint,
+        SETTING_VALUE_BOOLEAN boolean,
+        SETTING_VALUE_STRING varchar(1024),
         SETTING_VALUE_BIG_DECIMAL decimal(19,2),
         primary key (SETTING_ID)
     );
@@ -586,15 +594,17 @@ CREATE SCHEMA ccm_shortcuts;
         primary key (TASK_ID, LOCALE)
     );
 
+    create table CCM_CORE.WORKFLOW_TEMPLATES (
+        WORKFLOW_ID bigint not null,
+        primary key (WORKFLOW_ID)
+    );
+
     create table CCM_CORE.WORKFLOW_USER_TASKS (
-        TASK_ID bigint not null,
-        ACTIVE boolean,
-        TASK_STATE varchar(512),
-        WORKFLOW_ID bigint,
         DUE_DATE timestamp,
         DURATION_MINUTES bigint,
         LOCKED boolean,
         START_DATE timestamp,
+        TASK_ID bigint not null,
         LOCKING_USER_ID bigint,
         NOTIFICATION_SENDER bigint,
         primary key (TASK_ID)
@@ -632,7 +642,6 @@ CREATE SCHEMA ccm_shortcuts;
 
     alter table CCM_SHORTCUTS.SHORTCUTS 
         add constraint UK_4otuwtog6qqdbg4e6p8xdpw8h unique (URL_KEY);
-
 create sequence hibernate_sequence start with 1 increment by 1;
 
     alter table CCM_CORE.APPLICATIONS 
@@ -684,6 +693,11 @@ create sequence hibernate_sequence start with 1 increment by 1;
         add constraint FKka9bt9f5br0kji5bcjxcmf6ch 
         foreign key (OBJECT_ID) 
         references CCM_CORE.CATEGORIES;
+
+    alter table CCM_CORE.CCM_OBJECTS_AUD 
+        add constraint FKr00eauutiyvocno8ckx6h9nw6 
+        foreign key (REV) 
+        references CCM_CORE.CCM_REVISIONS;
 
     alter table CCM_CORE.DIGESTS 
         add constraint FKc53g09agnye3w1v4euy3e0gsi 
@@ -1065,8 +1079,38 @@ create sequence hibernate_sequence start with 1 increment by 1;
         foreign key (WORKFLOW_ID) 
         references CCM_CORE.WORKFLOWS;
 
+    alter table CCM_CORE.WORKFLOW_TASK_COMMENTS 
+        add constraint FKkfqrf9jdvm7livu5if06w0r5t 
+        foreign key (TASK_ID) 
+        references CCM_CORE.WORKFLOW_TASKS;
+
+    alter table CCM_CORE.WORKFLOW_TASK_DEPENDENCIES 
+        add constraint FK1htp420ki24jaswtcum56iawe 
+        foreign key (DEPENDENT_TASK_ID) 
+        references CCM_CORE.WORKFLOW_TASKS;
+
+    alter table CCM_CORE.WORKFLOW_TASK_DEPENDENCIES 
+        add constraint FK8rbggnp4yjpab8quvvx800ymy 
+        foreign key (DEPENDS_ON_TASK_ID) 
+        references CCM_CORE.WORKFLOW_TASKS;
+
+    alter table CCM_CORE.WORKFLOW_TASK_LABELS 
+        add constraint FKf715qud6g9xv2xeb8rrpnv4xs 
+        foreign key (TASK_ID) 
+        references CCM_CORE.WORKFLOW_TASKS;
+
     alter table CCM_CORE.WORKFLOW_TASKS 
         add constraint FK1693cbc36e4d8gucg8q7sc57e 
+        foreign key (WORKFLOW_ID) 
+        references CCM_CORE.WORKFLOWS;
+
+    alter table CCM_CORE.WORKFLOW_TASKS_DESCRIPTIONS 
+        add constraint FK2s2498d2tpojjrtghq7iyaosv 
+        foreign key (TASK_ID) 
+        references CCM_CORE.WORKFLOW_TASKS;
+
+    alter table CCM_CORE.WORKFLOW_TEMPLATES 
+        add constraint FK8692vdme4yxnkj1m0k1dw74pk 
         foreign key (WORKFLOW_ID) 
         references CCM_CORE.WORKFLOWS;
 
@@ -1081,6 +1125,6 @@ create sequence hibernate_sequence start with 1 increment by 1;
         references CCM_CORE.USERS;
 
     alter table CCM_CORE.WORKFLOW_USER_TASKS 
-        add constraint FK_bg60xxg9kerqsxyphbfxulg8y 
-        foreign key (WORKFLOW_ID) 
-        references CCM_CORE.WORKFLOWS;
+        add constraint FKefpdf9ojplu7loo31hfm0wl2h 
+        foreign key (TASK_ID) 
+        references CCM_CORE.WORKFLOW_TASKS;

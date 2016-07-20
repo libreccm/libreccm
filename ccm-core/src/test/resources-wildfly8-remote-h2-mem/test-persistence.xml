@@ -32,8 +32,8 @@
                 We are using the ValidityAuditStrategy here because it is faster
                 when querying data than the DefaultStrategy
             -->
-            <property name="org.hibernate.envers.audit_strategy" 
-                      value="org.hibernate.envers.strategy.ValidityAuditStrategy"/>
+            <!--<property name="org.hibernate.envers.audit_strategy" 
+                      value="org.hibernate.envers.strategy.ValidityAuditStrategy"/>-->
         </properties>
     </persistence-unit>
     

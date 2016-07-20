@@ -22,14 +22,19 @@ import com.arsdigita.ui.admin.applications.AdminApplicationCreator;
 import com.arsdigita.ui.admin.AdminServlet;
 import com.arsdigita.ui.admin.AdminUiConstants;
 import com.arsdigita.ui.admin.applications.AdminApplicationSetup;
+import com.arsdigita.ui.admin.applications.DefaultApplicationInstanceForm;
+import com.arsdigita.ui.admin.applications.DefaultApplicationSettingsPane;
 import com.arsdigita.ui.login.LoginApplicationCreator;
 import com.arsdigita.ui.login.LoginServlet;
 import com.arsdigita.ui.login.LoginApplicationSetup;
 import com.arsdigita.ui.login.LoginConstants;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+
 import javax.persistence.EntityManager;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -83,23 +88,23 @@ public class CcmCore implements CcmModule {
     public void install(final InstallEvent event) {
         LOGGER.info("Setting up system users...");
         final SystemUsersSetup systemUsersSetup = new SystemUsersSetup(
-                event);
+            event);
         systemUsersSetup.setupSystemUsers();
 
         LOGGER.info("Setting up admin application (/ccm/admin/)...");
         final AdminApplicationSetup adminSetup
-                                    = new AdminApplicationSetup(event);
+                                        = new AdminApplicationSetup(event);
         adminSetup.setup();
 
         LOGGER.info("Setting up login application...");
         final LoginApplicationSetup loginSetup
-                                    = new LoginApplicationSetup(event);
+                                        = new LoginApplicationSetup(event);
         loginSetup.setup();
 
         LOGGER.info("Importing category domains from bundle (if any)...");
         final Properties integrationProps = new Properties();
         try (final InputStream inputStream = getClass().getResourceAsStream(
-                CoreConstants.INTEGRATION_PROPS)) {
+            CoreConstants.INTEGRATION_PROPS)) {
             if (inputStream == null) {
                 LOGGER.warn("Integration properties file was not found.");
             } else {
@@ -107,7 +112,7 @@ public class CcmCore implements CcmModule {
             }
         } catch (IOException ex) {
             LOGGER.warn("Failed to read integration properties. "
-                                + "Using empty proeprties.");
+                            + "Using empty proeprties.");
         }
 
         if (integrationProps.containsKey("bundle.domains")) {
@@ -133,7 +138,7 @@ public class CcmCore implements CcmModule {
         //Nothing
     }
 
-    private void importDomains(final String domainFiles, 
+    private void importDomains(final String domainFiles,
                                final EntityManager entityManager) {
         final String[] tokens = domainFiles.split(",");
 
@@ -161,4 +166,5 @@ public class CcmCore implements CcmModule {
 //                        domainFile);
 //        }
     }
+
 }

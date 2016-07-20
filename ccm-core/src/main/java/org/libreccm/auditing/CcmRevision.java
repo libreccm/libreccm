@@ -39,7 +39,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "CCM_REVISIONS", schema = DB_SCHEMA)
-@RevisionEntity()
+@RevisionEntity(CcmRevisionListener.class)
 public class CcmRevision extends DefaultRevisionEntity {
 
     private static final long serialVersionUID = -3458682765535922544L;

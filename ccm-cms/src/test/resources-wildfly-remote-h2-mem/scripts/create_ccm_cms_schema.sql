@@ -1,3 +1,10 @@
+DROP SCHEMA IF EXISTS ccm_cms;
+DROP SCHEMA IF EXISTS ccm_core;
+
+DROP SEQUENCE IF EXISTS hibernate_sequence;
+
+CREATE SCHEMA ccm_core;
+CREATE SCHEMA ccm_cms;
 
     create table CCM_CMS.ARTICLE_LEADS (
         OBJECT_ID bigint not null,
@@ -16,11 +23,11 @@
     create table CCM_CMS.ARTICLE_TEXTS_AUD (
         REV integer not null,
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob not null,
+        LOCALIZED_VALUE clob,
         LOCALE varchar(255) not null,
         REVTYPE tinyint,
         REVEND integer,
-        primary key (REV, OBJECT_ID, LOCALIZED_VALUE, LOCALE)
+        primary key (REV, OBJECT_ID, LOCALE)
     );
 
     create table CCM_CMS.ARTICLES (
@@ -44,11 +51,11 @@
     create table CCM_CMS.ASSET_TITLES_AUD (
         REV integer not null,
         ASSET_ID bigint not null,
-        LOCALIZED_VALUE clob not null,
+        LOCALIZED_VALUE clob,
         LOCALE varchar(255) not null,
         REVTYPE tinyint,
         REVEND integer,
-        primary key (REV, ASSET_ID, LOCALIZED_VALUE, LOCALE)
+        primary key (REV, ASSET_ID, LOCALE)
     );
 
     create table CCM_CMS.ASSETS (
@@ -76,11 +83,11 @@
     create table CCM_CMS.ATTACHMENT_LIST_CAPTIONS_AUD (
         REV integer not null,
         LIST_ID bigint not null,
-        LOCALIZED_VALUE clob not null,
+        LOCALIZED_VALUE clob,
         LOCALE varchar(255) not null,
         REVTYPE tinyint,
         REVEND integer,
-        primary key (REV, LIST_ID, LOCALIZED_VALUE, LOCALE)
+        primary key (REV, LIST_ID, LOCALE)
     );
 
     create table CCM_CMS.ATTACHMENT_LISTS (
@@ -153,11 +160,11 @@
     create table CCM_CMS.BINARY_ASSET_DESCRIPTIONS_AUD (
         REV integer not null,
         ASSET_ID bigint not null,
-        LOCALIZED_VALUE clob not null,
+        LOCALIZED_VALUE clob,
         LOCALE varchar(255) not null,
         REVTYPE tinyint,
         REVEND integer,
-        primary key (REV, ASSET_ID, LOCALIZED_VALUE, LOCALE)
+        primary key (REV, ASSET_ID, LOCALE)
     );
 
     create table CCM_CMS.BINARY_ASSETS (
@@ -189,11 +196,11 @@
     create table CCM_CMS.BOOKMARK_DESCRIPTIONS_AUD (
         REV integer not null,
         ASSET_ID bigint not null,
-        LOCALIZED_VALUE clob not null,
+        LOCALIZED_VALUE clob,
         LOCALE varchar(255) not null,
         REVTYPE tinyint,
         REVEND integer,
-        primary key (REV, ASSET_ID, LOCALIZED_VALUE, LOCALE)
+        primary key (REV, ASSET_ID, LOCALE)
     );
 
     create table CCM_CMS.BOOKMARKS (
@@ -219,11 +226,11 @@
     create table CCM_CMS.CONTENT_ITEM_DESCRIPTIONS_AUD (
         REV integer not null,
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob not null,
+        LOCALIZED_VALUE clob,
         LOCALE varchar(255) not null,
         REVTYPE tinyint,
         REVEND integer,
-        primary key (REV, OBJECT_ID, LOCALIZED_VALUE, LOCALE)
+        primary key (REV, OBJECT_ID, LOCALE)
     );
 
     create table CCM_CMS.CONTENT_ITEM_NAMES (
@@ -236,11 +243,11 @@
     create table CCM_CMS.CONTENT_ITEM_NAMES_AUD (
         REV integer not null,
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob not null,
+        LOCALIZED_VALUE clob,
         LOCALE varchar(255) not null,
         REVTYPE tinyint,
         REVEND integer,
-        primary key (REV, OBJECT_ID, LOCALIZED_VALUE, LOCALE)
+        primary key (REV, OBJECT_ID, LOCALE)
     );
 
     create table CCM_CMS.CONTENT_ITEM_TITLES (
@@ -253,11 +260,11 @@
     create table CCM_CMS.CONTENT_ITEM_TITLES_AUD (
         REV integer not null,
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob not null,
+        LOCALIZED_VALUE clob,
         LOCALE varchar(255) not null,
         REVTYPE tinyint,
         REVEND integer,
-        primary key (REV, OBJECT_ID, LOCALIZED_VALUE, LOCALE)
+        primary key (REV, OBJECT_ID, LOCALE)
     );
 
     create table CCM_CMS.CONTENT_ITEMS (
@@ -339,11 +346,11 @@
     create table CCM_CMS.EVENT_COSTS_AUD (
         REV integer not null,
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob not null,
+        LOCALIZED_VALUE clob,
         LOCALE varchar(255) not null,
         REVTYPE tinyint,
         REVEND integer,
-        primary key (REV, OBJECT_ID, LOCALIZED_VALUE, LOCALE)
+        primary key (REV, OBJECT_ID, LOCALE)
     );
 
     create table CCM_CMS.EVENT_DATES (
@@ -356,11 +363,11 @@
     create table CCM_CMS.EVENT_DATES_AUD (
         REV integer not null,
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob not null,
+        LOCALIZED_VALUE clob,
         LOCALE varchar(255) not null,
         REVTYPE tinyint,
         REVEND integer,
-        primary key (REV, OBJECT_ID, LOCALIZED_VALUE, LOCALE)
+        primary key (REV, OBJECT_ID, LOCALE)
     );
 
     create table CCM_CMS.EVENT_LOCATIONS (
@@ -373,11 +380,11 @@
     create table CCM_CMS.EVENT_LOCATIONS_AUD (
         REV integer not null,
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob not null,
+        LOCALIZED_VALUE clob,
         LOCALE varchar(255) not null,
         REVTYPE tinyint,
         REVEND integer,
-        primary key (REV, OBJECT_ID, LOCALIZED_VALUE, LOCALE)
+        primary key (REV, OBJECT_ID, LOCALE)
     );
 
     create table CCM_CMS.EVENT_MAIN_CONTRIBUTORS (
@@ -390,11 +397,11 @@
     create table CCM_CMS.EVENT_MAIN_CONTRIBUTORS_AUD (
         REV integer not null,
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob not null,
+        LOCALIZED_VALUE clob,
         LOCALE varchar(255) not null,
         REVTYPE tinyint,
         REVEND integer,
-        primary key (REV, OBJECT_ID, LOCALIZED_VALUE, LOCALE)
+        primary key (REV, OBJECT_ID, LOCALE)
     );
 
     create table CCM_CMS.EVENT_TEXTS (
@@ -407,11 +414,11 @@
     create table CCM_CMS.EVENT_TEXTS_AUD (
         REV integer not null,
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob not null,
+        LOCALIZED_VALUE clob,
         LOCALE varchar(255) not null,
         REVTYPE tinyint,
         REVEND integer,
-        primary key (REV, OBJECT_ID, LOCALIZED_VALUE, LOCALE)
+        primary key (REV, OBJECT_ID, LOCALE)
     );
 
     create table CCM_CMS.EVENT_TYPES (
@@ -424,11 +431,11 @@
     create table CCM_CMS.EVENT_TYPES_AUD (
         REV integer not null,
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob not null,
+        LOCALIZED_VALUE clob,
         LOCALE varchar(255) not null,
         REVTYPE tinyint,
         REVEND integer,
-        primary key (REV, OBJECT_ID, LOCALIZED_VALUE, LOCALE)
+        primary key (REV, OBJECT_ID, LOCALE)
     );
 
     create table CCM_CMS.EVENTS (
@@ -543,11 +550,11 @@
     create table CCM_CMS.LEGAL_METADATA_RIGHTS_AUD (
         REV integer not null,
         ASSET_ID bigint not null,
-        LOCALIZED_VALUE clob not null,
+        LOCALIZED_VALUE clob,
         LOCALE varchar(255) not null,
         REVTYPE tinyint,
         REVEND integer,
-        primary key (REV, ASSET_ID, LOCALIZED_VALUE, LOCALE)
+        primary key (REV, ASSET_ID, LOCALE)
     );
 
     create table CCM_CMS.LIFECYCLE_DEFINITION_DESCRIPTIONS (
@@ -626,11 +633,11 @@
     create table CCM_CMS.MPA_SECTION_TEXTS_AUD (
         REV integer not null,
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob not null,
+        LOCALIZED_VALUE clob,
         LOCALE varchar(255) not null,
         REVTYPE tinyint,
         REVEND integer,
-        primary key (REV, OBJECT_ID, LOCALIZED_VALUE, LOCALE)
+        primary key (REV, OBJECT_ID, LOCALE)
     );
 
     create table CCM_CMS.MPA_SECTION_TITLES (
@@ -643,11 +650,11 @@
     create table CCM_CMS.MPA_SECTION_TITLES_AUD (
         REV integer not null,
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob not null,
+        LOCALIZED_VALUE clob,
         LOCALE varchar(255) not null,
         REVTYPE tinyint,
         REVEND integer,
-        primary key (REV, OBJECT_ID, LOCALIZED_VALUE, LOCALE)
+        primary key (REV, OBJECT_ID, LOCALE)
     );
 
     create table CCM_CMS.MPA_SUMMARIES (
@@ -660,11 +667,11 @@
     create table CCM_CMS.MPA_SUMMARIES_AUD (
         REV integer not null,
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob not null,
+        LOCALIZED_VALUE clob,
         LOCALE varchar(255) not null,
         REVTYPE tinyint,
         REVEND integer,
-        primary key (REV, OBJECT_ID, LOCALIZED_VALUE, LOCALE)
+        primary key (REV, OBJECT_ID, LOCALE)
     );
 
     create table CCM_CMS.MULTIPART_ARTICLE_SECTIONS (
@@ -730,11 +737,11 @@
     create table CCM_CMS.NEWS_TEXTS_AUD (
         REV integer not null,
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob not null,
+        LOCALIZED_VALUE clob,
         LOCALE varchar(255) not null,
         REVTYPE tinyint,
         REVEND integer,
-        primary key (REV, OBJECT_ID, LOCALIZED_VALUE, LOCALE)
+        primary key (REV, OBJECT_ID, LOCALE)
     );
 
     create table CCM_CMS.NOTE_TEXTS (
@@ -747,11 +754,11 @@
     create table CCM_CMS.NOTE_TEXTS_AUD (
         REV integer not null,
         ASSET_ID bigint not null,
-        LOCALIZED_VALUE clob not null,
+        LOCALIZED_VALUE clob,
         LOCALE varchar(255) not null,
         REVTYPE tinyint,
         REVEND integer,
-        primary key (REV, ASSET_ID, LOCALIZED_VALUE, LOCALE)
+        primary key (REV, ASSET_ID, LOCALE)
     );
 
     create table CCM_CMS.NOTES (
