@@ -16,13 +16,15 @@
                          name="info_root" 
                          enabled="true"
                          visible="true"
-                         abstract_category="false" />
+                         abstract_category="false" 
+                         category_order="1" />
     <ccm_core.categories object_id="-2200"
                          unique_id="b163f73c-9ac2-44d7-a037-de621f5ca828"
                          name="info_assets" 
                          enabled="true"
                          visible="true"
-                         abstract_category="false"/>
+                         abstract_category="false" 
+                         category_order="1" />
                              
     <ccm_core.category_titles object_id="-2100" 
                               locale="en" 
@@ -37,9 +39,9 @@
                               locale="en"
                               localized_value="info" />
     
-    <ccm_core.resource_descriptions object_id="-1100" 
-                                    locale="en"
-                                    localized_value="Initial content section" />
+    <!--<ccm_core.resource_descriptions object_id="-1100" 
+    locale="en"
+    localized_value="Initial content section" />-->
     
     <ccm_core.applications object_id="-1100"
                            application_type="org.librecms.contentsection.ContentSection"
@@ -126,7 +128,7 @@
                           grantee_id="-3300" 
                           creation_date="2016-07-15"/>
     <ccm_core.permissions permission_id="-4250" 
-                          granted_privilege="delete_item" 
+                          granted_privilege="delete_items" 
                           object_id="-2100" 
                           grantee_id="-3300" 
                           creation_date="2016-07-15"/>
@@ -161,7 +163,7 @@
                           grantee_id="-3400" 
                           creation_date="2016-07-15"/>
     <ccm_core.permissions permission_id="-4350" 
-                          granted_privilege="administer_content_items" 
+                          granted_privilege="administer_content_types" 
                           object_id="-1100" 
                           grantee_id="-3400" 
                           creation_date="2016-07-15"/>
@@ -191,7 +193,7 @@
                           grantee_id="-3400" 
                           creation_date="2016-07-15"/>
     <ccm_core.permissions permission_id="-4410" 
-                          granted_privilege="delete_item" 
+                          granted_privilege="delete_items" 
                           object_id="-2100" 
                           grantee_id="-3400" 
                           creation_date="2016-07-15"/>
@@ -231,7 +233,7 @@
                           grantee_id="-3500" 
                           creation_date="2016-07-15"/>
     <ccm_core.permissions permission_id="-4560" 
-                          granted_privilege="delete_item" 
+                          granted_privilege="delete_items" 
                           object_id="-2100" 
                           grantee_id="-3500" 
                           creation_date="2016-07-15"/>

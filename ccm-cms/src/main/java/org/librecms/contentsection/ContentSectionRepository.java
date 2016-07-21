@@ -23,6 +23,8 @@ import org.libreccm.core.CoreConstants;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
 
+import java.util.UUID;
+
 import javax.enterprise.context.RequestScoped;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
@@ -64,6 +66,11 @@ public class ContentSectionRepository
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public void save(final ContentSection section) {
+        if(isNew(section)) {
+            section.setUuid(UUID.randomUUID().toString());
+            section.setApplicationType(ContentSection.class.getName());
+        }
+        
         super.save(section);
     }
 

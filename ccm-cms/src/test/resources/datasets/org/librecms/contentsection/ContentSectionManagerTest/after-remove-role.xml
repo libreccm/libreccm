@@ -20,10 +20,10 @@
                  view_published_items, preview_items
     
     info_editor: categorize_items, create_new_items,, edit_items, approve_items, 
-                 delete_items, view_published_items, preview_items
+                 delete_itemss, view_published_items, preview_items
                      
     info_manager: administer_roles, administer_workflow, administer_lifecyles, 
-                  administer_categories, administer_content_items, 
+                  administer_categories, administer_content_types, 
                   categorize_items, create_new_items, edit_items, 
                   approve_items, publish_items, delete-items, 
                   view_published_items, preview_items
@@ -51,13 +51,15 @@
                          name="info_root" 
                          enabled="true"
                          visible="true"
-                         abstract_category="false" />
+                         abstract_category="false" 
+                         category_order="1" />
     <ccm_core.categories object_id="-2200"
                          unique_id="b163f73c-9ac2-44d7-a037-de621f5ca828"
                          name="info_assets" 
                          enabled="true"
                          visible="true"
-                         abstract_category="false"/>
+                         abstract_category="false" 
+                         category_order="1" />
                              
     <ccm_core.category_titles object_id="-2100" 
                               locale="en" 
@@ -72,9 +74,9 @@
                               locale="en"
                               localized_value="info" />
     
-    <ccm_core.resource_descriptions object_id="-1100" 
-                                    locale="en"
-                                    localized_value="Initial content section" />
+    <!--<ccm_core.resource_descriptions object_id="-1100" 
+    locale="en"
+    localized_value="Initial content section" />-->
     
     <ccm_core.applications object_id="-1100"
                            application_type="org.librecms.contentsection.ContentSection"
@@ -93,6 +95,8 @@
                         name="info_editor" />
     <ccm_core.ccm_roles role_id="-3400"
                         name="info_manager" />
+    <ccm_core.ccm_roles role_id="-3500"
+                        name="info_publisher" />
     <ccm_core.ccm_roles role_id="-3600"
                         name="info_content_reader" />
     
@@ -153,7 +157,7 @@
                           grantee_id="-3300" 
                           creation_date="2016-07-15"/>
     <ccm_core.permissions permission_id="-4250" 
-                          granted_privilege="delete_item" 
+                          granted_privilege="delete_items" 
                           object_id="-2100" 
                           grantee_id="-3300" 
                           creation_date="2016-07-15"/>
@@ -188,7 +192,7 @@
                           grantee_id="-3400" 
                           creation_date="2016-07-15"/>
     <ccm_core.permissions permission_id="-4350" 
-                          granted_privilege="administer_content_items" 
+                          granted_privilege="administer_content_types" 
                           object_id="-1100" 
                           grantee_id="-3400" 
                           creation_date="2016-07-15"/>
@@ -218,7 +222,7 @@
                           grantee_id="-3400" 
                           creation_date="2016-07-15"/>
     <ccm_core.permissions permission_id="-4410" 
-                          granted_privilege="delete_item" 
+                          granted_privilege="delete_items" 
                           object_id="-2100" 
                           grantee_id="-3400" 
                           creation_date="2016-07-15"/>

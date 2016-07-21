@@ -18,6 +18,8 @@
  */
 package org.librecms.contentsection;
 
+import com.arsdigita.kernel.KernelConfig;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
@@ -41,6 +43,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+import org.libreccm.categorization.CategoryRepository;
+import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.security.Role;
 import org.libreccm.security.RoleRepository;
 import org.libreccm.tests.categories.IntegrationTest;
@@ -48,6 +52,7 @@ import org.libreccm.tests.categories.IntegrationTest;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.IntStream;
 
 import javax.inject.Inject;
@@ -75,6 +80,12 @@ public class ContentSectionManagerTest {
 
     @Inject
     private RoleRepository roleRepository;
+
+    @Inject
+    private ConfigurationManager confManager;
+
+    @Inject
+    private CategoryRepository categoryRepo;
 
     public ContentSectionManagerTest() {
     }
@@ -197,7 +208,17 @@ public class ContentSectionManagerTest {
     @ShouldMatchDataSet(
         value = "datasets/org/librecms/contentsection/"
                     + "ContentSectionManagerTest/after-create.xml",
-        excludeColumns = {"object_id"})
+        excludeColumns = {"object_id",
+                          "root_assets_folder_id",
+                          "root_documents_folder_id",
+                          "permission_id",
+                          "role_id",
+                          "grantee_id",
+                          "unique_id",
+                          "uuid",
+                          "created",
+                          "section_id",
+                          "creation_date"})
     @InSequence(100)
     public void createSection() {
         manager.createContentSection("test");
@@ -215,6 +236,27 @@ public class ContentSectionManagerTest {
         final ContentSection section = repository.findByLabel("info");
 
         manager.renameContentSection(section, "content");
+
+        final KernelConfig kernelConfig = confManager.findConfiguration(
+            KernelConfig.class);
+        final Locale defaultLocale = new Locale(kernelConfig
+            .getDefaultLanguage());
+
+        section.getTitle().addValue(defaultLocale, "content");
+        repository.save(section);
+
+        section.getRootDocumentsFolder().setName("content_root");
+        section.getRootDocumentsFolder().setDisplayName("content_root");
+        section.getRootDocumentsFolder().getTitle().addValue(
+            defaultLocale, "content_root");
+
+        section.getRootAssetsFolder().setName("content_assets");
+        section.getRootAssetsFolder().setDisplayName("content_assets");
+        section.getRootAssetsFolder().getTitle().addValue(
+            defaultLocale, "content_assets");
+
+        categoryRepo.save(section.getRootDocumentsFolder());
+        categoryRepo.save(section.getRootAssetsFolder());
     }
 
     @Test
@@ -223,7 +265,11 @@ public class ContentSectionManagerTest {
     @ShouldMatchDataSet(
         value = "datasets/org/librecms/contentsection/"
                     + "ContentSectionManagerTest/after-add-role.xml",
-        excludeColumns = {"object_id"})
+        excludeColumns = {"object_id",
+                          "role_id",
+                          "permission_id",
+                          "creation_date",
+                          "grantee_id"})
     @InSequence(300)
     public void addRole() {
         final ContentSection section = repository.findByLabel("info");

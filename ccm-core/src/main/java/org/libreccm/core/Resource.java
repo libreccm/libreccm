@@ -24,6 +24,7 @@ import org.libreccm.l10n.LocalizedString;
 import org.libreccm.web.CcmApplication;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -108,6 +109,12 @@ public class Resource extends CcmObject implements Serializable {
     @ManyToOne
     private Resource parent;
 
+    public Resource() {
+        title = new LocalizedString();
+        description = new LocalizedString();
+        childs = new ArrayList<>();
+    }
+    
 //    @Column(name = "resource_type")
 //    private String resourceType;
     public LocalizedString getTitle() {

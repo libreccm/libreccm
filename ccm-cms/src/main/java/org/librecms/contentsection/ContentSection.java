@@ -41,6 +41,8 @@ import javax.persistence.Table;
 
 import org.libreccm.web.ApplicationType;
 
+import java.util.ArrayList;
+
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
@@ -52,11 +54,17 @@ import static org.librecms.CmsConstants.*;
  */
 @Entity
 @Table(name = "CONTENT_SECTIONS", schema = DB_SCHEMA)
-@NamedQueries(
+@NamedQueries({
     @NamedQuery(
         name = "ContentSection.findByLabel",
-        query = "SELECT s FROM ContentSection s WHERE s.label = :label")
-)
+        query = "SELECT s FROM ContentSection s WHERE s.label = :label"),
+    @NamedQuery(
+        name = "ContentSection.findPermissions",
+        query = "SELECT p FROM Permission p "
+                    + "WHERE (p.object = :section "
+                    + "       OR p.object = :rootDocumentsFolder) "
+                    + "AND p.grantee = :role")
+})
 @ApplicationType(
     name = CONTENT_SECTION_APP_TYPE,
     descBundle = "org.librecms.contentsection.ContentSectionResources",
@@ -112,6 +120,10 @@ public class ContentSection extends CcmApplication implements Serializable {
 
     @Column(name = "DEFAULT_LOCALE")
     private Locale defaultLocale;
+
+    public ContentSection() {
+        roles = new ArrayList<>();
+    }
 
     public String getLabel() {
         return label;
@@ -182,7 +194,20 @@ public class ContentSection extends CcmApplication implements Serializable {
     }
 
     protected void removeRole(final Role role) {
-        roles.remove(role);
+
+        int index = -1;
+        for (int i = 0; i < roles.size(); i++) {
+            if (roles.get(i).getName().equals(role.getName())) {
+                index = i;
+            }
+        }
+
+        if (index == -1) {
+            //Role not part of ContentSection
+            return;
+        }
+
+        roles.remove(index);
     }
 
     public Locale getDefaultLocale() {

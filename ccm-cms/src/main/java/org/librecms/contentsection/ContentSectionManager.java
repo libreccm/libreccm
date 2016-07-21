@@ -18,18 +18,28 @@
  */
 package org.librecms.contentsection;
 
+import com.arsdigita.kernel.KernelConfig;
+
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryRepository;
+import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.core.CoreConstants;
 import org.libreccm.security.AuthorizationRequired;
+import org.libreccm.security.Permission;
 import org.libreccm.security.PermissionManager;
 import org.libreccm.security.RequiresPrivilege;
 import org.libreccm.security.Role;
-import org.libreccm.security.RoleManager;
 import org.libreccm.security.RoleRepository;
+
+import java.util.List;
+import java.util.Locale;
+import java.util.UUID;
+import java.util.stream.Stream;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
 import static org.librecms.CmsConstants.*;
@@ -44,6 +54,9 @@ import static org.librecms.contentsection.ContentSection.*;
 public class ContentSectionManager {
 
     @Inject
+    private EntityManager entityManager;
+
+    @Inject
     private ContentSectionRepository sectionRepo;
 
     @Inject
@@ -52,11 +65,13 @@ public class ContentSectionManager {
     @Inject
     private RoleRepository roleRepo;
 
-    @Inject
-    private RoleManager roleManager;
-
+//    @Inject
+//    private RoleManager roleManager;
     @Inject
     private PermissionManager permissionManager;
+
+    @Inject
+    private ConfigurationManager confManager;
 
     /**
      * Creates a new content section including the default roles.
@@ -74,14 +89,33 @@ public class ContentSectionManager {
                 "The name of a ContentSection can't be blank.");
         }
 
+        final KernelConfig kernelConfig = confManager.findConfiguration(
+            KernelConfig.class);
+        final Locale defautLocale
+                         = new Locale(kernelConfig.getDefaultLanguage());
+
         final ContentSection section = new ContentSection();
         section.setLabel(name);
+        section.setDisplayName(name);
+        section.setPrimaryUrl(name);
+        section.getTitle().addValue(defautLocale, name);
 
         final Category rootFolder = new Category();
         rootFolder.setName(String.format("%s_root", name));
+        rootFolder.getTitle().addValue(defautLocale, rootFolder.getName());
+        rootFolder.setDisplayName(rootFolder.getName());
+        rootFolder.setUuid(UUID.randomUUID().toString());
+        rootFolder.setUniqueId(rootFolder.getUuid());
+        rootFolder.setCategoryOrder(1L);
 
         final Category rootAssetFolder = new Category();
-        rootFolder.setName(String.format("%s_assets", name));
+        rootAssetFolder.setName(String.format("%s_assets", name));
+        rootAssetFolder.getTitle().addValue(defautLocale,
+                                            rootAssetFolder.getName());
+        rootAssetFolder.setDisplayName(rootAssetFolder.getName());
+        rootAssetFolder.setUuid(UUID.randomUUID().toString());
+        rootAssetFolder.setUniqueId(rootAssetFolder.getUuid());
+        rootAssetFolder.setCategoryOrder(1L);
 
         section.setRootDocumentFolder(rootFolder);
         section.setRootAssetsFolder(rootAssetFolder);
@@ -109,7 +143,7 @@ public class ContentSectionManager {
                                 PRIVILEGE_ITEMS_VIEW_PUBLISHED,
                                 PRIVILEGE_ITEMS_PREVIEW);
         addRoleToContentSection(section,
-                                MANAGER, name,
+                                MANAGER,
                                 PRIVILEGE_ADMINISTER_ROLES,
                                 PRIVILEGE_ADMINISTER_WORKFLOW,
                                 PRIVILEGE_ADMINISTER_LIFECYLES,
@@ -124,7 +158,7 @@ public class ContentSectionManager {
                                 PRIVILEGE_ITEMS_VIEW_PUBLISHED,
                                 PRIVILEGE_ITEMS_PREVIEW);
         addRoleToContentSection(section,
-                                PUBLISHER, name,
+                                PUBLISHER,
                                 PRIVILEGE_ITEMS_CATEGORIZE,
                                 PRIVILEGE_ITEMS_CREATE_NEW,
                                 PRIVILEGE_ITEMS_EDIT,
@@ -134,7 +168,7 @@ public class ContentSectionManager {
                                 PRIVILEGE_ITEMS_VIEW_PUBLISHED,
                                 PRIVILEGE_ITEMS_PREVIEW);
         addRoleToContentSection(section,
-                                CONTENT_READER, name,
+                                CONTENT_READER,
                                 PRIVILEGE_ITEMS_VIEW_PUBLISHED);
 
         return section;
@@ -142,7 +176,9 @@ public class ContentSectionManager {
 
     /**
      * Renames a content section and all roles associated with it (roles
-     * starting with the name of the content section).
+     * starting with the name of the content section). Note that you have to
+     * rename the localised titles of the content section and the root folders
+     * manually
      *
      * @param section The section to rename.
      *
@@ -156,6 +192,8 @@ public class ContentSectionManager {
         final String oldName = section.getLabel();
 
         section.setLabel(name);
+        section.setDisplayName(name);
+        section.setPrimaryUrl(name);
 
         section.getRoles().forEach(r -> renameSectionRole(r, oldName, name));
     }
@@ -197,9 +235,28 @@ public class ContentSectionManager {
         final ContentSection contentSection,
         final Role role) {
 
+        if (contentSection == null) {
+            throw new IllegalArgumentException(
+                "Can't remove role from ContentSection null");
+        }
+
+        if (role == null) {
+            throw new IllegalArgumentException("Role to delete can't be null.");
+        }
+
         contentSection.removeRole(role);
         sectionRepo.save(contentSection);
-        roleRepo.delete(role);
+
+        final TypedQuery<Permission> query = entityManager
+            .createNamedQuery("ContentSection.findPermissions",
+                              Permission.class);
+        query.setParameter("section", contentSection);
+        query.setParameter("rootDocumentsFolder", 
+                           contentSection.getRootDocumentsFolder());
+        query.setParameter("role", role);
+
+        final List<Permission> permissions = query.getResultList();
+        permissions.forEach(p -> entityManager.remove(p));
     }
 
     @AuthorizationRequired

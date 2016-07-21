@@ -25,25 +25,29 @@
                          name="info_root" 
                          enabled="true"
                          visible="true"
-                         abstract_category="false" />
+                         abstract_category="false" 
+                         category_order="1" />
     <ccm_core.categories object_id="-2200"
                          unique_id="b163f73c-9ac2-44d7-a037-de621f5ca828"
                          name="info_assets" 
                          enabled="true"
                          visible="true"
-                         abstract_category="false"/>
+                         abstract_category="false" 
+                         category_order="1" />
     <ccm_core.categories object_id="-2300"
                          unique_id="1c423126-1e45-4fd9-9690-35d85d535e75"
-                         name="info_root" 
+                         name="test_root" 
                          enabled="true"
                          visible="true"
-                         abstract_category="false" />
+                         abstract_category="false" 
+                         category_order="1" />
     <ccm_core.categories object_id="-2400"
                          unique_id="b393da77-df18-4eef-aa58-1f11599d82d0"
-                         name="info_assets" 
+                         name="test_assets" 
                          enabled="true"
                          visible="true"
-                         abstract_category="false"/>
+                         abstract_category="false" 
+                         category_order="1" />
                              
     <ccm_core.category_titles object_id="-2100" 
                               locale="en" 
@@ -70,12 +74,12 @@
                               locale="en"
                               localized_value="test" />
     
-    <ccm_core.resource_descriptions object_id="-1100" 
-                                    locale="en"
-                                    localized_value="Initial content section" />
-    <ccm_core.resource_descriptions object_id="-1200" 
-                                    locale="en"
-                                    localized_value="Test content section" />
+    <!--<ccm_core.resource_descriptions object_id="-1100" 
+    locale="en"
+    localized_value="Initial content section" />
+<ccm_core.resource_descriptions object_id="-1200" 
+    locale="en"
+    localized_value="Test content section" />-->
         
     <ccm_core.applications object_id="-1100"
                            application_type="org.librecms.contentsection.ContentSection"
@@ -189,7 +193,7 @@
                           grantee_id="-3300" 
                           creation_date="2016-07-15"/>
     <ccm_core.permissions permission_id="-4250" 
-                          granted_privilege="delete_item" 
+                          granted_privilege="delete_items" 
                           object_id="-2100" 
                           grantee_id="-3300" 
                           creation_date="2016-07-15"/>
@@ -224,7 +228,7 @@
                           grantee_id="-3400" 
                           creation_date="2016-07-15"/>
     <ccm_core.permissions permission_id="-4350" 
-                          granted_privilege="administer_content_items" 
+                          granted_privilege="administer_content_types" 
                           object_id="-2100" 
                           grantee_id="-3400" 
                           creation_date="2016-07-15"/>
@@ -255,7 +259,7 @@
                           grantee_id="-3400" 
                           creation_date="2016-07-15"/>
     <ccm_core.permissions permission_id="-4410" 
-                          granted_privilege="delete_item" 
+                          granted_privilege="delete_items" 
                           object_id="-2100" 
                           grantee_id="-3400" 
                           creation_date="2016-07-15"/>
@@ -295,7 +299,7 @@
                           grantee_id="-3500" 
                           creation_date="2016-07-15"/>
     <ccm_core.permissions permission_id="-4560" 
-                          granted_privilege="delete_item" 
+                          granted_privilege="delete_items" 
                           object_id="-2100" 
                           grantee_id="-3500" 
                           creation_date="2016-07-15"/>
@@ -360,7 +364,7 @@
                           grantee_id="-33000" 
                           creation_date="2016-07-15"/>
     <ccm_core.permissions permission_id="-42500" 
-                          granted_privilege="delete_item" 
+                          granted_privilege="delete_items" 
                           object_id="-2300" 
                           grantee_id="-33000" 
                           creation_date="2016-07-15"/>
@@ -395,7 +399,7 @@
                           grantee_id="-34000" 
                           creation_date="2016-07-15"/>
     <ccm_core.permissions permission_id="-43500" 
-                          granted_privilege="administer_content_items" 
+                          granted_privilege="administer_content_types" 
                           object_id="-1200" 
                           grantee_id="-34000" 
                           creation_date="2016-07-15"/>
@@ -425,7 +429,7 @@
                           grantee_id="-34000" 
                           creation_date="2016-07-15"/>
     <ccm_core.permissions permission_id="-44100" 
-                          granted_privilege="delete_item" 
+                          granted_privilege="delete_items" 
                           object_id="-2300" 
                           grantee_id="-34000" 
                           creation_date="2016-07-15"/>
@@ -465,7 +469,7 @@
                           grantee_id="-35000" 
                           creation_date="2016-07-15"/>
     <ccm_core.permissions permission_id="-45600" 
-                          granted_privilege="delete_item" 
+                          granted_privilege="delete_items" 
                           object_id="-2300" 
                           grantee_id="-35000" 
                           creation_date="2016-07-15"/>
