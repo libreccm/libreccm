@@ -29,6 +29,8 @@ import org.libreccm.web.ApplicationType;
  */
 public class ApplicationTypeTreeNode implements TreeNode {
 
+    protected final static String TYPE_NODE_KEY_PREFIX = "apptype_";
+    
     private final ApplicationType applicationType;
 
     public ApplicationTypeTreeNode(final ApplicationType applicationType) {
@@ -37,7 +39,7 @@ public class ApplicationTypeTreeNode implements TreeNode {
 
     @Override
     public Object getKey() {
-        return applicationType.name();
+        return String.join("", TYPE_NODE_KEY_PREFIX, applicationType.name());
     }
 
     @Override

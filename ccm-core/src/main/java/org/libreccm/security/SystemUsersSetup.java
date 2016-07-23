@@ -126,6 +126,10 @@ public class SystemUsersSetup {
             final Properties properties = new Properties();
             if (inputStream == null) {
                 LOGGER.warn("No integration properties available.");
+                LOGGER.warn("Using empty integration properties");
+                return new Properties();
+            } else {
+                LOGGER.info("Loading integration.properties...");
                 properties.load(inputStream);
             }
             return properties;

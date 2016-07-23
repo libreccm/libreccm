@@ -57,7 +57,9 @@ public abstract class AbstractCcmApplicationSetup {
         try (InputStream inputStream = getClass().getResourceAsStream(
             CoreConstants.INTEGRATION_PROPS)) {
             final Properties properties = new Properties();
-            properties.load(inputStream);
+            if (inputStream != null) {
+                properties.load(inputStream);
+            }
             return properties;
         } catch (IOException ex) {
             LOGGER.warn(
@@ -75,26 +77,26 @@ public abstract class AbstractCcmApplicationSetup {
         appRoleSetup.grantPermission(role, privilege);
     }
 
-    public void grantPermission(final Role role, 
+    public void grantPermission(final Role role,
                                 final String privilege,
                                 final CcmObject ccmObject) {
         appRoleSetup.grantPermission(role, privilege, ccmObject);
     }
 
     public void grantPermissions(final Role role, final String... privileges) {
-        for(final String privilege : privileges) {
+        for (final String privilege : privileges) {
             grantPermission(role, privilege);
         }
     }
-    
-    public void grantPermissions(final Role role, 
+
+    public void grantPermissions(final Role role,
                                  final CcmObject ccmObject,
                                  final String... privileges) {
-        for(final String privilege : privileges) {
+        for (final String privilege : privileges) {
             grantPermission(role, privilege, ccmObject);
         }
     }
-    
+
     public abstract void setup();
 
 }

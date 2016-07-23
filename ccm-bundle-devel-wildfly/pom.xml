@@ -180,9 +180,9 @@
             <id>generic</id>
             
             <build>
-            <plugins>
-                <plugin>
-                    <groupId>org.wildfly.plugins</groupId>
+                <plugins>
+                    <plugin>
+                        <groupId>org.wildfly.plugins</groupId>
                         <artifactId>wildfly-maven-plugin</artifactId>
                         
                         <configuration>
@@ -194,8 +194,8 @@
                                 <java-opt>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8787</java-opt>
                             </java-opts>
                         </configuration>
-                </plugin>
-            </plugins>
+                    </plugin>
+                </plugins>
             </build>
             
         </profile>

@@ -33,7 +33,9 @@ import com.arsdigita.toolbox.ui.LayoutPanel;
 import com.arsdigita.util.UncheckedWrapperException;
 
 import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.web.ApplicationRepository;
 import org.libreccm.web.ApplicationType;
+import org.libreccm.web.CcmApplication;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -81,15 +83,37 @@ public class ApplicationsTab extends LayoutPanel {
 
         applicationTree = new Tree(new ApplicationTreeModelBuilder());
         applicationTree.addChangeListener(e -> {
+
             final PageState state = e.getPageState();
+            final String key = (String) applicationTree.getSelectedKey(state);
 
-            final Object key = applicationTree.getSelectedKey(state);
-            if (key instanceof Long) {
+            if (key.startsWith(
+                ApplicationInstanceTreeNode.INSTANCE_NODE_KEY_PREFIX)) {
 
-            } else if (key instanceof String) {
+                //Instance is selected
+                final String instanceId = key.substring(
+                    ApplicationInstanceTreeNode.INSTANCE_NODE_KEY_PREFIX
+                    .length());
+                selectedAppInstance.setSelectedKey(state, instanceId);
+
+                final ApplicationRepository appRepo = CdiUtil.createCdiUtil()
+                    .findBean(ApplicationRepository.class);
+                final CcmApplication application = appRepo.findById(
+                    Long.parseLong(instanceId));
+                if (application != null) {
+                    selectedAppType.setSelectedKey(
+                        state, application.getApplicationType());
+                }
+
+                showAppSettings(state);
+
+            } else if (key.startsWith(
+                ApplicationTypeTreeNode.TYPE_NODE_KEY_PREFIX)) {
+
                 //ApplicationType node is selected
                 showManagementLinks(state);
-                final String appTypeKey = (String) key;
+                final String appTypeKey = key.substring(
+                    ApplicationTypeTreeNode.TYPE_NODE_KEY_PREFIX.length());
 
                 selectedAppType.setSelectedKey(state, appTypeKey);
 
@@ -196,6 +220,7 @@ public class ApplicationsTab extends LayoutPanel {
                 settingsPanes.put(appTypeName, settingsPane);
             } else {
                 final AbstractAppInstanceForm instanceForm = createInstanceForm(
+                    String.format("%s_instance_form", appTypeName),
                     instanceFormClass);
                 managementPanel.add(instanceForm);
                 instanceForms.put(appTypeName, instanceForm);
@@ -246,11 +271,17 @@ public class ApplicationsTab extends LayoutPanel {
     }
 
     protected void showInstances(final PageState state) {
-        placeholderInstances.setVisible(state, true);
-        placeholderSingletonSettings.setVisible(state, false);
-        appInfo.setVisible(state, false);
+
         hideAllInstanceForms(state);
         hideAllSettingsPanes(state);
+
+        //placeholderInstances.setVisible(state, true);
+        final String appType = selectedAppType.getSelectedKey(state);
+        if (instanceForms.containsKey(appType)) {
+            instanceForms.get(appType).setVisible(state, true);
+        }
+        placeholderSingletonSettings.setVisible(state, false);
+        appInfo.setVisible(state, false);
     }
 
     protected void hideInstances(final PageState state) {
@@ -271,6 +302,31 @@ public class ApplicationsTab extends LayoutPanel {
         }
 
         appInfo.setVisible(state, false);
+    }
+
+    protected void showAppSettings(final PageState state) {
+        hideAllInstanceForms(state);
+        hideAllSettingsPanes(state);
+        hideManagementLinks(state);
+        placeholderInstances.setVisible(state, false);
+        placeholderSingletonSettings.setVisible(state, false);
+
+        if (settingsPanes.containsKey(selectedAppType.getSelectedKey(state))) {
+            settingsPanes.get(selectedAppType.getSelectedKey(state)).setVisible(
+                state, true);
+        }
+        
+//        final String appId = selectedAppInstance.getSelectedKey(state);
+//        final ApplicationRepository appRepo = CdiUtil.createCdiUtil().findBean(
+//            ApplicationRepository.class);
+//        final CcmApplication application = appRepo.findById(Long
+//            .parseLong(appId));
+//        if (application != null) {
+//            final String appType = application.getApplicationType();
+//            if (settingsPanes.containsKey(appType)) {
+//                settingsPanes.get(appType).setVisible(state, true);
+//            }
+//        }
     }
 
     protected void hideSingletonAppSettings(final PageState state) {
@@ -306,15 +362,18 @@ public class ApplicationsTab extends LayoutPanel {
     }
 
     private AbstractAppInstanceForm createInstanceForm(
-        Class<? extends AbstractAppInstanceForm> instanceFormClass) {
+        final String name,
+        final Class<? extends AbstractAppInstanceForm> instanceFormClass) {
 
         try {
             final Constructor<? extends AbstractAppInstanceForm> constructor
                                                                      = instanceFormClass
-                .getConstructor(ParameterSingleSelectionModel.class,
+                .getConstructor(String.class,
+                                ParameterSingleSelectionModel.class,
                                 ParameterSingleSelectionModel.class);
 
-            return constructor.newInstance(selectedAppType,
+            return constructor.newInstance(name,
+                                           selectedAppType,
                                            selectedAppInstance);
         } catch (NoSuchMethodException |
                  SecurityException |

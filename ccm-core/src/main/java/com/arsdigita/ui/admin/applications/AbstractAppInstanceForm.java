@@ -19,8 +19,10 @@
 package com.arsdigita.ui.admin.applications;
 
 import com.arsdigita.bebop.Form;
+import com.arsdigita.bebop.FormProcessException;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.ParameterSingleSelectionModel;
+import com.arsdigita.bebop.event.FormProcessListener;
 
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.web.ApplicationRepository;
@@ -49,9 +51,13 @@ public abstract class AbstractAppInstanceForm extends Form {
         this.selectedAppInstance = selectedAppInstance;
         
         createWidgets();
+        
+        addProcessListener(createProcessListener());
     }
 
     protected abstract void createWidgets();
+    
+    protected abstract FormProcessListener createProcessListener();
     
     protected ApplicationType getSelectedAppType(final PageState state) {
         final org.libreccm.web.ApplicationManager appManager = CdiUtil

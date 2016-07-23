@@ -18,7 +18,6 @@
  */
 package org.libreccm.web;
 
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.libreccm.core.AbstractEntityRepository;
 import org.libreccm.core.CoreConstants;
 import org.libreccm.security.AuthorizationRequired;
@@ -57,6 +56,7 @@ public class ApplicationRepository
      * @return The application mounted at {@code path} or {@code null} if there
      *         is no application mounted at that {@code path}.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public CcmApplication retrieveApplicationForPath(final String path) {
         final TypedQuery<CcmApplication> query = getEntityManager()
             .createNamedQuery("CcmApplication.retrieveApplicationForPath",
@@ -77,6 +77,7 @@ public class ApplicationRepository
      * @return A list of the installed applications of the provided
      *         {@code type}.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public List<CcmApplication> findByType(final String type) {
         final TypedQuery<CcmApplication> query = getEntityManager()
             .createNamedQuery("CcmApplication.Application.findByType",

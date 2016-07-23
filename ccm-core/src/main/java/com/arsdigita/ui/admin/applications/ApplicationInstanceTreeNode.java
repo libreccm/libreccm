@@ -19,10 +19,14 @@
 package com.arsdigita.ui.admin.applications;
 
 import com.arsdigita.bebop.tree.TreeNode;
+import com.arsdigita.kernel.KernelConfig;
 
 import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.web.CcmApplication;
+
+import java.util.Locale;
 
 /**
  *
@@ -30,6 +34,8 @@ import org.libreccm.web.CcmApplication;
  */
 public class ApplicationInstanceTreeNode implements TreeNode {
 
+    protected static final String INSTANCE_NODE_KEY_PREFIX = "appinstance_";
+    
     private final CcmApplication application;
 
     public ApplicationInstanceTreeNode(final CcmApplication application) {
@@ -38,17 +44,38 @@ public class ApplicationInstanceTreeNode implements TreeNode {
 
     @Override
     public Object getKey() {
-        return application.getObjectId();
+        return String.format("%s%d",
+                             INSTANCE_NODE_KEY_PREFIX, 
+                             application.getObjectId());
     }
 
     @Override
     public Object getElement() {
         final GlobalizationHelper globalizationHelper = CdiUtil.createCdiUtil()
             .findBean(GlobalizationHelper.class);
-        return application.getTitle().getValue(globalizationHelper
-            .getNegotiatedLocale());
+        final ConfigurationManager confManager = CdiUtil.createCdiUtil()
+            .findBean(ConfigurationManager.class);
+        final KernelConfig kernelConfig = confManager.findConfiguration(
+            KernelConfig.class);
+        final Locale defaultLocale = new Locale(kernelConfig
+            .getDefaultLanguage());
+
+        final String title;
+        if (application.getTitle().hasValue(globalizationHelper
+            .getNegotiatedLocale())) {
+            title = application.getTitle().getValue(globalizationHelper
+                .getNegotiatedLocale());
+        } else if (application.getTitle().hasValue(defaultLocale)) {
+            title = application.getTitle().getValue(defaultLocale);
+        } else if (application.getTitle().hasValue(Locale.getDefault())) {
+            title = application.getTitle().getValue(Locale.getDefault());
+        } else {
+            title = application.getPrimaryUrl();
+        }
+
+        return title;
     }
-    
+
     public CcmApplication getApplication() {
         return application;
     }

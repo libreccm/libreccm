@@ -54,14 +54,14 @@ import javax.sql.DataSource;
 public class CcmIntegrator implements Integrator {
 
     private static final Logger LOGGER = LogManager.getLogger(
-            CcmIntegrator.class);
+        CcmIntegrator.class);
 
     /**
      * Name of the property which is used to retrieve the data source in use
      * from Hibernate.
      */
     private static final String DATASOURCE_PROPERTY
-                                = "hibernate.connection.datasource";
+                                    = "hibernate.connection.datasource";
 
     /**
      * Service loader containing all modules. Initialised by the
@@ -94,7 +94,7 @@ public class CcmIntegrator implements Integrator {
         try {
             //Create dependency tree for the modules
             final DependencyTreeManager treeManager
-                                        = new DependencyTreeManager();
+                                            = new DependencyTreeManager();
             final List<TreeNode> tree = treeManager.generateTree(modules);
             final List<TreeNode> orderedNodes = treeManager.orderModules(tree);
 
@@ -110,7 +110,7 @@ public class CcmIntegrator implements Integrator {
 //            //Get DataSource and Connection from the sessionFactory of 
 //            //Hibernate.
             final DataSource dataSource = (DataSource) sessionFactory.
-                    getProperties().get(DATASOURCE_PROPERTY);
+                getProperties().get(DATASOURCE_PROPERTY);
             if (dataSource == null) {
                 throw new IllegalStateException("No data source available.");
             }
@@ -121,7 +121,7 @@ public class CcmIntegrator implements Integrator {
             final Flyway flyway = new Flyway();
             flyway.setDataSource(dataSource);
             final StringBuffer buffer = new StringBuffer(
-                    "db/migrations/org/libreccm/base");
+                "db/migrations/org/libreccm/base");
             appendDbLocation(buffer, connection);
             flyway.setLocations(buffer.toString());
             flyway.migrate();
@@ -199,15 +199,16 @@ public class CcmIntegrator implements Integrator {
      * If the database is not supported an {@link IntegrationException} will be
      * thrown.
      *
-     * @param buffer Buffer for the location string.
+     * @param buffer     Buffer for the location string.
      * @param connection The JDBC connection object.
      *
-     * @throws SQLException If an error occurs while accessing the database.
+     * @throws SQLException         If an error occurs while accessing the
+     *                              database.
      * @throws IntegrationException If the database is not supported yet.
      */
     private void appendDbLocation(final StringBuffer buffer,
                                   final Connection connection)
-            throws SQLException {
+        throws SQLException {
 
         switch (connection.getMetaData().getDatabaseProductName()) {
             case "H2":
@@ -218,9 +219,9 @@ public class CcmIntegrator implements Integrator {
                 break;
             default:
                 throw new IntegrationException(String.format(
-                        "Integration failed. Database \"%s\" is not supported yet.",
-                        connection.getMetaData().
-                        getDatabaseProductName()));
+                    "Integration failed. Database \"%s\" is not supported yet.",
+                    connection.getMetaData().
+                    getDatabaseProductName()));
         }
     }
 
@@ -236,10 +237,10 @@ public class CcmIntegrator implements Integrator {
      */
     private String getLocation(final ModuleInfo moduleInfo,
                                final Connection connection)
-            throws SQLException {
+        throws SQLException {
 
         final StringBuffer buffer = new StringBuffer(
-                "classpath:/db/migrations/");
+            "classpath:/db/migrations/");
         buffer.append(moduleInfo.getModuleDataPackage());
         appendDbLocation(buffer, connection);
 
@@ -249,7 +250,7 @@ public class CcmIntegrator implements Integrator {
     /**
      * Helper method for executing the migrations for a module.
      *
-     * @param module The module for which the migrations are executed.
+     * @param module     The module for which the migrations are executed.
      * @param dataSource The JDBC data source for connecting to the database.
      *
      * @throws SQLException If an error occurs while applying the migrations.
@@ -269,9 +270,8 @@ public class CcmIntegrator implements Integrator {
             //Set schema correctly for the different databases. Necessary because
             //different RDBMS handle case different.
             if ("H2".equals(connection.getMetaData().getDatabaseProductName())) {
-                flyway
-                        .setSchemas(getSchemaName(moduleInfo).toUpperCase(
-                                Locale.ROOT));
+                flyway.setSchemas(getSchemaName(moduleInfo).toUpperCase(
+                    Locale.ROOT));
             } else {
                 flyway.setSchemas(getSchemaName(moduleInfo));
             }
@@ -303,11 +303,11 @@ public class CcmIntegrator implements Integrator {
             if (newModule) {
                 try (Statement statement = connection.createStatement()) {
                     statement.execute(String.format(
-                            "INSERT INTO ccm_core.installed_modules "
-                                    + "(module_id, module_class_name, status) "
-                                    + "VALUES (%d, '%s', 'NEW')",
-                            module.getName().hashCode(),
-                            module.getName()));
+                        "INSERT INTO ccm_core.installed_modules "
+                            + "(module_id, module_class_name, status) "
+                            + "VALUES (%d, '%s', 'NEW')",
+                        module.getName().hashCode(),
+                        module.getName()));
                 } catch (SQLException ex) {
                     throw new IntegrationException("Failed to integrate.", ex);
                 }
@@ -333,7 +333,7 @@ public class CcmIntegrator implements Integrator {
 
             //Get JDBC connection
             final DataSource dataSource = (DataSource) sessionFactory
-                    .getProperties().get(DATASOURCE_PROPERTY);
+                .getProperties().get(DATASOURCE_PROPERTY);
             connection = dataSource.getConnection();
             System.out.println("checking modules...");
             LOGGER.info("Checking modules...");
@@ -344,10 +344,10 @@ public class CcmIntegrator implements Integrator {
                 try (Statement query = connection.createStatement();
                      //Check status of each module
                      ResultSet result = query.executeQuery(
-                             String.format("SELECT module_class_name, status "
-                                                   + "FROM ccm_core.installed_modules "
+                         String.format("SELECT module_class_name, status "
+                                           + "FROM ccm_core.installed_modules "
                                            + "WHERE module_class_name = '%s'",
-                                           module.getClass().getName()))) {
+                                       module.getClass().getName()))) {
 
                     System.out.printf("Checking status of module %s...%n",
                                       module.getClass().getName());
@@ -355,7 +355,7 @@ public class CcmIntegrator implements Integrator {
                     //If there modules marked for uninstall remove the schema 
                     //of the module from the database.
                     if (result.next() && ModuleStatus.UNINSTALL.toString()
-                            .equals(result.getString("status"))) {
+                        .equals(result.getString("status"))) {
                         uninstallModule(connection,
                                         dataSource,
                                         module,
@@ -389,7 +389,7 @@ public class CcmIntegrator implements Integrator {
                                  final DataSource dataSource,
                                  final CcmModule module,
                                  final ModuleInfo moduleInfo)
-            throws SQLException {
+        throws SQLException {
         LOGGER.info("Removing schema for module %s...",
                     module.getClass().getName());
         final Flyway flyway = new Flyway();
@@ -402,16 +402,16 @@ public class CcmIntegrator implements Integrator {
 
         //Delete the module from the installed modules table.
         try (final Statement statement = connection
-                .createStatement()) {
+            .createStatement()) {
             statement.addBatch(String.format(
-                    "DELETE FROM ccm_core.installed_modules "
-                            + "WHERE module_class_name = '%s'",
-                    module.getClass().getName()));
+                "DELETE FROM ccm_core.installed_modules "
+                    + "WHERE module_class_name = '%s'",
+                module.getClass().getName()));
             statement.executeBatch();
             LOGGER.info("Done.");
         } catch (SQLException ex) {
             throw new IntegrationException(
-                    "Failed to desintegrate", ex);
+                "Failed to desintegrate", ex);
         }
     }
 

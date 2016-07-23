@@ -21,6 +21,7 @@ package org.libreccm.web;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
+import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.core.CoreConstants;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.modules.CcmModule;
@@ -37,7 +38,6 @@ import java.util.ResourceBundle;
 import java.util.ServiceLoader;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.TransactionAttribute;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -92,19 +92,14 @@ public class ApplicationManager {
         final ApplicationType type,
         final String path,
         final Class<T> applicationClass) throws ApplicationCreateException {
+        @SuppressWarnings("unchecked")
+        final ApplicationCreator<T> creator = CdiUtil.createCdiUtil().findBean(
+            type.creator());
+        final T application = creator.createInstance(path, type);
 
-        try {
-            @SuppressWarnings("unchecked")
-            final ApplicationCreator<T> creator = type.creator().newInstance();
-            final T application = creator.createInstance(path, type);
+        entityManager.persist(application);
 
-            entityManager.persist(application);
-
-            return application;
-        } catch (InstantiationException | IllegalAccessException ex) {
-            throw new ApplicationCreateException("Failed to create application.",
-                                                 ex);
-        }
+        return application;
     }
 
     @AuthorizationRequired

@@ -18,8 +18,6 @@
  */
 package org.librecms.contentsection;
 
-import com.arsdigita.ui.admin.applications.DefaultApplicationInstanceForm;
-import com.arsdigita.ui.admin.applications.DefaultApplicationSettingsPane;
 
 import org.libreccm.categorization.Category;
 import org.libreccm.security.Role;
@@ -40,6 +38,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.libreccm.web.ApplicationType;
+import org.librecms.contentsection.ui.admin.ApplicationInstanceForm;
 
 import java.util.ArrayList;
 
@@ -65,12 +64,13 @@ import static org.librecms.CmsConstants.*;
                     + "       OR p.object = :rootDocumentsFolder) "
                     + "AND p.grantee = :role")
 })
-@ApplicationType(
-    name = CONTENT_SECTION_APP_TYPE,
-    descBundle = "org.librecms.contentsection.ContentSectionResources",
-    singleton = false,
-    creator = ContentSectionCreator.class,
-    servlet = ContentSectionServlet.class)
+//@ApplicationType(
+//    name = CONTENT_SECTION_APP_TYPE,
+//    descBundle = "org.librecms.contentsection.ContentSectionResources",
+//    singleton = false,
+//    creator = ContentSectionCreator.class,
+//    servlet = ContentSectionServlet.class,
+//    instanceForm = ApplicationInstanceForm.class)
 public class ContentSection extends CcmApplication implements Serializable {
 
     private static final long serialVersionUID = -671718122153931727L;

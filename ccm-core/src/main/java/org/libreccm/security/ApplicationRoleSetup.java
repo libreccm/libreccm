@@ -70,7 +70,7 @@ public class ApplicationRoleSetup {
         final Permission permission = createPermission(role, privilege);
         permission.setObject(ccmObject);
         
-        entityManager.persist(privilege);
+        entityManager.persist(permission);
         entityManager.merge(role);
     }
 

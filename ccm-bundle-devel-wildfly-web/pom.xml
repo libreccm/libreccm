@@ -48,6 +48,12 @@
             <artifactId>ccm-shortcuts</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.librecms</groupId>
+            <artifactId>ccm-cms</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <!-- CCM Modules end -->
         
     </dependencies>
     

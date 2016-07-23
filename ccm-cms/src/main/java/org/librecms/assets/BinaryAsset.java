@@ -21,6 +21,7 @@ package org.librecms.assets;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
+
 import javax.activation.MimeType;
 import javax.persistence.AssociationOverride;
 import javax.persistence.Column;
@@ -30,9 +31,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.Table;
+
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.libreccm.jpa.utils.MimeTypeConverter;
 import org.libreccm.l10n.LocalizedString;
+
+import javax.persistence.Convert;
 
 import static org.librecms.CmsConstants.*;
 
@@ -64,6 +69,7 @@ public class BinaryAsset extends Asset implements Serializable {
     private String fileName;
 
     @Column(name = "MIME_TYPE", length = 512, nullable = false)
+    @Convert(converter = MimeTypeConverter.class)
     @NotEmpty
     private MimeType mimeType;
 

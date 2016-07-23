@@ -24,6 +24,10 @@ import org.libreccm.categorization.Category;
 import org.libreccm.modules.InstallEvent;
 import org.libreccm.security.Role;
 import org.libreccm.web.AbstractCcmApplicationSetup;
+import org.librecms.CmsConstants;
+
+import java.util.Locale;
+import java.util.UUID;
 
 import static org.librecms.CmsConstants.*;
 import static org.librecms.contentsection.ContentSection.*;
@@ -61,13 +65,21 @@ public class ContentSectionSetup extends AbstractCcmApplicationSetup {
 
     private void createContentSection(final String sectionName) {
         final ContentSection section = new ContentSection();
+        section.setUuid(UUID.randomUUID().toString());
+        section.setApplicationType(CmsConstants.CONTENT_SECTION_APP_TYPE);
+        section.setPrimaryUrl(sectionName);
+        section.setDisplayName(sectionName);
         section.setLabel(sectionName);
 
         final Category rootFolder = new Category();
+        rootFolder.setUuid(UUID.randomUUID().toString());
+        rootFolder.setUniqueId(rootFolder.getUuid());
         rootFolder.setName(String.format("%s_" + ROOT, sectionName));
 
         final Category rootAssetFolder = new Category();
-        rootFolder.setName(String.format("%s_" + ASSETS, sectionName));
+        rootAssetFolder.setName(String.format("%s_" + ASSETS, sectionName));
+        rootAssetFolder.setUuid(UUID.randomUUID().toString());
+        rootAssetFolder.setUniqueId(rootAssetFolder.getUuid());
 
         section.setRootDocumentFolder(rootFolder);
         section.setRootAssetsFolder(rootAssetFolder);

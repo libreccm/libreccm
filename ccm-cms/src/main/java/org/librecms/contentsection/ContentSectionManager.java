@@ -120,9 +120,9 @@ public class ContentSectionManager {
         section.setRootDocumentFolder(rootFolder);
         section.setRootAssetsFolder(rootAssetFolder);
 
-        sectionRepo.save(section);
         categoryRepo.save(rootFolder);
         categoryRepo.save(rootAssetFolder);
+        sectionRepo.save(section);
 
         addRoleToContentSection(section,
                                 ALERT_RECIPIENT);

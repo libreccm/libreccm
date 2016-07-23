@@ -5,7 +5,6 @@ package org.librecms;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.libreccm.categorization.Category;
 import org.libreccm.core.CoreConstants;
 import org.libreccm.modules.CcmModule;
 import org.libreccm.modules.InitEvent;
@@ -14,23 +13,35 @@ import org.libreccm.modules.Module;
 import org.libreccm.modules.RequiredModule;
 import org.libreccm.modules.ShutdownEvent;
 import org.libreccm.modules.UnInstallEvent;
+import org.libreccm.web.ApplicationType;
 import org.librecms.contentsection.ContentSection;
+import org.librecms.contentsection.ContentSectionCreator;
 import org.librecms.contentsection.ContentSectionSetup;
+import org.librecms.contentsection.ui.admin.ApplicationInstanceForm;
+import org.librecms.contentsection.ui.admin.SettingsPane;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-@Module(packageName = "org.libreccm.cms",
-        requiredModules = {
-            @RequiredModule(module = org.libreccm.core.CcmCore.class)
-        }
+@Module(//packageName = "org.librecms.cms",
+    requiredModules = {
+        @RequiredModule(module = org.libreccm.core.CcmCore.class)
+    },
+    applicationTypes = {
+        @ApplicationType(
+            name = CmsConstants.CONTENT_SECTION_APP_TYPE,
+            applicationClass = ContentSection.class,
+            instanceForm = ApplicationInstanceForm.class,
+            settingsPane = SettingsPane.class,
+            descBundle = CmsConstants.CONTENT_SECTION_DESC_BUNDLE,
+            creator = ContentSectionCreator.class
+        )
+    }
 )
 public class Cms implements CcmModule {
 
     private static final Logger LOGGER = LogManager.getLogger(Cms.class);
-
-    
 
     @Override
     public void install(final InstallEvent event) {
@@ -43,7 +54,12 @@ public class Cms implements CcmModule {
         final Properties integrationProps = new Properties();
         try (final InputStream inputStream = getClass().getResourceAsStream(
             CoreConstants.INTEGRATION_PROPS)) {
-            integrationProps.load(inputStream);
+
+            if (inputStream == null) {
+                LOGGER.warn("No integration.properties available.");
+            } else {
+                integrationProps.load(inputStream);
+            }
         } catch (IOException ex) {
             LOGGER.warn(
                 "Failed to load integration properties. Using default values.",
@@ -67,15 +83,14 @@ public class Cms implements CcmModule {
         // * Content Reader: View Published Items
     }
 
-    private void createContentSection(final String contentSectionName) {
-        final ContentSection section = new ContentSection();
-        section.setLabel(contentSectionName);
-
-        final Category rootFolder = new Category();
-        rootFolder.setName(String.format("%s_root", contentSectionName));
-
-    }
-
+//    private void createContentSection(final String contentSectionName) {
+//        final ContentSection section = new ContentSection();
+//        section.setLabel(contentSectionName);
+//
+//        final Category rootFolder = new Category();
+//        rootFolder.setName(String.format("%s_root", contentSectionName));
+//
+//    }
     @Override
     public void init(final InitEvent event) {
         //ToDo Add initialisation logic necessary for your module
