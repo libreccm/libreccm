@@ -19,13 +19,14 @@
 package org.librecms.contentsection;
 
 import org.libreccm.auditing.AbstractAuditedEntityRepository;
+import org.libreccm.categorization.Category;
 import org.libreccm.core.CcmObject;
 import org.libreccm.core.CcmObjectRepository;
 
+import java.util.List;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.persistence.NoResultException;
-import javax.persistence.TypedQuery;
 
 /**
  *
@@ -62,6 +63,11 @@ public class ContentItemRepository
         }
     }
     
+    public <T extends ContentItem> T findById(final long itemId, 
+                                              final Class<T> type) {
+        throw new UnsupportedOperationException();
+    }
+    
     public ContentItem findByUuid(final String uuid) {
         final CcmObject result = ccmObjectRepo.findObjectByUuid(uuid);
         if (result instanceof ContentItem) {
@@ -71,6 +77,17 @@ public class ContentItemRepository
         }
     }
     
-    //ToDo: Methods for finding items by name, path, content type etc.
+    public <T extends ContentItem> T findByUuid(final String uuid,
+                                                final Class<T> type) {
+        throw new UnsupportedOperationException();
+    }
+    
+    public <T extends ContentItem> List<T> findByType(final Class<T> type) {
+        throw new UnsupportedOperationException();
+    }
+    
+    public List<ContentItem> findByFolder(final Category folder) {
+        throw new UnsupportedOperationException();
+    }
     
 }

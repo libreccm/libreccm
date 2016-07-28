@@ -27,6 +27,7 @@ import com.arsdigita.util.URLRewriter;
 import com.arsdigita.web.ParameterMap;
 import com.arsdigita.web.RedirectSignal;
 import com.arsdigita.web.URL;
+import com.arsdigita.web.Web;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -49,6 +50,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.log4j.Logger;
+
+import java.net.URLEncoder;
 
 /**
  * Class static helper methods for request dispatching.
@@ -1155,4 +1158,42 @@ public final class DispatcherHelper implements DispatcherConstants {
         }
     }
 
+    /**
+     * Encodes the given request into a return URL parameter. Returns
+     * <code>URLencode(returnURL)</code> where returnURL is
+     * <code>returnURI?key=URLencode(val)&...</code>. The original parameter values are
+     * doubly-encoded so that they are decoded appropriately.
+     *
+     *
+     * @param req the request to encode
+     *
+     * @return the URL-encoded parameter
+     *
+     */
+    public static String encodeReturnURL(HttpServletRequest req) {
+        StringBuilder returnURL = new StringBuilder(100);
+        returnURL.append(Web.getWebContext().getRequestURL().getRequestURI());
+        returnURL.append('?');
+
+        // convert posted parameters to URL parameters
+        Enumeration params = req.getParameterNames();
+        boolean first = true;
+        while (params.hasMoreElements()) {
+            String key = (String) params.nextElement();
+            String[] vals = req.getParameterValues(key);
+            for (int i = 0; i < vals.length; i++) {
+                if (first) {
+                    first = false;
+                } else {
+                    returnURL.append('&');
+                }
+                returnURL.append(key);
+                returnURL.append('=');
+                returnURL.append(URLEncoder.encode(vals[i]));
+            }
+        }
+
+        return URLEncoder.encode(returnURL.toString());
+    }
+    
 }

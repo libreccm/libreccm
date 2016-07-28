@@ -29,16 +29,25 @@ public class CmsConstants {
     public static final String DB_SCHEMA = "CCM_CMS";
 
     public static final String CMS_BUNDLE = "org.librecms.CmsResources";
-    
-    public static final String CONTENT_SECTION_APP_TYPE = "org.librecms.contentsection.ContentSection";
-    public static final String CONTENT_SECTION_SERVLET_PATH = "/templates/servlet/content-section/*";
-    public static final String CONTENT_SECTION_DESC_BUNDLE = "org.librecms.contentsection.ContentSectionResources";
 
-    public static final String PRIVILEGE_ADMINISTER_CATEGORIES = "administer_categories";
-    public static final String PRIVILEGE_ADMINISTER_CONTENT_TYPES = "administer_content_types";
-    public static final String PRIVILEGE_ADMINISTER_LIFECYLES = "administer_lifecyles";
+    public static final String CONTENT_CENTER_URL = "/content-center/";
+
+    public static final String CONTENT_SECTION_APP_TYPE
+                               = "org.librecms.contentsection.ContentSection";
+    public static final String CONTENT_SECTION_SERVLET_PATH
+                               = "/templates/servlet/content-section/*";
+    public static final String CONTENT_SECTION_DESC_BUNDLE
+                               = "org.librecms.contentsection.ContentSectionResources";
+
+    public static final String PRIVILEGE_ADMINISTER_CATEGORIES
+                               = "administer_categories";
+    public static final String PRIVILEGE_ADMINISTER_CONTENT_TYPES
+                               = "administer_content_types";
+    public static final String PRIVILEGE_ADMINISTER_LIFECYLES
+                               = "administer_lifecyles";
     public static final String PRIVILEGE_ADMINISTER_ROLES = "administer_roles";
-    public static final String PRIVILEGE_ADMINISTER_WORKFLOW = "administer_workflow";
+    public static final String PRIVILEGE_ADMINISTER_WORKFLOW
+                               = "administer_workflow";
     public static final String PRIVILEGE_ITEMS_APPROVE = "approve_items";
     public static final String PRIVILEGE_ITEMS_PUBLISH = "publish_items";
     public static final String PRIVILEGE_ITEMS_CATEGORIZE = "categorize_items";
@@ -46,9 +55,21 @@ public class CmsConstants {
     public static final String PRIVILEGE_ITEMS_DELETE = "delete_items";
     public static final String PRIVILEGE_ITEMS_EDIT = "edit_items";
     public static final String PRIVILEGE_ITEMS_PREVIEW = "preview_items";
-    public static final String PRIVILEGE_ITEMS_VIEW_PUBLISHED = "view_published_items";
-    public static final String PRIVILEGE_APPLY_ALTERNATE_WORKFLOW = "apply_alternate_workflow";
+    public static final String PRIVILEGE_ITEMS_VIEW_PUBLISHED
+                               = "view_published_items";
+    public static final String PRIVILEGE_APPLY_ALTERNATE_WORKFLOW
+                               = "apply_alternate_workflow";
 
+    /**
+     * Constant string used as key for creating service package as a legacy
+     * application.
+     */
+    public static final String SERVICE_PACKAGE_KEY = "cms-service";
+    public static final String SERVICE_URL = "/cms-service/";
+
+    public static final String ASSET_ID = "asset_id";
+    public static final String IMAGE_ID = "image_id";
+    
     private CmsConstants() {
         //Nothing
     }

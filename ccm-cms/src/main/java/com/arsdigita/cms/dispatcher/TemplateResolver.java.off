@@ -1,0 +1,97 @@
+/*
+ * Copyright (C) 2001-2004 Red Hat Inc. All Rights Reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public License
+ * as published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ */
+package com.arsdigita.cms.dispatcher;
+
+import javax.servlet.http.HttpServletRequest;
+
+/**
+ * Reimplementation, based on ItemTemplateResolver
+ *
+ * <p>
+ * Many sites offer alternative views of the same content item depending on
+ * device or browser, or on user preference. For example, a site may have
+ * "plain" and "fancy" versions of its pages. The fancy versions would be the
+ * defaults, while the plain versions would be appropriate for users with
+ * low-bandwidth connections, older browsers, or a distaste for flashy
+ * appurtenances. In this the case the selection might be made based on a
+ * cookie.</p>
+ *
+ * <p>
+ * Another common example is the "printable" version of a page. In this case a
+ * query variable might be more appropriate.</p>
+ *
+ *
+ * @author Karl Goldstein (karlg@arsdigita.com)
+ * @version $Id: TemplateResolver.java 1967 2009-08-29 21:05:51Z pboy $
+ *
+ */
+public interface TemplateResolver {
+
+    /**
+     * Returns the JSP template filename relative to the webapp root.
+     *
+     * @param section The ContentSection for the request
+     * @param item    The ContentItem for the request
+     * @param request The current HttpServletRequest
+     *
+     * @return The path to the jsp template.
+     */
+    public String getTemplate(ContentSection section,
+                              ContentItem item,
+                              HttpServletRequest request);
+
+    /**
+     * Returns the JSP template filename relative to the webapp root for a given
+     * Template reference.
+     *
+     * @param template The Template to resolve the URL for.
+     *
+     * @return The path to the jsp template.
+     */
+    public String getTemplatePath(Template template);
+
+    /**
+     * Returns the XSL template filename relative to the webapp root for a given
+     * Template reference.
+     *
+     * @param template The Template to resolve the URL for.
+     *
+     * @return The path to the xsl template.
+     */
+    public String getTemplateXSLPath(Template template);
+
+    /**
+     * Sets the TemplateContext parameter in the request
+     *
+     * @param sTemplateContext the template context to set
+     * @param request          the request in which to set the template context
+     */
+    public void setTemplateContext(String sTemplateContext,
+                                   HttpServletRequest request);
+
+    /**
+     * Gets the template context from the request.
+     *
+     * @param request the request from which to get the template context
+     *
+     * @return the template context
+     */
+    public String getTemplateContext(HttpServletRequest request);
+
+}

@@ -234,7 +234,9 @@ public final class WebConfig {
                                                      = (Class<ApplicationFileResolver>) Class
                 .forName(resolverClass);
             return clazz.newInstance();
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
+        } catch (ClassNotFoundException |
+                 InstantiationException |
+                 IllegalAccessException ex) {
             throw new UncheckedWrapperException(
                 "Unable to retrieve ApplicationFileResolver", ex);
         }
