@@ -30,6 +30,8 @@ import org.libreccm.security.User;
 import org.libreccm.tests.categories.UnitTest;
 import org.libreccm.testutils.EqualsVerifier;
 import org.libreccm.web.CcmApplication;
+import org.libreccm.workflow.Workflow;
+import org.librecms.lifecycle.Lifecycle;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -134,6 +136,18 @@ public class EqualsAndHashCodeTest extends EqualsVerifier {
         
         final Resource resource2 = new Resource();
         resource2.setDisplayName("Resource 2");
+        
+        final Lifecycle lifecycle1 = new Lifecycle();
+        lifecycle1.setFinished(true);
+        
+        final Lifecycle lifecycle2 = new Lifecycle();
+        lifecycle2.setFinished(false);
+        
+        final Workflow workflow1 = new Workflow();
+        workflow1.setWorkflowId(-100);
+        
+        final Workflow workflow2 = new Workflow();
+        workflow2.setWorkflowId(-200);
 
         verifier
             .withPrefabValues(ContentItem.class, item1, item2)
@@ -146,7 +160,9 @@ public class EqualsAndHashCodeTest extends EqualsVerifier {
             .withPrefabValues(Group.class, group1, group2)
             .withPrefabValues(CcmApplication.class, application1, application2)
             .withPrefabValues(Domain.class, domain1, domain2)
-            .withPrefabValues(Resource.class, resource1, resource2);
+            .withPrefabValues(Resource.class, resource1, resource2)
+            .withPrefabValues(Lifecycle.class, lifecycle1, lifecycle2)
+            .withPrefabValues(Workflow.class, workflow1, workflow2);
     }
 
     /**

@@ -21,6 +21,7 @@ package com.arsdigita.cms;
 import com.arsdigita.bebop.Page;
 import com.arsdigita.cms.dispatcher.CMSPage;
 import com.arsdigita.cms.ui.CMSApplicationPage;
+import com.arsdigita.cms.ui.contentcenter.MainPage;
 
 import com.arsdigita.dispatcher.DispatcherHelper;
 import com.arsdigita.dispatcher.RequestContext;
@@ -99,10 +100,10 @@ public class ContentCenterServlet extends BaseApplicationServlet {
         // Addresses previously noted in WEB-INF/resources/content-center-map.xml
         // Obviously not required.
 
-//ToDo        
-//        addPage("/", new MainPage());     // index page at address ~/cc
-//        addPage("/index", new MainPage());
-//ToDo End
+
+        addPage("/", new MainPage());     // index page at address ~/cc
+        addPage("/index", new MainPage());
+
 
 // addPage("/item-search", new CMSItemSearchPage()); 
         //  Old style

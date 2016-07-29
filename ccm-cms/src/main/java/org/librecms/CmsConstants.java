@@ -30,6 +30,7 @@ public class CmsConstants {
 
     public static final String CMS_BUNDLE = "org.librecms.CmsResources";
 
+    public static final String CONTENT_CENTER_APP_TYPE = "com.arsdigita.cms.ContentCenter";
     public static final String CONTENT_CENTER_URL = "/content-center/";
 
     public static final String CONTENT_SECTION_APP_TYPE

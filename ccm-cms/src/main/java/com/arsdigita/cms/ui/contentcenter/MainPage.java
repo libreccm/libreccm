@@ -17,17 +17,25 @@
  */
 package com.arsdigita.cms.ui.contentcenter;
 
+import com.arsdigita.bebop.Component;
 import com.arsdigita.bebop.Label;
+import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.SimpleContainer;
 import com.arsdigita.bebop.TabbedPane;
 import com.arsdigita.bebop.event.ActionEvent;
 import com.arsdigita.bebop.event.ActionListener;
 import com.arsdigita.bebop.parameters.BigDecimalParameter;
+import com.arsdigita.bebop.parameters.LongParameter;
 import com.arsdigita.cms.ui.CMSApplicationPage;
+import com.arsdigita.cms.ui.GlobalNavigation;
+import com.arsdigita.cms.ui.WorkspaceContextBar;
 import com.arsdigita.globalization.GlobalizedMessage;
+import com.arsdigita.ui.CcmObjectSelectionModel;
 
 import org.apache.log4j.Logger;
 import org.librecms.CmsConstants;
+import org.librecms.contentsection.ContentSection;
+import org.librecms.contentsection.ContentType;
 
 //  ////////////////////////////////////////////////////////////////////////////
 //
@@ -59,10 +67,10 @@ public class MainPage extends CMSApplicationPage implements ActionListener {
     private TabbedPane m_tabbedPane;
 
     private TasksPanel m_tasks;
-    private ItemSearch m_search;
-    private IdSearchTab m_IdSearch;
-    private ACSObjectSelectionModel m_typeSel;
-    private ACSObjectSelectionModel m_sectionSel;
+//    private ItemSearch m_search;
+//    private IdSearchTab m_IdSearch;
+    private CcmObjectSelectionModel<ContentType> m_typeSel;
+    private CcmObjectSelectionModel<ContentSection> m_sectionSel;
 
     public static final String CONTENT_TYPE = "type_id";
     public static final String CONTENT_SECTION = "section_id";
@@ -83,19 +91,14 @@ public class MainPage extends CMSApplicationPage implements ActionListener {
         /* Set the class attribute value (down in SimpleComponent).           */
         setClassAttr("cms-admin");
 
-        BigDecimalParameter typeId = new BigDecimalParameter(CONTENT_TYPE);
+        LongParameter typeId = new LongParameter(CONTENT_TYPE);
         addGlobalStateParam(typeId);
-        m_typeSel = new ACSObjectSelectionModel(
-            ContentType.class.getName(),
-            ContentType.BASE_DATA_OBJECT_TYPE,
-            typeId
-        );
+        m_typeSel = new CcmObjectSelectionModel(ContentType.class, typeId);
 
-        BigDecimalParameter sectionId = new BigDecimalParameter(CONTENT_SECTION);
+        LongParameter sectionId = new LongParameter(CONTENT_SECTION);
         addGlobalStateParam(sectionId);
-        m_sectionSel = new ACSObjectSelectionModel(
-            ContentSection.class.getName(),
-            ContentSection.BASE_DATA_OBJECT_TYPE,
+        m_sectionSel = new CcmObjectSelectionModel(
+            ContentSection.class,
             sectionId
         );
 
@@ -103,14 +106,14 @@ public class MainPage extends CMSApplicationPage implements ActionListener {
         add(new GlobalNavigation());
 
         m_tasks = getTasksPane(m_typeSel, m_sectionSel);
-        m_search = getSearchPane();
-        m_IdSearch = getIdSearchPane();
+//        m_search = getSearchPane();
+//        m_IdSearch = getIdSearchPane();
 
         m_tabbedPane = createTabbedPane();
         m_tabbedPane.setIdAttr("page-body");
         add(m_tabbedPane);
 
-        add(new DebugPanel());
+//        add(new DebugPanel());
 
     }
 
@@ -118,34 +121,34 @@ public class MainPage extends CMSApplicationPage implements ActionListener {
      * Creates, and then caches, the Tasks pane. Overriding this method to
      * return null will prevent this tab from appearing.
      */
-    protected TasksPanel getTasksPane(ACSObjectSelectionModel typeModel,
-                                      ACSObjectSelectionModel sectionModel) {
+    protected TasksPanel getTasksPane(CcmObjectSelectionModel<ContentType> typeModel,
+                                      CcmObjectSelectionModel<ContentSection> sectionModel) {
         if (m_tasks == null) {
             m_tasks = new TasksPanel(typeModel, sectionModel);
         }
         return m_tasks;
     }
 
-    /**
-     * Creates, and then caches, the Search pane. Overriding this method to
-     * return null will prevent this tab from appearing.
-     *
-     */
-    protected ItemSearch getSearchPane() {
-        if (m_search == null) {
-            m_search = new ItemSearch(ContentItem.DRAFT);
-        }
-
-        return m_search;
-    }
-
-    protected IdSearchTab getIdSearchPane() {
-        if (m_IdSearch == null) {
-            m_IdSearch = new IdSearchTab("idsearch");
-        }
-
-        return m_IdSearch;
-    }
+//    /**
+//     * Creates, and then caches, the Search pane. Overriding this method to
+//     * return null will prevent this tab from appearing.
+//     *
+//     */
+//    protected ItemSearch getSearchPane() {
+//        if (m_search == null) {
+//            m_search = new ItemSearch(ContentItem.DRAFT);
+//        }
+//
+//        return m_search;
+//    }
+//
+//    protected IdSearchTab getIdSearchPane() {
+//        if (m_IdSearch == null) {
+//            m_IdSearch = new IdSearchTab("idsearch");
+//        }
+//
+//        return m_IdSearch;
+//    }
 
     /**
      * Created the TabbedPane to use for this page. Sets the class attribute for
@@ -161,23 +164,24 @@ public class MainPage extends CMSApplicationPage implements ActionListener {
     protected TabbedPane createTabbedPane() {
         TabbedPane tabbedPane = new TabbedPane();
         tabbedPane.setClassAttr(XSL_CLASS);
-        Label taskLabel = new Label(GlobalizationUtil
-            .globalize("cms.ui.contentcenter.mainpage.taskssections"));
-        Label searchLabel = new Label(GlobalizationUtil
-            .globalize("cms.ui.contentcenter.mainpage.search"));
+        Label taskLabel = new Label(new GlobalizedMessage(
+            "cms.ui.contentcenter.mainpage.taskssections", 
+            CmsConstants.CMS_BUNDLE));
+        Label searchLabel = new Label(new GlobalizedMessage(
+            "cms.ui.contentcenter.mainpage.search", CmsConstants.CMS_BUNDLE));
         Label IdsearchLabel = new Label("ID Search");
 
         addToPane(tabbedPane,
                   taskLabel,
                   getTasksPane(m_typeSel, m_sectionSel));
-        addToPane(tabbedPane,
-                  //        searchLabel, 
-                  new Label(GlobalizationUtil.globalize(
-                      "cms.ui.contentcenter.mainpage.search")),
-                  getSearchPane());
-        addToPane(tabbedPane,
-                  IdsearchLabel,
-                  getIdSearchPane());
+//        addToPane(tabbedPane,
+//                  new Label(new GlobalizedMessage(
+//                      "cms.ui.contentcenter.mainpage.search", 
+//                      CmsConstants.CMS_BUNDLE)),
+//                  getSearchPane());
+//        addToPane(tabbedPane,
+//                  IdsearchLabel,
+//                  getIdSearchPane());
 
         tabbedPane.addActionListener(this);
         return tabbedPane;
@@ -224,11 +228,12 @@ public class MainPage extends CMSApplicationPage implements ActionListener {
 
         if (pane == m_tasks) {
             m_tasks.reset(state);
-        } else if (pane == m_search) {
-            m_search.reset(state);
-        } else if (pane == m_IdSearch) {
-            m_IdSearch.reset(state);
-        }
+        } 
+//        else if (pane == m_search) {
+//            m_search.reset(state);
+//        } else if (pane == m_IdSearch) {
+//            m_IdSearch.reset(state);
+//        }
     }
 
 }

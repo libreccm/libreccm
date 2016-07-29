@@ -37,13 +37,11 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import org.libreccm.web.ApplicationType;
-import org.librecms.contentsection.ui.admin.ApplicationInstanceForm;
-
 import java.util.ArrayList;
 
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 
 import static org.librecms.CmsConstants.*;
 
@@ -120,6 +118,9 @@ public class ContentSection extends CcmApplication implements Serializable {
 
     @Column(name = "DEFAULT_LOCALE")
     private Locale defaultLocale;
+    
+    @OneToMany(mappedBy = "contentSection")
+    private List<ContentType> contentTypes;
 
     public ContentSection() {
         roles = new ArrayList<>();
@@ -218,6 +219,22 @@ public class ContentSection extends CcmApplication implements Serializable {
         this.defaultLocale = defaultLocale;
     }
 
+    public List<ContentType> getContentTypes() {
+        return Collections.unmodifiableList(contentTypes);
+    }
+    
+    protected void setContentTypes(final List<ContentType> contentTypes) {
+        this.contentTypes = contentTypes;
+    }
+    
+    protected void addContentType(final ContentType contentType) {
+        contentTypes.add(contentType);
+    }
+    
+    protected void removeContentType(final ContentType contentType) {
+        contentTypes.remove(contentType);
+    }
+    
     @Override
     public int hashCode() {
         int hash = super.hashCode();

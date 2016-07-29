@@ -80,7 +80,7 @@ public class ApplicationRepository
     @Transactional(Transactional.TxType.REQUIRED)
     public List<CcmApplication> findByType(final String type) {
         final TypedQuery<CcmApplication> query = getEntityManager()
-            .createNamedQuery("CcmApplication.Application.findByType",
+            .createNamedQuery("CcmApplication.findByType",
                               CcmApplication.class);
         query.setParameter("type", type);
 

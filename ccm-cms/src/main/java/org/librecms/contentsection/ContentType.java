@@ -18,10 +18,15 @@
  */
 package org.librecms.contentsection;
 
+import org.hibernate.annotations.NamedQueries;
+import org.hibernate.annotations.NamedQuery;
+
 import static org.librecms.CmsConstants.*;
 
 import org.libreccm.core.CcmObject;
 import org.libreccm.l10n.LocalizedString;
+import org.libreccm.workflow.Workflow;
+import org.librecms.lifecycle.Lifecycle;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -34,20 +39,33 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
+ * The {@code ContentType} entity links a content item with its content section.
+ * It also provides default values for the lifecycle and the workflow.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
 @Table(name = "CONTENT_TYPES", schema = DB_SCHEMA)
+@NamedQueries({
+    @NamedQuery(
+        name = "ContentType.findByContenSection",
+        query = "SELECT c FROM ContentType c "
+                    + "WHERE c.contentSection = :contentSection")
+})
 public class ContentType extends CcmObject implements Serializable {
 
     private static final long serialVersionUID = -2708659750560382851L;
 
     @Column(name = "CONTENT_ITEM_CLASS", length = 1024)
     private String contentItemClass;
+
+    @ManyToOne
+    @JoinColumn(name = "CONTENT_SECTION_ID")
+    private ContentSection contentSection;
 
     @Embedded
     @AssociationOverride(
@@ -78,7 +96,13 @@ public class ContentType extends CcmObject implements Serializable {
     @Enumerated(EnumType.STRING)
     private ContentItemMode mode;
 
-    //ToDo references for authoring kit etc
+    @ManyToOne
+    @JoinColumn(name = "DEFAULT_LIFECYCLE_ID")
+    private Lifecycle defaultLifecycle;
+
+    @ManyToOne
+    @JoinColumn(name = "DEFAULT_WORKFLOW")
+    private Workflow defaultWorkflow;
 
     public String getContentItemClass() {
         return contentItemClass;
@@ -86,6 +110,14 @@ public class ContentType extends CcmObject implements Serializable {
 
     public void setContentItemClass(final String contentItemClass) {
         this.contentItemClass = contentItemClass;
+    }
+
+    public ContentSection getContentSection() {
+        return contentSection;
+    }
+
+    protected void setContentSection(final ContentSection contentSection) {
+        this.contentSection = contentSection;
     }
 
     public LocalizedString getLabel() {
@@ -126,6 +158,22 @@ public class ContentType extends CcmObject implements Serializable {
 
     public void setMode(final ContentItemMode mode) {
         this.mode = mode;
+    }
+
+    public Lifecycle getDefaultLifecycle() {
+        return defaultLifecycle;
+    }
+
+    protected void setDefaultLifecycle(final Lifecycle defaultLifecycle) {
+        this.defaultLifecycle = defaultLifecycle;
+    }
+
+    public Workflow getDefaultWorkflow() {
+        return defaultWorkflow;
+    }
+
+    protected void setDefaultWorkflow(final Workflow defaultWorkflow) {
+        this.defaultWorkflow = defaultWorkflow;
     }
 
     @Override

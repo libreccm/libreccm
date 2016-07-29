@@ -20,6 +20,7 @@ package org.librecms.contentsection;
 
 import org.libreccm.categorization.Category;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
@@ -82,6 +83,10 @@ public class ContentItemManager {
     public <T extends ContentItem> Optional<T> getLiveVersion(
         final ContentItem item,
         final Class<T> type) {
+        throw new UnsupportedOperationException();
+    }
+
+    public <T extends ContentItem> List<T> getPendingVersions() {
         throw new UnsupportedOperationException();
     }
     

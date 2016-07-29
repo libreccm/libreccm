@@ -1,4 +1,5 @@
 
+
     create table CCM_CMS.ARTICLE_LEADS (
         OBJECT_ID int8 not null,
         LOCALIZED_VALUE text,
@@ -317,6 +318,9 @@
         DESCENDANTS varchar(1024),
         mode varchar(255),
         OBJECT_ID int8 not null,
+        CONTENT_SECTION_ID int8,
+        DEFAULT_LIFECYCLE_ID int8,
+        DEFAULT_WORKFLOW int8,
         primary key (OBJECT_ID)
     );
 
@@ -1109,6 +1113,21 @@
         add constraint FK3suusqws1xgffyk3yob7m7dge 
         foreign key (OBJECT_ID) 
         references CCM_CMS.CONTENT_TYPES;
+
+    alter table CCM_CMS.CONTENT_TYPES 
+        add constraint FKriohuo8093its1k5rgoc5yrfc 
+        foreign key (CONTENT_SECTION_ID) 
+        references CCM_CMS.CONTENT_SECTIONS;
+
+    alter table CCM_CMS.CONTENT_TYPES 
+        add constraint FKoqvcvktnvt4ncx5k6daqat4u8 
+        foreign key (DEFAULT_LIFECYCLE_ID) 
+        references CCM_CMS.LIFECYCLES;
+
+    alter table CCM_CMS.CONTENT_TYPES 
+        add constraint FKpgeccqsr50xwb268ypmfx0r66 
+        foreign key (DEFAULT_WORKFLOW) 
+        references CCM_CORE.WORKFLOWS;
 
     alter table CCM_CMS.CONTENT_TYPES 
         add constraint FK96vwsbqfbdg33ujeeawajr0v4 

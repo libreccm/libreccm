@@ -23,8 +23,28 @@ package org.librecms.contentsection;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public enum ContentItemVersion {
-    
+
+    /**
+     * A draft version is only visible to authenticated users with the
+     * appropriate permissions. The draft version is also the version which is
+     * edited by the authors.
+     */
     DRAFT,
+    /**
+     * This version is assigned to the live copy by the
+     * {@link ContentItemManager} while the item is published.
+     */
+    PUBLISHING,
+    /**
+     * A published version which is not yet visible because its lifecycle
+     * defines a later date.
+     */
+    PENDING,
+    /**
+     * The live version of a content item is the one which is visible to
+     * most/all users. The live version is basically a copy of the state of the
+     * draft version of a content item on a specific time.
+     */
     LIVE
-    
+
 }

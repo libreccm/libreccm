@@ -31,47 +31,47 @@ import org.libreccm.core.CcmObjectRepository;
 
 /**
  * @param <T>
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
- 
+ *
  */
-public class CcmObjectSelectionModel<T extends CcmObject> 
-    implements SingleSelectionModel<Long>{
+public class CcmObjectSelectionModel<T extends CcmObject>
+    implements SingleSelectionModel<Long> {
 
     private final Class<T> clazz;
     private final SingleSelectionModel<Long> model;
-    
+
     public CcmObjectSelectionModel(final LongParameter parameter) {
         this(null, parameter);
     }
-    
+
     public CcmObjectSelectionModel(final String parameterName) {
         this(null, new LongParameter(parameterName));
     }
-    
+
 //    public CcmObjectSelectionModel(final SingleSelectionModel<T> model ) {
 //        this(null, model);
 //    }
 //    
-    public CcmObjectSelectionModel(final Class<T> clazz, 
+    public CcmObjectSelectionModel(final Class<T> clazz,
                                    final String parameterName) {
         this(clazz, new LongParameter(parameterName));
     }
-    
+
     public CcmObjectSelectionModel(final Class<T> clazz,
                                    final LongParameter parameter) {
         this(clazz, new ParameterSingleSelectionModel<>(parameter));
     }
-    
-    public CcmObjectSelectionModel(final Class<T> clazz, 
+
+    public CcmObjectSelectionModel(final Class<T> clazz,
                                    final SingleSelectionModel<Long> model) {
         this.clazz = clazz;
         this.model = model;
     }
-    
+
     @Override
     public boolean isSelected(final PageState state) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return model.isSelected(state);
     }
 
     @Override
@@ -83,35 +83,34 @@ public class CcmObjectSelectionModel<T extends CcmObject>
     public void setSelectedKey(final PageState state, final Long key) {
         model.setSelectedKey(state, key);
     }
-    
+
     public T getSelectedObject(final PageState state) {
         final Long key = getSelectedKey(state);
         final CcmObjectRepository repository = CdiUtil.createCdiUtil().findBean(
             CcmObjectRepository.class);
-        //final T object = repository.findById(key);
-        throw new UnsupportedOperationException();
+        @SuppressWarnings("unchecked")
+        final T object = (T) repository.findById(key);
+        return object;
     }
 
     @Override
-    public void clearSelection(PageState state) {
+    public void clearSelection(final PageState state) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void addChangeListener(ChangeListener changeListener) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void addChangeListener(final ChangeListener changeListener) {
+        model.addChangeListener(changeListener);
     }
 
     @Override
-    public void removeChangeListener(ChangeListener changeListener) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void removeChangeListener(final ChangeListener changeListener) {
+        model.addChangeListener(changeListener);;
     }
 
     @Override
     public ParameterModel getStateParameter() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return model.getStateParameter();
     }
-    
-    
-    
+
 }

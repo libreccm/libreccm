@@ -22,8 +22,6 @@ import com.arsdigita.ui.admin.applications.AdminApplicationCreator;
 import com.arsdigita.ui.admin.AdminServlet;
 import com.arsdigita.ui.admin.AdminUiConstants;
 import com.arsdigita.ui.admin.applications.AdminApplicationSetup;
-import com.arsdigita.ui.admin.applications.DefaultApplicationInstanceForm;
-import com.arsdigita.ui.admin.applications.DefaultApplicationSettingsPane;
 import com.arsdigita.ui.login.LoginApplicationCreator;
 import com.arsdigita.ui.login.LoginServlet;
 import com.arsdigita.ui.login.LoginApplicationSetup;
