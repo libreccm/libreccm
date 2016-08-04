@@ -24,21 +24,23 @@ import org.libreccm.core.CcmObject;
 import org.libreccm.core.CcmObjectRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
 /**
+ * Repository for content items.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-public class ContentItemRepository 
-    extends AbstractAuditedEntityRepository<Long, ContentItem>{
+public class ContentItemRepository
+    extends AbstractAuditedEntityRepository<Long, ContentItem> {
 
     @Inject
-    private CcmObjectRepository ccmObjectRepo; 
-    
+    private CcmObjectRepository ccmObjectRepo;
+
     @Override
     public Long getEntityId(final ContentItem item) {
         return item.getObjectId();
@@ -53,21 +55,48 @@ public class ContentItemRepository
     public boolean isNew(final ContentItem item) {
         return ccmObjectRepo.isNew(item);
     }
-    
-    public ContentItem findById(final long itemId) {
+
+    /**
+     * Finds a content item by is id.
+     *
+     * @param itemId The id of item to retrieve.
+     *
+     * @return The content item identified by the provided {@code itemId} or
+     *         nothing if there is such content item.
+     */
+    public Optional<ContentItem> findById(final long itemId) {
         final CcmObject result = ccmObjectRepo.findObjectById(itemId);
         if (result instanceof ContentItem) {
-            return (ContentItem) result;
+            return Optional.of((ContentItem) result);
         } else {
-            return null;
+            return Optional.empty();
         }
     }
-    
-    public <T extends ContentItem> T findById(final long itemId, 
-                                              final Class<T> type) {
+
+    /**
+     * Finds a content item by its ID and ensures that is a the requested type.
+     *
+     * @param <T>    The type of the content item.
+     * @param itemId The id of item to retrieve.
+     * @param type   The type of the content item.
+     *
+     * @return The content item identified by the provided id or an empty
+     *         {@link Optional} if there is no such item or if it is not of the
+     *         requested type.
+     */
+    public <T extends ContentItem> Optional<T> findById(final long itemId,
+                                                        final Class<T> type) {
         throw new UnsupportedOperationException();
     }
-    
+
+    /**
+     * Finds a content item by is UUID.
+     *
+     * @param uuid The id of item to retrieve.
+     *
+     * @return The content item identified by the provided {@code uuid} or
+     *         nothing if there is such content item.
+     */
     public ContentItem findByUuid(final String uuid) {
         final CcmObject result = ccmObjectRepo.findObjectByUuid(uuid);
         if (result instanceof ContentItem) {
@@ -76,18 +105,42 @@ public class ContentItemRepository
             return null;
         }
     }
-    
+
+    /**
+     * Finds a content item by its UUID and ensures that is a the requested type.
+     *
+     * @param <T>    The type of the content item.
+     * @param uuid The UUID of item to retrieve.
+     * @param type   The type of the content item.
+     *
+     * @return The content item identified by the provided UUID or an empty
+     *         {@link Optional} if there is no such item or if it is not of the
+     *         requested type.
+     */
     public <T extends ContentItem> T findByUuid(final String uuid,
                                                 final Class<T> type) {
         throw new UnsupportedOperationException();
     }
-    
+
+    /**
+     * Finds all content items of a specific type.
+     * 
+     * @param <T> The type of the items.
+     * @param type The type of the items.
+     * @return A list of all content items of the requested type.
+     */
     public <T extends ContentItem> List<T> findByType(final Class<T> type) {
         throw new UnsupportedOperationException();
     }
-    
+
+    /**
+     * Retrieves all content items in the provided folder.
+     * 
+     * @param folder The folder.
+     * @return A list of all items in the provided folder.
+     */
     public List<ContentItem> findByFolder(final Category folder) {
         throw new UnsupportedOperationException();
     }
-    
+
 }

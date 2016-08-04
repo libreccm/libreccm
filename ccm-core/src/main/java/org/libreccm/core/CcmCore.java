@@ -35,6 +35,8 @@ import javax.persistence.EntityManager;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.libreccm.admin.ui.AdminJsfApplicationCreator;
+import org.libreccm.admin.ui.AdminJsfApplicationSetup;
 
 import org.libreccm.modules.CcmModule;
 import org.libreccm.modules.InitEvent;
@@ -60,7 +62,12 @@ import org.libreccm.web.ApplicationType;
                      descBundle = "com.arsdigita.ui.admin.AdminResources",
                      singleton = true,
                      creator = AdminApplicationCreator.class,
-                     servlet = AdminServlet.class)},
+                     servlet = AdminServlet.class),
+    @ApplicationType(name = "org.libreccm.ui.admin.AdminFaces",
+                     descBundle = "com.arsdigita.ui.admin.AdminResources",
+                     singleton = true,
+                     creator = AdminJsfApplicationCreator.class,
+                     servletPath = "/admin-jsf/admin.xhtml")},
         configurations = {
             com.arsdigita.bebop.BebopConfig.class,
             com.arsdigita.dispatcher.DispatcherConfig.class,
@@ -93,6 +100,11 @@ public class CcmCore implements CcmModule {
         final AdminApplicationSetup adminSetup
                                         = new AdminApplicationSetup(event);
         adminSetup.setup();
+
+        LOGGER.info("Setting up admin-jsf application (/ccm/admin-jsf/)...");
+        final AdminJsfApplicationSetup adminJsfSetup
+                                       = new AdminJsfApplicationSetup(event);
+        adminJsfSetup.setup();
 
         LOGGER.info("Setting up login application...");
         final LoginApplicationSetup loginSetup

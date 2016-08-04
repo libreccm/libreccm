@@ -291,6 +291,12 @@
                 <version>1.2.5</version>
             </dependency>
             
+            <!-- PrimeFaces for JSF prototype -->
+            <dependency>
+                <groupId>org.primefaces</groupId>
+                <artifactId>primefaces</artifactId>
+                <version>6.0</version>
+            </dependency>
             
             <!-- 
                 *********************

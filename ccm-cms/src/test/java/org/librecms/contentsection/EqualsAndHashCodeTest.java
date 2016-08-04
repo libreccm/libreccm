@@ -31,7 +31,9 @@ import org.libreccm.tests.categories.UnitTest;
 import org.libreccm.testutils.EqualsVerifier;
 import org.libreccm.web.CcmApplication;
 import org.libreccm.workflow.Workflow;
+import org.libreccm.workflow.WorkflowTemplate;
 import org.librecms.lifecycle.Lifecycle;
+import org.librecms.lifecycle.LifecycleDefinition;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -137,17 +139,17 @@ public class EqualsAndHashCodeTest extends EqualsVerifier {
         final Resource resource2 = new Resource();
         resource2.setDisplayName("Resource 2");
         
-        final Lifecycle lifecycle1 = new Lifecycle();
-        lifecycle1.setFinished(true);
+        final LifecycleDefinition lifecycleDef1 = new LifecycleDefinition();
+        lifecycleDef1.setDefinitionId(-100);
         
-        final Lifecycle lifecycle2 = new Lifecycle();
-        lifecycle2.setFinished(false);
+        final LifecycleDefinition lifecycleDef2 = new LifecycleDefinition();
+        lifecycleDef2.setDefinitionId(-110);
         
-        final Workflow workflow1 = new Workflow();
-        workflow1.setWorkflowId(-100);
+        final WorkflowTemplate workflowTemplate1 = new WorkflowTemplate();
+        workflowTemplate1.setWorkflowId(-200);
         
-        final Workflow workflow2 = new Workflow();
-        workflow2.setWorkflowId(-200);
+        final WorkflowTemplate workflowTemplate2 = new WorkflowTemplate();
+        workflowTemplate2.setWorkflowId(-210);
 
         verifier
             .withPrefabValues(ContentItem.class, item1, item2)
@@ -161,8 +163,12 @@ public class EqualsAndHashCodeTest extends EqualsVerifier {
             .withPrefabValues(CcmApplication.class, application1, application2)
             .withPrefabValues(Domain.class, domain1, domain2)
             .withPrefabValues(Resource.class, resource1, resource2)
-            .withPrefabValues(Lifecycle.class, lifecycle1, lifecycle2)
-            .withPrefabValues(Workflow.class, workflow1, workflow2);
+            .withPrefabValues(LifecycleDefinition.class, 
+                              lifecycleDef1, 
+                              lifecycleDef2)
+            .withPrefabValues(WorkflowTemplate.class, 
+                              workflowTemplate1, 
+                              workflowTemplate2);
     }
 
     /**

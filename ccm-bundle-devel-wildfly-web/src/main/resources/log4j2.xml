@@ -45,5 +45,8 @@
         <Logger name="org.libreccm.security.Shiro"
                 level="debug">
         </Logger>
+        <Logger name="org.librecms.contentsection.ContentSectionSetup"
+                level="debug">
+        </Logger>
     </Loggers>
 </Configuration>

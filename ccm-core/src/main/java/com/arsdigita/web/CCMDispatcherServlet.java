@@ -437,7 +437,7 @@ public class CCMDispatcherServlet extends BaseServlet {
                         m_typeURI = servletAnnotation.urlPatterns()[0];
                     }
                 } else {
-                    m_typeURI = "";
+                    m_typeURI = appType.servletPath();
                 }
             }
 

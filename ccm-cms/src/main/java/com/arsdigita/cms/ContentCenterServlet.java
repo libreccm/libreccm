@@ -48,7 +48,6 @@ import org.librecms.contentsection.ContentSectionRepository;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -136,8 +135,8 @@ public class ContentCenterServlet extends BaseApplicationServlet {
         /*       Check user and privilegies                                   */
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final Shiro shiro = cdiUtil.findBean(Shiro.class);
-        if (shiro.getSubject().isAuthenticated()) {
-            throw new LoginSignal(sreq);            // send to login page
+        if (!shiro.getSubject().isAuthenticated()) {
+            throw new LoginSignal(sreq); // send to login page
         }
         final PermissionChecker permissionChecker = cdiUtil.findBean(
             PermissionChecker.class);
@@ -178,7 +177,7 @@ public class ContentCenterServlet extends BaseApplicationServlet {
         //      DispatcherHelper.sendRedirect(sresp, originalUrl + "/");
         //      return;
         //  }
-        final Page page = (Page) pages.get(pathInfo);
+        final Page page = pages.get(pathInfo);
         if (page != null) {
 
             // Check user access.
@@ -274,7 +273,7 @@ public class ContentCenterServlet extends BaseApplicationServlet {
     )
         throws ServletException {
 
-        if (CdiUtil.createCdiUtil().findBean(Shiro.class).getSubject()
+        if (!CdiUtil.createCdiUtil().findBean(Shiro.class).getSubject()
             .isAuthenticated()) {
             throw new LoginSignal(request);
         }

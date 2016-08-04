@@ -16,18 +16,36 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.librecms;
+package org.libreccm.admin.ui;
 
-import org.librecms.contentsection.ContentItem;
+import org.libreccm.modules.InstallEvent;
+import org.libreccm.web.AbstractCcmApplicationSetup;
+import org.libreccm.web.CcmApplication;
+
+import java.util.UUID;
 
 /**
- * Annotation providing several informations about a content type. A content 
- * type is provided by a class extending the {@link ContentItem} class.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public @interface ContentType {
+public class AdminJsfApplicationSetup extends AbstractCcmApplicationSetup {
+
+    public static final String ADMIN_APP_NAME = "CcmAdminJsf";
     
-    //ToDo
+    public AdminJsfApplicationSetup(final InstallEvent event) {
+        super(event);
+    }
+    
+    @Override
+    public void setup() {
+        final CcmApplication admin = new CcmApplication();
+        admin.setUuid(UUID.randomUUID().toString());
+        admin.setApplicationType("org.libreccm.ui.admin.AdminFaces");
+        admin.setPrimaryUrl("/admin-jsf/");
+        
+        getEntityManager().persist(admin);
+    }
+    
+    
     
 }

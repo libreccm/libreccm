@@ -26,7 +26,6 @@ import org.libreccm.security.Role;
 import org.libreccm.web.AbstractCcmApplicationSetup;
 import org.librecms.CmsConstants;
 
-import java.util.Locale;
 import java.util.UUID;
 
 import static org.librecms.CmsConstants.*;
@@ -54,8 +53,13 @@ public class ContentSectionSetup extends AbstractCcmApplicationSetup {
         if (getIntegrationProps().containsKey(INITIAL_CONTENT_SECTIONS)) {
             sectionNames = getIntegrationProps().getProperty(
                 INITIAL_CONTENT_SECTIONS);
+            LOGGER.info(
+                "Found names for initial content sections in integration "
+                    + "properties: {}", sectionNames);
         } else {
             sectionNames = "info";
+            LOGGER.info("No initial content sections definied integration "
+                            + "properties, using default: {}", sectionNames);
         }
 
         for (final String contentSectionName : sectionNames.split(",")) {
@@ -64,12 +68,26 @@ public class ContentSectionSetup extends AbstractCcmApplicationSetup {
     }
 
     private void createContentSection(final String sectionName) {
+        LOGGER.debug("Creating content section with section name \"{}\"...",
+                     sectionName);
         final ContentSection section = new ContentSection();
         section.setUuid(UUID.randomUUID().toString());
         section.setApplicationType(CmsConstants.CONTENT_SECTION_APP_TYPE);
-        section.setPrimaryUrl(sectionName);
+        section.setPrimaryUrl(String.format("/%s/", sectionName));
         section.setDisplayName(sectionName);
         section.setLabel(sectionName);
+
+        LOGGER.debug("New content section properties: "
+                         + "uuid = {}; "
+                         + "applicationType = \"{}\"; "
+                         + "primaryUrl = \"{}\"; "
+                         + "displayName = \"{}\"; "
+                         + "label = \"{}\"",
+                     section.getUuid(),
+                     section.getApplicationType(),
+                     section.getPrimaryUrl(),
+                     section.getDisplayName(),
+                     section.getLabel());
 
         final Category rootFolder = new Category();
         rootFolder.setUuid(UUID.randomUUID().toString());

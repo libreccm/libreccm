@@ -25,8 +25,8 @@ import static org.librecms.CmsConstants.*;
 
 import org.libreccm.core.CcmObject;
 import org.libreccm.l10n.LocalizedString;
-import org.libreccm.workflow.Workflow;
-import org.librecms.lifecycle.Lifecycle;
+import org.libreccm.workflow.WorkflowTemplate;
+import org.librecms.lifecycle.LifecycleDefinition;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -98,11 +98,11 @@ public class ContentType extends CcmObject implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "DEFAULT_LIFECYCLE_ID")
-    private Lifecycle defaultLifecycle;
+    private LifecycleDefinition defaultLifecycle;
 
     @ManyToOne
     @JoinColumn(name = "DEFAULT_WORKFLOW")
-    private Workflow defaultWorkflow;
+    private WorkflowTemplate defaultWorkflow;
 
     public String getContentItemClass() {
         return contentItemClass;
@@ -160,19 +160,19 @@ public class ContentType extends CcmObject implements Serializable {
         this.mode = mode;
     }
 
-    public Lifecycle getDefaultLifecycle() {
+    public LifecycleDefinition getDefaultLifecycle() {
         return defaultLifecycle;
     }
 
-    protected void setDefaultLifecycle(final Lifecycle defaultLifecycle) {
+    protected void setDefaultLifecycle(final LifecycleDefinition defaultLifecycle) {
         this.defaultLifecycle = defaultLifecycle;
     }
 
-    public Workflow getDefaultWorkflow() {
+    public WorkflowTemplate getDefaultWorkflow() {
         return defaultWorkflow;
     }
 
-    protected void setDefaultWorkflow(final Workflow defaultWorkflow) {
+    protected void setDefaultWorkflow(final WorkflowTemplate defaultWorkflow) {
         this.defaultWorkflow = defaultWorkflow;
     }
 

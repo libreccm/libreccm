@@ -30,7 +30,7 @@ import java.util.List;
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
- * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
+ * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  * @param <K> Primary key of the entity.
  * @param <T> Type of the entity
  */
@@ -42,6 +42,7 @@ public abstract class AbstractAuditedEntityRepository<K, T>
 
     public abstract K getEntityId(final T entity);
 
+    @SuppressWarnings("unchecked")
     public T retrieveRevisionOfEntity(final T entity, final Number revision) {
         final AuditQuery query = auditReader.createQuery()
             .forEntitiesAtRevision(getEntityClass(), revision);

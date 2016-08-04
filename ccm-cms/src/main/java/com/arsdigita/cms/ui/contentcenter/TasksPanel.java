@@ -75,8 +75,12 @@ public class TasksPanel extends CMSContainer {
     // private ActionLink m_viewAllLink;
     // private ActionLink m_viewShortLink;
     private Paginator m_paginator;
-    private ActionLink m_viewLockLink, m_viewUnlockLink, m_viewAllLockLink;
-    private Label m_viewLockLabel, m_viewUnlockLabel, m_viewAllLockLabel;
+    private ActionLink m_viewLockLink;
+    private ActionLink m_viewUnlockLink;
+    private ActionLink m_viewAllLockLink;
+    private Label m_viewLockLabel;
+    private Label m_viewUnlockLabel;
+    private Label m_viewAllLockLabel;
     private StringParameter m_sortDirectionParam;
     private StringParameter m_sortTypeParam;
     private StringParameter m_lockFilterParam;
@@ -103,7 +107,7 @@ public class TasksPanel extends CMSContainer {
     private Label m_selectorLabel;
 //ToDo
 //    private CreationSelector m_selector;
-//    private ContentSectionContainer m_sections;
+    private ContentSectionContainer m_sections;
 //    ToDo End
     private CcmObjectSelectionModel m_sectionSel;
     private CcmObjectSelectionModel m_typeSel;
@@ -134,7 +138,8 @@ public class TasksPanel extends CMSContainer {
      * @pre maxRows != null
      *
      */
-    public TasksPanel(int maxRows, CcmObjectSelectionModel typeModel,
+    public TasksPanel(int maxRows, 
+                      CcmObjectSelectionModel typeModel,
                       CcmObjectSelectionModel sectionModel) {
         super();
 
@@ -192,14 +197,13 @@ public class TasksPanel extends CMSContainer {
 //        m_selector = new CreationSelector(m_typeSel, m_folderSel);
 //        m_creationPane.add(m_selector);
 //ToDo End
-
         m_creationPane.setClassAttr("itemCreationPane");
         add(m_creationPane);
 
         // The section list UIx
 //ToDo
-//        m_sections = new ContentSectionContainer(m_typeSel, m_sectionSel);
-//        add(m_sections);
+        m_sections = new ContentSectionContainer(m_typeSel, m_sectionSel);
+        add(m_sections);
 //ToDo End
         // When a new type is selected, show the creation UI.
         // When the selection is cleared, return to section list
@@ -444,8 +448,6 @@ public class TasksPanel extends CMSContainer {
 //            query.addEqualsFilter("isLocked", "f");
 //        } // else show all
 //    }
-
-
 //    private static class RootFolderSelectionModel
 //        extends FolderSelectionModel {
 //
@@ -474,7 +476,6 @@ public class TasksPanel extends CMSContainer {
 //
 //    }
 //ToDo End
-
     /**
      *
      */
@@ -512,9 +513,8 @@ public class TasksPanel extends CMSContainer {
 //
 //            return query;
 //        }
-
         public int size(PageState ps) {
-            return ((Long) m_taskCount.get(ps)).intValue();
+            return ((Integer)m_taskCount.get(ps)).intValue();
         }
 
         private RequestLocal m_taskCount = new RequestLocal() {
@@ -523,7 +523,7 @@ public class TasksPanel extends CMSContainer {
             public Object initialValue(PageState state) {
 //                DataQuery query = makeQuery(state);
 //                return new Long(query.size());
-return null;
+                return 0;
             }
 
         };
@@ -536,7 +536,6 @@ return null;
             exportAttributes(content);
 
 //            DataQuery query = makeQuery(state);
-
             String lockFilterType = getLockFilterType(state);
             content.addAttribute("lockFilterType", lockFilterType);
 
@@ -664,18 +663,18 @@ return null;
 //                                      String.valueOf(
 //                                          ContentItemPage.AUTHORING_TAB));
 //                }
-            }
+        }
 
-            // m_actionLabel.generateXML(state, content);
-            String[][] sortableHeaders = {{SORT_TITLE,
-                                           "cms.ui.workflow.task.item_title"},
-                                          {SORT_ACTION, "cms.ui.action"},
-                                          {SORT_DATE, "cms.ui.tasks_due_date"},
-                                          {SORT_STATUS,
-                                           "cms.ui.tasks_status_no_colon"},
-                                          {SORT_USER,
-                                           "cms.ui.workflow.task.locking_user"},
-                                          {SORT_WORKFLOW, "cms.ui.workflow"}};
+        // m_actionLabel.generateXML(state, content);
+        String[][] sortableHeaders = {{SORT_TITLE,
+                                       "cms.ui.workflow.task.item_title"},
+                                      {SORT_ACTION, "cms.ui.action"},
+                                      {SORT_DATE, "cms.ui.tasks_due_date"},
+                                      {SORT_STATUS,
+                                       "cms.ui.tasks_status_no_colon"},
+                                      {SORT_USER,
+                                       "cms.ui.workflow.task.locking_user"},
+                                      {SORT_WORKFLOW, "cms.ui.workflow"}};
 //            for (int i = 0; i < sortableHeaders.length; i++) {
 //                String header = sortableHeaders[i][0];
 //                String labelKey = sortableHeaders[i][1];
@@ -705,14 +704,15 @@ return null;
 //                link.generateXML(state, content);
 //                state.clearControlEvent();
 //            }
-        }
 
-        @Override
-        public void respond(PageState state) throws ServletException {
-            String key = state.getControlEventName();
-            String value = state.getControlEventValue();
-            if (TASK_ACTION.equals(key)) {
-                BigDecimal itemID = new BigDecimal(value);
+    }
+
+    @Override
+    public void respond(PageState state) throws ServletException {
+        String key = state.getControlEventName();
+        String value = state.getControlEventValue();
+        if (TASK_ACTION.equals(key)) {
+            BigDecimal itemID = new BigDecimal(value);
 //
 //                try {
 //                    ContentItem item = new ContentItem(itemID);
@@ -751,7 +751,7 @@ return null;
 //                    throw new ServletException("Unknown content ID" + itemID);
 //                }
 //            } else 
-                if (SORT_UP.equals(key) || SORT_DOWN.equals(key)) {
+            if (SORT_UP.equals(key) || SORT_DOWN.equals(key)) {
                 state.setValue(m_sortTypeParam, value);
                 if (SORT_DOWN.equals(key)) {
                     state.setValue(m_sortDirectionParam, SORT_DOWN);
@@ -776,5 +776,4 @@ return null;
 //        return PermissionService.getFilterQuery(factory, "itemID", privilege,
 //                                                partyOID);
 //    }
-
 }

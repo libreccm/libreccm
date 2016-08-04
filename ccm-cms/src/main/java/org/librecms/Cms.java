@@ -3,6 +3,10 @@
  */
 package org.librecms;
 
+import com.arsdigita.cms.ContentCenterAppCreator;
+import com.arsdigita.cms.ContentCenterServlet;
+import com.arsdigita.cms.ContentCenterSetup;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.core.CoreConstants;
@@ -14,6 +18,7 @@ import org.libreccm.modules.RequiredModule;
 import org.libreccm.modules.ShutdownEvent;
 import org.libreccm.modules.UnInstallEvent;
 import org.libreccm.web.ApplicationType;
+import org.libreccm.web.CcmApplication;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionCreator;
 import org.librecms.contentsection.ContentSectionSetup;
@@ -29,6 +34,13 @@ import java.util.Properties;
         @RequiredModule(module = org.libreccm.core.CcmCore.class)
     },
     applicationTypes = {
+        @ApplicationType(
+            name = CmsConstants.CONTENT_CENTER_APP_TYPE,
+            applicationClass = CcmApplication.class,
+            descBundle = CmsConstants.CONTENT_CENTER_DESC_BUNDLE,
+            creator = ContentCenterAppCreator.class,
+            servlet = ContentCenterServlet.class
+        ),
         @ApplicationType(
             name = CmsConstants.CONTENT_SECTION_APP_TYPE,
             applicationClass = ContentSection.class,
@@ -66,6 +78,12 @@ public class Cms implements CcmModule {
                 ex);
         }
 
+        LOGGER.info("Setting content center...");
+        final ContentCenterSetup contentCenterSetup = new ContentCenterSetup(
+            event);
+        contentCenterSetup.setup();
+
+        LOGGER.info("Setting up content sections...");
         final ContentSectionSetup contentSectionSetup = new ContentSectionSetup(
             event);
         contentSectionSetup.setup();

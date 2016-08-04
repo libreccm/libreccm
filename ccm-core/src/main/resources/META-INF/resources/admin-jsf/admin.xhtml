@@ -1,0 +1,124 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <f:loadBundle basename="com.arsdigita.ui.admin.AdminResources"
+                  var="texts" />
+    
+    <h:head>
+        <title>
+            LibreCCM Admin
+        </title>
+    </h:head>
+
+    <h:body>
+        <f:metadata>
+            <f:event listener="#{authorizationListener.isPermitted}" 
+                     type="preRenderView" />
+            <f:attribute name="requiredPrivilege" value="admin" />
+        </f:metadata>
+
+        <div id="header">
+            <h:outputStylesheet library="admin-jsf" name="header.css" />
+
+            <div id="logo">
+                <h:graphicImage alt="" 
+                                height="70"
+
+                                library="admin-jsf" 
+                                name="libreccm.png" />
+                <!--<img alt="" 
+                     id="logo" 
+                     src="/themes/libreccm-default/images/libreccm.png" />-->
+            </div>
+
+            <h:form id="user-widget">
+                <p:menuButton rendered="#{userContextController.loggedIn}"
+                              value="#{userContextController.currentUserName}">
+                    <p:menuitem action="#{userContextController.changePassword()}"
+                                icon="fa fa-edit"
+                                value="Change password" />
+                    <p:menuitem action="#{userContextController.logout()}"
+                                icon="fa fa-sign-out"
+                                value="Logout" />
+                </p:menuButton>
+            </h:form>
+        </div>
+
+        <p:tabView id="admin-tabs" dynamic="true">
+            <p:tab title="#{texts['ui.admin.tab.applications']}">
+                <h:outputText value="Applications Placeholder" />
+            </p:tab>
+            <p:tab title="#{texts['ui.admin.tab.users_groups_roles.title']}">
+                <p:tabView id="user-groups-roles-tabs" orientation="left">
+                    <p:tab title="Users">
+                        <h:outputText value="Users Placeholder" />
+                    </p:tab>
+                    <p:tab title="Groups">
+                        <h:outputText value="Groups Placeholder" />
+                    </p:tab>
+                    <p:tab title="Roles">
+                        <h:outputText value="Roles Placeholder" />
+                    </p:tab>
+                </p:tabView>
+                
+            </p:tab>
+            <p:tab title="#{texts['ui.admin.tab.categories.title']}">
+                <h:outputText value="Categories Placeholder" />
+            </p:tab>
+            <p:tab title="#{texts['ui.admin.tab.configuration.title']}">
+                <h:outputText value="Configuration Placeholder" />
+            </p:tab>
+            <p:tab title="#{texts['ui.admin.tab.workflows.title']}">
+                <h:outputText value="Workflows Placeholder" />
+            </p:tab>
+            <p:tab title="#{texts['ui.admin.tab.sysinfo.title']}">
+                <p:dataTable value="#{configurationController.systemInformation}"
+                             var="prop">
+                    <f:facet name="header">
+                        <h:outputText value="#{texts['ui.admin.sysinfo.appinfo']}" />
+                    </f:facet>
+                    <p:column>
+                        <h:outputText value="#{prop.name}" />
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{prop.value}" />
+                    </p:column>
+                </p:dataTable>
+                
+                <p:dataTable value="#{configurationController.javaSystemProperties}"
+                             var="prop">
+                    <f:facet name="header">
+                        <h:outputText value="#{texts['ui.admin.sysinfo.java_system_properties']}" />
+                    </f:facet>
+                    <p:column>
+                        <h:outputText value="#{prop.name}" />
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{prop.value}" />
+                    </p:column>
+                </p:dataTable>
+                
+                <p:dataTable value="#{configurationController.xmlConfig}"
+                             var="prop">
+                    <f:facet name="header">
+                        <h:outputText value="#{texts['ui.admin.sysinfo.xml_config']}" />
+                    </f:facet>
+                    <p:column>
+                        <h:outputText value="#{prop.name}" />
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{prop.value}" />
+                    </p:column>
+                </p:dataTable>
+                <h:outputText value="Systeminformation Placeholder" />
+            </p:tab>
+        </p:tabView>
+
+
+        <h:outputText value="LibreCCM Admin Faces Placeholder" />
+    </h:body>
+
+</html>
+
