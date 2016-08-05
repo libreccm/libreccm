@@ -22,6 +22,7 @@ import org.libreccm.auditing.AbstractAuditedEntityRepository;
 import org.libreccm.categorization.Category;
 import org.libreccm.core.CcmObject;
 import org.libreccm.core.CcmObjectRepository;
+import org.librecms.contenttypes.Article;
 
 import java.util.List;
 import java.util.Optional;

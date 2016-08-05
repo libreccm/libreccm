@@ -285,7 +285,7 @@ public class CMSPage extends Page implements ResourceHandler {
         if (itemId != null) {
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final ContentItemRepository itemRepo = cdiUtil.findBean(ContentItemRepository.class);
-            final ContentItem item = itemRepo.findById(Long.parseLong("item_id"));
+            final ContentItem item = itemRepo.findById(Long.parseLong("item_id")).get();
             final PermissionChecker permissionChecker = cdiUtil.findBean(
                 PermissionChecker.class);
             permissionChecker.checkPermission(CmsConstants.PRIVILEGE_ITEMS_PREVIEW, 
