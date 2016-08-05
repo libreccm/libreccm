@@ -16,18 +16,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.ui.admin;
+package org.libreccm.ui.admin.sysinfo;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class ConfProperty {
+public class SysInfoProperty {
 
     private final String name;
     private final String value;
 
-    public ConfProperty(final String name, final String value) {
+    public SysInfoProperty(final String name, final String value) {
         this.name = name;
         this.value = value;
     }

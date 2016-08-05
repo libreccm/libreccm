@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.ui.admin;
+package org.libreccm.ui.admin.sysinfo;
 
 import org.xml.sax.SAXException;
 
@@ -43,9 +43,9 @@ import javax.xml.transform.TransformerFactory;
  */
 @RequestScoped
 @Named
-public class ConfigurationController {
+public class SysInfoController {
 
-    public List<ConfProperty> getSystemInformation() {
+    public List<SysInfoProperty> getSystemInformation() {
         final Properties properties = new Properties();
 
         try (final InputStream stream = getClass().getResourceAsStream(
@@ -61,67 +61,67 @@ public class ConfigurationController {
             throw new RuntimeException(ex);
         }
 
-        final List<ConfProperty> sysInfo = new ArrayList<>();
+        final List<SysInfoProperty> sysInfo = new ArrayList<>();
         properties.stringPropertyNames().forEach(propName -> sysInfo.add(
-            new ConfProperty(propName,
+            new SysInfoProperty(propName,
                              properties.getProperty(propName))));
         return sysInfo;
     }
 
-    public List<ConfProperty> getJavaSystemProperties() {
+    public List<SysInfoProperty> getJavaSystemProperties() {
         final Properties systemProperties = System.getProperties();
-        final List<ConfProperty> javaSysProps = new ArrayList<>();
+        final List<SysInfoProperty> javaSysProps = new ArrayList<>();
         systemProperties.stringPropertyNames().forEach(propName -> javaSysProps
-            .add(new ConfProperty(propName, systemProperties.getProperty(
+            .add(new SysInfoProperty(propName, systemProperties.getProperty(
                                   propName))));
         return javaSysProps;
     }
 
-    public List<ConfProperty> getXmlConfig() {
-        final List<ConfProperty> xmlProps = new ArrayList<>();
+    public List<SysInfoProperty> getXmlConfig() {
+        final List<SysInfoProperty> xmlProps = new ArrayList<>();
 
         final ResourceBundle texts = ResourceBundle.getBundle(
             "com.arsdigita.ui.admin.AdminResources");
 
-        xmlProps.add(new ConfProperty(
+        xmlProps.add(new SysInfoProperty(
             texts.getString("ui.admin.sysinfo.xml_transformer_factory"),
             TransformerFactory.newInstance().getClass().getName()));
         try {
-            xmlProps.add(new ConfProperty(
+            xmlProps.add(new SysInfoProperty(
                 texts.getString("ui.admin.sysinfo.xml_transformer"),
                 TransformerFactory.newInstance().newTransformer().getClass()
                 .getName()));
         } catch (TransformerConfigurationException ex) {
-            xmlProps.add(new ConfProperty(
+            xmlProps.add(new SysInfoProperty(
                 texts.getString("ui.admin.sysinfo.xml_transformer"), "???"));
         }
 
-        xmlProps.add(new ConfProperty(
+        xmlProps.add(new SysInfoProperty(
             texts.getString("ui.admin.sysinfo.xml_document_builder_factory"),
             DocumentBuilderFactory.newInstance().getClass().getName()));
 
         try {
-            xmlProps.add(new ConfProperty(
+            xmlProps.add(new SysInfoProperty(
                 texts.getString("ui.admin.sysinfo.xml_document_builder"),
                 DocumentBuilderFactory.newInstance().newDocumentBuilder()
                 .getClass().getName()));
         } catch (ParserConfigurationException ex) {
-            xmlProps.add(new ConfProperty(
+            xmlProps.add(new SysInfoProperty(
                 texts.getString("ui.admin.sysinfo.xml_document_builder"),
                 "???"));
         }
 
-        xmlProps.add(new ConfProperty(
+        xmlProps.add(new SysInfoProperty(
             texts.getString("ui.admin.sysinfo.sax_parser_factory"),
             SAXParserFactory.newInstance().getClass().getName()));
 
         try {
-            xmlProps.add(new ConfProperty(
+            xmlProps.add(new SysInfoProperty(
                 texts.getString("ui.admin.sysinfo.sax_parser"),
                 SAXParserFactory.newInstance().newSAXParser().getClass()
                 .getName()));
         } catch (ParserConfigurationException | SAXException ex) {
-            xmlProps.add(new ConfProperty(
+            xmlProps.add(new SysInfoProperty(
                 texts.getString("ui.admin.sysinfo.sax_parser"), "???"));
         }
 

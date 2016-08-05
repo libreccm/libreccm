@@ -63,13 +63,28 @@ import javax.xml.bind.annotation.XmlRootElement;
                 query = "SELECT r FROM Role r "
                             + "WHERE r.name = :name"),
     @NamedQuery(
+        name = "Role.count",
+        query = "SELECT COUNT(r) FROM Role r"),
+    @NamedQuery(
         name = "Role.findAllOrderedByRoleName",
         query = "SELECT r FROM Role r ORDER BY r.name"),
     @NamedQuery(
+        name = "Role.findAllOrderedByRoleNameLimit",
+        query = "SELECT r FROM Role r ORDER BY r.name "),
+    @NamedQuery(
+        name = "Role.findAllOrderedByRoleNameDesc",
+        query = "SELECT r FROM Role r ORDER BY r.name DESC"),
+    @NamedQuery(
         name = "Role.searchByName",
-        query
-            = "SELECT r FROM Role r WHERE LOWER(r.name) LIKE CONCAT(LOWER(:name), '%') "
-              + "ORDER BY r.name ")
+        query = "SELECT r FROM Role r "
+                    + "WHERE LOWER(r.name) LIKE CONCAT(LOWER(:name), '%') "
+                    + "ORDER BY r.name "),
+    @NamedQuery(
+        name = "Role.searchByNameCount",
+        query = "SELECT COUNT(r.name) FROM Role r "
+                    + "WHERE LOWER(r.name) LIKE CONCAT(LOWER(:name), '%') "
+                    + "GROUP BY r.name "
+                    + "ORDER BY r.name ")
 })
 @NamedEntityGraphs({
     @NamedEntityGraph(
@@ -91,9 +106,9 @@ public class Role implements Serializable {
     private static final long serialVersionUID = -7121296514181469687L;
 
     public static final String ENTITY_GRPAH_WITH_MEMBERS
-                               = "Role.withMembers";
+                                   = "Role.withMembers";
     public static final String ENTITY_GRPAH_WITH_PERMISSIONS
-                               = "Role.withPermissions";
+                                   = "Role.withPermissions";
 
     @Id
     @Column(name = "ROLE_ID")

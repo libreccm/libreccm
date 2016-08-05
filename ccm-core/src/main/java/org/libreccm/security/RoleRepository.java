@@ -26,6 +26,7 @@ import javax.persistence.TypedQuery;
 import org.libreccm.core.AbstractEntityRepository;
 import org.libreccm.core.CoreConstants;
 
+import javax.persistence.NoResultException;
 import javax.transaction.Transactional;
 
 /**
@@ -47,6 +48,12 @@ public class RoleRepository extends AbstractEntityRepository<Long, Role> {
             throw new IllegalArgumentException("Can't save null.");
         }
         return entity.getRoleId() == 0;
+    }
+
+    public long count() {
+        final TypedQuery<Long> query = getEntityManager().createNamedQuery(
+            "Role.count", Long.class);
+        return query.getSingleResult();
     }
 
     /**
@@ -75,11 +82,42 @@ public class RoleRepository extends AbstractEntityRepository<Long, Role> {
         return query.getResultList();
     }
 
+    public List<Role> findAllOrderedByRole(final int maxResults,
+                                           final int firstResult) {
+        final TypedQuery<Role> query = getEntityManager().createNamedQuery(
+            "Role.findAllOrderedByRoleName", Role.class);
+        query.setMaxResults(maxResults);
+        query.setFirstResult(firstResult);
+        return query.getResultList();
+    }
+
     public List<Role> searchByName(final String name) {
         final TypedQuery<Role> query = getEntityManager().createNamedQuery(
             "Role.searchByName", Role.class);
         query.setParameter("name", name);
         return query.getResultList();
+    }
+
+    public List<Role> searchByName(final String name,
+                                   final int maxResults,
+                                   final int firstResult) {
+        final TypedQuery<Role> query = getEntityManager().createNamedQuery(
+            "Role.searchByName", Role.class);
+        query.setParameter("name", name);
+        query.setFirstResult(firstResult);
+        query.setMaxResults(maxResults);
+        return query.getResultList();
+    }
+
+    public long searchByNameCount(final String name) {
+        final TypedQuery<Long> query = getEntityManager().createNamedQuery(
+            "Role.searchByNameCount", Long.class);
+        query.setParameter("name", name);
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException ex) {
+            return 0;
+        }
     }
 
     @AuthorizationRequired
@@ -89,7 +127,7 @@ public class RoleRepository extends AbstractEntityRepository<Long, Role> {
     public void save(final Role role) {
         super.save(role);
     }
-    
+
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
     @Override
@@ -98,14 +136,14 @@ public class RoleRepository extends AbstractEntityRepository<Long, Role> {
         if (role == null) {
             throw new IllegalArgumentException("Can't delete null.");
         }
-        
+
         final Role delete = getEntityManager().find(Role.class,
                                                     role.getRoleId());
-        
+
         delete.getMemberships().forEach(m -> {
             getEntityManager().remove(m);
         });
-        
+
         getEntityManager().remove(delete);
     }
 
