@@ -22,7 +22,7 @@ package org.librecms.contentsection;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public enum ContentItemMode {
+public enum ContentTypeMode {
     
     DEFAULT,
     INTERNAL,

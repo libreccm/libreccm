@@ -93,8 +93,9 @@ public class ContentType extends CcmObject implements Serializable {
     @Column(name = "DESCENDANTS", length = 1024)
     private String descendants;
 
+    @Column(name = "TYPE_MODE")
     @Enumerated(EnumType.STRING)
-    private ContentItemMode mode;
+    private ContentTypeMode mode;
 
     @ManyToOne
     @JoinColumn(name = "DEFAULT_LIFECYCLE_ID")
@@ -152,11 +153,11 @@ public class ContentType extends CcmObject implements Serializable {
         this.descendants = descendants;
     }
 
-    public ContentItemMode getMode() {
+    public ContentTypeMode getMode() {
         return mode;
     }
 
-    public void setMode(final ContentItemMode mode) {
+    public void setMode(final ContentTypeMode mode) {
         this.mode = mode;
     }
 

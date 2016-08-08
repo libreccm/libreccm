@@ -38,6 +38,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -54,6 +56,16 @@ import static org.librecms.CmsConstants.*;
 @Entity
 @Audited
 @Table(name = "CONTENT_ITEMS", schema = DB_SCHEMA)
+@NamedQueries({
+    @NamedQuery(
+        name = "ContentItem.findByType",
+        query = "SELECT i FROM ContentItem i WHERE TYPE(I) = :type"),
+    @NamedQuery(
+        name = "ContentItem.findByFolder",
+        query = "SELECT i FROM ContentItem i "
+                    + "WHERE :folder MEMBER OF i.categories"
+    )
+})
 public class ContentItem extends CcmObject implements Serializable {
 
     private static final long serialVersionUID = 5897287630227129653L;
@@ -80,6 +92,7 @@ public class ContentItem extends CcmObject implements Serializable {
      * The content type associated with the content item.
      */
     @OneToOne
+    @JoinColumn(name = "CONTENT_TYPE_ID")
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private ContentType contentType;
 
@@ -114,12 +127,14 @@ public class ContentItem extends CcmObject implements Serializable {
     /**
      * The version/publishing state of the content item.
      */
+    @Column(name = "VERSION")
     @Enumerated(EnumType.STRING)
     private ContentItemVersion version;
 
     /**
      * The launch date of the content item (date when the item is made public)
      */
+    @Column(name = "LAUNCH_DATE")
     @Temporal(TemporalType.DATE)
     private Date launchDate;
 

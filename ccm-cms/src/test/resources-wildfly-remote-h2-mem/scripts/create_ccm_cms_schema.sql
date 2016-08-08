@@ -269,10 +269,10 @@ CREATE SCHEMA ccm_cms;
 
     create table CCM_CMS.CONTENT_ITEMS (
         ANCESTORS varchar(1024),
-        launchDate date,
-        version varchar(255),
+        LAUNCH_DATE date,
+        VERSION varchar(255),
         OBJECT_ID bigint not null,
-        contentType_OBJECT_ID bigint,
+        CONTENT_TYPE_ID bigint,
         primary key (OBJECT_ID)
     );
 
@@ -280,9 +280,9 @@ CREATE SCHEMA ccm_cms;
         OBJECT_ID bigint not null,
         REV integer not null,
         ANCESTORS varchar(1024),
-        launchDate date,
-        version varchar(255),
-        contentType_OBJECT_ID bigint,
+        LAUNCH_DATE date,
+        VERSION varchar(255),
+        CONTENT_TYPE_ID bigint,
         primary key (OBJECT_ID, REV)
     );
 
@@ -322,8 +322,11 @@ CREATE SCHEMA ccm_cms;
         ANCESTORS varchar(1024),
         CONTENT_ITEM_CLASS varchar(1024),
         DESCENDANTS varchar(1024),
-        mode varchar(255),
+        TYPE_MODE varchar(255),
         OBJECT_ID bigint not null,
+        CONTENT_SECTION_ID bigint,
+        DEFAULT_LIFECYCLE_ID bigint,
+        DEFAULT_WORKFLOW bigint,
         primary key (OBJECT_ID)
     );
 
@@ -1697,8 +1700,8 @@ create sequence hibernate_sequence start with 1 increment by 1;
         references CCM_CORE.CCM_REVISIONS;
 
     alter table CCM_CMS.CONTENT_ITEMS 
-        add constraint FKi1ce005bvnavqy8xlyim60yav 
-        foreign key (contentType_OBJECT_ID) 
+        add constraint FKg83y3asxi1jr7larwven7ueu0 
+        foreign key (CONTENT_TYPE_ID) 
         references CCM_CMS.CONTENT_TYPES;
 
     alter table CCM_CMS.CONTENT_ITEMS 

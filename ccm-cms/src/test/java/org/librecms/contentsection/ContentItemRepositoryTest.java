@@ -18,14 +18,11 @@
  */
 package org.librecms.contentsection;
 
-import com.arsdigita.kernel.KernelConfig;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
 import org.jboss.arquillian.persistence.CreateSchema;
 import org.jboss.arquillian.persistence.PersistenceTest;
-import org.jboss.arquillian.persistence.ShouldMatchDataSet;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
@@ -41,53 +38,42 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryRepository;
-import org.libreccm.configuration.ConfigurationManager;
-import org.libreccm.security.Role;
-import org.libreccm.security.RoleRepository;
 import org.libreccm.tests.categories.IntegrationTest;
+import org.librecms.contenttypes.Article;
+import org.librecms.contenttypes.News;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 import javax.inject.Inject;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
-import static org.librecms.CmsConstants.*;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@Category(IntegrationTest.class)
+@org.junit.experimental.categories.Category(IntegrationTest.class)
 @RunWith(Arquillian.class)
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
 @CreateSchema({"create_ccm_cms_schema.sql"})
-public class ContentSectionManagerTest {
+public class ContentItemRepositoryTest {
 
     @Inject
-    private ContentSectionRepository repository;
-
-    @Inject
-    private ContentSectionManager manager;
-
-    @Inject
-    private RoleRepository roleRepository;
-
-    @Inject
-    private ConfigurationManager confManager;
-
+    private ContentItemRepository itemRepo;
+    
     @Inject
     private CategoryRepository categoryRepo;
 
-    public ContentSectionManagerTest() {
+    public ContentItemRepositoryTest() {
     }
 
     @BeforeClass
@@ -141,7 +127,7 @@ public class ContentSectionManagerTest {
 
         return ShrinkWrap
             .create(WebArchive.class,
-                    "LibreCCM-org.libreccm.cms.contentsection.ContentSectionManagerTest.war")
+                    "LibreCCM-org.libreccm.cms.contentsection.ContentItemRepositoryTest.war")
             .addPackage(org.libreccm.auditing.CcmRevision.class.getPackage())
             .addPackage(org.libreccm.categorization.Categorization.class
                 .getPackage())
@@ -150,6 +136,8 @@ public class ContentSectionManagerTest {
                 .getPackage())
             .addPackage(org.libreccm.core.CcmCore.class.getPackage())
             .addPackage(org.libreccm.jpa.EntityManagerProducer.class
+                .getPackage())
+            .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
                 .getPackage())
             .addPackage(org.libreccm.l10n.LocalizedString.class
                 .getPackage())
@@ -175,7 +163,10 @@ public class ContentSectionManagerTest {
             .addPackage(org.librecms.assets.Asset.class.getPackage())
             .addPackage(org.librecms.attachments.AttachmentList.class
                 .getPackage())
-            .addPackage(ContentSection.class.getPackage())
+            .addPackage(org.librecms.lifecycle.Lifecycle.class.getPackage())
+            .addPackage(org.librecms.contentsection.ContentSection.class
+                .getPackage())
+            .addPackage(org.librecms.contenttypes.Article.class.getPackage())
             .addAsLibraries(libs)
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")
@@ -186,113 +177,68 @@ public class ContentSectionManagerTest {
     @Test
     @InSequence(10)
     public void isRepositoryInjected() {
-        assertThat(repository, is(not(nullValue())));
+        assertThat(itemRepo, is(not(nullValue())));
+        assertThat(categoryRepo, is(not(nullValue())));
     }
 
     @Test
-    @InSequence(20)
-    public void isManagerInjected() {
-        assertThat(manager, is(not(nullValue())));
-    }
-
-    @Test
-    @InSequence(30)
-    public void isRoleRepositoryInjected() {
-        assertThat(roleRepository, is(not(nullValue())));
-    }
-
-    @Test
-    @UsingDataSet("datasets/org/librecms/contentsection/"
-                      + "ContentSectionManagerTest/data.xml")
-    @ShouldMatchDataSet(
-        value = "datasets/org/librecms/contentsection/"
-                    + "ContentSectionManagerTest/after-create.xml",
-        excludeColumns = {"object_id",
-                          "root_assets_folder_id",
-                          "root_documents_folder_id",
-                          "permission_id",
-                          "role_id",
-                          "grantee_id",
-                          "unique_id",
-                          "uuid",
-                          "created",
-                          "section_id",
-                          "creation_date"})
     @InSequence(100)
-    public void createSection() {
-        manager.createContentSection("test");
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentItemRepositoryTest/data.xml")
+    public void findByUuidAndType() {
+        final Optional<Article> article1 = itemRepo.findByUuid(
+            "aed4b402-1180-46c6-b42d-7245f4dca248", Article.class);
+        final Optional<Article> article2 = itemRepo.findByUuid(
+            "acae860f-2ffa-450d-b486-054292f0dae6", Article.class);
+        final Optional<Article> article3 = itemRepo.findByUuid(
+            "f4b38abb-234b-4354-bc92-e36c068a1ebd", Article.class);
+        final Optional<News> news1 = itemRepo.findByUuid(
+            "d9ea527d-c6e3-4bdd-962d-c0a1a80c6c72", News.class);
+
+        final Optional<Article> newsAsArticle = itemRepo.findByUuid(
+            "f4b38abb-234b-4354-bc92-e36c068a1ebd", Article.class);
+        final Optional<News> articleAsNews = itemRepo.findByUuid(
+            "acae860f-2ffa-450d-b486-054292f0dae6", News.class);
+
+        assertThat(article1.isPresent(), is(true));
+        assertThat(article1.get().getDisplayName(), is(equalTo("article1")));
+        assertThat(article2.isPresent(), is(true));
+        assertThat(article2.get().getDisplayName(), is(equalTo("article2")));
+        assertThat(article3.isPresent(), is(true));
+        assertThat(article3.get().getDisplayName(), is(equalTo("article3")));
+        assertThat(news1.isPresent(), is(true));
+        assertThat(news1.get().getDisplayName(), is(equalTo("news1")));
+
+        assertThat(newsAsArticle.isPresent(), is(false));
+        assertThat(articleAsNews.isPresent(), is(false));
     }
 
     @Test
-    @UsingDataSet("datasets/org/librecms/contentsection/"
-                      + "ContentSectionManagerTest/data.xml")
-    @ShouldMatchDataSet(
-        value = "datasets/org/librecms/contentsection/"
-                    + "ContentSectionManagerTest/after-rename.xml",
-        excludeColumns = {"object_id"})
     @InSequence(200)
-    public void renameSection() {
-        final ContentSection section = repository.findByLabel("info");
-
-        manager.renameContentSection(section, "content");
-
-        final KernelConfig kernelConfig = confManager.findConfiguration(
-            KernelConfig.class);
-        final Locale defaultLocale = new Locale(kernelConfig
-            .getDefaultLanguage());
-
-        section.getTitle().addValue(defaultLocale, "content");
-        repository.save(section);
-
-        section.getRootDocumentsFolder().setName("content_root");
-        section.getRootDocumentsFolder().setDisplayName("content_root");
-        section.getRootDocumentsFolder().getTitle().addValue(
-            defaultLocale, "content_root");
-
-        section.getRootAssetsFolder().setName("content_assets");
-        section.getRootAssetsFolder().setDisplayName("content_assets");
-        section.getRootAssetsFolder().getTitle().addValue(
-            defaultLocale, "content_assets");
-
-        categoryRepo.save(section.getRootDocumentsFolder());
-        categoryRepo.save(section.getRootAssetsFolder());
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentItemRepositoryTest/data.xml")
+    public void findByType() {
+        final List<Article> articles = itemRepo.findByType(Article.class);
+        assertThat(articles, is(not(nullValue())));
+        assertThat(articles.size(), is(3));
+        
+        final List<News> news = itemRepo.findByType(News.class);
+        assertThat(news, is(not(nullValue())));
+        assertThat(news.size(), is(1));
     }
 
     @Test
-    @UsingDataSet("datasets/org/librecms/contentsection/"
-                      + "ContentSectionManagerTest/data.xml")
-    @ShouldMatchDataSet(
-        value = "datasets/org/librecms/contentsection/"
-                    + "ContentSectionManagerTest/after-add-role.xml",
-        excludeColumns = {"object_id",
-                          "role_id",
-                          "permission_id",
-                          "creation_date",
-                          "grantee_id"})
     @InSequence(300)
-    public void addRole() {
-        final ContentSection section = repository.findByLabel("info");
-
-        manager.addRoleToContentSection(section,
-                                        "reviewer",
-                                        PRIVILEGE_ITEMS_VIEW_PUBLISHED,
-                                        PRIVILEGE_ITEMS_PREVIEW,
-                                        PRIVILEGE_ITEMS_APPROVE);
-    }
-
-    @Test
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                      + "ContentSectionManagerTest/data.xml")
-    @ShouldMatchDataSet(
-        value = "datasets/org/librecms/contentsection/"
-                    + "ContentSectionManagerTest/after-remove-role.xml",
-        excludeColumns = {"object_id"})
-    @InSequence(300)
-    public void removeRole() {
-        final ContentSection section = repository.findByLabel("info");
-        final Role role = roleRepository.findByName("info_publisher");
-
-        manager.removeRoleFromContentSection(section, role);
+                      + "ContentItemRepositoryTest/data.xml")
+    public void findByFolder() {
+        final Category folder = categoryRepo.findById(-2100L);
+        
+        final List<ContentItem> items = itemRepo.findByFolder(folder);
+        
+        assertThat(items, is(not(nullValue())));
+        assertThat(items.size(), is(4));
+        
     }
-
+    
 }

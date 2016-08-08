@@ -22,13 +22,13 @@ import org.libreccm.auditing.AbstractAuditedEntityRepository;
 import org.libreccm.categorization.Category;
 import org.libreccm.core.CcmObject;
 import org.libreccm.core.CcmObjectRepository;
-import org.librecms.contenttypes.Article;
 
 import java.util.List;
 import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.persistence.TypedQuery;
 
 /**
  * Repository for content items.
@@ -108,36 +108,49 @@ public class ContentItemRepository
     }
 
     /**
-     * Finds a content item by its UUID and ensures that is a the requested type.
+     * Finds a content item by its UUID and ensures that is a the requested
+     * type.
      *
-     * @param <T>    The type of the content item.
+     * @param <T>  The type of the content item.
      * @param uuid The UUID of item to retrieve.
-     * @param type   The type of the content item.
+     * @param type The type of the content item.
      *
      * @return The content item identified by the provided UUID or an empty
      *         {@link Optional} if there is no such item or if it is not of the
      *         requested type.
      */
-    public <T extends ContentItem> T findByUuid(final String uuid,
-                                                final Class<T> type) {
-        throw new UnsupportedOperationException();
+    @SuppressWarnings("unchecked")
+    public <T extends ContentItem> Optional<T> findByUuid(final String uuid,
+                                                          final Class<T> type) {
+        final CcmObject result = ccmObjectRepo.findObjectByUuid(uuid);
+      
+        if (result.getClass().isAssignableFrom(type)) {
+            return Optional.of((T)result);
+        } else {
+            return Optional.empty();
+        }
     }
 
     /**
      * Finds all content items of a specific type.
-     * 
-     * @param <T> The type of the items.
+     *
+     * @param <T>  The type of the items.
      * @param type The type of the items.
+     *
      * @return A list of all content items of the requested type.
      */
     public <T extends ContentItem> List<T> findByType(final Class<T> type) {
-        throw new UnsupportedOperationException();
+        final TypedQuery<T> query = getEntityManager().createNamedQuery(
+            "ContentItem.findByType", type);
+        query.setParameter("type", type);
+        return query.getResultList();
     }
 
     /**
      * Retrieves all content items in the provided folder.
-     * 
+     *
      * @param folder The folder.
+     *
      * @return A list of all items in the provided folder.
      */
     public List<ContentItem> findByFolder(final Category folder) {

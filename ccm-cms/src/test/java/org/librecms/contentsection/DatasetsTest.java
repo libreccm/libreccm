@@ -47,7 +47,8 @@ public class DatasetsTest extends DatasetsVerifier {
             "/datasets/org/librecms/contentsection/ContentSectionManagerTest/after-add-role.xml",
             "/datasets/org/librecms/contentsection/ContentSectionManagerTest/after-create.xml",
             "/datasets/org/librecms/contentsection/ContentSectionManagerTest/after-remove-role.xml",
-            "/datasets/org/librecms/contentsection/ContentSectionManagerTest/after-rename.xml" });
+            "/datasets/org/librecms/contentsection/ContentSectionManagerTest/after-rename.xml",
+            "/datasets/org/librecms/contentsection/ContentItemRepositoryTest/data.xml"});
     }
 
     public DatasetsTest(final String datasetPath) {
