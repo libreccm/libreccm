@@ -86,11 +86,12 @@ public class PermissionChecker {
         if (result) {
             return result;
         } else if (object instanceof InheritsPermissions) {
-            if (((InheritsPermissions) object).getParent() == null) {
+            if (((InheritsPermissions) object).getParent().isPresent()) {
                 return result;
             } else {
-                return isPermitted(privilege,
-                                   ((InheritsPermissions) object).getParent());
+                return isPermitted(
+                    privilege,
+                    ((InheritsPermissions) object).getParent().get());
             }
         } else {
             return result;
@@ -139,7 +140,7 @@ public class PermissionChecker {
             final boolean result = isPermitted(privilege, object);
 
             if (!result) {
-                if (((InheritsPermissions) object).getParent() == null) {
+                if (((InheritsPermissions) object).getParent().isPresent()) {
                     if (subject.isAuthenticated()) {
                         subject.checkPermission(generatePermissionString(
                             privilege, object));
@@ -148,8 +149,9 @@ public class PermissionChecker {
                             generatePermissionString(privilege, object));
                     }
                 } else {
-                    checkPermission(privilege,
-                                    ((InheritsPermissions) object).getParent());
+                    checkPermission(
+                        privilege,
+                        ((InheritsPermissions) object).getParent().get());
                 }
             }
         } else if (subject.isAuthenticated()) {

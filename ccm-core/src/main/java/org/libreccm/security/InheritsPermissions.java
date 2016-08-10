@@ -20,6 +20,8 @@ package org.libreccm.security;
 
 import org.libreccm.core.CcmObject;
 
+import java.util.Optional;
+
 /**
  * Subclasses of {@link CcmObject} can implement this interface to inherit 
  * the permissions of their parent object. This interface is processed by the 
@@ -42,6 +44,6 @@ public interface InheritsPermissions {
      * object in addition to the permissions granted on the object itself to 
      * determine if a user is granted a specific privilege on the object.
      */
-    CcmObject getParent();
+    Optional<CcmObject> getParent();
     
 }

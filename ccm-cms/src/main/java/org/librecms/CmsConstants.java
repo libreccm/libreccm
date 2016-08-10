@@ -41,6 +41,8 @@ public class CmsConstants {
     public static final String CONTENT_SECTION_DESC_BUNDLE
                                = "org.librecms.contentsection.ContentSectionResources";
 
+    public static final String CATEGORIZATION_TYPE_FOLDER = "folder";
+    
     public static final String PRIVILEGE_ADMINISTER_CATEGORIES
                                = "administer_categories";
     public static final String PRIVILEGE_ADMINISTER_CONTENT_TYPES

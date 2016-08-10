@@ -32,6 +32,8 @@ import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -44,6 +46,11 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "WORKFLOW_USER_TASKS", schema = DB_SCHEMA)
+@NamedQueries(
+    @NamedQuery(
+        name = "UserTask.findLockedBy",
+        query = "SELECT t FROM UserTask t WHERE t.lockingUser = :user")
+)
 //Can't reduce complexity yet
 @SuppressWarnings({"PMD.CyclomaticComplexity",
                    "PMD.StdCyclomaticComplexity",
@@ -159,11 +166,11 @@ public class UserTask extends Task implements Serializable {
     protected void setAssignments(final List<TaskAssignment> assignments) {
         this.assignments = assignments;
     }
-    
+
     protected void addAssignment(final TaskAssignment assignment) {
         assignments.add(assignment);
     }
-    
+
     protected void removeAssignment(final TaskAssignment assignment) {
         assignments.remove(assignment);
     }

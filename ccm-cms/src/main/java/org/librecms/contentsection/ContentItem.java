@@ -20,15 +20,22 @@ package org.librecms.contentsection;
 
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
+import org.libreccm.categorization.Categorization;
 import org.libreccm.core.CcmObject;
 import org.libreccm.l10n.LocalizedString;
+import org.libreccm.security.InheritsPermissions;
+import org.libreccm.workflow.Workflow;
+import org.librecms.CmsConstants;
 import org.librecms.attachments.AttachmentList;
+import org.librecms.lifecycle.Lifecycle;
 
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.persistence.AssociationOverride;
 import javax.persistence.Column;
@@ -62,16 +69,12 @@ import static org.librecms.CmsConstants.*;
         query = "SELECT i FROM ContentItem i WHERE TYPE(I) = :type"),
     @NamedQuery(
         name = "ContentItem.findByFolder",
-        //        query = "SELECT i FROM ContentItem i "
-        //                    + "WHERE (SELECT c FROM Categorization c "
-        //                    + "       WHERE c.category = :folder"
-        //                    + "       AND c.object = i) "
-        //                    + "MEMBER OF i.categories"
         query = "SELECT c.categorizedObject FROM Categorization c "
                     + "WHERE c.category = :folder"
     )
 })
-public class ContentItem extends CcmObject implements Serializable {
+public class ContentItem extends CcmObject implements Serializable,
+                                                      InheritsPermissions {
 
     private static final long serialVersionUID = 5897287630227129653L;
 
@@ -154,6 +157,16 @@ public class ContentItem extends CcmObject implements Serializable {
     @JoinColumn(name = "CONTENT_ITEM_ID")
     private List<AttachmentList<?>> attachments;
 
+    @OneToOne
+    @JoinColumn(name = "LIFECYCLE_ID")
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+    private Lifecycle lifecycle;
+
+    @OneToOne
+    @JoinColumn(name = "WORKFLOW_ID")
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+    private Workflow workflow;
+
     public LocalizedString getName() {
         return name;
     }
@@ -226,6 +239,36 @@ public class ContentItem extends CcmObject implements Serializable {
         this.attachments = attachments;
     }
 
+    public Lifecycle getLifecycle() {
+        return lifecycle;
+    }
+
+    public void setLifecycle(final Lifecycle lifecycle) {
+        this.lifecycle = lifecycle;
+    }
+
+    public Workflow getWorkflow() {
+        return workflow;
+    }
+
+    public void setWorkflow(final Workflow workflow) {
+        this.workflow = workflow;
+    }
+
+    @Override
+    public Optional<CcmObject> getParent() {
+        final List<Categorization> result = getCategories().stream().filter(
+            categorization -> CmsConstants.CATEGORIZATION_TYPE_FOLDER.equals(
+                categorization.getType()))
+            .collect(Collectors.toList());
+
+        if (result.isEmpty()) {
+            return Optional.empty();
+        } else {
+            return Optional.of(result.get(0).getCategorizedObject());
+        }
+    }
+
     @Override
     public int hashCode() {
         int hash = super.hashCode();
@@ -235,6 +278,8 @@ public class ContentItem extends CcmObject implements Serializable {
         hash = 59 * hash + Objects.hashCode(description);
         hash = 59 * hash + Objects.hashCode(version);
         hash = 59 * hash + Objects.hashCode(launchDate);
+        hash = 59 * hash + Objects.hashCode(lifecycle);
+        hash = 59 * hash + Objects.hashCode(workflow);
         return hash;
     }
 
@@ -275,7 +320,10 @@ public class ContentItem extends CcmObject implements Serializable {
         if (!Objects.equals(launchDate, other.getLaunchDate())) {
             return false;
         }
-        return true;
+        if (!Objects.equals(lifecycle, other.getLifecycle())) {
+            return false;
+        }
+        return Objects.equals(workflow, other.getWorkflow());
     }
 
     @Override
@@ -285,18 +333,23 @@ public class ContentItem extends CcmObject implements Serializable {
 
     @Override
     public String toString(final String data) {
-        return super.toString(String.format(", name = {}, "
-                                                + "contentType = {}, "
-                                                + "title = {}, "
-                                                + "description = {},"
-                                                + "version = %s,"
-                                                + "launchDate = %s%s",
+        return super.toString(String.format(", name = %s, "
+                                                + "contentType = { %s }, "
+                                                + "title = %s, "
+                                                + "description = %s, "
+                                                + "version = %s, "
+                                                + "launchDate = %s, "
+                                                + "lifecycle = { %s }, "
+                                                + "workflow = { %s }"
+                                                + "%s",
                                             Objects.toString(name),
                                             Objects.toString(contentType),
                                             Objects.toString(title),
                                             Objects.toString(description),
                                             Objects.toString(version),
                                             Objects.toString(launchDate),
+                                            Objects.toString(lifecycle),
+                                            Objects.toString(workflow),
                                             data));
     }
 

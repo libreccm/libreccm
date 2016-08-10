@@ -80,6 +80,11 @@ public class PhaseDefinition implements Serializable {
     @Column(name = "DEFAULT_LISTENER", length = 1024)
     private String defaultListener;
 
+    public PhaseDefinition() {
+        label = new LocalizedString();
+        description = new LocalizedString();
+    }
+    
     public long getDefinitionId() {
         return definitionId;
     }

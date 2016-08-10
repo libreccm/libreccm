@@ -83,6 +83,8 @@ public class LifecycleDefinition implements Serializable {
     private List<PhaseDefinition> phaseDefinitions;
 
     public LifecycleDefinition() {
+        label = new LocalizedString();
+        description = new LocalizedString();
         phaseDefinitions = new ArrayList<>();
     }
 

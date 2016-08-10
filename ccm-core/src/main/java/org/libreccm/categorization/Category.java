@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.persistence.AssociationOverride;
 import javax.persistence.Column;
@@ -338,8 +339,8 @@ public class Category extends CcmObject implements InheritsPermissions,
     
     
     @Override
-    public CcmObject getParent() {
-        return getParentCategory();
+    public Optional<CcmObject> getParent() {
+        return Optional.ofNullable(getParentCategory());
     }
 
     @Override

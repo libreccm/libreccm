@@ -41,6 +41,7 @@ CREATE SCHEMA ccm_core;
 
     create table ccm_core.categorizations (
         categorization_id bigint not null,
+        type varchar(255),
         category_order bigint,
         category_index boolean,
         object_order bigint,

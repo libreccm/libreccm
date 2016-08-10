@@ -50,8 +50,8 @@ import javax.persistence.Table;
 @NamedQueries({
     @NamedQuery(name = "Categorization.find",
                 query = "SELECT c FROM Categorization c "
-                                + "WHERE c.category = :category "
-                                + "AND c.categorizedObject = :object")
+                            + "WHERE c.category = :category "
+                            + "AND c.categorizedObject = :object")
 })
 public class Categorization implements Serializable {
 
@@ -100,12 +100,19 @@ public class Categorization implements Serializable {
     @Column(name = "OBJECT_ORDER")
     private long objectOrder;
 
+    /**
+     * Used to distinguish between different kinds of categorisations. Used for
+     * example by in the ccm-cms module to distinguish folders from categories.
+     */
+    @Column(name = "TYPE", length = 255, nullable = true)
+    private String type;
+
     public Categorization() {
         index = false;
         categoryOrder = 0;
         objectOrder = 0;
     }
-    
+
     public long getCategorizationId() {
         return categorizationId;
     }
@@ -154,16 +161,25 @@ public class Categorization implements Serializable {
         this.objectOrder = objectOrder;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(final String type) {
+        this.type = type;
+    }
+
     @Override
     public int hashCode() {
         int hash = 7;
         hash
-        = 89 * hash + (int) (categorizationId ^ (categorizationId >>> 32));
+            = 89 * hash + (int) (categorizationId ^ (categorizationId >>> 32));
         hash = 89 * hash + Objects.hashCode(category);
         hash = 89 * hash + Objects.hashCode(categorizedObject);
         hash = 89 * hash + (index ? 1 : 0);
         hash = 89 * hash + (int) (categoryOrder ^ (categoryOrder >>> 32));
         hash = 89 * hash + (int) (objectOrder ^ (objectOrder >>> 32));
+        hash = 89 * hash + Objects.hashCode(type);
         return hash;
     }
 
@@ -199,7 +215,12 @@ public class Categorization implements Serializable {
         if (categoryOrder != other.getCategoryOrder()) {
             return false;
         }
-        return objectOrder == other.getObjectOrder();
+
+        if (objectOrder != other.getObjectOrder()) {
+            return false;
+        }
+
+        return Objects.equals(type, other.getType());
     }
 
     public boolean canEqual(final Object obj) {
@@ -213,13 +234,14 @@ public class Categorization implements Serializable {
 
     public String toString(final String data) {
         return String.format("%s{ "
-                                     + "categorizationId = %d, "
-                                     + "category = %s, "
-                                     + "categorizedObject = %s, "
-                                     + "index = %b,"
-                                     + "categoryOrder = %d, "
-                                     + "objectOrder = %d"
-                                     + "%s }",
+                                 + "categorizationId = %d, "
+                                 + "category = %s, "
+                                 + "categorizedObject = %s, "
+                                 + "index = %b,"
+                                 + "categoryOrder = %d, "
+                                 + "objectOrder = %d"
+                                 + "type = %s"
+                                 + "%s }",
                              super.toString(),
                              categorizationId,
                              Objects.toString(category),
@@ -227,6 +249,7 @@ public class Categorization implements Serializable {
                              index,
                              categoryOrder,
                              objectOrder,
+                             type,
                              data);
     }
 

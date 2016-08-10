@@ -876,6 +876,7 @@ CREATE SCHEMA ccm_cms;
 
     create table CCM_CORE.CATEGORIZATIONS (
         CATEGORIZATION_ID int8 not null,
+        TYPE varchar(255),
         CATEGORY_ORDER int8,
         CATEGORY_INDEX boolean,
         OBJECT_ORDER int8,

@@ -217,11 +217,11 @@ public class Role implements Serializable {
         this.assignedTasks = assignedTasks;
     }
 
-    protected void addAssignedTask(final TaskAssignment taskAssignment) {
+    public void addAssignedTask(final TaskAssignment taskAssignment) {
         assignedTasks.add(taskAssignment);
     }
 
-    protected void removeAssignedTask(final TaskAssignment taskAssignment) {
+    public void removeAssignedTask(final TaskAssignment taskAssignment) {
         assignedTasks.remove(taskAssignment);
     }
 
