@@ -137,7 +137,8 @@
         localized_value="Etiam euismod lacus laoreet sodales ultricies. Pellentesque non elit vitae purus sagittis." />
     
     <ccm_cms.news object_id="-10400"
-                  news_date="2016-08-08" />
+                  news_date="2016-08-08" 
+                  homepage="false" />
     
     <ccm_cms.news_texts 
         object_id="-10400"
@@ -146,16 +147,28 @@
     
     <ccm_core.categorizations categorization_id="-30100" 
                               category_id="-2100" 
-                              object_id="-10100" />
+                              object_id="-10100" 
+                              category_order="1" 
+                              object_order="1" 
+                              category_index="false" />
     <ccm_core.categorizations categorization_id="-30200" 
                               category_id="-2100" 
-                              object_id="-10200" />
+                              object_id="-10200" 
+                              category_order="1" 
+                              object_order="2" 
+                              category_index="false" />
     <ccm_core.categorizations categorization_id="-30300" 
-                                  category_id="-2100" 
-                                  object_id="-10300" />
+                              category_id="-2100" 
+                              object_id="-10300" 
+                              category_order="1" 
+                              object_order="3" 
+                              category_index="false" />
     <ccm_core.categorizations categorization_id="-30400" 
-                                  category_id="-2100" 
-                                  object_id="-10400" />
+                              category_id="-2100" 
+                              object_id="-10400" 
+                              category_order="1" 
+                              object_order="4" 
+                              category_index="false" />
     
     <ccm_core.ccm_roles role_id="-3100"
                         name="info_alert_recipient" />

@@ -38,5 +38,5 @@
     </persistence-unit>
     
 </persistence>
-ccm-core/src/test/resources-wildfly8-remote-h2-mem/test-persistence.xml lines 1-40/40 (END)
+
 

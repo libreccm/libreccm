@@ -62,8 +62,13 @@ import static org.librecms.CmsConstants.*;
         query = "SELECT i FROM ContentItem i WHERE TYPE(I) = :type"),
     @NamedQuery(
         name = "ContentItem.findByFolder",
-        query = "SELECT i FROM ContentItem i "
-                    + "WHERE :folder MEMBER OF i.categories"
+        //        query = "SELECT i FROM ContentItem i "
+        //                    + "WHERE (SELECT c FROM Categorization c "
+        //                    + "       WHERE c.category = :folder"
+        //                    + "       AND c.object = i) "
+        //                    + "MEMBER OF i.categories"
+        query = "SELECT c.categorizedObject FROM Categorization c "
+                    + "WHERE c.category = :folder"
     )
 })
 public class ContentItem extends CcmObject implements Serializable {

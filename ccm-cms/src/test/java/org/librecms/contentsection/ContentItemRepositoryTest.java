@@ -184,6 +184,39 @@ public class ContentItemRepositoryTest {
     @Test
     @InSequence(100)
     @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentItemRepositoryTest/data.xml") 
+    public void findByIdAndType() {
+        final Optional<Article> article1 = itemRepo.findById(
+            -10100L, Article.class);
+        final Optional<Article> article2 = itemRepo.findById(
+            -10200L, Article.class);
+        final Optional<Article> article3 = itemRepo.findById(
+            -10300L, Article.class);
+        final Optional<News> news1 = itemRepo.findById(
+            -10400L, News.class);
+
+        final Optional<Article> newsAsArticle = itemRepo.findById(
+            -10400, Article.class);
+        final Optional<News> articleAsNews = itemRepo.findById(
+            -10200L, News.class);
+
+        assertThat(article1.isPresent(), is(true));
+        assertThat(article1.get().getDisplayName(), is(equalTo("article1")));
+        assertThat(article2.isPresent(), is(true));
+        assertThat(article2.get().getDisplayName(), is(equalTo("article2")));
+        assertThat(article3.isPresent(), is(true));
+        assertThat(article3.get().getDisplayName(), is(equalTo("article3")));
+        assertThat(news1.isPresent(), is(true));
+        assertThat(news1.get().getDisplayName(), is(equalTo("news1")));
+
+        assertThat(newsAsArticle.isPresent(), is(false));
+        assertThat(articleAsNews.isPresent(), is(false));
+    }
+    
+    
+    @Test
+    @InSequence(200)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
                       + "ContentItemRepositoryTest/data.xml")
     public void findByUuidAndType() {
         final Optional<Article> article1 = itemRepo.findByUuid(
@@ -196,7 +229,7 @@ public class ContentItemRepositoryTest {
             "d9ea527d-c6e3-4bdd-962d-c0a1a80c6c72", News.class);
 
         final Optional<Article> newsAsArticle = itemRepo.findByUuid(
-            "f4b38abb-234b-4354-bc92-e36c068a1ebd", Article.class);
+            "d9ea527d-c6e3-4bdd-962d-c0a1a80c6c72", Article.class);
         final Optional<News> articleAsNews = itemRepo.findByUuid(
             "acae860f-2ffa-450d-b486-054292f0dae6", News.class);
 
@@ -214,7 +247,7 @@ public class ContentItemRepositoryTest {
     }
 
     @Test
-    @InSequence(200)
+    @InSequence(300)
     @UsingDataSet("datasets/org/librecms/contentsection/"
                       + "ContentItemRepositoryTest/data.xml")
     public void findByType() {
@@ -228,7 +261,7 @@ public class ContentItemRepositoryTest {
     }
 
     @Test
-    @InSequence(300)
+    @InSequence(400)
     @UsingDataSet("datasets/org/librecms/contentsection/"
                       + "ContentItemRepositoryTest/data.xml")
     public void findByFolder() {

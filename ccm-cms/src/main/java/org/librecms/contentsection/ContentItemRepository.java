@@ -23,6 +23,7 @@ import org.libreccm.categorization.Category;
 import org.libreccm.core.CcmObject;
 import org.libreccm.core.CcmObjectRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -85,9 +86,15 @@ public class ContentItemRepository
      *         {@link Optional} if there is no such item or if it is not of the
      *         requested type.
      */
+    @SuppressWarnings("unchecked")
     public <T extends ContentItem> Optional<T> findById(final long itemId,
                                                         final Class<T> type) {
-        throw new UnsupportedOperationException();
+        final CcmObject result = ccmObjectRepo.findById(itemId);
+        if (result.getClass().isAssignableFrom(type)) {
+            return Optional.of((T) result);
+        } else {
+            return Optional.empty();
+        }
     }
 
     /**
@@ -123,9 +130,9 @@ public class ContentItemRepository
     public <T extends ContentItem> Optional<T> findByUuid(final String uuid,
                                                           final Class<T> type) {
         final CcmObject result = ccmObjectRepo.findObjectByUuid(uuid);
-      
+
         if (result.getClass().isAssignableFrom(type)) {
-            return Optional.of((T)result);
+            return Optional.of((T) result);
         } else {
             return Optional.empty();
         }
@@ -139,11 +146,13 @@ public class ContentItemRepository
      *
      * @return A list of all content items of the requested type.
      */
+    @SuppressWarnings("unchecked")
     public <T extends ContentItem> List<T> findByType(final Class<T> type) {
-        final TypedQuery<T> query = getEntityManager().createNamedQuery(
-            "ContentItem.findByType", type);
+        final TypedQuery<ContentItem> query = getEntityManager()
+            .createNamedQuery("ContentItem.findByType", ContentItem.class);
         query.setParameter("type", type);
-        return query.getResultList();
+
+        return (List<T>) query.getResultList();
     }
 
     /**
@@ -154,7 +163,16 @@ public class ContentItemRepository
      * @return A list of all items in the provided folder.
      */
     public List<ContentItem> findByFolder(final Category folder) {
-        throw new UnsupportedOperationException();
+        final TypedQuery<CcmObject> query = getEntityManager()
+            .createNamedQuery("ContentItem.findByFolder", CcmObject.class);
+        query.setParameter("folder", folder);
+
+        final List<ContentItem> result = new ArrayList<>();
+        query.getResultList().stream()
+            .filter(obj -> (obj instanceof ContentItem))
+            .forEach(obj -> result.add((ContentItem) obj));
+
+        return result;
     }
 
 }
