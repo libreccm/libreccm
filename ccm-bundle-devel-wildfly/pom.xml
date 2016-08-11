@@ -189,6 +189,7 @@
                             <version>${wildfly.version}</version>
                             
                             <skip>false</skip>
+                            <startupTimeout>120</startupTimeout>
                             
                             <java-opts>
                                 <java-opt>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8787</java-opt>
