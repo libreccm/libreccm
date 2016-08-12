@@ -43,6 +43,8 @@ public class RolesController {
 
     private final LazyDataModel<Role> tableModel;
 
+    private Role selectedRole;
+    
     public RolesController() {
         tableModel = new RolesTableModel();
     }
@@ -54,6 +56,16 @@ public class RolesController {
     public List<Role> getRoles() {
         return roleRepo.findAll();
     }
+    
+    public Role getSelectedRole() {
+        return selectedRole;
+    }
+    
+    public void setSelectedRole(final Role selectedRole) {
+        this.selectedRole = selectedRole;
+    }
+    
+    
 
     private class RolesTableModel extends LazyDataModel<Role> {
 

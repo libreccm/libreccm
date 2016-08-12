@@ -24,17 +24,19 @@ import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.MigrationInfo;
 import org.flywaydb.core.internal.util.jdbc.JdbcUtils;
 import org.hibernate.boot.Metadata;
-import org.hibernate.cfg.Configuration;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.integrator.spi.Integrator;
 import org.hibernate.service.spi.SessionFactoryServiceRegistry;
+import org.libreccm.search.SearchConfig;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.ServiceLoader;
 
 import javax.sql.DataSource;
@@ -65,7 +67,7 @@ public class CcmIntegrator implements Integrator {
 
     /**
      * Service loader containing all modules. Initialised by the
-     * {@link #integrate(Configuration, SessionFactoryImplementor, SessionFactoryServiceRegistry)}
+     * {@link #integrate(Metadata, SessionFactoryImplementor, SessionFactoryServiceRegistry)}
      * method.
      */
     private ServiceLoader<CcmModule> modules;
@@ -132,11 +134,9 @@ public class CcmIntegrator implements Integrator {
                              node.getModuleInfo().getModuleName(),
                              node.getModuleInfo().getModuleVersion());
                 migrateModule(node.getModule().getClass(), dataSource);
-
-//                for (Class<?> entity : node.getModuleInfo().getModuleEntities()) {
-//                    configuration.addAnnotatedClass(entity);
-//                }
             }
+
+            configureHibernateSearch(connection, sessionFactory);
 
         } catch (DependencyException | SQLException ex) {
             throw new IntegrationException("Failed to integrate modules", ex);
@@ -145,6 +145,7 @@ public class CcmIntegrator implements Integrator {
         }
 
         LOGGER.info("All modules integrated successfully.");
+
     }
 
     /**
@@ -412,6 +413,63 @@ public class CcmIntegrator implements Integrator {
         } catch (SQLException ex) {
             throw new IntegrationException(
                 "Failed to desintegrate", ex);
+        }
+    }
+
+    private void configureHibernateSearch(
+        final Connection connection,
+        final SessionFactoryImplementor sessionFactory) throws SQLException {
+
+        LOGGER.info("Configuring Hibernate Search...");
+
+        LOGGER.debug(
+            "Checking for Directory Provider setting in configuration...");
+        final Optional<String> directoryProvider = getSetting(
+            connection,
+            SearchConfig.class.getName(),
+            SearchConfig.DIRECTORY_PROVIDER);
+        if (directoryProvider.isPresent()) {
+            LOGGER.debug("Found setting for directory provider: {}",
+                         directoryProvider.orElse(""));
+            sessionFactory.getProperties().setProperty(
+                "hibernate.search.default.directory_provider",
+                directoryProvider.get());
+        } else {
+            LOGGER.debug("No setting for directory provider. "
+                             + "Defaulting to RAM directory provider.");
+            sessionFactory.getProperties().setProperty(
+                "hibernate.search.default.directory_provider", "ram");
+        }
+
+        final Optional<String> indexBase = getSetting(
+            connection,
+            SearchConfig.class.getName(),
+            SearchConfig.INDEX_BASE);
+        if (indexBase.isPresent()) {
+            LOGGER.debug("Setting Index Base to \"{}\".", indexBase.get());
+            sessionFactory.getProperties().setProperty(
+                "hibernate.search.default.indexBase",
+                indexBase.get());
+        }
+    }
+
+    private Optional<String> getSetting(final Connection connection,
+                                        final String settingClass,
+                                        final String settingName)
+        throws SQLException {
+
+        try (PreparedStatement statement = connection.prepareStatement(
+            "SELECT setting_value_string FROM ccm_core.settings "
+                + "WHERE configuration_class = ? AND name = ?")) {
+            statement.setString(1, settingClass);
+            statement.setString(2, settingName);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return Optional.ofNullable(resultSet.getString(1));
+                } else {
+                    return Optional.empty();
+                }
+            }
         }
     }
 

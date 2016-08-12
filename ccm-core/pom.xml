@@ -62,6 +62,12 @@
             <scope>provided</scope>
         </dependency>
         
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-search</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        
         <!--
             Flyway framework for database schema migrations
         -->

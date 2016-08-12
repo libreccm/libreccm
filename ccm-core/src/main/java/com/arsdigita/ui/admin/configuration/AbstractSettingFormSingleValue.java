@@ -165,7 +165,11 @@ public abstract class AbstractSettingFormSingleValue<T> extends Form {
                 return;
             }
 
-            valueField.setValue(state, value.toString());
+            if (value == null) {
+                valueField.setValue(state, "");
+             } else {
+                valueField.setValue(state, value.toString());
+            }
         }
 
     }

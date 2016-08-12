@@ -271,6 +271,16 @@
             </dependency>
             
             <!--
+            Hibernate Search provides seamless integration of Apache Lucene with 
+            Hibernate/JPA
+            -->
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-search</artifactId>
+                <version>5.5.4.Final</version>
+            </dependency>
+            
+            <!--
                 Flyway framework for database schema migrations
             -->
             <dependency>

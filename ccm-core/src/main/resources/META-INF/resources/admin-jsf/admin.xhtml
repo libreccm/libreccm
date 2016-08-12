@@ -64,7 +64,7 @@
                     <p:tab title="Roles">
                         <!--<h:outputText value="Roles Placeholder" />-->
                         <!--<p:panel header="#{texts['ui.admin.tab.users_groups_roles.title']}">-->
-                        <h:form>
+                        <h:form id="rolesForm">
                             <p:dataTable id="rolesTable"
                                          lazy="true"
                                          paginator="true"
@@ -82,11 +82,37 @@
                                           id="role-name">
                                     <h:outputText value="#{role.name}" />
                                 </p:column>
+                                <p:column>
+                                    <p:commandButton icon="ui-icon-wrench"
+                                                     oncomplete="PF('roleDialog').show()"
+                                                     title="Edit"
+                                                     action="#{rolesController.setSelectedRole(role)}"
+                                                     >
+                                        <!--  -->
+                                        <!--  update="selectedRoleName" -->
+                                        <!--<f:setPropertyActionListener value="{role}"
+                                                                     target="{rolesController.selectedRole}" />-->
+                                    </p:commandButton>
+                                </p:column>
                             </p:dataTable>
+
+                            <p:dialog header="#{texts['ui.admin.tab.users_groups_roles.edit']}"
+                                      widgetVar="roleDialog"
+                                      modal="true"
+                                      showEffect="fade"
+                                      hideEffect="fade">
+                                <p:outputPanel rendered="#{rolesController.selectedRole != null}">
+                                    <h:outputText id="selectedRoleName"
+                                                  rendered="#{rolesController.selectedRole != null}"
+                                                  value="#{rolesController.selectedRole.name}" />
+                                </p:outputPanel>
+                            </p:dialog>
                         </h:form>
                         <!--</p:panel>-->
                     </p:tab>
                 </p:tabView>
+
+
 
             </p:tab>
             <p:tab title="#{texts['ui.admin.tab.categories.title']}">

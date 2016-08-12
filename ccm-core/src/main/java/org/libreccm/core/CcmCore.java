@@ -83,6 +83,7 @@ import org.libreccm.web.ApplicationType;
             com.arsdigita.xml.XmlConfig.class,
             com.arsdigita.xml.formatters.DateFormatterConfig.class,
             org.libreccm.configuration.ExampleConfiguration.class,
+            org.libreccm.search.SearchConfig.class,
             org.libreccm.security.EmailTemplates.class,
             org.libreccm.security.OneTimeAuthConfig.class,})
 public class CcmCore implements CcmModule {

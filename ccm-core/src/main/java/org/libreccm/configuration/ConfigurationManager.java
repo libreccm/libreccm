@@ -302,7 +302,7 @@ public class ConfigurationManager {
             "New value of setting \"%s#%s\" is: \"%s\"",
             confClassName,
             settingName,
-            value.toString()));
+            value));
         @SuppressWarnings("unchecked")
         final T settingValue = (T) value;
         setting.setValue(settingValue);
@@ -310,8 +310,7 @@ public class ConfigurationManager {
             "Value of setting \"%s#%s\" is now: \"%s\"",
             confClassName,
             settingName,
-            setting.getValue().toString()
-        ));
+            setting.getValue()));
         LOGGER.debug("Saving changed setting to DB...");
         settingManager.saveSetting(setting);
     }
@@ -355,7 +354,7 @@ public class ConfigurationManager {
                     LOGGER.debug("Setting \"{}#{}\" found. Value: {}",
                                  confName,
                                  settingName,
-                                 setting.getValue().toString());
+                                 setting.getValue());
                     field.set(conf, setting.getValue());
                 } catch (IllegalAccessException ex) {
                     LOGGER.warn(

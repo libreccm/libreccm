@@ -176,7 +176,7 @@ public class SettingManager {
         if (Strings.isBlank(settingAnnotation.descKey())) {
             settingInfo.setDescKey(String.join(".",
                                                field.getName(),
-                                               "descripotion"));
+                                               "description"));
         } else {
             settingInfo.setDescKey(settingAnnotation.descKey());
         }
