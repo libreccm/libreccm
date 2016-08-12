@@ -18,6 +18,8 @@
  */
 package org.librecms.lifecycle;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
 import org.librecms.CmsConstants;
@@ -36,6 +38,9 @@ import javax.transaction.Transactional;
  */
 @RequestScoped
 public class LifecycleManager {
+
+    public static final Logger LOGGER = LogManager.getLogger(
+        LifecycleManager.class);
 
     @Inject
     private LifecycleDefinitionRepository lifecycleDefinitionRepo;
@@ -135,8 +140,8 @@ public class LifecycleManager {
                         lifecycle, LifecycleEvent.STARTED);
                 }
             }
-            
-            //ToDo Invoke Listeners
+
+            invokeLifecycleEventListener(lifecycle, LifecycleEvent.STARTED);
         }
     }
 
@@ -160,9 +165,15 @@ public class LifecycleManager {
             }
 
             lifecycle.getPhases().get(current).setFinished(true);
+            invokePhaseEventListener(lifecycle, 
+                                     lifecycle.getPhases().get(current), 
+                                     PhaseEvent.FINISHED);
             //Check for last phase, if not set next phase to started
             if (current < lifecycle.getPhases().size() - 1) {
                 lifecycle.getPhases().get(current + 1).setStarted(true);
+                invokePhaseEventListener(lifecycle,
+                                         lifecycle.getPhases().get(current + 1),
+                                         PhaseEvent.STARTED);
             }
         } else {
             startLifecycle(lifecycle);
@@ -182,7 +193,96 @@ public class LifecycleManager {
             phaseRepo.save(phase);
         });
 
+        invokeLifecycleEventListener(lifecycle, LifecycleEvent.RESET);
         lifecycleRepo.save(lifecycle);
+    }
+
+    private void invokeLifecycleEventListener(final Lifecycle lifecycle,
+                                              final LifecycleEvent event) {
+        final String listenerClassName = lifecycle.getListener();
+        final Class<?> listenerClass;
+        try {
+            listenerClass = Class.forName(listenerClassName);
+        } catch (ClassNotFoundException ex) {
+            LOGGER.error("Failed to find LifecycleListener class \"{}\". "
+                             + "Listener is ignored.",
+                         listenerClassName);
+            return;
+        }
+
+        if (!LifecycleEventListener.class.isAssignableFrom(listenerClass)) {
+            LOGGER.warn("Class \"{}\" is not an implementation of the "
+                            + "interface \"{}\".",
+                        listenerClassName,
+                        LifecycleEventListener.class.getName());
+            return;
+        }
+
+        final Object object;
+        try {
+            object = listenerClass.newInstance();
+        } catch (IllegalAccessException |
+                 InstantiationException ex) {
+            LOGGER.error("Failed to create instance of LifecycleEventListener "
+                             + "of class \"{}\".",
+                         listenerClass.getName());
+            LOGGER.error("Reason: ", ex);
+            return;
+        }
+
+        if (object instanceof LifecycleEventListener) {
+            final LifecycleEventListener listener
+                                             = (LifecycleEventListener) object;
+            listener.update(lifecycle, event);
+        } else {
+            LOGGER.error("Generated object is not an instance of \"{}\". "
+                             + "Ignoring listener.",
+                         LifecycleEventListener.class.getName());
+        }
+    }
+
+    private void invokePhaseEventListener(final Lifecycle lifecycle,
+                                          final Phase phase,
+                                          final PhaseEvent event) {
+        final String listenerClassName = phase.getListener();
+        final Class<?> listenerClass;
+        try {
+            listenerClass = Class.forName(listenerClassName);
+        } catch (ClassNotFoundException ex) {
+            LOGGER.error("Failed to find PhaseListener class \"{}\". "
+                             + "Listener is ignored.",
+                         listenerClassName);
+            return;
+        }
+
+        if (!PhaseEventListener.class.isAssignableFrom(listenerClass)) {
+            LOGGER.warn("Class \"{}\" is not an implementation of the "
+                            + "interface \"{}\".",
+                        listenerClassName,
+                        PhaseEventListener.class.getName());
+            return;
+        }
+
+        final Object object;
+        try {
+            object = listenerClass.newInstance();
+        } catch (IllegalAccessException |
+                 InstantiationException ex) {
+            LOGGER.error("Failed to create instance of PhaseEventListener "
+                             + "of class \"{}\".",
+                         listenerClass.getName());
+            LOGGER.error("Reason: ", ex);
+            return;
+        }
+
+        if (object instanceof PhaseEventListener) {
+            final PhaseEventListener listener = (PhaseEventListener) object;
+            listener.update(lifecycle, phase, event);
+        } else {
+            LOGGER.error("Generated object is not an instance of \"{}\". "
+                             + "Ignoring listener.",
+                         PhaseEventListener.class.getName());
+        }
     }
 
 }
