@@ -21,17 +21,23 @@ package org.libreccm.ui.admin;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+
 import org.apache.shiro.subject.Subject;
 import org.libreccm.security.Shiro;
 import org.libreccm.security.User;
+
+import java.io.Serializable;
+
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@RequestScoped
 @Named
-public class UserContextController {
+@RequestScoped
+public class UserContextController implements Serializable {
+
+    private static final long serialVersionUID = 2046117182808198398L;
 
     @Inject
     private Shiro shiro;
@@ -42,14 +48,14 @@ public class UserContextController {
     public boolean isLoggedIn() {
         return subject.isAuthenticated();
     }
-    
+
     public String getCurrentUserName() {
         final User user = shiro.getUser();
 
         if (user == null) {
             return "";
         } else {
-            return String.format("%s %s", 
+            return String.format("%s %s",
                                  user.getGivenName(),
                                  user.getFamilyName());
         }

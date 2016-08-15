@@ -14,6 +14,7 @@
     </h:head>
 
     <h:body>
+
         <f:metadata>
             <f:event listener="#{authorizationListener.isPermitted}" 
                      type="preRenderView" />
@@ -29,9 +30,6 @@
 
                                 library="admin-jsf" 
                                 name="libreccm.png" />
-                <!--<img alt="" 
-                     id="logo" 
-                     src="/themes/libreccm-default/images/libreccm.png" />-->
             </div>
 
             <h:form id="user-widget">
@@ -62,8 +60,6 @@
                         <h:outputText value="Groups Placeholder" />
                     </p:tab>
                     <p:tab title="Roles">
-                        <!--<h:outputText value="Roles Placeholder" />-->
-                        <!--<p:panel header="#{texts['ui.admin.tab.users_groups_roles.title']}">-->
                         <h:form id="rolesForm">
                             <p:dataTable id="rolesTable"
                                          lazy="true"
@@ -71,6 +67,7 @@
                                          rows="20"
                                          rowsPerPageTemplate="20,50"
                                          scrollable="true"
+                                         tableStyle="table-layout: auto;"
                                          value="#{rolesController.tableModel}"
                                          var="role">
                                 <f:facet name="header">
@@ -82,16 +79,20 @@
                                           id="role-name">
                                     <h:outputText value="#{role.name}" />
                                 </p:column>
-                                <p:column>
+                                <p:column style="text-align: center">
                                     <p:commandButton icon="ui-icon-wrench"
+                                                     iconPos="center"
                                                      oncomplete="PF('roleDialog').show()"
                                                      title="Edit"
-                                                     action="#{rolesController.setSelectedRole(role)}"
-                                                     >
-                                        <!--  -->
-                                        <!--  update="selectedRoleName" -->
-                                        <!--<f:setPropertyActionListener value="{role}"
-                                                                     target="{rolesController.selectedRole}" />-->
+                                                     update=":admin-tabs:user-groups-roles-tabs:rolesForm:roleDetails">
+                                        <f:setPropertyActionListener value="#{role}"
+                                                                     target="#{rolesController.selectedRole}" />
+                                    </p:commandButton>
+                                </p:column>
+                                <p:column style="text-align: center">
+                                    <p:commandButton icon="ui-icon-closethick"
+                                                     iconPos="center"
+                                                     title="Delete">
                                     </p:commandButton>
                                 </p:column>
                             </p:dataTable>
@@ -100,15 +101,52 @@
                                       widgetVar="roleDialog"
                                       modal="true"
                                       showEffect="fade"
-                                      hideEffect="fade">
-                                <p:outputPanel rendered="#{rolesController.selectedRole != null}">
-                                    <h:outputText id="selectedRoleName"
-                                                  rendered="#{rolesController.selectedRole != null}"
-                                                  value="#{rolesController.selectedRole.name}" />
+                                      hideEffect="fade"
+                                      style="font-size: 1.2em;">
+                                <p:outputPanel id="roleDetails">
+                                    <p:tabView dynamic="true"
+                                               id="rolesDetailTab">
+                                        <p:tab title="#{texts['ui.admin.tab.users_groups_roles.role_details']}">
+                                            <p:inputText 
+                                                id="selectedRoleName"
+                                                value="#{rolesController.selectedRoleName}" />
+                                            <div>
+                                                <p:commandButton action="#{rolesController.renameSelectedRole()}" 
+                                                                 oncomplete="PF('roleDialog').hide()"
+                                                                 update=":admin-tabs:user-groups-roles-tabs:rolesForm:rolesTable"
+                                                                 value="#{texts['ui.admin.tab.users_groups_roles.role_details.save']}"/>
+                                                <p:commandButton action="#{rolesController.renameSelectedRoleCancel()}" 
+                                                                 oncomplete="PF('roleDialog').hide()"
+                                                                 value="#{texts['ui.admin.tab.users_groups_roles.role_details.cancel']}"/>
+                                            </div>
+                                            <!-- <h:outputText id="selectedRoleName"
+                                                          value="#{rolesController.selectedRole.name}" />-->
+                                        </p:tab>
+                                        <p:tab title="#{texts['ui.admin.tab.users_groups_roles.role_members']}">
+                                            <p:dataTable value="#{rolesController.selectedRoleMemberships}"
+                                                         var="membership">
+                                                <p:column headerText="Name">
+                                                    <h:outputText value="#{membership.member.name}"/>
+                                                </p:column>
+                                            </p:dataTable>
+                                        </p:tab>
+                                        <p:tab title="#{texts['ui.admin.tab.users_groups_roles.role_permissions']}">
+                                            <p:dataTable tableStyle="table-layout: auto;"
+                                                         value="#{rolesController.selectedRolePermissions}"
+                                                         var="permission">
+                                                <p:column headerText="Privilege">
+                                                    <h:outputText value="#{permission.grantedPrivilege}" />
+                                                </p:column>
+                                                <p:column headerText="On object">
+                                                    <h:outputText rendered="#{permission.object != null}"
+                                                                  value="#{permission.object.displayName}" />
+                                                </p:column>
+                                            </p:dataTable>
+                                        </p:tab>
+                                    </p:tabView>
                                 </p:outputPanel>
                             </p:dialog>
                         </h:form>
-                        <!--</p:panel>-->
                     </p:tab>
                 </p:tabView>
 

@@ -211,11 +211,8 @@ public class ContentSectionServlet extends BaseApplicationServlet {
                 getClass().getName());
         }
 
-        //  NEW STUFF here will be used to process the pages in this servlet
-        //  Currently NOT working
-        //   addPage("/admin", new MainPage());     // index page at address ~/cs
-        //   addPage("/admin/index.jsp", new MainPage());     
-        //   addPage("/admin/item.jsp", new MainPage());     
+        //ToDo addPage(CmsConstants.CONTENT_SECTION_PAGE, new ContentSectionPage());     // index page at address ~/cs
+        //ToDo   addPage(CmsConstants.CONTENT_SECTION_ITEM_PAGE, new ContentSectionPage());     
     }
 
     /**

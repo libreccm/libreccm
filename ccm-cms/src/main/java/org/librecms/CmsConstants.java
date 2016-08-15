@@ -29,6 +29,7 @@ public class CmsConstants {
     public static final String DB_SCHEMA = "CCM_CMS";
 
     public static final String CMS_BUNDLE = "org.librecms.CmsResources";
+    public static final String CMS_FOLDER_BUNDLE = "com.arsdigita.cms.ui.folder.CMSFolderResources";
 
     public static final String CONTENT_CENTER_APP_TYPE = "com.arsdigita.cms.ContentCenter";
     public static final String CONTENT_CENTER_URL = "/content-center/";
@@ -40,6 +41,9 @@ public class CmsConstants {
                                = "/templates/servlet/content-section/*";
     public static final String CONTENT_SECTION_DESC_BUNDLE
                                = "org.librecms.contentsection.ContentSectionResources";
+    
+    public static final String CONTENT_SECTION_PAGE = "/admin";
+    public static final String CONTENT_SECTION_ITEM_PAGE = "/item";
 
     public static final String CATEGORIZATION_TYPE_FOLDER = "folder";
     
