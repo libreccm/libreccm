@@ -36,17 +36,17 @@ import org.libreccm.core.CcmObjectRepository;
  *
  */
 public class CcmObjectSelectionModel<T extends CcmObject>
-    implements SingleSelectionModel<Long> {
+        implements SingleSelectionModel<Long> {
 
     private final Class<T> clazz;
     private final SingleSelectionModel<Long> model;
 
     public CcmObjectSelectionModel(final LongParameter parameter) {
-        this(null, parameter);
+        this("", parameter);
     }
 
     public CcmObjectSelectionModel(final String parameterName) {
-        this(null, new LongParameter(parameterName));
+        this("", new LongParameter(parameterName));
     }
 
 //    public CcmObjectSelectionModel(final SingleSelectionModel<T> model ) {
@@ -58,14 +58,45 @@ public class CcmObjectSelectionModel<T extends CcmObject>
         this(clazz, new LongParameter(parameterName));
     }
 
+    public CcmObjectSelectionModel(final String className,
+                                   final String parameterName) {
+        try {
+            clazz = (Class<T>) Class.forName(className);
+        } catch (ClassNotFoundException ex) {
+            throw new RuntimeException(ex);
+        }
+        model = new ParameterSingleSelectionModel(new LongParameter(
+                parameterName));
+    }
+
     public CcmObjectSelectionModel(final Class<T> clazz,
                                    final LongParameter parameter) {
         this(clazz, new ParameterSingleSelectionModel<>(parameter));
     }
 
+    public CcmObjectSelectionModel(final String className,
+                                   final LongParameter parameter) {
+        try {
+            clazz = (Class<T>) Class.forName(className);
+        } catch (ClassNotFoundException ex) {
+            throw new RuntimeException(ex);
+        }
+        model = new ParameterSingleSelectionModel<>(parameter);
+    }
+
     public CcmObjectSelectionModel(final Class<T> clazz,
                                    final SingleSelectionModel<Long> model) {
         this.clazz = clazz;
+        this.model = model;
+    }
+
+    public CcmObjectSelectionModel(final String className,
+                                   final SingleSelectionModel<Long> model) {
+        try {
+            clazz = (Class<T>) Class.forName(className);
+        } catch (ClassNotFoundException ex) {
+            throw new RuntimeException(ex);
+        }
         this.model = model;
     }
 
@@ -87,7 +118,7 @@ public class CcmObjectSelectionModel<T extends CcmObject>
     public T getSelectedObject(final PageState state) {
         final Long key = getSelectedKey(state);
         final CcmObjectRepository repository = CdiUtil.createCdiUtil().findBean(
-            CcmObjectRepository.class);
+                CcmObjectRepository.class);
         @SuppressWarnings("unchecked")
         final T object = (T) repository.findById(key);
         return object;

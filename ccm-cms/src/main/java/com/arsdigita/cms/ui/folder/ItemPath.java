@@ -20,58 +20,67 @@ package com.arsdigita.cms.ui.folder;
 
 import com.arsdigita.bebop.List;
 import com.arsdigita.bebop.PageState;
-import com.arsdigita.cms.ContentItem;
-import com.arsdigita.cms.ItemCollection;
+import com.arsdigita.bebop.list.ListModel;
+import com.arsdigita.bebop.list.ListModelBuilder;
 import com.arsdigita.cms.ItemSelectionModel;
 import com.arsdigita.util.LockableImpl;
+import org.libreccm.categorization.Category;
+import org.libreccm.cdi.utils.CdiUtil;
+import org.librecms.contentsection.ContentItem;
+import org.librecms.contentsection.ContentItemManager;
 
 /**
- * Produce a list of the items starting from the selected item's root down
- * to the item itself.
+ * Produce a list of the items starting from the selected item's root down to
+ * the item itself.
  *
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @author <a href="mailto:lutter@arsdigita.com">David Lutterkort</a>
- * @version $Id: ItemPath.java 1940 2009-05-29 07:15:05Z terry $
  */
 public class ItemPath extends List {
 
     public ItemPath(ItemSelectionModel folderSel) {
-        super(new ListModelBuilder(folderSel));
+        super(new ItemPathListModelBuilder(folderSel));
         setAttribute("type", "item-path");
         setSelectionModel(folderSel);
     }
 
-    public static class ListModel
-        implements com.arsdigita.bebop.list.ListModel {
-        ItemCollection m_coll;
+    public static class ItemPathListModel implements ListModel {
 
-        public ListModel(ContentItem i) {
-            m_coll = i.getPathInfo(true);
+        private final java.util.List<Category> pathFolders;
+        private int index = -1;
+
+        public ItemPathListModel(final ContentItem item) {
+            pathFolders = CdiUtil.createCdiUtil().findBean(ContentItemManager.class).getItemFolders(item);
         }
 
+        @Override
         public boolean next() {
-            return m_coll.next();
+            index++;
+            return index < pathFolders.size();
         }
 
         public Object getElement() {
-            return m_coll.getName();
+            return pathFolders.get(index).getName();
         }
 
         public String getKey() {
-            return m_coll.getID().toString();
+            return Long.toString(pathFolders.get(index).getObjectId());
         }
     }
 
-    public static class ListModelBuilder extends LockableImpl
-        implements com.arsdigita.bebop.list.ListModelBuilder {
+    public static class ItemPathListModelBuilder extends LockableImpl
+            implements ListModelBuilder {
 
         ItemSelectionModel m_itemSel;
 
-        public ListModelBuilder(ItemSelectionModel itemSel) {
+        public ItemPathListModelBuilder(ItemSelectionModel itemSel) {
             m_itemSel = itemSel;
         }
 
-        public com.arsdigita.bebop.list.ListModel makeModel(List l, final PageState s) {
-            return new ListModel((ContentItem) m_itemSel.getSelectedObject(s));
+        public com.arsdigita.bebop.list.ListModel makeModel(List l,
+                                                            final PageState s) {
+            return new ItemPathListModel((ContentItem) m_itemSel.
+                    getSelectedObject(s));
         }
     }
 }

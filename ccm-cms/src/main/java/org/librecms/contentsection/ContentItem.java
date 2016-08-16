@@ -265,7 +265,7 @@ public class ContentItem extends CcmObject implements Serializable,
         if (result.isEmpty()) {
             return Optional.empty();
         } else {
-            return Optional.of(result.get(0).getCategorizedObject());
+            return Optional.of(result.get(0).getCategory());
         }
     }
 
