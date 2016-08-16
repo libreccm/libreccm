@@ -20,18 +20,15 @@ package com.arsdigita.cms;
 
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.SingleSelectionModel;
-import com.arsdigita.bebop.parameters.BigDecimalParameter;
-import com.arsdigita.kernel.ui.ACSObjectSelectionModel;
-import com.arsdigita.util.UncheckedWrapperException;
+import com.arsdigita.bebop.parameters.LongParameter;
+import com.arsdigita.ui.CcmObjectSelectionModel;
 
 import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.core.CcmObject;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentType;
 import org.librecms.contentsection.ContentTypeRepository;
 
-import javax.servlet.ServletException;
 
 import java.math.BigDecimal;
 
@@ -52,51 +49,12 @@ import java.math.BigDecimal;
  * @see com.arsdigita.kernel.ui.ACSObjectSelectionModel
  * @see com.arsdigita.bebop.SingleSelectionModel
  */
-public class ItemSelectionModel extends ACSObjectSelectionModel {
+public class ItemSelectionModel extends CcmObjectSelectionModel {
 
     private Long m_typeId;
 
     private static final Logger s_log = Logger.getLogger(
         ItemSelectionModel.class);
-
-    /**
-     * Construct a new <code>ItemSelectionModel</code>. This model will produce
-     * instances of <code>ContentItem</code> by automatically instantiating the
-     * correct Java subclass using the
-     * {@link com.arsdigita.domain.DomainObjectFactory}.
-     *
-     * @param parameter The state parameter which should be used to store the
-     *                  object ID
-     */
-    public ItemSelectionModel(BigDecimalParameter parameter) {
-        this(null, null, parameter);
-    }
-
-    /**
-     * Construct a new <code>ItemSelectionModel</code>. This model will produce
-     * instances of <code>ContentItem</code> by automatically instantiating the
-     * correct Java subclass using the
-     * {@link com.arsdigita.domain.DomainObjectFactory}.
-     *
-     * @param parameterName The name of the state parameter which will be used
-     *                      to store the object ID.
-     */
-    public ItemSelectionModel(String parameterName) {
-        this(null, null, new BigDecimalParameter(parameterName));
-    }
-
-    /**
-     * Construct a new <code>ItemSelectionModel</code>. This model will produce
-     * instances of <code>ContentItem</code> by automatically instantiating the
-     * correct Java subclass using the
-     * {@link com.arsdigita.domain.DomainObjectFactory}.
-     *
-     * @param model The {@link SingleSelectionModel} which will supply a
-     *              {@link BigDecimal} ID of the currently selected item
-     */
-    public ItemSelectionModel(SingleSelectionModel model) {
-        this(null, null, model);
-    }
 
     /**
      * Construct a new <code>ItemSelectionModel</code>
@@ -108,7 +66,7 @@ public class ItemSelectionModel extends ACSObjectSelectionModel {
      *                      to store the item.
      */
     public ItemSelectionModel(ContentType type, String parameterName) {
-        this(type, new BigDecimalParameter(parameterName));
+        this(type, new LongParameter(parameterName));
     }
 
     /**
@@ -119,8 +77,8 @@ public class ItemSelectionModel extends ACSObjectSelectionModel {
      * @param parameter The state parameter which should be used by this item
      *
      */
-    public ItemSelectionModel(ContentType type, BigDecimalParameter parameter) {
-        super(type.getContentItemClass(), type.getContentItemClass(), parameter);
+    public ItemSelectionModel(ContentType type, LongParameter parameter) {
+        super(type.getContentItemClass(), parameter);
         m_typeId = type.getObjectId();
     }
 
@@ -134,90 +92,8 @@ public class ItemSelectionModel extends ACSObjectSelectionModel {
      *
      */
     public ItemSelectionModel(ContentType type, SingleSelectionModel model) {
-        super(type.getContentItemClass(), type.getContentItemClass(), model);
+        super(type.getContentItemClass(), model);
         m_typeId = type.getObjectId();
-    }
-
-    /**
-     * Construct a new <code>ItemSelectionModel</code>
-     *
-     * @param itemClass     The name of the Java class which represents the
-     *                      content item. Must be a subclass of ContentItem. In
-     *                      addition, the class must have a constructor with a
-     *                      single OID parameter.
-     * @param objectType    The name of the persistence metadata object type
-     *                      which represents the content item. In practice, will
-     *                      often be the same as the itemClass.
-     * @param parameterName The name of the state parameter which will be used
-     *                      to store the item.
-     */
-    public ItemSelectionModel(String itemClass, 
-                              String objectType,
-                              String parameterName) {
-        super(itemClass, objectType, new BigDecimalParameter(parameterName));
-    }
-
-    /**
-     * Construct a new <code>ItemSelectionModel</code>
-     *
-     * @param itemClass  The name of the Java class which represents the content
-     *                   item. Must be a subclass of ContentItem. In addition,
-     *                   the class must have a constructor with a single OID
-     *                   parameter.
-     * @param objectType The name of the persistence metadata object type which
-     *                   represents the content item. In practice, will often be
-     *                   the same as the itemClass.
-     * @param parameter  The state parameter which should be used by this item
-     */
-    public ItemSelectionModel(String itemClass, String objectType,
-                              BigDecimalParameter parameter) {
-        super(itemClass, objectType, parameter);
-    }
-
-    /**
-     * Construct a new <code>ItemSelectionModel</code>
-     *
-     * @param itemClass  The name of the Java class which represents the content
-     *                   item. Must be a subclass of ContentItem. In addition,
-     *                   the class must have a constructor with a single OID
-     *                   parameter.
-     * @param objectType The name of the persistence metadata object type which
-     *                   represents the content item. In practice, will often be
-     *                   the same as the itemClass.
-     * @param model      The {@link SingleSelectionModel} which will supply a
-     *                   {@link BigDecimal} id of the currently selected object
-     *
-     */
-    public ItemSelectionModel(String itemClass, 
-                              String objectType,
-                              SingleSelectionModel model) {
-        super(itemClass, objectType, model);
-    }
-
-    /**
-     * A utility function which creates a new item with the given ID. Uses
-     * reflection to create the instance of the class supplied in the
-     * constructor to this ItemSelectionModel.
-     *
-     * @param id The id of the new item -- this is now ignored
-     *
-     * @return The newly created item
-     *
-     * @deprecated use createItem() instead
-     */
-    public ContentItem createItem(BigDecimal id) throws ServletException {
-        return (ContentItem) createACSObject();
-    }
-
-    /**
-     * A utility function which creates a new item. Uses reflection to create
-     * the instance of the class supplied in the constructor to this
-     * ItemSelectionModel.
-     *
-     * @return The newly created item
-     */
-    public ContentItem createItem() throws ServletException {
-        return (ContentItem) createACSObject();
     }
 
     /**
@@ -231,38 +107,6 @@ public class ItemSelectionModel extends ACSObjectSelectionModel {
      */
     public final ContentItem getSelectedItem(PageState s) {
         return (ContentItem) getSelectedObject(s);
-    }
-
-    /**
-     * A utility function which creates a new item with the given ID. Uses
-     * reflection to create the instance of the class supplied in the
-     * constructor to this ItemSelectionModel.
-     *
-     * @param id The id of the new item -- this is now ignored
-     *
-     * @return The newly created item
-     *
-     * @deprecated Use createACSObject() instead
-     */
-    public CcmObject createACSObject(BigDecimal id) throws ServletException {
-        return createACSObject();
-    }
-
-    /**
-     * A utility function which creates a new item. Uses reflection to create
-     * the instance of the class supplied in the constructor to this
-     * ItemSelectionModel.
-     *
-     * @return The newly created item
-     */
-    public CcmObject createACSObject() throws ServletException {
-        ContentType type = getContentType();
-        ContentItem item = (ContentItem) super.createACSObject();
-
-        if (type != null) {
-            item.setContentType(type);
-        }
-        return item;
     }
 
     /**
