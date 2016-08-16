@@ -52,9 +52,14 @@ import javax.persistence.Table;
 @Table(name = "CONTENT_TYPES", schema = DB_SCHEMA)
 @NamedQueries({
     @NamedQuery(
-        name = "ContentType.findByContenSection",
+        name = "ContentType.findByContentSection",
         query = "SELECT c FROM ContentType c "
-                    + "WHERE c.contentSection = :contentSection")
+                    + "WHERE c.contentSection = :contentSection"),
+    @NamedQuery(
+        name = "ContentType.findByContentSectionAndClass",
+        query = "SELECT c FROM ContentType c "
+                    + "WHERE c.contentSection = :contentSection "
+                    + "AND c.contentItemClass  =:clazz")
 })
 public class ContentType extends CcmObject implements Serializable {
 
@@ -165,7 +170,8 @@ public class ContentType extends CcmObject implements Serializable {
         return defaultLifecycle;
     }
 
-    protected void setDefaultLifecycle(final LifecycleDefinition defaultLifecycle) {
+    protected void setDefaultLifecycle(
+        final LifecycleDefinition defaultLifecycle) {
         this.defaultLifecycle = defaultLifecycle;
     }
 

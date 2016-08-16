@@ -20,15 +20,19 @@ package org.librecms.contentsection;
 
 import org.libreccm.core.AbstractEntityRepository;
 
+import java.util.List;
+import java.util.Optional;
+
 import javax.enterprise.context.RequestScoped;
+import javax.persistence.TypedQuery;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-public class ContentTypeRepository 
-    extends AbstractEntityRepository<Long, ContentType>{
+public class ContentTypeRepository
+    extends AbstractEntityRepository<Long, ContentType> {
 
     @Override
     public Class<ContentType> getEntityClass() {
@@ -39,5 +43,128 @@ public class ContentTypeRepository
     public boolean isNew(final ContentType type) {
         return type.getObjectId() == 0;
     }
-    
+
+    /**
+     * Finds all {@link ContentType}s of a specific content section.
+     *
+     * @param section The section whose {@link ContentTyp}s are retrieved. Can't
+     *                be {@code null}.
+     *
+     * @return A list of all {@link ContentType}s of the provided section.
+     */
+    public List<ContentType> findByContentSection(final ContentSection section) {
+        if (section == null) {
+            throw new IllegalArgumentException(
+                "Parameter section of method "
+                    + "ContentTypeRepo#findByContentSection("
+                    + "ContentSection section) can't be null.");
+        }
+
+        final TypedQuery<ContentType> query = getEntityManager()
+            .createNamedQuery("ContentType.findByContentSection",
+                              ContentType.class);
+        query.setParameter("contentSection", section);
+
+        return query.getResultList();
+    }
+
+    /**
+     * Retrieves a specific {@link ContentType}.
+     *
+     * @param section The section associated with the {@link ContentType} to
+     *                retrieve. Can't be {@code null}.
+     * @param clazz   The subclass of the {@link ContentItem} class associated
+     *                with the content type. Can't be {@code null}.
+     *
+     * @return The requested {@link ContentType} if their is a
+     *         {@link ContentType} for the provided class in the provided
+     *         section. Otherwise the returned {@link Optional} will be empty.
+     */
+    public Optional<ContentType> findByContentSectionAndClass(
+        final ContentSection section,
+        final Class<? extends ContentItem> clazz) {
+
+        if (section == null) {
+            throw new IllegalArgumentException(
+                "Parameter section of method "
+                    + "ContentTypeRepo#findByContentSectionAndClass("
+                    + "ContentSection section, "
+                    + "Class<? extends ContentItem> clazz) can't be null.");
+        }
+        if (clazz == null) {
+            throw new IllegalArgumentException(
+                "Parameter clazz of method "
+                    + "ContentTypeRepo#findByContentSectionAndClass("
+                    + "ContentSection section, "
+                    + "Class<? extends ContentItem> clazz) can't be null.");
+        }
+
+        return findByContentSectionAndClass(section, clazz.getName());
+    }
+
+    /**
+     * Retrieves a specific {@link ContentType}.
+     *
+     * @param section   The section associated with the {@link ContentType} to
+     *                  retrieve.
+     * @param className The name of the subclass of the {@link ContentItem}
+     *                  class associated with the content type. The class must
+     *                  be a subclass of {@link ContentItem}.
+     *
+     * @return The requested {@link ContentType} if their is a
+     *         {@link ContentType} for the provided class in the provided
+     *         section. Otherwise the returned {@link Optional} will be empty.
+     */
+    public Optional<ContentType> findByContentSectionAndClass(
+        final ContentSection section,
+        final String className) {
+        if (section == null) {
+            throw new IllegalArgumentException(
+                "Parameter section of method "
+                    + "ContentTypeRepo#findByContentSectionAndClass("
+                    + "ContentSection section, "
+                    + "String className) can't be null.");
+        }
+        if (className == null || className.isEmpty()) {
+            throw new IllegalArgumentException(
+                "Parameter className of method "
+                    + "ContentTypeRepo#findByContentSectionAndClass("
+                    + "ContentSection section, "
+                    + "String className) can't be null.");
+        }
+
+        try {
+            final Class<?> clazz = Class.forName(className);
+            if (!clazz.isAssignableFrom(ContentItem.class)) {
+                throw new IllegalArgumentException(String.format(
+                    "The provided class \"%s\" is not a subclass of \"%s\".",
+                    className,
+                    ContentItem.class.getName()));
+            }
+        } catch (ClassNotFoundException ex) {
+            throw new IllegalArgumentException(String.format(
+                "Class \"%s\" does not exist.", className));
+        }
+
+        final TypedQuery<ContentType> query = getEntityManager()
+            .createNamedQuery("ContentType.findByContentSectionAndClass",
+                              ContentType.class);
+        query.setParameter("contentSection", section);
+        query.setParameter("clazz", className);
+
+        final List<ContentType> result = query.getResultList();
+        if (result.isEmpty()) {
+            return Optional.empty();
+        } else if (result.size() > 1) {
+            throw new RuntimeException(String.format(
+                "More than one ContentType for section \"%s\" and type \"%s\" "
+                    + "found. This is an invalid state. Check your installation"
+                    + "immediatly.",
+                section.getLabel(),
+                className));
+        } else {
+            return Optional.of(result.get(0));
+        }
+    }
+
 }
