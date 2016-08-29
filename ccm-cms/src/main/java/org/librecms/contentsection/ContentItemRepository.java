@@ -26,10 +26,12 @@ import org.libreccm.core.CcmObjectRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.TypedQuery;
+import jdk.nashorn.internal.objects.NativeArray;
 
 /**
  * Repository for content items.
@@ -38,7 +40,7 @@ import javax.persistence.TypedQuery;
  */
 @RequestScoped
 public class ContentItemRepository
-    extends AbstractAuditedEntityRepository<Long, ContentItem> {
+        extends AbstractAuditedEntityRepository<Long, ContentItem> {
 
     @Inject
     private CcmObjectRepository ccmObjectRepo;
@@ -64,7 +66,7 @@ public class ContentItemRepository
      * @param itemId The id of item to retrieve.
      *
      * @return The content item identified by the provided {@code itemId} or
-     *         nothing if there is such content item.
+     * nothing if there is such content item.
      */
     public Optional<ContentItem> findById(final long itemId) {
         final CcmObject result = ccmObjectRepo.findObjectById(itemId);
@@ -78,13 +80,13 @@ public class ContentItemRepository
     /**
      * Finds a content item by its ID and ensures that is a the requested type.
      *
-     * @param <T>    The type of the content item.
+     * @param <T> The type of the content item.
      * @param itemId The id of item to retrieve.
-     * @param type   The type of the content item.
+     * @param type The type of the content item.
      *
      * @return The content item identified by the provided id or an empty
-     *         {@link Optional} if there is no such item or if it is not of the
-     *         requested type.
+     * {@link Optional} if there is no such item or if it is not of the
+     * requested type.
      */
     @SuppressWarnings("unchecked")
     public <T extends ContentItem> Optional<T> findById(final long itemId,
@@ -103,7 +105,7 @@ public class ContentItemRepository
      * @param uuid The id of item to retrieve.
      *
      * @return The content item identified by the provided {@code uuid} or
-     *         nothing if there is such content item.
+     * nothing if there is such content item.
      */
     public ContentItem findByUuid(final String uuid) {
         final CcmObject result = ccmObjectRepo.findObjectByUuid(uuid);
@@ -118,13 +120,13 @@ public class ContentItemRepository
      * Finds a content item by its UUID and ensures that is a the requested
      * type.
      *
-     * @param <T>  The type of the content item.
+     * @param <T> The type of the content item.
      * @param uuid The UUID of item to retrieve.
      * @param type The type of the content item.
      *
      * @return The content item identified by the provided UUID or an empty
-     *         {@link Optional} if there is no such item or if it is not of the
-     *         requested type.
+     * {@link Optional} if there is no such item or if it is not of the
+     * requested type.
      */
     @SuppressWarnings("unchecked")
     public <T extends ContentItem> Optional<T> findByUuid(final String uuid,
@@ -141,7 +143,7 @@ public class ContentItemRepository
     /**
      * Finds all content items of a specific type.
      *
-     * @param <T>  The type of the items.
+     * @param <T> The type of the items.
      * @param type The type of the items.
      *
      * @return A list of all content items of the requested type.
@@ -149,7 +151,7 @@ public class ContentItemRepository
     @SuppressWarnings("unchecked")
     public <T extends ContentItem> List<T> findByType(final Class<T> type) {
         final TypedQuery<ContentItem> query = getEntityManager()
-            .createNamedQuery("ContentItem.findByType", ContentItem.class);
+                .createNamedQuery("ContentItem.findByType", ContentItem.class);
         query.setParameter("type", type);
 
         return (List<T>) query.getResultList();
@@ -163,16 +165,51 @@ public class ContentItemRepository
      * @return A list of all items in the provided folder.
      */
     public List<ContentItem> findByFolder(final Category folder) {
-        final TypedQuery<CcmObject> query = getEntityManager()
-            .createNamedQuery("ContentItem.findByFolder", CcmObject.class);
+        final TypedQuery<ContentItem> query = getEntityManager()
+                .createNamedQuery("ContentItem.findByFolder", 
+                                  ContentItem.class);
         query.setParameter("folder", folder);
 
-        final List<ContentItem> result = new ArrayList<>();
-        query.getResultList().stream()
-            .filter(obj -> (obj instanceof ContentItem))
-            .forEach(obj -> result.add((ContentItem) obj));
+        return query.getResultList();
+    }
+    
+    public long countItemsInFolder(final Category folder) {
+        final TypedQuery<Long> query = getEntityManager()
+        .createNamedQuery("ContentItem.countItemsInFolder", Long.class);
+        query.setParameter("folder", folder);
+        
+        return query.getSingleResult();
+    }
 
-        return result;
+    public long countByNameInFolder(final Category folder, final String name) {
+        final TypedQuery<Long> query = getEntityManager().createNamedQuery(
+                "ContentItem.countByNameInFolder", Long.class);
+        query.setParameter("folder", folder);
+        query.setParameter("name", name);
+
+        return query.getSingleResult();
+    }
+
+    public List<ContentItem> filterByFolderAndName(final Category folder,
+                                                   final String name) {
+        final TypedQuery<ContentItem> query = getEntityManager()
+                .createNamedQuery("ContentItem.filterByNameAndFolder",
+                                  ContentItem.class);
+        query.setParameter("folder", folder);
+        query.setParameter("name", name);
+
+        return query.getResultList();
+    }
+
+    public long countFilterByFolderAndName(final Category folder,
+                                           final String name) {
+        final TypedQuery<Long> query = getEntityManager()
+                .createNamedQuery("ContentItem.countFilterByNameAndFolder",
+                                  Long.class);
+        query.setParameter("folder", folder);
+        query.setParameter("name", name);
+
+        return query.getSingleResult();
     }
 
 }

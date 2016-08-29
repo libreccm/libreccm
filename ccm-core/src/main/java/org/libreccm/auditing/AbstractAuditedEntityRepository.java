@@ -65,20 +65,38 @@ public abstract class AbstractAuditedEntityRepository<K, T>
     /**
      * Retrieves the number of revisions for a given entity.
      *
-     * @param entity The entity
+     * @param entity   The entity
      * @param objectId The primary key
      *
      * @return A list of revision numbers, at which the entity was modified,
      *         sorted in ascending order (so older revisions come first).
      *
-     * @throws NotAuditedException When entities of the given class are not
-     * audited.
+     * @throws NotAuditedException      When entities of the given class are not
+     *                                  audited.
      * @throws IllegalArgumentException If cls or primaryKey is null.
-     * @throws IllegalStateException If the associated entity manager is closed.
+     * @throws IllegalStateException    If the associated entity manager is
+     *                                  closed.
      */
     public List<Number> retrieveRevisionNumbersOfEntity(final T entity,
                                                         final Long objectId) {
         return auditReader.getRevisions(entity.getClass(), objectId);
+    }
+    
+    public CcmRevision retrieveFirstRevision(final T entity,
+                                             final Long objectId) {
+        final List<Number> revisions = retrieveRevisionNumbersOfEntity(
+            entity, objectId);
+        
+        return auditReader.findRevision(CcmRevision.class, revisions.get(0));
+    }
+
+    public CcmRevision retrieveCurrentRevision(final T entity,
+                                               final Long objectId) {
+        final List<Number> revisions = retrieveRevisionNumbersOfEntity(
+            entity, objectId);
+        final Number lastRevision = revisions.get(revisions.size() - 1);
+
+        return auditReader.findRevision(CcmRevision.class, lastRevision);
     }
 
 }

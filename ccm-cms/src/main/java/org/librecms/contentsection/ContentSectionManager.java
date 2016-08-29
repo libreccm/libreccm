@@ -18,6 +18,7 @@
  */
 package org.librecms.contentsection;
 
+import com.arsdigita.cms.dispatcher.ItemResolver;
 import com.arsdigita.kernel.KernelConfig;
 
 import org.libreccm.categorization.Category;
@@ -34,7 +35,6 @@ import org.libreccm.security.RoleRepository;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -86,13 +86,13 @@ public class ContentSectionManager {
     public ContentSection createContentSection(final String name) {
         if (name == null || name.isEmpty()) {
             throw new IllegalArgumentException(
-                "The name of a ContentSection can't be blank.");
+                    "The name of a ContentSection can't be blank.");
         }
 
         final KernelConfig kernelConfig = confManager.findConfiguration(
-            KernelConfig.class);
+                KernelConfig.class);
         final Locale defautLocale
-                         = new Locale(kernelConfig.getDefaultLanguage());
+                     = new Locale(kernelConfig.getDefaultLanguage());
 
         final ContentSection section = new ContentSection();
         section.setLabel(name);
@@ -232,12 +232,12 @@ public class ContentSectionManager {
     @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
     @Transactional(Transactional.TxType.REQUIRED)
     public void removeRoleFromContentSection(
-        final ContentSection contentSection,
-        final Role role) {
+            final ContentSection contentSection,
+            final Role role) {
 
         if (contentSection == null) {
             throw new IllegalArgumentException(
-                "Can't remove role from ContentSection null");
+                    "Can't remove role from ContentSection null");
         }
 
         if (role == null) {
@@ -248,10 +248,10 @@ public class ContentSectionManager {
         sectionRepo.save(contentSection);
 
         final TypedQuery<Permission> query = entityManager
-            .createNamedQuery("ContentSection.findPermissions",
-                              Permission.class);
+                .createNamedQuery("ContentSection.findPermissions",
+                                  Permission.class);
         query.setParameter("section", contentSection);
-        query.setParameter("rootDocumentsFolder", 
+        query.setParameter("rootDocumentsFolder",
                            contentSection.getRootDocumentsFolder());
         query.setParameter("role", role);
 
@@ -273,6 +273,18 @@ public class ContentSectionManager {
     public void removeTypeFromSection(final ContentType type,
                                       final ContentSection section) {
         throw new UnsupportedOperationException();
+    }
+
+    public ItemResolver getItemResolver(final ContentSection section) {
+        try {
+            final Class<ItemResolver> itemResolverClazz = (Class<ItemResolver>) Class.
+                    forName(section.getItemResolverClass());
+            return itemResolverClazz.newInstance();
+        } catch (ClassNotFoundException |
+                 IllegalAccessException |
+                 InstantiationException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
 }

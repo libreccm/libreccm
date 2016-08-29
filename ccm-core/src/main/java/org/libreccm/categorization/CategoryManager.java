@@ -25,11 +25,15 @@ import org.apache.logging.log4j.Logger;
 import org.libreccm.core.CcmObject;
 import org.libreccm.core.CcmObjectRepository;
 import org.libreccm.security.AuthorizationRequired;
+import org.libreccm.security.PermissionChecker;
 import org.libreccm.security.RequiresPrivilege;
 import org.libreccm.security.Shiro;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.StringJoiner;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -65,6 +69,9 @@ public class CategoryManager {
     @Inject
     private Shiro shiro;
 
+    @Inject
+    private PermissionChecker permissionChecker;
+
     /**
      * Assigns an category to an object.
      *
@@ -89,6 +96,35 @@ public class CategoryManager {
         @RequiresPrivilege(MANAGE_CATEGORY_OBJECTS_PRIVILEGE)
         final Category category) {
 
+        addObjectToCategory(object, category, null);
+    }
+    
+    /**
+     * Assigns an category to an object.
+     *
+     * Please note: Because the association between {@link Category} and {@code
+     * CcmObject} is a many-to-many association we use an association object to
+     * store the additional attributes of the association. The
+     * {@link Categorization} entity is completely managed by this class.
+     *
+     * If either {@code object} or the {@code category} parameter are
+     * {@code null} an {@link IllegalArgumentException} is thrown because
+     * passing {@code null} to this method indicates a programming error.
+     *
+     * @param object   The object to assign to the category. Can never be
+     *                 {@code null}.
+     * @param category The category to which the object should be assigned. Can
+     *                 never be {@code null}.
+     * @param type Type of the categorisation.
+     */
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public void addObjectToCategory(
+        final CcmObject object,
+        @RequiresPrivilege(MANAGE_CATEGORY_OBJECTS_PRIVILEGE)
+        final Category category,
+        final String type) {
+
         if (object == null) {
             throw new IllegalArgumentException(
                 "Null can't be added to a category.");
@@ -104,11 +140,12 @@ public class CategoryManager {
         categorization.setCategory(category);
         categorization.setCategoryOrder(object.getCategories().size() + 1);
         categorization.setObjectOrder(category.getObjects().size() + 1);
+        categorization.setType(type);
 
         object.addCategory(categorization);
         category.addObject(categorization);
 
-        // To saving a category requires the manage_category privilege which
+        // Saving a category requires the manage_category privilege which
         // may has not been granted to a user which is allowed to assign objects
         // to a category. Therefore we bypass the this authorisation check here
         // by executing CategoryRepository#save(Category) as the system user.
@@ -593,6 +630,67 @@ public class CategoryManager {
             categoryRepo.save(subCategory);
             categoryRepo.save(prevCategory);
         });
+    }
+
+    /**
+     * Returns the path of a category as string. The path of a category are the
+     * names of all its parent categories and the category joined together,
+     * separated by a slash.
+     *
+     * @param category The category whose path is generated.
+     *
+     * @return The path of the category.
+     */
+    public String getCategoryPath(final Category category) {
+        final List<String> tokens = new ArrayList<>();
+
+        Category current = category;
+        while (current.getParentCategory() != null) {
+            tokens.add(current.getDisplayName());
+            current = current.getParentCategory();
+        }
+
+        Collections.reverse(tokens);
+        final StringJoiner joiner = new StringJoiner("/", "/", "");
+        tokens.forEach(joiner::add);
+
+        return joiner.toString();
+    }
+
+    public boolean hasIndexObject(final Category category) {
+//        final TypedQuery<Long> hasIndexItemQuery = entityManager
+//            .createNamedQuery("Categorization.hasIndexObject", Long.class);
+//        hasIndexItemQuery.setParameter("category", category);
+//        final long indexItems = hasIndexItemQuery.getSingleResult();
+//        return indexItems > 0;
+        final TypedQuery<Boolean> query = entityManager
+            .createNamedQuery("Categorization.hasIndexObject", Boolean.class);
+        query.setParameter("category", category);
+
+        return query.getSingleResult();
+    }
+
+    /**
+     * Retrieves to index object of a category. The caller is responsible for
+     * checking if the current user has sufficient privileges to read the index
+     * object!
+     *
+     * @param category The category of which the index object should be
+     *                 retrieved.
+     *
+     * @return An {@link Optional} containing the index object of the provided
+     *         category if the category has an index object.
+     */
+    public Optional<CcmObject> getIndexObject(final Category category) {
+        if (hasIndexObject(category)) {
+            final TypedQuery<CcmObject> query = entityManager.createNamedQuery(
+                "Categorization.findIndexObject", CcmObject.class);
+            query.setParameter("category", category);
+
+            return Optional.of(query.getSingleResult());
+        } else {
+            return Optional.empty();
+        }
     }
 
 }

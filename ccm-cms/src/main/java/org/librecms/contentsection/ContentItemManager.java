@@ -18,8 +18,14 @@
  */
 package org.librecms.contentsection;
 
+import com.arsdigita.kernel.KernelConfig;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.ArrayList;
 import java.util.Collections;
+
 import org.libreccm.categorization.Category;
 import org.libreccm.workflow.WorkflowTemplate;
 import org.librecms.lifecycle.LifecycleDefinition;
@@ -30,8 +36,31 @@ import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+
 import org.libreccm.categorization.Categorization;
+import org.libreccm.categorization.CategoryManager;
+import org.libreccm.categorization.ObjectNotAssignedToCategoryException;
+import org.libreccm.configuration.ConfigurationManager;
+import org.libreccm.l10n.LocalizedString;
+import org.libreccm.workflow.Workflow;
+import org.libreccm.workflow.WorkflowManager;
 import org.librecms.CmsConstants;
+import org.librecms.lifecycle.Lifecycle;
+import org.librecms.lifecycle.LifecycleManager;
+
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
 
 /**
  *
@@ -39,6 +68,18 @@ import org.librecms.CmsConstants;
  */
 @RequestScoped
 public class ContentItemManager {
+
+    private static final Logger LOGGER = LogManager.getLogger(
+        ContentItemManager.class);
+
+    @Inject
+    private EntityManager entityManager;
+
+    @Inject
+    private ConfigurationManager confManager;
+
+    @Inject
+    private CategoryManager categoryManager;
 
     @Inject
     private ContentItemRepository contentItemRepo;
@@ -48,6 +89,12 @@ public class ContentItemManager {
 
     @Inject
     private ContentSectionManager sectionManager;
+
+    @Inject
+    private LifecycleManager lifecycleManager;
+
+    @Inject
+    private WorkflowManager workflowManager;
 
     /**
      * Creates a new content item in the provided content section and folder
@@ -65,6 +112,7 @@ public class ContentItemManager {
      *
      * @return The new content item.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public <T extends ContentItem> T createContentItem(
         final String name,
         final ContentSection section,
@@ -112,6 +160,7 @@ public class ContentItemManager {
      *
      * @return The new content item.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public <T extends ContentItem> T createContentItem(
         final String name,
         final ContentSection section,
@@ -119,7 +168,47 @@ public class ContentItemManager {
         final WorkflowTemplate workflowTemplate,
         final LifecycleDefinition lifecycleDefinition,
         final Class<T> type) {
-        throw new UnsupportedOperationException();
+
+        final Optional<ContentType> contentType = typeRepo
+            .findByContentSectionAndClass(section, type);
+
+        if (!contentType.isPresent()) {
+            throw new IllegalArgumentException(String.format(
+                "ContentSection \"%s\" has no content type for \"%s\".",
+                section.getLabel(),
+                type.getName()));
+        }
+
+        final Lifecycle lifecycle = lifecycleManager.createLifecycle(
+            lifecycleDefinition);
+        final Workflow workflow = workflowManager.createWorkflow(
+            workflowTemplate);
+
+        final T item;
+        try {
+            item = type.newInstance();
+        } catch (InstantiationException | IllegalAccessException ex) {
+            LOGGER.error("Failed to create new content item of type \"{}\" "
+                             + "in content section \"{}\".",
+                         type.getName(),
+                         section.getLabel());
+            throw new RuntimeException(ex);
+        }
+
+        final KernelConfig kernelConfig = confManager.findConfiguration(
+            KernelConfig.class);
+
+        item.setDisplayName(name);
+        item.getName().addValue(new Locale(kernelConfig.getDefaultLanguage()),
+                                name);
+        item.setLifecycle(lifecycle);
+        item.setWorkflow(workflow);
+
+        categoryManager.addObjectToCategory(item, folder);
+
+        contentItemRepo.save(item);
+
+        return item;
     }
 
     /**
@@ -130,8 +219,22 @@ public class ContentItemManager {
      * @param item         The item to move.
      * @param targetFolder The folder to which the item is moved.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public void move(final ContentItem item, final Category targetFolder) {
-        throw new UnsupportedOperationException();
+        final ContentItem draftItem = getDraftVersion(item, item.getClass());
+        final Optional<Category> currentFolder = getItemFolder(item);
+
+        if (currentFolder.isPresent()) {
+            try {
+                categoryManager.removeObjectFromCategory(draftItem,
+                                                         currentFolder.get());
+            } catch (ObjectNotAssignedToCategoryException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+
+        categoryManager.addObjectToCategory(draftItem, targetFolder);
+
     }
 
     /**
@@ -144,8 +247,188 @@ public class ContentItemManager {
      *                     original item an index is appended to the name of the
      *                     item.
      */
+    @SuppressWarnings("unchecked")
     public void copy(final ContentItem item, final Category targetFolder) {
+        final Optional<ContentType> contentType = typeRepo
+            .findByContentSectionAndClass(
+                item.getContentType().getContentSection(), item.getClass());
+
+        if (!contentType.isPresent()) {
+            throw new IllegalArgumentException(String.format(
+                "ContentSection \"%s\" has no content type for \"%s\".",
+                item.getContentType().getContentSection(),
+                item.getClass().getName()));
+        }
+
+        final ContentItem draftItem = getDraftVersion(item, item.getClass());
+
+        final ContentItem copy;
+        try {
+            copy = item.getClass().newInstance();
+        } catch (InstantiationException | IllegalAccessException ex) {
+            throw new RuntimeException(ex);
+        }
+
+        copy.setContentType(contentType.get());
+
+        final Lifecycle lifecycle = lifecycleManager.createLifecycle(
+            contentType.get().getDefaultLifecycle());
+        final Workflow workflow = workflowManager.createWorkflow(contentType
+            .get().getDefaultWorkflow());
+
+        copy.setLifecycle(lifecycle);
+        copy.setWorkflow(workflow);
+
+        draftItem.getCategories().forEach(categorization -> categoryManager
+            .addObjectToCategory(copy, categorization.getCategory()));
+
+        final Optional<Category> itemFolder = getItemFolder(draftItem);
+        if (itemFolder.isPresent()) {
+            try {
+                categoryManager.removeObjectFromCategory(
+                    copy, getItemFolder(draftItem).get());
+            } catch (ObjectNotAssignedToCategoryException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+
+        categoryManager.addObjectToCategory(
+            copy,
+            targetFolder,
+            CmsConstants.CATEGORIZATION_TYPE_FOLDER);
+
+        // !!!!!!!!!!!!!!!!!!!!!
+        // ToDo copy Attachments
+        // !!!!!!!!!!!!!!!!!!!!!
+        //
+        //
+        final BeanInfo beanInfo;
+        try {
+            beanInfo = Introspector.getBeanInfo(item.getClass());
+        } catch (IntrospectionException ex) {
+            throw new RuntimeException(ex);
+        }
+
+        for (final PropertyDescriptor propertyDescriptor : beanInfo
+            .getPropertyDescriptors()) {
+            if (propertyIsExcluded(propertyDescriptor.getName())) {
+                continue;
+            }
+
+            final Class<?> propType = propertyDescriptor.getPropertyType();
+            final Method readMethod = propertyDescriptor.getReadMethod();
+            final Method writeMethod = propertyDescriptor.getWriteMethod();
+
+            if (LocalizedString.class.equals(propType)) {
+                final LocalizedString source;
+                final LocalizedString target;
+                try {
+                    source = (LocalizedString) readMethod.invoke(draftItem);
+                    target = (LocalizedString) readMethod.invoke(copy);
+                } catch (IllegalAccessException |
+                         IllegalArgumentException |
+                         InvocationTargetException ex) {
+                    throw new RuntimeException(ex);
+                }
+
+                source.getAvailableLocales().forEach(
+                    locale -> target.addValue(locale, source.getValue(locale)));
+            } else if (propType != null
+                           && propType.isAssignableFrom(ContentItem.class)) {
+
+                final ContentItem linkedItem;
+                try {
+                    linkedItem = (ContentItem) readMethod.invoke(draftItem);
+                } catch (IllegalAccessException |
+                         IllegalArgumentException |
+                         InvocationTargetException ex) {
+                    throw new RuntimeException(ex);
+                }
+
+                final ContentItem linkedDraftItem = getDraftVersion(
+                    linkedItem, linkedItem.getClass());
+
+                try {
+                    writeMethod.invoke(copy, linkedDraftItem);
+                } catch (IllegalAccessException |
+                         IllegalArgumentException |
+                         InvocationTargetException ex) {
+                    throw new RuntimeException(ex);
+                }
+            } else if (propType != null
+                           && propType.isAssignableFrom(List.class)) {
+                final List<Object> source;
+                final List<Object> target;
+                try {
+                    source = (List<Object>) readMethod.invoke(draftItem);
+                    target = (List<Object>) readMethod.invoke(copy);
+                } catch (IllegalAccessException |
+                         IllegalArgumentException |
+                         InvocationTargetException ex) {
+                    throw new RuntimeException(ex);
+                }
+
+                target.addAll(source);
+            } else if (propType != null
+                           && propType.isAssignableFrom(Map.class)) {
+                final Map<Object, Object> source;
+                final Map<Object, Object> target;
+
+                try {
+                    source = (Map<Object, Object>) readMethod.invoke(draftItem);
+                    target = (Map<Object, Object>) readMethod.invoke(copy);
+                } catch (IllegalAccessException |
+                         IllegalArgumentException |
+                         InvocationTargetException ex) {
+                    throw new RuntimeException(ex);
+                }
+
+                source.forEach((key, value) -> target.put(key, value));
+            } else if (propType != null
+                           && propType.isAssignableFrom(Set.class)) {
+                final Set<Object> source;
+                final Set<Object> target;
+
+                try {
+                    source = (Set<Object>) readMethod.invoke(draftItem);
+                    target = (Set<Object>) readMethod.invoke(copy);
+                } catch (IllegalAccessException |
+                         IllegalArgumentException |
+                         InvocationTargetException ex) {
+                    throw new RuntimeException(ex);
+                }
+
+                target.addAll(source);
+            } else {
+                final Object value;
+                try {
+                    value = readMethod.invoke(item);
+                    writeMethod.invoke(copy, value);
+                } catch (IllegalAccessException |
+                         IllegalArgumentException |
+                         InvocationTargetException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        }
+
         throw new UnsupportedOperationException();
+    }
+
+    private boolean propertyIsExcluded(final String name) {
+        final String[] excluded = new String[]{
+            "objectId", "uuid", "lifecycle", "workflow", "categories",
+            "attachments"
+        };
+
+        boolean result = false;
+        for (final String current : excluded) {
+            if (current.equals(name)) {
+                result = true;
+            }
+        }
+
+        return result;
     }
 
     /**
@@ -156,8 +439,151 @@ public class ContentItemManager {
      *
      * @return The published content item.
      */
+    @SuppressWarnings("unchecked")
     public ContentItem publish(final ContentItem item) {
-        throw new UnsupportedOperationException();
+        final ContentItem draftItem = getDraftVersion(item, ContentItem.class);
+        final ContentItem liveItem;
+
+        if (isLive(item)) {
+            liveItem = getLiveVersion(item, ContentItem.class).get();
+        } else {
+            try {
+                liveItem = draftItem.getClass().newInstance();
+            } catch (InstantiationException | IllegalAccessException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+
+        liveItem.setContentType(draftItem.getContentType());
+        liveItem.setLifecycle(draftItem.getLifecycle());
+        liveItem.setWorkflow(draftItem.getWorkflow());
+
+        draftItem.getCategories().forEach(categorization -> categoryManager
+            .addObjectToCategory(item, categorization.getCategory()));
+
+        liveItem.setUuid(draftItem.getUuid());
+
+        // !!!!!!!!!!!!!!!!!!!!!
+        // ToDo copy Attachments
+        // !!!!!!!!!!!!!!!!!!!!!
+        //
+        //
+        final BeanInfo beanInfo;
+        try {
+            beanInfo = Introspector.getBeanInfo(item.getClass());
+        } catch (IntrospectionException ex) {
+            throw new RuntimeException(ex);
+        }
+
+        for (final PropertyDescriptor propertyDescriptor : beanInfo
+            .getPropertyDescriptors()) {
+
+            if (propertyIsExcluded(propertyDescriptor.getName())) {
+                continue;
+            }
+
+            final Class<?> propType = propertyDescriptor.getPropertyType();
+            final Method readMethod = propertyDescriptor.getReadMethod();
+            final Method writeMethod = propertyDescriptor.getWriteMethod();
+
+            if (LocalizedString.class.equals(propType)) {
+                final LocalizedString source;
+                final LocalizedString target;
+                try {
+                    source = (LocalizedString) readMethod.invoke(draftItem);
+                    target = (LocalizedString) readMethod.invoke(liveItem);
+                } catch (IllegalAccessException |
+                         IllegalArgumentException |
+                         InvocationTargetException ex) {
+                    throw new RuntimeException(ex);
+                }
+
+                source.getAvailableLocales().forEach(
+                    locale -> target.addValue(locale, source.getValue(locale)));
+            } else if (propType != null
+                           && propType.isAssignableFrom(ContentItem.class)) {
+                final ContentItem linkedItem;
+                try {
+                    linkedItem = (ContentItem) readMethod.invoke(draftItem);
+                } catch (IllegalAccessException |
+                         IllegalArgumentException |
+                         InvocationTargetException ex) {
+                    throw new RuntimeException(ex);
+                }
+
+                final ContentItem linkedDraftItem = getDraftVersion(
+                    linkedItem, linkedItem.getClass());
+
+                if (isLive(linkedDraftItem)) {
+                    try {
+                        final Optional<ContentItem> linkedLiveItem
+                                                        = getLiveVersion(
+                                linkedDraftItem, ContentItem.class);
+                        writeMethod.invoke(liveItem, linkedLiveItem);
+                    } catch (IllegalAccessException |
+                             IllegalArgumentException |
+                             InvocationTargetException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+            } else if (propType != null
+                           && propType.isAssignableFrom(List.class)) {
+                final List<Object> source;
+                final List<Object> target;
+                try {
+                    source = (List<Object>) readMethod.invoke(draftItem);
+                    target = (List<Object>) readMethod.invoke(liveItem);
+                } catch (IllegalAccessException |
+                         IllegalArgumentException |
+                         InvocationTargetException ex) {
+                    throw new RuntimeException(ex);
+                }
+
+                target.addAll(source);
+            } else if (propType != null
+                           && propType.isAssignableFrom(Map.class)) {
+                final Map<Object, Object> source;
+                final Map<Object, Object> target;
+
+                try {
+                    source = (Map<Object, Object>) readMethod.invoke(draftItem);
+                    target = (Map<Object, Object>) readMethod.invoke(liveItem);
+                } catch (IllegalAccessException |
+                         IllegalArgumentException |
+                         InvocationTargetException ex) {
+                    throw new RuntimeException(ex);
+                }
+
+                source.forEach((key, value) -> target.put(key, value));
+            } else if (propType != null
+                           && propType.isAssignableFrom(Set.class)) {
+                final Set<Object> source;
+                final Set<Object> target;
+
+                try {
+                    source = (Set<Object>) readMethod.invoke(draftItem);
+                    target = (Set<Object>) readMethod.invoke(liveItem);
+                } catch (IllegalAccessException |
+                         IllegalArgumentException |
+                         InvocationTargetException ex) {
+                    throw new RuntimeException(ex);
+                }
+
+                target.addAll(source);
+            } else {
+                final Object value;
+                try {
+                    value = readMethod.invoke(item);
+                    writeMethod.invoke(liveItem, value);
+                } catch (IllegalAccessException |
+                         IllegalArgumentException |
+                         InvocationTargetException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        }
+
+        return liveItem;
     }
 
     /**
@@ -165,8 +591,16 @@ public class ContentItemManager {
      *
      * @param item
      */
-    public void unpublish(final ContentItem item) {
-        throw new UnsupportedOperationException();
+    @Transactional(Transactional.TxType.REQUIRED)
+    public void unpublish(final ContentItem item
+    ) {
+        final Optional<ContentItem> liveItem = getLiveVersion(
+            item, ContentItem.class);
+
+        if (liveItem.isPresent()) {
+            entityManager.remove(liveItem);
+        }
+
     }
 
     /**
@@ -178,7 +612,11 @@ public class ContentItemManager {
      *         {@code false} if not.
      */
     public boolean isLive(final ContentItem item) {
-        throw new UnsupportedOperationException();
+        final TypedQuery<Boolean> query = entityManager.createNamedQuery(
+            "ContentItem.hasLiveVersion", Boolean.class);
+        query.setParameter("uuid", item.getUuid());
+
+        return query.getSingleResult();
     }
 
     /**
@@ -196,7 +634,16 @@ public class ContentItemManager {
     public <T extends ContentItem> Optional<T> getLiveVersion(
         final ContentItem item,
         final Class<T> type) {
-        throw new UnsupportedOperationException();
+
+        if (isLive(item)) {
+            final TypedQuery<T> query = entityManager.createNamedQuery(
+                "ContentItem.findLiveVersion", type);
+            query.setParameter("uuid", item.getUuid());
+            
+            return Optional.of(query.getSingleResult());
+        } else {
+            return Optional.empty();
+        }
     }
 
     /**
@@ -230,7 +677,11 @@ public class ContentItemManager {
      */
     public <T extends ContentItem> T getDraftVersion(final ContentItem item,
                                                      final Class<T> type) {
-        throw new UnsupportedOperationException();
+        final TypedQuery<T> query = entityManager.createNamedQuery(
+            "ContentItem.findDraftVersion", type);
+        query.setParameter("uuid", item.getUuid());
+        
+        return query.getSingleResult();
     }
 
     /**
@@ -262,11 +713,11 @@ public class ContentItemManager {
      * {@code /research/computer-science/artificial-intelligence/neural-nets}.
      * If the parameter {@code withContentSection} is set to {@code true} the
      * the path will be prefixed with the name of the content section. For
-     * instance if the item {@link neural-nets} is part of the content section
+     * instance if the item {@code neural-nets} is part of the content section
      * {@code info}, the path including the content section would be
-     * {@link info:/research/computer-science/artificial-intelligence/neural-nets}.
+     * {@code info:/research/computer-science/artificial-intelligence/neural-nets}.
      *
-     * @param item               The item which path is generated.
+     * @param item               The item whose path is generated.
      * @param withContentSection Wether to include the content section into the
      *                           path.
      *
@@ -337,6 +788,28 @@ public class ContentItemManager {
         }
 
         return folders;
+    }
+
+    /**
+     * Gets the folder in which in item is placed (if the item is part of
+     * folder).
+     *
+     * @param item The item
+     *
+     * @return An {@link Optional} containing the folder of the item if the item
+     *         is part of a folder.
+     */
+    public Optional<Category> getItemFolder(final ContentItem item) {
+        final List<Categorization> result = item.getCategories().stream().
+            filter(categorization -> CmsConstants.CATEGORIZATION_TYPE_FOLDER.
+                equals(categorization.getType()))
+            .collect(Collectors.toList());
+
+        if (result.size() > 0) {
+            return Optional.of(result.get(0).getCategory());
+        } else {
+            return Optional.empty();
+        }
     }
 
 }

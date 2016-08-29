@@ -116,7 +116,7 @@ public class ContentSectionConfig {
 
     public static ContentSectionConfig getConfig() {
         final ConfigurationManager confManager = CdiUtil.createCdiUtil()
-            .findBean(ConfigurationManager.class);
+                .findBean(ConfigurationManager.class);
         return confManager.findConfiguration(ContentSectionConfig.class);
     }
 

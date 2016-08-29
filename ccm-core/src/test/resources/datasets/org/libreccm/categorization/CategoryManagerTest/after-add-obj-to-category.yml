@@ -71,4 +71,4 @@ ccm_core.categorizations:
       category_id: -2100
       category_order: 1
       object_order: 2
-      category_index: false
+      category_index: true

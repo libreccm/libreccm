@@ -29,21 +29,24 @@ import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 
 /**
- * <p>The <tt>ItemResolver</tt> is responsible for mapping a URL in a
- * particular content section to a content item.</p>
+ * <p>
+ * The <tt>ItemResolver</tt> is responsible for mapping a URL in a particular
+ * content section to a content item.</p>
  *
- * <p>As an example, here is the item resolution process for a request to
+ * <p>
+ * As an example, here is the item resolution process for a request to
  * <tt>http://yourserver/cms/cheese</tt>:</p>
  *
- * <p>The item resolver would be asked to map the URL stub <tt>/cheese</tt>
- * in the content section mounted at <tt>/cms</tt> to a content item.  To
- * this end, the dispatcher calls the <tt>getItem</tt> method, passing in
- * the {@link com.arsdigita.cms.ContentSection} and the URL stub for the
- * item within the section, <tt>/cheese</tt> in our example. As a final
- * argument, the dispatcher passes either <tt>ContentItem.DRAFT</tt> or
- * <tt>ContentItem.LIVE</tt> to the <tt>ItemResolver</tt>, depending on
- * whether the returned item should be the live version (for public pages)
- * or the draft version (for previewing).</p>
+ * <p>
+ * The item resolver would be asked to map the URL stub <tt>/cheese</tt>
+ * in the content section mounted at <tt>/cms</tt> to a content item. To this
+ * end, the dispatcher calls the <tt>getItem</tt> method, passing in the
+ * {@link com.arsdigita.cms.ContentSection} and the URL stub for the item within
+ * the section, <tt>/cheese</tt> in our example. As a final argument, the
+ * dispatcher passes either <tt>ContentItem.DRAFT</tt> or
+ * <tt>ContentItem.LIVE</tt> to the <tt>ItemResolver</tt>, depending on whether
+ * the returned item should be the live version (for public pages) or the draft
+ * version (for previewing).</p>
  *
  * @author Michael Pih (pihman@arsdigita.com)
  * @author Stanislav Freidin (sfreidin@arsdigita.com)
@@ -60,7 +63,8 @@ public interface ItemResolver {
      * @param context The use context
      * @return The content item, or null if no such item exists
      */
-    public ContentItem getItem(ContentSection section, String url,
+    public ContentItem getItem(ContentSection section,
+                               String url,
                                String context);
 
     /**
@@ -82,10 +86,11 @@ public interface ItemResolver {
      * @return The URL of the item
      * @see #getCurrentContext
      */
-    public String generateItemURL (
-                                   PageState state, BigDecimal itemId, String name,
-                                   ContentSection section, String context
-                                   );
+    public String generateItemURL(PageState state,
+                                  Long itemId,
+                                  String name,
+                                  ContentSection section,
+                                  String context);
 
     /**
      * Generates a URL for a content item.
@@ -99,10 +104,13 @@ public interface ItemResolver {
      * @return The URL of the item
      * @see #getCurrentContext
      */
-    public String generateItemURL (
-                                   PageState state, BigDecimal itemId, String name,
-                                   ContentSection section, String context, String templateContext
-                                   );
+    public String generateItemURL(PageState state,
+                                  Long itemId,
+                                  String name,
+                                  ContentSection section,
+                                  String context,
+                                  String templateContext
+    );
 
     /**
      * Generates a URL for a content item.
@@ -114,9 +122,10 @@ public interface ItemResolver {
      * @return The URL of the item
      * @see #getCurrentContext
      */
-    public String generateItemURL (
-                                   PageState state, ContentItem item, ContentSection section, String context
-                                   );
+    public String generateItemURL(PageState state,
+                                  ContentItem item,
+                                  ContentSection section,
+                                  String context);
 
     /**
      * Generates a URL for a content item.
@@ -129,21 +138,22 @@ public interface ItemResolver {
      * @return The URL of the item
      * @see #getCurrentContext
      */
-    public String generateItemURL (
-                                   PageState state, ContentItem item, ContentSection section, String context,
-                                   String templateContext
-                                   );
+    public String generateItemURL(PageState state,
+                                  ContentItem item,
+                                  ContentSection section,
+                                  String context,
+                                  String templateContext);
 
     /**
      * Return a master page based on page state (and content section).
      *
-     * @param item    The content item
+     * @param item The content item
      * @param request The HTTP request
      * @return The master page
      */
     public CMSPage getMasterPage(ContentItem item, HttpServletRequest request)
-        throws ServletException;
-        
+            throws ServletException;
+
 
     /*
      * Having to stick the following methods, getTemplateFromURL, and 
@@ -152,16 +162,16 @@ public interface ItemResolver {
      * to be cleaned up to fix this.  As it is, ItemResolver parses URL's for
      * template contexts, and TemplateResolver sets the actual template contexts
      * in the request.
-     */        
-       
+     */
     /**
      * Finds the template context from the URL and returns it, if it is there.
      * Otherwise, returns null.
+     *
      * @param inUrl the URL from which to get the template context
      * @return the template context, or null if there is no template context
-     */        
-    public  String getTemplateFromURL(String inUrl);       
-    
+     */
+    public String getTemplateFromURL(String inUrl);
+
     /**
      * Removes the template context from the <code>inUrl</code>.
      *

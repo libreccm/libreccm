@@ -285,6 +285,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <groups>org.libreccm.tests.categories.UnitTest</groups>
+                    <trimStackTrace>false</trimStackTrace>
                 </configuration>
             </plugin>
             <plugin>
@@ -425,6 +426,9 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-report-plugin</artifactId>
                 <version>2.19.1</version>
+                <configuration>
+                    <trimStackTrace>false</trimStackTrace>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
@@ -708,6 +712,7 @@
                             <additionalClasspathElements>
                                 <additionalClasspathElement>${project.build.directory}/generated-resources</additionalClasspathElement>
                             </additionalClasspathElements>
+                            <trimStackTrace>false</trimStackTrace>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -784,6 +789,7 @@
                                 org.libreccm.tests.categories.UnitTest,
                                 org.libreccm.tests.categories.IntegrationTest
                             </groups>
+                            <trimStackTrace>false</trimStackTrace>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -1083,6 +1089,7 @@
                                 org.libreccm.tests.categories.UnitTest,
                                 org.libreccm.tests.categories.IntegrationTest
                             </groups>
+                            <trimStackTrace>false</trimStackTrace>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -1169,6 +1176,7 @@
                                 org.libreccm.tests.categories.UnitTest,
                                 org.libreccm.tests.categories.IntegrationTest
                             </groups>
+                            <trimStackTrace>false</trimStackTrace>
                         </configuration>
                     </plugin>
                 </plugins>

@@ -47,7 +47,7 @@ import org.libreccm.security.Shiro;
 import org.libreccm.tests.categories.IntegrationTest;
 
 import java.io.File;
-import java.util.concurrent.Callable;
+import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -581,6 +581,35 @@ public class CategoryManagerTest {
             categoryRepo.save(test);
             categoryManager.addSubCategoryToCategory(test, categories);
         });
+    }
+    
+    @Test
+    @UsingDataSet(
+        "datasets/org/libreccm/categorization/CategoryManagerTest/data.yml")
+    @InSequence(6000)
+    public void hasIndexObject() {
+        final Category category1 = categoryRepo.findById(-2100L);
+        final Category category2 = categoryRepo.findById(-2200L);
+        
+        assertThat(categoryManager.hasIndexObject(category1), is(false));
+        assertThat(categoryManager.hasIndexObject(category2), is(true));
+    }
+    
+    @Test
+    @UsingDataSet(
+        "datasets/org/libreccm/categorization/CategoryManagerTest/data.yml")
+    @InSequence(6500)
+    public void getIndexObject() {
+        final Category category1 = categoryRepo.findById(-2100L);
+        final Category category2 = categoryRepo.findById(-2200L);
+        
+        assertThat(categoryManager.getIndexObject(category1).isPresent(), 
+                   is(false));
+        
+        final Optional<CcmObject> index2 = categoryManager.getIndexObject(
+            category2);
+        assertThat(index2.isPresent(), is(true));
+        assertThat(index2.get().getDisplayName(), is(equalTo("object3")));
     }
 
 }

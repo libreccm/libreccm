@@ -39,6 +39,7 @@ CREATE SCHEMA ccm_core;
         CATEGORY_ORDER bigint,
         CATEGORY_INDEX boolean,
         OBJECT_ORDER bigint,
+        TYPE varchar(255),
         OBJECT_ID bigint,
         CATEGORY_ID bigint,
         primary key (CATEGORIZATION_ID)

@@ -48,10 +48,23 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "CATEGORIZATIONS", schema = DB_SCHEMA)
 @NamedQueries({
-    @NamedQuery(name = "Categorization.find",
-                query = "SELECT c FROM Categorization c "
-                            + "WHERE c.category = :category "
-                            + "AND c.categorizedObject = :object")
+    @NamedQuery(
+        name = "Categorization.find",
+        query = "SELECT c FROM Categorization c "
+                    + "WHERE c.category = :category "
+                    + "AND c.categorizedObject = :object"),
+    @NamedQuery(
+        name = "Categorization.findIndexObject",
+        query = "SELECT c.categorizedObject FROM Categorization c "
+                    + "WHERE c.category = :category "
+                    + "AND c.index = TRUE"),
+    @NamedQuery(
+        name = "Categorization.hasIndexObject",
+        query = "SELECT (CASE WHEN COUNT(c.categorizedObject) > 0 THEN true "
+                    + "ELSE false END) "
+                    + "FROM Categorization c "
+                    + "WHERE c.category = :category "
+                    + "AND c.index = TRUE")
 })
 public class Categorization implements Serializable {
 
