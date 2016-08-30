@@ -23,15 +23,12 @@ import org.libreccm.categorization.Category;
 import org.libreccm.core.CcmObject;
 import org.libreccm.core.CcmObjectRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.TypedQuery;
-import jdk.nashorn.internal.objects.NativeArray;
 
 /**
  * Repository for content items.
@@ -69,9 +66,9 @@ public class ContentItemRepository
      * nothing if there is such content item.
      */
     public Optional<ContentItem> findById(final long itemId) {
-        final CcmObject result = ccmObjectRepo.findObjectById(itemId);
-        if (result instanceof ContentItem) {
-            return Optional.of((ContentItem) result);
+        final Optional<CcmObject> result = ccmObjectRepo.findObjectById(itemId);
+        if (result.isPresent() && result.get() instanceof ContentItem) {
+            return Optional.of((ContentItem) result.get());
         } else {
             return Optional.empty();
         }
@@ -107,12 +104,12 @@ public class ContentItemRepository
      * @return The content item identified by the provided {@code uuid} or
      * nothing if there is such content item.
      */
-    public ContentItem findByUuid(final String uuid) {
-        final CcmObject result = ccmObjectRepo.findObjectByUuid(uuid);
-        if (result instanceof ContentItem) {
-            return (ContentItem) result;
+    public Optional<ContentItem> findByUuid(final String uuid) {
+        final Optional<CcmObject> result = ccmObjectRepo.findObjectByUuid(uuid);
+        if (result.isPresent() && result.get() instanceof ContentItem) {
+            return Optional.of((ContentItem) result.get());
         } else {
-            return null;
+            return Optional.empty();
         }
     }
 
@@ -131,10 +128,11 @@ public class ContentItemRepository
     @SuppressWarnings("unchecked")
     public <T extends ContentItem> Optional<T> findByUuid(final String uuid,
                                                           final Class<T> type) {
-        final CcmObject result = ccmObjectRepo.findObjectByUuid(uuid);
+        final Optional<CcmObject> result = ccmObjectRepo.findObjectByUuid(uuid);
 
-        if (result.getClass().isAssignableFrom(type)) {
-            return Optional.of((T) result);
+        if (result.isPresent() 
+            && result.get().getClass().isAssignableFrom(type)) {
+            return Optional.of((T) result.get());
         } else {
             return Optional.empty();
         }
@@ -166,21 +164,34 @@ public class ContentItemRepository
      */
     public List<ContentItem> findByFolder(final Category folder) {
         final TypedQuery<ContentItem> query = getEntityManager()
-                .createNamedQuery("ContentItem.findByFolder", 
+                .createNamedQuery("ContentItem.findByFolder",
                                   ContentItem.class);
         query.setParameter("folder", folder);
 
         return query.getResultList();
     }
-    
+
+    /**
+     * Counts the items in a folder/category.
+     *
+     * @param folder The folder/category
+     * @return The number of content items in the category/folder.
+     */
     public long countItemsInFolder(final Category folder) {
         final TypedQuery<Long> query = getEntityManager()
-        .createNamedQuery("ContentItem.countItemsInFolder", Long.class);
+                .createNamedQuery("ContentItem.countItemsInFolder", Long.class);
         query.setParameter("folder", folder);
-        
+
         return query.getSingleResult();
     }
 
+    /**
+     * Counts the number of items with a specific name in a folder/category.
+     *
+     * @param folder
+     * @param name
+     * @return
+     */
     public long countByNameInFolder(final Category folder, final String name) {
         final TypedQuery<Long> query = getEntityManager().createNamedQuery(
                 "ContentItem.countByNameInFolder", Long.class);
@@ -190,6 +201,15 @@ public class ContentItemRepository
         return query.getSingleResult();
     }
 
+    /**
+     * Retrieves all items in a specific folder where
+     * {@link CcmObject#displayName} of the item starts with the provided
+     * pattern.
+     *
+     * @param folder The folder/category whose items are filtered.
+     * @param name The name pattern to use.
+     * @return A list with all items in the folder matching the provided filter.
+     */
     public List<ContentItem> filterByFolderAndName(final Category folder,
                                                    final String name) {
         final TypedQuery<ContentItem> query = getEntityManager()
@@ -201,6 +221,15 @@ public class ContentItemRepository
         return query.getResultList();
     }
 
+    /**
+     * Counts a items in a specfic folder whose {@link CcmObject#displayName}
+     * starts with the provided pattern.
+     *
+     * @param folder The folder/category to use.
+     * @param name The name pattern to use.
+     * @return The number of items in the folder/category which match the
+     * provided pattern.
+     */
     public long countFilterByFolderAndName(final Category folder,
                                            final String name) {
         final TypedQuery<Long> query = getEntityManager()

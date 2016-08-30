@@ -18,6 +18,8 @@
  */
 package org.libreccm.core;
 
+import java.util.Optional;
+
 import static org.libreccm.core.CoreConstants.*;
 
 import java.util.UUID;
@@ -47,7 +49,7 @@ public class CcmObjectRepository extends AbstractEntityRepository<Long, CcmObjec
 
         if (ACCESS_DENIED.equals(entity.getDisplayName())) {
             throw new IllegalArgumentException(
-                "Can't save the Access Denied object.");
+                    "Can't save the Access Denied object.");
         }
 
         return entity.getObjectId() == 0;
@@ -58,27 +60,33 @@ public class CcmObjectRepository extends AbstractEntityRepository<Long, CcmObjec
         entity.setUuid(UUID.randomUUID().toString());
     }
 
-    public CcmObject findObjectById(final long objectId) {
+    /**
+     * Finds a {@link CcmObject} by its id.
+     *
+      @param objectId The id of the item to find.
+     * @return
+     */
+    public Optional<CcmObject> findObjectById(final long objectId) {
         final TypedQuery<CcmObject> query = getEntityManager().createNamedQuery(
-            "CcmObject.findById", CcmObject.class);
+                "CcmObject.findById", CcmObject.class);
         query.setParameter("id", objectId);
 
         try {
-            return query.getSingleResult();
+            return Optional.of(query.getSingleResult());
         } catch (NoResultException ex) {
-            return null;
+            return Optional.empty();
         }
     }
-    
-    public CcmObject findObjectByUuid(final String uuid) {
+
+    public Optional<CcmObject> findObjectByUuid(final String uuid) {
         final TypedQuery<CcmObject> query = getEntityManager().createNamedQuery(
-            "CcmObject.findByUuid", CcmObject.class);
+                "CcmObject.findByUuid", CcmObject.class);
         query.setParameter("uuid", uuid);
 
         try {
-            return query.getSingleResult();
+            return Optional.of(query.getSingleResult());
         } catch (NoResultException ex) {
-            return null;
+            return Optional.empty();
         }
     }
 
