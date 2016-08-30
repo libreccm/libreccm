@@ -12,9 +12,7 @@ LibreCCM Code Conventions
 
 * Target language and platform
 
-    The target language of the project is Java 7. At the moment we can't 
-    rely on the availability of Java 8 on the systems our users want to install
-    LibreCCM. LibreCCM also uses the 
+    The target language of the project is Java 8. LibreCCM also uses the 
     {{{http://www.jcp.org/en/jsr/detail?id=342}Java EE 7 platform}}. In 
     particular LibreCCM makes heavy use of the following APIs from the 
     Java EE 7 standard:
@@ -28,7 +26,7 @@ LibreCCM Code Conventions
     []
 
     In consequence LibreCCM requires a Java EE compatible application server 
-    to like {{{http://wildfly.org/}Wildfly 8}} to run. We will stay as close to
+    to like {{{http://wildfly.org/}Wildfly}} to run. We will stay as close to
     the standard as possible, but in some cases we will enforce a specific 
     implementation.
 
@@ -116,7 +114,7 @@ LibreCCM Code Conventions
     </dependency>
 -------------------------------------------------------------------------------
 
-    The scope here is <<<provided>>> because to necessary JAR file has already
+    The scope here is <<<provided>>> because the necessary JAR file has already
     been added due to the use of the FindBugs Maven plugin. 
 
     For PMD the standard annotation <<<@SuppressWarnings>>> can be used:
