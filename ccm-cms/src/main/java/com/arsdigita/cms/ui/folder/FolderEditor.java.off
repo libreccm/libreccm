@@ -22,7 +22,7 @@ import com.arsdigita.bebop.FormData;
 import com.arsdigita.bebop.FormProcessException;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.event.FormSectionEvent;
-import com.arsdigita.cms.Folder;
+import org.libreccm.categorization.Category;
 
 
 /**
@@ -44,11 +44,13 @@ public class FolderEditor extends FolderForm {
 
     /**
      * Initialize the form with name & label of folder being edited.
+     * @param e
+     * @throws com.arsdigita.bebop.FormProcessException
      */
     public void init(FormSectionEvent e) throws FormProcessException {
         PageState s = e.getPageState();
         FormData data = e.getFormData();
-        Folder folder = getCurrentFolder(s);
+        Category folder = getCurrentFolder(s);
         data.put(NAME, folder.getName());
         data.put(TITLE, folder.getLabel());
     }
@@ -57,7 +59,7 @@ public class FolderEditor extends FolderForm {
     public void process(FormSectionEvent e) throws FormProcessException {
         PageState s = e.getPageState();
         FormData data = e.getFormData();
-        Folder folder = getCurrentFolder(s);
+        Category folder = getCurrentFolder(s);
 
         updateFolder(folder, (String)data.get(NAME), (String)data.get(TITLE));
     }
