@@ -50,9 +50,9 @@ import org.librecms.CmsConstants;
  * @author <a href="mailto:stas@arsdigita.com">Stanislav Freidin</a>
  */
 public abstract class BasicItemForm extends FormSection
-        implements FormInitListener,
-                   FormProcessListener,
-                   FormValidationListener {
+    implements FormInitListener,
+               FormProcessListener,
+               FormValidationListener {
 
     /**
      * Internal logger instance to faciliate debugging. Enable logging output by
@@ -74,9 +74,9 @@ public abstract class BasicItemForm extends FormSection
      * Construct a new BasicItemForm with 2 ColumnPanels and add basic content.
      * The left Panel is used for Labels, the right Panel for values.
      *
-     * @param formName the name of this form
+     * @param formName  the name of this form
      * @param itemModel The {@link ItemSelectionModel} which will be responsible
-     * for loading the current item
+     *                  for loading the current item
      */
     public BasicItemForm(String formName, ItemSelectionModel itemModel) {
 
@@ -111,10 +111,10 @@ public abstract class BasicItemForm extends FormSection
      * Construct a new BasicItemForm with a specified number of ColumnPanels and
      * without any content.
      *
-     * @param formName the name of this form
+     * @param formName    the name of this form
      * @param columnPanel the columnpanel of the form
-     * @param itemModel The {@link ItemSelectionModel} which will be responsible
-     * for loading the current item
+     * @param itemModel   The {@link ItemSelectionModel} which will be
+     *                    responsible for loading the current item
      */
     public BasicItemForm(String formName,
                          ColumnPanel columnPanel,
@@ -122,7 +122,7 @@ public abstract class BasicItemForm extends FormSection
         super(columnPanel);
 
         m_widgetSection = new FormSection(new ColumnPanel(columnPanel.
-                getNumCols(),
+            getNumCols(),
                                                           true));
         super.add(m_widgetSection, ColumnPanel.INSERT);
         m_itemModel = itemModel;
@@ -133,17 +133,16 @@ public abstract class BasicItemForm extends FormSection
      */
     public void addSaveCancelSection() {
         m_saveCancelSection = new SaveCancelSection();
-        super.
-                add(m_saveCancelSection, ColumnPanel.FULL_WIDTH
-                                                 | ColumnPanel.LEFT);
+        super.add(m_saveCancelSection,
+                  ColumnPanel.FULL_WIDTH | ColumnPanel.LEFT);
     }
 
     /**
      * Currently, to insert javascript code the Label Widget is "abused".
      */
     private final Label m_script = new Label(String.format(
-            "<script language=\"javascript\" src=\"%s/javascript/manipulate-input.js\"></script>",
-            Web.getWebappContextPath()),
+        "<script language=\"javascript\" src=\"%s/javascript/manipulate-input.js\"></script>",
+        Web.getWebappContextPath()),
                                              false);
 
     /**
@@ -172,16 +171,16 @@ public abstract class BasicItemForm extends FormSection
         // it breaks URLs & potentially overwrites the user's
         // customizations.
         final TextField titleWidget = new TextField(new TrimmedStringParameter(
-                TITLE));
+            TITLE));
         titleWidget.setLabel(getTitleLabel());
         titleWidget.setHint(getTitleHint());
         titleWidget.addValidationListener(new NotNullValidationListener());
         titleWidget.setOnFocus("if (this.form." + NAME + ".value == '') { "
-                                       + " defaulting = true; this.form." + NAME
-                                       + ".value = urlize(this.value); }");
+                                   + " defaulting = true; this.form." + NAME
+                                   + ".value = urlize(this.value); }");
         titleWidget.setOnKeyUp(
-                "if (defaulting) { this.form." + NAME
-                        + ".value = urlize(this.value) }");
+            "if (defaulting) { this.form." + NAME
+                + ".value = urlize(this.value) }");
         add(titleWidget);
 
         // For some content types it may be useful to change the label of 
@@ -190,7 +189,7 @@ public abstract class BasicItemForm extends FormSection
         // (jensp 2011-01-28)
 //      add(new Label(getNameLabel()));
         final TextField nameWidget = new TextField(new TrimmedStringParameter(
-                NAME));
+            NAME));
         nameWidget.setLabel(getNameLabel());
         nameWidget.setHint(getNameHint());
         // We just check parameter specific properties here! Additionally, 
@@ -202,11 +201,11 @@ public abstract class BasicItemForm extends FormSection
         nameWidget.setMaxLength(190);
         nameWidget.setOnFocus("defaulting = false");
         nameWidget.setOnBlur(
-                "if (this.value == '') "
-                        + "{ defaulting = true; this.value = urlize(this.form."
-                        + TITLE
-                        + ".value) } "
-                        + " else { this.value = urlize(this.value); }");
+            "if (this.value == '') "
+                + "{ defaulting = true; this.value = urlize(this.form."
+                + TITLE
+                + ".value) } "
+                + " else { this.value = urlize(this.value); }");
         add(nameWidget);
 
     }
@@ -236,6 +235,7 @@ public abstract class BasicItemForm extends FormSection
      * pre-fill the widgets with data, instantiate the content item, etc.
      *
      * @param e
+     *
      * @throws FormProcessException
      */
     @Override
@@ -246,6 +246,7 @@ public abstract class BasicItemForm extends FormSection
      * user's changes to the database.
      *
      * @param e
+     *
      * @throws FormProcessException
      */
     @Override
@@ -256,6 +257,7 @@ public abstract class BasicItemForm extends FormSection
      * context form validation, specifically name (url) uniqueness in a folder!
      *
      * @param e
+     *
      * @throws com.arsdigita.bebop.FormProcessException
      */
     @Override
@@ -279,9 +281,9 @@ public abstract class BasicItemForm extends FormSection
      * Layout constraints are defined in each layout container as static ints.
      * Use a bitwise OR to specify multiple constraints.
      *
-     * @param pc the component to add to this container
+     * @param pc          the component to add to this container
      * @param constraints layout constraints (a bitwise OR of static ints in the
-     * particular layout)
+     *                    particular layout)
      */
     @Override
     public void add(Component pc, int constraints) {
@@ -326,7 +328,7 @@ public abstract class BasicItemForm extends FormSection
     }
 
     /**
-     * Provides the text for the unser hint providing some detailed information
+     * Provides the text for the user hint providing some detailed information
      * how to use this widget. This method can be overwritten to adjust the text
      * for some content types. {@link #getNameLabel()}
      *
@@ -347,8 +349,8 @@ public abstract class BasicItemForm extends FormSection
      * form should call this method in the validation listener.
      *
      * @param parent the folder in which to check
-     * @param event the {@link FormSectionEvent} which was passed to the
-     * validation listener
+     * @param event  the {@link FormSectionEvent} which was passed to the
+     *               validation listener
      */
 //    public void validateNameUniqueness(Category parent, FormSectionEvent event) {
 //
@@ -417,27 +419,38 @@ public abstract class BasicItemForm extends FormSection
      * only be called from the validation listener of an "edit" form.
      *
      * @param event the {@link FormSectionEvent} which was passed to the
-     * validation listener
-     * @param id The id of the item that is being checked. This must no be null.
+     *              validation listener
+     * @param id    The id of the item that is being checked. This must no be
+     *              null.
+     *
      * @return
      *
      * @throws FormProcessException if the folder already contains an item with
-     * the name the user provided on the input form. / public void
-     * validateNameUniquenessWithinCategory(FormSectionEvent event, BigDecimal
-     * id) throws FormProcessException { if (id == null) { s_log.warn("Trying to
-     * validation the name uniqueness without " + " a valid item is invalid.
-     * This method should only " + " be called in \"edit\" forms. The passed in
-     * id " + " was null."); return; } // now we check to make sure that the new
-     * name is valid // within every category that the item is mapped to // this
-     * is only necessary for category browsing FormData data =
-     * event.getFormData(); String url = (String) data.get(NAME); if (url ==
-     * null) { return; } DataQuery query =
-     * SessionManager.getSession().retrieveQuery(
-     * "com.arsdigita.categorization.getAllItemURLsForCategoryFromItem");
-     * query.setParameter("itemID", id); query.addEqualsFilter("lower(url)",
-     * url.toLowerCase()); if (query.size() > 0) { // we need to make sure that
-     * the conflicting item is not a // pending or live version of the same item
-     * BigDecimal itemID = null;
+     *                              the name the user provided on the input
+     *                              form. / public void
+     *                              validateNameUniquenessWithinCategory(FormSectionEvent
+     *                              event, BigDecimal id) throws
+     *                              FormProcessException { if (id == null) {
+     *                              s_log.warn("Trying to validation the name
+     *                              uniqueness without " + " a valid item is
+     *                              invalid. This method should only " + " be
+     *                              called in \"edit\" forms. The passed in id "
+     *                              + " was null."); return; } // now we check
+     *                              to make sure that the new name is valid //
+     *                              within every category that the item is
+     *                              mapped to // this is only necessary for
+     *                              category browsing FormData data =
+     *                              event.getFormData(); String url = (String)
+     *                              data.get(NAME); if (url == null) { return; }
+     *                              DataQuery query =
+     *                              SessionManager.getSession().retrieveQuery(
+     *                              "com.arsdigita.categorization.getAllItemURLsForCategoryFromItem");
+     *                              query.setParameter("itemID", id);
+     *                              query.addEqualsFilter("lower(url)",
+     *                              url.toLowerCase()); if (query.size() > 0) {
+     *                              // we need to make sure that the conflicting
+     *                              item is not a // pending or live version of
+     *                              the same item BigDecimal itemID = null;
      *
      * ContentItem item = (ContentItem)getItemSelectionModel()
      * .getSelectedObject(event.getPageState()); Collection list =
@@ -456,6 +469,7 @@ public abstract class BasicItemForm extends FormSection
      * Helper Method for name uniqueness validation.
      *
      * @param item
+     *
      * @return
      */
 //    public static Collection getAllVersionIDs(ContentItem item) {

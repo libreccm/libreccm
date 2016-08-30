@@ -29,10 +29,9 @@ import org.libreccm.categorization.Category;
  * Implements functionality for renaming a folder. Most code taken from FolderCreator. Need to refactor out base
  * functionality of FolderEditor & Creator.
  *
- * @author Jon Orris (jorris@arsdigita.com)
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens >Pelzetter</a>
+ * @author <a href="mailto:jorris@arsdigita.com">Jon Orris</a>
  *
- * @version $Revision: #9 $ $DateTime: 2004/08/17 23:15:09 $
- * @version $Id: FolderEditor.java 287 2005-02-22 00:29:02Z sskracic $
  */
 
 public class FolderEditor extends FolderForm {
@@ -41,21 +40,22 @@ public class FolderEditor extends FolderForm {
         super(name, folder);
     }
 
-
     /**
-     * Initialize the form with name & label of folder being edited.
+     * Initialise the form with name & label of folder being edited.
      * @param e
      * @throws com.arsdigita.bebop.FormProcessException
      */
+    @Override
     public void init(FormSectionEvent e) throws FormProcessException {
         PageState s = e.getPageState();
         FormData data = e.getFormData();
         Category folder = getCurrentFolder(s);
         data.put(NAME, folder.getName());
-        data.put(TITLE, folder.getLabel());
+        data.put(TITLE, folder.getDisplayName());
     }
 
 
+    @Override
     public void process(FormSectionEvent e) throws FormProcessException {
         PageState s = e.getPageState();
         FormData data = e.getFormData();
