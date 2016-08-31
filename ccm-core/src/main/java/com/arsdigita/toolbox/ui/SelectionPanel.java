@@ -37,13 +37,12 @@ import org.apache.log4j.Logger;
 
 /** 
  * 
- * @version $Id$
  */
 public class SelectionPanel extends LayoutPanel implements Resettable {
 
     private static final Logger s_log = Logger.getLogger(SelectionPanel.class);
 
-    private SingleSelectionModel m_model;
+    private SingleSelectionModel<Long> m_model;
     private Component m_selector;
     private ActionGroup m_group;
     private final ModalPanel m_body;
@@ -60,7 +59,7 @@ public class SelectionPanel extends LayoutPanel implements Resettable {
 
     protected void build(final Component title,
                        final Component selector,
-                       final SingleSelectionModel model) {
+                       final SingleSelectionModel<Long> model) {
         m_model = model;
         m_selector = selector;
 
@@ -198,11 +197,11 @@ public class SelectionPanel extends LayoutPanel implements Resettable {
         m_selector = selector;
     }
 
-    public final void setSelectionModel(final SingleSelectionModel model) {
+    public final void setSelectionModel(final SingleSelectionModel<Long> model) {
         m_model = model;
     }
 
-    public final SingleSelectionModel getSelectionModel() {
+    public final SingleSelectionModel<Long> getSelectionModel() {
         return m_model;
     }
 

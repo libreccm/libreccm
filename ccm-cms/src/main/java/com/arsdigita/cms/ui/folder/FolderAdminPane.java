@@ -29,26 +29,29 @@ import com.arsdigita.bebop.event.ActionListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.bebop.parameters.BigDecimalParameter;
 import com.arsdigita.cms.CMS;
-import com.arsdigita.cms.ContentSection;
+
+import org.librecms.contentsection.ContentSection;
+
 import com.arsdigita.cms.ui.BaseDeleteForm;
-import com.arsdigita.cms.util.GlobalizationUtil;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.toolbox.ui.SelectionPanel;
+
 import org.apache.log4j.Logger;
+import org.libreccm.categorization.CategoryRepository;
+import org.libreccm.cdi.utils.CdiUtil;
+import org.librecms.CmsConstants;
 
 import java.math.BigDecimal;
 
 /**
- * A pane that contains a folder tree on the left and a folder
- * manipulator on the right.
+ * A pane that contains a folder tree on the left and a folder manipulator on
+ * the right.
  *
  * @author Justin Ross &lt;jross@redhat.com&gt;
- * @version $Id: FolderAdminPane.java 1942 2009-05-29 07:53:23Z terry $
  */
 public class FolderAdminPane extends SelectionPanel {
 
-    private static final Logger s_log = Logger.getLogger
-        (FolderAdminPane.class);
+    private static final Logger s_log = Logger.getLogger(FolderAdminPane.class);
 
     private final FolderRequestLocal m_folder;
 
@@ -69,16 +72,23 @@ public class FolderAdminPane extends SelectionPanel {
         setEdit(new ActionLink(new Label(gz("cms.ui.folder.edit"))),
                 new FolderEditForm(m_folder));
 
-        final BaseDeleteForm delete = new BaseDeleteForm
-            (new Label(gz("cms.ui.folder.delete_prompt"))) {
-                public final void process(final FormSectionEvent e)
-                        throws FormProcessException {
-                    final PageState state = e.getPageState();
+        final BaseDeleteForm delete = new BaseDeleteForm(new Label(gz(
+            "cms.ui.folder.delete_prompt"))) {
 
-                    m_folder.getFolder(state).delete();
-                    getSelectionModel().clearSelection(state);
-                }
-            };
+            @Override
+            public final void process(final FormSectionEvent e)
+                throws FormProcessException {
+                final PageState state = e.getPageState();
+
+                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+                final CategoryRepository categoryRepo = cdiUtil.findBean(
+                    CategoryRepository.class);
+
+                categoryRepo.delete(m_folder.getFolder(state));
+                getSelectionModel().clearSelection(state);
+            }
+
+        };
 
         setDelete(new ActionLink(new Label(gz("cms.ui.folder.delete"))),
                   delete);
@@ -91,6 +101,7 @@ public class FolderAdminPane extends SelectionPanel {
         addAction(getDeleteLink());
     }
 
+    @Override
     public void register(final Page page) {
         super.register(page);
 
@@ -99,31 +110,35 @@ public class FolderAdminPane extends SelectionPanel {
     }
 
     private class PreselectListener implements ActionListener {
+
+        @Override
         public final void actionPerformed(final ActionEvent e) {
             final PageState state = e.getPageState();
-            final SingleSelectionModel model = getSelectionModel();
+            final SingleSelectionModel<Long> model = getSelectionModel();
 
             if (!model.isSelected(state)) {
-                final BigDecimal value = (BigDecimal) state.getValue(m_param);
+                final Long value = (Long) state.getValue(m_param);
 
                 if (value == null) {
-                    final ContentSection section =
-                        CMS.getContext().getContentSection();
+                    final ContentSection section = CMS.getContext()
+                        .getContentSection();
 
-                    model.setSelectedKey
-                        (state, section.getRootFolder().getID());
+                    model.setSelectedKey(state, section.getRootDocumentsFolder()
+                                         .getObjectId());
                 } else {
                     model.setSelectedKey(state, value);
                 }
             }
         }
+
     }
 
     private static GlobalizedMessage gz(final String key) {
-        return GlobalizationUtil.globalize(key);
+        return new GlobalizedMessage(key, CmsConstants.CMS_FOLDER_BUNDLE);
     }
 
     private static String lz(final String key) {
         return (String) gz(key).localize();
     }
+
 }

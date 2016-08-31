@@ -50,7 +50,6 @@ import org.apache.log4j.Logger;
 
 /**
  *
- * @version $Id$
  */
 public class ModalPanel extends ComponentMap {
 
