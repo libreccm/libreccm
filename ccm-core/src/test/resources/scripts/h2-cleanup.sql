@@ -34,4 +34,8 @@ DELETE FROM ccm_core.parties;
 
 DELETE FROM ccm_core.ccm_roles;
 
+DELETE FROM ccm_core.ccm_objects_aud;
+
+DELETE FROM ccm_core.ccm_revisions;
+
 ALTER SEQUENCE hibernate_sequence RESTART WITH 1;

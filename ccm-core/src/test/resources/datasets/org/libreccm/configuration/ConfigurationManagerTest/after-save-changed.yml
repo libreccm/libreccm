@@ -1,31 +1,31 @@
 ccm_core.settings:
     - setting_id: -3100
-      configuration_class: org.libreccm.configuration.ExampleConfiguration
+      configuration_class: org.libreccm.configuration.TestExampleConfiguration
       name: price
       dtype: BigDecimalSetting
       setting_value_big_decimal: 109.99
     - setting_id: -3200
-      configuration_class: org.libreccm.configuration.ExampleConfiguration
+      configuration_class: org.libreccm.configuration.TestExampleConfiguration
       name: enabled
       dtype: BooleanSetting
       setting_value_boolean: true
     - setting_id: -3300
-      configuration_class: org.libreccm.configuration.ExampleConfiguration
+      configuration_class: org.libreccm.configuration.TestExampleConfiguration
       name: minTemperature
       dtype: DoubleSetting
       setting_value_double: 23.5
     - setting_id: -3400
-      configuration_class: org.libreccm.configuration.ExampleConfiguration
+      configuration_class: org.libreccm.configuration.TestExampleConfiguration
       name: itemsPerPage
       dtype: LongSetting
       setting_value_long: 30
     - setting_id: -3500
-      configuration_class: org.libreccm.configuration.ExampleConfiguration
+      configuration_class: org.libreccm.configuration.TestExampleConfiguration
       name: helpUrl
       dtype: StringSetting
       setting_value_string: http://www.example.org
     - setting_id: -3600
-      configuration_class: org.libreccm.configuration.ExampleConfiguration
+      configuration_class: org.libreccm.configuration.TestExampleConfiguration
       name: languages
       dtype: EnumSetting
 

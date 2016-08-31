@@ -65,10 +65,10 @@ ccm_core.categorizations:
       object_id: -3300
       category_order: 1
       object_order: 1
-      category_index: false
+      category_index: true
     - categorization_id: -10200
       object_id: -3200
       category_id: -2100
       category_order: 1
       object_order: 2
-      category_index: true
+      category_index: false

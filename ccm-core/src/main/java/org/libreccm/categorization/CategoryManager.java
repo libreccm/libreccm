@@ -141,6 +141,7 @@ public class CategoryManager {
         categorization.setCategoryOrder(object.getCategories().size() + 1);
         categorization.setObjectOrder(category.getObjects().size() + 1);
         categorization.setType(type);
+        categorization.setIndex(false);
 
         object.addCategory(categorization);
         category.addObject(categorization);

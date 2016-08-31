@@ -80,19 +80,22 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedEntityGraph(
         name = "Category.withSubCategoriesAndObjects",
         attributeNodes = {
-            @NamedAttributeNode(value = "subCategories",
-                                subgraph = "subCategories"),
-            @NamedAttributeNode(value = "objects")
-        },
-        subgraphs = {
-            @NamedSubgraph(
-                name = "subCategories",
-                attributeNodes = {
-                    @NamedAttributeNode("subCategories"),
-                    @NamedAttributeNode("objects")
-                }
-            )
+            @NamedAttributeNode(value = "subCategories"
+                //,
+            //                    subgraph = "subCategories"
+            ),
+            //@NamedAttributeNode(value = "objects")
         }
+//        ,
+//        subgraphs = {
+//            @NamedSubgraph(
+//                name = "subCategories",
+//                attributeNodes = {
+//                    @NamedAttributeNode("subCategories"),
+//                    @NamedAttributeNode("objects")
+//                }
+//            )
+//        }
     )
 })
 @DefaultEntityGraph("Category.withSubCategoriesAndObjects")
