@@ -47,6 +47,8 @@ import org.libreccm.security.Shiro;
 import org.libreccm.tests.categories.IntegrationTest;
 
 import java.io.File;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -85,6 +87,9 @@ public class CategoryManagerTest {
 
     @Inject
     private Subject subject;
+
+    @Inject
+    private TestCategoryController controller;
 
     @PersistenceContext(name = "LibreCCM")
     private EntityManager entityManager;
@@ -582,7 +587,7 @@ public class CategoryManagerTest {
             categoryManager.addSubCategoryToCategory(test, categories);
         });
     }
-    
+
     @Test
     @UsingDataSet(
         "datasets/org/libreccm/categorization/CategoryManagerTest/data.yml")
@@ -590,11 +595,11 @@ public class CategoryManagerTest {
     public void hasIndexObject() {
         final Category category1 = categoryRepo.findById(-2100L);
         final Category category2 = categoryRepo.findById(-2200L);
-        
+
         assertThat(categoryManager.hasIndexObject(category1), is(false));
         assertThat(categoryManager.hasIndexObject(category2), is(true));
     }
-    
+
     @Test
     @UsingDataSet(
         "datasets/org/libreccm/categorization/CategoryManagerTest/data.yml")
@@ -602,14 +607,39 @@ public class CategoryManagerTest {
     public void getIndexObject() {
         final Category category1 = categoryRepo.findById(-2100L);
         final Category category2 = categoryRepo.findById(-2200L);
-        
-        assertThat(categoryManager.getIndexObject(category1).isPresent(), 
+
+        assertThat(categoryManager.getIndexObject(category1).isPresent(),
                    is(false));
-        
+
         final Optional<CcmObject> index2 = categoryManager.getIndexObject(
             category2);
         assertThat(index2.isPresent(), is(true));
         assertThat(index2.get().getDisplayName(), is(equalTo("object3")));
+    }
+
+    /**
+     * This is a test to check if accessing multiple lazy fetched collections in
+     * a single transaction (provided by
+     * {@link TestCategoryController#getData(long)}) works.
+     */
+    @Test
+    @UsingDataSet(
+        "datasets/org/libreccm/categorization/CategoryManagerTest/data.yml")
+    @InSequence(7000)
+    public void retrieveMultipleLazyCollections() {
+        assertThat(controller, is(not(nullValue())));
+
+        final Map<String, List<String>> data = controller.getData(-2100L);
+
+        final List<String> subCategories = data.get("subCategories");
+        final List<String> objects = data.get("objects");
+
+        assertThat(subCategories.size(), is(1));
+        assertThat(subCategories.get(0), is(equalTo("bar")));
+        assertThat(subCategories, hasItem("bar"));
+
+        assertThat(objects.size(), is(1));
+        assertThat(objects, hasItem("object1"));
     }
 
 }
