@@ -24,12 +24,20 @@ import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.SingleSelectionModel;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.cms.CMS;
+
 import org.librecms.contentsection.ContentSection;
 import org.librecms.lifecycle.LifecycleDefinition;
+
 import com.arsdigita.cms.ui.BaseAdminPane;
 import com.arsdigita.cms.ui.BaseDeleteForm;
 import com.arsdigita.cms.ui.FormSecurityListener;
+
 import org.apache.log4j.Logger;
+import org.libreccm.cdi.utils.CdiUtil;
+import org.librecms.CmsConstants;
+import org.librecms.contentsection.ContentSectionManager;
+import org.librecms.lifecycle.Lifecycle;
+import org.librecms.lifecycle.LifecycleDefinitionRepository;
 
 import java.math.BigDecimal;
 
@@ -37,10 +45,10 @@ import java.math.BigDecimal;
  * <p>This class contains the split pane for the lifecycle administration
  * interface.</p>
  *
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @author Michael Pih
  * @author Jack Chung
- * @author Justin Ross &lt;jross@redhat.com&gt;
- * @version $Id: LifecycleAdminPane.java 1942 2009-05-29 07:53:23Z terry $
+ * @author <a href="mailto:jross@redhat.com">Justin Ross</a>
  */
 public class LifecycleAdminPane extends BaseAdminPane {
 
@@ -75,10 +83,14 @@ public class LifecycleAdminPane extends BaseAdminPane {
 
     private class SelectionRequestLocal
             extends LifecycleDefinitionRequestLocal {
+        @Override
         protected final Object initialValue(final PageState state) {
             final String id = m_model.getSelectedKey(state).toString();
 
-            return new LifecycleDefinition(new BigDecimal(id));
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final LifecycleDefinitionRepository lifecycleDefRepo = cdiUtil.findBean(LifecycleDefinitionRepository.class);
+            
+            return lifecycleDefRepo.findById(Long.parseLong(id));
         }
     }
 
@@ -87,22 +99,26 @@ public class LifecycleAdminPane extends BaseAdminPane {
             super(new Label(gz("cms.ui.lifecycle.delete_prompt")));
 
             addSubmissionListener
-                (new FormSecurityListener(SecurityManager.LIFECYCLE_ADMIN));
+                (new FormSecurityListener(CmsConstants.PRIVILEGE_ADMINISTER_LIFECYLES));
         }
 
-        public final void process(final FormSectionEvent e)
+        public final void process(final FormSectionEvent event)
                 throws FormProcessException {
-            final PageState state = e.getPageState();
+            final PageState state = event.getPageState();
             final ContentSection section =
                 CMS.getContext().getContentSection();
             final LifecycleDefinition definition =
                 m_definition.getLifecycleDefinition(state);
 
-            section.removeLifecycleDefinition(definition);
-            section.save();
-
-            definition.delete();
-
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final ContentSectionManager sectionManager = cdiUtil.findBean(
+                ContentSectionManager.class);
+            final LifecycleDefinitionRepository lifecycleDefRepo = cdiUtil.findBean(LifecycleDefinitionRepository.class);
+            
+            sectionManager.removeLifecycleDefinitionFromContentSection(
+                definition, section);
+            lifecycleDefRepo.delete(definition);
+            
             m_model.clearSelection(state);
         }
     }

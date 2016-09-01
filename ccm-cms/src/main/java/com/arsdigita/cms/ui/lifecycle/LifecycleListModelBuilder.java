@@ -24,7 +24,6 @@ import com.arsdigita.bebop.list.ListModelBuilder;
 import com.arsdigita.cms.CMS;
 import org.librecms.contentsection.ContentSection;
 import com.arsdigita.util.LockableImpl;
-import com.arsdigita.util.UncheckedWrapperException;
 import java.util.List;
 
 import java.util.NoSuchElementException;
@@ -49,7 +48,8 @@ public final class LifecycleListModelBuilder extends LockableImpl
 
     private class Model implements ListModel {
 
-        private List<LifecycleDefinition> m_cycles;
+        private final List<LifecycleDefinition> m_cycles;
+        private int index = -1;
 
         public Model(final PageState state) {
             m_cycles = getCollection(state);
@@ -58,24 +58,25 @@ public final class LifecycleListModelBuilder extends LockableImpl
         private List<LifecycleDefinition> getCollection(final PageState state) {
             final ContentSection section = CMS.getContext().getContentSection();
 
-            final List<LifecycleDefinition> cycles = section.get
-                    getLifecycleDefinitions();
-
-            cycles.addOrder("upper(label)");
+            final List<LifecycleDefinition> cycles = section.getLifecycleDefinitions();
 
             return cycles;
         }
 
+        @Override
         public boolean next() throws NoSuchElementException {
-            return m_cycles.next();
+            index++;
+            return index < m_cycles.size();
         }
 
+        @Override
         public Object getElement() {
-            return m_cycles.getLifecycleDefinition().getLabel();
+            return m_cycles.get(index).getLabel();
         }
 
+        @Override
         public String getKey() {
-            return m_cycles.getLifecycleDefinition().getID().toString();
+            return Long.toString(m_cycles.get(index).getDefinitionId());
         }
     }
 }
