@@ -41,6 +41,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+import org.librecms.lifecycle.LifecycleDefinition;
 
 import static org.librecms.CmsConstants.*;
 import static org.librecms.contentsection.ContentSection.*;
@@ -272,6 +273,43 @@ public class ContentSectionManager {
     @Transactional(Transactional.TxType.REQUIRED)
     public void removeTypeFromSection(final ContentType type,
                                       final ContentSection section) {
+        throw new UnsupportedOperationException();
+    }
+
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
+    @Transactional(Transactional.TxType.REQUIRED)
+    public void addLifecycleDefinitionToContentSection(
+            final LifecycleDefinition definition,
+            final ContentSection section) {
+        throw new UnsupportedOperationException();
+    }
+
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
+    @Transactional(Transactional.TxType.REQUIRED)
+    public void removeLifecycleDefinitionFromContentSection(
+            final LifecycleDefinition definition,
+            final ContentSection contentSection) {
+        throw new UnsupportedOperationException();
+    }
+
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
+    @Transactional(Transactional.TxType.REQUIRED)
+    public void addWorkflowTemplateToContentSection(
+            final LifecycleDefinition definition,
+            final ContentSection section) {
+        throw new UnsupportedOperationException();
+    }
+
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
+    @Transactional(Transactional.TxType.REQUIRED)
+
+    public void removeWorkflowTemplateFromContentSection(
+            final LifecycleDefinition definition,
+            final ContentSection contentSection) {
         throw new UnsupportedOperationException();
     }
 
