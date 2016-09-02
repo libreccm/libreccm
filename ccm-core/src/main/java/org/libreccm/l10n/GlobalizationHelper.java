@@ -81,7 +81,7 @@ public class GlobalizationHelper {
         final KernelConfig kernelConfig = confManager.findConfiguration(
             KernelConfig.class);
 
-        Locale preferred = new Locale(kernelConfig.getDefaultLanguage());
+        Locale preferred = kernelConfig.getDefaultLocale();
 
         final Locale selectedLocale = getSelectedLocale();
         if (selectedLocale == null || !kernelConfig.hasLanguage(selectedLocale

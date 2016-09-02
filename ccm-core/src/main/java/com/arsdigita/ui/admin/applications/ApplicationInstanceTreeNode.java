@@ -35,7 +35,7 @@ import java.util.Locale;
 public class ApplicationInstanceTreeNode implements TreeNode {
 
     protected static final String INSTANCE_NODE_KEY_PREFIX = "appinstance_";
-    
+
     private final CcmApplication application;
 
     public ApplicationInstanceTreeNode(final CcmApplication application) {
@@ -45,7 +45,7 @@ public class ApplicationInstanceTreeNode implements TreeNode {
     @Override
     public Object getKey() {
         return String.format("%s%d",
-                             INSTANCE_NODE_KEY_PREFIX, 
+                             INSTANCE_NODE_KEY_PREFIX,
                              application.getObjectId());
     }
 
@@ -57,8 +57,7 @@ public class ApplicationInstanceTreeNode implements TreeNode {
             .findBean(ConfigurationManager.class);
         final KernelConfig kernelConfig = confManager.findConfiguration(
             KernelConfig.class);
-        final Locale defaultLocale = new Locale(kernelConfig
-            .getDefaultLanguage());
+        final Locale defaultLocale = kernelConfig.getDefaultLocale();
 
         final String title;
         if (application.getTitle().hasValue(globalizationHelper

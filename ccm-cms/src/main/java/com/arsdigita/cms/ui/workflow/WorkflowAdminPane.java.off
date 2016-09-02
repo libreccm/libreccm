@@ -22,23 +22,20 @@ import com.arsdigita.bebop.FormProcessException;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.event.FormSectionEvent;
-import com.arsdigita.cms.SecurityManager;
 import com.arsdigita.cms.ui.BaseAdminPane;
 import com.arsdigita.cms.ui.BaseDeleteForm;
 import com.arsdigita.cms.ui.VisibilityComponent;
-import com.arsdigita.workflow.simple.WorkflowTemplate;
-import org.apache.log4j.Logger;
+
+import org.libreccm.workflow.WorkflowTemplate;
+import org.librecms.CmsConstants;
 
 import java.math.BigDecimal;
 
 /**
- * @author Justin Ross &lt;jross@redhat.com&gt;
- * @version $Id: WorkflowAdminPane.java 287 2005-02-22 00:29:02Z sskracic $
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
+ * @author <a href="mailto:jross@redhat.com">Justin Ross</a>
  */
 public final class WorkflowAdminPane extends BaseAdminPane {
-
-    private static final Logger s_log = Logger.getLogger
-        (WorkflowAdminPane.class);
 
     private final WorkflowRequestLocal m_workflow;
 
@@ -57,33 +54,39 @@ public final class WorkflowAdminPane extends BaseAdminPane {
                                          getEditLink(),
                                          getDeleteLink()));
 
-        addAction(new VisibilityComponent(getAddLink(),
-                                          SecurityManager.WORKFLOW_ADMIN));
+        addAction(new VisibilityComponent(
+            getAddLink(), CmsConstants.PRIVILEGE_ADMINISTER_WORKFLOW));
     }
 
     private class DeleteForm extends BaseDeleteForm {
+
         DeleteForm() {
             super(gz("cms.ui.workflow.delete_prompt"));
 
-            addSecurityListener(SecurityManager.WORKFLOW_ADMIN);
+            addSecurityListener(CmsConstants.PRIVILEGE_ADMINISTER_WORKFLOW);
         }
 
+        @Override
         public final void process(final FormSectionEvent e)
-                throws FormProcessException {
+            throws FormProcessException {
             final PageState state = e.getPageState();
 
             m_workflow.getWorkflow(state).delete();
 
             getSelectionModel().clearSelection(state);
         }
+
     }
 
     private class SelectionRequestLocal extends WorkflowRequestLocal {
+
         protected final Object initialValue(final PageState state) {
-            final String id = getSelectionModel().getSelectedKey
-                (state).toString();
+            final String id = getSelectionModel().getSelectedKey(state)
+                .toString();
 
             return new WorkflowTemplate(new BigDecimal(id));
         }
+
     }
+
 }

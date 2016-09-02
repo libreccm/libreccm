@@ -31,6 +31,7 @@ import org.libreccm.security.PermissionManager;
 import org.libreccm.security.RequiresPrivilege;
 import org.libreccm.security.Role;
 import org.libreccm.security.RoleRepository;
+import org.libreccm.workflow.WorkflowTemplate;
 
 import java.util.List;
 import java.util.Locale;
@@ -41,6 +42,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+
 import org.librecms.lifecycle.LifecycleDefinition;
 
 import static org.librecms.CmsConstants.*;
@@ -87,13 +89,12 @@ public class ContentSectionManager {
     public ContentSection createContentSection(final String name) {
         if (name == null || name.isEmpty()) {
             throw new IllegalArgumentException(
-                    "The name of a ContentSection can't be blank.");
+                "The name of a ContentSection can't be blank.");
         }
 
         final KernelConfig kernelConfig = confManager.findConfiguration(
-                KernelConfig.class);
-        final Locale defautLocale
-                     = new Locale(kernelConfig.getDefaultLanguage());
+            KernelConfig.class);
+        final Locale defautLocale = kernelConfig.getDefaultLocale();
 
         final ContentSection section = new ContentSection();
         section.setLabel(name);
@@ -233,12 +234,12 @@ public class ContentSectionManager {
     @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
     @Transactional(Transactional.TxType.REQUIRED)
     public void removeRoleFromContentSection(
-            final ContentSection contentSection,
-            final Role role) {
+        final ContentSection contentSection,
+        final Role role) {
 
         if (contentSection == null) {
             throw new IllegalArgumentException(
-                    "Can't remove role from ContentSection null");
+                "Can't remove role from ContentSection null");
         }
 
         if (role == null) {
@@ -249,8 +250,8 @@ public class ContentSectionManager {
         sectionRepo.save(contentSection);
 
         final TypedQuery<Permission> query = entityManager
-                .createNamedQuery("ContentSection.findPermissions",
-                                  Permission.class);
+            .createNamedQuery("ContentSection.findPermissions",
+                              Permission.class);
         query.setParameter("section", contentSection);
         query.setParameter("rootDocumentsFolder",
                            contentSection.getRootDocumentsFolder());
@@ -280,8 +281,8 @@ public class ContentSectionManager {
     @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
     @Transactional(Transactional.TxType.REQUIRED)
     public void addLifecycleDefinitionToContentSection(
-            final LifecycleDefinition definition,
-            final ContentSection section) {
+        final LifecycleDefinition definition,
+        final ContentSection section) {
         throw new UnsupportedOperationException();
     }
 
@@ -289,8 +290,8 @@ public class ContentSectionManager {
     @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
     @Transactional(Transactional.TxType.REQUIRED)
     public void removeLifecycleDefinitionFromContentSection(
-            final LifecycleDefinition definition,
-            final ContentSection contentSection) {
+        final LifecycleDefinition definition,
+        final ContentSection contentSection) {
         throw new UnsupportedOperationException();
     }
 
@@ -298,8 +299,8 @@ public class ContentSectionManager {
     @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
     @Transactional(Transactional.TxType.REQUIRED)
     public void addWorkflowTemplateToContentSection(
-            final LifecycleDefinition definition,
-            final ContentSection section) {
+        final WorkflowTemplate definition,
+        final ContentSection section) {
         throw new UnsupportedOperationException();
     }
 
@@ -308,15 +309,16 @@ public class ContentSectionManager {
     @Transactional(Transactional.TxType.REQUIRED)
 
     public void removeWorkflowTemplateFromContentSection(
-            final LifecycleDefinition definition,
-            final ContentSection contentSection) {
+        final LifecycleDefinition definition,
+        final ContentSection contentSection) {
         throw new UnsupportedOperationException();
     }
 
     public ItemResolver getItemResolver(final ContentSection section) {
         try {
-            final Class<ItemResolver> itemResolverClazz = (Class<ItemResolver>) Class.
-                    forName(section.getItemResolverClass());
+            final Class<ItemResolver> itemResolverClazz
+                                      = (Class<ItemResolver>) Class.
+                forName(section.getItemResolverClass());
             return itemResolverClazz.newInstance();
         } catch (ClassNotFoundException |
                  IllegalAccessException |

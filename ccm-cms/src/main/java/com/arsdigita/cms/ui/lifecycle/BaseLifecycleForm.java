@@ -98,8 +98,7 @@ class BaseLifecycleForm extends BaseForm {
                 ConfigurationManager.class);
             final KernelConfig kernelConfig = confManager.findConfiguration(
                 KernelConfig.class);
-            final Locale defaultLocale = new Locale(kernelConfig
-                .getDefaultLanguage());
+            final Locale defaultLocale = kernelConfig.getDefaultLocale();
             final String label = (String) m_name.getValue(state);
 
             final java.util.List<LifecycleDefinition> definitions = CMS

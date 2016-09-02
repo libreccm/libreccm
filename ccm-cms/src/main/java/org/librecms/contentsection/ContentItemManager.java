@@ -199,7 +199,7 @@ public class ContentItemManager {
                 KernelConfig.class);
 
         item.setDisplayName(name);
-        item.getName().addValue(new Locale(kernelConfig.getDefaultLanguage()),
+        item.getName().addValue(kernelConfig.getDefaultLocale(),
                                 name);
         item.setLifecycle(lifecycle);
         item.setWorkflow(workflow);

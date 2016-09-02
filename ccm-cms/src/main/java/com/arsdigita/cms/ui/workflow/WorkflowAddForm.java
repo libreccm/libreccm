@@ -16,7 +16,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  */
-package com.arsdigita.cms.ui.lifecycle;
+package com.arsdigita.cms.ui.workflow;
 
 import com.arsdigita.bebop.FormProcessException;
 import com.arsdigita.bebop.PageState;
@@ -26,74 +26,64 @@ import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.cms.CMS;
 import com.arsdigita.kernel.KernelConfig;
 
-import org.apache.logging.log4j.LogManager;
 import org.librecms.contentsection.ContentSection;
-import org.librecms.lifecycle.LifecycleDefinition;
-import org.apache.logging.log4j.Logger;
+import org.libreccm.workflow.WorkflowTemplate;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.ConfigurationManager;
+import org.libreccm.workflow.WorkflowTemplateRepository;
 import org.librecms.contentsection.ContentSectionManager;
-import org.librecms.lifecycle.LifecycleDefinitionRepository;
 
 import java.util.Locale;
 
 /**
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
+ * @author Uday Mathur
  * @author Michael Pih
- * @author Jack Chung
- * @author <a href="mailto:xdmoon@redhat.com">Xixi D'Moon</a>
- * @author <a href="jross@redhat.com">Justin Ross</a>
+ * @author <a href="mailto:jross@redhat.com">Justin Ross</a>
  */
-class LifecycleAddForm extends BaseLifecycleForm {
-
-    private static final Logger LOGGER = LogManager.getLogger(LifecycleAddForm.class);
+class WorkflowAddForm extends BaseWorkflowForm {
 
     private final SingleSelectionModel<Long> m_model;
 
-    LifecycleAddForm(final SingleSelectionModel<Long> model) {
-        super("LifecycleDefinition", gz("cms.ui.lifecycle.add"));
+    WorkflowAddForm(final SingleSelectionModel<Long> model) {
+        super("workflow", gz("cms.ui.workflow.add"));
 
         m_model = model;
-
-        m_name.addValidationListener(new NameUniqueListener(null));
 
         addProcessListener(new ProcessListener());
     }
 
     private class ProcessListener implements FormProcessListener {
-
+        
         @Override
-        public final void process(final FormSectionEvent e)
-            throws FormProcessException {
-            final PageState state = e.getPageState();
+        public final void process(final FormSectionEvent event)
+                throws FormProcessException {
+            final PageState state = event.getPageState();
+
+            final String label = (String) m_title.getValue(state);
+            final String description = (String) m_description.getValue(state);
+
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final ConfigurationManager confManager = cdiUtil.findBean(
-                ConfigurationManager.class);
-            final LifecycleDefinitionRepository lifecycleDefRepo = cdiUtil.findBean(
-                LifecycleDefinitionRepository.class);
+            final WorkflowTemplateRepository workflowTemplateRepository = cdiUtil.findBean(
+                WorkflowTemplateRepository.class);
             final ContentSectionManager sectionManager = cdiUtil.findBean(
                 ContentSectionManager.class);
+            final ConfigurationManager confManager = cdiUtil.findBean(ConfigurationManager.class);
             final KernelConfig kernelConfig = confManager.findConfiguration(
                 KernelConfig.class);
             final Locale defaultLocale = kernelConfig.getDefaultLocale();
+            
+            final WorkflowTemplate workflow = new WorkflowTemplate();
+            workflow.getName().addValue(defaultLocale, label);
+            workflow.getDescription().addValue(defaultLocale, description);
+            
+            workflowTemplateRepository.save(workflow);
 
-            final LifecycleDefinition definition = new LifecycleDefinition();
+            final ContentSection section =
+                CMS.getContext().getContentSection();
+            sectionManager.addWorkflowTemplateToContentSection(workflow, section);
 
-            definition.getLabel().addValue(defaultLocale,
-                                           (String) m_name.getValue(state));
-            definition.getDescription().addValue(
-                defaultLocale,
-                (String) m_description.getValue(state));
-            lifecycleDefRepo.save(definition);
-
-            final ContentSection section = CMS.getContext().getContentSection();
-            sectionManager.addLifecycleDefinitionToContentSection(definition,
-                                                                  section);
-
-            m_model.setSelectedKey(state, 
-                                   definition.getDefinitionId());
+            m_model.setSelectedKey(state, workflow.getWorkflowId());
         }
-
     }
-
 }

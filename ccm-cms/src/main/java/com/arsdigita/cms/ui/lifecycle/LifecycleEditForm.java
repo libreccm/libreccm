@@ -75,9 +75,10 @@ class LifecycleEditForm extends BaseLifecycleForm {
 
     private class ProcessListener implements FormProcessListener {
 
-        public final void process(final FormSectionEvent e)
+        @Override
+        public final void process(final FormSectionEvent event)
             throws FormProcessException {
-            final PageState state = e.getPageState();
+            final PageState state = event.getPageState();
             final LifecycleDefinition definition = m_definition
                 .getLifecycleDefinition(state);
 
@@ -88,8 +89,7 @@ class LifecycleEditForm extends BaseLifecycleForm {
                 .findBean(LifecycleDefinitionRepository.class);
             final KernelConfig kernelConfig = confManager.findConfiguration(
                 KernelConfig.class);
-            final Locale defaultLocale = new Locale(kernelConfig
-                .getDefaultLanguage());
+            final Locale defaultLocale = kernelConfig.getDefaultLocale();
 
             definition.getLabel().addValue(defaultLocale,
                                            (String) m_name.getValue(state));

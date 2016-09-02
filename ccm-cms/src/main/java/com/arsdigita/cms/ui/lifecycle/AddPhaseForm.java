@@ -294,8 +294,7 @@ class AddPhaseForm extends CMSForm {
             ConfigurationManager.class);
         final KernelConfig kernelConfig = confManager.findConfiguration(
             KernelConfig.class);
-        final Locale defaultLocale = new Locale(kernelConfig
-            .getDefaultLanguage());
+        final Locale defaultLocale = kernelConfig.getDefaultLocale();
 
         // Check if the object already exists for double click protection.
         final PhaseDefinition phaseDef = new PhaseDefinition();
@@ -331,8 +330,7 @@ class AddPhaseForm extends CMSForm {
             ConfigurationManager.class);
         final KernelConfig kernelConfig = confManager.findConfiguration(
             KernelConfig.class);
-        final Locale defaultLocale = new Locale(kernelConfig
-            .getDefaultLanguage());
+        final Locale defaultLocale = kernelConfig.getDefaultLocale();
 
         for (final PhaseDefinition phaseDef : phaseDefs) {
             if (phaseDef.getLabel().getValue(defaultLocale).equalsIgnoreCase(

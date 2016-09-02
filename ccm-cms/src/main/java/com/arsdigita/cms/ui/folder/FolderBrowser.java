@@ -316,8 +316,7 @@ public class FolderBrowser extends Table {
             final List<Predicate> filters = new ArrayList<>();
             final KernelConfig kernelConfig = confManager.findConfiguration(
                 KernelConfig.class);
-            final Locale defaultLocale = new Locale(kernelConfig.
-                getDefaultLanguage());
+            final Locale defaultLocale = kernelConfig.getDefaultLocale();
             if (state.getValue(m_aToZfilter) != null) {
                 filters.add(criteriaBuilder.like(criteriaBuilder.lower(
                     root.get("Categorization.categorizedObject.displayName")),

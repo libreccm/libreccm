@@ -295,7 +295,7 @@ class EditPhaseForm extends CMSForm {
             PhaseDefinititionRepository.class);
         final KernelConfig kernelConfig = confManager.findConfiguration(
             KernelConfig.class);
-        final Locale defaultLocale = new Locale(kernelConfig.getDefaultLanguage());
+        final Locale defaultLocale = kernelConfig.getDefaultLocale();
         
         final PhaseDefinition phaseDefinition = m_phase.getPhase(state);
         phaseDefinition.getLabel().addValue(defaultLocale, label);

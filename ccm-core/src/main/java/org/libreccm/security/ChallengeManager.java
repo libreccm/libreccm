@@ -401,8 +401,7 @@ public class ChallengeManager {
         } else {
             final KernelConfig kernelConfig = configurationManager
                 .findConfiguration(KernelConfig.class);
-            final Locale defaultLocale = new Locale(kernelConfig
-                .getDefaultLanguage());
+            final Locale defaultLocale =kernelConfig.getDefaultLocale();
             return localizedString.getValue(defaultLocale);
         }
     }
@@ -444,8 +443,7 @@ public class ChallengeManager {
         } else {
             final KernelConfig kernelConfig = configurationManager
                 .findConfiguration(KernelConfig.class);
-            final Locale defaultLocale = new Locale(kernelConfig
-                .getDefaultLanguage());
+            final Locale defaultLocale = kernelConfig.getDefaultLocale();
             return localizedString.getValue(defaultLocale);
         }
     }

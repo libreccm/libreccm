@@ -150,8 +150,7 @@ class LifecycleItemPane extends BaseItemPane {
                     ConfigurationManager.class);
                 final KernelConfig kernelConfig = confManager.findConfiguration(
                     KernelConfig.class);
-                final Locale defaultLocale = new Locale(kernelConfig
-                    .getDefaultLanguage());
+                final Locale defaultLocale = kernelConfig.getDefaultLocale();
 
                 final java.util.List props = super.properties(state);
                 final LifecycleDefinition cycle = m_cycle

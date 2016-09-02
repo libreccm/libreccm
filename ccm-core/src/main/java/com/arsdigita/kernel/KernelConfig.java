@@ -29,6 +29,7 @@ import org.libreccm.configuration.Configuration;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.configuration.Setting;
 
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 /**
@@ -199,6 +200,10 @@ public final class KernelConfig {
         this.defaultLanguage = defaultLanguage;
     }
 
+    public Locale getDefaultLocale() {
+        return new Locale(getDefaultLanguage());
+    }
+    
     public String getSystemEmailAddress() {
         return systemEmailAddress;
     }
