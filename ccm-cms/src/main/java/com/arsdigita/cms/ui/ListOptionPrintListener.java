@@ -27,7 +27,7 @@ import com.arsdigita.bebop.form.OptionGroup;
 import java.util.List;
 
 /**
- * Migrated from the {@code DataQueryPrintListener} in the old system. Renamed 
+ * Migrated from the {@code DataQueryOptionPrintListener} in the old system. Renamed 
  * and refactored to operate on a list.
  * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>

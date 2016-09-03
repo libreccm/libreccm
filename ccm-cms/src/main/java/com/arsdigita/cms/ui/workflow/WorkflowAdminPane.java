@@ -26,7 +26,12 @@ import com.arsdigita.cms.ui.BaseAdminPane;
 import com.arsdigita.cms.ui.BaseDeleteForm;
 import com.arsdigita.cms.ui.VisibilityComponent;
 
+import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.workflow.Workflow;
+import org.libreccm.workflow.WorkflowManager;
+import org.libreccm.workflow.WorkflowRepository;
 import org.libreccm.workflow.WorkflowTemplate;
+import org.libreccm.workflow.WorkflowTemplateRepository;
 import org.librecms.CmsConstants;
 
 import java.math.BigDecimal;
@@ -67,11 +72,15 @@ public final class WorkflowAdminPane extends BaseAdminPane {
         }
 
         @Override
-        public final void process(final FormSectionEvent e)
+        public final void process(final FormSectionEvent event)
             throws FormProcessException {
-            final PageState state = e.getPageState();
+            final PageState state = event.getPageState();
 
-            m_workflow.getWorkflow(state).delete();
+            final CdiUtil cdiUtil= CdiUtil.createCdiUtil();
+            final WorkflowRepository workflowRepo= cdiUtil.findBean(WorkflowRepository.class);
+
+            final Workflow workflow = m_workflow.getWorkflow(state);
+            workflowRepo.delete(workflow);
 
             getSelectionModel().clearSelection(state);
         }
@@ -80,11 +89,16 @@ public final class WorkflowAdminPane extends BaseAdminPane {
 
     private class SelectionRequestLocal extends WorkflowRequestLocal {
 
+        @Override
         protected final Object initialValue(final PageState state) {
             final String id = getSelectionModel().getSelectedKey(state)
                 .toString();
 
-            return new WorkflowTemplate(new BigDecimal(id));
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final WorkflowTemplateRepository templateRepo = cdiUtil.findBean(
+                WorkflowTemplateRepository.class);
+            
+            return templateRepo.findById(Long.parseLong(id));
         }
 
     }

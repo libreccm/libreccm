@@ -32,16 +32,29 @@ import com.arsdigita.bebop.table.DefaultTableCellRenderer;
 import com.arsdigita.cms.ui.BaseDeleteForm;
 import com.arsdigita.cms.ui.BaseItemPane;
 import com.arsdigita.cms.ui.VisibilityComponent;
+import com.arsdigita.kernel.KernelConfig;
+
 import org.librecms.workflow.CmsTask;
 import org.libreccm.security.User;
+
 import com.arsdigita.toolbox.ui.ActionGroup;
 import com.arsdigita.toolbox.ui.PropertyList;
 import com.arsdigita.toolbox.ui.Section;
 import com.arsdigita.util.UncheckedWrapperException;
 import com.arsdigita.web.Web;
+
+import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.security.Shiro;
+import org.libreccm.workflow.Task;
+import org.libreccm.workflow.TaskRepository;
 import org.libreccm.workflow.Workflow;
+import org.libreccm.workflow.WorkflowManager;
+import org.librecms.CmsConstants;
+import org.librecms.workflow.CmsTaskTypeRepository;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Locale;
 
 abstract class BaseWorkflowItemPane extends BaseItemPane {
 
@@ -66,24 +79,23 @@ abstract class BaseWorkflowItemPane extends BaseItemPane {
         m_detailPane = new SimpleContainer();
 
         // Tasks
-
         final FinishLink taskFinishLink = new FinishLink();
 
-        final ActionLink taskAddLink = new ActionLink
-            (new Label(gz("cms.ui.workflow.task.add")));
-        final TaskAddForm taskAddForm = new TaskAddForm
-            (m_workflow, m_tasks.getRowSelectionModel());
+        final ActionLink taskAddLink = new ActionLink(new Label(gz(
+            "cms.ui.workflow.task.add")));
+        final TaskAddForm taskAddForm = new TaskAddForm(m_workflow, m_tasks
+                                                        .getRowSelectionModel());
 
-        final ActionLink taskEditLink = new ActionLink
-            (new Label(gz("cms.ui.workflow.task.edit")));
+        final ActionLink taskEditLink = new ActionLink(new Label(gz(
+            "cms.ui.workflow.task.edit")));
         final TaskEditForm taskEditForm = new TaskEditForm(m_workflow, m_task);
 
-        final ActionLink taskDeleteLink = new ActionLink
-            (new Label(gz("cms.ui.workflow.task.delete")));
+        final ActionLink taskDeleteLink = new ActionLink(new Label(gz(
+            "cms.ui.workflow.task.delete")));
         final TaskDeleteForm taskDeleteForm = new TaskDeleteForm();
 
-        final ActionLink backLink = new ActionLink
-            (new Label(gz("cms.ui.workflow.task.return")));
+        final ActionLink backLink = new ActionLink(new Label(gz(
+            "cms.ui.workflow.task.return")));
         backLink.addActionListener(new ResetListener());
 
         m_taskPane = new TaskItemPane(m_workflow, m_task,
@@ -114,12 +126,15 @@ abstract class BaseWorkflowItemPane extends BaseItemPane {
     }
 
     protected class AdminVisible extends VisibilityComponent {
+
         public AdminVisible(final Component child) {
-            super(child, SecurityManager.WORKFLOW_ADMIN);
+            super(child, CmsConstants.PRIVILEGE_ADMINISTER_WORKFLOW);
         }
+
     }
 
     private class FinishLink extends ActionLink {
+
         FinishLink() {
             super(new Label(gz("cms.ui.workflow.task.finish")));
 
@@ -127,27 +142,37 @@ abstract class BaseWorkflowItemPane extends BaseItemPane {
             addActionListener(new ResetListener());
         }
 
+        @Override
         public final boolean isVisible(final PageState state) {
-            CmsTask task = m_task.getTask(state);
-            User lockingUser = task.getLockedUser();
-            boolean visible = task.isEnabled()  &&
-                (lockingUser == null ||
-                  lockingUser.equals(Web.getWebContext().getUser()));
+            final CmsTask task = m_task.getTask(state);
+            final User lockingUser = task.getLockingUser();
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final Shiro shiro = cdiUtil.findBean(Shiro.class);
+            final User currentUser = shiro.getUser();
+
+            boolean visible = task.isLocked()
+                                  && (lockingUser == null
+                                      || lockingUser.equals(currentUser));
             return visible;
         }
 
         private class Listener implements ActionListener {
-            public final void actionPerformed(final ActionEvent e) {
-                final PageState state = e.getPageState();
 
-                try {
-                    m_task.getTask(state).finish
-                        (Web.getWebContext().getUser());
-                } catch (TaskException te) {
-                    throw new UncheckedWrapperException(te);
-                }
+            @Override
+            public final void actionPerformed(final ActionEvent event) {
+                final PageState state = event.getPageState();
+
+                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+                final WorkflowManager workflowManager = cdiUtil.findBean(
+                    WorkflowManager.class);
+
+                final Task task = m_task.getTask(state);
+                task.setTaskState("finished");
+
             }
+
         }
+
     }
 
     public void reset(final PageState state) {
@@ -157,32 +182,48 @@ abstract class BaseWorkflowItemPane extends BaseItemPane {
     }
 
     private class TaskDeleteForm extends BaseDeleteForm {
+
         TaskDeleteForm() {
             super(new Label(gz("cms.ui.workflow.task.delete_prompt")));
 
-            addSecurityListener(SecurityManager.WORKFLOW_ADMIN);
+            addSecurityListener(CmsConstants.PRIVILEGE_ADMINISTER_WORKFLOW);
         }
 
-        public final void process(final FormSectionEvent e)
-                throws FormProcessException {
-            final PageState state = e.getPageState();
+        @Override
+        public final void process(final FormSectionEvent event)
+            throws FormProcessException {
+            final PageState state = event.getPageState();
 
-            m_task.getTask(state).delete();
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final TaskRepository taskRepo = cdiUtil.findBean(
+                TaskRepository.class);
+
+            final Task task = m_task.getTask(state);
+            taskRepo.delete(task);
 
             m_tasks.getRowSelectionModel().clearSelection(state);
         }
+
     }
 
     private class TaskSelectionRequestLocal extends TaskRequestLocal {
-        protected final Object initialValue(final PageState state) {
-            final String id = m_tasks.getRowSelectionModel().getSelectedKey
-                (state).toString();
 
-            return new CmsTask(new BigDecimal(id));
+        @Override
+        protected final Object initialValue(final PageState state) {
+            final String id = m_tasks.getRowSelectionModel().getSelectedKey(
+                state).toString();
+
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final CmsTaskTypeRepository taskRepo = cdiUtil.findBean(
+                CmsTaskTypeRepository.class);
+
+            return taskRepo.findById(Long.parseLong(id));
         }
+
     }
 
     class SummarySection extends Section {
+
         SummarySection(final ActionLink editLink,
                        final ActionLink deleteLink) {
             setHeading(new Label(gz("cms.ui.workflow.details")));
@@ -200,26 +241,35 @@ abstract class BaseWorkflowItemPane extends BaseItemPane {
         }
 
         private class Properties extends PropertyList {
-            protected final java.util.List properties(final PageState state) {
-                final java.util.List props = super.properties(state);
+
+            @Override
+            protected final List<Property> properties(final PageState state) {
+                @SuppressWarnings("unchecked")
+                final List<Property> props = super.properties(state);
                 final Workflow flow = (Workflow) m_workflow.get(state);
 
+                final KernelConfig kernelConfig = KernelConfig.getConfig();
+                final Locale defaultLocale = kernelConfig.getDefaultLocale();
+
                 props.add(new Property(gz("cms.ui.name"),
-                                       flow.getLabel()));
-                props.add(new Property(gz("cms.ui.description"),
-                                       flow.getDescription()));
-                props.add(new Property(gz("cms.ui.workflow.current_state"),
-                                       flow.getStateString()));
+                                       flow.getName().getValue(defaultLocale)));
+                props.add(new Property(
+                    gz("cms.ui.description"),
+                    flow.getDescription().getValue(defaultLocale)));
+//                props.add(new Property(gz("cms.ui.workflow.current_state"),
+//                                       flow.getStateString()));
                 props.add(new Property(gz("cms.ui.workflow.num_tasks"),
-                                       String.valueOf(flow.getTaskCount())));
+                                       String.valueOf(flow.getTasks().size())));
 
                 return props;
             }
+
         }
 
     }
 
     class TaskSection extends Section {
+
         TaskSection(final ActionLink taskAddLink) {
             setHeading(new Label(gz("cms.ui.workflow.tasks")));
 
@@ -229,10 +279,11 @@ abstract class BaseWorkflowItemPane extends BaseItemPane {
             group.setSubject(m_tasks);
             group.addAction(new AdminVisible(taskAddLink), ActionGroup.ADD);
         }
+
     }
 
     // XXX Fix this.
-    private static final String[] s_columns = new String[] {
+    private static final String[] s_columns = new String[]{
         lz("cms.ui.name"),
         lz("cms.ui.description"),
         lz("cms.ui.workflow.task.dependencies"),
@@ -240,14 +291,15 @@ abstract class BaseWorkflowItemPane extends BaseItemPane {
     };
 
     private class TaskTable extends Table {
+
         public TaskTable() {
             super(new TaskTableModelBuilder(m_workflow), s_columns);
 
             setEmptyView(new Label(gz("cms.ui.workflow.task.none")));
 
-            getColumn(0).setCellRenderer
-                (new DefaultTableCellRenderer(true));
+            getColumn(0).setCellRenderer(new DefaultTableCellRenderer(true));
         }
+
     }
 
 }
