@@ -46,8 +46,6 @@ import org.libreccm.security.Role;
 import org.libreccm.security.RoleRepository;
 import org.librecms.contentsection.ContentSection;
 
-import java.math.BigDecimal;
-
 /**
  * TODO Needs description
  *
@@ -62,7 +60,7 @@ public class RoleAdminPane extends BaseAdminPane {
     private static final CdiUtil cdiutil = CdiUtil.createCdiUtil();
 
     private final SingleSelectionModel m_model;
-    //private final RoleRequestLocal m_role;
+    private final RoleRequestLocal m_role;
 
     private final List m_staff;
     private final List m_viewers;
@@ -74,7 +72,7 @@ public class RoleAdminPane extends BaseAdminPane {
 
         m_model.addChangeListener(new SelectionListener());
 
-        //m_role = new SelectionRequestLocal();
+        m_role = new SelectionRequestLocal();
 
         m_staff = new List(new StaffListModelBuilder());
         m_staff.setSelectionModel(m_model);
@@ -91,12 +89,12 @@ public class RoleAdminPane extends BaseAdminPane {
         final ViewerSection viewers = new ViewerSection();
         left.add(viewers);
 
-        //setEdit(gz("cms.ui.role.edit"), new RoleEditForm(m_role, false));
-        //setDelete(gz("cms.ui.role.delete"), new DeleteForm());
+        setEdit(gz("cms.ui.role.edit"), new RoleEditForm(m_role, false));
+        setDelete(gz("cms.ui.role.delete"), new DeleteForm());
 
         setIntroPane(new Label(gz("cms.ui.role.intro")));
-        //setItemPane(new BaseRoleItemPane(m_model, m_role,
-         //                                getEditLink(), getDeleteLink()));
+        setItemPane(new BaseRoleItemPane(m_model, m_role,
+                                         getEditLink(), getDeleteLink()));
     }
 
     private class StaffSection extends Section {
@@ -111,12 +109,12 @@ public class RoleAdminPane extends BaseAdminPane {
             final ActionLink link = new ActionLink
                 (new Label(gz("cms.ui.role.staff.add")));
 
-            //group.addAction(new VisibilityComponent(link, STAFF_ADMIN),
-            //                ActionGroup.ADD);
+            group.addAction(new VisibilityComponent(link, SecurityConstants.STAFF_ADMIN),
+                            ActionGroup.ADD);
 
-            //final RoleAddForm form = new RoleAddForm(m_model, false);
-            //getBody().add(form);
-            //getBody().connect(link, form);
+            final RoleAddForm form = new RoleAddForm(m_model, false);
+            getBody().add(form);
+            getBody().connect(link, form);
         }
     }
 
@@ -132,12 +130,12 @@ public class RoleAdminPane extends BaseAdminPane {
             final ActionLink link = new ActionLink
                 (new Label(gz("cms.ui.role.viewer.add")));
 
-            //group.addAction(new VisibilityComponent(link, STAFF_ADMIN),
-              //              ActionGroup.ADD);
+            group.addAction(new VisibilityComponent(link, SecurityConstants.STAFF_ADMIN),
+                            ActionGroup.ADD);
 
-            //final RoleAddForm form = new RoleAddForm(m_model, true);
-            //getBody().add(form);
-            //getBody().connect(link, form);
+            final RoleAddForm form = new RoleAddForm(m_model, true);
+            getBody().add(form);
+            getBody().connect(link, form);
         }
     }
 
@@ -158,15 +156,16 @@ public class RoleAdminPane extends BaseAdminPane {
             }
         }
     }
-/*
+
     private class SelectionRequestLocal extends RoleRequestLocal {
         protected final Object initialValue(final PageState state) {
-            final String id = m_model.getSelectedKey(state).toString();
+            final Long id = Long.parseLong(m_model.getSelectedKey(state).toString());
+            final RoleRepository roleRepository = cdiutil.findBean(RoleRepository.class);
 
-            return new Role(new BigDecimal(id));
+            return roleRepository.findById(id);
         }
     }
-*/
+
     private static class StaffListModelBuilder extends LockableImpl
             implements ListModelBuilder {
         public StaffListModelBuilder() {
@@ -179,7 +178,7 @@ public class RoleAdminPane extends BaseAdminPane {
                 CMS.getContext().getContentSection();
 
             //return new RoleListModel
-            //    (section.getStaffGroup().getOrderedRoles());
+            //    (section.getStaffGroup().getOrderedRoles()); FIXME
             return null;
         }
     }
@@ -192,7 +191,7 @@ public class RoleAdminPane extends BaseAdminPane {
                 CMS.getContext().getContentSection();
 
             //return new RoleListModel
-            //    (section.getViewersGroup().getOrderedRoles());
+            //    (section.getViewersGroup().getOrderedRoles()); FIXME
             return null;
         }
     }

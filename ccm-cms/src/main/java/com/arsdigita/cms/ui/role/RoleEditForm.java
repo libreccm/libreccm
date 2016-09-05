@@ -28,6 +28,9 @@ import org.apache.log4j.Logger;
 import org.libreccm.security.Role;
 
 /**
+ * For more detailed information see {@link com.arsdigita.bebop.Form}.
+ *
+ * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  * @author Michael Pih
  * @author Justin Ross &lt;jross@redhat.com&gt;
  * @version $Id: RoleEditForm.java 287 2005-02-22 00:29:02Z sskracic $
