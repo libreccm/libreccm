@@ -46,6 +46,8 @@ import org.libreccm.security.Role;
 import org.libreccm.security.RoleRepository;
 import org.librecms.contentsection.ContentSection;
 
+import java.util.ArrayList;
+
 /**
  * TODO Needs description
  *
@@ -179,7 +181,7 @@ public class RoleAdminPane extends BaseAdminPane {
 
             //return new RoleListModel
             //    (section.getStaffGroup().getOrderedRoles()); FIXME
-            return null;
+            return new RoleListModel(new ArrayList<>());
         }
     }
 
@@ -192,7 +194,7 @@ public class RoleAdminPane extends BaseAdminPane {
 
             //return new RoleListModel
             //    (section.getViewersGroup().getOrderedRoles()); FIXME
-            return null;
+            return new RoleListModel(new ArrayList<>());
         }
     }
 
