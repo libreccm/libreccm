@@ -42,6 +42,9 @@ import org.librecms.contentsection.ContentSection;
 import java.math.BigDecimal;
 
 /**
+ * TODO Needs a description
+ *
+ * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  * @author Justin Ross &lt;jross@redhat.com&gt;
  * @version $Id: BaseRoleItemPane.java 287 2005-02-22 00:29:02Z sskracic $
  */
