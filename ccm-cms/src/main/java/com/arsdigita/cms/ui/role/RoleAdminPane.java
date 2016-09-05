@@ -36,11 +36,14 @@ import com.arsdigita.cms.CMS;
 import com.arsdigita.cms.ui.BaseAdminPane;
 import com.arsdigita.cms.ui.BaseDeleteForm;
 import com.arsdigita.cms.ui.VisibilityComponent;
+import com.arsdigita.cms.util.SecurityConstants;
 import com.arsdigita.toolbox.ui.ActionGroup;
 import com.arsdigita.toolbox.ui.Section;
 import com.arsdigita.util.LockableImpl;
 import org.apache.log4j.Logger;
+import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.Role;
+import org.libreccm.security.RoleRepository;
 import org.librecms.contentsection.ContentSection;
 
 import java.math.BigDecimal;
@@ -55,6 +58,8 @@ import java.math.BigDecimal;
 public class RoleAdminPane extends BaseAdminPane {
 
     private static final Logger s_log = Logger.getLogger(RoleAdminPane.class);
+
+    private static final CdiUtil cdiutil = CdiUtil.createCdiUtil();
 
     private final SingleSelectionModel m_model;
     //private final RoleRequestLocal m_role;
@@ -187,7 +192,7 @@ public class RoleAdminPane extends BaseAdminPane {
                 CMS.getContext().getContentSection();
 
             //return new RoleListModel
-            //    (section.getViewersGroup().getOrderedRoles());#
+            //    (section.getViewersGroup().getOrderedRoles());
             return null;
         }
     }
@@ -196,14 +201,18 @@ public class RoleAdminPane extends BaseAdminPane {
         DeleteForm() {
             super(gz("cms.ui.role.delete_prompt"));
 
-            //addSecurityListener(STAFF_ADMIN);
+            addSecurityListener(SecurityConstants.STAFF_ADMIN);
         }
 
         public final void process(final FormSectionEvent e)
                 throws FormProcessException {
             final PageState state = e.getPageState();
 
-            //m_role.getRole(state).delete();
+            final RoleRepository roleRepository = cdiutil.findBean(RoleRepository.class);
+            final Long id = Long.parseLong(m_model.getSelectedKey(state).toString());
+            final Role role = roleRepository.findById(id);
+
+            roleRepository.delete(role);
 
             m_model.clearSelection(state);
         }
