@@ -33,19 +33,22 @@ import com.arsdigita.bebop.list.ListModel;
 import com.arsdigita.bebop.list.ListModelBuilder;
 import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.cms.CMS;
-import com.arsdigita.cms.ContentSection;
 import com.arsdigita.cms.ui.BaseAdminPane;
 import com.arsdigita.cms.ui.BaseDeleteForm;
 import com.arsdigita.cms.ui.VisibilityComponent;
-import com.arsdigita.kernel.Role;
 import com.arsdigita.toolbox.ui.ActionGroup;
 import com.arsdigita.toolbox.ui.Section;
 import com.arsdigita.util.LockableImpl;
 import org.apache.log4j.Logger;
+import org.libreccm.security.Role;
+import org.librecms.contentsection.ContentSection;
 
 import java.math.BigDecimal;
 
 /**
+ * TODO Needs description
+ *
+ * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  * @author Justin Ross &lt;jross@redhat.com&gt;
  * @version $Id: RoleAdminPane.java 287 2005-02-22 00:29:02Z sskracic $
  */
@@ -54,7 +57,7 @@ public class RoleAdminPane extends BaseAdminPane {
     private static final Logger s_log = Logger.getLogger(RoleAdminPane.class);
 
     private final SingleSelectionModel m_model;
-    private final RoleRequestLocal m_role;
+    //private final RoleRequestLocal m_role;
 
     private final List m_staff;
     private final List m_viewers;
@@ -66,7 +69,7 @@ public class RoleAdminPane extends BaseAdminPane {
 
         m_model.addChangeListener(new SelectionListener());
 
-        m_role = new SelectionRequestLocal();
+        //m_role = new SelectionRequestLocal();
 
         m_staff = new List(new StaffListModelBuilder());
         m_staff.setSelectionModel(m_model);
@@ -83,14 +86,12 @@ public class RoleAdminPane extends BaseAdminPane {
         final ViewerSection viewers = new ViewerSection();
         left.add(viewers);
 
-        // XXX there need to be two edit forms with different boolean
-        // args.  this is broken
-        setEdit(gz("cms.ui.role.edit"), new RoleEditForm(m_role, false));
-        setDelete(gz("cms.ui.role.delete"), new DeleteForm());
+        //setEdit(gz("cms.ui.role.edit"), new RoleEditForm(m_role, false));
+        //setDelete(gz("cms.ui.role.delete"), new DeleteForm());
 
         setIntroPane(new Label(gz("cms.ui.role.intro")));
-        setItemPane(new BaseRoleItemPane(m_model, m_role,
-                                         getEditLink(), getDeleteLink()));
+        //setItemPane(new BaseRoleItemPane(m_model, m_role,
+         //                                getEditLink(), getDeleteLink()));
     }
 
     private class StaffSection extends Section {
@@ -105,12 +106,12 @@ public class RoleAdminPane extends BaseAdminPane {
             final ActionLink link = new ActionLink
                 (new Label(gz("cms.ui.role.staff.add")));
 
-            group.addAction(new VisibilityComponent(link, STAFF_ADMIN),
-                            ActionGroup.ADD);
+            //group.addAction(new VisibilityComponent(link, STAFF_ADMIN),
+            //                ActionGroup.ADD);
 
-            final RoleAddForm form = new RoleAddForm(m_model, false);
-            getBody().add(form);
-            getBody().connect(link, form);
+            //final RoleAddForm form = new RoleAddForm(m_model, false);
+            //getBody().add(form);
+            //getBody().connect(link, form);
         }
     }
 
@@ -126,12 +127,12 @@ public class RoleAdminPane extends BaseAdminPane {
             final ActionLink link = new ActionLink
                 (new Label(gz("cms.ui.role.viewer.add")));
 
-            group.addAction(new VisibilityComponent(link, STAFF_ADMIN),
-                            ActionGroup.ADD);
+            //group.addAction(new VisibilityComponent(link, STAFF_ADMIN),
+              //              ActionGroup.ADD);
 
-            final RoleAddForm form = new RoleAddForm(m_model, true);
-            getBody().add(form);
-            getBody().connect(link, form);
+            //final RoleAddForm form = new RoleAddForm(m_model, true);
+            //getBody().add(form);
+            //getBody().connect(link, form);
         }
     }
 
@@ -152,7 +153,7 @@ public class RoleAdminPane extends BaseAdminPane {
             }
         }
     }
-
+/*
     private class SelectionRequestLocal extends RoleRequestLocal {
         protected final Object initialValue(final PageState state) {
             final String id = m_model.getSelectedKey(state).toString();
@@ -160,7 +161,7 @@ public class RoleAdminPane extends BaseAdminPane {
             return new Role(new BigDecimal(id));
         }
     }
-
+*/
     private static class StaffListModelBuilder extends LockableImpl
             implements ListModelBuilder {
         public StaffListModelBuilder() {
@@ -172,8 +173,9 @@ public class RoleAdminPane extends BaseAdminPane {
             final ContentSection section =
                 CMS.getContext().getContentSection();
 
-            return new RoleListModel
-                (section.getStaffGroup().getOrderedRoles());
+            //return new RoleListModel
+            //    (section.getStaffGroup().getOrderedRoles());
+            return null;
         }
     }
 
@@ -184,8 +186,9 @@ public class RoleAdminPane extends BaseAdminPane {
             final ContentSection section =
                 CMS.getContext().getContentSection();
 
-            return new RoleListModel
-                (section.getViewersGroup().getOrderedRoles());
+            //return new RoleListModel
+            //    (section.getViewersGroup().getOrderedRoles());#
+            return null;
         }
     }
 
@@ -193,14 +196,14 @@ public class RoleAdminPane extends BaseAdminPane {
         DeleteForm() {
             super(gz("cms.ui.role.delete_prompt"));
 
-            addSecurityListener(STAFF_ADMIN);
+            //addSecurityListener(STAFF_ADMIN);
         }
 
         public final void process(final FormSectionEvent e)
                 throws FormProcessException {
             final PageState state = e.getPageState();
 
-            m_role.getRole(state).delete();
+            //m_role.getRole(state).delete();
 
             m_model.clearSelection(state);
         }

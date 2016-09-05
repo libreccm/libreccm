@@ -36,7 +36,7 @@ import com.arsdigita.util.Assert;
 import org.apache.log4j.Logger;
 
 /** 
- * 
+ * TODO Needs description
  */
 public class SelectionPanel extends LayoutPanel implements Resettable {
 
