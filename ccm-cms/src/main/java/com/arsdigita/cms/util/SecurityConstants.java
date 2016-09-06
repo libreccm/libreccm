@@ -24,11 +24,14 @@ package com.arsdigita.cms.util;
  * <p>Security class used for checking and granting privileges in
  * CMS.</p>
  *
+ * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  * @author Michael Pih
  * @version $Revision: #7 $ $DateTime: 2004/08/17 23:15:09 $
  * @version $Id: SecurityConstants.java 2090 2010-04-17 08:04:14Z pboy $
  */
-public interface SecurityConstants {
+public class SecurityConstants {
+
+    private SecurityConstants(){}
 
     // CMS Actions
     public final static String STAFF_ADMIN = "staff_admin";

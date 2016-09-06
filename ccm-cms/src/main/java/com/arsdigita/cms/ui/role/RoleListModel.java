@@ -35,6 +35,7 @@ import java.util.Iterator;
  * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  */
 class RoleListModel implements ListModel {
+
     private final Collection<Role> m_roles;
 
     private Iterator<Role> iterator;
