@@ -34,9 +34,11 @@ import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.ServiceLoader;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 /**
  * Maps between configuration classes and the settings stored in the database.
@@ -67,9 +69,8 @@ public class ConfigurationManager {
         final ServiceLoader<CcmModule> modules = ServiceLoader.load(
             CcmModule.class);
 
-        final SortedSet<Class<?>> configurations = new TreeSet<>((c1, c2) -> {
-            return c1.getName().compareTo(c2.getName());
-        });
+        final SortedSet<Class<?>> configurations = new TreeSet<>(
+            (conf1, conf2) -> conf1.getName().compareTo(conf2.getName()));
 
         for (CcmModule module : modules) {
             final Module annotation = module.getClass().getAnnotation(
@@ -79,9 +80,10 @@ public class ConfigurationManager {
                 continue;
             }
 
-            Arrays.stream(annotation.configurations()).forEach(c -> {
-                configurations.add(c);
-            });
+            final List<Class<?>> moduleConfs = Arrays.stream(
+                annotation.configurations()).collect(Collectors.toList());
+
+            configurations.addAll(moduleConfs);
         }
 
         return configurations;
