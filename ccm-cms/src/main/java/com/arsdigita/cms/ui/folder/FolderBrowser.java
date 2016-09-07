@@ -141,7 +141,7 @@ public class FolderBrowser extends Table {
                                                        ? s_noIndexHeaders
                                                        : s_headers));
         setHeader(new TableHeader(getColumnModel()));
-        
+
         m_currentFolder = currentFolder;
 
         /*
@@ -516,27 +516,29 @@ public class FolderBrowser extends Table {
             final ItemResolver itemResolver = sectionManager.getItemResolver(
                 section);
 
-            item.getName().getAvailableLocales().forEach(locale -> {
-                final String lang = locale.toString();
-                final StringBuilder fontWeight = new StringBuilder(2);
-                final StringBuilder styleClasses = new StringBuilder(20);
-                if (itemManager.isLive(item)) {
-                    fontWeight.append(Label.BOLD);
-                    styleClasses.append("live ");
-                }
-
-                final Label langLabel = new Label(lang);
-                langLabel.setFontWeight(fontWeight.toString().trim());
-                langLabel.setClassAttr(styleClasses.toString().trim());
-
-                container.add(new Link(
-                    langLabel,
-                    itemResolver.generateItemURL(state,
-                                                 item.getObjectId(),
-                                                 name,
-                                                 section,
-                                                 item.getVersion().name())));
-            });
+            item.getName().getAvailableLocales().stream()
+                .map((locale) -> locale.toString())
+                .map((lang) -> {
+                    final StringBuilder fontWeight = new StringBuilder(2);
+                    final StringBuilder styleClasses = new StringBuilder(20);
+                    if (itemManager.isLive(item)) {
+                        fontWeight.append(Label.BOLD);
+                        styleClasses.append("live ");
+                    }
+                    final Label langLabel = new Label(lang);
+                    langLabel.setFontWeight(fontWeight.toString().trim());
+                    langLabel.setClassAttr(styleClasses.toString().trim());
+                    return langLabel;
+                })
+                .forEach((langLabel) -> {
+                    container.add(new Link(
+                        langLabel,
+                        itemResolver.generateItemURL(state,
+                                                     item.getObjectId(),
+                                                     name,
+                                                     section,
+                                                     item.getVersion().name())));
+                });
 
             return container;
         }
@@ -862,7 +864,6 @@ public class FolderBrowser extends Table {
 //        }
 //
 //    }
-
     /**
      * Getting the GlobalizedMessage using a CMS Class targetBundle.
      *
