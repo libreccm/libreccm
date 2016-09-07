@@ -31,41 +31,32 @@ import com.arsdigita.bebop.table.DefaultTableCellRenderer;
 import com.arsdigita.bebop.table.TableColumn;
 import com.arsdigita.bebop.table.TableModel;
 import com.arsdigita.bebop.table.TableModelBuilder;
-import com.arsdigita.cms.CMS;
 import com.arsdigita.cms.ui.BaseItemPane;
 import com.arsdigita.cms.ui.VisibilityComponent;
 import com.arsdigita.kernel.KernelConfig;
 
 import org.librecms.workflow.CmsTask;
-import org.libreccm.core.EmailAddress;
-import org.libreccm.security.Group;
 import org.libreccm.security.User;
 
 import com.arsdigita.toolbox.ui.ActionGroup;
 import com.arsdigita.toolbox.ui.PropertyList;
 import com.arsdigita.toolbox.ui.Section;
 import com.arsdigita.util.LockableImpl;
-import com.arsdigita.web.Web;
 
-import com.sun.javafx.scene.control.skin.VirtualFlow;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.security.GroupRepository;
 import org.libreccm.security.PermissionChecker;
 import org.libreccm.security.Role;
 import org.libreccm.security.RoleRepository;
 import org.libreccm.security.Shiro;
 import org.libreccm.workflow.Task;
 import org.libreccm.workflow.UserTask;
-import org.libreccm.workflow.Workflow;
 import org.libreccm.workflow.WorkflowManager;
 import org.librecms.CmsConstants;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
-import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
@@ -336,15 +327,14 @@ final class TaskItemPane extends BaseItemPane {
             }
 
             private String deps(final CmsTask task) {
-                final List<Task> deps = task.getDependsOn();
+                final List<Task> dependencies = task.getDependsOn();
                 final KernelConfig kernelConfig = KernelConfig.getConfig();
                 final Locale defaultLocale = kernelConfig.getDefaultLocale();
-                final StringJoiner joiner = new StringJoiner(", ");
 
-                deps.forEach(dep -> joiner.add(dep.getLabel().getValue(
-                    defaultLocale)));
-
-                return joiner.toString();
+                return dependencies.stream()
+                    .map(dependency -> dependency.getLabel().getValue(
+                        defaultLocale))
+                    .collect(Collectors.joining(", "));
             }
 
         }
@@ -432,13 +422,14 @@ final class TaskItemPane extends BaseItemPane {
 
         private class Model implements TableModel {
 
-            private final List<Role> roles = new ArrayList<>();
+            private final List<Role> roles;
             private Role role;
             private int index = -1;
 
             private Model(final CmsTask task) {
-                task.getAssignments().forEach(assignment -> roles.add(
-                    assignment.getRole()));
+                roles = task.getAssignments().stream()
+                    .map(assignment -> assignment.getRole())
+                    .collect(Collectors.toList());
             }
 
             @Override
@@ -449,7 +440,7 @@ final class TaskItemPane extends BaseItemPane {
             @Override
             public final boolean nextRow() {
                 index++;
-               return index < roles.size();
+                return index < roles.size();
             }
 
             @Override

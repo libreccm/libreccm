@@ -56,6 +56,7 @@ import org.librecms.CmsConstants;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TooManyListenersException;
+import java.util.stream.Collectors;
 
 class TaskAddRole extends CMSForm {
 
@@ -104,10 +105,10 @@ class TaskAddRole extends CMSForm {
             final CmsTask task = m_task.getTask(state);
 
             final List<TaskAssignment> assignments = task.getAssignments();
-            final List<Role> roles = new ArrayList<>();
-
-            assignments.forEach(assignment -> roles.add(assignment.getRole()));
-
+            final List<Role> roles = assignments.stream()
+                .map(TaskAssignment::getRole)
+                .collect(Collectors.toList());
+            
             m_roles.setValue(state, roles);
         }
 

@@ -46,6 +46,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TooManyListenersException;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="jens.pelzetter@googlemail.com">Jens Pelzetter</a>
@@ -179,15 +180,16 @@ class BaseTaskForm extends BaseForm {
                                    final String[] selectedDependencies) {
         final List<Task> dependencies = task.getDependentTasks();
         final Map<Long, Task> toAdd = new HashMap<>();
-        final Map<Long, Task> toRemove = new HashMap<>();
-
         // Everything is to be removed unless it is in the array.
-        dependencies.forEach(temp -> toRemove.put(temp.getTaskId(), temp));
-        
-        final CdiUtil cdiUtil =CdiUtil.createCdiUtil();
+        final Map<Long, Task> toRemove = dependencies.stream()
+            .collect(Collectors.toMap(Task::getTaskId,
+                                      dependency -> dependency));
+
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final TaskRepository taskRepo = cdiUtil.findBean(TaskRepository.class);
-        final WorkflowManager workflowManager = cdiUtil.findBean(WorkflowManager.class);
-        
+        final WorkflowManager workflowManager = cdiUtil.findBean(
+            WorkflowManager.class);
+
         Long selectedId;
         Object addedTask;
         if (selectedDependencies != null) {
@@ -200,11 +202,11 @@ class BaseTaskForm extends BaseForm {
             }
         }
 
-        toRemove.values().forEach(temp -> workflowManager.removeDependentTask(
-            task, temp));
-        
-        toAdd.values().forEach(temp -> workflowManager.addDependentTask(task,
-                                                                        temp));
+        toRemove.values().forEach(taskToRemove -> workflowManager
+            .removeDependentTask(task, taskToRemove));
+
+        toAdd.values().forEach(tasktoAdd -> workflowManager
+            .addDependentTask(task, tasktoAdd));
     }
 
 }

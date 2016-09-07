@@ -18,7 +18,6 @@
  */
 package com.arsdigita.cms.ui.workflow;
 
-import com.arsdigita.bebop.Form;
 import com.arsdigita.bebop.FormProcessException;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.event.FormInitListener;
@@ -45,6 +44,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.TooManyListenersException;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
@@ -109,12 +109,12 @@ class TaskEditForm extends BaseTaskForm {
             m_type.setValue(state, Long.toString(task.getTaskType()
                             .getTaskTypeId()));
 
-            final List<Task> deps = task.getDependsOn();
-            final List<String> list = new ArrayList<>();
+            final List<Task> dependencies = task.getDependsOn();
+            final List<String> depIdList =  dependencies.stream()
+                .map(dependency -> Long.toString(dependency.getTaskId()))
+                .collect(Collectors.toList());
 
-            deps.forEach(dep -> list.add(Long.toString(dep.getTaskId())));
-
-            m_deps.setValue(state, list.toArray());
+            m_deps.setValue(state, depIdList.toArray());
         }
 
     }
@@ -130,7 +130,8 @@ class TaskEditForm extends BaseTaskForm {
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final TaskRepository taskRepo = cdiUtil.findBean(
                 TaskRepository.class);
-            final CmsTaskTypeRepository taskTypeRepo = cdiUtil.findBean(CmsTaskTypeRepository.class);
+            final CmsTaskTypeRepository taskTypeRepo = cdiUtil.findBean(
+                CmsTaskTypeRepository.class);
             final ConfigurationManager confManager = cdiUtil.findBean(
                 ConfigurationManager.class);
             final KernelConfig kernelConfig = confManager.findConfiguration(
@@ -142,8 +143,9 @@ class TaskEditForm extends BaseTaskForm {
             task.getDescription().addValue(
                 defaultLocale,
                 (String) m_description.getValue(state));
-            
-            final CmsTaskType taskType = taskTypeRepo.findById((Long) m_type.getValue(state));
+
+            final CmsTaskType taskType = taskTypeRepo.findById((Long) m_type
+                .getValue(state));
             task.setTaskType(taskType);
 
             taskRepo.save(task);
