@@ -30,9 +30,7 @@ import org.libreccm.security.User;
 import org.libreccm.tests.categories.UnitTest;
 import org.libreccm.testutils.EqualsVerifier;
 import org.libreccm.web.CcmApplication;
-import org.libreccm.workflow.Workflow;
 import org.libreccm.workflow.WorkflowTemplate;
-import org.librecms.lifecycle.Lifecycle;
 import org.librecms.lifecycle.LifecycleDefinition;
 
 import java.util.Arrays;

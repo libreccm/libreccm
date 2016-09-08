@@ -27,14 +27,14 @@ import java.util.Objects;
 
 /**
  * Encapsulates the informations about an authoring kit.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class AuthoringKitInfo {
 
     /**
-     * The create component (the form used to collect the mandatory data for 
-     * the content type).
+     * The create component (the form used to collect the mandatory data for the
+     * content type).
      */
     private Class<? extends ItemCreateForm> createComponent;
 
@@ -52,17 +52,21 @@ public class AuthoringKitInfo {
     }
 
     public void setCreateComponent(
-        final Class<? extends ItemCreateForm> createComponent) {
+            final Class<? extends ItemCreateForm> createComponent) {
 
         this.createComponent = createComponent;
     }
 
     public List<AuthoringStepInfo> getAuthoringSteps() {
-        return Collections.unmodifiableList(authoringSteps);
+        if (authoringSteps == null) {
+            return null;
+        } else {
+            return Collections.unmodifiableList(authoringSteps);
+        }
     }
 
     protected void setAuthoringSteps(
-        final List<AuthoringStepInfo> authoringSteps) {
+            final List<AuthoringStepInfo> authoringSteps) {
         this.authoringSteps = authoringSteps;
     }
 
@@ -97,10 +101,10 @@ public class AuthoringKitInfo {
         if (!other.canEqual(this)) {
             return false;
         }
-        if (!Objects.equals(this.createComponent, other.getCreateComponent())) {
+        if (!Objects.equals(createComponent, other.getCreateComponent())) {
             return false;
         }
-        return Objects.equals(this.authoringSteps, other.getAuthoringSteps());
+        return Objects.equals(authoringSteps, other.getAuthoringSteps());
     }
 
     public boolean canEqual(final Object obj) {
@@ -114,9 +118,9 @@ public class AuthoringKitInfo {
 
     public String toString(final String data) {
         return String.format("%s{ "
-                                 + "createComponent = \"%s\", "
-                                 + "authoringSteps = { %s }%s"
-                                 + " }",
+                                     + "createComponent = \"%s\", "
+                                     + "authoringSteps = { %s }%s"
+                                     + " }",
                              super.toString(),
                              Objects.toString(createComponent),
                              Objects.toString(authoringSteps),

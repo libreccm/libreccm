@@ -42,6 +42,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+import org.librecms.CmsConstants;
 
 import org.librecms.lifecycle.LifecycleDefinition;
 
@@ -77,7 +78,8 @@ public class ContentSectionManager {
     private ConfigurationManager confManager;
 
     /**
-     * Creates a new content section including the default roles.
+     * Creates a new content section including the default roles. This operation
+     * requries {@code admin} privileges.
      *
      * @param name The name of the new content section.
      *
@@ -89,11 +91,11 @@ public class ContentSectionManager {
     public ContentSection createContentSection(final String name) {
         if (name == null || name.isEmpty()) {
             throw new IllegalArgumentException(
-                "The name of a ContentSection can't be blank.");
+                    "The name of a ContentSection can't be blank.");
         }
 
         final KernelConfig kernelConfig = confManager.findConfiguration(
-            KernelConfig.class);
+                KernelConfig.class);
         final Locale defautLocale = kernelConfig.getDefaultLocale();
 
         final ContentSection section = new ContentSection();
@@ -180,7 +182,7 @@ public class ContentSectionManager {
      * Renames a content section and all roles associated with it (roles
      * starting with the name of the content section). Note that you have to
      * rename the localised titles of the content section and the root folders
-     * manually
+     * manually. This operation requires {@code admin} privileges.
      *
      * @param section The section to rename.
      *
@@ -211,12 +213,24 @@ public class ContentSectionManager {
         }
     }
 
+    /**
+     * Adds new role to a content section. the new role will not have any
+     * members, they have to be added separatly. This operation requires
+     * {@link CmsConstants#PRIVILEGE_ADMINISTER_ROLES} for the provided content
+     * section.
+     *
+     * @param section The {@link ContentSection} to which the role is added.
+     * @param roleName The name of the new role.
+     * @param privileges The privileges of the new role.
+     */
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
     @Transactional(Transactional.TxType.REQUIRED)
-    public void addRoleToContentSection(final ContentSection section,
-                                        final String roleName,
-                                        final String... privileges) {
+    public void addRoleToContentSection(
+            @RequiresPrivilege(PRIVILEGE_ADMINISTER_ROLES)
+            final ContentSection section,
+            final String roleName,
+            final String... privileges) {
+
         final Role role = new Role();
         role.setName(String.join("_", section.getLabel(), roleName));
         roleRepo.save(role);
@@ -226,20 +240,52 @@ public class ContentSectionManager {
             permissionManager.grantPrivilege(privilege, role, rootFolder);
         }
 
+//        section.addRole(role);
+//        sectionRepo.save(section);
+        addRoleToContentSection(role, section);
+    }
+
+    /**
+     * Associates an existing role to with a content section. This will not
+     * grant any permissions for the content section to the role. This operation
+     * requires {@link CmsConstants#PRIVILEGE_ADMINISTER_ROLES} for the provided
+     * content section.
+     *
+     * @param role The role to add.
+     * @param section The section the role is associated with.
+     */
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public void addRoleToContentSection(
+            final Role role,
+            @RequiresPrivilege(PRIVILEGE_ADMINISTER_ROLES)
+            final ContentSection section) {
+
         section.addRole(role);
         sectionRepo.save(section);
     }
 
+    /**
+     * Removes a role from a content section and deletes all permissions of the
+     * role which are associated with the content section. The role itself is
+     * <strong>not</strong> deleted because the role is maybe is used in other
+     * places. This operation requires
+     * {@link CmsConstants#PRIVILEGE_ADMINISTER_ROLES} for the provided content
+     * section.
+     *
+     * @param contentSection The section from which the role is removed.
+     * @param role The role to remove from the content section.
+     */
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
     @Transactional(Transactional.TxType.REQUIRED)
     public void removeRoleFromContentSection(
-        final ContentSection contentSection,
-        final Role role) {
+            @RequiresPrivilege(PRIVILEGE_ADMINISTER_ROLES)
+            final ContentSection contentSection,
+            final Role role) {
 
         if (contentSection == null) {
             throw new IllegalArgumentException(
-                "Can't remove role from ContentSection null");
+                    "Can't remove role from ContentSection null");
         }
 
         if (role == null) {
@@ -250,8 +296,8 @@ public class ContentSectionManager {
         sectionRepo.save(contentSection);
 
         final TypedQuery<Permission> query = entityManager
-            .createNamedQuery("ContentSection.findPermissions",
-                              Permission.class);
+                .createNamedQuery("ContentSection.findPermissions",
+                                  Permission.class);
         query.setParameter("section", contentSection);
         query.setParameter("rootDocumentsFolder",
                            contentSection.getRootDocumentsFolder());
@@ -261,64 +307,133 @@ public class ContentSectionManager {
         permissions.forEach(p -> entityManager.remove(p));
     }
 
+    /**
+     * Associates a content type with a content section making the type
+     * available for use in the content section. This operation requires
+     * {@link CmsConstants#PRIVILEGE_ADMINISTER_CONTENT_TYPES} for the provided
+     * content section.
+     *
+     * @param type The {@link ContentItem} class representing the type to add.
+     * @param section The section to which to type is added.
+     */
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
     @Transactional(Transactional.TxType.REQUIRED)
-    public void addTypeToSection(final ContentType type,
-                                 final ContentSection section) {
+    public void addTypeToSection(
+            final Class<? extends ContentItem> type,
+            @RequiresPrivilege(PRIVILEGE_ADMINISTER_CONTENT_TYPES)
+            final ContentSection section) {
+
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Removes a content type from a content section. After this it is not
+     * possible to create new items of this type in the content section.
+     * Existing items are left untouched. This operation requires
+     * {@link CmsConstants#PRIVILEGE_ADMINISTER_CONTENT_TYPES} for the provided
+     * content section.
+     *
+     * @param type The type to remove.
+     * @param section The section from which the type is removed.
+     */
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
     @Transactional(Transactional.TxType.REQUIRED)
-    public void removeTypeFromSection(final ContentType type,
-                                      final ContentSection section) {
+    public void removeTypeFromSection(
+            final ContentType type,
+            @RequiresPrivilege(PRIVILEGE_ADMINISTER_CONTENT_TYPES)
+            final ContentSection section) {
+
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Adds a lifecycle definition to a content section. This operation requires
+     * {@link CmsConstants#PRIVILEGE_ADMINISTER_LIFECYLES} for the provided
+     * content section.
+     *
+     * @param definition The lifecycle definition to add.
+     * @param section The section to which the definition is added.
+     */
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
     @Transactional(Transactional.TxType.REQUIRED)
     public void addLifecycleDefinitionToContentSection(
-        final LifecycleDefinition definition,
-        final ContentSection section) {
-        throw new UnsupportedOperationException();
+            final LifecycleDefinition definition,
+            @RequiresPrivilege(PRIVILEGE_ADMINISTER_LIFECYLES)
+            final ContentSection section) {
+
+        section.addLifecycleDefinition(definition);
+        sectionRepo.save(section);
     }
 
+    /**
+     * Removes a lifecycle definition from a content section. This operation
+     * requires {@link CmsConstants#PRIVILEGE_ADMINISTER_LIFECYLES} for the
+     * provided content section.
+     *
+     * @param definition The definition to remove.
+     * @param section The section from which the definition is removed.
+     */
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
     @Transactional(Transactional.TxType.REQUIRED)
     public void removeLifecycleDefinitionFromContentSection(
-        final LifecycleDefinition definition,
-        final ContentSection contentSection) {
-        throw new UnsupportedOperationException();
+            final LifecycleDefinition definition,
+            @RequiresPrivilege(PRIVILEGE_ADMINISTER_LIFECYLES)
+            final ContentSection section) {
+
+        section.removeLifecycleDefinition(definition);
+        sectionRepo.save(section);
     }
 
+    /**
+     * Adds a workflow template to a content section. This operation requires
+     * {@link CmsConstants#PRIVILEGE_ADMINISTER_WORKFLOW} for the provided
+     * content section.
+     *
+     * @param template The template to add.
+     * @param section The content section to which the template is added.
+     */
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
     @Transactional(Transactional.TxType.REQUIRED)
     public void addWorkflowTemplateToContentSection(
-        final WorkflowTemplate definition,
-        final ContentSection section) {
-        throw new UnsupportedOperationException();
+            final WorkflowTemplate template,
+            @RequiresPrivilege(PRIVILEGE_ADMINISTER_WORKFLOW)
+            final ContentSection section) {
+
+        section.addWorkflowTemplate(template);
+        sectionRepo.save(section);
     }
 
+    /**
+     * Removes a workflow template from a content section. This operation
+     * requires {@link CmsConstants#PRIVILEGE_ADMINISTER_WORKFLOW} for the
+     * provided content section.
+     *
+     * @param template The template to remove.
+     * @param section The section from which the template is removed.
+     */
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
     @Transactional(Transactional.TxType.REQUIRED)
-
     public void removeWorkflowTemplateFromContentSection(
-        final LifecycleDefinition definition,
-        final ContentSection contentSection) {
-        throw new UnsupportedOperationException();
+            final WorkflowTemplate template,
+            @RequiresPrivilege(PRIVILEGE_ADMINISTER_WORKFLOW)
+            final ContentSection section) {
+
+        section.removeWorkflowTemplate(template);
+        sectionRepo.save(section);
     }
 
+    /**
+     * Retrieves the {@link ItemResolver} for the provided content section.
+     *
+     * @param section The section for which the {@link ItemResolver} is
+     * retrieved.
+     * @return The {@link ItemResolver} for the provided content section.
+     */
     public ItemResolver getItemResolver(final ContentSection section) {
         try {
             final Class<ItemResolver> itemResolverClazz
                                       = (Class<ItemResolver>) Class.
-                forName(section.getItemResolverClass());
+                    forName(section.getItemResolverClass());
             return itemResolverClazz.newInstance();
         } catch (ClassNotFoundException |
                  IllegalAccessException |
