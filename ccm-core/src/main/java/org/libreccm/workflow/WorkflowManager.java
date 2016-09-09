@@ -19,6 +19,7 @@
 package org.libreccm.workflow;
 
 import org.libreccm.core.CoreConstants;
+import org.libreccm.l10n.LocalizedString;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
 import org.libreccm.security.Role;
@@ -70,13 +71,24 @@ public class WorkflowManager {
     @Transactional(Transactional.TxType.REQUIRED)
     public Workflow createWorkflow(final WorkflowTemplate template) {
         final Workflow workflow = new Workflow();
+        
+        final LocalizedString name = new LocalizedString();
+        template.getName().getValues().forEach(
+            (locale, str) -> name.addValue(locale, str));
+        workflow.setName(name);
+        
+        final LocalizedString description = new LocalizedString();
+        template.getDescription().getValues().forEach(
+        (locale, str) -> description.addValue(locale, str));
+        workflow.setDescription(description);
+        
         final Map<Long, Task> tasks = new HashMap<>();
 
         template.getTasks().forEach(taskTemplate -> createTask(taskTemplate,
                                                                tasks));
         template.getTasks().forEach(taskTemplate -> fixTaskDependencies(
             taskTemplate, tasks.get(taskTemplate.getTaskId()), tasks));
-        
+
         tasks.values().forEach(task -> taskRepo.save(task));
         workflowRepo.save(workflow);
 
@@ -105,15 +117,31 @@ public class WorkflowManager {
                 if ("taskId".equals(propertyDesc.getName())
                         || "workflow".equals(propertyDesc.getName())
                         || "dependentTasks".equals(propertyDesc.getName())
-                        || "dependsOn".equals(propertyDesc.getName())) {
+                        || "dependsOn".equals(propertyDesc.getName())
+                        || "assignments".equals(propertyDesc.getName())
+                        || "class".equals(propertyDesc.getName())) {
                     continue;
                 }
 
                 final Method readMethod = propertyDesc.getReadMethod();
                 final Method writeMethod = propertyDesc.getWriteMethod();
 
+                if (writeMethod == null) {
+                    continue;
+                }
+
                 final Object value = readMethod.invoke(template);
-                writeMethod.invoke(task, value);
+                if (value instanceof LocalizedString) {
+                    final LocalizedString localized = (LocalizedString) value;
+                    final LocalizedString copy = new LocalizedString();
+
+                    localized.getValues().forEach(
+                        (locale, str) -> copy.addValue(locale, str));
+
+                    writeMethod.invoke(task, copy);
+                } else {
+                    writeMethod.invoke(task, value);
+                }
             } catch (IllegalAccessException |
                      IllegalArgumentException |
                      InvocationTargetException ex) {

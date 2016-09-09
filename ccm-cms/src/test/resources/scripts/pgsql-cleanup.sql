@@ -14,12 +14,6 @@ DELETE FROM ccm_cms.content_items;
 
 DELETE FROM ccm_cms.content_section_lifecycle_definitions;
 
-DELETE FROM ccm_cms.lifecycle_definition_labels;
-
-DELETE FROM ccm_cms.lifecycle_definition_descriptions;
-
-DELETE FROM ccm_cms.lifecyle_definitions;
-
 DELETE FROM ccm_cms.content_section_workflow_templates;
 
 DELETE FROM ccm_core.workflow_templates;
@@ -29,6 +23,12 @@ DELETE FROM ccm_cms.content_type_labels;
 DELETE FROM ccm_cms.content_type_descriptions;
 
 DELETE FROM ccm_cms.content_types;
+
+DELETE FROM ccm_cms.lifecycle_definition_labels;
+
+DELETE FROM ccm_cms.lifecycle_definition_descriptions;
+
+DELETE FROM ccm_cms.lifecyle_definitions;
 
 DELETE FROM ccm_cms.content_section_roles;
 

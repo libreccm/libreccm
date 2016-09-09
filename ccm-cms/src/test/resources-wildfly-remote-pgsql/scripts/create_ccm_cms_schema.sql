@@ -626,7 +626,7 @@ CREATE SCHEMA ccm_cms;
         START_DATE_TIME date,
         STARTED boolean,
         DEFINITION_ID int8,
-        lifecycle_LIFECYCLE_ID int8,
+        LIFECYCLE_ID int8,
         primary key (PHASE_ID)
     );
 
@@ -2042,7 +2042,7 @@ create sequence hibernate_sequence start 1 increment 1;
 
     alter table CCM_CMS.LIFECYLE_PHASES 
         add constraint FKerihqw4gpb0lwap6x73us7wos 
-        foreign key (lifecycle_LIFECYCLE_ID) 
+        foreign key (LIFECYCLE_ID) 
         references CCM_CMS.LIFECYCLES;
 
     alter table CCM_CMS.MPA_SECTION_TEXTS 

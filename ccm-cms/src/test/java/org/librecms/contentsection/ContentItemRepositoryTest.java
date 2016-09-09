@@ -41,6 +41,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryRepository;
+import org.libreccm.security.Shiro;
 import org.libreccm.tests.categories.IntegrationTest;
 import org.librecms.contenttypes.Article;
 import org.librecms.contenttypes.News;
@@ -329,23 +330,23 @@ public class ContentItemRepositoryTest {
     public void countFilterByFolderAndName() {
         final Category folder = categoryRepo.findById(-2100L);
 
-        assertThat(itemRepo.countFilterByFolderAndName(folder, "article"), 
+        assertThat(itemRepo.countFilterByFolderAndName(folder, "article"),
                    is(3L));
-        assertThat(itemRepo.countFilterByFolderAndName(folder, "art"), 
+        assertThat(itemRepo.countFilterByFolderAndName(folder, "art"),
                    is(3L));
-        assertThat(itemRepo.countFilterByFolderAndName(folder, "article1"), 
+        assertThat(itemRepo.countFilterByFolderAndName(folder, "article1"),
                    is(1L));
-        assertThat(itemRepo.countFilterByFolderAndName(folder, "article2"), 
+        assertThat(itemRepo.countFilterByFolderAndName(folder, "article2"),
                    is(1L));
-        assertThat(itemRepo.countFilterByFolderAndName(folder, "article3"), 
+        assertThat(itemRepo.countFilterByFolderAndName(folder, "article3"),
                    is(1L));
 
-        assertThat(itemRepo.countFilterByFolderAndName(folder, "news"), 
+        assertThat(itemRepo.countFilterByFolderAndName(folder, "news"),
                    is(1L));
 
-        assertThat(itemRepo.countFilterByFolderAndName(folder, "article10"), 
+        assertThat(itemRepo.countFilterByFolderAndName(folder, "article10"),
                    is(0L));
-        assertThat(itemRepo.countFilterByFolderAndName(folder, "foo"), 
+        assertThat(itemRepo.countFilterByFolderAndName(folder, "foo"),
                    is(0L));
     }
 

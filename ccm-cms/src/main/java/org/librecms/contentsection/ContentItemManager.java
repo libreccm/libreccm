@@ -180,11 +180,6 @@ public class ContentItemManager {
                 type.getName()));
         }
 
-        final Lifecycle lifecycle = lifecycleManager.createLifecycle(
-            lifecycleDefinition);
-        final Workflow workflow = workflowManager.createWorkflow(
-            workflowTemplate);
-
         final T item;
         try {
             item = type.newInstance();
@@ -202,10 +197,25 @@ public class ContentItemManager {
         item.setDisplayName(name);
         item.getName().addValue(kernelConfig.getDefaultLocale(),
                                 name);
-        item.setLifecycle(lifecycle);
-        item.setWorkflow(workflow);
 
-        categoryManager.addObjectToCategory(item, folder);
+        item.setVersion(ContentItemVersion.DRAFT);
+        item.setContentType(contentType.get());
+
+        if (lifecycleDefinition != null) {
+            final Lifecycle lifecycle = lifecycleManager.createLifecycle(
+                lifecycleDefinition);
+            item.setLifecycle(lifecycle);
+        }
+        if (workflowTemplate != null) {
+            final Workflow workflow = workflowManager.createWorkflow(
+                workflowTemplate);
+            item.setWorkflow(workflow);
+        }
+
+        categoryManager.addObjectToCategory(
+            item,
+            folder,
+            CmsConstants.CATEGORIZATION_TYPE_FOLDER);
 
         contentItemRepo.save(item);
 

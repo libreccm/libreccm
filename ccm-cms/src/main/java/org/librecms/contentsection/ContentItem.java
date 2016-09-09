@@ -30,6 +30,7 @@ import org.librecms.attachments.AttachmentList;
 import org.librecms.lifecycle.Lifecycle;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -218,6 +219,13 @@ public class ContentItem extends CcmObject implements Serializable,
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private Workflow workflow;
 
+    public ContentItem() {
+        name = new LocalizedString();
+        title = new LocalizedString();
+        description = new LocalizedString();
+        attachments = new ArrayList<>();
+    }
+    
     public LocalizedString getName() {
         return name;
     }

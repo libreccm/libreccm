@@ -626,7 +626,7 @@ create table CCM_CMS.ARTICLE_LEADS (
         START_DATE_TIME date,
         STARTED boolean,
         DEFINITION_ID bigint,
-        lifecycle_LIFECYCLE_ID bigint,
+        LIFECYCLE_ID bigint,
         primary key (PHASE_ID)
     );
 
@@ -2042,7 +2042,7 @@ create sequence hibernate_sequence start with 1 increment by 1;
 
     alter table CCM_CMS.LIFECYLE_PHASES 
         add constraint FKerihqw4gpb0lwap6x73us7wos 
-        foreign key (lifecycle_LIFECYCLE_ID) 
+        foreign key (LIFECYCLE_ID) 
         references CCM_CMS.LIFECYCLES;
 
     alter table CCM_CMS.MPA_SECTION_TEXTS 

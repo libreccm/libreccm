@@ -69,6 +69,7 @@ public class Phase implements Serializable {
     private boolean finished;
 
     @ManyToOne
+    @JoinColumn(name = "LIFECYCLE_ID")
     private Lifecycle lifecycle;
 
     @OneToOne

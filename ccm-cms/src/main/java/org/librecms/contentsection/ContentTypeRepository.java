@@ -135,7 +135,7 @@ public class ContentTypeRepository
 
         try {
             final Class<?> clazz = Class.forName(className);
-            if (!clazz.isAssignableFrom(ContentItem.class)) {
+            if (!ContentItem.class.isAssignableFrom(clazz)) {
                 throw new IllegalArgumentException(String.format(
                     "The provided class \"%s\" is not a subclass of \"%s\".",
                     className,

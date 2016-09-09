@@ -179,6 +179,13 @@ public class CategoryManagerTest {
     }
 
     @Test
+    @InSequence(20)
+    public void checkShiro() {
+        assertThat(shiro.getSecurityManager(), is(not(nullValue())));
+        assertThat(shiro.getSystemUser(), is(not(nullValue())));
+    }
+    
+    @Test
     @UsingDataSet(
         "datasets/org/libreccm/categorization/CategoryManagerTest/data.yml")
     @ShouldMatchDataSet(
