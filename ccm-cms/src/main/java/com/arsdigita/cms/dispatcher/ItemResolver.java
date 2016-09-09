@@ -26,7 +26,6 @@ import org.librecms.contentsection.ContentSection;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
-import java.math.BigDecimal;
 
 /**
  * <p>

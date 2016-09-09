@@ -6,7 +6,7 @@ DROP SEQUENCE IF EXISTS hibernate_sequence;
 CREATE SCHEMA ccm_core;
 CREATE SCHEMA ccm_cms;
 
-    create table CCM_CMS.ARTICLE_LEADS (
+create table CCM_CMS.ARTICLE_LEADS (
         OBJECT_ID bigint not null,
         LOCALIZED_VALUE clob,
         LOCALE varchar(255) not null,
@@ -170,7 +170,7 @@ CREATE SCHEMA ccm_cms;
     create table CCM_CMS.BINARY_ASSETS (
         ASSET_DATA blob,
         FILENAME varchar(512) not null,
-        MIME_TYPE binary(512) not null,
+        MIME_TYPE varchar(512) not null,
         DATA_SIZE bigint,
         ASSET_ID bigint not null,
         primary key (ASSET_ID)
@@ -181,7 +181,7 @@ CREATE SCHEMA ccm_cms;
         REV integer not null,
         ASSET_DATA blob,
         FILENAME varchar(512),
-        MIME_TYPE binary(512),
+        MIME_TYPE varchar(512),
         DATA_SIZE bigint,
         primary key (ASSET_ID, REV)
     );
@@ -273,6 +273,8 @@ CREATE SCHEMA ccm_cms;
         VERSION varchar(255),
         OBJECT_ID bigint not null,
         CONTENT_TYPE_ID bigint,
+        LIFECYCLE_ID bigint,
+        WORKFLOW_ID bigint,
         primary key (OBJECT_ID)
     );
 
@@ -283,6 +285,8 @@ CREATE SCHEMA ccm_cms;
         LAUNCH_DATE date,
         VERSION varchar(255),
         CONTENT_TYPE_ID bigint,
+        LIFECYCLE_ID bigint,
+        WORKFLOW_ID bigint,
         primary key (OBJECT_ID, REV)
     );
 
@@ -876,10 +880,10 @@ CREATE SCHEMA ccm_cms;
 
     create table CCM_CORE.CATEGORIZATIONS (
         CATEGORIZATION_ID bigint not null,
-        TYPE varchar(255),
         CATEGORY_ORDER bigint,
         CATEGORY_INDEX boolean,
         OBJECT_ORDER bigint,
+        TYPE varchar(255),
         OBJECT_ID bigint,
         CATEGORY_ID bigint,
         primary key (CATEGORIZATION_ID)
@@ -1331,11 +1335,11 @@ CREATE SCHEMA ccm_cms;
         SETTING_ID bigint not null,
         CONFIGURATION_CLASS varchar(512) not null,
         NAME varchar(512) not null,
+        SETTING_VALUE_LONG bigint,
+        SETTING_VALUE_BIG_DECIMAL decimal(19,2),
         SETTING_VALUE_BOOLEAN boolean,
         SETTING_VALUE_STRING varchar(1024),
-        SETTING_VALUE_LONG bigint,
         SETTING_VALUE_DOUBLE double,
-        SETTING_VALUE_BIG_DECIMAL decimal(19,2),
         primary key (SETTING_ID)
     );
 
@@ -1474,6 +1478,22 @@ CREATE SCHEMA ccm_cms;
     alter table CCM_CORE.SETTINGS 
         add constraint UK5whinfxdaepqs09e5ia9y71uk unique (CONFIGURATION_CLASS, NAME);
 create sequence hibernate_sequence start with 1 increment by 1;
+
+    create table CCM_CMS.CONTENT_SECTION_LIFECYCLE_DEFINITIONS (
+        CONTENT_SECTION_ID bigint not null,
+        LIFECYCLE_DEFINITION_ID bigint not null
+    );
+
+    create table CCM_CMS.CONTENT_SECTION_WORKFLOW_TEMPLATES (
+        CONTENT_SECTION_ID bigint not null,
+        WORKFLOW_TEMPLATE_ID bigint not null
+    );
+
+    alter table CCM_CMS.CONTENT_SECTION_LIFECYCLE_DEFINITIONS 
+        add constraint UK_dhbp1f81iaw6sl7tg36xh439e unique (LIFECYCLE_DEFINITION_ID);
+
+    alter table CCM_CMS.CONTENT_SECTION_WORKFLOW_TEMPLATES 
+        add constraint UK_goj42ghwu4tf1akfb2r6ensns unique (WORKFLOW_TEMPLATE_ID);
 
     alter table CCM_CMS.ARTICLE_LEADS 
         add constraint FK4g66u3qtfyepw0f733kuiiaul 
@@ -1706,6 +1726,16 @@ create sequence hibernate_sequence start with 1 increment by 1;
         references CCM_CMS.CONTENT_TYPES;
 
     alter table CCM_CMS.CONTENT_ITEMS 
+        add constraint FKfh1nm46qpw6xcwkmgaqw2iu3h 
+        foreign key (LIFECYCLE_ID) 
+        references CCM_CMS.LIFECYCLES;
+
+    alter table CCM_CMS.CONTENT_ITEMS 
+        add constraint FKl00ldjygr6as8gqbt3j14ke7j 
+        foreign key (WORKFLOW_ID) 
+        references CCM_CORE.WORKFLOWS;
+
+    alter table CCM_CMS.CONTENT_ITEMS 
         add constraint FK1fr2q5y1wpmrufruja5ivfpuf 
         foreign key (OBJECT_ID) 
         references CCM_CORE.CCM_OBJECTS;
@@ -1749,6 +1779,21 @@ create sequence hibernate_sequence start with 1 increment by 1;
         add constraint FK3suusqws1xgffyk3yob7m7dge 
         foreign key (OBJECT_ID) 
         references CCM_CMS.CONTENT_TYPES;
+
+    alter table CCM_CMS.CONTENT_TYPES 
+        add constraint FKriohuo8093its1k5rgoc5yrfc 
+        foreign key (CONTENT_SECTION_ID) 
+        references CCM_CMS.CONTENT_SECTIONS;
+
+    alter table CCM_CMS.CONTENT_TYPES 
+        add constraint FK8s83we1tuh9r3j57dyos69wfa 
+        foreign key (DEFAULT_LIFECYCLE_ID) 
+        references CCM_CMS.LIFECYLE_DEFINITIONS;
+
+    alter table CCM_CMS.CONTENT_TYPES 
+        add constraint FKhnu9oikw8rpf22lt5fmk41t7k 
+        foreign key (DEFAULT_WORKFLOW) 
+        references CCM_CORE.WORKFLOW_TEMPLATES;
 
     alter table CCM_CMS.CONTENT_TYPES 
         add constraint FK96vwsbqfbdg33ujeeawajr0v4 
@@ -2689,3 +2734,23 @@ create sequence hibernate_sequence start with 1 increment by 1;
         add constraint FKefpdf9ojplu7loo31hfm0wl2h 
         foreign key (TASK_ID) 
         references CCM_CORE.WORKFLOW_TASKS;
+
+    alter table CCM_CMS.CONTENT_SECTION_LIFECYCLE_DEFINITIONS 
+        add constraint FKqnsnk1eju8vrbm7x0wr5od4ll 
+        foreign key (LIFECYCLE_DEFINITION_ID) 
+        references CCM_CMS.LIFECYLE_DEFINITIONS;
+
+    alter table CCM_CMS.CONTENT_SECTION_LIFECYCLE_DEFINITIONS 
+        add constraint FK7daejlunqsnhgky4b92n019a9 
+        foreign key (CONTENT_SECTION_ID) 
+        references CCM_CMS.CONTENT_SECTIONS;
+
+    alter table CCM_CMS.CONTENT_SECTION_WORKFLOW_TEMPLATES 
+        add constraint FKrx08cdjm9tutrp5lvfhgslw48 
+        foreign key (WORKFLOW_TEMPLATE_ID) 
+        references CCM_CORE.WORKFLOW_TEMPLATES;
+
+    alter table CCM_CMS.CONTENT_SECTION_WORKFLOW_TEMPLATES 
+        add constraint FK6kuejkcl9hcbkr8q6bdlatt8q 
+        foreign key (CONTENT_SECTION_ID) 
+        references CCM_CMS.CONTENT_SECTIONS;

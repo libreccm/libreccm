@@ -126,6 +126,7 @@ public class ContentSection extends CcmApplication implements Serializable {
     @OneToMany
     @JoinTable(
             name = "CONTENT_SECTION_LIFECYCLE_DEFINITIONS",
+            schema = DB_SCHEMA,
             joinColumns = {
                 @JoinColumn(name = "CONTENT_SECTION_ID")
             },
@@ -138,6 +139,7 @@ public class ContentSection extends CcmApplication implements Serializable {
     @OneToMany
     @JoinTable(
             name = "CONTENT_SECTION_WORKFLOW_TEMPLATES",
+            schema = DB_SCHEMA,
             joinColumns = {
                 @JoinColumn(name = "CONTENT_SECTION_ID")
             },

@@ -25,6 +25,7 @@ import org.libreccm.core.CcmObjectRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -167,7 +168,7 @@ public class ContentItemRepository
                 .createNamedQuery("ContentItem.findByFolder",
                                   ContentItem.class);
         query.setParameter("folder", folder);
-
+        
         return query.getResultList();
     }
 
@@ -213,7 +214,7 @@ public class ContentItemRepository
     public List<ContentItem> filterByFolderAndName(final Category folder,
                                                    final String name) {
         final TypedQuery<ContentItem> query = getEntityManager()
-                .createNamedQuery("ContentItem.filterByNameAndFolder",
+                .createNamedQuery("ContentItem.filterByFolderAndName",
                                   ContentItem.class);
         query.setParameter("folder", folder);
         query.setParameter("name", name);
@@ -233,7 +234,7 @@ public class ContentItemRepository
     public long countFilterByFolderAndName(final Category folder,
                                            final String name) {
         final TypedQuery<Long> query = getEntityManager()
-                .createNamedQuery("ContentItem.countFilterByNameAndFolder",
+                .createNamedQuery("ContentItem.countFilterByFolderAndName",
                                   Long.class);
         query.setParameter("folder", folder);
         query.setParameter("name", name);

@@ -66,50 +66,62 @@ import static org.librecms.CmsConstants.*;
 @NamedQueries({
     @NamedQuery(
         name = "ContentItem.findByType",
-        query = "SELECT i FROM ContentItem i WHERE TYPE(I) = :type"),
+        query = "SELECT i FROM ContentItem i WHERE TYPE(i) = :type"),
     @NamedQuery(
         name = "ContentItem.findByFolder",
-        query = "SELECT c.categorizedObject FROM Categorization c "
+        query = "SELECT i FROM ContentItem i "
+                    + "JOIN i.categories c "
                     + "WHERE c.category = :folder "
-                    + "AND TYPE(c.categorizedObject) IN ContentItem"),
+                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "'"),
     @NamedQuery(
         name = "ContentItem.countItemsInFolder",
-        query = "SELECT COUNT(c) FROM Categorization c "
+        query = "SELECT count(i) FROM ContentItem i "
+                    + "JOIN i.categories c "
                     + "WHERE c.category = :folder "
-                    + "AND TYPE(c.categorizedObject) IN ContentItem"),
+                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "'"),
     @NamedQuery(
         name = "ContentItem.countByNameInFolder",
-        query = "SELECT count(c) FROM Categorization c "
+        query = "SELECT COUNT(i) FROM ContentItem i "
+                    + "JOIN i.categories c "
                     + "WHERE c.category = :folder "
-                    + "AND c.categorizedObject.displayName = :name"),
+                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
+                    + "AND i.displayName = :name"),
     @NamedQuery(
-        name = "ContentItem.filterByNameAndFolder",
-        query = "SELECT c.categorizedObject FROM Categorization c "
+        name = "ContentItem.filterByFolderAndName",
+        query = "SELECT i FROM ContentItem i "
+                    + "JOIN i.categories c "
                     + "WHERE c.category = :folder "
-                    + "AND TYPE(c.categorizedObject) IN (ContentItem)"
-                    + "AND (LOWER(c.categorizedObject.displayName) LIKE CONCAT(LOWER(:name), '%') "),
+                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
+                    + "AND LOWER(i.displayName) LIKE CONCAT(LOWER(:name), '%')"),
     @NamedQuery(
-        name = "ContentItem.countFilterByNameAndFolder",
-        query = "SELECT count(c) FROM Categorization c "
+        name = "ContentItem.countFilterByFolderAndName",
+        query = "SELECT COUNT(i) FROM ContentItem i "
+                    + "JOIN i.categories c "
                     + "WHERE c.category = :folder "
-                    + "AND TYPE(c.categorizedObject) IN (ContentItem)"
-                    + "AND LOWER(c.categorizedObject.displayName) LIKE CONCAT(LOWER(:name), '%s') "),
+                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
+                    + "AND LOWER(i.displayName) LIKE CONCAT(LOWER(:name), '%')"
+    //        query = "SELECT COUNT(c) FROM Categorization c "
+    //                    + "JOIN c.categorizedObject o "
+    //                    + "WHERE c.category = :folder "
+    //                    + "AND TYPE(o) IN (ContentItem) "
+    //                    + "AND LOWER(o.displayName) LIKE CONCAT(LOWER(:name), '%s') "
+    ),
     @NamedQuery(
         name = "ContentItem.hasLiveVersion",
         query = "SELECT (CASE WHEN COUNT(i) > 0 THEN true ELSE false END) "
                     + "FROM ContentItem i "
-                    + "WHERE i.uuid = :uuid "
-                    + "AND i.version = \"LIVE\""),
+                    + "WHERE i.uuid = ':uuid' "
+                    + "AND i.version = 'LIVE'"),
     @NamedQuery(
         name = "ContentItem.findDraftVersion",
         query = "SELECT i FROM ContentItem i "
-                    + "WHERE i.uuid = :uuid "
-                    + "AND i.version = \"DRAFT\""),
+                    + "WHERE i.uuid = ':uuid' "
+                    + "AND i.version = 'DRAFT'"),
     @NamedQuery(
         name = "ContentItem.findLiveVersion",
         query = "SELECT i FROM ContentItem i "
-                    + "WHERE i.uuid = :uuid "
-                    + "AND i.version = \"LIVE\"")
+                    + "WHERE i.uuid = ':uuid' "
+                    + "AND i.version = 'LIVE'")
 
 })
 public class ContentItem extends CcmObject implements Serializable,

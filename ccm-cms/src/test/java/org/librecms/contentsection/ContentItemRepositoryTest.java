@@ -69,7 +69,7 @@ public class ContentItemRepositoryTest {
 
     @Inject
     private ContentItemRepository itemRepo;
-    
+
     @Inject
     private CategoryRepository categoryRepo;
 
@@ -127,7 +127,7 @@ public class ContentItemRepositoryTest {
 
         return ShrinkWrap
             .create(WebArchive.class,
-                    "LibreCCM-org.libreccm.cms.contentsection.ContentItemRepositoryTest.war")
+                    "LibreCCM-org.librecms.contentsection.ContentItemRepositoryTest.war")
             .addPackage(org.libreccm.auditing.CcmRevision.class.getPackage())
             .addPackage(org.libreccm.categorization.Categorization.class
                 .getPackage())
@@ -157,6 +157,7 @@ public class ContentItemRepositoryTest {
                 com.arsdigita.ui.admin.applications.DefaultApplicationInstanceForm.class)
             .addClass(
                 com.arsdigita.ui.admin.applications.DefaultApplicationSettingsPane.class)
+            .addClass(com.arsdigita.cms.dispatcher.ItemResolver.class)
             .addPackage(com.arsdigita.util.Lockable.class.getPackage())
             .addPackage(com.arsdigita.web.BaseServlet.class.getPackage())
             .addPackage(org.librecms.Cms.class.getPackage())
@@ -184,7 +185,7 @@ public class ContentItemRepositoryTest {
     @Test
     @InSequence(100)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                      + "ContentItemRepositoryTest/data.xml") 
+                      + "ContentItemRepositoryTest/data.xml")
     public void findByIdAndType() {
         final Optional<Article> article1 = itemRepo.findById(
             -10100L, Article.class);
@@ -212,8 +213,7 @@ public class ContentItemRepositoryTest {
         assertThat(newsAsArticle.isPresent(), is(false));
         assertThat(articleAsNews.isPresent(), is(false));
     }
-    
-    
+
     @Test
     @InSequence(200)
     @UsingDataSet("datasets/org/librecms/contentsection/"
@@ -254,7 +254,7 @@ public class ContentItemRepositoryTest {
         final List<Article> articles = itemRepo.findByType(Article.class);
         assertThat(articles, is(not(nullValue())));
         assertThat(articles.size(), is(3));
-        
+
         final List<News> news = itemRepo.findByType(News.class);
         assertThat(news, is(not(nullValue())));
         assertThat(news.size(), is(1));
@@ -266,12 +266,87 @@ public class ContentItemRepositoryTest {
                       + "ContentItemRepositoryTest/data.xml")
     public void findByFolder() {
         final Category folder = categoryRepo.findById(-2100L);
-        
+
+        assertThat(folder.getObjects().size(), is(4));
+
         final List<ContentItem> items = itemRepo.findByFolder(folder);
-        
+
         assertThat(items, is(not(nullValue())));
         assertThat(items.size(), is(4));
-        
     }
-    
+
+    @Test
+    @InSequence(410)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentItemRepositoryTest/data.xml")
+    public void countItemsInFolder() {
+        final Category folder = categoryRepo.findById(-2100L);
+
+        assertThat(itemRepo.countItemsInFolder(folder), is(4L));
+    }
+
+    @Test
+    @InSequence(500)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentItemRepositoryTest/data.xml")
+    public void countByNameInFolder() {
+        final Category folder = categoryRepo.findById(-2100L);
+
+        assertThat(itemRepo.countByNameInFolder(folder, "article1"), is(1L));
+        assertThat(itemRepo.countByNameInFolder(folder, "article2"), is(1L));
+        assertThat(itemRepo.countByNameInFolder(folder, "article3"), is(1L));
+        assertThat(itemRepo.countByNameInFolder(folder, "article4"), is(0L));
+        assertThat(itemRepo.countByNameInFolder(folder, "article"), is(0L));
+        assertThat(itemRepo.countByNameInFolder(folder, "news1"), is(1L));
+    }
+
+    @Test
+    @InSequence(500)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentItemRepositoryTest/data.xml")
+    public void filterByFolderAndName() {
+        final Category folder = categoryRepo.findById(-2100L);
+
+        final List<ContentItem> articles = itemRepo.filterByFolderAndName(
+            folder, "article");
+        final List<ContentItem> news = itemRepo.filterByFolderAndName(folder,
+                                                                      "news");
+
+        assertThat(articles.size(), is(3));
+        assertThat(news.size(), is(1));
+
+        assertThat(articles.get(0).getDisplayName(), is(equalTo("article1")));
+        assertThat(articles.get(1).getDisplayName(), is(equalTo("article2")));
+        assertThat(articles.get(2).getDisplayName(), is(equalTo("article3")));
+
+        assertThat(news.get(0).getDisplayName(), is(equalTo("news1")));
+    }
+
+    @Test
+    @InSequence(510)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentItemRepositoryTest/data.xml")
+    public void countFilterByFolderAndName() {
+        final Category folder = categoryRepo.findById(-2100L);
+
+        assertThat(itemRepo.countFilterByFolderAndName(folder, "article"), 
+                   is(3L));
+        assertThat(itemRepo.countFilterByFolderAndName(folder, "art"), 
+                   is(3L));
+        assertThat(itemRepo.countFilterByFolderAndName(folder, "article1"), 
+                   is(1L));
+        assertThat(itemRepo.countFilterByFolderAndName(folder, "article2"), 
+                   is(1L));
+        assertThat(itemRepo.countFilterByFolderAndName(folder, "article3"), 
+                   is(1L));
+
+        assertThat(itemRepo.countFilterByFolderAndName(folder, "news"), 
+                   is(1L));
+
+        assertThat(itemRepo.countFilterByFolderAndName(folder, "article10"), 
+                   is(0L));
+        assertThat(itemRepo.countFilterByFolderAndName(folder, "foo"), 
+                   is(0L));
+    }
+
 }
