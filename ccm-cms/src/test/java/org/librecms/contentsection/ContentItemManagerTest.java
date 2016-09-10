@@ -19,6 +19,7 @@
 package org.librecms.contentsection;
 
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.container.test.api.ShouldThrowException;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
 import org.jboss.arquillian.persistence.CreateSchema;
@@ -41,16 +42,21 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.libreccm.categorization.Category;
+import org.libreccm.categorization.CategoryRepository;
 import org.libreccm.security.Shiro;
 import org.libreccm.tests.categories.IntegrationTest;
-import org.libreccm.workflow.Workflow;
-import org.libreccm.workflow.WorkflowRepository;
+import org.libreccm.workflow.WorkflowTemplate;
+import org.libreccm.workflow.WorkflowTemplateRepository;
 import org.librecms.contenttypes.Article;
+import org.librecms.contenttypes.Event;
+import org.librecms.lifecycle.LifecycleDefinition;
+import org.librecms.lifecycle.LifecycleDefinitionRepository;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 import javax.inject.Inject;
@@ -75,10 +81,22 @@ public class ContentItemManagerTest {
     private ContentSectionRepository sectionRepo;
 
     @Inject
+    private ContentItemRepository itemRepo;
+
+    @Inject
     private ContentItemManager itemManager;
 
     @Inject
+    private CategoryRepository categoryRepo;
+
+    @Inject
     private Shiro shiro;
+
+    @Inject
+    private WorkflowTemplateRepository workflowTemplateRepo;
+
+    @Inject
+    private LifecycleDefinitionRepository lifecycleDefinitionRepo;
 
     @Inject
     private EntityManager entityManager;
@@ -206,20 +224,21 @@ public class ContentItemManagerTest {
     }
 
     @Test
-    @InSequence(100)
+    @InSequence(1100)
     @UsingDataSet("datasets/org/librecms/contentsection/"
                       + "ContentItemManagerTest/data.xml")
-    @ShouldMatchDataSet(value = "datasets/org/librecms/contentsection/"
-                                    + "ContentItemManagerTest/after-create-contentitem.xml",
-                        excludeColumns = {"categorization_id",
-                                          "lifecycle_id",
-                                          "object_id",
-                                          "object_order",
-                                          "phase_id",
-                                          "task_id",
-                                          "uuid",
-                                          "workflow_id"
-                        })
+    @ShouldMatchDataSet(
+        value = "datasets/org/librecms/contentsection/"
+                    + "ContentItemManagerTest/after-create-contentitem.xml",
+        excludeColumns = {"categorization_id",
+                          "lifecycle_id",
+                          "object_id",
+                          "object_order",
+                          "phase_id",
+                          "task_id",
+                          "uuid",
+                          "workflow_id"
+        })
     public void createContentItem() {
         final ContentSection section = sectionRepo.findByLabel("info");
         final Category folder = section.getRootDocumentsFolder();
@@ -247,25 +266,375 @@ public class ContentItemManagerTest {
                    workflowCount, is(3L));
     }
 
-    // Create content item type not in content section
-    // Create content item name null
-    // Create content item name empty
-    // Create content item folder null
-    // Create content item folder no a folder
-    // Create content item with lifecycle and workflow
-    // Create content item with lifecycle and workflow type not in content section
-    // Create content item with lifecycle and workflow name null
+    /**
+     * Checks if an {@link IllegalArgumentException} is thrown when the content
+     * type of the item to create is not registered with the provided content
+     * section.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    @InSequence(1200)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentItemManagerTest/data.xml")
+    @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
+                            + "ContentItemManagerTest/data.xml")
+    @ShouldThrowException(IllegalArgumentException.class)
+    public void createItemTypeNotInSection() {
+        final ContentSection section = sectionRepo.findByLabel("info");
+        final Category folder = section.getRootDocumentsFolder();
+
+        itemManager.createContentItem("Test", section, folder, Event.class);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    @InSequence(1300)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentItemManagerTest/data.xml")
+    @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
+                            + "ContentItemManagerTest/data.xml")
+    @ShouldThrowException(IllegalArgumentException.class)
+    public void createItemNameIsNull() {
+        final ContentSection section = sectionRepo.findByLabel("info");
+        final Category folder = section.getRootDocumentsFolder();
+
+        itemManager.createContentItem(null, section, folder, Article.class);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    @InSequence(1400)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentItemManagerTest/data.xml")
+    @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
+                            + "ContentItemManagerTest/data.xml")
+    @ShouldThrowException(IllegalArgumentException.class)
+    public void createItemNameIsEmpty() {
+        final ContentSection section = sectionRepo.findByLabel("info");
+        final Category folder = section.getRootDocumentsFolder();
+
+        itemManager.createContentItem("", section, folder, Article.class);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    @InSequence(1500)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentItemManagerTest/data.xml")
+    @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
+                            + "ContentItemManagerTest/data.xml")
+    @ShouldThrowException(IllegalArgumentException.class)
+    public void createItemFolderIsNull() {
+        final ContentSection section = sectionRepo.findByLabel("info");
+
+        itemManager.createContentItem("Test", section, null, Article.class);
+    }
+
+    @Test
+    @InSequence(2100)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentItemManagerTest/data.xml")
+    @ShouldMatchDataSet(
+        value = "datasets/org/librecms/contentsection/"
+                    + "ContentItemManagerTest/"
+                    + "after-create-contentitem-with-lifecycle-and-workflow.xml",
+        excludeColumns = {"categorization_id",
+                          "lifecycle_id",
+                          "object_id",
+                          "object_order",
+                          "phase_id",
+                          "task_id",
+                          "uuid",
+                          "workflow_id"
+        })
+    public void createContentItemWithLifecycleAndWorkflow() {
+        final ContentSection section = sectionRepo.findByLabel("info");
+        final Category folder = section.getRootDocumentsFolder();
+
+        final WorkflowTemplate workflowTemplate = workflowTemplateRepo
+            .findById(-110L);
+        final LifecycleDefinition lifecycleDefinition = lifecycleDefinitionRepo
+            .findById(-210L);
+
+        final Article article = itemManager.createContentItem(
+            "new-article",
+            section,
+            folder,
+            workflowTemplate,
+            lifecycleDefinition,
+            Article.class);
+
+        assertThat("DisplayName has not the expected value.",
+                   article.getDisplayName(), is(equalTo("new-article")));
+        final Locale locale = new Locale("en");
+        assertThat("Name has not the expected value.",
+                   article.getName().getValue(locale),
+                   is(equalTo("new-article")));
+        assertThat("lifecycle was not added to content item.",
+                   article.getLifecycle(), is(not(nullValue())));
+        assertThat("workflow was not added to content item.",
+                   article.getWorkflow(), is(not(nullValue())));
+
+        final TypedQuery<Long> query = entityManager.createQuery(
+            "SELECT COUNT(w) FROM Workflow w", Long.class);
+        final long workflowCount = query.getSingleResult();
+        assertThat("Expected three workflows in database.",
+                   workflowCount, is(3L));
+    }
+
+    /**
+     * Checks if an {@link IllegalArgumentException} is thrown when the content
+     * type of the item to create is not registered with the provided content
+     * section.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    @InSequence(2200)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentItemManagerTest/data.xml")
+    @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
+                            + "ContentItemManagerTest/data.xml")
+    @ShouldThrowException(IllegalArgumentException.class)
+    public void createItemTypeNotInSectionWithLifecycleAndWorkflow() {
+        final ContentSection section = sectionRepo.findByLabel("info");
+        final Category folder = section.getRootDocumentsFolder();
+
+        final WorkflowTemplate workflowTemplate = workflowTemplateRepo
+            .findById(-110L);
+        final LifecycleDefinition lifecycleDefinition = lifecycleDefinitionRepo
+            .findById(-210L);
+
+        itemManager.createContentItem("Test",
+                                      section,
+                                      folder,
+                                      workflowTemplate,
+                                      lifecycleDefinition,
+                                      Event.class);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    @InSequence(2300)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentItemManagerTest/data.xml")
+    @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
+                            + "ContentItemManagerTest/data.xml")
+    @ShouldThrowException(IllegalArgumentException.class)
+    public void createItemNameIsNullWithLifecycleAndWorkflow() {
+        final ContentSection section = sectionRepo.findByLabel("info");
+        final Category folder = section.getRootDocumentsFolder();
+
+        final WorkflowTemplate workflowTemplate = workflowTemplateRepo
+            .findById(-110L);
+        final LifecycleDefinition lifecycleDefinition = lifecycleDefinitionRepo
+            .findById(-210L);
+
+        itemManager.createContentItem(null,
+                                      section,
+                                      folder,
+                                      workflowTemplate,
+                                      lifecycleDefinition,
+                                      Article.class);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    @InSequence(2400)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentItemManagerTest/data.xml")
+    @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
+                            + "ContentItemManagerTest/data.xml")
+    @ShouldThrowException(IllegalArgumentException.class)
+    public void createItemNameIsNoWorkflow() {
+        final ContentSection section = sectionRepo.findByLabel("info");
+        final Category folder = section.getRootDocumentsFolder();
+
+        final LifecycleDefinition lifecycleDefinition = lifecycleDefinitionRepo
+            .findById(-210L);
+
+        itemManager.createContentItem(null,
+                                      section,
+                                      folder,
+                                      null,
+                                      lifecycleDefinition,
+                                      Article.class);
+    }
+
     // Create content item with lifecycle and workflow name empty
-    // Create content item with lifecycle and workflow folder null
-    // Create content item with lifecycle and workflow folder no a folder
-    // Move item
-    // Move item item null
-    // Move item folder null
-    // Move item folder not a folder
-    // copy item
-    // copy item item null
-    // copy item folder null
-    // copy item folder not a folder
+    @Test(expected = IllegalArgumentException.class)
+    @InSequence(2500)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentItemManagerTest/data.xml")
+    @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
+                            + "ContentItemManagerTest/data.xml")
+    @ShouldThrowException(IllegalArgumentException.class)
+    public void createItemNoLifecycle() {
+        final ContentSection section = sectionRepo.findByLabel("info");
+        final Category folder = section.getRootDocumentsFolder();
+
+        final WorkflowTemplate workflowTemplate = workflowTemplateRepo
+            .findById(-110L);
+
+        itemManager.createContentItem(null,
+                                      section,
+                                      folder,
+                                      workflowTemplate,
+                                      null,
+                                      Article.class);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    @InSequence(2600)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentItemManagerTest/data.xml")
+    @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
+                            + "ContentItemManagerTest/data.xml")
+    @ShouldThrowException(IllegalArgumentException.class)
+    public void createItemFolderIsNullWithLifecycleAndWorkflow() {
+        final ContentSection section = sectionRepo.findByLabel("info");
+
+        final WorkflowTemplate workflowTemplate = workflowTemplateRepo
+            .findById(-110L);
+        final LifecycleDefinition lifecycleDefinition = lifecycleDefinitionRepo
+            .findById(-210L);
+
+        itemManager.createContentItem("Test",
+                                      section,
+                                      null,
+                                      workflowTemplate,
+                                      lifecycleDefinition,
+                                      Article.class);
+    }
+
+    @Test
+    @InSequence(3100)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentItemManagerTest/move-before.xml")
+    @ShouldMatchDataSet(
+        value = "datasets/org/librecms/contentsection/"
+                    + "ContentItemManagerTest/move-after.xml",
+        excludeColumns = {"categorization_id",
+                          "lifecycle_id",
+                          "object_id",
+                          "object_order",
+                          "phase_id",
+                          "task_id",
+                          "uuid",
+                          "workflow_id"
+        })
+    public void moveItem() {
+        final Optional<ContentItem> item = itemRepo.findById(-10100L);
+        assertThat(item.isPresent(), is(true));
+
+        final Category targetFolder = categoryRepo.findById(-2120L);
+        assertThat(targetFolder, is(not(nullValue())));
+
+        itemManager.move(item.get(), targetFolder);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    @InSequence(3200)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentItemManagerTest/move-before.xml")
+    @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
+                            + "ContentItemManagerTest/move-before.xml")
+    @ShouldThrowException(IllegalArgumentException.class)
+    public void moveItemNull() {
+        final Category targetFolder = categoryRepo.findById(-2120L);
+        assertThat(targetFolder, is(not(nullValue())));
+
+        itemManager.move(null, targetFolder);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    @InSequence(3200)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentItemManagerTest/move-before.xml")
+    @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
+                            + "ContentItemManagerTest/move-before.xml")
+    @ShouldThrowException(IllegalArgumentException.class)
+    public void moveItemFolderNull() {
+        final Optional<ContentItem> item = itemRepo.findById(-10100L);
+        assertThat(item.isPresent(), is(true));
+
+        itemManager.move(item.get(), null);
+    }
+
+    @Test
+    @InSequence(4100)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentItemManagerTest/move-before.xml")
+    @ShouldMatchDataSet(
+        value = "datasets/org/librecms/contentsection/"
+                    + "ContentItemManagerTest/copy-to-other-folder-after.xml",
+        excludeColumns = {"categorization_id",
+                          "lifecycle_id",
+                          "object_id",
+                          "object_order",
+                          "phase_id",
+                          "task_id",
+                          "uuid",
+                          "workflow_id"
+        })
+    public void copyToOtherFolder() {
+        final Optional<ContentItem> item = itemRepo.findById(-10100L);
+        assertThat(item.isPresent(), is(true));
+
+        final Category targetFolder = categoryRepo.findById(-2120L);
+        assertThat(targetFolder, is(not(nullValue())));
+        
+        itemManager.copy(item.get(), targetFolder);
+    }
+    
+    @Test
+    @InSequence(4200)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentItemManagerTest/move-before.xml")
+    @ShouldMatchDataSet(
+        value = "datasets/org/librecms/contentsection/"
+                    + "ContentItemManagerTest/copy-to-same-folder-after.xml",
+        excludeColumns = {"categorization_id",
+                          "lifecycle_id",
+                          "object_id",
+                          "object_order",
+                          "phase_id",
+                          "task_id",
+                          "uuid",
+                          "workflow_id"
+        })
+    public void copyToSameFolder() {
+        final Optional<ContentItem> item = itemRepo.findById(-10100L);
+        assertThat(item.isPresent(), is(true));
+
+        final Category targetFolder = categoryRepo.findById(-2110L);
+        assertThat(targetFolder, is(not(nullValue())));
+        
+        itemManager.copy(item.get(), targetFolder);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    @InSequence(4100)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentItemManagerTest/move-before.xml")
+    @ShouldMatchDataSet(
+        value = "datasets/org/librecms/contentsection/"
+                      + "ContentItemManagerTest/move-before.xml")
+    @ShouldThrowException(IllegalArgumentException.class)
+    public void copyItemNull() {
+        final Category targetFolder = categoryRepo.findById(-2120L);
+        assertThat(targetFolder, is(not(nullValue())));
+        
+        itemManager.copy(null, targetFolder);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    @InSequence(4100)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentItemManagerTest/move-before.xml")
+    @ShouldMatchDataSet(
+        value = "datasets/org/librecms/contentsection/"
+                      + "ContentItemManagerTest/move-before.xml")
+    @ShouldThrowException(IllegalArgumentException.class)
+    public void copyItemToFolderNull() {
+        final Optional<ContentItem> item = itemRepo.findById(-10100L);
+        assertThat(item.isPresent(), is(true));
+        
+        itemManager.copy(item.get(), null);
+    }
+    
     // publish item (draft)
     // publish item (live)
     // publish item null

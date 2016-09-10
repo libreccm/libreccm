@@ -180,6 +180,11 @@ public class ContentItemManager {
                 type.getName()));
         }
 
+        if (name == null || name.isEmpty()) {
+            throw new IllegalArgumentException(
+                "The name of a content item can't be blank.");
+        }
+
         final T item;
         try {
             item = type.newInstance();
@@ -232,6 +237,15 @@ public class ContentItemManager {
      */
     @Transactional(Transactional.TxType.REQUIRED)
     public void move(final ContentItem item, final Category targetFolder) {
+        if (item == null) {
+            throw new IllegalArgumentException("The item to move can't be null.");
+        }
+
+        if (targetFolder == null) {
+            throw new IllegalArgumentException(
+                "The target folder can't be null.");
+        }
+
         final ContentItem draftItem = getDraftVersion(item, item.getClass());
         final Optional<Category> currentFolder = getItemFolder(item);
 
@@ -244,7 +258,10 @@ public class ContentItemManager {
             }
         }
 
-        categoryManager.addObjectToCategory(draftItem, targetFolder);
+        categoryManager.addObjectToCategory(
+            draftItem,
+            targetFolder,
+            CmsConstants.CATEGORIZATION_TYPE_FOLDER);
 
     }
 
@@ -260,6 +277,15 @@ public class ContentItemManager {
      */
     @SuppressWarnings("unchecked")
     public void copy(final ContentItem item, final Category targetFolder) {
+        if (item == null) {
+            throw new IllegalArgumentException("The item to copy can't be null.");
+        }
+
+        if (targetFolder == null) {
+            throw new IllegalArgumentException(
+                "The target folder to which the item is copied can't be null");
+        }
+
         final Optional<ContentType> contentType = typeRepo
             .findByContentSectionAndClass(
                 item.getContentType().getContentSection(), item.
@@ -331,6 +357,10 @@ public class ContentItemManager {
             final Method readMethod = propertyDescriptor.getReadMethod();
             final Method writeMethod = propertyDescriptor.getWriteMethod();
 
+            if (writeMethod == null) {
+                continue;
+            }
+            
             if (LocalizedString.class.equals(propType)) {
                 final LocalizedString source;
                 final LocalizedString target;
@@ -424,8 +454,6 @@ public class ContentItemManager {
                 }
             }
         }
-
-        throw new UnsupportedOperationException();
     }
 
     private boolean propertyIsExcluded(final String name) {
@@ -690,13 +718,22 @@ public class ContentItemManager {
      *         something is seriously wrong with the database) this method will
      * <b>never</b> return {@code null}.
      */
+    @SuppressWarnings("unchecked")
     public <T extends ContentItem> T getDraftVersion(final ContentItem item,
                                                      final Class<T> type) {
-        final TypedQuery<T> query = entityManager.createNamedQuery(
-            "ContentItem.findDraftVersion", type);
+        if (!ContentItem.class.isAssignableFrom(type)) {
+            throw new IllegalArgumentException(String.format(
+                "The provided type \"%s\" does match the type of the provided "
+                    + "item (\"%s\").",
+                type.getName(),
+                item.getClass().getName()));
+        }
+
+        final TypedQuery<ContentItem> query = entityManager.createNamedQuery(
+            "ContentItem.findDraftVersion", ContentItem.class);
         query.setParameter("uuid", item.getUuid());
 
-        return query.getSingleResult();
+        return (T) query.getSingleResult();
     }
 
     /**

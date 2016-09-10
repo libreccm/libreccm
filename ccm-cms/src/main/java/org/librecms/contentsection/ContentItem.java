@@ -116,12 +116,12 @@ import static org.librecms.CmsConstants.*;
     @NamedQuery(
         name = "ContentItem.findDraftVersion",
         query = "SELECT i FROM ContentItem i "
-                    + "WHERE i.uuid = ':uuid' "
+                    + "WHERE i.uuid = :uuid "
                     + "AND i.version = 'DRAFT'"),
     @NamedQuery(
         name = "ContentItem.findLiveVersion",
         query = "SELECT i FROM ContentItem i "
-                    + "WHERE i.uuid = ':uuid' "
+                    + "WHERE i.uuid = :uuid "
                     + "AND i.version = 'LIVE'")
 
 })

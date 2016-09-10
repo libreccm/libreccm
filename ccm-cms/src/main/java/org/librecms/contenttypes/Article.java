@@ -56,6 +56,11 @@ public class Article extends ContentItem implements Serializable {
             ))
     private LocalizedString text;
 
+    public Article() {
+        super();
+        text = new LocalizedString();
+    }
+    
     public LocalizedString getText() {
         return text;
     }
