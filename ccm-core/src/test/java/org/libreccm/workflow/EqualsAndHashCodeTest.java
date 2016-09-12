@@ -29,6 +29,7 @@ import org.libreccm.testutils.EqualsVerifier;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Locale;
 
 /**
  *
@@ -89,12 +90,19 @@ public class EqualsAndHashCodeTest extends EqualsVerifier {
         final User user2 = new TestUser();
         user2.setName("user2");
         
+        final WorkflowTemplate template1 = new WorkflowTemplate();
+        template1.getName().addValue(Locale.ENGLISH, "Template 1");
+        
+        final WorkflowTemplate template2 = new WorkflowTemplate();
+        template1.getName().addValue(Locale.ENGLISH, "Template 2");
+        
         verifier
             .withPrefabValues(UserTask.class, userTask1, userTask2)
             .withPrefabValues(Role.class, role1, role2)
             .withPrefabValues(Task.class, task1, task2)
             .withPrefabValues(Group.class, group1, group2)
-            .withPrefabValues(User.class, user1, user2);
+            .withPrefabValues(User.class, user1, user2)
+            .withPrefabValues(WorkflowTemplate.class, template1, template2);
     }
     
      /**

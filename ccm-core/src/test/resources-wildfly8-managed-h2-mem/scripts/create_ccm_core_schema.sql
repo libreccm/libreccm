@@ -580,6 +580,7 @@ CREATE SCHEMA ccm_core;
 
     create table ccm_core.workflows (
         workflow_id bigint not null,
+        template_id bigint,
         primary key (workflow_id)
     );
 
@@ -1079,5 +1080,10 @@ CREATE SCHEMA ccm_core;
         add constraint FK_4nmt8xkbfog6dhq2mpt8m3skf 
         foreign key (workflow_id) 
         references ccm_core.workflows;
+
+    alter table CCM_CORE.WORKFLOWS 
+        add constraint FKol71r1t83h0qe65gglq43far2 
+        foreign key (template_id) 
+        references CCM_CORE.WORKFLOW_TEMPLATES;
 
     create sequence hibernate_sequence start with 1 increment by 1;

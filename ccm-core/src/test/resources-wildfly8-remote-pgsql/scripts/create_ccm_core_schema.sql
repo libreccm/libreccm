@@ -1124,3 +1124,8 @@ create sequence hibernate_sequence start 1 increment 1;
         add constraint FKefpdf9ojplu7loo31hfm0wl2h 
         foreign key (TASK_ID) 
         references CCM_CORE.WORKFLOW_TASKS;
+
+    alter table CCM_CORE.WORKFLOWS 
+        add constraint FKol71r1t83h0qe65gglq43far2 
+        foreign key (template_id) 
+        references CCM_CORE.WORKFLOW_TEMPLATES;

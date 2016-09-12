@@ -39,6 +39,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -58,6 +59,10 @@ public class Workflow implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long workflowId;
 
+    @ManyToOne
+    @JoinColumn(name = "TEMPLATE_ID")
+    private WorkflowTemplate template;
+    
     @Embedded
     @AssociationOverride(
         name = "values",
@@ -94,6 +99,14 @@ public class Workflow implements Serializable {
 
     public void setWorkflowId(final long workflowId) {
         this.workflowId = workflowId;
+    }
+    
+    public WorkflowTemplate getTemplate() {
+        return template;
+    }
+    
+    protected void setTemplate(final WorkflowTemplate template) {
+        this.template = template;
     }
 
     public LocalizedString getName() {
