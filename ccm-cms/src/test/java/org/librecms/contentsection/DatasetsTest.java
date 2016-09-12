@@ -48,10 +48,12 @@ public class DatasetsTest extends DatasetsVerifier {
             "/datasets/org/librecms/contentsection/ContentSectionManagerTest/after-create.xml",
             "/datasets/org/librecms/contentsection/ContentSectionManagerTest/after-remove-role.xml",
             "/datasets/org/librecms/contentsection/ContentSectionManagerTest/after-rename.xml",
+
             "/datasets/org/librecms/contentsection/ContentItemRepositoryTest/data.xml",
+
             "/datasets/org/librecms/contentsection/ContentItemManagerTest/data.xml",
             "/datasets/org/librecms/contentsection/ContentItemManagerTest/after-create-contentitem.xml",
-            "/datasets/org/librecms/contentsection/ContentItemManagerTest/after-create-contentitem-with-lifecycle-and-workflow.xml",
+            "/datasets/org/librecms/contentsection/ContentItemManagerTest/after-create-contentitem-with-workflow.xml",
             "/datasets/org/librecms/contentsection/ContentItemManagerTest/move-before.xml",
             "/datasets/org/librecms/contentsection/ContentItemManagerTest/move-after.xml",
             "/datasets/org/librecms/contentsection/ContentItemManagerTest/copy-to-other-folder-after.xml",

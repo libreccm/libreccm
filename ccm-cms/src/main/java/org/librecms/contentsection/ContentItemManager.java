@@ -99,7 +99,7 @@ public class ContentItemManager {
 
     /**
      * Creates a new content item in the provided content section and folder
-     * with the default lifecycle and workflow.
+     * with the workflow.
      *
      * The folder must be a subfolder of the
      * {@link ContentSection#rootDocumentsFolder} of the provided content
@@ -134,30 +134,29 @@ public class ContentItemManager {
                                  section,
                                  folder,
                                  contentType.get().getDefaultWorkflow(),
-                                 contentType.get().getDefaultLifecycle(),
                                  type);
     }
 
     /**
      * Creates a new content item in the provided content section and folder
-     * with the provided lifecycle and workflow.
+     * with specific workflow.
      *
      * The folder must be a subfolder of the
      * {@link ContentSection#rootDocumentsFolder} of the provided content
      * section. Otherwise an {@link IllegalArgumentException} is thrown.
      *
-     * Likewise the provided {@link LifecycleDefinition} and
-     * {@link WorkflowTemplate} must be defined in the provided content section.
-     * Otherwise an {@link IllegalArgumentException} is thrown.
+     * Likewise the provided {@link WorkflowTemplate} must be defined in the
+     * provided content section. Otherwise an {@link IllegalArgumentException}
+     * is thrown.
      *
-     * @param <T>                 The type of the content item.
-     * @param name                The name (URL stub) of the new content item.
-     * @param section             The content section in which the item is
-     *                            generated.
-     * @param folder              The folder in which in the item is stored.
-     * @param workflowTemplate
-     * @param lifecycleDefinition
-     * @param type                The type of the new content item.
+     * @param <T>              The type of the content item.
+     * @param name             The name (URL stub) of the new content item.
+     * @param section          The content section in which the item is
+     *                         generated.
+     * @param folder           The folder in which in the item is stored.
+     * @param workflowTemplate The template for the workflow to apply to the new
+     *                         item.
+     * @param type             The type of the new content item.
      *
      * @return The new content item.
      */
@@ -167,7 +166,6 @@ public class ContentItemManager {
         final ContentSection section,
         final Category folder,
         final WorkflowTemplate workflowTemplate,
-        final LifecycleDefinition lifecycleDefinition,
         final Class<T> type) {
 
         final Optional<ContentType> contentType = typeRepo
@@ -206,11 +204,6 @@ public class ContentItemManager {
         item.setVersion(ContentItemVersion.DRAFT);
         item.setContentType(contentType.get());
 
-        if (lifecycleDefinition != null) {
-            final Lifecycle lifecycle = lifecycleManager.createLifecycle(
-                lifecycleDefinition);
-            item.setLifecycle(lifecycle);
-        }
         if (workflowTemplate != null) {
             final Workflow workflow = workflowManager.createWorkflow(
                 workflowTemplate);
@@ -302,20 +295,23 @@ public class ContentItemManager {
 
         final ContentItem copy;
         try {
-            copy = item.getClass().newInstance();
+            copy = draftItem.getClass().newInstance();
         } catch (InstantiationException | IllegalAccessException ex) {
             throw new RuntimeException(ex);
         }
 
         copy.setContentType(contentType.get());
 
-        final Lifecycle lifecycle = lifecycleManager.createLifecycle(
-            contentType.get().getDefaultLifecycle());
         final Workflow workflow = workflowManager.createWorkflow(contentType
             .get().getDefaultWorkflow());
 
-        copy.setLifecycle(lifecycle);
-        copy.setWorkflow(workflow);
+        if (draftItem.getWorkflow() != null) {
+            final WorkflowTemplate template = draftItem.getWorkflow()
+                .getTemplate();
+            final Workflow copyWorkflow = workflowManager.createWorkflow(
+                template);
+            copy.setWorkflow(copyWorkflow);
+        }
 
         draftItem.getCategories().forEach(categorization -> categoryManager
             .addObjectToCategory(copy, categorization.getCategory()));
@@ -360,7 +356,7 @@ public class ContentItemManager {
             if (writeMethod == null) {
                 continue;
             }
-            
+
             if (LocalizedString.class.equals(propType)) {
                 final LocalizedString source;
                 final LocalizedString target;
@@ -474,14 +470,49 @@ public class ContentItemManager {
 
     /**
      * Creates a live version of content item or updates the live version of a
-     * content item if there already a live version.
+     * content item if there already a live version using the default lifecycle
+     * for the content type of the provided item.
      *
      * @param item The content item to publish.
      *
      * @return The published content item.
      */
-    @SuppressWarnings("unchecked")
     public ContentItem publish(final ContentItem item) {
+        if (item == null) {
+            throw new IllegalArgumentException(
+                "The item to publish can't be null.");
+        }
+
+        final LifecycleDefinition lifecycleDefinition = item.getContentType()
+            .getDefaultLifecycle();
+
+        return publish(item, lifecycleDefinition);
+    }
+
+    /**
+     * Creates a live version of content item or updates the live version of a
+     * content item if there already a live version.
+     *
+     * @param item                The content item to publish.
+     * @param lifecycleDefinition The definition of the lifecycle to use for the
+     *                            new item.
+     *
+     * @return The published content item.
+     */
+    @SuppressWarnings("unchecked")
+    public ContentItem publish(final ContentItem item,
+                               final LifecycleDefinition lifecycleDefinition) {
+        if (item == null) {
+            throw new IllegalArgumentException(
+                "The item to publish can't be null.");
+        }
+
+        if (lifecycleDefinition == null) {
+            throw new IllegalArgumentException(
+                "The lifecycle definition for the "
+                    + "lifecycle of the item to publish can't be null.");
+        }
+
         final ContentItem draftItem = getDraftVersion(item, ContentItem.class);
         final ContentItem liveItem;
 
@@ -496,7 +527,11 @@ public class ContentItemManager {
         }
 
         liveItem.setContentType(draftItem.getContentType());
-        liveItem.setLifecycle(draftItem.getLifecycle());
+
+        final Lifecycle lifecycle = lifecycleManager.createLifecycle(
+            lifecycleDefinition);
+
+        liveItem.setLifecycle(lifecycle);
         liveItem.setWorkflow(draftItem.getWorkflow());
 
         draftItem.getCategories().forEach(categorization -> categoryManager

@@ -49,7 +49,6 @@ import org.libreccm.workflow.WorkflowTemplate;
 import org.libreccm.workflow.WorkflowTemplateRepository;
 import org.librecms.contenttypes.Article;
 import org.librecms.contenttypes.Event;
-import org.librecms.lifecycle.LifecycleDefinition;
 import org.librecms.lifecycle.LifecycleDefinitionRepository;
 
 import java.io.File;
@@ -254,8 +253,6 @@ public class ContentItemManagerTest {
         assertThat("Name has not the expected value.",
                    article.getName().getValue(locale),
                    is(equalTo("new-article")));
-        assertThat("lifecycle was not added to content item.",
-                   article.getLifecycle(), is(not(nullValue())));
         assertThat("workflow was not added to content item.",
                    article.getWorkflow(), is(not(nullValue())));
 
@@ -333,7 +330,7 @@ public class ContentItemManagerTest {
     @ShouldMatchDataSet(
         value = "datasets/org/librecms/contentsection/"
                     + "ContentItemManagerTest/"
-                    + "after-create-contentitem-with-lifecycle-and-workflow.xml",
+                    + "after-create-contentitem-with-workflow.xml",
         excludeColumns = {"categorization_id",
                           "lifecycle_id",
                           "object_id",
@@ -343,21 +340,18 @@ public class ContentItemManagerTest {
                           "uuid",
                           "workflow_id"
         })
-    public void createContentItemWithLifecycleAndWorkflow() {
+    public void createContentItemWithWorkflow() {
         final ContentSection section = sectionRepo.findByLabel("info");
         final Category folder = section.getRootDocumentsFolder();
 
         final WorkflowTemplate workflowTemplate = workflowTemplateRepo
             .findById(-110L);
-        final LifecycleDefinition lifecycleDefinition = lifecycleDefinitionRepo
-            .findById(-210L);
-
+        
         final Article article = itemManager.createContentItem(
             "new-article",
             section,
             folder,
             workflowTemplate,
-            lifecycleDefinition,
             Article.class);
 
         assertThat("DisplayName has not the expected value.",
@@ -366,8 +360,6 @@ public class ContentItemManagerTest {
         assertThat("Name has not the expected value.",
                    article.getName().getValue(locale),
                    is(equalTo("new-article")));
-        assertThat("lifecycle was not added to content item.",
-                   article.getLifecycle(), is(not(nullValue())));
         assertThat("workflow was not added to content item.",
                    article.getWorkflow(), is(not(nullValue())));
 
@@ -390,20 +382,17 @@ public class ContentItemManagerTest {
     @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
                             + "ContentItemManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
-    public void createItemTypeNotInSectionWithLifecycleAndWorkflow() {
+    public void createItemTypeNotInSectionWithWorkflow() {
         final ContentSection section = sectionRepo.findByLabel("info");
         final Category folder = section.getRootDocumentsFolder();
 
         final WorkflowTemplate workflowTemplate = workflowTemplateRepo
             .findById(-110L);
-        final LifecycleDefinition lifecycleDefinition = lifecycleDefinitionRepo
-            .findById(-210L);
 
         itemManager.createContentItem("Test",
                                       section,
                                       folder,
                                       workflowTemplate,
-                                      lifecycleDefinition,
                                       Event.class);
     }
 
@@ -414,20 +403,17 @@ public class ContentItemManagerTest {
     @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
                             + "ContentItemManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
-    public void createItemNameIsNullWithLifecycleAndWorkflow() {
+    public void createItemNameIsNullWithWorkflow() {
         final ContentSection section = sectionRepo.findByLabel("info");
         final Category folder = section.getRootDocumentsFolder();
 
         final WorkflowTemplate workflowTemplate = workflowTemplateRepo
             .findById(-110L);
-        final LifecycleDefinition lifecycleDefinition = lifecycleDefinitionRepo
-            .findById(-210L);
 
         itemManager.createContentItem(null,
                                       section,
                                       folder,
                                       workflowTemplate,
-                                      lifecycleDefinition,
                                       Article.class);
     }
 
@@ -442,36 +428,9 @@ public class ContentItemManagerTest {
         final ContentSection section = sectionRepo.findByLabel("info");
         final Category folder = section.getRootDocumentsFolder();
 
-        final LifecycleDefinition lifecycleDefinition = lifecycleDefinitionRepo
-            .findById(-210L);
-
         itemManager.createContentItem(null,
                                       section,
                                       folder,
-                                      null,
-                                      lifecycleDefinition,
-                                      Article.class);
-    }
-
-    // Create content item with lifecycle and workflow name empty
-    @Test(expected = IllegalArgumentException.class)
-    @InSequence(2500)
-    @UsingDataSet("datasets/org/librecms/contentsection/"
-                      + "ContentItemManagerTest/data.xml")
-    @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
-                            + "ContentItemManagerTest/data.xml")
-    @ShouldThrowException(IllegalArgumentException.class)
-    public void createItemNoLifecycle() {
-        final ContentSection section = sectionRepo.findByLabel("info");
-        final Category folder = section.getRootDocumentsFolder();
-
-        final WorkflowTemplate workflowTemplate = workflowTemplateRepo
-            .findById(-110L);
-
-        itemManager.createContentItem(null,
-                                      section,
-                                      folder,
-                                      workflowTemplate,
                                       null,
                                       Article.class);
     }
@@ -483,19 +442,16 @@ public class ContentItemManagerTest {
     @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
                             + "ContentItemManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
-    public void createItemFolderIsNullWithLifecycleAndWorkflow() {
+    public void createItemFolderIsNullWithWorkflow() {
         final ContentSection section = sectionRepo.findByLabel("info");
 
         final WorkflowTemplate workflowTemplate = workflowTemplateRepo
             .findById(-110L);
-        final LifecycleDefinition lifecycleDefinition = lifecycleDefinitionRepo
-            .findById(-210L);
 
         itemManager.createContentItem("Test",
                                       section,
                                       null,
                                       workflowTemplate,
-                                      lifecycleDefinition,
                                       Article.class);
     }
 

@@ -94,14 +94,14 @@
                                                localized_value="The only phase" 
                                                locale="en" />
     
-    <ccm_cms.lifecycles lifecycle_id="-300" 
+    <!--<ccm_cms.lifecycles lifecycle_id="-300" 
                         started="false"
                         finished="false"
                         definition_id="-210" />
     
     <ccm_cms.lifecyle_phases phase_id="-300100" 
                              started="false" 
-                             finished="false" />
+                             finished="false" />-->
     
     <ccm_core.ccm_objects object_id="-1100"
                           display_name="info"

@@ -1457,6 +1457,7 @@ CREATE SCHEMA ccm_cms;
 
     create table CCM_CORE.WORKFLOWS (
         WORKFLOW_ID int8 not null,
+        TEMPLATE_ID int8,
         primary key (WORKFLOW_ID)
     );
 
@@ -2754,3 +2755,8 @@ create sequence hibernate_sequence start 1 increment 1;
         add constraint FK6kuejkcl9hcbkr8q6bdlatt8q 
         foreign key (CONTENT_SECTION_ID) 
         references CCM_CMS.CONTENT_SECTIONS;
+
+    alter table CCM_CORE.WORKFLOWS 
+        add constraint FKol71r1t83h0qe65gglq43far2 
+        foreign key (template_id) 
+        references CCM_CORE.WORKFLOW_TEMPLATES;

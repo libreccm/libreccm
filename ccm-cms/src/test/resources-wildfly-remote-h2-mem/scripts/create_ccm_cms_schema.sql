@@ -1457,6 +1457,7 @@ create table CCM_CMS.ARTICLE_LEADS (
 
     create table CCM_CORE.WORKFLOWS (
         WORKFLOW_ID bigint not null,
+        TEMPLATE_ID bigint,
         primary key (WORKFLOW_ID)
     );
 
@@ -2754,3 +2755,8 @@ create sequence hibernate_sequence start with 1 increment by 1;
         add constraint FK6kuejkcl9hcbkr8q6bdlatt8q 
         foreign key (CONTENT_SECTION_ID) 
         references CCM_CMS.CONTENT_SECTIONS;
+
+    alter table CCM_CORE.WORKFLOWS 
+        add constraint FKol71r1t83h0qe65gglq43far2 
+        foreign key (TEMPLATE_ID) 
+        references CCM_CORE.WORKFLOW_TEMPLATES;
