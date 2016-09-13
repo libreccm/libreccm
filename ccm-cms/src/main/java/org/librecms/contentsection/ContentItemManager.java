@@ -266,6 +266,7 @@ public class ContentItemManager {
      * target folder is the same folder as the folder of the original item an
      * index is appended to the name of the item.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     @SuppressWarnings("unchecked")
     public void copy(final ContentItem item, final Category targetFolder) {
         if (item == null) {

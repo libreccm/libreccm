@@ -4,13 +4,21 @@ DELETE FROM ccm_cms.news;
 
 DELETE FROM ccm_cms.article_texts;
 
+DELETE FROM ccm_cms.article_texts_aud;
+
 DELETE FROM ccm_cms.articles;
 
 DELETE FROM ccm_cms.content_item_names;
 
+DELETE FROM ccm_cms.content_item_names_aud;
+
 DELETE FROM ccm_cms.content_item_titles;
 
+DELETE FROM ccm_cms.content_item_titles_aud;
+
 DELETE FROM ccm_cms.content_items;
+
+DELETE FROM ccm_cms.content_items_aud;
 
 DELETE FROM ccm_cms.content_section_lifecycle_definitions;
 
@@ -77,6 +85,10 @@ DELETE FROM ccm_core.user_email_addresses;
 DELETE FROM ccm_core.parties;
 
 DELETE FROM ccm_core.ccm_roles;
+
+DELETE FROM ccm_core.ccm_objects_aud;
+
+DELETE FROM ccm_core.ccm_revisions;
 
 ALTER SEQUENCE hibernate_sequence RESTART;
 
