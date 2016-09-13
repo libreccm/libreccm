@@ -71,7 +71,7 @@ import javax.transaction.Transactional;
 public class ContentItemManager {
 
     private static final Logger LOGGER = LogManager.getLogger(
-        ContentItemManager.class);
+            ContentItemManager.class);
 
     @Inject
     private EntityManager entityManager;
@@ -105,29 +105,29 @@ public class ContentItemManager {
      * {@link ContentSection#rootDocumentsFolder} of the provided content
      * section. Otherwise an {@link IllegalArgumentException} is thrown.
      *
-     * @param <T>     The type of the content item.
-     * @param name    The name (URL stub) of the new content item.
+     * @param <T> The type of the content item.
+     * @param name The name (URL stub) of the new content item.
      * @param section The content section in which the item is generated.
-     * @param folder  The folder in which in the item is stored.
-     * @param type    The type of the new content item.
+     * @param folder The folder in which in the item is stored.
+     * @param type The type of the new content item.
      *
      * @return The new content item.
      */
     @Transactional(Transactional.TxType.REQUIRED)
     public <T extends ContentItem> T createContentItem(
-        final String name,
-        final ContentSection section,
-        final Category folder,
-        final Class<T> type) {
+            final String name,
+            final ContentSection section,
+            final Category folder,
+            final Class<T> type) {
 
         final Optional<ContentType> contentType = typeRepo
-            .findByContentSectionAndClass(section, type);
+                .findByContentSectionAndClass(section, type);
 
         if (!contentType.isPresent()) {
             throw new IllegalArgumentException(String.format(
-                "ContentSection \"%s\" has no content type for \"%s\".",
-                section.getLabel(),
-                type.getName()));
+                    "ContentSection \"%s\" has no content type for \"%s\".",
+                    section.getLabel(),
+                    type.getName()));
         }
 
         return createContentItem(name,
@@ -149,38 +149,37 @@ public class ContentItemManager {
      * provided content section. Otherwise an {@link IllegalArgumentException}
      * is thrown.
      *
-     * @param <T>              The type of the content item.
-     * @param name             The name (URL stub) of the new content item.
-     * @param section          The content section in which the item is
-     *                         generated.
-     * @param folder           The folder in which in the item is stored.
+     * @param <T> The type of the content item.
+     * @param name The name (URL stub) of the new content item.
+     * @param section The content section in which the item is generated.
+     * @param folder The folder in which in the item is stored.
      * @param workflowTemplate The template for the workflow to apply to the new
-     *                         item.
-     * @param type             The type of the new content item.
+     * item.
+     * @param type The type of the new content item.
      *
      * @return The new content item.
      */
     @Transactional(Transactional.TxType.REQUIRED)
     public <T extends ContentItem> T createContentItem(
-        final String name,
-        final ContentSection section,
-        final Category folder,
-        final WorkflowTemplate workflowTemplate,
-        final Class<T> type) {
+            final String name,
+            final ContentSection section,
+            final Category folder,
+            final WorkflowTemplate workflowTemplate,
+            final Class<T> type) {
 
         final Optional<ContentType> contentType = typeRepo
-            .findByContentSectionAndClass(section, type);
+                .findByContentSectionAndClass(section, type);
 
         if (!contentType.isPresent()) {
             throw new IllegalArgumentException(String.format(
-                "ContentSection \"%s\" has no content type for \"%s\".",
-                section.getLabel(),
-                type.getName()));
+                    "ContentSection \"%s\" has no content type for \"%s\".",
+                    section.getLabel(),
+                    type.getName()));
         }
 
         if (name == null || name.isEmpty()) {
             throw new IllegalArgumentException(
-                "The name of a content item can't be blank.");
+                    "The name of a content item can't be blank.");
         }
 
         final T item;
@@ -188,14 +187,14 @@ public class ContentItemManager {
             item = type.newInstance();
         } catch (InstantiationException | IllegalAccessException ex) {
             LOGGER.error("Failed to create new content item of type \"{}\" "
-                             + "in content section \"{}\".",
+                                 + "in content section \"{}\".",
                          type.getName(),
                          section.getLabel());
             throw new RuntimeException(ex);
         }
 
         final KernelConfig kernelConfig = confManager.findConfiguration(
-            KernelConfig.class);
+                KernelConfig.class);
 
         item.setDisplayName(name);
         item.getName().addValue(kernelConfig.getDefaultLocale(),
@@ -206,14 +205,14 @@ public class ContentItemManager {
 
         if (workflowTemplate != null) {
             final Workflow workflow = workflowManager.createWorkflow(
-                workflowTemplate);
+                    workflowTemplate);
             item.setWorkflow(workflow);
         }
 
         categoryManager.addObjectToCategory(
-            item,
-            folder,
-            CmsConstants.CATEGORIZATION_TYPE_FOLDER);
+                item,
+                folder,
+                CmsConstants.CATEGORIZATION_TYPE_FOLDER);
 
         contentItemRepo.save(item);
 
@@ -225,7 +224,7 @@ public class ContentItemManager {
      * only moves the draft version of the item. The live version is moved after
      * a the item is republished.
      *
-     * @param item         The item to move.
+     * @param item The item to move.
      * @param targetFolder The folder to which the item is moved.
      */
     @Transactional(Transactional.TxType.REQUIRED)
@@ -236,7 +235,7 @@ public class ContentItemManager {
 
         if (targetFolder == null) {
             throw new IllegalArgumentException(
-                "The target folder can't be null.");
+                    "The target folder can't be null.");
         }
 
         final ContentItem draftItem = getDraftVersion(item, item.getClass());
@@ -252,9 +251,9 @@ public class ContentItemManager {
         }
 
         categoryManager.addObjectToCategory(
-            draftItem,
-            targetFolder,
-            CmsConstants.CATEGORIZATION_TYPE_FOLDER);
+                draftItem,
+                targetFolder,
+                CmsConstants.CATEGORIZATION_TYPE_FOLDER);
 
     }
 
@@ -262,11 +261,10 @@ public class ContentItemManager {
      * Creates an copy of the draft version of the item in the provided
      * {@code targetFolder}.
      *
-     * @param item         The item to copy.
+     * @param item The item to copy.
      * @param targetFolder The folder in which the copy is created. If the
-     *                     target folder is the same folder as the folder of the
-     *                     original item an index is appended to the name of the
-     *                     item.
+     * target folder is the same folder as the folder of the original item an
+     * index is appended to the name of the item.
      */
     @SuppressWarnings("unchecked")
     public void copy(final ContentItem item, final Category targetFolder) {
@@ -276,19 +274,19 @@ public class ContentItemManager {
 
         if (targetFolder == null) {
             throw new IllegalArgumentException(
-                "The target folder to which the item is copied can't be null");
+                    "The target folder to which the item is copied can't be null");
         }
 
         final Optional<ContentType> contentType = typeRepo
-            .findByContentSectionAndClass(
-                item.getContentType().getContentSection(), item.
-                getClass());
+                .findByContentSectionAndClass(
+                        item.getContentType().getContentSection(), item.
+                        getClass());
 
         if (!contentType.isPresent()) {
             throw new IllegalArgumentException(String.format(
-                "ContentSection \"%s\" has no content type for \"%s\".",
-                item.getContentType().getContentSection(),
-                item.getClass().getName()));
+                    "ContentSection \"%s\" has no content type for \"%s\".",
+                    item.getContentType().getContentSection(),
+                    item.getClass().getName()));
         }
 
         final ContentItem draftItem = getDraftVersion(item, item.getClass());
@@ -302,34 +300,31 @@ public class ContentItemManager {
 
         copy.setContentType(contentType.get());
 
-        final Workflow workflow = workflowManager.createWorkflow(contentType
-            .get().getDefaultWorkflow());
-
         if (draftItem.getWorkflow() != null) {
             final WorkflowTemplate template = draftItem.getWorkflow()
-                .getTemplate();
+                    .getTemplate();
             final Workflow copyWorkflow = workflowManager.createWorkflow(
-                template);
+                    template);
             copy.setWorkflow(copyWorkflow);
         }
 
         draftItem.getCategories().forEach(categorization -> categoryManager
-            .addObjectToCategory(copy, categorization.getCategory()));
+                .addObjectToCategory(copy, categorization.getCategory()));
 
         final Optional<Category> itemFolder = getItemFolder(draftItem);
         if (itemFolder.isPresent()) {
             try {
                 categoryManager.removeObjectFromCategory(
-                    copy, getItemFolder(draftItem).get());
+                        copy, getItemFolder(draftItem).get());
             } catch (ObjectNotAssignedToCategoryException ex) {
                 throw new RuntimeException(ex);
             }
         }
 
         categoryManager.addObjectToCategory(
-            copy,
-            targetFolder,
-            CmsConstants.CATEGORIZATION_TYPE_FOLDER);
+                copy,
+                targetFolder,
+                CmsConstants.CATEGORIZATION_TYPE_FOLDER);
 
         // !!!!!!!!!!!!!!!!!!!!!
         // ToDo copy Attachments
@@ -344,7 +339,7 @@ public class ContentItemManager {
         }
 
         for (final PropertyDescriptor propertyDescriptor : beanInfo
-            .getPropertyDescriptors()) {
+                .getPropertyDescriptors()) {
             if (propertyIsExcluded(propertyDescriptor.getName())) {
                 continue;
             }
@@ -370,10 +365,10 @@ public class ContentItemManager {
                 }
 
                 source.getAvailableLocales().forEach(
-                    locale -> target.addValue(locale,
-                                              source.getValue(locale)));
+                        locale -> target.addValue(locale,
+                                                  source.getValue(locale)));
             } else if (propType != null
-                           && propType.isAssignableFrom(ContentItem.class)) {
+                               && propType.isAssignableFrom(ContentItem.class)) {
 
                 final ContentItem linkedItem;
                 try {
@@ -385,7 +380,7 @@ public class ContentItemManager {
                 }
 
                 final ContentItem linkedDraftItem = getDraftVersion(
-                    linkedItem, linkedItem.getClass());
+                        linkedItem, linkedItem.getClass());
 
                 try {
                     writeMethod.invoke(copy, linkedDraftItem);
@@ -395,7 +390,7 @@ public class ContentItemManager {
                     throw new RuntimeException(ex);
                 }
             } else if (propType != null
-                           && propType.isAssignableFrom(List.class)) {
+                               && propType.isAssignableFrom(List.class)) {
                 final List<Object> source;
                 final List<Object> target;
                 try {
@@ -409,7 +404,7 @@ public class ContentItemManager {
 
                 target.addAll(source);
             } else if (propType != null
-                           && propType.isAssignableFrom(Map.class)) {
+                               && propType.isAssignableFrom(Map.class)) {
                 final Map<Object, Object> source;
                 final Map<Object, Object> target;
 
@@ -424,7 +419,7 @@ public class ContentItemManager {
 
                 source.forEach((key, value) -> target.put(key, value));
             } else if (propType != null
-                           && propType.isAssignableFrom(Set.class)) {
+                               && propType.isAssignableFrom(Set.class)) {
                 final Set<Object> source;
                 final Set<Object> target;
 
@@ -450,6 +445,18 @@ public class ContentItemManager {
                 }
             }
         }
+
+        if (targetFolder.equals(getItemFolder(item).orElse(null))) {
+            final long number = contentItemRepo.countFilterByFolderAndName(
+                    targetFolder, String.format("%s_copy",
+                                                item.getDisplayName()));
+            final long index = number + 1;
+            copy.setDisplayName(String.format("%s_copy%d", 
+                                              copy.getDisplayName(),
+                                              index));
+        }
+        
+        contentItemRepo.save(copy);
     }
 
     private boolean propertyIsExcluded(final String name) {
@@ -480,11 +487,11 @@ public class ContentItemManager {
     public ContentItem publish(final ContentItem item) {
         if (item == null) {
             throw new IllegalArgumentException(
-                "The item to publish can't be null.");
+                    "The item to publish can't be null.");
         }
 
         final LifecycleDefinition lifecycleDefinition = item.getContentType()
-            .getDefaultLifecycle();
+                .getDefaultLifecycle();
 
         return publish(item, lifecycleDefinition);
     }
@@ -493,9 +500,9 @@ public class ContentItemManager {
      * Creates a live version of content item or updates the live version of a
      * content item if there already a live version.
      *
-     * @param item                The content item to publish.
+     * @param item The content item to publish.
      * @param lifecycleDefinition The definition of the lifecycle to use for the
-     *                            new item.
+     * new item.
      *
      * @return The published content item.
      */
@@ -504,13 +511,13 @@ public class ContentItemManager {
                                final LifecycleDefinition lifecycleDefinition) {
         if (item == null) {
             throw new IllegalArgumentException(
-                "The item to publish can't be null.");
+                    "The item to publish can't be null.");
         }
 
         if (lifecycleDefinition == null) {
             throw new IllegalArgumentException(
-                "The lifecycle definition for the "
-                    + "lifecycle of the item to publish can't be null.");
+                    "The lifecycle definition for the "
+                            + "lifecycle of the item to publish can't be null.");
         }
 
         final ContentItem draftItem = getDraftVersion(item, ContentItem.class);
@@ -529,13 +536,13 @@ public class ContentItemManager {
         liveItem.setContentType(draftItem.getContentType());
 
         final Lifecycle lifecycle = lifecycleManager.createLifecycle(
-            lifecycleDefinition);
+                lifecycleDefinition);
 
         liveItem.setLifecycle(lifecycle);
         liveItem.setWorkflow(draftItem.getWorkflow());
 
         draftItem.getCategories().forEach(categorization -> categoryManager
-            .addObjectToCategory(item, categorization.getCategory()));
+                .addObjectToCategory(item, categorization.getCategory()));
 
         liveItem.setUuid(draftItem.getUuid());
 
@@ -552,7 +559,7 @@ public class ContentItemManager {
         }
 
         for (final PropertyDescriptor propertyDescriptor : beanInfo
-            .getPropertyDescriptors()) {
+                .getPropertyDescriptors()) {
 
             if (propertyIsExcluded(propertyDescriptor.getName())) {
                 continue;
@@ -575,10 +582,10 @@ public class ContentItemManager {
                 }
 
                 source.getAvailableLocales().forEach(
-                    locale -> target.addValue(locale, source.
-                                              getValue(locale)));
+                        locale -> target.addValue(locale, source.
+                                                  getValue(locale)));
             } else if (propType != null
-                           && propType.isAssignableFrom(ContentItem.class)) {
+                               && propType.isAssignableFrom(ContentItem.class)) {
                 final ContentItem linkedItem;
                 try {
                     linkedItem = (ContentItem) readMethod.invoke(draftItem);
@@ -589,13 +596,13 @@ public class ContentItemManager {
                 }
 
                 final ContentItem linkedDraftItem = getDraftVersion(
-                    linkedItem, linkedItem.getClass());
+                        linkedItem, linkedItem.getClass());
 
                 if (isLive(linkedDraftItem)) {
                     try {
                         final Optional<ContentItem> linkedLiveItem
-                                                        = getLiveVersion(
-                                linkedDraftItem, ContentItem.class);
+                                                    = getLiveVersion(
+                                        linkedDraftItem, ContentItem.class);
                         writeMethod.invoke(liveItem, linkedLiveItem);
                     } catch (IllegalAccessException |
                              IllegalArgumentException |
@@ -604,7 +611,7 @@ public class ContentItemManager {
                     }
                 }
             } else if (propType != null
-                           && propType.isAssignableFrom(List.class)) {
+                               && propType.isAssignableFrom(List.class)) {
                 final List<Object> source;
                 final List<Object> target;
                 try {
@@ -618,7 +625,7 @@ public class ContentItemManager {
 
                 target.addAll(source);
             } else if (propType != null
-                           && propType.isAssignableFrom(Map.class)) {
+                               && propType.isAssignableFrom(Map.class)) {
                 final Map<Object, Object> source;
                 final Map<Object, Object> target;
 
@@ -633,7 +640,7 @@ public class ContentItemManager {
 
                 source.forEach((key, value) -> target.put(key, value));
             } else if (propType != null
-                           && propType.isAssignableFrom(Set.class)) {
+                               && propType.isAssignableFrom(Set.class)) {
                 final Set<Object> source;
                 final Set<Object> target;
 
@@ -673,7 +680,7 @@ public class ContentItemManager {
     public void unpublish(final ContentItem item
     ) {
         final Optional<ContentItem> liveItem = getLiveVersion(
-            item, ContentItem.class);
+                item, ContentItem.class);
 
         if (liveItem.isPresent()) {
             entityManager.remove(liveItem);
@@ -687,11 +694,11 @@ public class ContentItemManager {
      * @param item The item
      *
      * @return {@code true} if the content item has a live version,
-     *         {@code false} if not.
+     * {@code false} if not.
      */
     public boolean isLive(final ContentItem item) {
         final TypedQuery<Boolean> query = entityManager.createNamedQuery(
-            "ContentItem.hasLiveVersion", Boolean.class);
+                "ContentItem.hasLiveVersion", Boolean.class);
         query.setParameter("uuid", item.getUuid());
 
         return query.getSingleResult();
@@ -700,22 +707,22 @@ public class ContentItemManager {
     /**
      * Retrieves the live version of the provided content item if any.
      *
-     * @param <T>  Type of the content item.
+     * @param <T> Type of the content item.
      * @param item The item of which the live version should be retrieved.
      * @param type Type of the content item.
      *
      * @return The live version of an item. If the item provided is already the
-     *         live version the provided item is returned, otherwise the live
-     *         version is returned. If there is no live version an empty
-     *         {@link Optional} is returned.
+     * live version the provided item is returned, otherwise the live version is
+     * returned. If there is no live version an empty {@link Optional} is
+     * returned.
      */
     public <T extends ContentItem> Optional<T> getLiveVersion(
-        final ContentItem item,
-        final Class<T> type) {
+            final ContentItem item,
+            final Class<T> type) {
 
         if (isLive(item)) {
             final TypedQuery<T> query = entityManager.createNamedQuery(
-                "ContentItem.findLiveVersion", type);
+                    "ContentItem.findLiveVersion", type);
             query.setParameter("uuid", item.getUuid());
 
             return Optional.of(query.getSingleResult());
@@ -727,30 +734,30 @@ public class ContentItemManager {
     /**
      * Retrieves the pending versions of an item if there are any.
      *
-     * @param <T>  Type of the content item to retrieve.
+     * @param <T> Type of the content item to retrieve.
      * @param item The item of which the pending versions are retrieved.
      * @param type Type of the content item to retrieve.
      *
      * @return A list of the pending versions of the item.
      */
     public <T extends ContentItem> List<T> getPendingVersions(
-        final ContentItem item,
-        final Class<T> type) {
+            final ContentItem item,
+            final Class<T> type) {
         throw new UnsupportedOperationException();
     }
 
     /**
      * Retrieves the draft version
      *
-     * @param <T>  Type of the item.
+     * @param <T> Type of the item.
      * @param item The item of which the draft version is retrieved.
      * @param type Type of the item.
      *
      * @return The draft version of the provided content item. If the provided
-     *         item is the draft version the provided item is simply returned.
-     *         Otherwise the draft version is retrieved from the database and is
-     *         returned. Each content item has a draft version (otherwise
-     *         something is seriously wrong with the database) this method will
+     * item is the draft version the provided item is simply returned. Otherwise
+     * the draft version is retrieved from the database and is returned. Each
+     * content item has a draft version (otherwise something is seriously wrong
+     * with the database) this method will
      * <b>never</b> return {@code null}.
      */
     @SuppressWarnings("unchecked")
@@ -758,14 +765,14 @@ public class ContentItemManager {
                                                      final Class<T> type) {
         if (!ContentItem.class.isAssignableFrom(type)) {
             throw new IllegalArgumentException(String.format(
-                "The provided type \"%s\" does match the type of the provided "
+                    "The provided type \"%s\" does match the type of the provided "
                     + "item (\"%s\").",
-                type.getName(),
-                item.getClass().getName()));
+                    type.getName(),
+                    item.getClass().getName()));
         }
 
         final TypedQuery<ContentItem> query = entityManager.createNamedQuery(
-            "ContentItem.findDraftVersion", ContentItem.class);
+                "ContentItem.findDraftVersion", ContentItem.class);
         query.setParameter("uuid", item.getUuid());
 
         return (T) query.getSingleResult();
@@ -804,9 +811,9 @@ public class ContentItemManager {
      * {@code info}, the path including the content section would be
      * {@code info:/research/computer-science/artificial-intelligence/neural-nets}.
      *
-     * @param item               The item whose path is generated.
+     * @param item The item whose path is generated.
      * @param withContentSection Wether to include the content section into the
-     *                           path.
+     * path.
      *
      * @return The path of the content item
      *
@@ -815,9 +822,9 @@ public class ContentItemManager {
     public String getItemPath(final ContentItem item,
                               final boolean withContentSection) {
         final List<Categorization> result = item.getCategories().stream().
-            filter(categorization -> CmsConstants.CATEGORIZATION_TYPE_FOLDER.
-                equals(categorization.getType()))
-            .collect(Collectors.toList());
+                filter(categorization -> CmsConstants.CATEGORIZATION_TYPE_FOLDER.
+                        equals(categorization.getType()))
+                .collect(Collectors.toList());
 
         if (result.isEmpty()) {
             return item.getDisplayName();
@@ -838,9 +845,9 @@ public class ContentItemManager {
 
             if (withContentSection) {
                 final String sectionName = item.getContentType().
-                    getContentSection().getDisplayName();
+                        getContentSection().getDisplayName();
                 return String.format(
-                    "%s/%s", sectionName, path);
+                        "%s/%s", sectionName, path);
             } else {
                 return String.format("/%s", path);
             }
@@ -856,9 +863,9 @@ public class ContentItemManager {
      */
     public List<Category> getItemFolders(final ContentItem item) {
         final List<Categorization> result = item.getCategories().stream().
-            filter(categorization -> CmsConstants.CATEGORIZATION_TYPE_FOLDER.
-                equals(categorization.getType()))
-            .collect(Collectors.toList());
+                filter(categorization -> CmsConstants.CATEGORIZATION_TYPE_FOLDER.
+                        equals(categorization.getType()))
+                .collect(Collectors.toList());
 
         final List<Category> folders = new ArrayList<>();
         if (!result.isEmpty()) {
@@ -884,13 +891,13 @@ public class ContentItemManager {
      * @param item The item
      *
      * @return An {@link Optional} containing the folder of the item if the item
-     *         is part of a folder.
+     * is part of a folder.
      */
     public Optional<Category> getItemFolder(final ContentItem item) {
         final List<Categorization> result = item.getCategories().stream().
-            filter(categorization -> CmsConstants.CATEGORIZATION_TYPE_FOLDER.
-                equals(categorization.getType()))
-            .collect(Collectors.toList());
+                filter(categorization -> CmsConstants.CATEGORIZATION_TYPE_FOLDER.
+                        equals(categorization.getType()))
+                .collect(Collectors.toList());
 
         if (result.size() > 0) {
             return Optional.of(result.get(0).getCategory());
