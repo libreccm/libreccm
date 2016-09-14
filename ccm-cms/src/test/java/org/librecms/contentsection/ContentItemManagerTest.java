@@ -458,10 +458,10 @@ public class ContentItemManagerTest {
     @Test
     @InSequence(3100)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                      + "ContentItemManagerTest/move-before.xml")
+                      + "ContentItemManagerTest/data.xml")
     @ShouldMatchDataSet(
         value = "datasets/org/librecms/contentsection/"
-                    + "ContentItemManagerTest/move-after.xml",
+                    + "ContentItemManagerTest/after-move.xml",
         excludeColumns = {"categorization_id",
                           "lifecycle_id",
                           "object_id",
@@ -484,9 +484,9 @@ public class ContentItemManagerTest {
     @Test(expected = IllegalArgumentException.class)
     @InSequence(3200)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                      + "ContentItemManagerTest/move-before.xml")
+                      + "ContentItemManagerTest/data.xml")
     @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
-                            + "ContentItemManagerTest/move-before.xml")
+                            + "ContentItemManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void moveItemNull() {
         final Category targetFolder = categoryRepo.findById(-2120L);
@@ -498,9 +498,9 @@ public class ContentItemManagerTest {
     @Test(expected = IllegalArgumentException.class)
     @InSequence(3200)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                      + "ContentItemManagerTest/move-before.xml")
+                      + "ContentItemManagerTest/data.xml")
     @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
-                            + "ContentItemManagerTest/move-before.xml")
+                            + "ContentItemManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void moveItemFolderNull() {
         final Optional<ContentItem> item = itemRepo.findById(-10100L);
@@ -512,10 +512,10 @@ public class ContentItemManagerTest {
     @Test
     @InSequence(4100)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                      + "ContentItemManagerTest/move-before.xml")
+                      + "ContentItemManagerTest/data.xml")
     @ShouldMatchDataSet(
         value = "datasets/org/librecms/contentsection/"
-                    + "ContentItemManagerTest/copy-to-other-folder-after.xml",
+                    + "ContentItemManagerTest/after-copy-to-other-folder.xml",
         excludeColumns = {"categorization_id",
                           "lifecycle_id",
                           "object_id",
@@ -538,10 +538,10 @@ public class ContentItemManagerTest {
     @Test
     @InSequence(4200)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                      + "ContentItemManagerTest/move-before.xml")
+                      + "ContentItemManagerTest/data.xml")
     @ShouldMatchDataSet(
         value = "datasets/org/librecms/contentsection/"
-                    + "ContentItemManagerTest/copy-to-same-folder-after.xml",
+                    + "ContentItemManagerTest/after-copy-to-same-folder.xml",
         excludeColumns = {"categorization_id",
                           "lifecycle_id",
                           "object_id",
@@ -564,10 +564,10 @@ public class ContentItemManagerTest {
     @Test(expected = IllegalArgumentException.class)
     @InSequence(4100)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                      + "ContentItemManagerTest/move-before.xml")
+                      + "ContentItemManagerTest/data.xml")
     @ShouldMatchDataSet(
         value = "datasets/org/librecms/contentsection/"
-                      + "ContentItemManagerTest/move-before.xml")
+                      + "ContentItemManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void copyItemNull() {
         final Category targetFolder = categoryRepo.findById(-2120L);
@@ -579,10 +579,10 @@ public class ContentItemManagerTest {
     @Test(expected = IllegalArgumentException.class)
     @InSequence(4100)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                      + "ContentItemManagerTest/move-before.xml")
+                      + "ContentItemManagerTest/data.xml")
     @ShouldMatchDataSet(
         value = "datasets/org/librecms/contentsection/"
-                      + "ContentItemManagerTest/move-before.xml")
+                      + "ContentItemManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void copyItemToFolderNull() {
         final Optional<ContentItem> item = itemRepo.findById(-10100L);

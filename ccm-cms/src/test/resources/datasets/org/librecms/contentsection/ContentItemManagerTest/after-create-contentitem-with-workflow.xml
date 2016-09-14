@@ -99,9 +99,9 @@
                         finished="false"
                         definition_id="-210" />
     
-    <ccm_cms.lifecyle_phases phase_id="-300100" 
-                             started="false" 
-                             finished="false" />-->
+<ccm_cms.lifecyle_phases phase_id="-300100" 
+    started="false" 
+    finished="false" />-->
     
     <ccm_core.ccm_objects object_id="-1100"
                           display_name="info"
@@ -109,6 +109,12 @@
     <ccm_core.ccm_objects object_id="-2100"
                           display_name="info_root"
                           uuid="82014239-9c06-486d-ae8c-4ae47f52a699" />
+    <ccm_core.ccm_objects object_id="-2110" 
+                          display_name="folder1" 
+                          uuid="c634c1c3-41b7-4773-bb2e-5b6cd14492a3" />
+    <ccm_core.ccm_objects object_id="-2120" 
+                          display_name="folder2" 
+                          uuid="3b2a3a92-cdea-4fe3-b364-401eb3fb0ffc" />
     <ccm_core.ccm_objects object_id="-2200"
                           display_name="info_assets"
                           uuid="b163f73c-9ac2-44d7-a037-de621f5ca828" />
@@ -141,6 +147,22 @@
                          visible="true"
                          abstract_category="false"
                          category_order="1" />
+    <ccm_core.categories object_id="-2110" 
+                         unique_id="c634c1c3-41b7-4773-bb2e-5b6cd14492a3"
+                         parent_category_id="-2100"
+                         name="folder1"
+                         enabled="true"
+                         visible="true"
+                         abstract_category="false"
+                         category_order="1" />
+    <ccm_core.categories object_id="-2120" 
+                         unique_id="3b2a3a92-cdea-4fe3-b364-401eb3fb0ffc"
+                         parent_category_id="-2100"
+                         name="folder2"
+                         enabled="true"
+                         visible="true"
+                         abstract_category="false"
+                         category_order="2" />
     <ccm_core.categories object_id="-2200"
                          unique_id="b163f73c-9ac2-44d7-a037-de621f5ca828"
                          name="info_assets" 
@@ -243,8 +265,8 @@
                                  locale="en" 
                                  localized_value="News 1" />
     <!--<ccm_cms.content_item_titles object_id="-11100" 
-                                 locale="en" 
-                                 localized_value="new-article" />-->
+    locale="en" 
+    localized_value="new-article" />-->
     
     <ccm_cms.content_type_labels object_id="-20100"
                                  locale="en" 
@@ -281,7 +303,7 @@
         localized_value="Curabitur vel sapien eu eros gravida bibendum vitae." />
     
     <ccm_core.categorizations categorization_id="-30100" 
-                              category_id="-2100" 
+                              category_id="-2110" 
                               object_id="-10100" 
                               category_order="1" 
                               object_order="1" 
