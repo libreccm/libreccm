@@ -99,8 +99,6 @@ public class CcmObject implements Identifiable, Serializable {
      *
      */
     @Column(name = "UUID", unique = true)
-    //@GeneratedValue(generator="uuid", strategy = GenerationType.AUTO)
-    //@GenericGenerator(name = "uuid", strategy = "uuid2")
     @NotNull
     @XmlElement(name = "uuid")
     private String uuid;

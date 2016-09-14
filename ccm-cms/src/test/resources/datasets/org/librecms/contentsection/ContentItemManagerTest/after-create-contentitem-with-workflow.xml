@@ -127,6 +127,9 @@
     <ccm_core.ccm_objects object_id="-10200"
                           display_name="article2"
                           uuid="acae860f-2ffa-450d-b486-054292f0dae6" />
+    <ccm_core.ccm_objects object_id="-99200"
+                          display_name="article2"
+                          uuid="ad8aaec6-1a0d-4e4f-a1e1-8b7bdc3014a4" />
     <ccm_core.ccm_objects object_id="-10400"
                           display_name="news1"
                           uuid="d9ea527d-c6e3-4bdd-962d-c0a1a80c6c72" />
@@ -235,6 +238,9 @@
                            version="DRAFT"
                            content_type_id="-20100" 
                            workflow_id="-120" />
+    <ccm_cms.content_items object_id="-99200" 
+                           version="LIVE"
+                           content_type_id="-20100" />
     
     <ccm_cms.content_item_names object_id="-10100" 
                                 locale="en" 
@@ -251,6 +257,9 @@
     <ccm_cms.content_item_names object_id="-11100" 
                                 locale="en" 
                                 localized_value="new-article" />
+    <ccm_cms.content_item_names object_id="-99200" 
+                                locale="en" 
+                                localized_value="article2" />
     
     <ccm_cms.content_item_titles object_id="-10100" 
                                  locale="en" 
@@ -264,9 +273,9 @@
     <ccm_cms.content_item_titles object_id="-10400" 
                                  locale="en" 
                                  localized_value="News 1" />
-    <!--<ccm_cms.content_item_titles object_id="-11100" 
-    locale="en" 
-    localized_value="new-article" />-->
+    <ccm_cms.content_item_titles object_id="-99200" 
+                                 locale="en" 
+                                 localized_value="Article 2" />
     
     <ccm_cms.content_type_labels object_id="-20100"
                                  locale="en" 
@@ -279,6 +288,7 @@
     <ccm_cms.articles object_id="-10200" />
     <ccm_cms.articles object_id="-10300" />
     <ccm_cms.articles object_id="-11100" />
+    <ccm_cms.articles object_id="-99200" />
     
     <ccm_cms.article_texts 
         object_id="-10100"
@@ -292,6 +302,10 @@
         object_id="-10300"
         locale="en" 
         localized_value="Etiam euismod lacus laoreet sodales ultricies. Pellentesque non elit vitae purus sagittis." />
+    <ccm_cms.article_texts 
+        object_id="-99200"
+        locale="en" 
+        localized_value="Duis quis tincidunt elit. In pharetra justo sit amet ipsum dictum, at." />
     
     <ccm_cms.news object_id="-10400"
                   news_date="2016-08-08" 
@@ -336,6 +350,13 @@
                               category_order="1" 
                               object_order="1" 
                               category_index="false"
+                              type="folder" />
+    <ccm_core.categorizations categorization_id="-98200" 
+                              category_id="-2100" 
+                              object_id="-99200" 
+                              category_order="1" 
+                              object_order="2" 
+                              category_index="false" 
                               type="folder" />
     
     <ccm_core.ccm_roles role_id="-3100"
