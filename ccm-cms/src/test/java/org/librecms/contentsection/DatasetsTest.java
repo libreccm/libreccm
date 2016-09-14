@@ -56,7 +56,8 @@ public class DatasetsTest extends DatasetsVerifier {
             "/datasets/org/librecms/contentsection/ContentItemManagerTest/after-create-contentitem-with-workflow.xml",
             "/datasets/org/librecms/contentsection/ContentItemManagerTest/after-move.xml",
             "/datasets/org/librecms/contentsection/ContentItemManagerTest/after-copy-to-other-folder.xml",
-            "/datasets/org/librecms/contentsection/ContentItemManagerTest/after-copy-to-same-folder.xml"});
+            "/datasets/org/librecms/contentsection/ContentItemManagerTest/after-copy-to-same-folder.xml",
+            "/datasets/org/librecms/contentsection/ContentItemManagerTest/after-publish.xml"});
     }
 
     public DatasetsTest(final String datasetPath) {

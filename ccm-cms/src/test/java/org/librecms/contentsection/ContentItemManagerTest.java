@@ -592,6 +592,26 @@ public class ContentItemManagerTest {
     }
     
     // publish item (draft)
+    @Test
+    @InSequence(4200)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentItemManagerTest/data.xml")
+    @ShouldMatchDataSet(
+        value = "datasets/org/librecms/contentsection/"
+                    + "ContentItemManagerTest/after-publish.xml",
+        excludeColumns = {"categorization_id",
+                          "lifecycle_id",
+                          "object_id",
+                          "object_order",
+                          "phase_id",
+                          "task_id",
+                          "uuid",
+                          "workflow_id"
+        })
+    public void publishItem() {
+        
+    }
+        
     // publish item (live)
     // publish item null
     // unpublish item 
