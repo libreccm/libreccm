@@ -236,22 +236,28 @@
                            default_lifecycle_id="-200" />
     
     <ccm_cms.content_items object_id="-10100" 
+                           item_uuid="aed4b402-1180-46c6-b42d-7245f4dca248"
                            version="DRAFT"
                            content_type_id="-20100" />
     <ccm_cms.content_items object_id="-10200" 
+                           item_uuid="acae860f-2ffa-450d-b486-054292f0dae6"
                            version="DRAFT"
                            content_type_id="-20100" />
     <ccm_cms.content_items object_id="-10300" 
+                           item_uuid="f4b38abb-234b-4354-bc92-e36c068a1ebd"
                            version="DRAFT"
                            content_type_id="-20100" />
     <ccm_cms.content_items object_id="-10400" 
+                           item_uuid="d9ea527d-c6e3-4bdd-962d-c0a1a80c6c72"
                            version="DRAFT"
                            content_type_id="-20200" />
     <ccm_cms.content_items object_id="-11100" 
+                           item_uuid="cfa0efb6-7ce2-41e8-be03-4ee8c7f18b05"
                            version="DRAFT"
                            content_type_id="-20100" 
                            workflow_id="-120" />
     <ccm_cms.content_items object_id="-99200" 
+                           item_uuid="acae860f-2ffa-450d-b486-054292f0dae6"
                            version="LIVE"
                            content_type_id="-20100" />
     
@@ -366,12 +372,12 @@
                               category_index="false"
                               type="folder" />
     <ccm_core.categorizations categorization_id="-98200" 
-                               category_id="-2100" 
-                               object_id="-99200" 
-                               category_order="1" 
-                               object_order="2" 
-                               category_index="false" 
-                               type="folder" />
+                              category_id="-2100" 
+                              object_id="-99200" 
+                              category_order="1" 
+                              object_order="2" 
+                              category_index="false" 
+                              type="folder" />
     
     <ccm_core.ccm_roles role_id="-3100"
                         name="info_alert_recipient" />

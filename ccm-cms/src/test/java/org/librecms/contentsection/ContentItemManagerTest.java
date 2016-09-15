@@ -236,6 +236,7 @@ public class ContentItemManagerTest {
                           "phase_id",
                           "task_id",
                           "uuid",
+                          "item_uuid",
                           "workflow_id"
         })
     public void createContentItem() {
@@ -338,6 +339,7 @@ public class ContentItemManagerTest {
                           "phase_id",
                           "task_id",
                           "uuid",
+                          "item_uuid",
                           "workflow_id"
         })
     public void createContentItemWithWorkflow() {
@@ -523,6 +525,7 @@ public class ContentItemManagerTest {
                           "phase_id",
                           "task_id",
                           "uuid",
+                          "item_uuid",
                           "workflow_id"
         })
     public void copyToOtherFolder() {
@@ -549,6 +552,7 @@ public class ContentItemManagerTest {
                           "phase_id",
                           "task_id",
                           "uuid",
+                          "item_uuid",
                           "workflow_id"
         })
     public void copyToSameFolder() {
@@ -562,7 +566,7 @@ public class ContentItemManagerTest {
     }
     
     @Test(expected = IllegalArgumentException.class)
-    @InSequence(4100)
+    @InSequence(4300)
     @UsingDataSet("datasets/org/librecms/contentsection/"
                       + "ContentItemManagerTest/data.xml")
     @ShouldMatchDataSet(
@@ -577,7 +581,7 @@ public class ContentItemManagerTest {
     }
     
     @Test(expected = IllegalArgumentException.class)
-    @InSequence(4100)
+    @InSequence(4400)
     @UsingDataSet("datasets/org/librecms/contentsection/"
                       + "ContentItemManagerTest/data.xml")
     @ShouldMatchDataSet(
@@ -593,7 +597,7 @@ public class ContentItemManagerTest {
     
     // publish item (draft)
     @Test
-    @InSequence(4200)
+    @InSequence(5100)
     @UsingDataSet("datasets/org/librecms/contentsection/"
                       + "ContentItemManagerTest/data.xml")
     @ShouldMatchDataSet(

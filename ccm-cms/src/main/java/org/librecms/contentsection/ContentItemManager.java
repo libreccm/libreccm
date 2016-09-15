@@ -202,12 +202,14 @@ public class ContentItemManager {
 
         item.setVersion(ContentItemVersion.DRAFT);
         item.setContentType(contentType.get());
-
+        
         if (workflowTemplate != null) {
             final Workflow workflow = workflowManager.createWorkflow(
                     workflowTemplate);
             item.setWorkflow(workflow);
         }
+        
+        contentItemRepo.save(item);
 
         categoryManager.addObjectToCategory(
                 item,
@@ -309,6 +311,8 @@ public class ContentItemManager {
             copy.setWorkflow(copyWorkflow);
         }
 
+        contentItemRepo.save(copy);
+        
         draftItem.getCategories().forEach(categorization -> categoryManager
                 .addObjectToCategory(copy, categorization.getCategory()));
 

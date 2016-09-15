@@ -269,6 +269,7 @@ CREATE SCHEMA ccm_cms;
 
     create table CCM_CMS.CONTENT_ITEMS (
         ANCESTORS varchar(1024),
+        ITEM_UUID varchar(255) not null,
         LAUNCH_DATE date,
         VERSION varchar(255),
         OBJECT_ID int8 not null,
@@ -282,6 +283,7 @@ CREATE SCHEMA ccm_cms;
         OBJECT_ID int8 not null,
         REV int4 not null,
         ANCESTORS varchar(1024),
+        ITEM_UUID varchar(255),
         LAUNCH_DATE date,
         VERSION varchar(255),
         CONTENT_TYPE_ID int8,

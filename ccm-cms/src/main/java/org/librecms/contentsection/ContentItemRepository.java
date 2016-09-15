@@ -25,6 +25,7 @@ import org.libreccm.core.CcmObjectRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -55,6 +56,15 @@ public class ContentItemRepository
     @Override
     public boolean isNew(final ContentItem item) {
         return ccmObjectRepo.isNew(item);
+    }
+    
+    @Override
+    public void initNewEntity(final ContentItem item) {
+        final String uuid = UUID.randomUUID().toString();
+        item.setUuid(uuid);
+        if (item.getItemUuid() == null || item.getItemUuid().isEmpty()) {
+            item.setItemUuid(uuid);
+        }
     }
 
     /**

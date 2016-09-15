@@ -130,6 +130,9 @@ public class ContentItem extends CcmObject implements Serializable,
 
     private static final long serialVersionUID = 5897287630227129653L;
 
+    @Column(name = "ITEM_UUID", nullable = false)
+    private String itemUuid;
+
     /**
      * The name of the content item which is used to generate the URL of the
      * content item. We are using a {@link LocalizedString} here to make it
@@ -225,7 +228,15 @@ public class ContentItem extends CcmObject implements Serializable,
         description = new LocalizedString();
         attachments = new ArrayList<>();
     }
-    
+
+    public String getItemUuid() {
+        return itemUuid;
+    }
+
+    protected void setItemUuid(final String itemUuid) {
+        this.itemUuid = itemUuid;
+    }
+
     public LocalizedString getName() {
         return name;
     }
@@ -332,6 +343,7 @@ public class ContentItem extends CcmObject implements Serializable,
     @Override
     public int hashCode() {
         int hash = super.hashCode();
+        hash = 59 * hash + Objects.hashCode(itemUuid);
         hash = 59 * hash + Objects.hashCode(name);
         hash = 59 * hash + Objects.hashCode(contentType);
         hash = 59 * hash + Objects.hashCode(title);
@@ -359,6 +371,10 @@ public class ContentItem extends CcmObject implements Serializable,
 
         final ContentItem other = (ContentItem) obj;
         if (!other.canEqual(this)) {
+            return false;
+        }
+
+        if (!Objects.equals(itemUuid, other.getItemUuid())) {
             return false;
         }
 
@@ -393,7 +409,8 @@ public class ContentItem extends CcmObject implements Serializable,
 
     @Override
     public String toString(final String data) {
-        return super.toString(String.format(", name = %s, "
+        return super.toString(String.format(", itemUuid = %s, "
+                                                + "name = %s, "
                                                 + "contentType = { %s }, "
                                                 + "title = %s, "
                                                 + "description = %s, "
@@ -402,6 +419,7 @@ public class ContentItem extends CcmObject implements Serializable,
                                                 + "lifecycle = { %s }, "
                                                 + "workflow = { %s }"
                                                 + "%s",
+                                            itemUuid,
                                             Objects.toString(name),
                                             Objects.toString(contentType),
                                             Objects.toString(title),
