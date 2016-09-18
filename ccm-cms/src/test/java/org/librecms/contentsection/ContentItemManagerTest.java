@@ -49,6 +49,7 @@ import org.libreccm.workflow.WorkflowTemplate;
 import org.libreccm.workflow.WorkflowTemplateRepository;
 import org.librecms.contenttypes.Article;
 import org.librecms.contenttypes.Event;
+import org.librecms.lifecycle.LifecycleDefinition;
 import org.librecms.lifecycle.LifecycleDefinitionRepository;
 
 import java.io.File;
@@ -348,7 +349,7 @@ public class ContentItemManagerTest {
 
         final WorkflowTemplate workflowTemplate = workflowTemplateRepo
             .findById(-110L);
-        
+
         final Article article = itemManager.createContentItem(
             "new-article",
             section,
@@ -534,10 +535,10 @@ public class ContentItemManagerTest {
 
         final Category targetFolder = categoryRepo.findById(-2120L);
         assertThat(targetFolder, is(not(nullValue())));
-        
+
         itemManager.copy(item.get(), targetFolder);
     }
-    
+
     @Test
     @InSequence(4200)
     @UsingDataSet("datasets/org/librecms/contentsection/"
@@ -561,41 +562,40 @@ public class ContentItemManagerTest {
 
         final Category targetFolder = categoryRepo.findById(-2110L);
         assertThat(targetFolder, is(not(nullValue())));
-        
+
         itemManager.copy(item.get(), targetFolder);
     }
-    
+
     @Test(expected = IllegalArgumentException.class)
     @InSequence(4300)
     @UsingDataSet("datasets/org/librecms/contentsection/"
                       + "ContentItemManagerTest/data.xml")
     @ShouldMatchDataSet(
         value = "datasets/org/librecms/contentsection/"
-                      + "ContentItemManagerTest/data.xml")
+                    + "ContentItemManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void copyItemNull() {
         final Category targetFolder = categoryRepo.findById(-2120L);
         assertThat(targetFolder, is(not(nullValue())));
-        
+
         itemManager.copy(null, targetFolder);
     }
-    
+
     @Test(expected = IllegalArgumentException.class)
     @InSequence(4400)
     @UsingDataSet("datasets/org/librecms/contentsection/"
                       + "ContentItemManagerTest/data.xml")
     @ShouldMatchDataSet(
         value = "datasets/org/librecms/contentsection/"
-                      + "ContentItemManagerTest/data.xml")
+                    + "ContentItemManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void copyItemToFolderNull() {
         final Optional<ContentItem> item = itemRepo.findById(-10100L);
         assertThat(item.isPresent(), is(true));
-        
+
         itemManager.copy(item.get(), null);
     }
-    
-    // publish item (draft)
+
     @Test
     @InSequence(5100)
     @UsingDataSet("datasets/org/librecms/contentsection/"
@@ -613,10 +613,74 @@ public class ContentItemManagerTest {
                           "workflow_id"
         })
     public void publishItem() {
-        
+        final Optional<ContentItem> item = itemRepo.findById(-10100L);
+        assertThat(item.isPresent(), is(true));
+
+        final ContentItem live = itemManager.publish(item.get());
+        assertThat(live, is(not(nullValue())));
+        assertThat(live.getVersion(), is(ContentItemVersion.LIVE));
     }
-        
-    // publish item (live)
+
+    @Test
+    @InSequence(5200)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentItemManagerTest/data.xml")
+    @ShouldMatchDataSet(
+        value = "datasets/org/librecms/contentsection/"
+                    + "ContentItemManagerTest/after-publish.xml",
+        excludeColumns = {"categorization_id",
+                          "lifecycle_id",
+                          "object_id",
+                          "object_order",
+                          "phase_id",
+                          "task_id",
+                          "uuid",
+                          "workflow_id"
+        })
+    public void publishItemWithLifecycle() {
+        final Optional<ContentItem> item = itemRepo.findById(-10100L);
+        final LifecycleDefinition lifecycleDef = lifecycleDefinitionRepo
+            .findById(-200L);
+        assertThat(item.isPresent(), is(true));
+        assertThat(lifecycleDef, is(not(nullValue())));
+
+        final ContentItem live = itemManager.publish(item.get(), lifecycleDef);
+        assertThat(live, is(not(nullValue())));
+        assertThat(live.getVersion(), is(ContentItemVersion.LIVE));
+    }
+
+    //Republish
+    @Test
+    @InSequence(5300)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentItemManagerTest/data.xml")
+    @ShouldMatchDataSet(
+        value = "datasets/org/librecms/contentsection/"
+                    + "ContentItemManagerTest/after-republish.xml",
+        excludeColumns = {"categorization_id",
+                          "lifecycle_id",
+                          "object_id",
+                          "object_order",
+                          "phase_id",
+                          "task_id",
+                          "uuid",
+                          "workflow_id"
+        })
+    public void republishItem() {
+        final Optional<ContentItem> item = itemRepo.findById(-10200L);
+        assertThat(item.isPresent(), is(true));
+
+        item.get().getName().addValue(Locale.ENGLISH, "article2-edited");
+        item.get().getTitle()
+            .addValue(Locale.ENGLISH, "Article has been edited");
+        itemRepo.save(item.get());
+
+        final Optional<ContentItem> draft = itemRepo.findById(-10200L);
+        assertThat(draft.get().getName().getValue(Locale.ENGLISH),
+                   is(equalTo("article2-edited")));
+        itemManager.publish(draft.get());
+    }
+
     // publish item null
     // unpublish item 
     // unpublish non live

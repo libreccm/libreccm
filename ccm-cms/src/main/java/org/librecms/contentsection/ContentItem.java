@@ -101,28 +101,23 @@ import static org.librecms.CmsConstants.*;
                     + "WHERE c.category = :folder "
                     + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
                     + "AND LOWER(i.displayName) LIKE CONCAT(LOWER(:name), '%')"
-    //        query = "SELECT COUNT(c) FROM Categorization c "
-    //                    + "JOIN c.categorizedObject o "
-    //                    + "WHERE c.category = :folder "
-    //                    + "AND TYPE(o) IN (ContentItem) "
-    //                    + "AND LOWER(o.displayName) LIKE CONCAT(LOWER(:name), '%s') "
     ),
     @NamedQuery(
         name = "ContentItem.hasLiveVersion",
         query = "SELECT (CASE WHEN COUNT(i) > 0 THEN true ELSE false END) "
                     + "FROM ContentItem i "
-                    + "WHERE i.uuid = ':uuid' "
-                    + "AND i.version = 'LIVE'"),
+                    + "WHERE i.itemUuid = :uuid "
+                    + "AND i.version = org.librecms.contentsection.ContentItemVersion.LIVE"),
     @NamedQuery(
         name = "ContentItem.findDraftVersion",
         query = "SELECT i FROM ContentItem i "
-                    + "WHERE i.uuid = :uuid "
-                    + "AND i.version = 'DRAFT'"),
+                    + "WHERE i.itemUuid = :uuid "
+                    + "AND i.version = org.librecms.contentsection.ContentItemVersion.DRAFT"),
     @NamedQuery(
         name = "ContentItem.findLiveVersion",
         query = "SELECT i FROM ContentItem i "
-                    + "WHERE i.uuid = :uuid "
-                    + "AND i.version = 'LIVE'")
+                    + "WHERE i.itemUuid = :uuid "
+                    + "AND i.version = org.librecms.contentsection.ContentItemVersion.LIVE")
 
 })
 public class ContentItem extends CcmObject implements Serializable,

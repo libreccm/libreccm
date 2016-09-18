@@ -3,15 +3,11 @@
     
     <ccm_core.workflows workflow_id="-100" />
     <ccm_core.workflows workflow_id="-110" />
-    <ccm_core.workflows workflow_id="-120" />
 
     <ccm_core.workflow_names workflow_id="-100" 
                              locale="en"
                              localized_value="Standard workflow" />
     <ccm_core.workflow_names workflow_id="-110" 
-                             locale="en"
-                             localized_value="Fast workflow" />
-    <ccm_core.workflow_names workflow_id="-120" 
                              locale="en"
                              localized_value="Fast workflow" />
     
@@ -30,10 +26,6 @@
                              active="false" 
                              task_state="waiting" 
                              workflow_id="-110" />
-    <ccm_core.workflow_tasks task_id="-120100"
-                             active="false" 
-                             task_state="waiting" 
-                             workflow_id="-120" />
     
     <ccm_core.workflow_task_labels task_id="-100100" 
                                    localized_value="Task 1.1" 
@@ -44,20 +36,14 @@
     <ccm_core.workflow_task_labels task_id="-110100" 
                                    localized_value="Task 2.1" 
                                    locale="en" />
-    <ccm_core.workflow_task_labels task_id="-120100" 
-                                   localized_value="Task 2.1" 
-                                   locale="en" />
     
     <ccm_core.workflow_user_tasks task_id="-100100" 
                                   duration_minutes="0" 
                                   locked="false" />
     <ccm_core.workflow_user_tasks task_id="-100200" 
-                                  duration_minutes="0"
-                                  locked="false" />
-    <ccm_core.workflow_user_tasks task_id="-110100" 
                                   duration_minutes="0" 
                                   locked="false" />
-    <ccm_core.workflow_user_tasks task_id="-120100" 
+    <ccm_core.workflow_user_tasks task_id="-110100" 
                                   duration_minutes="0" 
                                   locked="false" />
         
@@ -93,15 +79,6 @@
     <ccm_cms.lifecycle_phase_definition_labels object_id="-210100" 
                                                localized_value="The only phase" 
                                                locale="en" />
-    
-    <!--<ccm_cms.lifecycles lifecycle_id="-300" 
-                        started="false"
-                        finished="false"
-                        definition_id="-210" />
-    
-<ccm_cms.lifecyle_phases phase_id="-300100" 
-    started="false" 
-    finished="false" />-->
     
     <ccm_core.ccm_objects object_id="-1100"
                           display_name="info"
@@ -139,9 +116,6 @@
     <ccm_core.ccm_objects object_id="-20200"
                           display_name="org.librecms.contenttypes.News"
                           uuid="47740f22-f89f-4ec3-90cf-d62859e53c7e" />
-    <ccm_core.ccm_objects object_id="-11100"
-                          display_name="new-article"
-                          uuid="cfa0efb6-7ce2-41e8-be03-4ee8c7f18b05" />
     
     <ccm_core.categories object_id="-2100"
                          unique_id="82014239-9c06-486d-ae8c-4ae47f52a699"
@@ -183,7 +157,6 @@
     
     <ccm_core.resources object_id="-1100" 
                         created="2016-07-15" />
-    
     <ccm_core.resource_titles object_id="-1100" 
                               locale="en"
                               localized_value="info" />
@@ -238,11 +211,6 @@
                            item_uuid="d9ea527d-c6e3-4bdd-962d-c0a1a80c6c72"
                            version="DRAFT"
                            content_type_id="-20200" />
-    <ccm_cms.content_items object_id="-11100" 
-                           item_uuid="cfa0efb6-7ce2-41e8-be03-4ee8c7f18b05"
-                           version="DRAFT"
-                           content_type_id="-20100" 
-                           workflow_id="-120" />
     <ccm_cms.content_items object_id="-99200" 
                            item_uuid="acae860f-2ffa-450d-b486-054292f0dae6"
                            version="LIVE"
@@ -260,9 +228,6 @@
     <ccm_cms.content_item_names object_id="-10400" 
                                 locale="en" 
                                 localized_value="news1" />
-    <ccm_cms.content_item_names object_id="-11100" 
-                                locale="en" 
-                                localized_value="new-article" />
     <ccm_cms.content_item_names object_id="-99200" 
                                 locale="en" 
                                 localized_value="article2" />
@@ -281,7 +246,7 @@
                                  localized_value="News 1" />
     <ccm_cms.content_item_titles object_id="-99200" 
                                  locale="en" 
-                                 localized_value="Article 2" />
+                                 localized_value="Article 2 Title" />
     
     <ccm_cms.content_type_labels object_id="-20100"
                                  locale="en" 
@@ -293,7 +258,6 @@
     <ccm_cms.articles object_id="-10100" />
     <ccm_cms.articles object_id="-10200" />
     <ccm_cms.articles object_id="-10300" />
-    <ccm_cms.articles object_id="-11100" />
     <ccm_cms.articles object_id="-99200" />
     
     <ccm_cms.article_texts 
@@ -349,13 +313,6 @@
                               category_order="1" 
                               object_order="4" 
                               category_index="false" 
-                              type="folder" />
-    <ccm_core.categorizations categorization_id="-30500" 
-                              category_id="-2100" 
-                              object_id="-11100" 
-                              category_order="1" 
-                              object_order="1" 
-                              category_index="false"
                               type="folder" />
     <ccm_core.categorizations categorization_id="-98200" 
                               category_id="-2100" 

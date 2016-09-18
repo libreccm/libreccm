@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <dataset>
     
+    <ccm_core.ccm_revisions id="0" 
+                            timestamp="1451602800" />
+    
     <ccm_core.ccm_objects object_id="-1100"
                           display_name="info"
                           uuid="963bcae7-3aeb-4b62-891c-e16c4defa1f2" />
@@ -28,6 +31,23 @@
     <ccm_core.ccm_objects object_id="-20200"
                           display_name="org.librecms.contenttypes.News"
                           uuid="47740f22-f89f-4ec3-90cf-d62859e53c7e" />
+    
+    <ccm_core.ccm_objects_aud object_id="-10100" 
+                              rev="0"
+                              revtype="0"
+                              display_name="article1" />
+    <ccm_core.ccm_objects_aud object_id="-10200" 
+                              rev="0"
+                              revtype="0"
+                              display_name="article2" />
+    <ccm_core.ccm_objects_aud object_id="-10300" 
+                              rev="0"
+                              revtype="0"
+                              display_name="article3" />
+    <ccm_core.ccm_objects_aud object_id="-10400" 
+                              rev="0"
+                              revtype="0"
+                              display_name="news1" />
     
     <ccm_core.categories object_id="-2100"
                          unique_id="82014239-9c06-486d-ae8c-4ae47f52a699"
@@ -90,6 +110,27 @@
                            version="DRAFT"
                            content_type_id="-20200" />
     
+    <ccm_cms.content_items_aud object_id="-10100" 
+                               rev="0"
+                               item_uuid="aed4b402-1180-46c6-b42d-7245f4dca248" 
+                               version="DRAFT" 
+                               content_type_id="-20100" />
+    <ccm_cms.content_items_aud object_id="-10200" 
+                               rev="0"
+                               item_uuid="acae860f-2ffa-450d-b486-054292f0dae6" 
+                               version="DRAFT" 
+                               content_type_id="-20100"/>
+    <ccm_cms.content_items_aud object_id="-10300" 
+                               rev="0"
+                               item_uuid="f4b38abb-234b-4354-bc92-e36c068a1ebd" 
+                               version="DRAFT" 
+                               content_type_id="-20100"/>
+    <ccm_cms.content_items_aud object_id="-10400" 
+                               rev="0"
+                               item_uuid="d9ea527d-c6e3-4bdd-962d-c0a1a80c6c72" 
+                               version="DRAFT" 
+                               content_type_id="-20200"/>
+    
     <ccm_cms.content_item_names object_id="-10100" 
                                 locale="en" 
                                 localized_value="article1" />
@@ -102,6 +143,27 @@
     <ccm_cms.content_item_names object_id="-10400" 
                                 locale="en" 
                                 localized_value="news1" />
+    
+    <ccm_cms.content_item_names_aud rev="0" 
+                                    object_id="-10100"
+                                    localized_value="article1"
+                                    locale="en"
+                                    revtype="0" />
+    <ccm_cms.content_item_names_aud rev="0" 
+                                    object_id="-10200"
+                                    localized_value="article2"
+                                    locale="en"
+                                    revtype="0" />
+    <ccm_cms.content_item_names_aud rev="0" 
+                                    object_id="-10300"
+                                    localized_value="article3"
+                                    locale="en"
+                                    revtype="0" />
+    <ccm_cms.content_item_names_aud rev="0" 
+                                    object_id="-10400"
+                                    localized_value="news1"
+                                    locale="en"
+                                    revtype="0" />
     
     <ccm_cms.content_item_titles object_id="-10100" 
                                  locale="en" 
@@ -116,6 +178,27 @@
                                  locale="en" 
                                  localized_value="News 1" />
     
+    <ccm_cms.content_item_titles_aud rev="0" 
+                                     object_id="-10100"
+                                     localized_value="Article 1"
+                                     locale="en"
+                                     revtype="0" />
+    <ccm_cms.content_item_titles_aud rev="0" 
+                                     object_id="-10200"
+                                     localized_value="Article 2"
+                                     locale="en"
+                                     revtype="0" />
+    <ccm_cms.content_item_titles_aud rev="0" 
+                                     object_id="-10300"
+                                     localized_value="Article 3"
+                                     locale="en"
+                                     revtype="0" />
+    <ccm_cms.content_item_titles_aud rev="0" 
+                                     object_id="-10400"
+                                     localized_value="News 1"
+                                     locale="en"
+                                     revtype="0" />
+    
     <ccm_cms.content_type_labels object_id="-20100"
                                  locale="en" 
                                  localized_value="Article" />
@@ -126,6 +209,13 @@
     <ccm_cms.articles object_id="-10100" />
     <ccm_cms.articles object_id="-10200" />
     <ccm_cms.articles object_id="-10300" />
+    
+    <ccm_cms.articles_aud object_id="-10100" 
+                          rev="0" />
+    <ccm_cms.articles_aud object_id="-10200" 
+                          rev="0" />
+    <ccm_cms.articles_aud object_id="-10300" 
+                          rev="0" />
     
     <ccm_cms.article_texts 
         object_id="-10100"
@@ -139,6 +229,25 @@
         object_id="-10300"
         locale="en" 
         localized_value="Etiam euismod lacus laoreet sodales ultricies. Pellentesque non elit vitae purus sagittis." />
+    
+    <ccm_cms.article_texts_aud 
+        rev="0" 
+        object_id="-10100" 
+        localized_value="Quisque varius turpis et nibh rhoncus consequat. In sapien metus, fermentum quis." 
+        locale="en" 
+        revtype="0" />
+    <ccm_cms.article_texts_aud 
+        rev="0" 
+        object_id="-10200" 
+        localized_value="Duis quis tincidunt elit. In pharetra justo sit amet ipsum dictum, at." 
+        locale="en" 
+        revtype="0" />
+    <ccm_cms.article_texts_aud 
+        rev="0" 
+        object_id="-10300" 
+        localized_value="Etiam euismod lacus laoreet sodales ultricies. Pellentesque non elit vitae purus sagittis." 
+        locale="en" 
+        revtype="0" />
     
     <ccm_cms.news object_id="-10400"
                   news_date="2016-08-08" 

@@ -249,7 +249,7 @@
                                  localized_value="Article 1" />
     <ccm_cms.content_item_titles object_id="-10200" 
                                  locale="en" 
-                                 localized_value="Article 2" />
+                                 localized_value="Article 2 Title" />
     <ccm_cms.content_item_titles object_id="-10300" 
                                  locale="en" 
                                  localized_value="Article 3" />

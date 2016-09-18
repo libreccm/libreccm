@@ -18,11 +18,13 @@
  */
 package org.librecms.contentsection;
 
+import com.sun.org.apache.bcel.internal.generic.LADD;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
 import org.jboss.arquillian.persistence.CreateSchema;
 import org.jboss.arquillian.persistence.PersistenceTest;
+import org.jboss.arquillian.persistence.ShouldMatchDataSet;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
@@ -49,6 +51,7 @@ import org.librecms.contenttypes.News;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
@@ -348,6 +351,24 @@ public class ContentItemRepositoryTest {
                    is(0L));
         assertThat(itemRepo.countFilterByFolderAndName(folder, "foo"),
                    is(0L));
+    }
+    
+    @Test
+    @InSequence(600)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentItemRepositoryTest/data.xml")
+    @ShouldMatchDataSet(value = "datasets/org/librecms/contentsection/"
+                      + "ContentItemRepositoryTest/after-save.xml",
+                        excludeColumns = {"object_id", "uuid", "item_uuid"})
+    public void saveChangedItem() {
+        final Optional<ContentItem> item = itemRepo.findById(-10100L);
+        
+        assertThat(item.isPresent(), is(true));
+        
+        item.get().getName().addValue(Locale.ENGLISH, "first-article");
+        item.get().getTitle().addValue(Locale.ENGLISH, "First Article");
+        
+        itemRepo.save(item.get());
     }
 
 }
