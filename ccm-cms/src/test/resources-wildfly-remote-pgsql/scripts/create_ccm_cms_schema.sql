@@ -1,5 +1,5 @@
-DROP SCHEMA IF EXISTS ccm_cms;
-DROP SCHEMA IF EXISTS ccm_core;
+DROP SCHEMA IF EXISTS ccm_cms CASCADE;
+DROP SCHEMA IF EXISTS ccm_core CASCADE;
 
 DROP SEQUENCE IF EXISTS hibernate_sequence;
 
@@ -292,9 +292,19 @@ CREATE SCHEMA ccm_cms;
         primary key (OBJECT_ID, REV)
     );
 
+    create table CCM_CMS.CONTENT_SECTION_LIFECYCLE_DEFINITIONS (
+        CONTENT_SECTION_ID int8 not null,
+        LIFECYCLE_DEFINITION_ID int8 not null
+    );
+
     create table CCM_CMS.CONTENT_SECTION_ROLES (
         SECTION_ID int8 not null,
         ROLE_ID int8 not null
+    );
+
+    create table CCM_CMS.CONTENT_SECTION_WORKFLOW_TEMPLATES (
+        CONTENT_SECTION_ID int8 not null,
+        WORKFLOW_TEMPLATE_ID int8 not null
     );
 
     create table CCM_CMS.CONTENT_SECTIONS (
@@ -851,6 +861,12 @@ CREATE SCHEMA ccm_cms;
     alter table CCM_CMS.ASSETS 
         add constraint UK_9l2v1u9beyemgjwqx7isbumwh unique (UUID);
 
+    alter table CCM_CMS.CONTENT_SECTION_LIFECYCLE_DEFINITIONS 
+        add constraint UK_dhbp1f81iaw6sl7tg36xh439e unique (LIFECYCLE_DEFINITION_ID);
+
+    alter table CCM_CMS.CONTENT_SECTION_WORKFLOW_TEMPLATES 
+        add constraint UK_goj42ghwu4tf1akfb2r6ensns unique (WORKFLOW_TEMPLATE_ID);
+
     create table CCM_CORE.APPLICATIONS (
         APPLICATION_TYPE varchar(1024) not null,
         PRIMARY_URL varchar(1024) not null,
@@ -1337,11 +1353,11 @@ CREATE SCHEMA ccm_cms;
         SETTING_ID int8 not null,
         CONFIGURATION_CLASS varchar(512) not null,
         NAME varchar(512) not null,
-        SETTING_VALUE_LONG int8,
-        SETTING_VALUE_BIG_DECIMAL numeric(19, 2),
-        SETTING_VALUE_BOOLEAN boolean,
-        SETTING_VALUE_STRING varchar(1024),
         SETTING_VALUE_DOUBLE float8,
+        SETTING_VALUE_BOOLEAN boolean,
+        SETTING_VALUE_BIG_DECIMAL numeric(19, 2),
+        SETTING_VALUE_STRING varchar(1024),
+        SETTING_VALUE_LONG int8,
         primary key (SETTING_ID)
     );
 
@@ -1481,22 +1497,6 @@ CREATE SCHEMA ccm_cms;
     alter table CCM_CORE.SETTINGS 
         add constraint UK5whinfxdaepqs09e5ia9y71uk unique (CONFIGURATION_CLASS, NAME);
 create sequence hibernate_sequence start 1 increment 1;
-
-    create table CONTENT_SECTION_LIFECYCLE_DEFINITIONS (
-        CONTENT_SECTION_ID int8 not null,
-        LIFECYCLE_DEFINITION_ID int8 not null
-    );
-
-    create table CCM_CMS.CONTENT_SECTION_WORKFLOW_TEMPLATES (
-        CONTENT_SECTION_ID int8 not null,
-        WORKFLOW_TEMPLATE_ID int8 not null
-    );
-
-    alter table CONTENT_SECTION_LIFECYCLE_DEFINITIONS 
-        add constraint UK_dhbp1f81iaw6sl7tg36xh439e unique (LIFECYCLE_DEFINITION_ID);
-
-    alter table CCM_CMS.CONTENT_SECTION_WORKFLOW_TEMPLATES 
-        add constraint UK_goj42ghwu4tf1akfb2r6ensns unique (WORKFLOW_TEMPLATE_ID);
 
     alter table CCM_CMS.ARTICLE_LEADS 
         add constraint FK4g66u3qtfyepw0f733kuiiaul 
@@ -1748,6 +1748,16 @@ create sequence hibernate_sequence start 1 increment 1;
         foreign key (OBJECT_ID, REV) 
         references CCM_CORE.CCM_OBJECTS_AUD;
 
+    alter table CCM_CMS.CONTENT_SECTION_LIFECYCLE_DEFINITIONS 
+        add constraint FKqnsnk1eju8vrbm7x0wr5od4ll 
+        foreign key (LIFECYCLE_DEFINITION_ID) 
+        references CCM_CMS.LIFECYLE_DEFINITIONS;
+
+    alter table CCM_CMS.CONTENT_SECTION_LIFECYCLE_DEFINITIONS 
+        add constraint FK7daejlunqsnhgky4b92n019a9 
+        foreign key (CONTENT_SECTION_ID) 
+        references CCM_CMS.CONTENT_SECTIONS;
+
     alter table CCM_CMS.CONTENT_SECTION_ROLES 
         add constraint FKkn5nygbmub9wd5lxw3402t82d 
         foreign key (ROLE_ID) 
@@ -1756,6 +1766,16 @@ create sequence hibernate_sequence start 1 increment 1;
     alter table CCM_CMS.CONTENT_SECTION_ROLES 
         add constraint FKgcn76piocmkmvl3b0omv9vkv9 
         foreign key (SECTION_ID) 
+        references CCM_CMS.CONTENT_SECTIONS;
+
+    alter table CCM_CMS.CONTENT_SECTION_WORKFLOW_TEMPLATES 
+        add constraint FKrx08cdjm9tutrp5lvfhgslw48 
+        foreign key (WORKFLOW_TEMPLATE_ID) 
+        references CCM_CORE.WORKFLOW_TEMPLATES;
+
+    alter table CCM_CMS.CONTENT_SECTION_WORKFLOW_TEMPLATES 
+        add constraint FK6kuejkcl9hcbkr8q6bdlatt8q 
+        foreign key (CONTENT_SECTION_ID) 
         references CCM_CMS.CONTENT_SECTIONS;
 
     alter table CCM_CMS.CONTENT_SECTIONS 
@@ -2044,7 +2064,7 @@ create sequence hibernate_sequence start 1 increment 1;
         references CCM_CMS.LIFECYCLE_PHASE_DEFINITIONS;
 
     alter table CCM_CMS.LIFECYLE_PHASES 
-        add constraint FKerihqw4gpb0lwap6x73us7wos 
+        add constraint FKlh2b1nokqxhf790lt7lhgoisc 
         foreign key (LIFECYCLE_ID) 
         references CCM_CMS.LIFECYCLES;
 
@@ -2738,27 +2758,7 @@ create sequence hibernate_sequence start 1 increment 1;
         foreign key (TASK_ID) 
         references CCM_CORE.WORKFLOW_TASKS;
 
-    alter table CONTENT_SECTION_LIFECYCLE_DEFINITIONS 
-        add constraint FKqnsnk1eju8vrbm7x0wr5od4ll 
-        foreign key (LIFECYCLE_DEFINITION_ID) 
-        references CCM_CMS.LIFECYLE_DEFINITIONS;
-
-    alter table CONTENT_SECTION_LIFECYCLE_DEFINITIONS 
-        add constraint FK7daejlunqsnhgky4b92n019a9 
-        foreign key (CONTENT_SECTION_ID) 
-        references CCM_CMS.CONTENT_SECTIONS;
-
-    alter table CCM_CMS.CONTENT_SECTION_WORKFLOW_TEMPLATES 
-        add constraint FKrx08cdjm9tutrp5lvfhgslw48 
-        foreign key (WORKFLOW_TEMPLATE_ID) 
-        references CCM_CORE.WORKFLOW_TEMPLATES;
-
-    alter table CCM_CMS.CONTENT_SECTION_WORKFLOW_TEMPLATES 
-        add constraint FK6kuejkcl9hcbkr8q6bdlatt8q 
-        foreign key (CONTENT_SECTION_ID) 
-        references CCM_CMS.CONTENT_SECTIONS;
-
     alter table CCM_CORE.WORKFLOWS 
-        add constraint FKol71r1t83h0qe65gglq43far2 
-        foreign key (template_id) 
+        add constraint FKeixdxau4jebw682gd49tdbsjy 
+        foreign key (TEMPLATE_ID) 
         references CCM_CORE.WORKFLOW_TEMPLATES;

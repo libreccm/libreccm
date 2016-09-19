@@ -18,7 +18,6 @@
  */
 package org.librecms.contentsection;
 
-import com.sun.org.apache.bcel.internal.generic.LADD;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
@@ -43,7 +42,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryRepository;
-import org.libreccm.security.Shiro;
 import org.libreccm.tests.categories.IntegrationTest;
 import org.librecms.contenttypes.Article;
 import org.librecms.contenttypes.News;
