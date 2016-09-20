@@ -8,6 +8,8 @@ DELETE FROM ccm_cms.article_texts_aud;
 
 DELETE FROM ccm_cms.articles;
 
+DELETE FROM ccm_cms.articles_aud;
+
 DELETE FROM ccm_cms.content_item_names;
 
 DELETE FROM ccm_cms.content_item_names_aud;
@@ -22,19 +24,51 @@ DELETE FROM ccm_cms.content_items_aud;
 
 DELETE FROM ccm_cms.content_section_lifecycle_definitions;
 
-DELETE FROM ccm_cms.content_section_workflow_templates;
-
-DELETE FROM ccm_core.workflow_templates;
-
 DELETE FROM ccm_cms.content_type_labels;
 
 DELETE FROM ccm_cms.content_type_descriptions;
 
 DELETE FROM ccm_cms.content_types;
 
+DELETE FROM ccm_cms.workflow_task_types;
+
+DELETE FROM ccm_cms.workflow_tasks;
+
+DELETE FROM ccm_core.workflow_descriptions;
+
+DELETE FROM ccm_core.workflow_names;
+
+DELETE FROM ccm_core.workflow_task_dependencies;
+
+DELETE FROM ccm_core.workflow_task_labels;
+
+DELETE FROM ccm_core.task_assignments;
+
+DELETE FROM ccm_core.workflow_user_tasks;
+
+DELETE FROM ccm_core.workflow_tasks;
+
+DELETE FROM ccm_core.workflow_tasks_descriptions;
+
+DELETE FROM ccm_cms.content_section_workflow_templates;
+
+DELETE FROM ccm_core.workflow_templates;
+
+DELETE FROM ccm_core.workflows;
+
+DELETE FROM ccm_cms.lifecycle_phase_definition_labels;
+
+DELETE FROM ccm_cms.lifecycle_phase_definition_descriptions;
+
 DELETE FROM ccm_cms.lifecycle_definition_labels;
 
 DELETE FROM ccm_cms.lifecycle_definition_descriptions;
+
+DELETE FROM ccm_cms.lifecyle_phases;
+
+DELETE FROM ccm_cms.lifecycles;
+
+DELETE FROM ccm_cms.lifecycle_phase_definitions;
 
 DELETE FROM ccm_cms.lifecyle_definitions;
 
@@ -90,5 +124,5 @@ DELETE FROM ccm_core.ccm_objects_aud;
 
 DELETE FROM ccm_core.ccm_revisions;
 
-ALTER SEQUENCE hibernate_sequence RESTART;
+ALTER SEQUENCE hibernate_sequence RESTART WITH 1;
 

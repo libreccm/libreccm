@@ -303,7 +303,7 @@ public class ContentItemRepositoryTest {
     }
 
     @Test
-    @InSequence(500)
+    @InSequence(510)
     @UsingDataSet("datasets/org/librecms/contentsection/"
                       + "ContentItemRepositoryTest/data.xml")
     public void filterByFolderAndName() {
@@ -325,7 +325,7 @@ public class ContentItemRepositoryTest {
     }
 
     @Test
-    @InSequence(510)
+    @InSequence(520)
     @UsingDataSet("datasets/org/librecms/contentsection/"
                       + "ContentItemRepositoryTest/data.xml")
     public void countFilterByFolderAndName() {

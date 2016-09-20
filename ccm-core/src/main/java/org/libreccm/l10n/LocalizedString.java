@@ -38,6 +38,7 @@ import javax.persistence.MapKeyColumn;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.hibernate.annotations.Type;
 
 /**
  * A helper class for localisable string properties. This class is declared as
@@ -61,6 +62,7 @@ public class LocalizedString implements Serializable {
     @Column(name = "LOCALIZED_VALUE")
     @Basic
     @Lob
+    @Type(type = "org.hibernate.type.TextType")
     @XmlElementWrapper(name = "values", namespace = L10N_XML_NS)
     @XmlElement(name = "value", namespace = L10N_XML_NS)
     private Map<Locale, String> values;

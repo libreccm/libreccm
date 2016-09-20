@@ -6,16 +6,16 @@ DROP SEQUENCE IF EXISTS hibernate_sequence;
 CREATE SCHEMA ccm_core;
 CREATE SCHEMA ccm_cms;
 
-create table CCM_CMS.ARTICLE_LEADS (
+    create table CCM_CMS.ARTICLE_LEADS (
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
 
     create table CCM_CMS.ARTICLE_TEXTS (
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
@@ -23,7 +23,7 @@ create table CCM_CMS.ARTICLE_LEADS (
     create table CCM_CMS.ARTICLE_TEXTS_AUD (
         REV integer not null,
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE varchar,
+        LOCALIZED_VALUE longvarchar not null,
         LOCALE varchar(255) not null,
         REVTYPE tinyint,
         REVEND integer,
@@ -43,7 +43,7 @@ create table CCM_CMS.ARTICLE_LEADS (
 
     create table CCM_CMS.ASSET_TITLES (
         ASSET_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (ASSET_ID, LOCALE)
     );
@@ -51,11 +51,11 @@ create table CCM_CMS.ARTICLE_LEADS (
     create table CCM_CMS.ASSET_TITLES_AUD (
         REV integer not null,
         ASSET_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar not null,
         LOCALE varchar(255) not null,
         REVTYPE tinyint,
         REVEND integer,
-        primary key (REV, ASSET_ID, LOCALE)
+        primary key (REV, ASSET_ID, LOCALIZED_VALUE, LOCALE)
     );
 
     create table CCM_CMS.ASSETS (
@@ -75,7 +75,7 @@ create table CCM_CMS.ARTICLE_LEADS (
 
     create table CCM_CMS.ATTACHMENT_LIST_CAPTIONS (
         LIST_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (LIST_ID, LOCALE)
     );
@@ -83,11 +83,11 @@ create table CCM_CMS.ARTICLE_LEADS (
     create table CCM_CMS.ATTACHMENT_LIST_CAPTIONS_AUD (
         REV integer not null,
         LIST_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar not null,
         LOCALE varchar(255) not null,
         REVTYPE tinyint,
         REVEND integer,
-        primary key (REV, LIST_ID, LOCALE)
+        primary key (REV, LIST_ID, LOCALIZED_VALUE, LOCALE)
     );
 
     create table CCM_CMS.ATTACHMENT_LISTS (
@@ -152,7 +152,7 @@ create table CCM_CMS.ARTICLE_LEADS (
 
     create table CCM_CMS.BINARY_ASSET_DESCRIPTIONS (
         ASSET_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (ASSET_ID, LOCALE)
     );
@@ -160,11 +160,11 @@ create table CCM_CMS.ARTICLE_LEADS (
     create table CCM_CMS.BINARY_ASSET_DESCRIPTIONS_AUD (
         REV integer not null,
         ASSET_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar not null,
         LOCALE varchar(255) not null,
         REVTYPE tinyint,
         REVEND integer,
-        primary key (REV, ASSET_ID, LOCALE)
+        primary key (REV, ASSET_ID, LOCALIZED_VALUE, LOCALE)
     );
 
     create table CCM_CMS.BINARY_ASSETS (
@@ -188,7 +188,7 @@ create table CCM_CMS.ARTICLE_LEADS (
 
     create table CCM_CMS.BOOKMARK_DESCRIPTIONS (
         ASSET_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (ASSET_ID, LOCALE)
     );
@@ -196,11 +196,11 @@ create table CCM_CMS.ARTICLE_LEADS (
     create table CCM_CMS.BOOKMARK_DESCRIPTIONS_AUD (
         REV integer not null,
         ASSET_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar not null,
         LOCALE varchar(255) not null,
         REVTYPE tinyint,
         REVEND integer,
-        primary key (REV, ASSET_ID, LOCALE)
+        primary key (REV, ASSET_ID, LOCALIZED_VALUE, LOCALE)
     );
 
     create table CCM_CMS.BOOKMARKS (
@@ -218,7 +218,7 @@ create table CCM_CMS.ARTICLE_LEADS (
 
     create table CCM_CMS.CONTENT_ITEM_DESCRIPTIONS (
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
@@ -226,7 +226,7 @@ create table CCM_CMS.ARTICLE_LEADS (
     create table CCM_CMS.CONTENT_ITEM_DESCRIPTIONS_AUD (
         REV integer not null,
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE varchar,
+        LOCALIZED_VALUE longvarchar not null,
         LOCALE varchar(255) not null,
         REVTYPE tinyint,
         REVEND integer,
@@ -235,7 +235,7 @@ create table CCM_CMS.ARTICLE_LEADS (
 
     create table CCM_CMS.CONTENT_ITEM_NAMES (
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
@@ -243,7 +243,7 @@ create table CCM_CMS.ARTICLE_LEADS (
     create table CCM_CMS.CONTENT_ITEM_NAMES_AUD (
         REV integer not null,
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE varchar,
+        LOCALIZED_VALUE longvarchar not null,
         LOCALE varchar(255) not null,
         REVTYPE tinyint,
         REVEND integer,
@@ -252,7 +252,7 @@ create table CCM_CMS.ARTICLE_LEADS (
 
     create table CCM_CMS.CONTENT_ITEM_TITLES (
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
@@ -260,7 +260,7 @@ create table CCM_CMS.ARTICLE_LEADS (
     create table CCM_CMS.CONTENT_ITEM_TITLES_AUD (
         REV integer not null,
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE varchar,
+        LOCALIZED_VALUE longvarchar not null,
         LOCALE varchar(255) not null,
         REVTYPE tinyint,
         REVEND integer,
@@ -269,10 +269,10 @@ create table CCM_CMS.ARTICLE_LEADS (
 
     create table CCM_CMS.CONTENT_ITEMS (
         ANCESTORS varchar(1024),
+        ITEM_UUID varchar(255) not null,
         LAUNCH_DATE date,
         VERSION varchar(255),
         OBJECT_ID bigint not null,
-        ITEM_UUID varchar(255) not null,
         CONTENT_TYPE_ID bigint,
         LIFECYCLE_ID bigint,
         WORKFLOW_ID bigint,
@@ -292,9 +292,19 @@ create table CCM_CMS.ARTICLE_LEADS (
         primary key (OBJECT_ID, REV)
     );
 
+    create table CCM_CMS.CONTENT_SECTION_LIFECYCLE_DEFINITIONS (
+        CONTENT_SECTION_ID bigint not null,
+        LIFECYCLE_DEFINITION_ID bigint not null
+    );
+
     create table CCM_CMS.CONTENT_SECTION_ROLES (
         SECTION_ID bigint not null,
         ROLE_ID bigint not null
+    );
+
+    create table CCM_CMS.CONTENT_SECTION_WORKFLOW_TEMPLATES (
+        CONTENT_SECTION_ID bigint not null,
+        WORKFLOW_TEMPLATE_ID bigint not null
     );
 
     create table CCM_CMS.CONTENT_SECTIONS (
@@ -312,14 +322,14 @@ create table CCM_CMS.ARTICLE_LEADS (
 
     create table CCM_CMS.CONTENT_TYPE_DESCRIPTIONS (
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
 
     create table CCM_CMS.CONTENT_TYPE_LABELS (
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
@@ -347,7 +357,7 @@ create table CCM_CMS.ARTICLE_LEADS (
 
     create table CCM_CMS.EVENT_COSTS (
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
@@ -355,7 +365,7 @@ create table CCM_CMS.ARTICLE_LEADS (
     create table CCM_CMS.EVENT_COSTS_AUD (
         REV integer not null,
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE varchar,
+        LOCALIZED_VALUE longvarchar not null,
         LOCALE varchar(255) not null,
         REVTYPE tinyint,
         REVEND integer,
@@ -364,7 +374,7 @@ create table CCM_CMS.ARTICLE_LEADS (
 
     create table CCM_CMS.EVENT_DATES (
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
@@ -372,7 +382,7 @@ create table CCM_CMS.ARTICLE_LEADS (
     create table CCM_CMS.EVENT_DATES_AUD (
         REV integer not null,
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE varchar,
+        LOCALIZED_VALUE longvarchar not null,
         LOCALE varchar(255) not null,
         REVTYPE tinyint,
         REVEND integer,
@@ -381,7 +391,7 @@ create table CCM_CMS.ARTICLE_LEADS (
 
     create table CCM_CMS.EVENT_LOCATIONS (
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
@@ -389,7 +399,7 @@ create table CCM_CMS.ARTICLE_LEADS (
     create table CCM_CMS.EVENT_LOCATIONS_AUD (
         REV integer not null,
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE varchar,
+        LOCALIZED_VALUE longvarchar not null,
         LOCALE varchar(255) not null,
         REVTYPE tinyint,
         REVEND integer,
@@ -398,7 +408,7 @@ create table CCM_CMS.ARTICLE_LEADS (
 
     create table CCM_CMS.EVENT_MAIN_CONTRIBUTORS (
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
@@ -406,7 +416,7 @@ create table CCM_CMS.ARTICLE_LEADS (
     create table CCM_CMS.EVENT_MAIN_CONTRIBUTORS_AUD (
         REV integer not null,
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE varchar,
+        LOCALIZED_VALUE longvarchar not null,
         LOCALE varchar(255) not null,
         REVTYPE tinyint,
         REVEND integer,
@@ -415,7 +425,7 @@ create table CCM_CMS.ARTICLE_LEADS (
 
     create table CCM_CMS.EVENT_TEXTS (
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
@@ -423,7 +433,7 @@ create table CCM_CMS.ARTICLE_LEADS (
     create table CCM_CMS.EVENT_TEXTS_AUD (
         REV integer not null,
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE varchar,
+        LOCALIZED_VALUE longvarchar not null,
         LOCALE varchar(255) not null,
         REVTYPE tinyint,
         REVEND integer,
@@ -432,7 +442,7 @@ create table CCM_CMS.ARTICLE_LEADS (
 
     create table CCM_CMS.EVENT_TYPES (
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
@@ -440,7 +450,7 @@ create table CCM_CMS.ARTICLE_LEADS (
     create table CCM_CMS.EVENT_TYPES_AUD (
         REV integer not null,
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE varchar,
+        LOCALIZED_VALUE longvarchar not null,
         LOCALE varchar(255) not null,
         REVTYPE tinyint,
         REVEND integer,
@@ -551,7 +561,7 @@ create table CCM_CMS.ARTICLE_LEADS (
 
     create table CCM_CMS.LEGAL_METADATA_RIGHTS (
         ASSET_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (ASSET_ID, LOCALE)
     );
@@ -559,37 +569,37 @@ create table CCM_CMS.ARTICLE_LEADS (
     create table CCM_CMS.LEGAL_METADATA_RIGHTS_AUD (
         REV integer not null,
         ASSET_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar not null,
         LOCALE varchar(255) not null,
         REVTYPE tinyint,
         REVEND integer,
-        primary key (REV, ASSET_ID, LOCALE)
+        primary key (REV, ASSET_ID, LOCALIZED_VALUE, LOCALE)
     );
 
     create table CCM_CMS.LIFECYCLE_DEFINITION_DESCRIPTIONS (
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
 
     create table CCM_CMS.LIFECYCLE_DEFINITION_LABELS (
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
 
     create table CCM_CMS.LIFECYCLE_PHASE_DEFINITION_DESCRIPTIONS (
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
 
     create table CCM_CMS.LIFECYCLE_PHASE_DEFINITION_LABELS (
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
@@ -634,7 +644,7 @@ create table CCM_CMS.ARTICLE_LEADS (
 
     create table CCM_CMS.MPA_SECTION_TEXTS (
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
@@ -642,7 +652,7 @@ create table CCM_CMS.ARTICLE_LEADS (
     create table CCM_CMS.MPA_SECTION_TEXTS_AUD (
         REV integer not null,
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE varchar,
+        LOCALIZED_VALUE longvarchar not null,
         LOCALE varchar(255) not null,
         REVTYPE tinyint,
         REVEND integer,
@@ -651,7 +661,7 @@ create table CCM_CMS.ARTICLE_LEADS (
 
     create table CCM_CMS.MPA_SECTION_TITLES (
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
@@ -659,7 +669,7 @@ create table CCM_CMS.ARTICLE_LEADS (
     create table CCM_CMS.MPA_SECTION_TITLES_AUD (
         REV integer not null,
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE varchar,
+        LOCALIZED_VALUE longvarchar not null,
         LOCALE varchar(255) not null,
         REVTYPE tinyint,
         REVEND integer,
@@ -668,7 +678,7 @@ create table CCM_CMS.ARTICLE_LEADS (
 
     create table CCM_CMS.MPA_SUMMARIES (
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
@@ -676,7 +686,7 @@ create table CCM_CMS.ARTICLE_LEADS (
     create table CCM_CMS.MPA_SUMMARIES_AUD (
         REV integer not null,
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE varchar,
+        LOCALIZED_VALUE longvarchar not null,
         LOCALE varchar(255) not null,
         REVTYPE tinyint,
         REVEND integer,
@@ -738,7 +748,7 @@ create table CCM_CMS.ARTICLE_LEADS (
 
     create table CCM_CMS.NEWS_TEXTS (
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
@@ -746,7 +756,7 @@ create table CCM_CMS.ARTICLE_LEADS (
     create table CCM_CMS.NEWS_TEXTS_AUD (
         REV integer not null,
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE varchar,
+        LOCALIZED_VALUE longvarchar not null,
         LOCALE varchar(255) not null,
         REVTYPE tinyint,
         REVEND integer,
@@ -755,7 +765,7 @@ create table CCM_CMS.ARTICLE_LEADS (
 
     create table CCM_CMS.NOTE_TEXTS (
         ASSET_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (ASSET_ID, LOCALE)
     );
@@ -763,11 +773,11 @@ create table CCM_CMS.ARTICLE_LEADS (
     create table CCM_CMS.NOTE_TEXTS_AUD (
         REV integer not null,
         ASSET_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar not null,
         LOCALE varchar(255) not null,
         REVTYPE tinyint,
         REVEND integer,
-        primary key (REV, ASSET_ID, LOCALE)
+        primary key (REV, ASSET_ID, LOCALIZED_VALUE, LOCALE)
     );
 
     create table CCM_CMS.NOTES (
@@ -851,6 +861,12 @@ create table CCM_CMS.ARTICLE_LEADS (
     alter table CCM_CMS.ASSETS 
         add constraint UK_9l2v1u9beyemgjwqx7isbumwh unique (UUID);
 
+    alter table CCM_CMS.CONTENT_SECTION_LIFECYCLE_DEFINITIONS 
+        add constraint UK_dhbp1f81iaw6sl7tg36xh439e unique (LIFECYCLE_DEFINITION_ID);
+
+    alter table CCM_CMS.CONTENT_SECTION_WORKFLOW_TEMPLATES 
+        add constraint UK_goj42ghwu4tf1akfb2r6ensns unique (WORKFLOW_TEMPLATE_ID);
+
     create table CCM_CORE.APPLICATIONS (
         APPLICATION_TYPE varchar(1024) not null,
         PRIMARY_URL varchar(1024) not null,
@@ -893,7 +909,7 @@ create table CCM_CMS.ARTICLE_LEADS (
 
     create table CCM_CORE.CATEGORY_DESCRIPTIONS (
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
@@ -910,7 +926,7 @@ create table CCM_CMS.ARTICLE_LEADS (
 
     create table CCM_CORE.CATEGORY_TITLES (
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
@@ -958,7 +974,7 @@ create table CCM_CMS.ARTICLE_LEADS (
 
     create table CCM_CORE.DOMAIN_DESCRIPTIONS (
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
@@ -975,14 +991,14 @@ create table CCM_CMS.ARTICLE_LEADS (
 
     create table CCM_CORE.DOMAIN_TITLES (
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
 
     create table CCM_CORE.FORMBUILDER_COMPONENT_DESCRIPTIONS (
         COMPONENT_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (COMPONENT_ID, LOCALE)
     );
@@ -1027,14 +1043,14 @@ create table CCM_CMS.ARTICLE_LEADS (
 
     create table CCM_CORE.FORMBUILDER_DATA_QUERY_DESCRIPTIONS (
         DATA_QUERY_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (DATA_QUERY_ID, LOCALE)
     );
 
     create table CCM_CORE.FORMBUILDER_DATA_QUERY_NAMES (
         DATA_QUERY_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (DATA_QUERY_ID, LOCALE)
     );
@@ -1071,7 +1087,7 @@ create table CCM_CMS.ARTICLE_LEADS (
 
     create table CCM_CORE.FORMBUILDER_OPTION_LABELS (
         OPTION_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OPTION_ID, LOCALE)
     );
@@ -1084,14 +1100,14 @@ create table CCM_CMS.ARTICLE_LEADS (
 
     create table CCM_CORE.FORMBUILDER_PROCESS_LISTENER_DESCRIPTIONS (
         PROCESS_LISTENER_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (PROCESS_LISTENER_ID, LOCALE)
     );
 
     create table CCM_CORE.FORMBUILDER_PROCESS_LISTENER_NAMES (
         PROCESS_LISTENER_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (PROCESS_LISTENER_ID, LOCALE)
     );
@@ -1288,21 +1304,21 @@ create table CCM_CMS.ARTICLE_LEADS (
 
     create table CCM_CORE.RESOURCE_DESCRIPTIONS (
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
 
     create table CCM_CORE.RESOURCE_TITLES (
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
 
     create table CCM_CORE.RESOURCE_TYPE_DESCRIPTIONS (
         RESOURCE_TYPE_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (RESOURCE_TYPE_ID, LOCALE)
     );
@@ -1339,9 +1355,9 @@ create table CCM_CMS.ARTICLE_LEADS (
         NAME varchar(512) not null,
         SETTING_VALUE_LONG bigint,
         SETTING_VALUE_BIG_DECIMAL decimal(19,2),
-        SETTING_VALUE_BOOLEAN boolean,
         SETTING_VALUE_STRING varchar(1024),
         SETTING_VALUE_DOUBLE double,
+        SETTING_VALUE_BOOLEAN boolean,
         primary key (SETTING_ID)
     );
 
@@ -1352,7 +1368,7 @@ create table CCM_CMS.ARTICLE_LEADS (
 
     create table CCM_CORE.SETTINGS_L10N_STR_VALUES (
         ENTRY_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (ENTRY_ID, LOCALE)
     );
@@ -1397,14 +1413,14 @@ create table CCM_CMS.ARTICLE_LEADS (
 
     create table CCM_CORE.WORKFLOW_DESCRIPTIONS (
         WORKFLOW_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (WORKFLOW_ID, LOCALE)
     );
 
     create table CCM_CORE.WORKFLOW_NAMES (
         WORKFLOW_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (WORKFLOW_ID, LOCALE)
     );
@@ -1421,7 +1437,7 @@ create table CCM_CMS.ARTICLE_LEADS (
 
     create table CCM_CORE.WORKFLOW_TASK_LABELS (
         TASK_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (TASK_ID, LOCALE)
     );
@@ -1436,7 +1452,7 @@ create table CCM_CMS.ARTICLE_LEADS (
 
     create table CCM_CORE.WORKFLOW_TASKS_DESCRIPTIONS (
         TASK_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (TASK_ID, LOCALE)
     );
@@ -1459,6 +1475,7 @@ create table CCM_CMS.ARTICLE_LEADS (
 
     create table CCM_CORE.WORKFLOWS (
         WORKFLOW_ID bigint not null,
+        TEMPLATE_ID bigint,
         primary key (WORKFLOW_ID)
     );
 
@@ -1480,22 +1497,6 @@ create table CCM_CMS.ARTICLE_LEADS (
     alter table CCM_CORE.SETTINGS 
         add constraint UK5whinfxdaepqs09e5ia9y71uk unique (CONFIGURATION_CLASS, NAME);
 create sequence hibernate_sequence start with 1 increment by 1;
-
-    create table CCM_CMS.CONTENT_SECTION_LIFECYCLE_DEFINITIONS (
-        CONTENT_SECTION_ID bigint not null,
-        LIFECYCLE_DEFINITION_ID bigint not null
-    );
-
-    create table CCM_CMS.CONTENT_SECTION_WORKFLOW_TEMPLATES (
-        CONTENT_SECTION_ID bigint not null,
-        WORKFLOW_TEMPLATE_ID bigint not null
-    );
-
-    alter table CCM_CMS.CONTENT_SECTION_LIFECYCLE_DEFINITIONS 
-        add constraint UK_dhbp1f81iaw6sl7tg36xh439e unique (LIFECYCLE_DEFINITION_ID);
-
-    alter table CCM_CMS.CONTENT_SECTION_WORKFLOW_TEMPLATES 
-        add constraint UK_goj42ghwu4tf1akfb2r6ensns unique (WORKFLOW_TEMPLATE_ID);
 
     alter table CCM_CMS.ARTICLE_LEADS 
         add constraint FK4g66u3qtfyepw0f733kuiiaul 
@@ -1747,6 +1748,16 @@ create sequence hibernate_sequence start with 1 increment by 1;
         foreign key (OBJECT_ID, REV) 
         references CCM_CORE.CCM_OBJECTS_AUD;
 
+    alter table CCM_CMS.CONTENT_SECTION_LIFECYCLE_DEFINITIONS 
+        add constraint FKqnsnk1eju8vrbm7x0wr5od4ll 
+        foreign key (LIFECYCLE_DEFINITION_ID) 
+        references CCM_CMS.LIFECYLE_DEFINITIONS;
+
+    alter table CCM_CMS.CONTENT_SECTION_LIFECYCLE_DEFINITIONS 
+        add constraint FK7daejlunqsnhgky4b92n019a9 
+        foreign key (CONTENT_SECTION_ID) 
+        references CCM_CMS.CONTENT_SECTIONS;
+
     alter table CCM_CMS.CONTENT_SECTION_ROLES 
         add constraint FKkn5nygbmub9wd5lxw3402t82d 
         foreign key (ROLE_ID) 
@@ -1755,6 +1766,16 @@ create sequence hibernate_sequence start with 1 increment by 1;
     alter table CCM_CMS.CONTENT_SECTION_ROLES 
         add constraint FKgcn76piocmkmvl3b0omv9vkv9 
         foreign key (SECTION_ID) 
+        references CCM_CMS.CONTENT_SECTIONS;
+
+    alter table CCM_CMS.CONTENT_SECTION_WORKFLOW_TEMPLATES 
+        add constraint FKrx08cdjm9tutrp5lvfhgslw48 
+        foreign key (WORKFLOW_TEMPLATE_ID) 
+        references CCM_CORE.WORKFLOW_TEMPLATES;
+
+    alter table CCM_CMS.CONTENT_SECTION_WORKFLOW_TEMPLATES 
+        add constraint FK6kuejkcl9hcbkr8q6bdlatt8q 
+        foreign key (CONTENT_SECTION_ID) 
         references CCM_CMS.CONTENT_SECTIONS;
 
     alter table CCM_CMS.CONTENT_SECTIONS 
@@ -2043,7 +2064,7 @@ create sequence hibernate_sequence start with 1 increment by 1;
         references CCM_CMS.LIFECYCLE_PHASE_DEFINITIONS;
 
     alter table CCM_CMS.LIFECYLE_PHASES 
-        add constraint FKerihqw4gpb0lwap6x73us7wos 
+        add constraint FKlh2b1nokqxhf790lt7lhgoisc 
         foreign key (LIFECYCLE_ID) 
         references CCM_CMS.LIFECYCLES;
 
@@ -2737,22 +2758,7 @@ create sequence hibernate_sequence start with 1 increment by 1;
         foreign key (TASK_ID) 
         references CCM_CORE.WORKFLOW_TASKS;
 
-    alter table CCM_CMS.CONTENT_SECTION_LIFECYCLE_DEFINITIONS 
-        add constraint FKqnsnk1eju8vrbm7x0wr5od4ll 
-        foreign key (LIFECYCLE_DEFINITION_ID) 
-        references CCM_CMS.LIFECYLE_DEFINITIONS;
-
-    alter table CCM_CMS.CONTENT_SECTION_LIFECYCLE_DEFINITIONS 
-        add constraint FK7daejlunqsnhgky4b92n019a9 
-        foreign key (CONTENT_SECTION_ID) 
-        references CCM_CMS.CONTENT_SECTIONS;
-
-    alter table CCM_CMS.CONTENT_SECTION_WORKFLOW_TEMPLATES 
-        add constraint FKrx08cdjm9tutrp5lvfhgslw48 
-        foreign key (WORKFLOW_TEMPLATE_ID) 
+    alter table CCM_CORE.WORKFLOWS 
+        add constraint FKeixdxau4jebw682gd49tdbsjy 
+        foreign key (TEMPLATE_ID) 
         references CCM_CORE.WORKFLOW_TEMPLATES;
-
-    alter table CCM_CMS.CONTENT_SECTION_WORKFLOW_TEMPLATES 
-        add constraint FK6kuejkcl9hcbkr8q6bdlatt8q 
-        foreign key (CONTENT_SECTION_ID) 
-        references CCM_CMS.CONTENT_SECTIONS;

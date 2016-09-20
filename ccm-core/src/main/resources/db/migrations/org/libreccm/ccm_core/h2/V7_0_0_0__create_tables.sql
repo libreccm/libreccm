@@ -39,7 +39,7 @@
 
     create table CCM_CORE.CATEGORY_DESCRIPTIONS (
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
@@ -56,7 +56,7 @@
 
     create table CCM_CORE.CATEGORY_TITLES (
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
@@ -95,7 +95,7 @@
 
     create table CCM_CORE.DOMAIN_DESCRIPTIONS (
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
@@ -112,7 +112,7 @@
 
     create table CCM_CORE.DOMAIN_TITLES (
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
@@ -130,7 +130,7 @@
 
     create table CCM_CORE.FORMBUILDER_COMPONENT_DESCRIPTIONS (
         COMPONENT_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (COMPONENT_ID, LOCALE)
     );
@@ -164,14 +164,14 @@
 
     create table CCM_CORE.FORMBUILDER_DATA_QUERY_DESCRIPTIONS (
         DATA_QUERY_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (DATA_QUERY_ID, LOCALE)
     );
 
     create table CCM_CORE.FORMBUILDER_DATA_QUERY_NAMES (
         DATA_QUERY_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (DATA_QUERY_ID, LOCALE)
     );
@@ -214,7 +214,7 @@
 
     create table CCM_CORE.FORMBUILDER_OPTION_LABELS (
         OPTION_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OPTION_ID, LOCALE)
     );
@@ -229,14 +229,14 @@
 
     create table CCM_CORE.FORMBUILDER_PROCESS_LISTENER_DESCRIPTIONS (
         PROCESS_LISTENER_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (PROCESS_LISTENER_ID, LOCALE)
     );
 
     create table CCM_CORE.FORMBUILDER_PROCESS_LISTENER_NAMES (
         PROCESS_LISTENER_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (PROCESS_LISTENER_ID, LOCALE)
     );
@@ -424,14 +424,14 @@
 
     create table CCM_CORE.RESOURCE_DESCRIPTIONS (
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
 
     create table CCM_CORE.RESOURCE_TITLES (
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
@@ -448,7 +448,7 @@
 
     create table CCM_CORE.RESOURCE_TYPE_DESCRIPTIONS (
         RESOURCE_TYPE_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (RESOURCE_TYPE_ID, LOCALE)
     );
@@ -501,7 +501,7 @@
 
     create table CCM_CORE.SETTINGS_L10N_STR_VALUES (
         ENTRY_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (ENTRY_ID, LOCALE)
     );
@@ -565,14 +565,14 @@
 
     create table CCM_CORE.WORKFLOW_DESCRIPTIONS (
         WORKFLOW_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (WORKFLOW_ID, LOCALE)
     );
 
     create table CCM_CORE.WORKFLOW_NAMES (
         WORKFLOW_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (WORKFLOW_ID, LOCALE)
     );
@@ -587,7 +587,7 @@
 
     create table CCM_CORE.WORKFLOW_TASKS_DESCRIPTIONS (
         TASK_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (TASK_ID, LOCALE)
     );
@@ -604,7 +604,7 @@
 
     create table CCM_CORE.WORKFLOW_TASK_LABELS (
         TASK_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (TASK_ID, LOCALE)
     );
