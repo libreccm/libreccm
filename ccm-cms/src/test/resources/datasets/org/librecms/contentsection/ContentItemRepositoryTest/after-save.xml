@@ -52,7 +52,7 @@
                               display_name="news1" />
     <ccm_core.ccm_objects_aud object_id="-10100" 
                               rev="1"
-                              revtype="2"
+                              revtype="1"
                               display_name="article1" />
     
     <ccm_core.categories object_id="-2100"
@@ -160,7 +160,8 @@
                                     object_id="-10100"
                                     localized_value="article1"
                                     locale="en"
-                                    revtype="0" />
+                                    revtype="0" 
+                                    revend="1" />
     <ccm_cms.content_item_names_aud rev="0" 
                                     object_id="-10200"
                                     localized_value="article2"
@@ -180,11 +181,16 @@
                                     object_id="-10100"
                                     localized_value="first-article"
                                     locale="en"
-                                    revtype="1" />
+                                    revtype="0" />
+    <ccm_cms.content_item_names_aud rev="1" 
+                                    object_id="-10100"
+                                    localized_value="article1"
+                                    locale="en"
+                                    revtype="2" />
     
     <ccm_cms.content_item_titles object_id="-10100" 
                                  locale="en" 
-                                 localized_value="first-article" />
+                                 localized_value="First Article" />
     <ccm_cms.content_item_titles object_id="-10200" 
                                  locale="en" 
                                  localized_value="Article 2" />
@@ -199,7 +205,8 @@
                                      object_id="-10100"
                                      localized_value="Article 1"
                                      locale="en"
-                                     revtype="0" />
+                                     revtype="0"
+                                     revend="1" />
     <ccm_cms.content_item_titles_aud rev="0" 
                                      object_id="-10200"
                                      localized_value="Article 2"
@@ -220,6 +227,11 @@
                                      localized_value="First Article"
                                      locale="en"
                                      revtype="0" />
+    <ccm_cms.content_item_titles_aud rev="1" 
+                                     object_id="-10100"
+                                     localized_value="Article 1"
+                                     locale="en"
+                                     revtype="2" />
     
     <ccm_cms.content_type_labels object_id="-20100"
                                  locale="en" 
@@ -270,12 +282,6 @@
         rev="0" 
         object_id="-10300" 
         localized_value="Etiam euismod lacus laoreet sodales ultricies. Pellentesque non elit vitae purus sagittis." 
-        locale="en" 
-        revtype="0" />
-    <ccm_cms.article_texts_aud 
-        rev="1" 
-        object_id="-10100" 
-        localized_value="Quisque varius turpis et nibh rhoncus consequat. In sapien metus, fermentum quis." 
         locale="en" 
         revtype="0" />
     

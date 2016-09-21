@@ -231,13 +231,16 @@ public class ContentItemManagerTest {
         value = "datasets/org/librecms/contentsection/"
                     + "ContentItemManagerTest/after-create-contentitem.xml",
         excludeColumns = {"categorization_id",
+                          "id",
+                          "item_uuid",
                           "lifecycle_id",
                           "object_id",
                           "object_order",
                           "phase_id",
+                          "rev",
                           "task_id",
                           "uuid",
-                          "item_uuid",
+                          "timestamp",
                           "workflow_id"
         })
     public void createContentItem() {
@@ -334,13 +337,16 @@ public class ContentItemManagerTest {
                     + "ContentItemManagerTest/"
                     + "after-create-contentitem-with-workflow.xml",
         excludeColumns = {"categorization_id",
+                          "id",
+                          "item_uuid",
                           "lifecycle_id",
                           "object_id",
                           "object_order",
                           "phase_id",
+                          "rev",
                           "task_id",
+                          "timestamp",
                           "uuid",
-                          "item_uuid",
                           "workflow_id"
         })
     public void createContentItemWithWorkflow() {
@@ -427,7 +433,7 @@ public class ContentItemManagerTest {
     @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
                             + "ContentItemManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
-    public void createItemNameIsNoWorkflow() {
+    public void createItemNameIsNullWorkflowIsNull() {
         final ContentSection section = sectionRepo.findByLabel("info");
         final Category folder = section.getRootDocumentsFolder();
 
@@ -520,13 +526,16 @@ public class ContentItemManagerTest {
         value = "datasets/org/librecms/contentsection/"
                     + "ContentItemManagerTest/after-copy-to-other-folder.xml",
         excludeColumns = {"categorization_id",
+                          "id",
+                          "item_uuid",
                           "lifecycle_id",
                           "object_id",
                           "object_order",
                           "phase_id",
+                          "rev",
                           "task_id",
                           "uuid",
-                          "item_uuid",
+                          "timestamp",
                           "workflow_id"
         })
     public void copyToOtherFolder() {
@@ -547,13 +556,16 @@ public class ContentItemManagerTest {
         value = "datasets/org/librecms/contentsection/"
                     + "ContentItemManagerTest/after-copy-to-same-folder.xml",
         excludeColumns = {"categorization_id",
+                          "id",
+                          "item_uuid",
                           "lifecycle_id",
                           "object_id",
                           "object_order",
                           "phase_id",
+                          "rev",
                           "task_id",
+                          "timestamp",
                           "uuid",
-                          "item_uuid",
                           "workflow_id"
         })
     public void copyToSameFolder() {
@@ -604,11 +616,14 @@ public class ContentItemManagerTest {
         value = "datasets/org/librecms/contentsection/"
                     + "ContentItemManagerTest/after-publish.xml",
         excludeColumns = {"categorization_id",
+                          "id",
                           "lifecycle_id",
                           "object_id",
                           "object_order",
                           "phase_id",
+                          "rev",
                           "task_id",
+                          "timestamp",
                           "uuid",
                           "workflow_id"
         })
@@ -629,11 +644,14 @@ public class ContentItemManagerTest {
         value = "datasets/org/librecms/contentsection/"
                     + "ContentItemManagerTest/after-publish.xml",
         excludeColumns = {"categorization_id",
+                          "id",
                           "lifecycle_id",
                           "object_id",
                           "object_order",
                           "phase_id",
+                          "rev",
                           "task_id",
+                          "timestamp",
                           "uuid",
                           "workflow_id"
         })
@@ -649,7 +667,6 @@ public class ContentItemManagerTest {
         assertThat(live.getVersion(), is(ContentItemVersion.LIVE));
     }
 
-    //Republish
     @Test
     @InSequence(5300)
     @UsingDataSet("datasets/org/librecms/contentsection/"
@@ -658,14 +675,17 @@ public class ContentItemManagerTest {
         value = "datasets/org/librecms/contentsection/"
                     + "ContentItemManagerTest/after-republish.xml",
         excludeColumns = {"categorization_id",
+                          "id",
                           "lifecycle_id",
                           "object_id",
                           "object_order",
                           "phase_id",
+                          "rev",
+                          "revend",
                           "task_id",
+                          "timestamp",
                           "uuid",
-                          "workflow_id"
-        })
+                          "workflow_id"})
     public void republishItem() {
         final Optional<ContentItem> item = itemRepo.findById(-10200L);
         assertThat(item.isPresent(), is(true));
@@ -681,7 +701,30 @@ public class ContentItemManagerTest {
         itemManager.publish(draft.get());
     }
 
-    // publish item null
+    @Test(expected = IllegalArgumentException.class)
+    @InSequence(5400)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentItemManagerTest/data.xml")
+    @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
+                            + "ContentItemManagerTest/data.xml")
+    @ShouldThrowException(IllegalArgumentException.class)
+    public void publishItemNull() {
+        itemManager.publish(null);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    @InSequence(5500)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentItemManagerTest/data.xml")
+    @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
+                            + "ContentItemManagerTest/data.xml")
+    @ShouldThrowException(IllegalArgumentException.class)
+    public void publishItemLifecycleNull() {
+        final Optional<ContentItem> draft = itemRepo.findById(-10200L);
+        
+        itemManager.publish(draft.get(), null);
+    }
+
     // unpublish item 
     // unpublish non live
     // unpublish item null

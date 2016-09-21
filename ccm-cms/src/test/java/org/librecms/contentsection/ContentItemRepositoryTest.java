@@ -357,7 +357,10 @@ public class ContentItemRepositoryTest {
                       + "ContentItemRepositoryTest/data.xml")
     @ShouldMatchDataSet(value = "datasets/org/librecms/contentsection/"
                       + "ContentItemRepositoryTest/after-save.xml",
-                        excludeColumns = {"object_id", "uuid", "item_uuid"})
+                        excludeColumns = {"object_id", 
+                                          "uuid", 
+                                          "item_uuid", 
+                                          "timestamp"})
     public void saveChangedItem() {
         final Optional<ContentItem> item = itemRepo.findById(-10100L);
         

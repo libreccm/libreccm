@@ -549,9 +549,22 @@ public class ContentItemManager {
         liveItem.setLifecycle(lifecycle);
         liveItem.setWorkflow(draftItem.getWorkflow());
 
+        final List<Category> oldCategories = liveItem
+            .getCategories()
+            .stream()
+            .map(categorization -> categorization.getCategory())
+            .collect(Collectors.toList());
+        oldCategories.forEach(category -> {
+            try {
+                categoryManager.removeObjectFromCategory(liveItem, category);
+            } catch (ObjectNotAssignedToCategoryException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+
         draftItem.getCategories().forEach(categorization -> categoryManager
-            .addObjectToCategory(liveItem, 
-                                 categorization.getCategory(), 
+            .addObjectToCategory(liveItem,
+                                 categorization.getCategory(),
                                  categorization.getType()));
 
         // !!!!!!!!!!!!!!!!!!!!!
@@ -678,10 +691,10 @@ public class ContentItemManager {
                 }
             }
         }
-        
+
         liveItem.setVersion(ContentItemVersion.LIVE);
         contentItemRepo.save(liveItem);
-        
+
         return liveItem;
     }
 
