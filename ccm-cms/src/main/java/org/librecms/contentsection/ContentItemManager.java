@@ -705,13 +705,41 @@ public class ContentItemManager {
      * @param item
      */
     @Transactional(Transactional.TxType.REQUIRED)
-    public void unpublish(final ContentItem item
-    ) {
+    public void unpublish(final ContentItem item) {
+        if (item == null) {
+            throw new IllegalArgumentException(
+                "The item to unpublish can't be null");
+        }
+
+        LOGGER.debug("Unpublishing item {}...", item.getItemUuid());
+
         final Optional<ContentItem> liveItem = getLiveVersion(
             item, ContentItem.class);
 
+        if (!liveItem.isPresent()) {
+            LOGGER.info("ContentItem {} has no live version.",
+                        item.getItemUuid());
+            return;
+        }
+
+        final List<Category> categories = liveItem
+            .get()
+            .getCategories()
+            .stream()
+            .map(categorization -> categorization.getCategory())
+            .collect(Collectors.toList());
+
+        categories.forEach(category -> {
+            try {
+                categoryManager.removeObjectFromCategory(liveItem.get(),
+                                                         category);
+            } catch (ObjectNotAssignedToCategoryException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+
         if (liveItem.isPresent()) {
-            entityManager.remove(liveItem);
+            entityManager.remove(liveItem.get());
         }
 
     }
@@ -727,7 +755,7 @@ public class ContentItemManager {
     public boolean isLive(final ContentItem item) {
         final TypedQuery<Boolean> query = entityManager.createNamedQuery(
             "ContentItem.hasLiveVersion", Boolean.class);
-        query.setParameter("uuid", item.getUuid());
+        query.setParameter("uuid", item.getItemUuid());
 
         return query.getSingleResult();
     }
@@ -744,16 +772,31 @@ public class ContentItemManager {
      *         version is returned. If there is no live version an empty
      *         {@link Optional} is returned.
      */
+    @SuppressWarnings({"unchecked"})
     public <T extends ContentItem> Optional<T> getLiveVersion(
         final ContentItem item,
         final Class<T> type) {
 
+        if (!ContentItem.class.isAssignableFrom(type)) {
+            throw new IllegalArgumentException(String.format(
+                "The provided type \"%s\" does match the type of the provided "
+                    + "item (\"%s\").",
+                type.getName(),
+                item.getClass().getName()));
+        }
+        
         if (isLive(item)) {
-            final TypedQuery<T> query = entityManager.createNamedQuery(
-                "ContentItem.findLiveVersion", type);
-            query.setParameter("uuid", item.getUuid());
+            final TypedQuery<ContentItem> query = entityManager
+                .createNamedQuery(
+                    "ContentItem.findLiveVersion", ContentItem.class);
+            query.setParameter("uuid", item.getItemUuid());
 
-            return Optional.of(query.getSingleResult());
+            final ContentItem result = query.getSingleResult();
+            if (type.isAssignableFrom(result.getClass())) {
+                return Optional.of((T) result);
+            } else {
+                return Optional.empty();
+            }
         } else {
             return Optional.empty();
         }
@@ -801,7 +844,7 @@ public class ContentItemManager {
 
         final TypedQuery<ContentItem> query = entityManager.createNamedQuery(
             "ContentItem.findDraftVersion", ContentItem.class);
-        query.setParameter("uuid", item.getUuid());
+        query.setParameter("uuid", item.getItemUuid());
 
         return (T) query.getSingleResult();
     }

@@ -711,7 +711,7 @@ public class ContentItemManagerTest {
     public void publishItemNull() {
         itemManager.publish(null);
     }
-    
+
     @Test(expected = IllegalArgumentException.class)
     @InSequence(5500)
     @UsingDataSet("datasets/org/librecms/contentsection/"
@@ -721,15 +721,167 @@ public class ContentItemManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     public void publishItemLifecycleNull() {
         final Optional<ContentItem> draft = itemRepo.findById(-10200L);
-        
+
         itemManager.publish(draft.get(), null);
     }
 
-    // unpublish item 
-    // unpublish non live
-    // unpublish item null
-    // isLive 
-    // isDraft
-    // getLiveVersion
+    @Test
+    @InSequence(6000)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentItemManagerTest/data.xml")
+    @ShouldMatchDataSet(
+        value = "datasets/org/librecms/contentsection/"
+                    + "ContentItemManagerTest/after-unpublish.xml",
+        excludeColumns = {"categorization_id",
+                          "id",
+                          "lifecycle_id",
+                          "object_id",
+                          "object_order",
+                          "phase_id",
+                          "rev",
+                          "revend",
+                          "task_id",
+                          "timestamp",
+                          "uuid",
+                          "workflow_id"})
+    public void unpublishItem() {
+        final Optional<ContentItem> item = itemRepo.findById(-10200L);
+        assertThat(item.isPresent(), is(true));
+
+        itemManager.unpublish(item.get());
+    }
+
+    @Test
+    @InSequence(6100)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentItemManagerTest/data.xml")
+    @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
+                            + "ContentItemManagerTest/data.xml")
+    public void unpublishNonLiveItem() {
+        final Optional<ContentItem> item = itemRepo.findById(-10300L);
+        assertThat(item.isPresent(), is(true));
+
+        itemManager.unpublish(item.get());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    @InSequence(6200)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentItemManagerTest/data.xml")
+    @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
+                            + "ContentItemManagerTest/data.xml")
+    @ShouldThrowException(IllegalArgumentException.class)
+    public void unpublishItemNull() {
+        itemManager.unpublish(null);
+    }
+
+    @Test
+    @InSequence(7000)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentItemManagerTest/data.xml")
+    @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
+                            + "ContentItemManagerTest/data.xml")
+    public void isLive() {
+        final Optional<ContentItem> item1 = itemRepo.findById(-10100L);
+        final Optional<ContentItem> item2 = itemRepo.findById(-10200L);
+        final Optional<ContentItem> item3 = itemRepo.findById(-10300L);
+        final Optional<ContentItem> item4 = itemRepo.findById(-10400L);
+
+        assertThat(item1.isPresent(), is(true));
+        assertThat(item2.isPresent(), is(true));
+        assertThat(item3.isPresent(), is(true));
+        assertThat(item4.isPresent(), is(true));
+
+        assertThat(itemManager.isLive(item1.get()), is(false));
+        assertThat(itemManager.isLive(item2.get()), is(true));
+        assertThat(itemManager.isLive(item3.get()), is(false));
+        assertThat(itemManager.isLive(item4.get()), is(false));
+    }
+
+    @Test
+    @InSequence(8000)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentItemManagerTest/data.xml")
+    @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
+                            + "ContentItemManagerTest/data.xml")
+    public void getLiveVersion() {
+        final Optional<ContentItem> draft1 = itemRepo.findById(-10100L);
+        final Optional<ContentItem> draft2 = itemRepo.findById(-10200L);
+        final Optional<ContentItem> draft3 = itemRepo.findById(-10300L);
+        final Optional<ContentItem> draft4 = itemRepo.findById(-10400L);
+
+        final Optional<ContentItem> live2 = itemRepo.findById(-99200L);
+
+        assertThat(itemManager.getLiveVersion(draft1.get(),
+                                              ContentItem.class).isPresent(),
+                   is(false));
+        final Optional<Article> liveVersion = itemManager.getLiveVersion(
+            draft2.get(), Article.class);
+        assertThat(liveVersion.isPresent(),
+                   is(true));
+        assertThat(liveVersion.get().getObjectId(),
+                   is(-99200L));
+        assertThat(liveVersion.get().getItemUuid(),
+                   is(equalTo("acae860f-2ffa-450d-b486-054292f0dae6")));
+        assertThat(liveVersion.get().getVersion(),
+                   is(ContentItemVersion.LIVE));
+        assertThat(itemManager.getLiveVersion(draft3.get(),
+                                              ContentItem.class).isPresent(),
+                   is(false));
+        assertThat(itemManager.getLiveVersion(draft4.get(),
+                                              ContentItem.class).isPresent(),
+                   is(false));
+
+        final Optional<ContentItem> fromLive = itemManager.getLiveVersion(
+            live2.get(), ContentItem.class);
+        assertThat(fromLive.isPresent(),
+                   is(true));
+        assertThat(fromLive.get().getObjectId(),
+                   is(-99200L));
+        assertThat(fromLive.get().getItemUuid(),
+                   is(equalTo("acae860f-2ffa-450d-b486-054292f0dae6")));
+        assertThat(fromLive.get().getVersion(),
+                   is(ContentItemVersion.LIVE));
+    }
+
+    @Test
+    @InSequence(8100)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentItemManagerTest/data.xml")
+    @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
+                            + "ContentItemManagerTest/data.xml")
     // getDraftVersion
+    public void getDraftVersion() {
+        final Optional<ContentItem> draft1 = itemRepo.findById(-10100L);
+        final Optional<ContentItem> draft2 = itemRepo.findById(-10200L);
+        final Optional<ContentItem> draft3 = itemRepo.findById(-10300L);
+        final Optional<ContentItem> draft4 = itemRepo.findById(-10400L);
+
+        assertThat(itemManager.getDraftVersion(draft1.get(),
+                                               ContentItem.class).getObjectId(),
+                   is(-10100L));
+        assertThat(itemManager.getDraftVersion(draft2.get(),
+                                               ContentItem.class).getObjectId(),
+                   is(-10200L));
+        assertThat(itemManager.getDraftVersion(draft3.get(),
+                                               ContentItem.class).getObjectId(),
+                   is(-10300L));
+        assertThat(itemManager.getDraftVersion(draft4.get(),
+                                               ContentItem.class).getObjectId(),
+                   is(-10400L));
+
+        final Optional<ContentItem> live2 = itemRepo.findById(-99200L);
+
+        final ContentItem draftVersion = itemManager.getDraftVersion(
+            live2.get(), ContentItem.class);
+
+        assertThat(draftVersion, is(not(nullValue())));
+        assertThat(draftVersion.getObjectId(), is(-10200L));
+        assertThat(draftVersion.getItemUuid(),
+                   is(equalTo("acae860f-2ffa-450d-b486-054292f0dae6")));
+        assertThat(draftVersion.getVersion(),
+                   is(ContentItemVersion.DRAFT));
+
+    }
+
 }
