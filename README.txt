@@ -14,7 +14,7 @@ To recreate the site run
 
 To include integration tests into the reports
 
-    mvn clean package site site:stage -P$profile-name
+    mvn clean package test site site:stage -P$profile-name
 
 The available profiles are listed in the documentation. All modules should 
 provide a profile called wildfly-remote-h2-mem. This profile uses a remote
@@ -24,7 +24,7 @@ Wildfly from http://www.wildfly.org. Unzip the downloaded archive and start
 the server using the bin/standalone.sh file. Then go to another terminal,
 navigate to the CCM NG directory and run
 
-    mvn clean package site site:stage -Pwildfly-remote-h2-mem
+    mvn clean package test site site:stage -Pwildfly-remote-h2-mem
 
 To run LibreCCM choose the bundle to run, for instance
 ccm-bundle-devel-wildfly. Depending on the bundle and the selected profile 
@@ -42,8 +42,8 @@ the -D switch: mvn -Djboss-as.home=/path/to/wildfly/
 
 To install the archetypes in your local Maven repository run
 
-    mvn [clean] install -pl $archetype-module
+    mvn [clean] install -pl $archetype-module -am
 
 for example
 
-mvn clean install -pl ccm-cms-archetypes-contenttype
+mvn clean install -pl ccm-cms-archetypes-contenttype -am
