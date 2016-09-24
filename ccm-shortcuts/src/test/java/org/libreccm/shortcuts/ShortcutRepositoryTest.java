@@ -23,6 +23,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
 import org.jboss.arquillian.persistence.CreateSchema;
 import org.jboss.arquillian.persistence.PersistenceTest;
+import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -37,7 +38,6 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.libreccm.tests.categories.IntegrationTest;
 
@@ -50,7 +50,6 @@ import java.util.stream.IntStream;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import org.jboss.arquillian.persistence.UsingDataSet;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
@@ -59,7 +58,7 @@ import static org.junit.Assert.*;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@Category(IntegrationTest.class)
+@org.junit.experimental.categories.Category(IntegrationTest.class)
 @RunWith(Arquillian.class)
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
@@ -126,7 +125,7 @@ public class ShortcutRepositoryTest {
         
         return ShrinkWrap.create(
             WebArchive.class,
-            "LibreCCM-org.libreccm.shortcuts.ShortcutTest-web.war")
+            "LibreCCM-org.libreccm.shortcuts.ShortcutRepositoryTest-web.war")
             .addPackage(org.libreccm.auditing.CcmRevision.class.getPackage())
             .addPackage(org.libreccm.categorization.Categorization.class
                 .getPackage())
@@ -138,9 +137,10 @@ public class ShortcutRepositoryTest {
             .addPackage(org.libreccm.l10n.LocalizedString.class
                 .getPackage())
             .addPackage(org.libreccm.security.Permission.class.getPackage())
-            .addPackage(org.libreccm.shortcuts.Shortcuts.class.getPackage())
             .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
             .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
+            .addClass(org.libreccm.shortcuts.Shortcut.class)
+            .addClass(org.libreccm.shortcuts.ShortcutRepository.class)
             .addAsLibraries(libs)
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")

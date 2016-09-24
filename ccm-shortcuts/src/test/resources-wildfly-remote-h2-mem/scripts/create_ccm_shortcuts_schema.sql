@@ -40,6 +40,7 @@ CREATE SCHEMA ccm_shortcuts;
         CATEGORY_ORDER bigint,
         CATEGORY_INDEX boolean,
         OBJECT_ORDER bigint,
+        TYPE varchar(255),
         OBJECT_ID bigint,
         CATEGORY_ID bigint,
         primary key (CATEGORIZATION_ID)
@@ -47,7 +48,7 @@ CREATE SCHEMA ccm_shortcuts;
 
     create table CCM_CORE.CATEGORY_DESCRIPTIONS (
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
@@ -64,7 +65,7 @@ CREATE SCHEMA ccm_shortcuts;
 
     create table CCM_CORE.CATEGORY_TITLES (
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
@@ -111,7 +112,7 @@ CREATE SCHEMA ccm_shortcuts;
 
     create table CCM_CORE.DOMAIN_DESCRIPTIONS (
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
@@ -128,14 +129,14 @@ CREATE SCHEMA ccm_shortcuts;
 
     create table CCM_CORE.DOMAIN_TITLES (
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
 
     create table CCM_CORE.FORMBUILDER_COMPONENT_DESCRIPTIONS (
         COMPONENT_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (COMPONENT_ID, LOCALE)
     );
@@ -180,14 +181,14 @@ CREATE SCHEMA ccm_shortcuts;
 
     create table CCM_CORE.FORMBUILDER_DATA_QUERY_DESCRIPTIONS (
         DATA_QUERY_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (DATA_QUERY_ID, LOCALE)
     );
 
     create table CCM_CORE.FORMBUILDER_DATA_QUERY_NAMES (
         DATA_QUERY_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (DATA_QUERY_ID, LOCALE)
     );
@@ -224,7 +225,7 @@ CREATE SCHEMA ccm_shortcuts;
 
     create table CCM_CORE.FORMBUILDER_OPTION_LABELS (
         OPTION_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OPTION_ID, LOCALE)
     );
@@ -237,14 +238,14 @@ CREATE SCHEMA ccm_shortcuts;
 
     create table CCM_CORE.FORMBUILDER_PROCESS_LISTENER_DESCRIPTIONS (
         PROCESS_LISTENER_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (PROCESS_LISTENER_ID, LOCALE)
     );
 
     create table CCM_CORE.FORMBUILDER_PROCESS_LISTENER_NAMES (
         PROCESS_LISTENER_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (PROCESS_LISTENER_ID, LOCALE)
     );
@@ -441,21 +442,21 @@ CREATE SCHEMA ccm_shortcuts;
 
     create table CCM_CORE.RESOURCE_DESCRIPTIONS (
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
 
     create table CCM_CORE.RESOURCE_TITLES (
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
 
     create table CCM_CORE.RESOURCE_TYPE_DESCRIPTIONS (
         RESOURCE_TYPE_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (RESOURCE_TYPE_ID, LOCALE)
     );
@@ -490,11 +491,11 @@ CREATE SCHEMA ccm_shortcuts;
         SETTING_ID bigint not null,
         CONFIGURATION_CLASS varchar(512) not null,
         NAME varchar(512) not null,
-        SETTING_VALUE_DOUBLE double,
         SETTING_VALUE_LONG bigint,
-        SETTING_VALUE_BOOLEAN boolean,
         SETTING_VALUE_STRING varchar(1024),
         SETTING_VALUE_BIG_DECIMAL decimal(19,2),
+        SETTING_VALUE_BOOLEAN boolean,
+        SETTING_VALUE_DOUBLE double,
         primary key (SETTING_ID)
     );
 
@@ -505,7 +506,7 @@ CREATE SCHEMA ccm_shortcuts;
 
     create table CCM_CORE.SETTINGS_L10N_STR_VALUES (
         ENTRY_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (ENTRY_ID, LOCALE)
     );
@@ -550,14 +551,14 @@ CREATE SCHEMA ccm_shortcuts;
 
     create table CCM_CORE.WORKFLOW_DESCRIPTIONS (
         WORKFLOW_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (WORKFLOW_ID, LOCALE)
     );
 
     create table CCM_CORE.WORKFLOW_NAMES (
         WORKFLOW_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (WORKFLOW_ID, LOCALE)
     );
@@ -574,7 +575,7 @@ CREATE SCHEMA ccm_shortcuts;
 
     create table CCM_CORE.WORKFLOW_TASK_LABELS (
         TASK_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (TASK_ID, LOCALE)
     );
@@ -589,7 +590,7 @@ CREATE SCHEMA ccm_shortcuts;
 
     create table CCM_CORE.WORKFLOW_TASKS_DESCRIPTIONS (
         TASK_ID bigint not null,
-        LOCALIZED_VALUE clob,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (TASK_ID, LOCALE)
     );
@@ -612,6 +613,7 @@ CREATE SCHEMA ccm_shortcuts;
 
     create table CCM_CORE.WORKFLOWS (
         WORKFLOW_ID bigint not null,
+        TEMPLATE_ID bigint,
         primary key (WORKFLOW_ID)
     );
 
@@ -1128,3 +1130,8 @@ create sequence hibernate_sequence start with 1 increment by 1;
         add constraint FKefpdf9ojplu7loo31hfm0wl2h 
         foreign key (TASK_ID) 
         references CCM_CORE.WORKFLOW_TASKS;
+
+    alter table CCM_CORE.WORKFLOWS 
+        add constraint FKeixdxau4jebw682gd49tdbsjy 
+        foreign key (TEMPLATE_ID) 
+        references CCM_CORE.WORKFLOW_TEMPLATES;

@@ -150,10 +150,12 @@ public class ShortcutManagerTest {
             .addPackage(org.libreccm.l10n.LocalizedString.class
                 .getPackage())
             .addPackage(org.libreccm.security.Permission.class.getPackage())
-            .addPackage(org.libreccm.shortcuts.Shortcuts.class.getPackage())
             .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
             .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
             .addClass(com.arsdigita.kernel.KernelConfig.class)
+            .addClass(org.libreccm.shortcuts.Shortcut.class)
+            .addClass(org.libreccm.shortcuts.ShortcutManager.class)
+            .addClass(org.libreccm.shortcuts.ShortcutRepository.class)
             .addAsLibraries(libs)
             .addAsResource("configs/shiro.ini", "shiro.ini")
             .addAsResource("test-persistence.xml",

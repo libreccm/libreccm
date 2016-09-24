@@ -40,6 +40,7 @@ CREATE SCHEMA ccm_shortcuts;
         CATEGORY_ORDER int8,
         CATEGORY_INDEX boolean,
         OBJECT_ORDER int8,
+        TYPE varchar(255),
         OBJECT_ID int8,
         CATEGORY_ID int8,
         primary key (CATEGORIZATION_ID)
@@ -490,11 +491,11 @@ CREATE SCHEMA ccm_shortcuts;
         SETTING_ID int8 not null,
         CONFIGURATION_CLASS varchar(512) not null,
         NAME varchar(512) not null,
-        SETTING_VALUE_BIG_DECIMAL numeric(19, 2),
-        SETTING_VALUE_DOUBLE float8,
-        SETTING_VALUE_STRING varchar(1024),
         SETTING_VALUE_LONG int8,
+        SETTING_VALUE_STRING varchar(1024),
+        SETTING_VALUE_BIG_DECIMAL numeric(19, 2),
         SETTING_VALUE_BOOLEAN boolean,
+        SETTING_VALUE_DOUBLE float8,
         primary key (SETTING_ID)
     );
 
@@ -612,6 +613,7 @@ CREATE SCHEMA ccm_shortcuts;
 
     create table CCM_CORE.WORKFLOWS (
         WORKFLOW_ID int8 not null,
+        TEMPLATE_ID int8,
         primary key (WORKFLOW_ID)
     );
 
@@ -1128,3 +1130,8 @@ create sequence hibernate_sequence start 1 increment 1;
         add constraint FKefpdf9ojplu7loo31hfm0wl2h 
         foreign key (TASK_ID) 
         references CCM_CORE.WORKFLOW_TASKS;
+
+    alter table CCM_CORE.WORKFLOWS 
+        add constraint FKeixdxau4jebw682gd49tdbsjy 
+        foreign key (TEMPLATE_ID) 
+        references CCM_CORE.WORKFLOW_TEMPLATES;
