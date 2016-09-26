@@ -23,9 +23,16 @@ import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.event.FormInitListener;
 import com.arsdigita.bebop.event.FormProcessListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
-import com.arsdigita.cms.CMS;
+import com.arsdigita.kernel.KernelConfig;
 import org.apache.log4j.Logger;
-import org.libreccm.security.Role;
+import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.configuration.ConfigurationManager;
+import org.libreccm.l10n.LocalizedString;
+import org.libreccm.security.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * For more detailed information see {@link com.arsdigita.bebop.Form}.
@@ -40,13 +47,13 @@ final class RoleEditForm extends BaseRoleForm {
     private static final Logger s_log = Logger.getLogger(RoleEditForm.class);
 
     private final RoleRequestLocal m_role;
-    private final boolean m_useViewersGroup;
+    //private final boolean m_useViewersGroup;
 
     public RoleEditForm(RoleRequestLocal role, boolean useViewersGroup) {
         super("EditStaffRole", gz("cms.ui.role.edit"), useViewersGroup);
 
         m_role = role;
-        m_useViewersGroup = useViewersGroup;
+        //m_useViewersGroup = useViewersGroup;
 
         m_name.addValidationListener(new NameUniqueListener(m_role));
 
@@ -60,12 +67,14 @@ final class RoleEditForm extends BaseRoleForm {
             final Role role = m_role.getRole(state);
 
             m_name.setValue(state, role.getName());
-            //m_description.setValue(state, role.getDescription());
+            m_description.setValue(state, role.getDescription());
 
             //final String[] privileges = RoleFactory.getRolePrivileges
              //   (CMS.getContext().getContentSection(), role);
+            final String[] permissions = role.getPermissions().stream().
+                    map(Permission::getGrantedPrivilege).toArray(String[]::new);
 
-            //m_privileges.setValue(state, privileges);
+            m_privileges.setValue(state, permissions);
         }
     }
 
@@ -76,8 +85,18 @@ final class RoleEditForm extends BaseRoleForm {
 
             final Role role = m_role.getRole(state);
             role.setName((String) m_name.getValue(state));
-            //role.setDescription((String) m_description.getValue(state));
-            //role.save();
+
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final PermissionManager permissionManager = cdiUtil.findBean(PermissionManager.class);
+            final RoleRepository roleRepository = cdiUtil.findBean(RoleRepository.class);
+            final ConfigurationManager manager = cdiUtil.findBean(ConfigurationManager.class);
+            final KernelConfig config = manager.findConfiguration(KernelConfig.class);
+
+            LocalizedString localizedDescription = role.getDescription();
+            localizedDescription.addValue(config.getDefaultLocale(), (String) m_description.getValue(state));
+            role.setDescription(localizedDescription);
+
+            roleRepository.save(role);
 
             /*RoleFactory.updatePrivileges
                 (role,
@@ -85,6 +104,26 @@ final class RoleEditForm extends BaseRoleForm {
                  CMS.getContext().getContentSection());
 
             role.save();*/
+
+            List<Permission> newPermissions = new ArrayList<>();
+            String[] selectedPermissions = (String[]) m_privileges.getValue(state);
+
+            for (Permission p : role.getPermissions()) {
+                if (Arrays.stream(selectedPermissions).anyMatch(x -> x.equals(p.getGrantedPrivilege()))) {
+                    newPermissions.add(p);
+                } else {
+                    permissionManager.revokePrivilege(p.getGrantedPrivilege(), role);
+                }
+            }
+
+            for (String s : selectedPermissions) {
+                if (newPermissions.stream().noneMatch(x -> x.getGrantedPrivilege().equals(s))) {
+                    permissionManager.grantPrivilege(s, role);
+                }
+            }
+            role.getPermissions().clear();
+            role.getPermissions().addAll(newPermissions);
+            roleRepository.save(role);
         }
     }
 }
