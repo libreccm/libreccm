@@ -46,8 +46,6 @@ import org.libreccm.security.Role;
 import org.libreccm.security.RoleRepository;
 import org.librecms.contentsection.ContentSection;
 
-import java.util.ArrayList;
-
 /**
  * TODO Needs description
  *
@@ -64,8 +62,7 @@ public class RoleAdminPane extends BaseAdminPane {
     private final SingleSelectionModel m_model;
     private final RoleRequestLocal m_role;
 
-    private final List m_staff;
-    private final List m_viewers;
+    private final List m_roles;
 
     public RoleAdminPane() {
         m_model = new ParameterSingleSelectionModel
@@ -76,20 +73,15 @@ public class RoleAdminPane extends BaseAdminPane {
 
         m_role = new SelectionRequestLocal();
 
-        m_staff = new List(new StaffListModelBuilder());
-        m_staff.setSelectionModel(m_model);
+        m_roles = new List(new RoleListModelBuilder());
+        m_roles.setSelectionModel(m_model);
 
-        m_viewers = new List(new ViewerListModelBuilder());
-        m_viewers.setSelectionModel(m_model);
 
         final SimpleContainer left = new SimpleContainer();
         setLeft(left);
 
-        final StaffSection staff = new StaffSection();
-        left.add(staff);
-
-        final ViewerSection viewers = new ViewerSection();
-        left.add(viewers);
+        final RoleSection roleSection = new RoleSection();
+        left.add(roleSection);
 
         setEdit(gz("cms.ui.role.edit"), new RoleEditForm(m_role, false));
         setDelete(gz("cms.ui.role.delete"), new DeleteForm());
@@ -99,6 +91,29 @@ public class RoleAdminPane extends BaseAdminPane {
                                          getEditLink(), getDeleteLink()));
     }
 
+    private class RoleSection extends Section {
+
+        RoleSection() {
+            setHeading(gz("cms.ui.role.staff"));
+
+            final ActionGroup group = new ActionGroup();
+            setBody(group);
+
+            group.setSubject(m_roles);
+
+            final ActionLink link = new ActionLink
+                    (new Label(gz("cms.ui.role.staff.add")));
+
+            group.addAction(new VisibilityComponent(link, SecurityConstants.STAFF_ADMIN),
+                    ActionGroup.ADD);
+
+            final RoleAddForm form = new RoleAddForm(m_model, false);
+            getBody().add(form);
+            getBody().connect(link, form);
+        }
+    }
+
+    /*
     private class StaffSection extends Section {
         StaffSection() {
             setHeading(gz("cms.ui.role.staff"));
@@ -120,6 +135,7 @@ public class RoleAdminPane extends BaseAdminPane {
         }
     }
 
+
     private class ViewerSection extends Section {
         ViewerSection() {
             setHeading(gz("cms.ui.role.viewers"));
@@ -139,7 +155,7 @@ public class RoleAdminPane extends BaseAdminPane {
             getBody().add(form);
             getBody().connect(link, form);
         }
-    }
+    }*/
 
     private class SelectionListener implements ChangeListener {
         public final void stateChanged(final ChangeEvent e) {
@@ -168,6 +184,7 @@ public class RoleAdminPane extends BaseAdminPane {
         }
     }
 
+    /* TODO Removed since we don't split viewers and staff right now!
     private static class StaffListModelBuilder extends LockableImpl
             implements ListModelBuilder {
         public StaffListModelBuilder() {
@@ -180,7 +197,7 @@ public class RoleAdminPane extends BaseAdminPane {
                 CMS.getContext().getContentSection();
 
             //return new RoleListModel
-            //    (section.getStaffGroup().getOrderedRoles()); FIXME
+            //    (section.getStaffGroup().getOrderedRoles());
             return new RoleListModel(new ArrayList<>());
         }
     }
@@ -193,11 +210,33 @@ public class RoleAdminPane extends BaseAdminPane {
                 CMS.getContext().getContentSection();
 
             //return new RoleListModel
-            //    (section.getViewersGroup().getOrderedRoles()); FIXME
+            //    (section.getViewersGroup().getOrderedRoles());
             return new RoleListModel(new ArrayList<>());
         }
     }
 
+*/
+
+    /**
+     * This builder provides a list model of the {@link Role roles} which correspond to the {@link ContentSection}
+     * in this context.
+     */
+    private static class RoleListModelBuilder extends LockableImpl implements  ListModelBuilder {
+
+        public RoleListModelBuilder() {
+            super();
+        }
+
+        public final ListModel makeModel(final List list, final PageState state) {
+            final ContentSection section = CMS.getContext().getContentSection();
+
+            return new RoleListModel(section.getRoles());
+        }
+    }
+
+    /**
+     * Provides a simple delete form to remove a {@link Role}.
+     */
     private class DeleteForm extends BaseDeleteForm {
         DeleteForm() {
             super(gz("cms.ui.role.delete_prompt"));
