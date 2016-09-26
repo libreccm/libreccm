@@ -45,9 +45,8 @@ import static org.libreccm.testutils.DatasetType.*;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.jboss.arquillian.persistence.dbunit.dataset.yaml.YamlDataSet;
 
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  *
@@ -121,7 +120,7 @@ public class DatasetsVerifier {
         try (final Connection connection = DriverManager.getConnection(
             connectionStr, "sa", "")) {
             //Create DB tables etc 
-            for(final String ddlFile : getDdlFiles()) {
+            for (final String ddlFile : getDdlFiles()) {
                 processDdlFile(connection, ddlFile);
             }
 //            final Path schemaPath = Paths.get(getClass().getResource(
@@ -132,25 +131,25 @@ public class DatasetsVerifier {
 
             //Get dataset to test
             final IDataSet dataSet;
-            switch (getDatasetType()) {
-                case FLAT_XML:
-                    final FlatXmlDataSetBuilder builder
-                                                    = new FlatXmlDataSetBuilder();
-                    dataSet = builder.build(getClass().getResourceAsStream(
-                        datasetPath));
-                    break;
-                case JSON:
-                    dataSet = new JsonDataSet(getClass()
-                        .getResourceAsStream(datasetPath));
-                    break;
-                case YAML:
-                    dataSet = new YamlDataSet(getClass()
-                        .getResourceAsStream(datasetPath));
-                    break;
-                default:
-                    throw new IllegalArgumentException(String.format(
-                        "Unsupported DatasetType \"%s\"",
-                        getDatasetType()));
+            try (final InputStream inputStream = getClass().getResourceAsStream(
+                datasetPath)) {
+                switch (getDatasetType()) {
+                    case FLAT_XML:
+                        final FlatXmlDataSetBuilder builder
+                                                        = new FlatXmlDataSetBuilder();
+                        dataSet = builder.build(inputStream);
+                        break;
+                    case JSON:
+                        dataSet = new JsonDataSet(inputStream);
+                        break;
+                    case YAML:
+                        dataSet = new YamlDataSet(inputStream);
+                        break;
+                    default:
+                        throw new IllegalArgumentException(String.format(
+                            "Unsupported DatasetType \"%s\"",
+                            getDatasetType()));
+                }
             }
 
             //Create DBUnit DB connection

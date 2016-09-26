@@ -77,13 +77,13 @@ public class EqualsVerifier {
 
     /**
      * Overwrite this methods to suppress warnings from the
-     * {@link nl.jqno.equalsverifier.EqualsVerifier}. Per default the following 
+     * {@link nl.jqno.equalsverifier.EqualsVerifier}. Per default the following
      * warnings are suppressed:
-     * 
+     *
      * <ul>
-     *  <li>{@code Warning.Warning.STRICT_INHERITANCE}</li>
-     *  <li>{@code Warning.NONFINAL_FIELDS}</li>
-     *  <li>{@code Warning.ALL_FIELDS_SHOULD_BE_USED}</li>
+     * <li>{@code Warning.Warning.STRICT_INHERITANCE}</li>
+     * <li>{@code Warning.NONFINAL_FIELDS}</li>
+     * <li>{@code Warning.ALL_FIELDS_SHOULD_BE_USED}</li>
      * </ul>
      *
      * @param verifier The verifier to which the suppression are added.
@@ -99,7 +99,7 @@ public class EqualsVerifier {
 
     /**
      * Use this method to add prefab values to the verifier.
-     * 
+     *
      * @param verifier The verifier to which the prefab values are added.
      */
     protected void addPrefabValues(
@@ -109,8 +109,8 @@ public class EqualsVerifier {
 
     @Test
     public void verifyEqualsAndHashCode() {
-        nl.jqno.equalsverifier.EqualsVerifier<?> verifier
-                                                     = nl.jqno.equalsverifier.EqualsVerifier
+        final nl.jqno.equalsverifier.EqualsVerifier<?> verifier
+                                                           = nl.jqno.equalsverifier.EqualsVerifier
             .forClass(entityClass)
             .withRedefinedSuperclass();
 
