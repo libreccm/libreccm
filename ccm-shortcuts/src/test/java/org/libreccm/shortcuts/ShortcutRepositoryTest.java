@@ -18,6 +18,8 @@
  */
 package org.libreccm.shortcuts;
 
+import static org.libreccm.testutils.DependenciesHelpers.*;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
@@ -29,10 +31,6 @@ import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.resolver.api.maven.Maven;
-import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
-import org.jboss.shrinkwrap.resolver.api.maven.ScopeType;
-import org.jboss.shrinkwrap.resolver.api.maven.coordinate.MavenDependencies;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -41,13 +39,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.libreccm.tests.categories.IntegrationTest;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -94,43 +87,6 @@ public class ShortcutRepositoryTest {
 
     @Deployment
     public static WebArchive createDeployment() {
-        final PomEquippedResolveStage pom = Maven
-            .resolver()
-            .loadPomFromFile("pom.xml");
-        final PomEquippedResolveStage dependencies = pom
-            .importCompileAndRuntimeDependencies();
-
-        final File[] libFiles = dependencies.resolve().withTransitivity()
-            .asFile();
-
-        final PomEquippedResolveStage pomCcmCore = Maven
-            .resolver()
-            .loadPomFromFile("../ccm-core/pom.xml");
-        final PomEquippedResolveStage dependenciesCcmCore = pomCcmCore
-            .importCompileAndRuntimeDependencies();
-        final File[] ccmCoreLibFiles = dependenciesCcmCore.resolve()
-            .withTransitivity().asFile();
-
-        final List<File> libsList = Arrays.stream(libFiles)
-            .filter(lib -> !lib.getName().startsWith("ccm-"))
-            .collect(Collectors.toList());
-        final List<File> ccmCoreLibsList = Arrays.stream(ccmCoreLibFiles)
-            .filter(lib -> !lib.getName().startsWith("ccm-"))
-            .collect(Collectors.toList());
-
-        final File[] libs = libsList.toArray(new File[libsList.size()]);
-        Arrays.stream(libs)
-            .forEach(lib -> System.err.printf(
-                "Adding file '%s' to test archive...%n",
-                lib.getName()));
-
-        final File[] ccmCoreLibs = ccmCoreLibsList.toArray(
-            new File[ccmCoreLibsList.size()]);
-        Arrays.stream(ccmCoreLibs)
-            .forEach(lib -> System.err.printf(
-                "Adding file '%s' to test archive...%n",
-                lib.getName()));
-
         return ShrinkWrap.create(
             WebArchive.class,
             "LibreCCM-org.libreccm.shortcuts.ShortcutRepositoryTest-web.war")
@@ -151,8 +107,8 @@ public class ShortcutRepositoryTest {
                 .getPackage())
             .addClass(org.libreccm.shortcuts.Shortcut.class)
             .addClass(org.libreccm.shortcuts.ShortcutRepository.class)
-            .addAsLibraries(libs)
-            .addAsLibraries(ccmCoreLibs)
+            .addAsLibraries(getModuleDependencies())
+            .addAsLibraries(getCcmCoreDependencies())
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")
             .addAsWebInfResource("test-web.xml", "WEB-INF/web.xml")

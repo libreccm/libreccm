@@ -18,14 +18,11 @@
  */
 package org.libreccm.shortcuts;
 
+import static org.libreccm.testutils.DependenciesHelpers.*;
+
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.subject.Subject;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.IntStream;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -43,10 +40,6 @@ import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.resolver.api.maven.Maven;
-import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
-import org.jboss.shrinkwrap.resolver.api.maven.ScopeType;
-import org.jboss.shrinkwrap.resolver.api.maven.coordinate.MavenDependencies;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -104,37 +97,6 @@ public class ShortcutManagerTest {
 
     @Deployment
     public static WebArchive createDeployment() {
-        final PomEquippedResolveStage pom = Maven
-            .resolver()
-            .loadPomFromFile("pom.xml");
-        final PomEquippedResolveStage dependencies = pom
-            .importCompileAndRuntimeDependencies();
-        dependencies.addDependency(MavenDependencies.createDependency(
-            "org.libreccm:ccm-core", ScopeType.RUNTIME, false));
-        dependencies.addDependency(MavenDependencies.createDependency(
-            "org.libreccm:ccm-testutils", ScopeType.RUNTIME, false));
-        dependencies.addDependency(MavenDependencies.createDependency(
-            "net.sf.saxon:Saxon-HE", ScopeType.RUNTIME, false));
-        dependencies.addDependency(MavenDependencies.createDependency(
-            "org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-impl-maven",
-            ScopeType.RUNTIME, false));
-        final File[] libsWithCcmCore = dependencies.resolve().withTransitivity()
-            .asFile();
-
-        final List<File> libsList = new ArrayList<>(libsWithCcmCore.length - 1);
-        IntStream.range(0, libsWithCcmCore.length).forEach(i -> {
-            final File lib = libsWithCcmCore[i];
-            if (!lib.getName().startsWith("ccm-core")) {
-                libsList.add(lib);
-            }
-        });
-        final File[] libs = libsList.toArray(new File[libsList.size()]);
-
-        for (File lib : libs) {
-            System.err.printf("Adding file '%s' to test archive...%n",
-                              lib.getName());
-        }
-
         return ShrinkWrap.create(
             WebArchive.class,
             "LibreCCM-org.libreccm.shortcuts.ShortcutTest-web.war")
@@ -152,11 +114,14 @@ public class ShortcutManagerTest {
             .addPackage(org.libreccm.security.Permission.class.getPackage())
             .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
             .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
+            .addPackage(org.libreccm.tests.categories.IntegrationTest.class
+                .getPackage())
             .addClass(com.arsdigita.kernel.KernelConfig.class)
             .addClass(org.libreccm.shortcuts.Shortcut.class)
             .addClass(org.libreccm.shortcuts.ShortcutManager.class)
             .addClass(org.libreccm.shortcuts.ShortcutRepository.class)
-            .addAsLibraries(libs)
+            .addAsLibraries(getModuleDependencies())
+            .addAsLibraries(getCcmCoreDependencies())
             .addAsResource("configs/shiro.ini", "shiro.ini")
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")
