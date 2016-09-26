@@ -30,13 +30,13 @@ import com.arsdigita.cms.CMS;
 import com.arsdigita.cms.ui.BaseForm;
 import com.arsdigita.cms.util.SecurityConstants;
 import com.arsdigita.globalization.GlobalizedMessage;
+import com.arsdigita.ui.admin.GlobalizationUtil;
 import com.arsdigita.util.UncheckedWrapperException;
 import org.apache.log4j.Logger;
 import org.libreccm.security.Role;
 import org.librecms.contentsection.ContentSection;
 
-import java.util.Collection;
-import java.util.TooManyListenersException;
+import java.util.*;
 
 /**
  * For more detailed information see {@link com.arsdigita.bebop.Form}.
@@ -111,6 +111,9 @@ public class BaseRoleForm extends BaseForm {
             m_role = role;
         }
 
+        /**
+         * Validates that there are no duplicates between the names of roles.
+         */
 	    @Override
         public final void validate(final ParameterEvent e)
                 throws FormProcessException {
@@ -119,32 +122,17 @@ public class BaseRoleForm extends BaseForm {
                 CMS.getContext().getContentSection();
             final String name = (String) m_name.getValue(state);
 
-            Collection<Role> roles;
+            Collection<Role> roles = section.getRoles();
 
-            /*
-            if (m_useViewersGroup) {
-                roles = section.getViewersGroup().getRoles();
-            } else {
-                roles = section.getStaffGroup().getRoles();
-            }
-
-
-
-            while (roles.next()) {
-                final Role role = roles.getRole();
-
-                if (roles.getRole().getName().equalsIgnoreCase(name)
+            for (Role role : roles) {
+                if (role.getName().equalsIgnoreCase(name)
                         && (m_role == null
-                            || !m_role.getRole(state).equals(role))) {
-                    roles.close();
+                        || !m_role.getRole(state).equals(role))) {
 
                     throw new FormProcessException
-                        (GlobalizationUtil.globalize("cms.ui.role.name_not_unique"));
+                            (GlobalizationUtil.globalize("cms.ui.role.name_not_unique"));
                 }
             }
-
-            roles.close();
-            */
         }
     }
 }

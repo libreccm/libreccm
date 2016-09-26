@@ -105,6 +105,7 @@ final class RoleEditForm extends BaseRoleForm {
 
             role.save();*/
 
+            // TODO This could be terribly wrong. Needs confirmation.
             List<Permission> newPermissions = new ArrayList<>();
             String[] selectedPermissions = (String[]) m_privileges.getValue(state);
 
