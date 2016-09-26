@@ -22,6 +22,7 @@ import static org.libreccm.core.CoreConstants.*;
 
 import org.hibernate.validator.constraints.NotBlank;
 import org.libreccm.core.DefaultEntityGraph;
+import org.libreccm.l10n.LocalizedString;
 import org.libreccm.workflow.TaskAssignment;
 
 import java.io.Serializable;
@@ -145,6 +146,13 @@ public class Role implements Serializable {
     @OneToMany(mappedBy = "role")
     private List<TaskAssignment> assignedTasks;
 
+    /**
+     * An optional description for a role.
+     */
+    @Column(name = "DESCRIPTION", length = 2048)
+    @XmlElement(name = "description", namespace = CORE_XML_NS)
+    private LocalizedString description;
+
     public Role() {
         super();
     }
@@ -223,6 +231,14 @@ public class Role implements Serializable {
 
     public void removeAssignedTask(final TaskAssignment taskAssignment) {
         assignedTasks.remove(taskAssignment);
+    }
+
+    public void setDescription(final LocalizedString description) {
+        this.description = description;
+    }
+
+    public LocalizedString getDescription() {
+        return this.description;
     }
 
     @Override
