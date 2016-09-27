@@ -88,11 +88,11 @@ public class ContentSection extends CcmApplication implements Serializable {
 
     @OneToOne
     @JoinColumn(name = "ROOT_DOCUMENTS_FOLDER_ID")
-    private Category rootDocumentsFolder;
+    private Folder rootDocumentsFolder;
 
     @OneToOne
     @JoinColumn(name = "ROOT_ASSETS_FOLDER_ID")
-    private Category rootAssetsFolder;
+    private Folder rootAssetsFolder;
 
     @Column(name = "PAGE_RESOLVER_CLASS", length = 1024)
     private String pageResolverClass;
@@ -161,19 +161,19 @@ public class ContentSection extends CcmApplication implements Serializable {
         this.label = label;
     }
 
-    public Category getRootDocumentsFolder() {
+    public Folder getRootDocumentsFolder() {
         return rootDocumentsFolder;
     }
 
-    protected void setRootDocumentFolder(final Category rootDocumentsFolder) {
+    protected void setRootDocumentFolder(final Folder rootDocumentsFolder) {
         this.rootDocumentsFolder = rootDocumentsFolder;
     }
 
-    public Category getRootAssetsFolder() {
+    public Folder getRootAssetsFolder() {
         return rootAssetsFolder;
     }
 
-    protected void setRootAssetsFolder(final Category rootAssetsFolder) {
+    protected void setRootAssetsFolder(final Folder rootAssetsFolder) {
         this.rootAssetsFolder = rootAssetsFolder;
     }
 

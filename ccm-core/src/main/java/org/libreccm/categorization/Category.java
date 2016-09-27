@@ -69,37 +69,37 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @Table(name = "CATEGORIES", schema = DB_SCHEMA)
 @NamedQueries({
-    @NamedQuery(name = "Category.topLevelCategories",
-                query
-                    = "SELECT c FROM Category c WHERE c.parentCategory IS NULL"),
-    @NamedQuery(name = "Category.findByName",
-                query = "SELECT c FROM Category c WHERE c.name = :name")
+    @NamedQuery(
+        name = "Category.topLevelCategories",
+        query = "SELECT c FROM Category c WHERE c.parentCategory IS NULL"),
+    @NamedQuery(
+        name = "Category.findByName",
+        query = "SELECT c FROM Category c WHERE c.name = :name")
 })
 @NamedEntityGraphs({
     @NamedEntityGraph(
         name = "Category.withSubCategoriesAndObjects",
         attributeNodes = {
             @NamedAttributeNode(value = "subCategories"
-                //,
+            //,
             //                    subgraph = "subCategories"
-            ),
-            //@NamedAttributeNode(value = "objects")
+            ), //@NamedAttributeNode(value = "objects")
         }
-//        ,
-//        subgraphs = {
-//            @NamedSubgraph(
-//                name = "subCategories",
-//                attributeNodes = {
-//                    @NamedAttributeNode("subCategories"),
-//                    @NamedAttributeNode("objects")
-//                }
-//            )
-//        }
+    //        ,
+    //        subgraphs = {
+    //            @NamedSubgraph(
+    //                name = "subCategories",
+    //                attributeNodes = {
+    //                    @NamedAttributeNode("subCategories"),
+    //                    @NamedAttributeNode("objects")
+    //                }
+    //            )
+    //        }
     )
 })
 @DefaultEntityGraph("Category.withSubCategoriesAndObjects")
 @XmlRootElement(name = "category", namespace = CAT_XML_NS)
-public class Category extends CcmObject implements InheritsPermissions, 
+public class Category extends CcmObject implements InheritsPermissions,
                                                    Serializable {
 
     private static final long serialVersionUID = -7250208963391878547L;
@@ -119,7 +119,7 @@ public class Category extends CcmObject implements InheritsPermissions,
     @Column(name = "NAME", nullable = false)
     @NotBlank
     @Pattern(regexp = "[\\w-.]*")
-    @XmlElement(name  ="name", namespace = CAT_XML_NS)
+    @XmlElement(name = "name", namespace = CAT_XML_NS)
     private String name;
 
     /**
@@ -338,8 +338,7 @@ public class Category extends CcmObject implements InheritsPermissions,
     public void setCategoryOrder(final long categoryOrder) {
         this.categoryOrder = categoryOrder;
     }
-    
-    
+
     @Override
     public Optional<CcmObject> getParent() {
         return Optional.ofNullable(getParentCategory());

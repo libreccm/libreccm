@@ -91,6 +91,9 @@ public class ContentItemManagerTest {
     private CategoryRepository categoryRepo;
 
     @Inject
+    private FolderRepository folderRepo;
+    
+    @Inject
     private Shiro shiro;
 
     @Inject
@@ -247,7 +250,7 @@ public class ContentItemManagerTest {
         })
     public void createContentItem() {
         final ContentSection section = sectionRepo.findByLabel("info");
-        final Category folder = section.getRootDocumentsFolder();
+        final Folder folder = section.getRootDocumentsFolder();
 
         final Article article = itemManager.createContentItem("new-article",
                                                               section,
@@ -284,7 +287,7 @@ public class ContentItemManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     public void createItemTypeNotInSection() {
         final ContentSection section = sectionRepo.findByLabel("info");
-        final Category folder = section.getRootDocumentsFolder();
+        final Folder folder = section.getRootDocumentsFolder();
 
         itemManager.createContentItem("Test", section, folder, Event.class);
     }
@@ -298,7 +301,7 @@ public class ContentItemManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     public void createItemNameIsNull() {
         final ContentSection section = sectionRepo.findByLabel("info");
-        final Category folder = section.getRootDocumentsFolder();
+        final Folder folder = section.getRootDocumentsFolder();
 
         itemManager.createContentItem(null, section, folder, Article.class);
     }
@@ -312,7 +315,7 @@ public class ContentItemManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     public void createItemNameIsEmpty() {
         final ContentSection section = sectionRepo.findByLabel("info");
-        final Category folder = section.getRootDocumentsFolder();
+        final Folder folder = section.getRootDocumentsFolder();
 
         itemManager.createContentItem("", section, folder, Article.class);
     }
@@ -353,7 +356,7 @@ public class ContentItemManagerTest {
         })
     public void createContentItemWithWorkflow() {
         final ContentSection section = sectionRepo.findByLabel("info");
-        final Category folder = section.getRootDocumentsFolder();
+        final Folder folder = section.getRootDocumentsFolder();
 
         final WorkflowTemplate workflowTemplate = workflowTemplateRepo
             .findById(-110L);
@@ -395,7 +398,7 @@ public class ContentItemManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     public void createItemTypeNotInSectionWithWorkflow() {
         final ContentSection section = sectionRepo.findByLabel("info");
-        final Category folder = section.getRootDocumentsFolder();
+        final Folder folder = section.getRootDocumentsFolder();
 
         final WorkflowTemplate workflowTemplate = workflowTemplateRepo
             .findById(-110L);
@@ -416,7 +419,7 @@ public class ContentItemManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     public void createItemNameIsNullWithWorkflow() {
         final ContentSection section = sectionRepo.findByLabel("info");
-        final Category folder = section.getRootDocumentsFolder();
+        final Folder folder = section.getRootDocumentsFolder();
 
         final WorkflowTemplate workflowTemplate = workflowTemplateRepo
             .findById(-110L);
@@ -437,7 +440,7 @@ public class ContentItemManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     public void createItemNameIsNullWorkflowIsNull() {
         final ContentSection section = sectionRepo.findByLabel("info");
-        final Category folder = section.getRootDocumentsFolder();
+        final Folder folder = section.getRootDocumentsFolder();
 
         itemManager.createContentItem(null,
                                       section,
@@ -486,7 +489,7 @@ public class ContentItemManagerTest {
         final Optional<ContentItem> item = itemRepo.findById(-10100L);
         assertThat(item.isPresent(), is(true));
 
-        final Category targetFolder = categoryRepo.findById(-2120L);
+        final Folder targetFolder = folderRepo.findById(-2120L);
         assertThat(targetFolder, is(not(nullValue())));
 
         itemManager.move(item.get(), targetFolder);
@@ -500,7 +503,7 @@ public class ContentItemManagerTest {
                             + "ContentItemManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void moveItemNull() {
-        final Category targetFolder = categoryRepo.findById(-2120L);
+        final Folder targetFolder = folderRepo.findById(-2120L);
         assertThat(targetFolder, is(not(nullValue())));
 
         itemManager.move(null, targetFolder);
@@ -544,7 +547,7 @@ public class ContentItemManagerTest {
         final Optional<ContentItem> item = itemRepo.findById(-10100L);
         assertThat(item.isPresent(), is(true));
 
-        final Category targetFolder = categoryRepo.findById(-2120L);
+        final Folder targetFolder = folderRepo.findById(-2120L);
         assertThat(targetFolder, is(not(nullValue())));
 
         itemManager.copy(item.get(), targetFolder);
@@ -574,7 +577,7 @@ public class ContentItemManagerTest {
         final Optional<ContentItem> item = itemRepo.findById(-10100L);
         assertThat(item.isPresent(), is(true));
 
-        final Category targetFolder = categoryRepo.findById(-2110L);
+        final Folder targetFolder = folderRepo.findById(-2110L);
         assertThat(targetFolder, is(not(nullValue())));
 
         itemManager.copy(item.get(), targetFolder);
@@ -589,7 +592,7 @@ public class ContentItemManagerTest {
                     + "ContentItemManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void copyItemNull() {
-        final Category targetFolder = categoryRepo.findById(-2120L);
+        final Folder targetFolder = folderRepo.findById(-2120L);
         assertThat(targetFolder, is(not(nullValue())));
 
         itemManager.copy(null, targetFolder);

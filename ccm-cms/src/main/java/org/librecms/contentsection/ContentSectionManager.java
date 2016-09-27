@@ -104,15 +104,16 @@ public class ContentSectionManager {
         section.setPrimaryUrl(name);
         section.getTitle().addValue(defautLocale, name);
 
-        final Category rootFolder = new Category();
+        final Folder rootFolder = new Folder();
         rootFolder.setName(String.format("%s_root", name));
         rootFolder.getTitle().addValue(defautLocale, rootFolder.getName());
         rootFolder.setDisplayName(rootFolder.getName());
         rootFolder.setUuid(UUID.randomUUID().toString());
         rootFolder.setUniqueId(rootFolder.getUuid());
         rootFolder.setCategoryOrder(1L);
+        rootFolder.setSection(section);
 
-        final Category rootAssetFolder = new Category();
+        final Folder rootAssetFolder = new Folder();
         rootAssetFolder.setName(String.format("%s_assets", name));
         rootAssetFolder.getTitle().addValue(defautLocale,
                                             rootAssetFolder.getName());
@@ -120,6 +121,7 @@ public class ContentSectionManager {
         rootAssetFolder.setUuid(UUID.randomUUID().toString());
         rootAssetFolder.setUniqueId(rootAssetFolder.getUuid());
         rootAssetFolder.setCategoryOrder(1L);
+        rootAssetFolder.setSection(section);
 
         section.setRootDocumentFolder(rootFolder);
         section.setRootAssetsFolder(rootAssetFolder);

@@ -75,6 +75,7 @@ public class CategoryRepository extends AbstractEntityRepository<Long, Category>
      *
      * @return A list of all top level categories.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public List<Category> getTopLevelCategories() {
         final TypedQuery<Category> query = getEntityManager().createNamedQuery(
             "Category.topLevelCategories", Category.class);
@@ -82,6 +83,7 @@ public class CategoryRepository extends AbstractEntityRepository<Long, Category>
         return query.getResultList();
     }
 
+    @Transactional(Transactional.TxType.REQUIRED)
     public Category findByPath(final String path) {
         if (path == null || path.isEmpty()) {
             throw new IllegalArgumentException("Path can't be null or empty.");
@@ -110,6 +112,7 @@ public class CategoryRepository extends AbstractEntityRepository<Long, Category>
         return findByPath(domain, tokens[1]);
     }
 
+    @Transactional(Transactional.TxType.REQUIRED)
     public Category findByPath(final Domain domain, final String path) {
         if (domain == null) {
             throw new IllegalArgumentException("Domain can't be null.");
@@ -129,11 +132,10 @@ public class CategoryRepository extends AbstractEntityRepository<Long, Category>
                                                       normalizedPath.length());
         }
 
-        LOGGER.debug(String.format(
-            "Trying to find category with path \"%s\" in "
-                + "domain \"%s\".",
-            normalizedPath,
-            domain.getDomainKey()));
+        LOGGER.debug("Trying to find category with path \"{}\" in "
+            + "domain \"{}\".",
+                     normalizedPath,
+                     domain.getDomainKey());
         final String[] tokens = normalizedPath.split("/");
         Category current = domain.getRoot();
         for (final String token : tokens) {
@@ -153,6 +155,7 @@ public class CategoryRepository extends AbstractEntityRepository<Long, Category>
                     return c.getName().equals(token);
                 })
                 .findFirst();
+            
             if (result.isPresent()) {
                 current = result.get();
             } else {
@@ -164,13 +167,12 @@ public class CategoryRepository extends AbstractEntityRepository<Long, Category>
     }
 
     @AuthorizationRequired
-
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public void save(
-        @RequiresPrivilege(CategorizationConstants.MANAGE_CATEGORY_PRIVILEGE) 
+        @RequiresPrivilege(CategorizationConstants.MANAGE_CATEGORY_PRIVILEGE)
         final Category category) {
-        
+
         super.save(category);
     }
 
@@ -179,9 +181,9 @@ public class CategoryRepository extends AbstractEntityRepository<Long, Category>
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public void delete(
-        @RequiresPrivilege(CategorizationConstants.MANAGE_CATEGORY_PRIVILEGE) 
+        @RequiresPrivilege(CategorizationConstants.MANAGE_CATEGORY_PRIVILEGE)
         final Category category) {
-        
+
         super.save(category);
     }
 

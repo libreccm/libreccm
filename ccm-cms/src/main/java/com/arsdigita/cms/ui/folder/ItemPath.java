@@ -24,10 +24,12 @@ import com.arsdigita.bebop.list.ListModel;
 import com.arsdigita.bebop.list.ListModelBuilder;
 import com.arsdigita.cms.ItemSelectionModel;
 import com.arsdigita.util.LockableImpl;
+
 import org.libreccm.categorization.Category;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemManager;
+import org.librecms.contentsection.Folder;
 
 /**
  * Produce a list of the items starting from the selected item's root down to
@@ -46,7 +48,7 @@ public class ItemPath extends List {
 
     public static class ItemPathListModel implements ListModel {
 
-        private final java.util.List<Category> pathFolders;
+        private final java.util.List<Folder> pathFolders;
         private int index = -1;
 
         public ItemPathListModel(final ContentItem item) {

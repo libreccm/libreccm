@@ -89,15 +89,17 @@ public class ContentSectionSetup extends AbstractCcmApplicationSetup {
                      section.getDisplayName(),
                      section.getLabel());
 
-        final Category rootFolder = new Category();
+        final Folder rootFolder = new Folder();
         rootFolder.setUuid(UUID.randomUUID().toString());
         rootFolder.setUniqueId(rootFolder.getUuid());
         rootFolder.setName(String.format("%s_" + ROOT, sectionName));
+        rootFolder.setSection(section);
 
-        final Category rootAssetFolder = new Category();
+        final Folder rootAssetFolder = new Folder();
         rootAssetFolder.setName(String.format("%s_" + ASSETS, sectionName));
         rootAssetFolder.setUuid(UUID.randomUUID().toString());
         rootAssetFolder.setUniqueId(rootAssetFolder.getUuid());
+        rootAssetFolder.setSection(section);
 
         section.setRootDocumentFolder(rootFolder);
         section.setRootAssetsFolder(rootAssetFolder);

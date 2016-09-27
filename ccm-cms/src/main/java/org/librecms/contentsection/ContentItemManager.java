@@ -42,6 +42,8 @@ import org.libreccm.categorization.CategoryManager;
 import org.libreccm.categorization.ObjectNotAssignedToCategoryException;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.l10n.LocalizedString;
+import org.libreccm.security.AuthorizationRequired;
+import org.libreccm.security.RequiresPrivilege;
 import org.libreccm.workflow.Workflow;
 import org.libreccm.workflow.WorkflowManager;
 import org.librecms.CmsConstants;
@@ -112,11 +114,13 @@ public class ContentItemManager {
      *
      * @return The new content item.
      */
+    @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public <T extends ContentItem> T createContentItem(
         final String name,
         final ContentSection section,
-        final Category folder,
+        @RequiresPrivilege(CmsConstants.PRIVILEGE_ITEMS_CREATE_NEW)
+        final Folder folder,
         final Class<T> type) {
 
         final Optional<ContentType> contentType = typeRepo
@@ -159,11 +163,13 @@ public class ContentItemManager {
      *
      * @return The new content item.
      */
+    @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public <T extends ContentItem> T createContentItem(
         final String name,
         final ContentSection section,
-        final Category folder,
+        @RequiresPrivilege(CmsConstants.PRIVILEGE_ITEMS_CREATE_NEW)
+        final Folder folder,
         final WorkflowTemplate workflowTemplate,
         final Class<T> type) {
 
@@ -226,22 +232,27 @@ public class ContentItemManager {
      * only moves the draft version of the item. The live version is moved after
      * a the item is republished.
      *
-     * @param item         The item to move.
-     * @param targetFolder The folder to which the item is moved.
+     * @param item   The item to move.
+     * @param target The folder to which the item is moved.
      */
+    @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
-    public void move(final ContentItem item, final Category targetFolder) {
+    public void move(
+        @RequiresPrivilege(CmsConstants.PRIVILEGE_ITEMS_EDIT)
+        final ContentItem item,
+        @RequiresPrivilege(CmsConstants.PRIVILEGE_ITEMS_EDIT)
+        final Folder target) {
         if (item == null) {
             throw new IllegalArgumentException("The item to move can't be null.");
         }
 
-        if (targetFolder == null) {
+        if (target == null) {
             throw new IllegalArgumentException(
                 "The target folder can't be null.");
         }
 
         final ContentItem draftItem = getDraftVersion(item, item.getClass());
-        final Optional<Category> currentFolder = getItemFolder(item);
+        final Optional<Folder> currentFolder = getItemFolder(item);
 
         if (currentFolder.isPresent()) {
             try {
@@ -254,7 +265,7 @@ public class ContentItemManager {
 
         categoryManager.addObjectToCategory(
             draftItem,
-            targetFolder,
+            target,
             CmsConstants.CATEGORIZATION_TYPE_FOLDER);
 
     }
@@ -271,7 +282,10 @@ public class ContentItemManager {
      */
     @Transactional(Transactional.TxType.REQUIRED)
     @SuppressWarnings("unchecked")
-    public void copy(final ContentItem item, final Category targetFolder) {
+    public void copy(
+        final ContentItem item,
+        @RequiresPrivilege(CmsConstants.PRIVILEGE_ITEMS_CREATE_NEW)
+        final Folder targetFolder) {
         if (item == null) {
             throw new IllegalArgumentException("The item to copy can't be null.");
         }
@@ -317,7 +331,7 @@ public class ContentItemManager {
         draftItem.getCategories().forEach(categorization -> categoryManager
             .addObjectToCategory(copy, categorization.getCategory()));
 
-        final Optional<Category> itemFolder = getItemFolder(draftItem);
+        final Optional<Folder> itemFolder = getItemFolder(draftItem);
         if (itemFolder.isPresent()) {
             try {
                 categoryManager.removeObjectFromCategory(
@@ -490,7 +504,12 @@ public class ContentItemManager {
      *
      * @return The published content item.
      */
-    public ContentItem publish(final ContentItem item) {
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public ContentItem publish(
+        @RequiresPrivilege(CmsConstants.PRIVILEGE_ITEMS_PUBLISH)
+        final ContentItem item) {
+
         if (item == null) {
             throw new IllegalArgumentException(
                 "The item to publish can't be null.");
@@ -512,9 +531,13 @@ public class ContentItemManager {
      *
      * @return The published content item.
      */
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
     @SuppressWarnings("unchecked")
-    public ContentItem publish(final ContentItem item,
-                               final LifecycleDefinition lifecycleDefinition) {
+    public ContentItem publish(
+        @RequiresPrivilege(CmsConstants.PRIVILEGE_ITEMS_PUBLISH)
+        final ContentItem item,
+        final LifecycleDefinition lifecycleDefinition) {
         if (item == null) {
             throw new IllegalArgumentException(
                 "The item to publish can't be null.");
@@ -704,8 +727,11 @@ public class ContentItemManager {
      *
      * @param item
      */
+    @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
-    public void unpublish(final ContentItem item) {
+    public void unpublish(
+        @RequiresPrivilege(CmsConstants.PRIVILEGE_ITEMS_PUBLISH)
+        final ContentItem item) {
         if (item == null) {
             throw new IllegalArgumentException(
                 "The item to unpublish can't be null");
@@ -752,6 +778,7 @@ public class ContentItemManager {
      * @return {@code true} if the content item has a live version,
      *         {@code false} if not.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public boolean isLive(final ContentItem item) {
         final TypedQuery<Boolean> query = entityManager.createNamedQuery(
             "ContentItem.hasLiveVersion", Boolean.class);
@@ -772,8 +799,11 @@ public class ContentItemManager {
      *         version is returned. If there is no live version an empty
      *         {@link Optional} is returned.
      */
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
     @SuppressWarnings({"unchecked"})
     public <T extends ContentItem> Optional<T> getLiveVersion(
+        @RequiresPrivilege(CmsConstants.PRIVILEGE_ITEMS_VIEW_PUBLISHED)
         final ContentItem item,
         final Class<T> type) {
 
@@ -784,7 +814,7 @@ public class ContentItemManager {
                 type.getName(),
                 item.getClass().getName()));
         }
-        
+
         if (isLive(item)) {
             final TypedQuery<ContentItem> query = entityManager
                 .createNamedQuery(
@@ -831,9 +861,14 @@ public class ContentItemManager {
      *         something is seriously wrong with the database) this method will
      * <b>never</b> return {@code null}.
      */
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
     @SuppressWarnings("unchecked")
-    public <T extends ContentItem> T getDraftVersion(final ContentItem item,
-                                                     final Class<T> type) {
+    public <T extends ContentItem> T getDraftVersion(
+        @RequiresPrivilege(CmsConstants.PRIVILEGE_ITEMS_PREVIEW)
+        final ContentItem item,
+        final Class<T> type) {
+        
         if (!ContentItem.class.isAssignableFrom(type)) {
             throw new IllegalArgumentException(String.format(
                 "The provided type \"%s\" does match the type of the provided "
@@ -932,20 +967,40 @@ public class ContentItemManager {
      *
      * @return
      */
-    public List<Category> getItemFolders(final ContentItem item) {
+    public List<Folder> getItemFolders(final ContentItem item) {
         final List<Categorization> result = item.getCategories().stream().
             filter(categorization -> CmsConstants.CATEGORIZATION_TYPE_FOLDER.
                 equals(categorization.getType()))
             .collect(Collectors.toList());
 
-        final List<Category> folders = new ArrayList<>();
+        final List<Folder> folders = new ArrayList<>();
         if (!result.isEmpty()) {
             Category current = result.get(0).getCategory();
-            folders.add(current);
+            if (current instanceof Folder) {
+                folders.add((Folder) current);
+            } else {
+                throw new IllegalArgumentException(String.format(
+                    "The item %s is assigned to the category %s with the"
+                        + "categorization type \"%s\", but the Category is not"
+                        + "a folder. This is no supported.",
+                    item.getUuid(),
+                    current.getUuid(),
+                    CmsConstants.CATEGORIZATION_TYPE_FOLDER));
+            }
 
             while (current.getParentCategory() != null) {
                 current = current.getParentCategory();
-                folders.add(current);
+                if (current instanceof Folder) {
+                    folders.add((Folder) current);
+                } else {
+                    throw new IllegalArgumentException(String.format(
+                        "The item %s is assigned to the category %s with the"
+                            + "categorization type \"%s\", but the Category is not"
+                        + "a folder. This is no supported.",
+                        item.getUuid(),
+                        current.getUuid(),
+                        CmsConstants.CATEGORIZATION_TYPE_FOLDER));
+                }
             }
 
             Collections.reverse(folders);
@@ -964,14 +1019,25 @@ public class ContentItemManager {
      * @return An {@link Optional} containing the folder of the item if the item
      *         is part of a folder.
      */
-    public Optional<Category> getItemFolder(final ContentItem item) {
+    public Optional<Folder> getItemFolder(final ContentItem item) {
         final List<Categorization> result = item.getCategories().stream().
             filter(categorization -> CmsConstants.CATEGORIZATION_TYPE_FOLDER.
                 equals(categorization.getType()))
             .collect(Collectors.toList());
 
         if (result.size() > 0) {
-            return Optional.of(result.get(0).getCategory());
+            final Category category = result.get(0).getCategory();
+            if (category instanceof Folder) {
+                return Optional.of((Folder) category);
+            } else {
+                throw new IllegalArgumentException(String.format(
+                    "The item %s is assigned to the category %s with the"
+                        + "categorization type \"%s\", but the Category is not"
+                        + "a folder. This is no supported.",
+                    item.getUuid(),
+                    category.getUuid(),
+                    CmsConstants.CATEGORIZATION_TYPE_FOLDER));
+            }
         } else {
             return Optional.empty();
         }
