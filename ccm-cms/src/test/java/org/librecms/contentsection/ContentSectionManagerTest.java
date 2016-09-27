@@ -32,10 +32,6 @@ import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.resolver.api.maven.Maven;
-import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
-import org.jboss.shrinkwrap.resolver.api.maven.ScopeType;
-import org.jboss.shrinkwrap.resolver.api.maven.coordinate.MavenDependencies;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -49,11 +45,7 @@ import org.libreccm.security.Role;
 import org.libreccm.security.RoleRepository;
 import org.libreccm.tests.categories.IntegrationTest;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
-import java.util.stream.IntStream;
 
 import javax.inject.Inject;
 
@@ -109,37 +101,6 @@ public class ContentSectionManagerTest {
 
     @Deployment
     public static WebArchive createDeployment() {
-//        final PomEquippedResolveStage pom = Maven
-//                .resolver()
-//                .loadPomFromFile("pom.xml");
-//        final PomEquippedResolveStage dependencies = pom
-//                .importCompileAndRuntimeDependencies();
-//        dependencies.addDependency(MavenDependencies.createDependency(
-//                "org.libreccm:ccm-core", ScopeType.RUNTIME, false));
-//        dependencies.addDependency(MavenDependencies.createDependency(
-//                "org.libreccm:ccm-testutils", ScopeType.RUNTIME, false));
-//        dependencies.addDependency(MavenDependencies.createDependency(
-//                "net.sf.saxon:Saxon-HE", ScopeType.RUNTIME, false));
-//        dependencies.addDependency(MavenDependencies.createDependency(
-//                "org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-impl-maven",
-//                ScopeType.RUNTIME, false));
-//        final File[] libsWithCcmCore = dependencies.resolve().withTransitivity()
-//                .asFile();
-//
-//        final List<File> libsList = new ArrayList<>(libsWithCcmCore.length - 1);
-//        IntStream.range(0, libsWithCcmCore.length).forEach(i -> {
-//            final File lib = libsWithCcmCore[i];
-//            if (!lib.getName().startsWith("ccm-core")) {
-//                libsList.add(lib);
-//            }
-//        });
-//        final File[] libs = libsList.toArray(new File[libsList.size()]);
-//
-//        for (File lib : libs) {
-//            System.err.printf("Adding file '%s' to test archive...%n",
-//                              lib.getName());
-//        }
-//
         return ShrinkWrap
                 .create(WebArchive.class,
                         "LibreCCM-org.libreccm.cms.contentsection.ContentSectionManagerTest.war").

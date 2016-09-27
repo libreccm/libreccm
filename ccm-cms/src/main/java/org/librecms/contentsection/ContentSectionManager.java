@@ -240,8 +240,6 @@ public class ContentSectionManager {
             permissionManager.grantPrivilege(privilege, role, rootFolder);
         }
 
-//        section.addRole(role);
-//        sectionRepo.save(section);
         addRoleToContentSection(role, section);
     }
 

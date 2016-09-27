@@ -640,17 +640,6 @@
                     <artifactId>h2</artifactId>
                     <scope>test</scope>
                 </dependency>
-                <!--<dependency>
-                    <groupId>org.jacoco</groupId>
-                    <artifactId>org.jacoco.core</artifactId>
-                    <version>0.7.4.201502262128</version>
-                    <scope>test</scope>
-                </dependency>-->
-                <!--<dependency>
-                    <groupId>org.jboss.arquillian.extension</groupId>
-                    <artifactId>arquillian-jacoco</artifactId>
-                    <version>1.0.0.Alpha7</version>
-                </dependency>-->
             </dependencies>
             
             <build>
@@ -795,233 +784,18 @@
                 </plugins>
             </build>
         </profile>
-        
-        <!--<profile>
-            <id>wildfly8-embedded</id>
-            <dependencies>
-                <dependency>
-                    <groupId>org.wildfly</groupId>
-                    <artifactId>wildfly-arquillian-container-embedded</artifactId>
-                    <version>8.2.0.Final</version>
-                    <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.wildfly</groupId>
-                    <artifactId>wildfly-embedded</artifactId>
-                    <version>8.2.0.Final</version>
-                </dependency>
-                <dependency>
-                    <groupId>org.jacoco</groupId>
-                    <artifactId>org.jacoco.core</artifactId>
-                    <version>0.7.5.201505241946</version>
-                    <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.jboss.arquillian.extension</groupId>
-                    <artifactId>arquillian-jacoco</artifactId>
-                    <version>1.0.0.Alpha8</version>
-                </dependency>
-            </dependencies>
-            
-            <build>
-                <testResources>
-                    <testResource>
-                        <directory>src/test/resources</directory>
-                    </testResource>
-                    <testResource>
-                        <directory>src/test/resources-wildfly8-embedded</directory>
-                    </testResource>
-                    <testResource>
-                        <directory>${project.build.directory}/generated-resources</directory>
-                    </testResource>
-                </testResources>
                 
-                <plugins>
-                    <plugin>
-                        <groupId>de.jpdigital</groupId>
-                        <artifactId>hibernate5-ddl-maven-plugin</artifactId>
-                        <configuration>
-                            <dialects>
-                                <param>h2</param>
-                                <param>postgresql9</param>
-                            </dialects>
-                            <packages>
-                                <param>org.libreccm</param>
-                            </packages>
-                            <useEnvers>true</useEnvers>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>gen-ddl</goal>
-                                </goals>
-                                <phase>process-classes</phase>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-dependency-plugin</artifactId>
-                        <version>2.10</version>
-                        <executions>
-                            <execution>
-                                <id>unpack</id>
-                                <phase>process-test-classes</phase>
-                                <goals>
-                                    <goal>unpack</goal>
-                                </goals>
-                                <configuration>
-                                    <artifactItems>
-                                        <artifactItem>
-                                            <groupId>org.wildfly</groupId>
-                                            <artifactId>wildfly-dist</artifactId>
-                                            <version>8.2.0.Final</version>
-                                            <type>zip</type>
-                                            <overWrite>false</overWrite>
-                                            <outputDirectory>target</outputDirectory>
-                                        </artifactItem>
-                                    </artifactItems>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <version>2.18.1</version>
-                        <configuration>
-                            <forkMode>always</forkMode>
-                            <forkCount>999</forkCount>
-                            <reuseForks>true</reuseForks>
-                            <systemPropertyVariables>
-                                <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
-                                <jboss.home>${project.basedir}/target/wildfly-8.2.0.Final</jboss.home>
-                                <module.path>${project.basedir}/target/wildfly-8.2.0.Final/modules</module.path>
-                            </systemPropertyVariables>
-                            <redirectTestOutputToFile>false</redirectTestOutputToFile>
-                            <groups>
-                                org.libreccm.tests.categories.UnitTest,
-                                org.libreccm.tests.categories.IntegrationTest
-                            </groups>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>-->
-        
-        <!--<profile>
-            <id>wildfly8-managed-h2-mem</id>
-            <dependencies>
-                <dependency>
-                    <groupId>org.wildfly</groupId>
-                    <artifactId>wildfly-arquillian-container-managed</artifactId>
-                    <version>8.2.1.Final</version>
-                </dependency>
-                <dependency>
-                    <groupId>org.jacoco</groupId>
-                    <artifactId>org.jacoco.core</artifactId>
-                    <version>0.7.4.201502262128</version>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-            <build>
-                <testResources>
-                    <testResource>
-                        <directory>src/test/resources</directory>
-                    </testResource>
-                    <testResource>
-                        <directory>src/test/resources-wildfly8-managed-h2-mem</directory>
-                    </testResource>
-                    <testResource>
-                        <directory>${project.build.directory}/generated-resources</directory>
-                    </testResource>
-                </testResources>
-                
-                <plugins>
-                    <plugin>
-                        <groupId>de.jpdigital</groupId>
-                        <artifactId>hibernate5-ddl-maven-plugin</artifactId>
-                        <configuration>
-                            <dialects>
-                                <param>h2</param>
-                                <param>postgresql9</param>
-                            </dialects>
-                            <packages>
-                                <param>org.libreccm</param>
-                            </packages>
-                            <useEnvers>true</useEnvers>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>gen-ddl</goal>
-                                </goals>
-                                <phase>process-classes</phase>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-dependency-plugin</artifactId>
-                        <version>2.10</version>
-                        <executions>
-                            <execution>
-                                <id>unpack</id>
-                                <phase>process-test-classes</phase>
-                                <goals>
-                                    <goal>unpack</goal>
-                                </goals>
-                                <configuration>
-                                    <artifactItems>
-                                        <artifactItem>
-                                            <groupId>org.wildfly</groupId>
-                                            <artifactId>wildfly-dist</artifactId>
-                                            <version>8.2.1.Final</version>
-                                            <type>zip</type>
-                                            <overWrite>false</overWrite>
-                                            <outputDirectory>${project.build.directory}</outputDirectory>
-                                        </artifactItem>
-                                    </artifactItems>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <version>2.18.1</version>
-                        <configuration>
-                            <forkMode>always</forkMode>
-                            <forkCount>999</forkCount>
-                            <reuseForks>true</reuseForks>
-                            <systemPropertyVariables>
-                                <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
-                            </systemPropertyVariables>
-                            <redirectTestOutputToFile>false</redirectTestOutputToFile>
-                            <groups>
-                                org.libreccm.tests.categories.UnitTest,
-                                org.libreccm.tests.categories.IntegrationTest
-                            </groups>
-                        </configuration>
-                    </plugin>
-
-                </plugins>
-            </build>
-        </profile>-->
-        
         <profile>
             <id>wildfly-remote-h2-mem</id>
             <dependencies>
                 <dependency>
                     <groupId>org.wildfly</groupId>
                     <artifactId>wildfly-arquillian-container-remote</artifactId>
-                    <!--<version>8.2.1.Final</version>-->
                     <scope>test</scope>
                 </dependency>
                 <dependency>
                     <groupId>org.jacoco</groupId>
                     <artifactId>org.jacoco.core</artifactId>
-                    <!--<version>0.7.5.201505241946</version>-->
                     <scope>test</scope>
                 </dependency>
                 <dependency>
@@ -1041,7 +815,7 @@
                         <directory>src/test/resources</directory>
                     </testResource>
                     <testResource>
-                        <directory>src/test/resources-wildfly8-remote-h2-mem</directory>
+                        <directory>src/test/resources-wildfly-remote-h2-mem</directory>
                     </testResource>
                     <testResource>
                         <directory>${project.build.directory}/generated-resources</directory>
@@ -1081,8 +855,6 @@
                             <reuseForks>true</reuseForks>
                             <systemPropertyVariables>
                                 <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
-                                <!--<jboss.home>${project.basedir}/target/wildfly-8.2.0.Final</jboss.home>
-                                <module.path>${project.basedir}/target/wildfly-8.2.0.Final/modules</module.path>-->
                             </systemPropertyVariables>
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <groups>
@@ -1102,20 +874,13 @@
                 <dependency>
                     <groupId>org.wildfly</groupId>
                     <artifactId>wildfly-arquillian-container-remote</artifactId>
-                    <!--<version>8.2.1.Final</version>-->
                     <scope>test</scope>
                 </dependency>
                 <dependency>
                     <groupId>org.jacoco</groupId>
                     <artifactId>org.jacoco.core</artifactId>
-                    <!--<version>0.7.5.201505241946</version>-->
                     <scope>test</scope>
                 </dependency>
-                <!--<dependency>
-                    <groupId>org.jboss.arquillian.extension</groupId>
-                    <artifactId>arquillian-jacoco</artifactId>
-                    <version>1.0.0.Alpha8</version>
-                </dependency>-->
                 <dependency>
                     <groupId>net.sf.saxon</groupId>
                     <artifactId>Saxon-HE</artifactId>
@@ -1128,7 +893,7 @@
                         <directory>src/test/resources</directory>
                     </testResource>
                     <testResource>
-                        <directory>src/test/resources-wildfly8-remote-pgsql</directory>
+                        <directory>src/test/resources-wildfly-remote-pgsql</directory>
                     </testResource>
                     <testResource>
                         <directory>${project.build.directory}/generated-resources</directory>
@@ -1168,8 +933,6 @@
                             <reuseForks>true</reuseForks>
                             <systemPropertyVariables>
                                 <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
-                                <!--<jboss.home>${project.basedir}/target/wildfly-8.2.0.Final</jboss.home>
-                                <module.path>${project.basedir}/target/wildfly-8.2.0.Final/modules</module.path>-->
                             </systemPropertyVariables>
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <groups>
