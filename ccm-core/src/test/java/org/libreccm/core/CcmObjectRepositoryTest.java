@@ -52,6 +52,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import static org.junit.Assert.*;
+import static org.libreccm.testutils.DependenciesHelpers.*;
 
 /**
  *
@@ -91,18 +92,6 @@ public class CcmObjectRepositoryTest {
 
     @Deployment
     public static WebArchive createDeployment() {
-        final PomEquippedResolveStage pom = Maven
-            .resolver()
-            .loadPomFromFile("pom.xml");
-        final PomEquippedResolveStage dependencies = pom
-            .importCompileAndRuntimeDependencies();
-        final File[] libs = dependencies.resolve().withTransitivity().asFile();
-
-        for (File lib : libs) {
-            System.err.printf("Adding file '%s' to test archive...%n",
-                              lib.getName());
-        }
-
         return ShrinkWrap
             .create(WebArchive.class,
                     "LibreCCM-org.libreccm.core.CcmObjectRepositoryTest.war")
@@ -123,7 +112,7 @@ public class CcmObjectRepositoryTest {
                 .getPackage())
             .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
             .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
-            .addAsLibraries(libs)
+            .addAsLibraries(getModuleDependencies())
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")
             .addAsWebInfResource("test-web.xml", "WEB-INF/web.xml")

@@ -41,6 +41,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 
 import static org.junit.Assert.*;
+import static org.libreccm.testutils.DependenciesHelpers.*;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -102,18 +103,6 @@ public class UserRepositoryTest {
 
     @Deployment
     public static WebArchive createDeployment() {
-        final PomEquippedResolveStage pom = Maven
-            .resolver()
-            .loadPomFromFile("pom.xml");
-        final PomEquippedResolveStage dependencies = pom.
-            importCompileAndRuntimeDependencies();
-        final File[] libs = dependencies.resolve().withTransitivity().asFile();
-
-        for (File lib : libs) {
-            System.err.printf("Adding file '%s' to test archive...%n",
-                              lib.getName());
-        }
-
         return ShrinkWrap
             .create(WebArchive.class,
                     "LibreCCM-org.libreccm.security.UserRepositoryTest.war")
@@ -137,7 +126,7 @@ public class UserRepositoryTest {
             .addClass(com.arsdigita.kernel.security.SecurityConfig.class)
             .addClass(com.arsdigita.kernel.KernelConfig.class)
             .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
-            .addAsLibraries(libs)
+            .addAsLibraries(getModuleDependencies())
             .addAsResource("configs/shiro.ini", "shiro.ini")
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")

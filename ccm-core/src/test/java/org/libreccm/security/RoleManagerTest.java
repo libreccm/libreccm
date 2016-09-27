@@ -48,6 +48,7 @@ import javax.inject.Inject;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
+import static org.libreccm.testutils.DependenciesHelpers.*;
 
 /**
  *
@@ -93,18 +94,6 @@ public class RoleManagerTest {
 
     @Deployment
     public static WebArchive createDeployment() {
-        final PomEquippedResolveStage pom = Maven
-            .resolver()
-            .loadPomFromFile("pom.xml");
-        final PomEquippedResolveStage dependencies = pom.
-            importCompileAndRuntimeDependencies();
-        final File[] libs = dependencies.resolve().withTransitivity().asFile();
-
-        for (File lib : libs) {
-            System.err.printf("Adding file '%s' to test archive...%n",
-                              lib.getName());
-        }
-
         return ShrinkWrap
             .create(WebArchive.class,
                     "LibreCCM-org.libreccm.security.RoleManagerTest.war")
@@ -131,7 +120,7 @@ public class RoleManagerTest {
             .addPackage(com.arsdigita.util.UncheckedWrapperException.class
                 .getPackage())
             .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
-            .addAsLibraries(libs)
+            .addAsLibraries(getModuleDependencies())
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")
             .addAsResource("configs/shiro.ini", "shiro.ini")

@@ -20,7 +20,6 @@ package org.libreccm.security;
 
 import static org.libreccm.core.CoreConstants.*;
 
-import java.io.File;
 import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
@@ -40,8 +39,6 @@ import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.resolver.api.maven.Maven;
-import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -58,6 +55,7 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
+import static org.libreccm.testutils.DependenciesHelpers.*;
 
 /**
  *
@@ -103,18 +101,6 @@ public class PermissionCheckerTest {
     
     @Deployment
     public static WebArchive createDeployment() {
-        final PomEquippedResolveStage pom = Maven
-            .resolver()
-            .loadPomFromFile("pom.xml");
-        final PomEquippedResolveStage dependencies = pom.
-            importCompileAndRuntimeDependencies();
-        final File[] libs = dependencies.resolve().withTransitivity().asFile();
-        
-        for (File lib : libs) {
-            System.err.printf("Adding file '%s' to test archive...%n",
-                              lib.getName());
-        }
-        
         return ShrinkWrap
             .create(WebArchive.class,
                     "LibreCCM-org.libreccm.security.PermissionCheckerTest.war")
@@ -141,7 +127,7 @@ public class PermissionCheckerTest {
                 .getPackage())
             .addPackage(com.arsdigita.util.UncheckedWrapperException.class
                 .getPackage())
-            .addAsLibraries(libs)
+            .addAsLibraries(getModuleDependencies())
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")
             .addAsResource("configs/shiro.ini", "shiro.ini")

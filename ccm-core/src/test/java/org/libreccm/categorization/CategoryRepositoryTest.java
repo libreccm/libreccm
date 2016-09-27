@@ -22,7 +22,6 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.subject.Subject;
 
-import java.io.File;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -40,8 +39,6 @@ import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.resolver.api.maven.Maven;
-import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -53,6 +50,7 @@ import org.libreccm.tests.categories.IntegrationTest;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
+import static org.libreccm.testutils.DependenciesHelpers.*;
 
 /**
  *
@@ -101,18 +99,6 @@ public class CategoryRepositoryTest {
 
     @Deployment
     public static WebArchive createDeployment() {
-        final PomEquippedResolveStage pom = Maven
-            .resolver()
-            .loadPomFromFile("pom.xml");
-        final PomEquippedResolveStage dependencies = pom
-            .importCompileAndRuntimeDependencies();
-        final File[] libs = dependencies.resolve().withTransitivity().asFile();
-
-        for (File lib : libs) {
-            System.err.printf("Adding file '%s' to test archive...%n",
-                              lib.getName());
-        }
-
         return ShrinkWrap
             .create(WebArchive.class,
                     "LibreCCM-org.libreccm.categorization.CategoryRepositoryTest.war")
@@ -136,7 +122,7 @@ public class CategoryRepositoryTest {
             .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
             .addClass(com.arsdigita.kernel.KernelConfig.class)
             .addClass(com.arsdigita.kernel.security.SecurityConfig.class)
-            .addAsLibraries(libs)
+            .addAsLibraries(getModuleDependencies())
             .addAsResource("configs/shiro.ini", "shiro.ini")
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")

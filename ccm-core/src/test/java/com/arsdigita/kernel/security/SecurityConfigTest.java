@@ -31,17 +31,15 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.resolver.api.maven.Maven;
-import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
 import org.junit.After;
 import org.junit.AfterClass;
 
 import static org.junit.Assert.*;
+import static org.libreccm.testutils.DependenciesHelpers.*;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.libreccm.categorization.Categorization;
 import org.libreccm.core.CcmObject;
@@ -53,7 +51,6 @@ import org.libreccm.tests.categories.IntegrationTest;
 import org.libreccm.web.ApplicationRepository;
 import org.libreccm.workflow.Workflow;
 
-import java.io.File;
 import java.util.List;
 
 /**
@@ -86,18 +83,6 @@ public class SecurityConfigTest {
 
     @Deployment
     public static WebArchive createDeployment() {
-        final PomEquippedResolveStage pom = Maven
-            .resolver()
-            .loadPomFromFile("pom.xml");
-        final PomEquippedResolveStage dependencies = pom
-            .importCompileAndRuntimeDependencies();
-        final File[] libs = dependencies.resolve().withTransitivity().asFile();
-
-        for (File lib : libs) {
-            System.err.printf("Adding file '%s' to test archive...%n",
-                              lib.getName());
-        }
-
         return ShrinkWrap
             .create(WebArchive.class,
                     "LibreCCM-com.arsdigita.kernel.security.SecurityConfigTest.war")
@@ -116,7 +101,7 @@ public class SecurityConfigTest {
             .addPackage(XML.class.getPackage())
             .addPackage(DateFormatter.class.getPackage())
             .addPackage(IntegrationTest.class.getPackage())
-            .addAsLibraries(libs)
+            .addAsLibraries(getModuleDependencies())
             .addAsResource(
                 "configs/com/arsdigita/kernel/security/SecurityConfigTest/ccm-core.config",
                 "ccm-core.config")

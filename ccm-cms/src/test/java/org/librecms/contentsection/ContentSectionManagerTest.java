@@ -60,6 +60,7 @@ import javax.inject.Inject;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 import static org.librecms.CmsConstants.*;
+import static org.libreccm.testutils.DependenciesHelpers.*;
 
 /**
  *
@@ -108,37 +109,37 @@ public class ContentSectionManagerTest {
 
     @Deployment
     public static WebArchive createDeployment() {
-        final PomEquippedResolveStage pom = Maven
-                .resolver()
-                .loadPomFromFile("pom.xml");
-        final PomEquippedResolveStage dependencies = pom
-                .importCompileAndRuntimeDependencies();
-        dependencies.addDependency(MavenDependencies.createDependency(
-                "org.libreccm:ccm-core", ScopeType.RUNTIME, false));
-        dependencies.addDependency(MavenDependencies.createDependency(
-                "org.libreccm:ccm-testutils", ScopeType.RUNTIME, false));
-        dependencies.addDependency(MavenDependencies.createDependency(
-                "net.sf.saxon:Saxon-HE", ScopeType.RUNTIME, false));
-        dependencies.addDependency(MavenDependencies.createDependency(
-                "org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-impl-maven",
-                ScopeType.RUNTIME, false));
-        final File[] libsWithCcmCore = dependencies.resolve().withTransitivity()
-                .asFile();
-
-        final List<File> libsList = new ArrayList<>(libsWithCcmCore.length - 1);
-        IntStream.range(0, libsWithCcmCore.length).forEach(i -> {
-            final File lib = libsWithCcmCore[i];
-            if (!lib.getName().startsWith("ccm-core")) {
-                libsList.add(lib);
-            }
-        });
-        final File[] libs = libsList.toArray(new File[libsList.size()]);
-
-        for (File lib : libs) {
-            System.err.printf("Adding file '%s' to test archive...%n",
-                              lib.getName());
-        }
-
+//        final PomEquippedResolveStage pom = Maven
+//                .resolver()
+//                .loadPomFromFile("pom.xml");
+//        final PomEquippedResolveStage dependencies = pom
+//                .importCompileAndRuntimeDependencies();
+//        dependencies.addDependency(MavenDependencies.createDependency(
+//                "org.libreccm:ccm-core", ScopeType.RUNTIME, false));
+//        dependencies.addDependency(MavenDependencies.createDependency(
+//                "org.libreccm:ccm-testutils", ScopeType.RUNTIME, false));
+//        dependencies.addDependency(MavenDependencies.createDependency(
+//                "net.sf.saxon:Saxon-HE", ScopeType.RUNTIME, false));
+//        dependencies.addDependency(MavenDependencies.createDependency(
+//                "org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-impl-maven",
+//                ScopeType.RUNTIME, false));
+//        final File[] libsWithCcmCore = dependencies.resolve().withTransitivity()
+//                .asFile();
+//
+//        final List<File> libsList = new ArrayList<>(libsWithCcmCore.length - 1);
+//        IntStream.range(0, libsWithCcmCore.length).forEach(i -> {
+//            final File lib = libsWithCcmCore[i];
+//            if (!lib.getName().startsWith("ccm-core")) {
+//                libsList.add(lib);
+//            }
+//        });
+//        final File[] libs = libsList.toArray(new File[libsList.size()]);
+//
+//        for (File lib : libs) {
+//            System.err.printf("Adding file '%s' to test archive...%n",
+//                              lib.getName());
+//        }
+//
         return ShrinkWrap
                 .create(WebArchive.class,
                         "LibreCCM-org.libreccm.cms.contentsection.ContentSectionManagerTest.war").
@@ -181,7 +182,8 @@ public class ContentSectionManagerTest {
                         .getPackage())
                 .addPackage(org.librecms.lifecycle.Lifecycle.class.getPackage())
                 .addPackage(ContentSection.class.getPackage())
-                .addAsLibraries(libs)
+                .addAsLibraries(getModuleDependencies())
+                .addAsLibraries(getCcmCoreDependencies())
                 .addAsResource("test-persistence.xml",
                                "META-INF/persistence.xml")
                 .addAsWebInfResource("test-web.xml", "WEB-INF/web.xml")

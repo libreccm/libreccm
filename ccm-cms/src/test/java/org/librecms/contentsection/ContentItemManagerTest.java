@@ -65,6 +65,7 @@ import javax.persistence.TypedQuery;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
+import static org.libreccm.testutils.DependenciesHelpers.*;
 
 /**
  *
@@ -122,36 +123,36 @@ public class ContentItemManagerTest {
 
     @Deployment
     public static WebArchive createDeployment() {
-        final PomEquippedResolveStage pom = Maven
-            .resolver()
-            .loadPomFromFile("pom.xml");
-        final PomEquippedResolveStage dependencies = pom
-            .importCompileAndRuntimeDependencies();
-        dependencies.addDependency(MavenDependencies.createDependency(
-            "org.libreccm:ccm-core", ScopeType.RUNTIME, false));
-        dependencies.addDependency(MavenDependencies.createDependency(
-            "org.libreccm:ccm-testutils", ScopeType.RUNTIME, false));
-        dependencies.addDependency(MavenDependencies.createDependency(
-            "net.sf.saxon:Saxon-HE", ScopeType.RUNTIME, false));
-        dependencies.addDependency(MavenDependencies.createDependency(
-            "org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-impl-maven",
-            ScopeType.RUNTIME, false));
-        final File[] libsWithCcmCore = dependencies.resolve().withTransitivity()
-            .asFile();
-
-        final List<File> libsList = new ArrayList<>(libsWithCcmCore.length - 1);
-        IntStream.range(0, libsWithCcmCore.length).forEach(i -> {
-            final File lib = libsWithCcmCore[i];
-            if (!lib.getName().startsWith("ccm-core")) {
-                libsList.add(lib);
-            }
-        });
-        final File[] libs = libsList.toArray(new File[libsList.size()]);
-
-        for (File lib : libs) {
-            System.err.printf("Adding file '%s' to test archive...%n",
-                              lib.getName());
-        }
+////        final PomEquippedResolveStage pom = Maven
+////            .resolver()
+////            .loadPomFromFile("pom.xml");
+////        final PomEquippedResolveStage dependencies = pom
+////            .importCompileAndRuntimeDependencies();
+////        dependencies.addDependency(MavenDependencies.createDependency(
+////            "org.libreccm:ccm-core", ScopeType.RUNTIME, false));
+////        dependencies.addDependency(MavenDependencies.createDependency(
+////            "org.libreccm:ccm-testutils", ScopeType.RUNTIME, false));
+////        dependencies.addDependency(MavenDependencies.createDependency(
+////            "net.sf.saxon:Saxon-HE", ScopeType.RUNTIME, false));
+////        dependencies.addDependency(MavenDependencies.createDependency(
+////            "org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-impl-maven",
+////            ScopeType.RUNTIME, false));
+////        final File[] libsWithCcmCore = dependencies.resolve().withTransitivity()
+////            .asFile();
+////
+//        final List<File> libsList = new ArrayList<>(libsWithCcmCore.length - 1);
+//        IntStream.range(0, libsWithCcmCore.length).forEach(i -> {
+//            final File lib = libsWithCcmCore[i];
+//            if (!lib.getName().startsWith("ccm-core")) {
+//                libsList.add(lib);
+//            }
+//        });
+//        final File[] libs = libsList.toArray(new File[libsList.size()]);
+//
+//        for (File lib : libs) {
+//            System.err.printf("Adding file '%s' to test archive...%n",
+//                              lib.getName());
+//        }
 
         return ShrinkWrap
             .create(WebArchive.class,
@@ -197,7 +198,8 @@ public class ContentItemManagerTest {
                 .getPackage())
             .addPackage(org.librecms.contenttypes.Article.class.getPackage())
             .addClass(com.arsdigita.kernel.security.SecurityConfig.class)
-            .addAsLibraries(libs)
+            .addAsLibraries(getModuleDependencies())
+            .addAsLibraries(getCcmCoreDependencies())
             .addAsResource("configs/shiro.ini", "shiro.ini")
             .addAsResource(
                 "configs/org/librecms/contentsection/ContentItemManagerTest/log4j2.xml",

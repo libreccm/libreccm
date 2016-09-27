@@ -19,7 +19,6 @@
 package org.libreccm.security;
 
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -39,8 +38,6 @@ import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.resolver.api.maven.Maven;
-import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -54,6 +51,7 @@ import org.libreccm.tests.categories.IntegrationTest;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
+import static org.libreccm.testutils.DependenciesHelpers.*;
 
 /**
  *
@@ -77,7 +75,6 @@ public class SecuredCollectionTest {
     @Inject
     private CcmObjectRepository objectRepository;
 
-    //private List<CcmObject> list;
     private SecuredCollection<CcmObject> collection1;
     private SecuredCollection<CcmObject> collection2;
     private SecuredCollection<CcmObject> collection3;
@@ -121,18 +118,6 @@ public class SecuredCollectionTest {
 
     @Deployment
     public static WebArchive createDeployment() {
-        final PomEquippedResolveStage pom = Maven
-            .resolver()
-            .loadPomFromFile("pom.xml");
-        final PomEquippedResolveStage dependencies = pom.
-            importCompileAndRuntimeDependencies();
-        final File[] libs = dependencies.resolve().withTransitivity().asFile();
-
-        for (File lib : libs) {
-            System.err.printf("Adding file '%s' to test archive...%n",
-                              lib.getName());
-        }
-
         return ShrinkWrap
             .create(WebArchive.class,
                     "LibreCCM-org.libreccm.security.SecuredCollectionTest.war")
@@ -158,7 +143,7 @@ public class SecuredCollectionTest {
                 .getPackage())
             .addPackage(com.arsdigita.util.UncheckedWrapperException.class
                 .getPackage())
-            .addAsLibraries(libs)
+            .addAsLibraries(getModuleDependencies())
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")
             .addAsResource("configs/shiro.ini", "shiro.ini")

@@ -30,10 +30,7 @@ import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.resolver.api.maven.Maven;
-import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -45,13 +42,13 @@ import org.libreccm.core.CcmObject;
 import org.libreccm.core.CcmObjectRepository;
 import org.libreccm.tests.categories.IntegrationTest;
 
-import java.io.File;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
+import static org.libreccm.testutils.DependenciesHelpers.*;
 
 /**
  *
@@ -100,18 +97,6 @@ public class PermissionManagerTest {
 
     @Deployment
     public static WebArchive createDeployment() {
-        final PomEquippedResolveStage pom = Maven
-            .resolver()
-            .loadPomFromFile("pom.xml");
-        final PomEquippedResolveStage dependencies = pom.
-            importCompileAndRuntimeDependencies();
-        final File[] libs = dependencies.resolve().withTransitivity().asFile();
-
-        for (File lib : libs) {
-            System.err.printf("Adding file '%s' to test archive...%n",
-                              lib.getName());
-        }
-
         return ShrinkWrap
             .create(WebArchive.class,
                     "LibreCCM-org.libreccm.security.PermissionManagerTest.war")
@@ -138,7 +123,7 @@ public class PermissionManagerTest {
             .addPackage(com.arsdigita.util.UncheckedWrapperException.class
                 .getPackage())
             .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
-            .addAsLibraries(libs)
+            .addAsLibraries(getModuleDependencies())
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")
             .addAsResource("configs/shiro.ini", "shiro.ini")

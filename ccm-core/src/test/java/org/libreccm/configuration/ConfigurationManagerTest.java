@@ -50,6 +50,7 @@ import org.libreccm.tests.categories.IntegrationTest;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
+import static org.libreccm.testutils.DependenciesHelpers.*;
 
 /**
  *
@@ -90,17 +91,17 @@ public class ConfigurationManagerTest {
 
     @Deployment
     public static WebArchive createDeployment() {
-        final PomEquippedResolveStage pom = Maven
-            .resolver()
-            .loadPomFromFile("pom.xml");
-        final PomEquippedResolveStage dependencies = pom
-            .importCompileAndRuntimeDependencies();
-        final File[] libs = dependencies.resolve().withTransitivity().asFile();
-
-        for (File lib : libs) {
-            System.err.printf("Adding file '%s' to test archive...%n",
-                              lib.getName());
-        }
+//        final PomEquippedResolveStage pom = Maven
+//            .resolver()
+//            .loadPomFromFile("pom.xml");
+//        final PomEquippedResolveStage dependencies = pom
+//            .importCompileAndRuntimeDependencies();
+//        final File[] libs = dependencies.resolve().withTransitivity().asFile();
+//
+//        for (File lib : libs) {
+//            System.err.printf("Adding file '%s' to test archive...%n",
+//                              lib.getName());
+//        }
 
         return ShrinkWrap
             .create(WebArchive.class,
@@ -128,7 +129,7 @@ public class ConfigurationManagerTest {
             .addClass(com.arsdigita.kernel.KernelConfig.class)
             .addClass(com.arsdigita.kernel.security.SecurityConfig.class)
             .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
-            .addAsLibraries(libs)
+            .addAsLibraries(getModuleDependencies())
             .addAsResource("configs/shiro.ini", "shiro.ini")
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")

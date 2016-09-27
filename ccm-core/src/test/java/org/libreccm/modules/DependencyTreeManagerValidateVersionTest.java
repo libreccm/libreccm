@@ -18,7 +18,6 @@
  */
 package org.libreccm.modules;
 
-import org.libreccm.modules.DependencyTreeManager;
 
 import static org.hamcrest.Matchers.*;
 

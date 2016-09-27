@@ -20,7 +20,6 @@ package org.libreccm.security;
 
 import org.apache.shiro.subject.ExecutionException;
 
-import java.io.File;
 
 import javax.inject.Inject;
 
@@ -35,10 +34,7 @@ import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.resolver.api.maven.Maven;
-import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -50,6 +46,7 @@ import org.libreccm.tests.categories.IntegrationTest;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
+import static org.libreccm.testutils.DependenciesHelpers.*;
 
 /**
  *
@@ -95,51 +92,40 @@ public class GroupManagerTest {
 
     @Deployment
     public static WebArchive createDeployment() {
-        final PomEquippedResolveStage pom = Maven
-            .resolver()
-            .loadPomFromFile("pom.xml");
-        final PomEquippedResolveStage dependencies = pom.
-            importCompileAndRuntimeDependencies();
-        final File[] libs = dependencies.resolve().withTransitivity().asFile();
-
-        for (File lib : libs) {
-            System.err.printf("Adding file '%s' to test archive...%n",
-                              lib.getName());
-        }
-
         return ShrinkWrap
-            .create(WebArchive.class,
-                    "LibreCCM-org.libreccm.security.GroupManagerTest.war")
-            .addPackage(org.libreccm.categorization.Categorization.class
-                .getPackage())
-            .addPackage(org.libreccm.configuration.ConfigurationManager.class
-                .getPackage())
-            .addPackage(org.libreccm.core.CcmObject.class.getPackage())
-            .addPackage(org.libreccm.jpa.EntityManagerProducer.class
-                .getPackage())
-            .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
-                .getPackage())
-            .addPackage(org.libreccm.l10n.LocalizedString.class.getPackage())
-            .addPackage(org.libreccm.security.User.class.getPackage())
-            .addPackage(org.libreccm.tests.categories.IntegrationTest.class
-                .getPackage())
-            .addPackage(org.libreccm.testutils.EqualsVerifier.class
-                .getPackage())
-            .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
-            .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
-            .addPackage(com.arsdigita.kernel.security.SecurityConfig.class
-                .getPackage())
-            .addPackage(com.arsdigita.util.UncheckedWrapperException.class
-                .getPackage())
-            .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
-            .addClass(com.arsdigita.kernel.KernelConfig.class)
-            .addClass(com.arsdigita.kernel.security.SecurityConfig.class)
-            .addAsLibraries(libs)
-            .addAsResource("test-persistence.xml",
-                           "META-INF/persistence.xml")
-            .addAsWebInfResource("test-web.xml", "web.xml")
-            .addAsResource("configs/shiro.ini", "shiro.ini")
-            .addAsWebInfResource("META-INF/beans.xml", "beans.xml");
+                .create(WebArchive.class,
+                        "LibreCCM-org.libreccm.security.GroupManagerTest.war")
+                .addPackage(org.libreccm.categorization.Categorization.class
+                        .getPackage())
+                .addPackage(
+                        org.libreccm.configuration.ConfigurationManager.class
+                        .getPackage())
+                .addPackage(org.libreccm.core.CcmObject.class.getPackage())
+                .addPackage(org.libreccm.jpa.EntityManagerProducer.class
+                        .getPackage())
+                .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
+                        .getPackage())
+                .addPackage(org.libreccm.l10n.LocalizedString.class.getPackage()).
+                addPackage(org.libreccm.security.User.class.getPackage())
+                .addPackage(org.libreccm.tests.categories.IntegrationTest.class
+                        .getPackage())
+                .addPackage(org.libreccm.testutils.EqualsVerifier.class
+                        .getPackage())
+                .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
+                .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
+                .addPackage(com.arsdigita.kernel.security.SecurityConfig.class
+                        .getPackage())
+                .addPackage(com.arsdigita.util.UncheckedWrapperException.class
+                        .getPackage())
+                .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
+                .addClass(com.arsdigita.kernel.KernelConfig.class)
+                .addClass(com.arsdigita.kernel.security.SecurityConfig.class)
+                .addAsLibraries(getModuleDependencies())
+                .addAsResource("test-persistence.xml",
+                               "META-INF/persistence.xml")
+                .addAsWebInfResource("test-web.xml", "web.xml")
+                .addAsResource("configs/shiro.ini", "shiro.ini")
+                .addAsWebInfResource("META-INF/beans.xml", "beans.xml");
     }
 
     @Test
@@ -163,8 +149,8 @@ public class GroupManagerTest {
     @Test
     @UsingDataSet("datasets/org/libreccm/security/GroupManagerTest/data.yml")
     @ShouldMatchDataSet(
-        value = "datasets/org/libreccm/security/GroupManagerTest/after-add.yml",
-        excludeColumns = {"membership_id"})
+            value = "datasets/org/libreccm/security/GroupManagerTest/after-add.yml",
+            excludeColumns = {"membership_id"})
     @InSequence(200)
     public void addUserToGroup() {
         final Group admins = groupRepository.findByName("admins");
@@ -188,7 +174,7 @@ public class GroupManagerTest {
 
         try {
             shiro.getSystemUser().execute(
-                () -> groupManager.addMemberToGroup(null, admins));
+                    () -> groupManager.addMemberToGroup(null, admins));
         } catch (ExecutionException ex) {
             throw ex.getCause();
         }
@@ -203,7 +189,7 @@ public class GroupManagerTest {
 
         try {
             shiro.getSystemUser().execute(
-                () -> groupManager.addMemberToGroup(jdoe, null));
+                    () -> groupManager.addMemberToGroup(jdoe, null));
         } catch (ExecutionException ex) {
             throw ex.getCause();
         }
@@ -212,20 +198,20 @@ public class GroupManagerTest {
     @Test
     @UsingDataSet("datasets/org/libreccm/security/GroupManagerTest/data.yml")
     @ShouldMatchDataSet(
-        value = "datasets/org/libreccm/security/GroupManagerTest/data.yml")
+            value = "datasets/org/libreccm/security/GroupManagerTest/data.yml")
     @InSequence(230)
     public void addUserToGroupAgain() {
         final Group admins = groupRepository.findByName("admins");
         final User jdoe = userRepository.findByName("jdoe");
 
         shiro.getSystemUser().execute(
-            () -> groupManager.addMemberToGroup(jdoe, admins));
+                () -> groupManager.addMemberToGroup(jdoe, admins));
     }
 
     @Test
     @UsingDataSet("datasets/org/libreccm/security/GroupManagerTest/data.yml")
     @ShouldMatchDataSet("datasets/org/libreccm/security/GroupManagerTest/"
-                            + "after-remove.yml")
+                                + "after-remove.yml")
     @InSequence(300)
     public void removeUserFromGroup() {
         final Group admins = groupRepository.findByName("admins");
@@ -252,7 +238,7 @@ public class GroupManagerTest {
 
         try {
             shiro.getSystemUser().execute(
-                () -> groupManager.removeMemberFromGroup(null, admins));
+                    () -> groupManager.removeMemberFromGroup(null, admins));
         } catch (ExecutionException ex) {
             throw ex.getCause();
         }
@@ -267,7 +253,7 @@ public class GroupManagerTest {
 
         try {
             shiro.getSystemUser().execute(
-                () -> groupManager.removeMemberFromGroup(jdoe, null));
+                    () -> groupManager.removeMemberFromGroup(jdoe, null));
         } catch (ExecutionException ex) {
             throw ex.getCause();
         }
@@ -276,14 +262,14 @@ public class GroupManagerTest {
     @Test
     @UsingDataSet("datasets/org/libreccm/security/GroupManagerTest/data.yml")
     @ShouldMatchDataSet(
-        value = "datasets/org/libreccm/security/GroupManagerTest/data.yml")
+            value = "datasets/org/libreccm/security/GroupManagerTest/data.yml")
     @InSequence(330)
     public void removeUserGroupNotAMember() {
         final Group admins = groupRepository.findByName("admins");
         final User mmuster = userRepository.findByName("mmuster");
 
         shiro.getSystemUser().execute(
-            () -> groupManager.removeMemberFromGroup(mmuster, admins));
+                () -> groupManager.removeMemberFromGroup(mmuster, admins));
     }
 
 }

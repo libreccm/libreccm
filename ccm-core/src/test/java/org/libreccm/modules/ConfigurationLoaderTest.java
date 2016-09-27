@@ -28,8 +28,6 @@ import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.resolver.api.maven.Maven;
-import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -40,10 +38,11 @@ import org.junit.runner.RunWith;
 import org.libreccm.configuration.ExampleConfiguration;
 import org.libreccm.tests.categories.IntegrationTest;
 
-import java.io.File;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+
+import static org.libreccm.testutils.DependenciesHelpers.*;
 
 
 /**
@@ -81,46 +80,29 @@ public class ConfigurationLoaderTest {
 
     @Deployment
     public static WebArchive createDeployment() {
-        final PomEquippedResolveStage pom = Maven
-            .resolver()
-            .loadPomFromFile("pom.xml");
-        final PomEquippedResolveStage dependencies = pom
-            .importCompileAndRuntimeDependencies();
-        final File[] libs = dependencies.resolve().withTransitivity().asFile();
-
-        for (File lib : libs) {
-            System.err.printf("Adding file '%s' to test archive...%n",
-                              lib.getName());
-        }
-
         return ShrinkWrap
             .create(WebArchive.class,
                     "LibreCCM-org.libreccm.modules.ConfigurationLoaderTest.war")
-            //.addPackage(org.libreccm.categorization.Category.class.getPackage())
             .addPackage(org.libreccm.configuration.Configuration.class
                 .getPackage())
-            //.addPackage(org.libreccm.core.CcmObject.class.getPackage())
             .addPackage(org.libreccm.jpa.EntityManagerProducer.class
                 .getPackage())
             .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
                 .getPackage())
             .addPackage(org.libreccm.l10n.LocalizedString.class.getPackage())
             .addClass(org.libreccm.modules.ConfigurationLoader.class)
-            //.addPackage(org.libreccm.security.Permission.class.getPackage())
-            //.addPackage(org.libreccm.workflow.Workflow.class.getPackage())
             .addPackage(org.libreccm.tests.categories.IntegrationTest.class
                 .getPackage())
             .addPackage(org.libreccm.testutils.EqualsVerifier.class.
                 getPackage())
             .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
-            .addAsLibraries(libs)
+            .addAsLibraries(getModuleDependencies())
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")
             .addAsResource(
                 "configs/org/libreccm/modules/ConfigurationLoaderTest/"
                     + "log4j2.xml",
                 "log4j2.xml")
-//            .addAsWebInfResource(EmptyAsset.INSTANCE, "web.xml")
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
             .addAsResource(
                 "configs/org/libreccm/modules/ConfigurationLoaderTest/"

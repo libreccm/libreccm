@@ -55,6 +55,7 @@ import java.util.List;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.libreccm.testutils.DependenciesHelpers.*;
 
 /**
  *
@@ -109,30 +110,30 @@ public class FilePortationTest {
 
     @Deployment
     public static WebArchive createDeployment() {
-        final PomEquippedResolveStage pom = Maven
-            .resolver()
-            .loadPomFromFile("pom.xml");
-        final PomEquippedResolveStage dependencies = pom
-            .importCompileAndRuntimeDependencies();
-        final java.io.File[] libs = dependencies.resolve().withTransitivity()
-            .asFile();
-
-        for (java.io.File lib : libs) {
-            System.err.printf("Adding file '%s' to test archive...%n", lib
-                              .getName());
-        }
-
-        final PomEquippedResolveStage corePom = Maven.resolver()
-            .loadPomFromFile("../ccm-core/pom.xml");
-        final PomEquippedResolveStage coreDependencies = corePom
-            .importCompileAndRuntimeDependencies();
-        final java.io.File[] coreLibs = coreDependencies.resolve()
-            .withTransitivity().asFile();
-        for (java.io.File lib : coreLibs) {
-            System.err.printf("Adding file '%s' to test archive...%n", lib
-                              .getName());
-        }
-
+//        final PomEquippedResolveStage pom = Maven
+//            .resolver()
+//            .loadPomFromFile("pom.xml");
+//        final PomEquippedResolveStage dependencies = pom
+//            .importCompileAndRuntimeDependencies();
+//        final java.io.File[] libs = dependencies.resolve().withTransitivity()
+//            .asFile();
+//
+//        for (java.io.File lib : libs) {
+//            System.err.printf("Adding file '%s' to test archive...%n", lib
+//                              .getName());
+//        }
+//
+//        final PomEquippedResolveStage corePom = Maven.resolver()
+//            .loadPomFromFile("../ccm-core/pom.xml");
+//        final PomEquippedResolveStage coreDependencies = corePom
+//            .importCompileAndRuntimeDependencies();
+//        final java.io.File[] coreLibs = coreDependencies.resolve()
+//            .withTransitivity().asFile();
+//        for (java.io.File lib : coreLibs) {
+//            System.err.printf("Adding file '%s' to test archive...%n", lib
+//                              .getName());
+//        }
+//
         return ShrinkWrap
             .create(WebArchive.class,
                     "LibreCCM-org.libreccm.docrepo.FilePortationTest.war")
@@ -161,8 +162,8 @@ public class FilePortationTest {
                 .getPackage())
             .addPackage(com.arsdigita.xml.CCMTransformerFactory.class
                 .getPackage())
-            .addAsLibraries(libs)
-            .addAsLibraries(coreLibs)
+            .addAsLibraries(getModuleDependencies())
+            .addAsLibraries(getCcmCoreDependencies())
             .addAsResource("META-INF/jboss-deployment-structure.xml", 
                            "META-INF/jboss-deployment-structure.xml")
             .addAsResource("test-persistence.xml", "META-INF/persistence.xml")

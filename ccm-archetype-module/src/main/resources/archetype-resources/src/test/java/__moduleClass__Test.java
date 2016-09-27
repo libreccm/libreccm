@@ -3,6 +3,7 @@
  */
 package ${package};
 
+import static org.libreccm.testutils.DependenciesHelpers.*;
 import static org.hamcrest.CoreMatchers.*;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -66,23 +67,12 @@ public class ${moduleClass}Test {
 
     @Deployment
     public static WebArchive createDeployment() {
-        final PomEquippedResolveStage pom = Maven
-            .resolver()
-            .loadPomFromFile("pom.xml");
-        final PomEquippedResolveStage dependencies = pom
-            .importCompileAndRuntimeDependencies();
-        final File[] libs = dependencies.resolve().withTransitivity().asFile();
-
-        for (File lib : libs) {
-            System.err.printf("Adding file '%s' to test archive...%n",
-                              lib.getName());
-        }
-
         return ShrinkWrap
             .create(WebArchive.class,
                     "LibreCCM-${package}.${moduleClass}Test.war")
             .addPackage(${moduleClass}.class.getPackage())
-            .addAsLibraries(libs)
+            .addAsLibraries(getModuleDependencies())
+            .addAsLibraries(getCcmCoreDependencies())
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")
             .addAsWebInfResource("test-web.xml", "WEB-INF/web.xml")

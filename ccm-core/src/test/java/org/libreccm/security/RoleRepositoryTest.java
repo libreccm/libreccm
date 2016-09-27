@@ -51,6 +51,7 @@ import javax.persistence.PersistenceContext;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
+import static org.libreccm.testutils.DependenciesHelpers.*;
 
 /**
  * Tests for the {@link RoleRepository}. Note. We are not enabling the 
@@ -96,18 +97,6 @@ public class RoleRepositoryTest {
 
     @Deployment
     public static WebArchive createDeployment() {
-        final PomEquippedResolveStage pom = Maven
-            .resolver()
-            .loadPomFromFile("pom.xml");
-        final PomEquippedResolveStage dependencies = pom.
-            importCompileAndRuntimeDependencies();
-        final File[] libs = dependencies.resolve().withTransitivity().asFile();
-
-        for (File lib : libs) {
-            System.err.printf("Adding file '%s' to test archive...%n",
-                              lib.getName());
-        }
-
         return ShrinkWrap
             .create(WebArchive.class,
                     "LibreCCM-org.libreccm.security.RoleRepositoryTest.war")
@@ -127,7 +116,7 @@ public class RoleRepositoryTest {
             .addPackage(org.libreccm.testutils.EqualsVerifier.class.getPackage())
             .addPackage(org.libreccm.tests.categories.IntegrationTest.class
                 .getPackage())
-            .addAsLibraries(libs)
+            .addAsLibraries(getModuleDependencies())
             .addAsResource("configs/shiro.ini", "shiro.ini")
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")

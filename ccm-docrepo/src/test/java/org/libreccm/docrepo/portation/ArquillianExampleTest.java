@@ -37,6 +37,7 @@ import java.io.File;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
+import static org.libreccm.testutils.DependenciesHelpers.*;
 
 /**
  *
@@ -75,32 +76,34 @@ public class ArquillianExampleTest {
 
     @Deployment
     public static WebArchive createDeployment() {
-        final PomEquippedResolveStage pom = Maven
-                .resolver()
-                .loadPomFromFile("pom.xml");
-        final PomEquippedResolveStage dependencies = pom
-                .importCompileAndRuntimeDependencies();
-        final File[] libs = dependencies.resolve().withTransitivity().asFile();
-
-        for (File lib : libs) {
-            System.err.printf("Adding file '%s' to test archive...%n",
-                              lib.getName());
-        }
-
+//        final PomEquippedResolveStage pom = Maven
+//                .resolver()
+//                .loadPomFromFile("pom.xml");
+//        final PomEquippedResolveStage dependencies = pom
+//                .importCompileAndRuntimeDependencies();
+//        final File[] libs = dependencies.resolve().withTransitivity().asFile();
+//
+//        for (File lib : libs) {
+//            System.err.printf("Adding file '%s' to test archive...%n",
+//                              lib.getName());
+//        }
+//
         return ShrinkWrap
                 .create(WebArchive.class,
-                        "LibreCCM-org.libreccm.docrepo.ArquillianExampleTest.war")
-                .addPackage(org.libreccm.core.CcmObject.class.getPackage())
+                        "LibreCCM-org.libreccm.docrepo.ArquillianExampleTest.war").
+                addPackage(org.libreccm.core.CcmObject.class.getPackage())
                 .addPackage(org.libreccm.security.Permission.class.getPackage())
                 .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
-                .addPackage(org.libreccm.categorization.Categorization.class.getPackage())
+                .addPackage(org.libreccm.categorization.Categorization.class.
+                        getPackage())
                 .addPackage(LocalizedString.class.getPackage())
                 .addPackage(Workflow.class.getPackage())
                 .addPackage(EntityManagerProducer.class.getPackage())
                 .addPackage(MimeTypeConverter.class.getPackage())
                 .addPackage(EqualsVerifier.class.getPackage())
                 .addPackage(IntegrationTest.class.getPackage())
-                .addAsLibraries(libs)
+                .addAsLibraries(getModuleDependencies())
+                .addAsLibraries(getCcmCoreDependencies())
                 .addAsResource("test-persistence.xml",
                                "META-INF/persistence.xml")
                 .addAsWebInfResource("test-web.xml", "WEB-INF/web.xml")
@@ -112,7 +115,6 @@ public class ArquillianExampleTest {
     //
     // @Test
     // public void hello() {}
-
     @Test
     @InSequence(1)
     public void entityManagerIsInjected() {
