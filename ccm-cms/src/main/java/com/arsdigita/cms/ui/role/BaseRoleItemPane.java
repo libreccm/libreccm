@@ -28,18 +28,21 @@ import com.arsdigita.bebop.Table;
 import com.arsdigita.bebop.event.TableActionAdapter;
 import com.arsdigita.bebop.event.TableActionEvent;
 import com.arsdigita.bebop.table.DefaultTableCellRenderer;
-import com.arsdigita.cms.CMS;
 import com.arsdigita.cms.ui.BaseItemPane;
+import com.arsdigita.cms.ui.PartySearchForm;
 import com.arsdigita.cms.ui.VisibilityComponent;
-import com.arsdigita.cms.util.SecurityConstants;
+import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.toolbox.ui.ActionGroup;
 import com.arsdigita.toolbox.ui.PropertyList;
 import com.arsdigita.toolbox.ui.Section;
 import org.apache.log4j.Logger;
-import org.libreccm.security.Role;
-import org.librecms.contentsection.ContentSection;
+import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.configuration.ConfigurationManager;
+import org.libreccm.core.CoreConstants;
+import org.libreccm.security.*;
+import org.librecms.CmsConstants;
 
-import java.math.BigDecimal;
+import java.util.stream.Collectors;
 
 /**
  * TODO Needs a description
@@ -56,8 +59,8 @@ class BaseRoleItemPane extends BaseItemPane {
     private final RoleRequestLocal m_role;
     private final SingleSelectionModel m_model;
 
-    //private final MemberTable m_members;
-    //private final AdminTable m_admins;
+    private final MemberTable m_members;
+    private final AdminTable m_admins;
 
     private final SimpleContainer m_detailPane;
 
@@ -68,8 +71,8 @@ class BaseRoleItemPane extends BaseItemPane {
         m_model = model;
         m_role = role;
 
-        //m_members = new MemberTable();
-        //m_admins = new AdminTable();
+        m_members = new MemberTable();
+        m_admins = new AdminTable();
 
         final ActionLink memberAddLink = new ActionLink
             (new Label(gz("cms.ui.role.member.add")));
@@ -85,7 +88,7 @@ class BaseRoleItemPane extends BaseItemPane {
         m_detailPane.add(new MemberSection(memberAddLink));
         m_detailPane.add(new AdminSection(adminAddLink));
 
-        /*
+
         final PartySearchForm memberSearchForm = new PartySearchForm();
         add(memberSearchForm);
 
@@ -111,18 +114,12 @@ class BaseRoleItemPane extends BaseItemPane {
         adminAddForm.getForm().addSubmissionListener
             (new CancelListener(adminAddForm.getForm()));
         resume(adminAddForm.getForm(), m_detailPane);
-        */
-    }
 
-    /*
-    private boolean hasAdmin(final PageState state) {
-        return CMS.getContext().getSecurityManager()..canAccess
-            (state.getRequest(), SecurityConstants.STAFF_ADMIN);
-    }*/
+    }
 
     private class AdminVisible extends VisibilityComponent {
         AdminVisible(final Component child) {
-            super(child, SecurityConstants.STAFF_ADMIN);
+            super(child, CmsConstants.PRIVILEGE_ADMINISTER_ROLES);
         }
     }
 
@@ -139,35 +136,30 @@ class BaseRoleItemPane extends BaseItemPane {
             group.addAction(new AdminVisible(deleteLink), ActionGroup.DELETE);
         }
 
+        @SuppressWarnings("unchecked")
         private class Properties extends PropertyList {
             protected final java.util.List properties(final PageState state) {
                 final java.util.List props = super.properties(state);
+
+                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+                final ConfigurationManager manager = cdiUtil.findBean(ConfigurationManager.class);
+                final KernelConfig config = manager.findConfiguration(KernelConfig.class);
+
                 final Role role = m_role.getRole(state);
 
                 props.add(new Property(lz("cms.ui.name"),
                                        role.getName()));
-                //props.add(new Property(lz("cms.ui.description"),
-                //                       role.getDescription()));
+                // Right now just loads the default locale description.
+                props.add(new Property(lz("cms.ui.description"),
+                                       role.getDescription().getValue(config.getDefaultLocale())));
 
-                final StringBuffer buffer = new StringBuffer();
-                final ContentSection section = CMS.getContext
-                    ().getContentSection();
-                /*
-                final DataQuery privs = RoleFactory.getRolePrivileges
-                    (section.getID(), role.getGroup().getID());
+                // Since Permissions don't seem to have a "pretty" form, the granted privilege is used.
+                final String permissions = role.getPermissions().stream()
+                        .map(Permission::getGrantedPrivilege)
+                        .collect(Collectors.joining(", "));
 
-                while (privs.next()) {
-                    buffer.append((String) privs.get("prettyName") + ", ");
-                }
-
-                privs.close();*/
-
-                final int length = buffer.length();
-
-                if (length > 0) {
-                    props.add(new Property(lz("cms.ui.role.privileges"),
-                                           buffer.toString().substring
-                                               (0, length - 2)));
+                if (permissions.length() > 0) {
+                    props.add(new Property(lz("cms.ui.role.privileges"), permissions));
                 } else {
                     props.add(new Property(lz("cms.ui.role.privileges"),
                                            lz("cms.ui.role.privilege.none")));
@@ -185,7 +177,7 @@ class BaseRoleItemPane extends BaseItemPane {
             final ActionGroup group = new ActionGroup();
             setBody(group);
 
-            //group.setSubject(m_members);
+            group.setSubject(m_members);
             group.addAction(new AdminVisible(memberAddLink), ActionGroup.ADD);
         }
     }
@@ -197,18 +189,18 @@ class BaseRoleItemPane extends BaseItemPane {
             final ActionGroup group = new ActionGroup();
             setBody(group);
 
-            //group.setSubject(m_admins);
+            group.setSubject(m_admins);
             group.addAction(new AdminVisible(adminAddLink), ActionGroup.ADD);
         }
     }
 
-    // XXX globz
+
     private static final String[] s_memberColumns = new String[] {
         lz("cms.ui.name"),
         lz("cms.ui.role.member.email"),
         lz("cms.ui.role.member.remove")
     };
-/*
+
     private class MemberTable extends Table {
         MemberTable() {
             super(new MemberTableModelBuilder(m_role), s_memberColumns);
@@ -223,22 +215,25 @@ class BaseRoleItemPane extends BaseItemPane {
 
         private class Listener extends TableActionAdapter {
             public final void cellSelected(final TableActionEvent e) {
+                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
                 final PageState state = e.getPageState();
+                final PermissionChecker permissionChecker = cdiUtil.findBean(PermissionChecker.class);
 
-                if (e.getColumn().intValue() == 2 && hasAdmin(state)) {
+                if (e.getColumn() == 2 && permissionChecker.isPermitted(CmsConstants.PRIVILEGE_ADMINISTER_ROLES)) {
                     final Role role = m_role.getRole(state);
-                    final Party party = (Party) DomainObjectFactory.newInstance
-                        (new OID(Party.BASE_DATA_OBJECT_TYPE,
-                                 new BigDecimal(e.getRowKey().toString())));
+                    long itemId = Long.parseLong(e.getRowKey().toString());
 
-                    role.remove(party);
-                    role.save();
+                    final PartyRepository partyRepository = cdiUtil.findBean(PartyRepository.class);
+                    final RoleManager roleManager = cdiUtil.findBean(RoleManager.class);
+                    final Party party = partyRepository.findById(itemId);
+
+                    roleManager.removeRoleFromParty(role, party);
 
                     getRowSelectionModel().clearSelection(state);
                 }
             }
         }
-    }*/
+    }
 
     private static final String[] s_adminColumns = new String[] {
         lz("cms.ui.name"),
@@ -246,7 +241,7 @@ class BaseRoleItemPane extends BaseItemPane {
         lz("cms.ui.role.admin.remove")
     };
 
-    /*
+
     private class AdminTable extends Table {
         AdminTable() {
             super(new AdminTableModelBuilder(m_role), s_adminColumns);
@@ -261,25 +256,20 @@ class BaseRoleItemPane extends BaseItemPane {
 
         private class Listener extends TableActionAdapter {
             public final void cellSelected(final TableActionEvent e) {
+                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
                 final PageState state = e.getPageState();
+                final PermissionChecker permissionChecker = cdiUtil.findBean(PermissionChecker.class);
 
-                if (e.getColumn().intValue() == 2 && hasAdmin(state)) {
+                if (e.getColumn() == 2 && permissionChecker.isPermitted(CmsConstants.PRIVILEGE_ADMINISTER_ROLES)) {
                     final Role role = m_role.getRole(state);
-                    final Party party = (Party) DomainObjectFactory.newInstance
-                        (new OID(Party.BASE_DATA_OBJECT_TYPE,
-                                 new BigDecimal(e.getRowKey().toString())));
+                    final PermissionManager permissionManager = cdiUtil.findBean(PermissionManager.class);
 
-                    final PermissionDescriptor perm =
-                        new PermissionDescriptor(PrivilegeDescriptor.ADMIN,
-                                                 role.getGroup(),
-                                                 party);
-
-                    PermissionService.revokePermission(perm);
+                    permissionManager.revokePrivilege(CoreConstants.ADMIN_PRIVILEGE, role);
 
                     getRowSelectionModel().clearSelection(state);
                 }
             }
         }
 
-    }*/
+    }
 }
