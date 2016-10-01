@@ -88,7 +88,6 @@ final class RoleEditForm extends BaseRoleForm {
 
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final PermissionManager permissionManager = cdiUtil.findBean(PermissionManager.class);
-            final RoleRepository roleRepository = cdiUtil.findBean(RoleRepository.class);
             final ConfigurationManager manager = cdiUtil.findBean(ConfigurationManager.class);
             final KernelConfig config = manager.findConfiguration(KernelConfig.class);
 
@@ -96,16 +95,6 @@ final class RoleEditForm extends BaseRoleForm {
             localizedDescription.addValue(config.getDefaultLocale(), (String) m_description.getValue(state));
             role.setDescription(localizedDescription);
 
-            roleRepository.save(role);
-
-            /*RoleFactory.updatePrivileges
-                (role,
-                 (String[]) m_privileges.getValue(state),
-                 CMS.getContext().getContentSection());
-
-            role.save();*/
-
-            // TODO This could be terribly wrong. Needs confirmation.
             List<Permission> newPermissions = new ArrayList<>();
             String[] selectedPermissions = (String[]) m_privileges.getValue(state);
 
@@ -122,9 +111,6 @@ final class RoleEditForm extends BaseRoleForm {
                     permissionManager.grantPrivilege(s, role);
                 }
             }
-            role.getPermissions().clear();
-            role.getPermissions().addAll(newPermissions);
-            roleRepository.save(role);
         }
     }
 }
