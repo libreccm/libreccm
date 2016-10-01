@@ -27,31 +27,27 @@ import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.core.EmailAddress;
 import org.libreccm.security.Party;
-import org.libreccm.security.PartyRepository;
 import org.libreccm.security.Role;
-import org.libreccm.security.RoleManager;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.stream.Collectors;
 
 /**
- * Creates a table model based on the {@link Party parties} of the given
- * {@link Role role}.
+ * TODO Needs a description.
  *
  * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  * @author Justin Ross &lt;jross@redhat.com&gt;
- * @version $Id: MemberTableModelBuilder.java 287 2005-02-22 00:29:02Z sskracic $
+ * @version $Id: AdminTableModelBuilder.java 287 2005-02-22 00:29:02Z sskracic $
  */
-class MemberTableModelBuilder extends AbstractTableModelBuilder {
+class AdminTableModelBuilder extends AbstractTableModelBuilder {
 
     private static final Logger s_log = Logger.getLogger
-        (MemberTableModelBuilder.class);
+        (AdminTableModelBuilder.class);
 
     private final RoleRequestLocal m_role;
 
-    MemberTableModelBuilder(final RoleRequestLocal role) {
+    AdminTableModelBuilder(final RoleRequestLocal role) {
         m_role = role;
     }
 
@@ -59,15 +55,20 @@ class MemberTableModelBuilder extends AbstractTableModelBuilder {
                                       final PageState state) {
         final Role role = m_role.getRole(state);
 
-        //FIXME Dirty hack, needs to be filtered in the database.
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-        final PartyRepository partyRepository = cdiUtil.findBean(PartyRepository.class);
-        final RoleManager roleManager = cdiUtil.findBean(RoleManager.class);
-        Collection<Party> parties = partyRepository.findAll().stream()
-                .filter(x -> roleManager.hasRole(x, role))
-                .collect(Collectors.toCollection(HashSet::new));
 
-        return new Model(parties);
+        /*TODO What does this mean?
+        Session session = SessionManager.getSession();
+        DataQuery query = session.retrieveQuery
+            ("com.arsdigita.cms.roleAdminListing");
+        
+        query.setParameter("roleID", role.getID());
+
+        final DataCollection admins = new DataQueryDataCollectionAdapter
+            (query, "party");*/
+
+
+        return new Model(new HashSet<>());
     }
 
     private static class Model implements TableModel {
@@ -79,7 +80,7 @@ class MemberTableModelBuilder extends AbstractTableModelBuilder {
             m_parties = parties;
             iterator = m_parties.iterator();
         }
-
+        
         public final int getColumnCount() {
             return 3;
         }
@@ -102,7 +103,7 @@ class MemberTableModelBuilder extends AbstractTableModelBuilder {
             case 0:
                 return m_party.getName();
             case 1:
-                //FIXME Party does not have a field for emails anymore.
+                //FIXME Since parties don't have emails atm.
                 final EmailAddress email = null;
 
                 if (email == null) {
@@ -111,7 +112,7 @@ class MemberTableModelBuilder extends AbstractTableModelBuilder {
                     return email.toString();
                 }
             case 2:
-                return lz("cms.ui.role.member.remove");
+                return lz("cms.ui.role.admin.remove");
             default:
                 throw new IllegalStateException();
             }
