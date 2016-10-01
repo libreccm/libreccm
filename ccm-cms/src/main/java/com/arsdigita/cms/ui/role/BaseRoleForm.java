@@ -28,12 +28,12 @@ import com.arsdigita.bebop.form.CheckboxGroup;
 import com.arsdigita.bebop.form.Option;
 import com.arsdigita.cms.CMS;
 import com.arsdigita.cms.ui.BaseForm;
-import com.arsdigita.cms.util.SecurityConstants;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.ui.admin.GlobalizationUtil;
 import com.arsdigita.util.UncheckedWrapperException;
 import org.apache.log4j.Logger;
 import org.libreccm.security.Role;
+import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentSection;
 
 import java.util.*;
@@ -80,7 +80,7 @@ public class BaseRoleForm extends BaseForm {
         addAction(new Finish());
         addAction(new Cancel());
 
-        addSecurityListener(SecurityConstants.STAFF_ADMIN);
+        addSecurityListener(CmsConstants.PRIVILEGE_ADMINISTER_ROLES);
     }
 
     private class PrivilegePrinter implements PrintListener {

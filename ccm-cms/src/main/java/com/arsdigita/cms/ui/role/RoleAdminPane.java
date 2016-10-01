@@ -36,7 +36,6 @@ import com.arsdigita.cms.CMS;
 import com.arsdigita.cms.ui.BaseAdminPane;
 import com.arsdigita.cms.ui.BaseDeleteForm;
 import com.arsdigita.cms.ui.VisibilityComponent;
-import com.arsdigita.cms.util.SecurityConstants;
 import com.arsdigita.toolbox.ui.ActionGroup;
 import com.arsdigita.toolbox.ui.Section;
 import com.arsdigita.util.LockableImpl;
@@ -44,6 +43,7 @@ import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.Role;
 import org.libreccm.security.RoleRepository;
+import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentSection;
 
 /**
@@ -104,7 +104,7 @@ public class RoleAdminPane extends BaseAdminPane {
             final ActionLink link = new ActionLink
                     (new Label(gz("cms.ui.role.staff.add")));
 
-            group.addAction(new VisibilityComponent(link, SecurityConstants.STAFF_ADMIN),
+            group.addAction(new VisibilityComponent(link, CmsConstants.PRIVILEGE_ADMINISTER_ROLES),
                     ActionGroup.ADD);
 
             final RoleAddForm form = new RoleAddForm(m_model, false);
@@ -241,7 +241,7 @@ public class RoleAdminPane extends BaseAdminPane {
         DeleteForm() {
             super(gz("cms.ui.role.delete_prompt"));
 
-            addSecurityListener(SecurityConstants.STAFF_ADMIN);
+            addSecurityListener(CmsConstants.PRIVILEGE_ADMINISTER_ROLES);
         }
 
         public final void process(final FormSectionEvent e)
