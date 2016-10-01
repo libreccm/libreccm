@@ -245,7 +245,7 @@ public abstract class UserAddForm extends SimpleContainer
     }
 
     /**
-     * Generates a {@link com.arsdigita.persistence.DataQuery} that encapsulates
+     * Generates a {@link List} that encapsulates
      * search results.
      *
      * @param state The page state
