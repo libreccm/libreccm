@@ -918,7 +918,7 @@ public class ContentItemManager {
      * {@code info:/research/computer-science/artificial-intelligence/neural-nets}.
      *
      * @param item               The item whose path is generated.
-     * @param withContentSection Wether to include the content section into the
+     * @param withContentSection Whether to include the content section into the
      *                           path.
      *
      * @return The path of the content item
@@ -940,7 +940,6 @@ public class ContentItemManager {
 
             Category current = result.get(0).getCategory();
             tokens.add(current.getName());
-
             while (current.getParentCategory() != null) {
                 current = current.getParentCategory();
                 tokens.add(current.getName());
@@ -953,7 +952,7 @@ public class ContentItemManager {
                 final String sectionName = item.getContentType().
                     getContentSection().getDisplayName();
                 return String.format(
-                    "%s/%s", sectionName, path);
+                    "%s:/%s", sectionName, path);
             } else {
                 return String.format("/%s", path);
             }

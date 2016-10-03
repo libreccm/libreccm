@@ -75,7 +75,7 @@ public class FolderRepository extends AbstractEntityRepository<Long, Folder> {
     public List<Folder> getRootAssetFolders() {
         final TypedQuery<Folder> query = getEntityManager().createNamedQuery(
             "Folder.rootFolders", Folder.class);
-        query.setParameter("type", FolderType.ASSET_FOLDER);
+        query.setParameter("type", FolderType.ASSETS_FOLDER);
 
         return query.getResultList();
     }
@@ -143,7 +143,7 @@ public class FolderRepository extends AbstractEntityRepository<Long, Folder> {
         final String[] tokens = normalizedPath.split("/");
         Folder current;
         switch(type) {
-            case ASSET_FOLDER:
+            case ASSETS_FOLDER:
                 current = section.getRootAssetsFolder();
                 break;
             case DOCUMENTS_FOLDER:

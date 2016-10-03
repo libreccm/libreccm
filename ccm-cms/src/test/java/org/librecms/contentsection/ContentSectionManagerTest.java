@@ -102,53 +102,58 @@ public class ContentSectionManagerTest {
     @Deployment
     public static WebArchive createDeployment() {
         return ShrinkWrap
-                .create(WebArchive.class,
-                        "LibreCCM-org.libreccm.cms.contentsection.ContentSectionManagerTest.war").
-                addPackage(org.libreccm.auditing.CcmRevision.class.getPackage())
-                .addPackage(org.libreccm.categorization.Categorization.class
-                        .getPackage())
-                .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
-                .addPackage(org.libreccm.configuration.Configuration.class
-                        .getPackage())
-                .addPackage(org.libreccm.core.CcmCore.class.getPackage())
-                .addPackage(org.libreccm.jpa.EntityManagerProducer.class
-                        .getPackage())
-                .addPackage(org.libreccm.l10n.LocalizedString.class
-                        .getPackage())
-                .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class.
-                        getPackage())
-                .addPackage(org.libreccm.security.Permission.class.getPackage())
-                .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
-                .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
-                .addPackage(com.arsdigita.bebop.Component.class.getPackage())
-                .addPackage(com.arsdigita.bebop.util.BebopConstants.class
-                        .getPackage())
-                .addClass(com.arsdigita.kernel.KernelConfig.class)
-                .addClass(com.arsdigita.runtime.CCMResourceManager.class)
-                .addClass(
-                        com.arsdigita.ui.admin.applications.AbstractAppInstanceForm.class)
-                .addClass(
-                        com.arsdigita.ui.admin.applications.AbstractAppSettingsPane.class)
-                .addClass(
-                        com.arsdigita.ui.admin.applications.DefaultApplicationInstanceForm.class)
-                .addClass(
-                        com.arsdigita.ui.admin.applications.DefaultApplicationSettingsPane.class)
-                .addPackage(com.arsdigita.cms.dispatcher.ItemResolver.class.
-                        getPackage())
-                .addPackage(com.arsdigita.util.Lockable.class.getPackage())
-                .addPackage(com.arsdigita.web.BaseServlet.class.getPackage())
-                .addPackage(org.librecms.Cms.class.getPackage())
-                .addPackage(org.librecms.assets.Asset.class.getPackage())
-                .addPackage(org.librecms.attachments.AttachmentList.class
-                        .getPackage())
-                .addPackage(org.librecms.lifecycle.Lifecycle.class.getPackage())
-                .addPackage(ContentSection.class.getPackage())
-                .addAsLibraries(getModuleDependencies())
-                .addAsLibraries(getCcmCoreDependencies())
-                .addAsResource("test-persistence.xml",
-                               "META-INF/persistence.xml")
-                .addAsWebInfResource("test-web.xml", "WEB-INF/web.xml")
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "WEB-INF/beans.xml");
+            .create(WebArchive.class,
+                    "LibreCCM-org.libreccm.cms.contentsection.ContentSectionManagerTest.war")
+            .addPackage(org.libreccm.auditing.CcmRevision.class.getPackage())
+            .addPackage(org.libreccm.categorization.Categorization.class
+                .getPackage())
+            .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
+            .addPackage(org.libreccm.configuration.Configuration.class
+                .getPackage())
+            .addPackage(org.libreccm.core.CcmCore.class.getPackage())
+            .addPackage(org.libreccm.jpa.EntityManagerProducer.class
+                .getPackage())
+            .addPackage(org.libreccm.l10n.LocalizedString.class
+                .getPackage())
+            .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class.
+                getPackage())
+            .addPackage(org.libreccm.security.Permission.class.getPackage())
+            .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
+            .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
+            .addPackage(com.arsdigita.bebop.Component.class.getPackage())
+            .addPackage(com.arsdigita.bebop.util.BebopConstants.class
+                .getPackage())
+            .addClass(com.arsdigita.kernel.KernelConfig.class)
+            .addClass(com.arsdigita.runtime.CCMResourceManager.class)
+            .addClass(
+                com.arsdigita.ui.admin.applications.AbstractAppInstanceForm.class)
+            .addClass(
+                com.arsdigita.ui.admin.applications.AbstractAppSettingsPane.class)
+            .addClass(
+                com.arsdigita.ui.admin.applications.DefaultApplicationInstanceForm.class)
+            .addClass(
+                com.arsdigita.ui.admin.applications.DefaultApplicationSettingsPane.class)
+            .addClass(org.libreccm.modules.Module.class)
+            .addClass(org.libreccm.modules.RequiredModule.class)
+            .addClass(org.libreccm.portation.Marshals.class)
+            .addPackage(com.arsdigita.cms.dispatcher.ItemResolver.class.
+                getPackage())
+            .addPackage(com.arsdigita.util.Lockable.class.getPackage())
+            .addPackage(com.arsdigita.web.BaseServlet.class.getPackage())
+            .addPackage(org.librecms.Cms.class.getPackage())
+            .addPackage(org.librecms.assets.Asset.class.getPackage())
+            .addPackage(org.librecms.attachments.AttachmentList.class
+                .getPackage())
+            .addPackage(org.librecms.lifecycle.Lifecycle.class.getPackage())
+            .addPackage(ContentSection.class.getPackage())
+            .addPackage(org.libreccm.tests.categories.IntegrationTest.class
+                .getPackage())
+            //.addAsLibraries(getModuleDependencies())
+            .addAsLibraries(getCcmCoreDependencies())
+            .addAsResource("test-persistence.xml",
+                           "META-INF/persistence.xml")
+            .addAsWebInfResource("test-web.xml", "WEB-INF/web.xml")
+            .addAsWebInfResource(EmptyAsset.INSTANCE, "WEB-INF/beans.xml");
     }
 
     @Test
@@ -171,21 +176,21 @@ public class ContentSectionManagerTest {
 
     @Test
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                          + "ContentSectionManagerTest/data.xml")
+                      + "ContentSectionManagerTest/data.xml")
     @ShouldMatchDataSet(
-            value = "datasets/org/librecms/contentsection/"
-                            + "ContentSectionManagerTest/after-create.xml",
-            excludeColumns = {"object_id",
-                              "root_assets_folder_id",
-                              "root_documents_folder_id",
-                              "permission_id",
-                              "role_id",
-                              "grantee_id",
-                              "unique_id",
-                              "uuid",
-                              "created",
-                              "section_id",
-                              "creation_date"})
+        value = "datasets/org/librecms/contentsection/"
+                    + "ContentSectionManagerTest/after-create.xml",
+        excludeColumns = {"object_id",
+                          "root_assets_folder_id",
+                          "root_documents_folder_id",
+                          "permission_id",
+                          "role_id",
+                          "grantee_id",
+                          "unique_id",
+                          "uuid",
+                          "created",
+                          "section_id",
+                          "creation_date"})
     @InSequence(100)
     public void createSection() {
         manager.createContentSection("test");
@@ -193,11 +198,11 @@ public class ContentSectionManagerTest {
 
     @Test
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                          + "ContentSectionManagerTest/data.xml")
+                      + "ContentSectionManagerTest/data.xml")
     @ShouldMatchDataSet(
-            value = "datasets/org/librecms/contentsection/"
-                            + "ContentSectionManagerTest/after-rename.xml",
-            excludeColumns = {"object_id"})
+        value = "datasets/org/librecms/contentsection/"
+                    + "ContentSectionManagerTest/after-rename.xml",
+        excludeColumns = {"object_id"})
     @InSequence(200)
     public void renameSection() {
         final ContentSection section = repository.findByLabel("info");
@@ -205,9 +210,9 @@ public class ContentSectionManagerTest {
         manager.renameContentSection(section, "content");
 
         final KernelConfig kernelConfig = confManager.findConfiguration(
-                KernelConfig.class);
+            KernelConfig.class);
         final Locale defaultLocale = new Locale(kernelConfig
-                .getDefaultLanguage());
+            .getDefaultLanguage());
 
         section.getTitle().addValue(defaultLocale, "content");
         repository.save(section);
@@ -215,12 +220,12 @@ public class ContentSectionManagerTest {
         section.getRootDocumentsFolder().setName("content_root");
         section.getRootDocumentsFolder().setDisplayName("content_root");
         section.getRootDocumentsFolder().getTitle().addValue(
-                defaultLocale, "content_root");
+            defaultLocale, "content_root");
 
         section.getRootAssetsFolder().setName("content_assets");
         section.getRootAssetsFolder().setDisplayName("content_assets");
         section.getRootAssetsFolder().getTitle().addValue(
-                defaultLocale, "content_assets");
+            defaultLocale, "content_assets");
 
         categoryRepo.save(section.getRootDocumentsFolder());
         categoryRepo.save(section.getRootAssetsFolder());
@@ -228,15 +233,15 @@ public class ContentSectionManagerTest {
 
     @Test
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                          + "ContentSectionManagerTest/data.xml")
+                      + "ContentSectionManagerTest/data.xml")
     @ShouldMatchDataSet(
-            value = "datasets/org/librecms/contentsection/"
-                            + "ContentSectionManagerTest/after-add-role.xml",
-            excludeColumns = {"object_id",
-                              "role_id",
-                              "permission_id",
-                              "creation_date",
-                              "grantee_id"})
+        value = "datasets/org/librecms/contentsection/"
+                    + "ContentSectionManagerTest/after-add-role.xml",
+        excludeColumns = {"object_id",
+                          "role_id",
+                          "permission_id",
+                          "creation_date",
+                          "grantee_id"})
     @InSequence(300)
     public void addRole() {
         final ContentSection section = repository.findByLabel("info");
@@ -250,11 +255,11 @@ public class ContentSectionManagerTest {
 
     @Test
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                          + "ContentSectionManagerTest/data.xml")
+                      + "ContentSectionManagerTest/data.xml")
     @ShouldMatchDataSet(
-            value = "datasets/org/librecms/contentsection/"
-                            + "ContentSectionManagerTest/after-remove-role.xml",
-            excludeColumns = {"object_id"})
+        value = "datasets/org/librecms/contentsection/"
+                    + "ContentSectionManagerTest/after-remove-role.xml",
+        excludeColumns = {"object_id"})
     @InSequence(300)
     public void removeRole() {
         final ContentSection section = repository.findByLabel("info");

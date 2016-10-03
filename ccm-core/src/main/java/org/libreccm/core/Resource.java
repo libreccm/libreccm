@@ -218,7 +218,10 @@ public class Resource extends CcmObject implements Serializable {
         if (!Objects.equals(description, other.getDescription())) {
             return false;
         }
-        if (!Objects.equals(created, other.getCreated())) {
+        //Note: Objects.equals(created, other.getCreated() returns false even
+        //if the dates are true because Hibernate sets the value with a sub 
+        //class of date. Solved by using getCreated()...
+        if (!Objects.equals(getCreated(), other.getCreated())) {
             return false;
         }
         return Objects.equals(parent, other.getParent());

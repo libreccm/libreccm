@@ -24,14 +24,16 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.libreccm.categorization.Category;
-import org.libreccm.core.CcmObject;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.JoinTable;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
@@ -58,7 +60,12 @@ public class Folder extends Category {
     private static final long serialVersionUID = 1L;
 
     @OneToOne
-    @JoinColumn(name = "CONTENT_SECTION_ID")
+//    @JoinColumn(name = "CONTENT_SECTION_ID")
+    @JoinTable(name = "FOLDER_CONTENT_SECTION_MAP", schema = DB_SCHEMA,
+               inverseJoinColumns = {
+                   @JoinColumn(name = "CONTENT_SECTION_ID")},
+               joinColumns = {
+                   @JoinColumn(name = "FOLDER_ID")})
     private ContentSection section;
 
     @Column(name = "TYPE", nullable = false)
@@ -79,6 +86,29 @@ public class Folder extends Category {
 
     protected void setType(final FolderType type) {
         this.type = type;
+    }
+
+    /**
+     * A convenient method for getting all sub folders of folder.
+     *
+     * @return The sub folders of this folder.
+     */
+    public List<Folder> getSubFolders() {
+        return Collections.unmodifiableList(
+            getSubCategories()
+            .stream()
+            .filter(subCategory -> subCategory instanceof Folder)
+            .map(subCategory -> (Folder) subCategory)
+            .collect(Collectors.toList()));
+    }
+
+    public Folder getParentFolder() {
+        final Category parent = getParentCategory();
+        if (parent == null) {
+            return null;
+        } else {
+            return (Folder) getParentCategory();
+        }
     }
 
     @Override

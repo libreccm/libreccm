@@ -25,6 +25,6 @@ package org.librecms.contentsection;
 public enum FolderType {
     
     DOCUMENTS_FOLDER,
-    ASSET_FOLDER,
+    ASSETS_FOLDER,
     
 }

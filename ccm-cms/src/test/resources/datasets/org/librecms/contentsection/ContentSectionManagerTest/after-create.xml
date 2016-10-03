@@ -88,6 +88,15 @@
                            application_type="org.librecms.contentsection.ContentSection"
                            primary_url="test" />
     
+    <ccm_cms.folders object_id="-2100"
+                     type="DOCUMENTS_FOLDER" />
+    <ccm_cms.folders object_id="-2200"
+                     type="ASSETS_FOLDER" />
+    <ccm_cms.folders object_id="-2300"
+                     type="DOCUMENTS_FOLDER" />
+    <ccm_cms.folders object_id="-2400"
+                     type="ASSETS_FOLDER" />
+    
     <ccm_cms.content_sections object_id="-1100"
                               label="info"
                               root_documents_folder_id="-2100"
@@ -96,6 +105,15 @@
                               label="test"
                               root_documents_folder_id="-2300"
                               root_assets_folder_id="-2400" />
+    
+    <ccm_cms.folder_content_section_map folder_id="-2100"
+                                        content_section_id="-1100" />
+    <ccm_cms.folder_content_section_map folder_id="-2200"
+                                        content_section_id="-1100" />
+    <ccm_cms.folder_content_section_map folder_id="-2300"
+                                        content_section_id="-1200" />
+    <ccm_cms.folder_content_section_map folder_id="-2400"
+                                        content_section_id="-1200" />
     
     <ccm_core.ccm_roles role_id="-3100"
                         name="info_alert_recipient" />

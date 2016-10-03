@@ -72,9 +72,13 @@ DELETE FROM ccm_cms.lifecycle_phase_definitions;
 
 DELETE FROM ccm_cms.lifecyle_definitions;
 
+DELETE FROM ccm_cms.folder_content_section_map;
+
 DELETE FROM ccm_cms.content_section_roles;
 
 DELETE FROM ccm_cms.content_sections;
+
+DELETE FROM ccm_cms.folders;
 
 DELETE FROM ccm_core.settings_string_list;
 

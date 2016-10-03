@@ -189,10 +189,28 @@
                            application_type="org.librecms.contentsection.ContentSection"
                            primary_url="info" />
     
+    <ccm_cms.folders object_id="-2100" 
+                     type="DOCUMENTS_FOLDER" />
+    <ccm_cms.folders object_id="-2110" 
+                     type="DOCUMENTS_FOLDER" />
+    <ccm_cms.folders object_id="-2120" 
+                     type="DOCUMENTS_FOLDER" />
+    <ccm_cms.folders object_id="-2200" 
+                     type="ASSETS_FOLDER" />
+    
     <ccm_cms.content_sections object_id="-1100"
                               label="info"
                               root_documents_folder_id="-2100"
                               root_assets_folder_id="-2200" />
+    
+    <ccm_cms.folder_content_section_map folder_id="-2100" 
+                                        content_section_id="-1100" />
+    <ccm_cms.folder_content_section_map folder_id="-2110" 
+                                        content_section_id="-1100" />
+    <ccm_cms.folder_content_section_map folder_id="-2120" 
+                                        content_section_id="-1100" />
+    <ccm_cms.folder_content_section_map folder_id="-2200" 
+                                        content_section_id="-1100" />
     
     <ccm_cms.content_section_workflow_templates 
         content_section_id="-1100" 

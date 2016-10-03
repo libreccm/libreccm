@@ -6,7 +6,6 @@ DROP SEQUENCE IF EXISTS hibernate_sequence;
 CREATE SCHEMA ccm_core;
 CREATE SCHEMA ccm_cms;
 
-
     create table CCM_CMS.ARTICLE_LEADS (
         OBJECT_ID bigint not null,
         LOCALIZED_VALUE longvarchar,
@@ -510,6 +509,18 @@ CREATE SCHEMA ccm_cms;
         ASSET_ID bigint not null,
         REV integer not null,
         primary key (ASSET_ID, REV)
+    );
+
+    create table CCM_CMS.FOLDER_CONTENT_SECTION_MAP (
+        CONTENT_SECTION_ID bigint,
+        FOLDER_ID bigint not null,
+        primary key (FOLDER_ID)
+    );
+
+    create table CCM_CMS.FOLDERS (
+        TYPE varchar(255) not null,
+        OBJECT_ID bigint not null,
+        primary key (OBJECT_ID)
     );
 
     create table CCM_CMS.IMAGES (
@@ -1361,11 +1372,11 @@ CREATE SCHEMA ccm_cms;
         SETTING_ID bigint not null,
         CONFIGURATION_CLASS varchar(512) not null,
         NAME varchar(512) not null,
+        SETTING_VALUE_LONG bigint,
+        SETTING_VALUE_BOOLEAN boolean,
+        SETTING_VALUE_BIG_DECIMAL decimal(19,2),
         SETTING_VALUE_STRING varchar(1024),
         SETTING_VALUE_DOUBLE double,
-        SETTING_VALUE_BOOLEAN boolean,
-        SETTING_VALUE_LONG bigint,
-        SETTING_VALUE_BIG_DECIMAL decimal(19,2),
         primary key (SETTING_ID)
     );
 
@@ -1787,14 +1798,14 @@ create sequence hibernate_sequence start with 1 increment by 1;
         references CCM_CMS.CONTENT_SECTIONS;
 
     alter table CCM_CMS.CONTENT_SECTIONS 
-        add constraint FKajweudfxaf7g2ydr2hcgqwcib 
+        add constraint FKavcn4aakxsb7kt7hmqlx0ecu6 
         foreign key (ROOT_ASSETS_FOLDER_ID) 
-        references CCM_CORE.CATEGORIES;
+        references CCM_CMS.FOLDERS;
 
     alter table CCM_CMS.CONTENT_SECTIONS 
-        add constraint FK6g7kw4b6diqa0nks45ilp0vhs 
+        add constraint FKd5sahsfsycq3i5icf3122ne8e 
         foreign key (ROOT_DOCUMENTS_FOLDER_ID) 
-        references CCM_CORE.CATEGORIES;
+        references CCM_CMS.FOLDERS;
 
     alter table CCM_CMS.CONTENT_SECTIONS 
         add constraint FK72jh0axiiru87i61mppvaiv96 
@@ -1980,6 +1991,21 @@ create sequence hibernate_sequence start with 1 increment by 1;
         add constraint FK3c9xf8w1dr3q0grxslguvviqn 
         foreign key (ASSET_ID, REV) 
         references CCM_CMS.BINARY_ASSETS_AUD;
+
+    alter table CCM_CMS.FOLDER_CONTENT_SECTION_MAP 
+        add constraint FKnof2m7o4f0ufrugeh4g5wt3g9 
+        foreign key (CONTENT_SECTION_ID) 
+        references CCM_CMS.CONTENT_SECTIONS;
+
+    alter table CCM_CMS.FOLDER_CONTENT_SECTION_MAP 
+        add constraint FKmmb7728dp707dljq282ch47k3 
+        foreign key (FOLDER_ID) 
+        references CCM_CMS.FOLDERS;
+
+    alter table CCM_CMS.FOLDERS 
+        add constraint FK2ag06r5ywtuji2pkt68etlg48 
+        foreign key (OBJECT_ID) 
+        references CCM_CORE.CATEGORIES;
 
     alter table CCM_CMS.IMAGES 
         add constraint FK51ja1101epvl74auenv6sqyev 
