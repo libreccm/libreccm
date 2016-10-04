@@ -201,11 +201,11 @@
                     <artifactId>wildfly-maven-plugin</artifactId>
                     <version>1.1.0.Alpha8</version>
                 </plugin>
-                <!--<plugin>
-                    <groupId>org.jboss.tattletale</groupId>
-                    <artifactId>tattletale-maven</artifactId>
-                    <version>1.1.2.Final</version>
-                </plugin>-->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-project-info-reports-plugin</artifactId>
+                    <version>2.9</version>
+                </plugin>
             </plugins>
         </pluginManagement>
         
