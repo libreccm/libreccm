@@ -31,8 +31,6 @@ import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.resolver.api.maven.Maven;
-import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -42,21 +40,22 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.libreccm.tests.categories.IntegrationTest;
 
-import java.io.File;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import org.libreccm.core.CcmObject;
+import org.libreccm.core.CcmObjectRepository;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import static org.libreccm.testutils.DependenciesHelpers.*;
 
 /**
- * Tests for the {@link RoleRepository}. Note. We are not enabling the 
- * {@link AuthorizationInterceptor} for this test. 
- * 
+ * Tests for the {@link RoleRepository}. Note. We are not enabling the
+ * {@link AuthorizationInterceptor} for this test.
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Category(IntegrationTest.class)
@@ -72,6 +71,9 @@ public class RoleRepositoryTest {
 
     @Inject
     private RoleRepository roleRepository;
+
+    @Inject
+    private CcmObjectRepository ccmObjRepo;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -104,16 +106,18 @@ public class RoleRepositoryTest {
             .addPackage(org.libreccm.core.CcmObject.class.getPackage())
             .addPackage(org.libreccm.categorization.Categorization.class
                 .getPackage())
-            .addPackage(org.libreccm.configuration.ConfigurationManager.class
+            .addPackage(
+                org.libreccm.configuration.ConfigurationManager.class
                 .getPackage())
-            .addPackage(org.libreccm.l10n.LocalizedString.class.getPackage())
-            .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
+            .addPackage(org.libreccm.l10n.LocalizedString.class.getPackage()).
+            addPackage(org.libreccm.web.CcmApplication.class.getPackage())
             .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
             .addPackage(org.libreccm.jpa.EntityManagerProducer.class
                 .getPackage())
             .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
                 .getPackage())
-            .addPackage(org.libreccm.testutils.EqualsVerifier.class.getPackage())
+            .addPackage(org.libreccm.testutils.EqualsVerifier.class.
+                getPackage())
             .addPackage(org.libreccm.tests.categories.IntegrationTest.class
                 .getPackage())
             .addAsLibraries(getModuleDependencies())
@@ -124,16 +128,31 @@ public class RoleRepositoryTest {
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
+    /**
+     * Verify that a {@link RoleRepository} instance is injected into
+     * {@link #roleRepository}.
+     */
     @Test
     public void repoIsInjected() {
         assertThat(roleRepository, is(not(nullValue())));
     }
 
+    /**
+     * Verify that a {@link EntityManager} instance is injected into
+     * {@link #entityManager}.
+     */
     @Test
     public void entityManagerIsInjected() {
         assertThat(entityManager, is(not(nullValue())));
     }
 
+    /**
+     * Helper method encapsulating some checks done multiple test methods.
+     *
+     * @param administrator The administrator role.
+     * @param user          The user role.
+     * @param reader        The reader role.
+     */
     private void checkRoles(final Role administrator,
                             final Role user,
                             final Role reader) {
@@ -150,6 +169,10 @@ public class RoleRepositoryTest {
         assertThat(reader.getName(), is(equalTo(READER)));
     }
 
+    /**
+     * Tries to find several {@link Role}s by their {@link Role#roleId} using
+     * {@link RoleRepository#findById(java.lang.Object)}.
+     */
     @Test
     @UsingDataSet("datasets/org/libreccm/security/RoleRepositoryTest/data.yml")
     @InSequence(100)
@@ -161,6 +184,10 @@ public class RoleRepositoryTest {
         checkRoles(administrator, user, reader);
     }
 
+    /**
+     * Tries to find several {@link Role}s by their unique {@link Role#name}
+     * using {@link RoleRepository#findByName(java.lang.String)}.
+     */
     @Test
     @UsingDataSet("datasets/org/libreccm/security/RoleRepositoryTest/data.yml")
     @InSequence(200)
@@ -172,6 +199,9 @@ public class RoleRepositoryTest {
         checkRoles(administrator, user, reader);
     }
 
+    /**
+     * Tries to find all {@link Role}s using {@link RoleRepository#findAll()}.
+     */
     @Test
     @UsingDataSet("datasets/org/libreccm/security/RoleRepositoryTest/data.yml")
     @InSequence(300)
@@ -181,6 +211,70 @@ public class RoleRepositoryTest {
         assertThat(roles.size(), is(3));
     }
 
+    /**
+     * Tests the {@link RoleRepository#findByPrivilege(java.lang.String)} method
+     * and the named query used by this method. Note: We are using the dataset
+     * from the {@link PermissionManagerTest} here because it contains roles,
+     * permissions and objects.
+     */
+    @Test
+    @UsingDataSet(
+        "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
+    @InSequence(310)
+    public void findByPrivilege() {
+        final List<Role> rolesWithPrivilege1 = roleRepository.findByPrivilege(
+            "privilege1");
+        final List<Role> rolesWithPrivilege2 = roleRepository.findByPrivilege(
+            "privilege2");
+        final List<Role> empty = roleRepository.findByPrivilege("privilege3");
+
+        assertThat(rolesWithPrivilege1.size(), is(1));
+        assertThat(rolesWithPrivilege2.size(), is(2));
+        assertThat(empty.isEmpty(), is(true));
+
+        assertThat(rolesWithPrivilege1.get(0).getName(), is(equalTo("role1")));
+        assertThat(rolesWithPrivilege2.get(0).getName(), is(equalTo("role1")));
+        assertThat(rolesWithPrivilege2.get(1).getName(), is(equalTo("role2")));
+
+    }
+
+    /**
+     * Tests the {@link RoleRepository#findByPrivilege(java.lang.String, org.libreccm.core.CcmObject)
+     * } method and the named query used by this method. Note: We are using the
+     * dataset from the {@link PermissionManagerTest} here because it contains
+     * roles, permissions and objects.
+     */
+    @Test
+    @UsingDataSet(
+        "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
+    @InSequence(310)
+    public void findByPrivilegeAndObject() {
+        final CcmObject object1 = ccmObjRepo.findById(-20001L);
+        final CcmObject object2 = ccmObjRepo.findById(-20002L);
+        final CcmObject object3 = ccmObjRepo.findById(-20003L);
+
+        final List<Role> rolesWithPrivilege1 = roleRepository.findByPrivilege(
+            "privilege1", object1);
+        final List<Role> rolesWithPrivilege2 = roleRepository.findByPrivilege(
+            "privilege2", object1);
+        final List<Role> empty1 = roleRepository.findByPrivilege("privilege3",
+                                                                 object1);
+        final List<Role> empty2 = roleRepository.findByPrivilege("privilege1",
+                                                                 object3);
+
+        assertThat(rolesWithPrivilege1.size(), is(0));
+        assertThat(rolesWithPrivilege2.size(), is(1));
+        assertThat(empty1.isEmpty(), is(true));
+        assertThat(empty2.isEmpty(), is(true));
+
+        assertThat(rolesWithPrivilege2.get(0).getName(), is(equalTo("role1")));
+
+    }
+
+    /**
+     * Tries to save a new {@link Role} by using
+     * {@link RoleRepository#save(org.libreccm.security.Role)}.
+     */
     @Test
     @UsingDataSet("datasets/org/libreccm/security/RoleRepositoryTest/data.yml")
     @ShouldMatchDataSet(value = "datasets/org/libreccm/security/"
@@ -194,6 +288,10 @@ public class RoleRepositoryTest {
         roleRepository.save(role);
     }
 
+    /**
+     * Tries to save a updated {@link Role} by using
+     * {@link RoleRepository#save(org.libreccm.security.Role)}.
+     */
     @Test
     @UsingDataSet("datasets/org/libreccm/security/RoleRepositoryTest/data.yml")
     @ShouldMatchDataSet(value = "datasets/org/libreccm/security/"
@@ -207,6 +305,11 @@ public class RoleRepositoryTest {
         roleRepository.save(role);
     }
 
+    /**
+     * Verifies that {@link RoleRepository#save(org.libreccm.security.Role)}
+     * throws a {@link IllegalArgumentException} is called with {@code null} for
+     * the {@link Role} to save.
+     */
     @Test(expected = IllegalArgumentException.class)
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(600)
@@ -214,6 +317,10 @@ public class RoleRepositoryTest {
         roleRepository.save(null);
     }
 
+    /**
+     * Tries a delete a {@link Role} by using
+     * {@link RoleRepository#delete(org.libreccm.security.Role)}.
+     */
     @Test
     @UsingDataSet("datasets/org/libreccm/security/RoleRepositoryTest/data.yml")
     @ShouldMatchDataSet(value = "datasets/org/libreccm/security/"
@@ -226,6 +333,11 @@ public class RoleRepositoryTest {
         roleRepository.delete(role);
     }
 
+    /**
+     * Verifies that {@link RoleRepository#delete(org.libreccm.security.Role)}
+     * throws an {@link IllegalArgumentException} is called with {@code null}
+     * for the {@link Role} to delete.
+     */
     @Test(expected = IllegalArgumentException.class)
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(800)

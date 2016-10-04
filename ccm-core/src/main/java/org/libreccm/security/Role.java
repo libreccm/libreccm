@@ -89,7 +89,18 @@ import javax.xml.bind.annotation.XmlRootElement;
             query = "SELECT COUNT(r.name) FROM Role r "
                             + "WHERE LOWER(r.name) LIKE CONCAT(LOWER(:name), '%') "
                     + "GROUP BY r.name "
-                            + "ORDER BY r.name ")
+                            + "ORDER BY r.name "),
+    @NamedQuery(
+            name = "Role.findByPrivilege",
+            query = "SELECT r FROM Role r JOIN r.permissions p "
+                            + "WHERE p.grantedPrivilege = :privilege "
+                            + "ORDER BY r.name"),
+    @NamedQuery(
+            name = "Role.findByPrivilegeAndObject",
+            query = "SELECT r FROM Role r JOIN r.permissions p "
+                            + "WHERE p.grantedPrivilege = :privilege "
+                            + "AND p.object = :object "
+                            + "ORDER BY r.name")
 })
 @NamedEntityGraphs({
     @NamedEntityGraph(
