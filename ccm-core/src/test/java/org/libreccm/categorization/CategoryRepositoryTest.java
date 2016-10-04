@@ -112,7 +112,7 @@ public class CategoryRepositoryTest {
             .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
                 .getPackage())
             .addPackage(org.libreccm.l10n.LocalizedString.class.getPackage())
-            .addPackage(org.libreccm.security.Permission.class.getPackage())
+            .addPackage(org.libreccm.security.Privilege.class.getPackage())
             .addPackage(org.libreccm.testutils.EqualsVerifier.class
                 .getPackage())
             .addPackage(org.libreccm.tests.categories.IntegrationTest.class

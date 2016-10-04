@@ -118,7 +118,7 @@ public class ConfigurationManagerTest {
                 .getPackage())
             .addPackage(org.libreccm.l10n.LocalizedString.class
                 .getPackage())
-            .addPackage(org.libreccm.security.Permission.class.getPackage())
+            .addPackage(org.libreccm.security.Privilege.class.getPackage())
             .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
             .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
             .addPackage(org.libreccm.tests.categories.IntegrationTest.class
