@@ -86,7 +86,7 @@ public class ApplicationManager {
     }
 
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public <T extends CcmApplication> T createInstance(
         final ApplicationType type,
@@ -103,7 +103,7 @@ public class ApplicationManager {
     }
 
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public void deleteInstance(final CcmApplication application) {
         entityManager.remove(application);

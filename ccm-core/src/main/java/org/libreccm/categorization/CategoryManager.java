@@ -93,7 +93,7 @@ public class CategoryManager {
     @Transactional(Transactional.TxType.REQUIRED)
     public void addObjectToCategory(
         final CcmObject object,
-        @RequiresPrivilege(MANAGE_CATEGORY_OBJECTS_PRIVILEGE)
+        @RequiresPrivilege(PRIVILEGE_MANAGE_CATEGORY_OBJECTS)
         final Category category) {
 
         addObjectToCategory(object, category, null);
@@ -121,7 +121,7 @@ public class CategoryManager {
     @Transactional(Transactional.TxType.REQUIRED)
     public void addObjectToCategory(
         final CcmObject object,
-        @RequiresPrivilege(MANAGE_CATEGORY_OBJECTS_PRIVILEGE)
+        @RequiresPrivilege(PRIVILEGE_MANAGE_CATEGORY_OBJECTS)
         final Category category,
         final String type) {
 
@@ -181,7 +181,7 @@ public class CategoryManager {
     @Transactional(Transactional.TxType.REQUIRED)
     public void removeObjectFromCategory(
         final CcmObject object,
-        @RequiresPrivilege(MANAGE_CATEGORY_OBJECTS_PRIVILEGE)
+        @RequiresPrivilege(PRIVILEGE_MANAGE_CATEGORY_OBJECTS)
         final Category category)
         throws ObjectNotAssignedToCategoryException {
 
@@ -252,7 +252,7 @@ public class CategoryManager {
     @Transactional(Transactional.TxType.REQUIRED)
     public void increaseObjectOrder(
         final CcmObject object,
-        @RequiresPrivilege(MANAGE_CATEGORY_OBJECTS_PRIVILEGE)
+        @RequiresPrivilege(PRIVILEGE_MANAGE_CATEGORY_OBJECTS)
         final Category category)
         throws ObjectNotAssignedToCategoryException {
 
@@ -326,7 +326,7 @@ public class CategoryManager {
     @Transactional(Transactional.TxType.REQUIRED)
     public void decreaseObjectOrder(
         final CcmObject object,
-        @RequiresPrivilege(MANAGE_CATEGORY_OBJECTS_PRIVILEGE)
+        @RequiresPrivilege(PRIVILEGE_MANAGE_CATEGORY_OBJECTS)
         final Category category)
         throws ObjectNotAssignedToCategoryException {
 
@@ -417,7 +417,7 @@ public class CategoryManager {
     @Transactional(Transactional.TxType.REQUIRED)
     public void addSubCategoryToCategory(
         final Category subCategory,
-        @RequiresPrivilege(MANAGE_CATEGORY_PRIVILEGE)
+        @RequiresPrivilege(PRIVILEGE_MANAGE_CATEGORY)
         final Category parentCategory) {
 
         final Category sub = categoryRepo.findById(subCategory.getObjectId());
@@ -457,7 +457,7 @@ public class CategoryManager {
     @Transactional(Transactional.TxType.REQUIRED)
     public void removeSubCategoryFromCategory(
         final Category subCategory,
-        @RequiresPrivilege(MANAGE_CATEGORY_PRIVILEGE)
+        @RequiresPrivilege(PRIVILEGE_MANAGE_CATEGORY)
         final Category parentCategory) {
 
         if (subCategory.getParentCategory() == null
@@ -502,7 +502,7 @@ public class CategoryManager {
     @Transactional(Transactional.TxType.REQUIRED)
     public void increaseCategoryOrder(
         final Category subCategory,
-        @RequiresPrivilege(MANAGE_CATEGORY_PRIVILEGE)
+        @RequiresPrivilege(PRIVILEGE_MANAGE_CATEGORY)
         final Category parentCategory) {
 
         if (parentCategory == null) {
@@ -577,7 +577,7 @@ public class CategoryManager {
     @Transactional(Transactional.TxType.REQUIRED)
     public void decreaseCategoryOrder(
         final Category subCategory,
-        @RequiresPrivilege(MANAGE_CATEGORY_PRIVILEGE)
+        @RequiresPrivilege(PRIVILEGE_MANAGE_CATEGORY)
         final Category parentCategory) {
 
         if (parentCategory == null) {

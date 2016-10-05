@@ -42,13 +42,18 @@ import org.libreccm.core.CcmObject;
 import org.libreccm.core.CcmObjectRepository;
 import org.libreccm.tests.categories.IntegrationTest;
 
-
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
+
 import static org.libreccm.testutils.DependenciesHelpers.*;
+
+import org.libreccm.categorization.CategorizationConstants;
+import org.libreccm.core.CoreConstants;
+
+import java.util.List;
 
 /**
  *
@@ -501,8 +506,7 @@ public class PermissionManagerTest {
         }
     }
 
-    @Test(expected
-              = IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     @UsingDataSet(
         "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
     @ShouldThrowException(IllegalArgumentException.class)
@@ -516,6 +520,36 @@ public class PermissionManagerTest {
         } catch (ExecutionException ex) {
             throw ex.getCause();
         }
+    }
+
+    /**
+     * Verifies if
+     * {@link PermissionManager#listDefiniedPrivileges(java.lang.Class)} returns
+     * the expected value.
+     */
+    @Test
+    @InSequence(500)
+    public void verifyListPrivileges() {
+
+        final List<String> corePrivileges = permissionManager
+            .listDefiniedPrivileges(CoreConstants.class);
+        final List<String> catPrivileges = permissionManager
+            .listDefiniedPrivileges(CategorizationConstants.class);
+
+        assertThat(corePrivileges, is(not(nullValue())));
+        assertThat(corePrivileges.isEmpty(), is(false));
+        assertThat(corePrivileges.size(), is(2));
+        assertThat(corePrivileges, contains(CoreConstants.PRIVILEGE_ADMIN,
+                                            CoreConstants.PRIVILEGE_SYSTEM));
+
+        assertThat(catPrivileges, is(not(nullValue())));
+        assertThat(catPrivileges.isEmpty(), is(false));
+        assertThat(catPrivileges.size(), is(3));
+        assertThat(catPrivileges,
+                   contains(CategorizationConstants.PRIVILEGE_MANAGE_CATEGORY,
+                            CategorizationConstants.PRIVILEGE_MANAGE_CATEGORY_OBJECTS,
+                            CategorizationConstants.PRIVILEGE_MANAGE_DOMAINS));
+
     }
 
 }

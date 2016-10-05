@@ -25,10 +25,10 @@ package org.libreccm.categorization;
 public final class CategorizationConstants {
 
     public static final String CAT_XML_NS = "http://categorization.libreccm.org";
-    public static final String MANAGE_CATEGORY_PRIVILEGE = "manage_category";
-    public static final String MANAGE_CATEGORY_OBJECTS_PRIVILEGE
+    public static final String PRIVILEGE_MANAGE_CATEGORY = "manage_category";
+    public static final String PRIVILEGE_MANAGE_CATEGORY_OBJECTS
                                = "manage_category_objects";
-    public static final String MANAGE_DOMAINS_PRIVILEGE = "manage_domains";
+    public static final String PRIVILEGE_MANAGE_DOMAINS = "manage_domains";
 
     private CategorizationConstants() {
         //Nothing

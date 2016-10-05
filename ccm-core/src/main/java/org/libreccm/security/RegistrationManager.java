@@ -82,7 +82,7 @@ public class RegistrationManager {
      * @throws IllegalArgumentException If the provided {@code user} is
      */
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.SYSTEM_PRIVILEGE)
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_SYSTEM)
     public void registerUser(final String userName,
                              final String familyName,
                              final String givenName,

@@ -28,6 +28,13 @@ import javax.persistence.TypedQuery;
 import org.libreccm.core.CcmObject;
 import org.libreccm.core.CoreConstants;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
 import javax.enterprise.context.RequestScoped;
 import javax.transaction.Transactional;
 
@@ -69,7 +76,7 @@ public class PermissionManager {
      * @param object    The object on which the privilege is granted.
      */
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public void grantPrivilege(final String privilege,
                                final Role grantee,
@@ -107,7 +114,7 @@ public class PermissionManager {
      * @param grantee   The role to which the privilege is granted.
      */
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public void grantPrivilege(final String privilege,
                                final Role grantee) {
@@ -140,7 +147,7 @@ public class PermissionManager {
      * @param object    The object on which the privilege was granted.
      */
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public void revokePrivilege(final String privilege,
                                 final Role grantee,
@@ -181,7 +188,7 @@ public class PermissionManager {
      * @param grantee   The role to which the privilege was granted.
      */
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public void revokePrivilege(final String privilege,
                                 final Role grantee) {
@@ -218,7 +225,7 @@ public class PermissionManager {
      * @param target
      */
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public void copyPermissions(final CcmObject source,
                                 final CcmObject target) {
@@ -241,6 +248,25 @@ public class PermissionManager {
             grantPrivilege(permission.getGrantedPrivilege(),
                            permission.getGrantee(),
                            target);
+        }
+    }
+
+    public List<String> listDefiniedPrivileges(final Class<?> clazz) {
+        return Arrays.stream(clazz.getDeclaredFields())
+            .filter(field -> Modifier.isStatic(field.getModifiers())
+                                 && Modifier.isFinal(field.getModifiers()))
+            .filter(field -> field.getName().startsWith("PRIVILEGE_")
+                                 || clazz.getSimpleName().endsWith("Privileges"))
+            .map(field -> getPrivilegeString(field))
+            .sorted()
+            .collect(Collectors.toList());
+    }
+
+    private String getPrivilegeString(final Field field) {
+        try {
+            return (String) field.get(null);
+        } catch (IllegalArgumentException | IllegalAccessException ex) {
+            throw new RuntimeException(ex);
         }
     }
 

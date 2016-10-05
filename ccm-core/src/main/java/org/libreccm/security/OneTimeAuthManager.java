@@ -79,7 +79,7 @@ public class OneTimeAuthManager {
      * @return The one time authentication token with the not hashed token.
      */
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.SYSTEM_PRIVILEGE)
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_SYSTEM)
     @Transactional(Transactional.TxType.REQUIRED)
     public OneTimeAuthToken createForUser(
         final User user, final OneTimeAuthTokenPurpose purpose) {
@@ -148,7 +148,7 @@ public class OneTimeAuthManager {
      *         {@code null} if there is no such token.
      */
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.SYSTEM_PRIVILEGE)
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_SYSTEM)
     public List<OneTimeAuthToken> retrieveForUser(
         final User user, final OneTimeAuthTokenPurpose purpose) {
         if (user == null || purpose == null) {
@@ -177,7 +177,7 @@ public class OneTimeAuthManager {
      *         purpose, {@code false} if not.
      */
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.SYSTEM_PRIVILEGE)
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_SYSTEM)
     public boolean validTokenExistsForUser(
         final User user, final OneTimeAuthTokenPurpose purpose) {
         if (user == null || purpose == null) {
@@ -209,7 +209,7 @@ public class OneTimeAuthManager {
      * @return {@code true} if the token is valid, {@code false} if not.
      */
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.SYSTEM_PRIVILEGE)
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_SYSTEM)
     public boolean isValid(final OneTimeAuthToken token) {
         if (token == null) {
             throw new IllegalArgumentException("Can't validate a token null");
@@ -234,7 +234,7 @@ public class OneTimeAuthManager {
      * {@code false} if not.
      */
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.SYSTEM_PRIVILEGE)
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_SYSTEM)
     public boolean verify(final OneTimeAuthToken token,
                           final String submittedToken) {
         if (token == null || submittedToken == null) {
@@ -265,7 +265,7 @@ public class OneTimeAuthManager {
      * @param token The token to invalidate.
      */
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.SYSTEM_PRIVILEGE)
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_SYSTEM)
     @Transactional(Transactional.TxType.REQUIRED)
     public void invalidate(final OneTimeAuthToken token) {
         if (token == null) {

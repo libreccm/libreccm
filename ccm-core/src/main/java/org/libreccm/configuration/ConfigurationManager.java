@@ -132,7 +132,7 @@ public class ConfigurationManager {
      *                                  {@link Configuration}.
      */
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public void saveConfiguration(final Object configuration) {
         if (configuration == null) {
@@ -278,7 +278,7 @@ public class ConfigurationManager {
      * @param value         The value to set.
      */
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     private <T> void setSettingValue(final Object configuration,
                                      final String settingName,

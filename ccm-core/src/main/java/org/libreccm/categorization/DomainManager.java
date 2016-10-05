@@ -63,7 +63,7 @@ public class DomainManager {
      * @return The new domain.
      */
     @AuthorizationRequired
-    @RequiresPrivilege(CategorizationConstants.MANAGE_DOMAINS_PRIVILEGE)
+    @RequiresPrivilege(CategorizationConstants.PRIVILEGE_MANAGE_DOMAINS)
     @Transactional(Transactional.TxType.REQUIRED)
     public Domain createDomain(final String domainKey,
                                final String rootCategoryName) {
@@ -95,7 +95,7 @@ public class DomainManager {
      *                    {@code CcmApplication is added}.
      */
     @AuthorizationRequired
-    @RequiresPrivilege(CategorizationConstants.MANAGE_DOMAINS_PRIVILEGE)
+    @RequiresPrivilege(CategorizationConstants.PRIVILEGE_MANAGE_DOMAINS)
     @Transactional(Transactional.TxType.REQUIRED)
     public void addDomainOwner(final CcmApplication application,
                                final Domain domain) {
@@ -124,7 +124,7 @@ public class DomainManager {
      *                    {@code CcmApplication} should be removed.
      */
     @AuthorizationRequired
-    @RequiresPrivilege(CategorizationConstants.MANAGE_DOMAINS_PRIVILEGE)
+    @RequiresPrivilege(CategorizationConstants.PRIVILEGE_MANAGE_DOMAINS)
     @Transactional(Transactional.TxType.REQUIRED)
     public void removeDomainOwner(final CcmApplication application,
                                   final Domain domain) {

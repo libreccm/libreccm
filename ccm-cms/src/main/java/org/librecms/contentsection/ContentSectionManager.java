@@ -86,7 +86,7 @@ public class ContentSectionManager {
      * @return The new content section.
      */
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public ContentSection createContentSection(final String name) {
         if (name == null || name.isEmpty()) {
@@ -191,7 +191,7 @@ public class ContentSectionManager {
      * @@param name The new name of the content section.
      */
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public void renameContentSection(final ContentSection section,
                                      final String name) {

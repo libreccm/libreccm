@@ -224,7 +224,7 @@ public class SettingManager {
      * @param setting The setting to save.
      */
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public void saveSetting(final AbstractSetting<?> setting) {
         if (setting.getSettingId() == 0) {

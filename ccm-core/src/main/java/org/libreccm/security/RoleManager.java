@@ -56,7 +56,7 @@ public class RoleManager {
      * @param party The party which to which to role is assigned.
      */
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public void assignRoleToParty(final Role role, final Party party) {
         if (role == null) {
@@ -92,7 +92,7 @@ public class RoleManager {
      * @param party
      */
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public void removeRoleFromParty(final Role role, final Party party) {
         if (role == null) {

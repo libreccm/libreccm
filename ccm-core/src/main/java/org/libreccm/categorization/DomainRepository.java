@@ -144,7 +144,7 @@ public class DomainRepository extends AbstractEntityRepository<Long, Domain> {
     }
 
     @AuthorizationRequired
-    @RequiresPrivilege(CategorizationConstants.MANAGE_DOMAINS_PRIVILEGE)
+    @RequiresPrivilege(CategorizationConstants.PRIVILEGE_MANAGE_DOMAINS)
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public void save(final Domain domain) {
@@ -152,7 +152,7 @@ public class DomainRepository extends AbstractEntityRepository<Long, Domain> {
     }
     
     @AuthorizationRequired
-    @RequiresPrivilege(CategorizationConstants.MANAGE_DOMAINS_PRIVILEGE)
+    @RequiresPrivilege(CategorizationConstants.PRIVILEGE_MANAGE_DOMAINS)
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public void delete(final Domain domain) {

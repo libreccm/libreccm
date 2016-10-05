@@ -110,7 +110,7 @@ public class ChallengeManager {
      * @return The text of the challenge mail.
      */
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.SYSTEM_PRIVILEGE)
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_SYSTEM)
     public String createEmailVerification(final User user) {
         if (user == null) {
             throw new IllegalArgumentException(
@@ -129,7 +129,7 @@ public class ChallengeManager {
      *                            user.
      */
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.SYSTEM_PRIVILEGE)
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_SYSTEM)
     public void sendEmailVerification(final User user)
         throws MessagingException {
         final String text = createEmailVerification(user);
@@ -151,7 +151,7 @@ public class ChallengeManager {
      *                                  stored token.
      */
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.SYSTEM_PRIVILEGE)
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_SYSTEM)
     public void finishEmailVerification(final User user,
                                         final String submittedToken)
         throws ChallengeFailedException {
@@ -180,7 +180,7 @@ public class ChallengeManager {
      * @return The challenge message.
      */
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.SYSTEM_PRIVILEGE)
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_SYSTEM)
     public String createAccountActivation(final User user) {
         if (user == null) {
             throw new IllegalArgumentException(
@@ -198,7 +198,7 @@ public class ChallengeManager {
      *                            message.
      */
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.SYSTEM_PRIVILEGE)
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_SYSTEM)
     public void sendAccountActivation(final User user)
         throws MessagingException {
         final String text = createAccountActivation(user);
@@ -220,7 +220,7 @@ public class ChallengeManager {
      *                                  the stored token.
      */
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.SYSTEM_PRIVILEGE)
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_SYSTEM)
     public void finishAccountActivation(final User user,
                                         final String submittedToken)
         throws ChallengeFailedException {
@@ -247,7 +247,7 @@ public class ChallengeManager {
      * @return The challenge message.
      */
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.SYSTEM_PRIVILEGE)
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_SYSTEM)
     public String createPasswordRecover(final User user) {
         if (user == null) {
             throw new IllegalArgumentException(
@@ -266,7 +266,7 @@ public class ChallengeManager {
      *                            message.
      */
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.SYSTEM_PRIVILEGE)
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_SYSTEM)
     public void sendPasswordRecover(final User user)
         throws MessagingException {
         final String text = createPasswordRecover(user);
@@ -289,7 +289,7 @@ public class ChallengeManager {
      *                                  the stored token.
      */
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.SYSTEM_PRIVILEGE)
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_SYSTEM)
     public void finishPasswordRecover(final User user,
                                       final String submittedToken,
                                       final String newPassword)

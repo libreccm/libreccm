@@ -120,7 +120,7 @@ public class GlobalNavigation extends SimpleComponent {
 
             /* If the current user has admin permissions, insert a link to the admin center */
             if (CdiUtil.createCdiUtil().findBean(PermissionChecker.class)
-                .isPermitted(CoreConstants.ADMIN_PRIVILEGE)) {
+                .isPermitted(CoreConstants.PRIVILEGE_ADMIN)) {
                 link(sreq, nav, "cms:adminCenter", m_adminPath, adminTitle);
             }
 

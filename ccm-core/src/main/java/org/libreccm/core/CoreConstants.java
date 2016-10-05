@@ -52,12 +52,12 @@ public final class CoreConstants {
     /**
      * Constant for the {@code admin} privilege.
      */
-    public static final String ADMIN_PRIVILEGE = "admin";
+    public static final String PRIVILEGE_ADMIN = "admin";
     
     /**
      * Constant for the {@code system} privilege.
      */
-    public static final String SYSTEM_PRIVILEGE = "system";
+    public static final String PRIVILEGE_SYSTEM = "system";
 
     private CoreConstants() {
         //Nothing

@@ -62,7 +62,7 @@ public class ContentSectionRepository
     }
 
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public void save(final ContentSection section) {
@@ -75,7 +75,7 @@ public class ContentSectionRepository
     }
 
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public void delete(final ContentSection section) {

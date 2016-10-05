@@ -56,7 +56,7 @@ public class GroupManager {
      * @param group  The group to which the user is added.
      */
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public void addMemberToGroup(final User user, final Group group) {
         if (user == null) {
@@ -95,7 +95,7 @@ public class GroupManager {
      * @param group The group from which the user is removed.
      */
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public void removeMemberFromGroup(final User member, final Group group) {
         if (member == null) {

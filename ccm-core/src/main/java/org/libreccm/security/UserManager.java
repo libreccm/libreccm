@@ -82,7 +82,7 @@ public class UserManager {
      * @return The new user.
      */
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @ValidateOnExecution
     @Transactional(Transactional.TxType.REQUIRED)
     public User createUser(final String givenName,
@@ -142,7 +142,7 @@ public class UserManager {
             user.setPassword(hashPassword(newPassword));
             shiro.getSystemUser().execute(() -> userRepository.save(user));
         } else {
-            permissionChecker.checkPermission(CoreConstants.ADMIN_PRIVILEGE);
+            permissionChecker.checkPermission(CoreConstants.PRIVILEGE_ADMIN);
             user.setPassword(hashPassword(newPassword));
             shiro.getSystemUser().execute(() -> userRepository.save(user));
         }

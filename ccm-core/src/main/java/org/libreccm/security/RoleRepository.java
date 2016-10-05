@@ -142,7 +142,7 @@ public class RoleRepository extends AbstractEntityRepository<Long, Role> {
     }
 
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public void save(final Role role) {
@@ -150,7 +150,7 @@ public class RoleRepository extends AbstractEntityRepository<Long, Role> {
     }
 
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Override
     @Transactional(Transactional.TxType.REQUIRED)
     public void delete(final Role role) {

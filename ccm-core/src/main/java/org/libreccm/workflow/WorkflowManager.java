@@ -67,7 +67,7 @@ public class WorkflowManager {
     private Shiro shiro;
 
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public Workflow createWorkflow(final WorkflowTemplate template) {
         final Workflow workflow = new Workflow();
@@ -169,7 +169,7 @@ public class WorkflowManager {
     }
 
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public void addTask(final Workflow workflow, final Task task) {
         workflow.addTask(task);
@@ -180,7 +180,7 @@ public class WorkflowManager {
     }
 
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public void removeTask(final Workflow workflow, final Task task) {
         workflow.removeTask(task);
@@ -191,7 +191,7 @@ public class WorkflowManager {
     }
 
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public void assignTask(final UserTask task, final Role role) {
         final TaskAssignment assignment = new TaskAssignment();
@@ -207,7 +207,7 @@ public class WorkflowManager {
     }
 
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public void retractTask(final UserTask task, final Role role) {
         final List<TaskAssignment> result = task.getAssignments().stream()
@@ -223,7 +223,7 @@ public class WorkflowManager {
     }
 
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public void addDependentTask(final Task parent, final Task task) {
         parent.addDependentTask(task);
@@ -234,7 +234,7 @@ public class WorkflowManager {
     }
 
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public void removeDependentTask(final Task parent, final Task task) {
         parent.removeDependentTask(task);
@@ -245,7 +245,7 @@ public class WorkflowManager {
     }
 
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public void lockTask(final UserTask task) {
         task.setLocked(true);
@@ -255,7 +255,7 @@ public class WorkflowManager {
     }
 
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public void unlockTask(final UserTask task) {
         task.setLocked(false);
@@ -265,7 +265,7 @@ public class WorkflowManager {
     }
 
     @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.ADMIN_PRIVILEGE)
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public List<UserTask> lockedBy(final User user) {
         final TypedQuery<UserTask> query = entityManager.createNamedQuery(
