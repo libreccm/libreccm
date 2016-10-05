@@ -56,6 +56,8 @@ import org.libreccm.core.CoreConstants;
 import java.util.List;
 
 /**
+ * Integration tests (run in a Application Server by Arquillian} for the
+ * {@link PermissionManager}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -136,24 +138,40 @@ public class PermissionManagerTest {
             .addAsWebInfResource("META-INF/beans.xml", "beans.xml");
     }
 
+    /**
+     * Verifies that a {@link PermissionManager} is injected.
+     */
     @Test
     @InSequence(100)
     public void permissionManagerIsInjected() {
         assertThat(permissionManager, is(not(nullValue())));
     }
 
+    /**
+     * Verifies that a {@link RoleRepository} is injected.
+     */
     @Test
     @InSequence(110)
     public void roleRepositoryIsInjected() {
         assertThat(roleRepository, is(not(nullValue())));
     }
 
+    /**
+     * Verifies that a {@link CcmObjectRepository} is injected.
+     */
     @Test
     @InSequence(120)
     public void ccmObjectRepositoryIsInjected() {
         assertThat(ccmObjectRepository, is(not(nullValue())));
     }
 
+    /**
+     * Verifies that the
+     * {@link PermissionManager#grantPrivilege(java.lang.String, org.libreccm.security.Role)}
+     * and
+     * {@link PermissionManager#grantPrivilege(java.lang.String, org.libreccm.security.Role, org.libreccm.core.CcmObject)}
+     * create valid permissions.
+     */
     @Test
     @UsingDataSet(
         "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
@@ -172,6 +190,13 @@ public class PermissionManagerTest {
         });
     }
 
+    /**
+     * Verifies that
+     * {@link PermissionManager#grantPrivilege(java.lang.String, org.libreccm.security.Role)}
+     * and
+     * {@link PermissionManager#grantPrivilege(java.lang.String, org.libreccm.security.Role, org.libreccm.core.CcmObject)}
+     * don't create duplicate permissions if an permission already exists.
+     */
     @Test
     @UsingDataSet(
         "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
@@ -189,6 +214,14 @@ public class PermissionManagerTest {
         });
     }
 
+    /**
+     * Verifies that
+     * {@link PermissionManager#grantPrivilege(java.lang.String, org.libreccm.security.Role)}
+     * throws a {@link IllegalArgumentException} if called with {@code null} for
+     * the privilege to grant.
+     *
+     * @throws Throwable
+     */
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet(
         "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
@@ -205,6 +238,14 @@ public class PermissionManagerTest {
         }
     }
 
+    /**
+     * Verifies that
+     * {@link PermissionManager#grantPrivilege(java.lang.String, org.libreccm.security.Role, org.libreccm.core.CcmObject)}
+     * throws a {@link IllegalArgumentException} if called with {@code null} for
+     * the privilege to grant.
+     *
+     * @throws Throwable
+     */
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet(
         "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
@@ -222,6 +263,14 @@ public class PermissionManagerTest {
         }
     }
 
+    /**
+     * Verifies that
+     * {@link PermissionManager#grantPrivilege(java.lang.String, org.libreccm.security.Role)}
+     * throws a {@link IllegalArgumentException} if called with an empty for a
+     * privilege to grant.
+     *
+     * @throws Throwable
+     */
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet(
         "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
@@ -238,6 +287,14 @@ public class PermissionManagerTest {
         }
     }
 
+    /**
+     * Verifies that
+     * {@link PermissionManager#grantPrivilege(java.lang.String, org.libreccm.security.Role, org.libreccm.core.CcmObject)}
+     * throws a {@link IllegalArgumentException} if called with an empty for a
+     * privilege to grant.
+     *
+     * @throws Throwable
+     */
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet(
         "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
@@ -255,6 +312,14 @@ public class PermissionManagerTest {
         }
     }
 
+    /**
+     * Verifies that
+     * {@link PermissionManager#grantPrivilege(java.lang.String, org.libreccm.security.Role}
+     * throws a {@link IllegalArgumentException} if called with {@code null} for
+     * the role parameter
+     *
+     * @throws Throwable
+     */
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet(
         "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
@@ -269,6 +334,14 @@ public class PermissionManagerTest {
         }
     }
 
+    /**
+     * Verifies that
+     * {@link PermissionManager#grantPrivilege(java.lang.String, org.libreccm.security.Role, org.libreccm.core.CcmObject)}
+     * throws a {@link IllegalArgumentException} if called with {@code null} for
+     * the role parameter
+     *
+     * @throws Throwable
+     */
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet(
         "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
@@ -287,6 +360,14 @@ public class PermissionManagerTest {
         }
     }
 
+    /**
+     * Verifies that
+     * {@link PermissionManager#grantPrivilege(java.lang.String, org.libreccm.security.Role, org.libreccm.core.CcmObject)}
+     * throws a {@link IllegalArgumentException} if called with {@code null} for
+     * the object on which the privilege should be granted.
+     *
+     * @throws Throwable
+     */
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet(
         "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
@@ -305,6 +386,13 @@ public class PermissionManagerTest {
         }
     }
 
+    /**
+     * Verifies that
+     * {@link PermissionManager#revokePrivilege(java.lang.String, org.libreccm.security.Role)}
+     * and
+     * {@link PermissionManager#revokePrivilege(java.lang.String, org.libreccm.security.Role, org.libreccm.core.CcmObject)}
+     * delete the appropriate permissions from the database.
+     */
     @Test
     @UsingDataSet(
         "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
@@ -323,6 +411,14 @@ public class PermissionManagerTest {
         });
     }
 
+    /**
+     * Verifies that
+     * {@link PermissionManager#revokePrivilege(java.lang.String, org.libreccm.security.Role)}
+     * does <em>not</em> throw an exception if no appropriate permission for the
+     * provided parameters exists.
+     *
+     * @throws Throwable
+     */
     @Test
     @UsingDataSet(
         "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
@@ -337,6 +433,13 @@ public class PermissionManagerTest {
             () -> permissionManager.revokePrivilege("privilege999", role1));
     }
 
+    /**
+     * Verifies that
+     * {@link PermissionManager#revokePrivilege(java.lang.String, org.libreccm.security.Role, org.libreccm.core.CcmObject)}
+     * does <em>not</em> throw an exception if no appropriate permission for the
+     * provided parameters exists.
+     *
+     */
     @Test
     @UsingDataSet(
         "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
@@ -354,6 +457,14 @@ public class PermissionManagerTest {
                                                     object1));
     }
 
+    /**
+     * Verifies that
+     * {@link PermissionManager#revokePrivilege(java.lang.String, org.libreccm.security.Role)}
+     * throws an {@link IllegalArgumentException} if called with {@code null}
+     * for the privilege to revoke.
+     *
+     * @throws Throwable
+     */
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet(
         "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
@@ -370,6 +481,14 @@ public class PermissionManagerTest {
         }
     }
 
+    /**
+     * Verifies that
+     * {@link PermissionManager#revokePrivilege(java.lang.String, org.libreccm.security.Role, org.libreccm.core.CcmObject)}.
+     * throws an {@link IllegalArgumentException} if called with {@code null}
+     * for the privilege to revoke.
+     *
+     * @throws Throwable
+     */
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet(
         "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
@@ -387,6 +506,14 @@ public class PermissionManagerTest {
         }
     }
 
+    /**
+     * Verifies that
+     * {@link PermissionManager#revokePrivilege(java.lang.String, org.libreccm.security.Role)}
+     * throws an {@link IllegalArgumentException} if called with an empty string
+     * for the privilege to revoke.
+     *
+     * @throws Throwable
+     */
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet(
         "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
@@ -403,6 +530,14 @@ public class PermissionManagerTest {
         }
     }
 
+    /**
+     * Verifies that
+     * {@link PermissionManager#revokePrivilege(java.lang.String, org.libreccm.security.Role, org.libreccm.core.CcmObject)}
+     * throws an {@link IllegalArgumentException} if called with {@code null}
+     * for the privilege to revoke.
+     *
+     * @throws Throwable
+     */
     @Test(expected
               = IllegalArgumentException.class)
     @UsingDataSet(
@@ -421,6 +556,14 @@ public class PermissionManagerTest {
         }
     }
 
+    /**
+     * Verifies that
+     * {@link PermissionManager#revokePrivilege(java.lang.String, org.libreccm.security.Role)}
+     * throws an {@link IllegalArgumentException} if called with {@code null}
+     * for the role to revoke the permission from.
+     *
+     * @throws Throwable
+     */
     @Test(expected
               = IllegalArgumentException.class)
     @UsingDataSet(
@@ -436,6 +579,13 @@ public class PermissionManagerTest {
         }
     }
 
+    /**
+     * Verifies that null null null null null     {@link PermissionManager#revokePrivilege(java.lang.String, org.libreccm.security.Role, org.libreccm.core.CcmObject) 
+     * throws an {@link IllegalArgumentException} if called with {@code null}
+     * for the role to revoke the permission from.
+     *
+     * @throws Throwable
+     */
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet(
         "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
@@ -454,8 +604,15 @@ public class PermissionManagerTest {
         }
     }
 
-    @Test(expected
-              = IllegalArgumentException.class)
+    /**
+     * Verifies that
+     * {@link PermissionManager#revokePrivilege(java.lang.String, org.libreccm.security.Role, org.libreccm.core.CcmObject)}
+     * throws an {@link IllegalArgumentException} if called with {@code null}
+     * for the object to revoke the permission from.
+     *
+     * @throws Throwable
+     */
+    @Test(expected = IllegalArgumentException.class)
     @UsingDataSet(
         "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
     @ShouldThrowException(IllegalArgumentException.class)
@@ -473,6 +630,13 @@ public class PermissionManagerTest {
         }
     }
 
+    /**
+     * Verifies that
+     * {@link PermissionManager#copyPermissions(org.libreccm.core.CcmObject, org.libreccm.core.CcmObject)}
+     * correctly copies permissions between two objects.
+     *
+     * @throws Throwable
+     */
     @Test
     @UsingDataSet(
         "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
@@ -489,8 +653,15 @@ public class PermissionManagerTest {
             () -> permissionManager.copyPermissions(object2, object3));
     }
 
-    @Test(expected
-              = IllegalArgumentException.class)
+    /**
+     * Verifies that
+     * {@link PermissionManager#copyPermissions(org.libreccm.core.CcmObject, org.libreccm.core.CcmObject)}
+     * throw an {@link IllegalArgumentException} if called with {@code null} for
+     * the source object.
+     *
+     * @throws Throwable
+     */
+    @Test(expected = IllegalArgumentException.class)
     @UsingDataSet(
         "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
     @ShouldThrowException(IllegalArgumentException.class)
@@ -506,6 +677,14 @@ public class PermissionManagerTest {
         }
     }
 
+    /**
+     * Verifies that
+     * {@link PermissionManager#copyPermissions(org.libreccm.core.CcmObject, org.libreccm.core.CcmObject)}
+     * throw an {@link IllegalArgumentException} if called with {@code null} for
+     * the target object.
+     *
+     * @throws Throwable
+     */
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet(
         "datasets/org/libreccm/security/PermissionManagerTest/data.yml")

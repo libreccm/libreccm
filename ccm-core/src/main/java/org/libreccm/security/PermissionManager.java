@@ -251,8 +251,23 @@ public class PermissionManager {
         }
     }
 
+    /**
+     * Lists all privileges constants defined by a given class.
+     *
+     * If the name of the class ends with {@code Privileges} all values of
+     * fields of the type {@code String} with the modifiers {@code static} and
+     * {@code final} are returned. Otherwise the values of all fields of type
+     * {@code String} with the modifiers {@code static} and {@code final} and
+     * whose name starts with {@code PRIVILEGE_} are returned.
+     *
+     *
+     * @param clazz The class to analyse.
+     *
+     * @return A list with all privileges defined by the provided class.
+     */
     public List<String> listDefiniedPrivileges(final Class<?> clazz) {
         return Arrays.stream(clazz.getDeclaredFields())
+            .filter(field -> field.getType().isAssignableFrom(String.class))
             .filter(field -> Modifier.isStatic(field.getModifiers())
                                  && Modifier.isFinal(field.getModifiers()))
             .filter(field -> field.getName().startsWith("PRIVILEGE_")
