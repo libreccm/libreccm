@@ -47,13 +47,12 @@ import org.libreccm.core.CcmObject;
 import org.libreccm.jpa.EntityManagerProducer;
 import org.libreccm.jpa.utils.UriConverter;
 import org.libreccm.l10n.LocalizedString;
+import org.libreccm.security.PermissionChecker;
 import org.libreccm.tests.categories.IntegrationTest;
 import org.libreccm.web.ApplicationRepository;
 import org.libreccm.workflow.Workflow;
 
 import java.util.List;
-
-import org.libreccm.security.Privilege;
 
 /**
  *
@@ -90,7 +89,7 @@ public class SecurityConfigTest {
                     "LibreCCM-com.arsdigita.kernel.security.SecurityConfigTest.war")
             .addPackage(CcmObject.class.getPackage())
             .addPackage(Categorization.class.getPackage())
-            .addPackage(Privilege.class.getPackage())
+            .addPackage(PermissionChecker.class.getPackage())
             .addPackage(LocalizedString.class.getPackage())
             .addPackage(Workflow.class.getPackage())
             .addPackage(UriConverter.class.getPackage())

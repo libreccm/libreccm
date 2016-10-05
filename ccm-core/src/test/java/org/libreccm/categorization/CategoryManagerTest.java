@@ -141,7 +141,8 @@ public class CategoryManagerTest {
             .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
                 .getPackage())
             .addPackage(org.libreccm.l10n.LocalizedString.class.getPackage())
-            .addPackage(org.libreccm.security.Privilege.class.getPackage())
+            .addPackage(org.libreccm.security.PermissionChecker.class
+                .getPackage())
             .addPackage(org.libreccm.testutils.EqualsVerifier.class
                 .getPackage())
             .addPackage(org.libreccm.tests.categories.IntegrationTest.class
@@ -185,7 +186,7 @@ public class CategoryManagerTest {
         assertThat(shiro.getSecurityManager(), is(not(nullValue())));
         assertThat(shiro.getSystemUser(), is(not(nullValue())));
     }
-    
+
     @Test
     @UsingDataSet(
         "datasets/org/libreccm/categorization/CategoryManagerTest/data.yml")

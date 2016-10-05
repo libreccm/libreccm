@@ -42,7 +42,6 @@ public class ToStringTest extends ToStringVerifier {
             GroupMembership.class,
             Party.class,
             OneTimeAuthToken.class,
-            Privilege.class,
             Role.class,
             RoleMembership.class,
             User.class

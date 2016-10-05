@@ -22,7 +22,6 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.subject.Subject;
 
-
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -68,10 +67,10 @@ public class CategoryRepositoryTest {
 
     @Inject
     private DomainRepository domainRepo;
-    
+
     @Inject
     private Shiro shiro;
-    
+
     @Inject
     private Subject subject;
 
@@ -112,7 +111,8 @@ public class CategoryRepositoryTest {
             .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
                 .getPackage())
             .addPackage(org.libreccm.l10n.LocalizedString.class.getPackage())
-            .addPackage(org.libreccm.security.Privilege.class.getPackage())
+            .addPackage(org.libreccm.security.PermissionChecker.class
+                .getPackage())
             .addPackage(org.libreccm.testutils.EqualsVerifier.class
                 .getPackage())
             .addPackage(org.libreccm.tests.categories.IntegrationTest.class
@@ -267,14 +267,14 @@ public class CategoryRepositoryTest {
             "john.doe@example.org", "foo123");
         token.setRememberMe(true);
         subject.login(token);
-        
+
         final Category category = new Category();
         category.setDisplayName("new-category");
         category.setName("new-category");
         category.setUniqueId("new0001");
 
         categoryRepo.save(category);
-        
+
         subject.logout();
     }
 
