@@ -55,7 +55,7 @@ public class FormProcessException extends ServletException {
     /**
      * Constructor using both types of messages which may be presented to the
      * user. It's a kind of fallback just in kind we really need a non-
-     * globalized message. Usage is stropngly discouraged.
+     * globalized message. Usage is strongly discouraged.
      * @param message
      * @param globalizedMessage 
      */
