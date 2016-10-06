@@ -78,6 +78,7 @@ class RolePartyAddForm extends PartyAddForm {
         return partyRepository.searchByName(searchQuery);
     }
 
+    @Override
     public void process(FormSectionEvent event) throws FormProcessException {
         FormData data = event.getFormData();
         PageState state = event.getPageState();
