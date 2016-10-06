@@ -18,19 +18,14 @@
  */
 package com.arsdigita.cms.ui.role;
 
-import com.arsdigita.bebop.ActionLink;
-import com.arsdigita.bebop.Component;
-import com.arsdigita.bebop.Label;
-import com.arsdigita.bebop.PageState;
-import com.arsdigita.bebop.SimpleContainer;
-import com.arsdigita.bebop.SingleSelectionModel;
-import com.arsdigita.bebop.Table;
+import com.arsdigita.bebop.*;
 import com.arsdigita.bebop.event.TableActionAdapter;
 import com.arsdigita.bebop.event.TableActionEvent;
 import com.arsdigita.bebop.table.DefaultTableCellRenderer;
 import com.arsdigita.cms.ui.BaseItemPane;
 import com.arsdigita.cms.ui.PartySearchForm;
 import com.arsdigita.cms.ui.VisibilityComponent;
+import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.toolbox.ui.ActionGroup;
 import com.arsdigita.toolbox.ui.PropertyList;
@@ -180,12 +175,17 @@ class BaseRoleItemPane extends BaseItemPane {
 
         private class Listener extends TableActionAdapter {
             @Override
-            public final void cellSelected(final TableActionEvent e) {
+            public final void cellSelected(final TableActionEvent e) throws FormProcessException {
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
                 final PageState state = e.getPageState();
                 final PermissionChecker permissionChecker = cdiUtil.findBean(PermissionChecker.class);
 
-                if (e.getColumn() == 2 && permissionChecker.isPermitted(CmsConstants.PRIVILEGE_ADMINISTER_ROLES)) {
+                if (!permissionChecker.isPermitted(CmsConstants.PRIVILEGE_ADMINISTER_ROLES)) {
+                    throw new FormProcessException(
+                            new GlobalizedMessage("cms.ui.role.insufficient_privileges", CmsConstants.CMS_BUNDLE));
+                }
+
+                if (e.getColumn() == 2) {
                     final Role role = m_role.getRole(state);
                     long itemId = Long.parseLong(e.getRowKey().toString());
 

@@ -18,6 +18,8 @@
  */
 package com.arsdigita.bebop.event;
 
+import com.arsdigita.bebop.FormProcessException;
+
 import java.util.EventListener;
 
 /**
@@ -39,7 +41,7 @@ public interface TableActionListener extends EventListener {
      *
      * @param e the event fired for the table.
      */
-    void cellSelected(TableActionEvent e);
+    void cellSelected(TableActionEvent e) throws FormProcessException;
 
     /**
      * An event handler for actions on a particular column heading or

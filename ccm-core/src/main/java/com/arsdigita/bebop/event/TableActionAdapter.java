@@ -18,6 +18,8 @@
  */
 package com.arsdigita.bebop.event;
 
+import com.arsdigita.bebop.FormProcessException;
+
 /**
  * An implentation of the TableActionListener interface meant to save the
  * developer from having to override both the {@link
@@ -36,9 +38,7 @@ public class TableActionAdapter implements TableActionListener {
      *
      * @param e the event fired for the table.
      */
-    public void cellSelected(TableActionEvent e) {
-        return;
-    }
+    public void cellSelected(TableActionEvent e) throws FormProcessException {}
 
     /**
      * A no-op implementation of {@link

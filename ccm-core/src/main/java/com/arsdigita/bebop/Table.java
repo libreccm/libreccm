@@ -225,7 +225,7 @@ public class Table extends SimpleComponent {
      * @param column the integer index of the selected column
      */
     protected void fireCellSelected(PageState state,
-                                    Object rowKey, Integer column) {
+                                    Object rowKey, Integer column) throws FormProcessException {
         Iterator i = m_listeners.getListenerIterator(TableActionListener.class);
         TableActionEvent e = null;
 

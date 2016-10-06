@@ -25,7 +25,6 @@ import com.arsdigita.bebop.table.TableModel;
 import com.arsdigita.ui.admin.GlobalizationUtil;
 import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.core.EmailAddress;
 import org.libreccm.security.Party;
 import org.libreccm.security.PartyRepository;
 import org.libreccm.security.Role;
