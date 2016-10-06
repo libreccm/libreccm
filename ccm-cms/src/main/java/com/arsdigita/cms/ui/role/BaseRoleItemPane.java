@@ -38,14 +38,17 @@ import com.arsdigita.toolbox.ui.Section;
 import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.ConfigurationManager;
-import org.libreccm.core.CoreConstants;
 import org.libreccm.security.*;
 import org.librecms.CmsConstants;
 
 import java.util.stream.Collectors;
 
 /**
- * TODO Needs a description
+ * This pane is for showing the properties of a {@link Role}. That includes name, description, permissions and
+ * members. The last one is a list of {@link Party parties} to which the role corresponds to.
+ *
+ * NOTE: There was an AdminTable besides the MemberTable. Since this function was/is never used, it was deemed
+ * deprecated and was removed.
  *
  * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  * @author Justin Ross &lt;jross@redhat.com&gt;
@@ -59,7 +62,6 @@ class BaseRoleItemPane extends BaseItemPane {
     private final RoleRequestLocal m_role;
 
     private final MemberTable m_members;
-    //private final AdminTable m_admins;
 
     BaseRoleItemPane(final SingleSelectionModel model,
                      final RoleRequestLocal role,
@@ -68,14 +70,9 @@ class BaseRoleItemPane extends BaseItemPane {
         m_role = role;
 
         m_members = new MemberTable();
-        //m_admins = new AdminTable();
 
         final ActionLink memberAddLink = new ActionLink
             (new Label(gz("cms.ui.role.member.add")));
-
-        /*
-        final ActionLink adminAddLink = new ActionLink
-            (new Label(gz("cms.ui.role.admin.add")));*/
 
         SimpleContainer m_detailPane = new SimpleContainer();
         add(m_detailPane);
@@ -83,8 +80,6 @@ class BaseRoleItemPane extends BaseItemPane {
 
         m_detailPane.add(new SummarySection(editLink, deleteLink));
         m_detailPane.add(new MemberSection(memberAddLink));
-        //m_detailPane.add(new AdminSection(adminAddLink));
-
 
         final PartySearchForm memberSearchForm = new PartySearchForm();
         add(memberSearchForm);
@@ -93,27 +88,11 @@ class BaseRoleItemPane extends BaseItemPane {
             (model, memberSearchForm.getSearchWidget());
         add(memberAddForm);
 
-        //final PartySearchForm adminSearchForm = new PartySearchForm();
-        //add(adminSearchForm);
-
-        /*
-        final RoleAdminAddForm adminAddForm = new RoleAdminAddForm
-            (m_model, adminSearchForm.getSearchWidget());
-        add(adminAddForm);*/
-
         connect(memberAddLink, memberSearchForm);
         connect(memberSearchForm, memberAddForm);
         memberAddForm.getForm().addSubmissionListener
             (new CancelListener(memberAddForm.getForm()));
         resume(memberAddForm.getForm(), m_detailPane);
-
-        /*
-        connect(adminAddLink, adminSearchForm);
-        connect(adminSearchForm, adminAddForm);
-        adminAddForm.getForm().addSubmissionListener
-            (new CancelListener(adminAddForm.getForm()));
-        resume(adminAddForm.getForm(), m_detailPane);*/
-
     }
 
     private class AdminVisible extends VisibilityComponent {
@@ -181,20 +160,6 @@ class BaseRoleItemPane extends BaseItemPane {
         }
     }
 
-    /*
-    private class AdminSection extends Section {
-        AdminSection(final ActionLink adminAddLink) {
-            setHeading(gz("cms.ui.role.admins"));
-
-            final ActionGroup group = new ActionGroup();
-            setBody(group);
-
-            group.setSubject(m_admins);
-            group.addAction(new AdminVisible(adminAddLink), ActionGroup.ADD);
-        }
-    }*/
-
-
     private static final String[] s_memberColumns = new String[] {
         lz("cms.ui.name"),
         lz("cms.ui.role.member.email"),
@@ -235,43 +200,4 @@ class BaseRoleItemPane extends BaseItemPane {
             }
         }
     }
-
-    /*
-    private static final String[] s_adminColumns = new String[] {
-        lz("cms.ui.name"),
-        lz("cms.ui.role.admin.email"),
-        lz("cms.ui.role.admin.remove")
-    };*/
-
-    /*
-    private class AdminTable extends Table {
-        AdminTable() {
-            super(new AdminTableModelBuilder(m_role), s_adminColumns);
-
-            setEmptyView(new Label(gz("cms.ui.role.admin.none")));
-
-            getColumn(2).setCellRenderer
-                (new DefaultTableCellRenderer(true));
-
-            addTableActionListener(new Listener());
-        }
-
-        private class Listener extends TableActionAdapter {
-            public final void cellSelected(final TableActionEvent e) {
-                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-                final PageState state = e.getPageState();
-                final PermissionChecker permissionChecker = cdiUtil.findBean(PermissionChecker.class);
-
-                if (e.getColumn() == 2 && permissionChecker.isPermitted(CmsConstants.PRIVILEGE_ADMINISTER_ROLES)) {
-                    final Role role = m_role.getRole(state);
-                    final PermissionManager permissionManager = cdiUtil.findBean(PermissionManager.class);
-
-                    permissionManager.revokePrivilege(CoreConstants.ADMIN_PRIVILEGE, role);
-
-                    getRowSelectionModel().clearSelection(state);
-                }
-            }
-        }
-
-    }*/
 }
