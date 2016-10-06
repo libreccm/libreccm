@@ -33,10 +33,16 @@ import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.*;
 import org.librecms.CmsConstants;
 
-import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 
 /**
+ * Adds a form which can add {@link Party parties} to {@link Role roles}.
+ * Also enables searching for parties.
+ *
+ * NOTE: In earlier versions it was also possible to filter
+ * parties using {@link User} attributes such as username, name, last name, etc.
+ * This feature may be added later if still needed.
  *
  * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  * @author Michael Pih
@@ -50,12 +56,7 @@ class RolePartyAddForm extends PartyAddForm {
 
     private SingleSelectionModel m_roles;
 
-    private static final String NAME_FILTER = 
-        "(upper(name) like ('%' || upper(:search) || '%'))" +
-        " or " +
-        "(upper(email) like ('%' || upper(:search) || '%'))";
-
-    public RolePartyAddForm(SingleSelectionModel roles, TextField search) {
+    RolePartyAddForm(SingleSelectionModel roles, TextField search) {
         super(search);
 
         m_roles = roles;
@@ -64,46 +65,18 @@ class RolePartyAddForm extends PartyAddForm {
             (new FormSecurityListener(CmsConstants.PRIVILEGE_ADMINISTER_ROLES));
     }
 
-    /*
-    protected DataQuery makeQuery(PageState s) {
-        Assert.isTrue(m_roles.isSelected(s));
-
-        Session session = SessionManager.getSession();
-
-        // XXX: Figure out how to use role directly here
-        DataQuery dq =
-            session.retrieveQuery("com.arsdigita.cms.searchToAddMemberParties");
-
-        BigDecimal roleId = new BigDecimal((String) m_roles.getSelectedKey(s));
-        String searchQuery = (String) getSearchWidget().getValue(s);
-
-        makeFilter(dq, roleId, searchQuery);
-        dq.addOrder("isUser desc, upper(name), upper(email)");
-        return dq;
-    }*/
 
     @Override
-    protected List<Party> makeQuery(PageState state) {
-        return null;
+    protected List<Party> makeQuery(PageState s) {
+        Assert.isTrue(m_roles.isSelected(s));
+
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final PartyRepository partyRepository = cdiUtil.findBean(PartyRepository.class);
+
+        final String searchQuery = (String) getSearchWidget().getValue(s);
+
+        return partyRepository.searchByName(searchQuery);
     }
-
-    /**
-     * Filters out members of the current group and parties whose name or email
-     * address matches the search string.
-     */
-    /*
-    private void makeFilter(DataQuery dq, BigDecimal roleId, String search) {
-
-        dq.setParameter("excludedRoleId", roleId);
-
-        // Add the search filter if the search query is not null.
-        if (search != null) {
-
-            dq.clearFilter();
-            Filter filter = dq.addFilter(NAME_FILTER);
-            filter.set("search", search);
-        }
-    }*/
 
     public void process(FormSectionEvent event) throws FormProcessException {
         FormData data = event.getFormData();
@@ -111,7 +84,7 @@ class RolePartyAddForm extends PartyAddForm {
         Assert.isTrue(m_roles.isSelected(state));
 
         String[] parties = (String[]) data.get("parties");
-        s_log.debug("PARTIES = " + parties);
+        s_log.debug("PARTIES = " + Arrays.toString(parties));
         if (parties == null) {
             throw new FormProcessException(GlobalizationUtil.globalize(
                     "cms.ui.role.no_party_selected"));
