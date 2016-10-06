@@ -29,9 +29,9 @@ import org.libreccm.security.Role;
  * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  * @version $Id: RoleRequestLocal.java 287 2005-02-22 00:29:02Z sskracic $
  */
-public abstract class RoleRequestLocal extends RequestLocal {
+abstract class RoleRequestLocal extends RequestLocal {
 
-    public final Role getRole(final PageState state) {
+    final Role getRole(final PageState state) {
         final Role role = (Role) get(state);
 
         Assert.exists(role, "Role role");

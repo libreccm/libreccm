@@ -23,21 +23,19 @@ import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.SingleSelectionModel;
 import com.arsdigita.bebop.event.FormProcessListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
-import com.arsdigita.cms.CMS;
 import com.arsdigita.kernel.KernelConfig;
 import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.l10n.LocalizedString;
 import org.libreccm.security.*;
-import org.librecms.contentsection.ContentSection;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 /**
- * For more detailed information see {@link com.arsdigita.bebop.Form}.
+ * Provides a {@link com.arsdigita.bebop.Form} for adding {@link Role roles}.
  *
  * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  * @author Michael Pih
@@ -49,20 +47,25 @@ final class RoleAddForm extends BaseRoleForm {
     private static final Logger s_log = Logger.getLogger(RoleAddForm.class);
 
     private SingleSelectionModel m_model;
-    private final boolean m_useViewersGroup;
 
-    public RoleAddForm(SingleSelectionModel model, boolean useViewersGroup) {
-        super("AddStaffRole", gz("cms.ui.role.add"), useViewersGroup);
+    RoleAddForm(SingleSelectionModel model) {
+        super("AddStaffRole", gz("cms.ui.role.add"));
 
         m_model = model;
-        m_useViewersGroup = useViewersGroup;
 
         m_name.addValidationListener(new NameUniqueListener(null));
 
         addProcessListener(new ProcessListener());
     }
 
+    /**
+     * The {@link Role} gets saved to the database and permissions are granted as needed.
+     *
+     * NOTE: The part about granting and revoking privileges is mostly Copy & Paste from {@link RoleEditForm}.
+     * If you find any bugs or errors in this code, be sure to change it there accordingly.
+     */
     private class ProcessListener implements FormProcessListener {
+        @Override
         public final void process(final FormSectionEvent e)
                 throws FormProcessException {
             final PageState state = e.getPageState();
@@ -71,6 +74,7 @@ final class RoleAddForm extends BaseRoleForm {
             final PermissionManager permissionManager = cdiUtil.findBean(PermissionManager.class);
             final ConfigurationManager manager = cdiUtil.findBean(ConfigurationManager.class);
             final KernelConfig config = manager.findConfiguration(KernelConfig.class);
+            final RoleRepository roleRepository = cdiUtil.findBean(RoleRepository.class);
 
             final Role role = new Role();
 
@@ -80,21 +84,13 @@ final class RoleAddForm extends BaseRoleForm {
             localizedDescription.addValue(config.getDefaultLocale(), (String) m_description.getValue(state));
             role.setDescription(localizedDescription);
 
-            List<Permission> newPermissions = new ArrayList<>();
+            //We don't now if the permissions list is empty, so we have to save beforehand to not lose data.
+            roleRepository.save(role);
+
             String[] selectedPermissions = (String[]) m_privileges.getValue(state);
 
-            for (Permission p : role.getPermissions()) {
-                if (Arrays.stream(selectedPermissions).anyMatch(x -> x.equals(p.getGrantedPrivilege()))) {
-                    newPermissions.add(p);
-                } else {
-                    permissionManager.revokePrivilege(p.getGrantedPrivilege(), role);
-                }
-            }
-
             for (String s : selectedPermissions) {
-                if (newPermissions.stream().noneMatch(x -> x.getGrantedPrivilege().equals(s))) {
-                    permissionManager.grantPrivilege(s, role);
-                }
+                permissionManager.grantPrivilege(s, role);
             }
 
             m_model.setSelectedKey(state, Long.toString(role.getRoleId()));

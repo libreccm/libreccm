@@ -47,7 +47,11 @@ import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentSection;
 
 /**
- * TODO Needs description
+ * Provides the logic to administer {@link Role roles}.
+ *
+ * NOTE: Prior, this class managed two {@link ListModelBuilder}.
+ * The reason being, that roles where differentiated between Viewer and Member groups.
+ * Since this is no longer the case, there exists only the {@link RoleListModelBuilder} now.
  *
  * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  * @author Justin Ross &lt;jross@redhat.com&gt;
@@ -57,10 +61,7 @@ public class RoleAdminPane extends BaseAdminPane {
 
     private static final Logger s_log = Logger.getLogger(RoleAdminPane.class);
 
-    private static final CdiUtil cdiutil = CdiUtil.createCdiUtil();
-
     private final SingleSelectionModel m_model;
-    private final RoleRequestLocal m_role;
 
     private final List m_roles;
 
@@ -71,7 +72,7 @@ public class RoleAdminPane extends BaseAdminPane {
 
         m_model.addChangeListener(new SelectionListener());
 
-        m_role = new SelectionRequestLocal();
+        RoleRequestLocal m_role = new SelectionRequestLocal();
 
         m_roles = new List(new RoleListModelBuilder());
         m_roles.setSelectionModel(m_model);
@@ -83,7 +84,7 @@ public class RoleAdminPane extends BaseAdminPane {
         final RoleSection roleSection = new RoleSection();
         left.add(roleSection);
 
-        setEdit(gz("cms.ui.role.edit"), new RoleEditForm(m_role, false));
+        setEdit(gz("cms.ui.role.edit"), new RoleEditForm(m_role));
         setDelete(gz("cms.ui.role.delete"), new DeleteForm());
 
         setIntroPane(new Label(gz("cms.ui.role.intro")));
@@ -107,57 +108,14 @@ public class RoleAdminPane extends BaseAdminPane {
             group.addAction(new VisibilityComponent(link, CmsConstants.PRIVILEGE_ADMINISTER_ROLES),
                     ActionGroup.ADD);
 
-            final RoleAddForm form = new RoleAddForm(m_model, false);
+            final RoleAddForm form = new RoleAddForm(m_model);
             getBody().add(form);
             getBody().connect(link, form);
         }
     }
-
-    /*
-    private class StaffSection extends Section {
-        StaffSection() {
-            setHeading(gz("cms.ui.role.staff"));
-
-            final ActionGroup group = new ActionGroup();
-            setBody(group);
-
-            group.setSubject(m_staff);
-
-            final ActionLink link = new ActionLink
-                (new Label(gz("cms.ui.role.staff.add")));
-
-            group.addAction(new VisibilityComponent(link, SecurityConstants.STAFF_ADMIN),
-                            ActionGroup.ADD);
-
-            final RoleAddForm form = new RoleAddForm(m_model, false);
-            getBody().add(form);
-            getBody().connect(link, form);
-        }
-    }
-
-
-    private class ViewerSection extends Section {
-        ViewerSection() {
-            setHeading(gz("cms.ui.role.viewers"));
-
-            final ActionGroup group = new ActionGroup();
-            setBody(group);
-
-            group.setSubject(m_viewers);
-
-            final ActionLink link = new ActionLink
-                (new Label(gz("cms.ui.role.viewer.add")));
-
-            group.addAction(new VisibilityComponent(link, SecurityConstants.STAFF_ADMIN),
-                            ActionGroup.ADD);
-
-            final RoleAddForm form = new RoleAddForm(m_model, true);
-            getBody().add(form);
-            getBody().connect(link, form);
-        }
-    }*/
 
     private class SelectionListener implements ChangeListener {
+        @Override
         public final void stateChanged(final ChangeEvent e) {
             s_log.debug("Selection state changed; I may change " +
                         "the body's visible pane");
@@ -176,46 +134,15 @@ public class RoleAdminPane extends BaseAdminPane {
     }
 
     private class SelectionRequestLocal extends RoleRequestLocal {
+        @Override
         protected final Object initialValue(final PageState state) {
             final Long id = Long.parseLong(m_model.getSelectedKey(state).toString());
-            final RoleRepository roleRepository = cdiutil.findBean(RoleRepository.class);
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final RoleRepository roleRepository = cdiUtil.findBean(RoleRepository.class);
 
             return roleRepository.findById(id);
         }
     }
-
-    /* TODO Removed since we don't split viewers and staff right now!
-    private static class StaffListModelBuilder extends LockableImpl
-            implements ListModelBuilder {
-        public StaffListModelBuilder() {
-            super();
-        }
-
-        public final ListModel makeModel(final List list,
-                                         final PageState state) {
-            final ContentSection section =
-                CMS.getContext().getContentSection();
-
-            //return new RoleListModel
-            //    (section.getStaffGroup().getOrderedRoles());
-            return new RoleListModel(new ArrayList<>());
-        }
-    }
-
-    private static class ViewerListModelBuilder extends LockableImpl
-            implements ListModelBuilder {
-        public final ListModel makeModel(final List list,
-                                         final PageState state) {
-            final ContentSection section =
-                CMS.getContext().getContentSection();
-
-            //return new RoleListModel
-            //    (section.getViewersGroup().getOrderedRoles());
-            return new RoleListModel(new ArrayList<>());
-        }
-    }
-
-*/
 
     /**
      * This builder provides a list model of the {@link Role roles} which correspond to the {@link ContentSection}
@@ -223,10 +150,11 @@ public class RoleAdminPane extends BaseAdminPane {
      */
     private static class RoleListModelBuilder extends LockableImpl implements  ListModelBuilder {
 
-        public RoleListModelBuilder() {
+        RoleListModelBuilder() {
             super();
         }
 
+        @Override
         public final ListModel makeModel(final List list, final PageState state) {
             final ContentSection section = CMS.getContext().getContentSection();
 
@@ -244,11 +172,13 @@ public class RoleAdminPane extends BaseAdminPane {
             addSecurityListener(CmsConstants.PRIVILEGE_ADMINISTER_ROLES);
         }
 
+        @Override
         public final void process(final FormSectionEvent e)
                 throws FormProcessException {
             final PageState state = e.getPageState();
 
-            final RoleRepository roleRepository = cdiutil.findBean(RoleRepository.class);
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final RoleRepository roleRepository = cdiUtil.findBean(RoleRepository.class);
             final Long id = Long.parseLong(m_model.getSelectedKey(state).toString());
             final Role role = roleRepository.findById(id);
 

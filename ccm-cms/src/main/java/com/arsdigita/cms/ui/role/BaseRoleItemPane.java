@@ -57,18 +57,14 @@ class BaseRoleItemPane extends BaseItemPane {
         (BaseRoleItemPane.class);
 
     private final RoleRequestLocal m_role;
-    private final SingleSelectionModel m_model;
 
     private final MemberTable m_members;
     //private final AdminTable m_admins;
 
-    private final SimpleContainer m_detailPane;
-
-    public BaseRoleItemPane(final SingleSelectionModel model,
-                            final RoleRequestLocal role,
-                            final ActionLink editLink,
-                            final ActionLink deleteLink) {
-        m_model = model;
+    BaseRoleItemPane(final SingleSelectionModel model,
+                     final RoleRequestLocal role,
+                     final ActionLink editLink,
+                     final ActionLink deleteLink) {
         m_role = role;
 
         m_members = new MemberTable();
@@ -81,7 +77,7 @@ class BaseRoleItemPane extends BaseItemPane {
         final ActionLink adminAddLink = new ActionLink
             (new Label(gz("cms.ui.role.admin.add")));*/
 
-        m_detailPane = new SimpleContainer();
+        SimpleContainer m_detailPane = new SimpleContainer();
         add(m_detailPane);
         setDefault(m_detailPane);
 
@@ -94,11 +90,11 @@ class BaseRoleItemPane extends BaseItemPane {
         add(memberSearchForm);
 
         final RolePartyAddForm memberAddForm = new RolePartyAddForm
-            (m_model, memberSearchForm.getSearchWidget());
+            (model, memberSearchForm.getSearchWidget());
         add(memberAddForm);
 
-        final PartySearchForm adminSearchForm = new PartySearchForm();
-        add(adminSearchForm);
+        //final PartySearchForm adminSearchForm = new PartySearchForm();
+        //add(adminSearchForm);
 
         /*
         final RoleAdminAddForm adminAddForm = new RoleAdminAddForm
@@ -218,6 +214,7 @@ class BaseRoleItemPane extends BaseItemPane {
         }
 
         private class Listener extends TableActionAdapter {
+            @Override
             public final void cellSelected(final TableActionEvent e) {
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
                 final PageState state = e.getPageState();

@@ -65,9 +65,6 @@ public abstract class PartyAddForm extends SimpleContainer
     private final static String CANCEL = "addCancel";
     private final static String SUBMIT_LABEL = "Add Members";
 
-    private final static String DQ_PARTY_ID = "partyId";
-    private final static String DQ_NAME = "name";
-
     private Widget m_search;
     private RequestLocal m_query;
 
@@ -76,8 +73,6 @@ public abstract class PartyAddForm extends SimpleContainer
 
     private Form m_form;
     private Hidden m_searchQuery;
-    private CheckboxGroup m_parties;
-    private Submit m_submit;
     private Submit m_cancel;
 
 
@@ -132,8 +127,9 @@ public abstract class PartyAddForm extends SimpleContainer
      *
      * @return The form
      */
-    protected Form makeForm() {
+    private Form makeForm() {
         final CMSForm form = new CMSForm("AddParties") {
+                @Override
                 public final boolean isCancelled(final PageState state) {
                     return m_cancel.isSelected(state);
                 }
@@ -146,23 +142,21 @@ public abstract class PartyAddForm extends SimpleContainer
         form.add(m_searchQuery, ColumnPanel.FULL_WIDTH);
 
         Label l = new Label(
-                            "Check the box next to the name of the person(s) to assign to this role.");
+                new GlobalizedMessage("Check the box next to the name of the person(s) to assign to this role."));
         form.add(l, ColumnPanel.FULL_WIDTH);
 
         // Add the list of parties that can be added.
-        m_parties = new CheckboxGroup(PARTIES);
+        CheckboxGroup m_parties = new CheckboxGroup(PARTIES);
         m_parties.addValidationListener(new NotNullValidationListener());
         try {
-            m_parties.addPrintListener(new PrintListener() {
-                    public void prepare(PrintEvent event) {
-                        CheckboxGroup target = (CheckboxGroup) event.getTarget();
-                        PageState state = event.getPageState();
-                        // Ensures that the init listener gets fired before the
-                        // print listeners.
-                        FormData data = m_form.getFormData(state);
-                        addParties(state, target);
-                    }
-                });
+            m_parties.addPrintListener(event -> {
+                CheckboxGroup target = (CheckboxGroup) event.getTarget();
+                PageState state = event.getPageState();
+                // Ensures that the init listener gets fired before the
+                // print listeners.
+                FormData data = m_form.getFormData(state);
+                addParties(state, target);
+            });
         } catch (TooManyListenersException e) {
             UncheckedWrapperException.throwLoggedException(getClass(), "Too many listeners", e);
         }
@@ -170,7 +164,7 @@ public abstract class PartyAddForm extends SimpleContainer
 
         // Submit and Cancel buttons.
         SimpleContainer s = new SimpleContainer();
-        m_submit = new Submit(SUBMIT, new GlobalizedMessage(SUBMIT_LABEL));
+        Submit m_submit = new Submit(SUBMIT, new GlobalizedMessage(SUBMIT_LABEL));
         s.add(m_submit);
         m_cancel = new Submit(CANCEL, new GlobalizedMessage("Cancel"));
         s.add(m_cancel);
@@ -219,7 +213,7 @@ public abstract class PartyAddForm extends SimpleContainer
      * @param target The option group
      * @pre ( state != null && target != null )
      */
-    protected void addParties(PageState state, OptionGroup target) {
+    private void addParties(PageState state, OptionGroup target) {
         @SuppressWarnings("unchecked")
         List<Party> parties = (List<Party>) m_query.get(state);
 
@@ -246,6 +240,7 @@ public abstract class PartyAddForm extends SimpleContainer
      *
      * @param event The form event
      */
+    @Override
     public void init(FormSectionEvent event) throws FormProcessException {
         PageState state = event.getPageState();
 
@@ -257,6 +252,7 @@ public abstract class PartyAddForm extends SimpleContainer
      *
      * @param event The form event
      */
+    @Override
     public abstract void process(FormSectionEvent event)
         throws FormProcessException;
 
@@ -267,6 +263,7 @@ public abstract class PartyAddForm extends SimpleContainer
      * @param state The page state
      * @param parent The parent DOM element
      */
+    @Override
     public void generateXML(PageState state, Element parent) {
 
         @SuppressWarnings("unchecked")

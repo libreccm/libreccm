@@ -45,7 +45,7 @@ import java.util.*;
  * @author Justin Ross &lt;jross@redhat.com&gt;
  * @version $Id: BaseRoleForm.java 287 2005-02-22 00:29:02Z sskracic $
  */
-public class BaseRoleForm extends BaseForm {
+class BaseRoleForm extends BaseForm {
 
     private static final Logger s_log = Logger.getLogger(BaseRoleForm.class);
 
@@ -53,14 +53,9 @@ public class BaseRoleForm extends BaseForm {
     final Description m_description;
     CheckboxGroup m_privileges;
 
-    private boolean m_useViewersGroup;
-
-    public BaseRoleForm(final String key,
-                        final GlobalizedMessage message,
-                        final boolean useViewersGroup) {
+    BaseRoleForm(final String key,
+                 final GlobalizedMessage message) {
         super(key, message);
-
-        m_useViewersGroup = useViewersGroup;
 
         m_name = new Name("label", 200, true);
         addField(gz("cms.ui.name"), m_name);

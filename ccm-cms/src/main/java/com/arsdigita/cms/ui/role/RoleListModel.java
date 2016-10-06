@@ -42,20 +42,23 @@ class RoleListModel implements ListModel {
 
     private Role currentRole;
 
-    public RoleListModel(final Collection<Role> roles) {
+    RoleListModel(final Collection<Role> roles) {
         m_roles = roles;
         iterator = roles.iterator();
     }
 
+    @Override
     public final boolean next() {
         currentRole = iterator.next();
         return currentRole != null;
     }
 
+    @Override
     public final Object getElement() {
         return currentRole.getName();
     }
 
+    @Override
     public final String getKey() {
         return Long.toString(currentRole.getRoleId());
     }

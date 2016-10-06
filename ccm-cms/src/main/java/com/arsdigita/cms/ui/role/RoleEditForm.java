@@ -35,7 +35,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * For more detailed information see {@link com.arsdigita.bebop.Form}.
+ * Represents a {@link com.arsdigita.bebop.Form Form} to edit {@link Role roles}.
  *
  * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  * @author Michael Pih
@@ -47,13 +47,11 @@ final class RoleEditForm extends BaseRoleForm {
     private static final Logger s_log = Logger.getLogger(RoleEditForm.class);
 
     private final RoleRequestLocal m_role;
-    //private final boolean m_useViewersGroup;
 
-    public RoleEditForm(RoleRequestLocal role, boolean useViewersGroup) {
-        super("EditStaffRole", gz("cms.ui.role.edit"), useViewersGroup);
+    RoleEditForm(RoleRequestLocal role) {
+        super("EditStaffRole", gz("cms.ui.role.edit"));
 
         m_role = role;
-        //m_useViewersGroup = useViewersGroup;
 
         m_name.addValidationListener(new NameUniqueListener(m_role));
 
@@ -61,7 +59,11 @@ final class RoleEditForm extends BaseRoleForm {
         addProcessListener(new ProcessListener());
     }
 
+    /**
+     * Sets the initial values of a {@link Role} which were received from the database.
+     */
     private class InitListener implements FormInitListener {
+        @Override
         public final void init(final FormSectionEvent e) {
             final PageState state = e.getPageState();
             final Role role = m_role.getRole(state);
@@ -69,8 +71,6 @@ final class RoleEditForm extends BaseRoleForm {
             m_name.setValue(state, role.getName());
             m_description.setValue(state, role.getDescription());
 
-            //final String[] privileges = RoleFactory.getRolePrivileges
-             //   (CMS.getContext().getContentSection(), role);
             final String[] permissions = role.getPermissions().stream().
                     map(Permission::getGrantedPrivilege).toArray(String[]::new);
 
@@ -78,7 +78,15 @@ final class RoleEditForm extends BaseRoleForm {
         }
     }
 
+    /**
+     * Updates a role and it's permissions. It uses the {@link PermissionManager} to grant and revoke permissions
+     * as needed.
+     *
+     * NOTE: The part about granting and revoking privileges is mostly identical to {@link RoleAddForm}.
+     * If you find any bugs or errors in this code, be sure to change it there accordingly.
+     */
     private class ProcessListener implements FormProcessListener {
+        @Override
         public final void process(final FormSectionEvent e)
                 throws FormProcessException {
             final PageState state = e.getPageState();
@@ -90,10 +98,14 @@ final class RoleEditForm extends BaseRoleForm {
             final PermissionManager permissionManager = cdiUtil.findBean(PermissionManager.class);
             final ConfigurationManager manager = cdiUtil.findBean(ConfigurationManager.class);
             final KernelConfig config = manager.findConfiguration(KernelConfig.class);
+            final RoleRepository roleRepository = cdiUtil.findBean(RoleRepository.class);
 
             LocalizedString localizedDescription = role.getDescription();
             localizedDescription.addValue(config.getDefaultLocale(), (String) m_description.getValue(state));
             role.setDescription(localizedDescription);
+
+            //We don't now if the permissions list is empty, so we have to save beforehand to not lose data.
+            roleRepository.save(role);
 
             List<Permission> newPermissions = new ArrayList<>();
             String[] selectedPermissions = (String[]) m_privileges.getValue(state);

@@ -55,6 +55,7 @@ class MemberTableModelBuilder extends AbstractTableModelBuilder {
         m_role = role;
     }
 
+    @Override
     public final TableModel makeModel(final Table table,
                                       final PageState state) {
         final Role role = m_role.getRole(state);
@@ -80,10 +81,12 @@ class MemberTableModelBuilder extends AbstractTableModelBuilder {
             iterator = m_parties.iterator();
         }
 
+        @Override
         public final int getColumnCount() {
             return 3;
         }
 
+        @Override
         public final boolean nextRow() {
             if (iterator.hasNext()) {
                 m_party = iterator.next();
@@ -93,23 +96,18 @@ class MemberTableModelBuilder extends AbstractTableModelBuilder {
             }
         }
 
+        @Override
         public final Object getKeyAt(final int column) {
             return m_party.getPartyId();
         }
 
+        @Override
         public final Object getElementAt(final int column) {
             switch (column) {
             case 0:
                 return m_party.getName();
             case 1:
-                //FIXME Party does not have a field for emails anymore.
-                final EmailAddress email = null;
-
-                if (email == null) {
-                    return lz("cms.ui.none");
-                } else {
-                    return email.toString();
-                }
+                return lz("cms.ui.none");
             case 2:
                 return lz("cms.ui.role.member.remove");
             default:
@@ -118,7 +116,7 @@ class MemberTableModelBuilder extends AbstractTableModelBuilder {
         }
     }
 
-    protected final static String lz(final String key) {
+    protected static String lz(final String key) {
         return (String) GlobalizationUtil.globalize(key).localize();
     }
 }
