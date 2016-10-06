@@ -60,7 +60,7 @@ class BaseRoleItemPane extends BaseItemPane {
     private final SingleSelectionModel m_model;
 
     private final MemberTable m_members;
-    private final AdminTable m_admins;
+    //private final AdminTable m_admins;
 
     private final SimpleContainer m_detailPane;
 
@@ -72,13 +72,14 @@ class BaseRoleItemPane extends BaseItemPane {
         m_role = role;
 
         m_members = new MemberTable();
-        m_admins = new AdminTable();
+        //m_admins = new AdminTable();
 
         final ActionLink memberAddLink = new ActionLink
             (new Label(gz("cms.ui.role.member.add")));
 
+        /*
         final ActionLink adminAddLink = new ActionLink
-            (new Label(gz("cms.ui.role.admin.add")));
+            (new Label(gz("cms.ui.role.admin.add")));*/
 
         m_detailPane = new SimpleContainer();
         add(m_detailPane);
@@ -86,7 +87,7 @@ class BaseRoleItemPane extends BaseItemPane {
 
         m_detailPane.add(new SummarySection(editLink, deleteLink));
         m_detailPane.add(new MemberSection(memberAddLink));
-        m_detailPane.add(new AdminSection(adminAddLink));
+        //m_detailPane.add(new AdminSection(adminAddLink));
 
 
         final PartySearchForm memberSearchForm = new PartySearchForm();
@@ -99,9 +100,10 @@ class BaseRoleItemPane extends BaseItemPane {
         final PartySearchForm adminSearchForm = new PartySearchForm();
         add(adminSearchForm);
 
+        /*
         final RoleAdminAddForm adminAddForm = new RoleAdminAddForm
             (m_model, adminSearchForm.getSearchWidget());
-        add(adminAddForm);
+        add(adminAddForm);*/
 
         connect(memberAddLink, memberSearchForm);
         connect(memberSearchForm, memberAddForm);
@@ -109,11 +111,12 @@ class BaseRoleItemPane extends BaseItemPane {
             (new CancelListener(memberAddForm.getForm()));
         resume(memberAddForm.getForm(), m_detailPane);
 
+        /*
         connect(adminAddLink, adminSearchForm);
         connect(adminSearchForm, adminAddForm);
         adminAddForm.getForm().addSubmissionListener
             (new CancelListener(adminAddForm.getForm()));
-        resume(adminAddForm.getForm(), m_detailPane);
+        resume(adminAddForm.getForm(), m_detailPane);*/
 
     }
 
@@ -182,6 +185,7 @@ class BaseRoleItemPane extends BaseItemPane {
         }
     }
 
+    /*
     private class AdminSection extends Section {
         AdminSection(final ActionLink adminAddLink) {
             setHeading(gz("cms.ui.role.admins"));
@@ -192,7 +196,7 @@ class BaseRoleItemPane extends BaseItemPane {
             group.setSubject(m_admins);
             group.addAction(new AdminVisible(adminAddLink), ActionGroup.ADD);
         }
-    }
+    }*/
 
 
     private static final String[] s_memberColumns = new String[] {
@@ -235,13 +239,14 @@ class BaseRoleItemPane extends BaseItemPane {
         }
     }
 
+    /*
     private static final String[] s_adminColumns = new String[] {
         lz("cms.ui.name"),
         lz("cms.ui.role.admin.email"),
         lz("cms.ui.role.admin.remove")
-    };
+    };*/
 
-
+    /*
     private class AdminTable extends Table {
         AdminTable() {
             super(new AdminTableModelBuilder(m_role), s_adminColumns);
@@ -271,5 +276,5 @@ class BaseRoleItemPane extends BaseItemPane {
             }
         }
 
-    }
+    }*/
 }
