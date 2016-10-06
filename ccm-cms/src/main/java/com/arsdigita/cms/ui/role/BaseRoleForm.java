@@ -92,7 +92,7 @@ class BaseRoleForm extends BaseForm {
             final List<String> possiblePrivileges = permissionManager.listDefiniedPrivileges(CmsConstants.class);
 
             for (final String privilege : possiblePrivileges) {
-                target.addOption(new Option(privilege, new Label(new GlobalizedMessage(privilege))));
+                target.addOption(new Option(privilege, new Label(new GlobalizedMessage(privilege, CmsConstants.CMS_BUNDLE))));
             }
         }
     }

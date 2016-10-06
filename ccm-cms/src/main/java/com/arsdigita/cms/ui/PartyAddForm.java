@@ -43,6 +43,7 @@ import com.arsdigita.ui.admin.GlobalizationUtil;
 import com.arsdigita.util.UncheckedWrapperException;
 import com.arsdigita.xml.Element;
 import org.libreccm.security.Party;
+import org.librecms.CmsConstants;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -64,6 +65,7 @@ public abstract class PartyAddForm extends SimpleContainer
     private final static String SUBMIT = "addSubmit";
     private final static String CANCEL = "addCancel";
     private final static String SUBMIT_LABEL = "Add Members";
+    private final static String CANCEL_LABEL = "Cancel";
 
     private Widget m_search;
     private RequestLocal m_query;
@@ -164,9 +166,9 @@ public abstract class PartyAddForm extends SimpleContainer
 
         // Submit and Cancel buttons.
         SimpleContainer s = new SimpleContainer();
-        Submit m_submit = new Submit(SUBMIT, new GlobalizedMessage(SUBMIT_LABEL));
+        Submit m_submit = new Submit(SUBMIT, new GlobalizedMessage(SUBMIT_LABEL, CmsConstants.CMS_BUNDLE));
         s.add(m_submit);
-        m_cancel = new Submit(CANCEL, new GlobalizedMessage("Cancel"));
+        m_cancel = new Submit(CANCEL, new GlobalizedMessage(CANCEL_LABEL, CmsConstants.CMS_BUNDLE));
         s.add(m_cancel);
         form.add(s, ColumnPanel.FULL_WIDTH | ColumnPanel.CENTER);
 
