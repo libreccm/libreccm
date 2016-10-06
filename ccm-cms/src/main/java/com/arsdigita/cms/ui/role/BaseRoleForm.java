@@ -19,6 +19,7 @@
 package com.arsdigita.cms.ui.role;
 
 import com.arsdigita.bebop.FormProcessException;
+import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.event.ParameterEvent;
 import com.arsdigita.bebop.event.ParameterListener;
@@ -32,6 +33,8 @@ import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.ui.admin.GlobalizationUtil;
 import com.arsdigita.util.UncheckedWrapperException;
 import org.apache.log4j.Logger;
+import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.security.PermissionManager;
 import org.libreccm.security.Role;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentSection;
@@ -81,21 +84,16 @@ class BaseRoleForm extends BaseForm {
     private class PrivilegePrinter implements PrintListener {
 	    @Override
         public final void prepare(final PrintEvent e) {
-            /*final CheckboxGroup target = (CheckboxGroup) e.getTarget();
-            final PageState state = e.getPageState();
+	        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final PermissionManager permissionManager = cdiUtil.findBean(PermissionManager.class);
 
-            final DataQuery query = SessionManager.getSession().retrieveQuery
-                (RoleFactory.CMS_PRIVILEGES);
-            query.addOrder(RoleFactory.SORT_ORDER);
+            final CheckboxGroup target = (CheckboxGroup) e.getTarget();
 
-            while (query.next()) {
-                target.addOption
-                    (new Option((String) query.get(RoleFactory.PRIVILEGE),
-                                (String) query.get(RoleFactory.PRETTY_NAME)));
+            final List<String> possiblePrivileges = permissionManager.listDefiniedPrivileges(CmsConstants.class);
+
+            for (final String privilege : possiblePrivileges) {
+                target.addOption(new Option(privilege, new Label(new GlobalizedMessage(privilege))));
             }
-
-            query.close();
-            */
         }
     }
 
