@@ -18,12 +18,6 @@
  */
 package org.libreccm.core;
 
-import nl.jqno.equalsverifier.Warning;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.libreccm.categorization.Category;
@@ -39,6 +33,10 @@ import java.util.Collection;
 import java.util.Locale;
 
 /**
+ * Verifies the implementation {@code equals} and {@code hashCode} of the
+ * {@link Resource} class. Separated from the tests in
+ * {@link EqualsAndHashCodeTest} because we need another setup in {@link #addPrefabValues(nl.jqno.equalsverifier.EqualsVerifier)
+ * for testing {@link Resource}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */

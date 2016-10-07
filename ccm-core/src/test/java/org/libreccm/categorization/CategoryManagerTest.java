@@ -33,8 +33,6 @@ import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.resolver.api.maven.Maven;
-import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -46,7 +44,6 @@ import org.libreccm.core.CcmObjectRepository;
 import org.libreccm.security.Shiro;
 import org.libreccm.tests.categories.IntegrationTest;
 
-import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -58,9 +55,11 @@ import javax.persistence.TypedQuery;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
+
 import static org.libreccm.testutils.DependenciesHelpers.*;
 
 /**
+ * Tests for the {@link CategoryManager}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -116,18 +115,6 @@ public class CategoryManagerTest {
 
     @Deployment
     public static WebArchive createDeployment() {
-//        final PomEquippedResolveStage pom = Maven
-//            .resolver()
-//            .loadPomFromFile("pom.xml");
-//        final PomEquippedResolveStage dependencies = pom
-//            .importCompileAndRuntimeDependencies();
-//        final File[] libs = dependencies.resolve().withTransitivity().asFile();
-//
-//        for (File lib : libs) {
-//            System.err.printf("Adding file '%s' to test archive...%n",
-//                              lib.getName());
-//        }
-
         return ShrinkWrap
             .create(WebArchive.class,
                     "LibreCCM-org.libreccm.categorization.CategoryManagerTest.war")
@@ -160,18 +147,27 @@ public class CategoryManagerTest {
             .addAsWebInfResource("META-INF/beans.xml", "beans.xml");
     }
 
+    /**
+     * Verifies that a {@link CategoryManager} instance is injected.
+     */
     @Test
     @InSequence(1)
     public void managerIsInjected() {
         assertThat(categoryManager, is(not(nullValue())));
     }
 
+    /**
+     * Verifies that an {@link EntityManager} instance is injected.
+     */
     @Test
     @InSequence(2)
     public void entityManagerIsInjected() {
         assertThat(entityManager, is(not((nullValue()))));
     }
 
+    /**
+     * Verifies that basic dataset for this test is loadable.
+     */
     @Test
     @UsingDataSet(
         "datasets/org/libreccm/categorization/CategoryManagerTest/data.yml")
@@ -180,6 +176,9 @@ public class CategoryManagerTest {
         System.out.println("Dataset loaded successfully.");
     }
 
+    /**
+     * Verifies that Shiro is setup properly.
+     */
     @Test
     @InSequence(20)
     public void checkShiro() {
@@ -187,9 +186,14 @@ public class CategoryManagerTest {
         assertThat(shiro.getSystemUser(), is(not(nullValue())));
     }
 
+    /**
+     * Verifies that
+     * {@link CategoryManager#addObjectToCategory(org.libreccm.core.CcmObject, org.libreccm.categorization.Category)}
+     * adds an object to a category.
+     */
     @Test
-    @UsingDataSet(
-        "datasets/org/libreccm/categorization/CategoryManagerTest/data.yml")
+    @UsingDataSet("datasets/org/libreccm/categorization/CategoryManagerTest/"
+                      + "data.yml")
     @ShouldMatchDataSet(
         value = "datasets/org/libreccm/categorization/CategoryManagerTest/"
                     + "after-add-obj-to-category.yml",
@@ -206,9 +210,13 @@ public class CategoryManagerTest {
             object2, foo));
     }
 
+    /**
+     * Verifies that the authorisation and permission inheritance from the
+     * domain to the categories works.
+     */
     @Test
-    @UsingDataSet(
-        "datasets/org/libreccm/categorization/CategoryManagerTest/data.yml")
+    @UsingDataSet("datasets/org/libreccm/categorization/CategoryManagerTest/"
+                      + "data.yml")
     @ShouldMatchDataSet(
         value = "datasets/org/libreccm/categorization/CategoryManagerTest/"
                     + "after-add-obj-to-category.yml",
@@ -231,9 +239,13 @@ public class CategoryManagerTest {
         subject.logout();
     }
 
+    /**
+     * Verifies that the authorisation and permission inheritance works for
+     * categories.
+     */
     @Test
-    @UsingDataSet(
-        "datasets/org/libreccm/categorization/CategoryManagerTest/data.yml")
+    @UsingDataSet("datasets/org/libreccm/categorization/CategoryManagerTest/"
+                      + "data.yml")
     @ShouldMatchDataSet(
         value = "datasets/org/libreccm/categorization/CategoryManagerTest/"
                     + "after-add-obj-to-category.yml",
@@ -256,9 +268,13 @@ public class CategoryManagerTest {
         subject.logout();
     }
 
+    /**
+     * Verifies that the authorisation and permission inheritance works for
+     * categories, this time with an unauthorised access.
+     */
     @Test(expected = UnauthorizedException.class)
-    @UsingDataSet(
-        "datasets/org/libreccm/categorization/CategoryManagerTest/data.yml")
+    @UsingDataSet("datasets/org/libreccm/categorization/CategoryManagerTest/"
+                      + "data.yml")
     @ShouldThrowException(UnauthorizedException.class)
     @InSequence(1400)
     public void addObjectToCategoryNotAuthorized() {
@@ -271,6 +287,14 @@ public class CategoryManagerTest {
         categoryManager.addObjectToCategory(object2, foo);
     }
 
+    /**
+     * Tries to remove an object from a category by using
+     * {@link CategoryManager#removeObjectFromCategory(org.libreccm.core.CcmObject, org.libreccm.categorization.Category)}
+     *
+     * The operation is executed in the system users context.
+     *
+     * @throws ObjectNotAssignedToCategoryException
+     */
     @Test
     @UsingDataSet(
         "datasets/org/libreccm/categorization/CategoryManagerTest/data.yml")
@@ -294,9 +318,19 @@ public class CategoryManagerTest {
         });
     }
 
+    /**
+     * Tries to remove an object from a category by using
+     * {@link CategoryManager#removeObjectFromCategory(org.libreccm.core.CcmObject, org.libreccm.categorization.Category)}
+     *
+     * This time we are using an author which has been authorised to do so for
+     * the category by a permission set on the {@link Domain} to which the
+     * category belongs.
+     *
+     * @throws ObjectNotAssignedToCategoryException
+     */
     @Test
-    @UsingDataSet(
-        "datasets/org/libreccm/categorization/CategoryManagerTest/data.yml")
+    @UsingDataSet("datasets/org/libreccm/categorization/CategoryManagerTest/"
+                      + "data.yml")
     @ShouldMatchDataSet(
         value = "datasets/org/libreccm/categorization/CategoryManagerTest/"
                     + "after-remove-obj-from-category.yml",
@@ -321,9 +355,18 @@ public class CategoryManagerTest {
         subject.logout();
     }
 
+    /**
+     * Tries to remove an object from a category by using
+     * {@link CategoryManager#removeObjectFromCategory(org.libreccm.core.CcmObject, org.libreccm.categorization.Category)}
+     *
+     * This time we are using an author which has been authorised to do so for
+     * the category by a permission set on the {@link Category} itself.
+     *
+     * @throws ObjectNotAssignedToCategoryException
+     */
     @Test
-    @UsingDataSet(
-        "datasets/org/libreccm/categorization/CategoryManagerTest/data.yml")
+    @UsingDataSet("datasets/org/libreccm/categorization/CategoryManagerTest/"
+                      + "data.yml")
     @ShouldMatchDataSet(
         value = "datasets/org/libreccm/categorization/CategoryManagerTest/"
                     + "after-remove-obj-from-category.yml",
@@ -348,9 +391,16 @@ public class CategoryManagerTest {
         subject.logout();
     }
 
+    /**
+     * Tries to remove an object from a category and verifies that a
+     * {@link UnauthorizedException} is thrown if the current user is not
+     * authorised for the operation.
+     *
+     * @throws ObjectNotAssignedToCategoryException
+     */
     @Test(expected = UnauthorizedException.class)
-    @UsingDataSet(
-        "datasets/org/libreccm/categorization/CategoryManagerTest/data.yml")
+    @UsingDataSet("datasets/org/libreccm/categorization/CategoryManagerTest/"
+                      + "data.yml")
     @ShouldThrowException(UnauthorizedException.class)
     @InSequence(2300)
     public void removeObjectFromCategoryNotAuthorized()
@@ -365,9 +415,12 @@ public class CategoryManagerTest {
         categoryManager.removeObjectFromCategory(object1, foo);
     }
 
+    /**
+     * Tries to add a sub category to another category.
+     */
     @Test
-    @UsingDataSet(
-        "datasets/org/libreccm/categorization/CategoryManagerTest/data.yml")
+    @UsingDataSet("datasets/org/libreccm/categorization/CategoryManagerTest/"
+                      + "data.yml")
     @ShouldMatchDataSet(
         value = "datasets/org/libreccm/categorization/"
                     + "CategoryManagerTest/after-add-subcategory.yml",
@@ -392,9 +445,13 @@ public class CategoryManagerTest {
             () -> categoryManager.addSubCategoryToCategory(sub, foo));
     }
 
+    /**
+     * Tries to add a subcategory to category with authorisation by a permission
+     * set of the {@link Domain} to which the category belongs.
+     */
     @Test
-    @UsingDataSet(
-        "datasets/org/libreccm/categorization/CategoryManagerTest/data.yml")
+    @UsingDataSet("datasets/org/libreccm/categorization/CategoryManagerTest/"
+                      + "data.yml")
     @ShouldMatchDataSet(
         value = "datasets/org/libreccm/categorization/"
                     + "CategoryManagerTest/after-add-subcategory.yml",
@@ -425,9 +482,13 @@ public class CategoryManagerTest {
         subject.logout();
     }
 
+    /**
+     * Tries to add a subcategory to category with authorisation by a permission
+     * set of the category.
+     */
     @Test
-    @UsingDataSet(
-        "datasets/org/libreccm/categorization/CategoryManagerTest/data.yml")
+    @UsingDataSet("datasets/org/libreccm/categorization/CategoryManagerTest/"
+                      + "data.yml")
     @ShouldMatchDataSet(
         value = "datasets/org/libreccm/categorization/"
                     + "CategoryManagerTest/after-add-subcategory.yml",
@@ -458,9 +519,15 @@ public class CategoryManagerTest {
         subject.logout();
     }
 
+    /**
+     * Tries to add a subcategory to a category and verifies that
+     * {@link CategoryManager#addSubCategoryToCategory(org.libreccm.categorization.Category, org.libreccm.categorization.Category)}
+     * throws an {@link UnauthorizedException} if the current user is not
+     * authorised to do that.
+     */
     @Test(expected = UnauthorizedException.class)
-    @UsingDataSet(
-        "datasets/org/libreccm/categorization/CategoryManagerTest/data.yml")
+    @UsingDataSet("datasets/org/libreccm/categorization/CategoryManagerTest/"
+                      + "data.yml")
     @ShouldThrowException(UnauthorizedException.class)
     @InSequence(3000)
     public void addSubCategoryToCategoryNotAuthorized() {
@@ -481,9 +548,13 @@ public class CategoryManagerTest {
         categoryManager.addSubCategoryToCategory(sub, foo);
     }
 
+    /**
+     * Tries to remove a subcategory from a category by using
+     * {@link CategoryManager#removeSubCategoryFromCategory(org.libreccm.categorization.Category, org.libreccm.categorization.Category)}.
+     */
     @Test
-    @UsingDataSet(
-        "datasets/org/libreccm/categorization/CategoryManagerTest/data.yml")
+    @UsingDataSet("datasets/org/libreccm/categorization/CategoryManagerTest/"
+                      + "data.yml")
     @ShouldMatchDataSet(
         value = "datasets/org/libreccm/categorization/"
                     + "CategoryManagerTest/after-remove-subcategory.yml",
@@ -497,9 +568,14 @@ public class CategoryManagerTest {
             () -> categoryManager.removeSubCategoryFromCategory(bar, foo));
     }
 
+    /**
+     * Tries to remove a subcategory from a category. The user is authorised to
+     * do by a permission set on the {@link Domain} to which the category
+     * belongs.
+     */
     @Test
-    @UsingDataSet(
-        "datasets/org/libreccm/categorization/CategoryManagerTest/data.yml")
+    @UsingDataSet("datasets/org/libreccm/categorization/CategoryManagerTest/"
+                      + "data.yml")
     @ShouldMatchDataSet(
         value = "datasets/org/libreccm/categorization/"
                     + "CategoryManagerTest/after-remove-subcategory.yml",
@@ -519,9 +595,13 @@ public class CategoryManagerTest {
         subject.logout();
     }
 
+    /**
+     * Tries to remove a subcategory from a category. The user is authorised to
+     * do by a permission set on the category.
+     */
     @Test
-    @UsingDataSet(
-        "datasets/org/libreccm/categorization/CategoryManagerTest/data.yml")
+    @UsingDataSet("datasets/org/libreccm/categorization/CategoryManagerTest/"
+                      + "data.yml")
     @ShouldMatchDataSet(
         value = "datasets/org/libreccm/categorization/"
                     + "CategoryManagerTest/after-remove-subcategory.yml",
@@ -541,9 +621,15 @@ public class CategoryManagerTest {
         subject.logout();
     }
 
+    /**
+     * Verifies that
+     * {@link CategoryManager#removeSubCategoryFromCategory(org.libreccm.categorization.Category, org.libreccm.categorization.Category)}
+     * throws an {@link UnauthorizedException} if the current user does not have
+     * sufficient permissions to execute the operation.
+     */
     @Test(expected = UnauthorizedException.class)
-    @UsingDataSet(
-        "datasets/org/libreccm/categorization/CategoryManagerTest/data.yml")
+    @UsingDataSet("datasets/org/libreccm/categorization/CategoryManagerTest/"
+                      + "data.yml")
     @ShouldThrowException(UnauthorizedException.class)
     @InSequence(4000)
     public void removeSubCategoryFromCategoryNotAuthorized() {
@@ -553,9 +639,13 @@ public class CategoryManagerTest {
         categoryManager.removeSubCategoryFromCategory(bar, foo);
     }
 
+    /**
+     * Verifies that multiple categories (a complete category hierarchy) can be
+     * created without saving each category after the creation of each category.
+     */
     @Test
-    @UsingDataSet(
-        "datasets/org/libreccm/categorization/CategoryManagerTest/data.yml")
+    @UsingDataSet("datasets/org/libreccm/categorization/CategoryManagerTest/"
+                      + "data.yml")
     @ShouldMatchDataSet(
         value = "datasets/org/libreccm/categorization/CategoryManagerTest/"
                     + "after-create-multiple-categories.yml",
@@ -597,9 +687,14 @@ public class CategoryManagerTest {
         });
     }
 
+    /**
+     * Verifies that
+     * {@link CategoryManager#hasIndexObject(org.libreccm.categorization.Category)}
+     * returns the expected value.
+     */
     @Test
-    @UsingDataSet(
-        "datasets/org/libreccm/categorization/CategoryManagerTest/data.yml")
+    @UsingDataSet("datasets/org/libreccm/categorization/CategoryManagerTest/"
+                      + "data.yml")
     @InSequence(6000)
     public void hasIndexObject() {
         final Category category1 = categoryRepo.findById(-2100L);
@@ -609,6 +704,11 @@ public class CategoryManagerTest {
         assertThat(categoryManager.hasIndexObject(category2), is(true));
     }
 
+    /**
+     * Tries to retrieve the index object from several categories and verifies
+     * that the expected object is returned by 
+     * {@link CategoryManager#getIndexObject(org.libreccm.categorization.Category).
+     */
     @Test
     @UsingDataSet(
         "datasets/org/libreccm/categorization/CategoryManagerTest/data.yml")

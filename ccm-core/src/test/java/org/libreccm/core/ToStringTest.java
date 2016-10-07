@@ -28,34 +28,34 @@ import java.util.Arrays;
 import java.util.Collection;
 
 /**
+ * Checks the implemention of the {@code toString} method of the entities in
+ * this package for {@link NullPointerException}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RunWith(Parameterized.class)
 @Category(UnitTest.class)
 public class ToStringTest extends ToStringVerifier {
-    
+
     @Parameterized.Parameters(name = "{0}")
     public static Collection<Class<?>> data() {
         return Arrays.asList(new Class<?>[]{
             CcmObject.class,
             EmailAddress.class,
-//            GroupMembership.class,
-//            Subject.class,
-//            Permission.class,
-//            PersonName.class,
-//            Privilege.class,
+            //            GroupMembership.class,
+            //            Subject.class,
+            //            Permission.class,
+            //            PersonName.class,
+            //            Privilege.class,
             Resource.class,
-            ResourceType.class,
-//            Role.class,
-//            User.class,
-//            Group.class
+            ResourceType.class, //            Role.class,
+        //            User.class,
+        //            Group.class
         });
     }
 
     public ToStringTest(final Class<?> entityClass) {
         super(entityClass);
     }
-    
 
 }

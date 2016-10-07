@@ -32,6 +32,8 @@ import org.libreccm.security.User;
 import org.libreccm.testutils.EqualsVerifier;
 
 /**
+ * Verifies implementions of {@code equals} and {@code hashCode} for the
+ * entities in the {@code org.libreccm.core} package.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */

@@ -52,7 +52,7 @@ import static org.junit.Assert.*;
 import static org.libreccm.testutils.DependenciesHelpers.*;
 
 /**
- *
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @org.junit.experimental.categories.Category(IntegrationTest.class)

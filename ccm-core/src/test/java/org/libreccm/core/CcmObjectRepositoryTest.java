@@ -33,8 +33,6 @@ import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.resolver.api.maven.Maven;
-import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -44,7 +42,6 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.libreccm.tests.categories.IntegrationTest;
 
-import java.io.File;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -52,9 +49,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import static org.junit.Assert.*;
+
 import static org.libreccm.testutils.DependenciesHelpers.*;
 
 /**
+ * Tests for the {@link CcmObjectRepository} which is the foundation for many
+ * other repositories in LibreCCM.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -120,37 +120,53 @@ public class CcmObjectRepositoryTest {
             .addAsWebInfResource(EmptyAsset.INSTANCE, "WEB-INF/beans.xml");
     }
 
+    /**
+     * Verify that an {@link CcmObjectRepository} instance is injected.
+     */
     @Test
     @InSequence(1)
     public void repoIsInjected() {
         assertThat(ccmObjectRepository, is(not((nullValue()))));
     }
 
+    /**
+     * Verify that an {@link EntityManager} is injected.
+     */
     @Test
     @InSequence(2)
     public void entityManagerIsInjected() {
         assertThat(entityManager, is(not((nullValue()))));
     }
 
+    /**
+     * Verify that the basic dataset loads successfully.
+     */
     @Test
-    @UsingDataSet(
-        "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.yml")
+    @UsingDataSet("datasets/org/libreccm/core/CcmObjectRepositoryTest/data.yml")
     @InSequence(3)
     public void datasetOnly() {
         System.out.println("Dataset loaded successfully.");
     }
 
+    /**
+     * Verify that the {@code after-save-changed.yml} dataset loads
+     * successfully.
+     */
     @Test
-    @UsingDataSet(
-        "datasets/org/libreccm/core/CcmObjectRepositoryTest/after-save-changed.yml")
+    @UsingDataSet("datasets/org/libreccm/core/CcmObjectRepositoryTest/"
+                      + "after-save-changed.yml")
     @InSequence(4)
     public void datasetOnly2() {
         System.out.println("Dataset loaded successfully.");
     }
 
+    /**
+     * Tries to find several objects by using
+     * {@link EntityManager#find(java.lang.Class, java.lang.Object)} with a
+     * value of type {@code long}.
+     */
     @Test
-    @UsingDataSet(
-        "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.yml")
+    @UsingDataSet("datasets/org/libreccm/core/CcmObjectRepositoryTest/data.yml")
     @InSequence(5)
     public void entityManagerFindCcmObjectByLongPrimitive() {
         final CcmObject obj1 = entityManager.find(CcmObject.class, -10L);
@@ -173,19 +189,24 @@ public class CcmObjectRepositoryTest {
         assertThat(none, is(nullValue()));
     }
 
+    /**
+     * Tries to find several objects by using
+     * {@link EntityManager#find(java.lang.Class, java.lang.Object)} with a
+     * value of type {@link Long}.
+     */
     @Test
-    @UsingDataSet(
-        "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.yml")
+    @UsingDataSet("datasets/org/libreccm/core/CcmObjectRepositoryTest/data.yml")
     @InSequence(6)
     public void entityManagerFindCcmObjectByLongClass() {
-        final CcmObject obj1 = entityManager.find(CcmObject.class,
-                                                  new Long(-10L));
-        final CcmObject obj2 = entityManager.find(CcmObject.class,
-                                                  new Long(-20L));
-        final CcmObject obj3 = entityManager.find(CcmObject.class,
-                                                  new Long(-30L));
-        final CcmObject none = entityManager.find(CcmObject.class, new Long(
-                                                  -999L));
+        final Long id1 = -10L;
+        final Long id2 = -20L;
+        final Long id3 = -30L;
+        final Long id4 = -999L;
+
+        final CcmObject obj1 = entityManager.find(CcmObject.class, id1);
+        final CcmObject obj2 = entityManager.find(CcmObject.class, id2);
+        final CcmObject obj3 = entityManager.find(CcmObject.class, id3);
+        final CcmObject none = entityManager.find(CcmObject.class, id4);
 
         assertThat(obj1, is(not(nullValue())));
         assertThat(obj1.getObjectId(), is(-10L));
@@ -203,8 +224,7 @@ public class CcmObjectRepositoryTest {
     }
 
     @Test
-    @UsingDataSet(
-        "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.yml")
+    @UsingDataSet("datasets/org/libreccm/core/CcmObjectRepositoryTest/data.yml")
     @InSequence(10)
     public void findCcmObjectById() {
         final CcmObject obj1 = ccmObjectRepository.findById(-10L);
@@ -227,9 +247,12 @@ public class CcmObjectRepositoryTest {
         assertThat(none, is(nullValue()));
     }
 
+    /**
+     * Tries to find all {@link CcmObject}s in the test database by using
+     * {@link CcmObjectRepository#findAll()}.
+     */
     @Test
-    @UsingDataSet(
-        "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.yml")
+    @UsingDataSet("datasets/org/libreccm/core/CcmObjectRepositoryTest/data.yml")
     @InSequence(10)
     public void findAllCcmObjects() {
         final List<CcmObject> objects = ccmObjectRepository.findAll();
@@ -237,9 +260,13 @@ public class CcmObjectRepositoryTest {
         assertThat(objects.size(), is(3));
     }
 
+    /**
+     * Tries to save a new {@link CcmObject} using
+     * {@link CcmObjectRepository#save(java.lang.Object)} and verifes that it is
+     * saved to the * database.
+     */
     @Test
-    @UsingDataSet(
-        "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.yml")
+    @UsingDataSet("datasets/org/libreccm/core/CcmObjectRepositoryTest/data.yml")
     @ShouldMatchDataSet(
         value = "datasets/org/libreccm/core/CcmObjectRepositoryTest/"
                     + "after-save-new.yml",
@@ -252,9 +279,14 @@ public class CcmObjectRepositoryTest {
         ccmObjectRepository.save(obj);
     }
 
+    /**
+     * Changes some values of one of the {@link CcmObject}s in the test
+     * database, saves the changes to the database by using
+     * {@link CcmObjectRepository#save(java.lang.Object)} and verifies that the
+     * changes have been written to the database.
+     */
     @Test
-    @UsingDataSet(
-        "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.yml")
+    @UsingDataSet("datasets/org/libreccm/core/CcmObjectRepositoryTest/data.yml")
     @ShouldMatchDataSet(
         value = "datasets/org/libreccm/core/CcmObjectRepositoryTest/"
                     + "after-save-changed.yml",
@@ -267,6 +299,11 @@ public class CcmObjectRepositoryTest {
         ccmObjectRepository.save(obj);
     }
 
+    /**
+     * Verifies that {@link CcmObjectRepository#save(java.lang.Object)} throws a
+     * {@link IllegalArgumentException} if called with {@code null} as the
+     * object to save.
+     */
     @Test(expected = IllegalArgumentException.class)
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(500)
@@ -274,9 +311,13 @@ public class CcmObjectRepositoryTest {
         ccmObjectRepository.save(null);
     }
 
+    /**
+     * Deletes one of the {@link CcmObject}s in the database by using 
+     * {@link CcmObjectRepository#delete(java.lang.Object)} and verifies that
+     * the object has been removed from the test database.
+     */
     @Test
-    @UsingDataSet(
-        "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.yml")
+    @UsingDataSet("datasets/org/libreccm/core/CcmObjectRepositoryTest/data.yml")
     @ShouldMatchDataSet(
         value = "datasets/org/libreccm/core/CcmObjectRepositoryTest/"
                     + "after-delete.yml",
@@ -288,6 +329,11 @@ public class CcmObjectRepositoryTest {
         ccmObjectRepository.delete(obj);
     }
 
+    /**
+     * Verifies that {@link CcmObjectRepository#delete(java.lang.Object)} throws
+     * a {@link IllegalArgumentException} if called with {@link null} for the 
+     * object to delete.
+     */
     @Test(expected = IllegalArgumentException.class)
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(700)

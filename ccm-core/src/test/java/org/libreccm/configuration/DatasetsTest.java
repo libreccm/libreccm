@@ -34,20 +34,20 @@ import org.libreccm.testutils.DatasetsVerifier;
 import static org.libreccm.testutils.DatasetType.*;
 
 /**
+ * Ensures that all datasets used by the tests in this package are valid.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RunWith(Parameterized.class)
 @Category(UnitTest.class)
 public class DatasetsTest extends DatasetsVerifier {
-    
+
     @Parameterized.Parameters(name = "Dataset {0}")
     public static Collection<String> data() {
         return Arrays.asList(new String[]{
             "/datasets/org/libreccm/configuration/ConfigurationManagerTest/after-save-changed.yml",
             "/datasets/org/libreccm/configuration/ConfigurationManagerTest/after-save-new.yml",
-            "/datasets/org/libreccm/configuration/ConfigurationManagerTest/data.yml",
-        });
+            "/datasets/org/libreccm/configuration/ConfigurationManagerTest/data.yml",});
     }
 
     public DatasetsTest(final String datasetPath) {
@@ -79,5 +79,5 @@ public class DatasetsTest extends DatasetsVerifier {
     @After
     public void tearDown() {
     }
-    
+
 }

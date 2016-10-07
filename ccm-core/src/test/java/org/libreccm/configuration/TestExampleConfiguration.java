@@ -23,7 +23,8 @@ import java.util.Collections;
 import java.util.Set;
 
 /**
- *
+ * An example configuration used by {@link ConfigurationManagerTest}.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Configuration

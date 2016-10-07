@@ -20,7 +20,6 @@ package org.libreccm.configuration;
 
 import com.example.TestConfiguration;
 
-import java.io.File;
 import java.math.BigDecimal;
 
 import javax.inject.Inject;
@@ -36,8 +35,6 @@ import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.resolver.api.maven.Maven;
-import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -50,9 +47,11 @@ import org.libreccm.tests.categories.IntegrationTest;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
+
 import static org.libreccm.testutils.DependenciesHelpers.*;
 
 /**
+ * Tests for the {@link ConfigurationManager}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -91,18 +90,6 @@ public class ConfigurationManagerTest {
 
     @Deployment
     public static WebArchive createDeployment() {
-//        final PomEquippedResolveStage pom = Maven
-//            .resolver()
-//            .loadPomFromFile("pom.xml");
-//        final PomEquippedResolveStage dependencies = pom
-//            .importCompileAndRuntimeDependencies();
-//        final File[] libs = dependencies.resolve().withTransitivity().asFile();
-//
-//        for (File lib : libs) {
-//            System.err.printf("Adding file '%s' to test archive...%n",
-//                              lib.getName());
-//        }
-
         return ShrinkWrap
             .create(WebArchive.class,
                     "LibreCCM-org.libreccm.configuration."
@@ -141,12 +128,18 @@ public class ConfigurationManagerTest {
             .addAsWebInfResource("META-INF/beans.xml", "beans.xml");
     }
 
+    /**
+     * Verifies that a {@link ConfigurationManager} instance is injected.
+     */
     @Test
     @InSequence(1)
     public void managerIsInjected() {
         assertThat(configurationManager, is(not(nullValue())));
     }
 
+    /**
+     * Verifies if the dataset for this can be loaded.
+     */
     @Test
     @UsingDataSet(
         "datasets/org/libreccm/configuration/ConfigurationManagerTest/data.yml")
@@ -155,9 +148,15 @@ public class ConfigurationManagerTest {
         System.out.println("Dataset loaded successfully.");
     }
 
+    /**
+     * Tries to load a configuration from the database using the
+     * {@link ConfigurationManager#findConfiguration(java.lang.Class)} method
+     * and verifies that the properties of the configuration class have the
+     * expected values.
+     */
     @Test
-    @UsingDataSet(
-        "datasets/org/libreccm/configuration/ConfigurationManagerTest/data.yml")
+    @UsingDataSet("datasets/org/libreccm/configuration/"
+                      + "ConfigurationManagerTest/data.yml")
     @InSequence(1100)
     public void loadConfiguration() {
         final TestExampleConfiguration configuration = configurationManager
@@ -176,12 +175,17 @@ public class ConfigurationManagerTest {
         assertThat(configuration.getLanguages(), hasItem("en"));
     }
 
+    /**
+     * Loads a configuration using
+     * {@link ConfigurationManager#findConfiguration(java.lang.Class)} changes
+     * some of the properties and writes the changes back to the database using
+     * {@link ConfigurationManager#saveConfiguration(java.lang.Object)}.
+     */
     @Test
-    @UsingDataSet(
-        "datasets/org/libreccm/configuration/ConfigurationManagerTest/data.yml")
-    @ShouldMatchDataSet(
-        "datasets/org/libreccm/configuration/ConfigurationManagerTest/"
-            + "after-save-changed.yml")
+    @UsingDataSet("datasets/org/libreccm/configuration/"
+                      + "ConfigurationManagerTest/data.yml")
+    @ShouldMatchDataSet("datasets/org/libreccm/configuration/"
+                            + "ConfigurationManagerTest/after-save-changed.yml")
     @InSequence(1200)
     public void saveConfiguration() {
         final TestExampleConfiguration configuration = configurationManager
@@ -195,9 +199,13 @@ public class ConfigurationManagerTest {
             () -> configurationManager.saveConfiguration(configuration));
     }
 
+    /**
+     * Loads a configuration which is not yet in the database an verifies that
+     * all properties of the configuration class have their defaults values.
+     */
     @Test
-    @UsingDataSet(
-        "datasets/org/libreccm/configuration/ConfigurationManagerTest/data.yml")
+    @UsingDataSet("datasets/org/libreccm/configuration/"
+                      + "ConfigurationManagerTest/data.yml")
     @InSequence(2100)
     public void loadNewConfiguration() {
         final TestConfiguration configuration = configurationManager
@@ -208,9 +216,13 @@ public class ConfigurationManagerTest {
         assertThat(configuration.getItemsPerPage(), is(40L));
     }
 
+    /**
+     * Loads a configuration which is not yet in the database and saves this
+     * configuration to the database.
+     */
     @Test
-    @UsingDataSet(
-        "datasets/org/libreccm/configuration/ConfigurationManagerTest/data.yml")
+    @UsingDataSet("datasets/org/libreccm/configuration/"
+                      + "ConfigurationManagerTest/data.yml")
     @ShouldMatchDataSet(
         value = "datasets/org/libreccm/configuration/"
                     + "ConfigurationManagerTest/after-save-new.yml",

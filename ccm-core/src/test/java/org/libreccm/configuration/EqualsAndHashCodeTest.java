@@ -27,7 +27,9 @@ import org.libreccm.tests.categories.UnitTest;
 import org.libreccm.testutils.EqualsVerifier;
 
 /**
- *
+ * Verifies the implementations of the {@code equals} and {@code hashCode} 
+ * methods of several classes in this package.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RunWith(Parameterized.class)

@@ -32,7 +32,8 @@ import java.util.Arrays;
 import java.util.Collection;
 
 /**
- *
+ * Verifies that datasets used by the tests in this package.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RunWith(Parameterized.class)

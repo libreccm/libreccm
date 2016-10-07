@@ -18,17 +18,9 @@
  */
 package org.libreccm.configuration;
 
-import org.libreccm.configuration.StringSetting;
-import org.libreccm.configuration.LocalizedStringSetting;
-import org.libreccm.configuration.ConfigurationInfo;
-import org.libreccm.configuration.EnumSetting;
-import org.libreccm.configuration.DoubleSetting;
-import org.libreccm.configuration.BigDecimalSetting;
-import org.libreccm.configuration.LongSetting;
-import org.libreccm.configuration.SettingInfo;
-import org.libreccm.configuration.BooleanSetting;
 import java.util.Arrays;
 import java.util.Collection;
+
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -36,7 +28,9 @@ import org.libreccm.tests.categories.UnitTest;
 import org.libreccm.testutils.ToStringVerifier;
 
 /**
- *
+ * Checks the implementation of the {@code toString} method of several classes
+ * in this package for {@link NullPointerException} and similar errors.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RunWith(Parameterized.class)
