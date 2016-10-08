@@ -232,7 +232,7 @@ public class ContentItemRepository
     }
 
     /**
-     * Counts a items in a specfic folder whose {@link CcmObject#displayName}
+     * Counts a items in a specific folder whose {@link CcmObject#displayName}
      * starts with the provided pattern.
      *
      * @param folder The folder/category to use.

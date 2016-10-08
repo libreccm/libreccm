@@ -54,12 +54,20 @@ import javax.persistence.Table;
     @NamedQuery(
         name = "ContentType.findByContentSection",
         query = "SELECT c FROM ContentType c "
-                    + "WHERE c.contentSection = :contentSection"),
+                    + "WHERE c.contentSection = :contentSection "
+                    + "ORDER BY c.contentItemClass")
+    ,
     @NamedQuery(
         name = "ContentType.findByContentSectionAndClass",
         query = "SELECT c FROM ContentType c "
                     + "WHERE c.contentSection = :contentSection "
-                    + "AND c.contentItemClass  =:clazz")
+                    + "AND c.contentItemClass  = :clazz")
+    ,
+        @NamedQuery(
+        name = "ContentType.isInUse",
+        query = "SELECT COUNT(i) FROM ContentItem i "
+                    + "WHERE i.contentType = :type"
+    )
 })
 public class ContentType extends CcmObject implements Serializable {
 

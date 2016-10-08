@@ -62,6 +62,9 @@ public class DatasetsTest extends DatasetsVerifier {
             "/datasets/org/librecms/contentsection/ContentItemManagerTest/after-republish.xml",
             "/datasets/org/librecms/contentsection/ContentItemManagerTest/after-unpublish.xml",
 
+            "/datasets/org/librecms/contentsection/ContentTypeRepositoryTest/data.xml",
+            "/datasets/org/librecms/contentsection/ContentTypeRepositoryTest/after-delete.xml",
+            
             "/datasets/org/librecms/contentsection/FolderManagerTest/data.xml",
             "/datasets/org/librecms/contentsection/FolderManagerTest/after-create-docs-folder.xml",
             "/datasets/org/librecms/contentsection/FolderManagerTest/after-create-assets-folder.xml",

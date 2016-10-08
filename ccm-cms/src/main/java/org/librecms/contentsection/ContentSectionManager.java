@@ -91,11 +91,11 @@ public class ContentSectionManager {
     public ContentSection createContentSection(final String name) {
         if (name == null || name.isEmpty()) {
             throw new IllegalArgumentException(
-                    "The name of a ContentSection can't be blank.");
+                "The name of a ContentSection can't be blank.");
         }
 
         final KernelConfig kernelConfig = confManager.findConfiguration(
-                KernelConfig.class);
+            KernelConfig.class);
         final Locale defautLocale = kernelConfig.getDefaultLocale();
 
         final ContentSection section = new ContentSection();
@@ -221,17 +221,17 @@ public class ContentSectionManager {
      * {@link CmsConstants#PRIVILEGE_ADMINISTER_ROLES} for the provided content
      * section.
      *
-     * @param section The {@link ContentSection} to which the role is added.
-     * @param roleName The name of the new role.
+     * @param section    The {@link ContentSection} to which the role is added.
+     * @param roleName   The name of the new role.
      * @param privileges The privileges of the new role.
      */
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public void addRoleToContentSection(
-            @RequiresPrivilege(PRIVILEGE_ADMINISTER_ROLES)
-            final ContentSection section,
-            final String roleName,
-            final String... privileges) {
+        @RequiresPrivilege(PRIVILEGE_ADMINISTER_ROLES)
+        final ContentSection section,
+        final String roleName,
+        final String... privileges) {
 
         final Role role = new Role();
         role.setName(String.join("_", section.getLabel(), roleName));
@@ -251,15 +251,15 @@ public class ContentSectionManager {
      * requires {@link CmsConstants#PRIVILEGE_ADMINISTER_ROLES} for the provided
      * content section.
      *
-     * @param role The role to add.
+     * @param role    The role to add.
      * @param section The section the role is associated with.
      */
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public void addRoleToContentSection(
-            final Role role,
-            @RequiresPrivilege(PRIVILEGE_ADMINISTER_ROLES)
-            final ContentSection section) {
+        final Role role,
+        @RequiresPrivilege(PRIVILEGE_ADMINISTER_ROLES)
+        final ContentSection section) {
 
         section.addRole(role);
         sectionRepo.save(section);
@@ -274,18 +274,18 @@ public class ContentSectionManager {
      * section.
      *
      * @param contentSection The section from which the role is removed.
-     * @param role The role to remove from the content section.
+     * @param role           The role to remove from the content section.
      */
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public void removeRoleFromContentSection(
-            @RequiresPrivilege(PRIVILEGE_ADMINISTER_ROLES)
-            final ContentSection contentSection,
-            final Role role) {
+        @RequiresPrivilege(PRIVILEGE_ADMINISTER_ROLES)
+        final ContentSection contentSection,
+        final Role role) {
 
         if (contentSection == null) {
             throw new IllegalArgumentException(
-                    "Can't remove role from ContentSection null");
+                "Can't remove role from ContentSection null");
         }
 
         if (role == null) {
@@ -296,8 +296,8 @@ public class ContentSectionManager {
         sectionRepo.save(contentSection);
 
         final TypedQuery<Permission> query = entityManager
-                .createNamedQuery("ContentSection.findPermissions",
-                                  Permission.class);
+            .createNamedQuery("ContentSection.findPermissions",
+                              Permission.class);
         query.setParameter("section", contentSection);
         query.setParameter("rootDocumentsFolder",
                            contentSection.getRootDocumentsFolder());
@@ -313,15 +313,16 @@ public class ContentSectionManager {
      * {@link CmsConstants#PRIVILEGE_ADMINISTER_CONTENT_TYPES} for the provided
      * content section.
      *
-     * @param type The {@link ContentItem} class representing the type to add.
+     * @param type    The {@link ContentItem} class representing the type to
+     *                add.
      * @param section The section to which to type is added.
      */
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public void addTypeToSection(
-            final Class<? extends ContentItem> type,
-            @RequiresPrivilege(PRIVILEGE_ADMINISTER_CONTENT_TYPES)
-            final ContentSection section) {
+        final Class<? extends ContentItem> type,
+        @RequiresPrivilege(PRIVILEGE_ADMINISTER_CONTENT_TYPES)
+        final ContentSection section) {
 
         throw new UnsupportedOperationException();
     }
@@ -333,15 +334,15 @@ public class ContentSectionManager {
      * {@link CmsConstants#PRIVILEGE_ADMINISTER_CONTENT_TYPES} for the provided
      * content section.
      *
-     * @param type The type to remove.
+     * @param type    The type to remove.
      * @param section The section from which the type is removed.
      */
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public void removeTypeFromSection(
-            final ContentType type,
-            @RequiresPrivilege(PRIVILEGE_ADMINISTER_CONTENT_TYPES)
-            final ContentSection section) {
+        final ContentType type,
+        @RequiresPrivilege(PRIVILEGE_ADMINISTER_CONTENT_TYPES)
+        final ContentSection section) {
 
         throw new UnsupportedOperationException();
     }
@@ -352,14 +353,14 @@ public class ContentSectionManager {
      * content section.
      *
      * @param definition The lifecycle definition to add.
-     * @param section The section to which the definition is added.
+     * @param section    The section to which the definition is added.
      */
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public void addLifecycleDefinitionToContentSection(
-            final LifecycleDefinition definition,
-            @RequiresPrivilege(PRIVILEGE_ADMINISTER_LIFECYLES)
-            final ContentSection section) {
+        final LifecycleDefinition definition,
+        @RequiresPrivilege(PRIVILEGE_ADMINISTER_LIFECYLES)
+        final ContentSection section) {
 
         section.addLifecycleDefinition(definition);
         sectionRepo.save(section);
@@ -371,14 +372,14 @@ public class ContentSectionManager {
      * provided content section.
      *
      * @param definition The definition to remove.
-     * @param section The section from which the definition is removed.
+     * @param section    The section from which the definition is removed.
      */
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public void removeLifecycleDefinitionFromContentSection(
-            final LifecycleDefinition definition,
-            @RequiresPrivilege(PRIVILEGE_ADMINISTER_LIFECYLES)
-            final ContentSection section) {
+        final LifecycleDefinition definition,
+        @RequiresPrivilege(PRIVILEGE_ADMINISTER_LIFECYLES)
+        final ContentSection section) {
 
         section.removeLifecycleDefinition(definition);
         sectionRepo.save(section);
@@ -390,14 +391,14 @@ public class ContentSectionManager {
      * content section.
      *
      * @param template The template to add.
-     * @param section The content section to which the template is added.
+     * @param section  The content section to which the template is added.
      */
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public void addWorkflowTemplateToContentSection(
-            final WorkflowTemplate template,
-            @RequiresPrivilege(PRIVILEGE_ADMINISTER_WORKFLOW)
-            final ContentSection section) {
+        final WorkflowTemplate template,
+        @RequiresPrivilege(PRIVILEGE_ADMINISTER_WORKFLOW)
+        final ContentSection section) {
 
         section.addWorkflowTemplate(template);
         sectionRepo.save(section);
@@ -409,14 +410,14 @@ public class ContentSectionManager {
      * provided content section.
      *
      * @param template The template to remove.
-     * @param section The section from which the template is removed.
+     * @param section  The section from which the template is removed.
      */
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public void removeWorkflowTemplateFromContentSection(
-            final WorkflowTemplate template,
-            @RequiresPrivilege(PRIVILEGE_ADMINISTER_WORKFLOW)
-            final ContentSection section) {
+        final WorkflowTemplate template,
+        @RequiresPrivilege(PRIVILEGE_ADMINISTER_WORKFLOW)
+        final ContentSection section) {
 
         section.removeWorkflowTemplate(template);
         sectionRepo.save(section);
@@ -426,20 +427,85 @@ public class ContentSectionManager {
      * Retrieves the {@link ItemResolver} for the provided content section.
      *
      * @param section The section for which the {@link ItemResolver} is
-     * retrieved.
+     *                retrieved.
+     *
      * @return The {@link ItemResolver} for the provided content section.
      */
     public ItemResolver getItemResolver(final ContentSection section) {
         try {
+            @SuppressWarnings("unchecked")
             final Class<ItemResolver> itemResolverClazz
-                                      = (Class<ItemResolver>) Class.
+                                          = (Class<ItemResolver>) Class.
                     forName(section.getItemResolverClass());
             return itemResolverClazz.newInstance();
-        } catch (ClassNotFoundException |
-                 IllegalAccessException |
-                 InstantiationException ex) {
+        } catch (ClassNotFoundException
+                 | IllegalAccessException
+                 | InstantiationException ex) {
             throw new RuntimeException(ex);
         }
+    }
+
+    /**
+     * Adds a new {@link ContentType} to a content section, making items of that
+     * type available in the content section.
+     *
+     * @param type             The type to add (a subclass of
+     *                         {@link ContentItem}.
+     * @param section          The section to which the type is added.
+     * @param defaultLifecycle The default lifecycle for items of the provided
+     *                         type in the provided content section. The
+     *                         lifecycle must be part of the provided section.
+     *                         Otherwise an {@link IllegalArgumentException} is
+     *                         thrown.
+     * @param defaultWorkflow  The default workflow for items of the provided
+     *                         type in the provided content section. The
+     *                         workflow must be part of the provided section.
+     *                         Otherwise an {@link IllegalArgumentException} is
+     *                         thrown.
+     *
+     * @return The new {@link ContentType} instance.
+     */
+    public ContentType addContentTypeToSection(
+        final Class<? extends ContentItem> type,
+        final ContentSection section,
+        final LifecycleDefinition defaultLifecycle,
+        final WorkflowTemplate defaultWorkflow) {
+
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Checks if a content section has a {@link ContentType} for a specific
+     * subclass {@link ContentItem}.
+     *
+     * @param type    The type to check for.
+     * @param section The section to check for the {@link ContentType}.
+     *
+     * @return {@code true} if the section has a {@link ContentType} for
+     *         {@code type}, {@code false} if not.
+     */
+    public boolean hasContentType(final Class<? extends ContentItem> type,
+                                  final ContentSection section) {
+
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Removes an <em>unused</em> {@link ContentType} from a
+     * {@link ContentSection}.
+     *
+     * @param type The type to remove from the section.
+     * @param section The section from which the type is removed.
+     *
+     * @throws IllegalArgumentException if the provided {@link ContentType} is
+     *                                  in use or the parameters or otherwise
+     *                                  illegal.
+     */
+    public void removeContentTypeFromSection(
+        final Class<? extends ContentItem> type,
+        final ContentSection section) {
+
+        throw new UnsupportedOperationException();
     }
 
 }

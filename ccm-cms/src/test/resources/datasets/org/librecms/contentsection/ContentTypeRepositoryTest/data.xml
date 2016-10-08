@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dataset>
+
+    <ccm_core.ccm_revisions id="0" 
+                            timestamp="1451602800" />
+
+    <ccm_core.ccm_objects object_id="-1001"
+                          display_name="info"
+                          uuid="963bcae7-3aeb-4b62-891c-e16c4defa1f2" />
+    <ccm_core.ccm_objects object_id="-2001"
+                          display_name="info_root"
+                          uuid="82014239-9c06-486d-ae8c-4ae47f52a699" />
+    <ccm_core.ccm_objects object_id="-2002"
+                          display_name="info_assets"
+                          uuid="b163f73c-9ac2-44d7-a037-de621f5ca828" />
+    <ccm_core.ccm_objects object_id="-3001"
+                          display_name="article1"
+                          uuid="aed4b402-1180-46c6-b42d-7245f4dca248" />
+    <ccm_core.ccm_objects object_id="-4001"
+                          display_name="org.libreccm.contenttypes.Article"
+                          uuid="2c8ec2fb-319d-4d44-9698-697c08b2b941" />
+    <ccm_core.ccm_objects object_id="-4002"
+                          display_name="org.librecms.contenttypes.News"
+                          uuid="47740f22-f89f-4ec3-90cf-d62859e53c7e" />
+
+        
+    <ccm_core.ccm_objects_aud object_id="-3001"
+                              rev="0" 
+                              revtype="0" 
+                              display_name="article1" />
+    
+    <ccm_core.resources object_id="-1001" 
+                        created="2016-07-15" />
+    <ccm_core.resource_titles object_id="-1001" 
+                              locale="en"
+                              localized_value="info" />
+
+    <ccm_core.applications object_id="-1001"
+                           application_type="org.librecms.contentsection.ContentSection"
+                           primary_url="info" />
+    
+    <ccm_core.categories object_id="-2001"
+                         unique_id="82014239-9c06-486d-ae8c-4ae47f52a699"
+                         name="info_root" 
+                         enabled="true"
+                         visible="true"
+                         abstract_category="false"
+                         category_order="1" />
+    <ccm_core.categories object_id="-2002"
+                         unique_id="b163f73c-9ac2-44d7-a037-de621f5ca828"
+                         name="info_assets" 
+                         enabled="true"
+                         visible="true"
+                         abstract_category="false" 
+                         category_order="1" />
+    
+    <ccm_core.category_titles object_id="-2001" 
+                              locale="en" 
+                              localized_value="info_root" />
+    <ccm_core.category_titles object_id="-2002" 
+                              locale="en" 
+                              localized_value="info_assets" />
+    
+    <ccm_cms.folders object_id="-2001"
+                     type="DOCUMENTS_FOLDER" />
+    <ccm_cms.folders object_id="-2002"
+                     type="ASSETS_FOLDER" />
+    
+    <ccm_cms.content_sections object_id="-1001"
+                              label="info"
+                              root_documents_folder_id="-2001"
+                              root_assets_folder_id="-2002" />
+
+    <ccm_cms.folder_content_section_map folder_id="-2001"
+                                        content_section_id="-1001" />
+    <ccm_cms.folder_content_section_map folder_id="-2002"
+                                        content_section_id="-1001" />
+    
+    <ccm_cms.content_types object_id="-4001" 
+                           content_item_class="org.librecms.contenttypes.Article" 
+                           content_section_id="-1001" />
+    <ccm_cms.content_types object_id="-4002" 
+                           content_item_class="org.librecms.contenttypes.News" 
+                           content_section_id="-1001" />
+
+    <ccm_cms.content_type_labels object_id="-4001"
+                                 locale="en" 
+                                 localized_value="Article" />
+    <ccm_cms.content_type_labels object_id="-4002"
+                                 locale="en" 
+                                 localized_value="News" />
+    
+    <ccm_cms.content_items object_id="-3001" 
+                           item_uuid="aed4b402-1180-46c6-b42d-7245f4dca248"
+                           version="DRAFT"
+                           content_type_id="-4001" />
+
+    <ccm_cms.content_items_aud object_id="-3001" 
+                               rev="0"
+                               item_uuid="aed4b402-1180-46c6-b42d-7245f4dca248" 
+                               version="DRAFT" 
+                               content_type_id="-4001" />
+
+    <ccm_cms.content_item_names object_id="-3001" 
+                                locale="en" 
+                                localized_value="article1" />
+    
+    <ccm_cms.content_item_names_aud rev="0" 
+                                    object_id="-3001"
+                                    localized_value="article1"
+                                    locale="en"
+                                    revtype="0" />
+
+    <ccm_cms.content_item_titles object_id="-3001" 
+                                 locale="en" 
+                                 localized_value="Article 1" />
+
+    <ccm_cms.content_item_titles_aud rev="0" 
+                                     object_id="-3001"
+                                     localized_value="Article 1"
+                                     locale="en"
+                                     revtype="0" />
+
+    <ccm_cms.articles object_id="-3001" />
+    
+    <ccm_cms.articles_aud object_id="-3001" 
+                          rev="0" />
+    
+    <ccm_cms.article_texts 
+        object_id="-3001"
+        locale="en" 
+        localized_value="Quisque varius turpis et nibh rhoncus consequat. In sapien metus, fermentum quis." />
+
+    <ccm_cms.article_texts_aud 
+        rev="0" 
+        object_id="-3001" 
+        localized_value="Quisque varius turpis et nibh rhoncus consequat. In sapien metus, fermentum quis." 
+        locale="en" 
+        revtype="0" />
+        
+    <ccm_core.categorizations categorization_id="-5001" 
+                              category_id="-2001" 
+                              object_id="-3001" 
+                              category_order="1" 
+                              object_order="1" 
+                              category_index="false"
+                              type="folder" />
+    
+    <ccm_core.ccm_roles role_id="-6001"
+                        name="info_alert_recipient" />
+    <ccm_core.ccm_roles role_id="-6002"
+                        name="info_author" />
+    <ccm_core.ccm_roles role_id="-6003"
+                        name="info_editor" />
+    <ccm_core.ccm_roles role_id="-6004"
+                        name="info_manager" />
+    <ccm_core.ccm_roles role_id="-6005"
+                        name="info_publisher" />
+    <ccm_core.ccm_roles role_id="-6006"
+                        name="info_content_reader" />
+
+    <ccm_cms.content_section_roles role_id="-6001" 
+                                   section_id="-1001" />
+    <ccm_cms.content_section_roles role_id="-6002" 
+                                   section_id="-1001" />
+    <ccm_cms.content_section_roles role_id="-6003" 
+                                   section_id="-1001" />
+    <ccm_cms.content_section_roles role_id="-6004" 
+                                   section_id="-1001" />
+    <ccm_cms.content_section_roles role_id="-6005" 
+                                   section_id="-1001" />
+    <ccm_cms.content_section_roles role_id="-6006" 
+                                   section_id="-1001" />
+
+    <ccm_core.permissions permission_id="-7001" 
+                          granted_privilege="categorize_items" 
+                          object_id="-2001" 
+                          grantee_id="-6002" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-7002" 
+                          granted_privilege="create_new_items" 
+                          object_id="-2001" 
+                          grantee_id="-6002" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-7003" 
+                          granted_privilege="edit_items" 
+                          object_id="-2001" 
+                          grantee_id="-6002" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-7004" 
+                          granted_privilege="view_published_items" 
+                          object_id="-2001" 
+                          grantee_id="-6002" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-7005" 
+                          granted_privilege="preview_items" 
+                          object_id="-2001" 
+                          grantee_id="-6002" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-7006" 
+                          granted_privilege="categorize_items" 
+                          object_id="-2001" 
+                          grantee_id="-6003" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-7007" 
+                          granted_privilege="create_new_items" 
+                          object_id="-2001" 
+                          grantee_id="-6003" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-7008" 
+                          granted_privilege="edit_items" 
+                          object_id="-2001" 
+                          grantee_id="-6003" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-7009" 
+                          granted_privilege="approve_items" 
+                          object_id="-2001" 
+                          grantee_id="-6003" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-7010" 
+                          granted_privilege="delete_items" 
+                          object_id="-2001" 
+                          grantee_id="-6003" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-7011" 
+                          granted_privilege="view_published_items" 
+                          object_id="-2001" 
+                          grantee_id="-6003" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-7012" 
+                          granted_privilege="preview_items" 
+                          object_id="-2001" 
+                          grantee_id="-6003" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-7013" 
+                          granted_privilege="administer_roles" 
+                          object_id="-1001" 
+                          grantee_id="-6004" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-7014" 
+                          granted_privilege="administer_workflow" 
+                          object_id="-1001" 
+                          grantee_id="-6004" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-7015" 
+                          granted_privilege="administer_lifecyles" 
+                          object_id="-1001" 
+                          grantee_id="-6004" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-7016" 
+                          granted_privilege="administer_categories" 
+                          object_id="-1001" 
+                          grantee_id="-6004" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-7017" 
+                          granted_privilege="administer_content_types" 
+                          object_id="-1001" 
+                          grantee_id="-6004" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-7018" 
+                          granted_privilege="categorize_items" 
+                          object_id="-2001" 
+                          grantee_id="-6004" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-7019" 
+                          granted_privilege="create_new_items" 
+                          object_id="-2001" 
+                          grantee_id="-6004" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-7020" 
+                          granted_privilege="edit_items" 
+                          object_id="-2001" 
+                          grantee_id="-6004" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-7021" 
+                          granted_privilege="approve_items" 
+                          object_id="-2001" 
+                          grantee_id="-6004" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-7022" 
+                          granted_privilege="publish_items" 
+                          object_id="-2001" 
+                          grantee_id="-6004" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-7023" 
+                          granted_privilege="delete_items" 
+                          object_id="-2001" 
+                          grantee_id="-6004" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-7024" 
+                          granted_privilege="view_published_items" 
+                          object_id="-2001" 
+                          grantee_id="-6004" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-7025" 
+                          granted_privilege="preview_items" 
+                          object_id="-2001" 
+                          grantee_id="-6004" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-7026" 
+                          granted_privilege="categorize_items" 
+                          object_id="-2001" 
+                          grantee_id="-6005" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-7027" 
+                          granted_privilege="create_new_items" 
+                          object_id="-2001" 
+                          grantee_id="-6005" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-7028" 
+                          granted_privilege="edit_items" 
+                          object_id="-2001" 
+                          grantee_id="-6005" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-7029" 
+                          granted_privilege="approve_items" 
+                          object_id="-2001" 
+                          grantee_id="-6005" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-7030" 
+                          granted_privilege="publish_items" 
+                          object_id="-2001" 
+                          grantee_id="-6005" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-7031" 
+                          granted_privilege="delete_items" 
+                          object_id="-2001" 
+                          grantee_id="-6005" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-7032" 
+                          granted_privilege="view_published_items" 
+                          object_id="-2001" 
+                          grantee_id="-6005" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-7033" 
+                          granted_privilege="preview_items" 
+                          object_id="-2001" 
+                          grantee_id="-6005" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-7034" 
+                          granted_privilege="view_published_items" 
+                          object_id="-2001" 
+                          grantee_id="-6006" 
+                          creation_date="2016-07-15"/>
+
+
+</dataset>

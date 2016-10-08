@@ -19,12 +19,17 @@
 package org.librecms.contentsection;
 
 import org.libreccm.core.AbstractEntityRepository;
+import org.libreccm.security.AuthorizationRequired;
+import org.libreccm.security.RequiresPrivilege;
+import org.librecms.CmsConstants;
 
 import java.util.List;
 import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
 
 /**
  *
@@ -34,6 +39,9 @@ import javax.persistence.TypedQuery;
 public class ContentTypeRepository
     extends AbstractEntityRepository<Long, ContentType> {
 
+    @Inject
+    private ContentItemRepository itemRepo;
+    
     @Override
     public Class<ContentType> getEntityClass() {
         return ContentType.class;
@@ -50,7 +58,8 @@ public class ContentTypeRepository
      * @param section The section whose {@link ContentTyp}s are retrieved. Can't
      *                be {@code null}.
      *
-     * @return A list of all {@link ContentType}s of the provided section.
+     * @return A list of all {@link ContentType}s of the provided section
+     *         ordered alphabetically.
      */
     public List<ContentType> findByContentSection(final ContentSection section) {
         if (section == null) {
@@ -165,6 +174,52 @@ public class ContentTypeRepository
         } else {
             return Optional.of(result.get(0));
         }
+    }
+
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    @Override
+    public void save(
+        @RequiresPrivilege(CmsConstants.PRIVILEGE_ADMINISTER_CONTENT_TYPES)
+        final ContentType type) {
+
+        super.save(type);
+    }
+
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    @Override
+    public void delete(
+        @RequiresPrivilege(CmsConstants.PRIVILEGE_ADMINISTER_CONTENT_TYPES)
+        final ContentType type) {
+        
+        if (isContentTypeInUse(type)) {
+            throw new IllegalArgumentException(String.format(
+                "Contenttype \"%s\" in section \"%s\" is in use and can't be"
+                    + "deleted.",
+                type.getContentItemClass(),
+                type.getContentSection().getDisplayName()));
+        } else {
+            super.delete(type);
+        }
+    }
+    
+    /**
+     * Checks if there is any item of the provided content type and the content
+     * section to which the type belongs.
+     *
+     * @param type The type to check for usage.
+     *
+     * @return {@code true} if the type is in use, {@code false} if not.
+     */
+    public boolean isContentTypeInUse(final ContentType type) {
+        final TypedQuery<Long> query = getEntityManager().createNamedQuery(
+            "ContentType.isInUse", Long.class);
+        query.setParameter("type", type);
+        
+        final long result = query.getSingleResult();
+        
+        return result > 0;
     }
 
 }
