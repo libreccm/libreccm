@@ -52,9 +52,13 @@ import javax.inject.Inject;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 import static org.librecms.CmsConstants.*;
+
 import static org.libreccm.testutils.DependenciesHelpers.*;
 
+import org.jboss.arquillian.container.test.api.ShouldThrowException;
+
 /**
+ * Tests for the {@link ContentSectionManager}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -79,6 +83,9 @@ public class ContentSectionManagerTest {
 
     @Inject
     private CategoryRepository categoryRepo;
+
+    @Inject
+    private ContentTypeRepository typeRepo;
 
     public ContentSectionManagerTest() {
     }
@@ -156,24 +163,23 @@ public class ContentSectionManagerTest {
             .addAsWebInfResource(EmptyAsset.INSTANCE, "WEB-INF/beans.xml");
     }
 
+    /**
+     * Check if all injection points work.
+     */
     @Test
-    @InSequence(10)
-    public void isRepositoryInjected() {
+    @InSequence(1)
+    public void checkInjection() {
         assertThat(repository, is(not(nullValue())));
-    }
-
-    @Test
-    @InSequence(20)
-    public void isManagerInjected() {
         assertThat(manager, is(not(nullValue())));
-    }
-
-    @Test
-    @InSequence(30)
-    public void isRoleRepositoryInjected() {
         assertThat(roleRepository, is(not(nullValue())));
+        assertThat(confManager, is(not(nullValue())));
+        assertThat(categoryRepo, is(not(nullValue())));
+        assertThat(typeRepo, is(not(nullValue())));
     }
 
+    /**
+     * Tries to create a new content section.
+     */
     @Test
     @UsingDataSet("datasets/org/librecms/contentsection/"
                       + "ContentSectionManagerTest/data.xml")
@@ -196,6 +202,10 @@ public class ContentSectionManagerTest {
         manager.createContentSection("test");
     }
 
+    /**
+     * Tries to rename a content section and checks if the content section, its
+     * root folders and its roles have been renamed to reflect the new name.
+     */
     @Test
     @UsingDataSet("datasets/org/librecms/contentsection/"
                       + "ContentSectionManagerTest/data.xml")
@@ -231,6 +241,9 @@ public class ContentSectionManagerTest {
         categoryRepo.save(section.getRootAssetsFolder());
     }
 
+    /**
+     * Tries to add a new role to a content section.
+     */
     @Test
     @UsingDataSet("datasets/org/librecms/contentsection/"
                       + "ContentSectionManagerTest/data.xml")
@@ -253,6 +266,79 @@ public class ContentSectionManagerTest {
                                         PRIVILEGE_ITEMS_APPROVE);
     }
 
+    /**
+     * Verifies that
+     * {@link ContentSectionManager#addRoleToContentSection(org.librecms.contentsection.ContentSection, java.lang.String, java.lang.String...)}
+     * throws a {@link IllegalArgumentException} if the section to which the
+     * role should be added is {@code null}.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentSectionManagerTest/data.xml")
+    @ShouldMatchDataSet(
+        value = "datasets/org/librecms/contentsection/"
+                    + "ContentSectionManagerTest/data.xml")
+    @ShouldThrowException(IllegalArgumentException.class)
+    @InSequence(301)
+    public void addRoleSectionIsNull() {
+        manager.addRoleToContentSection(null,
+                                        "reviewer",
+                                        PRIVILEGE_ITEMS_VIEW_PUBLISHED,
+                                        PRIVILEGE_ITEMS_PREVIEW,
+                                        PRIVILEGE_ITEMS_APPROVE);
+    }
+
+    /**
+     * Verifies that
+     * {@link ContentSectionManager#addRoleToContentSection(org.librecms.contentsection.ContentSection, java.lang.String, java.lang.String...)}
+     * throws a {@link IllegalArgumentException} if the role to add is
+     * {@code null}.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentSectionManagerTest/data.xml")
+    @ShouldMatchDataSet(
+        value = "datasets/org/librecms/contentsection/"
+                    + "ContentSectionManagerTest/data.xml")
+    @ShouldThrowException(IllegalArgumentException.class)
+    @InSequence(302)
+    public void addRoleNameIsNull() {
+        final ContentSection section = repository.findByLabel("info");
+
+        manager.addRoleToContentSection(section,
+                                        null,
+                                        PRIVILEGE_ITEMS_VIEW_PUBLISHED,
+                                        PRIVILEGE_ITEMS_PREVIEW,
+                                        PRIVILEGE_ITEMS_APPROVE);
+    }
+
+    /**
+     * Verifies that
+     * {@link ContentSectionManager#addRoleToContentSection(org.librecms.contentsection.ContentSection, java.lang.String, java.lang.String...)}
+     * throws a {@link IllegalArgumentException} if the name of the role to add
+     * is empty.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentSectionManagerTest/data.xml")
+    @ShouldMatchDataSet(
+        value = "datasets/org/librecms/contentsection/"
+                    + "ContentSectionManagerTest/data.xml")
+    @ShouldThrowException(IllegalArgumentException.class)
+    @InSequence(302)
+    public void addRoleNameIsEmpty() {
+        final ContentSection section = repository.findByLabel("info");
+
+        manager.addRoleToContentSection(section,
+                                        " ",
+                                        PRIVILEGE_ITEMS_VIEW_PUBLISHED,
+                                        PRIVILEGE_ITEMS_PREVIEW,
+                                        PRIVILEGE_ITEMS_APPROVE);
+    }
+
+    /**
+     * Tries to remove a role from a content section.
+     */
     @Test
     @UsingDataSet("datasets/org/librecms/contentsection/"
                       + "ContentSectionManagerTest/data.xml")
@@ -260,12 +346,283 @@ public class ContentSectionManagerTest {
         value = "datasets/org/librecms/contentsection/"
                     + "ContentSectionManagerTest/after-remove-role.xml",
         excludeColumns = {"object_id"})
-    @InSequence(300)
+    @InSequence(350)
     public void removeRole() {
         final ContentSection section = repository.findByLabel("info");
         final Role role = roleRepository.findByName("info_publisher");
 
         manager.removeRoleFromContentSection(section, role);
+    }
+
+    /**
+     * Verifies that
+     * {@link ContentSectionManager#removeRoleFromContentSection(org.librecms.contentsection.ContentSection, org.libreccm.security.Role)}
+     * throws an {@link IllegalArgumentException} if called with {@code null}
+     * for the role to remove.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentSectionManagerTest/data.xml")
+    @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
+                            + "ContentSectionManagerTest/data.xml")
+    @ShouldThrowException(IllegalArgumentException.class)
+    @InSequence(351)
+    public void removeRoleNull() {
+        final ContentSection section = repository.findByLabel("info");
+
+        manager.removeRoleFromContentSection(section, null);
+    }
+
+    /**
+     * Verifies that
+     * {@link ContentSectionManager#removeRoleFromContentSection(org.librecms.contentsection.ContentSection, org.libreccm.security.Role)}
+     * throws an {@link IllegalArgumentException} if called with {@code null}
+     * for the section from which to role is removed.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentSectionManagerTest/data.xml")
+    @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
+                            + "ContentSectionManagerTest/data.xml")
+    @ShouldThrowException(IllegalArgumentException.class)
+    @InSequence(352)
+    public void removeRoleSectionIsNull() {
+        final Role role = roleRepository.findByName("info_publisher");
+
+        manager.removeRoleFromContentSection(null, role);
+    }
+
+    /**
+     * Tries to add content type to a content section by using
+     * {@link ContentSectionManager#addContentTypeToSection(java.lang.Class, org.librecms.contentsection.ContentSection, org.librecms.lifecycle.LifecycleDefinition, org.libreccm.workflow.WorkflowTemplate)}.
+     */
+    @Test
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentSectionManagerTest/data.xml")
+    @ShouldMatchDataSet(
+        value = "datasets/org/librecms/contentsection/"
+                    + "ContentSectionManagerTest/after-add-contenttype.xml")
+    @InSequence(400)
+    public void addContentTypeToSection() {
+        fail();
+    }
+
+    /**
+     * Verifies that
+     * {@link ContentSectionManager#addContentTypeToSection(java.lang.Class, org.librecms.contentsection.ContentSection, org.librecms.lifecycle.LifecycleDefinition, org.libreccm.workflow.WorkflowTemplate)}.
+     * does nothing if there is already a {@link ContentType} for the provided
+     * type in the provided content section.
+     */
+    @Test
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentSectionManagerTest/data.xml")
+    @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
+                            + "ContentSectionManagerTest/data.xml")
+    @InSequence(500)
+    public void addAlreadyAddedTypeToSection() {
+        fail();
+    }
+
+    /**
+     * Verifies that
+     * {@link ContentSectionManager#addContentTypeToSection(java.lang.Class, org.librecms.contentsection.ContentSection, org.librecms.lifecycle.LifecycleDefinition, org.libreccm.workflow.WorkflowTemplate)}.
+     * throws an {@link IllegalArgumentException} when called with {@code null}
+     * for the type to add.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentSectionManagerTest/data.xml")
+    @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
+                            + "ContentSectionManagerTest/data.xml")
+    @ShouldThrowException(IllegalArgumentException.class)
+    @InSequence(600)
+    public void addTypeToSectionTypeIsNull() {
+        fail();
+    }
+
+    /**
+     * Verifies that
+     * {@link ContentSectionManager#addContentTypeToSection(java.lang.Class, org.librecms.contentsection.ContentSection, org.librecms.lifecycle.LifecycleDefinition, org.libreccm.workflow.WorkflowTemplate)}.
+     * throws an {@link IllegalArgumentException} when called with {@code null}
+     * for the section of the type to add.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentSectionManagerTest/data.xml")
+    @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
+                            + "ContentSectionManagerTest/data.xml")
+    @ShouldThrowException(IllegalArgumentException.class)
+    @InSequence(700)
+    public void addTypeToSectionSectionIsNull() {
+        fail();
+    }
+
+    /**
+     * Verifies that
+     * {@link ContentSectionManager#addContentTypeToSection(java.lang.Class, org.librecms.contentsection.ContentSection, org.librecms.lifecycle.LifecycleDefinition, org.libreccm.workflow.WorkflowTemplate)}.
+     * throws an {@link IllegalArgumentException} when called with {@code null}
+     * for the default lifecycle for the type.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentSectionManagerTest/data.xml")
+    @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
+                            + "ContentSectionManagerTest/data.xml")
+    @ShouldThrowException(IllegalArgumentException.class)
+    @InSequence(800)
+    public void addTypeToSectionLifecycleIsNull() {
+        fail();
+    }
+
+    /**
+     * Verifies that
+     * {@link ContentSectionManager#addContentTypeToSection(java.lang.Class, org.librecms.contentsection.ContentSection, org.librecms.lifecycle.LifecycleDefinition, org.libreccm.workflow.WorkflowTemplate)}.
+     * throws an {@link IllegalArgumentException} when called with {@code null}
+     * for the default workflow of the type to add.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentSectionManagerTest/data.xml")
+    @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
+                            + "ContentSectionManagerTest/data.xml")
+    @ShouldThrowException(IllegalArgumentException.class)
+    @InSequence(900)
+    public void addTypeToSectionWorkflowIsNull() {
+        fail();
+    }
+
+    /**
+     * Verifies that
+     * {@link ContentSectionManager#addContentTypeToSection(java.lang.Class, org.librecms.contentsection.ContentSection, org.librecms.lifecycle.LifecycleDefinition, org.libreccm.workflow.WorkflowTemplate)}.
+     * throws an {@link IllegalArgumentException} when called with a lifecycle
+     * which does not belong to the provided {@link ContentSection}.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentSectionManagerTest/data.xml")
+    @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
+                            + "ContentSectionManagerTest/data.xml")
+    @ShouldThrowException(IllegalArgumentException.class)
+    @InSequence(1000)
+    public void addTypeToSectionLifecycleNotInSection() {
+        fail();
+    }
+
+    /**
+     * Verifies that
+     * {@link ContentSectionManager#addContentTypeToSection(java.lang.Class, org.librecms.contentsection.ContentSection, org.librecms.lifecycle.LifecycleDefinition, org.libreccm.workflow.WorkflowTemplate)}.
+     * throws an {@link IllegalArgumentException} when called with a workflow
+     * which does not belong to the provided {@link ContentSection}.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentSectionManagerTest/data.xml")
+    @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
+                            + "ContentSectionManagerTest/data.xml")
+    @ShouldThrowException(IllegalArgumentException.class)
+    @InSequence(1100)
+    public void addTypeToSectionWorkflowNoInSection() {
+        fail();
+    }
+
+    /**
+     * Verifies the return value of
+     * {@link ContentSectionManager#hasContentType(java.lang.Class, org.librecms.contentsection.ContentSection)}.
+     */
+    @Test
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentSectionManagerTest/data.xml")
+    @ShouldMatchDataSet(
+        value = "datasets/org/librecms/contentsection/"
+                    + "ContentSectionManagerTest/after-add-contenttype.xml")
+    @InSequence(1200)
+    public void verifyHasContentType() {
+        fail();
+    }
+
+    /**
+     * Tries to remove an unused content type from a section.
+     */
+    @Test
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentSectionManagerTest/data.xml")
+    @ShouldMatchDataSet(
+        value = "datasets/org/librecms/contentsection/"
+                    + "ContentSectionManagerTest/after-remove-contenttype.xml")
+    @InSequence(1300)
+    public void removeContentTypeFromSection() {
+        fail();
+    }
+
+    /**
+     * Verifies that
+     * {@link ContentSectionManager#removeContentTypeFromSection(java.lang.Class, org.librecms.contentsection.ContentSection)}
+     * does nothing if the provided section has no {@link ContentType} for the
+     * provided subclass of {@link ContentItem}.
+     */
+    @Test
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentSectionManagerTest/data.xml")
+    @ShouldMatchDataSet(
+        value = "datasets/org/librecms/contentsection/"
+                    + "ContentSectionManagerTest/data.xml")
+    @InSequence(1301)
+    public void removeNotExistingContentTypeFromSection() {
+        fail();
+    }
+
+    /**
+     * Verifies that
+     * {@link ContentSectionManager#removeContentTypeFromSection(java.lang.Class, org.librecms.contentsection.ContentSection)}
+     * throws a {@link IllegalArgumentException} if the type to delete is still
+     * in use.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentSectionManagerTest/data.xml")
+    @ShouldMatchDataSet(
+        value = "datasets/org/librecms/contentsection/"
+                    + "ContentSectionManagerTest/data.xml")
+    @ShouldThrowException(IllegalArgumentException.class)
+    @InSequence(1400)
+    public void removeContentTypeFromSectionTypeInUse() {
+        fail();
+    }
+
+    /**
+     * Verifies that
+     * {@link ContentSectionManager#removeContentTypeFromSection(java.lang.Class, org.librecms.contentsection.ContentSection)}
+     * throws an {@link IllegalArgumentException} if called with {@code null}
+     * for the type to remove.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentSectionManagerTest/data.xml")
+    @ShouldMatchDataSet(
+        value = "datasets/org/librecms/contentsection/"
+                    + "ContentSectionManagerTest/data.xml")
+    @ShouldThrowException(IllegalArgumentException.class)
+    @InSequence(1400)
+    public void removeContentTypeFromSectionTypeIsNull() {
+        fail();
+    }
+
+    /**
+     * Verifies that
+     * {@link ContentSectionManager#removeContentTypeFromSection(java.lang.Class, org.librecms.contentsection.ContentSection)}
+     * throws an {@link IllegalArgumentException} if called with {@code null}
+     * for the section from which the type is removed.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentSectionManagerTest/data.xml")
+    @ShouldMatchDataSet(
+        value = "datasets/org/librecms/contentsection/"
+                    + "ContentSectionManagerTest/data.xml")
+    @ShouldThrowException(IllegalArgumentException.class)
+    @InSequence(1400)
+    public void removeContentTypeFromSectionSectionIsNull() {
+        fail();
     }
 
 }

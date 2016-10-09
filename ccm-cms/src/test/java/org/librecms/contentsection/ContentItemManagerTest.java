@@ -31,17 +31,12 @@ import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.resolver.api.maven.Maven;
-import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
-import org.jboss.shrinkwrap.resolver.api.maven.ScopeType;
-import org.jboss.shrinkwrap.resolver.api.maven.coordinate.MavenDependencies;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryRepository;
 import org.libreccm.security.Shiro;
 import org.libreccm.tests.categories.IntegrationTest;
@@ -52,12 +47,8 @@ import org.librecms.contenttypes.Event;
 import org.librecms.lifecycle.LifecycleDefinition;
 import org.librecms.lifecycle.LifecycleDefinitionRepository;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.stream.IntStream;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -65,6 +56,7 @@ import javax.persistence.TypedQuery;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
+
 import static org.libreccm.testutils.DependenciesHelpers.*;
 
 /**
@@ -92,7 +84,7 @@ public class ContentItemManagerTest {
 
     @Inject
     private FolderRepository folderRepo;
-    
+
     @Inject
     private Shiro shiro;
 
@@ -126,37 +118,6 @@ public class ContentItemManagerTest {
 
     @Deployment
     public static WebArchive createDeployment() {
-////        final PomEquippedResolveStage pom = Maven
-////            .resolver()
-////            .loadPomFromFile("pom.xml");
-////        final PomEquippedResolveStage dependencies = pom
-////            .importCompileAndRuntimeDependencies();
-////        dependencies.addDependency(MavenDependencies.createDependency(
-////            "org.libreccm:ccm-core", ScopeType.RUNTIME, false));
-////        dependencies.addDependency(MavenDependencies.createDependency(
-////            "org.libreccm:ccm-testutils", ScopeType.RUNTIME, false));
-////        dependencies.addDependency(MavenDependencies.createDependency(
-////            "net.sf.saxon:Saxon-HE", ScopeType.RUNTIME, false));
-////        dependencies.addDependency(MavenDependencies.createDependency(
-////            "org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-impl-maven",
-////            ScopeType.RUNTIME, false));
-////        final File[] libsWithCcmCore = dependencies.resolve().withTransitivity()
-////            .asFile();
-////
-//        final List<File> libsList = new ArrayList<>(libsWithCcmCore.length - 1);
-//        IntStream.range(0, libsWithCcmCore.length).forEach(i -> {
-//            final File lib = libsWithCcmCore[i];
-//            if (!lib.getName().startsWith("ccm-core")) {
-//                libsList.add(lib);
-//            }
-//        });
-//        final File[] libs = libsList.toArray(new File[libsList.size()]);
-//
-//        for (File lib : libs) {
-//            System.err.printf("Adding file '%s' to test archive...%n",
-//                              lib.getName());
-//        }
-
         return ShrinkWrap
             .create(WebArchive.class,
                     "LibreCCM-org.librecms.contentsection.ContentItemManagerTest.war")
@@ -201,7 +162,9 @@ public class ContentItemManagerTest {
                 .getPackage())
             .addPackage(org.librecms.contenttypes.Article.class.getPackage())
             .addClass(com.arsdigita.kernel.security.SecurityConfig.class)
-            .addAsLibraries(getModuleDependencies())
+            .addPackage(org.libreccm.tests.categories.IntegrationTest.class
+                .getPackage())
+            //            .addAsLibraries(getModuleDependencies())
             .addAsLibraries(getCcmCoreDependencies())
             .addAsResource("configs/shiro.ini", "shiro.ini")
             .addAsResource(

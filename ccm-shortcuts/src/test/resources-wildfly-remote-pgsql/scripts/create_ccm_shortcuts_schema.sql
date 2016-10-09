@@ -479,6 +479,13 @@ CREATE SCHEMA ccm_shortcuts;
         primary key (OBJECT_ID)
     );
 
+    create table CCM_CORE.ROLE_DESCRIPTIONS (
+        ROLE_ID int8 not null,
+        LOCALIZED_VALUE text,
+        LOCALE varchar(255) not null,
+        primary key (ROLE_ID, LOCALE)
+    );
+
     create table CCM_CORE.ROLE_MEMBERSHIPS (
         MEMBERSHIP_ID int8 not null,
         MEMBER_ID int8,
@@ -492,10 +499,10 @@ CREATE SCHEMA ccm_shortcuts;
         CONFIGURATION_CLASS varchar(512) not null,
         NAME varchar(512) not null,
         SETTING_VALUE_LONG int8,
-        SETTING_VALUE_STRING varchar(1024),
-        SETTING_VALUE_BIG_DECIMAL numeric(19, 2),
-        SETTING_VALUE_BOOLEAN boolean,
         SETTING_VALUE_DOUBLE float8,
+        SETTING_VALUE_BOOLEAN boolean,
+        SETTING_VALUE_BIG_DECIMAL numeric(19, 2),
+        SETTING_VALUE_STRING varchar(1024),
         primary key (SETTING_ID)
     );
 
@@ -1015,6 +1022,11 @@ create sequence hibernate_sequence start 1 increment 1;
         add constraint FKbjdf8pm4frth8r06ev2qjm88f 
         foreign key (OBJECT_ID) 
         references CCM_CORE.CCM_OBJECTS;
+
+    alter table CCM_CORE.ROLE_DESCRIPTIONS 
+        add constraint FKo09bh4j3k3k0ph3awvjwx31ft 
+        foreign key (ROLE_ID) 
+        references CCM_CORE.CCM_ROLES;
 
     alter table CCM_CORE.ROLE_MEMBERSHIPS 
         add constraint FK9m88ywi7rcin7b7jrgh53emrq 

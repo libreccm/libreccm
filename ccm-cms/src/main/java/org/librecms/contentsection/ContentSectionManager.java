@@ -500,6 +500,7 @@ public class ContentSectionManager {
      * @throws IllegalArgumentException if the provided {@link ContentType} is
      *                                  in use or the parameters or otherwise
      *                                  illegal.
+     * @see ContentTypeRepository#delete(org.librecms.contentsection.ContentType) 
      */
     public void removeContentTypeFromSection(
         final Class<? extends ContentItem> type,

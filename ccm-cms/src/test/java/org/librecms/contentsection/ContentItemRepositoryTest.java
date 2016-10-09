@@ -134,7 +134,9 @@ public class ContentItemRepositoryTest {
             .addPackage(org.librecms.contentsection.ContentSection.class
                 .getPackage())
             .addPackage(org.librecms.contenttypes.Article.class.getPackage())
-            .addAsLibraries(getModuleDependencies())
+            .addPackage(org.libreccm.tests.categories.IntegrationTest.class
+                .getPackage())
+            //            .addAsLibraries(getModuleDependencies())
             .addAsLibraries(getCcmCoreDependencies())
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")
@@ -315,25 +317,25 @@ public class ContentItemRepositoryTest {
         assertThat(itemRepo.countFilterByFolderAndName(folder, "foo"),
                    is(0L));
     }
-    
+
     @Test
     @InSequence(600)
     @UsingDataSet("datasets/org/librecms/contentsection/"
                       + "ContentItemRepositoryTest/data.xml")
     @ShouldMatchDataSet(value = "datasets/org/librecms/contentsection/"
-                      + "ContentItemRepositoryTest/after-save.xml",
-                        excludeColumns = {"object_id", 
-                                          "uuid", 
-                                          "item_uuid", 
+                                    + "ContentItemRepositoryTest/after-save.xml",
+                        excludeColumns = {"object_id",
+                                          "uuid",
+                                          "item_uuid",
                                           "timestamp"})
     public void saveChangedItem() {
         final Optional<ContentItem> item = itemRepo.findById(-10100L);
-        
+
         assertThat(item.isPresent(), is(true));
-        
+
         item.get().getName().addValue(Locale.ENGLISH, "first-article");
         item.get().getTitle().addValue(Locale.ENGLISH, "First Article");
-        
+
         itemRepo.save(item.get());
     }
 
