@@ -25,11 +25,13 @@ import static org.librecms.CmsConstants.*;
 
 import org.libreccm.core.CcmObject;
 import org.libreccm.l10n.LocalizedString;
+import org.libreccm.security.InheritsPermissions;
 import org.libreccm.workflow.WorkflowTemplate;
 import org.librecms.lifecycle.LifecycleDefinition;
 
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.persistence.AssociationOverride;
 import javax.persistence.Column;
@@ -69,7 +71,8 @@ import javax.persistence.Table;
                     + "WHERE i.contentType = :type"
     )
 })
-public class ContentType extends CcmObject implements Serializable {
+public class ContentType extends CcmObject implements InheritsPermissions,
+                                                      Serializable {
 
     private static final long serialVersionUID = -2708659750560382851L;
 
@@ -189,6 +192,11 @@ public class ContentType extends CcmObject implements Serializable {
 
     protected void setDefaultWorkflow(final WorkflowTemplate defaultWorkflow) {
         this.defaultWorkflow = defaultWorkflow;
+    }
+    
+    @Override
+    public Optional<CcmObject> getParent() {
+        return Optional.of(contentSection);
     }
 
     @Override

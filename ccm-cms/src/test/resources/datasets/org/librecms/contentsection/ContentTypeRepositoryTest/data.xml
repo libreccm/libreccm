@@ -146,6 +146,18 @@
                               category_index="false"
                               type="folder" />
     
+    <ccm_core.parties party_id="-8001" 
+                      name = "public-user" />
+    
+    <ccm_core.users party_id="-8001"
+                    given_name="public" 
+                    family_name="user"
+                    email_address="public-user@localhost"
+                    banned="false"
+                    bouncing="false"
+                    verified="true"
+                    password_reset_required="false" />
+    
     <ccm_core.ccm_roles role_id="-6001"
                         name="info_alert_recipient" />
     <ccm_core.ccm_roles role_id="-6002"

@@ -20,6 +20,7 @@ package org.librecms.contentsection;
 
 import static org.libreccm.testutils.DependenciesHelpers.*;
 
+import org.apache.shiro.authz.UnauthorizedException;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.ShouldThrowException;
 import org.jboss.arquillian.junit.Arquillian;
@@ -31,7 +32,6 @@ import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -39,6 +39,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.libreccm.security.Shiro;
 import org.libreccm.tests.categories.IntegrationTest;
 import org.librecms.contenttypes.Article;
 import org.librecms.contenttypes.News;
@@ -68,6 +69,9 @@ public class ContentTypeRepositoryTest {
 
     @Inject
     private ContentSectionRepository contentSectionRepo;
+
+    @Inject
+    private Shiro shiro;
 
     public ContentTypeRepositoryTest() {
     }
@@ -139,8 +143,10 @@ public class ContentTypeRepositoryTest {
             .addAsLibraries(getCcmCoreDependencies())
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")
-            .addAsWebInfResource("test-web.xml", "WEB-INF/web.xml")
-            .addAsWebInfResource(EmptyAsset.INSTANCE, "WEB-INF/beans.xml");
+            .addAsWebInfResource("test-web.xml", "web.xml")
+            .addAsResource("configs/shiro.ini", "shiro.ini")
+            .addAsResource("META-INF/beans.xml", "META-INF/beans.xml");
+        //.addAsWebInfResource(EmptyAsset.INSTANCE, "WEB-INF/beans.xml");
     }
 
     /**
@@ -151,6 +157,7 @@ public class ContentTypeRepositoryTest {
     public void checkInjection() {
         assertThat(contentTypeRepo, is(not(nullValue())));
         assertThat(contentSectionRepo, is(not(nullValue())));
+        assertThat(shiro, is(not(nullValue())));
     }
 
     /**
@@ -170,12 +177,12 @@ public class ContentTypeRepositoryTest {
         assertThat(types, is(not(nullValue())));
         assertThat(types.isEmpty(), is(false));
         assertThat(types.size(), is(2));
-        
+
         assertThat(types.get(0).getContentItemClass(),
                    is(equalTo(Article.class.getName())));
         assertThat(types.get(0).getContentSection().getDisplayName(),
                    is(equalTo("info")));
-        
+
         assertThat(types.get(1).getContentItemClass(),
                    is(equalTo(News.class.getName())));
         assertThat(types.get(1).getContentSection().getDisplayName(),
@@ -369,6 +376,26 @@ public class ContentTypeRepositoryTest {
             .findByContentSectionAndClass(section, News.class);
         assertThat(newsType.isPresent(), is(true));
 
+        shiro.getSystemUser()
+            .execute(() -> contentTypeRepo.delete(newsType.get()));
+    }
+
+    /**
+     * Verifies that an unused content type can be deleted.
+     */
+    @Test(expected = UnauthorizedException.class)
+    @InSequence(2000)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentTypeRepositoryTest/data.xml")
+    @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
+                            + "ContentTypeRepositoryTest/data.xml")
+    @ShouldThrowException(UnauthorizedException.class)
+    public void deleteUnusedContentTypeUnauthorized() {
+        final ContentSection section = contentSectionRepo.findById(-1001L);
+        final Optional<ContentType> newsType = contentTypeRepo
+            .findByContentSectionAndClass(section, News.class);
+        assertThat(newsType.isPresent(), is(true));
+
         contentTypeRepo.delete(newsType.get());
 
     }
@@ -377,7 +404,7 @@ public class ContentTypeRepositoryTest {
      * Verifies that content types which are in use can't be deleted.
      */
     @Test(expected = IllegalArgumentException.class)
-    @InSequence(2000)
+    @InSequence(2200)
     @UsingDataSet("datasets/org/librecms/contentsection/"
                       + "ContentTypeRepositoryTest/data.xml")
     @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
@@ -389,7 +416,8 @@ public class ContentTypeRepositoryTest {
             .findByContentSectionAndClass(section, Article.class);
         assertThat(articleType.isPresent(), is(true));
 
-        contentTypeRepo.delete(articleType.get());
+        shiro.getSystemUser()
+            .execute(() -> contentTypeRepo.delete(articleType.get()));
     }
 
 }

@@ -274,10 +274,12 @@ public class OneTimeAuthManagerTest {
         final User user = userRepository.findByName("jdoe");
 
         shiro.getSystemUser().execute(
-            () -> assertThat(
-                oneTimeAuthManager.validTokenExistsForUser(
-                    user, OneTimeAuthTokenPurpose.EMAIL_VERIFICATION),
-                is(true)));
+            () -> {
+                assertThat(
+                    oneTimeAuthManager.validTokenExistsForUser(
+                        user, OneTimeAuthTokenPurpose.EMAIL_VERIFICATION),
+                    is(true));
+            });
     }
 
     @Test
@@ -288,10 +290,12 @@ public class OneTimeAuthManagerTest {
         final User user = userRepository.findByName("mmuster");
 
         shiro.getSystemUser().execute(
-            () -> assertThat(
-                oneTimeAuthManager.validTokenExistsForUser(
-                    user, OneTimeAuthTokenPurpose.EMAIL_VERIFICATION),
-                is(false)));
+            () -> {
+                assertThat(
+                    oneTimeAuthManager.validTokenExistsForUser(
+                        user, OneTimeAuthTokenPurpose.EMAIL_VERIFICATION),
+                    is(false));
+            });
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -338,8 +342,10 @@ public class OneTimeAuthManagerTest {
             });
         assertThat(result, is(not(empty())));
         shiro.getSystemUser().execute(
-            () -> assertThat(oneTimeAuthManager.isValid(result.get(0)),
-                             is(true)));
+            () -> {
+                assertThat(oneTimeAuthManager.isValid(result.get(0)),
+                           is(true));
+            });
     }
 
     @Test
@@ -363,7 +369,9 @@ public class OneTimeAuthManagerTest {
         token.setValidUntil(Date.from(date.toInstant(ZoneOffset.UTC)));
 
         shiro.getSystemUser().execute(
-            () -> assertThat(oneTimeAuthManager.isValid(token), is(false)));
+            () -> {
+                assertThat(oneTimeAuthManager.isValid(token), is(false));
+            });
 
     }
 
