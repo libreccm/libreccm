@@ -90,13 +90,13 @@ public class ContentItemManager {
     private ContentTypeRepository typeRepo;
 
     @Inject
-    private ContentSectionManager sectionManager;
-
-    @Inject
     private LifecycleManager lifecycleManager;
 
     @Inject
     private WorkflowManager workflowManager;
+    
+    @Inject
+    private FolderRepository folderRepo;
 
     /**
      * Creates a new content item in the provided content section and folder
@@ -378,9 +378,9 @@ public class ContentItemManager {
                 try {
                     source = (LocalizedString) readMethod.invoke(draftItem);
                     target = (LocalizedString) readMethod.invoke(copy);
-                } catch (IllegalAccessException |
-                         IllegalArgumentException |
-                         InvocationTargetException ex) {
+                } catch (IllegalAccessException
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
                     throw new RuntimeException(ex);
                 }
 
@@ -393,9 +393,9 @@ public class ContentItemManager {
                 final ContentItem linkedItem;
                 try {
                     linkedItem = (ContentItem) readMethod.invoke(draftItem);
-                } catch (IllegalAccessException |
-                         IllegalArgumentException |
-                         InvocationTargetException ex) {
+                } catch (IllegalAccessException
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
                     throw new RuntimeException(ex);
                 }
 
@@ -404,9 +404,9 @@ public class ContentItemManager {
 
                 try {
                     writeMethod.invoke(copy, linkedDraftItem);
-                } catch (IllegalAccessException |
-                         IllegalArgumentException |
-                         InvocationTargetException ex) {
+                } catch (IllegalAccessException
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
                     throw new RuntimeException(ex);
                 }
             } else if (propType != null
@@ -416,9 +416,9 @@ public class ContentItemManager {
                 try {
                     source = (List<Object>) readMethod.invoke(draftItem);
                     target = (List<Object>) readMethod.invoke(copy);
-                } catch (IllegalAccessException |
-                         IllegalArgumentException |
-                         InvocationTargetException ex) {
+                } catch (IllegalAccessException
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
                     throw new RuntimeException(ex);
                 }
 
@@ -431,9 +431,9 @@ public class ContentItemManager {
                 try {
                     source = (Map<Object, Object>) readMethod.invoke(draftItem);
                     target = (Map<Object, Object>) readMethod.invoke(copy);
-                } catch (IllegalAccessException |
-                         IllegalArgumentException |
-                         InvocationTargetException ex) {
+                } catch (IllegalAccessException
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
                     throw new RuntimeException(ex);
                 }
 
@@ -446,9 +446,9 @@ public class ContentItemManager {
                 try {
                     source = (Set<Object>) readMethod.invoke(draftItem);
                     target = (Set<Object>) readMethod.invoke(copy);
-                } catch (IllegalAccessException |
-                         IllegalArgumentException |
-                         InvocationTargetException ex) {
+                } catch (IllegalAccessException
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
                     throw new RuntimeException(ex);
                 }
 
@@ -458,9 +458,9 @@ public class ContentItemManager {
                 try {
                     value = readMethod.invoke(item);
                     writeMethod.invoke(copy, value);
-                } catch (IllegalAccessException |
-                         IllegalArgumentException |
-                         InvocationTargetException ex) {
+                } catch (IllegalAccessException
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
                     throw new RuntimeException(ex);
                 }
             }
@@ -623,9 +623,9 @@ public class ContentItemManager {
                 try {
                     source = (LocalizedString) readMethod.invoke(draftItem);
                     target = (LocalizedString) readMethod.invoke(liveItem);
-                } catch (IllegalAccessException |
-                         IllegalArgumentException |
-                         InvocationTargetException ex) {
+                } catch (IllegalAccessException
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
                     throw new RuntimeException(ex);
                 }
 
@@ -637,9 +637,9 @@ public class ContentItemManager {
                 final ContentItem linkedItem;
                 try {
                     linkedItem = (ContentItem) readMethod.invoke(draftItem);
-                } catch (IllegalAccessException |
-                         IllegalArgumentException |
-                         InvocationTargetException ex) {
+                } catch (IllegalAccessException
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
                     throw new RuntimeException(ex);
                 }
 
@@ -652,9 +652,9 @@ public class ContentItemManager {
                                                         = getLiveVersion(
                                 linkedDraftItem, ContentItem.class);
                         writeMethod.invoke(liveItem, linkedLiveItem);
-                    } catch (IllegalAccessException |
-                             IllegalArgumentException |
-                             InvocationTargetException ex) {
+                    } catch (IllegalAccessException
+                             | IllegalArgumentException
+                             | InvocationTargetException ex) {
                         throw new RuntimeException(ex);
                     }
                 }
@@ -665,9 +665,9 @@ public class ContentItemManager {
                 try {
                     source = (List<Object>) readMethod.invoke(draftItem);
                     target = (List<Object>) readMethod.invoke(liveItem);
-                } catch (IllegalAccessException |
-                         IllegalArgumentException |
-                         InvocationTargetException ex) {
+                } catch (IllegalAccessException
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
                     throw new RuntimeException(ex);
                 }
 
@@ -680,9 +680,9 @@ public class ContentItemManager {
                 try {
                     source = (Map<Object, Object>) readMethod.invoke(draftItem);
                     target = (Map<Object, Object>) readMethod.invoke(liveItem);
-                } catch (IllegalAccessException |
-                         IllegalArgumentException |
-                         InvocationTargetException ex) {
+                } catch (IllegalAccessException
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
                     throw new RuntimeException(ex);
                 }
 
@@ -695,9 +695,9 @@ public class ContentItemManager {
                 try {
                     source = (Set<Object>) readMethod.invoke(draftItem);
                     target = (Set<Object>) readMethod.invoke(liveItem);
-                } catch (IllegalAccessException |
-                         IllegalArgumentException |
-                         InvocationTargetException ex) {
+                } catch (IllegalAccessException
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
                     throw new RuntimeException(ex);
                 }
 
@@ -707,9 +707,9 @@ public class ContentItemManager {
                 try {
                     value = readMethod.invoke(item);
                     writeMethod.invoke(liveItem, value);
-                } catch (IllegalAccessException |
-                         IllegalArgumentException |
-                         InvocationTargetException ex) {
+                } catch (IllegalAccessException
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
                     throw new RuntimeException(ex);
                 }
             }
@@ -719,6 +719,31 @@ public class ContentItemManager {
         contentItemRepo.save(liveItem);
 
         return liveItem;
+    }
+
+    /**
+     * Publishes all items in a folder. Items which are already live will be
+     * republished. Note: Items in sub folders will <strong>not</strong> be
+     * published!
+     *
+     * @param folder The folder which items should be published.
+     */
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public void publish(
+        @RequiresPrivilege(CmsConstants.PRIVILEGE_ITEMS_PUBLISH)
+        final Folder folder) {
+
+        // Ensure that we are using a fresh folder and that the folder was 
+        // retrieved in this transaction to avoid problems with lazy fetched 
+        // data.
+        final Folder theFolder = folderRepo.findById(folder.getObjectId());
+        
+        theFolder.getObjects()
+            .stream()
+            .map(categorization -> categorization.getCategorizedObject())
+            .filter(object -> object instanceof ContentItem)
+            .forEach(item -> publish((ContentItem) item));
     }
 
     /**
@@ -770,6 +795,32 @@ public class ContentItemManager {
 
     }
 
+    /**
+     * Unpublishes all live items in a folder. Items in sub folders will
+     * <strong>not</strong> be unpublished!.
+     * 
+     * @param folder The folders which items are unpublished.
+     */
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public void unpublish(
+        @RequiresPrivilege(CmsConstants.PRIVILEGE_ITEMS_PUBLISH)
+        final Folder folder) {
+        
+        // Ensure that we are using a fresh folder and that the folder was 
+        // retrieved in this transaction to avoid problems with lazy fetched 
+        // data.
+        final Folder theFolder = folderRepo.findById(folder.getObjectId());
+        
+        theFolder.getObjects()
+            .stream()
+            .map(categorization -> categorization.getCategorizedObject())
+            .filter(object -> object instanceof ContentItem)
+            .map(object -> (ContentItem) object)
+            .filter(item -> isLive(item))
+            .forEach(item -> unpublish(item));
+    }
+    
     /**
      * Determines if a content item has a live version.
      *
@@ -868,7 +919,7 @@ public class ContentItemManager {
         @RequiresPrivilege(CmsConstants.PRIVILEGE_ITEMS_PREVIEW)
         final ContentItem item,
         final Class<T> type) {
-        
+
         if (!ContentItem.class.isAssignableFrom(type)) {
             throw new IllegalArgumentException(String.format(
                 "The provided type \"%s\" does match the type of the provided "
@@ -929,7 +980,7 @@ public class ContentItemManager {
                               final boolean withContentSection) {
         final List<Categorization> result = item.getCategories().stream().
             filter(categorization -> CmsConstants.CATEGORIZATION_TYPE_FOLDER.
-                equals(categorization.getType()))
+            equals(categorization.getType()))
             .collect(Collectors.toList());
 
         if (result.isEmpty()) {
@@ -969,7 +1020,7 @@ public class ContentItemManager {
     public List<Folder> getItemFolders(final ContentItem item) {
         final List<Categorization> result = item.getCategories().stream().
             filter(categorization -> CmsConstants.CATEGORIZATION_TYPE_FOLDER.
-                equals(categorization.getType()))
+            equals(categorization.getType()))
             .collect(Collectors.toList());
 
         final List<Folder> folders = new ArrayList<>();
@@ -1021,7 +1072,7 @@ public class ContentItemManager {
     public Optional<Folder> getItemFolder(final ContentItem item) {
         final List<Categorization> result = item.getCategories().stream().
             filter(categorization -> CmsConstants.CATEGORIZATION_TYPE_FOLDER.
-                equals(categorization.getType()))
+            equals(categorization.getType()))
             .collect(Collectors.toList());
 
         if (result.size() > 0) {
