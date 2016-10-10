@@ -36,6 +36,9 @@
     
     -->
     
+    <ccm_core.ccm_revisions id="0" 
+                            timestamp="1451602800" />
+    
     <ccm_core.ccm_objects object_id="-1100"
                           display_name="info"
                           uuid="963bcae7-3aeb-4b62-891c-e16c4defa1f2" />
@@ -45,6 +48,20 @@
     <ccm_core.ccm_objects object_id="-2200"
                           display_name="info_assets"
                           uuid="b163f73c-9ac2-44d7-a037-de621f5ca828" />
+    <ccm_core.ccm_objects object_id="-10001"
+                          display_name="org.libreccm.contenttypes.Article"
+                          uuid="2c8ec2fb-319d-4d44-9698-697c08b2b941" />
+    <ccm_core.ccm_objects object_id="-10002"
+                          display_name="org.librecms.contenttypes.News"
+                          uuid="47740f22-f89f-4ec3-90cf-d62859e53c7e" />
+    <ccm_core.ccm_objects object_id="-11001"
+                          display_name="article1"
+                          uuid="aed4b402-1180-46c6-b42d-7245f4dca248" />
+
+    <ccm_core.ccm_objects_aud object_id="-11001"
+                              rev="0" 
+                              revtype="0" 
+                              display_name="article1" />
     
     <ccm_core.categories object_id="-2100"
                          unique_id="82014239-9c06-486d-ae8c-4ae47f52a699"
@@ -70,6 +87,7 @@
     
     <ccm_core.resources object_id="-1100" 
                         created="2016-07-15" />
+    
     <ccm_core.resource_titles object_id="-1100" 
                               locale="en"
                               localized_value="info" />
@@ -82,21 +100,121 @@
                            application_type="org.librecms.contentsection.ContentSection"
                            primary_url="info" />
     
+    <ccm_core.workflows workflow_id="-14001" />
+    <ccm_core.workflows workflow_id="-14002" />
+    <ccm_core.workflows workflow_id="-14003" />
+
+    <ccm_core.workflow_templates workflow_id="-14001" />
+    <ccm_core.workflow_templates workflow_id="-14002" />
+    <ccm_core.workflow_templates workflow_id="-14003" />
+    
     <ccm_cms.folders object_id="-2100"
                      type="DOCUMENTS_FOLDER" />
     <ccm_cms.folders object_id="-2200"
                      type="ASSETS_FOLDER" />
+    
+    <ccm_cms.lifecyle_definitions lifecycle_definition_id="-13001" />
+    <ccm_cms.lifecyle_definitions lifecycle_definition_id="-13002" />
+    <ccm_cms.lifecyle_definitions lifecycle_definition_id="-13003" />
     
     <ccm_cms.content_sections object_id="-1100"
                               label="info"
                               root_documents_folder_id="-2100"
                               root_assets_folder_id="-2200" />
     
+    <ccm_cms.content_types object_id="-10001" 
+                           content_item_class="org.librecms.contenttypes.Article" 
+                           content_section_id="-1100"
+                           default_lifecycle_id="-13001"
+                           default_workflow="-14001" />
+    <ccm_cms.content_types object_id="-10002" 
+                           content_item_class="org.librecms.contenttypes.News" 
+                           content_section_id="-1100"
+                           default_lifecycle_id="-13001"
+                           default_workflow="-14001" />
+
+    <ccm_cms.content_type_labels object_id="-10001"
+                                 locale="en" 
+                                 localized_value="Article" />
+    <ccm_cms.content_type_labels object_id="-10002"
+                                 locale="en" 
+                                 localized_value="News" />
+
+    <ccm_cms.content_section_lifecycle_definitions 
+        content_section_id="-1100"
+        lifecycle_definition_id="-13001" />
+    <ccm_cms.content_section_lifecycle_definitions 
+        content_section_id="-1100"
+        lifecycle_definition_id="-13002" />
+    
+    <ccm_cms.content_section_workflow_templates 
+        content_section_id="-1100"
+        workflow_template_id="-14001" />
+    <ccm_cms.content_section_workflow_templates 
+        content_section_id="-1100"
+        workflow_template_id="-14002" />
+        
     <ccm_cms.folder_content_section_map folder_id="-2100"
                                         content_section_id="-1100" />
     <ccm_cms.folder_content_section_map folder_id="-2200"
                                         content_section_id="-1100" />
     
+    <ccm_cms.content_items object_id="-11001" 
+                           item_uuid="aed4b402-1180-46c6-b42d-7245f4dca248"
+                           version="DRAFT"
+                           content_type_id="-10001" />
+
+    <ccm_cms.content_items_aud object_id="-11001" 
+                               rev="0"
+                               item_uuid="aed4b402-1180-46c6-b42d-7245f4dca248" 
+                               version="DRAFT" 
+                               content_type_id="-10001" />
+ 
+    <ccm_cms.content_item_names object_id="-11001" 
+                                locale="en" 
+                                localized_value="article1" />
+    
+    <ccm_cms.content_item_names_aud rev="0" 
+                                    object_id="-11001"
+                                    localized_value="article1"
+                                    locale="en"
+                                    revtype="0" />
+
+    <ccm_cms.content_item_titles object_id="-11001" 
+                                 locale="en" 
+                                 localized_value="Article 1" />
+
+    <ccm_cms.content_item_titles_aud rev="0" 
+                                     object_id="-11001"
+                                     localized_value="Article 1"
+                                     locale="en"
+                                     revtype="0" />
+
+    <ccm_cms.articles object_id="-11001" />
+    
+    <ccm_cms.articles_aud object_id="-11001" 
+                          rev="0" />
+    
+    <ccm_cms.article_texts 
+        object_id="-11001"
+        locale="en" 
+        localized_value="Quisque varius turpis et nibh rhoncus consequat. In sapien metus, fermentum quis." />
+
+    <ccm_cms.article_texts_aud 
+        rev="0" 
+        object_id="-11001" 
+        localized_value="Quisque varius turpis et nibh rhoncus consequat. In sapien metus, fermentum quis." 
+        locale="en" 
+        revtype="0" />
+        
+    <ccm_core.categorizations categorization_id="-12001" 
+                              category_id="-2100" 
+                              object_id="-11001" 
+                              category_order="1" 
+                              object_order="1" 
+                              category_index="false"
+                              type="folder" />
+
     <ccm_core.ccm_roles role_id="-3100"
                         name="info_alert_recipient" />
     <ccm_core.ccm_roles role_id="-3200"

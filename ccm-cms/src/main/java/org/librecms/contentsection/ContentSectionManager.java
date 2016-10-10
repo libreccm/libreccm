@@ -42,9 +42,12 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+
 import org.librecms.CmsConstants;
 
 import org.librecms.lifecycle.LifecycleDefinition;
+
+import java.util.Optional;
 
 import static org.librecms.CmsConstants.*;
 import static org.librecms.contentsection.ContentSection.*;
@@ -69,8 +72,9 @@ public class ContentSectionManager {
     @Inject
     private RoleRepository roleRepo;
 
-//    @Inject
-//    private RoleManager roleManager;
+    @Inject
+    private ContentTypeRepository typeRepo;
+
     @Inject
     private PermissionManager permissionManager;
 
@@ -106,6 +110,7 @@ public class ContentSectionManager {
 
         final Folder rootFolder = new Folder();
         rootFolder.setName(String.format("%s_root", name));
+        rootFolder.setType(FolderType.DOCUMENTS_FOLDER);
         rootFolder.getTitle().addValue(defautLocale, rootFolder.getName());
         rootFolder.setDisplayName(rootFolder.getName());
         rootFolder.setUuid(UUID.randomUUID().toString());
@@ -115,6 +120,7 @@ public class ContentSectionManager {
 
         final Folder rootAssetFolder = new Folder();
         rootAssetFolder.setName(String.format("%s_assets", name));
+        rootAssetFolder.setType(FolderType.ASSETS_FOLDER);
         rootAssetFolder.getTitle().addValue(defautLocale,
                                             rootAssetFolder.getName());
         rootAssetFolder.setDisplayName(rootAssetFolder.getName());
@@ -233,6 +239,15 @@ public class ContentSectionManager {
         final String roleName,
         final String... privileges) {
 
+        if (section == null) {
+            throw new IllegalArgumentException("Can't add a role to "
+                                                   + "section null.");
+        }
+
+        if (roleName == null || roleName.trim().isEmpty()) {
+            throw new IllegalArgumentException("No role name provided.");
+        }
+
         final Role role = new Role();
         role.setName(String.join("_", section.getLabel(), roleName));
         roleRepo.save(role);
@@ -260,6 +275,16 @@ public class ContentSectionManager {
         final Role role,
         @RequiresPrivilege(PRIVILEGE_ADMINISTER_ROLES)
         final ContentSection section) {
+
+        if (section == null) {
+            throw new IllegalArgumentException("Can't add a role to "
+                                                   + "section null.");
+        }
+
+        if (role == null) {
+            throw new IllegalArgumentException("Can't add role null to a "
+                                                   + "content section.");
+        }
 
         section.addRole(role);
         sectionRepo.save(section);
@@ -305,46 +330,6 @@ public class ContentSectionManager {
 
         final List<Permission> permissions = query.getResultList();
         permissions.forEach(p -> entityManager.remove(p));
-    }
-
-    /**
-     * Associates a content type with a content section making the type
-     * available for use in the content section. This operation requires
-     * {@link CmsConstants#PRIVILEGE_ADMINISTER_CONTENT_TYPES} for the provided
-     * content section.
-     *
-     * @param type    The {@link ContentItem} class representing the type to
-     *                add.
-     * @param section The section to which to type is added.
-     */
-    @AuthorizationRequired
-    @Transactional(Transactional.TxType.REQUIRED)
-    public void addTypeToSection(
-        final Class<? extends ContentItem> type,
-        @RequiresPrivilege(PRIVILEGE_ADMINISTER_CONTENT_TYPES)
-        final ContentSection section) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Removes a content type from a content section. After this it is not
-     * possible to create new items of this type in the content section.
-     * Existing items are left untouched. This operation requires
-     * {@link CmsConstants#PRIVILEGE_ADMINISTER_CONTENT_TYPES} for the provided
-     * content section.
-     *
-     * @param type    The type to remove.
-     * @param section The section from which the type is removed.
-     */
-    @AuthorizationRequired
-    @Transactional(Transactional.TxType.REQUIRED)
-    public void removeTypeFromSection(
-        final ContentType type,
-        @RequiresPrivilege(PRIVILEGE_ADMINISTER_CONTENT_TYPES)
-        final ContentSection section) {
-
-        throw new UnsupportedOperationException();
     }
 
     /**
@@ -447,7 +432,9 @@ public class ContentSectionManager {
 
     /**
      * Adds a new {@link ContentType} to a content section, making items of that
-     * type available in the content section.
+     * type available in the content section. This operation requires
+     * {@link CmsConstants#PRIVILEGE_ADMINISTER_CONTENT_TYPES} for the provided
+     * content section.
      *
      * @param type             The type to add (a subclass of
      *                         {@link ContentItem}.
@@ -465,13 +452,79 @@ public class ContentSectionManager {
      *
      * @return The new {@link ContentType} instance.
      */
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
     public ContentType addContentTypeToSection(
         final Class<? extends ContentItem> type,
+        @RequiresPrivilege(CmsConstants.PRIVILEGE_ADMINISTER_CONTENT_TYPES)
         final ContentSection section,
         final LifecycleDefinition defaultLifecycle,
         final WorkflowTemplate defaultWorkflow) {
 
-        throw new UnsupportedOperationException();
+        if (type == null) {
+            throw new IllegalArgumentException("Can't add null as content type "
+                                                   + "to a content section.");
+        }
+
+        if (section == null) {
+            throw new IllegalArgumentException("Can't add a content type"
+                                                   + "to section null.");
+        }
+
+        if (defaultLifecycle == null) {
+            throw new IllegalArgumentException("Can't create a content type "
+                                                   + "without a default lifecycle.");
+        }
+
+        if (defaultWorkflow == null) {
+            throw new IllegalArgumentException("Can't create a content type "
+                                                   + "without a default workflow.");
+        }
+
+        if (!section.getLifecycleDefinitions().contains(defaultLifecycle)) {
+            final KernelConfig kernelConfig = confManager.findConfiguration(
+                KernelConfig.class);
+            final Locale defaultLocale = kernelConfig.getDefaultLocale();
+            throw new IllegalArgumentException(String.format(
+                "The provided default lifecycle %d\"%s\" is not part of the"
+                    + "provided content section %d\"%s\".",
+                defaultLifecycle.getDefinitionId(),
+                defaultLifecycle.getLabel().getValue(defaultLocale),
+                section.getObjectId(),
+                section.getDisplayName()));
+        }
+
+        if (!section.getWorkflowTemplates().contains(defaultWorkflow)) {
+            final KernelConfig kernelConfig = confManager.findConfiguration(
+                KernelConfig.class);
+            final Locale defaultLocale = kernelConfig.getDefaultLocale();
+            throw new IllegalArgumentException(String.format(
+                "The provided default workflow %d\"%s\" is not part of the"
+                    + "provided content section %d\"%s\".",
+                defaultWorkflow.getWorkflowId(),
+                defaultWorkflow.getName().getValue(defaultLocale),
+                section.getObjectId(),
+                section.getDisplayName()));
+        }
+        
+        if (hasContentType(type, section)) {
+            return typeRepo.findByContentSectionAndClass(section, type).get();
+        }
+
+        final ContentType contentType = new ContentType();
+        contentType.setUuid(UUID.randomUUID().toString());
+        contentType.setContentSection(section);
+        contentType.setDisplayName(type.getName());
+        contentType.setContentItemClass(type.getName());
+        contentType.setDefaultLifecycle(defaultLifecycle);
+        contentType.setDefaultWorkflow(defaultWorkflow);
+
+        section.addContentType(contentType);
+
+        sectionRepo.save(section);
+        typeRepo.save(contentType);
+
+        return contentType;
     }
 
     /**
@@ -487,26 +540,69 @@ public class ContentSectionManager {
     public boolean hasContentType(final Class<? extends ContentItem> type,
                                   final ContentSection section) {
 
-        throw new UnsupportedOperationException();
+        if (type == null) {
+            return false;
+        }
+
+        if (section == null) {
+            return false;
+        }
+
+        final Optional<ContentType> result = typeRepo
+            .findByContentSectionAndClass(section, type);
+
+        return result.isPresent();
     }
 
     /**
      * Removes an <em>unused</em> {@link ContentType} from a
-     * {@link ContentSection}.
+     * {@link ContentSection}. This operation requires
+     * {@link CmsConstants#PRIVILEGE_ADMINISTER_CONTENT_TYPES} for the provided
+     * content section.
      *
-     * @param type The type to remove from the section.
+     * @param type    The type to remove from the section.
      * @param section The section from which the type is removed.
      *
      * @throws IllegalArgumentException if the provided {@link ContentType} is
      *                                  in use or the parameters or otherwise
      *                                  illegal.
-     * @see ContentTypeRepository#delete(org.librecms.contentsection.ContentType) 
+     * @see
+     * ContentTypeRepository#delete(org.librecms.contentsection.ContentType)
      */
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
     public void removeContentTypeFromSection(
         final Class<? extends ContentItem> type,
+        @RequiresPrivilege(CmsConstants.PRIVILEGE_ADMINISTER_CONTENT_TYPES)
         final ContentSection section) {
 
-        throw new UnsupportedOperationException();
+        if (type == null) {
+            throw new IllegalArgumentException("Can't remove content type null.");
+        }
+
+        if (section == null) {
+            throw new IllegalArgumentException("Can't remove a content type "
+                                                   + "from section null.");
+        }
+
+        final Optional<ContentType> contentType = typeRepo
+            .findByContentSectionAndClass(section, type);
+
+        if (!contentType.isPresent()) {
+            return;
+        }
+
+        if (typeRepo.isContentTypeInUse(contentType.get())) {
+            throw new IllegalArgumentException(String.format(
+                "ContentType %d:\"%s\" is used by content section %d:\"s\" can can't"
+                + "be deleted.",
+                contentType.get().getObjectId(),
+                contentType.get().getDisplayName(),
+                section.getObjectId(),
+                section.getDisplayName()));
+        }
+
+        typeRepo.delete(contentType.get());
     }
 
 }

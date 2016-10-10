@@ -22,7 +22,6 @@
     <ccm_core.ccm_objects object_id="-4002"
                           display_name="org.librecms.contenttypes.News"
                           uuid="47740f22-f89f-4ec3-90cf-d62859e53c7e" />
-
         
     <ccm_core.ccm_objects_aud object_id="-3001"
                               rev="0" 
@@ -31,6 +30,7 @@
     
     <ccm_core.resources object_id="-1001" 
                         created="2016-07-15" />
+    
     <ccm_core.resource_titles object_id="-1001" 
                               locale="en"
                               localized_value="info" />

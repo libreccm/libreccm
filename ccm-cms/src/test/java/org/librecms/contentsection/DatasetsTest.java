@@ -44,6 +44,8 @@ public class DatasetsTest extends DatasetsVerifier {
     public static Collection<String> data() {
         return Arrays.asList(new String[]{
             "/datasets/org/librecms/contentsection/ContentSectionManagerTest/data.xml",
+            "/datasets/org/librecms/contentsection/ContentSectionManagerTest/after-add-contenttype.xml",
+            "/datasets/org/librecms/contentsection/ContentSectionManagerTest/after-remove-contenttype.xml",
             "/datasets/org/librecms/contentsection/ContentSectionManagerTest/after-add-role.xml",
             "/datasets/org/librecms/contentsection/ContentSectionManagerTest/after-create.xml",
             "/datasets/org/librecms/contentsection/ContentSectionManagerTest/after-remove-role.xml",
@@ -64,15 +66,13 @@ public class DatasetsTest extends DatasetsVerifier {
 
             "/datasets/org/librecms/contentsection/ContentTypeRepositoryTest/data.xml",
             "/datasets/org/librecms/contentsection/ContentTypeRepositoryTest/after-delete.xml",
-            
+
             "/datasets/org/librecms/contentsection/FolderManagerTest/data.xml",
             "/datasets/org/librecms/contentsection/FolderManagerTest/after-create-docs-folder.xml",
             "/datasets/org/librecms/contentsection/FolderManagerTest/after-create-assets-folder.xml",
             "/datasets/org/librecms/contentsection/FolderManagerTest/after-delete-folder.xml",
             "/datasets/org/librecms/contentsection/FolderManagerTest/after-move-folder.xml",
-            "/datasets/org/librecms/contentsection/FolderManagerTest/after-move-folder-same-name.xml",
-
-        });
+            "/datasets/org/librecms/contentsection/FolderManagerTest/after-move-folder-same-name.xml",});
     }
 
     public DatasetsTest(final String datasetPath) {

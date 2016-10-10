@@ -56,6 +56,13 @@ import static org.librecms.CmsConstants.*;
 import static org.libreccm.testutils.DependenciesHelpers.*;
 
 import org.jboss.arquillian.container.test.api.ShouldThrowException;
+import org.libreccm.workflow.WorkflowTemplate;
+import org.libreccm.workflow.WorkflowTemplateRepository;
+import org.librecms.contenttypes.Article;
+import org.librecms.contenttypes.Event;
+import org.librecms.contenttypes.News;
+import org.librecms.lifecycle.LifecycleDefinition;
+import org.librecms.lifecycle.LifecycleDefinitionRepository;
 
 /**
  * Tests for the {@link ContentSectionManager}.
@@ -86,6 +93,12 @@ public class ContentSectionManagerTest {
 
     @Inject
     private ContentTypeRepository typeRepo;
+
+    @Inject
+    private LifecycleDefinitionRepository lifecycleDefRepo;
+
+    @Inject
+    private WorkflowTemplateRepository workflowTemplateRepo;
 
     public ContentSectionManagerTest() {
     }
@@ -153,6 +166,7 @@ public class ContentSectionManagerTest {
                 .getPackage())
             .addPackage(org.librecms.lifecycle.Lifecycle.class.getPackage())
             .addPackage(ContentSection.class.getPackage())
+            .addPackage(org.librecms.contenttypes.Article.class.getPackage())
             .addPackage(org.libreccm.tests.categories.IntegrationTest.class
                 .getPackage())
             //.addAsLibraries(getModuleDependencies())
@@ -175,6 +189,8 @@ public class ContentSectionManagerTest {
         assertThat(confManager, is(not(nullValue())));
         assertThat(categoryRepo, is(not(nullValue())));
         assertThat(typeRepo, is(not(nullValue())));
+        assertThat(lifecycleDefRepo, is(not(nullValue())));
+        assertThat(workflowTemplateRepo, is(not(nullValue())));
     }
 
     /**
@@ -196,7 +212,9 @@ public class ContentSectionManagerTest {
                           "uuid",
                           "created",
                           "section_id",
-                          "creation_date"})
+                          "creation_date",
+                          "content_section_id",
+                          "folder_id"})
     @InSequence(100)
     public void createSection() {
         manager.createContentSection("test");
@@ -401,10 +419,25 @@ public class ContentSectionManagerTest {
                       + "ContentSectionManagerTest/data.xml")
     @ShouldMatchDataSet(
         value = "datasets/org/librecms/contentsection/"
-                    + "ContentSectionManagerTest/after-add-contenttype.xml")
+                    + "ContentSectionManagerTest/after-add-contenttype.xml",
+        excludeColumns = {"object_id",
+                          "uuid"})
     @InSequence(400)
     public void addContentTypeToSection() {
-        fail();
+        final ContentSection section = repository.findById(-1100L);
+        final LifecycleDefinition lifecycleDef = lifecycleDefRepo
+            .findById(-13002L);
+        final WorkflowTemplate workflowTemplate = workflowTemplateRepo
+            .findById(-14001L);
+
+        assertThat(section, is(not(nullValue())));
+        assertThat(lifecycleDef, is(not(nullValue())));
+        assertThat(workflowTemplate, is(not(nullValue())));
+
+        manager.addContentTypeToSection(Event.class,
+                                        section,
+                                        lifecycleDef,
+                                        workflowTemplate);
     }
 
     /**
@@ -419,8 +452,21 @@ public class ContentSectionManagerTest {
     @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
                             + "ContentSectionManagerTest/data.xml")
     @InSequence(500)
-    public void addAlreadyAddedTypeToSection() {
-        fail();
+    public void addAlreadyAddedContentTypeToSection() {
+        final ContentSection section = repository.findById(-1100L);
+        final LifecycleDefinition lifecycleDef = lifecycleDefRepo
+            .findById(-13002L);
+        final WorkflowTemplate workflowTemplate = workflowTemplateRepo
+            .findById(-14002L);
+
+        assertThat(section, is(not(nullValue())));
+        assertThat(lifecycleDef, is(not(nullValue())));
+        assertThat(workflowTemplate, is(not(nullValue())));
+
+        manager.addContentTypeToSection(News.class,
+                                        section,
+                                        lifecycleDef,
+                                        workflowTemplate);
     }
 
     /**
@@ -436,8 +482,22 @@ public class ContentSectionManagerTest {
                             + "ContentSectionManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(600)
-    public void addTypeToSectionTypeIsNull() {
-        fail();
+    public void addContentTypeToSectionTypeIsNull() {
+        final ContentSection section = repository.findById(-1100L);
+        final LifecycleDefinition lifecycleDef = lifecycleDefRepo
+            .findById(-13002L);
+        final WorkflowTemplate workflowTemplate = workflowTemplateRepo
+            .findById(-14002L);
+
+        assertThat(section, is(not(nullValue())));
+        assertThat(lifecycleDef, is(not(nullValue())));
+        assertThat(workflowTemplate, is(not(nullValue())));
+
+        manager.addContentTypeToSection(null,
+                                        section,
+                                        lifecycleDef,
+                                        workflowTemplate);
+
     }
 
     /**
@@ -453,8 +513,19 @@ public class ContentSectionManagerTest {
                             + "ContentSectionManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(700)
-    public void addTypeToSectionSectionIsNull() {
-        fail();
+    public void addContentTypeToSectionSectionIsNull() {
+        final LifecycleDefinition lifecycleDef = lifecycleDefRepo
+            .findById(-13002L);
+        final WorkflowTemplate workflowTemplate = workflowTemplateRepo
+            .findById(-14002L);
+
+        assertThat(lifecycleDef, is(not(nullValue())));
+        assertThat(workflowTemplate, is(not(nullValue())));
+
+        manager.addContentTypeToSection(Event.class,
+                                        null,
+                                        lifecycleDef,
+                                        workflowTemplate);
     }
 
     /**
@@ -470,8 +541,18 @@ public class ContentSectionManagerTest {
                             + "ContentSectionManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(800)
-    public void addTypeToSectionLifecycleIsNull() {
-        fail();
+    public void addContentTypeToSectionLifecycleIsNull() {
+        final ContentSection section = repository.findById(-1100L);
+        final WorkflowTemplate workflowTemplate = workflowTemplateRepo
+            .findById(-14001L);
+
+        assertThat(section, is(not(nullValue())));
+        assertThat(workflowTemplate, is(not(nullValue())));
+
+        manager.addContentTypeToSection(Event.class,
+                                        section,
+                                        null,
+                                        workflowTemplate);
     }
 
     /**
@@ -487,8 +568,19 @@ public class ContentSectionManagerTest {
                             + "ContentSectionManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(900)
-    public void addTypeToSectionWorkflowIsNull() {
-        fail();
+    public void addContentTypeToSectionWorkflowIsNull() {
+        final ContentSection section = repository.findById(-1100L);
+        final LifecycleDefinition lifecycleDef = lifecycleDefRepo
+            .findById(-13002L);
+
+        assertThat(section, is(not(nullValue())));
+        assertThat(lifecycleDef, is(not(nullValue())));
+
+        manager.addContentTypeToSection(Event.class,
+                                        section,
+                                        lifecycleDef,
+                                        null);
+
     }
 
     /**
@@ -504,8 +596,21 @@ public class ContentSectionManagerTest {
                             + "ContentSectionManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(1000)
-    public void addTypeToSectionLifecycleNotInSection() {
-        fail();
+    public void addContentTypeToSectionLifecycleNotInSection() {
+        final ContentSection section = repository.findById(-1100L);
+        final LifecycleDefinition lifecycleDef = lifecycleDefRepo
+            .findById(-13003L);
+        final WorkflowTemplate workflowTemplate = workflowTemplateRepo
+            .findById(-14001L);
+
+        assertThat(section, is(not(nullValue())));
+        assertThat(lifecycleDef, is(not(nullValue())));
+        assertThat(workflowTemplate, is(not(nullValue())));
+
+        manager.addContentTypeToSection(Event.class,
+                                        section,
+                                        lifecycleDef,
+                                        workflowTemplate);
     }
 
     /**
@@ -521,8 +626,21 @@ public class ContentSectionManagerTest {
                             + "ContentSectionManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(1100)
-    public void addTypeToSectionWorkflowNoInSection() {
-        fail();
+    public void addContentTypeToSectionWorkflowNoInSection() {
+        final ContentSection section = repository.findById(-1100L);
+        final LifecycleDefinition lifecycleDef = lifecycleDefRepo
+            .findById(-13002L);
+        final WorkflowTemplate workflowTemplate = workflowTemplateRepo
+            .findById(-14003L);
+
+        assertThat(section, is(not(nullValue())));
+        assertThat(lifecycleDef, is(not(nullValue())));
+        assertThat(workflowTemplate, is(not(nullValue())));
+
+        manager.addContentTypeToSection(Event.class,
+                                        section,
+                                        lifecycleDef,
+                                        workflowTemplate);
     }
 
     /**
@@ -532,12 +650,13 @@ public class ContentSectionManagerTest {
     @Test
     @UsingDataSet("datasets/org/librecms/contentsection/"
                       + "ContentSectionManagerTest/data.xml")
-    @ShouldMatchDataSet(
-        value = "datasets/org/librecms/contentsection/"
-                    + "ContentSectionManagerTest/after-add-contenttype.xml")
     @InSequence(1200)
     public void verifyHasContentType() {
-        fail();
+        final ContentSection section = repository.findById(-1100L);
+
+        assertThat(manager.hasContentType(Article.class, section), is(true));
+        assertThat(manager.hasContentType(News.class, section), is(true));
+        assertThat(manager.hasContentType(Event.class, section), is(false));
     }
 
     /**
@@ -551,7 +670,9 @@ public class ContentSectionManagerTest {
                     + "ContentSectionManagerTest/after-remove-contenttype.xml")
     @InSequence(1300)
     public void removeContentTypeFromSection() {
-        fail();
+        final ContentSection section = repository.findById(-1100L);
+
+        manager.removeContentTypeFromSection(News.class, section);
     }
 
     /**
@@ -568,7 +689,9 @@ public class ContentSectionManagerTest {
                     + "ContentSectionManagerTest/data.xml")
     @InSequence(1301)
     public void removeNotExistingContentTypeFromSection() {
-        fail();
+        final ContentSection section = repository.findById(-1100L);
+
+        manager.removeContentTypeFromSection(Event.class, section);
     }
 
     /**
@@ -586,7 +709,9 @@ public class ContentSectionManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(1400)
     public void removeContentTypeFromSectionTypeInUse() {
-        fail();
+        final ContentSection section = repository.findById(-1100L);
+
+        manager.removeContentTypeFromSection(Article.class, section);
     }
 
     /**
@@ -604,7 +729,9 @@ public class ContentSectionManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(1400)
     public void removeContentTypeFromSectionTypeIsNull() {
-        fail();
+        final ContentSection section = repository.findById(-1100L);
+
+        manager.removeContentTypeFromSection(null, section);
     }
 
     /**
@@ -622,7 +749,7 @@ public class ContentSectionManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(1400)
     public void removeContentTypeFromSectionSectionIsNull() {
-        fail();
+        manager.removeContentTypeFromSection(News.class, null);
     }
 
 }
