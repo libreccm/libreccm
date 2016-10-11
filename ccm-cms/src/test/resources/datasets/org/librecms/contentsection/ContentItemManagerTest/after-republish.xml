@@ -3,6 +3,7 @@
     
     <ccm_core.workflows workflow_id="-100" />
     <ccm_core.workflows workflow_id="-110" />
+    <ccm_core.workflows workflow_id="-120" />
 
     <ccm_core.workflow_names workflow_id="-100" 
                              locale="en"
@@ -10,9 +11,14 @@
     <ccm_core.workflow_names workflow_id="-110" 
                              locale="en"
                              localized_value="Fast workflow" />
+    <ccm_core.workflow_names workflow_id="-120" 
+                             locale="en" 
+                             localized_value="Projects Default workflow" />
+
     
     <ccm_core.workflow_templates workflow_id="-100" />
     <ccm_core.workflow_templates workflow_id="-110" />
+    <ccm_core.workflow_templates workflow_id="-120" />
     
     <ccm_core.workflow_tasks task_id="-100100"
                              active="false" 
@@ -49,12 +55,16 @@
         
     <ccm_cms.lifecyle_definitions lifecycle_definition_id="-200" />
     <ccm_cms.lifecyle_definitions lifecycle_definition_id="-210" />
+    <ccm_cms.lifecyle_definitions lifecycle_definition_id="-220" />
     
     <ccm_cms.lifecycle_definition_labels object_id="-200" 
                                          localized_value="Default lifecycle" 
                                          locale="en" />
     <ccm_cms.lifecycle_definition_labels object_id="-210" 
                                          localized_value="Alternate lifecycle" 
+                                         locale="en" />
+    <ccm_cms.lifecycle_definition_labels object_id="-220" 
+                                         localized_value="Project default lifecycle" 
                                          locale="en" />
     
     <ccm_cms.lifecycle_phase_definitions phase_definition_id="-200100" 
@@ -121,6 +131,18 @@
     <ccm_core.ccm_objects object_id="-20200"
                           display_name="org.librecms.contenttypes.News"
                           uuid="47740f22-f89f-4ec3-90cf-d62859e53c7e" />
+    <ccm_core.ccm_objects object_id="-1200" 
+                          display_name="projects" 
+                          uuid="cb2443f7-e192-4eb9-a2ba-165b2bbabc61" />
+    <ccm_core.ccm_objects object_id="-2300"
+                          display_name="projects_root"
+                          uuid="125b7229-10d8-4209-9243-0281ec332bf4" />
+    <ccm_core.ccm_objects object_id="-2400"
+                          display_name="projects_assets"
+                          uuid="8c4e9717-7cae-4f7d-bb25-f3aff793755e" />
+    <ccm_core.ccm_objects object_id="-20300"
+                          display_name="org.librecms.contenttypes.Article"
+                          uuid="bd061ab6-9c4f-45ff-ab69-f521008eeac3" />
     
     <ccm_core.ccm_objects_aud object_id="-10100"
                               rev="0"
@@ -183,23 +205,52 @@
                          visible="true"
                          abstract_category="false" 
                          category_order="1" />
-                             
+    <ccm_core.categories object_id="-2300" 
+                         unique_id="125b7229-10d8-4209-9243-0281ec332bf4" 
+                         name="projects_root"
+                         enabled="true"
+                         visible="true"
+                         abstract_category="false"
+                         category_order="1" />
+    <ccm_core.categories object_id="-2400" 
+                         unique_id="8c4e9717-7cae-4f7d-bb25-f3aff793755e" 
+                         name="projects_assets"
+                         enabled="true"
+                         visible="true"
+                         abstract_category="false"
+                         category_order="1" />
+
     <ccm_core.category_titles object_id="-2100" 
                               locale="en" 
                               localized_value="info_root" />
     <ccm_core.category_titles object_id="-2200" 
                               locale="en" 
                               localized_value="info_assets" />
+    <ccm_core.category_titles object_id="-2300"
+                              locale="en" 
+                              localized_value="projects_root" />
+    <ccm_core.category_titles object_id="-2400"
+                              locale="en" 
+                              localized_value="projects_assets" />
     
     <ccm_core.resources object_id="-1100" 
                         created="2016-07-15" />
+    <ccm_core.resources object_id="-1200" 
+                        created="2016-07-15" />
+
     <ccm_core.resource_titles object_id="-1100" 
                               locale="en"
                               localized_value="info" />
+    <ccm_core.resource_titles object_id="-1200" 
+                              locale="en"
+                              localized_value="projects" />
     
     <ccm_core.applications object_id="-1100"
                            application_type="org.librecms.contentsection.ContentSection"
                            primary_url="info" />
+    <ccm_core.applications object_id="-1200"
+                           application_type="org.librecms.contentsection.ContentSection"
+                           primary_url="projects" />
     
     <ccm_cms.folders object_id="-2100" 
                      type="DOCUMENTS_FOLDER" />
@@ -209,12 +260,20 @@
                      type="DOCUMENTS_FOLDER" />
     <ccm_cms.folders object_id="-2200" 
                      type="ASSETS_FOLDER" />
+    <ccm_cms.folders object_id="-2300"
+                     type="DOCUMENTS_FOLDER" />
+    <ccm_cms.folders object_id="-2400"
+                     type="ASSETS_FOLDER" />
     
     <ccm_cms.content_sections object_id="-1100"
                               label="info"
                               root_documents_folder_id="-2100"
                               root_assets_folder_id="-2200" />
-    
+    <ccm_cms.content_sections object_id="-1200"
+                              label="projects"
+                              root_documents_folder_id="-2300"
+                              root_assets_folder_id="-2400" />
+
     <ccm_cms.folder_content_section_map folder_id="-2100" 
                                         content_section_id="-1100" />
     <ccm_cms.folder_content_section_map folder_id="-2110" 
@@ -223,6 +282,10 @@
                                         content_section_id="-1100" />
     <ccm_cms.folder_content_section_map folder_id="-2200" 
                                         content_section_id="-1100" />
+    <ccm_cms.folder_content_section_map folder_id="-2300" 
+                                        content_section_id="-1200" />
+    <ccm_cms.folder_content_section_map folder_id="-2400" 
+                                        content_section_id="-1200" />
     
     <ccm_cms.content_section_workflow_templates 
         content_section_id="-1100" 
@@ -230,6 +293,9 @@
     <ccm_cms.content_section_workflow_templates 
         content_section_id="-1100" 
         workflow_template_id="-110" />
+    <ccm_cms.content_section_workflow_templates 
+        content_section_id="-1200" 
+        workflow_template_id="-120" />
     
     <ccm_cms.content_section_lifecycle_definitions 
         content_section_id="-1100"
@@ -237,6 +303,9 @@
     <ccm_cms.content_section_lifecycle_definitions 
         content_section_id="-1100"
         lifecycle_definition_id="-210" />
+    <ccm_cms.content_section_lifecycle_definitions 
+        content_section_id="-1200"
+        lifecycle_definition_id="-220" />
     
     <ccm_cms.content_types object_id="-20100" 
                            content_item_class="org.librecms.contenttypes.Article" 
@@ -248,6 +317,11 @@
                            content_section_id="-1100" 
                            default_workflow="-100" 
                            default_lifecycle_id="-200" />
+    <ccm_cms.content_types object_id="-20300" 
+                           content_item_class="org.librecms.contenttypes.Article" 
+                           content_section_id="-1200" 
+                           default_workflow="-120" 
+                           default_lifecycle_id="-220" />
     
     <ccm_cms.content_items object_id="-10100" 
                            item_uuid="aed4b402-1180-46c6-b42d-7245f4dca248"
@@ -737,6 +811,175 @@
                           object_id="-2100" 
                           grantee_id="-3600" 
                           creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-4710" 
+                          granted_privilege="categorize_items" 
+                          object_id="-2300" 
+                          grantee_id="-3200" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-4720" 
+                          granted_privilege="create_new_items" 
+                          object_id="-2300" 
+                          grantee_id="-3200" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-4730" 
+                          granted_privilege="edit_items" 
+                          object_id="-2300" 
+                          grantee_id="-3200" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-4740" 
+                          granted_privilege="view_published_items" 
+                          object_id="-2300" 
+                          grantee_id="-3200" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-4750" 
+                          granted_privilege="preview_items" 
+                          object_id="-2300" 
+                          grantee_id="-3200" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-4810" 
+                          granted_privilege="categorize_items" 
+                          object_id="-2300" 
+                          grantee_id="-3300" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-4820" 
+                          granted_privilege="create_new_items" 
+                          object_id="-2300" 
+                          grantee_id="-3300" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-4830" 
+                          granted_privilege="edit_items" 
+                          object_id="-2300" 
+                          grantee_id="-3300" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-4840" 
+                          granted_privilege="approve_items" 
+                          object_id="-2300" 
+                          grantee_id="-3300" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-4850" 
+                          granted_privilege="delete_items" 
+                          object_id="-2300" 
+                          grantee_id="-3300" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-4860" 
+                          granted_privilege="view_published_items" 
+                          object_id="-2300" 
+                          grantee_id="-3300" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-4870" 
+                          granted_privilege="preview_items" 
+                          object_id="-2300" 
+                          grantee_id="-3300" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-4910" 
+                          granted_privilege="administer_roles" 
+                          object_id="-1100" 
+                          grantee_id="-3400" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-4920" 
+                          granted_privilege="administer_workflow" 
+                          object_id="-1100" 
+                          grantee_id="-3400" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-4930" 
+                          granted_privilege="administer_lifecyles" 
+                          object_id="-1100" 
+                          grantee_id="-3400" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-4940" 
+                          granted_privilege="administer_categories" 
+                          object_id="-1100" 
+                          grantee_id="-3400" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-4950" 
+                          granted_privilege="administer_content_types" 
+                          object_id="-1100" 
+                          grantee_id="-3400" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-4960" 
+                          granted_privilege="categorize_items" 
+                          object_id="-2300" 
+                          grantee_id="-3400" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-4970" 
+                          granted_privilege="create_new_items" 
+                          object_id="-2300" 
+                          grantee_id="-3400" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-4980" 
+                          granted_privilege="edit_items" 
+                          object_id="-2300" 
+                          grantee_id="-3400" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-4990" 
+                          granted_privilege="approve_items" 
+                          object_id="-2300" 
+                          grantee_id="-3400" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-5000" 
+                          granted_privilege="publish_items" 
+                          object_id="-2300" 
+                          grantee_id="-3400" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-5010" 
+                          granted_privilege="delete_items" 
+                          object_id="-2300" 
+                          grantee_id="-3400" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-5020" 
+                          granted_privilege="view_published_items" 
+                          object_id="-2300" 
+                          grantee_id="-3400" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-5030" 
+                          granted_privilege="preview_items" 
+                          object_id="-2300" 
+                          grantee_id="-3400" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-5110" 
+                          granted_privilege="categorize_items" 
+                          object_id="-2300" 
+                          grantee_id="-3500" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-5120" 
+                          granted_privilege="create_new_items" 
+                          object_id="-2300" 
+                          grantee_id="-3500" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-5130" 
+                          granted_privilege="edit_items" 
+                          object_id="-2300" 
+                          grantee_id="-3500" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-5140" 
+                          granted_privilege="approve_items" 
+                          object_id="-2300" 
+                          grantee_id="-3500" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-5150" 
+                          granted_privilege="publish_items" 
+                          object_id="-2300" 
+                          grantee_id="-3500" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-5160" 
+                          granted_privilege="delete_items" 
+                          object_id="-2300" 
+                          grantee_id="-3500" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-5170" 
+                          granted_privilege="view_published_items" 
+                          object_id="-2300" 
+                          grantee_id="-3500" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-5180" 
+                          granted_privilege="preview_items" 
+                          object_id="-2300" 
+                          grantee_id="-3500" 
+                          creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-5210" 
+                          granted_privilege="view_published_items" 
+                          object_id="-2300" 
+                          grantee_id="-3600" 
+                          creation_date="2016-07-15"/>
 
-    
 </dataset>

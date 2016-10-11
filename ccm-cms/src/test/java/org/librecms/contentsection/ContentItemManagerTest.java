@@ -677,7 +677,9 @@ public class ContentItemManagerTest {
                             + "ContentItemManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void publishItemNull() {
-        itemManager.publish(null);
+        final ContentItem item = null;
+        
+        itemManager.publish(item);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -740,7 +742,8 @@ public class ContentItemManagerTest {
                             + "ContentItemManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void unpublishItemNull() {
-        itemManager.unpublish(null);
+        final ContentItem item = null;
+        itemManager.unpublish(item);
     }
 
     @Test
