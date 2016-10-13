@@ -84,6 +84,12 @@ public class ContentItemManager {
     private CategoryManager categoryManager;
 
     @Inject
+    private FolderManager folderManager;
+
+    @Inject
+    private ContentSectionManager sectionManager;
+
+    @Inject
     private ContentItemRepository contentItemRepo;
 
     @Inject
@@ -94,7 +100,7 @@ public class ContentItemManager {
 
     @Inject
     private WorkflowManager workflowManager;
-    
+
     @Inject
     private FolderRepository folderRepo;
 
@@ -183,7 +189,7 @@ public class ContentItemManager {
                 type.getName()));
         }
 
-        if (name == null || name.isEmpty()) {
+        if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException(
                 "The name of a content item can't be blank.");
         }
@@ -233,7 +239,7 @@ public class ContentItemManager {
      * a the item is republished.
      *
      * @param item   The item to move.
-     * @param target The folder to which the item is moved.
+     * @param targetFolder The folder to which the item is moved.
      */
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
@@ -241,18 +247,35 @@ public class ContentItemManager {
         @RequiresPrivilege(CmsConstants.PRIVILEGE_ITEMS_EDIT)
         final ContentItem item,
         @RequiresPrivilege(CmsConstants.PRIVILEGE_ITEMS_EDIT)
-        final Folder target) {
+        final Folder targetFolder) {
         if (item == null) {
             throw new IllegalArgumentException("The item to move can't be null.");
         }
 
-        if (target == null) {
+        if (targetFolder == null) {
             throw new IllegalArgumentException(
                 "The target folder can't be null.");
         }
 
         final ContentItem draftItem = getDraftVersion(item, item.getClass());
         final Optional<Folder> currentFolder = getItemFolder(item);
+
+        if (!sectionManager.hasContentType(draftItem.getClass(),
+                                           targetFolder.getSection())) {
+            throw new IllegalArgumentException(String.format(
+                "Can't move item %d:\"%s\" to folder \"%s\"."
+                    + "The target folder %d:\"%s\" belongs to content section "
+                    + "%d:\"%s\". The content type \"%s\" has not registered"
+                    + "for this section.",
+                draftItem.getObjectId(),
+                draftItem.getDisplayName(),
+                folderManager.getFolderPath(targetFolder, true),
+                targetFolder.getObjectId(),
+                targetFolder.getDisplayName(),
+                targetFolder.getSection().getObjectId(),
+                targetFolder.getSection().getDisplayName(),
+                draftItem.getClass().getName()));
+        }
 
         if (currentFolder.isPresent()) {
             try {
@@ -265,7 +288,7 @@ public class ContentItemManager {
 
         categoryManager.addObjectToCategory(
             draftItem,
-            target,
+            targetFolder,
             CmsConstants.CATEGORIZATION_TYPE_FOLDER);
 
     }
@@ -279,10 +302,12 @@ public class ContentItemManager {
      *                     target folder is the same folder as the folder of the
      *                     original item an index is appended to the name of the
      *                     item.
+     *
+     * @return The copy of the item
      */
     @Transactional(Transactional.TxType.REQUIRED)
     @SuppressWarnings("unchecked")
-    public void copy(
+    public ContentItem copy(
         final ContentItem item,
         @RequiresPrivilege(CmsConstants.PRIVILEGE_ITEMS_CREATE_NEW)
         final Folder targetFolder) {
@@ -308,6 +333,22 @@ public class ContentItemManager {
         }
 
         final ContentItem draftItem = getDraftVersion(item, item.getClass());
+        if (!sectionManager.hasContentType(draftItem.getClass(),
+                                           targetFolder.getSection())) {
+            throw new IllegalArgumentException(String.format(
+                "Can't copy item %d:\"%s\" to folder \"%s\"."
+                    + "The target folder %d:\"%s\" belongs to content section "
+                    + "%d:\"%s\". The content type \"%s\" has not registered"
+                    + "for this section.",
+                draftItem.getObjectId(),
+                draftItem.getDisplayName(),
+                folderManager.getFolderPath(targetFolder, true),
+                targetFolder.getObjectId(),
+                targetFolder.getDisplayName(),
+                targetFolder.getSection().getObjectId(),
+                targetFolder.getSection().getDisplayName(),
+                draftItem.getClass().getName()));
+        }
 
         final ContentItem copy;
         try {
@@ -477,6 +518,8 @@ public class ContentItemManager {
         }
 
         contentItemRepo.save(copy);
+
+        return copy;
     }
 
     private boolean propertyIsExcluded(final String name) {
@@ -738,7 +781,7 @@ public class ContentItemManager {
         // retrieved in this transaction to avoid problems with lazy fetched 
         // data.
         final Folder theFolder = folderRepo.findById(folder.getObjectId());
-        
+
         theFolder.getObjects()
             .stream()
             .map(categorization -> categorization.getCategorizedObject())
@@ -798,7 +841,7 @@ public class ContentItemManager {
     /**
      * Unpublishes all live items in a folder. Items in sub folders will
      * <strong>not</strong> be unpublished!.
-     * 
+     *
      * @param folder The folders which items are unpublished.
      */
     @AuthorizationRequired
@@ -806,12 +849,12 @@ public class ContentItemManager {
     public void unpublish(
         @RequiresPrivilege(CmsConstants.PRIVILEGE_ITEMS_PUBLISH)
         final Folder folder) {
-        
+
         // Ensure that we are using a fresh folder and that the folder was 
         // retrieved in this transaction to avoid problems with lazy fetched 
         // data.
         final Folder theFolder = folderRepo.findById(folder.getObjectId());
-        
+
         theFolder.getObjects()
             .stream()
             .map(categorization -> categorization.getCategorizedObject())
@@ -820,7 +863,7 @@ public class ContentItemManager {
             .filter(item -> isLive(item))
             .forEach(item -> unpublish(item));
     }
-    
+
     /**
      * Determines if a content item has a live version.
      *

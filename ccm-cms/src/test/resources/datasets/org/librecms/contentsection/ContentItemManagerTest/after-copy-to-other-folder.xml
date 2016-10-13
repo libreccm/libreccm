@@ -237,6 +237,10 @@
     <ccm_core.resource_titles object_id="-1100" 
                               locale="en"
                               localized_value="info" />
+    <ccm_core.resource_titles object_id="-1200" 
+                              locale="en"
+                              localized_value="projects" />
+    
     <ccm_core.applications object_id="-1200"
                            application_type="org.librecms.contentsection.ContentSection"
                            primary_url="projects" />
@@ -275,6 +279,10 @@
                                         content_section_id="-1100" />
     <ccm_cms.folder_content_section_map folder_id="-2200" 
                                         content_section_id="-1100" />
+    <ccm_cms.folder_content_section_map folder_id="-2300" 
+                                        content_section_id="-1200" />
+    <ccm_cms.folder_content_section_map folder_id="-2400" 
+                                        content_section_id="-1200" />
     
     <ccm_cms.content_section_workflow_templates 
         content_section_id="-1100" 

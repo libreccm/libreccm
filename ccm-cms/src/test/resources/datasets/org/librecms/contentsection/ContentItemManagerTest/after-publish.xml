@@ -237,6 +237,9 @@
     <ccm_core.resource_titles object_id="-1100" 
                               locale="en"
                               localized_value="info" />
+    <ccm_core.resource_titles object_id="-1200" 
+                                  locale="en"
+                                  localized_value="projects" />
     
     <ccm_core.applications object_id="-1100"
                            application_type="org.librecms.contentsection.ContentSection"

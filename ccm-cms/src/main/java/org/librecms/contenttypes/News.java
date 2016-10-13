@@ -76,7 +76,6 @@ public class News extends ContentItem implements Serializable {
      * the function recentItems.
      */
     @Column(name = "HOMEPAGE")
-    @NotEmpty
     private boolean homepage;
 
     public LocalizedString getText() {
@@ -88,11 +87,11 @@ public class News extends ContentItem implements Serializable {
     }
 
     public Date getReleaseDate() {
-        return releaseDate;
+        return new Date(releaseDate.getTime());
     }
 
     public void setReleaseDate(final Date releaseDate) {
-        this.releaseDate = releaseDate;
+        this.releaseDate = new Date(releaseDate.getTime());
     }
 
     public boolean isHomepage() {
