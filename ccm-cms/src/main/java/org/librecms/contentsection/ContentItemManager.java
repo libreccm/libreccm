@@ -234,11 +234,17 @@ public class ContentItemManager {
     }
 
     /**
-     * Moves a content item to another folder in the same content section. This
+     * Moves a content item to another folder. If moving an item to another
+     * content section the caller should first check if the type of the item is
+     * registered in the target version using
+     * {@link ContentSectionManager#hasContentType(java.lang.Class, org.librecms.contentsection.ContentSection)}.
+     * If this method is called with for item and a folder in another content
+     * section and the type of the item is not registered for target section
+     * this method will throw an {@link IllegalArgumentException}. This method
      * only moves the draft version of the item. The live version is moved after
      * a the item is republished.
      *
-     * @param item   The item to move.
+     * @param item         The item to move.
      * @param targetFolder The folder to which the item is moved.
      */
     @AuthorizationRequired
@@ -295,7 +301,13 @@ public class ContentItemManager {
 
     /**
      * Creates an copy of the draft version of the item in the provided
-     * {@code targetFolder}.
+     * {@code targetFolder}. If the target folder belongs to another content
+     * section the caller should first check if the type of the item is
+     * registered for the target section by using
+     * {@link ContentSectionManager#hasContentType(java.lang.Class, org.librecms.contentsection.ContentSection)}.
+     * If this method is called for an item and a folder in another content
+     * section and the type of the item is not registered for the target section
+     * an {@link IllegalArgumentException} is thrown.
      *
      * @param item         The item to copy.
      * @param targetFolder The folder in which the copy is created. If the
