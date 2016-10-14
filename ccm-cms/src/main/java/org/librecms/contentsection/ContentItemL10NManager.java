@@ -58,7 +58,7 @@ public class ContentItemL10NManager {
 
     @Inject
     private ContentItemRepository itemRepo;
-    
+
     private Locale defaultLocale;
     private List<Locale> supportedLocales;
 
@@ -151,9 +151,18 @@ public class ContentItemL10NManager {
         final ContentItem item,
         final Locale locale) {
 
+        if (item == null) {
+            throw new IllegalArgumentException("Can't add language to item null.");
+        }
+
+        if (locale == null) {
+            throw new IllegalArgumentException(
+                "Can't add language null to an item.");
+        }
+
         findLocalizedStringProperties(item)
             .forEach(property -> addLanguage(item, locale, property));
-        
+
         itemRepo.save(item);
     }
 
@@ -161,12 +170,12 @@ public class ContentItemL10NManager {
                              final Locale locale,
                              final PropertyDescriptor property) {
 
-        final Method readMethod = property.getReadMethod();        
+        final Method readMethod = property.getReadMethod();
         final LocalizedString localizedStr = readLocalizedString(item,
                                                                  readMethod);
         addLanguage(localizedStr, locale);
     }
-    
+
     private void addLanguage(final LocalizedString localizedString,
                              final Locale locale) {
         if (localizedString.hasValue(locale)) {
@@ -213,6 +222,16 @@ public class ContentItemL10NManager {
         final ContentItem item,
         final Locale locale) {
 
+        if (item == null) {
+            throw new IllegalArgumentException(
+                "Can't remove language from item null.");
+        }
+
+        if (locale == null) {
+            throw new IllegalArgumentException(
+                "Can't remove language null from an item.");
+        }
+
         findLocalizedStringProperties(item)
             .forEach(property -> removeLanguage(item, locale, property));
 
@@ -249,6 +268,10 @@ public class ContentItemL10NManager {
         @RequiresPrivilege(CmsConstants.PRIVILEGE_ITEMS_EDIT)
         final ContentItem item) {
 
+        if (item == null) {
+            throw new IllegalArgumentException("Can't normalise item null.");
+        }
+
         final Set<Locale> languages = collectLanguages(item);
 
         findLocalizedStringProperties(item)
@@ -256,7 +279,7 @@ public class ContentItemL10NManager {
             .map(property -> property.getReadMethod())
             .map(readMethod -> readLocalizedString(item, readMethod))
             .forEach(str -> normalize(str, languages));
-        
+
         itemRepo.save(item);
     }
 
@@ -266,7 +289,7 @@ public class ContentItemL10NManager {
         final List<Locale> missingLangs = languages.stream()
             .filter(lang -> !localizedString.hasValue(lang))
             .collect(Collectors.toList());
-        
+
         if (!missingLangs.isEmpty()) {
             missingLangs.stream()
                 .forEach(lang -> addLanguage(localizedString, lang));
