@@ -10,6 +10,10 @@ DELETE FROM ccm_cms.articles;
 
 DELETE FROM ccm_cms.articles_aud;
 
+DELETE FROM ccm_cms.content_item_descriptions;
+
+DELETE FROM ccm_cms.content_item_descriptions_aud;
+
 DELETE FROM ccm_cms.content_item_names;
 
 DELETE FROM ccm_cms.content_item_names_aud;

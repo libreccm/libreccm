@@ -19,15 +19,30 @@
 package org.librecms.contentsection;
 
 import com.arsdigita.kernel.KernelConfig;
+import com.arsdigita.util.UncheckedWrapperException;
 
+import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.l10n.LocalizedString;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
 import org.librecms.CmsConstants;
 
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 /**
@@ -37,6 +52,64 @@ import javax.transaction.Transactional;
  */
 @RequestScoped
 public class ContentItemL10NManager {
+
+    @Inject
+    private ConfigurationManager confManager;
+
+    @Inject
+    private ContentItemRepository itemRepo;
+    
+    private Locale defaultLocale;
+    private List<Locale> supportedLocales;
+
+    @PostConstruct
+    private void init() {
+        final KernelConfig kernelConfig = confManager.findConfiguration(
+            KernelConfig.class);
+        defaultLocale = kernelConfig.getDefaultLocale();
+        supportedLocales = kernelConfig.getSupportedLanguages()
+            .stream()
+            .map(language -> new Locale(language))
+            .collect(Collectors.toList());
+    }
+
+    private List<PropertyDescriptor> findLocalizedStringProperties(
+        final ContentItem item) {
+
+        try {
+            return Arrays.stream(
+                Introspector.getBeanInfo(item.getClass())
+                    .getPropertyDescriptors())
+                .filter(property -> property.getPropertyType().isAssignableFrom(
+                LocalizedString.class))
+                .collect(Collectors.toList());
+        } catch (IntrospectionException ex) {
+            throw new UncheckedWrapperException(ex);
+        }
+    }
+
+    private LocalizedString readLocalizedString(final ContentItem item,
+                                                final Method readMethod) {
+        try {
+            return (LocalizedString) readMethod.invoke(item);
+        } catch (IllegalAccessException
+                 | IllegalArgumentException
+                 | InvocationTargetException ex) {
+            throw new UncheckedWrapperException(ex);
+        }
+    }
+
+    private Set<Locale> collectLanguages(final ContentItem item) {
+        final Set<Locale> locales = new HashSet<>();
+
+        findLocalizedStringProperties(item)
+            .stream()
+            .map(property -> property.getReadMethod())
+            .map(readMethod -> readLocalizedString(item, readMethod))
+            .forEach(str -> locales.addAll(str.getAvailableLocales()));
+
+        return locales;
+    }
 
     /**
      * Checks if an content item has data for particular language.
@@ -49,8 +122,16 @@ public class ContentItemL10NManager {
      */
     @Transactional(Transactional.TxType.REQUIRED)
     public boolean hasLanguage(final ContentItem item, final Locale locale) {
+        if (item == null) {
+            throw new IllegalArgumentException("Can't check if item null has a"
+                                                   + "specific locale.");
+        }
 
-        throw new UnsupportedOperationException();
+        if (locale == null) {
+            throw new IllegalArgumentException("Can't check for locale null.");
+        }
+
+        return collectLanguages(item).contains(locale);
     }
 
     /**
@@ -70,7 +151,50 @@ public class ContentItemL10NManager {
         final ContentItem item,
         final Locale locale) {
 
-        throw new UnsupportedOperationException();
+        findLocalizedStringProperties(item)
+            .forEach(property -> addLanguage(item, locale, property));
+        
+        itemRepo.save(item);
+    }
+
+    private void addLanguage(final ContentItem item,
+                             final Locale locale,
+                             final PropertyDescriptor property) {
+
+        final Method readMethod = property.getReadMethod();        
+        final LocalizedString localizedStr = readLocalizedString(item,
+                                                                 readMethod);
+        addLanguage(localizedStr, locale);
+    }
+    
+    private void addLanguage(final LocalizedString localizedString,
+                             final Locale locale) {
+        if (localizedString.hasValue(locale)) {
+            //Nothing to do
+            return;
+        }
+
+        final String value;
+        if (localizedString.hasValue(defaultLocale)) {
+            value = localizedString.getValue(defaultLocale);
+        } else {
+            value = findValue(localizedString);
+        }
+
+        localizedString.addValue(locale, value);
+    }
+
+    private String findValue(final LocalizedString localizedStr) {
+        final Optional<Locale> locale = supportedLocales
+            .stream()
+            .filter(current -> localizedStr.hasValue(current))
+            .findAny();
+
+        if (locale.isPresent()) {
+            return localizedStr.getValue(locale.get());
+        } else {
+            return "Lorem ipsum";
+        }
     }
 
     /**
@@ -86,10 +210,26 @@ public class ContentItemL10NManager {
     @Transactional(Transactional.TxType.REQUIRED)
     public void removeLangauge(
         @RequiresPrivilege(CmsConstants.PRIVILEGE_ITEMS_EDIT)
-        final ContentItem item, 
+        final ContentItem item,
         final Locale locale) {
-        
-        throw new UnsupportedOperationException();
+
+        findLocalizedStringProperties(item)
+            .forEach(property -> removeLanguage(item, locale, property));
+
+        itemRepo.save(item);
+    }
+
+    private void removeLanguage(final ContentItem item,
+                                final Locale locale,
+                                final PropertyDescriptor property) {
+
+        final Method readMethod = property.getReadMethod();
+
+        final LocalizedString localizedStr = readLocalizedString(item,
+                                                                 readMethod);
+        if (localizedStr.hasValue(locale)) {
+            localizedStr.removeValue(locale);
+        }
     }
 
     /**
@@ -108,8 +248,29 @@ public class ContentItemL10NManager {
     public void normalizedLanguages(
         @RequiresPrivilege(CmsConstants.PRIVILEGE_ITEMS_EDIT)
         final ContentItem item) {
+
+        final Set<Locale> languages = collectLanguages(item);
+
+        findLocalizedStringProperties(item)
+            .stream()
+            .map(property -> property.getReadMethod())
+            .map(readMethod -> readLocalizedString(item, readMethod))
+            .forEach(str -> normalize(str, languages));
         
-        throw new UnsupportedOperationException();
+        itemRepo.save(item);
+    }
+
+    private void normalize(final LocalizedString localizedString,
+                           final Set<Locale> languages) {
+
+        final List<Locale> missingLangs = languages.stream()
+            .filter(lang -> !localizedString.hasValue(lang))
+            .collect(Collectors.toList());
+        
+        if (!missingLangs.isEmpty()) {
+            missingLangs.stream()
+                .forEach(lang -> addLanguage(localizedString, lang));
+        }
     }
 
 }

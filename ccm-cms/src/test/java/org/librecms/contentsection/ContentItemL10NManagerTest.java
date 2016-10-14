@@ -42,6 +42,7 @@ import org.junit.runner.RunWith;
 import org.libreccm.tests.categories.IntegrationTest;
 
 import java.util.Locale;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -164,9 +165,17 @@ public class ContentItemL10NManagerTest {
     @Test
     @InSequence(10)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                      + "ContentItemL10NManager/data.xml")
+                      + "ContentItemL10NManagerTest/data.xml")
     public void verifyHasLanguage() {
-        fail();
+        final Optional<ContentItem> item = itemRepo.findById(-10100L);
+        assertThat(item.isPresent(), is(true));
+
+        assertThat(l10nManager.hasLanguage(item.get(), Locale.ENGLISH),
+                   is(true));
+        assertThat(l10nManager.hasLanguage(item.get(), Locale.FRENCH),
+                   is(true));
+        assertThat(l10nManager.hasLanguage(item.get(), Locale.GERMAN),
+                   is(false));
     }
 
     /**
@@ -176,12 +185,14 @@ public class ContentItemL10NManagerTest {
      * for the item.
      */
     @Test(expected = IllegalArgumentException.class)
-    @InSequence(10)
+    @InSequence(20)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                      + "ContentItemL10NManager/data.xml")
+                      + "ContentItemL10NManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void hasLanguageItemIsNull() {
-        fail();
+        final ContentItem item = null;
+
+        l10nManager.hasLanguage(item, Locale.ENGLISH);
     }
 
     /**
@@ -191,12 +202,17 @@ public class ContentItemL10NManagerTest {
      * for the language.
      */
     @Test(expected = IllegalArgumentException.class)
-    @InSequence(10)
+    @InSequence(30)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                      + "ContentItemL10NManager/data.xml")
+                      + "ContentItemL10NManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void hasLanguageLanguageIsNull() {
-        fail();
+        final Optional<ContentItem> item = itemRepo.findById(-10100L);
+        assertThat(item.isPresent(), is(true));
+
+        assertThat(l10nManager.hasLanguage(item.get(), null),
+                   is(true));
+
     }
 
     /**
@@ -204,14 +220,18 @@ public class ContentItemL10NManagerTest {
      * {@link ContentItemL10NManager#addLanguage(org.librecms.contentsection.ContentItem, java.util.Locale)}.
      */
     @Test
-    @InSequence(20)
+    @InSequence(40)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                      + "ContentItemL10NManager/data.xml")
+                      + "ContentItemL10NManagerTest/data.xml")
     @ShouldMatchDataSet(
         value = "datasets/org/librecms/contentsection/"
-                    + "ContentItemL10NManager/after-add-language.xml")
+                    + "ContentItemL10NManagerTest/after-add-language.xml",
+        excludeColumns = {"timestamp"})
     public void addLanguage() {
-        fail();
+        final Optional<ContentItem> item = itemRepo.findById(-10100L);
+        assertThat(item.isPresent(), is(true));
+
+        l10nManager.addLanguage(item.get(), Locale.GERMAN);
     }
 
     /**
@@ -220,14 +240,18 @@ public class ContentItemL10NManagerTest {
      * with an existing language has not effect.
      */
     @Test
-    @InSequence(20)
+    @InSequence(50)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                      + "ContentItemL10NManager/data.xml")
+                      + "ContentItemL10NManagerTest/data.xml")
     @ShouldMatchDataSet(
         value = "datasets/org/librecms/contentsection/"
-                    + "ContentItemL10NManager/data.xml")
+                    + "ContentItemL10NManagerTest/data.xml")
     public void addLanguageAlreadyPresent() {
-        fail();
+        final Optional<ContentItem> item = itemRepo.findById(-10100L);
+        assertThat(item.isPresent(), is(true));
+
+        l10nManager.addLanguage(item.get(), Locale.FRENCH);
+
     }
 
     /**
@@ -236,15 +260,17 @@ public class ContentItemL10NManagerTest {
      * {@code null} for the item.
      */
     @Test(expected = IllegalArgumentException.class)
-    @InSequence(20)
+    @InSequence(60)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                      + "ContentItemL10NManager/data.xml")
+                      + "ContentItemL10NManagerTest/data.xml")
     @ShouldMatchDataSet(
         value = "datasets/org/librecms/contentsection/"
-                    + "ContentItemL10NManager/data.xml")
+                    + "ContentItemL10NManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void addLanguageItemIsNull() {
-        fail();
+        final ContentItem item = null;
+
+        l10nManager.addLanguage(item, Locale.GERMAN);
     }
 
     /**
@@ -255,27 +281,35 @@ public class ContentItemL10NManagerTest {
     @Test(expected = IllegalArgumentException.class)
     @InSequence(20)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                      + "ContentItemL10NManager/data.xml")
+                      + "ContentItemL10NManagerTest/data.xml")
     @ShouldMatchDataSet(
         value = "datasets/org/librecms/contentsection/"
-                    + "ContentItemL10NManager/data.xml")
+                    + "ContentItemL10NManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void addLanguageLanguageIsNull() {
-        fail();
+        final Optional<ContentItem> item = itemRepo.findById(-10100L);
+        assertThat(item.isPresent(), is(true));
+
+        l10nManager.addLanguage(item.get(), null);
     }
 
     /**
-     * Tries to remove language from a content item by using null     {@link ContentItemL10NManager#removeLangauge(org.librecms.contentsection.ContentItem, java.util.Locale) 
+     * Tries to remove language from a content item by using
+     * {@link ContentItemL10NManager#removeLangauge(org.librecms.contentsection.ContentItem, java.util.Locale)}.
      */
     @Test
-    @InSequence(20)
+    @InSequence(70)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                      + "ContentItemL10NManager/data.xml")
+                      + "ContentItemL10NManagerTest/data.xml")
     @ShouldMatchDataSet(
         value = "datasets/org/librecms/contentsection/"
-                    + "ContentItemL10NManager/after-remove-language.xml")
+                    + "ContentItemL10NManagerTest/after-remove-language.xml",
+        excludeColumns = {"timestamp"})
     public void removeLanguage() {
-        fail();
+        final Optional<ContentItem> item = itemRepo.findById(-10100L);
+        assertThat(item.isPresent(), is(true));
+
+        l10nManager.removeLangauge(item.get(), Locale.FRENCH);
     }
 
     /**
@@ -284,14 +318,17 @@ public class ContentItemL10NManagerTest {
      * has not effect if called for not present language.
      */
     @Test
-    @InSequence(20)
+    @InSequence(80)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                      + "ContentItemL10NManager/data.xml")
+                      + "ContentItemL10NManagerTest/data.xml")
     @ShouldMatchDataSet(
         value = "datasets/org/librecms/contentsection/"
-                    + "ContentItemL10NManager/data.xml")
+                    + "ContentItemL10NManagerTest/data.xml")
     public void removeNotPresentLanguage() {
-        fail();
+        final Optional<ContentItem> item = itemRepo.findById(-10100L);
+        assertThat(item.isPresent(), is(true));
+
+        l10nManager.removeLangauge(item.get(), Locale.GERMAN);
     }
 
     /**
@@ -301,15 +338,17 @@ public class ContentItemL10NManagerTest {
      * for the item.
      */
     @Test(expected = IllegalArgumentException.class)
-    @InSequence(20)
+    @InSequence(90)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                      + "ContentItemL10NManager/data.xml")
+                      + "ContentItemL10NManagerTest/data.xml")
     @ShouldMatchDataSet(
         value = "datasets/org/librecms/contentsection/"
-                    + "ContentItemL10NManager/data.xml")
+                    + "ContentItemL10NManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void removeLanguageItemIsNull() {
-        fail();
+        final ContentItem item = null;
+
+        l10nManager.removeLangauge(item, Locale.GERMAN);
     }
 
     /**
@@ -319,29 +358,38 @@ public class ContentItemL10NManagerTest {
      * for the language.
      */
     @Test(expected = IllegalArgumentException.class)
-    @InSequence(20)
+    @InSequence(100)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                      + "ContentItemL10NManager/data.xml")
+                      + "ContentItemL10NManagerTest/data.xml")
     @ShouldMatchDataSet(
         value = "datasets/org/librecms/contentsection/"
-                    + "ContentItemL10NManager/data.xml")
+                    + "ContentItemL10NManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void removeLanguageLanguageIsNull() {
-        fail();
+        final Optional<ContentItem> item = itemRepo.findById(-10100L);
+        assertThat(item.isPresent(), is(true));
+
+        l10nManager.removeLangauge(item.get(), null);
+
     }
 
     /**
-     * Tries to normalise the languages of a content item by using null     {@link ContentItemL10NManager#normalizedLanguages(org.librecms.contentsection.ContentItem) 
+     * Tries to normalise the languages of a content item by using null null
+     * null null null null null null null null null null     {@link ContentItemL10NManager#normalizedLanguages(org.librecms.contentsection.ContentItem) 
      */
     @Test
-    @InSequence(20)
+    @InSequence(120)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                      + "ContentItemL10NManager/data.xml")
+                      + "ContentItemL10NManagerTest/data.xml")
     @ShouldMatchDataSet(
         value = "datasets/org/librecms/contentsection/"
-                    + "ContentItemL10NManager/after-normalize.xml")
+                    + "ContentItemL10NManagerTest/after-normalize.xml",
+        excludeColumns = {"timestamp"})
     public void normalizeItem() {
-        fail();
+        final Optional<ContentItem> item = itemRepo.findById(-10200L);
+        assertThat(item.isPresent(), is(true));
+
+        l10nManager.normalizedLanguages(item.get());
     }
 
     /**
@@ -350,14 +398,18 @@ public class ContentItemL10NManagerTest {
      * for already normalised item has not effect.
      */
     @Test
-    @InSequence(20)
+    @InSequence(130)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                      + "ContentItemL10NManager/data.xml")
+                      + "ContentItemL10NManagerTest/data.xml")
     @ShouldMatchDataSet(
         value = "datasets/org/librecms/contentsection/"
-                    + "ContentItemL10NManager/data.xml")
+                    + "ContentItemL10NManagerTest/data.xml")
     public void normalizeItemAlreadyNormalized() {
-        fail();
+        final Optional<ContentItem> item = itemRepo.findById(-10100L);
+        assertThat(item.isPresent(), is(true));
+
+        l10nManager.normalizedLanguages(item.get());
+
     }
 
     /**
@@ -367,15 +419,17 @@ public class ContentItemL10NManagerTest {
      * for the item.
      */
     @Test(expected = IllegalArgumentException.class)
-    @InSequence(20)
+    @InSequence(140)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                      + "ContentItemL10NManager/data.xml")
+                      + "ContentItemL10NManagerTest/data.xml")
     @ShouldMatchDataSet(
         value = "datasets/org/librecms/contentsection/"
-                    + "ContentItemL10NManager/data.xml")
+                    + "ContentItemL10NManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void normalizeItemNull() {
-        fail();
+        final ContentItem item = null;
+
+        l10nManager.normalizedLanguages(item);
     }
 
 }

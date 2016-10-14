@@ -54,6 +54,11 @@ public class DatasetsTest extends DatasetsVerifier {
             "/datasets/org/librecms/contentsection/ContentItemRepositoryTest/data.xml",
             "/datasets/org/librecms/contentsection/ContentItemRepositoryTest/after-save.xml",
 
+            "/datasets/org/librecms/contentsection/ContentItemL10NManagerTest/data.xml",
+            "/datasets/org/librecms/contentsection/ContentItemL10NManagerTest/after-add-language.xml",
+            "/datasets/org/librecms/contentsection/ContentItemL10NManagerTest/after-normalize.xml",
+            "/datasets/org/librecms/contentsection/ContentItemL10NManagerTest/after-remove-language.xml",
+            
             "/datasets/org/librecms/contentsection/ContentItemManagerTest/data.xml",
             "/datasets/org/librecms/contentsection/ContentItemManagerTest/after-create-contentitem.xml",
             "/datasets/org/librecms/contentsection/ContentItemManagerTest/after-create-contentitem-with-workflow.xml",

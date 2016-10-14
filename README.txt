@@ -16,6 +16,15 @@ To include integration tests into the reports
 
     mvn clean package test site site:stage -P$profile-name
 
+Note: If there are test failures the package goal fails and the site is not
+build. The build the site anywhy use
+
+    mvn clean package site site:stage -Dmaven.test.failure.ignore=true
+
+or with a profile
+
+    mvn clean package site site:stage -Dmaven.test.failure.ignore=true -Pwildfly-remote-h2-mem
+
 The available profiles are listed in the documentation. All modules should 
 provide a profile called wildfly-remote-h2-mem. This profile uses a remote
 Wildfly application server and its integrated H2 in-memory database for
