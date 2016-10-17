@@ -34,20 +34,21 @@ import javax.persistence.Table;
 import static org.librecms.CmsConstants.*;
 
 /**
- *
+ * Assets for side notes (additional informations) for a content item.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "NOTES", schema = DB_SCHEMA)
+@Table(name = "SIDE_NOTES", schema = DB_SCHEMA)
 @Audited
-public class Note extends Asset implements Serializable {
+public class SideNote extends Asset implements Serializable {
 
     private static final long serialVersionUID = -4566222634780521726L;
 
     @Embedded
     @AssociationOverride(
         name = "values",
-        joinTable = @JoinTable(name = "NOTE_TEXTS",
+        joinTable = @JoinTable(name = "SIDE_NOTE_TEXTS",
                                schema = DB_SCHEMA,
                                joinColumns = {
                                    @JoinColumn(name = "ASSET_ID")
@@ -56,7 +57,7 @@ public class Note extends Asset implements Serializable {
     )
     private LocalizedString text;
 
-    public Note() {
+    public SideNote() {
         super();
         text = new LocalizedString();
     }
@@ -88,10 +89,10 @@ public class Note extends Asset implements Serializable {
             return false;
         }
 
-        if (!(obj instanceof Note)) {
+        if (!(obj instanceof SideNote)) {
             return false;
         }
-        final Note other = (Note) obj;
+        final SideNote other = (SideNote) obj;
         if (!other.canEqual(this)) {
             return false;
         }
@@ -100,7 +101,7 @@ public class Note extends Asset implements Serializable {
 
     @Override
     public boolean canEqual(final Object obj) {
-        return obj instanceof Note;
+        return obj instanceof SideNote;
     }
 
     @Override

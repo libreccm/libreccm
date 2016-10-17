@@ -31,11 +31,12 @@ import javax.persistence.Table;
 import static org.librecms.CmsConstants.*;
 
 /**
- *
+ * An asset for external videos, like videos from YouTube.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "EXTERNAL_VIDEO_ASSET", schema = DB_SCHEMA)
+@Table(name = "EXTERNAL_VIDEO_ASSETS", schema = DB_SCHEMA)
 @Audited
 public class ExternalVideoAsset extends Bookmark implements Serializable {
 

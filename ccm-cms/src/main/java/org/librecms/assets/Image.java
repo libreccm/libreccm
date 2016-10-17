@@ -33,6 +33,8 @@ import javax.persistence.OneToOne;
 import static org.librecms.CmsConstants.*;
 
 /**
+ * An asset for images (in a format which can be displayed by a browser, like 
+ * PNG, JPEG or GIF).
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */

@@ -39,7 +39,7 @@ public class AssetRepository
 
     @Override
     public Long getEntityId(final Asset asset) {
-        return asset.getAssetId();
+        return asset.getObjectId();
     }
 
     @Override
@@ -49,7 +49,7 @@ public class AssetRepository
 
     @Override
     public boolean isNew(final Asset asset) {
-        return asset.getAssetId() == 0;
+        return asset.getObjectId() == 0;
     }
 
     public Optional<Asset> findByUuid(final String uuid) {

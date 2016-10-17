@@ -31,6 +31,9 @@ import javax.persistence.Table;
 import static org.librecms.CmsConstants.*;
 
 /**
+ * An asset for an external audio file (an audio file which is
+ * <strong>not</strong>
+ * stored in the database of LibreCCM.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */

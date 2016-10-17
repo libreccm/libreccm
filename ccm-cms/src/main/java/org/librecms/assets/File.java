@@ -25,7 +25,8 @@ import org.hibernate.envers.Audited;
 import static org.librecms.CmsConstants.*;
 
 /**
- *
+ * An asset for making files available for download.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
@@ -55,7 +56,7 @@ public class File extends BinaryAsset implements Serializable {
         if (!(obj instanceof File)) {
             return false;
         }
-        final BinaryAsset other = (File) obj;
+        final File other = (File) obj;
         return other.canEqual(this);
     }
     

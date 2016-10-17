@@ -205,7 +205,7 @@ public class ContentItem extends CcmObject implements Serializable,
 
     @OneToMany
     @JoinColumn(name = "CONTENT_ITEM_ID")
-    private List<AttachmentList<?>> attachments;
+    private List<AttachmentList> attachments;
 
     @OneToOne
     @JoinColumn(name = "LIFECYCLE_ID")
@@ -296,12 +296,20 @@ public class ContentItem extends CcmObject implements Serializable,
         this.ancestors = ancestors;
     }
 
-    public List<AttachmentList<?>> getAttachments() {
+    public List<AttachmentList> getAttachments() {
         return Collections.unmodifiableList(attachments);
     }
 
-    protected void setAttachments(final List<AttachmentList<?>> attachments) {
+    protected void setAttachments(final List<AttachmentList> attachments) {
         this.attachments = attachments;
+    }
+    
+    protected void addAttachmentList(final AttachmentList attachmentList) {
+        attachments.add(attachmentList);
+    }
+    
+    protected void removeAttachmentList(final AttachmentList attachmentList) {
+        attachments.remove(attachmentList);
     }
 
     public Lifecycle getLifecycle() {

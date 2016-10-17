@@ -35,7 +35,9 @@ import org.libreccm.l10n.LocalizedString;
 import static org.librecms.CmsConstants.*;
 
 /**
- *
+ * An assets for managing bookmarks which can be used to create links. Useful
+ * if the same link appears in multiple places.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity

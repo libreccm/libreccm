@@ -27,9 +27,12 @@ import org.libreccm.security.Role;
 import org.libreccm.security.User;
 import org.libreccm.tests.categories.UnitTest;
 import org.libreccm.testutils.EqualsVerifier;
+import org.librecms.attachments.ItemAttachment;
+import org.librecms.contentsection.ContentItem;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.UUID;
 
 /**
  *
@@ -43,7 +46,6 @@ public class EqualsAndHashCodeTest extends EqualsVerifier {
     public static Collection<Class<?>> data() {
         return Arrays.asList(new Class<?>[]{
             Asset.class,
-            ReusableAsset.class
         });
     }
 
@@ -86,13 +88,29 @@ public class EqualsAndHashCodeTest extends EqualsVerifier {
         final Category category2 = new Category();
         category2.setObjectId(-4200);
         category2.setDisplayName("Category 2");
+        
+        final ContentItem item1 = new ContentItem();
+        item1.setDisplayName("item1");
+        
+        final ContentItem item2 = new ContentItem();
+        item2.setDisplayName("item2");
+        
+        final ItemAttachment<Asset> itemAttachment1 = new ItemAttachment<>();
+        itemAttachment1.setUuid(UUID.randomUUID().toString());
+
+        final ItemAttachment<Asset> itemAttachment2 = new ItemAttachment<>();
+        itemAttachment2.setUuid(UUID.randomUUID().toString());
 
         verifier
             .withPrefabValues(CcmObject.class, object1, object2)
             .withPrefabValues(Role.class, role1, role2)
             .withPrefabValues(User.class, user1, user2)
             .withPrefabValues(Group.class, group1, group2)
-            .withPrefabValues(Category.class, category1, category2);
+            .withPrefabValues(Category.class, category1, category2)
+            .withPrefabValues(ContentItem.class, item1, item2)
+            .withPrefabValues(ItemAttachment.class, 
+                              itemAttachment1, 
+                              itemAttachment2);
 
     }
 

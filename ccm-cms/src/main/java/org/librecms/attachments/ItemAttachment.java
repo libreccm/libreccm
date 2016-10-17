@@ -31,12 +31,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import static org.librecms.CmsConstants.*;
 
 /**
+ * An intermediate entity to model the relation between an {@link Asset} (either
+ * shared or not shared) and an {@link AttachmentList}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @param <T>
@@ -49,18 +51,38 @@ public class ItemAttachment<T extends Asset> implements Identifiable,
 
     private static final long serialVersionUID = -9005379413315191984L;
 
+    /**
+     * The ID of the attachment entity in the database.
+     */
     @Column(name = "ATTACHMENT_ID")
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long attachmentId;
 
+    /**
+     * UUID of the attachment.
+     */
     @Column(name = "uuid")
     private String uuid;
 
-    @OneToOne(targetEntity = Asset.class)
+    /**
+     * The {@link AttachmentList} to which this attachment belongs.
+     */
+    @ManyToOne
+    @JoinColumn(name = "ATTACHMENT_LIST_ID")
+    private AttachmentList attachmentList;
+
+    /**
+     * The {@link Asset} which is linked by this attachment to the
+     * {@link #attachmentList}.
+     */
+    @ManyToOne(targetEntity = Asset.class)
     @JoinColumn(name = "ASSET_ID")
     private T asset;
 
+    /**
+     * The sort key of this attachment in {@link #attachmentList}.
+     */
     @Column(name = "SORT_KEY")
     private long sortKey;
 
@@ -79,6 +101,14 @@ public class ItemAttachment<T extends Asset> implements Identifiable,
 
     public void setUuid(final String uuid) {
         this.uuid = uuid;
+    }
+
+    public AttachmentList getAttachmentList() {
+        return attachmentList;
+    }
+
+    protected void setAttachmentList(final AttachmentList attachmentList) {
+        this.attachmentList = attachmentList;
     }
 
     public T getAsset() {
@@ -102,6 +132,7 @@ public class ItemAttachment<T extends Asset> implements Identifiable,
         int hash = 3;
         hash
             = 71 * hash + (int) (attachmentId ^ (attachmentId >>> 32));
+        hash = 71 * hash + Objects.hashCode(uuid);
         hash = 71 * hash + Objects.hashCode(asset);
         hash = 71 * hash + (int) (sortKey ^ (sortKey >>> 32));
         return hash;
@@ -123,6 +154,9 @@ public class ItemAttachment<T extends Asset> implements Identifiable,
             return false;
         }
         if (attachmentId != other.getAttachmentId()) {
+            return false;
+        }
+        if (!Objects.equals(uuid, other.getUuid())) {
             return false;
         }
         if (sortKey != other.getSortKey()) {

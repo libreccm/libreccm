@@ -110,7 +110,7 @@ public class Utilities {
      * @deprecated Use Service.getAssetURL(BinaryAsset asset) instead
      */
     public static String getAssetURL(BinaryAsset asset) {
-        return getAssetURL(asset.getAssetId());
+        return getAssetURL(asset.getObjectId());
     }
 
     /**
@@ -131,7 +131,7 @@ public class Utilities {
 
 
     /**
-     * Constuct a URL which serves an image.
+     * Construct a URL which serves an image.
      *
      * @param asset  The image asset whose image is to be served
      * @return the URL which will serve the specified image asset
@@ -141,7 +141,7 @@ public class Utilities {
     //  StringBuffer buf = new StringBuffer(getServiceURL());
         StringBuilder buf = new StringBuilder(CmsConstants.SERVICE_URL );
         buf.append("stream/image/?");
-        buf.append(CmsConstants.IMAGE_ID).append("=").append(asset.getAssetId());
+        buf.append(CmsConstants.IMAGE_ID).append("=").append(asset.getObjectId());
         return buf.toString();
     }
 

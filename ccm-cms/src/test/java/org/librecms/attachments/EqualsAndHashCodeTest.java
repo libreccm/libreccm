@@ -20,12 +20,18 @@ package org.librecms.attachments;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.libreccm.core.CcmObject;
+import org.libreccm.security.Group;
+import org.libreccm.security.Role;
 import org.libreccm.tests.categories.UnitTest;
 import org.libreccm.testutils.EqualsVerifier;
+import org.librecms.assets.Asset;
+import org.librecms.contentsection.ContentItem;
+import org.librecms.contentsection.ContentSection;
 
 import java.util.Arrays;
 import java.util.Collection;
-
+import java.util.UUID;
 
 /**
  *
@@ -38,6 +44,7 @@ public class EqualsAndHashCodeTest extends EqualsVerifier {
     @Parameterized.Parameters(name = "{0}")
     public static Collection<Class<?>> data() {
         return Arrays.asList(new Class<?>[]{
+            AttachmentsConfig.class,
             ItemAttachment.class,
             AttachmentList.class
         });
@@ -45,6 +52,64 @@ public class EqualsAndHashCodeTest extends EqualsVerifier {
 
     public EqualsAndHashCodeTest(final Class<?> clazz) {
         super(clazz);
+    }
+
+    @Override
+    protected void addPrefabValues(
+        final nl.jqno.equalsverifier.EqualsVerifier<?> verifier) {
+
+        final ContentSection section1 = new ContentSection();
+        section1.setDisplayName("section1");
+
+        final ContentSection section2 = new ContentSection();
+        section1.setDisplayName("section2");
+
+        final ContentItem item1 = new ContentItem();
+        item1.setDisplayName("item1");
+
+        final ContentItem item2 = new ContentItem();
+        item2.setDisplayName("item2");
+
+        final ItemAttachment<Asset> itemAttachment1 = new ItemAttachment<>();
+        itemAttachment1.setUuid(UUID.randomUUID().toString());
+
+        final ItemAttachment<Asset> itemAttachment2 = new ItemAttachment<>();
+        itemAttachment2.setUuid(UUID.randomUUID().toString());
+
+        final CcmObject object1 = new CcmObject();
+        object1.setDisplayName("object1");
+
+        final CcmObject object2 = new CcmObject();
+        object2.setDisplayName("object2");
+
+        final Role role1 = new Role();
+        role1.setName("role1");
+
+        final Role role2 = new Role();
+        role1.setName("role2");
+        
+        final Group group1 = new Group();
+        group1.setName("group1");
+        
+        final Group group2 = new Group();
+        group1.setName("group2");
+        
+        final Asset asset1 = new Asset();
+        asset1.setDisplayName("asset1");
+        
+        final Asset asset2 = new Asset();
+        asset2.setDisplayName("asset2");
+
+        verifier
+            .withPrefabValues(ContentSection.class, section1, section2)
+            .withPrefabValues(ContentItem.class, item1, item2)
+            .withPrefabValues(ItemAttachment.class,
+                              itemAttachment1,
+                              itemAttachment2)
+            .withPrefabValues(CcmObject.class, object1, object2)
+            .withPrefabValues(Role.class, role1, role2)
+            .withPrefabValues(Group.class, group1, group2)
+            .withPrefabValues(Asset.class, asset1, asset2);
     }
 
 }

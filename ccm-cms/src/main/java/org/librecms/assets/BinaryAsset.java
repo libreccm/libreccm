@@ -42,7 +42,8 @@ import javax.persistence.Convert;
 import static org.librecms.CmsConstants.*;
 
 /**
- *
+ * Base class for all assets storing binary information, like videos.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity

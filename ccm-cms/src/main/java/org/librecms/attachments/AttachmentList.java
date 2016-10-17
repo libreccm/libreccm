@@ -21,15 +21,12 @@ package org.librecms.attachments;
 import org.hibernate.envers.Audited;
 import org.libreccm.core.Identifiable;
 import org.libreccm.l10n.LocalizedString;
-import org.librecms.assets.Asset;
+import org.librecms.contentsection.ContentItem;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Objects;
 
 import javax.persistence.AssociationOverride;
@@ -41,33 +38,57 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import static org.librecms.CmsConstants.*;
 
 /**
- *
+ * A list of assets attached a {@link ContentItem}. Each {@link ContentItem}
+ * may have multiple lists of attachments. Each list can be identified by name
+ * which can be used for example by the theme to determine the position where 
+ * the list is printed.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
- * @param <T>
  */
 @Entity
-@Table(schema = DB_SCHEMA, name = "ATTACHMENT_LISTS")
+@Table(name = "ATTACHMENT_LISTS", schema = DB_SCHEMA)
 @Audited
-public class AttachmentList<T extends Asset> implements Identifiable,
-                                                        List<ItemAttachment<T>>,
-                                                        Serializable {
+public class AttachmentList implements Identifiable, Serializable {
 
-    private static final long serialVersionUID = -7750330135750750047L;
-
+    private static final long serialVersionUID = -7931234562247075541L;
+    
+    /**
+     * Database ID of the list entity.
+     */
     @Column(name = "LIST_ID")
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long listId;
 
+    /**
+     * UUID of the list.
+     */
     @Column(name = "UUID")
     private String uuid;
 
+    /**
+     * The {@link ContentItem} which owns this list.
+     */
+    @ManyToOne
+    @JoinColumn(name = "ITEM_ID")
+    private ContentItem item;
+
+    /**
+     * The name of the list.
+     */
+    @Column(name = "NAME")
+    private String name;
+
+    /**
+     * The localised title of the list.
+     */
     @Embedded
     @AssociationOverride(
         name = "values",
@@ -78,20 +99,29 @@ public class AttachmentList<T extends Asset> implements Identifiable,
                                }
         )
     )
-    private LocalizedString caption;
+    private LocalizedString title;
 
-    @Column(name = "ASSET_TYPE", length = 1024)
-    private String assetType;
+    /**
+     * The description of the list.
+     */
+    @Embedded
+    @AssociationOverride(
+        name = "values",
+        joinTable = @JoinTable(name = "ATTACHMENT_LIST_DESCRIPTIONS",
+                               schema = DB_SCHEMA,
+                               joinColumns = {
+                                   @JoinColumn(name = "LIST_ID")
+                               }))
+    private LocalizedString description;
 
-    @OneToMany(targetEntity = ItemAttachment.class)
-    @JoinColumn(name = "LIST_ID")
-    private List<ItemAttachment<T>> attachments;
+    @OneToMany(mappedBy = "attachmentList")
+    private List<ItemAttachment<?>> attachments;
 
     public long getListId() {
         return listId;
     }
 
-    protected void setListId(final long listId) {
+    public void setListId(long listId) {
         this.listId = listId;
     }
 
@@ -104,170 +134,74 @@ public class AttachmentList<T extends Asset> implements Identifiable,
         this.uuid = uuid;
     }
 
-    public LocalizedString getCaption() {
-        return caption;
+    public ContentItem getItem() {
+        return item;
     }
 
-    public void setCaption(final LocalizedString caption) {
-        this.caption = caption;
+    public void setItem(final ContentItem item) {
+        this.item = item;
     }
 
-    public String getAssetType() {
-        return assetType;
+    public String getName() {
+        return name;
     }
 
-    public void setAssetType(final String assetType) {
-        this.assetType = assetType;
+    public void setName(final String name) {
+        this.name = name;
     }
 
-    public List<ItemAttachment<T>> getAttachments() {
+    public LocalizedString getTitle() {
+        return title;
+    }
+
+    public void setTitle(final LocalizedString title) {
+        this.title = title;
+    }
+
+    public LocalizedString getDescription() {
+        return description;
+    }
+
+    public void setDescription(final LocalizedString description) {
+        this.description = description;
+    }
+
+    public List<ItemAttachment<?>> getAttachments() {
         if (attachments == null) {
-            return null;
+            return new ArrayList<>();
         } else {
             return Collections.unmodifiableList(attachments);
         }
     }
 
-    public void setAttachments(List<ItemAttachment<T>> attachments) {
-        this.attachments = new ArrayList<>(attachments);
+    protected void setAttachments(final List<ItemAttachment<?>> attachments) {
+        this.attachments = Collections.unmodifiableList(attachments);
     }
 
-    @Override
-    public int size() {
-        return attachments.size();
+    protected void addAttachment(final ItemAttachment<?> attachment) {
+        attachments.add(attachment);
     }
 
-    @Override
-    public boolean isEmpty() {
-        return attachments.isEmpty();
-    }
-
-    @Override
-    public boolean contains(final Object obj) {
-        return attachments.contains(obj);
-    }
-
-    @Override
-    public Iterator<ItemAttachment<T>> iterator() {
-        return attachments.iterator();
-    }
-
-    @Override
-    public Object[] toArray() {
-        return attachments.toArray();
-    }
-
-    @Override
-    public <T> T[] toArray(final T[] array) {
-        return attachments.toArray(array);
-    }
-
-    @Override
-    public boolean add(final ItemAttachment<T> attachment) {
-        return attachments.add(attachment);
-    }
-
-    @Override
-    public boolean remove(final Object obj) {
-        return attachments.remove(obj);
-    }
-
-    @Override
-    public boolean containsAll(final Collection<?> collection) {
-        return attachments.containsAll(collection);
-    }
-
-    @Override
-    public boolean addAll(
-        final Collection<? extends ItemAttachment<T>> collection) {
-
-        return attachments.addAll(collection);
-    }
-
-    @Override
-    public boolean addAll(
-        final int index,
-        final Collection<? extends ItemAttachment<T>> collection) {
-
-        return attachments.addAll(index, collection);
-    }
-
-    @Override
-    public boolean removeAll(final Collection<?> collection) {
-        return attachments.removeAll(collection);
-    }
-
-    @Override
-    public boolean retainAll(final Collection<?> collection) {
-        return attachments.retainAll(collection);
-    }
-
-    @Override
-    public void clear() {
-        attachments.clear();
-    }
-
-    @Override
-    public ItemAttachment<T> get(final int index) {
-        return attachments.get(index);
-    }
-
-    @Override
-    public ItemAttachment<T> set(final int index,
-                                 final ItemAttachment<T> element) {
-        return attachments.set(index, element);
-    }
-
-    @Override
-    public void add(final int index, final ItemAttachment<T> element) {
-        attachments.add(index, element);
-    }
-
-    @Override
-    public ItemAttachment<T> remove(final int index) {
-        return attachments.remove(index);
-    }
-
-    @Override
-    public int indexOf(final Object obj) {
-        return attachments.indexOf(obj);
-    }
-
-    @Override
-    public int lastIndexOf(final Object obj) {
-        return attachments.lastIndexOf(obj);
-    }
-
-    @Override
-    public ListIterator<ItemAttachment<T>> listIterator() {
-        return attachments.listIterator();
-    }
-
-    @Override
-    public ListIterator<ItemAttachment<T>> listIterator(final int index) {
-        return attachments.listIterator(index);
-    }
-
-    @Override
-    public List<ItemAttachment<T>> subList(final int fromIndex,
-                                           final int toIndex) {
-        return attachments.subList(fromIndex, toIndex);
+    protected void removeAttachment(final ItemAttachment<?> attachment) {
+        attachments.remove(attachment);
     }
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 97 * hash + (int) (listId ^ (listId >>> 32));
-        hash = 97 * hash + Objects.hashCode(uuid);
-        hash = 97 * hash + Objects.hashCode(caption);
-        hash = 97 * hash + Objects.hashCode(assetType);
-        hash = 97 * hash + Objects.hashCode(attachments);
+        int hash = 3;
+        hash = 29 * hash + (int) (listId ^ (listId >>> 32));
+        hash = 29 * hash + Objects.hashCode(uuid);
+        hash = 29 * hash + Objects.hashCode(name);
+        hash = 29 * hash + Objects.hashCode(title);
+        hash = 29 * hash + Objects.hashCode(description);
+        hash = 29 * hash + Objects.hashCode(attachments);
         return hash;
     }
 
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
+            
             return true;
         }
         if (obj == null) {
@@ -276,23 +210,37 @@ public class AttachmentList<T extends Asset> implements Identifiable,
         if (!(obj instanceof AttachmentList)) {
             return false;
         }
-        final AttachmentList<?> other = (AttachmentList<?>) obj;
+        final AttachmentList other = (AttachmentList) obj;
         if (!other.canEqual(this)) {
+            System.out.println("Same object");
             return false;
         }
+
         if (listId != other.getListId()) {
+            System.out.println("list ids are not equal");
             return false;
         }
         if (!Objects.equals(uuid, other.getUuid())) {
+            System.out.println("uuid is not equal");
             return false;
         }
-        if (!Objects.equals(caption, other.getCaption())) {
+        if (!Objects.equals(name, other.getName())) {
+            System.out.println("name is not equal");
             return false;
         }
-        if (!Objects.equals(assetType, other.getAssetType())) {
+        if (!Objects.equals(title, other.getTitle())) {
+            System.out.println("caption is not equal");
             return false;
         }
-        return Objects.equals(attachments, other.getAttachments());
+        if (!Objects.equals(description, other.getDescription())) {
+            System.out.println("description is not equal");
+            return false;
+        }
+        System.out.printf("attachments{%s}.equals({%s}) = %b\n", 
+                          Objects.toString(attachments),
+                          Objects.toString(other.getAttachments()),
+                          Objects.equals(attachments, other.getAttachments()));
+        return Objects.equals(getAttachments(), other.getAttachments());
     }
 
     public boolean canEqual(final Object obj) {
@@ -308,15 +256,17 @@ public class AttachmentList<T extends Asset> implements Identifiable,
         return String.format("%s{ "
                                  + "listId = %d, "
                                  + "uuid = %s, "
+                                 + "name = \"%s\", "
                                  + "caption = { %s }, "
-                                 + "assetType = %s, "
+                                 + "description = { %s }, "
                                  + "attachments = { %s }%s"
                                  + " }",
                              super.toString(),
                              listId,
                              uuid,
-                             Objects.toString(caption),
-                             assetType,
+                             name,
+                             Objects.toString(title),
+                             Objects.toString(description),
                              Objects.toString(attachments),
                              data);
     }

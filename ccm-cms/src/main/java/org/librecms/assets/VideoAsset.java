@@ -32,11 +32,12 @@ import javax.persistence.Table;
 import static org.librecms.CmsConstants.*;
 
 /**
- *
+ * An asset for videos.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "VIDEO_ASSET", schema = DB_SCHEMA)
+@Table(name = "VIDEO_ASSETS", schema = DB_SCHEMA)
 @Audited
 public class VideoAsset extends BinaryAsset implements Serializable {
 
