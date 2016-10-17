@@ -6,5 +6,5 @@ alter table CCM_CORE.WORKFLOWS
 
 alter table CCM_CORE.WORKFLOWS 
         add constraint FKol71r1t83h0qe65gglq43far2 
-        foreign key (template_id) 
+        foreign key (TEMPLATE_ID) 
         references CCM_CORE.WORKFLOW_TEMPLATES;

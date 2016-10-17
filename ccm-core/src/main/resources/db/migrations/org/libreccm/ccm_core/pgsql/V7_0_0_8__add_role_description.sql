@@ -1,6 +1,6 @@
 create table CCM_CORE.ROLE_DESCRIPTIONS (
         ROLE_ID bigint not null,
-        LOCALIZED_VALUE longvarchar,
+        LOCALIZED_VALUE text,
         LOCALE varchar(255) not null,
         primary key (ROLE_ID, LOCALE)
     );
