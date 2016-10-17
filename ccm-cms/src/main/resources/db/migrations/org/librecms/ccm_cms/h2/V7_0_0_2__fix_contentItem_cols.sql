@@ -13,7 +13,7 @@ alter table CCM_CMS.CONTENT_ITEMS_AUD
 alter table CCM_CMS.CONTENT_ITEMS
     alter column version rename to VERSION;
 
-alter table CCM_CMS.CONTENT_ITEMS
+alter table CCM_CMS.CONTENT_ITEMS_AUD
     alter column contentType_OBJECT_ID rename to CONTENT_TYPE_ID;
 
 alter table CCM_CMS.CONTENT_TYPES
