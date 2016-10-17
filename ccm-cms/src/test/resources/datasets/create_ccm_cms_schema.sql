@@ -6,6 +6,7 @@ DROP SEQUENCE IF EXISTS hibernate_sequence;
 CREATE SCHEMA ccm_core;
 CREATE SCHEMA ccm_cms;
 
+
     create table CCM_CMS.ARTICLE_LEADS (
         OBJECT_ID bigint not null,
         LOCALIZED_VALUE longvarchar,
@@ -59,18 +60,14 @@ CREATE SCHEMA ccm_cms;
     );
 
     create table CCM_CMS.ASSETS (
-        ASSET_ID bigint not null,
-        UUID varchar(255),
-        primary key (ASSET_ID)
+        OBJECT_ID bigint not null,
+        primary key (OBJECT_ID)
     );
 
     create table CCM_CMS.ASSETS_AUD (
-        ASSET_ID bigint not null,
+        OBJECT_ID bigint not null,
         REV integer not null,
-        REVTYPE tinyint,
-        REVEND integer,
-        UUID varchar(255),
-        primary key (ASSET_ID, REV)
+        primary key (OBJECT_ID, REV)
     );
 
     create table CCM_CMS.ATTACHMENT_LIST_CAPTIONS (
@@ -90,10 +87,28 @@ CREATE SCHEMA ccm_cms;
         primary key (REV, LIST_ID, LOCALIZED_VALUE, LOCALE)
     );
 
+    create table CCM_CMS.ATTACHMENT_LIST_DESCRIPTIONS (
+        LIST_ID bigint not null,
+        LOCALIZED_VALUE longvarchar,
+        LOCALE varchar(255) not null,
+        primary key (LIST_ID, LOCALE)
+    );
+
+    create table CCM_CMS.ATTACHMENT_LIST_DESCRIPTIONS_AUD (
+        REV integer not null,
+        LIST_ID bigint not null,
+        LOCALIZED_VALUE longvarchar not null,
+        LOCALE varchar(255) not null,
+        REVTYPE tinyint,
+        REVEND integer,
+        primary key (REV, LIST_ID, LOCALIZED_VALUE, LOCALE)
+    );
+
     create table CCM_CMS.ATTACHMENT_LISTS (
         LIST_ID bigint not null,
-        ASSET_TYPE varchar(1024),
+        NAME varchar(255),
         UUID varchar(255),
+        ITEM_ID bigint,
         CONTENT_ITEM_ID bigint,
         primary key (LIST_ID)
     );
@@ -103,18 +118,10 @@ CREATE SCHEMA ccm_cms;
         REV integer not null,
         REVTYPE tinyint,
         REVEND integer,
-        ASSET_TYPE varchar(1024),
+        NAME varchar(255),
         UUID varchar(255),
+        ITEM_ID bigint,
         primary key (LIST_ID, REV)
-    );
-
-    create table CCM_CMS.AttachmentList_ItemAttachment_AUD (
-        REV integer not null,
-        LIST_ID bigint not null,
-        ATTACHMENT_ID bigint not null,
-        REVTYPE tinyint,
-        REVEND integer,
-        primary key (REV, LIST_ID, ATTACHMENT_ID)
     );
 
     create table CCM_CMS.ATTACHMENTS (
@@ -122,7 +129,7 @@ CREATE SCHEMA ccm_cms;
         SORT_KEY bigint,
         uuid varchar(255),
         ASSET_ID bigint,
-        LIST_ID bigint,
+        ATTACHMENT_LIST_ID bigint,
         primary key (ATTACHMENT_ID)
     );
 
@@ -134,20 +141,21 @@ CREATE SCHEMA ccm_cms;
         SORT_KEY bigint,
         uuid varchar(255),
         ASSET_ID bigint,
+        ATTACHMENT_LIST_ID bigint,
         primary key (ATTACHMENT_ID, REV)
     );
 
     create table CCM_CMS.AUDIO_ASSETS (
-        ASSET_ID bigint not null,
+        OBJECT_ID bigint not null,
         LEGAL_METADATA_ID bigint,
-        primary key (ASSET_ID)
+        primary key (OBJECT_ID)
     );
 
     create table CCM_CMS.AUDIO_ASSETS_AUD (
-        ASSET_ID bigint not null,
+        OBJECT_ID bigint not null,
         REV integer not null,
         LEGAL_METADATA_ID bigint,
-        primary key (ASSET_ID, REV)
+        primary key (OBJECT_ID, REV)
     );
 
     create table CCM_CMS.BINARY_ASSET_DESCRIPTIONS (
@@ -172,18 +180,18 @@ CREATE SCHEMA ccm_cms;
         FILENAME varchar(512) not null,
         MIME_TYPE varchar(512) not null,
         DATA_SIZE bigint,
-        ASSET_ID bigint not null,
-        primary key (ASSET_ID)
+        OBJECT_ID bigint not null,
+        primary key (OBJECT_ID)
     );
 
     create table CCM_CMS.BINARY_ASSETS_AUD (
-        ASSET_ID bigint not null,
+        OBJECT_ID bigint not null,
         REV integer not null,
         ASSET_DATA blob,
         FILENAME varchar(512),
         MIME_TYPE varchar(512),
         DATA_SIZE bigint,
-        primary key (ASSET_ID, REV)
+        primary key (OBJECT_ID, REV)
     );
 
     create table CCM_CMS.BOOKMARK_DESCRIPTIONS (
@@ -205,15 +213,15 @@ CREATE SCHEMA ccm_cms;
 
     create table CCM_CMS.BOOKMARKS (
         URL varchar(2048) not null,
-        ASSET_ID bigint not null,
-        primary key (ASSET_ID)
+        OBJECT_ID bigint not null,
+        primary key (OBJECT_ID)
     );
 
     create table CCM_CMS.BOOKMARKS_AUD (
-        ASSET_ID bigint not null,
+        OBJECT_ID bigint not null,
         REV integer not null,
         URL varchar(2048),
-        primary key (ASSET_ID, REV)
+        primary key (OBJECT_ID, REV)
     );
 
     create table CCM_CMS.CONTENT_ITEM_DESCRIPTIONS (
@@ -475,40 +483,40 @@ CREATE SCHEMA ccm_cms;
     );
 
     create table CCM_CMS.EXTERNAL_AUDIO_ASSETS (
-        ASSET_ID bigint not null,
+        OBJECT_ID bigint not null,
         LEGAL_METADATA_ID bigint,
-        primary key (ASSET_ID)
+        primary key (OBJECT_ID)
     );
 
     create table CCM_CMS.EXTERNAL_AUDIO_ASSETS_AUD (
-        ASSET_ID bigint not null,
+        OBJECT_ID bigint not null,
         REV integer not null,
         LEGAL_METADATA_ID bigint,
-        primary key (ASSET_ID, REV)
+        primary key (OBJECT_ID, REV)
     );
 
-    create table CCM_CMS.EXTERNAL_VIDEO_ASSET (
-        ASSET_ID bigint not null,
+    create table CCM_CMS.EXTERNAL_VIDEO_ASSETS (
+        OBJECT_ID bigint not null,
         LEGAL_METADATA_ID bigint,
-        primary key (ASSET_ID)
+        primary key (OBJECT_ID)
     );
 
-    create table CCM_CMS.EXTERNAL_VIDEO_ASSET_AUD (
-        ASSET_ID bigint not null,
+    create table CCM_CMS.EXTERNAL_VIDEO_ASSETS_AUD (
+        OBJECT_ID bigint not null,
         REV integer not null,
         LEGAL_METADATA_ID bigint,
-        primary key (ASSET_ID, REV)
+        primary key (OBJECT_ID, REV)
     );
 
     create table CCM_CMS.FILES (
-        ASSET_ID bigint not null,
-        primary key (ASSET_ID)
+        OBJECT_ID bigint not null,
+        primary key (OBJECT_ID)
     );
 
     create table CCM_CMS.FILES_AUD (
-        ASSET_ID bigint not null,
+        OBJECT_ID bigint not null,
         REV integer not null,
-        primary key (ASSET_ID, REV)
+        primary key (OBJECT_ID, REV)
     );
 
     create table CCM_CMS.FOLDER_CONTENT_SECTION_MAP (
@@ -526,35 +534,35 @@ CREATE SCHEMA ccm_cms;
     create table CCM_CMS.IMAGES (
         HEIGHT bigint,
         WIDTH bigint,
-        ASSET_ID bigint not null,
+        OBJECT_ID bigint not null,
         LEGAL_METADATA_ID bigint,
-        primary key (ASSET_ID)
+        primary key (OBJECT_ID)
     );
 
     create table CCM_CMS.IMAGES_AUD (
-        ASSET_ID bigint not null,
+        OBJECT_ID bigint not null,
         REV integer not null,
         HEIGHT bigint,
         WIDTH bigint,
         LEGAL_METADATA_ID bigint,
-        primary key (ASSET_ID, REV)
+        primary key (OBJECT_ID, REV)
     );
 
     create table CCM_CMS.LEGAL_METADATA (
         CREATOR varchar(255),
         PUBLISHER varchar(255),
         RIGHTS_HOLDER varchar(512),
-        ASSET_ID bigint not null,
-        primary key (ASSET_ID)
+        OBJECT_ID bigint not null,
+        primary key (OBJECT_ID)
     );
 
     create table CCM_CMS.LEGAL_METADATA_AUD (
-        ASSET_ID bigint not null,
+        OBJECT_ID bigint not null,
         REV integer not null,
         CREATOR varchar(255),
         PUBLISHER varchar(255),
         RIGHTS_HOLDER varchar(512),
-        primary key (ASSET_ID, REV)
+        primary key (OBJECT_ID, REV)
     );
 
     create table CCM_CMS.LEGAL_METADATA_CONTRIBUTORS (
@@ -775,14 +783,29 @@ CREATE SCHEMA ccm_cms;
         primary key (REV, OBJECT_ID, LOCALIZED_VALUE, LOCALE)
     );
 
-    create table CCM_CMS.NOTE_TEXTS (
+    create table CCM_CMS.RELATED_LINKS (
+        OBJECT_ID bigint not null,
+        BOOKMARK_ID bigint,
+        TARGET_ITEM bigint,
+        primary key (OBJECT_ID)
+    );
+
+    create table CCM_CMS.RELATED_LINKS_AUD (
+        OBJECT_ID bigint not null,
+        REV integer not null,
+        BOOKMARK_ID bigint,
+        TARGET_ITEM bigint,
+        primary key (OBJECT_ID, REV)
+    );
+
+    create table CCM_CMS.SIDE_NOTE_TEXTS (
         ASSET_ID bigint not null,
         LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (ASSET_ID, LOCALE)
     );
 
-    create table CCM_CMS.NOTE_TEXTS_AUD (
+    create table CCM_CMS.SIDE_NOTE_TEXTS_AUD (
         REV integer not null,
         ASSET_ID bigint not null,
         LOCALIZED_VALUE longvarchar not null,
@@ -792,42 +815,14 @@ CREATE SCHEMA ccm_cms;
         primary key (REV, ASSET_ID, LOCALIZED_VALUE, LOCALE)
     );
 
-    create table CCM_CMS.NOTES (
-        ASSET_ID bigint not null,
-        primary key (ASSET_ID)
-    );
-
-    create table CCM_CMS.NOTES_AUD (
-        ASSET_ID bigint not null,
-        REV integer not null,
-        primary key (ASSET_ID, REV)
-    );
-
-    create table CCM_CMS.RELATED_LINKS (
-        ASSET_ID bigint not null,
-        BOOKMARK_ID bigint,
-        TARGET_ITEM bigint,
-        primary key (ASSET_ID)
-    );
-
-    create table CCM_CMS.RELATED_LINKS_AUD (
-        ASSET_ID bigint not null,
-        REV integer not null,
-        BOOKMARK_ID bigint,
-        TARGET_ITEM bigint,
-        primary key (ASSET_ID, REV)
-    );
-
-    create table CCM_CMS.REUSABLE_ASSETS (
+    create table CCM_CMS.SIDE_NOTES (
         OBJECT_ID bigint not null,
-        ASSET_ID bigint,
         primary key (OBJECT_ID)
     );
 
-    create table CCM_CMS.REUSABLE_ASSETS_AUD (
+    create table CCM_CMS.SIDE_NOTES_AUD (
         OBJECT_ID bigint not null,
         REV integer not null,
-        ASSET_ID bigint,
         primary key (OBJECT_ID, REV)
     );
 
@@ -840,21 +835,21 @@ CREATE SCHEMA ccm_cms;
         primary key (GENERATOR_ID)
     );
 
-    create table CCM_CMS.VIDEO_ASSET (
+    create table CCM_CMS.VIDEO_ASSETS (
         HEIGHT bigint,
         WIDTH bigint,
-        ASSET_ID bigint not null,
+        OBJECT_ID bigint not null,
         LEGAL_METADATA_ID bigint,
-        primary key (ASSET_ID)
+        primary key (OBJECT_ID)
     );
 
-    create table CCM_CMS.VIDEO_ASSET_AUD (
-        ASSET_ID bigint not null,
+    create table CCM_CMS.VIDEO_ASSETS_AUD (
+        OBJECT_ID bigint not null,
         REV integer not null,
         HEIGHT bigint,
         WIDTH bigint,
         LEGAL_METADATA_ID bigint,
-        primary key (ASSET_ID, REV)
+        primary key (OBJECT_ID, REV)
     );
 
     create table CCM_CMS.WORKFLOW_TASK_TYPES (
@@ -869,9 +864,6 @@ CREATE SCHEMA ccm_cms;
         TASK_TYPE_ID bigint,
         primary key (TASK_ID)
     );
-
-    alter table CCM_CMS.ASSETS 
-        add constraint UK_9l2v1u9beyemgjwqx7isbumwh unique (UUID);
 
     alter table CCM_CMS.CONTENT_SECTION_LIFECYCLE_DEFINITIONS 
         add constraint UK_dhbp1f81iaw6sl7tg36xh439e unique (LIFECYCLE_DEFINITION_ID);
@@ -1372,11 +1364,11 @@ CREATE SCHEMA ccm_cms;
         SETTING_ID bigint not null,
         CONFIGURATION_CLASS varchar(512) not null,
         NAME varchar(512) not null,
-        SETTING_VALUE_LONG bigint,
+        SETTING_VALUE_DOUBLE double,
         SETTING_VALUE_BOOLEAN boolean,
         SETTING_VALUE_BIG_DECIMAL decimal(19,2),
         SETTING_VALUE_STRING varchar(1024),
-        SETTING_VALUE_DOUBLE double,
+        SETTING_VALUE_LONG bigint,
         primary key (SETTING_ID)
     );
 
@@ -1562,15 +1554,15 @@ create sequence hibernate_sequence start with 1 increment by 1;
         foreign key (REVEND) 
         references CCM_CORE.CCM_REVISIONS;
 
-    alter table CCM_CMS.ASSETS_AUD 
-        add constraint FK4m4op9s9h5qhndcsssbu55gr2 
-        foreign key (REV) 
-        references CCM_CORE.CCM_REVISIONS;
+    alter table CCM_CMS.ASSETS 
+        add constraint FKlbiojib44ujxv9eee1sjn67qk 
+        foreign key (OBJECT_ID) 
+        references CCM_CORE.CCM_OBJECTS;
 
     alter table CCM_CMS.ASSETS_AUD 
-        add constraint FK586j3p95nw2oa6yd06xdw0o5u 
-        foreign key (REVEND) 
-        references CCM_CORE.CCM_REVISIONS;
+        add constraint FKi5q560xg9357da8gc5sukqbw8 
+        foreign key (OBJECT_ID, REV) 
+        references CCM_CORE.CCM_OBJECTS_AUD;
 
     alter table CCM_CMS.ATTACHMENT_LIST_CAPTIONS 
         add constraint FKeqcryerscpnmqpipwyrvd0lae 
@@ -1587,6 +1579,26 @@ create sequence hibernate_sequence start with 1 increment by 1;
         foreign key (REVEND) 
         references CCM_CORE.CCM_REVISIONS;
 
+    alter table CCM_CMS.ATTACHMENT_LIST_DESCRIPTIONS 
+        add constraint FKixgpo00r1cqq5jw1s7v6fchpn 
+        foreign key (LIST_ID) 
+        references CCM_CMS.ATTACHMENT_LISTS;
+
+    alter table CCM_CMS.ATTACHMENT_LIST_DESCRIPTIONS_AUD 
+        add constraint FKqhqkm6tas9fdmggv4k1vj0nc7 
+        foreign key (REV) 
+        references CCM_CORE.CCM_REVISIONS;
+
+    alter table CCM_CMS.ATTACHMENT_LIST_DESCRIPTIONS_AUD 
+        add constraint FKqv2o9jffgok4518fb5c85552l 
+        foreign key (REVEND) 
+        references CCM_CORE.CCM_REVISIONS;
+
+    alter table CCM_CMS.ATTACHMENT_LISTS 
+        add constraint FKqyj7ifjfyp7kmsj8fiyxn0am3 
+        foreign key (ITEM_ID) 
+        references CCM_CMS.CONTENT_ITEMS;
+
     alter table CCM_CMS.ATTACHMENT_LISTS 
         add constraint FK4c7jp8622b8m8nvdvdajnt0am 
         foreign key (CONTENT_ITEM_ID) 
@@ -1602,24 +1614,14 @@ create sequence hibernate_sequence start with 1 increment by 1;
         foreign key (REVEND) 
         references CCM_CORE.CCM_REVISIONS;
 
-    alter table CCM_CMS.AttachmentList_ItemAttachment_AUD 
-        add constraint FKduowjilu7dqfs2oja88tr5oim 
-        foreign key (REV) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.AttachmentList_ItemAttachment_AUD 
-        add constraint FKdtm7qp3n6cojbm9b916plsgtx 
-        foreign key (REVEND) 
-        references CCM_CORE.CCM_REVISIONS;
-
     alter table CCM_CMS.ATTACHMENTS 
         add constraint FKmn0bm137vwr61iy5nb59cjm22 
         foreign key (ASSET_ID) 
         references CCM_CMS.ASSETS;
 
     alter table CCM_CMS.ATTACHMENTS 
-        add constraint FK622uanry14vw27de3d2v9uy57 
-        foreign key (LIST_ID) 
+        add constraint FK3mqbt13sbed2ae0esrps4p0oh 
+        foreign key (ATTACHMENT_LIST_ID) 
         references CCM_CMS.ATTACHMENT_LISTS;
 
     alter table CCM_CMS.ATTACHMENTS_AUD 
@@ -1638,13 +1640,13 @@ create sequence hibernate_sequence start with 1 increment by 1;
         references CCM_CMS.LEGAL_METADATA;
 
     alter table CCM_CMS.AUDIO_ASSETS 
-        add constraint FKa1m18ejmeknjiibvh2dac6tas 
-        foreign key (ASSET_ID) 
+        add constraint FKgxpsfjlfsk609c0w2te18y90v 
+        foreign key (OBJECT_ID) 
         references CCM_CMS.BINARY_ASSETS;
 
     alter table CCM_CMS.AUDIO_ASSETS_AUD 
-        add constraint FKaf381a7d420ru9114rqcpr2b4 
-        foreign key (ASSET_ID, REV) 
+        add constraint FKbt11nwbde1en1upceratct6s3 
+        foreign key (OBJECT_ID, REV) 
         references CCM_CMS.BINARY_ASSETS_AUD;
 
     alter table CCM_CMS.BINARY_ASSET_DESCRIPTIONS 
@@ -1663,13 +1665,13 @@ create sequence hibernate_sequence start with 1 increment by 1;
         references CCM_CORE.CCM_REVISIONS;
 
     alter table CCM_CMS.BINARY_ASSETS 
-        add constraint FK65sp6cl7d8qjmqgku1bjtpsdy 
-        foreign key (ASSET_ID) 
+        add constraint FKltx0jq1u1aflrd20k1c77m8vh 
+        foreign key (OBJECT_ID) 
         references CCM_CMS.ASSETS;
 
     alter table CCM_CMS.BINARY_ASSETS_AUD 
-        add constraint FKovfkjrq3eka9fsfe5sidw07p3 
-        foreign key (ASSET_ID, REV) 
+        add constraint FK1qfap4mxprjk7gnjdcvdxr5mv 
+        foreign key (OBJECT_ID, REV) 
         references CCM_CMS.ASSETS_AUD;
 
     alter table CCM_CMS.BOOKMARK_DESCRIPTIONS 
@@ -1688,13 +1690,13 @@ create sequence hibernate_sequence start with 1 increment by 1;
         references CCM_CORE.CCM_REVISIONS;
 
     alter table CCM_CMS.BOOKMARKS 
-        add constraint FKhs1tohpjry5sqdpl3cijl5ppk 
-        foreign key (ASSET_ID) 
+        add constraint FKksnngecvvxmsxdvri4shby2hy 
+        foreign key (OBJECT_ID) 
         references CCM_CMS.ASSETS;
 
     alter table CCM_CMS.BOOKMARKS_AUD 
-        add constraint FKjrk2tah1gyn67acth3g7olvuc 
-        foreign key (ASSET_ID, REV) 
+        add constraint FK47cpxaw9vnnes2dbr6h3toirl 
+        foreign key (OBJECT_ID, REV) 
         references CCM_CMS.ASSETS_AUD;
 
     alter table CCM_CMS.CONTENT_ITEM_DESCRIPTIONS 
@@ -1958,38 +1960,38 @@ create sequence hibernate_sequence start with 1 increment by 1;
         references CCM_CMS.LEGAL_METADATA;
 
     alter table CCM_CMS.EXTERNAL_AUDIO_ASSETS 
-        add constraint FK5sxviewjxfgk0at60emrpuh3n 
-        foreign key (ASSET_ID) 
+        add constraint FK36xjlvslk0vlekn9lsc7x1c7a 
+        foreign key (OBJECT_ID) 
         references CCM_CMS.BOOKMARKS;
 
     alter table CCM_CMS.EXTERNAL_AUDIO_ASSETS_AUD 
-        add constraint FK6814o1fnh49p5ij9cfvr7y00s 
-        foreign key (ASSET_ID, REV) 
+        add constraint FKp3jndaw4k35wb3d6hg5ng4xww 
+        foreign key (OBJECT_ID, REV) 
         references CCM_CMS.BOOKMARKS_AUD;
 
-    alter table CCM_CMS.EXTERNAL_VIDEO_ASSET 
-        add constraint FK3jia7ctpjs0u510hi0qqexu5t 
+    alter table CCM_CMS.EXTERNAL_VIDEO_ASSETS 
+        add constraint FK82gxr2se97dl902eu4wvhdvh3 
         foreign key (LEGAL_METADATA_ID) 
         references CCM_CMS.LEGAL_METADATA;
 
-    alter table CCM_CMS.EXTERNAL_VIDEO_ASSET 
-        add constraint FKc6m77lkbfa5ym2s8sq00jkyjf 
-        foreign key (ASSET_ID) 
+    alter table CCM_CMS.EXTERNAL_VIDEO_ASSETS 
+        add constraint FKps8bq22n1fxy8svnsrui3f0t2 
+        foreign key (OBJECT_ID) 
         references CCM_CMS.BOOKMARKS;
 
-    alter table CCM_CMS.EXTERNAL_VIDEO_ASSET_AUD 
-        add constraint FKd5efitnmsrko2vq48ei1mclfv 
-        foreign key (ASSET_ID, REV) 
+    alter table CCM_CMS.EXTERNAL_VIDEO_ASSETS_AUD 
+        add constraint FKilxwg8ppd64hl14tojfmupau9 
+        foreign key (OBJECT_ID, REV) 
         references CCM_CMS.BOOKMARKS_AUD;
 
     alter table CCM_CMS.FILES 
-        add constraint FK4e8p3tu8ocy43ofs9uifuk8gh 
-        foreign key (ASSET_ID) 
+        add constraint FKpg74w39tfbbuqhcy21u61q138 
+        foreign key (OBJECT_ID) 
         references CCM_CMS.BINARY_ASSETS;
 
     alter table CCM_CMS.FILES_AUD 
-        add constraint FK3c9xf8w1dr3q0grxslguvviqn 
-        foreign key (ASSET_ID, REV) 
+        add constraint FKdl876a4twd0gkranwqkdmxnwy 
+        foreign key (OBJECT_ID, REV) 
         references CCM_CMS.BINARY_ASSETS_AUD;
 
     alter table CCM_CMS.FOLDER_CONTENT_SECTION_MAP 
@@ -2013,23 +2015,23 @@ create sequence hibernate_sequence start with 1 increment by 1;
         references CCM_CMS.LEGAL_METADATA;
 
     alter table CCM_CMS.IMAGES 
-        add constraint FK9mgknvtu1crw4el5d4sqy8d6c 
-        foreign key (ASSET_ID) 
+        add constraint FKmdqranhdstkn6m6d73l15amxs 
+        foreign key (OBJECT_ID) 
         references CCM_CMS.BINARY_ASSETS;
 
     alter table CCM_CMS.IMAGES_AUD 
-        add constraint FK6xggeoexci2har3mceo9naqiy 
-        foreign key (ASSET_ID, REV) 
+        add constraint FK4jsrdpe6d8is0ybx2p7sxivwf 
+        foreign key (OBJECT_ID, REV) 
         references CCM_CMS.BINARY_ASSETS_AUD;
 
     alter table CCM_CMS.LEGAL_METADATA 
-        add constraint FKjxss2fb6khhn68e8ccuksl9hk 
-        foreign key (ASSET_ID) 
+        add constraint FKnxl7uyv1ks0qabgeienx2t9d1 
+        foreign key (OBJECT_ID) 
         references CCM_CMS.ASSETS;
 
     alter table CCM_CMS.LEGAL_METADATA_AUD 
-        add constraint FKofjkwpepeyb6e8tytnhjfvx49 
-        foreign key (ASSET_ID, REV) 
+        add constraint FKpt3eqil7iij6t5h1lrnjbb5xs 
+        foreign key (OBJECT_ID, REV) 
         references CCM_CMS.ASSETS_AUD;
 
     alter table CCM_CMS.LEGAL_METADATA_CONTRIBUTORS 
@@ -2207,31 +2209,6 @@ create sequence hibernate_sequence start with 1 increment by 1;
         foreign key (REVEND) 
         references CCM_CORE.CCM_REVISIONS;
 
-    alter table CCM_CMS.NOTE_TEXTS 
-        add constraint FKa0yp21m25o7omtnag0eet8v8q 
-        foreign key (ASSET_ID) 
-        references CCM_CMS.NOTES;
-
-    alter table CCM_CMS.NOTE_TEXTS_AUD 
-        add constraint FKoxggogvr9ek831d7y3omu8wvw 
-        foreign key (REV) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.NOTE_TEXTS_AUD 
-        add constraint FKg1kfbj306ufy8034a83a7ft2o 
-        foreign key (REVEND) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.NOTES 
-        add constraint FKb5msdqwvlj4ipd1r8f8uxuoy4 
-        foreign key (ASSET_ID) 
-        references CCM_CMS.ASSETS;
-
-    alter table CCM_CMS.NOTES_AUD 
-        add constraint FKjr3tek35d3f0xm4xp0s811cah 
-        foreign key (ASSET_ID, REV) 
-        references CCM_CMS.ASSETS_AUD;
-
     alter table CCM_CMS.RELATED_LINKS 
         add constraint FKb517dnfj56oby2s34jp1omuim 
         foreign key (BOOKMARK_ID) 
@@ -2243,29 +2220,39 @@ create sequence hibernate_sequence start with 1 increment by 1;
         references CCM_CMS.CONTENT_ITEMS;
 
     alter table CCM_CMS.RELATED_LINKS 
-        add constraint FKf4r30ra4a2ajuky0tk4lc06n5 
-        foreign key (ASSET_ID) 
+        add constraint FK35tv60a9kflo17h6xduvwvgis 
+        foreign key (OBJECT_ID) 
         references CCM_CMS.ASSETS;
 
     alter table CCM_CMS.RELATED_LINKS_AUD 
-        add constraint FKkda2cf5ynu7v7udi0ytfmr9ij 
-        foreign key (ASSET_ID, REV) 
+        add constraint FKiuwk6mcj3h5gccu2aviq3d8lt 
+        foreign key (OBJECT_ID, REV) 
         references CCM_CMS.ASSETS_AUD;
 
-    alter table CCM_CMS.REUSABLE_ASSETS 
-        add constraint FKngdq6f077q6ndqn9o3jc6k14a 
+    alter table CCM_CMS.SIDE_NOTE_TEXTS 
+        add constraint FK3c357rqa9kanmmpaggdapvjli 
         foreign key (ASSET_ID) 
+        references CCM_CMS.SIDE_NOTES;
+
+    alter table CCM_CMS.SIDE_NOTE_TEXTS_AUD 
+        add constraint FKiu4ht1tipeal2csdkvws4fnws 
+        foreign key (REV) 
+        references CCM_CORE.CCM_REVISIONS;
+
+    alter table CCM_CMS.SIDE_NOTE_TEXTS_AUD 
+        add constraint FKacekagiqks1cj9otxdmryl934 
+        foreign key (REVEND) 
+        references CCM_CORE.CCM_REVISIONS;
+
+    alter table CCM_CMS.SIDE_NOTES 
+        add constraint FKea6cikleenmkgw5bwus22mfr3 
+        foreign key (OBJECT_ID) 
         references CCM_CMS.ASSETS;
 
-    alter table CCM_CMS.REUSABLE_ASSETS 
-        add constraint FKhvf4mfltp8abbr5u0qgjm2jk2 
-        foreign key (OBJECT_ID) 
-        references CCM_CORE.CCM_OBJECTS;
-
-    alter table CCM_CMS.REUSABLE_ASSETS_AUD 
-        add constraint FKgyc5gd3cffox4wvjoir6i4gxt 
+    alter table CCM_CMS.SIDE_NOTES_AUD 
+        add constraint FKl5pkg9mp2ymc2uo4kmlubyp3m 
         foreign key (OBJECT_ID, REV) 
-        references CCM_CORE.CCM_OBJECTS_AUD;
+        references CCM_CMS.ASSETS_AUD;
 
     alter table CCM_CMS.TASK_EVENT_URL_GENERATOR 
         add constraint FKjjasedpc2ef91iknmiyqwhxrs 
@@ -2277,19 +2264,19 @@ create sequence hibernate_sequence start with 1 increment by 1;
         foreign key (TASK_TYPE_ID) 
         references CCM_CMS.WORKFLOW_TASK_TYPES;
 
-    alter table CCM_CMS.VIDEO_ASSET 
-        add constraint FKdjjbp8p48xwfqhw0oo79tkyjy 
+    alter table CCM_CMS.VIDEO_ASSETS 
+        add constraint FKjuywvv7wq9pyid5b6ivyrc0yk 
         foreign key (LEGAL_METADATA_ID) 
         references CCM_CMS.LEGAL_METADATA;
 
-    alter table CCM_CMS.VIDEO_ASSET 
-        add constraint FK9cynf36vykykyaga2j1xs7jkx 
-        foreign key (ASSET_ID) 
+    alter table CCM_CMS.VIDEO_ASSETS 
+        add constraint FKqt2cx1r31kqbqkimdld312i9g 
+        foreign key (OBJECT_ID) 
         references CCM_CMS.BINARY_ASSETS;
 
-    alter table CCM_CMS.VIDEO_ASSET_AUD 
-        add constraint FK7qsbfxxg6ixpkjjor4nbkd63i 
-        foreign key (ASSET_ID, REV) 
+    alter table CCM_CMS.VIDEO_ASSETS_AUD 
+        add constraint FKdrx9uu9a03ju7vqvkjretohpk 
+        foreign key (OBJECT_ID, REV) 
         references CCM_CMS.BINARY_ASSETS_AUD;
 
     alter table CCM_CMS.WORKFLOW_TASKS 
