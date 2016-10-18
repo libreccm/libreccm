@@ -237,6 +237,27 @@ alter table CCM_CMS.VIDEO_ASSETS_AUD
 alter table CCM_CMS.NOTE_TEXTS 
     rename to CCM_CMS.SIDE_NOTE_TEXTS;
 
+alter table CCM_CMS.SIDE_NOTE_TEXTS
+    alter column ASSET_ID RENAME TO SIDE_NOTE_ID;
+
+create table CCM_CMS.SIDE_NOTE_TITLES (
+    SIDE_NOTE_ID bigint not null,
+    LOCALIZED_VALUE longvarchar,
+    LOCALE varchar(255) not null,
+    primary key (SIDE_NOTE_ID, LOCALE)
+);
+
+create table CCM_CMS.SIDE_NOTE_TITLES_AUD (
+    REV integer not null,
+    SIDE_NOTE_ID bigint not null,
+    LOCALIZED_VALUE longvarchar not null,
+    LOCALE varchar(255) not null,
+    REVTYPE tinyint,
+    REVEND integer,
+    primary key (REV, SIDE_NOTE_ID, LOCALIZED_VALUE, LOCALE)
+);
+
+
 alter table CCM_CMS.ATTACHMENTS
     add column ATTACHMENT_LIST_ID bigint;
 
@@ -357,7 +378,7 @@ alter table CCM_CMS.LEGAL_METADATA_AUD
 
 alter table CCM_CMS.SIDE_NOTE_TEXTS 
     add constraint FK79g6eg2csjaixrjr2xgael8lm 
-    foreign key (ASSET_ID) 
+    foreign key (SIDE_NOTE_ID) 
     references CCM_CMS.SIDE_NOTES;
 
 alter table CCM_CMS.RELATED_LINKS 
@@ -394,3 +415,18 @@ alter table CCM_CMS.VIDEO_ASSETS_AUD
     add constraint FKdrx9uu9a03ju7vqvkjretohpk 
     foreign key (OBJECT_ID, REV) 
     references CCM_CMS.BINARY_ASSETS_AUD;
+
+alter table CCM_CMS.SIDE_NOTE_TITLES 
+    add constraint FKf8c9mw6p4ijiba77t32uh7i0o 
+    foreign key (SIDE_NOTE_ID) 
+    references CCM_CMS.SIDE_NOTES;
+
+alter table CCM_CMS.SIDE_NOTE_TITLES_AUD 
+    add constraint FKkuw32q22sotku83khh1xda7sf 
+    foreign key (REV) 
+    references CCM_CORE.CCM_REVISIONS;
+
+alter table CCM_CMS.SIDE_NOTE_TITLES_AUD 
+    add constraint FKbqgawobyevpbgxsnbbs9vwooq 
+    foreign key (REVEND) 
+    references CCM_CORE.CCM_REVISIONS;

@@ -6,7 +6,7 @@ DROP SEQUENCE IF EXISTS hibernate_sequence;
 CREATE SCHEMA ccm_core;
 CREATE SCHEMA ccm_cms;
 
-    create table CCM_CMS.ARTICLE_LEADS (
+create table CCM_CMS.ARTICLE_LEADS (
         OBJECT_ID int8 not null,
         LOCALIZED_VALUE text,
         LOCALE varchar(255) not null,
@@ -798,20 +798,37 @@ CREATE SCHEMA ccm_cms;
     );
 
     create table CCM_CMS.SIDE_NOTE_TEXTS (
-        ASSET_ID int8 not null,
+        SIDE_NOTE_ID int8 not null,
         LOCALIZED_VALUE text,
         LOCALE varchar(255) not null,
-        primary key (ASSET_ID, LOCALE)
+        primary key (SIDE_NOTE_ID, LOCALE)
     );
 
     create table CCM_CMS.SIDE_NOTE_TEXTS_AUD (
         REV int4 not null,
-        ASSET_ID int8 not null,
+        SIDE_NOTE_ID int8 not null,
         LOCALIZED_VALUE text not null,
         LOCALE varchar(255) not null,
         REVTYPE int2,
         REVEND int4,
-        primary key (REV, ASSET_ID, LOCALIZED_VALUE, LOCALE)
+        primary key (REV, SIDE_NOTE_ID, LOCALIZED_VALUE, LOCALE)
+    );
+
+    create table CCM_CMS.SIDE_NOTE_TITLES (
+        SIDE_NOTE_ID int8 not null,
+        LOCALIZED_VALUE text,
+        LOCALE varchar(255) not null,
+        primary key (SIDE_NOTE_ID, LOCALE)
+    );
+
+    create table CCM_CMS.SIDE_NOTE_TITLES_AUD (
+        REV int4 not null,
+        SIDE_NOTE_ID int8 not null,
+        LOCALIZED_VALUE text not null,
+        LOCALE varchar(255) not null,
+        REVTYPE int2,
+        REVEND int4,
+        primary key (REV, SIDE_NOTE_ID, LOCALIZED_VALUE, LOCALE)
     );
 
     create table CCM_CMS.SIDE_NOTES (
@@ -1363,11 +1380,11 @@ CREATE SCHEMA ccm_cms;
         SETTING_ID int8 not null,
         CONFIGURATION_CLASS varchar(512) not null,
         NAME varchar(512) not null,
-        SETTING_VALUE_DOUBLE float8,
-        SETTING_VALUE_BOOLEAN boolean,
         SETTING_VALUE_BIG_DECIMAL numeric(19, 2),
-        SETTING_VALUE_STRING varchar(1024),
         SETTING_VALUE_LONG int8,
+        SETTING_VALUE_BOOLEAN boolean,
+        SETTING_VALUE_STRING varchar(1024),
+        SETTING_VALUE_DOUBLE float8,
         primary key (SETTING_ID)
     );
 
@@ -2229,8 +2246,8 @@ create sequence hibernate_sequence start 1 increment 1;
         references CCM_CMS.ASSETS_AUD;
 
     alter table CCM_CMS.SIDE_NOTE_TEXTS 
-        add constraint FK3c357rqa9kanmmpaggdapvjli 
-        foreign key (ASSET_ID) 
+        add constraint FK4mvpioee23u1qswmn1fekipoh 
+        foreign key (SIDE_NOTE_ID) 
         references CCM_CMS.SIDE_NOTES;
 
     alter table CCM_CMS.SIDE_NOTE_TEXTS_AUD 
@@ -2240,6 +2257,21 @@ create sequence hibernate_sequence start 1 increment 1;
 
     alter table CCM_CMS.SIDE_NOTE_TEXTS_AUD 
         add constraint FKacekagiqks1cj9otxdmryl934 
+        foreign key (REVEND) 
+        references CCM_CORE.CCM_REVISIONS;
+
+    alter table CCM_CMS.SIDE_NOTE_TITLES 
+        add constraint FKf8c9mw6p4ijiba77t32uh7i0o 
+        foreign key (SIDE_NOTE_ID) 
+        references CCM_CMS.SIDE_NOTES;
+
+    alter table CCM_CMS.SIDE_NOTE_TITLES_AUD 
+        add constraint FKkuw32q22sotku83khh1xda7sf 
+        foreign key (REV) 
+        references CCM_CORE.CCM_REVISIONS;
+
+    alter table CCM_CMS.SIDE_NOTE_TITLES_AUD 
+        add constraint FKbqgawobyevpbgxsnbbs9vwooq 
         foreign key (REVEND) 
         references CCM_CORE.CCM_REVISIONS;
 

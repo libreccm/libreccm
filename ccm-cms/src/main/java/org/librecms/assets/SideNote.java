@@ -47,11 +47,21 @@ public class SideNote extends Asset implements Serializable {
 
     @Embedded
     @AssociationOverride(
+    name = "values",
+    joinTable = @JoinTable(name = "SIDE_NOTE_TITLES",
+                           schema = DB_SCHEMA,
+                           joinColumns = {
+                               @JoinColumn(name = "SIDE_NOTE_ID")
+                           }))
+    private LocalizedString title;
+    
+    @Embedded
+    @AssociationOverride(
         name = "values",
         joinTable = @JoinTable(name = "SIDE_NOTE_TEXTS",
                                schema = DB_SCHEMA,
                                joinColumns = {
-                                   @JoinColumn(name = "ASSET_ID")
+                                   @JoinColumn(name = "SIDE_NOTE_ID")
                                }
         )
     )
