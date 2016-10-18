@@ -6,7 +6,7 @@ DROP SEQUENCE IF EXISTS hibernate_sequence;
 CREATE SCHEMA ccm_core;
 CREATE SCHEMA ccm_cms;
 
-create table CCM_CMS.ARTICLE_LEADS (
+    create table CCM_CMS.ARTICLE_LEADS (
         OBJECT_ID bigint not null,
         LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
@@ -106,6 +106,7 @@ create table CCM_CMS.ARTICLE_LEADS (
     create table CCM_CMS.ATTACHMENT_LISTS (
         LIST_ID bigint not null,
         NAME varchar(255),
+        LIST_ORDER bigint,
         UUID varchar(255),
         ITEM_ID bigint,
         CONTENT_ITEM_ID bigint,
@@ -118,6 +119,7 @@ create table CCM_CMS.ARTICLE_LEADS (
         REVTYPE tinyint,
         REVEND integer,
         NAME varchar(255),
+        LIST_ORDER bigint,
         UUID varchar(255),
         ITEM_ID bigint,
         primary key (LIST_ID, REV)
@@ -1381,10 +1383,10 @@ create table CCM_CMS.ARTICLE_LEADS (
         CONFIGURATION_CLASS varchar(512) not null,
         NAME varchar(512) not null,
         SETTING_VALUE_BIG_DECIMAL decimal(19,2),
-        SETTING_VALUE_LONG bigint,
-        SETTING_VALUE_BOOLEAN boolean,
         SETTING_VALUE_STRING varchar(1024),
         SETTING_VALUE_DOUBLE double,
+        SETTING_VALUE_BOOLEAN boolean,
+        SETTING_VALUE_LONG bigint,
         primary key (SETTING_ID)
     );
 

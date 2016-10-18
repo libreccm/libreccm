@@ -123,6 +123,9 @@ alter table CCM_CMS.ATTACHMENT_LISTS
 alter table CCM_CMS.ATTACHMENT_LISTS
     add column ITEM_ID int8;
 
+alter table CCM_CMS.ATTACHMENT_LISTS
+    add column LIST_ORDER int8;
+
 alter table CCM_CMS.ATTACHMENT_LISTS_AUD 
     drop column ASSET_TYPE;
 
@@ -131,6 +134,9 @@ alter table CCM_CMS.ATTACHMENT_LISTS_AUD
 
 alter table CCM_CMS.ATTACHMENT_LISTS_AUD
     add column ITEM_ID int8;
+
+alter table CCM_CMS.ATTACHMENT_LISTS_AUD
+    add column LIST_ORDER int8;
 
 alter table CCM_CMS.AUDIO_ASSETS 
     drop constraint FKa1m18ejmeknjiibvh2dac6tas;

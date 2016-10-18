@@ -45,11 +45,11 @@ import javax.persistence.Table;
 import static org.librecms.CmsConstants.*;
 
 /**
- * A list of assets attached a {@link ContentItem}. Each {@link ContentItem}
- * may have multiple lists of attachments. Each list can be identified by name
- * which can be used for example by the theme to determine the position where 
- * the list is printed.
- * 
+ * A list of assets attached a {@link ContentItem}. Each {@link ContentItem} may
+ * have multiple lists of attachments. Each list can be identified by name which
+ * can be used for example by the theme to determine the position where the list
+ * is printed.
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
@@ -58,7 +58,7 @@ import static org.librecms.CmsConstants.*;
 public class AttachmentList implements Identifiable, Serializable {
 
     private static final long serialVersionUID = -7931234562247075541L;
-    
+
     /**
      * Database ID of the list entity.
      */
@@ -85,6 +85,13 @@ public class AttachmentList implements Identifiable, Serializable {
      */
     @Column(name = "NAME")
     private String name;
+
+    /**
+     * A order index for ordering multiple attachment lists with the same
+     * {@link #name}.
+     */
+    @Column(name = "LIST_ORDER")
+    private long order;
 
     /**
      * The localised title of the list.
@@ -150,6 +157,14 @@ public class AttachmentList implements Identifiable, Serializable {
         this.name = name;
     }
 
+    public long getOrder() {
+        return order;
+    }
+
+    public void setOrder(final long order) {
+        this.order = order;
+    }
+
     public LocalizedString getTitle() {
         return title;
     }
@@ -192,6 +207,7 @@ public class AttachmentList implements Identifiable, Serializable {
         hash = 29 * hash + (int) (listId ^ (listId >>> 32));
         hash = 29 * hash + Objects.hashCode(uuid);
         hash = 29 * hash + Objects.hashCode(name);
+        hash = 29 * hash + (int) (order ^ (order >>> 32));
         hash = 29 * hash + Objects.hashCode(title);
         hash = 29 * hash + Objects.hashCode(description);
         hash = 29 * hash + Objects.hashCode(attachments);
@@ -201,7 +217,7 @@ public class AttachmentList implements Identifiable, Serializable {
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
-            
+
             return true;
         }
         if (obj == null) {
@@ -224,6 +240,9 @@ public class AttachmentList implements Identifiable, Serializable {
             System.out.println("uuid is not equal");
             return false;
         }
+        if (order != other.getOrder()) {
+            return false;
+        }
         if (!Objects.equals(name, other.getName())) {
             System.out.println("name is not equal");
             return false;
@@ -236,7 +255,7 @@ public class AttachmentList implements Identifiable, Serializable {
             System.out.println("description is not equal");
             return false;
         }
-        System.out.printf("attachments{%s}.equals({%s}) = %b\n", 
+        System.out.printf("attachments{%s}.equals({%s}) = %b\n",
                           Objects.toString(attachments),
                           Objects.toString(other.getAttachments()),
                           Objects.equals(attachments, other.getAttachments()));
@@ -257,6 +276,7 @@ public class AttachmentList implements Identifiable, Serializable {
                                  + "listId = %d, "
                                  + "uuid = %s, "
                                  + "name = \"%s\", "
+                                 + "order = %d, "
                                  + "caption = { %s }, "
                                  + "description = { %s }, "
                                  + "attachments = { %s }%s"
@@ -265,6 +285,7 @@ public class AttachmentList implements Identifiable, Serializable {
                              listId,
                              uuid,
                              name,
+                             order,
                              Objects.toString(title),
                              Objects.toString(description),
                              Objects.toString(attachments),
