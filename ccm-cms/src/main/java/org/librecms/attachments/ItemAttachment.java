@@ -46,8 +46,10 @@ import static org.librecms.CmsConstants.*;
 @Entity
 @Table(schema = DB_SCHEMA, name = "ATTACHMENTS")
 @Audited
-public class ItemAttachment<T extends Asset> implements Identifiable,
-                                                        Serializable {
+public class ItemAttachment<T extends Asset>
+    implements Comparable<ItemAttachment<?>>,
+               Identifiable,
+               Serializable {
 
     private static final long serialVersionUID = -9005379413315191984L;
 
@@ -127,6 +129,15 @@ public class ItemAttachment<T extends Asset> implements Identifiable,
         this.sortKey = sortKey;
     }
 
+    @Override
+    public int compareTo(final ItemAttachment<?> other) {
+        if (other == null) {
+            throw new NullPointerException();
+        }
+        
+        return Long.compare(sortKey, other.getSortKey());
+    }
+    
     @Override
     public int hashCode() {
         int hash = 3;

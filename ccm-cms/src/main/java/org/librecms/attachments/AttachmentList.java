@@ -55,7 +55,9 @@ import static org.librecms.CmsConstants.*;
 @Entity
 @Table(name = "ATTACHMENT_LISTS", schema = DB_SCHEMA)
 @Audited
-public class AttachmentList implements Identifiable, Serializable {
+public class AttachmentList implements Comparable<AttachmentList>,
+                                       Identifiable,
+                                       Serializable {
 
     private static final long serialVersionUID = -7931234562247075541L;
 
@@ -199,6 +201,20 @@ public class AttachmentList implements Identifiable, Serializable {
 
     protected void removeAttachment(final ItemAttachment<?> attachment) {
         attachments.remove(attachment);
+    }
+
+    @Override
+    public int compareTo(final AttachmentList other) {
+        if (other == null) {
+            throw new NullPointerException();
+        }
+
+        final int nameCompare = name.compareTo(other.getName());
+        if (nameCompare == 0) {
+            return Long.compare(order, other.getOrder());
+        } else {
+            return nameCompare;
+        }
     }
 
     @Override
