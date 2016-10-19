@@ -69,6 +69,70 @@ import static org.librecms.CmsConstants.*;
                 query = "SELECT a FROM Asset a "
                             + "WHERE a.uuid = :uuid "
                             + "AND TYPE(a) = :type")
+    ,
+    @NamedQuery(
+        name = "Asset.findByFolder",
+        query = "SELECT a FROM Asset a "
+                    + "JOIN a.categories c "
+                    + "WHERE c.category = :folder "
+                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "'")
+    ,
+    @NamedQuery(
+        name = "Asset.countInFolder",
+        query = "SELECT COUNT(a) FROM Asset a "
+                    + "JOIN a.categories c "
+                    + "WHERE c.category = :folder "
+                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "'")
+    ,
+    @NamedQuery(
+        name = "Asset.filterByFolderAndName",
+        query = "SELECT a FROM Asset a "
+                    + "JOIN a.categories c "
+                    + "WHERE c.category = :folder "
+                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
+                    + "AND LOWER(a.displayName) LIKE CONCAT(LOWER(:name), '%')")
+    ,
+    @NamedQuery(
+        name = "Asset.countFilterByFolderAndName",
+        query = "SELECT COUNT(a) FROM Asset a "
+                    + "JOIN a.categories c "
+                    + "WHERE c.category = :folder "
+                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
+                    + "AND LOWER(a.displayName) LIKE CONCAT(LOWER(:name), '%')")
+    ,
+    @NamedQuery(
+        name = "Asset.filterByFolderAndType",
+        query = "SELECT a FROM Asset a "
+                    + "JOIN a.categories c "
+                    + "WHERE c.category = :folder "
+                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
+                    + "AND TYPE(a) = :type")
+    ,
+    @NamedQuery(
+        name = "Asset.countFilterByFolderAndType",
+        query = "SELECT COUNT(a) FROM Asset a "
+                    + "JOIN a.categories c "
+                    + "WHERE c.category = :folder "
+                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
+                    + "AND TYPE(a) = :type")
+    ,
+    @NamedQuery(
+        name = "Asset.filterByFolderAndNameAndType",
+        query = "SELECT a FROM Asset a "
+                    + "JOIN a.categories c "
+                    + "WHERE c.category = :folder "
+                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
+                    + "AND LOWER(a.displayName) LIKE CONCAT(LOWER(:name), '%') "
+                    + "AND TYPE(a) = :type")
+    ,
+    @NamedQuery(
+        name = "Asset.countFilterByFolderAndNameAndType",
+        query = "SELECT COUNT(a) FROM Asset a "
+                    + "JOIN a.categories c "
+                    + "WHERE c.category = :folder "
+                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
+                    + "AND LOWER(a.displayName) LIKE CONCAT(LOWER(:name), '%') "
+                    + "AND TYPE(a) = :type")
 })
 public class Asset extends CcmObject implements InheritsPermissions {
 

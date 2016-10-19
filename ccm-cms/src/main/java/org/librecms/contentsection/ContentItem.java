@@ -203,8 +203,7 @@ public class ContentItem extends CcmObject implements Serializable,
     @Column(name = "ANCESTORS", length = 1024)
     private String ancestors;
 
-    @OneToMany
-    @JoinColumn(name = "CONTENT_ITEM_ID")
+    @OneToMany(mappedBy = "item")
     private List<AttachmentList> attachments;
 
     @OneToOne

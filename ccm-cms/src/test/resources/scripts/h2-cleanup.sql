@@ -1,3 +1,31 @@
+DELETE FROM ccm_cms.attachments_aud;
+
+DELETE FROM ccm_cms.attachments;
+
+DELETE FROM ccm_cms.attachment_lists_aud;
+
+DELETE FROM ccm_cms.attachment_lists;
+
+DELETE FROM ccm_cms.images_aud;
+
+DELETE FROM ccm_cms.images;
+
+DELETE FROM ccm_cms.files_aud;
+
+DELETE FROM ccm_cms.files;
+
+DELETE FROM ccm_cms.binary_assets_aud;
+
+DELETE FROM ccm_cms.binary_assets;
+
+DELETE FROM ccm_cms.asset_titles_aud;
+
+DELETE FROM ccm_cms.asset_titles;
+
+DELETE FROM ccm_cms.assets_aud;
+
+DELETE FROM ccm_cms.assets;
+
 DELETE FROM ccm_cms.news_texts;
 
 DELETE FROM ccm_cms.news;
