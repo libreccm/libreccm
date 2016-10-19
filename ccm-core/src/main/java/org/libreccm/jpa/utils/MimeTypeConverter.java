@@ -18,7 +18,6 @@
  */
 package org.libreccm.jpa.utils;
 
-
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
 import javax.persistence.AttributeConverter;
@@ -27,7 +26,7 @@ import javax.persistence.Converter;
 /**
  * A converter for converting properties of the type {@link MimeType} to
  * {@code String}.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Converter(autoApply = true)
@@ -35,7 +34,11 @@ public class MimeTypeConverter implements AttributeConverter<MimeType, String> {
 
     @Override
     public String convertToDatabaseColumn(final MimeType attribute) {
-        return attribute.toString();
+        if (attribute == null) {
+            return null;
+        } else {
+            return attribute.toString();
+        }
     }
 
     @Override
@@ -46,7 +49,5 @@ public class MimeTypeConverter implements AttributeConverter<MimeType, String> {
             throw new IllegalArgumentException("Not a valid mime type", ex);
         }
     }
-    
-    
 
 }
