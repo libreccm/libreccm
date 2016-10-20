@@ -252,7 +252,7 @@ public class ContentItemManager {
     public void move(
         @RequiresPrivilege(CmsConstants.PRIVILEGE_ITEMS_EDIT)
         final ContentItem item,
-        @RequiresPrivilege(CmsConstants.PRIVILEGE_ITEMS_EDIT)
+        @RequiresPrivilege(CmsConstants.PRIVILEGE_ITEMS_CREATE_NEW)
         final Folder targetFolder) {
         if (item == null) {
             throw new IllegalArgumentException("The item to move can't be null.");
@@ -318,6 +318,7 @@ public class ContentItemManager {
      * @return The copy of the item
      */
     @Transactional(Transactional.TxType.REQUIRED)
+    @AuthorizationRequired
     @SuppressWarnings("unchecked")
     public ContentItem copy(
         final ContentItem item,
@@ -999,7 +1000,7 @@ public class ContentItemManager {
      * name {@code neural-nets} has the path
      * {@code /research/computer-science/artificial-intelligence/neural-nets}.
      *
-     * @param item The item which path is generated.
+     * @param item The item for which path is generated.
      *
      * @return The path of the content item
      *
@@ -1010,7 +1011,7 @@ public class ContentItemManager {
     }
 
     /**
-     * Return the path of an as String. The path of an item is the path of the
+     * Returns the path of an item as String. The path of an item is the path of the
      * folder category the item is a member of concatenated with the name of the
      * item. The path is relative to the content section. For instance, the path
      * of an item in the folder category
@@ -1066,7 +1067,7 @@ public class ContentItemManager {
     }
 
     /**
-     * Creates as list of the folders in which is item is placed.
+     * Creates a list of the folders in which an item is placed.
      *
      * @param item
      *
