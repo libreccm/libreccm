@@ -24,9 +24,9 @@ import com.arsdigita.util.Assert;
 import org.apache.shiro.authz.AuthorizationException;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.PermissionChecker;
-import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentSection;
+import org.librecms.contentsection.privileges.ItemPrivileges;
 
 import java.io.IOException;
 
@@ -83,7 +83,7 @@ public abstract class ResourceHandlerImpl implements ResourceHandler {
                                 RequestContext actx,
                                 ContentItem item) {
         if (!CdiUtil.createCdiUtil().findBean(PermissionChecker.class)
-            .isPermitted(CmsConstants.PRIVILEGE_ITEMS_VIEW_PUBLISHED, item)) {
+            .isPermitted(ItemPrivileges.VIEW_PUBLISHED, item)) {
             throw new AuthorizationException(
                 "cms.dispatcher.no_permission_to_access_resource");
         }

@@ -45,6 +45,7 @@ import org.libreccm.web.CcmApplication;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionRepository;
+import org.librecms.contentsection.privileges.ItemPrivileges;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -145,7 +146,7 @@ public class ContentCenterServlet extends BaseApplicationServlet {
         final List<ContentSection> sections = sectionRepo.findAll();
         boolean hasAccess = false;
         for (final ContentSection section : sections) {
-            if (permissionChecker.isPermitted(CmsConstants.PRIVILEGE_ITEMS_EDIT,
+            if (permissionChecker.isPermitted(ItemPrivileges.EDIT,
                                               section.getRootDocumentsFolder())) {
                 hasAccess = true;
                 break;

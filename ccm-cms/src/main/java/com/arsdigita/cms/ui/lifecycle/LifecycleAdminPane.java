@@ -36,13 +36,15 @@ import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentSectionManager;
+import org.librecms.contentsection.privileges.AdminPrivileges;
 import org.librecms.lifecycle.Lifecycle;
 import org.librecms.lifecycle.LifecycleDefinitionRepository;
 
 import java.math.BigDecimal;
 
 /**
- * <p>This class contains the split pane for the lifecycle administration
+ * <p>
+ * This class contains the split pane for the lifecycle administration
  * interface.</p>
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
@@ -66,7 +68,6 @@ public class LifecycleAdminPane extends BaseAdminPane {
 
         // XXX secvis
         //add(new LifecycleAdminContainer(m_addLink));
-
         setAdd(gz("cms.ui.lifecycle.add"),
                new LifecycleAddForm(m_model));
         setEdit(gz("cms.ui.lifecycle.edit"),
@@ -82,44 +83,50 @@ public class LifecycleAdminPane extends BaseAdminPane {
     }
 
     private class SelectionRequestLocal
-            extends LifecycleDefinitionRequestLocal {
+        extends LifecycleDefinitionRequestLocal {
+
         @Override
         protected final Object initialValue(final PageState state) {
             final String id = m_model.getSelectedKey(state).toString();
 
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final LifecycleDefinitionRepository lifecycleDefRepo = cdiUtil.findBean(LifecycleDefinitionRepository.class);
-            
+            final LifecycleDefinitionRepository lifecycleDefRepo = cdiUtil
+                .findBean(LifecycleDefinitionRepository.class);
+
             return lifecycleDefRepo.findById(Long.parseLong(id));
         }
+
     }
 
     private final class DeleteForm extends BaseDeleteForm {
+
         DeleteForm() {
             super(new Label(gz("cms.ui.lifecycle.delete_prompt")));
 
-            addSubmissionListener
-                (new FormSecurityListener(CmsConstants.PRIVILEGE_ADMINISTER_LIFECYLES));
+            addSubmissionListener(new FormSecurityListener(
+                AdminPrivileges.ADMINISTER_LIFECYLES));
         }
 
         public final void process(final FormSectionEvent event)
-                throws FormProcessException {
+            throws FormProcessException {
             final PageState state = event.getPageState();
-            final ContentSection section =
-                CMS.getContext().getContentSection();
-            final LifecycleDefinition definition =
-                m_definition.getLifecycleDefinition(state);
+            final ContentSection section = CMS.getContext().getContentSection();
+            final LifecycleDefinition definition = m_definition
+                .getLifecycleDefinition(state);
 
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final ContentSectionManager sectionManager = cdiUtil.findBean(
                 ContentSectionManager.class);
-            final LifecycleDefinitionRepository lifecycleDefRepo = cdiUtil.findBean(LifecycleDefinitionRepository.class);
-            
+            final LifecycleDefinitionRepository lifecycleDefRepo = cdiUtil
+                .findBean(LifecycleDefinitionRepository.class);
+
             sectionManager.removeLifecycleDefinitionFromContentSection(
                 definition, section);
             lifecycleDefRepo.delete(definition);
-            
+
             m_model.clearSelection(state);
         }
+
     }
+
 }

@@ -20,10 +20,12 @@ package org.librecms.assets;
 
 import java.util.List;
 import java.util.Optional;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.categorization.CategoryManager;
@@ -36,6 +38,8 @@ import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.Folder;
 import org.librecms.contentsection.FolderManager;
 import org.librecms.contentsection.FolderRepository;
+import org.librecms.contentsection.privileges.AssetPrivileges;
+import org.librecms.contentsection.privileges.ItemPrivileges;
 
 /**
  * Provides methods for managing {@link Asset}s, especially sharable
@@ -80,7 +84,7 @@ public class AssetManager {
     @Transactional(Transactional.TxType.REQUIRED)
     public <T extends Asset> T createAsset(
             final String name,
-            @RequiresPrivilege(CmsConstants.PRIVILEGE_ITEMS_EDIT)
+            @RequiresPrivilege(ItemPrivileges.EDIT)
             final AttachmentList attachments,
             final Class<T> type) {
         throw new UnsupportedOperationException("Not implemented yet.");
@@ -104,7 +108,7 @@ public class AssetManager {
     @Transactional(Transactional.TxType.REQUIRED)
     public <T extends Asset> T createAsset(
             final String name,
-            @RequiresPrivilege(CmsConstants.PRIVILEGE_ITEMS_CREATE_NEW)
+            @RequiresPrivilege(AssetPrivileges.CREATE_NEW)
             final Folder folder,
             final Class<T> type) {
         throw new UnsupportedOperationException("Not implemented yet.");
@@ -159,9 +163,9 @@ public class AssetManager {
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public void move(
-            @RequiresPrivilege(CmsConstants.PRIVILEGE_ITEMS_EDIT)
+            @RequiresPrivilege(AssetPrivileges.EDIT)
             final Asset asset,
-            @RequiresPrivilege(CmsConstants.PRIVILEGE_ITEMS_EDIT)
+            @RequiresPrivilege(AssetPrivileges.CREATE_NEW)
             final Folder targetFolder) {
         throw new UnsupportedOperationException("Not implemented yet.");
     }
@@ -175,7 +179,7 @@ public class AssetManager {
     @Transactional(Transactional.TxType.REQUIRED)
     @AuthorizationRequired
     public void copy(final Asset asset,
-                     @RequiresPrivilege(CmsConstants.PRIVILEGE_ITEMS_CREATE_NEW)
+                     @RequiresPrivilege(AssetPrivileges.CREATE_NEW)
                      final Folder targetFolder) {
         throw new UnsupportedOperationException("Not implemented yet.");
     }

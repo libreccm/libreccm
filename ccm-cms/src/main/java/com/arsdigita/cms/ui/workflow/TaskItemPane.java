@@ -52,6 +52,7 @@ import org.libreccm.workflow.Task;
 import org.libreccm.workflow.UserTask;
 import org.libreccm.workflow.WorkflowManager;
 import org.librecms.CmsConstants;
+import org.librecms.contentsection.privileges.AdminPrivileges;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -119,13 +120,13 @@ final class TaskItemPane extends BaseItemPane {
             PermissionChecker.class);
 
         return permissionChecker.isPermitted(
-            CmsConstants.PRIVILEGE_ADMINISTER_WORKFLOW);
+            AdminPrivileges.ADMINISTER_WORKFLOW);
     }
 
     private class AdminVisible extends VisibilityComponent {
 
         public AdminVisible(final Component child) {
-            super(child, CmsConstants.PRIVILEGE_ADMINISTER_WORKFLOW);
+            super(child, AdminPrivileges.ADMINISTER_WORKFLOW);
         }
 
     }

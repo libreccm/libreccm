@@ -46,6 +46,7 @@ import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.security.PermissionChecker;
 import org.librecms.CmsConstants;
+import org.librecms.contentsection.privileges.AdminPrivileges;
 import org.librecms.lifecycle.PhaseDefinititionRepository;
 
 import java.util.Locale;
@@ -235,7 +236,7 @@ class LifecycleItemPane extends BaseItemPane {
             PermissionChecker.class);
 
         return permissionChecker.isPermitted(
-            CmsConstants.PRIVILEGE_ADMINISTER_LIFECYLES);
+            AdminPrivileges.ADMINISTER_LIFECYLES);
     }
 
     @Override

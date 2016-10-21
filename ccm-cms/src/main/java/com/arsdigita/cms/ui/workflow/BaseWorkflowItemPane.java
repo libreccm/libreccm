@@ -50,6 +50,7 @@ import org.libreccm.workflow.TaskRepository;
 import org.libreccm.workflow.Workflow;
 import org.libreccm.workflow.WorkflowManager;
 import org.librecms.CmsConstants;
+import org.librecms.contentsection.privileges.AdminPrivileges;
 import org.librecms.workflow.CmsTaskTypeRepository;
 
 import java.math.BigDecimal;
@@ -128,7 +129,7 @@ abstract class BaseWorkflowItemPane extends BaseItemPane {
     protected class AdminVisible extends VisibilityComponent {
 
         public AdminVisible(final Component child) {
-            super(child, CmsConstants.PRIVILEGE_ADMINISTER_WORKFLOW);
+            super(child, AdminPrivileges.ADMINISTER_WORKFLOW);
         }
 
     }
@@ -186,7 +187,7 @@ abstract class BaseWorkflowItemPane extends BaseItemPane {
         TaskDeleteForm() {
             super(new Label(gz("cms.ui.workflow.task.delete_prompt")));
 
-            addSecurityListener(CmsConstants.PRIVILEGE_ADMINISTER_WORKFLOW);
+            addSecurityListener(AdminPrivileges.ADMINISTER_WORKFLOW);
         }
 
         @Override

@@ -52,6 +52,7 @@ import org.libreccm.security.RoleRepository;
 import org.libreccm.workflow.TaskAssignment;
 import org.libreccm.workflow.WorkflowManager;
 import org.librecms.CmsConstants;
+import org.librecms.contentsection.privileges.AdminPrivileges;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -158,7 +159,7 @@ class TaskAddRole extends CMSForm {
                 PermissionChecker.class);
 
             if (!permissionChecker.isPermitted(
-                CmsConstants.PRIVILEGE_ADMINISTER_WORKFLOW)) {
+                AdminPrivileges.ADMINISTER_WORKFLOW)) {
                 throw new FormProcessException(
                     new GlobalizedMessage(
                         "cms.ui.workflow.insufficient_privileges",

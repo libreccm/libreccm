@@ -26,7 +26,6 @@ import com.arsdigita.web.LoginSignal;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,12 +37,9 @@ import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.PermissionChecker;
 import org.libreccm.security.Shiro;
-import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentSection;
-import org.librecms.lifecycle.Lifecycle;
-
-import java.util.logging.Level;
+import org.librecms.contentsection.privileges.ItemPrivileges;
 
 /**
  * Dispatches to the JSP or Servlet for rendering a content item.
@@ -153,7 +149,7 @@ public class ItemDispatcher implements ChainedDispatcher {
 //            if (sm.canAccess((User)null, SecurityManager.PUBLIC_PAGES, item)) {
             if (CdiUtil.createCdiUtil().findBean(PermissionChecker.class)
                 .isPermitted(
-                    CmsConstants.PRIVILEGE_ITEMS_VIEW_PUBLISHED, item)) {
+                    ItemPrivileges.VIEW_PUBLISHED, item)) {
                 DispatcherHelper.cacheForWorld(response, expires);
             } else {
                 DispatcherHelper.cacheForUser(response, expires);
@@ -205,13 +201,13 @@ public class ItemDispatcher implements ChainedDispatcher {
             item = itemResolver.getItem(section, url, "draft");
             if (item != null) {
                 hasPermission = permissionChecker.isPermitted(
-                    CmsConstants.PRIVILEGE_ITEMS_PREVIEW, item);
+                    ItemPrivileges.PREVIEW, item);
             }
         } else {
             item = itemResolver.getItem(section, url, "live");
             if (item != null) {
                 hasPermission = permissionChecker.isPermitted(
-                    CmsConstants.PRIVILEGE_ITEMS_VIEW_PUBLISHED, item);
+                    ItemPrivileges.VIEW_PUBLISHED, item);
             }
         }
 
@@ -223,7 +219,7 @@ public class ItemDispatcher implements ChainedDispatcher {
             item = itemResolver.getItem(section, url, "live");
             if (item != null) {
                 hasPermission = permissionChecker.isPermitted(
-                    CmsConstants.PRIVILEGE_ITEMS_VIEW_PUBLISHED, item);
+                    ItemPrivileges.VIEW_PUBLISHED, item);
             }
         }
         // chris.gilbert@westsussex.gov.uk -  if user is not logged in, give them a chance to do that, else show them the door

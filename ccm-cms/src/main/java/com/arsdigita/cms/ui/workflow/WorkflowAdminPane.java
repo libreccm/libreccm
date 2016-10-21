@@ -28,13 +28,11 @@ import com.arsdigita.cms.ui.VisibilityComponent;
 
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.workflow.Workflow;
-import org.libreccm.workflow.WorkflowManager;
 import org.libreccm.workflow.WorkflowRepository;
-import org.libreccm.workflow.WorkflowTemplate;
 import org.libreccm.workflow.WorkflowTemplateRepository;
 import org.librecms.CmsConstants;
 
-import java.math.BigDecimal;
+import org.librecms.contentsection.privileges.AdminPrivileges;
 
 /**
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
@@ -60,7 +58,7 @@ public final class WorkflowAdminPane extends BaseAdminPane {
                                          getDeleteLink()));
 
         addAction(new VisibilityComponent(
-            getAddLink(), CmsConstants.PRIVILEGE_ADMINISTER_WORKFLOW));
+            getAddLink(), AdminPrivileges.ADMINISTER_WORKFLOW));
     }
 
     private class DeleteForm extends BaseDeleteForm {
@@ -68,7 +66,7 @@ public final class WorkflowAdminPane extends BaseAdminPane {
         DeleteForm() {
             super(gz("cms.ui.workflow.delete_prompt"));
 
-            addSecurityListener(CmsConstants.PRIVILEGE_ADMINISTER_WORKFLOW);
+            addSecurityListener(AdminPrivileges.ADMINISTER_WORKFLOW);
         }
 
         @Override

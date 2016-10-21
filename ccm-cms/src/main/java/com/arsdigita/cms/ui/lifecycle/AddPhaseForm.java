@@ -52,6 +52,7 @@ import com.arsdigita.util.UncheckedWrapperException;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.ConfigurationManager;
 import org.librecms.CmsConstants;
+import org.librecms.contentsection.privileges.AdminPrivileges;
 import org.librecms.lifecycle.LifecycleDefinitionRepository;
 import org.librecms.lifecycle.PhaseDefinititionRepository;
 
@@ -211,7 +212,7 @@ class AddPhaseForm extends CMSForm {
         });
 
         addSubmissionListener(new FormSecurityListener(
-            CmsConstants.PRIVILEGE_ADMINISTER_LIFECYLES));
+            AdminPrivileges.ADMINISTER_LIFECYLES));
 
         addValidationListener(new FormValidationListener() {
 

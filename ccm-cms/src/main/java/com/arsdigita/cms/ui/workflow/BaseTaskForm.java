@@ -39,6 +39,7 @@ import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.workflow.TaskRepository;
 import org.libreccm.workflow.WorkflowManager;
 import org.librecms.CmsConstants;
+import org.librecms.contentsection.privileges.AdminPrivileges;
 import org.librecms.workflow.CmsTaskTypeRepository;
 
 import java.util.HashMap;
@@ -92,7 +93,7 @@ class BaseTaskForm extends BaseForm {
         addAction(new Finish());
         addAction(new Cancel());
 
-        addSecurityListener(CmsConstants.PRIVILEGE_ADMINISTER_WORKFLOW);
+        addSecurityListener(AdminPrivileges.ADMINISTER_WORKFLOW);
         addValidationListener(new ValidationListener());
     }
 

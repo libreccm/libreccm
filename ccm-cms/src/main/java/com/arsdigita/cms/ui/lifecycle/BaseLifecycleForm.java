@@ -38,6 +38,7 @@ import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.ConfigurationManager;
 import org.librecms.CmsConstants;
+import org.librecms.contentsection.privileges.AdminPrivileges;
 import org.librecms.lifecycle.LifecycleDefinition;
 
 import java.util.Locale;
@@ -77,7 +78,7 @@ class BaseLifecycleForm extends BaseForm {
         addAction(new Cancel());
 
         addSubmissionListener(new FormSecurityListener(
-            CmsConstants.PRIVILEGE_ADMINISTER_LIFECYLES));
+            AdminPrivileges.ADMINISTER_LIFECYLES));
     }
 
     class NameUniqueListener implements ParameterListener {

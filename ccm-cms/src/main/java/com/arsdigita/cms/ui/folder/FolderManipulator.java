@@ -66,16 +66,20 @@ import com.arsdigita.toolbox.ui.ActionGroup;
 import com.arsdigita.util.Assert;
 import com.arsdigita.util.UncheckedWrapperException;
 import com.arsdigita.web.Web;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+
 import org.apache.log4j.Logger;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import javax.persistence.TypedQuery;
+
 import org.arsdigita.cms.CMSConfig;
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryManager;
@@ -88,6 +92,7 @@ import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemManager;
 import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contentsection.ContentSectionConfig;
+import org.librecms.contentsection.privileges.ItemPrivileges;
 
 /**
  * Browse folders and manipulate them with various actions (move/copy/delete).
@@ -550,7 +555,7 @@ public class FolderManipulator extends SimpleContainer implements
             final PermissionChecker permissionChecker = cdiUtil.findBean(
                     PermissionChecker.class);
             if (!permissionChecker.isPermitted(
-                    CmsConstants.PRIVILEGE_ITEMS_CREATE_NEW, target)) {
+                    ItemPrivileges.CREATE_NEW, target)) {
                 data.addError("cms.ui.folder.no_permission_for_item",
                               CmsConstants.CMS_FOLDER_BUNDLE);
             }
@@ -589,7 +594,7 @@ public class FolderManipulator extends SimpleContainer implements
             }
 
             if (!(permissionChecker.isPermitted(
-                  CmsConstants.PRIVILEGE_ITEMS_DELETE, item))
+                  ItemPrivileges.DELETE, item))
                         && isMove(state)) {
                 addErrorMessage(data, "cms.ui.folder.no_permission_for_item",
                                 name);

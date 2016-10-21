@@ -24,7 +24,7 @@ import org.libreccm.categorization.Category;
 import org.libreccm.core.AbstractEntityRepository;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
-import org.librecms.CmsConstants;
+import org.librecms.contentsection.privileges.ItemPrivileges;
 
 import java.util.List;
 import java.util.Optional;
@@ -186,7 +186,7 @@ public class FolderRepository extends AbstractEntityRepository<Long, Folder> {
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public void save(
-        @RequiresPrivilege(CmsConstants.PRIVILEGE_ITEMS_CREATE_NEW)
+        @RequiresPrivilege(ItemPrivileges.CREATE_NEW)
         final Folder folder) {
         
         super.save(folder);
@@ -196,7 +196,7 @@ public class FolderRepository extends AbstractEntityRepository<Long, Folder> {
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public void delete(
-        @RequiresPrivilege(CmsConstants.PRIVILEGE_ITEMS_CREATE_NEW)
+        @RequiresPrivilege(ItemPrivileges.CREATE_NEW)
         final Folder folder) {
         
         super.delete(folder);

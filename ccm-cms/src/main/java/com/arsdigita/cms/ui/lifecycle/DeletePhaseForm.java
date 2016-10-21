@@ -39,6 +39,7 @@ import com.arsdigita.cms.ui.FormSecurityListener;
 
 import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.CmsConstants;
+import org.librecms.contentsection.privileges.AdminPrivileges;
 import org.librecms.lifecycle.PhaseDefinititionRepository;
 
 import java.math.BigDecimal;
@@ -87,7 +88,7 @@ class DeletePhaseForm extends CMSForm
         addInitListener(this);
 
         addSubmissionListener(new FormSecurityListener(
-            CmsConstants.PRIVILEGE_ADMINISTER_LIFECYLES));
+            AdminPrivileges.ADMINISTER_LIFECYLES));
 
         addProcessListener(this);
     }

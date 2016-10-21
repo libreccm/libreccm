@@ -44,12 +44,14 @@ import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
 import org.librecms.CmsConstants;
+import org.librecms.contentsection.privileges.AdminPrivileges;
+import org.librecms.contentsection.privileges.AssetPrivileges;
+import org.librecms.contentsection.privileges.ItemPrivileges;
 
 import org.librecms.lifecycle.LifecycleDefinition;
 
 import java.util.Optional;
 
-import static org.librecms.CmsConstants.*;
 import static org.librecms.contentsection.ContentSection.*;
 
 /**
@@ -140,48 +142,69 @@ public class ContentSectionManager {
                                 ALERT_RECIPIENT);
         addRoleToContentSection(section,
                                 AUTHOR,
-                                PRIVILEGE_ITEMS_CATEGORIZE,
-                                PRIVILEGE_ITEMS_CREATE_NEW,
-                                PRIVILEGE_ITEMS_EDIT,
-                                PRIVILEGE_ITEMS_VIEW_PUBLISHED,
-                                PRIVILEGE_ITEMS_PREVIEW);
+                                ItemPrivileges.CATEGORIZE,
+                                ItemPrivileges.CREATE_NEW,
+                                ItemPrivileges.EDIT,
+                                ItemPrivileges.VIEW_PUBLISHED,
+                                ItemPrivileges.PREVIEW,
+                                AssetPrivileges.USE,
+                                AssetPrivileges.CREATE_NEW,
+                                AssetPrivileges.EDIT,
+                                AssetPrivileges.VIEW,
+                                AssetPrivileges.DELETE);
         addRoleToContentSection(section,
                                 EDITOR,
-                                PRIVILEGE_ITEMS_CATEGORIZE,
-                                PRIVILEGE_ITEMS_CREATE_NEW,
-                                PRIVILEGE_ITEMS_EDIT,
-                                PRIVILEGE_ITEMS_APPROVE,
-                                PRIVILEGE_ITEMS_DELETE,
-                                PRIVILEGE_ITEMS_VIEW_PUBLISHED,
-                                PRIVILEGE_ITEMS_PREVIEW);
+                                ItemPrivileges.CATEGORIZE,
+                                ItemPrivileges.CREATE_NEW,
+                                ItemPrivileges.EDIT,
+                                ItemPrivileges.APPROVE,
+                                ItemPrivileges.DELETE,
+                                ItemPrivileges.VIEW_PUBLISHED,
+                                ItemPrivileges.PREVIEW,
+                                AssetPrivileges.USE,
+                                AssetPrivileges.CREATE_NEW,
+                                AssetPrivileges.EDIT,
+                                AssetPrivileges.VIEW,
+                                AssetPrivileges.DELETE);
         addRoleToContentSection(section,
                                 MANAGER,
-                                PRIVILEGE_ADMINISTER_ROLES,
-                                PRIVILEGE_ADMINISTER_WORKFLOW,
-                                PRIVILEGE_ADMINISTER_LIFECYLES,
-                                PRIVILEGE_ADMINISTER_CATEGORIES,
-                                PRIVILEGE_ADMINISTER_CONTENT_TYPES,
-                                PRIVILEGE_ITEMS_CATEGORIZE,
-                                PRIVILEGE_ITEMS_CREATE_NEW,
-                                PRIVILEGE_ITEMS_EDIT,
-                                PRIVILEGE_ITEMS_APPROVE,
-                                PRIVILEGE_ITEMS_PUBLISH,
-                                PRIVILEGE_ITEMS_DELETE,
-                                PRIVILEGE_ITEMS_VIEW_PUBLISHED,
-                                PRIVILEGE_ITEMS_PREVIEW);
+                                AdminPrivileges.ADMINISTER_ROLES,
+                                AdminPrivileges.ADMINISTER_WORKFLOW,
+                                AdminPrivileges.ADMINISTER_LIFECYLES,
+                                AdminPrivileges.ADMINISTER_CATEGORIES,
+                                AdminPrivileges.ADMINISTER_CONTENT_TYPES,
+                                ItemPrivileges.CATEGORIZE,
+                                ItemPrivileges.CREATE_NEW,
+                                ItemPrivileges.EDIT,
+                                ItemPrivileges.APPROVE,
+                                ItemPrivileges.PUBLISH,
+                                ItemPrivileges.DELETE,
+                                ItemPrivileges.VIEW_PUBLISHED,
+                                ItemPrivileges.PREVIEW,
+                                AssetPrivileges.USE,
+                                AssetPrivileges.CREATE_NEW,
+                                AssetPrivileges.EDIT,
+                                AssetPrivileges.VIEW,
+                                AssetPrivileges.DELETE);
         addRoleToContentSection(section,
                                 PUBLISHER,
-                                PRIVILEGE_ITEMS_CATEGORIZE,
-                                PRIVILEGE_ITEMS_CREATE_NEW,
-                                PRIVILEGE_ITEMS_EDIT,
-                                PRIVILEGE_ITEMS_APPROVE,
-                                PRIVILEGE_ITEMS_PUBLISH,
-                                PRIVILEGE_ITEMS_DELETE,
-                                PRIVILEGE_ITEMS_VIEW_PUBLISHED,
-                                PRIVILEGE_ITEMS_PREVIEW);
+                                ItemPrivileges.CATEGORIZE,
+                                ItemPrivileges.CREATE_NEW,
+                                ItemPrivileges.EDIT,
+                                ItemPrivileges.APPROVE,
+                                ItemPrivileges.PUBLISH,
+                                ItemPrivileges.DELETE,
+                                ItemPrivileges.VIEW_PUBLISHED,
+                                ItemPrivileges.PREVIEW,
+                                AssetPrivileges.USE,
+                                AssetPrivileges.CREATE_NEW,
+                                AssetPrivileges.EDIT,
+                                AssetPrivileges.VIEW,
+                                AssetPrivileges.DELETE);
         addRoleToContentSection(section,
                                 CONTENT_READER,
-                                PRIVILEGE_ITEMS_VIEW_PUBLISHED);
+                                ItemPrivileges.VIEW_PUBLISHED,
+                                AssetPrivileges.VIEW);
 
         return section;
     }
@@ -224,8 +247,8 @@ public class ContentSectionManager {
     /**
      * Adds new role to a content section. the new role will not have any
      * members, they have to be added separatly. This operation requires
-     * {@link CmsConstants#PRIVILEGE_ADMINISTER_ROLES} for the provided content
-     * section.
+     * {@link CmsConstants#AdminPrivileges.ADMINISTER_ROLES} for the provided
+     * content section.
      *
      * @param section    The {@link ContentSection} to which the role is added.
      * @param roleName   The name of the new role.
@@ -234,7 +257,7 @@ public class ContentSectionManager {
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public void addRoleToContentSection(
-        @RequiresPrivilege(PRIVILEGE_ADMINISTER_ROLES)
+        @RequiresPrivilege(AdminPrivileges.ADMINISTER_ROLES)
         final ContentSection section,
         final String roleName,
         final String... privileges) {
@@ -252,9 +275,9 @@ public class ContentSectionManager {
         role.setName(String.join("_", section.getLabel(), roleName));
         roleRepo.save(role);
 
-        final Category rootFolder = section.getRootDocumentsFolder();
+//        final Category rootFolder = section.getRootDocumentsFolder();
         for (String privilege : privileges) {
-            permissionManager.grantPrivilege(privilege, role, rootFolder);
+            permissionManager.grantPrivilege(privilege, role, section);
         }
 
         addRoleToContentSection(role, section);
@@ -263,8 +286,8 @@ public class ContentSectionManager {
     /**
      * Associates an existing role to with a content section. This will not
      * grant any permissions for the content section to the role. This operation
-     * requires {@link CmsConstants#PRIVILEGE_ADMINISTER_ROLES} for the provided
-     * content section.
+     * requires {@link CmsConstants#AdminPrivileges.ADMINISTER_ROLES} for the
+     * provided content section.
      *
      * @param role    The role to add.
      * @param section The section the role is associated with.
@@ -273,7 +296,7 @@ public class ContentSectionManager {
     @Transactional(Transactional.TxType.REQUIRED)
     public void addRoleToContentSection(
         final Role role,
-        @RequiresPrivilege(PRIVILEGE_ADMINISTER_ROLES)
+        @RequiresPrivilege(AdminPrivileges.ADMINISTER_ROLES)
         final ContentSection section) {
 
         if (section == null) {
@@ -295,8 +318,8 @@ public class ContentSectionManager {
      * role which are associated with the content section. The role itself is
      * <strong>not</strong> deleted because the role is maybe is used in other
      * places. This operation requires
-     * {@link CmsConstants#PRIVILEGE_ADMINISTER_ROLES} for the provided content
-     * section.
+     * {@link CmsConstants#AdminPrivileges.ADMINISTER_ROLES} for the provided
+     * content section.
      *
      * @param contentSection The section from which the role is removed.
      * @param role           The role to remove from the content section.
@@ -304,7 +327,7 @@ public class ContentSectionManager {
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public void removeRoleFromContentSection(
-        @RequiresPrivilege(PRIVILEGE_ADMINISTER_ROLES)
+        @RequiresPrivilege(AdminPrivileges.ADMINISTER_ROLES)
         final ContentSection contentSection,
         final Role role) {
 
@@ -334,8 +357,8 @@ public class ContentSectionManager {
 
     /**
      * Adds a lifecycle definition to a content section. This operation requires
-     * {@link CmsConstants#PRIVILEGE_ADMINISTER_LIFECYLES} for the provided
-     * content section.
+     * {@link CmsConstants#AdminPrivileges.ADMINISTER_LIFECYLES} for the
+     * provided content section.
      *
      * @param definition The lifecycle definition to add.
      * @param section    The section to which the definition is added.
@@ -344,7 +367,7 @@ public class ContentSectionManager {
     @Transactional(Transactional.TxType.REQUIRED)
     public void addLifecycleDefinitionToContentSection(
         final LifecycleDefinition definition,
-        @RequiresPrivilege(PRIVILEGE_ADMINISTER_LIFECYLES)
+        @RequiresPrivilege(AdminPrivileges.ADMINISTER_LIFECYLES)
         final ContentSection section) {
 
         section.addLifecycleDefinition(definition);
@@ -353,8 +376,8 @@ public class ContentSectionManager {
 
     /**
      * Removes a lifecycle definition from a content section. This operation
-     * requires {@link CmsConstants#PRIVILEGE_ADMINISTER_LIFECYLES} for the
-     * provided content section.
+     * requires {@link CmsConstants#AdminPrivileges.ADMINISTER_LIFECYLES} for
+     * the provided content section.
      *
      * @param definition The definition to remove.
      * @param section    The section from which the definition is removed.
@@ -363,7 +386,7 @@ public class ContentSectionManager {
     @Transactional(Transactional.TxType.REQUIRED)
     public void removeLifecycleDefinitionFromContentSection(
         final LifecycleDefinition definition,
-        @RequiresPrivilege(PRIVILEGE_ADMINISTER_LIFECYLES)
+        @RequiresPrivilege(AdminPrivileges.ADMINISTER_LIFECYLES)
         final ContentSection section) {
 
         section.removeLifecycleDefinition(definition);
@@ -372,7 +395,7 @@ public class ContentSectionManager {
 
     /**
      * Adds a workflow template to a content section. This operation requires
-     * {@link CmsConstants#PRIVILEGE_ADMINISTER_WORKFLOW} for the provided
+     * {@link CmsConstants#AdminPrivileges.ADMINISTER_WORKFLOW} for the provided
      * content section.
      *
      * @param template The template to add.
@@ -382,7 +405,7 @@ public class ContentSectionManager {
     @Transactional(Transactional.TxType.REQUIRED)
     public void addWorkflowTemplateToContentSection(
         final WorkflowTemplate template,
-        @RequiresPrivilege(PRIVILEGE_ADMINISTER_WORKFLOW)
+        @RequiresPrivilege(AdminPrivileges.ADMINISTER_WORKFLOW)
         final ContentSection section) {
 
         section.addWorkflowTemplate(template);
@@ -391,7 +414,7 @@ public class ContentSectionManager {
 
     /**
      * Removes a workflow template from a content section. This operation
-     * requires {@link CmsConstants#PRIVILEGE_ADMINISTER_WORKFLOW} for the
+     * requires {@link CmsConstants#AdminPrivileges.ADMINISTER_WORKFLOW} for the
      * provided content section.
      *
      * @param template The template to remove.
@@ -401,7 +424,7 @@ public class ContentSectionManager {
     @Transactional(Transactional.TxType.REQUIRED)
     public void removeWorkflowTemplateFromContentSection(
         final WorkflowTemplate template,
-        @RequiresPrivilege(PRIVILEGE_ADMINISTER_WORKFLOW)
+        @RequiresPrivilege(AdminPrivileges.ADMINISTER_WORKFLOW)
         final ContentSection section) {
 
         section.removeWorkflowTemplate(template);
@@ -433,8 +456,8 @@ public class ContentSectionManager {
     /**
      * Adds a new {@link ContentType} to a content section, making items of that
      * type available in the content section. This operation requires
-     * {@link CmsConstants#PRIVILEGE_ADMINISTER_CONTENT_TYPES} for the provided
-     * content section.
+     * {@link CmsConstants#AdminPrivileges.ADMINISTER_CONTENT_TYPES} for the
+     * provided content section.
      *
      * @param type             The type to add (a subclass of
      *                         {@link ContentItem}.
@@ -456,7 +479,7 @@ public class ContentSectionManager {
     @Transactional(Transactional.TxType.REQUIRED)
     public ContentType addContentTypeToSection(
         final Class<? extends ContentItem> type,
-        @RequiresPrivilege(CmsConstants.PRIVILEGE_ADMINISTER_CONTENT_TYPES)
+        @RequiresPrivilege(AdminPrivileges.ADMINISTER_CONTENT_TYPES)
         final ContentSection section,
         final LifecycleDefinition defaultLifecycle,
         final WorkflowTemplate defaultWorkflow) {
@@ -506,7 +529,7 @@ public class ContentSectionManager {
                 section.getObjectId(),
                 section.getDisplayName()));
         }
-        
+
         if (hasContentType(type, section)) {
             return typeRepo.findByContentSectionAndClass(section, type).get();
         }
@@ -557,8 +580,8 @@ public class ContentSectionManager {
     /**
      * Removes an <em>unused</em> {@link ContentType} from a
      * {@link ContentSection}. This operation requires
-     * {@link CmsConstants#PRIVILEGE_ADMINISTER_CONTENT_TYPES} for the provided
-     * content section.
+     * {@link CmsConstants#AdminPrivileges.ADMINISTER_CONTENT_TYPES} for the
+     * provided content section.
      *
      * @param type    The type to remove from the section.
      * @param section The section from which the type is removed.
@@ -573,7 +596,7 @@ public class ContentSectionManager {
     @Transactional(Transactional.TxType.REQUIRED)
     public void removeContentTypeFromSection(
         final Class<? extends ContentItem> type,
-        @RequiresPrivilege(CmsConstants.PRIVILEGE_ADMINISTER_CONTENT_TYPES)
+        @RequiresPrivilege(AdminPrivileges.ADMINISTER_CONTENT_TYPES)
         final ContentSection section) {
 
         if (type == null) {

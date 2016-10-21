@@ -25,6 +25,7 @@ import com.arsdigita.cms.ui.BaseForm;
 import com.arsdigita.globalization.GlobalizedMessage;
 
 import org.librecms.CmsConstants;
+import org.librecms.contentsection.privileges.AdminPrivileges;
 
 /**
  * <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
@@ -50,7 +51,7 @@ class BaseWorkflowForm extends BaseForm {
         addAction(new Finish());
         addAction(new Cancel());
 
-        addSecurityListener(CmsConstants.PRIVILEGE_ADMINISTER_WORKFLOW);
+        addSecurityListener(AdminPrivileges.ADMINISTER_WORKFLOW);
         addValidationListener(new ValidationListener());
     }
 

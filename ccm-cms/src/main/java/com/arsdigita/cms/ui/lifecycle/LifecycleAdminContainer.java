@@ -29,21 +29,19 @@ import com.arsdigita.toolbox.ui.SecurityContainer;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.PermissionChecker;
 import org.librecms.CmsConstants;
-
+import org.librecms.contentsection.privileges.AdminPrivileges;
 
 /**
- * Security container that wraps the canAdministerLifecycles access check
- * around its components.
+ * Security container that wraps the canAdministerLifecycles access check around
+ * its components.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @author <a href="mailto:pihman@arsdigita.com">Michael Pih</a>
  */
 public class LifecycleAdminContainer extends SecurityContainer {
 
-
     /**
-     * This default constructor should be followed by calls to
-     * <code>add</code>.
+     * This default constructor should be followed by calls to <code>add</code>.
      */
     public LifecycleAdminContainer() {
         super();
@@ -62,14 +60,17 @@ public class LifecycleAdminContainer extends SecurityContainer {
      * Returns true if the current user can access the child component.
      *
      * @param state The page state
+     *
      * @return true if the access checks pass, false otherwise
      */
     @Override
     protected boolean canAccess(final Party party, final PageState state) {
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-        final PermissionChecker permissionChecker = cdiUtil.findBean(PermissionChecker.class);
-        
-        return permissionChecker.isPermitted(CmsConstants.PRIVILEGE_ADMINISTER_LIFECYLES);
+        final PermissionChecker permissionChecker = cdiUtil.findBean(
+            PermissionChecker.class);
+
+        return permissionChecker.isPermitted(
+            AdminPrivileges.ADMINISTER_LIFECYLES);
     }
 
 }

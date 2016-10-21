@@ -30,11 +30,13 @@ import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.toolbox.ui.ActionGroup;
 import com.arsdigita.toolbox.ui.PropertyList;
 import com.arsdigita.toolbox.ui.Section;
+
 import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.security.*;
 import org.librecms.CmsConstants;
+import org.librecms.contentsection.privileges.AdminPrivileges;
 
 import java.util.stream.Collectors;
 
@@ -92,7 +94,7 @@ class BaseRoleItemPane extends BaseItemPane {
 
     private class AdminVisible extends VisibilityComponent {
         AdminVisible(final Component child) {
-            super(child, CmsConstants.PRIVILEGE_ADMINISTER_ROLES);
+            super(child, AdminPrivileges.ADMINISTER_ROLES);
         }
     }
 
@@ -180,7 +182,7 @@ class BaseRoleItemPane extends BaseItemPane {
                 final PageState state = e.getPageState();
                 final PermissionChecker permissionChecker = cdiUtil.findBean(PermissionChecker.class);
 
-                if (!permissionChecker.isPermitted(CmsConstants.PRIVILEGE_ADMINISTER_ROLES)) {
+                if (!permissionChecker.isPermitted(AdminPrivileges.ADMINISTER_ROLES)) {
                     throw new FormProcessException(
                             new GlobalizedMessage("cms.ui.role.insufficient_privileges", CmsConstants.CMS_BUNDLE));
                 }

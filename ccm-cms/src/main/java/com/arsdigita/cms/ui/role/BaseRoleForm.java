@@ -32,12 +32,14 @@ import com.arsdigita.cms.ui.BaseForm;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.ui.admin.GlobalizationUtil;
 import com.arsdigita.util.UncheckedWrapperException;
+
 import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.PermissionManager;
 import org.libreccm.security.Role;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentSection;
+import org.librecms.contentsection.privileges.AdminPrivileges;
 
 import java.util.*;
 
@@ -78,7 +80,7 @@ class BaseRoleForm extends BaseForm {
         addAction(new Finish());
         addAction(new Cancel());
 
-        addSecurityListener(CmsConstants.PRIVILEGE_ADMINISTER_ROLES);
+        addSecurityListener(AdminPrivileges.ADMINISTER_ROLES);
     }
 
     private class PrivilegePrinter implements PrintListener {

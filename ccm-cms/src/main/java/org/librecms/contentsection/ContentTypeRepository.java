@@ -22,6 +22,7 @@ import org.libreccm.core.AbstractEntityRepository;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
 import org.librecms.CmsConstants;
+import org.librecms.contentsection.privileges.AdminPrivileges;
 
 import java.util.List;
 import java.util.Optional;
@@ -180,7 +181,7 @@ public class ContentTypeRepository
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public void save(
-        @RequiresPrivilege(CmsConstants.PRIVILEGE_ADMINISTER_CONTENT_TYPES)
+        @RequiresPrivilege(AdminPrivileges.ADMINISTER_CONTENT_TYPES)
         final ContentType type) {
 
         super.save(type);
@@ -190,7 +191,7 @@ public class ContentTypeRepository
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public void delete(
-        @RequiresPrivilege(CmsConstants.PRIVILEGE_ADMINISTER_CONTENT_TYPES)
+        @RequiresPrivilege(AdminPrivileges.ADMINISTER_CONTENT_TYPES)
         final ContentType type) {
         
         if (isContentTypeInUse(type)) {

@@ -48,6 +48,7 @@ import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contentsection.ContentSection;
+import org.librecms.contentsection.privileges.ItemPrivileges;
 
 
 /**
@@ -288,7 +289,7 @@ public class CMSPage extends Page implements ResourceHandler {
             final ContentItem item = itemRepo.findById(Long.parseLong("item_id")).get();
             final PermissionChecker permissionChecker = cdiUtil.findBean(
                 PermissionChecker.class);
-            permissionChecker.checkPermission(CmsConstants.PRIVILEGE_ITEMS_PREVIEW, 
+            permissionChecker.checkPermission(ItemPrivileges.PREVIEW, 
                                               item);
         }
         

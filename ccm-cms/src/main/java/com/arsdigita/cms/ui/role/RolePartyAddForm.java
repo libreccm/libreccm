@@ -28,10 +28,12 @@ import com.arsdigita.cms.ui.FormSecurityListener;
 import com.arsdigita.cms.ui.PartyAddForm;
 import com.arsdigita.ui.admin.GlobalizationUtil;
 import com.arsdigita.util.Assert;
+
 import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.*;
 import org.librecms.CmsConstants;
+import org.librecms.contentsection.privileges.AdminPrivileges;
 
 import java.util.Arrays;
 import java.util.List;
@@ -62,7 +64,7 @@ class RolePartyAddForm extends PartyAddForm {
         m_roles = roles;
 
         getForm().addSubmissionListener
-            (new FormSecurityListener(CmsConstants.PRIVILEGE_ADMINISTER_ROLES));
+            (new FormSecurityListener(AdminPrivileges.ADMINISTER_ROLES));
     }
 
 

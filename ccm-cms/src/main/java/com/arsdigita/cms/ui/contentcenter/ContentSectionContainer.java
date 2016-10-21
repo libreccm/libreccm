@@ -18,23 +18,15 @@
  */
 package com.arsdigita.cms.ui.contentcenter;
 
-import com.arsdigita.bebop.BoxPanel;
-
-import java.math.BigDecimal;
 
 import com.arsdigita.bebop.Component;
 import com.arsdigita.bebop.Embedded;
-import com.arsdigita.bebop.FormProcessException;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.Link;
 import com.arsdigita.bebop.Page;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.SingleSelectionModel;
 import com.arsdigita.bebop.Table;
-import com.arsdigita.bebop.event.FormProcessListener;
-import com.arsdigita.bebop.event.FormSectionEvent;
-import com.arsdigita.bebop.event.FormSubmissionListener;
-import com.arsdigita.bebop.form.Hidden;
 import com.arsdigita.bebop.parameters.BigDecimalParameter;
 import com.arsdigita.bebop.table.TableCellRenderer;
 import com.arsdigita.bebop.table.TableColumn;
@@ -43,24 +35,18 @@ import com.arsdigita.bebop.table.TableModel;
 import com.arsdigita.bebop.table.TableModelBuilder;
 import com.arsdigita.cms.ui.CMSContainer;
 import com.arsdigita.ui.admin.GlobalizationUtil;
-import com.arsdigita.util.Assert;
 import com.arsdigita.util.LockableImpl;
-import com.arsdigita.web.Web;
 
 import org.libreccm.categorization.Category;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.PermissionChecker;
-import org.libreccm.security.User;
-import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentSection;
-import org.librecms.contentsection.ContentSectionConfig;
 import org.librecms.contentsection.ContentSectionRepository;
+import org.librecms.contentsection.privileges.ItemPrivileges;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.mail.Folder;
 
 /**
  * Displays all the content sections in table, with links to the admin (and in
@@ -171,7 +157,7 @@ public class ContentSectionContainer extends CMSContainer {
 //                    folder = section.getRootDocumentsFolder();
 //
 //                    if (!permissionChecker.isPermitted(
-//                        CmsConstants.PRIVILEGE_ITEMS_CREATE_NEW, folder)) {
+//                        ItemPrivileges.CREATE_NEW, folder)) {
 //                        throw new FormProcessException(
 //                            (GlobalizationUtil.globalize(
 //                             "cms.ui.insufficient_privileges")));
@@ -414,7 +400,7 @@ public class ContentSectionContainer extends CMSContainer {
                 return allSections
                     .stream()
                     .filter(section -> permissionChecker
-                        .isPermitted(CmsConstants.PRIVILEGE_ITEMS_VIEW_PUBLISHED,
+                        .isPermitted(ItemPrivileges.VIEW_PUBLISHED,
                                      section))
                     .collect(Collectors.toList());
             }
@@ -616,7 +602,7 @@ public class ContentSectionContainer extends CMSContainer {
 
             // If the user has no access, return a Label instead of a Link
             if (permissionChecker.isPermitted(
-                CmsConstants.PRIVILEGE_ITEMS_EDIT,
+                ItemPrivileges.EDIT,
                 section.getRootDocumentsFolder())) {
 
                 return new Link(section.getLabel(),

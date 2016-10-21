@@ -46,6 +46,7 @@ import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionRepository;
+import org.librecms.contentsection.privileges.ItemPrivileges;
 
 /**
  * <p>
@@ -281,7 +282,7 @@ public class CMSDispatcher implements Dispatcher, ChainedDispatcher {
                 .findBean(PermissionChecker.class);
 
             if (permissionChecker.isPermitted(
-                CmsConstants.PRIVILEGE_ITEMS_VIEW_PUBLISHED, item)) {
+                ItemPrivileges.VIEW_PUBLISHED, item)) {
                 if (preview) {
                     item = getContentItem(section,
                                           remainingUrl,
@@ -384,13 +385,13 @@ public class CMSDispatcher implements Dispatcher, ChainedDispatcher {
                 return;
             }
             //if (!sm.canAccess(user, SecurityManager.ADMIN_PAGES)) {
-            permissionChecker.checkPermission(CmsConstants.PRIVILEGE_ITEMS_EDIT,
+            permissionChecker.checkPermission(ItemPrivileges.EDIT,
                                               section.getRootDocumentsFolder());
         } else {
             // For public page requests, use the SecurityManager to check access
             // SecurityManager.canAccess(user, SecurityManager.PUBLIC_PAGES) must
             permissionChecker.checkPermission(
-                CmsConstants.PRIVILEGE_ITEMS_VIEW_PUBLISHED,
+                ItemPrivileges.VIEW_PUBLISHED,
                 section.getRootDocumentsFolder());
         }
     }

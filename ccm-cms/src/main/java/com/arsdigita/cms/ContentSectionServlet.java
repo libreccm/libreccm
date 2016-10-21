@@ -68,6 +68,7 @@ import org.librecms.contentsection.ContentItemManager;
 import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionConfig;
+import org.librecms.contentsection.privileges.ItemPrivileges;
 import org.librecms.lifecycle.Lifecycle;
 
 import javax.enterprise.inject.spi.CDI;
@@ -425,7 +426,7 @@ public class ContentSectionServlet extends BaseApplicationServlet {
             PermissionChecker.class);
         if (s_cacheItems && contentItemManager.isLive(item)) {
             if (permissionChecker.isPermitted(
-                CmsConstants.PRIVILEGE_ITEMS_VIEW_PUBLISHED, item)) {
+                ItemPrivileges.VIEW_PUBLISHED, item)) {
                 DispatcherHelper.cacheForWorld(sresp, expires);
             } else {
                 DispatcherHelper.cacheForUser(sresp, expires);
@@ -540,7 +541,7 @@ public class ContentSectionServlet extends BaseApplicationServlet {
             item = itemResolver.getItem(section, url, CMSDispatcher.PREVIEW);
             if (item != null) {
                 hasPermission = permissionChecker.isPermitted(
-                    CmsConstants.PRIVILEGE_ITEMS_PREVIEW, item);
+                    ItemPrivileges.PREVIEW, item);
             }
         } else {
             if (s_log.isInfoEnabled()) {
@@ -588,7 +589,7 @@ public class ContentSectionServlet extends BaseApplicationServlet {
                 }
 
                 hasPermission = permissionChecker.isPermitted(
-                    CmsConstants.PRIVILEGE_ITEMS_VIEW_PUBLISHED, item);
+                    ItemPrivileges.VIEW_PUBLISHED, item);
 
                 if (hasPermission) {
                 }
@@ -611,7 +612,7 @@ public class ContentSectionServlet extends BaseApplicationServlet {
             item = itemResolver.getItem(section, url, "live");
             if (item != null) {
                 hasPermission = permissionChecker.isPermitted(
-                    CmsConstants.PRIVILEGE_ITEMS_VIEW_PUBLISHED, item);
+                    ItemPrivileges.VIEW_PUBLISHED, item);
             }
         }
 
@@ -747,7 +748,7 @@ public class ContentSectionServlet extends BaseApplicationServlet {
     public static boolean checkAdminAccess(HttpServletRequest request,
                                            ContentSection section) {
         return CdiUtil.createCdiUtil().findBean(PermissionChecker.class)
-            .isPermitted(CmsConstants.PRIVILEGE_ITEMS_EDIT,
+            .isPermitted(ItemPrivileges.EDIT,
                          section.getRootDocumentsFolder());
     }
 

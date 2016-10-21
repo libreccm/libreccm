@@ -30,6 +30,7 @@ import org.libreccm.web.ApplicationManager;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentSection;
+import org.librecms.contentsection.privileges.ItemPrivileges;
 
 import java.io.IOException;
 
@@ -125,7 +126,7 @@ public class ContentSectionDispatcher implements Dispatcher {
                                            ContentSection section) {
 
         return CdiUtil.createCdiUtil().findBean(PermissionChecker.class)
-            .isPermitted(CmsConstants.PRIVILEGE_ITEMS_EDIT, section
+            .isPermitted(ItemPrivileges.EDIT, section
                          .getRootDocumentsFolder());
     }
 

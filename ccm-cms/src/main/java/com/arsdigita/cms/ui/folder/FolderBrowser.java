@@ -76,6 +76,7 @@ import org.librecms.contentsection.ContentItemManager;
 import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionManager;
+import org.librecms.contentsection.privileges.ItemPrivileges;
 
 import java.util.Date;
 
@@ -218,7 +219,7 @@ public class FolderBrowser extends Table {
         Assert.exists(folder);
 
         final boolean canDelete = permissionChecker.isPermitted(
-            CmsConstants.PRIVILEGE_ITEMS_DELETE, folder);
+            ItemPrivileges.DELETE, folder);
         m_deleteColumn.setVisible(state, canDelete);
     }
 

@@ -30,6 +30,9 @@ import java.util.UUID;
 
 import static org.librecms.CmsConstants.*;
 import static org.librecms.contentsection.ContentSection.*;
+import org.librecms.contentsection.privileges.AdminPrivileges;
+import org.librecms.contentsection.privileges.AssetPrivileges;
+import org.librecms.contentsection.privileges.ItemPrivileges;
 
 /**
  *
@@ -123,52 +126,91 @@ public class ContentSectionSetup extends AbstractCcmApplicationSetup {
 
         grantPermissions(author,
                          rootFolder,
-                         PRIVILEGE_ITEMS_CATEGORIZE,
-                         PRIVILEGE_ITEMS_CREATE_NEW,
-                         PRIVILEGE_ITEMS_EDIT,
-                         PRIVILEGE_ITEMS_VIEW_PUBLISHED,
-                         PRIVILEGE_ITEMS_PREVIEW);
+                         ItemPrivileges.CATEGORIZE,
+                         ItemPrivileges.CREATE_NEW,
+                         ItemPrivileges.EDIT,
+                         ItemPrivileges.VIEW_PUBLISHED,
+                         ItemPrivileges.PREVIEW);
+        
+        grantPermissions(author, 
+                         rootAssetFolder,
+                         AssetPrivileges.USE,
+                         AssetPrivileges.CREATE_NEW,
+                         AssetPrivileges.EDIT,
+                         AssetPrivileges.VIEW,
+                         AssetPrivileges.DELETE);
 
         grantPermissions(editor,
                          rootFolder,
-                         PRIVILEGE_ITEMS_CATEGORIZE,
-                         PRIVILEGE_ITEMS_CREATE_NEW,
-                         PRIVILEGE_ITEMS_EDIT,
-                         PRIVILEGE_ITEMS_APPROVE,
-                         PRIVILEGE_ITEMS_DELETE,
-                         PRIVILEGE_ITEMS_VIEW_PUBLISHED,
-                         PRIVILEGE_ITEMS_PREVIEW);
+                         ItemPrivileges.CATEGORIZE,
+                         ItemPrivileges.CREATE_NEW,
+                         ItemPrivileges.EDIT,
+                         ItemPrivileges.APPROVE,
+                         ItemPrivileges.DELETE,
+                         ItemPrivileges.VIEW_PUBLISHED,
+                         ItemPrivileges.PREVIEW);
+        
+        grantPermissions(editor, 
+                         rootAssetFolder,
+                         AssetPrivileges.USE,
+                         AssetPrivileges.CREATE_NEW,
+                         AssetPrivileges.EDIT,
+                         AssetPrivileges.VIEW,
+                         AssetPrivileges.DELETE);
 
         grantPermissions(manager,
+                         section,
+                         AdminPrivileges.ADMINISTER_ROLES,
+                         AdminPrivileges.ADMINISTER_WORKFLOW,
+                         AdminPrivileges.ADMINISTER_LIFECYLES,
+                         AdminPrivileges.ADMINISTER_CATEGORIES,
+                         AdminPrivileges.ADMINISTER_CONTENT_TYPES);
+        
+        grantPermissions(manager,
                          rootFolder,
-                         PRIVILEGE_ADMINISTER_ROLES,
-                         PRIVILEGE_ADMINISTER_WORKFLOW,
-                         PRIVILEGE_ADMINISTER_LIFECYLES,
-                         PRIVILEGE_ADMINISTER_CATEGORIES,
-                         PRIVILEGE_ADMINISTER_CONTENT_TYPES,
-                         PRIVILEGE_ITEMS_CATEGORIZE,
-                         PRIVILEGE_ITEMS_CREATE_NEW,
-                         PRIVILEGE_ITEMS_EDIT,
-                         PRIVILEGE_ITEMS_APPROVE,
-                         PRIVILEGE_ITEMS_PUBLISH,
-                         PRIVILEGE_ITEMS_DELETE,
-                         PRIVILEGE_ITEMS_VIEW_PUBLISHED,
-                         PRIVILEGE_ITEMS_PREVIEW);
+                         ItemPrivileges.CATEGORIZE,
+                         ItemPrivileges.CREATE_NEW,
+                         ItemPrivileges.EDIT,
+                         ItemPrivileges.APPROVE,
+                         ItemPrivileges.PUBLISH,
+                         ItemPrivileges.DELETE,
+                         ItemPrivileges.VIEW_PUBLISHED,
+                         ItemPrivileges.PREVIEW);
+        
+        grantPermissions(manager, 
+                         rootAssetFolder,
+                         AssetPrivileges.USE,
+                         AssetPrivileges.CREATE_NEW,
+                         AssetPrivileges.EDIT,
+                         AssetPrivileges.VIEW,
+                         AssetPrivileges.DELETE);
 
         grantPermissions(publisher,
                          rootFolder,
-                         PRIVILEGE_ITEMS_CATEGORIZE,
-                         PRIVILEGE_ITEMS_CREATE_NEW,
-                         PRIVILEGE_ITEMS_EDIT,
-                         PRIVILEGE_ITEMS_APPROVE,
-                         PRIVILEGE_ITEMS_PUBLISH,
-                         PRIVILEGE_ITEMS_DELETE,
-                         PRIVILEGE_ITEMS_VIEW_PUBLISHED,
-                         PRIVILEGE_ITEMS_PREVIEW);
+                         ItemPrivileges.CATEGORIZE,
+                         ItemPrivileges.CREATE_NEW,
+                         ItemPrivileges.EDIT,
+                         ItemPrivileges.APPROVE,
+                         ItemPrivileges.PUBLISH,
+                         ItemPrivileges.DELETE,
+                         ItemPrivileges.VIEW_PUBLISHED,
+                         ItemPrivileges.PREVIEW);
+        
+        grantPermissions(publisher, 
+                         rootAssetFolder,
+                         AssetPrivileges.USE,
+                         AssetPrivileges.CREATE_NEW,
+                         AssetPrivileges.EDIT,
+                         AssetPrivileges.VIEW,
+                         AssetPrivileges.DELETE);
 
         grantPermissions(contentReader,
                          rootFolder,
-                         PRIVILEGE_ITEMS_VIEW_PUBLISHED);
+                         ItemPrivileges.VIEW_PUBLISHED);
+        
+        grantPermissions(contentReader,
+                         rootAssetFolder,
+                         AssetPrivileges.VIEW);
 
         getEntityManager().persist(alertRecipient);
         getEntityManager().persist(author);

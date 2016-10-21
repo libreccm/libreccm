@@ -47,6 +47,7 @@ import org.libreccm.security.RequiresPrivilege;
 import org.libreccm.workflow.Workflow;
 import org.libreccm.workflow.WorkflowManager;
 import org.librecms.CmsConstants;
+import org.librecms.contentsection.privileges.ItemPrivileges;
 import org.librecms.lifecycle.Lifecycle;
 import org.librecms.lifecycle.LifecycleManager;
 
@@ -125,7 +126,7 @@ public class ContentItemManager {
     public <T extends ContentItem> T createContentItem(
         final String name,
         final ContentSection section,
-        @RequiresPrivilege(CmsConstants.PRIVILEGE_ITEMS_CREATE_NEW)
+        @RequiresPrivilege(ItemPrivileges.CREATE_NEW)
         final Folder folder,
         final Class<T> type) {
 
@@ -174,7 +175,7 @@ public class ContentItemManager {
     public <T extends ContentItem> T createContentItem(
         final String name,
         final ContentSection section,
-        @RequiresPrivilege(CmsConstants.PRIVILEGE_ITEMS_CREATE_NEW)
+        @RequiresPrivilege(ItemPrivileges.CREATE_NEW)
         final Folder folder,
         final WorkflowTemplate workflowTemplate,
         final Class<T> type) {
@@ -250,9 +251,9 @@ public class ContentItemManager {
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public void move(
-        @RequiresPrivilege(CmsConstants.PRIVILEGE_ITEMS_EDIT)
+        @RequiresPrivilege(ItemPrivileges.EDIT)
         final ContentItem item,
-        @RequiresPrivilege(CmsConstants.PRIVILEGE_ITEMS_CREATE_NEW)
+        @RequiresPrivilege(ItemPrivileges.CREATE_NEW)
         final Folder targetFolder) {
         if (item == null) {
             throw new IllegalArgumentException("The item to move can't be null.");
@@ -322,7 +323,7 @@ public class ContentItemManager {
     @SuppressWarnings("unchecked")
     public ContentItem copy(
         final ContentItem item,
-        @RequiresPrivilege(CmsConstants.PRIVILEGE_ITEMS_CREATE_NEW)
+        @RequiresPrivilege(ItemPrivileges.CREATE_NEW)
         final Folder targetFolder) {
         if (item == null) {
             throw new IllegalArgumentException("The item to copy can't be null.");
@@ -563,7 +564,7 @@ public class ContentItemManager {
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public ContentItem publish(
-        @RequiresPrivilege(CmsConstants.PRIVILEGE_ITEMS_PUBLISH)
+        @RequiresPrivilege(ItemPrivileges.PUBLISH)
         final ContentItem item) {
 
         if (item == null) {
@@ -591,7 +592,7 @@ public class ContentItemManager {
     @Transactional(Transactional.TxType.REQUIRED)
     @SuppressWarnings("unchecked")
     public ContentItem publish(
-        @RequiresPrivilege(CmsConstants.PRIVILEGE_ITEMS_PUBLISH)
+        @RequiresPrivilege(ItemPrivileges.PUBLISH)
         final ContentItem item,
         final LifecycleDefinition lifecycleDefinition) {
         if (item == null) {
@@ -787,7 +788,7 @@ public class ContentItemManager {
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public void publish(
-        @RequiresPrivilege(CmsConstants.PRIVILEGE_ITEMS_PUBLISH)
+        @RequiresPrivilege(ItemPrivileges.PUBLISH)
         final Folder folder) {
 
         // Ensure that we are using a fresh folder and that the folder was 
@@ -811,7 +812,7 @@ public class ContentItemManager {
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public void unpublish(
-        @RequiresPrivilege(CmsConstants.PRIVILEGE_ITEMS_PUBLISH)
+        @RequiresPrivilege(ItemPrivileges.PUBLISH)
         final ContentItem item) {
         if (item == null) {
             throw new IllegalArgumentException(
@@ -860,7 +861,7 @@ public class ContentItemManager {
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public void unpublish(
-        @RequiresPrivilege(CmsConstants.PRIVILEGE_ITEMS_PUBLISH)
+        @RequiresPrivilege(ItemPrivileges.PUBLISH)
         final Folder folder) {
 
         // Ensure that we are using a fresh folder and that the folder was 
@@ -910,7 +911,7 @@ public class ContentItemManager {
     @Transactional(Transactional.TxType.REQUIRED)
     @SuppressWarnings({"unchecked"})
     public <T extends ContentItem> Optional<T> getLiveVersion(
-        @RequiresPrivilege(CmsConstants.PRIVILEGE_ITEMS_VIEW_PUBLISHED)
+        @RequiresPrivilege(ItemPrivileges.VIEW_PUBLISHED)
         final ContentItem item,
         final Class<T> type) {
 
@@ -972,7 +973,7 @@ public class ContentItemManager {
     @Transactional(Transactional.TxType.REQUIRED)
     @SuppressWarnings("unchecked")
     public <T extends ContentItem> T getDraftVersion(
-        @RequiresPrivilege(CmsConstants.PRIVILEGE_ITEMS_PREVIEW)
+        @RequiresPrivilege(ItemPrivileges.PREVIEW)
         final ContentItem item,
         final Class<T> type) {
 

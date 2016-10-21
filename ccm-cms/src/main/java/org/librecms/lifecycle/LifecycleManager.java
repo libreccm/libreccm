@@ -23,6 +23,7 @@ import org.apache.logging.log4j.Logger;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
 import org.librecms.CmsConstants;
+import org.librecms.contentsection.privileges.AdminPrivileges;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +60,7 @@ public class LifecycleManager {
 
     @Transactional(Transactional.TxType.REQUIRED)
     @AuthorizationRequired
-    @RequiresPrivilege(CmsConstants.PRIVILEGE_ADMINISTER_LIFECYLES)
+    @RequiresPrivilege(AdminPrivileges.ADMINISTER_LIFECYLES)
     public void addPhaseDefinition(
         final LifecycleDefinition lifecycleDefinition,
         final PhaseDefinition phaseDefinition) {
@@ -72,7 +73,7 @@ public class LifecycleManager {
 
     @Transactional(Transactional.TxType.REQUIRED)
     @AuthorizationRequired
-    @RequiresPrivilege(CmsConstants.PRIVILEGE_ADMINISTER_LIFECYLES)
+    @RequiresPrivilege(AdminPrivileges.ADMINISTER_LIFECYLES)
     public void removePhaseDefinition(
         final LifecycleDefinition lifecycleDefinition,
         final PhaseDefinition phaseDefinition) {
@@ -85,7 +86,7 @@ public class LifecycleManager {
 
     @Transactional(Transactional.TxType.REQUIRED)
     @AuthorizationRequired
-    @RequiresPrivilege(CmsConstants.PRIVILEGE_ADMINISTER_LIFECYLES)
+    @RequiresPrivilege(AdminPrivileges.ADMINISTER_LIFECYLES)
     public Lifecycle createLifecycle(
         final LifecycleDefinition lifecycleDefinition) {
 
@@ -113,7 +114,7 @@ public class LifecycleManager {
 
     @Transactional(Transactional.TxType.REQUIRED)
     @AuthorizationRequired
-    @RequiresPrivilege(CmsConstants.PRIVILEGE_ADMINISTER_LIFECYLES)
+    @RequiresPrivilege(AdminPrivileges.ADMINISTER_LIFECYLES)
     public void startLifecycle(final Lifecycle lifecycle) {
         if (!lifecycle.isStarted()) {
             if (lifecycle.isFinished()) {
@@ -147,7 +148,7 @@ public class LifecycleManager {
 
     @Transactional(Transactional.TxType.REQUIRED)
     @AuthorizationRequired
-    @RequiresPrivilege(CmsConstants.PRIVILEGE_ADMINISTER_LIFECYLES)
+    @RequiresPrivilege(AdminPrivileges.ADMINISTER_LIFECYLES)
     public void nextPhase(final Lifecycle lifecycle) {
         if (lifecycle.isStarted()) {
             int current = -1;
@@ -182,7 +183,7 @@ public class LifecycleManager {
 
     @Transactional(Transactional.TxType.REQUIRED)
     @AuthorizationRequired
-    @RequiresPrivilege(CmsConstants.PRIVILEGE_ADMINISTER_LIFECYLES)
+    @RequiresPrivilege(AdminPrivileges.ADMINISTER_LIFECYLES)
     public void reset(final Lifecycle lifecycle) {
         lifecycle.setStarted(false);
         lifecycle.setFinished(false);

@@ -26,6 +26,7 @@ import org.libreccm.l10n.LocalizedString;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
 import org.librecms.CmsConstants;
+import org.librecms.contentsection.privileges.ItemPrivileges;
 
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -147,7 +148,7 @@ public class ContentItemL10NManager {
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public void addLanguage(
-        @RequiresPrivilege(CmsConstants.PRIVILEGE_ITEMS_EDIT)
+        @RequiresPrivilege(ItemPrivileges.EDIT)
         final ContentItem item,
         final Locale locale) {
 
@@ -218,7 +219,7 @@ public class ContentItemL10NManager {
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public void removeLangauge(
-        @RequiresPrivilege(CmsConstants.PRIVILEGE_ITEMS_EDIT)
+        @RequiresPrivilege(ItemPrivileges.EDIT)
         final ContentItem item,
         final Locale locale) {
 
@@ -265,7 +266,7 @@ public class ContentItemL10NManager {
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public void normalizedLanguages(
-        @RequiresPrivilege(CmsConstants.PRIVILEGE_ITEMS_EDIT)
+        @RequiresPrivilege(ItemPrivileges.EDIT)
         final ContentItem item) {
 
         if (item == null) {

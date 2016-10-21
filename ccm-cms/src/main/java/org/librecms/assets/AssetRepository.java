@@ -29,6 +29,7 @@ import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.Folder;
+import org.librecms.contentsection.privileges.AssetPrivileges;
 
 import java.util.List;
 import java.util.Optional;
@@ -89,6 +90,15 @@ public class AssetRepository
         }
     }
 
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    @Override
+    public void save(
+        @RequiresPrivilege(AssetPrivileges.EDIT)
+        final Asset asset) {
+        
+    }
+    
     /**
      * Deletes an <strong>unused</strong> Asset. If the {@link Asset} is in use
      * (linked to at least one ContentItem) an {@link AssetInUseException} is
@@ -103,7 +113,7 @@ public class AssetRepository
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public void delete(
-        @RequiresPrivilege(CmsConstants.PRIVILEGE_ITEMS_DELETE)
+        @RequiresPrivilege(AssetPrivileges.DELETE)
         final Asset asset) {
 
         if (asset.getItemAttachments().isEmpty()) {

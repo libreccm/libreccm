@@ -58,6 +58,7 @@ import static org.libreccm.testutils.DependenciesHelpers.*;
 import org.jboss.arquillian.container.test.api.ShouldThrowException;
 import org.libreccm.workflow.WorkflowTemplate;
 import org.libreccm.workflow.WorkflowTemplateRepository;
+import org.librecms.contentsection.privileges.ItemPrivileges;
 import org.librecms.contenttypes.Article;
 import org.librecms.contenttypes.Event;
 import org.librecms.contenttypes.News;
@@ -279,9 +280,9 @@ public class ContentSectionManagerTest {
 
         manager.addRoleToContentSection(section,
                                         "reviewer",
-                                        PRIVILEGE_ITEMS_VIEW_PUBLISHED,
-                                        PRIVILEGE_ITEMS_PREVIEW,
-                                        PRIVILEGE_ITEMS_APPROVE);
+                                        ItemPrivileges.VIEW_PUBLISHED,
+                                        ItemPrivileges.PREVIEW,
+                                        ItemPrivileges.APPROVE);
     }
 
     /**
@@ -301,9 +302,9 @@ public class ContentSectionManagerTest {
     public void addRoleSectionIsNull() {
         manager.addRoleToContentSection(null,
                                         "reviewer",
-                                        PRIVILEGE_ITEMS_VIEW_PUBLISHED,
-                                        PRIVILEGE_ITEMS_PREVIEW,
-                                        PRIVILEGE_ITEMS_APPROVE);
+                                        ItemPrivileges.VIEW_PUBLISHED,
+                                        ItemPrivileges.PREVIEW,
+                                        ItemPrivileges.APPROVE);
     }
 
     /**
@@ -325,9 +326,9 @@ public class ContentSectionManagerTest {
 
         manager.addRoleToContentSection(section,
                                         null,
-                                        PRIVILEGE_ITEMS_VIEW_PUBLISHED,
-                                        PRIVILEGE_ITEMS_PREVIEW,
-                                        PRIVILEGE_ITEMS_APPROVE);
+                                        ItemPrivileges.VIEW_PUBLISHED,
+                                        ItemPrivileges.PREVIEW,
+                                        ItemPrivileges.APPROVE);
     }
 
     /**
@@ -349,9 +350,9 @@ public class ContentSectionManagerTest {
 
         manager.addRoleToContentSection(section,
                                         " ",
-                                        PRIVILEGE_ITEMS_VIEW_PUBLISHED,
-                                        PRIVILEGE_ITEMS_PREVIEW,
-                                        PRIVILEGE_ITEMS_APPROVE);
+                                        ItemPrivileges.VIEW_PUBLISHED,
+                                        ItemPrivileges.PREVIEW,
+                                        ItemPrivileges.APPROVE);
     }
 
     /**
