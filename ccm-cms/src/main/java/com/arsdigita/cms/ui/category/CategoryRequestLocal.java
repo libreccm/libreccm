@@ -23,7 +23,7 @@ import com.arsdigita.bebop.RequestLocal;
 import org.apache.log4j.Logger;
 import org.libreccm.categorization.Category;
 
-public class CategoryRequestLocal extends RequestLocal {
+class CategoryRequestLocal extends RequestLocal {
 
     private static final Logger s_log = Logger.getLogger
         (CategoryRequestLocal.class);
