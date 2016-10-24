@@ -32,7 +32,6 @@ import org.libreccm.categorization.CategoryManager;
 import org.libreccm.core.CoreConstants;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
-import org.librecms.CmsConstants;
 import org.librecms.attachments.AttachmentList;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.Folder;
@@ -124,7 +123,9 @@ public class AssetManager {
      * Users of this class usually should use these methods. This method has
      * been made public for special cases. Please note that this class does
      * <strong>not</strong>
-     * perform any authorization checks. This is up to the caller.
+     * perform any authorisation checks. This is up to the caller. Also if no
+     * folder is provided and the caller does not add the created asset to an
+     * {@link AttachmentList} the asset will become orphaned can't be accessed.
      *
      * @param <T> Type variable for the type of the {@link Asset}.
      * @param name The name of the new {@link Asset}.
@@ -149,7 +150,7 @@ public class AssetManager {
      */
     @Transactional(Transactional.TxType.REQUIRED)
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
-    public void deleteOrphanedAssets() {
+    public void cleanOrphanedAssets() {
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 

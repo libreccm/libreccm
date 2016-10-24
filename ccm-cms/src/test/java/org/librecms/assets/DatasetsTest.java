@@ -45,7 +45,9 @@ public class DatasetsTest extends DatasetsVerifier {
     public static Collection<String> data() {
         return Arrays.asList(new String[]{
             "/datasets/org/librecms/assets/AssetRepositoryTest/data.xml",
-            "/datasets/org/librecms/assets/AssetRepositoryTest/after-delete.xml"
+            "/datasets/org/librecms/assets/AssetRepositoryTest/after-delete.xml",
+            
+            "/datasets/org/librecms/assets/AssetManagerTest/data.xml",
         });
     }
 
