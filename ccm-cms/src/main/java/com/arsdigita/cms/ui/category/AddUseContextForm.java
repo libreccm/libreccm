@@ -29,15 +29,20 @@ import com.arsdigita.bebop.parameters.ParameterData;
 import com.arsdigita.bebop.util.GlobalizationUtil;
 import com.arsdigita.cms.CMS;
 import com.arsdigita.cms.ui.BaseForm;
+import com.arsdigita.kernel.KernelConfig;
 import org.apache.log4j.Logger;
 import org.libreccm.categorization.Category;
 import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.l10n.LocalizedString;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.privileges.AdminPrivileges;
 
 
 /**
+ * TODO Needs a description.
+ *
+ * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  * @author Scott Seago
  * @version $Id: AddUseContextForm.java 2090 2010-04-17 08:04:14Z pboy $
  */
@@ -95,12 +100,15 @@ class AddUseContextForm extends BaseForm {
             final PageState state = e.getPageState();
 
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final ConfigurationManager manager = cdiUtil.findBean(ConfigurationManager.class);
+            final KernelConfig config = manager.findConfiguration(KernelConfig.class);
 
             final String useContext = (String) m_useContext.getValue(state);
 
             final String rootName = (String) m_rootName.getValue(state);
             final LocalizedString rootDescription = new LocalizedString();
-            rootDescription.addValue(null, (String) m_rootDescription.getValue(state));
+            rootDescription.addValue(config.getDefaultLocale(), (String) m_rootDescription.getValue(state));
+
             Category root = new Category();
             root.setName(rootName);
             root.setDescription(rootDescription);
