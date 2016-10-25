@@ -48,6 +48,14 @@ public class DatasetsTest extends DatasetsVerifier {
             "/datasets/org/librecms/assets/AssetRepositoryTest/after-delete.xml",
             
             "/datasets/org/librecms/assets/AssetManagerTest/data.xml",
+            "/datasets/org/librecms/assets/AssetManagerTest/after-clean-orphaned.xml",
+            "/datasets/org/librecms/assets/AssetManagerTest/after-copy-to-other-contentsection.xml",
+            "/datasets/org/librecms/assets/AssetManagerTest/after-copy-to-other-folder.xml",
+            "/datasets/org/librecms/assets/AssetManagerTest/after-copy-to-same-folder.xml",
+            "/datasets/org/librecms/assets/AssetManagerTest/after-create-nonshared.xml",
+            "/datasets/org/librecms/assets/AssetManagerTest/after-create-shared.xml",
+            "/datasets/org/librecms/assets/AssetManagerTest/after-move-to-other-contentsection.xml",
+            "/datasets/org/librecms/assets/AssetManagerTest/after-move-to-other-folder.xml",
         });
     }
 

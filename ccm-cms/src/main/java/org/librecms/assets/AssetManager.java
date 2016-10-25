@@ -18,8 +18,11 @@
  */
 package org.librecms.assets;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -28,6 +31,8 @@ import javax.transaction.Transactional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.libreccm.categorization.Categorization;
+import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryManager;
 import org.libreccm.core.CoreConstants;
 import org.libreccm.security.AuthorizationRequired;
@@ -39,6 +44,8 @@ import org.librecms.contentsection.FolderManager;
 import org.librecms.contentsection.FolderRepository;
 import org.librecms.contentsection.privileges.AssetPrivileges;
 import org.librecms.contentsection.privileges.ItemPrivileges;
+
+import static org.librecms.CmsConstants.*;
 
 /**
  * Provides methods for managing {@link Asset}s, especially sharable
@@ -195,7 +202,7 @@ public class AssetManager {
      */
     @Transactional(Transactional.TxType.REQUIRED)
     public boolean isAssetInUse(final Asset asset) {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        return !asset.getItemAttachments().isEmpty();
     }
 
     /**
@@ -210,7 +217,7 @@ public class AssetManager {
      * @see #getAssetPath(org.librecms.assets.Asset, boolean)
      */
     public String getAssetPath(final Asset asset) {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        return getAssetPath(asset, false);
     }
 
     /**
@@ -219,20 +226,52 @@ public class AssetManager {
      * @param asset The {@link Asset} for which the path is generated.
      * @param withContentSection Whether to include the content section into the
      * path or not.
-     * @return The path of the asset.
+     * @return The path of the asset. For non shared assets this is an empty
+     * string.
      *
      * @see #getAssetPath(org.librecms.assets.Asset)
      */
     public String getAssetPath(final Asset asset,
                                final boolean withContentSection) {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        final List<Categorization> result = asset.getCategories().stream()
+                .filter(categorization -> {
+                    return CATEGORIZATION_TYPE_FOLDER.equals(
+                            categorization.getType());
+                })
+                .collect(Collectors.toList());
+
+        if (result.isEmpty()) {
+            return "";
+        } else {
+            final List<String> tokens = new ArrayList<>();
+            tokens.add(asset.getDisplayName());
+
+            Category current = result.get(0).getCategory();
+            tokens.add(current.getName());
+            while (current.getParentCategory() != null) {
+                current = current.getParentCategory();
+                tokens.add(current.getName());
+            }
+
+            Collections.reverse(tokens);
+            final String path = String.join("/", tokens);
+
+            if (withContentSection) {
+                final String sectionName = ((Folder) result.get(0).getCategory()).
+                        getSection().getDisplayName();
+                return String.format("%s:/%s", sectionName, path);
+            } else {
+                return String.format("/%s", path);
+            }
+        }
     }
 
     /**
      * Creates a list of the folder in which an asset is placed.
      *
      * @param asset
-     * @return
+     * @return A list of the folders which form the path of the asset. For non
+     * shared assets an empty list is returned.
      */
     public List<Folder> getAssetFolders(final Asset asset) {
         throw new UnsupportedOperationException("Not implemented yet.");
@@ -246,6 +285,14 @@ public class AssetManager {
      * shared asset an empty {@link Optional} is returned.
      */
     public Optional<Folder> getAssetFolder(final Asset asset) {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        return asset.getCategories().stream()
+                .filter(categorization -> {
+                    return CATEGORIZATION_TYPE_FOLDER.equals(
+                            categorization.getType());
+                })
+                .map(categorization -> {
+                    return (Folder) categorization.getCategory();
+                })
+                .findFirst();
     }
 }

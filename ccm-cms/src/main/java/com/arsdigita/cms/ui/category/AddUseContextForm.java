@@ -131,9 +131,9 @@ class AddUseContextForm extends BaseForm {
                 }
 
             }*/
-            m_model.setSelectedKey(state, useContext == null ? 
-                                   CategoryUseContextModelBuilder.DEFAULT_USE_CONTEXT :
-                                   useContext);
+//            m_model.setSelectedKey(state, useContext == null ? 
+//                                   CategoryUseContextModelBuilder.DEFAULT_USE_CONTEXT :
+//                                   useContext);
         }
     }
 }

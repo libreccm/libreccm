@@ -18,6 +18,9 @@
  */
 package org.librecms.assets;
 
+import java.util.List;
+import java.util.Optional;
+
 import static org.libreccm.testutils.DependenciesHelpers.*;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -45,6 +48,7 @@ import org.librecms.attachments.AttachmentList;
 import org.librecms.contentsection.FolderRepository;
 
 import javax.inject.Inject;
+import org.librecms.contentsection.Folder;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
@@ -95,61 +99,61 @@ public class AssetManagerTest {
     @Deployment
     public static WebArchive createDeployment() {
         return ShrinkWrap
-            .create(WebArchive.class,
-                    "LibreCCM-org.librecms.assets.AssetManagerTest.war")
-            .addPackage(org.libreccm.auditing.CcmRevision.class.getPackage())
-            .addPackage(org.libreccm.categorization.Categorization.class
-                .getPackage())
-            .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
-            .addPackage(org.libreccm.configuration.Configuration.class
-                .getPackage())
-            .addPackage(org.libreccm.core.CcmCore.class.getPackage())
-            .addPackage(org.libreccm.jpa.EntityManagerProducer.class
-                .getPackage())
-            .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
-                .getPackage())
-            .addPackage(org.libreccm.l10n.LocalizedString.class
-                .getPackage())
-            .addPackage(org.libreccm.security.Permission.class.getPackage())
-            .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
-            .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
-            .addPackage(com.arsdigita.bebop.Component.class.getPackage())
-            .addPackage(com.arsdigita.bebop.util.BebopConstants.class
-                .getPackage())
-            .addClass(com.arsdigita.kernel.KernelConfig.class)
-            .addClass(com.arsdigita.runtime.CCMResourceManager.class)
-            .addClass(
-                com.arsdigita.ui.admin.applications.AbstractAppInstanceForm.class)
-            .addClass(
-                com.arsdigita.ui.admin.applications.AbstractAppSettingsPane.class)
-            .addClass(
-                com.arsdigita.ui.admin.applications.DefaultApplicationInstanceForm.class)
-            .addClass(
-                com.arsdigita.ui.admin.applications.DefaultApplicationSettingsPane.class)
-            .addClass(com.arsdigita.cms.dispatcher.ItemResolver.class)
-            .addPackage(com.arsdigita.util.Lockable.class.getPackage())
-            .addPackage(com.arsdigita.web.BaseServlet.class.getPackage())
-            .addPackage(org.librecms.Cms.class.getPackage())
-            .addPackage(org.librecms.assets.Asset.class.getPackage())
-            .addPackage(org.librecms.attachments.AttachmentList.class
-                .getPackage())
-            .addPackage(org.librecms.lifecycle.Lifecycle.class.getPackage())
-            .addPackage(org.librecms.contentsection.ContentSection.class
-                .getPackage())
-            .addPackage(org.librecms.contenttypes.Article.class.getPackage()).
-            addClass(com.arsdigita.kernel.security.SecurityConfig.class)
-            .addPackage(org.libreccm.tests.categories.IntegrationTest.class
-                .getPackage())
-            //            .addAsLibraries(getModuleDependencies())
-            .addAsLibraries(getCcmCoreDependencies())
-            .addAsResource("configs/shiro.ini", "shiro.ini")
-            .addAsResource(
-                "configs/org/librecms/contentsection/ContentItemManagerTest/log4j2.xml",
-                "log4j2.xml")
-            .addAsResource("test-persistence.xml",
-                           "META-INF/persistence.xml")
-            .addAsWebInfResource("test-web.xml", "web.xml")
-            .addAsWebInfResource(EmptyAsset.INSTANCE, "WEB-INF/beans.xml");
+                .create(WebArchive.class,
+                        "LibreCCM-org.librecms.assets.AssetManagerTest.war")
+                .addPackage(org.libreccm.auditing.CcmRevision.class.getPackage()).
+                addPackage(org.libreccm.categorization.Categorization.class
+                        .getPackage())
+                .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
+                .addPackage(org.libreccm.configuration.Configuration.class
+                        .getPackage())
+                .addPackage(org.libreccm.core.CcmCore.class.getPackage())
+                .addPackage(org.libreccm.jpa.EntityManagerProducer.class
+                        .getPackage())
+                .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
+                        .getPackage())
+                .addPackage(org.libreccm.l10n.LocalizedString.class
+                        .getPackage())
+                .addPackage(org.libreccm.security.Permission.class.getPackage())
+                .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
+                .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
+                .addPackage(com.arsdigita.bebop.Component.class.getPackage())
+                .addPackage(com.arsdigita.bebop.util.BebopConstants.class
+                        .getPackage())
+                .addClass(com.arsdigita.kernel.KernelConfig.class)
+                .addClass(com.arsdigita.runtime.CCMResourceManager.class)
+                .addClass(
+                        com.arsdigita.ui.admin.applications.AbstractAppInstanceForm.class).
+                addClass(
+                        com.arsdigita.ui.admin.applications.AbstractAppSettingsPane.class).
+                addClass(
+                        com.arsdigita.ui.admin.applications.DefaultApplicationInstanceForm.class).
+                addClass(
+                        com.arsdigita.ui.admin.applications.DefaultApplicationSettingsPane.class).
+                addClass(com.arsdigita.cms.dispatcher.ItemResolver.class)
+                .addPackage(com.arsdigita.util.Lockable.class.getPackage())
+                .addPackage(com.arsdigita.web.BaseServlet.class.getPackage())
+                .addPackage(org.librecms.Cms.class.getPackage())
+                .addPackage(org.librecms.assets.Asset.class.getPackage())
+                .addPackage(org.librecms.attachments.AttachmentList.class
+                        .getPackage())
+                .addPackage(org.librecms.lifecycle.Lifecycle.class.getPackage())
+                .addPackage(org.librecms.contentsection.ContentSection.class
+                        .getPackage())
+                .addPackage(org.librecms.contenttypes.Article.class.getPackage()).
+                addClass(com.arsdigita.kernel.security.SecurityConfig.class)
+                .addPackage(org.libreccm.tests.categories.IntegrationTest.class
+                        .getPackage())
+                //            .addAsLibraries(getModuleDependencies())
+                .addAsLibraries(getCcmCoreDependencies())
+                .addAsResource("configs/shiro.ini", "shiro.ini")
+                .addAsResource(
+                        "configs/org/librecms/contentsection/ContentItemManagerTest/log4j2.xml",
+                        "log4j2.xml")
+                .addAsResource("test-persistence.xml",
+                               "META-INF/persistence.xml")
+                .addAsWebInfResource("test-web.xml", "web.xml")
+                .addAsWebInfResource(EmptyAsset.INSTANCE, "WEB-INF/beans.xml");
     }
 
     /**
@@ -184,10 +188,10 @@ public class AssetManagerTest {
     @InSequence(100)
     @UsingDataSet("datasets/org/librecms/assets/AssetManagerTest/data.xml")
     @ShouldMatchDataSet(
-        value = "datasets/org/librecms/assets/AssetManagerTest/"
-                    + "after-create-nonshared.xml",
-        excludeColumns = {"object_id",
-                          "uuid"})
+            value = "datasets/org/librecms/assets/AssetManagerTest/"
+                            + "after-create-nonshared.xml",
+            excludeColumns = {"object_id",
+                              "uuid"})
     public void createNonSharedAssets() {
         fail();
     }
@@ -260,10 +264,10 @@ public class AssetManagerTest {
     @InSequence(200)
     @UsingDataSet("datasets/org/librecms/assets/AssetManagerTest/data.xml")
     @ShouldMatchDataSet(
-        value = "datasets/org/librecms/assets/AssetManagerTest/"
-                    + "after-create-shared.xml",
-        excludeColumns = {"object_id",
-                          "uuid"})
+            value = "datasets/org/librecms/assets/AssetManagerTest/"
+                            + "after-create-shared.xml",
+            excludeColumns = {"object_id",
+                              "uuid"})
     public void createSharedAssets() {
         fail();
     }
@@ -336,10 +340,10 @@ public class AssetManagerTest {
     @InSequence(300)
     @UsingDataSet("datasets/org/librecms/assets/AssetManagerTest/data.xml")
     @ShouldMatchDataSet(
-        value = "datasets/org/librecms/assets/AssetManagerTest/"
-                    + "after-clean-orphaned.xml",
-        excludeColumns = {"object_id",
-                          "uuid"})
+            value = "datasets/org/librecms/assets/AssetManagerTest/"
+                            + "after-clean-orphaned.xml",
+            excludeColumns = {"object_id",
+                              "uuid"})
     public void cleanOrphanedAssets() {
         fail();
     }
@@ -352,10 +356,10 @@ public class AssetManagerTest {
     @InSequence(400)
     @UsingDataSet("datasets/org/librecms/assets/AssetManagerTest/data.xml")
     @ShouldMatchDataSet(
-        value = "datasets/org/librecms/assets/AssetManagerTest/"
-                    + "after-move-to-other-folder.xml",
-        excludeColumns = {"object_id",
-                          "uuid"})
+            value = "datasets/org/librecms/assets/AssetManagerTest/"
+                            + "after-move-to-other-folder.xml",
+            excludeColumns = {"object_id",
+                              "uuid"})
     public void moveAssetToOtherFolder() {
         fail();
     }
@@ -368,10 +372,10 @@ public class AssetManagerTest {
     @InSequence(410)
     @UsingDataSet("datasets/org/librecms/assets/AssetManagerTest/data.xml")
     @ShouldMatchDataSet(
-        value = "datasets/org/librecms/assets/AssetManagerTest/"
-                    + "after-move-to-other-contentsection.xml",
-        excludeColumns = {"object_id",
-                          "uuid"})
+            value = "datasets/org/librecms/assets/AssetManagerTest/"
+                            + "after-move-to-other-contentsection.xml",
+            excludeColumns = {"object_id",
+                              "uuid"})
     public void moveAssetToFolderInOtherContentSection() {
         fail();
     }
@@ -429,10 +433,10 @@ public class AssetManagerTest {
     @InSequence(500)
     @UsingDataSet("datasets/org/librecms/assets/AssetManagerTest/data.xml")
     @ShouldMatchDataSet(
-        value = "datasets/org/librecms/assets/AssetManagerTest/"
-                    + "after-copy-to-other-folder.xml",
-        excludeColumns = {"object_id",
-                          "uuid"})
+            value = "datasets/org/librecms/assets/AssetManagerTest/"
+                            + "after-copy-to-other-folder.xml",
+            excludeColumns = {"object_id",
+                              "uuid"})
     public void copyAssetToOtherFolder() {
         fail();
     }
@@ -445,10 +449,10 @@ public class AssetManagerTest {
     @InSequence(510)
     @UsingDataSet("datasets/org/librecms/assets/AssetManagerTest/data.xml")
     @ShouldMatchDataSet(
-        value = "datasets/org/librecms/assets/AssetManagerTest/"
-                    + "after-copy-to-same-folder.xml",
-        excludeColumns = {"object_id",
-                          "uuid"})
+            value = "datasets/org/librecms/assets/AssetManagerTest/"
+                            + "after-copy-to-same-folder.xml",
+            excludeColumns = {"object_id",
+                              "uuid"})
     public void copyAssetToSameFolder() {
         fail();
     }
@@ -462,10 +466,10 @@ public class AssetManagerTest {
     @InSequence(520)
     @UsingDataSet("datasets/org/librecms/assets/AssetManagerTest/data.xml")
     @ShouldMatchDataSet(
-        value = "datasets/org/librecms/assets/AssetManagerTest/"
-                    + "after-copy-to-other-contentsection.xml",
-        excludeColumns = {"object_id",
-                          "uuid"})
+            value = "datasets/org/librecms/assets/AssetManagerTest/"
+                            + "after-copy-to-other-contentsection.xml",
+            excludeColumns = {"object_id",
+                              "uuid"})
     public void copyAssetToOtherContentSection() {
         fail();
     }
@@ -520,11 +524,28 @@ public class AssetManagerTest {
      * {@link AssetManager#isAssetInUse(org.librecms.assets.Asset)} for various
      * {@link Asset}s.
      */
+    @Test
     @InSequence(600)
     @UsingDataSet("datasets/org/librecms/assets/AssetManagerTest/data.xml")
     @ShouldMatchDataSet("datasets/org/librecms/assets/AssetManagerTest/data.xml")
     public void verifyIsAssetInUse() {
-        fail();
+        final Asset header = assetRepo.findById(-700L);
+        final Asset phb = assetRepo.findById(-800L);
+        final Asset servicesHeader = assetRepo.findById(-900L);
+        final Asset product1Datasheet = assetRepo.findById(-1000L);
+        final Asset catalog = assetRepo.findById(-1100L);
+
+        assertThat(header, is(not(nullValue())));
+        assertThat(phb, is(not(nullValue())));
+        assertThat(servicesHeader, is(not(nullValue())));
+        assertThat(product1Datasheet, is(not(nullValue())));
+        assertThat(catalog, is(not(nullValue())));
+
+        assertThat(assetManager.isAssetInUse(header), is(true));
+        assertThat(assetManager.isAssetInUse(phb), is(false));
+        assertThat(assetManager.isAssetInUse(servicesHeader), is(true));
+        assertThat(assetManager.isAssetInUse(product1Datasheet), is(true));
+        assertThat(assetManager.isAssetInUse(catalog), is(true));
     }
 
     /**
@@ -532,11 +553,33 @@ public class AssetManagerTest {
      * {@link AssetManager#getAssetPath(org.librecms.assets.Asset)} for various
      * {@link Asset}s.
      */
+    @Test
     @InSequence(700)
     @UsingDataSet("datasets/org/librecms/assets/AssetManagerTest/data.xml")
     @ShouldMatchDataSet("datasets/org/librecms/assets/AssetManagerTest/data.xml")
     public void verifyGetAssetPathWithoutContentSection() {
-        fail();
+        final Asset header = assetRepo.findById(-700L);
+        final Asset phb = assetRepo.findById(-800L);
+        final Asset servicesHeader = assetRepo.findById(-900L);
+        final Asset product1Datasheet = assetRepo.findById(-1000L);
+        final Asset catalog = assetRepo.findById(-1100L);
+
+        assertThat(header, is(not(nullValue())));
+        assertThat(phb, is(not(nullValue())));
+        assertThat(servicesHeader, is(not(nullValue())));
+        assertThat(product1Datasheet, is(not(nullValue())));
+        assertThat(catalog, is(not(nullValue())));
+
+        assertThat(assetManager.getAssetPath(header),
+                   is(equalTo("/media/header.png")));
+        assertThat(assetManager.getAssetPath(phb),
+                   is(equalTo("/media/the-phb.png")));
+        assertThat(assetManager.getAssetPath(servicesHeader),
+                   is(equalTo("/media/services-header.png")));
+        assertThat(assetManager.getAssetPath(product1Datasheet),
+                   is(equalTo("")));
+        assertThat(assetManager.getAssetPath(catalog),
+                   is(equalTo("/media/catalog.pdf")));
     }
 
     /**
@@ -544,11 +587,33 @@ public class AssetManagerTest {
      * }
      * for various {@link Asset}s.
      */
+    @Test
     @InSequence(800)
     @UsingDataSet("datasets/org/librecms/assets/AssetManagerTest/data.xml")
     @ShouldMatchDataSet("datasets/org/librecms/assets/AssetManagerTest/data.xml")
     public void verifyGetAssetPathWithContentSection() {
-        fail();
+        final Asset header = assetRepo.findById(-700L);
+        final Asset phb = assetRepo.findById(-800L);
+        final Asset servicesHeader = assetRepo.findById(-900L);
+        final Asset product1Datasheet = assetRepo.findById(-1000L);
+        final Asset catalog = assetRepo.findById(-1100L);
+
+        assertThat(header, is(not(nullValue())));
+        assertThat(phb, is(not(nullValue())));
+        assertThat(servicesHeader, is(not(nullValue())));
+        assertThat(product1Datasheet, is(not(nullValue())));
+        assertThat(catalog, is(not(nullValue())));
+
+        assertThat(assetManager.getAssetPath(header, true),
+                   is(equalTo("info:/media/header.png")));
+        assertThat(assetManager.getAssetPath(phb, true),
+                   is(equalTo("info:/media/the-phb.png")));
+        assertThat(assetManager.getAssetPath(servicesHeader, true),
+                   is(equalTo("info:/media/services-header.png")));
+        assertThat(assetManager.getAssetPath(product1Datasheet, true),
+                   is(equalTo("")));
+        assertThat(assetManager.getAssetPath(catalog, true),
+                   is(equalTo("info:/media/catalog.pdf")));
     }
 
     /**
@@ -556,11 +621,47 @@ public class AssetManagerTest {
      * {@link AssetManager#getAssetFolder(org.librecms.assets.Asset)} for
      * various {@link Asset}s.
      */
+    @Test
     @InSequence(900)
     @UsingDataSet("datasets/org/librecms/assets/AssetManagerTest/data.xml")
     @ShouldMatchDataSet("datasets/org/librecms/assets/AssetManagerTest/data.xml")
     public void verifyGetAssetFolder() {
-        fail();
+        final Asset header = assetRepo.findById(-700L);
+        final Asset phb = assetRepo.findById(-800L);
+        final Asset servicesHeader = assetRepo.findById(-900L);
+        final Asset product1Datasheet = assetRepo.findById(-1000L);
+        final Asset catalog = assetRepo.findById(-1100L);
+
+        assertThat(header, is(not(nullValue())));
+        assertThat(phb, is(not(nullValue())));
+        assertThat(servicesHeader, is(not(nullValue())));
+        assertThat(product1Datasheet, is(not(nullValue())));
+        assertThat(catalog, is(not(nullValue())));
+
+        final Folder media = folderRepo.findById(-400L);
+        assertThat(media, is(not(nullValue())));
+
+        final Optional<Folder> headerFolder = assetManager
+                .getAssetFolder(header);
+        final Optional<Folder> phbFolder = assetManager
+                .getAssetFolder(phb);
+        final Optional<Folder> servicesHeaderFolder = assetManager
+                .getAssetFolder(servicesHeader);
+        final Optional<Folder> product1DatasheetFolder = assetManager
+                .getAssetFolder(product1Datasheet);
+        final Optional<Folder> catalogFolder = assetManager
+                .getAssetFolder(catalog);
+
+        assertThat(headerFolder.isPresent(), is(true));
+        assertThat(phbFolder.isPresent(), is(true));
+        assertThat(servicesHeaderFolder.isPresent(), is(true));
+        assertThat(product1DatasheetFolder.isPresent(), is(false));
+        assertThat(catalogFolder.isPresent(), is(true));
+
+        assertThat(headerFolder.get(), is(equalTo(media)));
+        assertThat(phbFolder.get(), is(equalTo(media)));
+        assertThat(servicesHeaderFolder.get(), is(equalTo(media)));
+        assertThat(catalogFolder.get(), is(equalTo(media)));
     }
 
     /**
@@ -568,11 +669,68 @@ public class AssetManagerTest {
      * }
      * for various {@link Asset}s.
      */
+    @Test
     @InSequence(1000)
     @UsingDataSet("datasets/org/librecms/assets/AssetManagerTest/data.xml")
     @ShouldMatchDataSet("datasets/org/librecms/assets/AssetManagerTest/data.xml")
     public void verifyGetAssetFolders() {
-        fail();
+        final Asset header = assetRepo.findById(-700L);
+        final Asset phb = assetRepo.findById(-800L);
+        final Asset servicesHeader = assetRepo.findById(-900L);
+        final Asset product1Datasheet = assetRepo.findById(-1000L);
+        final Asset catalog = assetRepo.findById(-1100L);
+
+        assertThat(header, is(not(nullValue())));
+        assertThat(phb, is(not(nullValue())));
+        assertThat(servicesHeader, is(not(nullValue())));
+        assertThat(product1Datasheet, is(not(nullValue())));
+        assertThat(catalog, is(not(nullValue())));
+
+        final Folder infoAssets = folderRepo.findById(-300L);
+        final Folder media = folderRepo.findById(-400L);
+
+        assertThat(infoAssets, is(not(nullValue())));
+        assertThat(media, is(not(nullValue())));
+
+        final List<Folder> headerFolders = assetManager.getAssetFolders(header);
+        final List<Folder> phbFolders = assetManager.getAssetFolders(phb);
+        final List<Folder> servicesHeaderFolders = assetManager.getAssetFolders(
+                phb);
+        final List<Folder> product1DatasheetFolders = assetManager.
+                getAssetFolders(product1Datasheet);
+        final List<Folder> catalogFolders = assetManager.
+                getAssetFolders(catalog);
+
+        assertThat(headerFolders, is(not(nullValue())));
+        assertThat(phbFolders, is(not(nullValue())));
+        assertThat(servicesHeaderFolders, is(not(nullValue())));
+        assertThat(product1DatasheetFolders, is(not(nullValue())));
+        assertThat(catalogFolders, is(not(nullValue())));
+
+        assertThat(headerFolders.isEmpty(), is(false));
+        assertThat(phbFolders.isEmpty(), is(false));
+        assertThat(servicesHeaderFolders.isEmpty(), is(false));
+        assertThat(product1DatasheetFolders.isEmpty(), is(true));
+        assertThat(catalogFolders.isEmpty(), is(false));
+
+        assertThat(headerFolders.size(), is(2));
+        assertThat(phbFolders.size(), is(2));
+        assertThat(servicesHeaderFolders.size(), is(2));
+        assertThat(product1DatasheetFolders.size(), is(0));
+        assertThat(catalogFolders.size(), is(2));
+
+        assertThat(headerFolders.get(0), is(equalTo(infoAssets)));
+        assertThat(headerFolders.get(1), is(equalTo(media)));
+
+        assertThat(phbFolders.get(0), is(equalTo(infoAssets)));
+        assertThat(phbFolders.get(1), is(equalTo(media)));
+
+        assertThat(servicesHeaderFolders.get(0), is(equalTo(infoAssets)));
+        assertThat(servicesHeaderFolders.get(1), is(equalTo(media)));
+
+        assertThat(catalogFolders.get(0), is(equalTo(infoAssets)));
+        assertThat(catalogFolders.get(1), is(equalTo(media)));
+
     }
 
 }
