@@ -177,7 +177,7 @@
                           localized_value="product1-datasheet.pdf" 
                           locale="en" />
     <ccm_cms.asset_titles asset_id="-1100" 
-                          localized_value="catelog.pdf" 
+                          localized_value="catalog.pdf" 
                           locale="en" />
     
     <ccm_cms.binary_assets object_id="-700" 
@@ -280,7 +280,7 @@
     <ccm_cms.asset_titles_aud asset_id="-1100" 
                               rev="0"
                               revtype="0"
-                              localized_value="catelog.pdf" 
+                              localized_value="catalog.pdf" 
                               locale="en" />
 
     

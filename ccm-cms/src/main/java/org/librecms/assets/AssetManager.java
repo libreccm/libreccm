@@ -57,7 +57,7 @@ import static org.librecms.CmsConstants.*;
 public class AssetManager {
 
     private static final Logger LOGGER = LogManager.
-            getLogger(AssetManager.class);
+        getLogger(AssetManager.class);
 
     @Inject
     private EntityManager entityManager;
@@ -78,21 +78,22 @@ public class AssetManager {
      * Creates a new, non shared {@link Asset} and adds it to the provided
      * {@link AttachmentList}.
      *
-     * @param <T> Type variable for the type of the new {@link Asset}.
-     * @param name The name of the new {@link Asset}.
+     * @param <T>         Type variable for the type of the new {@link Asset}.
+     * @param name        The name of the new {@link Asset}.
      * @param attachments The {@link AttachmentList} to which the new
-     * {@link Asset} is added.
-     * @param type The type of the new {@link Asset}. Must be a subclass of the
-     * {@link Asset} class.
+     *                    {@link Asset} is added.
+     * @param type        The type of the new {@link Asset}. Must be a subclass
+     *                    of the {@link Asset} class.
+     *
      * @return The new {@link Asset}.
      */
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public <T extends Asset> T createAsset(
-            final String name,
-            @RequiresPrivilege(ItemPrivileges.EDIT)
-            final AttachmentList attachments,
-            final Class<T> type) {
+        final String name,
+        @RequiresPrivilege(ItemPrivileges.EDIT)
+        final AttachmentList attachments,
+        final Class<T> type) {
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
@@ -103,20 +104,21 @@ public class AssetManager {
      * a content section. Otherwise an {@link IllegalArgumentException} is
      * thrown.
      *
-     * @param <T> Type variable for the type of the {@link Asset} to create.
-     * @param name The name of the new {@link Asset}.
+     * @param <T>    Type variable for the type of the {@link Asset} to create.
+     * @param name   The name of the new {@link Asset}.
      * @param folder The {@link Folder} in which the {@link Asset} is created.
-     * @param type The type of the new {@link Asset}. Must be a subclass of the
-     * {@link Asset} class.
+     * @param type   The type of the new {@link Asset}. Must be a subclass of
+     *               the {@link Asset} class.
+     *
      * @return The new {@link Asset}.
      */
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public <T extends Asset> T createAsset(
-            final String name,
-            @RequiresPrivilege(AssetPrivileges.CREATE_NEW)
-            final Folder folder,
-            final Class<T> type) {
+        final String name,
+        @RequiresPrivilege(AssetPrivileges.CREATE_NEW)
+        final Folder folder,
+        final Class<T> type) {
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
@@ -134,15 +136,16 @@ public class AssetManager {
      * folder is provided and the caller does not add the created asset to an
      * {@link AttachmentList} the asset will become orphaned can't be accessed.
      *
-     * @param <T> Type variable for the type of the {@link Asset}.
-     * @param name The name of the new {@link Asset}.
+     * @param <T>    Type variable for the type of the {@link Asset}.
+     * @param name   The name of the new {@link Asset}.
      * @param folder Optional folder in which the new {@link Asset} is placed.
-     * @param type The type of the new {@link Asset}. Must be a subclass of the
-     * {@link Asset} class.
+     * @param type   The type of the new {@link Asset}. Must be a subclass of
+     *               the {@link Asset} class.
+     *
      * @return The new {@link Asset}. Note: If no {@link Folder} is provided and
-     * the and the returned {@link Asset} is not added to an
-     * {@link AttachmentList} the new {@code Asset} will become orphaned and
-     * can't be accessed by any method.
+     *         the and the returned {@link Asset} is not added to an
+     *         {@link AttachmentList} the new {@code Asset} will become orphaned
+     *         and can't be accessed by any method.
      */
     @Transactional(Transactional.TxType.REQUIRED)
     public <T extends Asset> T createAsset(final String name,
@@ -158,30 +161,37 @@ public class AssetManager {
     @Transactional(Transactional.TxType.REQUIRED)
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     public void cleanOrphanedAssets() {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        final List<Asset> assets = assetRepo.findAll();
+
+        final List<Asset> orphaned = assets.stream()
+            .filter(asset -> asset.getCategories().isEmpty()
+                                 && asset.getItemAttachments().isEmpty())
+            .collect(Collectors.toList());
+
+        orphaned.forEach(orphan -> assetRepo.delete(orphan));
     }
 
     /**
      * Moves an {@link Asset} to an folder.
      *
-     * @param asset The {@link Asset} to move.
+     * @param asset        The {@link Asset} to move.
      * @param targetFolder The folder to which the {@link Asset} is moved. Must
-     * be an asset folder.
+     *                     be an asset folder.
      */
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public void move(
-            @RequiresPrivilege(AssetPrivileges.EDIT)
-            final Asset asset,
-            @RequiresPrivilege(AssetPrivileges.CREATE_NEW)
-            final Folder targetFolder) {
+        @RequiresPrivilege(AssetPrivileges.EDIT)
+        final Asset asset,
+        @RequiresPrivilege(AssetPrivileges.CREATE_NEW)
+        final Folder targetFolder) {
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
     /**
      * Copies an {@link Asset}.
      *
-     * @param asset The {@link Asset} to copy.
+     * @param asset        The {@link Asset} to copy.
      * @param targetFolder The folder to which the {@link Asset} is copied.
      */
     @Transactional(Transactional.TxType.REQUIRED)
@@ -197,8 +207,9 @@ public class AssetManager {
      * member of at least one {@link AttachmentList}.
      *
      * @param asset The {@link Asset} to check for usage.
+     *
      * @return {@code true} if the {@link Asset} is in use, {@link false} if
-     * not.
+     *         not.
      */
     @Transactional(Transactional.TxType.REQUIRED)
     public boolean isAssetInUse(final Asset asset) {
@@ -211,8 +222,9 @@ public class AssetManager {
      * with the name of the asset. The path is relative to the content section.
      *
      * @param asset The {@link Assset} for which the path is generated.
+     *
      * @return The path of the {@link Asset}. If the {@link Asset} is a non
-     * shared asset the path is empty.
+     *         shared asset the path is empty.
      *
      * @see #getAssetPath(org.librecms.assets.Asset, boolean)
      */
@@ -223,22 +235,24 @@ public class AssetManager {
     /**
      * Returns the path of an item as String.
      *
-     * @param asset The {@link Asset} for which the path is generated.
+     * @param asset              The {@link Asset} for which the path is
+     *                           generated.
      * @param withContentSection Whether to include the content section into the
-     * path or not.
+     *                           path or not.
+     *
      * @return The path of the asset. For non shared assets this is an empty
-     * string.
+     *         string.
      *
      * @see #getAssetPath(org.librecms.assets.Asset)
      */
     public String getAssetPath(final Asset asset,
                                final boolean withContentSection) {
         final List<Categorization> result = asset.getCategories().stream()
-                .filter(categorization -> {
-                    return CATEGORIZATION_TYPE_FOLDER.equals(
-                            categorization.getType());
-                })
-                .collect(Collectors.toList());
+            .filter(categorization -> {
+                return CATEGORIZATION_TYPE_FOLDER.equals(
+                    categorization.getType());
+            })
+            .collect(Collectors.toList());
 
         if (result.isEmpty()) {
             return "";
@@ -247,17 +261,17 @@ public class AssetManager {
             tokens.add(asset.getDisplayName());
 
             Category current = result.get(0).getCategory();
-            tokens.add(current.getName());
             while (current.getParentCategory() != null) {
-                current = current.getParentCategory();
                 tokens.add(current.getName());
+                current = current.getParentCategory();
             }
 
             Collections.reverse(tokens);
             final String path = String.join("/", tokens);
 
             if (withContentSection) {
-                final String sectionName = ((Folder) result.get(0).getCategory()).
+                final String sectionName
+                             = ((Folder) result.get(0).getCategory()).
                         getSection().getDisplayName();
                 return String.format("%s:/%s", sectionName, path);
             } else {
@@ -270,29 +284,71 @@ public class AssetManager {
      * Creates a list of the folder in which an asset is placed.
      *
      * @param asset
+     *
      * @return A list of the folders which form the path of the asset. For non
-     * shared assets an empty list is returned.
+     *         shared assets an empty list is returned.
      */
     public List<Folder> getAssetFolders(final Asset asset) {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        final List<Categorization> result = asset.getCategories().stream()
+            .filter(categorization -> {
+                return CATEGORIZATION_TYPE_FOLDER.equals(categorization
+                    .getType());
+            })
+            .collect(Collectors.toList());
+
+        final List<Folder> folders = new ArrayList<>();
+        if (!result.isEmpty()) {
+            Category current = result.get(0).getCategory();
+            if (current instanceof Folder) {
+                folders.add((Folder) current);
+            } else {
+                throw new IllegalArgumentException(String.format(
+                    "The asset %s is assigned to the category %s with the"
+                        + "categorization type \"%s\", but the Category is not"
+                        + "a folder. This is no supported.",
+                    asset.getUuid(),
+                    current.getUuid(),
+                    CATEGORIZATION_TYPE_FOLDER));
+            }
+
+            while (current.getParentCategory() != null) {
+                current = current.getParentCategory();
+                if (current instanceof Folder) {
+                    folders.add((Folder) current);
+                } else {
+                    throw new IllegalArgumentException(String.format(
+                        "The asset %s is assigned to the category %s with the"
+                            + "categorization type \"%s\", but the Category is not"
+                        + "a folder. This is no supported.",
+                        asset.getUuid(),
+                        current.getUuid(),
+                        CATEGORIZATION_TYPE_FOLDER));
+                }
+            }
+        }
+
+        Collections.reverse(folders);
+        return folders;
     }
 
     /**
      * Gets the folder in which an asset is placed.
      *
      * @param asset The asset.
+     *
      * @return The folder in which the asset is placed. If the asset is a non
-     * shared asset an empty {@link Optional} is returned.
+     *         shared asset an empty {@link Optional} is returned.
      */
     public Optional<Folder> getAssetFolder(final Asset asset) {
         return asset.getCategories().stream()
-                .filter(categorization -> {
-                    return CATEGORIZATION_TYPE_FOLDER.equals(
-                            categorization.getType());
-                })
-                .map(categorization -> {
-                    return (Folder) categorization.getCategory();
-                })
-                .findFirst();
+            .filter(categorization -> {
+                return CATEGORIZATION_TYPE_FOLDER.equals(
+                    categorization.getType());
+            })
+            .map(categorization -> {
+                return (Folder) categorization.getCategory();
+            })
+            .findFirst();
     }
+
 }

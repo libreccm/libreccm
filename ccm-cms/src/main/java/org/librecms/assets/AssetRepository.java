@@ -61,6 +61,9 @@ public class AssetRepository
     @Inject
     private CategoryManager categoryManager;
 
+    @Inject
+    private AssetManager assetManager;
+
     @Override
     public Long getEntityId(final Asset asset) {
         return asset.getObjectId();
@@ -96,9 +99,9 @@ public class AssetRepository
     public void save(
         @RequiresPrivilege(AssetPrivileges.EDIT)
         final Asset asset) {
-        
+
     }
-    
+
     /**
      * Deletes an <strong>unused</strong> Asset. If the {@link Asset} is in use
      * (linked to at least one ContentItem) an {@link AssetInUseException} is
@@ -116,7 +119,10 @@ public class AssetRepository
         @RequiresPrivilege(AssetPrivileges.DELETE)
         final Asset asset) {
 
-        if (asset.getItemAttachments().isEmpty()) {
+        if (assetManager.isAssetInUse(asset)) {
+            throw new AssetInUseException(String.format("Asset %s is in use.",
+                                                        asset.getUuid()));
+        } else {
             final List<Category> categories = asset.getCategories()
                 .stream()
                 .map(categorization -> categorization.getCategory())
@@ -131,9 +137,6 @@ public class AssetRepository
             }
 
             ccmObjectRepo.delete(asset);
-        } else {
-            throw new AssetInUseException(String.format("Asset %s is in use.",
-                                                        asset.getUuid()));
         }
     }
 
