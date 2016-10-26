@@ -37,13 +37,15 @@ import org.libreccm.categorization.CategoryManager;
 import org.libreccm.core.CoreConstants;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
+import org.librecms.CmsConstants;
 import org.librecms.attachments.AttachmentList;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.Folder;
 import org.librecms.contentsection.FolderManager;
 import org.librecms.contentsection.FolderRepository;
 import org.librecms.contentsection.privileges.AssetPrivileges;
-import org.librecms.contentsection.privileges.ItemPrivileges;
+
+import java.util.Objects;
 
 import static org.librecms.CmsConstants.*;
 
@@ -75,83 +77,56 @@ public class AssetManager {
     private FolderManager folderManager;
 
     /**
-     * Creates a new, non shared {@link Asset} and adds it to the provided
-     * {@link AttachmentList}.
-     *
-     * @param <T>         Type variable for the type of the new {@link Asset}.
-     * @param name        The name of the new {@link Asset}.
-     * @param attachments The {@link AttachmentList} to which the new
-     *                    {@link Asset} is added.
-     * @param type        The type of the new {@link Asset}. Must be a subclass
-     *                    of the {@link Asset} class.
-     *
-     * @return The new {@link Asset}.
-     */
-    @AuthorizationRequired
-    @Transactional(Transactional.TxType.REQUIRED)
-    public <T extends Asset> T createAsset(
-        final String name,
-        @RequiresPrivilege(ItemPrivileges.EDIT)
-        final AttachmentList attachments,
-        final Class<T> type) {
-        throw new UnsupportedOperationException("Not implemented yet.");
-    }
-
-    /**
-     * Creates a new shared {@link Asset} in the provided {@link Folder}.
+     * Makes an {@link Asset} a shared {@code Asset} by adding it to an asset
+     * folder. This action can't be undone.
      *
      * The folder must be a subfolder {@link ContentSection#rootAssetsFolder} of
      * a content section. Otherwise an {@link IllegalArgumentException} is
      * thrown.
      *
-     * @param <T>    Type variable for the type of the {@link Asset} to create.
-     * @param name   The name of the new {@link Asset}.
-     * @param folder The {@link Folder} in which the {@link Asset} is created.
-     * @param type   The type of the new {@link Asset}. Must be a subclass of
-     *               the {@link Asset} class.
      *
-     * @return The new {@link Asset}.
+     * @param asset  The {@link Asset} to share.
+     * @param folder The {@link Folder} in which the {@link Asset} is created.
      */
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
-    public <T extends Asset> T createAsset(
-        final String name,
+    public void shareAsset(
+        final Asset asset,
         @RequiresPrivilege(AssetPrivileges.CREATE_NEW)
-        final Folder folder,
-        final Class<T> type) {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        final Folder folder) {
+
+        if (asset == null) {
+            throw new IllegalArgumentException("Can't share asset null.");
+        }
+
+        if (folder == null) {
+            throw new IllegalArgumentException("No folder provided");
+        }
+
+        if (isShared(asset)) {
+            throw new IllegalArgumentException(String.format(
+                "The asset %s is already shared.",
+                Objects.toString(asset)));
+        }
+
+        categoryManager.addObjectToCategory(
+            asset,
+            folder,
+            CmsConstants.CATEGORIZATION_TYPE_FOLDER);
     }
 
     /**
-     * Creates a new {@link Asset}. If a folder is provided a sharable
-     * {@link Asset} is created. Otherwise a non shared asset is created. This
-     * method implements the common logic for
-     * {@link #createAsset(java.lang.String, org.librecms.attachments.AttachmentList, java.lang.Class)}
-     * and
-     * {@link #createAsset(java.lang.String, org.librecms.contentsection.Folder, java.lang.Class)}.
-     * Users of this class usually should use these methods. This method has
-     * been made public for special cases. Please note that this class does
-     * <strong>not</strong>
-     * perform any authorisation checks. This is up to the caller. Also if no
-     * folder is provided and the caller does not add the created asset to an
-     * {@link AttachmentList} the asset will become orphaned can't be accessed.
+     * Checks of an {@link Asset} is shared (associated with an {@link Folder}.
+     * The folder in which the asset is stored can be retrieved using
+     * {@link #getAssetFolder(org.librecms.assets.Asset)}.
      *
-     * @param <T>    Type variable for the type of the {@link Asset}.
-     * @param name   The name of the new {@link Asset}.
-     * @param folder Optional folder in which the new {@link Asset} is placed.
-     * @param type   The type of the new {@link Asset}. Must be a subclass of
-     *               the {@link Asset} class.
+     * @param asset The asset the check.
      *
-     * @return The new {@link Asset}. Note: If no {@link Folder} is provided and
-     *         the and the returned {@link Asset} is not added to an
-     *         {@link AttachmentList} the new {@code Asset} will become orphaned
-     *         and can't be accessed by any method.
+     * @return {@code true} is the {@link Asset} is shared,
+     *         {@code false if not}.
      */
-    @Transactional(Transactional.TxType.REQUIRED)
-    public <T extends Asset> T createAsset(final String name,
-                                           final Optional<Folder> folder,
-                                           final Class<T> type) {
-        throw new UnsupportedOperationException("Not implemented yet.");
+    public boolean isShared(final Asset asset) {
+        return getAssetFolder(asset).isPresent();
     }
 
     /**
@@ -271,7 +246,7 @@ public class AssetManager {
 
             if (withContentSection) {
                 final String sectionName
-                             = ((Folder) result.get(0).getCategory()).
+                                 = ((Folder) result.get(0).getCategory()).
                         getSection().getDisplayName();
                 return String.format("%s:/%s", sectionName, path);
             } else {

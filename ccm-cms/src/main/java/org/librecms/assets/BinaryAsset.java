@@ -38,6 +38,7 @@ import org.libreccm.jpa.utils.MimeTypeConverter;
 import org.libreccm.l10n.LocalizedString;
 
 import javax.persistence.Convert;
+import javax.validation.constraints.NotNull;
 
 import static org.librecms.CmsConstants.*;
 
@@ -71,7 +72,7 @@ public class BinaryAsset extends Asset implements Serializable {
 
     @Column(name = "MIME_TYPE", length = 512, nullable = false)
     @Convert(converter = MimeTypeConverter.class)
-    @NotEmpty
+    @NotNull
     private MimeType mimeType;
 
     @Column(name = "ASSET_DATA")

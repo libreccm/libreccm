@@ -45,10 +45,18 @@ import org.junit.runner.RunWith;
 import org.libreccm.security.Shiro;
 import org.libreccm.tests.categories.IntegrationTest;
 import org.librecms.attachments.AttachmentList;
+import org.librecms.contentsection.ContentItem;
+import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contentsection.FolderRepository;
 
 import javax.inject.Inject;
+
 import org.librecms.contentsection.Folder;
+
+import java.util.Locale;
+
+import javax.activation.MimeType;
+import javax.activation.MimeTypeParseException;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
@@ -64,6 +72,9 @@ import static org.junit.Assert.*;
 @Transactional(TransactionMode.COMMIT)
 @CreateSchema({"create_ccm_cms_schema.sql"})
 public class AssetManagerTest {
+
+    @Inject
+    private ContentItemRepository itemRepo;
 
     @Inject
     private AssetRepository assetRepo;
@@ -179,27 +190,45 @@ public class AssetManagerTest {
     }
 
     /**
-     * Tries to generate various non shared {@link Asset}s of different types
-     * using
-     * {@link AssetManager#createAsset(java.lang.String, org.librecms.attachments.AttachmentList, java.lang.Class)}.
-     * and puts them into an {@link AttachmentList}.
+     * Tries to share an {@link Asset} using
+     * {@link AssetManager#shareAsset(org.librecms.assets.Asset, org.librecms.contentsection.Folder)}.
+     *
+     * @throws javax.activation.MimeTypeParseException
      */
     @Test
     @InSequence(100)
     @UsingDataSet("datasets/org/librecms/assets/AssetManagerTest/data.xml")
     @ShouldMatchDataSet(
-        value = "datasets/org/librecms/assets/AssetManagerTest/"
-                    + "after-create-nonshared.xml",
-        excludeColumns = {"object_id",
+        value = "datasets/org/librecms/assets/AssetManagerTest/after-share.xml",
+        excludeColumns = {"asset_id",
+                          "categorization_id",
+                          "id",
+                          "object_id",
+                          "object_order",
+                          "rev",
+                          "timestamp",
                           "uuid"})
-    public void createNonSharedAssets() {
-        fail();
+    public void shareAsset() throws MimeTypeParseException {
+        final Folder folder = folderRepo.findById(-420L);
+        assertThat(folder, is(not(nullValue())));
+
+        final File file = new File();
+        file.setDisplayName("datasheet.pdf");
+        file.setFileName("datasheet.pdf");
+        file.setMimeType(new MimeType("application/pdf"));
+        file.getTitle().addValue(Locale.ENGLISH, "datasheet.pdf");
+        assetRepo.save(file);
+
+        assetManager.shareAsset(file, folder);
+
+        assertThat(file, is(not(nullValue())));
+        assertThat(file.getDisplayName(), is(equalTo("datasheet.pdf")));
     }
 
     /**
      * Verifies that
-     * {@link AssetManager#createAsset(java.lang.String, org.librecms.attachments.AttachmentList, java.lang.Class)}
-     * throws an {@link IllegalArgumentException} if the provided {@code name}
+     * {@link AssetManager#shareAsset(org.librecms.assets.Asset, org.librecms.contentsection.Folder)}
+     * throws an {@link IllegalArgumentException} if the provided {@code asset}
      * is {@code null}.
      */
     @Test(expected = IllegalArgumentException.class)
@@ -207,129 +236,54 @@ public class AssetManagerTest {
     @UsingDataSet("datasets/org/librecms/assets/AssetManagerTest/data.xml")
     @ShouldMatchDataSet("datasets/org/librecms/assets/AssetManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
-    public void createNonSharedAssetNameIsNull() {
+    public void shareAssetNull() {
+        final Folder folder = folderRepo.findById(-420L);
+        assertThat(folder, is(not(nullValue())));
 
+        assetManager.shareAsset(null, folder);
     }
 
     /**
      * Verifies that
-     * {@link AssetManager#createAsset(java.lang.String, org.librecms.attachments.AttachmentList, java.lang.Class)}
-     * throws an {@link IllegalArgumentException} if the provided {@code name}
-     * is empty.
+     * {@link AssetManager#shareAsset(org.librecms.assets.Asset, org.librecms.contentsection.Folder)}
+     * throws an {@link IllegalArgumentException} if the provided {@code folder}
+     * is null.
+     *
+     * @throws javax.activation.MimeTypeParseException
      */
     @Test(expected = IllegalArgumentException.class)
     @InSequence(120)
     @UsingDataSet("datasets/org/librecms/assets/AssetManagerTest/data.xml")
     @ShouldMatchDataSet("datasets/org/librecms/assets/AssetManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
-    public void createNonSharedAssetNameIsEmpty() {
-        fail();
+    public void shareAssetFolderIsNull() throws MimeTypeParseException {
+        final File file = new File();
+        file.setDisplayName("datasheet.pdf");
+        file.setFileName("datasheet.pdf");
+        file.setMimeType(new MimeType("application/pdf"));
+
+        assetManager.shareAsset(file, null);
     }
 
     /**
      * Verifies that
-     * {@link AssetManager#createAsset(java.lang.String, org.librecms.attachments.AttachmentList, java.lang.Class)}
-     * throws an {@link IllegalArgumentException} if the provided
-     * {@code attachmentList} is empty.
+     * {@link AssetManager#shareAsset(org.librecms.assets.Asset, org.librecms.contentsection.Folder)}
+     * throws an {@link IllegalArgumentException} if the provided {@code asset}
+     * is already shared.
      */
     @Test(expected = IllegalArgumentException.class)
     @InSequence(130)
     @UsingDataSet("datasets/org/librecms/assets/AssetManagerTest/data.xml")
     @ShouldMatchDataSet("datasets/org/librecms/assets/AssetManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
-    public void createNonSharedAssetAttachmentListNull() {
-        fail();
-    }
+    public void shareAlreadySharedAsset() {
+        final Folder folder = folderRepo.findById(-420L);
+        assertThat(folder, is(not(nullValue())));
 
-    /**
-     * Verifies that
-     * {@link AssetManager#createAsset(java.lang.String, org.librecms.attachments.AttachmentList, java.lang.Class)}
-     * throws an {@link IllegalArgumentException} if the provided {@code type}
-     * is empty.
-     */
-    @Test(expected = IllegalArgumentException.class)
-    @InSequence(140)
-    @UsingDataSet("datasets/org/librecms/assets/AssetManagerTest/data.xml")
-    @ShouldMatchDataSet("datasets/org/librecms/assets/AssetManagerTest/data.xml")
-    @ShouldThrowException(IllegalArgumentException.class)
-    public void createNonSharedAssetTypeIsNull() {
-        fail();
-    }
+        final Asset asset = assetRepo.findById(-700L);
+        assertThat(asset, is(not(nullValue())));
 
-    /**
-     * Tries to generate various shared {@link Asset}s of different types using
-     * {@link AssetManager#createAsset(java.lang.String, org.librecms.contentsection.Folder, java.lang.Class)}.
-     */
-    @Test
-    @InSequence(200)
-    @UsingDataSet("datasets/org/librecms/assets/AssetManagerTest/data.xml")
-    @ShouldMatchDataSet(
-        value = "datasets/org/librecms/assets/AssetManagerTest/"
-                    + "after-create-shared.xml",
-        excludeColumns = {"object_id",
-                          "uuid"})
-    public void createSharedAssets() {
-        fail();
-    }
-
-    /**
-     * Verifies that
-     * {@link AssetManager#createAsset(java.lang.String, org.librecms.contentsection.Folder, java.lang.Class)}
-     * throws an {@link IllegalArgumentException} if the provided {@code name}
-     * is {@code null}.
-     */
-    @Test(expected = IllegalArgumentException.class)
-    @InSequence(210)
-    @UsingDataSet("datasets/org/librecms/assets/AssetManagerTest/data.xml")
-    @ShouldMatchDataSet("datasets/org/librecms/assets/AssetManagerTest/data.xml")
-    @ShouldThrowException(IllegalArgumentException.class)
-    public void createSharedAssetNameIsNull() {
-        fail();
-    }
-
-    /**
-     * Verifies that
-     * {@link AssetManager#createAsset(java.lang.String, org.librecms.contentsection.Folder, java.lang.Class)}
-     * throws an {@link IllegalArgumentException} if the provided {@code name}
-     * is empty.
-     */
-    @Test(expected = IllegalArgumentException.class)
-    @InSequence(220)
-    @UsingDataSet("datasets/org/librecms/assets/AssetManagerTest/data.xml")
-    @ShouldMatchDataSet("datasets/org/librecms/assets/AssetManagerTest/data.xml")
-    @ShouldThrowException(IllegalArgumentException.class)
-    public void createSharedAssetNameIsEmpty() {
-        fail();
-    }
-
-    /**
-     * Verifies that
-     * {@link AssetManager#createAsset(java.lang.String, org.librecms.contentsection.Folder, java.lang.Class)}
-     * throws an {@link IllegalArgumentException} if the provided {@code folder}
-     * is {@code null}.
-     */
-    @Test(expected = IllegalArgumentException.class)
-    @InSequence(230)
-    @UsingDataSet("datasets/org/librecms/assets/AssetManagerTest/data.xml")
-    @ShouldMatchDataSet("datasets/org/librecms/assets/AssetManagerTest/data.xml")
-    @ShouldThrowException(IllegalArgumentException.class)
-    public void createSharedAssetFolderIsNull() {
-        fail();
-    }
-
-    /**
-     * Verifies that
-     * {@link AssetManager#createAsset(java.lang.String, org.librecms.contentsection.Folder, java.lang.Class)}
-     * throws an {@link IllegalArgumentException} if the provided {@code type}
-     * is {@code null}.
-     */
-    @Test(expected = IllegalArgumentException.class)
-    @InSequence(240)
-    @UsingDataSet("datasets/org/librecms/assets/AssetManagerTest/data.xml")
-    @ShouldMatchDataSet("datasets/org/librecms/assets/AssetManagerTest/data.xml")
-    @ShouldThrowException(IllegalArgumentException.class)
-    public void createSharedAssetTypeIsNull() {
-        fail();
+        assetManager.shareAsset(asset, folder);
     }
 
     /**
@@ -342,8 +296,7 @@ public class AssetManagerTest {
     @ShouldMatchDataSet(
         value = "datasets/org/librecms/assets/AssetManagerTest/"
                     + "after-clean-orphaned.xml",
-        excludeColumns = {"timestamp"},
-        orderBy = {"asset_titles_aud.asset_id"})
+        excludeColumns = {"timestamp", "object_order"})
     public void cleanOrphanedAssets() {
         assetManager.cleanOrphanedAssets();
     }
