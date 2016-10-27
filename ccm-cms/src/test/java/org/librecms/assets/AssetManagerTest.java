@@ -306,15 +306,24 @@ public class AssetManagerTest {
      * section using
      * {@link AssetManager#copy(org.librecms.assets.Asset, org.librecms.contentsection.Folder)}.
      */
+    @Test
     @InSequence(400)
     @UsingDataSet("datasets/org/librecms/assets/AssetManagerTest/data.xml")
     @ShouldMatchDataSet(
         value = "datasets/org/librecms/assets/AssetManagerTest/"
                     + "after-move-to-other-folder.xml",
-        excludeColumns = {"object_id",
+        excludeColumns = {"categorization_id",
+                          "object_id",
+                          "object_order",
                           "uuid"})
     public void moveAssetToOtherFolder() {
-        fail();
+        final Asset asset = assetRepo.findById(-900L);
+        assertThat(asset, is(not(nullValue())));
+        
+        final Folder folder = folderRepo.findById(-410L);
+        assertThat(folder, is(not(nullValue())));
+        
+        assetManager.move(asset, folder);
     }
 
     /**

@@ -18,6 +18,7 @@
  */
 package org.librecms.assets;
 
+import com.arsdigita.util.UncheckedWrapperException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -46,6 +47,7 @@ import org.librecms.contentsection.FolderRepository;
 import org.librecms.contentsection.privileges.AssetPrivileges;
 
 import java.util.Objects;
+import org.libreccm.categorization.ObjectNotAssignedToCategoryException;
 
 import static org.librecms.CmsConstants.*;
 
@@ -160,7 +162,29 @@ public class AssetManager {
         final Asset asset,
         @RequiresPrivilege(AssetPrivileges.CREATE_NEW)
         final Folder targetFolder) {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        
+        if (asset == null) {
+            throw new IllegalArgumentException("No asset to move provided.");
+        }
+        
+        if (targetFolder == null) {
+            throw new IllegalArgumentException("No target folder specified.");
+        }
+        
+        final Optional<Folder> currentFolder = getAssetFolder(asset);
+        
+        if (currentFolder.isPresent()) {
+            try {
+                categoryManager.removeObjectFromCategory(asset, 
+                                                         currentFolder.get());
+            } catch(ObjectNotAssignedToCategoryException ex) {
+                throw new UncheckedWrapperException(ex);
+            }
+        }
+        
+        categoryManager.addObjectToCategory(asset, 
+                                            targetFolder,
+                                            CATEGORIZATION_TYPE_FOLDER);
     }
 
     /**

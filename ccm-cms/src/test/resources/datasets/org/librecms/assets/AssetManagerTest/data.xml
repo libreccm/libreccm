@@ -365,7 +365,7 @@
                                rev="0"
                                filename="product1-datasheet.pdf"
                                mime_type="application/pdf"
-                               data_size="0"    />
+                               data_size="0" />
     <ccm_cms.binary_assets_aud object_id="-1100" 
                                rev="0"
                                filename="catalog.pdf" 
