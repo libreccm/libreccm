@@ -331,15 +331,24 @@ public class AssetManagerTest {
      * section using
      * {@link AssetManager#copy(org.librecms.assets.Asset, org.librecms.contentsection.Folder)}.
      */
+    @Test
     @InSequence(410)
     @UsingDataSet("datasets/org/librecms/assets/AssetManagerTest/data.xml")
     @ShouldMatchDataSet(
         value = "datasets/org/librecms/assets/AssetManagerTest/"
                     + "after-move-to-other-contentsection.xml",
-        excludeColumns = {"object_id",
+        excludeColumns = {"categorization_id",
+                          "object_id",
+                          "object_order",
                           "uuid"})
     public void moveAssetToFolderInOtherContentSection() {
-        fail();
+        final Asset asset = assetRepo.findById(-900L);
+        assertThat(asset, is(not(nullValue())));
+        
+        final Folder folder = folderRepo.findById(-1600L);
+        assertThat(folder, is(not(nullValue())));
+        
+        assetManager.move(asset, folder);
     }
 
     /**
@@ -354,7 +363,10 @@ public class AssetManagerTest {
     @ShouldMatchDataSet("datasets/org/librecms/assets/AssetManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void moveAssetNull() {
-        fail();
+        final Folder folder = folderRepo.findById(-410L);
+        assertThat(folder, is(not(nullValue())));
+        
+        assetManager.move(null, folder);
     }
 
     /**
@@ -369,7 +381,10 @@ public class AssetManagerTest {
     @ShouldMatchDataSet("datasets/org/librecms/assets/AssetManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void moveAssetTargetFolderIsNull() {
-        fail();
+        final Asset asset = assetRepo.findById(-900L);
+        assertThat(asset, is(not(nullValue())));
+        
+        assetManager.move(asset, null);
     }
 
     /**
@@ -383,8 +398,14 @@ public class AssetManagerTest {
     @UsingDataSet("datasets/org/librecms/assets/AssetManagerTest/data.xml")
     @ShouldMatchDataSet("datasets/org/librecms/assets/AssetManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
-    public void moveAssetTargetFolderNotAssetFolder() {
-        fail();
+    public void moveAssetTargetFolderIsNotAssetFolder() {
+        final Asset asset = assetRepo.findById(-900L);
+        assertThat(asset, is(not(nullValue())));
+        
+        final Folder folder = folderRepo.findById(-200L);
+        assertThat(folder, is(not(nullValue())));
+        
+        assetManager.move(asset, folder);
     }
 
     /**

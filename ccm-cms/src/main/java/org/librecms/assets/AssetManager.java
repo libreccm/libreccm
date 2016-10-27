@@ -19,6 +19,7 @@
 package org.librecms.assets;
 
 import com.arsdigita.util.UncheckedWrapperException;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -47,7 +48,9 @@ import org.librecms.contentsection.FolderRepository;
 import org.librecms.contentsection.privileges.AssetPrivileges;
 
 import java.util.Objects;
+
 import org.libreccm.categorization.ObjectNotAssignedToCategoryException;
+import org.librecms.contentsection.FolderType;
 
 import static org.librecms.CmsConstants.*;
 
@@ -169,6 +172,12 @@ public class AssetManager {
         
         if (targetFolder == null) {
             throw new IllegalArgumentException("No target folder specified.");
+        }
+        
+        if (targetFolder.getType() != FolderType.ASSETS_FOLDER) {
+            throw new IllegalArgumentException(String.format(
+                "The provided target folder %s is not an asset folder.",
+                Objects.toString(targetFolder)));
         }
         
         final Optional<Folder> currentFolder = getAssetFolder(asset);
