@@ -617,8 +617,8 @@ public class ContentSectionManager {
 
         if (typeRepo.isContentTypeInUse(contentType.get())) {
             throw new IllegalArgumentException(String.format(
-                "ContentType %d:\"%s\" is used by content section %d:\"s\" can can't"
-                + "be deleted.",
+                "ContentType %d:\"%s\" is used by content section %d:\"%s\" and "
+                    + "can't be deleted.",
                 contentType.get().getObjectId(),
                 contentType.get().getDisplayName(),
                 section.getObjectId(),
