@@ -325,6 +325,7 @@ public class ContentItemManager {
         final ContentItem item,
         @RequiresPrivilege(ItemPrivileges.CREATE_NEW)
         final Folder targetFolder) {
+        
         if (item == null) {
             throw new IllegalArgumentException("The item to copy can't be null.");
         }
@@ -511,7 +512,7 @@ public class ContentItemManager {
             } else {
                 final Object value;
                 try {
-                    value = readMethod.invoke(item);
+                    value = readMethod.invoke(draftItem);
                     writeMethod.invoke(copy, value);
                 } catch (IllegalAccessException
                          | IllegalArgumentException

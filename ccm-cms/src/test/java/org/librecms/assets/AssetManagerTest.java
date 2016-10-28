@@ -319,10 +319,10 @@ public class AssetManagerTest {
     public void moveAssetToOtherFolder() {
         final Asset asset = assetRepo.findById(-900L);
         assertThat(asset, is(not(nullValue())));
-        
+
         final Folder folder = folderRepo.findById(-410L);
         assertThat(folder, is(not(nullValue())));
-        
+
         assetManager.move(asset, folder);
     }
 
@@ -344,10 +344,10 @@ public class AssetManagerTest {
     public void moveAssetToFolderInOtherContentSection() {
         final Asset asset = assetRepo.findById(-900L);
         assertThat(asset, is(not(nullValue())));
-        
+
         final Folder folder = folderRepo.findById(-1600L);
         assertThat(folder, is(not(nullValue())));
-        
+
         assetManager.move(asset, folder);
     }
 
@@ -363,10 +363,12 @@ public class AssetManagerTest {
     @ShouldMatchDataSet("datasets/org/librecms/assets/AssetManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void moveAssetNull() {
+        final Asset asset = null;
+
         final Folder folder = folderRepo.findById(-410L);
         assertThat(folder, is(not(nullValue())));
-        
-        assetManager.move(null, folder);
+
+        assetManager.move(asset, folder);
     }
 
     /**
@@ -383,8 +385,10 @@ public class AssetManagerTest {
     public void moveAssetTargetFolderIsNull() {
         final Asset asset = assetRepo.findById(-900L);
         assertThat(asset, is(not(nullValue())));
-        
-        assetManager.move(asset, null);
+
+        final Folder targetFolder = null;
+
+        assetManager.move(asset, targetFolder);
     }
 
     /**
@@ -401,10 +405,10 @@ public class AssetManagerTest {
     public void moveAssetTargetFolderIsNotAssetFolder() {
         final Asset asset = assetRepo.findById(-900L);
         assertThat(asset, is(not(nullValue())));
-        
+
         final Folder folder = folderRepo.findById(-200L);
         assertThat(folder, is(not(nullValue())));
-        
+
         assetManager.move(asset, folder);
     }
 
@@ -419,9 +423,21 @@ public class AssetManagerTest {
         value = "datasets/org/librecms/assets/AssetManagerTest/"
                     + "after-copy-to-other-folder.xml",
         excludeColumns = {"object_id",
-                          "uuid"})
+                          "uuid",
+                          "asset_id",
+                          "id",
+                          "timestamp",
+                          "rev",
+                          "categorization_id",
+                          "object_order"})
     public void copyAssetToOtherFolder() {
-        fail();
+        final Asset asset = assetRepo.findById(-1100L);
+        assertThat(asset, is(not(nullValue())));
+
+        final Folder targetFolder = folderRepo.findById(-400L);
+        assertThat(targetFolder, is(not(nullValue())));
+
+        assetManager.copy(asset, targetFolder);
     }
 
     /**
@@ -435,9 +451,22 @@ public class AssetManagerTest {
         value = "datasets/org/librecms/assets/AssetManagerTest/"
                     + "after-copy-to-same-folder.xml",
         excludeColumns = {"object_id",
-                          "uuid"})
+                          "uuid",
+                          "asset_id",
+                          "id",
+                          "timestamp",
+                          "rev",
+                          "categorization_id",
+                          "object_order"})
     public void copyAssetToSameFolder() {
-        fail();
+        final Asset asset = assetRepo.findById(-1100L);
+        assertThat(asset, is(not(nullValue())));
+
+        final Folder targetFolder = folderRepo.findById(-420L);
+        assertThat(targetFolder, is(not(nullValue())));
+
+        assetManager.copy(asset, targetFolder);
+        assetManager.copy(asset, targetFolder);
     }
 
     /**
@@ -452,9 +481,21 @@ public class AssetManagerTest {
         value = "datasets/org/librecms/assets/AssetManagerTest/"
                     + "after-copy-to-other-contentsection.xml",
         excludeColumns = {"object_id",
-                          "uuid"})
+                          "uuid",
+                          "asset_id",
+                          "id",
+                          "timestamp",
+                          "rev",
+                          "categorization_id",
+                          "object_order"})
     public void copyAssetToOtherContentSection() {
-        fail();
+        final Asset asset = assetRepo.findById(-1100L);
+        assertThat(asset, is(not(nullValue())));
+
+        final Folder targetFolder = folderRepo.findById(-1600L);
+        assertThat(targetFolder, is(not(nullValue())));
+
+        assetManager.copy(asset, targetFolder);
     }
 
     /**
@@ -469,7 +510,12 @@ public class AssetManagerTest {
     @ShouldMatchDataSet("datasets/org/librecms/assets/AssetManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void copyAssetNull() {
-        fail();
+        final Asset asset = null;
+
+        final Folder targetFolder = folderRepo.findById(-420L);
+        assertThat(targetFolder, is(not(nullValue())));
+
+        assetManager.copy(asset, targetFolder);
     }
 
     /**
@@ -484,7 +530,12 @@ public class AssetManagerTest {
     @ShouldMatchDataSet("datasets/org/librecms/assets/AssetManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void copyAssetTargetFolderIsNull() {
-        fail();
+        final Asset asset = assetRepo.findById(-1100L);
+        assertThat(asset, is(not(nullValue())));
+
+        final Folder targetFolder = null;
+
+        assetManager.copy(asset, targetFolder);
     }
 
     /**
@@ -499,7 +550,13 @@ public class AssetManagerTest {
     @ShouldMatchDataSet("datasets/org/librecms/assets/AssetManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void copyAssetTargetFolderIsNotAssetFolder() {
-        fail();
+        final Asset asset = assetRepo.findById(-1100L);
+        assertThat(asset, is(not(nullValue())));
+
+        final Folder targetFolder = folderRepo.findById(-200L);
+        assertThat(targetFolder, is(not(nullValue())));
+
+        assetManager.copy(asset, targetFolder);
     }
 
     /**

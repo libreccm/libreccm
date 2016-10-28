@@ -50,7 +50,17 @@ import org.librecms.contentsection.privileges.AssetPrivileges;
 import java.util.Objects;
 
 import org.libreccm.categorization.ObjectNotAssignedToCategoryException;
+import org.libreccm.l10n.LocalizedString;
 import org.librecms.contentsection.FolderType;
+
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.Set;
 
 import static org.librecms.CmsConstants.*;
 
@@ -165,33 +175,33 @@ public class AssetManager {
         final Asset asset,
         @RequiresPrivilege(AssetPrivileges.CREATE_NEW)
         final Folder targetFolder) {
-        
+
         if (asset == null) {
             throw new IllegalArgumentException("No asset to move provided.");
         }
-        
+
         if (targetFolder == null) {
             throw new IllegalArgumentException("No target folder specified.");
         }
-        
+
         if (targetFolder.getType() != FolderType.ASSETS_FOLDER) {
             throw new IllegalArgumentException(String.format(
                 "The provided target folder %s is not an asset folder.",
                 Objects.toString(targetFolder)));
         }
-        
+
         final Optional<Folder> currentFolder = getAssetFolder(asset);
-        
+
         if (currentFolder.isPresent()) {
             try {
-                categoryManager.removeObjectFromCategory(asset, 
+                categoryManager.removeObjectFromCategory(asset,
                                                          currentFolder.get());
-            } catch(ObjectNotAssignedToCategoryException ex) {
+            } catch (ObjectNotAssignedToCategoryException ex) {
                 throw new UncheckedWrapperException(ex);
             }
         }
-        
-        categoryManager.addObjectToCategory(asset, 
+
+        categoryManager.addObjectToCategory(asset,
                                             targetFolder,
                                             CATEGORIZATION_TYPE_FOLDER);
     }
@@ -201,13 +211,182 @@ public class AssetManager {
      *
      * @param asset        The {@link Asset} to copy.
      * @param targetFolder The folder to which the {@link Asset} is copied.
+     *
+     * @return The copy of the {@code asset}.
      */
     @Transactional(Transactional.TxType.REQUIRED)
     @AuthorizationRequired
-    public void copy(final Asset asset,
-                     @RequiresPrivilege(AssetPrivileges.CREATE_NEW)
-                     final Folder targetFolder) {
-        throw new UnsupportedOperationException("Not implemented yet.");
+    @SuppressWarnings("unchecked")
+    public Asset copy(final Asset asset,
+                      @RequiresPrivilege(AssetPrivileges.CREATE_NEW)
+                      final Folder targetFolder) {
+
+        if (asset == null) {
+            throw new IllegalArgumentException("No asset to copy.");
+        }
+
+        if (targetFolder == null) {
+            throw new IllegalArgumentException("No target folder provided.");
+        }
+
+        if (targetFolder.getType() != FolderType.ASSETS_FOLDER) {
+            throw new IllegalArgumentException(String.format(
+                "The provided target folder %s is not an asset folder.",
+                Objects.toString(targetFolder)));
+        }
+
+        final Asset copy;
+        try {
+            copy = asset.getClass().newInstance();
+        } catch (InstantiationException | IllegalAccessException ex) {
+            throw new UncheckedWrapperException(ex);
+        }
+
+        final BeanInfo beanInfo;
+        try {
+            beanInfo = Introspector.getBeanInfo(asset.getClass());
+        } catch (IntrospectionException ex) {
+            throw new UncheckedWrapperException(ex);
+        }
+
+        for (final PropertyDescriptor propertyDescriptor : beanInfo
+            .getPropertyDescriptors()) {
+            if (propertyIsExcluded(propertyDescriptor.getName())) {
+                continue;
+            }
+
+            final Class<?> propType = propertyDescriptor.getPropertyType();
+            final Method readMethod = propertyDescriptor.getReadMethod();
+            final Method writeMethod = propertyDescriptor.getWriteMethod();
+
+            if (writeMethod == null) {
+                continue;
+            }
+
+            if (LocalizedString.class.equals(propType)) {
+                final LocalizedString source;
+                final LocalizedString target;
+                try {
+                    source = (LocalizedString) readMethod.invoke(asset);
+                    target = (LocalizedString) readMethod.invoke(copy);
+                } catch (IllegalAccessException
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
+                    throw new RuntimeException(ex);
+                }
+
+                source.getAvailableLocales().forEach(
+                    locale -> target.addValue(locale,
+                                              source.getValue(locale)));
+            } else if (propType != null
+                           && propType.isAssignableFrom(Asset.class)) {
+
+                final Asset linkedAsset;
+                try {
+                    linkedAsset = (Asset) readMethod.invoke(asset);
+                } catch (IllegalAccessException
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
+                    throw new UncheckedWrapperException(ex);
+                }
+
+                try {
+                    writeMethod.invoke(copy, linkedAsset);
+                } catch (IllegalAccessException
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
+                    throw new UncheckedWrapperException(ex);
+                }
+            } else if (propType != null
+                           && propType.isAssignableFrom(List.class)) {
+                final List<Object> source;
+                final List<Object> target;
+                try {
+                    source = (List<Object>) readMethod.invoke(asset);
+                    target = (List<Object>) readMethod.invoke(copy);
+                } catch (IllegalAccessException
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
+                    throw new UncheckedWrapperException(ex);
+                }
+
+                target.addAll(source);
+            } else if (propType != null
+                           && propType.isAssignableFrom(Map.class)) {
+                final Map<Object, Object> source;
+                final Map<Object, Object> target;
+
+                try {
+                    source = (Map<Object, Object>) readMethod.invoke(asset);
+                    target = (Map<Object, Object>) readMethod.invoke(copy);
+                } catch (IllegalAccessException
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
+                    throw new RuntimeException(ex);
+                }
+
+                source.forEach((key, value) -> target.put(key, value));
+            } else if (propType != null
+                           && propType.isAssignableFrom(Set.class)) {
+                final Set<Object> source;
+                final Set<Object> target;
+
+                try {
+                    source = (Set<Object>) readMethod.invoke(asset);
+                    target = (Set<Object>) readMethod.invoke(copy);
+                } catch (IllegalAccessException
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
+                    throw new RuntimeException(ex);
+                }
+
+                target.addAll(source);
+            } else {
+                final Object value;
+                try {
+                    value = readMethod.invoke(asset);
+                    writeMethod.invoke(copy, value);
+                } catch (IllegalAccessException
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
+                    throw new UncheckedWrapperException(ex);
+                }
+            }
+        }
+
+        if (targetFolder.equals(getAssetFolder(asset).orElse(null))) {
+            final long number = assetRepo.countFilterByFolderAndName(
+                targetFolder, String.format("%s_copy",
+                                            asset.getDisplayName()));
+            final long index = number + 1;
+            copy.setDisplayName(String.format("%s_copy%d",
+                                              copy.getDisplayName(),
+                                              index));
+        }
+
+        assetRepo.save(asset);
+        
+        categoryManager.addObjectToCategory(copy,
+                                            targetFolder,
+                                            CATEGORIZATION_TYPE_FOLDER);
+
+        return asset;
+    }
+
+    private boolean propertyIsExcluded(final String name) {
+        final String[] excluded = new String[]{"objectId",
+                                               "uuid",
+                                               "categories",
+                                               "itemAttachments"};
+
+        boolean result = false;
+        for (final String current : excluded) {
+            if (current.equals(name)) {
+                result = true;
+            }
+        }
+
+        return result;
     }
 
     /**

@@ -44,7 +44,7 @@ import static org.librecms.CmsConstants.*;
 
 /**
  * Base class for all assets storing binary information, like videos.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
@@ -56,13 +56,13 @@ public class BinaryAsset extends Asset implements Serializable {
 
     @Embedded
     @AssociationOverride(
-            name = "values",
-            joinTable = @JoinTable(name = "BINARY_ASSET_DESCRIPTIONS",
-                                   schema = DB_SCHEMA,
-                                   joinColumns = {
-                                       @JoinColumn(name = "ASSET_ID")
-                                   }
-            )
+        name = "values",
+        joinTable = @JoinTable(name = "BINARY_ASSET_DESCRIPTIONS",
+                               schema = DB_SCHEMA,
+                               joinColumns = {
+                                   @JoinColumn(name = "ASSET_ID")
+                               }
+        )
     )
     private LocalizedString description;
 
@@ -85,6 +85,7 @@ public class BinaryAsset extends Asset implements Serializable {
     public BinaryAsset() {
         super();
         description = new LocalizedString();
+        data = new byte[]{};
     }
 
     public LocalizedString getDescription() {
@@ -112,12 +113,21 @@ public class BinaryAsset extends Asset implements Serializable {
     }
 
     public byte[] getData() {
-        return Arrays.copyOf(data, data.length);
+        if (data == null) {
+            return new byte[]{};
+        } else {
+            return Arrays.copyOf(data, data.length);
+        }
     }
 
     public void setData(final byte[] data) {
-        this.data = Arrays.copyOf(data, data.length);
-        size = data.length;
+        if (data == null) {
+            this.data = new byte[]{};
+            size = this.data.length;
+        } else {
+            this.data = Arrays.copyOf(data, data.length);
+            size = data.length;
+        }
     }
 
     public long getSize() {
@@ -181,13 +191,14 @@ public class BinaryAsset extends Asset implements Serializable {
     @Override
     public String toString(final String data) {
         return super.toString(String.format(", description = %s, "
-                                                    + "fileName = \"%s\", "
-                                                    + "mimeType = \"%s\", "
-                                                    + "size = %d%s",
+                                                + "fileName = \"%s\", "
+                                                + "mimeType = \"%s\", "
+                                                + "size = %d%s",
                                             Objects.toString(description),
                                             fileName,
                                             Objects.toString(mimeType),
                                             size,
                                             data));
     }
+
 }
