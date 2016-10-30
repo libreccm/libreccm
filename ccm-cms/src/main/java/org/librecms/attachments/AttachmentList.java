@@ -39,6 +39,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -55,6 +57,14 @@ import static org.librecms.CmsConstants.*;
 @Entity
 @Table(name = "ATTACHMENT_LISTS", schema = DB_SCHEMA)
 @Audited
+@NamedQueries({
+    @NamedQuery(
+        name = "AttachmentList.findForItemAndName",
+        query = "SELECT l FROM AttachmentList l "
+                    + "WHERE l.name = :name "
+                    + "AND l.item = :item "
+                    + "ORDER BY l.order")
+})
 public class AttachmentList implements Comparable<AttachmentList>,
                                        Identifiable,
                                        Serializable {

@@ -74,9 +74,6 @@ import static org.junit.Assert.*;
 public class AssetManagerTest {
 
     @Inject
-    private ContentItemRepository itemRepo;
-
-    @Inject
     private AssetRepository assetRepo;
 
     @Inject
@@ -112,8 +109,8 @@ public class AssetManagerTest {
         return ShrinkWrap
             .create(WebArchive.class,
                     "LibreCCM-org.librecms.assets.AssetManagerTest.war")
-            .addPackage(org.libreccm.auditing.CcmRevision.class.getPackage()).
-            addPackage(org.libreccm.categorization.Categorization.class
+            .addPackage(org.libreccm.auditing.CcmRevision.class.getPackage())
+            .addPackage(org.libreccm.categorization.Categorization.class
                 .getPackage())
             .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
             .addPackage(org.libreccm.configuration.Configuration.class
