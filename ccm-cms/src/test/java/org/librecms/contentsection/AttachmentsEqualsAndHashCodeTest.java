@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.librecms.attachments;
+package org.librecms.contentsection;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -25,21 +25,20 @@ import org.libreccm.security.Group;
 import org.libreccm.security.Role;
 import org.libreccm.tests.categories.UnitTest;
 import org.libreccm.testutils.EqualsVerifier;
-import org.librecms.assets.Asset;
-import org.librecms.contentsection.ContentItem;
-import org.librecms.contentsection.ContentSection;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.UUID;
 
 /**
- *
+ * Verifies the {@code equals} and {@code hashCode} methods of the classes
+ * {@link AttachmentsConfig}, {@link AttachmentList} and {@link ItemAttachment}.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RunWith(Parameterized.class)
 @org.junit.experimental.categories.Category(UnitTest.class)
-public class EqualsAndHashCodeTest extends EqualsVerifier {
+public class AttachmentsEqualsAndHashCodeTest extends EqualsVerifier {
 
     @Parameterized.Parameters(name = "{0}")
     public static Collection<Class<?>> data() {
@@ -50,7 +49,7 @@ public class EqualsAndHashCodeTest extends EqualsVerifier {
         });
     }
 
-    public EqualsAndHashCodeTest(final Class<?> clazz) {
+    public AttachmentsEqualsAndHashCodeTest(final Class<?> clazz) {
         super(clazz);
     }
 

@@ -18,6 +18,7 @@
  */
 package org.librecms.assets;
 
+import org.librecms.contentsection.Asset;
 import org.hibernate.envers.Audited;
 import org.librecms.contentsection.ContentItem;
 

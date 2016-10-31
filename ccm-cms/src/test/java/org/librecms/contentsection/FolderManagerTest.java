@@ -122,8 +122,8 @@ public class FolderManagerTest {
             .addPackage(com.arsdigita.util.Lockable.class.getPackage())
             .addPackage(com.arsdigita.web.BaseServlet.class.getPackage())
             .addPackage(org.librecms.Cms.class.getPackage())
-            .addPackage(org.librecms.assets.Asset.class.getPackage())
-            .addPackage(org.librecms.attachments.AttachmentList.class
+            .addPackage(org.librecms.contentsection.Asset.class.getPackage())
+            .addPackage(org.librecms.contentsection.AttachmentList.class
                 .getPackage())
             .addPackage(org.librecms.lifecycle.Lifecycle.class.getPackage())
             .addPackage(ContentSection.class.getPackage())

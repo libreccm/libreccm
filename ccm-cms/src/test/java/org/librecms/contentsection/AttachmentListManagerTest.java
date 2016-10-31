@@ -16,7 +16,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.librecms.attachments;
+package org.librecms.contentsection;
+
+import org.librecms.contentsection.AttachmentList;
+import org.librecms.contentsection.AttachmentListManager;
 
 import static org.libreccm.testutils.DependenciesHelpers.*;
 
@@ -42,7 +45,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.libreccm.security.Shiro;
 import org.libreccm.tests.categories.IntegrationTest;
-import org.librecms.assets.Asset;
+import org.librecms.contentsection.Asset;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemRepository;
 
@@ -132,9 +135,8 @@ public class AttachmentListManagerTest {
             .addPackage(com.arsdigita.util.Lockable.class.getPackage())
             .addPackage(com.arsdigita.web.BaseServlet.class.getPackage())
             .addPackage(org.librecms.Cms.class.getPackage())
-            .addPackage(org.librecms.assets.Asset.class.getPackage())
-            .addPackage(org.librecms.attachments.AttachmentList.class
-                .getPackage())
+            .addPackage(org.librecms.assets.BinaryAsset.class.getPackage())
+            .addPackage(org.librecms.contentsection.Asset.class.getPackage())
             .addPackage(org.librecms.lifecycle.Lifecycle.class.getPackage())
             .addPackage(org.librecms.contentsection.ContentSection.class
                 .getPackage())
@@ -183,8 +185,9 @@ public class AttachmentListManagerTest {
      */
     @Test
     @InSequence(100)
-    @UsingDataSet("datasets/org/librecms/attachments/AttachmentListManagerTest/"
-                      + "data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AttachmentListManagerTest/"
+            + "data.xml")
     public void getAttachmentListNames() {
         shiro.getSystemUser().execute(() -> {
             final Optional<ContentItem> article1 = itemRepo.findById(-510);
@@ -201,8 +204,8 @@ public class AttachmentListManagerTest {
             assertThat(names1, is(not(nullValue())));
             assertThat(names1.size(), is(3));
             assertThat(names1.get(0), is("list1"));
-            assertThat(names1.get(1), is("list2"));
-            assertThat(names1.get(2), is("list3"));
+            assertThat(names1.get(1), is("list1"));
+            assertThat(names1.get(2), is("list2"));
 
             assertThat(names2, is(not(nullValue())));
             assertThat(names2.size(), is(2));
@@ -218,8 +221,9 @@ public class AttachmentListManagerTest {
      */
     @Test(expected = IllegalArgumentException.class)
     @InSequence(110)
-    @UsingDataSet("datasets/org/librecms/attachments/AttachmentListManagerTest/"
-                      + "data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AttachmentListManagerTest/"
+            + "data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void getAttachmentListNamesFromNull() {
         final ContentItem item = null;
@@ -237,8 +241,9 @@ public class AttachmentListManagerTest {
      */
     @Test
     @InSequence(200)
-    @UsingDataSet("datasets/org/librecms/attachments/AttachmentListManagerTest/"
-                      + "data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AttachmentListManagerTest/"
+            + "data.xml")
     public void getAttachmentList() {
         final Subject systemUser = shiro.getSystemUser();
 
@@ -284,8 +289,9 @@ public class AttachmentListManagerTest {
      */
     @Test(expected = IllegalArgumentException.class)
     @InSequence(210)
-    @UsingDataSet("datasets/org/librecms/attachments/AttachmentListManagerTest/"
-                      + "data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AttachmentListManagerTest/"
+            + "data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void getAttachmentListFromItemNull() {
         final Subject systemUser = shiro.getSystemUser();
@@ -303,8 +309,9 @@ public class AttachmentListManagerTest {
      */
     @Test(expected = IllegalArgumentException.class)
     @InSequence(220)
-    @UsingDataSet("datasets/org/librecms/attachments/AttachmentListManagerTest/"
-                      + "data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AttachmentListManagerTest/"
+            + "data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void getAttachmentListNameIsNull() {
         final Subject systemUser = shiro.getSystemUser();
@@ -325,8 +332,9 @@ public class AttachmentListManagerTest {
      */
     @Test(expected = IllegalArgumentException.class)
     @InSequence(230)
-    @UsingDataSet("datasets/org/librecms/attachments/AttachmentListManagerTest/"
-                      + "data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AttachmentListManagerTest/"
+            + "data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void getAttachmentListWithEmptyName() {
         final Subject systemUser = shiro.getSystemUser();
@@ -347,12 +355,15 @@ public class AttachmentListManagerTest {
      */
     @Test
     @InSequence(300)
-    @UsingDataSet("datasets/org/librecms/attachments/AttachmentListManagerTest/"
-                      + "data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AttachmentListManagerTest/"
+            + "data.xml")
     @ShouldMatchDataSet(
-        value = "datasets/org/librecms/attachments/AttachmentListManagerTest/"
-                    + "after-create.xml",
+        value
+            = "datasets/org/librecms/contentsection/AttachmentListManagerTest/"
+                  + "after-create.xml",
         excludeColumns = {"timestamp",
+                          "object_id",
                           "list_id",
                           "uuid"})
     public void createAttachmentList() {
@@ -370,14 +381,17 @@ public class AttachmentListManagerTest {
      */
     @Test(expected = IllegalArgumentException.class)
     @InSequence(310)
-    @UsingDataSet("datasets/org/librecms/attachments/AttachmentListManagerTest/"
-                      + "data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AttachmentListManagerTest/"
+            + "data.xml")
     @ShouldMatchDataSet(
-        "datasets/org/librecms/attachments/AttachmentListManagerTest/"
+        "datasets/org/librecms/contentsection/AttachmentListManagerTest/"
             + "data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void createAttachmentListForItemNull() {
-        fail("Not implemented yet");
+        final ContentItem item = null;
+
+        listManager.createAttachmentList(item, "newList");
     }
 
     /**
@@ -388,13 +402,17 @@ public class AttachmentListManagerTest {
      */
     @Test(expected = IllegalArgumentException.class)
     @InSequence(320)
-    @UsingDataSet("datasets/org/librecms/attachments/AttachmentListManagerTest/"
-                      + "data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AttachmentListManagerTest/"
+            + "data.xml")
     @ShouldMatchDataSet(
-        "datasets/org/librecms/attachments/AttachmentListManagerTest/"
+        "datasets/org/librecms/contentsection/AttachmentListManagerTest/"
             + "data.xml")
     public void createAttachmentListNameIsNull() {
-        fail("Not implemented yet");
+        final Optional<ContentItem> item = itemRepo.findById(-520);
+        assertThat(item.isPresent(), is(true));
+
+        listManager.createAttachmentList(item.get(), null);
     }
 
     /**
@@ -405,13 +423,17 @@ public class AttachmentListManagerTest {
      */
     @Test(expected = IllegalArgumentException.class)
     @InSequence(330)
-    @UsingDataSet("datasets/org/librecms/attachments/AttachmentListManagerTest/"
-                      + "data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AttachmentListManagerTest/"
+            + "data.xml")
     @ShouldMatchDataSet(
-        "datasets/org/librecms/attachments/AttachmentListManagerTest/"
+        "datasets/org/librecms/contentsection/AttachmentListManagerTest/"
             + "data.xml")
     public void createAttachmentListNameIsEmpty() {
-        fail("Not implemented yet");
+        final Optional<ContentItem> item = itemRepo.findById(-520);
+        assertThat(item.isPresent(), is(true));
+
+        listManager.createAttachmentList(item.get(), "  ");
     }
 
     /**
@@ -421,13 +443,21 @@ public class AttachmentListManagerTest {
      */
     @Test
     @InSequence(400)
-    @UsingDataSet("datasets/org/librecms/attachments/AttachmentListManagerTest/"
-                      + "data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AttachmentListManagerTest/"
+            + "data.xml")
     @ShouldMatchDataSet(
-        "datasets/org/librecms/attachments/AttachmentListManagerTest/"
-            + "after-create.xml")
-    public void createAttachmentListAfterPosition() {
-        fail("Not implemented yet");
+        value = "datasets/org/librecms/contentsection/"
+                    + "AttachmentListManagerTest/after-create-with-position.xml",
+        excludeColumns = {"timestamp",
+                          "object_id",
+                          "list_id",
+                          "uuid"})
+    public void createAttachmentListWithPosition() {
+        final Optional<ContentItem> item = itemRepo.findById(-510);
+        assertThat(item.isPresent(), is(true));
+
+        listManager.createAttachmentList(item.get(), "newList", 1);
     }
 
     /**
@@ -439,13 +469,22 @@ public class AttachmentListManagerTest {
      */
     @Test
     @InSequence(410)
-    @UsingDataSet("datasets/org/librecms/attachments/AttachmentListManagerTest/"
-                      + "data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AttachmentListManagerTest/"
+            + "data.xml")
     @ShouldMatchDataSet(
-        "datasets/org/librecms/attachments/AttachmentListManagerTest/"
-            + "after-create-with-negative-position.xml")
-    public void createAttachmentListNegativePosition() {
-        fail("Not implemented yet");
+        value = "datasets/org/librecms/contentsection/"
+                    + "AttachmentListManagerTest/"
+                    + "after-create-with-negative-position.xml",
+        excludeColumns = {"timestamp",
+                          "object_id",
+                          "list_id",
+                          "uuid"})
+    public void createAttachmentListWithNegativePosition() {
+        final Optional<ContentItem> item = itemRepo.findById(-510);
+        assertThat(item.isPresent(), is(true));
+
+        listManager.createAttachmentList(item.get(), "newList", -3);
     }
 
     /**
@@ -458,13 +497,22 @@ public class AttachmentListManagerTest {
      */
     @Test
     @InSequence(420)
-    @UsingDataSet("datasets/org/librecms/attachments/AttachmentListManagerTest/"
-                      + "data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AttachmentListManagerTest/"
+            + "data.xml")
     @ShouldMatchDataSet(
-        "datasets/org/librecms/attachments/AttachmentListManagerTest/"
-            + "after-create-after-last.xml")
-    public void createAttachmentListAfterLastPosition() {
-        fail("Not implemented yet");
+        value = "datasets/org/librecms/contentsection/"
+                    + "AttachmentListManagerTest/"
+                    + "after-create-after-last.xml",
+        excludeColumns = {"timestamp",
+                          "object_id",
+                          "list_id",
+                          "uuid"})
+    public void createAttachmentListWithPositionAfterLast() {
+        final Optional<ContentItem> item = itemRepo.findById(-510);
+        assertThat(item.isPresent(), is(true));
+
+        listManager.createAttachmentList(item.get(), "newList", 10);
     }
 
     /**
@@ -475,14 +523,17 @@ public class AttachmentListManagerTest {
      */
     @Test(expected = IllegalArgumentException.class)
     @InSequence(430)
-    @UsingDataSet("datasets/org/librecms/attachments/AttachmentListManagerTest/"
-                      + "data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AttachmentListManagerTest/"
+            + "data.xml")
     @ShouldMatchDataSet(
-        "datasets/org/librecms/attachments/AttachmentListManagerTest/"
+        "datasets/org/librecms/contentsection/AttachmentListManagerTest/"
             + "data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
-    public void createAttachmentListAfterPositionForItemNull() {
-        fail("Not implemented yet");
+    public void createAttachmentListWithPositionForItemNull() {
+        final ContentItem item = null;
+
+        listManager.createAttachmentList(item, "newList", 10);
     }
 
     /**
@@ -493,14 +544,18 @@ public class AttachmentListManagerTest {
      */
     @Test(expected = IllegalArgumentException.class)
     @InSequence(440)
-    @UsingDataSet("datasets/org/librecms/attachments/AttachmentListManagerTest/"
-                      + "data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AttachmentListManagerTest/"
+            + "data.xml")
     @ShouldMatchDataSet(
-        "datasets/org/librecms/attachments/AttachmentListManagerTest/"
+        "datasets/org/librecms/contentsection/AttachmentListManagerTest/"
             + "data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
-    public void createAttachmentListAfterPositionNameIsNull() {
-        fail("Not implemented yet");
+    public void createAttachmentListWithPositionNameIsNull() {
+        final Optional<ContentItem> item = itemRepo.findById(-510);
+        assertThat(item.isPresent(), is(true));
+
+        listManager.createAttachmentList(item.get(), null, 10);
     }
 
     /**
@@ -511,14 +566,18 @@ public class AttachmentListManagerTest {
      */
     @Test(expected = IllegalArgumentException.class)
     @InSequence(450)
-    @UsingDataSet("datasets/org/librecms/attachments/AttachmentListManagerTest/"
-                      + "data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AttachmentListManagerTest/"
+            + "data.xml")
     @ShouldMatchDataSet(
-        "datasets/org/librecms/attachments/AttachmentListManagerTest/"
+        "datasets/org/librecms/contentsection/AttachmentListManagerTest/"
             + "data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
-    public void createAttachmentListAfterPositionNameIsEmpty() {
-        fail("Not implemented yet");
+    public void createAttachmentListWithPositionNameIsEmpty() {
+        final Optional<ContentItem> item = itemRepo.findById(-510);
+        assertThat(item.isPresent(), is(true));
+
+        listManager.createAttachmentList(item.get(), "   ", 10);
     }
 
     /**
@@ -529,13 +588,19 @@ public class AttachmentListManagerTest {
      */
     @Test
     @InSequence(500)
-    @UsingDataSet("datasets/org/librecms/attachments/AttachmentListManagerTest/"
-                      + "data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AttachmentListManagerTest/"
+            + "data.xml")
     @ShouldMatchDataSet(
-        "datasets/org/librecms/attachments/AttachmentListManagerTest/"
-            + "after-remove.xml")
+        value = "datasets/org/librecms/contentsection/"
+                    + "AttachmentListManagerTest/after-remove.xml",
+        excludeColumns = {"timestamp"})
     public void removeAttachmentList() {
-        fail("Not implemented yet");
+        final Optional<ContentItem> item = itemRepo.findById(-510);
+        assertThat(item.isPresent(), is(true));
+        final AttachmentList list = item.get().getAttachments().get(0);
+
+        listManager.removeAttachmentList(list);
     }
 
     /**
@@ -545,29 +610,59 @@ public class AttachmentListManagerTest {
      */
     @Test(expected = IllegalArgumentException.class)
     @InSequence(510)
-    @UsingDataSet("datasets/org/librecms/attachments/AttachmentListManagerTest/"
-                      + "data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AttachmentListManagerTest/"
+            + "data.xml")
     @ShouldMatchDataSet(
-        "datasets/org/librecms/attachments/AttachmentListManagerTest/"
+        "datasets/org/librecms/contentsection/AttachmentListManagerTest/"
             + "data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void removeAttachmentListNull() {
-        fail("Not implemented yet");
+        final AttachmentList list = null;
+
+        listManager.removeAttachmentList(list);
+
     }
 
     /**
-     * Tries to move an {@link AttachmentList} up one position up using
+     * Tries to move an {@link AttachmentList} up one position up (+1) using
      * {@link AttachmentListManager#moveUp(org.librecms.attachments.AttachmentList)}.
      */
     @Test
     @InSequence(600)
-    @UsingDataSet("datasets/org/librecms/attachments/AttachmentListManagerTest/"
-                      + "data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AttachmentListManagerTest/"
+            + "data.xml")
     @ShouldMatchDataSet(
-        "datasets/org/librecms/attachments/AttachmentListManagerTest/"
-            + "after-move-up.xml")
+        value = "datasets/org/librecms/contentsection/"
+                    + "AttachmentListManagerTest/after-move-up.xml",
+        excludeColumns = {"timestamp"})
     public void moveUp() {
-        fail("Not implemented yet");
+        final Optional<ContentItem> item = itemRepo.findById(-510);
+        assertThat(item.isPresent(), is(true));
+        final AttachmentList list = item.get().getAttachments().get(0);
+
+        listManager.moveUp(list);
+    }
+
+    /**
+     * Tries to move the item of the last position up and verifies that this
+     * that cause any changes.
+     */
+    @Test
+    @InSequence(610)
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AttachmentListManagerTest/"
+            + "data.xml")
+    @ShouldMatchDataSet(
+        "datasets/org/librecms/contentsection/AttachmentListManagerTest/"
+            + "data.xml")
+    public void moveUpLast() {
+        final Optional<ContentItem> item = itemRepo.findById(-510);
+        assertThat(item.isPresent(), is(true));
+        final AttachmentList list = item.get().getAttachments().get(2);
+
+        listManager.moveUp(list);
     }
 
     /**
@@ -576,15 +671,18 @@ public class AttachmentListManagerTest {
      * throws an {@link IllegalArgumentException} if called for {@code null}.
      */
     @Test(expected = IllegalArgumentException.class)
-    @InSequence(510)
-    @UsingDataSet("datasets/org/librecms/attachments/AttachmentListManagerTest/"
-                      + "data.xml")
+    @InSequence(620)
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AttachmentListManagerTest/"
+            + "data.xml")
     @ShouldMatchDataSet(
-        "datasets/org/librecms/attachments/AttachmentListManagerTest/"
+        "datasets/org/librecms/contentsection/AttachmentListManagerTest/"
             + "data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void moveUpListNull() {
-        fail("Not implemented yet");
+        final AttachmentList list = null;
+
+        listManager.moveUp(list);
     }
 
     /**
@@ -592,14 +690,40 @@ public class AttachmentListManagerTest {
      * {@link AttachmentListManager#moveUp(org.librecms.attachments.AttachmentList)}.
      */
     @Test
-    @InSequence(600)
-    @UsingDataSet("datasets/org/librecms/attachments/AttachmentListManagerTest/"
-                      + "data.xml")
+    @InSequence(700)
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AttachmentListManagerTest/"
+            + "data.xml")
     @ShouldMatchDataSet(
-        "datasets/org/librecms/attachments/AttachmentListManagerTest/"
-            + "after-move-down.xml")
+        value = "datasets/org/librecms/contentsection/"
+                    + "AttachmentListManagerTest/after-move-down.xml",
+        excludeColumns = {"timestamp"})
     public void moveDown() {
-        fail("Not implemented yet");
+        final Optional<ContentItem> item = itemRepo.findById(-510);
+        assertThat(item.isPresent(), is(true));
+        final AttachmentList list = item.get().getAttachments().get(2);
+
+        listManager.moveDown(list);
+    }
+
+    /**
+     * Tries to move the item of the last position up and verifies that this
+     * that cause any changes.
+     */
+    @Test
+    @InSequence(710)
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AttachmentListManagerTest/"
+            + "data.xml")
+    @ShouldMatchDataSet(
+        "datasets/org/librecms/contentsection/AttachmentListManagerTest/"
+            + "data.xml")
+    public void moveDownFirst() {
+        final Optional<ContentItem> item = itemRepo.findById(-510);
+        assertThat(item.isPresent(), is(true));
+        final AttachmentList list = item.get().getAttachments().get(0);
+
+        listManager.moveDown(list);
     }
 
     /**
@@ -608,80 +732,19 @@ public class AttachmentListManagerTest {
      * throws an {@link IllegalArgumentException} if called for {@code null}.
      */
     @Test(expected = IllegalArgumentException.class)
-    @InSequence(510)
-    @UsingDataSet("datasets/org/librecms/attachments/AttachmentListManagerTest/"
-                      + "data.xml")
+    @InSequence(720)
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AttachmentListManagerTest/"
+            + "data.xml")
     @ShouldMatchDataSet(
-        "datasets/org/librecms/attachments/AttachmentListManagerTest/"
+        "datasets/org/librecms/contentsection/AttachmentListManagerTest/"
             + "data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void moveDownListNull() {
-        fail("Not implemented yet");
+        final AttachmentList list = null;
+
+        listManager.moveDown(list);
     }
 
-    /**
-     * Tries to move an {@link AttachmentList} to an specific position using
-     * {@link AttachmentListManager#moveTo(org.librecms.attachments.AttachmentList, long)}.
-     */
-    @Test
-    @InSequence(600)
-    @UsingDataSet("datasets/org/librecms/attachments/AttachmentListManagerTest/"
-                      + "data.xml")
-    @ShouldMatchDataSet(
-        "datasets/org/librecms/attachments/AttachmentListManagerTest/"
-            + "after-move-to.xml")
-    public void moveTo() {
-        fail("Not implemented yet");
-    }
-
-    /**
-     * Tries to move an {@link AttachmentList} to the first position using
-     * {@link AttachmentListManager#moveTo(org.librecms.attachments.AttachmentList, long)}
-     * with a negative value for {@code position}.
-     */
-    @Test
-    @InSequence(600)
-    @UsingDataSet("datasets/org/librecms/attachments/AttachmentListManagerTest/"
-                      + "data.xml")
-    @ShouldMatchDataSet(
-        "datasets/org/librecms/attachments/AttachmentListManagerTest/"
-            + "after-move-to-first.xml")
-    public void moveToNegativePosition() {
-        fail("Not implemented yet");
-    }
-
-    /**
-     * Tries to move an {@link AttachmentList} to the last position using
-     * {@link AttachmentListManager#moveTo(org.librecms.attachments.AttachmentList, long)}
-     * with a value larger than the number of attachment lists.
-     */
-    @Test
-    @InSequence(600)
-    @UsingDataSet("datasets/org/librecms/attachments/AttachmentListManagerTest/"
-                      + "data.xml")
-    @ShouldMatchDataSet(
-        "datasets/org/librecms/attachments/AttachmentListManagerTest/"
-            + "after-move-to-last.xml")
-    public void moveToLargerThanLast() {
-        fail("Not implemented yet");
-    }
-
-    /**
-     * Verifies that
-     * {@link AttachmentListManager#moveTo(org.librecms.attachments.AttachmentList, long)}
-     * throws an {@link IllegalArgumentException} if called with {@code null}
-     * for the attachment list to move.
-     */
-    @Test(expected = IllegalArgumentException.class)
-    @InSequence(510)
-    @UsingDataSet("datasets/org/librecms/attachments/AttachmentListManagerTest/"
-                      + "data.xml")
-    @ShouldMatchDataSet(
-        "datasets/org/librecms/attachments/AttachmentListManagerTest/"
-            + "data.xml")
-    @ShouldThrowException(IllegalArgumentException.class)
-    public void moveToListNull() {
-        fail("Not implemented yet");
-    }
 
 }

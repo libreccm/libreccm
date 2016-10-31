@@ -18,6 +18,7 @@
  */
 package org.librecms.assets;
 
+import org.librecms.contentsection.Asset;
 import org.hibernate.envers.Audited;
 import org.libreccm.l10n.LocalizedString;
 

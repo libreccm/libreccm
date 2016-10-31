@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.librecms.attachments;
+package org.librecms.contentsection;
 
 import org.hibernate.envers.Audited;
 import org.libreccm.core.Identifiable;
@@ -157,7 +157,7 @@ public class AttachmentList implements Comparable<AttachmentList>,
         return item;
     }
 
-    public void setItem(final ContentItem item) {
+    protected void setItem(final ContentItem item) {
         this.item = item;
     }
 

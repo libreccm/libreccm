@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.librecms.assets;
+package org.librecms.contentsection;
 
 import static org.libreccm.testutils.DependenciesHelpers.*;
 
@@ -41,14 +41,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.libreccm.security.Shiro;
 import org.libreccm.tests.categories.IntegrationTest;
-import org.librecms.contentsection.ContentItem;
-import org.librecms.contentsection.Folder;
-import org.librecms.contentsection.FolderRepository;
+import org.librecms.assets.BinaryAsset;
 
 import java.util.List;
 import java.util.Optional;
 
 import javax.inject.Inject;
+
+import org.librecms.assets.File;
+import org.librecms.assets.Image;
+import org.librecms.assets.VideoAsset;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
@@ -97,7 +99,7 @@ public class AssetRepositoryTest {
     public static WebArchive createDeployment() {
         return ShrinkWrap
             .create(WebArchive.class,
-                    "LibreCCM-org.librecms.assets.AssetRepositoryTest.war")
+                    "LibreCCM-org.librecms.contentsection.AssetRepositoryTest.war")
             .addPackage(org.libreccm.auditing.CcmRevision.class.getPackage())
             .addPackage(org.libreccm.categorization.Categorization.class
                 .getPackage())
@@ -131,8 +133,9 @@ public class AssetRepositoryTest {
             .addPackage(com.arsdigita.util.Lockable.class.getPackage())
             .addPackage(com.arsdigita.web.BaseServlet.class.getPackage())
             .addPackage(org.librecms.Cms.class.getPackage())
-            .addPackage(org.librecms.assets.Asset.class.getPackage())
-            .addPackage(org.librecms.attachments.AttachmentList.class
+            .addPackage(org.librecms.contentsection.Asset.class.getPackage())
+            .addPackage(org.librecms.assets.BinaryAsset.class.getPackage())
+            .addPackage(org.librecms.contentsection.AttachmentList.class
                 .getPackage())
             .addPackage(org.librecms.lifecycle.Lifecycle.class.getPackage())
             .addPackage(org.librecms.contentsection.ContentSection.class
@@ -181,9 +184,10 @@ public class AssetRepositoryTest {
      */
     @Test
     @InSequence(100)
-    @UsingDataSet("datasets/org/librecms/assets/AssetRepositoryTest/data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AssetRepositoryTest/data.xml")
     @ShouldMatchDataSet(
-        value = "datasets/org/librecms/assets/AssetRepositoryTest/"
+        value = "datasets/org/librecms/contentsection/AssetRepositoryTest/"
                     + "after-delete.xml",
         excludeColumns = {"timestamp", "object_order"}
     )
@@ -202,9 +206,11 @@ public class AssetRepositoryTest {
      */
     @Test(expected = AssetInUseException.class)
     @InSequence(110)
-    @UsingDataSet("datasets/org/librecms/assets/AssetRepositoryTest/data.xml")
-    @ShouldMatchDataSet("datasets/org/librecms/assets/AssetRepositoryTest/"
-                            + "data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AssetRepositoryTest/data.xml")
+    @ShouldMatchDataSet(
+        "datasets/org/librecms/contentsection/AssetRepositoryTest/"
+            + "data.xml")
     @ShouldThrowException(AssetInUseException.class)
     public void deleteUsedAsset() {
         final Asset asset = assetRepo.findById(-700L);
@@ -220,7 +226,8 @@ public class AssetRepositoryTest {
      */
     @Test
     @InSequence(200)
-    @UsingDataSet("datasets/org/librecms/assets/AssetRepositoryTest/data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AssetRepositoryTest/data.xml")
     public void findAssetByUuid() {
         final Optional<Asset> header = assetRepo.findByUuid(
             "4635589f-b87a-46d9-979e-6af14af063e5");
@@ -232,15 +239,25 @@ public class AssetRepositoryTest {
             "5211bf56-c20b-40b3-8ef8-0c7d35325fda");
 
         assertThat(header.isPresent(), is(true));
-        assertThat(phb.isPresent(), is(true));
-        assertThat(datasheet.isPresent(), is(true));
-        assertThat(none.isPresent(), is(false));
-
+        assertThat(header.get(), is(instanceOf(Asset.class)));
+        assertThat(header.get(), is(instanceOf(BinaryAsset.class)));
+        assertThat(header.get(), is(instanceOf(Image.class)));
         assertThat(header.get().getDisplayName(), is(equalTo("header.png")));
+
+        assertThat(phb.isPresent(), is(true));
+        assertThat(phb.get(), is(instanceOf(Asset.class)));
+        assertThat(phb.get(), is(instanceOf(BinaryAsset.class)));
+        assertThat(phb.get(), is(instanceOf(Image.class)));
         assertThat(phb.get().getDisplayName(), is(equalTo("the-phb.png")));
+
+        assertThat(datasheet.isPresent(), is(true));
+        assertThat(datasheet.get(), is(instanceOf(Asset.class)));
+        assertThat(datasheet.get(), is(instanceOf(BinaryAsset.class)));
+        assertThat(datasheet.get(), is(instanceOf(File.class)));
         assertThat(datasheet.get().getDisplayName(), is(equalTo(
                    "product1-datasheet.pdf")));
 
+        assertThat(none.isPresent(), is(false));
     }
 
     /**
@@ -249,7 +266,8 @@ public class AssetRepositoryTest {
      */
     @Test
     @InSequence(210)
-    @UsingDataSet("datasets/org/librecms/assets/AssetRepositoryTest/data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AssetRepositoryTest/data.xml")
     public void findAssetByUuidAndType() {
         final Optional<Asset> asset = assetRepo.findByUuidAndType(
             "4635589f-b87a-46d9-979e-6af14af063e5", Image.class);
@@ -268,7 +286,8 @@ public class AssetRepositoryTest {
      */
     @Test
     @InSequence(300)
-    @UsingDataSet("datasets/org/librecms/assets/AssetRepositoryTest/data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AssetRepositoryTest/data.xml")
     public void findAssetByType() {
         final List<Asset> images = assetRepo.findByType(Image.class);
         final List<Asset> files = assetRepo.findByType(File.class);
@@ -295,7 +314,8 @@ public class AssetRepositoryTest {
      */
     @Test
     @InSequence(400)
-    @UsingDataSet("datasets/org/librecms/assets/AssetRepositoryTest/data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AssetRepositoryTest/data.xml")
     public void findAssetsByFolder() {
         final Folder media = folderRepo.findById(-400L);
         final Folder data = folderRepo.findById(-500L);
@@ -314,7 +334,8 @@ public class AssetRepositoryTest {
      */
     @Test
     @InSequence(410)
-    @UsingDataSet("datasets/org/librecms/assets/AssetRepositoryTest/data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AssetRepositoryTest/data.xml")
     public void countAssetsInFolder() {
         final Folder media = folderRepo.findById(-400L);
         final Folder data = folderRepo.findById(-500L);
@@ -329,7 +350,8 @@ public class AssetRepositoryTest {
      */
     @Test
     @InSequence(500)
-    @UsingDataSet("datasets/org/librecms/assets/AssetRepositoryTest/data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AssetRepositoryTest/data.xml")
     public void filterAssetByFolderAndName() {
         final Folder media = folderRepo.findById(-400L);
 
@@ -351,7 +373,8 @@ public class AssetRepositoryTest {
      */
     @Test
     @InSequence(510)
-    @UsingDataSet("datasets/org/librecms/assets/AssetRepositoryTest/data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AssetRepositoryTest/data.xml")
     public void countFilterAssetByFolderAndName() {
         final Folder media = folderRepo.findById(-400L);
 
@@ -368,7 +391,8 @@ public class AssetRepositoryTest {
      */
     @Test
     @InSequence(600)
-    @UsingDataSet("datasets/org/librecms/assets/AssetRepositoryTest/data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AssetRepositoryTest/data.xml")
     public void filterAssetsByFolderAndType() {
         final Folder media = folderRepo.findById(-400L);
 
@@ -400,7 +424,8 @@ public class AssetRepositoryTest {
      */
     @Test
     @InSequence(610)
-    @UsingDataSet("datasets/org/librecms/assets/AssetRepositoryTest/data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AssetRepositoryTest/data.xml")
     public void countFilterAssetsByFolderAndType() {
         final Folder media = folderRepo.findById(-400L);
 
@@ -419,7 +444,8 @@ public class AssetRepositoryTest {
      */
     @Test
     @InSequence(600)
-    @UsingDataSet("datasets/org/librecms/assets/AssetRepositoryTest/data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AssetRepositoryTest/data.xml")
     public void filterAssetsByFolderAndTypeAndName() {
         final Folder media = folderRepo.findById(-400L);
 
@@ -440,7 +466,8 @@ public class AssetRepositoryTest {
      */
     @Test
     @InSequence(610)
-    @UsingDataSet("datasets/org/librecms/assets/AssetRepositoryTest/data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AssetRepositoryTest/data.xml")
     public void countFilterAssetsByFolderAndTypeAndName() {
         final Folder media = folderRepo.findById(-400L);
 

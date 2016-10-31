@@ -18,6 +18,8 @@
  */
 package org.librecms.assets;
 
+import org.librecms.contentsection.Asset;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;

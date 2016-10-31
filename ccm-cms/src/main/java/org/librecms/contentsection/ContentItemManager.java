@@ -46,7 +46,9 @@ import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
 import org.libreccm.workflow.Workflow;
 import org.libreccm.workflow.WorkflowManager;
+
 import static org.librecms.CmsConstants.*;
+
 import org.librecms.contentsection.privileges.ItemPrivileges;
 import org.librecms.lifecycle.Lifecycle;
 import org.librecms.lifecycle.LifecycleManager;
@@ -1155,5 +1157,5 @@ public class ContentItemManager {
             return Optional.empty();
         }
     }
-
+    
 }

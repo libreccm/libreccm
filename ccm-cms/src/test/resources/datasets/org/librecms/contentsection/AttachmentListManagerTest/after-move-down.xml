@@ -3,6 +3,8 @@
 
     <ccm_core.ccm_revisions id="0"
                             timestamp="1451602800" />
+    <ccm_core.ccm_revisions id="1"
+                            timestamp="1451602800" />
     
     <ccm_core.ccm_objects object_id="-100" 
                           display_name="info"
@@ -213,17 +215,17 @@
     <ccm_cms.asset_titles_aud asset_id="-710"
                               rev="0"
                               revtype="0" 
-                              localized_value="asset510-1a"
+                              localized_value="asset-510-1a"
                               locale="en" />
     <ccm_cms.asset_titles_aud asset_id="-720"
                               rev="0"
                               revtype="0" 
-                              localized_value="asset510-1b"
+                              localized_value="asset-510-1b"
                               locale="en" />
     <ccm_cms.asset_titles_aud asset_id="-730"
                               rev="0"
                               revtype="0" 
-                              localized_value="asset520-2a"
+                              localized_value="asset-520-2a"
                               locale="en" />
     
     <ccm_cms.binary_assets object_id="-610"
@@ -344,13 +346,13 @@
                               uuid="209e3f76-1523-4601-84bd-dbae91f4f26d"
                               item_id="-510" />
     <ccm_cms.attachment_lists list_id="-510020"
-                              name="list2"
-                              list_order="2"
+                              name="list1"
+                              list_order="3"
                               uuid="57850f9c-e191-4f6f-9537-d5c2d2f118ec"
                               item_id="-510" />
     <ccm_cms.attachment_lists list_id="-510030"
-                              name="list3"
-                              list_order="3"
+                              name="list2"
+                              list_order="2"
                               uuid="a0c2ba42-d506-48c0-b7cc-d32b2a031a50"
                               item_id="-510" />
     <ccm_cms.attachment_lists list_id="-520010"
@@ -373,13 +375,15 @@
     <ccm_cms.attachment_lists_aud list_id="-510020" 
                                   rev="0"
                                   revtype="0"
-                                  name="list2"
+                                  revend="1"
+                                  name="list1"
                                   uuid="57850f9c-e191-4f6f-9537-d5c2d2f118ec"
-                                  itme_id="-510" />
+                                  item_id="-510" />
     <ccm_cms.attachment_lists_aud list_id="-510030" 
                                   rev="0"
                                   revtype="0"
-                                  name="list3"
+                                  revend="1"
+                                  name="list2"
                                   uuid="a0c2ba42-d506-48c0-b7cc-d32b2a031a50"
                                   item_id="-510" />
     <ccm_cms.attachment_lists_aud list_id="-520010" 
@@ -391,9 +395,23 @@
     <ccm_cms.attachment_lists_aud list_id="-520020" 
                                   rev="0"
                                   revtype="0"
-                                  name="list1"
+                                  name="list2"
                                   uuid="a6841869-6ebd-4a14-9c52-627cfc880f4e"
                                   item_id="-520" />
+    <ccm_cms.attachment_lists_aud list_id="-510020" 
+                                  rev="1"
+                                  revtype="1"
+                                  name="list1"
+                                  list_order="3"
+                                  uuid="57850f9c-e191-4f6f-9537-d5c2d2f118ec"
+                                  item_id="-510" />
+    <ccm_cms.attachment_lists_aud list_id="-510030" 
+                                  rev="1"
+                                  revtype="1"
+                                  name="list2"
+                                  list_order="2"
+                                  uuid="a0c2ba42-d506-48c0-b7cc-d32b2a031a50"
+                                  item_id="-510" />
     
     <ccm_cms.attachments attachment_id="-510110"
                          sort_key="1"

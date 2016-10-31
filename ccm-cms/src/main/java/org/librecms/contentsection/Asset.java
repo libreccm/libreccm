@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.librecms.assets;
+package org.librecms.contentsection;
 
 import org.hibernate.envers.Audited;
 import org.libreccm.categorization.Categorization;
@@ -24,7 +24,6 @@ import org.libreccm.core.CcmObject;
 import org.libreccm.l10n.LocalizedString;
 import org.libreccm.security.InheritsPermissions;
 import org.librecms.CmsConstants;
-import org.librecms.attachments.ItemAttachment;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -155,6 +154,7 @@ public class Asset extends CcmObject implements InheritsPermissions {
 
     public Asset() {
         title = new LocalizedString();
+        itemAttachments = new ArrayList<>();
     }
 
     public LocalizedString getTitle() {
@@ -171,6 +171,24 @@ public class Asset extends CcmObject implements InheritsPermissions {
         } else {
             return Collections.unmodifiableList(itemAttachments);
         }
+    }
+
+    protected void setItemAttachments(
+        final List<ItemAttachment<?>> itemAttachments) {
+
+        if (itemAttachments == null) {
+            this.itemAttachments = new ArrayList<>();
+        } else {
+            this.itemAttachments = itemAttachments;
+        }
+    }
+
+    protected void addItemAttachment(final ItemAttachment<?> itemAttachment) {
+        itemAttachments.add(itemAttachment);
+    }
+
+    protected void removeItemAttachment(final ItemAttachment<?> itemAttachment) {
+        itemAttachments.remove(itemAttachment);
     }
 
     @Override

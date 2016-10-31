@@ -17,7 +17,7 @@
  * MA 02110-1301  USA
  */
 
-package org.librecms.assets;
+package org.librecms.contentsection;
 
 /**
  *

@@ -18,9 +18,12 @@
  */
 package org.librecms.assets;
 
+import org.librecms.contentsection.Asset;
+
 import java.io.Serializable;
 import java.net.URL;
 import java.util.Objects;
+
 import javax.persistence.AssociationOverride;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -28,6 +31,7 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Table;
+
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.libreccm.l10n.LocalizedString;

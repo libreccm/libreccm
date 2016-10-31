@@ -16,11 +16,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.librecms.attachments;
+package org.librecms.contentsection;
 
 import org.hibernate.envers.Audited;
 import org.libreccm.core.Identifiable;
-import org.librecms.assets.Asset;
 
 import java.io.Serializable;
 import java.util.Objects;

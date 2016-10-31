@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.librecms.assets;
+package org.librecms.contentsection;
 
 import com.arsdigita.util.UncheckedWrapperException;
 
@@ -27,8 +27,6 @@ import org.libreccm.categorization.ObjectNotAssignedToCategoryException;
 import org.libreccm.core.CcmObjectRepository;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
-import org.librecms.CmsConstants;
-import org.librecms.contentsection.Folder;
 import org.librecms.contentsection.privileges.AssetPrivileges;
 
 import java.util.List;

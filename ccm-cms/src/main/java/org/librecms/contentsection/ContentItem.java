@@ -26,7 +26,6 @@ import org.libreccm.l10n.LocalizedString;
 import org.libreccm.security.InheritsPermissions;
 import org.libreccm.workflow.Workflow;
 import org.librecms.CmsConstants;
-import org.librecms.attachments.AttachmentList;
 import org.librecms.lifecycle.Lifecycle;
 
 import java.io.Serializable;
@@ -67,33 +66,38 @@ import static org.librecms.CmsConstants.*;
 @NamedQueries({
     @NamedQuery(
         name = "ContentItem.findByType",
-        query = "SELECT i FROM ContentItem i WHERE TYPE(i) = :type"),
+        query = "SELECT i FROM ContentItem i WHERE TYPE(i) = :type")
+    ,
     @NamedQuery(
         name = "ContentItem.findByFolder",
         query = "SELECT i FROM ContentItem i "
                     + "JOIN i.categories c "
                     + "WHERE c.category = :folder "
-                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "'"),
+                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "'")
+    ,
     @NamedQuery(
         name = "ContentItem.countItemsInFolder",
         query = "SELECT count(i) FROM ContentItem i "
                     + "JOIN i.categories c "
                     + "WHERE c.category = :folder "
-                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "'"),
+                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "'")
+    ,
     @NamedQuery(
         name = "ContentItem.countByNameInFolder",
         query = "SELECT COUNT(i) FROM ContentItem i "
                     + "JOIN i.categories c "
                     + "WHERE c.category = :folder "
                     + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
-                    + "AND i.displayName = :name"),
+                    + "AND i.displayName = :name")
+    ,
     @NamedQuery(
         name = "ContentItem.filterByFolderAndName",
         query = "SELECT i FROM ContentItem i "
                     + "JOIN i.categories c "
                     + "WHERE c.category = :folder "
                     + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
-                    + "AND LOWER(i.displayName) LIKE CONCAT(LOWER(:name), '%')"),
+                    + "AND LOWER(i.displayName) LIKE CONCAT(LOWER(:name), '%')")
+    ,
     @NamedQuery(
         name = "ContentItem.countFilterByFolderAndName",
         query = "SELECT COUNT(i) FROM ContentItem i "
@@ -101,18 +105,21 @@ import static org.librecms.CmsConstants.*;
                     + "WHERE c.category = :folder "
                     + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
                     + "AND LOWER(i.displayName) LIKE CONCAT(LOWER(:name), '%')"
-    ),
+    )
+    ,
     @NamedQuery(
         name = "ContentItem.hasLiveVersion",
         query = "SELECT (CASE WHEN COUNT(i) > 0 THEN true ELSE false END) "
                     + "FROM ContentItem i "
                     + "WHERE i.itemUuid = :uuid "
-                    + "AND i.version = org.librecms.contentsection.ContentItemVersion.LIVE"),
+                    + "AND i.version = org.librecms.contentsection.ContentItemVersion.LIVE")
+    ,
     @NamedQuery(
         name = "ContentItem.findDraftVersion",
         query = "SELECT i FROM ContentItem i "
                     + "WHERE i.itemUuid = :uuid "
-                    + "AND i.version = org.librecms.contentsection.ContentItemVersion.DRAFT"),
+                    + "AND i.version = org.librecms.contentsection.ContentItemVersion.DRAFT")
+    ,
     @NamedQuery(
         name = "ContentItem.findLiveVersion",
         query = "SELECT i FROM ContentItem i "
@@ -296,17 +303,22 @@ public class ContentItem extends CcmObject implements Serializable,
     }
 
     public List<AttachmentList> getAttachments() {
+        Collections.sort(attachments);
         return Collections.unmodifiableList(attachments);
     }
 
     protected void setAttachments(final List<AttachmentList> attachments) {
-        this.attachments = attachments;
+        if (attachments == null) {
+            this.attachments = new ArrayList<>();
+        } else {
+            this.attachments = attachments;
+        }
     }
-    
+
     protected void addAttachmentList(final AttachmentList attachmentList) {
         attachments.add(attachmentList);
     }
-    
+
     protected void removeAttachmentList(final AttachmentList attachmentList) {
         attachments.remove(attachmentList);
     }
@@ -331,8 +343,8 @@ public class ContentItem extends CcmObject implements Serializable,
     public Optional<CcmObject> getParent() {
         final List<Categorization> result = getCategories().stream().filter(
             categorization -> CmsConstants.CATEGORIZATION_TYPE_FOLDER.
-            equals(
-                categorization.getType()))
+                equals(
+                    categorization.getType()))
             .collect(Collectors.toList());
 
         if (result.isEmpty()) {

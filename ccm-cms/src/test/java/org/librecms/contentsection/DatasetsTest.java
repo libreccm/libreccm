@@ -43,6 +43,30 @@ public class DatasetsTest extends DatasetsVerifier {
     @Parameterized.Parameters(name = "Dataset {0}")
     public static Collection<String> data() {
         return Arrays.asList(new String[]{
+            "/datasets/org/librecms/contentsection/AssetRepositoryTest/data.xml",
+            "/datasets/org/librecms/contentsection/AssetRepositoryTest/after-delete.xml",
+            
+            "/datasets/org/librecms/contentsection/AssetManagerTest/data.xml",
+            "/datasets/org/librecms/contentsection/AssetManagerTest/after-clean-orphaned.xml",
+            "/datasets/org/librecms/contentsection/AssetManagerTest/after-copy-to-other-contentsection.xml",
+            "/datasets/org/librecms/contentsection/AssetManagerTest/after-copy-to-other-folder.xml",
+            "/datasets/org/librecms/contentsection/AssetManagerTest/after-copy-to-same-folder.xml",
+            "/datasets/org/librecms/contentsection/AssetManagerTest/after-share.xml",
+            "/datasets/org/librecms/contentsection/AssetManagerTest/after-move-to-other-contentsection.xml",
+            "/datasets/org/librecms/contentsection/AssetManagerTest/after-move-to-other-folder.xml",
+            
+            "/datasets/org/librecms/contentsection/AttachmentListManagerTest/data.xml",
+            "/datasets/org/librecms/contentsection/AttachmentListManagerTest/after-create-after-last.xml",
+            "/datasets/org/librecms/contentsection/AttachmentListManagerTest/after-create-with-negative-position.xml",
+            "/datasets/org/librecms/contentsection/AttachmentListManagerTest/after-create-with-position.xml",
+            "/datasets/org/librecms/contentsection/AttachmentListManagerTest/after-create.xml",
+            "/datasets/org/librecms/contentsection/AttachmentListManagerTest/after-move-down.xml",
+            "/datasets/org/librecms/contentsection/AttachmentListManagerTest/after-move-to-first.xml",
+            "/datasets/org/librecms/contentsection/AttachmentListManagerTest/after-move-to-last.xml",
+            "/datasets/org/librecms/contentsection/AttachmentListManagerTest/after-move-to.xml",
+            "/datasets/org/librecms/contentsection/AttachmentListManagerTest/after-move-up.xml",
+            "/datasets/org/librecms/contentsection/AttachmentListManagerTest/after-remove.xml",
+            
             "/datasets/org/librecms/contentsection/ContentSectionManagerTest/data.xml",
             "/datasets/org/librecms/contentsection/ContentSectionManagerTest/after-add-contenttype.xml",
             "/datasets/org/librecms/contentsection/ContentSectionManagerTest/after-remove-contenttype.xml",
