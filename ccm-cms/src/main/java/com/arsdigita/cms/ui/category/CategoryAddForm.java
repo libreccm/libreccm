@@ -59,9 +59,6 @@ final class CategoryAddForm extends BaseCategoryForm {
 
         m_model = model;
 
-        //m_name.addValidationListener(new NameUniqueListener(null, m_name, NameUniqueListener.NAME_FIELD));
-        //m_url.addValidationListener(new NameUniqueListener(null, m_url, NameUniqueListener.URL_FIELD));
-	
         addProcessListener(new ProcessListener());
     }
 
@@ -83,7 +80,6 @@ final class CategoryAddForm extends BaseCategoryForm {
             final Category parent = m_parent.getCategory(state);
             final String name = (String) m_name.getValue(state);
             final String description = (String) m_description.getValue(state);
-            final String url = (String) m_url.getValue(state);
             final String isAbstract = (String) m_isAbstract.getValue(state);
 
             Assert.exists(parent, "Category parent");
@@ -108,16 +104,9 @@ final class CategoryAddForm extends BaseCategoryForm {
                     category.setAbstractCategory(true);
                 }
 
-                //category.save(); // XXX this is necessary?
                 categoryRepository.save(category);
 
-                //parent.addChild(category);
-                //parent.save();
                 categoryManager.addSubCategoryToCategory(category, parent);
-
-                //category.setDefaultParentCategory(parent);
-                //category.save(k);
-
 
                 m_model.setSelectedKey(state, category.getUniqueId());
             } else {
