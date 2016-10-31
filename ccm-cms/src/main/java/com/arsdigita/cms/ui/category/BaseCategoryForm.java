@@ -57,7 +57,6 @@ class BaseCategoryForm extends BaseForm {
     final CategoryRequestLocal m_parent;
     final TextField m_name;
     final TextArea m_description;
-    final TextField m_url;
     final RadioGroup m_isAbstract;
     final RadioGroup m_isVisible;
     final RadioGroup m_isEnabled;
@@ -118,31 +117,11 @@ class BaseCategoryForm extends BaseForm {
         m_description.setRows(5);
         m_description.setCols(40);
 
-        // URL
-        // JavaScript auto-url generation is off by default.
-        // It is turned on under the following circumstances
-        //
-        // * If the url is null, upon starting edit of the title
-        // * If the url is null, upon finishing edit of name
-        //
-        // The rationale is that, auto-url generation is useful
-        // if the url is currently null, but once a name has been
-        // created you don't want to subsequently change it since
-        // it breaks URLs & potentially overwrites the user's
-        // customizations.
-        m_url = new TextField(new TrimmedStringParameter(URL));
-        m_url.setSize(30);
-        m_url.setMaxLength(200);
-        m_url.addValidationListener(new NotNullValidationListener());
-        m_url.setOnFocus("defaulting = false");
-        m_url.setOnBlur("if (this.value == '') " + "{ defaulting = true; this.value = urlize(this.form." + NAME
-                        + ".value) } " + "else { this.value = urlize(this.value); }");
-        addField(gz("cms.ui.category.url"), m_url);
-
         addAction(new Finish());
         addAction(new Cancel());
     }
 
+    @Override
     public void generateXML(PageState ps, Element parent) {
         m_script.generateXML(ps, parent);
         super.generateXML(ps, parent);
@@ -153,8 +132,7 @@ class BaseCategoryForm extends BaseForm {
         private final CategoryRequestLocal m_category;
         private final Widget m_widget;
         private final int m_type;
-        public final static int NAME_FIELD = 1;
-        public final static int URL_FIELD = 2;
+        final static int NAME_FIELD = 1;
 
         NameUniqueListener(final CategoryRequestLocal category) {
             this(category, m_name, NAME_FIELD);
@@ -179,7 +157,6 @@ class BaseCategoryForm extends BaseForm {
 
             for (final Category child : children) {
                 String compField = child.getName();
-                       //(m_type == URL_FIELD) ? child.getURL() : child.getName(); TODO
                 if (compField.equalsIgnoreCase(title)
                     && (m_category == null
                         || !m_category.getCategory(state).equals(child))) {
