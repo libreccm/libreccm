@@ -54,9 +54,6 @@ final class CategoryEditForm extends BaseCategoryForm {
 
         m_category = category;
 
-        //m_name.addValidationListener(new NameUniqueListener(null, m_name, NameUniqueListener.NAME_FIELD));
-        //m_url.addValidationListener(new NameUniqueListener(null, m_url, NameUniqueListener.URL_FIELD));
-
         addInitListener(new InitListener());
         addProcessListener(new ProcessListener());
     }
@@ -121,8 +118,7 @@ final class CategoryEditForm extends BaseCategoryForm {
                 final LocalizedString localizedDescription = new LocalizedString();
                 localizedDescription.addValue(config.getDefaultLocale() ,(String) m_description.getValue(state));
                 category.setDescription(localizedDescription);
-                //category.setURL((String) m_url.getValue(state));
-                
+
                 final String isAbstract = (String) m_isAbstract.getValue(state);
                 // this seems anti-intuitive but the question is "can you place
                 // items in this category.  If the user says "yes" then the
