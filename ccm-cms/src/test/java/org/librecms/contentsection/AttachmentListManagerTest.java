@@ -18,8 +18,6 @@
  */
 package org.librecms.contentsection;
 
-import org.librecms.contentsection.AttachmentList;
-import org.librecms.contentsection.AttachmentListManager;
 
 import static org.libreccm.testutils.DependenciesHelpers.*;
 
@@ -45,9 +43,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.libreccm.security.Shiro;
 import org.libreccm.tests.categories.IntegrationTest;
-import org.librecms.contentsection.Asset;
-import org.librecms.contentsection.ContentItem;
-import org.librecms.contentsection.ContentItemRepository;
 
 import java.util.List;
 import java.util.Optional;

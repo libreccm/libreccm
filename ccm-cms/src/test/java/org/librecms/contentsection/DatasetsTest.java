@@ -45,7 +45,7 @@ public class DatasetsTest extends DatasetsVerifier {
         return Arrays.asList(new String[]{
             "/datasets/org/librecms/contentsection/AssetRepositoryTest/data.xml",
             "/datasets/org/librecms/contentsection/AssetRepositoryTest/after-delete.xml",
-            
+
             "/datasets/org/librecms/contentsection/AssetManagerTest/data.xml",
             "/datasets/org/librecms/contentsection/AssetManagerTest/after-clean-orphaned.xml",
             "/datasets/org/librecms/contentsection/AssetManagerTest/after-copy-to-other-contentsection.xml",
@@ -54,19 +54,16 @@ public class DatasetsTest extends DatasetsVerifier {
             "/datasets/org/librecms/contentsection/AssetManagerTest/after-share.xml",
             "/datasets/org/librecms/contentsection/AssetManagerTest/after-move-to-other-contentsection.xml",
             "/datasets/org/librecms/contentsection/AssetManagerTest/after-move-to-other-folder.xml",
-            
+
             "/datasets/org/librecms/contentsection/AttachmentListManagerTest/data.xml",
             "/datasets/org/librecms/contentsection/AttachmentListManagerTest/after-create-after-last.xml",
             "/datasets/org/librecms/contentsection/AttachmentListManagerTest/after-create-with-negative-position.xml",
             "/datasets/org/librecms/contentsection/AttachmentListManagerTest/after-create-with-position.xml",
             "/datasets/org/librecms/contentsection/AttachmentListManagerTest/after-create.xml",
             "/datasets/org/librecms/contentsection/AttachmentListManagerTest/after-move-down.xml",
-            "/datasets/org/librecms/contentsection/AttachmentListManagerTest/after-move-to-first.xml",
-            "/datasets/org/librecms/contentsection/AttachmentListManagerTest/after-move-to-last.xml",
-            "/datasets/org/librecms/contentsection/AttachmentListManagerTest/after-move-to.xml",
             "/datasets/org/librecms/contentsection/AttachmentListManagerTest/after-move-up.xml",
             "/datasets/org/librecms/contentsection/AttachmentListManagerTest/after-remove.xml",
-            
+
             "/datasets/org/librecms/contentsection/ContentSectionManagerTest/data.xml",
             "/datasets/org/librecms/contentsection/ContentSectionManagerTest/after-add-contenttype.xml",
             "/datasets/org/librecms/contentsection/ContentSectionManagerTest/after-remove-contenttype.xml",
@@ -82,7 +79,7 @@ public class DatasetsTest extends DatasetsVerifier {
             "/datasets/org/librecms/contentsection/ContentItemL10NManagerTest/after-add-language.xml",
             "/datasets/org/librecms/contentsection/ContentItemL10NManagerTest/after-normalize.xml",
             "/datasets/org/librecms/contentsection/ContentItemL10NManagerTest/after-remove-language.xml",
-            
+
             "/datasets/org/librecms/contentsection/ContentItemManagerTest/data.xml",
             "/datasets/org/librecms/contentsection/ContentItemManagerTest/after-create-contentitem.xml",
             "/datasets/org/librecms/contentsection/ContentItemManagerTest/after-create-contentitem-with-workflow.xml",
@@ -103,7 +100,11 @@ public class DatasetsTest extends DatasetsVerifier {
             "/datasets/org/librecms/contentsection/FolderManagerTest/after-create-assets-folder.xml",
             "/datasets/org/librecms/contentsection/FolderManagerTest/after-delete-folder.xml",
             "/datasets/org/librecms/contentsection/FolderManagerTest/after-move-folder.xml",
-            "/datasets/org/librecms/contentsection/FolderManagerTest/after-move-folder-same-name.xml",});
+            "/datasets/org/librecms/contentsection/FolderManagerTest/after-move-folder-same-name.xml",
+
+            "/datasets/org/librecms/contentsection/ItemAttachmentManagerTest/data.xml",
+            "/datasets/org/librecms/contentsection/ItemAttachmentManagerTest/after-attach-shared.xml",
+            "/datasets/org/librecms/contentsection/ItemAttachmentManagerTest/after-attach-nonshared.xml",});
     }
 
     public DatasetsTest(final String datasetPath) {

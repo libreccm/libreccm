@@ -19,15 +19,17 @@
 package org.librecms.contentsection;
 
 import org.hibernate.envers.Audited;
+import org.libreccm.core.CcmObject;
 import org.libreccm.core.Identifiable;
 import org.libreccm.l10n.LocalizedString;
-import org.librecms.contentsection.ContentItem;
+import org.libreccm.security.InheritsPermissions;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.persistence.AssociationOverride;
 import javax.persistence.Column;
@@ -67,6 +69,7 @@ import static org.librecms.CmsConstants.*;
 })
 public class AttachmentList implements Comparable<AttachmentList>,
                                        Identifiable,
+                                       InheritsPermissions,
                                        Serializable {
 
     private static final long serialVersionUID = -7931234562247075541L;
@@ -161,6 +164,15 @@ public class AttachmentList implements Comparable<AttachmentList>,
         this.item = item;
     }
 
+    @Override
+    public Optional<CcmObject> getParent() {
+        if (item == null) {
+            return Optional.empty();
+        } else {
+            return Optional.of(item);
+        }
+    }
+    
     public String getName() {
         return name;
     }

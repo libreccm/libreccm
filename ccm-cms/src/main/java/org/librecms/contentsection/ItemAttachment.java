@@ -31,6 +31,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 import static org.librecms.CmsConstants.*;
@@ -45,6 +47,13 @@ import static org.librecms.CmsConstants.*;
 @Entity
 @Table(schema = DB_SCHEMA, name = "ATTACHMENTS")
 @Audited
+@NamedQueries({
+    @NamedQuery(
+        name = "ItemAttachment.countByAssetIdAndList",
+        query = "SELECT COUNT(i) FROM ItemAttachment i "
+                    + "WHERE i.asset = :asset "
+                    + "AND i.attachmentList = :attachmentList")
+})
 public class ItemAttachment<T extends Asset>
     implements Comparable<ItemAttachment<?>>,
                Identifiable,
@@ -133,10 +142,10 @@ public class ItemAttachment<T extends Asset>
         if (other == null) {
             throw new NullPointerException();
         }
-        
+
         return Long.compare(sortKey, other.getSortKey());
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 3;
