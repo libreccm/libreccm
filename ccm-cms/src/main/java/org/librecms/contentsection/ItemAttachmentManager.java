@@ -18,6 +18,7 @@
  */
 package org.librecms.contentsection;
 
+import java.util.List;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
 import org.librecms.contentsection.privileges.ItemPrivileges;
@@ -44,18 +45,21 @@ public class ItemAttachmentManager {
     @Inject
     private AssetRepository assetRepo;
 
+    @Inject
+    private AssetManager assetManager;
+
     /**
      * Adds the provided {@link Asset} to the provided {@link AttachmentList}.
      *
-     * @param asset          The {@link Asset} to add.
+     * @param asset The {@link Asset} to add.
      * @param attachmentList The attachment list to which the asset is added.
      */
     @Transactional(Transactional.TxType.REQUIRED)
     @AuthorizationRequired
     public void attachAsset(
-        final Asset asset,
-        @RequiresPrivilege(ItemPrivileges.EDIT)
-        final AttachmentList attachmentList) {
+            final Asset asset,
+            @RequiresPrivilege(ItemPrivileges.EDIT)
+            final AttachmentList attachmentList) {
 
         if (asset == null) {
             throw new IllegalArgumentException("Can't attach asset null.");
@@ -63,7 +67,7 @@ public class ItemAttachmentManager {
 
         if (attachmentList == null) {
             throw new IllegalArgumentException(
-                "Can't attach an asset to attachment list null.");
+                    "Can't attach an asset to attachment list null.");
         }
 
         // For shared assets (we assume that every asset already in the database
@@ -72,7 +76,7 @@ public class ItemAttachmentManager {
             saveNonSharedAsset(asset);
         } else {
             final TypedQuery<Long> countQuery = entityManager.createNamedQuery(
-                "ItemAttachment.countByAssetIdAndList", Long.class);
+                    "ItemAttachment.countByAssetIdAndList", Long.class);
             countQuery.setParameter("asset", asset);
             countQuery.setParameter("attachmentList", attachmentList);
 
@@ -99,6 +103,7 @@ public class ItemAttachmentManager {
     @Transactional(Transactional.TxType.REQUIRES_NEW)
     private void saveNonSharedAsset(final Asset asset) {
         assetRepo.save(asset);
+        entityManager.flush();
     }
 
     /**
@@ -106,22 +111,45 @@ public class ItemAttachmentManager {
      * {@link AttachmentList}. If the asset is a non shared asset the asset is
      * deleted.
      *
-     * @param asset          The {@link Asset} to remove.
+     * @param asset The {@link Asset} to remove.
      * @param attachmentList The attachment list to which the asset is removed
-     *                       from.
+     * from.
      */
     public void unattachAsset(final Asset asset,
                               final AttachmentList attachmentList) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        final TypedQuery<Long> countQuery = entityManager.createNamedQuery(
+                "ItemAttachment.countByAssetIdAndList", Long.class);
+        countQuery.setParameter("asset", asset);
+        countQuery.setParameter("attachmentList", attachmentList);
+
+        final long count = countQuery.getSingleResult();
+
+        if (count == 0) {
+            return;
+        }
+
+        final TypedQuery<ItemAttachment> query = entityManager
+                .createNamedQuery("ItemAttachment.findByAssetByAndList",
+                                  ItemAttachment.class);
+        query.setParameter("asset", asset);
+        query.setParameter("attachmentList", attachmentList);
+
+        final List<ItemAttachment> attachments = query.getResultList();
+        attachments.forEach((attachment) -> entityManager.remove(attachment));
+
+        if (!assetManager.isShared(asset)) {
+//            assetRepo.delete(asset);
+            entityManager.remove(asset);
+        }
     }
 
     /**
      * Moves the {@link Asset} one position up in the provided
      * {@link AttachmentList}.
      *
-     * @param asset          The asset to move up. If the asset is not part of
-     *                       the provided {@link AttachmentList} an
-     *                       {@link IllegalArgumentException} is thrown.
+     * @param asset The asset to move up. If the asset is not part of the
+     * provided {@link AttachmentList} an {@link IllegalArgumentException} is
+     * thrown.
      * @param attachmentList The attachment list in which the item is moved.
      */
     public void moveUp(final Asset asset,
@@ -133,9 +161,9 @@ public class ItemAttachmentManager {
      * Moves the {@link Asset} one position down in the provided
      * {@link AttachmentList}.
      *
-     * @param asset          The asset to move down. If the asset is not part of
-     *                       the provided {@link AttachmentList} an
-     *                       {@link IllegalArgumentException} is thrown.
+     * @param asset The asset to move down. If the asset is not part of the
+     * provided {@link AttachmentList} an {@link IllegalArgumentException} is
+     * thrown.
      * @param attachmentList The attachment list in which the item is moved.
      */
     public void moveDown(final Asset asset,

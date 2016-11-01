@@ -104,7 +104,9 @@ public class DatasetsTest extends DatasetsVerifier {
 
             "/datasets/org/librecms/contentsection/ItemAttachmentManagerTest/data.xml",
             "/datasets/org/librecms/contentsection/ItemAttachmentManagerTest/after-attach-shared.xml",
-            "/datasets/org/librecms/contentsection/ItemAttachmentManagerTest/after-attach-nonshared.xml",});
+            "/datasets/org/librecms/contentsection/ItemAttachmentManagerTest/after-attach-nonshared.xml",
+            "/datasets/org/librecms/contentsection/ItemAttachmentManagerTest/after-unattach-nonshared.xml",
+            "/datasets/org/librecms/contentsection/ItemAttachmentManagerTest/after-unattach-nonshared.xml",});
     }
 
     public DatasetsTest(final String datasetPath) {

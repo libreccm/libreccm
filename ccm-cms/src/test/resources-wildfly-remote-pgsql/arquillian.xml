@@ -31,9 +31,9 @@
         <property name="qualifiedTableNames">true</property>
     </extension>
     
-    <!--<extension qualifier="persistence-script">
+    <extension qualifier="persistence-script">
         <property name="scriptsToExecuteAfterTest">scripts/pgsql-cleanup.sql</property>
-    </extension>-->
+    </extension>
 
     
 </arquillian>
