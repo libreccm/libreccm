@@ -140,6 +140,12 @@
     <ccm_core.ccm_objects object_id="-2400"
                           display_name="projects_assets"
                           uuid="8c4e9717-7cae-4f7d-bb25-f3aff793755e" />
+    <ccm_core.ccm_objects object_id="-11100"
+                          display_name="sharedAsset"
+                          uuid="419a03e2-0415-4090-952d-cdc58e5e302c" />
+    <ccm_core.ccm_objects object_id="-11200"
+                          display_name="nonSharedAsset"
+                          uuid="23b0ed3c-e0ea-4a74-817c-eff2b8eeb15f" />
     <ccm_core.ccm_objects object_id="-20300"
                           display_name="org.librecms.contenttypes.Article"
                           uuid="bd061ab6-9c4f-45ff-ab69-f521008eeac3" />
@@ -151,12 +157,12 @@
     <ccm_core.ccm_objects_aud object_id="-10200" 
                               rev="0"
                               revtype="0"
-                              revend="1"
+                              revend="6"
                               display_name="article2" />
     <ccm_core.ccm_objects_aud object_id="-99200" 
                               rev="0"
                               revtype="0"
-                              revend="1"
+                              revend="6"
                               display_name="article2" />
     <ccm_core.ccm_objects_aud object_id="-10300" 
                               rev="0"
@@ -167,13 +173,24 @@
                               revtype="0"
                               display_name="news1" />
     <ccm_core.ccm_objects_aud object_id="-10200" 
-                              rev="1"
+                              rev="6"
                               revtype="1"
+                              display_name="article2" />
+    <ccm_core.ccm_objects_aud object_id="-99300"
+                              rev="6"
+                              revtype="0" 
                               display_name="article2" />
     <ccm_core.ccm_objects_aud object_id="-99200" 
-                              rev="1"
-                              revtype="1"
-                              display_name="article2" />
+                              rev="6"
+                              revtype="2" />
+    <ccm_core.ccm_objects_aud object_id="-11100"
+                              rev="0"
+                              revtype="0"
+                              display_name="sharedAsset" />
+    <ccm_core.ccm_objects_aud object_id="-11200"
+                              rev="0"
+                              revtype="0"
+                              display_name="nonSharedAsset" />
     
     <ccm_core.categories object_id="-2100"
                          unique_id="82014239-9c06-486d-ae8c-4ae47f52a699"
@@ -370,13 +387,15 @@
                                version="DRAFT" 
                                content_type_id="-20200"/>
     <ccm_cms.content_items_aud object_id="-10200" 
-                               rev="1"
+                               rev="6"
                                item_uuid="acae860f-2ffa-450d-b486-054292f0dae6" 
                                version="DRAFT" 
                                content_type_id="-20100"/>
     <ccm_cms.content_items_aud object_id="-99200" 
-                               rev="1"
-                               item_uuid="acae860f-2ffa-450d-b486-054292f0dae6" 
+                               rev="6" />
+    <ccm_cms.content_items_aud object_id="-99300" 
+                               rev="6"
+                               item_uuid="00000000-0000-0000-0000-000000000000" 
                                version="LIVE" 
                                content_type_id="-20100"/>
         
@@ -405,7 +424,7 @@
                                     object_id="-10200"
                                     localized_value="article2"
                                     locale="en"
-                                    revend="1"
+                                    revend="6"
                                     revtype="0" />
     <ccm_cms.content_item_names_aud rev="0" 
                                     object_id="-10300"
@@ -422,23 +441,23 @@
                                     localized_value="article2"
                                     locale="en"
                                     revtype="0" 
-                                    revend="1"/>
-    <ccm_cms.content_item_names_aud rev="1"
+                                    revend="6"/>
+    <ccm_cms.content_item_names_aud rev="6"
                                     object_id="-10200" 
                                     localized_value="article2-edited"
                                     locale="en"
                                     revtype="0" />
-    <ccm_cms.content_item_names_aud rev="1"
+    <ccm_cms.content_item_names_aud rev="6"
                                     object_id="-10200" 
                                     localized_value="article2"
                                     locale="en"
                                     revtype="2" />
-    <ccm_cms.content_item_names_aud rev="1"
-                                    object_id="-99200" 
+    <ccm_cms.content_item_names_aud rev="6"
+                                    object_id="-99300" 
                                     localized_value="article2-edited"
                                     locale="en"
                                     revtype="0" />
-    <ccm_cms.content_item_names_aud rev="1"
+    <ccm_cms.content_item_names_aud rev="6"
                                     object_id="-99200" 
                                     localized_value="article2"
                                     locale="en"
@@ -485,22 +504,22 @@
                                      localized_value="Article 2 Title"
                                      locale="en"
                                      revtype="0" />
-    <ccm_cms.content_item_titles_aud rev="1"
+    <ccm_cms.content_item_titles_aud rev="6"
                                      object_id="-10200" 
                                      localized_value="Article has been edited"
                                      locale="en"
                                      revtype="0" />
-    <ccm_cms.content_item_titles_aud rev="1"
+    <ccm_cms.content_item_titles_aud rev="6"
                                      object_id="-10200" 
                                      localized_value="Article 2"
                                      locale="en"
                                      revtype="2" />
-    <ccm_cms.content_item_titles_aud rev="1"
-                                     object_id="-99200" 
+    <ccm_cms.content_item_titles_aud rev="6"
+                                     object_id="-99300" 
                                      localized_value="Article has been edited"
                                      locale="en"
                                      revtype="0" />
-    <ccm_cms.content_item_titles_aud rev="1"
+    <ccm_cms.content_item_titles_aud rev="6"
                                      object_id="-99200" 
                                      localized_value="Article 2 Title"
                                      locale="en"
@@ -549,14 +568,27 @@
         revtype="0" />
     <ccm_cms.article_texts_aud 
         rev="0" 
+        revend="6"
         object_id="-99200" 
         localized_value="Duis quis tincidunt elit. In pharetra justo sit amet ipsum dictum, at." 
         locale="en" 
         revtype="0" />
     <ccm_cms.article_texts_aud 
+        rev="6" 
+        object_id="-99200" 
+        localized_value="Duis quis tincidunt elit. In pharetra justo sit amet ipsum dictum, at." 
+        locale="en" 
+        revtype="2" />
+    <ccm_cms.article_texts_aud 
         rev="0" 
         object_id="-10300" 
         localized_value="Etiam euismod lacus laoreet sodales ultricies. Pellentesque non elit vitae purus sagittis." 
+        locale="en" 
+        revtype="0" />
+    <ccm_cms.article_texts_aud 
+        rev="6" 
+        object_id="-99300" 
+        localized_value="Duis quis tincidunt elit. In pharetra justo sit amet ipsum dictum, at." 
         locale="en" 
         revtype="0" />
 
@@ -568,6 +600,34 @@
         object_id="-10400"
         locale="en" 
         localized_value="Curabitur vel sapien eu eros gravida bibendum vitae." />
+    
+    <ccm_cms.assets object_id="-11100" />
+    <ccm_cms.assets object_id="-11200" />
+    
+    <ccm_cms.assets_aud object_id="-11100" 
+                        rev="0" />
+    <ccm_cms.assets_aud object_id="-11200" 
+                        rev="0" />
+    
+    <ccm_cms.binary_assets object_id="-11100"
+                           filename="sharedAsset.pdf"
+                           mime_type="application/pdf"
+                           data_size="0" />
+    <ccm_cms.binary_assets object_id="-11200"
+                           filename="nonSharedAsset.pdf"
+                           mime_type="application/pdf"
+                           data_size="0" />
+    
+    <ccm_cms.binary_assets_aud object_id="-11100"
+                               rev="0"
+                               filename="sharedAsset.pdf"
+                               mime_type="application/pdf"
+                               data_size="0" />
+    <ccm_cms.binary_assets_aud object_id="-11200"
+                               rev="0"
+                               filename="nonSharedAsset.pdf"
+                               mime_type="application/pdf"
+                               data_size="0" />
     
     <ccm_core.categorizations categorization_id="-30100" 
                               category_id="-2110" 
@@ -604,6 +664,54 @@
                               object_order="2" 
                               category_index="false" 
                               type="folder" />
+    
+    <ccm_core.categorizations categorization_id="-98300" 
+                              category_id="-2200" 
+                              object_id="-11100" 
+                              category_order="1" 
+                              object_order="2" 
+                              category_index="false" 
+                              type="folder" />
+    
+    <ccm_cms.attachment_lists list_id="-510010"
+                              name="list1"
+                              list_order="1"
+                              uuid="209e3f76-1523-4601-84bd-dbae91f4f26d"
+                              item_id="-10100" />
+    
+    <ccm_cms.attachment_lists_aud list_id="-510010"
+                                  rev="0"
+                                  revtype="0"
+                                  name="list1"
+                                  list_order="1"
+                                  uuid="209e3f76-1523-4601-84bd-dbae91f4f26d"
+                                  item_id="-10100" />
+    
+    <ccm_cms.attachments attachment_id="-510110"
+                         sort_key="1"
+                         uuid="de1d8531-df11-4808-9679-9ffa7537ebd1"
+                         asset_id="-11100"
+                         attachment_list_id="-510010" />
+    <ccm_cms.attachments attachment_id="-510120"
+                         sort_key="1"
+                         uuid="bfea9877-3300-4000-be99-94258f3e832f"
+                         asset_id="-11200"
+                         attachment_list_id="-510010" />
+    
+    <ccm_cms.attachments_aud attachment_id="-510110"
+                             rev="0"
+                             revtype="0"
+                             sort_key="1"
+                             uuid="de1d8531-df11-4808-9679-9ffa7537ebd1"
+                             asset_id="-11100"
+                             attachment_list_id="-510010" />
+    <ccm_cms.attachments_aud attachment_id="-510120"
+                             rev="0"
+                             revtype="0"
+                             sort_key="1"
+                             uuid="bfea9877-3300-4000-be99-94258f3e832f"
+                             asset_id="-11200"
+                             attachment_list_id="-510010" />
     
     <ccm_core.ccm_roles role_id="-3100"
                         name="info_alert_recipient" />

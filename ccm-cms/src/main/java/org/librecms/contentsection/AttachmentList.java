@@ -139,6 +139,12 @@ public class AttachmentList implements Comparable<AttachmentList>,
     @OneToMany(mappedBy = "attachmentList")
     private List<ItemAttachment<?>> attachments;
 
+    public AttachmentList() {
+        title = new LocalizedString();
+        description = new LocalizedString();
+        attachments = new ArrayList<>();
+    }
+    
     public long getListId() {
         return listId;
     }

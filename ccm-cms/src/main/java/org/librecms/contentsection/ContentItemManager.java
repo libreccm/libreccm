@@ -19,6 +19,7 @@
 package org.librecms.contentsection;
 
 import com.arsdigita.kernel.KernelConfig;
+import com.arsdigita.util.UncheckedWrapperException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -59,8 +60,11 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
+import java.util.logging.Level;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -106,6 +110,9 @@ public class ContentItemManager {
 
     @Inject
     private FolderRepository folderRepo;
+
+    @Inject
+    private AssetManager assetManager;
 
     /**
      * Creates a new content item in the provided content section and folder
@@ -327,7 +334,7 @@ public class ContentItemManager {
         final ContentItem item,
         @RequiresPrivilege(ItemPrivileges.CREATE_NEW)
         final Folder targetFolder) {
-        
+
         if (item == null) {
             throw new IllegalArgumentException("The item to copy can't be null.");
         }
@@ -339,8 +346,7 @@ public class ContentItemManager {
 
         final Optional<ContentType> contentType = typeRepo
             .findByContentSectionAndClass(
-                item.getContentType().getContentSection(), item.
-                getClass());
+                targetFolder.getSection(), item.getClass());
 
         if (!contentType.isPresent()) {
             throw new IllegalArgumentException(String.format(
@@ -404,11 +410,10 @@ public class ContentItemManager {
             targetFolder,
             CATEGORIZATION_TYPE_FOLDER);
 
-        // !!!!!!!!!!!!!!!!!!!!!
-        // ToDo copy Attachments
-        // !!!!!!!!!!!!!!!!!!!!!
-        //
-        //
+        for (AttachmentList attachmentList : item.getAttachments()) {
+            copyAttachmentList(attachmentList, copy);
+        }
+
         final BeanInfo beanInfo;
         try {
             beanInfo = Introspector.getBeanInfo(item.getClass());
@@ -541,9 +546,13 @@ public class ContentItemManager {
 
     private boolean propertyIsExcluded(final String name) {
         final String[] excluded = new String[]{
-            "objectId", "uuid", "lifecycle", "workflow", "categories",
-            "attachments"
-        };
+            "attachments",
+            "categories",
+            "contentType",
+            "lifecycle",
+            "objectId",
+            "uuid",
+            "workflow",};
 
         boolean result = false;
         for (final String current : excluded) {
@@ -553,6 +562,125 @@ public class ContentItemManager {
         }
 
         return result;
+    }
+
+    private void copyAttachmentList(final AttachmentList list,
+                                    final ContentItem target) {
+        final AttachmentList targetList = new AttachmentList();
+        for (final Locale locale : list.getDescription().getAvailableLocales()) {
+            targetList.getDescription().addValue(
+                locale, list.getDescription().getValue(locale));
+        }
+        targetList.setItem(target);
+        targetList.setName(list.getName());
+        targetList.setOrder(list.getOrder());
+        for (Map.Entry<Locale, String> title : list.getTitle().getValues()
+            .entrySet()) {
+            targetList.getTitle().addValue(title.getKey(), title.getValue());
+        }
+        targetList.setUuid(UUID.randomUUID().toString());
+
+        entityManager.persist(list);
+
+        for (ItemAttachment<?> attachment : list.getAttachments()) {
+            if (assetManager.isShared(attachment.getAsset())) {
+                copySharedAssetAttachment(attachment, targetList);
+            } else {
+                copyAssetAttachment(attachment, targetList);
+            }
+        }
+
+        entityManager.merge(list);
+    }
+
+    private void copySharedAssetAttachment(final ItemAttachment<?> attachment,
+                                           final AttachmentList target) {
+        final ItemAttachment<Asset> itemAttachment = new ItemAttachment<>();
+        itemAttachment.setAsset(attachment.getAsset());
+        itemAttachment.setAttachmentList(target);
+        itemAttachment.setSortKey(attachment.getSortKey());
+        itemAttachment.setUuid(UUID.randomUUID().toString());
+
+        entityManager.persist(itemAttachment);
+        target.addAttachment(itemAttachment);
+        entityManager.merge(target);
+    }
+
+    private void copyAssetAttachment(final ItemAttachment<?> attachment,
+                                     final AttachmentList targetList) {
+        final Asset source = attachment.getAsset();
+        final Asset target;
+        try {
+            target = source.getClass().newInstance();
+        } catch (InstantiationException | IllegalAccessException ex) {
+            throw new UncheckedWrapperException(ex);
+        }
+
+        final BeanInfo beanInfo;
+        try {
+            beanInfo = Introspector.getBeanInfo(source.getClass());
+        } catch (IntrospectionException ex) {
+            throw new UncheckedWrapperException(ex);
+        }
+
+        for (final PropertyDescriptor propertyDescriptor : beanInfo
+            .getPropertyDescriptors()) {
+            final String propertyName = propertyDescriptor.getName();
+            if ("objectId".equals(propertyName)
+                    || "uuid".equals(propertyName)
+                    || "itemAttachments".equals(propertyName)
+                    || "categories".equals(propertyName)) {
+                continue;
+            }
+
+            final Class<?> propType = propertyDescriptor.getPropertyType();
+            final Method readMethod = propertyDescriptor.getReadMethod();
+            final Method writeMethod = propertyDescriptor.getWriteMethod();
+
+            if (writeMethod == null) {
+                continue;
+            }
+
+            if (LocalizedString.class.equals(propType)) {
+                final LocalizedString sourceStr;
+                final LocalizedString targetStr;
+                try {
+                    sourceStr = (LocalizedString) readMethod.invoke(source);
+                    targetStr = (LocalizedString) readMethod.invoke(target);
+                } catch (IllegalAccessException
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
+                    throw new UncheckedWrapperException(ex);
+                }
+
+                sourceStr.getAvailableLocales().forEach(
+                    locale -> targetStr.addValue(locale,
+                                                 sourceStr.getValue(locale)));
+            } else {
+                final Object value;
+                try {
+                    value = readMethod.invoke(source);
+                    writeMethod.invoke(target, value);
+                } catch (IllegalAccessException
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
+                    throw new UncheckedWrapperException(ex);
+                }
+            }
+        }
+
+        target.setUuid(UUID.randomUUID().toString());
+
+        entityManager.persist(target);
+        final ItemAttachment<Asset> targetAttachment = new ItemAttachment<>();
+        targetAttachment.setAsset(target);
+        targetAttachment.setSortKey(attachment.getSortKey());
+        targetAttachment.setUuid(UUID.randomUUID().toString());
+        entityManager.persist(targetAttachment);
+
+        targetAttachment.setAttachmentList(targetList);
+        targetList.addAttachment(targetAttachment);
+        entityManager.merge(targetAttachment);
     }
 
     /**
@@ -613,14 +741,17 @@ public class ContentItemManager {
         final ContentItem liveItem;
 
         if (isLive(item)) {
-            liveItem = getLiveVersion(item, ContentItem.class).get();
-        } else {
-            try {
-                liveItem = draftItem.getClass().newInstance();
-            } catch (InstantiationException | IllegalAccessException ex) {
-                throw new RuntimeException(ex);
-            }
+            final ContentItem oldLiveItem = getLiveVersion(
+                item, ContentItem.class).get();
+            unpublish(oldLiveItem);
         }
+//        else {
+        try {
+            liveItem = draftItem.getClass().newInstance();
+        } catch (InstantiationException | IllegalAccessException ex) {
+            throw new RuntimeException(ex);
+        }
+//        }
 
         liveItem.setVersion(ContentItemVersion.PUBLISHING);
         liveItem.setItemUuid(draftItem.getItemUuid());
@@ -650,11 +781,10 @@ public class ContentItemManager {
                                  categorization.getCategory(),
                                  categorization.getType()));
 
-        // !!!!!!!!!!!!!!!!!!!!!
-        // ToDo copy Attachments
-        // !!!!!!!!!!!!!!!!!!!!!
-        //
-        //
+        for (AttachmentList attachmentList : item.getAttachments()) {
+            copyAttachmentList(attachmentList, liveItem);
+        }
+
         final BeanInfo beanInfo;
         try {
             beanInfo = Introspector.getBeanInfo(item.getClass());
@@ -833,6 +963,15 @@ public class ContentItemManager {
             return;
         }
 
+        final List<AttachmentList> attachmentLists = liveItem.get()
+            .getAttachments();
+        for (final AttachmentList attachmentList : attachmentLists) {
+            attachmentList.getAttachments().forEach(
+                attachment -> {
+                    unpublishAttachment(attachment);
+                });
+        }
+
         final List<Category> categories = liveItem
             .get()
             .getCategories()
@@ -853,6 +992,21 @@ public class ContentItemManager {
             entityManager.remove(liveItem.get());
         }
 
+    }
+
+    private void unpublishAttachment(final ItemAttachment<?> itemAttachment) {
+        final Asset asset = itemAttachment.getAsset();
+
+        asset.removeItemAttachment(itemAttachment);
+        itemAttachment.setAsset(null);
+
+        if (assetManager.isShared(asset)) {
+            entityManager.merge(asset);
+        } else {
+            entityManager.remove(asset);
+        }
+
+        entityManager.remove(itemAttachment);
     }
 
     /**
@@ -1157,5 +1311,5 @@ public class ContentItemManager {
             return Optional.empty();
         }
     }
-    
+
 }

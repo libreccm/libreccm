@@ -60,7 +60,7 @@ import static org.libreccm.testutils.DependenciesHelpers.*;
 
 /**
  * Tests for the {@link ContentItemManager}.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @org.junit.experimental.categories.Category(IntegrationTest.class)
@@ -154,6 +154,7 @@ public class ContentItemManagerTest {
             .addPackage(org.librecms.contentsection.Asset.class.getPackage())
             .addPackage(org.librecms.contentsection.AttachmentList.class
                 .getPackage())
+            .addPackage(org.librecms.assets.BinaryAsset.class.getPackage())
             .addPackage(org.librecms.lifecycle.Lifecycle.class.getPackage())
             .addPackage(org.librecms.contentsection.ContentSection.class
                 .getPackage())
@@ -534,19 +535,18 @@ public class ContentItemManagerTest {
                           "uuid",
                           "workflow_id"
         })
-    public void moveToOtherContentSection() {
+    public void moveItemToOtherContentSection() {
         final Optional<ContentItem> item = itemRepo.findById(-10100L);
         final Folder targetFolder = folderRepo.findById(-2300L);
-        
+
         assertThat(item.isPresent(), is(true));
         assertThat(targetFolder, is(not(nullValue())));
-        
+
         itemManager.move(item.get(), targetFolder);
     }
 
-        /**
-     * Verifies that
-     * {@link ContentItemManager#move(org.librecms.contentsection.ContentItem, org.librecms.contentsection.Folder) 
+    /**
+     * Verifies that      {@link ContentItemManager#move(org.librecms.contentsection.ContentItem, org.librecms.contentsection.Folder) 
      * throws an {@link IllegalArgumentException} if the type of the item to
      * copy has not been registered in content section to which the target
      * folder belongs.
@@ -554,21 +554,20 @@ public class ContentItemManagerTest {
     @Test(expected = IllegalArgumentException.class)
     @InSequence(4120)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-        + "ContentItemManagerTest/data.xml")
+                      + "ContentItemManagerTest/data.xml")
     @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
-        + "ContentItemManagerTest/data.xml")
+                            + "ContentItemManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void moveToOtherContentSectionTypeNotPresent() {
         final Optional<ContentItem> item = itemRepo.findById(-10400L);
         final Folder targetFolder = folderRepo.findById(-2300L);
-        
+
         assertThat(item.isPresent(), is(true));
         assertThat(targetFolder, is(not(nullValue())));
-        
+
         itemManager.move(item.get(), targetFolder);
     }
 
-    
     /**
      * Verifies that
      * {@link ContentItemManager#move(org.librecms.contentsection.ContentItem, org.librecms.contentsection.Folder)}
@@ -620,14 +619,18 @@ public class ContentItemManagerTest {
     @ShouldMatchDataSet(
         value = "datasets/org/librecms/contentsection/"
                     + "ContentItemManagerTest/after-copy-to-other-folder.xml",
-        excludeColumns = {"categorization_id",
+        excludeColumns = {"asset_id",
+                          "attachment_id",
+                          "attachment_list_id",
+                          "categorization_id",
                           "id",
+                          "item_id",
                           "item_uuid",
                           "lifecycle_id",
+                          "list_id",
                           "object_id",
                           "object_order",
                           "phase_id",
-                          "rev",
                           "task_id",
                           "uuid",
                           "timestamp",
@@ -654,28 +657,32 @@ public class ContentItemManagerTest {
     @ShouldMatchDataSet(
         value = "datasets/org/librecms/contentsection/"
                     + "ContentItemManagerTest/after-copy-to-folder-in-other-section.xml",
-        excludeColumns = {"categorization_id",
-                          "content_type_id",
+        excludeColumns = {"asset_id",
+                          "attachment_id",
+                          "attachment_list_id",
+                          "categorization_id",
                           "id",
+                          "item_id",
                           "item_uuid",
                           "lifecycle_id",
+                          "list_id",
                           "object_id",
                           "object_order",
                           "phase_id",
-                          "rev",
                           "task_id",
                           "uuid",
                           "timestamp",
-                          "workflow_id"})
+                          "workflow_id"
+        })
     public void copyToFolderInOtherSection() {
         final Optional<ContentItem> source = itemRepo.findById(-10100L);
         final Folder targetFolder = folderRepo.findById(-2300L);
-        
+
         assertThat(source.isPresent(), is(true));
         assertThat(targetFolder, is(not(nullValue())));
-        
+
         final ContentItem target = itemManager.copy(source.get(), targetFolder);
-        
+
         assertThat(target.getUuid(), is(not(equalTo(source.get().getUuid()))));
         assertThat(target.getItemUuid(), is(equalTo(target.getUuid())));
     }
@@ -690,17 +697,17 @@ public class ContentItemManagerTest {
     @Test(expected = IllegalArgumentException.class)
     @InSequence(4120)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-        + "ContentItemManagerTest/data.xml")
+                      + "ContentItemManagerTest/data.xml")
     @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
-        + "ContentItemManagerTest/data.xml")
+                            + "ContentItemManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void copyToFolderInOtherSectionTypeNotPresent() {
         final Optional<ContentItem> source = itemRepo.findById(-10400L);
         final Folder targetFolder = folderRepo.findById(-2300L);
-        
+
         assertThat(source.isPresent(), is(true));
         assertThat(targetFolder, is(not(nullValue())));
-        
+
         itemManager.copy(source.get(), targetFolder);
     }
 
@@ -717,17 +724,21 @@ public class ContentItemManagerTest {
     @ShouldMatchDataSet(
         value = "datasets/org/librecms/contentsection/"
                     + "ContentItemManagerTest/after-copy-to-same-folder.xml",
-        excludeColumns = {"categorization_id",
+        excludeColumns = {"asset_id",
+                          "attachment_id",
+                          "attachment_list_id",
+                          "categorization_id",
                           "id",
+                          "item_id",
                           "item_uuid",
                           "lifecycle_id",
+                          "list_id",
                           "object_id",
                           "object_order",
                           "phase_id",
-                          "rev",
                           "task_id",
-                          "timestamp",
                           "uuid",
+                          "timestamp",
                           "workflow_id"
         })
     public void copyToSameFolder() {
@@ -796,16 +807,21 @@ public class ContentItemManagerTest {
     @ShouldMatchDataSet(
         value = "datasets/org/librecms/contentsection/"
                     + "ContentItemManagerTest/after-publish.xml",
-        excludeColumns = {"categorization_id",
+        excludeColumns = {"asset_id",
+                          "attachment_id",
+                          "attachment_list_id",
+                          "categorization_id",
                           "id",
+                          "item_id",
+                          "item_uuid",
                           "lifecycle_id",
+                          "list_id",
                           "object_id",
                           "object_order",
                           "phase_id",
-                          "rev",
                           "task_id",
-                          "timestamp",
                           "uuid",
+                          "timestamp",
                           "workflow_id"
         })
     public void publishItem() {
@@ -831,16 +847,21 @@ public class ContentItemManagerTest {
     @ShouldMatchDataSet(
         value = "datasets/org/librecms/contentsection/"
                     + "ContentItemManagerTest/after-publish.xml",
-        excludeColumns = {"categorization_id",
+        excludeColumns = {"asset_id",
+                          "attachment_id",
+                          "attachment_list_id",
+                          "categorization_id",
                           "id",
+                          "item_id",
+                          "item_uuid",
                           "lifecycle_id",
+                          "list_id",
                           "object_id",
                           "object_order",
                           "phase_id",
-                          "rev",
                           "task_id",
-                          "timestamp",
                           "uuid",
+                          "timestamp",
                           "workflow_id"
         })
     public void publishItemWithLifecycle() {
@@ -868,12 +889,11 @@ public class ContentItemManagerTest {
                     + "ContentItemManagerTest/after-republish.xml",
         excludeColumns = {"categorization_id",
                           "id",
+                          "item_uuid",
                           "lifecycle_id",
                           "object_id",
                           "object_order",
                           "phase_id",
-                          "rev",
-                          "revend",
                           "task_id",
                           "timestamp",
                           "uuid",

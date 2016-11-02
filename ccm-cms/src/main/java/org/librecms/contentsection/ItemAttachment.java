@@ -24,6 +24,7 @@ import org.libreccm.core.Identifiable;
 import java.io.Serializable;
 import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -85,7 +86,7 @@ public class ItemAttachment<T extends Asset>
     /**
      * The {@link AttachmentList} to which this attachment belongs.
      */
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.PERSIST})
     @JoinColumn(name = "ATTACHMENT_LIST_ID")
     private AttachmentList attachmentList;
 
@@ -93,7 +94,8 @@ public class ItemAttachment<T extends Asset>
      * The {@link Asset} which is linked by this attachment to the
      * {@link #attachmentList}.
      */
-    @ManyToOne(targetEntity = Asset.class)
+    @ManyToOne(targetEntity = Asset.class, 
+               cascade = {CascadeType.PERSIST})
     @JoinColumn(name = "ASSET_ID")
     private T asset;
 

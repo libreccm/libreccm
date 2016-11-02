@@ -153,7 +153,7 @@
     <ccm_core.ccm_objects object_id="-20200"
                           display_name="org.librecms.contenttypes.News"
                           uuid="47740f22-f89f-4ec3-90cf-d62859e53c7e" />
-    <ccm_core.ccm_objects object_id="-11100"
+    <ccm_core.ccm_objects object_id="-12100"
                           display_name="new-article"
                           uuid="cfa0efb6-7ce2-41e8-be03-4ee8c7f18b05" />
     <ccm_core.ccm_objects object_id="-1200" 
@@ -165,6 +165,12 @@
     <ccm_core.ccm_objects object_id="-2400"
                           display_name="projects_assets"
                           uuid="8c4e9717-7cae-4f7d-bb25-f3aff793755e" />
+    <ccm_core.ccm_objects object_id="-11100"
+                          display_name="sharedAsset"
+                          uuid="419a03e2-0415-4090-952d-cdc58e5e302c" />
+    <ccm_core.ccm_objects object_id="-11200"
+                          display_name="nonSharedAsset"
+                          uuid="23b0ed3c-e0ea-4a74-817c-eff2b8eeb15f" />
     <ccm_core.ccm_objects object_id="-20300"
                           display_name="org.librecms.contenttypes.Article"
                           uuid="bd061ab6-9c4f-45ff-ab69-f521008eeac3" />
@@ -190,6 +196,14 @@
                               revtype="0"
                               display_name="news1" />
     <ccm_core.ccm_objects_aud object_id="-11100"
+                              rev="0"
+                              revtype="0"
+                              display_name="sharedAsset" />
+    <ccm_core.ccm_objects_aud object_id="-11200"
+                              rev="0"
+                              revtype="0"
+                              display_name="nonSharedAsset" />
+    <ccm_core.ccm_objects_aud object_id="-12100"
                               rev="1"
                               revtype="0"
                               display_name="new-article" />
@@ -358,7 +372,7 @@
                            item_uuid="d9ea527d-c6e3-4bdd-962d-c0a1a80c6c72"
                            version="DRAFT"
                            content_type_id="-20200" />
-    <ccm_cms.content_items object_id="-11100" 
+    <ccm_cms.content_items object_id="-12100" 
                            item_uuid="cfa0efb6-7ce2-41e8-be03-4ee8c7f18b05"
                            version="DRAFT"
                            content_type_id="-20100" 
@@ -393,7 +407,7 @@
                                item_uuid="d9ea527d-c6e3-4bdd-962d-c0a1a80c6c72" 
                                version="DRAFT" 
                                content_type_id="-20200"/>
-    <ccm_cms.content_items_aud object_id="-11100"
+    <ccm_cms.content_items_aud object_id="-12100"
                                rev="1"
                                item_uuid="cfa0efb6-7ce2-41e8-be03-4ee8c7f18b05"
                                version="DRAFT"
@@ -411,7 +425,7 @@
     <ccm_cms.content_item_names object_id="-10400" 
                                 locale="en" 
                                 localized_value="news1" />
-    <ccm_cms.content_item_names object_id="-11100" 
+    <ccm_cms.content_item_names object_id="-12100" 
                                 locale="en" 
                                 localized_value="new-article" />
     <ccm_cms.content_item_names object_id="-99200" 
@@ -444,7 +458,7 @@
                                     locale="en"
                                     revtype="0" />
     <ccm_cms.content_item_names_aud rev="1"
-                                    object_id="-11100"
+                                    object_id="-12100"
                                     localized_value="new-article"
                                     locale="en"
                                     revtype="0" />
@@ -501,7 +515,7 @@
     <ccm_cms.articles object_id="-10100" />
     <ccm_cms.articles object_id="-10200" />
     <ccm_cms.articles object_id="-10300" />
-    <ccm_cms.articles object_id="-11100" />
+    <ccm_cms.articles object_id="-12100" />
     <ccm_cms.articles object_id="-99200" />
     
     <ccm_cms.article_texts 
@@ -555,6 +569,42 @@
         locale="en" 
         localized_value="Curabitur vel sapien eu eros gravida bibendum vitae." />
     
+        <ccm_cms.assets object_id="-11100" />
+    <ccm_cms.assets object_id="-11200" />
+    
+    <ccm_cms.assets_aud object_id="-11100" 
+                        rev="0" />
+    <ccm_cms.assets_aud object_id="-11200" 
+                        rev="0" />
+    
+    <ccm_cms.binary_assets object_id="-11100"
+                           filename="sharedAsset.pdf"
+                           mime_type="application/pdf"
+                           data_size="0" />
+    <ccm_cms.binary_assets object_id="-11200"
+                           filename="nonSharedAsset.pdf"
+                           mime_type="application/pdf"
+                           data_size="0" />
+    
+    <ccm_cms.binary_assets_aud object_id="-11100"
+                               rev="0"
+                               filename="sharedAsset.pdf"
+                               mime_type="application/pdf"
+                               data_size="0" />
+    <ccm_cms.binary_assets_aud object_id="-11200"
+                               rev="0"
+                               filename="nonSharedAsset.pdf"
+                               mime_type="application/pdf"
+                               data_size="0" />
+    
+    <ccm_cms.files object_id="-11100" />
+    <ccm_cms.files object_id="-11200" />
+    
+    <ccm_cms.files_aud object_id="-11100"
+                       rev="0" />
+    <ccm_cms.files_aud object_id="-11200"
+                       rev="0" />
+    
     <ccm_core.categorizations categorization_id="-30100" 
                               category_id="-2110" 
                               object_id="-10100" 
@@ -585,7 +635,7 @@
                               type="folder" />
     <ccm_core.categorizations categorization_id="-30500" 
                               category_id="-2100" 
-                              object_id="-11100" 
+                              object_id="-12100" 
                               category_order="1" 
                               object_order="1" 
                               category_index="false"
@@ -597,6 +647,53 @@
                               object_order="2" 
                               category_index="false" 
                               type="folder" />
+    <ccm_core.categorizations categorization_id="-98300" 
+                              category_id="-2200" 
+                              object_id="-11100" 
+                              category_order="1" 
+                              object_order="2" 
+                              category_index="false" 
+                              type="folder" />
+    
+    <ccm_cms.attachment_lists list_id="-510010"
+                              name="list1"
+                              list_order="1"
+                              uuid="209e3f76-1523-4601-84bd-dbae91f4f26d"
+                              item_id="-10100" />
+    
+    <ccm_cms.attachment_lists_aud list_id="-510010"
+                                  rev="0"
+                                  revtype="0"
+                                  name="list1"
+                                  list_order="1"
+                                  uuid="209e3f76-1523-4601-84bd-dbae91f4f26d"
+                                  item_id="-10100" />
+    
+    <ccm_cms.attachments attachment_id="-510110"
+                         sort_key="1"
+                         uuid="de1d8531-df11-4808-9679-9ffa7537ebd1"
+                         asset_id="-11100"
+                         attachment_list_id="-510010" />
+    <ccm_cms.attachments attachment_id="-510120"
+                         sort_key="1"
+                         uuid="bfea9877-3300-4000-be99-94258f3e832f"
+                         asset_id="-11200"
+                         attachment_list_id="-510010" />
+    
+    <ccm_cms.attachments_aud attachment_id="-510110"
+                             rev="0"
+                             revtype="0"
+                             sort_key="1"
+                             uuid="de1d8531-df11-4808-9679-9ffa7537ebd1"
+                             asset_id="-11100"
+                             attachment_list_id="-510010" />
+    <ccm_cms.attachments_aud attachment_id="-510120"
+                             rev="0"
+                             revtype="0"
+                             sort_key="1"
+                             uuid="bfea9877-3300-4000-be99-94258f3e832f"
+                             asset_id="-11200"
+                             attachment_list_id="-510010" />
     
     <ccm_core.ccm_roles role_id="-3100"
                         name="info_alert_recipient" />
