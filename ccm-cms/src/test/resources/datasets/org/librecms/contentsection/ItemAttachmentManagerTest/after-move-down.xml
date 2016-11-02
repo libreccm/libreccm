@@ -3,6 +3,8 @@
 
     <ccm_core.ccm_revisions id="0"
                             timestamp="1451602800" />
+    <ccm_core.ccm_revisions id="1"
+                            timestamp="1451602800" />
     
     <ccm_core.ccm_objects object_id="-100" 
                           display_name="info"
@@ -320,12 +322,12 @@
                          asset_id="-710"
                          attachment_list_id="-510010" />
     <ccm_cms.attachments attachment_id="-510120"
-                         sort_key="2"
+                         sort_key="3"
                          uuid="5a34deae-9e3a-41e8-abd8-6a7d10dd9e7d"
                          asset_id="-720"
                          attachment_list_id="-510010" />
     <ccm_cms.attachments attachment_id="-510130"
-                         sort_key="3"
+                         sort_key="2"
                          uuid="9e34627c-2da9-45fe-aae3-48801bd27cbe"
                          asset_id="-610"
                          attachment_list_id="-510010" />
@@ -345,6 +347,7 @@
     <ccm_cms.attachments_aud attachment_id="-510120"
                              rev="0"
                              revtype="0"
+                             revend="1"
                              sort_key="2"
                              uuid="5a34deae-9e3a-41e8-abd8-6a7d10dd9e7d"
                              asset_id="-720"
@@ -352,6 +355,7 @@
     <ccm_cms.attachments_aud attachment_id="-510130"
                              rev="0"
                              revtype="0"
+                             revend="1"
                              sort_key="3"
                              uuid="9e34627c-2da9-45fe-aae3-48801bd27cbe"
                              asset_id="-610"
@@ -370,7 +374,20 @@
                              uuid="395c43dc-4aea-43e3-a2de-13e10f3a63f7"
                              asset_id="-630"
                              attachment_list_id="-510030" />
+    <ccm_cms.attachments_aud attachment_id="-510120"
+                             rev="1"
+                             revtype="1"
+                             sort_key="3"
+                             uuid="5a34deae-9e3a-41e8-abd8-6a7d10dd9e7d"
+                             asset_id="-720"
+                             attachment_list_id="-510010" />
+    <ccm_cms.attachments_aud attachment_id="-510130"
+                             rev="1"
+                             revtype="1"
+                             sort_key="2"
+                             uuid="9e34627c-2da9-45fe-aae3-48801bd27cbe"
+                             asset_id="-610"
+                             attachment_list_id="-510010" />
     
 </dataset>
-
 

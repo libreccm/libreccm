@@ -105,60 +105,60 @@ public class ItemAttachmentManagerTest {
     @Deployment
     public static WebArchive createDeployment() {
         return ShrinkWrap
-                .create(WebArchive.class,
-                        "LibreCCM-org.librecms.assets.AssetManagerTest.war")
-                .addPackage(org.libreccm.auditing.CcmRevision.class.getPackage()).
-                addPackage(org.libreccm.categorization.Categorization.class
-                        .getPackage())
-                .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
-                .addPackage(org.libreccm.configuration.Configuration.class
-                        .getPackage())
-                .addPackage(org.libreccm.core.CcmCore.class.getPackage())
-                .addPackage(org.libreccm.jpa.EntityManagerProducer.class
-                        .getPackage())
-                .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
-                        .getPackage())
-                .addPackage(org.libreccm.l10n.LocalizedString.class
-                        .getPackage())
-                .addPackage(org.libreccm.security.Permission.class.getPackage())
-                .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
-                .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
-                .addPackage(com.arsdigita.bebop.Component.class.getPackage())
-                .addPackage(com.arsdigita.bebop.util.BebopConstants.class
-                        .getPackage())
-                .addClass(com.arsdigita.kernel.KernelConfig.class)
-                .addClass(com.arsdigita.runtime.CCMResourceManager.class)
-                .addClass(
-                        com.arsdigita.ui.admin.applications.AbstractAppInstanceForm.class).
-                addClass(
-                        com.arsdigita.ui.admin.applications.AbstractAppSettingsPane.class).
-                addClass(
-                        com.arsdigita.ui.admin.applications.DefaultApplicationInstanceForm.class).
-                addClass(
-                        com.arsdigita.ui.admin.applications.DefaultApplicationSettingsPane.class).
-                addClass(com.arsdigita.cms.dispatcher.ItemResolver.class)
-                .addPackage(com.arsdigita.util.Lockable.class.getPackage())
-                .addPackage(com.arsdigita.web.BaseServlet.class.getPackage())
-                .addPackage(org.librecms.Cms.class.getPackage())
-                .addPackage(org.librecms.assets.BinaryAsset.class.getPackage())
-                .addPackage(org.librecms.contentsection.Asset.class.getPackage()).
-                addPackage(org.librecms.lifecycle.Lifecycle.class.getPackage())
-                .addPackage(org.librecms.contentsection.ContentSection.class
-                        .getPackage())
-                .addPackage(org.librecms.contenttypes.Article.class.getPackage()).
-                addClass(com.arsdigita.kernel.security.SecurityConfig.class)
-                .addPackage(org.libreccm.tests.categories.IntegrationTest.class
-                        .getPackage())
-                //            .addAsLibraries(getModuleDependencies())
-                .addAsLibraries(getCcmCoreDependencies())
-                .addAsResource("configs/shiro.ini", "shiro.ini")
-                .addAsResource(
-                        "configs/org/librecms/contentsection/ContentItemManagerTest/log4j2.xml",
-                        "log4j2.xml")
-                .addAsResource("test-persistence.xml",
-                               "META-INF/persistence.xml")
-                .addAsWebInfResource("test-web.xml", "web.xml")
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "WEB-INF/beans.xml");
+            .create(WebArchive.class,
+                    "LibreCCM-org.librecms.assets.AssetManagerTest.war")
+            .addPackage(org.libreccm.auditing.CcmRevision.class.getPackage()).
+            addPackage(org.libreccm.categorization.Categorization.class
+                .getPackage())
+            .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
+            .addPackage(org.libreccm.configuration.Configuration.class
+                .getPackage())
+            .addPackage(org.libreccm.core.CcmCore.class.getPackage())
+            .addPackage(org.libreccm.jpa.EntityManagerProducer.class
+                .getPackage())
+            .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
+                .getPackage())
+            .addPackage(org.libreccm.l10n.LocalizedString.class
+                .getPackage())
+            .addPackage(org.libreccm.security.Permission.class.getPackage())
+            .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
+            .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
+            .addPackage(com.arsdigita.bebop.Component.class.getPackage())
+            .addPackage(com.arsdigita.bebop.util.BebopConstants.class
+                .getPackage())
+            .addClass(com.arsdigita.kernel.KernelConfig.class)
+            .addClass(com.arsdigita.runtime.CCMResourceManager.class)
+            .addClass(
+                com.arsdigita.ui.admin.applications.AbstractAppInstanceForm.class)
+            .addClass(
+                com.arsdigita.ui.admin.applications.AbstractAppSettingsPane.class)
+            .addClass(
+                com.arsdigita.ui.admin.applications.DefaultApplicationInstanceForm.class)
+            .addClass(
+                com.arsdigita.ui.admin.applications.DefaultApplicationSettingsPane.class)
+            .addClass(com.arsdigita.cms.dispatcher.ItemResolver.class)
+            .addPackage(com.arsdigita.util.Lockable.class.getPackage())
+            .addPackage(com.arsdigita.web.BaseServlet.class.getPackage())
+            .addPackage(org.librecms.Cms.class.getPackage())
+            .addPackage(org.librecms.assets.BinaryAsset.class.getPackage())
+            .addPackage(org.librecms.contentsection.Asset.class.getPackage()).
+            addPackage(org.librecms.lifecycle.Lifecycle.class.getPackage())
+            .addPackage(org.librecms.contentsection.ContentSection.class
+                .getPackage())
+            .addPackage(org.librecms.contenttypes.Article.class.getPackage()).
+            addClass(com.arsdigita.kernel.security.SecurityConfig.class)
+            .addPackage(org.libreccm.tests.categories.IntegrationTest.class
+                .getPackage())
+            //            .addAsLibraries(getModuleDependencies())
+            .addAsLibraries(getCcmCoreDependencies())
+            .addAsResource("configs/shiro.ini", "shiro.ini")
+            .addAsResource(
+                "configs/org/librecms/contentsection/ContentItemManagerTest/log4j2.xml",
+                "log4j2.xml")
+            .addAsResource("test-persistence.xml",
+                           "META-INF/persistence.xml")
+            .addAsWebInfResource("test-web.xml", "web.xml")
+            .addAsWebInfResource(EmptyAsset.INSTANCE, "WEB-INF/beans.xml");
     }
 
     /**
@@ -193,13 +193,13 @@ public class ItemAttachmentManagerTest {
     @Test
     @InSequence(100)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                          + "ItemAttachmentManagerTest/data.xml")
+                      + "ItemAttachmentManagerTest/data.xml")
     @ShouldMatchDataSet(
-            value = "datasets/org/librecms/contentsection/"
-                            + "ItemAttachmentManagerTest/after-attach-nonshared.xml",
-            excludeColumns = {"timestamp",
-                              "uuid",
-                              "attachment_id"})
+        value = "datasets/org/librecms/contentsection/"
+                    + "ItemAttachmentManagerTest/after-attach-nonshared.xml",
+        excludeColumns = {"timestamp",
+                          "uuid",
+                          "attachment_id"})
     public void attachNonSharedAsset() throws MimeTypeParseException {
         final Optional<ContentItem> item = itemRepo.findById(-510L);
         assertThat(item.isPresent(), is(true));
@@ -222,13 +222,13 @@ public class ItemAttachmentManagerTest {
     @Test
     @InSequence(100)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                          + "ItemAttachmentManagerTest/data.xml")
+                      + "ItemAttachmentManagerTest/data.xml")
     @ShouldMatchDataSet(
-            value = "datasets/org/librecms/contentsection/"
-                            + "ItemAttachmentManagerTest/after-attach-shared.xml",
-            excludeColumns = {"timestamp",
-                              "uuid",
-                              "attachment_id"})
+        value = "datasets/org/librecms/contentsection/"
+                    + "ItemAttachmentManagerTest/after-attach-shared.xml",
+        excludeColumns = {"timestamp",
+                          "uuid",
+                          "attachment_id"})
     public void attachSharedAsset() throws MimeTypeParseException {
         final Optional<ContentItem> item = itemRepo.findById(-510L);
         assertThat(item.isPresent(), is(true));
@@ -248,9 +248,9 @@ public class ItemAttachmentManagerTest {
     @Test
     @InSequence(110)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                          + "ItemAttachmentManagerTest/data.xml")
+                      + "ItemAttachmentManagerTest/data.xml")
     @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
-                                + "ItemAttachmentManagerTest/data.xml")
+                            + "ItemAttachmentManagerTest/data.xml")
     public void attachAssetAlreadyAttached() {
         final Optional<ContentItem> item = itemRepo.findById(-510L);
         assertThat(item.isPresent(), is(true));
@@ -270,9 +270,9 @@ public class ItemAttachmentManagerTest {
     @Test(expected = IllegalArgumentException.class)
     @InSequence(120)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                          + "ItemAttachmentManagerTest/data.xml")
+                      + "ItemAttachmentManagerTest/data.xml")
     @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
-                                + "ItemAttachmentManagerTest/data.xml")
+                            + "ItemAttachmentManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void attachAssetNull() {
         final Optional<ContentItem> item = itemRepo.findById(-510L);
@@ -293,9 +293,9 @@ public class ItemAttachmentManagerTest {
     @Test(expected = IllegalArgumentException.class)
     @InSequence(130)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                          + "ItemAttachmentManagerTest/data.xml")
+                      + "ItemAttachmentManagerTest/data.xml")
     @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
-                                + "ItemAttachmentManagerTest/data.xml")
+                            + "ItemAttachmentManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void attachAssetToListNull() {
         final AttachmentList list = null;
@@ -311,12 +311,12 @@ public class ItemAttachmentManagerTest {
     @Test
     @InSequence(210)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                          + "ItemAttachmentManagerTest/data.xml")
+                      + "ItemAttachmentManagerTest/data.xml")
     @ShouldMatchDataSet(
-            value = "datasets/org/librecms/contentsection/"
-                            + "ItemAttachmentManagerTest/"
-                            + "after-unattach-shared.xml",
-            excludeColumns = {"timestamp"})
+        value = "datasets/org/librecms/contentsection/"
+                    + "ItemAttachmentManagerTest/"
+                    + "after-unattach-shared.xml",
+        excludeColumns = {"timestamp"})
     public void unattachSharedAsset() {
         final Asset asset = assetRepo.findById(-610L);
         final Optional<ContentItem> item = itemRepo.findById(-510L);
@@ -338,12 +338,12 @@ public class ItemAttachmentManagerTest {
     @Test
     @InSequence(220)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                          + "ItemAttachmentManagerTest/data.xml")
+                      + "ItemAttachmentManagerTest/data.xml")
     @ShouldMatchDataSet(
-            value = "datasets/org/librecms/contentsection/"
-                            + "ItemAttachmentManagerTest/"
-                            + "after-unattach-nonshared.xml",
-            excludeColumns = {"timestamp"})
+        value = "datasets/org/librecms/contentsection/"
+                    + "ItemAttachmentManagerTest/"
+                    + "after-unattach-nonshared.xml",
+        excludeColumns = {"timestamp"})
     public void unattachNonSharedAsset() {
         final Asset asset = assetRepo.findById(-720L);
         final Optional<ContentItem> item = itemRepo.findById(-510L);
@@ -365,11 +365,19 @@ public class ItemAttachmentManagerTest {
     @Test
     @InSequence(220)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                          + "ItemAttachmentManagerTest/data.xml")
+                      + "ItemAttachmentManagerTest/data.xml")
     @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
-                                + "ItemAttachmentManagerTest/data.xml")
+                            + "ItemAttachmentManagerTest/data.xml")
     public void unattachAssetNotAttached() {
-        fail("Not implemented yet");
+        final Asset asset = assetRepo.findById(-720L);
+        final Optional<ContentItem> item = itemRepo.findById(-510L);
+
+        assertThat(asset, is(not(nullValue())));
+        assertThat(item.isPresent(), is(true));
+
+        final AttachmentList list = item.get().getAttachments().get(1);
+
+        attachmentManager.unattachAsset(asset, list);
     }
 
     /**
@@ -381,12 +389,19 @@ public class ItemAttachmentManagerTest {
     @Test(expected = IllegalArgumentException.class)
     @InSequence(230)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                          + "ItemAttachmentManagerTest/data.xml")
+                      + "ItemAttachmentManagerTest/data.xml")
     @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
-                                + "ItemAttachmentManagerTest/data.xml")
+                            + "ItemAttachmentManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void unattachAssetNull() {
-        fail("Not implemented yet");
+        final Asset asset = null;
+
+        final Optional<ContentItem> item = itemRepo.findById(-510L);
+        assertThat(item.isPresent(), is(true));
+
+        final AttachmentList list = item.get().getAttachments().get(0);
+
+        attachmentManager.unattachAsset(asset, list);
     }
 
     /**
@@ -398,12 +413,17 @@ public class ItemAttachmentManagerTest {
     @Test(expected = IllegalArgumentException.class)
     @InSequence(240)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                          + "ItemAttachmentManagerTest/data.xml")
+                      + "ItemAttachmentManagerTest/data.xml")
     @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
-                                + "ItemAttachmentManagerTest/data.xml")
+                            + "ItemAttachmentManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void unattachAssetFromListNull() {
-        fail("Not implemented yet");
+        final Asset asset = assetRepo.findById(-720L);
+        assertThat(asset, is(not(nullValue())));
+
+        final AttachmentList list = null;
+
+        attachmentManager.unattachAsset(asset, list);
     }
 
     /**
@@ -414,11 +434,19 @@ public class ItemAttachmentManagerTest {
     @Test
     @InSequence(300)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                          + "ItemAttachmentManagerTest/data.xml")
-    @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
-                                + "ItemAttachmentManagerTest/after-move-up.xml")
+                      + "ItemAttachmentManagerTest/data.xml")
+    @ShouldMatchDataSet(
+        value = "datasets/org/librecms/contentsection/"
+                    + "ItemAttachmentManagerTest/after-move-up.xml",
+        excludeColumns = {"timestamp"})
     public void moveUp() {
-        fail("Not implemented yet");
+        final Optional<ContentItem> item = itemRepo.findById(-510L);
+        assertThat(item.isPresent(), is(true));
+
+        final AttachmentList list = item.get().getAttachments().get(0);
+
+        attachmentManager.moveUp(list.getAttachments().get(0).getAsset(),
+                                 list);
     }
 
     /**
@@ -429,11 +457,17 @@ public class ItemAttachmentManagerTest {
     @Test
     @InSequence(310)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                          + "ItemAttachmentManagerTest/data.xml")
+                      + "ItemAttachmentManagerTest/data.xml")
     @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
-                                + "ItemAttachmentManagerTest/data.xml")
+                            + "ItemAttachmentManagerTest/data.xml")
     public void moveUpLast() {
-        fail("Not implemented yet");
+        final Optional<ContentItem> item = itemRepo.findById(-510L);
+        assertThat(item.isPresent(), is(true));
+
+        final AttachmentList list = item.get().getAttachments().get(0);
+
+        attachmentManager.moveUp(list.getAttachments().get(2).getAsset(),
+                                 list);
     }
 
     /**
@@ -445,12 +479,39 @@ public class ItemAttachmentManagerTest {
     @Test(expected = IllegalArgumentException.class)
     @InSequence(320)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                          + "ItemAttachmentManagerTest/data.xml")
+                      + "ItemAttachmentManagerTest/data.xml")
     @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
-                                + "ItemAttachmentManagerTest/data.xml")
+                            + "ItemAttachmentManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void moveUpNull() {
-        fail("Not implemented yet");
+        final Optional<ContentItem> item = itemRepo.findById(-510L);
+        assertThat(item.isPresent(), is(true));
+
+        final AttachmentList list = item.get().getAttachments().get(0);
+
+        attachmentManager.moveUp(null, list);
+    }
+
+    /**
+     * Verifies that
+     * {@link ItemAttachmentManager#moveUp(org.librecms.contentsection.Asset, org.librecms.contentsection.AttachmentList)}
+     * throws an {@link IllegalArgumentException} if called with {@code null}
+     * for the list.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    @InSequence(330)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ItemAttachmentManagerTest/data.xml")
+    @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
+                            + "ItemAttachmentManagerTest/data.xml")
+    @ShouldThrowException(IllegalArgumentException.class)
+    public void moveUpInListNull() {
+        final Asset asset = assetRepo.findById(-720L);
+        assertThat(asset, is(not(nullValue())));
+
+        final AttachmentList list = null;
+
+        attachmentManager.moveUp(asset, list);
     }
 
     /**
@@ -461,11 +522,19 @@ public class ItemAttachmentManagerTest {
     @Test
     @InSequence(400)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                          + "ItemAttachmentManagerTest/data.xml")
-    @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
-                                + "ItemAttachmentManagerTest/after-move-down.xml")
+                      + "ItemAttachmentManagerTest/data.xml")
+    @ShouldMatchDataSet(
+        value = "datasets/org/librecms/contentsection/"
+                    + "ItemAttachmentManagerTest/after-move-down.xml",
+        excludeColumns = {"timestamp"})
     public void moveDown() {
-        fail("Not implemented yet");
+        final Optional<ContentItem> item = itemRepo.findById(-510L);
+        assertThat(item.isPresent(), is(true));
+
+        final AttachmentList list = item.get().getAttachments().get(0);
+
+        attachmentManager.moveDown(list.getAttachments().get(2).getAsset(),
+                                   list);
     }
 
     /**
@@ -476,11 +545,17 @@ public class ItemAttachmentManagerTest {
     @Test
     @InSequence(410)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                          + "ItemAttachmentManagerTest/data.xml")
+                      + "ItemAttachmentManagerTest/data.xml")
     @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
-                                + "ItemAttachmentManagerTest/data.xml")
+                            + "ItemAttachmentManagerTest/data.xml")
     public void moveDownFirst() {
-        fail("Not implemented yet");
+        final Optional<ContentItem> item = itemRepo.findById(-510L);
+        assertThat(item.isPresent(), is(true));
+
+        final AttachmentList list = item.get().getAttachments().get(0);
+
+        attachmentManager.moveDown(list.getAttachments().get(0).getAsset(),
+                                   list);
     }
 
     /**
@@ -492,12 +567,39 @@ public class ItemAttachmentManagerTest {
     @Test(expected = IllegalArgumentException.class)
     @InSequence(420)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                          + "ItemAttachmentManagerTest/data.xml")
+                      + "ItemAttachmentManagerTest/data.xml")
     @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
-                                + "ItemAttachmentManagerTest/data.xml")
+                            + "ItemAttachmentManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void moveDownNull() {
-        fail("Not implemented yet");
+        final Optional<ContentItem> item = itemRepo.findById(-510L);
+        assertThat(item.isPresent(), is(true));
+
+        final AttachmentList list = item.get().getAttachments().get(0);
+
+        attachmentManager.moveDown(null, list);
+    }
+
+    /**
+     * Verifies that
+     * {@link ItemAttachmentManager#moveDown(org.librecms.contentsection.Asset, org.librecms.contentsection.AttachmentList)}
+     * throws an {@link IllegalArgumentException} if called with {@code null}
+     * for the list.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    @InSequence(430)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ItemAttachmentManagerTest/data.xml")
+    @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
+                            + "ItemAttachmentManagerTest/data.xml")
+    @ShouldThrowException(IllegalArgumentException.class)
+    public void moveDownInListNull() {
+        final Asset asset = assetRepo.findById(-720L);
+        assertThat(asset, is(not(nullValue())));
+
+        final AttachmentList list = null;
+
+        attachmentManager.moveDown(asset, list);
     }
 
 }

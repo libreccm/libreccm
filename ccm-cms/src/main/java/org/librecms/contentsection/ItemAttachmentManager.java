@@ -19,11 +19,15 @@
 package org.librecms.contentsection;
 
 import java.util.List;
+
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
 import org.librecms.contentsection.privileges.ItemPrivileges;
 
+import java.util.Collections;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -51,15 +55,15 @@ public class ItemAttachmentManager {
     /**
      * Adds the provided {@link Asset} to the provided {@link AttachmentList}.
      *
-     * @param asset The {@link Asset} to add.
+     * @param asset          The {@link Asset} to add.
      * @param attachmentList The attachment list to which the asset is added.
      */
     @Transactional(Transactional.TxType.REQUIRED)
     @AuthorizationRequired
     public void attachAsset(
-            final Asset asset,
-            @RequiresPrivilege(ItemPrivileges.EDIT)
-            final AttachmentList attachmentList) {
+        final Asset asset,
+        @RequiresPrivilege(ItemPrivileges.EDIT)
+        final AttachmentList attachmentList) {
 
         if (asset == null) {
             throw new IllegalArgumentException("Can't attach asset null.");
@@ -67,7 +71,7 @@ public class ItemAttachmentManager {
 
         if (attachmentList == null) {
             throw new IllegalArgumentException(
-                    "Can't attach an asset to attachment list null.");
+                "Can't attach an asset to attachment list null.");
         }
 
         // For shared assets (we assume that every asset already in the database
@@ -76,7 +80,7 @@ public class ItemAttachmentManager {
             saveNonSharedAsset(asset);
         } else {
             final TypedQuery<Long> countQuery = entityManager.createNamedQuery(
-                    "ItemAttachment.countByAssetIdAndList", Long.class);
+                "ItemAttachment.countByAssetIdAndList", Long.class);
             countQuery.setParameter("asset", asset);
             countQuery.setParameter("attachmentList", attachmentList);
 
@@ -111,14 +115,23 @@ public class ItemAttachmentManager {
      * {@link AttachmentList}. If the asset is a non shared asset the asset is
      * deleted.
      *
-     * @param asset The {@link Asset} to remove.
+     * @param asset          The {@link Asset} to remove.
      * @param attachmentList The attachment list to which the asset is removed
-     * from.
+     *                       from.
      */
     public void unattachAsset(final Asset asset,
                               final AttachmentList attachmentList) {
+        if (asset == null) {
+            throw new IllegalArgumentException("Can't unattach null.");
+        }
+
+        if (attachmentList == null) {
+            throw new IllegalArgumentException(
+                "Can't unattach an asset from list null.");
+        }
+
         final TypedQuery<Long> countQuery = entityManager.createNamedQuery(
-                "ItemAttachment.countByAssetIdAndList", Long.class);
+            "ItemAttachment.countByAssetIdAndList", Long.class);
         countQuery.setParameter("asset", asset);
         countQuery.setParameter("attachmentList", attachmentList);
 
@@ -128,17 +141,18 @@ public class ItemAttachmentManager {
             return;
         }
 
+        @SuppressWarnings("rawtypes")
         final TypedQuery<ItemAttachment> query = entityManager
-                .createNamedQuery("ItemAttachment.findByAssetByAndList",
-                                  ItemAttachment.class);
+            .createNamedQuery("ItemAttachment.findByAssetByAndList",
+                              ItemAttachment.class);
         query.setParameter("asset", asset);
         query.setParameter("attachmentList", attachmentList);
 
+        @SuppressWarnings("rawtypes")
         final List<ItemAttachment> attachments = query.getResultList();
         attachments.forEach((attachment) -> entityManager.remove(attachment));
 
         if (!assetManager.isShared(asset)) {
-//            assetRepo.delete(asset);
             entityManager.remove(asset);
         }
     }
@@ -147,28 +161,147 @@ public class ItemAttachmentManager {
      * Moves the {@link Asset} one position up in the provided
      * {@link AttachmentList}.
      *
-     * @param asset The asset to move up. If the asset is not part of the
-     * provided {@link AttachmentList} an {@link IllegalArgumentException} is
-     * thrown.
+     * @param asset          The asset to move up. If the asset is not part of
+     *                       the provided {@link AttachmentList} an
+     *                       {@link IllegalArgumentException} is thrown.
      * @param attachmentList The attachment list in which the item is moved.
      */
-    public void moveUp(final Asset asset,
-                       final AttachmentList attachmentList) {
-        throw new UnsupportedOperationException("Not implemented yet");
+    @Transactional(Transactional.TxType.REQUIRED)
+    @AuthorizationRequired
+    public void moveUp(
+        final Asset asset,
+        @RequiresPrivilege(ItemPrivileges.EDIT)
+        final AttachmentList attachmentList) {
+
+        if (asset == null) {
+            throw new IllegalArgumentException("Can't move null.");
+        }
+
+        if (attachmentList == null) {
+            throw new IllegalArgumentException(
+                "Can't move up an asset in list null.");
+        }
+
+        final TypedQuery<Long> countQuery = entityManager.createNamedQuery(
+            "ItemAttachment.countByAssetIdAndList", Long.class);
+        countQuery.setParameter("asset", asset);
+        countQuery.setParameter("attachmentList", attachmentList);
+        final long count = countQuery.getSingleResult();
+
+        if (count == 0) {
+            return;
+        }
+
+        @SuppressWarnings("rawtypes")
+        final TypedQuery<ItemAttachment> query = entityManager.createNamedQuery(
+            "ItemAttachment.findByAssetByAndList", ItemAttachment.class);
+        query.setParameter("asset", asset);
+        query.setParameter("attachmentList", attachmentList);
+        final ItemAttachment<?> selected = query.getSingleResult();
+
+        final Optional<ItemAttachment<?>> attachment1 = attachmentList
+            .getAttachments().stream()
+            .filter(attachment -> {
+                return attachment.getSortKey() == selected.getSortKey();
+            })
+            .findFirst();
+        final Optional<ItemAttachment<?>> attachment2 = attachmentList
+            .getAttachments().stream()
+            .filter(attachment -> {
+                return attachment.getSortKey() >= selected.getSortKey() + 1;
+            })
+            .findFirst();
+
+        if (!attachment2.isPresent()) {
+            return;
+        }
+
+        final long sortKey1 = attachment1.get().getSortKey();
+        final long sortKey2 = attachment2.get().getSortKey();
+
+        attachment1.get().setSortKey(sortKey2);
+        attachment2.get().setSortKey(sortKey1);
+
+        entityManager.merge(attachment1.get());
+        entityManager.merge(attachment2.get());
     }
 
     /**
      * Moves the {@link Asset} one position down in the provided
      * {@link AttachmentList}.
      *
-     * @param asset The asset to move down. If the asset is not part of the
-     * provided {@link AttachmentList} an {@link IllegalArgumentException} is
-     * thrown.
+     * @param asset          The asset to move down. If the asset is not part of
+     *                       the provided {@link AttachmentList} an
+     *                       {@link IllegalArgumentException} is thrown.
      * @param attachmentList The attachment list in which the item is moved.
      */
-    public void moveDown(final Asset asset,
-                         final AttachmentList attachmentList) {
-        throw new UnsupportedOperationException("Not implemented yet");
+    @Transactional(Transactional.TxType.REQUIRED)
+    @AuthorizationRequired
+    public void moveDown(
+        final Asset asset,
+        @RequiresPrivilege(ItemPrivileges.EDIT)
+        final AttachmentList attachmentList) {
+
+        if (asset == null) {
+            throw new IllegalArgumentException("Can't move down null.");
+        }
+
+        if (attachmentList == null) {
+            throw new IllegalArgumentException(
+                "Can't move down an asset in list null.");
+        }
+
+        final TypedQuery<Long> countQuery = entityManager.createNamedQuery(
+            "ItemAttachment.countByAssetIdAndList", Long.class);
+        countQuery.setParameter("asset", asset);
+        countQuery.setParameter("attachmentList", attachmentList);
+        final long count = countQuery.getSingleResult();
+
+        if (count == 0) {
+            return;
+        }
+
+        @SuppressWarnings("rawtypes")
+        final TypedQuery<ItemAttachment> query = entityManager.createNamedQuery(
+            "ItemAttachment.findByAssetByAndList", ItemAttachment.class);
+        query.setParameter("asset", asset);
+        query.setParameter("attachmentList", attachmentList);
+        final ItemAttachment<?> selected = query.getSingleResult();
+
+        final Optional<ItemAttachment<?>> attachment1 = attachmentList
+            .getAttachments().stream()
+            .filter(attachment -> {
+                return attachment.getSortKey() == selected.getSortKey();
+            })
+            .findFirst();
+        final List<ItemAttachment<?>> lower = attachmentList
+            .getAttachments().stream()
+            .filter(attachment -> {
+                return attachment.getSortKey() <= selected.getSortKey() - 1;
+            })
+            .collect(Collectors.toList());
+        Collections.sort(lower);
+
+        final Optional<ItemAttachment<?>> attachment2;
+        if (lower.isEmpty()) {
+            attachment2 = Optional.empty();
+        } else {
+            attachment2 = Optional.of(lower.get(lower.size() - 1));
+        }
+
+        if (!attachment2.isPresent()) {
+            return;
+        }
+
+        final long sortKey1 = attachment1.get().getSortKey();
+        final long sortKey2 = attachment2.get().getSortKey();
+
+        attachment1.get().setSortKey(sortKey2);
+        attachment2.get().setSortKey(sortKey1);
+
+        entityManager.merge(attachment1.get());
+        entityManager.merge(attachment2.get());
+
     }
 
 }

@@ -302,7 +302,7 @@ public class AttachmentListManager {
      *
      * @param attachmentList The list to move.
      */
-    @Transactional
+    @Transactional(Transactional.TxType.REQUIRED)
     @AuthorizationRequired
     public void moveUp(
         @RequiresPrivilege(ItemPrivileges.EDIT)
