@@ -152,8 +152,8 @@
                           display_name="org.librecms.contenttypes.Article"
                           uuid="bd061ab6-9c4f-45ff-ab69-f521008eeac3" />
     <ccm_core.ccm_objects object_id="-11300"
-                              display_name="nonSharedAsset"
-                              uuid="00000000-0000-0000-0000-000000000000" />
+                          display_name="nonSharedAsset"
+                          uuid="00000000-0000-0000-0000-000000000000" />
     
     <ccm_core.ccm_objects_aud object_id="-10100"
                               rev="0"
@@ -188,7 +188,7 @@
                               rev="10"
                               revtype="0"
                               display_name="article1" />
-        <ccm_core.ccm_objects_aud object_id="-11100"
+    <ccm_core.ccm_objects_aud object_id="-11100"
                               rev="10"
                               revtype="1"
                               display_name="sharedAsset" />
