@@ -37,7 +37,7 @@ import javax.enterprise.context.RequestScoped;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-public class ContentTypeManager {
+public class ContentTypesManager {
 
     private static final String DEFAULT_DESCRIPTION_KEY = "description";
     private static final String DEFAULT_LABEL_KEY = "label";

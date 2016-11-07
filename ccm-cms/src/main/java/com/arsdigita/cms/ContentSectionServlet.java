@@ -39,10 +39,7 @@ import com.arsdigita.web.WebConfig;
 import com.arsdigita.xml.Document;
 
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,24 +51,15 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.arsdigita.cms.CMSConfig;
-import org.hibernate.secure.spi.PermissibleAction;
-import org.hibernate.secure.spi.PermissionCheckEntityInformation;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.security.PermissionChecker;
 import org.libreccm.security.Shiro;
-import org.libreccm.security.User;
 import org.libreccm.web.CcmApplication;
-import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemManager;
-import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contentsection.ContentSection;
-import org.librecms.contentsection.ContentSectionConfig;
 import org.librecms.contentsection.privileges.ItemPrivileges;
-import org.librecms.lifecycle.Lifecycle;
-
-import javax.enterprise.inject.spi.CDI;
 
 /*
  * NOTE:

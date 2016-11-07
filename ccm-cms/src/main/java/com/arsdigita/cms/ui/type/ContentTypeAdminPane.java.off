@@ -35,12 +35,8 @@ import org.librecms.contentsection.ContentType;
 //ToDo import com.arsdigita.cms.SectionTemplateMapping;
 import com.arsdigita.cms.ui.BaseAdminPane;
 import com.arsdigita.cms.ui.BaseDeleteForm;
-import com.arsdigita.cms.ui.ContentSectionPage;
-import com.arsdigita.cms.util.GlobalizationUtil;
-import com.arsdigita.kernel.ACSObject;
-import com.arsdigita.domain.DomainCollection;
-import com.arsdigita.persistence.DataCollection;
-import com.arsdigita.persistence.SessionManager;
+//ToDo insert later import com.arsdigita.cms.ui.ContentSectionPage;
+import org.libreccm.core.CcmObject;
 import com.arsdigita.kernel.ui.ACSObjectSelectionModel;
 import com.arsdigita.toolbox.ui.ActionGroup;
 import com.arsdigita.toolbox.ui.Section;
@@ -53,11 +49,11 @@ import java.math.BigDecimal;
  * This class contains the split pane for the ContentType
  * administration interface.
  *
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @author Jack Chung
  * @author Michael Pih
  * @author Stanislav Freidin
  * @author Justin Ross &lt;jross@redhat.com&gt;
- * @version $Id: ContentTypeAdminPane.java 1942 2009-05-29 07:53:23Z terry $
  */
 public final class ContentTypeAdminPane extends BaseAdminPane {
 
@@ -105,18 +101,18 @@ public final class ContentTypeAdminPane extends BaseAdminPane {
     }
 
     @Override
-    public void register(Page p) {
-        super.register(p);
+    public void register(final Page page) {
+        super.register(page);
 
-        p.addActionListener(new ActionListener() {
+        page.addActionListener(new ActionListener() {
 
             /**
              * 
-             * @param e 
+             * @param event 
              */
             @Override
-            public void actionPerformed(ActionEvent e) {
-                final PageState state = e.getPageState();
+            public void actionPerformed(final ActionEvent event) {
+                final PageState state = event.getPageState();
                 ContentType contentType = (ContentType) m_model.getSelectedObject(state);
                 ContentSection section = CMS.getContext().getContentSection();
                 if (contentType == null) {
