@@ -112,46 +112,47 @@ public final class ContentTypeAdminPane extends BaseAdminPane {
              */
             @Override
             public void actionPerformed(final ActionEvent event) {
-                final PageState state = event.getPageState();
-                ContentType contentType = (ContentType) m_model.getSelectedObject(state);
-                ContentSection section = CMS.getContext().getContentSection();
-                if (contentType == null) {
-                    final String template = state.getRequest()
-                                            .getParameter(ContentSectionPage
-                                                          .SET_TEMPLATE);
-                    if (template != null) {
-                        DataCollection da = SessionManager.getSession().retrieve(SectionTemplateMapping.BASE_DATA_OBJECT_TYPE);
-                        DomainCollection c = new DomainCollection(da);
-                        c.addEqualsFilter(SectionTemplateMapping.SECTION + "." + ACSObject.ID,
-                                section.getID());
-                        c.addEqualsFilter(SectionTemplateMapping.TEMPLATE + "." + ACSObject.ID,
-                                new BigDecimal(template));
-                        c.addOrder(SectionTemplateMapping.CONTENT_TYPE + "." + ContentType.LABEL);
-                        if (c.next()) {
-                            SectionTemplateMapping mapping =
-                                    (SectionTemplateMapping) c.getDomainObject();
-                            contentType = mapping.getContentType();
-                        }
-                        c.close();
-                    }
-                    if (contentType == null) {
-                        ContentTypeCollection contentTypes = section.getContentTypes();
-                        contentTypes.addOrder("label asc");
-                        try {
-                            if (contentTypes.next()) {
-                                contentType = contentTypes.getContentType();
-                            }
-                        } finally {
-                            contentTypes.close();
-                        }
-                    }
-                    if (contentType != null) {
-                        m_model.setSelectedObject(state, contentType);
-                        getBody().push(state, getItemPane());
-                    }
-
-
-                }
+//                ToDo
+//                final PageState state = event.getPageState();
+//                ContentType contentType = (ContentType) m_model.getSelectedObject(state);
+//                ContentSection section = CMS.getContext().getContentSection();
+//                if (contentType == null) {
+//                    final String template = state.getRequest()
+//                                            .getParameter(ContentSectionPage
+//                                                          .SET_TEMPLATE);
+//                    if (template != null) {
+//                        DataCollection da = SessionManager.getSession().retrieve(SectionTemplateMapping.BASE_DATA_OBJECT_TYPE);
+//                        DomainCollection c = new DomainCollection(da);
+//                        c.addEqualsFilter(SectionTemplateMapping.SECTION + "." + ACSObject.ID,
+//                                section.getID());
+//                        c.addEqualsFilter(SectionTemplateMapping.TEMPLATE + "." + ACSObject.ID,
+//                                new BigDecimal(template));
+//                        c.addOrder(SectionTemplateMapping.CONTENT_TYPE + "." + ContentType.LABEL);
+//                        if (c.next()) {
+//                            SectionTemplateMapping mapping =
+//                                    (SectionTemplateMapping) c.getDomainObject();
+//                            contentType = mapping.getContentType();
+//                        }
+//                        c.close();
+//                    }
+//                    if (contentType == null) {
+//                        ContentTypeCollection contentTypes = section.getContentTypes();
+//                        contentTypes.addOrder("label asc");
+//                        try {
+//                            if (contentTypes.next()) {
+//                                contentType = contentTypes.getContentType();
+//                            }
+//                        } finally {
+//                            contentTypes.close();
+//                        }
+//                    }
+//                    if (contentType != null) {
+//                        m_model.setSelectedObject(state, contentType);
+//                        getBody().push(state, getItemPane());
+//                    }
+//
+//
+//                }
             }
         });
     }

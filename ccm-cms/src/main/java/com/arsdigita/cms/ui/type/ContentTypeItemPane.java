@@ -41,10 +41,17 @@ import com.arsdigita.kernel.ui.ACSObjectSelectionModel;
 import com.arsdigita.toolbox.ui.ActionGroup;
 import com.arsdigita.toolbox.ui.Cancellable;
 import com.arsdigita.toolbox.ui.Section;
+import com.arsdigita.util.UncheckedWrapperException;
+import java.util.logging.Level;
 import org.apache.log4j.Logger;
+import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.security.PermissionChecker;
+import org.librecms.contentsection.ContentSectionManager;
+import org.librecms.contentsection.ContentTypeManager;
+import org.librecms.contentsection.privileges.AdminPrivileges;
 
 /**
- * 
+ *
  * @authro <a href="jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @author Justin Ross &lt;jross@redhat.com&gt;
  */
@@ -54,11 +61,10 @@ final class ContentTypeItemPane extends BaseItemPane {
     private final ACSObjectSelectionModel m_model;
     private final ContentTypeRequestLocal m_type;
     private final SimpleContainer m_detailPane;
-    private final TypeElements m_elements;
-    private final AddElement m_elementAddForm;
-    //ToDo private final SectionTemplatesListing m_templates;
+//  Only useful for user definied content types private final TypeElements m_elements;
+//  Only useful for user definied content types private final AddElement m_elementAddForm;
+//  ToDo  private final SectionTemplatesListing m_templates;
     private final TypePermissionsTable m_permissions;
-//    private final RelationAttributeSection m_relationAttributes;
 
     ContentTypeItemPane(final ACSObjectSelectionModel model,
                         final ContentTypeRequestLocal type,
@@ -71,13 +77,11 @@ final class ContentTypeItemPane extends BaseItemPane {
         add(m_detailPane);
         setDefault(m_detailPane);
 
-        m_elements = new TypeElements(m_model);
-        m_elementAddForm = new AddElement();
-
+//        m_elements = new TypeElements(m_model);
+//        m_elementAddForm = new AddElement();
 //        ToDo
 //        m_templates = new SectionTemplatesListing(
 //            new ContentSectionRequestLocal(), m_type);
-
         m_permissions = new TypePermissionsTable(
                 new ContentSectionRequestLocal(), m_type);
 
@@ -91,31 +95,29 @@ final class ContentTypeItemPane extends BaseItemPane {
 //        templateForm.add(templateFormSection);
 //        add(templateForm);
 
-
-        final AddTextElement textForm = new AddTextElement(m_model);
-        add(textForm);
-
-        final AddNumberElement numberForm = new AddNumberElement(m_model);
-        add(numberForm);
-
-        final AddDateElement dateForm = new AddDateElement(m_model);
-        add(dateForm);
-
-        final AddTextAssetElement assetForm = new AddTextAssetElement(m_model);
-        add(assetForm);
-
-        final AddImageElement imageForm = new AddImageElement(m_model);
-        add(imageForm);
-
-        final AddFileElement fileForm = new AddFileElement(m_model);
-        add(fileForm);
-
-        final AddContentItemElement itemForm =
-                                    new AddContentItemElement(m_model);
-        add(itemForm);
-
+//        final AddTextElement textForm = new AddTextElement(m_model);
+//        add(textForm);
+//
+//        final AddNumberElement numberForm = new AddNumberElement(m_model);
+//        add(numberForm);
+//
+//        final AddDateElement dateForm = new AddDateElement(m_model);
+//        add(dateForm);
+//
+//        final AddTextAssetElement assetForm = new AddTextAssetElement(m_model);
+//        add(assetForm);
+//
+//        final AddImageElement imageForm = new AddImageElement(m_model);
+//        add(imageForm);
+//
+//        final AddFileElement fileForm = new AddFileElement(m_model);
+//        add(fileForm);
+//
+//        final AddContentItemElement itemForm
+//                                    = new AddContentItemElement(m_model);
+//        add(itemForm);
         m_detailPane.add(new SummarySection(editLink, deleteLink));
-        m_detailPane.add(new RelationAttributeSection());
+//        m_detailPane.add(new RelationAttributeSection());
 
         m_detailPane.add(new TypeSecurityContainer(new ElementSection()));
         m_detailPane.add(new TemplateSection(templateAddLink));
@@ -123,39 +125,38 @@ final class ContentTypeItemPane extends BaseItemPane {
         //m_detailPane.add(new PermissionsSection(permissionAddLink));
         m_detailPane.add(new PermissionsSection());
 
-        connect(templateAddLink, templateForm);
-       // connect(permissionAddLink, permissionsForm);
-
-        final SingleSelect elementSelect =
-                           m_elementAddForm.getElementTypeSelect();
-
-        connect(m_elementAddForm, elementSelect,
-                AddElement.TEXT_ELEMENT, textForm);
-        connect(textForm);
-
-        connect(m_elementAddForm, elementSelect,
-                AddElement.NUMBER_ELEMENT, numberForm);
-        connect(numberForm);
-
-        connect(m_elementAddForm, elementSelect,
-                AddElement.DATE_ELEMENT, dateForm);
-        connect(dateForm);
-
-        connect(m_elementAddForm, elementSelect,
-                AddElement.TEXT_ASSET_ELEMENT, assetForm);
-        connect(assetForm);
-
-        connect(m_elementAddForm, elementSelect,
-                AddElement.IMAGE_ELEMENT, imageForm);
-        connect(imageForm);
-
-        connect(m_elementAddForm, elementSelect,
-                AddElement.FILE_ELEMENT, fileForm);
-        connect(fileForm);
-
-        connect(m_elementAddForm, elementSelect,
-                AddElement.CONTENT_ITEM_ELEMENT, itemForm);
-        connect(itemForm);
+//        connect(templateAddLink, templateForm);
+        // connect(permissionAddLink, permissionsForm);
+//        final SingleSelect elementSelect
+//                           = m_elementAddForm.getElementTypeSelect();
+//
+//        connect(m_elementAddForm, elementSelect,
+//                AddElement.TEXT_ELEMENT, textForm);
+//        connect(textForm);
+//
+//        connect(m_elementAddForm, elementSelect,
+//                AddElement.NUMBER_ELEMENT, numberForm);
+//        connect(numberForm);
+//
+//        connect(m_elementAddForm, elementSelect,
+//                AddElement.DATE_ELEMENT, dateForm);
+//        connect(dateForm);
+//
+//        connect(m_elementAddForm, elementSelect,
+//                AddElement.TEXT_ASSET_ELEMENT, assetForm);
+//        connect(assetForm);
+//
+//        connect(m_elementAddForm, elementSelect,
+//                AddElement.IMAGE_ELEMENT, imageForm);
+//        connect(imageForm);
+//
+//        connect(m_elementAddForm, elementSelect,
+//                AddElement.FILE_ELEMENT, fileForm);
+//        connect(fileForm);
+//
+//        connect(m_elementAddForm, elementSelect,
+//                AddElement.CONTENT_ITEM_ELEMENT, itemForm);
+//        connect(itemForm);
     }
 
     // XXX A temporary, low-impact fix.
@@ -198,14 +199,15 @@ final class ContentTypeItemPane extends BaseItemPane {
             final ActionGroup group = new ActionGroup();
             setBody(group);
 
-            group.setSubject(m_elements);
-            group.addAction(m_elementAddForm);
+//            group.setSubject(m_elements);
+//            group.addAction(m_elementAddForm);
         }
 
         @Override
         public final boolean isVisible(final PageState state) {
-            return m_model.isSelected(state) && isDynamicType(state)
-                   && !ContentSection.getConfig().getHideUDCTUI();
+//            return m_model.isSelected(state) && isDynamicType(state)
+//                           && !ContentSection.getConfig().getHideUDCTUI();
+            return false;
         }
     }
 
@@ -217,7 +219,7 @@ final class ContentTypeItemPane extends BaseItemPane {
             final ActionGroup group = new ActionGroup();
             setBody(group);
 
-            group.setSubject(m_templates);
+//            ToDo group.setSubject(m_templates);
             group.addAction(new TypeSecurityContainer(templateAddLink));
         }
 
@@ -245,55 +247,55 @@ final class ContentTypeItemPane extends BaseItemPane {
         }
     }
 
-    private class RelationAttributeSection extends Section {
-
-        RelationAttributeSection() {
-            setHeading(new Label(gz("cms.ui.type.attributes")));
-
-            setBody(new RelationAttributeList(m_type));
-        }
-
-        @Override
-        public final boolean isVisible(final PageState state) {
-// ISt es möglich, den folgenden Code nur einmal zu haben?? Kann man auf die isVisible von RelationAttributeList
-            // zurückgreifen??
-            boolean retVal = false;
-            ContentType ct = (ContentType) m_type.getContentType(state);
-            ContentItem ci = null;
-
-            try {
-                Class<? extends ContentItem> clazz = Class.forName(ct.
-                        getClassName()).asSubclass(ContentItem.class);
-                ci = clazz.newInstance();
-                if (ci instanceof RelationAttributeInterface) {
-                    RelationAttributeInterface rai =
-                                               (RelationAttributeInterface) ci;
-                    retVal = rai.hasRelationAttributes();
-                }
-                ci.delete();
-            } catch (Exception ex) {
-                //retVal = false;
-            }
-
-            return retVal;
-        }
-    }
-
+//    private class RelationAttributeSection extends Section {
+//
+//        RelationAttributeSection() {
+//            setHeading(new Label(gz("cms.ui.type.attributes")));
+//
+//            setBody(new RelationAttributeList(m_type));
+//        }
+//
+//        @Override
+//        public final boolean isVisible(final PageState state) {
+//// ISt es möglich, den folgenden Code nur einmal zu haben?? Kann man auf die isVisible von RelationAttributeList
+//            // zurückgreifen??
+//            boolean retVal = false;
+//            ContentType ct = (ContentType) m_type.getContentType(state);
+//            ContentItem ci = null;
+//
+//            try {
+//                Class<? extends ContentItem> clazz = Class.forName(ct.
+//                        getClassName()).asSubclass(ContentItem.class);
+//                ci = clazz.newInstance();
+//                if (ci instanceof RelationAttributeInterface) {
+//                    RelationAttributeInterface rai
+//                                               = (RelationAttributeInterface) ci;
+//                    retVal = rai.hasRelationAttributes();
+//                }
+//                ci.delete();
+//            } catch (Exception ex) {
+//                //retVal = false;
+//            }
+//
+//            return retVal;
+//        }
+//    }
     @Override
     public final void register(final Page page) {
         super.register(page);
 
         page.addActionListener(new ActionListener() {
 
-            public final void actionPerformed(final ActionEvent e) {
-                final PageState state = e.getPageState();
+            @Override
+            public final void actionPerformed(final ActionEvent event) {
+                final PageState state = event.getPageState();
 
                 if (state.isVisibleOnPage(ContentTypeItemPane.this)
-                    && m_model.isSelected(state)
-                    && !userCanEdit(state)) {
-                    m_templates.getRemoveColumn().setVisible(state, false);
-                    m_templates.getDefaultColumn().setVisible(state, false);
-                    m_elements.getTable().getColumn(3).setVisible(state, false);
+                            && m_model.isSelected(state)
+                            && !userCanEdit(state)) {
+//                    m_templates.getRemoveColumn().setVisible(state, false);
+//                    m_templates.getDefaultColumn().setVisible(state, false);
+//                    m_elements.getTable().getColumn(3).setVisible(state, false);
                 }
             }
         });
@@ -301,46 +303,47 @@ final class ContentTypeItemPane extends BaseItemPane {
 
     /**
      * Unregister a content type from a content section.
-     * XXX domlay
      */
     private void removeType(final PageState state) {
         final ContentSection section = CMS.getContext().getContentSection();
 
-        section.removeContentType(m_type.getContentType(state));
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final ContentTypeManager typeManager = cdiUtil.findBean(
+                ContentTypeManager.class);
+        final ContentSectionManager sectionManager = cdiUtil.findBean(
+                ContentSectionManager.class);
 
-        section.save();
+        final ContentType type = m_type.getContentType(state);
+        final Class<? extends ContentItem> typeClass;
+        try {
+            typeClass = (Class<? extends ContentItem>) Class.forName(
+                    type.getContentItemClass());
+        } catch (ClassNotFoundException ex) {
+           throw new UncheckedWrapperException(ex);
+        }
+        
+        sectionManager.removeContentTypeFromSection(typeClass, section);
     }
 
     /**
      * Determine if the current user has access to edit the content type
-     * XXX domlay
      */
     protected static boolean userCanEdit(final PageState state) {
-        SecurityManager sm = Utilities.getSecurityManager(state);
-        return sm.canAccess(state.getRequest(),
-                            SecurityManager.CONTENT_TYPE_ADMIN);
+        final PermissionChecker permissionChecker = CdiUtil.createCdiUtil().findBean(PermissionChecker.class);
+        final ContentSection section = CMS.getContext().getContentSection();
+        
+        return permissionChecker.isPermitted(
+                AdminPrivileges.ADMINISTER_CONTENT_TYPES, section);
     }
 
     /**
-     * utility method
-     * get the DataObject from the DataBase, returns true if it
+     * utility method get the DataObject from the DataBase, returns true if it
      * is a modifiable type, false otherwise.
      *
-     * XXX domlay
+     * Because we don't have modifiable types aka User Definied Content Types in
+     * CCM NG yet, this method returns always false for now.
      */
     protected final boolean isDynamicType(final PageState state) {
-        final ContentType type = m_type.getContentType(state);
-
-        final String objectTypeString =
-                     "com.arsdigita.persistence.DynamicObjectType";
-        final DataCollection collection = SessionManager.getSession().retrieve(
-                objectTypeString);
-        collection.addEqualsFilter("dynamicType", type.getAssociatedObjectType());
-
-        final boolean b = collection.next();
-
-        collection.close();
-
-        return b;
+        return false;
     }
 }
