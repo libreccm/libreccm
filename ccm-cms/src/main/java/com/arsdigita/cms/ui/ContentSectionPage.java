@@ -29,13 +29,14 @@ import com.arsdigita.bebop.event.ActionListener;
 import com.arsdigita.bebop.event.PrintEvent;
 import com.arsdigita.bebop.event.PrintListener;
 import com.arsdigita.cms.CMS;
+import com.arsdigita.cms.PageLocations;
 
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentSection;
 
 import com.arsdigita.cms.dispatcher.CMSPage;
-import com.arsdigita.cms.ui.category.CategoryAdminPane;
-import com.arsdigita.cms.ui.cse.ContentSoonExpiredPane;
+//ToDo NG import com.arsdigita.cms.ui.category.CategoryAdminPane;
+//ToDo NG import com.arsdigita.cms.ui.cse.ContentSoonExpiredPane;
 import com.arsdigita.cms.ui.folder.FolderAdminPane;
 import com.arsdigita.cms.ui.lifecycle.LifecycleAdminPane;
 import com.arsdigita.cms.ui.role.RoleAdminPane;
@@ -46,15 +47,20 @@ import com.arsdigita.toolbox.ui.LayoutPanel;
 import com.arsdigita.util.Assert;
 import com.arsdigita.web.Web;
 
+import org.apache.logging.log4j.LogManager;
+
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.arsdigita.cms.CMSConfig;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.PermissionChecker;
 import org.librecms.CmsConstants;
+import org.librecms.contentsection.ContentItemManager;
+import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contentsection.ContentItemVersion;
 import org.librecms.contentsection.ContentSectionConfig;
+import org.librecms.contentsection.privileges.AdminPrivileges;
 
 /**
  * Contains the entire admin UI for a content section.
@@ -63,18 +69,18 @@ import org.librecms.contentsection.ContentSectionConfig;
  * replaced by the newer servlet based model. @see
  * c.ad.cms.ui.contentsection.MainPage (currently not active).
  *
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @author Jack Chung
  * @author Michael Pih
- * @author Xixi D'Moon &lt;xdmoon@redhat.com&gt;
- * @author Justin Ross &lt;jross@redhat.com&gt;
- * @version $Id: ContentSectionPage.java 2224 2011-08-01 07:45:23Z pboy $
+ * @author Xixi D'Moon
+ * @author Justin Ross
+
  */
 public class ContentSectionPage extends CMSPage implements ActionListener {
 
-    private static final Logger s_log = Logger.getLogger(
+    private static final Logger LOGGER = LogManager.getLogger(
         ContentSectionPage.class);
-    public static final String RESOURCE_BUNDLE
-                                   = "com.arsdigita.cms.CMSResources";
+
     /**
      * The URL parameter that can be passed in in order to set the current
      * folder. This is used in getting back to the correct level of folder
@@ -123,17 +129,17 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
     public static final int USER_ADMIN_TAB = 7;
     private TabbedPane m_tabbedPane;
     private FolderAdminPane m_folderPane;
-    private BrowsePane m_browsePane;
-    private ItemSearch m_searchPane;
-    private ImagesPane m_imagesPane;
+//ToDo NG    private BrowsePane m_browsePane;
+//ToDo NG    private ItemSearch m_searchPane;
+//ToDo NG    private ImagesPane m_imagesPane;
     private RoleAdminPane m_rolePane;
     private WorkflowAdminPane m_workflowPane;
     private LifecycleAdminPane m_lifecyclePane;
-    private CategoryAdminPane m_categoryPane;
+//ToDo NG    private CategoryAdminPane m_categoryPane;
     private ContentTypeAdminPane m_typePane;
     //private LayoutPanel m_userAdminPane;
     private LayoutPanel m_csePane;
-    private ReportPane m_reportPane;
+//ToDo NG    private ReportPane m_reportPane;
 
     /**
      * Creates the content section index page containing - a Navigaton bar for
@@ -150,19 +156,19 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
 
         // Initialize the individual panes
         m_folderPane = getFolderAdminPane();
-        m_browsePane = getBrowsePane();
-        m_searchPane = getSearchPane();
-        m_imagesPane = getImagesPane();
+//ToDo NG        m_browsePane = getBrowsePane();
+//ToDo NG        m_searchPane = getSearchPane();
+//ToDo NG        m_imagesPane = getImagesPane();
         m_rolePane = getRoleAdminPane();
         m_workflowPane = getWorkflowAdminPane();
         m_lifecyclePane = getLifecycleAdminPane();
-        m_categoryPane = getCategoryAdminPane();
+//ToDo NG        m_categoryPane = getCategoryAdminPane();
         m_typePane = getContentTypeAdminPane();
         // userAdminPane removed, used to contain just one item (reset user
         // folder) which moved to the FolderAdminPane
         //m_userAdminPane = getUserAdminPane();
         m_csePane = getCSEPane();
-        m_reportPane = getReportPane();
+//ToDo NG        m_reportPane = getReportPane();
 
         // The panes
         m_tabbedPane = createTabbedPane();
@@ -186,32 +192,32 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
                 final PermissionChecker permissionChecker = CdiUtil
                     .createCdiUtil().findBean(PermissionChecker.class);
 
-                //m_tabbedPane.setTabVisible(state, m_userAdminPane, sm.canAccess(user, SecurityConstants.STAFF_ADMIN));
                 if (CMSConfig.getConfig().isHideAdminTabs()) {
                     m_tabbedPane.setTabVisible(
                         state,
                         m_workflowPane,
                         permissionChecker.isPermitted(
-                            CmsConstants.PRIVILEGE_ADMINISTER_WORKFLOW));
-                    m_tabbedPane.setTabVisible(
-                        state, m_categoryPane,
-                        permissionChecker.isPermitted(
-                            CmsConstants.PRIVILEGE_ADMINISTER_CATEGORIES));
+                            AdminPrivileges.ADMINISTER_WORKFLOW));
+//ToDo NG
+//                    m_tabbedPane.setTabVisible(
+//                        state, m_categoryPane,
+//                        permissionChecker.isPermitted(
+//                            AdminPrivileges.ADMINISTER_CATEGORIES));
                     m_tabbedPane.setTabVisible(
                         state,
                         m_lifecyclePane,
                         permissionChecker.isPermitted(
-                            CmsConstants.PRIVILEGE_ADMINISTER_LIFECYLES));
+                            AdminPrivileges.ADMINISTER_LIFECYLES));
                     m_tabbedPane.setTabVisible(
                         state,
                         m_typePane,
                         permissionChecker.isPermitted(
-                            CmsConstants.PRIVILEGE_ADMINISTER_CONTENT_TYPES));
+                            AdminPrivileges.ADMINISTER_CONTENT_TYPES));
                     m_tabbedPane.setTabVisible(
                         state,
                         m_rolePane,
                         permissionChecker.isPermitted(
-                            CmsConstants.PRIVILEGE_ADMINISTER_ROLES));
+                            AdminPrivileges.ADMINISTER_ROLES));
                     // csePane: should check permission
                     m_tabbedPane.setTabVisible(state, m_csePane, true);
                     // TODO Check for reportPane as well
@@ -239,34 +245,37 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
      *
      * @return
      */
-    protected BrowsePane getBrowsePane() {
-        if (m_browsePane == null) {
-            m_browsePane = new BrowsePane();
-        }
-        return m_browsePane;
-    }
+//    ToDo NG
+//    protected BrowsePane getBrowsePane() {
+//        if (m_browsePane == null) {
+//            m_browsePane = new BrowsePane();
+//        }
+//        return m_browsePane;
+//    }
 
     /**
      * Creates, and then caches, the search pane. Overriding this method to
      * return null will prevent this tab from appearing.
      * @return 
      */
-    protected ItemSearch getSearchPane() {
-        if (m_searchPane == null) {
-            m_searchPane
-                = new ItemSearch(
-                    ContentItemVersion.DRAFT.toString(),
-                    CMSConfig.getConfig().isLimitItemSearchToContentSection());
-        }
-        return m_searchPane;
-    }
+//    ToDo NG
+//    protected ItemSearch getSearchPane() {
+//        if (m_searchPane == null) {
+//            m_searchPane
+//                = new ItemSearch(
+//                    ContentItemVersion.DRAFT.toString(),
+//                    CMSConfig.getConfig().isLimitItemSearchToContentSection());
+//        }
+//        return m_searchPane;
+//    }
 
-    protected ImagesPane getImagesPane() {
-        if (m_imagesPane == null) {
-            m_imagesPane = new ImagesPane();
-        }
-        return m_imagesPane;
-    }
+//    ToDo NG
+//    protected ImagesPane getImagesPane() {
+//        if (m_imagesPane == null) {
+//            m_imagesPane = new ImagesPane();
+//        }
+//        return m_imagesPane;
+//    }
 
     protected RoleAdminPane getRoleAdminPane() {
         if (m_rolePane == null) {
@@ -301,17 +310,20 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
      * Creates, and then caches, the category administration pane. Overriding
      * this method to return null will prevent this tab from appearing.
      */
-    protected CategoryAdminPane getCategoryAdminPane() {
-        if (m_categoryPane == null) {
-            m_categoryPane = new CategoryAdminPane();
-        }
-        return m_categoryPane;
-    }
+//ToDo NG
+//    protected CategoryAdminPane getCategoryAdminPane() {
+//        if (m_categoryPane == null) {
+//            m_categoryPane = new CategoryAdminPane();
+//        }
+//        return m_categoryPane;
+//    }
 
     /**
      * Creates, and then caches, the content type administration pane.
      * Overriding this method to return null will prevent this tab from
      * appearing.
+     * 
+     * @return
      */
     protected ContentTypeAdminPane getContentTypeAdminPane() {
         if (m_typePane == null) {
@@ -332,17 +344,18 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
         if (m_csePane == null) {
             m_csePane = new LayoutPanel();
             m_csePane.setLeft(new SimpleComponent());
-            m_csePane.setBody(new ContentSoonExpiredPane());
+//ToDo NG            m_csePane.setBody(new ContentSoonExpiredPane());
         }
         return m_csePane;
     }
 
-    protected ReportPane getReportPane() {
-        if (m_reportPane == null) {
-            m_reportPane = new ReportPane();
-        }
-        return m_reportPane;
-    }
+//    ToDo NG
+//    protected ReportPane getReportPane() {
+//        if (m_reportPane == null) {
+//            m_reportPane = new ReportPane();
+//        }
+//        return m_reportPane;
+//    }
 
     /**
      * Adds the specified component, with the specified tab name, to the tabbed
@@ -352,7 +365,9 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
      * @param tabName The name of the tab if it's added
      * @param comp    The component to add to the pane
      */
-    protected void addToPane(TabbedPane pane, String tabName, Component comp) {
+    protected void addToPane(final TabbedPane pane, 
+                             final String tabName, 
+                             final Component comp) {
         if (comp != null) {
             pane.addTab(new Label(tabName), comp);
         }
@@ -384,21 +399,17 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
         final TabbedPane pane = new TabbedPane();
 
         //tab(pane, "cms.ui.folders", getFolderAdminPane());
-        tab(pane, "cms.ui.browse", getBrowsePane());
-        tab(pane, "cms.ui.search", getSearchPane());
-        tab(pane, "cms.ui.images", getImagesPane());
+//        ToDo NG tab(pane, "cms.ui.browse", getBrowsePane());
+//        ToDo NG tab(pane, "cms.ui.search", getSearchPane());
+//        ToDo NG tab(pane, "cms.ui.images", getImagesPane());
         tab(pane, "cms.ui.roles", getRoleAdminPane());
         tab(pane, "cms.ui.workflows", getWorkflowAdminPane());
         tab(pane, "cms.ui.lifecycles", getLifecycleAdminPane());
-        tab(pane, "cms.ui.categories", getCategoryAdminPane());
+//       ToDo NG  tab(pane, "cms.ui.categories", getCategoryAdminPane());
         tab(pane, "cms.ui.content_types", getContentTypeAdminPane());
-        // user admin tab removed from tab bar and the only one widget there
-        // (reset home folder) moved to folder browser
-        // tab(pane, "cms.ui.user_admin", getUserAdminPane());
         tab(pane, "cms.ui.cse", getCSEPane());
-        //if (DbHelper.getDatabase() == DbHelper.DB_ORACLE) {
-            tab(pane, "cms.ui.reports", getReportPane());
-        //}
+//     ToDo NG       tab(pane, "cms.ui.reports", getReportPane());
+        
 
         return pane;
     }
@@ -411,7 +422,7 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
      * @return The current content section
      */
     @Override
-    public ContentSection getContentSection(HttpServletRequest request) {
+    public ContentSection getContentSection(final HttpServletRequest request) {
         // Resets all content sections associations.
         ContentSection section = super.getContentSection(request);
         Assert.exists(section);
@@ -425,27 +436,28 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
      * @param event The event fired by selecting a tab
      */
     @Override
-    public void actionPerformed(ActionEvent event) {
+    public void actionPerformed(final ActionEvent event) {
         final PageState state = event.getPageState();
 
         final Component pane = m_tabbedPane.getCurrentPane(state);
 
-        if (pane == m_searchPane) {
-            m_searchPane.reset(state);
-        } else if (pane == m_imagesPane) {
-            m_imagesPane.reset(state);
-        } else if (pane == m_folderPane) {
+//ToDo NG        if (pane == m_searchPane) {
+//            m_searchPane.reset(state);
+//        } else if (pane == m_imagesPane) {
+//            m_imagesPane.reset(state);
+//        } else 
+            if (pane == m_folderPane) {
             m_folderPane.reset(state);
-        } else if (pane == m_browsePane) {
-            m_browsePane.reset(state);
+//ToDo NG        } else if (pane == m_browsePane) {
+//            m_browsePane.reset(state);
         } else if (pane == m_rolePane) {
             m_rolePane.reset(state);
         } else if (pane == m_workflowPane) {
             m_workflowPane.reset(state);
         } else if (pane == m_lifecyclePane) {
             m_lifecyclePane.reset(state);
-        } else if (pane == m_categoryPane) {
-            m_categoryPane.reset(state);
+//ToDo NG        } else if (pane == m_categoryPane) {
+//            m_categoryPane.reset(state);
         } else if (pane == m_typePane) {
             m_typePane.reset(state);
 //        } else if (pane == m_userAdminPane) {
@@ -463,18 +475,18 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
      *
      * @return
      */
-    public static String getSectionURL(ContentItem item, int tab) {
+    public static String getSectionURL(final ContentItem item, final int tab) {
         // Get the content section associated with the content item.
-        ContentSection section = ContentSection.getContentSection(item);
-
-        String url = section.getURL() + PageLocations.SECTION_PAGE
+        final ContentSection section = item.getContentType().getContentSection();
+        
+        final String url = section.getPrimaryUrl() + PageLocations.SECTION_PAGE
                          + "?" + SET_TAB + "=" + tab;
 
         return url;
     }
 
     private static GlobalizedMessage gz(final String key) {
-        return new GlobalizedMessage(key, RESOURCE_BUNDLE);
+        return new GlobalizedMessage(key, CmsConstants.CMS_BUNDLE);
     }
 
     /**
@@ -487,7 +499,7 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
      * @pre key != null
      */
     public static GlobalizedMessage globalize(final String key) {
-        return new GlobalizedMessage(key, RESOURCE_BUNDLE);
+        return new GlobalizedMessage(key, CmsConstants.CMS_BUNDLE);
     }
 
     /**
@@ -499,7 +511,7 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
      */
     public static GlobalizedMessage globalize(final String key,
                                               final Object[] args) {
-        return new GlobalizedMessage(key, RESOURCE_BUNDLE, args);
+        return new GlobalizedMessage(key, CmsConstants.CMS_BUNDLE, args);
     }
 
     /**
@@ -510,13 +522,13 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
 
         /**
          *
-         * @param e
+         * @param event
          */
         @Override
-        public void prepare(PrintEvent e) {
-            final Label l = (Label) e.getTarget();
+        public void prepare(final PrintEvent event) {
+            final Label l = (Label) event.getTarget();
 
-            l.setLabel(CMS.getContext().getContentSection().getName());
+            l.setLabel(CMS.getContext().getContentSection().getLabel());
         }
 
     }
