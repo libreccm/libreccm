@@ -24,6 +24,9 @@ import org.libreccm.workflow.WorkflowTemplate;
 import org.librecms.contentsection.privileges.AdminPrivileges;
 import org.librecms.lifecycle.LifecycleDefinition;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -39,6 +42,25 @@ public class ContentTypeManager {
     @Inject
     private ContentTypeRepository typeRepo;
 
+    @SuppressWarnings("unchecked")
+    public Class<? extends ContentItem> classNameToClass(final String className) {
+        final Class<?> clazz;
+        try {
+            clazz = Class.forName(className);
+        } catch (ClassNotFoundException ex) {
+            throw new IllegalArgumentException(String.format(
+                "No class with the name \"%s\" exists.", className), 
+                ex);
+        }
+        
+        if (clazz.isAssignableFrom(ContentItem.class)) {
+            return (Class<? extends ContentItem>) clazz;
+        } else {
+            throw new IllegalArgumentException(String.format(
+                "Class \"%s\" is not a content type.", className));
+        }
+    }
+    
     @Transactional(Transactional.TxType.REQUIRED)
     @AuthorizationRequired
     public void setDefaultLifecycle(
