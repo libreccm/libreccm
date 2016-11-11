@@ -694,7 +694,7 @@
                               name="list1"
                               list_order="1"
                               uuid="00000000-0000-0000-0000-000000000000"
-                              item_id="-10500" />
+                              item_id="-10110" />
     
     <ccm_cms.attachment_lists_aud list_id="-510010"
                                   rev="0"
@@ -709,7 +709,7 @@
                                   name="list1"
                                   list_order="1"
                                   uuid="00000000-0000-0000-0000-000000000000"
-                                  item_id="-10500" />
+                                  item_id="-10110" />
     
     <ccm_cms.attachments attachment_id="-510110"
                          sort_key="1"
