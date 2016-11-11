@@ -18,8 +18,11 @@
  */
 package org.librecms.contenttypes;
 
+import com.arsdigita.util.UncheckedWrapperException;
+
 import org.libreccm.modules.CcmModule;
 import org.librecms.contentsection.ContentItem;
+import org.librecms.contentsection.ContentType;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -210,11 +213,67 @@ public class ContentTypesManager {
 
     /**
      * Retrieves a list of all content types currently available on the system.
-     * 
+     *
      * @return A list of all available content types.
      */
     public List<ContentTypeInfo> getAvailableContentTypes() {
         return Collections.unmodifiableList(availableContentTypes);
+    }
+
+    /**
+     * Get the {@link ContentTypeInfo} for a specific type.
+     *
+     * @param contentTypeClass The class representing the content type.
+     *
+     * @return A {@link ContentTypeInfo} describing the content type.
+     */
+    public ContentTypeInfo getContentTypeInfo(
+        final Class<? extends ContentItem> contentTypeClass) {
+
+        return createContentTypeInfo(contentTypeClass);
+    }
+
+    /**
+     * Convenient method for getting the {@link ContentTypeInfo} about a
+     * specific content type.
+     *
+     * @param contentTypeClass The name of the class representing the content
+     *                         type.
+     *
+     * @return A {@link ContentTypeInfo} describing the content type.
+     */
+    @SuppressWarnings("unchecked")
+    public ContentTypeInfo getContentTypeInfo(final String contentTypeClass) {
+        final Class<?> clazz;
+        try {
+            clazz = Class.forName(contentTypeClass);
+        } catch (ClassNotFoundException ex) {
+            throw new IllegalArgumentException(String.format(
+                "There is not class \"%s\".", contentTypeClass),
+                                               ex);
+        }
+
+        if (!clazz.isAssignableFrom(ContentItem.class)) {
+            throw new IllegalArgumentException(String.format(
+                "Class \"%s\" is not a subclass of \"%s\".",
+                contentTypeClass,
+                ContentItem.class.getName()));
+        }
+
+        return getContentTypeInfo((Class<? extends ContentItem>) clazz);
+    }
+
+    /**
+     * Convenient method for getting the {@link ContentTypeInfo} about a
+     * specific content type.
+     *
+     * @param contentType The content type (from a content section} representing
+     *                    the content type.
+     *
+     * @return A {@link ContentTypeInfo} describing the content type.
+     */
+    public ContentTypeInfo getContentTypeInfo(final ContentType contentType) {
+        return getContentTypeInfo(contentType.getContentItemClass());
     }
 
 }

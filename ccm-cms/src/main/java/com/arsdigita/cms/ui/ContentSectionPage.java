@@ -78,9 +78,6 @@ import org.librecms.contentsection.privileges.AdminPrivileges;
  */
 public class ContentSectionPage extends CMSPage implements ActionListener {
 
-    private static final Logger LOGGER = LogManager.getLogger(
-        ContentSectionPage.class);
-
     /**
      * The URL parameter that can be passed in in order to set the current
      * folder. This is used in getting back to the correct level of folder
@@ -127,6 +124,7 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
      */
     public static final int CONTENTTYPES_TAB = 6;
     public static final int USER_ADMIN_TAB = 7;
+    
     private TabbedPane m_tabbedPane;
     private FolderAdminPane m_folderPane;
 //ToDo NG    private BrowsePane m_browsePane;
