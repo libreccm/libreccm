@@ -28,7 +28,7 @@ import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentType;
 import org.librecms.contentsection.ContentTypeRepository;
-
+import org.librecms.contenttypes.ContentTypeInfo;
 
 import java.math.BigDecimal;
 
@@ -44,16 +44,16 @@ import java.math.BigDecimal;
  * model will only instantiate items that are of the specified content type, or
  * one of it subclasses.</p>
  *
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @author Stanislav Freidin (stas@arsdigita.com)
- * @version $Revision$ $DateTime: 2004/08/17 23:15:09 $
  * @see com.arsdigita.kernel.ui.ACSObjectSelectionModel
  * @see com.arsdigita.bebop.SingleSelectionModel
  */
-public class ItemSelectionModel extends CcmObjectSelectionModel {
+public class ItemSelectionModel extends CcmObjectSelectionModel<ContentItem> {
 
-    private Long m_typeId;
+    private Long typeId;
 
-    private static final Logger s_log = Logger.getLogger(
+    private static final Logger LOGGER = Logger.getLogger(
         ItemSelectionModel.class);
 
     /**
@@ -65,7 +65,8 @@ public class ItemSelectionModel extends CcmObjectSelectionModel {
      * @param parameterName The name of the state parameter which will be used
      *                      to store the item.
      */
-    public ItemSelectionModel(ContentType type, String parameterName) {
+    public ItemSelectionModel(final ContentType type,
+                              final String parameterName) {
         this(type, new LongParameter(parameterName));
     }
 
@@ -77,9 +78,10 @@ public class ItemSelectionModel extends CcmObjectSelectionModel {
      * @param parameter The state parameter which should be used by this item
      *
      */
-    public ItemSelectionModel(ContentType type, LongParameter parameter) {
+    public ItemSelectionModel(final ContentType type,
+                              final LongParameter parameter) {
         super(type.getContentItemClass(), parameter);
-        m_typeId = type.getObjectId();
+        typeId = type.getObjectId();
     }
 
     /**
@@ -91,22 +93,35 @@ public class ItemSelectionModel extends CcmObjectSelectionModel {
      *              {@link BigDecimal} id of the currently selected object
      *
      */
-    public ItemSelectionModel(ContentType type, SingleSelectionModel model) {
+    public ItemSelectionModel(final ContentType type,
+                              final SingleSelectionModel<Long> model) {
         super(type.getContentItemClass(), model);
-        m_typeId = type.getObjectId();
+        typeId = type.getObjectId();
     }
 
+    public ItemSelectionModel(final ContentTypeInfo type,
+                              final SingleSelectionModel<Long> model) {
+        super(type.getContentItemClass().getName(), model);
+        typeId = null;
+    }
+    
+    public ItemSelectionModel(final ContentTypeInfo type,
+                              final LongParameter parameter) {
+        super(type.getContentItemClass().getName(), parameter);
+        typeId = null;
+    }
+    
     /**
      * A convenience method that gets the currently selected object and casts it
      * to a <code>ContentItem</code>
      *
-     * @param s the current page state
+     * @param state the current page state
      *
      * @return the currently selected <code>ContentItem</code>, or null if no
      *         item was selected.
      */
-    public final ContentItem getSelectedItem(PageState s) {
-        return (ContentItem) getSelectedObject(s);
+    public final ContentItem getSelectedItem(final PageState state) {
+        return getSelectedObject(state);
     }
 
     /**
@@ -119,8 +134,9 @@ public class ItemSelectionModel extends CcmObjectSelectionModel {
 
         ContentType type = null;
 
-        if (m_typeId != null) {
-            type = CdiUtil.createCdiUtil().findBean(ContentTypeRepository.class).findById(m_typeId);
+        if (typeId != null) {
+            type = CdiUtil.createCdiUtil().findBean(ContentTypeRepository.class)
+                .findById(typeId);
         }
 
         return type;

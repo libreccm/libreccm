@@ -24,7 +24,6 @@ import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.Page;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.page.PageTransformer;
-import com.arsdigita.cms.ContentSectionServlet;
 import com.arsdigita.dispatcher.RequestContext;
 import com.arsdigita.templating.PresentationManager;
 import com.arsdigita.web.Web;
@@ -48,6 +47,7 @@ import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contentsection.ContentSection;
+import org.librecms.contentsection.ContentSectionServlet;
 import org.librecms.contentsection.privileges.ItemPrivileges;
 
 

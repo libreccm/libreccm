@@ -20,7 +20,6 @@ package org.librecms.contentsection;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.libreccm.categorization.Category;
 import org.libreccm.modules.InstallEvent;
 import org.libreccm.security.Role;
 import org.libreccm.web.AbstractCcmApplicationSetup;
@@ -28,8 +27,8 @@ import org.librecms.CmsConstants;
 
 import java.util.UUID;
 
-import static org.librecms.CmsConstants.*;
 import static org.librecms.contentsection.ContentSection.*;
+
 import org.librecms.contentsection.privileges.AdminPrivileges;
 import org.librecms.contentsection.privileges.AssetPrivileges;
 import org.librecms.contentsection.privileges.ItemPrivileges;
@@ -96,12 +95,14 @@ public class ContentSectionSetup extends AbstractCcmApplicationSetup {
         rootFolder.setUuid(UUID.randomUUID().toString());
         rootFolder.setUniqueId(rootFolder.getUuid());
         rootFolder.setName(String.format("%s_" + ROOT, sectionName));
+        rootFolder.setType(FolderType.DOCUMENTS_FOLDER);
         rootFolder.setSection(section);
 
         final Folder rootAssetFolder = new Folder();
         rootAssetFolder.setName(String.format("%s_" + ASSETS, sectionName));
         rootAssetFolder.setUuid(UUID.randomUUID().toString());
         rootAssetFolder.setUniqueId(rootAssetFolder.getUuid());
+        rootAssetFolder.setType(FolderType.ASSETS_FOLDER);
         rootAssetFolder.setSection(section);
 
         section.setRootDocumentFolder(rootFolder);

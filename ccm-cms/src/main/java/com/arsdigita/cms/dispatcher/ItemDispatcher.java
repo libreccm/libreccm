@@ -18,7 +18,6 @@
  */
 package com.arsdigita.cms.dispatcher;
 
-import com.arsdigita.cms.ContentSectionServlet;
 import com.arsdigita.dispatcher.ChainedDispatcher;
 import com.arsdigita.dispatcher.DispatcherHelper;
 import com.arsdigita.dispatcher.RequestContext;
@@ -39,6 +38,7 @@ import org.libreccm.security.PermissionChecker;
 import org.libreccm.security.Shiro;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentSection;
+import org.librecms.contentsection.ContentSectionServlet;
 import org.librecms.contentsection.privileges.ItemPrivileges;
 
 /**

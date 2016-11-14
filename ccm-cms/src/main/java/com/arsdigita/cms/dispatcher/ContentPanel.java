@@ -21,13 +21,13 @@ package com.arsdigita.cms.dispatcher;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.SimpleComponent;
 import com.arsdigita.cms.CMS;
-import com.arsdigita.cms.ContentSectionServlet;
 import com.arsdigita.dispatcher.DispatcherHelper;
 import com.arsdigita.util.Assert;
 import com.arsdigita.xml.Element;
 
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentSection;
+import org.librecms.contentsection.ContentSectionServlet;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

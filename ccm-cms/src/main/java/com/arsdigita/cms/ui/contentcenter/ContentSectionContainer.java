@@ -34,12 +34,13 @@ import com.arsdigita.bebop.table.TableColumnModel;
 import com.arsdigita.bebop.table.TableModel;
 import com.arsdigita.bebop.table.TableModelBuilder;
 import com.arsdigita.cms.ui.CMSContainer;
-import com.arsdigita.ui.admin.GlobalizationUtil;
+import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.util.LockableImpl;
 
 import org.libreccm.categorization.Category;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.PermissionChecker;
+import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionRepository;
 import org.librecms.contentsection.privileges.ItemPrivileges;
@@ -298,8 +299,8 @@ public class ContentSectionContainer extends CMSContainer {
             // depending on configuration of the location column!
             Integer colNo = 0;
 
-            Label emptyView = new Label(GlobalizationUtil
-                .globalize("cms.ui.contentcenter.section"));
+            Label emptyView = new Label(new GlobalizedMessage(
+                "cms.ui.contentcenter.section", CmsConstants.CMS_BUNDLE));
             emptyView.setFontWeight(Label.ITALIC);
             setEmptyView(emptyView);
 
@@ -309,18 +310,18 @@ public class ContentSectionContainer extends CMSContainer {
             TableColumnModel columnModel = getColumnModel();
 
             // prepare column headers
-            Label sectionHead = new Label(GlobalizationUtil
-                .globalize("cms.ui.contentcenter.section"));
-            sectionHead.setHint(GlobalizationUtil
-                .globalize("cms.ui.contentcenter.section_hint"));
-            Label locationHead = new Label(GlobalizationUtil
-                .globalize("cms.ui.contentcenter.location"));
-            locationHead.setHint(GlobalizationUtil
-                .globalize("cms.ui.contentcenter.location_hint"));
-            Label actionHead = new Label(GlobalizationUtil
-                .globalize("cms.ui.contentcenter.action"));
-            actionHead.setHint(GlobalizationUtil
-                .globalize("cms.ui.contentcenter.action_hint"));
+            Label sectionHead = new Label(new GlobalizedMessage(
+                "cms.ui.contentcenter.section", CmsConstants.CMS_BUNDLE));
+            sectionHead.setHint(new GlobalizedMessage(
+                "cms.ui.contentcenter.section_hint", CmsConstants.CMS_BUNDLE));
+            Label locationHead = new Label(new GlobalizedMessage(
+                "cms.ui.contentcenter.location", CmsConstants.CMS_BUNDLE));
+            locationHead.setHint(new GlobalizedMessage(
+                "cms.ui.contentcenter.location_hint", CmsConstants.CMS_BUNDLE));
+            Label actionHead = new Label(new GlobalizedMessage(
+                "cms.ui.contentcenter.action", CmsConstants.CMS_BUNDLE));
+            actionHead.setHint(new GlobalizedMessage(
+                "cms.ui.contentcenter.action_hint", CmsConstants.CMS_BUNDLE));
 
             //TableColumn contentSectionColumn = new TableColumn(colNo, COLUMN_SECTION);
             TableColumn contentSectionColumn = new TableColumn(
@@ -606,7 +607,7 @@ public class ContentSectionContainer extends CMSContainer {
                 section.getRootDocumentsFolder())) {
 
                 return new Link(section.getLabel(),
-                                generateURL(section.getPrimaryUrl() + "/"));
+                                generateURL(section.getPrimaryUrl()));
             } else {
                 //return new Label(section.getName(), false);
                 // return null;  // Produces a NPE although it shouldn't and

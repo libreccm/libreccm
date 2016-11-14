@@ -152,6 +152,9 @@ alter table CCM_CMS.BINARY_ASSETS_AUD
 
 drop table if exists CCM_CMS.AttachmentList_ItemAttachment_AUD;
 
+alter table CCM_CMS.ATTACHMENTS_AUD 
+    add column ATTACHMENT_LIST_ID int8;
+
 alter table CCM_CMS.AUDIO_ASSETS 
     rename column ASSET_ID to OBJECT_ID;
 
@@ -243,6 +246,12 @@ alter table CCM_CMS.NOTE_TEXTS
 
 alter table CCM_CMS.SIDE_NOTE_TEXTS
     rename column ASSET_ID to SIDE_NOTE_ID;
+
+alter table CCM_CMS.NOTE_TEXTS_AUD 
+    rename to SIDE_NOTE_TEXTS_AUD;
+
+alter table CCM_CMS.SIDE_NOTE_TEXTS_AUD
+    rename column ASSET_ID TO SIDE_NOTE_ID;
 
 create table CCM_CMS.SIDE_NOTE_TITLES (
     SIDE_NOTE_ID int8 not null,

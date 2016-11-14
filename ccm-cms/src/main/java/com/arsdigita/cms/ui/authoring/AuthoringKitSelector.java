@@ -25,20 +25,24 @@ import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.SimpleContainer;
 import com.arsdigita.bebop.SingleSelectionModel;
 
-import org.librecms.contentsection.ContentType;
 
 import com.arsdigita.cms.ItemSelectionModel;
 import com.arsdigita.xml.Element;
 
 import org.apache.logging.log4j.LogManager;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.logging.log4j.Logger;
+import org.libreccm.cdi.utils.CdiUtil;
+import org.librecms.contentsection.ContentType;
+import org.librecms.contenttypes.AuthoringKitInfo;
+import org.librecms.contenttypes.ContentTypeInfo;
+import org.librecms.contenttypes.ContentTypesManager;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Selects a component based on content type. Helper class for {@link
@@ -51,9 +55,9 @@ public abstract class AuthoringKitSelector extends SimpleContainer {
 
     private static final Logger LOGGER = LogManager.getLogger(
         AuthoringKitSelector.class);
-    private Map m_comps;
-    private MapComponentSelectionModel m_sel;
-    private List<ContentType> m_types;
+    private final Map<String, Component> components;
+    private final MapComponentSelectionModel<String> selectionModel;
+    private final List<ContentTypeInfo> types;
 
     /**
      * Construct a new AuthoringKitSelector. Load all the possible authoring
@@ -64,45 +68,52 @@ public abstract class AuthoringKitSelector extends SimpleContainer {
      *
      * @pre itemModel != null
      */
-    public AuthoringKitSelector(final SingleSelectionModel model) {
+    public AuthoringKitSelector(final SingleSelectionModel<String> model) {
         super();
 
-        m_comps = new HashMap();
-        m_sel = new MapComponentSelectionModel(model, m_comps);
+        components = new HashMap<>();
+        selectionModel = new MapComponentSelectionModel<>(model, components);
 
-        m_types = ContentType.getAllContentTypes();
-        if (m_types.isEmpty()) {
+        
+        
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final ContentTypesManager typesManager = cdiUtil.findBean(
+            ContentTypesManager.class);
+        types = typesManager.getAvailableContentTypes();
+
+        if (types.isEmpty()) {
             throw new RuntimeException("No Content Types were found.");
         }
     }
 
     // Overloaded add methods
     @Override
-    public void add(Component c) {
+    public void add(final Component component) {
         throw new UnsupportedOperationException();
     }
 
     // Overloaded add methods
     @Override
-    public void add(Component c, int constraints) {
+    public void add(final Component component, final int constraints) {
         throw new UnsupportedOperationException();
     }
 
     /**
      * Instantiate all the authoring kit wizards. The child class should call
-     * this method after it is done with initialization.
+     * this method after it is done with initialisation.
      */
     protected void processKit() {
-        while (m_types.next()) {
-            ContentType type = m_types.getContentType();
-            AuthoringKit kit = type.getAuthoringKit();
+        for (final ContentTypeInfo type : types) {
+            final AuthoringKitInfo kit = type.getAuthoringKit();
             if (kit != null) {
-                Component c = instantiateKitComponent(kit, type);
-                if (c != null) {
-                    super.add(c);
-                    m_comps.put(type.getID(), c);
-                    LOGGER.info("Added component " + c + " for "
-                                    + type.getAssociatedObjectType());
+                final Component component = instantiateKitComponent(kit, type);
+                if (component != null) {
+                    super.add(component);
+                    components.put(type.getContentItemClass().getName(),
+                                   component);
+                    LOGGER.info("Added component {} for {}",
+                                Objects.toString(component),
+                                type.getContentItemClass().getName());
                 }
             }
         }
@@ -115,36 +126,40 @@ public abstract class AuthoringKitSelector extends SimpleContainer {
      *
      * @param kit  for this kit
      * @param type for this type
+     *
+     * @return
      */
     protected abstract Component instantiateKitComponent(
-        AuthoringKit kit, ContentType type);
+        final AuthoringKitInfo kit, final ContentTypeInfo type);
 
     /**
-     * @param id The content type id
+     *
+     * @param typeClass
      *
      * @return The component the given type id
      */
-    public Component getComponent(BigDecimal id) {
-        return (Component) m_comps.get(id);
+    public Component getComponent(final String typeClass) {
+        return components.get(typeClass);
     }
 
     /**
      * @return The selection model used by this wizard
      */
-    public MapComponentSelectionModel getComponentSelectionModel() {
-        return m_sel;
+    public MapComponentSelectionModel<String> getComponentSelectionModel() {
+        return selectionModel;
     }
 
     // Choose the right component and run it
-    public void generateXML(PageState state, Element parent) {
+    @Override
+    public void generateXML(final PageState state, final Element parent) {
         if (isVisible(state)) {
-            Component c = m_sel.getComponent(state);
-            if (c == null) {
+            final Component component = selectionModel.getComponent(state);
+            if (component == null) {
                 throw new IllegalStateException("No component for "
-                                                    + m_sel
-                    .getSelectedKey(state));
+                                                    + selectionModel
+                        .getSelectedKey(state));
             }
-            c.generateXML(state, parent);
+            component.generateXML(state, parent);
         }
     }
 

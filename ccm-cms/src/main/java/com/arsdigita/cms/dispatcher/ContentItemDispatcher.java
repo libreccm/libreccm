@@ -18,7 +18,6 @@
  */
 package com.arsdigita.cms.dispatcher;
 
-import com.arsdigita.cms.ContentSectionServlet;
 import com.arsdigita.dispatcher.Dispatcher;
 import com.arsdigita.dispatcher.DispatcherHelper;
 import com.arsdigita.dispatcher.RequestContext;
@@ -80,7 +79,7 @@ public class ContentItemDispatcher implements Dispatcher {
         throws IOException, ServletException {
 
         Boolean bXMLMode = (Boolean) request
-            .getAttribute(ContentSectionServlet.XML_MODE);
+            .getAttribute("xmlMode");
         if (bXMLMode != null && bXMLMode.booleanValue()) {
             //if this is XML mode, then use itemXML
             m_itemXML.dispatch(request, response, actx);
@@ -119,7 +118,7 @@ public class ContentItemDispatcher implements Dispatcher {
      */
     public static ContentItem getContentItem(HttpServletRequest request) {
         return (ContentItem) request.getAttribute(
-            ContentSectionServlet.CONTENT_ITEM);
+            "com.arsdigita.cms.dispatcher.item");
     }
 
 //    //synchronize access to the cache

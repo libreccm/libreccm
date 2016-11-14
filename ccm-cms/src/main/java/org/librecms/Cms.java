@@ -47,7 +47,8 @@ import java.util.Properties;
             instanceForm = ApplicationInstanceForm.class,
             settingsPane = SettingsPane.class,
             descBundle = CmsConstants.CONTENT_SECTION_DESC_BUNDLE,
-            creator = ContentSectionCreator.class
+            creator = ContentSectionCreator.class,
+            servletPath = "/templates/servlet/content-section"
         )
     }
 )
