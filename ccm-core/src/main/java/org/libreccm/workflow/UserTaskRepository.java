@@ -19,15 +19,21 @@
 package org.libreccm.workflow;
 
 import org.libreccm.core.AbstractEntityRepository;
+import org.libreccm.security.Role;
+import org.libreccm.security.User;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
+import javax.persistence.TypedQuery;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-public class UserTaskRepository extends AbstractEntityRepository<Long, UserTask>{
+public class UserTaskRepository extends AbstractEntityRepository<Long, UserTask> {
 
     @Override
     public Class<UserTask> getEntityClass() {
@@ -38,7 +44,30 @@ public class UserTaskRepository extends AbstractEntityRepository<Long, UserTask>
     public boolean isNew(final UserTask task) {
         return task.getTaskId() == 0;
     }
+
+    public List<UserTask> findEnabledTasksForWorkflow(final User user,
+                                                      final Workflow workflow) {
+        final TypedQuery<UserTask> query = getEntityManager().createNamedQuery(
+            "UserTask.findEnabledTasksForWorkflow", UserTask.class);
+        query.setParameter("user", user);
+        query.setParameter("workflow", workflow);
+
+        return query.getResultList();
+    }
     
-    
-    
+    public List<UserTask> getAssignedTasks(final User user, 
+                                           final Workflow workflow) {
+        final TypedQuery<UserTask> query = getEntityManager().createNamedQuery(
+            "UserTask.findAssignedTasks", UserTask.class);
+        final List<Role> roles = user.getRoleMemberships()
+        .stream()
+        .map(membership -> membership.getRole())
+        .collect(Collectors.toList());
+        
+        query.setParameter("roles", roles );
+        query.setParameter("workflow", workflow);
+        
+        return query.getResultList();
+    }
+
 }

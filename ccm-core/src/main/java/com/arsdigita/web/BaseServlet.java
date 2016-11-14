@@ -18,6 +18,8 @@
  */
 package com.arsdigita.web;
 
+import com.arsdigita.dispatcher.DispatcherHelper;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -87,6 +89,8 @@ public abstract class BaseServlet extends HttpServlet {
                                  final HttpServletResponse response)
         throws ServletException, IOException {
 
+        InternalRequestLocal.prepareAll(request);
+        DispatcherHelper.setRequest(request);
         Web.init(request, getServletContext());
         Web.getWebContext().setRequestURL(getRequestURL(request));
 

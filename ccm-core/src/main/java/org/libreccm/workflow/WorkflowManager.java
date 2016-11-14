@@ -36,6 +36,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
@@ -71,17 +72,17 @@ public class WorkflowManager {
     @Transactional(Transactional.TxType.REQUIRED)
     public Workflow createWorkflow(final WorkflowTemplate template) {
         final Workflow workflow = new Workflow();
-        
+
         final LocalizedString name = new LocalizedString();
         template.getName().getValues().forEach(
             (locale, str) -> name.addValue(locale, str));
         workflow.setName(name);
-        
+
         final LocalizedString description = new LocalizedString();
         template.getDescription().getValues().forEach(
-        (locale, str) -> description.addValue(locale, str));
+            (locale, str) -> description.addValue(locale, str));
         workflow.setDescription(description);
-        
+
         final Map<Long, Task> tasks = new HashMap<>();
 
         template.getTasks().forEach(taskTemplate -> createTask(taskTemplate,
@@ -142,9 +143,9 @@ public class WorkflowManager {
                 } else {
                     writeMethod.invoke(task, value);
                 }
-            } catch (IllegalAccessException |
-                     IllegalArgumentException |
-                     InvocationTargetException ex) {
+            } catch (IllegalAccessException
+                     | IllegalArgumentException
+                     | InvocationTargetException ex) {
                 throw new RuntimeException();
             }
 
@@ -273,6 +274,37 @@ public class WorkflowManager {
         query.setParameter("user", user);
 
         return query.getResultList();
+    }
+
+    public void start(final Workflow workflow) {
+        if (workflow.getTasks() != null && !workflow.getTasks().isEmpty()) {
+            final Task first = workflow.getTasks().get(0);
+
+            if (first instanceof UserTask) {
+                final User user = shiro.getUser();
+                lockTask((UserTask) first);
+            }
+        }
+    }
+
+    /**
+     * Gets the state of a workflow.
+     * 
+     * @param workflow
+     * @return 
+     */
+    public int getState(final Workflow workflow) {
+
+        final Optional<Task> activeTask = workflow.getTasks()
+            .stream()
+            .filter(task -> task.isActive())
+            .findAny();
+
+        if (activeTask.isPresent()) {
+            return WorkflowConstants.STARTED;
+        } else {
+            return -1;
+        }
     }
 
 }

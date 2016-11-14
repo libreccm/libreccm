@@ -18,8 +18,11 @@
  */
 package com.arsdigita.web;
 
+import com.arsdigita.dispatcher.DispatcherHelper;
+import com.arsdigita.dispatcher.InitialRequestContext;
+import com.arsdigita.dispatcher.RequestContext;
+
 import org.apache.log4j.Logger;
-import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.web.ApplicationRepository;
 import org.libreccm.web.CcmApplication;
 
@@ -92,7 +95,7 @@ public abstract class BaseApplicationServlet extends BaseServlet {
      */
     @Inject
     private ApplicationRepository appRepository;
-    
+
     /**
      * <p>
      * Augments the context of the request and delegates to {@link
@@ -120,7 +123,9 @@ public abstract class BaseApplicationServlet extends BaseServlet {
 //        final RequestContext rc = makeLegacyContext(
 //            request, app, Web.getUserContext());
 //
-//        DispatcherHelper.setRequestContext(request, rc);
+        final RequestContext context = new InitialRequestContext(request,
+                                                            getServletContext());
+        DispatcherHelper.setRequestContext(request, context);
 //
 //        final ServletException[] servletException = {null};
 //        final IOException[] ioException = {null};

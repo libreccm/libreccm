@@ -46,11 +46,25 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "WORKFLOW_USER_TASKS", schema = DB_SCHEMA)
-@NamedQueries(
+@NamedQueries({
     @NamedQuery(
         name = "UserTask.findLockedBy",
         query = "SELECT t FROM UserTask t WHERE t.lockingUser = :user")
-)
+    ,
+    @NamedQuery(
+        name = "UserTask.findEnabledTasksForWorkflow",
+        query = "SELECT t FROM UserTask t "
+                    + "WHERE t.lockingUser = :user "
+                    + "AND t.workflow = :workflow"
+    )
+    ,
+    @NamedQuery(
+        name = "UserTask.findAssignedTasks",
+        query = "SELECT t FROM UserTask t "
+                    + "WHERE t.assignments.role IN :roles "
+                    + "AND t.assignments.workflow = :workflow "
+                    + "AND t.active = true")
+})
 //Can't reduce complexity yet
 @SuppressWarnings({"PMD.CyclomaticComplexity",
                    "PMD.StdCyclomaticComplexity",
