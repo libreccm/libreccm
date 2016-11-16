@@ -30,7 +30,7 @@ import com.arsdigita.cms.ui.UserSearchForm;
 import com.arsdigita.globalization.GlobalizedMessage;
 
 import org.libreccm.security.User;
-import org.libreccm.workflow.UserTask;
+import org.libreccm.workflow.AssignableTask;
 
 import com.arsdigita.xml.Element;
 
@@ -146,7 +146,7 @@ class TaskAddUser extends SimpleContainer {
                     WorkflowManager.class);
                 final UserRepository userRepo = cdiUtil.findBean(UserRepository.class);
                 
-                final UserTask task = m_task.getTask(state);
+                final AssignableTask task = m_task.getTask(state);
                 User user;
 
                 for (int i = 0; i < users.length; i++) {

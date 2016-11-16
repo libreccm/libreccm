@@ -30,9 +30,10 @@ import java.util.Objects;
 
 import javax.persistence.AssociationOverride;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -40,9 +41,11 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
@@ -59,6 +62,35 @@ import javax.persistence.Table;
                    "PMD.ShortClassName",
                    "PMD.TooManyMethods",
                    "PMD.AvoidDuplicateLiterals"})
+@NamedQueries({
+    @NamedQuery(
+        name = "Task.countUnfinishedAndActiveTasksForWorkflow",
+        query = "SELECT COUNT(t) FROM Task t "
+                    + "WHERE t.taskState != org.libreccm.workflow.TaskState.FINISHED "
+                + "AND t.active = true "
+                    + "AND t.workflow = :workflow")
+    ,
+    @NamedQuery(
+        name = "Task.countUnfinishedTasksForWorkflow",
+        query = "SELECT COUNT(t) FROM Task t "
+                    + "WHERE t.taskState != org.libreccm.workflow.TaskState.FINISHED "
+                + "AND t.workflow = :workflow"
+    )
+    ,
+    @NamedQuery(
+        name = "Task.findEnabledTasks",
+        query = "SELECT t FROM Task t "
+                    + "WHERE t.workflow = :workflow "
+                    + "AND t.taskState = org.libreccm.workflow.TaskState.ENABLED "
+                + "AND t.active = true"
+    )
+    ,
+    @NamedQuery(
+        name = "Task.findFinishedTasks",
+        query = "SELECT t FROM Task t "
+                    + "WHERE t.workflow = :workflow "
+                    + "AND t.taskState = org.libreccm.workflow.TaskState.FINISHED")
+})
 public class Task implements Serializable {
 
     private static final long serialVersionUID = 8161343036908150426L;
@@ -70,27 +102,28 @@ public class Task implements Serializable {
 
     @Embedded
     @AssociationOverride(
-            name = "values",
-            joinTable = @JoinTable(name = "WORKFLOW_TASK_LABELS",
-                                   schema = DB_SCHEMA,
-                                   joinColumns = {
-                                       @JoinColumn(name = "TASK_ID")}))
+        name = "values",
+        joinTable = @JoinTable(name = "WORKFLOW_TASK_LABELS",
+                               schema = DB_SCHEMA,
+                               joinColumns = {
+                                   @JoinColumn(name = "TASK_ID")}))
     private LocalizedString label;
 
     @Embedded
     @AssociationOverride(
-            name = "values",
-            joinTable = @JoinTable(name = "WORKFLOW_TASKS_DESCRIPTIONS",
-                                   schema = DB_SCHEMA,
-                                   joinColumns = {
-                                       @JoinColumn(name = "TASK_ID")}))
+        name = "values",
+        joinTable = @JoinTable(name = "WORKFLOW_TASKS_DESCRIPTIONS",
+                               schema = DB_SCHEMA,
+                               joinColumns = {
+                                   @JoinColumn(name = "TASK_ID")}))
     private LocalizedString description;
 
     @Column(name = "ACTIVE")
     private boolean active;
 
     @Column(name = "TASK_STATE", length = 512)
-    private String taskState;
+    @Enumerated(EnumType.STRING)
+    private TaskState taskState;
 
     @ManyToOne
     @JoinColumn(name = "WORKFLOW_ID")
@@ -108,14 +141,9 @@ public class Task implements Serializable {
                    @JoinColumn(name = "DEPENDENT_TASK_ID")})
     private List<Task> dependsOn;
 
-    @ElementCollection
-    @JoinTable(name = "WORKFLOW_TASK_COMMENTS",
-               schema = DB_SCHEMA,
-               joinColumns = {
-                   @JoinColumn(name = "TASK_ID")})
-    @Column(name = "COMMENT")
-    @Lob
-    private List<String> comments;
+    @OneToMany
+    @JoinColumn(name = "TASK_ID")
+    private List<TaskComment> comments;
 
     public Task() {
         super();
@@ -159,11 +187,11 @@ public class Task implements Serializable {
         this.active = active;
     }
 
-    public String getTaskState() {
+    public TaskState getTaskState() {
         return taskState;
     }
 
-    public void setTaskState(final String taskState) {
+    protected void setTaskState(final TaskState taskState) {
         this.taskState = taskState;
     }
 
@@ -215,7 +243,7 @@ public class Task implements Serializable {
         dependsOn.remove(task);
     }
 
-    public List<String> getComments() {
+    public List<TaskComment> getComments() {
         if (comments == null) {
             return null;
         } else {
@@ -223,15 +251,15 @@ public class Task implements Serializable {
         }
     }
 
-    protected void setComments(final List<String> comments) {
+    protected void setComments(final List<TaskComment> comments) {
         this.comments = comments;
     }
 
-    public void addComment(final String comment) {
+    public void addComment(final TaskComment comment) {
         comments.add(comment);
     }
 
-    public void removeComment(final String comment) {
+    public void removeComment(final TaskComment comment) {
         comments.remove(comment);
     }
 
@@ -294,14 +322,14 @@ public class Task implements Serializable {
 
     public String toString(final String data) {
         return String.format("%s{ "
-                                     + "taskId = %d, "
-                                     + "label = %s, "
-                                     + "active = %b, "
-                                     + "taskState = \"%s\", "
-                                     + "workflow = %s, "
-                                     + "dependentTasks = %s, "
-                                     + "dependsOn = %s%s"
-                                     + " }",
+                                 + "taskId = %d, "
+                                 + "label = %s, "
+                                 + "active = %b, "
+                                 + "taskState = \"%s\", "
+                                 + "workflow = %s, "
+                                 + "dependentTasks = %s, "
+                                 + "dependsOn = %s%s"
+                                 + " }",
                              super.toString(),
                              taskId,
                              Objects.toString(label),

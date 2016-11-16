@@ -33,40 +33,43 @@ import javax.persistence.TypedQuery;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-public class UserTaskRepository extends AbstractEntityRepository<Long, UserTask> {
+public class AssignableTaskRepository
+    extends AbstractEntityRepository<Long, AssignableTask> {
 
     @Override
-    public Class<UserTask> getEntityClass() {
-        return UserTask.class;
+    public Class<AssignableTask> getEntityClass() {
+        return AssignableTask.class;
     }
 
     @Override
-    public boolean isNew(final UserTask task) {
+    public boolean isNew(final AssignableTask task) {
         return task.getTaskId() == 0;
     }
 
-    public List<UserTask> findEnabledTasksForWorkflow(final User user,
-                                                      final Workflow workflow) {
-        final TypedQuery<UserTask> query = getEntityManager().createNamedQuery(
-            "UserTask.findEnabledTasksForWorkflow", UserTask.class);
+    public List<AssignableTask> findEnabledTasksForWorkflow(
+        final User user, final Workflow workflow) {
+        final TypedQuery<AssignableTask> query = getEntityManager()
+            .createNamedQuery(
+                "UserTask.findEnabledTasksForWorkflow", AssignableTask.class);
         query.setParameter("user", user);
         query.setParameter("workflow", workflow);
 
         return query.getResultList();
     }
-    
-    public List<UserTask> getAssignedTasks(final User user, 
-                                           final Workflow workflow) {
-        final TypedQuery<UserTask> query = getEntityManager().createNamedQuery(
-            "UserTask.findAssignedTasks", UserTask.class);
+
+    public List<AssignableTask> getAssignedTasks(final User user,
+                                                 final Workflow workflow) {
+        final TypedQuery<AssignableTask> query = getEntityManager()
+            .createNamedQuery(
+                "UserTask.findAssignedTasks", AssignableTask.class);
         final List<Role> roles = user.getRoleMemberships()
-        .stream()
-        .map(membership -> membership.getRole())
-        .collect(Collectors.toList());
-        
-        query.setParameter("roles", roles );
+            .stream()
+            .map(membership -> membership.getRole())
+            .collect(Collectors.toList());
+
+        query.setParameter("roles", roles);
         query.setParameter("workflow", workflow);
-        
+
         return query.getResultList();
     }
 

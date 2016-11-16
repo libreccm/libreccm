@@ -23,7 +23,7 @@ import org.junit.runners.Parameterized;
 import org.libreccm.core.CcmObject;
 import org.libreccm.tests.categories.UnitTest;
 import org.libreccm.testutils.EqualsVerifier;
-import org.libreccm.workflow.UserTask;
+import org.libreccm.workflow.AssignableTask;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -88,10 +88,10 @@ public class EqualsAndHashCodeTest extends EqualsVerifier {
         ccmObject1.setObjectId(-200);
         ccmObject1.setDisplayName("Object 2");
         
-        final UserTask task1 = new UserTask();
+        final AssignableTask task1 = new AssignableTask();
         task1.setTaskId(-10);
         
-        final UserTask task2 = new UserTask();
+        final AssignableTask task2 = new AssignableTask();
         task2.setTaskId(-20);
         
         verifier
@@ -100,7 +100,7 @@ public class EqualsAndHashCodeTest extends EqualsVerifier {
             .withPrefabValues(Role.class, role1, role2)
             .withPrefabValues(Party.class, party1, party2)
             .withPrefabValues(CcmObject.class, ccmObject1, ccmObject2)
-            .withPrefabValues(UserTask.class, task1, task2);
+            .withPrefabValues(AssignableTask.class, task1, task2);
     }
 
 }

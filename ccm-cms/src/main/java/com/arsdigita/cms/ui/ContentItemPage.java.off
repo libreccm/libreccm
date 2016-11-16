@@ -436,7 +436,7 @@ public class ContentItemPage extends CMSPage implements ActionListener {
      * @param itemId the id of the ContentItem object to display
      * @param tab The index of the tab to display
      */
-    public static String getItemURL(BigDecimal itemId, int tab) {
+    public static String getItemURL(long itemId, int tab) {
         final ContentItem item =
                 (ContentItem) DomainObjectFactory.newInstance(new OID(
                 ContentItem.BASE_DATA_OBJECT_TYPE, itemId));

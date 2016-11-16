@@ -24,8 +24,8 @@ import com.arsdigita.kernel.KernelConfig;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.security.Shiro;
 import org.libreccm.security.User;
-import org.libreccm.workflow.UserTask;
-import org.libreccm.workflow.UserTaskRepository;
+import org.libreccm.workflow.AssignableTask;
+import org.libreccm.workflow.AssignableTaskRepository;
 import org.libreccm.workflow.Workflow;
 import org.libreccm.workflow.WorkflowManager;
 
@@ -50,7 +50,7 @@ public class AssignedTaskController {
     private WorkflowManager workflowManager;
 
     @Inject
-    private UserTaskRepository userTaskRepo;
+    private AssignableTaskRepository userTaskRepo;
 
     @Inject
     private Shiro shiro;
@@ -71,7 +71,7 @@ public class AssignedTaskController {
     @Transactional(Transactional.TxType.REQUIRED)
     public List<RowData<Long>> getAssignedTasks(final Workflow workflow) {
         final User user = shiro.getUser();
-        final List<UserTask> tasks = userTaskRepo.getAssignedTasks(user,
+        final List<AssignableTask> tasks = userTaskRepo.getAssignedTasks(user,
                                                                    workflow);
 
         return tasks
@@ -81,7 +81,7 @@ public class AssignedTaskController {
 
     }
 
-    private RowData<Long> createRowData(final UserTask task) {
+    private RowData<Long> createRowData(final AssignableTask task) {
         
         
         final RowData<Long> rowData = new RowData<>(3);

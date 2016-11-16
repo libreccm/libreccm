@@ -20,6 +20,8 @@ package org.libreccm.workflow;
 
 import static org.libreccm.core.CoreConstants.*;
 
+import org.libreccm.core.CcmObject;
+
 import java.io.Serializable;
 
 import javax.persistence.Entity;
@@ -34,6 +36,12 @@ import javax.persistence.Table;
 public class WorkflowTemplate extends Workflow implements Serializable {
 
     private static final long serialVersionUID = 5770519379144947171L;
+
+    @Override
+    protected void setObject(final CcmObject object) {
+        throw new UnsupportedOperationException(
+            "A WorkflowTemplate has no object.");
+    }
 
     @Override
     public int hashCode() {

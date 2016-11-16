@@ -51,7 +51,7 @@ public class TaskAssignment implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "TASK_ID")
-    private UserTask task;
+    private AssignableTask task;
 
     @ManyToOne
     @JoinColumn(name = "ROLE_ID")
@@ -65,11 +65,11 @@ public class TaskAssignment implements Serializable {
         this.taskAssignmentId = taskAssignmentId;
     }
 
-    public UserTask getTask() {
+    public AssignableTask getTask() {
         return task;
     }
 
-    protected void setTask(final UserTask task) {
+    protected void setTask(final AssignableTask task) {
         this.task = task;
     }
 

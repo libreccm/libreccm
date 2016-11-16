@@ -27,7 +27,7 @@ import com.arsdigita.bebop.parameters.IntegerParameter;
 import com.arsdigita.cms.ui.BaseForm;
 import com.arsdigita.cms.ui.ListOptionPrintListener;
 
-import org.librecms.workflow.CmsTaskType;
+import org.librecms.workflow.CmsTaskTypeOld;
 
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.kernel.KernelConfig;
@@ -142,27 +142,27 @@ class BaseTaskForm extends BaseForm {
     }
      */
     // Fix this one too
-    private class TaskTypePrintListener extends ListOptionPrintListener<CmsTaskType> {
+    private class TaskTypePrintListener extends ListOptionPrintListener<CmsTaskTypeOld> {
 
         @Override
-        protected List<CmsTaskType> getDataQuery(final PageState state) {
+        protected List<CmsTaskTypeOld> getDataQuery(final PageState state) {
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final CmsTaskTypeRepository taskTypeRepo = cdiUtil.findBean(
                 CmsTaskTypeRepository.class);
 
-            final List<CmsTaskType> taskTypes = taskTypeRepo.findAll();
+            final List<CmsTaskTypeOld> taskTypes = taskTypeRepo.findAll();
 
             return taskTypes;
 
         }
 
         @Override
-        public String getKey(final CmsTaskType taskType) {
+        public String getKey(final CmsTaskTypeOld taskType) {
             return Long.toString(taskType.getTaskTypeId());
         }
 
         @Override
-        public String getValue(final CmsTaskType taskType) {
+        public String getValue(final CmsTaskTypeOld taskType) {
             final KernelConfig kernelConfig = KernelConfig.getConfig();
             final Locale defaultLocale = kernelConfig.getDefaultLocale();
             return taskType.getName().getValue(defaultLocale);

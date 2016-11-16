@@ -49,7 +49,7 @@ import org.libreccm.security.Role;
 import org.libreccm.security.RoleRepository;
 import org.libreccm.security.Shiro;
 import org.libreccm.workflow.Task;
-import org.libreccm.workflow.UserTask;
+import org.libreccm.workflow.AssignableTask;
 import org.libreccm.workflow.WorkflowManager;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.privileges.AdminPrivileges;
@@ -173,7 +173,7 @@ final class TaskItemPane extends BaseItemPane {
 
                 final User user = shiro.getUser();
 
-                final List<UserTask> tasks = workflowManager.lockedBy(user);
+                final List<AssignableTask> tasks = workflowManager.lockedBy(user);
 
                 return tasks.contains(task);
             }

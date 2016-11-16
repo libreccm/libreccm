@@ -39,14 +39,14 @@ import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.Shiro;
 import org.libreccm.workflow.Task;
-import org.libreccm.workflow.UserTask;
-import org.libreccm.workflow.UserTaskRepository;
+import org.libreccm.workflow.AssignableTask;
+import org.libreccm.workflow.AssignableTaskRepository;
 import org.libreccm.workflow.WorkflowConstants;
 import org.libreccm.workflow.WorkflowManager;
 import org.libreccm.workflow.WorkflowRepository;
 import org.librecms.CmsConstants;
 import org.librecms.workflow.CmsTask;
-import org.librecms.workflow.CmsTaskType;
+import org.librecms.workflow.CmsTaskTypeOld;
 
 import java.util.List;
 
@@ -177,16 +177,15 @@ public final class AssignedTaskSection extends Section {
             protected final Object initialValue(final PageState state) {
                 final Workflow workflow = m_flow.getWorkflow(state);
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-                final UserTaskRepository userTaskRepo = cdiUtil.findBean(
-                    UserTaskRepository.class);
+                final AssignableTaskRepository userTaskRepo = cdiUtil.findBean(AssignableTaskRepository.class);
                 final Shiro shiro = cdiUtil.findBean(Shiro.class);
                 return userTaskRepo.findEnabledTasksForWorkflow(shiro.getUser(), 
                                                                 workflow);
             }
 
             @SuppressWarnings("unchecked")
-            final List<UserTask> getTasks(final PageState state) {
-                return (ArrayList<UserTask>) get(state);
+            final List<AssignableTask> getTasks(final PageState state) {
+                return (ArrayList<AssignableTask>) get(state);
             }
 
         }
@@ -208,7 +207,7 @@ public final class AssignedTaskSection extends Section {
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final WorkflowManager workflowManager = cdiUtil.findBean(WorkflowManager.class);
             
-            for(final UserTask task : m_tasks.getTasks(state)) {
+            for(final AssignableTask task : m_tasks.getTasks(state)) {
                 if (relevant(task) && !task.isLocked()) {
                     workflowManager.lockTask(task);
                 }
@@ -219,7 +218,7 @@ public final class AssignedTaskSection extends Section {
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final WorkflowManager workflowManager = cdiUtil.findBean(WorkflowManager.class);
             
-            for(final UserTask task : m_tasks.getTasks(state)) {
+            for(final AssignableTask task : m_tasks.getTasks(state)) {
                 if (relevant(task) && task.isLocked()) {
                     workflowManager.unlockTask(task);
                 }
@@ -227,7 +226,7 @@ public final class AssignedTaskSection extends Section {
         }
 
         final boolean tasksLocked(final PageState state) {
-            for(final UserTask task : m_tasks.getTasks(state)) {
+            for(final AssignableTask task : m_tasks.getTasks(state)) {
                 if (relevant(task) && !task.isLocked()) {
                     return false;
                 }
@@ -248,7 +247,7 @@ public final class AssignedTaskSection extends Section {
             return !m_tasks.getTasks(state).isEmpty();
         }
 
-        private boolean relevant(final UserTask task) {
+        private boolean relevant(final AssignableTask task) {
             return true;
             
 //            ToDo

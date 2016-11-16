@@ -20,6 +20,7 @@ package org.libreccm.workflow;
 
 import static org.libreccm.core.CoreConstants.*;
 
+import org.libreccm.core.CcmObject;
 import org.libreccm.l10n.LocalizedString;
 
 import java.io.Serializable;
@@ -32,6 +33,8 @@ import javax.persistence.AssociationOverride;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -40,7 +43,10 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 /**
@@ -50,6 +56,12 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "WORKFLOWS", schema = DB_SCHEMA)
 @Inheritance(strategy = InheritanceType.JOINED)
+@NamedQueries({
+    @NamedQuery(
+        name = "Workflow.findForObject",
+        query = "SELECT w FROM Workflow w "
+                    + "WHERE W.object = :object")
+})
 public class Workflow implements Serializable {
 
     private static final long serialVersionUID = 4322500264543325829L;
@@ -62,7 +74,7 @@ public class Workflow implements Serializable {
     @ManyToOne
     @JoinColumn(name = "TEMPLATE_ID")
     private WorkflowTemplate template;
-    
+
     @Embedded
     @AssociationOverride(
         name = "values",
@@ -82,6 +94,21 @@ public class Workflow implements Serializable {
                                }))
     private LocalizedString description;
 
+    @Column(name = "WORKFLOW_STATE")
+    @Enumerated(EnumType.STRING)
+    private WorkflowState state;
+
+    @Column(name = "ACTIVE")
+    private boolean active;
+
+    @Column(name = "TASKS_STATE")
+    @Enumerated(EnumType.STRING)
+    private TaskState tasksState;
+    
+    @OneToOne
+    @JoinColumn(name = "OBJECT_ID")
+    private CcmObject object;
+
     @OneToMany(mappedBy = "workflow")
     private List<Task> tasks;
 
@@ -100,11 +127,11 @@ public class Workflow implements Serializable {
     public void setWorkflowId(final long workflowId) {
         this.workflowId = workflowId;
     }
-    
+
     public WorkflowTemplate getTemplate() {
         return template;
     }
-    
+
     protected void setTemplate(final WorkflowTemplate template) {
         this.template = template;
     }
@@ -123,6 +150,38 @@ public class Workflow implements Serializable {
 
     public void setDescription(final LocalizedString description) {
         this.description = description;
+    }
+
+    public WorkflowState getState() {
+        return state;
+    }
+
+    protected void setState(final WorkflowState state) {
+        this.state = state;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    protected void setActive(final boolean active) {
+        this.active = active;
+    }
+
+    public TaskState getTasksState() {
+        return tasksState;
+    }
+    
+    protected void setTasksState(final TaskState tasksState) {
+        this.tasksState = tasksState;
+    }
+    
+    public CcmObject getObject() {
+        return object;
+    }
+
+    protected void setObject(final CcmObject object) {
+        this.object = object;
     }
 
     public List<Task> getTasks() {
@@ -150,6 +209,11 @@ public class Workflow implements Serializable {
         int hash = 5;
         hash = 79 * hash + (int) (this.workflowId ^ (this.workflowId >>> 32));
         hash = 79 * hash + Objects.hashCode(this.name);
+        hash = 79 * hash + Objects.hashCode(description);
+        hash = 79 * hash + Objects.hashCode(state);
+        hash = 79 * hash + (active ? 1 : 0);
+        hash = 79 * hash + Objects.hashCode(tasksState);
+        hash = 79 * hash + Objects.hashCode(object);
         return hash;
     }
 
@@ -166,11 +230,32 @@ public class Workflow implements Serializable {
             return false;
         }
 
-        if (this.workflowId != other.getWorkflowId()) {
+        if (workflowId != other.getWorkflowId()) {
             return false;
         }
-        return Objects.equals(this.name, other.getName());
+
+        if (!Objects.equals(name, other.getName())) {
+            return false;
+        }
+
+        if (!Objects.equals(description, other.getDescription())) {
+            return false;
+        }
+
+        if (!Objects.equals(state, other.getState())) {
+            return false;
+        }
+
+        if (active != other.isActive()) {
+            return false;
+        }
         
+        if (!Objects.equals(tasksState, other.getTasksState())) {
+            return false;
+        }
+
+        return Objects.equals(object, other.getObject());
+
     }
 
     public boolean canEqual(final Object obj) {
@@ -185,12 +270,20 @@ public class Workflow implements Serializable {
     public String toString(final String data) {
         return String.format("%s{ "
                                  + "workflowId = %d, "
-                                 + "name = \"%s\"%s"
+                                 + "name = \"%s\", "
+                                 + "description = \"%s\", "
+                                 + "state = \"%s\", "
+                                 + "active = %b"
+                                 + "object = \"%s\"%s"
                                  + " }",
                              super.toString(),
                              workflowId,
-                             name,
+                             Objects.toString(name),
+                             Objects.toString(description),
+                             Objects.toString(state),
+                             active,
+                             Objects.toString(object),
                              data);
     }
-    
+
 }

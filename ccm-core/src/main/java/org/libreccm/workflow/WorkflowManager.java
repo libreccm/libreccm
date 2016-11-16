@@ -18,14 +18,17 @@
  */
 package org.libreccm.workflow;
 
+import com.arsdigita.kernel.KernelConfig;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.libreccm.configuration.ConfigurationManager;
+import org.libreccm.core.CcmObject;
 import org.libreccm.core.CoreConstants;
 import org.libreccm.l10n.LocalizedString;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
-import org.libreccm.security.Role;
-import org.libreccm.security.RoleRepository;
 import org.libreccm.security.Shiro;
-import org.libreccm.security.User;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -33,12 +36,14 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -52,6 +57,9 @@ import javax.transaction.Transactional;
 @RequestScoped
 public class WorkflowManager {
 
+    private final static Logger LOGGER = LogManager.getLogger(
+        WorkflowManager.class);
+
     @Inject
     private EntityManager entityManager;
 
@@ -62,15 +70,28 @@ public class WorkflowManager {
     private TaskRepository taskRepo;
 
     @Inject
-    private RoleRepository roleRepo;
+    private TaskManager taskManager;
 
     @Inject
     private Shiro shiro;
 
+    @Inject
+    private ConfigurationManager confManager;
+
+    private Locale defaultLocale;
+
+    @PostConstruct
+    private void init() {
+        final KernelConfig kernelConfig = confManager.findConfiguration(
+            KernelConfig.class);
+        defaultLocale = kernelConfig.getDefaultLocale();
+    }
+
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
-    public Workflow createWorkflow(final WorkflowTemplate template) {
+    public Workflow createWorkflow(final WorkflowTemplate template,
+                                   final CcmObject object) {
         final Workflow workflow = new Workflow();
 
         final LocalizedString name = new LocalizedString();
@@ -89,6 +110,9 @@ public class WorkflowManager {
                                                                tasks));
         template.getTasks().forEach(taskTemplate -> fixTaskDependencies(
             taskTemplate, tasks.get(taskTemplate.getTaskId()), tasks));
+
+        workflow.setObject(object);
+        workflow.setState(WorkflowState.INIT);
 
         tasks.values().forEach(task -> taskRepo.save(task));
         workflowRepo.save(workflow);
@@ -172,139 +196,161 @@ public class WorkflowManager {
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
-    public void addTask(final Workflow workflow, final Task task) {
-        workflow.addTask(task);
-        task.setWorkflow(workflow);
-
-        workflowRepo.save(workflow);
-        taskRepo.save(task);
-    }
-
-    @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
-    @Transactional(Transactional.TxType.REQUIRED)
-    public void removeTask(final Workflow workflow, final Task task) {
-        workflow.removeTask(task);
-        task.setWorkflow(null);
-
-        workflowRepo.save(workflow);
-        taskRepo.save(task);
-    }
-
-    @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
-    @Transactional(Transactional.TxType.REQUIRED)
-    public void assignTask(final UserTask task, final Role role) {
-        final TaskAssignment assignment = new TaskAssignment();
-        assignment.setTask(task);
-        assignment.setRole(role);
-
-        task.addAssignment(assignment);
-        role.addAssignedTask(assignment);
-
-        entityManager.persist(assignment);
-        taskRepo.save(task);
-        roleRepo.save(role);
-    }
-
-    @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
-    @Transactional(Transactional.TxType.REQUIRED)
-    public void retractTask(final UserTask task, final Role role) {
-        final List<TaskAssignment> result = task.getAssignments().stream()
-            .filter(assigned -> role.equals(assigned.getRole()))
-            .collect(Collectors.toList());
-
-        if (!result.isEmpty()) {
-            final TaskAssignment assignment = result.get(0);
-            task.removeAssignment(assignment);
-            role.removeAssignedTask(assignment);
-            entityManager.remove(assignment);
+    public List<Task> findEnabledTasks(final Workflow workflow) {
+        if (workflow.getState() == WorkflowState.DELETED
+                || workflow.getState() == WorkflowState.STOPPED) {
+            LOGGER.debug(String.format("Workflow state is \"%s\". Workflow "
+                                           + "has no enabled tasks.",
+                                       workflow.getState().toString()));
+            return Collections.emptyList();
         }
+
+        final TypedQuery<Task> query = entityManager.createNamedQuery(
+            "Task.findEnabledTasks", Task.class);
+        query.setParameter("workflow", workflow);
+
+        return Collections.unmodifiableList(query.getResultList());
     }
 
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
-    public void addDependentTask(final Task parent, final Task task) {
-        parent.addDependentTask(task);
-        task.addDependsOn(parent);
+    public List<Task> findFinishedTasks(final Workflow workflow) {
+        final TypedQuery<Task> query = entityManager.createNamedQuery(
+            "Task.findFinishedTasks", Task.class);
+        query.setParameter("workflow", workflow);
 
-        taskRepo.save(task);
-        taskRepo.save(parent);
+        return Collections.unmodifiableList(query.getResultList());
     }
 
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
-    public void removeDependentTask(final Task parent, final Task task) {
-        parent.removeDependentTask(task);
-        task.removeDependsOn(parent);
+    public List<AssignableTask> findOverdueTasks(final Workflow workflow) {
+        final TypedQuery<AssignableTask> query = entityManager.createNamedQuery(
+            "AssignableTask.findOverdueTasks", AssignableTask.class);
+        query.setParameter("workflow", workflow);
+        query.setParameter("now", new Date());
 
-        taskRepo.save(task);
-        taskRepo.save(parent);
+        return Collections.unmodifiableList(query.getResultList());
     }
 
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
-    public void lockTask(final UserTask task) {
-        task.setLocked(true);
-        task.setLockingUser(shiro.getUser());
-
-        taskRepo.save(task);
-    }
-
-    @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
-    @Transactional(Transactional.TxType.REQUIRED)
-    public void unlockTask(final UserTask task) {
-        task.setLocked(false);
-        task.setLockingUser(null);
-
-        taskRepo.save(task);
-    }
-
-    @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
-    @Transactional(Transactional.TxType.REQUIRED)
-    public List<UserTask> lockedBy(final User user) {
-        final TypedQuery<UserTask> query = entityManager.createNamedQuery(
-            "UserTask.findLockedBy", UserTask.class);
-        query.setParameter("user", user);
-
-        return query.getResultList();
-    }
-
     public void start(final Workflow workflow) {
-        if (workflow.getTasks() != null && !workflow.getTasks().isEmpty()) {
-            final Task first = workflow.getTasks().get(0);
+        final WorkflowState oldState = workflow.getState();
 
-            if (first instanceof UserTask) {
-                final User user = shiro.getUser();
-                lockTask((UserTask) first);
+        workflow.setState(WorkflowState.STARTED);
+        if (oldState == WorkflowState.INIT) {
+            workflow.setActive(true);
+            updateState(workflow);
+
+            for (final Task current : workflow.getTasks()) {
+                current.setActive(true);
+                taskManager.updateState(current);
+            }
+        }
+
+        workflowRepo.save(workflow);
+    }
+
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
+    @Transactional(Transactional.TxType.REQUIRED)
+    private void updateState(final Workflow workflow) {
+        if (workflow.getTasksState() == TaskState.ENABLED) {
+            final TypedQuery<Long> query = entityManager.createNamedQuery(
+                "Task.countUnfinishedAndActiveTasksForWorkflow", Long.class);
+            query.setParameter("workflow", workflow);
+
+            final Long result = query.getSingleResult();
+
+            if (result > 0) {
+                return;
+            } else {
+                finish(workflow);
+            }
+        }
+
+        if (workflow.getTasksState() == TaskState.FINISHED) {
+            final TypedQuery<Long> query = entityManager.createNamedQuery(
+                "Task.countUnfinishedTasksForWorkflow", Long.class);
+            query.setParameter("workflow", workflow);
+
+            final Long result = query.getSingleResult();
+
+            if (result > 0) {
+                enable(workflow);
             }
         }
     }
 
-    /**
-     * Gets the state of a workflow.
-     * 
-     * @param workflow
-     * @return 
-     */
-    public int getState(final Workflow workflow) {
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
+    @Transactional(Transactional.TxType.REQUIRED)
+    public void stop(final Workflow workflow) {
+        workflow.setState(WorkflowState.STOPPED);
+        workflowRepo.save(workflow);
+    }
 
-        final Optional<Task> activeTask = workflow.getTasks()
-            .stream()
-            .filter(task -> task.isActive())
-            .findAny();
-
-        if (activeTask.isPresent()) {
-            return WorkflowConstants.STARTED;
-        } else {
-            return -1;
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
+    @Transactional(Transactional.TxType.REQUIRED)
+    public void finish(final Workflow workflow) {
+        if (workflow.getTasksState() != TaskState.ENABLED) {
+            throw new IllegalArgumentException(String.format(
+                "Workflow \"%s\" is not enabled.",
+                workflow.getName().getValue(defaultLocale)));
         }
+
+        workflow.setTasksState(TaskState.FINISHED);
+        workflowRepo.save(workflow);
+
+    }
+
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
+    @Transactional(Transactional.TxType.REQUIRED)
+    public void enable(final Workflow workflow) {
+        if (workflow.getTasksState() == TaskState.ENABLED) {
+            return;
+        }
+
+        switch (workflow.getTasksState()) {
+            case DISABLED:
+                LOGGER.debug("Workflow \"{}\" is disabled; enabling it.",
+                             workflow.getName().getValue(defaultLocale));
+                workflow.setTasksState(TaskState.ENABLED);
+                workflowRepo.save(workflow);
+                break;
+            case FINISHED:
+                LOGGER.debug("Workflow \"{}\" is finished; reenabling it.");
+                workflow.setTasksState(TaskState.ENABLED);
+                workflowRepo.save(workflow);
+                break;
+            default:
+                LOGGER.debug("Workflow \"{}\" has tasksState \"{}\", "
+                                 + "#enable(Workflow) does nothing.",
+                             workflow.getName().getValue(defaultLocale),
+                             workflow.getTasksState());
+                break;
+        }
+    }
+
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
+    @Transactional(Transactional.TxType.REQUIRED)
+    public void disable(final Workflow workflow) {
+        if (workflow.getTasksState() == TaskState.DISABLED) {
+            return;
+        }
+
+        workflow.setTasksState(TaskState.DISABLED);
+        workflowRepo.save(workflow);
+
+        workflow.getTasks().forEach(task -> taskManager.disable(task));
+        workflow.setState(WorkflowState.INIT);
     }
 
 }

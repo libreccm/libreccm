@@ -18,7 +18,6 @@
  */
 package com.arsdigita.cms.ui.authoring;
 
-
 import com.arsdigita.bebop.Component;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.Resettable;
@@ -33,6 +32,7 @@ import org.librecms.contentsection.ContentType;
 
 import com.arsdigita.cms.ItemSelectionModel;
 import com.arsdigita.toolbox.ui.LayoutPanel;
+import com.arsdigita.util.UncheckedWrapperException;
 import com.arsdigita.xml.Element;
 
 import oracle.jrockit.jfr.events.ContentTypeImpl;
@@ -42,37 +42,36 @@ import org.librecms.contenttypes.ContentTypeInfo;
 
 import java.math.BigDecimal;
 
-
 /**
- * An invisible component which contains all the possible authoring kits. 
- * The kits are loaded from the database at construction time. The selector 
- * chooses which kit to display at page rendering time based on the value 
- * of the content_type state parameter.
- * 
- * Essentially, this component is a hack which is used to get around
- * the fact that we cannot instantiate stateful components dynamically.
+ * An invisible component which contains all the possible authoring kits. The
+ * kits are loaded from the database at construction time. The selector chooses
+ * which kit to display at page rendering time based on the value of the
+ * content_type state parameter.
+ *
+ * Essentially, this component is a hack which is used to get around the fact
+ * that we cannot instantiate stateful components dynamically.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @author unknown
  */
 public class WizardSelector extends AuthoringKitSelector
-    implements Resettable {
+        implements Resettable {
 
     private ItemSelectionModel itemSelectionModel;
 
     /**
-     * Construct a new WizardSelector. Load all the possible authoring kits 
-     * from the database and construct wizards for them.
+     * Construct a new WizardSelector. Load all the possible authoring kits from
+     * the database and construct wizards for them.
      *
-     * @param model the {@link ItemSelectionModel} which will
-     *              supply the wizard with its item
+     * @param model the {@link ItemSelectionModel} which will supply the wizard
+     * with its item
      *
-     * @param typeModel the {@link ACSObjectSelectionModel} which will
-     *                  supply the default content type
+     * @param typeModel the {@link ACSObjectSelectionModel} which will supply
+     * the default content type
      *
      * @pre itemModel != null
      */
-    public WizardSelector(final ItemSelectionModel model, 
+    public WizardSelector(final ItemSelectionModel model,
                           final SingleSelectionModel<String> typeModel) {
         super(typeModel);
         itemSelectionModel = model;
@@ -81,18 +80,19 @@ public class WizardSelector extends AuthoringKitSelector
 
     /**
      * Get the wizard for the given kit.
+     *
      * @param kit
      * @param type
-     * @return 
+     * @return
      */
-    public Component instantiateKitComponent(final AuthoringKitInfo kit, 
+    @Override
+    public Component instantiateKitComponent(final AuthoringKitInfo kit,
                                              final ContentTypeInfo type) {
 
-        final ItemSelectionModel itemModel = new
-            ItemSelectionModel(type,
-                               (LongParameter)itemSelectionModel.getStateParameter());
+        final ItemSelectionModel itemModel = new ItemSelectionModel(
+                type, (LongParameter) itemSelectionModel.getStateParameter());
 
-        final AuthoringKitWizard wizard = new AuthoringKitWizard(type, itemModel);        
+        final AuthoringKitWizard wizard = new AuthoringKitWizard(type, itemModel);
         return wizard;
     }
 
@@ -107,54 +107,51 @@ public class WizardSelector extends AuthoringKitSelector
     private Component getCurrentWizard(PageState state) {
 
         // Get the current item and extract its content type
-        if(!itemSelectionModel.isSelected(state))
-            throw new RuntimeException( (String) GlobalizationUtil.globalize(
-                                        "cms.ui.authoring.missing_item_id")
-                                        .localize());
+        if (!itemSelectionModel.isSelected(state)) {
+            throw new UncheckedWrapperException("No item selected.");
+        }
 
-        ContentItem item =
-            (ContentItem)itemSelectionModel.getSelectedObject(state);
+        final ContentItem item = (ContentItem) itemSelectionModel
+                .getSelectedObject(state);
 
-        ContentType type = item.getContentType();
-        BigDecimal typeId;
+        final ContentType type = item.getContentType();
+        final String typeClass;
 
-        if(type == null) {
+        if (type == null) {
             // Try to get the default content type
-            typeId = (BigDecimal)getComponentSelectionModel().getSelectedKey(state);
-            if(typeId == null) {
-                throw new RuntimeException((String) GlobalizationUtil.globalize(
-                                          "cms.ui.authoring.missing_content_type")
-                                          .localize());
+            typeClass = getComponentSelectionModel().getSelectedKey(state);
+            if (typeClass == null || typeClass.isEmpty()) {
+                throw new UncheckedWrapperException("Content type is missing");
             }
         } else {
-            typeId = type.getID();
+            typeClass = type.getContentItemClass();
         }
-              
+
         // Return the selected wizard
-        return (Component)getComponent(typeId);
+        return (Component) getComponent(typeClass);
     }
 
     // Choose the right wizard and run it
-    public void generateXML(PageState state, Element parent) {
+    @Override
+    public void generateXML(final PageState state, final Element parent) {
 
-        Component c = getCurrentWizard(state);
+        final Component component = getCurrentWizard(state);
 
-        if(c == null) {
-            throw new RuntimeException( (String) GlobalizationUtil.globalize(
-                                        "cms.ui.authoring.no_current_wizard")
-                                        .localize());
+        if (component == null) {
+            throw new UncheckedWrapperException("No Wizard.");
         }
 
-        c.generateXML(state, parent);
+        component.generateXML(state, parent);
     }
 
     /**
      * Reset the state of the current wizard
      */
-    public void reset(PageState state) {
-        Resettable r = (Resettable)getCurrentWizard(state);
-        if(r != null) r.reset(state);
+    public void reset(final PageState state) {
+        final Resettable resettable = (Resettable) getCurrentWizard(state);
+        if (resettable != null) {
+            resettable.reset(state);
+        }
     }
-
 
 }

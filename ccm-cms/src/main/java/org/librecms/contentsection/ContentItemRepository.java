@@ -29,7 +29,9 @@ import java.util.UUID;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+import org.libreccm.workflow.Workflow;
 
 /**
  * Repository for content items.
@@ -251,4 +253,17 @@ public class ContentItemRepository
         return query.getSingleResult();
     }
 
+    public Optional<ContentItem> findItemWithWorkflow(final Workflow workflow) {
+        final TypedQuery<ContentItem> query = getEntityManager()
+                .createNamedQuery("ContentItem.findItemWithWorkflow", 
+                                  ContentItem.class);
+        query.setParameter("workflow", workflow);
+        
+        try {
+            return Optional.of(query.getSingleResult());
+        } catch(NoResultException ex) {
+            return Optional.empty();
+        }
+    }
+    
 }

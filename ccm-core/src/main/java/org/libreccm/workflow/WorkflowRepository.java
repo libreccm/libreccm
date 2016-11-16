@@ -19,8 +19,13 @@
 package org.libreccm.workflow;
 
 import org.libreccm.core.AbstractEntityRepository;
+import org.libreccm.core.CcmObject;
+
+import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
+import javax.persistence.NoResultException;
+import javax.persistence.TypedQuery;
 
 /**
  *
@@ -37,6 +42,23 @@ public class WorkflowRepository extends AbstractEntityRepository<Long, Workflow>
     @Override
     public boolean isNew(final Workflow workflow) {
         return workflow.getWorkflowId() == 0;
+    }
+    
+    public Optional<Workflow> findWorkflowForObject(final CcmObject object) {
+        if (object == null) {
+            throw new IllegalArgumentException(
+                "Can't find a workflow for object null.");
+        }
+        
+        final TypedQuery<Workflow> query = getEntityManager().createNamedQuery(
+            "Workflow.findForObject", Workflow.class);
+        query.setParameter("object", object);
+        
+        try {
+            return Optional.of(query.getSingleResult());
+        } catch(NoResultException ex) {
+            return Optional.empty();
+        }
     }
     
 }

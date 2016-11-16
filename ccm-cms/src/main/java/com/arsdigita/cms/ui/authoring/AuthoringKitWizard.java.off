@@ -57,7 +57,7 @@ import com.arsdigita.toolbox.ui.Section;
 import com.arsdigita.util.Assert;
 import com.arsdigita.util.SequentialMap;
 import com.arsdigita.util.UncheckedWrapperException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -66,6 +66,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.Collections;
+import org.apache.logging.log4j.LogManager;
+import org.librecms.contenttypes.AuthoringKitInfo;
+import org.librecms.contenttypes.ContentTypeInfo;
 
 /**
  * This class represents a single authoring kit.  The wizard accepts a
@@ -83,12 +86,11 @@ import java.util.Collections;
  * This constructor will be called when the component is automatically
  * instantiated by the <code>AuthoringKitWizard</code>.</p>
  *
- * @version $Id: AuthoringKitWizard.java 2140 2011-01-16 12:04:20Z pboy $
  */
 public class AuthoringKitWizard extends LayoutPanel implements Resettable {
 
     /** Private Logger instance for this class */
-    private static final Logger s_log = Logger.getLogger(
+    private static final Logger LOGGER = LogManager.getLogger(
             AuthoringKitWizard.class);
     private static Class[] s_args = new Class[]{
         ItemSelectionModel.class,
@@ -103,8 +105,8 @@ public class AuthoringKitWizard extends LayoutPanel implements Resettable {
     private static final java.util.List<AssetStepEntry> s_assets = new 
                          ArrayList<AssetStepEntry>();
     private final Object[] m_vals;
-    private final ContentType m_type;
-    private final AuthoringKit m_kit;
+    private final ContentTypeInfo m_type;
+    private final AuthoringKitInfo m_kit;
     private final ItemSelectionModel m_sel;
     private final WorkflowRequestLocal m_workflow;
     private final AssignedTaskTable m_tasks;
@@ -131,14 +133,12 @@ public class AuthoringKitWizard extends LayoutPanel implements Resettable {
      *
      * @param type The content type of the items that this wizard will
      * handle
-     *
-     * @param itemModel The item selection model which will supply
-     * this wizard with the content item object
+     * @param model
      */
-    public AuthoringKitWizard(final ContentType type,
+    public AuthoringKitWizard(final ContentTypeInfo type,
                               final ItemSelectionModel model) {
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Authoring kit wizard for type " + type + " "
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Authoring kit wizard for type " + type + " "
                         + "undergoing creation");
         }
 
@@ -262,9 +262,9 @@ public class AuthoringKitWizard extends LayoutPanel implements Resettable {
         Collection skipSteps = ContentSection.getConfig().getAssetStepsToSkip(
                 type);
         Iterator it = skipSteps.iterator();
-        if (s_log.isDebugEnabled()) {
+        if (LOGGER.isDebugEnabled()) {
             while (it.hasNext()) {
-                s_log.debug("skip step " + it.next());
+                LOGGER.debug("skip step " + it.next());
             }
         }
         //Iterator assets = s_assets.iterator();
@@ -276,7 +276,7 @@ public class AuthoringKitWizard extends LayoutPanel implements Resettable {
             final String baseObjectType = data.getBaseDataObjectType();
             //Class step = (Class) data[1];
             Class step = data.getStep();
-            s_log.debug("possibly adding asset step " + step.getName());
+            LOGGER.debug("possibly adding asset step " + step.getName());
             if (!skipSteps.contains(step.getName())) {
                 //GlobalizedMessage label = (GlobalizedMessage) data[2];
                 GlobalizedMessage label = data.getLabel();
@@ -423,7 +423,7 @@ public class AuthoringKitWizard extends LayoutPanel implements Resettable {
         // registered, but I needed the image step to use a different step class if the specialised
         // image step application was loaded. Solution is to ensure initialiser in new project
         // runs after original ccm-ldn-image-step initializer and override the registered step here
-        s_log.debug(
+        LOGGER.debug(
                 "registering asset step - label: "
                 + label.localize()
                 + " step class: "
@@ -451,7 +451,7 @@ public class AuthoringKitWizard extends LayoutPanel implements Resettable {
              */
             if ((thisObjectType.equals(baseObjectType))
                 && (thisLabel.localize().equals(label.localize()))) {
-                s_log.debug(
+                LOGGER.debug(
                         "registering authoring step with same label as previously registered step");
                 s_assets.remove(data);
                 break;
@@ -570,8 +570,8 @@ public class AuthoringKitWizard extends LayoutPanel implements Resettable {
      * @param className The Java class name of the step
      */
     protected Component instantiateStep(String name) {
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Instantiating kit wizard '" + name + "' with "
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Instantiating kit wizard '" + name + "' with "
                         + "arguments " + s_args);
         }
 

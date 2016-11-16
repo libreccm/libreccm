@@ -1,0 +1,253 @@
+/*
+ * Copyright (C) 2003-2004 Red Hat Inc. All Rights Reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public License
+ * as published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ */
+package com.arsdigita.cms.ui.workflow;
+
+import com.arsdigita.bebop.FormProcessException;
+import com.arsdigita.bebop.Label;
+import com.arsdigita.bebop.PageState;
+import com.arsdigita.bebop.event.FormInitListener;
+import com.arsdigita.bebop.event.FormProcessListener;
+import com.arsdigita.bebop.event.FormSectionEvent;
+import com.arsdigita.bebop.event.FormValidationListener;
+import com.arsdigita.bebop.form.Option;
+import com.arsdigita.bebop.form.RadioGroup;
+import com.arsdigita.bebop.parameters.BooleanParameter;
+
+import org.librecms.contentsection.ContentSection;
+
+import com.arsdigita.cms.ContentCenter;
+import com.arsdigita.cms.ui.ContentItemPage;
+import com.arsdigita.globalization.GlobalizedMessage;
+import com.arsdigita.util.UncheckedWrapperException;
+
+import org.librecms.workflow.CmsTask;
+import org.librecms.workflow.CmsTaskTypeOld;
+
+import com.arsdigita.web.RedirectSignal;
+import com.arsdigita.web.URL;
+import com.arsdigita.web.Web;
+
+import org.libreccm.workflow.Task;
+import org.apache.logging.log4j.Logger;
+
+import java.util.Iterator;
+import java.util.Optional;
+
+import org.apache.logging.log4j.LogManager;
+import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.security.PermissionChecker;
+import org.libreccm.security.Shiro;
+import org.libreccm.workflow.TaskRepository;
+import org.libreccm.workflow.WorkflowManager;
+import org.libreccm.workflow.WorkflowRepository;
+import org.librecms.CmsConstants;
+import org.librecms.contentsection.ContentItem;
+import org.librecms.contentsection.ContentItemRepository;
+
+/**
+ * <p>
+ * A form that prompts the user to comment on and approve tasks and then
+ * finishes the task if it was approved.</p>
+ *
+ * @author Justin Ross &lt;jross@redhat.com&gt;
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
+ */
+public final class TaskFinishForm extends CommentAddForm {
+
+    private static final Logger LOGGER = LogManager.getLogger(
+            TaskFinishForm.class);
+    private final TaskRequestLocal m_task;
+    private final Label m_approvePrompt;
+    private final RadioGroup m_approve;
+
+    public TaskFinishForm(final TaskRequestLocal task) {
+        super(task);
+
+        m_task = task;
+
+        m_approve = new RadioGroup(new BooleanParameter("approve"));
+        m_approve.addOption(new Option("true",
+                                       lz("cms.ui.workflow.task.approve")));
+        m_approve.addOption(new Option("false",
+                                       lz("cms.ui.workflow.task.reject")));
+
+        m_approvePrompt = new Label(gz("cms.ui.workflow.task.approve_prompt"));
+
+        addComponent(m_approvePrompt);
+        addComponent(m_approve);
+
+        addInitListener(new InitListener());
+        addValidationListener(new ValidationListener());
+        addProcessListener(new ProcessListener());
+    }
+
+    private class InitListener implements FormInitListener {
+
+        @Override
+        public final void init(final FormSectionEvent e) {
+            LOGGER.debug("Initializing task finish");
+
+            final PageState state = e.getPageState();
+
+            if (isVisible(state)) {
+                final CmsTask task = m_task.getTask(state);
+
+                if (requiresApproval(task)) {
+                    m_approvePrompt.setVisible(state, true);
+                    m_approve.setVisible(state, true);
+                } else {
+                    m_approvePrompt.setVisible(state, false);
+                    m_approve.setVisible(state, false);
+                }
+            }
+        }
+    }
+
+    private class ValidationListener implements FormValidationListener {
+
+        @Override
+        public final void validate(final FormSectionEvent e)
+                throws FormProcessException {
+            LOGGER.debug("Validating task finish");
+
+            final PageState state = e.getPageState();
+            final CmsTask task = m_task.getTask(state);
+
+            if (requiresApproval(task) && m_approve.getValue(state) == null) {
+                throw new FormProcessException(new GlobalizedMessage(
+                        "cms.ui.workflow.task.approval_or_reject_required",
+                        CmsConstants.CMS_BUNDLE));
+            }
+        }
+    }
+
+    private class ProcessListener implements FormProcessListener {
+
+        @Override
+        public final void process(final FormSectionEvent event)
+                throws FormProcessException {
+            LOGGER.debug("Processing task finish");
+
+            final PageState state = event.getPageState();
+            final CmsTask task = m_task.getTask(state);
+            boolean finishedTask = false;
+
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final PermissionChecker permissionChecker = cdiUtil.findBean(
+                    PermissionChecker.class);
+            final ContentItemRepository itemRepo = cdiUtil.findBean(
+                    ContentItemRepository.class);
+            final Optional<ContentItem> item = itemRepo.findItemWithWorkflow(
+                    task.getWorkflow());
+
+            if (!item.isPresent()) {
+                throw new UncheckedWrapperException(
+                        "Workflow not assigned to an item");
+            }
+
+            permissionChecker.checkPermission(task.getTaskType().getPrivilege(),
+                                              item.get());
+
+            final TaskRepository taskRepo = cdiUtil.findBean(
+                    TaskRepository.class);
+
+            if (requiresApproval(task)) {
+                LOGGER.debug("The task requires approval; checking to see "
+                                     + "if it's approved");
+
+                // XXX I think the fact that this returns a Boolean is
+                // the effect of broken parameter marshalling in
+                // Bebop.
+                final Boolean isApproved = (Boolean) m_approve.getValue(state);
+
+                if (isApproved.equals(Boolean.TRUE)) {
+                    LOGGER.debug("The task is approved; finishing the task");
+
+                    final Shiro shiro = cdiUtil.findBean(Shiro.class);
+                    final WorkflowManager workflowManager = cdiUtil.findBean(
+                            WorkflowManager.class);
+
+                    task.setActive(false);
+                    finishedTask = true;
+                } else {
+                    LOGGER.debug("The task is rejected; reenabling dependent "
+                                         + "tasks");
+
+                    // Reenable the previous tasks.
+                    final Iterator<Task> iter = task.getDependentTasks().
+                            iterator();
+
+                    while (iter.hasNext()) {
+                        final Task dependent = (Task) iter.next();
+
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("Reenabling task " + dependent.
+                                    getLabel());
+                        }
+
+                        dependent.setActive(true);
+
+                        taskRepo.save(dependent);
+                    }
+                }
+            } else {
+                LOGGER.debug("The task does not require approval; finishing "
+                                     + "it");
+
+                task.setActive(false);
+                taskRepo.save(task);
+            }
+            if (finishedTask) {
+                Iterator tasks = Engine.getInstance(CMSEngine.CMS_ENGINE_TYPE).
+                        getEnabledTasks(Web.getWebContext().getUser(),
+                                        task.getParentID()).iterator();
+                if (tasks.hasNext()) {
+                    CmsTask thisTask = (CmsTask) tasks.next();
+                    PermissionDescriptor thisTaskAccess = new PermissionDescriptor(
+                            thisTask.getTaskType().getPrivilege(), task.
+                            getWorkflow().getObject(), user);
+                    if (PermissionService.checkPermission(thisTaskAccess)) {
+
+                        // Lock task for user
+                        thisTask.lock((User) user);
+                        int targetTab = (thisTask.getTaskType().getID().equals(CmsTaskTypeOld.DEPLOY)) ? ContentItemPage.PUBLISHING_TAB : ContentItemPage.AUTHORING_TAB;
+                        throw new RedirectSignal(URL.there(state.getRequest(),
+                                                           ContentItemPage.
+                                                                   getItemURL(
+                                                                           task.
+                                                                                   getItem(),
+                                                                           targetTab)),
+                                                 true);
+                    }
+                }
+                // redirect to /content-center if streamlined creation mode is active.
+                if (ContentSection.getConfig().getUseStreamlinedCreation()) {
+                    throw new RedirectSignal(URL.there(state.getRequest(),
+                                                       ContentCenter.getURL()),
+                                             true);
+                }
+
+            }
+        }
+    }
+
+    private static boolean requiresApproval(final CmsTask task) {
+        return !task.getTaskType().getID().equals(CmsTaskTypeOld.AUTHOR);
+    }
+}

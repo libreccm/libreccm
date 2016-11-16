@@ -18,14 +18,15 @@
  */
 package org.librecms.workflow;
 
-import org.libreccm.workflow.UserTask;
+import org.libreccm.workflow.AssignableTask;
 
 import java.io.Serializable;
 import java.util.Objects;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Table;
 
 import static org.librecms.CmsConstants.*;
@@ -36,12 +37,12 @@ import static org.librecms.CmsConstants.*;
  */
 @Entity
 @Table(name = "WORKFLOW_TASKS", schema = DB_SCHEMA)
-public class CmsTask extends UserTask implements Serializable {
+public class CmsTask extends AssignableTask implements Serializable {
 
     private static final long serialVersionUID = -3988352366529930659L;
     
-    @OneToOne
-    @JoinColumn(name = "TASK_TYPE_ID")
+    @Column(name = "TASK_TYPE")
+    @Enumerated(EnumType.STRING)
     private CmsTaskType taskType;
 
     public CmsTaskType getTaskType() {
@@ -79,7 +80,7 @@ public class CmsTask extends UserTask implements Serializable {
             return false;
         }
         
-        return Objects.equals(taskType, other.taskType);
+        return Objects.equals(taskType, other.getTaskType());
     }
     
     @Override

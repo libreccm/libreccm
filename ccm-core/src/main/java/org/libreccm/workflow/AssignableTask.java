@@ -45,31 +45,37 @@ import javax.persistence.TemporalType;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "WORKFLOW_USER_TASKS", schema = DB_SCHEMA)
+@Table(name = "WORKFLOW_ASSIGNABLE_TASKS", schema = DB_SCHEMA)
 @NamedQueries({
     @NamedQuery(
-        name = "UserTask.findLockedBy",
-        query = "SELECT t FROM UserTask t WHERE t.lockingUser = :user")
+        name = "AssignableTask.findLockedBy",
+        query = "SELECT t FROM AssignableTask t WHERE t.lockingUser = :user")
     ,
     @NamedQuery(
-        name = "UserTask.findEnabledTasksForWorkflow",
-        query = "SELECT t FROM UserTask t "
+        name = "AssignableTask.findEnabledTasksForWorkflow",
+        query = "SELECT t FROM AssignableTask t "
                     + "WHERE t.lockingUser = :user "
                     + "AND t.workflow = :workflow"
     )
     ,
     @NamedQuery(
-        name = "UserTask.findAssignedTasks",
-        query = "SELECT t FROM UserTask t "
+        name = "AssignableTask.findAssignedTasks",
+        query = "SELECT t FROM AssignableTask t "
                     + "WHERE t.assignments.role IN :roles "
                     + "AND t.assignments.workflow = :workflow "
                     + "AND t.active = true")
+    ,
+    @NamedQuery(
+        name = "AssignableTask.findOverdueTasks",
+        query = "SELECT t FROM AssignableTask t "
+                    + "WHERE t.workflow = :workflow "
+                    + "AND t.dueDate < :now")
 })
 //Can't reduce complexity yet
 @SuppressWarnings({"PMD.CyclomaticComplexity",
                    "PMD.StdCyclomaticComplexity",
                    "PMD.ModifiedCyclomaticComplexity"})
-public class UserTask extends Task implements Serializable {
+public class AssignableTask extends Task implements Serializable {
 
     private static final long serialVersionUID = 4188064584389893019L;
 
@@ -99,7 +105,7 @@ public class UserTask extends Task implements Serializable {
     @OneToMany(mappedBy = "task")
     private List<TaskAssignment> assignments;
 
-    public UserTask() {
+    public AssignableTask() {
         super();
         assignments = new ArrayList<>();
     }
@@ -217,10 +223,10 @@ public class UserTask extends Task implements Serializable {
             return false;
         }
 
-        if (!(obj instanceof UserTask)) {
+        if (!(obj instanceof AssignableTask)) {
             return false;
         }
-        final UserTask other = (UserTask) obj;
+        final AssignableTask other = (AssignableTask) obj;
         if (!other.canEqual(this)) {
             return false;
         }
@@ -245,7 +251,7 @@ public class UserTask extends Task implements Serializable {
 
     @Override
     public boolean canEqual(final Object obj) {
-        return obj instanceof UserTask;
+        return obj instanceof AssignableTask;
     }
 
     @Override

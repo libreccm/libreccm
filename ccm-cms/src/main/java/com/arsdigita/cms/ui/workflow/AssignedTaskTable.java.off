@@ -40,8 +40,8 @@ import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.Shiro;
 import org.libreccm.security.User;
-import org.libreccm.workflow.UserTask;
-import org.libreccm.workflow.UserTaskRepository;
+import org.libreccm.workflow.AssignableTask;
+import org.libreccm.workflow.AssignableTaskRepository;
 import org.libreccm.workflow.WorkflowManager;
 import org.librecms.CmsConstants;
 import org.librecms.workflow.CmsTaskTypeRepository;
@@ -70,13 +70,12 @@ public final class AssignedTaskTable extends Table {
             final int column = event.getColumn();
 
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final UserTaskRepository userTaskRepo = cdiUtil.findBean(
-                UserTaskRepository.class);
+            final AssignableTaskRepository userTaskRepo = cdiUtil.findBean(AssignableTaskRepository.class);
             final WorkflowManager workflowManager = cdiUtil.findBean(WorkflowManager.class);
             final Shiro shiro = cdiUtil.findBean(Shiro.class);
 
             if (column == 1) {
-                final UserTask task = userTaskRepo.findById((Long) event
+                final AssignableTask task = userTaskRepo.findById((Long) event
                     .getRowKey());
                 final User currentUser = shiro.getUser();
                 final User lockingUser = task.getLockingUser();

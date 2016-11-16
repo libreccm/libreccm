@@ -40,7 +40,7 @@ public class ToStringTest extends ToStringVerifier {
         return Arrays.asList(new Class<?>[]{
             Task.class,
             TaskAssignment.class,
-            UserTask.class,
+            AssignableTask.class,
             Workflow.class
         });
     }

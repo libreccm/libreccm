@@ -1,9 +1,3 @@
-DROP SCHEMA IF EXISTS ccm_core;
-
-DROP SEQUENCE IF EXISTS hibernate_sequence;
-
-CREATE SCHEMA ccm_core;
-
 
     create table CCM_CORE.APPLICATIONS (
         APPLICATION_TYPE varchar(1024) not null,
@@ -500,8 +494,8 @@ CREATE SCHEMA ccm_core;
         NAME varchar(512) not null,
         SETTING_VALUE_DOUBLE double,
         SETTING_VALUE_BOOLEAN boolean,
-        SETTING_VALUE_BIG_DECIMAL decimal(19,2),
         SETTING_VALUE_LONG bigint,
+        SETTING_VALUE_BIG_DECIMAL decimal(19,2),
         SETTING_VALUE_STRING varchar(1024),
         primary key (SETTING_ID)
     );
@@ -556,6 +550,17 @@ CREATE SCHEMA ccm_core;
         primary key (PARTY_ID)
     );
 
+    create table CCM_CORE.WORKFLOW_ASSIGNABLE_TASKS (
+        DUE_DATE timestamp,
+        DURATION_MINUTES bigint,
+        LOCKED boolean,
+        START_DATE timestamp,
+        TASK_ID bigint not null,
+        LOCKING_USER_ID bigint,
+        NOTIFICATION_SENDER bigint,
+        primary key (TASK_ID)
+    );
+
     create table CCM_CORE.WORKFLOW_DESCRIPTIONS (
         WORKFLOW_ID bigint not null,
         LOCALIZED_VALUE longvarchar,
@@ -571,8 +576,11 @@ CREATE SCHEMA ccm_core;
     );
 
     create table CCM_CORE.WORKFLOW_TASK_COMMENTS (
-        TASK_ID bigint not null,
-        COMMENT clob
+        COMMENT_ID bigint not null,
+        COMMENT longvarchar,
+        AUTHOR_ID bigint,
+        TASK_ID bigint,
+        primary key (COMMENT_ID)
     );
 
     create table CCM_CORE.WORKFLOW_TASK_DEPENDENCIES (
@@ -607,19 +615,11 @@ CREATE SCHEMA ccm_core;
         primary key (WORKFLOW_ID)
     );
 
-    create table CCM_CORE.WORKFLOW_USER_TASKS (
-        DUE_DATE timestamp,
-        DURATION_MINUTES bigint,
-        LOCKED boolean,
-        START_DATE timestamp,
-        TASK_ID bigint not null,
-        LOCKING_USER_ID bigint,
-        NOTIFICATION_SENDER bigint,
-        primary key (TASK_ID)
-    );
-
     create table CCM_CORE.WORKFLOWS (
         WORKFLOW_ID bigint not null,
+        ACTIVE boolean,
+        WORKFLOW_STATE varchar(255),
+        OBJECT_ID bigint,
         TEMPLATE_ID bigint,
         primary key (WORKFLOW_ID)
     );
@@ -1054,9 +1054,9 @@ create sequence hibernate_sequence start with 1 increment by 1;
         references CCM_CORE.CCM_ROLES;
 
     alter table CCM_CORE.TASK_ASSIGNMENTS 
-        add constraint FKc1vovbjg9mp5yegx2fdoutx7u 
+        add constraint FKk6gl2yvqr7gnqq25s1bm2gy4i 
         foreign key (TASK_ID) 
-        references CCM_CORE.WORKFLOW_USER_TASKS;
+        references CCM_CORE.WORKFLOW_ASSIGNABLE_TASKS;
 
     alter table CCM_CORE.THREADS 
         add constraint FKsx08mpwvwnw97uwdgjs76q39g 
@@ -1078,6 +1078,21 @@ create sequence hibernate_sequence start with 1 increment by 1;
         foreign key (PARTY_ID) 
         references CCM_CORE.PARTIES;
 
+    alter table CCM_CORE.WORKFLOW_ASSIGNABLE_TASKS 
+        add constraint FK1pnsq9ur3ylq0ghuj23p4cogs 
+        foreign key (LOCKING_USER_ID) 
+        references CCM_CORE.USERS;
+
+    alter table CCM_CORE.WORKFLOW_ASSIGNABLE_TASKS 
+        add constraint FK9ngp088m8xa82swy7yg3qx6vh 
+        foreign key (NOTIFICATION_SENDER) 
+        references CCM_CORE.USERS;
+
+    alter table CCM_CORE.WORKFLOW_ASSIGNABLE_TASKS 
+        add constraint FKt9ha3no3bj8a50pnw8cnqh2cq 
+        foreign key (TASK_ID) 
+        references CCM_CORE.WORKFLOW_TASKS;
+
     alter table CCM_CORE.WORKFLOW_DESCRIPTIONS 
         add constraint FKgx7upkqky82dpxvbs95imfl9l 
         foreign key (WORKFLOW_ID) 
@@ -1087,6 +1102,11 @@ create sequence hibernate_sequence start with 1 increment by 1;
         add constraint FKkxedy9p48avfk45r0bn4uc09i 
         foreign key (WORKFLOW_ID) 
         references CCM_CORE.WORKFLOWS;
+
+    alter table CCM_CORE.WORKFLOW_TASK_COMMENTS 
+        add constraint FKd2ymdg8nay9pmh2nn2whba0j8 
+        foreign key (AUTHOR_ID) 
+        references CCM_CORE.USERS;
 
     alter table CCM_CORE.WORKFLOW_TASK_COMMENTS 
         add constraint FKkfqrf9jdvm7livu5if06w0r5t 
@@ -1123,20 +1143,10 @@ create sequence hibernate_sequence start with 1 increment by 1;
         foreign key (WORKFLOW_ID) 
         references CCM_CORE.WORKFLOWS;
 
-    alter table CCM_CORE.WORKFLOW_USER_TASKS 
-        add constraint FKf09depwj5rgso2dair07vnu33 
-        foreign key (LOCKING_USER_ID) 
-        references CCM_CORE.USERS;
-
-    alter table CCM_CORE.WORKFLOW_USER_TASKS 
-        add constraint FK6evo9y34awhdfcyl8gv78qb7f 
-        foreign key (NOTIFICATION_SENDER) 
-        references CCM_CORE.USERS;
-
-    alter table CCM_CORE.WORKFLOW_USER_TASKS 
-        add constraint FKefpdf9ojplu7loo31hfm0wl2h 
-        foreign key (TASK_ID) 
-        references CCM_CORE.WORKFLOW_TASKS;
+    alter table CCM_CORE.WORKFLOWS 
+        add constraint FKrm2yfrs6veoxoy304upq2wc64 
+        foreign key (OBJECT_ID) 
+        references CCM_CORE.CCM_OBJECTS;
 
     alter table CCM_CORE.WORKFLOWS 
         add constraint FKeixdxau4jebw682gd49tdbsjy 
