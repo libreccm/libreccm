@@ -22,12 +22,14 @@ import org.libreccm.core.AbstractEntityRepository;
 import org.libreccm.core.CcmObject;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import javax.enterprise.context.RequestScoped;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 
 /**
+ * Repository for {@link Workflow}s.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -43,22 +45,35 @@ public class WorkflowRepository extends AbstractEntityRepository<Long, Workflow>
     public boolean isNew(final Workflow workflow) {
         return workflow.getWorkflowId() == 0;
     }
-    
+
+    @Override
+    public void initNewEntity(final Workflow workflow) {
+        workflow.setUuid(UUID.randomUUID().toString());
+    }
+
+    /**
+     * Finds the workflow for an given object if the object has workflow.
+     *
+     * @param object The object
+     * @return An {@link Optional} containing the workflow assigned to the
+     * {@code object} if the object has a workflow. Otherwise an empty
+     * {@link Optional} is returned.
+     */
     public Optional<Workflow> findWorkflowForObject(final CcmObject object) {
         if (object == null) {
             throw new IllegalArgumentException(
-                "Can't find a workflow for object null.");
+                    "Can't find a workflow for object null.");
         }
-        
+
         final TypedQuery<Workflow> query = getEntityManager().createNamedQuery(
-            "Workflow.findForObject", Workflow.class);
+                "Workflow.findForObject", Workflow.class);
         query.setParameter("object", object);
-        
+
         try {
             return Optional.of(query.getSingleResult());
-        } catch(NoResultException ex) {
+        } catch (NoResultException ex) {
             return Optional.empty();
         }
     }
-    
+
 }

@@ -35,28 +35,48 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import org.libreccm.core.Identifiable;
 
 /**
+ * A comment for a task. Comments are intended for other users, for example to
+ * inform them about problems etc. with the object.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
 @Table(name = "WORKFLOW_TASK_COMMENTS", schema = CoreConstants.DB_SCHEMA)
-public class TaskComment implements Serializable {
+public class TaskComment implements Identifiable, Serializable {
 
     private static final long serialVersionUID = 3842991529698351698L;
 
+    /**
+     * Database ID of the comment.
+     */
     @Id
     @Column(name = "COMMENT_ID")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long commentId;
 
+    /**
+     * The UUID of the comment.
+     */
+    @Column(name = "uuid", unique = true, nullable = false)
+    @NotNull
+    private String uuid;
+
+    /**
+     * The comment.
+     */
     @Column(name = "COMMENT")
     @Basic
     @Lob
     @Type(type = "org.hibernate.type.TextType")
     private String comment;
 
+    /**
+     * The author of the comment.
+     */
     @OneToOne
     @JoinColumn(name = "AUTHOR_ID")
     private User author;
@@ -67,6 +87,15 @@ public class TaskComment implements Serializable {
 
     protected void setCommentId(final long commentId) {
         this.commentId = commentId;
+    }
+
+    @Override
+    public String getUuid() {
+        return uuid;
+    }
+
+    protected void setUuid(final String uuid) {
+        this.uuid = uuid;
     }
 
     public String getComment() {
@@ -89,6 +118,7 @@ public class TaskComment implements Serializable {
     public int hashCode() {
         int hash = 3;
         hash = 67 * hash + (int) (commentId ^ (commentId >>> 32));
+        hash = 67 * hash + Objects.hashCode(uuid);
         hash = 67 * hash + Objects.hashCode(comment);
         hash = 67 * hash + Objects.hashCode(author);
         return hash;
@@ -113,6 +143,9 @@ public class TaskComment implements Serializable {
         if (commentId != other.getCommentId()) {
             return false;
         }
+        if (!Objects.equals(uuid, other.getUuid())) {
+            return false;
+        }
         if (!Objects.equals(comment, other.getComment())) {
             return false;
         }
@@ -130,12 +163,14 @@ public class TaskComment implements Serializable {
 
     public String toString(final String data) {
         return String.format("%s{ "
-                                 + "commentId = %d, "
-                                 + "comment = \"%s\", "
-                                 + "author = %s%s"
-                                 + " }",
+                                     + "commentId = %d, "
+                                     + "uuid = \"%s\""
+                                     + "comment = \"%s\", "
+                                     + "author = %s%s"
+                                     + " }",
                              super.toString(),
                              commentId,
+                             uuid,
                              comment,
                              Objects.toString(author),
                              data);

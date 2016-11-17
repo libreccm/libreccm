@@ -28,7 +28,9 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 /**
- *
+ * Objects of these class are used as templates for new workflows. The tasks 
+ * in the template are copied when a new workflow is generated.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
@@ -37,6 +39,13 @@ public class WorkflowTemplate extends Workflow implements Serializable {
 
     private static final long serialVersionUID = 5770519379144947171L;
 
+    /**
+     * A workflow template has no object. Therefore the {@code setObject(CcmObject)
+     * method has been overwritten the throw an {@link UnsupportedOperationException} 
+     * when called on the workflow template.
+     * 
+     * @param object 
+     */
     @Override
     protected void setObject(final CcmObject object) {
         throw new UnsupportedOperationException(

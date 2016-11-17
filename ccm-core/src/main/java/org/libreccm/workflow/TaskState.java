@@ -19,7 +19,8 @@
 package org.libreccm.workflow;
 
 /**
- *
+ * The possible states of a {@link Task}.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public enum TaskState {

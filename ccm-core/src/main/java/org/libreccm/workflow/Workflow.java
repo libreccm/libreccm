@@ -48,8 +48,12 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import org.libreccm.core.Identifiable;
 
 /**
+ * A workflow is a collection of tasks which are performed on an object. Tasks
+ * can depend on each other.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -58,57 +62,93 @@ import javax.persistence.Table;
 @Inheritance(strategy = InheritanceType.JOINED)
 @NamedQueries({
     @NamedQuery(
-        name = "Workflow.findForObject",
-        query = "SELECT w FROM Workflow w "
-                    + "WHERE W.object = :object")
+            name = "Workflow.findForObject",
+            query = "SELECT w FROM Workflow w "
+                            + "WHERE W.object = :object")
 })
-public class Workflow implements Serializable {
+public class Workflow implements Identifiable, Serializable {
 
     private static final long serialVersionUID = 4322500264543325829L;
 
+    /**
+     * Database id of the workflow.
+     */
     @Id
     @Column(name = "WORKFLOW_ID")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long workflowId;
 
+    /**
+     * UUID of the workflow.
+     */
+    @Column(name = "uuid", unique = true, nullable = false)
+    @NotNull
+    private String uuid;
+
+    /**
+     * The template which was used the generate the workflow.
+     */
     @ManyToOne
     @JoinColumn(name = "TEMPLATE_ID")
     private WorkflowTemplate template;
 
+    /**
+     * Human readable name of the workflow.
+     */
     @Embedded
     @AssociationOverride(
-        name = "values",
-        joinTable = @JoinTable(name = "WORKFLOW_NAMES",
-                               schema = DB_SCHEMA,
-                               joinColumns = {
-                                   @JoinColumn(name = "WORKFLOW_ID")}))
+            name = "values",
+            joinTable = @JoinTable(name = "WORKFLOW_NAMES",
+                                   schema = DB_SCHEMA,
+                                   joinColumns = {
+                                       @JoinColumn(name = "WORKFLOW_ID")}))
     private LocalizedString name;
 
+    /**
+     * Description of the workflow.
+     */
     @Embedded
     @AssociationOverride(
-        name = "values",
-        joinTable = @JoinTable(name = "WORKFLOW_DESCRIPTIONS",
-                               schema = DB_SCHEMA,
-                               joinColumns = {
-                                   @JoinColumn(name = "WORKFLOW_ID")
-                               }))
+            name = "values",
+            joinTable = @JoinTable(name = "WORKFLOW_DESCRIPTIONS",
+                                   schema = DB_SCHEMA,
+                                   joinColumns = {
+                                       @JoinColumn(name = "WORKFLOW_ID")
+                                   }))
     private LocalizedString description;
 
+    /**
+     * The current state of the workflow.
+     */
     @Column(name = "WORKFLOW_STATE")
     @Enumerated(EnumType.STRING)
     private WorkflowState state;
 
+    /**
+     * Is the workflow active?
+     */
     @Column(name = "ACTIVE")
     private boolean active;
 
+    /**
+     * The task state of the workflow. This field is a leftover from the old
+     * implementation of workflow were workflow extended {@link Task}. Because
+     * we wanted to keep the basic logic this field is here.
+     */
     @Column(name = "TASKS_STATE")
     @Enumerated(EnumType.STRING)
     private TaskState tasksState;
-    
+
+    /**
+     * The object for which this workflow was generated.
+     */
     @OneToOne
     @JoinColumn(name = "OBJECT_ID")
     private CcmObject object;
 
+    /**
+     * The tasks belonging to this workflow.
+     */
     @OneToMany(mappedBy = "workflow")
     private List<Task> tasks;
 
@@ -124,8 +164,17 @@ public class Workflow implements Serializable {
         return workflowId;
     }
 
-    public void setWorkflowId(final long workflowId) {
+    protected void setWorkflowId(final long workflowId) {
         this.workflowId = workflowId;
+    }
+
+    @Override
+    public String getUuid() {
+        return uuid;
+    }
+
+    protected void setUuid(final String uuid) {
+        this.uuid = uuid;
     }
 
     public WorkflowTemplate getTemplate() {
@@ -171,11 +220,11 @@ public class Workflow implements Serializable {
     public TaskState getTasksState() {
         return tasksState;
     }
-    
+
     protected void setTasksState(final TaskState tasksState) {
         this.tasksState = tasksState;
     }
-    
+
     public CcmObject getObject() {
         return object;
     }
@@ -207,8 +256,9 @@ public class Workflow implements Serializable {
     @Override
     public int hashCode() {
         int hash = 5;
-        hash = 79 * hash + (int) (this.workflowId ^ (this.workflowId >>> 32));
-        hash = 79 * hash + Objects.hashCode(this.name);
+        hash = 79 * hash + (int) (workflowId ^ (workflowId >>> 32));
+        hash = 79 * hash + Objects.hashCode(uuid);
+        hash = 79 * hash + Objects.hashCode(name);
         hash = 79 * hash + Objects.hashCode(description);
         hash = 79 * hash + Objects.hashCode(state);
         hash = 79 * hash + (active ? 1 : 0);
@@ -234,6 +284,10 @@ public class Workflow implements Serializable {
             return false;
         }
 
+        if (!Objects.equals(uuid, other.getUuid())) {
+            return false;
+        }
+
         if (!Objects.equals(name, other.getName())) {
             return false;
         }
@@ -249,7 +303,7 @@ public class Workflow implements Serializable {
         if (active != other.isActive()) {
             return false;
         }
-        
+
         if (!Objects.equals(tasksState, other.getTasksState())) {
             return false;
         }
@@ -269,15 +323,17 @@ public class Workflow implements Serializable {
 
     public String toString(final String data) {
         return String.format("%s{ "
-                                 + "workflowId = %d, "
-                                 + "name = \"%s\", "
-                                 + "description = \"%s\", "
-                                 + "state = \"%s\", "
-                                 + "active = %b"
-                                 + "object = \"%s\"%s"
-                                 + " }",
+                                     + "workflowId = %d, "
+                                     + "uuid = \"%s\", "
+                                     + "name = \"%s\", "
+                                     + "description = \"%s\", "
+                                     + "state = \"%s\", "
+                                     + "active = %b"
+                                     + "object = \"%s\"%s"
+                                     + " }",
                              super.toString(),
                              workflowId,
+                             uuid,
                              Objects.toString(name),
                              Objects.toString(description),
                              Objects.toString(state),

@@ -23,7 +23,8 @@ import org.libreccm.core.AbstractEntityRepository;
 import javax.enterprise.context.RequestScoped;
 
 /**
- *
+ * A repository for {@link WorkflowTemplate}s.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped

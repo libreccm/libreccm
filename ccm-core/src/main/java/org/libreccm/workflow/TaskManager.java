@@ -23,22 +23,20 @@ import org.apache.logging.log4j.Logger;
 import org.libreccm.core.CoreConstants;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
-import org.libreccm.security.Role;
-import org.libreccm.security.RoleRepository;
 import org.libreccm.security.Shiro;
 import org.libreccm.security.User;
 
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.UUID;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
 /**
+ * Manager for {@link Task}s. The logic of some of this methods has been taken
+ * from the old implementation without changes.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -46,7 +44,7 @@ import javax.transaction.Transactional;
 public class TaskManager {
 
     private static final Logger LOGGER = LogManager.getLogger(TaskManager.class);
-    
+
     @Inject
     private EntityManager entityManager;
 
@@ -57,11 +55,14 @@ public class TaskManager {
     private TaskRepository taskRepo;
 
     @Inject
-    private RoleRepository roleRepo;
-
-    @Inject
     private Shiro shiro;
 
+    /**
+     * Adds a {@link Task} to a {@link Workflow}.
+     *
+     * @param workflow The workflow to which the task is added.
+     * @param task The task to add.
+     */
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
@@ -73,6 +74,12 @@ public class TaskManager {
         taskRepo.save(task);
     }
 
+    /**
+     * Removes a {@link Task} from a {@link Workflow}.
+     *
+     * @param workflow The workflow from which the task is removed.
+     * @param task The task to remove.
+     */
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
@@ -84,11 +91,19 @@ public class TaskManager {
         taskRepo.save(task);
     }
 
+    /**
+     * Adds a dependent {@link Task} to another {@code Task}.
+     *
+     * @param parent The task to which the dependent task is added.
+     * @param task The dependent task.
+     * @throws CircularTaskDependencyException If a circular dependency is
+     * detected.
+     */
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public void addDependentTask(final Task parent, final Task task)
-        throws CircularTaskDependencyException {
+            throws CircularTaskDependencyException {
 
         checkForCircularDependencies(parent, task);
 
@@ -99,6 +114,12 @@ public class TaskManager {
         taskRepo.save(parent);
     }
 
+    /**
+     * Removes a dependent task.
+     *
+     * @param parent The task from which the dependent task is removed.
+     * @param task The dependent task to remove.
+     */
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
@@ -110,9 +131,16 @@ public class TaskManager {
         taskRepo.save(parent);
     }
 
+    /**
+     * Helper method for checking for circular dependencies.
+     *
+     * @param task1
+     * @param task2
+     * @throws CircularTaskDependencyException
+     */
     private void checkForCircularDependencies(final Task task1,
                                               final Task task2)
-        throws CircularTaskDependencyException {
+            throws CircularTaskDependencyException {
 
         if (dependsOn(task1, task2)) {
             throw new CircularTaskDependencyException();
@@ -126,7 +154,7 @@ public class TaskManager {
             }
 
             if (current.getDependsOn() != null
-                    && !current.getDependsOn().isEmpty()) {
+                        && !current.getDependsOn().isEmpty()) {
                 return dependsOn(current, dependsOn);
             }
         }
@@ -134,30 +162,57 @@ public class TaskManager {
         return false;
     }
 
+    /**
+     * Adds a new {@link TaskComment} containing the provided comment to a
+     * {@link Task}. The author of the comment is the current user.
+     *
+     * @param task The task to which the comment is added.
+     * @param comment The comment to add.
+     */
     public void addComment(final Task task, final String comment) {
         addComment(task, shiro.getUser(), comment);
     }
 
+    /**
+     * Adds a new {@link TaskComment} containing the provided comment to a
+     * {@link Task}.
+     *
+     * @param task The task to which the comment is added.
+     * @param author the author of the comment.
+     * @param comment The comment to add.
+     */
     public void addComment(final Task task,
                            final User author,
                            final String comment) {
         final TaskComment taskComment = new TaskComment();
+        taskComment.setUuid(UUID.randomUUID().toString());
         taskComment.setAuthor(author);
         taskComment.setComment(comment);
-        
+
         task.addComment(taskComment);
-        
+
         entityManager.persist(taskComment);
         taskRepo.save(task);
     }
 
+    /**
+     * Removes a comment from a task.
+     *
+     * @param task The task from which the comment is removed.
+     * @param comment The comment to remove.
+     */
     public void removeComment(final Task task, final TaskComment comment) {
         task.removeComment(comment);
         taskRepo.save(task);
     }
 
+    /**
+     * Enables a {@link Task}.
+     *
+     * @param task The task to enable.
+     */
     public void enable(final Task task) {
-        switch(task.getTaskState()) {
+        switch (task.getTaskState()) {
             case DISABLED:
                 task.setTaskState(TaskState.ENABLED);
                 taskRepo.save(task);
@@ -174,53 +229,70 @@ public class TaskManager {
         }
     }
 
+    /**
+     * Disables a {@link Task}.
+     *
+     * @param task The task to disable.
+     */
     public void disable(final Task task) {
         task.setTaskState(TaskState.DISABLED);
         taskRepo.save(task);
     }
-    
+
+    /**
+     * Finishes a {@link Task}.
+     *
+     * @param task The task to finish.
+     */
     public void finish(final Task task) {
         if (task == null) {
             throw new IllegalArgumentException("Can't finished null...");
         }
-        
+
         if (task.getTaskState() != TaskState.ENABLED) {
             throw new IllegalArgumentException(String.format(
-            "Task %s is not enabled.",
-            Objects.toString(task)));
+                    "Task %s is not enabled.",
+                    Objects.toString(task)));
         }
-        
+
         task.setTaskState(TaskState.FINISHED);
         taskRepo.save(task);
-        
+
         task.getDependentTasks().forEach(dependent -> updateState(dependent));
     }
 
+    /**
+     * Helper method for updating the state of {@link Task}. Called by
+     * {@link #finish(org.libreccm.workflow.Task)} to update the state of all
+     * dependent tasks.
+     *
+     * @param task
+     */
     protected void updateState(final Task task) {
         LOGGER.debug("Updating state for task {}...",
                      Objects.toString(task));
-        
+
         boolean dependenciesSatisfied = true;
-        
+
         if (task.getTaskState() == TaskState.DELETED || !task.isActive()) {
             return;
         }
-        
-        for(final Task dependsOnTask : task.getDependsOn()) {
+
+        for (final Task dependsOnTask : task.getDependsOn()) {
             LOGGER.debug("Checking dependency {}...",
                          Objects.toString(dependsOnTask));
             if (dependsOnTask.getTaskState() != TaskState.FINISHED
-                && dependsOnTask.isActive()) {
-                
+                        && dependsOnTask.isActive()) {
+
                 LOGGER.debug("Dependency is not yet satisfied.");
-                
+
                 dependenciesSatisfied = false;
                 break;
             }
         }
-        
+
         LOGGER.debug("Dependencies state is {}", dependenciesSatisfied);
-        
+
         // Rollback case. Previously finished task, but parent tasks
         // are re-enabled.
         if (task.getTaskState() == TaskState.FINISHED) {
@@ -232,19 +304,19 @@ public class TaskManager {
                 return;
             }
         }
-        
+
         if (task.getTaskState() == TaskState.ENABLED) {
             if (!dependenciesSatisfied) {
                 disable(task);
                 return;
             }
         }
-        
+
         if (task.getTaskState() == TaskState.DISABLED) {
             if (dependenciesSatisfied) {
                 enable(task);
             }
         }
-     }
+    }
 
 }

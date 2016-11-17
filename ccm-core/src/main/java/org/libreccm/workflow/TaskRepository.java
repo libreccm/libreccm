@@ -23,7 +23,8 @@ import org.libreccm.core.AbstractEntityRepository;
 import javax.enterprise.context.RequestScoped;
 
 /**
- *
+ * Repository for {@link Task}s.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped

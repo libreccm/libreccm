@@ -19,7 +19,8 @@
 package org.libreccm.workflow;
 
 /**
- *
+ * The possible states of a workflow.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public enum WorkflowState {
@@ -28,6 +29,6 @@ public enum WorkflowState {
     STOPPED,
     DELETED,
     INIT,
-    NONE
+    NONE;
     
 }
