@@ -27,6 +27,7 @@ import org.libreccm.workflow.AssignableTask;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Locale;
 
 /**
  *
@@ -89,10 +90,10 @@ public class EqualsAndHashCodeTest extends EqualsVerifier {
         ccmObject1.setDisplayName("Object 2");
         
         final AssignableTask task1 = new AssignableTask();
-        task1.setTaskId(-10);
+        task1.getLabel().addValue(Locale.ENGLISH, "Task 1");
         
         final AssignableTask task2 = new AssignableTask();
-        task2.setTaskId(-20);
+        task2.getLabel().addValue(Locale.ENGLISH, "Task 2");
         
         verifier
             .withPrefabValues(Group.class, group1, group2)

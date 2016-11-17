@@ -41,16 +41,16 @@ import javax.transaction.Transactional;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-public class AssignableTaskManager extends TaskManager {
+public class AssignableTaskManager {
 
     @Inject
     private EntityManager entityManager;
 
     @Inject
-    private WorkflowRepository workflowRepo;
+    private TaskRepository taskRepo;
 
     @Inject
-    private TaskRepository taskRepo;
+    private TaskManager taskManager;
 
     @Inject
     private RoleRepository roleRepo;
@@ -58,10 +58,26 @@ public class AssignableTaskManager extends TaskManager {
     @Inject
     private Shiro shiro;
 
+    /**
+     * Assigns a task to role.
+     *
+     * @param task The task to assign.
+     * @param role The role to which the task is assigned.
+     */
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public void assignTask(final AssignableTask task, final Role role) {
+        if (task == null) {
+            throw new IllegalArgumentException(
+                "Can't assign task null to a role.");
+        }
+
+        if (role == null) {
+            throw new IllegalArgumentException(
+                "Can't assign a task to role null.");
+        }
+
         final TaskAssignment assignment = new TaskAssignment();
         assignment.setTask(task);
         assignment.setRole(role);
@@ -74,10 +90,26 @@ public class AssignableTaskManager extends TaskManager {
         roleRepo.save(role);
     }
 
+    /**
+     * Deletes a task assignments.
+     *
+     * @param task
+     * @param role
+     */
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public void retractTask(final AssignableTask task, final Role role) {
+        if (task == null) {
+            throw new IllegalArgumentException(
+                "Can't retract task null from a role.");
+        }
+
+        if (role == null) {
+            throw new IllegalArgumentException(
+                "Can't retract a task from role null.");
+        }
+
         final List<TaskAssignment> result = task.getAssignments().stream()
             .filter(assigned -> role.equals(assigned.getRole()))
             .collect(Collectors.toList());
@@ -90,30 +122,65 @@ public class AssignableTaskManager extends TaskManager {
         }
     }
 
+    /**
+     * 
+     * @param task 
+     */
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public void lockTask(final AssignableTask task) {
+        if (task == null) {
+            throw new IllegalArgumentException("Can't lock task null.");
+        }
+        
+        if (task.isLocked()) {
+            throw new IllegalArgumentException(String.format(
+                "Task %s is already locked by user \"%s\".",
+                Objects.toString(task),
+                task.getLockingUser().getName()));
+        }
+        
         task.setLocked(true);
         task.setLockingUser(shiro.getUser());
 
         taskRepo.save(task);
     }
 
+    /**
+     * Unlocks a task.
+     * 
+     * @param task The task to unlock.
+     */
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public void unlockTask(final AssignableTask task) {
+        if (task == null) {
+            throw new IllegalArgumentException("Can't unlock task null.");
+        }
+       
         task.setLocked(false);
         task.setLockingUser(null);
 
         taskRepo.save(task);
     }
 
+    /**
+     * Retrieves a list of all tasks locked by a specific user.
+     * 
+     * @param user The user which locks the tasks.
+     * @return A list with all tasks locked by the specified user.
+     */
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public List<AssignableTask> lockedBy(final User user) {
+        
+        if (user == null) {
+            throw new IllegalArgumentException("user can't be null.");
+        }
+        
         final TypedQuery<AssignableTask> query = entityManager.createNamedQuery(
             "UserTask.findLockedBy", AssignableTask.class);
         query.setParameter("user", user);
@@ -121,12 +188,17 @@ public class AssignableTaskManager extends TaskManager {
         return query.getResultList();
     }
 
+    /**
+     * Finishes a {@link AssignableTask}.
+     * 
+     * @param task The task to finish.
+     */
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public void finish(final AssignableTask task) {
         final User currentUser = shiro.getUser();
-        
+
         if (!currentUser.equals(task.getLockingUser())) {
             throw new IllegalArgumentException(String.format(
                 "Current user %s is not locking user for task %s. Task is"
@@ -135,18 +207,23 @@ public class AssignableTaskManager extends TaskManager {
                 Objects.toString(task),
                 Objects.toString(task.getLockingUser())));
         }
-        
-        super.finish(task);
+
+        taskManager.finish(task);
     }
-    
+
+    /**
+     * Finishes a {@link AssignableTask} with a comment.
+     * 
+     * @param task The task to finish.
+     * @param comment The comment to add to the task.
+     */
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public void finish(final AssignableTask task,
                        final String comment) {
-        addComment(task, comment);
+        taskManager.addComment(task, comment);
         finish(task);
     }
-    
-    
+
 }

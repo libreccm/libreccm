@@ -29,7 +29,8 @@ import javax.enterprise.context.RequestScoped;
 import javax.persistence.TypedQuery;
 
 /**
- *
+ * Repository for assignable tasks.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped

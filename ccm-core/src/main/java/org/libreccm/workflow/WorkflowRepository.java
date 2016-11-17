@@ -47,7 +47,8 @@ public class WorkflowRepository extends AbstractEntityRepository<Long, Workflow>
     }
 
     @Override
-    public void initNewEntity(final Workflow workflow) {
+    protected void initNewEntity(final Workflow workflow) {
+        super.initNewEntity(workflow);
         workflow.setUuid(UUID.randomUUID().toString());
     }
 

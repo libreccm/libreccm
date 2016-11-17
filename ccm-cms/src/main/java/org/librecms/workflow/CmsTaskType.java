@@ -26,7 +26,8 @@ import com.arsdigita.cms.workflow.TaskURLGenerator;
 import org.librecms.contentsection.privileges.ItemPrivileges;
 
 /**
- *
+ * Possible types of a {@link CmsTask}.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public enum CmsTaskType {

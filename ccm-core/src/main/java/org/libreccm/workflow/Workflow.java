@@ -81,7 +81,7 @@ public class Workflow implements Identifiable, Serializable {
     /**
      * UUID of the workflow.
      */
-    @Column(name = "uuid", unique = true, nullable = false)
+    @Column(name = "UUID", unique = true, nullable = false)
     @NotNull
     private String uuid;
 

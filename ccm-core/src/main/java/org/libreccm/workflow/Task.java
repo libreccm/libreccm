@@ -20,6 +20,8 @@ package org.libreccm.workflow;
 
 import static org.libreccm.core.CoreConstants.*;
 
+import org.libreccm.core.CcmObject;
+import org.libreccm.core.Identifiable;
 import org.libreccm.l10n.LocalizedString;
 
 import java.io.Serializable;
@@ -47,8 +49,11 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 /**
+ * A task is part of a workflow and represents a specific step in the creation
+ * process of an {@link CcmObject}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -91,15 +96,28 @@ import javax.persistence.Table;
                     + "WHERE t.workflow = :workflow "
                     + "AND t.taskState = org.libreccm.workflow.TaskState.FINISHED")
 })
-public class Task implements Serializable {
+public class Task implements Identifiable, Serializable {
 
     private static final long serialVersionUID = 8161343036908150426L;
 
+    /**
+     * Database ID of the task.
+     */
     @Id
     @Column(name = "TASK_ID")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long taskId;
+    
+    /**
+     * The UUID of the task.
+     */
+    @Column(name = "UUID", unique = true, nullable = false)
+    @NotNull
+    private String uuid;
 
+    /**
+     * A human readable, localisable label for the task.
+     */
     @Embedded
     @AssociationOverride(
         name = "values",
@@ -109,6 +127,9 @@ public class Task implements Serializable {
                                    @JoinColumn(name = "TASK_ID")}))
     private LocalizedString label;
 
+    /**
+     * A description of the task.
+     */
     @Embedded
     @AssociationOverride(
         name = "values",
@@ -118,20 +139,35 @@ public class Task implements Serializable {
                                    @JoinColumn(name = "TASK_ID")}))
     private LocalizedString description;
 
+    /**
+     * Is the task active?
+     */
     @Column(name = "ACTIVE")
     private boolean active;
 
+    /**
+     * The state of the task.
+     */
     @Column(name = "TASK_STATE", length = 512)
     @Enumerated(EnumType.STRING)
     private TaskState taskState;
 
+    /**
+     * The workflow to which the task belongs.
+     */
     @ManyToOne
     @JoinColumn(name = "WORKFLOW_ID")
     private Workflow workflow;
 
+    /**
+     * Tasks which the depends of this task.
+     */
     @ManyToMany(mappedBy = "dependsOn")
     private List<Task> dependentTasks;
 
+    /**
+     * The task of this task depends.
+     */
     @ManyToMany
     @JoinTable(name = "WORKFLOW_TASK_DEPENDENCIES",
                schema = DB_SCHEMA,
@@ -141,6 +177,9 @@ public class Task implements Serializable {
                    @JoinColumn(name = "DEPENDENT_TASK_ID")})
     private List<Task> dependsOn;
 
+    /**
+     * Comments for the task.
+     */
     @OneToMany
     @JoinColumn(name = "TASK_ID")
     private List<TaskComment> comments;
@@ -159,10 +198,18 @@ public class Task implements Serializable {
         return taskId;
     }
 
-    public void setTaskId(final long taskId) {
+    protected void setTaskId(final long taskId) {
         this.taskId = taskId;
     }
 
+    public String getUuid() {
+        return uuid;
+    }
+    
+    protected void setUuid(final String uuid) {
+        this.uuid = uuid;
+    }
+    
     public LocalizedString getLabel() {
         return label;
     }
@@ -267,6 +314,7 @@ public class Task implements Serializable {
     public int hashCode() {
         int hash = 7;
         hash = 79 * hash + (int) (taskId ^ (taskId >>> 32));
+        hash = 79 * hash + Objects.hashCode(uuid);
         hash = 79 * hash + Objects.hashCode(label);
         hash = 79 * hash + Objects.hashCode(description);
         hash = 79 * hash + (active ? 1 : 0);
@@ -296,6 +344,9 @@ public class Task implements Serializable {
         if (taskId != other.getTaskId()) {
             return false;
         }
+        if (!Objects.equals(uuid, other.getUuid())) {
+            return false;
+        }
         if (!Objects.equals(label, other.getLabel())) {
             return false;
         }
@@ -323,6 +374,7 @@ public class Task implements Serializable {
     public String toString(final String data) {
         return String.format("%s{ "
                                  + "taskId = %d, "
+            + "uuid = \"%s\", "
                                  + "label = %s, "
                                  + "active = %b, "
                                  + "taskState = \"%s\", "
@@ -332,6 +384,7 @@ public class Task implements Serializable {
                                  + " }",
                              super.toString(),
                              taskId,
+                             uuid,
                              Objects.toString(label),
                              active,
                              taskState,

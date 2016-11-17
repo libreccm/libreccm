@@ -20,6 +20,8 @@ package org.libreccm.workflow;
 
 import org.libreccm.core.AbstractEntityRepository;
 
+import java.util.UUID;
+
 import javax.enterprise.context.RequestScoped;
 
 /**
@@ -38,6 +40,11 @@ public class TaskRepository extends AbstractEntityRepository<Long, Task> {
     @Override
     public boolean isNew(final Task task) {
         return task.getTaskId() == 0;
+    }
+    @Override
+    protected void initNewEntity(final Task task) {
+        super.initNewEntity(task);
+        task.setUuid(UUID.randomUUID().toString());
     }
 
 }

@@ -297,7 +297,7 @@ public abstract class AbstractEntityRepository<K, E> {
      *
      * @param entity The entity to init.
      */
-    public void initNewEntity(final E entity) {
+    protected void initNewEntity(final E entity) {
         //Empty default implementation
     }
 

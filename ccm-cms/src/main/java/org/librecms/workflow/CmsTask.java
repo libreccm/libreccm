@@ -19,6 +19,7 @@
 package org.librecms.workflow;
 
 import org.libreccm.workflow.AssignableTask;
+import org.librecms.contentsection.ContentItem;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -32,7 +33,8 @@ import javax.persistence.Table;
 import static org.librecms.CmsConstants.*;
 
 /**
- *
+ * A special tasks for {@link ContentItem}s.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
@@ -41,6 +43,9 @@ public class CmsTask extends AssignableTask implements Serializable {
 
     private static final long serialVersionUID = -3988352366529930659L;
     
+    /**
+     * The type of the task.
+     */
     @Column(name = "TASK_TYPE")
     @Enumerated(EnumType.STRING)
     private CmsTaskType taskType;

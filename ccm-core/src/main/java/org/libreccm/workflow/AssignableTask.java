@@ -41,7 +41,10 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 /**
- *
+ * A task which can be assigned to a user. Also a {@code AssignableTask} can be 
+ * locked by a user to indicate that the user is currently working on the
+ * object to which the workflow to which the task belongs is assigned.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
@@ -79,29 +82,50 @@ public class AssignableTask extends Task implements Serializable {
 
     private static final long serialVersionUID = 4188064584389893019L;
 
+    /**
+     * Is the task locked?
+     */
     @Column(name = "LOCKED")
     private boolean locked;
 
+    /**
+     * The user which has locked the task (if the task is locked).
+     */
     @OneToOne
     @JoinColumn(name = "LOCKING_USER_ID")
     private User lockingUser;
 
+    /**
+     * The date on which the task was started.
+     */
     @Column(name = "START_DATE")
     @Temporal(TemporalType.TIMESTAMP)
     private Date startDate;
 
+    /**
+     * The date on which the task should be finished.
+     */
     @Column(name = "DUE_DATE")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dueDate;
 
+    /**
+     * How long did it take to complete the task?
+     */
     @Column(name = "DURATION_MINUTES")
     private long durationMinutes;
 
+    /**
+     * Which user should be used as sender of notification emails for the task?
+     */
     @OneToOne
     @JoinColumn(name = "NOTIFICATION_SENDER")
     @SuppressWarnings("PMD.LongVariable") //Shorter name would not be descriptive
     private User notificationSender;
 
+    /**
+     * The roles to which task is assigned.
+     */
     @OneToMany(mappedBy = "task")
     private List<TaskAssignment> assignments;
 

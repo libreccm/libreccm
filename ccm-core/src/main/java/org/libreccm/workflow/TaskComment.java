@@ -61,7 +61,7 @@ public class TaskComment implements Identifiable, Serializable {
     /**
      * The UUID of the comment.
      */
-    @Column(name = "uuid", unique = true, nullable = false)
+    @Column(name = "UUID", unique = true, nullable = false)
     @NotNull
     private String uuid;
 

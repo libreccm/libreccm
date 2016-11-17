@@ -21,18 +21,25 @@ package org.librecms.workflow;
 import com.arsdigita.cms.workflow.TaskURLGenerator;
 import com.arsdigita.util.UncheckedWrapperException;
 
-import org.libreccm.workflow.AssignableTaskManager;
 import org.librecms.contentsection.ContentItem;
 
 import javax.enterprise.context.RequestScoped;
 
 /**
- *
+ * Manager for {@link CmsTask}s.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-public class CmsTaskManager extends AssignableTaskManager {
-
+public class CmsTaskManager {
+    
+    /**
+     * Retrieves the URL for finishing the task for a certain {@link ContentItem}.
+     * 
+     * @param item The item.
+     * @param task The task.
+     * @return The finish URL.
+     */
     public String getFinishUrl(final ContentItem item, final CmsTask task) {
         final Class<? extends TaskURLGenerator> urlGeneratorClass = task
             .getTaskType().getUrlGenerator();

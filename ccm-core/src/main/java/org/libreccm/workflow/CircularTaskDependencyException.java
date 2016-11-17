@@ -20,7 +20,8 @@
 package org.libreccm.workflow;
 
 /**
- *
+ * Thrown when a circular task dependency is detected.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class CircularTaskDependencyException extends Exception {

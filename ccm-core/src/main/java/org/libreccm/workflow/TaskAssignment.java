@@ -35,7 +35,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
- *
+ * Represents the assignment of a {@link AssignableTask} to a {@link Role}.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
@@ -44,15 +45,24 @@ public class TaskAssignment implements Serializable {
 
     private static final long serialVersionUID = -4427537363301565707L;
 
+    /**
+     * Database ID of the entity.
+     */
     @Id
     @Column(name = "TASK_ASSIGNMENT_ID")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long taskAssignmentId;
 
+    /**
+     * The task.
+     */
     @ManyToOne
     @JoinColumn(name = "TASK_ID")
     private AssignableTask task;
 
+    /**
+     * The role to which the task is assigned.
+     */
     @ManyToOne
     @JoinColumn(name = "ROLE_ID")
     private Role role;
