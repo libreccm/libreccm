@@ -115,6 +115,10 @@ public class ContentItemL10NManagerTest {
                 .getPackage())
             .addClass(com.arsdigita.kernel.KernelConfig.class)
             .addClass(com.arsdigita.runtime.CCMResourceManager.class)
+            .addClass(com.arsdigita.dispatcher.RequestContext.class)
+            .addClass(com.arsdigita.dispatcher.AccessDeniedException.class)
+            .addClass(com.arsdigita.cms.dispatcher.ContentItemDispatcher.class)
+            .addClass(com.arsdigita.dispatcher.Dispatcher.class)
             .addClass(
                 com.arsdigita.ui.admin.applications.AbstractAppInstanceForm.class)
             .addClass(
@@ -375,7 +379,7 @@ public class ContentItemL10NManagerTest {
 
     /**
      * Tries to normalise the languages of a content item by using null null
-     * null null null null null null null null null null     {@link ContentItemL10NManager#normalizedLanguages(org.librecms.contentsection.ContentItem) 
+     * null null null null null null null null null null null     {@link ContentItemL10NManager#normalizedLanguages(org.librecms.contentsection.ContentItem) 
      */
     @Test
     @InSequence(120)

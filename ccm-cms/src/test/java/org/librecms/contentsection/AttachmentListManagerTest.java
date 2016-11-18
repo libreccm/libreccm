@@ -18,7 +18,6 @@
  */
 package org.librecms.contentsection;
 
-
 import static org.libreccm.testutils.DependenciesHelpers.*;
 
 import org.apache.shiro.subject.Subject;
@@ -118,6 +117,10 @@ public class AttachmentListManagerTest {
                 .getPackage())
             .addClass(com.arsdigita.kernel.KernelConfig.class)
             .addClass(com.arsdigita.runtime.CCMResourceManager.class)
+            .addClass(com.arsdigita.dispatcher.RequestContext.class)
+            .addClass(com.arsdigita.dispatcher.AccessDeniedException.class)
+            .addClass(com.arsdigita.cms.dispatcher.ContentItemDispatcher.class)
+            .addClass(com.arsdigita.dispatcher.Dispatcher.class)
             .addClass(
                 com.arsdigita.ui.admin.applications.AbstractAppInstanceForm.class)
             .addClass(
@@ -740,6 +743,5 @@ public class AttachmentListManagerTest {
 
         listManager.moveDown(list);
     }
-
 
 }

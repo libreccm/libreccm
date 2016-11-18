@@ -41,10 +41,10 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 /**
- * A task which can be assigned to a user. Also a {@code AssignableTask} can be 
- * locked by a user to indicate that the user is currently working on the
- * object to which the workflow to which the task belongs is assigned.
- * 
+ * A task which can be assigned to a user. Also a {@code AssignableTask} can be
+ * locked by a user to indicate that the user is currently working on the object
+ * to which the workflow to which the task belongs is assigned.
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
@@ -64,8 +64,9 @@ import javax.persistence.TemporalType;
     @NamedQuery(
         name = "AssignableTask.findAssignedTasks",
         query = "SELECT t FROM AssignableTask t "
-                    + "WHERE t.assignments.role IN :roles "
-                    + "AND t.assignments.workflow = :workflow "
+                    + "JOIN t.assignments a "
+                    + "WHERE a.role IN :roles "
+                    + "AND t.workflow = :workflow "
                     + "AND t.active = true")
     ,
     @NamedQuery(

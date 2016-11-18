@@ -51,7 +51,6 @@ import javax.inject.Inject;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
-import static org.librecms.CmsConstants.*;
 
 import static org.libreccm.testutils.DependenciesHelpers.*;
 
@@ -146,6 +145,10 @@ public class ContentSectionManagerTest {
                 .getPackage())
             .addClass(com.arsdigita.kernel.KernelConfig.class)
             .addClass(com.arsdigita.runtime.CCMResourceManager.class)
+            .addClass(com.arsdigita.dispatcher.RequestContext.class)
+            .addClass(com.arsdigita.dispatcher.AccessDeniedException.class)
+            .addClass(com.arsdigita.cms.dispatcher.ContentItemDispatcher.class)
+            .addClass(com.arsdigita.dispatcher.Dispatcher.class)
             .addClass(
                 com.arsdigita.ui.admin.applications.AbstractAppInstanceForm.class)
             .addClass(

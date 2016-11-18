@@ -62,8 +62,6 @@ DELETE FROM ccm_cms.content_type_descriptions;
 
 DELETE FROM ccm_cms.content_types;
 
-DELETE FROM ccm_cms.workflow_task_types;
-
 DELETE FROM ccm_cms.workflow_tasks;
 
 DELETE FROM ccm_core.workflow_descriptions;
@@ -74,13 +72,13 @@ DELETE FROM ccm_core.workflow_task_dependencies;
 
 DELETE FROM ccm_core.workflow_task_labels;
 
-DELETE FROM ccm_core.task_assignments;
+DELETE FROM ccm_core.workflow_task_assignments;
 
-DELETE FROM ccm_core.workflow_user_tasks;
+DELETE FROM ccm_core.workflow_assignable_tasks;
 
 DELETE FROM ccm_core.workflow_tasks;
 
-DELETE FROM ccm_core.workflow_tasks_descriptions;
+DELETE FROM ccm_core.workflow_task_descriptions;
 
 DELETE FROM ccm_cms.content_section_workflow_templates;
 

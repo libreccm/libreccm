@@ -139,6 +139,10 @@ public class ContentItemManagerTest {
                 .getPackage())
             .addClass(com.arsdigita.kernel.KernelConfig.class)
             .addClass(com.arsdigita.runtime.CCMResourceManager.class)
+            .addClass(com.arsdigita.dispatcher.RequestContext.class)
+            .addClass(com.arsdigita.dispatcher.AccessDeniedException.class)
+            .addClass(com.arsdigita.cms.dispatcher.ContentItemDispatcher.class)
+            .addClass(com.arsdigita.dispatcher.Dispatcher.class)
             .addClass(
                 com.arsdigita.ui.admin.applications.AbstractAppInstanceForm.class)
             .addClass(
@@ -546,7 +550,7 @@ public class ContentItemManagerTest {
     }
 
     /**
-     * Verifies that      {@link ContentItemManager#move(org.librecms.contentsection.ContentItem, org.librecms.contentsection.Folder) 
+     * Verifies that null     {@link ContentItemManager#move(org.librecms.contentsection.ContentItem, org.librecms.contentsection.Folder) 
      * throws an {@link IllegalArgumentException} if the type of the item to
      * copy has not been registered in content section to which the target
      * folder belongs.

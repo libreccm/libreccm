@@ -1,3 +1,8 @@
+drop schema if exists CCM_CORE;
+
+drop sequence if exists HIBERNATE_SEQUENCE;
+
+create schema CCM_CORE;
 
     create table CCM_CORE.APPLICATIONS (
         APPLICATION_TYPE varchar(1024) not null,

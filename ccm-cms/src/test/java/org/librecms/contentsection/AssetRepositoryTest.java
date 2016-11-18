@@ -121,6 +121,10 @@ public class AssetRepositoryTest {
                 .getPackage())
             .addClass(com.arsdigita.kernel.KernelConfig.class)
             .addClass(com.arsdigita.runtime.CCMResourceManager.class)
+            .addClass(com.arsdigita.dispatcher.RequestContext.class)
+            .addClass(com.arsdigita.dispatcher.AccessDeniedException.class)
+            .addClass(com.arsdigita.cms.dispatcher.ContentItemDispatcher.class)
+            .addClass(com.arsdigita.dispatcher.Dispatcher.class)
             .addClass(
                 com.arsdigita.ui.admin.applications.AbstractAppInstanceForm.class)
             .addClass(

@@ -62,9 +62,9 @@ import org.libreccm.core.Identifiable;
 @Inheritance(strategy = InheritanceType.JOINED)
 @NamedQueries({
     @NamedQuery(
-            name = "Workflow.findForObject",
-            query = "SELECT w FROM Workflow w "
-                            + "WHERE W.object = :object")
+        name = "Workflow.findForObject",
+        query = "SELECT w FROM Workflow w "
+                    + "WHERE W.object = :object")
 })
 public class Workflow implements Identifiable, Serializable {
 
@@ -97,11 +97,11 @@ public class Workflow implements Identifiable, Serializable {
      */
     @Embedded
     @AssociationOverride(
-            name = "values",
-            joinTable = @JoinTable(name = "WORKFLOW_NAMES",
-                                   schema = DB_SCHEMA,
-                                   joinColumns = {
-                                       @JoinColumn(name = "WORKFLOW_ID")}))
+        name = "values",
+        joinTable = @JoinTable(name = "WORKFLOW_NAMES",
+                               schema = DB_SCHEMA,
+                               joinColumns = {
+                                   @JoinColumn(name = "WORKFLOW_ID")}))
     private LocalizedString name;
 
     /**
@@ -109,12 +109,12 @@ public class Workflow implements Identifiable, Serializable {
      */
     @Embedded
     @AssociationOverride(
-            name = "values",
-            joinTable = @JoinTable(name = "WORKFLOW_DESCRIPTIONS",
-                                   schema = DB_SCHEMA,
-                                   joinColumns = {
-                                       @JoinColumn(name = "WORKFLOW_ID")
-                                   }))
+        name = "values",
+        joinTable = @JoinTable(name = "WORKFLOW_DESCRIPTIONS",
+                               schema = DB_SCHEMA,
+                               joinColumns = {
+                                   @JoinColumn(name = "WORKFLOW_ID")
+                               }))
     private LocalizedString description;
 
     /**
@@ -263,7 +263,6 @@ public class Workflow implements Identifiable, Serializable {
         hash = 79 * hash + Objects.hashCode(state);
         hash = 79 * hash + (active ? 1 : 0);
         hash = 79 * hash + Objects.hashCode(tasksState);
-        hash = 79 * hash + Objects.hashCode(object);
         return hash;
     }
 
@@ -304,12 +303,7 @@ public class Workflow implements Identifiable, Serializable {
             return false;
         }
 
-        if (!Objects.equals(tasksState, other.getTasksState())) {
-            return false;
-        }
-
-        return Objects.equals(object, other.getObject());
-
+        return Objects.equals(tasksState, other.getTasksState());
     }
 
     public boolean canEqual(final Object obj) {
@@ -323,14 +317,13 @@ public class Workflow implements Identifiable, Serializable {
 
     public String toString(final String data) {
         return String.format("%s{ "
-                                     + "workflowId = %d, "
-                                     + "uuid = \"%s\", "
-                                     + "name = \"%s\", "
-                                     + "description = \"%s\", "
-                                     + "state = \"%s\", "
-                                     + "active = %b"
-                                     + "object = \"%s\"%s"
-                                     + " }",
+                                 + "workflowId = %d, "
+                                 + "uuid = \"%s\", "
+                                 + "name = \"%s\", "
+                                 + "description = \"%s\", "
+                                 + "state = \"%s\", "
+                                 + "active = %b%s"
+                                 + " }",
                              super.toString(),
                              workflowId,
                              uuid,
@@ -338,7 +331,6 @@ public class Workflow implements Identifiable, Serializable {
                              Objects.toString(description),
                              Objects.toString(state),
                              active,
-                             Objects.toString(object),
                              data);
     }
 
