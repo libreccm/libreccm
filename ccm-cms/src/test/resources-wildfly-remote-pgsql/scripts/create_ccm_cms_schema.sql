@@ -1,18 +1,3 @@
-DROP SCHEMA IF EXISTS ccm_cms CASCADE;
-DROP SCHEMA IF EXISTS ccm_core CASCADE;
-
-DROP SEQUENCE IF EXISTS hibernate_sequence;
-
-CREATE SCHEMA ccm_core;
-CREATE SCHEMA ccm_cms;
-
-
-    create table CCM_CMS.ARTICLE_LEADS (
-        OBJECT_ID int8 not null,
-        LOCALIZED_VALUE text,
-        LOCALE varchar(255) not null,
-        primary key (OBJECT_ID, LOCALE)
-    );
 
     create table CCM_CMS.ARTICLE_TEXTS (
         OBJECT_ID int8 not null,
@@ -110,7 +95,6 @@ CREATE SCHEMA ccm_cms;
         LIST_ORDER int8,
         UUID varchar(255),
         ITEM_ID int8,
-        CONTENT_ITEM_ID int8,
         primary key (LIST_ID)
     );
 
@@ -354,15 +338,6 @@ CREATE SCHEMA ccm_cms;
         DEFAULT_LIFECYCLE_ID int8,
         DEFAULT_WORKFLOW int8,
         primary key (OBJECT_ID)
-    );
-
-    create table CCM_CMS.ContentItem_AttachmentList_AUD (
-        REV int4 not null,
-        CONTENT_ITEM_ID int8 not null,
-        LIST_ID int8 not null,
-        REVTYPE int2,
-        REVEND int4,
-        primary key (REV, CONTENT_ITEM_ID, LIST_ID)
     );
 
     create table CCM_CMS.EVENT_COSTS (
@@ -845,15 +820,6 @@ CREATE SCHEMA ccm_cms;
         primary key (OBJECT_ID, REV)
     );
 
-    create table CCM_CMS.TASK_EVENT_URL_GENERATOR (
-        GENERATOR_ID int8 not null,
-        EVENT varchar(256),
-        URL_GENERATOR_CLASS varchar(1024),
-        CONTENT_TYPE_ID int8,
-        TASK_TYPE_ID int8,
-        primary key (GENERATOR_ID)
-    );
-
     create table CCM_CMS.VIDEO_ASSETS (
         HEIGHT int8,
         WIDTH int8,
@@ -871,16 +837,9 @@ CREATE SCHEMA ccm_cms;
         primary key (OBJECT_ID, REV)
     );
 
-    create table CCM_CMS.WORKFLOW_TASK_TYPES (
-        TASK_TYPE_ID int8 not null,
-        DEFAULT_URL_GENERATOR_CLASS varchar(1024),
-        PRIVILEGE varchar(256),
-        primary key (TASK_TYPE_ID)
-    );
-
     create table CCM_CMS.WORKFLOW_TASKS (
+        TASK_TYPE varchar(255),
         TASK_ID int8 not null,
-        TASK_TYPE_ID int8,
         primary key (TASK_ID)
     );
 
@@ -1384,10 +1343,10 @@ CREATE SCHEMA ccm_cms;
         CONFIGURATION_CLASS varchar(512) not null,
         NAME varchar(512) not null,
         SETTING_VALUE_BIG_DECIMAL numeric(19, 2),
-        SETTING_VALUE_STRING varchar(1024),
-        SETTING_VALUE_DOUBLE float8,
         SETTING_VALUE_BOOLEAN boolean,
         SETTING_VALUE_LONG int8,
+        SETTING_VALUE_STRING varchar(1024),
+        SETTING_VALUE_DOUBLE float8,
         primary key (SETTING_ID)
     );
 
@@ -1406,13 +1365,6 @@ CREATE SCHEMA ccm_cms;
     create table CCM_CORE.SETTINGS_STRING_LIST (
         LIST_ID int8 not null,
         value varchar(255)
-    );
-
-    create table CCM_CORE.TASK_ASSIGNMENTS (
-        TASK_ASSIGNMENT_ID int8 not null,
-        ROLE_ID int8,
-        TASK_ID int8,
-        primary key (TASK_ASSIGNMENT_ID)
     );
 
     create table CCM_CORE.THREADS (
@@ -1441,6 +1393,17 @@ CREATE SCHEMA ccm_cms;
         primary key (PARTY_ID)
     );
 
+    create table CCM_CORE.WORKFLOW_ASSIGNABLE_TASKS (
+        DUE_DATE timestamp,
+        DURATION_MINUTES int8,
+        LOCKED boolean,
+        START_DATE timestamp,
+        TASK_ID int8 not null,
+        LOCKING_USER_ID int8,
+        NOTIFICATION_SENDER int8,
+        primary key (TASK_ID)
+    );
+
     create table CCM_CORE.WORKFLOW_DESCRIPTIONS (
         WORKFLOW_ID int8 not null,
         LOCALIZED_VALUE text,
@@ -1455,14 +1418,32 @@ CREATE SCHEMA ccm_cms;
         primary key (WORKFLOW_ID, LOCALE)
     );
 
+    create table CCM_CORE.WORKFLOW_TASK_ASSIGNMENTS (
+        TASK_ASSIGNMENT_ID int8 not null,
+        ROLE_ID int8,
+        TASK_ID int8,
+        primary key (TASK_ASSIGNMENT_ID)
+    );
+
     create table CCM_CORE.WORKFLOW_TASK_COMMENTS (
-        TASK_ID int8 not null,
-        COMMENT text
+        COMMENT_ID int8 not null,
+        COMMENT text,
+        UUID varchar(255) not null,
+        AUTHOR_ID int8,
+        TASK_ID int8,
+        primary key (COMMENT_ID)
     );
 
     create table CCM_CORE.WORKFLOW_TASK_DEPENDENCIES (
         DEPENDS_ON_TASK_ID int8 not null,
         DEPENDENT_TASK_ID int8 not null
+    );
+
+    create table CCM_CORE.WORKFLOW_TASK_DESCRIPTIONS (
+        TASK_ID int8 not null,
+        LOCALIZED_VALUE text,
+        LOCALE varchar(255) not null,
+        primary key (TASK_ID, LOCALE)
     );
 
     create table CCM_CORE.WORKFLOW_TASK_LABELS (
@@ -1476,15 +1457,9 @@ CREATE SCHEMA ccm_cms;
         TASK_ID int8 not null,
         ACTIVE boolean,
         TASK_STATE varchar(512),
+        UUID varchar(255) not null,
         WORKFLOW_ID int8,
         primary key (TASK_ID)
-    );
-
-    create table CCM_CORE.WORKFLOW_TASKS_DESCRIPTIONS (
-        TASK_ID int8 not null,
-        LOCALIZED_VALUE text,
-        LOCALE varchar(255) not null,
-        primary key (TASK_ID, LOCALE)
     );
 
     create table CCM_CORE.WORKFLOW_TEMPLATES (
@@ -1492,19 +1467,13 @@ CREATE SCHEMA ccm_cms;
         primary key (WORKFLOW_ID)
     );
 
-    create table CCM_CORE.WORKFLOW_USER_TASKS (
-        DUE_DATE timestamp,
-        DURATION_MINUTES int8,
-        LOCKED boolean,
-        START_DATE timestamp,
-        TASK_ID int8 not null,
-        LOCKING_USER_ID int8,
-        NOTIFICATION_SENDER int8,
-        primary key (TASK_ID)
-    );
-
     create table CCM_CORE.WORKFLOWS (
         WORKFLOW_ID int8 not null,
+        ACTIVE boolean,
+        WORKFLOW_STATE varchar(255),
+        TASKS_STATE varchar(255),
+        UUID varchar(255) not null,
+        OBJECT_ID int8,
         TEMPLATE_ID int8,
         primary key (WORKFLOW_ID)
     );
@@ -1526,12 +1495,16 @@ CREATE SCHEMA ccm_cms;
 
     alter table CCM_CORE.SETTINGS 
         add constraint UK5whinfxdaepqs09e5ia9y71uk unique (CONFIGURATION_CLASS, NAME);
-create sequence hibernate_sequence start 1 increment 1;
 
-    alter table CCM_CMS.ARTICLE_LEADS 
-        add constraint FK4g66u3qtfyepw0f733kuiiaul 
-        foreign key (OBJECT_ID) 
-        references CCM_CMS.WORKFLOW_TASK_TYPES;
+    alter table CCM_CORE.WORKFLOW_TASK_COMMENTS 
+        add constraint UK_4nnedf08odyjxalfkg16fmjoi unique (UUID);
+
+    alter table CCM_CORE.WORKFLOW_TASKS 
+        add constraint UK_2u6ruatxij8wfojl8a1eigqqd unique (UUID);
+
+    alter table CCM_CORE.WORKFLOWS 
+        add constraint UK_o113id7d1cxql0edsrohlnn9x unique (UUID);
+create sequence hibernate_sequence start 1 increment 1;
 
     alter table CCM_CMS.ARTICLE_TEXTS 
         add constraint FK1pel1j53h3t3adh9o5cbje2d3 
@@ -1616,11 +1589,6 @@ create sequence hibernate_sequence start 1 increment 1;
     alter table CCM_CMS.ATTACHMENT_LISTS 
         add constraint FKqyj7ifjfyp7kmsj8fiyxn0am3 
         foreign key (ITEM_ID) 
-        references CCM_CMS.CONTENT_ITEMS;
-
-    alter table CCM_CMS.ATTACHMENT_LISTS 
-        add constraint FK4c7jp8622b8m8nvdvdajnt0am 
-        foreign key (CONTENT_ITEM_ID) 
         references CCM_CMS.CONTENT_ITEMS;
 
     alter table CCM_CMS.ATTACHMENT_LISTS_AUD 
@@ -1862,16 +1830,6 @@ create sequence hibernate_sequence start 1 increment 1;
         add constraint FK96vwsbqfbdg33ujeeawajr0v4 
         foreign key (OBJECT_ID) 
         references CCM_CORE.CCM_OBJECTS;
-
-    alter table CCM_CMS.ContentItem_AttachmentList_AUD 
-        add constraint FK4notdhn18abev1asay7cmyy84 
-        foreign key (REV) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.ContentItem_AttachmentList_AUD 
-        add constraint FK16sw895gdgghrymbirrgrvxsa 
-        foreign key (REVEND) 
-        references CCM_CORE.CCM_REVISIONS;
 
     alter table CCM_CMS.EVENT_COSTS 
         add constraint FKrbmepytotc73h5inefeih6rea 
@@ -2288,16 +2246,6 @@ create sequence hibernate_sequence start 1 increment 1;
         foreign key (OBJECT_ID, REV) 
         references CCM_CMS.ASSETS_AUD;
 
-    alter table CCM_CMS.TASK_EVENT_URL_GENERATOR 
-        add constraint FKjjasedpc2ef91iknmiyqwhxrs 
-        foreign key (CONTENT_TYPE_ID) 
-        references CCM_CMS.CONTENT_TYPES;
-
-    alter table CCM_CMS.TASK_EVENT_URL_GENERATOR 
-        add constraint FKi3tnip5gr0i5hvw8skw21pveh 
-        foreign key (TASK_TYPE_ID) 
-        references CCM_CMS.WORKFLOW_TASK_TYPES;
-
     alter table CCM_CMS.VIDEO_ASSETS 
         add constraint FKjuywvv7wq9pyid5b6ivyrc0yk 
         foreign key (LEGAL_METADATA_ID) 
@@ -2314,14 +2262,9 @@ create sequence hibernate_sequence start 1 increment 1;
         references CCM_CMS.BINARY_ASSETS_AUD;
 
     alter table CCM_CMS.WORKFLOW_TASKS 
-        add constraint FK1sk7ouwhx9r3buxvbfvfa7nnm 
-        foreign key (TASK_TYPE_ID) 
-        references CCM_CMS.WORKFLOW_TASK_TYPES;
-
-    alter table CCM_CMS.WORKFLOW_TASKS 
-        add constraint FKge2x94m1y9tr7mk26ensyn674 
+        add constraint FKoon3rwfmg0lhgbj4un4q3otya 
         foreign key (TASK_ID) 
-        references CCM_CORE.WORKFLOW_USER_TASKS;
+        references CCM_CORE.WORKFLOW_ASSIGNABLE_TASKS;
 
     alter table CCM_CORE.APPLICATIONS 
         add constraint FKatcp9ij6mbkx0nfeig1o6n3lm 
@@ -2728,16 +2671,6 @@ create sequence hibernate_sequence start 1 increment 1;
         foreign key (LIST_ID) 
         references CCM_CORE.SETTINGS;
 
-    alter table CCM_CORE.TASK_ASSIGNMENTS 
-        add constraint FKe29uwmvxdmol1fjob3auej4qv 
-        foreign key (ROLE_ID) 
-        references CCM_CORE.CCM_ROLES;
-
-    alter table CCM_CORE.TASK_ASSIGNMENTS 
-        add constraint FKc1vovbjg9mp5yegx2fdoutx7u 
-        foreign key (TASK_ID) 
-        references CCM_CORE.WORKFLOW_USER_TASKS;
-
     alter table CCM_CORE.THREADS 
         add constraint FKsx08mpwvwnw97uwdgjs76q39g 
         foreign key (ROOT_ID) 
@@ -2758,6 +2691,21 @@ create sequence hibernate_sequence start 1 increment 1;
         foreign key (PARTY_ID) 
         references CCM_CORE.PARTIES;
 
+    alter table CCM_CORE.WORKFLOW_ASSIGNABLE_TASKS 
+        add constraint FK1pnsq9ur3ylq0ghuj23p4cogs 
+        foreign key (LOCKING_USER_ID) 
+        references CCM_CORE.USERS;
+
+    alter table CCM_CORE.WORKFLOW_ASSIGNABLE_TASKS 
+        add constraint FK9ngp088m8xa82swy7yg3qx6vh 
+        foreign key (NOTIFICATION_SENDER) 
+        references CCM_CORE.USERS;
+
+    alter table CCM_CORE.WORKFLOW_ASSIGNABLE_TASKS 
+        add constraint FKt9ha3no3bj8a50pnw8cnqh2cq 
+        foreign key (TASK_ID) 
+        references CCM_CORE.WORKFLOW_TASKS;
+
     alter table CCM_CORE.WORKFLOW_DESCRIPTIONS 
         add constraint FKgx7upkqky82dpxvbs95imfl9l 
         foreign key (WORKFLOW_ID) 
@@ -2767,6 +2715,21 @@ create sequence hibernate_sequence start 1 increment 1;
         add constraint FKkxedy9p48avfk45r0bn4uc09i 
         foreign key (WORKFLOW_ID) 
         references CCM_CORE.WORKFLOWS;
+
+    alter table CCM_CORE.WORKFLOW_TASK_ASSIGNMENTS 
+        add constraint FKpq4paqtfbi5erhh98wl1ja005 
+        foreign key (ROLE_ID) 
+        references CCM_CORE.CCM_ROLES;
+
+    alter table CCM_CORE.WORKFLOW_TASK_ASSIGNMENTS 
+        add constraint FK3933ol31co3yn5ee75b2hmhgp 
+        foreign key (TASK_ID) 
+        references CCM_CORE.WORKFLOW_ASSIGNABLE_TASKS;
+
+    alter table CCM_CORE.WORKFLOW_TASK_COMMENTS 
+        add constraint FKd2ymdg8nay9pmh2nn2whba0j8 
+        foreign key (AUTHOR_ID) 
+        references CCM_CORE.USERS;
 
     alter table CCM_CORE.WORKFLOW_TASK_COMMENTS 
         add constraint FKkfqrf9jdvm7livu5if06w0r5t 
@@ -2783,6 +2746,11 @@ create sequence hibernate_sequence start 1 increment 1;
         foreign key (DEPENDS_ON_TASK_ID) 
         references CCM_CORE.WORKFLOW_TASKS;
 
+    alter table CCM_CORE.WORKFLOW_TASK_DESCRIPTIONS 
+        add constraint FKeb7mqbdx3bk7t01vo7kp2hpf 
+        foreign key (TASK_ID) 
+        references CCM_CORE.WORKFLOW_TASKS;
+
     alter table CCM_CORE.WORKFLOW_TASK_LABELS 
         add constraint FKf715qud6g9xv2xeb8rrpnv4xs 
         foreign key (TASK_ID) 
@@ -2793,30 +2761,15 @@ create sequence hibernate_sequence start 1 increment 1;
         foreign key (WORKFLOW_ID) 
         references CCM_CORE.WORKFLOWS;
 
-    alter table CCM_CORE.WORKFLOW_TASKS_DESCRIPTIONS 
-        add constraint FK2s2498d2tpojjrtghq7iyaosv 
-        foreign key (TASK_ID) 
-        references CCM_CORE.WORKFLOW_TASKS;
-
     alter table CCM_CORE.WORKFLOW_TEMPLATES 
         add constraint FK8692vdme4yxnkj1m0k1dw74pk 
         foreign key (WORKFLOW_ID) 
         references CCM_CORE.WORKFLOWS;
 
-    alter table CCM_CORE.WORKFLOW_USER_TASKS 
-        add constraint FKf09depwj5rgso2dair07vnu33 
-        foreign key (LOCKING_USER_ID) 
-        references CCM_CORE.USERS;
-
-    alter table CCM_CORE.WORKFLOW_USER_TASKS 
-        add constraint FK6evo9y34awhdfcyl8gv78qb7f 
-        foreign key (NOTIFICATION_SENDER) 
-        references CCM_CORE.USERS;
-
-    alter table CCM_CORE.WORKFLOW_USER_TASKS 
-        add constraint FKefpdf9ojplu7loo31hfm0wl2h 
-        foreign key (TASK_ID) 
-        references CCM_CORE.WORKFLOW_TASKS;
+    alter table CCM_CORE.WORKFLOWS 
+        add constraint FKrm2yfrs6veoxoy304upq2wc64 
+        foreign key (OBJECT_ID) 
+        references CCM_CORE.CCM_OBJECTS;
 
     alter table CCM_CORE.WORKFLOWS 
         add constraint FKeixdxau4jebw682gd49tdbsjy 

@@ -40,7 +40,7 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "TASK_ASSIGNMENTS", schema = DB_SCHEMA)
+@Table(name = "WORKFLOW_TASK_ASSIGNMENTS", schema = DB_SCHEMA)
 public class TaskAssignment implements Serializable {
 
     private static final long serialVersionUID = -4427537363301565707L;

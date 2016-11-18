@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <dataset>
     
-    <ccm_core.workflows workflow_id="-100" />
-    <ccm_core.workflows workflow_id="-110" />
-    <ccm_core.workflows workflow_id="-120" />
-    <ccm_core.workflows workflow_id="-140" />
+    <ccm_core.workflows workflow_id="-100"
+                        uuid="1d86f6ab-2d6c-4b59-83c1-c6b4bdd1d3dc" />
+    <ccm_core.workflows workflow_id="-110"
+                        uuid="feaf9c06-62f9-4e83-acc5-d18fd5e69d42" />
+    <ccm_core.workflows workflow_id="-120"
+                        uuid="017c6c19-db78-46f2-b771-dad2814319d3" />
+    <ccm_core.workflows workflow_id="-140"
+                        uuid="c6e317a1-88d5-48ab-8896-304d4c8d1f3e" />
 
     <ccm_core.workflow_names workflow_id="-100" 
                              locale="en"
@@ -24,18 +28,22 @@
     <ccm_core.workflow_templates workflow_id="-120" />
     
     <ccm_core.workflow_tasks task_id="-100100"
-                             active="false" 
+                             uuid="43db829c-7749-4ca9-8aba-241a9c2d00b3"
+                             active="false"
                              task_state="waiting" 
                              workflow_id="-100" />
     <ccm_core.workflow_tasks task_id="-100200"
+                             uuid="9d6112af-abde-42d6-9c9b-06bb0b245158"
                              active="false" 
                              task_state="waiting" 
                              workflow_id="-100" />
     <ccm_core.workflow_tasks task_id="-110100"
+                             uuid="de4b5303-a445-457b-a52b-7ee2759ee3f7"
                              active="false" 
                              task_state="waiting" 
                              workflow_id="-110" />
     <ccm_core.workflow_tasks task_id="-140100"
+                             uuid="438a742b-dc1f-42f4-8fb8-061fbed5b26b"
                              active="false" 
                              task_state="waiting" 
                              workflow_id="-140" />
@@ -53,18 +61,18 @@
                                    localized_value="Task 2.1" 
                                    locale="en" />
     
-    <ccm_core.workflow_user_tasks task_id="-100100" 
-                                  duration_minutes="0" 
-                                  locked="false" />
-    <ccm_core.workflow_user_tasks task_id="-100200" 
-                                  duration_minutes="0"
-                                  locked="false" />
-    <ccm_core.workflow_user_tasks task_id="-110100" 
-                                  duration_minutes="0" 
-                                  locked="false" />
-    <ccm_core.workflow_user_tasks task_id="-140100" 
-                                  duration_minutes="0" 
-                                  locked="false" />
+    <ccm_core.workflow_assignable_tasks task_id="-100100" 
+                                        duration_minutes="0" 
+                                        locked="false" />
+    <ccm_core.workflow_assignable_tasks task_id="-100200" 
+                                        duration_minutes="0"
+                                        locked="false" />
+    <ccm_core.workflow_assignable_tasks task_id="-110100" 
+                                        duration_minutes="0" 
+                                        locked="false" />
+    <ccm_core.workflow_assignable_tasks task_id="-140100" 
+                                        duration_minutes="0" 
+                                        locked="false" />
         
     <ccm_cms.lifecyle_definitions lifecycle_definition_id="-200" />
     <ccm_cms.lifecyle_definitions lifecycle_definition_id="-210" />
@@ -569,7 +577,7 @@
         locale="en" 
         localized_value="Curabitur vel sapien eu eros gravida bibendum vitae." />
     
-        <ccm_cms.assets object_id="-11100" />
+    <ccm_cms.assets object_id="-11100" />
     <ccm_cms.assets object_id="-11200" />
     
     <ccm_cms.assets_aud object_id="-11100" 
@@ -708,15 +716,15 @@
     <ccm_core.ccm_roles role_id="-3600"
                         name="info_content_reader" />
     
-    <ccm_core.task_assignments task_assignment_id="-910"
-                               task_id="-100100" 
-                               role_id="-3200" />
-    <ccm_core.task_assignments task_assignment_id="-920"
-                               task_id="-100100" 
-                               role_id="-3300" />
-    <ccm_core.task_assignments task_assignment_id="-930"
-                               task_id="-110100" 
-                               role_id="-3200" />
+    <ccm_core.workflow_task_assignments task_assignment_id="-910"
+                                        task_id="-100100" 
+                                        role_id="-3200" />
+    <ccm_core.workflow_task_assignments task_assignment_id="-920"
+                                        task_id="-100100" 
+                                        role_id="-3300" />
+    <ccm_core.workflow_task_assignments task_assignment_id="-930"
+                                        task_id="-110100" 
+                                        role_id="-3200" />
     
     <ccm_cms.content_section_roles role_id="-3100" 
                                    section_id="-1100" />

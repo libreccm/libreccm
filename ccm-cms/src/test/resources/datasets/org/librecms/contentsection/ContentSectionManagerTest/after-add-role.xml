@@ -65,9 +65,12 @@
                            application_type="org.librecms.contentsection.ContentSection"
                            primary_url="info" />
 
-    <ccm_core.workflows workflow_id="-14001" />
-    <ccm_core.workflows workflow_id="-14002" />
-    <ccm_core.workflows workflow_id="-14003" />
+    <ccm_core.workflows workflow_id="-14001"
+                        uuid="27c81e9d-cfbd-4196-9db9-55e7a5fe4c52" />
+    <ccm_core.workflows workflow_id="-14002"
+                        uuid="46041c25-ddf4-4e98-9067-21a8a8a0dcd7" />
+    <ccm_core.workflows workflow_id="-14003"
+                        uuid="3953c9be-f8ee-4015-9911-a560c762b052" />
     
     <ccm_core.workflow_templates workflow_id="-14001" />
     <ccm_core.workflow_templates workflow_id="-14002" />

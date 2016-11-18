@@ -133,7 +133,7 @@ public class Task implements Identifiable, Serializable {
     @Embedded
     @AssociationOverride(
         name = "values",
-        joinTable = @JoinTable(name = "WORKFLOW_TASKS_DESCRIPTIONS",
+        joinTable = @JoinTable(name = "WORKFLOW_TASK_DESCRIPTIONS",
                                schema = DB_SCHEMA,
                                joinColumns = {
                                    @JoinColumn(name = "TASK_ID")}))
