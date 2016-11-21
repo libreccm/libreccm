@@ -21,6 +21,7 @@ package org.libreccm.docrepo;
 
 import org.hibernate.validator.constraints.NotEmpty;
 import org.libreccm.core.Identifiable;
+import org.libreccm.portation.Portable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -46,7 +47,7 @@ import java.util.Objects;
  */
 @Entity
 @Table(schema = "CCM_DOCREPO", name = "BLOB_OBJECTS")
-public class BlobObject implements Identifiable, Serializable {
+public class BlobObject implements Identifiable, Serializable, Portable {
 
     private static final long serialVersionUID = -7468014879548796218L;
 

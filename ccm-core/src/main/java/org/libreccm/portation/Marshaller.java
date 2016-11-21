@@ -45,13 +45,11 @@ public class Marshaller {
 
     @Inject
     @Any
-    private Instance<AbstractMarshaller<? extends Identifiable>>
-            marshallerInstances;
+    private Instance<AbstractMarshaller<? extends Portable>> marshallerInstances;
 
-    // Assigns lists with objects of the same type as values to their typ as
-    // key.
-    private Map<Class<? extends Identifiable>, List<Identifiable>> classListMap;
-
+    // Assigns lists with objects of the same type as values to their typ.
+    // The type represents the key
+    private Map<Class<? extends Portable>, List<Portable>> classListMap;
 
     /**
      * Main export method. Organizes the objects into list of the same type
@@ -61,11 +59,12 @@ public class Marshaller {
      * @param format The export style/format e.g. CSV or JSON
      * @param filename The name of the file to be exported to
      */
-    public void exportObjects(List<Identifiable> objects, Format format,
-                               String filename) {
+    public void exportObjects(List<Portable> objects,
+                              Format format,
+                              String filename) {
         putObjects(objects);
 
-        for (Map.Entry<Class<? extends Identifiable>, List<Identifiable>>
+        for (Map.Entry<Class<? extends Portable>, List<Portable>>
             classListEntry : classListMap.entrySet()) {
             exportList(classListEntry.getValue(), classListEntry.getKey(),
                     format, filename);
@@ -81,14 +80,14 @@ public class Marshaller {
      *
      * @param objects list of all objects being organized
      */
-    private void putObjects(List<Identifiable> objects) {
-        for (Identifiable object : objects) {
-            Class<? extends Identifiable> type = object.getClass();
+    private void putObjects(List<Portable> objects) {
+        for (Portable object : objects) {
+            Class<? extends Portable> type = object.getClass();
 
             if (classListMap.containsKey(type)) {
                 classListMap.get(type).add(object);
             } else {
-                List<Identifiable> values = new ArrayList<>();
+                List<Portable> values = new ArrayList<>();
                 values.add(object);
                 classListMap.put(type, values);
             }
@@ -107,12 +106,13 @@ public class Marshaller {
      * @param type The class of the type
      * @param format The export style
      * @param filename The filename
-     * @param <I> The type of the current marshaller
+     * @param <P> The type of the current marshaller
      */
-    private <I extends Identifiable> void exportList(List<I> list, Class<?
-            extends I> type, Format format, String filename) {
-
-        final Instance<AbstractMarshaller<? extends Identifiable>>
+    private <P extends Portable> void exportList(List<P> list,
+                                                 Class<? extends P> type,
+                                                 Format format,
+                                                 String filename) {
+        final Instance<AbstractMarshaller<? extends Portable>>
                 marshallerInstance = marshallerInstances.select(new
                 MarshalsLiteral(type));
 
@@ -127,10 +127,10 @@ public class Marshaller {
                             .getName()));
         } else {
             // Get the marshaller for this list and call the export method.
-            final Iterator<AbstractMarshaller<? extends Identifiable>>
+            final Iterator<AbstractMarshaller<? extends Portable>>
                     iterator = marshallerInstance.iterator();
             @SuppressWarnings("unchecked")
-            final AbstractMarshaller<I> marshaller = (AbstractMarshaller<I>)
+            final AbstractMarshaller<P> marshaller = (AbstractMarshaller<P>)
                     iterator.next();
 
             marshaller.prepare(format, filename + "__" + type.toString(),
@@ -151,9 +151,9 @@ public class Marshaller {
      *
      * @param filenames List of filenames for the files wishing to be imported
      * @param format The import style
-     * @param <I> The type of the current marshaller
+     * @param <P> The type of the current marshaller
      */
-    public <I extends Identifiable> void importObjects(
+    public <P extends Portable> void importObjects(
             List<String> filenames, Format format) {
         for (String filename : filenames) {
             String[] splitFilename = filename.split("__");
@@ -163,9 +163,9 @@ public class Marshaller {
             try {
                 Class clazz = Class.forName(className);
                 @SuppressWarnings("unchecked")
-                Class<I> type = clazz.asSubclass(Identifiable.class);
+                Class<P> type = clazz.asSubclass(Portable.class);
 
-                final Instance<AbstractMarshaller<? extends Identifiable>>
+                final Instance<AbstractMarshaller<? extends Portable>>
                         marshallerInstance = marshallerInstances.select(new
                         MarshalsLiteral(type));
 
@@ -180,10 +180,10 @@ public class Marshaller {
                                     .getName()));
                 } else {
                     // Get the marshaller for this list and call the export method.
-                    final Iterator<AbstractMarshaller<? extends Identifiable>>
+                    final Iterator<AbstractMarshaller<? extends Portable>>
                             iterator = marshallerInstance.iterator();
                     @SuppressWarnings("unchecked")
-                    final AbstractMarshaller<I> marshaller = (AbstractMarshaller<I>)
+                    final AbstractMarshaller<P> marshaller = (AbstractMarshaller<P>)
                             iterator.next();
 
                     marshaller.prepare(format, filename, false);
@@ -202,14 +202,14 @@ public class Marshaller {
             implements Marshals {
 
         private static final long serialVersionUID = -8093783826632252875L;
-        private final Class<? extends Identifiable> entityClass;
+        private final Class<? extends Portable> entityClass;
 
-        public MarshalsLiteral(Class<? extends Identifiable> entityClass) {
+        public MarshalsLiteral(Class<? extends Portable> entityClass) {
             this.entityClass = entityClass;
         }
 
         @Override
-        public Class<? extends Identifiable> value() {
+        public Class<? extends Portable> value() {
             return entityClass;
         }
     }

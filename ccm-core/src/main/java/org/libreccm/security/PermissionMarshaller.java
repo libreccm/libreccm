@@ -16,12 +16,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.portation;
+package org.libreccm.security;
+
+import org.libreccm.portation.AbstractMarshaller;
+
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
 
 /**
- * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
- * @version created the 03.02.2016
+ * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
+ * @version created on 11/7/16
  */
-public enum Format {
-    XML
+public class PermissionMarshaller extends AbstractMarshaller<Permission> {
+
+    @Inject
+    private EntityManager entityManager;
+
+    @Override
+    protected Class<Permission> getObjectClass() {
+        return Permission.class;
+    }
+
+    @Override
+    protected void insertIntoDb(Permission portableObject) {
+        if (portableObject.getPermissionId() == 0) {
+            entityManager.persist(portableObject);
+        } else {
+            entityManager.merge(portableObject);
+        }
+    }
 }

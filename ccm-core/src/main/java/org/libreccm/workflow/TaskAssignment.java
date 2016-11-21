@@ -20,6 +20,8 @@ package org.libreccm.workflow;
 
 import static org.libreccm.core.CoreConstants.*;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import org.libreccm.portation.Portable;
 import org.libreccm.security.Role;
 
 import java.io.Serializable;
@@ -41,7 +43,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "WORKFLOW_TASK_ASSIGNMENTS", schema = DB_SCHEMA)
-public class TaskAssignment implements Serializable {
+public class TaskAssignment implements Serializable, Portable {
 
     private static final long serialVersionUID = -4427537363301565707L;
 
@@ -58,6 +60,7 @@ public class TaskAssignment implements Serializable {
      */
     @ManyToOne
     @JoinColumn(name = "TASK_ID")
+    @JsonBackReference
     private AssignableTask task;
 
     /**
@@ -65,6 +68,7 @@ public class TaskAssignment implements Serializable {
      */
     @ManyToOne
     @JoinColumn(name = "ROLE_ID")
+    @JsonBackReference
     private Role role;
 
     public long getTaskAssignmentId() {

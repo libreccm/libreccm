@@ -18,13 +18,9 @@
  */
 package org.libreccm.security;
 
-import static org.libreccm.core.CoreConstants.*;
-
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.libreccm.core.CcmObject;
-
-import java.io.Serializable;
-import java.util.Date;
-import java.util.Objects;
+import org.libreccm.portation.Portable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -35,7 +31,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -43,6 +38,12 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.Objects;
+
+import static org.libreccm.core.CoreConstants.CORE_XML_NS;
+import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 
 /**
  * A permission grants a privilege on an object or system wide to {@link Role}.
@@ -71,7 +72,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 })
 @XmlRootElement(name = "permission", namespace = CORE_XML_NS)
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Permission implements Serializable {
+public class Permission implements Serializable, Portable {
 
     private static final long serialVersionUID = -5178045844045517958L;
 
@@ -94,8 +95,9 @@ public class Permission implements Serializable {
     /**
      * The object on which the privilege is granted. My be {@code null}.
      */
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "OBJECT_ID")
+    @JsonBackReference
     private CcmObject object;
 
     /**
@@ -103,6 +105,7 @@ public class Permission implements Serializable {
      */
     @ManyToOne
     @JoinColumn(name = "GRANTEE_ID")
+    @JsonBackReference
     private Role grantee;
 
     /**

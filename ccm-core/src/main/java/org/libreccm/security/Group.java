@@ -20,7 +20,9 @@ package org.libreccm.security;
 
 import static org.libreccm.core.CoreConstants.*;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.libreccm.core.DefaultEntityGraph;
+import org.libreccm.portation.Portable;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -88,7 +90,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 })
 @DefaultEntityGraph("Group.withMembersAndRoleMemberships")
 @XmlRootElement(name = "user-group", namespace = CORE_XML_NS)
-public class Group extends Party implements Serializable {
+public class Group extends Party implements Serializable, Portable {
 
     private static final long serialVersionUID = -4800759206452780739L;
 
@@ -99,6 +101,7 @@ public class Group extends Party implements Serializable {
     @OneToMany(mappedBy = "group")
     @XmlElementWrapper(name = "group-memberships", namespace = CORE_XML_NS)
     @XmlElement(name = "group-membership", namespace = CORE_XML_NS)
+    @JsonManagedReference
     private Set<GroupMembership> memberships = new HashSet<>();
 
     public Group() {

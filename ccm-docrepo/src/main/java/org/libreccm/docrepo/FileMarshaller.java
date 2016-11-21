@@ -44,7 +44,7 @@ public class FileMarshaller extends AbstractResourceMarshaller<File> {
     }
 
     @Override
-    protected void insertIntoDb(File object) {
-        fileRepository.save(object);
+    protected void insertIntoDb(File portableObject) {
+        fileRepository.save(portableObject);
     }
 }

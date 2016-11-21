@@ -41,7 +41,7 @@ public class RepositoryMarshaller extends AbstractMarshaller<Repository> {
     }
 
     @Override
-    protected void insertIntoDb(Repository object) {
-        repositoryRepository.save(object);
+    protected void insertIntoDb(Repository portableObject) {
+        repositoryRepository.save(portableObject);
     }
 }

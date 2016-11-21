@@ -50,6 +50,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import org.libreccm.core.Identifiable;
+import org.libreccm.portation.Portable;
 
 /**
  * A workflow is a collection of tasks which are performed on an object. Tasks
@@ -66,7 +67,7 @@ import org.libreccm.core.Identifiable;
         query = "SELECT w FROM Workflow w "
                     + "WHERE W.object = :object")
 })
-public class Workflow implements Identifiable, Serializable {
+public class Workflow implements Identifiable, Serializable, Portable {
 
     private static final long serialVersionUID = 4322500264543325829L;
 
@@ -86,7 +87,7 @@ public class Workflow implements Identifiable, Serializable {
     private String uuid;
 
     /**
-     * The template which was used the generate the workflow.
+     * The template which was used to generate the workflow.
      */
     @ManyToOne
     @JoinColumn(name = "TEMPLATE_ID")
@@ -132,8 +133,8 @@ public class Workflow implements Identifiable, Serializable {
 
     /**
      * The task state of the workflow. This field is a leftover from the old
-     * implementation of workflow were workflow extended {@link Task}. Because
-     * we wanted to keep the basic logic this field is here.
+     * implementation of workflow were workflow extended {@link Task}. This
+     * field is here because we wanted to keep the basic logic.
      */
     @Column(name = "TASKS_STATE")
     @Enumerated(EnumType.STRING)

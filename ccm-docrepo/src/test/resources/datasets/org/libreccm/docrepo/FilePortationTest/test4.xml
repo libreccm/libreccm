@@ -1,14 +1,14 @@
 <File>
   <objectId>1</objectId>
-  <uuid>bcf940f3-c43a-47da-a029-4ee136757a01</uuid>
+  <uuid>3edb95ff-85cc-4af8-aa30-92e4029bfe57</uuid>
   <displayName/>
   <name>testname</name>
   <description>this is a text description</description>
   <path>/home/tosmers/Svn/libreccm/ccm_ng/ccm-docrepo/src/test/resources/datasets/org/libreccm/docrepo/FilePortationTest/filename.txt</path>
   <mimeType/>
   <size>0</size>
-  <creationDate>1461836103332</creationDate>
-  <lastModifiedDate>1461836103332</lastModifiedDate>
+  <creationDate>1476719581162</creationDate>
+  <lastModifiedDate>1476719581162</lastModifiedDate>
   <creationIp/>
   <lastModifiedIp/>
   <creationUser/>

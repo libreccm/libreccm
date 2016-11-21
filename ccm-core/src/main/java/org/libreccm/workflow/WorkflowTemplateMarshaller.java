@@ -16,12 +16,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.portation;
+package org.libreccm.workflow;
+
+import org.libreccm.portation.AbstractMarshaller;
+
+import javax.inject.Inject;
 
 /**
- * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
- * @version created the 03.02.2016
+ * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
+ * @version created on 11/21/16
  */
-public enum Format {
-    XML
+public class WorkflowTemplateMarshaller extends
+        AbstractMarshaller<WorkflowTemplate> {
+
+    @Inject
+    private WorkflowTemplateRepository workflowTemplateRepository;
+
+    @Override
+    protected Class<WorkflowTemplate> getObjectClass() {
+        return WorkflowTemplate.class;
+    }
+
+    @Override
+    protected void insertIntoDb(WorkflowTemplate portableObject) {
+        workflowTemplateRepository.save(portableObject);
+    }
 }

@@ -18,9 +18,12 @@
  */
 package org.libreccm.core;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import org.hibernate.envers.Audited;
 import org.libreccm.categorization.Categorization;
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryManager;
+import org.libreccm.portation.Portable;
 import org.libreccm.security.Permission;
 
 import javax.persistence.Column;
@@ -38,7 +41,6 @@ import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,8 +49,6 @@ import java.util.Objects;
 
 import static org.libreccm.core.CoreConstants.CORE_XML_NS;
 import static org.libreccm.core.CoreConstants.DB_SCHEMA;
-
-import org.hibernate.envers.Audited;
 
 /**
  * Root class of all entities in LibreCCM which need categorisation and
@@ -117,6 +117,7 @@ public class CcmObject implements Identifiable, Serializable {
     @OneToMany(mappedBy = "object")
     @XmlElementWrapper(name = "permissions", namespace = CORE_XML_NS)
     @XmlElement(name = "permission", namespace = CORE_XML_NS)
+    @JsonManagedReference
     private List<Permission> permissions;
 
     /**
@@ -125,6 +126,7 @@ public class CcmObject implements Identifiable, Serializable {
     @OneToMany(mappedBy = "categorizedObject")
     @XmlElementWrapper(name = "categories", namespace = CORE_XML_NS)
     @XmlElement(name = "category", namespace = CORE_XML_NS)
+    @JsonManagedReference
     private List<Categorization> categories;
 
     public CcmObject() {
@@ -164,7 +166,7 @@ public class CcmObject implements Identifiable, Serializable {
      * @return Returns all permissions for this {@code CcmObject}. Please note
      *         that the returned {@link List} can't be modified. For adding and
      *         removing permissions use the methods provided by the
-     *         {@link CcmObjectManager}.
+     *         {@code CcmObjectManager}.
      */
     public List<Permission> getPermissions() {
         return Collections.unmodifiableList(permissions);
@@ -311,7 +313,7 @@ public class CcmObject implements Identifiable, Serializable {
      *
      * @param obj The object to check.
      *
-     * @return {@code true} if {@link obj} can equal this, false otherwise.
+     * @return {@code true} if {@code obj} can equal this, false otherwise.
      */
     public boolean canEqual(final Object obj) {
         return obj instanceof CcmObject;

@@ -18,14 +18,14 @@
  */
 package org.libreccm.workflow;
 
-import static org.libreccm.core.CoreConstants.*;
-
 import org.libreccm.core.CcmObject;
-
-import java.io.Serializable;
+import org.libreccm.portation.Portable;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.io.Serializable;
+
+import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 
 /**
  * Objects of these class are used as templates for new workflows. The tasks 
@@ -35,14 +35,16 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "WORKFLOW_TEMPLATES", schema = DB_SCHEMA)
-public class WorkflowTemplate extends Workflow implements Serializable {
+public class WorkflowTemplate extends Workflow implements Serializable,
+        Portable {
 
     private static final long serialVersionUID = 5770519379144947171L;
 
     /**
-     * A workflow template has no object. Therefore the {@code setObject(CcmObject)
-     * method has been overwritten the throw an {@link UnsupportedOperationException} 
-     * when called on the workflow template.
+     * A workflow template has no object. Therefore the {@code setObject
+     * (CcmObject)} method has been overwritten to throw an
+     * {@link UnsupportedOperationException} when called on the workflow
+     * template.
      * 
      * @param object 
      */

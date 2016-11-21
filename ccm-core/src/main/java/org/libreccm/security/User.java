@@ -20,8 +20,10 @@ package org.libreccm.security;
 
 import static org.libreccm.core.CoreConstants.*;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.libreccm.core.DefaultEntityGraph;
 import org.libreccm.core.EmailAddress;
+import org.libreccm.portation.Portable;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -125,7 +127,7 @@ import javax.xml.bind.annotation.XmlTransient;
 //Supressing a few warnings from PMD because they misleading here.
 //User is perfectly fine class name, and the complexity is not to high...
 @SuppressWarnings({"PMD.ShortClassName", "PMD.LongVariable"})
-public class User extends Party implements Serializable {
+public class User extends Party implements Serializable, Portable {
 
     private static final long serialVersionUID = 4035223413596611393L;
 
@@ -202,6 +204,7 @@ public class User extends Party implements Serializable {
     @OneToMany(mappedBy = "member")
     @XmlElementWrapper(name = "group-memberships", namespace = CORE_XML_NS)
     @XmlElement(name = "group-membership", namespace = CORE_XML_NS)
+    @JsonManagedReference
     private Set<GroupMembership> groupMemberships = new HashSet<>();
 
     protected User() {

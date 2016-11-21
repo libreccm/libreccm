@@ -16,34 +16,35 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.docrepo;
+package org.libreccm.categorization;
 
-import org.libreccm.portation.Marshals;
+import org.libreccm.portation.AbstractMarshaller;
 
-import javax.faces.bean.RequestScoped;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 
 /**
- * Marshaller class for importing and exporting {@code Folder}s from the
- * system into a specified file and the other way around.
- *
  * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
- * @version created the 3/16/16
+ * @version created on 11/7/16
  */
-@RequestScoped
-@Marshals(Folder.class)
-public class FolderMarshaller extends AbstractResourceMarshaller<Folder> {
+public class CategorizationMarshaller extends AbstractMarshaller<Categorization>{
 
     @Inject
-    private FolderRepository folderRepository;
+    private EntityManager entityManager;
 
     @Override
-    protected Class<Folder> getObjectClass() {
-        return Folder.class;
+    protected Class<Categorization> getObjectClass() {
+        return Categorization.class;
     }
 
     @Override
-    protected void insertIntoDb(Folder portableObject) {
-        folderRepository.save(portableObject);
+    @Transactional(Transactional.TxType.REQUIRED)
+    protected void insertIntoDb(Categorization portableObject) {
+        if (portableObject.getCategorizationId() == 0) {
+            entityManager.persist(portableObject);
+        } else {
+            entityManager.merge(portableObject);
+        }
     }
 }

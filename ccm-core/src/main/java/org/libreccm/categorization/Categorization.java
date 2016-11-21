@@ -18,12 +18,9 @@
  */
 package org.libreccm.categorization;
 
-import static org.libreccm.core.CoreConstants.*;
-
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.libreccm.core.CcmObject;
-
-import java.io.Serializable;
-import java.util.Objects;
+import org.libreccm.portation.Portable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -35,6 +32,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import java.io.Serializable;
+import java.util.Objects;
+
+import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 
 /**
  * Association class describing the association between a category and an
@@ -66,7 +67,7 @@ import javax.persistence.Table;
                     + "WHERE c.category = :category "
                     + "AND c.index = TRUE")
 })
-public class Categorization implements Serializable {
+public class Categorization implements Serializable, Portable {
 
     private static final long serialVersionUID = 201504301320L;
 
@@ -83,6 +84,7 @@ public class Categorization implements Serializable {
      */
     @ManyToOne
     @JoinColumn(name = "CATEGORY_ID")
+    @JsonBackReference
     private Category category;
 
     /**
@@ -90,6 +92,7 @@ public class Categorization implements Serializable {
      */
     @ManyToOne
     @JoinColumn(name = "OBJECT_ID")
+    @JsonBackReference
     private CcmObject categorizedObject;
 
     /**

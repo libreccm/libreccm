@@ -23,7 +23,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.apache.log4j.Logger;
-import org.libreccm.core.Identifiable;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -42,7 +41,7 @@ import java.util.List;
  * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
  * @version created the 2/10/16
  */
-public abstract class AbstractMarshaller<I extends Identifiable> {
+public abstract class AbstractMarshaller<P extends Portable> {
 
     private static final Logger log = Logger.getLogger(AbstractMarshaller.class);
 
@@ -52,14 +51,19 @@ public abstract class AbstractMarshaller<I extends Identifiable> {
     // XML specifics
     ObjectMapper xmlMapper;
 
-    // JSON specifics
-
-    // CSV specifics
-
-
-
-    public void prepare(final Format format, String filename, boolean
-            indentation) {
+    /**
+     * Prepares import and export routine. Sets the format in which the ex-
+     * or import will take place and sets the name of the file exported to or
+     * imported from. Furthermore it is possible to decide for or against
+     * indentation in the output file.
+     *
+     * @param format The format of the ex-/import
+     * @param filename The filename of the file exported to or imported from
+     * @param indentation whether or not indentation
+     */
+    public void prepare(final Format format,
+                        String filename,
+                        boolean indentation) {
         this.format = format;
         this.filename = filename;
 
@@ -74,19 +78,20 @@ public abstract class AbstractMarshaller<I extends Identifiable> {
                 }
                 break;
 
-            case JSON:
-                break;
-
-            case CSV:
-                break;
-
             default:
                 break;
         }
     }
 
 
-    public void exportList(final List<I> exportList) {
+    /**
+     * Export routine for lists with the same object type {@code P}. Creates a
+     * new file with the prepared filename and starts, depending on the set
+     * format, the export process, object after object.
+     *
+     * @param exportList List of equally typed objects.
+     */
+    public void exportList(final List<P> exportList) {
         File file = new File(filename);
         FileWriter fileWriter = null;
 
@@ -97,7 +102,7 @@ public abstract class AbstractMarshaller<I extends Identifiable> {
                     " with the name %s.", file.getName()));
         }
         if (fileWriter != null) {
-            for (I object : exportList) {
+            for (P object : exportList) {
                 String line = null;
 
                 switch (format) {
@@ -112,41 +117,37 @@ public abstract class AbstractMarshaller<I extends Identifiable> {
                         }
                         break;
 
-                    case JSON:
-                        break;
-
-                    case CSV:
-                        break;
-
                     default:
                         break;
                 }
-
                 if (line != null) {
                     try {
                         fileWriter.write(line);
                         fileWriter.write(System.getProperty("line.separator"));
                     } catch (IOException e) {
-                        log.error(String.format("Unable to write to file with the" +
-                                " name %s.", file.getName()));
+                        log.error(String.format("Unable to write to file with" +
+                                " the name %s.", file.getName()));
                     }
                 }
             }
-
             try {
                 fileWriter.close();
             } catch (IOException e) {
                 log.error(String.format("Unable to close a fileWriter for the" +
                         " file with the name %s.", file.getName()));
             }
-
         }
     }
 
-    protected abstract Class<I> getObjectClass();
-    protected abstract void insertIntoDb(I object);
-
-    public List<I> importFile() {
+    /**
+     * Import routine for files containing objects of the same type {@code P}.
+     * Creates a new list of strings to read the file line by line. Each line
+     * of the list represents an object of the file. Then retrieves each object
+     * from the corresponding string in the list.
+     *
+     * @return List of imported objects.
+     */
+    public List<P> importFile() {
         File file = new File(filename);
 
         List<String> lines = null;
@@ -157,10 +158,10 @@ public abstract class AbstractMarshaller<I extends Identifiable> {
                     "name %s.", file.getName()));
         }
 
-        List<I> objects = new ArrayList<I>();
+        List<P> objects = new ArrayList<>();
         if (lines != null) {
             for (String line : lines) {
-                I object = null;
+                P object = null;
                 switch (format) {
                     case XML:
                         try {
@@ -169,12 +170,6 @@ public abstract class AbstractMarshaller<I extends Identifiable> {
                             log.error(String.format("Unable to read objects " +
                                     "from XML line:\n \"%s\"", line), e);
                         }
-                        break;
-
-                    case JSON:
-                        break;
-
-                    case CSV:
                         break;
 
                     default:
@@ -189,4 +184,17 @@ public abstract class AbstractMarshaller<I extends Identifiable> {
         return objects;
     }
 
+    /**
+     * Abstract method to get the object class to determine the type {@code P}.
+     *
+     * @return The object class
+     */
+    protected abstract Class<P> getObjectClass();
+
+    /**
+     * Abstract method to insert every imported object into the database.
+     *
+     * @param portableObject An object of type {@code P}
+     */
+    protected abstract void insertIntoDb(P portableObject);
 }

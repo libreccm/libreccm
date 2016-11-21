@@ -42,5 +42,5 @@ import java.lang.annotation.Target;
         ElementType.METHOD})
 public @interface Marshals {
 
-    Class<? extends Identifiable> value();
+    Class<? extends Portable> value();
 }

@@ -16,12 +16,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.portation;
+package org.libreccm.workflow;
+
+import org.libreccm.portation.AbstractMarshaller;
+
+import javax.inject.Inject;
 
 /**
- * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
- * @version created the 03.02.2016
+ * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
+ * @version created on 11/18/16
  */
-public enum Format {
-    XML
+public class AssignableTaskMarshaller extends AbstractMarshaller<AssignableTask> {
+
+    @Inject
+    private AssignableTaskRepository assignableTaskRepository;
+
+    @Override
+    protected Class<AssignableTask> getObjectClass() {
+        return AssignableTask.class;
+    }
+
+    @Override
+    protected void insertIntoDb(AssignableTask portableObject) {
+        assignableTaskRepository.save(portableObject);
+    }
 }

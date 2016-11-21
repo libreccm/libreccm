@@ -20,6 +20,8 @@ package org.libreccm.workflow;
 
 import static org.libreccm.core.CoreConstants.*;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import org.libreccm.portation.Portable;
 import org.libreccm.security.User;
 
 import java.io.Serializable;
@@ -79,7 +81,7 @@ import javax.persistence.TemporalType;
 @SuppressWarnings({"PMD.CyclomaticComplexity",
                    "PMD.StdCyclomaticComplexity",
                    "PMD.ModifiedCyclomaticComplexity"})
-public class AssignableTask extends Task implements Serializable {
+public class AssignableTask extends Task implements Serializable, Portable {
 
     private static final long serialVersionUID = 4188064584389893019L;
 
@@ -128,6 +130,7 @@ public class AssignableTask extends Task implements Serializable {
      * The roles to which task is assigned.
      */
     @OneToMany(mappedBy = "task")
+    @JsonManagedReference
     private List<TaskAssignment> assignments;
 
     public AssignableTask() {

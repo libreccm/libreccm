@@ -18,22 +18,14 @@
  */
 package org.libreccm.security;
 
-import static org.libreccm.core.CoreConstants.*;
-
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.validator.constraints.NotBlank;
 import org.libreccm.core.DefaultEntityGraph;
 import org.libreccm.l10n.LocalizedString;
+import org.libreccm.portation.Portable;
 import org.libreccm.workflow.TaskAssignment;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
 import javax.persistence.AssociationOverride;
-
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -55,6 +47,16 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+
+import static org.libreccm.core.CoreConstants.CORE_XML_NS;
+import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 
 /**
  * A role is basically a collection a {@link Permission}s and {@code Task}s.
@@ -117,7 +119,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "role", namespace = CORE_XML_NS)
 @XmlAccessorType(XmlAccessType.FIELD)
 @SuppressWarnings({"PMD.ShortClassName", "PMD.TooManyMethods"})
-public class Role implements Serializable {
+public class Role implements Serializable, Portable {
 
     private static final long serialVersionUID = -7121296514181469687L;
 
@@ -148,6 +150,7 @@ public class Role implements Serializable {
     @OneToMany(mappedBy = "role")
     @XmlElementWrapper(name = "role-memberships", namespace = CORE_XML_NS)
     @XmlElement(name = "role-membership", namespace = CORE_XML_NS)
+    @JsonManagedReference
     private Set<RoleMembership> memberships = new HashSet<>();
 
     /**
@@ -156,9 +159,11 @@ public class Role implements Serializable {
     @OneToMany(mappedBy = "grantee")
     @XmlElementWrapper(name = "permissions", namespace = CORE_XML_NS)
     @XmlElement(name = "permission", namespace = CORE_XML_NS)
+    @JsonManagedReference
     private List<Permission> permissions = new ArrayList<>();
 
     @OneToMany(mappedBy = "role")
+    @JsonManagedReference
     private List<TaskAssignment> assignedTasks;
 
     /**

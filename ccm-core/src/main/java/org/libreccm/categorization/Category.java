@@ -21,10 +21,13 @@ package org.libreccm.categorization;
 import static org.libreccm.categorization.CategorizationConstants.*;
 import static org.libreccm.core.CoreConstants.*;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.validator.constraints.NotBlank;
 import org.libreccm.core.CcmObject;
 import org.libreccm.core.DefaultEntityGraph;
 import org.libreccm.l10n.LocalizedString;
+import org.libreccm.portation.Portable;
 import org.libreccm.security.InheritsPermissions;
 
 import java.io.Serializable;
@@ -100,7 +103,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @DefaultEntityGraph("Category.withSubCategoriesAndObjects")
 @XmlRootElement(name = "category", namespace = CAT_XML_NS)
 public class Category extends CcmObject implements InheritsPermissions,
-                                                   Serializable {
+                                                   Serializable, Portable {
 
     private static final long serialVersionUID = -7250208963391878547L;
 
@@ -179,6 +182,7 @@ public class Category extends CcmObject implements InheritsPermissions,
      */
     @OneToMany(mappedBy = "category")
     @XmlElementWrapper(name = "objects", namespace = CAT_XML_NS)
+    @JsonManagedReference
     private List<Categorization> objects;
 
     /**
@@ -187,6 +191,7 @@ public class Category extends CcmObject implements InheritsPermissions,
     @OneToMany(mappedBy = "parentCategory")
     @XmlElementWrapper(name = "subcategories", namespace = CAT_XML_NS)
     @XmlElement(name = "category")
+    @JsonManagedReference
     private List<Category> subCategories;
 
     /**
@@ -195,6 +200,7 @@ public class Category extends CcmObject implements InheritsPermissions,
      */
     @ManyToOne
     @JoinColumn(name = "PARENT_CATEGORY_ID")
+    @JsonBackReference
     private Category parentCategory;
 
     /**

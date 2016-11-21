@@ -44,7 +44,7 @@ public class BlobObjectMarshaller extends AbstractMarshaller<BlobObject> {
     }
 
     @Override
-    protected void insertIntoDb(BlobObject object) {
-        blobObjectRepository.save(object);
+    protected void insertIntoDb(BlobObject portableObject) {
+        blobObjectRepository.save(portableObject);
     }
 }

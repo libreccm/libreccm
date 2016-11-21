@@ -19,9 +19,10 @@
 package org.libreccm.portation;
 
 /**
- * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
- * @version created the 03.02.2016
+ * Interface for the ex-/import routine. With this interface any object class
+ * can declare itself ex- or im{@code portable}.
+ *
+ * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
+ * @version created on 11/3/16
  */
-public enum Format {
-    XML
-}
+public interface Portable {}

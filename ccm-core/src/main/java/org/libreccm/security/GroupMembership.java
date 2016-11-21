@@ -18,6 +18,9 @@
  */
 package org.libreccm.security;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import org.libreccm.portation.Portable;
+
 import static org.libreccm.core.CoreConstants.*;
 
 import java.io.Serializable;
@@ -50,7 +53,7 @@ import javax.xml.bind.annotation.XmlTransient;
                 query = "SELECT m FROM GroupMembership m "
                             + "WHERE m.member = :member AND m.group = :group")})
 @XmlRootElement(name = "group-membership", namespace = CORE_XML_NS)
-public class GroupMembership implements Serializable {
+public class GroupMembership implements Serializable, Portable {
 
     private static final long serialVersionUID = 83192968306850665L;
 
@@ -63,11 +66,13 @@ public class GroupMembership implements Serializable {
     @ManyToOne
     @JoinColumn(name = "GROUP_ID")
     @XmlTransient
+    @JsonBackReference
     private Group group;
 
     @ManyToOne
     @JoinColumn(name = "MEMBER_ID")
     @XmlTransient
+    @JsonBackReference
     private User member;
 
     public long getMembershipId() {

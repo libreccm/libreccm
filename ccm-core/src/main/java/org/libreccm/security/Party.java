@@ -20,7 +20,9 @@ package org.libreccm.security;
 
 import static org.libreccm.core.CoreConstants.*;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.libreccm.core.DefaultEntityGraph;
+import org.libreccm.portation.Portable;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -97,6 +99,7 @@ public class Party implements Serializable {
     @OneToMany(mappedBy = "member")
     @XmlElementWrapper(name = "role-memberships", namespace = CORE_XML_NS)
     @XmlElement(name = "role-membership", namespace = CORE_XML_NS)
+    @JsonManagedReference
     private Set<RoleMembership> roleMemberships = new HashSet<>();
 
     protected Party() {
