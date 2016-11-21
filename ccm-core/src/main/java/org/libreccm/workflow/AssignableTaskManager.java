@@ -123,8 +123,8 @@ public class AssignableTaskManager {
     }
 
     /**
-     * 
-     * @param task 
+     *
+     * @param task
      */
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
@@ -133,14 +133,14 @@ public class AssignableTaskManager {
         if (task == null) {
             throw new IllegalArgumentException("Can't lock task null.");
         }
-        
+
         if (task.isLocked()) {
             throw new IllegalArgumentException(String.format(
                 "Task %s is already locked by user \"%s\".",
                 Objects.toString(task),
                 task.getLockingUser().getName()));
         }
-        
+
         task.setLocked(true);
         task.setLockingUser(shiro.getUser());
 
@@ -149,7 +149,7 @@ public class AssignableTaskManager {
 
     /**
      * Unlocks a task.
-     * 
+     *
      * @param task The task to unlock.
      */
     @AuthorizationRequired
@@ -159,7 +159,7 @@ public class AssignableTaskManager {
         if (task == null) {
             throw new IllegalArgumentException("Can't unlock task null.");
         }
-       
+
         task.setLocked(false);
         task.setLockingUser(null);
 
@@ -168,19 +168,20 @@ public class AssignableTaskManager {
 
     /**
      * Retrieves a list of all tasks locked by a specific user.
-     * 
+     *
      * @param user The user which locks the tasks.
+     *
      * @return A list with all tasks locked by the specified user.
      */
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public List<AssignableTask> lockedBy(final User user) {
-        
+
         if (user == null) {
             throw new IllegalArgumentException("user can't be null.");
         }
-        
+
         final TypedQuery<AssignableTask> query = entityManager.createNamedQuery(
             "UserTask.findLockedBy", AssignableTask.class);
         query.setParameter("user", user);
@@ -190,7 +191,7 @@ public class AssignableTaskManager {
 
     /**
      * Finishes a {@link AssignableTask}.
-     * 
+     *
      * @param task The task to finish.
      */
     @AuthorizationRequired
@@ -213,8 +214,8 @@ public class AssignableTaskManager {
 
     /**
      * Finishes a {@link AssignableTask} with a comment.
-     * 
-     * @param task The task to finish.
+     *
+     * @param task    The task to finish.
      * @param comment The comment to add to the task.
      */
     @AuthorizationRequired
@@ -224,6 +225,16 @@ public class AssignableTaskManager {
                        final String comment) {
         taskManager.addComment(task, comment);
         finish(task);
+    }
+
+    public List<AssignableTask> findAssignedTasks(final Workflow workflow,
+                                                  final List<Role> roles) {
+        final TypedQuery<AssignableTask> query = entityManager.createNamedQuery(
+            "AssignableTask.findAssignedTasks", AssignableTask.class);
+        query.setParameter("workflow", workflow);
+        query.setParameter("roles", roles);
+        
+        return query.getResultList();
     }
 
 }

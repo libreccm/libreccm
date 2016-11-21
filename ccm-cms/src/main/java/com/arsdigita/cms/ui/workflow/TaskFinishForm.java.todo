@@ -29,36 +29,40 @@ import com.arsdigita.bebop.form.Option;
 import com.arsdigita.bebop.form.RadioGroup;
 import com.arsdigita.bebop.parameters.BooleanParameter;
 
-import org.librecms.contentsection.ContentSection;
-
-import com.arsdigita.cms.ContentCenter;
 import com.arsdigita.cms.ui.ContentItemPage;
 import com.arsdigita.globalization.GlobalizedMessage;
+import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.util.UncheckedWrapperException;
 
 import org.librecms.workflow.CmsTask;
-import org.librecms.workflow.CmsTaskTypeOld;
 
 import com.arsdigita.web.RedirectSignal;
 import com.arsdigita.web.URL;
-import com.arsdigita.web.Web;
 
 import org.libreccm.workflow.Task;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Iterator;
 import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
+import org.arsdigita.cms.CMSConfig;
 import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.security.PermissionChecker;
 import org.libreccm.security.Shiro;
+import org.libreccm.security.User;
+import org.libreccm.workflow.AssignableTask;
+import org.libreccm.workflow.AssignableTaskManager;
+import org.libreccm.workflow.TaskManager;
 import org.libreccm.workflow.TaskRepository;
+import org.libreccm.workflow.Workflow;
 import org.libreccm.workflow.WorkflowManager;
-import org.libreccm.workflow.WorkflowRepository;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemRepository;
+import org.librecms.workflow.CmsTaskType;
+
+import java.util.List;
 
 /**
  * <p>
@@ -71,7 +75,7 @@ import org.librecms.contentsection.ContentItemRepository;
 public final class TaskFinishForm extends CommentAddForm {
 
     private static final Logger LOGGER = LogManager.getLogger(
-            TaskFinishForm.class);
+        TaskFinishForm.class);
     private final TaskRequestLocal m_task;
     private final Label m_approvePrompt;
     private final RadioGroup m_approve;
@@ -82,10 +86,12 @@ public final class TaskFinishForm extends CommentAddForm {
         m_task = task;
 
         m_approve = new RadioGroup(new BooleanParameter("approve"));
-        m_approve.addOption(new Option("true",
-                                       lz("cms.ui.workflow.task.approve")));
-        m_approve.addOption(new Option("false",
-                                       lz("cms.ui.workflow.task.reject")));
+        m_approve.addOption(new Option(
+            "true",
+            new Label(gz("cms.ui.workflow.task.approve"))));
+        m_approve.addOption(new Option(
+            "false",
+            new Label(gz("cms.ui.workflow.task.reject"))));
 
         m_approvePrompt = new Label(gz("cms.ui.workflow.task.approve_prompt"));
 
@@ -117,13 +123,14 @@ public final class TaskFinishForm extends CommentAddForm {
                 }
             }
         }
+
     }
 
     private class ValidationListener implements FormValidationListener {
 
         @Override
         public final void validate(final FormSectionEvent e)
-                throws FormProcessException {
+            throws FormProcessException {
             LOGGER.debug("Validating task finish");
 
             final PageState state = e.getPageState();
@@ -131,17 +138,18 @@ public final class TaskFinishForm extends CommentAddForm {
 
             if (requiresApproval(task) && m_approve.getValue(state) == null) {
                 throw new FormProcessException(new GlobalizedMessage(
-                        "cms.ui.workflow.task.approval_or_reject_required",
-                        CmsConstants.CMS_BUNDLE));
+                    "cms.ui.workflow.task.approval_or_reject_required",
+                    CmsConstants.CMS_BUNDLE));
             }
         }
+
     }
 
     private class ProcessListener implements FormProcessListener {
 
         @Override
         public final void process(final FormSectionEvent event)
-                throws FormProcessException {
+            throws FormProcessException {
             LOGGER.debug("Processing task finish");
 
             final PageState state = event.getPageState();
@@ -150,26 +158,36 @@ public final class TaskFinishForm extends CommentAddForm {
 
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final PermissionChecker permissionChecker = cdiUtil.findBean(
-                    PermissionChecker.class);
+                PermissionChecker.class);
             final ContentItemRepository itemRepo = cdiUtil.findBean(
-                    ContentItemRepository.class);
+                ContentItemRepository.class);
             final Optional<ContentItem> item = itemRepo.findItemWithWorkflow(
-                    task.getWorkflow());
+                task.getWorkflow());
 
             if (!item.isPresent()) {
                 throw new UncheckedWrapperException(
-                        "Workflow not assigned to an item");
+                    "Workflow not assigned to an item");
             }
 
             permissionChecker.checkPermission(task.getTaskType().getPrivilege(),
                                               item.get());
 
             final TaskRepository taskRepo = cdiUtil.findBean(
-                    TaskRepository.class);
+                TaskRepository.class);
+            final WorkflowManager workflowManager = cdiUtil.findBean(
+                WorkflowManager.class);
+            final TaskManager taskManager = cdiUtil.findBean(TaskManager.class);
+            final AssignableTaskManager assignableTaskManager = cdiUtil
+                .findBean(AssignableTaskManager.class);
+            final Shiro shiro = cdiUtil.findBean(Shiro.class);
+            final ConfigurationManager confManager = cdiUtil.findBean(
+                ConfigurationManager.class);
+            final KernelConfig kernelConfig = confManager.findConfiguration(
+                KernelConfig.class);
 
             if (requiresApproval(task)) {
                 LOGGER.debug("The task requires approval; checking to see "
-                                     + "if it's approved");
+                                 + "if it's approved");
 
                 // XXX I think the fact that this returns a Boolean is
                 // the effect of broken parameter marshalling in
@@ -179,75 +197,77 @@ public final class TaskFinishForm extends CommentAddForm {
                 if (isApproved.equals(Boolean.TRUE)) {
                     LOGGER.debug("The task is approved; finishing the task");
 
-                    final Shiro shiro = cdiUtil.findBean(Shiro.class);
-                    final WorkflowManager workflowManager = cdiUtil.findBean(
-                            WorkflowManager.class);
-
-                    task.setActive(false);
+                    taskManager.finish(task);
                     finishedTask = true;
                 } else {
                     LOGGER.debug("The task is rejected; reenabling dependent "
-                                         + "tasks");
+                                     + "tasks");
 
                     // Reenable the previous tasks.
-                    final Iterator<Task> iter = task.getDependentTasks().
-                            iterator();
+                    for (final Task dependent : task.getDependentTasks()) {
+                        LOGGER.debug("Reenabling task {}",
+                                     dependent.getLabel().getValue(
+                                         kernelConfig.getDefaultLocale()));
 
-                    while (iter.hasNext()) {
-                        final Task dependent = (Task) iter.next();
-
-                        if (LOGGER.isDebugEnabled()) {
-                            LOGGER.debug("Reenabling task " + dependent.
-                                    getLabel());
-                        }
-
-                        dependent.setActive(true);
-
-                        taskRepo.save(dependent);
+                        taskManager.enable(dependent);
                     }
                 }
             } else {
-                LOGGER.debug("The task does not require approval; finishing "
-                                     + "it");
+                LOGGER.debug("The task does not require approval; finishing it");
 
-                task.setActive(false);
-                taskRepo.save(task);
+                taskManager.disable(task);
             }
             if (finishedTask) {
-                Iterator tasks = Engine.getInstance(CMSEngine.CMS_ENGINE_TYPE).
-                        getEnabledTasks(Web.getWebContext().getUser(),
-                                        task.getParentID()).iterator();
-                if (tasks.hasNext()) {
-                    CmsTask thisTask = (CmsTask) tasks.next();
-                    PermissionDescriptor thisTaskAccess = new PermissionDescriptor(
-                            thisTask.getTaskType().getPrivilege(), task.
-                            getWorkflow().getObject(), user);
-                    if (PermissionService.checkPermission(thisTaskAccess)) {
+                final TaskFinishFormController controller = cdiUtil.findBean(
+                    TaskFinishFormController.class);
+                final Workflow workflow = task.getWorkflow();
+                final User user = shiro.getUser();
+                final List<AssignableTask> tasks = controller.findEnabledTasks(
+                    workflow);
+                for (final AssignableTask currentTask : tasks) {
+                    if (!(currentTask instanceof CmsTask)) {
+                        continue;
+                    }
 
-                        // Lock task for user
-                        thisTask.lock((User) user);
-                        int targetTab = (thisTask.getTaskType().getID().equals(CmsTaskTypeOld.DEPLOY)) ? ContentItemPage.PUBLISHING_TAB : ContentItemPage.AUTHORING_TAB;
-                        throw new RedirectSignal(URL.there(state.getRequest(),
-                                                           ContentItemPage.
-                                                                   getItemURL(
-                                                                           task.
-                                                                                   getItem(),
-                                                                           targetTab)),
-                                                 true);
+                    final CmsTask currentCmsTask = (CmsTask) currentTask;
+                    final String privilege = currentCmsTask.getTaskType()
+                        .getPrivilege();
+                    if (permissionChecker.isPermitted(privilege,
+                                                      workflow.getObject())) {
+                        //Lock task for current user
+                        assignableTaskManager.lockTask(currentCmsTask);
+
+                        if (CmsTaskType.DEPLOY == currentCmsTask.getTaskType()) {
+
+                        } else {
+                            throw new RedirectSignal(
+                                URL.there(state.getRequest(),
+                                          ContentItemPage.getItemURL(
+                                              item,
+                                              ContentItemPage.PUBLISHING_TAB)),
+                                true);
+                        }
+
                     }
                 }
+
                 // redirect to /content-center if streamlined creation mode is active.
-                if (ContentSection.getConfig().getUseStreamlinedCreation()) {
-                    throw new RedirectSignal(URL.there(state.getRequest(),
-                                                       ContentCenter.getURL()),
-                                             true);
+                final CMSConfig cmsConfig = confManager.findConfiguration(
+                    CMSConfig.class);
+                if (cmsConfig.isUseStreamlinedCreation()) {
+                    throw new RedirectSignal(
+                        URL.there(state.getRequest(),
+                                  CmsConstants.CONTENT_CENTER_URL),
+                        true);
                 }
 
             }
         }
+
     }
 
     private static boolean requiresApproval(final CmsTask task) {
-        return !task.getTaskType().getID().equals(CmsTaskTypeOld.AUTHOR);
+        return task.getTaskType() != CmsTaskType.AUTHOR;
     }
+
 }

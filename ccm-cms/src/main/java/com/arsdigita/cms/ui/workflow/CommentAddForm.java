@@ -24,10 +24,13 @@ import com.arsdigita.bebop.event.FormProcessListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.bebop.form.TextArea;
 import com.arsdigita.cms.ui.BaseForm;
+
 import org.librecms.workflow.CmsTask;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.workflow.TaskComment;
+import org.libreccm.workflow.TaskManager;
 import org.libreccm.workflow.TaskRepository;
 
 /**
@@ -69,9 +72,8 @@ class CommentAddForm extends BaseForm {
             final CmsTask task = selectedTask.getTask(state);
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final TaskRepository taskRepo = cdiUtil.findBean(TaskRepository.class);
-
-            task.addComment((String)comment.getValue(state));
-            taskRepo.save(task);
+            final TaskManager taskManager = cdiUtil.findBean(TaskManager.class);
+            taskManager.addComment(task, (String) comment.getValue(state));
         }
     }
 }

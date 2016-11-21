@@ -28,25 +28,19 @@ import com.arsdigita.bebop.event.ActionListener;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.toolbox.ui.ActionGroup;
 import com.arsdigita.toolbox.ui.Section;
-import com.arsdigita.web.Web;
 
 import org.libreccm.workflow.Workflow;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
-import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.Shiro;
-import org.libreccm.workflow.Task;
 import org.libreccm.workflow.AssignableTask;
+import org.libreccm.workflow.AssignableTaskManager;
 import org.libreccm.workflow.AssignableTaskRepository;
-import org.libreccm.workflow.WorkflowConstants;
 import org.libreccm.workflow.WorkflowManager;
-import org.libreccm.workflow.WorkflowRepository;
+import org.libreccm.workflow.WorkflowState;
 import org.librecms.CmsConstants;
 import org.librecms.workflow.CmsTask;
-import org.librecms.workflow.CmsTaskTypeOld;
+import org.librecms.workflow.CmsTaskType;
 
 import java.util.List;
 
@@ -94,8 +88,8 @@ public final class AssignedTaskSection extends Section {
 
         @Override
         public final boolean isVisible(final PageState state) {
-            return m_facade.workflowState(state, WorkflowConstants.INIT) 
-                   || m_facade.workflowState(state, WorkflowConstants.STOPPED);
+            return m_facade.workflowState(state, WorkflowState.INIT)
+                       || m_facade.workflowState(state, WorkflowState.STOPPED);
         }
 
         private class Listener implements ActionListener {
@@ -119,9 +113,9 @@ public final class AssignedTaskSection extends Section {
 
         @Override
         public final boolean isVisible(final PageState state) {
-            return m_facade.workflowState(state, WorkflowConstants.STARTED) 
-                   && m_facade.tasksExist(state)
-                   && !m_facade.tasksLocked(state);
+            return m_facade.workflowState(state, WorkflowState.STARTED)
+                       && m_facade.tasksExist(state)
+                       && !m_facade.tasksLocked(state);
         }
 
         private class Listener implements ActionListener {
@@ -145,9 +139,9 @@ public final class AssignedTaskSection extends Section {
 
         @Override
         public final boolean isVisible(final PageState state) {
-            return m_facade.workflowState(state, WorkflowConstants.STARTED) 
-                   && m_facade.tasksExist(state)
-                   && m_facade.tasksLocked(state);
+            return m_facade.workflowState(state, WorkflowState.STARTED)
+                       && m_facade.tasksExist(state)
+                       && m_facade.tasksLocked(state);
         }
 
         private class Listener implements ActionListener {
@@ -177,23 +171,24 @@ public final class AssignedTaskSection extends Section {
             protected final Object initialValue(final PageState state) {
                 final Workflow workflow = m_flow.getWorkflow(state);
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-                final AssignableTaskRepository userTaskRepo = cdiUtil.findBean(AssignableTaskRepository.class);
+                final AssignableTaskRepository userTaskRepo = cdiUtil.findBean(
+                    AssignableTaskRepository.class);
                 final Shiro shiro = cdiUtil.findBean(Shiro.class);
-                return userTaskRepo.findEnabledTasksForWorkflow(shiro.getUser(), 
+                return userTaskRepo.findEnabledTasksForWorkflow(shiro.getUser(),
                                                                 workflow);
             }
 
             @SuppressWarnings("unchecked")
             final List<AssignableTask> getTasks(final PageState state) {
-                return (ArrayList<AssignableTask>) get(state);
+                return (List<AssignableTask>) get(state);
             }
 
         }
 
         final void restartWorkflow(final PageState state) {
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-                final WorkflowManager workflowManager = cdiUtil.findBean(
-                    WorkflowManager.class);
+            final WorkflowManager workflowManager = cdiUtil.findBean(
+                WorkflowManager.class);
             final Workflow workflow = m_flow.getWorkflow(state);
             workflowManager.start(workflow);
 
@@ -205,42 +200,43 @@ public final class AssignedTaskSection extends Section {
 
         final void lockTasks(final PageState state) {
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final WorkflowManager workflowManager = cdiUtil.findBean(WorkflowManager.class);
-            
-            for(final AssignableTask task : m_tasks.getTasks(state)) {
+            final AssignableTaskManager taskManager = cdiUtil.findBean(
+                AssignableTaskManager.class);
+
+            for (final AssignableTask task : m_tasks.getTasks(state)) {
                 if (relevant(task) && !task.isLocked()) {
-                    workflowManager.lockTask(task);
+                    taskManager.lockTask(task);
                 }
             }
         }
 
         final void unlockTasks(final PageState state) {
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final WorkflowManager workflowManager = cdiUtil.findBean(WorkflowManager.class);
-            
-            for(final AssignableTask task : m_tasks.getTasks(state)) {
+            final AssignableTaskManager taskManager = cdiUtil.findBean(
+                AssignableTaskManager.class);
+
+            for (final AssignableTask task : m_tasks.getTasks(state)) {
                 if (relevant(task) && task.isLocked()) {
-                    workflowManager.unlockTask(task);
+                    taskManager.unlockTask(task);
                 }
             }
         }
 
         final boolean tasksLocked(final PageState state) {
-            for(final AssignableTask task : m_tasks.getTasks(state)) {
+            for (final AssignableTask task : m_tasks.getTasks(state)) {
                 if (relevant(task) && !task.isLocked()) {
                     return false;
                 }
             }
-            
+
             return true;
         }
 
-        final boolean workflowState(final PageState state, int processState) {
-            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final WorkflowManager workflowManager = cdiUtil.findBean(WorkflowManager.class);
+        final boolean workflowState(final PageState state,
+                                    WorkflowState processState) {
             final Workflow workflow = m_flow.getWorkflow(state);
-            
-            return workflowManager.getState(workflow) == processState;
+
+            return workflow.getState() == processState;
         }
 
         final boolean tasksExist(final PageState state) {
@@ -248,11 +244,15 @@ public final class AssignedTaskSection extends Section {
         }
 
         private boolean relevant(final AssignableTask task) {
-            return true;
-            
-//            ToDo
-//            return task.getTaskType().getID().equals(CMSTaskType.AUTHOR)
-//                       || task.getTaskType().getID().equals(CMSTaskType.EDIT);
+            if (task instanceof CmsTask) {
+                final CmsTask cmsTask = (CmsTask) task;
+
+                return cmsTask.getTaskType() == CmsTaskType.AUTHOR
+                           || cmsTask.getTaskType() == CmsTaskType.EDIT;
+            } else {
+                return false;
+            }
+
         }
 
     }

@@ -46,12 +46,13 @@ import com.arsdigita.web.Web;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.Shiro;
 import org.libreccm.workflow.Task;
+import org.libreccm.workflow.TaskManager;
 import org.libreccm.workflow.TaskRepository;
 import org.libreccm.workflow.Workflow;
 import org.libreccm.workflow.WorkflowManager;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.privileges.AdminPrivileges;
-import org.librecms.workflow.CmsTaskTypeRepository;
+import org.librecms.workflow.CmsTaskType;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -151,10 +152,8 @@ abstract class BaseWorkflowItemPane extends BaseItemPane {
             final Shiro shiro = cdiUtil.findBean(Shiro.class);
             final User currentUser = shiro.getUser();
 
-            boolean visible = task.isLocked()
-                                  && (lockingUser == null
-                                      || lockingUser.equals(currentUser));
-            return visible;
+            return task.isLocked() && (lockingUser == null
+                                       || lockingUser.equals(currentUser));
         }
 
         private class Listener implements ActionListener {
@@ -164,18 +163,17 @@ abstract class BaseWorkflowItemPane extends BaseItemPane {
                 final PageState state = event.getPageState();
 
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-                final WorkflowManager workflowManager = cdiUtil.findBean(
-                    WorkflowManager.class);
+                final TaskManager taskManager = cdiUtil.findBean(TaskManager.class);
 
                 final Task task = m_task.getTask(state);
-                task.setTaskState("finished");
-
+                taskManager.finish(task);
             }
 
         }
 
     }
 
+    @Override
     public void reset(final PageState state) {
         super.reset(state);
 
@@ -211,14 +209,10 @@ abstract class BaseWorkflowItemPane extends BaseItemPane {
 
         @Override
         protected final Object initialValue(final PageState state) {
-            final String id = m_tasks.getRowSelectionModel().getSelectedKey(
+            final String key = m_tasks.getRowSelectionModel().getSelectedKey(
                 state).toString();
 
-            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final CmsTaskTypeRepository taskRepo = cdiUtil.findBean(
-                CmsTaskTypeRepository.class);
-
-            return taskRepo.findById(Long.parseLong(id));
+            return CmsTaskType.valueOf(key);
         }
 
     }
@@ -237,8 +231,6 @@ abstract class BaseWorkflowItemPane extends BaseItemPane {
                                     ActionGroup.EDIT);
             m_actionGroup.addAction(new AdminVisible(deleteLink),
                                     ActionGroup.DELETE);
-//            m_actionGroup.addAction(new AdminVisible(new StartLink()));
-//            m_actionGroup.addAction(new AdminVisible(new StopLink()));
         }
 
         private class Properties extends PropertyList {
@@ -247,20 +239,20 @@ abstract class BaseWorkflowItemPane extends BaseItemPane {
             protected final List<Property> properties(final PageState state) {
                 @SuppressWarnings("unchecked")
                 final List<Property> props = super.properties(state);
-                final Workflow flow = (Workflow) m_workflow.get(state);
+                final Workflow workflow = (Workflow) m_workflow.get(state);
 
                 final KernelConfig kernelConfig = KernelConfig.getConfig();
                 final Locale defaultLocale = kernelConfig.getDefaultLocale();
 
                 props.add(new Property(gz("cms.ui.name"),
-                                       flow.getName().getValue(defaultLocale)));
+                                       workflow.getName().getValue(defaultLocale)));
                 props.add(new Property(
                     gz("cms.ui.description"),
-                    flow.getDescription().getValue(defaultLocale)));
-//                props.add(new Property(gz("cms.ui.workflow.current_state"),
-//                                       flow.getStateString()));
+                    workflow.getDescription().getValue(defaultLocale)));
+                props.add(new Property(gz("cms.ui.workflow.current_state"),
+                                       workflow.getState().toString()));
                 props.add(new Property(gz("cms.ui.workflow.num_tasks"),
-                                       String.valueOf(flow.getTasks().size())));
+                                       String.valueOf(workflow.getTasks().size())));
 
                 return props;
             }

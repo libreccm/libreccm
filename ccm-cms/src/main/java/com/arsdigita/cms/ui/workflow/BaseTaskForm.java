@@ -15,36 +15,36 @@
 package com.arsdigita.cms.ui.workflow;
 
 import com.arsdigita.bebop.FormProcessException;
-import com.arsdigita.bebop.PageState;
+import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.bebop.event.FormValidationListener;
+import com.arsdigita.bebop.event.PrintEvent;
+import com.arsdigita.bebop.event.PrintListener;
 import com.arsdigita.bebop.form.CheckboxGroup;
+import com.arsdigita.bebop.form.Option;
 import com.arsdigita.bebop.form.OptionGroup;
 import com.arsdigita.bebop.form.SingleSelect;
 import com.arsdigita.bebop.form.TextArea;
 import com.arsdigita.bebop.form.TextField;
 import com.arsdigita.bebop.parameters.IntegerParameter;
 import com.arsdigita.cms.ui.BaseForm;
-import com.arsdigita.cms.ui.ListOptionPrintListener;
-
-import org.librecms.workflow.CmsTaskTypeOld;
 
 import com.arsdigita.globalization.GlobalizedMessage;
-import com.arsdigita.kernel.KernelConfig;
+import com.arsdigita.util.UncheckedWrapperException;
 
 import org.apache.logging.log4j.LogManager;
 import org.libreccm.workflow.Task;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.workflow.CircularTaskDependencyException;
+import org.libreccm.workflow.TaskManager;
 import org.libreccm.workflow.TaskRepository;
-import org.libreccm.workflow.WorkflowManager;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.privileges.AdminPrivileges;
-import org.librecms.workflow.CmsTaskTypeRepository;
+import org.librecms.workflow.CmsTaskType;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.TooManyListenersException;
 import java.util.stream.Collectors;
@@ -54,9 +54,6 @@ import java.util.stream.Collectors;
  * @author <a href="jross@redhat.com">Justin Ross</a>
  */
 class BaseTaskForm extends BaseForm {
-
-    private static final Logger LOGGER = LogManager
-        .getLogger(BaseTaskForm.class);
 
     final WorkflowRequestLocal m_workflow;
 
@@ -81,7 +78,7 @@ class BaseTaskForm extends BaseForm {
         try {
             m_type.addPrintListener(new TaskTypePrintListener());
         } catch (TooManyListenersException ex) {
-            throw new RuntimeException(ex);
+            throw new UncheckedWrapperException(ex);
         }
 
         m_description = new Description("desc", 4000, true);
@@ -142,30 +139,19 @@ class BaseTaskForm extends BaseForm {
     }
      */
     // Fix this one too
-    private class TaskTypePrintListener extends ListOptionPrintListener<CmsTaskTypeOld> {
+    private class TaskTypePrintListener implements PrintListener {
 
         @Override
-        protected List<CmsTaskTypeOld> getDataQuery(final PageState state) {
-            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final CmsTaskTypeRepository taskTypeRepo = cdiUtil.findBean(
-                CmsTaskTypeRepository.class);
+        public void prepare(final PrintEvent event) {
+            final OptionGroup target = (OptionGroup) event.getTarget();
 
-            final List<CmsTaskTypeOld> taskTypes = taskTypeRepo.findAll();
+            for (final CmsTaskType type : CmsTaskType.values()) {
+                final GlobalizedMessage label = new GlobalizedMessage(
+                    String.format("cms.workflow.task_type.%s", type.toString()),
+                    CmsConstants.CMS_BUNDLE);
 
-            return taskTypes;
-
-        }
-
-        @Override
-        public String getKey(final CmsTaskTypeOld taskType) {
-            return Long.toString(taskType.getTaskTypeId());
-        }
-
-        @Override
-        public String getValue(final CmsTaskTypeOld taskType) {
-            final KernelConfig kernelConfig = KernelConfig.getConfig();
-            final Locale defaultLocale = kernelConfig.getDefaultLocale();
-            return taskType.getName().getValue(defaultLocale);
+                target.addOption(new Option(type.toString(), new Label(label)));
+            }
         }
 
     }
@@ -176,6 +162,7 @@ class BaseTaskForm extends BaseForm {
      * new ones in since it is possible that Tasks will fire events when
      * dependencies are added and removed.
      *
+     * XXX domlay
      */
     final void processDependencies(final Task task,
                                    final String[] selectedDependencies) {
@@ -188,8 +175,7 @@ class BaseTaskForm extends BaseForm {
 
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final TaskRepository taskRepo = cdiUtil.findBean(TaskRepository.class);
-        final WorkflowManager workflowManager = cdiUtil.findBean(
-            WorkflowManager.class);
+        final TaskManager taskManager = cdiUtil.findBean(TaskManager.class);
 
         Long selectedId;
         Object addedTask;
@@ -203,11 +189,17 @@ class BaseTaskForm extends BaseForm {
             }
         }
 
-        toRemove.values().forEach(taskToRemove -> workflowManager
-            .removeDependentTask(task, taskToRemove));
+        for (final Task taskToRemove : toRemove.values()) {
+            taskManager.removeDependentTask(task, taskToRemove);
+        }
 
-        toAdd.values().forEach(tasktoAdd -> workflowManager
-            .addDependentTask(task, tasktoAdd));
+        for (final Task taskToAdd : toAdd.values()) {
+            try {
+            taskManager.addDependentTask(task, taskToAdd);
+            } catch(CircularTaskDependencyException ex) {
+                throw new UncheckedWrapperException(ex);
+            }
+        }
     }
 
 }

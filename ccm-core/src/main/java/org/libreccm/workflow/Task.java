@@ -107,7 +107,7 @@ public class Task implements Identifiable, Serializable {
     @Column(name = "TASK_ID")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long taskId;
-    
+
     /**
      * The UUID of the task.
      */
@@ -205,11 +205,11 @@ public class Task implements Identifiable, Serializable {
     public String getUuid() {
         return uuid;
     }
-    
+
     protected void setUuid(final String uuid) {
         this.uuid = uuid;
     }
-    
+
     public LocalizedString getLabel() {
         return label;
     }
@@ -374,7 +374,7 @@ public class Task implements Identifiable, Serializable {
     public String toString(final String data) {
         return String.format("%s{ "
                                  + "taskId = %d, "
-            + "uuid = \"%s\", "
+                                 + "uuid = \"%s\", "
                                  + "label = %s, "
                                  + "active = %b, "
                                  + "taskState = \"%s\", "

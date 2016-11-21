@@ -20,7 +20,7 @@ package com.arsdigita.cms.ui.workflow;
 
 import com.arsdigita.bebop.FormProcessException;
 import com.arsdigita.bebop.PageState;
-import com.arsdigita.bebop.event.FormInitListener;
+import com.arsdigita.bebop.SingleSelectionModel;
 import com.arsdigita.bebop.event.FormProcessListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.bebop.event.PrintEvent;
@@ -36,29 +36,33 @@ import com.arsdigita.util.UncheckedWrapperException;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.workflow.Task;
+import org.libreccm.workflow.TaskManager;
 import org.libreccm.workflow.TaskRepository;
-import org.librecms.workflow.CmsTaskTypeOld;
-import org.librecms.workflow.CmsTaskTypeRepository;
+import org.libreccm.workflow.Workflow;
+import org.libreccm.workflow.WorkflowManager;
+import org.librecms.workflow.CmsTaskType;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.TooManyListenersException;
-import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @author Justin Ross
  */
-class TaskEditForm extends BaseTaskForm {
+class TaskAddForm extends BaseTaskForm {
 
-    private TaskRequestLocal m_task;
+    protected final static String ERROR_MSG
+                                      = "A workflow template with that name already exists in this content "
+                                        + "section.";
 
-    public TaskEditForm(final WorkflowRequestLocal workflow,
-                        final TaskRequestLocal task) {
-        super("task", gz("cms.ui.workflow.task.edit"), workflow);
+    private final SingleSelectionModel<Long> m_model;
 
-        m_task = task;
+    public TaskAddForm(final WorkflowRequestLocal workflow,
+                       final SingleSelectionModel<Long> model) {
+        super("task", gz("cms.ui.workflow.task.add"), workflow);
+
+        m_model = model;
 
         try {
             m_deps.addPrintListener(new DependencyPrinter());
@@ -66,7 +70,6 @@ class TaskEditForm extends BaseTaskForm {
             throw new UncheckedWrapperException(tmle);
         }
 
-        addInitListener(new InitListener());
         addProcessListener(new ProcessListener());
     }
 
@@ -78,43 +81,12 @@ class TaskEditForm extends BaseTaskForm {
             final List<Task> tasks = m_workflow.getWorkflow(state).getTasks();
 
             final OptionGroup options = (OptionGroup) event.getTarget();
+            final KernelConfig kernelConfig = KernelConfig.getConfig();
+            final Locale defaultLocale = kernelConfig.getDefaultLocale();
 
-            tasks.forEach(task -> addOption(task, state, options));
-        }
-
-    }
-
-    private void addOption(final Task task,
-                           final PageState state,
-                           final OptionGroup options) {
-        final KernelConfig kernelConfig = KernelConfig.getConfig();
-        final Locale defaultLocale = kernelConfig.getDefaultLocale();
-        if (m_task.getTask(state).getTaskId() != task.getTaskId()) {
-            options.addOption(new Option(
+            tasks.forEach(task -> options.addOption(new Option(
                 Long.toString(task.getTaskId()),
-                task.getLabel().getValue(defaultLocale)));
-        }
-    }
-
-    private class InitListener implements FormInitListener {
-
-        @Override
-        public final void init(final FormSectionEvent event)
-            throws FormProcessException {
-            final PageState state = event.getPageState();
-            final CmsTask task = m_task.getTask(state);
-
-            m_name.setValue(state, task.getLabel());
-            m_description.setValue(state, task.getDescription());
-            m_type.setValue(state, Long.toString(task.getTaskType()
-                            .getTaskTypeId()));
-
-            final List<Task> dependencies = task.getDependsOn();
-            final List<String> depIdList =  dependencies.stream()
-                .map(dependency -> Long.toString(dependency.getTaskId()))
-                .collect(Collectors.toList());
-
-            m_deps.setValue(state, depIdList.toArray());
+                task.getLabel().getValue(defaultLocale))));
         }
 
     }
@@ -124,14 +96,18 @@ class TaskEditForm extends BaseTaskForm {
         @Override
         public final void process(final FormSectionEvent event)
             throws FormProcessException {
+
             final PageState state = event.getPageState();
-            final CmsTask task = m_task.getTask(state);
+
+            final Workflow workflow = m_workflow.getWorkflow(state);
+            final CmsTask task = new CmsTask();
 
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final TaskRepository taskRepo = cdiUtil.findBean(
                 TaskRepository.class);
-            final CmsTaskTypeRepository taskTypeRepo = cdiUtil.findBean(
-                CmsTaskTypeRepository.class);
+            final WorkflowManager workflowManager = cdiUtil.findBean(
+                WorkflowManager.class);
+            final TaskManager taskManager = cdiUtil.findBean(TaskManager.class);
             final ConfigurationManager confManager = cdiUtil.findBean(
                 ConfigurationManager.class);
             final KernelConfig kernelConfig = confManager.findConfiguration(
@@ -139,18 +115,22 @@ class TaskEditForm extends BaseTaskForm {
             final Locale defaultLocale = kernelConfig.getDefaultLocale();
 
             task.getLabel().addValue(defaultLocale,
-                                     (String) m_name.getValue(state));
+                                     ((String) m_name.getValue(state)));
             task.getDescription().addValue(
                 defaultLocale,
-                (String) m_description.getValue(state));
-
-            final CmsTaskTypeOld taskType = taskTypeRepo.findById((Long) m_type
-                .getValue(state));
+                ((String) m_description.getValue(state)));
+            
+            final CmsTaskType taskType = CmsTaskType.valueOf((String) m_type.getValue(state));
             task.setTaskType(taskType);
+            task.setActive(true);
 
             taskRepo.save(task);
 
+            taskManager.addTask(workflow, task);
+            
             processDependencies(task, (String[]) m_deps.getValue(state));
+
+            m_model.setSelectedKey(state, task.getTaskId());
         }
 
     }

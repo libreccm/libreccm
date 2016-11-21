@@ -42,13 +42,13 @@ import org.librecms.workflow.CmsTask;
 
 import com.arsdigita.globalization.GlobalizedMessage;
 
-
 import com.arsdigita.util.UncheckedWrapperException;
 
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.PermissionChecker;
 import org.libreccm.security.Role;
 import org.libreccm.security.RoleRepository;
+import org.libreccm.workflow.AssignableTaskManager;
 import org.libreccm.workflow.TaskAssignment;
 import org.libreccm.workflow.WorkflowManager;
 import org.librecms.CmsConstants;
@@ -109,7 +109,7 @@ class TaskAddRole extends CMSForm {
             final List<Role> roles = assignments.stream()
                 .map(TaskAssignment::getRole)
                 .collect(Collectors.toList());
-            
+
             m_roles.setValue(state, roles);
         }
 
@@ -125,13 +125,14 @@ class TaskAddRole extends CMSForm {
                 final CmsTask task = m_task.getTask(state);
 
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-                final WorkflowManager workflowManager = cdiUtil.findBean(
-                    WorkflowManager.class);
+                final AssignableTaskManager taskManager = cdiUtil.findBean(
+                    AssignableTaskManager.class);
                 final RoleRepository roleRepository = cdiUtil.findBean(
                     RoleRepository.class);
 
-                task.getAssignments().forEach(assignment -> workflowManager
-                    .retractTask(task, assignment.getRole()));
+                task.getAssignments().forEach(assignment -> {
+                    taskManager.retractTask(task, assignment.getRole());
+                });
 
                 final String[] roleIds = (String[]) m_roles.getValue(state);
 
@@ -139,7 +140,7 @@ class TaskAddRole extends CMSForm {
                     for (final String roleId : roleIds) {
                         final Role role = roleRepository.findById(Long
                             .parseLong(roleId));
-                        workflowManager.assignTask(task, role);
+                        taskManager.assignTask(task, role);
                     }
                 }
             }
@@ -199,10 +200,6 @@ class TaskAddRole extends CMSForm {
 
     private static GlobalizedMessage gz(final String key) {
         return new GlobalizedMessage(key, CmsConstants.CMS_BUNDLE);
-    }
-
-    private static String lz(final String key) {
-        return (String) gz(key).localize();
     }
 
 }

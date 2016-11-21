@@ -50,6 +50,7 @@ import org.libreccm.security.RoleRepository;
 import org.libreccm.security.Shiro;
 import org.libreccm.workflow.Task;
 import org.libreccm.workflow.AssignableTask;
+import org.libreccm.workflow.AssignableTaskManager;
 import org.libreccm.workflow.WorkflowManager;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.privileges.AdminPrivileges;
@@ -167,13 +168,13 @@ final class TaskItemPane extends BaseItemPane {
                 final CmsTask task = m_task.getTask(state);
 
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-                final WorkflowManager workflowManager = cdiUtil.findBean(
-                    WorkflowManager.class);
+                final AssignableTaskManager taskManager = cdiUtil.findBean(
+                    AssignableTaskManager.class);
                 final Shiro shiro = cdiUtil.findBean(Shiro.class);
 
                 final User user = shiro.getUser();
 
-                final List<AssignableTask> tasks = workflowManager.lockedBy(user);
+                final List<AssignableTask> tasks = taskManager.lockedBy(user);
 
                 return tasks.contains(task);
             }
@@ -256,9 +257,9 @@ final class TaskItemPane extends BaseItemPane {
                     if (hasAdmin(state)) {
                         final CmsTask task = m_task.getTask(state);
                         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-                        final WorkflowManager workflowManager = cdiUtil
-                            .findBean(WorkflowManager.class);
-                        workflowManager.lockTask(task);
+                        final AssignableTaskManager taskManager = cdiUtil
+                            .findBean(AssignableTaskManager.class);
+                        taskManager.lockTask(task);
                     }
                 }
 
@@ -290,9 +291,9 @@ final class TaskItemPane extends BaseItemPane {
                     if (hasAdmin(state)) {
                         final CmsTask task = m_task.getTask(state);
                         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-                        final WorkflowManager workflowManager = cdiUtil
-                            .findBean(WorkflowManager.class);
-                        workflowManager.unlockTask(task);
+                        final AssignableTaskManager taskManager = cdiUtil
+                            .findBean(AssignableTaskManager.class);
+                        taskManager.unlockTask(task);
                     }
                 }
 
@@ -319,7 +320,7 @@ final class TaskItemPane extends BaseItemPane {
                 props.add(new Property(gz("cms.ui.workflow.task.dependencies"),
                                        deps(task)));
                 props.add(new Property(gz("cms.ui.workflow.task.state"),
-                                       task.getTaskState()));
+                                       task.getTaskState().toString()));
                 props.add(new Property(gz("cms.ui.workflow.task.locked"),
                                        task.isLocked()
                                            ? lz("cms.ui.yes") : lz("cms.ui.no")));
@@ -334,7 +335,7 @@ final class TaskItemPane extends BaseItemPane {
 
                 return dependencies.stream()
                     .map(dependency -> dependency.getLabel().getValue(
-                        defaultLocale))
+                    defaultLocale))
                     .collect(Collectors.joining(", "));
             }
 
@@ -383,13 +384,13 @@ final class TaskItemPane extends BaseItemPane {
                                 .getRowKey());
 
                             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-                            final WorkflowManager workflowManager = cdiUtil
-                                .findBean(WorkflowManager.class);
+                            final AssignableTaskManager taskManager = cdiUtil
+                                .findBean(AssignableTaskManager.class);
                             final RoleRepository roleRepo = cdiUtil.findBean(
                                 RoleRepository.class);
 
                             final Role role = roleRepo.findById(roleId);
-                            workflowManager.retractTask(task, role);
+                            taskManager.retractTask(task, role);
                         }
                     }
                 }
