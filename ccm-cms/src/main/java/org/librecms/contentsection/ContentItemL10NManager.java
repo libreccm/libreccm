@@ -134,6 +134,13 @@ public class ContentItemL10NManager {
 
         return collectLanguages(item).contains(locale);
     }
+    
+    @Transactional(Transactional.TxType.REQUIRED)
+    public Set<Locale> creatableLocales(final ContentItem item) {
+        return supportedLocales.stream()
+                .filter(locale -> hasLanguage(item, locale))
+                .collect(Collectors.toSet());
+    }
 
     /**
      * Adds a language to a content item. The method will retrieve all fields of
