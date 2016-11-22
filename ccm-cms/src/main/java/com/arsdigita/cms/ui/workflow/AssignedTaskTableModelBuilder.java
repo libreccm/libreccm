@@ -26,12 +26,12 @@ import com.arsdigita.util.Assert;
 
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.workflow.Workflow;
-import org.libreccm.workflow.WorkflowConstants;
 import org.libreccm.workflow.WorkflowManager;
 import org.librecms.CmsConstants;
 
 import java.util.Collections;
 import java.util.Iterator;
+import org.libreccm.workflow.WorkflowState;
 
 /**
  *
@@ -62,7 +62,7 @@ class AssignedTaskTableModelBuilder extends AbstractTableModelBuilder {
             final CdiUtil cdiUtil= CdiUtil.createCdiUtil();
             final WorkflowManager workflowManager = cdiUtil.findBean(WorkflowManager.class);
     
-            if (workflowManager.getState(workflow) == WorkflowConstants.STARTED) {
+            if (workflow.getState() == WorkflowState.STARTED) {
                 final AssignedTaskController controller = cdiUtil.findBean(
                     AssignedTaskController.class);
                 m_iter = controller.getAssignedTasks(workflow).iterator();

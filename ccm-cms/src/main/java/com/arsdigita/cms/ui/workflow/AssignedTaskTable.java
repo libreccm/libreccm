@@ -29,22 +29,17 @@ import com.arsdigita.bebop.event.TableActionEvent;
 import com.arsdigita.bebop.table.DefaultTableCellRenderer;
 import com.arsdigita.bebop.table.TableCellRenderer;
 
-import org.librecms.workflow.CmsTask;
 
 import com.arsdigita.globalization.GlobalizedMessage;
-import com.arsdigita.web.Web;
 
-import java.math.BigDecimal;
-
-import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.Shiro;
 import org.libreccm.security.User;
 import org.libreccm.workflow.AssignableTask;
+import org.libreccm.workflow.AssignableTaskManager;
 import org.libreccm.workflow.AssignableTaskRepository;
 import org.libreccm.workflow.WorkflowManager;
 import org.librecms.CmsConstants;
-import org.librecms.workflow.CmsTaskTypeRepository;
 
 public final class AssignedTaskTable extends Table {
 
@@ -70,21 +65,25 @@ public final class AssignedTaskTable extends Table {
             final int column = event.getColumn();
 
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final AssignableTaskRepository userTaskRepo = cdiUtil.findBean(AssignableTaskRepository.class);
-            final WorkflowManager workflowManager = cdiUtil.findBean(WorkflowManager.class);
+            final AssignableTaskRepository userTaskRepo = cdiUtil.findBean(
+                    AssignableTaskRepository.class);
+            final WorkflowManager workflowManager = cdiUtil.findBean(
+                    WorkflowManager.class);
+            final AssignableTaskManager taskManager = cdiUtil.findBean(
+                    AssignableTaskManager.class);
             final Shiro shiro = cdiUtil.findBean(Shiro.class);
 
             if (column == 1) {
                 final AssignableTask task = userTaskRepo.findById((Long) event
-                    .getRowKey());
+                        .getRowKey());
                 final User currentUser = shiro.getUser();
                 final User lockingUser = task.getLockingUser();
                 if (task.isLocked()
-                        && lockingUser != null
-                        && lockingUser.equals(currentUser)) {
-                    workflowManager.unlockTask(task);
+                            && lockingUser != null
+                            && lockingUser.equals(currentUser)) {
+                    taskManager.unlockTask(task);
                 } else {
-                    workflowManager.lockTask(task);
+                    taskManager.lockTask(task);
                 }
             }
         }
@@ -98,31 +97,31 @@ public final class AssignedTaskTable extends Table {
                                             final PageState state,
                                             final Object value,
                                             final boolean isSelected,
-                                            final Object key, 
+                                            final Object key,
                                             final int row,
                                             final int column) {
             // SF patch [ 1587168 ] Show locking user
-            BoxPanel p = new BoxPanel();
-            User lockingUser = (User) value;
+            final BoxPanel panel = new BoxPanel();
+            final User lockingUser = (User) value;
             if (lockingUser != null) {
                 final StringBuilder sb = new StringBuilder("Locked by <br />");
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
                 final Shiro shiro = cdiUtil.findBean(Shiro.class);
                 if (lockingUser.equals(shiro.getUser())) {
                     sb.append("you");
-                    p.add(new ControlLink(new Label(
-                        gz("cms.ui.workflow.task.unlock"))));
+                    panel.add(new ControlLink(new Label(
+                            gz("cms.ui.workflow.task.unlock"))));
                 } else {
                     sb.append(lockingUser.getName());
-                    p.add(new ControlLink(new Label(
-                        gz("cms.ui.workflow.task.takeover"))));
+                    panel.add(new ControlLink(new Label(
+                            gz("cms.ui.workflow.task.takeover"))));
                 }
-                p.add(new Label(sb.toString(), false));
+                panel.add(new Label(sb.toString(), false));
             } else {
-                p.add(new ControlLink(
-                    new Label(gz("cms.ui.workflow.task.lock"))));
+                panel.add(new ControlLink(
+                        new Label(gz("cms.ui.workflow.task.lock"))));
             }
-            return p;
+            return panel;
         }
 
     }
