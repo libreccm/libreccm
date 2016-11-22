@@ -24,7 +24,7 @@ import java.util.NoSuchElementException;
 /**
  * Convenience extensions to {@link javax.swing.event.EventListenerList
  * Swing's <code>EventListenerList</code>}.
- * @version $Id$
+ *
  */
 public class EventListenerList extends javax.swing.event.EventListenerList {
 

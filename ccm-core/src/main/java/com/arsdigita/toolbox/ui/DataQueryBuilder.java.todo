@@ -1,0 +1,71 @@
+/*
+ * Copyright (C) 2001-2004 Red Hat Inc. All Rights Reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public License
+ * as published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ */
+package com.arsdigita.toolbox.ui;
+
+import com.arsdigita.util.Lockable;
+import com.arsdigita.bebop.PageState;
+
+import java.util.List;
+
+import javax.persistence.criteria.CriteriaQuery;
+
+/**
+ * This class is used by the {@link DataTable} class in order to construct a
+ * query during each request.
+ *
+ * In its original implementation this class used a {@code DataQuery}. Because
+ * this class is not longer available in JPA we had to change this class to use
+ * the JPA CriteriaQuery which is a rough equivalent in JPA. Also this class now
+ * uses generics.
+ *
+ * To create a {@link CriteriaQuery} the method
+ * {@link DataTableController#createQuery(java.lang.Class)} can be used. After
+ * the query is build
+ * {@link DataTableController#executeQuery(javax.persistence.criteria.CriteriaQuery)}
+ * can be used to execute the query. An instance of {@link DataTableController}
+ * can be obtained using the {@link org.libreccm.cdi.utils.CdiUtil} class.
+ *
+ * The abstract {@link AbstractDataQueryBuilder} can be used to avoid this
+ * boilerplate code. It provides the method
+ * {@link AbstractDataQueryBuilder#createBaseQuery(java.lang.Class)} which
+ * retrieves the {@link DataTableController} can creates a new
+ * {@link CriteriaQuery}.
+ *
+ * @param <T> the type of the entities the query should return.
+ */
+public interface DataQueryBuilder<T> extends Lockable {
+
+    /**
+     * Perform all necessary database operations and return a {@link List} for
+     * the {@link DataTable} to use.
+     *
+     * @param table the parent DataTable
+     * @param state the page state
+     *
+     * @return
+     */
+    CriteriaQuery<T> makeDataQuery(DataTable<T> table, PageState state);
+
+    /**
+     * @return the name of the column in the query that serves as the primary
+     *         key for the items
+     */
+    String getKeyColumn();
+
+}

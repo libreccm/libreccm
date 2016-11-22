@@ -18,7 +18,6 @@
  */
 package com.arsdigita.cms.ui.item;
 
-import com.arsdigita.bebop.*;
 import com.arsdigita.bebop.event.TableActionAdapter;
 import com.arsdigita.bebop.event.TableActionEvent;
 import com.arsdigita.bebop.table.TableCellRenderer;

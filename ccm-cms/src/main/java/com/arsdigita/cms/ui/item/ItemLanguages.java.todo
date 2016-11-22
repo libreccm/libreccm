@@ -48,7 +48,6 @@ import com.arsdigita.web.RedirectSignal;
 import com.arsdigita.web.URL;
 import org.libreccm.workflow.Workflow;
 import org.libreccm.workflow.WorkflowTemplate;
-import org.apache.log4j.Logger;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -71,8 +70,8 @@ public class ItemLanguages extends LayoutPanel {
     /**
      * Constructs a new <code>ItemLanguages</code>.
      *
-     * @param selectionModel the {@link ItemSelectionModel} which will supply the current
-     * item
+     * @param selectionModel the {@link ItemSelectionModel} which will supply
+     *                       the current item
      */
     public ItemLanguages(final ItemSelectionModel selectionModel) {
         this.selectionModel = selectionModel;
@@ -91,9 +90,11 @@ public class ItemLanguages extends LayoutPanel {
 
         form.setRedirecting(true);
         languageWidget = new LanguageWidget(ContentItem.LANGUAGE) {
+
             protected void setupOptions() {
                 // Don't do anything.
             }
+
         };
 
         try {
@@ -119,18 +120,20 @@ public class ItemLanguages extends LayoutPanel {
             final PageState state = e.getPageState();
             final OptionGroup optionGroup = (OptionGroup) e.getTarget();
             final ContentPage item = (ContentPage) selectionModel.
-                    getSelectedItem(state);
+                getSelectedItem(state);
             final Collection languages = LanguageUtil.convertToG11N(
-                    LanguageUtil.getCreatableLanguages(item));
+                LanguageUtil.getCreatableLanguages(item));
 
             for (Iterator iter = languages.iterator(); iter.hasNext();) {
                 final Pair pair = (Pair) iter.next();
                 final String langCode = (String) pair.getKey();
                 final GlobalizedMessage langName
-                                        = (GlobalizedMessage) pair.getValue();
+                                            = (GlobalizedMessage) pair
+                        .getValue();
                 optionGroup.addOption(new Option(langCode, new Label(langName)));
             }
         }
+
     }
 
     /**
@@ -139,10 +142,11 @@ public class ItemLanguages extends LayoutPanel {
     private class ProcessListener implements FormProcessListener {
 
         public final void process(final FormSectionEvent e)
-                throws FormProcessException {
+            throws FormProcessException {
             PageState state = e.getPageState();
             String lang = (String) languageWidget.getValue(state);
-            ContentPage item = (ContentPage) selectionModel.getSelectedItem(state);
+            ContentPage item = (ContentPage) selectionModel.getSelectedItem(
+                state);
             ContentBundle bundle = item.getContentBundle();
             String name = bundle.getName();
 
@@ -159,8 +163,8 @@ public class ItemLanguages extends LayoutPanel {
 
                 // Apply default workflow
                 WorkflowTemplate template
-                                 = ContentTypeWorkflowTemplate
-                                .getWorkflowTemplate(section, type);
+                                     = ContentTypeWorkflowTemplate
+                        .getWorkflowTemplate(section, type);
                 if (template != null) {
                     Workflow w = template.instantiateNewWorkflow();
                     w.setObjectID(item.getID());
@@ -172,8 +176,8 @@ public class ItemLanguages extends LayoutPanel {
 
                 // redirect to ContentItemPage.AUTHORING_TAB of the new instance
                 final String target = URL.getDispatcherPath() + ContentItemPage.
-                        getItemURL(item,
-                                   ContentItemPage.AUTHORING_TAB);
+                    getItemURL(item,
+                               ContentItemPage.AUTHORING_TAB);
 
                 throw new RedirectSignal(target, true);
             } else if (changeSubmit.isSelected(state)) {
@@ -191,6 +195,7 @@ public class ItemLanguages extends LayoutPanel {
                 }
             }
         }
+
     }
 
     protected static final GlobalizedMessage gz(final String key) {
@@ -200,4 +205,5 @@ public class ItemLanguages extends LayoutPanel {
     protected static final String lz(final String key) {
         return (String) gz(key).localize();
     }
+
 }

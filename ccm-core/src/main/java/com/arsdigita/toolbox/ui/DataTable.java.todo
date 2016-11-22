@@ -1,0 +1,978 @@
+/*
+ * Copyright (C) 2001-2004 Red Hat Inc. All Rights Reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public License
+ * as published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ */
+package com.arsdigita.toolbox.ui;
+
+import com.arsdigita.bebop.Page;
+import com.arsdigita.bebop.PageState;
+import com.arsdigita.bebop.PaginationModelBuilder;
+import com.arsdigita.bebop.Paginator;
+import com.arsdigita.bebop.ParameterSingleSelectionModel;
+import com.arsdigita.bebop.SingleSelectionModel;
+import com.arsdigita.bebop.Table;
+import com.arsdigita.bebop.Label;
+import com.arsdigita.bebop.ControlLink;
+import com.arsdigita.bebop.Component;
+import com.arsdigita.bebop.RequestLocal;
+import com.arsdigita.bebop.event.EventListenerList;
+import com.arsdigita.bebop.event.TableActionEvent;
+import com.arsdigita.bebop.event.TableActionListener;
+import com.arsdigita.bebop.table.DefaultTableCellRenderer;
+import com.arsdigita.bebop.table.DefaultTableColumnModel;
+import com.arsdigita.bebop.table.TableCellRenderer;
+import com.arsdigita.bebop.table.TableColumn;
+import com.arsdigita.bebop.table.TableColumnModel;
+import com.arsdigita.bebop.table.TableModel;
+import com.arsdigita.bebop.table.TableModelBuilder;
+import com.arsdigita.bebop.parameters.StringParameter;
+import com.arsdigita.util.LockableImpl;
+import com.arsdigita.util.Assert;
+
+import com.arsdigita.globalization.GlobalizedMessage;
+
+import com.arsdigita.xml.Element;
+
+import java.util.Iterator;
+import java.util.Map;
+import java.util.HashMap;
+
+import java.math.BigDecimal;
+
+import org.apache.log4j.Logger;
+import org.libreccm.cdi.utils.CdiUtil;
+
+import java.util.ResourceBundle;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Root;
+
+/**
+ * <h4>General</h4>
+ *
+ * Wraps any {@link List} in a sortable Bebop {@link Table}.
+ *
+ * The {@link List} is supplied by the {@link DataQueryBuilder} class, which the
+ * user must implement. The <code>DataQueryBuilder</code> may dynamically
+ * construct the query during each request, or return the same named query for
+ * each request; the <code>DataTable</code> does not care where the query comes
+ * from.
+ *
+ * This class may contain multiple {@link QueryListener}s. These listeners will
+ * be fired whenever the query is about to be performed, thus giving the user a
+ * chance to set additional filters on the query.
+ *
+ * Columns may be added to the <code>DataTable</code> by calling the
+ * {@link #addColumn} method. The user may choose to make the column sortable or
+ * non-sortable; sortable columns will appear as links on the Web page which,
+ * when clicked, will sort the table by the specified column. See the
+ * documentation on the various <code>addColumn</code> methods for more
+ * information.
+ *
+ *
+ * This class sets the XSL "class" attribute to "dataTable"
+ *
+ * <h4>Pagination</h4>
+ *
+ * <code>DataTable</code> also implements {@link PaginationModelBuilder}. This
+ * means that it could serve as the model builder for any {@link Paginator}
+ * component. Pagination of the query occurs after all the sorting and query
+ * events have finished. Consider a query which returns the rows "A B C D E F".
+ * If the paginator displays 3 rows per page, page 1 will contain "A B C" and
+ * page 2 will contain "D E F". If the user then clicks on the header in the
+ * <code>DataTable</code>, causing the query to be sorted in reverse order, page
+ * 1 will contain "F E D" and page 2 will contain "C B A". In order for
+ * pagination to work properly, the following pattern must be used:
+ *
+ * <blockquote><pre><code>
+ * DataTable table = new DataTable(...);
+ * Paginator paginator = new Paginator(table, ...);
+ * table.setPaginator(paginator);
+ * </code></pre></blockquote>
+ *
+ * The <code>setPaginator</code> call is required due to a design flaw in the
+ * <code>Paginator</code> component.
+ * <p>
+ *
+ * <h4>Globalization</h4>
+ *
+ * The <code>DataTable</code> will ordinarily interpret the labels of its column
+ * headers as plain text, and spit them out on the screen verbatim. However, if
+ * <code>setResouceBundle</code> is called, <code>DataTable</code> will instead
+ * interpret the column header labels as keys into the specified resource
+ * bundle, thus attempting to globalize the column headers at runtime.
+ * <p>
+ *
+ * @author Stanislav Freidin
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
+ * @param <T> Type of the entities in the table.
+ */
+public class DataTable<T> extends Table implements PaginationModelBuilder {
+
+    private DataQueryBuilder<T> dataQueryBuilder;
+    private SingleSelectionModel<String> orderModel;
+    private StringParameter dirParam;
+    private String resourceBundle;
+    private RequestLocal querySize;
+    private Paginator paginator;
+
+    public static final String ORDER = "o";
+    public static final String DIRECTION = "d";
+    public static final String ASCENDING = "asc";
+    public static final String DESCENDING = "desc";
+
+    private EventListenerList queryListeners;
+
+    /**
+     * Construct a new DataTable.
+     *
+     * @param dataQueryBuilder the {@link DataQueryBuilder} that will be used
+     *                         for this browser
+     * @param orderModel       the {@link SingleSelectionModel} that will be
+     *                         used to determine the column to order by
+     * @param resourceBundle   the name of the resource bundle that will be used
+     *                         to globalise the column labels. If null, column
+     *                         labels will be printed verbatim to the screen.
+     */
+    public DataTable(final DataQueryBuilder<T> dataQueryBuilder,
+                     final SingleSelectionModel<String> orderModel,
+                     final String resourceBundle) {
+        
+        super(new DataBuilderAdapter(), new DataTableColumnModel());
+        this.dataQueryBuilder = dataQueryBuilder;
+        this.resourceBundle = resourceBundle;
+
+        setOrderSelectionModel(orderModel);
+        addTableActionListener(new DataTableActionListener());
+        queryListeners = new EventListenerList();
+
+        dirParam = new StringParameter(DIRECTION);
+        dirParam.setDefaultValue(ASCENDING);
+
+        getHeader().setDefaultRenderer(new GlobalizedHeaderCellRenderer());
+
+        querySize = new RequestLocal();
+        paginator = null;
+
+        setClassAttr("dataTable");
+    }
+
+    /**
+     * Construct a new DataTable.
+     *
+     * @param dataQueryBuilder the {@link DataQueryBuilder} that will be used
+     *                         for this browser
+     * @param orderModel       the {@link SingleSelectionModel} that will be
+     *                         used to determine the column to order by
+     */
+    public DataTable(final DataQueryBuilder<T> dataQueryBuilder,
+                     final SingleSelectionModel<T> orderModel) {
+        this(dataQueryBuilder, orderModel, null);
+    }
+
+    /**
+     * Construct a new DataTable
+     *
+     * @param dataQueryBuilder the {@link DataQueryBuilder} that will be used
+     *                         for this browser
+     *
+     */
+    public DataTable(final DataQueryBuilder<T> dataQueryBuilder) {
+        this(dataQueryBuilder,
+             new ParameterSingleSelectionModel<T>(new StringParameter(ORDER)));
+    }
+
+    /**
+     * Register the ordering parameter
+     */
+    @Override
+    public void register(final Page parent) {
+        super.register(parent);
+        parent.addComponentStateParam(this,
+                                      getOrderSelectionModel()
+                                          .getStateParameter());
+        parent.addComponentStateParam(this, dirParam);
+    }
+
+    /**
+     * Set the key of the default column which will be used to sort the entries
+     *
+     * @param attribute the default attribute to sort by
+     */
+    public void setDefaultOrder(final String attribute) {
+        Assert.isUnlocked(this);
+        getOrderSelectionModel().getStateParameter()
+            .setDefaultValue(attribute);
+    }
+
+    /**
+     * Get the key of the default column which will be used to sort the entries
+     *
+     * @return the default attribute to sort by, or null if no default has been
+     *         set
+     */
+    public String getDefaultOrder() {
+        return (String) getOrderSelectionModel().getStateParameter()
+            .getDefaultValue();
+    }
+
+    /**
+     * Add a column to this table.
+     *
+     * @param label      The user-readable label for the column NOTE: depending
+     *                   on setResourceBundle() it is treated as plain text for
+     *                   output or key into bundle resulting in globalized
+     *                   Labels!
+     * @param attribute  The name of the attribute in the <code>DataQuery</code>
+     *                   which will be used as the value for this column.
+     * @param isSortable true if it is possible to sort using this column, false
+     *                   otherwise
+     * @param renderer   a {@link TableCellRenderer} that will be used to format
+     *                   the attribute as a string.
+     *
+     * @return the newly added column
+     */
+    public TableColumn addColumn(final String label,
+                                 final String attribute,
+                                 final boolean isSortable,
+                                 final TableCellRenderer renderer) {
+        return addColumn(label, attribute, isSortable, renderer, null);
+    }
+
+    /**
+     * Add a column to this table.
+     *
+     * @param label          The user-readable label for the column NOTE:
+     *                       depending on setResourceBundle() it is treated as
+     *                       plain text for output or key into bundle resulting
+     *                       in globalised Labels!
+     * @param attribute      The name of the attribute in the
+     *                       <code>DataQuery</code> which will be used as the
+     *                       value for this column.
+     * @param isSortable     true if it is possible to sort using this column,
+     *                       false otherwise
+     * @param renderer       a {@link TableCellRenderer} that will be used to
+     *                       format the attribute as a string.
+     * @param orderAttribute The name of the attribute which will be used as the
+     *                       column to order by. This key may be different from
+     *                       the <code>attribute</code> parameter.
+     *
+     * @return the newly added column
+     */
+    public TableColumn addColumn(final String label,
+                                 final String attribute,
+                                 final boolean isSortable,
+                                 final TableCellRenderer renderer,
+                                 final String orderAttribute) {
+        DataTableColumnModel model = (DataTableColumnModel) getColumnModel();
+        TableColumn column = new SortableTableColumn(model.size(),
+                                                     label,
+                                                     attribute,
+                                                     isSortable,
+                                                     renderer
+        );
+
+        model.add(column, orderAttribute);
+
+        // Update the default sort order
+        if (isSortable && getDefaultOrder() == null) {
+            setDefaultOrder((orderAttribute == null) ? attribute
+                                : orderAttribute);
+        }
+
+        return column;
+    }
+
+    /**
+     * Add a column to this table.
+     *
+     * @param label      The user-readable label for the column NOTE: depending
+     *                   on setResourceBundle() it is treated as plain text for
+     *                   output or key into bundle resulting in globalized
+     *                   Labels!
+     * @param attribute  The name of the attribute in the <code>DataQuery</code>
+     *                   which will be used as the value for this column.
+     * @param isSortable true if it is possible to sort using this column, false
+     *                   otherwise
+     *
+     * @return the newly added column
+     */
+    public TableColumn addColumn(final String label,
+                                 final String attribute,
+                                 final boolean isSortable) {
+        return addColumn(label,
+                         attribute,
+                         isSortable,
+                         new DefaultTableCellRenderer(false));
+    }
+
+    /**
+     * Add a column to this table.
+     *
+     * @param label     The user-readable label for the column NOTE: depending
+     *                  on setResourceBundle() it is treated as plain text for
+     *                  output or key into bundle resulting in globalized
+     *                  Labels!
+     * @param attribute The name of the attribute in the <code>DataQuery</code>
+     *                  which will be used as the value for this column.
+     *
+     * @return the newly added column
+     */
+    public TableColumn addColumn(final String label, final String attribute) {
+        return addColumn(label, attribute, false);
+    }
+
+    /**
+     * Add a column to this table. The value for the column will not be supplied
+     * by the query; instead, it is the user's responsibility to supply the
+     * value through a custom {@link TableModel} or render it directly in the
+     * {@link TableCellRenderer}. Typically, this method will be used to add
+     * {@link ControlLink}s to the table.
+     *
+     * @param label    The user-readable label for the column NOTE: depending on
+     *                 setResourceBundle() it is treated as plain text for
+     *                 output or key into bundle resulting in globalized Labels!
+     * @param renderer The cell renderer for the given column
+     *
+     * @return the newly added column
+     */
+    public TableColumn addColumn(final String label,
+                                 final TableCellRenderer renderer) {
+        final TableColumnModel columnModel = getColumnModel();
+        final TableColumn column = new TableColumn(columnModel.size(), label);
+        column.setCellRenderer(renderer);
+        column.setHeaderRenderer(new GlobalizedHeaderCellRenderer(false));
+        columnModel.add(column);
+        return column;
+    }
+
+    /**
+     *
+     * @return the {@link DataQueryBuilder} that creates a {@link DataQuery} for
+     *         this table during each request
+     */
+    public DataQueryBuilder<T> getDataQueryBuilder() {
+        return dataQueryBuilder;
+    }
+
+    /**
+     * @param builder the new {@link DataQueryBuilder} for this table
+     */
+    public void setDataQueryBuilder(final DataQueryBuilder<T> builder) {
+        Assert.isUnlocked(this);
+        dataQueryBuilder = builder;
+    }
+
+    /**
+     * @return the {@link SingleSelectionModel} that will determine the order
+     */
+    public SingleSelectionModel<String> getOrderSelectionModel() {
+        return orderModel;
+    }
+
+    /**
+     * Set the {@link SingleSelectionModel} that will determine the order for
+     * the items in the table.
+     *
+     * @param orderModel The new model
+     */
+    public void setOrderSelectionModel(
+        final SingleSelectionModel<String> orderModel) {
+
+        Assert.isUnlocked(this);
+        this.orderModel = orderModel;
+    }
+
+    /**
+     * Add a {@link QueryListener} to this table. The listener will be fired
+     * whenever the query is about to be performed.
+     *
+     * @param listener the new query listener
+     */
+    public void addQueryListener(final QueryListener listener) {
+        Assert.isUnlocked(this);
+        queryListeners.add(QueryListener.class, listener);
+    }
+
+    /**
+     * Remove a {@link QueryListener} from this table.
+     *
+     * @param listener the new query listener
+     */
+    public void removeQueryListener(final QueryListener listener) {
+        Assert.isUnlocked(this);
+        queryListeners.remove(QueryListener.class, listener);
+    }
+
+    /**
+     * Fire the query event listeners to indicate that a query is about to be
+     * performed
+     *
+     * @param state The page state
+     * @param query The {@link DataQuery}
+     */
+    protected void fireQueryPending(final PageState state,
+                                    final CriteriaQuery<T> query) {
+        final Iterator<QueryListener> iterator = queryListeners
+            .getListenerIterator(QueryListener.class);
+        QueryEvent<T> event = null;
+
+        while (iterator.hasNext()) {
+            if (event == null) {
+                event = new QueryEvent<>(this, state, query);
+            }
+            iterator.next().queryPending(event);
+        }
+    }
+
+    /**
+     * Set the column by which the table will be ordered
+     *
+     * @param state the page state
+     * @param attr  the attribute by which the table will be sorted
+     */
+    public void setOrder(final PageState state, final String attr) {
+        getOrderSelectionModel().setSelectedKey(state, attr);
+    }
+
+    /**
+     * @param state the page state
+     *
+     * @return the column by which the table will be ordered
+     */
+    public String getOrder(final PageState state) {
+        return getOrderSelectionModel().getSelectedKey(state);
+    }
+
+    /**
+     * @param state the page state
+     *
+     * @return the order by which the currently selected column will be sorted;
+     *         will be either ASCENDING or DESCENDING
+     */
+    public String getOrderDirection(final PageState state) {
+        return (String) state.getValue(dirParam);
+    }
+
+    /**
+     * Set the sort direction
+     *
+     * @param state the page state
+     * @param dir   the direction in which the current column should be sorted;
+     *              either ASCENDING or DESCENDING
+     */
+    public void setOrderDirection(final PageState state, final String dir) {
+        Assert.isTrue(ASCENDING.equals(dir) || DESCENDING.equals(dir));
+        state.setValue(dirParam, dir);
+    }
+
+    /**
+     * Toggle the sort direction between ascending and descending
+     *
+     * @param state the page state
+     *
+     * @return the new order direction; will be either ASCENDING or DESCENDING
+     */
+    public String toggleOrderDirection(final PageState state) {
+        String dir = getOrderDirection(state);
+        dir = (ASCENDING.equals(dir)) ? DESCENDING : ASCENDING;
+        setOrderDirection(state, dir);
+        return dir;
+    }
+
+    /**
+     * Return the {@link DataQuery} that will be used during the current request
+     *
+     * @param state the page state for the current request
+     *
+     * @return the current <code>DataQuery</code>
+     */
+    public CriteriaQuery<T> getDataQuery(final PageState state) {
+        return ((DataQueryTableModel) getTableModel(state)).getDataQuery();
+    }
+
+    /**
+     * Paginate the query according to the paginator component. This method will
+     * be automatically called by the {@link Paginator} component to which this
+     * <code>DataTable</code> has been added as the model builder.
+     *
+     * @param paginator the parent <code>Paginator</code>
+     * @param state     the current page state
+     *
+     * @return the total number of rows in the query
+     */
+    @Override
+    public int getTotalSize(final Paginator paginator, final PageState state) {
+        final CriteriaQuery<T> query = getDataQuery(state);
+
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final DataTableController controller = cdiUtil.findBean(
+            DataTableController.class);
+
+        return controller.executeQuery(query).size();
+    }
+
+    /**
+     * Return the paginator component used by this table, or null if the table
+     * is not paginated.
+     *
+     * @return The paginator.
+     */
+    public final Paginator getPaginator() {
+        return paginator;
+    }
+
+    /**
+     * Set the paginator component used by this table, or null if the table
+     * should not be paginated.
+     *
+     * @param paginator The paginator to use.
+     */
+    public final void setPaginator(final Paginator paginator) {
+        Assert.isUnlocked(this);
+        this.paginator = paginator;
+    }
+
+    /**
+     * Return the RequestLocal used for storing the query size during the
+     * request
+     *
+     * @return The query size.
+     */
+    protected final RequestLocal getQuerySizeLocal() {
+        return querySize;
+    }
+
+    /**
+     * Lock this table
+     */
+    @Override
+    public void lock() {
+        dataQueryBuilder.lock();
+        super.lock();
+    }
+
+    // Export the current order
+    @Override
+    public void generateExtraXMLAttributes(final PageState state,
+                                           final Element element) {
+        String key = getOrder(state);
+        if (key != null) {
+            element.addAttribute("order",
+                                 Integer
+                                     .toString(getColumnModel().getIndex(key)));
+        }
+        String dir = getOrderDirection(state);
+        if (dir != null) {
+            element.addAttribute("direction", dir);
+        }
+    }
+
+    /**
+     * Globalises the specified key.
+     *
+     * @param key The key of the message.
+     *
+     * @return The globalised message for the provided key.
+     */
+    public GlobalizedMessage globalize(String key) {
+        return new GlobalizedMessage(key, resourceBundle);
+    }
+
+    /**
+     * Return the resource bundle for globalisation, or null if no bundle was
+     * specified
+     *
+     * @return The fully qualified name of the {@link ResourceBundle} used by
+     *         this {@code DataTable}.
+     */
+    public String getResourceBundle() {
+        return resourceBundle;
+    }
+
+    /**
+     * Set the resource bundle for globalisation, or null if no globalisation is
+     * needed.
+     *
+     * @param bundle The fully qualified name of the {@link ResourceBundle} to
+     *               use.
+     */
+    public void setResourceBundle(final String bundle) {
+        Assert.isUnlocked(this);
+        resourceBundle = bundle;
+    }
+
+    /**
+     * A {@link TableColumn} that could potentially be sorted
+     */
+    private static class SortableTableColumn extends TableColumn {
+
+        private boolean sortable;
+        private SingleSelectionModel<String> orderModel;
+
+        /**
+         * Construct a new SortableTableColumn
+         *
+         * @param modelIndex the index of the column in the table model from
+         *                   which to retrieve values.
+         * @param value      the value for the column header.
+         * @param key        the key for the column header.
+         * @param isSortable whether the column is sortable or not
+         * @param renderer   the renderer which will be used to render this
+         *                   column
+         */
+        public SortableTableColumn(final int modelIndex,
+                                   final Object value,
+                                   final Object key,
+                                   final boolean isSortable,
+                                   final TableCellRenderer renderer
+        ) {
+
+            super(modelIndex, value, key);
+            setSortable(isSortable);
+            setCellRenderer(renderer);
+        }
+
+        /**
+         * Determine whether this column is sortable
+         *
+         * @param isSortable if true, the column will be sortable
+         */
+        public void setSortable(final boolean isSortable) {
+            Assert.isUnlocked(this);
+            sortable = isSortable;
+            setHeaderRenderer(new GlobalizedHeaderCellRenderer(isSortable));
+        }
+
+        /**
+         * @return the {@link SingleSelectionModel} which is responsible for
+         *         maintaining the sort order
+         */
+        public SingleSelectionModel<String> getOrderSelectionModel() {
+            return orderModel;
+        }
+
+        /**
+         * @return true if this column is sortable, false otherwise
+         */
+        public boolean isSortable() {
+            return sortable;
+        }
+
+    }
+
+    /**
+     * The action listener that will sort the {@link DataQuery} for this table
+     */
+    private static class DataTableActionListener implements TableActionListener {
+
+        @Override
+        public void cellSelected(final TableActionEvent event) {
+        }
+
+        @Override
+        public void headSelected(final TableActionEvent event) {
+            final PageState state = event.getPageState();
+            final DataTable<?> table = (DataTable<?>) event.getSource();
+
+            final int index = event.getColumn();
+            final SortableTableColumn column = (SortableTableColumn) table
+                .getColumnModel().get(index);
+
+            if (column != null) {
+                if (column.isSortable()) {
+                    final DataTableColumnModel model
+                                                   = (DataTableColumnModel) table
+                            .getColumnModel();
+                    final String oldOrder = table.getOrder(state);
+                    String newOrder = model.getColumnKey(column);
+                    if (newOrder == null) {
+                        newOrder = (String) column.getHeaderKey();
+                    }
+                    if (oldOrder != null && oldOrder.equals(newOrder)) {
+                        // Reverse direction
+                        table.toggleOrderDirection(state);
+                    } else {
+                        table.setOrder(state, newOrder);
+                        table.setOrderDirection(state, DataTable.ASCENDING);
+                    }
+                }
+            }
+        }
+
+    }
+
+    /**
+     * Adapts a {@link DataQueryBuilder} into a {@link TableModelBuilder}. Wraps
+     * the query returned by the builder in a DataQueryTableModel.
+     *
+     * @see com.arsdigita.toolbox.ui.DataTable.DataQueryTableModel
+     */
+    protected static class DataBuilderAdapter extends LockableImpl
+        implements TableModelBuilder {
+
+        /**
+         * Create a new <code>DataBuilderAdapter</code>
+         */
+        public DataBuilderAdapter() {
+            super();
+        }
+
+        /**
+         * Obtain a {@link DataQuery} and apply query events to it. The query
+         * events may add additional filters to the query, among other things.
+         * Finally, retrieve the current sort column from the parent
+         * {@link DataTable} and apply it to the query
+         *
+         * @see com.arsdigita.toolbox.ui.DataTable.DataQueryTableModel
+         * @param table the parent {@link DataTable}
+         * @param state the current page state
+         *
+         * @return the final {@link DataQuery}, which is now ready to be wrapped
+         *         in a DataQueryTableModel
+         */
+        protected <E> CriteriaQuery<E> createQuery(final DataTable<E> table,
+                                                   final PageState state) {
+            final CriteriaQuery<E> query = table.getDataQueryBuilder()
+                .makeDataQuery(table, state);
+
+            final Root<E> root = query.getR
+            
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final DataTableController controller = cdiUtil.findBean(
+                DataTableController.class);
+            final CriteriaBuilder criteriaBuilder = controller
+                .getCriteriaBuilder();
+
+            String order = table.getOrder(state);
+            if (order != null) {
+                String dir = table.getOrderDirection(state);
+                if (dir != null) {
+                    order += " " + dir;
+                }
+                query.orderBy(criteriaBuilder.asc())
+                query.addOrder(order);
+            }
+            table.fireQueryPending(state, query);
+
+            // Paginate the query if neccessary
+            if (table.getPaginator() != null) {
+                // Force the size to calculate before the range is set
+                if (table.getQuerySizeLocal().get(state) == null) {
+                    table.getQuerySizeLocal().set(state, new BigDecimal(query
+                                                  .size()));
+                }
+
+                // Paginate the query
+                query
+                    .setRange(new Integer(table.getPaginator().getFirst(state)),
+                              new Integer(table.getPaginator().getLast(state)
+                                              + 1));
+            }
+
+            return query;
+        }
+
+        /**
+         * Construct a DataQueryTableModel by wrapping the query.
+         *
+         * @param table the parent {@link DataTable}
+         * @param s     the current page state
+         *
+         * @see com.arsdigita.toolbox.ui.DataTable.DataQueryTableModel
+         * @return a DataQueryTableModel that will iterate through the query
+         */
+        public TableModel makeModel(Table table, PageState s) {
+            DataTable t = (DataTable) table;
+            DataQuery d = createQuery(t, s);
+
+            if (d == null) {
+                return Table.EMPTY_MODEL;
+            }
+
+            return new DataQueryTableModel(t, d,
+                                           t.getDataQueryBuilder()
+                                               .getKeyColumn());
+        }
+
+    }
+
+    /**
+     * A TableModel which gets its data from a DataQuery. This TableModel is
+     * used in the {@link DataTable.DataBuilderAdapter} to iterate through the
+     * query returned by the {@link DataQueryBuilder} and generate rows for it
+     * on the screen.
+     */
+    protected static class DataQueryTableModel implements TableModel {
+
+        private DataQuery m_data;
+        private DataTableColumnModel m_cols;
+        private String m_keyColumn;
+
+        /**
+         * Create a new <code>DataQueryTableModel</code>
+         *
+         * @param t         the {@link DataTable} which needs this model
+         * @param data      the {@link DataQuery to be wrapped}
+         * @param keyColumn the name of the column in the query which represents
+         *                  the primary key
+         *
+         * @pre data != null
+         * @pre keyColumn != null
+         * @pre t != null
+         * @pre t.getColumnModel() != null
+         */
+        public DataQueryTableModel(DataTable t, DataQuery data, String keyColumn) {
+            m_data = data;
+            m_cols = (DataTableColumnModel) t.getColumnModel();
+            m_keyColumn = keyColumn;
+        }
+
+        public int getColumnCount() {
+            return m_cols.size();
+        }
+
+        public boolean nextRow() {
+            return m_data.next();
+        }
+
+        public Object getElementAt(int columnIndex) {
+            String key = (String) m_cols.get(columnIndex).getHeaderKey();
+            if (key != null) {
+                return m_data.get(key);
+            } else {
+                return null;
+            }
+        }
+
+        public Object getKeyAt(int columnIndex) {
+            String key = m_cols.getKeyAt(columnIndex);
+            if (key != null) {
+                return m_data.get(key);
+            } else {
+                return m_data.get(m_keyColumn);
+            }
+        }
+
+        /**
+         * Return the original DataQuery. The query's cursor will be "pointing"
+         * at the current row
+         */
+        public DataQuery getDataQuery() {
+            return m_data;
+        }
+
+    }
+
+    /**
+     * Always renders the table header as a link. Thus, it becomes possible to
+     * sort up and down by clicking the table column over and over.<p>
+     * Also, globalizes the column labels if possible.
+     */
+    protected static class GlobalizedHeaderCellRenderer
+        implements TableCellRenderer {
+
+        private boolean m_active;
+
+        public GlobalizedHeaderCellRenderer(boolean isActive) {
+            m_active = isActive;
+        }
+
+        public GlobalizedHeaderCellRenderer() {
+            this(true);
+        }
+
+        public Component getComponent(Table table, PageState state, Object value,
+                                      boolean isSelected, Object key,
+                                      int row, int column) {
+            DataTable t = (DataTable) table;
+            Label label;
+
+            if (value == null) {
+                label = new Label("&nbsp;", false);
+            } else {
+                String str = value.toString();
+                if (t.getResourceBundle() != null) {
+                    label = new Label(t.globalize(str));
+                } else {
+                    label = new Label(str);
+                }
+            }
+
+            if (m_active) {
+                return new ControlLink(label);
+            } else {
+                return label;
+            }
+        }
+
+    }
+
+    /**
+     * A special column model that maintains an alternate key for each column.
+     * The alternate key will be passed to the query in the
+     * <code>addOrder</code> method, thus sorting the query by the given column
+     * - making it possible to make the sort key differ from the attribute key
+     * for any given column.
+     * <p>
+     * Note that each column ALREADY has a unique key, which can be retrieved by
+     * calling <code>TableColumn.getHeaderKey()</code>. This key will be used to
+     * provide the value for the column.
+     */
+    protected static class DataTableColumnModel extends DefaultTableColumnModel {
+
+        // The column keys are a property of the table and column
+        // combination so we store the values in the HashMap
+        private Map m_columnKeys = new HashMap();
+
+        public void add(TableColumn column, String columnKey) {
+            super.add(column);
+            setColumnKey(column, columnKey);
+        }
+
+        public void add(int columnIndex, TableColumn column, String columnKey) {
+            super.add(columnIndex, column);
+            setColumnKey(column, columnKey);
+        }
+
+        public String getColumnKey(TableColumn column) {
+            return (String) m_columnKeys.get(column);
+        }
+
+        public String getKeyAt(int columnIndex) {
+            return getColumnKey(get(columnIndex));
+        }
+
+        public void setColumnKey(TableColumn column, String columnKey) {
+            m_columnKeys.put(column, columnKey);
+        }
+
+        public void setColumnKey(int columnIndex, String columnKey) {
+            setColumnKey(get(columnIndex), columnKey);
+        }
+
+        @Override
+        public void remove(TableColumn column) {
+            super.remove(column);
+            m_columnKeys.remove(column);
+        }
+
+    }
+
+}
