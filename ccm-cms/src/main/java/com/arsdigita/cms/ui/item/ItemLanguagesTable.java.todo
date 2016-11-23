@@ -18,237 +18,162 @@
  */
 package com.arsdigita.cms.ui.item;
 
-import com.arsdigita.bebop.event.TableActionAdapter;
+import com.arsdigita.bebop.Component;
+import com.arsdigita.bebop.ControlLink;
+import com.arsdigita.bebop.FormProcessException;
+import com.arsdigita.bebop.Label;
+import com.arsdigita.bebop.Link;
+import com.arsdigita.bebop.PageState;
+import com.arsdigita.bebop.SingleSelectionModel;
+import com.arsdigita.bebop.Table;
 import com.arsdigita.bebop.event.TableActionEvent;
+import com.arsdigita.bebop.event.TableActionListener;
 import com.arsdigita.bebop.table.TableCellRenderer;
 import com.arsdigita.bebop.table.TableColumn;
+import com.arsdigita.bebop.table.TableColumnModel;
 import com.arsdigita.cms.ItemSelectionModel;
-import com.arsdigita.cms.dispatcher.MultilingualItemResolver;
 import com.arsdigita.cms.ui.ContentItemPage;
+import com.arsdigita.globalization.GlobalizedMessage;
+
+import org.libreccm.cdi.utils.CdiUtil;
+import org.librecms.CmsConstants;
+import org.librecms.contentsection.ContentItem;
+import org.librecms.contentsection.ContentItemL10NManager;
 import org.librecms.util.LanguageUtil;
-import com.arsdigita.toolbox.ui.DataTable;
-import com.arsdigita.util.LockableImpl;
-import com.arsdigita.web.RedirectSignal;
-import com.arsdigita.web.URL;
-import java.math.BigDecimal;
-import org.apache.log4j.Logger;
+
+import java.util.Locale;
+
 
 /**
- * Displays a list of all language instances of an item. 
+ * Displays a list of all language instances of an item.
  *
  */
-public class ItemLanguagesTable extends DataTable {
+public class ItemLanguagesTable extends Table {
 
-    private static final Logger LOGGER = Logger.getLogger(ItemLanguagesTable.class);
-    private final ItemSelectionModel m_model;
-    private final TableColumn m_deleteColumn;
+    public static final int COL_LANGUAGE = 0;
+    public static final int COL_TITLE = 1;
+    public static final int COL_DELETE = 2;
+
+    private final ItemSelectionModel itemSelectionModel;
+    private final SingleSelectionModel<String> langSelectionModel;
+//    private final TableColumn deleteColumn;
 
     /**
-     * Construct a new
-     * <code>ItemHistoryTable</code>
+     * Construct a new {@code ItemLanguagesTable} which shows all language
+     * variants of an item.
      *
-     * @param model the ItemSelectionModel that supplies the current item
+     * @param itemSelectionModel the ItemSelectionModel that supplies the
+     *                           current item
+     * @param langSelectionModel the single selection model which stores the
+     *                           selected language.
      */
-    public ItemLanguagesTable(ItemSelectionModel model) {
-        super(new LanguagesBuilder(model));
-        m_model = model;
+    public ItemLanguagesTable(final ItemSelectionModel itemSelectionModel,
+                              final SingleSelectionModel<String> langSelectionModel) {
+        super();
+        setIdAttr("item_languages_table");
 
-        addColumn("cms.ui.language.header", 
-                  ContentPage.LANGUAGE, 
-                  false,
-                  new LanguageCellRenderer(m_model));
-        addColumn("cms.ui.title", 
-                  ContentPage.TITLE);
-        m_deleteColumn = addColumn("cms.ui.action", new ActionCellRenderer(
-                m_model));
-        setResourceBundle(GlobalizationUtil.getBundleName());
-        addTableActionListener(new InstanceDeleter(m_model));
-    }
+        this.itemSelectionModel = itemSelectionModel;
+        this.langSelectionModel = langSelectionModel;
+        setModelBuilder(new ItemLanguagesTableModelBuilder(itemSelectionModel));
 
-    /**
-     * Builds the query for all the language instances in the current Bundle
-     */
-    private static class LanguagesBuilder extends LockableImpl
-            implements DataQueryBuilder {
+        final TableColumnModel columnModel = getColumnModel();
+        columnModel.add(new TableColumn(COL_LANGUAGE,
+                                        new Label(new GlobalizedMessage(
+                                            "cms.ui.language.header",
+                                            CmsConstants.CMS_BUNDLE))));
+        columnModel.add(new TableColumn(COL_TITLE,
+                                        new Label(new GlobalizedMessage(
+                                            "cms.ui.language.title",
+                                            CmsConstants.CMS_BUNDLE))));
+        columnModel.add(new TableColumn(COL_DELETE,
+                                        new Label(new GlobalizedMessage(
+                                            "cms.ui.action",
+                                            CmsConstants.CMS_BUNDLE))));
 
-        ItemSelectionModel m_model;
+        columnModel.get(COL_LANGUAGE).setCellRenderer(new TableCellRenderer() {
 
-        public LanguagesBuilder(ItemSelectionModel model) {
-            super();
-            m_model = model;
-        }
+            @Override
+            public Component getComponent(final Table table,
+                                          final PageState state,
+                                          final Object value,
+                                          final boolean isSelected,
+                                          final Object key,
+                                          final int row,
+                                          final int column) {
 
-        public DataQuery makeDataQuery(DataTable t, PageState s) {
-            ContentPage multiLingual =
-                    (ContentPage) m_model.getSelectedObject(s);
-            DataQuery q = SessionManager.getSession().retrieveQuery(
-                    "com.arsdigita.cms.getBundledItems");
-            q.setParameter("bundleID", multiLingual.getContentBundle().getID());
-            return q;
-        }
+                final Locale locale = new Locale((String) value);
 
-        public String getKeyColumn() {
-            return ContentPage.ID;
-        }
-    }
+                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+                final LanguageUtil langUtil = cdiUtil.findBean(
+                    LanguageUtil.class);
 
-    /**
-     * Renders the full language name.
-     */
-    private static class LanguageCellRenderer implements TableCellRenderer {
+                final Label label = new Label(langUtil.getLangFull(locale));
 
-        private ItemSelectionModel m_model;
-
-        public LanguageCellRenderer(ItemSelectionModel model) {
-            m_model = model;
-        }
-
-        public Component getComponent(Table table, PageState state, Object value,
-                boolean isSelected, Object key,
-                int row, int column) {
-
-            BigDecimal id = (BigDecimal) key;
-            ContentPage cp;
-
-            try {
-                cp = new ContentPage(id);
-            } catch (DataObjectNotFoundException ex) {
-                // Content item was not found, return nothing
-                return new Label();
-            }
-
-            ContentBundle bundle = cp.getContentBundle();
-
-            if (bundle != null
-                    && !(cp instanceof LanguageInvariantContentItem
-                    && ((LanguageInvariantContentItem) cp).isLanguageInvariant())) {
-
-                StringBuilder fontWeight = new StringBuilder(2);
-                StringBuilder classes = new StringBuilder(20);
-
-                if (cp.isLive()) {
-                    fontWeight.append(Label.BOLD);
-                    classes.append("live ");
-                }
-                if (bundle.getPrimaryInstance().equals(cp)) {
-                    fontWeight.append(Label.ITALIC);
-                    classes.append("primaryInstance");
-                }
-
-                String target = ContentItemPage.getItemURL(cp, ContentItemPage.AUTHORING_TAB);
-                Label langLabel = new Label(LanguageUtil.getLangFull((String) value));
-
-                langLabel.setFontWeight(fontWeight.toString().trim());
-                langLabel.setClassAttr(classes.toString().trim());
-
-                if (m_model.getSelectedKey(state).equals(key)) {
-                    // Current instance: no link
-                    return langLabel;
+                if (langSelectionModel.getSelectedKey(state).equals(key)) {
+                    // Current variant, no link
+                    return label;
                 } else {
-                    return new Link(langLabel, target);
+                    final String target = ContentItemPage.getItemURL(
+                        itemSelectionModel.getSelectedItem(state),
+                        ContentItemPage.AUTHORING_TAB);
+                    return new Link(label, target);
                 }
             }
 
-            return new Label();
         }
+        );
+        columnModel.get(COL_DELETE).setCellRenderer(new TableCellRenderer() {
+
+            @Override
+            public Component getComponent(final Table table,
+                                          final PageState state,
+                                          final Object value,
+                                          final boolean isSelected,
+                                          final Object key,
+                                          final int row,
+                                          final int column) {
+
+                final ControlLink link = new ControlLink(new Label(
+                    new GlobalizedMessage("cms.ui.delete",
+                                          CmsConstants.CMS_BUNDLE)));
+                link.setConfirmation(new GlobalizedMessage(
+                    "cms.ui.delete.confirmation", CmsConstants.CMS_BUNDLE));
+
+                return link;
+            }
+
+        });
+
+        addTableActionListener(new TableActionListener() {
+
+            @Override
+            public void cellSelected(final TableActionEvent event)
+                throws FormProcessException {
+
+                if (event.getColumn() != COL_DELETE) {
+                    //Nothing to do
+                    return;
+                }
+
+                final PageState state = event.getPageState();
+                final ContentItem item = itemSelectionModel
+                    .getSelectedItem(state);
+                final String selectedLang = (String) event.getRowKey();
+
+                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+                final ContentItemL10NManager l10nManager = cdiUtil.findBean(
+                    ContentItemL10NManager.class);
+
+                l10nManager.removeLangauge(item, new Locale(selectedLang));
+            }
+
+            @Override
+            public void headSelected(final TableActionEvent event) {
+                //Nothing
+            }
+
+        });
+
     }
 
-    /**
-     * Delete language instance action link.
-     */
-    private static class ActionCellRenderer implements TableCellRenderer {
-
-        private static final Logger logger =
-                Logger.getLogger(ActionCellRenderer.class);
-        private static final Label s_noAction;
-        private static final Label s_primary;
-        private static final ControlLink s_link;
-
-        static {
-            logger.debug("Static initializer is starting...");
-            s_noAction = new Label("&nbsp;", false);
-            s_noAction.lock();
-            s_primary = new Label(GlobalizationUtil.globalize(
-                    "cms.ui.primary_instance"), false);
-            s_primary.lock();
-            s_link = new ControlLink(new Label(GlobalizationUtil.globalize(
-                    "cms.ui.delete")));
-            s_link.setConfirmation(GlobalizationUtil.globalize(
-                    "cms.ui.delete_confirmation"));
-            logger.debug("Static initalizer finished.");
-        }
-        private ItemSelectionModel m_model;
-
-        public ActionCellRenderer(ItemSelectionModel model) {
-            m_model = model;
-        }
-
-        public Component getComponent(Table table, PageState state, Object value,
-                boolean isSelected, Object key,
-                int row, int column) {
-            // check if primary instance
-            BigDecimal id = new BigDecimal(key.toString());
-            OID oid = new OID(ContentPage.BASE_DATA_OBJECT_TYPE, id);
-            try {
-                ContentPage item = (ContentPage) DomainObjectFactory.newInstance(oid);
-                if (item.getLanguage().equals(
-                        item.getContentBundle().getDefaultLanguage())) {
-                    return s_primary;
-                } else if (item.isLive()) {
-                    return s_noAction;
-                }
-            } catch (DataObjectNotFoundException ex) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Could not get item with id " + id);
-                }
-                return s_noAction;
-            }
-            return s_link;
-        }
-    }
-
-    // delete one language instance
-    private class InstanceDeleter extends TableActionAdapter {
-
-        private ItemSelectionModel m_model;
-
-        public InstanceDeleter(ItemSelectionModel model) {
-            m_model = model;
-        }
-
-        @Override
-        public void cellSelected(TableActionEvent e) {
-            int col = e.getColumn().intValue();
-
-            if (m_deleteColumn != getColumn(col)) {
-                return;
-            }
-
-            PageState s = e.getPageState();
-            BigDecimal id = new BigDecimal(e.getRowKey().toString());
-
-            OID oid = new OID(ContentPage.BASE_DATA_OBJECT_TYPE, id);
-            try {
-                ContentPage item =
-                        (ContentPage) DomainObjectFactory.newInstance(oid);
-                ContentBundle bundle = item.getContentBundle();
-                bundle.removeInstance(item);
-                item.delete();
-
-                if (m_model.getSelectedKey(s).equals(id)) {
-                    throw new RedirectSignal(
-                        URL.there((new MultilingualItemResolver()
-                                       .generateItemURL(s, 
-                                                        bundle.getPrimaryInstance(), 
-                                                        bundle.getContentSection(), 
-                                                        ContentItem.DRAFT)), 
-                            null), 
-                        true);
-                }
-            } catch (com.arsdigita.domain.DataObjectNotFoundException ex) {
-                // Object not found is ok, it has probably been deleted already
-            }
-            ((Table) e.getSource()).clearSelection(s);
-        }
-    }
 }

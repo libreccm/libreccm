@@ -53,9 +53,6 @@ public class ItemSelectionModel extends CcmObjectSelectionModel<ContentItem> {
 
     private Long typeId;
 
-    private static final Logger LOGGER = Logger.getLogger(
-        ItemSelectionModel.class);
-
     /**
      * Construct a new <code>ItemSelectionModel</code>
      *

@@ -24,6 +24,7 @@ import com.arsdigita.util.UncheckedWrapperException;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.l10n.LocalizedString;
 import org.libreccm.security.AuthorizationRequired;
+import org.libreccm.security.PermissionChecker;
 import org.libreccm.security.RequiresPrivilege;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.privileges.ItemPrivileges;
@@ -34,9 +35,11 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -59,6 +62,9 @@ public class ContentItemL10NManager {
 
     @Inject
     private ContentItemRepository itemRepo;
+
+    @Inject
+    private PermissionChecker permissionChecker;
 
     private Locale defaultLocale;
     private List<Locale> supportedLocales;
@@ -113,6 +119,50 @@ public class ContentItemL10NManager {
     }
 
     /**
+     * Helper method for reading methods in this class for verifying that the
+     * current user is permitted to read the item.
+     *
+     * If the provided {@code item} is a live item
+     * ({@link ContentItem#getVersion()} returns
+     * {@link ContentItemVersion#LIVE}) the current user needs the a permission
+     * which grants the {@link ItemPrivileges#VIEW_PUBLISHED} privilege for the
+     * provided {@code item}. If the item is a draft item
+     * ({@link ContentItem#getVersion()} returns
+     * {@link ContentItemVersion#DRAFT}, {@link ContentItemVersion#PENDING} or
+     * {@link ContentItemVersion#PUBLISHING} the user needs a permission which
+     * grants the {@link ItemPrivileges#PREVIEW} privilege for the provided
+     * {@code item}.
+     *
+     * @param item The item for which the read permission is verified.
+     */
+    private void checkReadPermission(final ContentItem item) {
+        final String requiredPrivilege;
+        if (ContentItemVersion.LIVE == item.getVersion()) {
+            requiredPrivilege = ItemPrivileges.VIEW_PUBLISHED;
+        } else {
+            requiredPrivilege = ItemPrivileges.PREVIEW;
+        }
+
+        permissionChecker.checkPermission(requiredPrivilege, item);
+    }
+
+    /**
+     * Retrieves all languages in which content item is available.
+     *
+     * @param item The item.
+     *
+     * @return A (unmodifiable) {@link Set} containing all languages in which
+     *         the item is available.
+     */
+    @Transactional(Transactional.TxType.REQUIRED)
+    public Set<Locale> availableLanguages(
+        final ContentItem item) {
+
+        checkReadPermission(item);
+        return Collections.unmodifiableSet(collectLanguages(item));
+    }
+
+    /**
      * Checks if an content item has data for particular language.
      *
      * @param item   The item to check.
@@ -121,8 +171,13 @@ public class ContentItemL10NManager {
      * @return {@link true} if the item has data for the language, {@code false}
      *         if not.
      */
+    @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
-    public boolean hasLanguage(final ContentItem item, final Locale locale) {
+    public boolean hasLanguage(
+        @RequiresPrivilege(ItemPrivileges.VIEW_PUBLISHED)
+        final ContentItem item,
+        final Locale locale) {
+
         if (item == null) {
             throw new IllegalArgumentException("Can't check if item null has a"
                                                    + "specific locale.");
@@ -132,14 +187,27 @@ public class ContentItemL10NManager {
             throw new IllegalArgumentException("Can't check for locale null.");
         }
 
+        checkReadPermission(item);
+
         return collectLanguages(item).contains(locale);
     }
-    
+
+    /**
+     * Returns a {@link Set} containing the locales for which the item does not
+     * yet have a variant.
+     *
+     * @param item The item.
+     *
+     * @return A {@link Set} with the locales for which the item does not have a
+     *         variant.
+     */
     @Transactional(Transactional.TxType.REQUIRED)
     public Set<Locale> creatableLocales(final ContentItem item) {
+        checkReadPermission(item);
+
         return supportedLocales.stream()
-                .filter(locale -> hasLanguage(item, locale))
-                .collect(Collectors.toSet());
+            .filter(locale -> hasLanguage(item, locale))
+            .collect(Collectors.toSet());
     }
 
     /**
@@ -149,7 +217,11 @@ public class ContentItemL10NManager {
      * configured in {@link KernelConfig}. If a field does not have an entry for
      * the default language the first value found is used.
      *
-     * @param item   The item to which the language variant is added.
+     * @param item   The item to which the language variant is added. The item
+     * <strong>must be</strong> the <strong>draft version</strong>
+     * of the item! If a <em>live version</em> or a
+     * <em>pending version</em> is provided the method will throw an
+     * {@link IllegalArgumentException}!
      * @param locale The locale of the language variant to add.
      */
     @AuthorizationRequired
@@ -160,7 +232,14 @@ public class ContentItemL10NManager {
         final Locale locale) {
 
         if (item == null) {
-            throw new IllegalArgumentException("Can't add language to item null.");
+            throw new IllegalArgumentException(
+                "Can't add language to item null.");
+        }
+
+        if (ContentItemVersion.DRAFT != item.getVersion()) {
+            throw new IllegalArgumentException(String.format(
+                "The provided item %s is not the draft version of an item.",
+                Objects.toString(item)));
         }
 
         if (locale == null) {
@@ -220,7 +299,11 @@ public class ContentItemL10NManager {
      * the entry for the provided locale if the field has an entry for that
      * locale.
      *
-     * @param item   The item from which the language variant is removed.
+     * @param item   The item from which the language variant is removed. The
+     *               item <strong>must be</strong> the <strong>draft
+     *               version</strong> of the item! If a <em>live version</em> or
+     *               a <em>pending version</em> is provided the method will
+     *               throw an {@link IllegalArgumentException}!
      * @param locale The locale of the language variant to remove.
      */
     @AuthorizationRequired
@@ -233,6 +316,12 @@ public class ContentItemL10NManager {
         if (item == null) {
             throw new IllegalArgumentException(
                 "Can't remove language from item null.");
+        }
+
+        if (ContentItemVersion.DRAFT != item.getVersion()) {
+            throw new IllegalArgumentException(String.format(
+                "The provided item %s is not the draft version of an item.",
+                Objects.toString(item)));
         }
 
         if (locale == null) {
@@ -268,7 +357,10 @@ public class ContentItemL10NManager {
      * {@link LocalizedString} has an entry for every language in the set. If
      * not an entry for the language is added.
      *
-     * @param item The item to normalise.
+     * @param item The item to normalise. The item <strong>must be</strong> the
+     *             <strong>draft version</strong> of the item! If a <em>live
+     *             version</em> or a <em>pending version</em> is provided the
+     *             method will throw an {@link IllegalArgumentException}!
      */
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
@@ -278,6 +370,12 @@ public class ContentItemL10NManager {
 
         if (item == null) {
             throw new IllegalArgumentException("Can't normalise item null.");
+        }
+
+        if (ContentItemVersion.DRAFT != item.getVersion()) {
+            throw new IllegalArgumentException(String.format(
+                "The provided item %s is not the draft version of an item.",
+                Objects.toString(item)));
         }
 
         final Set<Locale> languages = collectLanguages(item);

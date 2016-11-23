@@ -23,6 +23,7 @@ import com.arsdigita.bebop.Form;
 import com.arsdigita.bebop.FormProcessException;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.PageState;
+import com.arsdigita.bebop.SingleSelectionModel;
 import com.arsdigita.bebop.event.FormProcessListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.bebop.event.PrintEvent;
@@ -30,13 +31,17 @@ import com.arsdigita.bebop.event.PrintListener;
 import com.arsdigita.bebop.form.Option;
 import com.arsdigita.bebop.form.OptionGroup;
 import com.arsdigita.bebop.form.Submit;
+
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentType;
+
 import com.arsdigita.cms.ItemSelectionModel;
 import com.arsdigita.cms.ui.ContentItemPage;
 import com.arsdigita.cms.ui.authoring.LanguageWidget;
+
 import org.librecms.util.LanguageUtil;
+
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.toolbox.ui.ActionGroup;
 import com.arsdigita.toolbox.ui.LayoutPanel;
@@ -46,12 +51,17 @@ import com.arsdigita.util.Pair;
 import com.arsdigita.util.UncheckedWrapperException;
 import com.arsdigita.web.RedirectSignal;
 import com.arsdigita.web.URL;
+
+import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.workflow.Workflow;
 import org.libreccm.workflow.WorkflowTemplate;
+import org.librecms.contentsection.ContentItemL10NManager;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.TooManyListenersException;
+import java.util.stream.Collectors;
 
 /**
  * Displays the "Language instances" pane, with all the language instances in
@@ -63,6 +73,7 @@ import java.util.TooManyListenersException;
 public class ItemLanguages extends LayoutPanel {
 
     private final ItemSelectionModel selectionModel;
+    private final SingleSelectionModel<String> selectedLanguage;
     private final LanguageWidget languageWidget;
     private final Submit changeSubmit;
     private final Submit createSubmit;
@@ -70,11 +81,15 @@ public class ItemLanguages extends LayoutPanel {
     /**
      * Constructs a new <code>ItemLanguages</code>.
      *
-     * @param selectionModel the {@link ItemSelectionModel} which will supply
-     *                       the current item
+     * @param selectionModel   the {@link ItemSelectionModel} which will supply
+     *                         the current item
+     * @param selectedLanguage {@link SingleSelectionModel} for the selected
+     *                         language.
      */
-    public ItemLanguages(final ItemSelectionModel selectionModel) {
+    public ItemLanguages(final ItemSelectionModel selectionModel,
+                         final SingleSelectionModel<String> selectedLanguage) {
         this.selectionModel = selectionModel;
+        this.selectedLanguage = selectedLanguage;
 
         final Section section = new Section(gz("cms.ui.item.languages"));
         setBody(section);
@@ -82,15 +97,17 @@ public class ItemLanguages extends LayoutPanel {
         final ActionGroup group = new ActionGroup();
         section.setBody(group);
 
-        group.setSubject(new ItemLanguagesTable(selectionModel));
+        group.setSubject(new ItemLanguagesTable(selectionModel,
+                                                selectedLanguage));
 
         final Form form = new Form("newLanguage", new BoxPanel(
                                    BoxPanel.HORIZONTAL));
         group.addAction(form);
 
         form.setRedirecting(true);
-        languageWidget = new LanguageWidget(ContentItem.LANGUAGE) {
+        languageWidget = new LanguageWidget("language_widget") {
 
+            @Override
             protected void setupOptions() {
                 // Don't do anything.
             }
@@ -99,8 +116,8 @@ public class ItemLanguages extends LayoutPanel {
 
         try {
             languageWidget.addPrintListener(new OptionPrinter());
-        } catch (TooManyListenersException tmle) {
-            new UncheckedWrapperException(tmle);
+        } catch (TooManyListenersException ex) {
+            throw new UncheckedWrapperException(ex);
         }
 
         form.add(languageWidget);
@@ -116,16 +133,26 @@ public class ItemLanguages extends LayoutPanel {
      */
     private class OptionPrinter implements PrintListener {
 
-        public final void prepare(final PrintEvent e) {
-            final PageState state = e.getPageState();
-            final OptionGroup optionGroup = (OptionGroup) e.getTarget();
-            final ContentPage item = (ContentPage) selectionModel.
-                getSelectedItem(state);
-            final Collection languages = LanguageUtil.convertToG11N(
-                LanguageUtil.getCreatableLanguages(item));
+        @Override
+        public final void prepare(final PrintEvent event) {
+            final PageState state = event.getPageState();
+            final OptionGroup optionGroup = (OptionGroup) event.getTarget();
+            final ContentItem item = selectionModel.getSelectedItem(state);
 
-            for (Iterator iter = languages.iterator(); iter.hasNext();) {
-                final Pair pair = (Pair) iter.next();
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final LanguageUtil languageUtil = cdiUtil.findBean(
+                LanguageUtil.class);
+            final ContentItemL10NManager l10NManager = cdiUtil.findBean(
+                ContentItemL10NManager.class);
+
+            final List<String> creatableLangs = l10NManager.creatableLocales(
+                item).stream()
+                .map(locale -> locale.toString())
+                .collect(Collectors.toList());
+            final List<Pair> languages = languageUtil.convertToG11N(
+                creatableLangs);
+
+            for(final Pair pair : languages) {
                 final String langCode = (String) pair.getKey();
                 final GlobalizedMessage langName
                                             = (GlobalizedMessage) pair
@@ -141,9 +168,10 @@ public class ItemLanguages extends LayoutPanel {
      */
     private class ProcessListener implements FormProcessListener {
 
-        public final void process(final FormSectionEvent e)
+        @Override
+        public final void process(final FormSectionEvent event)
             throws FormProcessException {
-            PageState state = e.getPageState();
+            PageState state = event.getPageState();
             String lang = (String) languageWidget.getValue(state);
             ContentPage item = (ContentPage) selectionModel.getSelectedItem(
                 state);
