@@ -23,11 +23,9 @@ import com.arsdigita.bebop.FormProcessException;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.Page;
 import com.arsdigita.bebop.PageState;
-import com.arsdigita.bebop.GridPanel;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.bebop.event.ActionEvent;
 import com.arsdigita.bebop.event.ActionListener;
-import com.arsdigita.bebop.event.FormProcessListener;
 import com.arsdigita.bebop.event.FormSubmissionListener;
 import com.arsdigita.cms.CMS;
 
@@ -40,11 +38,9 @@ import com.arsdigita.cms.ui.BaseDeleteForm;
 import com.arsdigita.globalization.GlobalizedMessage;
 //ToDo insert later import com.arsdigita.cms.ui.ContentSectionPage;
 
-import org.libreccm.core.CcmObject;
 
 import com.arsdigita.kernel.ui.ACSObjectSelectionModel;
 import com.arsdigita.toolbox.ui.ActionGroup;
-import com.arsdigita.toolbox.ui.Section;
 import com.arsdigita.toolbox.ui.Cancellable;
 
 import org.apache.log4j.Logger;
@@ -53,7 +49,6 @@ import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentSectionManager;
 import org.librecms.contentsection.ContentTypeManager;
 
-import java.math.BigDecimal;
 
 /**
  * This class contains the split pane for the ContentType administration

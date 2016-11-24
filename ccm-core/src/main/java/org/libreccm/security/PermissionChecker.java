@@ -24,12 +24,15 @@ import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.subject.Subject;
 import org.libreccm.core.CcmObject;
 
+import java.util.Optional;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 
 /**
  * An utility class for checking permissions. Uses the current {@link Subject}
- * as provided by the {@link Shiro} bean.
+ * as provided by the {@link Shiro} bean useless otherwise indicated.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -45,14 +48,17 @@ public class PermissionChecker {
     @Inject
     private Shiro shiro;
 
+    @Inject
+    private RoleRepository roleRepo;
+
     /**
      * Checks if the current subject has a permission granting the provided
-     * privilege.
+     * {@code privilege}.
      *
      * @param privilege The privilege granted by the permission.
      *
-     * @return {@code true} if the current subject has as permission granting
-     *         the provided {@code privilege}, {@code false} otherwise.
+     * @return {@code true} if the current subject has a permission granting the
+     *         provided {@code privilege}, {@code false} otherwise.
      */
     public boolean isPermitted(final String privilege) {
         if (subject.isAuthenticated()) {
@@ -64,15 +70,50 @@ public class PermissionChecker {
     }
 
     /**
+     * Check if the provided {@code role} has a permissions granting the
+     * provided {@code privilege}.
+     *
+     * @param privilege The privilege granted by the permission.
+     * @param role      The role to check for a permission granting the
+     *                  {@code privilege}.
+     *
+     * @return {@code true} if the role has a permission granting the provided
+     *         {@code privilege}, {@code false} otherwise.
+     */
+    @Transactional(Transactional.TxType.REQUIRED)
+    public boolean isPermitted(final String privilege, final Role role) {
+        if (privilege == null || privilege.trim().isEmpty()) {
+            throw new IllegalArgumentException(
+                "Can't check permission null (or empty)");
+        }
+
+        if (role == null) {
+            throw new IllegalArgumentException(
+                "Can't check permission for role null.");
+        }
+
+        //Ensure that we have a none detached entity
+        final Role theRole = roleRepo.findById(role.getRoleId());
+
+        final Optional<Permission> permission = theRole.getPermissions()
+            .stream()
+            .filter(granted -> privilege.equals(granted.getGrantedPrivilege()))
+            .findFirst();
+
+        return permission.isPresent();
+    }
+
+    /**
      * Checks if the current subject has a permission granting the provided
-     * privilege on the provided object or its parent object(s) if the object
-     * implements the {@link InheritsPermissions} interface.
+     * {@code privilege} on the provided {@code object} or its parent object(s)
+     * if the object implements the {@link InheritsPermissions} interface.
      *
      * @param privilege The granted privilege.
      * @param object    The object on which the privilege is granted.
      *
      * @return {@code true} if the there is a permission granting the provided
-     *         {@code privilege} on the provided {@code subject}.
+     *         {@code privilege} on the provided {@code object} to the current
+     *         subject.
      */
     public boolean isPermitted(final String privilege, final CcmObject object) {
         final boolean result;
@@ -96,6 +137,67 @@ public class PermissionChecker {
         } else {
             return result;
         }
+    }
+
+    /**
+     * Checks if the provided {@code role} has a permission granting the
+     * provided {@code privilege} on the provided object or its parent object(s)
+     * if the object implements the {@link InheritsPermissions} interface.
+     *
+     * @param privilege The granted privilege.
+     * @param object    The object on which the {@code privilege} is granted.
+     * @param role      The role to check for a permission granting the
+     *                  {@code privilege}.
+     *
+     * @return {@code true} if the there is a permission granting the provided
+     *         {@code privilege} on the provided {@code object} to the provided
+     *         {@code role}.
+     */
+    public boolean isPermitted(final String privilege,
+                               final CcmObject object,
+                               final Role role) {
+        if (privilege == null || privilege.trim().isEmpty()) {
+            throw new IllegalArgumentException(
+                "Can't check permission null (or empty)");
+        }
+
+        if (role == null) {
+            throw new IllegalArgumentException(
+                "Can't check permission for role null.");
+        }
+
+        if (object == null) {
+            throw new IllegalArgumentException(
+                "Can verify permissions for object null.");
+        }
+
+        final boolean result;
+
+        //Ensure that we have a none detached entity
+        final Role theRole = roleRepo.findById(role.getRoleId());
+
+        final Optional<Permission> permission = theRole.getPermissions()
+            .stream()
+            .filter(granted -> granted.getObject() != null)
+            .filter(granted -> object.equals(granted.getObject()))
+            .findFirst();
+        result = permission.isPresent();
+
+        if (result) {
+            return result;
+        } else if (object instanceof InheritsPermissions) {
+            if (((InheritsPermissions) object).getParent().isPresent()) {
+                return isPermitted(
+                    privilege,
+                    ((InheritsPermissions) object).getParent().get(),
+                    role);
+            } else {
+                return result;
+            }
+        } else {
+            return result;
+        }
+
     }
 
     /**

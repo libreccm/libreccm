@@ -18,14 +18,15 @@
  */
 package org.librecms.contentsection;
 
+import org.librecms.contentsection.privileges.TypePrivileges;
+
 import org.libreccm.security.AuthorizationRequired;
+import org.libreccm.security.PermissionManager;
 import org.libreccm.security.RequiresPrivilege;
+import org.libreccm.security.Role;
 import org.libreccm.workflow.WorkflowTemplate;
 import org.librecms.contentsection.privileges.AdminPrivileges;
 import org.librecms.lifecycle.LifecycleDefinition;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -41,6 +42,9 @@ public class ContentTypeManager {
 
     @Inject
     private ContentTypeRepository typeRepo;
+    
+    @Inject
+    private PermissionManager permissionManager;
 
     @SuppressWarnings("unchecked")
     public Class<? extends ContentItem> classNameToClass(final String className) {
@@ -49,10 +53,10 @@ public class ContentTypeManager {
             clazz = Class.forName(className);
         } catch (ClassNotFoundException ex) {
             throw new IllegalArgumentException(String.format(
-                "No class with the name \"%s\" exists.", className), 
-                ex);
+                "No class with the name \"%s\" exists.", className),
+                                               ex);
         }
-        
+
         if (clazz.isAssignableFrom(ContentItem.class)) {
             return (Class<? extends ContentItem>) clazz;
         } else {
@@ -60,7 +64,7 @@ public class ContentTypeManager {
                 "Class \"%s\" is not a content type.", className));
         }
     }
-    
+
     @Transactional(Transactional.TxType.REQUIRED)
     @AuthorizationRequired
     public void setDefaultLifecycle(
@@ -81,8 +85,28 @@ public class ContentTypeManager {
         final WorkflowTemplate template) {
 
         type.setDefaultWorkflow(template);
-        
+
         typeRepo.save(type);
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    @AuthorizationRequired
+    public void grantUsageOfType(
+        @RequiresPrivilege(AdminPrivileges.ADMINISTER_CONTENT_TYPES)
+        final ContentType type,
+        final Role role) {
+
+        permissionManager.grantPrivilege(TypePrivileges.USE_TYPE, role, type);
+    }
+    
+    @Transactional(Transactional.TxType.REQUIRED)
+    @AuthorizationRequired
+    public void denyUsageOnType(
+        @RequiresPrivilege(AdminPrivileges.ADMINISTER_CONTENT_TYPES)
+        final ContentType type,
+        final Role role) {
+
+        permissionManager.revokePrivilege(TypePrivileges.USE_TYPE, role, type);
     }
 
 }
