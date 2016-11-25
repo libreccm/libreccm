@@ -308,7 +308,7 @@ public class ContentItemL10NManager {
      */
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
-    public void removeLangauge(
+    public void removeLanguage(
         @RequiresPrivilege(ItemPrivileges.EDIT)
         final ContentItem item,
         final Locale locale) {
@@ -330,7 +330,7 @@ public class ContentItemL10NManager {
         }
 
         findLocalizedStringProperties(item)
-            .forEach(property -> removeLanguage(item, locale, property));
+            .forEach(property -> ContentItemL10NManager.this.removeLanguage(item, locale, property));
 
         itemRepo.save(item);
     }

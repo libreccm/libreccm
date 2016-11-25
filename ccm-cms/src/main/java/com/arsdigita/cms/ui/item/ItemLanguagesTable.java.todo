@@ -164,7 +164,7 @@ public class ItemLanguagesTable extends Table {
                 final ContentItemL10NManager l10nManager = cdiUtil.findBean(
                     ContentItemL10NManager.class);
 
-                l10nManager.removeLangauge(item, new Locale(selectedLang));
+                l10nManager.removeLanguage(item, new Locale(selectedLang));
             }
 
             @Override

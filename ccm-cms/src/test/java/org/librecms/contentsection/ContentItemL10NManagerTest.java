@@ -299,7 +299,7 @@ public class ContentItemL10NManagerTest {
 
     /**
      * Tries to remove language from a content item by using
-     * {@link ContentItemL10NManager#removeLangauge(org.librecms.contentsection.ContentItem, java.util.Locale)}.
+     * {@link ContentItemL10NManager#removeLanguage(org.librecms.contentsection.ContentItem, java.util.Locale)}.
      */
     @Test
     @InSequence(70)
@@ -313,12 +313,12 @@ public class ContentItemL10NManagerTest {
         final Optional<ContentItem> item = itemRepo.findById(-10100L);
         assertThat(item.isPresent(), is(true));
 
-        l10nManager.removeLangauge(item.get(), Locale.FRENCH);
+        l10nManager.removeLanguage(item.get(), Locale.FRENCH);
     }
 
     /**
      * Verifies that
-     * {@link ContentItemL10NManager#removeLangauge(org.librecms.contentsection.ContentItem, java.util.Locale)}
+     * {@link ContentItemL10NManager#removeLanguage(org.librecms.contentsection.ContentItem, java.util.Locale)}
      * has not effect if called for not present language.
      */
     @Test
@@ -332,12 +332,12 @@ public class ContentItemL10NManagerTest {
         final Optional<ContentItem> item = itemRepo.findById(-10100L);
         assertThat(item.isPresent(), is(true));
 
-        l10nManager.removeLangauge(item.get(), Locale.GERMAN);
+        l10nManager.removeLanguage(item.get(), Locale.GERMAN);
     }
 
     /**
      * Verifies that
-     * {@link ContentItemL10NManager#removeLangauge(org.librecms.contentsection.ContentItem, java.util.Locale)}
+     * {@link ContentItemL10NManager#removeLanguage(org.librecms.contentsection.ContentItem, java.util.Locale)}
      * throws an {@link IllegalArgumentException} if called with {@code null}
      * for the item.
      */
@@ -352,12 +352,12 @@ public class ContentItemL10NManagerTest {
     public void removeLanguageItemIsNull() {
         final ContentItem item = null;
 
-        l10nManager.removeLangauge(item, Locale.GERMAN);
+        l10nManager.removeLanguage(item, Locale.GERMAN);
     }
 
     /**
      * Verifies that
-     * {@link ContentItemL10NManager#removeLangauge(org.librecms.contentsection.ContentItem, java.util.Locale)}
+     * {@link ContentItemL10NManager#removeLanguage(org.librecms.contentsection.ContentItem, java.util.Locale)}
      * throws an {@link IllegalArgumentException} if called with {@code null}
      * for the language.
      */
@@ -373,7 +373,7 @@ public class ContentItemL10NManagerTest {
         final Optional<ContentItem> item = itemRepo.findById(-10100L);
         assertThat(item.isPresent(), is(true));
 
-        l10nManager.removeLangauge(item.get(), null);
+        l10nManager.removeLanguage(item.get(), null);
 
     }
 

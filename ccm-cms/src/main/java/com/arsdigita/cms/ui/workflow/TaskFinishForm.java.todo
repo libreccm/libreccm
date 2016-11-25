@@ -179,7 +179,6 @@ public final class TaskFinishForm extends CommentAddForm {
             final TaskManager taskManager = cdiUtil.findBean(TaskManager.class);
             final AssignableTaskManager assignableTaskManager = cdiUtil
                 .findBean(AssignableTaskManager.class);
-            final Shiro shiro = cdiUtil.findBean(Shiro.class);
             final ConfigurationManager confManager = cdiUtil.findBean(
                 ConfigurationManager.class);
             final KernelConfig kernelConfig = confManager.findConfiguration(
@@ -221,7 +220,6 @@ public final class TaskFinishForm extends CommentAddForm {
                 final TaskFinishFormController controller = cdiUtil.findBean(
                     TaskFinishFormController.class);
                 final Workflow workflow = task.getWorkflow();
-                final User user = shiro.getUser();
                 final List<AssignableTask> tasks = controller.findEnabledTasks(
                     workflow);
                 for (final AssignableTask currentTask : tasks) {
@@ -243,7 +241,7 @@ public final class TaskFinishForm extends CommentAddForm {
                             throw new RedirectSignal(
                                 URL.there(state.getRequest(),
                                           ContentItemPage.getItemURL(
-                                              item,
+                                              item.get(),
                                               ContentItemPage.PUBLISHING_TAB)),
                                 true);
                         }

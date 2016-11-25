@@ -40,8 +40,6 @@ import org.libreccm.security.User;
 import com.arsdigita.toolbox.ui.ActionGroup;
 import com.arsdigita.toolbox.ui.PropertyList;
 import com.arsdigita.toolbox.ui.Section;
-import com.arsdigita.util.UncheckedWrapperException;
-import com.arsdigita.web.Web;
 
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.Shiro;
@@ -49,48 +47,45 @@ import org.libreccm.workflow.Task;
 import org.libreccm.workflow.TaskManager;
 import org.libreccm.workflow.TaskRepository;
 import org.libreccm.workflow.Workflow;
-import org.libreccm.workflow.WorkflowManager;
-import org.librecms.CmsConstants;
 import org.librecms.contentsection.privileges.AdminPrivileges;
 import org.librecms.workflow.CmsTaskType;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Locale;
 
 abstract class BaseWorkflowItemPane extends BaseItemPane {
 
-    final WorkflowRequestLocal m_workflow;
-    final TaskRequestLocal m_task;
+    final WorkflowRequestLocal workflowRequestLocal;
+    final TaskRequestLocal taskRequestLocal;
 
-    ActionGroup m_actionGroup;
-    final TaskTable m_tasks;
+    ActionGroup actionGroup;
+    final TaskTable taskTable;
 
-    final SimpleContainer m_detailPane;
-    final TaskItemPane m_taskPane;
-    final SummarySection m_summarySection;
+    final SimpleContainer detailPane;
+    final TaskItemPane taskItemPane;
+    final SummarySection summarySection;
 
     public BaseWorkflowItemPane(final WorkflowRequestLocal workflow,
                                 final ActionLink editLink,
                                 final ActionLink deleteLink) {
-        m_workflow = workflow;
+        workflowRequestLocal = workflow;
 
-        m_tasks = new TaskTable();
-        m_task = new TaskSelectionRequestLocal();
+        taskTable = new TaskTable();
+        taskRequestLocal = new TaskSelectionRequestLocal();
 
-        m_detailPane = new SimpleContainer();
+        detailPane = new SimpleContainer();
 
         // Tasks
         final FinishLink taskFinishLink = new FinishLink();
 
         final ActionLink taskAddLink = new ActionLink(new Label(gz(
             "cms.ui.workflow.task.add")));
-        final TaskAddForm taskAddForm = new TaskAddForm(m_workflow, m_tasks
+        final TaskAddForm taskAddForm = new TaskAddForm(workflowRequestLocal, taskTable
                                                         .getRowSelectionModel());
 
         final ActionLink taskEditLink = new ActionLink(new Label(gz(
             "cms.ui.workflow.task.edit")));
-        final TaskEditForm taskEditForm = new TaskEditForm(m_workflow, m_task);
+        final TaskEditForm taskEditForm = new TaskEditForm(workflowRequestLocal, taskRequestLocal);
 
         final ActionLink taskDeleteLink = new ActionLink(new Label(gz(
             "cms.ui.workflow.task.delete")));
@@ -100,31 +95,31 @@ abstract class BaseWorkflowItemPane extends BaseItemPane {
             "cms.ui.workflow.task.return")));
         backLink.addActionListener(new ResetListener());
 
-        m_taskPane = new TaskItemPane(m_workflow, m_task,
+        taskItemPane = new TaskItemPane(workflowRequestLocal, taskRequestLocal,
                                       taskFinishLink, taskEditLink,
                                       taskDeleteLink, backLink);
 
-        m_summarySection = new SummarySection(editLink, deleteLink);
-        m_detailPane.add(m_summarySection);
-        m_detailPane.add(new TaskSection(taskAddLink));
+        summarySection = new SummarySection(editLink, deleteLink);
+        detailPane.add(summarySection);
+        detailPane.add(new TaskSection(taskAddLink));
 
-        add(m_detailPane);
-        setDefault(m_detailPane);
-        add(m_taskPane);
+        add(detailPane);
+        setDefault(detailPane);
+        add(taskItemPane);
         add(taskAddForm);
         add(taskEditForm);
         add(taskDeleteForm);
 
-        connect(m_tasks, 0, m_taskPane);
+        connect(taskTable, 0, taskItemPane);
 
         connect(taskAddLink, taskAddForm);
-        connect(taskAddForm, m_taskPane);
+        connect(taskAddForm, taskItemPane);
 
         connect(taskEditLink, taskEditForm);
         connect(taskEditForm);
 
         connect(taskDeleteLink, taskDeleteForm);
-        connect(taskDeleteForm, m_detailPane);
+        connect(taskDeleteForm, detailPane);
     }
 
     protected class AdminVisible extends VisibilityComponent {
@@ -146,7 +141,7 @@ abstract class BaseWorkflowItemPane extends BaseItemPane {
 
         @Override
         public final boolean isVisible(final PageState state) {
-            final CmsTask task = m_task.getTask(state);
+            final CmsTask task = taskRequestLocal.getTask(state);
             final User lockingUser = task.getLockingUser();
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final Shiro shiro = cdiUtil.findBean(Shiro.class);
@@ -165,7 +160,7 @@ abstract class BaseWorkflowItemPane extends BaseItemPane {
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
                 final TaskManager taskManager = cdiUtil.findBean(TaskManager.class);
 
-                final Task task = m_task.getTask(state);
+                final Task task = taskRequestLocal.getTask(state);
                 taskManager.finish(task);
             }
 
@@ -177,7 +172,7 @@ abstract class BaseWorkflowItemPane extends BaseItemPane {
     public void reset(final PageState state) {
         super.reset(state);
 
-        m_tasks.getRowSelectionModel().clearSelection(state);
+        taskTable.getRowSelectionModel().clearSelection(state);
     }
 
     private class TaskDeleteForm extends BaseDeleteForm {
@@ -197,10 +192,10 @@ abstract class BaseWorkflowItemPane extends BaseItemPane {
             final TaskRepository taskRepo = cdiUtil.findBean(
                 TaskRepository.class);
 
-            final Task task = m_task.getTask(state);
+            final Task task = taskRequestLocal.getTask(state);
             taskRepo.delete(task);
 
-            m_tasks.getRowSelectionModel().clearSelection(state);
+            taskTable.getRowSelectionModel().clearSelection(state);
         }
 
     }
@@ -209,7 +204,7 @@ abstract class BaseWorkflowItemPane extends BaseItemPane {
 
         @Override
         protected final Object initialValue(final PageState state) {
-            final String key = m_tasks.getRowSelectionModel().getSelectedKey(
+            final String key = taskTable.getRowSelectionModel().getSelectedKey(
                 state).toString();
 
             return CmsTaskType.valueOf(key);
@@ -223,13 +218,13 @@ abstract class BaseWorkflowItemPane extends BaseItemPane {
                        final ActionLink deleteLink) {
             setHeading(new Label(gz("cms.ui.workflow.details")));
 
-            m_actionGroup = new ActionGroup();
-            setBody(m_actionGroup);
+            actionGroup = new ActionGroup();
+            setBody(actionGroup);
 
-            m_actionGroup.setSubject(new Properties());
-            m_actionGroup.addAction(new AdminVisible(editLink),
+            actionGroup.setSubject(new Properties());
+            actionGroup.addAction(new AdminVisible(editLink),
                                     ActionGroup.EDIT);
-            m_actionGroup.addAction(new AdminVisible(deleteLink),
+            actionGroup.addAction(new AdminVisible(deleteLink),
                                     ActionGroup.DELETE);
         }
 
@@ -239,7 +234,7 @@ abstract class BaseWorkflowItemPane extends BaseItemPane {
             protected final List<Property> properties(final PageState state) {
                 @SuppressWarnings("unchecked")
                 final List<Property> props = super.properties(state);
-                final Workflow workflow = (Workflow) m_workflow.get(state);
+                final Workflow workflow = (Workflow) workflowRequestLocal.get(state);
 
                 final KernelConfig kernelConfig = KernelConfig.getConfig();
                 final Locale defaultLocale = kernelConfig.getDefaultLocale();
@@ -269,7 +264,7 @@ abstract class BaseWorkflowItemPane extends BaseItemPane {
             final ActionGroup group = new ActionGroup();
             setBody(group);
 
-            group.setSubject(m_tasks);
+            group.setSubject(taskTable);
             group.addAction(new AdminVisible(taskAddLink), ActionGroup.ADD);
         }
 
@@ -286,7 +281,7 @@ abstract class BaseWorkflowItemPane extends BaseItemPane {
     private class TaskTable extends Table {
 
         public TaskTable() {
-            super(new TaskTableModelBuilder(m_workflow), s_columns);
+            super(new TaskTableModelBuilder(workflowRequestLocal), s_columns);
 
             setEmptyView(new Label(gz("cms.ui.workflow.task.none")));
 

@@ -43,6 +43,7 @@ import com.arsdigita.cms.ui.authoring.LanguageWidget;
 import org.librecms.util.LanguageUtil;
 
 import com.arsdigita.globalization.GlobalizedMessage;
+import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.toolbox.ui.ActionGroup;
 import com.arsdigita.toolbox.ui.LayoutPanel;
 import com.arsdigita.toolbox.ui.Section;
@@ -60,8 +61,11 @@ import org.librecms.contentsection.ContentItemL10NManager;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.TooManyListenersException;
 import java.util.stream.Collectors;
+import org.libreccm.configuration.ConfigurationManager;
+import org.librecms.CmsConstants;
 
 /**
  * Displays the "Language instances" pane, with all the language instances in
@@ -81,10 +85,10 @@ public class ItemLanguages extends LayoutPanel {
     /**
      * Constructs a new <code>ItemLanguages</code>.
      *
-     * @param selectionModel   the {@link ItemSelectionModel} which will supply
-     *                         the current item
+     * @param selectionModel the {@link ItemSelectionModel} which will supply
+     * the current item
      * @param selectedLanguage {@link SingleSelectionModel} for the selected
-     *                         language.
+     * language.
      */
     public ItemLanguages(final ItemSelectionModel selectionModel,
                          final SingleSelectionModel<String> selectedLanguage) {
@@ -141,22 +145,22 @@ public class ItemLanguages extends LayoutPanel {
 
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final LanguageUtil languageUtil = cdiUtil.findBean(
-                LanguageUtil.class);
+                    LanguageUtil.class);
             final ContentItemL10NManager l10NManager = cdiUtil.findBean(
-                ContentItemL10NManager.class);
+                    ContentItemL10NManager.class);
 
             final List<String> creatableLangs = l10NManager.creatableLocales(
-                item).stream()
-                .map(locale -> locale.toString())
-                .collect(Collectors.toList());
+                    item).stream()
+                    .map(locale -> locale.toString())
+                    .collect(Collectors.toList());
             final List<Pair> languages = languageUtil.convertToG11N(
-                creatableLangs);
+                    creatableLangs);
 
-            for(final Pair pair : languages) {
+            for (final Pair pair : languages) {
                 final String langCode = (String) pair.getKey();
                 final GlobalizedMessage langName
-                                            = (GlobalizedMessage) pair
-                        .getValue();
+                                        = (GlobalizedMessage) pair
+                                .getValue();
                 optionGroup.addOption(new Option(langCode, new Label(langName)));
             }
         }
@@ -170,64 +174,46 @@ public class ItemLanguages extends LayoutPanel {
 
         @Override
         public final void process(final FormSectionEvent event)
-            throws FormProcessException {
-            PageState state = event.getPageState();
-            String lang = (String) languageWidget.getValue(state);
-            ContentPage item = (ContentPage) selectionModel.getSelectedItem(
-                state);
-            ContentBundle bundle = item.getContentBundle();
-            String name = bundle.getName();
+                throws FormProcessException {
+
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+
+            final PageState state = event.getPageState();
+            final String lang = (String) languageWidget.getValue(state);
+            final ContentItem item = (ContentItem) selectionModel
+                    .getSelectedItem(state);
+
+            final ConfigurationManager confManager = cdiUtil.findBean(
+                    ConfigurationManager.class);
+            final KernelConfig kernelConfig = confManager.findConfiguration(
+                    KernelConfig.class);
+            final Locale defaultLocale = kernelConfig.getDefaultLocale();
+            final String name = item.getName().getValue(defaultLocale);
 
             if (createSubmit.isSelected(state)) {
-                ContentSection section = item.getContentSection();
+                final ContentSection section = item.getContentType().
+                        getContentSection();
 
                 Assert.exists(section, ContentSection.class);
 
-                ContentType type = item.getContentType();
-
-                item = (ContentPage) item.copy(lang);
-                item.setLanguage(lang);
-                item.setName(name);
-
-                // Apply default workflow
-                WorkflowTemplate template
-                                     = ContentTypeWorkflowTemplate
-                        .getWorkflowTemplate(section, type);
-                if (template != null) {
-                    Workflow w = template.instantiateNewWorkflow();
-                    w.setObjectID(item.getID());
-                    w.start(Kernel.getContext().getUser());
-                    w.save();
-                }
-
-                selectionModel.setSelectedObject(state, item);
+                final ContentItemL10NManager l10NManager = cdiUtil.findBean(
+                        ContentItemL10NManager.class);
+                l10NManager.addLanguage(item, new Locale(lang));
 
                 // redirect to ContentItemPage.AUTHORING_TAB of the new instance
-                final String target = URL.getDispatcherPath() + ContentItemPage.
-                    getItemURL(item,
-                               ContentItemPage.AUTHORING_TAB);
-
+                final String target = String.join(
+                        "", URL.getDispatcherPath(),
+                        ContentItemPage.getItemURL(item,
+                                                   ContentItemPage.AUTHORING_TAB));
+                
                 throw new RedirectSignal(target, true);
-            } else if (changeSubmit.isSelected(state)) {
-                String oldLang = item.getLanguage();
-                item.setLanguage(lang);
-                // propagate language change to the Name attribute
-                item.setName(name);
-                item.save();
-
-                // if the item being changed is the default, update the bundle
-                // to keep this item as the default
-                if (bundle.getDefaultLanguage().equals(oldLang)) {
-                    bundle.setDefaultLanguage(lang);
-                    bundle.save();
-                }
-            }
+            } 
         }
 
     }
 
     protected static final GlobalizedMessage gz(final String key) {
-        return GlobalizationUtil.globalize(key);
+        return new GlobalizedMessage(key, CmsConstants.CMS_BUNDLE);
     }
 
     protected static final String lz(final String key) {

@@ -55,7 +55,8 @@ public class CMSForm extends Form implements Cancellable {
      * @param state The page state
      * @return true if the form is cancelled, false otherwise
      */
-    public boolean isCancelled(PageState state) {
+    @Override
+    public boolean isCancelled(final PageState state) {
         return false;
     }
 }

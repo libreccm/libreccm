@@ -23,7 +23,6 @@ import com.arsdigita.bebop.SingleSelectionModel;
 import com.arsdigita.bebop.parameters.LongParameter;
 import com.arsdigita.ui.CcmObjectSelectionModel;
 
-import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentType;
@@ -53,6 +52,14 @@ public class ItemSelectionModel extends CcmObjectSelectionModel<ContentItem> {
 
     private Long typeId;
 
+    public ItemSelectionModel(final LongParameter parameter) {
+        super(parameter);
+    }
+    
+    public ItemSelectionModel(final String parameterName) {
+        super(parameterName);
+    }
+    
     /**
      * Construct a new <code>ItemSelectionModel</code>
      *
