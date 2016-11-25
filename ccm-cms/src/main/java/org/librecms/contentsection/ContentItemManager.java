@@ -68,6 +68,9 @@ import java.util.UUID;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+import org.libreccm.security.PermissionChecker;
+import org.libreccm.security.PermissionManager;
+import org.librecms.contentsection.privileges.TypePrivileges;
 
 /**
  * Manager class providing several methods to manipulate {@link ContentItem}s.
@@ -112,6 +115,9 @@ public class ContentItemManager {
 
     @Inject
     private AssetManager assetManager;
+    
+    @Inject
+    private PermissionChecker permissionChecker;
 
     /**
      * Creates a new content item in the provided content section and folder
@@ -198,6 +204,10 @@ public class ContentItemManager {
                 type.getName()));
         }
 
+        //Check if the current user is allowed to use the content type
+        permissionChecker.checkPermission(TypePrivileges.USE_TYPE, 
+                                          contentType.get());
+        
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException(
                 "The name of a content item can't be blank.");

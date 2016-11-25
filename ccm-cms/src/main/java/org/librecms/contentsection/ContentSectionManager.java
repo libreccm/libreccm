@@ -51,6 +51,7 @@ import org.librecms.contentsection.privileges.ItemPrivileges;
 import org.librecms.lifecycle.LifecycleDefinition;
 
 import java.util.Optional;
+import org.librecms.contentsection.privileges.TypePrivileges;
 
 import static org.librecms.contentsection.ContentSection.*;
 
@@ -97,11 +98,11 @@ public class ContentSectionManager {
     public ContentSection createContentSection(final String name) {
         if (name == null || name.isEmpty()) {
             throw new IllegalArgumentException(
-                "The name of a ContentSection can't be blank.");
+                    "The name of a ContentSection can't be blank.");
         }
 
         final KernelConfig kernelConfig = confManager.findConfiguration(
-            KernelConfig.class);
+                KernelConfig.class);
         final Locale defautLocale = kernelConfig.getDefaultLocale();
 
         final ContentSection section = new ContentSection();
@@ -250,21 +251,21 @@ public class ContentSectionManager {
      * {@link CmsConstants#AdminPrivileges.ADMINISTER_ROLES} for the provided
      * content section.
      *
-     * @param section    The {@link ContentSection} to which the role is added.
-     * @param roleName   The name of the new role.
+     * @param section The {@link ContentSection} to which the role is added.
+     * @param roleName The name of the new role.
      * @param privileges The privileges of the new role.
      */
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public void addRoleToContentSection(
-        @RequiresPrivilege(AdminPrivileges.ADMINISTER_ROLES)
-        final ContentSection section,
-        final String roleName,
-        final String... privileges) {
+            @RequiresPrivilege(AdminPrivileges.ADMINISTER_ROLES)
+            final ContentSection section,
+            final String roleName,
+            final String... privileges) {
 
         if (section == null) {
             throw new IllegalArgumentException("Can't add a role to "
-                                                   + "section null.");
+                                                       + "section null.");
         }
 
         if (roleName == null || roleName.trim().isEmpty()) {
@@ -289,24 +290,24 @@ public class ContentSectionManager {
      * requires {@link CmsConstants#AdminPrivileges.ADMINISTER_ROLES} for the
      * provided content section.
      *
-     * @param role    The role to add.
+     * @param role The role to add.
      * @param section The section the role is associated with.
      */
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public void addRoleToContentSection(
-        final Role role,
-        @RequiresPrivilege(AdminPrivileges.ADMINISTER_ROLES)
-        final ContentSection section) {
+            final Role role,
+            @RequiresPrivilege(AdminPrivileges.ADMINISTER_ROLES)
+            final ContentSection section) {
 
         if (section == null) {
             throw new IllegalArgumentException("Can't add a role to "
-                                                   + "section null.");
+                                                       + "section null.");
         }
 
         if (role == null) {
             throw new IllegalArgumentException("Can't add role null to a "
-                                                   + "content section.");
+                                                       + "content section.");
         }
 
         section.addRole(role);
@@ -322,18 +323,18 @@ public class ContentSectionManager {
      * content section.
      *
      * @param contentSection The section from which the role is removed.
-     * @param role           The role to remove from the content section.
+     * @param role The role to remove from the content section.
      */
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public void removeRoleFromContentSection(
-        @RequiresPrivilege(AdminPrivileges.ADMINISTER_ROLES)
-        final ContentSection contentSection,
-        final Role role) {
+            @RequiresPrivilege(AdminPrivileges.ADMINISTER_ROLES)
+            final ContentSection contentSection,
+            final Role role) {
 
         if (contentSection == null) {
             throw new IllegalArgumentException(
-                "Can't remove role from ContentSection null");
+                    "Can't remove role from ContentSection null");
         }
 
         if (role == null) {
@@ -344,8 +345,8 @@ public class ContentSectionManager {
         sectionRepo.save(contentSection);
 
         final TypedQuery<Permission> query = entityManager
-            .createNamedQuery("ContentSection.findPermissions",
-                              Permission.class);
+                .createNamedQuery("ContentSection.findPermissions",
+                                  Permission.class);
         query.setParameter("section", contentSection);
         query.setParameter("rootDocumentsFolder",
                            contentSection.getRootDocumentsFolder());
@@ -361,14 +362,14 @@ public class ContentSectionManager {
      * provided content section.
      *
      * @param definition The lifecycle definition to add.
-     * @param section    The section to which the definition is added.
+     * @param section The section to which the definition is added.
      */
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public void addLifecycleDefinitionToContentSection(
-        final LifecycleDefinition definition,
-        @RequiresPrivilege(AdminPrivileges.ADMINISTER_LIFECYLES)
-        final ContentSection section) {
+            final LifecycleDefinition definition,
+            @RequiresPrivilege(AdminPrivileges.ADMINISTER_LIFECYLES)
+            final ContentSection section) {
 
         section.addLifecycleDefinition(definition);
         sectionRepo.save(section);
@@ -380,14 +381,14 @@ public class ContentSectionManager {
      * the provided content section.
      *
      * @param definition The definition to remove.
-     * @param section    The section from which the definition is removed.
+     * @param section The section from which the definition is removed.
      */
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public void removeLifecycleDefinitionFromContentSection(
-        final LifecycleDefinition definition,
-        @RequiresPrivilege(AdminPrivileges.ADMINISTER_LIFECYLES)
-        final ContentSection section) {
+            final LifecycleDefinition definition,
+            @RequiresPrivilege(AdminPrivileges.ADMINISTER_LIFECYLES)
+            final ContentSection section) {
 
         section.removeLifecycleDefinition(definition);
         sectionRepo.save(section);
@@ -399,14 +400,14 @@ public class ContentSectionManager {
      * content section.
      *
      * @param template The template to add.
-     * @param section  The content section to which the template is added.
+     * @param section The content section to which the template is added.
      */
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public void addWorkflowTemplateToContentSection(
-        final WorkflowTemplate template,
-        @RequiresPrivilege(AdminPrivileges.ADMINISTER_WORKFLOW)
-        final ContentSection section) {
+            final WorkflowTemplate template,
+            @RequiresPrivilege(AdminPrivileges.ADMINISTER_WORKFLOW)
+            final ContentSection section) {
 
         section.addWorkflowTemplate(template);
         sectionRepo.save(section);
@@ -418,14 +419,14 @@ public class ContentSectionManager {
      * provided content section.
      *
      * @param template The template to remove.
-     * @param section  The section from which the template is removed.
+     * @param section The section from which the template is removed.
      */
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public void removeWorkflowTemplateFromContentSection(
-        final WorkflowTemplate template,
-        @RequiresPrivilege(AdminPrivileges.ADMINISTER_WORKFLOW)
-        final ContentSection section) {
+            final WorkflowTemplate template,
+            @RequiresPrivilege(AdminPrivileges.ADMINISTER_WORKFLOW)
+            final ContentSection section) {
 
         section.removeWorkflowTemplate(template);
         sectionRepo.save(section);
@@ -435,7 +436,7 @@ public class ContentSectionManager {
      * Retrieves the {@link ItemResolver} for the provided content section.
      *
      * @param section The section for which the {@link ItemResolver} is
-     *                retrieved.
+     * retrieved.
      *
      * @return The {@link ItemResolver} for the provided content section.
      */
@@ -443,12 +444,12 @@ public class ContentSectionManager {
         try {
             @SuppressWarnings("unchecked")
             final Class<ItemResolver> itemResolverClazz
-                                          = (Class<ItemResolver>) Class.
-                    forName(section.getItemResolverClass());
+                                      = (Class<ItemResolver>) Class.
+                            forName(section.getItemResolverClass());
             return itemResolverClazz.newInstance();
         } catch (ClassNotFoundException
-                 | IllegalAccessException
-                 | InstantiationException ex) {
+                         | IllegalAccessException
+                         | InstantiationException ex) {
             throw new RuntimeException(ex);
         }
     }
@@ -459,75 +460,72 @@ public class ContentSectionManager {
      * {@link CmsConstants#AdminPrivileges.ADMINISTER_CONTENT_TYPES} for the
      * provided content section.
      *
-     * @param type             The type to add (a subclass of
-     *                         {@link ContentItem}.
-     * @param section          The section to which the type is added.
+     * @param type The type to add (a subclass of {@link ContentItem}.
+     * @param section The section to which the type is added.
      * @param defaultLifecycle The default lifecycle for items of the provided
-     *                         type in the provided content section. The
-     *                         lifecycle must be part of the provided section.
-     *                         Otherwise an {@link IllegalArgumentException} is
-     *                         thrown.
-     * @param defaultWorkflow  The default workflow for items of the provided
-     *                         type in the provided content section. The
-     *                         workflow must be part of the provided section.
-     *                         Otherwise an {@link IllegalArgumentException} is
-     *                         thrown.
+     * type in the provided content section. The lifecycle must be part of the
+     * provided section. Otherwise an {@link IllegalArgumentException} is
+     * thrown.
+     * @param defaultWorkflow The default workflow for items of the provided
+     * type in the provided content section. The workflow must be part of the
+     * provided section. Otherwise an {@link IllegalArgumentException} is
+     * thrown.
      *
      * @return The new {@link ContentType} instance.
      */
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public ContentType addContentTypeToSection(
-        final Class<? extends ContentItem> type,
-        @RequiresPrivilege(AdminPrivileges.ADMINISTER_CONTENT_TYPES)
-        final ContentSection section,
-        final LifecycleDefinition defaultLifecycle,
-        final WorkflowTemplate defaultWorkflow) {
+            final Class<? extends ContentItem> type,
+            @RequiresPrivilege(AdminPrivileges.ADMINISTER_CONTENT_TYPES)
+            final ContentSection section,
+            final LifecycleDefinition defaultLifecycle,
+            final WorkflowTemplate defaultWorkflow) {
 
         if (type == null) {
             throw new IllegalArgumentException("Can't add null as content type "
-                                                   + "to a content section.");
+                                                       + "to a content section.");
         }
 
         if (section == null) {
             throw new IllegalArgumentException("Can't add a content type"
-                                                   + "to section null.");
+                                                       + "to section null.");
         }
 
         if (defaultLifecycle == null) {
             throw new IllegalArgumentException("Can't create a content type "
-                                                   + "without a default lifecycle.");
+                                                       + "without a default lifecycle.");
         }
 
         if (defaultWorkflow == null) {
             throw new IllegalArgumentException("Can't create a content type "
-                                                   + "without a default workflow.");
+                                                       + "without a default workflow.");
         }
 
         if (!section.getLifecycleDefinitions().contains(defaultLifecycle)) {
             final KernelConfig kernelConfig = confManager.findConfiguration(
-                KernelConfig.class);
+                    KernelConfig.class);
             final Locale defaultLocale = kernelConfig.getDefaultLocale();
             throw new IllegalArgumentException(String.format(
-                "The provided default lifecycle %d\"%s\" is not part of the"
-                    + "provided content section %d\"%s\".",
-                defaultLifecycle.getDefinitionId(),
-                defaultLifecycle.getLabel().getValue(defaultLocale),
-                section.getObjectId(),
-                section.getDisplayName()));
+                    "The provided default lifecycle %d\"%s\" is not part of the"
+                            + "provided content section %d\"%s\".",
+                    defaultLifecycle.getDefinitionId(),
+                    defaultLifecycle.getLabel().getValue(defaultLocale),
+                    section.getObjectId(),
+                    section.getDisplayName()));
         }
 
         if (!section.getWorkflowTemplates().contains(defaultWorkflow)) {
             final KernelConfig kernelConfig = confManager.findConfiguration(
-                KernelConfig.class);
+                    KernelConfig.class);
             final Locale defaultLocale = kernelConfig.getDefaultLocale();
             throw new IllegalArgumentException(String.format(
-                "The provided default workflow %d\"%s\" is not part of the"
-                    + "provided content section %d\"%s\".",
-                defaultWorkflow.getWorkflowId(),
-                defaultWorkflow.getName().getValue(defaultLocale),
-                section.getObjectId(),
-                section.getDisplayName()));
+                    "The provided default workflow %d\"%s\" is not part of the"
+                            + "provided content section %d\"%s\".",
+                    defaultWorkflow.getWorkflowId(),
+                    defaultWorkflow.getName().getValue(defaultLocale),
+                    section.getObjectId(),
+                    section.getDisplayName()));
         }
 
         if (hasContentType(type, section)) {
@@ -544,6 +542,10 @@ public class ContentSectionManager {
 
         section.addContentType(contentType);
 
+        section.getRoles().stream()
+                .forEach(role -> permissionManager.grantPrivilege(
+                TypePrivileges.USE_TYPE, role, contentType));
+
         sectionRepo.save(section);
         typeRepo.save(contentType);
 
@@ -554,11 +556,11 @@ public class ContentSectionManager {
      * Checks if a content section has a {@link ContentType} for a specific
      * subclass {@link ContentItem}.
      *
-     * @param type    The type to check for.
+     * @param type The type to check for.
      * @param section The section to check for the {@link ContentType}.
      *
      * @return {@code true} if the section has a {@link ContentType} for
-     *         {@code type}, {@code false} if not.
+     * {@code type}, {@code false} if not.
      */
     public boolean hasContentType(final Class<? extends ContentItem> type,
                                   final ContentSection section) {
@@ -572,7 +574,7 @@ public class ContentSectionManager {
         }
 
         final Optional<ContentType> result = typeRepo
-            .findByContentSectionAndClass(section, type);
+                .findByContentSectionAndClass(section, type);
 
         return result.isPresent();
     }
@@ -583,21 +585,20 @@ public class ContentSectionManager {
      * {@link CmsConstants#AdminPrivileges.ADMINISTER_CONTENT_TYPES} for the
      * provided content section.
      *
-     * @param type    The type to remove from the section.
+     * @param type The type to remove from the section.
      * @param section The section from which the type is removed.
      *
      * @throws IllegalArgumentException if the provided {@link ContentType} is
-     *                                  in use or the parameters or otherwise
-     *                                  illegal.
+     * in use or the parameters or otherwise illegal.
      * @see
      * ContentTypeRepository#delete(org.librecms.contentsection.ContentType)
      */
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public void removeContentTypeFromSection(
-        final Class<? extends ContentItem> type,
-        @RequiresPrivilege(AdminPrivileges.ADMINISTER_CONTENT_TYPES)
-        final ContentSection section) {
+            final Class<? extends ContentItem> type,
+            @RequiresPrivilege(AdminPrivileges.ADMINISTER_CONTENT_TYPES)
+            final ContentSection section) {
 
         if (type == null) {
             throw new IllegalArgumentException("Can't remove content type null.");
@@ -605,11 +606,11 @@ public class ContentSectionManager {
 
         if (section == null) {
             throw new IllegalArgumentException("Can't remove a content type "
-                                                   + "from section null.");
+                                                       + "from section null.");
         }
 
         final Optional<ContentType> contentType = typeRepo
-            .findByContentSectionAndClass(section, type);
+                .findByContentSectionAndClass(section, type);
 
         if (!contentType.isPresent()) {
             return;
@@ -617,12 +618,12 @@ public class ContentSectionManager {
 
         if (typeRepo.isContentTypeInUse(contentType.get())) {
             throw new IllegalArgumentException(String.format(
-                "ContentType %d:\"%s\" is used by content section %d:\"%s\" and "
+                    "ContentType %d:\"%s\" is used by content section %d:\"%s\" and "
                     + "can't be deleted.",
-                contentType.get().getObjectId(),
-                contentType.get().getDisplayName(),
-                section.getObjectId(),
-                section.getDisplayName()));
+                    contentType.get().getObjectId(),
+                    contentType.get().getDisplayName(),
+                    section.getObjectId(),
+                    section.getDisplayName()));
         }
 
         typeRepo.delete(contentType.get());
