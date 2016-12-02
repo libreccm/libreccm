@@ -20,6 +20,8 @@ package org.libreccm.modules;
 
 import org.libreccm.configuration.Configuration;
 import org.libreccm.configuration.ConfigurationManager;
+import org.libreccm.pagemodel.ComponentModel;
+import org.libreccm.pagemodel.PageModelComponentModel;
 import org.libreccm.web.ApplicationType;
 
 import java.lang.annotation.Retention;
@@ -90,4 +92,6 @@ public @interface Module {
      */
     Class<?>[] configurations() default {};
 
+    PageModelComponentModel[] pageModelComponentModels() default {};
+    
 }

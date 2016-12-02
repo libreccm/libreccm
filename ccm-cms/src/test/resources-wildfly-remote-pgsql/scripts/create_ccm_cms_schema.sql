@@ -856,49 +856,50 @@ create schema CCM_CORE;
     alter table CCM_CMS.CONTENT_SECTION_WORKFLOW_TEMPLATES 
         add constraint UK_goj42ghwu4tf1akfb2r6ensns unique (WORKFLOW_TEMPLATE_ID);
 
+
     create table CCM_CORE.APPLICATIONS (
         APPLICATION_TYPE varchar(1024) not null,
         PRIMARY_URL varchar(1024) not null,
-        OBJECT_ID int8 not null,
+        OBJECT_ID bigint not null,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.ATTACHMENTS (
-        ATTACHMENT_ID int8 not null,
-        ATTACHMENT_DATA oid,
+        ATTACHMENT_ID bigint not null,
+        ATTACHMENT_DATA blob,
         DESCRIPTION varchar(255),
         MIME_TYPE varchar(255),
         TITLE varchar(255),
-        MESSAGE_ID int8,
+        MESSAGE_ID bigint,
         primary key (ATTACHMENT_ID)
     );
 
     create table CCM_CORE.CATEGORIES (
         ABSTRACT_CATEGORY boolean,
-        CATEGORY_ORDER int8,
+        CATEGORY_ORDER bigint,
         ENABLED boolean,
         NAME varchar(255) not null,
         UNIQUE_ID varchar(255),
         VISIBLE boolean,
-        OBJECT_ID int8 not null,
-        PARENT_CATEGORY_ID int8,
+        OBJECT_ID bigint not null,
+        PARENT_CATEGORY_ID bigint,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.CATEGORIZATIONS (
-        CATEGORIZATION_ID int8 not null,
-        CATEGORY_ORDER int8,
+        CATEGORIZATION_ID bigint not null,
+        CATEGORY_ORDER bigint,
         CATEGORY_INDEX boolean,
-        OBJECT_ORDER int8,
+        OBJECT_ORDER bigint,
         TYPE varchar(255),
-        OBJECT_ID int8,
-        CATEGORY_ID int8,
+        OBJECT_ID bigint,
+        CATEGORY_ID bigint,
         primary key (CATEGORIZATION_ID)
     );
 
     create table CCM_CORE.CATEGORY_DESCRIPTIONS (
-        OBJECT_ID int8 not null,
-        LOCALIZED_VALUE text,
+        OBJECT_ID bigint not null,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
@@ -908,86 +909,86 @@ create schema CCM_CORE;
         RELEASED timestamp,
         URI varchar(1024),
         VERSION varchar(255),
-        OBJECT_ID int8 not null,
-        ROOT_CATEGORY_ID int8,
+        OBJECT_ID bigint not null,
+        ROOT_CATEGORY_ID bigint,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.CATEGORY_TITLES (
-        OBJECT_ID int8 not null,
-        LOCALIZED_VALUE text,
+        OBJECT_ID bigint not null,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
 
     create table CCM_CORE.CCM_OBJECTS (
-        OBJECT_ID int8 not null,
+        OBJECT_ID bigint not null,
         DISPLAY_NAME varchar(255),
         UUID varchar(255),
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.CCM_OBJECTS_AUD (
-        OBJECT_ID int8 not null,
-        REV int4 not null,
-        REVTYPE int2,
-        REVEND int4,
+        OBJECT_ID bigint not null,
+        REV integer not null,
+        REVTYPE tinyint,
+        REVEND integer,
         DISPLAY_NAME varchar(255),
         primary key (OBJECT_ID, REV)
     );
 
     create table CCM_CORE.CCM_REVISIONS (
-        id int4 not null,
-        timestamp int8 not null,
+        id integer not null,
+        timestamp bigint not null,
         USER_NAME varchar(255),
         primary key (id)
     );
 
     create table CCM_CORE.CCM_ROLES (
-        ROLE_ID int8 not null,
+        ROLE_ID bigint not null,
         NAME varchar(512) not null,
         primary key (ROLE_ID)
     );
 
     create table CCM_CORE.DIGESTS (
-        FREQUENCY int4,
+        FREQUENCY integer,
         HEADER varchar(4096) not null,
         NEXT_RUN timestamp,
         DIGEST_SEPARATOR varchar(128) not null,
         SIGNATURE varchar(4096) not null,
         SUBJECT varchar(255) not null,
-        OBJECT_ID int8 not null,
-        FROM_PARTY_ID int8,
+        OBJECT_ID bigint not null,
+        FROM_PARTY_ID bigint,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.DOMAIN_DESCRIPTIONS (
-        OBJECT_ID int8 not null,
-        LOCALIZED_VALUE text,
+        OBJECT_ID bigint not null,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
 
     create table CCM_CORE.DOMAIN_OWNERSHIPS (
-        OWNERSHIP_ID int8 not null,
+        OWNERSHIP_ID bigint not null,
         CONTEXT varchar(255),
-        DOMAIN_ORDER int8,
-        OWNER_ORDER int8,
-        domain_OBJECT_ID int8 not null,
-        owner_OBJECT_ID int8 not null,
+        DOMAIN_ORDER bigint,
+        OWNER_ORDER bigint,
+        domain_OBJECT_ID bigint not null,
+        owner_OBJECT_ID bigint not null,
         primary key (OWNERSHIP_ID)
     );
 
     create table CCM_CORE.DOMAIN_TITLES (
-        OBJECT_ID int8 not null,
-        LOCALIZED_VALUE text,
+        OBJECT_ID bigint not null,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
 
     create table CCM_CORE.FORMBUILDER_COMPONENT_DESCRIPTIONS (
-        COMPONENT_ID int8 not null,
-        LOCALIZED_VALUE text,
+        COMPONENT_ID bigint not null,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (COMPONENT_ID, LOCALE)
     );
@@ -996,65 +997,65 @@ create schema CCM_CORE;
         ACTIVE boolean,
         ADMIN_NAME varchar(255),
         ATTRIBUTE_STRING varchar(255),
-        COMPONENT_ORDER int8,
+        COMPONENT_ORDER bigint,
         SELECTED boolean,
-        OBJECT_ID int8 not null,
-        parentComponent_OBJECT_ID int8,
+        OBJECT_ID bigint not null,
+        parentComponent_OBJECT_ID bigint,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.FORMBUILDER_CONFIRM_EMAIL_LISTENER (
-        BODY text,
+        BODY clob,
         FROM_EMAIL varchar(255),
         SUBJECT varchar(255),
-        OBJECT_ID int8 not null,
+        OBJECT_ID bigint not null,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.FORMBUILDER_CONFIRM_REDIRECT_LISTENERS (
         URL varchar(255),
-        OBJECT_ID int8 not null,
+        OBJECT_ID bigint not null,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.FORMBUILDER_DATA_DRIVEN_SELECTS (
         MULTIPLE boolean,
         QUERY varchar(255),
-        OBJECT_ID int8 not null,
+        OBJECT_ID bigint not null,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.FORMBUILDER_DATA_QUERIES (
         QUERY_ID varchar(255),
-        OBJECT_ID int8 not null,
+        OBJECT_ID bigint not null,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.FORMBUILDER_DATA_QUERY_DESCRIPTIONS (
-        DATA_QUERY_ID int8 not null,
-        LOCALIZED_VALUE text,
+        DATA_QUERY_ID bigint not null,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (DATA_QUERY_ID, LOCALE)
     );
 
     create table CCM_CORE.FORMBUILDER_DATA_QUERY_NAMES (
-        DATA_QUERY_ID int8 not null,
-        LOCALIZED_VALUE text,
+        DATA_QUERY_ID bigint not null,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (DATA_QUERY_ID, LOCALE)
     );
 
     create table CCM_CORE.FORMBUILDER_FORMSECTIONS (
         FORMSECTION_ACTION varchar(255),
-        OBJECT_ID int8 not null,
+        OBJECT_ID bigint not null,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.FORMBUILDER_LISTENERS (
         ATTRIBUTE_STRING varchar(255),
         CLASS_NAME varchar(255),
-        OBJECT_ID int8 not null,
-        widget_OBJECT_ID int8,
+        OBJECT_ID bigint not null,
+        widget_OBJECT_ID bigint,
         primary key (OBJECT_ID)
     );
 
@@ -1063,76 +1064,76 @@ create schema CCM_CORE;
         PRETTY_NAME varchar(255),
         PRETTY_PLURAL varchar(255),
         PROPERTIES_FORM varchar(255),
-        OBJECT_ID int8 not null,
+        OBJECT_ID bigint not null,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.FORMBUILDER_OBJECT_TYPES (
         APP_NAME varchar(255),
         CLASS_NAME varchar(255),
-        OBJECT_ID int8 not null,
+        OBJECT_ID bigint not null,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.FORMBUILDER_OPTION_LABELS (
-        OPTION_ID int8 not null,
-        LOCALIZED_VALUE text,
+        OPTION_ID bigint not null,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OPTION_ID, LOCALE)
     );
 
     create table CCM_CORE.FORMBUILDER_OPTIONS (
         PARAMETER_VALUE varchar(255),
-        OBJECT_ID int8 not null,
+        OBJECT_ID bigint not null,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.FORMBUILDER_PROCESS_LISTENER_DESCRIPTIONS (
-        PROCESS_LISTENER_ID int8 not null,
-        LOCALIZED_VALUE text,
+        PROCESS_LISTENER_ID bigint not null,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (PROCESS_LISTENER_ID, LOCALE)
     );
 
     create table CCM_CORE.FORMBUILDER_PROCESS_LISTENER_NAMES (
-        PROCESS_LISTENER_ID int8 not null,
-        LOCALIZED_VALUE text,
+        PROCESS_LISTENER_ID bigint not null,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (PROCESS_LISTENER_ID, LOCALE)
     );
 
     create table CCM_CORE.FORMBUILDER_PROCESS_LISTENERS (
         LISTENER_CLASS varchar(255),
-        PROCESS_LISTENER_ORDER int8,
-        OBJECT_ID int8 not null,
-        formSection_OBJECT_ID int8,
+        PROCESS_LISTENER_ORDER bigint,
+        OBJECT_ID bigint not null,
+        formSection_OBJECT_ID bigint,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.FORMBUILDER_REMOTE_SERVER_POST_LISTENER (
         REMOTE_URL varchar(2048),
-        OBJECT_ID int8 not null,
+        OBJECT_ID bigint not null,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.FORMBUILDER_SIMPLE_EMAIL_LISTENERS (
         RECIPIENT varchar(255),
         SUBJECT varchar(255),
-        OBJECT_ID int8 not null,
+        OBJECT_ID bigint not null,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.FORMBUILDER_TEMPLATE_EMAIL_LISTENERS (
-        BODY text,
+        BODY clob,
         RECIPIENT varchar(255),
         SUBJECT varchar(255),
-        OBJECT_ID int8 not null,
+        OBJECT_ID bigint not null,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.FORMBUILDER_WIDGET_LABELS (
-        OBJECT_ID int8 not null,
-        widget_OBJECT_ID int8,
+        OBJECT_ID bigint not null,
+        widget_OBJECT_ID bigint,
         primary key (OBJECT_ID)
     );
 
@@ -1140,58 +1141,58 @@ create schema CCM_CORE;
         DEFAULT_VALUE varchar(255),
         PARAMETER_MODEL varchar(255),
         PARAMETER_NAME varchar(255),
-        OBJECT_ID int8 not null,
-        label_OBJECT_ID int8,
+        OBJECT_ID bigint not null,
+        label_OBJECT_ID bigint,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.FORMBUILDER_XML_EMAIL_LISTENERS (
         RECIPIENT varchar(255),
         SUBJECT varchar(255),
-        OBJECT_ID int8 not null,
+        OBJECT_ID bigint not null,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.GROUP_MEMBERSHIPS (
-        MEMBERSHIP_ID int8 not null,
-        GROUP_ID int8,
-        MEMBER_ID int8,
+        MEMBERSHIP_ID bigint not null,
+        GROUP_ID bigint,
+        MEMBER_ID bigint,
         primary key (MEMBERSHIP_ID)
     );
 
     create table CCM_CORE.GROUPS (
-        PARTY_ID int8 not null,
+        PARTY_ID bigint not null,
         primary key (PARTY_ID)
     );
 
     create table CCM_CORE.HOSTS (
-        HOST_ID int8 not null,
+        HOST_ID bigint not null,
         SERVER_NAME varchar(512),
-        SERVER_PORT int8,
+        SERVER_PORT bigint,
         primary key (HOST_ID)
     );
 
     create table CCM_CORE.INITS (
-        INITIALIZER_ID int8 not null,
+        INITIALIZER_ID bigint not null,
         CLASS_NAME varchar(255),
-        REQUIRED_BY_ID int8,
+        REQUIRED_BY_ID bigint,
         primary key (INITIALIZER_ID)
     );
 
     create table CCM_CORE.INSTALLED_MODULES (
-        MODULE_ID int4 not null,
+        MODULE_ID integer not null,
         MODULE_CLASS_NAME varchar(2048),
         STATUS varchar(255),
         primary key (MODULE_ID)
     );
 
     create table CCM_CORE.LUCENE_DOCUMENTS (
-        DOCUMENT_ID int8 not null,
-        CONTENT text,
+        DOCUMENT_ID bigint not null,
+        CONTENT clob,
         CONTENT_SECTION varchar(512),
         COUNTRY varchar(8),
         CREATED timestamp,
-        DIRTY int8,
+        DIRTY bigint,
         DOCUMENT_LANGUAGE varchar(8),
         LAST_MODIFIED timestamp,
         SUMMARY varchar(4096),
@@ -1199,15 +1200,15 @@ create schema CCM_CORE;
         TITLE varchar(4096),
         TYPE varchar(255),
         TYPE_SPECIFIC_INFO varchar(512),
-        CREATED_BY_PARTY_ID int8,
-        LAST_MODIFIED_BY int8,
+        CREATED_BY_PARTY_ID bigint,
+        LAST_MODIFIED_BY bigint,
         primary key (DOCUMENT_ID)
     );
 
     create table CCM_CORE.LUCENE_INDEXES (
-        INDEX_ID int8 not null,
-        LUCENE_INDEX_ID int8,
-        HOST_ID int8,
+        INDEX_ID bigint not null,
+        LUCENE_INDEX_ID bigint,
+        HOST_ID bigint,
         primary key (INDEX_ID)
     );
 
@@ -1216,9 +1217,9 @@ create schema CCM_CORE;
         BODY_MIME_TYPE varchar(255),
         SENT timestamp,
         SUBJECT varchar(255),
-        OBJECT_ID int8 not null,
-        IN_REPLY_TO_ID int8,
-        SENDER_ID int8,
+        OBJECT_ID bigint not null,
+        IN_REPLY_TO_ID bigint,
+        SENDER_ID bigint,
         primary key (OBJECT_ID)
     );
 
@@ -1228,92 +1229,127 @@ create schema CCM_CORE;
         EXPUNGE_MESSAGE boolean,
         FULFILL_DATE timestamp,
         HEADER varchar(4096),
-        MAX_RETRIES int8,
+        MAX_RETRIES bigint,
         REQUEST_DATE timestamp,
         SIGNATURE varchar(4096),
         STATUS varchar(32),
-        OBJECT_ID int8 not null,
-        DIGEST_ID int8,
-        MESSAGE_ID int8,
-        RECEIVER_ID int8,
+        OBJECT_ID bigint not null,
+        DIGEST_ID bigint,
+        MESSAGE_ID bigint,
+        RECEIVER_ID bigint,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.ONE_TIME_AUTH_TOKENS (
-        TOKEN_ID int8 not null,
+        TOKEN_ID bigint not null,
         PURPOSE varchar(255),
         TOKEN varchar(255),
         VALID_UNTIL timestamp,
-        USER_ID int8,
+        USER_ID bigint,
         primary key (TOKEN_ID)
     );
 
+    create table CCM_CORE.PAGE_MODEL_COMPONENT_MODELS (
+        COMPONENT_MODEL_ID bigint not null,
+        CLASS_ATTRIBUTE varchar(512),
+        ID_ATTRIBUTE varchar(255),
+        COMPONENT_KEY varchar(255),
+        STYLE_ATTRIBUTE varchar(1024),
+        UUID varchar(255) not null,
+        PAGE_MODEL_ID bigint,
+        primary key (COMPONENT_MODEL_ID)
+    );
+
+    create table CCM_CORE.PAGE_MODEL_DESCRIPTIONS (
+        PAGE_MODEL_ID bigint not null,
+        LOCALIZED_VALUE longvarchar,
+        LOCALE varchar(255) not null,
+        primary key (PAGE_MODEL_ID, LOCALE)
+    );
+
+    create table CCM_CORE.PAGE_MODEL_TITLES (
+        PAGE_MODEL_ID bigint not null,
+        LOCALIZED_VALUE longvarchar,
+        LOCALE varchar(255) not null,
+        primary key (PAGE_MODEL_ID, LOCALE)
+    );
+
+    create table CCM_CORE.PAGE_MODELS (
+        PAGE_MODEL_ID bigint not null,
+        NAME varchar(255),
+        TYPE varchar(255) not null,
+        UUID varchar(255) not null,
+        VERSION varchar(255) not null,
+        APPLICATION_ID bigint,
+        primary key (PAGE_MODEL_ID)
+    );
+
     create table CCM_CORE.PARTIES (
-        PARTY_ID int8 not null,
+        PARTY_ID bigint not null,
         NAME varchar(256) not null,
         primary key (PARTY_ID)
     );
 
     create table CCM_CORE.PERMISSIONS (
-        PERMISSION_ID int8 not null,
+        PERMISSION_ID bigint not null,
         CREATION_DATE timestamp,
         CREATION_IP varchar(255),
         granted_privilege varchar(255),
-        CREATION_USER_ID int8,
-        GRANTEE_ID int8,
-        OBJECT_ID int8,
+        CREATION_USER_ID bigint,
+        GRANTEE_ID bigint,
+        OBJECT_ID bigint,
         primary key (PERMISSION_ID)
     );
 
     create table CCM_CORE.PORTALS (
         TEMPLATE boolean,
-        OBJECT_ID int8 not null,
+        OBJECT_ID bigint not null,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.PORTLETS (
-        CELL_NUMBER int8,
-        SORT_KEY int8,
-        OBJECT_ID int8 not null,
-        PORTAL_ID int8,
+        CELL_NUMBER bigint,
+        SORT_KEY bigint,
+        OBJECT_ID bigint not null,
+        PORTAL_ID bigint,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.QUEUE_ITEMS (
-        QUEUE_ITEM_ID int8 not null,
+        QUEUE_ITEM_ID bigint not null,
         HEADER varchar(4096),
         RECEIVER_ADDRESS varchar(512),
-        RETRY_COUNT int8,
+        RETRY_COUNT bigint,
         SIGNATURE varchar(4096),
         SUCCESSFUL_SENDED boolean,
-        MESSAGE_ID int8,
-        RECEIVER_ID int8,
+        MESSAGE_ID bigint,
+        RECEIVER_ID bigint,
         primary key (QUEUE_ITEM_ID)
     );
 
     create table CCM_CORE.RESOURCE_DESCRIPTIONS (
-        OBJECT_ID int8 not null,
-        LOCALIZED_VALUE text,
+        OBJECT_ID bigint not null,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
 
     create table CCM_CORE.RESOURCE_TITLES (
-        OBJECT_ID int8 not null,
-        LOCALIZED_VALUE text,
+        OBJECT_ID bigint not null,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
 
     create table CCM_CORE.RESOURCE_TYPE_DESCRIPTIONS (
-        RESOURCE_TYPE_ID int8 not null,
-        LOCALIZED_VALUE text,
+        RESOURCE_TYPE_ID bigint not null,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (RESOURCE_TYPE_ID, LOCALE)
     );
 
     create table CCM_CORE.RESOURCE_TYPES (
-        RESOURCE_TYPE_ID int8 not null,
+        RESOURCE_TYPE_ID bigint not null,
         SINGLETON boolean,
         TITLE varchar(254) not null,
         EMBEDDED_VIEW boolean,
@@ -1324,64 +1360,64 @@ create schema CCM_CORE;
 
     create table CCM_CORE.RESOURCES (
         CREATED timestamp,
-        OBJECT_ID int8 not null,
-        parent_OBJECT_ID int8,
-        resourceType_RESOURCE_TYPE_ID int8,
+        OBJECT_ID bigint not null,
+        parent_OBJECT_ID bigint,
+        resourceType_RESOURCE_TYPE_ID bigint,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.ROLE_DESCRIPTIONS (
-        ROLE_ID int8 not null,
-        LOCALIZED_VALUE text,
+        ROLE_ID bigint not null,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (ROLE_ID, LOCALE)
     );
 
     create table CCM_CORE.ROLE_MEMBERSHIPS (
-        MEMBERSHIP_ID int8 not null,
-        MEMBER_ID int8,
-        ROLE_ID int8,
+        MEMBERSHIP_ID bigint not null,
+        MEMBER_ID bigint,
+        ROLE_ID bigint,
         primary key (MEMBERSHIP_ID)
     );
 
     create table CCM_CORE.SETTINGS (
         DTYPE varchar(31) not null,
-        SETTING_ID int8 not null,
+        SETTING_ID bigint not null,
         CONFIGURATION_CLASS varchar(512) not null,
         NAME varchar(512) not null,
-        SETTING_VALUE_BIG_DECIMAL numeric(19, 2),
         SETTING_VALUE_BOOLEAN boolean,
-        SETTING_VALUE_LONG int8,
         SETTING_VALUE_STRING varchar(1024),
-        SETTING_VALUE_DOUBLE float8,
+        SETTING_VALUE_DOUBLE double,
+        SETTING_VALUE_BIG_DECIMAL decimal(19,2),
+        SETTING_VALUE_LONG bigint,
         primary key (SETTING_ID)
     );
 
     create table CCM_CORE.SETTINGS_ENUM_VALUES (
-        ENUM_ID int8 not null,
+        ENUM_ID bigint not null,
         value varchar(255)
     );
 
     create table CCM_CORE.SETTINGS_L10N_STR_VALUES (
-        ENTRY_ID int8 not null,
-        LOCALIZED_VALUE text,
+        ENTRY_ID bigint not null,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (ENTRY_ID, LOCALE)
     );
 
     create table CCM_CORE.SETTINGS_STRING_LIST (
-        LIST_ID int8 not null,
+        LIST_ID bigint not null,
         value varchar(255)
     );
 
     create table CCM_CORE.THREADS (
-        OBJECT_ID int8 not null,
-        ROOT_ID int8,
+        OBJECT_ID bigint not null,
+        ROOT_ID bigint,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.USER_EMAIL_ADDRESSES (
-        USER_ID int8 not null,
+        USER_ID bigint not null,
         EMAIL_ADDRESS varchar(512) not null,
         BOUNCING boolean,
         VERIFIED boolean
@@ -1396,92 +1432,92 @@ create schema CCM_CORE;
         EMAIL_ADDRESS varchar(512) not null,
         BOUNCING boolean,
         VERIFIED boolean,
-        PARTY_ID int8 not null,
+        PARTY_ID bigint not null,
         primary key (PARTY_ID)
     );
 
     create table CCM_CORE.WORKFLOW_ASSIGNABLE_TASKS (
         DUE_DATE timestamp,
-        DURATION_MINUTES int8,
+        DURATION_MINUTES bigint,
         LOCKED boolean,
         START_DATE timestamp,
-        TASK_ID int8 not null,
-        LOCKING_USER_ID int8,
-        NOTIFICATION_SENDER int8,
+        TASK_ID bigint not null,
+        LOCKING_USER_ID bigint,
+        NOTIFICATION_SENDER bigint,
         primary key (TASK_ID)
     );
 
     create table CCM_CORE.WORKFLOW_DESCRIPTIONS (
-        WORKFLOW_ID int8 not null,
-        LOCALIZED_VALUE text,
+        WORKFLOW_ID bigint not null,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (WORKFLOW_ID, LOCALE)
     );
 
     create table CCM_CORE.WORKFLOW_NAMES (
-        WORKFLOW_ID int8 not null,
-        LOCALIZED_VALUE text,
+        WORKFLOW_ID bigint not null,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (WORKFLOW_ID, LOCALE)
     );
 
     create table CCM_CORE.WORKFLOW_TASK_ASSIGNMENTS (
-        TASK_ASSIGNMENT_ID int8 not null,
-        ROLE_ID int8,
-        TASK_ID int8,
+        TASK_ASSIGNMENT_ID bigint not null,
+        ROLE_ID bigint,
+        TASK_ID bigint,
         primary key (TASK_ASSIGNMENT_ID)
     );
 
     create table CCM_CORE.WORKFLOW_TASK_COMMENTS (
-        COMMENT_ID int8 not null,
-        COMMENT text,
+        COMMENT_ID bigint not null,
+        COMMENT longvarchar,
         UUID varchar(255) not null,
-        AUTHOR_ID int8,
-        TASK_ID int8,
+        AUTHOR_ID bigint,
+        TASK_ID bigint,
         primary key (COMMENT_ID)
     );
 
     create table CCM_CORE.WORKFLOW_TASK_DEPENDENCIES (
-        DEPENDS_ON_TASK_ID int8 not null,
-        DEPENDENT_TASK_ID int8 not null
+        DEPENDS_ON_TASK_ID bigint not null,
+        DEPENDENT_TASK_ID bigint not null
     );
 
     create table CCM_CORE.WORKFLOW_TASK_DESCRIPTIONS (
-        TASK_ID int8 not null,
-        LOCALIZED_VALUE text,
+        TASK_ID bigint not null,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (TASK_ID, LOCALE)
     );
 
     create table CCM_CORE.WORKFLOW_TASK_LABELS (
-        TASK_ID int8 not null,
-        LOCALIZED_VALUE text,
+        TASK_ID bigint not null,
+        LOCALIZED_VALUE longvarchar,
         LOCALE varchar(255) not null,
         primary key (TASK_ID, LOCALE)
     );
 
     create table CCM_CORE.WORKFLOW_TASKS (
-        TASK_ID int8 not null,
+        TASK_ID bigint not null,
         ACTIVE boolean,
         TASK_STATE varchar(512),
         UUID varchar(255) not null,
-        WORKFLOW_ID int8,
+        WORKFLOW_ID bigint,
         primary key (TASK_ID)
     );
 
     create table CCM_CORE.WORKFLOW_TEMPLATES (
-        WORKFLOW_ID int8 not null,
+        WORKFLOW_ID bigint not null,
         primary key (WORKFLOW_ID)
     );
 
     create table CCM_CORE.WORKFLOWS (
-        WORKFLOW_ID int8 not null,
+        WORKFLOW_ID bigint not null,
         ACTIVE boolean,
         WORKFLOW_STATE varchar(255),
         TASKS_STATE varchar(255),
         UUID varchar(255) not null,
-        OBJECT_ID int8,
-        TEMPLATE_ID int8,
+        OBJECT_ID bigint,
+        TEMPLATE_ID bigint,
         primary key (WORKFLOW_ID)
     );
 
@@ -1511,767 +1547,7 @@ create schema CCM_CORE;
 
     alter table CCM_CORE.WORKFLOWS 
         add constraint UK_o113id7d1cxql0edsrohlnn9x unique (UUID);
-create sequence hibernate_sequence start 1 increment 1;
-
-    alter table CCM_CMS.ARTICLE_TEXTS 
-        add constraint FK1pel1j53h3t3adh9o5cbje2d3 
-        foreign key (OBJECT_ID) 
-        references CCM_CMS.ARTICLES;
-
-    alter table CCM_CMS.ARTICLE_TEXTS_AUD 
-        add constraint FKa06qks62tieeba607ykdrv3ry 
-        foreign key (REV) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.ARTICLE_TEXTS_AUD 
-        add constraint FKljfof07259eofkub5g2dx0jlq 
-        foreign key (REVEND) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.ARTICLES 
-        add constraint FK2pwvn9v2t2pikcw5hn2oq13q 
-        foreign key (OBJECT_ID) 
-        references CCM_CMS.CONTENT_ITEMS;
-
-    alter table CCM_CMS.ARTICLES_AUD 
-        add constraint FKnevu4il5fu4vy2f5twh50kstr 
-        foreign key (OBJECT_ID, REV) 
-        references CCM_CMS.CONTENT_ITEMS_AUD;
-
-    alter table CCM_CMS.ASSET_TITLES 
-        add constraint FKj61sy509dv63u246wlau5f9pa 
-        foreign key (ASSET_ID) 
-        references CCM_CMS.ASSETS;
-
-    alter table CCM_CMS.ASSET_TITLES_AUD 
-        add constraint FK6yuimrre2oowjo0diw6b00nhe 
-        foreign key (REV) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.ASSET_TITLES_AUD 
-        add constraint FKcaockxi21ve0irh06vegc77uu 
-        foreign key (REVEND) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.ASSETS 
-        add constraint FKlbiojib44ujxv9eee1sjn67qk 
-        foreign key (OBJECT_ID) 
-        references CCM_CORE.CCM_OBJECTS;
-
-    alter table CCM_CMS.ASSETS_AUD 
-        add constraint FKi5q560xg9357da8gc5sukqbw8 
-        foreign key (OBJECT_ID, REV) 
-        references CCM_CORE.CCM_OBJECTS_AUD;
-
-    alter table CCM_CMS.ATTACHMENT_LIST_CAPTIONS 
-        add constraint FKeqcryerscpnmqpipwyrvd0lae 
-        foreign key (LIST_ID) 
-        references CCM_CMS.ATTACHMENT_LISTS;
-
-    alter table CCM_CMS.ATTACHMENT_LIST_CAPTIONS_AUD 
-        add constraint FK727detagt51wmejywhteq4jfs 
-        foreign key (REV) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.ATTACHMENT_LIST_CAPTIONS_AUD 
-        add constraint FK7589vpkxegxs8y3wqjx37tig3 
-        foreign key (REVEND) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.ATTACHMENT_LIST_DESCRIPTIONS 
-        add constraint FKixgpo00r1cqq5jw1s7v6fchpn 
-        foreign key (LIST_ID) 
-        references CCM_CMS.ATTACHMENT_LISTS;
-
-    alter table CCM_CMS.ATTACHMENT_LIST_DESCRIPTIONS_AUD 
-        add constraint FKqhqkm6tas9fdmggv4k1vj0nc7 
-        foreign key (REV) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.ATTACHMENT_LIST_DESCRIPTIONS_AUD 
-        add constraint FKqv2o9jffgok4518fb5c85552l 
-        foreign key (REVEND) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.ATTACHMENT_LISTS 
-        add constraint FKqyj7ifjfyp7kmsj8fiyxn0am3 
-        foreign key (ITEM_ID) 
-        references CCM_CMS.CONTENT_ITEMS;
-
-    alter table CCM_CMS.ATTACHMENT_LISTS_AUD 
-        add constraint FKgdt5p8huh1lhk299hkrytqmqc 
-        foreign key (REV) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.ATTACHMENT_LISTS_AUD 
-        add constraint FKdn502yobchapgcyj1bu00u67a 
-        foreign key (REVEND) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.ATTACHMENTS 
-        add constraint FKmn0bm137vwr61iy5nb59cjm22 
-        foreign key (ASSET_ID) 
-        references CCM_CMS.ASSETS;
-
-    alter table CCM_CMS.ATTACHMENTS 
-        add constraint FK3mqbt13sbed2ae0esrps4p0oh 
-        foreign key (ATTACHMENT_LIST_ID) 
-        references CCM_CMS.ATTACHMENT_LISTS;
-
-    alter table CCM_CMS.ATTACHMENTS_AUD 
-        add constraint FKl19663g6todb5d1e9lok7fl9e 
-        foreign key (REV) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.ATTACHMENTS_AUD 
-        add constraint FK4n28sostn1hc8bf43qsp1pyuf 
-        foreign key (REVEND) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.AUDIO_ASSETS 
-        add constraint FKg9tos3it7lflk5o90jluonpev 
-        foreign key (LEGAL_METADATA_ID) 
-        references CCM_CMS.LEGAL_METADATA;
-
-    alter table CCM_CMS.AUDIO_ASSETS 
-        add constraint FKgxpsfjlfsk609c0w2te18y90v 
-        foreign key (OBJECT_ID) 
-        references CCM_CMS.BINARY_ASSETS;
-
-    alter table CCM_CMS.AUDIO_ASSETS_AUD 
-        add constraint FKbt11nwbde1en1upceratct6s3 
-        foreign key (OBJECT_ID, REV) 
-        references CCM_CMS.BINARY_ASSETS_AUD;
-
-    alter table CCM_CMS.BINARY_ASSET_DESCRIPTIONS 
-        add constraint FK31kl9gu49nvhcku7gfsro6hqq 
-        foreign key (ASSET_ID) 
-        references CCM_CMS.BINARY_ASSETS;
-
-    alter table CCM_CMS.BINARY_ASSET_DESCRIPTIONS_AUD 
-        add constraint FKhehi2pvqliq0s2jhv661lar7g 
-        foreign key (REV) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.BINARY_ASSET_DESCRIPTIONS_AUD 
-        add constraint FK9f5n81i6j0yopog1hvua2wmxc 
-        foreign key (REVEND) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.BINARY_ASSETS 
-        add constraint FKltx0jq1u1aflrd20k1c77m8vh 
-        foreign key (OBJECT_ID) 
-        references CCM_CMS.ASSETS;
-
-    alter table CCM_CMS.BINARY_ASSETS_AUD 
-        add constraint FK1qfap4mxprjk7gnjdcvdxr5mv 
-        foreign key (OBJECT_ID, REV) 
-        references CCM_CMS.ASSETS_AUD;
-
-    alter table CCM_CMS.BOOKMARK_DESCRIPTIONS 
-        add constraint FKmeydpwmlq0wqw3gab4auiyrqg 
-        foreign key (ASSET_ID) 
-        references CCM_CMS.BOOKMARKS;
-
-    alter table CCM_CMS.BOOKMARK_DESCRIPTIONS_AUD 
-        add constraint FKfff2ein3uhgwyyyajamy3hfwy 
-        foreign key (REV) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.BOOKMARK_DESCRIPTIONS_AUD 
-        add constraint FKtl48flnrkr0upvrc1ksy1o92m 
-        foreign key (REVEND) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.BOOKMARKS 
-        add constraint FKksnngecvvxmsxdvri4shby2hy 
-        foreign key (OBJECT_ID) 
-        references CCM_CMS.ASSETS;
-
-    alter table CCM_CMS.BOOKMARKS_AUD 
-        add constraint FK47cpxaw9vnnes2dbr6h3toirl 
-        foreign key (OBJECT_ID, REV) 
-        references CCM_CMS.ASSETS_AUD;
-
-    alter table CCM_CMS.CONTENT_ITEM_DESCRIPTIONS 
-        add constraint FK6mt4tjnenr79o52wcj99tpeu4 
-        foreign key (OBJECT_ID) 
-        references CCM_CMS.CONTENT_ITEMS;
-
-    alter table CCM_CMS.CONTENT_ITEM_DESCRIPTIONS_AUD 
-        add constraint FK12yrysxv4fxa73ker40e883av 
-        foreign key (REV) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.CONTENT_ITEM_DESCRIPTIONS_AUD 
-        add constraint FK4pxuq0pf2hrtireo902t21ocx 
-        foreign key (REVEND) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.CONTENT_ITEM_NAMES 
-        add constraint FKijrfangf9s3lyncmod651xyg8 
-        foreign key (OBJECT_ID) 
-        references CCM_CMS.CONTENT_ITEMS;
-
-    alter table CCM_CMS.CONTENT_ITEM_NAMES_AUD 
-        add constraint FKq631ee5ollx5xkliowcrt8wkj 
-        foreign key (REV) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.CONTENT_ITEM_NAMES_AUD 
-        add constraint FKbjaycalit9pa2u7ae5dwjgtky 
-        foreign key (REVEND) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.CONTENT_ITEM_TITLES 
-        add constraint FKbvf67lou4ep94pgi6tur6o2gf 
-        foreign key (OBJECT_ID) 
-        references CCM_CMS.CONTENT_ITEMS;
-
-    alter table CCM_CMS.CONTENT_ITEM_TITLES_AUD 
-        add constraint FKfbno0rxshoi57y8aehwv3o42j 
-        foreign key (REV) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.CONTENT_ITEM_TITLES_AUD 
-        add constraint FK4c3exifj1ghwg6htglynlo094 
-        foreign key (REVEND) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.CONTENT_ITEMS 
-        add constraint FKg83y3asxi1jr7larwven7ueu0 
-        foreign key (CONTENT_TYPE_ID) 
-        references CCM_CMS.CONTENT_TYPES;
-
-    alter table CCM_CMS.CONTENT_ITEMS 
-        add constraint FKfh1nm46qpw6xcwkmgaqw2iu3h 
-        foreign key (LIFECYCLE_ID) 
-        references CCM_CMS.LIFECYCLES;
-
-    alter table CCM_CMS.CONTENT_ITEMS 
-        add constraint FKl00ldjygr6as8gqbt3j14ke7j 
-        foreign key (WORKFLOW_ID) 
-        references CCM_CORE.WORKFLOWS;
-
-    alter table CCM_CMS.CONTENT_ITEMS 
-        add constraint FK1fr2q5y1wpmrufruja5ivfpuf 
-        foreign key (OBJECT_ID) 
-        references CCM_CORE.CCM_OBJECTS;
-
-    alter table CCM_CMS.CONTENT_ITEMS_AUD 
-        add constraint FKsfhj0qok0ksjplvgcaditqekl 
-        foreign key (OBJECT_ID, REV) 
-        references CCM_CORE.CCM_OBJECTS_AUD;
-
-    alter table CCM_CMS.CONTENT_SECTION_LIFECYCLE_DEFINITIONS 
-        add constraint FKqnsnk1eju8vrbm7x0wr5od4ll 
-        foreign key (LIFECYCLE_DEFINITION_ID) 
-        references CCM_CMS.LIFECYLE_DEFINITIONS;
-
-    alter table CCM_CMS.CONTENT_SECTION_LIFECYCLE_DEFINITIONS 
-        add constraint FK7daejlunqsnhgky4b92n019a9 
-        foreign key (CONTENT_SECTION_ID) 
-        references CCM_CMS.CONTENT_SECTIONS;
-
-    alter table CCM_CMS.CONTENT_SECTION_ROLES 
-        add constraint FKkn5nygbmub9wd5lxw3402t82d 
-        foreign key (ROLE_ID) 
-        references CCM_CORE.CCM_ROLES;
-
-    alter table CCM_CMS.CONTENT_SECTION_ROLES 
-        add constraint FKgcn76piocmkmvl3b0omv9vkv9 
-        foreign key (SECTION_ID) 
-        references CCM_CMS.CONTENT_SECTIONS;
-
-    alter table CCM_CMS.CONTENT_SECTION_WORKFLOW_TEMPLATES 
-        add constraint FKrx08cdjm9tutrp5lvfhgslw48 
-        foreign key (WORKFLOW_TEMPLATE_ID) 
-        references CCM_CORE.WORKFLOW_TEMPLATES;
-
-    alter table CCM_CMS.CONTENT_SECTION_WORKFLOW_TEMPLATES 
-        add constraint FK6kuejkcl9hcbkr8q6bdlatt8q 
-        foreign key (CONTENT_SECTION_ID) 
-        references CCM_CMS.CONTENT_SECTIONS;
-
-    alter table CCM_CMS.CONTENT_SECTIONS 
-        add constraint FKavcn4aakxsb7kt7hmqlx0ecu6 
-        foreign key (ROOT_ASSETS_FOLDER_ID) 
-        references CCM_CMS.FOLDERS;
-
-    alter table CCM_CMS.CONTENT_SECTIONS 
-        add constraint FKd5sahsfsycq3i5icf3122ne8e 
-        foreign key (ROOT_DOCUMENTS_FOLDER_ID) 
-        references CCM_CMS.FOLDERS;
-
-    alter table CCM_CMS.CONTENT_SECTIONS 
-        add constraint FK72jh0axiiru87i61mppvaiv96 
-        foreign key (OBJECT_ID) 
-        references CCM_CORE.APPLICATIONS;
-
-    alter table CCM_CMS.CONTENT_TYPE_DESCRIPTIONS 
-        add constraint FKknyen2aw844b65grp7uys34cb 
-        foreign key (OBJECT_ID) 
-        references CCM_CMS.CONTENT_TYPES;
-
-    alter table CCM_CMS.CONTENT_TYPE_LABELS 
-        add constraint FK3suusqws1xgffyk3yob7m7dge 
-        foreign key (OBJECT_ID) 
-        references CCM_CMS.CONTENT_TYPES;
-
-    alter table CCM_CMS.CONTENT_TYPES 
-        add constraint FKriohuo8093its1k5rgoc5yrfc 
-        foreign key (CONTENT_SECTION_ID) 
-        references CCM_CMS.CONTENT_SECTIONS;
-
-    alter table CCM_CMS.CONTENT_TYPES 
-        add constraint FK8s83we1tuh9r3j57dyos69wfa 
-        foreign key (DEFAULT_LIFECYCLE_ID) 
-        references CCM_CMS.LIFECYLE_DEFINITIONS;
-
-    alter table CCM_CMS.CONTENT_TYPES 
-        add constraint FKhnu9oikw8rpf22lt5fmk41t7k 
-        foreign key (DEFAULT_WORKFLOW) 
-        references CCM_CORE.WORKFLOW_TEMPLATES;
-
-    alter table CCM_CMS.CONTENT_TYPES 
-        add constraint FK96vwsbqfbdg33ujeeawajr0v4 
-        foreign key (OBJECT_ID) 
-        references CCM_CORE.CCM_OBJECTS;
-
-    alter table CCM_CMS.EVENT_COSTS 
-        add constraint FKrbmepytotc73h5inefeih6rea 
-        foreign key (OBJECT_ID) 
-        references CCM_CMS.EVENTS;
-
-    alter table CCM_CMS.EVENT_COSTS_AUD 
-        add constraint FKocok2fj1oflsi16i9guf8bpc6 
-        foreign key (REV) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.EVENT_COSTS_AUD 
-        add constraint FKr17panho66n1ixh8tdms01e2c 
-        foreign key (REVEND) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.EVENT_DATES 
-        add constraint FKfsfsbgoeoi511ll69iy1v7ujs 
-        foreign key (OBJECT_ID) 
-        references CCM_CMS.EVENTS;
-
-    alter table CCM_CMS.EVENT_DATES_AUD 
-        add constraint FK70p2ayg7fexrb9jogdu3vlwfb 
-        foreign key (REV) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.EVENT_DATES_AUD 
-        add constraint FKklmki82kiy0hwwpfdur2s7l3e 
-        foreign key (REVEND) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.EVENT_LOCATIONS 
-        add constraint FK8snwub57evwh6px3n265tcoiv 
-        foreign key (OBJECT_ID) 
-        references CCM_CMS.EVENTS;
-
-    alter table CCM_CMS.EVENT_LOCATIONS_AUD 
-        add constraint FKk5thpb1gaktsk213o53y97hno 
-        foreign key (REV) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.EVENT_LOCATIONS_AUD 
-        add constraint FKivwe7h7k4myq4rhuh2wkepd9j 
-        foreign key (REVEND) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.EVENT_MAIN_CONTRIBUTORS 
-        add constraint FKlmq881mxd08hthm5dy4ayjq0e 
-        foreign key (OBJECT_ID) 
-        references CCM_CMS.EVENTS;
-
-    alter table CCM_CMS.EVENT_MAIN_CONTRIBUTORS_AUD 
-        add constraint FKqgkj5almojvt913heh1f4kro5 
-        foreign key (REV) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.EVENT_MAIN_CONTRIBUTORS_AUD 
-        add constraint FKh8vhg85li7c8yqjrg2plvkgho 
-        foreign key (REVEND) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.EVENT_TEXTS 
-        add constraint FKc46r2g7ry50b9e875dldjhwxp 
-        foreign key (OBJECT_ID) 
-        references CCM_CMS.EVENTS;
-
-    alter table CCM_CMS.EVENT_TEXTS_AUD 
-        add constraint FK82mc7uswliij43std6gwyswj3 
-        foreign key (REV) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.EVENT_TEXTS_AUD 
-        add constraint FK1s381t783dmpk0fup65mvma0w 
-        foreign key (REVEND) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.EVENT_TYPES 
-        add constraint FKhdbj26ubbhmht44qpin7ony29 
-        foreign key (OBJECT_ID) 
-        references CCM_CMS.EVENTS;
-
-    alter table CCM_CMS.EVENT_TYPES_AUD 
-        add constraint FKgby7m27rnb6oeloqycyf4b1kx 
-        foreign key (REV) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.EVENT_TYPES_AUD 
-        add constraint FKhcpvb5q2geclo5vxk0gt815x8 
-        foreign key (REVEND) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.EVENTS 
-        add constraint FKt56odfo39eq13gcj1bbtngoj7 
-        foreign key (OBJECT_ID) 
-        references CCM_CMS.CONTENT_ITEMS;
-
-    alter table CCM_CMS.EVENTS_AUD 
-        add constraint FK9gofktd490afdwak49x15w6me 
-        foreign key (OBJECT_ID, REV) 
-        references CCM_CMS.CONTENT_ITEMS_AUD;
-
-    alter table CCM_CMS.EXTERNAL_AUDIO_ASSETS 
-        add constraint FKrwn3rdmqevi618fthojs0xkkq 
-        foreign key (LEGAL_METADATA_ID) 
-        references CCM_CMS.LEGAL_METADATA;
-
-    alter table CCM_CMS.EXTERNAL_AUDIO_ASSETS 
-        add constraint FK36xjlvslk0vlekn9lsc7x1c7a 
-        foreign key (OBJECT_ID) 
-        references CCM_CMS.BOOKMARKS;
-
-    alter table CCM_CMS.EXTERNAL_AUDIO_ASSETS_AUD 
-        add constraint FKp3jndaw4k35wb3d6hg5ng4xww 
-        foreign key (OBJECT_ID, REV) 
-        references CCM_CMS.BOOKMARKS_AUD;
-
-    alter table CCM_CMS.EXTERNAL_VIDEO_ASSETS 
-        add constraint FK82gxr2se97dl902eu4wvhdvh3 
-        foreign key (LEGAL_METADATA_ID) 
-        references CCM_CMS.LEGAL_METADATA;
-
-    alter table CCM_CMS.EXTERNAL_VIDEO_ASSETS 
-        add constraint FKps8bq22n1fxy8svnsrui3f0t2 
-        foreign key (OBJECT_ID) 
-        references CCM_CMS.BOOKMARKS;
-
-    alter table CCM_CMS.EXTERNAL_VIDEO_ASSETS_AUD 
-        add constraint FKilxwg8ppd64hl14tojfmupau9 
-        foreign key (OBJECT_ID, REV) 
-        references CCM_CMS.BOOKMARKS_AUD;
-
-    alter table CCM_CMS.FILES 
-        add constraint FKpg74w39tfbbuqhcy21u61q138 
-        foreign key (OBJECT_ID) 
-        references CCM_CMS.BINARY_ASSETS;
-
-    alter table CCM_CMS.FILES_AUD 
-        add constraint FKdl876a4twd0gkranwqkdmxnwy 
-        foreign key (OBJECT_ID, REV) 
-        references CCM_CMS.BINARY_ASSETS_AUD;
-
-    alter table CCM_CMS.FOLDER_CONTENT_SECTION_MAP 
-        add constraint FKnof2m7o4f0ufrugeh4g5wt3g9 
-        foreign key (CONTENT_SECTION_ID) 
-        references CCM_CMS.CONTENT_SECTIONS;
-
-    alter table CCM_CMS.FOLDER_CONTENT_SECTION_MAP 
-        add constraint FKmmb7728dp707dljq282ch47k3 
-        foreign key (FOLDER_ID) 
-        references CCM_CMS.FOLDERS;
-
-    alter table CCM_CMS.FOLDERS 
-        add constraint FK2ag06r5ywtuji2pkt68etlg48 
-        foreign key (OBJECT_ID) 
-        references CCM_CORE.CATEGORIES;
-
-    alter table CCM_CMS.IMAGES 
-        add constraint FK51ja1101epvl74auenv6sqyev 
-        foreign key (LEGAL_METADATA_ID) 
-        references CCM_CMS.LEGAL_METADATA;
-
-    alter table CCM_CMS.IMAGES 
-        add constraint FKmdqranhdstkn6m6d73l15amxs 
-        foreign key (OBJECT_ID) 
-        references CCM_CMS.BINARY_ASSETS;
-
-    alter table CCM_CMS.IMAGES_AUD 
-        add constraint FK4jsrdpe6d8is0ybx2p7sxivwf 
-        foreign key (OBJECT_ID, REV) 
-        references CCM_CMS.BINARY_ASSETS_AUD;
-
-    alter table CCM_CMS.LEGAL_METADATA 
-        add constraint FKnxl7uyv1ks0qabgeienx2t9d1 
-        foreign key (OBJECT_ID) 
-        references CCM_CMS.ASSETS;
-
-    alter table CCM_CMS.LEGAL_METADATA_AUD 
-        add constraint FKpt3eqil7iij6t5h1lrnjbb5xs 
-        foreign key (OBJECT_ID, REV) 
-        references CCM_CMS.ASSETS_AUD;
-
-    alter table CCM_CMS.LEGAL_METADATA_CONTRIBUTORS 
-        add constraint FKf9s3kxi6y5r60wksv5bospmx1 
-        foreign key (LEGAL_METADATA_ID) 
-        references CCM_CMS.LEGAL_METADATA;
-
-    alter table CCM_CMS.LEGAL_METADATA_CONTRIBUTORS_AUD 
-        add constraint FKc3lonfk7mn3p14ix96k5u74om 
-        foreign key (REV) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.LEGAL_METADATA_CONTRIBUTORS_AUD 
-        add constraint FKgxxsteesd2em96fj05f0u4men 
-        foreign key (REVEND) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.LEGAL_METADATA_RIGHTS 
-        add constraint FKhsy9u7nrh3slmkkri3nba7e1 
-        foreign key (ASSET_ID) 
-        references CCM_CMS.LEGAL_METADATA;
-
-    alter table CCM_CMS.LEGAL_METADATA_RIGHTS_AUD 
-        add constraint FKe2da3kha2nl6sj0dllhepuxtq 
-        foreign key (REV) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.LEGAL_METADATA_RIGHTS_AUD 
-        add constraint FKr867xswbxlqq6diyqyqnrh670 
-        foreign key (REVEND) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.LIFECYCLE_DEFINITION_DESCRIPTIONS 
-        add constraint FKsdr5aoogu4b9x95m8qsbe4t0y 
-        foreign key (OBJECT_ID) 
-        references CCM_CMS.LIFECYLE_DEFINITIONS;
-
-    alter table CCM_CMS.LIFECYCLE_DEFINITION_LABELS 
-        add constraint FKt4h71sl91ue18b25pdjty7jex 
-        foreign key (OBJECT_ID) 
-        references CCM_CMS.LIFECYLE_DEFINITIONS;
-
-    alter table CCM_CMS.LIFECYCLE_PHASE_DEFINITION_DESCRIPTIONS 
-        add constraint FKafbeck8qm0nflpt9aedn196ou 
-        foreign key (OBJECT_ID) 
-        references CCM_CMS.LIFECYCLE_PHASE_DEFINITIONS;
-
-    alter table CCM_CMS.LIFECYCLE_PHASE_DEFINITION_LABELS 
-        add constraint FKqysn500b0sp7bu8gy2sf2q8b9 
-        foreign key (OBJECT_ID) 
-        references CCM_CMS.LIFECYCLE_PHASE_DEFINITIONS;
-
-    alter table CCM_CMS.LIFECYCLE_PHASE_DEFINITIONS 
-        add constraint FKq5cwomuc9s1f3fsriq9t35407 
-        foreign key (LIFECYCLE_DEFINITION_ID) 
-        references CCM_CMS.LIFECYLE_DEFINITIONS;
-
-    alter table CCM_CMS.LIFECYCLES 
-        add constraint FK5yx1a2f8g4w95p1ul77sfhow8 
-        foreign key (DEFINITION_ID) 
-        references CCM_CMS.LIFECYLE_DEFINITIONS;
-
-    alter table CCM_CMS.LIFECYLE_PHASES 
-        add constraint FKpqysexvd82e4xd4uibtdfn8j4 
-        foreign key (DEFINITION_ID) 
-        references CCM_CMS.LIFECYCLE_PHASE_DEFINITIONS;
-
-    alter table CCM_CMS.LIFECYLE_PHASES 
-        add constraint FKlh2b1nokqxhf790lt7lhgoisc 
-        foreign key (LIFECYCLE_ID) 
-        references CCM_CMS.LIFECYCLES;
-
-    alter table CCM_CMS.MPA_SECTION_TEXTS 
-        add constraint FKaruovr4oa07syyhvkixfwc17h 
-        foreign key (OBJECT_ID) 
-        references CCM_CMS.MULTIPART_ARTICLE_SECTIONS;
-
-    alter table CCM_CMS.MPA_SECTION_TEXTS_AUD 
-        add constraint FKs4kvqroybq9ldb2rwhr6v8kmt 
-        foreign key (REV) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.MPA_SECTION_TEXTS_AUD 
-        add constraint FKpxvtsycad805c8u0vyh7pcb2c 
-        foreign key (REVEND) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.MPA_SECTION_TITLES 
-        add constraint FK7qpmrj6yjvad50k5budn5rag4 
-        foreign key (OBJECT_ID) 
-        references CCM_CMS.MULTIPART_ARTICLE_SECTIONS;
-
-    alter table CCM_CMS.MPA_SECTION_TITLES_AUD 
-        add constraint FKk64mi5911ybptw4slxh8i0lgb 
-        foreign key (REV) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.MPA_SECTION_TITLES_AUD 
-        add constraint FKq7f0y31r5tk2nesx0lv53d6sb 
-        foreign key (REVEND) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.MPA_SUMMARIES 
-        add constraint FK5kx5ghrkh6tqa2vms2qabacx8 
-        foreign key (OBJECT_ID) 
-        references CCM_CMS.MULTIPART_ARTICLES;
-
-    alter table CCM_CMS.MPA_SUMMARIES_AUD 
-        add constraint FKmmrabpl2gsrdb2udc76x9o6q7 
-        foreign key (REV) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.MPA_SUMMARIES_AUD 
-        add constraint FK3kebu6i1dtwfegp4409hhob4x 
-        foreign key (REVEND) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.MULTIPART_ARTICLE_SECTIONS 
-        add constraint FK30tkd6xp4i1gg6nrse4di2yxx 
-        foreign key (MULTIPART_ARTICLE_ID) 
-        references CCM_CMS.MULTIPART_ARTICLES;
-
-    alter table CCM_CMS.MULTIPART_ARTICLE_SECTIONS_AUD 
-        add constraint FK8xq6k3a1kmnxv9nh5wae80k6k 
-        foreign key (REV) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.MULTIPART_ARTICLE_SECTIONS_AUD 
-        add constraint FKsudhdaa9hs73447yik8mdy3ts 
-        foreign key (REVEND) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.MULTIPART_ARTICLES 
-        add constraint FKj7j0ew378cmcta2dfdso4tmey 
-        foreign key (OBJECT_ID) 
-        references CCM_CMS.CONTENT_ITEMS;
-
-    alter table CCM_CMS.MULTIPART_ARTICLES_AUD 
-        add constraint FKacl2u1cx6tmwfb9cpaxstw39k 
-        foreign key (OBJECT_ID, REV) 
-        references CCM_CMS.CONTENT_ITEMS_AUD;
-
-    alter table CCM_CMS.MultiPartArticle_MultiPartArticleSection_AUD 
-        add constraint FK9vexjsvd62ufkgi4g24qiql70 
-        foreign key (REV) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.MultiPartArticle_MultiPartArticleSection_AUD 
-        add constraint FK4ds2fgwphr74869qkn4e2yia6 
-        foreign key (REVEND) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.NEWS 
-        add constraint FKl8jhpvtn0lx9drkhhbbuvqqis 
-        foreign key (OBJECT_ID) 
-        references CCM_CMS.CONTENT_ITEMS;
-
-    alter table CCM_CMS.NEWS_AUD 
-        add constraint FK7akvtda3f51espb46xtjalcl2 
-        foreign key (OBJECT_ID, REV) 
-        references CCM_CMS.CONTENT_ITEMS_AUD;
-
-    alter table CCM_CMS.NEWS_TEXTS 
-        add constraint FK1s5m60rf80iaidktawb3ebmf3 
-        foreign key (OBJECT_ID) 
-        references CCM_CMS.NEWS;
-
-    alter table CCM_CMS.NEWS_TEXTS_AUD 
-        add constraint FKrand9sf233sgkgp8wfoen468l 
-        foreign key (REV) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.NEWS_TEXTS_AUD 
-        add constraint FKotjtrajmmjxussl4pvy2vl7ho 
-        foreign key (REVEND) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.RELATED_LINKS 
-        add constraint FKb517dnfj56oby2s34jp1omuim 
-        foreign key (BOOKMARK_ID) 
-        references CCM_CMS.BOOKMARKS;
-
-    alter table CCM_CMS.RELATED_LINKS 
-        add constraint FK7ts8tmnwxi8kry7cer3egujsv 
-        foreign key (TARGET_ITEM) 
-        references CCM_CMS.CONTENT_ITEMS;
-
-    alter table CCM_CMS.RELATED_LINKS 
-        add constraint FK35tv60a9kflo17h6xduvwvgis 
-        foreign key (OBJECT_ID) 
-        references CCM_CMS.ASSETS;
-
-    alter table CCM_CMS.RELATED_LINKS_AUD 
-        add constraint FKiuwk6mcj3h5gccu2aviq3d8lt 
-        foreign key (OBJECT_ID, REV) 
-        references CCM_CMS.ASSETS_AUD;
-
-    alter table CCM_CMS.SIDE_NOTE_TEXTS 
-        add constraint FK4mvpioee23u1qswmn1fekipoh 
-        foreign key (SIDE_NOTE_ID) 
-        references CCM_CMS.SIDE_NOTES;
-
-    alter table CCM_CMS.SIDE_NOTE_TEXTS_AUD 
-        add constraint FKiu4ht1tipeal2csdkvws4fnws 
-        foreign key (REV) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.SIDE_NOTE_TEXTS_AUD 
-        add constraint FKacekagiqks1cj9otxdmryl934 
-        foreign key (REVEND) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.SIDE_NOTE_TITLES 
-        add constraint FKf8c9mw6p4ijiba77t32uh7i0o 
-        foreign key (SIDE_NOTE_ID) 
-        references CCM_CMS.SIDE_NOTES;
-
-    alter table CCM_CMS.SIDE_NOTE_TITLES_AUD 
-        add constraint FKkuw32q22sotku83khh1xda7sf 
-        foreign key (REV) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.SIDE_NOTE_TITLES_AUD 
-        add constraint FKbqgawobyevpbgxsnbbs9vwooq 
-        foreign key (REVEND) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CMS.SIDE_NOTES 
-        add constraint FKea6cikleenmkgw5bwus22mfr3 
-        foreign key (OBJECT_ID) 
-        references CCM_CMS.ASSETS;
-
-    alter table CCM_CMS.SIDE_NOTES_AUD 
-        add constraint FKl5pkg9mp2ymc2uo4kmlubyp3m 
-        foreign key (OBJECT_ID, REV) 
-        references CCM_CMS.ASSETS_AUD;
-
-    alter table CCM_CMS.VIDEO_ASSETS 
-        add constraint FKjuywvv7wq9pyid5b6ivyrc0yk 
-        foreign key (LEGAL_METADATA_ID) 
-        references CCM_CMS.LEGAL_METADATA;
-
-    alter table CCM_CMS.VIDEO_ASSETS 
-        add constraint FKqt2cx1r31kqbqkimdld312i9g 
-        foreign key (OBJECT_ID) 
-        references CCM_CMS.BINARY_ASSETS;
-
-    alter table CCM_CMS.VIDEO_ASSETS_AUD 
-        add constraint FKdrx9uu9a03ju7vqvkjretohpk 
-        foreign key (OBJECT_ID, REV) 
-        references CCM_CMS.BINARY_ASSETS_AUD;
-
-    alter table CCM_CMS.WORKFLOW_TASKS 
-        add constraint FKoon3rwfmg0lhgbj4un4q3otya 
-        foreign key (TASK_ID) 
-        references CCM_CORE.WORKFLOW_ASSIGNABLE_TASKS;
+create sequence hibernate_sequence start with 1 increment by 1;
 
     alter table CCM_CORE.APPLICATIONS 
         add constraint FKatcp9ij6mbkx0nfeig1o6n3lm 
@@ -2577,6 +1853,26 @@ create sequence hibernate_sequence start 1 increment 1;
         add constraint FKtplfuphkiorfkttaewb4wmfjc 
         foreign key (USER_ID) 
         references CCM_CORE.USERS;
+
+    alter table CCM_CORE.PAGE_MODEL_COMPONENT_MODELS 
+        add constraint FKo696ch035fe7rrueol1po13od 
+        foreign key (PAGE_MODEL_ID) 
+        references CCM_CORE.PAGE_MODELS;
+
+    alter table CCM_CORE.PAGE_MODEL_DESCRIPTIONS 
+        add constraint FKcc5d6eqxu1369k8ycyyt6vn3e 
+        foreign key (PAGE_MODEL_ID) 
+        references CCM_CORE.PAGE_MODELS;
+
+    alter table CCM_CORE.PAGE_MODEL_TITLES 
+        add constraint FKj14q9911yhd4js9p6rs21rwjf 
+        foreign key (PAGE_MODEL_ID) 
+        references CCM_CORE.PAGE_MODELS;
+
+    alter table CCM_CORE.PAGE_MODELS 
+        add constraint FKk2lihllrxj89mn3tqv43amafe 
+        foreign key (APPLICATION_ID) 
+        references CCM_CORE.APPLICATIONS;
 
     alter table CCM_CORE.PERMISSIONS 
         add constraint FKj9di7pawxgtouxmu2k44bj5c4 

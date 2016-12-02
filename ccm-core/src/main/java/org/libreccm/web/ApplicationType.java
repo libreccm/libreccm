@@ -62,8 +62,6 @@ public @interface ApplicationType {
      * bundle. Defaults to {@code application_title}
      *
      * @return
-     *
-     * @return
      */
     String titleKey() default "application_title";
 
