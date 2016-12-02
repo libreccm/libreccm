@@ -18,6 +18,8 @@
  */
 package org.libreccm.pagemodel;
 
+import com.arsdigita.bebop.Form;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -38,5 +40,7 @@ public @interface PageModelComponentModel {
     String descKey() default "component_model_desc";
     
     Class<? extends ComponentModel> modelClass();
+    
+    Class<? extends Form> editor();
     
 }

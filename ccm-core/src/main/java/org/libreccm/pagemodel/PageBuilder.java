@@ -22,14 +22,15 @@ import javax.enterprise.context.RequestScoped;
 
 /**
  * Interface for page builders. A page builder is invoked to build a page a
- * specific type. An implementation should be a CDI bean which is annotated with
+ * specific type. An implementation must be a CDI bean which is annotated with
  * the qualifier {@link PageModelType}. The recommended scope is
  * {@link RequestScoped}.
- * 
- * An implementation should add all default components which have to be present 
- * in page. The {@link PageModel} should only specify <strong>additional</strong>
+ *
+ * An implementation should add all default components which have to be present
+ * in page. The {@link PageModel} should only specify
+ * <strong>additional</strong>
  * components.
- * 
+ *
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @param <P> The type of page the page builder creates.
@@ -37,7 +38,19 @@ import javax.enterprise.context.RequestScoped;
 public interface PageBuilder<P> {
 
     /**
+     * Build a page for the view technology supported by this page builder
+     * without an additional components.
+     * {@link #buildPage(org.libreccm.pagemodel.PageModel)} should use this
+     * method for creating the default page.
+     *
+     * @return A page with the default components.
+     */
+    P buildPage();
+
+    /**
      * Build a page of type {@code P} using the provided {@link PageModel}.
+     * Implementations should call the implementation of {@link #buildPage()}
+     * for creating the basic page with the default components.
      *
      * @param pageModel The {@link PageModel} from which the page is generated.
      *

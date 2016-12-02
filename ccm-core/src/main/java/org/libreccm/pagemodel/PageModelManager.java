@@ -19,10 +19,20 @@
 package org.libreccm.pagemodel;
 
 import org.libreccm.core.CoreConstants;
+import org.libreccm.modules.CcmModule;
+import org.libreccm.modules.Module;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
 import org.libreccm.web.CcmApplication;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.ServiceLoader;
+
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -39,6 +49,28 @@ public class PageModelManager {
 
     @Inject
     private ComponentModelRepository componentModelRepo;
+
+    private final Map<String, PageModelComponentModel> components
+                                                           = new HashMap<>();
+
+    @PostConstruct
+    private void init() {
+        final ServiceLoader<CcmModule> modules = ServiceLoader.load(
+            CcmModule.class);
+
+        for (CcmModule module : modules) {
+            final Module moduleData = module.getClass().getAnnotation(
+                Module.class);
+
+            final PageModelComponentModel[] models = moduleData
+                .pageModelComponentModels();
+
+            for (PageModelComponentModel model : models) {
+                components.put(model.modelClass().getName(),
+                               model);
+            }
+        }
+    }
 
     /**
      * Creates a new {@link PageModel} for the provided application.
@@ -85,6 +117,27 @@ public class PageModelManager {
         pageModel.setType(type);
 
         return pageModel;
+    }
+
+    public List<PageModelComponentModel> findAvailableComponents() {
+        final List<PageModelComponentModel> list = new ArrayList<>(components
+            .values());
+        list.sort((component1, component2) -> {
+            return component1.modelClass().getName().compareTo(
+                component2.modelClass().getName());
+        });
+
+        return list;
+    }
+
+    public Optional<PageModelComponentModel> findComponentModel(
+        final String className) {
+
+        if (components.containsKey(className)) {
+            return Optional.of(components.get(className));
+        } else {
+            return Optional.empty();
+        }
     }
 
     /**
