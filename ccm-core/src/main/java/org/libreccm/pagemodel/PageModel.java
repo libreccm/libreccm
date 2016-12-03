@@ -55,6 +55,26 @@ import javax.validation.constraints.NotNull;
 @Table(name = "PAGE_MODELS", schema = CoreConstants.DB_SCHEMA)
 @NamedQueries({
     @NamedQuery(
+        name = "PageModel.findDraftVersion",
+        query = "SELECT p FROM PageModel p "
+                    + "WHERE p.modelUuid = :uuid "
+                    + "AND p.version = org.libreccm.pagemodel.PageModelVersion.DRAFT")
+    ,
+    @NamedQuery(
+        name = "PageModel.hasLiveVersion",
+        query = "SELECT (CASE WHEN COUNT(p) > 0 THEN true ELSE False END) "
+                    + "FROM PageModel p "
+                    + "WHERE p.modelUuid = :uuid "
+                    + "AND p.version = org.libreccm.pagemodel.PageModelVersion.LIVE"
+    )
+    ,
+    @NamedQuery(
+        name = "PageModel.findLiveVersion",
+        query = "SELECT p FROM PageModel p "
+                    + "WHERE p.modelUuid = :uuid "
+                    + "AND p.version = org.libreccm.pagemodel.PageModelVersion.LIVE")
+    ,
+    @NamedQuery(
         name = "PageModel.findByApplication",
         query = "SELECT p FROM PageModel p WHERE p.application = :application")
     ,
@@ -67,7 +87,8 @@ import javax.validation.constraints.NotNull;
         name = "PageModel.findByApplicationAndName",
         query = "SELECT p FROM PageModel p "
                     + "WHERE p.name = :name AND p.application = :application"
-    ),
+    )
+    ,
     @NamedQuery(
         name = "PageModel.countByApplicationAndName",
         query = "SELECT COUNT(p) FROM PageModel p "
@@ -86,6 +107,10 @@ public class PageModel implements Serializable {
     @Column(name = "UUID", length = 255, nullable = false)
     @NotNull
     private String uuid;
+
+    @Column(name = "MODEL_UUID", length = 255, nullable = false)
+    @NotNull
+    private String modelUuid;
 
     @Column(name = "NAME", length = 255)
     private String name;
@@ -146,6 +171,14 @@ public class PageModel implements Serializable {
         this.uuid = uuid;
     }
 
+    public String getModelUuid() {
+        return modelUuid;
+    }
+
+    protected void setModelUuid(final String modelUuid) {
+        this.modelUuid = modelUuid;
+    }
+
     public String getName() {
         return name;
     }
@@ -158,7 +191,7 @@ public class PageModel implements Serializable {
         return version;
     }
 
-    protected void setPageModelVersion(final PageModelVersion version) {
+    protected void setVersion(final PageModelVersion version) {
         this.version = version;
     }
 
@@ -202,14 +235,18 @@ public class PageModel implements Serializable {
         this.components = components;
     }
 
-    public void addComponent(final ComponentModel component) {
+    protected void addComponent(final ComponentModel component) {
         components.add(component);
     }
 
-    public void removeComponent(final ComponentModel component) {
+    protected void removeComponent(final ComponentModel component) {
         components.remove(component);
     }
 
+    protected void clearComponents() {
+        components.clear();
+    }
+    
     @Override
     public int hashCode() {
         int hash = 7;

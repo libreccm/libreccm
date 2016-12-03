@@ -18,6 +18,8 @@
  */
 package org.libreccm.pagemodel;
 
+import com.arsdigita.util.UncheckedWrapperException;
+
 import org.libreccm.core.CoreConstants;
 import org.libreccm.modules.CcmModule;
 import org.libreccm.modules.Module;
@@ -25,16 +27,28 @@ import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
 import org.libreccm.web.CcmApplication;
 
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ServiceLoader;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
 /**
@@ -43,6 +57,9 @@ import javax.transaction.Transactional;
  */
 @RequestScoped
 public class PageModelManager {
+
+    @Inject
+    private EntityManager entityManager;
 
     @Inject
     private PageModelRepository pageModelRepo;
@@ -79,6 +96,7 @@ public class PageModelManager {
      *                    application.
      * @param application The application for which the {@link PageModel} is
      *                    created.
+     * @param type        Type of the page model (view technology).
      *
      * @return The new {@link PageModel}.
      */
@@ -115,8 +133,206 @@ public class PageModelManager {
         pageModel.setName(name);
         pageModel.setApplication(application);
         pageModel.setType(type);
+        pageModel.setVersion(PageModelVersion.DRAFT);
 
         return pageModel;
+    }
+
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public PageModel getDraftVersion(
+        @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
+        final PageModel pageModel) {
+
+        if (pageModel == null) {
+            throw new IllegalArgumentException(
+                "Can't get draft version for page model null.");
+        }
+
+        final TypedQuery<PageModel> query = entityManager.createNamedQuery(
+            "PageModel.findDraftVersion", PageModel.class);
+        query.setParameter("uuid", pageModel.getModelUuid());
+
+        return query.getSingleResult();
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public boolean isLive(final PageModel pageModel) {
+        final TypedQuery<Boolean> query = entityManager.createNamedQuery(
+            "PageModel.hasLiveVersion", Boolean.class);
+        query.setParameter("uuid", pageModel.getModelUuid());
+
+        return query.getSingleResult();
+    }
+
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public Optional<PageModel> getLiveVersion(
+        @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN) PageModel pageModel) {
+
+        if (isLive(pageModel)) {
+            final TypedQuery<PageModel> query = entityManager.createNamedQuery(
+                "PageModel.findLiveVersion",
+                PageModel.class);
+            query.setParameter("uuid", pageModel.getModelUuid());
+            return Optional.of(query.getSingleResult());
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    public PageModel publish(final PageModel pageModel) {
+        final PageModel draftModel = getDraftVersion(pageModel);
+        final PageModel liveModel;
+
+        if (isLive(pageModel)) {
+            liveModel = getLiveVersion(pageModel).get();
+        } else {
+            liveModel = new PageModel();
+        }
+
+        liveModel.setVersion(PageModelVersion.LIVE);
+        liveModel.setModelUuid(draftModel.getModelUuid());
+
+        for (Map.Entry<Locale, String> entry : draftModel.getTitle().getValues()
+            .entrySet()) {
+            liveModel.getTitle().addValue(entry.getKey(), entry.getValue());
+        }
+
+        for (Map.Entry<Locale, String> entry : liveModel.getDescription()
+            .getValues().entrySet()) {
+            liveModel.getDescription().addValue(entry.getKey(), 
+                                                entry.getValue());
+        }
+
+        liveModel.setApplication(draftModel.getApplication());
+        liveModel.setType(draftModel.getType());
+        
+        
+        liveModel.clearComponents();
+        for(final ComponentModel draft : draftModel.getComponents()) {
+            final ComponentModel live = publishComponentModel(draft);
+            addComponentModel(liveModel, live);
+        }
+        
+        return liveModel;
+    }
+    
+    @SuppressWarnings("unchecked")
+    private ComponentModel publishComponentModel(final ComponentModel draftModel) {
+        
+        final Class<? extends ComponentModel> clazz = draftModel.getClass();
+        
+        final ComponentModel liveModel;
+        try {
+            liveModel = clazz.newInstance();
+        } catch (InstantiationException | IllegalAccessException ex) {
+            throw new UncheckedWrapperException(ex);
+        }
+        
+        liveModel.setModelUuid(draftModel.getModelUuid());
+        
+        final BeanInfo beanInfo;
+        try {
+            beanInfo = Introspector.getBeanInfo(clazz);
+        } catch(IntrospectionException ex) {
+            throw new UncheckedWrapperException(ex);
+        }
+        
+        for(final PropertyDescriptor propertyDescriptor : beanInfo.getPropertyDescriptors()) {
+            final Class<?> propType = propertyDescriptor.getPropertyType();
+            final Method readMethod = propertyDescriptor.getReadMethod();
+            final Method writeMethod = propertyDescriptor.getWriteMethod();
+            
+            if (propertyIsExcluded(propertyDescriptor.getName())) {
+                continue;
+            }
+            
+            if (writeMethod == null) {
+                continue;
+            }
+            
+            if (propType != null
+                && propType.isAssignableFrom(List.class)) {
+                
+                final List<Object> source;
+                final List<Object> target;
+                try {
+                    source = (List<Object>) readMethod.invoke(draftModel);
+                    target = (List<Object>) readMethod.invoke(liveModel);
+                } catch(IllegalAccessException 
+                        | IllegalArgumentException
+                        | InvocationTargetException ex) {
+                    throw new UncheckedWrapperException(ex);
+                }
+                
+                target.addAll(source);
+            } else if(propType != null
+                && propType.isAssignableFrom(Map.class)) {
+                
+                final Map<Object, Object> source;
+                final Map<Object, Object> target;
+                
+                try {
+                    source = (Map<Object, Object>) readMethod.invoke(draftModel);
+                    target = (Map<Object, Object>) readMethod.invoke(liveModel);
+                } catch(IllegalAccessException
+                        | IllegalArgumentException 
+                        | InvocationTargetException ex) {
+                    throw new UncheckedWrapperException(ex);
+                }
+                
+                source.forEach((key, value) -> target.put(key, value));
+                
+            } else if(propType != null 
+                      && propType.isAssignableFrom(Set.class)) {
+                
+                final Set<Object> source;
+                final Set<Object> target;
+                
+                try {
+                    source = (Set<Object>) readMethod.invoke(draftModel);
+                    target = (Set<Object>) readMethod.invoke(liveModel);
+                }catch(IllegalAccessException
+                        | IllegalArgumentException 
+                        | InvocationTargetException ex) {
+                    throw new UncheckedWrapperException(ex);
+                }
+                
+                target.addAll(source);
+            } else {
+                final Object value;
+                try {
+                    value = readMethod.invoke(draftModel);
+                    writeMethod.invoke(liveModel, value);
+                } catch(IllegalAccessException 
+                        | IllegalArgumentException
+                        | InvocationTargetException ex) {
+                    throw new UncheckedWrapperException(ex);
+                }
+            }
+        }
+        
+        componentModelRepo.save(liveModel);
+        
+        return liveModel;
+    }
+    
+    private boolean propertyIsExcluded(final String name) {
+        final String[] excluded = new String[]{
+            "uuid",
+            "modelUuid"
+        };
+        
+        boolean result = false;
+        for(final String current : excluded) {
+            if (current.equals(name)) {
+                result = true;
+                break;
+            }
+        }
+        
+        return result;
     }
 
     public List<PageModelComponentModel> findAvailableComponents() {

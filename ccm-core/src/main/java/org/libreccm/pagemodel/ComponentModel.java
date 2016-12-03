@@ -55,6 +55,10 @@ public class ComponentModel implements Serializable {
     @NotNull
     private String uuid;
 
+    @Column(name = "MODEL_UUID", length = 255, nullable = false)
+    @NotNull
+    private String modelUuid;
+    
     @ManyToOne
     @JoinColumn(name = "PAGE_MODEL_ID")
     private PageModel pageModel;
@@ -83,10 +87,18 @@ public class ComponentModel implements Serializable {
         return uuid;
     }
 
-    protected void setUUid(final String uuid) {
+    protected void setUuid(final String uuid) {
         this.uuid = uuid;
     }
 
+    public String getModelUuid() {
+        return modelUuid;
+    }
+    
+    protected void setModelUuid(final String modelUuid) {
+        this.modelUuid = modelUuid;
+    }
+    
     public PageModel getPageModel() {
         return pageModel;
     }

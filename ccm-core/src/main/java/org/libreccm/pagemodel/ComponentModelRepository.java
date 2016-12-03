@@ -43,7 +43,13 @@ public class ComponentModelRepository extends AbstractEntityRepository<Long, Com
 
     @Override
     public void initNewEntity(final ComponentModel componentModel) {
-        componentModel.setUUid(UUID.randomUUID().toString());
+        final String uuid = UUID.randomUUID().toString();
+        
+        componentModel.setUuid(uuid);
+        if (componentModel.getModelUuid() == null 
+            || componentModel.getModelUuid().isEmpty()) {
+            componentModel.setModelUuid(uuid);
+        }
     }
     
 }

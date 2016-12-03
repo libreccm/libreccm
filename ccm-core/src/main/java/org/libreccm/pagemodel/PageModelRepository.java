@@ -55,7 +55,13 @@ public class PageModelRepository extends AbstractEntityRepository<Long, PageMode
             throw new IllegalArgumentException("PageModel can't be null.");
         }
 
-        pageModel.setUuid(UUID.randomUUID().toString());
+        final String uuid = UUID.randomUUID().toString();
+
+        pageModel.setUuid(uuid);
+        if (pageModel.getModelUuid() == null
+                || pageModel.getModelUuid().isEmpty()) {
+            pageModel.setModelUuid(uuid);
+        }
     }
 
     public List<PageModel> findByApplication(final CcmApplication application) {
@@ -113,7 +119,7 @@ public class PageModelRepository extends AbstractEntityRepository<Long, PageMode
 
     public long countByApplicationAndName(final CcmApplication application,
                                           final String name) {
-        
+
         if (application == null) {
             throw new IllegalArgumentException(
                 "Can't count page models for application null");
