@@ -1575,4 +1575,4 @@ alter table CCM_CMS.ARTICLE_LEADS
     alter table CCM_CMS.WORKFLOW_TASKS 
         add constraint FKge2x94m1y9tr7mk26ensyn674 
         foreign key (TASK_ID) 
-        references CCM_CORE.WORKFLOW_USER_TASKS;
+        references CCM_CORE.WORKFLOW_ASSIGNABLE_TASKS;

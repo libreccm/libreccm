@@ -45,7 +45,6 @@ public class PageBuilderManager {
             type, applicationType);
 
         final Instance<PageBuilder<?>> instance = pageBuilders.select(literal);
-
         if (instance.isUnsatisfied()) {
             throw new IllegalArgumentException(String.format(
                 "No PageBuilder for type \"%s\" and application type \"%s\" "
@@ -54,7 +53,7 @@ public class PageBuilderManager {
                 applicationType));
         } else if (instance.isAmbiguous()) {
             throw new IllegalArgumentException(String.format(
-                "There are more than one PageBuilders for type \"%s\" and "
+                "Multiple PageBuilders for type \"%s\" and "
                     + "application type \"%s\" avilable. Something is wrong.",
                 type,
                 applicationType));

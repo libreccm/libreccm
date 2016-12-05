@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
 import javax.inject.Qualifier;
 
 /**
- * Specifies for which view technology a {@link ComponentBuilder} builds the
+ * Specifies for which component and view technology a {@link ComponentBuilder} builds the
  * components.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
@@ -36,6 +36,8 @@ import javax.inject.Qualifier;
 @Target(ElementType.TYPE)
 public @interface ComponentModelType {
 
+    Class<? extends ComponentModel> componentModel();
+    
     String type();
 
 }

@@ -242,6 +242,16 @@ public class ContentSectionServlet extends BaseApplicationServlet {
 
         final RequestContext ctx = DispatcherHelper.getRequestContext();
         final String url = ctx.getRemainingURLPart();
+        
+        //Only for testing PageModel
+        if (url != null && url.endsWith("page-model/")) {
+            getServletContext()
+                    .getRequestDispatcher("/page-model.bebop")
+                    .include(request, response);
+            return;
+        }
+        //End Test PageModel
+        
         LOGGER.info("Resolving URL {} and trying as item first.");
         final ItemResolver itemResolver = getItemResolver(section);
 

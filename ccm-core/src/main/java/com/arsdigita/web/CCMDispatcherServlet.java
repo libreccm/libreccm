@@ -495,6 +495,7 @@ public class CCMDispatcherServlet extends BaseServlet {
             final StringBuffer target = new StringBuffer(128);
 
             target.append(m_typeURI);
+            target.append("/");
             target.append(path.substring(m_instanceURI.length()));
             target.append("?");
             target.append(BaseApplicationServlet.APPLICATION_ID_PARAMETER);
