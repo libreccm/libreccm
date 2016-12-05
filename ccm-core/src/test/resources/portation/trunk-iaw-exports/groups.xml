@@ -1,0 +1,16 @@
+<Group><partyId>541003</partyId><name>projects Administration</name><memberships><membershipId>8</membershipId><marshaller/></memberships><marshaller/></Group>
+<Group><partyId>1061</partyId><name>content Administration</name><memberships><membershipId>6</membershipId><marshaller/></memberships><marshaller/></Group>
+<Group><partyId>541006</partyId><name>projects Viewers</name><marshaller/></Group>
+<Group><partyId>1064</partyId><name>content Viewers</name><marshaller/></Group>
+<Group><partyId>1339004</partyId><name>homepages Viewers</name><marshaller/></Group>
+<Group><partyId>3439036</partyId><name>publications Viewers</name><marshaller/></Group>
+<Group><partyId>5619069</partyId><name>euss Administration</name><marshaller/></Group>
+<Group><partyId>-300</partyId><name>Site-wide Administrators</name><roleMemberships><membershipId>112</membershipId><marshaller/></roleMemberships><roleMemberships><membershipId>109</membershipId><marshaller/></roleMemberships><roleMemberships><membershipId>130</membershipId><marshaller/></roleMemberships><roleMemberships><membershipId>140</membershipId><marshaller/></roleMemberships><roleMemberships><membershipId>136</membershipId><marshaller/></roleMemberships><roleMemberships><membershipId>152</membershipId><marshaller/></roleMemberships><roleMemberships><membershipId>153</membershipId><marshaller/></roleMemberships><roleMemberships><membershipId>158</membershipId><marshaller/></roleMemberships><roleMemberships><membershipId>116</membershipId><marshaller/></roleMemberships><roleMemberships><membershipId>157</membershipId><marshaller/></roleMemberships><roleMemberships><membershipId>154</membershipId><marshaller/></roleMemberships><roleMemberships><membershipId>123</membershipId><marshaller/></roleMemberships><memberships><membershipId>4</membershipId><marshaller/></memberships><memberships><membershipId>1</membershipId><marshaller/></memberships><memberships><membershipId>5</membershipId><marshaller/></memberships><memberships><membershipId>2</membershipId><marshaller/></memberships><memberships><membershipId>3</membershipId><marshaller/></memberships><marshaller/></Group>
+<Group><partyId>5619070</partyId><name>euss Viewers</name><marshaller/></Group>
+<Group><partyId>1339003</partyId><name>homepages Administration</name><marshaller/></Group>
+<Group><partyId>3439035</partyId><name>publications Administration</name><marshaller/></Group>
+<Group><partyId>1937037</partyId><name>research Viewers</name><marshaller/></Group>
+<Group><partyId>1937036</partyId><name>research Administration</name><marshaller/></Group>
+<Group><partyId>1271</partyId><name>Portal Workspace Groups</name><marshaller/></Group>
+<Group><partyId>1274</partyId><name>Portal Homepage</name><marshaller/></Group>
+<Group><partyId>1278</partyId><name>Portal Homepage</name><memberships><membershipId>7</membershipId><marshaller/></memberships><marshaller/></Group>
