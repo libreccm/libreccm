@@ -47,8 +47,8 @@ public class Marshaller {
     @Any
     private Instance<AbstractMarshaller<? extends Portable>> marshallerInstances;
 
-    // Assigns lists with objects of the same type as values to their typ.
-    // The type represents the key
+    // Maps lists with objects of the same type to their typ.
+    // The type represents the key, the lists the values
     private Map<Class<? extends Portable>, List<Portable>> classListMap;
 
     /**
@@ -153,7 +153,7 @@ public class Marshaller {
      * @param format The import style
      * @param <P> The type of the current marshaller
      */
-    public <P extends Portable> void importObjects(
+    public <P extends Portable> void importFiles(
             List<String> filenames, Format format) {
         for (String filename : filenames) {
             String[] splitFilename = filename.split("__");

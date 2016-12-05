@@ -83,6 +83,25 @@ public abstract class AbstractMarshaller<P extends Portable> {
         }
     }
 
+    /**
+     * Same as {@code prepare}-methode above. Adds distinction between path
+     * and filename.
+     *
+     * @param format The format of the ex-/import
+     * @param folderPath The folderPath of the file exported to or imported
+     *                   from
+     * @param filename The filename of the file exported to or imported from
+     * @param indentation whether or not indentation
+     */
+    public void prepare(final Format format,
+                        String folderPath, String filename,
+                        boolean indentation) {
+        File file = new File(folderPath);
+        if (file.exists() || file.mkdirs()) {
+            prepare(format, folderPath + "/" + filename, indentation);
+        }
+    }
+
 
     /**
      * Export routine for lists with the same object type {@code P}. Creates a
