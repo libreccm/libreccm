@@ -18,6 +18,7 @@
  */
 package org.libreccm.pagemodel;
 
+import java.util.Optional;
 import javax.inject.Inject;
 
 /**
@@ -37,25 +38,31 @@ public abstract class AbstractPageBuilder<P> implements PageBuilder<P> {
         final P page = buildPage();
 
         for (final ComponentModel componentModel : pageModel.getComponents()) {
-            final Object component = buildComponent(
+            final Optional<Object> component = buildComponent(
                     componentModel, componentModel.getClass());
-            addComponent(page, component);
+            if (component.isPresent()) {
+                addComponent(page, component);
+            }
         }
 
         return page;
     }
 
-    protected <M extends ComponentModel> Object buildComponent(
-            final ComponentModel componentModel, 
+    protected <M extends ComponentModel> Optional<Object> buildComponent(
+            final ComponentModel componentModel,
             final Class<M> componentModelClass) {
 
         componentBuilderManager.findComponentBuilder(componentModel.getClass(),
                                                      getType());
-        
-        final ComponentBuilder<M, ?> builder = componentBuilderManager
+
+        final Optional<ComponentBuilder<M, ?>> builder = componentBuilderManager
                 .findComponentBuilder(componentModelClass, getType());
-        
-        return builder.buildComponent((M) componentModel);
+
+        if (builder.isPresent()) {
+            return Optional.of(builder.get().buildComponent((M) componentModel));
+        } else {
+            return Optional.empty();
+        }
     }
 
     protected abstract String getType();

@@ -57,5 +57,7 @@ public interface PageBuilder<P> {
      * @return The page generated from the provided {@link PageModel}.
      */
     P buildPage(PageModel pageModel);
+    
+    
 
 }
