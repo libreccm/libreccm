@@ -20,6 +20,8 @@ package org.libreccm.pagemodel;
 
 import com.arsdigita.util.UncheckedWrapperException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.libreccm.core.CoreConstants;
 import org.libreccm.modules.CcmModule;
 import org.libreccm.modules.Module;
@@ -57,6 +59,9 @@ import javax.transaction.Transactional;
 @RequestScoped
 public class PageModelManager {
 
+    private static final Logger LOGGER = LogManager.getLogger(
+        PageModelManager.class);
+
     @Inject
     private EntityManager entityManager;
 
@@ -67,7 +72,7 @@ public class PageModelManager {
     private ComponentModelRepository componentModelRepo;
 
     private final Map<String, PageModelComponentModel> components
-                                                       = new HashMap<>();
+                                                           = new HashMap<>();
 
     /**
      * Called by CDI after an instance of this class is created. Initialises the
@@ -76,21 +81,26 @@ public class PageModelManager {
      */
     @PostConstruct
     private void init() {
+        LOGGER.debug("Initalising {}...", PageModelManager.class.getName());
+
         final ServiceLoader<CcmModule> modules = ServiceLoader.load(
-                CcmModule.class);
+            CcmModule.class);
 
         for (CcmModule module : modules) {
             final Module moduleData = module.getClass().getAnnotation(
-                    Module.class);
+                Module.class);
 
             final PageModelComponentModel[] models = moduleData
-                    .pageModelComponentModels();
+                .pageModelComponentModels();
 
             for (PageModelComponentModel model : models) {
                 components.put(model.modelClass().getName(),
                                model);
             }
         }
+        LOGGER.debug("Initalised {}. Found {} ComponentModels.",
+                     PageModelManager.class.getName(),
+                     components.size());
     }
 
     /**
@@ -100,11 +110,11 @@ public class PageModelManager {
      * Please note that this method will always return the <strong>live</strong>
      * version of the page model.
      *
-     * @param name The name of the new page model. Must be unique for the
-     * application.
+     * @param name        The name of the new page model. Must be unique for the
+     *                    application.
      * @param application The application for which the {@link PageModel} is
-     * created.
-     * @param type Type of the page model (view technology).
+     *                    created.
+     * @param type        Type of the page model (view technology).
      *
      * @return The new {@link PageModel}.
      */
@@ -117,23 +127,32 @@ public class PageModelManager {
 
         if (application == null) {
             throw new IllegalArgumentException(
-                    "Can't create a page model for application null");
+                "Can't create a page model for application null");
         }
 
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException(
-                    "The name of a page model can't be null or empty.");
+                "The name of a page model can't be null or empty.");
         }
+        LOGGER.debug(
+            "Creating new PageModel with name \"{}\" for application \"{}\" and type \"{}\".",
+            name,
+            application.getPrimaryUrl(),
+            type);
 
         final long count = pageModelRepo.countByApplicationAndName(application,
                                                                    name);
 
         if (count > 0) {
+            LOGGER.error("A page model with the name \"{}\" for the "
+                             + "application \"{}\" already exists.",
+                         name,
+                         application.getPrimaryUrl());
             throw new IllegalArgumentException(String.format(
-                    "A page model with the name \"%s\" for the application \"%s\" "
+                "A page model with the name \"%s\" for the application \"%s\" "
                     + "already exists.",
-                    name,
-                    application.getPrimaryUrl()));
+                name,
+                application.getPrimaryUrl()));
         }
 
         final PageModel pageModel = new PageModel();
@@ -152,22 +171,23 @@ public class PageModelManager {
      * {@link CoreConstants#PRIVILEGE_ADMIN} privilege.
      *
      * @param pageModel The {@link PageModel} for which the draft version is
-     * retrieved.
+     *                  retrieved.
+     *
      * @return The draft version of the provided {@link PageModel}.
      */
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public PageModel getDraftVersion(
-            @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
-            final PageModel pageModel) {
+        @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
+        final PageModel pageModel) {
 
         if (pageModel == null) {
             throw new IllegalArgumentException(
-                    "Can't get draft version for page model null.");
+                "Can't get draft version for page model null.");
         }
 
         final TypedQuery<PageModel> query = entityManager.createNamedQuery(
-                "PageModel.findDraftVersion", PageModel.class);
+            "PageModel.findDraftVersion", PageModel.class);
         query.setParameter("uuid", pageModel.getModelUuid());
 
         return query.getSingleResult();
@@ -177,30 +197,37 @@ public class PageModelManager {
      * Checks if a {@link PageModel} has a live version.
      *
      * @param pageModel The {@link PageModel} to check for a live version.
+     *
      * @return {@code true} if there is a live version for the provided
-     * {@link PageModel}, {@code false} otherwise.
+     *         {@link PageModel}, {@code false} otherwise.
      */
     @Transactional(Transactional.TxType.REQUIRED)
     public boolean isLive(final PageModel pageModel) {
         final TypedQuery<Boolean> query = entityManager.createNamedQuery(
-                "PageModel.hasLiveVersion", Boolean.class);
+            "PageModel.hasLiveVersion", Boolean.class);
         query.setParameter("uuid", pageModel.getModelUuid());
 
         return query.getSingleResult();
     }
 
     /**
+     * Retrieves the live version of a {@link PageModel}. This method does not
+     * require any privileges.
      *
-     * @param pageModel
-     * @return
+     * @param pageModel The {@link PageModel} of which the live version is
+     *                  retrieved.
+     *
+     * @return An {@link Optional} containing the live version of the provided
+     *         {@link PageModel} if there is a live version. Otherwise an empty
+     *         {@link Optional} is returned.
      */
     @Transactional(Transactional.TxType.REQUIRED)
     public Optional<PageModel> getLiveVersion(final PageModel pageModel) {
 
         if (isLive(pageModel)) {
             final TypedQuery<PageModel> query = entityManager.createNamedQuery(
-                    "PageModel.findLiveVersion",
-                    PageModel.class);
+                "PageModel.findLiveVersion",
+                PageModel.class);
             query.setParameter("uuid", pageModel.getModelUuid());
             return Optional.of(query.getSingleResult());
         } else {
@@ -208,12 +235,24 @@ public class PageModelManager {
         }
     }
 
+    /**
+     * Publishes the draft version of a {@link PageModel}. If there is already a
+     * live version of the provided {@link PageModel} the live version is
+     * updated. If no live version exists a new live version is created.
+     *
+     * @param pageModel The {@link PageModel} to publish.
+     *
+     * @return The live version of the provided {@link PageModel}.
+     */
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
+    @Transactional(Transactional.TxType.REQUIRED)
     public PageModel publish(final PageModel pageModel) {
         final PageModel draftModel = getDraftVersion(pageModel);
         final PageModel liveModel;
 
         if (isLive(pageModel)) {
-            liveModel = getLiveVersion(pageModel).get();
+            liveModel = getLiveVersion(draftModel).get();
         } else {
             liveModel = new PageModel();
         }
@@ -222,12 +261,12 @@ public class PageModelManager {
         liveModel.setModelUuid(draftModel.getModelUuid());
 
         for (Map.Entry<Locale, String> entry : draftModel.getTitle().getValues()
-                .entrySet()) {
+            .entrySet()) {
             liveModel.getTitle().addValue(entry.getKey(), entry.getValue());
         }
 
         for (Map.Entry<Locale, String> entry : liveModel.getDescription()
-                .getValues().entrySet()) {
+            .getValues().entrySet()) {
             liveModel.getDescription().addValue(entry.getKey(),
                                                 entry.getValue());
         }
@@ -244,6 +283,15 @@ public class PageModelManager {
         return liveModel;
     }
 
+    /**
+     * Helper method for coping the {@link ComponentModel}s from the draft
+     * version to the live version.
+     *
+     * @param draftModel The draft version of the {@link ComponentModel} to copy
+     *                   to the live version of its {@link PageModel}.
+     *
+     * @return The live version of the {@link ComponentModel}.
+     */
     @SuppressWarnings("unchecked")
     private ComponentModel publishComponentModel(final ComponentModel draftModel) {
 
@@ -266,7 +314,7 @@ public class PageModelManager {
         }
 
         for (final PropertyDescriptor propertyDescriptor : beanInfo.
-                getPropertyDescriptors()) {
+            getPropertyDescriptors()) {
             final Class<?> propType = propertyDescriptor.getPropertyType();
             final Method readMethod = propertyDescriptor.getReadMethod();
             final Method writeMethod = propertyDescriptor.getWriteMethod();
@@ -280,7 +328,7 @@ public class PageModelManager {
             }
 
             if (propType != null
-                        && propType.isAssignableFrom(List.class)) {
+                    && propType.isAssignableFrom(List.class)) {
 
                 final List<Object> source;
                 final List<Object> target;
@@ -288,14 +336,14 @@ public class PageModelManager {
                     source = (List<Object>) readMethod.invoke(draftModel);
                     target = (List<Object>) readMethod.invoke(liveModel);
                 } catch (IllegalAccessException
-                                 | IllegalArgumentException
-                                 | InvocationTargetException ex) {
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
                     throw new UncheckedWrapperException(ex);
                 }
 
                 target.addAll(source);
             } else if (propType != null
-                               && propType.isAssignableFrom(Map.class)) {
+                           && propType.isAssignableFrom(Map.class)) {
 
                 final Map<Object, Object> source;
                 final Map<Object, Object> target;
@@ -304,15 +352,15 @@ public class PageModelManager {
                     source = (Map<Object, Object>) readMethod.invoke(draftModel);
                     target = (Map<Object, Object>) readMethod.invoke(liveModel);
                 } catch (IllegalAccessException
-                                 | IllegalArgumentException
-                                 | InvocationTargetException ex) {
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
                     throw new UncheckedWrapperException(ex);
                 }
 
                 source.forEach((key, value) -> target.put(key, value));
 
             } else if (propType != null
-                               && propType.isAssignableFrom(Set.class)) {
+                           && propType.isAssignableFrom(Set.class)) {
 
                 final Set<Object> source;
                 final Set<Object> target;
@@ -321,8 +369,8 @@ public class PageModelManager {
                     source = (Set<Object>) readMethod.invoke(draftModel);
                     target = (Set<Object>) readMethod.invoke(liveModel);
                 } catch (IllegalAccessException
-                                 | IllegalArgumentException
-                                 | InvocationTargetException ex) {
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
                     throw new UncheckedWrapperException(ex);
                 }
 
@@ -333,8 +381,8 @@ public class PageModelManager {
                     value = readMethod.invoke(draftModel);
                     writeMethod.invoke(liveModel, value);
                 } catch (IllegalAccessException
-                                 | IllegalArgumentException
-                                 | InvocationTargetException ex) {
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
                     throw new UncheckedWrapperException(ex);
                 }
             }
@@ -345,6 +393,15 @@ public class PageModelManager {
         return liveModel;
     }
 
+    /**
+     * Helper method to determine if a property is excluded from the publishing
+     * process.
+     *
+     * @param name The name of the property.
+     *
+     * @return {@code true} if the property is excluded from the publishing
+     *         process, {@link false} if not.
+     */
     private boolean propertyIsExcluded(final String name) {
         final String[] excluded = new String[]{
             "uuid",
@@ -362,19 +419,34 @@ public class PageModelManager {
         return result;
     }
 
+    /**
+     * Returns all available {@link ComponentModel}.
+     *
+     * @return A list of all available {@link ComponentModel}s.
+     */
     public List<PageModelComponentModel> findAvailableComponents() {
         final List<PageModelComponentModel> list = new ArrayList<>(components
-                .values());
+            .values());
         list.sort((component1, component2) -> {
             return component1.modelClass().getName().compareTo(
-                    component2.modelClass().getName());
+                component2.modelClass().getName());
         });
 
         return list;
     }
 
+    /**
+     * Finds the description specific {@link ComponentModel}.
+     *
+     * @param className The fully qualified name of the {@link ComponentModel}
+     *                  class.
+     *
+     * @return An {@link Optional} containing the description of the
+     *         {@link ComponentModel} if there is a {@link ComponentModel} with
+     *         the specified {@code name}. Otherwise an empty {@link Optional}.
+     */
     public Optional<PageModelComponentModel> findComponentModel(
-            final String className) {
+        final String className) {
 
         if (components.containsKey(className)) {
             return Optional.of(components.get(className));
@@ -384,9 +456,10 @@ public class PageModelManager {
     }
 
     /**
-     * Add a {@link ComponentModel} to a {@link PageModel}.
+     * Adds a {@link ComponentModel} to a {@link PageModel}.
      *
-     * @param pageModel The {@link PageModel} to which component model is added.
+     * @param pageModel      The {@link PageModel} to which component model is
+     *                       added.
      * @param componentModel The {@link ComponentModel} to add.
      */
     public void addComponentModel(final PageModel pageModel,
@@ -394,12 +467,12 @@ public class PageModelManager {
 
         if (pageModel == null) {
             throw new IllegalArgumentException(
-                    "Can't add a component model to page model null.");
+                "Can't add a component model to page model null.");
         }
 
         if (componentModel == null) {
             throw new IllegalArgumentException(
-                    "Can't add component model null to a page model.");
+                "Can't add component model null to a page model.");
         }
 
         pageModel.addComponent(componentModel);
@@ -412,22 +485,22 @@ public class PageModelManager {
     /**
      * Removes a {@link ComponentModel} from a {@link PageModel}.
      *
-     * @param pageModel The {@link PageModel} from which the
-     * {@link ComponentModel} is removed.
+     * @param pageModel      The {@link PageModel} from which the
+     *                       {@link ComponentModel} is removed.
      * @param componentModel The {@link ComponentModel} to remove. The component
-     * model is also removed from the database.
+     *                       model is also removed from the database.
      */
     public void removeComponentModel(final PageModel pageModel,
                                      final ComponentModel componentModel) {
 
         if (pageModel == null) {
             throw new IllegalArgumentException(
-                    "Can't remove a component model from page model null.");
+                "Can't remove a component model from page model null.");
         }
 
         if (componentModel == null) {
             throw new IllegalArgumentException(
-                    "Can't remove component model null from a page model.");
+                "Can't remove component model null from a page model.");
         }
 
         pageModel.removeComponent(componentModel);
