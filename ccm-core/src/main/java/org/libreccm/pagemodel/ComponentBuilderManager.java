@@ -19,10 +19,13 @@
 package org.libreccm.pagemodel;
 
 import java.util.Iterator;
+import java.util.Optional;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -31,12 +34,20 @@ import javax.inject.Inject;
 @RequestScoped
 public class ComponentBuilderManager {
 
+    private static final Logger LOGGER = LogManager.getLogger(
+            ComponentBuilderManager.class);
+
     @Inject
     private Instance<ComponentBuilder<?, ?>> componentBuilders;
 
-    public <M extends ComponentModel> ComponentBuilder<M, ?> findComponentBuilder(
+    public <M extends ComponentModel> Optional<ComponentBuilder<M, ?>> findComponentBuilder(
             final Class<M> componentModelClass,
             final String type) {
+
+        LOGGER.debug("Trying to find ComponentBuilder for ComponentModel\"{}\""
+                             + "and type \"{}\"...",
+                     componentModelClass.getName(),
+                     type);
 
         final ComponentModelTypeLiteral literal = new ComponentModelTypeLiteral(
                 componentModelClass, type);
@@ -44,24 +55,23 @@ public class ComponentBuilderManager {
         final Instance<ComponentBuilder<?, ?>> instance = componentBuilders
                 .select(literal);
         if (instance.isUnsatisfied()) {
-            throw new IllegalArgumentException(String.format(
-            "No ComponentBuilder for component model \"%s\" and type \"%s\" "
-                    + "available.",
-            componentModelClass.getName(),
-            type));
-        } else if(instance.isAmbiguous()) {
-            throw new IllegalArgumentException(String.format(
-            "Multiple ComponentBuilders for component model \"%s\" and type \"%s\" "
-                    + "available. Something is wrong",
-            componentModelClass.getName(),
-            type));
+            LOGGER.warn("No ComponentBuilder for component model \"%s\" "
+                    + "and type \"%s\". Ignoring component model.");
+            return Optional.empty();
+        } else if (instance.isAmbiguous()) {
+            throw new IllegalStateException(String.format(
+                    "Multiple ComponentBuilders for component model \"%s\" and "
+                            + "type \"%s\" available. Something is wrong",
+                    componentModelClass.getName(),
+                    type));
         } else {
-            final Iterator<ComponentBuilder<?, ?>> iterator = instance.iterator();
+            final Iterator<ComponentBuilder<?, ?>> iterator = instance.
+                    iterator();
             final ComponentBuilder<?, ?> componentBuilder = iterator.next();
-            
-            return (ComponentBuilder<M, ?>) componentBuilder;
+
+            return Optional.of((ComponentBuilder<M, ?>) componentBuilder);
         }
-        
+
     }
 
     private class ComponentModelTypeLiteral
