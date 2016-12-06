@@ -19,7 +19,8 @@
 package org.libreccm.pagemodel;
 
 /**
- *
+ * Enumeration for the possible values for the version of a {@link PageModel}.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public enum PageModelVersion {
