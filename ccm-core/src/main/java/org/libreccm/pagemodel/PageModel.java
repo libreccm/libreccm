@@ -50,103 +50,147 @@ import javax.validation.constraints.NotNull;
  * a page. The {@code PageModel} specifics which components are used on a page.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
+ *
+ * @see PageModelRepository
+ * @see PageModelManager
+ * @see PageBuilder
  */
 @Entity
 @Table(name = "PAGE_MODELS", schema = CoreConstants.DB_SCHEMA)
 @NamedQueries({
     @NamedQuery(
-        name = "PageModel.findDraftVersion",
-        query = "SELECT p FROM PageModel p "
-                    + "WHERE p.modelUuid = :uuid "
-                    + "AND p.version = org.libreccm.pagemodel.PageModelVersion.DRAFT")
+            name = "PageModel.findDraftVersion",
+            query = "SELECT p FROM PageModel p "
+                            + "WHERE p.modelUuid = :uuid "
+                            + "AND p.version = org.libreccm.pagemodel.PageModelVersion.DRAFT")
     ,
     @NamedQuery(
-        name = "PageModel.hasLiveVersion",
-        query = "SELECT (CASE WHEN COUNT(p) > 0 THEN true ELSE False END) "
-                    + "FROM PageModel p "
-                    + "WHERE p.modelUuid = :uuid "
-                    + "AND p.version = org.libreccm.pagemodel.PageModelVersion.LIVE"
+            name = "PageModel.hasLiveVersion",
+            query = "SELECT (CASE WHEN COUNT(p) > 0 THEN true ELSE False END) "
+                            + "FROM PageModel p "
+                            + "WHERE p.modelUuid = :uuid "
+                            + "AND p.version = org.libreccm.pagemodel.PageModelVersion.LIVE"
     )
     ,
     @NamedQuery(
-        name = "PageModel.findLiveVersion",
-        query = "SELECT p FROM PageModel p "
-                    + "WHERE p.modelUuid = :uuid "
-                    + "AND p.version = org.libreccm.pagemodel.PageModelVersion.LIVE")
+            name = "PageModel.findLiveVersion",
+            query = "SELECT p FROM PageModel p "
+                            + "WHERE p.modelUuid = :uuid "
+                            + "AND p.version = org.libreccm.pagemodel.PageModelVersion.LIVE")
     ,
     @NamedQuery(
-        name = "PageModel.findByApplication",
-        query = "SELECT p FROM PageModel p WHERE p.application = :application")
+            name = "PageModel.findByApplication",
+            query = "SELECT p FROM PageModel p "
+                            + "WHERE p.application = :application "
+                            + "AND p.version = org.libreccm.pagemodel.PageModelVersion.LIVE")
     ,
     @NamedQuery(
-        name = "PageModel.countByApplication",
-        query = "SELECT COUNT(p) FROM PageModel p "
-                    + "WHERE p.application = :application")
+            name = "PageModel.countByApplication",
+            query = "SELECT COUNT(p) FROM PageModel p "
+                            + "WHERE p.application = :application "
+                            + "AND p.version = org.libreccm.pagemodel.PageModelVersion.LIVE")
     ,
     @NamedQuery(
-        name = "PageModel.findByApplicationAndName",
-        query = "SELECT p FROM PageModel p "
-                    + "WHERE p.name = :name AND p.application = :application"
+            name = "PageModel.findByApplicationAndName",
+            query = "SELECT p FROM PageModel p "
+                            + "WHERE p.name = :name "
+                            + "AND p.application = :application "
+                            + "AND p.version = org.libreccm.pagemodel.PageModelVersion.LIVE"
     )
     ,
     @NamedQuery(
-        name = "PageModel.countByApplicationAndName",
-        query = "SELECT COUNT(p) FROM PageModel p "
-                    + "WHERE p.name = :name AND p.application = :application"
+            name = "PageModel.countByApplicationAndName",
+            query = "SELECT COUNT(p) FROM PageModel p "
+                            + "WHERE p.name = :name "
+                            + "AND p.application = :application "
+                            + "AND p.version = org.libreccm.pagemodel.PageModelVersion.LIVE"
     )
 })
 public class PageModel implements Serializable {
 
     private static final long serialVersionUID = 7252512839926020978L;
 
+    /**
+     * The ID of the entity in the database.
+     */
     @Id
     @Column(name = "PAGE_MODEL_ID")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long pageModelId;
 
+    /**
+     * The UUID of this {@code PageModel}. Please note that this UUID identifies
+     * the dataset not the model. Therefore the draft and the live version have
+     * different values for this field.
+     */
     @Column(name = "UUID", length = 255, nullable = false)
     @NotNull
     private String uuid;
 
+    /**
+     * The UUID of the model. Same for draft and live version.
+     */
     @Column(name = "MODEL_UUID", length = 255, nullable = false)
     @NotNull
     private String modelUuid;
 
+    /**
+     * The name of this {@code PageModel}. Not localised, for use in URLs.
+     */
     @Column(name = "NAME", length = 255)
     private String name;
 
+    /**
+     * The version of this {@code PageModel}.
+     */
     @Column(name = "VERSION", length = 255, nullable = false)
     @Enumerated(EnumType.STRING)
     private PageModelVersion version;
 
+    /**
+     * The localised title of this {@code PageModel} (shown in the
+     * administration UI),
+     */
     @Embedded
     @AssociationOverride(
-        name = "values",
-        joinTable = @JoinTable(name = "PAGE_MODEL_TITLES",
-                               schema = CoreConstants.DB_SCHEMA,
-                               joinColumns = {
-                                   @JoinColumn(name = "PAGE_MODEL_ID")
-                               }))
+            name = "values",
+            joinTable = @JoinTable(name = "PAGE_MODEL_TITLES",
+                                   schema = CoreConstants.DB_SCHEMA,
+                                   joinColumns = {
+                                       @JoinColumn(name = "PAGE_MODEL_ID")
+                                   }))
     private LocalizedString title;
 
+    /**
+     * A description of this {@code PageModel} describing its purpose.
+     */
     @Embedded
     @AssociationOverride(
-        name = "values",
-        joinTable = @JoinTable(name = "PAGE_MODEL_DESCRIPTIONS",
-                               schema = CoreConstants.DB_SCHEMA,
-                               joinColumns = {
-                                   @JoinColumn(name = "PAGE_MODEL_ID")
-                               }))
+            name = "values",
+            joinTable = @JoinTable(name = "PAGE_MODEL_DESCRIPTIONS",
+                                   schema = CoreConstants.DB_SCHEMA,
+                                   joinColumns = {
+                                       @JoinColumn(name = "PAGE_MODEL_ID")
+                                   }))
     private LocalizedString description;
 
+    /**
+     * The application with which this {@code PageModel} is associated.
+     */
     @ManyToOne
     @JoinColumn(name = "APPLICATION_ID")
     private CcmApplication application;
 
+    /**
+     * The type of this {@code PageModel}.
+     */
     @Column(name = "TYPE", length = 255, nullable = false)
     @NotNull
     private String type;
 
+    /**
+     * The components of the page described by this {@code PageModel}.
+     */
     @OneToMany(mappedBy = "pageModel")
     private List<ComponentModel> components;
 
@@ -246,7 +290,7 @@ public class PageModel implements Serializable {
     protected void clearComponents() {
         components.clear();
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 7;
@@ -303,13 +347,13 @@ public class PageModel implements Serializable {
 
     public String toString(final String data) {
         return String.format("%s{ "
-                                 + "pageModelId = %d, "
-                                 + "uuid = %s, "
-                                 + "name = \"%s\", "
-                                 + "title = %s, "
-                                 + "description = %s, "
-                                 + "type = \"%s\""
-                                 + " }",
+                                     + "pageModelId = %d, "
+                                     + "uuid = %s, "
+                                     + "name = \"%s\", "
+                                     + "title = %s, "
+                                     + "description = %s, "
+                                     + "type = \"%s\""
+                                     + " }",
                              super.toString(),
                              pageModelId,
                              uuid,
