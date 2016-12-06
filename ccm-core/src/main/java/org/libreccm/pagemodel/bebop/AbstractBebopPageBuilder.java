@@ -28,10 +28,10 @@ import org.libreccm.pagemodel.AbstractPageBuilder;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public abstract class AbstractBebopPageBuilder extends AbstractPageBuilder<Page>{
+public abstract class AbstractBebopPageBuilder extends AbstractPageBuilder<Page> {
 
     public static final String BEBOP = "Bebop";
-    
+
     @Override
     protected String getType() {
         return BEBOP;
@@ -40,18 +40,21 @@ public abstract class AbstractBebopPageBuilder extends AbstractPageBuilder<Page>
     @Override
     protected void addComponent(final Page page, final Object component) {
         final Component bebopComponent = (Component) component;
-        
+
         page.add(bebopComponent);
     }
 
     @Override
     public Page buildPage() {
-        
-        final String application = Web.getWebContext().getApplication().getPrimaryUrl();
-        final Page page =  PageFactory.buildPage(application, "");
-        
+
+        final String application = Web.getWebContext().getApplication().
+                getPrimaryUrl();
+        final Page page = PageFactory.buildPage(application, "");
+
+        addDefaultComponents(page);
+
         return page;
     }
-    
+
     public abstract void addDefaultComponents(final Page page);
 }
