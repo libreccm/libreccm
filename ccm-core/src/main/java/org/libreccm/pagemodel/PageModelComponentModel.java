@@ -24,23 +24,56 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.ResourceBundle;
 
 /**
+ * Used in the description of {@link CcmModule} to specify which
+ * {@link ComponentModel}s are provided by an module.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface PageModelComponentModel {
-    
+
+    /**
+     * Fully qualified name of a resource bundle providing the title and
+     * description of the {@link ComponentModel}.
+     *
+     * @return The fully qualified name of the {@link ResourceBundle} which
+     * provides the title and description of the {@link ComponentModel}.
+     */
     String descBundle() default "";
-    
+
+    /**
+     * Key for the title of the {@link ComponentModel} in the
+     * {@link ResourceBundle} specified by {@link #descBundle()}.
+     *
+     * @return The key for the title of the {@link ComponentModel}.
+     */
     String titleKey() default "component_model_title";
-    
+
+    /**
+     * Key for the description of the {@link ComponentModel} in the
+     * {@link ResourceBundle} specified by {@link #descBundle()}.
+     *
+     * @return The key for the description of the {@link ComponentModel}.
+     */
     String descKey() default "component_model_desc";
-    
+
+    /**
+     * The class which provides the {@link ComponentModel}.
+     *
+     * @return The class which provides the {@link ComponentModel}.
+     */
     Class<? extends ComponentModel> modelClass();
-    
+
+    /**
+     * A (Bebop) form for editing the properties of an instance of the
+     * {@link ComponentModel}.
+     *
+     * @return A (Bebop) form for editing the {@code ComponentModel}.
+     */
     Class<? extends Form> editor();
-    
+
 }
