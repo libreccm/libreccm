@@ -25,6 +25,10 @@ import com.arsdigita.web.Web;
 import org.libreccm.pagemodel.AbstractPageBuilder;
 
 /**
+ * Basic implementation of a {@link PageBuilder} for Bebop {@link Page}s.
+ * Applications must provided an implementation of the {@link PageBuilder}.
+ * These implementations must override the
+ * {@link #addDefaultComponents(com.arsdigita.bebop.Page)} method.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -48,7 +52,7 @@ public abstract class AbstractBebopPageBuilder extends AbstractPageBuilder<Page>
     public Page buildPage() {
 
         final String application = Web.getWebContext().getApplication().
-                getPrimaryUrl();
+            getPrimaryUrl();
         final Page page = PageFactory.buildPage(application, "");
 
         addDefaultComponents(page);
@@ -56,5 +60,11 @@ public abstract class AbstractBebopPageBuilder extends AbstractPageBuilder<Page>
         return page;
     }
 
+    /**
+     * Add the default components which are present on every page.
+     * 
+     * @param page The page to which the components are added.
+     */
     public abstract void addDefaultComponents(final Page page);
+
 }

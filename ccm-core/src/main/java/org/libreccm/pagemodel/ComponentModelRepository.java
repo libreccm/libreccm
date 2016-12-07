@@ -19,12 +19,17 @@
 package org.libreccm.pagemodel;
 
 import org.libreccm.core.AbstractEntityRepository;
+import org.libreccm.core.CoreConstants;
+import org.libreccm.security.AuthorizationRequired;
+import org.libreccm.security.RequiresPrivilege;
 
 import java.util.UUID;
 
 import javax.enterprise.context.RequestScoped;
+import javax.transaction.Transactional;
 
 /**
+ * Repository class for managing {@link ComponentModel} entities.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -41,15 +46,29 @@ public class ComponentModelRepository extends AbstractEntityRepository<Long, Com
         return componentModel.getComponentModelId() == 0;
     }
 
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
+    @Transactional(Transactional.TxType.REQUIRED)
+    @Override
+    public void save(final ComponentModel componentModel) {
+        super.save(componentModel);
+    }
+
+    /**
+     * Initialises a new entity.
+     *
+     * @param componentModel The new {@link ComponentModel} entity to
+     *                       initialise.
+     */
     @Override
     public void initNewEntity(final ComponentModel componentModel) {
         final String uuid = UUID.randomUUID().toString();
-        
+
         componentModel.setUuid(uuid);
-        if (componentModel.getModelUuid() == null 
-            || componentModel.getModelUuid().isEmpty()) {
+        if (componentModel.getModelUuid() == null
+                || componentModel.getModelUuid().isEmpty()) {
             componentModel.setModelUuid(uuid);
         }
     }
-    
+
 }
