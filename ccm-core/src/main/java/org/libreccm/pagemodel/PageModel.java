@@ -36,6 +36,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
@@ -56,6 +58,7 @@ import javax.validation.constraints.NotNull;
  * @see PageBuilder
  */
 @Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "PAGE_MODELS", schema = CoreConstants.DB_SCHEMA)
 @NamedQueries({
     @NamedQuery(
