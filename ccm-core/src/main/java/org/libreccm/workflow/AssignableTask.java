@@ -18,18 +18,9 @@
  */
 package org.libreccm.workflow;
 
-import static org.libreccm.core.CoreConstants.*;
-
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.libreccm.portation.Portable;
 import org.libreccm.security.User;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -41,6 +32,14 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+
+import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 
 /**
  * A task which can be assigned to a user. Also a {@code AssignableTask} can be
@@ -130,7 +129,7 @@ public class AssignableTask extends Task implements Serializable, Portable {
      * The roles to which task is assigned.
      */
     @OneToMany(mappedBy = "task")
-    @JsonManagedReference
+    @JsonBackReference(value = "taskassignment-assignabletask")
     private List<TaskAssignment> assignments;
 
     public AssignableTask() {

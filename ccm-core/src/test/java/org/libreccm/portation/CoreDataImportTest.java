@@ -77,12 +77,14 @@ public class CoreDataImportTest {
                                 "CoreDataImportTest.war")
                 .addPackage(org.libreccm.categorization.Category
                         .class.getPackage())
-                .addPackage(org.libreccm.core.CcmObject.class.getPackage())
+                .addPackage(org.libreccm.core.CcmObject
+                        .class.getPackage())
                 .addPackage(org.libreccm.l10n.LocalizedString
                         .class.getPackage())
                 .addPackage(org.libreccm.portation.AbstractMarshaller
                         .class.getPackage())
-                .addPackage(org.libreccm.security.Group.class.getPackage())
+                .addPackage(org.libreccm.security.Group
+                        .class.getPackage())
                 .addPackage(org.libreccm.workflow.AssignableTask
                         .class.getPackage())
                 .addPackage(org.libreccm.configuration.ConfigurationManager
@@ -90,6 +92,10 @@ public class CoreDataImportTest {
                 .addPackage(org.libreccm.tests.categories.IntegrationTest
                         .class.getPackage())
                 .addPackage(org.libreccm.testutils.EqualsVerifier
+                        .class.getPackage())
+                .addPackage(org.libreccm.web.CcmApplication
+                        .class.getPackage())
+                .addPackage(org.libreccm.jpa.EntityManagerProducer
                         .class.getPackage())
                 .addAsLibraries(getModuleDependencies())
                 .addAsResource("test-persistence.xml",
@@ -113,72 +119,72 @@ public class CoreDataImportTest {
     public void categoriesShouldBeImported() {
         ImportHelper.importCategories();
     }
-//
-//    @Test
-//    @InSequence(110)
-//    public void categorizationsShouldBeImported() {
-//        ImportHelper.importCategorizations();
-//    }
-//
-//    @Test
-//    @InSequence(115)
-//    public void usersShouldBeImported() {
-//        ImportHelper.importUsers();
-//    }
-//
-//    @Test
-//    @InSequence(120)
-//    public void groupsShouldBeImported() {
-//        ImportHelper.importGroups();
-//    }
-//
-//    @Test
-//    @InSequence(125)
-//    public void groupMembershipsShouldBeImported() {
-//        ImportHelper.importGroupMemberships();
-//    }
-//
-//    @Test
-//    @InSequence(130)
-//    public void rolesShouldBeImported() {
-//        ImportHelper.importRoles();
-//    }
-//
-//    @Test
-//    @InSequence(135)
-//    public void roleMembershipsShouldBeImported() {
-//        ImportHelper.importRoleMemberships();
-//    }
-//
-//    @Test
-//    @InSequence(140)
-//    public void workflowTemplatesShouldBeImported() {
-//        ImportHelper.importWorkflowTemplates();
-//    }
-//
-//    @Test
-//    @InSequence(145)
-//    public void workflowsShouldBeImported() {
-//        ImportHelper.importWorkflows();
-//    }
-//
-//    @Test
-//    @InSequence(150)
-//    public void assignableTasksShouldBeImported() {
-//        ImportHelper.importAssignableTasks();
-//    }
-//
-//    @Test
-//    @InSequence(155)
-//    public void taskAssignmentsShouldBeImported() {
-//        ImportHelper.importTaskAssignments();
-//    }
-//
-//    @Test
-//    @InSequence(160)
-//    public void permissionsShouldBeImported() {
-//        ImportHelper.importPermissions();
-//    }
+
+    @Test
+    @InSequence(110)
+    public void categorizationsShouldBeImported() {
+        ImportHelper.importCategorizations();
+    }
+
+    @Test
+    @InSequence(115)
+    public void usersShouldBeImported() {
+        ImportHelper.importUsers();
+    }
+
+    @Test
+    @InSequence(120)
+    public void groupsShouldBeImported() {
+        ImportHelper.importGroups();
+    }
+
+    @Test
+    @InSequence(125)
+    public void groupMembershipsShouldBeImported() {
+        ImportHelper.importGroupMemberships();
+    }
+
+    @Test
+    @InSequence(130)
+    public void rolesShouldBeImported() {
+        ImportHelper.importRoles();
+    }
+
+    @Test
+    @InSequence(135)
+    public void roleMembershipsShouldBeImported() {
+        ImportHelper.importRoleMemberships();
+    }
+
+    @Test
+    @InSequence(140)
+    public void workflowTemplatesShouldBeImported() {
+        ImportHelper.importWorkflowTemplates();
+    }
+
+    @Test
+    @InSequence(145)
+    public void workflowsShouldBeImported() {
+        ImportHelper.importWorkflows();
+    }
+
+    @Test
+    @InSequence(150)
+    public void assignableTasksShouldBeImported() {
+        ImportHelper.importAssignableTasks();
+    }
+
+    @Test
+    @InSequence(155)
+    public void taskAssignmentsShouldBeImported() {
+        ImportHelper.importTaskAssignments();
+    }
+
+    @Test
+    @InSequence(160)
+    public void permissionsShouldBeImported() {
+        ImportHelper.importPermissions();
+    }
 
 
 }

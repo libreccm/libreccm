@@ -19,12 +19,8 @@
 package org.libreccm.security;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.libreccm.portation.Portable;
-
-import static org.libreccm.core.CoreConstants.*;
-
-import java.io.Serializable;
-import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -39,6 +35,11 @@ import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import java.io.Serializable;
+import java.util.Objects;
+
+import static org.libreccm.core.CoreConstants.CORE_XML_NS;
+import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 
 /**
  * Association class representing the association between a {@link Role} and a
@@ -67,13 +68,13 @@ public class RoleMembership implements Serializable, Portable {
     @ManyToOne
     @JoinColumn(name = "ROLE_ID")
     @XmlTransient
-    @JsonBackReference
+    @JsonManagedReference(value = "rolemembership-role")
     private Role role;
 
     @ManyToOne
     @JoinColumn(name = "MEMBER_ID")
     @XmlTransient
-    @JsonBackReference
+    @JsonManagedReference(value = "rolemembership-party")
     private Party member;
 
     public long getMembershipId() {

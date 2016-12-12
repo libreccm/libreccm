@@ -18,6 +18,7 @@
  */
 package org.libreccm.security;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.validator.constraints.NotBlank;
 import org.libreccm.core.DefaultEntityGraph;
@@ -150,7 +151,7 @@ public class Role implements Serializable, Portable {
     @OneToMany(mappedBy = "role")
     @XmlElementWrapper(name = "role-memberships", namespace = CORE_XML_NS)
     @XmlElement(name = "role-membership", namespace = CORE_XML_NS)
-    @JsonManagedReference
+    @JsonBackReference(value = "rolemembership-role")
     private Set<RoleMembership> memberships = new HashSet<>();
 
     /**
@@ -159,11 +160,11 @@ public class Role implements Serializable, Portable {
     @OneToMany(mappedBy = "grantee")
     @XmlElementWrapper(name = "permissions", namespace = CORE_XML_NS)
     @XmlElement(name = "permission", namespace = CORE_XML_NS)
-    @JsonManagedReference
+    @JsonBackReference(value = "permission-role")
     private List<Permission> permissions = new ArrayList<>();
 
     @OneToMany(mappedBy = "role")
-    @JsonManagedReference
+    @JsonBackReference(value = "taskassignment-role")
     private List<TaskAssignment> assignedTasks;
 
     /**

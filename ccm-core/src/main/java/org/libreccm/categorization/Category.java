@@ -182,7 +182,7 @@ public class Category extends CcmObject implements InheritsPermissions,
      */
     @OneToMany(mappedBy = "category")
     @XmlElementWrapper(name = "objects", namespace = CAT_XML_NS)
-    @JsonManagedReference
+    @JsonBackReference(value = "categorization-category")
     private List<Categorization> objects;
 
     /**
@@ -191,7 +191,7 @@ public class Category extends CcmObject implements InheritsPermissions,
     @OneToMany(mappedBy = "parentCategory")
     @XmlElementWrapper(name = "subcategories", namespace = CAT_XML_NS)
     @XmlElement(name = "category")
-    @JsonManagedReference
+    @JsonBackReference(value = "parentcategory-subcategory")
     private List<Category> subCategories;
 
     /**
@@ -200,7 +200,7 @@ public class Category extends CcmObject implements InheritsPermissions,
      */
     @ManyToOne
     @JoinColumn(name = "PARENT_CATEGORY_ID")
-    @JsonBackReference
+    @JsonManagedReference(value = "parentcategory-subcategory")
     private Category parentCategory;
 
     /**

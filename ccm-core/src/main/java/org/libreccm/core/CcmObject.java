@@ -18,12 +18,12 @@
  */
 package org.libreccm.core;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.envers.Audited;
 import org.libreccm.categorization.Categorization;
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryManager;
-import org.libreccm.portation.Portable;
 import org.libreccm.security.Permission;
 
 import javax.persistence.Column;
@@ -117,7 +117,7 @@ public class CcmObject implements Identifiable, Serializable {
     @OneToMany(mappedBy = "object")
     @XmlElementWrapper(name = "permissions", namespace = CORE_XML_NS)
     @XmlElement(name = "permission", namespace = CORE_XML_NS)
-    @JsonManagedReference
+    @JsonBackReference(value = "permission-object")
     private List<Permission> permissions;
 
     /**
@@ -126,7 +126,7 @@ public class CcmObject implements Identifiable, Serializable {
     @OneToMany(mappedBy = "categorizedObject")
     @XmlElementWrapper(name = "categories", namespace = CORE_XML_NS)
     @XmlElement(name = "category", namespace = CORE_XML_NS)
-    @JsonManagedReference
+    @JsonBackReference(value = "categorization-object")
     private List<Categorization> categories;
 
     public CcmObject() {
