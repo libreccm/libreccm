@@ -18,17 +18,9 @@
  */
 package org.libreccm.security;
 
-import static org.libreccm.core.CoreConstants.*;
-
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.libreccm.core.DefaultEntityGraph;
 import org.libreccm.portation.Portable;
-
-import java.io.Serializable;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.NamedAttributeNode;
@@ -42,6 +34,14 @@ import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+
+import static org.libreccm.core.CoreConstants.CORE_XML_NS;
+import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 
 /**
  * A group is basically a collection of users.
@@ -101,7 +101,7 @@ public class Group extends Party implements Serializable, Portable {
     @OneToMany(mappedBy = "group")
     @XmlElementWrapper(name = "group-memberships", namespace = CORE_XML_NS)
     @XmlElement(name = "group-membership", namespace = CORE_XML_NS)
-    @JsonManagedReference
+    @JsonBackReference(value = "groupmembership-group")
     private Set<GroupMembership> memberships = new HashSet<>();
 
     public Group() {

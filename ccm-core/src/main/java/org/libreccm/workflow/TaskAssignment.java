@@ -18,14 +18,10 @@
  */
 package org.libreccm.workflow;
 
-import static org.libreccm.core.CoreConstants.*;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.libreccm.portation.Portable;
 import org.libreccm.security.Role;
-
-import java.io.Serializable;
-import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -35,6 +31,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.io.Serializable;
+import java.util.Objects;
+
+import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 
 /**
  * Represents the assignment of a {@link AssignableTask} to a {@link Role}.
@@ -60,7 +60,7 @@ public class TaskAssignment implements Serializable, Portable {
      */
     @ManyToOne
     @JoinColumn(name = "TASK_ID")
-    @JsonBackReference
+    @JsonManagedReference(value = "taskassignment-assignabletask")
     private AssignableTask task;
 
     /**
@@ -68,7 +68,7 @@ public class TaskAssignment implements Serializable, Portable {
      */
     @ManyToOne
     @JoinColumn(name = "ROLE_ID")
-    @JsonBackReference
+    @JsonManagedReference(value = "taskassignment-role")
     private Role role;
 
     public long getTaskAssignmentId() {

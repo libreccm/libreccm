@@ -22,7 +22,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -43,7 +44,8 @@ import java.util.List;
  */
 public abstract class AbstractMarshaller<P extends Portable> {
 
-    private static final Logger log = Logger.getLogger(AbstractMarshaller.class);
+    private static final Logger LOGGER = LogManager.getLogger(AbstractMarshaller
+            .class);
 
     private Format format;
     private String filename;
@@ -73,10 +75,13 @@ public abstract class AbstractMarshaller<P extends Portable> {
                 JacksonXmlModule module = new JacksonXmlModule();
                 module.setDefaultUseWrapper(false);
                 xmlMapper = new XmlMapper(module);
+
                 if (indentation) {
                     xmlMapper.enable(SerializationFeature.INDENT_OUTPUT);
                 }
+
                 break;
+
 
             default:
                 break;
@@ -117,8 +122,9 @@ public abstract class AbstractMarshaller<P extends Portable> {
         try {
             fileWriter = new FileWriter(file);
         } catch (IOException e) {
-            log.error(String.format("Unable to open a fileWriter for the file" +
-                    " with the name %s.", file.getName()));
+            LOGGER.error("Unable to open a fileWriter for the file" +
+                    " with the name {}.", file.getName());
+            LOGGER.error(e);
         }
         if (fileWriter != null) {
             for (P object : exportList) {
@@ -128,11 +134,12 @@ public abstract class AbstractMarshaller<P extends Portable> {
                     case XML:
                         try {
                             line = xmlMapper.writeValueAsString(object);
-                            //log.info(line);
+                            //LOGGER.info(line);
                         } catch (IOException e) {
-                            log.error(String.format("Unable to write objetct " +
-                                    "of class %s as XML string with name %s.",
-                                    object.getClass(), file.getName()), e);
+                            LOGGER.error("Unable to write objetct " +
+                                    "of class {} as XML string with name {}.",
+                                    object.getClass(), file.getName());
+                            LOGGER.error(e);
                         }
                         break;
 
@@ -144,16 +151,18 @@ public abstract class AbstractMarshaller<P extends Portable> {
                         fileWriter.write(line);
                         fileWriter.write(System.getProperty("line.separator"));
                     } catch (IOException e) {
-                        log.error(String.format("Unable to write to file with" +
-                                " the name %s.", file.getName()));
+                        LOGGER.error("Unable to write to file with" +
+                                " the name {}.", file.getName());
+                        LOGGER.error(e);
                     }
                 }
             }
             try {
                 fileWriter.close();
             } catch (IOException e) {
-                log.error(String.format("Unable to close a fileWriter for the" +
-                        " file with the name %s.", file.getName()));
+                LOGGER.error("Unable to close a fileWriter for the" +
+                        " file with the name {}.", file.getName());
+                LOGGER.error(e);
             }
         }
     }
@@ -173,8 +182,9 @@ public abstract class AbstractMarshaller<P extends Portable> {
         try {
             lines = Files.readAllLines(file.toPath());
         } catch (IOException e) {
-            log.error(String.format("Unable to read lines of the file with " +
-                    "name %s.", file.getName()));
+            LOGGER.error("Unable to read lines of the file with " +
+                    "name {}.", file.getName());
+            LOGGER.error(e);
         }
 
         List<P> objects = new ArrayList<>();
@@ -186,8 +196,9 @@ public abstract class AbstractMarshaller<P extends Portable> {
                         try {
                             object = xmlMapper.readValue(line, getObjectClass());
                         } catch (IOException e) {
-                            log.error(String.format("Unable to read objects " +
-                                    "from XML line:\n \"%s\"", line), e);
+                            LOGGER.error("Unable to read objects " +
+                                    "from XML line:\n \"{}\"", line);
+                            LOGGER.error(e);
                         }
                         break;
 

@@ -18,17 +18,8 @@
  */
 package org.libreccm.security;
 
-import static org.libreccm.core.CoreConstants.*;
-
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.libreccm.core.DefaultEntityGraph;
-import org.libreccm.portation.Portable;
-
-import java.io.Serializable;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -48,6 +39,14 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+
+import static org.libreccm.core.CoreConstants.CORE_XML_NS;
+import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 
 /**
  * Party is a base class for {@link User} and {@link Group} defining some common
@@ -99,7 +98,7 @@ public class Party implements Serializable {
     @OneToMany(mappedBy = "member")
     @XmlElementWrapper(name = "role-memberships", namespace = CORE_XML_NS)
     @XmlElement(name = "role-membership", namespace = CORE_XML_NS)
-    @JsonManagedReference
+    @JsonBackReference(value = "rolemembership-party")
     private Set<RoleMembership> roleMemberships = new HashSet<>();
 
     protected Party() {

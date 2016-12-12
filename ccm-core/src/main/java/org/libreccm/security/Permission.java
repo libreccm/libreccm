@@ -19,6 +19,7 @@
 package org.libreccm.security;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.libreccm.core.CcmObject;
 import org.libreccm.portation.Portable;
 
@@ -97,7 +98,7 @@ public class Permission implements Serializable, Portable {
      */
     @ManyToOne
     @JoinColumn(name = "OBJECT_ID")
-    @JsonBackReference
+    @JsonManagedReference(value = "permission-object")
     private CcmObject object;
 
     /**
@@ -105,7 +106,7 @@ public class Permission implements Serializable, Portable {
      */
     @ManyToOne
     @JoinColumn(name = "GRANTEE_ID")
-    @JsonBackReference
+    @JsonManagedReference(value = "permission-role")
     private Role grantee;
 
     /**
