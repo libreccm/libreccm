@@ -22,12 +22,11 @@ import com.arsdigita.bebop.Component;
 import com.arsdigita.bebop.PageState;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+
 import org.libreccm.cdi.utils.CdiUtil;
 
-import org.libreccm.security.Party;
 import org.libreccm.security.PermissionChecker;
 
 /**
@@ -102,6 +101,10 @@ public class ComponentAccess {
                 .reduce((result1, result2) -> result1 && result2);
 
         return canAccess.orElse(false);
+    }
+    
+    public boolean canAccess(final PageState state) {
+        return canAccess();
     }
 
 }
