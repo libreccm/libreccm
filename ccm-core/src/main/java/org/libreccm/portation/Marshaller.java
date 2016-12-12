@@ -111,7 +111,9 @@ public class Marshaller {
     private <P extends Portable> void exportList(List<P> list,
                                                  Class<? extends P> type,
                                                  Format format,
-                                                 String filename) {
+                                                 String filename)
+            throws IllegalArgumentException {
+
         final Instance<AbstractMarshaller<? extends Portable>>
                 marshallerInstance = marshallerInstances.select(new
                 MarshalsLiteral(type));
@@ -153,8 +155,10 @@ public class Marshaller {
      * @param format The import style
      * @param <P> The type of the current marshaller
      */
-    public <P extends Portable> void importFiles(
-            List<String> filenames, Format format) {
+    public <P extends Portable> void importFiles(List<String> filenames,
+                                                 Format format)
+            throws IllegalArgumentException {
+
         for (String filename : filenames) {
             String[] splitFilename = filename.split("__");
             String className =

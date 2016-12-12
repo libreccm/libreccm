@@ -19,6 +19,7 @@
 package org.libreccm.categorization;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.libreccm.core.CcmObject;
 import org.libreccm.portation.Portable;
 
@@ -84,7 +85,7 @@ public class Categorization implements Serializable, Portable {
      */
     @ManyToOne
     @JoinColumn(name = "CATEGORY_ID")
-    @JsonBackReference
+    @JsonManagedReference(value = "categorization-category")
     private Category category;
 
     /**
@@ -92,7 +93,7 @@ public class Categorization implements Serializable, Portable {
      */
     @ManyToOne
     @JoinColumn(name = "OBJECT_ID")
-    @JsonBackReference
+    @JsonManagedReference(value = "categorization-object")
     private CcmObject categorizedObject;
 
     /**

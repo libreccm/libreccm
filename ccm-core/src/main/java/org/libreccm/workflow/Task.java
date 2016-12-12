@@ -20,6 +20,8 @@ package org.libreccm.workflow;
 
 import static org.libreccm.core.CoreConstants.*;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.libreccm.core.CcmObject;
 import org.libreccm.core.Identifiable;
 import org.libreccm.l10n.LocalizedString;
@@ -157,12 +159,14 @@ public class Task implements Identifiable, Serializable {
      */
     @ManyToOne
     @JoinColumn(name = "WORKFLOW_ID")
+    @JsonManagedReference(value = "task-workflow")
     private Workflow workflow;
 
     /**
      * Tasks which the depends of this task.
      */
     @ManyToMany(mappedBy = "dependsOn")
+    @JsonBackReference(value = "dependson-dependent")
     private List<Task> dependentTasks;
 
     /**
@@ -175,6 +179,7 @@ public class Task implements Identifiable, Serializable {
                    @JoinColumn(name = "DEPENDS_ON_TASK_ID")},
                inverseJoinColumns = {
                    @JoinColumn(name = "DEPENDENT_TASK_ID")})
+    @JsonManagedReference(value = "dependson-dependent")
     private List<Task> dependsOn;
 
     /**

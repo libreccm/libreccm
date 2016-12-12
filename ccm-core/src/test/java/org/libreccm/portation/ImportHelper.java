@@ -43,17 +43,16 @@ import java.util.List;
  */
 class ImportHelper {
     private static String pathName =
-            "/home/tosmers/Svn/libreccm/ccm-ng/ccm-core/src/test/resource" +
-                    "/portation/trunk-iaw-export";
+            "/home/tosmers/Svn/libreccm/ccm_ng/ccm-core/src/test/resources/" +
+                    "portation/trunk-iaw-exports";
     private static boolean indentation = false;
 
-    private static String blub = "Hallo";
 
     static void importCategories() {
         CategoryMarshaller categoryMarshaller = new
                 CategoryMarshaller();
         categoryMarshaller.prepare(Format.XML, pathName,
-                "categories", indentation);
+                "categories.xml", indentation);
         List<Category> categories = categoryMarshaller.importFile();
     }
 
@@ -61,21 +60,21 @@ class ImportHelper {
         CategorizationMarshaller categorizationMarshaller = new
                 CategorizationMarshaller();
         categorizationMarshaller.prepare(Format.XML, pathName,
-                "categorizations", indentation);
+                "categorizations.xml", indentation);
         categorizationMarshaller.importFile();
     }
 
     static void importUsers() {
         UserMarshaller userMarshaller = new UserMarshaller();
         userMarshaller.prepare(Format.XML, pathName,
-                "users", indentation);
+                "users.xml", indentation);
         userMarshaller.importFile();
     }
 
     static void importGroups() {
         GroupMarshaller groupMarshaller = new GroupMarshaller();
         groupMarshaller.prepare(Format.XML, pathName,
-                "groups", indentation);
+                "groups.xml", indentation);
         groupMarshaller.importFile();
     }
 
@@ -83,14 +82,14 @@ class ImportHelper {
         GroupMembershipMarshaller groupMembershipMarshaller = new
                 GroupMembershipMarshaller();
         groupMembershipMarshaller.prepare(Format.XML, pathName,
-                "groupMemberships", indentation);
+                "groupMemberships.xml", indentation);
         groupMembershipMarshaller.importFile();
     }
 
     static void importRoles() {
         RoleMarshaller roleMarshaller = new RoleMarshaller();
         roleMarshaller.prepare(Format.XML, pathName,
-                "roles", indentation);
+                "roles.xml", indentation);
         roleMarshaller.importFile();
     }
 
@@ -98,7 +97,7 @@ class ImportHelper {
         RoleMembershipMarshaller roleMembershipMarshaller = new
                 RoleMembershipMarshaller();
         roleMembershipMarshaller.prepare(Format.XML, pathName,
-                "roleMemberships", indentation);
+                "roleMemberships.xml", indentation);
         roleMembershipMarshaller.importFile();
     }
 
@@ -106,7 +105,7 @@ class ImportHelper {
         WorkflowTemplateMarshaller workflowTemplateMarshaller = new
                 WorkflowTemplateMarshaller();
         workflowTemplateMarshaller.prepare(Format.XML, pathName,
-                "workflowTemplates", indentation);
+                "workflowTemplates.xml", indentation);
         workflowTemplateMarshaller.importFile();
     }
 
@@ -114,7 +113,7 @@ class ImportHelper {
         WorkflowMarshaller workflowMarshaller = new
                 WorkflowMarshaller();
         workflowMarshaller.prepare(Format.XML, pathName,
-                "workflows", indentation);
+                "workflows.xml", indentation);
         workflowMarshaller.importFile();
     }
 
@@ -122,7 +121,7 @@ class ImportHelper {
         AssignableTaskMarshaller assignableTaskMarshaller = new
                 AssignableTaskMarshaller();
         assignableTaskMarshaller.prepare(Format.XML, pathName,
-                "assignableTasks", indentation);
+                "assignableTasks.xml", indentation);
         assignableTaskMarshaller.importFile();
     }
 
@@ -130,7 +129,7 @@ class ImportHelper {
         TaskAssignmentMarshaller taskAssignmentMarshaller = new
                 TaskAssignmentMarshaller();
         taskAssignmentMarshaller.prepare(Format.XML, pathName,
-                "taskAssignments", indentation);
+                "taskAssignments.xml", indentation);
         taskAssignmentMarshaller.importFile();
     }
 
@@ -138,7 +137,7 @@ class ImportHelper {
         PermissionMarshaller permissionMarshaller = new
                 PermissionMarshaller();
         permissionMarshaller.prepare(Format.XML, pathName,
-                "permissions", indentation);
+                "permissions.xml", indentation);
         permissionMarshaller.importFile();
     }
 
