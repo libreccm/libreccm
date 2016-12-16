@@ -20,45 +20,64 @@ package com.arsdigita.cms.dispatcher;
 
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.cms.CMS;
-import com.arsdigita.cms.ContentCenter;
+import com.arsdigita.cms.ui.ContentItemPage;
+import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.util.Assert;
 
 import org.apache.logging.log4j.Logger;
-import org.libreccm.categorization.Category;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentSection;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
-import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.StringTokenizer;
+
 import org.apache.logging.log4j.LogManager;
 import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.core.CcmObject;
+import org.libreccm.l10n.GlobalizationHelper;
 import org.librecms.CmsConstants;
+import org.librecms.contentsection.ContentItemManager;
 import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contentsection.ContentItemVersion;
 import org.librecms.contentsection.Folder;
 import org.librecms.contentsection.FolderManager;
+import org.librecms.util.LanguageUtil;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
+
+import static javax.naming.ldap.SortControl.*;
 
 /**
  * Resolves items to URLs and URLs to items for multiple language variants.
  *
- * Created Mon Jan 20 14:30:03 2003.
+ * * <strong>
+ * AS of version 7.0.0 this class not longer part of the public API. It is left
+ * here to keep the changes to the UI classes as minimal as possible. For new
+ * code other methods, for example from the {@link ContentItemManager} or the
+ * {@link ContentItemRepository} should be used. Because this class is no longer
+ * part of the public API the will might be removed or changed in future
+ * releases without prior warning.
+ * </strong>
+ *
+ *
  *
  * @author <a href="mailto:mhanisch@redhat.com">Michael Hanisch</a>
- * @version $Id: MultilingualItemResolver.java 2090 2010-04-17 08:04:14Z pboy $
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class MultilingualItemResolver
-        extends AbstractItemResolver implements ItemResolver {
+    extends AbstractItemResolver implements ItemResolver {
 
     private static final Logger LOGGER = LogManager.getLogger(
-            MultilingualItemResolver.class);
+        MultilingualItemResolver.class);
 
     private static MasterPage s_masterP = null;
     private static final String ADMIN_PREFIX = "admin";
@@ -83,8 +102,10 @@ public class MultilingualItemResolver
      * @param section The current content section
      * @param itemUrl The section-relative URL
      * @param context The use context, e.g. <code>ContentItem.LIVE</code>,
-     * <code>CMSDispatcher.PREVIEW</code> or <code>ContentItem.DRAFT</code>. See {@link
+     *                <code>CMSDispatcher.PREVIEW</code> or
+     *                <code>ContentItem.DRAFT</code>. See {@link
      * #getCurrentContext}.
+     *
      * @return The content item, or null if no such item exists
      */
     @Override
@@ -92,7 +113,7 @@ public class MultilingualItemResolver
                                final String itemUrl,
                                final String context) {
         LOGGER.debug("Resolving the item in content section \"{}\" at URL "
-                             + "\"{}\" for context \"{}\"...",
+                         + "\"{}\" for context \"{}\"...",
                      section.getLabel(),
                      itemUrl,
                      context);
@@ -119,16 +140,16 @@ public class MultilingualItemResolver
                 LOGGER.debug("The root folder has a live version; recursing");
 
                 final FolderManager folderManager = cdiUtil.findBean(
-                        FolderManager.class);
+                    FolderManager.class);
                 final String prefix = String.join(
-                        "",
-                        section.getPrimaryUrl(),
-                        folderManager.getFolderPath(rootFolder));
+                    "",
+                    section.getPrimaryUrl(),
+                    folderManager.getFolderPath(rootFolder));
 
                 if (url.startsWith(prefix)) {
                     LOGGER.
-                            debug("The starts with prefix \"{}\"; removing it...",
-                                  prefix);
+                        debug("The starts with prefix \"{}\"; removing it...",
+                              prefix);
 
                     url = url.substring(prefix.length());
                 }
@@ -171,8 +192,8 @@ public class MultilingualItemResolver
 
                 if (url.startsWith(prefix)) {
                     LOGGER.debug(
-                            "The URL starts with prefix \"{}\"; removing it",
-                            prefix);
+                        "The URL starts with prefix \"{}\"; removing it",
+                        prefix);
 
                     url = url.substring(prefix.length());
                 }
@@ -186,7 +207,7 @@ public class MultilingualItemResolver
                 return item;
             } else {
                 throw new IllegalArgumentException(String.format(
-                        "Invalid item resolver context \"%s\".", context));
+                    "Invalid item resolver context \"%s\".", context));
             }
         }
 
@@ -199,11 +220,13 @@ public class MultilingualItemResolver
      * Fetches the current context based on the page state.
      *
      * @param state the current page state
+     *
      * @return the context of the current URL, such as
-     * <code>ContentItem.LIVE</code> or <code>ContentItem.DRAFT</code>
+     *         <code>ContentItem.LIVE</code> or <code>ContentItem.DRAFT</code>
+     *
      * @see ContentItem#LIVE
      * @see ContentItem#DRAFT
-     * 
+     *
      * ToDo: Refactor to use the {@link ContentItemVersion} directly.
      */
     @Override
@@ -232,8 +255,8 @@ public class MultilingualItemResolver
         url = stripTemplateFromURL(url);
 
         // Determine if we are under the admin UI.
-        if (url.startsWith(ADMIN_PREFIX) 
-            || url.startsWith(CmsConstants.CONTENT_CENTER_URL)) {
+        if (url.startsWith(ADMIN_PREFIX)
+                || url.startsWith(CmsConstants.CONTENT_CENTER_URL)) {
             return ContentItemVersion.DRAFT.toString();
         } else {
             return ContentItemVersion.LIVE.toString();
@@ -243,17 +266,19 @@ public class MultilingualItemResolver
     /**
      * Generates a URL for a content item.
      *
-     * @param itemId The item ID
-     * @param name The name of the content page
-     * @param state The page state
+     * @param itemId  The item ID
+     * @param name    The name of the content page
+     * @param state   The page state
      * @param section the content section to which the item belongs
      * @param context the context of the URL, such as "live" or "admin"
+     *
      * @return The URL of the item
+     *
      * @see #getCurrentContext
      */
     @Override
     public String generateItemURL(final PageState state,
-                                  final BigDecimal itemId,
+                                  final Long itemId,
                                   final String name,
                                   final ContentSection section,
                                   final String context) {
@@ -263,27 +288,29 @@ public class MultilingualItemResolver
     /**
      * Generates a URL for a content item.
      *
-     * @param itemId The item ID
-     * @param name The name of the content page
-     * @param state The page state
-     * @param section the content section to which the item belongs
-     * @param context the context of the URL, such as "live" or "admin"
+     * @param itemId          The item ID
+     * @param name            The name of the content page
+     * @param state           The page state
+     * @param section         the content section to which the item belongs
+     * @param context         the context of the URL, such as "live" or "admin"
      * @param templateContext the context for the URL, such as "public"
+     *
      * @return The URL of the item
+     *
      * @see #getCurrentContext
      */
     @Override
     public String generateItemURL(final PageState state,
-                                  final BigDecimal itemId,
+                                  final Long itemId,
                                   final String name,
                                   final ContentSection section,
                                   final String context,
                                   final String templateContext) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Generating an item URL for item id " + itemId
-                                 + ", section " + section + ", and context '"
-                                 + context
-                                 + "' with name '" + name + "'");
+                             + ", section " + section + ", and context '"
+                             + context
+                             + "' with name '" + name + "'");
         }
 
         Assert.exists(itemId, "BigDecimal itemId");
@@ -291,40 +318,35 @@ public class MultilingualItemResolver
         Assert.exists(section, "ContentSection section");
 
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-        final ContentItemRepository itemRepo = cdiUtil.findBean(ContentItemRepository.class);
-        
+        final ContentItemRepository itemRepo = cdiUtil.findBean(
+            ContentItemRepository.class);
+
         if (ContentItemVersion.DRAFT.toString().equals(context)) {
             // No template context here.
             return generateDraftURL(section, itemId);
         } else if (CMSDispatcher.PREVIEW.equals(context)) {
-            ContentItem item = new ContentItem(itemId);
-
+            final ContentItem item = itemRepo.findById(itemId);
             return generatePreviewURL(section, item, templateContext);
-        } else if (ContentItem.LIVE.equals(context)) {
-            ContentItem item = new ContentItem(itemId);
-
-            if (Assert.isEnabled()) {
-                Assert.exists(item, "item");
-                Assert.isTrue(ContentItem.LIVE.equals(item.getVersion()),
-                              "Generating " + ContentItem.LIVE + " "
-                                      + "URL; this item must be the live version");
-            }
+        } else if (ContentItemVersion.LIVE.toString().equals(context)) {
+            final ContentItem item = itemRepo.findById(itemId);
 
             return generateLiveURL(section, item, templateContext);
         } else {
             throw new IllegalArgumentException("Unknown context '" + context
-                                                       + "'");
+                                                   + "'");
         }
     }
 
     /**
      * Generates a URL for a content item.
      *
-     * @param item The item
-     * @param state The page state
+     * @param item    The item
+     * @param state   The page state
      * @param section the content section to which the item belongs
      * @param context the context of the URL, such as "live" or "admin"
+     *
      * @return The URL of the item
+     *
      * @see #getCurrentContext
      */
     @Override
@@ -338,68 +360,61 @@ public class MultilingualItemResolver
     /**
      * Generates a URL for a content item.
      *
-     * @param item The item
-     * @param state The page state
-     * @param section the content section to which the item belongs
-     * @param context the context of the URL, such as "live" or "admin"
+     * @param item            The item
+     * @param state           The page state
+     * @param section         the content section to which the item belongs
+     * @param context         the context of the URL, such as "live" or "admin"
      * @param templateContext the context for the URL, such as "public"
+     *
      * @return The URL of the item
+     *
      * @see #getCurrentContext
      */
     @Override
     public String generateItemURL(final PageState state,
                                   final ContentItem item,
-                                  ContentSection section,
+                                  final ContentSection section,
                                   final String context,
                                   final String templateContext) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Generating an item URL for item " + item
-                                 + ", section "
-                                 + section + ", and context " + context);
+                             + ", section "
+                             + section + ", and context " + context);
         }
 
-        Assert.exists(item, "ContentItem item");
-        Assert.exists(context, "String context");
-
+        final ContentSection contentSection;
         if (section == null) {
-            section = item.getContentSection();
+            contentSection = item.getContentType().getContentSection();
+        } else {
+            contentSection = section;
         }
 
-        if (ContentItem.DRAFT.equals(context)) {
-            if (Assert.isEnabled()) {
-                Assert.isTrue(ContentItem.DRAFT.equals(item.getVersion()),
-                              "Generating " + ContentItem.DRAFT
-                                      + " url: item must be draft version");
-            }
-
-            return generateDraftURL(section, item.getID());
+        if (ContentItemVersion.DRAFT.toString().equals(context)) {
+            return generateDraftURL(section, item.getObjectId());
         } else if (CMSDispatcher.PREVIEW.equals(context)) {
             return generatePreviewURL(section, item, templateContext);
-        } else if (ContentItem.LIVE.equals(context)) {
-            if (Assert.isEnabled()) {
-                Assert.isTrue(ContentItem.LIVE.equals(item.getVersion()),
-                              "Generating " + ContentItem.LIVE
-                                      + " url: item must be live version");
-            }
-
-            return generateLiveURL(section, item, templateContext);
+        } else if (ContentItemVersion.LIVE.toString().equals(context)) {
+            return generateLiveURL(contentSection, item, templateContext);
         } else {
-            throw new RuntimeException("Unknown context " + context);
+            throw new IllegalArgumentException(String.format(
+                "Unknown context \"%s\".", context));
         }
     }
 
     /**
      * Returns a master page based on page state (and content section).
      *
-     * @param item The content item
+     * @param item    The content item
      * @param request The HTTP request
+     *
      * @return The master page
+     *
      * @throws javax.servlet.ServletException
      */
     @Override
     public CMSPage getMasterPage(final ContentItem item,
                                  final HttpServletRequest request)
-            throws ServletException {
+        throws ServletException {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Getting the master page for item " + item);
         }
@@ -421,25 +436,27 @@ public class MultilingualItemResolver
      * Returns content item's draft version URL
      *
      * @param section The content section to which the item belongs
-     * @param itemId The content item's ID
+     * @param itemId  The content item's ID
+     *
      * @return generated URL string
      */
     protected String generateDraftURL(final ContentSection section,
-                                      final BigDecimal itemId) {
+                                      final Long itemId) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Generating draft URL for item ID " + itemId
-                                 + " and section " + section);
+                             + " and section " + section);
         }
 
         if (Assert.isEnabled()) {
             Assert.isTrue(section != null && itemId != null,
                           "get draft url: neither secion nor item "
-                                  + "can be null");
+                              + "can be null");
         }
 
-        final String url = ContentItemPage.getItemURL(section.getPath() + "/",
-                                                      itemId,
-                                                      ContentItemPage.AUTHORING_TAB);
+        final String url = ContentItemPage.getItemURL(
+            String.format("%s/", section.getPrimaryUrl()),
+            itemId,
+            ContentItemPage.AUTHORING_TAB);
 
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Generated draft URL " + url);
@@ -455,23 +472,23 @@ public class MultilingualItemResolver
      * specific language instance of the item referenced here, i.e. this URL
      * will be resolved to a <em>language-specific</em> URL internally.
      *
-     * @param section the <code>ContentSection</code> that contains this item
-     * @param item <code>ContentItem</code> for which a URL should be
-     * constructed.
+     * @param section         the <code>ContentSection</code> that contains this
+     *                        item
+     * @param item            <code>ContentItem</code> for which a URL should be
+     *                        constructed.
      * @param templateContext template context; will be ignored if
-     * <code>null</code>
+     *                        <code>null</code>
      *
      * @return a <em>language-independent</em> URL to the <code>item</code> in
-     * the given <code>section</code>, which will be presented within the given
-     * <code>templateContext</code>
+     *         the given <code>section</code>, which will be presented within
+     *         the given <code>templateContext</code>
      */
     protected String generateLiveURL(final ContentSection section,
                                      final ContentItem item,
                                      final String templateContext) {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Generating live URL for item " + item + " in "
-                                 + "section " + section);
-        }
+        LOGGER.debug("Generating live URL for item {} in section {}",
+                     Objects.toString(item),
+                     Objects.toString(section));
 
         /*
          * URL = URL of section + templateContext + path to the ContentBundle
@@ -479,7 +496,9 @@ public class MultilingualItemResolver
          */
         final StringBuffer url = new StringBuffer(400);
         //url.append(section.getURL());
-        url.append(section.getPath()).append("/");
+        url
+            .append(section.getPrimaryUrl())
+            .append("/");
 
         /*
          * add template context, if one is given
@@ -487,56 +506,17 @@ public class MultilingualItemResolver
         // This is breaking URL's...not sure why it's here. XXX
         // this should work with the appropriate logic. trying again.
         if (!(templateContext == null || templateContext.length() == 0)) {
-            url.append(TEMPLATE_CONTEXT_PREFIX).append(templateContext).append(
-                    "/");
+            url
+                .append(TEMPLATE_CONTEXT_PREFIX)
+                .append(templateContext)
+                .append("/");
         }
 
-        // Try to retrieve the bundle.
-        final ContentItem bundle = (ContentItem) item.getParent();
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final ContentItemManager itemManager = cdiUtil.findBean(
+            ContentItemManager.class);
+        url.append(itemManager.getItemPath(item));
 
-        /*
-         * It would be nice if we had a ContentPage here, which
-         * supports the getContentBundle() method, but unfortunately
-         * the API sucks and there is no real distinction between mere
-         * ContentItems and top-level items, so we have to use this
-         * hack.  TODO: add sanity check that bundle is actually a
-         * ContentItem.
-         */
-        if (bundle != null && bundle instanceof ContentBundle) {
-            LOGGER.debug("Found a bundle; building its file name");
-
-            final String fname = bundle.getPath();
-
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Appending the bundle's file name '" + fname + "'");
-            }
-
-            url.append(fname);
-
-        } else {
-            LOGGER.debug("No bundle found; using the item's path directly");
-
-            url.append(item.getPath());
-        }
-        /*        
-         * This will append the language to the url, which will in turn render
-         * the language negotiation inoperative
-        final String language = item.getLanguage();
-        
-        if (language == null) {
-            s_log.debug("The item has no language; omitting the " +
-                    "language encoding");
-        } else {
-            s_log.debug("Encoding the language of the item passed in, '" +
-                    language + "'");
-            
-            url.append("." + language);
-        }
-        
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Generated live URL " + url.toString());
-        }
-         */
         return url.toString();
     }
 
@@ -547,71 +527,44 @@ public class MultilingualItemResolver
      * <em>no</em> language negotiation is involved when a request is made to a
      * URL that has been generated by this method.
      *
-     * @param section The <code>ContentSection</code> which contains the
-     * <code>item</code>
-     * @param item The <code>ContentItem</code> for which a URL should be
-     * generated.
+     * @param section         The <code>ContentSection</code> which contains the
+     *                        <code>item</code>
+     * @param item            The <code>ContentItem</code> for which a URL
+     *                        should be generated.
      * @param templateContext the context that determines which template should
-     * render the item when it is previewed; ignored if the argument given here
-     * is <code>null</code>
+     *                        render the item when it is previewed; ignored if
+     *                        the argument given here is <code>null</code>
+     *
      * @return a URL which can be used to preview the given <code>item</code>
      */
-    protected String generatePreviewURL(ContentSection section,
-                                        ContentItem item,
-                                        String templateContext) {
+    protected String generatePreviewURL(final ContentSection section,
+                                        final ContentItem item,
+                                        final String templateContext) {
         Assert.exists(section, "ContentSection section");
         Assert.exists(item, "ContentItem item");
 
         final StringBuffer url = new StringBuffer(100);
-        url.append(section.getPath());
-        url.append("/");
-        url.append(CMSDispatcher.PREVIEW);
-        url.append("/");
+        url
+            .append(section.getPrimaryUrl())
+            .append("/")
+            .append(CMSDispatcher.PREVIEW)
+            .append("/");
         /*
          * add template context, if one is given
          */
         // This is breaking URL's...not sure why it's here. XXX
         // this should work with the appropriate logic. trying again.
         if (!(templateContext == null || templateContext.length() == 0)) {
-            url.append(TEMPLATE_CONTEXT_PREFIX).append(templateContext).append(
-                    "/");
+            url
+                .append(TEMPLATE_CONTEXT_PREFIX)
+                .append(templateContext)
+                .append("/");
         }
 
-        // Try to retrieve the bundle.
-        ContentItem bundle = (ContentItem) item.getParent();
-
-        /* It would be nice if we had a ContentPage here, which
-         * supports the getContentBundle() method, but unfortunately
-         * the API sucks and there is no real distinction between mere
-         * ContentItems and top-level items, so we have to use this
-         * hack.  TODO: add sanity check that bundle is actually a
-         * ContentItem.
-         */
-        if (bundle != null && bundle instanceof ContentBundle) {
-            LOGGER.debug("Found a bundle; using its path");
-
-            url.append(bundle.getPath());
-        } else {
-            LOGGER.debug("No bundle found; using the item's path directly");
-
-            url.append(item.getPath());
-        }
-
-        final String language = item.getLanguage();
-
-        if (language == null) {
-            LOGGER.debug("The item has no language; omitting the "
-                                 + "language encoding");
-        } else {
-            LOGGER.debug("Encoding the language of the item passed in, '"
-                                 + language + "'");
-
-            url.append(".").append(language);
-        }
-
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Generated preview URL " + url.toString());
-        }
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final ContentItemManager itemManager = cdiUtil.findBean(
+            ContentItemManager.class);
+        url.append(itemManager.getItemPath(item));
 
         return url.toString();
     }
@@ -621,9 +574,11 @@ public class MultilingualItemResolver
      * according to this ID.
      *
      * @param url URL that indicates which item should be retrieved; must
-     * contain the <code>ITEM_ID</code> parameter
+     *            contain the <code>ITEM_ID</code> parameter
+     *
      * @return the <code>ContentItem</code> the given <code>url</code> points
-     * to, or <code>null</code> if no ID has been found in the <code>url</code>
+     *         to, or <code>null</code> if no ID has been found in the
+     *         <code>url</code>
      */
     protected ContentItem getItemFromDraftURL(final String url) {
         if (LOGGER.isDebugEnabled()) {
@@ -661,41 +616,45 @@ public class MultilingualItemResolver
             LOGGER.debug("Looking up item using item ID " + item_id);
         }
 
-        OID oid = new OID(ContentItem.BASE_DATA_OBJECT_TYPE, new BigDecimal(
-                          item_id));
-        final ContentItem item = (ContentItem) DomainObjectFactory.newInstance(
-                oid);
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final ContentItemRepository itemRepo = cdiUtil.findBean(
+            ContentItemRepository.class);
 
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Returning item " + item);
+        final Optional<ContentItem> item = itemRepo.findById(Long.parseLong(
+            item_id));
+
+        if (item.isPresent()) {
+            LOGGER.debug("Returning item {}", Objects.toString(item));
+            return item.get();
+        } else {
+            return null;
         }
-
-        return item;
     }
 
     /**
      * Returns a content item based on URL relative to the root folder.
      *
-     * @param url The content item url
+     * @param url          The content item url
      * @param parentFolder The parent folder object, url must be relevant to it
+     *
      * @return The Content Item instance, it can also be either Bundle or Folder
-     * objects, depending on URL and file language extension
+     *         objects, depending on URL and file language extension
      */
-    protected ContentItem getItemFromLiveURL(String url,
-                                             Folder parentFolder) {
+    protected ContentItem getItemFromLiveURL(final String url,
+                                             final Folder parentFolder) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Resolving the item for live URL " + url
-                                 + " and parent folder " + parentFolder);
+                             + " and parent folder " + parentFolder);
         }
 
         if (parentFolder == null || url == null || url.equals("")) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("The url is null or parent folder was null "
-                                     + "or something else is wrong, so just return "
-                             + "the parent folder");
+                                 + "or something else is wrong, so just return "
+                                 + "null");
             }
 
-            return parentFolder;
+            return null;
         }
 
         int len = url.length();
@@ -703,28 +662,28 @@ public class MultilingualItemResolver
 
         if (index >= 0) {
             LOGGER.debug("The URL starts with a slash; paring off the first "
-                                 + "URL element and recursing");
+                             + "URL element and recursing");
 
-            // If we got first slash (index == 0), ignore it and go
-            // on, sample '/foo/bar/item.html.en', in next recursion
-            // will have deal with 'foo' folder.
-            String name = index > 0 ? url.substring(0, index) : "";
-            parentFolder = "".equals(name) ? parentFolder
-                           : (Folder) parentFolder.getItem(URLEncoder.encode(
-                            name), true);
-            url = index + 1 < len ? url.substring(index + 1) : "";
+            final String liveUrl = index + 1 < len ? url.substring(index + 1)
+                                       : "";
 
-            return getItemFromLiveURL(url, parentFolder);
+            return getItemFromLiveURL(liveUrl, parentFolder);
         } else {
             LOGGER.debug("Found a file element in the URL");
 
-            String[] nameAndLang = getNameAndLangFromURLFrag(url);
-            String name = nameAndLang[0];
-            String lang = nameAndLang[1];
+            final String[] nameAndLang = getNameAndLangFromURLFrag(url);
+            final String name = nameAndLang[0];
 
-            ContentItem item = parentFolder.getItem(URLEncoder.encode(name),
-                                                    false);
-            return getItemFromLangAndBundle(lang, item);
+            final Optional<CcmObject> item = parentFolder.getObjects().stream()
+                .map(categorization -> categorization.getCategorizedObject())
+                .filter(object -> object.getDisplayName().equals(name))
+                .findFirst();
+
+            if (item.isPresent() && item.get() instanceof ContentItem) {
+                return (ContentItem) item.get();
+            } else {
+                return null;
+            }
         }
     }
 
@@ -732,11 +691,13 @@ public class MultilingualItemResolver
      * Returns an array containing the the item's name and lang based on the URL
      * fragment.
      *
+     * @param url
+     *
      * @return a two-element string array, the first element containing the
-     * bundle name, and the second element containing the lang string
+     *         bundle name, and the second element containing the lang string
      */
-    protected String[] getNameAndLangFromURLFrag(String url) {
-        String name = null;
+    protected String[] getNameAndLangFromURLFrag(final String url) {
+        String name;
         String lang = null;
 
         /*
@@ -749,7 +710,7 @@ public class MultilingualItemResolver
          *    from a bundle
          * 2b if no match is found
          */
-        final ArrayList exts = new ArrayList(5);
+        final List<String> exts = new ArrayList<>(5);
         final StringTokenizer tok = new StringTokenizer(url, ".");
 
         while (tok.hasMoreTokens()) {
@@ -757,10 +718,9 @@ public class MultilingualItemResolver
         }
 
         if (exts.size() > 0) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Found some file extensions to look at; they "
-                                     + "are " + exts);
-            }
+            LOGGER.debug("Found some file extensions to look at; they "
+                             + "are {}",
+                         exts);
 
             /*
              * We have found at least one extension, so we can
@@ -772,18 +732,16 @@ public class MultilingualItemResolver
  /*
              * First element is the NAME of the item, not an extension!
              */
-            name = (String) exts.get(0);
-            String ext = null;
-            Collection supportedLangs
-                       = LanguageUtil.getSupportedLanguages2LA();
-            Iterator supportedLangIt = null;
+            name = exts.get(0);
+            String ext;
+            final Collection<String> supportedLangs = KernelConfig.getConfig()
+                .getSupportedLanguages();
+            Iterator<String> supportedLangIt;
 
             for (int i = 1; i < exts.size(); i++) {
-                ext = (String) exts.get(i);
+                ext = exts.get(i);
 
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Examining extension " + ext);
-                }
+                LOGGER.debug("Examining extension {}", ext);
 
                 /*
                  * Loop through all extensions, but discard the
@@ -801,37 +759,26 @@ public class MultilingualItemResolver
                     while (supportedLangIt.hasNext()) {
                         if (ext.equals(supportedLangIt.next())) {
                             lang = ext;
-                            if (LOGGER.isDebugEnabled()) {
-                                LOGGER.debug("Found a match; using "
-                                                     + "language " + lang);
-                            }
+                            LOGGER.debug("Found a match; using "
+                                             + "language {}", lang);
                             break;
                         }
                     }
                 } else {
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("Discarding extension " + ext + "; "
-                                             + "it is too short");
-                    }
+                    LOGGER.debug("Discarding extension {}; it is too short",
+                                 ext);
                 }
             }
         } else {
-            LOGGER.debug("The file has no extensions; no language was "
-                                 + "encoded");
+            LOGGER.debug("The file has no extensions; no language was encoded");
             name = url;     // no extension, so we just have a name here
             lang = null;    // no extension, so we cannot guess the language
         }
 
-        if (Assert.isEnabled()) {
-            Assert.exists(name, "String name");
-            Assert.exists(lang == null || lang.length() == 2);
-        }
+        LOGGER.debug("File name resolved to {}", name);
+        LOGGER.debug("File language resolved to {}", lang);
 
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("File name resolved to " + name);
-            LOGGER.debug("File language resolved to " + lang);
-        }
-        String[] returnArray = new String[2];
+        final String[] returnArray = new String[2];
         returnArray[0] = name;
         returnArray[1] = lang;
         return returnArray;
@@ -839,62 +786,17 @@ public class MultilingualItemResolver
 
     /**
      * Finds a language instance of a content item given the bundle, name, and
-     * lang string
+     * lang string. Note: Because there not ContentBundles anymore this method 
+     * simply returns the provided item. 
      *
      * @param lang The lang string from the URL
      * @param item The content bundle
      *
      * @return The negotiated lang instance for the current request.
      */
-    protected ContentItem getItemFromLangAndBundle(String lang, ContentItem item) {
-        if (item != null && item instanceof ContentBundle) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Found content bundle " + item);
-            }
-            if (lang == null) {
-                LOGGER.debug("The URL has no language encoded in it; "
-                                     + "negotiating the language");
-                // There is no language, so we get the negotiated locale and call
-                // this method again with a proper language
-                return this.getItemFromLangAndBundle(GlobalizationHelper.
-                        getNegotiatedLocale().getLanguage(), item);
-            } else {
-                LOGGER.debug("The URL is encoded with a langauge; "
-                                     + "fetching the appropriate item from "
-                                     + "the bundle");
-                /*
-                 * So the request contains a language code as an
-                 * extension of the "name" ==>go ahead and try to
-                 * find the item from its ContentBundle.  Fail if
-                 * the bundle does not contain an instance for the
-                 * given language.
-                 */
-
-                final ContentItem resolved
-                                  = ((ContentBundle) item).getInstance(lang);
-
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Resolved URL to item " + resolved);
-                }
-                return resolved;
-            }
-        } else {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.
-                        debug("I expected to get a content bundle; I got "
-                                      + item);
-            }
-
-            /*
-             * We expected something like a Bundle, but it seems
-             * like we got something completely different...  just
-             * return this crap and let other people's code deal
-             * with it ;-).
-             *
-             * NOTE: This should never happen :-)
-             */
-            return item;    // might be null
-        }
+    protected ContentItem getItemFromLangAndBundle(final String lang,
+                                                   final ContentItem item) {
+        return item;
     }
 
 }

@@ -26,7 +26,6 @@ import org.librecms.contentsection.ContentSection;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
-import java.math.BigDecimal;
 import java.util.StringTokenizer;
 
 /**
@@ -36,82 +35,45 @@ public abstract class AbstractItemResolver implements ItemResolver {
 
     protected static final String TEMPLATE_CONTEXT_PREFIX = "tem_";
 
-    /* (non-Javadoc)
-	 * @see com.arsdigita.cms.dispatcher.ItemResolver#getItem(
-     *        com.arsdigita.cms.ContentSection, java.lang.String, java.lang.String)
-     */
+    @Override
     public abstract ContentItem getItem(
         ContentSection section,
         String url,
         String context);
 
-    /* (non-Javadoc)
-	 * @see com.arsdigita.cms.dispatcher.ItemResolver#getCurrentContext(
-     *                                   com.arsdigita.bebop.PageState)
-     */
+    @Override
     public abstract String getCurrentContext(PageState state);
 
-    /* (non-Javadoc)
-	 * @see com.arsdigita.cms.dispatcher.ItemResolver#generateItemURL(
-     *                      com.arsdigita.bebop.PageState, java.math.BigDecimal,
-     *                      java.lang.String, com.arsdigita.cms.ContentSection,
-     *                      java.lang.String)
-     */
+    @Override
     public abstract String generateItemURL(
         PageState state,
-        BigDecimal itemId,
+        Long itemId,
         String name,
         ContentSection section,
         String context);
 
-    /* (non-Javadoc)
-	 * @see com.arsdigita.cms.dispatcher.ItemResolver#generateItemURL(
-     *                                     com.arsdigita.bebop.PageState,
-     *                                     java.math.BigDecimal,
-     *                                     java.lang.String,
-     *                                     com.arsdigita.cms.ContentSection,
-     *                                     java.lang.String, java.lang.String)
-     */
-    public abstract String generateItemURL(
-        PageState state,
-        BigDecimal itemId,
-        String name,
-        ContentSection section,
-        String context,
-        String templateContext);
+    @Override
+    public abstract String generateItemURL(PageState state,
+                                           Long itemId,
+                                           String name,
+                                           ContentSection section,
+                                           String context,
+                                           String templateContext);
 
-    /* (non-Javadoc)
-	 * @see com.arsdigita.cms.dispatcher.ItemResolver#generateItemURL(
-     *                                     com.arsdigita.bebop.PageState,
-     *                                     com.arsdigita.cms.ContentItem,
-     *                                     com.arsdigita.cms.ContentSection,
-     *                                     java.lang.String)
-     */
-    public abstract String generateItemURL(
-        PageState state,
-        ContentItem item,
-        ContentSection section,
-        String context);
+    @Override
+    public abstract String generateItemURL(PageState state,
+                                           ContentItem item,
+                                           ContentSection section,
+                                           String context);
 
-    /* (non-Javadoc)
-	 * @see com.arsdigita.cms.dispatcher.ItemResolver#generateItemURL(
-     *                                     com.arsdigita.bebop.PageState,
-     *                                     com.arsdigita.cms.ContentItem,
-     *                                     com.arsdigita.cms.ContentSection,
-     *                                     java.lang.String, java.lang.String)
-     */
-    public abstract String generateItemURL(
-        PageState state,
-        ContentItem item,
-        ContentSection section,
-        String context,
-        String templateContext);
+    @Override
+    public abstract String generateItemURL(PageState state,
+                                           ContentItem item,
+                                           ContentSection section,
+                                           String context,
+                                           String templateContext);
 
-    /* (non-Javadoc)
-	 * @see com.arsdigita.cms.dispatcher.ItemResolver#getMasterPage(
-     *                                     com.arsdigita.cms.ContentItem,
-     *                                     javax.servlet.http.HttpServletRequest)
-     */
+    @Override
     public abstract CMSPage getMasterPage(ContentItem item,
                                           HttpServletRequest request)
         throws ServletException;
@@ -124,7 +86,8 @@ public abstract class AbstractItemResolver implements ItemResolver {
      *
      * @return the template context, or null if there is no template context
      */
-    public String getTemplateFromURL(String inUrl) {
+    @Override
+    public String getTemplateFromURL(final String inUrl) {
         String tempUrl;
         String url;
         if (inUrl.startsWith("/")) {
@@ -155,13 +118,15 @@ public abstract class AbstractItemResolver implements ItemResolver {
      *
      * @return <code>inUrl</code> with the template context removed
      */
-    public String stripTemplateFromURL(String inUrl) {
+    @Override
+    public String stripTemplateFromURL(final String inUrl) {
+        
         String sTemplateContext = getTemplateFromURL(inUrl);
 
         if (sTemplateContext != null) {
             //there is a template context, so strip it
             int iTemplateLength = TEMPLATE_CONTEXT_PREFIX.length()
-                                  + sTemplateContext.length() + 1;
+                                      + sTemplateContext.length() + 1;
             String sStripped = inUrl.substring(iTemplateLength, inUrl.length());
             return sStripped;
         } else {
