@@ -18,56 +18,78 @@
  */
 package com.arsdigita.cms.dispatcher;
 
-
+import com.arsdigita.bebop.Page;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.cms.CMS;
+
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.Folder;
-import com.arsdigita.cms.ContentCenter;
+
 import com.arsdigita.cms.ui.ContentItemPage;
 import com.arsdigita.dispatcher.DispatcherHelper;
-import org.apache.log4j.Logger;
+import com.arsdigita.web.URL;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.core.CcmObject;
+import org.librecms.CmsConstants;
+import org.librecms.contentsection.ContentItemManager;
+import org.librecms.contentsection.ContentItemRepository;
+import org.librecms.contentsection.ContentItemVersion;
+
+import java.util.Optional;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import java.math.BigDecimal;
-import java.util.StringTokenizer;
 
 /**
- * <p>This is the default implementation of
- * {@link com.arsdigita.cms.dispatcher.ItemResolver}.</p>
+ * This is the default implementation of
+ * {@link com.arsdigita.cms.dispatcher.ItemResolver}.
  *
- * <p>The <tt>getItem</tt> method of the default implementation of
- * <tt>ItemResolver</tt>,
- * {@link com.arsdigita.cms.dispatcher.SimpleItemResolver}
- * runs a simple query using the passed in information to retrieve the
- * content item with a name that matches the URL stub, in our example
- * it looks for a content item with name <tt>cheese</tt>. If no such item
- * exists, or if there is such an item, but without a live version, even
- * though one has been requested, <tt>getItem</tt> returns <tt>null</tt>.</p>
+ * The {@link #getItem(java.lang.String, org.librecms.contentsection.Folder) }
+ * method of the default implementation of  {@link ItemResolver}, 
+ * {@link com.arsdigita.cms.dispatcher.SimpleItemResolver} runs a simple query
+ * using the passed in information to retrieve the content item with a name that
+ * matches the URL stub, in our example it looks for a content item with name
+ * {@code cheese}. If no such item exists, or if there is such an item, but
+ * without a live version, even though one has been requested, {@code getItem}
+ * returns {@code null}.
  *
- * <p>After the CMS Dispatcher received the content item from the
- * <tt>ItemResolver</tt>, it also asks it for the
- * {@link com.arsdigita.cms.dispatcher.MasterPage} for that item in the
- * current request. With the content item and the master page in hand,
- * the dispatcher calls <tt>service</tt> on the page.</p>
+ * After the CMS Dispatcher received the content item from the
+ * {@link ItemResolver}, it also asks it for the
+ * {@link com.arsdigita.cms.dispatcher.MasterPage} for that item in the current
+ * request. With the content item and the master page in hand, the dispatcher
+ * calls {@code service} on the page.
+ * 
+ * <strong>
+ * AS of version 7.0.0 this class not longer part of the public API. It is left
+ * here to keep the changes to the UI classes as minimal as possible. For new
+ * code other methods, for example from the {@link ContentItemManager} or 
+ * the {@link ContentItemRepository} should be used. Because this class is no 
+ * longer part of the public API the will might be removed or changed in future
+ * releases without prior warning.
+ * </strong>
  *
  * @author Michael Pih (pihman@arsdigita.com)
- * @version $Revision: #15 $ $DateTime: 2004/08/17 23:15:09 $
- * @version $Id: SimpleItemResolver.java 2090 2010-04-17 08:04:14Z pboy $
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class SimpleItemResolver extends AbstractItemResolver implements ItemResolver {
+public class SimpleItemResolver
+    extends AbstractItemResolver
+    implements ItemResolver {
 
-    private static final Logger s_log =
-        Logger.getLogger(SimpleItemResolver.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(
+        SimpleItemResolver.class.getName());
 
     private static final String ADMIN_PREFIX = "admin";
-    private static final String WORKSPACE_PREFIX = ContentCenter.getURL();    
+    private static final String WORKSPACE_PREFIX
+                                    = CmsConstants.CONTENT_CENTER_URL;
 
-    private static MasterPage s_masterP = null;
+    private static MasterPage masterPage = null;
 
-    public SimpleItemResolver() {}
+    public SimpleItemResolver() {
+    }
 
     /**
      * Return a content item based on page state (and content section).
@@ -75,17 +97,20 @@ public class SimpleItemResolver extends AbstractItemResolver implements ItemReso
      * @param section The current content section
      * @param url     The section-relative URL
      * @param context The LIVE/DRAFT context (*not* the template use context)
-     * @return The content item mapped to the content section and URL, or
-     *   null if no such item exists
+     *
+     * @return The content item mapped to the content section and URL, or null
+     *         if no such item exists
      */
-    public ContentItem getItem(ContentSection section, String url,
-                               String context) {
+    @Override
+    public ContentItem getItem(final ContentSection section,
+                               final String url,
+                               final String context) {
 
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("trying to get " + context + " item for url " + url);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("trying to get " + context + " item for url " + url);
         }
 
-        String itemUrl = stripTemplateFromURL(url);
+        final String itemUrl = stripTemplateFromURL(url);
 
         // getItem fails if called from a JSP template, because the request URL
         // gets replaced with the filesystem path to the JSP (when
@@ -95,58 +120,36 @@ public class SimpleItemResolver extends AbstractItemResolver implements ItemReso
         ContentItem reqItem = (ContentItem) DispatcherHelper.getRequest().
             getAttribute("com.arsdigita.cms.dispatcher.item");
         if (reqItem != null) {
-            s_log.info("found item in the request, returning it");
+            LOGGER.info("found item in the request, returning it");
             return reqItem;
         }
 
-        //ContentItem item = getCachedItem(section, itemUrl, context);
-        //if (item != null) {
-        //  return item;
-        //}
-
-        Folder rootFolder = section.getRootFolder();
-        if ( rootFolder == null ) {
-            s_log.info("no root folder found, returning null");
+        final Folder rootFolder = section.getRootDocumentsFolder();
+        if (rootFolder == null) {
+            LOGGER.info("no root folder found, returning null");
             return null;
         }
 
-        if ( context.equals(ContentItem.LIVE) ) {
-            rootFolder = (Folder) rootFolder.getLiveVersion();
-            if ( rootFolder == null ) {
-                s_log.info("no LIVE version of root folder found, returning null");
-                return null;
-            }
-        } else if ( context.equals(ContentItem.DRAFT) )  {
-            // Do nothing ?
-        } else {
-            throw new RuntimeException(
-                                       "getItem: Invalid item resolver context " + context);
-        }
-
-        ContentItem item = getItem(itemUrl, rootFolder);
-        //if (item != null) {
-        //  cacheItem(section, itemUrl, context, item);
-        //}
-
-        return item;
-    }    
+        return getItem(itemUrl, rootFolder);
+    }
 
     /**
      * @param state the current page state
+     *
      * @return the context of the current URL, such as "live" or "admin"
      */
-    public String getCurrentContext(PageState state) {
+    @Override
+    public String getCurrentContext(final PageState state) {
 
         String url = state.getRequest().getRequestURI();
 
-        ContentSection section =
-            CMS.getContext().getContentSection();
+        final ContentSection section = CMS.getContext().getContentSection();
 
         // If this page is associated with a content section, transform
         // the URL so that it is relative to the content section site node.
-        if ( section != null ) {
-            String sectionURL = section.getURL();
-            if ( url.startsWith(sectionURL) ) {
+        if (section != null) {
+            final String sectionURL = section.getPrimaryUrl();
+            if (url.startsWith(sectionURL)) {
                 url = url.substring(sectionURL.length());
             }
         }
@@ -156,176 +159,256 @@ public class SimpleItemResolver extends AbstractItemResolver implements ItemReso
         url = stripTemplateFromURL(url);
 
         // Determine if we are under the admin UI.
-        if ( url.startsWith(ADMIN_PREFIX) ||
-             url.startsWith(WORKSPACE_PREFIX) ) {
-            return ContentItem.DRAFT;
+        if (url.startsWith(ADMIN_PREFIX) || url.startsWith(WORKSPACE_PREFIX)) {
+            return ContentItemVersion.DRAFT.toString();
         } else {
-            return ContentItem.LIVE;
+            return ContentItemVersion.LIVE.toString();
         }
     }
 
     /**
-     * Return the content item at the specified path, or null
-     * if no such item exists. The path is interpreted as a series
-     * of folders; for example, "/foo/bar/baz" will look for
-     * an item named "baz" in a folder named "bar" in a folder named "foo"
-     * under the specified root folder.
+     * Return the content item at the specified path, or null if no such item
+     * exists. The path is interpreted as a series of folders; for example,
+     * "/foo/bar/baz" will look for an item named "baz" in a folder named "bar"
+     * in a folder named "foo" under the specified root folder.
      *
-     * @param url the URL to the item
+     * @param url        the URL to the item
      * @param rootFolder The root folder where the item search will start
+     *
      * @return the item on success, null if no such item exists
-     * @pre rootFolder != null
-     * @pre url != null
      */
-    public ContentItem getItem(String url, Folder rootFolder) {
+    public ContentItem getItem(final String url, final Folder rootFolder) {
 
-        StringTokenizer tokenizer = new StringTokenizer(url, "/");
-        String name = null;
-        Folder oldFolder = null;
+        final String[] tokens = url.split("/");
 
-        while(rootFolder != null && tokenizer.hasMoreTokens()) {
-            name = tokenizer.nextToken();
-            oldFolder = rootFolder;
-            rootFolder = (Folder)rootFolder.getItem(name, true);
+        Folder currentFolder = rootFolder;
+        int i;
+        for (i = 0; i < tokens.length; i++) {
+            final String token = tokens[i];
+            final Optional<Folder> folder = currentFolder.getSubFolders()
+                .stream()
+                .filter(subFolder -> subFolder.getDisplayName().equals(token))
+                .findFirst();
+
+            if (folder.isPresent()) {
+                currentFolder = folder.get();
+            } else {
+                break;
+            }
         }
 
-        if(tokenizer.hasMoreTokens()) {
+        if (i >= tokens.length - 1) {
             // failure
-            s_log.debug("no more tokens found, returning null");
+            LOGGER.debug("no more tokens found, returning null");
             return null;
         } else {
-            // Get the content item which is the last token
-            if (rootFolder != null ) {
-                ContentItem indexItem = rootFolder.getIndexItem();
-                if (indexItem != null) {
-                    s_log.info("returning index item for folder");
-                    return indexItem;
-                }
-            }
-            if ( name == null ) {
-                s_log.debug("no name found");
+            //Get the content item which is the last token
+            final String name = tokens[tokens.length - 1];
+            final Optional<CcmObject> item = currentFolder.getObjects()
+                .stream()
+                .map(categorization -> categorization.getCategorizedObject())
+                .filter(object -> object.getDisplayName().equals(name))
+                .findFirst();
+            if (item.isPresent() && item.get() instanceof ContentItem) {
+                return (ContentItem) item.get();
+            } else {
                 return null;
             }
-            return oldFolder.getItem(name, false);
         }
     }
 
-    // Generate the URL for an item in the DRAFT context
-    private String generateDraftURL(BigDecimal itemId, ContentSection section) {
-        return ContentItemPage.getItemURL(section.getFullPath() + "/", itemId,
-                                          ContentItemPage.AUTHORING_TAB);
+    /**
+     * Generate the URL for an item in the DRAFT context
+     *
+     * @param itemId
+     * @param section
+     *
+     * @return
+     */
+    private String generateDraftURL(final Long itemId,
+                                    final ContentSection section) {
+        return ContentItemPage.getItemURL(
+            String.format("%s%s/",
+                          URL.getDispatcherPath(),
+                          section.getPrimaryUrl()),
+            itemId,
+            ContentItemPage.AUTHORING_TAB);
     }
 
+    /**
+     * Generate the URL for an item in the LIVE context with a given template
+     * context
+     *
+     * @param item
+     * @param section
+     * @param templateContext
+     *
+     * @return
+     *
+     */
+    private String generateLiveURL(final ContentItem item,
+                                   final ContentSection section,
+                                   final String templateContext) {
 
-    // Generate the URL for an item in the LIVE context with a given template context
-    private String generateLiveURL(ContentItem item, ContentSection section,
-                                   String templateContext) {
-        String templateURLFrag =
-            (templateContext == null || templateContext.length() == 0) ?
-            "" : TEMPLATE_CONTEXT_PREFIX + templateContext + "/";
-        return section.getPath() + "/" + templateURLFrag + item.getPath();
+        final String templateUrlFrag;
+        if (templateContext == null || templateContext.isEmpty()) {
+            templateUrlFrag = "";
+        } else {
+            templateUrlFrag = String.format(TEMPLATE_CONTEXT_PREFIX + "%s/",
+                                            templateContext);
+        }
+
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final ContentItemManager itemManager = cdiUtil.findBean(
+            ContentItemManager.class);
+
+        return String.format("%s/%s%s",
+                             section.getPrimaryUrl(),
+                             templateUrlFrag,
+                             itemManager.getItemPath(item));
     }
 
+    /**
+     * Generate the preview URL for an item in the DRAFT context.
+     *
+     * @param item
+     * @param section
+     * @param templateContext
+     *
+     * @return
+     */
+    private String generatePreviewURL(final ContentItem item,
+                                      final ContentSection section,
+                                      final String templateContext) {
+        final String templateUrlFrag;
+        if (templateContext == null || templateContext.isEmpty()) {
+            templateUrlFrag = "";
+        } else {
+            templateUrlFrag = String.format(TEMPLATE_CONTEXT_PREFIX + "%s/",
+                                            templateContext);
+        }
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final ContentItemManager itemManager = cdiUtil.findBean(
+            ContentItemManager.class);
 
-    // Generate the preview URL for an item in the DRAFT context
-    private String generatePreviewURL(ContentItem item, ContentSection section,
-                                      String templateContext) {
-        String templateURLFrag =
-            (templateContext == null || templateContext.length() == 0) ?
-            "" : TEMPLATE_CONTEXT_PREFIX + templateContext + "/";
-        StringBuffer url = new StringBuffer();
+        final StringBuilder url = new StringBuilder();
         url
-            .append(section.getPath())
-            .append("/" + CMSDispatcher.PREVIEW)
+            .append(section.getPrimaryUrl())
             .append("/")
-            .append(templateURLFrag)
-            .append(item.getPath());
+            .append(CMSDispatcher.PREVIEW)
+            .append("/")
+            .append(templateUrlFrag)
+            .append(itemManager.getItemPath(item));
+
         return url.toString();
     }
 
     /**
      * Generates a URL for a content item.
      *
-     * @param itemId The item ID
-     * @param name The name of the content page
-     * @param state The page state
+     * @param itemId  The item ID
+     * @param name    The name of the content page
+     * @param state   The page state
      * @param section the content section to which the item belongs
      * @param context the context of the URL, such as "LIVE" or "DRAFT"
+     *
      * @return The URL of the item
-     * @pre context != null
      */
-    public String generateItemURL(PageState state, BigDecimal itemId,
-                                  String name, ContentSection section,
-                                  String context) {
+    @Override
+    public String generateItemURL(final PageState state,
+                                  final Long itemId,
+                                  final String name,
+                                  final ContentSection section,
+                                  final String context) {
         return generateItemURL(state, itemId, name, section, context, null);
     }
 
     /**
      * Generates a URL for a content item.
      *
-     * @param itemId The item ID
-     * @param name The name of the content page
-     * @param state The page state
-     * @param section the content section to which the item belongs
-     * @param context the context of the URL, such as "live" or "admin"
+     * @param itemId          The item ID
+     * @param name            The name of the content page
+     * @param state           The page state
+     * @param section         the content section to which the item belongs
+     * @param context         the context of the URL, such as "live" or "admin"
      * @param templateContext the context for the URL, such as "public"
+     *
      * @return The URL of the item
-     * @pre context != null
      */
-    public String generateItemURL(PageState state, BigDecimal itemId,
-                                  String name, ContentSection section,
-                                  String context, String templateContext) {
-        if ( ContentItem.DRAFT.equals(context) ) {
+    @Override
+    public String generateItemURL(final PageState state,
+                                  final Long itemId,
+                                  final String name,
+                                  final ContentSection section,
+                                  final String context,
+                                  final String templateContext) {
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final ContentItemRepository itemRepo = cdiUtil.findBean(
+            ContentItemRepository.class);
+
+        if (ContentItemVersion.DRAFT.toString().equals(context)) {
             return generateDraftURL(itemId, section);
-        } else if (ContentItem.LIVE.equals(context)) {
-            ContentItem item = new ContentItem(itemId);
+        } else if (ContentItemVersion.LIVE.toString().equals(context)) {
+            final ContentItem item = itemRepo.findById(itemId);
             return generateLiveURL(item, section, templateContext);
         } else if (CMSDispatcher.PREVIEW.equals(context)) {
-            ContentItem item = new ContentItem(itemId);
+            final ContentItem item = itemRepo.findById(itemId);
             return generatePreviewURL(item, section, templateContext);
         } else {
-            throw new RuntimeException( (String) GlobalizationUtil.globalize("cms.dispatcher.unknown_context").localize() + context);
+            throw new IllegalArgumentException(String.format(
+                "Unknown context \"%s\".", context));
         }
     }
 
     /**
      * Generates a URL for a content item.
      *
-     * @param item The item
-     * @param state The page state
+     * @param item    The item
+     * @param state   The page state
      * @param section the content section to which the item belongs
      * @param context the context of the URL, such as "LIVE" or "DRAFT"
+     *
      * @return The URL of the item
+     *
      * @see #getCurrentContext
      */
-    public String generateItemURL (
-                                   PageState state, ContentItem item, ContentSection section, String context
-                                   ) {
+    @Override
+    public String generateItemURL(final PageState state,
+                                  final ContentItem item,
+                                  final ContentSection section,
+                                  final String context) {
         return generateItemURL(state, item, section, context, null);
     }
+
     /**
      * Generates a URL for a content item.
      *
-     * @param item The item
-     * @param state The page state
-     * @param section the content section to which the item belongs
-     * @param context the context of the URL, such as "live" or "admin"
+     * @param item            The item
+     * @param state           The page state
+     * @param section         the content section to which the item belongs
+     * @param context         the context of the URL, such as "live" or "admin"
      * @param templateContext the context for the URL, such as "public"
+     *
      * @return The URL of the item
+     *
      * @see #getCurrentContext
      */
-    public String generateItemURL (
-                                   PageState state, ContentItem item, ContentSection section,
-                                   String context, String templateContext
-                                   ) {
-        if (ContentItem.LIVE.equals(context)) {
+    @Override
+    public String generateItemURL(final PageState state,
+                                  final ContentItem item,
+                                  final ContentSection section,
+                                  final String context,
+                                  final String templateContext) {
+
+        if (ContentItemVersion.LIVE.toString().equals(context)) {
             return generateLiveURL(item, section, templateContext);
-        } else if (ContentItem.DRAFT.equals(context)) {
-            return generateDraftURL(item.getID(), section);
+        } else if (ContentItemVersion.DRAFT.toString().equals(context)) {
+            return generateDraftURL(item.getObjectId(), section);
         } else if (CMSDispatcher.PREVIEW.equals(context)) {
             return generatePreviewURL(item, section, templateContext);
         } else {
-            throw new RuntimeException( (String) GlobalizationUtil.globalize("cms.dispatcher.unknown_context").localize() + context);
+            throw new IllegalArgumentException(String.format(
+                "Unknown context \"%s\".", context));
         }
     }
 
@@ -334,16 +417,20 @@ public class SimpleItemResolver extends AbstractItemResolver implements ItemReso
      *
      * @param item    The content item
      * @param request The HTTP request
+     *
+     * @throws javax.servlet.ServletException
      */
-    public CMSPage getMasterPage(ContentItem item, HttpServletRequest request)
+    @Override
+    public CMSPage getMasterPage(final ContentItem item,
+                                 final HttpServletRequest request)
         throws ServletException {
 
-        if ( s_masterP == null ) {
-            s_masterP = new MasterPage();
-            s_masterP.init();
+        if (masterPage == null) {
+            masterPage = new MasterPage();
+            masterPage.init();
         }
 
-        return s_masterP;
+        return masterPage;
     }
 
 }

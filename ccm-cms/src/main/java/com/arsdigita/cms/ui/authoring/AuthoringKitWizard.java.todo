@@ -36,7 +36,9 @@ import com.arsdigita.bebop.event.FormProcessListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.list.ListCellRenderer;
+
 import org.librecms.contentsection.ContentType;
+
 import com.arsdigita.cms.ItemSelectionModel;
 import com.arsdigita.cms.ui.ContentItemPage;
 import com.arsdigita.cms.ui.item.ItemWorkflowRequestLocal;
@@ -46,13 +48,13 @@ import com.arsdigita.cms.ui.workflow.TaskFinishForm;
 import com.arsdigita.cms.ui.workflow.TaskRequestLocal;
 import com.arsdigita.cms.ui.workflow.WorkflowRequestLocal;
 import com.arsdigita.globalization.GlobalizedMessage;
-import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.toolbox.ui.LayoutPanel;
 import com.arsdigita.toolbox.ui.ModalPanel;
 import com.arsdigita.toolbox.ui.Section;
 import com.arsdigita.util.Assert;
 import com.arsdigita.util.SequentialMap;
 import com.arsdigita.util.UncheckedWrapperException;
+
 import org.apache.logging.log4j.Logger;
 
 import java.lang.reflect.Constructor;
@@ -60,9 +62,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.ResourceBundle;
+
 import org.apache.logging.log4j.LogManager;
 import org.arsdigita.cms.CMSConfig;
 import org.libreccm.cdi.utils.CdiUtil;
