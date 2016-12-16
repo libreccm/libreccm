@@ -125,15 +125,17 @@ public class FolderRepository extends AbstractEntityRepository<Long, Folder> {
             throw new IllegalArgumentException("Path can't be null or empty.");
         }
 
-        String normalizedPath = path.replace('.', '/');
-        if (normalizedPath.charAt(0) == '/') {
-            normalizedPath = normalizedPath.substring(1);
-        }
-
-        if (normalizedPath.endsWith("/")) {
-            normalizedPath = normalizedPath.substring(0,
-                                                      normalizedPath.length());
-        }
+//        String normalizedPath = path.replace('.', '/');
+//        if (normalizedPath.charAt(0) == '/') {
+//            normalizedPath = normalizedPath.substring(1);
+//        }
+//
+//        if (normalizedPath.endsWith("/")) {
+//            normalizedPath = normalizedPath.substring(0,
+//                                                      normalizedPath.length());
+//        }
+//        
+        final String normalizedPath = PathUtil.normalizePath(path);
 
         LOGGER.debug("Trying to find folder with path \"{}\" and type {} in"
                          + "content section \"{}\".",

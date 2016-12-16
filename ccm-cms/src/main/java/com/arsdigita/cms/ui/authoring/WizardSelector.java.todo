@@ -21,26 +21,20 @@ package com.arsdigita.cms.ui.authoring;
 import com.arsdigita.bebop.Component;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.Resettable;
-import com.arsdigita.bebop.SimpleContainer;
 import com.arsdigita.bebop.SingleSelectionModel;
-import com.arsdigita.bebop.parameters.BigDecimalParameter;
 import com.arsdigita.bebop.parameters.LongParameter;
-import com.arsdigita.bebop.parameters.StringParameter;
 
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentType;
 
 import com.arsdigita.cms.ItemSelectionModel;
-import com.arsdigita.toolbox.ui.LayoutPanel;
+import com.arsdigita.kernel.ui.ACSObjectSelectionModel;
 import com.arsdigita.util.UncheckedWrapperException;
 import com.arsdigita.xml.Element;
 
-import oracle.jrockit.jfr.events.ContentTypeImpl;
-import org.librecms.contenttypes.AuthoringKit;
 import org.librecms.contenttypes.AuthoringKitInfo;
 import org.librecms.contenttypes.ContentTypeInfo;
 
-import java.math.BigDecimal;
 
 /**
  * An invisible component which contains all the possible authoring kits. The
@@ -55,7 +49,7 @@ import java.math.BigDecimal;
  * @author unknown
  */
 public class WizardSelector extends AuthoringKitSelector
-        implements Resettable {
+    implements Resettable {
 
     private final ItemSelectionModel itemSelectionModel;
 
@@ -63,11 +57,11 @@ public class WizardSelector extends AuthoringKitSelector
      * Construct a new WizardSelector. Load all the possible authoring kits from
      * the database and construct wizards for them.
      *
-     * @param model the {@link ItemSelectionModel} which will supply the wizard
-     * with its item
+     * @param model     the {@link ItemSelectionModel} which will supply the
+     *                  wizard with its item
      *
      * @param typeModel the {@link ACSObjectSelectionModel} which will supply
-     * the default content type
+     *                  the default content type
      *
      * @pre itemModel != null
      */
@@ -83,6 +77,7 @@ public class WizardSelector extends AuthoringKitSelector
      *
      * @param kit
      * @param type
+     *
      * @return
      */
     @Override
@@ -90,9 +85,10 @@ public class WizardSelector extends AuthoringKitSelector
                                              final ContentTypeInfo type) {
 
         final ItemSelectionModel itemModel = new ItemSelectionModel(
-                type, (LongParameter) itemSelectionModel.getStateParameter());
+            type, (LongParameter) itemSelectionModel.getStateParameter());
 
-        final AuthoringKitWizard wizard = new AuthoringKitWizard(type, itemModel);
+        final AuthoringKitWizard wizard
+                                 = new AuthoringKitWizard(type, itemModel);
         return wizard;
     }
 
@@ -111,8 +107,7 @@ public class WizardSelector extends AuthoringKitSelector
             throw new UncheckedWrapperException("No item selected.");
         }
 
-        final ContentItem item = (ContentItem) itemSelectionModel
-                .getSelectedObject(state);
+        final ContentItem item = itemSelectionModel.getSelectedObject(state);
 
         final ContentType type = item.getContentType();
         final String typeClass;
@@ -128,7 +123,7 @@ public class WizardSelector extends AuthoringKitSelector
         }
 
         // Return the selected wizard
-        return (Component) getComponent(typeClass);
+        return getComponent(typeClass);
     }
 
     // Choose the right wizard and run it
