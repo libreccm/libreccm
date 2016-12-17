@@ -453,6 +453,18 @@ public class CcmIntegrator implements Integrator {
         }
     }
 
+    /**
+     * A helper method for getting a setting from the configuration database.
+     * We can't use JPA/Hibernate in this class because the JPA subsystem is 
+     * not initialised when this class runs. Therefore we have the fallback to 
+     * JDBC here.
+     * 
+     * @param connection Connection to the database.
+     * @param settingClass Setting class used to represent the setting.
+     * @param settingName The name of the setting to retrieve.
+     * @return The value of the setting.
+     * @throws SQLException 
+     */
     private Optional<String> getSetting(final Connection connection,
                                         final String settingClass,
                                         final String settingName)
