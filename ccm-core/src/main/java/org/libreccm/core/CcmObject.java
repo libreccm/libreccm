@@ -41,6 +41,7 @@ import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,6 +50,8 @@ import java.util.Objects;
 
 import static org.libreccm.core.CoreConstants.CORE_XML_NS;
 import static org.libreccm.core.CoreConstants.DB_SCHEMA;
+
+import org.hibernate.search.annotations.Field;
 
 /**
  * Root class of all entities in LibreCCM which need categorisation and
@@ -92,6 +95,7 @@ public class CcmObject implements Identifiable, Serializable {
     @Id
     @Column(name = "OBJECT_ID")
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Field
     @XmlElement(name = "object-id", namespace = CORE_XML_NS)
     private long objectId;
 
@@ -100,6 +104,7 @@ public class CcmObject implements Identifiable, Serializable {
      */
     @Column(name = "UUID", unique = true)
     @NotNull
+    @Field
     @XmlElement(name = "uuid")
     private String uuid;
     
@@ -108,6 +113,7 @@ public class CcmObject implements Identifiable, Serializable {
      */
     @Column(name = "DISPLAY_NAME")
     @Audited
+    @Field
     @XmlElement(name = "display-name", namespace = CORE_XML_NS)
     private String displayName;
 
