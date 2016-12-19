@@ -92,7 +92,7 @@ public class CCMDispatcherServlet extends BaseServlet {
 
     private static final String DISPATCHED_ATTRIBUTE
                                 = CCMDispatcherServlet.class
-            .getName() + ".dispatched";
+                    .getName() + ".dispatched";
 
     /**
      * String containing the web context path portion of the WEB application
@@ -431,8 +431,8 @@ public class CCMDispatcherServlet extends BaseServlet {
                                 .urlPatterns()[0]
                                 .substring(0,
                                            servletAnnotation
-                                           .urlPatterns()[0]
-                                           .length() - 1);
+                                                   .urlPatterns()[0]
+                                                   .length() - 1);
                     } else {
                         m_typeURI = servletAnnotation.urlPatterns()[0];
                     }
@@ -495,8 +495,10 @@ public class CCMDispatcherServlet extends BaseServlet {
             final StringBuffer target = new StringBuffer(128);
 
             target.append(m_typeURI);
-            target.append("/");
-            target.append(path.substring(m_instanceURI.length()));
+//            target.append("/");
+            if (path.length() > (m_instanceURI.length() + 1)) {
+                target.append(path.substring(m_instanceURI.length() + 1));
+            }
             target.append("?");
             target.append(BaseApplicationServlet.APPLICATION_ID_PARAMETER);
             target.append("=");

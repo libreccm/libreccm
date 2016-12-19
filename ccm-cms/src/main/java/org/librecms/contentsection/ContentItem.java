@@ -172,7 +172,7 @@ public class ContentItem extends CcmObject implements Serializable,
                                }
         )
     )
-    @Field
+//    @Field
     private LocalizedString name;
 
     /**
@@ -181,7 +181,7 @@ public class ContentItem extends CcmObject implements Serializable,
     @OneToOne
     @JoinColumn(name = "CONTENT_TYPE_ID")
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
-    @Field
+//    @Field
     private ContentType contentType;
 
     /**
@@ -197,7 +197,7 @@ public class ContentItem extends CcmObject implements Serializable,
                                }
         )
     )
-    @Field
+//    @Field
     private LocalizedString title;
 
     /**
@@ -211,7 +211,7 @@ public class ContentItem extends CcmObject implements Serializable,
                                joinColumns = {
                                    @JoinColumn(name = "OBJECT_ID")}
         ))
-    @Field
+//    @Field
     private LocalizedString description;
 
     /**
@@ -219,7 +219,7 @@ public class ContentItem extends CcmObject implements Serializable,
      */
     @Column(name = "VERSION")
     @Enumerated(EnumType.STRING)
-    @Field
+//    @Field
     private ContentItemVersion version;
 
     /**
