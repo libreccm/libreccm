@@ -20,6 +20,8 @@ package org.librecms.contentsection;
 
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
 import org.libreccm.categorization.Categorization;
 import org.libreccm.core.CcmObject;
 import org.libreccm.l10n.LocalizedString;
@@ -63,6 +65,7 @@ import static org.librecms.CmsConstants.*;
 @Entity
 @Audited
 @Table(name = "CONTENT_ITEMS", schema = DB_SCHEMA)
+@Indexed
 @NamedQueries({
     @NamedQuery(
         name = "ContentItem.findByType",
@@ -150,6 +153,7 @@ public class ContentItem extends CcmObject implements Serializable,
     private static final long serialVersionUID = 5897287630227129653L;
 
     @Column(name = "ITEM_UUID", nullable = false)
+    @Field
     private String itemUuid;
 
     /**
@@ -168,6 +172,7 @@ public class ContentItem extends CcmObject implements Serializable,
                                }
         )
     )
+    @Field
     private LocalizedString name;
 
     /**
@@ -176,6 +181,7 @@ public class ContentItem extends CcmObject implements Serializable,
     @OneToOne
     @JoinColumn(name = "CONTENT_TYPE_ID")
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+    @Field
     private ContentType contentType;
 
     /**
@@ -191,6 +197,7 @@ public class ContentItem extends CcmObject implements Serializable,
                                }
         )
     )
+    @Field
     private LocalizedString title;
 
     /**
@@ -204,6 +211,7 @@ public class ContentItem extends CcmObject implements Serializable,
                                joinColumns = {
                                    @JoinColumn(name = "OBJECT_ID")}
         ))
+    @Field
     private LocalizedString description;
 
     /**
@@ -211,6 +219,7 @@ public class ContentItem extends CcmObject implements Serializable,
      */
     @Column(name = "VERSION")
     @Enumerated(EnumType.STRING)
+    @Field
     private ContentItemVersion version;
 
     /**
