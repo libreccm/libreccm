@@ -52,6 +52,7 @@ import static org.libreccm.core.CoreConstants.CORE_XML_NS;
 import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 
 import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.FieldBridge;
 
 /**
  * Root class of all entities in LibreCCM which need categorisation and
@@ -95,7 +96,6 @@ public class CcmObject implements Identifiable, Serializable {
     @Id
     @Column(name = "OBJECT_ID")
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Field
     @XmlElement(name = "object-id", namespace = CORE_XML_NS)
     private long objectId;
 
@@ -121,7 +121,6 @@ public class CcmObject implements Identifiable, Serializable {
      * Permissions granted on this object.
      */
     @OneToMany(mappedBy = "object")
-    @Field
     @XmlElementWrapper(name = "permissions", namespace = CORE_XML_NS)
     @XmlElement(name = "permission", namespace = CORE_XML_NS)
     @JsonBackReference(value = "permission-object")
