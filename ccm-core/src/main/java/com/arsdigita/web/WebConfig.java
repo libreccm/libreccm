@@ -43,7 +43,7 @@ import javax.validation.executable.ExecutableValidator;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Configuration
-public final class WebConfig {
+public class WebConfig {
 
     private static final Logger LOGGER = LogManager.getLogger(WebConfig.class);
 

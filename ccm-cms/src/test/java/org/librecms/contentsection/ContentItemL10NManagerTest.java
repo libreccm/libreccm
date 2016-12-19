@@ -137,8 +137,8 @@ public class ContentItemL10NManagerTest {
             .addPackage(org.librecms.lifecycle.Lifecycle.class.getPackage())
             .addPackage(org.librecms.contentsection.ContentSection.class
                 .getPackage())
-            .addPackage(org.librecms.contenttypes.Article.class.getPackage()).
-            addClass(com.arsdigita.kernel.security.SecurityConfig.class)
+            .addPackage(org.librecms.contenttypes.Article.class.getPackage())
+            .addClass(com.arsdigita.kernel.security.SecurityConfig.class)
             .addPackage(org.libreccm.tests.categories.IntegrationTest.class
                 .getPackage())
             //            .addAsLibraries(getModuleDependencies())
