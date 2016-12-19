@@ -38,44 +38,71 @@ import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
 /**
+ * Provides an interface to Hibernate search. The methods here can be used to
+ * reduce the boilerplate code for writing Hibernate Search queries.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @ApplicationScoped
 public class SearchManager {
-    
+
     @Inject
     private EntityManager entityManager;
-    
+
     private FullTextEntityManager fullTextEntityManager;
-    
-    public SearchManager() {
-        
-    }
-    
+
+    /**
+     * Initialises the class by creating a {@link FullTextEntityManager}.
+     */
     @PostConstruct
     private void init() {
         fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
     }
-    
+
+    /**
+     * Rebuild the complete index. This methods requires {@code admin}
+     * privileges.
+     *
+     * @return A {@link Future} object for controlling/monitoring the index
+     *         process.
+     */
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     public Future<?> rebuildIndex() {
         final MassIndexer indexer = fullTextEntityManager.createIndexer();
         return indexer.start();
     }
-    
+
+    /**
+     * Creates a {@link QueryBuilder} for the provided entity class.
+     *
+     * @param entityClass The entity class.
+     *
+     * @return A {@link QueryBuilder} which can be used to create a Hibernate
+     *         Search/Lucene query for entities of the provided class.
+     */
     public QueryBuilder createQueryBuilder(final Class<?> entityClass) {
-        final SearchFactory searchFactory = fullTextEntityManager.getSearchFactory();
+        final SearchFactory searchFactory = fullTextEntityManager
+            .getSearchFactory();
         return searchFactory.buildQueryBuilder().forEntity(entityClass).get();
     }
-    
+
+    /**
+     * Executes a Hibernate Search/Lucene query. This method contains uses the
+     * {@link #fullTextEntityManager} to wrap the Lucene query into an
+     * Hibernate/JPA query. To avoid lazy loading issues this method is
+     * transactional.
+     *
+     * @param query The query to execute.
+     *
+     * @return A result list containing all entities matching the query.
+     */
     @Transactional(Transactional.TxType.REQUIRED)
     public List<?> executeQuery(final Query query) {
         final javax.persistence.Query jpaQuery = fullTextEntityManager
             .createFullTextQuery(query);
-        
+
         return jpaQuery.getResultList();
     }
-    
+
 }
