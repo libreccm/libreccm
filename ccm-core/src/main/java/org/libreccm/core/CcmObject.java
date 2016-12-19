@@ -121,6 +121,7 @@ public class CcmObject implements Identifiable, Serializable {
      * Permissions granted on this object.
      */
     @OneToMany(mappedBy = "object")
+    @Field
     @XmlElementWrapper(name = "permissions", namespace = CORE_XML_NS)
     @XmlElement(name = "permission", namespace = CORE_XML_NS)
     @JsonBackReference(value = "permission-object")
