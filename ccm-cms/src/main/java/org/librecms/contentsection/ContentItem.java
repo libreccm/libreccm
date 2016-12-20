@@ -54,6 +54,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import org.hibernate.search.annotations.IndexedEmbedded;
 
 import static org.librecms.CmsConstants.*;
 
@@ -197,7 +198,7 @@ public class ContentItem extends CcmObject implements Serializable,
                                }
         )
     )
-//    @Field
+    @IndexedEmbedded
     private LocalizedString title;
 
     /**
@@ -211,7 +212,7 @@ public class ContentItem extends CcmObject implements Serializable,
                                joinColumns = {
                                    @JoinColumn(name = "OBJECT_ID")}
         ))
-//    @Field
+    @IndexedEmbedded
     private LocalizedString description;
 
     /**
@@ -219,7 +220,7 @@ public class ContentItem extends CcmObject implements Serializable,
      */
     @Column(name = "VERSION")
     @Enumerated(EnumType.STRING)
-//    @Field
+    @Field
     private ContentItemVersion version;
 
     /**
