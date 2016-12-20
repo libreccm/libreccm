@@ -60,7 +60,7 @@ public class TaskAssignment implements Serializable, Portable {
      */
     @ManyToOne
     @JoinColumn(name = "TASK_ID")
-    @JsonManagedReference(value = "taskassignment-assignabletask")
+    @JsonBackReference(value = "assignabletask-taskassignment")
     private AssignableTask task;
 
     /**
@@ -68,7 +68,7 @@ public class TaskAssignment implements Serializable, Portable {
      */
     @ManyToOne
     @JoinColumn(name = "ROLE_ID")
-    @JsonManagedReference(value = "taskassignment-role")
+    @JsonBackReference(value = "role-taskassignment")
     private Role role;
 
     public long getTaskAssignmentId() {

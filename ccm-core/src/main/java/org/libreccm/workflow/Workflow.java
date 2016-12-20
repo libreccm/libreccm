@@ -21,6 +21,7 @@ package org.libreccm.workflow;
 import static org.libreccm.core.CoreConstants.*;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.libreccm.core.CcmObject;
 import org.libreccm.l10n.LocalizedString;
 
@@ -152,7 +153,7 @@ public class Workflow implements Identifiable, Serializable, Portable {
      * The tasks belonging to this workflow.
      */
     @OneToMany(mappedBy = "workflow")
-    @JsonBackReference(value = "task-workflow")
+    @JsonManagedReference(value = "workflow-task")
     private List<Task> tasks;
 
     public Workflow() {

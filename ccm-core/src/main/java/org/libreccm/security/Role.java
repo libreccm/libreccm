@@ -153,7 +153,7 @@ public class Role implements Serializable, Portable {
     @OneToMany(mappedBy = "role")
     @XmlElementWrapper(name = "role-memberships", namespace = CORE_XML_NS)
     @XmlElement(name = "role-membership", namespace = CORE_XML_NS)
-    @JsonBackReference(value = "rolemembership-role")
+    @JsonManagedReference(value = "role-rolemembership")
     private Set<RoleMembership> memberships = new HashSet<>();
 
     /**
@@ -162,11 +162,11 @@ public class Role implements Serializable, Portable {
     @OneToMany(mappedBy = "grantee")
     @XmlElementWrapper(name = "permissions", namespace = CORE_XML_NS)
     @XmlElement(name = "permission", namespace = CORE_XML_NS)
-    @JsonBackReference(value = "permission-role")
+    @JsonManagedReference(value = "role-permission")
     private List<Permission> permissions = new ArrayList<>();
 
     @OneToMany(mappedBy = "role")
-    @JsonBackReference(value = "taskassignment-role")
+    @JsonManagedReference(value = "role-taskassignment")
     private List<TaskAssignment> assignedTasks;
 
     /**
