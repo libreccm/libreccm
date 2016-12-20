@@ -19,6 +19,7 @@
 package org.libreccm.security;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.libreccm.core.DefaultEntityGraph;
 
 import javax.persistence.Column;
@@ -98,7 +99,7 @@ public class Party implements Serializable {
     @OneToMany(mappedBy = "member")
     @XmlElementWrapper(name = "role-memberships", namespace = CORE_XML_NS)
     @XmlElement(name = "role-membership", namespace = CORE_XML_NS)
-    @JsonBackReference(value = "rolemembership-party")
+    @JsonManagedReference(value = "party-rolemembership")
     private Set<RoleMembership> roleMemberships = new HashSet<>();
 
     protected Party() {

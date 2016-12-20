@@ -20,6 +20,9 @@ package org.libreccm.security;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import org.hibernate.search.annotations.ContainedIn;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.IndexedEmbedded;
 import org.libreccm.core.CcmObject;
 import org.libreccm.portation.Portable;
 
@@ -42,9 +45,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
-import org.hibernate.search.annotations.ContainedIn;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.IndexedEmbedded;
 
 import static org.libreccm.core.CoreConstants.CORE_XML_NS;
 import static org.libreccm.core.CoreConstants.DB_SCHEMA;
@@ -103,7 +103,7 @@ public class Permission implements Serializable, Portable {
     @ManyToOne
     @JoinColumn(name = "OBJECT_ID")
     @ContainedIn
-    @JsonManagedReference(value = "permission-object")
+    @JsonBackReference(value = "object-permission")
     private CcmObject object;
 
     /**
@@ -112,7 +112,7 @@ public class Permission implements Serializable, Portable {
     @ManyToOne
     @IndexedEmbedded
     @JoinColumn(name = "GRANTEE_ID")
-    @JsonManagedReference(value = "permission-role")
+    @JsonBackReference(value = "role-permission")
     private Role grantee;
 
     /**
