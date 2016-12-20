@@ -42,6 +42,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
+import org.hibernate.search.annotations.ContainedIn;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.IndexedEmbedded;
 
 import static org.libreccm.core.CoreConstants.CORE_XML_NS;
 import static org.libreccm.core.CoreConstants.DB_SCHEMA;
@@ -90,6 +93,7 @@ public class Permission implements Serializable, Portable {
      * The granted privilege.
      */
     @Column(name = "granted_privilege")
+    @Field
     @XmlElement(name = "privilege", namespace = CORE_XML_NS)
     private String grantedPrivilege;
 
@@ -98,6 +102,7 @@ public class Permission implements Serializable, Portable {
      */
     @ManyToOne
     @JoinColumn(name = "OBJECT_ID")
+    @ContainedIn
     @JsonManagedReference(value = "permission-object")
     private CcmObject object;
 
@@ -105,6 +110,7 @@ public class Permission implements Serializable, Portable {
      * The role to which the permission is granted.
      */
     @ManyToOne
+    @IndexedEmbedded
     @JoinColumn(name = "GRANTEE_ID")
     @JsonManagedReference(value = "permission-role")
     private Role grantee;

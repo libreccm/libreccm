@@ -53,6 +53,7 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.FieldBridge;
+import org.hibernate.search.annotations.IndexedEmbedded;
 
 /**
  * Root class of all entities in LibreCCM which need categorisation and
@@ -121,6 +122,7 @@ public class CcmObject implements Identifiable, Serializable {
      * Permissions granted on this object.
      */
     @OneToMany(mappedBy = "object")
+    @IndexedEmbedded(includePaths = {"grantedPrivilege", "grantee.name"})
     @XmlElementWrapper(name = "permissions", namespace = CORE_XML_NS)
     @XmlElement(name = "permission", namespace = CORE_XML_NS)
     @JsonBackReference(value = "permission-object")

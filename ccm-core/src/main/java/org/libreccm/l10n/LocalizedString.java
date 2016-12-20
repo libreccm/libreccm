@@ -39,6 +39,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.hibernate.annotations.Type;
+import org.hibernate.search.annotations.Field;
 
 /**
  * A helper class for localisable string properties. This class is declared as
@@ -63,6 +64,7 @@ public class LocalizedString implements Serializable {
     @Basic
     @Lob
     @Type(type = "org.hibernate.type.TextType")
+    @Field
     @XmlElementWrapper(name = "values", namespace = L10N_XML_NS)
     @XmlElement(name = "value", namespace = L10N_XML_NS)
     private Map<Locale, String> values;
