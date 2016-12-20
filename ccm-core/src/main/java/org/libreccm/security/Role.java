@@ -55,6 +55,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import org.hibernate.search.annotations.Field;
 
 import static org.libreccm.core.CoreConstants.CORE_XML_NS;
 import static org.libreccm.core.CoreConstants.DB_SCHEMA;
@@ -140,6 +141,7 @@ public class Role implements Serializable, Portable {
      * numbers 0 to 9, the {@code -} (dash) and the {@code _} (underscore).
      */
     @Column(name = "NAME", length = 512, nullable = false)
+    @Field
     @NotBlank
     @Pattern(regexp = "[a-zA-Z0-9\\-_]*")
     @XmlElement(name = "name", namespace = CORE_XML_NS)
