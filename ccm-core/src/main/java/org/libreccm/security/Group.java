@@ -19,6 +19,7 @@
 package org.libreccm.security;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.libreccm.core.DefaultEntityGraph;
 import org.libreccm.portation.Portable;
 
@@ -101,7 +102,7 @@ public class Group extends Party implements Serializable, Portable {
     @OneToMany(mappedBy = "group")
     @XmlElementWrapper(name = "group-memberships", namespace = CORE_XML_NS)
     @XmlElement(name = "group-membership", namespace = CORE_XML_NS)
-    @JsonBackReference(value = "groupmembership-group")
+    @JsonManagedReference(value = "group-groupmembership")
     private Set<GroupMembership> memberships = new HashSet<>();
 
     public Group() {

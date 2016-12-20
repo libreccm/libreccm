@@ -67,13 +67,13 @@ public class GroupMembership implements Serializable, Portable {
     @ManyToOne
     @JoinColumn(name = "GROUP_ID")
     @XmlTransient
-    @JsonManagedReference(value = "groupmembership-group")
+    @JsonBackReference(value = "group-groupmembership")
     private Group group;
 
     @ManyToOne
     @JoinColumn(name = "MEMBER_ID")
     @XmlTransient
-    @JsonManagedReference(value = "groupmembership-user")
+    @JsonBackReference(value = "user-groupmembership")
     private User member;
 
     public long getMembershipId() {

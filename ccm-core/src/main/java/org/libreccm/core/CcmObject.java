@@ -21,6 +21,8 @@ package org.libreccm.core;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.envers.Audited;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.IndexedEmbedded;
 import org.libreccm.categorization.Categorization;
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryManager;
@@ -41,7 +43,6 @@ import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -50,10 +51,6 @@ import java.util.Objects;
 
 import static org.libreccm.core.CoreConstants.CORE_XML_NS;
 import static org.libreccm.core.CoreConstants.DB_SCHEMA;
-
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FieldBridge;
-import org.hibernate.search.annotations.IndexedEmbedded;
 
 /**
  * Root class of all entities in LibreCCM which need categorisation and
@@ -125,7 +122,7 @@ public class CcmObject implements Identifiable, Serializable {
     @IndexedEmbedded(includePaths = {"grantedPrivilege", "grantee.name"})
     @XmlElementWrapper(name = "permissions", namespace = CORE_XML_NS)
     @XmlElement(name = "permission", namespace = CORE_XML_NS)
-    @JsonBackReference(value = "permission-object")
+    @JsonManagedReference(value = "object-permission")
     private List<Permission> permissions;
 
     /**
@@ -134,7 +131,7 @@ public class CcmObject implements Identifiable, Serializable {
     @OneToMany(mappedBy = "categorizedObject")
     @XmlElementWrapper(name = "categories", namespace = CORE_XML_NS)
     @XmlElement(name = "category", namespace = CORE_XML_NS)
-    @JsonBackReference(value = "categorization-object")
+    @JsonManagedReference(value = "object-categorization")
     private List<Categorization> categories;
 
     public CcmObject() {

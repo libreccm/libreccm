@@ -159,14 +159,14 @@ public class Task implements Identifiable, Serializable {
      */
     @ManyToOne
     @JoinColumn(name = "WORKFLOW_ID")
-    @JsonManagedReference(value = "task-workflow")
+    @JsonBackReference(value = "workflow-task")
     private Workflow workflow;
 
     /**
      * Tasks which the depends of this task.
      */
     @ManyToMany(mappedBy = "dependsOn")
-    @JsonBackReference(value = "dependson-dependent")
+    @JsonManagedReference(value = "dependent-dependson")
     private List<Task> dependentTasks;
 
     /**
@@ -179,7 +179,7 @@ public class Task implements Identifiable, Serializable {
                    @JoinColumn(name = "DEPENDS_ON_TASK_ID")},
                inverseJoinColumns = {
                    @JoinColumn(name = "DEPENDENT_TASK_ID")})
-    @JsonManagedReference(value = "dependson-dependent")
+    @JsonBackReference(value = "dependent-dependson")
     private List<Task> dependsOn;
 
     /**

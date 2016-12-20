@@ -68,13 +68,13 @@ public class RoleMembership implements Serializable, Portable {
     @ManyToOne
     @JoinColumn(name = "ROLE_ID")
     @XmlTransient
-    @JsonManagedReference(value = "rolemembership-role")
+    @JsonBackReference(value = "role-rolemembership")
     private Role role;
 
     @ManyToOne
     @JoinColumn(name = "MEMBER_ID")
     @XmlTransient
-    @JsonManagedReference(value = "rolemembership-party")
+    @JsonBackReference(value = "party-rolemembership")
     private Party member;
 
     public long getMembershipId() {

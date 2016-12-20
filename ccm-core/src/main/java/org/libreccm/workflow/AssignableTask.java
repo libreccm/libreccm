@@ -19,6 +19,7 @@
 package org.libreccm.workflow;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.libreccm.portation.Portable;
 import org.libreccm.security.User;
 
@@ -129,7 +130,7 @@ public class AssignableTask extends Task implements Serializable, Portable {
      * The roles to which task is assigned.
      */
     @OneToMany(mappedBy = "task")
-    @JsonBackReference(value = "taskassignment-assignabletask")
+    @JsonManagedReference(value = "assignabletask-taskassignment")
     private List<TaskAssignment> assignments;
 
     public AssignableTask() {

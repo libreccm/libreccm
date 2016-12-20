@@ -85,7 +85,7 @@ public class Categorization implements Serializable, Portable {
      */
     @ManyToOne
     @JoinColumn(name = "CATEGORY_ID")
-    @JsonManagedReference(value = "categorization-category")
+    @JsonBackReference(value = "category-categorization")
     private Category category;
 
     /**
@@ -93,7 +93,7 @@ public class Categorization implements Serializable, Portable {
      */
     @ManyToOne
     @JoinColumn(name = "OBJECT_ID")
-    @JsonManagedReference(value = "categorization-object")
+    @JsonBackReference(value = "object-categorization")
     private CcmObject categorizedObject;
 
     /**
