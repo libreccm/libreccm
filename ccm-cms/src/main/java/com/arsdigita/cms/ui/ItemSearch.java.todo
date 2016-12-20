@@ -22,30 +22,29 @@ import com.arsdigita.bebop.Form;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.Resettable;
 import com.arsdigita.bebop.SimpleContainer;
-
-import com.arsdigita.search.QuerySpecification;
-import com.arsdigita.search.ui.QueryGenerator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
- * A wrapper around the {@link ItemSearchSection} which embedds
- * the form section in a form.
+ * A wrapper around the {@link ItemSearchSection} which embeds the form section
+ * in a form.
  *
  * @author Stanislav Freidin (sfreidin@arsdigita.com)
- * @version $Id: ItemSearch.java 1940 2009-05-29 07:15:05Z terry $
+ * @author <a href="jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class ItemSearch extends Form implements Resettable, QueryGenerator {
+public class ItemSearch extends Form implements Resettable {
 
-    private static final org.apache.log4j.Logger s_log =
-            org.apache.log4j.Logger.getLogger(ItemSearch.class);
+    private static final Logger LOGGER = LogManager.getLogger(ItemSearch.class);
     public static final String SINGLE_TYPE_PARAM = ItemSearchSection.SINGLE_TYPE_PARAM;
-    private ItemSearchSection m_section;
+    
+    private ItemSearchSection itemSearchSection;
 
     /**
-     * Construct a new <code>ItemSearch</code> component
-     * Default to limit the search to current content section
+     * Construct a new <code>ItemSearch</code> component Default to limit the
+     * search to current content section
      *
      * @param context the context for the retrieved items. Should be
-     *   {@link ContentItem#DRAFT} or {@link ContentItem#LIVE}
+     * {@link ContentItem#DRAFT} or {@link ContentItem#LIVE}
      */
     public ItemSearch(String context) {
         this(context, true);
@@ -55,32 +54,34 @@ public class ItemSearch extends Form implements Resettable, QueryGenerator {
      * Construct a new <code>ItemSearch</code> component
      *
      * @param context the context for the retrieved items. Should be
-     *   {@link ContentItem#DRAFT} or {@link ContentItem#LIVE}
-     * @param limitToContentSection limit the search to the current content section
+     * {@link ContentItem#DRAFT} or {@link ContentItem#LIVE}
+     * @param limitToContentSection limit the search to the current content
+     * section
      */
     public ItemSearch(String context, boolean limitToContentSection) {
         super("itemSearch", new SimpleContainer());
         //setMethod("GET");
-        m_section = createSearchSection(context, limitToContentSection);
-        add(m_section);
+        itemSearchSection = createSearchSection(context, limitToContentSection);
+        add(itemSearchSection);
     }
 
-    protected ItemSearchSection createSearchSection(String context, boolean limitToContentSection) {
+    protected ItemSearchSection createSearchSection(String context,
+                                                    boolean limitToContentSection) {
         return new ItemSearchSection(context, limitToContentSection);
     }
 
     @Override
     public boolean hasQuery(PageState state) {
-        return m_section.hasQuery(state);
+        return itemSearchSection.hasQuery(state);
     }
 
     @Override
     public QuerySpecification getQuerySpecification(PageState state) {
-        return m_section.getQuerySpecification(state);
+        return itemSearchSection.getQuerySpecification(state);
     }
 
     @Override
     public void reset(PageState state) {
-        m_section.reset(state);
+        itemSearchSection.reset(state);
     }
 }
