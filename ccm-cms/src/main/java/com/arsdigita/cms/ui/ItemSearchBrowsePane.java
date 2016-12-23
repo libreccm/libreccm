@@ -23,7 +23,6 @@ import com.arsdigita.bebop.Form;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.Page;
 import com.arsdigita.bebop.PageState;
-import com.arsdigita.bebop.ParameterSingleSelectionModel;
 import com.arsdigita.bebop.Resettable;
 import com.arsdigita.bebop.SimpleContainer;
 import com.arsdigita.bebop.SingleSelectionModel;
@@ -41,27 +40,29 @@ import com.arsdigita.bebop.event.TreeExpansionListener;
 import com.arsdigita.bebop.form.Option;
 import com.arsdigita.bebop.form.SingleSelect;
 import com.arsdigita.bebop.form.Submit;
-import com.arsdigita.bebop.parameters.BigDecimalParameter;
-import com.arsdigita.cms.dispatcher.Utilities;
+import com.arsdigita.bebop.parameters.LongParameter;
 
 import com.arsdigita.cms.CMS;
+
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.Folder;
-import com.arsdigita.cms.ui.authoring.NewItemForm;
+
 import com.arsdigita.cms.ui.folder.FolderRequestLocal;
 import com.arsdigita.cms.ui.folder.FolderSelectionModel;
 import com.arsdigita.cms.ui.folder.FolderTreeModelBuilder;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.toolbox.ui.LayoutPanel;
-import com.arsdigita.util.Assert;
 
-import java.math.BigDecimal;
 import org.apache.logging.log4j.LogManager;
 
 import org.apache.logging.log4j.Logger;
 import org.arsdigita.cms.CMSConfig;
+import org.libreccm.categorization.Category;
+import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.CmsConstants;
-import org.librecms.contentsection.ContentSectionConfig;
+import org.librecms.contentsection.ContentSectionRepository;
+
+import java.util.List;
 
 /**
  * A pane that contains a folder tree on the left and a folder manipulator on
@@ -78,7 +79,7 @@ public class ItemSearchBrowsePane extends SimpleContainer implements Resettable,
 
     private static final String CONTENT_TYPE_ID = "ct";
     private static final Logger LOGGER = LogManager.getLogger(
-            ItemSearchBrowsePane.class);
+        ItemSearchBrowsePane.class);
     private final FolderSelectionModel folderSelectionModel;
     private final FolderRequestLocal folderRequestLocal;
     private final Tree tree;
@@ -94,12 +95,12 @@ public class ItemSearchBrowsePane extends SimpleContainer implements Resettable,
         setAttribute("navbar-title",
                      new GlobalizedMessage("cms.ui.folder_browser",
                                            CmsConstants.CMS_BUNDLE)
-                             .localize().toString());
+                         .localize().toString());
 
         final BoxPanel left = new BoxPanel(BoxPanel.VERTICAL);
 
         final Label label = new Label(new GlobalizedMessage(
-                "cms.ui.folder_browser", CmsConstants.CMS_BUNDLE));
+            "cms.ui.folder_browser", CmsConstants.CMS_BUNDLE));
         label.setClassAttr("heading");
         left.add(label);
 
@@ -107,17 +108,19 @@ public class ItemSearchBrowsePane extends SimpleContainer implements Resettable,
         // subsites through the ItemSearchBrowsePane.  A new parameter has been added to allow the 
         // administrator to pick between the old and new versions.
         boolean linksOnlyInSameSubsite = CMSConfig.getConfig()
-                .isLinksOnlyInSameSubsite();
-        LOGGER.debug("linksOnlyInSameSubsite value is {}",  
+            .isLinksOnlyInSameSubsite();
+        LOGGER.debug("linksOnlyInSameSubsite value is {}",
                      linksOnlyInSameSubsite);
 
         tree = new Tree(new FolderTreeModelBuilder() {
+
             @Override
-            protected Folder getRoot(PageState ps) {
-                Folder root = getRootFolder(ps);
+            protected Category getRootFolder(final PageState state) {
+                final Category root = ItemSearchBrowsePane.this.getRootFolder(
+                    state);
 
                 if (null == root) {
-                    return super.getRoot(ps);
+                    return super.getRootFolder(state);
                 }
                 return root;
             }
@@ -139,7 +142,6 @@ public class ItemSearchBrowsePane extends SimpleContainer implements Resettable,
         tree.addTreeExpansionListener(this);
         left.add(tree);
 
-//        CMSContainer container = new CMSContainer();        
         left.setClassAttr("main");
 
         final BoxPanel body = new BoxPanel(BoxPanel.VERTICAL);
@@ -147,49 +149,48 @@ public class ItemSearchBrowsePane extends SimpleContainer implements Resettable,
         body.add(folderBrowser);
         body.add(folderBrowser.getPaginator());
 
-//        m_newItem = new SectionNewItemForm("newItem");
-//        m_typeSel = new ParameterSingleSelectionModel(new BigDecimalParameter(CONTENT_TYPE_ID));
-//        m_newItem.addProcessListener(this);
-//
-//        container.add(m_newItem);
-        //add(container);
         mainPanel.setLeft(left);
         mainPanel.setBody(body);
         add(mainPanel);
     }
 
     @Override
-    public boolean isVisible(PageState s) {
+    public boolean isVisible(final PageState state) {
         // Always expand root node
-        if (tree.isCollapsed(getRootFolder(s).getID().toString(), s)) {
-            tree.expand(getRootFolder(s).getID().toString(), s);
+        if (tree.isCollapsed(Long.toString(getRootFolder(state).getObjectId()),
+                             state)) {
+            tree.expand(Long.toString(getRootFolder(state).getObjectId()),
+                        state);
         }
 
-        return super.isVisible(s);
+        return super.isVisible(state);
     }
 
     private Form getSectionForm() {
-        Form sectionForm = new Form("isfbSectionForm",
-                                    new BoxPanel(BoxPanel.HORIZONTAL));
+        final Form sectionForm = new Form("isfbSectionForm",
+                                          new BoxPanel(BoxPanel.HORIZONTAL));
         sectionForm.setClassAttr("navbar");
 
-        sectionSelect = new SingleSelect(new OIDParameter("isfbSection"));
-        ContentSectionCollection sections = ContentSection.getAllSections();
-        while (sections.next()) {
-            ContentSection section = sections.getContentSection();
-            sectionSelect.addOption(new Option(section.getOID().toString(),
-                                               section.getDisplayName()));
-        }
+        sectionSelect = new SingleSelect(new LongParameter("isfbSection"));
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final ContentSectionRepository sectionRepo = cdiUtil.findBean(
+            ContentSectionRepository.class);
+        final List<ContentSection> sections = sectionRepo.findAll();
+
+        sections.forEach(section -> sectionSelect.addOption(
+            new Option(Long.toString(section.getObjectId()),
+                       section.getDisplayName())));
 
         sectionForm.addInitListener(new FormInitListener() {
-            @Override
-            public void init(FormSectionEvent ev) {
-                PageState ps = ev.getPageState();
 
-                if (null == sectionSelect.getValue(ps)) {
+            @Override
+            public void init(final FormSectionEvent event) {
+                final PageState state = event.getPageState();
+
+                if (null == sectionSelect.getValue(state)) {
                     ContentSection section = CMS.getContext().
-                            getContentSection();
-                    sectionSelect.setValue(ps, section.getOID());
+                        getContentSection();
+                    sectionSelect.setValue(state, section.getObjectId());
                 }
             }
 
@@ -201,48 +202,52 @@ public class ItemSearchBrowsePane extends SimpleContainer implements Resettable,
         return sectionForm;
     }
 
-    private Folder getRootFolder(PageState ps) {
+    private Folder getRootFolder(final PageState state) {
         LOGGER.debug("Getting the root folder.");
         if (sectionSelect != null) {
             // We have more than one subsite to choose between
-            OID sectionOID = (OID) sectionSelect.getValue(ps);
+            final Long sectionId = (Long) sectionSelect.getValue(state);
             if (LOGGER.isDebugEnabled()) {
-                if (null != sectionOID) {
-                    LOGGER.debug("Using section " + sectionOID.toString());
-                } else {
+                if (null == sectionId) {
                     LOGGER.debug("Using default section");
+                } else {
+                    LOGGER.debug("Using section " + sectionId.toString());
                 }
             }
 
-            if (null == sectionOID) {
+            if (null == sectionId) {
                 return null;
             }
 
-            ContentSection section = (ContentSection) DomainObjectFactory.
-                    newInstance(sectionOID);
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final ContentSectionRepository sectionRepo = cdiUtil.findBean(
+                ContentSectionRepository.class);
+            final ContentSection section = sectionRepo.findById(sectionId);
 
-            return section.getRootFolder();
+            return section.getRootDocumentsFolder();
         } else {
             return null;
         }
     }
 
     @Override
-    public void register(Page p) {
-        super.register(p);
-        p.addComponentStateParam(this, folderSelectionModel.getStateParameter());
+    public void register(final Page page) {
+        super.register(page);
+        page.addComponentStateParam(this, folderSelectionModel
+                                    .getStateParameter());
 
         // Only add the SingleSelect item if it exists
         if (sectionSelect != null) {
-            p.addComponentStateParam(this, sectionSelect.getParameterModel());
+            page.addComponentStateParam(this, sectionSelect.getParameterModel());
         }
 
         // Save the state of the new item component
 //        p.addComponentStateParam(this, m_typeSel.getStateParameter());
-        p.addActionListener(new ActionListener() {
+        page.addActionListener(new ActionListener() {
+
             @Override
-            public void actionPerformed(ActionEvent e) {
-                final PageState state = e.getPageState();
+            public void actionPerformed(final ActionEvent event) {
+                final PageState state = event.getPageState();
 
                 if (state.isVisibleOnPage(ItemSearchBrowsePane.this)) {
                     showHideSegments(state);
@@ -256,27 +261,14 @@ public class ItemSearchBrowsePane extends SimpleContainer implements Resettable,
      * Show/hide segments based on access checks.
      *
      * @param state The page state
-     * @pre ( state != null )
      */
-    private void showHideSegments(PageState state) {
-        SecurityManager sm = Utilities.getSecurityManager(state);
-        Folder folder = folderRequestLocal.getFolder(state);
-        Assert.exists(folder);
-
-        // MP: This should be checked on the current folder instead of just
-        //     the content section.
-//        boolean newItem =
-//                sm.canAccess(state.getRequest(), SecurityManager.NEW_ITEM, folder);
-//
-//        if (!newItem) {
-//            browseMode(state);
-//        }
-//        m_newItem.setVisible(state, newItem);
+    private void showHideSegments(final PageState state) {
+        //Empty
     }
 
     @Override
-    public void reset(PageState s) {
-        //m_browser.reset(s);
+    public void reset(final PageState state) {
+        //Empty
     }
 
     public ItemSearchFolderBrowser getFolderBrowser() {
@@ -290,106 +282,86 @@ public class ItemSearchBrowsePane extends SimpleContainer implements Resettable,
     /**
      * sets the current level of expansion of the folder tree and in the folder
      * browser table
+     *
+     * @param state
+     * @param key
      */
-    protected void setSelectedFolder(PageState s, String key) {
+    protected void setSelectedFolder(final PageState state,
+                                     final String key) {
 
         //set the selected folder of the folder browser
-        folderBrowser.getFolderSelectionModel().setSelectedKey(s, key);
+        folderBrowser.getFolderSelectionModel().setSelectedKey(
+            state, Long.parseLong(key));
 
         //set the selected folder of the folder tree
-        folderSelectionModel.setSelectedKey(s, key);
-        Folder current = (Folder) folderSelectionModel.getSelectedObject(s);
-        Folder parent = (Folder) current.getParent();
+        folderSelectionModel.setSelectedKey(state, Long.parseLong(key));
+        final Folder current = (Folder) folderSelectionModel.getSelectedObject(
+            state);
+        final Folder parent = current.getParentFolder();
         if (parent != null) {
-            BigDecimal id = parent.getID();
-            tree.expand(id.toString(), s);
+            final long parentId = parent.getObjectId();
+            tree.expand(Long.toString(parentId), state);
         }
     }
 
     // Implement TreeExpansionListener
     @Override
-    public void treeCollapsed(TreeExpansionEvent e) {
-        PageState s = e.getPageState();
-        folderSelectionModel.setSelectedKey(s, e.getNodeKey());
+    public void treeCollapsed(final TreeExpansionEvent event) {
+        final PageState state = event.getPageState();
+        folderSelectionModel.setSelectedKey(
+            state, Long.parseLong((String) event.getNodeKey()));
     }
 
     @Override
-    public void treeExpanded(TreeExpansionEvent e) {
-        return;
+    public void treeExpanded(final TreeExpansionEvent event) {
+        // Empty
     }
 
     @Override
-    public void stateChanged(ChangeEvent e) {
-        PageState s = e.getPageState();
-        Folder current = (Folder) folderSelectionModel.getSelectedObject(s);
-        Folder parent = (Folder) current.getParent();
-        folderBrowser.getPaginator().reset(s);
+    public void stateChanged(final ChangeEvent event) {
+        final PageState state = event.getPageState();
+        final Folder current = (Folder) folderSelectionModel.getSelectedObject(state);
+        final Folder parent =  current.getParentFolder();
+        folderBrowser.getPaginator().reset(state);
         if (parent != null) {
-            BigDecimal id = parent.getID();
-            tree.expand(id.toString(), s);
+            final Long parentId = parent.getObjectId();
+            tree.expand(parentId.toString(), state);
         }
-        //m_browser.getPermissionsPane().reset(s);
-        //m_browser.setPermissionLinkVis(s);
     }
 
     @Override
-    public void process(FormSectionEvent e) {
-        PageState s = e.getPageState();
-        final Object source = e.getSource();
-//        if (source == m_newItem) {
-//            BigDecimal typeID = m_newItem.getTypeID(s);
-//            m_typeSel.setSelectedKey(s, typeID);
-//            newItemMode(s);
-//        } else {
-        browseMode(s);
-//        }
+    public void process(final FormSectionEvent event) {
+        final PageState state = event.getPageState();
+        browseMode(state);
     }
 
     @Override
-    public void submitted(FormSectionEvent e) {
-        PageState s = e.getPageState();
-        final Object source = e.getSource();
-//        if (source == m_newItem) {
-//            BigDecimal typeID = m_newItem.getTypeID(s);
-//            m_typeSel.setSelectedKey(s, typeID);
-//            //newItemMode(s);
-//        }
+    public void submitted(final FormSectionEvent event) {
+        //Nothing
     }
 
-    private void browseMode(PageState s) {
-//        m_browseSeg.setVisible(s, true);
-        typeSelectionModel.clearSelection(s);
+    private void browseMode(final PageState state) {
+        typeSelectionModel.clearSelection(state);
     }
 
-    private void newItemMode(PageState s) {
-//        m_newItemSeg.setVisible(s, true);
+    private void newItemMode(final PageState state) {
+        //Nothing
     }
 
     private FolderSelectionModel createFolderSelectionModel() {
         return new FolderSelectionModel("folder") {
+
             @Override
-            protected BigDecimal getRootFolderID(PageState ps) {
-                Folder root = getRootFolder(ps);
+            protected Long getRootFolderID(final PageState state) {
+                final Folder root = getRootFolder(state);
 
                 if (null == root) {
-                    return super.getRootFolderID(ps);
+                    return super.getRootFolderID(state);
                 }
-                return root.getID();
+                return root.getObjectId();
             }
 
         };
     }
 
-    private static class SectionNewItemForm extends NewItemForm {
-
-        public SectionNewItemForm(String name) {
-            super(name);
-        }
-
-        @Override
-        public ContentSection getContentSection(PageState s) {
-            return CMS.getContext().getContentSection();
-        }
-
-    }
 }

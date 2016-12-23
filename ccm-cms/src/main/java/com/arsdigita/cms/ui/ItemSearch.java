@@ -22,8 +22,10 @@ import com.arsdigita.bebop.Form;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.Resettable;
 import com.arsdigita.bebop.SimpleContainer;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.arsdigita.search.ui.QueryGenerator;
+
+import org.apache.lucene.search.Query;
+import org.librecms.contentsection.ContentItem;
 
 /**
  * A wrapper around the {@link ItemSearchSection} which embeds the form section
@@ -32,9 +34,8 @@ import org.apache.logging.log4j.Logger;
  * @author Stanislav Freidin (sfreidin@arsdigita.com)
  * @author <a href="jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class ItemSearch extends Form implements Resettable {
+public class ItemSearch extends Form implements Resettable, QueryGenerator {
 
-    private static final Logger LOGGER = LogManager.getLogger(ItemSearch.class);
     public static final String SINGLE_TYPE_PARAM = ItemSearchSection.SINGLE_TYPE_PARAM;
     
     private ItemSearchSection itemSearchSection;
@@ -58,30 +59,31 @@ public class ItemSearch extends Form implements Resettable {
      * @param limitToContentSection limit the search to the current content
      * section
      */
-    public ItemSearch(String context, boolean limitToContentSection) {
+    public ItemSearch(final String context, 
+                      final boolean limitToContentSection) {
         super("itemSearch", new SimpleContainer());
         //setMethod("GET");
         itemSearchSection = createSearchSection(context, limitToContentSection);
         add(itemSearchSection);
     }
 
-    protected ItemSearchSection createSearchSection(String context,
+    protected ItemSearchSection createSearchSection(final String context,
                                                     boolean limitToContentSection) {
         return new ItemSearchSection(context, limitToContentSection);
     }
 
     @Override
-    public boolean hasQuery(PageState state) {
+    public boolean hasQuery(final PageState state) {
         return itemSearchSection.hasQuery(state);
     }
 
     @Override
-    public QuerySpecification getQuerySpecification(PageState state) {
+    public Query getQuerySpecification(final PageState state) {
         return itemSearchSection.getQuerySpecification(state);
     }
 
     @Override
-    public void reset(PageState state) {
+    public void reset(final PageState state) {
         itemSearchSection.reset(state);
     }
 }
