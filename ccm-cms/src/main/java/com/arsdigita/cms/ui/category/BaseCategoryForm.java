@@ -164,6 +164,5 @@ class BaseCategoryForm extends BaseForm {
                 }
             }
         }
-
     }
 }
