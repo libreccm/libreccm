@@ -33,12 +33,13 @@ import org.librecms.contentsection.ContentSection;
  * Builds a list of category use contexts for the current
  * content section.
  *
+ * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  * @author Scott Seago 
  * @version $Id: CategoryUseContextModelBuilder.java 2090 2010-04-17 08:04:14Z pboy $
  */
 class CategoryUseContextModelBuilder extends AbstractListModelBuilder {
 
-    public static String DEFAULT_USE_CONTEXT = "<default>";
+    private static String DEFAULT_USE_CONTEXT = "<default>";
 
     private static final Logger s_log = Logger.getLogger
         (CategoryUseContextModelBuilder.class);
@@ -58,7 +59,7 @@ class CategoryUseContextModelBuilder extends AbstractListModelBuilder {
             final CategoryManager manager = cdiUtil.findBean(CategoryManager.class);
 
             m_roots = manager.get
-            m_roots.addOrder(Category.USE_CONTEXT);
+            //m_roots.addOrder(Category.USE_CONTEXT);
         }
 
         public boolean next() {
