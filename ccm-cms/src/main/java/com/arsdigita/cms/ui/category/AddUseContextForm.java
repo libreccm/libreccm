@@ -88,10 +88,12 @@ class AddUseContextForm extends BaseForm {
             ParameterData data = e.getParameterData();
 
             final String name = (String) m_useContext.getValue(e.getPageState());
-            if (true) {//Category.getRootForObject(CMS.getContext().getContentSection(),
+
+            // XXX Do a dupe check ala commented code below
+            //if (true) {//Category.getRootForObject(CMS.getContext().getContentSection(),
                                           //name) != null) {
-                data.addError(getError());
-            }
+            //    data.addError(getError());
+            //}
         }
     }
     private class ProcessListener implements FormProcessListener {
@@ -117,7 +119,7 @@ class AddUseContextForm extends BaseForm {
             final ContentSection section =
                 CMS.getContext().getContentSection();
 
-            /*
+            /* TODO Maybe trash
             Category.setRootForObject(section, root, useContext);
             PermissionService.setContext(root, section);
             Category defaultRoot = Category.getRootForObject(section);
@@ -131,9 +133,11 @@ class AddUseContextForm extends BaseForm {
                 }
 
             }*/
-//            m_model.setSelectedKey(state, useContext == null ? 
-//                                   CategoryUseContextModelBuilder.DEFAULT_USE_CONTEXT :
-//                                   useContext);
+
+            //TODO Uncomment when CategoryUseContextModelBuilder works
+            //m_model.setSelectedKey(state, useContext == null ?
+            //                       CategoryUseContextModelBuilder.DEFAULT_USE_CONTEXT :
+            //                       useContext);
         }
     }
 }

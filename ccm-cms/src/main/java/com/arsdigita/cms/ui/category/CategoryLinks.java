@@ -32,6 +32,9 @@ import com.arsdigita.bebop.util.GlobalizationUtil;
 import com.arsdigita.util.LockableImpl;
 import org.libreccm.categorization.Category;
 
+import java.util.Collection;
+import java.util.HashSet;
+
 /**
  * A List of all secondary parents of the current category.
  *
@@ -75,7 +78,8 @@ public class CategoryLinks extends List {
         setEmptyView(label);
     }
 
-    /* TODO There is only one parent
+    // Since this part is for non default parents, but the is only one... this is not needed anymore, i guess
+    /*
     private class LinkedCategoryModelBuilder extends LockableImpl
             implements ListModelBuilder {
         public ListModel makeModel(List list, PageState state) {
@@ -83,8 +87,11 @@ public class CategoryLinks extends List {
 
             if (category != null && category.getParent().isPresent()) {
 
+                Collection<Category> categories = new HashSet<>();
+                categories.add(category.getParentCategory());
+
                 return new CategoryCollectionListModel
-                    (category.getParents(),
+                    (categories,
                      parent == null ? null : parent.getID());
             } else {
                 return List.EMPTY_MODEL;
