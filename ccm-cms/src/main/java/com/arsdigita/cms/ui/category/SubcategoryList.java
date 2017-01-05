@@ -35,6 +35,7 @@ import java.util.Collection;
 /**
  * A List of all subcategories of the current category.
  *
+ * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  * @author Stanislav Freidin (stas@arsdigita.com)
  * @author Michael Pih (pihman@arsdigita.com)
  * @version $Revision: #15 $ $DateTime: 2004/08/17 23:15:09 $
@@ -80,7 +81,7 @@ public class SubcategoryList extends SortableCategoryList {
 
             if (category != null && !category.getSubCategories().isEmpty()) {
                 Collection<Category> children = category.getSubCategories();
-                //String order = ContentSection.getConfig().getCategoryTreeOrder(); TODO Sorting?
+                //String order = ContentSection.getConfig().getCategoryTreeOrder(); FIXME Collections are not sorted
                 //order = Category.SORT_KEY.equals(order) ? "link." + order : order;
                 //children.addOrder(order);
              //   children.addOrder("link." + Category.SORT_KEY);

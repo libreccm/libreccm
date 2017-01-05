@@ -24,6 +24,8 @@ import com.arsdigita.toolbox.ui.ComponentAccess;
 
 public class CategoryComponentAccess extends ComponentAccess {
     // XXX implement me!
+    // TODO This seems pretty useless...
+    // FIXME
     
     public CategoryComponentAccess(Component c,
 				   CategoryRequestLocal category) {
