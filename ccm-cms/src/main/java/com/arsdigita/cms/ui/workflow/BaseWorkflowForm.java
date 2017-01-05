@@ -28,8 +28,7 @@ import org.librecms.CmsConstants;
 import org.librecms.contentsection.privileges.AdminPrivileges;
 
 /**
- * <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
- *
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @author Uday Mathur
  * @author Michael Pih
  * @author <a href="mailto:jross@redhat.com">Justin Ross</a>
