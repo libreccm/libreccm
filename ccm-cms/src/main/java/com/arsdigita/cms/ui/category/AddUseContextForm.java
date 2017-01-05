@@ -134,7 +134,7 @@ class AddUseContextForm extends BaseForm {
 
             }*/
 
-            //TODO Uncomment when CategoryUseContextModelBuilder works
+            //TODO Uncomment when CategoryUseContextModelBuilder works <--- Maybe obsolete?
             //m_model.setSelectedKey(state, useContext == null ?
             //                       CategoryUseContextModelBuilder.DEFAULT_USE_CONTEXT :
             //                       useContext);
