@@ -22,6 +22,7 @@ import org.libreccm.portation.AbstractMarshaller;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 
 /**
  * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
@@ -38,6 +39,7 @@ public class RoleMembershipMarshaller extends AbstractMarshaller<RoleMembership>
     }
 
     @Override
+    @Transactional(Transactional.TxType.REQUIRED)
     protected void insertIntoDb(RoleMembership portableObject) {
         if (portableObject.getMembershipId() == 0) {
             entityManager.persist(portableObject);

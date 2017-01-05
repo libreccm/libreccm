@@ -21,6 +21,7 @@ package org.libreccm.security;
 import org.libreccm.portation.AbstractMarshaller;
 
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 
 /**
  * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
@@ -37,6 +38,7 @@ public class UserMarshaller extends AbstractMarshaller<User> {
     }
 
     @Override
+    @Transactional(Transactional.TxType.REQUIRED)
     protected void insertIntoDb(User portableObject) {
         userRepository.save(portableObject);
     }
