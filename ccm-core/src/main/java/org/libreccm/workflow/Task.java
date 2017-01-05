@@ -18,19 +18,12 @@
  */
 package org.libreccm.workflow;
 
-import static org.libreccm.core.CoreConstants.*;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.libreccm.core.CcmObject;
 import org.libreccm.core.Identifiable;
 import org.libreccm.l10n.LocalizedString;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
 
 import javax.persistence.AssociationOverride;
 import javax.persistence.Column;
@@ -52,6 +45,13 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+
+import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 
 /**
  * A task is part of a workflow and represents a specific step in the creation
@@ -166,7 +166,9 @@ public class Task implements Identifiable, Serializable {
      * Tasks which the depends of this task.
      */
     @ManyToMany(mappedBy = "dependsOn")
-    @JsonManagedReference(value = "dependent-dependson")
+    @JsonIdentityInfo(
+            generator = ObjectIdGenerators.PropertyGenerator.class,
+            property = "taskId")
     private List<Task> dependentTasks;
 
     /**
@@ -179,7 +181,9 @@ public class Task implements Identifiable, Serializable {
                    @JoinColumn(name = "DEPENDS_ON_TASK_ID")},
                inverseJoinColumns = {
                    @JoinColumn(name = "DEPENDENT_TASK_ID")})
-    @JsonBackReference(value = "dependent-dependson")
+    @JsonIdentityInfo(
+            generator = ObjectIdGenerators.PropertyGenerator.class,
+            property = "taskId")
     private List<Task> dependsOn;
 
     /**
