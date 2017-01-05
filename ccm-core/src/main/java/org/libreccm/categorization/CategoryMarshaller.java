@@ -21,6 +21,7 @@ package org.libreccm.categorization;
 import org.libreccm.portation.AbstractMarshaller;
 
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 
 /**
  * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
@@ -37,6 +38,7 @@ public class CategoryMarshaller extends AbstractMarshaller<Category> {
     }
 
     @Override
+    @Transactional(Transactional.TxType.REQUIRED)
     protected void insertIntoDb(Category portableObject) {
         categoryRepository.save(portableObject);
     }
