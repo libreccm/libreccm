@@ -25,7 +25,9 @@ import org.hibernate.envers.query.AuditQuery;
 import org.libreccm.core.AbstractEntityRepository;
 
 import javax.inject.Inject;
+
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -81,15 +83,50 @@ public abstract class AbstractAuditedEntityRepository<K, T>
                                                         final Long objectId) {
         return auditReader.getRevisions(entity.getClass(), objectId);
     }
-    
+
+    /**
+     * Retrieves the first revision of the given entity.
+     *
+     * @param entity   The entity.
+     * @param objectId The primary key of the entity.
+     *
+     * @return The first revision of the entity.
+     */
     public CcmRevision retrieveFirstRevision(final T entity,
                                              final Long objectId) {
         final List<Number> revisions = retrieveRevisionNumbersOfEntity(
             entity, objectId);
-        
+
         return auditReader.findRevision(CcmRevision.class, revisions.get(0));
     }
 
+    /**
+     * Retrieves all revisions of the given entity. The list of revisions is
+     * ordered from the oldest revision to the newest revision.
+     *
+     * @param entity The entity.
+     * @param objectId The primary key of the entity.
+     *
+     * @return A list of all revisions of the provided entity.
+     */
+    public List<CcmRevision> retrieveRevisions(final T entity,
+                                               final Long objectId) {
+        final List<Number> revisionNumbers = retrieveRevisionNumbersOfEntity(
+            entity, objectId);
+
+        return revisionNumbers.stream()
+            .map(revisionNumber -> auditReader.findRevision(CcmRevision.class,
+                                                            revisionNumber))
+            .collect(Collectors.toList());
+    }
+
+    /**
+     * Retrieves the current revision of an entity.
+     * 
+     * @param entity The entity.
+     * @param objectId the primary key the entity.
+     * @return The most current revision of the entity.
+     */
     public CcmRevision retrieveCurrentRevision(final T entity,
                                                final Long objectId) {
         final List<Number> revisions = retrieveRevisionNumbersOfEntity(

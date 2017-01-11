@@ -59,6 +59,8 @@ public class CmsConstants {
 
     public static final String ASSET_ID = "asset_id";
     public static final String IMAGE_ID = "image_id";
+    
+    public final static String SCHEDULE_PUBLICATION = "schedule_publication";
 
     private CmsConstants() {
         //Nothing

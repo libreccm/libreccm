@@ -24,12 +24,10 @@ import com.arsdigita.bebop.Page;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.event.ActionEvent;
 import com.arsdigita.bebop.event.ActionListener;
-import com.arsdigita.categorization.Category;
-import com.arsdigita.categorization.CategoryCollection;
-import com.arsdigita.cms.CMS;
-import com.arsdigita.cms.CMSConfig;
-import com.arsdigita.cms.ContentItem;
-import com.arsdigita.cms.lifecycle.Lifecycle;
+
+import org.librecms.contentsection.ContentItem;
+import org.librecms.lifecycle.Lifecycle;
+
 import com.arsdigita.cms.ui.BaseItemPane;
 import com.arsdigita.cms.ui.ContentItemPage;
 import com.arsdigita.cms.ui.item.ContentItemRequestLocal;
@@ -37,101 +35,110 @@ import com.arsdigita.toolbox.ui.LayoutPanel;
 import com.arsdigita.web.RedirectSignal;
 import com.arsdigita.web.URL;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.security.PermissionChecker;
+import org.librecms.contentsection.privileges.ItemPrivileges;
+
 
 /**
  * @author Michael Pih
  * @author Jack Chung
  * @author Justin Ross &lt;jross@redhat.com&gt;
- * @author Jens Pelzetter jens@jp-digital.de
- * @version $Id: ItemLifecycleAdminPane.java 1942 2009-05-29 07:53:23Z terry $
+ * @author <a href="mailto:jens.pelzetter@goolemail.com">Jens Pelzetter</a>
  */
 public class ItemLifecycleAdminPane extends BaseItemPane {
 
-    private static final Logger s_log = Logger.getLogger(
-            ItemLifecycleAdminPane.class);
-    private final ContentItemRequestLocal m_item;
-    private final LifecycleRequestLocal m_lifecycle;
-    private final LayoutPanel m_introPane;
-    private final LayoutPanel m_detailPane;
-    private final LayoutPanel m_selectPane;
-    private final LayoutPanel m_lockedPane;
-    private final LayoutPanel m_errorPane;
-    private final LayoutPanel m_cantPublishPane;
+    private static final Logger LOGGER = LogManager.getLogger(
+        ItemLifecycleAdminPane.class);
+    private final ContentItemRequestLocal selectedItem;
+    private final LifecycleRequestLocal selectedLifecycle;
+    private final LayoutPanel introPane;
+    private final LayoutPanel detailPane;
+    private final LayoutPanel selectPane;
+    private final LayoutPanel lockedPane;
+    private final LayoutPanel errorPane;
+    private final LayoutPanel cantPublishPane;
 
-    public ItemLifecycleAdminPane(final ContentItemRequestLocal item) {
-        m_item = item;
-        m_lifecycle = new ItemLifecycleRequestLocal();
+    public ItemLifecycleAdminPane(final ContentItemRequestLocal selectedItem) {
+        this.selectedItem = selectedItem;
+        selectedLifecycle = new ItemLifecycleRequestLocal();
 
-        m_introPane = new LayoutPanel();
-        add(m_introPane);
+        introPane = new LayoutPanel();
+        add(introPane);
 
         final Label message = new Label(gz("cms.ui.item.lifecycle.intro"));
-        m_introPane.setBody(message);
+        introPane.setBody(message);
 
-        m_detailPane = new LayoutPanel();
-        add(m_detailPane);
+        detailPane = new LayoutPanel();
+        add(detailPane);
 
-        final ItemLifecycleItemPane itemPane =
-                                    new ItemLifecycleItemPane(m_item,
-                                                              m_lifecycle);
-        m_detailPane.setBody(itemPane);
+        final ItemLifecycleItemPane itemPane = new ItemLifecycleItemPane(
+            selectedItem, selectedLifecycle);
+        detailPane.setBody(itemPane);
 
-        m_selectPane = new LayoutPanel();
-        add(m_selectPane);
+        selectPane = new LayoutPanel();
+        add(selectPane);
 
-        final ItemLifecycleSelectForm selectForm =
-                                      new ItemLifecycleSelectForm(m_item);
-        m_selectPane.setBody(selectForm);
+        final ItemLifecycleSelectForm selectForm = new ItemLifecycleSelectForm(
+            selectedItem);
+        selectPane.setBody(selectForm);
 
-        m_lockedPane = new LayoutPanel();
-        add(m_lockedPane);
+        lockedPane = new LayoutPanel();
+        add(lockedPane);
 
         final Label lockedMsg = new Label(gz(
-                "cms.ui.item.lifecycle.publish_locked"));
-        m_lockedPane.setBody(lockedMsg);
+            "cms.ui.item.lifecycle.publish_locked"));
+        lockedPane.setBody(lockedMsg);
         final ControlLink lockedUpdateLink = new ControlLink(new Label(gz(
-                "cms.ui.item.lifecycle.publish_locked.update")));
+            "cms.ui.item.lifecycle.publish_locked.update")));
         lockedUpdateLink.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(final ActionEvent event) {
                 throw new RedirectSignal(
-                        URL.getDispatcherPath()
+                    URL.getDispatcherPath()
                         + ContentItemPage.getItemURL(
-                        item.getContentItem(event.getPageState()),
+                        selectedItem.getContentItem(event.getPageState()),
                         ContentItemPage.PUBLISHING_TAB),
-                        true);
+                    true);
             }
-        });
-        m_lockedPane.setBottom(lockedUpdateLink);
 
-        m_errorPane = new LayoutPanel();
-        add(m_errorPane);
+        });
+        lockedPane.setBottom(lockedUpdateLink);
+
+        errorPane = new LayoutPanel();
+        add(errorPane);
 
         final Label errorMsg = new Label(gz("cms.ui.lifecycle.publish.error"));
-        m_errorPane.setBody(errorMsg);
-        
-        m_cantPublishPane = new LayoutPanel();
-        add(m_cantPublishPane);
-        
-        final Label cantPublish = new Label(gz("cms.ui.lifecycle.publish.not_possible_abstract_category"));
-        m_cantPublishPane.setBody(cantPublish);
+        errorPane.setBody(errorMsg);
 
-        connect(selectForm, m_detailPane);                
+        cantPublishPane = new LayoutPanel();
+        add(cantPublishPane);
+
+        final Label cantPublish = new Label(gz(
+            "cms.ui.lifecycle.publish.not_possible_abstract_category"));
+        cantPublishPane.setBody(cantPublish);
+
+        connect(selectForm, detailPane);
     }
 
     private class ItemLifecycleRequestLocal extends LifecycleRequestLocal {
 
+        @Override
         protected final Object initialValue(final PageState state) {
-            final ContentItem item = m_item.getContentItem(state);
+            final ContentItem item = selectedItem.getContentItem(state);
             final Lifecycle lifecycle = item.getLifecycle();
 
-            s_log.debug("Returning lifecycle " + lifecycle);
+            LOGGER.debug("Returning lifecycle " + lifecycle);
 
             return lifecycle;
         }
+
     }
 
+    @Override
     public final void register(final Page page) {
         super.register(page);
 
@@ -140,71 +147,71 @@ public class ItemLifecycleAdminPane extends BaseItemPane {
 
     private class VisibilityListener implements ActionListener {
 
-        public final void actionPerformed(final ActionEvent e) {
-            s_log.debug("Determining which pane to show");
+        @Override
+        public final void actionPerformed(final ActionEvent event) {
+            LOGGER.debug("Determining which pane to show");
 
-            final PageState state = e.getPageState();
+            final PageState state = event.getPageState();
 
-            if (CMSConfig.getInstanceOf().getThreadedPublishing()
-                && PublishLock.getInstance().isLocked(m_item.getContentItem(
-                    state))) {
-                if (PublishLock.getInstance().hasError(m_item.getContentItem(
-                        state))) {
-                    push(state, m_errorPane);
-                } else {
-                    push(state, m_lockedPane);
-                    state.getResponse().addIntHeader("Refresh", 5);
-                }
-            } else if(isAssignedToAbstractCategory(m_item.getContentItem(state))) {
-                push(state, m_cantPublishPane);
+//            if (CMSConfig.getConfig().isThreadPublishing()
+//                    && PublishLock.getInstance().isLocked(m_item.getContentItem(
+//                    state))) {
+//                if (PublishLock.getInstance().hasError(m_item.getContentItem(
+//                    state))) {
+//                    push(state, m_errorPane);
+//                } else {
+//                    push(state, m_lockedPane);
+//                    state.getResponse().addIntHeader("Refresh", 5);
+//                }
+//            } else 
+            if (isAssignedToAbstractCategory(selectedItem.getContentItem(state))) {
+                push(state, cantPublishPane);
             } else {
                 if (state.isVisibleOnPage(ItemLifecycleAdminPane.this)) {
-                    if (m_lifecycle.getLifecycle(state) == null) {
+                    if (selectedLifecycle.getLifecycle(state) == null) {
                         if (hasPermission(state)) {
-                            push(state, m_selectPane);
+                            push(state, selectPane);
                         } else {
-                            push(state, m_introPane);
+                            push(state, introPane);
                         }
                     } else {
-                        push(state, m_detailPane);
+                        push(state, detailPane);
                     }
                 }
             }
         }
+
     }
 
     private boolean hasPermission(final PageState state) {
-        final ContentItem item = m_item.getContentItem(state);
+        final ContentItem item = selectedItem.getContentItem(state);
 
-        return CMS.getContext().getSecurityManager().canAccess(
-                state.getRequest(), SCHEDULE_PUBLICATION, item);
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final PermissionChecker permissionChecker = cdiUtil.findBean(
+            PermissionChecker.class);
+
+        return permissionChecker.isPermitted(ItemPrivileges.PUBLISH, item);
     }
-    
+
     /**
      * Checks if the item is assigned to an abstract category.
-     * 
+     *
      * A category is abstract if not items can assigned to it.
-     * 
+     *
      * @param item
-     * @return {@code true} if assigned to a abstract category, {@code false} if not.
+     *
+     * @return {@code true} if assigned to a abstract category, {@code false} if
+     *         not.
      */
     private boolean isAssignedToAbstractCategory(final ContentItem item) {
+
+        final long count = item.getCategories().stream()
+            .filter(categorization -> {
+                return categorization.getCategory().isAbstractCategory();
+            })
+            .count();
         
-        final CategoryCollection categories = item.getCategoryCollection();
-        
-        boolean result = false;
-        Category category;
-        while(categories.next()) {
-            category = categories.getCategory();
-            
-            if (category.isAbstract()) {
-                result = true;
-                break;
-            }
-        }
-        
-        categories.close();
-        
-        return result;
+        return count > 0;
     }
+
 }
