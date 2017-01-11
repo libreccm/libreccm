@@ -19,53 +19,57 @@
 package com.arsdigita.cms.ui;
 
 import com.arsdigita.bebop.PageState;
-import com.arsdigita.cms.ContentCenter;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.toolbox.ui.ContextBar;
 import com.arsdigita.web.URL;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.web.ApplicationManager;
 import org.libreccm.web.ApplicationRepository;
-import org.libreccm.web.ApplicationType;
 import org.libreccm.web.CcmApplication;
 import org.librecms.CmsConstants;
 
 import java.util.List;
-import java.util.Map;
 
 /**
- * <p>The context bar of the content center UI.</p>
+ * <p>
+ * The context bar of the content center UI.</p>
  *
- * @author Justin Ross &lt;jross@redhat.com&gt;
- * @version $Id$
+ * @author Justin Ross
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 // Made public (instead of unspecified) in 6.6.8
 public class WorkspaceContextBar extends ContextBar {
 
-    /** A logger instance, primarily to assist debugging .                    */
-    private static final Logger s_log = Logger.getLogger
-                                               (WorkspaceContextBar.class);
+    /**
+     * A logger instance, primarily to assist debugging .
+     */
+    private static final Logger LOGGER = LogManager.getLogger(
+        WorkspaceContextBar.class);
 
     /**
-     * 
+     *
      * @param state
-     * @return 
+     *
+     * @return
      */
     @Override
-    protected List entries(final PageState state) {
+    protected List<Entry> entries(final PageState state) {
 
-        final List entries = super.entries(state);
+        final List<Entry> entries = super.entries(state);
 
-        final String centerTitle = (String) new GlobalizedMessage("cms.ui.content_center", CmsConstants.CMS_BUNDLE).localize();
+        final String centerTitle = (String) new GlobalizedMessage(
+            "cms.ui.content_center", CmsConstants.CMS_BUNDLE).localize();
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-        final ApplicationRepository appRepo = cdiUtil.findBean(ApplicationRepository.class);
-        final List<CcmApplication> apps = appRepo.findByType(CmsConstants.CONTENT_SECTION_APP_TYPE);
-        
+        final ApplicationRepository appRepo = cdiUtil.findBean(
+            ApplicationRepository.class);
+        final List<CcmApplication> apps = appRepo.findByType(
+            CmsConstants.CONTENT_SECTION_APP_TYPE);
+
         final String centerPath = apps.get(0).getPrimaryUrl();
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Got Url: " + centerPath);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Got Url: " + centerPath);
         }
         final URL url = URL.there(state.getRequest(), centerPath);
 
