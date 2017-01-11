@@ -20,15 +20,22 @@ package com.arsdigita.cms.ui.type;
 
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.cms.CMS;
+
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentType;
 import org.librecms.lifecycle.LifecycleDefinition;
+
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.kernel.KernelConfig;
+import com.arsdigita.toolbox.ui.Property;
 import com.arsdigita.toolbox.ui.PropertyList;
+
 import java.util.Locale;
+
 import org.libreccm.workflow.WorkflowTemplate;
 import org.librecms.CmsConstants;
+
+import java.util.List;
 
 /**
  * This component displays basic attributes of a content type
@@ -50,8 +57,8 @@ class ContentTypePropertyList extends PropertyList {
     }
 
     @Override
-    protected final java.util.List properties(final PageState state) {
-        final java.util.List props = super.properties(state);
+    protected final List<Property> properties(final PageState state) {
+        final List<Property> props = super.properties(state);
         final ContentType type = m_type.getContentType(state);
         final ContentSection section =
             CMS.getContext().getContentSection();

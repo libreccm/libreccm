@@ -24,24 +24,23 @@ import com.arsdigita.bebop.RequestLocal;
 import com.arsdigita.web.URL;
 import com.arsdigita.util.Assert;
 import com.arsdigita.xml.Element;
+
 import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.log4j.Logger;
 
 /**
  * <p>A context bar.</p>
  *
- * @author Justin Ross &lt;jross@redhat.com&gt;
- * @version $Id$
+ * @author Justin Ross
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public abstract class ContextBar extends SimpleComponent {
 
-    private static final Logger s_log = Logger.getLogger(ContextBar.class);
-
-    private static final RequestLocal s_entries = new RequestLocal() {
+    private static final RequestLocal ENTRIES = new RequestLocal() {
+            @Override
             protected final Object initialValue(final PageState state) {
-                return new ArrayList();
+                return new ArrayList<>();
             }
         };
 
@@ -49,17 +48,19 @@ public abstract class ContextBar extends SimpleComponent {
         super();
     }
 
-    protected List entries(final PageState state) {
-        return (List) s_entries.get(state);
+    @SuppressWarnings("unchecked")
+    protected List<Entry> entries(final PageState state) {
+        return (List<Entry>) ENTRIES.get(state);
     }
 
+    @Override
     public final void generateXML(final PageState state, final Element parent) {
         if (isVisible(state)) {
             final Element nav = parent.newChildElement
                 ("bebop:contextBar", BEBOP_XML_NS);
 
-            for (Iterator iter = entries(state).iterator(); iter.hasNext(); ) {
-                ((Entry) iter.next()).generateXML(state, nav);
+            for (Iterator<Entry> iter = entries(state).iterator(); iter.hasNext(); ) {
+                iter.next().generateXML(state, nav);
             }
         }
     }

@@ -24,7 +24,6 @@ import com.arsdigita.cms.PageLocations;
 
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentSection;
-import org.librecms.contentsection.Folder;
 
 import com.arsdigita.web.ParameterMap;
 import com.arsdigita.web.URL;
@@ -36,11 +35,6 @@ import java.util.List;
 import java.util.Stack;
 
 import org.apache.logging.log4j.Logger;
-import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.core.CcmObject;
-import org.librecms.contentsection.ContentSectionManager;
-
-import java.util.Optional;
 
 /**
  * The context bar of the content section UI.
@@ -54,14 +48,14 @@ public class ContentSectionContextBar extends WorkspaceContextBar {
         ContentSectionContextBar.class);
 
     @Override
-    protected List entries(final PageState state) {
+    protected List<Entry> entries(final PageState state) {
 
         /* Include breadcrumb entries already set by content-center (i.e. the
          * URL of the content center itself                                   */
-        final List entries = super.entries(state);
+        final List<Entry> entries = super.entries(state);
 
         final ContentSection section = CMS.getContext().getContentSection();
-        final Stack folderEntryStack = new Stack();
+        final Stack<Entry> folderEntryStack = new Stack<>();
         String currentFolderLabel = null;
         ParameterMap params = new ParameterMap();
         boolean isTemplate = false;
