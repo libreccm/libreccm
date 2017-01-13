@@ -38,7 +38,6 @@ import com.arsdigita.cms.ui.BaseDeleteForm;
 import com.arsdigita.globalization.GlobalizedMessage;
 //ToDo insert later import com.arsdigita.cms.ui.ContentSectionPage;
 
-
 import com.arsdigita.kernel.ui.ACSObjectSelectionModel;
 import com.arsdigita.toolbox.ui.ActionGroup;
 import com.arsdigita.toolbox.ui.Cancellable;
@@ -49,16 +48,15 @@ import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentSectionManager;
 import org.librecms.contentsection.ContentTypeManager;
 
-
 /**
  * This class contains the split pane for the ContentType administration
  * interface.
  *
- * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @author Jack Chung
  * @author Michael Pih
  * @author Stanislav Freidin
  * @author Justin Ross &lt;jross@redhat.com&gt;
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public final class ContentTypeAdminPane extends BaseAdminPane {
 
@@ -83,13 +81,12 @@ public final class ContentTypeAdminPane extends BaseAdminPane {
         m_type = new SelectionRequestLocal();
 
         ActionLink addTypeLink
-                   = new ActionLink(new Label(gz("cms.ui.type.add")));
+                       = new ActionLink(new Label(gz("cms.ui.type.add")));
 
 //        AddTypeContainer addTypeContainer = new AddTypeContainer();
 //        getBody().add(addTypeContainer);
 //        getBody().connect(addTypeLink, addTypeContainer);
 //        addTypeLink.addActionListener(addTypeContainer);
-
         setEdit(new ActionLink(new Label(gz("cms.ui.type.edit"))),
                 new EditType(m_model));
 

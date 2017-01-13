@@ -20,7 +20,6 @@ package com.arsdigita.cms.ui.lifecycle;
 
 import com.arsdigita.bebop.Component;
 import com.arsdigita.bebop.PageState;
-import com.arsdigita.cms.dispatcher.Utilities;
 
 import org.libreccm.security.Party;
 
@@ -28,15 +27,14 @@ import com.arsdigita.toolbox.ui.SecurityContainer;
 
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.PermissionChecker;
-import org.librecms.CmsConstants;
 import org.librecms.contentsection.privileges.AdminPrivileges;
 
 /**
  * Security container that wraps the canAdministerLifecycles access check around
  * its components.
  *
- * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @author <a href="mailto:pihman@arsdigita.com">Michael Pih</a>
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class LifecycleAdminContainer extends SecurityContainer {
 

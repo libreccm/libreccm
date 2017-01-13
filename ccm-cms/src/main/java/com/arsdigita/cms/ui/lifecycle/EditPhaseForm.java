@@ -56,10 +56,10 @@ import java.util.Locale;
 /**
  * This class contains a form component to edit a lifecycle phase definition.
  *
- * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @author Jack Chung
  * @author Xixi D'Moon
  * @author Michael Pih
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class EditPhaseForm extends CMSForm {
 
@@ -280,7 +280,7 @@ class EditPhaseForm extends CMSForm {
      */
     private void updatePhaseDefinition(final PageState state)
         throws FormProcessException {
-        
+
         final String label = (String) m_label.getValue(state);
         final String description = (String) m_description.getValue(state);
         final Integer delayDays = (Integer) m_delayDays.getValue(state);
@@ -291,17 +291,19 @@ class EditPhaseForm extends CMSForm {
         final Integer durMinutes = (Integer) m_durMinutes.getValue(state);
 
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-        final ConfigurationManager confManager = cdiUtil.findBean(ConfigurationManager.class);
+        final ConfigurationManager confManager = cdiUtil.findBean(
+            ConfigurationManager.class);
         final PhaseDefinititionRepository phaseDefRepo = cdiUtil.findBean(
             PhaseDefinititionRepository.class);
         final KernelConfig kernelConfig = confManager.findConfiguration(
             KernelConfig.class);
         final Locale defaultLocale = kernelConfig.getDefaultLocale();
-        
+
         final PhaseDefinition phaseDefinition = m_phase.getPhase(state);
         phaseDefinition.getLabel().addValue(defaultLocale, label);
         phaseDefinition.getDescription().addValue(defaultLocale, description);
-        phaseDefinition.setDefaultDelay(delayDays * delayHours * delayMinutes * 60);
+        phaseDefinition.setDefaultDelay(delayDays * delayHours * delayMinutes
+                                        * 60);
         phaseDefinition.setDefaultDuration(durDays * durHours * durMinutes * 60);
         phaseDefRepo.save(phaseDefinition);
     }
@@ -376,7 +378,7 @@ class EditPhaseForm extends CMSForm {
         if ((days + hours + minutes) == 0) {
             throw new FormProcessException(new GlobalizedMessage(
                 "cms.ui.phase.duration_negative",
-            CmsConstants.CMS_BUNDLE));
+                CmsConstants.CMS_BUNDLE));
         }
     }
 

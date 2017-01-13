@@ -30,13 +30,12 @@ import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.workflow.Workflow;
 import org.libreccm.workflow.WorkflowRepository;
 import org.libreccm.workflow.WorkflowTemplateRepository;
-import org.librecms.CmsConstants;
 
 import org.librecms.contentsection.privileges.AdminPrivileges;
 
 /**
- * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @author <a href="mailto:jross@redhat.com">Justin Ross</a>
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public final class WorkflowAdminPane extends BaseAdminPane {
 

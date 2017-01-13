@@ -33,9 +33,9 @@ import org.libreccm.workflow.WorkflowRepository;
 import java.util.Locale;
 
 /**
- * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @author Uday Mathur
  * @author <a href="mailto:jross@redhat.com">Justin Ross</a>
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class WorkflowEditForm extends BaseWorkflowForm {
 

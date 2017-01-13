@@ -49,8 +49,6 @@ import org.arsdigita.cms.CMSConfig;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.security.PermissionChecker;
-import org.libreccm.security.Shiro;
-import org.libreccm.security.User;
 import org.libreccm.workflow.AssignableTask;
 import org.libreccm.workflow.AssignableTaskManager;
 import org.libreccm.workflow.TaskManager;

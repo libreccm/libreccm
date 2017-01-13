@@ -32,9 +32,7 @@ import com.arsdigita.cms.ui.BaseForm;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.util.UncheckedWrapperException;
 
-import org.apache.logging.log4j.LogManager;
 import org.libreccm.workflow.Task;
-import org.apache.logging.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.workflow.CircularTaskDependencyException;
 import org.libreccm.workflow.TaskManager;
@@ -50,8 +48,8 @@ import java.util.TooManyListenersException;
 import java.util.stream.Collectors;
 
 /**
- * @author <a href="jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @author <a href="jross@redhat.com">Justin Ross</a>
+ * @author <a href="jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class BaseTaskForm extends BaseForm {
 

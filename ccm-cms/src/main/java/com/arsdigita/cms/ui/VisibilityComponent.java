@@ -27,11 +27,11 @@ import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.PermissionChecker;
 
 /**
- * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @author Justin Ross
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class VisibilityComponent extends ProxyComponent {
-    
+
     private final String m_action;
 
     public VisibilityComponent(final Component child, final String action) {
@@ -49,8 +49,10 @@ public class VisibilityComponent extends ProxyComponent {
         Assert.exists(m_action, String.class);
 
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-        final PermissionChecker permissionChecker = cdiUtil.findBean(PermissionChecker.class);
-        
+        final PermissionChecker permissionChecker = cdiUtil.findBean(
+            PermissionChecker.class);
+
         return permissionChecker.isPermitted(m_action);
     }
+
 }

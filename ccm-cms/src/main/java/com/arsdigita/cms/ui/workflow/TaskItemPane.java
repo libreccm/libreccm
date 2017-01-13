@@ -52,18 +52,15 @@ import org.libreccm.security.Shiro;
 import org.libreccm.workflow.Task;
 import org.libreccm.workflow.AssignableTask;
 import org.libreccm.workflow.AssignableTaskManager;
-import org.libreccm.workflow.WorkflowManager;
-import org.librecms.CmsConstants;
 import org.librecms.contentsection.privileges.AdminPrivileges;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
 /**
- * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @author <a href="mailto:jross@redhat.com">Justin Ross</a>
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 final class TaskItemPane extends BaseItemPane {
 

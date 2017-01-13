@@ -25,7 +25,6 @@ import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.SimpleContainer;
 import com.arsdigita.bebop.SingleSelectionModel;
 
-
 import com.arsdigita.cms.ItemSelectionModel;
 import com.arsdigita.xml.Element;
 
@@ -36,7 +35,6 @@ import java.util.Map;
 
 import org.apache.logging.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.librecms.contentsection.ContentType;
 import org.librecms.contenttypes.AuthoringKitInfo;
 import org.librecms.contenttypes.ContentTypeInfo;
 import org.librecms.contenttypes.ContentTypesManager;
@@ -48,8 +46,8 @@ import java.util.Objects;
  * Selects a component based on content type. Helper class for {@link
  * com.arsdigita.cms.ui.authoring.WizardSelector}.
  *
- * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @author unknown
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public abstract class AuthoringKitSelector extends SimpleContainer {
 
@@ -74,8 +72,6 @@ public abstract class AuthoringKitSelector extends SimpleContainer {
         components = new HashMap<>();
         selectionModel = new MapComponentSelectionModel<>(model, components);
 
-        
-        
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final ContentTypesManager typesManager = cdiUtil.findBean(
             ContentTypesManager.class);

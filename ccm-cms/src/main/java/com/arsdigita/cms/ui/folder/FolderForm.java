@@ -35,7 +35,6 @@ import com.arsdigita.bebop.form.TextField;
 import com.arsdigita.bebop.parameters.NotNullValidationListener;
 import com.arsdigita.bebop.parameters.TrimmedStringParameter;
 import com.arsdigita.bebop.parameters.URLTokenValidationListener;
-import com.arsdigita.cms.ItemSelectionModel;
 import com.arsdigita.cms.ui.authoring.BasicItemForm;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.util.Assert;
@@ -59,9 +58,8 @@ import org.librecms.CmsConstants;
  * {@link BasicItemForm}. Therefore it is possible that comments etc still refer
  * to {@link BasicItemForm}.
  *
- * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @author <a href="mailto:jorris@arsdigita.com">Jon Orris</a>
- *
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public abstract class FolderForm extends FormSection
     implements FormInitListener,
@@ -390,7 +388,7 @@ public abstract class FolderForm extends FormSection
             .getSelectedObject(state);
         return folder;
     }
-    
+
     final protected FolderSelectionModel getFolderSelectionModel() {
         return currentFolder;
     }

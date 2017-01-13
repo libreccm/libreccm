@@ -44,9 +44,9 @@ import org.librecms.contenttypes.ContentTypeInfo;
  *
  * Essentially, this component is a hack which is used to get around the fact
  * that we cannot instantiate stateful components dynamically.
- *
- * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
+ * 
  * @author unknown
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class WizardSelector extends AuthoringKitSelector
     implements Resettable {

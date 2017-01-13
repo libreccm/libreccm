@@ -85,9 +85,9 @@ import java.util.Date;
  * selection model is updated. If the user clicks on any other item, an separate
  * item selection model is updated.
  *
- * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
- * @author <a href="mailto:quasi@quasiweb.de">Sören Bernstein</a>
  * @author <a href="mailto:lutter@arsdigita.com">David Lutterkort</a>
+ * @author <a href="mailto:quasi@quasiweb.de">Sören Bernstein</a>
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class FolderBrowser extends Table {
 
@@ -325,15 +325,15 @@ public class FolderBrowser extends Table {
                                                                ((String) state.
                                                                 getValue(
                                                                 m_aToZfilter)).
-                                                               toLowerCase(
-                                                                   defaultLocale))));
+                                                                   toLowerCase(
+                                                                       defaultLocale))));
                 filters.add(criteriaBuilder.like(criteriaBuilder.lower(
                     root.get("Categorization.categoriziedObject.name.value")),
                                                  String.format("%s%%",
                                                                (String) state.
-                                                               getValue(
-                                                                   m_aToZfilter))
-                                                 .toLowerCase(defaultLocale)));
+                                                                   getValue(
+                                                                       m_aToZfilter))
+                                                     .toLowerCase(defaultLocale)));
             }
 
             if (state.getValue(m_filter) != null) {
@@ -341,14 +341,14 @@ public class FolderBrowser extends Table {
                     root.get("Categorization.categorizedObject.displayName")),
                                                  String.format("%s%%",
                                                                ((String) state.
-                                                                getValue(
-                                                                m_filter)))));
+                                                                    getValue(
+                                                                    m_filter)))));
                 filters.add(criteriaBuilder.like(criteriaBuilder.lower(
                     root.get("Categorization.categorizedObject.name.value")),
                                                  String.format("%s%%",
                                                                ((String) state.
-                                                                getValue(
-                                                                m_filter)))));
+                                                                    getValue(
+                                                                    m_filter)))));
             }
 
             final Predicate filtersPredicate = criteriaBuilder.or(filters.

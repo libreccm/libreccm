@@ -43,8 +43,9 @@ import java.math.BigDecimal;
  * model will only instantiate items that are of the specified content type, or
  * one of it subclasses.</p>
  *
- * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @author Stanislav Freidin (stas@arsdigita.com)
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
+ * 
  * @see com.arsdigita.kernel.ui.ACSObjectSelectionModel
  * @see com.arsdigita.bebop.SingleSelectionModel
  */

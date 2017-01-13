@@ -24,14 +24,13 @@ import com.arsdigita.bebop.event.FormValidationListener;
 import com.arsdigita.cms.ui.BaseForm;
 import com.arsdigita.globalization.GlobalizedMessage;
 
-import org.librecms.CmsConstants;
 import org.librecms.contentsection.privileges.AdminPrivileges;
 
 /**
- * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @author Uday Mathur
  * @author Michael Pih
  * @author <a href="mailto:jross@redhat.com">Justin Ross</a>
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class BaseWorkflowForm extends BaseForm {
 

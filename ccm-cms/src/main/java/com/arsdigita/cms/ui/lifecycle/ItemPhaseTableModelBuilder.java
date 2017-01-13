@@ -28,8 +28,6 @@ import org.arsdigita.cms.CMSConfig;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.librecms.CmsConstants;
-import org.librecms.contentsection.ContentSection;
-import org.librecms.contentsection.ContentSectionConfig;
 import org.librecms.lifecycle.Phase;
 
 import java.text.DateFormat;

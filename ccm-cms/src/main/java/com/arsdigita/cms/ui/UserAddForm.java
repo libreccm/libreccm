@@ -38,22 +38,20 @@ import com.arsdigita.bebop.form.Submit;
 import com.arsdigita.bebop.form.Widget;
 import com.arsdigita.bebop.parameters.NotNullValidationListener;
 import com.arsdigita.globalization.GlobalizedMessage;
-import com.arsdigita.util.UncheckedWrapperException;
 import com.arsdigita.xml.Element;
 
 import org.libreccm.security.User;
 import org.librecms.CmsConstants;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.TooManyListenersException;
 
 /**
  * Form for adding multiple users to a role.
  *
- * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @author <a href="mailto:pihman@arsdigita.com">Michael Pih</a>
  * @author <a href="mailto:umathur@arsdigita.com">Uday Mathur</a>
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public abstract class UserAddForm extends SimpleContainer
     implements FormProcessListener {
@@ -245,8 +243,7 @@ public abstract class UserAddForm extends SimpleContainer
     }
 
     /**
-     * Generates a {@link List} that encapsulates
-     * search results.
+     * Generates a {@link List} that encapsulates search results.
      *
      * @param state The page state
      *

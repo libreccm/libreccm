@@ -44,9 +44,9 @@ import java.util.List;
  * label, description, default lifecycle definition, default workflow
  * template
  *
- * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @author Michael Pih
  * @author <a href="mailto:jross@redhat.com">Justin Ross</a>
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class ContentTypePropertyList extends PropertyList {
 

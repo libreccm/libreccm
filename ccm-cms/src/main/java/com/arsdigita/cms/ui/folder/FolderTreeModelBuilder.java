@@ -36,11 +36,9 @@ import org.libreccm.categorization.Category;
  * containing the folder structure underneath a root folder. The root folder can
  * be changed by overriding {@link #getRoot getRoot}.
  *
- * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @author <a href="mailto:tri@arsdigita.com">Tri Tran</a>
  * @author <a href="mailto:lutter@arsdigita.com">David Lutterkort</a>
- *
- * @version $Id: FolderTreeModelBuilder.java 2183 2011-06-20 00:57:18Z pboy $
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class FolderTreeModelBuilder extends LockableImpl
         implements TreeModelBuilder {

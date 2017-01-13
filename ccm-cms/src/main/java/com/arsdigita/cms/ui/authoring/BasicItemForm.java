@@ -46,8 +46,8 @@ import org.librecms.CmsConstants;
  * A form for editing subclasses of ContentItem. This is just a convenience
  * class.
  *
- * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @author <a href="mailto:stas@arsdigita.com">Stanislav Freidin</a>
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public abstract class BasicItemForm extends FormSection
     implements FormInitListener,
