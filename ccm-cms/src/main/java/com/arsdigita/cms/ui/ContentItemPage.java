@@ -41,12 +41,12 @@ import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.cms.CMS;
 import com.arsdigita.cms.ItemSelectionModel;
 import com.arsdigita.cms.PageLocations;
-import com.arsdigita.cms.ui.item.CustomizedPreviewLink;
 import com.arsdigita.cms.dispatcher.CMSDispatcher;
 import com.arsdigita.cms.dispatcher.CMSPage;
 import com.arsdigita.cms.dispatcher.ItemResolver;
 import com.arsdigita.cms.ui.authoring.WizardSelector;
 import com.arsdigita.cms.ui.item.ContentItemRequestLocal;
+import com.arsdigita.cms.ui.item.CustomizedPreviewLink;
 import com.arsdigita.cms.ui.item.ItemLanguages;
 import com.arsdigita.cms.ui.item.Summary;
 import com.arsdigita.cms.ui.lifecycle.ItemLifecycleAdminPane;
@@ -60,9 +60,7 @@ import com.arsdigita.util.Assert;
 import com.arsdigita.util.UncheckedWrapperException;
 import com.arsdigita.xml.Document;
 import com.arsdigita.xml.Element;
-import java.io.IOException;
-import java.util.Optional;
-import javax.servlet.http.HttpServletRequest;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.arsdigita.cms.CMSConfig;
@@ -73,6 +71,11 @@ import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contentsection.ContentItemVersion;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentType;
+
+import java.io.IOException;
+import java.util.Optional;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Page for administering a content item.

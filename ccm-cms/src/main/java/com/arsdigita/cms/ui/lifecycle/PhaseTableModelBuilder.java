@@ -38,26 +38,27 @@ import java.util.List;
 
 class PhaseTableModelBuilder extends LockableImpl
         implements TableModelBuilder {
-    private final LifecycleDefinitionRequestLocal m_cycle;
+    private final LifecycleDefinitionRequestLocal cycle;
 
     public PhaseTableModelBuilder
             (final LifecycleDefinitionRequestLocal cycle) {
-        m_cycle = cycle;
+        this.cycle = cycle;
     }
 
+    @Override
     public final TableModel makeModel(final Table table,
                                       final PageState state) {
-        return new PhaseTableModel(m_cycle.getLifecycleDefinition(state));
+        return new PhaseTableModel(cycle.getLifecycleDefinition(state));
     }
 
     private static class PhaseTableModel implements TableModel {
-        private PhaseDefinition m_phase;
-        private final List<PhaseDefinition> m_phases;
+        
+        private final List<PhaseDefinition> phases;
         private int index = -1;
+        private PhaseDefinition phase;
 
         public PhaseTableModel(final LifecycleDefinition cycle) {
-            m_phases = cycle.getPhaseDefinitions();
-            m_phase = null;
+            phases = cycle.getPhaseDefinitions();
         }
 
         @Override
@@ -68,8 +69,8 @@ class PhaseTableModelBuilder extends LockableImpl
         @Override
         public final boolean nextRow() {
             index++;
-            if (index < m_phases.size()) {
-                m_phase = m_phases.get(index);
+            if (index < phases.size()) {
+                phase = phases.get(index);
 
                 return true;
             } else {
@@ -79,17 +80,17 @@ class PhaseTableModelBuilder extends LockableImpl
 
         @Override
         public final Object getElementAt(final int column) {
-            Assert.exists(m_phase, "PhaseDefinition m_phase");
+            Assert.exists(phase, "PhaseDefinition m_phase");
 
             switch (column) {
             case 0:
-                return m_phase.getLabel();
+                return phase.getLabel();
             case 1:
-                return m_phase.getDescription();
+                return phase.getDescription();
             case 2:
-                return Duration.formatDuration(m_phase.getDefaultDelay());
+                return Duration.formatDuration(phase.getDefaultDelay());
             case 3:
-                final Long duration = m_phase.getDefaultDuration();
+                final Long duration = phase.getDefaultDuration();
 
                 if (duration == null) {
                     return lz("cms.ui.lifecycle.forever");
@@ -105,11 +106,12 @@ class PhaseTableModelBuilder extends LockableImpl
             }
         }
 
+        @Override
         public Object getKeyAt(int columnIndex) {
-            if (m_phase == null) {
+            if (phase == null) {
                 throw new IllegalStateException();
             } else {
-                return m_phase.getDefinitionId();
+                return phase.getDefinitionId();
             }
         }
     }

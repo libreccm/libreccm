@@ -39,13 +39,11 @@ import com.arsdigita.bebop.event.PrintListener;
 import com.arsdigita.bebop.form.Option;
 import com.arsdigita.bebop.form.SingleSelect;
 import com.arsdigita.bebop.form.Submit;
-import com.arsdigita.cms.CMS;
-import com.arsdigita.cms.ContentCenter;
-import com.arsdigita.cms.dispatcher.Utilities;
 import com.arsdigita.cms.ui.BaseItemPane;
 import com.arsdigita.cms.ui.ContentItemPage;
 import com.arsdigita.cms.ui.item.ContentItemRequestLocal;
 import com.arsdigita.globalization.GlobalizedMessage;
+import com.arsdigita.mail.Mail;
 import com.arsdigita.toolbox.ui.ActionGroup;
 import com.arsdigita.toolbox.ui.Property;
 import com.arsdigita.toolbox.ui.PropertyList;
@@ -53,7 +51,6 @@ import com.arsdigita.toolbox.ui.Section;
 import com.arsdigita.util.UncheckedWrapperException;
 import com.arsdigita.web.RedirectSignal;
 import com.arsdigita.web.URL;
-import com.arsdigita.web.Web;
 import com.arsdigita.xml.Element;
 
 import org.apache.logging.log4j.LogManager;
@@ -61,18 +58,15 @@ import org.apache.logging.log4j.Logger;
 import org.arsdigita.cms.CMSConfig;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.l10n.GlobalizationHelper;
-import org.libreccm.notification.Notification;
-import org.libreccm.security.Party;
 import org.libreccm.security.PermissionChecker;
+import org.libreccm.security.Shiro;
 import org.libreccm.security.User;
-import org.libreccm.workflow.Workflow;
+import org.libreccm.security.UserRepository;
 import org.libreccm.workflow.WorkflowManager;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemManager;
 import org.librecms.contentsection.ContentItemRepository;
-import org.librecms.contentsection.ContentSection;
-import org.librecms.contentsection.ContentSectionConfig;
 import org.librecms.contentsection.privileges.ItemPrivileges;
 import org.librecms.lifecycle.Lifecycle;
 
@@ -84,6 +78,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+
+import javax.mail.MessagingException;
 
 /**
  * This class contains the component which displays the information for a
@@ -304,7 +300,7 @@ class ItemLifecycleItemPane extends BaseItemPane {
             WorkflowManager.class);
 
         itemManager.publish(item);
-        
+
         workflowManager.finish(item.getWorkflow());
     }
 
@@ -322,10 +318,13 @@ class ItemLifecycleItemPane extends BaseItemPane {
             public final void actionPerformed(final ActionEvent event) {
                 final PageState state = event.getPageState();
                 final ContentItem item = selectedItem.getContentItem(state);
-                final User user = Web.getWebContext().getUser();
+                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+                final Shiro shiro = cdiUtil.findBean(Shiro.class);
+                final User user = shiro.getUser();
 
                 /*
-                 * jensp 2011-12-14: Check is threaded publishing is active. If yes, execute publishing in a thread.
+                 * jensp 2011-12-14: Check is threaded publishing is active. 
+                 * If yes, execute publishing in a thread.
                  */
                 if (CMSConfig.getConfig().isThreadPublishing()) {
                     final Republisher republisher = new Republisher(item, user);
@@ -341,46 +340,30 @@ class ItemLifecycleItemPane extends BaseItemPane {
                                                   = new PrintWriter(strWriter);
                             ex.printStackTrace(writer);
 
-                            PublishLock.getInstance().setError(item, strWriter
-                                                               .toString());
+//                            PublishLock.getInstance().setError(item, strWriter
+//                                                               .toString());
                             LOGGER.error(String.format(
                                 "An error occurred while "
                                     + "publishing the item '%s': ",
-                                item.getOID().toString()),
-                                         ex);
+                                item.getUuid()), ex);
 
-                            if ((CMSConfig.getInstanceOf().
-                                 getPublicationFailureSender()
+                            if ((CMSConfig.getConfig()
+                                 .getPublishingFailureSender()
                                  == null)
-                                    && (CMSConfig.getInstanceOf().
-                                            getPublicationFailureReceiver()
+                                    && (CMSConfig.getConfig()
+                                            .getPublishingFailureReceiver()
                                         == null)) {
                                 return;
                             }
 
-                            final PartyCollection receiverParties = Party
-                                .retrieveAllParties();
-                            Party receiver = null;
-                            receiverParties.addEqualsFilter("primaryEmail",
-                                                            CMSConfig
-                                                                .getInstanceOf()
-                                                                .getPublicationFailureReceiver());
-                            if (receiverParties.next()) {
-                                receiver = receiverParties.getParty();
-                            }
-                            receiverParties.close();
-
-                            final PartyCollection senderParties = Party
-                                .retrieveAllParties();
-                            Party sender = null;
-                            senderParties.addEqualsFilter("primaryEmail",
-                                                          CMSConfig
-                                                              .getInstanceOf().
-                                                              getPublicationFailureReceiver());
-                            if (senderParties.next()) {
-                                sender = senderParties.getParty();
-                            }
-                            senderParties.close();
+                            final UserRepository userRepo = cdiUtil.findBean(
+                                UserRepository.class);
+                            final User receiver = userRepo.findByEmailAddress(
+                                CMSConfig.getConfig()
+                                    .getPublishingFailureReceiver());
+                            final User sender = userRepo.findByEmailAddress(
+                                CMSConfig.getConfig()
+                                    .getPublishingFailureSender());
 
                             if ((sender != null) && (receiver != null)) {
                                 final Writer traceWriter = new StringWriter();
@@ -388,21 +371,25 @@ class ItemLifecycleItemPane extends BaseItemPane {
                                     traceWriter);
                                 ex.printStackTrace(printWriter);
 
-                                final Notification notification
-                                                       = new Notification(
-                                        sender,
-                                        receiver,
-                                        String.format(
-                                            "Failed to publish item '%s'",
-                                            item.getOID().toString()),
-                                        String.format(
-                                            "Publishing item '%s' failed "
-                                                + "with error message: %s.\n\n"
-                                                + "Stacktrace:\n%s",
-                                            item.getOID().toString(),
-                                            ex.getMessage(),
-                                            traceWriter.toString()));
-                                notification.save();
+                                final Mail notification = new Mail(
+                                    receiver.getPrimaryEmailAddress()
+                                        .getAddress(),
+                                    sender.getPrimaryEmailAddress().getAddress(),
+                                    String.format(
+                                        "Failed to publish item '%s'",
+                                        item.getUuid()));
+                                notification.setBody(String.format(
+                                    "Publishing item '%s' failed "
+                                        + "with error message: %s.\n\n"
+                                        + "Stacktrace:\n%s",
+                                    item.getUuid(),
+                                    ex.getMessage(),
+                                    traceWriter.toString()));
+                                try {
+                                    notification.send();
+                                } catch (MessagingException msgex) {
+                                    throw new UncheckedWrapperException(msgex);
+                                }
                             }
                         }
 
@@ -420,10 +407,11 @@ class ItemLifecycleItemPane extends BaseItemPane {
                      */
                 } else {
                     republish(item, false, user);
-                    if (ContentSection.getConfig().getUseStreamlinedCreation()) {
+                    if (CMSConfig.getConfig().isUseStreamlinedCreation()) {
                         throw new RedirectSignal(
                             URL.there(state.getRequest(),
-                                      ContentCenter.getURL()), true);
+                                      CmsConstants.CONTENT_CENTER_URL),
+                            true);
                     }
                 }
             }
@@ -435,29 +423,24 @@ class ItemLifecycleItemPane extends BaseItemPane {
          */
         private class Republisher implements Runnable {
 
-            /**
-             * Saves OID of item as a string. This is necessary because it is
-             * not possible to access to same data object instance from multiple
-             * threads. So we have to create a new instance a the data object in
-             * the run method. To avoid any sort a problems, we store the OID as
-             * a string and convert it back to an OID in the run method.
-             */
-            private final String itemOid;
+            private final String itemUuid;
             private final User user;
 
             private Republisher(final ContentItem item, User user) {
-                itemOid = item.getOID().toString();
+                itemUuid = item.getUuid();
                 this.user = user;
             }
 
             @Override
             public void run() {
-                final ContentItem item = (ContentItem) DomainObjectFactory
-                    .newInstance(OID.valueOf(
-                        itemOid));
-                PublishLock.getInstance().lock(item);
+                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+                final ContentItemRepository itemRepo = cdiUtil.findBean(
+                    ContentItemRepository.class);
+                final ContentItem item = itemRepo.findByUuid(itemUuid).get();
+
+//                PublishLock.getInstance().lock(item);
                 republish(item, false, user);
-                PublishLock.getInstance().unlock(item);
+//                PublishLock.getInstance().unlock(item);
             }
 
         }
@@ -482,13 +465,15 @@ class ItemLifecycleItemPane extends BaseItemPane {
             public final void actionPerformed(final ActionEvent e) {
                 final PageState state = e.getPageState();
                 final ContentItem item = selectedItem.getContentItem(state);
-                final User user = Web.getWebContext().getUser();
+                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+                final Shiro shiro = cdiUtil.findBean(Shiro.class);
+                final User user = shiro.getUser();
 
                 /**
                  * jensp 2011-12-14: Execute is a thread if threaded publishing
                  * is active.
                  */
-                if (CMSConfig.getInstanceOf().getThreadedPublishing()) {
+                if (CMSConfig.getConfig().isThreadPublishing()) {
                     final Republisher republisher = new Republisher(item, user);
                     final Thread thread = new Thread(republisher);
                     thread.setUncaughtExceptionHandler(
@@ -502,46 +487,29 @@ class ItemLifecycleItemPane extends BaseItemPane {
                                                   = new PrintWriter(strWriter);
                             ex.printStackTrace(writer);
 
-                            PublishLock.getInstance().setError(item, strWriter
-                                                               .toString());
+//                            PublishLock.getInstance().setError(item, strWriter
+//                                                               .toString());
                             LOGGER.error(String.format(
                                 "An error occurred while "
                                     + "publishing the item '%s': ",
-                                item.getOID().toString()),
-                                         ex);
+                                item.getUuid()), ex);
 
-                            if ((CMSConfig.getInstanceOf().
-                                 getPublicationFailureSender()
-                                 == null)
-                                    && (CMSConfig.getInstanceOf().
-                                            getPublicationFailureReceiver()
+                            if ((CMSConfig.getConfig().
+                                 getPublishingFailureSender() == null)
+                                    && (CMSConfig.getConfig().
+                                            getPublishingFailureReceiver()
                                         == null)) {
                                 return;
                             }
 
-                            final PartyCollection receiverParties = Party
-                                .retrieveAllParties();
-                            Party receiver = null;
-                            receiverParties.addEqualsFilter("primaryEmail",
-                                                            CMSConfig
-                                                                .getInstanceOf()
-                                                                .getPublicationFailureReceiver());
-                            if (receiverParties.next()) {
-                                receiver = receiverParties.getParty();
-                            }
-                            receiverParties.close();
-
-                            final PartyCollection senderParties = Party
-                                .retrieveAllParties();
-                            Party sender = null;
-                            senderParties.addEqualsFilter("primaryEmail",
-                                                          CMSConfig
-                                                              .getInstanceOf().
-                                                              getPublicationFailureReceiver());
-                            if (senderParties.next()) {
-                                sender = senderParties.getParty();
-                            }
-                            senderParties.close();
+                            final UserRepository userRepo = cdiUtil.findBean(
+                                UserRepository.class);
+                            final User receiver = userRepo.findByEmailAddress(
+                                CMSConfig.getConfig()
+                                    .getPublishingFailureReceiver());
+                            final User sender = userRepo.findByEmailAddress(
+                                CMSConfig.getConfig()
+                                    .getPublishingFailureSender());
 
                             if ((sender != null) && (receiver != null)) {
                                 final Writer traceWriter = new StringWriter();
@@ -549,21 +517,25 @@ class ItemLifecycleItemPane extends BaseItemPane {
                                     traceWriter);
                                 ex.printStackTrace(printWriter);
 
-                                final Notification notification
-                                                       = new Notification(
-                                        sender,
-                                        receiver,
-                                        String.format(
-                                            "Failed to publish item '%s'",
-                                            item.getOID().toString()),
-                                        String.format(
-                                            "Publishing item '%s' failed "
-                                                + "with error message: %s.\n\n"
-                                                + "Stacktrace:\n%s",
-                                            item.getOID().toString(),
-                                            ex.getMessage(),
-                                            traceWriter.toString()));
-                                notification.save();
+                                final Mail notification = new Mail(
+                                    receiver.getPrimaryEmailAddress()
+                                        .getAddress(),
+                                    sender.getPrimaryEmailAddress().getAddress(),
+                                    String.format(
+                                        "Failed to publish item '%s'",
+                                        item.getUuid()));
+                                notification.setBody(String.format(
+                                    "Publishing item '%s' failed "
+                                        + "with error message: %s.\n\n"
+                                        + "Stacktrace:\n%s",
+                                    item.getUuid(),
+                                    ex.getMessage(),
+                                    traceWriter.toString()));
+                                try {
+                                    notification.send();
+                                } catch (MessagingException msgex) {
+                                    throw new UncheckedWrapperException(msgex);
+                                }
                             }
                         }
 
@@ -581,10 +553,11 @@ class ItemLifecycleItemPane extends BaseItemPane {
                      * jensp 2011-12-14 end
                      */
                     republish(item, true, user);
-                    if (ContentSection.getConfig().getUseStreamlinedCreation()) {
+                    if (CMSConfig.getConfig().isUseStreamlinedCreation()) {
                         throw new RedirectSignal(
                             URL.there(state.getRequest(),
-                                      ContentCenter.getURL()), true);
+                                      CmsConstants.CONTENT_CENTER_URL),
+                            true);
                     }
                 }
             }
@@ -596,29 +569,23 @@ class ItemLifecycleItemPane extends BaseItemPane {
          */
         private class Republisher implements Runnable {
 
-            /**
-             * Saves OID of item as a string. This is necessary because it is
-             * not possible to access to same data object instance from multiple
-             * threads. So we have to create a new instance a the data object in
-             * the run method. To avoid any sort a problems, we store the OID as
-             * a string and convert it back to an OID in the run method.
-             */
-            private final String itemOid;
+            private final String itemUuid;
             private final User user;
 
             private Republisher(final ContentItem item, User user) {
-                itemOid = item.getOID().toString();
+                itemUuid = item.getUuid();
                 this.user = user;
             }
 
             @Override
             public void run() {
-                final ContentItem item = (ContentItem) DomainObjectFactory
-                    .newInstance(OID.valueOf(
-                        itemOid));
-                PublishLock.getInstance().lock(item);
+                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+                final ContentItemRepository itemRepo = cdiUtil.findBean(
+                    ContentItemRepository.class);
+                final ContentItem item = itemRepo.findByUuid(itemUuid).get();
+//                PublishLock.getInstance().lock(item);
                 republish(item, true, user);
-                PublishLock.getInstance().unlock(item);
+//                PublishLock.getInstance().unlock(item);
             }
 
         }
@@ -678,18 +645,17 @@ class ItemLifecycleItemPane extends BaseItemPane {
             final SingleSelect actionSelect = new SingleSelect(
                 LIFECYCLE_ACTION);
 
-            actionSelect.addOption(new Option(REPUBLISH, (String) gz(
-                                              "cms.ui.item.lifecycle.republish")
-                                              .localize()));
-            if (!ContentSection.getConfig().hideResetLifecycleLink()) {
-                actionSelect.addOption(new Option(REPUBLISH_AND_RESET,
-                                                  (String) gz(
-                                                      "cms.ui.item.lifecycle.republish_and_reset")
-                                                      .localize()));
+            actionSelect.addOption(new Option(
+                REPUBLISH,
+                new Label(gz("cms.ui.item.lifecycle.republish"))));
+            if (!CMSConfig.getConfig().isHideResetLifecycleLink()) {
+                actionSelect.addOption(new Option(
+                    REPUBLISH_AND_RESET,
+                    new Label(gz("cms.ui.item.lifecycle.republish_and_reset"))));
             }
-            actionSelect.addOption(new Option(UNPUBLISH, (String) gz(
-                                              "cms.ui.item.lifecycle.unpublish")
-                                              .localize()));
+            actionSelect.addOption(new Option(
+                UNPUBLISH,
+                new Label(gz("cms.ui.item.lifecycle.unpublish"))));
 
             submit = new Submit(gz("cms.ui.item.lifecycle.do"));
             notAuthorized = new Label(gz(
@@ -705,15 +671,17 @@ class ItemLifecycleItemPane extends BaseItemPane {
         }
 
         @Override
-        public void init(FormSectionEvent fse) throws FormProcessException {
-            final PageState state = fse.getPageState();
+        public void init(final FormSectionEvent event)
+            throws FormProcessException {
+
+            final PageState state = event.getPageState();
             final ContentItem item = selectedItem.getContentItem(state);
 
-            final SecurityManager sm = Utilities.getSecurityManager(state);
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final PermissionChecker permissionChecker = cdiUtil.findBean(
+                PermissionChecker.class);
 
-            if (sm.canAccess(state.getRequest(),
-                             SecurityManager.PUBLISH,
-                             item)) {
+            if (permissionChecker.isPermitted(ItemPrivileges.PUBLISH, item)) {
                 submit.setVisible(state, true);
                 notAuthorized.setVisible(state, false);
             } else {
@@ -723,11 +691,14 @@ class ItemLifecycleItemPane extends BaseItemPane {
         }
 
         @Override
-        public void process(final FormSectionEvent fse) throws
-            FormProcessException {
-            final PageState state = fse.getPageState();
-            final FormData data = fse.getFormData();
-            final User user = Web.getWebContext().getUser();
+        public void process(final FormSectionEvent event)
+            throws FormProcessException {
+
+            final PageState state = event.getPageState();
+            final FormData data = event.getFormData();
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final Shiro shiro = cdiUtil.findBean(Shiro.class);
+            final User user = shiro.getUser();
 
             String selected = (String) data.get(LIFECYCLE_ACTION);
             final ContentItem item = selectedItem.getContentItem(state);
@@ -737,7 +708,7 @@ class ItemLifecycleItemPane extends BaseItemPane {
              * threaded publishing is active.
              */
             if (REPUBLISH.equals(selected)) {
-                if (CMSConfig.getInstanceOf().getThreadedPublishing()) {
+                if (CMSConfig.getConfig().isThreadPublishing()) {
                     final RepublishRunner runner = new RepublishRunner(item,
                                                                        user);
                     final Thread thread = new Thread(runner);
@@ -752,46 +723,30 @@ class ItemLifecycleItemPane extends BaseItemPane {
                                                   = new PrintWriter(strWriter);
                             ex.printStackTrace(writer);
 
-                            PublishLock.getInstance().setError(item, strWriter
-                                                               .toString());
+//                            PublishLock.getInstance().setError(item, strWriter
+//                                                               .toString());
                             LOGGER.error(String.format(
                                 "An error occurred while "
                                     + "publishing the item '%s': ",
-                                item.getOID().toString()),
-                                         ex);
+                                item.getUuid()), ex);
 
-                            if ((CMSConfig.getInstanceOf().
-                                 getPublicationFailureSender()
+                            if ((CMSConfig.getConfig()
+                                 .getPublishingFailureSender()
                                  == null)
-                                    && (CMSConfig.getInstanceOf().
-                                            getPublicationFailureReceiver()
+                                    && (CMSConfig.getConfig()
+                                            .getPublishingFailureReceiver()
                                         == null)) {
                                 return;
                             }
 
-                            final PartyCollection receiverParties = Party
-                                .retrieveAllParties();
-                            Party receiver = null;
-                            receiverParties.addEqualsFilter("primaryEmail",
-                                                            CMSConfig
-                                                                .getInstanceOf()
-                                                                .getPublicationFailureReceiver());
-                            if (receiverParties.next()) {
-                                receiver = receiverParties.getParty();
-                            }
-                            receiverParties.close();
-
-                            final PartyCollection senderParties = Party
-                                .retrieveAllParties();
-                            Party sender = null;
-                            senderParties.addEqualsFilter("primaryEmail",
-                                                          CMSConfig
-                                                              .getInstanceOf().
-                                                              getPublicationFailureReceiver());
-                            if (senderParties.next()) {
-                                sender = senderParties.getParty();
-                            }
-                            senderParties.close();
+                            final UserRepository userRepo = cdiUtil.findBean(
+                                UserRepository.class);
+                            final User receiver = userRepo.findByEmailAddress(
+                                CMSConfig.getConfig()
+                                    .getPublishingFailureReceiver());
+                            final User sender = userRepo.findByEmailAddress(
+                                CMSConfig.getConfig()
+                                    .getPublishingFailureSender());
 
                             if ((sender != null) && (receiver != null)) {
                                 final Writer traceWriter = new StringWriter();
@@ -799,21 +754,25 @@ class ItemLifecycleItemPane extends BaseItemPane {
                                     traceWriter);
                                 ex.printStackTrace(printWriter);
 
-                                final Notification notification
-                                                       = new Notification(
-                                        sender,
-                                        receiver,
-                                        String.format(
-                                            "Failed to publish item '%s'",
-                                            item.getOID().toString()),
-                                        String.format(
-                                            "Publishing item '%s' failed "
-                                                + "with error message: %s.\n\n"
-                                                + "Stacktrace:\n%s",
-                                            item.getOID().toString(),
-                                            ex.getMessage(),
-                                            traceWriter.toString()));
-                                notification.save();
+                                final Mail notification = new Mail(
+                                    receiver.getPrimaryEmailAddress()
+                                        .getAddress(),
+                                    sender.getPrimaryEmailAddress().getAddress(),
+                                    String.format(
+                                        "Failed to publish item '%s'",
+                                        item.getUuid()));
+                                notification.setBody(String.format(
+                                    "Publishing item '%s' failed "
+                                        + "with error message: %s.\n\n"
+                                        + "Stacktrace:\n%s",
+                                    item.getUuid(),
+                                    ex.getMessage(),
+                                    traceWriter.toString()));
+                                try {
+                                    notification.send();
+                                } catch (MessagingException msgex) {
+                                    throw new UncheckedWrapperException(msgex);
+                                }
                             }
                         }
 
@@ -829,14 +788,14 @@ class ItemLifecycleItemPane extends BaseItemPane {
                 } else {
                     republish(item, false, user);
 
-                    if (ContentSection.getConfig().getUseStreamlinedCreation()) {
+                    if (CMSConfig.getConfig().isUseStreamlinedCreation()) {
                         throw new RedirectSignal(
                             URL.there(state.getRequest(),
-                                      ContentCenter.getURL()), true);
+                                      CmsConstants.CONTENT_CENTER_URL), true);
                     }
                 }
             } else if (REPUBLISH_AND_RESET.equals(selected)) {
-                if (CMSConfig.getInstanceOf().getThreadedPublishing()) {
+                if (CMSConfig.getConfig().isThreadPublishing()) {
                     final RepublishAndResetRunner runner
                                                       = new RepublishAndResetRunner(
                             item, user);
@@ -852,46 +811,30 @@ class ItemLifecycleItemPane extends BaseItemPane {
                                                   = new PrintWriter(strWriter);
                             ex.printStackTrace(writer);
 
-                            PublishLock.getInstance().setError(item, strWriter
-                                                               .toString());
+//                            PublishLock.getInstance().setError(item, strWriter
+//                                                               .toString());
                             LOGGER.error(String.format(
                                 "An error occurred while "
                                     + "publishing the item '%s': ",
-                                item.getOID().toString()),
-                                         ex);
+                                item.getUuid()), ex);
 
-                            if ((CMSConfig.getInstanceOf().
-                                 getPublicationFailureSender()
+                            if ((CMSConfig.getConfig()
+                                 .getPublishingFailureSender()
                                  == null)
-                                    && (CMSConfig.getInstanceOf().
-                                            getPublicationFailureReceiver()
+                                    && (CMSConfig.getConfig()
+                                            .getPublishingFailureReceiver()
                                         == null)) {
                                 return;
                             }
 
-                            final PartyCollection receiverParties = Party
-                                .retrieveAllParties();
-                            Party receiver = null;
-                            receiverParties.addEqualsFilter("primaryEmail",
-                                                            CMSConfig
-                                                                .getInstanceOf()
-                                                                .getPublicationFailureReceiver());
-                            if (receiverParties.next()) {
-                                receiver = receiverParties.getParty();
-                            }
-                            receiverParties.close();
-
-                            final PartyCollection senderParties = Party
-                                .retrieveAllParties();
-                            Party sender = null;
-                            senderParties.addEqualsFilter("primaryEmail",
-                                                          CMSConfig
-                                                              .getInstanceOf().
-                                                              getPublicationFailureReceiver());
-                            if (senderParties.next()) {
-                                sender = senderParties.getParty();
-                            }
-                            senderParties.close();
+                            final UserRepository userRepo = cdiUtil.findBean(
+                                UserRepository.class);
+                            final User receiver = userRepo.findByEmailAddress(
+                                CMSConfig.getConfig()
+                                    .getPublishingFailureReceiver());
+                            final User sender = userRepo.findByEmailAddress(
+                                CMSConfig.getConfig()
+                                    .getPublishingFailureSender());
 
                             if ((sender != null) && (receiver != null)) {
                                 final Writer traceWriter = new StringWriter();
@@ -899,21 +842,25 @@ class ItemLifecycleItemPane extends BaseItemPane {
                                     traceWriter);
                                 ex.printStackTrace(printWriter);
 
-                                final Notification notification
-                                                       = new Notification(
-                                        sender,
-                                        receiver,
-                                        String.format(
-                                            "Failed to publish item '%s'",
-                                            item.getOID().toString()),
-                                        String.format(
-                                            "Publishing item '%s' failed "
-                                                + "with error message: %s.\n\n"
-                                                + "Stacktrace:\n%s",
-                                            item.getOID().toString(),
-                                            ex.getMessage(),
-                                            traceWriter.toString()));
-                                notification.save();
+                                final Mail notification = new Mail(
+                                    receiver.getPrimaryEmailAddress()
+                                        .getAddress(),
+                                    sender.getPrimaryEmailAddress().getAddress(),
+                                    String.format(
+                                        "Failed to publish item '%s'",
+                                        item.getUuid()));
+                                notification.setBody(String.format(
+                                    "Publishing item '%s' failed "
+                                        + "with error message: %s.\n\n"
+                                        + "Stacktrace:\n%s",
+                                    item.getUuid(),
+                                    ex.getMessage(),
+                                    traceWriter.toString()));
+                                try {
+                                    notification.send();
+                                } catch (MessagingException msgex) {
+                                    throw new UncheckedWrapperException(msgex);
+                                }
                             }
                         }
 
@@ -929,14 +876,16 @@ class ItemLifecycleItemPane extends BaseItemPane {
                 } else {
                     republish(item, true, user);
 
-                    if (ContentSection.getConfig().getUseStreamlinedCreation()) {
+                    if (CMSConfig.getConfig().isUseStreamlinedCreation()) {
                         throw new RedirectSignal(
                             URL.there(state.getRequest(),
-                                      ContentCenter.getURL()), true);
+                                      CmsConstants.CONTENT_CENTER_URL), true);
                     }
                 }
             } else if (UNPUBLISH.equals(selected)) {
-                item.unpublish();
+                final ContentItemManager itemManager = cdiUtil.findBean(
+                    ContentItemManager.class);
+                itemManager.unpublish(item);
             } else {
                 throw new IllegalArgumentException("Illegal selection");
             }
@@ -944,72 +893,60 @@ class ItemLifecycleItemPane extends BaseItemPane {
 
         private class RepublishRunner implements Runnable {
 
-            /**
-             * Saves OID of item as a string. This is necessary because it is
-             * not possible to access to same data object instance from multiple
-             * threads. So we have to create a new instance a the data object in
-             * the run method. To avoid any sort a problems, we store the OID as
-             * a string and convert it back to an OID in the run method.
-             */
-            private final String itemOid;
+            private final String itemUuid;
             private final User user;
 
-            private RepublishRunner(final ContentItem item, User user) {
-                itemOid = item.getOID().toString();
+            private RepublishRunner(final ContentItem item,
+                                    final User user) {
+                itemUuid = item.getUuid();
                 this.user = user;
             }
 
             private void doRepublish() {
-                final ContentItem item = (ContentItem) DomainObjectFactory
-                    .newInstance(OID.valueOf(
-                        itemOid));
+                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+                final ContentItemRepository itemRepo = cdiUtil.findBean(
+                    ContentItemRepository.class);
+                final ContentItem item = itemRepo.findByUuid(itemUuid).get();
                 republish(item, false, user);
             }
 
             @Override
             public void run() {
-                final ContentItem item = (ContentItem) DomainObjectFactory
-                    .newInstance(OID.valueOf(
-                        itemOid));
-                PublishLock.getInstance().lock(item);
+//                PublishLock.getInstance().lock(item);
                 doRepublish();
-                PublishLock.getInstance().unlock(item);
+//                PublishLock.getInstance().unlock(item);
             }
 
         }
 
         private class RepublishAndResetRunner implements Runnable {
 
-            /**
-             * Saves OID of item as a string. This is necessary because it is
-             * not possible to access to same data object instance from multiple
-             * threads. So we have to create a new instance a the data object in
-             * the run method. To avoid any sort a problems, we store the OID as
-             * a string and convert it back to an OID in the run method.
-             */
-            private final String itemOid;
+            private final String itemUuid;
             private final User user;
 
-            private RepublishAndResetRunner(final ContentItem item, User user) {
-                itemOid = item.getOID().toString();
+            private RepublishAndResetRunner(final ContentItem item,
+                                            final User user) {
+                itemUuid = item.getUuid();
                 this.user = user;
             }
 
             private void doRepublishAndReset() {
-                final ContentItem item = (ContentItem) DomainObjectFactory
-                    .newInstance(OID.valueOf(
-                        itemOid));
+                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+                final ContentItemRepository itemRepo = cdiUtil.findBean(
+                    ContentItemRepository.class);
+                final ContentItem item = itemRepo.findByUuid(itemUuid).get();
                 republish(item, true, user);
             }
 
             @Override
             public void run() {
-                final ContentItem item = (ContentItem) DomainObjectFactory
-                    .newInstance(OID.valueOf(
-                        itemOid));
-                PublishLock.getInstance().lock(item);
+                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+                final ContentItemRepository itemRepo = cdiUtil.findBean(
+                    ContentItemRepository.class);
+                final ContentItem item = itemRepo.findByUuid(itemUuid).get();
+//                PublishLock.getInstance().lock(item);
                 doRepublishAndReset();
-                PublishLock.getInstance().unlock(item);
+//                PublishLock.getInstance().unlock(item);
             }
 
         }

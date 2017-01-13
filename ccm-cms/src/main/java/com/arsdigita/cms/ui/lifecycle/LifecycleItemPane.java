@@ -36,6 +36,7 @@ import org.librecms.lifecycle.PhaseDefinition;
 import com.arsdigita.cms.ui.BaseItemPane;
 import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.toolbox.ui.ActionGroup;
+import com.arsdigita.toolbox.ui.Property;
 import com.arsdigita.toolbox.ui.PropertyList;
 import com.arsdigita.toolbox.ui.Section;
 

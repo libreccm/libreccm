@@ -39,7 +39,7 @@ import com.arsdigita.cms.dispatcher.CMSPage;
 //ToDo NG import com.arsdigita.cms.ui.cse.ContentSoonExpiredPane;
 import com.arsdigita.cms.ui.folder.FolderAdminPane;
 import com.arsdigita.cms.ui.lifecycle.LifecycleAdminPane;
-import com.arsdigita.cms.ui.role.RoleAdminPane;
+//import com.arsdigita.cms.ui.role.RoleAdminPane;
 import com.arsdigita.cms.ui.type.ContentTypeAdminPane;
 import com.arsdigita.cms.ui.workflow.WorkflowAdminPane;
 import com.arsdigita.globalization.GlobalizedMessage;
@@ -130,7 +130,7 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
 //ToDo NG    private BrowsePane m_browsePane;
 //ToDo NG    private ItemSearch m_searchPane;
 //ToDo NG    private ImagesPane m_imagesPane;
-    private RoleAdminPane m_rolePane;
+//ToDo NG    private RoleAdminPane m_rolePane;
     private WorkflowAdminPane m_workflowPane;
     private LifecycleAdminPane m_lifecyclePane;
 //ToDo NG    private CategoryAdminPane m_categoryPane;
@@ -157,7 +157,7 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
 //ToDo NG        m_browsePane = getBrowsePane();
 //ToDo NG        m_searchPane = getSearchPane();
 //ToDo NG        m_imagesPane = getImagesPane();
-        m_rolePane = getRoleAdminPane();
+//ToDo NG        m_rolePane = getRoleAdminPane();
         m_workflowPane = getWorkflowAdminPane();
         m_lifecyclePane = getLifecycleAdminPane();
 //ToDo NG        m_categoryPane = getCategoryAdminPane();
@@ -211,11 +211,12 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
                         m_typePane,
                         permissionChecker.isPermitted(
                             AdminPrivileges.ADMINISTER_CONTENT_TYPES));
-                    m_tabbedPane.setTabVisible(
-                        state,
-                        m_rolePane,
-                        permissionChecker.isPermitted(
-                            AdminPrivileges.ADMINISTER_ROLES));
+//ToDo NG
+//m_tabbedPane.setTabVisible(
+//                        state,
+//                        m_rolePane,
+//                        permissionChecker.isPermitted(
+//                            AdminPrivileges.ADMINISTER_ROLES));
                     // csePane: should check permission
                     m_tabbedPane.setTabVisible(state, m_csePane, true);
                     // TODO Check for reportPane as well
@@ -275,12 +276,13 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
 //        return m_imagesPane;
 //    }
 
-    protected RoleAdminPane getRoleAdminPane() {
-        if (m_rolePane == null) {
-            m_rolePane = new RoleAdminPane();
-        }
-        return m_rolePane;
-    }
+//   ToDo NG
+//    protected RoleAdminPane getRoleAdminPane() {
+//        if (m_rolePane == null) {
+//            m_rolePane = new RoleAdminPane();
+//        }
+//        return m_rolePane;
+//    }
 
     /**
      * Creates, and then caches, the workflow administration pane. Overriding
@@ -400,7 +402,7 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
 //        ToDo NG tab(pane, "cms.ui.browse", getBrowsePane());
 //        ToDo NG tab(pane, "cms.ui.search", getSearchPane());
 //        ToDo NG tab(pane, "cms.ui.images", getImagesPane());
-        tab(pane, "cms.ui.roles", getRoleAdminPane());
+//        ToDo NG tab(pane, "cms.ui.roles", getRoleAdminPane());
         tab(pane, "cms.ui.workflows", getWorkflowAdminPane());
         tab(pane, "cms.ui.lifecycles", getLifecycleAdminPane());
 //       ToDo NG  tab(pane, "cms.ui.categories", getCategoryAdminPane());
@@ -448,8 +450,8 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
             m_folderPane.reset(state);
 //ToDo NG        } else if (pane == m_browsePane) {
 //            m_browsePane.reset(state);
-        } else if (pane == m_rolePane) {
-            m_rolePane.reset(state);
+//        } else if (pane == m_rolePane) {
+//            m_rolePane.reset(state);
         } else if (pane == m_workflowPane) {
             m_workflowPane.reset(state);
         } else if (pane == m_lifecyclePane) {

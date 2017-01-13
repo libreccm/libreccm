@@ -65,6 +65,10 @@ import org.libreccm.portation.Portable;
 @Inheritance(strategy = InheritanceType.JOINED)
 @NamedQueries({
     @NamedQuery(
+        name = "Workflow.findByUuid",
+        query = "SELECT W FROM Workflow w WHERE w.uuid = :uuid")
+    ,
+    @NamedQuery(
         name = "Workflow.findForObject",
         query = "SELECT w FROM Workflow w "
                     + "WHERE W.object = :object")

@@ -44,8 +44,17 @@ public abstract class AbstractAuditedEntityRepository<K, T>
 
     public abstract K getEntityId(final T entity);
 
+    /**
+     * Retrieves an entity at specific revision. The entity will be in the state
+     * as it was when the revision was created.
+     *
+     * @param entity
+     * @param revision
+     *
+     * @return
+     */
     @SuppressWarnings("unchecked")
-    public T retrieveRevisionOfEntity(final T entity, final Number revision) {
+    public T retrieveEntityAtRevision(final T entity, final Number revision) {
         final AuditQuery query = auditReader.createQuery()
             .forEntitiesAtRevision(getEntityClass(), revision);
         query.add(AuditEntity.id().eq(getEntityId(entity)));
@@ -104,7 +113,7 @@ public abstract class AbstractAuditedEntityRepository<K, T>
      * Retrieves all revisions of the given entity. The list of revisions is
      * ordered from the oldest revision to the newest revision.
      *
-     * @param entity The entity.
+     * @param entity   The entity.
      * @param objectId The primary key of the entity.
      *
      * @return A list of all revisions of the provided entity.
@@ -122,9 +131,10 @@ public abstract class AbstractAuditedEntityRepository<K, T>
 
     /**
      * Retrieves the current revision of an entity.
-     * 
-     * @param entity The entity.
+     *
+     * @param entity   The entity.
      * @param objectId the primary key the entity.
+     *
      * @return The most current revision of the entity.
      */
     public CcmRevision retrieveCurrentRevision(final T entity,
@@ -134,6 +144,19 @@ public abstract class AbstractAuditedEntityRepository<K, T>
         final Number lastRevision = revisions.get(revisions.size() - 1);
 
         return auditReader.findRevision(CcmRevision.class, lastRevision);
+    }
+
+    /**
+     * Retrieves a specific revision object.
+     *
+     * @param entity
+     * @param objectId
+     * @param revision
+     *
+     * @return
+     */
+    public CcmRevision retrieveRevision(final Number revision) {
+        return auditReader.findRevision(CcmRevision.class, revision);
     }
 
 }
