@@ -53,21 +53,47 @@ public class WorkflowRepository extends AbstractEntityRepository<Long, Workflow>
     }
 
     /**
+     * Find a {@link Workflow} by its UUID.
+     *
+     * @param uuid The UUID of the {@link Workflow} to find.
+     *
+     * @return An {@link Optional} containing the {@link Workflow} identified by
+     *         the provided UUID.
+     */
+    public Optional<Workflow> findByUuid(final String uuid) {
+        if (uuid == null || uuid.trim().isEmpty()) {
+            throw new IllegalArgumentException(
+                "The UUID of the Workflow to retrieve can't be null or empty.");
+        }
+        
+        final TypedQuery<Workflow> query = getEntityManager().createNamedQuery(
+            "Workflow.findByUuid", Workflow.class);
+        query.setParameter("uuid", uuid);
+        
+        try {
+            return Optional.of(query.getSingleResult());
+        } catch(NoResultException ex) {
+            return Optional.empty();
+        }
+    }
+
+    /**
      * Finds the workflow for an given object if the object has workflow.
      *
      * @param object The object
+     *
      * @return An {@link Optional} containing the workflow assigned to the
-     * {@code object} if the object has a workflow. Otherwise an empty
-     * {@link Optional} is returned.
+     *         {@code object} if the object has a workflow. Otherwise an empty
+     *         {@link Optional} is returned.
      */
     public Optional<Workflow> findWorkflowForObject(final CcmObject object) {
         if (object == null) {
             throw new IllegalArgumentException(
-                    "Can't find a workflow for object null.");
+                "Can't find a workflow for object null.");
         }
 
         final TypedQuery<Workflow> query = getEntityManager().createNamedQuery(
-                "Workflow.findForObject", Workflow.class);
+            "Workflow.findForObject", Workflow.class);
         query.setParameter("object", object);
 
         try {

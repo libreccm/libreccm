@@ -23,15 +23,11 @@ import com.arsdigita.cms.CMS;
 
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentSection;
-import org.librecms.contentsection.ContentType;
 
 import com.arsdigita.cms.ItemSelectionModel;
 import com.arsdigita.cms.PageLocations;
 import com.arsdigita.web.ParameterMap;
 import com.arsdigita.web.URL;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
