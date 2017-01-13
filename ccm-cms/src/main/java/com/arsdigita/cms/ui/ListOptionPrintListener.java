@@ -27,10 +27,11 @@ import com.arsdigita.bebop.form.OptionGroup;
 import java.util.List;
 
 /**
- * Migrated from the {@code DataQueryOptionPrintListener} in the old system. Renamed 
- * and refactored to operate on a list.
- * 
+ * Migrated from the {@code DataQueryOptionPrintListener} in the old system.
+ * Renamed and refactored to operate on a list.
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
+ *
  * @param <T> Type of the objects in the list.
  */
 public abstract class ListOptionPrintListener<T> implements PrintListener {

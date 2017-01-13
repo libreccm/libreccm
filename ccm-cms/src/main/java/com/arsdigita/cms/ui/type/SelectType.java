@@ -35,7 +35,6 @@ import com.arsdigita.bebop.form.Submit;
 import com.arsdigita.cms.CMS;
 
 import org.librecms.contentsection.ContentSection;
-import org.librecms.contentsection.ContentType;
 
 import com.arsdigita.cms.ui.CMSForm;
 import com.arsdigita.globalization.GlobalizedMessage;
@@ -43,18 +42,13 @@ import com.arsdigita.ui.admin.GlobalizationUtil;
 import com.arsdigita.util.UncheckedWrapperException;
 
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.l10n.GlobalizationHelper;
 import org.librecms.CmsConstants;
-import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentSectionManager;
 import org.librecms.contentsection.ContentTypeManager;
 import org.librecms.contenttypes.ContentTypeInfo;
 import org.librecms.contenttypes.ContentTypesManager;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.ResourceBundle;
 import java.util.TooManyListenersException;
 import java.util.stream.Collectors;
 
@@ -62,9 +56,9 @@ import java.util.stream.Collectors;
  * This class contains a form component to that allows adding already-existing
  * content type to a content section.
  *
- * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @author Jack Chung
  * @author Michael Pih
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class SelectType extends CMSForm implements PrintListener,
                                                    FormSubmissionListener,

@@ -21,13 +21,11 @@ package com.arsdigita.cms.ui.type;
 import com.arsdigita.bebop.Component;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.cms.CMS;
-import com.arsdigita.cms.dispatcher.Utilities;
 
 import org.libreccm.security.Party;
 
 import com.arsdigita.toolbox.ui.SecurityContainer;
 
-import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.PermissionChecker;
 import org.librecms.contentsection.ContentSection;
@@ -35,8 +33,8 @@ import org.librecms.contentsection.privileges.AdminPrivileges;
 
 /**
  * 
- * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @author <a href="mailto:jross@redhat.com">Justin Ross</a>
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public final class TypeSecurityContainer extends SecurityContainer {
 

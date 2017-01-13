@@ -38,11 +38,11 @@ import org.librecms.lifecycle.LifecycleDefinitionRepository;
 import java.util.Locale;
 
 /**
- * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @author Michael Pih
  * @author Jack Chung
  * @author <a href="mailto:xdmoon@redhat.com">Xixi D'Moon</a>
  * @author <a href="jross@redhat.com">Justin Ross</a>
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class LifecycleAddForm extends BaseLifecycleForm {
 

@@ -26,13 +26,13 @@ import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.SimpleContainer;
 import com.arsdigita.bebop.event.ActionEvent;
 import com.arsdigita.bebop.event.ActionListener;
-import com.arsdigita.bebop.form.SingleSelect;
 import com.arsdigita.bebop.form.Submit;
 import com.arsdigita.cms.CMS;
+
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentType;
-import com.arsdigita.cms.dispatcher.Utilities;
+
 import com.arsdigita.cms.ui.BaseItemPane;
 import com.arsdigita.cms.ui.ContentSectionRequestLocal;
 //ToDo import com.arsdigita.cms.ui.templates.SectionTemplatesListing;
@@ -42,7 +42,7 @@ import com.arsdigita.toolbox.ui.ActionGroup;
 import com.arsdigita.toolbox.ui.Cancellable;
 import com.arsdigita.toolbox.ui.Section;
 import com.arsdigita.util.UncheckedWrapperException;
-import java.util.logging.Level;
+
 import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.PermissionChecker;
@@ -52,8 +52,8 @@ import org.librecms.contentsection.privileges.AdminPrivileges;
 
 /**
  *
- * @authro <a href="jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @author Justin Ross &lt;jross@redhat.com&gt;
+ * @author <a href="jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 final class ContentTypeItemPane extends BaseItemPane {
 

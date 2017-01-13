@@ -36,10 +36,10 @@ import org.librecms.contentsection.ContentSectionManager;
 import java.util.Locale;
 
 /**
- * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @author Uday Mathur
  * @author Michael Pih
  * @author <a href="mailto:jross@redhat.com">Justin Ross</a>
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class WorkflowAddForm extends BaseWorkflowForm {
 

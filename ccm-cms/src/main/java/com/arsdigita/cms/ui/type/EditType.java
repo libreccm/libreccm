@@ -70,9 +70,9 @@ import javax.persistence.NoResultException;
 /**
  * This class contains a form component to edit a content type
  *
- * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @author Jack Chung (flattop@arsdigita.com)
  * @author Michael Pih (pihman@arsdigita.com)
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class EditType extends CMSForm
     implements FormInitListener, FormProcessListener {

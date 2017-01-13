@@ -40,7 +40,6 @@ import java.util.Locale;
  * @author Jack Chung
  * @author Xixi D'Moon &lt;xdmoon@redhat.com&gt;
  * @author Justin Ross &lt;jross@redhat.com&gt;
- * @version $Id$
  */
 class LifecycleEditForm extends BaseLifecycleForm {
 

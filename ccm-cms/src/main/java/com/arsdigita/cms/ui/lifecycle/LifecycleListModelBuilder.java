@@ -33,9 +33,9 @@ import org.librecms.lifecycle.LifecycleDefinition;
  * Loads all the current lifecycles from the database so that they may be
  * displayed in a list.
  *
- * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @author <a href="mailto:pihman@arsdigita.com">Michael Pih</a>
  * @author <a href="mailto:flattop@arsdigita.com">Jack Chung</a>
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public final class LifecycleListModelBuilder extends LockableImpl
         implements ListModelBuilder {

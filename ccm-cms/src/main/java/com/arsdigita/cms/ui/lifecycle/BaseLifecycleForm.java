@@ -44,8 +44,8 @@ import org.librecms.lifecycle.LifecycleDefinition;
 import java.util.Locale;
 
 /**
- * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @author <a href="mailto:jross@redhat.com">Justin Ross</a>
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class BaseLifecycleForm extends BaseForm {
 

@@ -39,8 +39,8 @@ import org.apache.logging.log4j.Logger;
 /**
  * The context bar of the content section UI.
  *
- * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @author Justin Ross
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class ContentSectionContextBar extends WorkspaceContextBar {
 

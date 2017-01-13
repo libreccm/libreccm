@@ -23,8 +23,8 @@ import com.arsdigita.util.Assert;
 /**
  * Utility methods for lifecycle durations.
  *
- * @author <a href="mailto:jens.pelzetter@googlemail.com>Jens Pelzetter</a>
  * @author <a href="mailto:pihman@arsdigita.com">Michael Pih</a>
+ * @author <a href="mailto:jens.pelzetter@googlemail.com>Jens Pelzetter</a>
  */
 public class Duration {
 
