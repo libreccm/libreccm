@@ -31,9 +31,8 @@ import org.librecms.contentsection.privileges.AdminPrivileges;
 
 /**
  * 
- * @autor <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @author Justin Ross &lt;jross@redhat.com&gt;
-
+ * @autor <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 final class TypeSecurityListener implements FormSubmissionListener {
 

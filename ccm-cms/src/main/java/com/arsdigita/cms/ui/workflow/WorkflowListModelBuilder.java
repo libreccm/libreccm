@@ -35,9 +35,9 @@ import java.util.Locale;
  * Builds a list of workflow templates registered to the current content
  * section.
  *
- * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @author Michael Pih
  * @author <a href="mailto:jross@redhat.com">Justin Ross</a>
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class WorkflowListModelBuilder extends AbstractListModelBuilder {
 

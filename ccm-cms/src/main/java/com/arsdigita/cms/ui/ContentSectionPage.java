@@ -45,21 +45,13 @@ import com.arsdigita.cms.ui.workflow.WorkflowAdminPane;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.toolbox.ui.LayoutPanel;
 import com.arsdigita.util.Assert;
-import com.arsdigita.web.Web;
-
-import org.apache.logging.log4j.LogManager;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.logging.log4j.Logger;
 import org.arsdigita.cms.CMSConfig;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.PermissionChecker;
 import org.librecms.CmsConstants;
-import org.librecms.contentsection.ContentItemManager;
-import org.librecms.contentsection.ContentItemRepository;
-import org.librecms.contentsection.ContentItemVersion;
-import org.librecms.contentsection.ContentSectionConfig;
 import org.librecms.contentsection.privileges.AdminPrivileges;
 
 /**
@@ -69,12 +61,11 @@ import org.librecms.contentsection.privileges.AdminPrivileges;
  * replaced by the newer servlet based model. @see
  * c.ad.cms.ui.contentsection.MainPage (currently not active).
  *
- * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @author Jack Chung
  * @author Michael Pih
  * @author Xixi D'Moon
  * @author Justin Ross
-
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class ContentSectionPage extends CMSPage implements ActionListener {
 

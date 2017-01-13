@@ -20,7 +20,6 @@ package com.arsdigita.cms.ui.lifecycle;
 
 import com.arsdigita.bebop.BoxPanel;
 import com.arsdigita.bebop.ColumnPanel;
-import com.arsdigita.bebop.Form;
 import com.arsdigita.bebop.FormData;
 import com.arsdigita.bebop.FormProcessException;
 import com.arsdigita.bebop.PageState;
@@ -38,17 +37,15 @@ import com.arsdigita.cms.ui.CMSForm;
 import com.arsdigita.cms.ui.FormSecurityListener;
 
 import org.libreccm.cdi.utils.CdiUtil;
-import org.librecms.CmsConstants;
 import org.librecms.contentsection.privileges.AdminPrivileges;
 import org.librecms.lifecycle.PhaseDefinititionRepository;
 
-import java.math.BigDecimal;
 
 /**
  * This class handles the deleting of a phase definition.
  *
- * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @author <a href="mailto:flattop@arsdigita.com">Jack Chung</a>
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class DeletePhaseForm extends CMSForm
     implements FormProcessListener, FormInitListener {

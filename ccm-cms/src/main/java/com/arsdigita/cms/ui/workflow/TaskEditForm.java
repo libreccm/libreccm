@@ -45,8 +45,8 @@ import java.util.TooManyListenersException;
 import java.util.stream.Collectors;
 
 /**
- * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @author Justin Ross
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class TaskEditForm extends BaseTaskForm {
 

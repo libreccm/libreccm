@@ -47,8 +47,8 @@ import java.util.Locale;
 import java.util.TooManyListenersException;
 
 /**
- * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @author Justin Ross
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class TaskAddForm extends BaseTaskForm {
 

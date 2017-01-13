@@ -47,7 +47,6 @@ import com.arsdigita.cms.ui.CMSForm;
 import com.arsdigita.cms.ui.FormSecurityListener;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.kernel.KernelConfig;
-import com.arsdigita.util.UncheckedWrapperException;
 
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.ConfigurationManager;
@@ -56,18 +55,16 @@ import org.librecms.contentsection.privileges.AdminPrivileges;
 import org.librecms.lifecycle.LifecycleDefinitionRepository;
 import org.librecms.lifecycle.PhaseDefinititionRepository;
 
-import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Locale;
 
 /**
  * This class contains a form component to add a lifecycle phase definition.
  *
- * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @author Jack Chung
  * @author Xixi D'Moon
  * @author Michael Pih
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class AddPhaseForm extends CMSForm {
 

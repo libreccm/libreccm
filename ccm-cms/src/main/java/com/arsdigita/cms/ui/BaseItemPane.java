@@ -26,8 +26,8 @@ import org.apache.logging.log4j.Logger;
 import org.librecms.CmsConstants;
 
 /**
- * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @author <a href="mailto:jross@redhat.com">Justin Ross</a>
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public abstract class BaseItemPane extends ModalPanel {
 
