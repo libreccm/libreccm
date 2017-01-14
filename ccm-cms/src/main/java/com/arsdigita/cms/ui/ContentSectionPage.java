@@ -36,7 +36,7 @@ import org.librecms.contentsection.ContentSection;
 
 import com.arsdigita.cms.dispatcher.CMSPage;
 //ToDo NG import com.arsdigita.cms.ui.category.CategoryAdminPane;
-//ToDo NG import com.arsdigita.cms.ui.cse.ContentSoonExpiredPane;
+import com.arsdigita.cms.ui.cse.ContentSoonExpiredPane;
 import com.arsdigita.cms.ui.folder.FolderAdminPane;
 import com.arsdigita.cms.ui.lifecycle.LifecycleAdminPane;
 //import com.arsdigita.cms.ui.role.RoleAdminPane;
@@ -335,7 +335,7 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
         if (m_csePane == null) {
             m_csePane = new LayoutPanel();
             m_csePane.setLeft(new SimpleComponent());
-//ToDo NG            m_csePane.setBody(new ContentSoonExpiredPane());
+            m_csePane.setBody(new ContentSoonExpiredPane());
         }
         return m_csePane;
     }
@@ -454,7 +454,7 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
 //        } else if (pane == m_userAdminPane) {
             //m_userAdminPane.reset(state);
         } else if (pane == m_csePane) {
-            //m_csePane.reset(state);
+            m_csePane.reset(state);
         }
     }
 
