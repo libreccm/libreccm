@@ -54,7 +54,8 @@ import static org.librecms.CmsConstants.*;
         name = "Folder.rootFolders",
         query = "SELECT f FROM Folder f "
                     + "WHERE f.parentCategory IS NULL "
-                    + "  AND f.type = :type"),
+                    + "  AND f.type = :type")
+    ,
     @NamedQuery(
         name = "Folder.findByName",
         query = "SELECT f FROM Folder f WHERE f.name = :name")
@@ -92,7 +93,7 @@ public class Folder extends Category implements InheritsPermissions,
     protected void setType(final FolderType type) {
         this.type = type;
     }
-    
+
     @Override
     public Optional<CcmObject> getParent() {
         if (getParentFolder() == null) {
@@ -110,10 +111,10 @@ public class Folder extends Category implements InheritsPermissions,
     public List<Folder> getSubFolders() {
         return Collections.unmodifiableList(
             getSubCategories()
-            .stream()
-            .filter(subCategory -> subCategory instanceof Folder)
-            .map(subCategory -> (Folder) subCategory)
-            .collect(Collectors.toList()));
+                .stream()
+                .filter(subCategory -> subCategory instanceof Folder)
+                .map(subCategory -> (Folder) subCategory)
+                .collect(Collectors.toList()));
     }
 
     public Folder getParentFolder() {
