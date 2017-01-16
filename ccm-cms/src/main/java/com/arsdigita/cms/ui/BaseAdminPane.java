@@ -24,21 +24,18 @@ import com.arsdigita.bebop.list.ListModelBuilder;
 import com.arsdigita.bebop.tree.TreeModelBuilder;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.toolbox.ui.SelectionPanel;
-import org.apache.log4j.Logger;
+
 import org.librecms.CmsConstants;
 
 /**
  * A base component for use in CMS admin panes.
  *
+ * @param <T> Type managed by the {@link SingleSelectionModel} used by instances
+ * of this class.
+ * 
  * @author Justin Ross &lt;jross@redhat.com&gt;
  */
-public abstract class BaseAdminPane extends SelectionPanel {
-
-    /** Internal logger instance to faciliate debugging. Enable logging output
-     *  by editing /WEB-INF/conf/log4j.properties int the runtime environment
-     *  and set com.arsdigita.cms.ui.BaseAdminPane=DEBUG 
-     *  by uncommenting or adding the line.                                   */
-    private static final Logger s_log = Logger.getLogger(BaseAdminPane.class);
+public abstract class BaseAdminPane<T> extends SelectionPanel<T> {
 
     protected BaseAdminPane() {
         super();
@@ -56,13 +53,13 @@ public abstract class BaseAdminPane extends SelectionPanel {
 
     protected BaseAdminPane(final Component title,
                             final Component selector,
-                            final SingleSelectionModel model) {
+                            final SingleSelectionModel<T> model) {
         super(title, selector, model);
     }
 
     protected BaseAdminPane(final GlobalizedMessage title,
                             final Component selector,
-                            final SingleSelectionModel model) {
+                            final SingleSelectionModel<T> model) {
         super(title, selector, model);
     }
 
@@ -93,4 +90,5 @@ public abstract class BaseAdminPane extends SelectionPanel {
     protected static String lz(final String key) {
         return (String) gz(key).localize();
     }
+
 }
