@@ -33,69 +33,73 @@ import com.arsdigita.bebop.list.ListModelBuilder;
 import com.arsdigita.bebop.tree.TreeModelBuilder;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.util.Assert;
-import org.apache.log4j.Logger;
 
-/** 
- * TODO Needs description
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+/**
+ * @param <T> Type managed by the {@link SingleSelectionModel} used in instances
+ * of this class.
+ * 
+ * @author unknown
+ * @author <a href="jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class SelectionPanel extends LayoutPanel implements Resettable {
+public class SelectionPanel<T> extends LayoutPanel implements Resettable {
 
-    private static final Logger s_log = Logger.getLogger(SelectionPanel.class);
+    private static final Logger LOGGER = LogManager.getLogger(
+        SelectionPanel.class);
 
-    private SingleSelectionModel<Long> m_model;
-    private Component m_selector;
-    private ActionGroup m_group;
-    private final ModalPanel m_body;
+    private SingleSelectionModel<T> selectionModel;
+    private Component selector;
+    private ActionGroup actionGroup;
+    private final ModalPanel body;
 
-    private Component m_introPane;
-    private Component m_itemPane;
+    private Component introPane;
+    private Component itemPane;
 
-    private ActionLink m_addLink;
-    private Form m_addForm;
-    private ActionLink m_editLink;
-    private Form m_editForm;
-    private ActionLink m_deleteLink;
-    private Form m_deleteForm;
+    private ActionLink addLink;
+    private Form addForm;
+    private ActionLink editLink;
+    private Form editForm;
+    private ActionLink deleteLink;
+    private Form deleteForm;
 
     protected void build(final Component title,
-                       final Component selector,
-                       final SingleSelectionModel<Long> model) {
-        m_model = model;
-        m_selector = selector;
+                         final Component selector,
+                         final SingleSelectionModel<T> model) {
+        selectionModel = model;
+        this.selector = selector;
 
         final Section section = new Section();
         setLeft(section);
 
         section.setHeading(title);
 
-        m_group = new ActionGroup();
-        section.setBody(m_group);
+        actionGroup = new ActionGroup();
+        section.setBody(actionGroup);
 
-        m_group.setSubject(selector);
+        actionGroup.setSubject(selector);
     }
 
     protected SelectionPanel() {
-        m_body = new ModalPanel();
-        setBody(m_body);
+        body = new ModalPanel();
+        setBody(body);
 
-        m_introPane = new NullComponent();
-        m_body.add(m_introPane);
-        m_body.setDefault(m_introPane);
+        introPane = new NullComponent();
+        body.add(introPane);
+        body.setDefault(introPane);
 
-        m_itemPane = new NullComponent();
-        m_body.add(m_itemPane);
+        itemPane = new NullComponent();
+        body.add(itemPane);
 
-        m_addLink = null;
-        m_addForm = null;
-        m_editLink = null;
-        m_editForm = null;
-        m_deleteLink = null;
-        m_deleteForm = null;
+        addLink = null;
+        addForm = null;
+        editLink = null;
+        editForm = null;
+        deleteLink = null;
+        deleteForm = null;
     }
 
-    /**
-     * @pre selector instanceof Tree || selector instanceof List
-     */
     public SelectionPanel(final Component title,
                           final Component selector) {
         this();
@@ -107,7 +111,6 @@ public class SelectionPanel extends LayoutPanel implements Resettable {
         }
 
         // Making up now for some untoward modeling in Bebop.
-
         if (selector instanceof List) {
             final List list = (List) selector;
 
@@ -125,7 +128,7 @@ public class SelectionPanel extends LayoutPanel implements Resettable {
 
     public SelectionPanel(final Component title,
                           final Component selector,
-                          final SingleSelectionModel model) {
+                          final SingleSelectionModel<T> model) {
         this();
 
         if (Assert.isEnabled()) {
@@ -143,7 +146,7 @@ public class SelectionPanel extends LayoutPanel implements Resettable {
 
     public SelectionPanel(final GlobalizedMessage title,
                           final Component selector,
-                          final SingleSelectionModel model) {
+                          final SingleSelectionModel<T> model) {
         this(new Label(title), selector, model);
     }
 
@@ -169,12 +172,12 @@ public class SelectionPanel extends LayoutPanel implements Resettable {
 
     @Override
     public void reset(final PageState state) {
-        s_log.debug("Resetting to default initial state");
+        LOGGER.debug("Resetting to default initial state");
 
-        if (m_selector instanceof Resettable) {
-            ((Resettable) m_selector).reset(state);
+        if (selector instanceof Resettable) {
+            ((Resettable) selector).reset(state);
         } else {
-            m_model.clearSelection(state);
+            selectionModel.clearSelection(state);
         }
 
         // The SelectionListener, on hearing the clearSelection event,
@@ -182,35 +185,35 @@ public class SelectionPanel extends LayoutPanel implements Resettable {
     }
 
     public final void addAction(final Component action) {
-        m_group.addAction(action);
+        actionGroup.addAction(action);
     }
 
     public final void addAction(final Component action, final String clacc) {
-        m_group.addAction(action, clacc);
+        actionGroup.addAction(action, clacc);
     }
 
     public final Component getSelector() {
-        return m_selector;
+        return selector;
     }
 
-    protected final void setSelector(Component selector) {
-        m_selector = selector;
+    protected final void setSelector(final Component selector) {
+        this.selector = selector;
     }
 
-    public final void setSelectionModel(final SingleSelectionModel<Long> model) {
-        m_model = model;
+    public final void setSelectionModel(final SingleSelectionModel<T> model) {
+        selectionModel = model;
     }
 
-    public final SingleSelectionModel<Long> getSelectionModel() {
-        return m_model;
+    public final SingleSelectionModel<T> getSelectionModel() {
+        return selectionModel;
     }
 
     public final ActionLink getAddLink() {
-        return m_addLink;
+        return addLink;
     }
 
     public final Form getAddForm() {
-        return m_addForm;
+        return addForm;
     }
 
     public final void setAdd(final GlobalizedMessage message,
@@ -224,20 +227,20 @@ public class SelectionPanel extends LayoutPanel implements Resettable {
         Assert.exists(form, "Form form");
         Assert.isUnlocked(this);
 
-        m_addForm = form;
-        m_body.add(m_addForm);
+        addForm = form;
+        body.add(addForm);
 
-        m_addLink = addLink;
+        this.addLink = addLink;
 
-        m_body.connect(m_addLink, m_addForm);
+        body.connect(addLink, addForm);
     }
 
     public final ActionLink getEditLink() {
-        return m_editLink;
+        return editLink;
     }
 
     public final Form getEditForm() {
-        return m_editForm;
+        return editForm;
     }
 
     public final void setEdit(final GlobalizedMessage message,
@@ -251,21 +254,21 @@ public class SelectionPanel extends LayoutPanel implements Resettable {
         Assert.exists(form, "Form form");
         Assert.isUnlocked(this);
 
-        m_editForm = form;
-        m_body.add(m_editForm);
+        editForm = form;
+        body.add(editForm);
 
-        m_editLink = editLink;
+        this.editLink = editLink;
 
-        m_body.connect(m_editLink, m_editForm);
-        m_body.connect(m_editForm);
+        body.connect(editLink, editForm);
+        body.connect(editForm);
     }
 
     public final ActionLink getDeleteLink() {
-        return m_deleteLink;
+        return deleteLink;
     }
 
     public final Form getDeleteForm() {
-        return m_deleteForm;
+        return deleteForm;
     }
 
     public final void setDelete(final GlobalizedMessage message,
@@ -279,59 +282,62 @@ public class SelectionPanel extends LayoutPanel implements Resettable {
         Assert.exists(form, "Form form");
         Assert.isUnlocked(this);
 
-        m_deleteForm = form;
-        m_body.add(m_deleteForm);
+        deleteForm = form;
+        body.add(deleteForm);
 
-        m_deleteLink = deleteLink;
+        this.deleteLink = deleteLink;
 
-        m_body.connect(m_deleteLink, m_deleteForm);
+        body.connect(deleteLink, deleteForm);
     }
 
     public final ModalPanel getBody() {
-        return m_body;
+        return body;
     }
 
     public final Component getIntroPane() {
-        return m_introPane;
+        return introPane;
     }
 
     public final void setIntroPane(final Component pane) {
         Assert.exists(pane, Component.class);
         Assert.isUnlocked(this);
 
-        m_introPane = pane;
-        m_body.add(m_introPane);
-        m_body.setDefault(m_introPane);
+        introPane = pane;
+        body.add(introPane);
+        body.setDefault(introPane);
     }
 
     public final Component getItemPane() {
-        return m_itemPane;
+        return itemPane;
     }
 
     public final void setItemPane(final Component pane) {
         Assert.exists(pane, "Component pane");
         Assert.isUnlocked(this);
 
-        m_itemPane = pane;
-        m_body.add(m_itemPane);
+        itemPane = pane;
+        body.add(itemPane);
     }
 
     public class SelectionListener implements ChangeListener {
+
         @Override
         public final void stateChanged(final ChangeEvent e) {
-            s_log.debug("Selection state changed; I may change " +
-                        "the body's visible pane");
+            LOGGER.debug("Selection state changed; I may change "
+                             + "the body's visible pane");
 
             final PageState state = e.getPageState();
 
-            m_body.reset(state);
+            body.reset(state);
 
-            if (m_model.isSelected(state)) {
-                s_log.debug("The selection model is selected; displaying " +
-                            "the item pane");
+            if (selectionModel.isSelected(state)) {
+                LOGGER.debug("The selection model is selected; displaying "
+                                 + "the item pane");
 
-                m_body.push(state, m_itemPane);
+                body.push(state, itemPane);
             }
         }
+
     }
+
 }
