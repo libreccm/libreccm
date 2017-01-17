@@ -115,7 +115,7 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
      */
     public static final int CONTENTTYPES_TAB = 6;
     public static final int USER_ADMIN_TAB = 7;
-    
+
     private TabbedPane m_tabbedPane;
     private FolderAdminPane m_folderPane;
 //ToDo NG    private BrowsePane m_browsePane;
@@ -128,7 +128,7 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
     private ContentTypeAdminPane m_typePane;
     //private LayoutPanel m_userAdminPane;
     private LayoutPanel m_csePane;
-//ToDo NG    private ReportPane m_reportPane;
+    private ReportPane m_reportPane;
 
     /**
      * Creates the content section index page containing - a Navigaton bar for
@@ -157,7 +157,7 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
         // folder) which moved to the FolderAdminPane
         //m_userAdminPane = getUserAdminPane();
         m_csePane = getCSEPane();
-//ToDo NG        m_reportPane = getReportPane();
+        m_reportPane = getReportPane();
 
         // The panes
         m_tabbedPane = createTabbedPane();
@@ -179,29 +179,29 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
                 }
 
                 final PermissionChecker permissionChecker = CdiUtil
-                    .createCdiUtil().findBean(PermissionChecker.class);
+                        .createCdiUtil().findBean(PermissionChecker.class);
 
                 if (CMSConfig.getConfig().isHideAdminTabs()) {
                     m_tabbedPane.setTabVisible(
-                        state,
-                        m_workflowPane,
-                        permissionChecker.isPermitted(
-                            AdminPrivileges.ADMINISTER_WORKFLOW));
+                            state,
+                            m_workflowPane,
+                            permissionChecker.isPermitted(
+                                    AdminPrivileges.ADMINISTER_WORKFLOW));
 //ToDo NG
 //                    m_tabbedPane.setTabVisible(
 //                        state, m_categoryPane,
 //                        permissionChecker.isPermitted(
 //                            AdminPrivileges.ADMINISTER_CATEGORIES));
                     m_tabbedPane.setTabVisible(
-                        state,
-                        m_lifecyclePane,
-                        permissionChecker.isPermitted(
-                            AdminPrivileges.ADMINISTER_LIFECYLES));
+                            state,
+                            m_lifecyclePane,
+                            permissionChecker.isPermitted(
+                                    AdminPrivileges.ADMINISTER_LIFECYLES));
                     m_tabbedPane.setTabVisible(
-                        state,
-                        m_typePane,
-                        permissionChecker.isPermitted(
-                            AdminPrivileges.ADMINISTER_CONTENT_TYPES));
+                            state,
+                            m_typePane,
+                            permissionChecker.isPermitted(
+                                    AdminPrivileges.ADMINISTER_CONTENT_TYPES));
 //ToDo NG
 //m_tabbedPane.setTabVisible(
 //                        state,
@@ -220,7 +220,8 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
     /**
      * Creates, and then caches, the browse pane. Overriding this method to
      * return null will prevent this tab from appearing.
-     * @return 
+     *
+     * @return
      */
     protected FolderAdminPane getFolderAdminPane() {
         if (m_folderPane == null) {
@@ -242,11 +243,11 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
 //        }
 //        return m_browsePane;
 //    }
-
     /**
      * Creates, and then caches, the search pane. Overriding this method to
      * return null will prevent this tab from appearing.
-     * @return 
+     *
+     * @return
      */
 //    ToDo NG
 //    protected ItemSearch getSearchPane() {
@@ -258,7 +259,6 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
 //        }
 //        return m_searchPane;
 //    }
-
 //    ToDo NG
 //    protected ImagesPane getImagesPane() {
 //        if (m_imagesPane == null) {
@@ -266,7 +266,6 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
 //        }
 //        return m_imagesPane;
 //    }
-
 //   ToDo NG
 //    protected RoleAdminPane getRoleAdminPane() {
 //        if (m_rolePane == null) {
@@ -274,7 +273,6 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
 //        }
 //        return m_rolePane;
 //    }
-
     /**
      * Creates, and then caches, the workflow administration pane. Overriding
      * this method to return null will prevent this tab from appearing.
@@ -308,12 +306,11 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
 //        }
 //        return m_categoryPane;
 //    }
-
     /**
      * Creates, and then caches, the content type administration pane.
      * Overriding this method to return null will prevent this tab from
      * appearing.
-     * 
+     *
      * @return
      */
     protected ContentTypeAdminPane getContentTypeAdminPane() {
@@ -340,24 +337,23 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
         return m_csePane;
     }
 
-//    ToDo NG
-//    protected ReportPane getReportPane() {
-//        if (m_reportPane == null) {
-//            m_reportPane = new ReportPane();
-//        }
-//        return m_reportPane;
-//    }
+    protected ReportPane getReportPane() {
+        if (m_reportPane == null) {
+            m_reportPane = new ReportPane();
+        }
+        return m_reportPane;
+    }
 
     /**
      * Adds the specified component, with the specified tab name, to the tabbed
      * pane only if it is not null.
      *
-     * @param pane    The pane to which to add the tab
+     * @param pane The pane to which to add the tab
      * @param tabName The name of the tab if it's added
-     * @param comp    The component to add to the pane
+     * @param comp The component to add to the pane
      */
-    protected void addToPane(final TabbedPane pane, 
-                             final String tabName, 
+    protected void addToPane(final TabbedPane pane,
+                             final String tabName,
                              final Component comp) {
         if (comp != null) {
             pane.addTab(new Label(tabName), comp);
@@ -400,7 +396,6 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
         tab(pane, "cms.ui.content_types", getContentTypeAdminPane());
         tab(pane, "cms.ui.cse", getCSEPane());
 //     ToDo NG       tab(pane, "cms.ui.reports", getReportPane());
-        
 
         return pane;
     }
@@ -437,7 +432,7 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
 //        } else if (pane == m_imagesPane) {
 //            m_imagesPane.reset(state);
 //        } else 
-            if (pane == m_folderPane) {
+        if (pane == m_folderPane) {
             m_folderPane.reset(state);
 //ToDo NG        } else if (pane == m_browsePane) {
 //            m_browsePane.reset(state);
@@ -462,16 +457,16 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
      * Construct a URL for displaying the tab
      *
      * @param item The item from which we get the corresponding content section
-     * @param tab  The index of the tab to display
+     * @param tab The index of the tab to display
      *
      * @return
      */
     public static String getSectionURL(final ContentItem item, final int tab) {
         // Get the content section associated with the content item.
         final ContentSection section = item.getContentType().getContentSection();
-        
+
         final String url = section.getPrimaryUrl() + PageLocations.SECTION_PAGE
-                         + "?" + SET_TAB + "=" + tab;
+                                   + "?" + SET_TAB + "=" + tab;
 
         return url;
     }
