@@ -23,7 +23,7 @@ import com.arsdigita.bebop.Table;
 import com.arsdigita.bebop.table.AbstractTableModelBuilder;
 import com.arsdigita.bebop.table.TableModel;
 import com.arsdigita.ui.admin.GlobalizationUtil;
-import org.apache.log4j.Logger;
+
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.Party;
 import org.libreccm.security.PartyRepository;
@@ -33,6 +33,7 @@ import org.libreccm.security.RoleManager;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -41,36 +42,34 @@ import java.util.stream.Collectors;
  *
  * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  * @author Justin Ross &lt;jross@redhat.com&gt;
- * @version $Id: MemberTableModelBuilder.java 287 2005-02-22 00:29:02Z sskracic $
+ * @version $Id: MemberTableModelBuilder.java 287 2005-02-22 00:29:02Z sskracic
+ * $
  */
 class MemberTableModelBuilder extends AbstractTableModelBuilder {
 
-    private static final Logger s_log = Logger.getLogger
-        (MemberTableModelBuilder.class);
-
-    private final RoleRequestLocal m_role;
+    private final RoleRequestLocal roleRequestLocal;
 
     MemberTableModelBuilder(final RoleRequestLocal role) {
-        m_role = role;
+        roleRequestLocal = role;
     }
 
     @Override
     public final TableModel makeModel(final Table table,
                                       final PageState state) {
-        final Role role = m_role.getRole(state);
+        final Role role = roleRequestLocal.getRole(state);
 
-        //FIXME Dirty hack, needs to be filtered in the database.
-        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-        final PartyRepository partyRepository = cdiUtil.findBean(PartyRepository.class);
-        final RoleManager roleManager = cdiUtil.findBean(RoleManager.class);
-        Collection<Party> parties = partyRepository.findAll().stream()
-                .filter(x -> roleManager.hasRole(x, role))
-                .collect(Collectors.toCollection(HashSet::new));
+        final List<Party> members = role.getMemberships()
+            .stream()
+            .map(membership -> membership.getMember())
+            .collect(Collectors.toList());
+        members.sort((member1, member2) -> member1.getName().compareTo(
+            member2.getName()));
 
-        return new Model(parties);
+        return new Model(members);
     }
 
     private static class Model implements TableModel {
+
         private Party m_party;
         private final Collection<Party> m_parties;
         private final Iterator<Party> iterator;
@@ -103,19 +102,21 @@ class MemberTableModelBuilder extends AbstractTableModelBuilder {
         @Override
         public final Object getElementAt(final int column) {
             switch (column) {
-            case 0:
-                return m_party.getName();
-            case 1:
-                return lz("cms.ui.none");
-            case 2:
-                return lz("cms.ui.role.member.remove");
-            default:
-                throw new IllegalStateException();
+                case 0:
+                    return m_party.getName();
+                case 1:
+                    return lz("cms.ui.none");
+                case 2:
+                    return lz("cms.ui.role.member.remove");
+                default:
+                    throw new IllegalStateException();
             }
         }
+
     }
 
     protected static String lz(final String key) {
         return (String) GlobalizationUtil.globalize(key).localize();
     }
+
 }

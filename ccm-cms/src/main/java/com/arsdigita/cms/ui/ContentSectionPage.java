@@ -39,7 +39,7 @@ import com.arsdigita.cms.dispatcher.CMSPage;
 import com.arsdigita.cms.ui.cse.ContentSoonExpiredPane;
 import com.arsdigita.cms.ui.folder.FolderAdminPane;
 import com.arsdigita.cms.ui.lifecycle.LifecycleAdminPane;
-//import com.arsdigita.cms.ui.role.RoleAdminPane;
+import com.arsdigita.cms.ui.role.RoleAdminPane;
 import com.arsdigita.cms.ui.type.ContentTypeAdminPane;
 import com.arsdigita.cms.ui.workflow.WorkflowAdminPane;
 import com.arsdigita.globalization.GlobalizedMessage;
@@ -121,7 +121,7 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
 //ToDo NG    private BrowsePane m_browsePane;
 //ToDo NG    private ItemSearch m_searchPane;
 //ToDo NG    private ImagesPane m_imagesPane;
-//ToDo NG    private RoleAdminPane m_rolePane;
+    private RoleAdminPane m_rolePane;
     private WorkflowAdminPane m_workflowPane;
     private LifecycleAdminPane m_lifecyclePane;
 //ToDo NG    private CategoryAdminPane m_categoryPane;
@@ -148,7 +148,7 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
 //ToDo NG        m_browsePane = getBrowsePane();
 //ToDo NG        m_searchPane = getSearchPane();
 //ToDo NG        m_imagesPane = getImagesPane();
-//ToDo NG        m_rolePane = getRoleAdminPane();
+        m_rolePane = getRoleAdminPane();
         m_workflowPane = getWorkflowAdminPane();
         m_lifecyclePane = getLifecycleAdminPane();
 //ToDo NG        m_categoryPane = getCategoryAdminPane();
@@ -179,35 +179,35 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
                 }
 
                 final PermissionChecker permissionChecker = CdiUtil
-                        .createCdiUtil().findBean(PermissionChecker.class);
+                    .createCdiUtil().findBean(PermissionChecker.class);
 
                 if (CMSConfig.getConfig().isHideAdminTabs()) {
                     m_tabbedPane.setTabVisible(
-                            state,
-                            m_workflowPane,
-                            permissionChecker.isPermitted(
-                                    AdminPrivileges.ADMINISTER_WORKFLOW));
+                        state,
+                        m_workflowPane,
+                        permissionChecker.isPermitted(
+                            AdminPrivileges.ADMINISTER_WORKFLOW));
 //ToDo NG
 //                    m_tabbedPane.setTabVisible(
 //                        state, m_categoryPane,
 //                        permissionChecker.isPermitted(
 //                            AdminPrivileges.ADMINISTER_CATEGORIES));
                     m_tabbedPane.setTabVisible(
-                            state,
-                            m_lifecyclePane,
-                            permissionChecker.isPermitted(
-                                    AdminPrivileges.ADMINISTER_LIFECYLES));
+                        state,
+                        m_lifecyclePane,
+                        permissionChecker.isPermitted(
+                            AdminPrivileges.ADMINISTER_LIFECYLES));
                     m_tabbedPane.setTabVisible(
-                            state,
-                            m_typePane,
-                            permissionChecker.isPermitted(
-                                    AdminPrivileges.ADMINISTER_CONTENT_TYPES));
-//ToDo NG
-//m_tabbedPane.setTabVisible(
-//                        state,
-//                        m_rolePane,
-//                        permissionChecker.isPermitted(
-//                            AdminPrivileges.ADMINISTER_ROLES));
+                        state,
+                        m_typePane,
+                        permissionChecker.isPermitted(
+                            AdminPrivileges.ADMINISTER_CONTENT_TYPES));
+
+                    m_tabbedPane.setTabVisible(
+                        state,
+                        m_rolePane,
+                        permissionChecker.isPermitted(
+                            AdminPrivileges.ADMINISTER_ROLES));
                     // csePane: should check permission
                     m_tabbedPane.setTabVisible(state, m_csePane, true);
                     // TODO Check for reportPane as well
@@ -266,13 +266,13 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
 //        }
 //        return m_imagesPane;
 //    }
-//   ToDo NG
-//    protected RoleAdminPane getRoleAdminPane() {
-//        if (m_rolePane == null) {
-//            m_rolePane = new RoleAdminPane();
-//        }
-//        return m_rolePane;
-//    }
+    protected RoleAdminPane getRoleAdminPane() {
+        if (m_rolePane == null) {
+            m_rolePane = new RoleAdminPane();
+        }
+        return m_rolePane;
+    }
+
     /**
      * Creates, and then caches, the workflow administration pane. Overriding
      * this method to return null will prevent this tab from appearing.
@@ -348,9 +348,9 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
      * Adds the specified component, with the specified tab name, to the tabbed
      * pane only if it is not null.
      *
-     * @param pane The pane to which to add the tab
+     * @param pane    The pane to which to add the tab
      * @param tabName The name of the tab if it's added
-     * @param comp The component to add to the pane
+     * @param comp    The component to add to the pane
      */
     protected void addToPane(final TabbedPane pane,
                              final String tabName,
@@ -457,7 +457,7 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
      * Construct a URL for displaying the tab
      *
      * @param item The item from which we get the corresponding content section
-     * @param tab The index of the tab to display
+     * @param tab  The index of the tab to display
      *
      * @return
      */
@@ -466,7 +466,7 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
         final ContentSection section = item.getContentType().getContentSection();
 
         final String url = section.getPrimaryUrl() + PageLocations.SECTION_PAGE
-                                   + "?" + SET_TAB + "=" + tab;
+                               + "?" + SET_TAB + "=" + tab;
 
         return url;
     }
