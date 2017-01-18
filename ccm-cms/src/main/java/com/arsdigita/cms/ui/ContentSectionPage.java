@@ -52,6 +52,7 @@ import org.arsdigita.cms.CMSConfig;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.PermissionChecker;
 import org.librecms.CmsConstants;
+import org.librecms.contentsection.ContentItemVersion;
 import org.librecms.contentsection.privileges.AdminPrivileges;
 
 /**
@@ -119,7 +120,7 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
     private TabbedPane m_tabbedPane;
     private FolderAdminPane m_folderPane;
 //ToDo NG    private BrowsePane m_browsePane;
-//ToDo NG    private ItemSearch m_searchPane;
+    private ItemSearch m_searchPane;
 //ToDo NG    private ImagesPane m_imagesPane;
     private RoleAdminPane m_rolePane;
     private WorkflowAdminPane m_workflowPane;
@@ -146,7 +147,7 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
         // Initialize the individual panes
         m_folderPane = getFolderAdminPane();
 //ToDo NG        m_browsePane = getBrowsePane();
-//ToDo NG        m_searchPane = getSearchPane();
+        m_searchPane = getSearchPane();
 //ToDo NG        m_imagesPane = getImagesPane();
         m_rolePane = getRoleAdminPane();
         m_workflowPane = getWorkflowAdminPane();
@@ -249,16 +250,15 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
      *
      * @return
      */
-//    ToDo NG
-//    protected ItemSearch getSearchPane() {
-//        if (m_searchPane == null) {
-//            m_searchPane
-//                = new ItemSearch(
-//                    ContentItemVersion.DRAFT.toString(),
-//                    CMSConfig.getConfig().isLimitItemSearchToContentSection());
-//        }
-//        return m_searchPane;
-//    }
+    protected ItemSearch getSearchPane() {
+        if (m_searchPane == null) {
+            m_searchPane
+                = new ItemSearch(
+                    ContentItemVersion.DRAFT.toString(),
+                    CMSConfig.getConfig().isLimitItemSearchToContentSection());
+        }
+        return m_searchPane;
+    }
 //    ToDo NG
 //    protected ImagesPane getImagesPane() {
 //        if (m_imagesPane == null) {
@@ -266,6 +266,7 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
 //        }
 //        return m_imagesPane;
 //    }
+
     protected RoleAdminPane getRoleAdminPane() {
         if (m_rolePane == null) {
             m_rolePane = new RoleAdminPane();

@@ -22,9 +22,7 @@ import com.arsdigita.bebop.Form;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.Resettable;
 import com.arsdigita.bebop.SimpleContainer;
-import com.arsdigita.search.ui.QueryGenerator;
 
-import org.apache.lucene.search.Query;
 import org.librecms.contentsection.ContentItem;
 
 /**
@@ -34,7 +32,7 @@ import org.librecms.contentsection.ContentItem;
  * @author Stanislav Freidin (sfreidin@arsdigita.com)
  * @author <a href="jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class ItemSearch extends Form implements Resettable, QueryGenerator {
+public class ItemSearch extends Form implements Resettable {
 
     public static final String SINGLE_TYPE_PARAM = ItemSearchSection.SINGLE_TYPE_PARAM;
     
@@ -70,16 +68,6 @@ public class ItemSearch extends Form implements Resettable, QueryGenerator {
     protected ItemSearchSection createSearchSection(final String context,
                                                     boolean limitToContentSection) {
         return new ItemSearchSection(context, limitToContentSection);
-    }
-
-    @Override
-    public boolean hasQuery(final PageState state) {
-        return itemSearchSection.hasQuery(state);
-    }
-
-    @Override
-    public Query getQuerySpecification(final PageState state) {
-        return itemSearchSection.getQuerySpecification(state);
     }
 
     @Override

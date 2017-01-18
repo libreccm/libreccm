@@ -18,16 +18,12 @@
  */
 package com.arsdigita.cms.ui.search;
 
-import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.form.Submit;
-import org.libreccm.categorization.Category;
-import com.arsdigita.cms.CMS;
-import org.librecms.contentsection.ContentSection;
+
 import org.librecms.contentsection.ContentType;
+
 import com.arsdigita.cms.ui.ContentSectionPage;
 import com.arsdigita.search.ui.BaseQueryComponent;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This class provides a basic query form for CMS admin pages that automatically
@@ -52,6 +48,7 @@ public class ItemQueryComponent extends BaseQueryComponent {
                               final ContentType type) {
         this.context = context;
 
+//ToDo      
 //            add(new PermissionFilterComponent(
 //                    SecurityManager.CMS_PREVIEW_ITEM));
 //
@@ -121,11 +118,8 @@ public class ItemQueryComponent extends BaseQueryComponent {
 //                                      CreationUserFilterType.KEY));
 //            add(new PartyFilterWidget(new LastModifiedUserFilterType(),
 //                                      LastModifiedUserFilterType.KEY));
-        
-
-        Submit submit =
-               new Submit(context + "_search",
-                          ContentSectionPage.globalize("cms.ui.search"));
+        Submit submit = new Submit(context + "_search",
+                                   ContentSectionPage.globalize("cms.ui.search"));
         add(submit);
     }
 
