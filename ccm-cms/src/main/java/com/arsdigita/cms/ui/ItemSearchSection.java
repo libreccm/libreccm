@@ -29,8 +29,10 @@ import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.event.FormProcessListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.bebop.parameters.BigDecimalParameter;
+
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentType;
+
 import com.arsdigita.cms.ui.search.ItemQueryComponent;
 import com.arsdigita.globalization.GlobalizedMessage;
 
@@ -38,9 +40,6 @@ import com.arsdigita.search.ui.ResultsPane;
 import com.arsdigita.search.ui.QueryGenerator;
 import com.arsdigita.toolbox.ui.LayoutPanel;
 
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
-import org.apache.lucene.search.Query;
 import org.librecms.CmsConstants;
 
 /**
@@ -51,11 +50,8 @@ import org.librecms.CmsConstants;
  * @author Stanislav Freidin (sfreidin@arsdigita.com)
  * @version $Id: ItemSearchSection.java 1940 2009-05-29 07:15:05Z terry $
  */
-public class ItemSearchSection extends FormSection implements Resettable,
-                                                              QueryGenerator {
+public class ItemSearchSection extends FormSection implements Resettable {
 
-    private static final Logger LOGGER = LogManager.getLogger(
-            ItemSearchSection.class);
     public static final String SINGLE_TYPE_PARAM = "single_type";
 
     private ItemQueryComponent itemQueryComponent;
@@ -117,22 +113,13 @@ public class ItemSearchSection extends FormSection implements Resettable,
         searchPanel.setBody(resultsComponent);
         this.add(searchPanel);
 
-//        addQueryGenerator(this);
-//        addResultsPane(this);
+        addQueryGenerator(this);
+        addResultsPane(this);
         addFormListener();
 
         setClassAttr("itemSearch");
     }
 
-    @Override
-    public boolean hasQuery(final PageState state) {
-        return itemQueryComponent.hasQuery(state);
-    }
-
-    @Override
-    public Query getQuerySpecification(final PageState state) {
-        return itemQueryComponent.getQuerySpecification(state);
-    }
 
     @Override
     public void reset(final PageState state) {
