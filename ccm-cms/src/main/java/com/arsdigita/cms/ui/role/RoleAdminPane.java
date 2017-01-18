@@ -40,11 +40,11 @@ import com.arsdigita.toolbox.ui.ActionGroup;
 import com.arsdigita.toolbox.ui.Section;
 import com.arsdigita.util.LockableImpl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.Role;
 import org.libreccm.security.RoleRepository;
-import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.privileges.AdminPrivileges;
 
@@ -56,29 +56,32 @@ import org.librecms.contentsection.privileges.AdminPrivileges;
  * Since this is no longer the case, there exists only the
  * {@link RoleListModelBuilder} now.
  *
- * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
+ *
  * @author Justin Ross &lt;jross@redhat.com&gt;
- * @version $Id: RoleAdminPane.java 287 2005-02-22 00:29:02Z sskracic $
+ * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
+ * @authr  <a href="mailto:jens.pelzetter@googemail.com">Jens Pelzetter</a>
+ *
  */
-public class RoleAdminPane extends BaseAdminPane {
+public class RoleAdminPane extends BaseAdminPane<String> {
 
-    private static final Logger s_log = Logger.getLogger(RoleAdminPane.class);
+    private static final Logger LOGGER = LogManager.getLogger(
+        RoleAdminPane.class);
 
-    private final SingleSelectionModel m_model;
+    private final SingleSelectionModel<String> selectionModel;
 
-    private final List m_roles;
+    private final List rolesList;
 
     public RoleAdminPane() {
-        m_model = new ParameterSingleSelectionModel(new StringParameter(
-            List.SELECTED));
-        setSelectionModel(m_model);
+        selectionModel = new ParameterSingleSelectionModel<>(
+            new StringParameter(List.SELECTED));
+        setSelectionModel(selectionModel);
 
-        m_model.addChangeListener(new SelectionListener());
+        selectionModel.addChangeListener(new SelectionListener());
 
         RoleRequestLocal m_role = new SelectionRequestLocal();
 
-        m_roles = new List(new RoleListModelBuilder());
-        m_roles.setSelectionModel(m_model);
+        rolesList = new List(new RoleListModelBuilder());
+        rolesList.setSelectionModel(selectionModel);
 
         final SimpleContainer left = new SimpleContainer();
         setLeft(left);
@@ -90,7 +93,7 @@ public class RoleAdminPane extends BaseAdminPane {
         setDelete(gz("cms.ui.role.delete"), new DeleteForm());
 
         setIntroPane(new Label(gz("cms.ui.role.intro")));
-        setItemPane(new BaseRoleItemPane(m_model, m_role,
+        setItemPane(new BaseRoleItemPane(selectionModel, m_role,
                                          getEditLink(), getDeleteLink()));
     }
 
@@ -102,17 +105,17 @@ public class RoleAdminPane extends BaseAdminPane {
             final ActionGroup group = new ActionGroup();
             setBody(group);
 
-            group.setSubject(m_roles);
+            group.setSubject(rolesList);
 
             final ActionLink link = new ActionLink(new Label(gz(
                 "cms.ui.role.staff.add")));
 
-            group.addAction(new VisibilityComponent(
-                link,
-                AdminPrivileges.ADMINISTER_ROLES),
-                            ActionGroup.ADD);
+            group.addAction(
+                new VisibilityComponent(link,
+                                        AdminPrivileges.ADMINISTER_ROLES),
+                ActionGroup.ADD);
 
-            final RoleAddForm form = new RoleAddForm(m_model);
+            final RoleAddForm form = new RoleAddForm(selectionModel);
             getBody().add(form);
             getBody().connect(link, form);
         }
@@ -122,17 +125,17 @@ public class RoleAdminPane extends BaseAdminPane {
     private class SelectionListener implements ChangeListener {
 
         @Override
-        public final void stateChanged(final ChangeEvent e) {
-            s_log.debug("Selection state changed; I may change "
-                            + "the body's visible pane");
+        public final void stateChanged(final ChangeEvent event) {
+            LOGGER.debug("Selection state changed; I may change "
+                             + "the body's visible pane");
 
-            final PageState state = e.getPageState();
+            final PageState state = event.getPageState();
 
             getBody().reset(state);
 
-            if (m_model.isSelected(state)) {
-                s_log.debug("The selection model is selected; displaying "
-                                + "the item pane");
+            if (selectionModel.isSelected(state)) {
+                LOGGER.debug("The selection model is selected; displaying "
+                                 + "the item pane");
 
                 getBody().push(state, getItemPane());
             }
@@ -144,8 +147,7 @@ public class RoleAdminPane extends BaseAdminPane {
 
         @Override
         protected final Object initialValue(final PageState state) {
-            final Long id = Long.parseLong(m_model.getSelectedKey(state)
-                .toString());
+            final Long id = Long.parseLong(selectionModel.getSelectedKey(state));
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final RoleRepository roleRepository = cdiUtil.findBean(
                 RoleRepository.class);
@@ -187,20 +189,19 @@ public class RoleAdminPane extends BaseAdminPane {
         }
 
         @Override
-        public final void process(final FormSectionEvent e)
+        public final void process(final FormSectionEvent event)
             throws FormProcessException {
-            final PageState state = e.getPageState();
+            final PageState state = event.getPageState();
 
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final RoleRepository roleRepository = cdiUtil.findBean(
                 RoleRepository.class);
-            final Long id = Long.parseLong(m_model.getSelectedKey(state)
-                .toString());
+            final Long id = Long.parseLong(selectionModel.getSelectedKey(state));
             final Role role = roleRepository.findById(id);
 
             roleRepository.delete(role);
 
-            m_model.clearSelection(state);
+            selectionModel.clearSelection(state);
         }
 
     }

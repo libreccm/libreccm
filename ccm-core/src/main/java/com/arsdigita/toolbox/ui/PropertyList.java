@@ -21,11 +21,8 @@ package com.arsdigita.toolbox.ui;
 import com.arsdigita.bebop.SimpleComponent;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.RequestLocal;
-import com.arsdigita.globalization.GlobalizedMessage;
-import com.arsdigita.util.Assert;
 import com.arsdigita.xml.Element;
 
-import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.List;
 
