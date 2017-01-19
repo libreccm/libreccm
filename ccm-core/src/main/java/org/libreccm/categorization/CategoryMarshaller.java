@@ -19,7 +19,9 @@
 package org.libreccm.categorization;
 
 import org.libreccm.portation.AbstractMarshaller;
+import org.libreccm.portation.Marshals;
 
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
@@ -27,6 +29,8 @@ import javax.transaction.Transactional;
  * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
  * @version created on 11/7/16
  */
+@RequestScoped
+@Marshals(Category.class)
 public class CategoryMarshaller extends AbstractMarshaller<Category> {
 
     @Inject

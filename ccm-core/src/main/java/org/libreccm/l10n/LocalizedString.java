@@ -38,6 +38,8 @@ import javax.persistence.MapKeyColumn;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Type;
 import org.hibernate.search.annotations.Field;
 
@@ -60,13 +62,13 @@ public class LocalizedString implements Serializable {
      */
     @ElementCollection(fetch = FetchType.EAGER)
     @MapKeyColumn(name = "LOCALE")
-    @Column(name = "LOCALIZED_VALUE")
+    @Column(name = "LOCALIZED_VALUES")
     @Basic
     @Lob
     @Type(type = "org.hibernate.type.TextType")
     @Field
     @XmlElementWrapper(name = "values", namespace = L10N_XML_NS)
-    @XmlElement(name = "value", namespace = L10N_XML_NS)
+    @XmlElement(name = "values", namespace = L10N_XML_NS)
     private Map<Locale, String> values;
 
     /**
@@ -161,6 +163,7 @@ public class LocalizedString implements Serializable {
      * @return A {@link Set} containing all locales for which this localised
      *         string has values.
      */
+    @JsonIgnore
     public Set<Locale> getAvailableLocales() {
         return values.keySet();
     }
