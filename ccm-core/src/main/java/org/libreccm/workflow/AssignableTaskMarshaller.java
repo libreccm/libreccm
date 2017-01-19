@@ -19,7 +19,9 @@
 package org.libreccm.workflow;
 
 import org.libreccm.portation.AbstractMarshaller;
+import org.libreccm.portation.Marshals;
 
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
@@ -27,6 +29,8 @@ import javax.transaction.Transactional;
  * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
  * @version created on 11/18/16
  */
+@RequestScoped
+@Marshals(AssignableTask.class)
 public class AssignableTaskMarshaller extends AbstractMarshaller<AssignableTask> {
 
     @Inject
