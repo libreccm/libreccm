@@ -19,7 +19,9 @@
 package org.libreccm.security;
 
 import org.libreccm.portation.AbstractMarshaller;
+import org.libreccm.portation.Marshals;
 
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
@@ -28,6 +30,8 @@ import javax.transaction.Transactional;
  * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
  * @version created on 11/7/16
  */
+@RequestScoped
+@Marshals(RoleMembership.class)
 public class RoleMembershipMarshaller extends AbstractMarshaller<RoleMembership> {
 
     @Inject

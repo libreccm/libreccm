@@ -189,6 +189,7 @@ public abstract class AbstractMarshaller<P extends Portable> {
 
         List<P> objects = new ArrayList<>();
         if (lines != null) {
+            int emptyObjects = 0;
             for (String line : lines) {
                 P object = null;
                 switch (format) {
@@ -206,9 +207,13 @@ public abstract class AbstractMarshaller<P extends Portable> {
                         break;
                 }
 
-                assert object != null;
-                insertIntoDb(object);
-                objects.add(object);
+                if (object != null) {
+                    insertIntoDb(object);
+                    objects.add(object);
+                } else {
+                    emptyObjects+=1;
+                    LOGGER.info("Count of empty objects: {}", emptyObjects);
+                }
             }
         }
         return objects;
