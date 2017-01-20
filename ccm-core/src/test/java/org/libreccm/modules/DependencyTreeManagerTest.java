@@ -30,8 +30,6 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.resolver.api.maven.Maven;
-import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
 import org.junit.After;
 import org.junit.AfterClass;
 
@@ -44,7 +42,6 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.libreccm.tests.categories.IntegrationTest;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -110,6 +107,7 @@ public class DependencyTreeManagerTest {
             .addClass(org.libreccm.modules.IntegrationException.class)
             .addClass(org.libreccm.modules.TreeNode.class)
             .addClass(org.libreccm.modules.CcmModule.class)
+            .addClass(org.libreccm.modules.ModuleEvent.class)
             .addClass(org.libreccm.modules.ModuleInfo.class)
             .addClass(org.libreccm.modules.ModuleStatus.class)
             .addClass(org.libreccm.modules.Module.class)
@@ -126,6 +124,8 @@ public class DependencyTreeManagerTest {
                 org.libreccm.modules.dependencytree.test.valid.TestModuleB.class)
             .addClass(
                 org.libreccm.modules.dependencytree.test.valid.TestModuleC.class)
+//            .addClass(org.libreccm.portation.Portable.class)
+            .addPackage(org.libreccm.pagemodel.PageModel.class.getPackage())
             .addClass(org.libreccm.web.ApplicationType.class)
             .addAsLibraries(getModuleDependencies())
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")

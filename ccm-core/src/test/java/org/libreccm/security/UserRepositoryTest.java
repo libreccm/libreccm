@@ -33,14 +33,12 @@ import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.resolver.api.maven.Maven;
-import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
 import org.junit.After;
 import org.junit.AfterClass;
 
 import static org.junit.Assert.*;
+
 import static org.libreccm.testutils.DependenciesHelpers.*;
 
 import org.junit.Before;
@@ -50,7 +48,6 @@ import org.junit.runner.RunWith;
 import org.libreccm.core.EmailAddress;
 import org.libreccm.tests.categories.IntegrationTest;
 
-import java.io.File;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -126,6 +123,7 @@ public class UserRepositoryTest {
             .addClass(com.arsdigita.kernel.security.SecurityConfig.class)
             .addClass(com.arsdigita.kernel.KernelConfig.class)
             .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
+            .addClass(org.libreccm.portation.Portable.class)
             .addAsLibraries(getModuleDependencies())
             .addAsResource("configs/shiro.ini", "shiro.ini")
             .addAsResource("test-persistence.xml",
