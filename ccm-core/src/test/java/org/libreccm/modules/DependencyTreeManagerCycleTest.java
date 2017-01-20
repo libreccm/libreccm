@@ -94,6 +94,7 @@ public class DependencyTreeManagerCycleTest {
             .addClass(org.libreccm.modules.IntegrationException.class)
             .addClass(TreeNode.class)
             .addClass(org.libreccm.modules.CcmModule.class)
+            .addClass(org.libreccm.modules.ModuleEvent.class)
             .addClass(org.libreccm.modules.ModuleInfo.class)
             .addClass(org.libreccm.modules.ModuleStatus.class)
             .addClass(org.libreccm.modules.Module.class)
@@ -110,6 +111,7 @@ public class DependencyTreeManagerCycleTest {
                 org.libreccm.modules.dependencytree.test.cycle.TestModuleB.class)
             .addClass(
                 org.libreccm.modules.dependencytree.test.cycle.TestModuleC.class)
+            .addPackage(org.libreccm.pagemodel.PageModel.class.getPackage())
             .addClass(org.libreccm.web.ApplicationType.class)
             .addAsLibraries(getModuleDependencies())
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
