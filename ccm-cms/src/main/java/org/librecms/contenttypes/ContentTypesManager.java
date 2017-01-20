@@ -18,7 +18,6 @@
  */
 package org.librecms.contenttypes;
 
-import com.arsdigita.util.UncheckedWrapperException;
 
 import org.libreccm.modules.CcmModule;
 import org.librecms.contentsection.ContentItem;
