@@ -62,7 +62,7 @@ public class LocalizedString implements Serializable {
      */
     @ElementCollection(fetch = FetchType.EAGER)
     @MapKeyColumn(name = "LOCALE")
-    @Column(name = "LOCALIZED_VALUES")
+    @Column(name = "LOCALIZED_VALUE")
     @Basic
     @Lob
     @Type(type = "org.hibernate.type.TextType")

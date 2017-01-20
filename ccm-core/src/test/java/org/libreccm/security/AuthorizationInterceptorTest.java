@@ -126,6 +126,7 @@ public class AuthorizationInterceptorTest {
             .addPackage(com.arsdigita.xml.formatters.DateTimeFormatter.class
                 .getPackage())
             .addClass(com.arsdigita.kernel.KernelConfig.class)
+            .addClass(org.libreccm.portation.Portable.class)
             .addAsLibraries(getModuleDependencies())
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")
