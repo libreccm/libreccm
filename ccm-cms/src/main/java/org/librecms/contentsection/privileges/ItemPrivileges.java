@@ -30,6 +30,11 @@ import org.librecms.contentsection.ContentItem;
 public final class ItemPrivileges {
 
     /**
+     * Allows the user to edit the permissions for items.
+     */
+    public static final String ADMINISTER = "administer_items";
+    
+    /**
      * Allows the user to approve {@link ContentItem}s.
      */
     public static final String APPROVE = "approve_items";

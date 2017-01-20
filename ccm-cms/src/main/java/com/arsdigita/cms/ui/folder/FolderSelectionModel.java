@@ -26,6 +26,7 @@ import com.arsdigita.ui.CcmObjectSelectionModel;
 
 import org.apache.log4j.Category;
 import org.librecms.contentsection.ContentSection;
+import org.librecms.contentsection.Folder;
 
 
 /**
@@ -34,15 +35,15 @@ import org.librecms.contentsection.ContentSection;
  * com.arsdigita.cms.Folder}.
  *
  * @author <a href="mailto:lutter@arsdigita.com">David Lutterkort</a>
- * @version $Id$
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class FolderSelectionModel extends CcmObjectSelectionModel {
+public class FolderSelectionModel extends CcmObjectSelectionModel<Folder> {
 
     public FolderSelectionModel(String name) {
         super(Category.class.getName(), name);
     }
 
-    public FolderSelectionModel(final SingleSelectionModel model) {
+    public FolderSelectionModel(final SingleSelectionModel<Long> model) {
         super(Category.class.getName(), model);
     }
 
@@ -60,10 +61,11 @@ public class FolderSelectionModel extends CcmObjectSelectionModel {
     /**
      * Clear the selection by resetting it to the root folder id.
      *
-     * @param s represents the curent request.
+     * @param state represents the cuerent request.
      */
-    public void clearSelection(PageState s) {
-        setSelectedKey(s, getRootFolderID(s));
+    @Override
+    public void clearSelection(final PageState state) {
+        setSelectedKey(state, getRootFolderID(state));
     }
 
     /**
@@ -72,13 +74,13 @@ public class FolderSelectionModel extends CcmObjectSelectionModel {
      * is to be used outside a content section, this method has to be overriden
      * appropriately.
      *
-     * @param s represents the current request
+     * @param state represents the current request
      * @return the ID of the root folder
      *
      * @pre s != null
      * @post return != null
      */
-    protected Long getRootFolderID(PageState s) {
+    protected Long getRootFolderID(final PageState state) {
         ContentSection sec = CMS.getContext().getContentSection();
         return sec.getRootDocumentsFolder().getObjectId();
     }
@@ -86,8 +88,11 @@ public class FolderSelectionModel extends CcmObjectSelectionModel {
     /**
      * Return true, since this selection model will always have a folder
      * selected in it
+     * @param state
+     * @return 
      */
-    public boolean isSelected(PageState s) {
+    @Override
+    public boolean isSelected(final PageState state) {
         return true;
     }
 

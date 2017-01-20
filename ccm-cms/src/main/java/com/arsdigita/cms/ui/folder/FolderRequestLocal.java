@@ -26,6 +26,7 @@ import org.apache.log4j.Logger;
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryRepository;
 import org.libreccm.cdi.utils.CdiUtil;
+import org.librecms.contentsection.Folder;
 
 
 public class FolderRequestLocal extends CcmObjectRequestLocal {
@@ -55,8 +56,8 @@ public class FolderRequestLocal extends CcmObjectRequestLocal {
         }
     }
 
-    public final Category getFolder(final PageState state) {
-        return (Category) get(state);
+    public final Folder getFolder(final PageState state) {
+        return (Folder) get(state);
     }
 
 }

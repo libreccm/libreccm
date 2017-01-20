@@ -113,11 +113,11 @@ public abstract class UserAddForm extends SimpleContainer
 
         m_form = makeForm(name);
 
-        Label title = new Label(new GlobalizedMessage("cms.ui.matches",
+        final Label title = new Label(new GlobalizedMessage("cms.ui.matches",
                                                       CmsConstants.CMS_BUNDLE));
         title.setFontWeight(Label.BOLD);
 
-        Label label = new Label(new GlobalizedMessage(
+        final Label label = new Label(new GlobalizedMessage(
             "cms.ui.there_was_no_one_matching_the_search_criteria",
             CmsConstants.CMS_BUNDLE));
         label.setFontWeight("em");

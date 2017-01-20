@@ -169,6 +169,7 @@ public class ContentSectionSetup extends AbstractCcmApplicationSetup {
         
         grantPermissions(manager,
                          rootFolder,
+                         ItemPrivileges.ADMINISTER,
                          ItemPrivileges.CATEGORIZE,
                          ItemPrivileges.CREATE_NEW,
                          ItemPrivileges.EDIT,

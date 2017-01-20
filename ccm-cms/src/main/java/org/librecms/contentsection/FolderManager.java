@@ -20,6 +20,7 @@ package org.librecms.contentsection;
 
 import com.arsdigita.kernel.KernelConfig;
 
+import org.libreccm.categorization.Categorization;
 import org.libreccm.categorization.CategoryManager;
 import org.libreccm.configuration.ConfigurationManager;
 
@@ -111,7 +112,7 @@ public class FolderManager {
      * and the content section to which the folder belongs are the same as for
      * the provided parent folder.
      *
-     * @param name The name of the new folder.
+     * @param name   The name of the new folder.
      * @param parent The folder in which the new folder is generated.
      *
      * @return The new folder.
@@ -120,16 +121,16 @@ public class FolderManager {
     public Folder createFolder(final String name, final Folder parent) {
         if (parent == null) {
             throw new IllegalArgumentException(
-                    "Can't create a folder without a parent folder.");
+                "Can't create a folder without a parent folder.");
         }
 
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException(
-                    "Can't create a folder with an empty name");
+                "Can't create a folder with an empty name");
         }
 
         final KernelConfig kernelConfig = confManager.findConfiguration(
-                KernelConfig.class);
+            KernelConfig.class);
 
         final Folder folder = new Folder();
         folder.setName(name);
@@ -147,7 +148,7 @@ public class FolderManager {
     public FolderIsDeletable folderIsDeletable(final Folder folder) {
         if (folder == null) {
             throw new IllegalArgumentException(
-                    "Can't check if null is deletable.");
+                "Can't check if null is deletable.");
         }
 
         if (!folder.getSubCategories().isEmpty()) {
@@ -183,20 +184,20 @@ public class FolderManager {
                 break;
             case HAS_SUBCATEGORIES:
                 throw new IllegalArgumentException(String.format(
-                        "Can't delete folder \"%s\" because the folder is not empty",
-                        getFolderPath(folder, true)));
+                    "Can't delete folder \"%s\" because the folder is not empty",
+                    getFolderPath(folder, true)));
             case IS_NOT_EMPTY:
                 throw new IllegalArgumentException(String.format(
-                        "Can't delete folder \"%s\" because the folder is not empty.",
-                        getFolderPath(folder)));
+                    "Can't delete folder \"%s\" because the folder is not empty.",
+                    getFolderPath(folder)));
             case IS_ROOT_FOLDER:
                 throw new IllegalArgumentException(
-                        "The folder to delete is a root folder can can't be deleted.");
+                    "The folder to delete is a root folder can can't be deleted.");
             default:
                 throw new IllegalArgumentException(String.format(
-                        "Unexpected return value from #folderIsDeletable: "
-                                + "\"%s\".",
-                        status.toString()));
+                    "Unexpected return value from #folderIsDeletable: "
+                        + "\"%s\".",
+                    status.toString()));
         }
     }
 
@@ -213,13 +214,13 @@ public class FolderManager {
     public void moveFolder(final Folder folder, final Folder target) {
 
         if (folder
-                    == null) {
+                == null) {
             throw new IllegalArgumentException("Can't move folder null");
         }
 
         if (target == null) {
             throw new IllegalArgumentException(
-                    "Can't move a folder to folder null");
+                "Can't move a folder to folder null");
         }
 
         final FolderIsMovable status = folderIsMovable(folder, target);
@@ -228,18 +229,18 @@ public class FolderManager {
                 final Folder source = folder.getParentFolder();
                 categoryManager.removeSubCategoryFromCategory(folder, source);
                 final boolean sameName = target.getSubCategories()
-                        .stream()
-                        .anyMatch(subCategory -> folder.getName().equals(
-                                subCategory
-                                .getName()));
+                    .stream()
+                    .anyMatch(subCategory -> folder.getName().equals(
+                    subCategory
+                        .getName()));
                 if (sameName) {
                     final String name = String.format("%s_1", folder.getName());
                     folder.setName(name);
                     folder.setDisplayName(name);
 
                     final KernelConfig kernelConfig = confManager.
-                            findConfiguration(
-                                    KernelConfig.class);
+                        findConfiguration(
+                            KernelConfig.class);
                     folder.getTitle().addValue(kernelConfig.getDefaultLocale(),
                                                name);
                 }
@@ -248,36 +249,36 @@ public class FolderManager {
             }
             case IS_ROOT_FOLDER:
                 throw new IllegalArgumentException(String.format(
-                        "The folder \"%s\" to move is a root folder can can't "
-                                + "be moved.",
-                        getFolderPath(folder)));
+                    "The folder \"%s\" to move is a root folder can can't "
+                        + "be moved.",
+                    getFolderPath(folder)));
             case SAME_FOLDER:
                 throw new IllegalArgumentException(
-                        "The folder to move and the target folder are the same "
-                                + "folder.");
+                    "The folder to move and the target folder are the same "
+                        + "folder.");
             case DIFFERENT_SECTIONS:
                 throw new IllegalArgumentException(String.format(
-                        "Folders can't be moved between content section. The "
-                                + "folder \"%s\" to move belongs to section "
-                                + "\"%s\", the target folder \"%s\" belongs to "
-                                + "section \"%s\".",
-                        getFolderPath(folder),
-                        folder.getSection().getDisplayName(),
-                        getFolderPath(target),
-                        target.getSection().getDisplayName()));
+                    "Folders can't be moved between content section. The "
+                        + "folder \"%s\" to move belongs to section "
+                        + "\"%s\", the target folder \"%s\" belongs to "
+                        + "section \"%s\".",
+                    getFolderPath(folder),
+                    folder.getSection().getDisplayName(),
+                    getFolderPath(target),
+                    target.getSection().getDisplayName()));
             case DIFFERENT_TYPES:
                 throw new IllegalArgumentException(
-                        "The folder to move is a \"%s\","
-                                + "but the target folder is a \"%s\" folder.");
+                    "The folder to move is a \"%s\","
+                        + "but the target folder is a \"%s\" folder.");
             case HAS_LIVE_ITEMS:
                 throw new IllegalArgumentException(String.format(
-                        "Can't move folder \"%s\" because some items in the "
-                                + "folder or its sub folder are live.",
-                        getFolderPath(folder, true)));
+                    "Can't move folder \"%s\" because some items in the "
+                        + "folder or its sub folder are live.",
+                    getFolderPath(folder, true)));
             default:
                 throw new IllegalArgumentException(String.format(
-                        "Unexpected return value from #folderIsMovable: %s",
-                        status.toString()));
+                    "Unexpected return value from #folderIsMovable: %s",
+                    status.toString()));
         }
 
 //        if (folder.getParentFolder()
@@ -345,7 +346,7 @@ public class FolderManager {
 
         if (target == null) {
             throw new IllegalArgumentException(
-                    "Can't check if a server can be moved to null.");
+                "Can't check if a server can be moved to null.");
         }
 
         if (folder.getParentFolder() == null) {
@@ -378,19 +379,19 @@ public class FolderManager {
      * @param folder The folder to check for live items.
      *
      * @return {@code true} if there any live items in the folder or its sub
-     * folders, {@code false} if not.
+     *         folders, {@code false} if not.
      */
     private boolean liveItemsInFolder(final Folder folder) {
         final boolean liveItemsInFolder = folder.getObjects()
-                .stream()
-                .map(categorization -> categorization.getCategorizedObject())
-                .filter(object -> object instanceof ContentItem)
-                .map(object -> (ContentItem) object)
-                .anyMatch(item -> itemManager.isLive(item));
+            .stream()
+            .map(categorization -> categorization.getCategorizedObject())
+            .filter(object -> object instanceof ContentItem)
+            .map(object -> (ContentItem) object)
+            .anyMatch(item -> itemManager.isLive(item));
 
         final boolean liveItemsInSubFolders = folder.getSubFolders()
-                .stream()
-                .anyMatch(subFolder -> liveItemsInFolder(subFolder));
+            .stream()
+            .anyMatch(subFolder -> liveItemsInFolder(subFolder));
 
         return liveItemsInFolder || liveItemsInSubFolders;
     }
@@ -401,7 +402,7 @@ public class FolderManager {
      * @param folder The folder.
      *
      * @return The path of the folder as a UNIX-like path, but without the
-     * content section as prefix.
+     *         content section as prefix.
      */
     public String getFolderPath(final Folder folder) {
         return getFolderPath(folder, false);
@@ -410,12 +411,12 @@ public class FolderManager {
     /**
      * Returns the path of folder.
      *
-     * @param folder The folder.
+     * @param folder             The folder.
      * @param withContentSection Whether to include the content section in the
-     * path.
+     *                           path.
      *
      * @return The path of the folder as a UNIX-like path, optionally with the
-     * content section the folder belongs to as prefix..
+     *         content section the folder belongs to as prefix..
      */
     public String getFolderPath(final Folder folder,
                                 final boolean withContentSection) {
@@ -441,6 +442,33 @@ public class FolderManager {
         } else {
             return String.format("/%s/", path);
         }
+    }
+
+    /**
+     * Creates list with a parent folders of the provided folder.
+     *
+     * @param folder The folder.
+     *
+     * @return
+     */
+    public List<Folder> getParentFolders(final Folder folder) {
+
+        if (folder == null) {
+            throw new IllegalArgumentException(
+                "Can't create a list of parent folder for folder null.");
+        }
+
+        final List<Folder> folders = new ArrayList<>();
+        if (folder.getParentFolder() != null) {
+            Folder currentFolder = folder.getParentFolder();
+            while(currentFolder != null) {
+                folders.add(currentFolder);
+                currentFolder = folder.getParentFolder();
+            }
+        }
+        
+        Collections.reverse(folders);
+        return folders;
     }
 
 }
