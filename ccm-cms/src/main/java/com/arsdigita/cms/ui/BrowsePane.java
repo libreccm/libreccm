@@ -36,11 +36,7 @@ import com.arsdigita.cms.ui.folder.FolderTreeModelBuilder;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.toolbox.ui.LayoutPanel;
 import com.arsdigita.util.Assert;
-import com.arsdigita.web.Web;
 
-import java.math.BigDecimal;
-
-import org.apache.log4j.Logger;
 import org.libreccm.categorization.Category;
 import org.libreccm.core.CcmObject;
 import org.librecms.CmsConstants;
@@ -51,25 +47,23 @@ import org.librecms.CmsConstants;
  * the "Browse" tab.
  *
  * @author David LutterKort &lt;dlutter@redhat.com&gt;
- * @version $Id: BrowsePane.java 1325 2006-09-22 08:11:33Z sskracic $
+ * @author <a href="jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class BrowsePane extends LayoutPanel implements Resettable {
 
-    private static final Logger s_log = Logger.getLogger(BrowsePane.class);
-
-    private final BaseTree m_tree;
-    private final SingleSelectionModel m_model;
-    private final FolderSelectionModel m_folderModel; // To support legacy UI code
-    private final FolderRequestLocal m_folder;
-    private final FlatItemList m_fil;
+    private final BaseTree tree;
+    private final SingleSelectionModel selectionModel;
+    private final FolderSelectionModel folderModel; // To support legacy UI code
+    private final FolderRequestLocal folderRequestLocal;
+    private final FlatItemList flatItemList;
 
     public BrowsePane() {
 
         /* The folder tree displayed on the left side / left column           */
-        m_tree = new BaseTree(new FolderTreeModelBuilder());
-        m_model = m_tree.getSelectionModel();
-        m_folderModel = new FolderSelectionModel(m_model);
-        m_folder = new FolderRequestLocal(m_folderModel);
+        tree = new BaseTree(new FolderTreeModelBuilder());
+        selectionModel = tree.getSelectionModel();
+        folderModel = new FolderSelectionModel(selectionModel);
+        folderRequestLocal = new FolderRequestLocal(folderModel);
 
         final SegmentedPanel left = new SegmentedPanel();
         setLeft(left);
@@ -77,21 +71,21 @@ public class BrowsePane extends LayoutPanel implements Resettable {
         final Label heading = new Label(
             new GlobalizedMessage("cms.ui.folder_browser",
                                   CmsConstants.CMS_FOLDER_BUNDLE));
-        left.addSegment(heading, m_tree);
+        left.addSegment(heading, tree);
 
-        m_fil = new FlatItemList(m_folder, m_folderModel);
-        setBody(m_fil);
+        flatItemList = new FlatItemList(folderRequestLocal, folderModel);
+        setBody(flatItemList);
 
-        m_fil.getManipulator().getItemView().addProcessListener(
+        flatItemList.getManipulator().getItemView().addProcessListener(
             new ProcessListener());
-        m_fil.getManipulator().getTargetSelector().addProcessListener(
+        flatItemList.getManipulator().getTargetSelector().addProcessListener(
             new ProcessListener());
-        m_fil.getManipulator().getTargetSelector().addSubmissionListener(
+        flatItemList.getManipulator().getTargetSelector().addSubmissionListener(
             new SubmissionListener());
     }
 
     @Override
-    public final void register(Page page) {
+    public final void register(final Page page) {
         super.register(page);
 
         page.addActionListener(new FolderListener());
@@ -99,10 +93,10 @@ public class BrowsePane extends LayoutPanel implements Resettable {
     }
 
     @Override
-    public final void reset(PageState state) {
+    public final void reset(final PageState state) {
         super.reset(state);
 
-        m_fil.reset(state);
+        flatItemList.reset(state);
     }
 
     // Private classes and methods
@@ -111,19 +105,16 @@ public class BrowsePane extends LayoutPanel implements Resettable {
      */
     private final class ProcessListener implements FormProcessListener {
 
-        /**
-         *
-         * @param e
-         */
-        public final void process(final FormSectionEvent e) {
-            final PageState state = e.getPageState();
+        @Override
+        public final void process(final FormSectionEvent event) {
+            final PageState state = event.getPageState();
 
-            if (e.getSource() == m_fil.getManipulator().getItemView()) {
+            if (event.getSource() == flatItemList.getManipulator().getItemView()) {
                 // Hide everything except for the flat item list
-                m_tree.setVisible(state, false);
-            } else if (e.getSource() == m_fil.getManipulator()
+                tree.setVisible(state, false);
+            } else if (event.getSource() == flatItemList.getManipulator()
                 .getTargetSelector()) {
-                m_tree.setVisible(state, true);
+                tree.setVisible(state, true);
             }
         }
 
@@ -131,12 +122,15 @@ public class BrowsePane extends LayoutPanel implements Resettable {
 
     private final class SubmissionListener implements FormSubmissionListener {
 
-        public final void submitted(final FormSectionEvent e) {
-            final PageState s = e.getPageState();
+        @Override
+        public final void submitted(final FormSectionEvent event) {
+            final PageState state = event.getPageState();
 
-            if (e.getSource() == m_fil.getManipulator().getTargetSelector()) {
-                if (!m_fil.getManipulator().getTargetSelector().isVisible(s)) {
-                    m_tree.setVisible(s, true);
+            if (event.getSource() == flatItemList.getManipulator()
+                .getTargetSelector()) {
+                if (!flatItemList.getManipulator().getTargetSelector()
+                    .isVisible(state)) {
+                    tree.setVisible(state, true);
                 }
             }
         }
@@ -145,17 +139,18 @@ public class BrowsePane extends LayoutPanel implements Resettable {
 
     private final class FolderListener implements ActionListener {
 
-        public final void actionPerformed(final ActionEvent e) {
-            final PageState state = e.getPageState();
+        @Override
+        public final void actionPerformed(final ActionEvent event) {
+            final PageState state = event.getPageState();
 
-            if (!m_model.isSelected(state)) {
+            if (!selectionModel.isSelected(state)) {
                 final String folder = state.getRequest().getParameter(
                     ContentSectionPage.SET_FOLDER);
 
                 if (folder == null) {
                     final Category root = CMS.getContext().getContentSection()
                         .getRootDocumentsFolder();
-                    Long folderID = root.getObjectId();
+                    final Long folderID = root.getObjectId();
 
                     /*
                     ToDo
@@ -168,9 +163,9 @@ public class BrowsePane extends LayoutPanel implements Resettable {
                         }
 
                     }*/
-                    m_model.setSelectedKey(state, folderID);
+                    selectionModel.setSelectedKey(state, folderID);
                 } else {
-                    m_model.setSelectedKey(state, folder);
+                    selectionModel.setSelectedKey(state, folder);
                 }
             }
         }
@@ -179,21 +174,22 @@ public class BrowsePane extends LayoutPanel implements Resettable {
 
     private final class TreeListener implements ActionListener {
 
-        public final void actionPerformed(final ActionEvent e) {
-            final PageState state = e.getPageState();
+        @Override
+        public final void actionPerformed(final ActionEvent event) {
+            final PageState state = event.getPageState();
 
             if (Assert.isEnabled()) {
-                Assert.isTrue(m_model.isSelected(state));
+                Assert.isTrue(selectionModel.isSelected(state));
             }
 
             final Category root = CMS.getContext().getContentSection()
                 .getRootDocumentsFolder();
 
-            if (!root.equals(m_folder.getFolder(state))) {
+            if (!root.equals(folderRequestLocal.getFolder(state))) {
                 // Expand the ancestor nodes of the currently
                 // selected node.
 
-                CcmObject object = m_folder.getFolder(state);
+                CcmObject object = folderRequestLocal.getFolder(state);
 
                 while (object != null) {
                     if (object instanceof Category) {
@@ -204,7 +200,7 @@ public class BrowsePane extends LayoutPanel implements Resettable {
 
                             if (result instanceof Category) {
                                 object = result;
-                                m_tree.expand(
+                                tree.expand(
                                     ((Long) object.getObjectId()).toString(),
                                     state);
                             } else {

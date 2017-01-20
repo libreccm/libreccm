@@ -119,7 +119,7 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
 
     private TabbedPane m_tabbedPane;
     private FolderAdminPane m_folderPane;
-//ToDo NG    private BrowsePane m_browsePane;
+    private BrowsePane m_browsePane;
     private ItemSearch m_searchPane;
 //ToDo NG    private ImagesPane m_imagesPane;
     private RoleAdminPane m_rolePane;
@@ -146,7 +146,7 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
 
         // Initialize the individual panes
         m_folderPane = getFolderAdminPane();
-//ToDo NG        m_browsePane = getBrowsePane();
+        m_browsePane = getBrowsePane();
         m_searchPane = getSearchPane();
 //ToDo NG        m_imagesPane = getImagesPane();
         m_rolePane = getRoleAdminPane();
@@ -237,13 +237,12 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
      *
      * @return
      */
-//    ToDo NG
-//    protected BrowsePane getBrowsePane() {
-//        if (m_browsePane == null) {
-//            m_browsePane = new BrowsePane();
-//        }
-//        return m_browsePane;
-//    }
+    protected BrowsePane getBrowsePane() {
+        if (m_browsePane == null) {
+            m_browsePane = new BrowsePane();
+        }
+        return m_browsePane;
+    }
     /**
      * Creates, and then caches, the search pane. Overriding this method to
      * return null will prevent this tab from appearing.
