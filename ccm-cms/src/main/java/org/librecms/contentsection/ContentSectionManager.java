@@ -542,12 +542,12 @@ public class ContentSectionManager {
 
         section.addContentType(contentType);
 
+        sectionRepo.save(section);
+        typeRepo.save(contentType);
+        
         section.getRoles().stream()
                 .forEach(role -> permissionManager.grantPrivilege(
                 TypePrivileges.USE_TYPE, role, contentType));
-
-        sectionRepo.save(section);
-        typeRepo.save(contentType);
 
         return contentType;
     }

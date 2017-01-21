@@ -66,7 +66,7 @@ import static org.librecms.CmsConstants.*;
 @Entity
 @Audited
 @Table(name = "CONTENT_ITEMS", schema = DB_SCHEMA)
-@Indexed
+//@Indexed
 @NamedQueries({
     @NamedQuery(
         name = "ContentItem.findByType",
