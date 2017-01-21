@@ -39,6 +39,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.libreccm.security.Shiro;
 import org.libreccm.tests.categories.IntegrationTest;
 
 import java.util.Locale;
@@ -69,6 +70,9 @@ public class ContentItemL10NManagerTest {
 
     @Inject
     private ContentItemL10NManager l10nManager;
+
+    @Inject
+    private Shiro shiro;
 
     public ContentItemL10NManagerTest() {
     }
@@ -107,6 +111,7 @@ public class ContentItemL10NManagerTest {
                 .getPackage())
             .addPackage(org.libreccm.l10n.LocalizedString.class
                 .getPackage())
+            .addClass(org.libreccm.portation.Portable.class)
             .addPackage(org.libreccm.security.Permission.class.getPackage())
             .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
             .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
@@ -171,15 +176,18 @@ public class ContentItemL10NManagerTest {
     @UsingDataSet("datasets/org/librecms/contentsection/"
                       + "ContentItemL10NManagerTest/data.xml")
     public void verifyHasLanguage() {
-        final Optional<ContentItem> item = itemRepo.findById(-10100L);
-        assertThat(item.isPresent(), is(true));
+        shiro.getSystemUser().execute(() -> {
+            final Optional<ContentItem> item = itemRepo.findById(-10100L);
+            assertThat(item.isPresent(), is(true));
 
-        assertThat(l10nManager.hasLanguage(item.get(), Locale.ENGLISH),
-                   is(true));
-        assertThat(l10nManager.hasLanguage(item.get(), Locale.FRENCH),
-                   is(true));
-        assertThat(l10nManager.hasLanguage(item.get(), Locale.GERMAN),
-                   is(false));
+            assertThat(l10nManager.hasLanguage(item.get(), Locale.ENGLISH),
+                       is(true));
+            assertThat(l10nManager.hasLanguage(item.get(), Locale.FRENCH),
+                       is(true));
+            assertThat(l10nManager.hasLanguage(item.get(), Locale.GERMAN),
+                       is(false));
+        });
+
     }
 
     /**
@@ -378,8 +386,8 @@ public class ContentItemL10NManagerTest {
     }
 
     /**
-     * Tries to normalise the languages of a content item by using null null
-     * null null null null null null null null null null null     {@link ContentItemL10NManager#normalizedLanguages(org.librecms.contentsection.ContentItem) 
+     * Tries to normalise the languages of a content item by using
+     * {@link ContentItemL10NManager#normalizedLanguages(org.librecms.contentsection.ContentItem)}
      */
     @Test
     @InSequence(120)

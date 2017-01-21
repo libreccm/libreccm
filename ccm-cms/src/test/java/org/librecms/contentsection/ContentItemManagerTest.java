@@ -132,6 +132,7 @@ public class ContentItemManagerTest {
             .addPackage(org.libreccm.l10n.LocalizedString.class
                 .getPackage())
             .addPackage(org.libreccm.security.Permission.class.getPackage())
+            .addClass(org.libreccm.portation.Portable.class)
             .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
             .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
             .addPackage(com.arsdigita.bebop.Component.class.getPackage())
@@ -229,28 +230,30 @@ public class ContentItemManagerTest {
                           "workflow_id"
         })
     public void createContentItem() {
-        final ContentSection section = sectionRepo.findByLabel("info");
-        final Folder folder = section.getRootDocumentsFolder();
+        shiro.getSystemUser().execute(() -> {
+            final ContentSection section = sectionRepo.findByLabel("info");
+            final Folder folder = section.getRootDocumentsFolder();
 
-        final Article article = itemManager.createContentItem("new-article",
-                                                              section,
-                                                              folder,
-                                                              Article.class);
+            final Article article = itemManager.createContentItem("new-article",
+                                                                  section,
+                                                                  folder,
+                                                                  Article.class);
 
-        assertThat("DisplayName has not the expected value.",
-                   article.getDisplayName(), is(equalTo("new-article")));
-        final Locale locale = new Locale("en");
-        assertThat("Name has not the expected value.",
-                   article.getName().getValue(locale),
-                   is(equalTo("new-article")));
-        assertThat("workflow was not added to content item.",
-                   article.getWorkflow(), is(not(nullValue())));
+            assertThat("DisplayName has not the expected value.",
+                       article.getDisplayName(), is(equalTo("new-article")));
+            final Locale locale = new Locale("en");
+            assertThat("Name has not the expected value.",
+                       article.getName().getValue(locale),
+                       is(equalTo("new-article")));
+            assertThat("workflow was not added to content item.",
+                       article.getWorkflow(), is(not(nullValue())));
 
-        final TypedQuery<Long> query = entityManager.createQuery(
-            "SELECT COUNT(w) FROM Workflow w", Long.class);
-        final long workflowCount = query.getSingleResult();
-        assertThat("Expected three workflows in database.",
-                   workflowCount, is(4L));
+            final TypedQuery<Long> query = entityManager.createQuery(
+                "SELECT COUNT(w) FROM Workflow w", Long.class);
+            final long workflowCount = query.getSingleResult();
+            assertThat("Expected three workflows in database.",
+                       workflowCount, is(4L));
+        });
     }
 
     /**
@@ -286,10 +289,12 @@ public class ContentItemManagerTest {
                             + "ContentItemManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void createItemNameIsNull() {
-        final ContentSection section = sectionRepo.findByLabel("info");
-        final Folder folder = section.getRootDocumentsFolder();
+        shiro.getSystemUser().execute(() -> {
+            final ContentSection section = sectionRepo.findByLabel("info");
+            final Folder folder = section.getRootDocumentsFolder();
 
-        itemManager.createContentItem(null, section, folder, Article.class);
+            itemManager.createContentItem(null, section, folder, Article.class);
+        });
     }
 
     /**
@@ -305,10 +310,12 @@ public class ContentItemManagerTest {
                             + "ContentItemManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void createItemNameIsEmpty() {
-        final ContentSection section = sectionRepo.findByLabel("info");
-        final Folder folder = section.getRootDocumentsFolder();
+        shiro.getSystemUser().execute(() -> {
+            final ContentSection section = sectionRepo.findByLabel("info");
+            final Folder folder = section.getRootDocumentsFolder();
 
-        itemManager.createContentItem(" ", section, folder, Article.class);
+            itemManager.createContentItem(" ", section, folder, Article.class);
+        });
     }
 
     /**
@@ -325,9 +332,11 @@ public class ContentItemManagerTest {
                             + "ContentItemManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void createItemFolderIsNull() {
-        final ContentSection section = sectionRepo.findByLabel("info");
+        shiro.getSystemUser().execute(() -> {
+            final ContentSection section = sectionRepo.findByLabel("info");
 
-        itemManager.createContentItem("Test", section, null, Article.class);
+            itemManager.createContentItem("Test", section, null, Article.class);
+        });
     }
 
     /**
@@ -356,33 +365,35 @@ public class ContentItemManagerTest {
                           "workflow_id"
         })
     public void createContentItemWithWorkflow() {
-        final ContentSection section = sectionRepo.findByLabel("info");
-        final Folder folder = section.getRootDocumentsFolder();
+        shiro.getSystemUser().execute(() -> {
+            final ContentSection section = sectionRepo.findByLabel("info");
+            final Folder folder = section.getRootDocumentsFolder();
 
-        final WorkflowTemplate workflowTemplate = workflowTemplateRepo
-            .findById(-110L);
+            final WorkflowTemplate workflowTemplate = workflowTemplateRepo
+                .findById(-110L);
 
-        final Article article = itemManager.createContentItem(
-            "new-article",
-            section,
-            folder,
-            workflowTemplate,
-            Article.class);
+            final Article article = itemManager.createContentItem(
+                "new-article",
+                section,
+                folder,
+                workflowTemplate,
+                Article.class);
 
-        assertThat("DisplayName has not the expected value.",
-                   article.getDisplayName(), is(equalTo("new-article")));
-        final Locale locale = new Locale("en");
-        assertThat("Name has not the expected value.",
-                   article.getName().getValue(locale),
-                   is(equalTo("new-article")));
-        assertThat("workflow was not added to content item.",
-                   article.getWorkflow(), is(not(nullValue())));
+            assertThat("DisplayName has not the expected value.",
+                       article.getDisplayName(), is(equalTo("new-article")));
+            final Locale locale = new Locale("en");
+            assertThat("Name has not the expected value.",
+                       article.getName().getValue(locale),
+                       is(equalTo("new-article")));
+            assertThat("workflow was not added to content item.",
+                       article.getWorkflow(), is(not(nullValue())));
 
-        final TypedQuery<Long> query = entityManager.createQuery(
-            "SELECT COUNT(w) FROM Workflow w", Long.class);
-        final long workflowCount = query.getSingleResult();
-        assertThat("Expected three workflows in database.",
-                   workflowCount, is(4L));
+            final TypedQuery<Long> query = entityManager.createQuery(
+                "SELECT COUNT(w) FROM Workflow w", Long.class);
+            final long workflowCount = query.getSingleResult();
+            assertThat("Expected three workflows in database.",
+                       workflowCount, is(4L));
+        });
     }
 
     /**
@@ -399,17 +410,19 @@ public class ContentItemManagerTest {
                             + "ContentItemManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void createItemTypeNotInSectionWithWorkflow() {
-        final ContentSection section = sectionRepo.findByLabel("info");
-        final Folder folder = section.getRootDocumentsFolder();
+        shiro.getSystemUser().execute(() -> {
+            final ContentSection section = sectionRepo.findByLabel("info");
+            final Folder folder = section.getRootDocumentsFolder();
 
-        final WorkflowTemplate workflowTemplate = workflowTemplateRepo
-            .findById(-110L);
+            final WorkflowTemplate workflowTemplate = workflowTemplateRepo
+                .findById(-110L);
 
-        itemManager.createContentItem("Test",
-                                      section,
-                                      folder,
-                                      workflowTemplate,
-                                      Event.class);
+            itemManager.createContentItem("Test",
+                                          section,
+                                          folder,
+                                          workflowTemplate,
+                                          Event.class);
+        });
     }
 
     /**
@@ -426,17 +439,19 @@ public class ContentItemManagerTest {
                             + "ContentItemManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void createItemNameIsNullWithWorkflow() {
-        final ContentSection section = sectionRepo.findByLabel("info");
-        final Folder folder = section.getRootDocumentsFolder();
+        shiro.getSystemUser().execute(() -> {
+            final ContentSection section = sectionRepo.findByLabel("info");
+            final Folder folder = section.getRootDocumentsFolder();
 
-        final WorkflowTemplate workflowTemplate = workflowTemplateRepo
-            .findById(-110L);
+            final WorkflowTemplate workflowTemplate = workflowTemplateRepo
+                .findById(-110L);
 
-        itemManager.createContentItem(null,
-                                      section,
-                                      folder,
-                                      workflowTemplate,
-                                      Article.class);
+            itemManager.createContentItem(null,
+                                          section,
+                                          folder,
+                                          workflowTemplate,
+                                          Article.class);
+        });
     }
 
     /**
@@ -453,14 +468,16 @@ public class ContentItemManagerTest {
                             + "ContentItemManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void createItemNameIsNullWorkflowIsNull() {
-        final ContentSection section = sectionRepo.findByLabel("info");
-        final Folder folder = section.getRootDocumentsFolder();
+        shiro.getSystemUser().execute(() -> {
+            final ContentSection section = sectionRepo.findByLabel("info");
+            final Folder folder = section.getRootDocumentsFolder();
 
-        itemManager.createContentItem(null,
-                                      section,
-                                      folder,
-                                      null,
-                                      Article.class);
+            itemManager.createContentItem(null,
+                                          section,
+                                          folder,
+                                          null,
+                                          Article.class);
+        });
     }
 
     /**
@@ -477,16 +494,18 @@ public class ContentItemManagerTest {
                             + "ContentItemManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void createItemFolderIsNullWithWorkflow() {
-        final ContentSection section = sectionRepo.findByLabel("info");
+        shiro.getSystemUser().execute(() -> {
+            final ContentSection section = sectionRepo.findByLabel("info");
 
-        final WorkflowTemplate workflowTemplate = workflowTemplateRepo
-            .findById(-110L);
+            final WorkflowTemplate workflowTemplate = workflowTemplateRepo
+                .findById(-110L);
 
-        itemManager.createContentItem("Test",
-                                      section,
-                                      null,
-                                      workflowTemplate,
-                                      Article.class);
+            itemManager.createContentItem("Test",
+                                          section,
+                                          null,
+                                          workflowTemplate,
+                                          Article.class);
+        });
     }
 
     /**
@@ -550,7 +569,7 @@ public class ContentItemManagerTest {
     }
 
     /**
-     * Verifies that null     {@link ContentItemManager#move(org.librecms.contentsection.ContentItem, org.librecms.contentsection.Folder) 
+     * Verifies that null null null null null null null null null null null null     {@link ContentItemManager#move(org.librecms.contentsection.ContentItem, org.librecms.contentsection.Folder) 
      * throws an {@link IllegalArgumentException} if the type of the item to
      * copy has not been registered in content section to which the target
      * folder belongs.
