@@ -135,6 +135,7 @@ public class ContentSectionManagerTest {
                 .getPackage())
             .addPackage(org.libreccm.l10n.LocalizedString.class
                 .getPackage())
+            .addPackage(org.libreccm.portation.Portable.class.getPackage())
             .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class.
                 getPackage())
             .addPackage(org.libreccm.security.Permission.class.getPackage())
@@ -425,7 +426,9 @@ public class ContentSectionManagerTest {
         value = "datasets/org/librecms/contentsection/"
                     + "ContentSectionManagerTest/after-add-contenttype.xml",
         excludeColumns = {"object_id",
-                          "uuid"})
+                          "uuid",
+                          "permission_id",
+                          "creation_date"})
     @InSequence(400)
     public void addContentTypeToSection() {
         final ContentSection section = repository.findById(-1100L);

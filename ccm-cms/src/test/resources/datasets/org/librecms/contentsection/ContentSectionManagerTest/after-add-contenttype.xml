@@ -529,5 +529,35 @@
                           object_id="-1100" 
                           grantee_id="-3600" 
                           creation_date="2016-07-15"/>
+    <ccm_core.permissions permission_id="-4710"
+                          granted_privilege="use_type"
+                          object_id="-10003"
+                          grantee_id="-3100"
+                          creation_date="2016-07-15" />
+    <ccm_core.permissions permission_id="-4720"
+                          granted_privilege="use_type"
+                          object_id="-10003"
+                          grantee_id="-3200"
+                          creation_date="2016-07-15" />
+    <ccm_core.permissions permission_id="-4730"
+                          granted_privilege="use_type"
+                          object_id="-10003"
+                          grantee_id="-3300"
+                          creation_date="2016-07-15" />
+    <ccm_core.permissions permission_id="-4740"
+                          granted_privilege="use_type"
+                          object_id="-10003"
+                          grantee_id="-3400"
+                          creation_date="2016-07-15" />
+    <ccm_core.permissions permission_id="-4750"
+                          granted_privilege="use_type"
+                          object_id="-10003"
+                          grantee_id="-3500"
+                          creation_date="2016-07-15" />
+    <ccm_core.permissions permission_id="-4760"
+                          granted_privilege="use_type"
+                          object_id="-10003"
+                          grantee_id="-3600"
+                          creation_date="2016-07-15" />
     
 </dataset>

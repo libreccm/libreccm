@@ -18,7 +18,6 @@
  */
 package org.librecms.contentsection;
 
-
 import java.util.List;
 import java.util.Optional;
 
@@ -119,6 +118,7 @@ public class AssetManagerTest {
                 .getPackage())
             .addPackage(org.libreccm.l10n.LocalizedString.class
                 .getPackage())
+            .addClass(org.libreccm.portation.Portable.class)
             .addPackage(org.libreccm.security.Permission.class.getPackage())
             .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
             .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
@@ -196,9 +196,11 @@ public class AssetManagerTest {
      */
     @Test
     @InSequence(100)
-    @UsingDataSet("datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
     @ShouldMatchDataSet(
-        value = "datasets/org/librecms/contentsection/AssetManagerTest/after-share.xml",
+        value
+        = "datasets/org/librecms/contentsection/AssetManagerTest/after-share.xml",
         excludeColumns = {"asset_id",
                           "categorization_id",
                           "id",
@@ -232,8 +234,10 @@ public class AssetManagerTest {
      */
     @Test(expected = IllegalArgumentException.class)
     @InSequence(110)
-    @UsingDataSet("datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
-    @ShouldMatchDataSet("datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
+    @ShouldMatchDataSet(
+        "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void shareAssetNull() {
         final Folder folder = folderRepo.findById(-420L);
@@ -252,8 +256,10 @@ public class AssetManagerTest {
      */
     @Test(expected = IllegalArgumentException.class)
     @InSequence(120)
-    @UsingDataSet("datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
-    @ShouldMatchDataSet("datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
+    @ShouldMatchDataSet(
+        "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void shareAssetFolderIsNull() throws MimeTypeParseException {
         final File file = new File();
@@ -272,8 +278,10 @@ public class AssetManagerTest {
      */
     @Test(expected = IllegalArgumentException.class)
     @InSequence(130)
-    @UsingDataSet("datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
-    @ShouldMatchDataSet("datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
+    @ShouldMatchDataSet(
+        "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void shareAlreadySharedAsset() {
         final Folder folder = folderRepo.findById(-420L);
@@ -291,7 +299,8 @@ public class AssetManagerTest {
      */
     @Test
     @InSequence(300)
-    @UsingDataSet("datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
     @ShouldMatchDataSet(
         value = "datasets/org/librecms/contentsection/AssetManagerTest/"
                     + "after-clean-orphaned.xml",
@@ -307,7 +316,8 @@ public class AssetManagerTest {
      */
     @Test
     @InSequence(400)
-    @UsingDataSet("datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
     @ShouldMatchDataSet(
         value = "datasets/org/librecms/contentsection/AssetManagerTest/"
                     + "after-move-to-other-folder.xml",
@@ -332,7 +342,8 @@ public class AssetManagerTest {
      */
     @Test
     @InSequence(410)
-    @UsingDataSet("datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
     @ShouldMatchDataSet(
         value = "datasets/org/librecms/contentsection/AssetManagerTest/"
                     + "after-move-to-other-contentsection.xml",
@@ -358,8 +369,10 @@ public class AssetManagerTest {
      */
     @Test(expected = IllegalArgumentException.class)
     @InSequence(420)
-    @UsingDataSet("datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
-    @ShouldMatchDataSet("datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
+    @ShouldMatchDataSet(
+        "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void moveAssetNull() {
         final Asset asset = null;
@@ -378,8 +391,10 @@ public class AssetManagerTest {
      */
     @Test(expected = IllegalArgumentException.class)
     @InSequence(430)
-    @UsingDataSet("datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
-    @ShouldMatchDataSet("datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
+    @ShouldMatchDataSet(
+        "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void moveAssetTargetFolderIsNull() {
         final Asset asset = assetRepo.findById(-900L);
@@ -398,8 +413,10 @@ public class AssetManagerTest {
      */
     @Test(expected = IllegalArgumentException.class)
     @InSequence(430)
-    @UsingDataSet("datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
-    @ShouldMatchDataSet("datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
+    @ShouldMatchDataSet(
+        "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void moveAssetTargetFolderIsNotAssetFolder() {
         final Asset asset = assetRepo.findById(-900L);
@@ -417,7 +434,8 @@ public class AssetManagerTest {
      */
     @Test
     @InSequence(500)
-    @UsingDataSet("datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
     @ShouldMatchDataSet(
         value = "datasets/org/librecms/contentsection/AssetManagerTest/"
                     + "after-copy-to-other-folder.xml",
@@ -445,7 +463,8 @@ public class AssetManagerTest {
      */
     @Test
     @InSequence(510)
-    @UsingDataSet("datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
     @ShouldMatchDataSet(
         value = "datasets/org/librecms/contentsection/AssetManagerTest/"
                     + "after-copy-to-same-folder.xml",
@@ -475,7 +494,8 @@ public class AssetManagerTest {
      */
     @Test
     @InSequence(520)
-    @UsingDataSet("datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
     @ShouldMatchDataSet(
         value = "datasets/org/librecms/contentsection/AssetManagerTest/"
                     + "after-copy-to-other-contentsection.xml",
@@ -505,8 +525,10 @@ public class AssetManagerTest {
      */
     @Test(expected = IllegalArgumentException.class)
     @InSequence(530)
-    @UsingDataSet("datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
-    @ShouldMatchDataSet("datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
+    @ShouldMatchDataSet(
+        "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void copyAssetNull() {
         final Asset asset = null;
@@ -525,8 +547,10 @@ public class AssetManagerTest {
      */
     @Test(expected = IllegalArgumentException.class)
     @InSequence(540)
-    @UsingDataSet("datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
-    @ShouldMatchDataSet("datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
+    @ShouldMatchDataSet(
+        "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void copyAssetTargetFolderIsNull() {
         final Asset asset = assetRepo.findById(-1100L);
@@ -545,8 +569,10 @@ public class AssetManagerTest {
      */
     @Test(expected = IllegalArgumentException.class)
     @InSequence(550)
-    @UsingDataSet("datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
-    @ShouldMatchDataSet("datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
+    @ShouldMatchDataSet(
+        "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void copyAssetTargetFolderIsNotAssetFolder() {
         final Asset asset = assetRepo.findById(-1100L);
@@ -565,8 +591,10 @@ public class AssetManagerTest {
      */
     @Test
     @InSequence(600)
-    @UsingDataSet("datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
-    @ShouldMatchDataSet("datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
+    @ShouldMatchDataSet(
+        "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
     public void verifyIsAssetInUse() {
         final Asset header = assetRepo.findById(-700L);
         final Asset phb = assetRepo.findById(-800L);
@@ -594,8 +622,10 @@ public class AssetManagerTest {
      */
     @Test
     @InSequence(700)
-    @UsingDataSet("datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
-    @ShouldMatchDataSet("datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
+    @ShouldMatchDataSet(
+        "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
     public void verifyGetAssetPathWithoutContentSection() {
         final Asset header = assetRepo.findById(-700L);
         final Asset phb = assetRepo.findById(-800L);
@@ -628,8 +658,10 @@ public class AssetManagerTest {
      */
     @Test
     @InSequence(800)
-    @UsingDataSet("datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
-    @ShouldMatchDataSet("datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
+    @ShouldMatchDataSet(
+        "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
     public void verifyGetAssetPathWithContentSection() {
         final Asset header = assetRepo.findById(-700L);
         final Asset phb = assetRepo.findById(-800L);
@@ -662,8 +694,10 @@ public class AssetManagerTest {
      */
     @Test
     @InSequence(900)
-    @UsingDataSet("datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
-    @ShouldMatchDataSet("datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
+    @ShouldMatchDataSet(
+        "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
     public void verifyGetAssetFolder() {
         final Asset header = assetRepo.findById(-700L);
         final Asset phb = assetRepo.findById(-800L);
@@ -715,8 +749,10 @@ public class AssetManagerTest {
      */
     @Test
     @InSequence(1000)
-    @UsingDataSet("datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
-    @ShouldMatchDataSet("datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
+    @UsingDataSet(
+        "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
+    @ShouldMatchDataSet(
+        "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
     public void verifyGetAssetFolders() {
         final Asset header = assetRepo.findById(-700L);
         final Asset phb = assetRepo.findById(-800L);
