@@ -21,6 +21,7 @@ package org.libreccm.portation;
 import org.libreccm.categorization.CategorizationMarshaller;
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryMarshaller;
+import org.libreccm.security.Group;
 import org.libreccm.security.GroupMarshaller;
 import org.libreccm.security.GroupMembershipMarshaller;
 import org.libreccm.security.PermissionMarshaller;
@@ -34,6 +35,7 @@ import org.libreccm.workflow.WorkflowTemplateMarshaller;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+
 import java.util.List;
 
 /**
@@ -57,6 +59,7 @@ class ImportHelper {
     @Inject
     private UserMarshaller userMarshaller;
     @Inject
+    @Marshals(Group.class)
     private GroupMarshaller groupMarshaller;
     @Inject
     private GroupMembershipMarshaller groupMembershipMarshaller;
