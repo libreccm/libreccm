@@ -4,7 +4,6 @@ drop sequence if exists HIBERNATE_SEQUENCE;
 
 create schema CCM_CORE;
 
-
     create table CCM_CORE.APPLICATIONS (
         APPLICATION_TYPE varchar(1024) not null,
         PRIMARY_URL varchar(1024) not null,
@@ -402,6 +401,7 @@ create schema CCM_CORE;
         CLASS_ATTRIBUTE varchar(512),
         ID_ATTRIBUTE varchar(255),
         COMPONENT_KEY varchar(255),
+        MODEL_UUID varchar(255) not null,
         STYLE_ATTRIBUTE varchar(1024),
         UUID varchar(255) not null,
         PAGE_MODEL_ID bigint,
@@ -424,6 +424,7 @@ create schema CCM_CORE;
 
     create table CCM_CORE.PAGE_MODELS (
         PAGE_MODEL_ID bigint not null,
+        MODEL_UUID varchar(255) not null,
         NAME varchar(255),
         TYPE varchar(255) not null,
         UUID varchar(255) not null,
@@ -443,8 +444,10 @@ create schema CCM_CORE;
         CREATION_DATE timestamp,
         CREATION_IP varchar(255),
         granted_privilege varchar(255),
+        INHERITED boolean,
         CREATION_USER_ID bigint,
         GRANTEE_ID bigint,
+        INHERITED_FROM_ID bigint,
         OBJECT_ID bigint,
         primary key (PERMISSION_ID)
     );
@@ -533,10 +536,10 @@ create schema CCM_CORE;
         SETTING_ID bigint not null,
         CONFIGURATION_CLASS varchar(512) not null,
         NAME varchar(512) not null,
+        SETTING_VALUE_BIG_DECIMAL decimal(19,2),
         SETTING_VALUE_BOOLEAN boolean,
         SETTING_VALUE_STRING varchar(1024),
         SETTING_VALUE_DOUBLE double,
-        SETTING_VALUE_BIG_DECIMAL decimal(19,2),
         SETTING_VALUE_LONG bigint,
         primary key (SETTING_ID)
     );
@@ -1031,6 +1034,11 @@ create sequence hibernate_sequence start with 1 increment by 1;
         add constraint FKikx3x0kn9fito23g50v6xbr9f 
         foreign key (GRANTEE_ID) 
         references CCM_CORE.CCM_ROLES;
+
+    alter table CCM_CORE.PERMISSIONS 
+        add constraint FKc1x3h1p3o20qiwmonpmva7t5i 
+        foreign key (INHERITED_FROM_ID) 
+        references CCM_CORE.CCM_OBJECTS;
 
     alter table CCM_CORE.PERMISSIONS 
         add constraint FKkamckexjnffnt8lay9nqeawhm 

@@ -54,7 +54,11 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
 import org.hibernate.search.annotations.IndexedEmbedded;
+import org.libreccm.security.RecursivePermissions;
+import org.librecms.contentsection.privileges.AssetPrivileges;
+import org.librecms.contentsection.privileges.ItemPrivileges;
 
 import static org.librecms.CmsConstants.*;
 
@@ -237,6 +241,9 @@ public class ContentItem extends CcmObject implements Serializable,
     @Column(name = "ANCESTORS", length = 1024)
     private String ancestors;
 
+    @RecursivePermissions(privileges = {AssetPrivileges.EDIT, 
+                                        AssetPrivileges.DELETE, 
+                                        AssetPrivileges.VIEW})
     @OneToMany(mappedBy = "item")
     private List<AttachmentList> attachments;
 

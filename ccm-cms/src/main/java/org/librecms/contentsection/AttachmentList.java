@@ -23,6 +23,8 @@ import org.libreccm.core.CcmObject;
 import org.libreccm.core.Identifiable;
 import org.libreccm.l10n.LocalizedString;
 import org.libreccm.security.InheritsPermissions;
+import org.libreccm.security.RecursivePermissions;
+import org.librecms.contentsection.privileges.AssetPrivileges;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -137,6 +139,9 @@ public class AttachmentList implements Comparable<AttachmentList>,
     private LocalizedString description;
 
     @OneToMany(mappedBy = "attachmentList")
+    @RecursivePermissions(privileges = {AssetPrivileges.EDIT, 
+                                        AssetPrivileges.DELETE, 
+                                        AssetPrivileges.VIEW})
     private List<ItemAttachment<?>> attachments;
 
     public AttachmentList() {

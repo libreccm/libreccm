@@ -19,7 +19,6 @@
 package org.libreccm.security;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.search.annotations.ContainedIn;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.IndexedEmbedded;
@@ -42,12 +41,15 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
 
 import static org.libreccm.core.CoreConstants.CORE_XML_NS;
 import static org.libreccm.core.CoreConstants.DB_SCHEMA;
+
+import javax.persistence.OneToOne;
 
 /**
  * A permission grants a privilege on an object or system wide to {@link Role}.
@@ -61,15 +63,18 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
                 query = "SELECT COUNT(p) FROM Permission p "
                             + "WHERE p.grantedPrivilege = :privilege "
                             + "AND p.grantee = :grantee "
-                            + "AND p.object = :object"),
+                            + "AND p.object = :object")
+    ,
     @NamedQuery(name = "Permission.existsForPrivilegeAndRole",
                 query = "SELECT count(p) FROM Permission p "
                             + "WHERE p.grantedPrivilege = :privilege "
                             + "AND p.grantee = :grantee "
-                            + "AND p.object IS NULL"),
+                            + "AND p.object IS NULL")
+    ,
     @NamedQuery(name = "Permission.findPermissionsForRole",
                 query = "SELECT p FROM Permission p "
-                            + "WHERE p.grantee = :grantee"),
+                            + "WHERE p.grantee = :grantee")
+    ,
     @NamedQuery(name = "Permission.findPermissionsForCcmObject",
                 query = "SELECT p FROM Permission p "
                             + "WHERE p.object = :object")
@@ -92,7 +97,7 @@ public class Permission implements Serializable, Portable {
     /**
      * The granted privilege.
      */
-    @Column(name = "granted_privilege")
+    @Column(name = "GRANTED_PRIVILEGE")
     @Field
     @XmlElement(name = "privilege", namespace = CORE_XML_NS)
     private String grantedPrivilege;
@@ -143,6 +148,21 @@ public class Permission implements Serializable, Portable {
     @Column(name = "CREATION_IP")
     @XmlElement(name = "creation-ip", namespace = CORE_XML_NS)
     private String creationIp;
+
+    /**
+     * If the permission is inherited from another object this field is set to
+     * {@code true}.
+     */
+    @Column(name = "INHERITED")
+    private boolean inherited;
+
+    /**
+     * If the permission is inherited from another object this field points to
+     * the object from the which the permission was inherited.
+     */
+    @OneToOne
+    @JoinColumn(name = "INHERITED_FROM_ID")
+    private CcmObject inheritedForm;
 
     protected Permission() {
         //Nothing
@@ -208,6 +228,22 @@ public class Permission implements Serializable, Portable {
         this.creationIp = creationIp;
     }
 
+    public boolean isInherited() {
+        return inherited;
+    }
+
+    protected void setInherited(boolean inherited) {
+        this.inherited = inherited;
+    }
+
+    public CcmObject getInheritedForm() {
+        return inheritedForm;
+    }
+
+    protected void setInheritedForm(CcmObject inheritedForm) {
+        this.inheritedForm = inheritedForm;
+    }
+
     @Override
     public int hashCode() {
         int hash = 3;
@@ -215,6 +251,7 @@ public class Permission implements Serializable, Portable {
         hash = 97 * hash + Objects.hashCode(grantedPrivilege);
         hash = 97 * hash + Objects.hashCode(creationDate);
         hash = 97 * hash + Objects.hashCode(creationIp);
+        hash = 97 * hash + Boolean.hashCode(inherited);
         return hash;
     }
 
@@ -241,7 +278,11 @@ public class Permission implements Serializable, Portable {
             return false;
         }
         
-        return Objects.equals(creationIp, other.getCreationIp());
+        if (!Objects.equals(creationIp, other.getCreationIp())) {
+            return false;
+        }
+
+        return inherited == other.isInherited();
     }
 
     public boolean canEqual(final Object obj) {

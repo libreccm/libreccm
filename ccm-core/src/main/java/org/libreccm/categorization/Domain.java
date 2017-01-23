@@ -26,6 +26,7 @@ import org.hibernate.validator.constraints.URL;
 import org.libreccm.core.CcmObject;
 import org.libreccm.core.DefaultEntityGraph;
 import org.libreccm.l10n.LocalizedString;
+import org.libreccm.security.RecursivePermissions;
 import org.libreccm.web.CcmApplication;
 
 import java.io.Serializable;
@@ -189,6 +190,7 @@ public class Domain extends CcmObject implements Serializable {
     /**
      * The root category of the domain.
      */
+    @RecursivePermissions
     @ManyToOne
     @JoinColumn(name = "ROOT_CATEGORY_ID")
     @XmlElement(name = "root", namespace = CAT_XML_NS)

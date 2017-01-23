@@ -401,6 +401,7 @@ create schema CCM_CORE;
         CLASS_ATTRIBUTE varchar(512),
         ID_ATTRIBUTE varchar(255),
         COMPONENT_KEY varchar(255),
+        MODEL_UUID varchar(255) not null,
         STYLE_ATTRIBUTE varchar(1024),
         UUID varchar(255) not null,
         PAGE_MODEL_ID int8,
@@ -423,6 +424,7 @@ create schema CCM_CORE;
 
     create table CCM_CORE.PAGE_MODELS (
         PAGE_MODEL_ID int8 not null,
+        MODEL_UUID varchar(255) not null,
         NAME varchar(255),
         TYPE varchar(255) not null,
         UUID varchar(255) not null,
@@ -442,8 +444,10 @@ create schema CCM_CORE;
         CREATION_DATE timestamp,
         CREATION_IP varchar(255),
         granted_privilege varchar(255),
+        INHERITED boolean,
         CREATION_USER_ID int8,
         GRANTEE_ID int8,
+        INHERITED_FROM_ID int8,
         OBJECT_ID int8,
         primary key (PERMISSION_ID)
     );
@@ -532,10 +536,10 @@ create schema CCM_CORE;
         SETTING_ID int8 not null,
         CONFIGURATION_CLASS varchar(512) not null,
         NAME varchar(512) not null,
+        SETTING_VALUE_BIG_DECIMAL numeric(19, 2),
         SETTING_VALUE_BOOLEAN boolean,
         SETTING_VALUE_STRING varchar(1024),
         SETTING_VALUE_DOUBLE float8,
-        SETTING_VALUE_BIG_DECIMAL numeric(19, 2),
         SETTING_VALUE_LONG int8,
         primary key (SETTING_ID)
     );
@@ -1030,6 +1034,11 @@ create sequence hibernate_sequence start 1 increment 1;
         add constraint FKikx3x0kn9fito23g50v6xbr9f 
         foreign key (GRANTEE_ID) 
         references CCM_CORE.CCM_ROLES;
+
+    alter table CCM_CORE.PERMISSIONS 
+        add constraint FKc1x3h1p3o20qiwmonpmva7t5i 
+        foreign key (INHERITED_FROM_ID) 
+        references CCM_CORE.CCM_OBJECTS;
 
     alter table CCM_CORE.PERMISSIONS 
         add constraint FKkamckexjnffnt8lay9nqeawhm 
