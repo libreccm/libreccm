@@ -32,6 +32,8 @@ import org.libreccm.workflow.TaskAssignmentMarshaller;
 import org.libreccm.workflow.WorkflowMarshaller;
 import org.libreccm.workflow.WorkflowTemplateMarshaller;
 
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import java.util.List;
 
 /**
@@ -41,101 +43,107 @@ import java.util.List;
  * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
  * @version created on 12/1/16
  */
+@RequestScoped
 class ImportHelper {
-    private static String pathName =
+    private String pathName =
             "/home/tosmers/Svn/libreccm/ccm_ng/ccm-core/src/test/resources/" +
                     "portation/trunk-iaw-exports";
-    private static boolean indentation = false;
+    private boolean indentation = false;
+
+    @Inject
+    private CategoryMarshaller categoryMarshaller;
+    @Inject
+    private CategorizationMarshaller categorizationMarshaller;
+    @Inject
+    private UserMarshaller userMarshaller;
+    @Inject
+    private GroupMarshaller groupMarshaller;
+    @Inject
+    private GroupMembershipMarshaller groupMembershipMarshaller;
+    @Inject
+    private RoleMarshaller roleMarshaller;
+    @Inject
+    private RoleMembershipMarshaller roleMembershipMarshaller;
+    @Inject
+    private WorkflowTemplateMarshaller workflowTemplateMarshaller;
+    @Inject
+    private WorkflowMarshaller workflowMarshaller;
+    @Inject
+    private AssignableTaskMarshaller assignableTaskMarshaller;
+    @Inject
+    private TaskAssignmentMarshaller taskAssignmentMarshaller;
+    @Inject
+    private PermissionMarshaller permissionMarshaller;
 
 
-    static void importCategories() {
-        CategoryMarshaller categoryMarshaller = new
-                CategoryMarshaller();
+    public void importCategories() {
         categoryMarshaller.prepare(Format.XML, pathName,
                 "categories.xml", indentation);
         List<Category> categories = categoryMarshaller.importFile();
     }
 
-    static void importCategorizations() {
-        CategorizationMarshaller categorizationMarshaller = new
-                CategorizationMarshaller();
+    public void importCategorizations() {
         categorizationMarshaller.prepare(Format.XML, pathName,
                 "categorizations.xml", indentation);
         categorizationMarshaller.importFile();
     }
 
-    static void importUsers() {
-        UserMarshaller userMarshaller = new UserMarshaller();
+    public void importUsers() {
         userMarshaller.prepare(Format.XML, pathName,
                 "users.xml", indentation);
         userMarshaller.importFile();
     }
 
-    static void importGroups() {
-        GroupMarshaller groupMarshaller = new GroupMarshaller();
+    public void importGroups() {
         groupMarshaller.prepare(Format.XML, pathName,
                 "groups.xml", indentation);
         groupMarshaller.importFile();
     }
 
-    static void importGroupMemberships() {
-        GroupMembershipMarshaller groupMembershipMarshaller = new
-                GroupMembershipMarshaller();
+    public void importGroupMemberships() {
+
         groupMembershipMarshaller.prepare(Format.XML, pathName,
                 "groupMemberships.xml", indentation);
         groupMembershipMarshaller.importFile();
     }
 
-    static void importRoles() {
-        RoleMarshaller roleMarshaller = new RoleMarshaller();
+    public void importRoles() {
         roleMarshaller.prepare(Format.XML, pathName,
                 "roles.xml", indentation);
         roleMarshaller.importFile();
     }
 
-    static void importRoleMemberships() {
-        RoleMembershipMarshaller roleMembershipMarshaller = new
-                RoleMembershipMarshaller();
+    public void importRoleMemberships() {
         roleMembershipMarshaller.prepare(Format.XML, pathName,
                 "roleMemberships.xml", indentation);
         roleMembershipMarshaller.importFile();
     }
 
-    static void importWorkflowTemplates() {
-        WorkflowTemplateMarshaller workflowTemplateMarshaller = new
-                WorkflowTemplateMarshaller();
+    public void importWorkflowTemplates() {
         workflowTemplateMarshaller.prepare(Format.XML, pathName,
                 "workflowTemplates.xml", indentation);
         workflowTemplateMarshaller.importFile();
     }
 
-    static void importWorkflows() {
-        WorkflowMarshaller workflowMarshaller = new
-                WorkflowMarshaller();
+    public void importWorkflows() {
         workflowMarshaller.prepare(Format.XML, pathName,
                 "workflows.xml", indentation);
         workflowMarshaller.importFile();
     }
 
-    static void importAssignableTasks() {
-        AssignableTaskMarshaller assignableTaskMarshaller = new
-                AssignableTaskMarshaller();
+    public void importAssignableTasks() {
         assignableTaskMarshaller.prepare(Format.XML, pathName,
                 "assignableTasks.xml", indentation);
         assignableTaskMarshaller.importFile();
     }
 
-    static void importTaskAssignments() {
-        TaskAssignmentMarshaller taskAssignmentMarshaller = new
-                TaskAssignmentMarshaller();
+    public void importTaskAssignments() {
         taskAssignmentMarshaller.prepare(Format.XML, pathName,
                 "taskAssignments.xml", indentation);
         taskAssignmentMarshaller.importFile();
     }
 
-    static void importPermissions() {
-        PermissionMarshaller permissionMarshaller = new
-                PermissionMarshaller();
+    public void importPermissions() {
         permissionMarshaller.prepare(Format.XML, pathName,
                 "permissions.xml", indentation);
         permissionMarshaller.importFile();
