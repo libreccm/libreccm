@@ -229,7 +229,12 @@ public class PermissionManagerTest {
         excludeColumns = {"permission_id"})
     @InSequence(211)
     public void grantPermissionRecursively() {
-        fail();
+        final Role role1 = roleRepository.findByName("role1");
+        final CcmObject category1 = ccmObjectRepository.findById(-20001L);
+
+        shiro.getSystemUser().execute(() -> {
+            permissionManager.grantPrivilege("privilege4", role1, category1);
+        });
     }
 
     /**
@@ -246,7 +251,12 @@ public class PermissionManagerTest {
         excludeColumns = {"permission_id"})
     @InSequence(212)
     public void grantInheritedPermission() {
-        fail();
+        final Role role1 = roleRepository.findByName("role1");
+        final CcmObject category2 = ccmObjectRepository.findById(-20001L);
+
+        shiro.getSystemUser().execute(() -> {
+            permissionManager.grantPrivilege("privilege4", role1, category2);
+        });
     }
 
     /**
@@ -480,7 +490,12 @@ public class PermissionManagerTest {
                     + "after-revoke-recursivly.yml")
     @InSequence(311)
     public void revokePermissionRecursivly() {
-        fail();
+         final Role role1 = roleRepository.findByName("role1");
+        final CcmObject category1 = ccmObjectRepository.findById(-20001L);
+
+        shiro.getSystemUser().execute(() -> {
+            permissionManager.revokePrivilege("privilege4", role1, category1);
+        });
     }
 
     /**

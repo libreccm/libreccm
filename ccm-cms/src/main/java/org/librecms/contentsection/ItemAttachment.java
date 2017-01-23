@@ -19,7 +19,9 @@
 package org.librecms.contentsection;
 
 import org.hibernate.envers.Audited;
+import org.libreccm.core.CcmObject;
 import org.libreccm.core.Identifiable;
+import org.libreccm.security.Relation;
 
 import java.io.Serializable;
 import java.util.Objects;
