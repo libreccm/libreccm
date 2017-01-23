@@ -162,7 +162,7 @@ public class Permission implements Serializable, Portable {
      */
     @OneToOne
     @JoinColumn(name = "INHERITED_FROM_ID")
-    private CcmObject inheritedForm;
+    private CcmObject inheritedFrom;
 
     protected Permission() {
         //Nothing
@@ -236,12 +236,12 @@ public class Permission implements Serializable, Portable {
         this.inherited = inherited;
     }
 
-    public CcmObject getInheritedForm() {
-        return inheritedForm;
+    public CcmObject getInheritedFrom() {
+        return inheritedFrom;
     }
 
-    protected void setInheritedForm(CcmObject inheritedForm) {
-        this.inheritedForm = inheritedForm;
+    protected void setInheritedFrom(CcmObject inheritedFrom) {
+        this.inheritedFrom = inheritedFrom;
     }
 
     @Override
@@ -277,7 +277,7 @@ public class Permission implements Serializable, Portable {
         if (!Objects.equals(creationDate, other.getCreationDate())) {
             return false;
         }
-        
+
         if (!Objects.equals(creationIp, other.getCreationIp())) {
             return false;
         }

@@ -18,6 +18,8 @@
  */
 package org.libreccm.security;
 
+import com.arsdigita.util.UncheckedWrapperException;
+
 import java.util.List;
 
 import javax.inject.Inject;
@@ -31,6 +33,7 @@ import org.libreccm.core.CoreConstants;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
@@ -101,6 +104,69 @@ public class PermissionManager {
             permission.setObject(object);
 
             entityManager.persist(permission);
+
+            grantRecursive(privilege, grantee, object, object.getClass());
+        }
+    }
+
+    private void grantRecursive(final String privilege,
+                                final Role grantee,
+                                final CcmObject object,
+                                final Class<?> clazz) {
+        final Field[] fields = clazz.getDeclaredFields();
+        Arrays.stream(fields)
+            .filter(field -> field.isAnnotationPresent(
+            RecursivePermissions.class))
+            .forEach(field -> {
+                field.setAccessible(true);
+                grantRecursive(privilege, grantee, field, object);
+            });
+
+        if (clazz.getSuperclass() != null) {
+            grantRecursive(privilege, grantee, object, clazz.getSuperclass());
+        }
+    }
+
+    private void grantRecursive(final String privilege,
+                                final Role grantee,
+                                final Field field,
+                                final CcmObject owner) {
+        final Object value;
+        try {
+            value = field.get(owner);
+        } catch (IllegalAccessException ex) {
+            throw new UncheckedWrapperException(ex);
+        }
+
+        if (value == null) {
+            return;
+        }
+
+        if (field.getType().equals(Collection.class)) {
+            final Collection<?> collection = (Collection<?>) value;
+            collection.stream()
+                .filter(obj -> obj instanceof CcmObject)
+                .map(obj -> (CcmObject) obj)
+                .forEach(obj -> grantPrivilege(privilege, grantee, obj));
+            collection.stream()
+                .filter(obj -> obj instanceof Relation)
+                .map(obj -> (Relation) obj)
+                .filter(relation -> relation.getRelatedObject() != null)
+                .map(relation -> relation.getRelatedObject())
+                .forEach(obj -> grantPrivilege(privilege, grantee, obj));
+        } else if (field.getType().equals(CcmObject.class)) {
+            grantPrivilege(privilege, grantee, (CcmObject) value);
+        } else if (field.getType().equals(Relation.class)) {
+            final Relation relation = (Relation) value;
+            if (relation.getRelatedObject() != null) {
+                grantPrivilege(privilege, grantee, relation.getRelatedObject());
+            }
+        } else {
+            throw new IllegalArgumentException(String.format(
+                "Found a field annotated with \"%s\" but the field is not a "
+                    + "collection nor a CcmObject nore a Relation object. This "
+                    + "is not supported.",
+                RecursivePermissions.class));
         }
     }
 
@@ -166,15 +232,26 @@ public class PermissionManager {
         }
 
         if (existsPermission(privilege, grantee, object)) {
-            final Query query = entityManager.createQuery(
+            final Query deleteQuery = entityManager.createQuery(
                 "DELETE FROM Permission p "
                     + "WHERE p.grantedPrivilege = :privilege "
                     + "AND p.grantee = :grantee "
                     + "AND p.object = :object");
-            query.setParameter(QUERY_PARAM_PRIVILEGE, privilege);
-            query.setParameter(QUERY_PARAM_GRANTEE, grantee);
-            query.setParameter(QUERY_PARAM_OBJECT, object);
-            query.executeUpdate();
+            deleteQuery.setParameter(QUERY_PARAM_PRIVILEGE, privilege);
+            deleteQuery.setParameter(QUERY_PARAM_GRANTEE, grantee);
+            deleteQuery.setParameter(QUERY_PARAM_OBJECT, object);
+            deleteQuery.executeUpdate();
+
+            final Query deleteInheritedQuery = entityManager.createQuery(
+                "DELETE FROM Permission p "
+                    + "WHERE p.grantedPrivilege = :privilege "
+                    + "AND p.grantee = :grantee "
+                    + "AND p.inheritedFrom = :object "
+                    + "AND p.inherited = true");
+            deleteInheritedQuery.setParameter(QUERY_PARAM_PRIVILEGE, privilege);
+            deleteInheritedQuery.setParameter(QUERY_PARAM_GRANTEE, grantee);
+            deleteInheritedQuery.setParameter("p.inheritedFrom", object);
+            deleteQuery.executeUpdate();
         }
     }
 

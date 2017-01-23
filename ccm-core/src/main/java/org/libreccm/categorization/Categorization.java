@@ -38,7 +38,7 @@ import java.util.Objects;
 
 import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 
-import org.libreccm.security.RecursivePermissions;
+import org.libreccm.security.Relation;
 
 /**
  * Association class describing the association between a category and an
@@ -70,7 +70,7 @@ import org.libreccm.security.RecursivePermissions;
                     + "WHERE c.category = :category "
                     + "AND c.index = TRUE")
 })
-public class Categorization implements Serializable, Portable {
+public class Categorization implements Serializable, Relation, Portable {
 
     private static final long serialVersionUID = 201504301320L;
 
@@ -93,7 +93,6 @@ public class Categorization implements Serializable, Portable {
     /**
      * The categorised object.
      */
-    @RecursivePermissions
     @ManyToOne
     @JoinColumn(name = "OBJECT_ID")
     @JsonBackReference(value = "object-categorization")
@@ -145,12 +144,22 @@ public class Categorization implements Serializable, Portable {
         return category;
     }
 
+    @Override
+    public CcmObject getOwner() {
+        return getCategory();
+    }
+    
     protected void setCategory(final Category category) {
         this.category = category;
     }
 
     public CcmObject getCategorizedObject() {
         return categorizedObject;
+    }
+    
+    @Override
+    public CcmObject getRelatedObject() {
+        return getCategorizedObject();
     }
 
     protected void setCategorizedObject(final CcmObject categorizedObject) {
