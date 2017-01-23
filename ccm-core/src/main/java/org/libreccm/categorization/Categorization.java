@@ -19,7 +19,6 @@
 package org.libreccm.categorization;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.libreccm.core.CcmObject;
 import org.libreccm.portation.Portable;
 
@@ -33,10 +32,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+
 import java.io.Serializable;
 import java.util.Objects;
 
 import static org.libreccm.core.CoreConstants.DB_SCHEMA;
+
+import org.libreccm.security.RecursivePermissions;
 
 /**
  * Association class describing the association between a category and an
@@ -91,6 +93,7 @@ public class Categorization implements Serializable, Portable {
     /**
      * The categorised object.
      */
+    @RecursivePermissions
     @ManyToOne
     @JoinColumn(name = "OBJECT_ID")
     @JsonBackReference(value = "object-categorization")
