@@ -53,6 +53,8 @@ import static org.libreccm.testutils.DependenciesHelpers.getModuleDependencies;
 @CreateSchema({"create_ccm_core_schema.sql"})
 public class CoreDataImportTest {
 
+    private ImportHelper importHelper;
+
     public CoreDataImportTest() {
 
     }
@@ -106,6 +108,7 @@ public class CoreDataImportTest {
 
     @Before
     public void setUp() {
+        importHelper = new ImportHelper();
     }
 
     @After
@@ -117,73 +120,73 @@ public class CoreDataImportTest {
     @Test
     @InSequence(105)
     public void categoriesShouldBeImported() {
-        ImportHelper.importCategories();
+        importHelper.importCategories();
     }
 
     @Test
     @InSequence(110)
     public void categorizationsShouldBeImported() {
-        ImportHelper.importCategorizations();
+        importHelper.importCategorizations();
     }
 
     @Test
     @InSequence(115)
     public void usersShouldBeImported() {
-        ImportHelper.importUsers();
+        importHelper.importUsers();
     }
 
     @Test
     @InSequence(120)
     public void groupsShouldBeImported() {
-        ImportHelper.importGroups();
+        importHelper.importGroups();
     }
 
     @Test
     @InSequence(125)
     public void groupMembershipsShouldBeImported() {
-        ImportHelper.importGroupMemberships();
+        importHelper.importGroupMemberships();
     }
 
     @Test
     @InSequence(130)
     public void rolesShouldBeImported() {
-        ImportHelper.importRoles();
+        importHelper.importRoles();
     }
 
     @Test
     @InSequence(135)
     public void roleMembershipsShouldBeImported() {
-        ImportHelper.importRoleMemberships();
+        importHelper.importRoleMemberships();
     }
 
     @Test
     @InSequence(140)
     public void workflowTemplatesShouldBeImported() {
-        ImportHelper.importWorkflowTemplates();
+        importHelper.importWorkflowTemplates();
     }
 
     @Test
     @InSequence(145)
     public void workflowsShouldBeImported() {
-        ImportHelper.importWorkflows();
+        importHelper.importWorkflows();
     }
 
     @Test
     @InSequence(150)
     public void assignableTasksShouldBeImported() {
-        ImportHelper.importAssignableTasks();
+        importHelper.importAssignableTasks();
     }
 
     @Test
     @InSequence(155)
     public void taskAssignmentsShouldBeImported() {
-        ImportHelper.importTaskAssignments();
+        importHelper.importTaskAssignments();
     }
 
     @Test
     @InSequence(160)
     public void permissionsShouldBeImported() {
-        ImportHelper.importPermissions();
+        importHelper.importPermissions();
     }
 
 
