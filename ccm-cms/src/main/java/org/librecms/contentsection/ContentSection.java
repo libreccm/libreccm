@@ -18,6 +18,7 @@
  */
 package org.librecms.contentsection;
 
+import org.libreccm.security.RecursivePermissions;
 import org.libreccm.security.Role;
 import org.libreccm.web.CcmApplication;
 
@@ -42,6 +43,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 
 import org.libreccm.workflow.WorkflowTemplate;
+import org.librecms.contentsection.privileges.AssetPrivileges;
+import org.librecms.contentsection.privileges.ItemPrivileges;
 import org.librecms.lifecycle.LifecycleDefinition;
 
 import static org.librecms.CmsConstants.*;
@@ -54,14 +57,15 @@ import static org.librecms.CmsConstants.*;
 @Table(name = "CONTENT_SECTIONS", schema = DB_SCHEMA)
 @NamedQueries({
     @NamedQuery(
-            name = "ContentSection.findByLabel",
-            query = "SELECT s FROM ContentSection s WHERE s.label = :label"),
+        name = "ContentSection.findByLabel",
+        query = "SELECT s FROM ContentSection s WHERE s.label = :label")
+    ,
     @NamedQuery(
-            name = "ContentSection.findPermissions",
-            query = "SELECT p FROM Permission p "
-                            + "WHERE (p.object = :section "
-                            + "       OR p.object = :rootDocumentsFolder) "
-                            + "AND p.grantee = :role")
+        name = "ContentSection.findPermissions",
+        query = "SELECT p FROM Permission p "
+                    + "WHERE (p.object = :section "
+                    + "       OR p.object = :rootDocumentsFolder) "
+                    + "AND p.grantee = :role")
 })
 //@ApplicationType(
 //    name = CONTENT_SECTION_APP_TYPE,
@@ -86,10 +90,25 @@ public class ContentSection extends CcmApplication implements Serializable {
     @Column(name = "LABEL", length = 512)
     private String label;
 
+    @RecursivePermissions(privileges = {ItemPrivileges.ADMINISTER,
+                                        ItemPrivileges.APPLY_ALTERNATE_WORKFLOW,
+                                        ItemPrivileges.APPROVE,
+                                        ItemPrivileges.CATEGORIZE,
+                                        ItemPrivileges.CREATE_NEW,
+                                        ItemPrivileges.DELETE,
+                                        ItemPrivileges.EDIT,
+                                        ItemPrivileges.PREVIEW,
+                                        ItemPrivileges.PUBLISH,
+                                        ItemPrivileges.VIEW_PUBLISHED})
     @OneToOne
     @JoinColumn(name = "ROOT_DOCUMENTS_FOLDER_ID")
     private Folder rootDocumentsFolder;
 
+    @RecursivePermissions(privileges = {AssetPrivileges.CREATE_NEW,
+                                        AssetPrivileges.DELETE,
+                                        AssetPrivileges.EDIT,
+                                        AssetPrivileges.USE,
+                                        AssetPrivileges.VIEW})
     @OneToOne
     @JoinColumn(name = "ROOT_ASSETS_FOLDER_ID")
     private Folder rootAssetsFolder;
@@ -125,27 +144,27 @@ public class ContentSection extends CcmApplication implements Serializable {
 
     @OneToMany
     @JoinTable(
-            name = "CONTENT_SECTION_LIFECYCLE_DEFINITIONS",
-            schema = DB_SCHEMA,
-            joinColumns = {
-                @JoinColumn(name = "CONTENT_SECTION_ID")
-            },
-            inverseJoinColumns = {
-                @JoinColumn(name = "LIFECYCLE_DEFINITION_ID")
-            }
+        name = "CONTENT_SECTION_LIFECYCLE_DEFINITIONS",
+        schema = DB_SCHEMA,
+        joinColumns = {
+            @JoinColumn(name = "CONTENT_SECTION_ID")
+        },
+        inverseJoinColumns = {
+            @JoinColumn(name = "LIFECYCLE_DEFINITION_ID")
+        }
     )
     private List<LifecycleDefinition> lifecycleDefinitions;
 
     @OneToMany
     @JoinTable(
-            name = "CONTENT_SECTION_WORKFLOW_TEMPLATES",
-            schema = DB_SCHEMA,
-            joinColumns = {
-                @JoinColumn(name = "CONTENT_SECTION_ID")
-            },
-            inverseJoinColumns = {
-                @JoinColumn(name = "WORKFLOW_TEMPLATE_ID")
-            }
+        name = "CONTENT_SECTION_WORKFLOW_TEMPLATES",
+        schema = DB_SCHEMA,
+        joinColumns = {
+            @JoinColumn(name = "CONTENT_SECTION_ID")
+        },
+        inverseJoinColumns = {
+            @JoinColumn(name = "WORKFLOW_TEMPLATE_ID")
+        }
     )
     private List<WorkflowTemplate> workflowTemplates;
 
@@ -267,7 +286,7 @@ public class ContentSection extends CcmApplication implements Serializable {
     }
 
     protected void setLifecycleDefinitions(
-            final List<LifecycleDefinition> lifecycleDefinitions) {
+        final List<LifecycleDefinition> lifecycleDefinitions) {
         this.lifecycleDefinitions = lifecycleDefinitions;
     }
 
@@ -276,25 +295,26 @@ public class ContentSection extends CcmApplication implements Serializable {
     }
 
     protected void removeLifecycleDefinition(
-            final LifecycleDefinition definition) {
+        final LifecycleDefinition definition) {
         lifecycleDefinitions.remove(definition);
     }
-   
-   public List<WorkflowTemplate> getWorkflowTemplates() {
-       return Collections.unmodifiableList(workflowTemplates);
-   }
-   
-   protected void setWorkflowTemplates(final List<WorkflowTemplate> workflowTemplates) {
-       this.workflowTemplates = workflowTemplates;
-   }
-   
-   protected void addWorkflowTemplate(final WorkflowTemplate template) {
-       workflowTemplates.add(template);
-   }
-   
-   protected void removeWorkflowTemplate(final WorkflowTemplate template) {
-       workflowTemplates.remove(template);
-   }
+
+    public List<WorkflowTemplate> getWorkflowTemplates() {
+        return Collections.unmodifiableList(workflowTemplates);
+    }
+
+    protected void setWorkflowTemplates(
+        final List<WorkflowTemplate> workflowTemplates) {
+        this.workflowTemplates = workflowTemplates;
+    }
+
+    protected void addWorkflowTemplate(final WorkflowTemplate template) {
+        workflowTemplates.add(template);
+    }
+
+    protected void removeWorkflowTemplate(final WorkflowTemplate template) {
+        workflowTemplates.remove(template);
+    }
 
     @Override
     public int hashCode() {
@@ -362,23 +382,23 @@ public class ContentSection extends CcmApplication implements Serializable {
     @Override
     public String toString(final String data) {
         return super.toString(String.format(
-                ", label = \"%s\", "
-                        + "rootDocumentsFolder = \"%s\", "
-                        + "rootAssetsFolder = \"%s\", "
-                        + "pageResolverClass = \"%s\", "
-                        + "itemResolverClass = \"%s\", "
-                        + "templateResolverClass = \"%s\", "
-                        + "xmlGeneratorClass = \"%s\", "
-                        + "defaultLocale = \"%s\"%s",
-                label,
-                Objects.toString(rootDocumentsFolder),
-                Objects.toString(rootAssetsFolder),
-                pageResolverClass,
-                itemResolverClass,
-                templateResolverClass,
-                xmlGeneratorClass,
-                Objects.toString(defaultLocale),
-                data));
+            ", label = \"%s\", "
+                + "rootDocumentsFolder = \"%s\", "
+                + "rootAssetsFolder = \"%s\", "
+                + "pageResolverClass = \"%s\", "
+                + "itemResolverClass = \"%s\", "
+                + "templateResolverClass = \"%s\", "
+                + "xmlGeneratorClass = \"%s\", "
+                + "defaultLocale = \"%s\"%s",
+            label,
+            Objects.toString(rootDocumentsFolder),
+            Objects.toString(rootAssetsFolder),
+            pageResolverClass,
+            itemResolverClass,
+            templateResolverClass,
+            xmlGeneratorClass,
+            Objects.toString(defaultLocale),
+            data));
     }
 
 }

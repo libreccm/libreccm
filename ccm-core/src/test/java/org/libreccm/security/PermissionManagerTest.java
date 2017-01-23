@@ -216,6 +216,40 @@ public class PermissionManagerTest {
     }
 
     /**
+     * Verifies that permissions are granted recursivly when a permission is
+     * granted if the object has properties which are annototed with
+     * {@link RecursivePermissions}.
+     */
+    @Test
+    @UsingDataSet("datasets/org/libreccm/security/PermissionManagerTest/"
+                      + "data-recursivly.yml")
+    @ShouldMatchDataSet(
+        value = "datasets/org/libreccm/security/PermissionManagerTest/"
+                    + "after-grant-recursivly.yml",
+        excludeColumns = {"permission_id"})
+    @InSequence(211)
+    public void grantPermissionRecursively() {
+        fail();
+    }
+
+    /**
+     * Verifies that granting a permission on a object which is already
+     * inherited from an object converts the permission to a directly granted
+     * one.
+     */
+    @Test
+    @UsingDataSet("datasets/org/libreccm/security/PermissionManagerTest/"
+                      + "after-grant-recursivly.yml")
+    @ShouldMatchDataSet(
+        value = "datasets/org/libreccm/security/PermissionManagerTest/"
+                    + "after-grant-inherited.yml",
+        excludeColumns = {"permission_id"})
+    @InSequence(212)
+    public void grantInheritedPermission() {
+        fail();
+    }
+
+    /**
      * Verifies that
      * {@link PermissionManager#grantPrivilege(java.lang.String, org.libreccm.security.Role)}
      * throws a {@link IllegalArgumentException} if called with {@code null} for
@@ -435,6 +469,21 @@ public class PermissionManagerTest {
     }
 
     /**
+     * Verifies that inherited permissions are revoked when they revoked from
+     * the object on which the permissions were granted.
+     */
+    @Test
+    @UsingDataSet("datasets/org/libreccm/security/PermissionManagerTest/"
+                      + "after-grant-recursivly.yml")
+    @ShouldMatchDataSet(
+        value = "datasets/org/libreccm/security/PermissionManagerTest/"
+                    + "after-revoke-recursivly.yml")
+    @InSequence(311)
+    public void revokePermissionRecursivly() {
+        fail();
+    }
+
+    /**
      * Verifies that
      * {@link PermissionManager#revokePrivilege(java.lang.String, org.libreccm.security.Role, org.libreccm.core.CcmObject)}
      * does <em>not</em> throw an exception if no appropriate permission for the
@@ -581,7 +630,8 @@ public class PermissionManagerTest {
     }
 
     /**
-     * Verifies that null null null null null     {@link PermissionManager#revokePrivilege(java.lang.String, org.libreccm.security.Role, org.libreccm.core.CcmObject) 
+     * Verifies that
+     * {@link PermissionManager#revokePrivilege(java.lang.String, org.libreccm.security.Role, org.libreccm.core.CcmObject)}
      * throws an {@link IllegalArgumentException} if called with {@code null}
      * for the role to revoke the permission from.
      *

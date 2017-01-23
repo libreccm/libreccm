@@ -1,0 +1,84 @@
+ccm_core.ccm_roles:
+    - role_id: -10001
+      name: role1
+    - role_id: -10002
+      name: role2
+ccm_core.ccm_objects:
+    - object_id: -20001
+      display_name: category1
+      uuid: 17239bc1-5db3-4448-b37c-cac0fddd7342
+    - object_id: -20002
+      display_name: category2
+      uuid: 686a5d09-36ec-46ba-9c97-a5d6db4b9008
+    - object_id: -20003
+      display_name: category3
+      uuid: 1c31700a-f9db-4188-812f-12dba4186c75
+    - object_id: -20004
+      display_name: objectA
+ccm_core.categories:
+    - object_id: -20001
+      unique_id: 17239bc1-5db3-4448-b37c-cac0fddd7342
+      name: category1
+      enabled: true
+      visible: true
+      abstract_category: false
+      category_order: 0
+    - object_id: -20002
+      unique_id: 686a5d09-36ec-46ba-9c97-a5d6db4b9008
+      name: category2
+      enabled: true
+      visible: true
+      abstract_category: false
+      category_order: 0
+      parent_category_id: -20001
+    - object_id: -20003
+      unique_id: 1c31700a-f9db-4188-812f-12dba4186c75
+      name: category3
+      enabled: true
+      visible: true
+      abstract_category: false
+      category_order: 0
+      parent_category_id: -20002
+ccm_core.categorizations:
+    - categorization_id: -40001
+      category_id: -20003
+      object_id: -20004
+ccm_core.permissions:
+    - permission_id: -30001
+      granted_privilege: privilege1
+      grantee_id: -10001
+      inherited: false
+    - permission_id: -30002
+      granted_privilege: privilege2
+      object_id: -20001
+      grantee_id: -10001
+      inherited: false
+    - permission_id: -30003
+      granted_privilege: privilege2
+      object_id: -20002
+      grantee_id: -10002
+      inherited: false
+    - permission_id: -30004
+      granted_privilege: privilege4
+      object_id: -20001
+      grantee_id: -10001
+      inherited: false
+    - permission_id: -30005
+      granted_privilege: privilege4
+      object_id: -20002
+      grantee_id: -10001
+      inherited: false
+    - permission_id: -30006
+      granted_privilege: privilege4
+      object_id: -20003
+      grantee_id: -10001
+      inherited: true
+      inherited_from_id: -20002
+    - permission_id: -30007
+      granted_privilege: privilege4
+      object_id: -20004
+      grantee_id: -10001
+      inherited: true
+      inherited_from_id: -20002
+
+

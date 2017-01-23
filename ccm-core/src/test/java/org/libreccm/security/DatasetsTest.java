@@ -57,8 +57,12 @@ public class DatasetsTest extends DatasetsVerifier {
             "/datasets/org/libreccm/security/PartyRepositoryTest/after-save-new.yml",
 
             "/datasets/org/libreccm/security/PermissionManagerTest/data.yml",
+            "/datasets/org/libreccm/security/PermissionManagerTest/data-recursivly.yml",
             "/datasets/org/libreccm/security/PermissionManagerTest/after-grant.yml",
+            "/datasets/org/libreccm/security/PermissionManagerTest/after-grant-recursivly.yml",
+            "/datasets/org/libreccm/security/PermissionManagerTest/after-grant-inherited.yml",
             "/datasets/org/libreccm/security/PermissionManagerTest/after-revoke.yml",
+            "/datasets/org/libreccm/security/PermissionManagerTest/after-revoke-recursivly.yml",
             "/datasets/org/libreccm/security/PermissionManagerTest/after-copy.yml",
             
             "/datasets/org/libreccm/security/RoleManagerTest/data.yml",

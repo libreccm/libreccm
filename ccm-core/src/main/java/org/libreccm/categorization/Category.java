@@ -29,6 +29,7 @@ import org.libreccm.core.DefaultEntityGraph;
 import org.libreccm.l10n.LocalizedString;
 import org.libreccm.portation.Portable;
 import org.libreccm.security.InheritsPermissions;
+import org.libreccm.security.RecursivePermissions;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -180,6 +181,7 @@ public class Category extends CcmObject implements InheritsPermissions,
     /**
      * The objects assigned to this category.
      */
+    @RecursivePermissions
     @OneToMany(mappedBy = "category")
     @XmlElementWrapper(name = "objects", namespace = CAT_XML_NS)
     @JsonManagedReference(value = "category-categorization")
@@ -188,6 +190,7 @@ public class Category extends CcmObject implements InheritsPermissions,
     /**
      * The sub categories of this category.
      */
+    @RecursivePermissions
     @OneToMany(mappedBy = "parentCategory")
     @XmlElementWrapper(name = "subcategories", namespace = CAT_XML_NS)
     @XmlElement(name = "category")
