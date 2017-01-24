@@ -43,6 +43,9 @@ ccm_core.categorizations:
     - categorization_id: -40001
       category_id: -20003
       object_id: -20004
+      category_index: false
+      category_order: 0
+      object_order: 0
 ccm_core.permissions:
     - permission_id: -30001
       granted_privilege: privilege1
