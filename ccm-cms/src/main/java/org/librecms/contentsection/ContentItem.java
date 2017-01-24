@@ -241,9 +241,6 @@ public class ContentItem extends CcmObject implements Serializable,
     @Column(name = "ANCESTORS", length = 1024)
     private String ancestors;
 
-    @RecursivePermissions(privileges = {AssetPrivileges.EDIT, 
-                                        AssetPrivileges.DELETE, 
-                                        AssetPrivileges.VIEW})
     @OneToMany(mappedBy = "item")
     private List<AttachmentList> attachments;
 

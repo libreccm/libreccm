@@ -142,7 +142,7 @@ public class PermissionManager {
             return;
         }
 
-        if (field.getType().equals(Collection.class)) {
+        if (Collection.class.isAssignableFrom(field.getType())) {
             final Collection<?> collection = (Collection<?>) value;
             collection.stream()
                 .filter(obj -> obj instanceof CcmObject)
@@ -154,9 +154,9 @@ public class PermissionManager {
                 .filter(relation -> relation.getRelatedObject() != null)
                 .map(relation -> relation.getRelatedObject())
                 .forEach(obj -> grantPrivilege(privilege, grantee, obj));
-        } else if (field.getType().equals(CcmObject.class)) {
+        } else if (CcmObject.class.isAssignableFrom(field.getType())) {
             grantPrivilege(privilege, grantee, (CcmObject) value);
-        } else if (field.getType().equals(Relation.class)) {
+        } else if (Relation.class.isAssignableFrom(field.getType())) {
             final Relation relation = (Relation) value;
             if (relation.getRelatedObject() != null) {
                 grantPrivilege(privilege, grantee, relation.getRelatedObject());
