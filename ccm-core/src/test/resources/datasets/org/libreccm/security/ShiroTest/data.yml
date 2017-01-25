@@ -123,21 +123,25 @@ ccm_core.permissions:
     - permission_id: -30001
       granted_privilege: privilege1
       grantee_id: -10001
+      inherited: false
     # permission for privilege2 granted on object1 to role1
     - permission_id: -30002
       granted_privilege: privilege2
       object_id: -20001
       grantee_id: -10001
+      inherited: false
     # permission for privilege2 granted on object2 to role2
     - permission_id: -30003
       granted_privilege: privilege2
       object_id: -20002
       grantee_id: -10002
+      inherited: false
     # permission for privilege3 granted on object1 to public-role
     - permission_id: -30004
       granted_privilege: privilege3
       object_id: -20001
       grantee_id: -10003
+      inherited: false
 ccm_core.settings:
     - setting_id: -301
       configuration_class: com.arsdigita.kernel.KernelConfig

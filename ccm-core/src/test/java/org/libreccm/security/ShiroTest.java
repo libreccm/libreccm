@@ -21,7 +21,6 @@ package org.libreccm.security;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 
-
 import javax.inject.Inject;
 
 import org.apache.shiro.subject.PrincipalCollection;
@@ -51,7 +50,10 @@ import org.libreccm.tests.categories.IntegrationTest;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
+
 import static org.libreccm.testutils.DependenciesHelpers.*;
+
+import org.jboss.arquillian.persistence.CleanupUsingScript;
 
 /**
  *
@@ -62,6 +64,7 @@ import static org.libreccm.testutils.DependenciesHelpers.*;
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
 @CreateSchema({"create_ccm_core_schema.sql"})
+@CleanupUsingScript({"cleanup.sql"})
 public class ShiroTest {
 
     @Inject
@@ -118,6 +121,7 @@ public class ShiroTest {
                 .getPackage())
             .addClass(org.libreccm.portation.Portable.class)
             .addClass(org.libreccm.security.authorization.LabBean.class)
+            .addClass(com.arsdigita.util.UncheckedWrapperException.class)
             .addAsLibraries(getModuleDependencies())
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")

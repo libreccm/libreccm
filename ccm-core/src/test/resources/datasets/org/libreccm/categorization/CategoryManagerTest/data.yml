@@ -124,15 +124,55 @@ ccm_core.permissions:
       granted_privilege: manage_category
       grantee_id: -4000
       object_id: -2000
+      inherited: false
+    - permission_id: -6010
+      granted_privilege: manage_category
+      grantee_id: -4000
+      object_id: -2100
+      inherited: true
+      inherited_from_id: -2000
+    - permission_id: -6020
+      granted_privilege: manage_category
+      grantee_id: -4000
+      object_id: -2200
+      inherited: true
+      inherited_from_id: -2000
     - permission_id: -6100
       granted_privilege: manage_category_objects
       grantee_id: -4000
       object_id: -2000
+      inherited: false
+    - permission_id: -6110
+      granted_privilege: manage_category_objects
+      grantee_id: -4000
+      object_id: -2100
+      inherited: true
+      inherited_from_id: -2000
+    - permission_id: -6120
+      granted_privilege: manage_category_objects
+      grantee_id: -4000
+      object_id: -2200
+      inherited: true
+      inherited_from_id: -2000
     - permission_id: -6200
       granted_privilege: manage_category
       grantee_id: -4100
       object_id: -2100
+      inherited: false
+    - permission_id: -6210
+      granted_privilege: manage_category
+      grantee_id: -4100
+      object_id: -2200
+      inherited: true
+      inherited_from_id: -2100
     - permission_id: -6300
       granted_privilege: manage_category_objects
       grantee_id: -4100
       object_id: -2100
+      inherited: false
+    - permission_id: -6310
+      granted_privilege: manage_category_objects
+      grantee_id: -4100
+      object_id: -2200
+      inherited: true
+      inherited_from_id: -2100

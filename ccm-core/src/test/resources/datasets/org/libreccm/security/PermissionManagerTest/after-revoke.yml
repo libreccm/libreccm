@@ -18,4 +18,5 @@ ccm_core.permissions:
       granted_privilege: privilege2
       object_id: -20002
       grantee_id: -10002
+      inherited: false
 

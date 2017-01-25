@@ -22,7 +22,6 @@ import org.hibernate.envers.Audited;
 import org.libreccm.categorization.Categorization;
 import org.libreccm.core.CcmObject;
 import org.libreccm.l10n.LocalizedString;
-import org.libreccm.security.InheritsPermissions;
 import org.librecms.CmsConstants;
 
 import java.util.ArrayList;
@@ -133,7 +132,7 @@ import static org.librecms.CmsConstants.*;
                     + "AND LOWER(a.displayName) LIKE CONCAT(LOWER(:name), '%') "
                     + "AND TYPE(a) = :type")
 })
-public class Asset extends CcmObject implements InheritsPermissions {
+public class Asset extends CcmObject {
 
     private static final long serialVersionUID = -3499741368562653529L;
 
@@ -189,23 +188,6 @@ public class Asset extends CcmObject implements InheritsPermissions {
 
     protected void removeItemAttachment(final ItemAttachment<?> itemAttachment) {
         itemAttachments.remove(itemAttachment);
-    }
-
-    @Override
-    public Optional<CcmObject> getParent() {
-        // For sharable assets the parent is the folder in the asset is stored
-        final Optional<CcmObject> folder = getFolder();
-        if (folder.isPresent()) {
-            return folder;
-        }
-
-        if (itemAttachments == null || itemAttachments.isEmpty()) {
-            return Optional.empty();
-        } else {
-            return Optional.of(itemAttachments.get(0).getAttachmentList()
-                .getItem());
-        }
-
     }
 
     private Optional<CcmObject> getFolder() {

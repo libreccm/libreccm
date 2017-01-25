@@ -52,7 +52,7 @@ class FolderEditForm extends FolderBaseForm {
         final FolderRequestLocal parent = new FolderRequestLocal(null) {
                 @Override
                 protected final Object initialValue(final PageState state) {
-                    return folder.getFolder(state).getParent().get();
+                    return folder.getFolder(state).getParentFolder();
                 }
             };
 

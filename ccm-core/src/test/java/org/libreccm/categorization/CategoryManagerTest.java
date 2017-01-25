@@ -58,6 +58,8 @@ import static org.junit.Assert.*;
 
 import static org.libreccm.testutils.DependenciesHelpers.*;
 
+import org.jboss.arquillian.persistence.CleanupUsingScript;
+
 /**
  * Tests for the {@link CategoryManager}.
  *
@@ -68,6 +70,7 @@ import static org.libreccm.testutils.DependenciesHelpers.*;
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
 @CreateSchema({"create_ccm_core_schema.sql"})
+@CleanupUsingScript({"cleanup.sql"})
 public class CategoryManagerTest {
 
     @Inject

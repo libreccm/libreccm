@@ -25,7 +25,6 @@ import javax.persistence.Table;
 
 import org.libreccm.categorization.Category;
 import org.libreccm.core.CcmObject;
-import org.libreccm.security.InheritsPermissions;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -60,8 +59,7 @@ import static org.librecms.CmsConstants.*;
         name = "Folder.findByName",
         query = "SELECT f FROM Folder f WHERE f.name = :name")
 })
-public class Folder extends Category implements InheritsPermissions,
-                                                Serializable {
+public class Folder extends Category implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -92,15 +90,6 @@ public class Folder extends Category implements InheritsPermissions,
 
     protected void setType(final FolderType type) {
         this.type = type;
-    }
-
-    @Override
-    public Optional<CcmObject> getParent() {
-        if (getParentFolder() == null) {
-            return Optional.of(section);
-        } else {
-            return Optional.of(getParentFolder());
-        }
     }
 
     /**

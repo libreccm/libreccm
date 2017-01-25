@@ -41,6 +41,7 @@ import static org.junit.Assert.*;
 
 import static org.libreccm.testutils.DependenciesHelpers.*;
 
+import org.jboss.arquillian.persistence.CleanupUsingScript;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.experimental.categories.Category;
@@ -63,6 +64,7 @@ import javax.persistence.PersistenceContext;
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
 @CreateSchema({"create_ccm_core_schema.sql"})
+@CleanupUsingScript({"cleanup.sql"})
 public class UserRepositoryTest {
 
     private static final String NOBODY = "nobody";

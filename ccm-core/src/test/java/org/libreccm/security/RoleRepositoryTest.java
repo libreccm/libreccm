@@ -45,12 +45,16 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
 import org.libreccm.core.CcmObject;
 import org.libreccm.core.CcmObjectRepository;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
+
 import static org.libreccm.testutils.DependenciesHelpers.*;
+
+import org.jboss.arquillian.persistence.CleanupUsingScript;
 
 /**
  * Tests for the {@link RoleRepository}. Note. We are not enabling the
@@ -63,6 +67,7 @@ import static org.libreccm.testutils.DependenciesHelpers.*;
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
 @CreateSchema({"create_ccm_core_schema.sql"})
+@CleanupUsingScript({"cleanup.sql"})
 public class RoleRepositoryTest {
 
     private static final String ADMINISTRATOR = "administrator";
@@ -121,6 +126,7 @@ public class RoleRepositoryTest {
             .addPackage(org.libreccm.tests.categories.IntegrationTest.class
                 .getPackage())
             .addClass(org.libreccm.portation.Portable.class)
+            .addClass(com.arsdigita.util.UncheckedWrapperException.class)
             .addAsLibraries(getModuleDependencies())
             .addAsResource("configs/shiro.ini", "shiro.ini")
             .addAsResource("test-persistence.xml",
