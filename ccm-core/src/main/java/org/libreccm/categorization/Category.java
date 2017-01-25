@@ -28,7 +28,6 @@ import org.libreccm.core.CcmObject;
 import org.libreccm.core.DefaultEntityGraph;
 import org.libreccm.l10n.LocalizedString;
 import org.libreccm.portation.Portable;
-import org.libreccm.security.InheritsPermissions;
 import org.libreccm.security.RecursivePermissions;
 
 import java.io.Serializable;
@@ -75,7 +74,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(
         name = "Category.topLevelCategories",
-        query = "SELECT c FROM Category c WHERE c.parentCategory IS NULL"),
+        query = "SELECT c FROM Category c WHERE c.parentCategory IS NULL")
+    ,
     @NamedQuery(
         name = "Category.findByName",
         query = "SELECT c FROM Category c WHERE c.name = :name")
@@ -103,8 +103,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 })
 @DefaultEntityGraph("Category.withSubCategoriesAndObjects")
 @XmlRootElement(name = "category", namespace = CAT_XML_NS)
-public class Category extends CcmObject implements InheritsPermissions,
-                                                   Serializable, Portable {
+public class Category extends CcmObject implements Serializable, Portable {
 
     private static final long serialVersionUID = -7250208963391878547L;
 
@@ -346,11 +345,6 @@ public class Category extends CcmObject implements InheritsPermissions,
 
     public void setCategoryOrder(final long categoryOrder) {
         this.categoryOrder = categoryOrder;
-    }
-
-    @Override
-    public Optional<CcmObject> getParent() {
-        return Optional.ofNullable(getParentCategory());
     }
 
     @Override

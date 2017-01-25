@@ -94,7 +94,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.5.1</version>
+                    <version>3.6.1</version>
                     <configuration>
                         <source>1.8</source>
                         <target>1.8</target>
@@ -111,17 +111,17 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>2.6</version>
+                    <version>3.0.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>2.6</version>
+                    <version>3.0.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-war-plugin</artifactId>
-                    <version>2.6</version>
+                    <version>3.0.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -131,7 +131,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
-                    <version>3.5.1</version>
+                    <version>3.6</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -172,7 +172,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>findbugs-maven-plugin</artifactId>
-                    <version>3.0.3</version>
+                    <version>3.0.4</version>
                     <configuration>
                         <findbugsXmlOutput>true</findbugsXmlOutput>
                         <xmlOutput>true</xmlOutput>
@@ -189,17 +189,17 @@
                 <plugin>
                     <groupId>de.jpdigital</groupId>
                     <artifactId>hibernate5-ddl-maven-plugin</artifactId>
-                    <version>1.0.0</version>
+                    <version>1.0.1-hibernate-5.2.4.Final</version>
                 </plugin>
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.7.6.201602180812</version>
+                    <version>0.7.8</version>
                 </plugin>
                 <plugin>
                     <groupId>org.wildfly.plugins</groupId>
                     <artifactId>wildfly-maven-plugin</artifactId>
-                    <version>1.1.0.Alpha8</version>
+                    <version>1.1.0.Final</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -286,7 +286,7 @@
             <dependency>
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-core</artifactId>
-                <version>4.0</version>
+                <version>4.0.3</version>
             </dependency>
             
             <!-- Shiro lib for security stuff -->
@@ -298,7 +298,7 @@
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-web</artifactId>
-                <version>1.2.5</version>
+                <version>1.3.2</version>
             </dependency>
             
             <!-- PrimeFaces for JSF prototype -->
@@ -325,7 +325,7 @@
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-bom</artifactId>
-                <version>2.5</version>
+                <version>2.7</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -351,7 +351,7 @@
             <dependency>
                 <groupId>commons-beanutils</groupId>
                 <artifactId>commons-beanutils</artifactId>
-                <version>1.9.2</version>
+                <version>1.9.3</version>
             </dependency>
             <dependency>
                 <groupId>commons-cli</groupId>
@@ -371,7 +371,7 @@
             <dependency>
                 <groupId>commons-fileupload</groupId>
                 <artifactId>commons-fileupload</artifactId>
-                <version>1.3.1</version>
+                <version>1.3.2</version>
             </dependency>
             <dependency>
                 <groupId>commons-httpclient</groupId>
@@ -403,7 +403,7 @@
             <dependency>
                 <groupId>net.sf.saxon</groupId>
                 <artifactId>Saxon-HE</artifactId>
-                <version>9.7.0-4</version>
+                <version>9.7.0-14</version>
             </dependency>
 
             <dependency>
@@ -421,7 +421,7 @@
             <dependency>
                 <groupId>org.jsoup</groupId>
                 <artifactId>jsoup</artifactId>
-                <version>1.9.1</version>
+                <version>1.10.2</version>
             </dependency>
             
             <dependency>
@@ -512,7 +512,7 @@
             <dependency>
                 <groupId>org.jboss.arquillian</groupId>
                 <artifactId>arquillian-bom</artifactId>
-                <version>1.1.11.Final</version>
+                <version>1.1.12.Final</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
@@ -541,7 +541,7 @@
             <dependency>
                 <groupId>org.jacoco</groupId>
                 <artifactId>org.jacoco.core</artifactId>
-                <version>0.7.6.201602180812</version>
+                <version>0.7.8</version>
                 <scope>test</scope>
             </dependency>
             
@@ -570,14 +570,14 @@
                 <groupId>nl.jqno.equalsverifier</groupId>
                 <artifactId>equalsverifier</artifactId>
                 <!--<version>1.7.8</version>-->
-                <version>2.0.2</version>
+                <version>2.2</version>
             </dependency>
             
             <!-- h2 database in used to check some database related things -->
             <dependency>
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
-                <version>1.4.192</version>
+                <version>1.4.193</version>
             </dependency>
 
         </dependencies>

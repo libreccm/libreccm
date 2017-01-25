@@ -17,11 +17,14 @@ ccm_core.permissions:
     - permission_id: -30001
       granted_privilege: privilege1
       grantee_id: -10001
+      inherited: false
     - permission_id: -30002
       granted_privilege: privilege2
       object_id: -20001
       grantee_id: -10001
+      inherited: false
     - permission_id: -30003
       granted_privilege: privilege2
       object_id: -20002
       grantee_id: -10002
+      inherited: false

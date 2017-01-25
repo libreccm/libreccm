@@ -105,8 +105,7 @@ public class PermissionChecker {
 
     /**
      * Checks if the current subject has a permission granting the provided
-     * {@code privilege} on the provided {@code object} or its parent object(s)
-     * if the object implements the {@link InheritsPermissions} interface.
+     * {@code privilege} on the provided {@code object}.
      *
      * @param privilege The granted privilege.
      * @param object    The object on which the privilege is granted.
@@ -116,33 +115,18 @@ public class PermissionChecker {
      *         subject.
      */
     public boolean isPermitted(final String privilege, final CcmObject object) {
-        final boolean result;
         if (subject.isAuthenticated()) {
-            result = subject.isPermitted(generatePermissionString(
+            return subject.isPermitted(generatePermissionString(
                 privilege, object));
         } else {
-            result = shiro.getPublicUser().isPermitted(generatePermissionString(
+            return shiro.getPublicUser().isPermitted(generatePermissionString(
                 privilege, object));
-        }
-        if (result) {
-            return result;
-        } else if (object instanceof InheritsPermissions) {
-            if (((InheritsPermissions) object).getParent().isPresent()) {
-                return isPermitted(
-                    privilege,
-                    ((InheritsPermissions) object).getParent().get());
-            } else {
-                return result;
-            }
-        } else {
-            return result;
         }
     }
 
     /**
      * Checks if the provided {@code role} has a permission granting the
-     * provided {@code privilege} on the provided object or its parent object(s)
-     * if the object implements the {@link InheritsPermissions} interface.
+     * provided {@code privilege} on the provided object.
      *
      * @param privilege The granted privilege.
      * @param object    The object on which the {@code privilege} is granted.
@@ -181,23 +165,7 @@ public class PermissionChecker {
             .filter(granted -> granted.getObject() != null)
             .filter(granted -> object.equals(granted.getObject()))
             .findFirst();
-        result = permission.isPresent();
-
-        if (result) {
-            return result;
-        } else if (object instanceof InheritsPermissions) {
-            if (((InheritsPermissions) object).getParent().isPresent()) {
-                return isPermitted(
-                    privilege,
-                    ((InheritsPermissions) object).getParent().get(),
-                    role);
-            } else {
-                return result;
-            }
-        } else {
-            return result;
-        }
-
+        return permission.isPresent();
     }
 
     /**
@@ -224,11 +192,8 @@ public class PermissionChecker {
      * Checks if the current subject has a permission granting the provided
      * privilege on the provided object.
      *
-     * If the object implements the {@link InheritsPermissions} interface the
-     * method also checks the parent objects for a permission granting the
-     * provided privilege.
      *
-     * @param privilege The privilige to check for.
+     * @param privilege The privilege to check for.
      * @param object    The object on which the privilege is granted.
      *
      * @throws AuthorizationException If there is no permission granting the
@@ -238,23 +203,7 @@ public class PermissionChecker {
     public void checkPermission(final String privilege,
                                 final CcmObject object)
         throws AuthorizationException {
-        if (object instanceof InheritsPermissions) {
-            final boolean result = isPermitted(privilege, object);
-
-            if (!result) {
-                if (((InheritsPermissions) object).getParent().isPresent()) {
-                    checkPermission(
-                        privilege,
-                        ((InheritsPermissions) object).getParent().get());
-                } else if (subject.isAuthenticated()) {
-                    subject.checkPermission(generatePermissionString(
-                        privilege, object));
-                } else {
-                    shiro.getPublicUser().checkPermission(
-                        generatePermissionString(privilege, object));
-                }
-            }
-        } else if (subject.isAuthenticated()) {
+        if (subject.isAuthenticated()) {
             subject.checkPermission(generatePermissionString(privilege, object));
         } else {
             shiro.getPublicUser().checkPermission(generatePermissionString(

@@ -21,11 +21,9 @@ package org.librecms.contentsection;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
 import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Indexed;
 import org.libreccm.categorization.Categorization;
 import org.libreccm.core.CcmObject;
 import org.libreccm.l10n.LocalizedString;
-import org.libreccm.security.InheritsPermissions;
 import org.libreccm.workflow.Workflow;
 import org.librecms.CmsConstants;
 import org.librecms.lifecycle.Lifecycle;
@@ -56,9 +54,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.hibernate.search.annotations.IndexedEmbedded;
-import org.libreccm.security.RecursivePermissions;
-import org.librecms.contentsection.privileges.AssetPrivileges;
-import org.librecms.contentsection.privileges.ItemPrivileges;
 
 import static org.librecms.CmsConstants.*;
 
@@ -72,6 +67,16 @@ import static org.librecms.CmsConstants.*;
 @Table(name = "CONTENT_ITEMS", schema = DB_SCHEMA)
 //@Indexed
 @NamedQueries({
+    @NamedQuery(
+        name = "ContentItem.findById",
+        query = "SELECT i FROM ContentItem i "
+                    + "WHERE i.objectId = :objectId "
+                    + "AND (EXISTS(SELECT p FROM Permission p "
+                    + "WHERE p.grantedPrivilege = 'read' "
+                    + "AND p.grantee IN :roles "
+                    + "AND p.object = i)"
+                    + "OR true = :admin)")
+    ,
     @NamedQuery(
         name = "ContentItem.findByType",
         query = "SELECT i FROM ContentItem i WHERE TYPE(i) = :type")
@@ -152,8 +157,7 @@ import static org.librecms.CmsConstants.*;
                     + "WHERE i.workflow = :workflow"
     )
 })
-public class ContentItem extends CcmObject implements Serializable,
-                                                      InheritsPermissions {
+public class ContentItem extends CcmObject implements Serializable {
 
     private static final long serialVersionUID = 5897287630227129653L;
 
@@ -368,21 +372,6 @@ public class ContentItem extends CcmObject implements Serializable,
 
     public void setWorkflow(final Workflow workflow) {
         this.workflow = workflow;
-    }
-
-    @Override
-    public Optional<CcmObject> getParent() {
-        final List<Categorization> result = getCategories().stream().filter(
-            categorization -> CmsConstants.CATEGORIZATION_TYPE_FOLDER.
-                equals(
-                    categorization.getType()))
-            .collect(Collectors.toList());
-
-        if (result.isEmpty()) {
-            return Optional.empty();
-        } else {
-            return Optional.of(result.get(0).getCategory());
-        }
     }
 
     @Override

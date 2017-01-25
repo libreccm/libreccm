@@ -38,12 +38,14 @@ import org.libreccm.tests.categories.IntegrationTest;
 
 import static org.libreccm.testutils.DependenciesHelpers.getModuleDependencies;
 
+import org.jboss.arquillian.persistence.CleanupUsingScript;
+
 
 /**
  * Test class. Tests the import capabilities of the core module
  * {@code Portation} with data from the trunk implementations
  *
- * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
+ * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  * @version created on 12/1/16
  */
 @org.junit.experimental.categories.Category(IntegrationTest.class)
@@ -51,6 +53,7 @@ import static org.libreccm.testutils.DependenciesHelpers.getModuleDependencies;
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
 @CreateSchema({"create_ccm_core_schema.sql"})
+@CleanupUsingScript({"cleanup.sql"})
 public class CoreDataImportTest {
 
     private ImportHelper importHelper;

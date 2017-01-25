@@ -63,7 +63,15 @@ import javax.persistence.OneToOne;
                 query = "SELECT COUNT(p) FROM Permission p "
                             + "WHERE p.grantedPrivilege = :privilege "
                             + "AND p.grantee = :grantee "
-                            + "AND p.object = :object")
+                            + "AND p.object = :object "
+                            + "AND p.inherited = false")
+    ,
+    @NamedQuery(name = "Permission.existsInheritedForPrivilegeRoleObject",
+                query = "SELECT COUNT(p) FROM Permission p "
+                            + "WHERE p.grantedPrivilege = :privilege "
+                            + "AND p.grantee = :grantee "
+                            + "AND p.object = :object "
+                            + "AND p.inherited = true")
     ,
     @NamedQuery(name = "Permission.existsForPrivilegeAndRole",
                 query = "SELECT count(p) FROM Permission p "
@@ -78,6 +86,7 @@ import javax.persistence.OneToOne;
     @NamedQuery(name = "Permission.findPermissionsForCcmObject",
                 query = "SELECT p FROM Permission p "
                             + "WHERE p.object = :object")
+
 })
 @XmlRootElement(name = "permission", namespace = CORE_XML_NS)
 @XmlAccessorType(XmlAccessType.FIELD)

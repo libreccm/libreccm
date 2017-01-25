@@ -47,6 +47,8 @@ import static org.junit.Assert.*;
 
 import static org.libreccm.testutils.DependenciesHelpers.*;
 
+import org.jboss.arquillian.persistence.CleanupUsingScript;
+
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
@@ -56,6 +58,7 @@ import static org.libreccm.testutils.DependenciesHelpers.*;
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
 @CreateSchema({"create_ccm_core_schema.sql"})
+@CleanupUsingScript({"cleanup.sql"})
 public class RoleManagerTest {
 
     @Inject

@@ -195,17 +195,12 @@ public class BrowsePane extends LayoutPanel implements Resettable {
                     if (object instanceof Category) {
                         final Category category = (Category) object;
 
-                        if (category.getParent().isPresent()) {
-                            final CcmObject result = category.getParent().get();
-
-                            if (result instanceof Category) {
-                                object = result;
-                                tree.expand(
-                                    ((Long) object.getObjectId()).toString(),
-                                    state);
-                            } else {
-                                object = null;
-                            }
+                        if (category.getParentCategory() != null) {
+                            final Category result = category.getParentCategory();
+                            object = result;
+                            tree.expand(
+                                ((Long) object.getObjectId()).toString(),
+                                state);
                         } else {
                             object = null;
                         }
