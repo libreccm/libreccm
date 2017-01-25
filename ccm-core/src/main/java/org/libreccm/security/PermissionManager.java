@@ -97,40 +97,51 @@ public class PermissionManager {
                 "Can't grant a permission on object NULL.");
         }
 
+        if (existsInheritedPermission(privilege, grantee, object)) {
+            revokePrivilege(privilege, grantee, object);
+        }
+
         if (!existsPermission(privilege, grantee, object)) {
             final Permission permission = new Permission();
             permission.setGrantee(grantee);
             permission.setGrantedPrivilege(privilege);
             permission.setObject(object);
+            permission.setInherited(false);
 
             entityManager.persist(permission);
 
-            grantRecursive(privilege, grantee, object, object.getClass());
+            grantRecursive(privilege, grantee, object, object.getClass(), object);
         }
     }
 
     private void grantRecursive(final String privilege,
                                 final Role grantee,
                                 final CcmObject object,
-                                final Class<?> clazz) {
+                                final Class<?> clazz,
+                                final CcmObject inheritedFrom) {
         final Field[] fields = clazz.getDeclaredFields();
         Arrays.stream(fields)
             .filter(field -> field.isAnnotationPresent(
             RecursivePermissions.class))
             .forEach(field -> {
                 field.setAccessible(true);
-                grantRecursive(privilege, grantee, field, object);
+                grantRecursive(privilege, grantee, field, object, inheritedFrom);
             });
 
         if (clazz.getSuperclass() != null) {
-            grantRecursive(privilege, grantee, object, clazz.getSuperclass());
+            grantRecursive(privilege,
+                           grantee,
+                           object,
+                           clazz.getSuperclass(),
+                           inheritedFrom);
         }
     }
 
     private void grantRecursive(final String privilege,
                                 final Role grantee,
                                 final Field field,
-                                final CcmObject owner) {
+                                final CcmObject owner,
+                                final CcmObject inheritedFrom) {
         final Object value;
         try {
             value = field.get(owner);
@@ -147,19 +158,28 @@ public class PermissionManager {
             collection.stream()
                 .filter(obj -> obj instanceof CcmObject)
                 .map(obj -> (CcmObject) obj)
-                .forEach(obj -> grantPrivilege(privilege, grantee, obj));
+                .forEach(obj -> grantInherited(privilege,
+                                               grantee,
+                                               obj,
+                                               inheritedFrom));
             collection.stream()
                 .filter(obj -> obj instanceof Relation)
                 .map(obj -> (Relation) obj)
                 .filter(relation -> relation.getRelatedObject() != null)
                 .map(relation -> relation.getRelatedObject())
-                .forEach(obj -> grantPrivilege(privilege, grantee, obj));
+                .forEach(obj -> grantInherited(privilege,
+                                               grantee,
+                                               obj,
+                                               inheritedFrom));
         } else if (CcmObject.class.isAssignableFrom(field.getType())) {
             grantPrivilege(privilege, grantee, (CcmObject) value);
         } else if (Relation.class.isAssignableFrom(field.getType())) {
             final Relation relation = (Relation) value;
             if (relation.getRelatedObject() != null) {
-                grantPrivilege(privilege, grantee, relation.getRelatedObject());
+                grantInherited(privilege,
+                               grantee,
+                               relation.getRelatedObject(),
+                               inheritedFrom);
             }
         } else {
             throw new IllegalArgumentException(String.format(
@@ -167,6 +187,29 @@ public class PermissionManager {
                     + "collection nor a CcmObject nore a Relation object. This "
                     + "is not supported.",
                 RecursivePermissions.class));
+        }
+    }
+
+    private void grantInherited(final String privilege,
+                                final Role grantee,
+                                final CcmObject object,
+                                final CcmObject inheritedFrom) {
+
+        if (!existsPermission(privilege, grantee, object)) {
+            final Permission permission = new Permission();
+            permission.setGrantee(grantee);
+            permission.setGrantedPrivilege(privilege);
+            permission.setObject(object);
+            permission.setInherited(true);
+            permission.setInheritedFrom(inheritedFrom);
+
+            entityManager.persist(permission);
+
+            grantRecursive(privilege,
+                           grantee,
+                           object,
+                           object.getClass(),
+                           inheritedFrom);
         }
     }
 
@@ -250,8 +293,8 @@ public class PermissionManager {
                     + "AND p.inherited = true");
             deleteInheritedQuery.setParameter(QUERY_PARAM_PRIVILEGE, privilege);
             deleteInheritedQuery.setParameter(QUERY_PARAM_GRANTEE, grantee);
-            deleteInheritedQuery.setParameter("p.inheritedFrom", object);
-            deleteQuery.executeUpdate();
+            deleteInheritedQuery.setParameter("object", object);
+            deleteInheritedQuery.executeUpdate();
         }
     }
 
@@ -361,8 +404,9 @@ public class PermissionManager {
     }
 
     /**
-     * Checks if a permission granting the provided {@code privilege} on the
-     * provided {@code object} to the provided {@code role} exists.
+     * Checks if a not inherited permission granting the provided
+     * {@code privilege} on the provided {@code object} to the provided
+     * {@code role} exists.
      *
      * @param privilege The privilege granted by the permission.
      * @param grantee   The role to which the privilege was granted.
@@ -376,6 +420,18 @@ public class PermissionManager {
                                      final CcmObject object) {
         final TypedQuery<Long> query = entityManager.createNamedQuery(
             "Permission.existsForPrivilegeRoleObject", Long.class);
+        query.setParameter(QUERY_PARAM_PRIVILEGE, privilege);
+        query.setParameter(QUERY_PARAM_GRANTEE, grantee);
+        query.setParameter(QUERY_PARAM_OBJECT, object);
+
+        return query.getSingleResult() > 0;
+    }
+
+    private boolean existsInheritedPermission(final String privilege,
+                                              final Role grantee,
+                                              final CcmObject object) {
+        final TypedQuery<Long> query = entityManager.createNamedQuery(
+            "Permission.existsInheritedForPrivilegeRoleObject", Long.class);
         query.setParameter(QUERY_PARAM_PRIVILEGE, privilege);
         query.setParameter(QUERY_PARAM_GRANTEE, grantee);
         query.setParameter(QUERY_PARAM_OBJECT, object);

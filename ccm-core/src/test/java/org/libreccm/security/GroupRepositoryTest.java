@@ -43,8 +43,10 @@ import org.junit.After;
 import org.junit.AfterClass;
 
 import static org.junit.Assert.*;
+
 import static org.libreccm.testutils.DependenciesHelpers.*;
 
+import org.jboss.arquillian.persistence.CleanupUsingScript;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -61,6 +63,7 @@ import org.libreccm.tests.categories.IntegrationTest;
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
 @CreateSchema("create_ccm_core_schema.sql")
+@CleanupUsingScript({"cleanup.sql"})
 public class GroupRepositoryTest {
 
     private static final String ADMINS = "admins";
@@ -117,6 +120,7 @@ public class GroupRepositoryTest {
             .addPackage(org.libreccm.tests.categories.IntegrationTest.class
                 .getPackage())
             .addClass(org.libreccm.portation.Portable.class)
+            .addClass(com.arsdigita.util.UncheckedWrapperException.class)
             .addAsLibraries(getModuleDependencies())
             .addAsResource("configs/shiro.ini", "shiro.ini")
             .addAsResource("test-persistence.xml",
