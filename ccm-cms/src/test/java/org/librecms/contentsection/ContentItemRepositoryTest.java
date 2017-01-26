@@ -18,9 +18,14 @@
  */
 package org.librecms.contentsection;
 
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
+import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
+import org.jboss.arquillian.persistence.CleanupUsingScript;
 import org.jboss.arquillian.persistence.CreateSchema;
 import org.jboss.arquillian.persistence.PersistenceTest;
 import org.jboss.arquillian.persistence.ShouldMatchDataSet;
@@ -42,15 +47,8 @@ import org.libreccm.tests.categories.IntegrationTest;
 import org.librecms.contenttypes.Article;
 import org.librecms.contenttypes.News;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
-
-import javax.inject.Inject;
-
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
-
 import static org.libreccm.testutils.DependenciesHelpers.*;
 
 /**
@@ -62,6 +60,7 @@ import static org.libreccm.testutils.DependenciesHelpers.*;
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
 @CreateSchema({"create_ccm_cms_schema.sql"})
+@CleanupUsingScript({"cleanup.sql"})
 public class ContentItemRepositoryTest {
 
     @Inject

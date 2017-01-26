@@ -50,6 +50,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import org.jboss.arquillian.persistence.CleanupUsingScript;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
@@ -63,12 +64,13 @@ import static org.junit.Assert.*;
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
 @CreateSchema({"create_ccm_cms_schema.sql"})
+@CleanupUsingScript({"cleanup.sql"})
 public class ContentItemPermissionTest {
 
     private static final String QUERY = "SELECT i FROM ContentItem i "
-                                            + "JOIN i.permissions p "
-                                            + "WHERE p.grantee IN :roles "
-                                            + "AND p.grantedPrivilege = 'view_draft_items' "
+                                                + "JOIN i.permissions p "
+                                                + "WHERE p.grantee IN :roles "
+                                                + "AND p.grantedPrivilege = 'view_draft_items' "
                                         + "ORDER BY i.displayName";
 
     @Inject
@@ -99,62 +101,63 @@ public class ContentItemPermissionTest {
     @Deployment
     public static WebArchive createDeployment() {
         return ShrinkWrap
-            .create(WebArchive.class,
-                    "LibreCCM-org.librecms.contentsection.ContentItemPermissionTest.war")
-            .addPackage(org.libreccm.auditing.CcmRevision.class.getPackage())
-            .addPackage(org.libreccm.categorization.Categorization.class
-                .getPackage())
-            .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
-            .addPackage(org.libreccm.configuration.Configuration.class
-                .getPackage())
-            .addPackage(org.libreccm.core.CcmCore.class.getPackage())
-            .addPackage(org.libreccm.jpa.EntityManagerProducer.class
-                .getPackage())
-            .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
-                .getPackage())
-            .addPackage(org.libreccm.l10n.LocalizedString.class
-                .getPackage())
-            .addPackage(org.libreccm.security.Permission.class.getPackage())
-            .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
-            .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
-            .addPackage(com.arsdigita.bebop.Component.class.getPackage())
-            .addPackage(com.arsdigita.bebop.util.BebopConstants.class
-                .getPackage())
-            .addClass(com.arsdigita.kernel.KernelConfig.class)
-            .addClass(com.arsdigita.runtime.CCMResourceManager.class)
-            .addClass(com.arsdigita.dispatcher.RequestContext.class)
-            .addClass(com.arsdigita.dispatcher.AccessDeniedException.class)
-            .addClass(com.arsdigita.cms.dispatcher.ContentItemDispatcher.class)
-            .addClass(com.arsdigita.dispatcher.Dispatcher.class)
-            .addClass(
-                com.arsdigita.ui.admin.applications.AbstractAppInstanceForm.class)
-            .addClass(
-                com.arsdigita.ui.admin.applications.AbstractAppSettingsPane.class)
-            .addClass(
-                com.arsdigita.ui.admin.applications.DefaultApplicationInstanceForm.class)
-            .addClass(
-                com.arsdigita.ui.admin.applications.DefaultApplicationSettingsPane.class)
-            .addClass(com.arsdigita.cms.dispatcher.ItemResolver.class)
-            .addClass(org.libreccm.portation.Portable.class)
-            .addPackage(com.arsdigita.util.Lockable.class.getPackage())
-            .addPackage(com.arsdigita.web.BaseServlet.class.getPackage())
-            .addPackage(org.librecms.Cms.class.getPackage())
-            .addPackage(org.librecms.contentsection.Asset.class.getPackage())
-            .addPackage(org.librecms.contentsection.AttachmentList.class
-                .getPackage())
-            .addPackage(org.librecms.lifecycle.Lifecycle.class.getPackage())
-            .addPackage(org.librecms.contentsection.ContentSection.class
-                .getPackage())
-            .addPackage(org.librecms.contenttypes.Article.class.getPackage())
-            .addPackage(org.libreccm.tests.categories.IntegrationTest.class
-                .getPackage())
-            //            .addAsLibraries(getModuleDependencies())
-            .addAsLibraries(getCcmCoreDependencies())
-            .addAsResource("test-persistence.xml",
-                           "META-INF/persistence.xml")
-            .addAsResource("configs/shiro.ini", "shiro.ini")
-            .addAsWebInfResource("test-web.xml", "web.xml")
-            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+                .create(WebArchive.class,
+                        "LibreCCM-org.librecms.contentsection.ContentItemPermissionTest.war").
+                addPackage(org.libreccm.auditing.CcmRevision.class.getPackage())
+                .addPackage(org.libreccm.categorization.Categorization.class
+                        .getPackage())
+                .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
+                .addPackage(org.libreccm.configuration.Configuration.class
+                        .getPackage())
+                .addPackage(org.libreccm.core.CcmCore.class.getPackage())
+                .addPackage(org.libreccm.jpa.EntityManagerProducer.class
+                        .getPackage())
+                .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
+                        .getPackage())
+                .addPackage(org.libreccm.l10n.LocalizedString.class
+                        .getPackage())
+                .addPackage(org.libreccm.security.Permission.class.getPackage())
+                .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
+                .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
+                .addPackage(com.arsdigita.bebop.Component.class.getPackage())
+                .addPackage(com.arsdigita.bebop.util.BebopConstants.class
+                        .getPackage())
+                .addClass(com.arsdigita.kernel.KernelConfig.class)
+                .addClass(com.arsdigita.runtime.CCMResourceManager.class)
+                .addClass(com.arsdigita.dispatcher.RequestContext.class)
+                .addClass(com.arsdigita.dispatcher.AccessDeniedException.class)
+                .addClass(
+                        com.arsdigita.cms.dispatcher.ContentItemDispatcher.class).
+                addClass(com.arsdigita.dispatcher.Dispatcher.class)
+                .addClass(
+                        com.arsdigita.ui.admin.applications.AbstractAppInstanceForm.class).
+                addClass(
+                        com.arsdigita.ui.admin.applications.AbstractAppSettingsPane.class).
+                addClass(
+                        com.arsdigita.ui.admin.applications.DefaultApplicationInstanceForm.class).
+                addClass(
+                        com.arsdigita.ui.admin.applications.DefaultApplicationSettingsPane.class).
+                addClass(com.arsdigita.cms.dispatcher.ItemResolver.class)
+                .addClass(org.libreccm.portation.Portable.class)
+                .addPackage(com.arsdigita.util.Lockable.class.getPackage())
+                .addPackage(com.arsdigita.web.BaseServlet.class.getPackage())
+                .addPackage(org.librecms.Cms.class.getPackage())
+                .addPackage(org.librecms.contentsection.Asset.class.getPackage()).
+                addPackage(org.librecms.contentsection.AttachmentList.class
+                        .getPackage())
+                .addPackage(org.librecms.lifecycle.Lifecycle.class.getPackage())
+                .addPackage(org.librecms.contentsection.ContentSection.class
+                        .getPackage())
+                .addPackage(org.librecms.contenttypes.Article.class.getPackage()).
+                addPackage(org.libreccm.tests.categories.IntegrationTest.class
+                        .getPackage())
+                //            .addAsLibraries(getModuleDependencies())
+                .addAsLibraries(getCcmCoreDependencies())
+                .addAsResource("test-persistence.xml",
+                               "META-INF/persistence.xml")
+                .addAsResource("configs/shiro.ini", "shiro.ini")
+                .addAsWebInfResource("test-web.xml", "web.xml")
+                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test
@@ -177,19 +180,19 @@ public class ContentItemPermissionTest {
     @Test
     @InSequence(100)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                      + "ContentItemPermissionTest/data.xml")
+                          + "ContentItemPermissionTest/data.xml")
     public void accessByNoUser() {
         final List<Role> roles;
         if (shiro.getUser() == null) {
             roles = new ArrayList<>();
         } else {
             roles = shiro.getUser().getRoleMemberships().stream()
-                .map(membership -> membership.getRole())
-                .collect(Collectors.toList());
+                    .map(membership -> membership.getRole())
+                    .collect(Collectors.toList());
         }
 
         final TypedQuery<ContentItem> query = entityManager.createQuery(
-            QUERY, ContentItem.class);
+                QUERY, ContentItem.class);
         query.setParameter("roles", roles);
         final List<ContentItem> result = query.getResultList();
 
@@ -199,19 +202,19 @@ public class ContentItemPermissionTest {
     @Test
     @InSequence(200)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                      + "ContentItemPermissionTest/data.xml")
+                          + "ContentItemPermissionTest/data.xml")
     public void accessByUser1() {
         final UsernamePasswordToken token = new UsernamePasswordToken(
-            "user1@example.org", "foo123");
+                "user1@example.org", "foo123");
         token.setRememberMe(true);
         subject.login(token);
 
         final List<Role> roles = shiro.getUser().getRoleMemberships().stream()
-            .map(membership -> membership.getRole())
-            .collect(Collectors.toList());
+                .map(membership -> membership.getRole())
+                .collect(Collectors.toList());
 
         final TypedQuery<ContentItem> query = entityManager.createQuery(
-            QUERY, ContentItem.class);
+                QUERY, ContentItem.class);
         query.setParameter("roles", roles);
         final List<ContentItem> result = query.getResultList();
 
@@ -223,19 +226,19 @@ public class ContentItemPermissionTest {
     @Test
     @InSequence(300)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                      + "ContentItemPermissionTest/data.xml")
+                          + "ContentItemPermissionTest/data.xml")
     public void accessByUser2() {
         final UsernamePasswordToken token = new UsernamePasswordToken(
-            "user2@example.org", "foo123");
+                "user2@example.org", "foo123");
         token.setRememberMe(true);
         subject.login(token);
 
         final List<Role> roles = shiro.getUser().getRoleMemberships().stream()
-            .map(membership -> membership.getRole())
-            .collect(Collectors.toList());
+                .map(membership -> membership.getRole())
+                .collect(Collectors.toList());
 
         final TypedQuery<ContentItem> query = entityManager.createQuery(
-            QUERY, ContentItem.class);
+                QUERY, ContentItem.class);
         query.setParameter("roles", roles);
         final List<ContentItem> result = query.getResultList();
 
@@ -246,19 +249,19 @@ public class ContentItemPermissionTest {
     @Test
     @InSequence(400)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                      + "ContentItemPermissionTest/data.xml")
+                          + "ContentItemPermissionTest/data.xml")
     public void accessByUser3() {
         final UsernamePasswordToken token = new UsernamePasswordToken(
-            "user3@example.org", "foo123");
+                "user3@example.org", "foo123");
         token.setRememberMe(true);
         subject.login(token);
 
         final List<Role> roles = shiro.getUser().getRoleMemberships().stream()
-            .map(membership -> membership.getRole())
-            .collect(Collectors.toList());
+                .map(membership -> membership.getRole())
+                .collect(Collectors.toList());
 
         final TypedQuery<ContentItem> query = entityManager.createQuery(
-            QUERY, ContentItem.class);
+                QUERY, ContentItem.class);
         query.setParameter("roles", roles);
         final List<ContentItem> result = query.getResultList();
 

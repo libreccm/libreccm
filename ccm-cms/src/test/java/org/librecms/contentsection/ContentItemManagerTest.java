@@ -52,6 +52,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import org.jboss.arquillian.persistence.CleanupUsingScript;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
@@ -68,6 +69,7 @@ import static org.libreccm.testutils.DependenciesHelpers.*;
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
 @CreateSchema({"create_ccm_cms_schema.sql"})
+@CleanupUsingScript({"cleanup.sql"})
 public class ContentItemManagerTest {
 
     @Inject
