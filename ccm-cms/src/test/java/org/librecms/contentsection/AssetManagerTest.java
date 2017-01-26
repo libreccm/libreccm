@@ -51,6 +51,7 @@ import java.util.Locale;
 
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
+import org.jboss.arquillian.persistence.CleanupUsingScript;
 
 import org.librecms.assets.File;
 
@@ -67,6 +68,7 @@ import static org.junit.Assert.*;
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
 @CreateSchema({"create_ccm_cms_schema.sql"})
+@CleanupUsingScript({"cleanup.sql"})
 public class AssetManagerTest {
 
     @Inject
