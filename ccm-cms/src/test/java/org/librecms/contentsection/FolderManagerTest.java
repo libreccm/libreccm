@@ -43,6 +43,7 @@ import org.junit.runner.RunWith;
 import org.libreccm.tests.categories.IntegrationTest;
 
 import javax.inject.Inject;
+import org.jboss.arquillian.persistence.CleanupUsingScript;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
@@ -56,6 +57,7 @@ import static org.junit.Assert.*;
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
 @CreateSchema({"create_ccm_cms_schema.sql"})
+@CleanupUsingScript({"cleanup.sql"})
 public class FolderManagerTest {
 
     @Inject

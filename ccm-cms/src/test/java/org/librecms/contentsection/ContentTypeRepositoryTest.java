@@ -49,6 +49,7 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.inject.Inject;
+import org.jboss.arquillian.persistence.CleanupUsingScript;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
@@ -62,6 +63,7 @@ import static org.junit.Assert.*;
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
 @CreateSchema({"create_ccm_cms_schema.sql"})
+@CleanupUsingScript({"cleanup.sql"})
 public class ContentTypeRepositoryTest {
 
     @Inject

@@ -55,6 +55,7 @@ import static org.junit.Assert.*;
 import static org.libreccm.testutils.DependenciesHelpers.*;
 
 import org.jboss.arquillian.container.test.api.ShouldThrowException;
+import org.jboss.arquillian.persistence.CleanupUsingScript;
 import org.libreccm.workflow.WorkflowTemplate;
 import org.libreccm.workflow.WorkflowTemplateRepository;
 import org.librecms.contentsection.privileges.ItemPrivileges;
@@ -74,6 +75,7 @@ import org.librecms.lifecycle.LifecycleDefinitionRepository;
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
 @CreateSchema({"create_ccm_cms_schema.sql"})
+@CleanupUsingScript({"cleanup.sql"})
 public class ContentSectionManagerTest {
 
     @Inject
