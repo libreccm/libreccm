@@ -26,7 +26,7 @@
     
     <extension qualifier="persistence-dbunit">
         <property name="defaultDataSetFormat">json</property>
-        <!--<property name="datatypeFactory">org.dbunit.ext.h2.H2DataTypeFactory</property>-->
+        <property name="datatypeFactory">org.dbunit.ext.postgresql.PostgresqlDataTypeFactory</property>
         <property name="excludePoi">true</property>
         <property name="qualifiedTableNames">true</property>
     </extension>
