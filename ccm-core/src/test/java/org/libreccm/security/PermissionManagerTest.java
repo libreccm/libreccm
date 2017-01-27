@@ -219,7 +219,7 @@ public class PermissionManagerTest {
 
     /**
      * Verifies that permissions are granted recursivly when a permission is
-     * granted if the object has properties which are annototed with
+     * granted if the object has properties which are annotated with
      * {@link RecursivePermissions}.
      */
     @Test
@@ -238,28 +238,6 @@ public class PermissionManagerTest {
             permissionManager.grantPrivilege("privilege4", role1, category1);
         });
     }
-
-    /**
-     * Verifies that granting a permission on a object which is already
-     * inherited from an object converts the permission to a directly granted
-     * one.
-     */
-//    @Test
-//    @UsingDataSet("datasets/org/libreccm/security/PermissionManagerTest/"
-//                      + "after-grant-recursivly.yml")
-//    @ShouldMatchDataSet(
-//        value = "datasets/org/libreccm/security/PermissionManagerTest/"
-//                    + "after-grant-inherited.yml",
-//        excludeColumns = {"permission_id"})
-//    @InSequence(212)
-//    public void grantInheritedPermission() {
-//        final Role role1 = roleRepository.findByName("role1");
-//        final CcmObject category2 = ccmObjectRepository.findById(-20002L);
-//
-//        shiro.getSystemUser().execute(() -> {
-//            permissionManager.grantPrivilege("privilege4", role1, category2);
-//        });
-//    }
 
     /**
      * Verifies that
