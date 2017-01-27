@@ -75,7 +75,7 @@ import org.librecms.lifecycle.LifecycleDefinitionRepository;
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
 @CreateSchema({"create_ccm_cms_schema.sql"})
-@CleanupUsingScript({"cleanup.sql"})
+@CleanupUsingScript({"no-cleanup.sql"})
 public class ContentSectionManagerTest {
 
     @Inject
@@ -221,7 +221,8 @@ public class ContentSectionManagerTest {
                           "section_id",
                           "creation_date",
                           "content_section_id",
-                          "folder_id"})
+                          "folder_id",
+                          "inherited_from_id"})
     @InSequence(100)
     public void createSection() {
         manager.createContentSection("test");

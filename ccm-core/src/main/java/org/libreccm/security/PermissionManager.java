@@ -123,6 +123,11 @@ public class PermissionManager {
         Arrays.stream(fields)
             .filter(field -> field.isAnnotationPresent(
             RecursivePermissions.class))
+            .filter(field -> {
+                return checkIfPrivilegeIsRecursive(
+                    field.getAnnotation(RecursivePermissions.class),
+                    privilege);
+            })
             .forEach(field -> {
                 field.setAccessible(true);
                 grantRecursive(privilege, grantee, field, object, inheritedFrom);
@@ -135,6 +140,14 @@ public class PermissionManager {
                            clazz.getSuperclass(),
                            inheritedFrom);
         }
+    }
+
+    private boolean checkIfPrivilegeIsRecursive(
+        final RecursivePermissions annotation,
+        final String privilege) {
+
+        return Arrays.stream(annotation.privileges())
+            .anyMatch(privilege::equals);
     }
 
     private void grantRecursive(final String privilege,
@@ -172,7 +185,10 @@ public class PermissionManager {
                                                obj,
                                                inheritedFrom));
         } else if (CcmObject.class.isAssignableFrom(field.getType())) {
-            grantPrivilege(privilege, grantee, (CcmObject) value);
+            grantInherited(privilege,
+                           grantee,
+                           (CcmObject) value,
+                           inheritedFrom);
         } else if (Relation.class.isAssignableFrom(field.getType())) {
             final Relation relation = (Relation) value;
             if (relation.getRelatedObject() != null) {
