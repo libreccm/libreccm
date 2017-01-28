@@ -18,7 +18,7 @@
             Disable automatic cleanup, does not work because of referential 
             integrity constrains.
         -->
-        <property name="defaultCleanupPhase">NONE</property>
+        <!--<property name="defaultCleanupPhase">NONE</property>-->
         
         <property name="dumpData">true</property>
         <property name="dumpDirectory">target</property>
@@ -26,14 +26,14 @@
     
     <extension qualifier="persistence-dbunit">
         <property name="defaultDataSetFormat">json</property>
-        <!--<property name="datatypeFactory">org.dbunit.ext.h2.H2DataTypeFactory</property>-->
+        <property name="datatypeFactory">org.dbunit.ext.postgresql.PostgresqlDataTypeFactory</property>
         <property name="excludePoi">true</property>
         <property name="qualifiedTableNames">true</property>
     </extension>
     
-    <extension qualifier="persistence-script">
+    <!--<extension qualifier="persistence-script">
         <property name="scriptsToExecuteAfterTest">scripts/pgsql-cleanup.sql</property>
-    </extension>
+    </extension>-->
 
     
 </arquillian>

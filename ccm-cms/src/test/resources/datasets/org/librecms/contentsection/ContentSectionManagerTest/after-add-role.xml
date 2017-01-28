@@ -927,5 +927,26 @@
                           creation_date="2016-07-15"
                           inherited="true" 
                           inherited_from_id="-1100" />
+    <ccm_core.permissions permission_id="-40000000" 
+                          granted_privilege="view_published_items" 
+                          object_id="-11001" 
+                          grantee_id="-3700" 
+                          creation_date="2016-07-15"
+                          inherited="true" 
+                          inherited_from_id="-1100" />
+    <ccm_core.permissions permission_id="-41000000" 
+                          granted_privilege="preview_items" 
+                          object_id="-11001" 
+                          grantee_id="-3700" 
+                          creation_date="2016-07-15"
+                          inherited="true" 
+                          inherited_from_id="-1100" />
+    <ccm_core.permissions permission_id="-42000000" 
+                          granted_privilege="approve_items" 
+                          object_id="-11001" 
+                          grantee_id="-3700" 
+                          creation_date="2016-07-15"
+                          inherited="true" 
+                          inherited_from_id="-1100" />
     
 </dataset>

@@ -33,7 +33,8 @@
     
     <ccm_core.permissions permission_id="-400"
                           granted_privilege="manage_shortcuts"
-                          grantee_id="-200" />
+                          grantee_id="-200"
+                          inherited="false" />
     
     <ccm_shortcuts.shortcuts shortcut_id="-10"
                              url_key="/mitglieder/"
