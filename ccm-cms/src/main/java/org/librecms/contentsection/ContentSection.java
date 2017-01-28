@@ -64,7 +64,8 @@ import static org.librecms.CmsConstants.*;
         name = "ContentSection.findPermissions",
         query = "SELECT p FROM Permission p "
                     + "WHERE (p.object = :section "
-                    + "       OR p.object = :rootDocumentsFolder) "
+                    + "       OR p.object = :rootDocumentsFolder"
+        + "                   OR p.object = :rootAssetsFolder) "
                     + "AND p.grantee = :role")
 })
 //@ApplicationType(
