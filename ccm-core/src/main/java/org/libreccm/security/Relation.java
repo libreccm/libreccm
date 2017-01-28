@@ -18,29 +18,33 @@
  */
 package org.libreccm.security;
 
+import org.apache.log4j.Category;
+import org.libreccm.categorization.Categorization;
 import org.libreccm.core.CcmObject;
-import org.libreccm.security.RecursivePermissions;
 
 /**
- * If N:M or relation with attributes is annotated with {@link RecursivePermissions} and the 
- * relation object is not a {@link CcmObject} the relation object must 
- * implement this interface.
- * 
+ * If N:M or relation with attributes is annotated with
+ * {@link RecursivePermissions} and the relation object is not a
+ * {@link CcmObject} the relation object must implement this interface.
+ *
  * An example are {@link Category#objects} and {@link Categorization}.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public interface Relation {
-    
+
     /**
      * Get the owning object of the relation.
-     * @return 
+     *
+     * @return
      */
     CcmObject getOwner();
+
     /**
      * Get the related object of the relation.
-     * @return 
+     *
+     * @return
      */
     CcmObject getRelatedObject();
-    
+
 }
