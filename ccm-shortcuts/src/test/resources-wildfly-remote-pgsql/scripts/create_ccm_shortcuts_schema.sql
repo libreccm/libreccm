@@ -1246,4 +1246,4 @@ create sequence hibernate_sequence start 1 increment 1;
 
     alter table CCM_SHORTCUTS.SHORTCUTS 
         add constraint UK_4otuwtog6qqdbg4e6p8xdpw8h unique (URL_KEY);
-    create sequence hibernate_sequence start 1 increment 1;
+

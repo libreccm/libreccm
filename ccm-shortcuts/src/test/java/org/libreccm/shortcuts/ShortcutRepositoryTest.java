@@ -23,6 +23,7 @@ import static org.libreccm.testutils.DependenciesHelpers.*;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
+import org.jboss.arquillian.persistence.CleanupUsingScript;
 import org.jboss.arquillian.persistence.CreateSchema;
 import org.jboss.arquillian.persistence.PersistenceTest;
 import org.jboss.arquillian.persistence.UsingDataSet;
@@ -58,6 +59,7 @@ import static org.junit.Assert.*;
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
 @CreateSchema({"create_ccm_shortcuts_schema.sql"})
+@CleanupUsingScript({"cleanup.sql"})
 public class ShortcutRepositoryTest {
 
     @Inject
