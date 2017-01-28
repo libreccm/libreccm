@@ -349,32 +349,38 @@
                           granted_privilege="view_draft_items" 
                           object_id="-10100" 
                           grantee_id="-3100" 
-                          creation_date="2016-07-15"/>
+                          creation_date="2016-07-15"
+                          inherited="false" />
     <ccm_core.permissions permission_id="-4200" 
                           granted_privilege="view_draft_items" 
                           object_id="-10400" 
                           grantee_id="-3100" 
-                          creation_date="2016-07-15"/>
+                          creation_date="2016-07-15"
+                          inherited="false" />
     <ccm_core.permissions permission_id="-4300" 
                           granted_privilege="view_draft_items" 
                           object_id="-10200" 
                           grantee_id="-3200" 
-                          creation_date="2016-07-15"/>
+                          creation_date="2016-07-15"
+                          inherited="false" />
     <ccm_core.permissions permission_id="-4400" 
                           granted_privilege="view_draft_items" 
                           object_id="-10100" 
                           grantee_id="-3300" 
-                          creation_date="2016-07-15"/>
+                          creation_date="2016-07-15"
+                          inherited="false" />
     <ccm_core.permissions permission_id="-4500" 
                           granted_privilege="view_draft_items" 
                           object_id="-10200" 
                           grantee_id="-3300" 
-                          creation_date="2016-07-15"/>
+                          creation_date="2016-07-15"
+                          inherited="false" />
     <ccm_core.permissions permission_id="-4600" 
                           granted_privilege="view_draft_items" 
                           object_id="-10300" 
                           grantee_id="-3300" 
-                          creation_date="2016-07-15"/>
+                          creation_date="2016-07-15"
+                          inherited="false" />
     
 </dataset>
 

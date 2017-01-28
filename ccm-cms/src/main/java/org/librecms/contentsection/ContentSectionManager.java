@@ -343,13 +343,15 @@ public class ContentSectionManager {
 
         contentSection.removeRole(role);
         sectionRepo.save(contentSection);
-
+        
         final TypedQuery<Permission> query = entityManager
                 .createNamedQuery("ContentSection.findPermissions",
                                   Permission.class);
         query.setParameter("section", contentSection);
         query.setParameter("rootDocumentsFolder",
                            contentSection.getRootDocumentsFolder());
+        query.setParameter("rootAssetsFolder",
+                           contentSection.getRootAssetsFolder());
         query.setParameter("role", role);
 
         final List<Permission> permissions = query.getResultList();

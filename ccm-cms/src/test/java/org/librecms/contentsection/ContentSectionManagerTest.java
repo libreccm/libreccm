@@ -75,7 +75,7 @@ import org.librecms.lifecycle.LifecycleDefinitionRepository;
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
 @CreateSchema({"create_ccm_cms_schema.sql"})
-@CleanupUsingScript({"no-cleanup.sql"})
+@CleanupUsingScript({"cleanup.sql"})
 public class ContentSectionManagerTest {
 
     @Inject
