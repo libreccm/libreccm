@@ -20,10 +20,11 @@ package org.librecms.contentsection.privileges;
 
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.Domain;
+import org.libreccm.security.Role;
 import org.libreccm.web.CcmApplication;
 import org.libreccm.workflow.WorkflowTemplate;
 import org.librecms.contentsection.ContentSection;
-import org.librecms.lifecycle.Lifecycle;
+import org.librecms.contentsection.ContentType;
 import org.librecms.lifecycle.LifecycleDefinition;
 
 /**

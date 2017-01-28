@@ -18,17 +18,40 @@
  */
 package org.libreccm.security;
 
+import org.libreccm.core.CcmObject;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.Collection;
 
 /**
  * Marker interface which an be added to a property to indicate that permissions
  * granted on the owing object should recursivly applied to the child objects.
  *
- * The privileges for which this applied can be defined using
- * {@link #privileges()}.
+ * The privileges for which this applied can be limited using the
+ * {@link #privileges()} property. If {@link #privileges()} is empty, all
+ * permissions are applied recursivly. Otherwise only permissions granting one
+ * of the listed privileges are applied recursivly.
+ *
+ * This annotation can only applied to fields of the following types:
+ * <ul>
+ * <li>{@link CcmObject}</li>
+ * <li>{@link Collection}</li>
+ * <li>{@link Relation}</li>
+ * </ul>
+ *
+ * If applied to a {@link Collection} field the permissions are only recursivly
+ * applied for members of the types {@link CcmObject} and {@link Relation}.
+ *
+ * If an association between two {@link CcmObject}s is modelled using a relation
+ * object the relation object must implement the {@link Relation} interface to
+ * apply to permissions recursivly.
+ *
+ * @see Relation
+ * @see PermissionManager#grantPrivilege(java.lang.String,
+ * org.libreccm.security.Role, org.libreccm.core.CcmObject)}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */

@@ -70,11 +70,16 @@ public class PermissionManager {
 
     /**
      * Grants a privilege on an object to a role. If the privilege was already
-     * granted, the method does nothing.
+     * granted, the method does nothing. If the object on which the privilege is
+     * granted has fields which an annotated with {@link RecursivePermissions}
+     * the method is also applied to these fields. For more details please refer
+     * to the description of the {@link RecursivePermissions} annotation.
      *
      * @param privilege The privilege to grant.
      * @param grantee   The role to which the privilege is granted.
      * @param object    The object on which the privilege is granted.
+     *
+     * @see RecursivePermissions
      */
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
@@ -114,6 +119,20 @@ public class PermissionManager {
         }
     }
 
+    /**
+     * Helper method for recursive permissions
+     *
+     * @param privilege     The privilege to grant.
+     * @param grantee       The role to which the privilege is granted.
+     * @param object        The current object for recursive granting.
+     * @param clazz         The current class analysed for fields annotated with
+     *                      {@link RecursivePermissions}. Is the class of
+     *                      {@code object} or a superclass of the class of
+     *                      {@code object}.
+     * @param inheritedFrom The object on which
+     *                      {@link #grantPrivilege(java.lang.String, org.libreccm.security.Role, org.libreccm.core.CcmObject)}
+     *                      was invoked.
+     */
     private void grantRecursive(final String privilege,
                                 final Role grantee,
                                 final CcmObject object,
@@ -133,6 +152,7 @@ public class PermissionManager {
                 grantRecursive(privilege, grantee, field, object, inheritedFrom);
             });
 
+        // Repeat for superclass of the current class.
         if (clazz.getSuperclass() != null) {
             grantRecursive(privilege,
                            grantee,
@@ -142,14 +162,41 @@ public class PermissionManager {
         }
     }
 
+    /**
+     * Helper method for checking if the
+     * {@link RecursivePermissions#privileges()} property of an
+     * {@link RecursivePermissions} annotation is either empty or contains the
+     * provided {@link privilege}.
+     *
+     * @param annotation The annotation to check.
+     * @param privilege  The privilege to check.
+     *
+     * @return {code true} if the {@link RecursivePermissions#privileges()}
+     *         property of the provided {@code annotation} if empty or contains
+     *         the provided {@code privilege}, {@code false} otherwise.
+     */
     private boolean checkIfPrivilegeIsRecursive(
         final RecursivePermissions annotation,
         final String privilege) {
 
-        return Arrays.stream(annotation.privileges())
-            .anyMatch(privilege::equals);
+        if (annotation.privileges() == null
+                || annotation.privileges().length == 0) {
+            return true;
+        } else {
+            return Arrays.stream(annotation.privileges())
+                .anyMatch(privilege::equals);
+        }
     }
 
+    /**
+     * Helper method for granting a recursive permission.
+     * 
+     * @param privilege The privilege to grant.
+     * @param grantee The role to which the privilege is granted.
+     * @param field The current field.
+     * @param owner The object which own the provided {@code field}.
+     * @param inheritedFrom The object from which the permission is inherited.
+     */
     private void grantRecursive(final String privilege,
                                 final Role grantee,
                                 final Field field,
@@ -167,6 +214,8 @@ public class PermissionManager {
         }
 
         if (Collection.class.isAssignableFrom(field.getType())) {
+            // For a collection field grant a permission on each CCMObject in
+            // the collection.
             final Collection<?> collection = (Collection<?>) value;
             collection.stream()
                 .filter(obj -> obj instanceof CcmObject)
@@ -175,6 +224,10 @@ public class PermissionManager {
                                                grantee,
                                                obj,
                                                inheritedFrom));
+            // Relations between two CcmObjects with attributes or n:m relations
+            // use an object to represent the relation. The object must implement
+            // the Relation interface. For each Relation object in the collection
+            // an inherited permission on the related object is created.
             collection.stream()
                 .filter(obj -> obj instanceof Relation)
                 .map(obj -> (Relation) obj)
@@ -185,11 +238,15 @@ public class PermissionManager {
                                                obj,
                                                inheritedFrom));
         } else if (CcmObject.class.isAssignableFrom(field.getType())) {
+            // If the provided object is a CcmObject create an inherited 
+            // permission for this object.
             grantInherited(privilege,
                            grantee,
                            (CcmObject) value,
                            inheritedFrom);
         } else if (Relation.class.isAssignableFrom(field.getType())) {
+            // If the provided field is a Relation object created an inherited
+            // permission on the related object.
             final Relation relation = (Relation) value;
             if (relation.getRelatedObject() != null) {
                 grantInherited(privilege,
@@ -206,6 +263,14 @@ public class PermissionManager {
         }
     }
 
+    /**
+     * Helper method for creating an inherited permission.
+     * 
+     * @param privilege The privilege to grant.
+     * @param grantee The role to which {@code privilege} is granted.
+     * @param object The object on which the {@code privilege} is granted.
+     * @param inheritedFrom The object from which the permission is inherited.
+     */
     private void grantInherited(final String privilege,
                                 final Role grantee,
                                 final CcmObject object,
