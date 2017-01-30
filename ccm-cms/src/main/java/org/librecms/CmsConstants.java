@@ -30,18 +30,22 @@ public class CmsConstants {
 
     public static final String CMS_BUNDLE = "org.librecms.CmsResources";
     public static final String CMS_FOLDER_BUNDLE
-                               = "com.arsdigita.cms.ui.folder.CMSFolderResources";
+                                   = "com.arsdigita.cms.ui.folder.CMSFolderResources";
 
     public static final String CONTENT_CENTER_APP_TYPE
-                               = "com.arsdigita.cms.ContentCenter";
+                                   = "com.arsdigita.cms.ContentCenter";
     public static final String CONTENT_CENTER_URL = "/content-center/";
     public static final String CONTENT_CENTER_DESC_BUNDLE
-                               = "org.librecms.contentcenter.ContentCenterResources";
+                                   = "org.librecms.contentcenter.ContentCenterResources";
 
     public static final String CONTENT_SECTION_APP_TYPE
                                    = "org.librecms.contentsection.ContentSection";
     public static final String CONTENT_SECTION_SERVLET_PATH
                                    = "/templates/servlet/content-section/*";
+    public static final String CMS_SERVICE_SERVLET_PATH
+                                   = "/templates/servlet/cms-service/*";
+    public static final String CONTENT_ITEM_SERVLET_PATH
+                                   = "/templates/servlet/content-item/*";
     public static final String CONTENT_SECTION_DESC_BUNDLE
                                    = "org.librecms.contentsection.ContentSectionResources";
 
@@ -59,7 +63,7 @@ public class CmsConstants {
 
     public static final String ASSET_ID = "asset_id";
     public static final String IMAGE_ID = "image_id";
-    
+
     public final static String SCHEDULE_PUBLICATION = "schedule_publication";
 
     private CmsConstants() {
