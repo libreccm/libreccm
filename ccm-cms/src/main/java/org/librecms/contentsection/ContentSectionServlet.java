@@ -51,6 +51,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.arsdigita.cms.CMSConfig;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.security.PermissionChecker;
@@ -100,7 +101,11 @@ import javax.servlet.RequestDispatcher;
  * @author <a href="mailto:pboy@barkhof.uni-bremen.de">Peter Boy</a>
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@WebServlet(urlPatterns = {CmsConstants.CONTENT_SECTION_SERVLET_PATH})
+@WebServlet(urlPatterns = {CmsConstants.CONTENT_SECTION_SERVLET_PATH,
+                           "/templates/servlet/content-section/",
+                           "/templates/servlet/content-section",
+                           CmsConstants.CMS_SERVICE_SERVLET_PATH,
+                           CmsConstants.CONTENT_ITEM_SERVLET_PATH})
 public class ContentSectionServlet extends BaseApplicationServlet {
 
     private static final long serialVersionUID = 8061725145564728637L;
@@ -173,17 +178,15 @@ public class ContentSectionServlet extends BaseApplicationServlet {
         // optional init-param named template-path from ~/WEB-INF/web.xml
         // may overwrite configuration parameters
         String templatePath = config.getInitParameter("template-path");
-        //ToDo
-        /*if (templatePath == null) {
-            m_templatePath = ContentSection.getConfig().getTemplateRoot();
+        if (templatePath == null) {
+            m_templatePath = CMSConfig.getConfig().getTemplateRootPath();
         } else {
             m_templatePath = config.getInitParameter("template-path");
-        }*/
+        }
 
         // optional init-param named file-resolver from ~/WEB-INF/web.xml
         String resolverName = config.getInitParameter("file-resolver");
 
-        //ToDo
         if (resolverName == null) {
             m_resolver = WebConfig.getConfig().getResolver();
         } else {
@@ -196,7 +199,7 @@ public class ContentSectionServlet extends BaseApplicationServlet {
 
         //  NEW STUFF here will be used to process the pages in this servlet
         //  Currently NOT working
-        //   addPage("/admin", new MainPage());     // index page at address ~/cs
+//        addPage("/admin", new MainPage());     // index page at address ~/cs
         //   addPage("/admin/index.jsp", new MainPage());     
         //   addPage("/admin/item.jsp", new MainPage());     
     }
@@ -242,20 +245,23 @@ public class ContentSectionServlet extends BaseApplicationServlet {
 
         final RequestContext ctx = DispatcherHelper.getRequestContext();
         final String url = ctx.getRemainingURLPart();
-        
+
         //Only for testing PageModel
         if (url != null && url.endsWith("page-model/")) {
             getServletContext()
-                    .getRequestDispatcher("/page-model.bebop")
-                    .include(request, response);
+                .getRequestDispatcher("/page-model.bebop")
+                .include(request, response);
             return;
         }
         //End Test PageModel
-        
-        LOGGER.info("Resolving URL {} and trying as item first.");
+
+        LOGGER.info("Resolving URL {} and trying as item first.", url);
         final ItemResolver itemResolver = getItemResolver(section);
 
         String pathInfo = request.getPathInfo();
+        if (pathInfo == null) {
+            pathInfo = "/";
+        }
 
         final ContentItem item = getItem(section, pathInfo, itemResolver);
 
@@ -314,7 +320,9 @@ public class ContentSectionServlet extends BaseApplicationServlet {
             request.setAttribute(CONTENT_SECTION, section);
 
             RequestDispatcher rd = m_resolver.resolve(m_templatePath,
-                                                      request, response, app);
+                                                      request, 
+                                                      response, 
+                                                      app);
             if (rd != null) {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Got dispatcher " + rd);
@@ -323,7 +331,7 @@ public class ContentSectionServlet extends BaseApplicationServlet {
                            response);
             } else {
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("No dispatcher found for" + rd);
+                    LOGGER.debug("No dispatcher found for " + rd);
                 }
                 String requestUri = request.getRequestURI(); // same as ctx.getRemainingURLPart()
                 response.sendError(404, requestUri
@@ -370,7 +378,6 @@ public class ContentSectionServlet extends BaseApplicationServlet {
 //
 //        templateResolver.setTemplateContext(sTemplateContext, request);
 //        ToDo End
-
         // Work out how long to cache for....
         // We take minimum(default timeout, lifecycle expiry)
         Lifecycle cycle = item.getLifecycle();
@@ -444,9 +451,6 @@ public class ContentSectionServlet extends BaseApplicationServlet {
         if (url.endsWith(XML_SUFFIX)) {
             request.setAttribute(XML_MODE, Boolean.TRUE);
             LOGGER.debug("StraightXML Requested");
-            itemUrl = String.format(
-                "/%s",
-                url.substring(0, url.length() - XML_SUFFIX.length()));
             itemUrl = "/" + url.substring(0, url.length() - XML_SUFFIX.length());
         } else {
             request.setAttribute(XML_MODE, Boolean.FALSE);

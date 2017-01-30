@@ -51,5 +51,11 @@
         <Logger name="org.librecms.contentsection.ContentSectionSetup"
                 level="debug">
         </Logger>
+        <Logger name="org.librecms.contentsection.ContentSectionServlet"
+                    level="debug">
+        </Logger>
+        <Logger name="com.arsdigita.web.DefaultApplicationFileResolver"
+                    level="debug">
+        </Logger>
     </Loggers>
 </Configuration>

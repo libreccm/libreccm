@@ -18,6 +18,8 @@
  */
 package org.librecms.contentsection;
 
+import com.arsdigita.cms.dispatcher.MultilingualItemResolver;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.modules.InstallEvent;
@@ -44,6 +46,8 @@ public class ContentSectionSetup extends AbstractCcmApplicationSetup {
 
     private static final String INITIAL_CONTENT_SECTIONS
                                     = "org.librecms.initial_content_sections";
+    private static final String DEFAULT_ITEM_RESOLVER
+                                    = "org.librecms.default_item_resolver";
 
     public ContentSectionSetup(final InstallEvent event) {
         super(event);
@@ -78,6 +82,16 @@ public class ContentSectionSetup extends AbstractCcmApplicationSetup {
         section.setPrimaryUrl(String.format("/%s/", sectionName));
         section.setDisplayName(sectionName);
         section.setLabel(sectionName);
+
+        if (getIntegrationProps().getProperty(DEFAULT_ITEM_RESOLVER) == null
+                || getIntegrationProps().getProperty(DEFAULT_ITEM_RESOLVER)
+                .trim().isEmpty()) {
+            section.setItemResolverClass(getIntegrationProps().getProperty(
+                DEFAULT_ITEM_RESOLVER));
+        } else {
+            section.setItemResolverClass(MultilingualItemResolver.class
+                .getName());
+        }
 
         LOGGER.debug("New content section properties: "
                          + "uuid = {}; "
@@ -132,8 +146,8 @@ public class ContentSectionSetup extends AbstractCcmApplicationSetup {
                          ItemPrivileges.EDIT,
                          ItemPrivileges.VIEW_PUBLISHED,
                          ItemPrivileges.PREVIEW);
-        
-        grantPermissions(author, 
+
+        grantPermissions(author,
                          rootAssetFolder,
                          AssetPrivileges.USE,
                          AssetPrivileges.CREATE_NEW,
@@ -150,8 +164,8 @@ public class ContentSectionSetup extends AbstractCcmApplicationSetup {
                          ItemPrivileges.DELETE,
                          ItemPrivileges.VIEW_PUBLISHED,
                          ItemPrivileges.PREVIEW);
-        
-        grantPermissions(editor, 
+
+        grantPermissions(editor,
                          rootAssetFolder,
                          AssetPrivileges.USE,
                          AssetPrivileges.CREATE_NEW,
@@ -166,7 +180,7 @@ public class ContentSectionSetup extends AbstractCcmApplicationSetup {
                          AdminPrivileges.ADMINISTER_LIFECYLES,
                          AdminPrivileges.ADMINISTER_CATEGORIES,
                          AdminPrivileges.ADMINISTER_CONTENT_TYPES);
-        
+
         grantPermissions(manager,
                          rootFolder,
                          ItemPrivileges.ADMINISTER,
@@ -178,8 +192,8 @@ public class ContentSectionSetup extends AbstractCcmApplicationSetup {
                          ItemPrivileges.DELETE,
                          ItemPrivileges.VIEW_PUBLISHED,
                          ItemPrivileges.PREVIEW);
-        
-        grantPermissions(manager, 
+
+        grantPermissions(manager,
                          rootAssetFolder,
                          AssetPrivileges.USE,
                          AssetPrivileges.CREATE_NEW,
@@ -197,8 +211,8 @@ public class ContentSectionSetup extends AbstractCcmApplicationSetup {
                          ItemPrivileges.DELETE,
                          ItemPrivileges.VIEW_PUBLISHED,
                          ItemPrivileges.PREVIEW);
-        
-        grantPermissions(publisher, 
+
+        grantPermissions(publisher,
                          rootAssetFolder,
                          AssetPrivileges.USE,
                          AssetPrivileges.CREATE_NEW,
@@ -209,7 +223,7 @@ public class ContentSectionSetup extends AbstractCcmApplicationSetup {
         grantPermissions(contentReader,
                          rootFolder,
                          ItemPrivileges.VIEW_PUBLISHED);
-        
+
         grantPermissions(contentReader,
                          rootAssetFolder,
                          AssetPrivileges.VIEW);
