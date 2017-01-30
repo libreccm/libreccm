@@ -93,16 +93,19 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
-                    <!--<webResources>
-                        <resource>
-                            <directory>../ccm-theme-foundry/src/main/resources/themes</directory>
-                        </resource>
-                    </webResources>-->
                     <overlays>
                         <overlay>
                             <groupId>org.libreccm</groupId>
                             <artifactId>ccm-theme-foundry</artifactId>
                             <type>jar</type>
+                        </overlay>
+                        <overlay>
+                            <groupId>org.librecms</groupId>
+                            <artifactId>ccm-cms</artifactId>
+                            <type>jar</type>
+                            <includes>
+                                <include>templates/</include>
+                            </includes>
                         </overlay>
                     </overlays>
                 </configuration>
