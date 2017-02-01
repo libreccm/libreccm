@@ -18,9 +18,7 @@
  */
 package org.libreccm.security;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import org.libreccm.core.DefaultEntityGraph;
 import org.libreccm.portation.Portable;
 
 import javax.persistence.Entity;
@@ -35,6 +33,7 @@ import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashSet;
@@ -89,7 +88,6 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
                     @NamedAttributeNode(value = "permissions")})
         })
 })
-@DefaultEntityGraph("Group.withMembersAndRoleMemberships")
 @XmlRootElement(name = "user-group", namespace = CORE_XML_NS)
 public class Group extends Party implements Serializable, Portable {
 

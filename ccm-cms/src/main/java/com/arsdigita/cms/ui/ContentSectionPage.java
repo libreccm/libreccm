@@ -243,6 +243,7 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
         }
         return m_browsePane;
     }
+
     /**
      * Creates, and then caches, the search pane. Overriding this method to
      * return null will prevent this tab from appearing.
@@ -386,16 +387,16 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
         final TabbedPane pane = new TabbedPane();
 
         //tab(pane, "cms.ui.folders", getFolderAdminPane());
-//        ToDo NG tab(pane, "cms.ui.browse", getBrowsePane());
-//        ToDo NG tab(pane, "cms.ui.search", getSearchPane());
-//        ToDo NG tab(pane, "cms.ui.images", getImagesPane());
-//        ToDo NG tab(pane, "cms.ui.roles", getRoleAdminPane());
+        tab(pane, "cms.ui.browse", getBrowsePane());
+        tab(pane, "cms.ui.search", getSearchPane());
+//      ToDo NG replace with media tab tab(pane, "cms.ui.images", getImagesPane());
+        tab(pane, "cms.ui.roles", getRoleAdminPane());
         tab(pane, "cms.ui.workflows", getWorkflowAdminPane());
         tab(pane, "cms.ui.lifecycles", getLifecycleAdminPane());
-//       ToDo NG  tab(pane, "cms.ui.categories", getCategoryAdminPane());
+//      ToDo NG  tab(pane, "cms.ui.categories", getCategoryAdminPane());
         tab(pane, "cms.ui.content_types", getContentTypeAdminPane());
         tab(pane, "cms.ui.cse", getCSEPane());
-//     ToDo NG       tab(pane, "cms.ui.reports", getReportPane());
+        tab(pane, "cms.ui.reports", getReportPane());
 
         return pane;
     }

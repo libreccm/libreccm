@@ -54,11 +54,11 @@ public class ItemSelectionModel extends CcmObjectSelectionModel<ContentItem> {
     private Long typeId;
 
     public ItemSelectionModel(final LongParameter parameter) {
-        super(parameter);
+        super(ContentItem.class.getName(), parameter);
     }
     
     public ItemSelectionModel(final String parameterName) {
-        super(parameterName);
+        super(ContentItem.class.getName(), parameterName);
     }
     
     /**

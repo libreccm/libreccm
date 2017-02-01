@@ -79,25 +79,6 @@ public abstract class AbstractEntityRepository<K, E> {
         return entityManager.createEntityGraph(getEntityClass());
     }
 
-    protected void applyDefaultEntityGraph(final TypedQuery<E> query) {
-        if (getEntityClass().isAnnotationPresent(DefaultEntityGraph.class)) {
-            LOGGER.debug("The following EntityGraphs are available for the "
-                             + "entity class {}:",
-                         getEntityClass().getName());
-            getEntityManager().getEntityGraphs(getEntityClass()).stream()
-                .forEach(g -> LOGGER.debug("\t{}", g.getName()));
-            LOGGER.debug("Entity class {} has default entity graphs:",
-                         getEntityClass().getName());
-            LOGGER.debug("Applying entity graph {}",
-                         getEntityClass().getAnnotation(
-                             DefaultEntityGraph.class).value());
-            query.setHint(FETCH_GRAPH_HINT_KEY,
-                          entityManager.getEntityGraph(
-                              getEntityClass().getAnnotation(
-                                  DefaultEntityGraph.class).value()));
-        }
-    }
-
     /**
      * Helper method for retrieving a single result from a query.
      *
@@ -172,12 +153,7 @@ public abstract class AbstractEntityRepository<K, E> {
      */
     @Transactional(Transactional.TxType.REQUIRED)
     public E findById(final K entityId) {
-        if (getEntityClass().isAnnotationPresent(DefaultEntityGraph.class)) {
-            return findById(entityId, getEntityClass().getAnnotation(
-                            DefaultEntityGraph.class).value());
-        } else {
-            return entityManager.find(getEntityClass(), entityId);
-        }
+        return entityManager.find(getEntityClass(), entityId);
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
@@ -239,12 +215,8 @@ public abstract class AbstractEntityRepository<K, E> {
     }
 
     public List<E> executeCriteriaQuery(final CriteriaQuery<E> criteriaQuery) {
-        if (hasDefaultEntityGraph()) {
-            return executeCriteriaQuery(criteriaQuery, getDefaultEntityGraph());
-        } else {
-            final TypedQuery<E> query = entityManager.createQuery(criteriaQuery);
-            return query.getResultList();
-        }
+        final TypedQuery<E> query = entityManager.createQuery(criteriaQuery);
+        return query.getResultList();
     }
 
     public List<E> executeCriteriaQuery(final CriteriaQuery<E> criteriaQuery,
@@ -314,21 +286,6 @@ public abstract class AbstractEntityRepository<K, E> {
 
         //We need to make sure we use a none detached entity, therefore the merge
         entityManager.remove(entityManager.merge(entity));
-    }
-
-    protected boolean hasDefaultEntityGraph() {
-        return getEntityClass().isAnnotationPresent(DefaultEntityGraph.class);
-    }
-
-    protected String getDefaultEntityGraph() {
-        if (hasDefaultEntityGraph()) {
-            return getEntityClass().getAnnotation(DefaultEntityGraph.class)
-                .value();
-        } else {
-            throw new IllegalArgumentException(String.format(
-                "Entity class \"%s\" has no DefaultEntityGraph!",
-                getEntityClass().getName()));
-        }
     }
 
 }

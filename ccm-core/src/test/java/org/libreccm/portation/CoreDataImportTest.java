@@ -19,6 +19,7 @@
 package org.libreccm.portation;
 
 import javax.inject.Inject;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
@@ -35,7 +36,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.libreccm.tests.categories.IntegrationTest;
 
 import static org.libreccm.testutils.DependenciesHelpers.getModuleDependencies;
 
@@ -49,7 +49,7 @@ import org.jboss.arquillian.persistence.CleanupUsingScript;
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  * @version created on 12/1/16
  */
-@org.junit.experimental.categories.Category(IntegrationTest.class)
+//@org.junit.experimental.categories.Category(IntegrationTest.class)
 @RunWith(Arquillian.class)
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)

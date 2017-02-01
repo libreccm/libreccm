@@ -18,9 +18,7 @@
  */
 package org.libreccm.security;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import org.libreccm.core.DefaultEntityGraph;
 import org.libreccm.core.EmailAddress;
 import org.libreccm.portation.Portable;
 
@@ -48,6 +46,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -122,7 +121,6 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
             )
         })
 })
-@DefaultEntityGraph("User.withGroupAndRoleMemberships")
 @XmlRootElement(name = "user", namespace = CORE_XML_NS)
 @XmlAccessorType(XmlAccessType.FIELD)
 //Supressing a few warnings from PMD because they misleading here.

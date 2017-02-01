@@ -24,6 +24,7 @@ import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.Page;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.page.PageTransformer;
+import com.arsdigita.cms.CMS;
 import com.arsdigita.dispatcher.RequestContext;
 import com.arsdigita.templating.PresentationManager;
 import com.arsdigita.web.Web;
@@ -280,6 +281,10 @@ public class CMSPage extends Page implements ResourceHandler {
         } else if(app instanceof ContentSection) {
             section = (ContentSection) app;
         } 
+        
+        if (section != null) {
+            CMS.getContext().setContentSection(section);
+        }
         
         final String itemId = request.getParameter("item_id");
         
