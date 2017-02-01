@@ -61,7 +61,6 @@ public class UserRepository extends AbstractEntityRepository<Long, User> {
     public User findByName(final String name) {
         final TypedQuery<User> query = getEntityManager().createNamedQuery(
             "User.findByName", User.class);
-        applyDefaultEntityGraph(query);
         query.setParameter("name", name);
 
         return getSingleResultOrNull(query);
@@ -123,7 +122,6 @@ public class UserRepository extends AbstractEntityRepository<Long, User> {
         final TypedQuery<User> query = getEntityManager().createNamedQuery(
             "User.findByEmailAddress", User.class);
         query.setParameter("emailAddress", emailAddress);
-        applyDefaultEntityGraph(query);
 
         return getSingleResultOrNull(query);
     }

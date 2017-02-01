@@ -18,9 +18,7 @@
  */
 package org.libreccm.security;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import org.libreccm.core.DefaultEntityGraph;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -40,6 +38,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashSet;
@@ -74,7 +73,6 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
                       attributeNodes = @NamedAttributeNode(
                           value = "roleMemberships"))
 })
-@DefaultEntityGraph("Party.withRoleMemberships")
 public class Party implements Serializable {
 
     private static final long serialVersionUID = 3319997992281332204L;
