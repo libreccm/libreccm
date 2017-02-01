@@ -154,7 +154,7 @@ public class ContentItemManagerTest {
                 com.arsdigita.ui.admin.applications.DefaultApplicationInstanceForm.class)
             .addClass(
                 com.arsdigita.ui.admin.applications.DefaultApplicationSettingsPane.class)
-            .addClass(com.arsdigita.cms.dispatcher.ItemResolver.class)
+            .addClass(org.librecms.dispatcher.ItemResolver.class)
             .addPackage(com.arsdigita.util.Lockable.class.getPackage())
             .addPackage(com.arsdigita.web.BaseServlet.class.getPackage())
             .addPackage(org.librecms.Cms.class.getPackage())

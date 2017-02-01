@@ -33,7 +33,6 @@ import org.librecms.contentsection.ContentSection;
 
 import com.arsdigita.cms.ItemSelectionModel;
 import com.arsdigita.cms.dispatcher.CMSDispatcher;
-import com.arsdigita.cms.dispatcher.ItemResolver;
 
 import org.librecms.lifecycle.Lifecycle;
 
@@ -61,6 +60,7 @@ import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.security.Shiro;
 import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contentsection.ContentSectionManager;
+import org.librecms.dispatcher.ItemResolver;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Date;

@@ -42,8 +42,7 @@ import com.arsdigita.bebop.table.TableCellRenderer;
 import com.arsdigita.bebop.table.TableColumn;
 import com.arsdigita.bebop.table.TableHeader;
 import com.arsdigita.bebop.table.TableModel;
-import com.arsdigita.cms.*;
-import com.arsdigita.cms.dispatcher.ItemResolver;
+import com.arsdigita.cms.CMS;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.toolbox.ui.FormatStandards;
@@ -77,6 +76,7 @@ import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionManager;
 import org.librecms.contentsection.privileges.ItemPrivileges;
+import org.librecms.dispatcher.ItemResolver;
 
 import java.util.Date;
 

@@ -21,7 +21,6 @@ package org.librecms.contentsection;
 import com.arsdigita.bebop.Page;
 import com.arsdigita.cms.dispatcher.CMSPage;
 import com.arsdigita.cms.dispatcher.ContentItemDispatcher;
-import com.arsdigita.cms.dispatcher.ItemResolver;
 import com.arsdigita.cms.ui.CMSApplicationPage;
 import com.arsdigita.dispatcher.AccessDeniedException;
 import com.arsdigita.dispatcher.DispatcherHelper;
@@ -30,7 +29,6 @@ import com.arsdigita.templating.PresentationManager;
 import com.arsdigita.templating.Templating;
 import com.arsdigita.util.Assert;
 import com.arsdigita.util.Classes;
-import com.arsdigita.util.UncheckedWrapperException;
 import com.arsdigita.web.ApplicationFileResolver;
 import com.arsdigita.web.BaseApplicationServlet;
 import com.arsdigita.web.LoginSignal;
@@ -39,7 +37,6 @@ import com.arsdigita.web.WebConfig;
 import com.arsdigita.xml.Document;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,10 +56,12 @@ import org.libreccm.security.Shiro;
 import org.libreccm.web.CcmApplication;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.privileges.ItemPrivileges;
+import org.librecms.dispatcher.ItemResolver;
 import org.librecms.lifecycle.Lifecycle;
 
 import java.util.Date;
 
+import javax.inject.Inject;
 import javax.servlet.RequestDispatcher;
 
 /*
@@ -136,8 +135,8 @@ public class ContentSectionServlet extends BaseApplicationServlet {
                                    = "com.arsdigita.cms.dispatcher.section";
 
     private final ContentItemDispatcher m_disp = new ContentItemDispatcher();
-    private static Map<String, ItemResolver> itemResolverCache = Collections
-        .synchronizedMap(new HashMap<>());
+//    private static Map<String, ItemResolver> itemResolverCache = Collections
+//        .synchronizedMap(new HashMap<>());
     private static Map s_itemURLCacheMap = null;
     /**
      * Whether to cache the content items
@@ -160,6 +159,9 @@ public class ContentSectionServlet extends BaseApplicationServlet {
      * configuration. (probably used for other stuff as JSP's as well)
      */
     private ApplicationFileResolver m_resolver;
+
+    @Inject
+    private ContentSectionManager sectionManager;
 
     /**
      * Init method overwrites parents init to pass in optional parameters
@@ -320,8 +322,8 @@ public class ContentSectionServlet extends BaseApplicationServlet {
             request.setAttribute(CONTENT_SECTION, section);
 
             RequestDispatcher rd = m_resolver.resolve(m_templatePath,
-                                                      request, 
-                                                      response, 
+                                                      request,
+                                                      response,
                                                       app);
             if (rd != null) {
                 if (LOGGER.isDebugEnabled()) {
@@ -411,32 +413,23 @@ public class ContentSectionServlet extends BaseApplicationServlet {
         return (ContentSection) request.getAttribute(CONTENT_SECTION);
     }
 
+    public static boolean checkAdminAccess(final HttpServletRequest request,
+                                           final ContentSection section) {
+        final PermissionChecker permissionChecker = CdiUtil.createCdiUtil()
+            .findBean(PermissionChecker.class);
+
+        return permissionChecker.isPermitted(ItemPrivileges.PREVIEW,
+                                             section)
+                   || permissionChecker.isPermitted(ItemPrivileges.EDIT,
+                                                    section)
+                   || permissionChecker.isPermitted(ItemPrivileges.APPROVE,
+                                                    section);
+    }
+
     @SuppressWarnings("unchecked")
     public ItemResolver getItemResolver(final ContentSection section) {
 
-        final String path = section.getPrimaryUrl();
-        final ItemResolver itemResolver;
-        if (itemResolverCache.containsKey(path)) {
-            itemResolver = itemResolverCache.get(path);
-        } else {
-            final String className = section.getItemResolverClass();
-            final Class<ItemResolver> clazz;
-            try {
-                clazz = (Class<ItemResolver>) Class.forName(className);
-                itemResolver = clazz.newInstance();
-            } catch (ClassNotFoundException
-                     | IllegalAccessException
-                     | InstantiationException ex) {
-                throw new UncheckedWrapperException(ex);
-            }
-
-            itemResolverCache.put(path, itemResolver);
-        }
-
-        LOGGER.debug("Using ItemResolver implementation \"{}\"...",
-                     itemResolver.getClass().getName());
-
-        return itemResolver;
+        return sectionManager.getItemResolver(section);
     }
 
     public ContentItem getItem(final ContentSection section,
