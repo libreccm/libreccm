@@ -18,13 +18,14 @@
  */
 package org.arsdigita.cms;
 
-import com.arsdigita.cms.dispatcher.ItemResolver;
 import com.arsdigita.util.UncheckedWrapperException;
 
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.Configuration;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.configuration.Setting;
+import org.librecms.dispatcher.ItemResolver;
+import org.librecms.dispatcher.SimpleItemResolver;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -292,7 +293,7 @@ public class CMSConfig {
     @Setting
     private List<String> defaultItemResolverClassNames = Arrays.asList(
         new String[]{
-            ItemResolver.class.getName()
+            SimpleItemResolver.class.getName()
         });
 
 //    @Setting

@@ -124,8 +124,7 @@ public class FolderManagerTest {
                 com.arsdigita.ui.admin.applications.DefaultApplicationInstanceForm.class)
             .addClass(
                 com.arsdigita.ui.admin.applications.DefaultApplicationSettingsPane.class)
-            .addPackage(com.arsdigita.cms.dispatcher.ItemResolver.class.
-                getPackage())
+            .addPackage(org.librecms.dispatcher.ItemResolver.class.getPackage())
             .addPackage(com.arsdigita.util.Lockable.class.getPackage())
             .addPackage(com.arsdigita.web.BaseServlet.class.getPackage())
             .addPackage(org.librecms.Cms.class.getPackage())

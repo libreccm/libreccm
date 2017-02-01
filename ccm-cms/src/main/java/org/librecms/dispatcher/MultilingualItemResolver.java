@@ -1,63 +1,69 @@
 /*
- * Copyright (C) 2003-2004 Red Hat Inc. All Rights Reserved.
+ * Copyright (C) 2017 LibreCCM Foundation.
  *
  * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public License
- * as published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- *
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301  USA
  */
-package com.arsdigita.cms.dispatcher;
+package org.librecms.dispatcher;
 
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.cms.CMS;
+import com.arsdigita.cms.dispatcher.CMSDispatcher;
+import com.arsdigita.cms.dispatcher.CMSPage;
+import com.arsdigita.cms.dispatcher.MasterPage;
 import com.arsdigita.cms.ui.ContentItemPage;
 import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.util.Assert;
 
-import org.apache.logging.log4j.Logger;
-import org.librecms.contentsection.ContentItem;
-import org.librecms.contentsection.ContentSection;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Objects;
-import java.util.StringTokenizer;
-
 import org.apache.logging.log4j.LogManager;
-import org.libreccm.cdi.utils.CdiUtil;
+import org.apache.logging.log4j.Logger;
 import org.libreccm.core.CcmObject;
-import org.libreccm.l10n.GlobalizationHelper;
 import org.librecms.CmsConstants;
+import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemManager;
 import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contentsection.ContentItemVersion;
+import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.Folder;
 import org.librecms.contentsection.FolderManager;
-import org.librecms.util.LanguageUtil;
+import org.librecms.contentsection.FolderRepository;
 
-import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.StringTokenizer;
 
-import static javax.naming.ldap.SortControl.*;
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 /**
  * Resolves items to URLs and URLs to items for multiple language variants.
+ *
+ * For version 7.0.0 this call has been moved from the
+ * {@code com.arsdigita.cms.dispatcher} package to the
+ * {@code org.librecms.dispatcher} package and refactored to an CDI bean. This
+ * was necessary to avoid several problems when accessing the entity beans for
+ * {@link Category} and {@link ContentItem}, primarily the infamous
+ * {@code LazyInitializationException}. Also several checks for null parameters
+ * were added to avoid {@code NullPointerExcpetions}.
  *
  * <strong>
  * AS of version 7.0.0 this class not longer part of the public API. It is left
@@ -73,13 +79,12 @@ import static javax.naming.ldap.SortControl.*;
  * @author <a href="mailto:mhanisch@redhat.com">Michael Hanisch</a>
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class MultilingualItemResolver
-    extends AbstractItemResolver implements ItemResolver {
+@RequestScoped
+public class MultilingualItemResolver implements ItemResolver {
 
     private static final Logger LOGGER = LogManager.getLogger(
         MultilingualItemResolver.class);
 
-    private static MasterPage s_masterP = null;
     private static final String ADMIN_PREFIX = "admin";
 
     /**
@@ -92,9 +97,17 @@ public class MultilingualItemResolver
      */
     protected static final String SEPARATOR = "&";
 
-    public MultilingualItemResolver() {
-        LOGGER.debug("Undergoing creation");
-    }
+    @Inject
+    private FolderRepository folderRepo;
+
+    @Inject
+    private FolderManager folderManager;
+
+    @Inject
+    private ContentItemRepository itemRepo;
+
+    @Inject
+    private ContentItemManager itemManager;
 
     /**
      * Returns a content item based on section, url, and use context.
@@ -108,24 +121,31 @@ public class MultilingualItemResolver
      *
      * @return The content item, or null if no such item exists
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public ContentItem getItem(final ContentSection section,
                                final String itemUrl,
                                final String context) {
+        if (section == null) {
+            throw new IllegalArgumentException(
+                "Can't get item from section null.");
+        }
+        if (itemUrl == null) {
+            throw new IllegalArgumentException("Can't get item for URL null.");
+        }
+        if (context == null) {
+            throw new IllegalArgumentException(
+                "Can't get item for context null.");
+        }
+
         LOGGER.debug("Resolving the item in content section \"{}\" at URL "
                          + "\"{}\" for context \"{}\"...",
                      section.getLabel(),
                      itemUrl,
                      context);
 
-        Assert.exists(section, "ContentSection section");
-        Assert.exists(itemUrl, "String url");
-        Assert.exists(context, "String context");
-
         final Folder rootFolder = section.getRootDocumentsFolder();
         String url = stripTemplateFromURL(itemUrl);
-
-        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
 
         if (rootFolder == null) {
             // nothing to do, if root folder is null
@@ -139,8 +159,6 @@ public class MultilingualItemResolver
 
                 LOGGER.debug("The root folder has a live version; recursing");
 
-                final FolderManager folderManager = cdiUtil.findBean(
-                    FolderManager.class);
                 final String prefix = String.join(
                     "",
                     section.getPrimaryUrl(),
@@ -229,6 +247,7 @@ public class MultilingualItemResolver
      *
      * ToDo: Refactor to use the {@link ContentItemVersion} directly.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public String getCurrentContext(final PageState state) {
         LOGGER.debug("Getting the current context");
@@ -276,6 +295,7 @@ public class MultilingualItemResolver
      *
      * @see #getCurrentContext
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public String generateItemURL(final PageState state,
                                   final Long itemId,
@@ -299,6 +319,7 @@ public class MultilingualItemResolver
      *
      * @see #getCurrentContext
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public String generateItemURL(final PageState state,
                                   final Long itemId,
@@ -306,20 +327,25 @@ public class MultilingualItemResolver
                                   final ContentSection section,
                                   final String context,
                                   final String templateContext) {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Generating an item URL for item id " + itemId
-                             + ", section " + section + ", and context '"
-                             + context
-                             + "' with name '" + name + "'");
+        if (itemId == null) {
+            throw new IllegalArgumentException(
+                "Can't generate item URL for item id null.");
+        }
+        if (context == null) {
+            throw new IllegalArgumentException(
+                "Can't generate item URL for context null.");
+        }
+        if (section == null) {
+            throw new IllegalArgumentException(
+                "Can't generate item URL for section null.");
         }
 
-        Assert.exists(itemId, "BigDecimal itemId");
-        Assert.exists(context, "String context");
-        Assert.exists(section, "ContentSection section");
-
-        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-        final ContentItemRepository itemRepo = cdiUtil.findBean(
-            ContentItemRepository.class);
+        LOGGER.debug("Generating an item URL for item id {}, section \"{}\" "
+                         + "and context \"{}\" with name \"{}\"...",
+                     itemId,
+                     section.getLabel(),
+                     context,
+                     name);
 
         if (ContentItemVersion.DRAFT.toString().equals(context)) {
             // No template context here.
@@ -349,6 +375,7 @@ public class MultilingualItemResolver
      *
      * @see #getCurrentContext
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public String generateItemURL(final PageState state,
                                   final ContentItem item,
@@ -370,16 +397,20 @@ public class MultilingualItemResolver
      *
      * @see #getCurrentContext
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public String generateItemURL(final PageState state,
                                   final ContentItem item,
                                   final ContentSection section,
                                   final String context,
                                   final String templateContext) {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Generating an item URL for item " + item
-                             + ", section "
-                             + section + ", and context " + context);
+        if (item == null) {
+            throw new IllegalArgumentException(
+                "Can't generate URL for item null.");
+        }
+        if (context == null) {
+            throw new IllegalArgumentException(
+                "Can't generate URL for context null.");
         }
 
         final ContentSection contentSection;
@@ -388,6 +419,12 @@ public class MultilingualItemResolver
         } else {
             contentSection = section;
         }
+
+        LOGGER.debug("Generating an item URL for item \"{}\", section \"{}\" "
+                         + "and context \"{}\".",
+                     item.getDisplayName(),
+                     contentSection.getLabel(),
+                     context);
 
         if (ContentItemVersion.DRAFT.toString().equals(context)) {
             return generateDraftURL(section, item.getObjectId());
@@ -401,35 +438,19 @@ public class MultilingualItemResolver
         }
     }
 
-    /**
-     * Returns a master page based on page state (and content section).
-     *
-     * @param item    The content item
-     * @param request The HTTP request
-     *
-     * @return The master page
-     *
-     * @throws javax.servlet.ServletException
-     */
+    @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public CMSPage getMasterPage(final ContentItem item,
                                  final HttpServletRequest request)
         throws ServletException {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Getting the master page for item " + item);
-        }
 
-        // taken from SimpleItemResolver
-        if (s_masterP == null) {
-            s_masterP = new MasterPage();
-            s_masterP.init();
-        }
+        LOGGER.debug("Getting the master page for item {}",
+                     item.getDisplayName());
 
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Returning master page " + s_masterP);
-        }
+        final MasterPage masterPage = new MasterPage();
+        masterPage.init();
 
-        return s_masterP;
+        return masterPage;
     }
 
     /**
@@ -512,9 +533,6 @@ public class MultilingualItemResolver
                 .append("/");
         }
 
-        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-        final ContentItemManager itemManager = cdiUtil.findBean(
-            ContentItemManager.class);
         url.append(itemManager.getItemPath(item));
 
         return url.toString();
@@ -561,9 +579,6 @@ public class MultilingualItemResolver
                 .append("/");
         }
 
-        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-        final ContentItemManager itemManager = cdiUtil.findBean(
-            ContentItemManager.class);
         url.append(itemManager.getItemPath(item));
 
         return url.toString();
@@ -581,18 +596,9 @@ public class MultilingualItemResolver
      *         <code>url</code>
      */
     protected ContentItem getItemFromDraftURL(final String url) {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Looking up the item from draft URL " + url);
-        }
+        LOGGER.debug("Looking up the item from draft URL ", url);
 
         int pos = url.indexOf(ITEM_ID);
-
-        // XXX this is wrong: here we abort on not finding the
-        // parameter; below we return null.
-        if (Assert.isEnabled()) {
-            Assert.isTrue(pos >= 0,
-                          "Draft URL must contain parameter " + ITEM_ID);
-        }
 
         String item_id = url.substring(pos); // item_id == ITEM_ID=.... ?
 
@@ -612,13 +618,7 @@ public class MultilingualItemResolver
         int i = item_id.indexOf(SEPARATOR);
         item_id = item_id.substring(pos, Math.min(i, item_id.length() - 1));
 
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Looking up item using item ID " + item_id);
-        }
-
-        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-        final ContentItemRepository itemRepo = cdiUtil.findBean(
-            ContentItemRepository.class);
+        LOGGER.debug("Looking up item using item ID {}", item_id);
 
         final Optional<ContentItem> item = itemRepo.findById(Long.parseLong(
             item_id));
@@ -642,20 +642,19 @@ public class MultilingualItemResolver
      */
     protected ContentItem getItemFromLiveURL(final String url,
                                              final Folder parentFolder) {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Resolving the item for live URL " + url
-                             + " and parent folder " + parentFolder);
-        }
 
         if (parentFolder == null || url == null || url.equals("")) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("The url is null or parent folder was null "
-                                 + "or something else is wrong, so just return "
-                                 + "null");
-            }
+            LOGGER.debug("The url is null or parent folder was null "
+                             + "or something else is wrong, so just return "
+                             + "null.");
 
             return null;
         }
+
+        LOGGER.debug("Resolving the item for live URL {}"
+                         + " and parent folder {}...",
+                     url,
+                     parentFolder.getName());
 
         int len = url.length();
         int index = url.indexOf('/');
@@ -674,13 +673,11 @@ public class MultilingualItemResolver
             final String[] nameAndLang = getNameAndLangFromURLFrag(url);
             final String name = nameAndLang[0];
 
-            final Optional<CcmObject> item = parentFolder.getObjects().stream()
-                .map(categorization -> categorization.getCategorizedObject())
-                .filter(object -> object.getDisplayName().equals(name))
-                .findFirst();
+            final Optional<ContentItem> item = itemRepo.findByNameInFolder(
+                parentFolder, name);
 
-            if (item.isPresent() && item.get() instanceof ContentItem) {
-                return (ContentItem) item.get();
+            if (item.isPresent()) {
+                return item.get();
             } else {
                 return null;
             }
@@ -786,8 +783,8 @@ public class MultilingualItemResolver
 
     /**
      * Finds a language instance of a content item given the bundle, name, and
-     * lang string. Note: Because there not ContentBundles anymore this method 
-     * simply returns the provided item. 
+     * lang string. Note: Because there not ContentBundles anymore this method
+     * simply returns the provided item.
      *
      * @param lang The lang string from the URL
      * @param item The content bundle
