@@ -136,8 +136,8 @@ public class ContentItemPermissionTest {
                 addClass(
                         com.arsdigita.ui.admin.applications.DefaultApplicationInstanceForm.class).
                 addClass(
-                        com.arsdigita.ui.admin.applications.DefaultApplicationSettingsPane.class).
-                addClass(com.arsdigita.cms.dispatcher.ItemResolver.class)
+                        com.arsdigita.ui.admin.applications.DefaultApplicationSettingsPane.class)
+                .addClass(org.librecms.dispatcher.ItemResolver.class)
                 .addClass(org.libreccm.portation.Portable.class)
                 .addPackage(com.arsdigita.util.Lockable.class.getPackage())
                 .addPackage(com.arsdigita.web.BaseServlet.class.getPackage())

@@ -21,6 +21,7 @@ package com.arsdigita.cms.dispatcher;
 import com.arsdigita.dispatcher.ChainedDispatcher;
 import com.arsdigita.dispatcher.DispatcherHelper;
 import com.arsdigita.dispatcher.RequestContext;
+import com.arsdigita.util.UncheckedWrapperException;
 import com.arsdigita.web.LoginSignal;
 
 import java.io.IOException;
@@ -38,8 +39,10 @@ import org.libreccm.security.PermissionChecker;
 import org.libreccm.security.Shiro;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentSection;
+import org.librecms.contentsection.ContentSectionManager;
 import org.librecms.contentsection.ContentSectionServlet;
 import org.librecms.contentsection.privileges.ItemPrivileges;
+import org.librecms.dispatcher.ItemResolver;
 
 /**
  * Dispatches to the JSP or Servlet for rendering a content item.
@@ -167,9 +170,7 @@ public class ItemDispatcher implements ChainedDispatcher {
             // This part assumes the template is JSP.
 //            final String templateURL = getTemplateURL(section, item, request,
 //                                                      actx);
-
 //            s_log.debug("TEMPLATE " + templateURL);
-
             DispatcherHelper.setRequestContext(request, actx);
             DispatcherHelper.forwardRequestByPath(null, request,
                                                   response);
@@ -235,7 +236,7 @@ public class ItemDispatcher implements ChainedDispatcher {
     }
 
     /**
-     * Fetches the ItemResolver for a content section. Checks cache first.
+     * Fetches the ItemResolver for a content section.
      *
      * @param section The content section
      *
@@ -243,22 +244,11 @@ public class ItemDispatcher implements ChainedDispatcher {
      */
     public ItemResolver getItemResolver(ContentSection section) {
 
-        String name = section.getLabel();
-        ItemResolver ir = (ItemResolver) s_itemResolverCache.get(name);
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final ContentSectionManager sectionManager = cdiUtil.findBean(
+            ContentSectionManager.class);
 
-        if (ir == null) {
-            try {
-                ir = (ItemResolver) Class
-                    .forName(section.getItemResolverClass()).newInstance();
-                s_itemResolverCache.put(name, ir);
-            } catch (ClassNotFoundException |
-                     IllegalAccessException |
-                     InstantiationException ex) {
-                throw new RuntimeException(ex);
-            }
-        }
-
-        return ir;
+        return sectionManager.getItemResolver(section);
     }
 
     /**
@@ -281,7 +271,6 @@ public class ItemDispatcher implements ChainedDispatcher {
 //
 //        return ir;
 //    }
-
     /**
      * Fetches the URL of a template for an item. The returned URL is relative
      * to the webapp context.
@@ -297,5 +286,4 @@ public class ItemDispatcher implements ChainedDispatcher {
 //
 //        return templateURL;
 //    }
-
 }

@@ -28,6 +28,7 @@ import com.arsdigita.xml.Element;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionServlet;
+import org.librecms.dispatcher.ItemResolver;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -116,7 +117,7 @@ public class ContentPanel extends SimpleComponent {
                 ContentSectionServlet.PREVIEW);
         }
         pathInfo.newChildElement("cms:templatePrefix", CMS.CMS_XML_NS).setText(
-            "/" + AbstractItemResolver.TEMPLATE_CONTEXT_PREFIX);
+            "/" + ItemResolver.TEMPLATE_CONTEXT_PREFIX);
 
         if (CMS.getContext().hasContentItem()) {
             ContentItem item = CMS.getContext().getContentItem();          

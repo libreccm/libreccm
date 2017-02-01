@@ -24,6 +24,7 @@ import com.arsdigita.dispatcher.DispatcherHelper;
 import com.arsdigita.dispatcher.JSPApplicationDispatcher;
 import com.arsdigita.dispatcher.RedirectException;
 import com.arsdigita.dispatcher.RequestContext;
+import com.arsdigita.util.UncheckedWrapperException;
 import com.arsdigita.web.LoginSignal;
 import com.arsdigita.web.URL;
 
@@ -45,8 +46,10 @@ import org.libreccm.security.User;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentSection;
+import org.librecms.contentsection.ContentSectionManager;
 import org.librecms.contentsection.ContentSectionRepository;
 import org.librecms.contentsection.privileges.ItemPrivileges;
+import org.librecms.dispatcher.ItemResolver;
 
 /**
  * <p>
@@ -139,7 +142,7 @@ public class CMSDispatcher implements Dispatcher, ChainedDispatcher {
 
     // Content section cache
     private static HashMap s_pageResolverCache = new HashMap();
-    private static HashMap s_itemResolverCache = new HashMap();
+//    private static HashMap s_itemResolverCache = new HashMap();
     private static HashMap s_xmlGeneratorCache = new HashMap();
 
     private boolean m_adminPagesOnly = false;
@@ -489,17 +492,17 @@ public class CMSDispatcher implements Dispatcher, ChainedDispatcher {
      * @param context The use context
      *
      * @return The item associated with the URL, or null if no such item exists
+     * @throws javax.servlet.ServletException
      */
     protected ContentItem getContentItem(ContentSection section, String url,
                                          String context)
         throws ServletException {
 
-        ItemResolver itemResolver = CMSDispatcher.getItemResolver(section);
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final ContentSectionManager sectionManager = cdiUtil.findBean(ContentSectionManager.class);
+        final ItemResolver itemResolver = sectionManager.getItemResolver(section);
 
-        ContentItem item = null;
-        item = itemResolver.getItem(section, url, context);
-
-        return item;
+        return itemResolver.getItem(section, url, context);
     }
 
     /**
@@ -584,21 +587,16 @@ public class CMSDispatcher implements Dispatcher, ChainedDispatcher {
      * @return The ItemResolver associated with the content section
      */
     public static ItemResolver getItemResolver(ContentSection section) {
-        String name = section.getLabel();
-        ItemResolver itemResolver = (ItemResolver) s_itemResolverCache.get(name);
-        if (itemResolver == null) {
-            final String itemResolverClassName = section.getItemResolverClass();
-            try {
-                itemResolver = (ItemResolver) Class.forName(
-                    itemResolverClassName).newInstance();
-            } catch (ClassNotFoundException |
-                     IllegalAccessException |
-                     InstantiationException ex) {
-                throw new RuntimeException(ex);
-            }
-            s_itemResolverCache.put(name, itemResolver);
+        
+        final Class<?> clazz;
+        try {
+            clazz =  Class.forName(section.getItemResolverClass());
+        } catch(ClassNotFoundException ex) {
+            throw new UncheckedWrapperException(ex);
         }
-        return itemResolver;
+        
+        return (ItemResolver) CdiUtil.createCdiUtil().findBean(clazz);
+        
     }
 
     /**

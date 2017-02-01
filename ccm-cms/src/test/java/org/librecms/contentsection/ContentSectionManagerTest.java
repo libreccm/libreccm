@@ -163,8 +163,7 @@ public class ContentSectionManagerTest {
             .addClass(org.libreccm.modules.Module.class)
             .addClass(org.libreccm.modules.RequiredModule.class)
             .addClass(org.libreccm.portation.Marshals.class)
-            .addPackage(com.arsdigita.cms.dispatcher.ItemResolver.class.
-                getPackage())
+            .addPackage(org.librecms.dispatcher.ItemResolver.class.getPackage())
             .addPackage(com.arsdigita.util.Lockable.class.getPackage())
             .addPackage(com.arsdigita.web.BaseServlet.class.getPackage())
             .addPackage(org.librecms.Cms.class.getPackage())

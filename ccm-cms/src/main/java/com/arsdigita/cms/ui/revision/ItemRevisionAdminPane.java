@@ -43,7 +43,6 @@ import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentSection;
 
 import com.arsdigita.cms.dispatcher.CMSDispatcher;
-import com.arsdigita.cms.dispatcher.ItemResolver;
 import com.arsdigita.cms.ui.BaseItemPane;
 import com.arsdigita.cms.ui.item.ContentItemRequestLocal;
 import com.arsdigita.toolbox.ui.ActionGroup;
@@ -52,9 +51,9 @@ import com.arsdigita.toolbox.ui.NullComponent;
 import com.arsdigita.toolbox.ui.Section;
 
 import org.libreccm.cdi.utils.CdiUtil;
-import org.librecms.contentsection.ContentItemManager;
 import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contentsection.ContentSectionManager;
+import org.librecms.dispatcher.ItemResolver;
 
 import java.math.BigInteger;
 

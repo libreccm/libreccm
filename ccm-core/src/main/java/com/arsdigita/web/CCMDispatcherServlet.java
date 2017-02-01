@@ -501,7 +501,8 @@ public class CCMDispatcherServlet extends BaseServlet {
             if (path.length() > (m_instanceURI.length() + 1)) {
                 target.append(path.substring(m_instanceURI.length()));
             }
-            if (target.charAt(target.length() - 1) != '/') {
+            if (target.charAt(target.length() - 1) != '/' 
+                && !path.contains(".")) {
                 target.append('/');
             }
             target.append("?");

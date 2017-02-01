@@ -18,10 +18,9 @@
  */
 package org.librecms.contentsection;
 
-import com.arsdigita.cms.dispatcher.ItemResolver;
 import com.arsdigita.kernel.KernelConfig;
+import com.arsdigita.util.UncheckedWrapperException;
 
-import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryRepository;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.core.CoreConstants;
@@ -51,7 +50,11 @@ import org.librecms.contentsection.privileges.ItemPrivileges;
 import org.librecms.lifecycle.LifecycleDefinition;
 
 import java.util.Optional;
+
 import org.librecms.contentsection.privileges.TypePrivileges;
+import org.librecms.dispatcher.ItemResolver;
+
+import javax.enterprise.inject.Instance;
 
 import static org.librecms.contentsection.ContentSection.*;
 
@@ -83,6 +86,9 @@ public class ContentSectionManager {
 
     @Inject
     private ConfigurationManager confManager;
+    
+    @Inject
+    private Instance<ItemResolver> itemResolvers;
 
     /**
      * Creates a new content section including the default roles. This operation
@@ -448,11 +454,19 @@ public class ContentSectionManager {
             final Class<ItemResolver> itemResolverClazz
                                       = (Class<ItemResolver>) Class.
                             forName(section.getItemResolverClass());
-            return itemResolverClazz.newInstance();
-        } catch (ClassNotFoundException
-                         | IllegalAccessException
-                         | InstantiationException ex) {
-            throw new RuntimeException(ex);
+            
+            final Instance<ItemResolver> instance = itemResolvers.select(
+                itemResolverClazz);
+            
+            if (instance.isUnsatisfied()) {
+                throw new UncheckedWrapperException(String.format(
+                    "No ItemResolver \"{}\" found.", 
+                    itemResolverClazz.getName()));
+            } else {
+                return instance.get();
+            }
+        } catch (ClassNotFoundException ex) {
+            throw new UncheckedWrapperException(ex);
         }
     }
 
