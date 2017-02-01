@@ -19,7 +19,6 @@
 package org.libreccm.categorization;
 
 import org.libreccm.core.AbstractEntityRepository;
-import org.libreccm.core.DefaultEntityGraph;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
 
@@ -64,31 +63,8 @@ public class DomainRepository extends AbstractEntityRepository<Long, Domain> {
     @Override
     @Transactional(Transactional.TxType.REQUIRED)
     public List<Domain> findAll() {
-        if (getEntityClass().isAnnotationPresent(DefaultEntityGraph.class)) {
-            return findAll(getEntityClass().getAnnotation(
-                DefaultEntityGraph.class).value());
-        } else {
-            final TypedQuery<Domain> query = getEntityManager()
-                .createNamedQuery("Domain.findAll", Domain.class);
-            return query.getResultList();
-        }
-    }
-
-    @Override
-    @Transactional(Transactional.TxType.REQUIRED)
-    public List<Domain> findAll(final String entityGraphName) {
-        @SuppressWarnings("unchecked")
-        final EntityGraph<Domain> entityGraph = (EntityGraph<Domain>) entityManager.
-            getEntityGraph(entityGraphName);
-        return findAll(entityGraph);
-    }
-
-    @Override
-    @Transactional(Transactional.TxType.REQUIRED)
-    public List<Domain> findAll(final EntityGraph<Domain> entityGraph) {
         final TypedQuery<Domain> query = getEntityManager()
-                .createNamedQuery("Domain.findAll", Domain.class);
-        query.setHint(FETCH_GRAPH_HINT_KEY, entityGraph);
+            .createNamedQuery("Domain.findAll", Domain.class);
         return query.getResultList();
     }
 
@@ -150,7 +126,7 @@ public class DomainRepository extends AbstractEntityRepository<Long, Domain> {
     public void save(final Domain domain) {
         super.save(domain);
     }
-    
+
     @AuthorizationRequired
     @RequiresPrivilege(CategorizationConstants.PRIVILEGE_MANAGE_DOMAINS)
     @Transactional(Transactional.TxType.REQUIRED)
@@ -158,4 +134,5 @@ public class DomainRepository extends AbstractEntityRepository<Long, Domain> {
     public void delete(final Domain domain) {
         super.delete(domain);
     }
+
 }

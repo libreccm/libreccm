@@ -18,7 +18,6 @@
  */
 package org.libreccm.security;
 
-import com.arsdigita.kernel.KernelConfig;
 
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -47,6 +46,15 @@ public class CcmShiroRealm extends AuthorizingRealm {
     protected AuthorizationInfo doGetAuthorizationInfo(
         final PrincipalCollection principals) {
 
+        final CcmShiroRealmController controller;
+        try {
+            controller = CdiUtil.createCdiUtil()
+                .findBean(CcmShiroRealmController.class);
+        } catch (IllegalStateException ex) {
+            throw new AuthenticationException(
+                "Failed to retrieve CcmShiroRealmController", ex);
+        }
+
         // Get the pricipal (object identifing the user).
         final Object principal = principals.getPrimaryPrincipal();
 
@@ -64,35 +72,8 @@ public class CcmShiroRealm extends AuthorizingRealm {
         if ("system-user".equals(userIdentifier)) {
             // The system user is a virtual user which has all roles and all
             // privileges
-//            final RoleRepository roleRepository;
-//            final BeanManager beanManager = CDI.current().getBeanManager();
-//            final Set<Bean<?>> beans = beanManager.
-//                getBeans(RoleRepository.class);
-//            final Iterator<Bean<?>> iterator = beans.iterator();
-//            if (iterator.hasNext()) {
-//                @SuppressWarnings("unchecked")
-//                final Bean<RoleRepository> bean
-//                                               = (Bean<RoleRepository>) iterator
-//                    .next();
-//                final CreationalContext<RoleRepository> ctx = beanManager.
-//                    createCreationalContext(bean);
-//
-//                roleRepository = (RoleRepository) beanManager.getReference(
-//                    bean, RoleRepository.class, ctx);
-//            } else {
-//                throw new AuthenticationException(
-//                    "Failed to retrieve RoleRepository");
-//            }
 
-            final RoleRepository roleRepository;
-            try {
-                roleRepository = CdiUtil.createCdiUtil()
-                    .findBean(RoleRepository.class);
-            } catch (IllegalStateException ex) {
-                throw new AuthenticationException(
-                    "Failed to retrieve RoleRepository", ex);
-            }
-            final List<Role> roles = roleRepository.findAll();
+            final List<Role> roles = controller.retrieveAllRoles();
 
             final SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
             for (final Role role : roles) {
@@ -103,41 +84,7 @@ public class CcmShiroRealm extends AuthorizingRealm {
             return info;
         }
 
-        //Find the user identified by the provided pricipal.
-        final User user = findUser(userIdentifier);
-
-        // Create a SimpleAuthorizationInfo instance. Contains the information
-        // from the database in the format expected by Shiro.
-        final SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-        // Get the Roles directly assigned to the user.
-        for (final RoleMembership roleMembership : user.getRoleMemberships()) {
-            // Add the role to the AuthorizationInfo object.
-            info.addRole(roleMembership.getRole().getName());
-
-            // Add the permissions assigned to the role to the AuthorizatonInfo. 
-            for (final Permission permission : roleMembership.getRole()
-                .getPermissions()) {
-                info.addStringPermission(permissionToString(permission));
-            }
-        }
-
-        //Get the Roles assigned to the groups of which the user is member of.
-        for (final GroupMembership membership : user.getGroupMemberships()) {
-            // Get the roles assigned to the group
-            for (final RoleMembership roleMembership : membership.getGroup()
-                .getRoleMemberships()) {
-                // Add the role to the AuthorizationInfo
-                info.addRole(roleMembership.getRole().getName());
-                // Add the permissions assigned to the role to the 
-                // AuthorizationInfo
-                for (final Permission permission : roleMembership.getRole()
-                    .getPermissions()) {
-                    info.addStringPermission(permissionToString(permission));
-                }
-            }
-        }
-
-        return info;
+        return controller.createAuthorizationInfo(userIdentifier);
     }
 
     @Override
@@ -156,81 +103,25 @@ public class CcmShiroRealm extends AuthorizingRealm {
                 principal.getClass().getName()));
         }
 
+        final CcmShiroRealmController controller;
+        try {
+            controller = CdiUtil.createCdiUtil()
+                .findBean(CcmShiroRealmController.class);
+        } catch (IllegalStateException ex) {
+            throw new AuthenticationException(
+                "Failed to retrieve CcmShiroRealmController", ex);
+        }
+        
         // Convert the pricipal to a string.
         final String userIdentifier = (String) principal;
         // Find the user identified by the pricipal.
-        final User user = findUser(userIdentifier);
+        final User user = controller.findUser(userIdentifier);
 
         // Return a SimpleAuthenticationInfo with the information relevant
         // for Shiro
         return new SimpleAuthenticationInfo(token.getPrincipal(),
                                             user.getPassword(),
                                             "CcmShiroRealm");
-    }
-
-    /**
-     * Helper method for finding a user by its identifier. Depending on the
-     * configuration of CCM this is either the name of the user or the email
-     * address of the user.
-     *
-     * @param userIdentifier The identifier of the user.
-     *
-     * @return The User identified by the provided {@code userIdentifier}.
-     *
-     * @throws AuthenticationException if no user for the provided identifier
-     *                                 could be retrieved.
-     */
-    private User findUser(final String userIdentifier) {
-        // For some reason we can't use the the CdiUtil class here, therefore
-        // we have to do the lookup for the UserRepository be ourself.
-        final UserRepository userRepository;
-//        final BeanManager beanManager = CDI.current().getBeanManager();
-//        final Set<Bean<?>> beans = beanManager.getBeans(
-//            UserRepository.class);
-//        final Iterator<Bean<?>> iterator = beans.iterator();
-//        if (iterator.hasNext()) {
-//            @SuppressWarnings("unchecked")
-//            final Bean<UserRepository> bean = (Bean<UserRepository>) iterator
-//                .next();
-//            final CreationalContext<UserRepository> ctx = beanManager
-//                .createCreationalContext(bean);
-//
-//            userRepository = (UserRepository) beanManager.getReference(
-//                bean, UserRepository.class, ctx);
-        try {
-            userRepository = CdiUtil.createCdiUtil().findBean(
-                UserRepository.class);
-        } catch (IllegalStateException ex) {
-            throw new AuthenticationException(
-                "Failed to retrieve UserRepository.", ex);
-        }
-
-//        } else {
-//            throw new AuthenticationException(
-//                "Failed to retrieve UserRepository.");
-//        }
-        // Depending of the configuration of CCM use the appropriate method
-        // for finding the user in the database.
-        final KernelConfig config = KernelConfig.getConfig();
-        final User user;
-
-        if ("email".equals(config.getPrimaryUserIdentifier())) {
-            user = userRepository.findByEmailAddress(userIdentifier);
-        } else {
-            user = userRepository.findByName(userIdentifier);
-        }
-
-        // If no matching user is found throw an AuthenticationException
-        if (user
-                == null) {
-            throw new AuthenticationException(String.format(
-                "No user identified by principal \"%s\" was found. Primary user "
-                + "identifier is \"%s\".",
-                userIdentifier, config.getPrimaryUserIdentifier()));
-        }
-
-        return user;
-
     }
 
     /**

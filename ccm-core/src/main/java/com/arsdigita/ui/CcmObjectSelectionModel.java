@@ -42,11 +42,11 @@ public class CcmObjectSelectionModel<T extends CcmObject>
     private final SingleSelectionModel<Long> model;
 
     public CcmObjectSelectionModel(final LongParameter parameter) {
-        this("", parameter);
+        this(CcmObject.class.getName(), parameter);
     }
 
     public CcmObjectSelectionModel(final String parameterName) {
-        this("", new LongParameter(parameterName));
+        this(CcmObject.class.getName(), new LongParameter(parameterName));
     }
 
 //    public CcmObjectSelectionModel(final SingleSelectionModel<T> model ) {
@@ -65,7 +65,7 @@ public class CcmObjectSelectionModel<T extends CcmObject>
         } catch (ClassNotFoundException ex) {
             throw new RuntimeException(ex);
         }
-        model = new ParameterSingleSelectionModel(new LongParameter(
+        model = new ParameterSingleSelectionModel<Long>(new LongParameter(
                 parameterName));
     }
 

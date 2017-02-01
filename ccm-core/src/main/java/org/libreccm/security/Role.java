@@ -18,10 +18,8 @@
  */
 package org.libreccm.security;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.validator.constraints.NotBlank;
-import org.libreccm.core.DefaultEntityGraph;
 import org.libreccm.l10n.LocalizedString;
 import org.libreccm.portation.Portable;
 import org.libreccm.workflow.TaskAssignment;
@@ -48,6 +46,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -55,6 +54,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+
 import org.hibernate.search.annotations.Field;
 
 import static org.libreccm.core.CoreConstants.CORE_XML_NS;
@@ -117,7 +117,6 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
                 @NamedAttributeNode(value = "permissions")
             })
 })
-@DefaultEntityGraph(Role.ENTITY_GRPAH_WITH_MEMBERS)
 @XmlRootElement(name = "role", namespace = CORE_XML_NS)
 @XmlAccessorType(XmlAccessType.FIELD)
 @SuppressWarnings({"PMD.ShortClassName", "PMD.TooManyMethods"})

@@ -118,9 +118,9 @@ public class ItemQueryComponent extends BaseQueryComponent {
 //                                      CreationUserFilterType.KEY));
 //            add(new PartyFilterWidget(new LastModifiedUserFilterType(),
 //                                      LastModifiedUserFilterType.KEY));
-        Submit submit = new Submit(context + "_search",
-                                   ContentSectionPage.globalize("cms.ui.search"));
-        add(submit);
+//        Submit submit = new Submit(context + "_search",
+//                                   ContentSectionPage.globalize("cms.ui.search"));
+//        add(submit);
     }
 
 //    private class LaunchDateFilterWidget extends DateRangeFilterWidget {

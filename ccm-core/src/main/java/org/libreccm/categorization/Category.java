@@ -25,7 +25,6 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.validator.constraints.NotBlank;
 import org.libreccm.core.CcmObject;
-import org.libreccm.core.DefaultEntityGraph;
 import org.libreccm.l10n.LocalizedString;
 import org.libreccm.portation.Portable;
 import org.libreccm.security.RecursivePermissions;
@@ -35,7 +34,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 import javax.persistence.AssociationOverride;
 import javax.persistence.Column;
@@ -101,7 +99,6 @@ import javax.xml.bind.annotation.XmlRootElement;
     //        }
     )
 })
-@DefaultEntityGraph("Category.withSubCategoriesAndObjects")
 @XmlRootElement(name = "category", namespace = CAT_XML_NS)
 public class Category extends CcmObject implements Serializable, Portable {
 
