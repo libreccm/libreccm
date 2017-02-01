@@ -39,8 +39,9 @@ import java.util.List;
  * possible to ex- or import that extending entity-class (e.g. DocRepo
  * .FileMarshal).
  *
- * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
+ * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  * @version created the 2/10/16
+ * @param <P>
  */
 public abstract class AbstractMarshaller<P extends Portable> {
 

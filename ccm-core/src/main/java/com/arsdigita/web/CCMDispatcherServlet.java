@@ -495,9 +495,11 @@ public class CCMDispatcherServlet extends BaseServlet {
             final StringBuffer target = new StringBuffer(128);
 
             target.append(m_typeURI);
-//            target.append("/");
+            if (!m_typeURI.endsWith("/")) {
+                target.append("/");
+            }
             if (path.length() > (m_instanceURI.length() + 1)) {
-                target.append(path.substring(m_instanceURI.length() + 1));
+                target.append(path.substring(m_instanceURI.length()));
             }
             if (target.charAt(target.length() - 1) != '/') {
                 target.append('/');

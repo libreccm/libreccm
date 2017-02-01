@@ -59,7 +59,7 @@ import static javax.naming.ldap.SortControl.*;
 /**
  * Resolves items to URLs and URLs to items for multiple language variants.
  *
- * * <strong>
+ * <strong>
  * AS of version 7.0.0 this class not longer part of the public API. It is left
  * here to keep the changes to the UI classes as minimal as possible. For new
  * code other methods, for example from the {@link ContentItemManager} or the
