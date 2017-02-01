@@ -31,7 +31,7 @@ import java.lang.annotation.Target;
  * value is the implementation of {@link Identifiable} for which the annotated
  * {@link AbstractMarshaller} implementation exports and imports its instances.
  *
- * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
+ * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  * @version created the 2/24/16
  */
 @Retention(RetentionPolicy.RUNTIME)

@@ -18,6 +18,7 @@
  */
 package org.libreccm.portation;
 
+import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
@@ -56,6 +57,7 @@ import org.jboss.arquillian.persistence.CleanupUsingScript;
 @CleanupUsingScript({"cleanup.sql"})
 public class CoreDataImportTest {
 
+    @Inject
     private ImportHelper importHelper;
 
     public CoreDataImportTest() {
@@ -111,7 +113,7 @@ public class CoreDataImportTest {
 
     @Before
     public void setUp() {
-        importHelper = new ImportHelper();
+        //importHelper = new ImportHelper();
     }
 
     @After

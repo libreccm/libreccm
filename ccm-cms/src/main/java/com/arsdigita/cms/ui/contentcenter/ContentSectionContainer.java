@@ -33,6 +33,7 @@ import com.arsdigita.bebop.table.TableColumn;
 import com.arsdigita.bebop.table.TableColumnModel;
 import com.arsdigita.bebop.table.TableModel;
 import com.arsdigita.bebop.table.TableModelBuilder;
+import com.arsdigita.cms.PageLocations;
 import com.arsdigita.cms.ui.CMSContainer;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.util.LockableImpl;
@@ -628,7 +629,7 @@ public class ContentSectionContainer extends CMSContainer {
          * @return
          */
         protected String generateURL(String prefix) {
-            return prefix;// + PageLocations.SECTION_PAGE;
+            return prefix + PageLocations.SECTION_PAGE;
         }
 
     }

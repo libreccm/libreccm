@@ -37,6 +37,17 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
 import java.util.List;
+import org.libreccm.categorization.Categorization;
+import org.libreccm.security.GroupMembership;
+import org.libreccm.security.Permission;
+import org.libreccm.security.Role;
+import org.libreccm.security.RoleMembership;
+import org.libreccm.security.User;
+import org.libreccm.workflow.AssignableTask;
+import org.libreccm.workflow.Task;
+import org.libreccm.workflow.TaskAssignment;
+import org.libreccm.workflow.Workflow;
+import org.libreccm.workflow.WorkflowTemplate;
 
 /**
  * Helper to implement the specifics for the importations. Makes source code
@@ -48,34 +59,45 @@ import java.util.List;
 @RequestScoped
 class ImportHelper {
     private String pathName =
-            "/home/tosmers/Svn/libreccm/ccm_ng/ccm-core/src/test/resources/" +
+            "/home/jensp/pwi/libreccm/ccm/ccm_ng/ccm-core/src/test/resources/" +
                     "portation/trunk-iaw-exports";
     private boolean indentation = false;
 
     @Inject
+    @Marshals(Category.class)
     private CategoryMarshaller categoryMarshaller;
     @Inject
+    @Marshals(Categorization.class)
     private CategorizationMarshaller categorizationMarshaller;
     @Inject
+    @Marshals(User.class)
     private UserMarshaller userMarshaller;
     @Inject
     @Marshals(Group.class)
     private GroupMarshaller groupMarshaller;
     @Inject
+    @Marshals(GroupMembership.class)
     private GroupMembershipMarshaller groupMembershipMarshaller;
     @Inject
+    @Marshals(Role.class)
     private RoleMarshaller roleMarshaller;
     @Inject
+    @Marshals(RoleMembership.class)
     private RoleMembershipMarshaller roleMembershipMarshaller;
     @Inject
+    @Marshals(WorkflowTemplate.class)
     private WorkflowTemplateMarshaller workflowTemplateMarshaller;
     @Inject
+    @Marshals(Workflow.class)
     private WorkflowMarshaller workflowMarshaller;
     @Inject
+    @Marshals(AssignableTask.class)
     private AssignableTaskMarshaller assignableTaskMarshaller;
     @Inject
+    @Marshals(TaskAssignment.class)
     private TaskAssignmentMarshaller taskAssignmentMarshaller;
     @Inject
+    @Marshals(Permission.class)
     private PermissionMarshaller permissionMarshaller;
 
 
