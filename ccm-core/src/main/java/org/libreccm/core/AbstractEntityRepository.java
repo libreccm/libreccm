@@ -45,10 +45,10 @@ import javax.transaction.Transactional;
 public abstract class AbstractEntityRepository<K, E> {
 
     private static final Logger LOGGER = LogManager.getLogger(
-        AbstractEntityRepository.class);
+            AbstractEntityRepository.class);
 
     protected static final String FETCH_GRAPH_HINT_KEY
-                                      = "javax.persistence.fetchgraph";
+                                  = "javax.persistence.fetchgraph";
 
     /**
      * The {@link EntityManager} instance to use. Provided by the container via
@@ -80,23 +80,6 @@ public abstract class AbstractEntityRepository<K, E> {
     }
 
     /**
-     * Helper method for retrieving a single result from a query.
-     *
-     * @param query The query from which the result is retrieved.
-     *
-     * @return A first result or the query or {@code null} of there is no
-     *         result.
-     */
-    protected E getSingleResultOrNull(final TypedQuery<E> query) {
-        final List<E> result = query.getResultList();
-        if (result.isEmpty()) {
-            return null;
-        } else {
-            return result.get(0);
-        }
-    }
-
-    /**
      * Helper method for retrieving a single result from a query. In contrast to
      * {@link #getSingleResultOrNull(javax.persistence.TypedQuery)} this method
      * return an {@link Optional} for the result.
@@ -104,7 +87,7 @@ public abstract class AbstractEntityRepository<K, E> {
      * @param query The query from which the result is retrieved.
      *
      * @return An {@link Optional} instance wrapping the first result of the
-     *         query. If there is no result the {@code Optional} is empty.
+     * query. If there is no result the {@code Optional} is empty.
      */
     protected Optional<E> getSingleResult(final TypedQuery<E> query) {
         final List<E> result = query.getResultList();
@@ -125,13 +108,12 @@ public abstract class AbstractEntityRepository<K, E> {
      * @param entityGraphName The name of the named entity graph.
      *
      * @return A mutable copy of the named entity graph identified by the
-     *         provided name or {@code null} if there is no such named entity
-     *         graph.
+     * provided name or {@code null} if there is no such named entity graph.
      */
     @SuppressWarnings("unchecked")
     public EntityGraph<E> createEntityGraph(final String entityGraphName) {
         return (EntityGraph<E>) entityManager.createEntityGraph(
-            entityGraphName);
+                entityGraphName);
     }
 
     /**
@@ -139,7 +121,7 @@ public abstract class AbstractEntityRepository<K, E> {
      * a repository class overwrite this method.
      *
      * @return The {@code Class} of the Entity which are managed by this
-     *         repository.
+     * repository.
      */
     public abstract Class<E> getEntityClass();
 
@@ -148,27 +130,31 @@ public abstract class AbstractEntityRepository<K, E> {
      *
      * @param entityId The ID of the entity to retrieve.
      *
-     * @return The entity identified by the provided ID of {@code null} if there
-     *         is no such entity.
+     * @return An {@link Optional} containing the entity identified by the
+     * provided ID or am empty {@link Optional} if there is no such entity.
      */
     @Transactional(Transactional.TxType.REQUIRED)
-    public E findById(final K entityId) {
-        return entityManager.find(getEntityClass(), entityId);
+    public Optional<E> findById(final K entityId) {
+        return Optional.ofNullable(entityManager.find(getEntityClass(),
+                                                      entityId));
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
-    public E findById(final K entityId, final String entityGraphName) {
+    public Optional<E> findById(final K entityId, final String entityGraphName) {
         @SuppressWarnings("unchecked")
         final EntityGraph<E> entityGraph = (EntityGraph<E>) entityManager.
-            getEntityGraph(entityGraphName);
+                getEntityGraph(entityGraphName);
         return findById(entityId, entityGraph);
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
-    public E findById(final K entityId, final EntityGraph<E> entityGraph) {
+    public Optional<E> findById(final K entityId,
+                                final EntityGraph<E> entityGraph) {
         final Map<String, Object> hints = new HashMap<>();
         hints.put(FETCH_GRAPH_HINT_KEY, entityGraph);
-        return entityManager.find(getEntityClass(), entityId, hints);
+        return Optional.ofNullable(entityManager.find(getEntityClass(),
+                                                      entityId,
+                                                      hints));
     }
 
     /**
@@ -176,7 +162,7 @@ public abstract class AbstractEntityRepository<K, E> {
      * responsible for.
      *
      * @return The list of entities in the database which are of the type
-     *         provided by {@link #getEntityClass()}.
+     * provided by {@link #getEntityClass()}.
      */
     @Transactional(Transactional.TxType.REQUIRED)
     public List<E> findAll() {
@@ -189,7 +175,7 @@ public abstract class AbstractEntityRepository<K, E> {
     public List<E> findAll(final String entityGraphName) {
         @SuppressWarnings("unchecked")
         final EntityGraph<E> entityGraph = (EntityGraph<E>) entityManager
-            .getEntityGraph(entityGraphName);
+                .getEntityGraph(entityGraphName);
 
         return findAll(entityGraph);
     }
@@ -203,9 +189,9 @@ public abstract class AbstractEntityRepository<K, E> {
 
     public CriteriaQuery<E> createCriteriaQuery() {
         final CriteriaBuilder criteriaBuilder = entityManager
-            .getCriteriaBuilder();
+                .getCriteriaBuilder();
         final CriteriaQuery<E> criteriaQuery = criteriaBuilder.createQuery(
-            getEntityClass());
+                getEntityClass());
         final Root<E> root = criteriaQuery.from(getEntityClass());
         return criteriaQuery.select(root);
     }
@@ -223,8 +209,8 @@ public abstract class AbstractEntityRepository<K, E> {
                                         final String graphName) {
         @SuppressWarnings("unchecked")
         final EntityGraph<E> entityGraph = (EntityGraph< E>) entityManager
-            .getEntityGraph(
-                graphName);
+                .getEntityGraph(
+                        graphName);
         return executeCriteriaQuery(criteriaQuery, entityGraph);
     }
 
@@ -243,7 +229,7 @@ public abstract class AbstractEntityRepository<K, E> {
      * @param entity The entity to check.
      *
      * @return {@code true} if the entity is new (isn't in the database yet),
-     *         {@code false} otherwise.
+     * {@code false} otherwise.
      */
     public abstract boolean isNew(final E entity);
 

@@ -65,7 +65,7 @@ public class CategoryMover extends Form {
             final CategoryRepository categoryRepo = CdiUtil
                 .createCdiUtil().findBean(CategoryRepository.class);
             final Category category = categoryRepo.findById(Long.parseLong(
-                selectedCategoryId.getSelectedKey(state)));
+                selectedCategoryId.getSelectedKey(state))).get();
 
             target.setLabel(new GlobalizedMessage(
                 "ui.admin.categories.category.move.heading",
@@ -94,10 +94,10 @@ public class CategoryMover extends Form {
                     CategoryManager.class);
 
                 final Category category = categoryRepo.findById(Long.parseLong(
-                    selectedCategoryId.getSelectedKey(state)));
+                    selectedCategoryId.getSelectedKey(state))).get();
                 final Category parent = category.getParentCategory();
                 final Category target = categoryRepo.findById(Long.parseLong(
-                    (String) categoryTree.getSelectedKey(state)));
+                    (String) categoryTree.getSelectedKey(state))).get();
                 
                 categoryManager.removeSubCategoryFromCategory(category, parent);
                 categoryManager.addSubCategoryToCategory(category, target);

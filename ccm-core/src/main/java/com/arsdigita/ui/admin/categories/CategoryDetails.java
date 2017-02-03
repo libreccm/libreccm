@@ -83,7 +83,7 @@ class CategoryDetails extends SegmentedPanel {
             final CategoryRepository categoryRepo = CdiUtil.createCdiUtil()
                 .findBean(CategoryRepository.class);
             final Category category = categoryRepo.findById(Long.parseLong(
-                selectedCategoryId.getSelectedKey(state)));
+                selectedCategoryId.getSelectedKey(state))).get();
 
             target.setLabel(new GlobalizedMessage(
                 "ui.admin.categories.category_details.heading",
@@ -115,8 +115,9 @@ class CategoryDetails extends SegmentedPanel {
                     final CategoryRepository categoryRepo = CdiUtil
                         .createCdiUtil().findBean(CategoryRepository.class);
                     final Category category = categoryRepo.findById(Long
-                        .parseLong(selectedCategoryId.getSelectedKey(state)));
-                    
+                        .parseLong(selectedCategoryId.getSelectedKey(state)))
+                        .get();
+
                     //If the category has no parent category it is the root
                     //category of a domain and can't be moved
                     return category.getParentCategory() != null;
@@ -202,7 +203,7 @@ class CategoryDetails extends SegmentedPanel {
                         createCdiUtil().findBean(CategoryRepository.class);
                     final Category category = categoryRepository.findById(
                         Long.parseLong(selectedCategoryId.getSelectedKey(
-                            state)));
+                            state))).get();
                     final KernelConfig kernelConfig = KernelConfig.getConfig();
                     final Set<String> supportedLanguages = kernelConfig.
                         getSupportedLanguages();
@@ -248,7 +249,7 @@ class CategoryDetails extends SegmentedPanel {
                     createCdiUtil().findBean(CategoryRepository.class);
                 final Category category = categoryRepository.findById(
                     Long.parseLong(selectedCategoryId.getSelectedKey(
-                        state)));
+                        state))).get();
                 final KernelConfig kernelConfig = KernelConfig.getConfig();
                 final Set<String> supportedLanguages = kernelConfig.
                     getSupportedLanguages();
@@ -287,7 +288,7 @@ class CategoryDetails extends SegmentedPanel {
                         createCdiUtil().findBean(CategoryRepository.class);
                     final Category category = categoryRepository.findById(
                         Long.parseLong(selectedCategoryId.getSelectedKey(
-                            state)));
+                            state))).get();
                     final KernelConfig kernelConfig = KernelConfig.getConfig();
                     final Set<String> supportedLanguages = kernelConfig.
                         getSupportedLanguages();
@@ -335,7 +336,7 @@ class CategoryDetails extends SegmentedPanel {
                     createCdiUtil().findBean(CategoryRepository.class);
                 final Category category = categoryRepository.findById(
                     Long.parseLong(selectedCategoryId.getSelectedKey(
-                        state)));
+                        state))).get();
                 final KernelConfig kernelConfig = KernelConfig.getConfig();
                 final Set<String> supportedLanguages = kernelConfig.
                     getSupportedLanguages();

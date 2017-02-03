@@ -31,7 +31,7 @@ import org.libreccm.security.RoleRepository;
 
 /**
  * Model builder for the {@link RolePropertySheetModel}.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class RolePropertySheetModelBuilder extends LockableImpl
@@ -54,9 +54,10 @@ class RolePropertySheetModelBuilder extends LockableImpl
         } else {
             final RoleRepository roleRepository = CdiUtil.createCdiUtil()
                 .findBean(RoleRepository.class);
-            selectedRole = roleRepository.findById(Long.parseLong(roleIdStr));
+            selectedRole = roleRepository.findById(Long.parseLong(roleIdStr))
+                .get();
         }
-        
+
         return new RolePropertySheetModel(selectedRole);
     }
 

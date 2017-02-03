@@ -24,7 +24,6 @@ import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.SimpleContainer;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.bebop.form.Submit;
-import com.arsdigita.cms.CMS;
 import com.arsdigita.cms.ui.UserAddForm;
 import com.arsdigita.cms.ui.UserSearchForm;
 import com.arsdigita.globalization.GlobalizedMessage;
@@ -40,7 +39,6 @@ import org.libreccm.security.UserRepository;
 import org.libreccm.workflow.WorkflowManager;
 import org.librecms.CmsConstants;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -150,7 +148,7 @@ class TaskAddUser extends SimpleContainer {
                 User user;
 
                 for (int i = 0; i < users.length; i++) {
-                    user = userRepo.findById(Long.parseLong(users[i]));
+                    user = userRepo.findById(Long.parseLong(users[i])).get();
 
                     //ToDo
                     

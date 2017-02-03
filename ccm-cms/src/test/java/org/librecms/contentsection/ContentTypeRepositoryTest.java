@@ -177,7 +177,7 @@ public class ContentTypeRepositoryTest {
     @UsingDataSet("datasets/org/librecms/contentsection/"
                       + "ContentTypeRepositoryTest/data.xml")
     public void findByContentSection() {
-        final ContentSection section = contentSectionRepo.findById(-1001L);
+        final ContentSection section = contentSectionRepo.findById(-1001L).get();
         final List<ContentType> types = contentTypeRepo.findByContentSection(
             section);
 
@@ -220,7 +220,7 @@ public class ContentTypeRepositoryTest {
     @UsingDataSet("datasets/org/librecms/contentsection/"
                       + "ContentTypeRepositoryTest/data.xml")
     public void findByContentSectionAndClass() {
-        final ContentSection section = contentSectionRepo.findById(-1001L);
+        final ContentSection section = contentSectionRepo.findById(-1001L).get();
         final Optional<ContentType> articleType = contentTypeRepo
             .findByContentSectionAndClass(section, Article.class);
         final Optional<ContentType> newsType = contentTypeRepo
@@ -271,7 +271,7 @@ public class ContentTypeRepositoryTest {
                       + "ContentTypeRepositoryTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void findByContentSectionAndClassNull() {
-        final ContentSection section = contentSectionRepo.findById(-1001L);
+        final ContentSection section = contentSectionRepo.findById(-1001L).get();
         final Class<? extends ContentItem> type = null;
         contentTypeRepo.findByContentSectionAndClass(section, type);
     }
@@ -286,7 +286,7 @@ public class ContentTypeRepositoryTest {
     @UsingDataSet("datasets/org/librecms/contentsection/"
                       + "ContentTypeRepositoryTest/data.xml")
     public void findByContentSectionAndClassName() {
-        final ContentSection section = contentSectionRepo.findById(-1001L);
+        final ContentSection section = contentSectionRepo.findById(-1001L).get();
         final Optional<ContentType> articleType = contentTypeRepo
             .findByContentSectionAndClass(section, Article.class.getName());
         final Optional<ContentType> newsType = contentTypeRepo
@@ -339,7 +339,7 @@ public class ContentTypeRepositoryTest {
                       + "ContentTypeRepositoryTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void findByContentSectionAndClassNameNull() {
-        final ContentSection section = contentSectionRepo.findById(-1001L);
+        final ContentSection section = contentSectionRepo.findById(-1001L).get();
         final String type = null;
         contentTypeRepo.findByContentSectionAndClass(section, type);
     }
@@ -353,7 +353,7 @@ public class ContentTypeRepositoryTest {
     @UsingDataSet("datasets/org/librecms/contentsection/"
                       + "ContentTypeRepositoryTest/data.xml")
     public void verifyIsContentTypeInUse() {
-        final ContentSection section = contentSectionRepo.findById(-1001L);
+        final ContentSection section = contentSectionRepo.findById(-1001L).get();
         final Optional<ContentType> articleType = contentTypeRepo
             .findByContentSectionAndClass(section, Article.class);
         final Optional<ContentType> newsType = contentTypeRepo
@@ -378,7 +378,7 @@ public class ContentTypeRepositoryTest {
     @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
                             + "ContentTypeRepositoryTest/after-delete.xml")
     public void deleteUnusedContentType() {
-        final ContentSection section = contentSectionRepo.findById(-1001L);
+        final ContentSection section = contentSectionRepo.findById(-1001L).get();
         final Optional<ContentType> newsType = contentTypeRepo
             .findByContentSectionAndClass(section, News.class);
         assertThat(newsType.isPresent(), is(true));
@@ -398,7 +398,7 @@ public class ContentTypeRepositoryTest {
                             + "ContentTypeRepositoryTest/data.xml")
     @ShouldThrowException(UnauthorizedException.class)
     public void deleteUnusedContentTypeUnauthorized() {
-        final ContentSection section = contentSectionRepo.findById(-1001L);
+        final ContentSection section = contentSectionRepo.findById(-1001L).get();
         final Optional<ContentType> newsType = contentTypeRepo
             .findByContentSectionAndClass(section, News.class);
         assertThat(newsType.isPresent(), is(true));
@@ -418,7 +418,7 @@ public class ContentTypeRepositoryTest {
                             + "ContentTypeRepositoryTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void deleteContentTypeInUse() {
-        final ContentSection section = contentSectionRepo.findById(-1001L);
+        final ContentSection section = contentSectionRepo.findById(-1001L).get();
         final Optional<ContentType> articleType = contentTypeRepo
             .findByContentSectionAndClass(section, Article.class);
         assertThat(articleType.isPresent(), is(true));

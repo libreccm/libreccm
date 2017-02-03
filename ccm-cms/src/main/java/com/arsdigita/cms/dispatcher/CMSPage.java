@@ -44,12 +44,13 @@ import org.libreccm.security.PermissionChecker;
 import org.libreccm.security.Shiro;
 import org.libreccm.security.User;
 import org.libreccm.web.CcmApplication;
-import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionServlet;
 import org.librecms.contentsection.privileges.ItemPrivileges;
+
+import java.util.Optional;
 
 
 /**
@@ -313,9 +314,9 @@ public class CMSPage extends Page implements ResourceHandler {
     @Override
     protected Element generateXMLHelper(PageState ps, Document parent) {
         Element page = super.generateXMLHelper(ps,parent);
-        final User user = CdiUtil.createCdiUtil().findBean(Shiro.class).getUser();
-        if ( user != null ) {
-            page.addAttribute("name",user.getName());
+        final Optional<User> user = CdiUtil.createCdiUtil().findBean(Shiro.class).getUser();
+        if ( user.isPresent()) {
+            page.addAttribute("name",user.get().getName());
         }
 
         return page;

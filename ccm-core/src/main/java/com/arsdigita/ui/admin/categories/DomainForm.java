@@ -77,7 +77,7 @@ class DomainForm extends Form {
                 final DomainRepository domainRepository = CdiUtil.
                     createCdiUtil().findBean(DomainRepository.class);
                 final Domain domain = domainRepository.findById(Long.parseLong(
-                    selectedDomainId.getSelectedKey(state)));
+                    selectedDomainId.getSelectedKey(state))).get();
                 target.setLabel(new GlobalizedMessage(
                     "ui.admin.categories.domain_form.heading.edit",
                     ADMIN_BUNDLE,
@@ -130,7 +130,7 @@ class DomainForm extends Form {
                 final DomainRepository domainRepository = cdiUtil.findBean(
                     DomainRepository.class);
                 final Domain domain = domainRepository.findById(Long.parseLong(
-                    selectedDomainId.getSelectedKey(state)));
+                    selectedDomainId.getSelectedKey(state))).get();
 
                 domainKey.setValue(state, domain.getDomainKey());
                 domainUri.setValue(state, domain.getUri());
@@ -202,7 +202,7 @@ class DomainForm extends Form {
                     }
                 } else {
                     domain = domainRepository.findById(Long.parseLong(
-                        selectedDomainId.getSelectedKey(state)));
+                        selectedDomainId.getSelectedKey(state))).get();
                 }
                 domain.setDomainKey(domainKeyData);
                 domain.setUri(domainUriData);

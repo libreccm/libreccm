@@ -39,8 +39,8 @@ import java.util.stream.Collectors;
 @Configuration
 public final class KernelConfig {
 
-    private static final String EMAIL = "email";
-    private static final String SCREEN_NAME = "screen_name";
+    public static final String USER_IDENTIFIER_EMAIL = "email";
+    public static final String USER_IDENTIFIER_SCREEN_NAME = "screen_name";
 
     @Setting
     private boolean debugEnabled = false;
@@ -52,7 +52,7 @@ public final class KernelConfig {
     private boolean dataPermissionCheckEnabled = true;
 
     @Setting
-    private String primaryUserIdentifier = EMAIL;
+    private String primaryUserIdentifier = USER_IDENTIFIER_EMAIL;
 
     @Setting
     private boolean ssoEnabled = false;
@@ -113,8 +113,8 @@ public final class KernelConfig {
     }
 
     public void setPrimaryUserIdentifier(final String primaryUserIdentifier) {
-        if (SCREEN_NAME.equals(primaryUserIdentifier)
-                || EMAIL.equals(primaryUserIdentifier)) {
+        if (USER_IDENTIFIER_SCREEN_NAME.equals(primaryUserIdentifier)
+                || USER_IDENTIFIER_EMAIL.equals(primaryUserIdentifier)) {
             this.primaryUserIdentifier = primaryUserIdentifier;
         } else {
             throw new IllegalArgumentException(
@@ -124,11 +124,11 @@ public final class KernelConfig {
     }
 
     public boolean emailIsPrimaryIdentifier() {
-        return EMAIL.equals(primaryUserIdentifier);
+        return USER_IDENTIFIER_EMAIL.equals(primaryUserIdentifier);
     }
 
     public boolean screenNameIsPrimaryIdentifier() {
-        return SCREEN_NAME.equals(primaryUserIdentifier);
+        return USER_IDENTIFIER_SCREEN_NAME.equals(primaryUserIdentifier);
     }
 
     public boolean isSsoEnabled() {

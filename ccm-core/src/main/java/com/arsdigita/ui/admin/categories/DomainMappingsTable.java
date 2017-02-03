@@ -130,10 +130,10 @@ class DomainMappingsTable extends Table {
 
                         final Domain domain = domainRepository.findById(
                             Long.parseLong(selectedDomainId.getSelectedKey(event
-                                .getPageState())));
+                                .getPageState()))).get();
 
                         final CcmApplication owner = appRepository.findById(
-                            Long.parseLong((String)event.getRowKey()));
+                            Long.parseLong((String)event.getRowKey())).get();
                         
                         domainManager.removeDomainOwner(owner, domain);
 
@@ -175,7 +175,7 @@ class DomainMappingsTable extends Table {
                 .findBean(DomainRepository.class);
             final Domain domain = domainRepository.findById(
                 Long.parseLong(selectedDomainId.getSelectedKey(state)),
-                "Domain.withOwners");
+                "Domain.withOwners").get();
             
             domainOwnerships = new ArrayList<>(domain.getOwners());
             

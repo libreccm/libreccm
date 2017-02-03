@@ -51,24 +51,24 @@ import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
  * Form for editing the group memberships of a user.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class GroupMembershipsForm extends Form {
 
     private static final String GROUPS_SELECTOR = "groupsselector";
-    
+
     private final CheckboxGroup groups;
     private final SaveCancelSection saveCancelSection;
-    
+
     public GroupMembershipsForm(
         final UserAdmin userAdmin,
         final ParameterSingleSelectionModel<String> selectedUserId) {
 
         super("edit-usergroupmemberships-form");
-        
+
         final BoxPanel links = new BoxPanel(BoxPanel.VERTICAL);
-        
+
         final Label heading = new Label(e -> {
             final PageState state = e.getPageState();
             final Label target = (Label) e.getTarget();
@@ -76,7 +76,8 @@ class GroupMembershipsForm extends Form {
             final String userIdStr = selectedUserId.getSelectedKey(state);
             final UserRepository userRepository = CdiUtil.createCdiUtil()
                 .findBean(UserRepository.class);
-            final User user = userRepository.findById(Long.parseLong(userIdStr));
+            final User user = userRepository.findById(Long.parseLong(userIdStr))
+                .get();
 
             target.setLabel(new GlobalizedMessage(
                 "ui.admin.user.edit_group_memberships",
@@ -95,7 +96,7 @@ class GroupMembershipsForm extends Form {
         links.add(backLink);
 
         add(links);
-        
+
         groups = new CheckboxGroup(GROUPS_SELECTOR);
         try {
             groups.addPrintListener(e -> {
@@ -124,10 +125,10 @@ class GroupMembershipsForm extends Form {
             throw new UncheckedWrapperException(ex);
         }
         add(groups);
-        
+
         saveCancelSection = new SaveCancelSection();
         add(saveCancelSection);
-        
+
         addInitListener(e -> {
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final UserRepository userRepository = cdiUtil.findBean(
@@ -136,7 +137,7 @@ class GroupMembershipsForm extends Form {
             final PageState state = e.getPageState();
 
             final User user = userRepository.findById(Long.parseLong(
-                selectedUserId.getSelectedKey(state)));
+                selectedUserId.getSelectedKey(state))).get();
             final List<Group> assignedGroups = new ArrayList<>();
             user.getGroupMemberships().forEach(m -> {
                 assignedGroups.add(m.getGroup());
@@ -150,7 +151,7 @@ class GroupMembershipsForm extends Form {
 
             groups.setValue(state, selectedGroups);
         });
-        
+
         addProcessListener(e -> {
             final PageState state = e.getPageState();
             if (saveCancelSection.getSaveButton().isSelected(state)) {
@@ -168,12 +169,12 @@ class GroupMembershipsForm extends Form {
                     GROUPS_SELECTOR);
 
                 final User user = userRepository.findById(Long.parseLong(
-                    selectedUserId.getSelectedKey(state)));
+                    selectedUserId.getSelectedKey(state))).get();
                 final List<Group> selectedGroups = new ArrayList<>();
                 if (selectedGroupIds != null) {
                     Arrays.stream(selectedGroupIds).forEach(id -> {
                         final Group group = groupRepository.findById(
-                            Long.parseLong(id));
+                            Long.parseLong(id)).get();
                         selectedGroups.add(group);
                     });
                 }
@@ -195,7 +196,7 @@ class GroupMembershipsForm extends Form {
                         //The group is maybe detached or not fully loaded,
                         //therefore we load the group from the database.
                         final Group group = groupRepository.findById(
-                            g.getPartyId());
+                            g.getPartyId()).get();
                         groupManager.removeMemberFromGroup(user, group);
                     }
                 });

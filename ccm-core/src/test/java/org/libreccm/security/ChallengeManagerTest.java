@@ -50,6 +50,8 @@ import static org.libreccm.testutils.DependenciesHelpers.*;
 
 import org.jboss.arquillian.persistence.CleanupUsingScript;
 
+import java.util.Optional;
+
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
@@ -159,32 +161,14 @@ public class ChallengeManagerTest {
         excludeColumns = {"token_id", "token", "valid_until"})
     @InSequence(1100)
     public void createEmailVerification() {
-//        final String path = String.format("%s/%s/register/verify-email",
-//                                          servletContext.getVirtualServerName(),
-//                                          servletContext.getContextPath());
-//        final String expected = String.format(
-//            "Please follow the following link to finish the email verfication "
-//                + "process:\n"
-//                + "\n"
-//                + "%s"
-//                + "\n\n"
-//                + "Please be aware that your verification token expires"
-//                + "at",
-//            path);
-
-        final User user = userRepository.findByName("mmuster");
+        final User user = userRepository.findByName("mmuster").get();
+        
         final String mail = shiro.getSystemUser().execute(() -> {
             return challengeManager.createEmailVerification(user);
         });
 
         assertThat(mail, is(not(nullValue())));
         assertThat(mail.isEmpty(), is(false));
-//        assertThat(
-//            String
-//            .format("Mail is expected to start with \"%s\" but is \"%s\".",
-//                    expected,
-//                    mail),
-//            mail.startsWith(expected), is(true));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -208,7 +192,7 @@ public class ChallengeManagerTest {
                     + "after-finish-email-verification.xml")
     @InSequence(1300)
     public void finishEmailVerification() throws ChallengeFailedException {
-        final User user = userRepository.findByName("mmuster");
+        final User user = userRepository.findByName("mmuster").get();
         shiro.getSystemUser().execute(() -> {
             challengeManager.finishEmailVerification(
                 user,
@@ -251,7 +235,7 @@ public class ChallengeManagerTest {
     public void finishEmailVerificationNullToken()
         throws Throwable {
 
-        final User user = userRepository.findByName("mmuster");
+        final User user = userRepository.findByName("mmuster").get();
         try {
             shiro.getSystemUser().execute(() -> {
                 challengeManager.finishEmailVerification(user, null);
@@ -270,18 +254,7 @@ public class ChallengeManagerTest {
         excludeColumns = {"token_id", "token", "valid_until"})
     @InSequence(2100)
     public void createAccountActivation() {
-//        final String path = String.format("%s/%s/register/activate-account",
-//                                          servletContext.getVirtualServerName(),
-//                                          servletContext.getContextPath());
-//        final String expected = String.format(
-//            "Please follow the following link to enable your new account:\n"
-//                + "\n"
-//                + "%s"
-//                + "\n\n"
-//                + "Please be aware that you must activate your account before",
-//            path);
-
-        final User user = userRepository.findByName("mmuster");
+        final User user = userRepository.findByName("mmuster").get();
         final String mail = shiro.getSystemUser().execute(() -> {
             return challengeManager.createAccountActivation(user);
         });
@@ -312,7 +285,7 @@ public class ChallengeManagerTest {
                     + "after-finish-account-activation.xml")
     @InSequence(2300)
     public void finishAccountActivation() throws Throwable {
-        final User user = userRepository.findByName("mmuster");
+        final User user = userRepository.findByName("mmuster").get();
         try {
             shiro.getSystemUser().execute(() -> {
                 challengeManager.finishAccountActivation(
@@ -357,7 +330,7 @@ public class ChallengeManagerTest {
     public void finishAccountActivationNullToken() throws Throwable {
 
         try {
-            final User user = userRepository.findByName("mmuster");
+            final User user = userRepository.findByName("mmuster").get();
             shiro.getSystemUser().execute(() -> {
                 challengeManager.finishAccountActivation(user, null);
                 return null;
@@ -375,26 +348,13 @@ public class ChallengeManagerTest {
         excludeColumns = {"token_id", "token", "valid_until"})
     @InSequence(3100)
     public void createPasswordRecover() {
-//        final String path = String.format("%s/%s/register/recover-password",
-//                                          servletContext.getVirtualServerName(),
-//                                          servletContext.getContextPath());
-//        final String expected = String.format(
-//            "Please follow the following link to complete the password recover "
-//                + "process:\n"
-//                + "\n"
-//                + "%s"
-//                + "\n\n"
-//                + "Please be aware that you must complete the process until",
-//            path);
-
-        final User user = userRepository.findByName("mmuster");
+        final User user = userRepository.findByName("mmuster").get();
         final String mail = shiro.getSystemUser().execute(() -> {
             return challengeManager.createPasswordRecover(user);
         });
 
         assertThat(mail, is(not(nullValue())));
         assertThat(mail.isEmpty(), is(false));
-//        assertThat(mail.startsWith(expected), is(true));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -421,7 +381,7 @@ public class ChallengeManagerTest {
         excludeColumns = "password")
     @InSequence(3300)
     public void finishPasswordRecover() throws ChallengeFailedException {
-        final User user = userRepository.findByName("mmuster");
+        final User user = userRepository.findByName("mmuster").get();
         shiro.getSystemUser().execute(() -> {
             challengeManager.finishPasswordRecover(
                 user,
@@ -430,7 +390,7 @@ public class ChallengeManagerTest {
             return null;
         });
 
-        final User after = userRepository.findByName("mmuster");
+        final User after = userRepository.findByName("mmuster").get();
         assertThat(userManager.verifyPassword(after, "new-password"), is(true));
     }
 
@@ -466,7 +426,7 @@ public class ChallengeManagerTest {
     @InSequence(3400)
     public void finishPasswordRecoverNullToken() throws Throwable {
 
-        final User user = userRepository.findByName("mmuster");
+        final User user = userRepository.findByName("mmuster").get();
         try {
             shiro.getSystemUser().execute(() -> {
                 challengeManager.finishPasswordRecover(
@@ -487,7 +447,7 @@ public class ChallengeManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(3500)
     public void finishPasswordRecoverNullPassword() throws Throwable {
-        final User user = userRepository.findByName("mmuster");
+        final User user = userRepository.findByName("mmuster").get();
 
         try {
             shiro.getSystemUser().execute(() -> {
@@ -511,7 +471,7 @@ public class ChallengeManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(3600)
     public void finishPasswordRecoverEmptyPassword() throws Throwable {
-        final User user = userRepository.findByName("mmuster");
+        final User user = userRepository.findByName("mmuster").get();
         try {
             shiro.getSystemUser().execute(() -> {
                 challengeManager.finishPasswordRecover(

@@ -121,7 +121,7 @@ public class ShortcutForm extends Form {
                 final ShortcutRepository repo = CdiUtil.createCdiUtil()
                     .findBean(ShortcutRepository.class);
                 final Shortcut shortcut = repo.findById(Long.parseLong(
-                    selectedShortcut.getSelectedKey(state)));
+                    selectedShortcut.getSelectedKey(state))).get();
                 urlKeyField.setValue(state, shortcut.getUrlKey());
                 redirectField.setValue(state, shortcut.getRedirect());
             }
@@ -138,7 +138,7 @@ public class ShortcutForm extends Form {
                     final ShortcutRepository repo = CdiUtil.createCdiUtil()
                         .findBean(ShortcutRepository.class);
                     shortcut = repo.findById(Long.parseLong(selectedShortcut
-                        .getSelectedKey(state)));
+                        .getSelectedKey(state))).get();
 
                     shortcut.setUrlKey(data.getString(URL_KEY));
                     shortcut.setRedirect(data.getString(REDIRECT));

@@ -146,7 +146,7 @@ abstract class BaseWorkflowItemPane extends BaseItemPane {
             final User lockingUser = task.getLockingUser();
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final Shiro shiro = cdiUtil.findBean(Shiro.class);
-            final User currentUser = shiro.getUser();
+            final User currentUser = shiro.getUser().get();
 
             return task.isLocked() && (lockingUser == null
                                        || lockingUser.equals(currentUser));

@@ -31,6 +31,8 @@ import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.Group;
 import org.libreccm.security.GroupRepository;
 
+import java.util.Optional;
+
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
@@ -112,7 +114,8 @@ class GroupForm extends Form {
                 final GroupRepository groupRepository = cdiUtil.findBean(
                     GroupRepository.class);
 
-                if (groupRepository.findByName(groupNameData) != null) {
+                final Optional<Group> group = groupRepository.findByName(groupNameData);
+                if (group.isPresent()) {
                     data.addError(GROUP_NAME, new GlobalizedMessage(
                                   "ui.admin.group.error.name_already_in_use",
                                   ADMIN_BUNDLE));
@@ -132,7 +135,7 @@ class GroupForm extends Form {
                     GroupRepository.class);
 
                 final Group group = groupRepository.findById(Long.parseLong(
-                    selectedGroupIdStr));
+                    selectedGroupIdStr)).get();
                 groupName.setValue(state, group.getName());
             }
         });
@@ -158,7 +161,7 @@ class GroupForm extends Form {
                     groupRepository.save(group);
                 } else {
                     final Group group = groupRepository.findById(Long.parseLong(
-                        selectedGroupIdStr));
+                        selectedGroupIdStr)).get();
                     group.setName(groupNameData);
 
                     groupRepository.save(group);

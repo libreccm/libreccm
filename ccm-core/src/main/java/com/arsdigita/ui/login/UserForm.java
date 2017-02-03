@@ -43,6 +43,8 @@ import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.User;
 import org.libreccm.security.UserRepository;
 
+import java.util.Optional;
+
 /**
  * Common code for user new / add / edit forms.
  *
@@ -279,8 +281,8 @@ public abstract class UserForm extends Form
             final String oldScreenName = user.getName();
             final String screenName = (String) m_screenName.getValue(state);
             if (screenName != null && !screenName.equals(oldScreenName)) {
-                final User result = userRepository.findByName(screenName);
-                if (result != null) {
+                final Optional<User> result = userRepository.findByName(screenName);
+                if (result.isPresent()) {
                     data.addError(FORM_SCREEN_NAME, ERROR_DUPLICATE_SN);
                 }
             }
@@ -289,8 +291,8 @@ public abstract class UserForm extends Form
             final String email = (String) m_email.getValue(state);
             if (KernelConfig.getConfig().emailIsPrimaryIdentifier()
                     && email != null && !email.equals(oldEmail)) {
-                final User result = userRepository.findByEmailAddress(email);
-                if (result != null) {
+                final Optional<User> result = userRepository.findByEmailAddress(email);
+                if (result.isPresent()) {
                     data.addError(FORM_EMAIL, ERROR_DUPLICATE_EMAIL);
                 }
             }

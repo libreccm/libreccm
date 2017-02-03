@@ -38,6 +38,7 @@ import org.libreccm.web.CcmApplication;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -217,10 +218,10 @@ public class CMSApplicationPage extends Page {
         //       document it in the classes. Probably remove one ore the other
         //       way from the API if possible.
         final Shiro shiro = CdiUtil.createCdiUtil().findBean(Shiro.class);
-        final User user = shiro.getUser();
+        final Optional<User> user = shiro.getUser();
         // User user = Web.getWebContext().getUser();
-        if ( user != null ) {
-            pageElement.addAttribute("name",user.getName());
+        if (user.isPresent()) {
+            pageElement.addAttribute("name",user.get().getName());
         }
 
         return pageElement;

@@ -372,7 +372,7 @@ public class ContentItemManagerTest {
             final Folder folder = section.getRootDocumentsFolder();
 
             final WorkflowTemplate workflowTemplate = workflowTemplateRepo
-                .findById(-110L);
+                .findById(-110L).get();
 
             final Article article = itemManager.createContentItem(
                 "new-article",
@@ -417,7 +417,7 @@ public class ContentItemManagerTest {
             final Folder folder = section.getRootDocumentsFolder();
 
             final WorkflowTemplate workflowTemplate = workflowTemplateRepo
-                .findById(-110L);
+                .findById(-110L).get();
 
             itemManager.createContentItem("Test",
                                           section,
@@ -446,7 +446,7 @@ public class ContentItemManagerTest {
             final Folder folder = section.getRootDocumentsFolder();
 
             final WorkflowTemplate workflowTemplate = workflowTemplateRepo
-                .findById(-110L);
+                .findById(-110L).get();
 
             itemManager.createContentItem(null,
                                           section,
@@ -500,7 +500,7 @@ public class ContentItemManagerTest {
             final ContentSection section = sectionRepo.findByLabel("info");
 
             final WorkflowTemplate workflowTemplate = workflowTemplateRepo
-                .findById(-110L);
+                .findById(-110L).get();
 
             itemManager.createContentItem("Test",
                                           section,
@@ -534,7 +534,7 @@ public class ContentItemManagerTest {
         final Optional<ContentItem> item = itemRepo.findById(-10100L);
         assertThat(item.isPresent(), is(true));
 
-        final Folder targetFolder = folderRepo.findById(-2120L);
+        final Folder targetFolder = folderRepo.findById(-2120L).get();
         assertThat(targetFolder, is(not(nullValue())));
 
         itemManager.move(item.get(), targetFolder);
@@ -562,7 +562,7 @@ public class ContentItemManagerTest {
         })
     public void moveItemToOtherContentSection() {
         final Optional<ContentItem> item = itemRepo.findById(-10100L);
-        final Folder targetFolder = folderRepo.findById(-2300L);
+        final Folder targetFolder = folderRepo.findById(-2300L).get();
 
         assertThat(item.isPresent(), is(true));
         assertThat(targetFolder, is(not(nullValue())));
@@ -585,7 +585,7 @@ public class ContentItemManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     public void moveToOtherContentSectionTypeNotPresent() {
         final Optional<ContentItem> item = itemRepo.findById(-10400L);
-        final Folder targetFolder = folderRepo.findById(-2300L);
+        final Folder targetFolder = folderRepo.findById(-2300L).get();
 
         assertThat(item.isPresent(), is(true));
         assertThat(targetFolder, is(not(nullValue())));
@@ -607,7 +607,7 @@ public class ContentItemManagerTest {
                             + "ContentItemManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void moveItemNull() {
-        final Folder targetFolder = folderRepo.findById(-2120L);
+        final Folder targetFolder = folderRepo.findById(-2120L).get();
         assertThat(targetFolder, is(not(nullValue())));
 
         itemManager.move(null, targetFolder);
@@ -665,7 +665,7 @@ public class ContentItemManagerTest {
         final Optional<ContentItem> item = itemRepo.findById(-10100L);
         assertThat(item.isPresent(), is(true));
 
-        final Folder targetFolder = folderRepo.findById(-2120L);
+        final Folder targetFolder = folderRepo.findById(-2120L).get();
         assertThat(targetFolder, is(not(nullValue())));
 
         itemManager.copy(item.get(), targetFolder);
@@ -701,7 +701,7 @@ public class ContentItemManagerTest {
         })
     public void copyToFolderInOtherSection() {
         final Optional<ContentItem> source = itemRepo.findById(-10100L);
-        final Folder targetFolder = folderRepo.findById(-2300L);
+        final Folder targetFolder = folderRepo.findById(-2300L).get();
 
         assertThat(source.isPresent(), is(true));
         assertThat(targetFolder, is(not(nullValue())));
@@ -728,7 +728,7 @@ public class ContentItemManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     public void copyToFolderInOtherSectionTypeNotPresent() {
         final Optional<ContentItem> source = itemRepo.findById(-10400L);
-        final Folder targetFolder = folderRepo.findById(-2300L);
+        final Folder targetFolder = folderRepo.findById(-2300L).get();
 
         assertThat(source.isPresent(), is(true));
         assertThat(targetFolder, is(not(nullValue())));
@@ -770,7 +770,7 @@ public class ContentItemManagerTest {
         final Optional<ContentItem> item = itemRepo.findById(-10100L);
         assertThat(item.isPresent(), is(true));
 
-        final Folder targetFolder = folderRepo.findById(-2110L);
+        final Folder targetFolder = folderRepo.findById(-2110L).get();
         assertThat(targetFolder, is(not(nullValue())));
 
         itemManager.copy(item.get(), targetFolder);
@@ -791,7 +791,7 @@ public class ContentItemManagerTest {
                     + "ContentItemManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void copyItemNull() {
-        final Folder targetFolder = folderRepo.findById(-2120L);
+        final Folder targetFolder = folderRepo.findById(-2120L).get();
         assertThat(targetFolder, is(not(nullValue())));
 
         itemManager.copy(null, targetFolder);
@@ -892,7 +892,7 @@ public class ContentItemManagerTest {
     public void publishItemWithLifecycle() {
         final Optional<ContentItem> item = itemRepo.findById(-10100L);
         final LifecycleDefinition lifecycleDef = lifecycleDefinitionRepo
-            .findById(-200L);
+            .findById(-200L).get();
         assertThat(item.isPresent(), is(true));
         assertThat(lifecycleDef, is(not(nullValue())));
 

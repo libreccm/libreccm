@@ -135,7 +135,7 @@ class EmailTable extends Table {
                         final UserRepository userRepository = CdiUtil
                             .createCdiUtil().findBean(UserRepository.class);
                         final User user = userRepository.findById(Long
-                            .parseLong(userIdStr));
+                            .parseLong(userIdStr)).get();
                         EmailAddress email = null;
                         for (EmailAddress current : user.getEmailAddresses()) {
                             if (current.getAddress().equals(key)) {

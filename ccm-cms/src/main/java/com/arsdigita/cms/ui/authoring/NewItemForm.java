@@ -129,7 +129,7 @@ public abstract class NewItemForm extends Form {
                     if (singleTypeID == null) {
                         parentType = null;
                     } else {
-                        parentType = typeRepo.findById(singleTypeID);
+                        parentType = typeRepo.findById(singleTypeID).get();
                     }
 
                     typesCollection = section.getContentTypes().stream()

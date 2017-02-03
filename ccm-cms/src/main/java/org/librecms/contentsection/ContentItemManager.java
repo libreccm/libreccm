@@ -115,7 +115,7 @@ public class ContentItemManager {
 
     @Inject
     private AssetManager assetManager;
-    
+
     @Inject
     private PermissionChecker permissionChecker;
 
@@ -205,9 +205,9 @@ public class ContentItemManager {
         }
 
         //Check if the current user is allowed to use the content type
-        permissionChecker.checkPermission(TypePrivileges.USE_TYPE, 
+        permissionChecker.checkPermission(TypePrivileges.USE_TYPE,
                                           contentType.get());
-        
+
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException(
                 "The name of a content item can't be blank.");
@@ -1023,7 +1023,7 @@ public class ContentItemManager {
         // Ensure that we are using a fresh folder and that the folder was 
         // retrieved in this transaction to avoid problems with lazy fetched 
         // data.
-        final Folder theFolder = folderRepo.findById(folder.getObjectId());
+        final Folder theFolder = folderRepo.findById(folder.getObjectId()).get();
 
         theFolder.getObjects()
             .stream()
@@ -1120,7 +1120,7 @@ public class ContentItemManager {
         // Ensure that we are using a fresh folder and that the folder was 
         // retrieved in this transaction to avoid problems with lazy fetched 
         // data.
-        final Folder theFolder = folderRepo.findById(folder.getObjectId());
+        final Folder theFolder = folderRepo.findById(folder.getObjectId()).get();
 
         theFolder.getObjects()
             .stream()
@@ -1384,10 +1384,8 @@ public class ContentItemManager {
      */
     public Optional<Folder> getItemFolder(final ContentItem item) {
         final List<Categorization> result = item.getCategories().stream()
-            .filter(categorization -> {
-                return CATEGORIZATION_TYPE_FOLDER.
-                    equals(categorization.getType());
-            })
+            .filter(categorization -> CATEGORIZATION_TYPE_FOLDER.equals(
+            categorization.getType()))
             .collect(Collectors.toList());
 
         if (result.size() > 0) {

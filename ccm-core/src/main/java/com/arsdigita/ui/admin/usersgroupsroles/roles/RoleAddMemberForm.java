@@ -89,7 +89,7 @@ class RoleAddMemberForm extends Form {
             final RoleRepository roleRepository = CdiUtil.createCdiUtil()
                 .findBean(RoleRepository.class);
             final Role role = roleRepository.findById(Long.parseLong(
-                selectedRoleId.getSelectedKey(state)));
+                selectedRoleId.getSelectedKey(state))).get();
 
             target.setLabel(new GlobalizedMessage(
                 "ui.admin.role_members.add.heading",
@@ -169,10 +169,10 @@ class RoleAddMemberForm extends Form {
                             final RoleManager roleManager = cdiUtil.findBean(
                                 RoleManager.class);
                             final Party party = partyRepository.findById(
-                                Long.parseLong(key));
+                                Long.parseLong(key)).get();
                             final Role role = roleRepository.findById(
                                 Long.parseLong(
-                                    selectedRoleId.getSelectedKey(state)));
+                                    selectedRoleId.getSelectedKey(state))).get();
                             roleManager.assignRoleToParty(role, party);
                             roleAdmin.hideRoleMemberAddForm(state);
                             break;

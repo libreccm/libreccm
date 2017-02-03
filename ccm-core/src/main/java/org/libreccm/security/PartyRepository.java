@@ -24,6 +24,7 @@ import org.libreccm.core.AbstractEntityRepository;
 import org.libreccm.core.CoreConstants;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
@@ -56,16 +57,16 @@ public class PartyRepository extends AbstractEntityRepository<Long, Party> {
      *
      * @return
      */
-    public Party findByName(final String name) {
+    public Optional<Party> findByName(final String name) {
         final TypedQuery<Party> query = getEntityManager().createNamedQuery(
             "Party.findByName", Party.class);
         query.setParameter("name", name);
 
         final List<Party> result = query.getResultList();
         if (result.isEmpty()) {
-            return null;
+            return Optional.empty();
         } else {
-            return result.get(0);
+            return Optional.of(result.get(0));
         }
     }
 

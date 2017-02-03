@@ -107,7 +107,7 @@ public class TypePermissionsTable extends Table implements TableActionListener {
         
         if (TABLE_COL_ACTION.equals(column.getHeaderKey().toString())) {
             final Role role = roleRepo.findById(Long.parseLong(
-                event.getRowKey().toString()));
+                event.getRowKey().toString())).get();
             ContentType contentType = getType().getContentType(state);
             
             controller.toggleTypeUsePermission(contentType, role);

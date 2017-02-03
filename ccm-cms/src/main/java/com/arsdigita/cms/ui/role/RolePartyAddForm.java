@@ -100,7 +100,7 @@ class RolePartyAddForm extends PartyAddForm {
         final PartyRepository partyRepository = cdiUtil.findBean(PartyRepository.class);
         final RoleManager roleManager = cdiUtil.findBean(RoleManager.class);
 
-        final Role role = roleRepository.findById(roleId);
+        final Role role = roleRepository.findById(roleId).get();
 
         // Add each checked party to the role
         Party party;
@@ -108,7 +108,7 @@ class RolePartyAddForm extends PartyAddForm {
             if (s_log.isDebugEnabled()) {
                 s_log.debug("parties[" + i + "] = " + parties[i]);
             }
-            party = partyRepository.findByName(parties[i]);
+            party = partyRepository.findByName(parties[i]).get();
             roleManager.assignRoleToParty(role, party);
         }
     }

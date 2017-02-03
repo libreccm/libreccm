@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -41,7 +40,7 @@ public class TestCategoryController {
     @Transactional(Transactional.TxType.REQUIRED)
     public Map<String, List<String>> getData(final long categoryId) {
 
-        final Category category = categoryRepo.findById(categoryId);
+        final Category category = categoryRepo.findById(categoryId).get();
         if (category == null) {
             throw new IllegalArgumentException(String.format(
                 "No category for id %d.", categoryId));

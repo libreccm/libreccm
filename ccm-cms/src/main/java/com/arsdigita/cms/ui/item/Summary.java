@@ -115,7 +115,7 @@ public class Summary extends CMSContainer {
             final ContentSection section = getContentSection(state);
 
             final Shiro shiro = cdiUtil.findBean(Shiro.class);
-            final User user = shiro.getUser();
+            final User user = shiro.getUser().get();
 
             // Setup xml element for item's properties
             final Element itemElement = new Element("cms:itemSummary",

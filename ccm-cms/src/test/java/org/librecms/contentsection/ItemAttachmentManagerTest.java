@@ -207,11 +207,7 @@ public class ItemAttachmentManagerTest {
         final Optional<ContentItem> item = itemRepo.findById(-510L);
         assertThat(item.isPresent(), is(true));
 
-//        final File file = new File();
-//        file.setDisplayName("assets510-2a");
-//        file.setFileName("asset-510-2a.pdf");
-//        file.setMimeType(new MimeType("application/pdf"));
-        final Asset file = assetRepo.findById(-720L);
+        final Asset file = assetRepo.findById(-720L).get();
 
         attachmentManager.attachAsset(file, item.get().getAttachments().get(1));
     }
@@ -236,7 +232,7 @@ public class ItemAttachmentManagerTest {
         final Optional<ContentItem> item = itemRepo.findById(-510L);
         assertThat(item.isPresent(), is(true));
 
-        final Asset shared = assetRepo.findById(-610L);
+        final Asset shared = assetRepo.findById(-610L).get();
 
         attachmentManager.attachAsset(shared,
                                       item.get().getAttachments().get(1));
@@ -258,7 +254,7 @@ public class ItemAttachmentManagerTest {
         final Optional<ContentItem> item = itemRepo.findById(-510L);
         assertThat(item.isPresent(), is(true));
 
-        final Asset shared = assetRepo.findById(-620L);
+        final Asset shared = assetRepo.findById(-620L).get();
 
         attachmentManager.attachAsset(shared,
                                       item.get().getAttachments().get(1));
@@ -302,7 +298,7 @@ public class ItemAttachmentManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     public void attachAssetToListNull() {
         final AttachmentList list = null;
-        final Asset shared = assetRepo.findById(-610L);
+        final Asset shared = assetRepo.findById(-610L).get();
 
         attachmentManager.attachAsset(shared, list);
     }
@@ -321,7 +317,7 @@ public class ItemAttachmentManagerTest {
                     + "after-unattach-shared.xml",
         excludeColumns = {"timestamp"})
     public void unattachSharedAsset() {
-        final Asset asset = assetRepo.findById(-610L);
+        final Asset asset = assetRepo.findById(-610L).get();
         final Optional<ContentItem> item = itemRepo.findById(-510L);
 
         assertThat(asset, is(not(nullValue())));
@@ -348,7 +344,7 @@ public class ItemAttachmentManagerTest {
                     + "after-unattach-nonshared.xml",
         excludeColumns = {"timestamp"})
     public void unattachNonSharedAsset() {
-        final Asset asset = assetRepo.findById(-720L);
+        final Asset asset = assetRepo.findById(-720L).get();
         final Optional<ContentItem> item = itemRepo.findById(-510L);
 
         assertThat(asset, is(not(nullValue())));
@@ -372,7 +368,7 @@ public class ItemAttachmentManagerTest {
     @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
                             + "ItemAttachmentManagerTest/data.xml")
     public void unattachAssetNotAttached() {
-        final Asset asset = assetRepo.findById(-720L);
+        final Asset asset = assetRepo.findById(-720L).get();
         final Optional<ContentItem> item = itemRepo.findById(-510L);
 
         assertThat(asset, is(not(nullValue())));
@@ -421,7 +417,7 @@ public class ItemAttachmentManagerTest {
                             + "ItemAttachmentManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void unattachAssetFromListNull() {
-        final Asset asset = assetRepo.findById(-720L);
+        final Asset asset = assetRepo.findById(-720L).get();
         assertThat(asset, is(not(nullValue())));
 
         final AttachmentList list = null;
@@ -509,7 +505,7 @@ public class ItemAttachmentManagerTest {
                             + "ItemAttachmentManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void moveUpInListNull() {
-        final Asset asset = assetRepo.findById(-720L);
+        final Asset asset = assetRepo.findById(-720L).get();
         assertThat(asset, is(not(nullValue())));
 
         final AttachmentList list = null;
@@ -597,7 +593,7 @@ public class ItemAttachmentManagerTest {
                             + "ItemAttachmentManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void moveDownInListNull() {
-        final Asset asset = assetRepo.findById(-720L);
+        final Asset asset = assetRepo.findById(-720L).get();
         assertThat(asset, is(not(nullValue())));
 
         final AttachmentList list = null;

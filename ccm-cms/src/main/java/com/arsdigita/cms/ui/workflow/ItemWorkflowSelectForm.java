@@ -52,7 +52,7 @@ import org.librecms.contentsection.ContentItem;
 class ItemWorkflowSelectForm extends CMSForm {
 
     private static final Logger LOGGER = LogManager.getLogger(
-            ItemWorkflowSelectForm.class);
+        ItemWorkflowSelectForm.class);
 
     private RadioGroup radioGroup;
 
@@ -88,7 +88,7 @@ class ItemWorkflowSelectForm extends CMSForm {
 
         @Override
         public final void process(final FormSectionEvent event)
-                throws FormProcessException {
+            throws FormProcessException {
 
             final PageState state = event.getPageState();
             final Long flowId = (Long) radioGroup.getValue(state);
@@ -98,13 +98,16 @@ class ItemWorkflowSelectForm extends CMSForm {
             if (item.getWorkflow() == null) {
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
                 final WorkflowTemplateRepository templateRepo = cdiUtil.
-                        findBean(WorkflowTemplateRepository.class);
+                    findBean(WorkflowTemplateRepository.class);
                 final WorkflowManager workflowManager = cdiUtil.findBean(
-                        WorkflowManager.class);
+                    WorkflowManager.class);
 
-                final WorkflowTemplate template = templateRepo.findById(flowId);
+                final WorkflowTemplate template = templateRepo.findById(flowId)
+                    .get();
                 workflowManager.createWorkflow(template, item);
             }
         }
+
     }
+
 }

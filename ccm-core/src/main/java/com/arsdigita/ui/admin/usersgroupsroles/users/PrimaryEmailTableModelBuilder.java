@@ -54,7 +54,7 @@ class PrimaryEmailTableModelBuilder extends LockableImpl
             final UserRepository userRepository = CdiUtil.createCdiUtil()
                 .findBean(UserRepository.class);
             final long userId = Long.parseLong(userIdStr);
-            selectedUser = userRepository.findById(userId);
+            selectedUser = userRepository.findById(userId).get();
         }
         
         return new PrimaryEmailTableModel(selectedUser);

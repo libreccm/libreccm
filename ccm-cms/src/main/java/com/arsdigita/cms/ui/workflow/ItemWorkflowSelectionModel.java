@@ -46,7 +46,7 @@ class ItemWorkflowSelectionModel extends ParameterSingleSelectionModel {
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final ContentItemRepository itemRepo = cdiUtil.findBean(ContentItemRepository.class);
         final ContentItem item = itemRepo.findById((Long) super.getSelectedKey(
-                state));
+                state)).get();
         
         return item.getWorkflow().getWorkflowId();
     }

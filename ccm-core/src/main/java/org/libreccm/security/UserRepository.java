@@ -22,6 +22,7 @@ import org.libreccm.core.AbstractEntityRepository;
 import org.libreccm.core.CoreConstants;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
 import javax.persistence.EntityGraph;
@@ -58,19 +59,12 @@ public class UserRepository extends AbstractEntityRepository<Long, User> {
      *         user matching the user name (should be possible) the first one is
      *         returned. If there is no matching user {@code null} is returned.
      */
-    public User findByName(final String name) {
+    public Optional<User> findByName(final String name) {
         final TypedQuery<User> query = getEntityManager().createNamedQuery(
             "User.findByName", User.class);
         query.setParameter("name", name);
 
-        return getSingleResultOrNull(query);
-
-//        final List<User> result = query.getResultList();
-//        if (result.isEmpty()) {
-//            return null;
-//        } else {
-//            return result.get(0);
-//        }
+        return getSingleResult(query);
     }
 
     /**
@@ -84,7 +78,7 @@ public class UserRepository extends AbstractEntityRepository<Long, User> {
      *         user matching the user name (should be possible) the first one is
      *         returned. If there is no matching user {@code null} is returned.
      */
-    public User findByName(final String name, final String entityGraphName) {
+    public Optional<User> findByName(final String name, final String entityGraphName) {
         @SuppressWarnings("unchecked")
         final EntityGraph<User> entityGraph
                                     = (EntityGraph<User>) getEntityManager()
@@ -92,21 +86,14 @@ public class UserRepository extends AbstractEntityRepository<Long, User> {
         return findByName(name, entityGraph);
     }
 
-    public User findByName(final String name,
+    public Optional<User> findByName(final String name,
                            final EntityGraph<User> entityGraph) {
         final TypedQuery<User> query = getEntityManager().createNamedQuery(
             "User.findByName", User.class);
         query.setParameter("name", name);
         query.setHint(FETCH_GRAPH_HINT_KEY, entityGraph);
 
-        return getSingleResultOrNull(query);
-
-//        final List<User> result = query.getResultList();
-//        if (result.isEmpty()) {
-//            return null;
-//        } else {
-//            return result.get(0);
-//        }
+        return getSingleResult(query);
     }
 
     /**
@@ -118,15 +105,15 @@ public class UserRepository extends AbstractEntityRepository<Long, User> {
      *         multiple matching users only the first one is returned. If there
      *         is no matching user {@code null} is returned.
      */
-    public User findByEmailAddress(final String emailAddress) {
+    public Optional<User> findByEmailAddress(final String emailAddress) {
         final TypedQuery<User> query = getEntityManager().createNamedQuery(
             "User.findByEmailAddress", User.class);
         query.setParameter("emailAddress", emailAddress);
 
-        return getSingleResultOrNull(query);
+        return getSingleResult(query);
     }
 
-    public User findByEmailAddress(final String emailAddress,
+    public Optional<User> findByEmailAddress(final String emailAddress,
                                    final String entityGraphName) {
         @SuppressWarnings("unchecked")
         final EntityGraph<User> entityGraph
@@ -135,14 +122,14 @@ public class UserRepository extends AbstractEntityRepository<Long, User> {
         return findByEmailAddress(emailAddress, entityGraph);
     }
 
-    public User findByEmailAddress(final String emailAddress,
+    public Optional<User> findByEmailAddress(final String emailAddress,
                                    final EntityGraph<User> entityGraph) {
         final TypedQuery<User> query = getEntityManager().createNamedQuery(
             "User.findByEmailAddress", User.class);
         query.setParameter("emailAddress", emailAddress);
         query.setHint(FETCH_GRAPH_HINT_KEY, entityGraph);
 
-        return getSingleResultOrNull(query);
+        return getSingleResult(query);
     }
 
     public List<User> filtered(final String term) {

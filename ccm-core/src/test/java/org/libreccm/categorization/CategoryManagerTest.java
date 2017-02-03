@@ -204,14 +204,14 @@ public class CategoryManagerTest {
         excludeColumns = {"categorization_id"})
     @InSequence(1100)
     public void addObjectToCategoryBySystemUser() {
-        final CcmObject object2 = ccmObjectRepo.findById(-3200L);
-        final Category foo = categoryRepo.findById(-2100L);
+        final Optional<CcmObject> object2 = ccmObjectRepo.findById(-3200L);
+        final Optional<Category> foo = categoryRepo.findById(-2100L);
 
-        assertThat(object2, is(not(nullValue())));
-        assertThat(foo, is(not(nullValue())));
+        assertThat(object2.isPresent(), is(true));
+        assertThat(foo.isPresent(), is(true));
 
         shiro.getSystemUser().execute(() -> categoryManager.addObjectToCategory(
-            object2, foo));
+            object2.get(), foo.get()));
     }
 
     /**
@@ -227,18 +227,18 @@ public class CategoryManagerTest {
         excludeColumns = {"categorization_id"})
     @InSequence(1200)
     public void addObjectToCategoryAuthByDomain() {
-        final CcmObject object2 = ccmObjectRepo.findById(-3200L);
-        final Category foo = categoryRepo.findById(-2100L);
+        final Optional<CcmObject> object2 = ccmObjectRepo.findById(-3200L);
+        final Optional<Category> foo = categoryRepo.findById(-2100L);
 
-        assertThat(object2, is(not(nullValue())));
-        assertThat(foo, is(not(nullValue())));
+        assertThat(object2.isPresent(), is(true));
+        assertThat(foo.isPresent(), is(true));
 
         final UsernamePasswordToken token = new UsernamePasswordToken(
             "jane.doe@example.org", "foo123");
         token.setRememberMe(true);
         subject.login(token);
 
-        categoryManager.addObjectToCategory(object2, foo);
+        categoryManager.addObjectToCategory(object2.get(), foo.get());
 
         subject.logout();
     }
@@ -256,18 +256,18 @@ public class CategoryManagerTest {
         excludeColumns = {"categorization_id"})
     @InSequence(1300)
     public void addObjectToCategoryAuthByCategory() {
-        final CcmObject object2 = ccmObjectRepo.findById(-3200L);
-        final Category foo = categoryRepo.findById(-2100L);
+        final Optional<CcmObject> object2 = ccmObjectRepo.findById(-3200L);
+        final Optional<Category> foo = categoryRepo.findById(-2100L);
 
-        assertThat(object2, is(not(nullValue())));
-        assertThat(foo, is(not(nullValue())));
+        assertThat(object2.isPresent(), is(true));
+        assertThat(foo.isPresent(), is(true));
 
         final UsernamePasswordToken token = new UsernamePasswordToken(
             "mmuster@example.com", "foo123");
         token.setRememberMe(true);
         subject.login(token);
 
-        categoryManager.addObjectToCategory(object2, foo);
+        categoryManager.addObjectToCategory(object2.get(), foo.get());
 
         subject.logout();
     }
@@ -282,13 +282,13 @@ public class CategoryManagerTest {
     @ShouldThrowException(UnauthorizedException.class)
     @InSequence(1400)
     public void addObjectToCategoryNotAuthorized() {
-        final CcmObject object2 = ccmObjectRepo.findById(-3200L);
-        final Category foo = categoryRepo.findById(-2100L);
+        final Optional<CcmObject> object2 = ccmObjectRepo.findById(-3200L);
+        final Optional<Category> foo = categoryRepo.findById(-2100L);
 
-        assertThat(object2, is(not(nullValue())));
-        assertThat(foo, is(not(nullValue())));
+        assertThat(object2.isPresent(), is(true));
+        assertThat(foo.isPresent(), is(true));
 
-        categoryManager.addObjectToCategory(object2, foo);
+        categoryManager.addObjectToCategory(object2.get(), foo.get());
     }
 
     /**
@@ -310,14 +310,14 @@ public class CategoryManagerTest {
     public void removeObjectFromCategoryBySystemUser()
         throws ObjectNotAssignedToCategoryException {
 
-        final CcmObject object1 = ccmObjectRepo.findById(-3100L);
-        final Category foo = categoryRepo.findById(-2100L);
+        final Optional<CcmObject> object1 = ccmObjectRepo.findById(-3100L);
+        final Optional<Category> foo = categoryRepo.findById(-2100L);
 
-        assertThat(object1, is(not(nullValue())));
-        assertThat(foo, is(not(nullValue())));
+        assertThat(object1.isPresent(), is(true));
+        assertThat(foo.isPresent(), is(true));
 
         shiro.getSystemUser().execute(() -> {
-            categoryManager.removeObjectFromCategory(object1, foo);
+            categoryManager.removeObjectFromCategory(object1.get(), foo.get());
             return null;
         });
     }
@@ -343,18 +343,18 @@ public class CategoryManagerTest {
     public void removeObjectFromCategoryAuthByDomain()
         throws ObjectNotAssignedToCategoryException {
 
-        final CcmObject object1 = ccmObjectRepo.findById(-3100L);
-        final Category foo = categoryRepo.findById(-2100L);
+        final Optional<CcmObject> object1 = ccmObjectRepo.findById(-3100L);
+        final Optional<Category> foo = categoryRepo.findById(-2100L);
 
-        assertThat(object1, is(not(nullValue())));
-        assertThat(foo, is(not(nullValue())));
+        assertThat(object1.isPresent(), is(true));
+        assertThat(foo.isPresent(), is(true));
 
         final UsernamePasswordToken token = new UsernamePasswordToken(
             "jane.doe@example.org", "foo123");
         token.setRememberMe(true);
         subject.login(token);
 
-        categoryManager.removeObjectFromCategory(object1, foo);
+        categoryManager.removeObjectFromCategory(object1.get(), foo.get());
 
         subject.logout();
     }
@@ -379,18 +379,18 @@ public class CategoryManagerTest {
     public void removeObjectFromCategoryAuthByCategory()
         throws ObjectNotAssignedToCategoryException {
 
-        final CcmObject object1 = ccmObjectRepo.findById(-3100L);
-        final Category foo = categoryRepo.findById(-2100L);
+        final Optional<CcmObject> object1 = ccmObjectRepo.findById(-3100L);
+        final Optional<Category> foo = categoryRepo.findById(-2100L);
 
-        assertThat(object1, is(not(nullValue())));
-        assertThat(foo, is(not(nullValue())));
+        assertThat(object1.isPresent(), is(true));
+        assertThat(foo.isPresent(), is(true));
 
         final UsernamePasswordToken token = new UsernamePasswordToken(
             "mmuster@example.com", "foo123");
         token.setRememberMe(true);
         subject.login(token);
 
-        categoryManager.removeObjectFromCategory(object1, foo);
+        categoryManager.removeObjectFromCategory(object1.get(), foo.get());
 
         subject.logout();
     }
@@ -410,13 +410,13 @@ public class CategoryManagerTest {
     public void removeObjectFromCategoryNotAuthorized()
         throws ObjectNotAssignedToCategoryException {
 
-        final CcmObject object1 = ccmObjectRepo.findById(-3100L);
-        final Category foo = categoryRepo.findById(-2100L);
+        final Optional<CcmObject> object1 = ccmObjectRepo.findById(-3100L);
+        final Optional<Category> foo = categoryRepo.findById(-2100L);
 
-        assertThat(object1, is(not(nullValue())));
-        assertThat(foo, is(not(nullValue())));
+        assertThat(object1.isPresent(), is(true));
+        assertThat(foo.isPresent(), is(true));
 
-        categoryManager.removeObjectFromCategory(object1, foo);
+        categoryManager.removeObjectFromCategory(object1.get(), foo.get());
     }
 
     /**
@@ -443,10 +443,10 @@ public class CategoryManagerTest {
         query.setParameter("name", "category-new");
         final Category sub = query.getSingleResult();
 
-        final Category foo = categoryRepo.findById(-2100L);
+        final Optional<Category> foo = categoryRepo.findById(-2100L);
 
         shiro.getSystemUser().execute(
-            () -> categoryManager.addSubCategoryToCategory(sub, foo));
+            () -> categoryManager.addSubCategoryToCategory(sub, foo.get()));
     }
 
     /**
@@ -474,14 +474,14 @@ public class CategoryManagerTest {
         query.setParameter("name", "category-new");
         final Category sub = query.getSingleResult();
 
-        final Category foo = categoryRepo.findById(-2100L);
+        final Optional<Category> foo = categoryRepo.findById(-2100L);
 
         final UsernamePasswordToken token = new UsernamePasswordToken(
             "jane.doe@example.org", "foo123");
         token.setRememberMe(true);
         subject.login(token);
 
-        categoryManager.addSubCategoryToCategory(sub, foo);
+        categoryManager.addSubCategoryToCategory(sub, foo.get());
 
         subject.logout();
     }
@@ -511,14 +511,14 @@ public class CategoryManagerTest {
         query.setParameter("name", "category-new");
         final Category sub = query.getSingleResult();
 
-        final Category foo = categoryRepo.findById(-2100L);
+        final Optional<Category> foo = categoryRepo.findById(-2100L);
 
         final UsernamePasswordToken token = new UsernamePasswordToken(
             "mmuster@example.com", "foo123");
         token.setRememberMe(true);
         subject.login(token);
 
-        categoryManager.addSubCategoryToCategory(sub, foo);
+        categoryManager.addSubCategoryToCategory(sub, foo.get());
 
         subject.logout();
     }
@@ -547,9 +547,9 @@ public class CategoryManagerTest {
         query.setParameter("name", "category-new");
         final Category sub = query.getSingleResult();
 
-        final Category foo = categoryRepo.findById(-2100L);
+        final Optional<Category> foo = categoryRepo.findById(-2100L);
 
-        categoryManager.addSubCategoryToCategory(sub, foo);
+        categoryManager.addSubCategoryToCategory(sub, foo.get());
     }
 
     /**
@@ -565,11 +565,12 @@ public class CategoryManagerTest {
         excludeColumns = {"categorization_id", "object_id"})
     @InSequence(4000)
     public void removeSubCategoryFromCategoryBySystemUser() {
-        final Category foo = categoryRepo.findById(-2100L);
-        final Category bar = categoryRepo.findById(-2200L);
+        final Optional<Category> foo = categoryRepo.findById(-2100L);
+        final Optional<Category> bar = categoryRepo.findById(-2200L);
 
         shiro.getSystemUser().execute(
-            () -> categoryManager.removeSubCategoryFromCategory(bar, foo));
+            () -> categoryManager.removeSubCategoryFromCategory(bar.get(), 
+                                                                foo.get()));
     }
 
     /**
@@ -586,15 +587,15 @@ public class CategoryManagerTest {
         excludeColumns = {"categorization_id", "object_id"})
     @InSequence(4000)
     public void removeSubCategoryFromCategoryAuthByDomain() {
-        final Category foo = categoryRepo.findById(-2100L);
-        final Category bar = categoryRepo.findById(-2200L);
+        final Optional<Category> foo = categoryRepo.findById(-2100L);
+        final Optional<Category> bar = categoryRepo.findById(-2200L);
 
         final UsernamePasswordToken token = new UsernamePasswordToken(
             "jane.doe@example.org", "foo123");
         token.setRememberMe(true);
         subject.login(token);
 
-        categoryManager.removeSubCategoryFromCategory(bar, foo);
+        categoryManager.removeSubCategoryFromCategory(bar.get(), foo.get());
 
         subject.logout();
     }
@@ -612,15 +613,15 @@ public class CategoryManagerTest {
         excludeColumns = {"categorization_id", "object_id"})
     @InSequence(4000)
     public void removeSubCategoryFromCategoryAuthByCategory() {
-        final Category foo = categoryRepo.findById(-2100L);
-        final Category bar = categoryRepo.findById(-2200L);
+        final Optional<Category> foo = categoryRepo.findById(-2100L);
+        final Optional<Category> bar = categoryRepo.findById(-2200L);
 
         final UsernamePasswordToken token = new UsernamePasswordToken(
             "mmuster@example.com", "foo123");
         token.setRememberMe(true);
         subject.login(token);
 
-        categoryManager.removeSubCategoryFromCategory(bar, foo);
+        categoryManager.removeSubCategoryFromCategory(bar.get(), foo.get());
 
         subject.logout();
     }
@@ -637,10 +638,10 @@ public class CategoryManagerTest {
     @ShouldThrowException(UnauthorizedException.class)
     @InSequence(4000)
     public void removeSubCategoryFromCategoryNotAuthorized() {
-        final Category foo = categoryRepo.findById(-2100L);
-        final Category bar = categoryRepo.findById(-2200L);
+        final Optional<Category> foo = categoryRepo.findById(-2100L);
+        final Optional<Category> bar = categoryRepo.findById(-2200L);
 
-        categoryManager.removeSubCategoryFromCategory(bar, foo);
+        categoryManager.removeSubCategoryFromCategory(bar.get(), foo.get());
     }
 
     /**
@@ -701,11 +702,11 @@ public class CategoryManagerTest {
                       + "data.yml")
     @InSequence(6000)
     public void hasIndexObject() {
-        final Category category1 = categoryRepo.findById(-2100L);
-        final Category category2 = categoryRepo.findById(-2200L);
+        final Optional<Category> category1 = categoryRepo.findById(-2100L);
+        final Optional<Category> category2 = categoryRepo.findById(-2200L);
 
-        assertThat(categoryManager.hasIndexObject(category1), is(false));
-        assertThat(categoryManager.hasIndexObject(category2), is(true));
+        assertThat(categoryManager.hasIndexObject(category1.get()), is(false));
+        assertThat(categoryManager.hasIndexObject(category2.get()), is(true));
     }
 
     /**
@@ -718,14 +719,14 @@ public class CategoryManagerTest {
         "datasets/org/libreccm/categorization/CategoryManagerTest/data.yml")
     @InSequence(6500)
     public void getIndexObject() {
-        final Category category1 = categoryRepo.findById(-2100L);
-        final Category category2 = categoryRepo.findById(-2200L);
+        final Optional<Category> category1 = categoryRepo.findById(-2100L);
+        final Optional<Category> category2 = categoryRepo.findById(-2200L);
 
-        assertThat(categoryManager.getIndexObject(category1).isPresent(),
+        assertThat(categoryManager.getIndexObject(category1.get()).isPresent(),
                    is(false));
 
         final Optional<CcmObject> index2 = categoryManager.getIndexObject(
-            category2);
+            category2.get());
         assertThat(index2.isPresent(), is(true));
         assertThat(index2.get().getDisplayName(), is(equalTo("object3")));
     }

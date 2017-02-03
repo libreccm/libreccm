@@ -197,7 +197,7 @@ public class RoleAdminPane extends BaseAdminPane<String> {
             final RoleRepository roleRepository = cdiUtil.findBean(
                 RoleRepository.class);
             final Long id = Long.parseLong(selectionModel.getSelectedKey(state));
-            final Role role = roleRepository.findById(id);
+            final Role role = roleRepository.findById(id).get();
 
             roleRepository.delete(role);
 

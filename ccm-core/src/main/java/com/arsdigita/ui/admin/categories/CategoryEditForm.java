@@ -75,7 +75,7 @@ public class CategoryEditForm extends Form {
             final CategoryRepository categoryRepository = CdiUtil
                 .createCdiUtil().findBean(CategoryRepository.class);
             final Category category = categoryRepository.findById(Long
-                .parseLong(selectedCategoryId.getSelectedKey(state)));
+                .parseLong(selectedCategoryId.getSelectedKey(state))).get();
             target.setLabel(new GlobalizedMessage(
                 "ui.admin.categories.category.edit_category",
                 ADMIN_BUNDLE,
@@ -117,7 +117,7 @@ public class CategoryEditForm extends Form {
             final CategoryRepository categoryRepository = cdiUtil.findBean(
                 CategoryRepository.class);
             final Category category = categoryRepository.findById(Long
-                .parseLong(selectedCategoryId.getSelectedKey(state)));
+                .parseLong(selectedCategoryId.getSelectedKey(state))).get();
 
             categoryName.setValue(state, category.getName());
             final List<String> props = new ArrayList<>();
@@ -161,15 +161,17 @@ public class CategoryEditForm extends Form {
                     CategoryManager.class);
 
                 final Category category = categoryRepository.findById(
-                    Long.parseLong(selectedCategoryId.getSelectedKey(state)));
+                    Long.parseLong(selectedCategoryId.getSelectedKey(state)))
+                    .get();
 
                 final FormData data = e.getFormData();
                 final String categoryNameData = data.getString(CATEGORY_NAME);
 
                 category.setName(categoryNameData);
 
-                final List<String> propertiesData = Arrays.asList((String[]) data.get(
-                    CATEGORY_PROPERTIES));
+                final List<String> propertiesData = Arrays.asList(
+                    (String[]) data.get(
+                        CATEGORY_PROPERTIES));
                 category.setEnabled(propertiesData.contains(ENABLED));
                 category.setVisible(propertiesData.contains(VISIBLE));
                 category.setAbstractCategory(propertiesData.contains(ABSTRACT));

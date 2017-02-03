@@ -51,7 +51,7 @@ public class CategoryMoverModel implements TreeModel {
         final CategoryRepository categoryRepository = CdiUtil.createCdiUtil()
             .findBean(CategoryRepository.class);
         final Category category = categoryRepository.findById(domain.getRoot()
-            .getObjectId());
+            .getObjectId()).get();
         return new CategoryMoverNode(category);
     }
 
@@ -71,7 +71,7 @@ public class CategoryMoverModel implements TreeModel {
         final CategoryRepository categoryRepo = CdiUtil.createCdiUtil()
             .findBean(CategoryRepository.class);
         final Category category = categoryRepo.findById(
-            ((CategoryMoverNode) node).getCategory().getObjectId());
+            ((CategoryMoverNode) node).getCategory().getObjectId()).get();
 
         final List<Category> subCategories = new ArrayList<>();
         category.getSubCategories().forEach(c -> {

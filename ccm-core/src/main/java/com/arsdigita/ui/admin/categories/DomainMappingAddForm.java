@@ -75,7 +75,7 @@ class DomainMappingAddForm extends Form {
                 final Domain domain = domainRepository.findById(
                     Long.parseLong(
                         selectedDomainId.getSelectedKey(e.getPageState())),
-                    "Domain.withOwners");
+                    "Domain.withOwners").get();
 
                 final List<CcmApplication> applications = appRepository
                     .findAll();
@@ -130,10 +130,10 @@ class DomainMappingAddForm extends Form {
 
             final Domain domain = domainRepository.findById(
                 Long.parseLong(selectedDomainId.getSelectedKey(state)),
-                "Domain.withOwners");
+                "Domain.withOwners").get();
             final CcmApplication application = appRepository.findById(
                 Long.parseLong(data.getString(DOMAIN_MAPPING_OWNER)),
-                "CcmApplication.withDomains");
+                "CcmApplication.withDomains").get();
 
             domainManager.addDomainOwner(application, domain);
         });

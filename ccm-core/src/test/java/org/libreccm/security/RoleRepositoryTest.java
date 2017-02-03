@@ -56,6 +56,8 @@ import static org.libreccm.testutils.DependenciesHelpers.*;
 
 import org.jboss.arquillian.persistence.CleanupUsingScript;
 
+import java.util.Optional;
+
 /**
  * Tests for the {@link RoleRepository}. Note. We are not enabling the
  * {@link AuthorizationInterceptor} for this test.
@@ -160,20 +162,20 @@ public class RoleRepositoryTest {
      * @param user          The user role.
      * @param reader        The reader role.
      */
-    private void checkRoles(final Role administrator,
-                            final Role user,
-                            final Role reader) {
-        assertThat(administrator, is(not((nullValue()))));
-        assertThat(administrator.getRoleId(), is(-10L));
-        assertThat(administrator.getName(), is(equalTo(ADMINISTRATOR)));
+    private void checkRoles(final Optional<Role> administrator,
+                            final Optional<Role> user,
+                            final Optional<Role> reader) {
+        assertThat(administrator.isPresent(), is(true));
+        assertThat(administrator.get().getRoleId(), is(-10L));
+        assertThat(administrator.get().getName(), is(equalTo(ADMINISTRATOR)));
 
-        assertThat(user, is(not((nullValue()))));
-        assertThat(user.getRoleId(), is(-20L));
-        assertThat(user.getName(), is(equalTo(USER)));
+        assertThat(user.isPresent(), is(true));
+        assertThat(user.get().getRoleId(), is(-20L));
+        assertThat(user.get().getName(), is(equalTo(USER)));
 
-        assertThat(reader, is(not((nullValue()))));
-        assertThat(reader.getRoleId(), is(-30L));
-        assertThat(reader.getName(), is(equalTo(READER)));
+        assertThat(reader.isPresent(), is(true));
+        assertThat(reader.get().getRoleId(), is(-30L));
+        assertThat(reader.get().getName(), is(equalTo(READER)));
     }
 
     /**
@@ -184,9 +186,9 @@ public class RoleRepositoryTest {
     @UsingDataSet("datasets/org/libreccm/security/RoleRepositoryTest/data.yml")
     @InSequence(100)
     public void findRoleById() {
-        final Role administrator = roleRepository.findById(-10L);
-        final Role user = roleRepository.findById(-20L);
-        final Role reader = roleRepository.findById(-30L);
+        final Optional<Role> administrator = roleRepository.findById(-10L);
+        final Optional<Role> user = roleRepository.findById(-20L);
+        final Optional<Role> reader = roleRepository.findById(-30L);
 
         checkRoles(administrator, user, reader);
     }
@@ -199,9 +201,9 @@ public class RoleRepositoryTest {
     @UsingDataSet("datasets/org/libreccm/security/RoleRepositoryTest/data.yml")
     @InSequence(200)
     public void findRoleByName() {
-        final Role administrator = roleRepository.findByName(ADMINISTRATOR);
-        final Role user = roleRepository.findByName(USER);
-        final Role reader = roleRepository.findByName(READER);
+        final Optional<Role> administrator = roleRepository.findByName(ADMINISTRATOR);
+        final Optional<Role> user = roleRepository.findByName(USER);
+        final Optional<Role> reader = roleRepository.findByName(READER);
 
         checkRoles(administrator, user, reader);
     }
@@ -256,9 +258,9 @@ public class RoleRepositoryTest {
         "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
     @InSequence(310)
     public void findByPrivilegeAndObject() {
-        final CcmObject object1 = ccmObjRepo.findById(-20001L);
-        final CcmObject object2 = ccmObjRepo.findById(-20002L);
-        final CcmObject object3 = ccmObjRepo.findById(-20003L);
+        final CcmObject object1 = ccmObjRepo.findById(-20001L).get();
+        final CcmObject object2 = ccmObjRepo.findById(-20002L).get();
+        final CcmObject object3 = ccmObjRepo.findById(-20003L).get();
 
         final List<Role> rolesWithPrivilege1 = roleRepository.findByPrivilege(
             "privilege1", object1);
@@ -306,7 +308,7 @@ public class RoleRepositoryTest {
                         excludeColumns = {"role_id"})
     @InSequence(500)
     public void saveChangedRole() {
-        final Role role = roleRepository.findById(-20L);
+        final Role role = roleRepository.findById(-20L).get();
         role.setName("writer");
 
         roleRepository.save(role);
@@ -335,7 +337,7 @@ public class RoleRepositoryTest {
                         excludeColumns = {"role_id"})
     @InSequence(700)
     public void deleteRole() {
-        final Role role = roleRepository.findByName(USER);
+        final Role role = roleRepository.findByName(USER).get();
 
         roleRepository.delete(role);
     }

@@ -134,7 +134,7 @@ class GroupsTable extends Table {
                         final GroupRepository groupRepository = CdiUtil
                             .createCdiUtil().findBean(GroupRepository.class);
                         final Group group = groupRepository.findById(
-                            Long.parseLong(key));
+                            Long.parseLong(key)).get();
                         groupRepository.delete(group);
                         break;
                     default:

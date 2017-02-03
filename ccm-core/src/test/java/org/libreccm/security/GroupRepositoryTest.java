@@ -54,6 +54,8 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.libreccm.tests.categories.IntegrationTest;
 
+import java.util.Optional;
+
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
@@ -141,33 +143,33 @@ public class GroupRepositoryTest {
         assertThat(entityManager, is(not(nullValue())));
     }
 
-    private void checkGroups(final Group admins,
-                             final Group users,
-                             final Group editors,
-                             final Group none) {
-        assertThat(admins, is(not(nullValue())));
-        assertThat(admins.getPartyId(), is(-10L));
-        assertThat(admins.getName(), is(equalTo(ADMINS)));
+    private void checkGroups(final Optional<Group> admins,
+                             final Optional<Group> users,
+                             final Optional<Group> editors,
+                             final Optional<Group> none) {
+        assertThat(admins.isPresent(), is(true));
+        assertThat(admins.get().getPartyId(), is(-10L));
+        assertThat(admins.get().getName(), is(equalTo(ADMINS)));
 
-        assertThat(users, is(not(nullValue())));
-        assertThat(users.getPartyId(), is(-20L));
-        assertThat(users.getName(), is(equalTo(USERS)));
+        assertThat(users.isPresent(), is(true));
+        assertThat(users.get().getPartyId(), is(-20L));
+        assertThat(users.get().getName(), is(equalTo(USERS)));
 
-        assertThat(editors, is(not(nullValue())));
-        assertThat(editors.getPartyId(), is(-30L));
-        assertThat(editors.getName(), is(equalTo(EDITORS)));
+        assertThat(editors.isPresent(), is(true));
+        assertThat(editors.get().getPartyId(), is(-30L));
+        assertThat(editors.get().getName(), is(equalTo(EDITORS)));
 
-        assertThat(none, is(nullValue()));
+        assertThat(none.isPresent(), is(false));
     }
 
     @Test
     @UsingDataSet("datasets/org/libreccm/security/GroupRepositoryTest/data.yml")
     @InSequence(100)
     public void findGroupById() {
-        final Group admins = groupRepository.findById(-10L);
-        final Group users = groupRepository.findById(-20L);
-        final Group editors = groupRepository.findById(-30L);
-        final Group none = groupRepository.findById(-999L);
+        final Optional<Group> admins = groupRepository.findById(-10L);
+        final Optional<Group> users = groupRepository.findById(-20L);
+        final Optional<Group> editors = groupRepository.findById(-30L);
+        final Optional<Group> none = groupRepository.findById(-999L);
 
         checkGroups(admins, users, editors, none);
     }
@@ -176,10 +178,10 @@ public class GroupRepositoryTest {
     @UsingDataSet("datasets/org/libreccm/security/GroupRepositoryTest/data.yml")
     @InSequence(200)
     public void findGroupByName() {
-        final Group admins = groupRepository.findByName(ADMINS);
-        final Group users = groupRepository.findByName(USERS);
-        final Group editors = groupRepository.findByName(EDITORS);
-        final Group none = groupRepository.findByName(NONE);
+        final Optional<Group> admins = groupRepository.findByName(ADMINS);
+        final Optional<Group> users = groupRepository.findByName(USERS);
+        final Optional<Group> editors = groupRepository.findByName(EDITORS);
+        final Optional<Group> none = groupRepository.findByName(NONE);
 
         checkGroups(admins, users, editors, none);
     }
@@ -213,7 +215,7 @@ public class GroupRepositoryTest {
                         excludeColumns = {"party_id"})
     @InSequence(500)
     public void saveChangedGroup() {
-        final Group group = groupRepository.findById(-30L);
+        final Group group = groupRepository.findById(-30L).get();
         group.setName("authors");
 
         groupRepository.save(group);
@@ -233,7 +235,7 @@ public class GroupRepositoryTest {
                         excludeColumns = {"party_id"})
     @InSequence(700)
     public void deleteUser() {
-        final Group group = groupRepository.findByName(USERS);
+        final Group group = groupRepository.findByName(USERS).get();
 
         groupRepository.delete(group);
     }

@@ -53,6 +53,7 @@ import org.librecms.contenttypes.ContentTypesManager;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.util.Optional;
 
 /**
  * An invisible component which contains all the possible creation components.
@@ -154,15 +155,15 @@ public class CreationSelector extends MetaForm {
             final ContentTypesManager typesManager = cdiUtil.findBean(
                 ContentTypesManager.class);
 
-            final ContentType type = typeRepo.findById(typeId);
-            if (type == null) {
+            final Optional<ContentType> type = typeRepo.findById(typeId);
+            if (!type.isPresent()) {
                 throw new UncheckedWrapperException(String.format(
                     "Type with id %d not found.", typeId));
             }
             final ContentTypeInfo typeInfo = typesManager.getContentTypeInfo(
-                type);
+                type.get());
             final AuthoringKitInfo kit = typeInfo.getAuthoringKit();
-            component = instantiateKitComponent(kit, type);
+            component = instantiateKitComponent(kit, type.get());
             if (component != null) {
                 returnForm.add(component);
                 returnForm.setMethod(Form.POST);

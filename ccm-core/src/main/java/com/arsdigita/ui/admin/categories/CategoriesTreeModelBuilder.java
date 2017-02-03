@@ -51,7 +51,7 @@ class CategoriesTreeModelBuilder
         final DomainRepository domainRepository = CdiUtil.createCdiUtil().
                 findBean(DomainRepository.class);
         final Domain domain = domainRepository.findById(Long.parseLong(
-                selectedDomainId.getSelectedKey(state)));
+                selectedDomainId.getSelectedKey(state))).get();
         
         return new CategoriesTreeModel(domain);
     }

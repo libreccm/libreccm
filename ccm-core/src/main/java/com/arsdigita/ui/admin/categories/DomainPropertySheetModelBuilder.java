@@ -58,7 +58,7 @@ class DomainPropertySheetModelBuilder
             final DomainRepository domainRepository = CdiUtil.createCdiUtil()
                 .findBean(DomainRepository.class);
             selectedDomain = domainRepository.findById(Long.parseLong(
-                domainIdStr));
+                domainIdStr)).get();
         }
 
         return new DomainPropertySheetModel(selectedDomain);

@@ -121,7 +121,7 @@ class DeletePhaseForm extends CMSForm
 
         // Check if the object is already deleted for double click
         // protection.
-        final PhaseDefinition phaseDef = phaseDefRepo.findById(key);
+        final PhaseDefinition phaseDef = phaseDefRepo.findById(key).get();
         if (phaseDef != null) {
             phaseDefRepo.delete(phaseDef);
         }
