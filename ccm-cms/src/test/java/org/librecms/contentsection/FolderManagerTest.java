@@ -43,7 +43,10 @@ import org.junit.runner.RunWith;
 import org.libreccm.tests.categories.IntegrationTest;
 
 import javax.inject.Inject;
+
 import org.jboss.arquillian.persistence.CleanupUsingScript;
+
+import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
@@ -165,10 +168,10 @@ public class FolderManagerTest {
                           "content_section_id"})
     @InSequence(1000)
     public void createDocumentsFolder() {
-        final Folder parent = folderRepo.findById(-2005L);
-        assertThat(parent, is(not(nullValue())));
+        final Optional<Folder> parent = folderRepo.findById(-2005L);
+        assertThat(parent.isPresent(), is(true));
 
-        final Folder test = folderManager.createFolder("test", parent);
+        final Folder test = folderManager.createFolder("test", parent.get());
 
         assertThat(test, is(not(nullValue())));
         assertThat(test.getName(), is(equalTo("test")));
@@ -189,10 +192,10 @@ public class FolderManagerTest {
                           "content_section_id"})
     @InSequence(1100)
     public void createAssetsFolder() {
-        final Folder parent = folderRepo.findById(-2013L);
-        assertThat(parent, is(not(nullValue())));
+        final Optional<Folder> parent = folderRepo.findById(-2013L);
+        assertThat(parent.isPresent(), is(true));
 
-        final Folder test = folderManager.createFolder("test", parent);
+        final Folder test = folderManager.createFolder("test", parent.get());
 
         assertThat(test, is(not(nullValue())));
         assertThat(test.getName(), is(equalTo("test")));
@@ -220,10 +223,10 @@ public class FolderManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(1500)
     public void createFolderNullName() {
-        final Folder parent = folderRepo.findById(-2005L);
-        assertThat(parent, is(not(nullValue())));
+        final Optional<Folder> parent = folderRepo.findById(-2005L);
+        assertThat(parent.isPresent(), is(true));
 
-        final Folder test = folderManager.createFolder(null, parent);
+        final Folder test = folderManager.createFolder(null, parent.get());
 
     }
 
@@ -236,10 +239,10 @@ public class FolderManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(1500)
     public void createFolderEmptyName() {
-        final Folder parent = folderRepo.findById(-2005L);
-        assertThat(parent, is(not(nullValue())));
+        final Optional<Folder> parent = folderRepo.findById(-2005L);
+        assertThat(parent.isPresent(), is(false));
 
-        final Folder test = folderManager.createFolder(" ", parent);
+        final Folder test = folderManager.createFolder(" ", parent.get());
 
     }
 
@@ -253,7 +256,7 @@ public class FolderManagerTest {
     @InSequence(2000)
     public void deleteFolder() {
         //docs-1-1-1
-        final Folder folder = folderRepo.findById(-2007L);
+        final Folder folder = folderRepo.findById(-2007L).get();
         folderManager.deleteFolder(folder);
     }
 
@@ -266,7 +269,7 @@ public class FolderManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(2100)
     public void deleteNonEmptyFolder() {
-        final Folder folder = folderRepo.findById(-2008L);
+        final Folder folder = folderRepo.findById(-2008L).get();
         folderManager.deleteFolder(folder);
     }
 
@@ -279,7 +282,7 @@ public class FolderManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(2100)
     public void deleteNonEmptySubFolder() {
-        final Folder folder = folderRepo.findById(-2006L);
+        final Folder folder = folderRepo.findById(-2006L).get();
         folderManager.deleteFolder(folder);
     }
 
@@ -292,7 +295,7 @@ public class FolderManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(2210)
     public void deleteRootFolder() {
-        final Folder folder = folderRepo.findById(-2003L);
+        final Folder folder = folderRepo.findById(-2003L).get();
         folderManager.deleteFolder(folder);
     }
 
@@ -318,8 +321,8 @@ public class FolderManagerTest {
     @InSequence(3000)
     public void moveFolder() {
         //docs-1-1-2 to docs-2
-        final Folder folder = folderRepo.findById(-2008L);
-        final Folder target = folderRepo.findById(-2010L);
+        final Folder folder = folderRepo.findById(-2008L).get();
+        final Folder target = folderRepo.findById(-2010L).get();
 
         folderManager.moveFolder(folder, target);
     }
@@ -335,8 +338,8 @@ public class FolderManagerTest {
     public void moveFolderTargetFolderSameName() {
         //docs-1/downloads to /docs-2/
 
-        final Folder folder = folderRepo.findById(-2009L);
-        final Folder target = folderRepo.findById(-2010L);
+        final Folder folder = folderRepo.findById(-2009L).get();
+        final Folder target = folderRepo.findById(-2010L).get();
 
         folderManager.moveFolder(folder, target);
     }
@@ -350,8 +353,8 @@ public class FolderManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(3100)
     public void moveDocumentsFolderToAssetsFolder() {
-        final Folder folder = folderRepo.findById(-2009L);
-        final Folder target = folderRepo.findById(-2014L);
+        final Folder folder = folderRepo.findById(-2009L).get();
+        final Folder target = folderRepo.findById(-2014L).get();
 
         folderManager.moveFolder(folder, target);
     }
@@ -365,8 +368,8 @@ public class FolderManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(3110)
     public void moveAssetsFolderToDocumentsFolder() {
-        final Folder folder = folderRepo.findById(-2014L);
-        final Folder target = folderRepo.findById(-2010L);
+        final Folder folder = folderRepo.findById(-2014L).get();
+        final Folder target = folderRepo.findById(-2010L).get();
 
         folderManager.moveFolder(folder, target);
     }
@@ -380,7 +383,7 @@ public class FolderManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(3110)
     public void moveFolderToItself() {
-        final Folder folder = folderRepo.findById(-2008L);
+        final Folder folder = folderRepo.findById(-2008L).get();
         
         folderManager.moveFolder(folder, folder);
     }
@@ -394,7 +397,7 @@ public class FolderManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(3200)
     public void moveFolderNull() {
-        final Folder target = folderRepo.findById(-2010L);
+        final Folder target = folderRepo.findById(-2010L).get();
         folderManager.moveFolder(null, target);
     }
 
@@ -407,7 +410,7 @@ public class FolderManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(3210)
     public void moveFolderTargetNull() {
-        final Folder folder = folderRepo.findById(-2008L);
+        final Folder folder = folderRepo.findById(-2008L).get();
         
         folderManager.moveFolder(folder, null);
     }
@@ -421,8 +424,8 @@ public class FolderManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(3300)
     public void moveFolderWithLiveItems() {
-        final Folder folder = folderRepo.findById(-2011L);
-        final Folder target = folderRepo.findById(-2010L);
+        final Folder folder = folderRepo.findById(-2011L).get();
+        final Folder target = folderRepo.findById(-2010L).get();
 
         folderManager.moveFolder(folder, target);
     }
@@ -436,8 +439,8 @@ public class FolderManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(3310)
     public void moveFolderWithLiveItemsInSubFolder() {
-        final Folder folder = folderRepo.findById(-2010L);
-        final Folder target = folderRepo.findById(-2005L);
+        final Folder folder = folderRepo.findById(-2010L).get();
+        final Folder target = folderRepo.findById(-2005L).get();
 
         folderManager.moveFolder(folder, target);
     }
@@ -451,8 +454,8 @@ public class FolderManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(3320)
     public void moveFolderToOtherSection() {
-        final Folder folder = folderRepo.findById(-2008L);
-        final Folder target = folderRepo.findById(-2003L);
+        final Folder folder = folderRepo.findById(-2008L).get();
+        final Folder target = folderRepo.findById(-2003L).get();
 
         folderManager.moveFolder(folder, target);
     }
@@ -462,21 +465,21 @@ public class FolderManagerTest {
                       + "FolderManagerTest/data.xml")
     @InSequence(3400)
     public void getFolderPath() {
-        final Folder infoRoot = folderRepo.findById(-2001L);
-        final Folder infoAssets = folderRepo.findById(-2002L);
-        final Folder projectsRoot = folderRepo.findById(-2003L);
-        final Folder projectsAssets = folderRepo.findById(-2004L);
-        final Folder docs1 = folderRepo.findById(-2005L);
-        final Folder docs11 = folderRepo.findById(-2006L);
-        final Folder docs111 = folderRepo.findById(-2007L);
-        final Folder docs112 = folderRepo.findById(-2008L);
-        final Folder downloads1 = folderRepo.findById(-2009L);
-        final Folder docs2 = folderRepo.findById(-2010L);
-        final Folder docs21 = folderRepo.findById(-2011L);
-        final Folder downloads2 = folderRepo.findById(-2012L);
-        final Folder assets1 = folderRepo.findById(-2013L);
-        final Folder assets11 = folderRepo.findById(-2014L);
-        final Folder assets12 = folderRepo.findById(-2015L);
+        final Folder infoRoot = folderRepo.findById(-2001L).get();
+        final Folder infoAssets = folderRepo.findById(-2002L).get();
+        final Folder projectsRoot = folderRepo.findById(-2003L).get();
+        final Folder projectsAssets = folderRepo.findById(-2004L).get();
+        final Folder docs1 = folderRepo.findById(-2005L).get();
+        final Folder docs11 = folderRepo.findById(-2006L).get();
+        final Folder docs111 = folderRepo.findById(-2007L).get();
+        final Folder docs112 = folderRepo.findById(-2008L).get();
+        final Folder downloads1 = folderRepo.findById(-2009L).get();
+        final Folder docs2 = folderRepo.findById(-2010L).get();
+        final Folder docs21 = folderRepo.findById(-2011L).get();
+        final Folder downloads2 = folderRepo.findById(-2012L).get();
+        final Folder assets1 = folderRepo.findById(-2013L).get();
+        final Folder assets11 = folderRepo.findById(-2014L).get();
+        final Folder assets12 = folderRepo.findById(-2015L).get();
         
         assertThat(folderManager.getFolderPath(infoRoot), 
                    is(equalTo("/info_root/")));
@@ -515,21 +518,21 @@ public class FolderManagerTest {
                       + "FolderManagerTest/data.xml")
     @InSequence(3410)
     public void getFolderPathWithContentSection() {
-        final Folder infoRoot = folderRepo.findById(-2001L);
-        final Folder infoAssets = folderRepo.findById(-2002L);
-        final Folder projectsRoot = folderRepo.findById(-2003L);
-        final Folder projectsAssets = folderRepo.findById(-2004L);
-        final Folder docs1 = folderRepo.findById(-2005L);
-        final Folder docs11 = folderRepo.findById(-2006L);
-        final Folder docs111 = folderRepo.findById(-2007L);
-        final Folder docs112 = folderRepo.findById(-2008L);
-        final Folder downloads1 = folderRepo.findById(-2009L);
-        final Folder docs2 = folderRepo.findById(-2010L);
-        final Folder docs21 = folderRepo.findById(-2011L);
-        final Folder downloads2 = folderRepo.findById(-2012L);
-        final Folder assets1 = folderRepo.findById(-2013L);
-        final Folder assets11 = folderRepo.findById(-2014L);
-        final Folder assets12 = folderRepo.findById(-2015L);
+        final Folder infoRoot = folderRepo.findById(-2001L).get();
+        final Folder infoAssets = folderRepo.findById(-2002L).get();
+        final Folder projectsRoot = folderRepo.findById(-2003L).get();
+        final Folder projectsAssets = folderRepo.findById(-2004L).get();
+        final Folder docs1 = folderRepo.findById(-2005L).get();
+        final Folder docs11 = folderRepo.findById(-2006L).get();
+        final Folder docs111 = folderRepo.findById(-2007L).get();
+        final Folder docs112 = folderRepo.findById(-2008L).get();
+        final Folder downloads1 = folderRepo.findById(-2009L).get();
+        final Folder docs2 = folderRepo.findById(-2010L).get();
+        final Folder docs21 = folderRepo.findById(-2011L).get();
+        final Folder downloads2 = folderRepo.findById(-2012L).get();
+        final Folder assets1 = folderRepo.findById(-2013L).get();
+        final Folder assets11 = folderRepo.findById(-2014L).get();
+        final Folder assets12 = folderRepo.findById(-2015L).get();
         
         assertThat(folderManager.getFolderPath(infoRoot, true), 
                    is(equalTo("info:/info_root/")));

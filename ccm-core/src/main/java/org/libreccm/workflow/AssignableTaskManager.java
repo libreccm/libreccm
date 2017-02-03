@@ -28,6 +28,7 @@ import org.libreccm.security.User;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
@@ -141,8 +142,13 @@ public class AssignableTaskManager {
                 task.getLockingUser().getName()));
         }
 
-        task.setLocked(true);
-        task.setLockingUser(shiro.getUser());
+        final Optional<User> user = shiro.getUser();
+        if (user.isPresent()) {
+            task.setLocked(true);
+            task.setLockingUser(user.get());
+        } else {
+            throw new IllegalStateException("No current user.");
+        }
 
         taskRepo.save(task);
     }
@@ -198,9 +204,10 @@ public class AssignableTaskManager {
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public void finish(final AssignableTask task) {
-        final User currentUser = shiro.getUser();
+        final Optional<User> currentUser = shiro.getUser();
 
-        if (!currentUser.equals(task.getLockingUser())) {
+        if (!currentUser.isPresent()
+            || !currentUser.get().equals(task.getLockingUser())) {
             throw new IllegalArgumentException(String.format(
                 "Current user %s is not locking user for task %s. Task is"
                     + "locaked by user %s.",
@@ -233,7 +240,7 @@ public class AssignableTaskManager {
             "AssignableTask.findAssignedTasks", AssignableTask.class);
         query.setParameter("workflow", workflow);
         query.setParameter("roles", roles);
-        
+
         return query.getResultList();
     }
 

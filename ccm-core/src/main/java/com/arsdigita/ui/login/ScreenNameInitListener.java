@@ -72,7 +72,7 @@ public class ScreenNameInitListener implements FormInitListener {
             return;
         }
 
-        final User user = shiro.getUser();
+        final User user = shiro.getUser().get();
         if (user.getName() == null) {
             s_log.debug("FAILURE null screen name");
             return;

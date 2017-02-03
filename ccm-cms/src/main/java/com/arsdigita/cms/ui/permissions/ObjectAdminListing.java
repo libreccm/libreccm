@@ -35,8 +35,6 @@ import com.arsdigita.bebop.table.TableCellRenderer;
 import com.arsdigita.bebop.table.TableModel;
 import com.arsdigita.bebop.table.TableModelBuilder;
 import com.arsdigita.cms.CMS;
-import com.arsdigita.cms.dispatcher.Utilities;
-import com.arsdigita.dispatcher.AccessDeniedException;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.ui.CcmObjectSelectionModel;
 import com.arsdigita.util.LockableImpl;
@@ -44,7 +42,6 @@ import com.arsdigita.util.UncheckedWrapperException;
 
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.core.CcmObject;
-import org.libreccm.security.Party;
 import org.libreccm.security.PermissionChecker;
 import org.libreccm.security.PermissionManager;
 import org.libreccm.security.Role;
@@ -52,9 +49,9 @@ import org.libreccm.security.RoleRepository;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.privileges.ItemPrivileges;
 
-import java.math.BigDecimal;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ObjectAdminListing extends SimpleContainer {
@@ -146,14 +143,14 @@ public class ObjectAdminListing extends SimpleContainer {
                     ItemPrivileges.ADMINISTER, object);
 
                 final String roleId = (String) event.getRowKey();
-                final Role role = roleRepo.findById(Long.parseLong(roleId));
-                if (role == null) {
+                final Optional<Role> role = roleRepo.findById(Long.parseLong(roleId));
+                if (!role.isPresent()) {
                     throw new UncheckedWrapperException(String.format(
                         "No role with id %s found.", roleId));
                 }
 
                 permissionManager.revokePrivilege(ItemPrivileges.ADMINISTER,
-                                                  role,
+                                                  role.get(),
                                                   object);
             }
         }

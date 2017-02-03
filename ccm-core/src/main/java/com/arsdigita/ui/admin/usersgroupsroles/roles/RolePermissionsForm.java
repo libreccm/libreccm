@@ -78,7 +78,7 @@ class RolePermissionsForm extends Form {
             final RoleRepository roleRepository = CdiUtil.createCdiUtil()
                     .findBean(RoleRepository.class);
             final Role role = roleRepository.findById(Long.parseLong(
-                    selectedRoleId.getSelectedKey(state)));
+                    selectedRoleId.getSelectedKey(state))).get();
 
             target.setLabel(new GlobalizedMessage(
                     "ui.admin.role_details.add_permission.heading",
@@ -170,7 +170,7 @@ class RolePermissionsForm extends Form {
                         RoleRepository.class);
 
                 final Role role = roleRepository.findById(Long.parseLong(
-                        selectedRoleId.getSelectedKey(state)));
+                        selectedRoleId.getSelectedKey(state))).get();
                 final PermissionManager permissionManager = cdiUtil.findBean(
                         PermissionManager.class);
                 if (objectIdData == null || objectIdData.isEmpty()) {

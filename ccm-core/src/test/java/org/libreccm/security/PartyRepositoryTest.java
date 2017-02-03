@@ -149,8 +149,8 @@ public class PartyRepositoryTest {
     @UsingDataSet("datasets/org/libreccm/security/PartyRepositoryTest/data.yml")
     @InSequence(100)
     public void findPartyById() {
-        final User jdoe = (User) partyRepository.findById(-10L);
-        final Group admins = (Group) partyRepository.findById(-20L);
+        final User jdoe = (User) partyRepository.findById(-10L).get();
+        final Group admins = (Group) partyRepository.findById(-20L).get();
 
         assertThat(jdoe, is(not(nullValue())));
         assertThat(jdoe.getPartyId(), is(-10L));
@@ -170,8 +170,8 @@ public class PartyRepositoryTest {
     @UsingDataSet("datasets/org/libreccm/security/PartyRepositoryTest/data.yml")
     @InSequence(110)
     public void findByName() {
-        final User jdoe = (User) partyRepository.findByName(JDOE);
-        final Group admins = (Group) partyRepository.findByName(ADMINS);
+        final User jdoe = (User) partyRepository.findByName(JDOE).get();
+        final Group admins = (Group) partyRepository.findByName(ADMINS).get();
 
         assertThat(jdoe, is(not(nullValue())));
         assertThat(jdoe.getPartyId(), is(-10L));
@@ -236,8 +236,8 @@ public class PartyRepositoryTest {
     )
     @InSequence(400)
     public void saveChangedParty() {
-        final Party user = partyRepository.findById(-10L);
-        final Party group = partyRepository.findById(-20L);
+        final Party user = partyRepository.findById(-10L).get();
+        final Party group = partyRepository.findById(-20L).get();
 
         user.setName("johndoe");
         group.setName("managers");
@@ -262,7 +262,7 @@ public class PartyRepositoryTest {
                         excludeColumns = {"party_id"})
     @InSequence(600)
     public void deleteParty() {
-        final Party user = partyRepository.findById(-10L);
+        final Party user = partyRepository.findById(-10L).get();
 
         shiro.getSystemUser().execute(() -> partyRepository.delete(user));
     }

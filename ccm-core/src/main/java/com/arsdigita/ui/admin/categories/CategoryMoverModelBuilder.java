@@ -58,12 +58,12 @@ public class CategoryMoverModelBuilder
         final DomainRepository domainRepository = cdiUtil.findBean(
             DomainRepository.class);
         final Domain domain = domainRepository.findById(Long.parseLong(
-            selectedDomainId.getSelectedKey(state)));
+            selectedDomainId.getSelectedKey(state))).get();
 
         final CategoryRepository categoryRepository = cdiUtil.findBean(
             CategoryRepository.class);
         final Category category = categoryRepository.findById(Long.parseLong(
-            selectedCategoryId.getSelectedKey(state)));
+            selectedCategoryId.getSelectedKey(state))).get();
         
         return new CategoryMoverModel(domain, category);
     }

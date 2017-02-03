@@ -186,7 +186,7 @@ public abstract class BaseApplicationServlet extends BaseServlet {
                             + "database");
         }
 
-        return appRepository.findById(appId);
+        return appRepository.findById(appId).get();
     }
 
     /**

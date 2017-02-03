@@ -170,9 +170,9 @@ public class PermissionCheckerTest {
     @UsingDataSet("datasets/org/libreccm/security/ShiroTest/data.yml")
     @InSequence(1300)
     public void isPermittedSystemUser() {
-        final CcmObject object1 = objectRepository.findById(-20001L);
-        final CcmObject object2 = objectRepository.findById(-20002L);
-        final CcmObject object3 = objectRepository.findById(-20003L);
+        final CcmObject object1 = objectRepository.findById(-20001L).get();
+        final CcmObject object2 = objectRepository.findById(-20002L).get();
+        final CcmObject object3 = objectRepository.findById(-20003L).get();
         
         shiro.getSystemUser().execute(new Callable<Boolean>() {
             
@@ -206,8 +206,8 @@ public class PermissionCheckerTest {
     @UsingDataSet("datasets/org/libreccm/security/ShiroTest/data.yml")
     @InSequence(1400)
     public void isPermittedObjectAuthenticatedUser() {
-        final CcmObject object1 = objectRepository.findById(-20001L);
-        final CcmObject object2 = objectRepository.findById(-20002L);
+        final CcmObject object1 = objectRepository.findById(-20001L).get();
+        final CcmObject object2 = objectRepository.findById(-20002L).get();
         
         final UsernamePasswordToken token = new UsernamePasswordToken("jdoe",
                                                                       "foo123");
@@ -227,8 +227,8 @@ public class PermissionCheckerTest {
     @UsingDataSet("datasets/org/libreccm/security/ShiroTest/data.yml")
     @InSequence(1500)
     public void isPermittedObjectUnAuthenticatedUser() {
-        final CcmObject object1 = objectRepository.findById(-20001L);
-        final CcmObject object2 = objectRepository.findById(-20002L);
+        final CcmObject object1 = objectRepository.findById(-20001L).get();
+        final CcmObject object2 = objectRepository.findById(-20002L).get();
         
         assertThat(permissionChecker.isPermitted("privilege1", object1),
                    is(false));
@@ -264,7 +264,7 @@ public class PermissionCheckerTest {
     @UsingDataSet("datasets/org/libreccm/security/ShiroTest/data.yml")
     @InSequence(2300)
     public void checkPermissionObjectAuthenticatedUser() {
-        final CcmObject object2 = objectRepository.findById(-20002L);
+        final CcmObject object2 = objectRepository.findById(-20002L).get();
         
         final UsernamePasswordToken token = new UsernamePasswordToken("jdoe",
                                                                       "foo123");
@@ -279,7 +279,7 @@ public class PermissionCheckerTest {
     @ShouldThrowException(AuthorizationException.class)
     @InSequence(2400)
     public void checkPermissionObjectUnAuthenticatedUser() {
-        final CcmObject object2 = objectRepository.findById(-20002L);
+        final CcmObject object2 = objectRepository.findById(-20002L).get();
         
         permissionChecker.checkPermission("privilege2", object2);
     }
@@ -288,7 +288,7 @@ public class PermissionCheckerTest {
     @UsingDataSet("datasets/org/libreccm/security/ShiroTest/data.yml")
     @InSequence(2500)
     public void checkPermissionObjectPublicUser() {
-        final CcmObject object1 = objectRepository.findById(-20001L);
+        final CcmObject object1 = objectRepository.findById(-20001L).get();
         
         permissionChecker.checkPermission("privilege3", object1);
     }
@@ -297,9 +297,9 @@ public class PermissionCheckerTest {
     @UsingDataSet("datasets/org/libreccm/security/ShiroTest/data.yml")
     @InSequence(2600)
     public void checkPermissionObjectSystemUser() {
-        final CcmObject object1 = objectRepository.findById(-20001L);
-        final CcmObject object2 = objectRepository.findById(-20002L);
-        final CcmObject object3 = objectRepository.findById(-20003L);
+        final CcmObject object1 = objectRepository.findById(-20001L).get();
+        final CcmObject object2 = objectRepository.findById(-20002L).get();
+        final CcmObject object3 = objectRepository.findById(-20003L).get();
         
         shiro.getSystemUser().execute(new Callable<Boolean>() {
             
@@ -323,7 +323,7 @@ public class PermissionCheckerTest {
     @UsingDataSet("datasets/org/libreccm/security/ShiroTest/data.yml")
     @InSequence(3100)
     public void checkPermissionReturnObjectAuthenticatedUser() {
-        final CcmObject object2 = objectRepository.findById(-20002L);
+        final CcmObject object2 = objectRepository.findById(-20002L).get();
         
         final UsernamePasswordToken token = new UsernamePasswordToken("jdoe",
                                                                       "foo123");
@@ -341,7 +341,7 @@ public class PermissionCheckerTest {
     @UsingDataSet("datasets/org/libreccm/security/ShiroTest/data.yml")
     @InSequence(3200)
     public void checkPermissionReturnObjectUnAuthenticatedUser() {
-        final CcmObject object2 = objectRepository.findById(-20002L);
+        final CcmObject object2 = objectRepository.findById(-20002L).get();
         
         final CcmObject result = permissionChecker.checkPermission(
             "privilege2", object2, CcmObject.class);
@@ -354,7 +354,7 @@ public class PermissionCheckerTest {
     @UsingDataSet("datasets/org/libreccm/security/ShiroTest/data.yml")
     @InSequence(600)
     public void checkPermissionReturnObjectPublicUser() {
-        final CcmObject object1 = objectRepository.findById(-20001L);
+        final CcmObject object1 = objectRepository.findById(-20001L).get();
         
         final CcmObject result = permissionChecker.checkPermission(
             "privilege3", object1, CcmObject.class);
@@ -367,9 +367,9 @@ public class PermissionCheckerTest {
     @UsingDataSet("datasets/org/libreccm/security/ShiroTest/data.yml")
     @InSequence(3200)
     public void checkPermissionReturnObjectSystemUser() {
-        final CcmObject object1 = objectRepository.findById(-20001L);
-        final CcmObject object2 = objectRepository.findById(-20002L);
-        final CcmObject object3 = objectRepository.findById(-20003L);
+        final CcmObject object1 = objectRepository.findById(-20001L).get();
+        final CcmObject object2 = objectRepository.findById(-20002L).get();
+        final CcmObject object3 = objectRepository.findById(-20003L).get();
         
         final List<CcmObject> results = shiro.getSystemUser().execute(
             new Callable<List<CcmObject>>() {

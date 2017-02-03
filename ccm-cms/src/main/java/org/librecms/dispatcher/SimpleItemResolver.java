@@ -395,10 +395,10 @@ public class SimpleItemResolver implements ItemResolver {
         if (ContentItemVersion.DRAFT.toString().equals(context)) {
             return generateDraftURL(itemId, section);
         } else if (ContentItemVersion.LIVE.toString().equals(context)) {
-            final ContentItem item = itemRepo.findById(itemId);
+            final ContentItem item = itemRepo.findById(itemId).get();
             return generateLiveURL(item, section, templateContext);
         } else if (CMSDispatcher.PREVIEW.equals(context)) {
-            final ContentItem item = itemRepo.findById(itemId);
+            final ContentItem item = itemRepo.findById(itemId).get();
             return generatePreviewURL(item, section, templateContext);
         } else {
             throw new IllegalArgumentException(String.format(

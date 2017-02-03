@@ -302,7 +302,7 @@ public class ACSObjectSelectionModel implements SingleSelectionModel {
         final CcmObjectRepository repository = cdiUtil.findBean(
                 CcmObjectRepository.class);
 
-        return repository.findById(objectId);
+        return repository.findById(objectId).get();
 
     }
 

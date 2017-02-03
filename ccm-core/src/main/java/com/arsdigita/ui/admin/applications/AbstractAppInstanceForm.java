@@ -19,7 +19,6 @@
 package com.arsdigita.ui.admin.applications;
 
 import com.arsdigita.bebop.Form;
-import com.arsdigita.bebop.FormProcessException;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.ParameterSingleSelectionModel;
 import com.arsdigita.bebop.event.FormProcessListener;
@@ -77,9 +76,8 @@ public abstract class AbstractAppInstanceForm extends Form {
             final ApplicationRepository appRepo = CdiUtil.createCdiUtil()
                 .findBean(ApplicationRepository.class);
 
-            final CcmApplication result = appRepo.findById(Long.parseLong(
+            return appRepo.findById(Long.parseLong(
                 selectedAppInstance.getSelectedKey(state)));
-            return Optional.of(result);
         }
     }
 

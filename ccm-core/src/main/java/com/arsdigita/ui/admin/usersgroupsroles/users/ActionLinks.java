@@ -80,7 +80,7 @@ class ActionLinks extends BoxPanel {
             final UserRepository userRepository = cdiUtil.findBean(
                 UserRepository.class);
             final User user = userRepository.findById(Long.parseLong(
-                selectedUserId.getSelectedKey(e.getPageState())));
+                selectedUserId.getSelectedKey(e.getPageState()))).get();
             final ChallengeManager challengeManager = cdiUtil.findBean(
                 ChallengeManager.class);
             try {

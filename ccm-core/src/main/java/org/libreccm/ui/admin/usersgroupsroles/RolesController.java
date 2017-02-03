@@ -31,6 +31,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import java.util.Set;
 
@@ -50,7 +51,7 @@ public class RolesController implements Serializable {
     private static final long serialVersionUID = 9092665507680111584L;
     private static final Logger LOGGER = LogManager.getLogger(
         RolesController.class);
-    
+
     @Inject
     private RoleRepository roleRepo;
 
@@ -78,31 +79,32 @@ public class RolesController implements Serializable {
         LOGGER.debug("getSelectedRole invoked...");
         return selectedRole;
     }
-    
+
     public void setSelectedRole(final Role selectedRole) {
         LOGGER.debug("Setting selected role to \"{}\"...", selectedRole);
         this.selectedRole = selectedRole;
         selectedRoleName = selectedRole.getName();
     }
-    
+
     public String getSelectedRoleName() {
         return selectedRoleName;
     }
-    
+
     public void setSelectedRoleName(final String name) {
         selectedRoleName = name;
     }
-    
+
     @Transactional(Transactional.TxType.REQUIRED)
     public Set<RoleMembership> getSelectedRoleMemberships() {
-        final Role role = roleRepo.findById(selectedRole.getRoleId());
+        final Role role = roleRepo.findById(selectedRole.getRoleId()).get();
         return role.getMemberships();
     }
-    
+
     @Transactional(Transactional.TxType.REQUIRED)
     public List<Permission> getSelectedRolePermissions() {
-        final Role role = roleRepo.findById(selectedRole.getRoleId(), 
-                                            Role.ENTITY_GRPAH_WITH_PERMISSIONS);
+        final Role role = roleRepo.findById(selectedRole.getRoleId(),
+                                            Role.ENTITY_GRPAH_WITH_PERMISSIONS)
+            .get();
         return role.getPermissions();
     }
 
@@ -110,13 +112,11 @@ public class RolesController implements Serializable {
         selectedRole.setName(selectedRoleName);
         roleRepo.save(selectedRole);
     }
-    
+
     public void renameSelectedRoleCancel() {
         selectedRoleName = selectedRole.getName();
     }
 
-    
-    
     private class RolesTableModel extends LazyDataModel<Role> {
 
         private static final long serialVersionUID = 8878060757439667086L;

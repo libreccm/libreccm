@@ -59,6 +59,7 @@ import org.librecms.CmsConstants;
 import org.librecms.contentsection.privileges.ItemPrivileges;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.TooManyListenersException;
 
 /**
@@ -263,14 +264,14 @@ public class ObjectAddAdmin extends SimpleContainer
 
             // Add each checked user to the object
             for (final String roleId : roleIds) {
-                final Role role = roleRepo.findById(Long.parseLong(roleId));
-                if (role == null) {
+                final Optional<Role> role = roleRepo.findById(Long.parseLong(roleId));
+                if (!role.isPresent()) {
                     throw new FormProcessException(new GlobalizedMessage(
                         "cms.ui.permissions.cannot_add_user",
                         CmsConstants.CMS_BUNDLE));
                 }
                 permissionManager.grantPrivilege(ItemPrivileges.ADMINISTER,
-                                                 role,
+                                                 role.get(),
                                                  object);
             }
 

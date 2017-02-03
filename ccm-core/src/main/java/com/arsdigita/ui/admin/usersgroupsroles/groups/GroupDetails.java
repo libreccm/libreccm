@@ -62,7 +62,7 @@ class GroupDetails extends BoxPanel {
             final GroupRepository groupRepository = CdiUtil.createCdiUtil()
                 .findBean(GroupRepository.class);
             final Group group = groupRepository.findById(Long.parseLong(
-                selectedGroupId.getSelectedKey(state)));
+                selectedGroupId.getSelectedKey(state))).get();
             target.setLabel(new GlobalizedMessage(
                 "ui.admin.group_details.header",
                 ADMIN_BUNDLE, 

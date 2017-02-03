@@ -119,9 +119,9 @@ class RoleMembersTable extends Table {
                         final RoleManager roleManager = cdiUtil.findBean(
                             RoleManager.class);
                         final Party party = partyRepository.findById(Long
-                            .parseLong(key));
+                            .parseLong(key)).get();
                         final Role role = roleRepository.findById(
-                            Long.parseLong(selectedRoleId.getSelectedKey(state)));
+                            Long.parseLong(selectedRoleId.getSelectedKey(state))).get();
                         roleManager.removeRoleFromParty(role, party);
                         break;
                     default:
@@ -173,7 +173,7 @@ class RoleMembersTable extends Table {
             final RoleRepository roleRepository = CdiUtil.createCdiUtil()
                 .findBean(RoleRepository.class);
             final Role role = roleRepository.findById(Long.parseLong(
-                selectedRoleId.getSelectedKey(state)));
+                selectedRoleId.getSelectedKey(state))).get();
 
             members = new ArrayList<>();
 

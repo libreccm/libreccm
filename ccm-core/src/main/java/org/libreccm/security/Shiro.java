@@ -19,6 +19,7 @@
 package org.libreccm.security;
 
 import com.arsdigita.kernel.KernelConfig;
+
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -28,6 +29,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
+
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.Session;
@@ -35,21 +37,57 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.subject.Subject;
 
+import java.util.Optional;
+
 /**
  * This application scoped CDI bean acts as bridge between CDI and Shiro. It
  * initialises the Shiro environment and provides the Shiro
  * {@link SecurityManager} and the current Shiro {@link Subject} via CDI
  * producer methods.
- * 
- * This class is based on the implementation for the upcoming CDI integration
- * of Shiro discussed at https://issues.apache.org/jira/browse/SHIRO-337 and
- * the implementation which can be found at https://github.com/hwellmann/shiro 
+ *
+ * This class is based on the implementation for the upcoming CDI integration of
+ * Shiro discussed at https://issues.apache.org/jira/browse/SHIRO-337 and the
+ * implementation which can be found at https://github.com/hwellmann/shiro
  * (commit 8a40df0).
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @ApplicationScoped
 public class Shiro {
+
+    /**
+     * Principal used for the public user if
+     * {@link KernelConfig#primaryUserIdentifier} is set to
+     * {@link KernelConfig#USER_IDENTIFIER_SCREEN_NAME}.
+     *
+     * @see #getPublicUser()
+     */
+    public static final String PUBLIC_USER_PRINCIPAL_SCREEN_NAME = "public-user";
+    /**
+     * Principal used for the public user if
+     * {@link KernelConfig#primaryUserIdentifier} is set to
+     * {@link KernelConfig#USER_IDENTIFIER_EMAIL}.
+     *
+     * @see #getPublicUser()
+     */
+    public static final String PUBLIC_USER_PRINCIPAL_EMAIL = "public-user@localhost";
+
+    /**
+     * Principal used for the system user if
+     * {@link KernelConfig#primaryUserIdentifier} is set to
+     * {@link KernelConfig#USER_IDENTIFIER_SCREEN_NAME}.
+     *
+     * @see #getSystemUser()
+     */
+    public static final String SYSTEM_USER_PRINCIPAL_SCREEN_NAME = "system-user";
+    /**
+     * Principal used for the system user if
+     * {@link KernelConfig#primaryUserIdentifier} is set to
+     * {@link KernelConfig#USER_IDENTIFIER_EMAIL}.
+     *
+     * @see #getSystemUser()
+     */
+    public static final String SYSTEM_USER_PRINCIPAL_EMAIL = "system-user@localhost";
 
     @Inject
     private UserRepository userRepository;
@@ -62,7 +100,7 @@ public class Shiro {
     @Produces
     @Named("securityManager")
     public SecurityManager getSecurityManager() {
-        return proxy(SecurityManager.class, 
+        return proxy(SecurityManager.class,
                      new SecurityManagerInvocationHandler());
     }
 
@@ -82,19 +120,42 @@ public class Shiro {
         return proxy(Session.class, new SessionInvocationHandler());
     }
 
+    /**
+     * Subject which is used to store the permissions for a none authenticated
+     * user.
+     *
+     * @return
+     */
     public Subject getPublicUser() {
         if (KernelConfig.getConfig().emailIsPrimaryIdentifier()) {
-            return buildInternalSubject("public-user@localhost");
+            return buildInternalSubject(PUBLIC_USER_PRINCIPAL_EMAIL);
         } else {
-            return buildInternalSubject("public-user");
+            return buildInternalSubject(PUBLIC_USER_PRINCIPAL_SCREEN_NAME);
         }
     }
 
+    /**
+     * A virtual user for internal processes which has all permissions.
+     *
+     * @return
+     */
     public Subject getSystemUser() {
-        return buildInternalSubject("system-user");
+        return buildInternalSubject(SYSTEM_USER_PRINCIPAL_SCREEN_NAME);
     }
 
-    public User getUser() {
+    /**
+     * Retrieve the {@link User} entity from the database for the current
+     * subject.
+     *
+     * @return An {@link Optional} containing the {@link User} entity for the
+     * current subject. If the current subject is a virtual user which has no
+     * representation in the database the returned {@link Optional} is empty.
+     *
+     * @see #getSubject()
+     * @see #getSystemUser() 
+     * @see #getPublicUser() 
+     */
+    public Optional<User> getUser() {
         final KernelConfig kernelConfig = KernelConfig.getConfig();
         if (kernelConfig.emailIsPrimaryIdentifier()) {
             return userRepository.findByEmailAddress((String) getSubject().
@@ -108,12 +169,12 @@ public class Shiro {
     private Subject buildInternalSubject(final String userName) {
         final PrincipalCollection principals = new SimplePrincipalCollection(
                 userName, "CcmShiroRealm");
-        final Subject publicUser = new Subject.Builder()
+        final Subject internalUser = new Subject.Builder()
                 .principals(principals)
                 .authenticated(true)
                 .buildSubject();
 
-        return publicUser;
+        return internalUser;
     }
 
     @SuppressWarnings("unchecked")

@@ -433,10 +433,10 @@ class ItemLifecycleSelectForm extends BaseForm {
                             UserRepository.class);
                         final User receiver = userRepo.findByEmailAddress(
                             CMSConfig.getConfig()
-                                .getPublishingFailureReceiver());
+                                .getPublishingFailureReceiver()).get();
                         final User sender = userRepo.findByEmailAddress(
                             CMSConfig.getConfig()
-                                .getPublishingFailureSender());
+                                .getPublishingFailureSender()).get();
 
                         if ((sender != null) && (receiver != null)) {
                             final Writer traceWriter = new StringWriter();
@@ -714,7 +714,7 @@ class ItemLifecycleSelectForm extends BaseForm {
                 workflowUuid = null;
             }
 
-            user = CdiUtil.createCdiUtil().findBean(Shiro.class).getUser();
+            user = CdiUtil.createCdiUtil().findBean(Shiro.class).getUser().get();
         }
 
         /**
@@ -747,7 +747,7 @@ class ItemLifecycleSelectForm extends BaseForm {
             final LifecycleDefinition cycleDef;
             final Lifecycle lifecycle;
             // Apply the new lifecycle.
-            cycleDef = lifecycleDefRepo.findById(defID);
+            cycleDef = lifecycleDefRepo.findById(defID).get();
             pending = itemManager.publish(item, cycleDef);
             lifecycle = pending.getLifecycle();
 

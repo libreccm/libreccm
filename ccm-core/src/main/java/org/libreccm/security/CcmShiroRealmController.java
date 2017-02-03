@@ -26,6 +26,7 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.libreccm.configuration.ConfigurationManager;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -75,7 +76,7 @@ class CcmShiroRealmController {
         final KernelConfig kernelConfig = confManager.findConfiguration(
             KernelConfig.class);
 
-        final User user;
+        final Optional<User> user;
         if ("email".equals(kernelConfig.getPrimaryUserIdentifier())) {
             user = userRepo.findByEmailAddress(userIdentifier);
         } else {
@@ -83,15 +84,14 @@ class CcmShiroRealmController {
         }
 
         // If no matching user is found throw an AuthenticationException
-        if (user
-                == null) {
+        if (!user.isPresent()) {
             throw new AuthenticationException(String.format(
                 "No user identified by principal \"%s\" was found. Primary user "
                 + "identifier is \"%s\".",
                 userIdentifier, kernelConfig.getPrimaryUserIdentifier()));
         }
 
-        return user;
+        return user.get();
     }
 
     @Transactional(Transactional.TxType.REQUIRED)

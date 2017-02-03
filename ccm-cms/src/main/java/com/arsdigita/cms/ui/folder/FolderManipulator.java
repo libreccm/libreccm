@@ -580,7 +580,7 @@ public class FolderManipulator extends SimpleContainer implements
             final PermissionChecker permissionChecker = cdiUtil.findBean(
                     PermissionChecker.class);
 
-            final ContentItem item = itemRepo.findById(itemId);
+            final ContentItem item = itemRepo.findById(itemId).get();
             final String name = item.getDisplayName();
 
             final long count = itemRepo.countByNameInFolder(target, name);

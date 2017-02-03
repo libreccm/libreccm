@@ -75,8 +75,8 @@ public final class AssignedTaskTable extends Table {
 
             if (column == 1) {
                 final AssignableTask task = userTaskRepo.findById((Long) event
-                        .getRowKey());
-                final User currentUser = shiro.getUser();
+                        .getRowKey()).get();
+                final User currentUser = shiro.getUser().get();
                 final User lockingUser = task.getLockingUser();
                 if (task.isLocked()
                             && lockingUser != null

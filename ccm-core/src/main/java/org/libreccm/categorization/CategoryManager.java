@@ -98,7 +98,7 @@ public class CategoryManager {
 
         addObjectToCategory(object, category, null);
     }
-    
+
     /**
      * Assigns an category to an object.
      *
@@ -115,7 +115,7 @@ public class CategoryManager {
      *                 {@code null}.
      * @param category The category to which the object should be assigned. Can
      *                 never be {@code null}.
-     * @param type Type of the categorisation.
+     * @param type     Type of the categorisation.
      */
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
@@ -420,23 +420,44 @@ public class CategoryManager {
         @RequiresPrivilege(PRIVILEGE_MANAGE_CATEGORY)
         final Category parentCategory) {
 
-        final Category sub = categoryRepo.findById(subCategory.getObjectId());
-        final Category parent = categoryRepo.findById(parentCategory
+        if (subCategory == null) {
+            throw new IllegalArgumentException("subCategory can't be null.");
+        }
+        if (parentCategory == null) {
+            throw new IllegalArgumentException("parentCategory can't be null.");
+        }
+        
+        final Optional<Category> sub = categoryRepo.findById(subCategory
+            .getObjectId());
+        final Optional<Category> parent = categoryRepo.findById(parentCategory
             .getObjectId());
 
-        if (sub.getParentCategory() != null) {
-            final Category oldParent = sub.getParentCategory();
-            removeSubCategoryFromCategory(sub, oldParent);
+        if (!sub.isPresent()) {
+            throw new IllegalArgumentException(String.format(
+                "The provided category to add as sub category {} was not found "
+                    + "in the database.",
+                subCategory.toString()));
+        }
+        if (!parent.isPresent()) {
+            throw new IllegalArgumentException(String.format(
+                "The category {} provided as parent category was not found in "
+                    + "the database.",
+                parentCategory.toString()));
         }
 
-        final int order = parent.getSubCategories().size() + 1;
-        parent.addSubCategory(sub);
-        sub.setParentCategory(parent);
-        sub.setCategoryOrder(order);
+        if (sub.get().getParentCategory() != null) {
+            final Category oldParent = sub.get().getParentCategory();
+            removeSubCategoryFromCategory(sub.get(), oldParent);
+        }
+
+        final int order = parent.get().getSubCategories().size() + 1;
+        parent.get().addSubCategory(sub.get());
+        sub.get().setParentCategory(parent.get());
+        sub.get().setCategoryOrder(order);
 
         shiro.getSystemUser().execute(() -> {
-            categoryRepo.save(parent);
-            categoryRepo.save(sub);
+            categoryRepo.save(parent.get());
+            categoryRepo.save(sub.get());
         });
     }
 

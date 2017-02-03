@@ -30,7 +30,7 @@ import org.libreccm.security.UserRepository;
 
 /**
  * Model builder for the {@link UserPropertySheetModelBuilder}.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class UserPropertySheetModelBuilder
@@ -53,7 +53,8 @@ class UserPropertySheetModelBuilder
         } else {
             final UserRepository userRepository = CdiUtil.createCdiUtil().
                 findBean(UserRepository.class);
-            selectedUser = userRepository.findById(Long.parseLong(userIdStr));
+            selectedUser = userRepository.findById(Long.parseLong(userIdStr))
+                .get();
         }
 
         return new UserPropertySheetModel(selectedUser);

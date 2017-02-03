@@ -148,9 +148,9 @@ public class UserManagerTest {
     @UsingDataSet("datasets/org/libreccm/security/UserManagerTest/data.yml")
     @InSequence(200)
     public void verifyPassword() {
-        final User jdoe = userRepository.findByName("jdoe");
-        final User mmuster = userRepository.findByName("mmuster");
-        final User joe = userRepository.findByName("joe");
+        final User jdoe = userRepository.findByName("jdoe").get();
+        final User mmuster = userRepository.findByName("mmuster").get();
+        final User joe = userRepository.findByName("joe").get();
 
         assertThat(userManager.verifyPassword(jdoe, "foo123"), is(true));
         assertThat(userManager.verifyPassword(mmuster, "foo123"), is(true));
@@ -172,7 +172,7 @@ public class UserManagerTest {
                                          "jane.doe@example.org",
                                          "foo456"));
 
-        final User jane2 = userRepository.findByName("jane");
+        final User jane2 = userRepository.findByName("jane").get();
         assertThat(userManager.verifyPassword(jane2, "foo456"), is(true));
     }
 
@@ -198,11 +198,11 @@ public class UserManagerTest {
     @UsingDataSet("datasets/org/libreccm/security/UserManagerTest/data.yml")
     @InSequence(500)
     public void updatePassword() {
-        final User jdoe = userRepository.findByName("jdoe");
+        final User jdoe = userRepository.findByName("jdoe").get();
         shiro.getSystemUser().execute(
             () -> userManager.updatePassword(jdoe, "foo456"));
 
-        final User jdoe2 = userRepository.findByName("jdoe");
+        final User jdoe2 = userRepository.findByName("jdoe").get();
         assertThat(userManager.verifyPassword(jdoe, "foo456"), is(true));
         assertThat(userManager.verifyPassword(jdoe2, "foo456"), is(true));
 

@@ -120,7 +120,7 @@ public class CcmObjectSelectionModel<T extends CcmObject>
         final CcmObjectRepository repository = CdiUtil.createCdiUtil().findBean(
                 CcmObjectRepository.class);
         @SuppressWarnings("unchecked")
-        final T object = (T) repository.findById(key);
+        final T object = (T) repository.findById(key).get();
         return object;
     }
 

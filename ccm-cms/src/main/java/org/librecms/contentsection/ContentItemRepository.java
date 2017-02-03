@@ -103,9 +103,9 @@ public class ContentItemRepository
     @SuppressWarnings("unchecked")
     public <T extends ContentItem> Optional<T> findById(final long itemId,
                                                         final Class<T> type) {
-        final CcmObject result = ccmObjectRepo.findById(itemId);
-        if (result.getClass().isAssignableFrom(type)) {
-            return Optional.of((T) result);
+        final Optional<CcmObject> result = ccmObjectRepo.findById(itemId);
+        if (result.get().getClass().isAssignableFrom(type)) {
+            return Optional.of((T) result.get());
         } else {
             return Optional.empty();
         }

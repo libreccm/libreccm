@@ -149,7 +149,7 @@ public class OneTimeAuthManagerTest {
         excludeColumns = {"token_id", "token", "valid_until"})
     @InSequence(100)
     public void createTokenForUser() {
-        final User mmuster = userRepository.findByName("mmuster");
+        final User mmuster = userRepository.findByName("mmuster").get();
         final OneTimeAuthToken token = shiro.getSystemUser().execute(() -> {
             return oneTimeAuthManager.createForUser(
                 mmuster,
@@ -206,7 +206,7 @@ public class OneTimeAuthManagerTest {
         "datasets/org/libreccm/security/OneTimeAuthManagerTest/data.xml")
     @InSequence(400)
     public void retrieveTokenForUser() {
-        final User jdoe = userRepository.findByName("jdoe");
+        final User jdoe = userRepository.findByName("jdoe").get();
 
         final List<OneTimeAuthToken> result = shiro.getSystemUser().execute(
             () -> {
@@ -229,7 +229,7 @@ public class OneTimeAuthManagerTest {
         "datasets/org/libreccm/security/OneTimeAuthManagerTest/data.xml")
     @InSequence(500)
     public void retrieveNotExistingTokenForUser() {
-        final User mmuster = userRepository.findByName("mmuster");
+        final User mmuster = userRepository.findByName("mmuster").get();
 
         final List<OneTimeAuthToken> result = shiro.getSystemUser().execute(
             () -> {
@@ -261,7 +261,7 @@ public class OneTimeAuthManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(700)
     public void retrieveTokenNullPurpose() throws Throwable {
-        final User mmuster = userRepository.findByName("mmuster");
+        final User mmuster = userRepository.findByName("mmuster").get();
 
         try {
             shiro.getSystemUser().execute(
@@ -276,7 +276,7 @@ public class OneTimeAuthManagerTest {
         "datasets/org/libreccm/security/OneTimeAuthManagerTest/data.xml")
     @InSequence(800)
     public void validTokenExistsForUser() {
-        final User user = userRepository.findByName("jdoe");
+        final User user = userRepository.findByName("jdoe").get();
 
         shiro.getSystemUser().execute(
             () -> {
@@ -292,7 +292,7 @@ public class OneTimeAuthManagerTest {
         "datasets/org/libreccm/security/OneTimeAuthManagerTest/data.xml")
     @InSequence(900)
     public void validTokenDoesNotExist() {
-        final User user = userRepository.findByName("mmuster");
+        final User user = userRepository.findByName("mmuster").get();
 
         shiro.getSystemUser().execute(
             () -> {
@@ -325,7 +325,7 @@ public class OneTimeAuthManagerTest {
     @InSequence(1100)
     public void validTokenNullPurpose() throws Throwable {
         try {
-            final User user = userRepository.findByName("mmuster");
+            final User user = userRepository.findByName("mmuster").get();
             shiro.getSystemUser().execute(
                 () -> oneTimeAuthManager.validTokenExistsForUser(user, null));
         } catch (ExecutionException ex) {
@@ -338,7 +338,7 @@ public class OneTimeAuthManagerTest {
         "datasets/org/libreccm/security/OneTimeAuthManagerTest/data.xml")
     @InSequence(1200)
     public void isValid() {
-        final User jdoe = userRepository.findByName("jdoe");
+        final User jdoe = userRepository.findByName("jdoe").get();
 
         final List<OneTimeAuthToken> result = shiro.getSystemUser().execute(
             () -> {
@@ -358,7 +358,7 @@ public class OneTimeAuthManagerTest {
         "datasets/org/libreccm/security/OneTimeAuthManagerTest/data.xml")
     @InSequence(1300)
     public void isInvalid() {
-        final User jdoe = userRepository.findByName("jdoe");
+        final User jdoe = userRepository.findByName("jdoe").get();
 
         final List<OneTimeAuthToken> result = shiro.getSystemUser().execute(
             () -> {
@@ -402,7 +402,7 @@ public class OneTimeAuthManagerTest {
                     + "after-invalidate.xml")
     @InSequence(1500)
     public void invalidateToken() {
-        final User jdoe = userRepository.findByName("jdoe");
+        final User jdoe = userRepository.findByName("jdoe").get();
 
         final List<OneTimeAuthToken> result = shiro.getSystemUser().execute(
             () -> {

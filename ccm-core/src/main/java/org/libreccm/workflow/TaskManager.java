@@ -27,6 +27,7 @@ import org.libreccm.security.Shiro;
 import org.libreccm.security.User;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.enterprise.context.RequestScoped;
@@ -61,7 +62,7 @@ public class TaskManager {
      * Adds a {@link Task} to a {@link Workflow}.
      *
      * @param workflow The workflow to which the task is added.
-     * @param task The task to add.
+     * @param task     The task to add.
      */
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
@@ -78,7 +79,7 @@ public class TaskManager {
      * Removes a {@link Task} from a {@link Workflow}.
      *
      * @param workflow The workflow from which the task is removed.
-     * @param task The task to remove.
+     * @param task     The task to remove.
      */
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
@@ -95,15 +96,16 @@ public class TaskManager {
      * Adds a dependent {@link Task} to another {@code Task}.
      *
      * @param parent The task to which the dependent task is added.
-     * @param task The dependent task.
+     * @param task   The dependent task.
+     *
      * @throws CircularTaskDependencyException If a circular dependency is
-     * detected.
+     *                                         detected.
      */
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public void addDependentTask(final Task parent, final Task task)
-            throws CircularTaskDependencyException {
+        throws CircularTaskDependencyException {
 
         checkForCircularDependencies(parent, task);
 
@@ -118,7 +120,7 @@ public class TaskManager {
      * Removes a dependent task.
      *
      * @param parent The task from which the dependent task is removed.
-     * @param task The dependent task to remove.
+     * @param task   The dependent task to remove.
      */
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
@@ -136,11 +138,12 @@ public class TaskManager {
      *
      * @param task1
      * @param task2
+     *
      * @throws CircularTaskDependencyException
      */
     private void checkForCircularDependencies(final Task task1,
                                               final Task task2)
-            throws CircularTaskDependencyException {
+        throws CircularTaskDependencyException {
 
         if (dependsOn(task1, task2)) {
             throw new CircularTaskDependencyException();
@@ -154,7 +157,7 @@ public class TaskManager {
             }
 
             if (current.getDependsOn() != null
-                        && !current.getDependsOn().isEmpty()) {
+                    && !current.getDependsOn().isEmpty()) {
                 return dependsOn(current, dependsOn);
             }
         }
@@ -166,19 +169,24 @@ public class TaskManager {
      * Adds a new {@link TaskComment} containing the provided comment to a
      * {@link Task}. The author of the comment is the current user.
      *
-     * @param task The task to which the comment is added.
+     * @param task    The task to which the comment is added.
      * @param comment The comment to add.
      */
     public void addComment(final Task task, final String comment) {
-        addComment(task, shiro.getUser(), comment);
+        final Optional<User> user = shiro.getUser();
+        if (user.isPresent()) {
+            addComment(task, user.get(), comment);
+        } else {
+            throw new IllegalStateException("No current user.");
+        }
     }
 
     /**
      * Adds a new {@link TaskComment} containing the provided comment to a
      * {@link Task}.
      *
-     * @param task The task to which the comment is added.
-     * @param author the author of the comment.
+     * @param task    The task to which the comment is added.
+     * @param author  the author of the comment.
      * @param comment The comment to add.
      */
     public void addComment(final Task task,
@@ -198,7 +206,7 @@ public class TaskManager {
     /**
      * Removes a comment from a task.
      *
-     * @param task The task from which the comment is removed.
+     * @param task    The task from which the comment is removed.
      * @param comment The comment to remove.
      */
     public void removeComment(final Task task, final TaskComment comment) {
@@ -251,8 +259,8 @@ public class TaskManager {
 
         if (task.getTaskState() != TaskState.ENABLED) {
             throw new IllegalArgumentException(String.format(
-                    "Task %s is not enabled.",
-                    Objects.toString(task)));
+                "Task %s is not enabled.",
+                Objects.toString(task)));
         }
 
         task.setTaskState(TaskState.FINISHED);
@@ -282,7 +290,7 @@ public class TaskManager {
             LOGGER.debug("Checking dependency {}...",
                          Objects.toString(dependsOnTask));
             if (dependsOnTask.getTaskState() != TaskState.FINISHED
-                        && dependsOnTask.isActive()) {
+                    && dependsOnTask.isActive()) {
 
                 LOGGER.debug("Dependency is not yet satisfied.");
 

@@ -46,6 +46,7 @@ import org.libreccm.security.User;
 import org.libreccm.security.UserRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -153,19 +154,19 @@ public class ResetPasswordForm extends Form {
         addInitListener(e -> {
             final PageState state = e.getPageState();
             final HttpServletRequest request = state.getRequest();
-            
+
             final String paramEmail = request.getParameter("email");
             final String paramToken = request.getParameter("token");
-            
+
             if (paramEmail != null) {
                 email.setValue(state, paramEmail);
             }
-            
+
             if (paramToken != null) {
                 authToken.setValue(state, paramToken);
             }
         });
-        
+
         addValidationListener(e -> {
             final PageState state = e.getPageState();
 
@@ -182,8 +183,9 @@ public class ResetPasswordForm extends Form {
                 final UserRepository userRepository = cdiUtil.findBean(
                     UserRepository.class);
 
-                final User user = userRepository.findByEmailAddress(emailData);
-                if (user == null) {
+                final Optional<User> user = userRepository.findByEmailAddress(
+                    emailData);
+                if (!user.isPresent()) {
                     data.addError(new GlobalizedMessage(
                         "login.form.reset_password.error", LOGIN_BUNDLE));
                     return;
@@ -192,7 +194,7 @@ public class ResetPasswordForm extends Form {
                 final OneTimeAuthManager oneTimeAuthManager = cdiUtil.findBean(
                     OneTimeAuthManager.class);
                 if (!oneTimeAuthManager.validTokenExistsForUser(
-                    user, OneTimeAuthTokenPurpose.RECOVER_PASSWORD)) {
+                    user.get(), OneTimeAuthTokenPurpose.RECOVER_PASSWORD)) {
 
                     data.addError(new GlobalizedMessage(
                         "login.form.reset_password.error", LOGIN_BUNDLE));
@@ -201,7 +203,7 @@ public class ResetPasswordForm extends Form {
 
                 final List<OneTimeAuthToken> tokens = oneTimeAuthManager
                     .retrieveForUser(
-                        user, OneTimeAuthTokenPurpose.RECOVER_PASSWORD);
+                        user.get(), OneTimeAuthTokenPurpose.RECOVER_PASSWORD);
 
                 boolean result = false;
                 for (OneTimeAuthToken token : tokens) {
@@ -239,8 +241,9 @@ public class ResetPasswordForm extends Form {
                 final UserRepository userRepository = cdiUtil.findBean(
                     UserRepository.class);
 
-                final User user = userRepository.findByEmailAddress(emailData);
-                if (user == null) {
+                final Optional<User> user = userRepository.findByEmailAddress(
+                    emailData);
+                if (!user.isPresent()) {
                     throw new FormProcessException(
                         "No matching user found. This should not happen because "
                         + "we verified that just a few moments ago.",
@@ -251,7 +254,7 @@ public class ResetPasswordForm extends Form {
                 final ChallengeManager challengeManager = cdiUtil.findBean(
                     ChallengeManager.class);
                 try {
-                    challengeManager.finishPasswordRecover(user,
+                    challengeManager.finishPasswordRecover(user.get(),
                                                            authTokenData,
                                                            passwordData);
                 } catch (ChallengeFailedException ex) {

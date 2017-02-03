@@ -23,6 +23,8 @@ import com.arsdigita.ui.login.UserNewForm;
 import org.apache.logging.log4j.util.Strings;
 import org.libreccm.core.CoreConstants;
 
+import java.util.Optional;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.mail.MessagingException;
@@ -126,16 +128,16 @@ public class RegistrationManager {
         user.setBanned(true);
         userRepository.save(user);
 
-        final Group registeredUsers = groupRepository.findByName(
+        final Optional<Group> registeredUsers = groupRepository.findByName(
             REGISTERED_USERS);
         final Group group;
-        if (registeredUsers == null) {
+        if (registeredUsers.isPresent()) {
+            group = registeredUsers.get();
+        } else {
             final Group newGroup = new Group();
             newGroup.setName("registered-users");
             groupRepository.save(newGroup);
             group = newGroup;
-        } else {
-            group = registeredUsers;
         }
 
         groupManager.addMemberToGroup(user, group);
@@ -145,15 +147,11 @@ public class RegistrationManager {
     }
 
     private boolean checkIfUserNameExists(final String userName) {
-        final User user = userRepository.findByName(userName);
-
-        return user != null;
+        return userRepository.findByName(userName).isPresent();
     }
 
     private boolean checkIfEmailIsInUse(final String emailAddress) {
-        final User user = userRepository.findByEmailAddress(emailAddress);
-
-        return user != null;
+        return userRepository.findByEmailAddress(emailAddress).isPresent();
     }
 
 }

@@ -61,7 +61,7 @@ class RoleDetails extends BoxPanel {
             final RoleRepository roleRepository = CdiUtil.createCdiUtil()
                 .findBean(RoleRepository.class);
             final Role role = roleRepository.findById(Long.parseLong(
-                selectedRoleId.getSelectedKey(state)));
+                selectedRoleId.getSelectedKey(state))).get();
             target.setLabel(new GlobalizedMessage(
                 "ui.admin.role_details.heading",
                 ADMIN_BUNDLE,

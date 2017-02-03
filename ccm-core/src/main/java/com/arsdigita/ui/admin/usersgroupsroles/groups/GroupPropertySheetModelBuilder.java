@@ -55,7 +55,7 @@ class GroupPropertySheetModelBuilder
         } else {
             final GroupRepository groupRepository = CdiUtil.createCdiUtil()
                 .findBean(GroupRepository.class);
-            selectedGroup = groupRepository.findById(Long.parseLong(groupIdStr));
+            selectedGroup = groupRepository.findById(Long.parseLong(groupIdStr)).get();
         }
 
         return new GroupPropertySheetModel(selectedGroup);

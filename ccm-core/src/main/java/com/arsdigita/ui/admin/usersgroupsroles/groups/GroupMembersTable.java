@@ -132,10 +132,10 @@ class GroupMembersTable extends Table {
                         final GroupManager groupManager = cdiUtil.findBean(
                             GroupManager.class);
                         final User user = userRepository.findById(Long
-                            .parseLong(key));
+                            .parseLong(key)).get();
                         final Group group = groupRepository.findById(
                             Long.parseLong(
-                                selectedGroupId.getSelectedKey(state)));
+                                selectedGroupId.getSelectedKey(state))).get();
                         groupManager.removeMemberFromGroup(user, group);
                         break;
                     default:
@@ -186,7 +186,7 @@ class GroupMembersTable extends Table {
             final GroupRepository groupRepository = CdiUtil.createCdiUtil()
                 .findBean(GroupRepository.class);
             final Group group = groupRepository.findById(Long.parseLong(
-                selectedGroupId.getSelectedKey(state)));
+                selectedGroupId.getSelectedKey(state))).get();
 
             members = new ArrayList<>();
 

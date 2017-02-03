@@ -39,6 +39,8 @@ import org.libreccm.security.ChallengeManager;
 import org.libreccm.security.User;
 import org.libreccm.security.UserRepository;
 
+import java.util.Optional;
+
 import javax.mail.MessagingException;
 
 import static com.arsdigita.ui.login.LoginConstants.*;
@@ -131,26 +133,18 @@ public class RecoverPasswordForm extends Form {
                 final UserRepository userRepository = cdiUtil.findBean(
                     UserRepository.class);
 
-                final User user = userRepository.findByEmailAddress(
+                final Optional<User> user = userRepository.findByEmailAddress(
                     (String) data.get(EMAIL));
-//                if (user == null) {
-//                    throw new FormProcessException(
-//                        "No user for provided email address found. This should "
-//                            + "not happen because we checked this in the "
-//                            + "validation listener.",
-//                        new GlobalizedMessage(
-//                            "login.form.recover_password.error", LOGIN_BUNDLE));
-//                }
 
                 // We don't show an error message if there is no matching user 
                 // account. This way we don't provide an attacker with 
                 // the valuable information that there is user account for 
                 // a particular email address.
-                if (user != null) {
+                if (user.isPresent()) {
                     final ChallengeManager challengeManager = cdiUtil.findBean(
                         ChallengeManager.class);
                     try {
-                        challengeManager.sendPasswordRecover(user);
+                        challengeManager.sendPasswordRecover(user.get());
                     } catch (MessagingException ex) {
                         throw new FormProcessException(
                             "Failed to send password recovery instructions.",
@@ -161,7 +155,7 @@ public class RecoverPasswordForm extends Form {
                     }
                 }
 
-                if (user == null) {
+                if (!user.isPresent()) {
                     LOGGER.warn(
                         "Password recover requested for not existing user {}.",
                         data.get(EMAIL));

@@ -28,7 +28,10 @@ import org.libreccm.core.CoreConstants;
 
 import javax.persistence.NoResultException;
 import javax.transaction.Transactional;
+
 import org.libreccm.core.CcmObject;
+
+import java.util.Optional;
 
 /**
  * Repository class for {@link Role} entities.
@@ -65,15 +68,15 @@ public class RoleRepository extends AbstractEntityRepository<Long, Role> {
      * @return The role identified by the provided {@code name} or {@code null}
      * if there is no matching role.
      */
-    public Role findByName(final String name) {
+    public Optional<Role> findByName(final String name) {
         final TypedQuery<Role> query = getEntityManager().createNamedQuery(
                 "Role.findByName", Role.class);
         query.setParameter("name", name);
         final List<Role> result = query.getResultList();
         if (result.isEmpty()) {
-            return null;
+            return Optional.empty();
         } else {
-            return result.get(0);
+            return Optional.of(result.get(0));
         }
     }
 

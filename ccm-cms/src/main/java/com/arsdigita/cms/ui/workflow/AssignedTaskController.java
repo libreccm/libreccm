@@ -70,7 +70,7 @@ public class AssignedTaskController {
 
     @Transactional(Transactional.TxType.REQUIRED)
     public List<RowData<Long>> getAssignedTasks(final Workflow workflow) {
-        final User user = shiro.getUser();
+        final User user = shiro.getUser().get();
         final List<AssignableTask> tasks = userTaskRepo.getAssignedTasks(user,
                                                                    workflow);
 

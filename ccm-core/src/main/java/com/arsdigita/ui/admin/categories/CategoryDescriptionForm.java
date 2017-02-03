@@ -52,17 +52,17 @@ public class CategoryDescriptionForm extends Form {
     private final SaveCancelSection saveCancelSection;
 
     public CategoryDescriptionForm(
-            final CategoriesTab categoriesTab,
-            final ParameterSingleSelectionModel<String> selectedCategoryId,
-            final ParameterSingleSelectionModel<String> selectedLanguage) {
+        final CategoriesTab categoriesTab,
+        final ParameterSingleSelectionModel<String> selectedCategoryId,
+        final ParameterSingleSelectionModel<String> selectedLanguage) {
 
         super("categoryDescriptionForm", new BoxPanel(BoxPanel.VERTICAL));
 
         this.categoriesTab = categoriesTab;
 
         final ActionLink backLink = new ActionLink(new GlobalizedMessage(
-                "ui.admin.categories.category.description.edit.back",
-                ADMIN_BUNDLE));
+            "ui.admin.categories.category.description.edit.back",
+            ADMIN_BUNDLE));
         backLink.addActionListener(e -> {
             categoriesTab.hideDomainTitleForm(e.getPageState());
         });
@@ -72,28 +72,28 @@ public class CategoryDescriptionForm extends Form {
             final PageState state = e.getPageState();
 
             final CategoryRepository categoryRepository = CdiUtil.
-                    createCdiUtil()
-                    .findBean(CategoryRepository.class);
+                createCdiUtil()
+                .findBean(CategoryRepository.class);
             final Category selectedCategory = categoryRepository.findById(
-                    Long.parseLong(selectedCategoryId.getSelectedKey(state)));
+                Long.parseLong(selectedCategoryId.getSelectedKey(state))).get();
 
             final Locale selectedLocale = new Locale(selectedLanguage
-                    .getSelectedKey(state));
+                .getSelectedKey(state));
 
             final Label target = (Label) e.getTarget();
 
             if (selectedCategory.getDescription().hasValue(selectedLocale)) {
                 target.setLabel(new GlobalizedMessage(
-                        "ui.admin.categories.category.description.edit_for_lang",
-                        ADMIN_BUNDLE,
-                        new String[]{selectedCategory.getName(),
-                                     selectedLocale.toString()}));
+                    "ui.admin.categories.category.description.edit_for_lang",
+                    ADMIN_BUNDLE,
+                    new String[]{selectedCategory.getName(),
+                                 selectedLocale.toString()}));
             } else {
                 target.setLabel(new GlobalizedMessage(
-                        "ui.admin.categories.category.description.add_for_lang",
-                        ADMIN_BUNDLE,
-                        new String[]{selectedCategory.getName(),
-                                     selectedLocale.toString()}));
+                    "ui.admin.categories.category.description.add_for_lang",
+                    ADMIN_BUNDLE,
+                    new String[]{selectedCategory.getName(),
+                                 selectedLocale.toString()}));
             }
         });
         heading.setClassAttr("heading");
@@ -101,7 +101,7 @@ public class CategoryDescriptionForm extends Form {
 
         description = new TextArea(LOCALIZED_CATEGORY_DESC);
         description.setLabel(new GlobalizedMessage(
-                "ui.admin.categories.category.description.label", ADMIN_BUNDLE));
+            "ui.admin.categories.category.description.label", ADMIN_BUNDLE));
         description.setCols(60);
         description.setRows(10);
         add(description);
@@ -113,12 +113,12 @@ public class CategoryDescriptionForm extends Form {
             final PageState state = e.getPageState();
 
             final CategoryRepository categoryRepository = CdiUtil.
-                    createCdiUtil().findBean(CategoryRepository.class);
+                createCdiUtil().findBean(CategoryRepository.class);
             final Category selectedCategory = categoryRepository.findById(
-                    Long.parseLong(selectedCategoryId.getSelectedKey(state)));
+                Long.parseLong(selectedCategoryId.getSelectedKey(state))).get();
 
             final Locale selectedLocale = new Locale(selectedLanguage
-                    .getSelectedKey(state));
+                .getSelectedKey(state));
 
             if (selectedCategory.getDescription().hasValue(selectedLocale)) {
                 description.setValue(state, selectedCategory.getDescription()
@@ -129,17 +129,17 @@ public class CategoryDescriptionForm extends Form {
         addValidationListener(e -> {
 
             if (saveCancelSection.getSaveButton().isSelected(
-                    e.getPageState())) {
+                e.getPageState())) {
                 final FormData data = e.getFormData();
 
                 final String titleData = data.getString(LOCALIZED_CATEGORY_DESC);
 
                 if (Strings.isBlank(titleData)) {
                     data.addError(
-                            LOCALIZED_CATEGORY_DESC,
-                            new GlobalizedMessage(
-                                    "ui.admin.categories.category.description.error.not_blank",
-                                    ADMIN_BUNDLE));
+                        LOCALIZED_CATEGORY_DESC,
+                        new GlobalizedMessage(
+                            "ui.admin.categories.category.description.error.not_blank",
+                            ADMIN_BUNDLE));
                 }
             }
         });
@@ -149,16 +149,17 @@ public class CategoryDescriptionForm extends Form {
 
             if (saveCancelSection.getSaveButton().isSelected(state)) {
                 final CategoryRepository categoryRepository = CdiUtil
-                        .createCdiUtil()
-                        .findBean(CategoryRepository.class);
+                    .createCdiUtil()
+                    .findBean(CategoryRepository.class);
                 final Category selectedCategory = categoryRepository.findById(
-                        Long.parseLong(selectedCategoryId.getSelectedKey(state)));
+                    Long.parseLong(selectedCategoryId.getSelectedKey(state)))
+                    .get();
 
                 final Locale selectedLocale = new Locale(selectedLanguage
-                        .getSelectedKey(state));
+                    .getSelectedKey(state));
 
                 final String titleData = e.getFormData().getString(
-                        LOCALIZED_CATEGORY_DESC);
+                    LOCALIZED_CATEGORY_DESC);
 
                 selectedCategory.getDescription().addValue(selectedLocale,
                                                            titleData);

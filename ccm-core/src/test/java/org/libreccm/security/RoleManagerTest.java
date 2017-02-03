@@ -142,11 +142,11 @@ public class RoleManagerTest {
         excludeColumns = {"membership_id"})
     @InSequence(200)
     public void assignRoleToParty() {
-        final Role role1 = roleRepository.findByName("role1");
-        final Role role3 = roleRepository.findByName("role3");
+        final Role role1 = roleRepository.findByName("role1").get();
+        final Role role3 = roleRepository.findByName("role3").get();
 
-        final Party joe = partyRepository.findByName("joe");
-        final Party group1 = partyRepository.findByName("group1");
+        final Party joe = partyRepository.findByName("joe").get();
+        final Party group1 = partyRepository.findByName("group1").get();
 
         shiro.getSystemUser().execute(() -> {
             roleManager.assignRoleToParty(role1, joe);
@@ -159,7 +159,7 @@ public class RoleManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(210)
     public void assignRoleNullToParty() throws Throwable {
-        final Party party = partyRepository.findByName("jdoe");
+        final Party party = partyRepository.findByName("jdoe").get();
 
         try {
             shiro.getSystemUser().execute(
@@ -174,7 +174,7 @@ public class RoleManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(220)
     public void assignRoleToPartyNull() throws Throwable {
-        final Role role = roleRepository.findByName("role1");
+        final Role role = roleRepository.findByName("role1").get();
 
         try {
             shiro.getSystemUser().execute(
@@ -190,8 +190,8 @@ public class RoleManagerTest {
         value = "datasets/org/libreccm/security/RoleManagerTest/data.yml")
     @InSequence(230)
     public void assignRoleToPartyAgain() {
-        final Party jdoe = partyRepository.findByName("jdoe");
-        final Role role1 = roleRepository.findByName("role1");
+        final Party jdoe = partyRepository.findByName("jdoe").get();
+        final Role role1 = roleRepository.findByName("role1").get();
 
         shiro.getSystemUser().execute(
             () -> roleManager.assignRoleToParty(role1, jdoe));
@@ -205,11 +205,11 @@ public class RoleManagerTest {
         excludeColumns = {"membership_id"})
     @InSequence(300)
     public void removeRoleFromParty() {
-        final Role role1 = roleRepository.findByName("role1");
-        final Role role2 = roleRepository.findByName("role2");
+        final Role role1 = roleRepository.findByName("role1").get();
+        final Role role2 = roleRepository.findByName("role2").get();
 
-        final Party jdoe = partyRepository.findByName("jdoe");
-        final Party group1 = partyRepository.findByName("group1");
+        final Party jdoe = partyRepository.findByName("jdoe").get();
+        final Party group1 = partyRepository.findByName("group1").get();
 
         shiro.getSystemUser().execute(() -> {
             roleManager.removeRoleFromParty(role1, jdoe);
@@ -222,7 +222,7 @@ public class RoleManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(310)
     public void removeRoleNullFromParty() throws Throwable {
-        final Party party = partyRepository.findByName("jdoe");
+        final Party party = partyRepository.findByName("jdoe").get();
 
         try {
             shiro.getSystemUser().execute(
@@ -237,7 +237,7 @@ public class RoleManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(220)
     public void removeRoleFromPartyNull() throws Throwable {
-        final Role role = roleRepository.findByName("role1");
+        final Role role = roleRepository.findByName("role1").get();
         try {
             shiro.getSystemUser().execute(
                 () -> roleManager.removeRoleFromParty(role, null));
@@ -252,8 +252,8 @@ public class RoleManagerTest {
         value = "datasets/org/libreccm/security/RoleManagerTest/data.yml")
     @InSequence(330)
     public void removeNotAssignedRoleFromParty() {
-        final Role role2 = roleRepository.findByName("role2");
-        final Party jdoe = partyRepository.findByName("jdoe");
+        final Role role2 = roleRepository.findByName("role2").get();
+        final Party jdoe = partyRepository.findByName("jdoe").get();
 
         shiro.getSystemUser().execute(
             () -> roleManager.removeRoleFromParty(role2, jdoe));

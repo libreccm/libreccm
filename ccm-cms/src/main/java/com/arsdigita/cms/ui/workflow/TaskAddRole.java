@@ -139,7 +139,7 @@ class TaskAddRole extends CMSForm {
                 if (roleIds != null) {
                     for (final String roleId : roleIds) {
                         final Role role = roleRepository.findById(Long
-                            .parseLong(roleId));
+                            .parseLong(roleId)).get();
                         taskManager.assignTask(task, role);
                     }
                 }

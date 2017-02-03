@@ -58,7 +58,7 @@ public class ContentSectionSummaryController {
     @Transactional(Transactional.TxType.REQUIRED)
     public List<RowData<Long>> createReportData(final ContentSection section) {
         final ContentSection contentSection = sectionRepo.findById(
-            section.getObjectId());
+            section.getObjectId()).get();
 
         final List<Folder> rootFolders = contentSection.getRootDocumentsFolder()
             .getSubFolders();

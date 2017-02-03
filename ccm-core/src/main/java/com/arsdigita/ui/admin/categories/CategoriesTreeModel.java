@@ -47,7 +47,7 @@ public class CategoriesTreeModel implements TreeModel {
         final CategoryRepository categoryRepository = CdiUtil.createCdiUtil()
             .findBean(CategoryRepository.class);
         final Category category = categoryRepository.findById(domain.getRoot()
-            .getObjectId());
+            .getObjectId()).get();
         return new CategoryTreeNode(category);
     }
 
@@ -57,7 +57,7 @@ public class CategoriesTreeModel implements TreeModel {
         final CategoryRepository categoryRepo = CdiUtil.createCdiUtil()
             .findBean(CategoryRepository.class);
         final Category category = categoryRepo.findById(
-            ((CategoryTreeNode) node).getCategory().getObjectId());
+            ((CategoryTreeNode) node).getCategory().getObjectId()).get();
 
         return (category.getSubCategories() != null
                 && !category.getSubCategories().isEmpty());
@@ -69,7 +69,7 @@ public class CategoriesTreeModel implements TreeModel {
         final CategoryRepository categoryRepo = CdiUtil.createCdiUtil()
             .findBean(CategoryRepository.class);
         final Category category = categoryRepo.findById(
-            ((CategoryTreeNode) node).getCategory().getObjectId());
+            ((CategoryTreeNode) node).getCategory().getObjectId()).get();
 
         return new SubCategoryNodesIterator(category.getSubCategories());
     }

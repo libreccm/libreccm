@@ -57,7 +57,7 @@ public class CategoryPropertySheetModelBuilder
             final CategoryRepository categoryRepository = CdiUtil.
                     createCdiUtil().findBean(CategoryRepository.class);
             selectedCategory = categoryRepository.findById(Long.parseLong(
-                    categoryIdStr));
+                    categoryIdStr)).get();
         }
         
         return new CategoryPropertySheetModel(selectedCategory);

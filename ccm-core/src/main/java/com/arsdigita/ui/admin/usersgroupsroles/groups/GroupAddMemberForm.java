@@ -53,11 +53,11 @@ import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
  * Form for adding a new member to group. The form contains a form for searching
- * members (uses the user name, the family name, the given name and the primary 
+ * members (uses the user name, the family name, the given name and the primary
  * email address). After a search term was send, a table with all matching users
  * is displayed. The table also contains an action link for adding a user to the
  * group which is currently selected..
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class GroupAddMemberForm extends Form {
@@ -95,7 +95,7 @@ class GroupAddMemberForm extends Form {
             final GroupRepository groupRepository = CdiUtil.createCdiUtil()
                 .findBean(GroupRepository.class);
             final Group group = groupRepository.findById(Long.parseLong(
-                selectedGroupId.getSelectedKey(state)));
+                selectedGroupId.getSelectedKey(state))).get();
 
             target.setLabel(new GlobalizedMessage(
                 "ui.admin.group_details.add_member.header",
@@ -104,7 +104,7 @@ class GroupAddMemberForm extends Form {
 
         });
         links.add(heading);
-        
+
         add(links);
 
         memberName = new TextField(MEMBER_NAME);
@@ -191,10 +191,11 @@ class GroupAddMemberForm extends Form {
                             final GroupManager groupManager = cdiUtil.findBean(
                                 GroupManager.class);
                             final User user = userRepository.findById(Long
-                                .parseLong(key));
+                                .parseLong(key)).get();
                             final Group group = groupRepository.findById(
                                 Long.parseLong(
-                                    selectedGroupId.getSelectedKey(state)));
+                                    selectedGroupId.getSelectedKey(state)))
+                                .get();
                             groupManager.addMemberToGroup(user, group);
                             groupAdmin.hideGroupMemberAddForm(state);
                             break;

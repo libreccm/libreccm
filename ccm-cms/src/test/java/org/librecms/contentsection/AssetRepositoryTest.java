@@ -199,9 +199,7 @@ public class AssetRepositoryTest {
         excludeColumns = {"timestamp", "object_order"}
     )
     public void deleteUnusedAsset() {
-        final Asset asset = assetRepo.findById(-800L);
-
-        assertThat(asset, is(not(nullValue())));
+        final Asset asset = assetRepo.findById(-800L).get();
 
         assetRepo.delete(asset);
     }
@@ -220,9 +218,7 @@ public class AssetRepositoryTest {
             + "data.xml")
     @ShouldThrowException(AssetInUseException.class)
     public void deleteUsedAsset() {
-        final Asset asset = assetRepo.findById(-700L);
-
-        assertThat(asset, is(not(nullValue())));
+        final Asset asset = assetRepo.findById(-700L).get();
 
         assetRepo.delete(asset);
     }
@@ -324,8 +320,8 @@ public class AssetRepositoryTest {
     @UsingDataSet(
         "datasets/org/librecms/contentsection/AssetRepositoryTest/data.xml")
     public void findAssetsByFolder() {
-        final Folder media = folderRepo.findById(-400L);
-        final Folder data = folderRepo.findById(-500L);
+        final Folder media = folderRepo.findById(-400L).get();
+        final Folder data = folderRepo.findById(-500L).get();
 
         final List<Asset> mediaAssets = assetRepo.findByFolder(media);
         final List<Asset> dataAssets = assetRepo.findByFolder(data);
@@ -344,8 +340,8 @@ public class AssetRepositoryTest {
     @UsingDataSet(
         "datasets/org/librecms/contentsection/AssetRepositoryTest/data.xml")
     public void countAssetsInFolder() {
-        final Folder media = folderRepo.findById(-400L);
-        final Folder data = folderRepo.findById(-500L);
+        final Folder media = folderRepo.findById(-400L).get();
+        final Folder data = folderRepo.findById(-500L).get();
 
         assertThat(assetRepo.countAssetsInFolder(media), is(5L));
         assertThat(assetRepo.countAssetsInFolder(data), is(0L));
@@ -360,7 +356,7 @@ public class AssetRepositoryTest {
     @UsingDataSet(
         "datasets/org/librecms/contentsection/AssetRepositoryTest/data.xml")
     public void filterAssetByFolderAndName() {
-        final Folder media = folderRepo.findById(-400L);
+        final Folder media = folderRepo.findById(-400L).get();
 
         final List<Asset> result1 = assetRepo.filterByFolderAndName(media,
                                                                     "hea");
@@ -383,7 +379,7 @@ public class AssetRepositoryTest {
     @UsingDataSet(
         "datasets/org/librecms/contentsection/AssetRepositoryTest/data.xml")
     public void countFilterAssetByFolderAndName() {
-        final Folder media = folderRepo.findById(-400L);
+        final Folder media = folderRepo.findById(-400L).get();
 
         assertThat(assetRepo.countFilterByFolderAndName(media, "hea"),
                    is(1L));
@@ -401,7 +397,7 @@ public class AssetRepositoryTest {
     @UsingDataSet(
         "datasets/org/librecms/contentsection/AssetRepositoryTest/data.xml")
     public void filterAssetsByFolderAndType() {
-        final Folder media = folderRepo.findById(-400L);
+        final Folder media = folderRepo.findById(-400L).get();
 
         final List<Asset> images = assetRepo.filterByFolderAndType(media,
                                                                    Image.class);
@@ -434,7 +430,7 @@ public class AssetRepositoryTest {
     @UsingDataSet(
         "datasets/org/librecms/contentsection/AssetRepositoryTest/data.xml")
     public void countFilterAssetsByFolderAndType() {
-        final Folder media = folderRepo.findById(-400L);
+        final Folder media = folderRepo.findById(-400L).get();
 
         assertThat(assetRepo.countFilterByFolderAndType(media, Image.class),
                    is(3L));
@@ -454,7 +450,7 @@ public class AssetRepositoryTest {
     @UsingDataSet(
         "datasets/org/librecms/contentsection/AssetRepositoryTest/data.xml")
     public void filterAssetsByFolderAndTypeAndName() {
-        final Folder media = folderRepo.findById(-400L);
+        final Folder media = folderRepo.findById(-400L).get();
 
         final List<Asset> result1 = assetRepo.filterByFolderAndTypeAndName(
             media, Image.class, "hea");
@@ -476,7 +472,7 @@ public class AssetRepositoryTest {
     @UsingDataSet(
         "datasets/org/librecms/contentsection/AssetRepositoryTest/data.xml")
     public void countFilterAssetsByFolderAndTypeAndName() {
-        final Folder media = folderRepo.findById(-400L);
+        final Folder media = folderRepo.findById(-400L).get();
 
         assertThat(assetRepo.countFilterByFolderAndTypeAndName(
             media, Image.class, "hea"),

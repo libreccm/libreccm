@@ -63,7 +63,7 @@ public class CategoryCreateForm extends Form {
             final CategoryRepository categoryRepository = CdiUtil
                 .createCdiUtil().findBean(CategoryRepository.class);
             final Category category = categoryRepository.findById(Long
-                .parseLong(selectedCategoryId.getSelectedKey(state)));
+                .parseLong(selectedCategoryId.getSelectedKey(state))).get();
             target.setLabel(new GlobalizedMessage(
                 "ui.admin.categories.category.create_new_subcategory",
                 ADMIN_BUNDLE,
@@ -108,7 +108,8 @@ public class CategoryCreateForm extends Form {
                     CategoryManager.class);
 
                 final Category selectedCategory = categoryRepository.findById(
-                    Long.parseLong(selectedCategoryId.getSelectedKey(state)));
+                    Long.parseLong(selectedCategoryId.getSelectedKey(state)))
+                    .get();
 
                 final FormData data = e.getFormData();
                 final String categoryNameData = data.getString(CATEGORY_NAME);
