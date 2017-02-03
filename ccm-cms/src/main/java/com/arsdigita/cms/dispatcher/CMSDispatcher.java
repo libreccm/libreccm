@@ -195,7 +195,7 @@ public class CMSDispatcher implements Dispatcher, ChainedDispatcher {
         } else if (remainingUrl.endsWith(ItemDispatcher.FILE_SUFFIX)) {
             remainingUrl = remainingUrl.substring(0, remainingUrl.length()
                                                          - ItemDispatcher.FILE_SUFFIX
-                                                  .length());
+                                                      .length());
         } else if (remainingUrl.equals("")) {
             remainingUrl = "index";
         }
@@ -362,8 +362,7 @@ public class CMSDispatcher implements Dispatcher, ChainedDispatcher {
      * @param request  The HTTP request
      * @param response The HTTP response
      * @param actx     The request context
-     *
-     * @exception AccessDeniedException if the user does not have access.
+     * @throws javax.servlet.ServletException
      *
      */
     protected void checkUserAccess(HttpServletRequest request,
@@ -371,10 +370,11 @@ public class CMSDispatcher implements Dispatcher, ChainedDispatcher {
                                    RequestContext actx)
         throws ServletException, AuthorizationException {
 
-        final Shiro shiro = CdiUtil.createCdiUtil().findBean(Shiro.class);
-        User user = shiro.getUser();
-        final PermissionChecker permissionChecker = CdiUtil.createCdiUtil()
-            .findBean(PermissionChecker.class);
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final Shiro shiro = cdiUtil.findBean(Shiro.class);
+        User user = shiro.getUser().get();
+        final PermissionChecker permissionChecker = cdiUtil.findBean(
+            PermissionChecker.class);
 
         ContentSection section = getContentSection(request);
 
@@ -492,6 +492,7 @@ public class CMSDispatcher implements Dispatcher, ChainedDispatcher {
      * @param context The use context
      *
      * @return The item associated with the URL, or null if no such item exists
+     *
      * @throws javax.servlet.ServletException
      */
     protected ContentItem getContentItem(ContentSection section, String url,
@@ -499,8 +500,10 @@ public class CMSDispatcher implements Dispatcher, ChainedDispatcher {
         throws ServletException {
 
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-        final ContentSectionManager sectionManager = cdiUtil.findBean(ContentSectionManager.class);
-        final ItemResolver itemResolver = sectionManager.getItemResolver(section);
+        final ContentSectionManager sectionManager = cdiUtil.findBean(
+            ContentSectionManager.class);
+        final ItemResolver itemResolver = sectionManager
+            .getItemResolver(section);
 
         return itemResolver.getItem(section, url, context);
     }
@@ -537,9 +540,9 @@ public class CMSDispatcher implements Dispatcher, ChainedDispatcher {
         try {
             pageResolver = (PageResolver) Class.forName(pageResolverClassName)
                 .newInstance();
-        } catch (ClassNotFoundException |
-                 IllegalAccessException |
-                 InstantiationException ex) {
+        } catch (ClassNotFoundException
+                 | IllegalAccessException
+                 | InstantiationException ex) {
             throw new RuntimeException(ex);
         }
         pageResolver.releasePage(url);
@@ -568,9 +571,9 @@ public class CMSDispatcher implements Dispatcher, ChainedDispatcher {
                 pageResolver = (PageResolver) Class.forName(
                     pageResolverClassName)
                     .newInstance();
-            } catch (ClassNotFoundException |
-                     IllegalAccessException |
-                     InstantiationException ex) {
+            } catch (ClassNotFoundException
+                     | IllegalAccessException
+                     | InstantiationException ex) {
                 throw new RuntimeException(ex);
             }
             s_pageResolverCache.put(name, pageResolver);
@@ -587,16 +590,16 @@ public class CMSDispatcher implements Dispatcher, ChainedDispatcher {
      * @return The ItemResolver associated with the content section
      */
     public static ItemResolver getItemResolver(ContentSection section) {
-        
+
         final Class<?> clazz;
         try {
-            clazz =  Class.forName(section.getItemResolverClass());
-        } catch(ClassNotFoundException ex) {
+            clazz = Class.forName(section.getItemResolverClass());
+        } catch (ClassNotFoundException ex) {
             throw new UncheckedWrapperException(ex);
         }
-        
+
         return (ItemResolver) CdiUtil.createCdiUtil().findBean(clazz);
-        
+
     }
 
     /**
@@ -614,9 +617,9 @@ public class CMSDispatcher implements Dispatcher, ChainedDispatcher {
             try {
                 xmlGenerator = (XMLGenerator) Class.forName(
                     xmlGeneratorClassName).newInstance();
-            } catch (ClassNotFoundException |
-                     IllegalAccessException |
-                     InstantiationException ex) {
+            } catch (ClassNotFoundException
+                     | IllegalAccessException
+                     | InstantiationException ex) {
                 throw new RuntimeException(ex);
             }
             s_xmlGeneratorCache.put(name, xmlGenerator);

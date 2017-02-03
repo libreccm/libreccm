@@ -351,10 +351,10 @@ public class MultilingualItemResolver implements ItemResolver {
             // No template context here.
             return generateDraftURL(section, itemId);
         } else if (CMSDispatcher.PREVIEW.equals(context)) {
-            final ContentItem item = itemRepo.findById(itemId);
+            final ContentItem item = itemRepo.findById(itemId).get();
             return generatePreviewURL(section, item, templateContext);
         } else if (ContentItemVersion.LIVE.toString().equals(context)) {
-            final ContentItem item = itemRepo.findById(itemId);
+            final ContentItem item = itemRepo.findById(itemId).get();
 
             return generateLiveURL(section, item, templateContext);
         } else {

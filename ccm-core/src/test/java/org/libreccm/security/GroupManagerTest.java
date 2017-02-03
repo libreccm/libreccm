@@ -157,11 +157,11 @@ public class GroupManagerTest {
         excludeColumns = {"membership_id"})
     @InSequence(200)
     public void addUserToGroup() {
-        final Group admins = groupRepository.findByName("admins");
-        final Group editors = groupRepository.findByName("editors");
+        final Group admins = groupRepository.findByName("admins").get();
+        final Group editors = groupRepository.findByName("editors").get();
 
-        final User jdoe = userRepository.findByName("jdoe");
-        final User mmuster = userRepository.findByName("mmuster");
+        final User jdoe = userRepository.findByName("jdoe").get();
+        final User mmuster = userRepository.findByName("mmuster").get();
 
         shiro.getSystemUser().execute(() -> {
             groupManager.addMemberToGroup(mmuster, admins);
@@ -174,7 +174,7 @@ public class GroupManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(210)
     public void addNullUserToGroup() throws Throwable {
-        final Group admins = groupRepository.findByName("admins");
+        final Group admins = groupRepository.findByName("admins").get();
 
         try {
             shiro.getSystemUser().execute(
@@ -189,7 +189,7 @@ public class GroupManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(220)
     public void addUserToGroupNull() throws Throwable {
-        final User jdoe = userRepository.findByName("jdoe");
+        final User jdoe = userRepository.findByName("jdoe").get();
 
         try {
             shiro.getSystemUser().execute(
@@ -205,8 +205,8 @@ public class GroupManagerTest {
         value = "datasets/org/libreccm/security/GroupManagerTest/data.yml")
     @InSequence(230)
     public void addUserToGroupAgain() {
-        final Group admins = groupRepository.findByName("admins");
-        final User jdoe = userRepository.findByName("jdoe");
+        final Group admins = groupRepository.findByName("admins").get();
+        final User jdoe = userRepository.findByName("jdoe").get();
 
         shiro.getSystemUser().execute(
             () -> groupManager.addMemberToGroup(jdoe, admins));
@@ -218,11 +218,11 @@ public class GroupManagerTest {
                             + "after-remove.yml")
     @InSequence(300)
     public void removeUserFromGroup() {
-        final Group admins = groupRepository.findByName("admins");
-        final Group users = groupRepository.findByName("users");
+        final Group admins = groupRepository.findByName("admins").get();
+        final Group users = groupRepository.findByName("users").get();
 
-        final User jdoe = userRepository.findByName("jdoe");
-        final User mmuster = userRepository.findByName("mmuster");
+        final User jdoe = userRepository.findByName("jdoe").get();
+        final User mmuster = userRepository.findByName("mmuster").get();
 
         assertThat(admins.getMemberships().size(), is(1));
         assertThat(users.getMemberships().size(), is(2));
@@ -238,7 +238,7 @@ public class GroupManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(310)
     public void removeUserNullFromGroup() throws Throwable {
-        final Group admins = groupRepository.findByName("admins");
+        final Group admins = groupRepository.findByName("admins").get();
 
         try {
             shiro.getSystemUser().execute(
@@ -253,7 +253,7 @@ public class GroupManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(320)
     public void removeUserFromGroupNull() throws Throwable {
-        final User jdoe = userRepository.findByName("jdoe");
+        final User jdoe = userRepository.findByName("jdoe").get();
 
         try {
             shiro.getSystemUser().execute(
@@ -269,8 +269,8 @@ public class GroupManagerTest {
         value = "datasets/org/libreccm/security/GroupManagerTest/data.yml")
     @InSequence(330)
     public void removeUserGroupNotAMember() {
-        final Group admins = groupRepository.findByName("admins");
-        final User mmuster = userRepository.findByName("mmuster");
+        final Group admins = groupRepository.findByName("admins").get();
+        final User mmuster = userRepository.findByName("mmuster").get();
 
         shiro.getSystemUser().execute(
             () -> groupManager.removeMemberFromGroup(mmuster, admins));

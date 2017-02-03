@@ -199,9 +199,9 @@ public class SubCategoriesTable extends Table {
                             .findBean(CategoryManager.class);
                         final Category parentCategory = categoryRepo.findById(
                             Long.parseLong(selectedCategoryId.getSelectedKey(
-                                state)));
+                                state))).get();
                         final Category subCategory = categoryRepo.findById(Long
-                            .parseLong((String) event.getRowKey()));
+                            .parseLong((String) event.getRowKey())).get();
                         categoryManager.decreaseCategoryOrder(subCategory,
                                                               parentCategory);
                         break;
@@ -214,9 +214,9 @@ public class SubCategoriesTable extends Table {
                             .findBean(CategoryManager.class);
                         final Category parentCategory = categoryRepo.findById(
                             Long.parseLong(selectedCategoryId.getSelectedKey(
-                                state)));
+                                state))).get();
                         final Category subCategory = categoryRepo.findById(Long
-                            .parseLong((String) event.getRowKey()));
+                            .parseLong((String) event.getRowKey())).get();
                         categoryManager.increaseCategoryOrder(subCategory,
                                                               parentCategory);
                         break;
@@ -232,7 +232,7 @@ public class SubCategoriesTable extends Table {
                         final CategoryRepository categoryRepo = cdiUtil
                             .findBean(CategoryRepository.class);
                         final Category category = categoryRepo.findById(Long
-                            .parseLong((String) event.getRowKey()));
+                            .parseLong((String) event.getRowKey())).get();
                         categoryRepo.delete(category);
                         break;
                     }
@@ -271,7 +271,7 @@ public class SubCategoriesTable extends Table {
             final CategoryRepository categoryRepo = CdiUtil.
                 createCdiUtil().findBean(CategoryRepository.class);
             final Category category = categoryRepo.findById(Long.parseLong(
-                selectedCategoryId.getSelectedKey(state)));
+                selectedCategoryId.getSelectedKey(state))).get();
 
             subCategories = new ArrayList<>(category.getSubCategories());
             subCategories.sort((c1, c2) -> {

@@ -73,7 +73,7 @@ class DomainDescriptionForm extends Form {
             final DomainRepository domainRepository = CdiUtil.createCdiUtil()
                 .findBean(DomainRepository.class);
             final Domain selectedDomain = domainRepository.findById(
-                Long.parseLong(selectedDomainId.getSelectedKey(state)));
+                Long.parseLong(selectedDomainId.getSelectedKey(state))).get();
 
             final Locale selectedLocale = new Locale(selectedLanguage
                 .getSelectedKey(state));
@@ -113,7 +113,7 @@ class DomainDescriptionForm extends Form {
             final DomainRepository domainRepository = CdiUtil.createCdiUtil()
                 .findBean(DomainRepository.class);
             final Domain selectedDomain = domainRepository.findById(
-                Long.parseLong(selectedDomainId.getSelectedKey(state)));
+                Long.parseLong(selectedDomainId.getSelectedKey(state))).get();
 
             final Locale selectedLocale = new Locale(selectedLanguage
                 .getSelectedKey(state));
@@ -150,7 +150,8 @@ class DomainDescriptionForm extends Form {
                     .createCdiUtil()
                     .findBean(DomainRepository.class);
                 final Domain selectedDomain = domainRepository.findById(
-                    Long.parseLong(selectedDomainId.getSelectedKey(state)));
+                    Long.parseLong(selectedDomainId.getSelectedKey(state)))
+                    .get();
 
                 final Locale selectedLocale = new Locale(selectedLanguage
                     .getSelectedKey(state));

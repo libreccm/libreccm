@@ -81,7 +81,7 @@ class DomainDetails extends SegmentedPanel {
             final DomainRepository domainRepository = CdiUtil.createCdiUtil()
                 .findBean(DomainRepository.class);
             final Domain domain = domainRepository.findById(Long.parseLong(
-                selectedDomainId.getSelectedKey(state)));
+                selectedDomainId.getSelectedKey(state))).get();
 
             target.setLabel(new GlobalizedMessage(
                 "ui.admin.categories.domain.details.heading",
@@ -163,7 +163,8 @@ class DomainDetails extends SegmentedPanel {
                     final DomainRepository domainRepository = CdiUtil
                         .createCdiUtil().findBean(DomainRepository.class);
                     final Domain domain = domainRepository.findById(Long
-                        .parseLong(selectedDomainId.getSelectedKey(state)));
+                        .parseLong(selectedDomainId.getSelectedKey(state)))
+                        .get();
                     final KernelConfig kernelConfig = KernelConfig.getConfig();
                     final Set<String> supportedLanguages = kernelConfig
                         .getSupportedLanguages();
@@ -208,8 +209,7 @@ class DomainDetails extends SegmentedPanel {
                 final DomainRepository domainRepository = CdiUtil
                     .createCdiUtil().findBean(DomainRepository.class);
                 final Domain domain = domainRepository.findById(Long
-                    .parseLong(
-                        selectedDomainId.getSelectedKey(state)));
+                    .parseLong(selectedDomainId.getSelectedKey(state))).get();
                 final KernelConfig kernelConfig = KernelConfig.getConfig();
                 final Set<String> supportedLanguages = kernelConfig
                     .getSupportedLanguages();
@@ -247,8 +247,8 @@ class DomainDetails extends SegmentedPanel {
                     final DomainRepository domainRepository = CdiUtil
                         .createCdiUtil().findBean(DomainRepository.class);
                     final Domain domain = domainRepository.findById(Long
-                        .parseLong(
-                            selectedDomainId.getSelectedKey(state)));
+                        .parseLong(selectedDomainId.getSelectedKey(state)))
+                        .get();
                     final KernelConfig kernelConfig = KernelConfig.getConfig();
                     final Set<String> supportedLanguages = kernelConfig
                         .getSupportedLanguages();
@@ -294,8 +294,7 @@ class DomainDetails extends SegmentedPanel {
                 final DomainRepository domainRepository = CdiUtil
                     .createCdiUtil().findBean(DomainRepository.class);
                 final Domain domain = domainRepository.findById(Long
-                    .parseLong(
-                        selectedDomainId.getSelectedKey(state)));
+                    .parseLong(selectedDomainId.getSelectedKey(state))).get();
                 final KernelConfig kernelConfig = KernelConfig.getConfig();
                 final Set<String> supportedLanguages = kernelConfig
                     .getSupportedLanguages();

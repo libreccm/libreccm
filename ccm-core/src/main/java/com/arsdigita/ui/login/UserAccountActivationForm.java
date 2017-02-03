@@ -45,6 +45,7 @@ import org.libreccm.security.User;
 import org.libreccm.security.UserRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -143,8 +144,9 @@ public class UserAccountActivationForm extends Form {
                 final UserRepository userRepository = cdiUtil.findBean(
                     UserRepository.class);
 
-                final User user = userRepository.findByEmailAddress(emailData);
-                if (user == null) {
+                final Optional<User> user = userRepository.findByEmailAddress(
+                    emailData);
+                if (!user.isPresent()) {
                     data.addError(new GlobalizedMessage(
                         "login.form.account_activation.error", LOGIN_BUNDLE));
                     return;
@@ -153,7 +155,7 @@ public class UserAccountActivationForm extends Form {
                 final OneTimeAuthManager oneTimeAuthManager = cdiUtil.findBean(
                     OneTimeAuthManager.class);
                 if (!oneTimeAuthManager.validTokenExistsForUser(
-                    user, OneTimeAuthTokenPurpose.ACCOUNT_ACTIVATION)) {
+                    user.get(), OneTimeAuthTokenPurpose.ACCOUNT_ACTIVATION)) {
 
                     data.addError(new GlobalizedMessage(
                         "login.form.account_activation.error", LOGIN_BUNDLE));
@@ -162,7 +164,7 @@ public class UserAccountActivationForm extends Form {
 
                 final List<OneTimeAuthToken> tokens = oneTimeAuthManager
                     .retrieveForUser(
-                        user, OneTimeAuthTokenPurpose.ACCOUNT_ACTIVATION);
+                        user.get(), OneTimeAuthTokenPurpose.ACCOUNT_ACTIVATION);
 
                 boolean result = false;
                 for (OneTimeAuthToken token : tokens) {
@@ -192,8 +194,9 @@ public class UserAccountActivationForm extends Form {
                 final UserRepository userRepository = cdiUtil.findBean(
                     UserRepository.class);
 
-                final User user = userRepository.findByEmailAddress(emailData);
-                if (user == null) {
+                final Optional<User> user = userRepository.findByEmailAddress(
+                    emailData);
+                if (!user.isPresent()) {
                     throw new FormProcessException(
                         "No matching user found. This should not happen because "
                         + "we verified that just a few moments ago.",
@@ -204,7 +207,7 @@ public class UserAccountActivationForm extends Form {
                 final ChallengeManager challengeManager = cdiUtil.findBean(
                     ChallengeManager.class);
                 try {
-                    challengeManager.finishAccountActivation(user,
+                    challengeManager.finishAccountActivation(user.get(),
                                                              authTokenData);
                 } catch (ChallengeFailedException ex) {
                     throw new FormProcessException(

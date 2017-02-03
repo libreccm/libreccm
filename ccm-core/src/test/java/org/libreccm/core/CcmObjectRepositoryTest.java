@@ -54,6 +54,8 @@ import static org.libreccm.testutils.DependenciesHelpers.*;
 
 import org.jboss.arquillian.persistence.CleanupUsingScript;
 
+import java.util.Optional;
+
 /**
  * Tests for the {@link CcmObjectRepository} which is the foundation for many
  * other repositories in LibreCCM.
@@ -231,24 +233,24 @@ public class CcmObjectRepositoryTest {
     @UsingDataSet("datasets/org/libreccm/core/CcmObjectRepositoryTest/data.yml")
     @InSequence(10)
     public void findCcmObjectById() {
-        final CcmObject obj1 = ccmObjectRepository.findById(-10L);
-        final CcmObject obj2 = ccmObjectRepository.findById(-20L);
-        final CcmObject obj3 = ccmObjectRepository.findById(-30L);
-        final CcmObject none = ccmObjectRepository.findById(-999L);
+        final Optional<CcmObject> obj1 = ccmObjectRepository.findById(-10L);
+        final Optional<CcmObject> obj2 = ccmObjectRepository.findById(-20L);
+        final Optional<CcmObject> obj3 = ccmObjectRepository.findById(-30L);
+        final Optional<CcmObject> none = ccmObjectRepository.findById(-999L);
 
-        assertThat(obj1, is(not(nullValue())));
-        assertThat(obj1.getObjectId(), is(-10L));
-        assertThat(obj1.getDisplayName(), is(equalTo("Test Object 1")));
+        assertThat(obj1.isPresent(), is(true));
+        assertThat(obj1.get().getObjectId(), is(-10L));
+        assertThat(obj1.get().getDisplayName(), is(equalTo("Test Object 1")));
 
-        assertThat(obj2, is(not(nullValue())));
-        assertThat(obj2.getObjectId(), is(-20L));
-        assertThat(obj2.getDisplayName(), is(equalTo("Test Object 2")));
+        assertThat(obj2.isPresent(), is(true));
+        assertThat(obj2.get().getObjectId(), is(-20L));
+        assertThat(obj2.get().getDisplayName(), is(equalTo("Test Object 2")));
 
-        assertThat(obj3, is(not(nullValue())));
-        assertThat(obj3.getObjectId(), is(-30L));
-        assertThat(obj3.getDisplayName(), is(equalTo("Test Object 3")));
+        assertThat(obj3.isPresent(), is(true));
+        assertThat(obj3.get().getObjectId(), is(-30L));
+        assertThat(obj3.get().getDisplayName(), is(equalTo("Test Object 3")));
 
-        assertThat(none, is(nullValue()));
+        assertThat(none.isPresent(), is(false));
     }
 
     /**
@@ -297,7 +299,7 @@ public class CcmObjectRepositoryTest {
         excludeColumns = {"object_id"})
     @InSequence(400)
     public void saveChangedCcmObject() {
-        final CcmObject obj = ccmObjectRepository.findById(-20L);
+        final CcmObject obj = ccmObjectRepository.findById(-20L).get();
         obj.setDisplayName("Second Test Object");
 
         ccmObjectRepository.save(obj);
@@ -328,7 +330,7 @@ public class CcmObjectRepositoryTest {
         excludeColumns = {"object_id"})
     @InSequence(600)
     public void deleteCcmObject() {
-        final CcmObject obj = ccmObjectRepository.findById(-20L);
+        final CcmObject obj = ccmObjectRepository.findById(-20L).get();
 
         ccmObjectRepository.delete(obj);
     }

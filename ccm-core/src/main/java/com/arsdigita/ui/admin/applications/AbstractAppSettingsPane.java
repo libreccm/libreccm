@@ -70,9 +70,8 @@ public abstract class AbstractAppSettingsPane extends SimpleContainer {
             final ApplicationRepository appRepo = CdiUtil.createCdiUtil()
                 .findBean(ApplicationRepository.class);
 
-            final CcmApplication result = appRepo.findById(Long.parseLong(
+            return appRepo.findById(Long.parseLong(
                 selectedAppInstance.getSelectedKey(state)));
-            return Optional.of(result);
         }
     }
 

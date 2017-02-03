@@ -28,6 +28,8 @@ import org.libreccm.core.CcmObjectRepository;
 import org.libreccm.security.Role;
 import org.libreccm.security.RoleRepository;
 
+import java.util.Optional;
+
 /**
  * This class is mainly instantiated from a PageState It is very context
  * specific for permissions. It tries to read the object_id and load the
@@ -71,13 +73,13 @@ class CMSUserObjectStruct {
         final CcmObjectRepository objectRepo = cdiUtil.findBean(
             CcmObjectRepository.class);
 
-        final CcmObject ccmObject = objectRepo.findById(objectId);
-        if (ccmObject == null) {
+        final Optional<CcmObject> ccmObject = objectRepo.findById(objectId);
+        if (!ccmObject.isPresent()) {
             throw new UncheckedWrapperException(String.format(
                 "Failed to find object with ID %d.", objectId));
         }
 
-        return ccmObject;
+        return ccmObject.get();
     }
 
     // use in package
@@ -86,14 +88,14 @@ class CMSUserObjectStruct {
         final RoleRepository roleRepo = cdiUtil
             .findBean(RoleRepository.class);
 
-        final Role role = roleRepo.findById(roleId);
+        final Optional<Role> role = roleRepo.findById(roleId);
 
-        if (role == null) {
+        if (!role.isPresent()) {
             throw new UncheckedWrapperException(String.format(
                 "Failed to find party with ID %d.", roleId));
         }
 
-        return role;
+        return role.get();
     }
 
     public static Role getRole(final PageState state) {

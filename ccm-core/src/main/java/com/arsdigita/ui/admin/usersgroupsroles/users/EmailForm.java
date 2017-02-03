@@ -93,7 +93,7 @@ class EmailForm extends Form {
                 final UserRepository userRepository = CdiUtil.createCdiUtil()
                     .findBean(UserRepository.class);
                 final User user = userRepository.findById(Long.parseLong(
-                    userIdStr));
+                    userIdStr)).get();
                 EmailAddress email = null;
                 if (user.getPrimaryEmailAddress().getAddress().equals(selected)) {
                     email = user.getPrimaryEmailAddress();
@@ -147,7 +147,7 @@ class EmailForm extends Form {
                 final UserRepository userRepository = CdiUtil.createCdiUtil()
                     .findBean(UserRepository.class);
                 final User user = userRepository.findById(Long.parseLong(
-                    userIdStr));
+                    userIdStr)).get();
                 EmailAddress email = null;
                 if (selected == null) {
                     email = new EmailAddress();

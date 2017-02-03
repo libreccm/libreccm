@@ -131,7 +131,7 @@ class RolesTable extends Table {
                         final RoleRepository roleRepository = CdiUtil
                             .createCdiUtil().findBean(RoleRepository.class);
                         final Role role = roleRepository.findById(Long
-                            .parseLong(key));
+                            .parseLong(key)).get();
                         roleRepository.delete(role);
                         break;
                     default:

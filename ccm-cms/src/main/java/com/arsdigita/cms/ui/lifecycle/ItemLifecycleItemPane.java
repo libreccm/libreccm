@@ -320,7 +320,7 @@ class ItemLifecycleItemPane extends BaseItemPane {
                 final ContentItem item = selectedItem.getContentItem(state);
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
                 final Shiro shiro = cdiUtil.findBean(Shiro.class);
-                final User user = shiro.getUser();
+                final User user = shiro.getUser().get();
 
                 /*
                  * jensp 2011-12-14: Check is threaded publishing is active. 
@@ -360,10 +360,10 @@ class ItemLifecycleItemPane extends BaseItemPane {
                                 UserRepository.class);
                             final User receiver = userRepo.findByEmailAddress(
                                 CMSConfig.getConfig()
-                                    .getPublishingFailureReceiver());
+                                    .getPublishingFailureReceiver()).get();
                             final User sender = userRepo.findByEmailAddress(
                                 CMSConfig.getConfig()
-                                    .getPublishingFailureSender());
+                                    .getPublishingFailureSender()).get();
 
                             if ((sender != null) && (receiver != null)) {
                                 final Writer traceWriter = new StringWriter();
@@ -467,7 +467,7 @@ class ItemLifecycleItemPane extends BaseItemPane {
                 final ContentItem item = selectedItem.getContentItem(state);
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
                 final Shiro shiro = cdiUtil.findBean(Shiro.class);
-                final User user = shiro.getUser();
+                final User user = shiro.getUser().get();
 
                 /**
                  * jensp 2011-12-14: Execute is a thread if threaded publishing
@@ -506,10 +506,10 @@ class ItemLifecycleItemPane extends BaseItemPane {
                                 UserRepository.class);
                             final User receiver = userRepo.findByEmailAddress(
                                 CMSConfig.getConfig()
-                                    .getPublishingFailureReceiver());
+                                    .getPublishingFailureReceiver()).get();
                             final User sender = userRepo.findByEmailAddress(
                                 CMSConfig.getConfig()
-                                    .getPublishingFailureSender());
+                                    .getPublishingFailureSender()).get();
 
                             if ((sender != null) && (receiver != null)) {
                                 final Writer traceWriter = new StringWriter();
@@ -698,7 +698,7 @@ class ItemLifecycleItemPane extends BaseItemPane {
             final FormData data = event.getFormData();
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final Shiro shiro = cdiUtil.findBean(Shiro.class);
-            final User user = shiro.getUser();
+            final User user = shiro.getUser().get();
 
             String selected = (String) data.get(LIFECYCLE_ACTION);
             final ContentItem item = selectedItem.getContentItem(state);
@@ -743,10 +743,10 @@ class ItemLifecycleItemPane extends BaseItemPane {
                                 UserRepository.class);
                             final User receiver = userRepo.findByEmailAddress(
                                 CMSConfig.getConfig()
-                                    .getPublishingFailureReceiver());
+                                    .getPublishingFailureReceiver()).get();
                             final User sender = userRepo.findByEmailAddress(
                                 CMSConfig.getConfig()
-                                    .getPublishingFailureSender());
+                                    .getPublishingFailureSender()).get();
 
                             if ((sender != null) && (receiver != null)) {
                                 final Writer traceWriter = new StringWriter();
@@ -831,10 +831,10 @@ class ItemLifecycleItemPane extends BaseItemPane {
                                 UserRepository.class);
                             final User receiver = userRepo.findByEmailAddress(
                                 CMSConfig.getConfig()
-                                    .getPublishingFailureReceiver());
+                                    .getPublishingFailureReceiver()).get();
                             final User sender = userRepo.findByEmailAddress(
                                 CMSConfig.getConfig()
-                                    .getPublishingFailureSender());
+                                    .getPublishingFailureSender()).get();
 
                             if ((sender != null) && (receiver != null)) {
                                 final Writer traceWriter = new StringWriter();

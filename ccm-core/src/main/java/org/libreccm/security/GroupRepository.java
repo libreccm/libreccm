@@ -26,6 +26,8 @@ import javax.persistence.TypedQuery;
 import org.libreccm.core.AbstractEntityRepository;
 import org.libreccm.core.CoreConstants;
 
+import java.util.Optional;
+
 import javax.transaction.Transactional;
 
 /**
@@ -60,15 +62,15 @@ public class GroupRepository extends AbstractEntityRepository<Long, Group> {
      *         there is no group identified by the provided name {@code null} is
      *         returned.
      */
-    public Group findByName(final String name) {
+    public Optional<Group> findByName(final String name) {
         final TypedQuery<Group> query = getEntityManager().createNamedQuery(
             "Group.findByName", Group.class);
         query.setParameter("name", name);
         final List<Group> result = query.getResultList();
         if (result.isEmpty()) {
-            return null;
+            return Optional.empty();
         } else {
-            return result.get(0);
+            return Optional.of(result.get(0));
         }
     }
 

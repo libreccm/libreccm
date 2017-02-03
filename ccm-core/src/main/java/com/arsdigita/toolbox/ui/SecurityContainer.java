@@ -83,7 +83,7 @@ public abstract class SecurityContainer extends SimpleContainer {
     public boolean isVisible(final PageState state) {
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final Shiro shiro = cdiUtil.findBean(Shiro.class);
-        final Party party = shiro.getUser();
+        final Party party = shiro.getUser().get();
         return ( super.isVisible(state) && canAccess(party, state) );
     }
 

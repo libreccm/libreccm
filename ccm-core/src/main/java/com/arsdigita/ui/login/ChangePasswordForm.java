@@ -119,7 +119,7 @@ public class ChangePasswordForm extends Form
 
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final Shiro shiro = cdiUtil.findBean(Shiro.class);
-        final User user = shiro.getUser();
+        final User user = shiro.getUser().get();
 
         final Label greeting;
         if (user == null) {
@@ -198,7 +198,7 @@ public class ChangePasswordForm extends Form
             final Shiro shiro = cdiUtil.findBean(Shiro.class);
             final UserManager userManager = cdiUtil.findBean(UserManager.class);
 
-            final User user = shiro.getUser();
+            final User user = shiro.getUser().get();
             if (!userManager.verifyPassword(user, oldPassword)) {
                 data.addError(OLD_PASSWORD_PARAM_NAME, LoginHelper.getMessage(
                               "login.changePasswordForm.badPasswordError"));
@@ -245,7 +245,7 @@ public class ChangePasswordForm extends Form
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final UserManager userManager = cdiUtil.findBean(UserManager.class);
         final Shiro shiro = cdiUtil.findBean(Shiro.class);
-        final User user = shiro.getUser();
+        final User user = shiro.getUser().get();
 
         final String newPassword = (String) m_newPassword.getValue(state);
         userManager.updatePassword(user, newPassword);

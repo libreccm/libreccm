@@ -174,8 +174,8 @@ public final class AssignedTaskSection extends Section {
                 final AssignableTaskRepository userTaskRepo = cdiUtil.findBean(
                     AssignableTaskRepository.class);
                 final Shiro shiro = cdiUtil.findBean(Shiro.class);
-                return userTaskRepo.findEnabledTasksForWorkflow(shiro.getUser(),
-                                                                workflow);
+                return userTaskRepo.findEnabledTasksForWorkflow(
+                    shiro.getUser().get(), workflow);
             }
 
             @SuppressWarnings("unchecked")

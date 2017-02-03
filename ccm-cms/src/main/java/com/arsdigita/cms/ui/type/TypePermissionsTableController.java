@@ -63,7 +63,7 @@ public class TypePermissionsTableController {
     @Transactional(Transactional.TxType.REQUIRED)
     public List<RowData<Long>> retrieveTypePermissions(
         final long typeId, final ContentSection section) {
-        final ContentType type = typeRepo.findById(typeId);
+        final ContentType type = typeRepo.findById(typeId).get();
 
         final List<Role> roles = section.getRoles();
 

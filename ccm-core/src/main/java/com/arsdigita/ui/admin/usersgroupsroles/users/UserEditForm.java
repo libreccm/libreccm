@@ -103,7 +103,8 @@ class UserEditForm extends Form {
             final String userIdStr = selectedUserId.getSelectedKey(state);
             final UserRepository userRepository = CdiUtil.createCdiUtil()
                 .findBean(UserRepository.class);
-            final User user = userRepository.findById(Long.parseLong(userIdStr));
+            final User user = userRepository.findById(Long.parseLong(userIdStr))
+                .get();
 
             userName.setValue(state, user.getName());
             familyName.setValue(state, user.getFamilyName());
@@ -157,7 +158,7 @@ class UserEditForm extends Form {
                 final UserRepository userRepository = CdiUtil.createCdiUtil()
                     .findBean(UserRepository.class);
                 final User user = userRepository.findById(Long.parseLong(
-                    userIdStr));
+                    userIdStr)).get();
 
                 if (!user.getName().equals(userName.getValue(state))) {
                     user.setName((String) userName.getValue(state));

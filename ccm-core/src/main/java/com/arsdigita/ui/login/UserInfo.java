@@ -209,7 +209,7 @@ public class UserInfo extends SimpleContainer {
         }
 
         final Shiro shiro = CdiUtil.createCdiUtil().findBean(Shiro.class);
-        final User user = shiro.getUser();
+        final User user = shiro.getUser().get();
 
         return user;
     }

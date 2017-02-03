@@ -141,7 +141,7 @@ public class ItemSelectionModel extends CcmObjectSelectionModel<ContentItem> {
 
         if (typeId != null) {
             type = CdiUtil.createCdiUtil().findBean(ContentTypeRepository.class)
-                .findById(typeId);
+                .findById(typeId).get();
         }
 
         return type;

@@ -62,7 +62,7 @@ public class EmailInitListener implements FormInitListener {
             return;
         }
 
-        final User user = shiro.getUser();
+        final User user = shiro.getUser().get();
 
         if (user == null) {
             s_log.debug("FAILURE no such user");

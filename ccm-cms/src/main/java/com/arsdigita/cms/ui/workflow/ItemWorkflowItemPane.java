@@ -24,8 +24,8 @@ import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.event.ActionEvent;
 import com.arsdigita.bebop.event.ActionListener;
 import com.arsdigita.cms.CMS;
+
 import org.librecms.workflow.CmsTask;
-import com.arsdigita.web.Web;
 import org.libreccm.workflow.Workflow;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.PermissionChecker;
@@ -75,7 +75,7 @@ final class ItemWorkflowItemPane extends BaseWorkflowItemPane {
             final TaskRepository taskRepo = cdiUtil.findBean(
                     TaskRepository.class);
 
-            return (CmsTask) taskRepo.findById(Long.parseLong(taskId));
+            return (CmsTask) taskRepo.findById(Long.parseLong(taskId)).get();
         }
 
     }

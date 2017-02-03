@@ -32,6 +32,8 @@ import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.User;
 import org.libreccm.security.UserRepository;
 
+import java.util.Optional;
+
 import javax.servlet.http.HttpServletRequest;
 
 import static com.arsdigita.ui.UI.*;
@@ -61,7 +63,7 @@ public class UserBanner extends SimpleComponent {
             final UserRepository userRepository = cdiUtil.findBean(
                 UserRepository.class);
 
-            final User user;
+            final Optional<User> user;
             if ("email".equals(config.getPrimaryUserIdentifier())) {
                 user = userRepository.findByEmailAddress(
                     (String) subject.getPrincipal());
@@ -70,15 +72,18 @@ public class UserBanner extends SimpleComponent {
                     .findByName((String) subject.getPrincipal());
             }
 
-            if (user != null) {
-                contentElem.addAttribute("givenName", user.getGivenName());
-                contentElem.addAttribute("familyName", user.getFamilyName());
-                contentElem.addAttribute("screenName", user.getName());
+            if (user.isPresent()) {
+                contentElem.addAttribute("givenName", 
+                                         user.get().getGivenName());
+                contentElem.addAttribute("familyName", 
+                                         user.get().getFamilyName());
+                contentElem.addAttribute("screenName", 
+                                         user.get().getName());
                 contentElem.addAttribute("primaryEmail",
-                                         user.getPrimaryEmailAddress()
+                                         user.get().getPrimaryEmailAddress()
                                          .getAddress());
                 contentElem.addAttribute("userID",
-                                         Long.toString(user.getPartyId()));
+                                         Long.toString(user.get().getPartyId()));
             }
         }
 

@@ -50,6 +50,7 @@ import org.libreccm.core.EmailAddress;
 import org.libreccm.tests.categories.IntegrationTest;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -144,48 +145,48 @@ public class UserRepositoryTest {
         assertThat(entityManager, is(not(nullValue())));
     }
 
-    private void checkUsers(final User jdoe,
-                            final User mmuster,
-                            final User joe,
-                            final User nobody) {
-        assertThat(jdoe, is(not(nullValue())));
-        assertThat(jdoe.getPartyId(), is(-10L));
-        assertThat(jdoe.getName(), is(equalTo(JDOE)));
-        assertThat(jdoe.getFamilyName(), is(equalTo("Doe")));
-        assertThat(jdoe.getGivenName(), is(equalTo("John")));
-        assertThat(jdoe.getPassword(),
+    private void checkUsers(final Optional<User> jdoe,
+                            final Optional<User> mmuster,
+                            final Optional<User> joe,
+                            final Optional<User> nobody) {
+        assertThat(jdoe.isPresent(), is(true));
+        assertThat(jdoe.get().getPartyId(), is(-10L));
+        assertThat(jdoe.get().getName(), is(equalTo(JDOE)));
+        assertThat(jdoe.get().getFamilyName(), is(equalTo("Doe")));
+        assertThat(jdoe.get().getGivenName(), is(equalTo("John")));
+        assertThat(jdoe.get().getPassword(),
                    is(equalTo(
                        "$shiro1$SHA-512$500000$7xkDcZUN0/whJInHIvGsDw==$WhelBVmJU/cLV7lAkMOrE5B/mqCW0bUuid1WX+xBwzzAaekC5bYn9eeOFGJWhiDgmaC50ZCUmM96/iGsRoc4uA==")));
 
-        assertThat(mmuster, is(not(nullValue())));
-        assertThat(mmuster.getPartyId(), is(-20L));
-        assertThat(mmuster.getName(), is(equalTo(MMUSTER)));
-        assertThat(mmuster.getFamilyName(), is(equalTo("Mustermann")));
-        assertThat(mmuster.getGivenName(), is(equalTo("Max")));
-        assertThat(mmuster.getPassword(),
+        assertThat(mmuster.isPresent(), is(true));
+        assertThat(mmuster.get().getPartyId(), is(-20L));
+        assertThat(mmuster.get().getName(), is(equalTo(MMUSTER)));
+        assertThat(mmuster.get().getFamilyName(), is(equalTo("Mustermann")));
+        assertThat(mmuster.get().getGivenName(), is(equalTo("Max")));
+        assertThat(mmuster.get().getPassword(),
                    is(equalTo(
                        "$shiro1$SHA-512$500000$Y7CnccN1h25sR7KCElMOXg==$CVLWBhetodaEzzhDfGjRcCFZtSW02xOnjH7xhBx0lbxO66grKIt6LWmXoUhLEydce1JZ7cbzNLYOxIwwTeqi5Q==")));
 
-        assertThat(joe, is(not(nullValue())));
-        assertThat(joe.getPartyId(), is(-30L));
-        assertThat(joe.getName(), is(equalTo(JOE)));
-        assertThat(joe.getFamilyName(), is(equalTo("Public")));
-        assertThat(joe.getGivenName(), is(equalTo("Joe")));
-        assertThat(joe.getPassword(),
+        assertThat(joe.isPresent(), is(true));
+        assertThat(joe.get().getPartyId(), is(-30L));
+        assertThat(joe.get().getName(), is(equalTo(JOE)));
+        assertThat(joe.get().getFamilyName(), is(equalTo("Public")));
+        assertThat(joe.get().getGivenName(), is(equalTo("Joe")));
+        assertThat(joe.get().getPassword(),
                    is(equalTo(
                        "$shiro1$SHA-512$500000$RUCYXAQt+XzUmj3x8oG5gw==$qU+lX160Jc6sNUOI9X85wlf2lzn4/hLJNURtjmw9LOYJ7vAqUFFmhyNCMxpzuHIpzeMELr+A0XReoSmtcZnOOw==")));
 
-        assertThat(nobody, is(nullValue()));
+        assertThat(nobody.isPresent(), is(false));
     }
 
     @Test
     @UsingDataSet("datasets/org/libreccm/security/UserRepositoryTest/data.yml")
     @InSequence(100)
     public void findUserById() {
-        final User jdoe = userRepository.findById(-10L);
-        final User mmuster = userRepository.findById(-20L);
-        final User joe = userRepository.findById(-30L);
-        final User nobody = userRepository.findById(-999L);
+        final Optional<User> jdoe = userRepository.findById(-10L);
+        final Optional<User> mmuster = userRepository.findById(-20L);
+        final Optional<User> joe = userRepository.findById(-30L);
+        final Optional<User> nobody = userRepository.findById(-999L);
 
         checkUsers(jdoe, mmuster, joe, nobody);
     }
@@ -194,10 +195,10 @@ public class UserRepositoryTest {
     @UsingDataSet("datasets/org/libreccm/security/UserRepositoryTest/data.yml")
     @InSequence(200)
     public void findUserByScreenName() {
-        final User jdoe = userRepository.findByName(JDOE);
-        final User mmuster = userRepository.findByName(MMUSTER);
-        final User joe = userRepository.findByName(JOE);
-        final User nobody = userRepository.findByName(NOBODY);
+        final Optional<User> jdoe = userRepository.findByName(JDOE);
+        final Optional<User> mmuster = userRepository.findByName(MMUSTER);
+        final Optional<User> joe = userRepository.findByName(JOE);
+        final Optional<User> nobody = userRepository.findByName(NOBODY);
 
         checkUsers(jdoe, mmuster, joe, nobody);
     }
@@ -206,13 +207,13 @@ public class UserRepositoryTest {
     @UsingDataSet("datasets/org/libreccm/security/UserRepositoryTest/data.yml")
     @InSequence(300)
     public void findUserByEmail() {
-        final User jdoe = userRepository.findByEmailAddress(
+        final Optional<User> jdoe = userRepository.findByEmailAddress(
             "john.doe@example.com");
-        final User mmuster1 = userRepository.findByEmailAddress(
+        final Optional<User> mmuster1 = userRepository.findByEmailAddress(
             "max.mustermann@example.org");
-        final User joe = userRepository.findByEmailAddress(
+        final Optional<User> joe = userRepository.findByEmailAddress(
             "joe.public@example.com");
-        final User nobody = userRepository
+        final Optional<User> nobody = userRepository
             .findByEmailAddress("nobody@example.org");
 
         checkUsers(jdoe, mmuster1, joe, nobody);
@@ -224,7 +225,7 @@ public class UserRepositoryTest {
     @InSequence(350)
     public void findByEmailAddressDuplicate() {
         final User user = userRepository.findByEmailAddress(
-            "max.mustermann@example.org");
+            "max.mustermann@example.org").get();
 
         assertThat(user.getPartyId(), is(-30L));
     }
@@ -271,7 +272,7 @@ public class UserRepositoryTest {
                         excludeColumns = {"party_id"})
     @InSequence(600)
     public void saveChangedUser() {
-        final User user = userRepository.findById(-10L);
+        final User user = userRepository.findById(-10L).get();
 
         //foo456
         user.setPassword(
@@ -300,7 +301,7 @@ public class UserRepositoryTest {
                         excludeColumns = {"party_id"})
     @InSequence(800)
     public void deleteUser() {
-        final User user = userRepository.findByName("mmuster");
+        final User user = userRepository.findByName("mmuster").get();
 
         shiro.getSystemUser().execute(() -> userRepository.delete(user));
     }

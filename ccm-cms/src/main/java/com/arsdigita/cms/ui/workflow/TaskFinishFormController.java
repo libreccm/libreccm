@@ -47,7 +47,7 @@ public class TaskFinishFormController {
     
     @Transactional(Transactional.TxType.REQUIRED)
     public List<AssignableTask> findEnabledTasks(final Workflow workflow) {
-        final User user = shiro.getUser();
+        final User user = shiro.getUser().get();
         final List<Role> roles = user.getRoleMemberships().stream()
         .map(membership -> membership.getRole())
         .collect(Collectors.toList());

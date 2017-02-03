@@ -31,6 +31,8 @@ import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.Role;
 import org.libreccm.security.RoleRepository;
 
+import java.util.Optional;
+
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
@@ -106,7 +108,8 @@ class RoleForm extends Form {
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
                 final RoleRepository roleRepository = cdiUtil.findBean(
                     RoleRepository.class);
-                if (roleRepository.findByName(roleNameData) != null) {
+                final Optional<Role> role = roleRepository.findByName(roleNameData);
+                if (role.isPresent()) {
                     data.addError(ROLE_NAME, new GlobalizedMessage(
                                   "ui.admin.role.error.name_already_in_use",
                                   ADMIN_BUNDLE));
@@ -126,7 +129,7 @@ class RoleForm extends Form {
                     RoleRepository.class);
 
                 final Role role = roleRepository.findById(Long.parseLong(
-                    selectedRoleIdStr));
+                    selectedRoleIdStr)).get();
                 roleName.setValue(state, role.getName());
             }
         });
@@ -151,7 +154,7 @@ class RoleForm extends Form {
                     roleRepository.save(role);
                 } else {
                     final Role role = roleRepository.findById(Long.parseLong(
-                        selectedRoleIdStr));
+                        selectedRoleIdStr)).get();
                     role.setName(roleNameData);
                     
                     roleRepository.save(role);

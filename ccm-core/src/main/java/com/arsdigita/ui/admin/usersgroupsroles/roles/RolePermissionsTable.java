@@ -113,7 +113,7 @@ class RolePermissionsTable extends Table {
                         final PermissionManager permissionManager = cdiUtil
                             .findBean(PermissionManager.class);
                         final Role role = roleRepository.findById(
-                            Long.parseLong(selectedRoleId.getSelectedKey(state)));
+                            Long.parseLong(selectedRoleId.getSelectedKey(state))).get();
                         final Permission permission = permissionManager
                             .findById(Long.parseLong(key));
                         if (permission.getObject() == null) {
@@ -176,7 +176,7 @@ class RolePermissionsTable extends Table {
                 .findBean(RoleRepository.class);
             final Role role = roleRepository.findById(
                 Long.parseLong(selectedRoleId.getSelectedKey(state)),
-                Role.ENTITY_GRPAH_WITH_PERMISSIONS);
+                Role.ENTITY_GRPAH_WITH_PERMISSIONS).get();
 
             permissions = new ArrayList<>(role.getPermissions());
 

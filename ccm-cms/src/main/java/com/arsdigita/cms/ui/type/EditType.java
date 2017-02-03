@@ -63,6 +63,7 @@ import org.librecms.lifecycle.LifecycleDefinitionRepository;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.TooManyListenersException;
 
 import javax.persistence.NoResultException;
@@ -225,12 +226,20 @@ public class EditType extends CMSForm
         final ContentTypeRepository typeRepo = cdiUtil.findBean(
             ContentTypeRepository.class);
 
+        final Optional<ContentType> result;
         try {
-            return typeRepo.findById(Long.parseLong(key));
-        } catch (NumberFormatException
-                 | NoResultException ex) {
+            result = typeRepo.findById(Long.parseLong(key));
+        } catch (NumberFormatException ex) {
             throw new UncheckedWrapperException(String.format(
-                "ContentType with ID %s not found.", key), ex);
+                "The provided key \"%s\" is not a long.", key), 
+                ex);
+        }
+        
+        if (result.isPresent()) {
+            return result.get();
+        } else {
+            throw new UncheckedWrapperException(String.format(
+                "ContentType with ID %s not found.", key));
         }
     }
 
@@ -266,13 +275,9 @@ public class EditType extends CMSForm
         final ContentTypeManager typeManager = cdiUtil.findBean(
             ContentTypeManager.class);
 
-        ContentType type = null;
-        try {
-            type = typeRepo.findById(key);
-        } catch (NoResultException ex) {
+        final Optional<ContentType> type = typeRepo.findById(key);
+        if (!type.isPresent()) {
             LOGGER.error("Can't find ContentType with key {}", key);
-            LOGGER.error(ex);
-
             throw new FormProcessException(new GlobalizedMessage(
                 "cms.ui.type.content_editing_failed",
                 CmsConstants.CMS_BUNDLE,
@@ -281,20 +286,20 @@ public class EditType extends CMSForm
 
         final KernelConfig kernelConfig = KernelConfig.getConfig();
 
-        type.getLabel().addValue(kernelConfig.getDefaultLocale(), label);
-        type.getDescription().addValue(kernelConfig.getDefaultLocale(),
+        type.get().getLabel().addValue(kernelConfig.getDefaultLocale(), label);
+        type.get().getDescription().addValue(kernelConfig.getDefaultLocale(),
                                        description);
 
-        typeRepo.save(type);
+        typeRepo.save(type.get());
 
         // Handle default lifecycle and workflow.
         final LifecycleDefinition defaultLifecycle = lifecycleDefRepo.findById(
-            lifecycleId);
+            lifecycleId).get();
         final WorkflowTemplate defaultWorkflow = workflowTemplateRepo.findById(
-            workflowId);
+            workflowId).get();
 
-        typeManager.setDefaultLifecycle(type, defaultLifecycle);
-        typeManager.setDefaultWorkflow(type, defaultWorkflow);
+        typeManager.setDefaultLifecycle(type.get(), defaultLifecycle);
+        typeManager.setDefaultWorkflow(type.get(), defaultWorkflow);
 
     }
 

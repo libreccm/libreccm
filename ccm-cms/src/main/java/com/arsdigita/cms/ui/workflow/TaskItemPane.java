@@ -170,7 +170,7 @@ final class TaskItemPane extends BaseItemPane {
                     AssignableTaskManager.class);
                 final Shiro shiro = cdiUtil.findBean(Shiro.class);
 
-                final User user = shiro.getUser();
+                final User user = shiro.getUser().get();
 
                 final List<AssignableTask> tasks = taskManager.lockedBy(user);
 
@@ -387,7 +387,7 @@ final class TaskItemPane extends BaseItemPane {
                             final RoleRepository roleRepo = cdiUtil.findBean(
                                 RoleRepository.class);
 
-                            final Role role = roleRepo.findById(roleId);
+                            final Role role = roleRepo.findById(roleId).get();
                             taskManager.retractTask(task, role);
                         }
                     }

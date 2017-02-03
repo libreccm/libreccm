@@ -251,7 +251,7 @@ class BaseRoleItemPane extends BaseItemPane {
                         PartyRepository.class);
                     final RoleManager roleManager = cdiUtil.findBean(
                         RoleManager.class);
-                    final Party party = partyRepository.findById(itemId);
+                    final Party party = partyRepository.findById(itemId).get();
 
                     roleManager.removeRoleFromParty(role, party);
 

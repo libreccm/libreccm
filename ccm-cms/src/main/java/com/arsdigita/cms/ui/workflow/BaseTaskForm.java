@@ -182,7 +182,7 @@ class BaseTaskForm extends BaseForm {
                 selectedId = Long.parseLong(selectedDependency);
                 addedTask = toRemove.remove(selectedId);
                 if (addedTask == null) {
-                    toAdd.put(selectedId, taskRepo.findById(selectedId));
+                    toAdd.put(selectedId, taskRepo.findById(selectedId).get());
                 }
             }
         }

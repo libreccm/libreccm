@@ -184,8 +184,8 @@ public class PermissionManagerTest {
         excludeColumns = {"permission_id"})
     @InSequence(200)
     public void grantPermission() {
-        final Role role2 = roleRepository.findByName("role2");
-        final CcmObject object3 = ccmObjectRepository.findById(-20003L);
+        final Role role2 = roleRepository.findByName("role2").get();
+        final CcmObject object3 = ccmObjectRepository.findById(-20003L).get();
 
         shiro.getSystemUser().execute(() -> {
             permissionManager.grantPrivilege("privilege2", role2, object3);
@@ -208,8 +208,8 @@ public class PermissionManagerTest {
                     + "data.yml")
     @InSequence(210)
     public void grantPermissionAgain() {
-        final Role role1 = roleRepository.findByName("role1");
-        final CcmObject object1 = ccmObjectRepository.findById(-20001L);
+        final Role role1 = roleRepository.findByName("role1").get();
+        final CcmObject object1 = ccmObjectRepository.findById(-20001L).get();
 
         shiro.getSystemUser().execute(() -> {
             permissionManager.grantPrivilege("privilege1", role1);
@@ -231,8 +231,8 @@ public class PermissionManagerTest {
         excludeColumns = {"permission_id"})
     @InSequence(211)
     public void grantPermissionRecursively() {
-        final Role role1 = roleRepository.findByName("role1");
-        final CcmObject category1 = ccmObjectRepository.findById(-20001L);
+        final Role role1 = roleRepository.findByName("role1").get();
+        final CcmObject category1 = ccmObjectRepository.findById(-20001L).get();
 
         shiro.getSystemUser().execute(() -> {
             permissionManager.grantPrivilege("privilege4", role1, category1);
@@ -253,7 +253,7 @@ public class PermissionManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(220)
     public void grantPermissionPrivilegeNull() throws Throwable {
-        final Role role1 = roleRepository.findByName("role1");
+        final Role role1 = roleRepository.findByName("role1").get();
 
         try {
             shiro.getSystemUser().execute(
@@ -277,8 +277,8 @@ public class PermissionManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(225)
     public void grantPermissionOnObjectPrivilegeNull() throws Throwable {
-        final Role role1 = roleRepository.findByName("role1");
-        final CcmObject object1 = ccmObjectRepository.findById(-20001L);
+        final Role role1 = roleRepository.findByName("role1").get();
+        final CcmObject object1 = ccmObjectRepository.findById(-20001L).get();
 
         try {
             shiro.getSystemUser().execute(
@@ -302,7 +302,7 @@ public class PermissionManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(230)
     public void grantPermissionEmptyPrivilege() throws Throwable {
-        final Role role1 = roleRepository.findByName("role1");
+        final Role role1 = roleRepository.findByName("role1").get();
 
         try {
             shiro.getSystemUser().execute(
@@ -326,8 +326,8 @@ public class PermissionManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(235)
     public void grantPermissionOnObjectEmptyPrivilege() throws Throwable {
-        final Role role1 = roleRepository.findByName("role1");
-        final CcmObject object1 = ccmObjectRepository.findById(-20001L);
+        final Role role1 = roleRepository.findByName("role1").get();
+        final CcmObject object1 = ccmObjectRepository.findById(-20001L).get();
 
         try {
             shiro.getSystemUser().execute(
@@ -373,7 +373,7 @@ public class PermissionManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(240)
     public void grantPermissionOnObjectToRoleNull() throws Throwable {
-        final CcmObject object1 = ccmObjectRepository.findById(-20001L);
+        final CcmObject object1 = ccmObjectRepository.findById(-20001L).get();
 
         try {
             shiro.getSystemUser().execute(
@@ -399,7 +399,7 @@ public class PermissionManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(250)
     public void grantPermissionNullObject() throws Throwable {
-        final Role role1 = roleRepository.findByName("role1");
+        final Role role1 = roleRepository.findByName("role1").get();
 
         try {
             shiro.getSystemUser().execute(
@@ -427,8 +427,8 @@ public class PermissionManagerTest {
         excludeColumns = {"permission_id"})
     @InSequence(300)
     public void revokePermission() {
-        final Role role1 = roleRepository.findByName("role1");
-        final CcmObject object1 = ccmObjectRepository.findById(-20001L);
+        final Role role1 = roleRepository.findByName("role1").get();
+        final CcmObject object1 = ccmObjectRepository.findById(-20001L).get();
 
         shiro.getSystemUser().execute(() -> {
             permissionManager.revokePrivilege("privilege1", role1);
@@ -452,7 +452,7 @@ public class PermissionManagerTest {
                     + "data.yml")
     @InSequence(310)
     public void revokeNotExistingPermission() throws Throwable {
-        final Role role1 = roleRepository.findByName("role1");
+        final Role role1 = roleRepository.findByName("role1").get();
 
         shiro.getSystemUser().execute(
             () -> permissionManager.revokePrivilege("privilege999", role1));
@@ -470,8 +470,8 @@ public class PermissionManagerTest {
                     + "after-revoke-recursivly.yml")
     @InSequence(311)
     public void revokePermissionRecursivly() {
-        final Role role1 = roleRepository.findByName("role1");
-        final CcmObject category1 = ccmObjectRepository.findById(-20001L);
+        final Role role1 = roleRepository.findByName("role1").get();
+        final CcmObject category1 = ccmObjectRepository.findById(-20001L).get();
 
         shiro.getSystemUser().execute(() -> {
             permissionManager.revokePrivilege("privilege4", role1, category1);
@@ -493,8 +493,8 @@ public class PermissionManagerTest {
                     + "data.yml")
     @InSequence(310)
     public void revokeNotExistingPermissionOnObject() {
-        final Role role1 = roleRepository.findByName("role1");
-        final CcmObject object1 = ccmObjectRepository.findById(-20001L);
+        final Role role1 = roleRepository.findByName("role1").get();
+        final CcmObject object1 = ccmObjectRepository.findById(-20001L).get();
 
         shiro.getSystemUser().execute(
             () -> permissionManager.revokePrivilege("privilege999",
@@ -516,7 +516,7 @@ public class PermissionManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(320)
     public void revokePermissionPrivilegeNull() throws Throwable {
-        final Role role1 = roleRepository.findByName("role1");
+        final Role role1 = roleRepository.findByName("role1").get();
 
         try {
             shiro.getSystemUser().execute(
@@ -540,8 +540,8 @@ public class PermissionManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(320)
     public void revokePermissionOnObjectPrivilegeNull() throws Throwable {
-        final Role role1 = roleRepository.findByName("role1");
-        final CcmObject object1 = ccmObjectRepository.findById(-20001L);
+        final Role role1 = roleRepository.findByName("role1").get();
+        final CcmObject object1 = ccmObjectRepository.findById(-20001L).get();
 
         try {
             shiro.getSystemUser().execute(
@@ -566,7 +566,7 @@ public class PermissionManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(330)
     public void revokePermissionEmptyPrivilege() throws Throwable {
-        final Role role1 = roleRepository.findByName("role1");
+        final Role role1 = roleRepository.findByName("role1").get();
 
         try {
             shiro.getSystemUser().execute(
@@ -591,8 +591,8 @@ public class PermissionManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(320)
     public void revokePermissionOnObjectEmptyPrivilege() throws Throwable {
-        final Role role1 = roleRepository.findByName("role1");
-        final CcmObject object1 = ccmObjectRepository.findById(-20001L);
+        final Role role1 = roleRepository.findByName("role1").get();
+        final CcmObject object1 = ccmObjectRepository.findById(-20001L).get();
 
         try {
             shiro.getSystemUser().execute(
@@ -639,7 +639,7 @@ public class PermissionManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(345)
     public void revokePermissionOnObjectFromRoleNull() throws Throwable {
-        final CcmObject object1 = ccmObjectRepository.findById(-20001L);
+        final CcmObject object1 = ccmObjectRepository.findById(-20001L).get();
 
         try {
             shiro.getSystemUser().execute(
@@ -665,7 +665,7 @@ public class PermissionManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(350)
     public void revokePermissionNullObject() throws Throwable {
-        final Role role1 = roleRepository.findByName("role1");
+        final Role role1 = roleRepository.findByName("role1").get();
 
         try {
             shiro.getSystemUser().execute(
@@ -693,8 +693,8 @@ public class PermissionManagerTest {
         excludeColumns = {"permission_id"})
     @InSequence(400)
     public void copyPermissions() throws Throwable {
-        final CcmObject object2 = ccmObjectRepository.findById(-20002L);
-        final CcmObject object3 = ccmObjectRepository.findById(-20003L);
+        final CcmObject object2 = ccmObjectRepository.findById(-20002L).get();
+        final CcmObject object3 = ccmObjectRepository.findById(-20003L).get();
 
         shiro.getSystemUser().execute(
             () -> permissionManager.copyPermissions(object2, object3));
@@ -714,7 +714,7 @@ public class PermissionManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(410)
     public void copyPermissionsNullSource() throws Throwable {
-        final CcmObject object3 = ccmObjectRepository.findById(-20003L);
+        final CcmObject object3 = ccmObjectRepository.findById(-20003L).get();
 
         try {
             shiro.getSystemUser().execute(
@@ -738,7 +738,7 @@ public class PermissionManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(420)
     public void copyPermissionsNullTarget() throws Throwable {
-        final CcmObject object2 = ccmObjectRepository.findById(-20002L);
+        final CcmObject object2 = ccmObjectRepository.findById(-20002L).get();
 
         try {
             shiro.getSystemUser().execute(

@@ -154,7 +154,7 @@ public class CategoryTitleTable extends Table {
                                 CategoryRepository.class);
                         final Category category = categoryRepository.findById(
                             Long.parseLong(selectedCategoryId.
-                                getSelectedKey(state)));
+                                getSelectedKey(state))).get();
                         category.getTitle().removeValue(locale);
 
                         categoryRepository.save(category);
@@ -197,7 +197,7 @@ public class CategoryTitleTable extends Table {
             final CategoryRepository categoryRepository = CdiUtil.
                 createCdiUtil().findBean(CategoryRepository.class);
             selectedCategory = categoryRepository.findById(Long.parseLong(
-                selectedCategoryId.getSelectedKey(state)));
+                selectedCategoryId.getSelectedKey(state))).get();
 
             locales = new ArrayList<>();
             if (selectedCategory.getTitle() != null) {

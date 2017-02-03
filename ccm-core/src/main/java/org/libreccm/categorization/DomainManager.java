@@ -24,6 +24,7 @@ import org.libreccm.web.ApplicationRepository;
 import org.libreccm.web.CcmApplication;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -128,26 +129,45 @@ public class DomainManager {
     @Transactional(Transactional.TxType.REQUIRED)
     public void removeDomainOwner(final CcmApplication application,
                                   final Domain domain) {
-        final CcmApplication owner = applicationRepo.findById(
+        if (application == null) {
+            throw new IllegalArgumentException("Can't remove owner null.");
+        }
+        if (domain == null) {
+            throw new IllegalArgumentException(
+                "Can't remove the owner from domain null.");
+        }
+
+        final Optional<CcmApplication> owner = applicationRepo.findById(
             application.getObjectId(), "CcmApplication.withDomains");
-        final Domain ownedDomain = domainRepo.findById(
+        final Optional<Domain> ownedDomain = domainRepo.findById(
             domain.getObjectId(), "Domain.withOwners");
+
+        if (!owner.isPresent()) {
+            throw new IllegalArgumentException(String.format(
+                "The provided owner %s does not exist in the database.",
+                application.toString()));
+        }
+        if (!ownedDomain.isPresent()) {
+            throw new IllegalArgumentException(String.format(
+                "The provided domain %s does not exist in the database.",
+                domain.toString()));
+        }
 
         final TypedQuery<DomainOwnership> query = entityManager
             .createNamedQuery("DomainOwnership.findByOwnerAndDomain",
                               DomainOwnership.class);
-        query.setParameter("owner", owner);
-        query.setParameter("domain", ownedDomain);
+        query.setParameter("owner", owner.get());
+        query.setParameter("domain", ownedDomain.get());
 
         final List<DomainOwnership> result = query.getResultList();
 
         if (result != null) {
             result.forEach(o -> {
-                ownedDomain.removeOwner(o);
-                owner.removeDomain(o);
+                ownedDomain.get().removeOwner(o);
+                owner.get().removeDomain(o);
                 entityManager.remove(o);
-                domainRepo.save(ownedDomain);
-                applicationRepo.save(owner);
+                domainRepo.save(ownedDomain.get());
+                applicationRepo.save(owner.get());
             });
         }
     }

@@ -238,7 +238,7 @@ public class ContentItemRepositoryTest {
     @UsingDataSet("datasets/org/librecms/contentsection/"
                       + "ContentItemRepositoryTest/data.xml")
     public void findByFolder() {
-        final Category folder = categoryRepo.findById(-2100L);
+        final Category folder = categoryRepo.findById(-2100L).get();
 
         assertThat(folder.getObjects().size(), is(4));
 
@@ -253,7 +253,7 @@ public class ContentItemRepositoryTest {
     @UsingDataSet("datasets/org/librecms/contentsection/"
                       + "ContentItemRepositoryTest/data.xml")
     public void countItemsInFolder() {
-        final Category folder = categoryRepo.findById(-2100L);
+        final Category folder = categoryRepo.findById(-2100L).get();
 
         assertThat(itemRepo.countItemsInFolder(folder), is(4L));
     }
@@ -263,7 +263,7 @@ public class ContentItemRepositoryTest {
     @UsingDataSet("datasets/org/librecms/contentsection/"
                       + "ContentItemRepositoryTest/data.xml")
     public void countByNameInFolder() {
-        final Category folder = categoryRepo.findById(-2100L);
+        final Category folder = categoryRepo.findById(-2100L).get();
 
         assertThat(itemRepo.countByNameInFolder(folder, "article1"), is(1L));
         assertThat(itemRepo.countByNameInFolder(folder, "article2"), is(1L));
@@ -278,7 +278,7 @@ public class ContentItemRepositoryTest {
     @UsingDataSet("datasets/org/librecms/contentsection/"
                       + "ContentItemRepositoryTest/data.xml")
     public void filterByFolderAndName() {
-        final Category folder = categoryRepo.findById(-2100L);
+        final Category folder = categoryRepo.findById(-2100L).get();
 
         final List<ContentItem> articles = itemRepo.filterByFolderAndName(
             folder, "article");
@@ -300,7 +300,7 @@ public class ContentItemRepositoryTest {
     @UsingDataSet("datasets/org/librecms/contentsection/"
                       + "ContentItemRepositoryTest/data.xml")
     public void countFilterByFolderAndName() {
-        final Category folder = categoryRepo.findById(-2100L);
+        final Category folder = categoryRepo.findById(-2100L).get();
 
         assertThat(itemRepo.countFilterByFolderAndName(folder, "article"),
                    is(3L));

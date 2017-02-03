@@ -27,6 +27,7 @@ import org.libreccm.security.Shiro;
 import org.libreccm.security.User;
 
 import java.io.Serializable;
+import java.util.Optional;
 
 
 /**
@@ -50,14 +51,15 @@ public class UserContextController implements Serializable {
     }
 
     public String getCurrentUserName() {
-        final User user = shiro.getUser();
-
-        if (user == null) {
-            return "";
-        } else {
+        final Optional<User> user = shiro.getUser();
+        
+        if (user.isPresent()) {
             return String.format("%s %s",
-                                 user.getGivenName(),
-                                 user.getFamilyName());
+                                 user.get().getGivenName(),
+                                 user.get().getFamilyName());
+            
+        } else {
+            return "";
         }
     }
 

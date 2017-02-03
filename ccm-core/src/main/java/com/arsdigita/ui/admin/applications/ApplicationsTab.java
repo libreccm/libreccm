@@ -41,6 +41,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
@@ -98,11 +99,11 @@ public class ApplicationsTab extends LayoutPanel {
 
                 final ApplicationRepository appRepo = CdiUtil.createCdiUtil()
                     .findBean(ApplicationRepository.class);
-                final CcmApplication application = appRepo.findById(
+                final Optional<CcmApplication> application = appRepo.findById(
                     Long.parseLong(instanceId));
-                if (application != null) {
+                if (application.isPresent()) {
                     selectedAppType.setSelectedKey(
-                        state, application.getApplicationType());
+                        state, application.get().getApplicationType());
                 }
 
                 showAppSettings(state);

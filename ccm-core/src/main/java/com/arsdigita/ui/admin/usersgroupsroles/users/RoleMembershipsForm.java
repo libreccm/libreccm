@@ -51,7 +51,7 @@ import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
  * Form for editing the role memberships of a user.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class RoleMembershipsForm extends Form {
@@ -75,7 +75,8 @@ class RoleMembershipsForm extends Form {
             final String userIdStr = selectedUserId.getSelectedKey(state);
             final UserRepository userRepository = CdiUtil.createCdiUtil()
                 .findBean(UserRepository.class);
-            final User user = userRepository.findById(Long.parseLong(userIdStr));
+            final User user = userRepository.findById(Long.parseLong(userIdStr))
+                .get();
 
             target.setLabel(new GlobalizedMessage(
                 "ui.admin.user_edit_role_memberships",
@@ -136,7 +137,7 @@ class RoleMembershipsForm extends Form {
             final PageState state = e.getPageState();
 
             final User user = userRepository.findById(Long.parseLong(
-                selectedUserId.getSelectedKey(state)));
+                selectedUserId.getSelectedKey(state))).get();
             final List<Role> assignedRoles = new ArrayList<>();
             user.getRoleMemberships().forEach(m -> {
                 assignedRoles.add(m.getRole());
@@ -150,12 +151,12 @@ class RoleMembershipsForm extends Form {
 
             roles.setValue(state, selectedRoles);
         });
-        
+
         addProcessListener(e -> {
             final PageState state = e.getPageState();
-            
+
             if (saveCancelSection.getSaveButton().isSelected(state)) {
-            
+
                 final FormData data = e.getFormData();
 
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
@@ -170,12 +171,12 @@ class RoleMembershipsForm extends Form {
                     ROLES_SELECTOR);
 
                 final User user = userRepository.findById(Long.parseLong(
-                    selectedUserId.getSelectedKey(state)));
+                    selectedUserId.getSelectedKey(state))).get();
                 final List<Role> selectedRoles = new ArrayList<>();
                 if (selectedRolesIds != null) {
                     Arrays.stream(selectedRolesIds).forEach(id -> {
                         final Role role = roleRepository.findById(
-                            Long.parseLong(id));
+                            Long.parseLong(id)).get();
                         selectedRoles.add(role);
                     });
                 }
@@ -196,7 +197,8 @@ class RoleMembershipsForm extends Form {
                     if (!selectedRoles.contains(r)) {
                         //Role is maybe detached or not fully loaded, 
                         //therefore we load the role from the database.
-                        final Role role = roleRepository.findById(r.getRoleId());
+                        final Role role = roleRepository.findById(r.getRoleId())
+                            .get();
                         roleManager.removeRoleFromParty(role, user);
                     }
                 });

@@ -212,7 +212,7 @@ public class AssetManagerTest {
                           "timestamp",
                           "uuid"})
     public void shareAsset() throws MimeTypeParseException {
-        final Folder folder = folderRepo.findById(-420L);
+        final Folder folder = folderRepo.findById(-420L).get();
         assertThat(folder, is(not(nullValue())));
 
         final File file = new File();
@@ -224,7 +224,6 @@ public class AssetManagerTest {
 
         assetManager.shareAsset(file, folder);
 
-        assertThat(file, is(not(nullValue())));
         assertThat(file.getDisplayName(), is(equalTo("datasheet.pdf")));
     }
 
@@ -242,8 +241,7 @@ public class AssetManagerTest {
         "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void shareAssetNull() {
-        final Folder folder = folderRepo.findById(-420L);
-        assertThat(folder, is(not(nullValue())));
+        final Folder folder = folderRepo.findById(-420L).get();
 
         assetManager.shareAsset(null, folder);
     }
@@ -286,11 +284,9 @@ public class AssetManagerTest {
         "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void shareAlreadySharedAsset() {
-        final Folder folder = folderRepo.findById(-420L);
-        assertThat(folder, is(not(nullValue())));
+        final Folder folder = folderRepo.findById(-420L).get();
 
-        final Asset asset = assetRepo.findById(-700L);
-        assertThat(asset, is(not(nullValue())));
+        final Asset asset = assetRepo.findById(-700L).get();
 
         assetManager.shareAsset(asset, folder);
     }
@@ -328,11 +324,9 @@ public class AssetManagerTest {
                           "object_order",
                           "uuid"})
     public void moveAssetToOtherFolder() {
-        final Asset asset = assetRepo.findById(-900L);
-        assertThat(asset, is(not(nullValue())));
+        final Asset asset = assetRepo.findById(-900L).get();
 
-        final Folder folder = folderRepo.findById(-410L);
-        assertThat(folder, is(not(nullValue())));
+        final Folder folder = folderRepo.findById(-410L).get();
 
         assetManager.move(asset, folder);
     }
@@ -354,11 +348,9 @@ public class AssetManagerTest {
                           "object_order",
                           "uuid"})
     public void moveAssetToFolderInOtherContentSection() {
-        final Asset asset = assetRepo.findById(-900L);
-        assertThat(asset, is(not(nullValue())));
+        final Asset asset = assetRepo.findById(-900L).get();
 
-        final Folder folder = folderRepo.findById(-1600L);
-        assertThat(folder, is(not(nullValue())));
+        final Folder folder = folderRepo.findById(-1600L).get();
 
         assetManager.move(asset, folder);
     }
@@ -379,8 +371,7 @@ public class AssetManagerTest {
     public void moveAssetNull() {
         final Asset asset = null;
 
-        final Folder folder = folderRepo.findById(-410L);
-        assertThat(folder, is(not(nullValue())));
+        final Folder folder = folderRepo.findById(-410L).get();
 
         assetManager.move(asset, folder);
     }
@@ -399,8 +390,7 @@ public class AssetManagerTest {
         "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void moveAssetTargetFolderIsNull() {
-        final Asset asset = assetRepo.findById(-900L);
-        assertThat(asset, is(not(nullValue())));
+        final Asset asset = assetRepo.findById(-900L).get();
 
         final Folder targetFolder = null;
 
@@ -421,11 +411,9 @@ public class AssetManagerTest {
         "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void moveAssetTargetFolderIsNotAssetFolder() {
-        final Asset asset = assetRepo.findById(-900L);
-        assertThat(asset, is(not(nullValue())));
+        final Asset asset = assetRepo.findById(-900L).get();
 
-        final Folder folder = folderRepo.findById(-200L);
-        assertThat(folder, is(not(nullValue())));
+        final Folder folder = folderRepo.findById(-200L).get();
 
         assetManager.move(asset, folder);
     }
@@ -450,11 +438,9 @@ public class AssetManagerTest {
                           "categorization_id",
                           "object_order"})
     public void copyAssetToOtherFolder() {
-        final Asset asset = assetRepo.findById(-1100L);
-        assertThat(asset, is(not(nullValue())));
+        final Asset asset = assetRepo.findById(-1100L).get();
 
-        final Folder targetFolder = folderRepo.findById(-400L);
-        assertThat(targetFolder, is(not(nullValue())));
+        final Folder targetFolder = folderRepo.findById(-400L).get();
 
         assetManager.copy(asset, targetFolder);
     }
@@ -479,11 +465,9 @@ public class AssetManagerTest {
                           "categorization_id",
                           "object_order"})
     public void copyAssetToSameFolder() {
-        final Asset asset = assetRepo.findById(-1100L);
-        assertThat(asset, is(not(nullValue())));
+        final Asset asset = assetRepo.findById(-1100L).get();
 
-        final Folder targetFolder = folderRepo.findById(-420L);
-        assertThat(targetFolder, is(not(nullValue())));
+        final Folder targetFolder = folderRepo.findById(-420L).get();
 
         assetManager.copy(asset, targetFolder);
         assetManager.copy(asset, targetFolder);
@@ -510,11 +494,9 @@ public class AssetManagerTest {
                           "categorization_id",
                           "object_order"})
     public void copyAssetToOtherContentSection() {
-        final Asset asset = assetRepo.findById(-1100L);
-        assertThat(asset, is(not(nullValue())));
+        final Asset asset = assetRepo.findById(-1100L).get();
 
-        final Folder targetFolder = folderRepo.findById(-1600L);
-        assertThat(targetFolder, is(not(nullValue())));
+        final Folder targetFolder = folderRepo.findById(-1600L).get();
 
         assetManager.copy(asset, targetFolder);
     }
@@ -535,8 +517,7 @@ public class AssetManagerTest {
     public void copyAssetNull() {
         final Asset asset = null;
 
-        final Folder targetFolder = folderRepo.findById(-420L);
-        assertThat(targetFolder, is(not(nullValue())));
+        final Folder targetFolder = folderRepo.findById(-420L).get();
 
         assetManager.copy(asset, targetFolder);
     }
@@ -555,8 +536,7 @@ public class AssetManagerTest {
         "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void copyAssetTargetFolderIsNull() {
-        final Asset asset = assetRepo.findById(-1100L);
-        assertThat(asset, is(not(nullValue())));
+        final Asset asset = assetRepo.findById(-1100L).get();
 
         final Folder targetFolder = null;
 
@@ -577,11 +557,9 @@ public class AssetManagerTest {
         "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void copyAssetTargetFolderIsNotAssetFolder() {
-        final Asset asset = assetRepo.findById(-1100L);
-        assertThat(asset, is(not(nullValue())));
+        final Asset asset = assetRepo.findById(-1100L).get();
 
-        final Folder targetFolder = folderRepo.findById(-200L);
-        assertThat(targetFolder, is(not(nullValue())));
+        final Folder targetFolder = folderRepo.findById(-200L).get();
 
         assetManager.copy(asset, targetFolder);
     }
@@ -598,17 +576,11 @@ public class AssetManagerTest {
     @ShouldMatchDataSet(
         "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
     public void verifyIsAssetInUse() {
-        final Asset header = assetRepo.findById(-700L);
-        final Asset phb = assetRepo.findById(-800L);
-        final Asset servicesHeader = assetRepo.findById(-900L);
-        final Asset product1Datasheet = assetRepo.findById(-1000L);
-        final Asset catalog = assetRepo.findById(-1100L);
-
-        assertThat(header, is(not(nullValue())));
-        assertThat(phb, is(not(nullValue())));
-        assertThat(servicesHeader, is(not(nullValue())));
-        assertThat(product1Datasheet, is(not(nullValue())));
-        assertThat(catalog, is(not(nullValue())));
+        final Asset header = assetRepo.findById(-700L).get();
+        final Asset phb = assetRepo.findById(-800L).get();
+        final Asset servicesHeader = assetRepo.findById(-900L).get();
+        final Asset product1Datasheet = assetRepo.findById(-1000L).get();
+        final Asset catalog = assetRepo.findById(-1100L).get();
 
         assertThat(assetManager.isAssetInUse(header), is(true));
         assertThat(assetManager.isAssetInUse(phb), is(false));
@@ -629,17 +601,11 @@ public class AssetManagerTest {
     @ShouldMatchDataSet(
         "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
     public void verifyGetAssetPathWithoutContentSection() {
-        final Asset header = assetRepo.findById(-700L);
-        final Asset phb = assetRepo.findById(-800L);
-        final Asset servicesHeader = assetRepo.findById(-900L);
-        final Asset product1Datasheet = assetRepo.findById(-1000L);
-        final Asset catalog = assetRepo.findById(-1100L);
-
-        assertThat(header, is(not(nullValue())));
-        assertThat(phb, is(not(nullValue())));
-        assertThat(servicesHeader, is(not(nullValue())));
-        assertThat(product1Datasheet, is(not(nullValue())));
-        assertThat(catalog, is(not(nullValue())));
+        final Asset header = assetRepo.findById(-700L).get();
+        final Asset phb = assetRepo.findById(-800L).get();
+        final Asset servicesHeader = assetRepo.findById(-900L).get();
+        final Asset product1Datasheet = assetRepo.findById(-1000L).get();
+        final Asset catalog = assetRepo.findById(-1100L).get();
 
         assertThat(assetManager.getAssetPath(header),
                    is(equalTo("/media/images/header.png")));
@@ -665,17 +631,11 @@ public class AssetManagerTest {
     @ShouldMatchDataSet(
         "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
     public void verifyGetAssetPathWithContentSection() {
-        final Asset header = assetRepo.findById(-700L);
-        final Asset phb = assetRepo.findById(-800L);
-        final Asset servicesHeader = assetRepo.findById(-900L);
-        final Asset product1Datasheet = assetRepo.findById(-1000L);
-        final Asset catalog = assetRepo.findById(-1100L);
-
-        assertThat(header, is(not(nullValue())));
-        assertThat(phb, is(not(nullValue())));
-        assertThat(servicesHeader, is(not(nullValue())));
-        assertThat(product1Datasheet, is(not(nullValue())));
-        assertThat(catalog, is(not(nullValue())));
+        final Asset header = assetRepo.findById(-700L).get();
+        final Asset phb = assetRepo.findById(-800L).get();
+        final Asset servicesHeader = assetRepo.findById(-900L).get();
+        final Asset product1Datasheet = assetRepo.findById(-1000L).get();
+        final Asset catalog = assetRepo.findById(-1100L).get();
 
         assertThat(assetManager.getAssetPath(header, true),
                    is(equalTo("info:/media/images/header.png")));
@@ -701,25 +661,15 @@ public class AssetManagerTest {
     @ShouldMatchDataSet(
         "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
     public void verifyGetAssetFolder() {
-        final Asset header = assetRepo.findById(-700L);
-        final Asset phb = assetRepo.findById(-800L);
-        final Asset servicesHeader = assetRepo.findById(-900L);
-        final Asset product1Datasheet = assetRepo.findById(-1000L);
-        final Asset catalog = assetRepo.findById(-1100L);
+        final Asset header = assetRepo.findById(-700L).get();
+        final Asset phb = assetRepo.findById(-800L).get();
+        final Asset servicesHeader = assetRepo.findById(-900L).get();
+        final Asset product1Datasheet = assetRepo.findById(-1000L).get();
+        final Asset catalog = assetRepo.findById(-1100L).get();
 
-        assertThat(header, is(not(nullValue())));
-        assertThat(phb, is(not(nullValue())));
-        assertThat(servicesHeader, is(not(nullValue())));
-        assertThat(product1Datasheet, is(not(nullValue())));
-        assertThat(catalog, is(not(nullValue())));
-
-        final Folder media = folderRepo.findById(-400L);
-        final Folder images = folderRepo.findById(-410L);
-        final Folder downloads = folderRepo.findById(-420L);
-
-        assertThat(media, is(not(nullValue())));
-        assertThat(images, is(not(nullValue())));
-        assertThat(downloads, is(not(nullValue())));
+        final Folder media = folderRepo.findById(-400L).get();
+        final Folder images = folderRepo.findById(-410L).get();
+        final Folder downloads = folderRepo.findById(-420L).get();
 
         final Optional<Folder> headerFolder = assetManager
             .getAssetFolder(header);
@@ -756,27 +706,16 @@ public class AssetManagerTest {
     @ShouldMatchDataSet(
         "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
     public void verifyGetAssetFolders() {
-        final Asset header = assetRepo.findById(-700L);
-        final Asset phb = assetRepo.findById(-800L);
-        final Asset servicesHeader = assetRepo.findById(-900L);
-        final Asset product1Datasheet = assetRepo.findById(-1000L);
-        final Asset catalog = assetRepo.findById(-1100L);
+        final Asset header = assetRepo.findById(-700L).get();
+        final Asset phb = assetRepo.findById(-800L).get();
+        final Asset servicesHeader = assetRepo.findById(-900L).get();
+        final Asset product1Datasheet = assetRepo.findById(-1000L).get();
+        final Asset catalog = assetRepo.findById(-1100L).get();
 
-        assertThat(header, is(not(nullValue())));
-        assertThat(phb, is(not(nullValue())));
-        assertThat(servicesHeader, is(not(nullValue())));
-        assertThat(product1Datasheet, is(not(nullValue())));
-        assertThat(catalog, is(not(nullValue())));
-
-        final Folder infoAssets = folderRepo.findById(-300L);
-        final Folder media = folderRepo.findById(-400L);
-        final Folder images = folderRepo.findById(-410L);
-        final Folder downloads = folderRepo.findById(-420L);
-
-        assertThat(infoAssets, is(not(nullValue())));
-        assertThat(media, is(not(nullValue())));
-        assertThat(images, is(not(nullValue())));
-        assertThat(downloads, is(not(nullValue())));
+        final Folder infoAssets = folderRepo.findById(-300L).get();
+        final Folder media = folderRepo.findById(-400L).get();
+        final Folder images = folderRepo.findById(-410L).get();
+        final Folder downloads = folderRepo.findById(-420L).get();
 
         final List<Folder> headerFolders = assetManager.getAssetFolders(header);
         final List<Folder> phbFolders = assetManager.getAssetFolders(phb);

@@ -135,7 +135,7 @@ public class ShortcutsTable extends Table {
                         final ShortcutRepository repo = CdiUtil.createCdiUtil()
                             .findBean(ShortcutRepository.class);
                         final Shortcut shortcut = repo.findById(Long.parseLong(
-                            (String) event.getRowKey()));
+                            (String) event.getRowKey())).get();
                         repo.delete(shortcut);
                         break;
                     }
