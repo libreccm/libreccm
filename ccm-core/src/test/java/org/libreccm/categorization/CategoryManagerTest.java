@@ -659,7 +659,7 @@ public class CategoryManagerTest {
     public void createMultipleCategories() {
 
         shiro.getSystemUser().execute(() -> {
-            final Domain domain = domainRepo.findByDomainKey("test");
+            final Domain domain = domainRepo.findByDomainKey("test").get();
             final Category root = domain.getRoot();
 
             final Category com = new Category();

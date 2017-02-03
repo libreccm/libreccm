@@ -47,7 +47,7 @@ public class LoginApplicationCreator
                             + "which is mounted at /login");
         }
 
-        return appRepository.retrieveApplicationForPath(primaryUrl);
+        return appRepository.retrieveApplicationForPath(primaryUrl).get();
     }
 
 }
