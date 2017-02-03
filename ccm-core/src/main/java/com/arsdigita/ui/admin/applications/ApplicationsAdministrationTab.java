@@ -40,6 +40,8 @@ import org.libreccm.web.ApplicationRepository;
 import org.libreccm.web.ApplicationType;
 import org.libreccm.web.CcmApplication;
 
+import java.util.Optional;
+
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
@@ -213,15 +215,15 @@ public class ApplicationsAdministrationTab extends LayoutPanel {
                     final ApplicationRepository appRepo = cdiUtil.findBean(
                         ApplicationRepository.class);
 
-                    final CcmApplication application = appRepo
+                    final Optional<CcmApplication> application = appRepo
                         .retrieveApplicationForPath(selectedKey);
 
                     final LegacyApplicationInstancePane pane;
-                    if (application != null) {
+                    if (application.isPresent()) {
                         pane = instancePanes.get(application.getClass().
                             getName());
                         if (pane != null) {
-                            pane.setApplication(application);
+                            pane.setApplication(application.get());
                         }
                     } else {
                         pane = null;

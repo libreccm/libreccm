@@ -45,7 +45,7 @@ public class AdminJsfApplicationCreator implements ApplicationCreator<CcmApplica
                             + "which is mounted at /admin-jsf");
         }
         
-        return appRepo.retrieveApplicationForPath(primaryUrl);
+        return appRepo.retrieveApplicationForPath(primaryUrl).get();
     }
     
     

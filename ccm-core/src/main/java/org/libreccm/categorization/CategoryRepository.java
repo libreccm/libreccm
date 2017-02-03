@@ -84,7 +84,7 @@ public class CategoryRepository extends AbstractEntityRepository<Long, Category>
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
-    public Category findByPath(final String path) {
+    public Optional<Category> findByPath(final String path) {
         if (path == null || path.isEmpty()) {
             throw new IllegalArgumentException("Path can't be null or empty.");
         }
@@ -102,18 +102,18 @@ public class CategoryRepository extends AbstractEntityRepository<Long, Category>
                     + "Valid path format: domainKey:path");
         }
 
-        final Domain domain = domainRepo.findByDomainKey(tokens[0]);
-        if (domain == null) {
+        final Optional<Domain> domain = domainRepo.findByDomainKey(tokens[0]);
+        if (domain.isPresent()) {
+            return findByPath(domain.get(), tokens[1]);
+        } else {
             throw new InvalidCategoryPathException(String.format(
                 "No domain identified by the key '%s' found.",
                 tokens[0]));
         }
-
-        return findByPath(domain, tokens[1]);
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
-    public Category findByPath(final Domain domain, final String path) {
+    public Optional<Category> findByPath(final Domain domain, final String path) {
         if (domain == null) {
             throw new IllegalArgumentException("Domain can't be null.");
         }
@@ -133,37 +133,40 @@ public class CategoryRepository extends AbstractEntityRepository<Long, Category>
         }
 
         LOGGER.debug("Trying to find category with path \"{}\" in "
-            + "domain \"{}\".",
+                         + "domain \"{}\".",
                      normalizedPath,
                      domain.getDomainKey());
         final String[] tokens = normalizedPath.split("/");
         Category current = domain.getRoot();
         for (final String token : tokens) {
             if (current.getSubCategories() == null) {
-                return null;
+                return Optional.empty();
             }
             final Optional<Category> result = current.getSubCategories()
                 .stream()
-                .filter((c) -> {
-                    LOGGER.debug("#findByPath(Domain, String): c = {}",
-                                 c.toString());
-                    LOGGER.debug(
-                        "#findByPath(Domain, String): c.getName = \"{}\"",
-                        c.getName());
-                    LOGGER.debug("#findByPath(Domain, String): token = \"{}\"",
-                                 token);
-                    return c.getName().equals(token);
-                })
+                .filter(c -> filterCategoryByName(c, token))
                 .findFirst();
-            
+
             if (result.isPresent()) {
                 current = result.get();
             } else {
-                return null;
+                return Optional.empty();
             }
         }
 
-        return current;
+        return Optional.of(current);
+    }
+
+    private boolean filterCategoryByName(final Category category,
+                                         final String name) {
+        LOGGER.debug("#findByPath(Domain, String): c = {}",
+                     category.toString());
+        LOGGER.debug(
+            "#findByPath(Domain, String): c.getName = \"{}\"",
+            category.getName());
+        LOGGER.debug("#findByPath(Domain, String): token = \"{}\"",
+                     name);
+        return category.getName().equals(name);
     }
 
     @AuthorizationRequired

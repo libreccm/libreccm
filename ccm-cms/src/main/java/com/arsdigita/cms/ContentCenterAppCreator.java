@@ -46,7 +46,7 @@ public class ContentCenterAppCreator implements ApplicationCreator<CcmApplicatio
                     + "/content-center/");
         }
         
-        return appRepository.retrieveApplicationForPath(primaryUrl);
+        return appRepository.retrieveApplicationForPath(primaryUrl).get();
     }
 
 }

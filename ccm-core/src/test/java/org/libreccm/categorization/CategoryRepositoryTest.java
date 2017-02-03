@@ -54,8 +54,10 @@ import static org.libreccm.testutils.DependenciesHelpers.*;
 
 import org.jboss.arquillian.persistence.CleanupUsingScript;
 
+import java.util.Optional;
+
 /**
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @org.junit.experimental.categories.Category(IntegrationTest.class)
@@ -160,23 +162,26 @@ public class CategoryRepositoryTest {
         "datasets/org/libreccm/categorization/CategoryRepositoryTest/data.yml")
     @InSequence(1100)
     public void findByPathString() {
-        final Category category1 = categoryRepo.findByPath("test:/foo/bar/");
-        final Category category2 = categoryRepo.findByPath("test:/foo/bar");
-        final Category category3 = categoryRepo.findByPath("test:/foo/");
+        final Optional<Category> category1 = categoryRepo.findByPath(
+            "test:/foo/bar/");
+        final Optional<Category> category2 = categoryRepo.findByPath(
+            "test:/foo/bar");
+        final Optional<Category> category3 = categoryRepo.findByPath(
+            "test:/foo/");
 
-        final Category notFound = categoryRepo
+        final Optional<Category> notFound = categoryRepo
             .findByPath("test:/does/not/exist");
 
-        assertThat(category1, is(not(nullValue())));
-        assertThat(category1.getName(), is(equalTo("bar")));
+        assertThat(category1.isPresent(), is(true));
+        assertThat(category1.get().getName(), is(equalTo("bar")));
 
-        assertThat(category2, is(not(nullValue())));
-        assertThat(category2.getName(), is(equalTo("bar")));
+        assertThat(category2.isPresent(), is(true));
+        assertThat(category2.get().getName(), is(equalTo("bar")));
 
-        assertThat(category3, is(not(nullValue())));
-        assertThat(category3.getName(), is(equalTo("foo")));
+        assertThat(category3.isPresent(), is(true));
+        assertThat(category3.get().getName(), is(equalTo("foo")));
 
-        assertThat(notFound, is(nullValue()));
+        assertThat(notFound.isPresent(), is(false));
     }
 
     @Test
@@ -184,10 +189,10 @@ public class CategoryRepositoryTest {
         "datasets/org/libreccm/categorization/CategoryRepositoryTest/data.yml")
     @InSequence(1150)
     public void findByPathStringNotExisting() {
-        final Category doesNotExist = categoryRepo.findByPath(
+        final Optional<Category> doesNotExist = categoryRepo.findByPath(
             "test:/does/not/exist");
 
-        assertThat(doesNotExist, is(nullValue()));
+        assertThat(doesNotExist.isPresent(), is(false));
     }
 
     @Test(expected = InvalidCategoryPathException.class)
@@ -204,29 +209,33 @@ public class CategoryRepositoryTest {
         "datasets/org/libreccm/categorization/CategoryRepositoryTest/data.yml")
     @InSequence(2100)
     public void findByPathDomainString() {
-        final Domain domain = domainRepo.findByDomainKey("test");
+        final Domain domain = domainRepo.findByDomainKey("test").get();
 
-        final Category category1 = categoryRepo.findByPath(domain, "/foo/bar/");
-        final Category category2 = categoryRepo.findByPath(domain, "foo/bar/");
-        final Category category3 = categoryRepo.findByPath(domain, "/foo/bar");
-        final Category category4 = categoryRepo.findByPath(domain, "foo/bar");
+        final Optional<Category> category1 = categoryRepo.findByPath(
+            domain, "/foo/bar/");
+        final Optional<Category> category2 = categoryRepo.findByPath(
+            domain, "foo/bar/");
+        final Optional<Category> category3 = categoryRepo.findByPath(
+            domain, "/foo/bar");
+        final Optional<Category> category4 = categoryRepo.findByPath(
+            domain, "foo/bar");
 
-        final Category notFound = categoryRepo.findByPath(domain,
-                                                          "/does/not/exist");
+        final Optional<Category> notFound = categoryRepo.findByPath(
+            domain, "/does/not/exist");
 
-        assertThat(category1, is(not(nullValue())));
-        assertThat(category1.getName(), is(equalTo("bar")));
+        assertThat(category1.isPresent(), is(true));
+        assertThat(category1.get().getName(), is(equalTo("bar")));
 
-        assertThat(category2, is(not(nullValue())));
-        assertThat(category2.getName(), is(equalTo("bar")));
+        assertThat(category2.isPresent(), is(true));
+        assertThat(category2.get().getName(), is(equalTo("bar")));
 
-        assertThat(category3, is(not(nullValue())));
-        assertThat(category3.getName(), is(equalTo("bar")));
+        assertThat(category3.isPresent(), is(true));
+        assertThat(category3.get().getName(), is(equalTo("bar")));
 
-        assertThat(category4, is(not(nullValue())));
-        assertThat(category4.getName(), is(equalTo("bar")));
+        assertThat(category4.isPresent(), is(true));
+        assertThat(category4.get().getName(), is(equalTo("bar")));
 
-        assertThat(notFound, is(nullValue()));
+        assertThat(notFound.isPresent(), is(false));
     }
 
     @Test
@@ -234,12 +243,12 @@ public class CategoryRepositoryTest {
         "datasets/org/libreccm/categorization/CategoryRepositoryTest/data.yml")
     @InSequence(1150)
     public void findByPathDomainStringNotExisting() {
-        final Domain domain = domainRepo.findByDomainKey("test");
+        final Domain domain = domainRepo.findByDomainKey("test").get();
 
-        final Category doesNotExist = categoryRepo.findByPath(domain,
+        final Optional<Category> doesNotExist = categoryRepo.findByPath(domain,
                                                               "/does/not/exist");
 
-        assertThat(doesNotExist, is(nullValue()));
+        assertThat(doesNotExist.isPresent(), is(false));
     }
 
     @Test

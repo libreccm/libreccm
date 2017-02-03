@@ -48,7 +48,7 @@ public class AdminApplicationCreator
                             + "which is mounted at /admin");
         }
         
-        return appRepository.retrieveApplicationForPath(primaryUrl);
+        return appRepository.retrieveApplicationForPath(primaryUrl).get();
     }
     
 
