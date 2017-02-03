@@ -47,7 +47,7 @@ public class ShortcutsApplicationCreator
                     + "/shortcuts");
         }
         
-        return appRepository.retrieveApplicationForPath(primaryUrl);
+        return appRepository.retrieveApplicationForPath(primaryUrl).get();
     }
     
     

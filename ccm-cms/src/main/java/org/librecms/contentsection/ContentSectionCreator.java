@@ -39,7 +39,7 @@ public class ContentSectionCreator
     @Override
     public CcmApplication createInstance(final String primaryUrl, 
                                          final ApplicationType type) {
-        return appRepo.retrieveApplicationForPath(primaryUrl);
+        return appRepo.retrieveApplicationForPath(primaryUrl).get();
     }
     
     

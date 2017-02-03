@@ -24,6 +24,7 @@ import org.libreccm.security.RequiresPrivilege;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.enterprise.context.RequestScoped;
@@ -76,7 +77,7 @@ public class DomainRepository extends AbstractEntityRepository<Long, Domain> {
      * @return The {@code Domain} identified by {@code domainKey} or
      *         {@code null} if there is no such {@code Domain}.
      */
-    public Domain findByDomainKey(final String domainKey) {
+    public Optional<Domain> findByDomainKey(final String domainKey) {
         final TypedQuery<Domain> query = entityManager.createNamedQuery(
             "Domain.findByKey", Domain.class);
         query.setParameter("key", domainKey);
@@ -86,9 +87,9 @@ public class DomainRepository extends AbstractEntityRepository<Long, Domain> {
         query.setHint("javax.persistence.fetchgraph", graph);
 
         try {
-            return query.getSingleResult();
+            return Optional.of(query.getSingleResult());
         } catch (NoResultException ex) {
-            return null;
+            return Optional.empty();
         }
     }
 

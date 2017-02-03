@@ -24,6 +24,7 @@ import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
 import javax.persistence.NoResultException;
@@ -57,15 +58,15 @@ public class ApplicationRepository
      *         is no application mounted at that {@code path}.
      */
     @Transactional(Transactional.TxType.REQUIRED)
-    public CcmApplication retrieveApplicationForPath(final String path) {
+    public Optional<CcmApplication> retrieveApplicationForPath(final String path) {
         final TypedQuery<CcmApplication> query = getEntityManager()
             .createNamedQuery("CcmApplication.retrieveApplicationForPath",
                               CcmApplication.class);
         query.setParameter("path", path);
         try {
-            return query.getSingleResult();
+            return Optional.of(query.getSingleResult());
         } catch (NoResultException ex) {
-            return null;
+            return Optional.empty();
         }
     }
 
