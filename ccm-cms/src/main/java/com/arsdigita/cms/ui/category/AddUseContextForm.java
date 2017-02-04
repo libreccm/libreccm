@@ -30,7 +30,7 @@ import com.arsdigita.bebop.util.GlobalizationUtil;
 import com.arsdigita.cms.CMS;
 import com.arsdigita.cms.ui.BaseForm;
 import com.arsdigita.kernel.KernelConfig;
-import org.apache.log4j.Logger;
+
 import org.libreccm.categorization.Category;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.ConfigurationManager;
@@ -42,13 +42,10 @@ import org.librecms.contentsection.privileges.AdminPrivileges;
 /**
  * TODO Needs a description.
  *
- * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  * @author Scott Seago
- * @version $Id: AddUseContextForm.java 2090 2010-04-17 08:04:14Z pboy $
+ * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  */
 class AddUseContextForm extends BaseForm {
-
-    private static final Logger s_log = Logger.getLogger(AddUseContextForm.class);
 
     private final SingleSelectionModel m_model;
 

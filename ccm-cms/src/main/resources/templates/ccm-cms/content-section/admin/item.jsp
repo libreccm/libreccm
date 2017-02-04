@@ -8,13 +8,14 @@
   <jsp:directive.page import="com.arsdigita.dispatcher.*"/>
   <jsp:directive.page import="com.arsdigita.web.LoginSignal"/>
   <jsp:directive.page import="com.arsdigita.web.Web"/>
-  <jsp:directive.page import="org.apache.log4j.Logger"/>
+  <jsp:directive.page import="org.apache.logging.log4j.Logger"/>
+  <jsp:directive.page import="org.apache.logging.log4j.LogManager"/>
   <jsp:directive.page import="java.util.Date"/>
 
 
   <jsp:declaration>
     private static final Logger s_log =
-        Logger.getLogger("content-section.www.admin.item.jsp");
+        LogManager.getLogger("content-section.www.admin.item.jsp");
     private ContentItemPage itemPage = null;
     private Date timestamp = new Date(0);
   </jsp:declaration>

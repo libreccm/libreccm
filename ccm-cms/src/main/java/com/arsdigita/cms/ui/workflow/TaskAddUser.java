@@ -33,7 +33,6 @@ import org.libreccm.workflow.AssignableTask;
 
 import com.arsdigita.xml.Element;
 
-import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.UserRepository;
 import org.libreccm.workflow.WorkflowManager;
@@ -46,11 +45,8 @@ import java.util.List;
  *
  * @author Uday Mathur
  * @author <a href="mailto:pihman@arsdigita.com">Michael Pih</a>
- * @version $Id$
  */
 class TaskAddUser extends SimpleContainer {
-
-    private static final Logger s_log = Logger.getLogger(TaskAddUser.class);
 
     private final TaskRequestLocal m_task;
 

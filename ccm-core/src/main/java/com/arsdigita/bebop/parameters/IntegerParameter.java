@@ -24,7 +24,6 @@ package com.arsdigita.bebop.parameters;
  *
  *    @author Karl Goldstein 
  *    @author Uday Mathur 
- *    @version $Id$
  */
 public class IntegerParameter extends NumberParameter {
 
@@ -32,6 +31,7 @@ public class IntegerParameter extends NumberParameter {
         super(name);
     }
 
+    @Override
     public Object unmarshal(String encoded) {
         if( encoded == null || encoded.length() == 0 ) {
             return null;

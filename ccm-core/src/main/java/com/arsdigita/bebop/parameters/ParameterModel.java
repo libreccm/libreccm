@@ -31,8 +31,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
-
 import java.util.Objects;
 
 /**
@@ -42,12 +40,8 @@ import java.util.Objects;
  *    @author Karl Goldstein
  *    @author Uday Mathur
  *
- *    @version $Id$
  */
 public abstract class ParameterModel implements Lockable {
-
-    private static final Logger s_log = Logger
-                                        .getLogger(ParameterModel.class.getName());
 
     /**
      * The name of this ParameterModel. The constructor will throw an

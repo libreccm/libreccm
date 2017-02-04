@@ -38,15 +38,15 @@ import com.arsdigita.bebop.table.TableModelBuilder;
 
 import static com.arsdigita.bebop.util.BebopConstants.*;
 
-import com.arsdigita.bebop.util.BebopConstants;
 import com.arsdigita.util.Assert;
 import com.arsdigita.xml.Element;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Iterator;
 
 import javax.servlet.ServletException;
-
-import org.apache.log4j.Logger;
 
 /**
  * Displays statically or dynamically generated data in tabular form. 
@@ -97,11 +97,11 @@ import org.apache.log4j.Logger;
  * @see TableColumnModel
  *
  * @author David Lutterkort 
- * @version $Id$
  */
 public class Table extends SimpleComponent {
 
-    private static final Logger logger = Logger.getLogger(Table.class);
+    private static final Logger LOGGER = LogManager.getLogger(Table.class);
+    
     // Names for HTML Attributes
     private static final String WIDTH = "width";
     private static final String CELL_SPACING = "cellspacing";
@@ -710,7 +710,7 @@ public class Table extends SimpleComponent {
             final int modelSize = getColumnModel().size();
             int row = 0;
 
-            logger.debug("Creating table rows...");
+            LOGGER.debug("Creating table rows...");
             long start = System.currentTimeMillis();
             do {
                 long rowStart = System.currentTimeMillis();
@@ -753,17 +753,17 @@ public class Table extends SimpleComponent {
                         long begin = System.currentTimeMillis();
                         r.getComponent(this, s, value, selected, key, row, i).
                                 generateXML(s, cell);
-                        logger.debug(String.format("until here i needed %d ms",
+                        LOGGER.debug(String.format("until here i needed %d ms",
                                                    System.currentTimeMillis()
                                                    - begin));
                     }
                 }
                 row += 1;
-                logger.debug(
+                LOGGER.debug(
                         String.format("Created row in %d ms",
                                       System.currentTimeMillis() - rowStart));
             } while (model.nextRow());
-            logger.debug(String.format("Build table rows in %d ms",
+            LOGGER.debug(String.format("Build table rows in %d ms",
                                        System.currentTimeMillis() - start));
         } else if (m_emptyView != null) {
             m_emptyView.generateXML(s, p);

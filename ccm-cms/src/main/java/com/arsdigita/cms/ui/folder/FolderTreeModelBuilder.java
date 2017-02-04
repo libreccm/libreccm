@@ -24,12 +24,17 @@ import com.arsdigita.bebop.tree.TreeModel;
 import com.arsdigita.bebop.tree.TreeModelBuilder;
 import com.arsdigita.bebop.tree.TreeNode;
 import com.arsdigita.cms.CMS;
+
 import org.librecms.contentsection.ContentSection;
+
 import com.arsdigita.util.LockableImpl;
+
 import java.util.Collections;
 import java.util.Iterator;
-import org.apache.log4j.Logger;
+
 import org.libreccm.categorization.Category;
+import org.libreccm.cdi.utils.CdiUtil;
+import org.librecms.contentsection.Folder;
 
 /**
  * A {@link com.arsdigita.bebop.tree.TreeModelBuilder} that produces trees
@@ -41,19 +46,17 @@ import org.libreccm.categorization.Category;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class FolderTreeModelBuilder extends LockableImpl
-        implements TreeModelBuilder {
-
-    private static final Logger s_log = Logger.getLogger(
-            FolderTreeModelBuilder.class);
+    implements TreeModelBuilder {
 
     /**
      * Make a tree model that lists the hierarchy of folders underneath the
      * folder returned by {@link #getRoot getRoot}.
      *
-     * @param tree the tree in which the model is used
+     * @param tree  the tree in which the model is used
      * @param state represents the current request
+     *
      * @return a tree model that lists the hierarchy of folders underneath the
-     * folder returnedby {@link #getRoot getRoot}.
+     *         folder returned by {@link #getRoot getRoot}.
      */
     @Override
     public TreeModel makeModel(final Tree tree, final PageState state) {
@@ -67,28 +70,35 @@ public class FolderTreeModelBuilder extends LockableImpl
             @Override
             public boolean hasChildren(final TreeNode node,
                                        final PageState state) {
-                return !((Category) node.getElement()).getSubCategories().
-                        isEmpty();
+                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+                final FolderTreeModelController controller = cdiUtil.findBean(
+                    FolderTreeModelController.class);
+
+                return controller.hasChildren(node);
             }
 
             @Override
-            public Iterator getChildren(final TreeNode node,
-                                        final PageState state) {
+            public Iterator<Folder> getChildren(final TreeNode node,
+                                                final PageState state) {
                 final String nodeKey = node.getKey().toString();
 
                 // Always expand root node
                 if (nodeKey.equals(getRoot(state).getKey().toString())
-                            && tree.isCollapsed(nodeKey, state)) {
+                        && tree.isCollapsed(nodeKey, state)) {
                     tree.expand(nodeKey, state);
                 }
 
                 if (tree.isCollapsed(nodeKey, state)) {
-                    return Collections.EMPTY_LIST.iterator();
+                    return Collections.emptyIterator();
                 }
 
-                return ((Category) node.getElement()).getSubCategories().
-                        iterator();
+                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+                final FolderTreeModelController controller = cdiUtil.findBean(
+                    FolderTreeModelController.class);
+                
+                return controller.getChildren(node);
             }
+
         };
 
         /*return new DataQueryTreeModel(getRoot(state).getID(),
@@ -140,20 +150,22 @@ public class FolderTreeModelBuilder extends LockableImpl
      * Retrn the root folder for the tree model in the current request.
      *
      * @param state represents the current request
+     *
      * @return the root folder for the tree
-     * @post return != null
+     *
      */
-    protected Category getRootFolder(final PageState state)
-            throws IllegalStateException {
-        ContentSection sec = CMS.getContext().getContentSection();
-        return sec.getRootDocumentsFolder();
+    protected Folder getRootFolder(final PageState state)
+        throws IllegalStateException {
+
+        final ContentSection section = CMS.getContext().getContentSection();
+        return section.getRootDocumentsFolder();
     }
 
     private class FolderTreeNode implements TreeNode {
 
-        private Category folder;
+        private final Folder folder;
 
-        public FolderTreeNode(final Category folder) {
+        public FolderTreeNode(final Folder folder) {
             this.folder = folder;
         }
 

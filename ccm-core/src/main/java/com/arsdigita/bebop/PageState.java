@@ -30,6 +30,10 @@ import com.arsdigita.web.RedirectSignal;
 import com.arsdigita.web.URL;
 import com.arsdigita.web.Web;
 import com.arsdigita.xml.Element;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.BitSet;
@@ -37,11 +41,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import org.apache.log4j.Logger;
 
 /**
  * <p>The request-specific data (state) for a {@link Page}. All
@@ -153,12 +157,11 @@ import org.apache.log4j.Logger;
  *
  * @author David Lutterkort
  * @author Uday Mathur
- * @version $Id$
  */
 public class PageState {
 
     /** Class specific logger instance. */
-    private static final Logger s_log = Logger.getLogger(PageState.class);
+    private static final Logger LOGGER = LogManager.getLogger(PageState.class);
 
     /** The underlying Page object. */
     private Page m_page;
@@ -501,8 +504,8 @@ public class PageState {
 		return;
             m_invisible.set(i);
         }
-        if (s_log.isInfoEnabled()) {
-            s_log.info("Marking visibility parameter as dirty " + m_request + " because of component " + c);
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("Marking visibility parameter as dirty " + m_request + " because of component " + c);
         }
         // Do this only in toURL since the RLE is expensive
         //m_pageState.put(Page.INVISIBLE, encodeVisibility(m_invisible));
@@ -884,7 +887,7 @@ public class PageState {
 
         final ParameterMap params = new ParameterMap();        
 
-        if (s_log.isDebugEnabled()) {
+        if (LOGGER.isDebugEnabled()) {
             dumpVisibility();
         }
 
@@ -917,8 +920,8 @@ public class PageState {
 
     private void synchronizeVisibility() {
         if (m_visibilityDirty) {
-            if (s_log.isInfoEnabled()) {
-                s_log.info("Encoding visibility parameter " + m_request);
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("Encoding visibility parameter " + m_request);
             }
             m_pageState.put(Page.INVISIBLE, encodeVisibility(m_invisible));
             m_visibilityDirty = false;
@@ -935,30 +938,30 @@ public class PageState {
         BitSet difference = (BitSet)current.clone();
         difference.xor(base);
         
-        s_log.debug("Current: " + current.toString());
-        s_log.debug("Default: " + base.toString());
-        s_log.debug("Difference: " + difference.toString());
+        LOGGER.debug("Current: " + current.toString());
+        LOGGER.debug("Default: " + base.toString());
+        LOGGER.debug("Difference: " + difference.toString());
 
-        s_log.debug("Current RAW: " + raw.marshal(current));
-        s_log.debug("Default RAW: " + raw.marshal(base));
-        s_log.debug("Difference RAW: " + raw.marshal(difference));
+        LOGGER.debug("Current RAW: " + raw.marshal(current));
+        LOGGER.debug("Default RAW: " + raw.marshal(base));
+        LOGGER.debug("Difference RAW: " + raw.marshal(difference));
 
-        s_log.debug("Current DGAP: " + dgap.marshal(current));
-        s_log.debug("Default DGAP: " + dgap.marshal(base));
-        s_log.debug("Difference DGAP: " + dgap.marshal(difference));
+        LOGGER.debug("Current DGAP: " + dgap.marshal(current));
+        LOGGER.debug("Default DGAP: " + dgap.marshal(base));
+        LOGGER.debug("Difference DGAP: " + dgap.marshal(difference));
         
-        s_log.debug("Current Result: " + dgap.unmarshal(dgap.marshal(current)));
-        s_log.debug("Default Result: " + dgap.unmarshal(dgap.marshal(base)));
-        s_log.debug("Difference Result: " + dgap.unmarshal(dgap.marshal(difference)));
+        LOGGER.debug("Current Result: " + dgap.unmarshal(dgap.marshal(current)));
+        LOGGER.debug("Default Result: " + dgap.unmarshal(dgap.marshal(base)));
+        LOGGER.debug("Difference Result: " + dgap.unmarshal(dgap.marshal(difference)));
         
         if (!current.equals(dgap.unmarshal(dgap.marshal(current)))) {
-            s_log.debug("Broken marshal/unmarshal for current");
+            LOGGER.debug("Broken marshal/unmarshal for current");
         }
         if (!base.equals(dgap.unmarshal(dgap.marshal(base)))) {
-            s_log.debug("Broken marshal/unmarshal for default");
+            LOGGER.debug("Broken marshal/unmarshal for default");
         }
         if (!difference.equals(dgap.unmarshal(dgap.marshal(difference)))) {
-            s_log.debug("Broken marshal/unmarshal for difference");
+            LOGGER.debug("Broken marshal/unmarshal for difference");
         }
     }
 

@@ -18,10 +18,13 @@
  */
 package com.arsdigita.util;
 
+import org.apache.logging.log4j.LogManager;
+
 import java.util.TreeMap;
 import java.util.HashMap;
 import java.util.Comparator;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.Logger;
 
 /**
  * An implementation of Map which preserves the order in which you put
@@ -29,11 +32,10 @@ import org.apache.log4j.Logger;
  *
  * @deprecated use {@link com.arsdigita.util.SequentialMap} instead
  * @author Justin Ross &lt;jross@redhat.com&gt;
- * @version $Id$
  */
 public class OrderedMap extends TreeMap {
 
-    private static final Logger s_log = Logger.getLogger(OrderedMap.class);
+    private static final Logger LOGGER = LogManager.getLogger(OrderedMap.class);
 
     private OrderingComparator m_comparator;
 
@@ -48,8 +50,8 @@ public class OrderedMap extends TreeMap {
      * its contents in calls to entrySet().iterator();
      */
     public Object put(final Object key, final Object value) {
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Adding a new map entry: " + key + " => " + value);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Adding a new map entry: " + key + " => " + value);
         }
 
         m_comparator.keep(key);
@@ -73,7 +75,7 @@ public class OrderedMap extends TreeMap {
 }
 
 final class OrderingComparator implements Comparator, Cloneable {
-    private static final Logger s_log = Logger.getLogger
+    private static final Logger LOGGER = LogManager.getLogger
         (OrderingComparator.class);
 
     private HashMap m_sortKeyMap = new HashMap();
@@ -84,15 +86,15 @@ final class OrderingComparator implements Comparator, Cloneable {
         Long sk2 = (Long) m_sortKeyMap.get(o2);
 
         if (sk1 == null) {
-            if (s_log.isDebugEnabled()) {
-                s_log.debug("The sort key of " + o1 + " is null; " +
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("The sort key of " + o1 + " is null; " +
                             "returning 1");
             }
 
             return 1;
         } else if (sk2 == null) {
-            if (s_log.isDebugEnabled()) {
-                s_log.debug("The sort key of " + o2 + " is null; " +
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("The sort key of " + o2 + " is null; " +
                             "returning -1");
             }
 
@@ -100,12 +102,12 @@ final class OrderingComparator implements Comparator, Cloneable {
         } else {
             final int result = (int) (sk1.longValue() - sk2.longValue());
 
-            if (s_log.isDebugEnabled()) {
-                s_log.debug("The sort key of " + o1 + " is " +
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("The sort key of " + o1 + " is " +
                             sk1.longValue());
-                s_log.debug("The sort key of " + o2 + " is " +
+                LOGGER.debug("The sort key of " + o2 + " is " +
                             sk2.longValue());
-                s_log.debug("The result is " + result);
+                LOGGER.debug("The result is " + result);
             }
 
             if (Assert.isEnabled() && result == 0) {

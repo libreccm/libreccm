@@ -55,6 +55,16 @@
         </dependency>
         <!-- CCM Modules end -->
         
+        <!-- Dependencies for log4j 2 including adapter for the log4j 1.2 API -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+        </dependency>
+        
     </dependencies>
     
     

@@ -19,20 +19,17 @@
 package com.arsdigita.web;
 
 import com.arsdigita.dispatcher.DispatcherHelper;
-//import com.arsdigita.kernel.security.Util;
 import com.arsdigita.util.Assert;
 import com.arsdigita.util.UncheckedWrapperException;
 import com.arsdigita.util.servlet.HttpHost;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.web.CcmApplication;
 
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import javax.enterprise.context.spi.CreationalContext;
@@ -40,6 +37,7 @@ import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * <p>
@@ -160,7 +158,7 @@ public class URL {
      * editing /WEB-INF/conf/log4j.properties int hte runtime environment and
      * set com.arsdigita.web.URL=DEBUG by uncommenting or adding the line.
      */
-    private static final Logger s_log = Logger.getLogger(URL.class);
+    private static final Logger LOGGER = LogManager.getLogger(URL.class);
 
     public static final String THEMES_DIR = "/themes";
 
@@ -936,8 +934,8 @@ public class URL {
     public static URL excursion(final HttpServletRequest sreq,
                                 final String path,
                                 final ParameterMap params) {
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Creating excursion URL to " + path);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Creating excursion URL to " + path);
         }
 
         final URL url = URL.there(sreq, path, params);

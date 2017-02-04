@@ -24,18 +24,17 @@ import com.arsdigita.bebop.Component;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.xml.Element;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
- * <p>A simple layout panel with top, bottom, left, right, and body
- * sections.</p>
+ * A simple layout panel with top, bottom, left, right, and body sections.
  *
  * @author Justin Ross &lt;jross@redhat.com&gt;
- * @version $Id$
  */
 public class LayoutPanel extends ComponentMap {
 
-    private static final Logger s_log = Logger.getLogger(LayoutPanel.class);
+    private static final Logger LOGGER = LogManager.getLogger(LayoutPanel.class);
 
     public final void setTop(final Component top) {
         put("top", top);
@@ -60,8 +59,8 @@ public class LayoutPanel extends ComponentMap {
     @Override
     public void generateXML(final PageState state, final Element parent) {
         if (isVisible(state)) {
-            final Element layout = parent.newChildElement
-                ("bebop:layoutPanel", BEBOP_XML_NS);
+            final Element layout = parent.newChildElement("bebop:layoutPanel",
+                                                          BEBOP_XML_NS);
 
             section(state, layout, "top");
             section(state, layout, "left");
@@ -77,10 +76,11 @@ public class LayoutPanel extends ComponentMap {
         final Component section = get(key);
 
         if (section != null) {
-            final Element elem = parent.newChildElement
-                ("bebop:" + key, BEBOP_XML_NS);
+            final Element elem = parent.newChildElement("bebop:" + key,
+                                                        BEBOP_XML_NS);
 
             section.generateXML(state, elem);
         }
     }
+
 }

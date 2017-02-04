@@ -28,6 +28,9 @@ import com.arsdigita.util.UncheckedWrapperException;
 import com.arsdigita.web.LoginSignal;
 import com.arsdigita.web.URL;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -37,7 +40,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
 import org.apache.shiro.authz.AuthorizationException;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.PermissionChecker;
@@ -119,7 +121,7 @@ import org.librecms.dispatcher.ItemResolver;
  */
 public class CMSDispatcher implements Dispatcher, ChainedDispatcher {
 
-    private static Logger s_log = Logger.getLogger(CMSDispatcher.class);
+    private static Logger LOGGER = LogManager.getLogger(CMSDispatcher.class);
 
     public static final String CONTENT_SECTION
                                    = "com.arsdigita.cms.dispatcher.section";
@@ -170,8 +172,8 @@ public class CMSDispatcher implements Dispatcher, ChainedDispatcher {
                          HttpServletResponse response,
                          RequestContext actx)
         throws IOException, ServletException {
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Dispatching request for " + new URL(request)
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Dispatching request for " + new URL(request)
                 .toDebugString());
         }
 
@@ -182,10 +184,10 @@ public class CMSDispatcher implements Dispatcher, ChainedDispatcher {
             processedUrl = processedUrl.substring(webappURLContext.length());
         }
 
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Determined the path to the current site node; it "
-                            + "is '" + processedUrl + "' according to the "
-                            + "request context");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Determined the path to the current site node; it "
+                             + "is '" + processedUrl + "' according to the "
+                             + "request context");
         }
 
         // This is the path within the site node.
@@ -200,9 +202,9 @@ public class CMSDispatcher implements Dispatcher, ChainedDispatcher {
             remainingUrl = "index";
         }
 
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Determined the path after the current site node; "
-                            + "it is '" + remainingUrl + "'");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Determined the path after the current site node; "
+                             + "it is '" + remainingUrl + "'");
         }
 
         // Fetch the current content section.
@@ -214,8 +216,8 @@ public class CMSDispatcher implements Dispatcher, ChainedDispatcher {
         }
         request.setAttribute(CONTENT_SECTION, section);
 
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Found content section '" + section + "'");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Found content section '" + section + "'");
         }
 
         // Check user access to this page and deny access if necessary.
@@ -224,12 +226,12 @@ public class CMSDispatcher implements Dispatcher, ChainedDispatcher {
         // Look for a site-node-specific asset (if any).
         // KG: This hack will be replaced by a ChainedDispatcher
         try {
-            s_log.debug("Looking for a site node asset");
+            LOGGER.debug("Looking for a site node asset");
 
             String siteNodeAssetURL = getSiteNodeAsset(request, actx);
             if (siteNodeAssetURL != null) {
-                s_log.debug("Site node asset found at '" + siteNodeAssetURL
-                                + "'");
+                LOGGER.debug("Site node asset found at '" + siteNodeAssetURL
+                                 + "'");
 
                 DispatcherHelper.cacheDisable(response);
                 DispatcherHelper.setRequestContext(request, actx);
@@ -238,8 +240,8 @@ public class CMSDispatcher implements Dispatcher, ChainedDispatcher {
                 return;
             }
 
-            s_log.debug("No site node asset found; proceeding with normal "
-                            + "dispatching");
+            LOGGER.debug("No site node asset found; proceeding with normal "
+                             + "dispatching");
         } catch (RedirectException e) {
             throw new ServletException(e);
         }
@@ -247,26 +249,26 @@ public class CMSDispatcher implements Dispatcher, ChainedDispatcher {
         // Fetch the requested resource (if any).
         ResourceHandler resource = getResource(section, remainingUrl);
 
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Got a resource '" + resource + "'");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Got a resource '" + resource + "'");
         }
 
         if (resource != null) {
-            if (s_log.isDebugEnabled()) {
-                s_log.debug("Found resource '" + remainingUrl + "'; "
-                                + "dispatching to it");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Found resource '" + remainingUrl + "'; "
+                                 + "dispatching to it");
             }
 
-            s_log.info("resource dispatch for " + remainingUrl);
+            LOGGER.info("resource dispatch for " + remainingUrl);
             // Found resource, now serve it.
             // NB, ResouceHandler implementations should take care of caching options
             resource.dispatch(request, response, actx);
 
         } else {
-            if (s_log.isDebugEnabled()) {
-                s_log.debug("No resource found at '" + remainingUrl + "'; "
-                                + "searching for a previewable content item at "
-                                + "this path");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("No resource found at '" + remainingUrl + "'; "
+                                 + "searching for a previewable content item at "
+                             + "this path");
             }
 
             // If the remaining URL starts with "preview/", then try and
@@ -301,16 +303,16 @@ public class CMSDispatcher implements Dispatcher, ChainedDispatcher {
             }
 
             if (item != null) {
-                if (s_log.isDebugEnabled()) {
-                    s_log.debug("Found item " + item + "; serving it");
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Found item " + item + "; serving it");
                 }
 
                 DispatcherHelper.cacheDisable(response);
                 preview(request, response, actx);
             } else {
-                s_log.debug("No item to preview found; falling back to "
-                                + "JSP dispatcher to look for some concrete "
-                                + "resource in the file system");
+                LOGGER.debug("No item to preview found; falling back to "
+                                 + "JSP dispatcher to look for some concrete "
+                                 + "resource in the file system");
 
                 // If no resource was found, look for a JSP page.
                 JSPApplicationDispatcher jsp = JSPApplicationDispatcher
@@ -338,8 +340,8 @@ public class CMSDispatcher implements Dispatcher, ChainedDispatcher {
             }
 
             if (url.equals(ADMIN_URL)) {
-                if (s_log.isInfoEnabled()) {
-                    s_log.info("Resolving admin URL '" + url + "'");
+                if (LOGGER.isInfoEnabled()) {
+                    LOGGER.info("Resolving admin URL '" + url + "'");
                 }
 
                 dispatch(request, response, actx);
@@ -362,6 +364,7 @@ public class CMSDispatcher implements Dispatcher, ChainedDispatcher {
      * @param request  The HTTP request
      * @param response The HTTP response
      * @param actx     The request context
+     *
      * @throws javax.servlet.ServletException
      *
      */
@@ -472,9 +475,9 @@ public class CMSDispatcher implements Dispatcher, ChainedDispatcher {
      */
     protected ResourceHandler getResource(ContentSection section, String url)
         throws ServletException {
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Searching for a resource for the URL fragment '" + url
-                            + "' under " + section);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Searching for a resource for the URL fragment '" + url
+                             + "' under " + section);
         }
 
         final PageResolver pageResolver = CMSDispatcher.getPageResolver(section);
@@ -556,14 +559,14 @@ public class CMSDispatcher implements Dispatcher, ChainedDispatcher {
      * @return The PageResolver associated with the content section
      */
     public static PageResolver getPageResolver(ContentSection section) {
-        s_log.debug("Getting the page resolver");
+        LOGGER.debug("Getting the page resolver");
 
         final String name = section.getLabel();
         PageResolver pr = (PageResolver) s_pageResolverCache.get(name);
 
         if (pr == null) {
-            s_log.debug("The page resolver was not cached; fetching a new "
-                            + "one and placing it in the cache");
+            LOGGER.debug("The page resolver was not cached; fetching a new "
+                             + "one and placing it in the cache");
 
             final String pageResolverClassName = section.getPageResolverClass();
             final PageResolver pageResolver;

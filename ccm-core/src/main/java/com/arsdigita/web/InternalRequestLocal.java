@@ -18,10 +18,13 @@
  */
 package com.arsdigita.web;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.ArrayList;
 import java.util.Iterator;
+
 import javax.servlet.http.HttpServletRequest;
-import org.apache.log4j.Logger;
 
 /**
  * A class that provides request-framed control over a thread-local
@@ -75,8 +78,8 @@ import org.apache.log4j.Logger;
  */
 class InternalRequestLocal extends ThreadLocal {
 
-    private static final Logger s_log = 
-                         Logger.getLogger(InternalRequestLocal.class);
+    private static final Logger LOGGER = 
+                         LogManager.getLogger(InternalRequestLocal.class);
 
     private static final ArrayList s_locals = new ArrayList();
 
@@ -95,8 +98,8 @@ class InternalRequestLocal extends ThreadLocal {
      * @param sreq 
      */
     static void prepareAll(final HttpServletRequest sreq) {
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Initializing all request-local objects; there are " +
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Initializing all request-local objects; there are " +
                         s_locals.size());
         }
 
@@ -113,8 +116,8 @@ class InternalRequestLocal extends ThreadLocal {
      * 
      */
     static void clearAll() {
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Clearing all request-local objects; there are " +
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Clearing all request-local objects; there are " +
                         s_locals.size());
         }
 

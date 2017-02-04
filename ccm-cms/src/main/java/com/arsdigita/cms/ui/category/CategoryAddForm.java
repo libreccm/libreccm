@@ -26,7 +26,9 @@ import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.dispatcher.AccessDeniedException;
 import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.util.Assert;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryManager;
 import org.libreccm.categorization.CategoryRepository;
@@ -39,13 +41,12 @@ import org.librecms.contentsection.privileges.AdminPrivileges;
 /**
  * TODO Needs a description.
  *
- * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  * @author Justin Ross &lt;jross@redhat.com&gt;
- * @version $Id: CategoryAddForm.java 2090 2010-04-17 08:04:14Z pboy $
+ * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  */
 final class CategoryAddForm extends BaseCategoryForm {
 
-    private static final Logger s_log = Logger.getLogger
+    private static final Logger LOGGER = LogManager.getLogger
         (CategoryAddForm.class);
 
     private final SingleSelectionModel m_model;
@@ -66,7 +67,7 @@ final class CategoryAddForm extends BaseCategoryForm {
 
         public final void process(final FormSectionEvent e)
                      throws FormProcessException {
-            s_log.debug("Adding a category");
+            LOGGER.debug("Adding a category");
 
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final CategoryRepository categoryRepository = cdiUtil.findBean(CategoryRepository.class);
@@ -84,8 +85,8 @@ final class CategoryAddForm extends BaseCategoryForm {
 
             Assert.exists(parent, "Category parent");
 
-            if (s_log.isDebugEnabled()) {
-                s_log.debug("Using parent category " + parent + " to " +
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Using parent category " + parent + " to " +
                             "create new category");
             }
 

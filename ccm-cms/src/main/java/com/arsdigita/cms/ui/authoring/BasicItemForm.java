@@ -38,7 +38,6 @@ import com.arsdigita.cms.ItemSelectionModel;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.web.Web;
 import com.arsdigita.xml.Element;
-import org.apache.log4j.Logger;
 
 import org.librecms.CmsConstants;
 
@@ -53,14 +52,6 @@ public abstract class BasicItemForm extends FormSection
     implements FormInitListener,
                FormProcessListener,
                FormValidationListener {
-
-    /**
-     * Internal logger instance to faciliate debugging. Enable logging output by
-     * editing /WEB-INF/conf/log4j.properties int hte runtime environment and
-     * set com.arsdigita.cms.ui.BasicItemForm=DEBUG by uncommenting or adding
-     * the line.
-     */
-    private static final Logger s_log = Logger.getLogger(BasicItemForm.class);
 
     private final ItemSelectionModel m_itemModel;
     private SaveCancelSection m_saveCancelSection;

@@ -21,16 +21,13 @@ package com.arsdigita.cms.ui;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.RequestLocal;
 import com.arsdigita.cms.CMS;
+
 import org.librecms.contentsection.ContentSection;
-import org.apache.log4j.Logger;
 
 /** 
  * 
  */
 public final class ContentSectionRequestLocal extends RequestLocal {
-
-    private static final Logger s_log = Logger.getLogger
-        (ContentSectionRequestLocal.class);
 
     @Override
     protected Object initialValue(final PageState state) {

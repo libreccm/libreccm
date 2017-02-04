@@ -23,7 +23,8 @@ import com.arsdigita.util.parameter.ParameterWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Properties;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Subject to change.
@@ -34,11 +35,10 @@ import org.apache.log4j.Logger;
  * @see com.arsdigita.util.parameter.ParameterWriter
  * @see JavaPropertyReader
  * @author Justin Ross &lt;jross@redhat.com&gt;
- * @version $Id$
  */
 public class JavaPropertyWriter implements ParameterWriter {
 
-    private static final Logger s_log = Logger.getLogger
+    private static final Logger LOGGER = LogManager.getLogger
         (JavaPropertyWriter.class);
 
     private static final String s_header =
@@ -66,8 +66,8 @@ public class JavaPropertyWriter implements ParameterWriter {
      * parameters to; it cannot be null
      */
     public final void store(final OutputStream out) {
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Storing " + this);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Storing " + this);
         }
 
         Assert.exists(out, OutputStream.class);
@@ -89,8 +89,8 @@ public class JavaPropertyWriter implements ParameterWriter {
      * be null
      */
     public final void write(final Parameter param, final String value) {
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Writing " + param + " with value " + value);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Writing " + param + " with value " + value);
         }
 
         if (Assert.isEnabled()) {

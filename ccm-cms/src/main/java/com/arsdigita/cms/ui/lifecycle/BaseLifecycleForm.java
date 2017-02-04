@@ -34,7 +34,6 @@ import com.arsdigita.cms.ui.FormSecurityListener;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.kernel.KernelConfig;
 
-import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.ConfigurationManager;
 import org.librecms.CmsConstants;
@@ -48,9 +47,6 @@ import java.util.Locale;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class BaseLifecycleForm extends BaseForm {
-
-    private static final Logger s_log = Logger
-        .getLogger(BaseLifecycleForm.class);
 
     final TextField m_name;
     final TextArea m_description;
@@ -92,7 +88,7 @@ class BaseLifecycleForm extends BaseForm {
         @Override
         public final void validate(final ParameterEvent e)
             throws FormProcessException {
-            
+
             final PageState state = e.getPageState();
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final ConfigurationManager confManager = cdiUtil.findBean(

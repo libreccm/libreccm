@@ -34,6 +34,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
@@ -64,8 +65,42 @@ public class PermissionManager {
      *
      * @return The permission identified by the provided {@code permissionId).
      */
-    public Permission findById(final long permissionId) {
-        return entityManager.find(Permission.class, permissionId);
+    public Optional<Permission> findById(final long permissionId) {
+        return Optional.ofNullable(entityManager.find(Permission.class,
+                                                      permissionId));
+    }
+
+    /**
+     * Retrieves all permissions granted to a role.
+     *
+     * @param role The role
+     *
+     * @return A list with all permissions granted to the provided {@code role}.
+     */
+    @Transactional(Transactional.TxType.REQUIRED)
+    public List<Permission> findPermissionsForRole(final Role role) {
+        final TypedQuery<Permission> query = entityManager.createNamedQuery(
+            "Permission.findPermissionsForRole", Permission.class);
+        query.setParameter("grantee", role);
+
+        return query.getResultList();
+    }
+
+    /**
+     * Retrieves all permissions granted on a {@link CcmObject}.
+     *
+     * @param object The object
+     *
+     * @return A list containing all permissions granted on the provided
+     *         {@code object}.
+     */
+    @Transactional(Transactional.TxType.REQUIRED)
+    public List<Permission> findPermissionsForObject(final CcmObject object) {
+        final TypedQuery<Permission> query = entityManager.createNamedQuery(
+            "Permission.findPermissionsForCcmObject", Permission.class);
+        query.setParameter("object", object);
+
+        return query.getResultList();
     }
 
     /**
@@ -190,11 +225,11 @@ public class PermissionManager {
 
     /**
      * Helper method for granting a recursive permission.
-     * 
-     * @param privilege The privilege to grant.
-     * @param grantee The role to which the privilege is granted.
-     * @param field The current field.
-     * @param owner The object which own the provided {@code field}.
+     *
+     * @param privilege     The privilege to grant.
+     * @param grantee       The role to which the privilege is granted.
+     * @param field         The current field.
+     * @param owner         The object which own the provided {@code field}.
      * @param inheritedFrom The object from which the permission is inherited.
      */
     private void grantRecursive(final String privilege,
@@ -265,10 +300,11 @@ public class PermissionManager {
 
     /**
      * Helper method for creating an inherited permission.
-     * 
-     * @param privilege The privilege to grant.
-     * @param grantee The role to which {@code privilege} is granted.
-     * @param object The object on which the {@code privilege} is granted.
+     *
+     * @param privilege     The privilege to grant.
+     * @param grantee       The role to which {@code privilege} is granted.
+     * @param object        The object on which the {@code privilege} is
+     *                      granted.
      * @param inheritedFrom The object from which the permission is inherited.
      */
     private void grantInherited(final String privilege,

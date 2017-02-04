@@ -29,6 +29,8 @@ import com.arsdigita.web.WebConfig;
 import com.arsdigita.xml.Document;
 import com.arsdigita.xml.Element;
 
+import org.apache.logging.log4j.Level;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
@@ -43,8 +45,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.TransformerException;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * An entry-point class for the functions of the templating package. The class
@@ -55,7 +57,6 @@ import org.apache.log4j.Logger;
  *
  * @author Dan Berrange
  * @author Justin Ross &lt;jross@redhat.com&gt;
- * @version $Id$
  */
 public class Templating {
 
@@ -65,7 +66,7 @@ public class Templating {
      * set com.arsdigita.templating.Templating=DEBUG by uncommenting it or
      * adding the line.
      */
-    private static final Logger s_log = Logger.getLogger(Templating.class);
+    private static final Logger LOGGER = LogManager.getLogger(Templating.class);
 
     /**
      * This is the name of the attribute that is set in the request whose value,
@@ -81,7 +82,7 @@ public class Templating {
         .getConfig();
 
     static {
-        s_log.debug("Static initalizer starting...");
+        LOGGER.debug("Static initalizer starting...");
 
         Exceptions.registerUnwrapper(
             TransformerException.class,
@@ -104,7 +105,7 @@ public class Templating {
         setting = s_config.getStylesheetCacheAge();
         int cacheAge = (setting == null ? 60 * 60 * 24 * 3 : setting.intValue());
 
-        s_log.debug("Static initalizer finished...");
+        LOGGER.debug("Static initalizer finished...");
     }
 
     /**
@@ -183,8 +184,8 @@ public class Templating {
                                                        boolean fancyErrors,
                                                        boolean useCache) {
 
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Getting template for URL " + source);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Getting template for URL " + source);
         }
 
         Assert.exists(source, URL.class);
@@ -192,9 +193,9 @@ public class Templating {
         XSLTemplate template = null;
 
         if (template == null) {
-            if (s_log.isInfoEnabled()) {
-                s_log.info("The template for URL " + source + " is not "
-                               + "cached; creating and caching it now");
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("The template for URL " + source + " is not "
+                                + "cached; creating and caching it now");
             }
 
             if (fancyErrors) {
@@ -212,9 +213,9 @@ public class Templating {
             // Debug mode should be captured at a lower level,
             // probably on UtilConfig.
 
-            if (s_log.isInfoEnabled()) {
-                s_log.info("Template " + template + " has been modified; "
-                               + "recreating it from scratch");
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("Template " + template + " has been modified; "
+                                + "recreating it from scratch");
             }
 
             if (fancyErrors) {
@@ -274,8 +275,8 @@ public class Templating {
      * @param source the <code>URL</code> to the top-level template resource
      */
     public static synchronized void purgeTemplate(final URL source) {
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Purging cached template for URL " + source);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Purging cached template for URL " + source);
         }
 
         Assert.exists(source, URL.class);
@@ -286,8 +287,8 @@ public class Templating {
      * regenerated on-demand as each gets requested.
      */
     public static synchronized void purgeTemplates() {
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Purging all cached templates");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Purging all cached templates");
         }
     }
 
@@ -312,8 +313,8 @@ public class Templating {
                 "http://www.w3.org/1999/XSL/Transform");
             imp.addAttribute("href", path.toString());
 
-            if (s_log.isInfoEnabled()) {
-                s_log.info("Adding import for " + path.toString());
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("Adding import for " + path.toString());
             }
         }
 
@@ -324,8 +325,8 @@ public class Templating {
             throw new UncheckedWrapperException("cannot build document", ex);
         }
 
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("XSL is " + doc.toString(true));
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("XSL is " + doc.toString(true));
         }
 
         return new ByteArrayInputStream(doc.toString(true).getBytes());
@@ -379,16 +380,17 @@ public class Templating {
         // and unrestricted access. The complete code should get refactored to
         // use ServletContext#getResource(path)
         String installContext = Web.getWebappContextPath();
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Installation context is >" + installContext + "<.");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Installation context is >" + installContext + "<.");
         }
         if (!installContext.equals("")) {
             // CCM is installed into a non-ROOT context
             if (localPath.startsWith(installContext)) {
                 // remove webapp context part
                 localPath = localPath.substring(installContext.length());
-                if (s_log.isDebugEnabled()) {
-                    s_log.debug("WebApp context removed: >>" + localPath + "<<");
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER
+                        .debug("WebApp context removed: >>" + localPath + "<<");
                 }
             }
         }
@@ -401,8 +403,8 @@ public class Templating {
                 // A virtual path to the ResourceServlet
                 localPath = localPath.substring("/resource".length()); //remove virtual part
                 URL newURL = Web.findResource(localPath); //without host part here!
-                if (s_log.isDebugEnabled()) {
-                    s_log.
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.
                         debug("Transforming resource " + url + " to "
                                   + newURL);
                 }
@@ -415,24 +417,24 @@ public class Templating {
                 if (file.exists()) {
                     try {
                         URL newURL = file.toURL();
-                        if (s_log.isDebugEnabled()) {
-                            s_log.debug("Transforming resource " + url + " to "
-                                            + newURL);
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("Transforming resource " + url + " to "
+                                             + newURL);
                         }
                         return newURL;
                     } catch (MalformedURLException ex) {
                         throw new UncheckedWrapperException(ex);
                     }
-                } else if (s_log.isDebugEnabled()) {
-                    s_log.debug("File " + filename
-                                    + " doesn't exist on disk");
+                } else if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("File " + filename
+                                     + " doesn't exist on disk");
                 }
             }
         } else // url is not the (local) running CCM host, no transformation
         // is done
-         if (s_log.isDebugEnabled()) {
-                s_log.debug("URL " + url + " is not local");
-            }
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("URL " + url + " is not local");
+        }
 
         return url;  // returns the original, unmodified url here
     }
@@ -445,9 +447,8 @@ public class Templating {
  */
 class LoggingErrorListener implements ErrorListener {
 
-    private static final Logger s_log
-                                    = Logger.getLogger(
-            LoggingErrorListener.class);
+    private static final Logger LOGGER = LogManager.getLogger(
+        LoggingErrorListener.class);
     private final ArrayList m_errors;
 
     LoggingErrorListener() {
@@ -474,10 +475,10 @@ class LoggingErrorListener implements ErrorListener {
     }
 
     private void log(Level level, TransformerException ex) {
-        s_log.log(level, "Transformer " + level + ": "
-                             + ex.getLocationAsString() + ": " + ex.
-                  getMessage(),
-                  ex);
+        LOGGER.log(level, "Transformer " + level + ": "
+                              + ex.getLocationAsString() + ": " + ex.
+                   getMessage(),
+                   ex);
         m_errors.add(ex);
     }
 

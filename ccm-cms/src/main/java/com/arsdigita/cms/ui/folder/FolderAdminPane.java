@@ -36,12 +36,10 @@ import com.arsdigita.cms.ui.BaseDeleteForm;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.toolbox.ui.SelectionPanel;
 
-import org.apache.log4j.Logger;
 import org.libreccm.categorization.CategoryRepository;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.CmsConstants;
 
-import java.math.BigDecimal;
 
 /**
  * A pane that contains a folder tree on the left and a folder manipulator on
@@ -50,8 +48,6 @@ import java.math.BigDecimal;
  * @author Justin Ross &lt;jross@redhat.com&gt;
  */
 public class FolderAdminPane extends SelectionPanel {
-
-    private static final Logger s_log = Logger.getLogger(FolderAdminPane.class);
 
     private final FolderRequestLocal m_folder;
 

@@ -25,7 +25,6 @@ import com.arsdigita.util.Assert;
 import com.arsdigita.web.Web;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,10 +33,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentSection;
-import org.librecms.contentsection.ContentSectionConfig;
 
 /**
  * This is the dispatcher for content-sections. It maintains a
@@ -55,13 +52,6 @@ public class ContentItemDispatcher implements Dispatcher {
 
     /**                                                                       */
     protected ItemXML m_itemXML;
-
-    
-    /**
-     * Private Logger instance for debugging purpose.
-     */
-    private static final Logger s_log = Logger.getLogger(
-        ContentItemDispatcher.class.getName());
 
     /**
      *     */

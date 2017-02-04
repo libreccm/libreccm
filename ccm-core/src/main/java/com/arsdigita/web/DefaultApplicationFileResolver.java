@@ -18,7 +18,8 @@
  */
 package com.arsdigita.web;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.libreccm.web.CcmApplication;
 
 import javax.servlet.RequestDispatcher;
@@ -38,7 +39,7 @@ public class DefaultApplicationFileResolver implements ApplicationFileResolver {
      *  by editing /WEB-INF/conf/log4j.properties int hte runtime environment
      *  and set com.arsdigita.web.DefaultApplicationFileResolver=DEBUG by 
      *  uncommenting or adding the line.                                      */
-    private static final Logger s_log = Logger.getLogger
+    private static final Logger LOGGER = LogManager.getLogger
                                         (DefaultApplicationFileResolver.class);
 
     /** List of alternative greeting files. Typical vales are index.jsp and
@@ -73,8 +74,8 @@ public class DefaultApplicationFileResolver implements ApplicationFileResolver {
                                      CcmApplication app) {
 
         String pathInfo = sreq.getPathInfo();  // effectively provides an url
-        if (s_log.isDebugEnabled()) {          // with application part stripped
-            s_log.debug("Resolving resource for " + pathInfo);
+        if (LOGGER.isDebugEnabled()) {          // with application part stripped
+            LOGGER.debug("Resolving resource for " + pathInfo);
         }
 
         // determine the URL the application INSTANCE is really installed at
@@ -92,29 +93,29 @@ public class DefaultApplicationFileResolver implements ApplicationFileResolver {
             // probed.
             if (path.endsWith("/")) {
                 for (String welcomeFile : WELCOME_FILES) { //1.5 enhanced for-loop
-                    if (s_log.isDebugEnabled()) {
-                        s_log.debug("Trying welcome resource " + 
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Trying welcome resource " + 
                                 path + welcomeFile);
                     }
                     RequestDispatcher rd = Web.findResourceDispatcher(
                                            "" + path + welcomeFile);
                     if (rd != null) {
-                        if (s_log.isDebugEnabled()) {
-                            s_log.debug("Got dispatcher " + rd);
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("Got dispatcher " + rd);
                         }
                         return rd;
                     }
                 }
             } else {
-                if (s_log.isDebugEnabled()) {
-                    s_log.debug("Trying resource " + path);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Trying resource " + path);
                 }
                 
                 RequestDispatcher rd = Web.findResourceDispatcher(
                                                "" + path);
                 if (rd != null) {
-                    if (s_log.isDebugEnabled()) {
-                        s_log.debug("Got dispatcher " + rd);
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Got dispatcher " + rd);
                     }
                     return rd;
                 }
@@ -133,8 +134,8 @@ public class DefaultApplicationFileResolver implements ApplicationFileResolver {
             }
         } while (node != null);
 
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("No dispatcher found");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("No dispatcher found");
         }
         // fallthrough, no success - returning null
         return null;

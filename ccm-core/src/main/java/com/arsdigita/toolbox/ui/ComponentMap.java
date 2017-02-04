@@ -25,17 +25,18 @@ import com.arsdigita.bebop.SimpleComponent;
 import com.arsdigita.util.Assert;
 import com.arsdigita.util.SequentialMap;
 import com.arsdigita.xml.Element;
+
+import org.apache.logging.log4j.LogManager;
+
 import java.util.Iterator;
-import org.apache.log4j.Logger;
 
-/** 
- * 
- * @version $Id$
- */
+import org.apache.logging.log4j.Logger;
+
 public abstract class ComponentMap extends SimpleComponent
-        implements Resettable {
+    implements Resettable {
 
-    private static final Logger s_log = Logger.getLogger(ComponentMap.class);
+    private static final Logger LOGGER = LogManager
+        .getLogger(ComponentMap.class);
 
     private final SequentialMap m_components;
 
@@ -48,7 +49,7 @@ public abstract class ComponentMap extends SimpleComponent
     }
 
     public void reset(final PageState state) {
-        s_log.debug("Resetting my children");
+        LOGGER.debug("Resetting my children");
 
         final Iterator iter = children();
 
@@ -82,4 +83,5 @@ public abstract class ComponentMap extends SimpleComponent
 
     public abstract void generateXML(final PageState state,
                                      final Element parent);
+
 }

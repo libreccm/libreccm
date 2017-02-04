@@ -24,7 +24,6 @@ import com.arsdigita.bebop.SimpleContainer;
 import com.arsdigita.bebop.TabbedPane;
 import com.arsdigita.bebop.event.ActionEvent;
 import com.arsdigita.bebop.event.ActionListener;
-import com.arsdigita.bebop.parameters.BigDecimalParameter;
 import com.arsdigita.bebop.parameters.LongParameter;
 import com.arsdigita.cms.ui.CMSApplicationPage;
 import com.arsdigita.cms.ui.GlobalNavigation;
@@ -32,7 +31,6 @@ import com.arsdigita.cms.ui.WorkspaceContextBar;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.ui.CcmObjectSelectionModel;
 
-import org.apache.log4j.Logger;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentType;
@@ -56,11 +54,8 @@ import org.librecms.contentsection.ContentType;
  * @author Jack Chung (flattop@arsdigita.com)
  * @author Michael Pih (pihman@arsdigita.com)
  * @author Peter Boy (pboy@barkhof.uni-bremen.de)
- * @version $Id: MainPage.java pboy $
  */
 public class MainPage extends CMSApplicationPage implements ActionListener {
-
-    private static final Logger s_log = Logger.getLogger(MainPage.class);
 
     private final static String XSL_CLASS = "CMS Admin";
 
@@ -114,15 +109,15 @@ public class MainPage extends CMSApplicationPage implements ActionListener {
         add(m_tabbedPane);
 
 //        add(new DebugPanel());
-
     }
 
     /**
      * Creates, and then caches, the Tasks pane. Overriding this method to
      * return null will prevent this tab from appearing.
      */
-    protected TasksPanel getTasksPane(CcmObjectSelectionModel<ContentType> typeModel,
-                                      CcmObjectSelectionModel<ContentSection> sectionModel) {
+    protected TasksPanel getTasksPane(
+        CcmObjectSelectionModel<ContentType> typeModel,
+        CcmObjectSelectionModel<ContentSection> sectionModel) {
         if (m_tasks == null) {
             m_tasks = new TasksPanel(typeModel, sectionModel);
         }
@@ -149,7 +144,6 @@ public class MainPage extends CMSApplicationPage implements ActionListener {
 //
 //        return m_IdSearch;
 //    }
-
     /**
      * Created the TabbedPane to use for this page. Sets the class attribute for
      * this tabbed pane. The default implementation uses a
@@ -165,7 +159,7 @@ public class MainPage extends CMSApplicationPage implements ActionListener {
         TabbedPane tabbedPane = new TabbedPane();
         tabbedPane.setClassAttr(XSL_CLASS);
         Label taskLabel = new Label(new GlobalizedMessage(
-            "cms.ui.contentcenter.mainpage.taskssections", 
+            "cms.ui.contentcenter.mainpage.taskssections",
             CmsConstants.CMS_BUNDLE));
         Label searchLabel = new Label(new GlobalizedMessage(
             "cms.ui.contentcenter.mainpage.search", CmsConstants.CMS_BUNDLE));
@@ -228,7 +222,7 @@ public class MainPage extends CMSApplicationPage implements ActionListener {
 
         if (pane == m_tasks) {
             m_tasks.reset(state);
-        } 
+        }
 //        else if (pane == m_search) {
 //            m_search.reset(state);
 //        } else if (pane == m_IdSearch) {

@@ -18,6 +18,9 @@
  */
 package com.arsdigita.xml;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
@@ -25,7 +28,6 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
-import org.apache.log4j.Logger;
 
 /**
  * This class acts as a facade for the {@link TransformerFactory} implementation
@@ -42,7 +44,7 @@ import org.apache.log4j.Logger;
  */
 public class CCMTransformerFactory extends TransformerFactory {
 
-    private static final Logger LOGGER = Logger.getLogger(
+    private static final Logger LOGGER = LogManager.getLogger(
         CCMTransformerFactory.class);
     private final TransformerFactory factory;
 

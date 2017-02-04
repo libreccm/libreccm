@@ -48,7 +48,8 @@ import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.toolbox.ui.FormatStandards;
 import com.arsdigita.util.Assert;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.libreccm.auditing.CcmRevision;
 
 import java.util.ArrayList;
@@ -91,7 +92,9 @@ import java.util.Date;
  */
 public class FolderBrowser extends Table {
 
-    private static final Logger s_log = Logger.getLogger(FolderBrowser.class);
+    private static final Logger LOGGER = LogManager.getLogger(
+        FolderBrowser.class);
+
     private static GlobalizedMessage[] s_headers = {
         globalize("cms.ui.folder.name"),
         globalize("cms.ui.folder.languages"),
@@ -551,20 +554,21 @@ public class FolderBrowser extends Table {
      */
     private static class ActionCellRenderer implements TableCellRenderer {
 
-        private static final Label s_noAction;
-        private static final ControlLink s_link;
-        private static final Logger logger = Logger.getLogger(
+        private static final Logger LOGGER = LogManager.getLogger(
             ActionCellRenderer.class);
 
+        private static final Label s_noAction;
+        private static final ControlLink s_link;
+
         static {
-            logger.debug("Static initializer is starting...");
+            LOGGER.debug("Static initializer is starting...");
             s_noAction = new Label("&nbsp;", false);
             s_noAction.lock();
             s_link = new ControlLink(
                 new Label(globalize("cms.ui.folder.delete")));
             s_link.setConfirmation(
                 globalize("cms.ui.folder.delete_confirmation"));
-            logger.debug("Static initializer finished.");
+            LOGGER.debug("Static initializer finished.");
         }
 
         @Override
@@ -760,8 +764,8 @@ public class FolderBrowser extends Table {
         }
 
         public boolean isDeletable() {
-            if (s_log.isDebugEnabled()) {
-                s_log.debug("Checking to see if " + this + " is deletable");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Checking to see if " + this + " is deletable");
             }
 
 //            if (m_itemColl.isFolder()) {
@@ -785,15 +789,15 @@ public class FolderBrowser extends Table {
 //            } else 
             if (itemManager.isLive(m_itemColl.get(index))) {
 
-                if (s_log.isDebugEnabled()) {
-                    s_log.debug(
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug(
                         "This item has a live instance; it cannot be deleted");
                 }
                 return false;
             }
 
-            if (s_log.isDebugEnabled()) {
-                s_log.debug(
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(
                     "The item is not a folder and doesn't have a live instance; it may be deleted");
             }
             return true;

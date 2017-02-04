@@ -19,7 +19,8 @@
 package com.arsdigita.util.parameter;
 
 import org.apache.commons.beanutils.converters.ClassConverter;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * A parameter representing a Java <code>Class</code>.
@@ -29,16 +30,16 @@ import org.apache.log4j.Logger;
  * @see java.lang.Class
  * @see Parameter
  * @author Justin Ross &lt;jross@redhat.com&gt;
- * @version $Id$
  */
 public class ClassParameter extends AbstractParameter {
 
-    private static final Logger logger = Logger.getLogger(ClassParameter.class);
+    private static final Logger LOGGER = LogManager.getLogger(
+        ClassParameter.class);
 
     static {
-        logger.debug("Static initalizer starting...");
+        LOGGER.debug("Static initalizer starting...");
         Converters.set(Class.class, new ClassConverter());
-        logger.debug("Static initalizer finished.");
+        LOGGER.debug("Static initalizer finished.");
     }
 
     public ClassParameter(final String name) {
@@ -71,4 +72,5 @@ public class ClassParameter extends AbstractParameter {
             return theClass.getName();
         }
     }
+
 }

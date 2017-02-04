@@ -24,27 +24,34 @@ import com.arsdigita.bebop.event.FormInitListener;
 import com.arsdigita.bebop.event.FormProcessListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.kernel.KernelConfig;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.l10n.LocalizedString;
-import org.libreccm.security.*;
+import org.libreccm.security.Permission;
+import org.libreccm.security.PermissionManager;
+import org.libreccm.security.Role;
+import org.libreccm.security.RoleRepository;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 /**
- * Represents a {@link com.arsdigita.bebop.Form Form} to edit {@link Role roles}.
+ * Represents a {@link com.arsdigita.bebop.Form Form} to edit
+ * {@link Role roles}.
  *
- * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
+ *
  * @author Michael Pih
  * @author Justin Ross &lt;jross@redhat.com&gt;
- * @version $Id: RoleEditForm.java 287 2005-02-22 00:29:02Z sskracic $
+ * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  */
 final class RoleEditForm extends BaseRoleForm {
 
-    private static final Logger s_log = Logger.getLogger(RoleEditForm.class);
+    private static final Logger LOGGER = LogManager
+        .getLogger(RoleEditForm.class);
 
     private final RoleRequestLocal m_role;
 
@@ -60,9 +67,11 @@ final class RoleEditForm extends BaseRoleForm {
     }
 
     /**
-     * Sets the initial values of a {@link Role} which were received from the database.
+     * Sets the initial values of a {@link Role} which were received from the
+     * database.
      */
     private class InitListener implements FormInitListener {
+
         @Override
         public final void init(final FormSectionEvent e) {
             final PageState state = e.getPageState();
@@ -72,57 +81,71 @@ final class RoleEditForm extends BaseRoleForm {
             m_description.setValue(state, role.getDescription());
 
             final String[] permissions = role.getPermissions().stream().
-                    map(Permission::getGrantedPrivilege).toArray(String[]::new);
+                map(Permission::getGrantedPrivilege).toArray(String[]::new);
 
             m_privileges.setValue(state, permissions);
         }
+
     }
 
     /**
-     * Updates a role and it's permissions. It uses the {@link PermissionManager} to grant and revoke permissions
-     * as needed.
+     * Updates a role and it's permissions. It uses the
+     * {@link PermissionManager} to grant and revoke permissions as needed.
      *
-     * NOTE: The part about granting and revoking privileges is mostly identical to {@link RoleAddForm}.
-     * If you find any bugs or errors in this code, be sure to change it there accordingly.
+     * NOTE: The part about granting and revoking privileges is mostly identical
+     * to {@link RoleAddForm}. If you find any bugs or errors in this code, be
+     * sure to change it there accordingly.
      */
     private class ProcessListener implements FormProcessListener {
+
         @Override
         public final void process(final FormSectionEvent e)
-                throws FormProcessException {
+            throws FormProcessException {
             final PageState state = e.getPageState();
 
             final Role role = m_role.getRole(state);
             role.setName((String) m_name.getValue(state));
 
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final PermissionManager permissionManager = cdiUtil.findBean(PermissionManager.class);
-            final ConfigurationManager manager = cdiUtil.findBean(ConfigurationManager.class);
-            final KernelConfig config = manager.findConfiguration(KernelConfig.class);
-            final RoleRepository roleRepository = cdiUtil.findBean(RoleRepository.class);
+            final PermissionManager permissionManager = cdiUtil.findBean(
+                PermissionManager.class);
+            final ConfigurationManager manager = cdiUtil.findBean(
+                ConfigurationManager.class);
+            final KernelConfig config = manager.findConfiguration(
+                KernelConfig.class);
+            final RoleRepository roleRepository = cdiUtil.findBean(
+                RoleRepository.class);
 
             LocalizedString localizedDescription = role.getDescription();
-            localizedDescription.addValue(config.getDefaultLocale(), (String) m_description.getValue(state));
+            localizedDescription.addValue(config.getDefaultLocale(),
+                                          (String) m_description.getValue(state));
             role.setDescription(localizedDescription);
 
             //We don't now if the permissions list is empty, so we have to save beforehand to not lose data.
             roleRepository.save(role);
 
             List<Permission> newPermissions = new ArrayList<>();
-            String[] selectedPermissions = (String[]) m_privileges.getValue(state);
+            String[] selectedPermissions = (String[]) m_privileges.getValue(
+                state);
 
             for (Permission p : role.getPermissions()) {
-                if (Arrays.stream(selectedPermissions).anyMatch(x -> x.equals(p.getGrantedPrivilege()))) {
+                if (Arrays.stream(selectedPermissions).anyMatch(x -> x.equals(p
+                    .getGrantedPrivilege()))) {
                     newPermissions.add(p);
                 } else {
-                    permissionManager.revokePrivilege(p.getGrantedPrivilege(), role);
+                    permissionManager.revokePrivilege(p.getGrantedPrivilege(),
+                                                      role);
                 }
             }
 
             for (String s : selectedPermissions) {
-                if (newPermissions.stream().noneMatch(x -> x.getGrantedPrivilege().equals(s))) {
+                if (newPermissions.stream().noneMatch(x -> x
+                    .getGrantedPrivilege().equals(s))) {
                     permissionManager.grantPrivilege(s, role);
                 }
             }
         }
+
     }
+
 }

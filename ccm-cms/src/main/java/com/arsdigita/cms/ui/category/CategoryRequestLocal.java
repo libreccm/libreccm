@@ -20,13 +20,10 @@ package com.arsdigita.cms.ui.category;
 
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.RequestLocal;
-import org.apache.log4j.Logger;
+
 import org.libreccm.categorization.Category;
 
 class CategoryRequestLocal extends RequestLocal {
-
-    private static final Logger s_log = Logger.getLogger
-        (CategoryRequestLocal.class);
 
     public final Category getCategory(final PageState state) {
         return (Category) get(state);

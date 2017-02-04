@@ -22,7 +22,8 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Implements a request context for the site map application
@@ -30,12 +31,11 @@ import org.apache.log4j.Logger;
  * for an incoming request.
  *
  * @author Bill Schneider 
- * @version $Id$
  * @since 4.5 
  */
 public class InitialRequestContext implements RequestContext {
 
-    private static final Logger s_log = Logger.getLogger
+    private static final Logger LOGGER = LogManager.getLogger
         (InitialRequestContext.class);
 
     private String m_urlSoFar;
@@ -105,25 +105,25 @@ public class InitialRequestContext implements RequestContext {
      */
     void initializeURLFromRequest(HttpServletRequest request,
                                   boolean preserveOriginalURL) {
-        s_log.debug("Initializing processed and remaining URL parts.");
+        LOGGER.debug("Initializing processed and remaining URL parts.");
         
         String requestUrl = DispatcherHelper.getCurrentResourcePath(request);
         m_urlSoFar = request.getContextPath();
         m_urlRemainder = requestUrl;
 
-        if (s_log.isDebugEnabled()) {
+        if (LOGGER.isDebugEnabled()) {
             String contextPath = request.getContextPath();
-            s_log.debug("contextPath: " + contextPath);
+            LOGGER.debug("contextPath: " + contextPath);
         }
 
-        if (s_log.isDebugEnabled()) {
+        if (LOGGER.isDebugEnabled()) {
             String servletPath = request.getServletPath();
-            s_log.debug("servletPath: " + servletPath);
+            LOGGER.debug("servletPath: " + servletPath);
         }
 
-        if (s_log.isDebugEnabled()) {
+        if (LOGGER.isDebugEnabled()) {
             String pathInfo = request.getPathInfo();
-            s_log.debug("pathInfo: " + pathInfo);
+            LOGGER.debug("pathInfo: " + pathInfo);
         }
 
         final String debugURL = "/debug";
@@ -147,14 +147,14 @@ public class InitialRequestContext implements RequestContext {
             m_urlRemainder = m_urlRemainder.substring(debugURLXSL.length());
         }
         if (!preserveOriginalURL) {
-            s_log.debug("Overwriting original URL, since the caller did not " +
+            LOGGER.debug("Overwriting original URL, since the caller did not " +
                         "ask to preserve it");
             m_originalUrl = m_urlSoFar + m_urlRemainder;
         }
 
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Set processed URL to '" + m_urlSoFar + "'");
-            s_log.debug("Set remaining URL to '" + m_urlRemainder + "'");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Set processed URL to '" + m_urlSoFar + "'");
+            LOGGER.debug("Set remaining URL to '" + m_urlRemainder + "'");
         }
     }
 

@@ -31,6 +31,9 @@ import com.arsdigita.web.Web;
 import com.arsdigita.xml.Document;
 import com.arsdigita.xml.Element;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -38,7 +41,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.PermissionChecker;
 import org.libreccm.security.Shiro;
@@ -68,11 +70,10 @@ import java.util.Optional;
  *
  * @author Michael Pih (pihman@arsdigita.com)
  * @author Uday Mathur (umathur@arsdigita.com)
- * @version $Id$
  */
 public class CMSPage extends Page implements ResourceHandler {
 
-    private static final Logger s_log = Logger.getLogger(CMSPage.class);
+    private static final Logger LOGGER = LogManager.getLogger(CMSPage.class);
 
     /** The global assets URL stub XML parameter name.    */
     public final static String ASSETS = "ASSETS";
@@ -157,10 +158,10 @@ public class CMSPage extends Page implements ResourceHandler {
      */
     @Override
     public synchronized void init() {
-        s_log.debug("Initializing the page");
+        LOGGER.debug("Initializing the page");
 
         if (!isLocked()) {
-            s_log.debug("The page hasn't been locked; locking it now");
+            LOGGER.debug("The page hasn't been locked; locking it now");
 
             lock();
         }

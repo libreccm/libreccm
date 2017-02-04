@@ -26,7 +26,9 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Iterator;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 
 /**
  * Subject to change.
@@ -40,11 +42,10 @@ import org.apache.log4j.Logger;
  * @see ParameterError
  * @see Parameter
  * @author Justin Ross &lt;jross@redhat.com&gt;
- * @version $Id$
  */
 public final class ErrorList {
 
-    private static final Logger s_log = Logger.getLogger(ErrorList.class);
+    private static final Logger LOGGER = LogManager.getLogger(ErrorList.class);
 
     private final ArrayList m_params;
 
@@ -111,7 +112,7 @@ public final class ErrorList {
         if (!isEmpty()) {
             final StringWriter writer = new StringWriter();
             report(writer);
-            s_log.error(writer.toString());
+            LOGGER.error(writer.toString());
 
             throw new ParameterException
                 ("Errors encountered while reading parameters", this);

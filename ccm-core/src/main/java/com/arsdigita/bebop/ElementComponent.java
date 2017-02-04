@@ -19,7 +19,6 @@
 package com.arsdigita.bebop;
 
 import com.arsdigita.xml.Element;
-import org.apache.log4j.Logger;
 
 /**
  * A component that gets its text entirely from a single XSL element.
@@ -28,9 +27,6 @@ import org.apache.log4j.Logger;
  * @version $Id$
  **/
 public class ElementComponent extends SimpleComponent {
-
-    private static final Logger s_log =
-        Logger.getLogger(ElementComponent.class.getName());
 
     private String m_name;
     private String m_uri;

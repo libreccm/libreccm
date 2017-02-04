@@ -25,7 +25,8 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * <p>CCMResourceManager Runtime environment repository object, stores essential
@@ -62,11 +63,10 @@ import org.apache.log4j.Logger;
  * @author Justin Ross &lt;jross@redhat.com&gt;
  * rewritten by
  * @author pboy &lt;pboy@barkhof.uni-bremen.de&gt;
- * @version $Id$
  */
 public final class CCMResourceManager {
 
-    private static final Logger s_log = Logger.getLogger(CCMResourceManager.class);
+    private static final Logger LOGGER = LogManager.getLogger(CCMResourceManager.class);
 
     private static CCMResourceManager s_ccm;
 
@@ -100,7 +100,7 @@ public final class CCMResourceManager {
         }
         else {
             // baseDir already set, silently discard
-            s_log.info("baseDir already set as " + m_baseDir + ". Discarded.");
+            LOGGER.info("baseDir already set as " + m_baseDir + ". Discarded.");
         }
     }
 
@@ -308,7 +308,7 @@ public final class CCMResourceManager {
      */
     private final void storeBaseDir(String baseDirName) {
 
-        s_log.debug("storeBaseDir: BaseDir name is given as " + baseDirName );
+        LOGGER.debug("storeBaseDir: BaseDir name is given as " + baseDirName );
         m_baseDir = new File(baseDirName);
 
         // eventually: check if dir exists, create it if not.

@@ -19,7 +19,9 @@
 package com.arsdigita.bebop;
 
 import com.arsdigita.bebop.form.Hidden;
+
 import javax.servlet.ServletException;
+
 import com.arsdigita.bebop.util.Traversal;
 import com.arsdigita.bebop.util.BebopConstants;
 import com.arsdigita.bebop.parameters.ParameterModel;
@@ -31,9 +33,10 @@ import com.arsdigita.util.UncheckedWrapperException;
 import com.arsdigita.xml.Element;
 import com.arsdigita.globalization.GlobalizedMessage;
 
-import java.util.Iterator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import org.apache.log4j.Logger;
+import java.util.Iterator;
 
 /**
  * Represents the visual structure of an HTML form. Forms can be constructed with a Container
@@ -71,7 +74,6 @@ import org.apache.log4j.Logger;
  * @author Rory Solomon
  * @author David Lutterkort
  *
- * @version $Id: Form.java 287 2005-02-22 00:29:02Z sskracic $
  */
 public class Form extends FormSection implements BebopConstants {
 
@@ -80,7 +82,7 @@ public class Form extends FormSection implements BebopConstants {
      * /WEB-INF/conf/log4j.properties int hte runtime environment and set
      * com.arsdigita.bebop.Form=DEBUG by uncommenting or adding the line.
      */
-    private static final Logger s_log = Logger.getLogger(Form.class);
+    private static final Logger LOGGER = LogManager.getLogger(Form.class);
 
     /**
      * Constant for specifying a <code>get</code> submission method for this form. See the <a href=
@@ -524,7 +526,7 @@ public class Form extends FormSection implements BebopConstants {
                 try {
                     return process(s);
                 } catch (FormProcessException e) {
-                    s_log.error("Form Process exception", e);
+                    LOGGER.error("Form Process exception", e);
                     throw new UncheckedWrapperException("Form Process error: "
                                                             + e.getMessage(), e);
                 }

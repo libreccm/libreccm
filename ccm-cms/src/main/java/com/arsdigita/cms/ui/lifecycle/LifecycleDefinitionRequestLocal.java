@@ -20,16 +20,14 @@ package com.arsdigita.cms.ui.lifecycle;
 
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.RequestLocal;
+
 import org.librecms.lifecycle.LifecycleDefinition;
-import org.apache.log4j.Logger;
 
 public abstract class LifecycleDefinitionRequestLocal extends RequestLocal {
 
-    private static final Logger s_log = Logger.getLogger
-        (LifecycleDefinitionRequestLocal.class);
-
-    public final LifecycleDefinition getLifecycleDefinition
-            (final PageState state) {
+    public final LifecycleDefinition getLifecycleDefinition(
+        final PageState state) {
         return (LifecycleDefinition) get(state);
     }
+
 }
