@@ -20,7 +20,6 @@ package org.librecms.contentsection;
 
 import com.arsdigita.kernel.KernelConfig;
 
-import org.libreccm.categorization.Categorization;
 import org.libreccm.categorization.CategoryManager;
 import org.libreccm.configuration.ConfigurationManager;
 

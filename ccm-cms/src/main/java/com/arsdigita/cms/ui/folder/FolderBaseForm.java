@@ -26,24 +26,23 @@ import com.arsdigita.bebop.form.TextField;
 import com.arsdigita.bebop.parameters.NotNullValidationListener;
 import com.arsdigita.bebop.parameters.TrimmedStringParameter;
 
-import org.librecms.contentsection.ContentItem;
 
 import com.arsdigita.cms.ui.CMSForm;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.web.Web;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.librecms.CmsConstants;
 
 /**
  * Class FolderForm implements the basic form for creating or renaming folders.
  *
  * @author Jon Orris &lt;jorris@redhat.com&gt;
- * @version $Id$
  */
 abstract class FolderBaseForm extends CMSForm {
 
-    private static Logger s_log = Logger.getLogger(FolderBaseForm.class);
+    private static Logger LOGGER = LogManager.getLogger(FolderBaseForm.class);
 
     public static final String NAME = "ContentItemName";
     public static final String TITLE = "ContentPageTitle";

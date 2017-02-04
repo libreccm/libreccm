@@ -20,7 +20,8 @@ package com.arsdigita.xml;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import com.arsdigita.util.Assert;
 import com.arsdigita.util.UncheckedWrapperException;
 import java.util.ArrayList;
@@ -42,7 +43,7 @@ import org.w3c.dom.Attr;
  */
 public class Element {
 
-    private static final Logger s_log = Logger.getLogger(Element.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(Element.class.getName());
     protected org.w3c.dom.Element m_element;
     /* DOM element that is being wrapped */
     /**
@@ -59,7 +60,7 @@ public class Element {
                 builder.setNamespaceAware(true);
                 return builder.newDocumentBuilder().newDocument();
             } catch (ParserConfigurationException e) {
-                s_log.error(e);
+                LOGGER.error(e);
                 throw new UncheckedWrapperException(
                         "INTERNAL: Could not create thread local DOM document.", 
                         e);
@@ -356,7 +357,7 @@ public class Element {
     }
 
     public Element setCDATASection(String cdata) {
-        s_log.debug("Setting CDATA section to '" + cdata + "'.");
+        LOGGER.debug("Setting CDATA section to '" + cdata + "'.");
 
         if (cdata == null) {
             cdata = "";
@@ -385,7 +386,7 @@ public class Element {
 
         String str = result.toString();
 
-        s_log.debug("Fetched this from CDATA section: " + str);
+        LOGGER.debug("Fetched this from CDATA section: " + str);
 
         return str;
     }
@@ -568,7 +569,7 @@ public class Element {
         while (xmlFragments.hasNext()) {
             xml.append(xmlFragments.next());
         }
-        s_log.debug("getXMLHashString: " + xml.toString());
+        LOGGER.debug("getXMLHashString: " + xml.toString());
         return xml.toString();
     }
 
@@ -576,7 +577,7 @@ public class Element {
     public int hashCode() {
         Date start = new Date();
         String hashString = getXMLHashString();
-        s_log.debug(
+        LOGGER.debug(
                 "hashCode: getXMLString took "
                 + (new Date().getTime() - start.getTime())
                 + " millisecs");
@@ -587,7 +588,7 @@ public class Element {
 
     @Override
     public boolean equals(Object other) {
-        s_log.debug("equals invoked");
+        LOGGER.debug("equals invoked");
         Date start = new Date();
         if (other == null) {
             return false;
@@ -598,7 +599,7 @@ public class Element {
         Element otherElement = (Element) other;
         String thisXML = getXMLHashString();
         String otherXML = otherElement.getXMLHashString();
-        s_log.debug(
+        LOGGER.debug(
                 "Equals: getXMLString twice took "
                 + (new Date().getTime() - start.getTime())
                 + " millisecs");

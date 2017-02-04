@@ -19,8 +19,8 @@
 package com.arsdigita.util.parameter;
 
 import com.arsdigita.util.Assert;
+
 import java.util.List;
-import org.apache.log4j.Logger;
 
 /**
  * Subject to change.
@@ -32,12 +32,9 @@ import org.apache.log4j.Logger;
  *
  * @see com.arsdigita.util.parameter.ErrorList
  * @author Justin Ross &lt;jross@redhat.com&gt;
- * @version $Id$
  */
 public final class ParameterException extends RuntimeException {
 
-    private static final Logger s_log = Logger.getLogger(
-        ParameterException.class);
     private static final long serialVersionUID = 1726920836531266365L;
 
     private final ErrorList m_errors;

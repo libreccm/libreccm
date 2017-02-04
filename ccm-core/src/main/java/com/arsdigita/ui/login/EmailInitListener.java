@@ -23,7 +23,8 @@ import com.arsdigita.bebop.event.FormInitListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.bebop.parameters.EmailParameter;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.apache.shiro.subject.Subject;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.Shiro;
@@ -39,7 +40,7 @@ import org.libreccm.security.User;
  */
 public class EmailInitListener implements FormInitListener {
 
-    private static final Logger s_log = Logger.getLogger(EmailInitListener.class
+    private static final Logger LOGGER = LogManager.getLogger(EmailInitListener.class
             .getName());
 
     private EmailParameter m_param;
@@ -51,26 +52,26 @@ public class EmailInitListener implements FormInitListener {
     public void init(FormSectionEvent event) {
         FormData data = event.getFormData();
 
-        s_log.debug("START");
+        LOGGER.debug("START");
 
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final Subject subject = cdiUtil.findBean(Subject.class);
         final Shiro shiro = cdiUtil.findBean(Shiro.class);
         
         if (!subject.isAuthenticated()) {
-            s_log.debug("FAILURE not logged in");
+            LOGGER.debug("FAILURE not logged in");
             return;
         }
 
         final User user = shiro.getUser().get();
 
         if (user == null) {
-            s_log.debug("FAILURE no such user");
+            LOGGER.debug("FAILURE no such user");
             return;
         }
 
         if (user.getPrimaryEmailAddress() == null) {
-            s_log.debug("FAILURE null primary email");
+            LOGGER.debug("FAILURE null primary email");
             return;
         }
         
@@ -78,7 +79,7 @@ public class EmailInitListener implements FormInitListener {
 
         data.put(m_param.getName(), user.getPrimaryEmailAddress().getAddress());
         
-        s_log.debug("SUCCESS");
+        LOGGER.debug("SUCCESS");
     }
 
 }

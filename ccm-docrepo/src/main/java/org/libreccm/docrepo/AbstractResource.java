@@ -18,7 +18,8 @@
  */
 package org.libreccm.docrepo;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.hibernate.validator.constraints.NotBlank;
 import org.libreccm.core.CcmObject;
 import org.libreccm.portation.Portable;
@@ -48,7 +49,7 @@ import java.util.Date;
 @Table(schema = "CCM_DOCREPO", name = "RESOURCES")
 public abstract class AbstractResource extends CcmObject implements Portable {
 
-    private static final Logger log = Logger.getLogger(AbstractResource.class);
+    private static final Logger log = LogManager.getLogger(AbstractResource.class);
 
     private static final long serialVersionUID = -910317798106611214L;
 

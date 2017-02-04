@@ -67,11 +67,12 @@ import com.arsdigita.util.Assert;
 import com.arsdigita.util.UncheckedWrapperException;
 import com.arsdigita.web.Web;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
-
-import org.apache.log4j.Logger;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -98,7 +99,6 @@ import org.librecms.contentsection.privileges.ItemPrivileges;
  * Browse folders and manipulate them with various actions (move/copy/delete).
  *
  * @author <a href="mailto:lutter@arsdigita.com">David Lutterkort</a>
- * @version $Id$
  */
 @SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class FolderManipulator extends SimpleContainer implements
@@ -108,8 +108,9 @@ public class FolderManipulator extends SimpleContainer implements
         Resettable {
 
     //public static final String RESOURCE_BUNDLE = "com.arsdigita.cms.ui.folder.CMSFolderResources";
-    private static final Logger LOGGER = Logger.getLogger(
+    private static final Logger LOGGER = LogManager.getLogger(
             FolderManipulator.class);
+    
     private static final String ATOZ_FILTER_PARAM = "aToZfilter";
     private static final String ACTION_PARAM = "act";
     private static final String FILTER_PARAM = "filter";

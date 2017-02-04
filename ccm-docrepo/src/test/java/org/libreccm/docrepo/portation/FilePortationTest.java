@@ -18,7 +18,8 @@
  */
 package org.libreccm.docrepo.portation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
@@ -67,7 +68,7 @@ import static org.libreccm.testutils.DependenciesHelpers.getModuleDependencies;
 @Transactional(TransactionMode.COMMIT)
 @CreateSchema({"create_ccm_docrepo_schema.sql"})
 public class FilePortationTest {
-    private static final Logger log = Logger.getLogger(FilePortationTest.class);
+    private static final Logger log = LogManager.getLogger(FilePortationTest.class);
 
     @Inject
     private FileRepository fileRepository;

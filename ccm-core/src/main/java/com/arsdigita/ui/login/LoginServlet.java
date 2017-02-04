@@ -34,7 +34,8 @@ import com.arsdigita.ui.UI;
 import com.arsdigita.web.ReturnSignal;
 import com.arsdigita.web.URL;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.security.UserRepository;
 
@@ -68,7 +69,7 @@ public class LoginServlet extends BebopApplicationServlet {
     /**
      * Logger instance for debugging
      */
-    private static final Logger s_log = Logger.getLogger(LoginServlet.class);
+    private static final Logger LOGGER = LogManager.getLogger(LoginServlet.class);
 
     // ////////////////////////////////////////////////////////////////////////
     // Define various URLs to subpages of Login to manage administrative tasks.
@@ -297,7 +298,7 @@ public class LoginServlet extends BebopApplicationServlet {
                 Class c = Class.forName(pageClass);
                 p = (Page) c.newInstance();
             } catch (Exception e) {
-                s_log.error(
+                LOGGER.error(
                     "Unable to instantiate waf.dispatcher.default_page_class", e);
             }
         }

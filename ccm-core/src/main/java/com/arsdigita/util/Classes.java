@@ -20,26 +20,21 @@ package com.arsdigita.util;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Constructor;
-import org.apache.log4j.Logger;
 
 import java.util.Arrays;
 
 /**
- * A collection of static utility methods for dealing with Java
- * classes.
+ * A collection of static utility methods for dealing with Java classes.
  *
  * @author Justin Ross
- * @version $Id$
  */
 public final class Classes {
-
-    private static final Logger s_log = Logger.getLogger(Classes.class);
 
     /**
      * Loads a class from its fully qualified string name.
      *
-     * @param clacc A fully qualified <code>String</code> naming
-     * the class to be loaded
+     * @param clacc A fully qualified <code>String</code> naming the class to be
+     *              loaded
      */
     public static final Class loadClass(final String clacc) {
         Assert.exists(clacc, String.class);
@@ -52,15 +47,12 @@ public final class Classes {
     }
 
     /**
-     * Constructs a new instance of a class using the given
-     * parameters.
+     * Constructs a new instance of a class using the given parameters.
      *
-     * @param clacc The <code>Class</code> of which to make a new
-     * instance
-     * @param params A <code>Class[]</code> representing the arguments
-     * of the desired constructor
-     * @param values An <code>Object[]</code> of values to fill the
-     * parameters
+     * @param clacc  The <code>Class</code> of which to make a new instance
+     * @param params A <code>Class[]</code> representing the arguments of the
+     *               desired constructor
+     * @param values An <code>Object[]</code> of values to fill the parameters
      */
     public static final Object newInstance(final Class clacc,
                                            final Class[] params,
@@ -77,25 +69,24 @@ public final class Classes {
 
             return constructor.newInstance(values);
         } catch (NoSuchMethodException ex) {
-            throw new UncheckedWrapperException
-                (message(clacc, params, values), ex);
+            throw new UncheckedWrapperException(message(clacc, params, values),
+                                                ex);
         } catch (IllegalAccessException ex) {
-            throw new UncheckedWrapperException
-                (message(clacc, params, values), ex);
+            throw new UncheckedWrapperException(message(clacc, params, values),
+                                                ex);
         } catch (InvocationTargetException ex) {
-            throw new UncheckedWrapperException
-                (message(clacc, params, values), ex);
+            throw new UncheckedWrapperException(message(clacc, params, values),
+                                                ex);
         } catch (InstantiationException ex) {
-            throw new UncheckedWrapperException
-                (message(clacc, params, values), ex);
+            throw new UncheckedWrapperException(message(clacc, params, values),
+                                                ex);
         }
     }
 
     private static String message(Class klass, Class[] params,
                                   Object[] values) {
-        return "class = " + klass +
-            ", params = " + message(params) +
-            ", values = " + message(values);
+        return "class = " + klass + ", params = " + message(params)
+               + ", values = " + message(values);
     }
 
     private static String message(Object[] array) {
@@ -107,15 +98,13 @@ public final class Classes {
     }
 
     /**
-     * Constructs a new instance of the class referred to by
-     * <code>clacc</code>.
+     * Constructs a new instance of the class referred to by <code>clacc</code>.
      *
-     * @param clacc The fully qualified <code>String</code>
-     * clacc of the object you wish to instantiate
-     * @param params A <code>Class[]</code> representing the arguments
-     * of the desired constructor
-     * @param values An <code>Object[]</code> of values to fill the
-     * parameters
+     * @param clacc  The fully qualified <code>String</code> clacc of the object
+     *               you wish to instantiate
+     * @param params A <code>Class[]</code> representing the arguments of the
+     *               desired constructor
+     * @param values An <code>Object[]</code> of values to fill the parameters
      */
     public static final Object newInstance(final String clacc,
                                            final Class[] params,
@@ -125,8 +114,8 @@ public final class Classes {
 
     /**
      * Creates a new instance of <code>clacc</code> using its no-args
-     * constructor.  If the class has no such constructor, it throws a
-     * runtime exception.
+     * constructor. If the class has no such constructor, it throws a runtime
+     * exception.
      *
      * @param clacc The class of which to create a new instance
      */
@@ -135,14 +124,14 @@ public final class Classes {
     }
 
     /**
-     * Creates a new instance of the class represented by
-     * <code>clacc</code> using its no-args constructor.  If the class
-     * has no such constructor, it throws a runtime exception.
+     * Creates a new instance of the class represented by <code>clacc</code>
+     * using its no-args constructor. If the class has no such constructor, it
+     * throws a runtime exception.
      *
-     * @param clacc The fully-qualified <code>String</code> name of
-     * the class
+     * @param clacc The fully-qualified <code>String</code> name of the class
      */
     public static final Object newInstance(final String clacc) {
         return newInstance(loadClass(clacc));
     }
+
 }

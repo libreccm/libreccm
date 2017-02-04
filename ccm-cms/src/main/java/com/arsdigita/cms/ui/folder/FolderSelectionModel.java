@@ -24,7 +24,7 @@ import com.arsdigita.cms.CMS;
 
 import com.arsdigita.ui.CcmObjectSelectionModel;
 
-import org.apache.log4j.Category;
+import org.libreccm.categorization.Category;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.Folder;
 

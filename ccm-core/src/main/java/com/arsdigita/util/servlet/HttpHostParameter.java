@@ -21,15 +21,12 @@ package com.arsdigita.util.servlet;
 import com.arsdigita.util.parameter.ErrorList;
 import com.arsdigita.util.parameter.ParameterError;
 import com.arsdigita.util.parameter.StringParameter;
-import org.apache.log4j.Logger;
 
 /**
- * This class represents info about a single host running
- * a server in a webapp cluster.
+ * This class represents info about a single host running a server in a webapp
+ * cluster.
  */
 public class HttpHostParameter extends StringParameter {
-    private static final Logger s_log = Logger.getLogger
-        (HttpHostParameter.class);
 
     public HttpHostParameter(final String name) {
         super(name);
@@ -43,22 +40,22 @@ public class HttpHostParameter extends StringParameter {
 
     protected Object unmarshal(final String value, final ErrorList errors) {
         if (value.indexOf("://") != -1) {
-            final ParameterError error = new ParameterError
-                (this, "The value must not have a scheme prefix");
+            final ParameterError error = new ParameterError(this,
+                                                            "The value must not have a scheme prefix");
             errors.add(error);
         }
 
         if (value.indexOf("/") != -1) {
-            final ParameterError error = new ParameterError
-                (this, "The value must not contain slashes");
+            final ParameterError error = new ParameterError(this,
+                                                            "The value must not contain slashes");
             errors.add(error);
         }
 
         final int sep = value.indexOf(":");
 
         if (sep == -1) {
-            final ParameterError error = new ParameterError
-                (this, "The value must contain a colon");
+            final ParameterError error = new ParameterError(this,
+                                                            "The value must contain a colon");
             errors.add(error);
         }
 
@@ -72,16 +69,16 @@ public class HttpHostParameter extends StringParameter {
 
             return new HttpHost(name, Integer.parseInt(port));
         } catch (IndexOutOfBoundsException ioobe) {
-            final ParameterError error = new ParameterError
-                (this, "The host spec is invalid; it must take the form " +
-                 "hostname:hostport");
+            final ParameterError error = new ParameterError(this,
+                                                            "The host spec is invalid; it must take the form "
+                                                            + "hostname:hostport");
             errors.add(error);
 
             return null;
         } catch (NumberFormatException nfe) {
-            final ParameterError error = new ParameterError
-                (this, "The port number must be an integer with no " +
-                 "extraneous spaces or punctuation");
+            final ParameterError error = new ParameterError(this,
+                                                            "The port number must be an integer with no "
+                                                            + "extraneous spaces or punctuation");
             errors.add(error);
 
             return null;
@@ -96,4 +93,5 @@ public class HttpHostParameter extends StringParameter {
             return host.getName() + ":" + host.getPort();
         }
     }
+
 }

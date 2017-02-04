@@ -21,7 +21,6 @@ package com.arsdigita.cms.ui;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.SimpleComponent;
 import com.arsdigita.cms.CMS;
-import com.arsdigita.cms.ContentCenter;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.ui.UI;
 import com.arsdigita.ui.admin.AdminUiConstants;
@@ -29,11 +28,9 @@ import com.arsdigita.ui.login.LoginServlet;
 import com.arsdigita.web.URL;
 import com.arsdigita.xml.Element;
 
-import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.core.CoreConstants;
 import org.libreccm.security.PermissionChecker;
-import org.libreccm.web.ApplicationCreator;
 import org.libreccm.web.ApplicationManager;
 import org.libreccm.web.ApplicationRepository;
 import org.libreccm.web.ApplicationType;
@@ -50,12 +47,11 @@ import javax.servlet.http.HttpServletRequest;
  * Global navigation elements for the CMS admin UIs.</p>
  *
  * @author Justin Ross &lt;jross@redhat.com&gt;
- * @version $Id$
  */
 // Made public (instead of unspecified, resulting in protected) in 6.6.8
 public class GlobalNavigation extends SimpleComponent {
 
-    private static final Logger s_log = Logger.getLogger(GlobalNavigation.class);
+    
     private final String m_adminPath;
     private final String m_centerPath;
     private final String m_changePasswordPath;

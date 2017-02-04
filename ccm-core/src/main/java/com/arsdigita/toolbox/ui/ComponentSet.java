@@ -26,7 +26,8 @@ import com.arsdigita.util.Assert;
 import com.arsdigita.xml.Element;
 import java.util.ArrayList;
 import java.util.Iterator;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /** 
  *
@@ -35,7 +36,7 @@ import org.apache.log4j.Logger;
 public class ComponentSet extends SimpleComponent
         implements Resettable {
 
-    private static final Logger s_log = Logger.getLogger(ComponentSet.class);
+    private static final Logger LOGGER = LogManager.getLogger(ComponentSet.class);
 
     private final ArrayList m_components;
 
@@ -44,7 +45,7 @@ public class ComponentSet extends SimpleComponent
     }
 
     public void reset(final PageState state) {
-        s_log.debug("Resetting children");
+        LOGGER.debug("Resetting children");
 
         final Iterator iter = children();
 

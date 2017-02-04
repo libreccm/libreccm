@@ -21,15 +21,15 @@ package com.arsdigita.cms.ui.category;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.ParameterSingleSelectionModel;
 import com.arsdigita.bebop.parameters.BigDecimalParameter;
-import com.arsdigita.cms.CMS;
 
 import com.arsdigita.cms.ui.SortableList;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.libreccm.categorization.Category;
-import org.librecms.contentsection.ContentSection;
 
 import javax.servlet.ServletException;
-import java.math.BigDecimal;
+
 
 /**
  * This list offers the option for the code to provide the developer
@@ -44,13 +44,14 @@ import java.math.BigDecimal;
  * "up" arrow n/2 times where n is the number of items in the list.
  * This clearly is not a good setup.
  *
- * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
+
  * @author Randy Graebner (randyg@alum.mit.edu)
- * @version $Id: SortableCategoryList.java 1942 2009-05-29 07:53:23Z terry $
+ * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
+
  */
 abstract class SortableCategoryList extends SortableList {
 
-    private static final Logger s_log = Logger.getLogger
+    private static final Logger LOGGER = LogManager.getLogger
         (SortableCategoryList.class);
 
     public final static String CHILDREN = "ch";

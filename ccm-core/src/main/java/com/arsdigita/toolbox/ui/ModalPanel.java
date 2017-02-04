@@ -46,14 +46,15 @@ import com.arsdigita.xml.Element;
 
 import java.util.Iterator;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  *
  */
 public class ModalPanel extends ComponentMap {
 
-    private static final Logger s_log = Logger.getLogger(ModalPanel.class);
+    private static final Logger LOGGER = LogManager.getLogger(ModalPanel.class);
 
     private final IndexStack m_stack;
     private Component m_default;
@@ -121,7 +122,7 @@ public class ModalPanel extends ComponentMap {
     }
 
     public final void clear(final PageState state) {
-        s_log.debug("Clearing the stack");
+        LOGGER.debug("Clearing the stack");
 
         m_stack.clear(state);
     }
@@ -137,24 +138,24 @@ public class ModalPanel extends ComponentMap {
         if (!pushed.equals(top(state))) {
             m_stack.push(state, state.getPage().stateIndex(pushed));
 
-            if (s_log.isDebugEnabled()) {
-                s_log.debug("Pushed " + top(state) + " visible");
-                s_log.debug("Stack is " + m_stack.toDebugString(state));
-                s_log.debug("Here", new Throwable());
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Pushed " + top(state) + " visible");
+                LOGGER.debug("Stack is " + m_stack.toDebugString(state));
+                LOGGER.debug("Here", new Throwable());
             }
         }
     }
 
     public final void pop(final PageState state) {
         if (m_stack.isEmpty(state)) {
-            s_log.debug("The stack is empty; nothing was popped");
+            LOGGER.debug("The stack is empty; nothing was popped");
         } else {
             m_stack.pop(state);
 
-            if (s_log.isDebugEnabled()) {
-                s_log.debug("Popped " + top(state) + " visible");
-                s_log.debug("Stack is " + m_stack.toDebugString(state));
-                s_log.debug("Here", new Throwable());
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Popped " + top(state) + " visible");
+                LOGGER.debug("Stack is " + m_stack.toDebugString(state));
+                LOGGER.debug("Here", new Throwable());
             }
         }
     }
@@ -177,7 +178,7 @@ public class ModalPanel extends ComponentMap {
 
         m_default = defaalt;
 
-        s_log.debug("Default set to " + defaalt);
+        LOGGER.debug("Default set to " + defaalt);
     }
 
     public final Component getDefault() {
@@ -299,8 +300,8 @@ public class ModalPanel extends ComponentMap {
             } else {
                 push(state, m_target);
 
-                if (s_log.isDebugEnabled()) {
-                    s_log.debug("Navigating to " + m_target);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Navigating to " + m_target);
                 }
             }
         }
@@ -391,7 +392,7 @@ public class ModalPanel extends ComponentMap {
             } else {
                 m_cancellable = null;
 
-                s_log.warn("Form " + form + " does not "
+                LOGGER.warn("Form " + form + " does not "
                                + "implement Cancellable.");
                 // See note above (import statement)!!
                 // StackTraces.log("The form was created at", form, s_log, "warn");
@@ -413,8 +414,8 @@ public class ModalPanel extends ComponentMap {
             final PageState state = e.getPageState();
 
             if (m_cancellable != null && m_cancellable.isCancelled(state)) {
-                if (s_log.isDebugEnabled()) {
-                    s_log.debug("Form processing is cancelled; reverting to "
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Form processing is cancelled; reverting to "
                                     + "pre-excursion state");
                 }
 
@@ -453,8 +454,8 @@ public class ModalPanel extends ComponentMap {
         public final void process(final FormSectionEvent e)
             throws FormProcessException {
             final PageState state = e.getPageState();
-            if (s_log.isDebugEnabled()) {
-                s_log.debug("Form processing went as planned and there is "
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Form processing went as planned and there is "
                                 + "no subsequent step; reverting to "
                                 + "pre-excursion state");
             }
@@ -477,8 +478,8 @@ public class ModalPanel extends ComponentMap {
 
         public final void process(final FormSectionEvent e)
             throws FormProcessException {
-            if (s_log.isDebugEnabled()) {
-                s_log.debug("Resuming the pre-excursion state");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Resuming the pre-excursion state");
             }
 
             final PageState state = e.getPageState();

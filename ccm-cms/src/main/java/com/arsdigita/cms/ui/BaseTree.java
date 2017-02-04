@@ -25,17 +25,13 @@ import com.arsdigita.bebop.event.ChangeListener;
 import com.arsdigita.bebop.event.TreeExpansionEvent;
 import com.arsdigita.bebop.event.TreeExpansionListener;
 import com.arsdigita.bebop.tree.TreeModelBuilder;
-import org.apache.log4j.Logger;
 
 /**
  * A convenience class for CMS trees.
  *
  * @author Justin Ross &lt;jross@redhat.com&gt;
- * @version $Id$
  */
 public class BaseTree extends Tree {
-
-    private static final Logger s_log = Logger.getLogger(BaseTree.class);
 
     public BaseTree(final TreeModelBuilder builder) {
         super(builder);

@@ -29,6 +29,9 @@ import com.arsdigita.bebop.util.BebopConstants;
 import com.arsdigita.util.Assert;
 import com.arsdigita.xml.Element;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.text.Collator;
 
 import java.util.Iterator;
@@ -40,7 +43,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
-import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.l10n.GlobalizationHelper;
 
@@ -51,11 +53,10 @@ import org.libreccm.l10n.GlobalizationHelper;
  * @author Uday Mathur
  * @author Rory Solomon
  * @author Michael Pih
- * @version $Id$
  */
 public abstract class OptionGroup extends Widget implements BebopConstants {
 
-    private static final Logger LOGGER = Logger.getLogger(OptionGroup.class);
+    private static final Logger LOGGER = LogManager.getLogger(OptionGroup.class);
 
     /**
      * The XML element to be used by individual options belonging to this group.

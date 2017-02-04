@@ -18,7 +18,8 @@
  */
 package com.arsdigita.util;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Utility functions for assertions.
@@ -33,12 +34,11 @@ import org.apache.log4j.Logger;
  * @author David Lutterkort &lt;dlutter@redhat.com&gt;
  * @author Uday Mathur
  * @author Justin Ross &lt;jross@redhat.com&gt;
- * @version $Id$
  */
 public class Assert {
 
     /** Class specific logger instance. */
-    private static final Logger s_log = Logger.getLogger(Assert.class);
+    private static final Logger LOGGER = LogManager.getLogger(Assert.class);
         
     private static final String DEFAULT_MESSAGE = "Assertion failure";
 
@@ -400,7 +400,7 @@ public class Assert {
     private static void error(final String message) {
         // Log the stack trace too, since we still have code that
         // manages to hide exceptions.
-        s_log.error(message, new AssertionError(message));
+        LOGGER.error(message, new AssertionError(message));
     }
 
     ///////////////////////////////////////////////////////////////////////////

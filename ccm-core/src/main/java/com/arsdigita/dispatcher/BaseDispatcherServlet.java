@@ -36,7 +36,8 @@ import javax.servlet.http.HttpSession;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -81,7 +82,7 @@ import org.xml.sax.helpers.DefaultHandler;
 public abstract class BaseDispatcherServlet extends HttpServlet
     implements Dispatcher, DispatcherConstants {
 
-    private static final Logger s_log = Logger.getLogger(
+    private static final Logger LOGGER = LogManager.getLogger(
         BaseDispatcherServlet.class);
     private final static int NOT_FOUND = 0;
     private final static int STATIC_FILE = 1;
@@ -99,9 +100,10 @@ public abstract class BaseDispatcherServlet extends HttpServlet
      * list of active requests
      */
     private static Vector s_activeList = new Vector();
+    private static final long serialVersionUID = 7349556332411247334L;
 
     static {
-        s_log.debug("Static initalizer starting...");
+        LOGGER.debug("Static initalizer starting...");
         // Add the basic request listeners.
 
         BaseDispatcherServlet.addRequestListener(new RequestListener() {
@@ -136,7 +138,7 @@ public abstract class BaseDispatcherServlet extends HttpServlet
         });
 
       
-        s_log.debug("Static initalizer finished.");
+        LOGGER.debug("Static initalizer finished.");
     }
 
     private List m_welcomeFiles = new ArrayList();
@@ -157,11 +159,11 @@ public abstract class BaseDispatcherServlet extends HttpServlet
             SAXParser parser = spf.newSAXParser();
             parser.parse(file, new WebXMLReader());
         } catch (SAXException se) {
-            s_log.error("error in init", se);
+            LOGGER.error("error in init", se);
         } catch (ParserConfigurationException pce) {
-            s_log.error("error in init", pce);
+            LOGGER.error("error in init", pce);
         } catch (IOException ioe) {
-            s_log.error("error in init", ioe);
+            LOGGER.error("error in init", ioe);
         }
         // default to index.jsp, index.html
         if (m_welcomeFiles.isEmpty()) {
@@ -225,8 +227,8 @@ public abstract class BaseDispatcherServlet extends HttpServlet
     public void service(HttpServletRequest req, HttpServletResponse resp)
         throws ServletException, IOException {
 
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("\n*** *** *** *** *** ***\n"
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("\n*** *** *** *** *** ***\n"
                             + "Servicing request for URL '" + req
                 .getRequestURI()
                             + "'\n" + "*** *** *** *** *** ***");
@@ -268,7 +270,7 @@ public abstract class BaseDispatcherServlet extends HttpServlet
         // (defer serving concrete JSPs until after listeners run)
         int concreteFileType = concreteFileType(req);
         if (concreteFileType == STATIC_FILE) {
-            s_log.debug("Setting world cache headers on static file");
+            LOGGER.debug("Setting world cache headers on static file");
             DispatcherHelper.cacheForWorld(resp);
             DispatcherHelper.forwardRequestByName("default", req, resp,
                                                   getServletContext());
@@ -294,7 +296,7 @@ public abstract class BaseDispatcherServlet extends HttpServlet
                     StartRequestRecord srr = startRequest(req, resp);
                     reqCtx = srr.m_reqCtx;
                     req = srr.m_req;
-                    s_log.debug("After startRequest the request is now " + req);
+                    LOGGER.debug("After startRequest the request is now " + req);
                 } catch (RedirectException re) {
                     final String url = re.getRedirectURL();
 
@@ -347,7 +349,7 @@ public abstract class BaseDispatcherServlet extends HttpServlet
             // try to commit
             finishedNormal = true;
         } catch (IOException ioe) {
-            s_log.error("error in BaseDispatcherServlet", ioe);
+            LOGGER.error("error in BaseDispatcherServlet", ioe);
             throw ioe;
         } catch (ServletException se) {
             // SDM #140226, improved handling of
@@ -368,17 +370,17 @@ public abstract class BaseDispatcherServlet extends HttpServlet
                 finishedNormal = true;
             } else if (rootError != null
                            && (rootError instanceof RedirectSignal)) {
-                s_log.debug("rethrowing RedirectSignal", rootError);
+                LOGGER.debug("rethrowing RedirectSignal", rootError);
                 throw (RedirectSignal) rootError;
             } else {
-                s_log.error("error in BaseDispatcherServlet", rootError);
+                LOGGER.error("error in BaseDispatcherServlet", rootError);
                 throw new ServletException(rootError);
             }
         } catch (RuntimeException re) {
-            s_log.error("error in BaseDispatcherServlet", re);
+            LOGGER.error("error in BaseDispatcherServlet", re);
             throw re;
         } catch (Error error) {
-            s_log.error("error in BaseDispatcherServlet", error);
+            LOGGER.error("error in BaseDispatcherServlet", error);
             throw error;
         } finally {
             if (!reentrant) {
@@ -449,7 +451,7 @@ public abstract class BaseDispatcherServlet extends HttpServlet
             try {
                 ((RequestListener) s_listenerList.get(i)).requestFinished(evt);
             } catch (Exception e) {
-                s_log.error("Error running request finished listener "
+                LOGGER.error("Error running request finished listener "
                                 + s_listenerList.
                     get(i) + " (#" + i + ")", e);
             }

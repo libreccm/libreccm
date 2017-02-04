@@ -20,11 +20,14 @@ package com.arsdigita.dispatcher;
 
 import java.io.File;
 import java.io.IOException;
+
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Basic dispatcher class for dispatching URLs to JSP or
@@ -64,10 +67,11 @@ import org.apache.log4j.Logger;
 public class JSPApplicationDispatcher extends BaseDispatcherServlet
                                       implements Dispatcher  {
 
-    private static final Logger s_log = Logger.getLogger
+    private static final Logger LOGGER = LogManager.getLogger
         (JSPApplicationDispatcher.class);
 
     private static JSPApplicationDispatcher s_instance = newInstance();
+    private static final long serialVersionUID = 1662461509796743896L;
 
     /**
      * Returns a new instance of a JSPApplicationDispatcher.
@@ -108,8 +112,8 @@ public class JSPApplicationDispatcher extends BaseDispatcherServlet
         ServletContext sctx = actx.getServletContext();
         String remainingURL = actx.getRemainingURLPart();
 
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("I think the remaining URL is '" + remainingURL + "'");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("I think the remaining URL is '" + remainingURL + "'");
         }
 
         // This is where we forward a request from /foo1/bar.ext or
@@ -120,19 +124,19 @@ public class JSPApplicationDispatcher extends BaseDispatcherServlet
             actx.getPageBase() +
             actx.getRemainingURLPart();
 
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Looking for a concrete resource under the web app " +
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Looking for a concrete resource under the web app " +
                         "context at '" + concreteURL + "'");
         }
 
         File concreteFile = new File(sctx.getRealPath(concreteURL));
 
         if (concreteFile.exists()) {
-            s_log.debug("Resource was found; forwarding");
+            LOGGER.debug("Resource was found; forwarding");
             DispatcherHelper.setRequestContext(req, actx);
             DispatcherHelper.forwardRequestByPath(concreteURL, req, resp);
         } else {
-            s_log.debug("Resource not found");
+            LOGGER.debug("Resource not found");
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
     }

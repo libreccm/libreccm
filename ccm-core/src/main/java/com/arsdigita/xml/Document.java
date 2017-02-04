@@ -18,8 +18,12 @@
  */
 package com.arsdigita.xml;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
+
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
@@ -28,7 +32,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.transform.stream.StreamResult;
-import org.apache.log4j.Logger;
+
 import java.io.UnsupportedEncodingException;
 
 /**
@@ -53,8 +57,8 @@ import java.io.UnsupportedEncodingException;
  */
 public class Document {
 
-    private static final Logger s_log =
-                                Logger.getLogger(Document.class.getName());
+    private static final Logger LOGGER =
+                                LogManager.getLogger(Document.class.getName());
     /**
      * this is the identity XSL stylesheet.  We need to provide the
      * identity transform as XSL explicitly because the default
@@ -112,7 +116,7 @@ public class Document {
     // instead to achieve independence from a JVM wide configuration.
     // Requires additional modifications in c.ad.util.xml.XML
     static {
-        s_log.debug("Static initalizer starting...");
+        LOGGER.debug("Static initalizer starting...");
         s_builder = DocumentBuilderFactory.newInstance();
         s_builder.setNamespaceAware(true);
         s_db = new ThreadLocal() {
@@ -126,7 +130,7 @@ public class Document {
                 }
             }
         };
-        s_log.debug("Static initalized finished.");
+        LOGGER.debug("Static initalized finished.");
     }
 
     /* Used to build the DOM Documents that this class wraps */
@@ -314,14 +318,14 @@ public class Document {
             identity.setOutputProperty("encoding", "UTF-8");
             identity.transform(new DOMSource(document), new StreamResult(os));
         } catch (javax.xml.transform.TransformerException e) {
-            s_log.error("error in toString", e);
+            LOGGER.error("error in toString", e);
             return document.toString();
         }
 
         try {
             return os.toString("UTF-8");
         } catch (UnsupportedEncodingException ex) {
-            s_log.error("UTF-8 encoding not supported!!!");
+            LOGGER.error("UTF-8 encoding not supported!!!");
             return os.toString();
         }
     }

@@ -21,7 +21,6 @@ package com.arsdigita.ui.login;
 import com.arsdigita.bebop.event.ActionEvent;
 import com.arsdigita.bebop.event.ActionListener;
 
-import org.apache.log4j.Logger;
 import org.apache.shiro.subject.Subject;
 import org.libreccm.cdi.utils.CdiUtil;
 
@@ -32,9 +31,6 @@ import org.libreccm.cdi.utils.CdiUtil;
  *
  */
 public class UserLogoutListener implements ActionListener {
-
-    private static final Logger s_log = Logger.getLogger(
-        UserLogoutListener.class);
 
     /**
      * Logs out the user.

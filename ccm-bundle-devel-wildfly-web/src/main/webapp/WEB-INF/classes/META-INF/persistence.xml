@@ -28,13 +28,16 @@
 
         <properties>
             <!-- Properties for Hibernate -->
-            <property name="hibernate.hbm2ddl.auto" value="validate"/>
+            <property name="hibernate.hbm2ddl.auto" value="validate" />
             <property name="hibernate.connection.autocommit" value="false" />
-            <property name="hibernate.id.new_generator_mappings" value="true"/>
+            <property name="hibernate.id.new_generator_mappings" value="true" />
             <property name="wildfly.jpa.hibernate.search.module" 
-                      value="org.hibernate.search.orm:main"/>
+                      value="org.hibernate.search.orm:main" />
             
-            
+            <!--<property name="hibernate.show_sql" value="true" />
+            <property name="format_sql" value="true" />
+            <property name="use_sql_comments" value="true" />-->
+
             <!-- 
                 Properties for Hibernate Envers 
                 We are using the ValidityAuditStrategy here because it is faster

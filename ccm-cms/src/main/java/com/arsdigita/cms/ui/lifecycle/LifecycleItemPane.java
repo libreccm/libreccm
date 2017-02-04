@@ -28,10 +28,8 @@ import com.arsdigita.bebop.Table;
 import com.arsdigita.bebop.event.ActionEvent;
 import com.arsdigita.bebop.event.ActionListener;
 import com.arsdigita.bebop.table.DefaultTableCellRenderer;
-import com.arsdigita.cms.CMS;
 
 import org.librecms.lifecycle.LifecycleDefinition;
-import org.librecms.lifecycle.PhaseDefinition;
 
 import com.arsdigita.cms.ui.BaseItemPane;
 import com.arsdigita.kernel.KernelConfig;
@@ -40,13 +38,9 @@ import com.arsdigita.toolbox.ui.Property;
 import com.arsdigita.toolbox.ui.PropertyList;
 import com.arsdigita.toolbox.ui.Section;
 
-import java.math.BigDecimal;
-
-import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.security.PermissionChecker;
-import org.librecms.CmsConstants;
 import org.librecms.contentsection.privileges.AdminPrivileges;
 import org.librecms.lifecycle.PhaseDefinititionRepository;
 
@@ -65,9 +59,6 @@ import java.util.Locale;
  * @author <a href="mailto:jross@redhat.com">Justin Ross</a>
  */
 class LifecycleItemPane extends BaseItemPane {
-
-    private static final Logger s_log = Logger
-        .getLogger(LifecycleItemPane.class);
 
     private final LifecycleDefinitionRequestLocal m_cycle;
     private final PhaseRequestLocal m_phase;

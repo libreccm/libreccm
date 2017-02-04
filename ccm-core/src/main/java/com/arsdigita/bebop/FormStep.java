@@ -18,14 +18,15 @@
  */
 package com.arsdigita.bebop;
 
-import org.apache.log4j.Logger;
-
 import com.arsdigita.bebop.event.FormInitListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.bebop.form.Widget;
 import com.arsdigita.bebop.parameters.BooleanParameter;
 import com.arsdigita.bebop.util.Traversal;
 import com.arsdigita.xml.Element;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * The FormStep class modifies the behavior of FormSection with respect to
@@ -34,31 +35,29 @@ import com.arsdigita.xml.Element;
  * listeners the first time the FormStep itself is displayed on the page. The
  * process, validate, and submission listeners are then fired on every
  * submission following the one in which the init listeners were fired. This
- * behavior is useful when used in conjunction with {@link MultiStepForm} or
- * its subclasses to provide initialization in later steps of a multi step
- * form that depends on the values entered in earlier steps.
+ * behavior is useful when used in conjunction with {@link MultiStepForm} or its
+ * subclasses to provide initialization in later steps of a multi step form that
+ * depends on the values entered in earlier steps.
  *
  * updated chris.gilbert@westsussex.gov.uk - support for session based wizards
  * (which enable use of actionlinks in wizard)
-
+ *
  * @see Wizard
  * @see MultiStepForm
  *
  * @author <a href="mailto:rhs@mit.edu">rhs@mit.edu</a>
- * @version $Id: FormStep.java 1414 2006-12-07 14:24:10Z chrisgilbert23 $
- **/
-
+ *
+ */
 public class FormStep extends FormSection {
-    private final static Logger s_log = Logger.getLogger(FormStep.class);
+
+    private final static Logger LOGGER = LogManager.getLogger(FormStep.class);
 
     private Form m_form = null;
 
     // cg - changed to using a parameter that is stored in pagestate so that if there are links
     // within the form then the init status of the steps is not lost
     // private Hidden m_initialized;
-    
     private BooleanParameter m_initialized;
-    
 
     /**
      * Constructs a new FormStep with the given name. The name must uniquely
@@ -66,8 +65,8 @@ public class FormStep extends FormSection {
      *
      * @param name A name that uniquely identifies this FormStep within it's
      *             enclosing Form.
-     **/
-
+     *
+     */
     public FormStep(String name) {
         addInitialized(name);
     }
@@ -76,11 +75,11 @@ public class FormStep extends FormSection {
      * Constructs a new FormStep with the given name. The name must uniquely
      * identify this FormStep within it's enclosing Form.
      *
-     * @param name A name that uniquely identifies this FormStep within it's
-     *             enclosing Form.
+     * @param name  A name that uniquely identifies this FormStep within it's
+     *              enclosing Form.
      * @param panel The container used to back this FormStep.
-     **/
-
+     *
+     */
     public FormStep(String name, Container panel) {
         super(panel);
         addInitialized(name);
@@ -93,14 +92,16 @@ public class FormStep extends FormSection {
 
     public void register(Page p) {
         super.register(p);
-	p.addComponentStateParam(this, m_initialized);
-        Traversal trav = new Traversal () {
-                protected void act(Component c) {
-                    if (c instanceof Widget) {
-                        ((Widget) c).setValidateInvisible(false);
-                    }
+        p.addComponentStateParam(this, m_initialized);
+        Traversal trav = new Traversal() {
+
+            protected void act(Component c) {
+                if (c instanceof Widget) {
+                    ((Widget) c).setValidateInvisible(false);
                 }
-            };
+            }
+
+        };
 
         trav.preorder(this);
     }
@@ -111,17 +112,18 @@ public class FormStep extends FormSection {
     }
 
     private void addInitialized(String name) {
-     	// m_initialized = new Hidden(new BooleanParameter(name));
-	// add(m_initialized);     
-   	m_initialized = new BooleanParameter(name);
+        // m_initialized = new Hidden(new BooleanParameter(name));
+        // add(m_initialized);     
+        m_initialized = new BooleanParameter(name);
         m_initialized.setDefaultValue(Boolean.FALSE);
     }
 
     public boolean isInitialized(PageState ps) {
         // Object init = m_initialized.getValue(ps);
-	Boolean init = (Boolean)ps.getValue(m_initialized);
+        Boolean init = (Boolean) ps.getValue(m_initialized);
         if (init == null) {
-    	    s_log.debug("init for step " + m_initialized.getName() + " is null. returning true");
+            LOGGER.debug("init for step " + m_initialized.getName()
+                             + " is null. returning true");
             // happens if step state is stored in session - 
             // form containing this step clears session
             // info when processed, but fireProcess invoked
@@ -142,8 +144,11 @@ public class FormStep extends FormSection {
     // Turn off forwarding of init events.
     protected FormInitListener createInitListener() {
         return new FormInitListener() {
-                public void init(FormSectionEvent evt) { }
-            };
+
+            public void init(FormSectionEvent evt) {
+            }
+
+        };
     }
 
     protected void fireSubmitted(FormSectionEvent evt)
@@ -161,11 +166,11 @@ public class FormStep extends FormSection {
 
     protected void fireProcess(FormSectionEvent evt)
         throws FormProcessException {
-        	s_log.debug("fireprocess invoked on Formstep " + m_initialized.getName());
+        LOGGER.debug("fireprocess invoked on Formstep " + m_initialized
+            .getName());
         if (isInitialized(evt.getPageState())) {
             super.fireProcess(evt);
-            
-           
+
         }
     }
 
@@ -176,7 +181,7 @@ public class FormStep extends FormSection {
                 fireInit(new FormSectionEvent(this, ps, fd));
                 setInitialized(ps);
             } catch (FormProcessException ex) {
-                s_log.debug("initialization aborted", ex);
+                LOGGER.debug("initialization aborted", ex);
                 fd.addError("Initialization Aborted: " + ex.getMessages());
             }
         }

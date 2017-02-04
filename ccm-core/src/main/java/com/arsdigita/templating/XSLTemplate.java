@@ -44,8 +44,9 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import org.w3c.dom.Document;
 
@@ -54,31 +55,33 @@ import org.w3c.dom.Document;
  * transformers.
  *
  * @author Dan Berrange
- * @version $Id$
  */
 public final class XSLTemplate {
 
-    /** Internal logger instance to faciliate debugging. Enable logging output
-     *  by editing /WEB-INF/conf/log4j.properties int hte runtime environment
-     *  and set com.arsdigita.templating.XSLTemplate=DEBUG by uncommenting 
-     *  or adding the line.                                                   */
-    private static final Logger s_log = Logger.getLogger(XSLTemplate.class);
+    /**
+     * Internal logger instance to faciliate debugging. Enable logging output by
+     * editing /WEB-INF/conf/log4j.properties int hte runtime environment and
+     * set com.arsdigita.templating.XSLTemplate=DEBUG by uncommenting or adding
+     * the line.
+     */
+    private static final Logger LOGGER = LogManager.getLogger(XSLTemplate.class);
 
-    /** Property containing the URL to the XSL source file or create this
-     *  instance                                                              */
+    /**
+     * Property containing the URL to the XSL source file or create this
+     * instance
+     */
     private final URL m_source;
     private final Templates m_templates;
     private final List m_dependents;
     private final Date m_created;
 
     /**
-     * Creates and loads a new template from <code>source</code>,
-     * using <code>listener</code> to handle any errors.
+     * Creates and loads a new template from <code>source</code>, using
+     * <code>listener</code> to handle any errors.
      *
-     * @param source A <code>URL</code> pointing to the template
-     * source text
-     * @param listener A <code>ErrorListener</code> to customize
-     * behavior on error
+     * @param source   A <code>URL</code> pointing to the template source text
+     * @param listener A <code>ErrorListener</code> to customize behavior on
+     *                 error
      */
     public XSLTemplate(final URL source,
                        final ErrorListener listener) {
@@ -92,17 +95,16 @@ public final class XSLTemplate {
         final SimpleURIResolver resolver = new SimpleURIResolver();
 
         try {
-            s_log.debug("Getting new templates object");
+            LOGGER.debug("Getting new templates object");
 
-            final TransformerFactory factory =
-                                     TransformerFactory.newInstance();
+            final TransformerFactory factory = TransformerFactory.newInstance();
             factory.setURIResolver(resolver);
             factory.setErrorListener(listener);
 
             m_templates = factory.newTemplates(resolver.resolve(m_source.
-                    toString(), null));
+                toString(), null));
 
-            s_log.debug("Done getting new templates");
+            LOGGER.debug("Done getting new templates");
         } catch (TransformerConfigurationException ex) {
             throw new WrappedTransformerException(ex);
         } catch (TransformerException ex) {
@@ -119,11 +121,10 @@ public final class XSLTemplate {
     }
 
     /**
-     * Creates and loads a new template from <code>source</code> using
-     * the default <code>ErrorListener</code>.
+     * Creates and loads a new template from <code>source</code> using the
+     * default <code>ErrorListener</code>.
      *
-     * @param source A <code>URL</code> pointing to the template
-     * source text
+     * @param source A <code>URL</code> pointing to the template source text
      */
     public XSLTemplate(final URL source) {
         this(source, new Log4JErrorListener());
@@ -132,8 +133,8 @@ public final class XSLTemplate {
     /**
      * Gets the <code>URL</code> of the template source.
      *
-     * @return The <code>URL</code> location of the template source;
-     * it cannot be null
+     * @return The <code>URL</code> location of the template source; it cannot
+     *         be null
      */
     public final URL getSource() {
         return m_source;
@@ -142,8 +143,8 @@ public final class XSLTemplate {
     /**
      * Gets a list of all dependent stylesheet files.
      *
-     * @return A <code>List</code> of <code>URL</code>s to dependent
-     * stylesheet files; it cannot be null
+     * @return A <code>List</code> of <code>URL</code>s to dependent stylesheet
+     *         files; it cannot be null
      */
     public final List getDependents() {
         return m_dependents;
@@ -156,7 +157,7 @@ public final class XSLTemplate {
      * @return The new <code>Transformer</code>; it cannot be null
      */
     public final synchronized Transformer newTransformer() {
-        s_log.debug("Generating new transformer");
+        LOGGER.debug("Generating new transformer");
 
         try {
             return m_templates.newTransformer();
@@ -167,23 +168,23 @@ public final class XSLTemplate {
 
     /**
      * Transforms the <code>source</code> document and sends it to
-     * <code>result</code>.  If there are errors,
-     * <code>listener</code> handles them.  This method internally
-     * creates and uses a new <code>Transformer</code>.
+     * <code>result</code>. If there are errors, <code>listener</code> handles
+     * them. This method internally creates and uses a new
+     * <code>Transformer</code>.
      *
-     * @param source The <code>Source</code> to be transformed; it
-     * cannot be null
-     * @param result The <code>Result</code> to capture the
-     * transformed product; it cannot be null
-     * @param listener A <code>ErrorListener</code> to handle
-     * transformation errors; it cannot be null
+     * @param source   The <code>Source</code> to be transformed; it cannot be
+     *                 null
+     * @param result   The <code>Result</code> to capture the transformed
+     *                 product; it cannot be null
+     * @param listener A <code>ErrorListener</code> to handle transformation
+     *                 errors; it cannot be null
      */
     public final void transform(final Source source,
                                 final Result result,
                                 final ErrorListener listener) {
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Transforming " + source + " and sending it to "
-                        + result + " using error listener " + listener);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Transforming " + source + " and sending it to "
+                             + result + " using error listener " + listener);
         }
 
         if (Assert.isEnabled()) {
@@ -196,11 +197,11 @@ public final class XSLTemplate {
             final Transformer transformer = newTransformer();
             transformer.setErrorListener(listener);
 
-            s_log.debug("Transforming the XML source document");
-           
+            LOGGER.debug("Transforming the XML source document");
+
             transformer.transform(source, result);
-                        
-            s_log.debug("Finished transforming");
+
+            LOGGER.debug("Finished transforming");
         } catch (TransformerConfigurationException tce) {
             throw new WrappedTransformerException(tce);
         } catch (TransformerException te) {
@@ -210,13 +211,13 @@ public final class XSLTemplate {
 
     /**
      * Transforms the <code>source</code> document and sends it to
-     * <code>result</code>.  This method internally creates and uses a
-     * new <code>Transformer</code>.
+     * <code>result</code>. This method internally creates and uses a new
+     * <code>Transformer</code>.
      *
-     * @param source The <code>Source</code> to be transformed; it
-     * cannot be null
-     * @param result The <code>Result</code> to capture the
-     * transformed product; it cannot be null
+     * @param source The <code>Source</code> to be transformed; it cannot be
+     *               null
+     * @param result The <code>Result</code> to capture the transformed product;
+     *               it cannot be null
      */
     public final void transform(final Source source,
                                 final Result result) {
@@ -225,15 +226,14 @@ public final class XSLTemplate {
 
     /**
      * Transforms <code>doc</code> and streams the result to
-     * <code>writer</code>.  If there are errors,
-     * <code>listener</code> handles them.
+     * <code>writer</code>. If there are errors, <code>listener</code> handles
+     * them.
      *
-     * @param doc The <code>Document</code> to transform; it cannot be
-     * null
-     * @param writer The <code>PrintWriter</code> to receive the
-     * transformed result; it cannot be null
-     * @param listener A <code>ErrorListener</code> to handle any
-     * errors; it cannot be null
+     * @param doc      The <code>Document</code> to transform; it cannot be null
+     * @param writer   The <code>PrintWriter</code> to receive the transformed
+     *                 result; it cannot be null
+     * @param listener A <code>ErrorListener</code> to handle any errors; it
+     *                 cannot be null
      */
     public final void transform(final Document doc,
                                 final PrintWriter writer,
@@ -254,10 +254,9 @@ public final class XSLTemplate {
      * Transforms <code>doc</code> and streams the result to
      * <code>writer</code>.
      *
-     * @param doc The <code>Document</code> to transform; it cannot be
-     * null
-     * @param writer The <code>PrintWriter</code> to receive the
-     * transformed result; it cannot be null
+     * @param doc    The <code>Document</code> to transform; it cannot be null
+     * @param writer The <code>PrintWriter</code> to receive the transformed
+     *               result; it cannot be null
      */
     public final void transform(final Document doc,
                                 final PrintWriter writer) {
@@ -265,82 +264,81 @@ public final class XSLTemplate {
     }
 
     /**
-     * Checks whether the XSL files associated with the template have
-     * been modified.
+     * Checks whether the XSL files associated with the template have been
+     * modified.
      *
-     * @return <code>true</code> if any dependent files have been
-     * modified, otherwise <code>false</code>
+     * @return <code>true</code> if any dependent files have been modified,
+     *         otherwise <code>false</code>
      */
     public final boolean isModified() {
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Checking if the XSL files for " + this.getSource().toString() + " "
-                        + "have been modified and need to be re-read");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Checking if the XSL files for " + this.getSource()
+                .toString() + " "
+                             + "have been modified and need to be re-read");
         }
 
         final Iterator iter = m_dependents.iterator();
 
         while (iter.hasNext()) {
-            final URL url = Templating.transformURL((URL) iter.next());            
+            final URL url = Templating.transformURL((URL) iter.next());
             Assert.exists(url, URL.class);
 
             if (url.getProtocol().equals("file")) {
                 final File file = new File(url.getPath());
 
                 if (file.lastModified() > m_created.getTime()) {
-                    if (s_log.isInfoEnabled()) {
-                        s_log.info("File " + file + " was modified " + file.
-                                lastModified());
+                    if (LOGGER.isInfoEnabled()) {
+                        LOGGER.info("File " + file + " was modified " + file.
+                            lastModified());
                     }
 
                     return true;
                 }
             } else {
-                if (s_log.isDebugEnabled()) {
-                    s_log.debug("The URL is not to a file; assuming " + url
-                                + " is not modified");
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("The URL is not to a file; assuming " + url
+                                     + " is not modified");
                 }
             }
         }
 
-        s_log.debug("No files were modified");
+        LOGGER.debug("No files were modified");
 
         return false;
     }
 
     /**
-     * Creates a ZIP file containing this stylesheet and
-     * all dependant's. NB, this method assumes that all
-     * stylesheets live in the same URL protocol. If the
-     * protocol a file is different from the protocol
-     * of the top level, then this file will be excluded
-     * from the ZIP. In practice this limitation is not
-     * critical, because XSL files should always use
-     * relative imports, which implies all imported files
-     * will be in the same URL space.
-     * 
-     * @param os the output stream to write the ZIP to
+     * Creates a ZIP file containing this stylesheet and all dependant's. NB,
+     * this method assumes that all stylesheets live in the same URL protocol.
+     * If the protocol a file is different from the protocol of the top level,
+     * then this file will be excluded from the ZIP. In practice this limitation
+     * is not critical, because XSL files should always use relative imports,
+     * which implies all imported files will be in the same URL space.
+     *
+     * @param os   the output stream to write the ZIP to
      * @param base the base directory in which the files will extract
+     *
      * @throws java.io.IOException
      */
     public void toZIP(OutputStream os,
                       String base)
-            throws IOException {
+        throws IOException {
 
         final ZipOutputStream zos = new ZipOutputStream(os);
 
         URL src = getSource();
         String srcProto = src.getProtocol();
 
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Outputting files for " + src);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Outputting files for " + src);
         }
 
         final Iterator sheets = getDependents().iterator();
         while (sheets.hasNext()) {
             URL xsl = (URL) sheets.next();
             if (xsl.getProtocol().equals(srcProto)) {
-                if (s_log.isDebugEnabled()) {
-                    s_log.debug("Outputting file " + xsl);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Outputting file " + xsl);
                 }
                 String path = xsl.getPath();
                 if (path.startsWith("/")) {
@@ -351,8 +349,8 @@ public final class XSLTemplate {
 
                 IO.copy(xsl.openStream(), zos);
             } else {
-                s_log.warn("Not outputting file " + xsl
-                           + " because its not under protocol " + srcProto);
+                LOGGER.warn("Not outputting file " + xsl
+                                + " because its not under protocol " + srcProto);
             }
         }
         zos.finish();
@@ -372,14 +370,16 @@ public final class XSLTemplate {
 
         @Override
         public void fatalError(TransformerException e) throws
-                TransformerException {
+            TransformerException {
             log(Level.FATAL, e);
         }
 
         private static void log(Level level, TransformerException ex) {
-            s_log.log(level, "Transformer " + level + ": " + ex.
-                    getLocationAsString() + ": " + ex.getMessage(),
-                      ex);
+            LOGGER.log(level, "Transformer " + level + ": " + ex.
+                       getLocationAsString() + ": " + ex.getMessage(),
+                       ex);
         }
+
     }
+
 }

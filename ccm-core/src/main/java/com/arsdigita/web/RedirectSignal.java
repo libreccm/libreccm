@@ -19,7 +19,9 @@
 package com.arsdigita.web;
 
 import com.arsdigita.util.Assert;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * <p>
@@ -59,7 +61,7 @@ public class RedirectSignal extends TransactionSignal {
     /**
      * Logger instance for debugging support.
      */
-    private static final Logger s_log = Logger.getLogger(RedirectSignal.class);
+    private static final Logger LOGGER=  LogManager.getLogger(RedirectSignal.class);
 
     /**
      * Destination URL where redirect to
@@ -83,8 +85,8 @@ public class RedirectSignal extends TransactionSignal {
                           + "the URL is '" + url + "'");
         }
 
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Request for redirect to URL '" + url + "'",
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Request for redirect to URL '" + url + "'",
                         new Throwable());
         }
 

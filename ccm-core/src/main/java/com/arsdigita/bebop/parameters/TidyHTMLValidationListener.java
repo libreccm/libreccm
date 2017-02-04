@@ -34,7 +34,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
-import org.apache.log4j.Logger;
 import org.w3c.tidy.Tidy;
 
 /**
@@ -76,14 +75,9 @@ import org.w3c.tidy.Tidy;
  * providing a validation listener based on JTidy. </p>
  *
  * @author Vadim Nasardinov (vadimn@redhat.com)
- * @version $Id$
- * @since 2002-08-16 21:46:25 -0400
  **/
 public class TidyHTMLValidationListener implements ParameterListener {
-
-    private static final Logger s_log =
-        Logger.getLogger(TidyHTMLValidationListener.class);
-
+    
     private static String LINE_SEPARATOR = System.getProperty("line.separator");
 
     private static LockableProperties s_tidyProperties;

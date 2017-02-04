@@ -18,7 +18,11 @@
  */
 package com.arsdigita.cms.ui.category;
 
-import com.arsdigita.bebop.*;
+import com.arsdigita.bebop.FormProcessException;
+import com.arsdigita.bebop.GridPanel;
+import com.arsdigita.bebop.Label;
+import com.arsdigita.bebop.PageState;
+import com.arsdigita.bebop.SaveCancelSection;
 import com.arsdigita.bebop.event.ParameterEvent;
 import com.arsdigita.bebop.event.ParameterListener;
 import com.arsdigita.bebop.form.FormErrorDisplay;
@@ -30,7 +34,6 @@ import com.arsdigita.bebop.util.GlobalizationUtil;
 import com.arsdigita.cms.ui.CMSForm;
 import com.arsdigita.globalization.GlobalizedMessage;
 
-import org.apache.log4j.Logger;
 import org.libreccm.categorization.Category;
 
 /**
@@ -39,12 +42,9 @@ import org.libreccm.categorization.Category;
  *
  * @author Michael Pih
  * @author Stanislav Freidin &lt;sfreidin@redhat.com&gt;
- * @version $Id: CategoryBaseForm.java 287 2005-02-22 00:29:02Z sskracic $
  */
 class CategoryBaseForm extends CMSForm {
-    private static final Logger s_log =
-        Logger.getLogger(CategoryBaseForm.class);
-
+    
     final CategoryRequestLocal m_parent;
 
     final FormErrorDisplay m_errors;

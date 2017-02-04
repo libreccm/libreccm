@@ -22,7 +22,8 @@ import com.arsdigita.dispatcher.DispatcherHelper;
 import com.arsdigita.dispatcher.InitialRequestContext;
 import com.arsdigita.dispatcher.RequestContext;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.libreccm.web.ApplicationRepository;
 import org.libreccm.web.CcmApplication;
 
@@ -64,7 +65,7 @@ public abstract class BaseApplicationServlet extends BaseServlet {
 
     private static final long serialVersionUID = 3204787384428680311L;
 
-    private static final Logger s_log = Logger.getLogger(
+    private static final Logger LOGGER = LogManager.getLogger(
         BaseApplicationServlet.class);
 
     /**
@@ -160,12 +161,12 @@ public abstract class BaseApplicationServlet extends BaseServlet {
      * @return
      */
     private CcmApplication getApplication(final HttpServletRequest request) {
-        s_log.debug("Resolving the application that will handle this request");
+        LOGGER.debug("Resolving the application that will handle this request");
 
         Long appId = (Long) request.getAttribute(APPLICATION_ID_ATTRIBUTE);
 
         if (appId == null) {
-            s_log.debug("I didn't receive an application ID with the "
+            LOGGER.debug("I didn't receive an application ID with the "
                             + "servlet request; trying to get it from the "
                             + "query string");
 
@@ -181,8 +182,8 @@ public abstract class BaseApplicationServlet extends BaseServlet {
             }
         }
 
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Retrieving application " + appId + " from the "
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Retrieving application " + appId + " from the "
                             + "database");
         }
 

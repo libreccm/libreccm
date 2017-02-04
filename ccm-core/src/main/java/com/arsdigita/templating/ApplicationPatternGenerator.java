@@ -25,7 +25,8 @@ import com.arsdigita.web.Web;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.libreccm.web.CcmApplication;
 
 /**
@@ -37,7 +38,8 @@ public class ApplicationPatternGenerator implements PatternGenerator {
     /**
      * Private logger instance for debugging purpose
      */
-    private static final Logger s_log = Logger.getLogger(PatternGenerator.class);
+    private static final Logger LOGGER = LogManager.getLogger(
+        PatternGenerator.class);
 
     /**
      * Implementation of the Interface class.
@@ -51,18 +53,18 @@ public class ApplicationPatternGenerator implements PatternGenerator {
     public String[] generateValues(String key,
                                    HttpServletRequest req) {
 
-        s_log.debug("Processing Application with key: " + key);
+        LOGGER.debug("Processing Application with key: " + key);
 
         final CcmApplication app = Web.getWebContext().getApplication();
         if (app != null) {
             String[] returnValue = {app.getApplicationType()};
-            s_log.debug("Found application >>" + returnValue
-                            + "<< in Application.");
+            LOGGER.debug("Found application >>" + returnValue
+                             + "<< in Application.");
             return returnValue;
         }
 
-        s_log.debug("ApplicationType for >>" + key
-                        + "<< not found. Trying SiteNodes instead.");
+        LOGGER.debug("ApplicationType for >>" + key
+                         + "<< not found. Trying SiteNodes instead.");
 
         throw new IllegalArgumentException(
             "No ApplicationType found for type name " + key);

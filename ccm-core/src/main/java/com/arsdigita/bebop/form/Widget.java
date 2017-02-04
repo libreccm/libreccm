@@ -24,8 +24,6 @@ import java.util.TooManyListenersException;
 
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
-
 import com.arsdigita.bebop.DescriptiveComponent;
 import com.arsdigita.bebop.Form;
 import com.arsdigita.bebop.FormData;
@@ -46,38 +44,32 @@ import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.util.Assert;
 import com.arsdigita.xml.Element;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 /**
- * <p>
  * A class representing a widget in the graphical representation of a form.
- * </p>
  *
- * <p>
  * A widget may correspond to a standard HTML form element, or to a more 
  * specific element or set of elements, such as a date widget that allows 
- * input of month, day and year (and possibly time as well).</p>
+ * input of month, day and year (and possibly time as well).
  *
- * <p>
  * This class and its subclasses provide methods to set all element attributes 
  * except for <code>VALUE</code>, which is typically dependent on the request. 
  * At the time of a request, a widget object merges a dynamically specified 
  * value or set of values with its own set of persistent attributes to render 
  * the final HTML for the widget. Other dynamic attributes may be associated with
  * the form component via a <code>WidgetPeer</code> associated with the widget.
- * </p>
- * <p>
+ *
  * The parent class provides the Label (the localized title) for the widget as
  * well as a (localized) hint as a kind of online manual for the user.
- * </p>
  *
  * @author Karl Goldstein
  * @author Uday Mathur
  * @author Rory Solomon
- * @version $Id$
  */
 public abstract class Widget extends DescriptiveComponent
                              implements Cloneable, BebopConstants {
-
-    private static final Logger s_log = Logger.getLogger(Widget.class);
 
     private ParameterModel m_parameterModel;
     private final EventListenerList m_listeners = new EventListenerList();

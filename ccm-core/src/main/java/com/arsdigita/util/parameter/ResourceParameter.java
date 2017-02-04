@@ -25,7 +25,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Iterator;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import com.arsdigita.util.UncheckedWrapperException;
 
@@ -45,11 +46,10 @@ import com.arsdigita.util.UncheckedWrapperException;
  * @author Justin Ross &lt;jross@redhat.com&gt;
  * @author Brett &lt;bprucha@users.sourceforge net&gt;
  * @author PBoy &lt;pboy@users.sourceforge net&gt;
- * @version $Id$
  */
 public class ResourceParameter extends AbstractParameter {
 
-    private static final Logger s_log = Logger.getLogger(ResourceParameter.class);
+    private static final Logger LOGGER = LogManager.getLogger(ResourceParameter.class);
 
     private Object m_default = null;
 
@@ -129,7 +129,7 @@ public class ResourceParameter extends AbstractParameter {
             URL url = cload.getResource(value);
             InputStream stream = cload.getResourceAsStream(value);
             if (stream == null && isRequired()) {
-                s_log.error(value + " is not a valid file and is required");
+                LOGGER.error(value + " is not a valid file and is required");
 
                 final ParameterError error = new ParameterError
                     (this, "Resource not found");
@@ -142,7 +142,7 @@ public class ResourceParameter extends AbstractParameter {
             } catch (FileNotFoundException ioe) {
                 // we know the file exists so this should not
                 // be an issue
-                s_log.error(value + " is not a valid file and is required", ioe);
+                LOGGER.error(value + " is not a valid file and is required", ioe);
 
                 errors.add(new ParameterError(this, ioe));
 

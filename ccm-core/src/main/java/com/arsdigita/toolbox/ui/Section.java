@@ -28,20 +28,18 @@ import com.arsdigita.bebop.SimpleComponent;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.util.Assert;
 import com.arsdigita.xml.Element;
+
 import java.util.ArrayList;
 import java.util.Iterator;
-import org.apache.log4j.Logger;
 
 /**
- * <p>A simple layout panel with top, bottom, left, right, and body
- * sections.</p>
+ * <p>
+ * A simple layout panel with top, bottom, left, right, and body sections.</p>
  *
  * @author Justin Ross &lt;jross@redhat.com&gt;
  * @version $Id$
  */
 public class Section extends SimpleComponent {
-
-    private static final Logger s_log = Logger.getLogger(Section.class);
 
     private final ArrayList m_children;
     private Component m_heading;
@@ -107,18 +105,19 @@ public class Section extends SimpleComponent {
 
     public final void generateXML(final PageState state, final Element parent) {
         if (isVisible(state)) {
-            final Element section = parent.newChildElement
-                ("bebop:section", BEBOP_XML_NS);
+            final Element section = parent.newChildElement("bebop:section",
+                                                           BEBOP_XML_NS);
 
-            final Element heading = section.newChildElement
-                ("bebop:heading", BEBOP_XML_NS);
+            final Element heading = section.newChildElement("bebop:heading",
+                                                            BEBOP_XML_NS);
 
             m_heading.generateXML(state, heading);
 
-            final Element body = section.newChildElement
-                ("bebop:body", BEBOP_XML_NS);
+            final Element body = section.newChildElement("bebop:body",
+                                                         BEBOP_XML_NS);
 
             m_body.generateXML(state, body);
         }
     }
+
 }

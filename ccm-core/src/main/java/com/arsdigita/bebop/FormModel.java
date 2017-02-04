@@ -30,10 +30,13 @@ import com.arsdigita.util.Assert;
 import com.arsdigita.util.Lockable;
 import com.arsdigita.util.URLRewriter;
 import com.arsdigita.web.RedirectSignal;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.log4j.Logger;
 
 /**
  * A container for two classes of
@@ -62,11 +65,10 @@ import org.apache.log4j.Logger;
  * @author Uday Mathur
  * @author Stas Freidin
  * @author Rory Solomon
- * @version $Id: FormModel.java 287 2005-02-22 00:29:02Z sskracic $
  */
 public class FormModel implements Lockable {
 
-    private static final Logger s_log = Logger.getLogger(FormModel.class);
+    private static final Logger LOGGER = LogManager.getLogger(FormModel.class);
 
     private static final String MAGIC_TAG_PREFIX = "form.";
 
@@ -147,8 +149,8 @@ public class FormModel implements Lockable {
         parameter.setDefaultOverridesNull(m_defaultOverridesNull);
         m_parameterModels.add(parameter);
 
-        if( s_log.isDebugEnabled() ) {
-            s_log.debug( "Added parameter: " + parameter.getName() + "[" +
+        if( LOGGER.isDebugEnabled() ) {
+            LOGGER.debug( "Added parameter: " + parameter.getName() + "[" +
                          parameter.getClass().getName() + "]" );
         }
     }
@@ -318,18 +320,18 @@ public class FormModel implements Lockable {
      */
     void process(final PageState state, final FormData data)
             throws FormProcessException {
-        s_log.debug("Processing the form model");
+        LOGGER.debug("Processing the form model");
 
         final FormSectionEvent e = new FormSectionEvent(this, state, data);
 
         if (data.isSubmission()) {
-            s_log.debug("The request is a form submission; running " +
+            LOGGER.debug("The request is a form submission; running " +
                         "submission listeners");
 
             try {
                 fireSubmitted(e);
             } catch (FormProcessException fpe) {
-                s_log.debug("A FormProcessException was thrown while firing " +
+                LOGGER.debug("A FormProcessException was thrown while firing " +
                             "submit; aborting further processing");
                 return;
             } finally {
@@ -337,39 +339,39 @@ public class FormModel implements Lockable {
 
             
             try {
-                s_log.debug("Validating parameters");
+                LOGGER.debug("Validating parameters");
                 fireParameterValidation(e);
                 
-                s_log.debug("Validating form");
+                LOGGER.debug("Validating form");
                 fireFormValidation(e);
             } finally {
             }
 
             if (data.isValid()) {
-                s_log.debug("The form data is valid; running process " +
+                LOGGER.debug("The form data is valid; running process " +
                             "listeners");
 
                 try {
                     fireFormProcess(e);
                 } catch (FormProcessException fpe) {
-                s_log.debug("A FormProcessException was thrown while " +
+                LOGGER.debug("A FormProcessException was thrown while " +
                             "initializing the form; storing the error", fpe);
 
                 data.addError("Initialization Aborted: " + fpe.getMessages());
                 } finally {
                 }
             } else {
-                s_log.debug("The form data was not valid; this form " +
+                LOGGER.debug("The form data was not valid; this form " +
                             "will not run its process listeners");
             }
         } else {
-            s_log.debug("The request is not a form submission; " +
+            LOGGER.debug("The request is not a form submission; " +
                         "running init listeners");
 
             try {
                 fireFormInit(e);
             } catch (FormProcessException fpe) {
-                s_log.debug("A FormProcessException was thrown while " +
+                LOGGER.debug("A FormProcessException was thrown while " +
                             "initializing the form; storing the error", fpe);
 
                 data.addError("Initialization Aborted: " + fpe.getMessages());
@@ -476,13 +478,13 @@ public class FormModel implements Lockable {
             try {
                 ((FormProcessListener) i.next()).process(e);
             } catch( RedirectSignal signal ) {
-                if( s_log.isDebugEnabled() ) {
-                    s_log.debug( "Delaying redirect to " +
+                if( LOGGER.isDebugEnabled() ) {
+                    LOGGER.debug( "Delaying redirect to " +
                                  signal.getDestinationURL() );
                 }
 
                 if( null != redirect ) {
-                    s_log.error( "Non-deterministic redirect. Ignoring earlier occurrence.", redirect );
+                    LOGGER.error( "Non-deterministic redirect. Ignoring earlier occurrence.", redirect );
                 }
 
                 redirect = signal;

@@ -21,18 +21,10 @@ package com.arsdigita.cms.ui;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.RequestLocal;
 
-import org.apache.log4j.Logger;
 import org.libreccm.core.CcmObject;
 
 
-/**
- *
- * @version $Id$
- */
 public class CcmObjectRequestLocal extends RequestLocal {
-
-    private static final Logger s_log = Logger.getLogger
-        (CcmObjectRequestLocal.class);
 
     public final CcmObject getACSObject(final PageState state) {
         return (CcmObject) get(state);

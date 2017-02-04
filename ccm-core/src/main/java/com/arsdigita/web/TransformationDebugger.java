@@ -35,7 +35,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  *
@@ -54,7 +55,7 @@ import org.apache.log4j.Logger;
  */
 public class TransformationDebugger extends Debugger {
 
-    private static final Logger s_log = Logger.getLogger(
+    private static final Logger LOGGER = LogManager.getLogger(
         TransformationDebugger.class);
 
     // private Document m_original;
@@ -145,13 +146,13 @@ public class TransformationDebugger extends Debugger {
             if (offset != -1) {
                 encoding = contentType.substring(offset + 8).trim();
             }
-            if (s_log.isDebugEnabled()) {
-                s_log.debug("Received content type " + contentType);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Received content type " + contentType);
             }
             InputStream is = con.getInputStream();
             InputStreamReader isr = new InputStreamReader(is, encoding);
-            if (s_log.isDebugEnabled()) {
-                s_log.debug("Process with character encoding " + isr
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Process with character encoding " + isr
                     .getEncoding());
             }
             BufferedReader input = new BufferedReader(isr);

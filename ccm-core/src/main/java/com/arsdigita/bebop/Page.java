@@ -32,6 +32,9 @@ import com.arsdigita.util.SystemInformation;
 import com.arsdigita.xml.Document;
 import com.arsdigita.xml.Element;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collection;
@@ -49,8 +52,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.ParserConfigurationException;
-
-import org.apache.log4j.Logger;
 
 /**
  * The top-level container for all Bebop components and containers.
@@ -73,15 +74,13 @@ import org.apache.log4j.Logger;
  * @author David Lutterkort
  * @author Stanislav Freidin
  * @author Uday Mathur
- *
- * @version $Id: Page.java 1270 2006-07-18 13:34:55Z cgyg9330 $
  */
 public class Page extends SimpleComponent implements Container {
 
     /**
      * Class specific logger instance.
      */
-    private static final Logger s_log = Logger.getLogger(Page.class);
+    private static final Logger LOGGER = LogManager.getLogger(Page.class);
     /**
      * The delimiter character for components naming
      */
@@ -104,12 +103,12 @@ public class Page extends SimpleComponent implements Container {
     static final Collection CONTROL_EVENT_KEYS;
 
     static {
-        s_log.debug("Static initalizer is starting...");
+        LOGGER.debug("Static initalizer is starting...");
         CONTROL_EVENT_KEYS = new ArrayList(3);
         CONTROL_EVENT_KEYS.add(SELECTED);
         CONTROL_EVENT_KEYS.add(CONTROL_EVENT);
         CONTROL_EVENT_KEYS.add(CONTROL_VALUE);
-        s_log.debug("Static initalizer finished.");
+        LOGGER.debug("Static initalizer finished.");
     }
 
     /**
@@ -761,7 +760,7 @@ public class Page extends SimpleComponent implements Container {
 
             };
             if (m_panel == null) {
-                s_log.warn("m_panel is null");
+                LOGGER.warn("m_panel is null");
             }
             componentRegistrar.preorder(m_panel);
             if (m_errorDisplay != null) {
@@ -872,8 +871,8 @@ public class Page extends SimpleComponent implements Container {
 
             final ActionListener listener = (ActionListener) i.next();
 
-            if (s_log.isDebugEnabled()) {
-                s_log.debug("Firing action listener " + listener);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Firing action listener " + listener);
             }
 
             listener.actionPerformed(e);
@@ -899,8 +898,8 @@ public class Page extends SimpleComponent implements Container {
 
             final RequestListener listener = (RequestListener) i.next();
 
-            if (s_log.isDebugEnabled()) {
-                s_log.debug("Firing request listener " + listener);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Firing request listener " + listener);
             }
 
             listener.pageRequested(e);
@@ -962,7 +961,7 @@ public class Page extends SimpleComponent implements Container {
 
         if (!stateContains(c)) {
             if (c == null) {
-                s_log.error("c is null");
+                LOGGER.error("c is null");
             } /*else {
              s_log.error("c: " + c.toString());
              }*/
@@ -1007,7 +1006,7 @@ public class Page extends SimpleComponent implements Container {
         }
         if (!m_stateModel.containsFormParam(p)) {
             String name = parameterName(c, p.getName());
-            s_log.debug(String
+            LOGGER.debug(String
                 .format("Setting name of parameter to add to '%s'",
                         name));
             p.setName(name);
@@ -1334,7 +1333,7 @@ public class Page extends SimpleComponent implements Container {
             String componentId = (String) it.next();
             hashString.append(componentId);
         }
-        s_log.debug("Time to create hashCode for page: " + (new Date().getTime()
+        LOGGER.debug("Time to create hashCode for page: " + (new Date().getTime()
                                                             - start.
                                                             getTime()));
         return hashString.toString();

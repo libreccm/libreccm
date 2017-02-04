@@ -24,18 +24,17 @@ import com.arsdigita.util.Assert;
 import com.arsdigita.xml.Element;
 import java.util.Iterator;
 import java.util.ArrayList;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
- * <p>A simple layout panel with top, bottom, left, right, and body
- * sections.</p>
+ * A simple layout panel with top, bottom, left, right, and body sections.</p>
  *
  * @author Justin Ross &lt;jross@redhat.com&gt;
- * @version $Id$
  */
 public class ActionGroup extends ComponentSet {
 
-    private static final Logger s_log = Logger.getLogger(ActionGroup.class);
+    private static final Logger LOGGER = LogManager.getLogger(ActionGroup.class);
 
     private Component m_subject;
     private final ArrayList m_actions = new ArrayList();
@@ -57,7 +56,7 @@ public class ActionGroup extends ComponentSet {
         Assert.exists(action, "Component action");
         Assert.isUnlocked(this);
 
-        m_actions.add(new Object[] {action, clacc});
+        m_actions.add(new Object[]{action, clacc});
         add(action);
     }
 
@@ -67,24 +66,24 @@ public class ActionGroup extends ComponentSet {
 
     public final void generateXML(final PageState state, final Element parent) {
         if (isVisible(state)) {
-            final Element layout = parent.newChildElement
-                ("bebop:actionGroup", BEBOP_XML_NS);
+            final Element layout = parent.newChildElement("bebop:actionGroup",
+                                                          BEBOP_XML_NS);
 
-            final Element subject = layout.newChildElement
-                ("bebop:subject", BEBOP_XML_NS);
+            final Element subject = layout.newChildElement("bebop:subject",
+                                                           BEBOP_XML_NS);
 
             if (m_subject != null) {
                 m_subject.generateXML(state, subject);
             }
 
-            for (Iterator iter = m_actions.iterator(); iter.hasNext(); ) {
+            for (Iterator iter = m_actions.iterator(); iter.hasNext();) {
                 final Object[] spec = (Object[]) iter.next();
                 final Component component = (Component) spec[0];
                 final String clacc = (String) spec[1];
 
                 if (component.isVisible(state)) {
-                    final Element action = layout.newChildElement
-                        ("bebop:action", BEBOP_XML_NS);
+                    final Element action = layout
+                        .newChildElement("bebop:action", BEBOP_XML_NS);
 
                     if (clacc != null) {
                         action.addAttribute("class", clacc);
@@ -95,4 +94,5 @@ public class ActionGroup extends ComponentSet {
             }
         }
     }
+
 }

@@ -240,7 +240,7 @@ public class FolderManagerTest {
     @InSequence(1500)
     public void createFolderEmptyName() {
         final Optional<Folder> parent = folderRepo.findById(-2005L);
-        assertThat(parent.isPresent(), is(false));
+        assertThat(parent.isPresent(), is(true));
 
         final Folder test = folderManager.createFolder(" ", parent.get());
 

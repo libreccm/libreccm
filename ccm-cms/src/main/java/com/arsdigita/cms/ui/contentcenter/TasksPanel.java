@@ -19,18 +19,11 @@
 package com.arsdigita.cms.ui.contentcenter;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.Iterator;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
-
 import com.arsdigita.bebop.ActionLink;
 import com.arsdigita.bebop.BoxPanel;
-import com.arsdigita.bebop.ControlLink;
-import com.arsdigita.bebop.Image;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.Page;
 import com.arsdigita.bebop.PageState;
@@ -38,7 +31,6 @@ import com.arsdigita.bebop.PaginationModelBuilder;
 import com.arsdigita.bebop.Paginator;
 import com.arsdigita.bebop.RequestLocal;
 import com.arsdigita.bebop.SimpleComponent;
-import com.arsdigita.bebop.SimpleContainer;
 import com.arsdigita.bebop.event.ActionEvent;
 import com.arsdigita.bebop.event.ActionListener;
 import com.arsdigita.bebop.event.ChangeEvent;
@@ -50,10 +42,6 @@ import com.arsdigita.cms.CMS;
 import com.arsdigita.cms.ui.CMSContainer;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.ui.CcmObjectSelectionModel;
-import com.arsdigita.util.Assert;
-import com.arsdigita.util.UncheckedWrapperException;
-import com.arsdigita.web.RedirectSignal;
-import com.arsdigita.web.Web;
 import com.arsdigita.xml.Element;
 
 import org.librecms.CmsConstants;
@@ -66,7 +54,6 @@ import org.librecms.contentsection.ContentType;
  */
 public class TasksPanel extends CMSContainer {
 
-    private static Logger s_log = Logger.getLogger(TasksPanel.class);
     // The default number of rows to show
     private static final int DEFAULT_MAX_ROWS = 15;
     // Number of tasks to show

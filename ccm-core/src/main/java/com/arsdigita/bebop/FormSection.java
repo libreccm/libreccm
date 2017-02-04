@@ -28,28 +28,29 @@ import com.arsdigita.bebop.event.FormValidationListener;
 import com.arsdigita.util.Assert;
 import com.arsdigita.xml.Element;
 
-import java.util.Iterator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import org.apache.log4j.Logger;
+import java.util.Iterator;
 
 /**
  * A standalone section of a <code>Form</code>. A <code>FormSection</code>
- * contains other Bebop components, most importantly
- * <code>Widgets</code> and associated listeners. It serves two purposes:
+ * contains other Bebop components, most importantly <code>Widgets</code> and
+ * associated listeners. It serves two purposes:
  * <UL>
  * <LI>Divides a form into visual sections</LI>
- * <LI>Serves as a container for form fragments that can function by themselves 
- *     and can be dropped into other forms</LI>
+ * <LI>Serves as a container for form fragments that can function by themselves
+ * and can be dropped into other forms</LI>
  * </UL>
- * <p>Since a <code>FormSection</code> has its own init, validation, and
- * process listeners, it can do all of its processing without any intervention
- * from the enclosing form.
+ * <p>
+ * Since a <code>FormSection</code> has its own init, validation, and process
+ * listeners, it can do all of its processing without any intervention from the
+ * enclosing form.
  *
- * Although a <code>FormSection</code> contains all the same pieces
- * that a <code>Form</code> does, it can only be used if it is added
- * directly or indirectly to a <code>Form</code>. <code>FormSection</code>s
- * that are not contained in a <code>Form</code> do not exhibit any useful
- * behavior.
+ * Although a <code>FormSection</code> contains all the same pieces that a
+ * <code>Form</code> does, it can only be used if it is added directly or
+ * indirectly to a <code>Form</code>. <code>FormSection</code>s that are not
+ * contained in a <code>Form</code> do not exhibit any useful behavior.
  *
  * @see Form
  * @see FormModel
@@ -59,34 +60,41 @@ import org.apache.log4j.Logger;
  * @author Stas Freidin
  * @author Rory Solomon
  * @author David Lutterkort
- *
- * @version $Id: FormSection.java 287 2005-02-22 00:29:02Z sskracic $
  */
 public class FormSection extends DescriptiveComponent implements Container {
 
-    /** Internal logger instance to faciliate debugging. Enable logging output
-     *  by editing /WEB-INF/conf/log4j.properties int the runtime environment
-     *  and set com.arsdigita.subsite.FormSection=DEBUG 
-     *  by uncommenting or adding the line.                                   */
-    private static final Logger s_log = Logger.getLogger(FormSection.class);
+    /**
+     * Internal logger instance to faciliate debugging. Enable logging output by
+     * editing /WEB-INF/conf/log4j.properties int the runtime environment and
+     * set com.arsdigita.subsite.FormSection=DEBUG by uncommenting or adding the
+     * line.
+     */
+    private static final Logger LOGGER = LogManager.getLogger(FormSection.class);
 
-    /** Underlying <code>FormModel</code> that stores
-     *  the parameter models for all the widgets in this form section.        */
+    /**
+     * Underlying <code>FormModel</code> that stores the parameter models for
+     * all the widgets in this form section.
+     */
     protected FormModel m_formModel;
 
-    /** The container to which all children are added. A
-     *  <code>ColumnPanel</code> by default.                                  */
+    /**
+     * The container to which all children are added. A <code>ColumnPanel</code>
+     * by default.
+     */
     protected Container m_panel;
 
-    /** Contains all the listeners that were added with the various
-     *  addXXXListener methods.
-     *  We maintain our own list of listeners, so that we can re-send the
-     *  events the FormModel generates, but with us as the source, not the
-     *  FormModel.                                                            */
+    /**
+     * Contains all the listeners that were added with the various
+     * addXXXListener methods. We maintain our own list of listeners, so that we
+     * can re-send the events the FormModel generates, but with us as the
+     * source, not the FormModel.
+     */
     private EventListenerList m_listeners;
 
-    /** Listeners we attach to the FormModel to forward
-     * form model events to our listeners with the right source               */
+    /**
+     * Listeners we attach to the FormModel to forward form model events to our
+     * listeners with the right source
+     */
     private FormSubmissionListener m_forwardSubmission;
 
     private FormInitListener m_forwardInit;
@@ -94,10 +102,11 @@ public class FormSection extends DescriptiveComponent implements Container {
     private FormProcessListener m_forwardProcess;
 
     /**
-     * Constructs a new form section. Sets the implicit layout Container of
-     * this <code>FormSection</code> to two column <code>ColumnPanel</code>
-     * by calling the 1-argument constructor.
-     **/
+     * Constructs a new form section. Sets the implicit layout Container of this
+     * <code>FormSection</code> to two column <code>ColumnPanel</code> by
+     * calling the 1-argument constructor.
+     *
+     */
     public FormSection() {
         this(new ColumnPanel(2, true));
     }
@@ -105,24 +114,26 @@ public class FormSection extends DescriptiveComponent implements Container {
     /**
      * Constructs a new form section. Sets the form model of this
      * <code>FormSection</code> to a new, anonymous FormModel.
-     * 
+     *
      * @param panel
-     **/
+     *
+     */
     public FormSection(Container panel) {
         this(panel, new FormModel("anonymous"));
     }
 
     /**
-     * Constructs a new form section. Sets the implicit layout Container of
-     * this <code>FormSection</code> to <code>panel</code>.  Sets the form
-     * model of this <code>FormSection</code> to <code>model</code>.
+     * Constructs a new form section. Sets the implicit layout Container of this
+     * <code>FormSection</code> to <code>panel</code>. Sets the form model of
+     * this <code>FormSection</code> to <code>model</code>.
      *
      * @param panel the container within this form section that holds the
-     * components that are added to the form section with calls to the
-     * <code>add</code> methods
+     *              components that are added to the form section with calls to
+     *              the <code>add</code> methods
      *
      * @param model the form model for this form section
-     **/
+     *
+     */
     protected FormSection(Container panel, FormModel model) {
         super();
         m_panel = panel;
@@ -135,17 +146,19 @@ public class FormSection extends DescriptiveComponent implements Container {
      * initialized with the request parameters but before any of the init,
      * validation, or process listeners are run. The listener's
      * <code>submitted</code> method may throw a
-     * <code>FormProcessException</code> to signal that any further
-     * processing of the form should be aborted.
+     * <code>FormProcessException</code> to signal that any further processing
+     * of the form should be aborted.
      *
      * @param listener a submission listener to run every time the form is
-     * submitted
+     *                 submitted
+     *
      * @see FormModel#addSubmissionListener
      * @pre listener != null
      */
     public void addSubmissionListener(FormSubmissionListener listener) {
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Adding submission listener " + listener + " to " + this);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Adding submission listener " + listener + " to "
+                         + this);
         }
 
         Assert.exists(listener, "Submission Listener");
@@ -155,15 +168,15 @@ public class FormSection extends DescriptiveComponent implements Container {
     }
 
     /**
-     * Removes the specified submission listener from the
-     * list of submission listeners (if it had previously been added).
+     * Removes the specified submission listener from the list of submission
+     * listeners (if it had previously been added).
      *
      * @param listener the submission listener to remove
      */
     public void removeSubmissionListener(FormSubmissionListener listener) {
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Removing submission listener " + listener + " from "
-                        + this);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Removing submission listener " + listener + " from "
+                             + this);
         }
 
         Assert.exists(listener, "Submission Listener");
@@ -176,28 +189,29 @@ public class FormSection extends DescriptiveComponent implements Container {
      * listeners.
      *
      * @param e the event to pass to the listeners
+     *
      * @throws FormProcessException if one of the listeners throws such an
-     * exception.
+     *                              exception.
      */
     protected void fireSubmitted(FormSectionEvent e)
-            throws FormProcessException {
+        throws FormProcessException {
         Assert.exists(e.getFormData(), "FormData");
         FormProcessException delayedException = null;
 
         Iterator i = m_listeners.getListenerIterator(
-                FormSubmissionListener.class);
+            FormSubmissionListener.class);
         while (i.hasNext()) {
             final FormSubmissionListener listener = (FormSubmissionListener) i.
-                    next();
+                next();
 
-            if (s_log.isDebugEnabled()) {
-                s_log.debug("Firing submission listener " + listener);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Firing submission listener " + listener);
             }
 
             try {
                 listener.submitted(e);
             } catch (FormProcessException ex) {
-                s_log.debug(ex);
+                LOGGER.debug(ex);
                 delayedException = ex;
             }
         }
@@ -207,7 +221,7 @@ public class FormSection extends DescriptiveComponent implements Container {
     }
 
     /**
-     * 
+     *
      */
     protected void forwardSubmission() {
         if (m_forwardSubmission == null) {
@@ -221,35 +235,36 @@ public class FormSection extends DescriptiveComponent implements Container {
      * form section.
      *
      * @return a submission listener that forwards submission events to this
-     * form section.
+     *         form section.
      */
     protected FormSubmissionListener createSubmissionListener() {
         return new FormSubmissionListener() {
 
             @Override
             public void submitted(FormSectionEvent e)
-                    throws FormProcessException {
+                throws FormProcessException {
                 fireSubmitted(new FormSectionEvent(FormSection.this,
                                                    e.getPageState(),
                                                    e.getFormData()));
             }
+
         };
     }
 
     /**
-     * Adds a listener for form initialization events. Initialization
-     * events occur when a form is initially requested by the user, but
-     * not when the form is subsequently submitted.  They typically
-     * perform actions such as querying the database for existing values
-     * to set up an edit form, or obtaining a sequence value to set up a
-     * create form.
+     * Adds a listener for form initialization events. Initialization events
+     * occur when a form is initially requested by the user, but not when the
+     * form is subsequently submitted. They typically perform actions such as
+     * querying the database for existing values to set up an edit form, or
+     * obtaining a sequence value to set up a create form.
      *
      * @param listener an instance of a class that implements the
-     * <code>FormInitListener</code> interface
-     * */
+     *                 <code>FormInitListener</code> interface
+     *
+     */
     public void addInitListener(FormInitListener listener) {
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Adding init listener " + listener + " to " + this);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Adding init listener " + listener + " to " + this);
         }
 
         Assert.exists(listener, "FormInitListener");
@@ -259,14 +274,14 @@ public class FormSection extends DescriptiveComponent implements Container {
     }
 
     /**
-     * Removes the specified init listener from the
-     * list of init listeners (if it had previously been added).
+     * Removes the specified init listener from the list of init listeners (if
+     * it had previously been added).
      *
      * @param listener the init listener to remove
      */
     public void removeInitListener(FormInitListener listener) {
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Removing init listener " + listener + " from " + this);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Removing init listener " + listener + " from " + this);
         }
 
         Assert.exists(listener, "Init Listener");
@@ -275,12 +290,12 @@ public class FormSection extends DescriptiveComponent implements Container {
     }
 
     /**
-     * Calls the <code>init</code> method on all registered init
-     * listeners.
+     * Calls the <code>init</code> method on all registered init listeners.
      *
      * @param e the event to pass to the listeners
+     *
      * @throws FormProcessException if one of the listeners throws such an
-     * exception.
+     *                              exception.
      */
     protected void fireInit(FormSectionEvent e) throws FormProcessException {
         Assert.exists(e.getFormData(), "FormData");
@@ -289,8 +304,8 @@ public class FormSection extends DescriptiveComponent implements Container {
         while (i.hasNext()) {
             final FormInitListener listener = (FormInitListener) i.next();
 
-            if (s_log.isDebugEnabled()) {
-                s_log.debug("Firing init listener " + listener);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Firing init listener " + listener);
             }
 
             listener.init(e);
@@ -298,7 +313,7 @@ public class FormSection extends DescriptiveComponent implements Container {
     }
 
     /**
-     * 
+     *
      */
     protected void forwardInit() {
         if (m_forwardInit == null) {
@@ -308,22 +323,21 @@ public class FormSection extends DescriptiveComponent implements Container {
     }
 
     /**
-     * Creates the init listener that forwards init events to this form
-     * section.
+     * Creates the init listener that forwards init events to this form section.
      *
-     * @return an init listener that forwards init events to this
-     * form section.
+     * @return an init listener that forwards init events to this form section.
      */
     protected FormInitListener createInitListener() {
         return new FormInitListener() {
 
             @Override
             public void init(FormSectionEvent e)
-                    throws FormProcessException {
+                throws FormProcessException {
                 fireInit(new FormSectionEvent(FormSection.this,
                                               e.getPageState(),
                                               e.getFormData()));
             }
+
         };
     }
 
@@ -342,20 +356,23 @@ public class FormSection extends DescriptiveComponent implements Container {
                                                 e.getPageState(),
                                                 e.getFormData()));
             }
+
         };
     }
 
     /**
-     * Adds a validation listener, implementing a custom validation
-     * check that applies to the form as a whole.  Useful for checks
-     * that require examination of the values of more than one parameter.
+     * Adds a validation listener, implementing a custom validation check that
+     * applies to the form as a whole. Useful for checks that require
+     * examination of the values of more than one parameter.
      *
      * @param listener an instance of a class that implements the
-     * <code>FormValidationListener</code> interface
-     * */
+     *                 <code>FormValidationListener</code> interface
+     *
+     */
     public void addValidationListener(FormValidationListener listener) {
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Adding validation listener " + listener + " to " + this);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Adding validation listener " + listener + " to "
+                         + this);
         }
 
         Assert.exists(listener, "FormValidationListener");
@@ -365,15 +382,15 @@ public class FormSection extends DescriptiveComponent implements Container {
     }
 
     /**
-     * Removes the specified validation listener from the
-     * list of validation listeners (if it had previously been added).
+     * Removes the specified validation listener from the list of validation
+     * listeners (if it had previously been added).
      *
      * @param listener a validation listener
      */
     public void removeValidationListener(FormValidationListener listener) {
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Removing validation listener " + listener + " from "
-                        + this);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Removing validation listener " + listener + " from "
+                             + this);
         }
 
         Assert.exists(listener, "Validation Listener");
@@ -391,19 +408,19 @@ public class FormSection extends DescriptiveComponent implements Container {
         FormData data = e.getFormData();
         Assert.exists(data, "FormData");
         Iterator i = m_listeners.getListenerIterator(
-                FormValidationListener.class);
+            FormValidationListener.class);
         while (i.hasNext()) {
             try {
-                final FormValidationListener listener =
-                                             (FormValidationListener) i.next();
+                final FormValidationListener listener
+                                             = (FormValidationListener) i.next();
 
-                if (s_log.isDebugEnabled()) {
-                    s_log.debug("Firing validation listener " + listener);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Firing validation listener " + listener);
                 }
 
                 listener.validate(e);
             } catch (FormProcessException fpe) {
-                s_log.debug(fpe);
+                LOGGER.debug(fpe);
                 data.addError(fpe.getGlobalizedMessage());
             }
         }
@@ -421,7 +438,7 @@ public class FormSection extends DescriptiveComponent implements Container {
      * form section.
      *
      * @return a validation listener that forwards validation events to this
-     * form section.
+     *         form section.
      */
     protected FormValidationListener createValidationListener() {
         return new FormValidationListener() {
@@ -432,23 +449,26 @@ public class FormSection extends DescriptiveComponent implements Container {
                                                   e.getPageState(),
                                                   e.getFormData()));
             }
+
         };
     }
 
     /**
-     * Adds a listener for form processing events.  <p>Process events
-     * only occur after a form submission has been successfully
-     * validated.  They are typically used to perform a database
-     * transaction or other operation based on the submitted data.
-     * <p>Process listeners are executed in the order in which
-     * they are added.
+     * Adds a listener for form processing events.
+     * <p>
+     * Process events only occur after a form submission has been successfully
+     * validated. They are typically used to perform a database transaction or
+     * other operation based on the submitted data.
+     * <p>
+     * Process listeners are executed in the order in which they are added.
      *
      * @param listener an instance of a class that implements the
-     * <code>FormProcessListener</code> interface
-     * */
+     *                 <code>FormProcessListener</code> interface
+     *
+     */
     public void addProcessListener(final FormProcessListener listener) {
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Adding process listener " + listener + " to " + this);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Adding process listener " + listener + " to " + this);
         }
 
         Assert.exists(listener, "FormProcessListener");
@@ -459,15 +479,15 @@ public class FormSection extends DescriptiveComponent implements Container {
     }
 
     /**
-     * Removes the specified process listener from the
-     * list of process listeners (if it had previously been added).
+     * Removes the specified process listener from the list of process listeners
+     * (if it had previously been added).
      *
      * @param listener the process listener to remove
      */
     public void removeProcessListener(FormProcessListener listener) {
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Removing process listener " + listener + " from "
-                        + this);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Removing process listener " + listener + " from "
+                             + this);
         }
 
         Assert.exists(listener, "Process Listener");
@@ -488,11 +508,12 @@ public class FormSection extends DescriptiveComponent implements Container {
 
             @Override
             public void process(FormSectionEvent e)
-                    throws FormProcessException {
+                throws FormProcessException {
                 fireProcess(new FormSectionEvent(FormSection.this,
                                                  e.getPageState(),
                                                  e.getFormData()));
             }
+
         };
     }
 
@@ -501,18 +522,19 @@ public class FormSection extends DescriptiveComponent implements Container {
      * listeners.
      *
      * @param e the event to pass to the listeners
+     *
      * @throws FormProcessException if one of the listeners throws such an
-     * exception.
+     *                              exception.
      */
     protected void fireProcess(FormSectionEvent e)
-            throws FormProcessException {
+        throws FormProcessException {
         Assert.exists(e.getFormData(), "FormData");
         Iterator i = m_listeners.getListenerIterator(FormProcessListener.class);
         while (i.hasNext()) {
             final FormProcessListener listener = (FormProcessListener) i.next();
 
-            if (s_log.isDebugEnabled()) {
-                s_log.debug("Firing process listener " + listener);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Firing process listener " + listener);
             }
 
             listener.process(e);
@@ -521,30 +543,33 @@ public class FormSection extends DescriptiveComponent implements Container {
 
     /**
      * Since a form section cannot be processed, always throws an error.
-     * (Processing of form sections is done by the form in which the
-     * section is contained.)
+     * (Processing of form sections is done by the form in which the section is
+     * contained.)
      *
      * @param data
-     * @return 
-     * @throws javax.servlet.ServletException because processing a form section 
-     *         is not meaningful.
+     *
+     * @return
+     *
+     * @throws javax.servlet.ServletException because processing a form section
+     *                                        is not meaningful.
      */
     public FormData process(PageState data)
-            throws javax.servlet.ServletException {
+        throws javax.servlet.ServletException {
         throw new UnsupportedOperationException();
     }
 
     /**
-     * Adds a listener for form cancellation events.  Cancellation
-     * listeners are typically used to clean-up page state and
-     * potentially intermediate changes to the database.
+     * Adds a listener for form cancellation events. Cancellation listeners are
+     * typically used to clean-up page state and potentially intermediate
+     * changes to the database.
      *
      * @param listener an instance of a class that implements the
-     * <code>FormCancelListener</code> interface
-     * */
+     *                 <code>FormCancelListener</code> interface
+     *
+     */
     public void addCancelListener(FormCancelListener listener) {
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Adding cancel listener " + listener + " to " + this);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Adding cancel listener " + listener + " to " + this);
         }
 
         Assert.exists(listener, "FormCancelListener");
@@ -553,14 +578,15 @@ public class FormSection extends DescriptiveComponent implements Container {
     }
 
     /**
-     * Removes the specified cancellation listener from the
-     * list of cancellation listeners (if it had previously been added).
+     * Removes the specified cancellation listener from the list of cancellation
+     * listeners (if it had previously been added).
      *
      * @param listener the cancellation listener to remove
      */
     public void removeCancelListener(FormCancelListener listener) {
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Removing cancel listener " + listener + " from " + this);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Removing cancel listener " + listener + " from "
+                         + this);
         }
 
         Assert.exists(listener, "Cancel Listener");
@@ -573,18 +599,19 @@ public class FormSection extends DescriptiveComponent implements Container {
      * listeners.
      *
      * @param e the event to pass to the listeners
+     *
      * @throws FormProcessException if one of the listeners throws such an
-     * exception.
+     *                              exception.
      */
     protected void fireCancel(FormSectionEvent e)
-            throws FormProcessException {
+        throws FormProcessException {
         Assert.exists(e.getFormData(), "FormData");
         Iterator i = m_listeners.getListenerIterator(FormCancelListener.class);
         while (i.hasNext()) {
             final FormCancelListener listener = (FormCancelListener) i.next();
 
-            if (s_log.isDebugEnabled()) {
-                s_log.debug("Firing cancel listener " + listener);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Firing cancel listener " + listener);
             }
 
             listener.cancel(e);
@@ -592,15 +619,15 @@ public class FormSection extends DescriptiveComponent implements Container {
     }
 
     /**
-     * Traverses the children this FormSection, collecting parameter models
-     * and listeners into the supplied FormModel. Sets implicit pointers
-     * of widgets in this FormSection to the supplied Form.
+     * Traverses the children this FormSection, collecting parameter models and
+     * listeners into the supplied FormModel. Sets implicit pointers of widgets
+     * in this FormSection to the supplied Form.
      *
      * @param f pointer to the form that is set inside Widgets within this
      *          FormSection
-     * @param m the FormModel in which to merge ParameterModels and
-     *          Listeners
-     * */
+     * @param m the FormModel in which to merge ParameterModels and Listeners
+     *
+     */
     @Override
     public void register(Form f, FormModel m) {
         m.mergeModel(getModel());
@@ -610,14 +637,16 @@ public class FormSection extends DescriptiveComponent implements Container {
      * Accessor method for this form's FormModel.
      *
      * @return FormModel The model of this form.
-     * */
+     *
+     */
     protected final FormModel getModel() {
         return m_formModel;
     }
 
     /**
      * Locks this FormSection, its FormModel, and the implicit Container.
-     * */
+     *
+     */
     @Override
     public void lock() {
         m_formModel.lock();
@@ -636,19 +665,19 @@ public class FormSection extends DescriptiveComponent implements Container {
      *
      * This must not be final, because MetaFrom needs to override it.
      *
-     * @return 
+     * @return
      */
     public Container getPanel() {
         return m_panel;
     }
 
     /**
-     * Returns an iterator over the children of this component. If the
-     * component has no children, returns an empty iterator (not
-     * <code>null</code> !).
+     * Returns an iterator over the children of this component. If the component
+     * has no children, returns an empty iterator (not <code>null</code> !).
      *
      * @post return != null
-     * */
+     *
+     */
     @Override
     public Iterator children() {
         return m_panel.children();
@@ -659,12 +688,14 @@ public class FormSection extends DescriptiveComponent implements Container {
      * <code>parent</code>. Uses the request values stored in
      * <code>state</code>.</p>
      *
-     * <p> This method generates DOM to be used with the XSLT template
-     * to produce the appropriate output.</p>
+     * <p>
+     * This method generates DOM to be used with the XSLT template to produce
+     * the appropriate output.</p>
      *
      * @param pageState the state of the current page
-     * @param parent the node that will be used to write to
-     * */
+     * @param parent    the node that will be used to write to
+     *
+     */
     @Override
     public void generateXML(PageState pageState, Element parent) {
         if (isVisible(pageState)) {
@@ -677,20 +708,21 @@ public class FormSection extends DescriptiveComponent implements Container {
      * Adds a component to this container.
      *
      * @param pc the component to add to this container
-     * */
+     *
+     */
     @Override
     public void add(Component pc) {
         m_panel.add(pc);
     }
 
     /**
-     * Adds a component with the specified layout constraints to this
-     * container. Layout constraints are defined in each layout container as
-     * static ints. Use a bitwise OR to specify multiple constraints.
+     * Adds a component with the specified layout constraints to this container.
+     * Layout constraints are defined in each layout container as static ints.
+     * Use a bitwise OR to specify multiple constraints.
      *
-     * @param pc the component to add to this container
-     * @param constraints layout constraints (a bitwise OR of static ints in 
-     *                    the particular layout)
+     * @param pc          the component to add to this container
+     * @param constraints layout constraints (a bitwise OR of static ints in the
+     *                    particular layout)
      */
     @Override
     public void add(Component pc, int constraints) {
@@ -698,41 +730,40 @@ public class FormSection extends DescriptiveComponent implements Container {
     }
 
     /**
-     * Returns <code>true</code> if this list contains the
-     * specified element. More
-     * formally, returns true if and only if this list contains at least
+     * Returns <code>true</code> if this list contains the specified element.
+     * More formally, returns true if and only if this list contains at least
      * one element e such that (o==null ? e==null : o.equals(e)).
      *
-     * This method returns <code>true</code> only if the component has
-     * been directly
-     * added to this container. If this container contains another
+     * This method returns <code>true</code> only if the component has been
+     * directly added to this container. If this container contains another
      * container that contains this component, this method returns
      * <code>false</code>.
      *
-     * @param  o element whose presence in this container is to be tested
+     * @param o element whose presence in this container is to be tested
      *
-     * @return <code>true</code> if this Container contains the
-     * specified component directly; <code>false</code> otherwise.
+     * @return <code>true</code> if this Container contains the specified
+     *         component directly; <code>false</code> otherwise.
      *
-     * */
+     *
+     */
     @Override
     public boolean contains(Object o) {
         return m_panel.contains(o);
     }
 
     /**
-     *  Returns the
-     * Component at the specified position. Each call to add()
-     * increments the index. This method should be used in conjunction
-     * with indexOf
+     * Returns the Component at the specified position. Each call to add()
+     * increments the index. This method should be used in conjunction with
+     * indexOf
      *
-     * @param index The index of the item to be retrieved from this
-     * Container. Since the user has no control over the index of added
-     * components (other than counting each call to add), this method
-     * should be used in conjunction with indexOf.
+     * @param index The index of the item to be retrieved from this Container.
+     *              Since the user has no control over the index of added
+     *              components (other than counting each call to add), this
+     *              method should be used in conjunction with indexOf.
      *
      * @return the component at the specified position in this container
-     * */
+     *
+     */
     @Override
     public Component get(int index) {
         return (Component) m_panel.get(index);
@@ -744,10 +775,10 @@ public class FormSection extends DescriptiveComponent implements Container {
      *
      * @param pc component to search for
      *
-     * @return the index in this list of the first occurrence of
-     * the specified element, or -1 if this list does not contain this
-     * element.
-     * */
+     * @return the index in this list of the first occurrence of the specified
+     *         element, or -1 if this list does not contain this element.
+     *
+     */
     @Override
     public int indexOf(Component pc) {
         return m_panel.indexOf(pc);
@@ -757,8 +788,9 @@ public class FormSection extends DescriptiveComponent implements Container {
      * Determines whether the container contains any components.
      *
      * @return <code>true</code> if this container contains no components
-     * <code>false</code> otherwise.
-     * */
+     *         <code>false</code> otherwise.
+     *
+     */
     @Override
     public boolean isEmpty() {
         return m_panel.isEmpty();
@@ -769,9 +801,11 @@ public class FormSection extends DescriptiveComponent implements Container {
      * recursively count the components indirectly contained in this container.
      *
      * @return the number of components directly in this container.
-     * */
+     *
+     */
     @Override
     public int size() {
         return m_panel.size();
     }
+
 }

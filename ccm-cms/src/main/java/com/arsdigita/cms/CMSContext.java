@@ -20,7 +20,8 @@ package com.arsdigita.cms;
 
 import com.arsdigita.util.Assert;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentSection;
 
@@ -43,11 +44,10 @@ import org.librecms.contentsection.ContentSection;
  * @see com.arsdigita.cms.CMS
  *
  * @author Daniel Berrange
- * @version $Id$
  */
 public final class CMSContext {
 
-    private static final Logger s_log = Logger.getLogger(CMSContext.class);
+    private static final Logger LOGGER = LogManager.getLogger(CMSContext.class);
 
     private ContentSection m_section = null;
     private ContentItem m_item = null;
@@ -102,8 +102,8 @@ public final class CMSContext {
     public final void setContentSection(final ContentSection section) {
         m_section = section;
 
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Content section set to " + section);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Content section set to " + section);
         }
     }
 
@@ -123,8 +123,8 @@ public final class CMSContext {
     public final ContentItem getContentItem() {
         // removing this which is necessarily true in ContentList
         //Assert.exists(m_item, "item");
-        if (s_log.isDebugEnabled() && m_item == null) {
-            s_log.debug("Content item is null");
+        if (LOGGER.isDebugEnabled() && m_item == null) {
+            LOGGER.debug("Content item is null");
         }
         return m_item;
     }
@@ -136,8 +136,8 @@ public final class CMSContext {
     public final void setContentItem(final ContentItem item) {
         m_item = item;
 
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Content item set to " + item);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Content item set to " + item);
         }
     }
 
@@ -166,8 +166,8 @@ public final class CMSContext {
     public final void setSecurityManager(final SecurityManager security) {
         m_security = security;
 
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Security manager set to " + security);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Security manager set to " + security);
         }
     }
 }

@@ -9,6 +9,20 @@
         <Root level="warn">
             <AppenderRef ref="Console"/>
         </Root>
+        
+        <Logger name="org.hibernate"
+                level="info">
+        </Logger>
+        <Logger name="org.hibernate.SQL"
+                level="debug">
+        </Logger>
+        <Logger name="org.hibernate.type"
+                  level="trace">
+        </Logger>
+        <Logger name="org.hibernate.type.descriptor.sql"
+                level="trace">
+        </Logger>
+        
         <Logger name="com.arsdigita.ui.admin.AdminServlet"
                 level="debug">
         </Logger>
@@ -52,10 +66,10 @@
                 level="debug">
         </Logger>
         <Logger name="org.librecms.contentsection.ContentSectionServlet"
-                    level="debug">
+                level="debug">
         </Logger>
         <Logger name="com.arsdigita.web.DefaultApplicationFileResolver"
-                    level="debug">
+                level="debug">
         </Logger>
     </Loggers>
 </Configuration>

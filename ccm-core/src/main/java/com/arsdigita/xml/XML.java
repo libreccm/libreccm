@@ -22,6 +22,8 @@ import com.arsdigita.util.UncheckedWrapperException;
 
 import com.arsdigita.xml.formatters.DateTimeFormatter;
 
+import org.apache.logging.log4j.LogManager;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -39,7 +41,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Provides a set of static helper methods for dealing with XML,
@@ -47,15 +49,15 @@ import org.apache.log4j.Logger;
  */
 public class XML {
 
-    private static final Logger s_log = Logger.getLogger(XML.class);
+    private static final Logger LOGGER = LogManager.getLogger(XML.class);
 
     // private static XMLConfig s_config;
 
     private static final Map s_formatters = new HashMap();
     static {
-        s_log.debug("Static initalizer starting...");
+        LOGGER.debug("Static initalizer starting...");
         s_formatters.put(Date.class, new DateTimeFormatter());
-        s_log.debug("Static initalizer finished.");
+        LOGGER.debug("Static initalizer finished.");
     }
 
     /**
@@ -138,13 +140,13 @@ public class XML {
 
         Formatter formatter = findFormatter(value.getClass());
         if (formatter == null) {
-            if (s_log.isDebugEnabled()) {
-                s_log.debug("No formatter for " + value.getClass());
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("No formatter for " + value.getClass());
             }
             return value.toString();
         }
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Processing " + value.getClass() +
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Processing " + value.getClass() +
                         " with " + formatter.getClass());
         }
         return formatter.format(value);
@@ -160,8 +162,8 @@ public class XML {
      */
     public static final void parseResource(String path,
                                            DefaultHandler handler) {
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Processing resource " + path +
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Processing resource " + path +
                         " with " + handler.getClass());
         }
 
@@ -189,8 +191,8 @@ public class XML {
      */
     public static final void parse(InputStream source,
                                    DefaultHandler handler) {
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Processing stream " + source +
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Processing stream " + source +
                         " with " + handler.getClass());
         }
 

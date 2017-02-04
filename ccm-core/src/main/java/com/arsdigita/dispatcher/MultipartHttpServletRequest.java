@@ -42,10 +42,12 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.log4j.Category;
 
 import com.arsdigita.globalization.Globalization;
 import com.arsdigita.util.UncheckedWrapperException;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Collection;
 
@@ -68,13 +70,11 @@ import javax.servlet.http.Part;
  * @author Karl Goldstein
  * @author Michael Pih
  * @author Uday Mathur
- * @version $Id: MultipartHttpServletRequest.java 1512 2007-03-22 02:36:06Z
- * apevec $
  * @since 4.5
  */
 public class MultipartHttpServletRequest implements HttpServletRequest {
 
-    private static final Category s_log = Category.getInstance(
+    private static final Logger LOGGER = LogManager.getLogger(
         MultipartHttpServletRequest.class);
 
     private HttpServletRequest m_request;
@@ -532,7 +532,7 @@ public class MultipartHttpServletRequest implements HttpServletRequest {
     }
 
     @Override
-    public void login(final String username, 
+    public void login(final String username,
                       final String password) throws ServletException {
         m_request.login(username, password);
     }
@@ -575,7 +575,7 @@ public class MultipartHttpServletRequest implements HttpServletRequest {
 
     @Override
     public AsyncContext startAsync(final ServletRequest servletRequest,
-                                   final ServletResponse servletResponse) 
+                                   final ServletResponse servletResponse)
         throws IllegalStateException {
         return m_request.startAsync(servletRequest, servletResponse);
     }

@@ -24,7 +24,8 @@ import com.arsdigita.util.UncheckedWrapperException;
 import org.apache.commons.codec.net.URLCodec;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.EncoderException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -41,7 +42,7 @@ import java.util.Set;
  */
 public class ParameterMap implements Cloneable {
 
-    private static final Logger s_log = Logger.getLogger(ParameterMap.class);
+    private static final Logger LOGGER = LogManager.getLogger(ParameterMap.class);
 
     private static ArrayList s_listeners = new ArrayList();
 
@@ -101,8 +102,8 @@ public class ParameterMap implements Cloneable {
 
     public static final void registerListener
             (final ParameterListener listener) {
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Registering parameter listener " + listener);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Registering parameter listener " + listener);
         }
 
         s_listeners.add(listener);
@@ -168,8 +169,8 @@ public class ParameterMap implements Cloneable {
             final String value = codec.decode
                 (query.substring(sep + 1, end));
 
-            if (s_log.isDebugEnabled()) {
-                s_log.debug("Parameter " + name + " = " + value);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Parameter " + name + " = " + value);
             }
 
             final String[] values = getParameterValues(name);

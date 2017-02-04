@@ -25,35 +25,35 @@ import com.arsdigita.dispatcher.RequestContext;
 //import com.arsdigita.persistence.Session;
 //import com.arsdigita.persistence.SessionManager;
 //import com.arsdigita.persistence.TransactionContext;
-import com.arsdigita.util.Assert;
+
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+
 import javax.servlet.http.HttpServletRequest;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * <p>
- * Utilities for the globalization process. The methods in this class make
- * use of the assumption that the ACS handles all locale and resource
- * negotiation so that the application developer doesn't have to worry about
- * it.
+ * Utilities for the globalization process. The methods in this class make use
+ * of the assumption that the ACS handles all locale and resource negotiation so
+ * that the application developer doesn't have to worry about it.
  * </p>
  *
  * @version $Id$
  */
 public class Globalization {
 
-    private static final Logger s_log = Logger.getLogger(Globalization.class);
+    private static final Logger LOGGER = LogManager.getLogger(
+        Globalization.class);
 
     public static final String ENCODING_PARAM_NAME = "g11n.enc";
 
     /**
-     * The default encoding for parameterts, as specified by the
-     * servlet spec
+     * The default encoding for parameterts, as specified by the servlet spec
      */
     public static final String DEFAULT_PARAM_ENCODING = "ISO-8859-1";
 
@@ -64,11 +64,10 @@ public class Globalization {
     public static final String DEFAULT_ENCODING = "ISO-8859-1";
 
 //    private static Map s_localeToCharsetMap;
-    
     private static String s_defaultCharset = DEFAULT_ENCODING;
-    
+
     private static boolean initialized = false;
-    
+
     static void init() {
         if (initialized) {
             return;
@@ -76,7 +75,6 @@ public class Globalization {
 //        loadLocaleToCharsetMap();
         initialized = true;
     }
-
 
 //    // Load the Locale to Charset Map from persistent storage.
 //    public static void loadLocaleToCharsetMap() {
@@ -123,11 +121,10 @@ public class Globalization {
 //            }
 //        }
 //    }
-
     static void setDefaultCharset(String encoding) {
         s_defaultCharset = encoding;
     }
-    
+
     /**
      * Get the default character set for encoding data
      *
@@ -183,11 +180,11 @@ public class Globalization {
 //        }
 //        return getDefaultCharset();
     }
-    
+
     /**
-     * Get the default character set for the request. First
-     * tries the getCharacterENcoding() method, then falls
-     * back on the DEFAULT_PARAM_ENCODING
+     * Get the default character set for the request. First tries the
+     * getCharacterENcoding() method, then falls back on the
+     * DEFAULT_PARAM_ENCODING
      *
      * @return String the character set
      */
@@ -198,9 +195,9 @@ public class Globalization {
         }
         return charset;
     }
-    
+
     /**
-     * Get the best locale for this request. 
+     * Get the best locale for this request.
      */
     private static java.util.Locale getLocale(HttpServletRequest req) {
         java.util.Locale l = DispatcherHelper.getNegotiatedLocale();
@@ -215,57 +212,56 @@ public class Globalization {
 
     /**
      * <p>
-     * Decode the value of an HttpServletRequest parameter. The value is
-     * decoded appropriately (lets hope so anyway).
+     * Decode the value of an HttpServletRequest parameter. The value is decoded
+     * appropriately (lets hope so anyway).
      * </p>
      *
-     * @param r The HttpServletRequest for which to get the value.
+     * @param r    The HttpServletRequest for which to get the value.
      * @param name The name of the parameter to retrieve.
      *
      * @return String The decoded value of the parameter.
      */
     public static final String decodeParameter(
-                                               HttpServletRequest r, String name
-                                               ) {
+        HttpServletRequest r, String name
+    ) {
         String re = r.getParameter(Globalization.ENCODING_PARAM_NAME);
         String original = r.getParameter(name);
         String real = null;
 
-        if (re == null ||
-            re.length() == 0) {
-            if (s_log.isDebugEnabled()) {
-                s_log.debug(ENCODING_PARAM_NAME + " is not set, using locale " +
-                            "default encoding for parameter " + name);
+        if (re == null || re.length() == 0) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(ENCODING_PARAM_NAME + " is not set, using locale "
+                             + "default encoding for parameter " + name);
             }
             re = getDefaultCharset(getLocale(r));
         }
 
-        if (original == null ||
-            original.length() == 0) {
-            if (s_log.isDebugEnabled()) {
-                s_log.debug("Parameter " + name + " has no value");
+        if (original == null || original.length() == 0) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Parameter " + name + " has no value");
             }
             real = original;
         } else if (getDefaultCharset(r).equals(re)) {
-            if (s_log.isDebugEnabled()) {
-                s_log.debug("Parameter " + name + " is already in correct encoding");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Parameter " + name
+                             + " is already in correct encoding");
             }
             real = original;
         } else {
-            if (s_log.isDebugEnabled()) {
-                s_log.debug("Parameter " + name + " is being converted from " +
-                            getDefaultCharset(r) + " into " + re);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Parameter " + name + " is being converted from "
+                             + getDefaultCharset(r) + " into " + re);
             }
             try {
-                real = new String
-                    (original.getBytes(getDefaultCharset(r)),
-                     re);
+                real = new String(original.getBytes(getDefaultCharset(r)),
+                                  re);
             } catch (UnsupportedEncodingException uee) {
-                s_log.warn("encoding " + re + " is not supported, falling back on system default");
+                LOGGER.warn("encoding " + re
+                            + " is not supported, falling back on system default");
                 real = original;
             }
         }
-        
+
         return real;
     }
 
@@ -278,46 +274,46 @@ public class Globalization {
      *
      * @return String[] The decoded parameters.
      */
-    public static final String[] decodeParameters
-            (HttpServletRequest r, String name) {
+    public static final String[] decodeParameters(HttpServletRequest r,
+                                                  String name) {
         String re = r.getParameter(Globalization.ENCODING_PARAM_NAME);
         String[] originals = r.getParameterValues(name);
         String[] real = null;
 
-        if (re == null ||
-            re.length() == 0) {
-            if (s_log.isDebugEnabled()) {
-                s_log.debug(ENCODING_PARAM_NAME + " is not set, using locale " +
-                            "default encoding for parameter " + name);
+        if (re == null || re.length() == 0) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(ENCODING_PARAM_NAME + " is not set, using locale "
+                             + "default encoding for parameter " + name);
             }
             re = getDefaultCharset(getLocale(r));
         }
 
-        if (originals == null ||
-            originals.length == 0) {
-            if (s_log.isDebugEnabled()) {
-                s_log.debug("Parameter " + name + " has no value");
+        if (originals == null || originals.length == 0) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Parameter " + name + " has no value");
             }
             real = originals;
         } else if (getDefaultCharset(r).equals(re)) {
-            if (s_log.isDebugEnabled()) {
-                s_log.debug("Parameter " + name + " is already in correct encoding");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Parameter " + name
+                             + " is already in correct encoding");
             }
             real = originals;
         } else {
-            if (s_log.isDebugEnabled()) {
-                s_log.debug("Parameter " + name + " is being converted from " +
-                            getDefaultCharset(r) + " into " + re);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Parameter " + name + " is being converted from "
+                             + getDefaultCharset(r) + " into " + re);
             }
             try {
                 real = new String[originals.length];
                 for (int i = 0; i < originals.length; i++) {
-                    real[i] = new String
-                        (originals[i].getBytes(getDefaultCharset(r)),
-                         re);
+                    real[i] = new String(originals[i].getBytes(
+                        getDefaultCharset(r)),
+                                         re);
                 }
             } catch (UnsupportedEncodingException uee) {
-                s_log.warn("encoding " + re + " is not supported, falling back on system default");
+                LOGGER.warn("encoding " + re
+                            + " is not supported, falling back on system default");
                 real = originals;
             }
         }
@@ -356,13 +352,13 @@ public class Globalization {
         rb = rc.getResourceBundle();
 
         if (rb != null) {
-            if (s_log.isInfoEnabled()) {
-                s_log.info(rb.getClass().getName() +
-                           " is the chosen ResourceBundle.");
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info(rb.getClass().getName()
+                            + " is the chosen ResourceBundle.");
             }
         } else {
-            if (s_log.isDebugEnabled()) {
-                s_log.debug("No matching ResourceBundle found");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("No matching ResourceBundle found");
             }
         }
 
@@ -375,7 +371,7 @@ public class Globalization {
      * appropriate Locale and key.
      * </p>
      *
-     * @param r The current HttpServletRequest.
+     * @param r   The current HttpServletRequest.
      * @param key The key used to select the appropriate Object
      *
      * @return The localized Object
@@ -390,7 +386,6 @@ public class Globalization {
         // If the key does not contain a '#' character, then use the
         // HttpServletRequest alone to determine the appropriate
         // ResourceBundle.
-
         int separator = key.indexOf('#');
         if (separator < 0) {
             rb = getResourceBundle(r);
@@ -415,14 +410,14 @@ public class Globalization {
             if (rb != null) {
                 l7dObject = rb.getObject(key);
             } else {
-                if (s_log.isDebugEnabled()) {
-                    s_log.debug("No ResourceBundle available");
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("No ResourceBundle available");
                 }
             }
         } catch (MissingResourceException e) {
-            if (s_log.isDebugEnabled()) {
-                s_log.debug("Key " + key + " was not found in the " +
-                            "ResourceBundle");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Key " + key + " was not found in the "
+                             + "ResourceBundle");
             }
         }
 
@@ -431,11 +426,11 @@ public class Globalization {
 
     /**
      * <p>
-     * Get a String from the appropriate ResourceBundle based on the
-     * appropriate Locale and key.
+     * Get a String from the appropriate ResourceBundle based on the appropriate
+     * Locale and key.
      * </p>
      *
-     * @param r The current HttpServletRequest.
+     * @param r   The current HttpServletRequest.
      * @param key The key used to select the appropriate String
      *
      * @return The localized String
@@ -450,12 +445,12 @@ public class Globalization {
     /**
      * <p>
      * Get a parameterized String (for doing MessageFormatting) from the
-     * appropraite ResourceBundle based on the appropriate Locale and key.
-     * Then interpolate the values for the other keys passed.
+     * appropraite ResourceBundle based on the appropriate Locale and key. Then
+     * interpolate the values for the other keys passed.
      * </p>
      *
-     * @param r The current HttpServletRequest.
-     * @param key The key used to select the appropriate String
+     * @param r         The current HttpServletRequest.
+     * @param key       The key used to select the appropriate String
      * @param arguments A Object[] containing the other keys to localize and
      *                  interpolate into the parameterized string. It may also
      *                  contain other Objects beside Strings, such as Date
@@ -491,26 +486,25 @@ public class Globalization {
      * default ResourceBundle in another language
      * </p>
      *
-     * @param targetBundle The ResourceBundle we are looking for.
-     * @param locale The Locale object representing the language we want.
+     * @param targetBundle  The ResourceBundle we are looking for.
+     * @param locale        The Locale object representing the language we want.
      * @param defaultLocale The Locale object representing the default language.
      */
-    public static ResourceBundle getBundleNoFallback
-        (String targetBundle, java.util.Locale locale,
-         java.util.Locale defaultLocale) {
+    public static ResourceBundle getBundleNoFallback(String targetBundle,
+                                                     java.util.Locale locale,
+                                                     java.util.Locale defaultLocale) {
         ResourceBundle bundle = null;
 
         if (locale == null) {
-            locale =
-                (defaultLocale != null) ?
-                defaultLocale : java.util.Locale.getDefault();
+            locale = (defaultLocale != null) ? defaultLocale : java.util.Locale
+                .getDefault();
         }
 
         try {
             bundle = ResourceBundle.getBundle(targetBundle, locale);
         } catch (MissingResourceException e) {
-            if (s_log.isInfoEnabled()) {
-                s_log.info("Didn't find ResourceBundle for " + targetBundle);
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("Didn't find ResourceBundle for " + targetBundle);
             }
         }
 
@@ -519,19 +513,17 @@ public class Globalization {
         // Make sure that if we found a ResourceBundle it is either in the
         // language we were looking for or, by coincidence, the target
         // language happens to match the default language for the system.
-        if (bundle != null ) {
-            if (
-                targetLanguage.equals(bundle.getLocale().getLanguage()) ||
-                targetLanguage.equals(defaultLocale.getLanguage())
-                ) {
-                if (s_log.isInfoEnabled()) {
-                    s_log.info("Found matching ResourceBundle for " +
-                               targetBundle);
+        if (bundle != null) {
+            if (targetLanguage.equals(bundle.getLocale().getLanguage())
+                || targetLanguage.equals(defaultLocale.getLanguage())) {
+                if (LOGGER.isInfoEnabled()) {
+                    LOGGER.info("Found matching ResourceBundle for "
+                                + targetBundle);
                 }
             } else {
-                if (s_log.isInfoEnabled()) {
-                    s_log.info("Found non-matching ResourceBundle for " +
-                               targetBundle);
+                if (LOGGER.isInfoEnabled()) {
+                    LOGGER.info("Found non-matching ResourceBundle for "
+                                + targetBundle);
                 }
                 bundle = null;
             }
@@ -539,4 +531,5 @@ public class Globalization {
 
         return bundle;
     }
+
 }

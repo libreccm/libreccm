@@ -18,8 +18,8 @@
  */
 package org.libreccm.security;
 
-import org.apache.log4j.Category;
 import org.libreccm.categorization.Categorization;
+import org.libreccm.categorization.Category;
 import org.libreccm.core.CcmObject;
 
 /**

@@ -18,72 +18,68 @@
  */
 package com.arsdigita.util;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
- * A wrapper exception that can be used to rethrow another
- * exception.
+ * A wrapper exception that can be used to rethrow another exception.
  *
  * TODO: This should become a skeleton when/if we switch to Java 1.4.
  * http://java.sun.com/j2se/1.4/docs/guide/lang/chained-exceptions.html
  *
- * The basic exception methods are overridden with methods that
- * combine this wrapper and its root cause, so it can be
- * treated just like any normal exception in actual use.
+ * The basic exception methods are overridden with methods that combine this
+ * wrapper and its root cause, so it can be treated just like any normal
+ * exception in actual use.
  *
- * Note that it is not necessary to provide a string along
- * with a root cause; in particular, the following usage:
+ * Note that it is not necessary to provide a string along with a root cause; in
+ * particular, the following usage:
  * <tt>new UncheckedWrapperException(e);</tt> is more correct than
  * <tt>new UncheckedWrapperException(e.getMessage(), e);</tt>
  *
  * @author David Eison
- * @version $Id$
  */
 public class UncheckedWrapperException extends RuntimeException {
 
-    private static final Logger logger = Logger.getLogger(
-            UncheckedWrapperException.class);
+    private static final long serialVersionUID = 1473646671430756784L;
 
     static {
-        logger.debug("Static initalizer starting...");
         Exceptions.registerUnwrapper(
-                UncheckedWrapperException.class,
-                new ExceptionUnwrapper() {
+            UncheckedWrapperException.class,
+            new ExceptionUnwrapper() {
 
-                    public Throwable unwrap(Throwable t) {
-                        UncheckedWrapperException ex =
-                                                  (UncheckedWrapperException) t;
-                        return ex.getRootCause();
-                    }
-                });
-        logger.debug("Static initalizer finished.");
+            public Throwable unwrap(Throwable t) {
+                UncheckedWrapperException ex = (UncheckedWrapperException) t;
+                return ex.getRootCause();
+            }
+
+        });
     }
+
     Throwable m_rootCause;
 
     /**
      * Constructor which only takes a msg, which will cause this
-     * UncheckedWrapperException to behave like a normal RuntimeException.
-     * While it doesn't seem to make a lot of sense to have a wrapper
-     * exception that doesn't wrap anything, this is needed so that it
-     * can be used as a direct replacement for RuntimeException.
+     * UncheckedWrapperException to behave like a normal RuntimeException. While
+     * it doesn't seem to make a lot of sense to have a wrapper exception that
+     * doesn't wrap anything, this is needed so that it can be used as a direct
+     * replacement for RuntimeException.
      */
     public UncheckedWrapperException(String msg) {
         this(msg, null);
     }
 
     /**
-     * Constructor which takes a root cause
-     * that this exception will be wrapping.
+     * Constructor which takes a root cause that this exception will be
+     * wrapping.
      */
     public UncheckedWrapperException(Throwable rootCause) {
         this(null, rootCause);
     }
 
     /**
-     * Constructor which takes a message string and a root cause
-     * that this exception will be wrapping.  The message string
-     * should be something different than rootCause.getMessage()
-     * would normally provide.
+     * Constructor which takes a message string and a root cause that this
+     * exception will be wrapping. The message string should be something
+     * different than rootCause.getMessage() would normally provide.
      */
     public UncheckedWrapperException(String s, Throwable rootCause) {
         super(s);
@@ -91,18 +87,19 @@ public class UncheckedWrapperException extends RuntimeException {
     }
 
     /**
-     * Throws an UncheckedWrapperException, and ensurs that it is logged at ERROR priority.
+     * Throws an UncheckedWrapperException, and ensurs that it is logged at
+     * ERROR priority.
      *
-     * @param source Class having the error. For Log4J reporting
-     * @param msg Error message
+     * @param source    Class having the error. For Log4J reporting
+     * @param msg       Error message
      * @param rootCause The root cause exception
      *
      * @throws UncheckedWrapperException
      */
     public static void throwLoggedException(Class source, String msg,
                                             Throwable rootCause) throws
-            UncheckedWrapperException {
-        Logger log = Logger.getLogger(source);
+        UncheckedWrapperException {
+        Logger log = LogManager.getLogger(source);
         log.error(msg, rootCause);
 
         throw new UncheckedWrapperException(msg, rootCause);
@@ -135,11 +132,10 @@ public class UncheckedWrapperException extends RuntimeException {
     /**
      * Get a string representing this exception and the root cause.
      *
-     * Functions like normal toString, except that the name of the
-     * provided class will be used instead of the name of the
-     * unchecked wrapper exception.  Useful when another exception
-     * class is using  an unchecked wrapper exception to delegate
-     * to.
+     * Functions like normal toString, except that the name of the provided
+     * class will be used instead of the name of the unchecked wrapper
+     * exception. Useful when another exception class is using an unchecked
+     * wrapper exception to delegate to.
      */
     public String toString(Class delegatingClass) {
         // default toString calls getMessage, so we don't want to rely on it
@@ -163,7 +159,7 @@ public class UncheckedWrapperException extends RuntimeException {
     public String getMessage() {
         if (m_rootCause != null) {
             return super.getMessage() + " (root cause: " + m_rootCause.
-                    getMessage() + ")";
+                getMessage() + ")";
         } else {
             return super.getMessage();
         }
@@ -204,4 +200,5 @@ public class UncheckedWrapperException extends RuntimeException {
             m_rootCause.printStackTrace(s);
         }
     }
+
 }

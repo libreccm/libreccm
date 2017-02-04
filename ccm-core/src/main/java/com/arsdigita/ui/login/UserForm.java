@@ -38,7 +38,6 @@ import com.arsdigita.bebop.parameters.StringLengthValidationListener;
 import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.kernel.KernelConfig;
 
-import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.User;
 import org.libreccm.security.UserRepository;
@@ -54,9 +53,6 @@ import java.util.Optional;
  */
 public abstract class UserForm extends Form
     implements LoginConstants, FormInitListener, FormValidationListener {
-
-    private static final Logger LOGGER = Logger.getLogger(UserForm.class
-        .getName());
 
     private final boolean m_newUser;
 

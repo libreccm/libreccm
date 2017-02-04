@@ -19,8 +19,12 @@
 package com.arsdigita.web;
 
 import com.arsdigita.util.Assert;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javax.servlet.http.HttpServletRequest;
-import org.apache.log4j.Logger;
+
 
 /**
  * <p>A signal that returns the client to a return URL encoded in the
@@ -32,7 +36,7 @@ import org.apache.log4j.Logger;
  */
 public class ReturnSignal extends RedirectSignal {
 
-    private static final Logger s_log = Logger.getLogger(ReturnSignal.class);
+    private static final Logger LOGGER = LogManager.getLogger(ReturnSignal.class);
     private static final long serialVersionUID = -2923355745770322780L;
 
     public ReturnSignal(final HttpServletRequest sreq) {
@@ -48,14 +52,14 @@ public class ReturnSignal extends RedirectSignal {
     }
 
     private static String getReturnURL(final HttpServletRequest sreq) {
-        s_log.debug("Fetching the return URL to redirect to");
+        LOGGER.debug("Fetching the return URL to redirect to");
 
         final String returnURL = sreq.getParameter("return_url");
 
         Assert.exists(returnURL, "String returnURL");
 
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Redirecting to URL '" + returnURL + "'");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Redirecting to URL '" + returnURL + "'");
         }
 
         return returnURL;
@@ -63,22 +67,22 @@ public class ReturnSignal extends RedirectSignal {
 
     private static String getReturnURL(final HttpServletRequest sreq,
                                        final String fallback) {
-        s_log.debug("Fetching the return URL to redirect to");
+        LOGGER.debug("Fetching the return URL to redirect to");
 
         Assert.exists(fallback, "String fallback");
 
         final String returnURL = sreq.getParameter("return_url");
 
         if (returnURL == null  || returnURL.equals("")) {
-            if (s_log.isDebugEnabled()) {
-                s_log.debug("Cannot find the return URL parameter; " +
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Cannot find the return URL parameter; " +
                             "using the fallback URL '" + fallback + "'");
             }
 
             return fallback;
         } else {
-            if (s_log.isDebugEnabled()) {
-                s_log.debug("Redirecting to the value in the return URL " +
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Redirecting to the value in the return URL " +
                             "parameter, '" + returnURL + "'");
             }
 
