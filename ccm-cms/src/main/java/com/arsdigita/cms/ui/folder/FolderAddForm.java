@@ -24,14 +24,11 @@ import com.arsdigita.bebop.SingleSelectionModel;
 import com.arsdigita.bebop.event.FormProcessListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
 
-import org.apache.log4j.Logger;
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryRepository;
 import org.libreccm.cdi.utils.CdiUtil;
 
 class FolderAddForm extends FolderBaseForm {
-
-    private static Logger s_log = Logger.getLogger(FolderAddForm.class);
 
     private final SingleSelectionModel<Long> m_model;
     private final FolderRequestLocal m_parent;

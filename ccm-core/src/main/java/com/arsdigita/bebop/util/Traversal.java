@@ -21,8 +21,11 @@ package com.arsdigita.bebop.util;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.HashSet;
+
 import com.arsdigita.bebop.Component;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * <p></p>
@@ -34,10 +37,10 @@ import org.apache.log4j.Logger;
  * This filter may be used to skip only individual components or entire
  * subtrees.  The default filter matches all components.</p>
  *
- * @version $Id: Traversal.java 287 2005-02-22 00:29:02Z sskracic $
  */
 public abstract class Traversal {
-    private static final Logger s_log = Logger.getLogger(Traversal.class);
+    
+    private static final Logger LOGGER = LogManager.getLogger(Traversal.class);
 
     /**
      * If <code>test</code> returns <code>PERFORM_ACTION</code>,
@@ -63,7 +66,7 @@ public abstract class Traversal {
     private Set m_visiting = null;
 
     {
-        if (s_log.isDebugEnabled()) {
+        if (LOGGER.isDebugEnabled()) {
             m_visiting = new HashSet();
         }
     }
@@ -84,8 +87,8 @@ public abstract class Traversal {
      *
      * @param c the component on which to call {@link #act}.  */
     public void preorder(Component c) {
-        if (s_log.isDebugEnabled() && m_visiting.contains(c)) {
-            s_log.debug("Cycle detected at component " + c +
+        if (LOGGER.isDebugEnabled() && m_visiting.contains(c)) {
+            LOGGER.debug("Cycle detected at component " + c +
                         "; visiting nodes: " + m_visiting);
             throw new IllegalStateException
                 ("Component " + c + " is part of a cycle");
@@ -100,7 +103,7 @@ public abstract class Traversal {
         }
 
         if (flag != SKIP_SUBTREE) {
-            if (s_log.isDebugEnabled()) {
+            if (LOGGER.isDebugEnabled()) {
                 m_visiting.add(c);
             }
 
@@ -109,7 +112,7 @@ public abstract class Traversal {
             }
         }
 
-        if (s_log.isDebugEnabled()) {
+        if (LOGGER.isDebugEnabled()) {
             m_visiting.remove(c);
         }
     }

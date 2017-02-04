@@ -31,19 +31,14 @@ import com.arsdigita.bebop.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.apache.log4j.Logger;
 
 /**
  * Completable.
  *
  * @author <a href="mailto:rhs@mit.edu">rhs@mit.edu</a>
- * @version $Revision: #10 $ $Date: 2004/08/16 $
- * @version $Id: Completable.java 287 2005-02-22 00:29:02Z sskracic $
  **/
 
 public abstract class Completable implements Component {
-
-    private final static Logger s_log = Logger.getLogger(Completable.class);
 
     private ArrayList m_completionListeners = new ArrayList();
 

@@ -36,6 +36,7 @@ import java.util.stream.Collectors;
 import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.JoinTable;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -63,7 +64,7 @@ public class Folder extends Category implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "CONTENT_SECTION_ID")
     @JoinTable(name = "FOLDER_CONTENT_SECTION_MAP", schema = DB_SCHEMA,
                inverseJoinColumns = {

@@ -29,7 +29,8 @@ import com.arsdigita.cms.ui.PartyAddForm;
 import com.arsdigita.ui.admin.GlobalizationUtil;
 import com.arsdigita.util.Assert;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.*;
 import org.librecms.CmsConstants;
@@ -39,22 +40,21 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Adds a form which can add {@link Party parties} to {@link Role roles}.
- * Also enables searching for parties.
+ * Adds a form which can add {@link Party parties} to {@link Role roles}. Also
+ * enables searching for parties.
  *
- * NOTE: In earlier versions it was also possible to filter
- * parties using {@link User} attributes such as username, name, last name, etc.
- * This feature may be added later if still needed.
+ * NOTE: In earlier versions it was also possible to filter parties using
+ * {@link User} attributes such as username, name, last name, etc. This feature
+ * may be added later if still needed.
  *
- * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
+ *
  * @author Michael Pih
  * @author Uday Mathur
- * @version $Id: RolePartyAddForm.java 287 2005-02-22 00:29:02Z sskracic $
+ * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  */
 class RolePartyAddForm extends PartyAddForm {
 
-    private static Logger s_log = Logger.getLogger
-        (RolePartyAddForm.class);
+    private static Logger LOGGER = LogManager.getLogger(RolePartyAddForm.class);
 
     private SingleSelectionModel m_roles;
 
@@ -63,17 +63,17 @@ class RolePartyAddForm extends PartyAddForm {
 
         m_roles = roles;
 
-        getForm().addSubmissionListener
-            (new FormSecurityListener(AdminPrivileges.ADMINISTER_ROLES));
+        getForm().addSubmissionListener(new FormSecurityListener(
+            AdminPrivileges.ADMINISTER_ROLES));
     }
-
 
     @Override
     protected List<Party> makeQuery(PageState s) {
         Assert.isTrue(m_roles.isSelected(s));
 
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-        final PartyRepository partyRepository = cdiUtil.findBean(PartyRepository.class);
+        final PartyRepository partyRepository = cdiUtil.findBean(
+            PartyRepository.class);
 
         final String searchQuery = (String) getSearchWidget().getValue(s);
 
@@ -87,29 +87,32 @@ class RolePartyAddForm extends PartyAddForm {
         Assert.isTrue(m_roles.isSelected(state));
 
         String[] parties = (String[]) data.get("parties");
-        s_log.debug("PARTIES = " + Arrays.toString(parties));
+        LOGGER.debug("PARTIES = " + Arrays.toString(parties));
         if (parties == null) {
             throw new FormProcessException(GlobalizationUtil.globalize(
-                    "cms.ui.role.no_party_selected"));
+                "cms.ui.role.no_party_selected"));
         }
 
         final Long roleId = new Long((String) m_roles.getSelectedKey(state));
 
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-        final RoleRepository roleRepository = cdiUtil.findBean(RoleRepository.class);
-        final PartyRepository partyRepository = cdiUtil.findBean(PartyRepository.class);
+        final RoleRepository roleRepository = cdiUtil.findBean(
+            RoleRepository.class);
+        final PartyRepository partyRepository = cdiUtil.findBean(
+            PartyRepository.class);
         final RoleManager roleManager = cdiUtil.findBean(RoleManager.class);
 
         final Role role = roleRepository.findById(roleId).get();
 
         // Add each checked party to the role
         Party party;
-        for ( int i = 0; i < parties.length; i++ ) {
-            if (s_log.isDebugEnabled()) {
-                s_log.debug("parties[" + i + "] = " + parties[i]);
+        for (int i = 0; i < parties.length; i++) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("parties[" + i + "] = " + parties[i]);
             }
             party = partyRepository.findByName(parties[i]).get();
             roleManager.assignRoleToParty(role, party);
         }
     }
+
 }

@@ -33,7 +33,6 @@ import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.ui.admin.GlobalizationUtil;
 import com.arsdigita.util.UncheckedWrapperException;
 
-import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.PermissionManager;
 import org.libreccm.security.Role;
@@ -41,18 +40,20 @@ import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.privileges.AdminPrivileges;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.TooManyListenersException;
+
+
 
 /**
  * For more detailed information see {@link com.arsdigita.bebop.Form}.
  *
  * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  * @author Justin Ross &lt;jross@redhat.com&gt;
- * @version $Id: BaseRoleForm.java 287 2005-02-22 00:29:02Z sskracic $
+ *
  */
 class BaseRoleForm extends BaseForm {
-
-    private static final Logger s_log = Logger.getLogger(BaseRoleForm.class);
 
     final Name m_name;
     final Description m_description;

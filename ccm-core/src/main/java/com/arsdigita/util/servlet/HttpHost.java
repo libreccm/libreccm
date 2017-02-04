@@ -20,7 +20,8 @@ package com.arsdigita.util.servlet;
 
 import com.arsdigita.util.Assert;
 import javax.servlet.http.HttpServletRequest;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Represents a host computer.  The host may in fact be a "virtual"
@@ -28,11 +29,10 @@ import org.apache.log4j.Logger;
  *
  * @author Dan Berrange
  * @author Justin Ross &lt;jross@redhat.com&gt;
- * @version $Id$
  */
 public class HttpHost {
 
-    private static final Logger s_log = Logger.getLogger(HttpHost.class);
+    private static final Logger LOGGER = LogManager.getLogger(HttpHost.class);
 
     private final String m_name;
     private final int m_port;
@@ -73,8 +73,8 @@ public class HttpHost {
         final String header = sreq.getHeader("Host");
 
         if (header == null) {
-            if (s_log.isInfoEnabled()) {
-                s_log.info("No 'Host:' header present; falling back " +
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("No 'Host:' header present; falling back " +
                            "on values from servlet request");
             }
 

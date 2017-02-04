@@ -205,7 +205,7 @@ class CMSPermissionsTables {
         }
         if (type == DIRECT) {
             headers[privileges.length + 1] = PERM_TABLE_ACTIONS.localize()
-                                                   + "";
+                                                 + "";
         }
         return headers;
     }
@@ -317,15 +317,13 @@ class CMSPermissionsTables {
         public TableModel makeModel(final Table table,
                                     final PageState state) {
             final CcmObject object = parent.getObject(state);
-            final List<Permission> permissions = object.getPermissions();
 
             switch (m_type) {
                 case DIRECT:
-                    return new DirectPermissionsTableModel(permissions,
-                                                           object);
+                    return new DirectPermissionsTableModel(object);
                 case INHERITED:
-                    return new DirectPermissionsTableModel(permissions,
-                                                           object);
+                    return new DirectPermissionsTableModel(
+                        object);
                 default:
                     return null;
             }
@@ -340,9 +338,9 @@ class CMSPermissionsTables {
         private final Iterator<Permission> iterator;
         private Permission currentPermission;
 
-        public DirectPermissionsTableModel(final List<Permission> permissions,
-                                           final CcmObject object) {
-            this.iterator = permissions.iterator();
+        public DirectPermissionsTableModel(final CcmObject object) {
+//            this.iterator = permissions.iterator();
+            throw new UnsupportedOperationException();
         }
 
         @Override
@@ -442,9 +440,8 @@ class CMSPermissionsTables {
     private final class InheritedPermissionsTableModel
         extends DirectPermissionsTableModel {
 
-        public InheritedPermissionsTableModel(final List<Permission> permissions,
-                                              final CcmObject object) {
-            super(permissions, object);
+        public InheritedPermissionsTableModel(final CcmObject object) {
+            super(object);
         }
 
         @Override
@@ -544,109 +541,6 @@ class CMSPermissionsTables {
             return link;
         }
 
-    }
-
-}
-
-/**
- * Utility class to encode a user privilege in the bebop table
- */
-final class UserPrivilegeKey {
-
-    private final String objectId;
-    private final String granteeId;
-    private final String privilege;
-    private final boolean granted;
-
-    public UserPrivilegeKey(final Long objectId,
-                            final Long granteeId,
-                            final String privilege,
-                            final boolean granted) {
-        this.objectId = objectId.toString();
-        this.granteeId = granteeId.toString();
-        this.privilege = privilege;
-        this.granted = granted;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("%s{ %s }",
-                             super.toString(),
-                             String.join(".", privilege,
-                                         objectId,
-                                         granteeId,
-                                         Boolean.toString(granted)));
-    }
-
-    /**
-     * Decodes the information in a key into the helper class
-     *
-     * @see PermissionStatus
-     */
-    static PermissionStatus undescribe(final String key) {
-
-        final int i = key.indexOf(".");
-        final int j = key.indexOf(".", i + 1);
-        final int k = key.lastIndexOf(".");
-
-        final String privilege = key.substring(0, i);
-        final Long oID = Long.parseLong(key.substring(i + 1, j));
-        final Long gID = Long.parseLong(key.substring(j + 1, k));
-
-        boolean granted = false;
-        final CMSUserObjectStruct uos;
-        try {
-            granted = Boolean.parseBoolean(key.substring(k + 1, k + 2));
-            uos = new CMSUserObjectStruct(gID, oID);
-        } catch (NumberFormatException ex) {
-            // cannot decode
-            throw new IllegalArgumentException(ex.getMessage());
-        }
-
-        return new PermissionStatus(privilege,
-                                    uos.getObject(),
-                                    uos.getRole(),
-                                    granted);
-    }
-
-}
-
-/**
- * Structure to hold a permission and its current grant state
- */
-final class PermissionStatus {
-
-    private final boolean granted;
-    private final CcmObject object;
-    private final Role role;
-    private final String privilege;
-
-    PermissionStatus(final String privilege,
-                     final CcmObject object,
-                     final Role role,
-                     final boolean granted) {
-
-        this.granted = granted;
-
-        this.object = object;
-        this.role = role;
-        this.privilege = privilege;
-    }
-
-    boolean isGranted() {
-        return granted;
-    }
-
-    CcmObject getObject() {
-        return object;
-    }
-
-    Role getRole() {
-        return role;
-    }
-
-    String getPrivilege() {
-        return privilege;
     }
 
 }

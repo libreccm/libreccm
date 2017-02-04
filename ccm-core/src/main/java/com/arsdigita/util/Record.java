@@ -18,9 +18,11 @@
  */
 package com.arsdigita.util;
 
-import java.lang.reflect.Method;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.lang.reflect.InvocationTargetException;
-import org.apache.log4j.Logger;
+import java.lang.reflect.Method;
 
 /**
  * @author Justin Ross &lt;jross@redhat.com&gt;
@@ -28,11 +30,12 @@ import org.apache.log4j.Logger;
  */
 public abstract class Record {
 
-    /** Internal logger instance to faciliate debugging. Enable logging output
-     *  by editing /WEB-INF/conf/log4j.properties int the runtime environment
-     *  and set com.arsdigita.util.Record=DEBUG 
-     *  by uncommenting or adding the line.                                                   */
-    private static final Logger s_log = Logger.getLogger(Record.class);
+    /**
+     * Internal logger instance to faciliate debugging. Enable logging output by
+     * editing /WEB-INF/conf/log4j.properties int the runtime environment and
+     * set com.arsdigita.util.Record=DEBUG by uncommenting or adding the line.
+     */
+    private static final Logger LOGGER = LogManager.getLogger(Record.class);
 
     private Class m_class;
     private Logger m_log;
@@ -85,14 +88,14 @@ public abstract class Record {
 
     private Method accessor(final String field) {
         try {
-            Method method = m_class.getDeclaredMethod
-                ("get" + field, new Class[] {});
+            Method method = m_class.getDeclaredMethod("get" + field,
+                                                      new Class[]{});
 
             return method;
         } catch (NoSuchMethodException nsme) {
             try {
-                Method method = m_class.getDeclaredMethod
-                    ("is" + field, new Class[] {});
+                Method method = m_class.getDeclaredMethod("is" + field,
+                                                          new Class[]{});
 
                 return method;
             } catch (NoSuchMethodException me) {
@@ -103,7 +106,7 @@ public abstract class Record {
 
     private Object value(final Method m) {
         try {
-            return m.invoke(this, new Object[] {});
+            return m.invoke(this, new Object[]{});
         } catch (IllegalAccessException iae) {
             throw new UncheckedWrapperException(iae);
         } catch (InvocationTargetException ite) {
@@ -134,4 +137,5 @@ public abstract class Record {
 
         return info.toString();
     }
+
 }

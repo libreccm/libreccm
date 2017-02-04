@@ -36,34 +36,31 @@ import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.web.Web;
 import com.arsdigita.xml.Element;
 
-import org.apache.log4j.Logger;
 import org.libreccm.categorization.Category;
 
 import java.util.Collection;
 
 /**
- * A form which creates a new category. Extends the edit form for
- * convenience.
+ * A form which creates a new category. Extends the edit form for convenience.
  *
- * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
+ *
  * @author Michael Pih
  * @author Stanislav Freidin &lt;sfreidin@redhat.com&gt;
  * @author Justin Ross &lt;jross@redhat.com&gt;
- * @version $Id: BaseCategoryForm.java 1951 2009-06-30 04:35:04Z terry $
+ * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  */
 class BaseCategoryForm extends BaseForm {
 
-    private static final Logger s_log = Logger.getLogger(BaseCategoryForm.class);
     final CategoryRequestLocal m_parent;
     final TextField m_name;
     final TextArea m_description;
     final RadioGroup m_isAbstract;
     final RadioGroup m_isVisible;
     final RadioGroup m_isEnabled;
-    private Label m_script = new Label( new GlobalizedMessage(String.format(
-            "<script language=\"javascript\" src=\"%s/javascript/manipulate-input.js\"></script>",
-            Web.getWebappContextPath())),
-            false);
+    private Label m_script = new Label(new GlobalizedMessage(String.format(
+        "<script language=\"javascript\" src=\"%s/javascript/manipulate-input.js\"></script>",
+        Web.getWebappContextPath())),
+                                       false);
     private final static String NAME = "name";
     private final static String DESCRIPTION = "description";
     private final static String URL = "url";
@@ -87,9 +84,11 @@ class BaseCategoryForm extends BaseForm {
         m_name.setSize(30);
         m_name.setMaxLength(200);
         m_name.addValidationListener(new NotNullValidationListener());
-        m_name.setOnFocus("if (this.form." + URL + ".value == '') { " + " defaulting = true; this.form." + URL
-                          + ".value = urlize(this.value); }");
-        m_name.setOnKeyUp("if (defaulting) { this.form." + URL + ".value = urlize(this.value) }");
+        m_name.setOnFocus("if (this.form." + URL + ".value == '') { "
+                          + " defaulting = true; this.form." + URL
+                              + ".value = urlize(this.value); }");
+        m_name.setOnKeyUp("if (defaulting) { this.form." + URL
+                          + ".value = urlize(this.value) }");
 
         // is abstract?
         m_isAbstract = new RadioGroup(IS_ABSTRACT);
@@ -108,7 +107,6 @@ class BaseCategoryForm extends BaseForm {
         m_isEnabled.addOption(new Option("no", new Label(gz("cms.ui.no"))));
         m_isEnabled.addOption(new Option("yes", new Label(gz("cms.ui.yes"))));
         addField(gz("cms.ui.category.is_enabled"), m_isEnabled);
-
 
         m_description = new TextArea(new TrimmedStringParameter(DESCRIPTION));
         addField(gz("cms.ui.description"), m_description);
@@ -147,7 +145,7 @@ class BaseCategoryForm extends BaseForm {
 
         @Override
         public final void validate(final ParameterEvent e)
-                throws FormProcessException {
+            throws FormProcessException {
             final PageState state = e.getPageState();
             final String title = (String) m_widget.getValue(state);
 
@@ -158,11 +156,14 @@ class BaseCategoryForm extends BaseForm {
             for (final Category child : children) {
                 String compField = child.getName();
                 if (compField.equalsIgnoreCase(title)
-                    && (m_category == null
-                        || !m_category.getCategory(state).equals(child))) {
-                    throw new FormProcessException(GlobalizationUtil.globalize("cms.ui.category.name_not_unique"));
+                        && (m_category == null
+                            || !m_category.getCategory(state).equals(child))) {
+                    throw new FormProcessException(GlobalizationUtil.globalize(
+                        "cms.ui.category.name_not_unique"));
                 }
             }
         }
+
     }
+
 }

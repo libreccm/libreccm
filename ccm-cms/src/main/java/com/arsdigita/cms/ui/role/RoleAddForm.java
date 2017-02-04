@@ -24,27 +24,25 @@ import com.arsdigita.bebop.SingleSelectionModel;
 import com.arsdigita.bebop.event.FormProcessListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.kernel.KernelConfig;
-import org.apache.log4j.Logger;
+
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.l10n.LocalizedString;
-import org.libreccm.security.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+
+import org.libreccm.security.PermissionManager;
+import org.libreccm.security.Role;
+import org.libreccm.security.RoleRepository;
 
 /**
  * Provides a {@link com.arsdigita.bebop.Form} for adding {@link Role roles}.
  *
- * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
+ 
  * @author Michael Pih
  * @author Justin Ross &lt;jross@redhat.com&gt;
- * @version $Id: RoleAddForm.java 287 2005-02-22 00:29:02Z sskracic $
+ * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  */
 final class RoleAddForm extends BaseRoleForm {
-
-    private static final Logger s_log = Logger.getLogger(RoleAddForm.class);
 
     private SingleSelectionModel m_model;
 

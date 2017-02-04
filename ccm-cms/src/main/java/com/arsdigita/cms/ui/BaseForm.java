@@ -39,7 +39,6 @@ import com.arsdigita.toolbox.ui.Cancellable;
 import com.arsdigita.toolbox.ui.Section;
 import com.arsdigita.util.Assert;
 
-import org.apache.log4j.Logger;
 import org.librecms.CmsConstants;
 
 /**
@@ -49,8 +48,6 @@ import org.librecms.CmsConstants;
  * @author <a href="mailto:jross@redhat.com">Justin Ross</a>
  */
 public abstract class BaseForm extends Form implements Cancellable {
-
-    private static final Logger s_log = Logger.getLogger(BaseForm.class);
 
     private final BodySection m_body;
     private final BoxPanel m_actions;

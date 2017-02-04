@@ -19,7 +19,8 @@
 package com.arsdigita.util.parameter;
 
 import org.apache.commons.beanutils.converters.IntegerConverter;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * A parameter representing a Java <code>Integer</code>.
@@ -29,16 +30,16 @@ import org.apache.log4j.Logger;
  * @see java.lang.Integer
  * @see Parameter
  * @author Justin Ross &lt;jross@redhat.com&gt;
- * @version $Id$
  */
 public class IntegerParameter extends AbstractParameter {
 
-    private final static Logger logger = Logger.getLogger(IntegerParameter.class);
+    private final static Logger LOGGER = LogManager.getLogger(
+        IntegerParameter.class);
 
     static {
-        logger.debug("Static initalizer starting...");
+        LOGGER.debug("Static initalizer starting...");
         Converters.set(Integer.class, new IntegerConverter());
-        logger.debug("Static initalizer finished.");
+        LOGGER.debug("Static initalizer finished.");
     }
 
     public IntegerParameter(final String name) {
@@ -50,4 +51,5 @@ public class IntegerParameter extends AbstractParameter {
                             final Object defaalt) {
         super(name, multiplicity, defaalt, Integer.class);
     }
+
 }

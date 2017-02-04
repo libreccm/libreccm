@@ -20,6 +20,9 @@ package com.arsdigita.web;
 import com.arsdigita.util.Assert;
 import com.arsdigita.util.StringUtils;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -29,7 +32,6 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
 
 /**
  * An entry point for functions of the web package.
@@ -45,7 +47,7 @@ public class Web {
      * editing /WEB-INF/conf/log4j.properties int the runtime environment and
      * set com.arsdigita.web.Web=DEBUG by uncommenting or adding the line.
      */
-    private static final Logger s_log = Logger.getLogger(Web.class);
+    private static final Logger LOGGER = LogManager.getLogger(Web.class);
 
 //    private static final WebConfig s_config = WebConfig.getConfig();
     private static final ThreadLocal s_request = new InternalRequestLocal();
@@ -184,8 +186,8 @@ public class Web {
     public static URL findResource(String resourcePath) {
 
         if (resourcePath == null) {
-            if (s_log.isDebugEnabled()) {
-                s_log.debug("Parameter resource is null. Giving up.");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Parameter resource is null. Giving up.");
             }
             return null;
         }
@@ -194,8 +196,8 @@ public class Web {
             resourcePath = "/" + resourcePath;
         }
         if (resourcePath.length() < 2) {
-            if (s_log.isDebugEnabled()) {
-                s_log
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER
                     .debug("Resource spec is too short: >" + resourcePath + "<");
             }
             return null;
@@ -213,14 +215,14 @@ public class Web {
             try {
                 URL url = myctx.getResource(resourcePath);
                 if (url != null) {
-                    if (s_log.isDebugEnabled()) {
-                        s_log.debug("Got URL " + url + " for " + resourcePath);
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Got URL " + url + " for " + resourcePath);
                     }
                     return url;   // Return adjusted resourcePath url
                 }
             } catch (MalformedURLException ex) {
-                if (s_log.isDebugEnabled()) {
-                    s_log.debug("Cannot get resource for " + resourcePath);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Cannot get resource for " + resourcePath);
                 }
                 // Try the first part of resourcePath as a webapp context path and
                 // check far a resourcePath there
@@ -228,13 +230,13 @@ public class Web {
                 String testPath = resourcePath.substring(1, offset);
                 String path = resourcePath.substring(offset);
 
-                if (s_log.isDebugEnabled()) {
-                    s_log.debug("Try to find a context at " + testPath);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Try to find a context at " + testPath);
                 }
                 // Try to achieve a context
                 ServletContext ctx = myctx.getContext(testPath);
-                if (s_log.isDebugEnabled()) {
-                    s_log
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER
                         .debug("Servlet context for " + testPath + " is " + ctx);
                 }
                 if (ctx != null) {
@@ -243,16 +245,16 @@ public class Web {
                     try {
                         URL url = ctx.getResource(path);
                         if (url != null) {
-                            if (s_log.isDebugEnabled()) {
-                                s_log.debug("Got URL " + url + " for " + path);
+                            if (LOGGER.isDebugEnabled()) {
+                                LOGGER.debug("Got URL " + url + " for " + path);
                             }
                             return url;   // Return adjusted resourcePath url
-                        } else if (s_log.isDebugEnabled()) {
-                            s_log.debug("No URL present for " + path);
+                        } else if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("No URL present for " + path);
                         }
                     } catch (MalformedURLException exc) {
-                        if (s_log.isDebugEnabled()) {
-                            s_log.debug("cannot get resource for " + path);
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("cannot get resource for " + path);
                         }
                     }
                 }
@@ -268,8 +270,8 @@ public class Web {
             String path = resourcePath.substring(offset);
 
             String[] webapps = StringUtils.split(webappList, ',');
-            if (s_log.isDebugEnabled()) {
-                s_log.debug("Web app list " + webappList + " path " + path);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Web app list " + webappList + " path " + path);
             }
 
             for (int i = (webapps.length - 1); i >= 0; i--) {
@@ -284,23 +286,23 @@ public class Web {
                 // }
 
                 ServletContext ctx = myctx.getContext(ctxPath);
-                if (s_log.isDebugEnabled()) {
-                    s_log.debug("Servlet context for " + ctxPath + " is " + ctx);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Servlet context for " + ctxPath + " is " + ctx);
                 }
                 if (ctx != null) {
                     try {
                         URL url = ctx.getResource(path);
                         if (url != null) {
-                            if (s_log.isDebugEnabled()) {
-                                s_log.debug("Got URL " + url + " for " + path);
+                            if (LOGGER.isDebugEnabled()) {
+                                LOGGER.debug("Got URL " + url + " for " + path);
                             }
                             return url;   // Return adjusted resourcePath url
-                        } else if (s_log.isDebugEnabled()) {
-                            s_log.debug("No URL present for " + path);
+                        } else if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("No URL present for " + path);
                         }
                     } catch (MalformedURLException ex) {
-                        if (s_log.isDebugEnabled()) {
-                            s_log.debug("cannot get resource for " + path);
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("cannot get resource for " + path);
                         }
                     }
                 }
@@ -383,8 +385,8 @@ public class Web {
             try {
                 url = ctx.getResource(resourcePath);
             } catch (MalformedURLException ex) {
-                if (s_log.isDebugEnabled()) {
-                    s_log.debug("Resource for " + resourcePath + " not found.");
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Resource for " + resourcePath + " not found.");
                 }
                 // throw new UncheckedWrapperException(
                 //           "No resource at " + resourcePath, ex);

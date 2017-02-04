@@ -34,6 +34,9 @@ import com.arsdigita.web.TransformationDebugger;
 import com.arsdigita.web.Web;
 import com.arsdigita.xml.Document;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -54,7 +57,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.l10n.GlobalizationHelper;
 
@@ -70,18 +72,18 @@ import org.libreccm.l10n.GlobalizationHelper;
  * <em>package</em> mounted on each site node.
  *
  * @author Bill Schneider
- * @version $Id: PageTransformer.java 2071 2010-01-28 18:24:06Z pboy $
  */
 public class PageTransformer implements PresentationManager {
 
-    private static final Logger s_log = Logger.getLogger(PageTransformer.class);
+    private static final Logger LOGGER = LogManager.getLogger(PageTransformer.class);
+    
     // this keeps track of all of the XSLParameters that can be added to
     // stylesheets
     private static final HashMap s_XSLParameters = new HashMap();
 
     // load the default xsl parameter generators
     static {
-        s_log.debug("Static initalizer starting...");
+        LOGGER.debug("Static initalizer starting...");
 
         registerXSLParameterGenerator("contextPath",
                                       new XSLParameterGenerator() {
@@ -284,7 +286,7 @@ public class PageTransformer implements PresentationManager {
 
                                   });
 
-        s_log.debug("Static initalizer finished.");
+        LOGGER.debug("Static initalizer finished.");
     }
     // XXX These need to move somewhere else.
 
@@ -345,7 +347,7 @@ public class PageTransformer implements PresentationManager {
         try {
             return resp.getWriter();
         } catch (IllegalStateException e) {
-            s_log.warn("Using getOutputStream instead of getWriter");
+            LOGGER.warn("Using getOutputStream instead of getWriter");
 
             try {
                 return new PrintWriter(new OutputStreamWriter(resp.
@@ -402,7 +404,7 @@ public class PageTransformer implements PresentationManager {
                 .getDefaultCharset(DispatcherHelper.getNegotiatedLocale());
 
             final String output = req.getParameter("output");
-            s_log.info("output=" + output);
+            LOGGER.info("output=" + output);
 
             if (output == null) {
 

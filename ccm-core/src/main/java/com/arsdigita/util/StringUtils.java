@@ -28,7 +28,8 @@ import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * A (static) class of generally-useful string utilities.
@@ -39,7 +40,7 @@ import org.apache.log4j.Logger;
     "PMD.ExcessiveClassLength", "PMD.TooManyMethods", "PMD.CyclomaticComplexity"})
 public final class StringUtils {
 
-    private static final Logger S_LOG = Logger.getLogger(StringUtils.class);
+    private static final Logger LOGGER = LogManager.getLogger(StringUtils.class);
 
     public static final String NEW_LINE = System.getProperty("line.separator");
     //html line break:
@@ -260,8 +261,8 @@ public final class StringUtils {
      * @return
      */
     private static String smartTextInline(final String str) {
-        if (S_LOG.isDebugEnabled()) {
-            S_LOG.debug("Input {" + str + "}");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Input {" + str + "}");
         }
 
         // We're going to use the octal characters \u0001 and \u0002 for
@@ -279,8 +280,8 @@ public final class StringUtils {
         result = result.replaceAll("\\(TM\\)|\\(tm\\)", "<sup>TM</sup>");
         result = result.replaceAll("^\\+", "");
 
-        if (S_LOG.isDebugEnabled()) {
-            S_LOG.debug("After entities {" + result + "}");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("After entities {" + result + "}");
         }
 
         // Next lets process italics /italic/
@@ -290,8 +291,8 @@ public final class StringUtils {
         // Now we're onto the monospace stuff =monospace=
         result = result.replaceAll("\\=+([a-zA-Z_0-9]+)+\\=", "<code>$1</code>");
 
-        if (S_LOG.isDebugEnabled()) {
-            S_LOG.debug("After styles {" + result + "}");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("After styles {" + result + "}");
         }
 
         // untitled mailto    
@@ -323,8 +324,8 @@ public final class StringUtils {
         result = result.replaceAll("@(http[s]*://www\\..+\\.[A-Za-z]{2,4})",
                 "<a href=\\\"$1\\\">$1</a>");
 
-        if (S_LOG.isDebugEnabled()) {
-            S_LOG.debug("After links {" + result + "}");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("After links {" + result + "}");
         }
 
         return result;

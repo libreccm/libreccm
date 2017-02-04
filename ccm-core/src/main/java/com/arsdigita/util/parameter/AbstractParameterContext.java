@@ -29,7 +29,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 
 /**
  * A base implementation of the <code>ParameterContext</code>
@@ -39,11 +41,10 @@ import org.apache.log4j.Logger;
  *
  * @see com.arsdigita.util.parameter.ParameterContext
  * @author Justin Ross &lt;jross@redhat.com&gt;
- * @version $Id$
  */
 public abstract class AbstractParameterContext implements ParameterContext {
 
-    private static final Logger s_log = Logger.getLogger
+    private static final Logger LOGGER = LogManager.getLogger
         (AbstractParameterContext.class);
 
     private final MapParameter m_param;
@@ -66,8 +67,8 @@ public abstract class AbstractParameterContext implements ParameterContext {
      * cannot be null
      */
     public final void register(final Parameter param) {
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Registering " + param + " on " + this);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Registering " + param + " on " + this);
         }
 
         if (Assert.isEnabled()) {
@@ -139,8 +140,8 @@ public abstract class AbstractParameterContext implements ParameterContext {
      * @see ParameterContext#get(Parameter,Object)
      */
     public void set(final Parameter param, final Object value) {
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Setting " + param + " to " + value);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Setting " + param + " to " + value);
         }
 
         Assert.exists(param, Parameter.class);

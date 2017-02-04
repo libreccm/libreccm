@@ -25,7 +25,8 @@ import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Debugger contains static methods for registering debuggers.
@@ -37,11 +38,10 @@ import org.apache.log4j.Logger;
  * @see TransformationDebugger
  *
  * @author Justin Ross
- * @version $Id: Debugger.java 287 2005-02-22 00:29:02Z sskracic $
  */
 public abstract class Debugger {
 
-    private static final Logger s_log = Logger.getLogger(Debugger.class);
+    private static final Logger LOGGER = LogManager.getLogger(Debugger.class);
 
     public static final String DEBUG_PARAMETER = "debug";
     public static final ThreadLocal s_debuggers = new DebuggerListLocal();

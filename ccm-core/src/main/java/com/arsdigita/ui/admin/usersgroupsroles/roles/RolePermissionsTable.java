@@ -115,7 +115,7 @@ class RolePermissionsTable extends Table {
                         final Role role = roleRepository.findById(
                             Long.parseLong(selectedRoleId.getSelectedKey(state))).get();
                         final Permission permission = permissionManager
-                            .findById(Long.parseLong(key));
+                            .findById(Long.parseLong(key)).get();
                         if (permission.getObject() == null) {
                             permissionManager.revokePrivilege(
                                 permission.getGrantedPrivilege(), role);

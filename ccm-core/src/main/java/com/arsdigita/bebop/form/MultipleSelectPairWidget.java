@@ -37,7 +37,6 @@ import java.util.List;
 import java.util.Iterator;
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.log4j.Logger;
 
 /**
  * <p>Multiple select widget pair for knowledge types. This FormStep
@@ -67,9 +66,6 @@ import org.apache.log4j.Logger;
  * @version $Id$
  */
 public class MultipleSelectPairWidget extends FormStep {
-
-    private static final Logger s_log =
-        Logger.getLogger(MultipleSelectPairWidget.class);
 
     private Hidden m_addSelectOptions;
     private Hidden m_removeSelectOptions;

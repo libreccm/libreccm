@@ -26,7 +26,8 @@ import com.arsdigita.kernel.security.Util;
 import com.arsdigita.web.Web;
 import com.arsdigita.web.LoginSignal;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 
 import javax.servlet.http.HttpServletRequest;
@@ -43,13 +44,10 @@ import org.apache.shiro.subject.Subject;
  *
  * @author Phong Nguyen
  * @author Sameer Ajmani
- * @version 1.0
- * @version $Id: UserAuthenticationListener.java 287 2005-02-22 00:29:02Z
- * sskracic $
  */
 public class UserAuthenticationListener implements RequestListener {
 
-    private static final Logger s_log = Logger.getLogger(
+    private static final Logger LOGGER = LogManager.getLogger(
         UserAuthenticationListener.class);
 
     /**
@@ -94,7 +92,7 @@ public class UserAuthenticationListener implements RequestListener {
         PageState state = event.getPageState();
 
         if (!isLoggedIn(state)) {
-            s_log.debug("User is not logged in");
+            LOGGER.debug("User is not logged in");
             redirectToLoginPage(state);
 
         }
@@ -112,7 +110,7 @@ public class UserAuthenticationListener implements RequestListener {
         // first make sure we're not already looking at the login
         // page -- if we are, don't redirect!
         if (urlBase.equals(Web.getWebContext().getRequestURL().getRequestURI())) {
-            s_log.debug("preventing cyclic redirect to: " + urlBase);
+            LOGGER.debug("preventing cyclic redirect to: " + urlBase);
             // return without redirect
             return;
         }

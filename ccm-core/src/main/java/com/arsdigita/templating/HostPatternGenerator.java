@@ -19,12 +19,12 @@
 package com.arsdigita.templating;
 
 import com.arsdigita.util.servlet.HttpHost;
-import com.arsdigita.web.Web;
 import com.arsdigita.web.WebConfig;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Generates a set of patterns corresponding to the current host name. (actually
@@ -39,7 +39,7 @@ public class HostPatternGenerator implements PatternGenerator {
      * set com.arsdigita.templating.HostPatternGenerator=DEBUG by uncommenting
      * or adding the line.
      */
-    private static final Logger s_log = Logger.getLogger(
+    private static final Logger LOGGER = LogManager.getLogger(
         HostPatternGenerator.class);
 
     /**
@@ -61,8 +61,8 @@ public class HostPatternGenerator implements PatternGenerator {
                                      WebConfig.getConfig().getHostPort());
         final String hostName = host.toString();
 
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Generating Values for key: " + key + " ["
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Generating Values for key: " + key + " ["
                         + "Hostname retrieved: >>" + hostName + "<<]");
         }
 

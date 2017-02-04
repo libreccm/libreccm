@@ -22,7 +22,6 @@ import com.arsdigita.ui.login.LoginServlet;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
 
 /**
  * <p>
@@ -32,11 +31,6 @@ import org.apache.log4j.Logger;
  * @author pb
  */
 public abstract class UI {
-
-    /**
-     * Private loggin instance.
-     */
-    private static final Logger s_log = Logger.getLogger(UI.class);
 
     /**
      * The UI XML namespace.

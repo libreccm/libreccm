@@ -42,7 +42,8 @@ import com.arsdigita.kernel.ui.ACSObjectSelectionModel;
 import com.arsdigita.toolbox.ui.ActionGroup;
 import com.arsdigita.toolbox.ui.Cancellable;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentSectionManager;
@@ -60,8 +61,9 @@ import org.librecms.contentsection.ContentTypeManager;
  */
 public final class ContentTypeAdminPane extends BaseAdminPane {
 
-    private static final Logger s_log = Logger.getLogger(
+    private static final Logger LOGGER = LogManager.getLogger(
         ContentTypeAdminPane.class);
+    
     private final ACSObjectSelectionModel m_model;
     private final ContentTypeRequestLocal m_type;
 
@@ -252,8 +254,8 @@ public final class ContentTypeAdminPane extends BaseAdminPane {
     private void resetPane(final PageState state) {
         getBody().reset(state);
         if (getSelectionModel().isSelected(state)) {
-            s_log.debug("The selection model is selected; displaying "
-                            + "the item pane");
+            LOGGER.debug("The selection model is selected; displaying "
+                             + "the item pane");
             getBody().push(state, getItemPane());
         }
     }

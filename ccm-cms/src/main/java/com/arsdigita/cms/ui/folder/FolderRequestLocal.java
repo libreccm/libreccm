@@ -22,17 +22,14 @@ import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.SingleSelectionModel;
 import com.arsdigita.cms.ui.CcmObjectRequestLocal;
 
-import org.apache.log4j.Logger;
-import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryRepository;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.contentsection.Folder;
 
+import java.util.Optional;
+
 
 public class FolderRequestLocal extends CcmObjectRequestLocal {
-
-    private static final Logger s_log = Logger.getLogger(
-        FolderRequestLocal.class);
 
     private final SingleSelectionModel m_model;
 
@@ -57,7 +54,15 @@ public class FolderRequestLocal extends CcmObjectRequestLocal {
     }
 
     public final Folder getFolder(final PageState state) {
-        return (Folder) get(state);
+        final Object object = get(state);
+        final Object selected;
+        if (object instanceof Optional) {
+            selected = ((Optional<?>) object).get();
+        } else {
+            selected = object;
+        }
+        
+        return (Folder) selected;
     }
 
 }

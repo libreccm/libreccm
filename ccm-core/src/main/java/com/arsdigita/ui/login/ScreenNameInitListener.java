@@ -24,7 +24,8 @@ import com.arsdigita.bebop.event.FormInitListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.bebop.parameters.StringParameter;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.shiro.subject.Subject;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.Shiro;
@@ -42,8 +43,8 @@ import org.libreccm.security.User;
  */
 public class ScreenNameInitListener implements FormInitListener {
 
-    private static Logger s_log = Logger.getLogger(ScreenNameInitListener.class
-        .getName());
+    private static Logger LOGGER = LogManager.getLogger(
+        ScreenNameInitListener.class);
     private StringParameter m_param;
 
     /**
@@ -61,25 +62,25 @@ public class ScreenNameInitListener implements FormInitListener {
     public void init(FormSectionEvent event) {
         PageState state = event.getPageState();
         FormData data = event.getFormData();
-        s_log.debug("START");
+        LOGGER.debug("START");
 
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final Subject subject = cdiUtil.findBean(Subject.class);
         final Shiro shiro = cdiUtil.findBean(Shiro.class);
 
         if (!subject.isAuthenticated()) {
-            s_log.debug("FAILURE not logged in");
+            LOGGER.debug("FAILURE not logged in");
             return;
         }
 
         final User user = shiro.getUser().get();
         if (user.getName() == null) {
-            s_log.debug("FAILURE null screen name");
+            LOGGER.debug("FAILURE null screen name");
             return;
         }
 
         data.put(m_param.getName(), user.getName());
-        s_log.debug("SUCCESS");
+        LOGGER.debug("SUCCESS");
     }
 
 }

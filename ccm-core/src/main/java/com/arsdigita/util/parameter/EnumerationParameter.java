@@ -19,22 +19,17 @@
 package com.arsdigita.util.parameter;
 
 import java.util.HashMap;
-import org.apache.log4j.Logger;
 
 /**
  * Subject to change.
  *
- * A parameter that maps keys to values and, given a key, marshals or
- * unmarshals to the corresponding value.
+ * A parameter that maps keys to values and, given a key, marshals or unmarshals
+ * to the corresponding value.
  *
  * @see Parameter
  * @author Justin Ross &lt;jross@redhat.com&gt;
- * @version $Id$
  */
 public class EnumerationParameter extends AbstractParameter {
-
-    private static final Logger s_log = Logger.getLogger
-        (EnumerationParameter.class);
 
     private final HashMap m_entries;
     private final HashMap m_reverse;
@@ -54,12 +49,12 @@ public class EnumerationParameter extends AbstractParameter {
 
     public final void put(final String name, final Object value) {
         if (m_entries.containsKey(name)) {
-            throw new IllegalArgumentException
-                ("name already has a value: " + name);
+            throw new IllegalArgumentException("name already has a value: "
+                                               + name);
         }
         if (m_reverse.containsKey(value)) {
-            throw new IllegalArgumentException
-                ("value already has a name: " + value);
+            throw new IllegalArgumentException("value already has a name: "
+                                               + value);
         }
         m_entries.put(name, value);
         m_reverse.put(value, name);
@@ -69,8 +64,9 @@ public class EnumerationParameter extends AbstractParameter {
         if (m_entries.containsKey(value)) {
             return m_entries.get(value);
         } else {
-            final ParameterError error = new ParameterError
-                (this, "The value must be one of " + m_entries.keySet());
+            final ParameterError error = new ParameterError(this,
+                                                            "The value must be one of "
+                                                            + m_entries.keySet());
 
             errors.add(error);
 

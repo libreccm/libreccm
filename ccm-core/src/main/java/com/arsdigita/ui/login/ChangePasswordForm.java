@@ -28,7 +28,6 @@ import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.Page;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.event.ActionEvent;
-import com.arsdigita.bebop.event.ActionListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.bebop.event.FormProcessListener;
 import com.arsdigita.bebop.event.FormValidationListener;
@@ -37,20 +36,19 @@ import com.arsdigita.bebop.form.Password;
 import com.arsdigita.bebop.form.Submit;
 import com.arsdigita.bebop.parameters.NotNullValidationListener;
 import com.arsdigita.bebop.parameters.URLParameter;
-import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.ui.UI;
 import com.arsdigita.web.URL;
 import com.arsdigita.web.ReturnSignal;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.User;
 
-import org.apache.shiro.subject.Subject;
 import org.libreccm.security.Shiro;
 import org.libreccm.security.UserManager;
+
+import java.util.Optional;
 
 /**
  * A Form that allows a user to change their password by entering their old
@@ -69,8 +67,6 @@ public class ChangePasswordForm extends Form
     implements FormProcessListener,
                FormValidationListener {
 
-    private static final Logger s_log = Logger.getLogger(
-        ChangePasswordForm.class.getName());
     final static String CHANGE_PASSWORD_FORM_NAME = "change-password";
     final static String OLD_PASSWORD_PARAM_NAME = "old-password";
     final static String NEW_PASSWORD_PARAM_NAME = "new-password";
@@ -119,21 +115,21 @@ public class ChangePasswordForm extends Form
 
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final Shiro shiro = cdiUtil.findBean(Shiro.class);
-        final User user = shiro.getUser().get();
+        final Optional<User> user = shiro.getUser();
 
         final Label greeting;
-        if (user == null) {
+        if (user.isPresent()) {
+             greeting = new Label(LoginHelper.getMessage(
+                "login.changePasswordForm.greeting",
+                new Object[]{String.format("%s %s",
+                                           user.get().getGivenName(),
+                                           user.get().getFamilyName())}));
+        } else {
             greeting = new Label(LoginHelper.getMessage(
                 "login.changePasswordForm.greeting",
                 new Object[]{String.format("%s %s",
                                            "",
                                            "")}));
-        } else {
-            greeting = new Label(LoginHelper.getMessage(
-                "login.changePasswordForm.greeting",
-                new Object[]{String.format("%s %s",
-                                           user.getGivenName(),
-                                           user.getFamilyName())}));
         }
         greeting.setFontWeight(Label.BOLD);
         greeting.setClassAttr("greeting");

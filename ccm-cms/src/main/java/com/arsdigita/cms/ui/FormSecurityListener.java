@@ -25,26 +25,18 @@ import com.arsdigita.bebop.event.FormSubmissionListener;
 
 import org.librecms.contentsection.ContentItem;
 
-import com.arsdigita.cms.dispatcher.Utilities;
 import com.arsdigita.cms.ui.item.ContentItemRequestLocal;
 import com.arsdigita.dispatcher.AccessDeniedException;
 
-import org.libreccm.security.User;
-
 import com.arsdigita.util.Assert;
-import com.arsdigita.web.Web;
 
-import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.PermissionChecker;
 
 /**
  * @author Justin Ross &lt;jross@redhat.com&gt;
- * @version $Id$
  */
 public class FormSecurityListener implements FormSubmissionListener {
-
-    private static Logger s_log = Logger.getLogger(FormSecurityListener.class);
 
     private final String m_action;
     private final ContentItemRequestLocal m_item;
@@ -63,20 +55,21 @@ public class FormSecurityListener implements FormSubmissionListener {
 
     @Override
     public final void submitted(final FormSectionEvent event)
-            throws FormProcessException {
-        
+        throws FormProcessException {
+
         final PageState state = event.getPageState();
-        
+
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-        final PermissionChecker permissionChecker = cdiUtil.findBean(PermissionChecker.class);
-                
+        final PermissionChecker permissionChecker = cdiUtil.findBean(
+            PermissionChecker.class);
+
         if (m_item == null) {
             if (permissionChecker.isPermitted(m_action)) {
                 return;
             }
         } else {
             final ContentItem item = m_item.getContentItem(state);
-            
+
             if (permissionChecker.isPermitted(m_action, item)) {
                 return;
             }
@@ -84,4 +77,5 @@ public class FormSecurityListener implements FormSubmissionListener {
 
         throw new AccessDeniedException();
     }
+
 }

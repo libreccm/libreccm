@@ -18,21 +18,21 @@
  */
 package com.arsdigita.cms.ui.folder;
 
-import com.arsdigita.bebop.Form;
 import com.arsdigita.bebop.FormProcessException;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.event.FormInitListener;
 import com.arsdigita.bebop.event.FormProcessListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryRepository;
 import org.libreccm.cdi.utils.CdiUtil;
 
 class FolderEditForm extends FolderBaseForm {
 
-    private static Logger s_log = Logger.getLogger(FolderEditForm.class);
+    private static Logger LOGGER = LogManager.getLogger(FolderEditForm.class);
 
     private final FolderRequestLocal m_folder;
 

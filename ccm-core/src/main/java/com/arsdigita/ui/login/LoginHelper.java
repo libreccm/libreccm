@@ -22,8 +22,12 @@ import com.arsdigita.bebop.PageState;
 import com.arsdigita.dispatcher.DispatcherHelper;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.web.ReturnSignal;
+
+import org.apache.logging.log4j.LogManager;
+
 import java.io.IOException;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,11 +36,10 @@ import javax.servlet.http.HttpServletResponse;
  * Provides helper functions for the login UI.
  *
  * @author Sameer Ajmani
- * @version $Id$
  */
 public class LoginHelper {
 
-    private static final Logger s_log = Logger.getLogger(LoginHelper.class);
+    private static final Logger LOGGER = LogManager.getLogger(LoginHelper.class);
 
     public static final String RETURN_URL_PARAM_NAME = "return_url";
 
@@ -129,12 +132,12 @@ public class LoginHelper {
         throws IOException {
 
         if (!response.isCommitted()) {
-            s_log.debug("Redirecting to: "+url);
+            LOGGER.debug("Redirecting to: "+url);
             DispatcherHelper.sendRedirect(request, response, url);
             response.flushBuffer();
             DispatcherHelper.abortRequest();
         } else {
-            s_log.debug("Redirect failed because "
+            LOGGER.debug("Redirect failed because "
                         +"response already committed");
         }
     }

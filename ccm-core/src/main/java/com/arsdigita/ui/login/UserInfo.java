@@ -30,7 +30,8 @@ import com.arsdigita.xml.Element;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.Shiro;
 import org.libreccm.security.User;
@@ -48,17 +49,14 @@ import org.libreccm.web.CcmApplication;
  * @author Sameer Ajmani
  * @author Peter Boy (refactored to eliminate old type kernel.Package* /
  * SiteNode)
- * @since 2001-06-01
- * @version 1.0
- * @version $Id$
+
  */
 public class UserInfo extends SimpleContainer {
 
     /**
      * Logger instance for debugging support
      */
-    private static final Logger s_log = Logger.getLogger(UserInfo.class
-        .getName());
+    private static final Logger LOGGER = LogManager.getLogger(UserInfo.class);
 
     /**
      * Holds a list of content centers (Application instances) that exist on
@@ -90,7 +88,7 @@ public class UserInfo extends SimpleContainer {
             @Override
             public void generateXML(PageState state, Element parent) {
                 if (!isLoggedIn(state)) {
-                    s_log.debug("user is not logged in, so no XML generated");
+                    LOGGER.debug("user is not logged in, so no XML generated");
                     return;
                 }
                 final User user = getUser(state);

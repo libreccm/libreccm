@@ -21,7 +21,6 @@ package com.arsdigita.bebop;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.xml.Element;
 
-import org.apache.log4j.Logger;
 
 
 /**
@@ -33,12 +32,6 @@ import org.apache.log4j.Logger;
  * @version $Id: TextStylable.java 287 2005-02-22 00:29:02Z sskracic $
  */
 abstract public class DescriptiveComponent extends SimpleComponent {
-
-    /** Internal logger instance to faciliate debugging. Enable logging output
-     *  by editing /WEB-INF/conf/log4j.properties int the runtime environment
-     *  and set com.arsdigita.bebop.DescriptiveComponent=DEBUG 
-     *  by uncommenting or adding the line.                                   */
-    private static final Logger s_log = Logger.getLogger(DescriptiveComponent.class);
 
     /** Property to store informational text for the user about the Link, e.g. 
      *  how to use it, or when to use it (or not to use it).                  */

@@ -30,6 +30,7 @@ import com.arsdigita.cms.CMS;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.util.Assert;
 import com.arsdigita.xml.Element;
+
 import java.io.IOException;
 
 /**
@@ -44,14 +45,11 @@ import java.io.IOException;
  * you must hit the "up" arrow n/2 times where n is the number of items in the
  * list. This clearly is not a good setup.
  *
- * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
+ *
  * @author Randy Graebner (randyg@alum.mit.edu)
- * @version $Id: SortableList.java 1618 2007-09-13 12:14:51Z chrisg23 $
+ * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  */
 public abstract class SortableList extends List {
-
-    private static final org.apache.log4j.Logger s_log
-            = org.apache.log4j.Logger.getLogger(SortableList.class);
 
     // It would be really nice if this used the save variable as is
     // used by List but because List has it as private, we cannot do that.
@@ -67,11 +65,12 @@ public abstract class SortableList extends List {
         this(model, false);
     }
 
-    public SortableList(ParameterSingleSelectionModel model, boolean suppressSort) {
+    public SortableList(ParameterSingleSelectionModel model,
+                        boolean suppressSort) {
         super(model);
         m_sortItems = !suppressSort;
     }
-    
+
     /**
      * This geneates the XML as specified by the arguments pass in to the
      * constructor.
@@ -91,7 +90,8 @@ public abstract class SortableList extends List {
 
         // because m.next() returned true, we know there are items
         // in the list
-        Element list = parent.newChildElement("cms:sortableList", CMS.CMS_XML_NS);
+        Element list = parent
+            .newChildElement("cms:sortableList", CMS.CMS_XML_NS);
         exportAttributes(list);
 
         Component c;
@@ -99,7 +99,8 @@ public abstract class SortableList extends List {
         int i = 0;
         boolean hasNext;
         do {
-            Element item = list.newChildElement(BebopConstants.BEBOP_CELL, BEBOP_XML_NS);
+            Element item = list.newChildElement(BebopConstants.BEBOP_CELL,
+                                                BEBOP_XML_NS);
             if (m_sortItems) {
 
                 item.addAttribute("configure", "true");
@@ -110,14 +111,15 @@ public abstract class SortableList extends List {
             // Converting both keys to String for comparison
             // since ListModel.getKey returns a String
             boolean selected = (selKey != null)
-                    && key.equals(selKey.toString());
+                                   && key.equals(selKey.toString());
 
             if (selected) {
                 item.addAttribute("selected", "selected");
             }
 
             generateLabelXML(state, item,
-                    new Label(new GlobalizedMessage(m.getElement().toString())), key, m.getElement());
+                             new Label(new GlobalizedMessage(m.getElement()
+                                 .toString())), key, m.getElement());
 
             hasNext = m.next();
 
@@ -138,7 +140,7 @@ public abstract class SortableList extends List {
 
             } catch (IOException ex) {
                 throw new IllegalStateException("Caught IOException: "
-                        + ex.getMessage());
+                                                    + ex.getMessage());
             }
             i++;
         } while (hasNext);
@@ -147,9 +149,10 @@ public abstract class SortableList extends List {
     }
 
     protected void generateLabelXML(PageState state, Element parent,
-            Label label, String key, Object element) {
+                                    Label label, String key, Object element) {
         state.setControlEvent(this, SELECT_EVENT, key);
         Component c = new ControlLink(label);
         c.generateXML(state, parent);
     }
+
 }

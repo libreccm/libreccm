@@ -25,7 +25,8 @@ import java.util.ResourceBundle;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.l10n.GlobalizationHelper;
 
@@ -52,7 +53,7 @@ public class GlobalizedMessage {
      * /WEB-INF/conf/log4j.properties int hte runtime environment and set
      * com.arsdigita.globalization.GlobalizedMessage=DEBUG by uncommenting or adding the line.
      */
-    private static final Logger LOGGER = Logger.getLogger(GlobalizedMessage.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(GlobalizedMessage.class.getName());
     private String m_key = "";
     private String m_bundleName = "";
     /**

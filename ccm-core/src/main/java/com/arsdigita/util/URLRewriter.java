@@ -27,7 +27,8 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Re-writes URLs to include additional parameters that come from a
@@ -35,12 +36,11 @@ import org.apache.log4j.Logger;
  * cookieless login possible, by re-writing URLs to include a session
  * ID parameter.
  *
- * @version $Id$
  */
 public class URLRewriter {
 
     /** Creates a s_logging category with name = to the full name of class  */
-    private static final Logger s_log = Logger.getLogger(URLRewriter.class);
+    private static final Logger LOGGER = LogManager.getLogger(URLRewriter.class);
 
     /** The parameter providers for the system. Client classes are registered here. */
     private static LinkedList s_providers = new LinkedList();
@@ -49,7 +49,7 @@ public class URLRewriter {
      * Adds a parameter provider.
      **/
     public static void addParameterProvider(ParameterProvider provider) {
-        s_log.debug("addParameterProvider: "
+        LOGGER.debug("addParameterProvider: "
                     + provider.getClass().getName());
         s_providers.add(provider);
     }
@@ -68,7 +68,7 @@ public class URLRewriter {
      **/
     public static Set getGlobalModels() {
         if (s_providers.isEmpty()) {
-            s_log.debug("getGlobalModels: no providers set");
+            LOGGER.debug("getGlobalModels: no providers set");
             return java.util.Collections.EMPTY_SET;
         }
 
@@ -87,7 +87,7 @@ public class URLRewriter {
      **/
     public static Set getGlobalParams(HttpServletRequest req) {
         if (s_providers.isEmpty()) {
-            s_log.debug("getGlobalParams: no providers set");
+            LOGGER.debug("getGlobalParams: no providers set");
             return java.util.Collections.EMPTY_SET;
         }
 
@@ -108,14 +108,14 @@ public class URLRewriter {
     public static String encodeRedirectURL(HttpServletRequest req,
                                            HttpServletResponse resp,
                                            String url) {
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("encodeRedirectURL: before: " + url);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("encodeRedirectURL: before: " + url);
         }
 
         url = resp.encodeRedirectURL(encodeParams(req, url));
 
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("encodeRedirectURL:  after: " + url);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("encodeRedirectURL:  after: " + url);
         }
 
         return url;
@@ -144,14 +144,14 @@ public class URLRewriter {
     public static String encodeURL(HttpServletRequest req,
                                    HttpServletResponse resp,
                                    String url) {
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("encodeURL: before: " + url);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("encodeURL: before: " + url);
         }
 
         url = resp.encodeURL(encodeParams(req, url));
 
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("encodeURL:  after: " + url);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("encodeURL:  after: " + url);
         }
 
         return url;
@@ -162,7 +162,7 @@ public class URLRewriter {
      **/
     private static String encodeParams(HttpServletRequest req, String url) {
         if (s_providers.isEmpty()) {
-            s_log.debug("encodeParams: no providers set");
+            LOGGER.debug("encodeParams: no providers set");
             return url;
         }
         Map params = new java.util.HashMap();

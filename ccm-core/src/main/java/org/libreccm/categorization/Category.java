@@ -39,6 +39,7 @@ import javax.persistence.AssociationOverride;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
@@ -178,7 +179,7 @@ public class Category extends CcmObject implements Serializable, Portable {
      * The objects assigned to this category.
      */
     @RecursivePermissions
-    @OneToMany(mappedBy = "category")
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
     @XmlElementWrapper(name = "objects", namespace = CAT_XML_NS)
     @JsonManagedReference(value = "category-categorization")
     private List<Categorization> objects;
@@ -187,7 +188,7 @@ public class Category extends CcmObject implements Serializable, Portable {
      * The sub categories of this category.
      */
     @RecursivePermissions
-    @OneToMany(mappedBy = "parentCategory")
+    @OneToMany(mappedBy = "parentCategory", fetch = FetchType.LAZY)
     @XmlElementWrapper(name = "subcategories", namespace = CAT_XML_NS)
     @XmlElement(name = "category")
     @JsonManagedReference(value = "subcategory-parentcategory")
@@ -197,7 +198,7 @@ public class Category extends CcmObject implements Serializable, Portable {
      * The parent category category of this category. Despite the root category
      * of domain every category has a parent category.
      */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PARENT_CATEGORY_ID")
     @JsonBackReference(value = "subcategory-parentcategory")
     private Category parentCategory;

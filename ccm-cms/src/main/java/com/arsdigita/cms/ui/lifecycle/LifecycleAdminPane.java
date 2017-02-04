@@ -32,29 +32,27 @@ import com.arsdigita.cms.ui.BaseAdminPane;
 import com.arsdigita.cms.ui.BaseDeleteForm;
 import com.arsdigita.cms.ui.FormSecurityListener;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentSectionManager;
 import org.librecms.contentsection.privileges.AdminPrivileges;
-import org.librecms.lifecycle.Lifecycle;
 import org.librecms.lifecycle.LifecycleDefinitionRepository;
 
-import java.math.BigDecimal;
 
 /**
- * <p>
  * This class contains the split pane for the lifecycle administration
- * interface.</p>
+ * interface.
  *
- * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
+ 
  * @author Michael Pih
  * @author Jack Chung
  * @author <a href="mailto:jross@redhat.com">Justin Ross</a>
+* @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class LifecycleAdminPane extends BaseAdminPane {
 
-    private static Logger s_log = Logger.getLogger(LifecycleAdminPane.class);
+    private static Logger LOGGER = LogManager.getLogger(LifecycleAdminPane.class);
 
     private final SingleSelectionModel m_model;
     private final LifecycleDefinitionRequestLocal m_definition;

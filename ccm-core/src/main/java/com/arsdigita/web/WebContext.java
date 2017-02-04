@@ -18,11 +18,11 @@
  */
 package com.arsdigita.web;
 
-// import com.arsdigita.web.CcmApplication;
 import com.arsdigita.util.Assert;
 import com.arsdigita.util.Record;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.libreccm.web.CcmApplication;
 
 /**
@@ -47,7 +47,7 @@ public final class WebContext extends Record {
      * set com.arsdigita.web.WebContext=DEBUG by uncommenting or adding the
      * line.
      */
-    private static final Logger s_log = Logger.getLogger(WebContext.class);
+    private static final Logger LOGGER = LogManager.getLogger(WebContext.class);
 
     private CcmApplication m_application = null;
     private URL m_requestURL = null;
@@ -65,7 +65,7 @@ public final class WebContext extends Record {
      * Constructor
      */
     WebContext() {
-        super(WebContext.class, s_log, s_fields);
+        super(WebContext.class, LOGGER, s_fields);
     }
 
     /**

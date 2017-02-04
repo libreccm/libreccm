@@ -43,7 +43,6 @@ import com.arsdigita.toolbox.ui.Cancellable;
 import com.arsdigita.toolbox.ui.Section;
 import com.arsdigita.util.UncheckedWrapperException;
 
-import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.PermissionChecker;
 import org.librecms.contentsection.ContentSectionManager;
@@ -57,7 +56,6 @@ import org.librecms.contentsection.privileges.AdminPrivileges;
  */
 final class ContentTypeItemPane extends BaseItemPane {
 
-    private static Logger s_log = Logger.getLogger(ContentTypeItemPane.class);
     private final ACSObjectSelectionModel m_model;
     private final ContentTypeRequestLocal m_type;
     private final SimpleContainer m_detailPane;
@@ -83,10 +81,10 @@ final class ContentTypeItemPane extends BaseItemPane {
 //        m_templates = new SectionTemplatesListing(
 //            new ContentSectionRequestLocal(), m_type);
         m_permissions = new TypePermissionsTable(
-                new ContentSectionRequestLocal(), m_type);
+            new ContentSectionRequestLocal(), m_type);
 
         final ActionLink templateAddLink = new ActionLink(new Label(gz(
-                "cms.ui.type.template.add")));
+            "cms.ui.type.template.add")));
 //        ToDo
 //        final TemplateCreate templateFormSection = new TemplateCreate(m_model);
 //        final Form templateForm = new CancellableForm("AddTemplate",
@@ -173,6 +171,7 @@ final class ContentTypeItemPane extends BaseItemPane {
         public final boolean isCancelled(final PageState state) {
             return m_cancel.isSelected(state);
         }
+
     }
 
     private class SummarySection extends Section {
@@ -189,6 +188,7 @@ final class ContentTypeItemPane extends BaseItemPane {
             group.addAction(new TypeSecurityContainer(editLink));
             group.addAction(new TypeSecurityContainer(deleteLink));
         }
+
     }
 
     private class ElementSection extends Section {
@@ -209,6 +209,7 @@ final class ContentTypeItemPane extends BaseItemPane {
 //                           && !ContentSection.getConfig().getHideUDCTUI();
             return false;
         }
+
     }
 
     private class TemplateSection extends Section {
@@ -227,6 +228,7 @@ final class ContentTypeItemPane extends BaseItemPane {
         public final boolean isVisible(final PageState state) {
             return m_model.isSelected(state) && !isDynamicType(state);
         }
+
     }
 
     private class PermissionsSection extends Section {
@@ -245,6 +247,7 @@ final class ContentTypeItemPane extends BaseItemPane {
         public final boolean isVisible(final PageState state) {
             return m_model.isSelected(state) && !isDynamicType(state);
         }
+
     }
 
 //    private class RelationAttributeSection extends Section {
@@ -291,13 +294,14 @@ final class ContentTypeItemPane extends BaseItemPane {
                 final PageState state = event.getPageState();
 
                 if (state.isVisibleOnPage(ContentTypeItemPane.this)
-                            && m_model.isSelected(state)
-                            && !userCanEdit(state)) {
+                        && m_model.isSelected(state)
+                        && !userCanEdit(state)) {
 //                    m_templates.getRemoveColumn().setVisible(state, false);
 //                    m_templates.getDefaultColumn().setVisible(state, false);
 //                    m_elements.getTable().getColumn(3).setVisible(state, false);
                 }
             }
+
         });
     }
 
@@ -309,19 +313,19 @@ final class ContentTypeItemPane extends BaseItemPane {
 
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final ContentTypeManager typeManager = cdiUtil.findBean(
-                ContentTypeManager.class);
+            ContentTypeManager.class);
         final ContentSectionManager sectionManager = cdiUtil.findBean(
-                ContentSectionManager.class);
+            ContentSectionManager.class);
 
         final ContentType type = m_type.getContentType(state);
         final Class<? extends ContentItem> typeClass;
         try {
             typeClass = (Class<? extends ContentItem>) Class.forName(
-                    type.getContentItemClass());
+                type.getContentItemClass());
         } catch (ClassNotFoundException ex) {
-           throw new UncheckedWrapperException(ex);
+            throw new UncheckedWrapperException(ex);
         }
-        
+
         sectionManager.removeContentTypeFromSection(typeClass, section);
     }
 
@@ -329,11 +333,12 @@ final class ContentTypeItemPane extends BaseItemPane {
      * Determine if the current user has access to edit the content type
      */
     protected static boolean userCanEdit(final PageState state) {
-        final PermissionChecker permissionChecker = CdiUtil.createCdiUtil().findBean(PermissionChecker.class);
+        final PermissionChecker permissionChecker = CdiUtil.createCdiUtil()
+            .findBean(PermissionChecker.class);
         final ContentSection section = CMS.getContext().getContentSection();
-        
+
         return permissionChecker.isPermitted(
-                AdminPrivileges.ADMINISTER_CONTENT_TYPES, section);
+            AdminPrivileges.ADMINISTER_CONTENT_TYPES, section);
     }
 
     /**
@@ -346,4 +351,5 @@ final class ContentTypeItemPane extends BaseItemPane {
     protected final boolean isDynamicType(final PageState state) {
         return false;
     }
+
 }

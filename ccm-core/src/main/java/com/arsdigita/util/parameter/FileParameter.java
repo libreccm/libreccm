@@ -20,7 +20,6 @@ package com.arsdigita.util.parameter;
 
 import java.io.File;
 
-import org.apache.log4j.Logger;
 
 /**
  * A Parameter representing a File
@@ -30,12 +29,12 @@ import org.apache.log4j.Logger;
  * @author bche
  */
 public class FileParameter extends AbstractParameter {
-    private static final Logger s_log = Logger.getLogger(FileParameter.class);
-
+    
     public FileParameter(final String name) {
         super(name, File.class);
     }
 
+    @Override
     public Object unmarshal(final String value, final ErrorList errors) {
         final String sPath = value;
         File file = new File(sPath);
@@ -46,6 +45,7 @@ public class FileParameter extends AbstractParameter {
         }
     }
 
+    @Override
     public String marshal(final Object value) {
         final File file = (File) value;
         if (file == null) {

@@ -18,9 +18,6 @@
  */
 package com.arsdigita.cms;
 
-
-import org.apache.log4j.Logger;
-
 /**
  * <p>
  * A central location for commonly used CMS services and their accessories.</p>
@@ -31,14 +28,9 @@ import org.apache.log4j.Logger;
  *
  * @author Daniel Berrange
  * @see com.arsdigita.kernel.Kernel
- * @version $Id$
  */
 public abstract class CMS {
 
-    /**
-     * Private Logger instance for debugging purpose.
-     */
-    private static final Logger s_log = Logger.getLogger(CMS.class);
 
     /**
      * The CMS XML namespace.

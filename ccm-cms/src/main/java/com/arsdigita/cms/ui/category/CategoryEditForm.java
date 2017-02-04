@@ -25,7 +25,9 @@ import com.arsdigita.bebop.event.FormProcessListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.dispatcher.AccessDeniedException;
 import com.arsdigita.kernel.KernelConfig;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryRepository;
 import org.libreccm.cdi.utils.CdiUtil;
@@ -37,13 +39,14 @@ import org.librecms.contentsection.privileges.AdminPrivileges;
 /**
  * TODO Needs a description.
  *
- * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  * @author Justin Ross &lt;jross@redhat.com&gt;
- * @version $Id: CategoryEditForm.java 2090 2010-04-17 08:04:14Z pboy $
+ * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  */
 final class CategoryEditForm extends BaseCategoryForm {
 
-    private static final Logger s_log = Logger.getLogger(CategoryEditForm.class);
+    private static final Logger LOGGER = LogManager.getLogger(
+        CategoryEditForm.class);
+
     private static final String NO = "no";
     private static final String YES = "yes";
     private final CategoryRequestLocal m_category;
@@ -62,7 +65,7 @@ final class CategoryEditForm extends BaseCategoryForm {
 
         @Override
         public final void init(final FormSectionEvent e)
-                throws FormProcessException {
+            throws FormProcessException {
             final PageState state = e.getPageState();
             final Category category = m_category.getCategory(state);
 
@@ -88,7 +91,6 @@ final class CategoryEditForm extends BaseCategoryForm {
                 m_isVisible.setValue(state, NO);
             }
 
-
             if (category.isEnabled()) {
                 m_isEnabled.setValue(state, YES);
             } else {
@@ -102,21 +104,28 @@ final class CategoryEditForm extends BaseCategoryForm {
 
         @Override
         public final void process(final FormSectionEvent e)
-                throws FormProcessException {
+            throws FormProcessException {
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final PermissionChecker permissionChecker = cdiUtil.findBean(PermissionChecker.class);
-            final ConfigurationManager manager = cdiUtil.findBean(ConfigurationManager.class);
-            final KernelConfig config = manager.findConfiguration(KernelConfig.class);
-            final CategoryRepository categoryRepository = cdiUtil.findBean(CategoryRepository.class);
-
+            final PermissionChecker permissionChecker = cdiUtil.findBean(
+                PermissionChecker.class);
+            final ConfigurationManager manager = cdiUtil.findBean(
+                ConfigurationManager.class);
+            final KernelConfig config = manager.findConfiguration(
+                KernelConfig.class);
+            final CategoryRepository categoryRepository = cdiUtil.findBean(
+                CategoryRepository.class);
 
             final PageState state = e.getPageState();
             final Category category = m_category.getCategory(state);
 
-            if (permissionChecker.isPermitted(AdminPrivileges.ADMINISTER_CATEGORIES, category)) {
+            if (permissionChecker.isPermitted(
+                AdminPrivileges.ADMINISTER_CATEGORIES, category)) {
                 category.setName((String) m_name.getValue(state));
-                final LocalizedString localizedDescription = new LocalizedString();
-                localizedDescription.addValue(config.getDefaultLocale() ,(String) m_description.getValue(state));
+                final LocalizedString localizedDescription
+                                      = new LocalizedString();
+                localizedDescription.addValue(config.getDefaultLocale(),
+                                              (String) m_description.getValue(
+                                                  state));
                 category.setDescription(localizedDescription);
 
                 final String isAbstract = (String) m_isAbstract.getValue(state);
@@ -150,4 +159,5 @@ final class CategoryEditForm extends BaseCategoryForm {
         }
 
     }
+
 }

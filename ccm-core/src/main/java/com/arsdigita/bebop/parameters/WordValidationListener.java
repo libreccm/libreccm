@@ -21,15 +21,15 @@ package com.arsdigita.bebop.parameters;
 import com.arsdigita.bebop.event.ParameterEvent;
 import com.arsdigita.bebop.event.ParameterListener;
 import com.arsdigita.bebop.FormProcessException;
-import com.arsdigita.bebop.parameters.ParameterData;
 
+import org.apache.logging.log4j.LogManager;
 import org.apache.oro.text.perl.Perl5Util;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 public class WordValidationListener implements ParameterListener {
-    private static final Logger s_log =
-        Logger.getLogger( WordValidationListener.class );
+    
+    private static final Logger LOGGER = LogManager.getLogger( WordValidationListener.class );
 
     public void validate(ParameterEvent e)
         throws FormProcessException {
@@ -39,8 +39,8 @@ public class WordValidationListener implements ParameterListener {
 
         if( null == value ) return;
 
-        if( s_log.isDebugEnabled() ) {
-            s_log.debug( "Name: " + d.getName() + ", Value: " + value );
+        if( LOGGER.isDebugEnabled() ) {
+            LOGGER.debug( "Name: " + d.getName() + ", Value: " + value );
         }
 
         Perl5Util re = new Perl5Util();

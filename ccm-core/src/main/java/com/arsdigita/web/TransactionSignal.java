@@ -18,7 +18,8 @@
  */
 package com.arsdigita.web;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * <p>
@@ -34,15 +35,15 @@ class TransactionSignal extends Error {
 
     private static final long serialVersionUID = -6081887476661858043L;
     
-    private static final Logger s_log = Logger
+    private static final Logger LOGGER = LogManager
         .getLogger(TransactionSignal.class);
     
 
     private final boolean m_isCommitRequested;
 
     TransactionSignal(boolean isCommitRequested) {
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Constructing a transaction signal with "
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Constructing a transaction signal with "
                             + "isCommitRequested set " + isCommitRequested);
         }
 

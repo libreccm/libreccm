@@ -19,10 +19,10 @@
 package com.arsdigita.util.parameter;
 
 import com.arsdigita.util.Assert;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import org.apache.log4j.Logger;
 
 /**
  * Aggregates a set of <code>ParameterReaders</code> so they may be
@@ -33,12 +33,8 @@ import org.apache.log4j.Logger;
  * @see ParameterReader
  * @author Rafael H. Schloming &lt;rhs@mit.edu&gt;
  * @author Justin Ross &lt;jross@redhat.com&gt;
- * @version $Id$
  */
 public class CompoundParameterReader implements ParameterReader {
-
-    private static final Logger s_log = Logger.getLogger
-        (CompoundParameterReader.class);
 
     private final List m_readers;
 

@@ -63,10 +63,9 @@ import java.util.Map;
  * @author sdeusch@arsdigita.com
  * @authro <a href="jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class CMSPermissionsPane extends SimpleContainer
-    implements Resettable,
-               ActionListener,
-               RequestListener {
+public class CMSPermissionsPane extends SimpleContainer implements Resettable,
+                                                                   ActionListener,
+                                                                   RequestListener {
 
     // non-shared parameter models; leave package scope for access from its members.
     private ParameterModel searchString = new StringParameter(

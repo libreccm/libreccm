@@ -22,7 +22,8 @@ import com.arsdigita.web.Web;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.libreccm.web.CcmApplication;
 
 /**
@@ -37,7 +38,7 @@ public class WebAppPatternGenerator implements PatternGenerator {
      * set com.arsdigita.templating.WebAppPatternGenerator=DEBUG by uncommenting
      * or adding the line.
      */
-    private static final Logger s_log = Logger.getLogger(
+    private static final Logger LOGGER = LogManager.getLogger(
         WebAppPatternGenerator.class);
 
     /**
@@ -66,8 +67,8 @@ public class WebAppPatternGenerator implements PatternGenerator {
             ctx = ctx.substring(1);
         }
 
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Generating Values key: " + key + " ["
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Generating Values key: " + key + " ["
                         + "Web.getWebContext(): " + Web.getWebContext() + " ,"
                         + "Application: " + Web.getWebContext().getApplication()
                         + "," + "ContextPath: >" + ctx + "<]");

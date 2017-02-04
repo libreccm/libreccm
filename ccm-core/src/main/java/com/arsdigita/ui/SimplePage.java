@@ -24,7 +24,8 @@ import com.arsdigita.bebop.Component;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.util.Classes;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -63,10 +64,11 @@ import java.util.Iterator;
  * 
  */
 public class SimplePage extends BasePage {
+    
     private static SimplePageLayout s_default = new SimplePageLayout();
     private static HashMap s_layouts = new HashMap();
 
-    private static Logger s_log = Logger.getLogger(SimplePage.class);
+    private static Logger LOGGER = LogManager.getLogger(SimplePage.class);
 
     /**
      * Set the default layout for all applications, which haven't
@@ -135,8 +137,8 @@ public class SimplePage extends BasePage {
      * @param child the component to add to the body
      */
     public void add(Component child) {
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Adding component to body " + child.getClass());
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Adding component to body " + child.getClass());
         }
         
         super.add(child);
@@ -150,8 +152,8 @@ public class SimplePage extends BasePage {
      */
     public void add(Component child,
                     int constraints) {
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Adding component to body " + child.getClass());
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Adding component to body " + child.getClass());
         }
         
         super.add(child, constraints);
@@ -169,8 +171,8 @@ public class SimplePage extends BasePage {
         while (tags.hasNext()) {
             String tag = (String)tags.next();
 
-            if (s_log.isDebugEnabled()) {
-                s_log.debug("Adding component with tag " + tag);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Adding component with tag " + tag);
             }
         
             
@@ -180,8 +182,8 @@ public class SimplePage extends BasePage {
                 SimpleComponent child = (SimpleComponent)Classes.newInstance(klass);
                 child.setMetaDataAttribute("tag", tag);
 
-                if (s_log.isDebugEnabled()) {
-                    s_log.debug("Adding component " + child.getClass());
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Adding component " + child.getClass());
                 }
         
                 super.add(child);

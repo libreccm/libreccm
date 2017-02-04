@@ -24,7 +24,8 @@ import com.arsdigita.util.parameter.ParameterReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * An implementation of <code>ParameterReader</code> that uses
@@ -39,7 +40,7 @@ import org.apache.log4j.Logger;
  */
 public class JavaPropertyReader implements ParameterReader {
 
-    private static final Logger s_log = Logger.getLogger
+    private static final Logger LOGGER = LogManager.getLogger
         (JavaPropertyReader.class);
 
     private final Properties m_props;
@@ -86,8 +87,8 @@ public class JavaPropertyReader implements ParameterReader {
      */
     @Override
     public final String read(final Parameter param, final ErrorList errors) {
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Reading " + param + " from " + m_props);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Reading " + param + " from " + m_props);
         }
 
         if (Assert.isEnabled()) {

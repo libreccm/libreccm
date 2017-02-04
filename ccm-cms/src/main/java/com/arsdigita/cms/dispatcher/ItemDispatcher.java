@@ -21,8 +21,10 @@ package com.arsdigita.cms.dispatcher;
 import com.arsdigita.dispatcher.ChainedDispatcher;
 import com.arsdigita.dispatcher.DispatcherHelper;
 import com.arsdigita.dispatcher.RequestContext;
-import com.arsdigita.util.UncheckedWrapperException;
 import com.arsdigita.web.LoginSignal;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -33,7 +35,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.PermissionChecker;
 import org.libreccm.security.Shiro;
@@ -48,12 +49,11 @@ import org.librecms.dispatcher.ItemResolver;
  * Dispatches to the JSP or Servlet for rendering a content item.
  *
  * @author Karl Goldstein (karlg@arsdigita.com)
- * @version $Revision$ $DateTime: 2004/08/17 23:15:09 $
  *
  */
 public class ItemDispatcher implements ChainedDispatcher {
 
-    private static Logger s_log = Logger.getLogger(ItemDispatcher.class);
+    private static Logger LOGGER = LogManager.getLogger(ItemDispatcher.class);
 
     public static Map s_itemResolverCache = Collections.synchronizedMap(
         new HashMap());
@@ -95,11 +95,11 @@ public class ItemDispatcher implements ChainedDispatcher {
         String queryString = request.getQueryString();
         String url = actx.getRemainingURLPart();
 
-        s_log.info("Resolving item URL " + url);
+        LOGGER.info("Resolving item URL " + url);
 
         if (url.endsWith(XML_SUFFIX)) {
             request.setAttribute(XML_MODE, Boolean.TRUE);
-            s_log.debug("StraightXML Requested");
+            LOGGER.debug("StraightXML Requested");
             url = "/" + url.substring(0, url.length() - XML_SUFFIX.length());
         } else {
             request.setAttribute(XML_MODE, Boolean.FALSE);
@@ -110,7 +110,7 @@ public class ItemDispatcher implements ChainedDispatcher {
             } else if (url.endsWith("/")) {
                 url = "/" + url.substring(0, url.length() - 1);
             } else {
-                s_log.warn("Fail: URL doesn't have right suffix.");
+                LOGGER.warn("Fail: URL doesn't have right suffix.");
                 return ChainedDispatcher.DISPATCH_CONTINUE;
             }
         }
@@ -121,13 +121,13 @@ public class ItemDispatcher implements ChainedDispatcher {
 
         final ContentItem item = getItem(section, url);
         if (item == null) {
-            s_log.warn("Fail: No live item found matching " + url);
+            LOGGER.warn("Fail: No live item found matching " + url);
             return ChainedDispatcher.DISPATCH_CONTINUE;
         }
 
         request.setAttribute(ContentSectionDispatcher.CONTENT_ITEM, item);
 
-        s_log.debug("MATCHED " + item.getObjectId());
+        LOGGER.debug("MATCHED " + item.getObjectId());
 
         // Work out how long to cache for....
         // We take minimum(default timeout, lifecycle expiry)
@@ -216,7 +216,7 @@ public class ItemDispatcher implements ChainedDispatcher {
 
             // look up folder if it's an index
             url = url.substring(0, url.length() - INDEX_FILE.length());
-            s_log.info("Attempting to match folder " + url);
+            LOGGER.info("Attempting to match folder " + url);
             item = itemResolver.getItem(section, url, "live");
             if (item != null) {
                 hasPermission = permissionChecker.isPermitted(

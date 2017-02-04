@@ -30,6 +30,7 @@ import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
 /**
@@ -50,6 +51,9 @@ class CcmShiroRealmController {
 
     @Inject
     private RoleRepository roleRepo;
+
+    @Inject
+    private PermissionManager permissionManager;
 
     @Inject
     private ConfigurationManager confManager;
@@ -99,18 +103,23 @@ class CcmShiroRealmController {
         final String userIdentifier) {
 
         final User user = findUser(userIdentifier);
-        
+
         // Create a SimpleAuthorizationInfo instance. Contains the information
         // from the database in the format expected by Shiro.
         final SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
         // Get the Roles directly assigned to the user.
         for (final RoleMembership roleMembership : user.getRoleMemberships()) {
             // Add the role to the AuthorizationInfo object.
-            info.addRole(roleMembership.getRole().getName());
+            final Role role = roleMembership.getRole();
+            info.addRole(role.getName());
 
-            // Add the permissions assigned to the role to the AuthorizatonInfo. 
-            for (final Permission permission : roleMembership.getRole()
-                .getPermissions()) {
+            final List<Permission> permissions = permissionManager
+                .findPermissionsForRole(role);
+
+            // Add the permissions assigned to the role to the AuthorizatonInfo. )
+//            for (final Permission permission : roleMembership.getRole()
+//                .getPermissions()) {
+            for (final Permission permission : permissions) {
                 info.addStringPermission(permissionToString(permission));
             }
         }
@@ -133,7 +142,7 @@ class CcmShiroRealmController {
 
         return info;
     }
-    
+
     /**
      * Helper method for converting a {@link Permission} to the string format
      * used by Shiro.

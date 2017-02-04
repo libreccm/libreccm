@@ -22,7 +22,7 @@ import com.arsdigita.bebop.Tree;
 
 public class FolderTree extends Tree {
 
-    public FolderTree(FolderSelectionModel folderSel) {
+    public FolderTree(final FolderSelectionModel folderSel) {
         super(new FolderTreeModelBuilder());
         setSelectionModel(folderSel);
     }

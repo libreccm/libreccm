@@ -29,6 +29,8 @@ import com.arsdigita.web.RedirectSignal;
 import com.arsdigita.web.URL;
 import com.arsdigita.web.Web;
 
+import org.apache.logging.log4j.LogManager;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -49,7 +51,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.PageContext;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import java.net.URLEncoder;
 
@@ -59,7 +61,6 @@ import java.net.URLEncoder;
  *
  * @author Bill Schneider
  * @since 4.5
- * @version $Id$
  */
 public final class DispatcherHelper implements DispatcherConstants {
 
@@ -69,7 +70,7 @@ public final class DispatcherHelper implements DispatcherConstants {
      * set com.arsdigita.dispatcher.DispatcherHelper=DEBUG by uncommenting or
      * adding the line.
      */
-    private static final Logger s_log = Logger.getLogger(DispatcherHelper.class);
+    private static final Logger LOGGER = LogManager.getLogger(DispatcherHelper.class);
     private static String s_webappCtx;
     private static String s_staticURL;
     private static boolean s_cachingActive;
@@ -215,7 +216,7 @@ public final class DispatcherHelper implements DispatcherConstants {
         // Of course if the request disappears off to a 3rd
         // party servlet we're screwed
         req = restoreOriginalRequest(req);
-        s_log.debug("Forwarding the request object " + req);
+        LOGGER.debug("Forwarding the request object " + req);
         if (attr != null) {
             rd.include(req, resp);
             req.setAttribute(INCLUDE_URI, attr);
@@ -397,7 +398,7 @@ public final class DispatcherHelper implements DispatcherConstants {
                                              RequestContext actx)
         throws RedirectException, DirectoryListingException,
                java.io.FileNotFoundException {
-        s_log.debug("Resolving abstract file");
+        LOGGER.debug("Resolving abstract file");
 
         File dirToSearch = null;
         String fStr = abstractFile.getAbsolutePath();
@@ -539,7 +540,7 @@ public final class DispatcherHelper implements DispatcherConstants {
                 .restoreRequestWrapper(orig);
 
             if (previous instanceof MultipartHttpServletRequest) {
-                s_log.debug("Build new multipart request from previous "
+                LOGGER.debug("Build new multipart request from previous "
                                 + previous + " and current " + orig);
 
                 MultipartHttpServletRequest previousmp
@@ -551,9 +552,9 @@ public final class DispatcherHelper implements DispatcherConstants {
                 DispatcherHelper.saveOriginalRequest(sreq,
                                                      orig);
 
-                s_log.debug("The main request is now " + sreq);
+                LOGGER.debug("The main request is now " + sreq);
             } else {
-                s_log.debug(
+                LOGGER.debug(
                     "The request is a new multipart; wrapping the request "
                         + "object");
                 try {
@@ -565,7 +566,7 @@ public final class DispatcherHelper implements DispatcherConstants {
                 DispatcherHelper.saveOriginalRequest(sreq, orig);
             }
         } else {
-            s_log.debug("The request is not multipart; proceeding "
+            LOGGER.debug("The request is not multipart; proceeding "
                             + "without wrapping the request");
         }
         return sreq;
@@ -634,8 +635,8 @@ public final class DispatcherHelper implements DispatcherConstants {
     public static void sendExternalRedirect(HttpServletResponse resp,
                                             String url)
         throws IOException {
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Redirecting to URL '" + url + "'", new Throwable());
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Redirecting to URL '" + url + "'", new Throwable());
         }
 
         if (StringUtils.emptyString(url)) {
@@ -670,23 +671,23 @@ public final class DispatcherHelper implements DispatcherConstants {
 
             if (sep == -1) {
                 destination = URL.there(req, url);
-                if (s_log.isDebugEnabled()) {
-                    s_log.debug("Setting destination to " + destination);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Setting destination to " + destination);
                 }
             } else {
                 final ParameterMap params = ParameterMap.fromString(url
                     .substring(sep + 1));
 
                 destination = URL.there(req, url.substring(0, sep), params);
-                if (s_log.isDebugEnabled()) {
-                    s_log.debug("Setting destination with map to "
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Setting destination with map to "
                                     + destination);
                 }
             }
             throw new RedirectSignal(destination, true);
         } else {
-            if (s_log.isDebugEnabled()) {
-                s_log.debug("Redirecting to URL without using URL.there. "
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Redirecting to URL without using URL.there. "
                                 + "URL is " + url);
             }
             throw new RedirectSignal(url, true);
@@ -844,7 +845,7 @@ public final class DispatcherHelper implements DispatcherConstants {
             webappCtx = "/" + webappCtx;
         }
         s_webappCtx = webappCtx;
-        s_log.warn("webappContext set to '" + webappCtx + "'");
+        LOGGER.warn("webappContext set to '" + webappCtx + "'");
     }
 
     /**
@@ -871,7 +872,7 @@ public final class DispatcherHelper implements DispatcherConstants {
                     s_webappCtx = "";
                 }
                 if (!s_webappCtx.equals(webappCtx)) {
-                    s_log.warn(
+                    LOGGER.warn(
                         "webappContext changed. Expected='" + s_webappCtx
                             + "' found='" + webappCtx
                         + "'.\nPerhaps the enterprise.init "
@@ -967,7 +968,7 @@ public final class DispatcherHelper implements DispatcherConstants {
         // XXX Probably need to assert here if isCommitted() returns true.
         // But first need to figure out what is setting Cache-Control.
         if (response.containsHeader("Cache-Control")) {
-            s_log.warn("Cache-Control has already been set. Overwriting.");
+            LOGGER.warn("Cache-Control has already been set. Overwriting.");
         }
 
         forceCacheDisable(response);
@@ -983,7 +984,7 @@ public final class DispatcherHelper implements DispatcherConstants {
             return;
         }
 
-        s_log.info("Setting cache control to disable");
+        LOGGER.info("Setting cache control to disable");
         // Aggressively defeat caching - works even for HTTP 0.9 proxies/clients!
         response.setHeader("Pragma", "no-cache");
         response.setHeader("Cache-Control", "must-revalidate, no-cache");
@@ -1058,7 +1059,7 @@ public final class DispatcherHelper implements DispatcherConstants {
         Assert.isTrue(!response.containsHeader("Cache-Control"),
                       "Caching headers have already been set");
 
-        s_log.info("Setting cache control to user");
+        LOGGER.info("Setting cache control to user");
 
         // For HTTP/1.1 user agents, we tell them only cache
         // for the original person  making the request
@@ -1158,7 +1159,7 @@ public final class DispatcherHelper implements DispatcherConstants {
         Calendar expires = Calendar.getInstance();
         expires.add(Calendar.SECOND, maxage);
 
-        s_log.info("Setting cache control to world");
+        LOGGER.info("Setting cache control to world");
         response.setHeader("Cache-Control", "public, max-age=" + maxage);
         response.setHeader("Expires",
                            rfc1123_formatter.format(expires.getTime()));

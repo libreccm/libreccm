@@ -20,13 +20,11 @@ package com.arsdigita.cms.ui.lifecycle;
 
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.RequestLocal;
+
 import org.librecms.lifecycle.PhaseDefinition;
-import org.apache.log4j.Logger;
 
 public abstract class PhaseRequestLocal extends RequestLocal {
 
-    private static final Logger s_log = Logger.getLogger
-        (PhaseRequestLocal.class);
 
     public final PhaseDefinition getPhase(final PageState state) {
         return (PhaseDefinition) get(state);

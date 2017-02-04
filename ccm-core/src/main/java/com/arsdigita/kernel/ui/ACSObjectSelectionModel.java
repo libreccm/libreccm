@@ -31,11 +31,9 @@ import com.arsdigita.util.Assert;
 import com.arsdigita.util.UncheckedWrapperException;
 
 import java.math.BigDecimal;
-import java.lang.reflect.Constructor;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.core.CcmObject;
 import org.libreccm.core.CcmObjectRepository;
