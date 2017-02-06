@@ -335,12 +335,11 @@ class CMSPermissionsTables {
 
         private final List<String> userPrivileges = new ArrayList<>();
 
-        private final Iterator<Permission> iterator;
+        private Iterator<Permission> iterator;
         private Permission currentPermission;
 
         public DirectPermissionsTableModel(final CcmObject object) {
 //            this.iterator = permissions.iterator();
-            throw new UnsupportedOperationException();
         }
 
         @Override
