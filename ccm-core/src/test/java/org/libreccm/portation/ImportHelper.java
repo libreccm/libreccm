@@ -18,36 +18,33 @@
  */
 package org.libreccm.portation;
 
+import org.libreccm.categorization.Categorization;
 import org.libreccm.categorization.CategorizationMarshaller;
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryMarshaller;
 import org.libreccm.security.Group;
 import org.libreccm.security.GroupMarshaller;
+import org.libreccm.security.GroupMembership;
 import org.libreccm.security.GroupMembershipMarshaller;
+import org.libreccm.security.Permission;
 import org.libreccm.security.PermissionMarshaller;
+import org.libreccm.security.Role;
 import org.libreccm.security.RoleMarshaller;
+import org.libreccm.security.RoleMembership;
 import org.libreccm.security.RoleMembershipMarshaller;
+import org.libreccm.security.User;
 import org.libreccm.security.UserMarshaller;
+import org.libreccm.workflow.AssignableTask;
 import org.libreccm.workflow.AssignableTaskMarshaller;
+import org.libreccm.workflow.TaskAssignment;
 import org.libreccm.workflow.TaskAssignmentMarshaller;
+import org.libreccm.workflow.Workflow;
 import org.libreccm.workflow.WorkflowMarshaller;
+import org.libreccm.workflow.WorkflowTemplate;
 import org.libreccm.workflow.WorkflowTemplateMarshaller;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-
-import java.util.List;
-import org.libreccm.categorization.Categorization;
-import org.libreccm.security.GroupMembership;
-import org.libreccm.security.Permission;
-import org.libreccm.security.Role;
-import org.libreccm.security.RoleMembership;
-import org.libreccm.security.User;
-import org.libreccm.workflow.AssignableTask;
-import org.libreccm.workflow.Task;
-import org.libreccm.workflow.TaskAssignment;
-import org.libreccm.workflow.Workflow;
-import org.libreccm.workflow.WorkflowTemplate;
 
 /**
  * Helper to implement the specifics for the importations. Makes source code
@@ -101,74 +98,73 @@ class ImportHelper {
     private PermissionMarshaller permissionMarshaller;
 
 
-    public void importCategories() {
+    void importCategories() {
         categoryMarshaller.prepare(Format.XML, pathName,
                 "categories.xml", indentation);
-        List<Category> categories = categoryMarshaller.importFile();
+        categoryMarshaller.importFile();
     }
 
-    public void importCategorizations() {
+    void importCategorizations() {
         categorizationMarshaller.prepare(Format.XML, pathName,
                 "categorizations.xml", indentation);
         categorizationMarshaller.importFile();
     }
 
-    public void importUsers() {
+    void importUsers() {
         userMarshaller.prepare(Format.XML, pathName,
                 "users.xml", indentation);
         userMarshaller.importFile();
     }
 
-    public void importGroups() {
+    void importGroups() {
         groupMarshaller.prepare(Format.XML, pathName,
                 "groups.xml", indentation);
         groupMarshaller.importFile();
     }
 
-    public void importGroupMemberships() {
-
+    void importGroupMemberships() {
         groupMembershipMarshaller.prepare(Format.XML, pathName,
                 "groupMemberships.xml", indentation);
         groupMembershipMarshaller.importFile();
     }
 
-    public void importRoles() {
+    void importRoles() {
         roleMarshaller.prepare(Format.XML, pathName,
                 "roles.xml", indentation);
         roleMarshaller.importFile();
     }
 
-    public void importRoleMemberships() {
+    void importRoleMemberships() {
         roleMembershipMarshaller.prepare(Format.XML, pathName,
                 "roleMemberships.xml", indentation);
         roleMembershipMarshaller.importFile();
     }
 
-    public void importWorkflowTemplates() {
+    void importWorkflowTemplates() {
         workflowTemplateMarshaller.prepare(Format.XML, pathName,
                 "workflowTemplates.xml", indentation);
         workflowTemplateMarshaller.importFile();
     }
 
-    public void importWorkflows() {
+    void importWorkflows() {
         workflowMarshaller.prepare(Format.XML, pathName,
                 "workflows.xml", indentation);
         workflowMarshaller.importFile();
     }
 
-    public void importAssignableTasks() {
+    void importAssignableTasks() {
         assignableTaskMarshaller.prepare(Format.XML, pathName,
                 "assignableTasks.xml", indentation);
         assignableTaskMarshaller.importFile();
     }
 
-    public void importTaskAssignments() {
+    void importTaskAssignments() {
         taskAssignmentMarshaller.prepare(Format.XML, pathName,
                 "taskAssignments.xml", indentation);
         taskAssignmentMarshaller.importFile();
     }
 
-    public void importPermissions() {
+    void importPermissions() {
         permissionMarshaller.prepare(Format.XML, pathName,
                 "permissions.xml", indentation);
         permissionMarshaller.importFile();
