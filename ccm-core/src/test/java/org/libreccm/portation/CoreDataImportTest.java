@@ -18,11 +18,10 @@
  */
 package org.libreccm.portation;
 
-import javax.inject.Inject;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
+import org.jboss.arquillian.persistence.CleanupUsingScript;
 import org.jboss.arquillian.persistence.CreateSchema;
 import org.jboss.arquillian.persistence.PersistenceTest;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
@@ -35,11 +34,14 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+import org.libreccm.tests.categories.IntegrationTest;
+
+import javax.faces.bean.RequestScoped;
+import javax.inject.Inject;
 
 import static org.libreccm.testutils.DependenciesHelpers.getModuleDependencies;
-
-import org.jboss.arquillian.persistence.CleanupUsingScript;
 
 
 /**
@@ -49,12 +51,13 @@ import org.jboss.arquillian.persistence.CleanupUsingScript;
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  * @version created on 12/1/16
  */
-//@org.junit.experimental.categories.Category(IntegrationTest.class)
+@Category(IntegrationTest.class)
 @RunWith(Arquillian.class)
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
 @CreateSchema({"create_ccm_core_schema.sql"})
 @CleanupUsingScript({"cleanup.sql"})
+@RequestScoped
 public class CoreDataImportTest {
 
     @Inject
@@ -113,7 +116,6 @@ public class CoreDataImportTest {
 
     @Before
     public void setUp() {
-        //importHelper = new ImportHelper();
     }
 
     @After
@@ -125,73 +127,73 @@ public class CoreDataImportTest {
     @Test
     @InSequence(105)
     public void categoriesShouldBeImported() {
-        importHelper.importCategories();
+        importHelper.importRoleMemberships();
     }
 
     @Test
     @InSequence(110)
     public void categorizationsShouldBeImported() {
-        importHelper.importCategorizations();
+        importHelper.importGroupMemberships();
     }
 
     @Test
     @InSequence(115)
     public void usersShouldBeImported() {
-        importHelper.importUsers();
+        importHelper.importGroups();
     }
 
     @Test
     @InSequence(120)
     public void groupsShouldBeImported() {
-        importHelper.importGroups();
+        importHelper.importUsers();
     }
 
     @Test
     @InSequence(125)
     public void groupMembershipsShouldBeImported() {
-        importHelper.importGroupMemberships();
+        importHelper.importTaskAssignments();
     }
 
     @Test
     @InSequence(130)
     public void rolesShouldBeImported() {
-        importHelper.importRoles();
+        importHelper.importAssignableTasks();
     }
 
     @Test
     @InSequence(135)
     public void roleMembershipsShouldBeImported() {
-        importHelper.importRoleMemberships();
+        importHelper.importWorkflowTemplates();
     }
 
     @Test
     @InSequence(140)
     public void workflowTemplatesShouldBeImported() {
-        importHelper.importWorkflowTemplates();
+        importHelper.importWorkflows();
     }
 
     @Test
     @InSequence(145)
     public void workflowsShouldBeImported() {
-        importHelper.importWorkflows();
+        importHelper.importCategorizations();
     }
 
     @Test
     @InSequence(150)
     public void assignableTasksShouldBeImported() {
-        importHelper.importAssignableTasks();
+        importHelper.importPermissions();
     }
 
     @Test
     @InSequence(155)
     public void taskAssignmentsShouldBeImported() {
-        importHelper.importTaskAssignments();
+        importHelper.importCategories();
     }
 
     @Test
     @InSequence(160)
     public void permissionsShouldBeImported() {
-        importHelper.importPermissions();
+        importHelper.importRoles();
     }
 
 
