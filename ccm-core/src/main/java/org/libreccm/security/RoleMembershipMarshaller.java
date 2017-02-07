@@ -45,10 +45,10 @@ public class RoleMembershipMarshaller extends AbstractMarshaller<RoleMembership>
     @Override
     @Transactional(Transactional.TxType.REQUIRED)
     protected void insertIntoDb(RoleMembership portableObject) {
-        if (portableObject.getMembershipId() == 0) {
+//        if (portableObject.getMembershipId() == 0) {
             entityManager.persist(portableObject);
-        } else {
-            entityManager.merge(portableObject);
-        }
+//        } else {
+//            entityManager.merge(portableObject);
+//        }
     }
 }

@@ -174,9 +174,10 @@ public abstract class AbstractMarshaller<P extends Portable> {
      * of the list represents an object of the file. Then retrieves each object
      * from the corresponding string in the list.
      *
-     * @return List of imported objects.
+     * @return If error occurs true, otherwise false.
      */
-    public List<P> importFile() {
+    public boolean importFile() {
+        boolean error = false;
         File file = new File(filename);
 
         List<String> lines = null;
@@ -186,6 +187,7 @@ public abstract class AbstractMarshaller<P extends Portable> {
             LOGGER.error("Unable to read lines of the file with " +
                     "name {}.", file.getName());
             LOGGER.error(e);
+            error = true;
         }
 
         List<P> objects = new ArrayList<>();
@@ -201,6 +203,7 @@ public abstract class AbstractMarshaller<P extends Portable> {
                             LOGGER.error("Unable to read objects " +
                                     "from XML line:\n \"{}\"", line);
                             LOGGER.error(e);
+                            error = true;
                         }
                         break;
 
@@ -214,10 +217,11 @@ public abstract class AbstractMarshaller<P extends Portable> {
                 } else {
                     emptyObjects+=1;
                     LOGGER.info("Count of empty objects: {}", emptyObjects);
+                    error = true;
                 }
             }
         }
-        return objects;
+        return error;
     }
 
     /**

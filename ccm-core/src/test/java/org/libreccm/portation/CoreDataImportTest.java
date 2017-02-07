@@ -31,6 +31,7 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -107,6 +108,8 @@ public class CoreDataImportTest {
                         .class.getPackage())
                 .addPackage(org.libreccm.jpa.EntityManagerProducer
                         .class.getPackage())
+                .addClass(com.arsdigita.util.UncheckedWrapperException
+                        .class)
                 .addAsLibraries(getModuleDependencies())
                 .addAsResource("test-persistence.xml",
                         "META-INF/persistence.xml")
@@ -127,70 +130,73 @@ public class CoreDataImportTest {
     @Test
     @InSequence(105)
     public void categoriesShouldBeImported() {
-        importHelper.importRoleMemberships();
+        Assert.assertFalse(importHelper.importRoleMemberships());
     }
 
-    @Test
+    //@Test
     @InSequence(110)
     public void categorizationsShouldBeImported() {
         importHelper.importGroupMemberships();
     }
 
-    @Test
+    //@Test
     @InSequence(115)
     public void usersShouldBeImported() {
         importHelper.importGroups();
     }
 
-    @Test
+    //@Test
     @InSequence(120)
     public void groupsShouldBeImported() {
         importHelper.importUsers();
     }
 
-    @Test
+    //@Test
     @InSequence(125)
     public void groupMembershipsShouldBeImported() {
         importHelper.importTaskAssignments();
     }
 
-    @Test
+    //@Test
     @InSequence(130)
     public void rolesShouldBeImported() {
         importHelper.importAssignableTasks();
     }
 
-    @Test
+    //@Test
     @InSequence(135)
     public void roleMembershipsShouldBeImported() {
         importHelper.importWorkflowTemplates();
     }
 
-    @Test
+    //@Test
     @InSequence(140)
     public void workflowTemplatesShouldBeImported() {
         importHelper.importWorkflows();
     }
 
-    @Test
+
+
+
+    //@Test
     @InSequence(145)
     public void workflowsShouldBeImported() {
         importHelper.importCategorizations();
     }
 
-    @Test
+    //@Test
     @InSequence(150)
     public void assignableTasksShouldBeImported() {
         importHelper.importPermissions();
     }
 
-    @Test
+    //@Test
     @InSequence(155)
     public void taskAssignmentsShouldBeImported() {
         importHelper.importCategories();
     }
 
-    @Test
+    //@Test
     @InSequence(160)
     public void permissionsShouldBeImported() {
         importHelper.importRoles();
