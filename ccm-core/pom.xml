@@ -433,7 +433,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.7.5.201505241946</version>
+                <version>0.7.8</version>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -801,7 +801,7 @@
                 <dependency>
                     <groupId>org.jboss.arquillian.extension</groupId>
                     <artifactId>arquillian-jacoco</artifactId>
-                    <version>1.0.0.Alpha8</version>
+                    <version>1.0.0.Alpha9</version>
                 </dependency>
                 <dependency>
                     <groupId>net.sf.saxon</groupId>

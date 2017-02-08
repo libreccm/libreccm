@@ -158,7 +158,7 @@ class CMSPermissionsGrant {
                     }
                 }
             }
-            parent.showAdmin(state);
+//            parent.showAdmin(state);
         }
 
     }
