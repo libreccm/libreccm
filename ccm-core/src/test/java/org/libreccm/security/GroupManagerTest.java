@@ -118,8 +118,6 @@ public class GroupManagerTest {
             .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
             .addPackage(com.arsdigita.kernel.security.SecurityConfig.class
                 .getPackage())
-            .addPackage(com.arsdigita.util.UncheckedWrapperException.class
-                .getPackage())
             .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
             .addClass(com.arsdigita.kernel.KernelConfig.class)
             .addClass(com.arsdigita.kernel.security.SecurityConfig.class)

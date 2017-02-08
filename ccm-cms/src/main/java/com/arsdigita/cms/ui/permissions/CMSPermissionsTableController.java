@@ -21,14 +21,17 @@ package com.arsdigita.cms.ui.permissions;
 import com.arsdigita.cms.CMS;
 
 import org.libreccm.core.CcmObject;
-import org.libreccm.security.Permission;
+import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.security.PermissionChecker;
 import org.libreccm.security.PermissionManager;
 import org.libreccm.security.Role;
-import org.librecms.contentsection.ContentItem;
+import org.librecms.contentsection.ContentSection;
+import org.librecms.contentsection.ContentSectionRepository;
 import org.librecms.contentsection.privileges.ItemPrivileges;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
@@ -43,6 +46,9 @@ import javax.transaction.Transactional;
 class CMSPermissionsTableController {
 
     @Inject
+    private ContentSectionRepository sectionRepo;
+
+    @Inject
     private PermissionManager permissionManager;
 
     @Inject
@@ -52,7 +58,14 @@ class CMSPermissionsTableController {
     public List<CMSPermissionsTableRow> buildDirectPermissionsRows(
         final CcmObject object) {
 
-        final List<Role> roles = CMS.getContext().getContentSection().getRoles();
+        final Optional<ContentSection> section = sectionRepo.findById(CMS
+            .getContext().getContentSection().getObjectId());
+        final List<Role> roles = section
+            .orElseThrow(() -> new UnexpectedErrorException(String.format(
+            "The content section %s from the CMS context was not found in"
+                + "the database.",
+            Objects.toString(CMS.getContext().getContentSection()))))
+            .getRoles();
 
         return roles.stream()
             .map(role -> buildRow(role, object))
@@ -63,7 +76,7 @@ class CMSPermissionsTableController {
     }
 
     private CMSPermissionsTableRow buildRow(final Role role,
-                                           final CcmObject object) {
+                                            final CcmObject object) {
         final List<String> privileges = permissionManager
             .listDefiniedPrivileges(ItemPrivileges.class);
 
@@ -79,8 +92,8 @@ class CMSPermissionsTableController {
     }
 
     private CMSPermissionsTableColumn buildColumn(final Role role,
-                                                 final CcmObject object,
-                                                 final String privilege) {
+                                                  final CcmObject object,
+                                                  final String privilege) {
         final CMSPermissionsTableColumn column = new CMSPermissionsTableColumn();
 
         column.setPrivilege(privilege);
@@ -102,5 +115,5 @@ class CMSPermissionsTableController {
             permissionManager.grantPrivilege(privilege, role, object);
         }
     }
-    
+
 }

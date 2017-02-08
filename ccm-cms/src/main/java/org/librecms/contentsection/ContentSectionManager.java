@@ -19,11 +19,11 @@
 package org.librecms.contentsection;
 
 import com.arsdigita.kernel.KernelConfig;
-import com.arsdigita.util.UncheckedWrapperException;
 
 import org.libreccm.categorization.CategoryRepository;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.core.CoreConstants;
+import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.Permission;
 import org.libreccm.security.PermissionManager;
@@ -459,14 +459,14 @@ public class ContentSectionManager {
                 itemResolverClazz);
             
             if (instance.isUnsatisfied()) {
-                throw new UncheckedWrapperException(String.format(
+                throw new UnexpectedErrorException(String.format(
                     "No ItemResolver \"{}\" found.", 
                     itemResolverClazz.getName()));
             } else {
                 return instance.get();
             }
         } catch (ClassNotFoundException ex) {
-            throw new UncheckedWrapperException(ex);
+            throw new UnexpectedErrorException(ex);
         }
     }
 

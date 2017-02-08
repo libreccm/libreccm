@@ -122,7 +122,6 @@ public class GroupRepositoryTest {
             .addPackage(org.libreccm.tests.categories.IntegrationTest.class
                 .getPackage())
             .addClass(org.libreccm.portation.Portable.class)
-            .addClass(com.arsdigita.util.UncheckedWrapperException.class)
             .addAsLibraries(getModuleDependencies())
             .addAsResource("configs/shiro.ini", "shiro.ini")
             .addAsResource("test-persistence.xml",

@@ -19,7 +19,6 @@
 package org.librecms.contentsection;
 
 import com.arsdigita.kernel.KernelConfig;
-import com.arsdigita.util.UncheckedWrapperException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -42,6 +41,7 @@ import org.libreccm.categorization.Categorization;
 import org.libreccm.categorization.CategoryManager;
 import org.libreccm.categorization.ObjectNotAssignedToCategoryException;
 import org.libreccm.configuration.ConfigurationManager;
+import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.l10n.LocalizedString;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
@@ -68,8 +68,8 @@ import java.util.UUID;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+
 import org.libreccm.security.PermissionChecker;
-import org.libreccm.security.PermissionManager;
 import org.librecms.contentsection.privileges.TypePrivileges;
 
 /**
@@ -615,7 +615,7 @@ public class ContentItemManager {
         try {
             target = source.getClass().newInstance();
         } catch (InstantiationException | IllegalAccessException ex) {
-            throw new UncheckedWrapperException(ex);
+            throw new UnexpectedErrorException(ex);
         }
 
         copyAsset(source, target);
@@ -655,7 +655,7 @@ public class ContentItemManager {
         try {
             beanInfo = Introspector.getBeanInfo(source.getClass());
         } catch (IntrospectionException ex) {
-            throw new UncheckedWrapperException(ex);
+            throw new UnexpectedErrorException(ex);
         }
 
         for (final PropertyDescriptor propertyDescriptor : beanInfo.
@@ -685,7 +685,7 @@ public class ContentItemManager {
                 } catch (IllegalAccessException
                          | IllegalArgumentException
                          | InvocationTargetException ex) {
-                    throw new UncheckedWrapperException(ex);
+                    throw new UnexpectedErrorException(ex);
                 }
 
                 copyLocalizedString(sourceStr, targetStr);
@@ -697,7 +697,7 @@ public class ContentItemManager {
                 } catch (IllegalAccessException
                          | IllegalArgumentException
                          | InvocationTargetException ex) {
-                    throw new UncheckedWrapperException(ex);
+                    throw new UnexpectedErrorException(ex);
                 }
             }
         }
@@ -860,7 +860,7 @@ public class ContentItemManager {
                             targetAsset = sourceAttachment.getAsset().getClass()
                                 .newInstance();
                         } catch (InstantiationException | IllegalAccessException ex) {
-                            throw new UncheckedWrapperException(ex);
+                            throw new UnexpectedErrorException(ex);
                         }
                         copyAsset(sourceAsset, targetAsset);
 

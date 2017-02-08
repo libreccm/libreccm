@@ -18,11 +18,10 @@
  */
 package org.libreccm.pagemodel;
 
-import com.arsdigita.util.UncheckedWrapperException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.core.CoreConstants;
+import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.modules.CcmModule;
 import org.libreccm.modules.Module;
 import org.libreccm.security.AuthorizationRequired;
@@ -301,7 +300,7 @@ public class PageModelManager {
         try {
             liveModel = clazz.newInstance();
         } catch (InstantiationException | IllegalAccessException ex) {
-            throw new UncheckedWrapperException(ex);
+            throw new UnexpectedErrorException(ex);
         }
 
         liveModel.setModelUuid(draftModel.getModelUuid());
@@ -310,7 +309,7 @@ public class PageModelManager {
         try {
             beanInfo = Introspector.getBeanInfo(clazz);
         } catch (IntrospectionException ex) {
-            throw new UncheckedWrapperException(ex);
+            throw new UnexpectedErrorException(ex);
         }
 
         for (final PropertyDescriptor propertyDescriptor : beanInfo.
@@ -338,7 +337,7 @@ public class PageModelManager {
                 } catch (IllegalAccessException
                          | IllegalArgumentException
                          | InvocationTargetException ex) {
-                    throw new UncheckedWrapperException(ex);
+                    throw new UnexpectedErrorException(ex);
                 }
 
                 target.addAll(source);
@@ -354,7 +353,7 @@ public class PageModelManager {
                 } catch (IllegalAccessException
                          | IllegalArgumentException
                          | InvocationTargetException ex) {
-                    throw new UncheckedWrapperException(ex);
+                    throw new UnexpectedErrorException(ex);
                 }
 
                 source.forEach((key, value) -> target.put(key, value));
@@ -371,7 +370,7 @@ public class PageModelManager {
                 } catch (IllegalAccessException
                          | IllegalArgumentException
                          | InvocationTargetException ex) {
-                    throw new UncheckedWrapperException(ex);
+                    throw new UnexpectedErrorException(ex);
                 }
 
                 target.addAll(source);
@@ -383,7 +382,7 @@ public class PageModelManager {
                 } catch (IllegalAccessException
                          | IllegalArgumentException
                          | InvocationTargetException ex) {
-                    throw new UncheckedWrapperException(ex);
+                    throw new UnexpectedErrorException(ex);
                 }
             }
         }

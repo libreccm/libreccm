@@ -18,7 +18,6 @@
  */
 package org.libreccm.security;
 
-import com.arsdigita.util.UncheckedWrapperException;
 
 import java.util.List;
 
@@ -29,6 +28,7 @@ import javax.persistence.TypedQuery;
 
 import org.libreccm.core.CcmObject;
 import org.libreccm.core.CoreConstants;
+import org.libreccm.core.UnexpectedErrorException;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -241,7 +241,7 @@ public class PermissionManager {
         try {
             value = field.get(owner);
         } catch (IllegalAccessException ex) {
-            throw new UncheckedWrapperException(ex);
+            throw new UnexpectedErrorException(ex);
         }
 
         if (value == null) {

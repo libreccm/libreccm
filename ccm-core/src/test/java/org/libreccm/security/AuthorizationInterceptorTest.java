@@ -121,8 +121,6 @@ public class AuthorizationInterceptorTest {
                 .getPackage())
             .addPackage(com.arsdigita.runtime.CCMResourceManager.class
                 .getPackage())
-            .addPackage(com.arsdigita.util.UncheckedWrapperException.class
-                .getPackage())
             .addPackage(com.arsdigita.web.CCMApplicationContextListener.class
                 .getPackage())
             .addPackage(com.arsdigita.xml.XML.class.getPackage())
@@ -130,6 +128,7 @@ public class AuthorizationInterceptorTest {
                 .getPackage())
             .addClass(com.arsdigita.kernel.KernelConfig.class)
             .addClass(org.libreccm.portation.Portable.class)
+            .addClass(com.arsdigita.util.UncheckedWrapperException.class)
             .addAsLibraries(getModuleDependencies())
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")

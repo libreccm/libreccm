@@ -121,7 +121,6 @@ public class ShiroTest {
                 .getPackage())
             .addClass(org.libreccm.portation.Portable.class)
             .addClass(org.libreccm.security.authorization.LabBean.class)
-            .addClass(com.arsdigita.util.UncheckedWrapperException.class)
             .addAsLibraries(getModuleDependencies())
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")
