@@ -536,7 +536,7 @@ public class PermissionManager {
                                      final Role grantee,
                                      final CcmObject object) {
         final TypedQuery<Long> query = entityManager.createNamedQuery(
-            "Permission.existsForPrivilegeRoleObject", Long.class);
+            "Permission.existsDirectForPrivilegeRoleObject", Long.class);
         query.setParameter(QUERY_PARAM_PRIVILEGE, privilege);
         query.setParameter(QUERY_PARAM_GRANTEE, grantee);
         query.setParameter(QUERY_PARAM_OBJECT, object);

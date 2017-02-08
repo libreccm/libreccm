@@ -63,6 +63,12 @@ import javax.persistence.OneToOne;
                 query = "SELECT COUNT(p) FROM Permission p "
                             + "WHERE p.grantedPrivilege = :privilege "
                             + "AND p.grantee = :grantee "
+                            + "AND p.object = :object")
+    ,
+    @NamedQuery(name = "Permission.existsDirectForPrivilegeRoleObject",
+                query = "SELECT COUNT(p) FROM Permission p "
+                            + "WHERE p.grantedPrivilege = :privilege "
+                            + "AND p.grantee = :grantee "
                             + "AND p.object = :object "
                             + "AND p.inherited = false")
     ,

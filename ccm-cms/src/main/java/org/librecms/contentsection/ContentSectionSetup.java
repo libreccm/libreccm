@@ -234,6 +234,29 @@ public class ContentSectionSetup extends AbstractCcmApplicationSetup {
         getEntityManager().persist(publisher);
         getEntityManager().persist(contentReader);
 
+        section.addRole(alertRecipient);
+        section.addRole(author);
+        section.addRole(editor);
+        section.addRole(manager);
+        section.addRole(publisher);
+        section.addRole(contentReader);
+
+        
+
+        final String itemResolverClassName;
+        if (getIntegrationProps().containsKey(String.format("%s.item_resolver",
+                                                            sectionName))) {
+            itemResolverClassName = getIntegrationProps().getProperty(
+                String.format("%s.item_resolver",
+                              sectionName));
+        } else if(getIntegrationProps().containsKey("default_item_resolver")) {
+            itemResolverClassName = getIntegrationProps().getProperty("default_item_resolver_name");
+        } else {
+            itemResolverClassName = MultilingualItemResolver.class.getName();
+        }
+        section.setItemResolverClass(itemResolverClassName);
+        
+        getEntityManager().merge(section);
     }
 
 }

@@ -18,17 +18,21 @@
  */
 package com.arsdigita.cms.ui;
 
+import com.arsdigita.bebop.Component;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.Page;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.Resettable;
 import com.arsdigita.bebop.SegmentedPanel;
 import com.arsdigita.bebop.SingleSelectionModel;
+import com.arsdigita.bebop.Text;
+import com.arsdigita.bebop.Tree;
 import com.arsdigita.bebop.event.FormProcessListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.bebop.event.FormSubmissionListener;
 import com.arsdigita.bebop.event.ActionEvent;
 import com.arsdigita.bebop.event.ActionListener;
+import com.arsdigita.bebop.tree.TreeCellRenderer;
 import com.arsdigita.cms.CMS;
 import com.arsdigita.cms.ui.folder.FolderRequestLocal;
 import com.arsdigita.cms.ui.folder.FolderSelectionModel;
@@ -40,6 +44,7 @@ import com.arsdigita.util.Assert;
 import org.libreccm.categorization.Category;
 import org.libreccm.core.CcmObject;
 import org.librecms.CmsConstants;
+import org.librecms.contentsection.Folder;
 
 /**
  * A pane that contains a folder tree on the left and a folder manipulator on
@@ -61,6 +66,29 @@ public class BrowsePane extends LayoutPanel implements Resettable {
 
         /* The folder tree displayed on the left side / left column           */
         tree = new BaseTree(new FolderTreeModelBuilder());
+        tree.setCellRenderer(new TreeCellRenderer() {
+
+            @Override
+            public Component getComponent(final Tree tree,
+                                          final PageState state,
+                                          final Object value,
+                                          final boolean isSelected,
+                                          final boolean isExpanded,
+                                          final boolean isLeaf,
+                                          final Object key) {
+                if (value instanceof Folder) {
+                    final Folder folder = (Folder) value;
+                    if (folder.getParentCategory() == null) {
+                        return new Text("/");
+                    } else {
+                        return new Text(folder.getName());
+                    }
+                } else {
+                    return new Text(value.toString());
+                }
+            }
+
+        });
         selectionModel = tree.getSelectionModel();
         folderModel = new FolderSelectionModel(selectionModel);
         folderRequestLocal = new FolderRequestLocal(folderModel);
@@ -70,7 +98,7 @@ public class BrowsePane extends LayoutPanel implements Resettable {
 
         final Label heading = new Label(
             new GlobalizedMessage("cms.ui.folder_browser",
-                                  CmsConstants.CMS_FOLDER_BUNDLE));
+                                  CmsConstants.CMS_BUNDLE));
         left.addSegment(heading, tree);
 
         flatItemList = new FlatItemList(folderRequestLocal, folderModel);
