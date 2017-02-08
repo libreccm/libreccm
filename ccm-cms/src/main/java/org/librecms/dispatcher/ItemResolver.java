@@ -41,7 +41,7 @@ import javax.servlet.http.HttpServletRequest;
  * The item resolver would be asked to map the URL stub {@code /cheese} in the
  * content section mounted at {@code /cms} to a content item. To this end, the
  * dispatcher calls the {@link #getItem} method, passing in the
- * {@link com.arsdigita.cms.ContentSection} and the URL stub for the item within
+ * {@link ContentSection} and the URL stub for the item within
  * the section, {@code /cheese} in our example. As a final argument, the
  * dispatcher passes either {@link ContentItemVersion#DRAFT} or
  * {@link ContentItemVersion#LIVE} to the {@code ItemResolver}, depending on
@@ -92,9 +92,9 @@ public interface ItemResolver {
     /**
      * Generates a URL for a content item.
      *
+     * @param state   The page state
      * @param itemId  The item ID
      * @param name    The name of the content page
-     * @param state   The page state
      * @param section the content section to which the item belongs
      * @param context the context of the URL, such as "live" or "admin"
      *

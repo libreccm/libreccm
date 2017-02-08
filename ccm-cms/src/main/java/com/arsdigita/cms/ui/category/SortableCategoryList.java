@@ -44,10 +44,8 @@ import javax.servlet.ServletException;
  * "up" arrow n/2 times where n is the number of items in the list.
  * This clearly is not a good setup.
  *
-
  * @author Randy Graebner (randyg@alum.mit.edu)
  * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
-
  */
 abstract class SortableCategoryList extends SortableList {
 
