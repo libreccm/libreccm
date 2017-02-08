@@ -33,14 +33,15 @@ import org.libreccm.core.CcmObject;
 class CMSPermissionsTableModelBuilder extends LockableImpl
     implements TableModelBuilder {
 
-    private final CcmObject object;
+    private final CMSPermissionsPane parent;
     
-    public CMSPermissionsTableModelBuilder(final CcmObject object) {
-        this.object = object;
+    public CMSPermissionsTableModelBuilder(final CMSPermissionsPane parent) {
+        this.parent = parent;
     }
     
     @Override
     public TableModel makeModel(final Table table, final PageState state) {
+        final CcmObject object = parent.getObject(state);
         return new CMSPermissionsTableModel(object);
     }
 

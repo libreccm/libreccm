@@ -244,10 +244,10 @@ public class FilePortationTest {
     public void objectShouldBeImported() {
         log.info("\n\n\n" + file.toString() + "\n\n\n");
         fileMarshaller.prepare(Format.XML, filePath + f2Xml, false);
-        List<File> objects = fileMarshaller.importFile();
-        objects.forEach(l -> log.info("\n\n\n" + l.toString() + "\n\n\n"));
+        fileMarshaller.importFile();
+//      objects.forEach(l -> log.info("\n\n\n" + l.toString() + "\n\n\n"));
 
         fileMarshaller.prepare(Format.XML, filePath + f4Xml, true);
-        fileMarshaller.exportList(objects);
+//        fileMarshaller.exportList(objects);
     }
 }

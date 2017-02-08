@@ -95,7 +95,7 @@ public class CMSUserSearchForm extends Form implements FormProcessListener {
         final List<Role> roles = roleRepo.searchByName(search);
 
         if (roles.isEmpty()) {
-            parent.showNoResults(state);
+//            parent.showNoResults(state);
         } else {
             // put search string into Page
             state.setValue(getSearchString(), data.get(SEARCH_QUERY));
@@ -103,7 +103,7 @@ public class CMSUserSearchForm extends Form implements FormProcessListener {
             // put privileges into Page
             state.setValue(getPrivilegeModel(), getPrivileges());
 
-            parent.showGrant(state);
+//            parent.showGrant(state);
         }
 
     }
