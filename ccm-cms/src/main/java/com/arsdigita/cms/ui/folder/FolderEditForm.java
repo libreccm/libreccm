@@ -29,6 +29,7 @@ import org.apache.logging.log4j.Logger;
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryRepository;
 import org.libreccm.cdi.utils.CdiUtil;
+import org.librecms.contentsection.FolderManager;
 
 class FolderEditForm extends FolderBaseForm {
 
@@ -52,7 +53,11 @@ class FolderEditForm extends FolderBaseForm {
         final FolderRequestLocal parent = new FolderRequestLocal(null) {
                 @Override
                 protected final Object initialValue(final PageState state) {
-                    return folder.getFolder(state).getParentFolder();
+                    final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+                    final FolderManager folderManager = cdiUtil.findBean(
+                        FolderManager.class);
+                    return folderManager.getParentFolder(getFolder(state))
+                        .orElse(null);
                 }
             };
 

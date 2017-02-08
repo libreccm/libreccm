@@ -18,8 +18,6 @@
  */
 package org.librecms.contentsection;
 
-import com.arsdigita.util.UncheckedWrapperException;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -45,6 +43,7 @@ import org.librecms.contentsection.privileges.AssetPrivileges;
 import java.util.Objects;
 
 import org.libreccm.categorization.ObjectNotAssignedToCategoryException;
+import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.l10n.LocalizedString;
 
 import java.beans.BeanInfo;
@@ -68,7 +67,7 @@ import static org.librecms.CmsConstants.*;
 public class AssetManager {
 
     private static final Logger LOGGER = LogManager.
-            getLogger(AssetManager.class);
+        getLogger(AssetManager.class);
 
     @Inject
     private EntityManager entityManager;
@@ -94,15 +93,15 @@ public class AssetManager {
      * thrown.
      *
      *
-     * @param asset The {@link Asset} to share.
+     * @param asset  The {@link Asset} to share.
      * @param folder The {@link Folder} in which the {@link Asset} is created.
      */
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public void shareAsset(
-            final Asset asset,
-            @RequiresPrivilege(AssetPrivileges.CREATE_NEW)
-            final Folder folder) {
+        final Asset asset,
+        @RequiresPrivilege(AssetPrivileges.CREATE_NEW)
+        final Folder folder) {
 
         if (asset == null) {
             throw new IllegalArgumentException("Can't share asset null.");
@@ -114,14 +113,14 @@ public class AssetManager {
 
         if (isShared(asset)) {
             throw new IllegalArgumentException(String.format(
-                    "The asset %s is already shared.",
-                    Objects.toString(asset)));
+                "The asset %s is already shared.",
+                Objects.toString(asset)));
         }
 
         categoryManager.addObjectToCategory(
-                asset,
-                folder,
-                CmsConstants.CATEGORIZATION_TYPE_FOLDER);
+            asset,
+            folder,
+            CmsConstants.CATEGORIZATION_TYPE_FOLDER);
     }
 
     /**
@@ -132,12 +131,12 @@ public class AssetManager {
      * @param asset The asset the check.
      *
      * @return {@code true} is the {@link Asset} is shared,
-     * {@code false if not}.
+     *         {@code false if not}.
      */
     public boolean isShared(final Asset asset) {
         if (asset == null) {
             throw new IllegalArgumentException(
-                    "Can't determine if null is a shared asset.");
+                "Can't determine if null is a shared asset.");
         }
 
         return getAssetFolder(asset).isPresent();
@@ -153,9 +152,9 @@ public class AssetManager {
         final List<Asset> assets = assetRepo.findAll();
 
         final List<Asset> orphaned = assets.stream()
-                .filter(asset -> asset.getCategories().isEmpty()
-                                         && asset.getItemAttachments().isEmpty()).
-                collect(Collectors.toList());
+            .filter(asset -> asset.getCategories().isEmpty()
+                                 && asset.getItemAttachments().isEmpty()).
+            collect(Collectors.toList());
 
         orphaned.forEach(orphan -> assetRepo.delete(orphan));
     }
@@ -163,17 +162,17 @@ public class AssetManager {
     /**
      * Moves an {@link Asset} to an folder.
      *
-     * @param asset The {@link Asset} to move.
+     * @param asset        The {@link Asset} to move.
      * @param targetFolder The folder to which the {@link Asset} is moved. Must
-     * be an asset folder.
+     *                     be an asset folder.
      */
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public void move(
-            @RequiresPrivilege(AssetPrivileges.EDIT)
-            final Asset asset,
-            @RequiresPrivilege(AssetPrivileges.CREATE_NEW)
-            final Folder targetFolder) {
+        @RequiresPrivilege(AssetPrivileges.EDIT)
+        final Asset asset,
+        @RequiresPrivilege(AssetPrivileges.CREATE_NEW)
+        final Folder targetFolder) {
 
         if (asset == null) {
             throw new IllegalArgumentException("No asset to move provided.");
@@ -185,8 +184,8 @@ public class AssetManager {
 
         if (targetFolder.getType() != FolderType.ASSETS_FOLDER) {
             throw new IllegalArgumentException(String.format(
-                    "The provided target folder %s is not an asset folder.",
-                    Objects.toString(targetFolder)));
+                "The provided target folder %s is not an asset folder.",
+                Objects.toString(targetFolder)));
         }
 
         final Optional<Folder> currentFolder = getAssetFolder(asset);
@@ -196,7 +195,7 @@ public class AssetManager {
                 categoryManager.removeObjectFromCategory(asset,
                                                          currentFolder.get());
             } catch (ObjectNotAssignedToCategoryException ex) {
-                throw new UncheckedWrapperException(ex);
+                throw new UnexpectedErrorException(ex);
             }
         }
 
@@ -208,7 +207,7 @@ public class AssetManager {
     /**
      * Copies an {@link Asset}.
      *
-     * @param asset The {@link Asset} to copy.
+     * @param asset        The {@link Asset} to copy.
      * @param targetFolder The folder to which the {@link Asset} is copied.
      *
      * @return The copy of the {@code asset}.
@@ -230,26 +229,26 @@ public class AssetManager {
 
         if (targetFolder.getType() != FolderType.ASSETS_FOLDER) {
             throw new IllegalArgumentException(String.format(
-                    "The provided target folder %s is not an asset folder.",
-                    Objects.toString(targetFolder)));
+                "The provided target folder %s is not an asset folder.",
+                Objects.toString(targetFolder)));
         }
 
         final Asset copy;
         try {
             copy = asset.getClass().newInstance();
         } catch (InstantiationException | IllegalAccessException ex) {
-            throw new UncheckedWrapperException(ex);
+            throw new UnexpectedErrorException(ex);
         }
 
         final BeanInfo beanInfo;
         try {
             beanInfo = Introspector.getBeanInfo(asset.getClass());
         } catch (IntrospectionException ex) {
-            throw new UncheckedWrapperException(ex);
+            throw new UnexpectedErrorException(ex);
         }
 
         for (final PropertyDescriptor propertyDescriptor : beanInfo
-                .getPropertyDescriptors()) {
+            .getPropertyDescriptors()) {
             if (propertyIsExcluded(propertyDescriptor.getName())) {
                 continue;
             }
@@ -269,49 +268,49 @@ public class AssetManager {
                     source = (LocalizedString) readMethod.invoke(asset);
                     target = (LocalizedString) readMethod.invoke(copy);
                 } catch (IllegalAccessException
-                                 | IllegalArgumentException
-                                 | InvocationTargetException ex) {
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
                     throw new RuntimeException(ex);
                 }
 
                 source.getAvailableLocales().forEach(
-                        locale -> target.addValue(locale,
-                                                  source.getValue(locale)));
+                    locale -> target.addValue(locale,
+                                              source.getValue(locale)));
             } else if (propType != null
-                               && propType.isAssignableFrom(Asset.class)) {
+                           && propType.isAssignableFrom(Asset.class)) {
 
                 final Asset linkedAsset;
                 try {
                     linkedAsset = (Asset) readMethod.invoke(asset);
                 } catch (IllegalAccessException
-                                 | IllegalArgumentException
-                                 | InvocationTargetException ex) {
-                    throw new UncheckedWrapperException(ex);
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
+                    throw new UnexpectedErrorException(ex);
                 }
 
                 try {
                     writeMethod.invoke(copy, linkedAsset);
                 } catch (IllegalAccessException
-                                 | IllegalArgumentException
-                                 | InvocationTargetException ex) {
-                    throw new UncheckedWrapperException(ex);
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
+                    throw new UnexpectedErrorException(ex);
                 }
             } else if (propType != null
-                               && propType.isAssignableFrom(List.class)) {
+                           && propType.isAssignableFrom(List.class)) {
                 final List<Object> source;
                 final List<Object> target;
                 try {
                     source = (List<Object>) readMethod.invoke(asset);
                     target = (List<Object>) readMethod.invoke(copy);
                 } catch (IllegalAccessException
-                                 | IllegalArgumentException
-                                 | InvocationTargetException ex) {
-                    throw new UncheckedWrapperException(ex);
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
+                    throw new UnexpectedErrorException(ex);
                 }
 
                 target.addAll(source);
             } else if (propType != null
-                               && propType.isAssignableFrom(Map.class)) {
+                           && propType.isAssignableFrom(Map.class)) {
                 final Map<Object, Object> source;
                 final Map<Object, Object> target;
 
@@ -319,14 +318,14 @@ public class AssetManager {
                     source = (Map<Object, Object>) readMethod.invoke(asset);
                     target = (Map<Object, Object>) readMethod.invoke(copy);
                 } catch (IllegalAccessException
-                                 | IllegalArgumentException
-                                 | InvocationTargetException ex) {
-                    throw new RuntimeException(ex);
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
+                    throw new UnexpectedErrorException(ex);
                 }
 
                 source.forEach((key, value) -> target.put(key, value));
             } else if (propType != null
-                               && propType.isAssignableFrom(Set.class)) {
+                           && propType.isAssignableFrom(Set.class)) {
                 final Set<Object> source;
                 final Set<Object> target;
 
@@ -334,8 +333,8 @@ public class AssetManager {
                     source = (Set<Object>) readMethod.invoke(asset);
                     target = (Set<Object>) readMethod.invoke(copy);
                 } catch (IllegalAccessException
-                                 | IllegalArgumentException
-                                 | InvocationTargetException ex) {
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
                     throw new RuntimeException(ex);
                 }
 
@@ -346,17 +345,17 @@ public class AssetManager {
                     value = readMethod.invoke(asset);
                     writeMethod.invoke(copy, value);
                 } catch (IllegalAccessException
-                                 | IllegalArgumentException
-                                 | InvocationTargetException ex) {
-                    throw new UncheckedWrapperException(ex);
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
+                    throw new UnexpectedErrorException(ex);
                 }
             }
         }
 
         if (targetFolder.equals(getAssetFolder(asset).orElse(null))) {
             final long number = assetRepo.countFilterByFolderAndName(
-                    targetFolder, String.format("%s_copy",
-                                                asset.getDisplayName()));
+                targetFolder, String.format("%s_copy",
+                                            asset.getDisplayName()));
             final long index = number + 1;
             copy.setDisplayName(String.format("%s_copy%d",
                                               copy.getDisplayName(),
@@ -395,7 +394,7 @@ public class AssetManager {
      * @param asset The {@link Asset} to check for usage.
      *
      * @return {@code true} if the {@link Asset} is in use, {@link false} if
-     * not.
+     *         not.
      */
     @Transactional(Transactional.TxType.REQUIRED)
     public boolean isAssetInUse(final Asset asset) {
@@ -414,7 +413,7 @@ public class AssetManager {
      * @param asset The {@link Assset} for which the path is generated.
      *
      * @return The path of the {@link Asset}. If the {@link Asset} is a non
-     * shared asset the path is empty.
+     *         shared asset the path is empty.
      *
      * @see #getAssetPath(org.librecms.assets.Asset, boolean)
      */
@@ -425,23 +424,24 @@ public class AssetManager {
     /**
      * Returns the path of an item as String.
      *
-     * @param asset The {@link Asset} for which the path is generated.
+     * @param asset              The {@link Asset} for which the path is
+     *                           generated.
      * @param withContentSection Whether to include the content section into the
-     * path or not.
+     *                           path or not.
      *
      * @return The path of the asset. For non shared assets this is an empty
-     * string.
+     *         string.
      *
      * @see #getAssetPath(org.librecms.assets.Asset)
      */
     public String getAssetPath(final Asset asset,
                                final boolean withContentSection) {
         final List<Categorization> result = asset.getCategories().stream()
-                .filter(categorization -> {
-                    return CATEGORIZATION_TYPE_FOLDER.equals(
-                            categorization.getType());
-                })
-                .collect(Collectors.toList());
+            .filter(categorization -> {
+                return CATEGORIZATION_TYPE_FOLDER.equals(
+                    categorization.getType());
+            })
+            .collect(Collectors.toList());
 
         if (result.isEmpty()) {
             return "";
@@ -459,9 +459,16 @@ public class AssetManager {
             final String path = String.join("/", tokens);
 
             if (withContentSection) {
-                final String sectionName
-                             = ((Folder) result.get(0).getCategory()).
-                                getSection().getDisplayName();
+                final Category category = result.get(0).getCategory();
+                final Optional<Folder> folder = folderRepo.findById(
+                    category.getObjectId());
+                final String sectionName;
+                if (folder.isPresent()) {
+                    sectionName = folder.get().getSection().getDisplayName();
+                } else {
+                    sectionName = "?";
+                }
+                
                 return String.format("%s:/%s", sectionName, path);
             } else {
                 return String.format("/%s", path);
@@ -475,15 +482,15 @@ public class AssetManager {
      * @param asset
      *
      * @return A list of the folders which form the path of the asset. For non
-     * shared assets an empty list is returned.
+     *         shared assets an empty list is returned.
      */
     public List<Folder> getAssetFolders(final Asset asset) {
         final List<Categorization> result = asset.getCategories().stream()
-                .filter(categorization -> {
-                    return CATEGORIZATION_TYPE_FOLDER.equals(categorization
-                            .getType());
-                })
-                .collect(Collectors.toList());
+            .filter(categorization -> {
+                return CATEGORIZATION_TYPE_FOLDER.equals(categorization
+                    .getType());
+            })
+            .collect(Collectors.toList());
 
         final List<Folder> folders = new ArrayList<>();
         if (!result.isEmpty()) {
@@ -492,12 +499,12 @@ public class AssetManager {
                 folders.add((Folder) current);
             } else {
                 throw new IllegalArgumentException(String.format(
-                        "The asset %s is assigned to the category %s with the"
-                                + "categorization type \"%s\", but the Category is not"
+                    "The asset %s is assigned to the category %s with the"
+                        + "categorization type \"%s\", but the Category is not"
                         + "a folder. This is no supported.",
-                        asset.getUuid(),
-                        current.getUuid(),
-                        CATEGORIZATION_TYPE_FOLDER));
+                    asset.getUuid(),
+                    current.getUuid(),
+                    CATEGORIZATION_TYPE_FOLDER));
             }
 
             while (current.getParentCategory() != null) {
@@ -506,12 +513,12 @@ public class AssetManager {
                     folders.add((Folder) current);
                 } else {
                     throw new IllegalArgumentException(String.format(
-                            "The asset %s is assigned to the category %s with the"
+                        "The asset %s is assigned to the category %s with the"
                             + "categorization type \"%s\", but the Category is not"
-                            + "a folder. This is no supported.",
-                            asset.getUuid(),
-                            current.getUuid(),
-                            CATEGORIZATION_TYPE_FOLDER));
+                        + "a folder. This is no supported.",
+                        asset.getUuid(),
+                        current.getUuid(),
+                        CATEGORIZATION_TYPE_FOLDER));
                 }
             }
         }
@@ -526,27 +533,29 @@ public class AssetManager {
      * @param asset The asset.
      *
      * @return The folder in which the asset is placed. If the asset is a non
-     * shared asset an empty {@link Optional} is returned.
+     *         shared asset an empty {@link Optional} is returned.
      */
     public Optional<Folder> getAssetFolder(final Asset asset) {
         if (asset == null) {
             throw new IllegalArgumentException(
-                    "Can't retrieve the folder for asset null.");
+                "Can't retrieve the folder for asset null.");
         }
 
         if (asset.getCategories() == null) {
             return Optional.empty();
         }
 
-        return asset.getCategories().stream()
-                .filter(categorization -> {
-                    return CATEGORIZATION_TYPE_FOLDER.equals(
-                            categorization.getType());
-                })
-                .map(categorization -> {
-                    return (Folder) categorization.getCategory();
-                })
-                .findFirst();
+        final Optional<Category> category = asset.getCategories().stream()
+            .filter(categorization -> CATEGORIZATION_TYPE_FOLDER.equals(
+            categorization.getType()))
+            .map(categorization -> categorization.getCategory())
+            .findFirst();
+
+        if (category.isPresent()) {
+            return folderRepo.findById(category.get().getObjectId());
+        } else {
+            return Optional.empty();
+        }
     }
 
 }

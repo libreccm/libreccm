@@ -19,8 +19,8 @@
 package org.librecms.workflow;
 
 import com.arsdigita.cms.workflow.TaskURLGenerator;
-import com.arsdigita.util.UncheckedWrapperException;
 
+import org.libreccm.core.UnexpectedErrorException;
 import org.librecms.contentsection.ContentItem;
 
 import javax.enterprise.context.RequestScoped;
@@ -48,7 +48,7 @@ public class CmsTaskManager {
             urlGenerator = urlGeneratorClass.newInstance();
         } catch (IllegalAccessException
                  | InstantiationException ex) {
-            throw new UncheckedWrapperException(ex);
+            throw new UnexpectedErrorException(ex);
         }
         
         return urlGenerator.generateURL(item.getObjectId(), task.getTaskId());

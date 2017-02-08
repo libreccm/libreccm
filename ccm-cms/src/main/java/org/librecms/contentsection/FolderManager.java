@@ -20,12 +20,14 @@ package org.librecms.contentsection;
 
 import com.arsdigita.kernel.KernelConfig;
 
+import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryManager;
 import org.libreccm.configuration.ConfigurationManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -106,6 +108,15 @@ public class FolderManager {
         HAS_LIVE_ITEMS
     }
 
+    public Optional<Folder> getParentFolder(final Folder folder) {
+        final Category parentCategory = folder.getParentCategory();
+        if (parentCategory == null) {
+            return Optional.empty();
+        } else {
+            return folderRepo.findById(parentCategory.getObjectId());
+        }
+    }
+    
     /**
      * Creates new folder as sub folder of the provided parent folder. The type
      * and the content section to which the folder belongs are the same as for
@@ -158,7 +169,7 @@ public class FolderManager {
             return FolderIsDeletable.IS_NOT_EMPTY;
         }
 
-        if (folder.getParentFolder() == null) {
+        if (!getParentFolder(folder).isPresent()) {
             return FolderIsDeletable.IS_ROOT_FOLDER;
         }
 
@@ -225,7 +236,7 @@ public class FolderManager {
         final FolderIsMovable status = folderIsMovable(folder, target);
         switch (status) {
             case YES: {
-                final Folder source = folder.getParentFolder();
+                final Folder source = getParentFolder(folder).get();
                 categoryManager.removeSubCategoryFromCategory(folder, source);
                 final boolean sameName = target.getSubCategories()
                     .stream()
@@ -348,7 +359,7 @@ public class FolderManager {
                 "Can't check if a server can be moved to null.");
         }
 
-        if (folder.getParentFolder() == null) {
+        if (!getParentFolder(folder).isPresent()) {
             return FolderIsMovable.IS_ROOT_FOLDER;
         }
 
@@ -427,8 +438,8 @@ public class FolderManager {
 
         tokens.add(folder.getName());
         Folder current = folder;
-        while (current.getParentFolder() != null) {
-            current = current.getParentFolder();
+        while (getParentFolder(current).isPresent()) {
+            current = getParentFolder(current).get();
             tokens.add(current.getName());
         }
 
@@ -458,11 +469,11 @@ public class FolderManager {
         }
 
         final List<Folder> folders = new ArrayList<>();
-        if (folder.getParentFolder() != null) {
-            Folder currentFolder = folder.getParentFolder();
-            while(currentFolder != null) {
-                folders.add(currentFolder);
-                currentFolder = folder.getParentFolder();
+        if (getParentFolder(folder).isPresent()) {
+            Optional<Folder> currentFolder = getParentFolder(folder);
+            while(currentFolder.isPresent()) {
+                folders.add(currentFolder.get());
+                currentFolder = getParentFolder(currentFolder.get());
             }
         }
         

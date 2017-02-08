@@ -108,8 +108,6 @@ public class CoreDataImportTest {
                         .class.getPackage())
                 .addPackage(org.libreccm.jpa.EntityManagerProducer
                         .class.getPackage())
-                .addClass(com.arsdigita.util.UncheckedWrapperException
-                        .class)
                 .addAsLibraries(getModuleDependencies())
                 .addAsResource("test-persistence.xml",
                         "META-INF/persistence.xml")

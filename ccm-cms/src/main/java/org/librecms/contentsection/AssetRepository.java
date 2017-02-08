@@ -18,13 +18,13 @@
  */
 package org.librecms.contentsection;
 
-import com.arsdigita.util.UncheckedWrapperException;
 
 import org.libreccm.auditing.AbstractAuditedEntityRepository;
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryManager;
 import org.libreccm.categorization.ObjectNotAssignedToCategoryException;
 import org.libreccm.core.CcmObjectRepository;
+import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
 import org.librecms.contentsection.privileges.AssetPrivileges;
@@ -130,7 +130,7 @@ public class AssetRepository
                 try {
                     categoryManager.removeObjectFromCategory(asset, category);
                 } catch (ObjectNotAssignedToCategoryException ex) {
-                    throw new UncheckedWrapperException(ex);
+                    throw new UnexpectedErrorException(ex);
                 }
             }
 

@@ -107,14 +107,14 @@ public class Folder extends Category implements Serializable {
                 .collect(Collectors.toList()));
     }
 
-    public Folder getParentFolder() {
-        final Category parent = getParentCategory();
-        if (parent == null) {
-            return null;
-        } else {
-            return (Folder) getParentCategory();
-        }
-    }
+//    public Folder getParentFolder() {
+//        final Category parent = getParentCategory();
+//        if (parent == null) {
+//            return null;
+//        } else {
+//            return (Folder) getParentCategory();
+//        }
+//    }
 
     @Override
     public int hashCode() {

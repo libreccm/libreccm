@@ -35,9 +35,8 @@ import java.util.List;
 /**
  * Abstract class responsible for ex- and importing entity-objects to several
  * file-formats. Every entity-class (e.g. DocRepo.File) needs to have its own
- * extension of this class to override the abstract methods, making it
- * possible to ex- or import that extending entity-class (e.g. DocRepo
- * .FileMarshal).
+ * extension of this class to override the abstract methods, making it possible
+ * to ex- or import that extending entity-class (e.g. DocRepo .FileMarshal).
  *
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  * @version created the 2/10/16
@@ -45,8 +44,8 @@ import java.util.List;
  */
 public abstract class AbstractMarshaller<P extends Portable> {
 
-    private static final Logger LOGGER = LogManager.getLogger(AbstractMarshaller
-            .class);
+    private static final Logger LOGGER = LogManager.getLogger(
+        AbstractMarshaller.class);
 
     private Format format;
     private String filename;
@@ -55,13 +54,13 @@ public abstract class AbstractMarshaller<P extends Portable> {
     ObjectMapper xmlMapper;
 
     /**
-     * Prepares import and export routine. Sets the format in which the ex-
-     * or import will take place and sets the name of the file exported to or
+     * Prepares import and export routine. Sets the format in which the ex- or
+     * import will take place and sets the name of the file exported to or
      * imported from. Furthermore it is possible to decide for or against
      * indentation in the output file.
      *
-     * @param format The format of the ex-/import
-     * @param filename The filename of the file exported to or imported from
+     * @param format      The format of the ex-/import
+     * @param filename    The filename of the file exported to or imported from
      * @param indentation whether or not indentation
      */
     public void prepare(final Format format,
@@ -83,20 +82,19 @@ public abstract class AbstractMarshaller<P extends Portable> {
 
                 break;
 
-
             default:
                 break;
         }
     }
 
     /**
-     * Same as {@code prepare}-methode above. Adds distinction between path
-     * and filename.
+     * Same as {@code prepare}-methode above. Adds distinction between path and
+     * filename.
      *
-     * @param format The format of the ex-/import
-     * @param folderPath The folderPath of the file exported to or imported
-     *                   from
-     * @param filename The filename of the file exported to or imported from
+     * @param format      The format of the ex-/import
+     * @param folderPath  The folderPath of the file exported to or imported
+     *                    from
+     * @param filename    The filename of the file exported to or imported from
      * @param indentation whether or not indentation
      */
     public void prepare(final Format format,
@@ -107,7 +105,6 @@ public abstract class AbstractMarshaller<P extends Portable> {
             prepare(format, folderPath + "/" + filename, indentation);
         }
     }
-
 
     /**
      * Export routine for lists with the same object type {@code P}. Creates a
@@ -123,8 +120,8 @@ public abstract class AbstractMarshaller<P extends Portable> {
         try {
             fileWriter = new FileWriter(file);
         } catch (IOException e) {
-            LOGGER.error("Unable to open a fileWriter for the file" +
-                    " with the name {}.", file.getName());
+            LOGGER.error("Unable to open a fileWriter for the file"
+                         + " with the name {}.", file.getName());
             LOGGER.error(e);
         }
         if (fileWriter != null) {
@@ -137,9 +134,9 @@ public abstract class AbstractMarshaller<P extends Portable> {
                             line = xmlMapper.writeValueAsString(object);
                             //LOGGER.info(line);
                         } catch (IOException e) {
-                            LOGGER.error("Unable to write objetct " +
-                                    "of class {} as XML string with name {}.",
-                                    object.getClass(), file.getName());
+                            LOGGER.error("Unable to write objetct "
+                                         + "of class {} as XML string with name {}.",
+                                         object.getClass(), file.getName());
                             LOGGER.error(e);
                         }
                         break;
@@ -152,8 +149,8 @@ public abstract class AbstractMarshaller<P extends Portable> {
                         fileWriter.write(line);
                         fileWriter.write(System.getProperty("line.separator"));
                     } catch (IOException e) {
-                        LOGGER.error("Unable to write to file with" +
-                                " the name {}.", file.getName());
+                        LOGGER.error("Unable to write to file with"
+                                     + " the name {}.", file.getName());
                         LOGGER.error(e);
                     }
                 }
@@ -161,8 +158,8 @@ public abstract class AbstractMarshaller<P extends Portable> {
             try {
                 fileWriter.close();
             } catch (IOException e) {
-                LOGGER.error("Unable to close a fileWriter for the" +
-                        " file with the name {}.", file.getName());
+                LOGGER.error("Unable to close a fileWriter for the"
+                             + " file with the name {}.", file.getName());
                 LOGGER.error(e);
             }
         }
@@ -170,8 +167,8 @@ public abstract class AbstractMarshaller<P extends Portable> {
 
     /**
      * Import routine for files containing objects of the same type {@code P}.
-     * Creates a new list of strings to read the file line by line. Each line
-     * of the list represents an object of the file. Then retrieves each object
+     * Creates a new list of strings to read the file line by line. Each line of
+     * the list represents an object of the file. Then retrieves each object
      * from the corresponding string in the list.
      *
      * @return If error occurs true, otherwise false.
@@ -184,8 +181,8 @@ public abstract class AbstractMarshaller<P extends Portable> {
         try {
             lines = Files.readAllLines(file.toPath());
         } catch (IOException e) {
-            LOGGER.error("Unable to read lines of the file with " +
-                    "name {}.", file.getName());
+            LOGGER.error("Unable to read lines of the file with " + "name {}.",
+                         file.getName());
             LOGGER.error(e);
             error = true;
         }
@@ -200,8 +197,8 @@ public abstract class AbstractMarshaller<P extends Portable> {
                         try {
                             object = xmlMapper.readValue(line, getObjectClass());
                         } catch (IOException e) {
-                            LOGGER.error("Unable to read objects " +
-                                    "from XML line:\n \"{}\"", line);
+                            LOGGER.error("Unable to read objects "
+                                         + "from XML line:\n \"{}\"", line);
                             LOGGER.error(e);
                             error = true;
                         }
@@ -215,7 +212,7 @@ public abstract class AbstractMarshaller<P extends Portable> {
                     insertIntoDb(object);
                     objects.add(object);
                 } else {
-                    emptyObjects+=1;
+                    emptyObjects += 1;
                     LOGGER.info("Count of empty objects: {}", emptyObjects);
                     error = true;
                 }
@@ -237,4 +234,5 @@ public abstract class AbstractMarshaller<P extends Portable> {
      * @param portableObject An object of type {@code P}
      */
     protected abstract void insertIntoDb(P portableObject);
+
 }
