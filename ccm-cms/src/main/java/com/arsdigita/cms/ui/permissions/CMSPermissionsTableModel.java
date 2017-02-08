@@ -51,7 +51,7 @@ class CMSPermissionsTableModel implements TableModel {
             PermissionManager.class);
 
         return permissionManager.listDefiniedPrivileges(ItemPrivileges.class)
-            .size();
+            .size() + 2;
     }
 
     @Override
@@ -66,12 +66,22 @@ class CMSPermissionsTableModel implements TableModel {
 
     @Override
     public Object getElementAt(final int columnIndex) {
-        return currentRow.getColumns().get(columnIndex);
+        if (columnIndex == 0) {
+            return currentRow.getRoleName();
+        } else if (columnIndex == getColumnCount() - 1) {
+            return "Remove all";
+        } else {
+            return currentRow.getColumns().get(columnIndex - 2);
+        }
     }
 
     @Override
     public Object getKeyAt(final int columnIndex) {
-        return currentRow.getColumns().get(columnIndex).getPrivilege();
+        if (columnIndex == 0 || columnIndex == getColumnCount() - 1) {
+            return currentRow.getRoleName();
+        } else {
+            return currentRow.getColumns().get(columnIndex).getPrivilege();
+        }
     }
 
 }
