@@ -245,7 +245,7 @@ public class CMSPermissionsPane extends SimpleContainer implements Resettable,
         if (permissionsTable != null) {
             return permissionsTable;
         }
-        
+
         final BoxPanel panel = new BoxPanel(BoxPanel.VERTICAL);
         final Label header = new Label(new GlobalizedMessage(
             "cms.ui.permissions.table.header",
@@ -264,6 +264,8 @@ public class CMSPermissionsPane extends SimpleContainer implements Resettable,
                          new Label(new GlobalizedMessage(
                              "cms.ui.permissions.table.role_header",
                              CmsConstants.CMS_BUNDLE)));
+        headerLabels.add(new Label(new GlobalizedMessage(
+            "cms.ui.permissions.table.remove_all.header")));
         final Table table = new Table(new CMSPermissionsTableModelBuilder(this),
                                       headerLabels.toArray());
         table.setClassAttr("dataTable");
@@ -281,7 +283,9 @@ public class CMSPermissionsPane extends SimpleContainer implements Resettable,
 
                     final ControlLink link = new ControlLink("");
 
-                    if ((boolean) value) {
+                    final CMSPermissionsTableColumn col
+                                                        = (CMSPermissionsTableColumn) value;
+                    if (col.isPermitted()) {
                         link.setClassAttr("checkBoxChecked");
                     } else {
                         link.setClassAttr("checkBoxUnchecked");
@@ -303,9 +307,12 @@ public class CMSPermissionsPane extends SimpleContainer implements Resettable,
                                           final Object key,
                                           final int row,
                                           final int column) {
-                final ControlLink link = new ControlLink((String) value);
+                final ControlLink link = new ControlLink(new Label(
+                    new GlobalizedMessage(
+                        "cms.ui.permissions.table.actions.remove_all",
+                        CmsConstants.CMS_BUNDLE)));
                 link.setConfirmation(new GlobalizedMessage(
-                    "permissions.table.actions.removeAll",
+                    "cms.ui.permissions.table.actions.remove_all.confirm",
                     CmsConstants.CMS_BUNDLE));
 
                 return link;
@@ -424,7 +431,6 @@ public class CMSPermissionsPane extends SimpleContainer implements Resettable,
 //            .getPermissions(CMSPermissionsConstants.INHERITED);
 //        return inheritedPermissions;
 //    }
-
     public SimpleContainer getAdminListingPanel() {
         if (adminListing == null) {
             adminListing = new ObjectAdminListing(selectionModel);
@@ -511,7 +517,6 @@ public class CMSPermissionsPane extends SimpleContainer implements Resettable,
 //        }
 //        return contextPanel;
 //    }
-
     ParameterModel getSearchString() {
         return searchString;
     }
@@ -537,7 +542,6 @@ public class CMSPermissionsPane extends SimpleContainer implements Resettable,
 //        getPermissionGrantPanel().setVisible(state, false);
 //        getNoSearchResultPanel().setVisible(state, true);
 //    }
-
 //    /**
 //     * Show the Grant privileges panel
 //     *
@@ -551,7 +555,6 @@ public class CMSPermissionsPane extends SimpleContainer implements Resettable,
 //        getNoSearchResultPanel().setVisible(state, false);
 //        getPermissionGrantPanel().setVisible(state, true);
 //    }
-
 //    /**
 //     * Shows the administration page of permissions to one object.
 //     *
@@ -595,7 +598,6 @@ public class CMSPermissionsPane extends SimpleContainer implements Resettable,
 //
 //        getPermissionGrantPanel().setVisible(state, false);
 //    }
-
     @Override
     public void actionPerformed(final ActionEvent event) {
 
@@ -637,7 +639,6 @@ public class CMSPermissionsPane extends SimpleContainer implements Resettable,
 //            getAdminListingPanel().setVisible(state, false);
 //        }
 //    }
-
     public String getPrivilegeName(final String privilege) {
         return privilegeNameMap.get(privilege);
     }

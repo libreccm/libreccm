@@ -71,7 +71,7 @@ class CMSPermissionsTableModel implements TableModel {
         } else if (columnIndex == getColumnCount() - 1) {
             return "Remove all";
         } else {
-            return currentRow.getColumns().get(columnIndex - 2);
+            return currentRow.getColumns().get(columnIndex - 1);
         }
     }
 
@@ -80,7 +80,7 @@ class CMSPermissionsTableModel implements TableModel {
         if (columnIndex == 0 || columnIndex == getColumnCount() - 1) {
             return currentRow.getRoleName();
         } else {
-            return currentRow.getColumns().get(columnIndex).getPrivilege();
+            return currentRow.getColumns().get(columnIndex - 1).getPrivilege();
         }
     }
 

@@ -32,7 +32,6 @@ import com.arsdigita.util.LockableImpl;
 import java.util.Collections;
 import java.util.Iterator;
 
-import org.libreccm.categorization.Category;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.contentsection.Folder;
 
