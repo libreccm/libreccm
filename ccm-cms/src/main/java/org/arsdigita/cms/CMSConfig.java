@@ -24,6 +24,7 @@ import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.Configuration;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.configuration.Setting;
+import org.libreccm.core.UnexpectedErrorException;
 import org.librecms.dispatcher.ItemResolver;
 import org.librecms.dispatcher.SimpleItemResolver;
 
@@ -695,7 +696,7 @@ public class CMSConfig {
                 resolverClasses.add((Class<ItemResolver>) Class.forName(
                     className));
             } catch (ClassNotFoundException ex) {
-                throw new UncheckedWrapperException(String.format(
+                throw new UnexpectedErrorException(String.format(
                     "ItemResolver class \"%s\" not found.", className), ex);
             }
         }
@@ -720,7 +721,7 @@ public class CMSConfig {
 //                resolverClasses.add((Class<TemplateResolver>) Class.forName(
 //                    className));
 //            } catch (ClassNotFoundException ex) {
-//                throw new UncheckedWrapperException(String.format(
+//                throw new UnexpectedErrorException(String.format(
 //                    "ItemResolver class \"%s\" not found.", className), ex);
 //            }
 //        }

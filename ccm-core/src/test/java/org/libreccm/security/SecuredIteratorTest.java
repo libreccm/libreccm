@@ -147,8 +147,6 @@ public class SecuredIteratorTest {
             .addPackage(com.arsdigita.kernel.security.SecurityConfig.class
                 .getPackage())
             .addPackage(com.arsdigita.kernel.KernelConfig.class.getPackage())
-            .addPackage(com.arsdigita.util.UncheckedWrapperException.class
-                .getPackage())
             .addClass(org.libreccm.portation.Portable.class)
             .addAsLibraries(getModuleDependencies())
             .addAsResource("test-persistence.xml",

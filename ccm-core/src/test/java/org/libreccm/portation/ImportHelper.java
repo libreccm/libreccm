@@ -55,7 +55,7 @@ import javax.inject.Inject;
  */
 @RequestScoped
 class ImportHelper {
-    private String repoPath = "/home/tosmers/Svn/libreccm/";
+    private String repoPath = "/home/jensp/pwi/libreccm/ccm/";
     //private String repoPath = "";
     private String projectPath = "ccm_ng/ccm-core/src/test/resources/" +
                     "portation/trunk-iaw-exports";

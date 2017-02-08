@@ -19,14 +19,13 @@
 package org.librecms.contentsection;
 
 import com.arsdigita.kernel.KernelConfig;
-import com.arsdigita.util.UncheckedWrapperException;
 
 import org.libreccm.configuration.ConfigurationManager;
+import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.l10n.LocalizedString;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.PermissionChecker;
 import org.libreccm.security.RequiresPrivilege;
-import org.librecms.CmsConstants;
 import org.librecms.contentsection.privileges.ItemPrivileges;
 
 import java.beans.IntrospectionException;
@@ -91,7 +90,7 @@ public class ContentItemL10NManager {
                 LocalizedString.class))
                 .collect(Collectors.toList());
         } catch (IntrospectionException ex) {
-            throw new UncheckedWrapperException(ex);
+            throw new UnexpectedErrorException(ex);
         }
     }
 
@@ -102,7 +101,7 @@ public class ContentItemL10NManager {
         } catch (IllegalAccessException
                  | IllegalArgumentException
                  | InvocationTargetException ex) {
-            throw new UncheckedWrapperException(ex);
+            throw new UnexpectedErrorException(ex);
         }
     }
 

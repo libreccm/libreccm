@@ -119,7 +119,6 @@ public class CcmObjectRepositoryTest {
             .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
             .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
             .addClass(org.libreccm.portation.Portable.class)
-            .addClass(com.arsdigita.util.UncheckedWrapperException.class)
             .addAsLibraries(getModuleDependencies())
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")
