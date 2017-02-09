@@ -22,13 +22,11 @@ import com.arsdigita.bebop.FormData;
 import com.arsdigita.bebop.FormProcessException;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.event.FormSectionEvent;
-import com.arsdigita.cms.ItemSelectionModel;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.categorization.Category;
 
-import java.math.BigDecimal;
 
 public class FolderCreator extends FolderForm {
 
@@ -44,7 +42,7 @@ public class FolderCreator extends FolderForm {
         final FolderSelectionModel model = getFolderSelectionModel();
 
         // Create a new item_id and set it as the key
-        model.setSelectedKey(state, -1L);
+        model.setSelectedKey(state, null);
     }
 
     @Override

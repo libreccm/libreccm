@@ -347,13 +347,21 @@ public class FlatItemList extends SegmentedPanel implements FormProcessListener,
         if (!newItem) {
             browseMode(state);
         }
-        createFolderAction.setVisible(state, newItem);
-        newItemForm.setVisible(state, newItem);
+      
+        browseSegment.setVisible(state, true);
+        
+//        newItemSegment.setVisible(state, newItem);
+//        newFolderSegment.setVisible(state, newItem);
+        //newItemForm.setVisible(state, newItem);
+        
 
         final boolean editItem = permissionChecker.isPermitted(
             ItemPrivileges.EDIT, folder);
 
         editFolderAction.setVisible(state, editItem);
+        chooseLabel.setVisible(state, editItem);
+        editFolderSegment.setVisible(state, editItem);
+        
 
         if (permissionChecker.isPermitted(ItemPrivileges.ADMINISTER, folder)) {
             permissionsSegment.setVisible(state, true);

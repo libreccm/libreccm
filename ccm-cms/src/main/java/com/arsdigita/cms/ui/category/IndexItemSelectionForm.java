@@ -119,7 +119,7 @@ public class IndexItemSelectionForm extends CMSForm {
                 for (Categorization child : children) {
                     ContentItem item = (ContentItem) child.getCategorizedObject();
                     Link link = new Link(
-                            item.getDisplayName(),
+                            new Text(item.getDisplayName()),
                             itemResolver.generateItemURL(
                                     state,
                                     item.getObjectId(),
