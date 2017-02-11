@@ -76,10 +76,12 @@ import org.librecms.contentsection.ContentItemManager;
 import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionManager;
+import org.librecms.contentsection.Folder;
 import org.librecms.contentsection.privileges.ItemPrivileges;
 import org.librecms.dispatcher.ItemResolver;
 
 import java.util.Date;
+import java.util.stream.Collectors;
 
 /**
  * Browse folders and items. If the user clicks on a folder, the folder
@@ -262,6 +264,18 @@ public class FolderBrowser extends Table {
         return m_folderSize;
     }
 
+    protected Paginator getPaginator() {
+        throw new UnsupportedOperationException();
+    }
+    
+    protected String getFilter(final PageState state) {
+        return (String) state.getValue(m_filter);
+    }
+    
+    protected String getAtoZfilter(final PageState state) {
+        return (String) state.getValue(m_aToZfilter);
+    }
+    
     private class FolderTableModelBuilder
         extends AbstractTableModelBuilder
         implements PaginationModelBuilder,
@@ -269,9 +283,10 @@ public class FolderBrowser extends Table {
 
         private final FolderSelectionModel folderModel;
         private final FolderBrowser folderBrowser;
-        private final ContentItemRepository itemRepo;
-        private final ConfigurationManager confManager;
-        private final ContentSectionManager sectionManager;
+//        private final ContentItemRepository itemRepo;
+//        private final ConfigurationManager confManager;
+//        private final ContentSectionManager sectionManager;
+        final FolderBrowserController controller;
 
         public FolderTableModelBuilder(final FolderSelectionModel folderModel) {
             this(folderModel, null);
@@ -282,99 +297,54 @@ public class FolderBrowser extends Table {
             this.folderModel = folderModel;
             this.folderBrowser = folderBrowser;
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            itemRepo = cdiUtil.findBean(ContentItemRepository.class);
-            confManager = cdiUtil.findBean(ConfigurationManager.class);
-            sectionManager = cdiUtil.findBean(ContentSectionManager.class);
+            controller = cdiUtil.findBean(FolderBrowserController.class);
+//            itemRepo = cdiUtil.findBean(ContentItemRepository.class);
+//            confManager = cdiUtil.findBean(ConfigurationManager.class);
+//            sectionManager = cdiUtil.findBean(ContentSectionManager.class);
         }
 
         @Override
         public TableModel makeModel(final Table table, final PageState state) {
+            final FolderSelectionModel folderSelectionModel
+                                           = getFolderSelectionModel();
+            final Folder folder = folderSelectionModel.getSelectedObject(state);
+            if (folder == null) {
+                return Table.EMPTY_MODEL;
+            } else {
+                table.getRowSelectionModel().clearSelection(state);
+                final List<Folder> subFolders = folder.getSubFolders();
+                final List<ContentItem> items = folder.getObjects()
+                    .stream()
+                    .map(categorization -> categorization.getCategorizedObject())
+                    .filter(object -> object instanceof ContentItem)
+                    .map(object -> (ContentItem) object)
+                    .collect(Collectors.toList());
+                
+                final List<CcmObject> objects = new ArrayList<>();
+                objects.addAll(subFolders);
+                objects.addAll(items);
+                
+
+            }
+
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
 
         @Override
         public int getTotalSize(final Paginator paginator,
                                 final PageState state) {
-            final Category folder = (Category) folderModel.getSelectedObject(
-                state);
-
-
-            /*
-            SELECT c.categorizedObject FROM Categorization c "
-            + "WHERE c.category = :folder "
-            + "AND TYPE(c.categorizedObject) IN ContentItem"
-            + "AND (LOWER(c.categorizationObject.displayName) LIKE CONCAT(LOWER(:name), '%') "
-            44+ "OR LOWER(c.categorizedObject.name.value) LIKE CONCAT(:name), '%')
-             */
-            final CriteriaBuilder criteriaBuilder = itemRepo.
-                getCriteriaBuilder();
-            final CriteriaQuery<ContentItem> query = criteriaBuilder.
-                createQuery(ContentItem.class);
-            final Root<Categorization> root = query.from(Categorization.class);
-            final Root<ContentItem> itemRoot = query.from(ContentItem.class);
-            //final List<Predicate> predicates = new ArrayList<>();
-            final Predicate categoryPredicate = criteriaBuilder.equal(
-                root.get("Categorization.category"), folder);
-            final Predicate typePredicate = criteriaBuilder.equal(
-                itemRoot.type(), ContentItem.class);
-            final List<Predicate> filters = new ArrayList<>();
-            final KernelConfig kernelConfig = confManager.findConfiguration(
-                KernelConfig.class);
-            final Locale defaultLocale = kernelConfig.getDefaultLocale();
-            if (state.getValue(m_aToZfilter) != null) {
-                filters.add(criteriaBuilder.like(criteriaBuilder.lower(
-                    root.get("Categorization.categorizedObject.displayName")),
-                                                 String.format("%s%%",
-                                                               ((String) state.
-                                                                getValue(
-                                                                m_aToZfilter)).
-                                                                   toLowerCase(
-                                                                       defaultLocale))));
-                filters.add(criteriaBuilder.like(criteriaBuilder.lower(
-                    root.get("Categorization.categoriziedObject.name.value")),
-                                                 String.format("%s%%",
-                                                               (String) state.
-                                                                   getValue(
-                                                                       m_aToZfilter))
-                                                     .toLowerCase(defaultLocale)));
-            }
-
-            if (state.getValue(m_filter) != null) {
-                filters.add(criteriaBuilder.like(criteriaBuilder.lower(
-                    root.get("Categorization.categorizedObject.displayName")),
-                                                 String.format("%s%%",
-                                                               ((String) state.
-                                                                    getValue(
-                                                                    m_filter)))));
-                filters.add(criteriaBuilder.like(criteriaBuilder.lower(
-                    root.get("Categorization.categorizedObject.name.value")),
-                                                 String.format("%s%%",
-                                                               ((String) state.
-                                                                    getValue(
-                                                                    m_filter)))));
-            }
-
-            final Predicate filtersPredicate = criteriaBuilder.or(filters.
-                toArray(new Predicate[filters.size()]));
-            final Predicate predicates = criteriaBuilder.and(categoryPredicate,
-                                                             typePredicate,
-                                                             filtersPredicate);
-
-            query.where(predicates).select(itemRoot);
-
-            return itemRepo.executeCriteriaQuery(query.where(predicates).select(
-                itemRoot)).size();
+            throw new UnsupportedOperationException();
+            
         }
 
         @Override
         public boolean isVisible(final PageState state) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            return folderBrowser != null && folderBrowser.isVisible(state);
         }
 
         @Override
         public long getFolderSize(final PageState state) {
-            return itemRepo.countItemsInFolder((Category) folderModel.
-                getSelectedObject(state));
+            throw new UnsupportedOperationException();
         }
 
     }
@@ -382,21 +352,23 @@ public class FolderBrowser extends Table {
     private class HeaderCellRenderer
         extends com.arsdigita.cms.ui.util.DefaultTableCellRenderer {
 
-        private String m_key;
+        private final String headerKey;
 
-        public HeaderCellRenderer(String key) {
+        public HeaderCellRenderer(final String headerKey) {
             super(true);
-            m_key = key;
+            this.headerKey = headerKey;
         }
 
         @Override
         public Component getComponent(final Table table, final PageState state,
-                                      Object value,
-                                      boolean isSelected, Object key,
-                                      int row, int column) {
+                                      final Object value,
+                                      boolean isSelected, 
+                                      final Object key,
+                                      final int row, 
+                                      final int column) {
             String headerName = (String) ((GlobalizedMessage) value).localize();
             String sortKey = (String) state.getValue(m_sortType);
-            final boolean isCurrentKey = sortKey.equals(m_key);
+            final boolean isCurrentKey = sortKey.equals(key);
             final String currentSortDirection = (String) state.getValue(
                 m_sortDirection);
             String imageURLStub;
@@ -422,7 +394,7 @@ public class FolderBrowser extends Table {
                     }
                     ps.setControlEvent(table,
                                        sortDirectionAction,
-                                       m_key);
+                                       headerKey);
                 }
 
             };
