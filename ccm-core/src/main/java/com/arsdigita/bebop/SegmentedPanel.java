@@ -250,32 +250,32 @@ public class SegmentedPanel extends SimpleContainer
             add(c);
         }
 
-        @Override
-        public boolean isVisible(final PageState state) {
-            boolean result = super.isVisible(state);
-
-            if (m_header != null) {
-                result = result && m_header.isVisible(state);
-
-                final Iterator children = m_header.children();
-                while (children.hasNext()) {
-                    final Component component = (Component) children.next();
-                    result = result && component.isVisible(state);
-                }
-            }
-
-            if (m_body != null) {
-                result = result && m_body.isVisible(state);
-
-                final Iterator children = m_body.children();
-                while (children.hasNext()) {
-                    final Component component = (Component) children.next();
-                    result = result && component.isVisible(state);
-                }
-            }
-
-            return result;
-        }
+//        @Override
+//        public boolean isVisible(final PageState state) {
+//            boolean result = super.isVisible(state);
+//
+//            if (m_header != null) {
+//                result = result && m_header.isVisible(state);
+//
+//                final Iterator children = m_header.children();
+//                while (children.hasNext()) {
+//                    final Component component = (Component) children.next();
+//                    result = result && component.isVisible(state);
+//                }
+//            }
+//
+//            if (m_body != null) {
+//                result = result && m_body.isVisible(state);
+//
+//                final Iterator children = m_body.children();
+//                while (children.hasNext()) {
+//                    final Component component = (Component) children.next();
+//                    result = result && component.isVisible(state);
+//                }
+//            }
+//
+//            return result;
+//        }
 
         /**
          * Generate the XML for this segment

@@ -25,6 +25,7 @@ import javax.persistence.Table;
 
 import org.libreccm.categorization.Category;
 import org.libreccm.core.CcmObject;
+import org.librecms.CmsConstants;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -59,6 +60,79 @@ import static org.librecms.CmsConstants.*;
     @NamedQuery(
         name = "Folder.findByName",
         query = "SELECT f FROM Folder f WHERE f.name = :name")
+    ,
+    @NamedQuery(
+        name = "Folder.findSubFolders",
+        query = "SELECT f FROM Folder f WHERE f.parentCategory = :parent "
+                    + "AND LOWER(f.name) LIKE :term "
+                    + "ORDER BY f.name"
+    )
+    ,
+    @NamedQuery(
+        name = "Folder.countSubFolders",
+        query
+            = "SELECT COUNT(f) FROM Folder f WHERE f.parentCategory = :parent "
+                  + "AND LOWER(f.name) LIKE :term"
+    )
+    ,
+    @NamedQuery(
+        name = "Folder.findItems",
+        query = "SELECT c.categorizedObject "
+                    + "FROM Categorization c "
+                    + "WHERE c.category = :folder "
+                    + "AND TYPE(c.categorizedObject) IN ContentItem "
+                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
+                    + "AND c.version = "
+                    + "org.librecms.contentsection.ContentItemVersion.DRAFT"
+                    + "AND (LOWER(c.categorizedObject.displayName) LIKE :term "
+                    + "OR LOWER(c.categorizedObject.name.value) LIKE :term) "
+                    + "ORDER BY c.categorizedObject.name")
+    ,
+    @NamedQuery(
+        name = "Folder.countItems",
+        query = "SELECT COUNT(c).categorizedObject "
+                    + "FROM Categorization c "
+                    + "WHERE c.category = :folder "
+                    + "AND Type(c.categorizedObject) IN ContentItem "
+                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
+                    + "AND c.version = "
+                    + "org.librecms.contentsection.ContentItemVersion.DRAFT"
+                    + "AND (LOWER(c.categorizedObject.displayName) LIKE :term "
+                    + "OR LOWER(c.categorizedObject.name.value) LIKE :term)")
+    ,
+    @NamedQuery(
+        name = "Folder.findObjects",
+        query = "SELECT o FROM CcmObject o "
+                    + "WHERE o IN (SELECT f FROM Folder f "
+                    + "WHERE f.parentCategory = :parent "
+                    + "AND lower(f.name) LIKE :term) "
+                    + "OR o IN (SELECT c.categorizedObject "
+                    + "FROM Categorization c "
+                    + "WHERE c.category = :folder "
+                    + "AND TYPE(c.categorizedObject) IN ContentItem "
+                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
+                    + "AND c.version = "
+                    + "org.librecms.contentsection.ContentItemVersion.DRAFT"
+                    + "AND (LOWER(c.categorizedObject.displayName) LIKE :term "
+                    + "OR LOWER(c.categorizedObject.name.value) LIKE :term)) "
+                    + "ORDER BY o.displayName")
+    ,
+    @NamedQuery(
+        name = "Folder.countObjects",
+        query = "SELECT COUNT(o) FROM CcmObject o "
+                    + "WHERE o IN (SELECT f FROM Folder f "
+                    + "WHERE f.parentCategory = :parent "
+                    + "AND lower(f.name) LIKE :term) "
+                    + "OR o IN (SELECT c.categorizedObject "
+                    + "FROM Categorization c "
+                    + "WHERE c.category = :folder "
+                    + "AND TYPE(c.categorizedObject) IN ContentItem "
+                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
+                    + "AND c.version = "
+                    + "org.librecms.contentsection.ContentItemVersion.DRAFT"
+                    + "AND (LOWER(c.categorizedObject.displayName) LIKE :term "
+                    + "OR LOWER(c.categorizedObject.name.value) LIKE :term)) "
+                    + "ORDER BY o.displayName")
 })
 public class Folder extends Category implements Serializable {
 
@@ -115,7 +189,6 @@ public class Folder extends Category implements Serializable {
 //            return (Folder) getParentCategory();
 //        }
 //    }
-
     @Override
     public int hashCode() {
         int hash = super.hashCode();

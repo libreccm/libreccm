@@ -92,7 +92,7 @@ public class FlatItemList extends SegmentedPanel implements FormProcessListener,
 //    private final ActionLink m_setHomeFolderAction;
 //    private final ActionLink m_removeHomeFolderAction;
     private final ActionLink createFolderAction;
-    private final ActionLink togglePrivateAction;
+//    private final ActionLink togglePrivateAction;
 //    private final Label m_homeFolderLabel;
     private final Segment browseSegment;
     private final Segment newItemSegment;
@@ -245,28 +245,28 @@ public class FlatItemList extends SegmentedPanel implements FormProcessListener,
         permissionActions.setSubject(permissionsPane);
 
         // An action
-        togglePrivateAction = new ActionLink(new Label(new PrintListener() {
-
-            @Override
-            public void prepare(final PrintEvent event) {
-                final PageState state = event.getPageState();
-                final Label target = (Label) event.getTarget();
-                final Folder currentFolder = folderRequestLocal.getFolder(state);
-                // ACSObject parent = currentFolder.getParent();
-
-//                if (context == null) {
-                target.setLabel(new GlobalizedMessage(
-                    "cms.ui.restore_default_permissions",
-                    CmsConstants.CMS_BUNDLE));
-//                } else {
-//                    target.setLabel(GlobalizationUtil
-//                        .globalize("cms.ui.use_custom_permissions"));
-//                }
-            }
-
-        }));
-        togglePrivateAction.addActionListener(this);
-        permissionActions.addAction(togglePrivateAction);
+//        togglePrivateAction = new ActionLink(new Label(new PrintListener() {
+//
+//            @Override
+//            public void prepare(final PrintEvent event) {
+//                final PageState state = event.getPageState();
+//                final Label target = (Label) event.getTarget();
+//                final Folder currentFolder = folderRequestLocal.getFolder(state);
+//                // ACSObject parent = currentFolder.getParent();
+//
+////                if (context == null) {
+//                target.setLabel(new GlobalizedMessage(
+//                    "cms.ui.restore_default_permissions",
+//                    CmsConstants.CMS_BUNDLE));
+////                } else {
+////                    target.setLabel(GlobalizationUtil
+////                        .globalize("cms.ui.use_custom_permissions"));
+////                }
+//            }
+//
+//        }));
+//        togglePrivateAction.addActionListener(this);
+//        permissionActions.addAction(togglePrivateAction);
 
         // The 'new item' segment
         newItemSegment.addHeader(new Label(globalize("cms.ui.new_item")));
@@ -305,12 +305,13 @@ public class FlatItemList extends SegmentedPanel implements FormProcessListener,
         super.register(page);
 
         page.setVisibleDefault(chooseLabel, false);
+//        page.setVisibleDefault(browseSegment, true);
         page.setVisibleDefault(newItemSegment, false);
         page.setVisibleDefault(newFolderSegment, false);
         page.setVisibleDefault(editFolderSegment, false);
 
-        page
-            .addComponentStateParam(this, typeSelectionModel.getStateParameter());
+        page.addComponentStateParam(this, 
+                                    typeSelectionModel.getStateParameter());
 
         page.addActionListener(new ActionListener() {
 
@@ -347,21 +348,16 @@ public class FlatItemList extends SegmentedPanel implements FormProcessListener,
         if (!newItem) {
             browseMode(state);
         }
-      
-        browseSegment.setVisible(state, true);
-        
-//        newItemSegment.setVisible(state, newItem);
-//        newFolderSegment.setVisible(state, newItem);
-        //newItemForm.setVisible(state, newItem);
-        
+
+        createFolderAction.setVisible(state, newItem);
+        newItemForm.setVisible(state, newItem);
 
         final boolean editItem = permissionChecker.isPermitted(
             ItemPrivileges.EDIT, folder);
 
         editFolderAction.setVisible(state, editItem);
-        chooseLabel.setVisible(state, editItem);
-        editFolderSegment.setVisible(state, editItem);
-        
+//        chooseLabel.setVisible(state, editItem);
+//        editFolderSegment.setVisible(state, editItem);
 
         if (permissionChecker.isPermitted(ItemPrivileges.ADMINISTER, folder)) {
             permissionsSegment.setVisible(state, true);
@@ -457,9 +453,10 @@ public class FlatItemList extends SegmentedPanel implements FormProcessListener,
         } else if (source == editFolderAction) {
             permissionsSegment.setVisible(state, false);
             editFolderSegment.setVisible(state, true);
-        } else if (source == togglePrivateAction) {
-            togglePermissions(state);
-        }
+        } 
+//          else if (source == togglePrivateAction) {
+//            togglePermissions(state);
+//        }
 //        } else if (source == m_setHomeFolderAction) {
 //            User user = Web.getWebContext().getUser();
 //            Folder folder = m_folder.getFolder(state);
@@ -505,15 +502,15 @@ public class FlatItemList extends SegmentedPanel implements FormProcessListener,
         return permissionsPane;
     }
 
-    public void setPermissionLinkVis(PageState state) {
-        final Folder currentFolder = folderRequestLocal.getFolder(state);
-        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-        final PermissionChecker permissionChecker = cdiUtil.findBean(
-            PermissionChecker.class);
-        if (!permissionChecker.isPermitted(ItemPrivileges.ADMINISTER,
-                                           currentFolder)) {
-            togglePrivateAction.setVisible(state, false);
-        }
+    public void setPermissionLinkVis(final PageState state) {
+//        final Folder currentFolder = folderRequestLocal.getFolder(state);
+//        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+//        final PermissionChecker permissionChecker = cdiUtil.findBean(
+//            PermissionChecker.class);
+//        if (!permissionChecker.isPermitted(ItemPrivileges.ADMINISTER,
+//                                           currentFolder)) {
+//            togglePrivateAction.setVisible(state, false);
+//        }
     }
 
     private static class SectionNewItemForm extends NewItemForm {
