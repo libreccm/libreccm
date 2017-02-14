@@ -62,6 +62,7 @@
         <module>ccm-cms-types-glossaryitem</module>
         <module>ccm-cms-types-faqitem</module>
         <module>ccm-cms-types-externallink</module>
+        <module>ccm-bundle-devel</module>
         <module>ccm-bundle-devel-wildfly-web</module>
         <module>ccm-bundle-devel-wildfly</module>
     </modules>
