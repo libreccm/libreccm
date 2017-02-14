@@ -186,8 +186,10 @@ public abstract class NewItemForm extends Form {
         if (isVisible(state)) {
             final ContentSection section = getContentSection(state);
 
-            final List<ContentType> types = section.getContentTypes();
-            boolean isEmpty = types.isEmpty();
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final NewItemFormController controller = cdiUtil.findBean(
+                NewItemFormController.class);
+            boolean isEmpty = !controller.hasContentTypes(section);
 
             createLabel.setVisible(state, !isEmpty);
             typeSelect.setVisible(state, !isEmpty);

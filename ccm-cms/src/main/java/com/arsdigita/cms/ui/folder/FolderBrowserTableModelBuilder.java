@@ -26,11 +26,9 @@ import com.arsdigita.bebop.table.TableModelBuilder;
 import com.arsdigita.util.LockableImpl;
 
 import org.libreccm.cdi.utils.CdiUtil;
-import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.Folder;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  *

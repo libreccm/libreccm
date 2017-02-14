@@ -22,6 +22,7 @@ import com.arsdigita.kernel.KernelConfig;
 
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.core.CcmObject;
+import org.libreccm.core.CcmObjectRepository;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.l10n.LocalizedString;
 import org.librecms.contentsection.ContentItem;
@@ -32,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -50,6 +52,9 @@ public class FolderBrowserController {
 
     @Inject
     private EntityManager entityManager;
+
+    @Inject
+    private CcmObjectRepository objectRepo;
 
     @Inject
     private ConfigurationManager confManager;
@@ -164,7 +169,7 @@ public class FolderBrowserController {
         final TypedQuery<CcmObject> query = entityManager.createNamedQuery(
             "Folder.findObjects", CcmObject.class);
         query.setParameter("folder", folder);
-        query.setParameter(filterTerm, filterTerm);
+        query.setParameter("term", filterTerm);
 
         if (first > 0 && maxResults > 0) {
             query.setFirstResult(first);
@@ -174,40 +179,22 @@ public class FolderBrowserController {
         return query.getResultList();
     }
 
-    public int countObjects(final Folder folder) {
-        return countObjects(folder, -1, -1);
+    public long countObjects(final Folder folder) {
+        return countObjects(folder, "%");
     }
 
-    public int countObjects(final Folder folder,
-                            final int frist,
-                            final int maxResults) {
-        return countObjects(folder, "%", frist, maxResults);
-    }
-
-    public int countObjects(final Folder folder,
-                            final String filterTerm) {
-        return countObjects(folder, filterTerm, -1, -1);
-    }
-
-    public int countObjects(final Folder folder,
-                            final String filterTerm,
-                            final int first,
-                            final int maxResults) {
-        final TypedQuery<Integer> query = entityManager.createNamedQuery(
-            "Folder.countObjects", Integer.class);
+    public long countObjects(final Folder folder,
+                             final String filterTerm) {
+        final TypedQuery<Long> query = entityManager.createNamedQuery(
+            "Folder.countObjects", Long.class);
         query.setParameter("folder", folder);
-        query.setParameter(filterTerm, filterTerm);
-
-        if (first > 0 && maxResults > 0) {
-            query.setFirstResult(first);
-            query.setMaxResults(maxResults);
-        }
+        query.setParameter("term", filterTerm);
 
         return query.getSingleResult();
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
-    protected List<FolderBrowserTableRow> getObjectRows(final Folder folder) {
+    List<FolderBrowserTableRow> getObjectRows(final Folder folder) {
         final List<CcmObject> objects = findObjects(folder);
 
         return objects.stream()
@@ -216,8 +203,8 @@ public class FolderBrowserController {
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
-    protected List<FolderBrowserTableRow> getObjectRows(final Folder folder,
-                                                        final String filterTerm) {
+    List<FolderBrowserTableRow> getObjectRows(final Folder folder,
+                                              final String filterTerm) {
         final List<CcmObject> objects = findObjects(folder,
                                                     filterTerm);
 
@@ -227,9 +214,9 @@ public class FolderBrowserController {
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
-    protected List<FolderBrowserTableRow> getObjectRows(final Folder folder,
-                                                        final int first,
-                                                        final int maxResults) {
+    List<FolderBrowserTableRow> getObjectRows(final Folder folder,
+                                              final int first,
+                                              final int maxResults) {
         final List<CcmObject> objects = findObjects(folder, first, maxResults);
 
         return objects.stream()
@@ -238,10 +225,10 @@ public class FolderBrowserController {
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
-    protected List<FolderBrowserTableRow> getObjectRows(final Folder folder,
-                                                        final String filterTerm,
-                                                        final int first,
-                                                        final int maxResults) {
+    List<FolderBrowserTableRow> getObjectRows(final Folder folder,
+                                              final String filterTerm,
+                                              final int first,
+                                              final int maxResults) {
         final List<CcmObject> objects = findObjects(folder,
                                                     filterTerm,
                                                     first,
@@ -295,6 +282,15 @@ public class FolderBrowserController {
         }
 
         return row;
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    protected void deleteObject(final long objectId) {
+        final Optional<CcmObject> object = objectRepo.findById(objectId);
+
+        if (object.isPresent()) {
+            objectRepo.delete(object.get());
+        }
     }
 
 }
