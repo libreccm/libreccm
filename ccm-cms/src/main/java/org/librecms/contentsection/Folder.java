@@ -68,71 +68,97 @@ import static org.librecms.CmsConstants.*;
                     + "ORDER BY f.name"
     )
     ,
-    @NamedQuery(
-        name = "Folder.countSubFolders",
-        query
-            = "SELECT COUNT(f) FROM Folder f WHERE f.parentCategory = :parent "
-                  + "AND LOWER(f.name) LIKE :term"
-    )
-    ,
-    @NamedQuery(
-        name = "Folder.findItems",
-        query = "SELECT c.categorizedObject "
-                    + "FROM Categorization c "
-                    + "WHERE c.category = :folder "
-                    + "AND TYPE(c.categorizedObject) IN ContentItem "
-                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
-                    + "AND c.version = "
-                    + "org.librecms.contentsection.ContentItemVersion.DRAFT"
-                    + "AND (LOWER(c.categorizedObject.displayName) LIKE :term "
-                    + "OR LOWER(c.categorizedObject.name.value) LIKE :term) "
-                    + "ORDER BY c.categorizedObject.name")
-    ,
-    @NamedQuery(
-        name = "Folder.countItems",
-        query = "SELECT COUNT(c).categorizedObject "
-                    + "FROM Categorization c "
-                    + "WHERE c.category = :folder "
-                    + "AND Type(c.categorizedObject) IN ContentItem "
-                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
-                    + "AND c.version = "
-                    + "org.librecms.contentsection.ContentItemVersion.DRAFT"
-                    + "AND (LOWER(c.categorizedObject.displayName) LIKE :term "
-                    + "OR LOWER(c.categorizedObject.name.value) LIKE :term)")
-    ,
+//    @NamedQuery(
+//        name = "Folder.countSubFolders",
+//        query
+//            = "SELECT COUNT(f) FROM Folder f WHERE f.parentCategory = :parent "
+//                  + "AND LOWER(f.name) LIKE :term"
+//    )
+//    ,
+//    @NamedQuery(
+//        name = "Folder.findItems",
+//        query = "SELECT c.categorizedObject "
+//                    + "FROM Categorization c "
+//                    + "WHERE c.category = :folder "
+//                    + "AND TYPE(c.categorizedObject) IN ContentItem "
+//                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
+//                    + "AND c.version = "
+//                    + "org.librecms.contentsection.ContentItemVersion.DRAFT"
+//                    + "AND (LOWER(c.categorizedObject.displayName) LIKE :term "
+//                    + "OR LOWER(c.categorizedObject.name.value) LIKE :term) "
+//                    + "ORDER BY c.categorizedObject.name")
+//    ,
+//    @NamedQuery(
+//        name = "Folder.countItems",
+//        query = "SELECT COUNT(c).categorizedObject "
+//                    + "FROM Categorization c "
+//                    + "WHERE c.category = :folder "
+//                    + "AND Type(c.categorizedObject) IN ContentItem "
+//                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
+//                    + "AND c.version = "
+//                    + "org.librecms.contentsection.ContentItemVersion.DRAFT"
+//                    + "AND (LOWER(c.categorizedObject.displayName) LIKE :term "
+//                    + "OR LOWER(c.categorizedObject.name.value) LIKE :term)")
+//    ,
     @NamedQuery(
         name = "Folder.findObjects",
         query = "SELECT o FROM CcmObject o "
                     + "WHERE o IN (SELECT f FROM Folder f "
-                    + "WHERE f.parentCategory = :parent "
-                    + "AND lower(f.name) LIKE :term) "
-                    + "OR o IN (SELECT c.categorizedObject "
-                    + "FROM Categorization c "
-                    + "WHERE c.category = :folder "
-                    + "AND TYPE(c.categorizedObject) IN ContentItem "
+                    + "WHERE f.parentCategory = :folder "
+                    + "AND LOWER(f.name) LIKE :term) "
+                    + "OR o IN (SELECT i FROM ContentItem i JOIN i.categories c "
+                + "WHERE c.category = :folder "
                     + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
-                    + "AND c.version = "
-                    + "org.librecms.contentsection.ContentItemVersion.DRAFT"
-                    + "AND (LOWER(c.categorizedObject.displayName) LIKE :term "
-                    + "OR LOWER(c.categorizedObject.name.value) LIKE :term)) "
-                    + "ORDER BY o.displayName")
+                    + "AND i.version = "
+                    + "org.librecms.contentsection.ContentItemVersion.DRAFT "
+                    + "AND (LOWER(i.displayName) LIKE LOWER(:term) "
+//                    + "OR LOWER(i.name.values) LIKE LOWER(:term)"
+                + ")) "
+                    + "ORDER BY o.displayName"
+    //        query = "SELECT o FROM CcmObject o "
+    //                    + "WHERE o IN (SELECT f FROM Folder f "
+    //                    + "WHERE f.parentCategory = :parent "
+    //                    + "AND lower(f.name) LIKE :term) "
+    //                    + "OR o IN (SELECT c.categorizedObject "
+    //                    + "FROM Categorization c "
+    //                    + "WHERE c.category = :folder "
+    //                    + "AND TYPE(c.categorizedObject) IN ContentItem "
+    //                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
+    //                    + "AND c.version = "
+    //                    + "org.librecms.contentsection.ContentItemVersion.DRAFT"
+    //                    + "AND (LOWER(c.categorizedObject.displayName) LIKE :term "
+    //                    + "OR LOWER(c.categorizedObject.name.value) LIKE :term)) "
+    //                    + "ORDER BY o.displayName"
+    )
     ,
     @NamedQuery(
         name = "Folder.countObjects",
         query = "SELECT COUNT(o) FROM CcmObject o "
                     + "WHERE o IN (SELECT f FROM Folder f "
-                    + "WHERE f.parentCategory = :parent "
-                    + "AND lower(f.name) LIKE :term) "
-                    + "OR o IN (SELECT c.categorizedObject "
-                    + "FROM Categorization c "
-                    + "WHERE c.category = :folder "
-                    + "AND TYPE(c.categorizedObject) IN ContentItem "
+                    + "WHERE f.parentCategory = :folder "
+                    + "AND LOWER(f.name) LIKE :term) "
+                    + "OR o IN (SELECT i FROM ContentItem i JOIN i.categories c "
+                + "WHERE c.category = :folder "
                     + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
-                    + "AND c.version = "
-                    + "org.librecms.contentsection.ContentItemVersion.DRAFT"
-                    + "AND (LOWER(c.categorizedObject.displayName) LIKE :term "
-                    + "OR LOWER(c.categorizedObject.name.value) LIKE :term)) "
-                    + "ORDER BY o.displayName")
+                    + "AND i.version = "
+                    + "org.librecms.contentsection.ContentItemVersion.DRAFT "
+                    + "AND (LOWER(i.displayName) LIKE LOWER(:term) "
+//                    + "OR LOWER(i.name.values) LIKE LOWER(:term)"
+                + "))"
+    //            query = "SELECT COUNT(o) FROM CcmObject o "
+    //                        + "WHERE o IN (SELECT f FROM Folder f "
+    //                        + "WHERE f.parentCategory = :parent "
+    //                        + "AND lower(f.name) LIKE :term) "
+    //                        + "OR o IN (SELECT c.categorizedObject AS co "
+    //                        + "FROM Categorization c "
+    //                        + "WHERE c.category = :folder "
+    //    //                    + "AND TYPE(co) IN ContentItem "
+    //                        + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
+    //                        + "AND co.version = "
+    //                        + "org.librecms.contentsection.ContentItemVersion.DRAFT "
+    //                        + "AND ((LOWER(co.displayName) LIKE :term "
+    //                        + "OR LOWER(co.name.value) LIKE :term)))"
+    )
 })
 public class Folder extends Category implements Serializable {
 

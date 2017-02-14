@@ -25,7 +25,6 @@ import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.Link;
 import com.arsdigita.bebop.Page;
 import com.arsdigita.bebop.PageState;
-import com.arsdigita.bebop.PaginationModelBuilder;
 import com.arsdigita.bebop.Paginator;
 import com.arsdigita.bebop.SimpleContainer;
 import com.arsdigita.bebop.Table;
@@ -35,53 +34,30 @@ import com.arsdigita.bebop.event.TableActionAdapter;
 import com.arsdigita.bebop.event.TableActionEvent;
 import com.arsdigita.bebop.event.TableActionListener;
 import com.arsdigita.bebop.parameters.StringParameter;
-import com.arsdigita.bebop.table.AbstractTableModelBuilder;
 import com.arsdigita.bebop.table.DefaultTableCellRenderer;
 import com.arsdigita.bebop.table.DefaultTableColumnModel;
 import com.arsdigita.bebop.table.TableCellRenderer;
 import com.arsdigita.bebop.table.TableColumn;
 import com.arsdigita.bebop.table.TableHeader;
-import com.arsdigita.bebop.table.TableModel;
 import com.arsdigita.cms.CMS;
 import com.arsdigita.globalization.GlobalizedMessage;
-import com.arsdigita.kernel.KernelConfig;
-import com.arsdigita.toolbox.ui.FormatStandards;
 import com.arsdigita.util.Assert;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-import org.libreccm.auditing.CcmRevision;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
-
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import javax.servlet.ServletException;
 
-import org.libreccm.categorization.Categorization;
 import org.libreccm.categorization.Category;
-import org.libreccm.categorization.CategoryManager;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.configuration.ConfigurationManager;
-import org.libreccm.core.CcmObject;
 import org.libreccm.security.PermissionChecker;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemManager;
-import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionManager;
-import org.librecms.contentsection.Folder;
 import org.librecms.contentsection.privileges.ItemPrivileges;
 import org.librecms.dispatcher.ItemResolver;
-
-import java.util.Date;
-import java.util.stream.Collectors;
 
 /**
  * Browse folders and items. If the user clicks on a folder, the folder
@@ -94,62 +70,51 @@ import java.util.stream.Collectors;
  */
 public class FolderBrowser extends Table {
 
-    private static final Logger LOGGER = LogManager.getLogger(
-        FolderBrowser.class);
-
-    private static GlobalizedMessage[] s_headers = {
+    private static final GlobalizedMessage[] HEADERS = {
         globalize("cms.ui.folder.name"),
         globalize("cms.ui.folder.languages"),
         globalize("cms.ui.folder.title"),
-        globalize("cms.ui.folder.additionalInfo"),
-        globalize("cms.ui.folder.type"),
-        globalize("cms.ui.folder.creation_date"),
-        globalize("cms.ui.folder.last_modified"),
-        globalize("cms.ui.folder.action"),
-        globalize("cms.ui.folder.index")};
-    private static GlobalizedMessage[] s_noIndexHeaders = {
-        globalize("cms.ui.folder.name"),
-        globalize("cms.ui.folder.languages"),
-        globalize("cms.ui.folder.title"),
-        globalize("cms.ui.folder.additionalInfo"),
+//        globalize("cms.ui.folder.additionalInfo"),
         globalize("cms.ui.folder.type"),
         globalize("cms.ui.folder.creation_date"),
         globalize("cms.ui.folder.last_modified"),
         globalize("cms.ui.folder.action")};
     private static final String SORT_ACTION_UP = "sortActionUp";
     private static final String SORT_ACTION_DOWN = "sortActionDown";
-    private FolderSelectionModel m_currentFolder;
-    private TableActionListener m_folderChanger;
-    private TableActionListener m_deleter;
-    private TableActionListener m_indexChanger;
-    private TableColumn m_nameColumn;
-    private TableColumn m_deleteColumn;
-    private TableColumn m_indexColumn;
     private final static String SORT_KEY_NAME = "name";
     private final static String SORT_KEY_TITLE = "title";
     private final static String SORT_KEY_LAST_MODIFIED_DATE = "lastModified";
     private final static String SORT_KEY_CREATION_DATE = "creationDate";
-    private StringParameter m_sortType = new StringParameter("sortType");
-    private StringParameter m_sortDirection = new StringParameter("sortDirn");
-    private StringParameter m_aToZfilter = null;
-    private StringParameter m_filter = null;
-    private FolderManipulator.FilterForm m_filterForm;
-    private long m_folderSize;
 
-    public FolderBrowser(FolderSelectionModel currentFolder) {
-        //super(new FolderTableModelBuilder(), s_headers);
+    private final FolderSelectionModel folderSelectionModel;
+    private final TableActionListener folderChanger;
+    private final TableActionListener folderDeleter;
+//    private TableActionListener m_indexChanger;
+    private final TableColumn nameColumn;
+    private final TableColumn deleteColumn;
+//    private TableColumn m_indexColumn;
+    private final StringParameter sortTypeParameter = new StringParameter("sortType");
+    private final StringParameter sortDirectionParameter = new StringParameter(
+        "sortDirn");
+    
+    private StringParameter atozFilterParameter = null;
+    private StringParameter filterParameter = null;
+    private FolderManipulator folderManipulator;
+    private Paginator paginator;
+//    private FolderManipulator.FilterForm filterForm;
+    private long folderSize;
+
+    public FolderBrowser(final FolderSelectionModel folderSelectionModel) {
         super();
-        m_sortType.setDefaultValue(SORT_KEY_NAME);
-        m_sortDirection.setDefaultValue(SORT_ACTION_UP);
+        sortTypeParameter.setDefaultValue(SORT_KEY_NAME);
+        sortDirectionParameter.setDefaultValue(SORT_ACTION_UP);
 
-        setModelBuilder(new FolderTableModelBuilder(currentFolder));
-        setColumnModel(new DefaultTableColumnModel(hideIndexColumn()
-                                                       ? s_noIndexHeaders
-                                                       : s_headers));
+        setModelBuilder(new FolderBrowserTableModelBuilder());
+        setColumnModel(new DefaultTableColumnModel(HEADERS));
         setHeader(new TableHeader(getColumnModel()));
 
-        m_currentFolder = currentFolder;
-
+        this.folderSelectionModel = folderSelectionModel;
+        
         /*
          *
          * This code should be uncommented if the desired behaviour is for a
@@ -173,40 +138,44 @@ public class FolderBrowser extends Table {
         getHeader().setDefaultRenderer(
             new com.arsdigita.cms.ui.util.DefaultTableCellRenderer());
 
-        m_nameColumn = getColumn(0);
-        m_nameColumn.setCellRenderer(new NameCellRenderer());
-        m_nameColumn.setHeaderRenderer(new HeaderCellRenderer(SORT_KEY_NAME));
+        nameColumn = getColumn(0);
+        nameColumn.setCellRenderer(new NameCellRenderer());
+        nameColumn.setHeaderRenderer(new HeaderCellRenderer(SORT_KEY_NAME));
         getColumn(1).setCellRenderer(new LanguagesCellRenderer());
         getColumn(2).setHeaderRenderer(new HeaderCellRenderer(SORT_KEY_TITLE));
         getColumn(5).setHeaderRenderer(new HeaderCellRenderer(
             SORT_KEY_CREATION_DATE));
         getColumn(6).setHeaderRenderer(new HeaderCellRenderer(
             SORT_KEY_LAST_MODIFIED_DATE));
-        m_deleteColumn = getColumn(7);
-        m_deleteColumn.setCellRenderer(new ActionCellRenderer());
-        m_deleteColumn.setAlign("center");
-        m_folderChanger = new FolderChanger();
-        addTableActionListener(m_folderChanger);
+        deleteColumn = getColumn(6);
+        deleteColumn.setCellRenderer(new ActionCellRenderer());
+        deleteColumn.setAlign("center");
+        folderChanger = new FolderChanger();
+        addTableActionListener(folderChanger);
 
-        m_deleter = new ItemDeleter();
-        addTableActionListener(m_deleter);
+        folderDeleter = new ItemDeleter();
+        addTableActionListener(folderDeleter);
 
         setEmptyView(new Label(globalize("cms.ui.folder.no_items")));
 
-        Assert.exists(m_currentFolder.getStateParameter());
+        Assert.exists(folderSelectionModel.getStateParameter());
     }
 
     @Override
-    public void register(Page p) {
-        super.register(p);
+    public void register(final Page page) {
+        super.register(page);
 
-        p.addComponentStateParam(this, m_currentFolder.getStateParameter());
-        p.addComponentStateParam(this, m_sortType);
-        p.addComponentStateParam(this, m_sortDirection);
-        p.addActionListener(new ActionListener() {
+        page.addComponentStateParam(this,
+                                    folderSelectionModel.getStateParameter());
+        page.addComponentStateParam(this,
+                                    sortTypeParameter);
+        page.addComponentStateParam(this,
+                                    sortDirectionParameter);
+        page.addActionListener(new ActionListener() {
 
-            public void actionPerformed(ActionEvent e) {
-                final PageState state = e.getPageState();
+            @Override
+            public void actionPerformed(final ActionEvent event) {
+                final PageState state = event.getPageState();
 
                 if (state.isVisibleOnPage(FolderBrowser.this)) {
                     showHideFolderActions(state);
@@ -216,139 +185,148 @@ public class FolderBrowser extends Table {
         });
     }
 
-    private void showHideFolderActions(PageState state) {
+    private void showHideFolderActions(final PageState state) {
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final PermissionChecker permissionChecker = cdiUtil.findBean(
             PermissionChecker.class);
-        Category folder = (Category) m_currentFolder.getSelectedObject(state);
-        Assert.exists(folder);
+        final Category folder = (Category) folderSelectionModel
+            .getSelectedObject(
+                state);
 
         final boolean canDelete = permissionChecker.isPermitted(
             ItemPrivileges.DELETE, folder);
-        m_deleteColumn.setVisible(state, canDelete);
+        deleteColumn.setVisible(state, canDelete);
     }
 
     @Override
-    public void respond(PageState state) throws ServletException {
-        String key = state.getControlEventName();
-        String value = state.getControlEventValue();
+    public void respond(final PageState state) throws ServletException {
+        final String key = state.getControlEventName();
+        final String value = state.getControlEventValue();
         if (SORT_ACTION_UP.equals(key)) {
-            state.setValue(m_sortType, value);
-            state.setValue(m_sortDirection, SORT_ACTION_UP);
+            state.setValue(sortTypeParameter, value);
+            state.setValue(sortDirectionParameter, SORT_ACTION_UP);
         } else if (SORT_ACTION_DOWN.equals(key)) {
-            state.setValue(m_sortType, value);
-            state.setValue(m_sortDirection, SORT_ACTION_DOWN);
+            state.setValue(sortTypeParameter, value);
+            state.setValue(sortDirectionParameter, SORT_ACTION_DOWN);
         } else {
             super.respond(state);
-            //throw new ServletException("Unknown control event: " + key);
         }
     }
 
     public FolderSelectionModel getFolderSelectionModel() {
-        return m_currentFolder;
+        return folderSelectionModel;
+    }
+    
+    protected void setFolderManipulator(final FolderManipulator folderManipulator) {
+        this.folderManipulator = folderManipulator;
     }
 
-    protected void setFilterForm(FolderManipulator.FilterForm filterForm) {
-        m_filterForm = filterForm;
+//    protected void setFilterForm(final FolderManipulator.FilterForm filterForm) {
+//        this.filterForm = filterForm;
+//    }
+
+    protected void setAtoZfilterParameter(
+        final StringParameter atozFilterParameter) {
+        this.atozFilterParameter = atozFilterParameter;
     }
 
-    protected void setAtoZfilterParameter(StringParameter aToZfilter) {
-        m_aToZfilter = aToZfilter;
-    }
-
-    protected void setFilterParameter(StringParameter filter) {
-        m_filter = filter;
+    protected void setFilterParameter(final StringParameter filterParameter) {
+        this.filterParameter = filterParameter;
     }
 
     protected long getFolderSize() {
-        return m_folderSize;
+        return folderSize;
     }
 
     protected Paginator getPaginator() {
-        throw new UnsupportedOperationException();
+        return paginator;
     }
     
+    protected void setPaginator(final Paginator paginator) {
+        this.paginator = paginator;
+    }
+
     protected String getFilter(final PageState state) {
-        return (String) state.getValue(m_filter);
+        return (String) state.getValue(filterParameter);
     }
-    
+
     protected String getAtoZfilter(final PageState state) {
-        return (String) state.getValue(m_aToZfilter);
-    }
-    
-    private class FolderTableModelBuilder
-        extends AbstractTableModelBuilder
-        implements PaginationModelBuilder,
-                   FolderManipulator.FilterFormModelBuilder {
-
-        private final FolderSelectionModel folderModel;
-        private final FolderBrowser folderBrowser;
-//        private final ContentItemRepository itemRepo;
-//        private final ConfigurationManager confManager;
-//        private final ContentSectionManager sectionManager;
-        final FolderBrowserController controller;
-
-        public FolderTableModelBuilder(final FolderSelectionModel folderModel) {
-            this(folderModel, null);
-        }
-
-        public FolderTableModelBuilder(final FolderSelectionModel folderModel,
-                                       final FolderBrowser folderBrowser) {
-            this.folderModel = folderModel;
-            this.folderBrowser = folderBrowser;
-            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            controller = cdiUtil.findBean(FolderBrowserController.class);
-//            itemRepo = cdiUtil.findBean(ContentItemRepository.class);
-//            confManager = cdiUtil.findBean(ConfigurationManager.class);
-//            sectionManager = cdiUtil.findBean(ContentSectionManager.class);
-        }
-
-        @Override
-        public TableModel makeModel(final Table table, final PageState state) {
-            final FolderSelectionModel folderSelectionModel
-                                           = getFolderSelectionModel();
-            final Folder folder = folderSelectionModel.getSelectedObject(state);
-            if (folder == null) {
-                return Table.EMPTY_MODEL;
-            } else {
-                table.getRowSelectionModel().clearSelection(state);
-                final List<Folder> subFolders = folder.getSubFolders();
-                final List<ContentItem> items = folder.getObjects()
-                    .stream()
-                    .map(categorization -> categorization.getCategorizedObject())
-                    .filter(object -> object instanceof ContentItem)
-                    .map(object -> (ContentItem) object)
-                    .collect(Collectors.toList());
-                
-                final List<CcmObject> objects = new ArrayList<>();
-                objects.addAll(subFolders);
-                objects.addAll(items);
-                
-
-            }
-
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public int getTotalSize(final Paginator paginator,
-                                final PageState state) {
-            throw new UnsupportedOperationException();
-            
-        }
-
-        @Override
-        public boolean isVisible(final PageState state) {
-            return folderBrowser != null && folderBrowser.isVisible(state);
-        }
-
-        @Override
-        public long getFolderSize(final PageState state) {
-            throw new UnsupportedOperationException();
-        }
-
+        return (String) state.getValue(atozFilterParameter);
     }
 
+//    private class FolderTableModelBuilder
+//        extends AbstractTableModelBuilder
+//        implements PaginationModelBuilder,
+//                   FolderManipulator.FilterFormModelBuilder {
+//
+//        private final FolderSelectionModel folderModel;
+//        private final FolderBrowser folderBrowser;
+////        private final ContentItemRepository itemRepo;
+////        private final ConfigurationManager confManager;
+////        private final ContentSectionManager sectionManager;
+//        final FolderBrowserController controller;
+//
+//        public FolderTableModelBuilder(final FolderSelectionModel folderModel) {
+//            this(folderModel, null);
+//        }
+//
+//        public FolderTableModelBuilder(final FolderSelectionModel folderModel,
+//                                       final FolderBrowser folderBrowser) {
+//            this.folderModel = folderModel;
+//            this.folderBrowser = folderBrowser;
+//            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+//            controller = cdiUtil.findBean(FolderBrowserController.class);
+////            itemRepo = cdiUtil.findBean(ContentItemRepository.class);
+////            confManager = cdiUtil.findBean(ConfigurationManager.class);
+////            sectionManager = cdiUtil.findBean(ContentSectionManager.class);
+//        }
+//
+//        @Override
+//        public TableModel makeModel(final Table table, final PageState state) {
+//            final FolderSelectionModel folderSelectionModel
+//                                           = getFolderSelectionModel();
+//            final Folder folder = folderSelectionModel.getSelectedObject(state);
+//            if (folder == null) {
+//                return Table.EMPTY_MODEL;
+//            } else {
+//                table.getRowSelectionModel().clearSelection(state);
+//                final List<Folder> subFolders = folder.getSubFolders();
+//                final List<ContentItem> items = folder.getObjects()
+//                    .stream()
+//                    .map(categorization -> categorization.getCategorizedObject())
+//                    .filter(object -> object instanceof ContentItem)
+//                    .map(object -> (ContentItem) object)
+//                    .collect(Collectors.toList());
+//                
+//                final List<CcmObject> objects = new ArrayList<>();
+//                objects.addAll(subFolders);
+//                objects.addAll(items);
+//                
+//
+//            }
+//
+//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//        }
+//
+//        @Override
+//        public int getTotalSize(final Paginator paginator,
+//                                final PageState state) {
+//            throw new UnsupportedOperationException();
+//            
+//        }
+//
+//        @Override
+//        public boolean isVisible(final PageState state) {
+//            return folderBrowser != null && folderBrowser.isVisible(state);
+//        }
+//
+//        @Override
+//        public long getFolderSize(final PageState state) {
+//            throw new UnsupportedOperationException();
+//        }
+//
+//    }
+//
     private class HeaderCellRenderer
         extends com.arsdigita.cms.ui.util.DefaultTableCellRenderer {
 
@@ -360,18 +338,19 @@ public class FolderBrowser extends Table {
         }
 
         @Override
-        public Component getComponent(final Table table, final PageState state,
+        public Component getComponent(final Table table,
+                                      final PageState state,
                                       final Object value,
-                                      boolean isSelected, 
+                                      final boolean isSelected,
                                       final Object key,
-                                      final int row, 
+                                      final int row,
                                       final int column) {
-            String headerName = (String) ((GlobalizedMessage) value).localize();
-            String sortKey = (String) state.getValue(m_sortType);
+            final GlobalizedMessage headerName = (GlobalizedMessage) value;
+            final String sortKey = (String) state.getValue(sortTypeParameter);
             final boolean isCurrentKey = sortKey.equals(key);
             final String currentSortDirection = (String) state.getValue(
-                m_sortDirection);
-            String imageURLStub;
+                sortDirectionParameter);
+            final String imageURLStub;
 
             if (SORT_ACTION_UP.equals(currentSortDirection)) {
                 imageURLStub = "gray-triangle-up.gif";
@@ -379,7 +358,7 @@ public class FolderBrowser extends Table {
                 imageURLStub = "gray-triangle-down.gif";
             }
 
-            ControlLink cl = new ControlLink(headerName) {
+            final ControlLink link = new ControlLink(new Label(headerName)) {
 
                 @Override
                 public void setControlEvent(PageState ps) {
@@ -398,24 +377,25 @@ public class FolderBrowser extends Table {
                 }
 
             };
-            Label l = new Label();
-            l.setLabel(headerName);
-            l.setClassAttr("folderBrowserLink");
-            l.setOutputEscaping(false);
-            l.setFontWeight(Label.BOLD);
+            final Label label = new Label();
+            label.setLabel(headerName);
+            label.setClassAttr("folderBrowserLink");
+            label.setOutputEscaping(false);
+            label.setFontWeight(Label.BOLD);
 
-            SimpleContainer container = new SimpleContainer();
-            container.add(l);
+            final SimpleContainer container = new SimpleContainer();
+            container.add(label);
             if (isCurrentKey) {
                 Image image = new Image("/assets/" + imageURLStub);
                 image.setBorder("0");
                 container.add(image);
             }
-            cl.setChild(container);
-            return cl;
+            link.setChild(container);
+            return link;
         }
 
     }
+//
 
     /**
      * Produce links to view an item or control links for folders to change into
@@ -428,16 +408,16 @@ public class FolderBrowser extends Table {
         }
 
         @Override
-        public Component getComponent(Table table,
-                                      PageState state,
-                                      Object value,
-                                      boolean isSelected,
-                                      Object key,
-                                      int row,
-                                      int column) {
+        public Component getComponent(final Table table,
+                                      final PageState state,
+                                      final Object value,
+                                      final boolean isSelected,
+                                      final Object key,
+                                      final int row,
+                                      final int column) {
 
             final ContentItem item = (ContentItem) value;
-            String name = item.getDisplayName();
+            final String name = item.getDisplayName();
 //            final ContentSection section = item.getContentType().
 //                    getContentSection();
             final ContentSection section = CMS.getContext().getContentSection();
@@ -471,16 +451,16 @@ public class FolderBrowser extends Table {
         }
 
         @Override
-        public Component getComponent(Table table,
-                                      PageState state,
-                                      Object value,
-                                      boolean isSelected,
-                                      Object key,
-                                      int row,
-                                      int column) {
+        public Component getComponent(final Table table,
+                                      final PageState state,
+                                      final Object value,
+                                      final boolean isSelected,
+                                      final Object key,
+                                      final int row,
+                                      final int column) {
 
             final ContentItem item = (ContentItem) value;
-            String name = item.getDisplayName();
+            final String name = item.getDisplayName();
 
             final SimpleContainer container = new SimpleContainer();
             final ContentSection section = CMS.getContext().getContentSection();
@@ -529,58 +509,33 @@ public class FolderBrowser extends Table {
         private static final Logger LOGGER = LogManager.getLogger(
             ActionCellRenderer.class);
 
-        private static final Label s_noAction;
-        private static final ControlLink s_link;
+        private static final Label noActionLabel;
+        private static final ControlLink link;
 
         static {
             LOGGER.debug("Static initializer is starting...");
-            s_noAction = new Label("&nbsp;", false);
-            s_noAction.lock();
-            s_link = new ControlLink(
+            noActionLabel = new Label("&nbsp;", false);
+            noActionLabel.lock();
+            link = new ControlLink(
                 new Label(globalize("cms.ui.folder.delete")));
-            s_link.setConfirmation(
+            link.setConfirmation(
                 globalize("cms.ui.folder.delete_confirmation"));
             LOGGER.debug("Static initializer finished.");
         }
 
         @Override
-        public Component getComponent(Table table, PageState state, Object value,
-                                      boolean isSelected, Object key,
-                                      int row, int column) {
+        public Component getComponent(final Table table,
+                                      final PageState state,
+                                      final Object value,
+                                      final boolean isSelected,
+                                      final Object key,
+                                      final int row,
+                                      final int column) {
             if (((Boolean) value)) {
-                return s_link;
+                return link;
             } else {
-                return s_noAction;
+                return noActionLabel;
             }
-        }
-
-    }
-
-    private final class IndexToggleRenderer implements TableCellRenderer {
-
-        @Override
-        public Component getComponent(Table table,
-                                      PageState state,
-                                      Object value,
-                                      boolean isSelected,
-                                      Object key,
-                                      int row,
-                                      int column) {
-
-            if (value == null) {
-                return new Label(new GlobalizedMessage(
-                    "cms.ui.folder.na",
-                    CmsConstants.CMS_FOLDER_BUNDLE));
-            }
-            ControlLink link = new ControlLink("");
-
-            if (((Boolean) value)) {
-                link.setClassAttr("checkBoxChecked");
-            } else {
-                link.setClassAttr("checkBoxUnchecked");
-            }
-
-            return link;
         }
 
     }
@@ -589,214 +544,211 @@ public class FolderBrowser extends Table {
     private class ItemDeleter extends TableActionAdapter {
 
         @Override
-        public void cellSelected(TableActionEvent e) {
-            int col = e.getColumn();
+        public void cellSelected(final TableActionEvent event) {
+            int col = event.getColumn();
 
-            if (m_deleteColumn != getColumn(col)) {
+            if (deleteColumn != getColumn(col)) {
                 return;
             }
 
-            PageState s = e.getPageState();
-            long itemId = Long.parseLong(e.getRowKey().toString());
-
-            final ContentItemRepository itemRepo = CdiUtil.createCdiUtil().
-                findBean(ContentItemRepository.class);
-            final Optional<ContentItem> item = itemRepo.findById(itemId);
-            if (item.isPresent()) {
-                itemRepo.delete(item.get());
-            }
-
-            ((Table) e.getSource()).clearSelection(s);
-        }
-
-    }
-
-    /**
-     * Table model around ItemCollection
-     */
-    private static class FolderTableModel implements TableModel {
-
-        private static final int NAME = 0;
-        private static final int LANGUAGES = 1;
-        private static final int TITLE = 2;
-        private static final int ADDITIONAL_INFO = 3;
-        private static final int TYPE = 4;
-        private static final int CREATION_DATE = 5;
-        private static final int LAST_MODIFIED = 6;
-        private static final int DELETABLE = 7;
-        private static final int IS_INDEX = 8;
-        private PageState m_state;
-        private FolderBrowser m_table;
-        private List<ContentItem> m_itemColl;
-        private Category m_fol;
-        private Long m_folIndexID;
-        private final ContentItemRepository itemRepo;
-        private final ContentItemManager itemManager;
-        private final CategoryManager categoryManager;
-        private int index = -1;
-
-        //old constructor before using paginator
-        //public FolderTableModel(Folder folder) {
-        //m_itemColl = folder.getItems();
-        //}
-        public FolderTableModel(FolderBrowser table,
-                                PageState state,
-                                List<ContentItem> itemColl) {
-            m_state = state;
-            m_table = table;
-            m_itemColl = itemColl;
-
-            m_fol = (Category) table.getFolderSelectionModel()
-                .getSelectedObject(state);
+            final PageState state = event.getPageState();
+            final long itemId = Long.parseLong(event.getRowKey().toString());
 
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            itemRepo = cdiUtil.findBean(ContentItemRepository.class);
-            itemManager = cdiUtil.findBean(ContentItemManager.class);
-            categoryManager = cdiUtil.findBean(CategoryManager.class);
+            final FolderBrowserController controller = cdiUtil.findBean(
+                FolderBrowserController.class);
+            controller.deleteObject(itemId);
 
-            if (!hideIndexColumn()) {
-                final Optional<CcmObject> indexItem = categoryManager
-                    .getIndexObject(m_fol);
-                if (indexItem.isPresent()) {
-                    m_folIndexID = indexItem.get().getObjectId();
-                } else {
-                    m_folIndexID = null;
-                }
-            }
-        }
-
-        @Override
-        public int getColumnCount() {
-            return 7;
-        }
-
-        @Override
-        public boolean nextRow() {
-            index++;
-            return index < m_itemColl.size();
-        }
-
-        @Override
-        public Object getElementAt(int columnIndex) {
-            switch (columnIndex) {
-                case NAME:
-                    return m_itemColl.get(index);
-                case LANGUAGES:
-                    return m_itemColl.get(index);
-                case TITLE:
-                    return m_itemColl.get(index).getDisplayName();
-                case ADDITIONAL_INFO:
-                    return "";
-                case TYPE:
-                    return m_itemColl.get(index).getContentType().getLabel()
-                        .getValue();
-                case CREATION_DATE: {
-                    final CcmRevision firstRevision = itemRepo
-                        .retrieveFirstRevision(
-                            m_itemColl.get(index), m_itemColl.get(index)
-                            .getObjectId());
-                    if (firstRevision == null) {
-                        return "--";
-                    } else {
-                        return FormatStandards.formatDate(new Date(firstRevision
-                            .getTimestamp()));
-                    }
-                }
-                case LAST_MODIFIED: {
-                    final CcmRevision currentRevision = itemRepo
-                        .retrieveCurrentRevision(
-                            m_itemColl.get(index),
-                            m_itemColl.get(index).getObjectId());
-                    if (currentRevision == null) {
-                        return "--";
-                    } else {
-                        return FormatStandards.formatDate(new Date(
-                            currentRevision.getTimestamp()));
-                    }
-                }
-                case DELETABLE:
-                    return isDeletable();
-                case IS_INDEX: {
-                    if (hideIndexColumn()) {
-                        throw new IndexOutOfBoundsException(
-                            "Column index " + columnIndex
-                                + " not in table model.");
-                    }
-                    if (m_folIndexID == null) {
-                        return false;
-                    }
-                    return m_folIndexID.compareTo(
-                        m_itemColl.get(index).getObjectId()) == 0;
-                }
-                default:
-                    throw new IndexOutOfBoundsException("Column index "
-                                                            + columnIndex
-                                                            + " not in table model.");
-            }
-        }
-
-        public boolean isDeletable() {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Checking to see if " + this + " is deletable");
-            }
-
-//            if (m_itemColl.isFolder()) {
-//
-//                if (!m_itemColl.hasChildren()) {
-//                    if (s_log.isDebugEnabled()) {
-//                        s_log.debug(
-//                            "The item is an empty folder; it may be deleted");
-//                    }
-//                    return true;
-//
-//                } else {
-//
-//                    if (s_log.isDebugEnabled()) {
-//                        s_log.debug(
-//                            "The folder is not empty; it cannot be deleted");
-//                    }
-//                    return false;
-//
-//                }
-//            } else 
-            if (itemManager.isLive(m_itemColl.get(index))) {
-
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug(
-                        "This item has a live instance; it cannot be deleted");
-                }
-                return false;
-            }
-
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug(
-                    "The item is not a folder and doesn't have a live instance; it may be deleted");
-            }
-            return true;
-        }
-
-        public Object getKeyAt(int columnIndex) {
-            // Note: Folders were marked by negative IDs
-            return m_itemColl.get(index).getObjectId();
+            ((Table) event.getSource()).clearSelection(state);
         }
 
     }
 
+//    /**
+//     * Table model around ItemCollection
+//     */
+//    private static class FolderTableModel implements TableModel {
+//
+//        private static final int NAME = 0;
+//        private static final int LANGUAGES = 1;
+//        private static final int TITLE = 2;
+//        private static final int ADDITIONAL_INFO = 3;
+//        private static final int TYPE = 4;
+//        private static final int CREATION_DATE = 5;
+//        private static final int LAST_MODIFIED = 6;
+//        private static final int DELETABLE = 7;
+//        private static final int IS_INDEX = 8;
+//        private PageState m_state;
+//        private FolderBrowser m_table;
+//        private List<ContentItem> m_itemColl;
+//        private Category m_fol;
+//        private Long m_folIndexID;
+//        private final ContentItemRepository itemRepo;
+//        private final ContentItemManager itemManager;
+//        private final CategoryManager categoryManager;
+//        private int index = -1;
+//
+//        //old constructor before using paginator
+//        //public FolderTableModel(Folder folder) {
+//        //m_itemColl = folder.getItems();
+//        //}
+//        public FolderTableModel(FolderBrowser table,
+//                                PageState state,
+//                                List<ContentItem> itemColl) {
+//            m_state = state;
+//            m_table = table;
+//            m_itemColl = itemColl;
+//
+//            m_fol = (Category) table.getFolderSelectionModel()
+//                .getSelectedObject(state);
+//
+//            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+//            itemRepo = cdiUtil.findBean(ContentItemRepository.class);
+//            itemManager = cdiUtil.findBean(ContentItemManager.class);
+//            categoryManager = cdiUtil.findBean(CategoryManager.class);
+//
+//            if (!hideIndexColumn()) {
+//                final Optional<CcmObject> indexItem = categoryManager
+//                    .getIndexObject(m_fol);
+//                if (indexItem.isPresent()) {
+//                    m_folIndexID = indexItem.get().getObjectId();
+//                } else {
+//                    m_folIndexID = null;
+//                }
+//            }
+//        }
+//
+//        @Override
+//        public int getColumnCount() {
+//            return 7;
+//        }
+//
+//        @Override
+//        public boolean nextRow() {
+//            index++;
+//            return index < m_itemColl.size();
+//        }
+//
+//        @Override
+//        public Object getElementAt(int columnIndex) {
+//            switch (columnIndex) {
+//                case NAME:
+//                    return m_itemColl.get(index);
+//                case LANGUAGES:
+//                    return m_itemColl.get(index);
+//                case TITLE:
+//                    return m_itemColl.get(index).getDisplayName();
+//                case ADDITIONAL_INFO:
+//                    return "";
+//                case TYPE:
+//                    return m_itemColl.get(index).getContentType().getLabel()
+//                        .getValue();
+//                case CREATION_DATE: {
+//                    final CcmRevision firstRevision = itemRepo
+//                        .retrieveFirstRevision(
+//                            m_itemColl.get(index), m_itemColl.get(index)
+//                            .getObjectId());
+//                    if (firstRevision == null) {
+//                        return "--";
+//                    } else {
+//                        return FormatStandards.formatDate(new Date(firstRevision
+//                            .getTimestamp()));
+//                    }
+//                }
+//                case LAST_MODIFIED: {
+//                    final CcmRevision currentRevision = itemRepo
+//                        .retrieveCurrentRevision(
+//                            m_itemColl.get(index),
+//                            m_itemColl.get(index).getObjectId());
+//                    if (currentRevision == null) {
+//                        return "--";
+//                    } else {
+//                        return FormatStandards.formatDate(new Date(
+//                            currentRevision.getTimestamp()));
+//                    }
+//                }
+//                case DELETABLE:
+//                    return isDeletable();
+//                case IS_INDEX: {
+//                    if (hideIndexColumn()) {
+//                        throw new IndexOutOfBoundsException(
+//                            "Column index " + columnIndex
+//                                + " not in table model.");
+//                    }
+//                    if (m_folIndexID == null) {
+//                        return false;
+//                    }
+//                    return m_folIndexID.compareTo(
+//                        m_itemColl.get(index).getObjectId()) == 0;
+//                }
+//                default:
+//                    throw new IndexOutOfBoundsException("Column index "
+//                                                            + columnIndex
+//                                                            + " not in table model.");
+//            }
+//        }
+//
+//        public boolean isDeletable() {
+//            if (LOGGER.isDebugEnabled()) {
+//                LOGGER.debug("Checking to see if " + this + " is deletable");
+//            }
+//
+////            if (m_itemColl.isFolder()) {
+////
+////                if (!m_itemColl.hasChildren()) {
+////                    if (s_log.isDebugEnabled()) {
+////                        s_log.debug(
+////                            "The item is an empty folder; it may be deleted");
+////                    }
+////                    return true;
+////
+////                } else {
+////
+////                    if (s_log.isDebugEnabled()) {
+////                        s_log.debug(
+////                            "The folder is not empty; it cannot be deleted");
+////                    }
+////                    return false;
+////
+////                }
+////            } else 
+//            if (itemManager.isLive(m_itemColl.get(index))) {
+//
+//                if (LOGGER.isDebugEnabled()) {
+//                    LOGGER.debug(
+//                        "This item has a live instance; it cannot be deleted");
+//                }
+//                return false;
+//            }
+//
+//            if (LOGGER.isDebugEnabled()) {
+//                LOGGER.debug(
+//                    "The item is not a folder and doesn't have a live instance; it may be deleted");
+//            }
+//            return true;
+//        }
+//
+//        public Object getKeyAt(int columnIndex) {
+//            // Note: Folders were marked by negative IDs
+//            return m_itemColl.get(index).getObjectId();
+//        }
+//
+//    }
     private class FolderChanger extends TableActionAdapter {
 
         @Override
-        public void cellSelected(TableActionEvent e) {
-            PageState s = e.getPageState();
-            int col = e.getColumn().intValue();
+        public void cellSelected(final TableActionEvent event) {
+            final PageState state = event.getPageState();
+            final int col = event.getColumn();
 
-            if (m_nameColumn != getColumn(col)) {
+            if (nameColumn != getColumn(col)) {
                 return;
             }
-            String key = (String) e.getRowKey();
+            final String key = (String) event.getRowKey();
             if (key.startsWith("-")) { // XXX dirty dirty
-                clearSelection(s);
+                clearSelection(state);
                 getFolderSelectionModel().setSelectedKey(
-                    s, Long.parseLong(key.substring(1)));
+                    state, Long.parseLong(key.substring(1)));
             }
         }
 
@@ -851,8 +803,5 @@ public class FolderBrowser extends Table {
 
     }
 
-    private static boolean hideIndexColumn() {
-        return true;
-    }
 
 }
