@@ -23,9 +23,11 @@ import org.libreccm.core.CoreConstants;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.enterprise.context.RequestScoped;
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
@@ -42,12 +44,12 @@ public class ContentSectionRepository
             throw new IllegalArgumentException(
                 "The label of a ContentSection can't be empty.");
         }
-        
+
         final TypedQuery<ContentSection> query = getEntityManager()
-            .createNamedQuery("ContentSection.findByLabel", 
+            .createNamedQuery("ContentSection.findByLabel",
                               ContentSection.class);
         query.setParameter("label", label);
-        
+
         return query.getSingleResult();
     }
 
@@ -66,11 +68,11 @@ public class ContentSectionRepository
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public void save(final ContentSection section) {
-        if(isNew(section)) {
+        if (isNew(section)) {
             section.setUuid(UUID.randomUUID().toString());
             section.setApplicationType(ContentSection.class.getName());
         }
-        
+
         super.save(section);
     }
 

@@ -21,7 +21,6 @@ package com.arsdigita.cms.ui.folder;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.PaginationModelBuilder;
 import com.arsdigita.bebop.Paginator;
-import com.arsdigita.bebop.Table;
 
 import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.contentsection.Folder;
@@ -66,9 +65,10 @@ class FolderBrowserPaginationModelBuilder implements PaginationModelBuilder {
             }
 
             if (filterTerm == null) {
-                return controller.countObjects(folder, first, pageSize);
+                return (int) controller.countObjects(folder);
             } else {
-                return controller.countObjects(folder, filter, first, pageSize);
+                return (int) controller.countObjects(folder, 
+                                                     filter);
             }
         }
     }

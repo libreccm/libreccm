@@ -57,15 +57,29 @@ import static org.librecms.CmsConstants.*;
 @Table(name = "CONTENT_SECTIONS", schema = DB_SCHEMA)
 @NamedQueries({
     @NamedQuery(
+        name = "ContentSection.findById",
+        query = "SELECT S FROM ContentSection s WHERE s.objectId = :objectId")
+    ,
+    @NamedQuery(
         name = "ContentSection.findByLabel",
         query = "SELECT s FROM ContentSection s WHERE s.label = :label")
+    ,
+    @NamedQuery(
+        name = "ContentSection.findContentTypes",
+        query = "SELECT t FROM ContentType t WHERE t.contentSection = :section")
+    ,
+    @NamedQuery(
+        name = "ContentSection.countContentTypes",
+        query
+        = "SELECT COUNT(t) FROM ContentType t WHERE t.contentSection = :section"
+    )
     ,
     @NamedQuery(
         name = "ContentSection.findPermissions",
         query = "SELECT p FROM Permission p "
                     + "WHERE (p.object = :section "
                     + "       OR p.object = :rootDocumentsFolder"
-        + "                   OR p.object = :rootAssetsFolder) "
+                    + "                   OR p.object = :rootAssetsFolder) "
                     + "AND p.grantee = :role")
 })
 //@ApplicationType(

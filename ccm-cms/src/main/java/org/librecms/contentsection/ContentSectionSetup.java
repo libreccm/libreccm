@@ -20,6 +20,7 @@ package org.librecms.contentsection;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.modules.InstallEvent;
 import org.libreccm.security.Role;
 import org.libreccm.web.AbstractCcmApplicationSetup;
@@ -32,7 +33,14 @@ import static org.librecms.contentsection.ContentSection.*;
 import org.librecms.contentsection.privileges.AdminPrivileges;
 import org.librecms.contentsection.privileges.AssetPrivileges;
 import org.librecms.contentsection.privileges.ItemPrivileges;
+import org.librecms.contenttypes.Article;
+import org.librecms.contenttypes.Event;
+import org.librecms.contenttypes.MultiPartArticle;
+import org.librecms.contenttypes.News;
 import org.librecms.dispatcher.MultilingualItemResolver;
+
+import java.util.Arrays;
+import java.util.logging.Level;
 
 /**
  *
@@ -47,6 +55,11 @@ public class ContentSectionSetup extends AbstractCcmApplicationSetup {
                                     = "org.librecms.initial_content_sections";
     private static final String DEFAULT_ITEM_RESOLVER
                                     = "org.librecms.default_item_resolver";
+    private static final String[] DEFAULT_TYPES = new String[]{
+        Article.class.getName(),
+        Event.class.getName(),
+        MultiPartArticle.class.getName(),
+        News.class.getName()};
 
     public ContentSectionSetup(final InstallEvent event) {
         super(event);
@@ -241,22 +254,61 @@ public class ContentSectionSetup extends AbstractCcmApplicationSetup {
         section.addRole(publisher);
         section.addRole(contentReader);
 
-        
-
         final String itemResolverClassName;
         if (getIntegrationProps().containsKey(String.format("%s.item_resolver",
                                                             sectionName))) {
             itemResolverClassName = getIntegrationProps().getProperty(
                 String.format("%s.item_resolver",
                               sectionName));
-        } else if(getIntegrationProps().containsKey("default_item_resolver")) {
-            itemResolverClassName = getIntegrationProps().getProperty("default_item_resolver_name");
+        } else if (getIntegrationProps().containsKey("default_item_resolver")) {
+            itemResolverClassName = getIntegrationProps().getProperty(
+                "default_item_resolver_name");
         } else {
             itemResolverClassName = MultilingualItemResolver.class.getName();
         }
         section.setItemResolverClass(itemResolverClassName);
-        
+
+        final String[] types;
+        if (getIntegrationProps().containsKey(String.format("%s.content_types",
+                                                            sectionName))) {
+            final String typesStr = getIntegrationProps().getProperty(String
+                .format("%s.content_types", sectionName));
+            types = typesStr.split(",");
+        } else if (getIntegrationProps().containsKey("default_content_types")) {
+            final String typesStr = getIntegrationProps().getProperty(
+                "default_content_types");
+            types = typesStr.split(",");
+        } else {
+            types = DEFAULT_TYPES;
+        }
+        Arrays.stream(types).forEach(type -> addContentTypeToSection(section,
+                                                                     type));
+
         getEntityManager().merge(section);
+    }
+
+    private void addContentTypeToSection(final ContentSection section,
+                                         final String contentType) {
+        final String typeClassName = contentType.trim();
+        final Class<?> clazz;
+        try {
+            clazz = Class.forName(typeClassName);
+        } catch (ClassNotFoundException ex) {
+            throw new UnexpectedErrorException(String.format(
+                "No class for content type '%s'.", typeClassName));
+        }
+
+        if (ContentItem.class.isAssignableFrom(clazz)) {
+            final ContentType type = new ContentType();
+            type.setContentSection(section);
+            type.setContentItemClass(clazz.getName());
+            section.addContentType(type);
+        } else {
+            throw new UnexpectedErrorException(String.format(
+                "The class '%s' is not a sub class of '%s'.",
+                clazz.getName(),
+                ContentItem.class.getName()));
+        }
     }
 
 }
