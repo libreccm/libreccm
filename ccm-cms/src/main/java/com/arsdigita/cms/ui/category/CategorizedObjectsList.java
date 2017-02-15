@@ -23,21 +23,16 @@ import com.arsdigita.bebop.list.ListModel;
 import com.arsdigita.bebop.list.ListModelBuilder;
 import com.arsdigita.bebop.util.GlobalizationUtil;
 import com.arsdigita.cms.CMS;
-import com.arsdigita.cms.dispatcher.ItemResolver;
-import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.util.LockableImpl;
 import com.arsdigita.xml.Element;
 import org.libreccm.categorization.Categorization;
 import org.libreccm.categorization.Category;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.core.CcmObject;
 import org.libreccm.security.PermissionChecker;
-import org.librecms.CmsConstants;
-import org.librecms.contentsection.ContentItem;
-import org.librecms.contentsection.ContentItemRepository;
+import org.librecms.contentsection.*;
 import org.librecms.contentsection.privileges.AdminPrivileges;
+import org.librecms.dispatcher.ItemResolver;
 
-import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Iterator;
 import javax.servlet.ServletException;
@@ -46,13 +41,11 @@ import javax.servlet.ServletException;
  * A List of all objects currently categorized under this category
  *
  * @author Randy Graebner (randyg@redhat.com)
- * @version $Revision: #18 $ $DateTime: 2004/08/17 23:15:09 $
- * @version $Revision: #18 $Id: CategorizedObjectsList.java 2090 2010-04-17
- * 08:04:14Z pboy $
+ * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  */
 public class CategorizedObjectsList extends SortableCategoryList {
 
-    public final static String CATEGORIZED_OBJECTS = "co";
+    //public final static String CATEGORIZED_OBJECTS = "co";
 
     public CategorizedObjectsList(final CategoryRequestLocal category) {
         super(category);
@@ -67,20 +60,23 @@ public class CategorizedObjectsList extends SortableCategoryList {
      * This actually performs the sorting
      */
     public void respond(PageState ps) throws ServletException {
+        /* TODO Reimplement sorting
         final String event = ps.getControlEventName();
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final ContentItemRepository contentItemRepository = cdiUtil.findBean(ContentItemRepository.class);
+        final ContentItemManager contentItemManager = cdiUtil.findBean(ContentItemManager.class);
+        final PermissionChecker permissionChecker = cdiUtil.findBean(PermissionChecker.class);
 
-        /*
+
         if (NEXT_EVENT.equals(event) || PREV_EVENT.equals(event)) {
             final long selectedID = Long.parseLong(ps.getControlEventValue());
             final Category parent = getCategory(ps);
 
             final ContentItem selectedItem = contentItemRepository.findById(selectedID).get();
-            final BigDecimal selectedDraftId = selectedItem.getDraftVersion().getID();
+            final Long selectedDraftId = contentItemManager.getDraftVersion(selectedItem, ContentItem.class).getObjectId();
 
-            if (CMS.getContext().getSecurityManager().canAccess(SecurityManager.CATEGORY_ADMIN)) {
-                final BigDecimal swapId = getSwapID(parent, selectedID, event);
+            if (permissionChecker.isPermitted(AdminPrivileges.ADMINISTER_CATEGORIES)) {
+                final Long swapId = getSwapID(parent, selectedID, event);
                 parent.swapSortKeys(selectedID, swapId);
                 final ContentItem swapItem = new ContentItem(swapId);
                 final BigDecimal swapDraftId = swapItem.getDraftVersion().getID();
@@ -104,11 +100,10 @@ public class CategorizedObjectsList extends SortableCategoryList {
         boolean foundSelectedID = false;
 
         if (category != null && !category.getObjects().isEmpty()) {
-            Iterator<Categorization> items = category.getObjects().iterator();
             //items.addEqualsFilter(ContentItem.VERSION, ContentItem.LIVE); TODO
             //items.sort(true);
-            while (items.hasNext()) {
-                long thisID = items.next().getCategorizationId();
+            for (Categorization categorization : category.getObjects()) {
+                long thisID = categorization.getCategorizationId();
                 if (foundSelectedID && NEXT_EVENT.equals(event)) {
                     swapID = thisID;
                     break;
@@ -132,23 +127,25 @@ public class CategorizedObjectsList extends SortableCategoryList {
     protected void generateLabelXML(PageState state, Element parent, Label label, String key, Object element) {
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final PermissionChecker permissionChecker = cdiUtil.findBean(PermissionChecker.class);
+        final ContentSectionManager contentSectionManager = cdiUtil.findBean(ContentSectionManager.class);
 
-        ContentBundle item = (ContentBundle) element;
+        ContentItem item = (ContentItem) element;
 
         boolean canEdit = permissionChecker.isPermitted(AdminPrivileges.ADMINISTER_CATEGORIES);
 
         if (canEdit) {
-
-            ContentSection section = item.getContentSection();
-            ItemResolver resolver = section.getItemResolver();
-
+            ContentSection section = CMS.getContext().getContentSection();
+            ItemResolver resolver = contentSectionManager.getItemResolver(section);
             Link link = new Link(
-                    item.getDisplayName(),
+                    new Text(item.getDisplayName()),
                     resolver.generateItemURL(
                             state,
-                            ((ContentBundle) item.getDraftVersion()).getPrimaryInstance(),
+                            item.getObjectId(),
+                            item.getDisplayName(),
                             section,
-                            ((ContentBundle) item.getDraftVersion()).getPrimaryInstance().getVersion()));
+                            item.getVersion().name()
+                    )
+            );
             Component c = link;
             c.generateXML(state, parent);
         }
@@ -161,10 +158,10 @@ public class CategorizedObjectsList extends SortableCategoryList {
                 final PageState state) {
             final Category category = getCategory(state);
 
-            if (category != null && category.hasChildObjects()) {
-                CategorizedCollection items = category.getObjects();
-                items.addEqualsFilter(ContentItem.VERSION, ContentItem.LIVE);
-                items.sort(true);
+            if (category != null && !category.getObjects().isEmpty()) {
+                Collection<Categorization> items = category.getObjects();
+                //items.addEqualsFilter(ContentItem.VERSION, ContentItem.LIVE);
+                //items.sort(true);
                 return new CategorizedCollectionListModel(items);
             } else {
                 return List.EMPTY_MODEL;
