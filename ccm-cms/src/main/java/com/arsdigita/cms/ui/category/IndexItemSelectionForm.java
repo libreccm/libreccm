@@ -36,10 +36,7 @@ import com.arsdigita.util.Assert;
 import com.arsdigita.util.UncheckedWrapperException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.libreccm.categorization.Categorization;
-import org.libreccm.categorization.Category;
-import org.libreccm.categorization.CategoryManager;
-import org.libreccm.categorization.CategoryRepository;
+import org.libreccm.categorization.*;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.core.CcmObject;
 import org.librecms.contentsection.*;
@@ -65,7 +62,6 @@ public class IndexItemSelectionForm extends CMSForm {
     private static final String NULL_OPTION_VALUE = "";
     private static final String NONE_OPTION_VALUE = "None";
 
-    private FormErrorDisplay m_errors;
     private SaveCancelSection m_saveCancelSection;
 
     public IndexItemSelectionForm(CategoryRequestLocal m) {
@@ -89,7 +85,7 @@ public class IndexItemSelectionForm extends CMSForm {
         add(header, ColumnPanel.FULL_WIDTH);
 
         // Form errors
-        m_errors = new FormErrorDisplay(this);
+        FormErrorDisplay m_errors = new FormErrorDisplay(this);
         add(m_errors, ColumnPanel.FULL_WIDTH);
 
         // Option Group
@@ -178,8 +174,12 @@ public class IndexItemSelectionForm extends CMSForm {
                     Optional<ContentItem> optionalItem = contentItemRepository.findById(Long.parseLong(selectedValue));
                     if (optionalItem.isPresent()) {
                         ContentItem item = contentItemManager.getDraftVersion(optionalItem.get(), ContentItem.class);
-                        //category.setIndexObject(item); TODO
-                        categoryRepository.save(category);
+                        try {
+                            categoryManager.setIndexObject(category, item);
+                            categoryRepository.save(category);
+                        } catch (ObjectNotAssignedToCategoryException e) {
+                            throw new FormProcessException(e);
+                        }
                     }
                 }
 
