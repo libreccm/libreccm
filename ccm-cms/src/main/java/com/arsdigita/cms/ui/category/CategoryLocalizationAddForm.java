@@ -18,22 +18,25 @@
  */
 package com.arsdigita.cms.ui.category;
 
-import com.arsdigita.bebop.FormProcessException;
-import com.arsdigita.bebop.Label;
-import com.arsdigita.bebop.PageState;
+import com.arsdigita.bebop.*;
 import com.arsdigita.bebop.event.FormInitListener;
 import com.arsdigita.bebop.event.FormProcessListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.bebop.form.Option;
-import com.arsdigita.categorization.Category;
+import com.arsdigita.bebop.util.GlobalizationUtil;
 import com.arsdigita.dispatcher.AccessDeniedException;
-import com.arsdigita.cms.util.GlobalizationUtil;
-import com.arsdigita.kernel.Kernel;
 import com.arsdigita.kernel.KernelConfig;
-import java.util.Locale;
-import java.util.StringTokenizer;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.libreccm.categorization.Category;
+import org.libreccm.categorization.CategoryRepository;
+import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.configuration.ConfigurationManager;
+import org.libreccm.security.PermissionChecker;
+import org.librecms.contentsection.privileges.AdminPrivileges;
 
-import org.apache.log4j.Logger;
+import java.util.Collection;
+import java.util.Locale;
 
 /**
  * Generates a form for creating new localisations for the given category.
@@ -42,11 +45,12 @@ import org.apache.log4j.Logger;
  * in order to present forms for managing the multi-language categories.
  *
  * @author Sören Bernstein <quasi@quasiweb.de>
- * @version $Id: CategoryLocalizationAddForm.java 287 2005-02-22 00:29:02Z sskracic $
+ * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  */
 public class CategoryLocalizationAddForm extends CategoryLocalizationForm {
 
-    private static final Logger s_log = Logger.getLogger(CategoryAddForm.class);
+    private static final Logger LOGGER = LogManager.getLogger(
+            CategoryLocalizationAddForm.class);
 
     /** Creates a new instance of CategoryLocalizationAddForm */
     public CategoryLocalizationAddForm(final CategoryRequestLocal category) {
@@ -68,6 +72,12 @@ public class CategoryLocalizationAddForm extends CategoryLocalizationForm {
         public final void init(final FormSectionEvent e)
                 throws FormProcessException {
 
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final ConfigurationManager manager = cdiUtil.findBean(
+                    ConfigurationManager.class);
+            final KernelConfig config = manager.findConfiguration(
+                    KernelConfig.class);
+
             final PageState state = e.getPageState();
             final Category category = m_category.getCategory(state);
 
@@ -75,20 +85,11 @@ public class CategoryLocalizationAddForm extends CategoryLocalizationForm {
             m_locale.addOption(new Option("",
                     new Label(GlobalizationUtil.globalize(
                               "cms.ui.select_one"))), state);
-
-            // all supported languages (by registry entry)
-            KernelConfig kernelConfig = Kernel.getConfig();
-            StringTokenizer strTok = kernelConfig.getSupportedLanguagesTokenizer();
-
-            while (strTok.hasMoreTokens()) {
-
-                String code = strTok.nextToken();
-
-                // If lanuage exists, remove it from the selection list
-                if (!category.getCategoryLocalizationCollection().
-                        localizationExists(code)) {
-                    m_locale.addOption(new Option(code,
-                            new Locale(code).getDisplayLanguage()), state);
+            final Collection<String> locales = config.getSupportedLanguages();
+            if (locales != null) {
+                for (String locale : locales) {
+                    m_locale.addOption(new Option(locale,
+                            new Text(new Locale(locale).getDisplayLanguage())), state);
                 }
             }
         }
@@ -98,29 +99,31 @@ public class CategoryLocalizationAddForm extends CategoryLocalizationForm {
 
         public final void process(final FormSectionEvent e)
                 throws FormProcessException {
-            s_log.debug("Adding a categoryLocalization to category " + m_category);
+            LOGGER.debug("Adding a categoryLocalization to category " + m_category);
+
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final PermissionChecker permissionChecker = cdiUtil.findBean(PermissionChecker.class);
+            final CategoryRepository categoryRepository = cdiUtil.findBean(CategoryRepository.class);
 
             final PageState state = e.getPageState();
 
             final Category category = m_category.getCategory(state);
-            final String locale = (String) m_locale.getValue(state);
-            final String name = (String) m_name.getValue(state);
+            final Locale locale = new Locale((String) m_locale.getValue(state));
+            final String title = (String) m_title.getValue(state);
             final String description = (String) m_description.getValue(state);
             final String url = (String) m_url.getValue(state);
             final String isEnabled = (String) m_isEnabled.getValue(state);
 
-            // Was soll das??
-            //Assert.assertNotNull(parent, "Category parent");
-
-            if (s_log.isDebugEnabled()) {
-                s_log.debug("Adding localization for locale " + locale
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Adding localization for locale " + locale
                         + " to category " + category);
             }
 
-            if (category.canEdit()) {
-                category.addLanguage(locale, name, description, url);
-                category.setEnabled("yes".equals(isEnabled), locale);
-                category.save();
+            if (permissionChecker.isPermitted(AdminPrivileges.ADMINISTER_CATEGORIES, category)) {
+                category.getTitle().addValue(locale, title);
+                category.getDescription().addValue(locale, description);
+                category.setEnabled(isEnabled.equals("yes"));
+                categoryRepository.save(category);
 
             } else {
                 // XXX user a better exception here.

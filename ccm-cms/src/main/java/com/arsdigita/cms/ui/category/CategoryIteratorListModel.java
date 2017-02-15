@@ -27,7 +27,6 @@ import java.util.Iterator;
  * A {@link ListModel} that iterates over categories via an iterator
  *
  * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
- * @version $Id: CategoryIteratorListModel.java 2090 2010-04-17 08:04:14Z pboy $
  */
 public class CategoryIteratorListModel implements ListModel {
 
