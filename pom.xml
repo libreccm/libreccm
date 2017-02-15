@@ -258,17 +258,6 @@
                 <version>5.0.7.Final</version>
             </dependency>
             
-            <!--
-                Hibernate Metamodel Generator. Required for generating the
-                metamodel classes for use with JPA Criteria API for completly
-                typesafe queries.
-            -->
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-jpamodelgen</artifactId>
-                <version>5.0.7.Final</version>
-            </dependency>
-            
             <!-- 
                 Hibernate Envers, used for providing versioning/auditing for
                 Entities.
