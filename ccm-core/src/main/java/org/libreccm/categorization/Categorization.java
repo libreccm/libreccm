@@ -53,22 +53,46 @@ import org.libreccm.security.Relation;
 @Table(name = "CATEGORIZATIONS", schema = DB_SCHEMA)
 @NamedQueries({
     @NamedQuery(
-        name = "Categorization.find",
-        query = "SELECT c FROM Categorization c "
-                    + "WHERE c.category = :category "
-                    + "AND c.categorizedObject = :object"),
+            name = "Categorization.find",
+            query = "SELECT c FROM Categorization c "
+                            + "WHERE c.category = :category "
+                            + "AND c.categorizedObject = :object")
+    ,
     @NamedQuery(
-        name = "Categorization.findIndexObject",
-        query = "SELECT c.categorizedObject FROM Categorization c "
-                    + "WHERE c.category = :category "
-                    + "AND c.index = TRUE"),
+            name = "Categorization.isAssignedTo",
+            query = "SELECT (CASE WHEN COUNT(c) > 0 THEN true ELSE false END) "
+                            + "FROM Categorization c "
+                            + "WHERE c.category = :category "
+                            + "AND c.categorizedObject = :object")
+    ,
     @NamedQuery(
-        name = "Categorization.hasIndexObject",
-        query = "SELECT (CASE WHEN COUNT(c.categorizedObject) > 0 THEN true "
+            name = "Categorization.isAssignedToWithType",
+            query = "SELECT (CASE WHEN COUNT(c) > 0 THEN true ELSE false END) "
+                            + "FROM Categorization c "
+                            + "WHERE c.category = :category "
+                            + "AND c.categorizedObject = :object "
+                            + "AND c.type = :type")
+    ,
+    @NamedQuery(
+            name = "Categorization.findIndexObject",
+            query = "SELECT c.categorizedObject FROM Categorization c "
+                            + "WHERE c.category = :category "
+                            + "AND c.index = TRUE")
+    ,
+    @NamedQuery(
+            name = "Categorization.findIndexObjectCategorization",
+            query = "SELECT c FROM Categorization c "
+                            + "WHERE c.category = :category "
+                            + "AND c.index = TRUE"
+    )
+    ,
+    @NamedQuery(
+            name = "Categorization.hasIndexObject",
+            query = "SELECT (CASE WHEN COUNT(c.categorizedObject) > 0 THEN true "
                     + "ELSE false END) "
-                    + "FROM Categorization c "
-                    + "WHERE c.category = :category "
-                    + "AND c.index = TRUE")
+                            + "FROM Categorization c "
+                            + "WHERE c.category = :category "
+                            + "AND c.index = TRUE")
 })
 public class Categorization implements Serializable, Relation, Portable {
 
@@ -148,7 +172,7 @@ public class Categorization implements Serializable, Relation, Portable {
     public CcmObject getOwner() {
         return getCategory();
     }
-    
+
     protected void setCategory(final Category category) {
         this.category = category;
     }
@@ -156,7 +180,7 @@ public class Categorization implements Serializable, Relation, Portable {
     public CcmObject getCategorizedObject() {
         return categorizedObject;
     }
-    
+
     @Override
     public CcmObject getRelatedObject() {
         return getCategorizedObject();
@@ -202,7 +226,7 @@ public class Categorization implements Serializable, Relation, Portable {
     public int hashCode() {
         int hash = 7;
         hash
-            = 89 * hash + (int) (categorizationId ^ (categorizationId >>> 32));
+        = 89 * hash + (int) (categorizationId ^ (categorizationId >>> 32));
         hash = 89 * hash + Objects.hashCode(category);
         hash = 89 * hash + Objects.hashCode(categorizedObject);
         hash = 89 * hash + (index ? 1 : 0);
@@ -263,14 +287,14 @@ public class Categorization implements Serializable, Relation, Portable {
 
     public String toString(final String data) {
         return String.format("%s{ "
-                                 + "categorizationId = %d, "
-                                 + "category = %s, "
-                                 + "categorizedObject = %s, "
-                                 + "index = %b,"
-                                 + "categoryOrder = %d, "
-                                 + "objectOrder = %d"
-                                 + "type = %s"
-                                 + "%s }",
+                                     + "categorizationId = %d, "
+                                     + "category = %s, "
+                                     + "categorizedObject = %s, "
+                                     + "index = %b,"
+                                     + "categoryOrder = %d, "
+                                     + "objectOrder = %d"
+                                     + "type = %s"
+                                     + "%s }",
                              super.toString(),
                              categorizationId,
                              Objects.toString(category),
