@@ -40,7 +40,7 @@ import java.util.HashSet;
  *
  * @author Stanislav Freidin (stas@arsdigita.com)
  * @author Michael Pih (pihman@arsdigita.com)
- * @version $Id: CategoryLinks.java 2140 2011-01-16 12:04:20Z pboy $
+ * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  */
 public class CategoryLinks extends List {
     public final static String SUB_CATEGORY = "sc";
@@ -78,7 +78,7 @@ public class CategoryLinks extends List {
         setEmptyView(label);
     }
 
-    // Since this part is for non default parents, but the is only one... this is not needed anymore, i guess
+    // Since this part is for non default parents, but there is only one... this is not needed anymore, i guess
     /*
     private class LinkedCategoryModelBuilder extends LockableImpl
             implements ListModelBuilder {

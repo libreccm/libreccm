@@ -39,13 +39,14 @@ import com.arsdigita.bebop.parameters.ParameterModel;
 import com.arsdigita.bebop.parameters.StringInRangeValidationListener;
 import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.bebop.parameters.TrimmedStringParameter;
-import com.arsdigita.categorization.Category;
-import com.arsdigita.categorization.CategoryCollection;
+import com.arsdigita.bebop.util.GlobalizationUtil;
 import com.arsdigita.cms.ui.BaseForm;
-import com.arsdigita.cms.util.GlobalizationUtil;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.web.Web;
 import com.arsdigita.xml.Element;
+import org.libreccm.categorization.Category;
+
+import java.util.List;
 import java.util.TooManyListenersException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -57,13 +58,13 @@ import java.util.logging.Logger;
  * forms for managing the multi-language categories.
  *
  * @author Sören Bernstein <quasi@quasiweb.de>
- * @version $Id: $
+ * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  */
 public class CategoryLocalizationForm extends BaseForm {
 
     final CategoryRequestLocal m_category;
     final SingleSelect m_locale;
-    final TextField m_name;
+    final TextField m_title;
     final TextArea m_description;
     //final TextField m_url;
     final Hidden m_url;
@@ -74,7 +75,7 @@ public class CategoryLocalizationForm extends BaseForm {
                                              false);
 
     private final static String LOCALE = "locale";
-    private final static String NAME = "name";
+    private final static String TITLE = "title";
     private final static String DESCRIPTION = "description";
     private final static String URL = "url";
     private final static String IS_ENABLED = "isEnabled";
@@ -99,35 +100,30 @@ public class CategoryLocalizationForm extends BaseForm {
         localeParam.addParameterListener(new StringInRangeValidationListener(0, 2));
 
         m_locale = new SingleSelect(localeParam);
-        m_locale.addValidationListener(new ParameterListener() {
+        m_locale.addValidationListener(e -> {
 
-            @Override
-            public void validate(ParameterEvent e) throws FormProcessException {
-
-                // the --select one-- option is not allowed
-                ParameterData data = e.getParameterData();
-                String code = (String) data.getValue();
-                if (code == null || code.length() == 0) {
-                    data.addError(
-                        GlobalizationUtil.globalize(
-                            "cms.ui.category.localization_error_locale"));
-                }
+            // the --select one-- option is not allowed
+            ParameterData data = e.getParameterData();
+            String code = (String) data.getValue();
+            if (code == null || code.length() == 0) {
+                data.addError(
+                    GlobalizationUtil.globalize(
+                        "cms.ui.category.localization_error_locale"));
             }
-
         });
 
         addField(gz("cms.ui.category.localization_locale"), m_locale);
 
-        m_name = new TextField(new TrimmedStringParameter(NAME));
-        addField(gz("cms.ui.name"), m_name);
+        m_title = new TextField(new TrimmedStringParameter(TITLE));
+        addField(gz("cms.ui.name"), m_title);
 
-        m_name.setSize(30);
-        m_name.setMaxLength(200);
-        m_name.addValidationListener(new NotNullValidationListener());
-        m_name.setOnFocus("if (this.form." + URL + ".value == '') { "
+        m_title.setSize(30);
+        m_title.setMaxLength(200);
+        m_title.addValidationListener(new NotNullValidationListener());
+        m_title.setOnFocus("if (this.form." + URL + ".value == '') { "
                               + " defaulting = true; this.form." + URL
                               + ".value = urlize(this.value); }");
-        m_name.setOnKeyUp("if (defaulting) { this.form." + URL + ".value = urlize(this.value) }");
+        m_title.setOnKeyUp("if (defaulting) { this.form." + URL + ".value = urlize(this.value) }");
 
         // is enabled?
         m_isEnabled = new RadioGroup(IS_ENABLED);
@@ -160,7 +156,7 @@ public class CategoryLocalizationForm extends BaseForm {
 //        m_url.addValidationListener(new NotNullValidationListener());
 //        m_url.setOnFocus("defaulting = false");
 //        m_url.setOnBlur("if (this.value == '') "
-//                            + "{ defaulting = true; this.value = urlize(this.form." + NAME
+//                            + "{ defaulting = true; this.value = urlize(this.form." + TITLE
 //                            + ".value) } " + "else { this.value = urlize(this.value); }");
 //        addField(gz("cms.ui.category.url"), m_url);
         //jensp 2014-09-16: Localisation of URLs is not useful but causes problems when resolving
@@ -178,7 +174,7 @@ public class CategoryLocalizationForm extends BaseForm {
 
                     final Category cat = m_category.getCategory(state);
 
-                    target.setValue(state, cat.getURL());
+                    target.setValue(state, cat.getName());
                 }
 
             });
@@ -211,11 +207,11 @@ public class CategoryLocalizationForm extends BaseForm {
         private final CategoryRequestLocal m_category;
         private final Widget m_widget;
         private final int m_type;
-        public final static int NAME_FIELD = 1;
+        final static int NAME_FIELD = 1;
         public final static int URL_FIELD = 2;
 
         NameUniqueListener(final CategoryRequestLocal category) {
-            this(category, m_name, NAME_FIELD);
+            this(category, m_title, NAME_FIELD);
         }
 
         NameUniqueListener(final CategoryRequestLocal category,
@@ -242,14 +238,12 @@ public class CategoryLocalizationForm extends BaseForm {
 
             final Category category = m_category.getCategory(state);
 
-            final CategoryCollection children = category.getChildren();
+            final List<Category> children = category.getSubCategories();
 
-            while (children.next()) {
-                final Category child = children.getCategory();
-                String compField = (m_type == URL_FIELD) ? child.getURL() : child.getName();
+            for (Category child : children) {
+                String compField = child.getName();
                 if (compField.equalsIgnoreCase(title)
-                        && (m_category == null
-                            || !m_category.getCategory(state).equals(child))) {
+                            || !m_category.getCategory(state).equals(child)) {
                     throw new FormProcessException(GlobalizationUtil.globalize("cms.ui.category.name_not_unique"));
                 }
             }
