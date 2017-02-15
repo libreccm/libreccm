@@ -32,6 +32,7 @@ import org.libreccm.security.Shiro;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.StringJoiner;
 
@@ -52,7 +53,7 @@ import javax.transaction.Transactional;
 public class CategoryManager {
 
     private static final Logger LOGGER = LogManager.getLogger(
-        CategoryManager.class);
+            CategoryManager.class);
 
     /**
      * A {@link CategoryRepository} instance used to interact with the database.
@@ -84,17 +85,17 @@ public class CategoryManager {
      * {@code null} an {@link IllegalArgumentException} is thrown because
      * passing {@code null} to this method indicates a programming error.
      *
-     * @param object   The object to assign to the category. Can never be
-     *                 {@code null}.
+     * @param object The object to assign to the category. Can never be
+     * {@code null}.
      * @param category The category to which the object should be assigned. Can
-     *                 never be {@code null}.
+     * never be {@code null}.
      */
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public void addObjectToCategory(
-        final CcmObject object,
-        @RequiresPrivilege(PRIVILEGE_MANAGE_CATEGORY_OBJECTS)
-        final Category category) {
+            final CcmObject object,
+            @RequiresPrivilege(PRIVILEGE_MANAGE_CATEGORY_OBJECTS)
+            final Category category) {
 
         addObjectToCategory(object, category, null);
     }
@@ -111,28 +112,28 @@ public class CategoryManager {
      * {@code null} an {@link IllegalArgumentException} is thrown because
      * passing {@code null} to this method indicates a programming error.
      *
-     * @param object   The object to assign to the category. Can never be
-     *                 {@code null}.
+     * @param object The object to assign to the category. Can never be
+     * {@code null}.
      * @param category The category to which the object should be assigned. Can
-     *                 never be {@code null}.
-     * @param type     Type of the categorisation.
+     * never be {@code null}.
+     * @param type Type of the categorisation.
      */
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public void addObjectToCategory(
-        final CcmObject object,
-        @RequiresPrivilege(PRIVILEGE_MANAGE_CATEGORY_OBJECTS)
-        final Category category,
-        final String type) {
+            final CcmObject object,
+            @RequiresPrivilege(PRIVILEGE_MANAGE_CATEGORY_OBJECTS)
+            final Category category,
+            final String type) {
 
         if (object == null) {
             throw new IllegalArgumentException(
-                "Null can't be added to a category.");
+                    "Null can't be added to a category.");
         }
 
         if (category == null) {
             throw new IllegalArgumentException(
-                "Can't add an object to category 'null'.");
+                    "Can't add an object to category 'null'.");
         }
 
         final Categorization categorization = new Categorization();
@@ -148,13 +149,35 @@ public class CategoryManager {
 
         // Saving a category requires the manage_category privilege which
         // may has not been granted to a user which is allowed to assign objects
-        // to a category. Therefore we bypass the this authorisation check here
+        // to a category. Therefore we bypass the authorisation check here
         // by executing CategoryRepository#save(Category) as the system user.
         shiro.getSystemUser().execute(() -> {
             entityManager.persist(categorization);
             categoryRepo.save(category);
             ccmObjectRepo.save(object);
         });
+    }
+
+    public boolean isAssignedToCategory(final Category category,
+                                        final CcmObject object) {
+        final TypedQuery<Boolean> query = entityManager.createNamedQuery(
+                "Categorization.isAssignedTo", Boolean.class);
+        query.setParameter("category", category);
+        query.setParameter("object", object);
+
+        return query.getSingleResult();
+    }
+
+    public boolean isAssignedToCategoryWithType(final Category category,
+                                                final CcmObject object,
+                                                final String type) {
+        final TypedQuery<Boolean> query = entityManager.createNamedQuery(
+                "Categorization.isAssignedTo", Boolean.class);
+        query.setParameter("category", category);
+        query.setParameter("object", object);
+        query.setParameter("type", type);
+
+        return query.getSingleResult();
     }
 
     /**
@@ -168,35 +191,35 @@ public class CategoryManager {
      * because passing {@code null} to either parameter indicates a programming
      * error.
      *
-     * @param object   The object to remove from the category. Can never be
-     *                 {@code null}.
+     * @param object The object to remove from the category. Can never be
+     * {@code null}.
      * @param category The category from which the object should be removed. Can
-     *                 never be {@code null}.
+     * never be {@code null}.
      *
      * @throws ObjectNotAssignedToCategoryException Thrown is the provided
-     *                                              object is <em>not</em>
+     * object is <em>not</em>
      * assigned to the provided category.
      */
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public void removeObjectFromCategory(
-        final CcmObject object,
-        @RequiresPrivilege(PRIVILEGE_MANAGE_CATEGORY_OBJECTS)
-        final Category category)
-        throws ObjectNotAssignedToCategoryException {
+            final CcmObject object,
+            @RequiresPrivilege(PRIVILEGE_MANAGE_CATEGORY_OBJECTS)
+            final Category category)
+            throws ObjectNotAssignedToCategoryException {
 
         if (object == null) {
             throw new IllegalArgumentException(
-                "Can't remove object 'null' from a category");
+                    "Can't remove object 'null' from a category");
         }
 
         if (category == null) {
             throw new IllegalArgumentException(
-                "Can't remove an object from category 'null'");
+                    "Can't remove an object from category 'null'");
         }
 
         final TypedQuery<Categorization> query = entityManager.createNamedQuery(
-            "Categorization.find", Categorization.class);
+                "Categorization.find", Categorization.class);
         query.setParameter("category", category);
         query.setParameter("object", object);
 
@@ -205,10 +228,10 @@ public class CategoryManager {
             categorization = query.getSingleResult();
         } catch (NoResultException ex) {
             LOGGER.warn(String.format(
-                "No categorization for category %s and object %s found."
-                    + "Ignoring. Orginal exception: ",
-                category.toString(),
-                object.toString()),
+                    "No categorization for category %s and object %s found."
+                            + "Ignoring. Orginal exception: ",
+                    category.toString(),
+                    object.toString()),
                         ex);
             return;
         }
@@ -239,22 +262,21 @@ public class CategoryManager {
      * The value of the {@code order} property of the object after the provided
      * is decreased by one. Effectively the two objects are swapped.
      *
-     * @param object   The object which {@code order} property is decreased.
-     *                 Can't be {@code null}.
+     * @param object The object which {@code order} property is decreased. Can't
+     * be {@code null}.
      * @param category The category to which the object is assigned. Can't be
-     *                 {@code null}.
+     * {@code null}.
      *
      * @throws ObjectNotAssignedToCategoryException Throws if the provided
-     *                                              object is not assigned to
-     *                                              the provided category.
+     * object is not assigned to the provided category.
      */
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public void increaseObjectOrder(
-        final CcmObject object,
-        @RequiresPrivilege(PRIVILEGE_MANAGE_CATEGORY_OBJECTS)
-        final Category category)
-        throws ObjectNotAssignedToCategoryException {
+            final CcmObject object,
+            @RequiresPrivilege(PRIVILEGE_MANAGE_CATEGORY_OBJECTS)
+            final Category category)
+            throws ObjectNotAssignedToCategoryException {
 
         if (object == null) {
             throw new IllegalArgumentException("The object can't be null.");
@@ -270,7 +292,7 @@ public class CategoryManager {
         Categorization current = null;
         int index = 0;
         final List<Categorization> objects = new ArrayList<>(category
-            .getObjects());
+                .getObjects());
         objects.sort((o1, o2) -> {
             return Long.compare(o1.getObjectOrder(), o2.getObjectOrder());
         });
@@ -293,10 +315,10 @@ public class CategoryManager {
         if (categorization == null) {
             //Object is not part of the category.
             throw new ObjectNotAssignedToCategoryException(String.format(
-                "The object %s is not assigned to the category %s (UUID: %s).",
-                object.getUuid(),
-                category.getName(),
-                category.getUuid()));
+                    "The object %s is not assigned to the category %s (UUID: %s).",
+                    object.getUuid(),
+                    category.getName(),
+                    category.getUuid()));
         }
 
         final long order = categorization.getObjectOrder();
@@ -313,22 +335,21 @@ public class CategoryManager {
      * The value of the {@code order} property of the object before the provided
      * is increased by one. Effectively the two objects are swapped.
      *
-     * @param object   The object which {@code order} property is decreased.
-     *                 Can't be {@code null}.
+     * @param object The object which {@code order} property is decreased. Can't
+     * be {@code null}.
      * @param category The category to which the object is assigned. Can't be
-     *                 {@code null}.
+     * {@code null}.
      *
      * @throws ObjectNotAssignedToCategoryException Throws if the provided
-     *                                              object is not assigned to
-     *                                              the provided category.
+     * object is not assigned to the provided category.
      */
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public void decreaseObjectOrder(
-        final CcmObject object,
-        @RequiresPrivilege(PRIVILEGE_MANAGE_CATEGORY_OBJECTS)
-        final Category category)
-        throws ObjectNotAssignedToCategoryException {
+            final CcmObject object,
+            @RequiresPrivilege(PRIVILEGE_MANAGE_CATEGORY_OBJECTS)
+            final Category category)
+            throws ObjectNotAssignedToCategoryException {
 
         if (object == null) {
             throw new IllegalArgumentException("The object can't be null.");
@@ -344,7 +365,7 @@ public class CategoryManager {
         Categorization current = null;
         int index = 0;
         final List<Categorization> objects = new ArrayList<>(category
-            .getObjects());
+                .getObjects());
         objects.sort((o1, o2) -> {
             return Long.compare(o1.getObjectOrder(), o2.getObjectOrder());
         });
@@ -367,10 +388,10 @@ public class CategoryManager {
         if (categorization == null) {
             //Object is not part of the category.
             throw new ObjectNotAssignedToCategoryException(String.format(
-                "The object %s is not assigned to the category %s (UUID: %s).",
-                object.getUuid(),
-                category.getName(),
-                category.getUuid()));
+                    "The object %s is not assigned to the category %s (UUID: %s).",
+                    object.getUuid(),
+                    category.getName(),
+                    category.getUuid()));
         }
 
         final long order = categorization.getObjectOrder();
@@ -387,15 +408,13 @@ public class CategoryManager {
      * of the {@code order} property of the {@link Categorization} of the
      * provided objects are swapped.
      *
-     * @param objectA  Th first object. Can't be {@code null}.
-     * @param objectB  The second object. Can't be {@code null}.
+     * @param objectA Th first object. Can't be {@code null}.
+     * @param objectB The second object. Can't be {@code null}.
      * @param category Can't be {@code null}. The category to which both objects
-     *                 are assigned. Can't be {@code null}.
+     * are assigned. Can't be {@code null}.
      *
      * @throws ObjectNotAssignedToCategoryException Thrown if one or both of the
-     *                                              provided objects are not
-     *                                              assigned to the provided
-     *                                              category.
+     * provided objects are not assigned to the provided category.
      */
 //    public void swapObjects(final CcmObject objectA,
 //                            final CcmObject objectB,
@@ -408,17 +427,17 @@ public class CategoryManager {
      * Adds a category as an subcategory to another category. If the category is
      * assigned to another category that association is removed.
      *
-     * @param subCategory    The category to add as subcategory. Can't be
-     *                       {@code null}.
+     * @param subCategory The category to add as subcategory. Can't be
+     * {@code null}.
      * @param parentCategory The category to which the category is added as
-     *                       subcategory. Can't be {@code null}.
+     * subcategory. Can't be {@code null}.
      */
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public void addSubCategoryToCategory(
-        final Category subCategory,
-        @RequiresPrivilege(PRIVILEGE_MANAGE_CATEGORY)
-        final Category parentCategory) {
+            final Category subCategory,
+            @RequiresPrivilege(PRIVILEGE_MANAGE_CATEGORY)
+            final Category parentCategory) {
 
         if (subCategory == null) {
             throw new IllegalArgumentException("subCategory can't be null.");
@@ -426,23 +445,23 @@ public class CategoryManager {
         if (parentCategory == null) {
             throw new IllegalArgumentException("parentCategory can't be null.");
         }
-        
+
         final Optional<Category> sub = categoryRepo.findById(subCategory
-            .getObjectId());
+                .getObjectId());
         final Optional<Category> parent = categoryRepo.findById(parentCategory
-            .getObjectId());
+                .getObjectId());
 
         if (!sub.isPresent()) {
             throw new IllegalArgumentException(String.format(
-                "The provided category to add as sub category {} was not found "
+                    "The provided category to add as sub category {} was not found "
                     + "in the database.",
-                subCategory.toString()));
+                    subCategory.toString()));
         }
         if (!parent.isPresent()) {
             throw new IllegalArgumentException(String.format(
-                "The category {} provided as parent category was not found in "
+                    "The category {} provided as parent category was not found in "
                     + "the database.",
-                parentCategory.toString()));
+                    parentCategory.toString()));
         }
 
         if (sub.get().getParentCategory() != null) {
@@ -466,27 +485,26 @@ public class CategoryManager {
      * assigned to another parent category (or as root category to a
      * {@link Domain} the category becomes orphaned.
      *
-     * @param subCategory    The subcategory to remove from the parent category.
-     *                       Can't be {@code null}.
+     * @param subCategory The subcategory to remove from the parent category.
+     * Can't be {@code null}.
      * @param parentCategory The parent category. Can't be {@code null}.
      *
      * @throws IllegalArgumentException If the provided subcategory is not
-     *                                  assigned to the provided parent
-     *                                  category.
+     * assigned to the provided parent category.
      */
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public void removeSubCategoryFromCategory(
-        final Category subCategory,
-        @RequiresPrivilege(PRIVILEGE_MANAGE_CATEGORY)
-        final Category parentCategory) {
+            final Category subCategory,
+            @RequiresPrivilege(PRIVILEGE_MANAGE_CATEGORY)
+            final Category parentCategory) {
 
         if (subCategory.getParentCategory() == null
-                || !subCategory.getParentCategory().equals(parentCategory)) {
+                    || !subCategory.getParentCategory().equals(parentCategory)) {
             throw new IllegalArgumentException(String.format(
-                "Category %s is not a subcategory of category %s.",
-                subCategory.toString(),
-                parentCategory.toString()));
+                    "Category %s is not a subcategory of category %s.",
+                    subCategory.toString(),
+                    parentCategory.toString()));
         }
 
         parentCategory.removeSubCategory(subCategory);
@@ -510,21 +528,20 @@ public class CategoryManager {
      * objects is decreased by one. If the object is the last one this method
      * has not effect.
      *
-     * @param subCategory    The category which order property is increased.
-     *                       Can't be {@code null}.
+     * @param subCategory The category which order property is increased. Can't
+     * be {@code null}.
      * @param parentCategory The parent category of the category. Can't be
-     *                       {@code null}.
+     * {@code null}.
      *
      * @throws IllegalArgumentException If the provided subcategory is not a
-     *                                  subcategory of the provided parent
-     *                                  category.
+     * subcategory of the provided parent category.
      */
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public void increaseCategoryOrder(
-        final Category subCategory,
-        @RequiresPrivilege(PRIVILEGE_MANAGE_CATEGORY)
-        final Category parentCategory) {
+            final Category subCategory,
+            @RequiresPrivilege(PRIVILEGE_MANAGE_CATEGORY)
+            final Category parentCategory) {
 
         if (parentCategory == null) {
             throw new IllegalArgumentException("parentCategory can't be null.");
@@ -537,7 +554,7 @@ public class CategoryManager {
         boolean found = false;
         int index = 0;
         final List<Category> subCategories = new ArrayList<>(parentCategory
-            .getSubCategories());
+                .getSubCategories());
         subCategories.sort((c1, c2) -> {
             return Long.compare(c1.getCategoryOrder(), c2.getCategoryOrder());
         });
@@ -551,12 +568,12 @@ public class CategoryManager {
 
         if (!found) {
             throw new IllegalArgumentException(String.format(
-                "The category %s (UUID: %s) is not a subcategory of the "
-                    + "category %s (UUID: %s)",
-                subCategory.getName(),
-                subCategory.getUuid(),
-                parentCategory.getName(),
-                parentCategory.getUuid()));
+                    "The category %s (UUID: %s) is not a subcategory of the "
+                            + "category %s (UUID: %s)",
+                    subCategory.getName(),
+                    subCategory.getUuid(),
+                    parentCategory.getName(),
+                    parentCategory.getUuid()));
         }
 
         final Category nextCategory;
@@ -585,21 +602,20 @@ public class CategoryManager {
      * preceeding objects is increased by one. If the object is the last one
      * this method has not effect.
      *
-     * @param subCategory    The category which order property is increased.
-     *                       Can't be {@code null}.
+     * @param subCategory The category which order property is increased. Can't
+     * be {@code null}.
      * @param parentCategory The parent category of the category. Can't be
-     *                       {@code null}.
+     * {@code null}.
      *
      * @throws IllegalArgumentException If the provided subcategory is not a
-     *                                  subcategory of the provided parent
-     *                                  category.
+     * subcategory of the provided parent category.
      */
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public void decreaseCategoryOrder(
-        final Category subCategory,
-        @RequiresPrivilege(PRIVILEGE_MANAGE_CATEGORY)
-        final Category parentCategory) {
+            final Category subCategory,
+            @RequiresPrivilege(PRIVILEGE_MANAGE_CATEGORY)
+            final Category parentCategory) {
 
         if (parentCategory == null) {
             throw new IllegalArgumentException("parentCategory can't be null.");
@@ -612,7 +628,7 @@ public class CategoryManager {
         boolean found = false;
         int index = 0;
         final List<Category> subCategories = new ArrayList<>(parentCategory
-            .getSubCategories());
+                .getSubCategories());
         subCategories.sort((c1, c2) -> {
             return Long.compare(c1.getCategoryOrder(), c2.getCategoryOrder());
         });
@@ -626,12 +642,12 @@ public class CategoryManager {
 
         if (!found) {
             throw new IllegalArgumentException(String.format(
-                "The category %s (UUID: %s) is not a subcategory of the "
-                    + "category %s (UUID: %s)",
-                subCategory.getName(),
-                subCategory.getUuid(),
-                parentCategory.getName(),
-                parentCategory.getUuid()));
+                    "The category %s (UUID: %s) is not a subcategory of the "
+                            + "category %s (UUID: %s)",
+                    subCategory.getName(),
+                    subCategory.getUuid(),
+                    parentCategory.getName(),
+                    parentCategory.getUuid()));
         }
 
         final Category prevCategory;
@@ -680,13 +696,8 @@ public class CategoryManager {
     }
 
     public boolean hasIndexObject(final Category category) {
-//        final TypedQuery<Long> hasIndexItemQuery = entityManager
-//            .createNamedQuery("Categorization.hasIndexObject", Long.class);
-//        hasIndexItemQuery.setParameter("category", category);
-//        final long indexItems = hasIndexItemQuery.getSingleResult();
-//        return indexItems > 0;
         final TypedQuery<Boolean> query = entityManager
-            .createNamedQuery("Categorization.hasIndexObject", Boolean.class);
+                .createNamedQuery("Categorization.hasIndexObject", Boolean.class);
         query.setParameter("category", category);
 
         return query.getSingleResult();
@@ -698,15 +709,15 @@ public class CategoryManager {
      * object!
      *
      * @param category The category of which the index object should be
-     *                 retrieved.
+     * retrieved.
      *
      * @return An {@link Optional} containing the index object of the provided
-     *         category if the category has an index object.
+     * category if the category has an index object.
      */
     public Optional<CcmObject> getIndexObject(final Category category) {
         if (hasIndexObject(category)) {
             final TypedQuery<CcmObject> query = entityManager.createNamedQuery(
-                "Categorization.findIndexObject", CcmObject.class);
+                    "Categorization.findIndexObject", CcmObject.class);
             query.setParameter("category", category);
 
             return Optional.of(query.getSingleResult());
@@ -715,4 +726,73 @@ public class CategoryManager {
         }
     }
 
+    @Transactional(Transactional.TxType.REQUIRED)
+    public void setIndexObject(final Category category,
+                               final CcmObject object) 
+            throws ObjectNotAssignedToCategoryException{
+        
+        Objects.requireNonNull(category);
+        Objects.requireNonNull(object);
+        
+        // First, ensure that the provided object is assigned to the provided 
+        // category.
+        if (!isAssignedToCategory(category, object)) {
+            throw new ObjectNotAssignedToCategoryException(String.format(
+            "The provided object %s is not assigned to the provided category %s "
+                    + "and can therefore not be an index object of the category.",
+            Objects.toString(category),
+            Objects.toString(object)));
+        }
+
+        // If the category has already an index object we need to reset the 
+        // index for the categorisation to ensure that the category has only
+        // one index object
+        resetIndexObject(category);
+
+        // Now find the categorization for the provided object and set 
+        // index = true
+        final TypedQuery<Categorization> query = entityManager.createNamedQuery(
+                "Categorization.find", Categorization.class);
+        query.setParameter("category", category);
+        query.setParameter("object", object);
+        
+        final Categorization categorization;
+        try {
+            categorization = query.getSingleResult();
+        } catch(NoResultException ex) {
+            throw new ObjectNotAssignedToCategoryException(String.format(
+                    "Strange. The previous check if the provided object %s is "
+                            + "assigned to the provided category %s returned "
+                            + "true, but the query for the categorization "
+                            + "object returned no result. This should not happen. "
+                            + "Please report a bug.",
+                    Objects.toString(object),
+                    Objects.toString(category)),
+            ex);
+        }
+        
+        categorization.setIndex(true);
+        entityManager.merge(categorization);
+    }
+
+    /**
+     * Resets the index object of a category to none. This methods retrieves all
+     * categorisations with {@link Categorization#index}{@code == true} of the
+     * provided category and set them to {@code false}. Therefore this method
+     * can also be used if a category has got multiple index objects due to some
+     * circumstances which may causes problems.
+     *
+     * @param category The category which index object should be reset.
+     */
+    @Transactional(Transactional.TxType.REQUIRED)
+    public void resetIndexObject(final Category category) {
+        final TypedQuery<Categorization> query = entityManager.createNamedQuery(
+                "Categorization.findIndexObjectCategorization",
+                Categorization.class);
+        query.setParameter("category", category);
+
+        final List<Categorization> result = query.getResultList();
+        result.forEach(categorization -> categorization.setIndex(false));
+        result.forEach(categorization -> entityManager.merge(categorization));
+    }
 }
