@@ -22,34 +22,33 @@ import com.arsdigita.bebop.Component;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.kernel.ui.ACSObjectSelectionModel;
 import com.arsdigita.toolbox.ui.SecurityContainer;
+import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.Party;
+import org.libreccm.security.PermissionChecker;
 
 
 /**
  * Container that wraps category admin access checks around UI components.
  *
  * @author Michael Pih (pihman@arsdigita.com)
- * @version $Revision: #9 $ $DateTime: 2004/08/17 23:15:09 $
- * @version $Id: CategoryAdminContainer.java 2090 2010-04-17 08:04:14Z pboy $
+ * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  */
 public class CategoryAdminContainer extends SecurityContainer {
 
-    private ACSObjectSelectionModel m_object;
-    private PrivilegeDescriptor m_priv;
+    private final ACSObjectSelectionModel m_object;
+    private final String m_priv;
 
     public CategoryAdminContainer(Component c,
                                   ACSObjectSelectionModel object,
-                                  PrivilegeDescriptor priv) {
+                                  String priv) {
         super(c);
         m_object = object;
         m_priv = priv;
     }
 
     public boolean canAccess(Party party, PageState state) {
-        return PermissionService.checkPermission(
-            new PermissionDescriptor(
-                m_priv,
-                (ACSObject) m_object.getSelectedObject(state),
-                party));
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final PermissionChecker permissionChecker = cdiUtil.findBean(PermissionChecker.class);
+        return permissionChecker.isPermitted(m_priv, m_object.getSelectedObject(state));
     }
 }
