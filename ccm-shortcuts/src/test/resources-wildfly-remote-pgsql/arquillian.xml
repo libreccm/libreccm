@@ -18,7 +18,7 @@
             Disable automatic cleanup, does not work because of referential 
             integrity constrains.
         -->
-        <!--<property name="defaultCleanupPhase">NONE</property>-->
+        <property name="defaultCleanupPhase">NONE</property>
         
         <property name="dumpData">true</property>
         <property name="dumpDirectory">target</property>
