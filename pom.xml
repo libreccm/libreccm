@@ -173,6 +173,11 @@
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>1.12</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
                     <artifactId>findbugs-maven-plugin</artifactId>
                     <version>3.0.4</version>
                     <configuration>
@@ -250,6 +255,17 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-entitymanager</artifactId>
+                <version>5.0.7.Final</version>
+            </dependency>
+            
+            <!--
+                Hibernate Metamodel Generator. Required for generating the
+                metamodel classes for use with JPA Criteria API for completly
+                typesafe queries.
+            -->
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-jpamodelgen</artifactId>
                 <version>5.0.7.Final</version>
             </dependency>
             
