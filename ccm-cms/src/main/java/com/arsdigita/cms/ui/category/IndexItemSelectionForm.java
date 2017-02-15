@@ -130,7 +130,7 @@ public class IndexItemSelectionForm extends CMSForm {
                     );
                     Component linkComponent = link;
                     //add the option with the link
-                    group.addOption(new Option(item.getItemUuid(), //TODO
+                    group.addOption(new Option(item.getItemUuid(),
                             linkComponent));
                 }
 
