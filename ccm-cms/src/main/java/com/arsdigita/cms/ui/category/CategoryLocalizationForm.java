@@ -44,12 +44,11 @@ import com.arsdigita.cms.ui.BaseForm;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.web.Web;
 import com.arsdigita.xml.Element;
+import org.apache.logging.log4j.LogManager;
 import org.libreccm.categorization.Category;
 
 import java.util.List;
 import java.util.TooManyListenersException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Base class for CategoryLocalizationAddForm and CategoryLocalizationEditForm.
@@ -61,6 +60,9 @@ import java.util.logging.Logger;
  * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  */
 public class CategoryLocalizationForm extends BaseForm {
+
+    private static final org.apache.logging.log4j.Logger LOGGER = LogManager.getLogger(
+            CategoryLocalizationForm.class);
 
     final CategoryRequestLocal m_category;
     final SingleSelect m_locale;
@@ -178,10 +180,8 @@ public class CategoryLocalizationForm extends BaseForm {
                 }
 
             });
-        } catch (TooManyListenersException ex) {
-            Logger.getLogger(CategoryLocalizationForm.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalArgumentException ex) {
-            Logger.getLogger(CategoryLocalizationForm.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (TooManyListenersException | IllegalArgumentException ex) {
+            LOGGER.fatal(ex);
         }
         addField(gz("cms.ui.category.url"), m_url);
 
