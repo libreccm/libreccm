@@ -158,8 +158,19 @@ public class CategoryManager {
         });
     }
 
+    /**
+     * Check if an object is assigned to a category.
+     *
+     * @param category The category
+     * @param object The object
+     * @return {@code true} if the provided {@code object} is assigned to the
+     * provided {@code category}, {@code false} otherwise.
+     */
     public boolean isAssignedToCategory(final Category category,
                                         final CcmObject object) {
+        Objects.requireNonNull(category);
+        Objects.requireNonNull(object);
+
         final TypedQuery<Boolean> query = entityManager.createNamedQuery(
                 "Categorization.isAssignedTo", Boolean.class);
         query.setParameter("category", category);
@@ -168,9 +179,25 @@ public class CategoryManager {
         return query.getSingleResult();
     }
 
+    /**
+     * Check if an object is assigned to a category with a specific type. If you
+     * only want to check if an object is assigned to a category regardless of
+     * the type use
+     * {@link #isAssignedToCategory(org.libreccm.categorization.Category, org.libreccm.core.CcmObject)}.
+     *
+     * @param category The category
+     * @param object The object
+     * @param type The type with which the object has been assigned to the
+     * category. the type may be {@code null}.
+     * @return {@code true} if the provided {@code object} is assigned to the
+     * provided {@code category} using the provided {@code type}.
+     */
     public boolean isAssignedToCategoryWithType(final Category category,
                                                 final CcmObject object,
                                                 final String type) {
+        Objects.requireNonNull(category);
+        Objects.requireNonNull(object);
+
         final TypedQuery<Boolean> query = entityManager.createNamedQuery(
                 "Categorization.isAssignedTo", Boolean.class);
         query.setParameter("category", category);
@@ -726,22 +753,36 @@ public class CategoryManager {
         }
     }
 
+    /**
+     * Set the index object of a category. There can only be one index object
+     * per category. Therefore this method first sets
+     * {@link Categorization#index} to false for all categorisations of the
+     * provided category. Then it retrieves the {@link Categorization} for the
+     * provided {@link CcmObject} and sets {@link Categorization#index} to
+     * {@code true} for this categorisation.
+     *
+     * @param category The category whose index object is set or changed.
+     * @param object The new index object for the category. The object must be
+     * assigned to the category.
+     * @throws ObjectNotAssignedToCategoryException If the provided
+     * {@code object} is not assigned to the provided {@code category}.
+     */
     @Transactional(Transactional.TxType.REQUIRED)
     public void setIndexObject(final Category category,
-                               final CcmObject object) 
-            throws ObjectNotAssignedToCategoryException{
-        
+                               final CcmObject object)
+            throws ObjectNotAssignedToCategoryException {
+
         Objects.requireNonNull(category);
         Objects.requireNonNull(object);
-        
+
         // First, ensure that the provided object is assigned to the provided 
         // category.
         if (!isAssignedToCategory(category, object)) {
             throw new ObjectNotAssignedToCategoryException(String.format(
-            "The provided object %s is not assigned to the provided category %s "
+                    "The provided object %s is not assigned to the provided category %s "
                     + "and can therefore not be an index object of the category.",
-            Objects.toString(category),
-            Objects.toString(object)));
+                    Objects.toString(category),
+                    Objects.toString(object)));
         }
 
         // If the category has already an index object we need to reset the 
@@ -755,22 +796,22 @@ public class CategoryManager {
                 "Categorization.find", Categorization.class);
         query.setParameter("category", category);
         query.setParameter("object", object);
-        
+
         final Categorization categorization;
         try {
             categorization = query.getSingleResult();
-        } catch(NoResultException ex) {
+        } catch (NoResultException ex) {
             throw new ObjectNotAssignedToCategoryException(String.format(
                     "Strange. The previous check if the provided object %s is "
                             + "assigned to the provided category %s returned "
                             + "true, but the query for the categorization "
                             + "object returned no result. This should not happen. "
-                            + "Please report a bug.",
+                    + "Please report a bug.",
                     Objects.toString(object),
                     Objects.toString(category)),
-            ex);
+                                                           ex);
         }
-        
+
         categorization.setIndex(true);
         entityManager.merge(categorization);
     }
