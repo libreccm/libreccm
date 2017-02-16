@@ -58,6 +58,11 @@ public final class CoreConstants {
      * Constant for the {@code system} privilege.
      */
     public static final String PRIVILEGE_SYSTEM = "system";
+    
+    /**
+     * The name of the system administrator role.
+     */
+    public static final String SYS_ADMIN_ROLE = "system-administrator";
 
     private CoreConstants() {
         //Nothing

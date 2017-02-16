@@ -46,6 +46,7 @@ import javax.activation.MimeTypeParseException;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import org.jboss.arquillian.persistence.CleanupUsingScript;
+import org.jboss.arquillian.persistence.TestExecutionPhase;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
@@ -60,7 +61,8 @@ import static org.junit.Assert.*;
 @PersistenceTest
 //@Transactional(TransactionMode.COMMIT)
 @CreateSchema({"create_ccm_cms_schema.sql"})
-@CleanupUsingScript({"cleanup.sql"})
+@CleanupUsingScript(value = {"cleanup.sql"},
+                    phase = TestExecutionPhase.BEFORE)
 public class ItemAttachmentManagerTest {
 
     @Inject

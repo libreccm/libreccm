@@ -46,6 +46,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import org.jboss.arquillian.persistence.TestExecutionPhase;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
@@ -59,7 +60,8 @@ import static org.junit.Assert.*;
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
 @CreateSchema({"create_ccm_shortcuts_schema.sql"})
-@CleanupUsingScript({"cleanup.sql"})
+@CleanupUsingScript(value = {"cleanup.sql"},
+                    phase = TestExecutionPhase.BEFORE)
 public class ShortcutRepositoryTest {
 
     @Inject

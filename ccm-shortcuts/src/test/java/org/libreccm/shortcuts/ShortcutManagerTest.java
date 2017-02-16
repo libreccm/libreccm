@@ -36,6 +36,7 @@ import org.jboss.arquillian.persistence.CleanupUsingScript;
 import org.jboss.arquillian.persistence.CreateSchema;
 import org.jboss.arquillian.persistence.PersistenceTest;
 import org.jboss.arquillian.persistence.ShouldMatchDataSet;
+import org.jboss.arquillian.persistence.TestExecutionPhase;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
@@ -63,7 +64,8 @@ import static org.junit.Assert.*;
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
 @CreateSchema({"create_ccm_shortcuts_schema.sql"})
-@CleanupUsingScript({"cleanup.sql"})
+@CleanupUsingScript(value = {"cleanup.sql"},
+                    phase = TestExecutionPhase.BEFORE)
 public class ShortcutManagerTest {
 
     @Inject

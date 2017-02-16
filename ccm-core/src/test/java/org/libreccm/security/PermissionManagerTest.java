@@ -55,6 +55,7 @@ import org.libreccm.categorization.CategorizationConstants;
 import org.libreccm.core.CoreConstants;
 
 import java.util.List;
+import org.jboss.arquillian.persistence.TestExecutionPhase;
 
 /**
  * Integration tests (run in a Application Server by Arquillian} for the
@@ -67,7 +68,8 @@ import java.util.List;
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
 @CreateSchema({"create_ccm_core_schema.sql"})
-@CleanupUsingScript(value = {"cleanup.sql"})
+@CleanupUsingScript(value = {"cleanup.sql"},
+                    phase = TestExecutionPhase.BEFORE)
 public class PermissionManagerTest {
 
     @Inject
@@ -107,36 +109,36 @@ public class PermissionManagerTest {
     @Deployment
     public static WebArchive createDeployment() {
         return ShrinkWrap
-            .create(WebArchive.class,
-                    "LibreCCM-org.libreccm.security.PermissionManagerTest.war").
-            addPackage(org.libreccm.categorization.Categorization.class
-                .getPackage())
-            .addPackage(org.libreccm.configuration.Configuration.class
-                .getPackage())
-            .addPackage(org.libreccm.core.CcmObject.class.getPackage())
-            .addPackage(org.libreccm.jpa.EntityManagerProducer.class
-                .getPackage())
-            .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
-                .getPackage())
-            .addPackage(org.libreccm.l10n.LocalizedString.class.getPackage()).
-            addPackage(org.libreccm.security.User.class.getPackage())
-            .addPackage(org.libreccm.tests.categories.IntegrationTest.class
-                .getPackage())
-            .addPackage(org.libreccm.testutils.EqualsVerifier.class
-                .getPackage())
-            .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
-            .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
-            .addPackage(com.arsdigita.kernel.KernelConfig.class.getPackage()).
-            addPackage(com.arsdigita.kernel.security.SecurityConfig.class
-                .getPackage())
-            .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
-            .addClass(org.libreccm.portation.Portable.class)
-            .addAsLibraries(getModuleDependencies())
-            .addAsResource("test-persistence.xml",
-                           "META-INF/persistence.xml")
-            .addAsResource("configs/shiro.ini", "shiro.ini")
-            .addAsWebInfResource("test-web.xml", "web.xml")
-            .addAsWebInfResource("META-INF/beans.xml", "beans.xml");
+                .create(WebArchive.class,
+                        "LibreCCM-org.libreccm.security.PermissionManagerTest.war").
+                addPackage(org.libreccm.categorization.Categorization.class
+                        .getPackage())
+                .addPackage(org.libreccm.configuration.Configuration.class
+                        .getPackage())
+                .addPackage(org.libreccm.core.CcmObject.class.getPackage())
+                .addPackage(org.libreccm.jpa.EntityManagerProducer.class
+                        .getPackage())
+                .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
+                        .getPackage())
+                .addPackage(org.libreccm.l10n.LocalizedString.class.getPackage()).
+                addPackage(org.libreccm.security.User.class.getPackage())
+                .addPackage(org.libreccm.tests.categories.IntegrationTest.class
+                        .getPackage())
+                .addPackage(org.libreccm.testutils.EqualsVerifier.class
+                        .getPackage())
+                .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
+                .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
+                .addPackage(com.arsdigita.kernel.KernelConfig.class.getPackage()).
+                addPackage(com.arsdigita.kernel.security.SecurityConfig.class
+                        .getPackage())
+                .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
+                .addClass(org.libreccm.portation.Portable.class)
+                .addAsLibraries(getModuleDependencies())
+                .addAsResource("test-persistence.xml",
+                               "META-INF/persistence.xml")
+                .addAsResource("configs/shiro.ini", "shiro.ini")
+                .addAsWebInfResource("test-web.xml", "web.xml")
+                .addAsWebInfResource("META-INF/beans.xml", "beans.xml");
     }
 
     /**
@@ -175,11 +177,11 @@ public class PermissionManagerTest {
      */
     @Test
     @UsingDataSet(
-        "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
+            "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
     @ShouldMatchDataSet(
-        value = "datasets/org/libreccm/security/PermissionManagerTest/"
-                    + "after-grant.yml",
-        excludeColumns = {"permission_id"})
+            value = "datasets/org/libreccm/security/PermissionManagerTest/"
+                            + "after-grant.yml",
+            excludeColumns = {"permission_id"})
     @InSequence(200)
     public void grantPermission() {
         final Role role2 = roleRepository.findByName("role2").get();
@@ -200,10 +202,10 @@ public class PermissionManagerTest {
      */
     @Test
     @UsingDataSet(
-        "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
+            "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
     @ShouldMatchDataSet(
-        value = "datasets/org/libreccm/security/PermissionManagerTest/"
-                    + "data.yml")
+            value = "datasets/org/libreccm/security/PermissionManagerTest/"
+                            + "data.yml")
     @InSequence(210)
     public void grantPermissionAgain() {
         final Role role1 = roleRepository.findByName("role1").get();
@@ -222,11 +224,11 @@ public class PermissionManagerTest {
      */
     @Test
     @UsingDataSet("datasets/org/libreccm/security/PermissionManagerTest/"
-                      + "data-recursivly.yml")
+                          + "data-recursivly.yml")
     @ShouldMatchDataSet(
-        value = "datasets/org/libreccm/security/PermissionManagerTest/"
-                    + "after-grant-recursivly.yml",
-        excludeColumns = {"permission_id"})
+            value = "datasets/org/libreccm/security/PermissionManagerTest/"
+                            + "after-grant-recursivly.yml",
+            excludeColumns = {"permission_id"})
     @InSequence(211)
     public void grantPermissionRecursively() {
         final Role role1 = roleRepository.findByName("role1").get();
@@ -247,7 +249,7 @@ public class PermissionManagerTest {
      */
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet(
-        "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
+            "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(220)
     public void grantPermissionPrivilegeNull() throws Throwable {
@@ -255,7 +257,7 @@ public class PermissionManagerTest {
 
         try {
             shiro.getSystemUser().execute(
-                () -> permissionManager.grantPrivilege(null, role1));
+                    () -> permissionManager.grantPrivilege(null, role1));
         } catch (ExecutionException ex) {
             throw ex.getCause();
         }
@@ -271,7 +273,7 @@ public class PermissionManagerTest {
      */
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet(
-        "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
+            "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(225)
     public void grantPermissionOnObjectPrivilegeNull() throws Throwable {
@@ -280,7 +282,7 @@ public class PermissionManagerTest {
 
         try {
             shiro.getSystemUser().execute(
-                () -> permissionManager.grantPrivilege(null, role1, object1));
+                    () -> permissionManager.grantPrivilege(null, role1, object1));
         } catch (ExecutionException ex) {
             throw ex.getCause();
         }
@@ -296,7 +298,7 @@ public class PermissionManagerTest {
      */
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet(
-        "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
+            "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(230)
     public void grantPermissionEmptyPrivilege() throws Throwable {
@@ -304,7 +306,7 @@ public class PermissionManagerTest {
 
         try {
             shiro.getSystemUser().execute(
-                () -> permissionManager.grantPrivilege("", role1));
+                    () -> permissionManager.grantPrivilege("", role1));
         } catch (ExecutionException ex) {
             throw ex.getCause();
         }
@@ -320,7 +322,7 @@ public class PermissionManagerTest {
      */
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet(
-        "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
+            "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(235)
     public void grantPermissionOnObjectEmptyPrivilege() throws Throwable {
@@ -329,7 +331,7 @@ public class PermissionManagerTest {
 
         try {
             shiro.getSystemUser().execute(
-                () -> permissionManager.grantPrivilege("", role1, object1));
+                    () -> permissionManager.grantPrivilege("", role1, object1));
         } catch (ExecutionException ex) {
             throw ex.getCause();
         }
@@ -345,13 +347,13 @@ public class PermissionManagerTest {
      */
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet(
-        "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
+            "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(240)
     public void grantPermissionToRoleNull() throws Throwable {
         try {
             shiro.getSystemUser().execute(
-                () -> permissionManager.grantPrivilege("privilege", null));
+                    () -> permissionManager.grantPrivilege("privilege", null));
         } catch (ExecutionException ex) {
             throw ex.getCause();
         }
@@ -367,7 +369,7 @@ public class PermissionManagerTest {
      */
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet(
-        "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
+            "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(240)
     public void grantPermissionOnObjectToRoleNull() throws Throwable {
@@ -375,9 +377,9 @@ public class PermissionManagerTest {
 
         try {
             shiro.getSystemUser().execute(
-                () -> permissionManager.grantPrivilege("privilege",
-                                                       null,
-                                                       object1));
+                    () -> permissionManager.grantPrivilege("privilege",
+                                                           null,
+                                                           object1));
         } catch (ExecutionException ex) {
             throw ex.getCause();
         }
@@ -393,7 +395,7 @@ public class PermissionManagerTest {
      */
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet(
-        "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
+            "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(250)
     public void grantPermissionNullObject() throws Throwable {
@@ -401,9 +403,9 @@ public class PermissionManagerTest {
 
         try {
             shiro.getSystemUser().execute(
-                () -> permissionManager.grantPrivilege("privilege1",
-                                                       role1,
-                                                       null));
+                    () -> permissionManager.grantPrivilege("privilege1",
+                                                           role1,
+                                                           null));
         } catch (ExecutionException ex) {
             throw ex.getCause();
         }
@@ -418,11 +420,11 @@ public class PermissionManagerTest {
      */
     @Test
     @UsingDataSet(
-        "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
+            "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
     @ShouldMatchDataSet(
-        value = "datasets/org/libreccm/security/PermissionManagerTest/"
-                    + "after-revoke.yml",
-        excludeColumns = {"permission_id"})
+            value = "datasets/org/libreccm/security/PermissionManagerTest/"
+                            + "after-revoke.yml",
+            excludeColumns = {"permission_id"})
     @InSequence(300)
     public void revokePermission() {
         final Role role1 = roleRepository.findByName("role1").get();
@@ -444,16 +446,16 @@ public class PermissionManagerTest {
      */
     @Test
     @UsingDataSet(
-        "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
+            "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
     @ShouldMatchDataSet(
-        value = "datasets/org/libreccm/security/PermissionManagerTest/"
-                    + "data.yml")
+            value = "datasets/org/libreccm/security/PermissionManagerTest/"
+                            + "data.yml")
     @InSequence(310)
     public void revokeNotExistingPermission() throws Throwable {
         final Role role1 = roleRepository.findByName("role1").get();
 
         shiro.getSystemUser().execute(
-            () -> permissionManager.revokePrivilege("privilege999", role1));
+                () -> permissionManager.revokePrivilege("privilege999", role1));
     }
 
     /**
@@ -462,10 +464,10 @@ public class PermissionManagerTest {
      */
     @Test
     @UsingDataSet("datasets/org/libreccm/security/PermissionManagerTest/"
-                      + "after-grant-recursivly.yml")
+                          + "after-grant-recursivly.yml")
     @ShouldMatchDataSet(
-        value = "datasets/org/libreccm/security/PermissionManagerTest/"
-                    + "after-revoke-recursivly.yml")
+            value = "datasets/org/libreccm/security/PermissionManagerTest/"
+                            + "after-revoke-recursivly.yml")
     @InSequence(311)
     public void revokePermissionRecursivly() {
         final Role role1 = roleRepository.findByName("role1").get();
@@ -485,19 +487,19 @@ public class PermissionManagerTest {
      */
     @Test
     @UsingDataSet(
-        "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
+            "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
     @ShouldMatchDataSet(
-        value = "datasets/org/libreccm/security/PermissionManagerTest/"
-                    + "data.yml")
+            value = "datasets/org/libreccm/security/PermissionManagerTest/"
+                            + "data.yml")
     @InSequence(310)
     public void revokeNotExistingPermissionOnObject() {
         final Role role1 = roleRepository.findByName("role1").get();
         final CcmObject object1 = ccmObjectRepository.findById(-20001L).get();
 
         shiro.getSystemUser().execute(
-            () -> permissionManager.revokePrivilege("privilege999",
-                                                    role1,
-                                                    object1));
+                () -> permissionManager.revokePrivilege("privilege999",
+                                                        role1,
+                                                        object1));
     }
 
     /**
@@ -510,7 +512,7 @@ public class PermissionManagerTest {
      */
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet(
-        "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
+            "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(320)
     public void revokePermissionPrivilegeNull() throws Throwable {
@@ -518,7 +520,7 @@ public class PermissionManagerTest {
 
         try {
             shiro.getSystemUser().execute(
-                () -> permissionManager.revokePrivilege(null, role1));
+                    () -> permissionManager.revokePrivilege(null, role1));
         } catch (ExecutionException ex) {
             throw ex.getCause();
         }
@@ -534,7 +536,7 @@ public class PermissionManagerTest {
      */
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet(
-        "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
+            "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(320)
     public void revokePermissionOnObjectPrivilegeNull() throws Throwable {
@@ -543,8 +545,8 @@ public class PermissionManagerTest {
 
         try {
             shiro.getSystemUser().execute(
-                () -> permissionManager.
-                    revokePrivilege(null, role1, object1));
+                    () -> permissionManager.
+                            revokePrivilege(null, role1, object1));
         } catch (ExecutionException ex) {
             throw ex.getCause();
         }
@@ -560,7 +562,7 @@ public class PermissionManagerTest {
      */
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet(
-        "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
+            "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(330)
     public void revokePermissionEmptyPrivilege() throws Throwable {
@@ -568,7 +570,7 @@ public class PermissionManagerTest {
 
         try {
             shiro.getSystemUser().execute(
-                () -> permissionManager.revokePrivilege("", role1));
+                    () -> permissionManager.revokePrivilege("", role1));
         } catch (ExecutionException ex) {
             throw ex.getCause();
         }
@@ -583,9 +585,9 @@ public class PermissionManagerTest {
      * @throws Throwable
      */
     @Test(expected
-              = IllegalArgumentException.class)
+          = IllegalArgumentException.class)
     @UsingDataSet(
-        "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
+            "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(320)
     public void revokePermissionOnObjectEmptyPrivilege() throws Throwable {
@@ -594,7 +596,7 @@ public class PermissionManagerTest {
 
         try {
             shiro.getSystemUser().execute(
-                () -> permissionManager.revokePrivilege("", role1, object1));
+                    () -> permissionManager.revokePrivilege("", role1, object1));
         } catch (ExecutionException ex) {
             throw ex.getCause();
         }
@@ -609,15 +611,15 @@ public class PermissionManagerTest {
      * @throws Throwable
      */
     @Test(expected
-              = IllegalArgumentException.class)
+          = IllegalArgumentException.class)
     @UsingDataSet(
-        "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
+            "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(340)
     public void revokePermissionFromRoleNull() throws Throwable {
         try {
             shiro.getSystemUser().execute(
-                () -> permissionManager.revokePrivilege("privilege1", null));
+                    () -> permissionManager.revokePrivilege("privilege1", null));
         } catch (ExecutionException ex) {
             throw ex.getCause();
         }
@@ -633,7 +635,7 @@ public class PermissionManagerTest {
      */
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet(
-        "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
+            "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(345)
     public void revokePermissionOnObjectFromRoleNull() throws Throwable {
@@ -641,9 +643,9 @@ public class PermissionManagerTest {
 
         try {
             shiro.getSystemUser().execute(
-                () -> permissionManager.revokePrivilege("privilege1",
-                                                        null,
-                                                        object1));
+                    () -> permissionManager.revokePrivilege("privilege1",
+                                                            null,
+                                                            object1));
         } catch (ExecutionException ex) {
             throw ex.getCause();
         }
@@ -659,7 +661,7 @@ public class PermissionManagerTest {
      */
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet(
-        "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
+            "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(350)
     public void revokePermissionNullObject() throws Throwable {
@@ -667,9 +669,9 @@ public class PermissionManagerTest {
 
         try {
             shiro.getSystemUser().execute(
-                () -> permissionManager.revokePrivilege("privilege2",
-                                                        role1,
-                                                        null));
+                    () -> permissionManager.revokePrivilege("privilege2",
+                                                            role1,
+                                                            null));
         } catch (ExecutionException ex) {
             throw ex.getCause();
         }
@@ -684,18 +686,18 @@ public class PermissionManagerTest {
      */
     @Test
     @UsingDataSet(
-        "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
+            "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
     @ShouldMatchDataSet(
-        value = "datasets/org/libreccm/security/PermissionManagerTest/"
-                    + "after-copy.yml",
-        excludeColumns = {"permission_id"})
+            value = "datasets/org/libreccm/security/PermissionManagerTest/"
+                            + "after-copy.yml",
+            excludeColumns = {"permission_id"})
     @InSequence(400)
     public void copyPermissions() throws Throwable {
         final CcmObject object2 = ccmObjectRepository.findById(-20002L).get();
         final CcmObject object3 = ccmObjectRepository.findById(-20003L).get();
 
         shiro.getSystemUser().execute(
-            () -> permissionManager.copyPermissions(object2, object3));
+                () -> permissionManager.copyPermissions(object2, object3));
     }
 
     /**
@@ -708,7 +710,7 @@ public class PermissionManagerTest {
      */
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet(
-        "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
+            "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(410)
     public void copyPermissionsNullSource() throws Throwable {
@@ -716,7 +718,7 @@ public class PermissionManagerTest {
 
         try {
             shiro.getSystemUser().execute(
-                () -> permissionManager.copyPermissions(null, object3));
+                    () -> permissionManager.copyPermissions(null, object3));
         } catch (ExecutionException ex) {
             throw ex.getCause();
         }
@@ -732,7 +734,7 @@ public class PermissionManagerTest {
      */
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet(
-        "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
+            "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(420)
     public void copyPermissionsNullTarget() throws Throwable {
@@ -740,7 +742,7 @@ public class PermissionManagerTest {
 
         try {
             shiro.getSystemUser().execute(
-                () -> permissionManager.copyPermissions(object2, null));
+                    () -> permissionManager.copyPermissions(object2, null));
         } catch (ExecutionException ex) {
             throw ex.getCause();
         }
@@ -756,9 +758,9 @@ public class PermissionManagerTest {
     public void verifyListPrivileges() {
 
         final List<String> corePrivileges = permissionManager
-            .listDefiniedPrivileges(CoreConstants.class);
+                .listDefiniedPrivileges(CoreConstants.class);
         final List<String> catPrivileges = permissionManager
-            .listDefiniedPrivileges(CategorizationConstants.class);
+                .listDefiniedPrivileges(CategorizationConstants.class);
 
         assertThat(corePrivileges, is(not(nullValue())));
         assertThat(corePrivileges.isEmpty(), is(false));

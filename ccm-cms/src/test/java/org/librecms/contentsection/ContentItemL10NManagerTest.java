@@ -47,6 +47,7 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 import org.jboss.arquillian.persistence.CleanupUsingScript;
+import org.jboss.arquillian.persistence.TestExecutionPhase;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
@@ -61,7 +62,8 @@ import static org.junit.Assert.*;
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
 @CreateSchema({"create_ccm_cms_schema.sql"})
-@CleanupUsingScript({"cleanup.sql"})
+@CleanupUsingScript(value = {"cleanup.sql"},
+                    phase = TestExecutionPhase.BEFORE)
 public class ContentItemL10NManagerTest {
 
     @Inject
@@ -98,66 +100,67 @@ public class ContentItemL10NManagerTest {
     @Deployment
     public static WebArchive createDeployment() {
         return ShrinkWrap
-            .create(WebArchive.class,
-                    "LibreCCM-org.librecms.contentsection.ContentItemManagerTest.war")
-            .addPackage(org.libreccm.auditing.CcmRevision.class.getPackage())
-            .addPackage(org.libreccm.categorization.Categorization.class
-                .getPackage())
-            .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
-            .addPackage(org.libreccm.configuration.Configuration.class
-                .getPackage())
-            .addPackage(org.libreccm.core.CcmCore.class.getPackage())
-            .addPackage(org.libreccm.jpa.EntityManagerProducer.class
-                .getPackage())
-            .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
-                .getPackage())
-            .addPackage(org.libreccm.l10n.LocalizedString.class
-                .getPackage())
-            .addClass(org.libreccm.portation.Portable.class)
-            .addPackage(org.libreccm.security.Permission.class.getPackage())
-            .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
-            .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
-            .addPackage(com.arsdigita.bebop.Component.class.getPackage())
-            .addPackage(com.arsdigita.bebop.util.BebopConstants.class
-                .getPackage())
-            .addClass(com.arsdigita.kernel.KernelConfig.class)
-            .addClass(com.arsdigita.runtime.CCMResourceManager.class)
-            .addClass(com.arsdigita.dispatcher.RequestContext.class)
-            .addClass(com.arsdigita.dispatcher.AccessDeniedException.class)
-            .addClass(com.arsdigita.cms.dispatcher.ContentItemDispatcher.class)
-            .addClass(com.arsdigita.dispatcher.Dispatcher.class)
-            .addClass(
-                com.arsdigita.ui.admin.applications.AbstractAppInstanceForm.class)
-            .addClass(
-                com.arsdigita.ui.admin.applications.AbstractAppSettingsPane.class)
-            .addClass(
-                com.arsdigita.ui.admin.applications.DefaultApplicationInstanceForm.class)
-            .addClass(
-                com.arsdigita.ui.admin.applications.DefaultApplicationSettingsPane.class)
-            .addClass(org.librecms.dispatcher.ItemResolver.class)
-            .addPackage(com.arsdigita.util.Lockable.class.getPackage())
-            .addPackage(com.arsdigita.web.BaseServlet.class.getPackage())
-            .addPackage(org.librecms.Cms.class.getPackage())
-            .addPackage(org.librecms.contentsection.Asset.class.getPackage())
-            .addPackage(org.librecms.contentsection.AttachmentList.class
-                .getPackage())
-            .addPackage(org.librecms.lifecycle.Lifecycle.class.getPackage())
-            .addPackage(org.librecms.contentsection.ContentSection.class
-                .getPackage())
-            .addPackage(org.librecms.contenttypes.Article.class.getPackage())
-            .addClass(com.arsdigita.kernel.security.SecurityConfig.class)
-            .addPackage(org.libreccm.tests.categories.IntegrationTest.class
-                .getPackage())
-            //            .addAsLibraries(getModuleDependencies())
-            .addAsLibraries(getCcmCoreDependencies())
-            .addAsResource("configs/shiro.ini", "shiro.ini")
-            .addAsResource(
-                "configs/org/librecms/contentsection/ContentItemManagerTest/log4j2.xml",
-                "log4j2.xml")
-            .addAsResource("test-persistence.xml",
-                           "META-INF/persistence.xml")
-            .addAsWebInfResource("test-web.xml", "web.xml")
-            .addAsWebInfResource(EmptyAsset.INSTANCE, "WEB-INF/beans.xml");
+                .create(WebArchive.class,
+                        "LibreCCM-org.librecms.contentsection.ContentItemManagerTest.war").
+                addPackage(org.libreccm.auditing.CcmRevision.class.getPackage())
+                .addPackage(org.libreccm.categorization.Categorization.class
+                        .getPackage())
+                .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
+                .addPackage(org.libreccm.configuration.Configuration.class
+                        .getPackage())
+                .addPackage(org.libreccm.core.CcmCore.class.getPackage())
+                .addPackage(org.libreccm.jpa.EntityManagerProducer.class
+                        .getPackage())
+                .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
+                        .getPackage())
+                .addPackage(org.libreccm.l10n.LocalizedString.class
+                        .getPackage())
+                .addClass(org.libreccm.portation.Portable.class)
+                .addPackage(org.libreccm.security.Permission.class.getPackage())
+                .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
+                .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
+                .addPackage(com.arsdigita.bebop.Component.class.getPackage())
+                .addPackage(com.arsdigita.bebop.util.BebopConstants.class
+                        .getPackage())
+                .addClass(com.arsdigita.kernel.KernelConfig.class)
+                .addClass(com.arsdigita.runtime.CCMResourceManager.class)
+                .addClass(com.arsdigita.dispatcher.RequestContext.class)
+                .addClass(com.arsdigita.dispatcher.AccessDeniedException.class)
+                .addClass(
+                        com.arsdigita.cms.dispatcher.ContentItemDispatcher.class).
+                addClass(com.arsdigita.dispatcher.Dispatcher.class)
+                .addClass(
+                        com.arsdigita.ui.admin.applications.AbstractAppInstanceForm.class).
+                addClass(
+                        com.arsdigita.ui.admin.applications.AbstractAppSettingsPane.class).
+                addClass(
+                        com.arsdigita.ui.admin.applications.DefaultApplicationInstanceForm.class).
+                addClass(
+                        com.arsdigita.ui.admin.applications.DefaultApplicationSettingsPane.class).
+                addClass(org.librecms.dispatcher.ItemResolver.class)
+                .addPackage(com.arsdigita.util.Lockable.class.getPackage())
+                .addPackage(com.arsdigita.web.BaseServlet.class.getPackage())
+                .addPackage(org.librecms.Cms.class.getPackage())
+                .addPackage(org.librecms.contentsection.Asset.class.getPackage()).
+                addPackage(org.librecms.contentsection.AttachmentList.class
+                        .getPackage())
+                .addPackage(org.librecms.lifecycle.Lifecycle.class.getPackage())
+                .addPackage(org.librecms.contentsection.ContentSection.class
+                        .getPackage())
+                .addPackage(org.librecms.contenttypes.Article.class.getPackage()).
+                addClass(com.arsdigita.kernel.security.SecurityConfig.class)
+                .addPackage(org.libreccm.tests.categories.IntegrationTest.class
+                        .getPackage())
+                //            .addAsLibraries(getModuleDependencies())
+                .addAsLibraries(getCcmCoreDependencies())
+                .addAsResource("configs/shiro.ini", "shiro.ini")
+                .addAsResource(
+                        "configs/org/librecms/contentsection/ContentItemManagerTest/log4j2.xml",
+                        "log4j2.xml")
+                .addAsResource("test-persistence.xml",
+                               "META-INF/persistence.xml")
+                .addAsWebInfResource("test-web.xml", "web.xml")
+                .addAsWebInfResource(EmptyAsset.INSTANCE, "WEB-INF/beans.xml");
     }
 
     @Test
@@ -176,7 +179,7 @@ public class ContentItemL10NManagerTest {
     @Test
     @InSequence(10)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                      + "ContentItemL10NManagerTest/data.xml")
+                          + "ContentItemL10NManagerTest/data.xml")
     public void verifyHasLanguage() {
         shiro.getSystemUser().execute(() -> {
             final Optional<ContentItem> item = itemRepo.findById(-10100L);
@@ -201,7 +204,7 @@ public class ContentItemL10NManagerTest {
     @Test(expected = IllegalArgumentException.class)
     @InSequence(20)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                      + "ContentItemL10NManagerTest/data.xml")
+                          + "ContentItemL10NManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void hasLanguageItemIsNull() {
         final ContentItem item = null;
@@ -218,7 +221,7 @@ public class ContentItemL10NManagerTest {
     @Test(expected = IllegalArgumentException.class)
     @InSequence(30)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                      + "ContentItemL10NManagerTest/data.xml")
+                          + "ContentItemL10NManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void hasLanguageLanguageIsNull() {
         final Optional<ContentItem> item = itemRepo.findById(-10100L);
@@ -236,11 +239,11 @@ public class ContentItemL10NManagerTest {
     @Test
     @InSequence(40)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                      + "ContentItemL10NManagerTest/data.xml")
+                          + "ContentItemL10NManagerTest/data.xml")
     @ShouldMatchDataSet(
-        value = "datasets/org/librecms/contentsection/"
-                    + "ContentItemL10NManagerTest/after-add-language.xml",
-        excludeColumns = {"timestamp"})
+            value = "datasets/org/librecms/contentsection/"
+                            + "ContentItemL10NManagerTest/after-add-language.xml",
+            excludeColumns = {"timestamp"})
     public void addLanguage() {
         final Optional<ContentItem> item = itemRepo.findById(-10100L);
         assertThat(item.isPresent(), is(true));
@@ -256,10 +259,10 @@ public class ContentItemL10NManagerTest {
     @Test
     @InSequence(50)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                      + "ContentItemL10NManagerTest/data.xml")
+                          + "ContentItemL10NManagerTest/data.xml")
     @ShouldMatchDataSet(
-        value = "datasets/org/librecms/contentsection/"
-                    + "ContentItemL10NManagerTest/data.xml")
+            value = "datasets/org/librecms/contentsection/"
+                            + "ContentItemL10NManagerTest/data.xml")
     public void addLanguageAlreadyPresent() {
         final Optional<ContentItem> item = itemRepo.findById(-10100L);
         assertThat(item.isPresent(), is(true));
@@ -276,10 +279,10 @@ public class ContentItemL10NManagerTest {
     @Test(expected = IllegalArgumentException.class)
     @InSequence(60)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                      + "ContentItemL10NManagerTest/data.xml")
+                          + "ContentItemL10NManagerTest/data.xml")
     @ShouldMatchDataSet(
-        value = "datasets/org/librecms/contentsection/"
-                    + "ContentItemL10NManagerTest/data.xml")
+            value = "datasets/org/librecms/contentsection/"
+                            + "ContentItemL10NManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void addLanguageItemIsNull() {
         final ContentItem item = null;
@@ -295,10 +298,10 @@ public class ContentItemL10NManagerTest {
     @Test(expected = IllegalArgumentException.class)
     @InSequence(20)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                      + "ContentItemL10NManagerTest/data.xml")
+                          + "ContentItemL10NManagerTest/data.xml")
     @ShouldMatchDataSet(
-        value = "datasets/org/librecms/contentsection/"
-                    + "ContentItemL10NManagerTest/data.xml")
+            value = "datasets/org/librecms/contentsection/"
+                            + "ContentItemL10NManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void addLanguageLanguageIsNull() {
         final Optional<ContentItem> item = itemRepo.findById(-10100L);
@@ -314,11 +317,11 @@ public class ContentItemL10NManagerTest {
     @Test
     @InSequence(70)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                      + "ContentItemL10NManagerTest/data.xml")
+                          + "ContentItemL10NManagerTest/data.xml")
     @ShouldMatchDataSet(
-        value = "datasets/org/librecms/contentsection/"
-                    + "ContentItemL10NManagerTest/after-remove-language.xml",
-        excludeColumns = {"timestamp"})
+            value = "datasets/org/librecms/contentsection/"
+                            + "ContentItemL10NManagerTest/after-remove-language.xml",
+            excludeColumns = {"timestamp"})
     public void removeLanguage() {
         final Optional<ContentItem> item = itemRepo.findById(-10100L);
         assertThat(item.isPresent(), is(true));
@@ -334,10 +337,10 @@ public class ContentItemL10NManagerTest {
     @Test
     @InSequence(80)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                      + "ContentItemL10NManagerTest/data.xml")
+                          + "ContentItemL10NManagerTest/data.xml")
     @ShouldMatchDataSet(
-        value = "datasets/org/librecms/contentsection/"
-                    + "ContentItemL10NManagerTest/data.xml")
+            value = "datasets/org/librecms/contentsection/"
+                            + "ContentItemL10NManagerTest/data.xml")
     public void removeNotPresentLanguage() {
         final Optional<ContentItem> item = itemRepo.findById(-10100L);
         assertThat(item.isPresent(), is(true));
@@ -354,10 +357,10 @@ public class ContentItemL10NManagerTest {
     @Test(expected = IllegalArgumentException.class)
     @InSequence(90)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                      + "ContentItemL10NManagerTest/data.xml")
+                          + "ContentItemL10NManagerTest/data.xml")
     @ShouldMatchDataSet(
-        value = "datasets/org/librecms/contentsection/"
-                    + "ContentItemL10NManagerTest/data.xml")
+            value = "datasets/org/librecms/contentsection/"
+                            + "ContentItemL10NManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void removeLanguageItemIsNull() {
         final ContentItem item = null;
@@ -374,10 +377,10 @@ public class ContentItemL10NManagerTest {
     @Test(expected = IllegalArgumentException.class)
     @InSequence(100)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                      + "ContentItemL10NManagerTest/data.xml")
+                          + "ContentItemL10NManagerTest/data.xml")
     @ShouldMatchDataSet(
-        value = "datasets/org/librecms/contentsection/"
-                    + "ContentItemL10NManagerTest/data.xml")
+            value = "datasets/org/librecms/contentsection/"
+                            + "ContentItemL10NManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void removeLanguageLanguageIsNull() {
         final Optional<ContentItem> item = itemRepo.findById(-10100L);
@@ -394,11 +397,11 @@ public class ContentItemL10NManagerTest {
     @Test
     @InSequence(120)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                      + "ContentItemL10NManagerTest/data.xml")
+                          + "ContentItemL10NManagerTest/data.xml")
     @ShouldMatchDataSet(
-        value = "datasets/org/librecms/contentsection/"
-                    + "ContentItemL10NManagerTest/after-normalize.xml",
-        excludeColumns = {"timestamp"})
+            value = "datasets/org/librecms/contentsection/"
+                            + "ContentItemL10NManagerTest/after-normalize.xml",
+            excludeColumns = {"timestamp"})
     public void normalizeItem() {
         final Optional<ContentItem> item = itemRepo.findById(-10200L);
         assertThat(item.isPresent(), is(true));
@@ -414,10 +417,10 @@ public class ContentItemL10NManagerTest {
     @Test
     @InSequence(130)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                      + "ContentItemL10NManagerTest/data.xml")
+                          + "ContentItemL10NManagerTest/data.xml")
     @ShouldMatchDataSet(
-        value = "datasets/org/librecms/contentsection/"
-                    + "ContentItemL10NManagerTest/data.xml")
+            value = "datasets/org/librecms/contentsection/"
+                            + "ContentItemL10NManagerTest/data.xml")
     public void normalizeItemAlreadyNormalized() {
         final Optional<ContentItem> item = itemRepo.findById(-10100L);
         assertThat(item.isPresent(), is(true));
@@ -435,10 +438,10 @@ public class ContentItemL10NManagerTest {
     @Test(expected = IllegalArgumentException.class)
     @InSequence(140)
     @UsingDataSet("datasets/org/librecms/contentsection/"
-                      + "ContentItemL10NManagerTest/data.xml")
+                          + "ContentItemL10NManagerTest/data.xml")
     @ShouldMatchDataSet(
-        value = "datasets/org/librecms/contentsection/"
-                    + "ContentItemL10NManagerTest/data.xml")
+            value = "datasets/org/librecms/contentsection/"
+                            + "ContentItemL10NManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void normalizeItemNull() {
         final ContentItem item = null;

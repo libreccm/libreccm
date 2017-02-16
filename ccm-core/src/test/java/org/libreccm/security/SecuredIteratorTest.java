@@ -56,6 +56,7 @@ import static org.junit.Assert.*;
 import static org.libreccm.testutils.DependenciesHelpers.*;
 
 import org.jboss.arquillian.persistence.CleanupUsingScript;
+import org.jboss.arquillian.persistence.TestExecutionPhase;
 
 /**
  *
@@ -66,7 +67,8 @@ import org.jboss.arquillian.persistence.CleanupUsingScript;
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
 @CreateSchema({"create_ccm_core_schema.sql"})
-@CleanupUsingScript({"cleanup.sql"})
+@CleanupUsingScript(value = {"cleanup.sql"},
+                    phase = TestExecutionPhase.BEFORE)
 public class SecuredIteratorTest {
 
     private static final String ACCESS_DENIED = "Access denied";
