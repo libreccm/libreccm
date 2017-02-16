@@ -41,10 +41,12 @@ import java.util.ArrayList;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import org.libreccm.core.CoreConstants;
 
 import org.libreccm.workflow.WorkflowTemplate;
 import org.librecms.contentsection.privileges.AssetPrivileges;
 import org.librecms.contentsection.privileges.ItemPrivileges;
+import org.librecms.contentsection.privileges.TypePrivileges;
 import org.librecms.lifecycle.LifecycleDefinition;
 
 import static org.librecms.CmsConstants.*;
@@ -57,29 +59,53 @@ import static org.librecms.CmsConstants.*;
 @Table(name = "CONTENT_SECTIONS", schema = DB_SCHEMA)
 @NamedQueries({
     @NamedQuery(
-        name = "ContentSection.findById",
-        query = "SELECT S FROM ContentSection s WHERE s.objectId = :objectId")
+            name = "ContentSection.findById",
+            query = "SELECT S FROM ContentSection s WHERE s.objectId = :objectId")
     ,
     @NamedQuery(
-        name = "ContentSection.findByLabel",
-        query = "SELECT s FROM ContentSection s WHERE s.label = :label")
+            name = "ContentSection.findByLabel",
+            query = "SELECT s FROM ContentSection s WHERE s.label = :label")
     ,
     @NamedQuery(
-        name = "ContentSection.findContentTypes",
-        query = "SELECT t FROM ContentType t WHERE t.contentSection = :section")
+            name = "ContentSection.findUsableContentTypes",
+            query = "SELECT t FROM ContentType t "
+                            + "WHERE t.contentSection = :section "
+                            + "AND "
+                            + "(t IN (SELECT p.object FROM Permission p "
+                            + "WHERE p.grantedPrivilege = '"
+                            + TypePrivileges.USE_TYPE + "' "
+                            + "AND p.grantee in :roles) "
+                            + "OR true = :isSysAdmin)")
     ,
     @NamedQuery(
-        name = "ContentSection.countContentTypes",
-        query
-        = "SELECT COUNT(t) FROM ContentType t WHERE t.contentSection = :section"
-    )
+            name = "ContentSection.countUsableContentTypes",
+            query = "SELECT COUNT(t) FROM ContentType t "
+                            + "WHERE t.contentSection = :section "
+                            + "AND "
+                            + "(t IN (SELECT p.object FROM Permission p "
+                            + "WHERE p.grantedPrivilege = '"
+                            + TypePrivileges.USE_TYPE + "' "
+                            + "AND p.grantee IN :roles) "
+                            + "OR true = :isSysAdmin)")
     ,
     @NamedQuery(
-        name = "ContentSection.findPermissions",
-        query = "SELECT p FROM Permission p "
-                    + "WHERE (p.object = :section "
-                    + "       OR p.object = :rootDocumentsFolder"
-                    + "                   OR p.object = :rootAssetsFolder) "
+            name = "ContentSection.hasUsableContentTypes",
+            query = "SELECT (CASE WHEN COUNT(t) > 0 THEN true ELSE false END)"
+                            + "FROM ContentType t "
+                            + "WHERE t.contentSection = :section "
+                            + "AND "
+                            + "(t IN (SELECT p.object FROM Permission p "
+                            + "WHERE p.grantedPrivilege = '"
+                            + TypePrivileges.USE_TYPE + "' "
+                            + "AND p.grantee IN :roles) "
+                            + "OR true = :isSysAdmin)")
+    ,
+    @NamedQuery(
+            name = "ContentSection.findPermissions",
+            query = "SELECT p FROM Permission p "
+                            + "WHERE (p.object = :section "
+                            + "       OR p.object = :rootDocumentsFolder"
+                            + "                   OR p.object = :rootAssetsFolder) "
                     + "AND p.grantee = :role")
 })
 //@ApplicationType(
@@ -149,39 +175,39 @@ public class ContentSection extends CcmApplication implements Serializable {
                inverseJoinColumns = {
                    @JoinColumn(name = "ROLE_ID")
                })
-    private List<Role> roles;
+    private List<Role> roles = new ArrayList<>();
 
     @Column(name = "DEFAULT_LOCALE")
     private Locale defaultLocale;
 
     @OneToMany(mappedBy = "contentSection")
-    private List<ContentType> contentTypes;
+    private List<ContentType> contentTypes = new ArrayList<>();
 
     @OneToMany
     @JoinTable(
-        name = "CONTENT_SECTION_LIFECYCLE_DEFINITIONS",
-        schema = DB_SCHEMA,
-        joinColumns = {
-            @JoinColumn(name = "CONTENT_SECTION_ID")
-        },
-        inverseJoinColumns = {
-            @JoinColumn(name = "LIFECYCLE_DEFINITION_ID")
-        }
+            name = "CONTENT_SECTION_LIFECYCLE_DEFINITIONS",
+            schema = DB_SCHEMA,
+            joinColumns = {
+                @JoinColumn(name = "CONTENT_SECTION_ID")
+            },
+            inverseJoinColumns = {
+                @JoinColumn(name = "LIFECYCLE_DEFINITION_ID")
+            }
     )
-    private List<LifecycleDefinition> lifecycleDefinitions;
+    private List<LifecycleDefinition> lifecycleDefinitions = new ArrayList<>();
 
     @OneToMany
     @JoinTable(
-        name = "CONTENT_SECTION_WORKFLOW_TEMPLATES",
-        schema = DB_SCHEMA,
-        joinColumns = {
-            @JoinColumn(name = "CONTENT_SECTION_ID")
-        },
-        inverseJoinColumns = {
-            @JoinColumn(name = "WORKFLOW_TEMPLATE_ID")
-        }
+            name = "CONTENT_SECTION_WORKFLOW_TEMPLATES",
+            schema = DB_SCHEMA,
+            joinColumns = {
+                @JoinColumn(name = "CONTENT_SECTION_ID")
+            },
+            inverseJoinColumns = {
+                @JoinColumn(name = "WORKFLOW_TEMPLATE_ID")
+            }
     )
-    private List<WorkflowTemplate> workflowTemplates;
+    private List<WorkflowTemplate> workflowTemplates = new ArrayList<>();
 
     public ContentSection() {
         roles = new ArrayList<>();
@@ -301,7 +327,7 @@ public class ContentSection extends CcmApplication implements Serializable {
     }
 
     protected void setLifecycleDefinitions(
-        final List<LifecycleDefinition> lifecycleDefinitions) {
+            final List<LifecycleDefinition> lifecycleDefinitions) {
         this.lifecycleDefinitions = lifecycleDefinitions;
     }
 
@@ -310,7 +336,7 @@ public class ContentSection extends CcmApplication implements Serializable {
     }
 
     protected void removeLifecycleDefinition(
-        final LifecycleDefinition definition) {
+            final LifecycleDefinition definition) {
         lifecycleDefinitions.remove(definition);
     }
 
@@ -319,7 +345,7 @@ public class ContentSection extends CcmApplication implements Serializable {
     }
 
     protected void setWorkflowTemplates(
-        final List<WorkflowTemplate> workflowTemplates) {
+            final List<WorkflowTemplate> workflowTemplates) {
         this.workflowTemplates = workflowTemplates;
     }
 
@@ -397,23 +423,23 @@ public class ContentSection extends CcmApplication implements Serializable {
     @Override
     public String toString(final String data) {
         return super.toString(String.format(
-            ", label = \"%s\", "
-                + "rootDocumentsFolder = \"%s\", "
-                + "rootAssetsFolder = \"%s\", "
-                + "pageResolverClass = \"%s\", "
-                + "itemResolverClass = \"%s\", "
-                + "templateResolverClass = \"%s\", "
-                + "xmlGeneratorClass = \"%s\", "
-                + "defaultLocale = \"%s\"%s",
-            label,
-            Objects.toString(rootDocumentsFolder),
-            Objects.toString(rootAssetsFolder),
-            pageResolverClass,
-            itemResolverClass,
-            templateResolverClass,
-            xmlGeneratorClass,
-            Objects.toString(defaultLocale),
-            data));
+                ", label = \"%s\", "
+                        + "rootDocumentsFolder = \"%s\", "
+                        + "rootAssetsFolder = \"%s\", "
+                        + "pageResolverClass = \"%s\", "
+                        + "itemResolverClass = \"%s\", "
+                        + "templateResolverClass = \"%s\", "
+                        + "xmlGeneratorClass = \"%s\", "
+                        + "defaultLocale = \"%s\"%s",
+                label,
+                Objects.toString(rootDocumentsFolder),
+                Objects.toString(rootAssetsFolder),
+                pageResolverClass,
+                itemResolverClass,
+                templateResolverClass,
+                xmlGeneratorClass,
+                Objects.toString(defaultLocale),
+                data));
     }
 
 }

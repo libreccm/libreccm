@@ -89,7 +89,7 @@ public class SystemUsersSetup {
         admin.setPassword(adminPassword);
 
         final Role adminRole = new Role();
-        adminRole.setName("system-administrator");
+        adminRole.setName(CoreConstants.SYS_ADMIN_ROLE);
 
         final RoleMembership membership = new RoleMembership();
         membership.setRole(adminRole);

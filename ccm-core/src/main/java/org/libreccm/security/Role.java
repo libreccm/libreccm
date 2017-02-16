@@ -70,47 +70,61 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 @NamedQueries({
     @NamedQuery(name = "Role.findByName",
                 query = "SELECT r FROM Role r "
-                                + "WHERE r.name = :name"),
+                                + "WHERE r.name = :name")
+    ,
     @NamedQuery(
             name = "Role.count",
-            query = "SELECT COUNT(r) FROM Role r"),
+            query = "SELECT COUNT(r) FROM Role r")
+    ,
     @NamedQuery(
             name = "Role.findAllOrderedByRoleName",
-            query = "SELECT r FROM Role r ORDER BY r.name"),
+            query = "SELECT r FROM Role r ORDER BY r.name")
+    ,
     @NamedQuery(
             name = "Role.findAllOrderedByRoleNameLimit",
-            query = "SELECT r FROM Role r ORDER BY r.name "),
+            query = "SELECT r FROM Role r ORDER BY r.name ")
+    ,
     @NamedQuery(
             name = "Role.findAllOrderedByRoleNameDesc",
-            query = "SELECT r FROM Role r ORDER BY r.name DESC"),
+            query = "SELECT r FROM Role r ORDER BY r.name DESC")
+    ,
     @NamedQuery(
             name = "Role.searchByName",
             query = "SELECT r FROM Role r "
                             + "WHERE LOWER(r.name) LIKE CONCAT(LOWER(:name), '%') "
-                    + "ORDER BY r.name "),
+                    + "ORDER BY r.name ")
+    ,
     @NamedQuery(
             name = "Role.searchByNameCount",
             query = "SELECT COUNT(r.name) FROM Role r "
                             + "WHERE LOWER(r.name) LIKE CONCAT(LOWER(:name), '%') "
                     + "GROUP BY r.name "
-                            + "ORDER BY r.name "),
+                            + "ORDER BY r.name ")
+    ,
     @NamedQuery(
             name = "Role.findByPrivilege",
             query = "SELECT r FROM Role r JOIN r.permissions p "
                             + "WHERE p.grantedPrivilege = :privilege "
-                            + "ORDER BY r.name"),
+                            + "ORDER BY r.name")
+    ,
     @NamedQuery(
             name = "Role.findByPrivilegeAndObject",
             query = "SELECT r FROM Role r JOIN r.permissions p "
                             + "WHERE p.grantedPrivilege = :privilege "
                             + "AND p.object = :object "
                             + "ORDER BY r.name")
+    ,
+    @NamedQuery(
+            name = "Role.findRolesOfUser",
+            query = "SELECT r.role FROM RoleMembership r "
+                            + "WHERE r.member = :user")
 })
 @NamedEntityGraphs({
     @NamedEntityGraph(
             name = Role.ENTITY_GRPAH_WITH_MEMBERS,
             attributeNodes = {
-                @NamedAttributeNode(value = "memberships"),}),
+                @NamedAttributeNode(value = "memberships"),})
+    ,
     @NamedEntityGraph(
             name = Role.ENTITY_GRPAH_WITH_PERMISSIONS,
             attributeNodes = {

@@ -57,6 +57,7 @@ import static org.libreccm.testutils.DependenciesHelpers.*;
 import org.jboss.arquillian.persistence.CleanupUsingScript;
 
 import java.util.Optional;
+import org.jboss.arquillian.persistence.TestExecutionPhase;
 
 /**
  * Tests for the {@link RoleRepository}. Note. We are not enabling the
@@ -69,7 +70,8 @@ import java.util.Optional;
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
 @CreateSchema({"create_ccm_core_schema.sql"})
-@CleanupUsingScript({"cleanup.sql"})
+@CleanupUsingScript(value = {"cleanup.sql"},
+                    phase = TestExecutionPhase.BEFORE)
 public class RoleRepositoryTest {
 
     private static final String ADMINISTRATOR = "administrator";
