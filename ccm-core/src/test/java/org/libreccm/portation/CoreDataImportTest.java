@@ -41,6 +41,7 @@ import org.libreccm.tests.categories.IntegrationTest;
 
 import javax.faces.bean.RequestScoped;
 import javax.inject.Inject;
+import org.jboss.arquillian.persistence.TestExecutionPhase;
 
 import static org.libreccm.testutils.DependenciesHelpers.getModuleDependencies;
 
@@ -57,8 +58,8 @@ import static org.libreccm.testutils.DependenciesHelpers.getModuleDependencies;
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
 @CreateSchema({"create_ccm_core_schema.sql"})
-@CleanupUsingScript({"cleanup.sql"})
-@RequestScoped
+@CleanupUsingScript(value = {"cleanup.sql"},
+                    phase = TestExecutionPhase.BEFORE)
 public class CoreDataImportTest {
 
     @Inject

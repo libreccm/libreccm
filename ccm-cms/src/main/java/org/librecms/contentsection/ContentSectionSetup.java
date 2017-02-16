@@ -40,7 +40,7 @@ import org.librecms.contenttypes.News;
 import org.librecms.dispatcher.MultilingualItemResolver;
 
 import java.util.Arrays;
-import java.util.logging.Level;
+import org.librecms.contentsection.privileges.TypePrivileges;
 
 /**
  *
@@ -49,12 +49,12 @@ import java.util.logging.Level;
 public class ContentSectionSetup extends AbstractCcmApplicationSetup {
 
     private static final Logger LOGGER = LogManager.getLogger(
-        ContentSectionSetup.class);
+            ContentSectionSetup.class);
 
     private static final String INITIAL_CONTENT_SECTIONS
-                                    = "org.librecms.initial_content_sections";
+                                = "org.librecms.initial_content_sections";
     private static final String DEFAULT_ITEM_RESOLVER
-                                    = "org.librecms.default_item_resolver";
+                                = "org.librecms.default_item_resolver";
     private static final String[] DEFAULT_TYPES = new String[]{
         Article.class.getName(),
         Event.class.getName(),
@@ -70,14 +70,14 @@ public class ContentSectionSetup extends AbstractCcmApplicationSetup {
         final String sectionNames;
         if (getIntegrationProps().containsKey(INITIAL_CONTENT_SECTIONS)) {
             sectionNames = getIntegrationProps().getProperty(
-                INITIAL_CONTENT_SECTIONS);
+                    INITIAL_CONTENT_SECTIONS);
             LOGGER.info(
-                "Found names for initial content sections in integration "
-                    + "properties: {}", sectionNames);
+                    "Found names for initial content sections in integration "
+                            + "properties: {}", sectionNames);
         } else {
             sectionNames = "info";
             LOGGER.info("No initial content sections definied integration "
-                            + "properties, using default: {}", sectionNames);
+                                + "properties, using default: {}", sectionNames);
         }
 
         for (final String contentSectionName : sectionNames.split(",")) {
@@ -96,21 +96,21 @@ public class ContentSectionSetup extends AbstractCcmApplicationSetup {
         section.setLabel(sectionName);
 
         if (getIntegrationProps().getProperty(DEFAULT_ITEM_RESOLVER) == null
-                || getIntegrationProps().getProperty(DEFAULT_ITEM_RESOLVER)
-                .trim().isEmpty()) {
+                    || getIntegrationProps().getProperty(DEFAULT_ITEM_RESOLVER)
+                        .trim().isEmpty()) {
             section.setItemResolverClass(getIntegrationProps().getProperty(
-                DEFAULT_ITEM_RESOLVER));
+                    DEFAULT_ITEM_RESOLVER));
         } else {
             section.setItemResolverClass(MultilingualItemResolver.class
-                .getName());
+                    .getName());
         }
 
         LOGGER.debug("New content section properties: "
-                         + "uuid = {}; "
-                         + "applicationType = \"{}\"; "
-                         + "primaryUrl = \"{}\"; "
-                         + "displayName = \"{}\"; "
-                         + "label = \"{}\"",
+                             + "uuid = {}; "
+                             + "applicationType = \"{}\"; "
+                             + "primaryUrl = \"{}\"; "
+                             + "displayName = \"{}\"; "
+                             + "label = \"{}\"",
                      section.getUuid(),
                      section.getApplicationType(),
                      section.getPrimaryUrl(),
@@ -138,8 +138,12 @@ public class ContentSectionSetup extends AbstractCcmApplicationSetup {
         getEntityManager().persist(rootFolder);
         getEntityManager().persist(rootAssetFolder);
 
+        LOGGER.debug(
+                "Creating default roles and permissions for content section "
+                        + "'{}'...",
+                sectionName);
         final Role alertRecipient = createRole(String.format(
-            "%s_" + ALERT_RECIPIENT, sectionName));
+                "%s_" + ALERT_RECIPIENT, sectionName));
         final Role author = createRole(String.format("%s_" + AUTHOR,
                                                      sectionName));
         final Role editor = createRole(String.format("%s_" + EDITOR,
@@ -149,7 +153,7 @@ public class ContentSectionSetup extends AbstractCcmApplicationSetup {
         final Role publisher = createRole(String.format("%s_" + PUBLISHER,
                                                         sectionName));
         final Role contentReader = createRole(String.format(
-            "%s_" + CONTENT_READER, sectionName));
+                "%s_" + CONTENT_READER, sectionName));
 
         grantPermissions(author,
                          rootFolder,
@@ -254,60 +258,103 @@ public class ContentSectionSetup extends AbstractCcmApplicationSetup {
         section.addRole(publisher);
         section.addRole(contentReader);
 
+        LOGGER.debug("Setting ItemResolver for content section '{}'...",
+                     sectionName);
         final String itemResolverClassName;
         if (getIntegrationProps().containsKey(String.format("%s.item_resolver",
                                                             sectionName))) {
+
             itemResolverClassName = getIntegrationProps().getProperty(
-                String.format("%s.item_resolver",
-                              sectionName));
+                    String.format("%s.item_resolver",
+                                  sectionName));
+            LOGGER.debug("integration.properties contains setting for the item "
+                                 + "resolver of content section '{}'. Using "
+                                 + "item resolver '{}'.",
+                         sectionName, itemResolverClassName);
         } else if (getIntegrationProps().containsKey("default_item_resolver")) {
             itemResolverClassName = getIntegrationProps().getProperty(
-                "default_item_resolver_name");
+                    "default_item_resolver_name");
+            LOGGER.debug("integration.properties contains setting for the "
+                                 + "default item resolver. Using item "
+                                 + "resolver '{}'.",
+                         itemResolverClassName);
         } else {
             itemResolverClassName = MultilingualItemResolver.class.getName();
+            LOGGER.debug("integration.properties contains *no* setting for item "
+                    + "resolver. Using default item resolver '{}'.",
+                         itemResolverClassName);
         }
         section.setItemResolverClass(itemResolverClassName);
 
+        LOGGER.debug("Adding default content types to content section '{}'...",
+                     sectionName);
         final String[] types;
         if (getIntegrationProps().containsKey(String.format("%s.content_types",
                                                             sectionName))) {
             final String typesStr = getIntegrationProps().getProperty(String
-                .format("%s.content_types", sectionName));
+                    .format("%s.content_types", sectionName));
+            LOGGER.debug("integration.properties contains setting for content "
+                    + "types of section '{}': {}",
+                         sectionName,
+                         typesStr);
             types = typesStr.split(",");
         } else if (getIntegrationProps().containsKey("default_content_types")) {
             final String typesStr = getIntegrationProps().getProperty(
-                "default_content_types");
+                    "default_content_types");
+            LOGGER.debug("integration.properties contains setting for default "
+                    + "content types for all sections: {}",
+                         typesStr);
             types = typesStr.split(",");
         } else {
+            LOGGER.debug("integration.properties contains not settings for "
+                    + "default content types. Using internal default: {}",
+                         String.join(", ", DEFAULT_TYPES));
             types = DEFAULT_TYPES;
         }
         Arrays.stream(types).forEach(type -> addContentTypeToSection(section,
-                                                                     type));
+                                                                     type,
+                                                                     author,
+                                                                     editor,
+                                                                     manager));
 
         getEntityManager().merge(section);
     }
 
     private void addContentTypeToSection(final ContentSection section,
-                                         final String contentType) {
+                                         final String contentType,
+                                         final Role... roles) {
         final String typeClassName = contentType.trim();
+        LOGGER.debug("Adding content type '{}' to content section '{}'...",
+                     contentType,
+                     section.getPrimaryUrl());
         final Class<?> clazz;
         try {
             clazz = Class.forName(typeClassName);
         } catch (ClassNotFoundException ex) {
             throw new UnexpectedErrorException(String.format(
-                "No class for content type '%s'.", typeClassName));
+                    "No class for content type '%s'.", typeClassName));
         }
 
         if (ContentItem.class.isAssignableFrom(clazz)) {
+            LOGGER.warn("'{}' is not is assignable from '{}'!",
+                        ContentItem.class.getName(),
+                        clazz.getName());
             final ContentType type = new ContentType();
             type.setContentSection(section);
+            type.setUuid(UUID.randomUUID().toString());
             type.setContentItemClass(clazz.getName());
+            getEntityManager().persist(type);
             section.addContentType(type);
+            
+            Arrays.stream(roles)
+                    .forEach(role -> grantPermission(role, 
+                                                     TypePrivileges.USE_TYPE, 
+                                                     type));
         } else {
             throw new UnexpectedErrorException(String.format(
-                "The class '%s' is not a sub class of '%s'.",
-                clazz.getName(),
-                ContentItem.class.getName()));
+                    "The class '%s' is not a sub class of '%s'.",
+                    clazz.getName(),
+                    ContentItem.class.getName()));
         }
     }
 

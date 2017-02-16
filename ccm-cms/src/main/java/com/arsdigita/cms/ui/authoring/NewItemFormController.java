@@ -18,16 +18,27 @@
  */
 package com.arsdigita.cms.ui.authoring;
 
+import java.util.Collections;
+import java.util.List;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionRepository;
 
 import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+import org.libreccm.security.PermissionChecker;
+import org.libreccm.security.Role;
+import org.libreccm.security.RoleRepository;
+import org.libreccm.security.Shiro;
+import org.libreccm.security.User;
+import org.librecms.contentsection.ContentType;
+import org.librecms.contentsection.ContentTypeRepository;
 
 /**
  * Controller class for the {@link NewItemForm}.
@@ -39,26 +50,65 @@ class NewItemFormController {
 
     @Inject
     private EntityManager entityManager;
+
+    @Inject
+    private Shiro shiro;
+    
+    @Inject
+    private PermissionChecker permissionChecker;
+
+    @Inject
+    private RoleRepository roleRepo;
+
     @Inject
     private ContentSectionRepository sectionRepo;
+    
+    @Inject
+    private ContentTypeRepository typeRepo;
 
     @Transactional(Transactional.TxType.REQUIRED)
     protected boolean hasContentTypes(final ContentSection section) {
         Objects.requireNonNull(section, "Can't work with null for the section.");
 
-//        final Optional<ContentSection> contentSection = sectionRepo.findById(
-//            section.getObjectId());
-//
-//        if (contentSection.isPresent()) {
-            final TypedQuery<Long> query = entityManager.createNamedQuery("ContentSection.countContentTypes", Long.class);
-            query.setParameter("section", section);
-            return query.getSingleResult() > 0;
-//        } else {
-//            throw new UnexpectedErrorException(String.format(
-//                "ContentSection %s was passed to this method but does not exist "
-//                + "in the database.",
-//                Objects.toString(section)));
-//        }
+        final Optional<User> user = shiro.getUser();
+        if (!user.isPresent()) {
+            return false;
+        }
+
+        final List<Role> roles = user.get().getRoleMemberships().stream()
+                .map(membership -> membership.getRole())
+                .collect(Collectors.toList());
+
+        final TypedQuery<Boolean> query = entityManager.createNamedQuery(
+                "ContentSection.hasUsableContentTypes", Boolean.class);
+        query.setParameter("section", section);
+        query.setParameter("roles", roles);
+        query.setParameter("isSysAdmin", permissionChecker.isPermitted("*"));
+        
+        return query.getSingleResult();
+    }
+    
+    @Transactional(Transactional.TxType.REQUIRED)
+    protected List<ContentType> getContentTypes(final ContentSection section) {
+        Objects.requireNonNull(section);
+        
+        final Optional<User> user = shiro.getUser();
+        if (!user.isPresent()) {
+            return Collections.EMPTY_LIST;
+        }
+        
+        final List<Role> roles = user.get().getRoleMemberships().stream()
+        .map(membership -> membership.getRole())
+        .collect(Collectors.toList());
+        
+        final TypedQuery<ContentType> query = entityManager.createNamedQuery(
+                "ContentSection.findUsableContentTypes",
+                ContentType.class);
+        query.setParameter("section", section);
+        query.setParameter("roles", roles);
+        query.setParameter("isSysAdmin", permissionChecker.isPermitted("*"));
+        
+        return query.getResultList();
     }
 
 }

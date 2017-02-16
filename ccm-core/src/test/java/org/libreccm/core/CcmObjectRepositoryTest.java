@@ -55,6 +55,7 @@ import static org.libreccm.testutils.DependenciesHelpers.*;
 import org.jboss.arquillian.persistence.CleanupUsingScript;
 
 import java.util.Optional;
+import org.jboss.arquillian.persistence.TestExecutionPhase;
 
 /**
  * Tests for the {@link CcmObjectRepository} which is the foundation for many
@@ -67,7 +68,8 @@ import java.util.Optional;
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
 @CreateSchema({"create_ccm_core_schema.sql"})
-@CleanupUsingScript({"cleanup.sql"})
+@CleanupUsingScript(value = {"cleanup.sql"}, 
+                    phase = TestExecutionPhase.BEFORE)
 public class CcmObjectRepositoryTest {
 
     @Inject
@@ -98,32 +100,33 @@ public class CcmObjectRepositoryTest {
     @Deployment
     public static WebArchive createDeployment() {
         return ShrinkWrap
-            .create(WebArchive.class,
-                    "LibreCCM-org.libreccm.core.CcmObjectRepositoryTest.war")
-            .addPackage(org.libreccm.auditing.CcmRevision.class.getPackage())
-            .addPackage(org.libreccm.categorization.Categorization.class
-                .getPackage())
-            .addPackage(org.libreccm.configuration.Configuration.class.
-                getPackage())
-            .addPackage(org.libreccm.core.CcmObject.class.getPackage())
-            .addPackage(org.libreccm.jpa.EntityManagerProducer.class
-                .getPackage())
-            .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
-                .getPackage())
-            .addPackage(org.libreccm.l10n.LocalizedString.class.getPackage())
-            .addPackage(org.libreccm.security.PermissionChecker.class
-                .getPackage())
-            .addPackage(org.libreccm.testutils.EqualsVerifier.class.getPackage())
-            .addPackage(org.libreccm.tests.categories.IntegrationTest.class
-                .getPackage())
-            .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
-            .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
-            .addClass(org.libreccm.portation.Portable.class)
-            .addAsLibraries(getModuleDependencies())
-            .addAsResource("test-persistence.xml",
-                           "META-INF/persistence.xml")
-            .addAsWebInfResource("test-web.xml", "WEB-INF/web.xml")
-            .addAsWebInfResource(EmptyAsset.INSTANCE, "WEB-INF/beans.xml");
+                .create(WebArchive.class,
+                        "LibreCCM-org.libreccm.core.CcmObjectRepositoryTest.war").
+                addPackage(org.libreccm.auditing.CcmRevision.class.getPackage())
+                .addPackage(org.libreccm.categorization.Categorization.class
+                        .getPackage())
+                .addPackage(org.libreccm.configuration.Configuration.class.
+                        getPackage())
+                .addPackage(org.libreccm.core.CcmObject.class.getPackage())
+                .addPackage(org.libreccm.jpa.EntityManagerProducer.class
+                        .getPackage())
+                .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
+                        .getPackage())
+                .addPackage(org.libreccm.l10n.LocalizedString.class.getPackage()).
+                addPackage(org.libreccm.security.PermissionChecker.class
+                        .getPackage())
+                .addPackage(org.libreccm.testutils.EqualsVerifier.class.
+                        getPackage())
+                .addPackage(org.libreccm.tests.categories.IntegrationTest.class
+                        .getPackage())
+                .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
+                .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
+                .addClass(org.libreccm.portation.Portable.class)
+                .addAsLibraries(getModuleDependencies())
+                .addAsResource("test-persistence.xml",
+                               "META-INF/persistence.xml")
+                .addAsWebInfResource("test-web.xml", "WEB-INF/web.xml")
+                .addAsWebInfResource(EmptyAsset.INSTANCE, "WEB-INF/beans.xml");
     }
 
     /**
@@ -160,7 +163,7 @@ public class CcmObjectRepositoryTest {
      */
     @Test
     @UsingDataSet("datasets/org/libreccm/core/CcmObjectRepositoryTest/"
-                      + "after-save-changed.yml")
+                          + "after-save-changed.yml")
     @InSequence(4)
     public void datasetOnly2() {
         System.out.println("Dataset loaded successfully.");
@@ -274,9 +277,9 @@ public class CcmObjectRepositoryTest {
     @Test
     @UsingDataSet("datasets/org/libreccm/core/CcmObjectRepositoryTest/data.yml")
     @ShouldMatchDataSet(
-        value = "datasets/org/libreccm/core/CcmObjectRepositoryTest/"
-                    + "after-save-new.yml",
-        excludeColumns = {"object_id", "uuid"})
+            value = "datasets/org/libreccm/core/CcmObjectRepositoryTest/"
+                            + "after-save-new.yml",
+            excludeColumns = {"object_id", "uuid"})
     @InSequence(300)
     public void saveNewCcmObject() {
         final CcmObject obj = new CcmObject();
@@ -294,9 +297,9 @@ public class CcmObjectRepositoryTest {
     @Test
     @UsingDataSet("datasets/org/libreccm/core/CcmObjectRepositoryTest/data.yml")
     @ShouldMatchDataSet(
-        value = "datasets/org/libreccm/core/CcmObjectRepositoryTest/"
-                    + "after-save-changed.yml",
-        excludeColumns = {"object_id"})
+            value = "datasets/org/libreccm/core/CcmObjectRepositoryTest/"
+                            + "after-save-changed.yml",
+            excludeColumns = {"object_id"})
     @InSequence(400)
     public void saveChangedCcmObject() {
         final CcmObject obj = ccmObjectRepository.findById(-20L).get();
@@ -318,16 +321,16 @@ public class CcmObjectRepositoryTest {
     }
 
     /**
-     * Deletes one of the {@link CcmObject}s in the database by using 
+     * Deletes one of the {@link CcmObject}s in the database by using
      * {@link CcmObjectRepository#delete(java.lang.Object)} and verifies that
      * the object has been removed from the test database.
      */
     @Test
     @UsingDataSet("datasets/org/libreccm/core/CcmObjectRepositoryTest/data.yml")
     @ShouldMatchDataSet(
-        value = "datasets/org/libreccm/core/CcmObjectRepositoryTest/"
-                    + "after-delete.yml",
-        excludeColumns = {"object_id"})
+            value = "datasets/org/libreccm/core/CcmObjectRepositoryTest/"
+                            + "after-delete.yml",
+            excludeColumns = {"object_id"})
     @InSequence(600)
     public void deleteCcmObject() {
         final CcmObject obj = ccmObjectRepository.findById(-20L).get();
@@ -337,7 +340,7 @@ public class CcmObjectRepositoryTest {
 
     /**
      * Verifies that {@link CcmObjectRepository#delete(java.lang.Object)} throws
-     * a {@link IllegalArgumentException} if called with {@link null} for the 
+     * a {@link IllegalArgumentException} if called with {@link null} for the
      * object to delete.
      */
     @Test(expected = IllegalArgumentException.class)

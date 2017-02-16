@@ -55,6 +55,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import org.jboss.arquillian.persistence.TestExecutionPhase;
 
 /**
  *
@@ -65,7 +66,8 @@ import javax.persistence.PersistenceContext;
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
 @CreateSchema({"create_ccm_core_schema.sql"})
-@CleanupUsingScript({"cleanup.sql"})
+@CleanupUsingScript(value = {"cleanup.sql"},
+                    phase = TestExecutionPhase.BEFORE)
 public class UserRepositoryTest {
 
     private static final String NOBODY = "nobody";
