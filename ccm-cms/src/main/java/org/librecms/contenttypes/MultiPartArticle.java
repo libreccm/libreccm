@@ -45,6 +45,8 @@ import static org.librecms.CmsConstants.*;
 @Entity
 @Audited
 @Table(name = "MULTIPART_ARTICLES", schema = DB_SCHEMA)
+@ContentTypeDescription(labelBundle = "org.librecms.contenttypes.MultiPartArticle",
+                        descriptionBundle = "org.librecms.contenttypes.MultiPartArticle")
 public class MultiPartArticle extends ContentItem implements Serializable {
 
     private static final long serialVersionUID = -587374085831420868L;

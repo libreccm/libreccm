@@ -42,6 +42,8 @@ import org.librecms.contentsection.ContentItem;
 @Entity
 @Audited
 @Table(name = "ARTICLES", schema = DB_SCHEMA)
+@ContentTypeDescription(labelBundle = "org.librecms.contenttypes.Article",
+                        descriptionBundle = "org.librecms.contenttypes.Article")
 public class Article extends ContentItem implements Serializable {
 
     private static final long serialVersionUID = 3832010184748095822L;

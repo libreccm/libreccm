@@ -49,7 +49,11 @@ import org.librecms.contentsection.privileges.TypePrivileges;
 import java.util.List;
 import java.util.TooManyListenersException;
 import java.util.stream.Collectors;
+
 import org.libreccm.l10n.GlobalizationHelper;
+import org.librecms.contentsection.ContentTypeManager;
+import org.librecms.contenttypes.ContentTypeInfo;
+import org.librecms.contenttypes.ContentTypesManager;
 
 /**
  * A form element which displays a select box of all content types available
@@ -76,7 +80,7 @@ public abstract class NewItemForm extends Form {
      * Construct a new NewItemForm. It sets a vertical BoxPanel as the component
      * container.
      *
-     * @param name the name attribute of the form.
+     * @param name        the name attribute of the form.
      * @param orientation
      */
     public NewItemForm(final String name, final int orientation) {
@@ -90,16 +94,16 @@ public abstract class NewItemForm extends Form {
 
         // create and add an "empty" component
         emptyLabel = new Label(
-                new GlobalizedMessage("cms.ui.authoring.no_types_registered",
-                                      CmsConstants.CMS_BUNDLE),
-                false);
+            new GlobalizedMessage("cms.ui.authoring.no_types_registered",
+                                  CmsConstants.CMS_BUNDLE),
+            false);
         emptyLabel.setIdAttr("empty_label");
         panel.add(emptyLabel);
 
         createLabel = new Label(
-                new GlobalizedMessage("cms.ui.authoring.create_new",
-                                      CmsConstants.CMS_BUNDLE),
-                false);
+            new GlobalizedMessage("cms.ui.authoring.create_new",
+                                  CmsConstants.CMS_BUNDLE),
+            false);
         createLabel.setIdAttr("create_label");
         panel.add(createLabel);
 
@@ -112,7 +116,7 @@ public abstract class NewItemForm extends Form {
                 @Override
                 public void prepare(final PrintEvent event) {
                     final OptionGroup target = (OptionGroup) event
-                            .getTarget();
+                        .getTarget();
                     target.clearOptions();
                     final PageState state = event.getPageState();
 
@@ -121,31 +125,30 @@ public abstract class NewItemForm extends Form {
 //                    final ContentType parentType;
                     final List<ContentType> typesCollection;
                     final Long singleTypeID = (Long) state.getValue(
-                            new LongParameter(ItemSearch.SINGLE_TYPE_PARAM));
+                        new LongParameter(ItemSearch.SINGLE_TYPE_PARAM));
 
                     final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
                     final NewItemFormController controller = cdiUtil.findBean(
-                            NewItemFormController.class);
+                        NewItemFormController.class);
                     final ContentTypeRepository typeRepo = cdiUtil.findBean(
-                            ContentTypeRepository.class);
+                        ContentTypeRepository.class);
+                    final ContentTypesManager typesManager = cdiUtil.findBean(
+                        ContentTypesManager.class);
                     final PermissionChecker permissionChecker = cdiUtil
-                            .findBean(PermissionChecker.class);
+                        .findBean(PermissionChecker.class);
 
-//                    if (singleTypeID == null) {
-//                        parentType = null;
-//                    } else {
-//                        parentType = typeRepo.findById(singleTypeID).get();
-//                    }
-//                    typesCollection = section.getContentTypes().stream()
-//                        .filter(type -> permissionChecker.isPermitted(
-//                        TypePrivileges.USE_TYPE,
-//                        type))
-//                        .collect(Collectors.toList());
                     typesCollection = controller.getContentTypes(section);
 
-                    typesCollection.forEach(type -> target.addOption(
-                            new Option(Long.toString(type.getObjectId()),
-                                       new Text(type.getContentItemClass()))));
+                    for (final ContentType type : typesCollection) {
+                        final ContentTypeInfo typeInfo = typesManager
+                            .getContentTypeInfo(type.getContentItemClass());
+                        final String value = Long.toString(type.getObjectId());
+                        final Label label = new Label(
+                            new GlobalizedMessage(typeInfo.getLabelKey(),
+                                                  typeInfo.getLabelBundle()));
+                        target.addOption(
+                            new Option(value, label));
+                    }
                 }
 
             });
@@ -197,7 +200,7 @@ public abstract class NewItemForm extends Form {
 
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final NewItemFormController controller = cdiUtil.findBean(
-                    NewItemFormController.class);
+                NewItemFormController.class);
             boolean isEmpty = !controller.hasContentTypes(section);
 
             createLabel.setVisible(state, !isEmpty);
