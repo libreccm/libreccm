@@ -48,6 +48,8 @@ import static org.librecms.CmsConstants.*;
 @Entity
 @Audited
 @Table(name = "EVENTS", schema = DB_SCHEMA)
+@ContentTypeDescription(labelBundle = "org.librecms.contenttypes.Event",
+                        descriptionBundle = "org.librecms.contenttypes.Event")
 public class Event extends ContentItem implements Serializable {
 
     private static final long serialVersionUID = -9104886733503414635L;

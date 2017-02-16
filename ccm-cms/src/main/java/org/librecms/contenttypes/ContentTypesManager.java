@@ -18,7 +18,6 @@
  */
 package org.librecms.contenttypes;
 
-
 import org.libreccm.modules.CcmModule;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentType;
@@ -72,7 +71,8 @@ public class ContentTypesManager {
             }
 
             final List<Class<? extends ContentItem>> moduleTypes = Arrays
-                .stream(annotation.value()).collect(Collectors.toList());
+                .stream(annotation.value())
+                .collect(Collectors.toList());
 
             types.addAll(moduleTypes);
         }
@@ -137,16 +137,18 @@ public class ContentTypesManager {
 
         final AuthoringKit authoringKit = contentTypeClass.getAnnotation(
             AuthoringKit.class);
-        final AuthoringKitInfo authoringKitInfo = new AuthoringKitInfo();
-        authoringKitInfo.setCreateComponent(authoringKit.createComponent());
+        if (authoringKit != null) {
+            final AuthoringKitInfo authoringKitInfo = new AuthoringKitInfo();
+            authoringKitInfo.setCreateComponent(authoringKit.createComponent());
 
-        final List<AuthoringStepInfo> steps = Arrays.stream(authoringKit
-            .steps())
-            .map(step -> createAuthoringStepInfo(contentTypeClass, step))
-            .collect(Collectors.toList());
-        authoringKitInfo.setAuthoringSteps(steps);
-        steps.sort((step1, step2) -> Integer.compare(step1.getOrder(),
-                                                     step2.getOrder()));
+            final List<AuthoringStepInfo> steps = Arrays.stream(authoringKit
+                .steps())
+                .map(step -> createAuthoringStepInfo(contentTypeClass, step))
+                .collect(Collectors.toList());
+            authoringKitInfo.setAuthoringSteps(steps);
+            steps.sort((step1, step2) -> Integer.compare(step1.getOrder(),
+                                                         step2.getOrder()));
+        }
 
         return contentTypeInfo;
     }
@@ -252,7 +254,7 @@ public class ContentTypesManager {
                                                ex);
         }
 
-        if (!clazz.isAssignableFrom(ContentItem.class)) {
+        if (!ContentItem.class.isAssignableFrom(clazz)) {
             throw new IllegalArgumentException(String.format(
                 "Class \"%s\" is not a subclass of \"%s\".",
                 contentTypeClass,
