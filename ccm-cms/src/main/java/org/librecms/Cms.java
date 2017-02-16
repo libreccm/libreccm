@@ -24,6 +24,10 @@ import org.librecms.contentsection.ContentSectionCreator;
 import org.librecms.contentsection.ContentSectionSetup;
 import org.librecms.contentsection.ui.admin.ApplicationInstanceForm;
 import org.librecms.contentsection.ui.admin.SettingsPane;
+import org.librecms.contenttypes.Article;
+import org.librecms.contenttypes.Event;
+import org.librecms.contenttypes.MultiPartArticle;
+import org.librecms.contenttypes.News;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,6 +56,7 @@ import java.util.Properties;
         )
     }
 )
+@ContentTypes({Article.class, Event.class, MultiPartArticle.class, News.class})
 public class Cms implements CcmModule {
 
     private static final Logger LOGGER = LogManager.getLogger(Cms.class);

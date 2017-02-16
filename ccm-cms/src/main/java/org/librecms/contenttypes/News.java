@@ -46,6 +46,8 @@ import static org.librecms.CmsConstants.*;
 @Entity
 @Audited
 @Table(name = "NEWS", schema = DB_SCHEMA)
+@ContentTypeDescription(labelBundle = "org.librecms.contenttypes.News",
+                        descriptionBundle = "org.librecms.contenttypes.News")
 public class News extends ContentItem implements Serializable {
 
     private static final long serialVersionUID = -4939565845920227974L;

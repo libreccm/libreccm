@@ -18,6 +18,9 @@
  */
 package org.librecms.contentsection;
 
+import com.arsdigita.globalization.GlobalizedMessage;
+
+import org.libreccm.l10n.GlobalizationHelper;
 import org.librecms.contentsection.privileges.TypePrivileges;
 
 import org.libreccm.security.AuthorizationRequired;
@@ -26,7 +29,11 @@ import org.libreccm.security.RequiresPrivilege;
 import org.libreccm.security.Role;
 import org.libreccm.workflow.WorkflowTemplate;
 import org.librecms.contentsection.privileges.AdminPrivileges;
+import org.librecms.contenttypes.Article;
 import org.librecms.lifecycle.LifecycleDefinition;
+
+import java.util.Objects;
+import java.util.ResourceBundle;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -42,10 +49,20 @@ public class ContentTypeManager {
 
     @Inject
     private ContentTypeRepository typeRepo;
-    
+
     @Inject
     private PermissionManager permissionManager;
 
+    /**
+     * Converts the class name of a content type to {@link Class} object.
+     *
+     * @param className The class name of the content type.
+     *
+     * @return The class for the content type.
+     *
+     * @throws IllegalArgumentException If the provided class is not a sub class
+     *                                  of {@link ContentItem}.
+     */
     @SuppressWarnings("unchecked")
     public Class<? extends ContentItem> classNameToClass(final String className) {
         final Class<?> clazz;
@@ -57,7 +74,7 @@ public class ContentTypeManager {
                                                ex);
         }
 
-        if (clazz.isAssignableFrom(ContentItem.class)) {
+        if (ContentItem.class.isAssignableFrom(clazz)) {
             return (Class<? extends ContentItem>) clazz;
         } else {
             throw new IllegalArgumentException(String.format(
@@ -65,6 +82,13 @@ public class ContentTypeManager {
         }
     }
 
+    /**
+     * Sets the default lifecycle to use for new items of a content type.
+     *
+     * @param type
+     * @param definition The {@link LifecycleDefinition} for the lifecycle to
+     *                   use for new items of the provided {@code type}.
+     */
     @Transactional(Transactional.TxType.REQUIRED)
     @AuthorizationRequired
     public void setDefaultLifecycle(
@@ -77,6 +101,13 @@ public class ContentTypeManager {
         typeRepo.save(type);
     }
 
+    /**
+     * Sets the default workflow to use for new items of a content type.
+     *
+     * @param type
+     * @param template The {@link WorkflowTemplate} for the workflow to use for
+     *                 new items of the provided {@code type}.
+     */
     @Transactional(Transactional.TxType.REQUIRED)
     @AuthorizationRequired
     public void setDefaultWorkflow(
@@ -89,6 +120,13 @@ public class ContentTypeManager {
         typeRepo.save(type);
     }
 
+    /**
+     * Creates a permission granting the {@link TypePrivileges#USE_TYPE}
+     * privilege to a role.
+     *
+     * @param type The type on which the privilege is granted.
+     * @param role The role to which the privilege is granted.
+     */
     @Transactional(Transactional.TxType.REQUIRED)
     @AuthorizationRequired
     public void grantUsageOfType(
@@ -98,7 +136,15 @@ public class ContentTypeManager {
 
         permissionManager.grantPrivilege(TypePrivileges.USE_TYPE, role, type);
     }
-    
+
+    /**
+     * Denies usages of the provided content type by revoking any existing
+     * permissions granting the {@link TypePrivileges#USE_TYPE} privilege to the
+     * provided role.
+     *
+     * @param type The type for which the permission is revoked.
+     * @param role The role from which the permission is removed.
+     */
     @Transactional(Transactional.TxType.REQUIRED)
     @AuthorizationRequired
     public void denyUsageOnType(

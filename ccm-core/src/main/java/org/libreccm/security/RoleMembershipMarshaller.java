@@ -18,6 +18,8 @@
  */
 package org.libreccm.security;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.libreccm.portation.AbstractMarshaller;
 import org.libreccm.portation.Marshals;
 
@@ -34,6 +36,8 @@ import javax.transaction.Transactional;
 @Marshals(RoleMembership.class)
 public class RoleMembershipMarshaller extends AbstractMarshaller<RoleMembership> {
 
+    private static final Logger LOGGER = LogManager.getLogger(RoleMembershipMarshaller.class);
+    
     @Inject
     private EntityManager entityManager;
 
@@ -51,6 +55,9 @@ public class RoleMembershipMarshaller extends AbstractMarshaller<RoleMembership>
             portableObject.setMembershipId(portableObject.getMembershipId() * -1);
 //            entityManager.persist(portableObject);
         entityManager.merge(portableObject);
+        entityManager.flush();
+        LOGGER.debug("Saved RoleMembership with id {}.",
+                     portableObject.getMembershipId());
 //        } else {
 //            entityManager.merge(portableObject);
 //        }

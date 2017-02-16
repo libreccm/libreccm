@@ -292,10 +292,12 @@ public class GlobalizedMessage {
                     getBundleName(),
                     locale,
                     rbControl);
-        } catch (MissingResourceException e) {
+        } catch (MissingResourceException ex) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug(
-                        "ResourceBundle " + getBundleName() + " was not found.");
+                        "ResourceBundle {} was not found.",
+                        getBundleName());
+                LOGGER.debug(ex);
             }
         }
 
