@@ -19,6 +19,9 @@
 package com.arsdigita.cms.ui.folder;
 
 import com.arsdigita.bebop.table.TableModel;
+import com.arsdigita.globalization.GlobalizedMessage;
+
+import org.librecms.CmsConstants;
 
 import java.util.Iterator;
 import java.util.List;
@@ -27,9 +30,9 @@ import javax.ws.rs.DELETE;
 
 /**
  * Table model for the {@link FolderBrowser}.
- * 
+ *
  * @see {FolderBrowserTableModelBuilder}
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class FolderBrowserTableModel implements TableModel {
@@ -41,14 +44,14 @@ class FolderBrowserTableModel implements TableModel {
     private static final int COL_CREATION_DATE = 4;
     private static final int COL_LAST_MODIFIED = 5;
     private static final int COL_DELETEABLE = 6;
-    
+
     private final Iterator<FolderBrowserTableRow> iterator;
     private FolderBrowserTableRow currentRow;
-    
+
     public FolderBrowserTableModel(final List<FolderBrowserTableRow> rows) {
         iterator = rows.iterator();
     }
-    
+
     @Override
     public int getColumnCount() {
         return 6;
@@ -66,7 +69,7 @@ class FolderBrowserTableModel implements TableModel {
 
     @Override
     public Object getElementAt(final int columnIndex) {
-        switch(columnIndex) {
+        switch (columnIndex) {
             case COL_NAME:
                 return currentRow.getName();
             case COL_LANGUAGES:
@@ -74,7 +77,14 @@ class FolderBrowserTableModel implements TableModel {
             case COL_TITLE:
                 return currentRow.getTitle();
             case COL_TYPE:
-                return currentRow.getType();
+                final String typeLabelBundle = currentRow.getTypeLabelBundle();
+                final String typeLabelKey = currentRow.getTypeLabelKey();
+                if (typeLabelKey == null) {
+                    return new GlobalizedMessage("empty_text",
+                                                 CmsConstants.CMS_BUNDLE);
+                } else {
+                    return new GlobalizedMessage(typeLabelKey, typeLabelBundle);
+                }
             case COL_CREATION_DATE:
                 return currentRow.getCreated();
             case COL_LAST_MODIFIED:
@@ -91,5 +101,5 @@ class FolderBrowserTableModel implements TableModel {
     public Object getKeyAt(final int columnIndex) {
         return currentRow.getObjectId();
     }
-    
+
 }

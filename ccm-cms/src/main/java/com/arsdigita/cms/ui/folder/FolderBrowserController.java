@@ -20,19 +20,26 @@ package com.arsdigita.cms.ui.folder;
 
 import com.arsdigita.kernel.KernelConfig;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.core.CcmObject;
 import org.libreccm.core.CcmObjectRepository;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.l10n.LocalizedString;
+import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemL10NManager;
+import org.librecms.contentsection.ContentType;
 import org.librecms.contentsection.Folder;
+import org.librecms.contenttypes.ContentTypeInfo;
+import org.librecms.contenttypes.ContentTypesManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -50,6 +57,9 @@ import javax.transaction.Transactional;
 @RequestScoped
 public class FolderBrowserController {
 
+    private static final Logger LOGGER = LogManager.getLogger(
+        FolderBrowserController.class);
+
     @Inject
     private EntityManager entityManager;
 
@@ -64,6 +74,9 @@ public class FolderBrowserController {
 
     @Inject
     private ContentItemL10NManager itemL10NManager;
+    
+    @Inject
+    private ContentTypesManager typesManager;
 
     private Locale defaultLocale;
 
@@ -166,6 +179,37 @@ public class FolderBrowserController {
                                        final String filterTerm,
                                        final int first,
                                        final int maxResults) {
+
+        Objects.requireNonNull(folder);
+        LOGGER.debug("Trying to find objects in folder {}...",
+                     Objects.toString(folder));
+
+//        final TypedQuery<CcmObject> testQuery1 = entityManager.createQuery(
+//            "SELECT f FROM Folder f "
+//                + "WHERE f.parentCategory = :folder "
+//                + "AND LOWER(f.name) LIKE :term",
+//            CcmObject.class);
+//        testQuery1.setParameter("folder", folder);
+//        testQuery1.setParameter("term", filterTerm);
+//        final List<CcmObject> testResult1 = testQuery1.getResultList();
+//        LOGGER.debug("TestResult1: {}",
+//                     Objects.toString(testResult1));
+//
+//        final TypedQuery<CcmObject> testQuery2 = entityManager.createQuery(
+//            "SELECT i FROM ContentItem i JOIN i.categories c "
+//                + "WHERE c.category = :folder "
+//                + "AND c.type = '" + CmsConstants.CATEGORIZATION_TYPE_FOLDER
+//            + "' "
+//                + "AND i.version = "
+//                + "org.librecms.contentsection.ContentItemVersion.DRAFT "
+//                + "AND (LOWER(i.displayName) LIKE LOWER(:term))",
+//            CcmObject.class);
+//        testQuery2.setParameter("folder", folder);
+//        testQuery2.setParameter("term", filterTerm);
+//        final List<CcmObject> testResult2 = testQuery2.getResultList();
+//        LOGGER.debug("TestResult2: {}",
+//                     Objects.toString(testResult2));
+
         final TypedQuery<CcmObject> query = entityManager.createNamedQuery(
             "Folder.findObjects", CcmObject.class);
         query.setParameter("folder", folder);
@@ -272,6 +316,10 @@ public class FolderBrowserController {
             } else {
                 row.setTitle(item.getTitle().getValue(defaultLocale));
             }
+            final ContentType type = item.getContentType();
+            final ContentTypeInfo typeInfo = typesManager.getContentTypeInfo(type);
+            row.setTypeLabelBundle(typeInfo.getLabelBundle());
+            row.setTypeLabelKey(typeInfo.getLabelKey());
         } else {
             row.setObjectId(object.getObjectId());
             row.setObjectUuid(object.getUuid());

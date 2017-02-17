@@ -24,6 +24,7 @@ import org.librecms.contentsection.Folder;
 import org.librecms.contentsection.FolderRepository;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
@@ -62,12 +63,12 @@ public class FolderTreeModelController {
 
     @Transactional(Transactional.TxType.REQUIRED)
     public boolean hasChildren(final TreeNode node) {
-        return getCurrentFolder(node).getSubCategories().isEmpty();
+        return !getCurrentFolder(node).getSubCategories().isEmpty();
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
-    public Iterator<Folder> getChildren(final TreeNode node) {
-        return getCurrentFolder(node).getSubFolders().iterator();
+    public List<Folder> getChildren(final TreeNode node) {
+        return getCurrentFolder(node).getSubFolders();
     }
 
 }

@@ -107,7 +107,14 @@ public class CcmObjectSelectionModel<T extends CcmObject>
 
     @Override
     public Long getSelectedKey(final PageState state) {
-        return model.getSelectedKey(state);
+        final Object key = model.getSelectedKey(state);
+        if (key instanceof Long) {
+            return (Long) key;
+        } else if(key instanceof String) {
+            return Long.parseLong((String) key);
+        } else {
+            return Long.parseLong(key.toString());
+        }
     }
 
     @Override

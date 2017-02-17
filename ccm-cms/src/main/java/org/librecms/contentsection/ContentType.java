@@ -37,6 +37,7 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
@@ -76,7 +77,7 @@ public class ContentType extends CcmObject implements Serializable {
     @Column(name = "CONTENT_ITEM_CLASS", length = 1024)
     private String contentItemClass;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CONTENT_SECTION_ID")
     private ContentSection contentSection;
 
@@ -110,11 +111,11 @@ public class ContentType extends CcmObject implements Serializable {
     @Enumerated(EnumType.STRING)
     private ContentTypeMode mode;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DEFAULT_LIFECYCLE_ID")
     private LifecycleDefinition defaultLifecycle;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DEFAULT_WORKFLOW")
     private WorkflowTemplate defaultWorkflow;
 

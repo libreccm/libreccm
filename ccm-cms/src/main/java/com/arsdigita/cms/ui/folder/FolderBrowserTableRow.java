@@ -30,13 +30,14 @@ import java.util.Locale;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class FolderBrowserTableRow {
-    
+
     private long objectId;
     private String objectUuid;
     private String name;
     private List<Locale> languages;
     private String title;
-    private String type;
+    private String typeLabelBundle;
+    private String typeLabelKey;
     private Date created;
     private Date lastModified;
     private boolean deletable;
@@ -81,28 +82,52 @@ class FolderBrowserTableRow {
         this.title = title;
     }
 
-    public String getType() {
-        return type;
+    public String getTypeLabelBundle() {
+        return typeLabelBundle;
+    }
+    
+    protected void setTypeLabelBundle(final String typeLabelBundle) {
+        this.typeLabelBundle = typeLabelBundle;
+    }
+    
+    public String getTypeLabelKey() {
+        return typeLabelKey;
     }
 
-    protected void setType(final String type) {
-        this.type = type;
+    protected void setTypeLabelKey(final String typeLabelKey) {
+        this.typeLabelKey = typeLabelKey;
     }
 
     public Date getCreated() {
-        return new Date(created.getTime());
+        if (created == null) {
+            return null;
+        } else {
+            return new Date(created.getTime());
+        }
     }
 
     protected void setCreated(final Date created) {
-        this.created = new Date(created.getTime());
+        if (created == null) {
+            this.created = null;
+        } else {
+            this.created = new Date(created.getTime());
+        }
     }
 
     public Date getLastModified() {
-        return new Date(lastModified.getTime());
+        if (lastModified == null) {
+            return null;
+        } else {
+            return new Date(lastModified.getTime());
+        }
     }
 
     protected void setLastModified(final Date lastModified) {
-        this.lastModified = new Date(lastModified.getTime());
+        if (lastModified == null) {
+            this.lastModified = null;
+        } else {
+            this.lastModified = new Date(lastModified.getTime());
+        }
     }
 
     public boolean isDeletable() {
@@ -112,7 +137,5 @@ class FolderBrowserTableRow {
     protected void setDeletable(final boolean deletable) {
         this.deletable = deletable;
     }
-    
-    
-    
+
 }

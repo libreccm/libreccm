@@ -10,7 +10,7 @@
             <AppenderRef ref="Console"/>
         </Root>
         
-        <Logger name="org.hibernate"
+        <!--<Logger name="org.hibernate"
                 level="info">
         </Logger>
         <Logger name="org.hibernate.SQL"
@@ -21,6 +21,10 @@
         </Logger>
         <Logger name="org.hibernate.type.descriptor.sql"
                 level="trace">
+        </Logger>-->
+        
+        <Logger name="com.arsdigita.cms.ui.folder.FolderBrowserTableModelBuilder"
+                level="debug">
         </Logger>
         
         <Logger name="com.arsdigita.ui.admin.AdminServlet"
