@@ -20,11 +20,15 @@ package com.arsdigita.cms.ui.folder;
 
 import com.arsdigita.bebop.tree.TreeNode;
 
+import org.libreccm.categorization.Category;
+import org.libreccm.core.UnexpectedErrorException;
 import org.librecms.contentsection.Folder;
 import org.librecms.contentsection.FolderRepository;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
@@ -47,10 +51,9 @@ public class FolderTreeModelController {
                 "Can't get current folder from null.");
         }
 
-        final Folder current = (Folder) node.getElement();
-
-        final Optional<Folder> folder = folderRepo.findById(current
-            .getObjectId());
+//        final Folder current = (Folder) node.getElement();
+        final Optional<Folder> folder = folderRepo
+            .findById((long) node.getKey());
         if (folder.isPresent()) {
             return folder.get();
         } else {
@@ -69,6 +72,28 @@ public class FolderTreeModelController {
     @Transactional(Transactional.TxType.REQUIRED)
     public List<Folder> getChildren(final TreeNode node) {
         return getCurrentFolder(node).getSubFolders();
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public List<Long> findAncestorIds(final Folder folder) {
+        Objects.requireNonNull(folder,
+                               "Can't find ids of the ancestors of folder null.");
+
+        final Optional<Folder> theFolder = folderRepo.findById(folder
+            .getObjectId());
+        if (!theFolder.isPresent()) {
+            throw new UnexpectedErrorException(String.format(
+                "The folder %s was not found in the database, but it should be there.",
+                Objects.toString(folder)));
+        }
+        final List<Long> ancestorIds = new ArrayList<>();
+        Category current = theFolder.get();
+        while(current != null) {
+            ancestorIds.add(current.getObjectId());
+            current = current.getParentCategory();
+        }
+        
+        return ancestorIds;
     }
 
 }

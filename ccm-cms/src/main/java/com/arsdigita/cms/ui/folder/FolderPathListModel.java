@@ -36,8 +36,9 @@ class FolderPathListModel implements ListModel {
     private Folder currentFolder;
 
     public FolderPathListModel(final Folder folder) {
-        pathFolders = CdiUtil.createCdiUtil().findBean(FolderManager.class)
-            .getParentFolders(folder).iterator();
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final FolderManager folderManager = cdiUtil.findBean(FolderManager.class);
+        pathFolders = folderManager.getParentFolders(folder).iterator();
     }
 
     @Override

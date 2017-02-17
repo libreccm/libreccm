@@ -34,9 +34,11 @@ import java.util.Collections;
 import java.util.Iterator;
 
 import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.l10n.GlobalizationHelper;
 import org.librecms.contentsection.Folder;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 /**
@@ -190,9 +192,21 @@ public class FolderTreeModelBuilder extends LockableImpl
 
         @Override
         public Object getElement() {
-            return folder;
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final GlobalizationHelper globalizationHelper = cdiUtil.findBean(
+                GlobalizationHelper.class);
+            final Locale locale = globalizationHelper.getNegotiatedLocale();
+            if (folder.getTitle().hasValue(locale)) {
+                return folder.getTitle().getValue(locale);
+            } else {
+                final String value = folder.getTitle().getValue();
+                if (value == null) {
+                    return folder.getName();
+                } else {
+                    return value;
+                }
+            }
         }
-
     }
 
     /*private class NewFolderBrowserIterator implements Iterator {

@@ -53,8 +53,6 @@ import org.libreccm.categorization.Category;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.PermissionChecker;
 import org.librecms.CmsConstants;
-import org.librecms.contentsection.ContentItem;
-import org.librecms.contentsection.ContentItemManager;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionManager;
 import org.librecms.contentsection.privileges.ItemPrivileges;

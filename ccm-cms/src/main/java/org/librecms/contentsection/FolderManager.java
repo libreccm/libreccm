@@ -23,10 +23,12 @@ import com.arsdigita.kernel.KernelConfig;
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryManager;
 import org.libreccm.configuration.ConfigurationManager;
+import org.libreccm.core.UnexpectedErrorException;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
@@ -108,8 +110,16 @@ public class FolderManager {
         HAS_LIVE_ITEMS
     }
 
+    @Transactional(Transactional.TxType.REQUIRED)
     public Optional<Folder> getParentFolder(final Folder folder) {
-        final Category parentCategory = folder.getParentCategory();
+        Objects.requireNonNull(folder);
+        final Optional<Folder> theFolder = folderRepo.findById(folder.getObjectId());
+        if (!theFolder.isPresent()) {
+            throw new UnexpectedErrorException(String.format(
+                "The folder %s should be in the database but is not.",
+                Objects.toString(folder)));
+        }
+        final Category parentCategory = theFolder.get().getParentCategory();
         if (parentCategory == null) {
             return Optional.empty();
         } else {
@@ -461,6 +471,7 @@ public class FolderManager {
      *
      * @return
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public List<Folder> getParentFolders(final Folder folder) {
 
         if (folder == null) {

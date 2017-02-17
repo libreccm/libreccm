@@ -355,7 +355,7 @@ public class Category extends CcmObject implements Serializable, Portable {
         hash = 23 * hash + (enabled ? 1 : 0);
         hash = 23 * hash + (visible ? 1 : 0);
         hash = 23 * hash + (abstractCategory ? 1 : 0);
-        hash = 23 * hash + Objects.hashCode(parentCategory);
+//        hash = 23 * hash + Objects.hashCode(parentCategory);
         hash = 23 * hash + (int) (categoryOrder ^ (categoryOrder >>> 32));
         return hash;
     }
@@ -402,9 +402,9 @@ public class Category extends CcmObject implements Serializable, Portable {
         if (abstractCategory != other.isAbstractCategory()) {
             return false;
         }
-        if (!Objects.equals(parentCategory, other.getParentCategory())) {
-            return false;
-        }
+//        if (!Objects.equals(parentCategory, other.getParentCategory())) {
+//            return false;
+//        }
         return categoryOrder == other.getCategoryOrder();
     }
 
