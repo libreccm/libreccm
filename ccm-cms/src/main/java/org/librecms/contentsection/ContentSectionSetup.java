@@ -40,7 +40,11 @@ import org.librecms.contenttypes.News;
 import org.librecms.dispatcher.MultilingualItemResolver;
 
 import java.util.Arrays;
+
 import org.librecms.contentsection.privileges.TypePrivileges;
+
+import java.util.Locale;
+
 
 /**
  *
@@ -121,11 +125,13 @@ public class ContentSectionSetup extends AbstractCcmApplicationSetup {
         rootFolder.setUuid(UUID.randomUUID().toString());
         rootFolder.setUniqueId(rootFolder.getUuid());
         rootFolder.setName(String.format("%s_" + ROOT, sectionName));
+        rootFolder.getTitle().addValue(Locale.ROOT, "/");
         rootFolder.setType(FolderType.DOCUMENTS_FOLDER);
         rootFolder.setSection(section);
 
         final Folder rootAssetFolder = new Folder();
         rootAssetFolder.setName(String.format("%s_" + ASSETS, sectionName));
+        rootAssetFolder.getTitle().addValue(Locale.ROOT, "/");
         rootAssetFolder.setUuid(UUID.randomUUID().toString());
         rootAssetFolder.setUniqueId(rootAssetFolder.getUuid());
         rootAssetFolder.setType(FolderType.ASSETS_FOLDER);

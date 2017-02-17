@@ -20,6 +20,7 @@ package com.arsdigita.cms.ui;
 
 import com.arsdigita.bebop.Component;
 import com.arsdigita.bebop.Label;
+import com.arsdigita.bebop.Link;
 import com.arsdigita.bebop.Page;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.Resettable;
@@ -37,14 +38,21 @@ import com.arsdigita.cms.CMS;
 import com.arsdigita.cms.ui.folder.FolderRequestLocal;
 import com.arsdigita.cms.ui.folder.FolderSelectionModel;
 import com.arsdigita.cms.ui.folder.FolderTreeModelBuilder;
+import com.arsdigita.cms.ui.folder.FolderTreeModelController;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.toolbox.ui.LayoutPanel;
 import com.arsdigita.util.Assert;
 
 import org.libreccm.categorization.Category;
+import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.core.CcmObject;
 import org.librecms.CmsConstants;
+import org.librecms.contentsection.ContentSection;
+import org.librecms.contentsection.ContentSectionManager;
 import org.librecms.contentsection.Folder;
+import org.librecms.dispatcher.ItemResolver;
+
+import java.util.List;
 
 /**
  * A pane that contains a folder tree on the left and a folder manipulator on
@@ -66,29 +74,6 @@ public class BrowsePane extends LayoutPanel implements Resettable {
 
         /* The folder tree displayed on the left side / left column           */
         tree = new BaseTree(new FolderTreeModelBuilder());
-        tree.setCellRenderer(new TreeCellRenderer() {
-
-            @Override
-            public Component getComponent(final Tree tree,
-                                          final PageState state,
-                                          final Object value,
-                                          final boolean isSelected,
-                                          final boolean isExpanded,
-                                          final boolean isLeaf,
-                                          final Object key) {
-                if (value instanceof Folder) {
-                    final Folder folder = (Folder) value;
-                    if (folder.getParentCategory() == null) {
-                        return new Text("/");
-                    } else {
-                        return new Text(folder.getName());
-                    }
-                } else {
-                    return new Text(value.toString());
-                }
-            }
-
-        });
         selectionModel = tree.getSelectionModel();
         folderModel = new FolderSelectionModel(selectionModel);
         folderRequestLocal = new FolderRequestLocal(folderModel);
@@ -216,27 +201,33 @@ public class BrowsePane extends LayoutPanel implements Resettable {
             if (!root.equals(folderRequestLocal.getFolder(state))) {
                 // Expand the ancestor nodes of the currently
                 // selected node.
-
-                CcmObject object = folderRequestLocal.getFolder(state);
-
-                while (object != null) {
-                    if (object instanceof Category) {
-                        final Category category = (Category) object;
-
-                        if (category.getParentCategory() != null) {
-                            final Category result = category.getParentCategory();
-                            object = result;
-                            tree.expand(
-                                ((Long) object.getObjectId()).toString(),
-                                state);
-                        } else {
-                            object = null;
-                        }
-
-                    } else {
-                        object = null;
-                    }
-                }
+                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+                final FolderTreeModelController controller = cdiUtil.findBean(
+                    FolderTreeModelController.class);
+                final List<Long> ancestorIds = controller.findAncestorIds(
+                    folderRequestLocal.getFolder(state));
+                ancestorIds.forEach(id -> tree.expand(id.toString(), state));
+                
+//                CcmObject object = folderRequestLocal.getFolder(state);
+//
+//                while (object != null) {
+//                    if (object instanceof Category) {
+//                        final Category category = (Category) object;
+//
+//                        if (category.getParentCategory() != null) {
+//                            final Category result = category.getParentCategory();
+//                            object = result;
+//                            tree.expand(
+//                                ((Long) object.getObjectId()).toString(),
+//                                state);
+//                        } else {
+//                            object = null;
+//                        }
+//
+//                    } else {
+//                        object = null;
+//                    }
+//                }
             }
         }
 
