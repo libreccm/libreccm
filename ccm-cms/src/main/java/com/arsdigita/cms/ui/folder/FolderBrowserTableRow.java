@@ -18,7 +18,6 @@
  */
 package com.arsdigita.cms.ui.folder;
 
-import org.libreccm.l10n.LocalizedString;
 
 import java.util.Collections;
 import java.util.Date;
@@ -41,6 +40,7 @@ class FolderBrowserTableRow {
     private Date created;
     private Date lastModified;
     private boolean deletable;
+    private boolean folder;
 
     public long getObjectId() {
         return objectId;
@@ -136,6 +136,14 @@ class FolderBrowserTableRow {
 
     protected void setDeletable(final boolean deletable) {
         this.deletable = deletable;
+    }
+    
+    public boolean isFolder() {
+        return folder;
+    }
+    
+    protected void setFolder(final boolean folder) {
+        this.folder = folder;
     }
 
 }

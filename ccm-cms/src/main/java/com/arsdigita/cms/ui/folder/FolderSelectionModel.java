@@ -58,6 +58,11 @@ public class FolderSelectionModel extends CcmObjectSelectionModel<Folder> {
         return result;
     }
 
+    @Override
+    public void setSelectedKey(final PageState state, final Long key) {
+        super.setSelectedKey(state, key);
+    }
+    
     /**
      * Clear the selection by resetting it to the root folder id.
      *

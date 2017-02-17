@@ -299,6 +299,7 @@ public class FolderBrowserController {
             } else {
                 row.setTitle(folder.getTitle().getValue(defaultLocale));
             }
+            row.setFolder(true);
         } else if (object instanceof ContentItem) {
             final ContentItem item = (ContentItem) object;
             row.setObjectId(item.getObjectId());
@@ -320,6 +321,7 @@ public class FolderBrowserController {
             final ContentTypeInfo typeInfo = typesManager.getContentTypeInfo(type);
             row.setTypeLabelBundle(typeInfo.getLabelBundle());
             row.setTypeLabelKey(typeInfo.getLabelKey());
+            row.setFolder(false);
         } else {
             row.setObjectId(object.getObjectId());
             row.setObjectUuid(object.getUuid());
@@ -327,6 +329,7 @@ public class FolderBrowserController {
             row.setLanguages(Collections.emptyList());
             final LocalizedString title = new LocalizedString();
             title.addValue(globalizationHelper.getNegotiatedLocale(), "???");
+            row.setFolder(false);
         }
 
         return row;

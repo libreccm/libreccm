@@ -99,7 +99,16 @@ class FolderBrowserTableModel implements TableModel {
 
     @Override
     public Object getKeyAt(final int columnIndex) {
+//        if (currentRow.isFolder()) {
+//            return String.format("folder-%d", currentRow.getObjectId());
+//        } else {
+//            return String.format("item-%d", currentRow.getObjectId());
+//        }
         return currentRow.getObjectId();
+    }
+    
+    public boolean isFolder() {
+        return currentRow.isFolder();
     }
 
 }
