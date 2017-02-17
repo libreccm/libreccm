@@ -51,10 +51,10 @@ public class RoleMembershipMarshaller extends AbstractMarshaller<RoleMembership>
     protected void insertIntoDb(RoleMembership portableObject) {
 
 //        if (portableObject.getMembershipId() == 0) {
-//            portableObject.setMembershipId(0);
-            portableObject.setMembershipId(portableObject.getMembershipId() * -1);
-//            entityManager.persist(portableObject);
-        entityManager.merge(portableObject);
+            portableObject.setMembershipId(0);
+//            portableObject.setMembershipId(portableObject.getMembershipId() * -1);
+            entityManager.persist(portableObject);
+//        entityManager.merge(portableObject);
         entityManager.flush();
         LOGGER.debug("Saved RoleMembership with id {}.",
                      portableObject.getMembershipId());

@@ -48,5 +48,5 @@ public interface TreeModel {
      * Check whether a given node has children, passing
      * in PageState for permissioning purposes
      */
-    Iterator getChildren(TreeNode n, PageState data);
+    Iterator<TreeNode> getChildren(TreeNode n, PageState data);
 }

@@ -28,6 +28,7 @@ import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.Paginator;
 import com.arsdigita.bebop.SimpleContainer;
 import com.arsdigita.bebop.Table;
+import com.arsdigita.bebop.Text;
 import com.arsdigita.bebop.event.ActionEvent;
 import com.arsdigita.bebop.event.ActionListener;
 import com.arsdigita.bebop.event.TableActionAdapter;
@@ -59,6 +60,9 @@ import org.librecms.contentsection.ContentSectionManager;
 import org.librecms.contentsection.privileges.ItemPrivileges;
 import org.librecms.dispatcher.ItemResolver;
 
+import java.util.List;
+import java.util.Locale;
+
 /**
  * Browse folders and items. If the user clicks on a folder, the folder
  * selection model is updated. If the user clicks on any other item, an separate
@@ -74,7 +78,7 @@ public class FolderBrowser extends Table {
         globalize("cms.ui.folder.name"),
         globalize("cms.ui.folder.languages"),
         globalize("cms.ui.folder.title"),
-//        globalize("cms.ui.folder.additionalInfo"),
+        //        globalize("cms.ui.folder.additionalInfo"),
         globalize("cms.ui.folder.type"),
         globalize("cms.ui.folder.creation_date"),
         globalize("cms.ui.folder.last_modified"),
@@ -83,6 +87,7 @@ public class FolderBrowser extends Table {
     private static final String SORT_ACTION_DOWN = "sortActionDown";
     private final static String SORT_KEY_NAME = "name";
     private final static String SORT_KEY_TITLE = "title";
+    private final static String SORT_KEY_TYPE = "type";
     private final static String SORT_KEY_LAST_MODIFIED_DATE = "lastModified";
     private final static String SORT_KEY_CREATION_DATE = "creationDate";
 
@@ -93,10 +98,11 @@ public class FolderBrowser extends Table {
     private final TableColumn nameColumn;
     private final TableColumn deleteColumn;
 //    private TableColumn m_indexColumn;
-    private final StringParameter sortTypeParameter = new StringParameter("sortType");
+    private final StringParameter sortTypeParameter = new StringParameter(
+        "sortType");
     private final StringParameter sortDirectionParameter = new StringParameter(
         "sortDirn");
-    
+
     private StringParameter atozFilterParameter = null;
     private StringParameter filterParameter = null;
     private FolderManipulator folderManipulator;
@@ -114,7 +120,7 @@ public class FolderBrowser extends Table {
         setHeader(new TableHeader(getColumnModel()));
 
         this.folderSelectionModel = folderSelectionModel;
-        
+
         /*
          *
          * This code should be uncommented if the desired behaviour is for a
@@ -216,15 +222,15 @@ public class FolderBrowser extends Table {
     public FolderSelectionModel getFolderSelectionModel() {
         return folderSelectionModel;
     }
-    
-    protected void setFolderManipulator(final FolderManipulator folderManipulator) {
+
+    protected void setFolderManipulator(
+        final FolderManipulator folderManipulator) {
         this.folderManipulator = folderManipulator;
     }
 
 //    protected void setFilterForm(final FolderManipulator.FilterForm filterForm) {
 //        this.filterForm = filterForm;
 //    }
-
     protected void setAtoZfilterParameter(
         final StringParameter atozFilterParameter) {
         this.atozFilterParameter = atozFilterParameter;
@@ -241,7 +247,7 @@ public class FolderBrowser extends Table {
     protected Paginator getPaginator() {
         return paginator;
     }
-    
+
     protected void setPaginator(final Paginator paginator) {
         this.paginator = paginator;
     }
@@ -416,10 +422,12 @@ public class FolderBrowser extends Table {
                                       final int row,
                                       final int column) {
 
-            final ContentItem item = (ContentItem) value;
-            final String name = item.getDisplayName();
+//            final ContentItem item = (ContentItem) value;
+//            final String name = item.getDisplayName();
 //            final ContentSection section = item.getContentType().
 //                    getContentSection();
+            final long itemId = (long) key;
+            final String name = (String) value;
             final ContentSection section = CMS.getContext().getContentSection();
             final ContentSectionManager sectionManager = CdiUtil.createCdiUtil()
                 .findBean(ContentSectionManager.class);
@@ -427,12 +435,18 @@ public class FolderBrowser extends Table {
                 section);
 
             return new Link(name,
-                            itemResolver.generateItemURL(
-                                state,
-                                item.getObjectId(),
-                                name,
-                                section,
-                                item.getVersion().name()));
+                            itemResolver.generateItemURL(state,
+                                                         itemId,
+                                                         name,
+                                                         section,
+                                                         "DRAFT"));
+//            return new Link(name,
+//                            itemResolver.generateItemURL(
+//                                state,
+//                                item.getObjectId(),
+//                                name,
+//                                section,
+//                                item.getVersion().name()));
 
         }
 
@@ -459,42 +473,50 @@ public class FolderBrowser extends Table {
                                       final int row,
                                       final int column) {
 
-            final ContentItem item = (ContentItem) value;
-            final String name = item.getDisplayName();
-
+//            final ContentItem item = (ContentItem) value;
+//            final String name = item.getDisplayName();
             final SimpleContainer container = new SimpleContainer();
             final ContentSection section = CMS.getContext().getContentSection();
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final ContentItemManager itemManager = cdiUtil.findBean(
-                ContentItemManager.class);
+//            final ContentItemManager itemManager = cdiUtil.findBean(
+//                ContentItemManager.class);
             final ContentSectionManager sectionManager = cdiUtil.findBean(
                 ContentSectionManager.class);
             final ItemResolver itemResolver = sectionManager.getItemResolver(
                 section);
 
-            item.getName().getAvailableLocales().stream()
-                .map((locale) -> locale.toString())
-                .map((lang) -> {
-                    final StringBuilder fontWeight = new StringBuilder(2);
-                    final StringBuilder styleClasses = new StringBuilder(20);
-                    if (itemManager.isLive(item)) {
-                        fontWeight.append(Label.BOLD);
-                        styleClasses.append("live ");
-                    }
-                    final Label langLabel = new Label(lang);
-                    langLabel.setFontWeight(fontWeight.toString().trim());
-                    langLabel.setClassAttr(styleClasses.toString().trim());
-                    return langLabel;
-                })
-                .forEach((langLabel) -> {
-                    container.add(new Link(
-                        langLabel,
-                        itemResolver.generateItemURL(state,
-                                                     item.getObjectId(),
-                                                     name,
-                                                     section,
-                                                     item.getVersion().name())));
-                });
+//            item.getName().getAvailableLocales().stream()
+//                .map((locale) -> locale.toString())
+//                .map((lang) -> {
+//                    final StringBuilder fontWeight = new StringBuilder(2);
+//                    final StringBuilder styleClasses = new StringBuilder(20);
+//                    if (itemManager.isLive(item)) {
+//                        fontWeight.append(Label.BOLD);
+//                        styleClasses.append("live ");
+//                    }
+//                    final Label langLabel = new Label(lang);
+//                    langLabel.setFontWeight(fontWeight.toString().trim());
+//                    langLabel.setClassAttr(styleClasses.toString().trim());
+//                    return langLabel;
+//                })
+//                .forEach((langLabel) -> {
+//                    container.add(new Link(
+//                        langLabel,
+//                        itemResolver.generateItemURL(state,
+//                                                     item.getObjectId(),
+//                                                     name,
+//                                                     section,
+//                                                     item.getVersion().name())));
+//                });
+            @SuppressWarnings("unchecked")
+            final List<Locale> availableLocales = (List<Locale>) value;
+            availableLocales.forEach(locale -> container.add(new Link(
+                new Text(locale.toString()),
+                itemResolver.generateItemURL(state,
+                                             (long) key,
+                                             locale.toString(),
+                                             section,
+                                             "DRAFT"))));
 
             return container;
         }
@@ -802,6 +824,5 @@ public class FolderBrowser extends Table {
         return new GlobalizedMessage(key, CmsConstants.CMS_FOLDER_BUNDLE);
 
     }
-
 
 }

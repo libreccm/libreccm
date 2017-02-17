@@ -25,6 +25,8 @@ import com.arsdigita.bebop.table.TableModel;
 import com.arsdigita.bebop.table.TableModelBuilder;
 import com.arsdigita.util.LockableImpl;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.contentsection.Folder;
 
@@ -37,6 +39,8 @@ import java.util.List;
 class FolderBrowserTableModelBuilder extends LockableImpl
     implements TableModelBuilder {
 
+    private final static Logger LOGGER = LogManager.getLogger(FolderBrowserTableModelBuilder.class);
+    
     @Override
     public TableModel makeModel(final Table table,
                                 final PageState state) {
@@ -70,14 +74,17 @@ class FolderBrowserTableModelBuilder extends LockableImpl
                 filterTerm = null;
             }
 
+            final long start = System.currentTimeMillis();
+            LOGGER.debug("Retrieving table rows...");
             final List<FolderBrowserTableRow> rows;
             if (filterTerm == null) {
-                rows = controller.getObjectRows(folder, first, pageSize);
+                rows = controller.getObjectRows(folder, first -1, pageSize);
             } else {
-                rows = controller.getObjectRows(folder, filter, first, pageSize);
+                rows = controller.getObjectRows(folder, filter, first- 1, pageSize);
             }
             
-            
+            LOGGER.debug("Retrieve table rows in {} ms.", 
+                         System.currentTimeMillis() - start);
             return new FolderBrowserTableModel(rows);
         }
     }

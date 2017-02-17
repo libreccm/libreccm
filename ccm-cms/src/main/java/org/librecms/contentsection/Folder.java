@@ -24,14 +24,11 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.libreccm.categorization.Category;
-import org.libreccm.core.CcmObject;
-import org.librecms.CmsConstants;
 
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.persistence.Column;
