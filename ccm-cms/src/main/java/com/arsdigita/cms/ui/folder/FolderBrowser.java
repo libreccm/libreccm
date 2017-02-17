@@ -119,24 +119,6 @@ public class FolderBrowser extends Table {
 
         this.folderSelectionModel = folderSelectionModel;
 
-        /*
-         *
-         * This code should be uncommented if the desired behaviour is for a
-         * change of folder to cause reversion to default ordering of contained
-         * items (by name ascending). Our feeling is that the user selected
-         * ordering should be retained for the duration of the folder browsing
-         * session. If anyone wants this alternative behaviour it should be
-         * brought in under the control of a config parameter.
-         *
-         * m_currentFolder.addChangeListener(new ChangeListener() {
-         *
-         * public void stateChanged(ChangeEvent e) { PageState state =
-         * e.getPageState(); state.setValue(m_sortType,
-         * m_sortType.getDefaultValue()); state.setValue(m_sortDirection,
-         * m_sortDirection.getDefaultValue());
-         *
-         * }});
-         */
         setClassAttr("dataTable");
 
         getHeader().setDefaultRenderer(
@@ -194,8 +176,7 @@ public class FolderBrowser extends Table {
         final PermissionChecker permissionChecker = cdiUtil.findBean(
             PermissionChecker.class);
         final Category folder = (Category) folderSelectionModel
-            .getSelectedObject(
-                state);
+            .getSelectedObject(state);
 
         final boolean canDelete = permissionChecker.isPermitted(
             ItemPrivileges.DELETE, folder);
@@ -258,79 +239,6 @@ public class FolderBrowser extends Table {
         return (String) state.getValue(atozFilterParameter);
     }
 
-//    private class FolderTableModelBuilder
-//        extends AbstractTableModelBuilder
-//        implements PaginationModelBuilder,
-//                   FolderManipulator.FilterFormModelBuilder {
-//
-//        private final FolderSelectionModel folderModel;
-//        private final FolderBrowser folderBrowser;
-////        private final ContentItemRepository itemRepo;
-////        private final ConfigurationManager confManager;
-////        private final ContentSectionManager sectionManager;
-//        final FolderBrowserController controller;
-//
-//        public FolderTableModelBuilder(final FolderSelectionModel folderModel) {
-//            this(folderModel, null);
-//        }
-//
-//        public FolderTableModelBuilder(final FolderSelectionModel folderModel,
-//                                       final FolderBrowser folderBrowser) {
-//            this.folderModel = folderModel;
-//            this.folderBrowser = folderBrowser;
-//            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-//            controller = cdiUtil.findBean(FolderBrowserController.class);
-////            itemRepo = cdiUtil.findBean(ContentItemRepository.class);
-////            confManager = cdiUtil.findBean(ConfigurationManager.class);
-////            sectionManager = cdiUtil.findBean(ContentSectionManager.class);
-//        }
-//
-//        @Override
-//        public TableModel makeModel(final Table table, final PageState state) {
-//            final FolderSelectionModel folderSelectionModel
-//                                           = getFolderSelectionModel();
-//            final Folder folder = folderSelectionModel.getSelectedObject(state);
-//            if (folder == null) {
-//                return Table.EMPTY_MODEL;
-//            } else {
-//                table.getRowSelectionModel().clearSelection(state);
-//                final List<Folder> subFolders = folder.getSubFolders();
-//                final List<ContentItem> items = folder.getObjects()
-//                    .stream()
-//                    .map(categorization -> categorization.getCategorizedObject())
-//                    .filter(object -> object instanceof ContentItem)
-//                    .map(object -> (ContentItem) object)
-//                    .collect(Collectors.toList());
-//                
-//                final List<CcmObject> objects = new ArrayList<>();
-//                objects.addAll(subFolders);
-//                objects.addAll(items);
-//                
-//
-//            }
-//
-//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//        }
-//
-//        @Override
-//        public int getTotalSize(final Paginator paginator,
-//                                final PageState state) {
-//            throw new UnsupportedOperationException();
-//            
-//        }
-//
-//        @Override
-//        public boolean isVisible(final PageState state) {
-//            return folderBrowser != null && folderBrowser.isVisible(state);
-//        }
-//
-//        @Override
-//        public long getFolderSize(final PageState state) {
-//            throw new UnsupportedOperationException();
-//        }
-//
-//    }
-//
     private class HeaderCellRenderer
         extends com.arsdigita.cms.ui.util.DefaultTableCellRenderer {
 
@@ -420,11 +328,6 @@ public class FolderBrowser extends Table {
                                       final int row,
                                       final int column) {
 
-//            final ContentItem item = (ContentItem) value;
-//            final String name = item.getDisplayName();
-//            final ContentSection section = item.getContentType().
-//                    getContentSection();
-            final long itemId = (long) key;
             final String name = (String) value;
             final ContentSection section = CMS.getContext().getContentSection();
             final ContentSectionManager sectionManager = CdiUtil.createCdiUtil()
@@ -432,20 +335,26 @@ public class FolderBrowser extends Table {
             final ItemResolver itemResolver = sectionManager.getItemResolver(
                 section);
 
-            return new Link(name,
-                            itemResolver.generateItemURL(state,
-                                                         itemId,
-                                                         name,
-                                                         section,
-                                                         "DRAFT"));
-//            return new Link(name,
-//                            itemResolver.generateItemURL(
-//                                state,
-//                                item.getObjectId(),
-//                                name,
-//                                section,
-//                                item.getVersion().name()));
+            final boolean isFolder = ((FolderBrowserTableModel) table
+                                      .getTableModel(state)).isFolder();
 
+            if (isFolder) {
+                //return new ControlLink(new Text(name));
+                return super.getComponent(table,
+                                          state,
+                                          value,
+                                          isSelected,
+                                          key,
+                                          row,
+                                          column);
+            } else {
+                return new Link(new Text(name),
+                                itemResolver.generateItemURL(state,
+                                                             (long) key,
+                                                             name,
+                                                             section,
+                                                             "DRAFT"));
+            }
         }
 
     }
@@ -510,11 +419,12 @@ public class FolderBrowser extends Table {
             final List<Locale> availableLocales = (List<Locale>) value;
             availableLocales.forEach(locale -> container.add(new Link(
                 new Text(locale.toString()),
-                itemResolver.generateItemURL(state,
-                                             (long) key,
-                                             locale.toString(),
-                                             section,
-                                             "DRAFT"))));
+                itemResolver.generateItemURL(
+                    state,
+                    (long) key,
+                    locale.toString(),
+                    section,
+                    "DRAFT"))));
 
             return container;
         }
@@ -765,11 +675,10 @@ public class FolderBrowser extends Table {
                 return;
             }
             final String key = (String) event.getRowKey();
-            if (key.startsWith("-")) { // XXX dirty dirty
-                clearSelection(state);
-                getFolderSelectionModel().setSelectedKey(
-                    state, Long.parseLong(key.substring(1)));
-            }
+
+            clearSelection(state);
+            getFolderSelectionModel().setSelectedKey(state, Long.parseLong(key));
+
         }
 
     }
