@@ -55,6 +55,8 @@ import javax.persistence.TemporalType;
 
 import org.hibernate.search.annotations.IndexedEmbedded;
 
+import javax.persistence.FetchType;
+
 import static org.librecms.CmsConstants.*;
 
 /**
@@ -187,7 +189,7 @@ public class ContentItem extends CcmObject implements Serializable {
     /**
      * The content type associated with the content item.
      */
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CONTENT_TYPE_ID")
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 //    @Field
@@ -245,15 +247,15 @@ public class ContentItem extends CcmObject implements Serializable {
     @Column(name = "ANCESTORS", length = 1024)
     private String ancestors;
 
-    @OneToMany(mappedBy = "item")
+    @OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
     private List<AttachmentList> attachments;
 
-    @OneToOne
+    @OneToOne()
     @JoinColumn(name = "LIFECYCLE_ID")
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private Lifecycle lifecycle;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "WORKFLOW_ID")
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private Workflow workflow;
@@ -379,7 +381,7 @@ public class ContentItem extends CcmObject implements Serializable {
         int hash = super.hashCode();
         hash = 59 * hash + Objects.hashCode(itemUuid);
         hash = 59 * hash + Objects.hashCode(name);
-        hash = 59 * hash + Objects.hashCode(contentType);
+//        hash = 59 * hash + Objects.hashCode(contentType);
         hash = 59 * hash + Objects.hashCode(title);
         hash = 59 * hash + Objects.hashCode(description);
         hash = 59 * hash + Objects.hashCode(version);
@@ -415,9 +417,9 @@ public class ContentItem extends CcmObject implements Serializable {
         if (!Objects.equals(name, other.getName())) {
             return false;
         }
-        if (!Objects.equals(contentType, other.getContentType())) {
-            return false;
-        }
+//        if (!Objects.equals(contentType, other.getContentType())) {
+//            return false;
+//        }
         if (!Objects.equals(title, other.getTitle())) {
             return false;
         }
@@ -445,7 +447,7 @@ public class ContentItem extends CcmObject implements Serializable {
     public String toString(final String data) {
         return super.toString(String.format(", itemUuid = %s, "
                                                 + "name = %s, "
-                                                + "contentType = { %s }, "
+//                                                + "contentType = { %s }, "
                                                 + "title = %s, "
                                                 + "description = %s, "
                                                 + "version = %s, "
@@ -455,7 +457,7 @@ public class ContentItem extends CcmObject implements Serializable {
                                                 + "%s",
                                             itemUuid,
                                             Objects.toString(name),
-                                            Objects.toString(contentType),
+//                                            Objects.toString(contentType),
                                             Objects.toString(title),
                                             Objects.toString(description),
                                             Objects.toString(version),

@@ -24,6 +24,7 @@ import com.arsdigita.bebop.tree.TreeModel;
 import com.arsdigita.bebop.tree.TreeModelBuilder;
 import com.arsdigita.bebop.tree.TreeNode;
 import com.arsdigita.cms.CMS;
+import com.arsdigita.ui.admin.applications.ApplicationInstanceTreeNode;
 
 import org.librecms.contentsection.ContentSection;
 
@@ -34,6 +35,9 @@ import java.util.Iterator;
 
 import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.contentsection.Folder;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * A {@link com.arsdigita.bebop.tree.TreeModelBuilder} that produces trees
@@ -77,7 +81,7 @@ public class FolderTreeModelBuilder extends LockableImpl
             }
 
             @Override
-            public Iterator<Folder> getChildren(final TreeNode node,
+            public Iterator<TreeNode> getChildren(final TreeNode node,
                                                 final PageState state) {
                 final String nodeKey = node.getKey().toString();
 
@@ -95,10 +99,21 @@ public class FolderTreeModelBuilder extends LockableImpl
                 final FolderTreeModelController controller = cdiUtil.findBean(
                     FolderTreeModelController.class);
                 
-                return controller.getChildren(node);
+                final List<Folder> subFolders = controller.getChildren(node);
+                return subFolders.stream()
+                    .map(folder -> generateTreeNode(folder))
+                    .collect(Collectors.toList())
+                    .iterator();
             }
 
+            private TreeNode generateTreeNode(final Folder folder) {
+            final FolderTreeNode node = new FolderTreeNode(folder);
+            
+            return node;
+        }
         };
+        
+        
 
         /*return new DataQueryTreeModel(getRoot(state).getID(),
                                       "com.arsdigita.cms.getRootFolder",
