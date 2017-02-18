@@ -51,10 +51,15 @@ import static org.libreccm.core.CoreConstants.*;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @NamedQueries({
     @NamedQuery(
-            name = "AbstractSetting.findByClassAndName",
-            query = "SELECT s FROM AbstractSetting s "
-                            + "WHERE configurationClass = :class "
-                            + "AND name = :name")
+        name = "AbstractSetting.findAllForClass",
+        query = "SELECT s FROM AbstractSetting s "
+                    + "WHERE s.configurationClass = :class")
+    ,
+    @NamedQuery(
+        name = "AbstractSetting.findByClassAndName",
+        query = "SELECT s FROM AbstractSetting s "
+                    + "WHERE s.configurationClass = :class "
+                    + "AND s.name = :name")
 })
 public abstract class AbstractSetting<T> implements Serializable {
 
@@ -95,11 +100,11 @@ public abstract class AbstractSetting<T> implements Serializable {
     public String getConfigurationClass() {
         return configurationClass;
     }
-    
+
     public void setConfigurationClass(final String configurationClass) {
         this.configurationClass = configurationClass;
     }
-    
+
     public String getName() {
         return name;
     }
@@ -151,10 +156,10 @@ public abstract class AbstractSetting<T> implements Serializable {
             return false;
         }
 
-        if (!Objects.equals(configurationClass, other.configurationClass)) {
+        if (!Objects.equals(configurationClass, other.getConfigurationClass())) {
             return false;
         }
-        return Objects.equals(name, other.name);
+        return Objects.equals(name, other.getName());
     }
 
     public boolean canEqual(final Object obj) {
@@ -168,17 +173,17 @@ public abstract class AbstractSetting<T> implements Serializable {
 
     public String toString(final String data) {
         return String.format(
-                "%s{ "
-                        + "settingId = %d, "
-                        + "configurationClass = \"%s\" "
-                        + "name = \"%s\" "
-                        + "%s"
-                        + " }",
-                super.toString(),
-                settingId,
-                configurationClass,
-                name,
-                data);
+            "%s{ "
+                + "settingId = %d, "
+                + "configurationClass = \"%s\" "
+                + "name = \"%s\" "
+                + "%s"
+                + " }",
+            super.toString(),
+            settingId,
+            configurationClass,
+            name,
+            data);
     }
 
 }

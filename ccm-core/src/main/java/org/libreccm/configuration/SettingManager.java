@@ -94,6 +94,17 @@ public class SettingManager {
         return settings;
     }
 
+    public List<AbstractSetting> retrieveAllSettings(final String confName) {
+        Objects.requireNonNull(confName);
+
+        final TypedQuery<AbstractSetting> query = entityManager
+            .createNamedQuery("AbstractSetting.findAllForClass",
+                              AbstractSetting.class);
+        query.setParameter("class", confName);
+
+        return query.getResultList();
+    }
+
     /**
      * Create a {@link SettingInfo} instance for a setting.
      *
@@ -134,10 +145,10 @@ public class SettingManager {
                         ex);
             return null;
         }
-        
+
         //Make the field accessible even if it has a private modifier
         field.setAccessible(true);
-            
+
         if (field.getAnnotation(Setting.class) == null) {
             return null;
         }
