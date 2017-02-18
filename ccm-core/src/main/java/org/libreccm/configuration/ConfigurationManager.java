@@ -34,7 +34,9 @@ import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -56,6 +58,11 @@ public class ConfigurationManager {
 
     @Inject
     private SettingConverter settingConverter;
+    
+    /**
+     * Map used to cache configuration during a request.
+     */
+    private final Map<String, Object> confCache = new HashMap<>();
 
     /**
      * Finds all configuration classes listed by the installed modules.
@@ -101,6 +108,7 @@ public class ConfigurationManager {
      * @throws IllegalArgumentException if the provided class is not annotated
      *                                  with {@link Configuration}.
      */
+    @SuppressWarnings("unchecked")
     public <T> T findConfiguration(final Class<T> confClass) {
         if (confClass == null) {
             throw new IllegalArgumentException("confClass can't be null");
@@ -114,8 +122,16 @@ public class ConfigurationManager {
         }
 
         final String confName = confClass.getName();
-
-        return findConfiguration(confName, confClass);
+        // First check if we have already retrieved the requested configuration
+        // during the current request. If not retrieve the configuration and
+        // put it into the map.
+        if (confCache.containsKey(confName)) {
+            return (T) confCache.get(confName);
+        } else {
+            final T configuration = findConfiguration(confName, confClass);
+            confCache.put(confName, configuration);
+            return configuration;
+        }
     }
 
     /**
@@ -181,6 +197,13 @@ public class ConfigurationManager {
                     configuration.getClass().getName()),
                                                 ex);
             }
+        }
+        
+        /**
+         * If the configuration is cached remove the cached version.
+         */
+        if (confCache.containsKey(configuration.getClass().getName())) {
+            confCache.remove(configuration.getClass().getName());
         }
     }
 
@@ -326,6 +349,7 @@ public class ConfigurationManager {
      * @return An instance of the configuration class with all setting fields
      *         set to the values stored in the registry.
      */
+    @SuppressWarnings("rawtypes")
     <T> T findConfiguration(final String confName, final Class<T> confClass) {
         final T conf;
 
@@ -339,6 +363,12 @@ public class ConfigurationManager {
             return null;
         }
 
+        final List<AbstractSetting> settingList = settingManager
+            .retrieveAllSettings(confName);
+        final Map<String, AbstractSetting> settings = settingList.stream()
+            .collect(Collectors.toMap(setting -> setting.getName(),
+                                      setting -> setting));
+        
         final Field[] fields = confClass.getDeclaredFields();
         for (final Field field : fields) {
             field.setAccessible(true);
@@ -348,17 +378,15 @@ public class ConfigurationManager {
 
             final String settingName = getSettingName(field);
 
-            final Class<?> settingType = field.getType();
-            final AbstractSetting<?> setting = settingManager.findSetting(
-                confName, settingName, settingType);
-            if (setting != null) {
+            if (settings.containsKey(settingName)) {
+                final AbstractSetting<?> setting = settings.get(settingName);
                 try {
                     LOGGER.debug("Setting \"{}#{}\" found. Value: {}",
                                  confName,
                                  settingName,
                                  setting.getValue());
                     field.set(conf, setting.getValue());
-                } catch (IllegalAccessException ex) {
+                } catch(IllegalAccessException ex) {
                     LOGGER.warn(
                         "Failed to set value of configuration class \"{}\". "
                             + "Ignoring.",
@@ -366,6 +394,25 @@ public class ConfigurationManager {
                         ex);
                 }
             }
+//            
+//            final Class<?> settingType = field.getType();
+//            final AbstractSetting<?> setting = settingManager.findSetting(
+//                confName, settingName, settingType);
+//            if (setting != null) {
+//                try {
+//                    LOGGER.debug("Setting \"{}#{}\" found. Value: {}",
+//                                 confName,
+//                                 settingName,
+//                                 setting.getValue());
+//                    field.set(conf, setting.getValue());
+//                } catch (IllegalAccessException ex) {
+//                    LOGGER.warn(
+//                        "Failed to set value of configuration class \"{}\". "
+//                            + "Ignoring.",
+//                        confClass.getName(),
+//                        ex);
+//                }
+//            }
         }
 
         return conf;
