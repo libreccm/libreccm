@@ -255,7 +255,7 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-entitymanager</artifactId>
-                <version>5.0.7.Final</version>
+                <version>5.0.10.Final</version>
             </dependency>
             
             <!-- 
@@ -265,7 +265,7 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-envers</artifactId>
-                <version>5.0.7.Final</version>
+                <version>5.0.10.Final</version>
             </dependency>
             
             <!-- 
@@ -274,12 +274,12 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-validator</artifactId>
-                <version>5.2.3.Final</version>
+                <version>5.2.4.Final</version>
             </dependency>
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-validator-cdi</artifactId>
-                <version>5.2.3.Final</version>
+                <version>5.2.4.Final</version>
             </dependency>
             
             <!--
