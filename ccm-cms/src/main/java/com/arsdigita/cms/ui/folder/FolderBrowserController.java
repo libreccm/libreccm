@@ -22,6 +22,7 @@ import com.arsdigita.kernel.KernelConfig;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.libreccm.categorization.Categorization;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.core.CcmObject;
 import org.libreccm.core.CcmObjectRepository;
@@ -30,6 +31,7 @@ import org.libreccm.l10n.LocalizedString;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemL10NManager;
+import org.librecms.contentsection.ContentItemVersion;
 import org.librecms.contentsection.ContentType;
 import org.librecms.contentsection.Folder;
 import org.librecms.contenttypes.ContentTypeInfo;
@@ -41,6 +43,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
+
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -48,6 +51,13 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
 /**
@@ -74,7 +84,7 @@ public class FolderBrowserController {
 
     @Inject
     private ContentItemL10NManager itemL10NManager;
-    
+
     @Inject
     private ContentTypesManager typesManager;
 
@@ -87,96 +97,26 @@ public class FolderBrowserController {
         defaultLocale = kernelConfig.getDefaultLocale();
     }
 
-    public long countSubFolders(final Folder folder) {
-        return countSubFolders(folder, "%");
-    }
-
-    public long countSubFolders(final Folder folder,
-                                final String filterTerm) {
-        final TypedQuery<Long> query = entityManager.createNamedQuery(
-            "Folder.countSubFolders", Long.class);
-        query.setParameter("folder", folder);
-        query.setParameter("term", filterTerm);
-
-        return query.getSingleResult();
-    }
-
-    public long countItems(final Folder folder) {
-        return countItems(folder, "%");
-    }
-
-    public long countItems(final Folder folder,
-                           final String filterTerm) {
-        final TypedQuery<Long> query = entityManager.createNamedQuery(
-            "Folder.countItems", Long.class);
-        query.setParameter("folder", folder);
-        query.setParameter("term", filterTerm);
-
-        return query.getSingleResult();
-    }
-
-    public List<Folder> findSubFolders(final Folder folder) {
-        return findSubFolders(folder, "%");
-    }
-
-    public List<Folder> findSubFolders(final Folder folder,
-                                       final String filterTerm) {
-        final TypedQuery<Folder> query = entityManager.createNamedQuery(
-            "Folder.findSubFolders", Folder.class);
-        query.setParameter("folder", folder);
-        query.setParameter("term", filterTerm);
-
-        return query.getResultList();
-    }
-
-    public List<ContentItem> findItems(final Folder folder) {
-        return findItems(folder, "%");
-    }
-
-    public List<ContentItem> findItems(final Folder folder,
-                                       final int first,
-                                       final int maxResults) {
-        return findItems(folder, "%", first, maxResults);
-    }
-
-    public List<ContentItem> findItems(final Folder folder,
-                                       final String filterTerm) {
-        return findItems(folder, filterTerm, -1, -1);
-    }
-
-    public List<ContentItem> findItems(final Folder folder,
-                                       final String filterTerm,
-                                       final int first,
-                                       final int maxResults) {
-        final TypedQuery<ContentItem> query = entityManager.createNamedQuery(
-            "Folder.findItems", ContentItem.class);
-        query.setParameter("folder", folder);
-        query.setParameter("term", filterTerm);
-        if (first > 0 && maxResults > 0) {
-            query.setFirstResult(first);
-            query.setMaxResults(maxResults);
-        }
-
-        return query.getResultList();
-    }
-
-    public List<CcmObject> findObjects(final Folder folder) {
-        return findObjects(folder, -1, -1);
+    public List<CcmObject> findObjects(final Folder folder, final String orderBy) {
+        return findObjects(folder, orderBy, -1, -1);
     }
 
     public List<CcmObject> findObjects(final Folder folder,
+                                       final String orderBy,
                                        final int first,
                                        final int maxResults) {
-        return findObjects(folder, "%", first, maxResults);
-    }
-
-    public List<CcmObject> findObjects(final Folder folder,
-                                       final String filterTerm) {
-        return findObjects(folder, filterTerm, -1, -1);
+        return findObjects(folder, "%", orderBy, first, maxResults);
     }
 
     public List<CcmObject> findObjects(final Folder folder,
                                        final String filterTerm,
+                                       final String orderBy) {
+        return findObjects(folder, filterTerm, orderBy, -1, -1);
+    }
+
+    public List<CcmObject> findObjects(final Folder folder,
+                                       final String filterTerm,
+                                       final String orderBy,
                                        final int first,
                                        final int maxResults) {
 
@@ -184,43 +124,21 @@ public class FolderBrowserController {
         LOGGER.debug("Trying to find objects in folder {}...",
                      Objects.toString(folder));
 
-//        final TypedQuery<CcmObject> testQuery1 = entityManager.createQuery(
-//            "SELECT f FROM Folder f "
-//                + "WHERE f.parentCategory = :folder "
-//                + "AND LOWER(f.name) LIKE :term",
-//            CcmObject.class);
-//        testQuery1.setParameter("folder", folder);
-//        testQuery1.setParameter("term", filterTerm);
-//        final List<CcmObject> testResult1 = testQuery1.getResultList();
-//        LOGGER.debug("TestResult1: {}",
-//                     Objects.toString(testResult1));
-//
-//        final TypedQuery<CcmObject> testQuery2 = entityManager.createQuery(
-//            "SELECT i FROM ContentItem i JOIN i.categories c "
-//                + "WHERE c.category = :folder "
-//                + "AND c.type = '" + CmsConstants.CATEGORIZATION_TYPE_FOLDER
-//            + "' "
-//                + "AND i.version = "
-//                + "org.librecms.contentsection.ContentItemVersion.DRAFT "
-//                + "AND (LOWER(i.displayName) LIKE LOWER(:term))",
-//            CcmObject.class);
-//        testQuery2.setParameter("folder", folder);
-//        testQuery2.setParameter("term", filterTerm);
-//        final List<CcmObject> testResult2 = testQuery2.getResultList();
-//        LOGGER.debug("TestResult2: {}",
-//                     Objects.toString(testResult2));
-
-        final TypedQuery<CcmObject> query = entityManager.createNamedQuery(
-            "Folder.findObjects", CcmObject.class);
-        query.setParameter("folder", folder);
-        query.setParameter("term", filterTerm);
-
-        if (first > 0 && maxResults > 0) {
-            query.setFirstResult(first);
-            query.setMaxResults(maxResults);
-        }
-
-        return query.getResultList();
+        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<CcmObject> criteriaQuery = builder
+            .createQuery(CcmObject.class);
+        final Root<CcmObject> from = criteriaQuery.from(CcmObject.class);
+ 
+        return entityManager.createQuery(
+            criteriaQuery
+                .select(from)
+                .where(builder.or(
+                    from.in(findSubFolders(folder, filterTerm)),
+                    from.in(findItemsInFolder(folder, filterTerm))))
+        .orderBy(builder.asc(from.get("displayName"))))
+            .setFirstResult(first)
+            .setMaxResults(maxResults)
+            .getResultList();
     }
 
     public long countObjects(final Folder folder) {
@@ -229,39 +147,26 @@ public class FolderBrowserController {
 
     public long countObjects(final Folder folder,
                              final String filterTerm) {
-        final TypedQuery<Long> query = entityManager.createNamedQuery(
-            "Folder.countObjects", Long.class);
-        query.setParameter("folder", folder);
-        query.setParameter("term", filterTerm);
 
-        return query.getSingleResult();
-    }
+        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<Long> criteriaQuery = builder.createQuery(
+            Long.class);
+        final Root<CcmObject> from = criteriaQuery.from(CcmObject.class);
 
-    @Transactional(Transactional.TxType.REQUIRED)
-    List<FolderBrowserTableRow> getObjectRows(final Folder folder) {
-        final List<CcmObject> objects = findObjects(folder);
-
-        return objects.stream()
-            .map(object -> buildRow(object))
-            .collect(Collectors.toList());
-    }
-
-    @Transactional(Transactional.TxType.REQUIRED)
-    List<FolderBrowserTableRow> getObjectRows(final Folder folder,
-                                              final String filterTerm) {
-        final List<CcmObject> objects = findObjects(folder,
-                                                    filterTerm);
-
-        return objects.stream()
-            .map(object -> buildRow(object))
-            .collect(Collectors.toList());
+        return entityManager
+            .createQuery(
+                criteriaQuery
+                    .select(builder.count(from))
+                    .where(builder.or(
+                        from.in(findSubFolders(folder, filterTerm)),
+                        from.in(findItemsInFolder(folder, filterTerm)))))
+            .getSingleResult();
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
     List<FolderBrowserTableRow> getObjectRows(final Folder folder,
-                                              final int first,
-                                              final int maxResults) {
-        final List<CcmObject> objects = findObjects(folder, first, maxResults);
+                                              final String orderBy) {
+        final List<CcmObject> objects = findObjects(folder, orderBy);
 
         return objects.stream()
             .map(object -> buildRow(object))
@@ -271,10 +176,40 @@ public class FolderBrowserController {
     @Transactional(Transactional.TxType.REQUIRED)
     List<FolderBrowserTableRow> getObjectRows(final Folder folder,
                                               final String filterTerm,
+                                              final String orderBy) {
+        final List<CcmObject> objects = findObjects(folder,
+                                                    filterTerm,
+                                                    orderBy);
+
+        return objects.stream()
+            .map(object -> buildRow(object))
+            .collect(Collectors.toList());
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    List<FolderBrowserTableRow> getObjectRows(final Folder folder,
+                                              final String orderBy,
+                                              final int first,
+                                              final int maxResults) {
+        final List<CcmObject> objects = findObjects(folder, 
+                                                    orderBy, 
+                                                    first, 
+                                                    maxResults);
+
+        return objects.stream()
+            .map(object -> buildRow(object))
+            .collect(Collectors.toList());
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    List<FolderBrowserTableRow> getObjectRows(final Folder folder,
+                                              final String filterTerm,
+                                              final String orderBy,
                                               final int first,
                                               final int maxResults) {
         final List<CcmObject> objects = findObjects(folder,
                                                     filterTerm,
+                                                    orderBy,
                                                     first,
                                                     maxResults);
 
@@ -318,7 +253,8 @@ public class FolderBrowserController {
                 row.setTitle(item.getTitle().getValue(defaultLocale));
             }
             final ContentType type = item.getContentType();
-            final ContentTypeInfo typeInfo = typesManager.getContentTypeInfo(type);
+            final ContentTypeInfo typeInfo = typesManager.getContentTypeInfo(
+                type);
             row.setTypeLabelBundle(typeInfo.getLabelBundle());
             row.setTypeLabelKey(typeInfo.getLabelKey());
             row.setFolder(false);
@@ -342,6 +278,57 @@ public class FolderBrowserController {
         if (object.isPresent()) {
             objectRepo.delete(object.get());
         }
+    }
+
+    /**
+     * Creates a Criteria Query
+     *
+     * @param folder
+     * @param filterTerm
+     *
+     * @return
+     */
+    private List<Folder> findSubFolders(final Folder folder,
+                                        final String filterTerm) {
+        final CriteriaBuilder builder = entityManager
+            .getCriteriaBuilder();
+
+        final CriteriaQuery<Folder> query = builder.createQuery(
+            Folder.class);
+        final Root<Folder> from = query.from(Folder.class);
+
+        return entityManager.createQuery(
+            query.where(builder.and(
+                builder.equal(from.get("parentCategory"), folder),
+                builder.like(builder.lower(from.get("name")), filterTerm))))
+            .getResultList();
+
+    }
+
+    private List<ContentItem> findItemsInFolder(
+        final Folder folder,
+        final String filterTerm) {
+
+        final CriteriaBuilder builder = entityManager
+            .getCriteriaBuilder();
+
+        final CriteriaQuery<ContentItem> query = builder.createQuery(
+            ContentItem.class);
+        final Root<ContentItem> fromItem = query.from(ContentItem.class);
+        final Join<ContentItem, Categorization> join = fromItem.join(
+            "categories");
+
+        return entityManager.createQuery(query
+            .select(fromItem)
+            .where(builder.and(
+                builder.equal(join.get("category"), folder),
+                builder.equal(join.get("type"),
+                              CmsConstants.CATEGORIZATION_TYPE_FOLDER),
+                builder.equal(fromItem.get("version"),
+                              ContentItemVersion.DRAFT),
+                builder.like(fromItem.get("displayName"),
+                             filterTerm))))
+            .getResultList();
     }
 
 }
