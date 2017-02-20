@@ -81,13 +81,13 @@ public class FolderBrowser extends Table {
         globalize("cms.ui.folder.creation_date"),
         globalize("cms.ui.folder.last_modified"),
         globalize("cms.ui.folder.action")};
-    private static final String SORT_ACTION_UP = "sortActionUp";
-    private static final String SORT_ACTION_DOWN = "sortActionDown";
-    private final static String SORT_KEY_NAME = "name";
-    private final static String SORT_KEY_TITLE = "title";
-    private final static String SORT_KEY_TYPE = "type";
-    private final static String SORT_KEY_LAST_MODIFIED_DATE = "lastModified";
-    private final static String SORT_KEY_CREATION_DATE = "creationDate";
+    protected static final String SORT_ACTION_UP = "sortActionUp";
+    protected static final String SORT_ACTION_DOWN = "sortActionDown";
+    protected final static String SORT_KEY_NAME = "name";
+    protected final static String SORT_KEY_TITLE = "title";
+    protected final static String SORT_KEY_TYPE = "type";
+    protected final static String SORT_KEY_LAST_MODIFIED_DATE = "lastModified";
+    protected final static String SORT_KEY_CREATION_DATE = "creationDate";
 
     private final FolderSelectionModel folderSelectionModel;
     private final TableActionListener folderChanger;
@@ -126,13 +126,13 @@ public class FolderBrowser extends Table {
 
         nameColumn = getColumn(0);
         nameColumn.setCellRenderer(new NameCellRenderer());
-        nameColumn.setHeaderRenderer(new HeaderCellRenderer(SORT_KEY_NAME));
+//        nameColumn.setHeaderRenderer(new HeaderCellRenderer(SORT_KEY_NAME));
         getColumn(1).setCellRenderer(new LanguagesCellRenderer());
-        getColumn(2).setHeaderRenderer(new HeaderCellRenderer(SORT_KEY_TITLE));
-        getColumn(5).setHeaderRenderer(new HeaderCellRenderer(
-            SORT_KEY_CREATION_DATE));
-        getColumn(6).setHeaderRenderer(new HeaderCellRenderer(
-            SORT_KEY_LAST_MODIFIED_DATE));
+//        getColumn(2).setHeaderRenderer(new HeaderCellRenderer(SORT_KEY_TITLE));
+//        getColumn(5).setHeaderRenderer(new HeaderCellRenderer(
+//            SORT_KEY_CREATION_DATE));
+//        getColumn(6).setHeaderRenderer(new HeaderCellRenderer(
+//            SORT_KEY_LAST_MODIFIED_DATE));
         deleteColumn = getColumn(6);
         deleteColumn.setCellRenderer(new ActionCellRenderer());
         deleteColumn.setAlign("center");

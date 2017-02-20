@@ -39,8 +39,9 @@ import java.util.List;
 class FolderBrowserTableModelBuilder extends LockableImpl
     implements TableModelBuilder {
 
-    private final static Logger LOGGER = LogManager.getLogger(FolderBrowserTableModelBuilder.class);
-    
+    private final static Logger LOGGER = LogManager.getLogger(
+        FolderBrowserTableModelBuilder.class);
+
     @Override
     public TableModel makeModel(final Table table,
                                 final PageState state) {
@@ -78,17 +79,22 @@ class FolderBrowserTableModelBuilder extends LockableImpl
             LOGGER.debug("Retrieving table rows...");
             final List<FolderBrowserTableRow> rows;
             if (filterTerm == null) {
-                rows = controller.getObjectRows(folder, first -1, pageSize);
+                rows = controller.getObjectRows(folder,
+                                                "name",
+                                                first - 1,
+                                                pageSize);
             } else {
-                rows = controller.getObjectRows(folder, filter, first- 1, pageSize);
+                rows = controller.getObjectRows(folder,
+                                                filter,
+                                                "name",
+                                                first - 1,
+                                                pageSize);
             }
-            
-            LOGGER.debug("Retrieve table rows in {} ms.", 
+
+            LOGGER.debug("Retrieve table rows in {} ms.",
                          System.currentTimeMillis() - start);
             return new FolderBrowserTableModel(rows);
         }
     }
-    
-    
 
 }
