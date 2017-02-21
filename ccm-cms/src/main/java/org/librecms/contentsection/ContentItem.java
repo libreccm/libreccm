@@ -56,6 +56,7 @@ import javax.persistence.TemporalType;
 import org.hibernate.search.annotations.IndexedEmbedded;
 
 import javax.persistence.FetchType;
+import org.hibernate.envers.NotAudited;
 
 import static org.librecms.CmsConstants.*;
 
@@ -70,93 +71,95 @@ import static org.librecms.CmsConstants.*;
 //@Indexed
 @NamedQueries({
     @NamedQuery(
-        name = "ContentItem.findById",
-        query = "SELECT i FROM ContentItem i "
-                    + "WHERE i.objectId = :objectId "
-                    + "AND (EXISTS(SELECT p FROM Permission p "
-                    + "WHERE p.grantedPrivilege = 'read' "
-                    + "AND p.grantee IN :roles "
-                    + "AND p.object = i)"
-                    + "OR true = :admin)")
+            name = "ContentItem.findById",
+            query = "SELECT i FROM ContentItem i "
+                            + "WHERE i.objectId = :objectId "
+                            + "AND (EXISTS(SELECT p FROM Permission p "
+                            + "WHERE p.grantedPrivilege = 'read' "
+                            + "AND p.grantee IN :roles "
+                            + "AND p.object = i)"
+                            + "OR true = :admin)")
     ,
     @NamedQuery(
-        name = "ContentItem.findByType",
-        query = "SELECT i FROM ContentItem i WHERE TYPE(i) = :type")
+            name = "ContentItem.findByType",
+            query = "SELECT i FROM ContentItem i WHERE TYPE(i) = :type")
     ,
     @NamedQuery(
-        name = "ContentItem.findByFolder",
-        query = "SELECT i FROM ContentItem i "
-                    + "JOIN i.categories c "
-                    + "WHERE c.category = :folder "
-                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER
-                    + "'")
+            name = "ContentItem.findByFolder",
+            query = "SELECT i FROM ContentItem i "
+                            + "JOIN i.categories c "
+                            + "WHERE c.category = :folder "
+                            + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER
+                            + "'")
     ,
     @NamedQuery(
-        name = "ContentItem.countItemsInFolder",
-        query = "SELECT count(i) FROM ContentItem i "
-                    + "JOIN i.categories c "
-                    + "WHERE c.category = :folder "
-                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER
-                    + "'")
+            name = "ContentItem.countItemsInFolder",
+            query = "SELECT count(i) FROM ContentItem i "
+                            + "JOIN i.categories c "
+                            + "WHERE c.category = :folder "
+                            + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER
+                            + "'")
     ,
     @NamedQuery(
-        name = "ContentItem.findByNameInFolder",
-        query = "SELECT i FROM ContentItem i "
-                    + "JOIN i.categories c "
-                    + "WHERE c.category = :folder "
-                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
-                    + "AND i.displayName = :name")
+            name = "ContentItem.findByNameInFolder",
+            query = "SELECT i FROM ContentItem i "
+                            + "JOIN i.categories c "
+                            + "WHERE c.category = :folder "
+                            + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER
+                            + "' "
+                            + "AND i.displayName = :name")
     ,
     @NamedQuery(
-        name = "ContentItem.countByNameInFolder",
-        query = "SELECT COUNT(i) FROM ContentItem i "
-                    + "JOIN i.categories c "
-                    + "WHERE c.category = :folder "
-                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
-                    + "AND i.displayName = :name")
+            name = "ContentItem.countByNameInFolder",
+            query = "SELECT COUNT(i) FROM ContentItem i "
+                            + "JOIN i.categories c "
+                            + "WHERE c.category = :folder "
+                            + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER
+                            + "' "
+                            + "AND i.displayName = :name")
     ,
     @NamedQuery(
-        name = "ContentItem.filterByFolderAndName",
-        query = "SELECT i FROM ContentItem i "
-                    + "JOIN i.categories c "
-                    + "WHERE c.category = :folder "
-                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER
-                    + "' "
-                    + "AND LOWER(i.displayName) LIKE CONCAT(LOWER(:name), '%')")
+            name = "ContentItem.filterByFolderAndName",
+            query = "SELECT i FROM ContentItem i "
+                            + "JOIN i.categories c "
+                            + "WHERE c.category = :folder "
+                            + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER
+                            + "' "
+                            + "AND LOWER(i.displayName) LIKE CONCAT(LOWER(:name), '%')")
     ,
     @NamedQuery(
-        name = "ContentItem.countFilterByFolderAndName",
-        query = "SELECT COUNT(i) FROM ContentItem i "
-                    + "JOIN i.categories c "
-                    + "WHERE c.category = :folder "
-                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER
-                    + "' "
-                    + "AND LOWER(i.displayName) LIKE CONCAT(LOWER(:name), '%')"
+            name = "ContentItem.countFilterByFolderAndName",
+            query = "SELECT COUNT(i) FROM ContentItem i "
+                            + "JOIN i.categories c "
+                            + "WHERE c.category = :folder "
+                            + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER
+                            + "' "
+                            + "AND LOWER(i.displayName) LIKE CONCAT(LOWER(:name), '%')"
     )
     ,
     @NamedQuery(
-        name = "ContentItem.hasLiveVersion",
-        query = "SELECT (CASE WHEN COUNT(i) > 0 THEN true ELSE false END) "
-                    + "FROM ContentItem i "
-                    + "WHERE i.itemUuid = :uuid "
-                    + "AND i.version = org.librecms.contentsection.ContentItemVersion.LIVE")
+            name = "ContentItem.hasLiveVersion",
+            query = "SELECT (CASE WHEN COUNT(i) > 0 THEN true ELSE false END) "
+                            + "FROM ContentItem i "
+                            + "WHERE i.itemUuid = :uuid "
+                            + "AND i.version = org.librecms.contentsection.ContentItemVersion.LIVE")
     ,
     @NamedQuery(
-        name = "ContentItem.findDraftVersion",
-        query = "SELECT i FROM ContentItem i "
-                    + "WHERE i.itemUuid = :uuid "
-                    + "AND i.version = org.librecms.contentsection.ContentItemVersion.DRAFT")
+            name = "ContentItem.findDraftVersion",
+            query = "SELECT i FROM ContentItem i "
+                            + "WHERE i.itemUuid = :uuid "
+                            + "AND i.version = org.librecms.contentsection.ContentItemVersion.DRAFT")
     ,
     @NamedQuery(
-        name = "ContentItem.findLiveVersion",
-        query = "SELECT i FROM ContentItem i "
-                    + "WHERE i.itemUuid = :uuid "
-                    + "AND i.version = org.librecms.contentsection.ContentItemVersion.LIVE")
+            name = "ContentItem.findLiveVersion",
+            query = "SELECT i FROM ContentItem i "
+                            + "WHERE i.itemUuid = :uuid "
+                            + "AND i.version = org.librecms.contentsection.ContentItemVersion.LIVE")
     ,
     @NamedQuery(
-        name = "ContentItem.findItemWithWorkflow",
-        query = "SELECT i FROM ContentItem i "
-                    + "WHERE i.workflow = :workflow"
+            name = "ContentItem.findItemWithWorkflow",
+            query = "SELECT i FROM ContentItem i "
+                            + "WHERE i.workflow = :workflow"
     )
 })
 public class ContentItem extends CcmObject implements Serializable {
@@ -175,13 +178,13 @@ public class ContentItem extends CcmObject implements Serializable {
      */
     @Embedded
     @AssociationOverride(
-        name = "values",
-        joinTable = @JoinTable(name = "CONTENT_ITEM_NAMES",
-                               schema = DB_SCHEMA,
-                               joinColumns = {
-                                   @JoinColumn(name = "OBJECT_ID")
-                               }
-        )
+            name = "values",
+            joinTable = @JoinTable(name = "CONTENT_ITEM_NAMES",
+                                   schema = DB_SCHEMA,
+                                   joinColumns = {
+                                       @JoinColumn(name = "OBJECT_ID")
+                                   }
+            )
     )
 //    @Field
     private LocalizedString name;
@@ -200,13 +203,13 @@ public class ContentItem extends CcmObject implements Serializable {
      */
     @Embedded
     @AssociationOverride(
-        name = "values",
-        joinTable = @JoinTable(name = "CONTENT_ITEM_TITLES",
-                               schema = DB_SCHEMA,
-                               joinColumns = {
-                                   @JoinColumn(name = "OBJECT_ID")
-                               }
-        )
+            name = "values",
+            joinTable = @JoinTable(name = "CONTENT_ITEM_TITLES",
+                                   schema = DB_SCHEMA,
+                                   joinColumns = {
+                                       @JoinColumn(name = "OBJECT_ID")
+                                   }
+            )
     )
     @IndexedEmbedded
     private LocalizedString title;
@@ -216,12 +219,12 @@ public class ContentItem extends CcmObject implements Serializable {
      */
     @Embedded
     @AssociationOverride(
-        name = "values",
-        joinTable = @JoinTable(name = "CONTENT_ITEM_DESCRIPTIONS",
-                               schema = DB_SCHEMA,
-                               joinColumns = {
-                                   @JoinColumn(name = "OBJECT_ID")}
-        ))
+            name = "values",
+            joinTable = @JoinTable(name = "CONTENT_ITEM_DESCRIPTIONS",
+                                   schema = DB_SCHEMA,
+                                   joinColumns = {
+                                       @JoinColumn(name = "OBJECT_ID")}
+            ))
     @IndexedEmbedded
     private LocalizedString description;
 
@@ -259,6 +262,58 @@ public class ContentItem extends CcmObject implements Serializable {
     @JoinColumn(name = "WORKFLOW_ID")
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private Workflow workflow;
+
+    /**
+     * Date when the item was created. This information is also available from
+     * the revision managed by Envers, but getting access to them involves some
+     * complex queries. Also it is not possible to get the creation date (date
+     * of the first entity) together with the last modified date (date of the
+     * last revision/current revision) of the item.
+     */
+    @Column(name = "CREATION_DATE")
+    @Temporal(TemporalType.TIMESTAMP)
+    @NotAudited
+    private Date creationDate;
+
+    /**
+     * Date the item was last modified. This information is also available from
+     * the revision managed by Envers, but getting access to them involves some
+     * complex queries. Also it is not possible to get the creation date (date
+     * of the first entity) together with the last modified date (date of the
+     * last revision/current revision) of the item.
+     */
+    @Column(name = "LAST_MODIFIED")
+    @Temporal(TemporalType.TIMESTAMP)
+    @NotAudited
+    private Date lastModified;
+
+    /**
+     * The name of the user which created the item. This information is also
+     * available from the revision managed by Envers, but getting access to them
+     * involves some complex queries. Also it is not possible to get the
+     * creation user (the user which created the first entity) together with the
+     * last modifying user (user which created the last revision/current
+     * revision) of the item.
+     *
+     * Please note that there is no grantee that the user still exists.
+     */
+    @Column(name = "CREATION_USER_NAME")
+    @NotAudited
+    private String creationUserName;
+
+    /**
+     * The name of the user which was the last one which modified the item. This
+     * information is also available from the revision managed by Envers, but
+     * getting access to them involves some complex queries. Also it is not
+     * possible to get the creation user (the user which created the first
+     * entity) together with the last modifying user (user which created the
+     * last revision/current revision) of the item.
+     *
+     * Please note that there is no grantee that the user still exists.
+     */
+    @Column(name = "LAST_MODIFING_USER_NAME")
+    @NotAudited
+    private String lastModifyingUserName;
 
     public ContentItem() {
         name = new LocalizedString();
@@ -376,6 +431,38 @@ public class ContentItem extends CcmObject implements Serializable {
         this.workflow = workflow;
     }
 
+    public Date getCreationDate() {
+        return new Date(creationDate.getTime());
+    }
+
+    public void setCreationDate(final Date creationDate) {
+        this.creationDate = new Date(creationDate.getTime());
+    }
+
+    public Date getLastModified() {
+        return new Date(lastModified.getTime());
+    }
+
+    public void setLastModified(final Date lastModified) {
+        this.lastModified = new Date(lastModified.getTime());
+    }
+
+    public String getCreationUserName() {
+        return creationUserName;
+    }
+
+    public void setCreationUserName(final String creationUserName) {
+        this.creationUserName = creationUserName;
+    }
+
+    public String getLastModifyingUserName() {
+        return lastModifyingUserName;
+    }
+
+    public void setLastModifyingUserName(final String lastModifyingUserName) {
+        this.lastModifyingUserName = lastModifyingUserName;
+    }
+
     @Override
     public int hashCode() {
         int hash = super.hashCode();
@@ -446,18 +533,18 @@ public class ContentItem extends CcmObject implements Serializable {
     @Override
     public String toString(final String data) {
         return super.toString(String.format(", itemUuid = %s, "
-                                                + "name = %s, "
-//                                                + "contentType = { %s }, "
-                                                + "title = %s, "
-                                                + "description = %s, "
-                                                + "version = %s, "
-                                                + "launchDate = %s, "
-                                                + "lifecycle = { %s }, "
-                                                + "workflow = { %s }"
-                                                + "%s",
+                                                    + "name = %s, "
+                                                    //                                                + "contentType = { %s }, "
+                                                    + "title = %s, "
+                                                    + "description = %s, "
+                                                    + "version = %s, "
+                                                    + "launchDate = %s, "
+                                                    + "lifecycle = { %s }, "
+                                                    + "workflow = { %s }"
+                                                    + "%s",
                                             itemUuid,
                                             Objects.toString(name),
-//                                            Objects.toString(contentType),
+                                            //                                            Objects.toString(contentType),
                                             Objects.toString(title),
                                             Objects.toString(description),
                                             Objects.toString(version),

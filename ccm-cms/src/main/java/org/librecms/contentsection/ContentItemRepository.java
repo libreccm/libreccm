@@ -18,6 +18,7 @@
  */
 package org.librecms.contentsection;
 
+import java.util.Date;
 import org.libreccm.auditing.AbstractAuditedEntityRepository;
 import org.libreccm.categorization.Category;
 import org.libreccm.core.CcmObject;
@@ -31,6 +32,8 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+import org.libreccm.security.Shiro;
+import org.libreccm.security.User;
 import org.libreccm.workflow.Workflow;
 
 /**
@@ -47,6 +50,9 @@ public class ContentItemRepository
 
     @Inject
     private FolderRepository folderRepo;
+    
+    @Inject
+    private Shiro shiro;
 
     @Override
     public Long getEntityId(final ContentItem item) {
@@ -345,6 +351,28 @@ public class ContentItemRepository
         } else {
             return Optional.empty();
         }
+    }
+    
+    @Override
+    public void save(final ContentItem item) {
+        final Date now = new Date();
+        final Optional<User> user = shiro.getUser();
+        final String userName;
+        if (user.isPresent()) {
+            userName = user.get().getName();
+        } else {
+            userName = "--unknown--";
+        }
+        
+        if (isNew(item)) {
+            item.setCreationDate(now);
+            item.setCreationUserName(userName);
+        } else {
+            item.setLastModified(now);
+            item.setLastModifyingUserName(userName);
+        }
+        
+        super.save(item);
     }
 
 }
