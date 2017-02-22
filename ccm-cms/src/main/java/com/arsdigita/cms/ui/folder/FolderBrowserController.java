@@ -21,6 +21,7 @@ package com.arsdigita.cms.ui.folder;
 import com.arsdigita.kernel.KernelConfig;
 
 import org.libreccm.categorization.Categorization;
+import org.libreccm.categorization.CategoryManager;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.core.CcmObject;
 import org.libreccm.core.CcmObjectRepository;
@@ -71,6 +72,9 @@ public class FolderBrowserController {
     @Inject
     private EntityManager entityManager;
 
+    @Inject
+    private CategoryManager categoryManager;
+    
     @Inject
     private CcmObjectRepository objectRepo;
 
@@ -326,6 +330,8 @@ public class FolderBrowserController {
             row.setTitle(folder.getTitle().getValue(defaultLocale));
         }
         row.setFolder(true);
+        row.setDeletable(!categoryManager.hasSubCategories(folder)
+                         && !categoryManager.hasObjects(folder));
 
         return row;
     }
