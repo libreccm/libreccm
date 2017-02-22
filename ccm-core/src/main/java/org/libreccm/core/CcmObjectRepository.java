@@ -27,6 +27,7 @@ import java.util.UUID;
 import javax.enterprise.context.RequestScoped;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
 
 /**
  * A repository class for {@link CcmObject}.
@@ -88,6 +89,12 @@ public class CcmObjectRepository extends AbstractEntityRepository<Long, CcmObjec
         } catch (NoResultException ex) {
             return Optional.empty();
         }
+    }
+    
+    @Transactional(Transactional.TxType.REQUIRED)
+    @Override
+    public void delete(final CcmObject object) {
+        super.delete(object);
     }
 
 }
