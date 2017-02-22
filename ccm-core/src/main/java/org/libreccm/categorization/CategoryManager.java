@@ -159,7 +159,7 @@ public class CategoryManager {
     }
 
     public boolean hasSubCategories(final Category category) {
-        
+
         Objects.requireNonNull(
             category,
             "Can't determine if Category null has sub categories.");
@@ -167,22 +167,22 @@ public class CategoryManager {
         final TypedQuery<Boolean> query = entityManager.createNamedQuery(
             "Category.hasSubCategories", Boolean.class);
         query.setParameter("category", category);
-        
+
         return query.getSingleResult();
     }
 
     public boolean hasObjects(final Category category) {
-        
-        Objects.requireNonNull(category, 
+
+        Objects.requireNonNull(category,
                                "Can't determine if category null has objects.");
-        
+
         final TypedQuery<Boolean> query = entityManager.createNamedQuery(
             "Category.hasObjects", Boolean.class);
         query.setParameter("category", category);
-        
+
         return query.getSingleResult();
     }
-    
+
     /**
      * Check if an object is assigned to a category.
      *
@@ -277,9 +277,9 @@ public class CategoryManager {
         query.setParameter("category", category);
         query.setParameter("object", object);
 
-        final Categorization categorization;
+        final List<Categorization> categorizations;
         try {
-            categorization = query.getSingleResult();
+            categorizations = query.getResultList();
         } catch (NoResultException ex) {
             LOGGER.warn(String.format(
                 "No categorization for category %s and object %s found."
@@ -289,8 +289,8 @@ public class CategoryManager {
                         ex);
             return;
         }
-        
-        entityManager.remove(categorization);
+
+        categorizations.forEach(entityManager::remove);
 
 //        shiro.getSystemUser().execute(() -> {
 //            object.removeCategory(categorization);

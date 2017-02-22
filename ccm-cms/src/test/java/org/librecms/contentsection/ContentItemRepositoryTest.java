@@ -146,7 +146,8 @@ public class ContentItemRepositoryTest {
             .addAsLibraries(getCcmCoreDependencies())
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")
-            .addAsWebInfResource("test-web.xml", "WEB-INF/web.xml")
+            .addAsResource("configs/shiro.ini", "shiro.ini")
+            .addAsWebInfResource("test-web.xml", "web.xml")
             .addAsWebInfResource(EmptyAsset.INSTANCE, "WEB-INF/beans.xml");
     }
 
