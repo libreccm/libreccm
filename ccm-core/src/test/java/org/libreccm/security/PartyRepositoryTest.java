@@ -112,7 +112,7 @@ public class PartyRepositoryTest {
                 .getPackage())
             .addPackage(
                 org.libreccm.configuration.ConfigurationManager.class
-                .getPackage())
+                    .getPackage())
             .addPackage(org.libreccm.l10n.LocalizedString.class
                 .getPackage())
             .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
@@ -269,8 +269,11 @@ public class PartyRepositoryTest {
         shiro.getSystemUser().execute(() -> partyRepository.delete(user));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    @ShouldThrowException(IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
+    @ShouldThrowException(NullPointerException.class)
+    @UsingDataSet("datasets/org/libreccm/security/PartyRepositoryTest/data.yml")
+    @ShouldMatchDataSet(
+        "datasets/org/libreccm/security/PartyRepositoryTest/data.yml")
     @InSequence(700)
     public void deleteNullValue() {
         shiro.getSystemUser().execute(() -> partyRepository.delete(null));

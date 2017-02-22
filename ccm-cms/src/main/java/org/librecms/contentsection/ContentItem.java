@@ -71,95 +71,95 @@ import static org.librecms.CmsConstants.*;
 //@Indexed
 @NamedQueries({
     @NamedQuery(
-            name = "ContentItem.findById",
-            query = "SELECT i FROM ContentItem i "
-                            + "WHERE i.objectId = :objectId "
-                            + "AND (EXISTS(SELECT p FROM Permission p "
-                            + "WHERE p.grantedPrivilege = 'read' "
-                            + "AND p.grantee IN :roles "
-                            + "AND p.object = i)"
-                            + "OR true = :admin)")
+        name = "ContentItem.findById",
+        query = "SELECT i FROM ContentItem i "
+                    + "WHERE i.objectId = :objectId "
+                    + "AND (EXISTS(SELECT p FROM Permission p "
+                    + "WHERE p.grantedPrivilege = 'read' "
+                    + "AND p.grantee IN :roles "
+                    + "AND p.object = i)"
+                    + "OR true = :admin)")
     ,
     @NamedQuery(
-            name = "ContentItem.findByType",
-            query = "SELECT i FROM ContentItem i WHERE TYPE(i) = :type")
+        name = "ContentItem.findByType",
+        query = "SELECT i FROM ContentItem i WHERE TYPE(i) = :type")
     ,
     @NamedQuery(
-            name = "ContentItem.findByFolder",
-            query = "SELECT i FROM ContentItem i "
-                            + "JOIN i.categories c "
-                            + "WHERE c.category = :folder "
-                            + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER
-                            + "'")
+        name = "ContentItem.findByFolder",
+        query = "SELECT i FROM ContentItem i "
+                    + "JOIN i.categories c "
+                    + "WHERE c.category = :folder "
+                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER
+                    + "'")
     ,
     @NamedQuery(
-            name = "ContentItem.countItemsInFolder",
-            query = "SELECT count(i) FROM ContentItem i "
-                            + "JOIN i.categories c "
-                            + "WHERE c.category = :folder "
-                            + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER
-                            + "'")
+        name = "ContentItem.countItemsInFolder",
+        query = "SELECT count(i) FROM ContentItem i "
+                    + "JOIN i.categories c "
+                    + "WHERE c.category = :folder "
+                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER
+                    + "'")
     ,
     @NamedQuery(
-            name = "ContentItem.findByNameInFolder",
-            query = "SELECT i FROM ContentItem i "
-                            + "JOIN i.categories c "
-                            + "WHERE c.category = :folder "
-                            + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER
-                            + "' "
-                            + "AND i.displayName = :name")
+        name = "ContentItem.findByNameInFolder",
+        query = "SELECT i FROM ContentItem i "
+                    + "JOIN i.categories c "
+                    + "WHERE c.category = :folder "
+                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER
+                    + "' "
+                    + "AND i.displayName = :name")
     ,
     @NamedQuery(
-            name = "ContentItem.countByNameInFolder",
-            query = "SELECT COUNT(i) FROM ContentItem i "
-                            + "JOIN i.categories c "
-                            + "WHERE c.category = :folder "
-                            + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER
-                            + "' "
-                            + "AND i.displayName = :name")
+        name = "ContentItem.countByNameInFolder",
+        query = "SELECT COUNT(i) FROM ContentItem i "
+                    + "JOIN i.categories c "
+                    + "WHERE c.category = :folder "
+                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER
+                    + "' "
+                    + "AND i.displayName = :name")
     ,
     @NamedQuery(
-            name = "ContentItem.filterByFolderAndName",
-            query = "SELECT i FROM ContentItem i "
-                            + "JOIN i.categories c "
-                            + "WHERE c.category = :folder "
-                            + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER
-                            + "' "
-                            + "AND LOWER(i.displayName) LIKE CONCAT(LOWER(:name), '%')")
+        name = "ContentItem.filterByFolderAndName",
+        query = "SELECT i FROM ContentItem i "
+                    + "JOIN i.categories c "
+                    + "WHERE c.category = :folder "
+                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER
+                    + "' "
+                    + "AND LOWER(i.displayName) LIKE CONCAT(LOWER(:name), '%')")
     ,
     @NamedQuery(
-            name = "ContentItem.countFilterByFolderAndName",
-            query = "SELECT COUNT(i) FROM ContentItem i "
-                            + "JOIN i.categories c "
-                            + "WHERE c.category = :folder "
-                            + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER
-                            + "' "
-                            + "AND LOWER(i.displayName) LIKE CONCAT(LOWER(:name), '%')"
+        name = "ContentItem.countFilterByFolderAndName",
+        query = "SELECT COUNT(i) FROM ContentItem i "
+                    + "JOIN i.categories c "
+                    + "WHERE c.category = :folder "
+                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER
+                    + "' "
+                    + "AND LOWER(i.displayName) LIKE CONCAT(LOWER(:name), '%')"
     )
     ,
     @NamedQuery(
-            name = "ContentItem.hasLiveVersion",
-            query = "SELECT (CASE WHEN COUNT(i) > 0 THEN true ELSE false END) "
-                            + "FROM ContentItem i "
-                            + "WHERE i.itemUuid = :uuid "
-                            + "AND i.version = org.librecms.contentsection.ContentItemVersion.LIVE")
+        name = "ContentItem.hasLiveVersion",
+        query = "SELECT (CASE WHEN COUNT(i) > 0 THEN true ELSE false END) "
+                    + "FROM ContentItem i "
+                    + "WHERE i.itemUuid = :uuid "
+                    + "AND i.version = org.librecms.contentsection.ContentItemVersion.LIVE")
     ,
     @NamedQuery(
-            name = "ContentItem.findDraftVersion",
-            query = "SELECT i FROM ContentItem i "
-                            + "WHERE i.itemUuid = :uuid "
-                            + "AND i.version = org.librecms.contentsection.ContentItemVersion.DRAFT")
+        name = "ContentItem.findDraftVersion",
+        query = "SELECT i FROM ContentItem i "
+                    + "WHERE i.itemUuid = :uuid "
+                    + "AND i.version = org.librecms.contentsection.ContentItemVersion.DRAFT")
     ,
     @NamedQuery(
-            name = "ContentItem.findLiveVersion",
-            query = "SELECT i FROM ContentItem i "
-                            + "WHERE i.itemUuid = :uuid "
-                            + "AND i.version = org.librecms.contentsection.ContentItemVersion.LIVE")
+        name = "ContentItem.findLiveVersion",
+        query = "SELECT i FROM ContentItem i "
+                    + "WHERE i.itemUuid = :uuid "
+                    + "AND i.version = org.librecms.contentsection.ContentItemVersion.LIVE")
     ,
     @NamedQuery(
-            name = "ContentItem.findItemWithWorkflow",
-            query = "SELECT i FROM ContentItem i "
-                            + "WHERE i.workflow = :workflow"
+        name = "ContentItem.findItemWithWorkflow",
+        query = "SELECT i FROM ContentItem i "
+                    + "WHERE i.workflow = :workflow"
     )
 })
 public class ContentItem extends CcmObject implements Serializable {
@@ -178,13 +178,13 @@ public class ContentItem extends CcmObject implements Serializable {
      */
     @Embedded
     @AssociationOverride(
-            name = "values",
-            joinTable = @JoinTable(name = "CONTENT_ITEM_NAMES",
-                                   schema = DB_SCHEMA,
-                                   joinColumns = {
-                                       @JoinColumn(name = "OBJECT_ID")
-                                   }
-            )
+        name = "values",
+        joinTable = @JoinTable(name = "CONTENT_ITEM_NAMES",
+                               schema = DB_SCHEMA,
+                               joinColumns = {
+                                   @JoinColumn(name = "OBJECT_ID")
+                               }
+        )
     )
 //    @Field
     private LocalizedString name;
@@ -203,13 +203,13 @@ public class ContentItem extends CcmObject implements Serializable {
      */
     @Embedded
     @AssociationOverride(
-            name = "values",
-            joinTable = @JoinTable(name = "CONTENT_ITEM_TITLES",
-                                   schema = DB_SCHEMA,
-                                   joinColumns = {
-                                       @JoinColumn(name = "OBJECT_ID")
-                                   }
-            )
+        name = "values",
+        joinTable = @JoinTable(name = "CONTENT_ITEM_TITLES",
+                               schema = DB_SCHEMA,
+                               joinColumns = {
+                                   @JoinColumn(name = "OBJECT_ID")
+                               }
+        )
     )
     @IndexedEmbedded
     private LocalizedString title;
@@ -219,12 +219,12 @@ public class ContentItem extends CcmObject implements Serializable {
      */
     @Embedded
     @AssociationOverride(
-            name = "values",
-            joinTable = @JoinTable(name = "CONTENT_ITEM_DESCRIPTIONS",
-                                   schema = DB_SCHEMA,
-                                   joinColumns = {
-                                       @JoinColumn(name = "OBJECT_ID")}
-            ))
+        name = "values",
+        joinTable = @JoinTable(name = "CONTENT_ITEM_DESCRIPTIONS",
+                               schema = DB_SCHEMA,
+                               joinColumns = {
+                                   @JoinColumn(name = "OBJECT_ID")}
+        ))
     @IndexedEmbedded
     private LocalizedString description;
 
@@ -432,19 +432,35 @@ public class ContentItem extends CcmObject implements Serializable {
     }
 
     public Date getCreationDate() {
-        return new Date(creationDate.getTime());
+        if (creationDate == null) {
+            return null;
+        } else {
+            return new Date(creationDate.getTime());
+        }
     }
 
     public void setCreationDate(final Date creationDate) {
-        this.creationDate = new Date(creationDate.getTime());
+        if (creationDate == null) {
+            this.creationDate = null;
+        } else {
+            this.creationDate = new Date(creationDate.getTime());
+        }
     }
 
     public Date getLastModified() {
-        return new Date(lastModified.getTime());
+        if (lastModified == null) {
+            return null;
+        } else {
+            return new Date(lastModified.getTime());
+        }
     }
 
     public void setLastModified(final Date lastModified) {
-        this.lastModified = new Date(lastModified.getTime());
+        if (lastModified == null) {
+            this.lastModified = null;
+        } else {
+            this.lastModified = new Date(lastModified.getTime());
+        }
     }
 
     public String getCreationUserName() {
@@ -533,15 +549,15 @@ public class ContentItem extends CcmObject implements Serializable {
     @Override
     public String toString(final String data) {
         return super.toString(String.format(", itemUuid = %s, "
-                                                    + "name = %s, "
-                                                    //                                                + "contentType = { %s }, "
-                                                    + "title = %s, "
-                                                    + "description = %s, "
-                                                    + "version = %s, "
-                                                    + "launchDate = %s, "
-                                                    + "lifecycle = { %s }, "
-                                                    + "workflow = { %s }"
-                                                    + "%s",
+                                                + "name = %s, "
+                                                //                                                + "contentType = { %s }, "
+                                                + "title = %s, "
+                                                + "description = %s, "
+                                                + "version = %s, "
+                                                + "launchDate = %s, "
+                                                + "lifecycle = { %s }, "
+                                                + "workflow = { %s }"
+                                                + "%s",
                                             itemUuid,
                                             Objects.toString(name),
                                             //                                            Objects.toString(contentType),
