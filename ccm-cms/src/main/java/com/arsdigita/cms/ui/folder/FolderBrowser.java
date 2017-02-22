@@ -246,11 +246,11 @@ public class FolderBrowser extends Table {
     protected String getSortType(final PageState state) {
         return (String) state.getValue(sortTypeParameter);
     }
-    
+
     protected String getSortDirection(final PageState state) {
         return (String) state.getValue(sortDirectionParameter);
     }
-    
+
     private class HeaderCellRenderer
         extends com.arsdigita.cms.ui.util.DefaultTableCellRenderer {
 
@@ -349,6 +349,7 @@ public class FolderBrowser extends Table {
 
             final boolean isFolder = ((FolderBrowserTableModel) table
                                       .getTableModel(state)).isFolder();
+            final long objectId = getObjectId(key);
 
             if (isFolder) {
                 //return new ControlLink(new Text(name));
@@ -356,13 +357,13 @@ public class FolderBrowser extends Table {
                                           state,
                                           value,
                                           isSelected,
-                                          key,
+                                          objectId,
                                           row,
                                           column);
             } else {
                 return new Link(new Text(name),
                                 itemResolver.generateItemURL(state,
-                                                             (long) key,
+                                                             objectId,
                                                              name,
                                                              section,
                                                              "DRAFT"));
@@ -392,48 +393,21 @@ public class FolderBrowser extends Table {
                                       final int row,
                                       final int column) {
 
-//            final ContentItem item = (ContentItem) value;
-//            final String name = item.getDisplayName();
             final SimpleContainer container = new SimpleContainer();
             final ContentSection section = CMS.getContext().getContentSection();
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-//            final ContentItemManager itemManager = cdiUtil.findBean(
-//                ContentItemManager.class);
             final ContentSectionManager sectionManager = cdiUtil.findBean(
                 ContentSectionManager.class);
             final ItemResolver itemResolver = sectionManager.getItemResolver(
                 section);
 
-//            item.getName().getAvailableLocales().stream()
-//                .map((locale) -> locale.toString())
-//                .map((lang) -> {
-//                    final StringBuilder fontWeight = new StringBuilder(2);
-//                    final StringBuilder styleClasses = new StringBuilder(20);
-//                    if (itemManager.isLive(item)) {
-//                        fontWeight.append(Label.BOLD);
-//                        styleClasses.append("live ");
-//                    }
-//                    final Label langLabel = new Label(lang);
-//                    langLabel.setFontWeight(fontWeight.toString().trim());
-//                    langLabel.setClassAttr(styleClasses.toString().trim());
-//                    return langLabel;
-//                })
-//                .forEach((langLabel) -> {
-//                    container.add(new Link(
-//                        langLabel,
-//                        itemResolver.generateItemURL(state,
-//                                                     item.getObjectId(),
-//                                                     name,
-//                                                     section,
-//                                                     item.getVersion().name())));
-//                });
             @SuppressWarnings("unchecked")
             final List<Locale> availableLocales = (List<Locale>) value;
             availableLocales.forEach(locale -> container.add(new Link(
                 new Text(locale.toString()),
                 itemResolver.generateItemURL(
                     state,
-                    (long) key,
+                    getObjectId(key),
                     locale.toString(),
                     section,
                     "DRAFT"))));
@@ -516,188 +490,17 @@ public class FolderBrowser extends Table {
             }
 
             final PageState state = event.getPageState();
-            final long itemId = Long.parseLong(event.getRowKey().toString());
 
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final FolderBrowserController controller = cdiUtil.findBean(
                 FolderBrowserController.class);
-            controller.deleteObject(itemId);
+            controller.deleteObject((String) event.getRowKey());
 
             ((Table) event.getSource()).clearSelection(state);
         }
 
     }
 
-//    /**
-//     * Table model around ItemCollection
-//     */
-//    private static class FolderTableModel implements TableModel {
-//
-//        private static final int NAME = 0;
-//        private static final int LANGUAGES = 1;
-//        private static final int TITLE = 2;
-//        private static final int ADDITIONAL_INFO = 3;
-//        private static final int TYPE = 4;
-//        private static final int CREATION_DATE = 5;
-//        private static final int LAST_MODIFIED = 6;
-//        private static final int DELETABLE = 7;
-//        private static final int IS_INDEX = 8;
-//        private PageState m_state;
-//        private FolderBrowser m_table;
-//        private List<ContentItem> m_itemColl;
-//        private Category m_fol;
-//        private Long m_folIndexID;
-//        private final ContentItemRepository itemRepo;
-//        private final ContentItemManager itemManager;
-//        private final CategoryManager categoryManager;
-//        private int index = -1;
-//
-//        //old constructor before using paginator
-//        //public FolderTableModel(Folder folder) {
-//        //m_itemColl = folder.getItems();
-//        //}
-//        public FolderTableModel(FolderBrowser table,
-//                                PageState state,
-//                                List<ContentItem> itemColl) {
-//            m_state = state;
-//            m_table = table;
-//            m_itemColl = itemColl;
-//
-//            m_fol = (Category) table.getFolderSelectionModel()
-//                .getSelectedObject(state);
-//
-//            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-//            itemRepo = cdiUtil.findBean(ContentItemRepository.class);
-//            itemManager = cdiUtil.findBean(ContentItemManager.class);
-//            categoryManager = cdiUtil.findBean(CategoryManager.class);
-//
-//            if (!hideIndexColumn()) {
-//                final Optional<CcmObject> indexItem = categoryManager
-//                    .getIndexObject(m_fol);
-//                if (indexItem.isPresent()) {
-//                    m_folIndexID = indexItem.get().getObjectId();
-//                } else {
-//                    m_folIndexID = null;
-//                }
-//            }
-//        }
-//
-//        @Override
-//        public int getColumnCount() {
-//            return 7;
-//        }
-//
-//        @Override
-//        public boolean nextRow() {
-//            index++;
-//            return index < m_itemColl.size();
-//        }
-//
-//        @Override
-//        public Object getElementAt(int columnIndex) {
-//            switch (columnIndex) {
-//                case NAME:
-//                    return m_itemColl.get(index);
-//                case LANGUAGES:
-//                    return m_itemColl.get(index);
-//                case TITLE:
-//                    return m_itemColl.get(index).getDisplayName();
-//                case ADDITIONAL_INFO:
-//                    return "";
-//                case TYPE:
-//                    return m_itemColl.get(index).getContentType().getLabel()
-//                        .getValue();
-//                case CREATION_DATE: {
-//                    final CcmRevision firstRevision = itemRepo
-//                        .retrieveFirstRevision(
-//                            m_itemColl.get(index), m_itemColl.get(index)
-//                            .getObjectId());
-//                    if (firstRevision == null) {
-//                        return "--";
-//                    } else {
-//                        return FormatStandards.formatDate(new Date(firstRevision
-//                            .getTimestamp()));
-//                    }
-//                }
-//                case LAST_MODIFIED: {
-//                    final CcmRevision currentRevision = itemRepo
-//                        .retrieveCurrentRevision(
-//                            m_itemColl.get(index),
-//                            m_itemColl.get(index).getObjectId());
-//                    if (currentRevision == null) {
-//                        return "--";
-//                    } else {
-//                        return FormatStandards.formatDate(new Date(
-//                            currentRevision.getTimestamp()));
-//                    }
-//                }
-//                case DELETABLE:
-//                    return isDeletable();
-//                case IS_INDEX: {
-//                    if (hideIndexColumn()) {
-//                        throw new IndexOutOfBoundsException(
-//                            "Column index " + columnIndex
-//                                + " not in table model.");
-//                    }
-//                    if (m_folIndexID == null) {
-//                        return false;
-//                    }
-//                    return m_folIndexID.compareTo(
-//                        m_itemColl.get(index).getObjectId()) == 0;
-//                }
-//                default:
-//                    throw new IndexOutOfBoundsException("Column index "
-//                                                            + columnIndex
-//                                                            + " not in table model.");
-//            }
-//        }
-//
-//        public boolean isDeletable() {
-//            if (LOGGER.isDebugEnabled()) {
-//                LOGGER.debug("Checking to see if " + this + " is deletable");
-//            }
-//
-////            if (m_itemColl.isFolder()) {
-////
-////                if (!m_itemColl.hasChildren()) {
-////                    if (s_log.isDebugEnabled()) {
-////                        s_log.debug(
-////                            "The item is an empty folder; it may be deleted");
-////                    }
-////                    return true;
-////
-////                } else {
-////
-////                    if (s_log.isDebugEnabled()) {
-////                        s_log.debug(
-////                            "The folder is not empty; it cannot be deleted");
-////                    }
-////                    return false;
-////
-////                }
-////            } else 
-//            if (itemManager.isLive(m_itemColl.get(index))) {
-//
-//                if (LOGGER.isDebugEnabled()) {
-//                    LOGGER.debug(
-//                        "This item has a live instance; it cannot be deleted");
-//                }
-//                return false;
-//            }
-//
-//            if (LOGGER.isDebugEnabled()) {
-//                LOGGER.debug(
-//                    "The item is not a folder and doesn't have a live instance; it may be deleted");
-//            }
-//            return true;
-//        }
-//
-//        public Object getKeyAt(int columnIndex) {
-//            // Note: Folders were marked by negative IDs
-//            return m_itemColl.get(index).getObjectId();
-//        }
-//
-//    }
     private class FolderChanger extends TableActionAdapter {
 
         @Override
@@ -708,54 +511,14 @@ public class FolderBrowser extends Table {
             if (nameColumn != getColumn(col)) {
                 return;
             }
-            final String key = (String) event.getRowKey();
 
             clearSelection(state);
-            getFolderSelectionModel().setSelectedKey(state, Long.parseLong(key));
-
+            getFolderSelectionModel().setSelectedKey(
+                state,
+                getObjectId(event.getRowKey()));
         }
 
     }
-
-//    private class IndexChanger extends TableActionAdapter {
-//
-//        private FolderSelectionModel m_fol;
-//
-//        public IndexChanger(FolderSelectionModel fol) {
-//            super();
-//            m_fol = fol;
-//        }
-//
-//        @Override
-//        public void cellSelected(TableActionEvent e) {
-//            PageState state = e.getPageState();
-//
-//            BigDecimal rowkey = new BigDecimal((String) e.getRowKey());
-//            if (rowkey == null) {
-//                return;
-//            }
-//
-//            try {
-//                ContentBundle contentItem = new ContentBundle(rowkey);
-//
-//                Folder folder = (Folder) m_fol.getSelectedObject(state);
-//
-//                ContentBundle currentIndexItem = (ContentBundle) folder.
-//                    getIndexItem();
-//                if (currentIndexItem == null || (currentIndexItem.getID().
-//                                                 compareTo(contentItem.getID())
-//                                                 != 0)) {
-//                    folder.setIndexItem(contentItem);
-//                } else {
-//                    folder.removeIndexItem();
-//                }
-//                folder.save();
-//            } catch (DataObjectNotFoundException donfe) {
-//                // Do nothing
-//            }
-//        }
-//
-//    }
     /**
      * Getting the GlobalizedMessage using a CMS Class targetBundle.
      *
@@ -763,6 +526,20 @@ public class FolderBrowser extends Table {
      */
     private static GlobalizedMessage globalize(String key) {
         return new GlobalizedMessage(key, CmsConstants.CMS_FOLDER_BUNDLE);
+
+    }
+
+    private long getObjectId(final Object key) {
+
+        final String keyStr = (String) key;
+
+        if (keyStr.startsWith("folder-")) {
+            return Long.parseLong(keyStr.substring("folder-".length()));
+        } else if (keyStr.startsWith("item-")) {
+            return Long.parseLong(keyStr.substring("item-".length()));
+        } else {
+            return Long.parseLong(keyStr);
+        }
 
     }
 

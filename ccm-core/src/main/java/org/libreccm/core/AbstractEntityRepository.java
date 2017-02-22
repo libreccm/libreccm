@@ -24,6 +24,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -266,10 +267,10 @@ public abstract class AbstractEntityRepository<K, E> {
      */
     @Transactional(Transactional.TxType.REQUIRED)
     public void delete(final E entity) {
-        if (entity == null) {
-            throw new IllegalArgumentException("Can't delete a null entity.");
-        }
-
+        
+        Objects.requireNonNull(entity, 
+                               "Can't delete a null entity.");
+        
         //We need to make sure we use a none detached entity, therefore the merge
         entityManager.remove(entityManager.merge(entity));
     }
