@@ -78,14 +78,25 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(
         name = "Category.findByName",
         query = "SELECT c FROM Category c WHERE c.name = :name")
+    ,
+    @NamedQuery(
+        name = "Category.hasObjects",
+        query = "SELECT (CASE WHEN COUNT(c) > 0 THEN true ELSE false END) "
+                    + "FROM Categorization c "
+                    + "WHERE c.category = :category")
+    ,
+    @NamedQuery(
+        name = "Category.hasSubCategories",
+        query = "SELECT (CASE WHEN COUNT(c) > 0 THEN true ELSE false END) "
+                    + "FROM Category c "
+                    + "WHERE c.parentCategory = :category")
 })
 @NamedEntityGraphs({
     @NamedEntityGraph(
         name = "Category.withSubCategoriesAndObjects",
         attributeNodes = {
             @NamedAttributeNode(value = "subCategories"
-            ), 
-        }
+            ),}
     )
 })
 @XmlRootElement(name = "category", namespace = CAT_XML_NS)
