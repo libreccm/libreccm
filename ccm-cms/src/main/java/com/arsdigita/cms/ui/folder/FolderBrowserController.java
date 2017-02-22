@@ -29,6 +29,7 @@ import org.libreccm.l10n.GlobalizationHelper;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemL10NManager;
+import org.librecms.contentsection.ContentItemManager;
 import org.librecms.contentsection.ContentItemVersion;
 import org.librecms.contentsection.ContentType;
 import org.librecms.contentsection.Folder;
@@ -89,6 +90,9 @@ public class FolderBrowserController {
 
     @Inject
     private ContentTypesManager typesManager;
+    
+    @Inject 
+    private ContentItemManager itemManager;
 
     private Locale defaultLocale;
 
@@ -370,6 +374,8 @@ public class FolderBrowserController {
             type);
         row.setTypeLabelBundle(typeInfo.getLabelBundle());
         row.setTypeLabelKey(typeInfo.getLabelKey());
+        
+        row.setDeletable(!itemManager.isLive(item));
 
         row.setCreated(item.getCreationDate());
         row.setLastModified(item.getLastModified());
