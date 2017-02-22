@@ -26,7 +26,6 @@ import org.librecms.CmsConstants;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.ws.rs.DELETE;
 
 /**
  * Table model for the {@link FolderBrowser}.

@@ -311,7 +311,7 @@ public class ContentItem extends CcmObject implements Serializable {
      *
      * Please note that there is no grantee that the user still exists.
      */
-    @Column(name = "LAST_MODIFING_USER_NAME")
+    @Column(name = "LAST_MODIFYING_USER_NAME")
     @NotAudited
     private String lastModifyingUserName;
 

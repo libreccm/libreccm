@@ -8,5 +8,5 @@ alter table CCM_CMS.CONTENT_ITEMS
     add column LAST_MODIFIED timestamp;
 
 alter table CCM_CMS.CONTENT_ITEMS 
-    add column LAST_MODIFING_USER_NAME varchar(255);
+    add column LAST_MODIFYING_USER_NAME varchar(255);
 

@@ -84,20 +84,8 @@ import javax.xml.bind.annotation.XmlRootElement;
         name = "Category.withSubCategoriesAndObjects",
         attributeNodes = {
             @NamedAttributeNode(value = "subCategories"
-            //,
-            //                    subgraph = "subCategories"
-            ), //@NamedAttributeNode(value = "objects")
+            ), 
         }
-    //        ,
-    //        subgraphs = {
-    //            @NamedSubgraph(
-    //                name = "subCategories",
-    //                attributeNodes = {
-    //                    @NamedAttributeNode("subCategories"),
-    //                    @NamedAttributeNode("objects")
-    //                }
-    //            )
-    //        }
     )
 })
 @XmlRootElement(name = "category", namespace = CAT_XML_NS)
