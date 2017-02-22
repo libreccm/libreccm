@@ -20,7 +20,6 @@ package org.libreccm.auditing;
 
 import org.apache.shiro.subject.Subject;
 
-
 import org.hibernate.envers.RevisionListener;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.Shiro;
@@ -46,7 +45,11 @@ public class CcmRevisionListener implements RevisionListener {
         final Shiro shiro = cdiUtil.findBean(Shiro.class);
 
         final Subject subject = shiro.getSubject();
-        revision.setUserName(subject.getPrincipal().toString());
+        if (subject == null || subject.getPrincipal() == null) {
+            revision.setUserName("");
+        } else {
+            revision.setUserName(subject.getPrincipal().toString());
+        }
     }
 
 }

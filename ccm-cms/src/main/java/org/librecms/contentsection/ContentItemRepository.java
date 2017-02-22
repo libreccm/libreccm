@@ -59,10 +59,10 @@ public class ContentItemRepository
 
     @Inject
     private FolderRepository folderRepo;
-    
+
     @Inject
     private ContentItemManager itemManager;
-    
+
     @Inject
     private CategoryManager categoryManager;
 
@@ -372,7 +372,12 @@ public class ContentItemRepository
     public void save(final ContentItem item) {
         final Date now = new Date();
         final Subject subject = shiro.getSubject();
-        final String userName = subject.getPrincipal().toString();
+        final String userName;
+        if (subject == null || subject.getPrincipal() == null) {
+            userName = "";
+        } else {
+            userName = subject.getPrincipal().toString();
+        }
 
         if (isNew(item)) {
             item.setCreationDate(now);
@@ -383,7 +388,7 @@ public class ContentItemRepository
 
         super.save(item);
     }
-    
+
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public void delete(final ContentItem item) {
@@ -393,27 +398,26 @@ public class ContentItemRepository
                     + "is live.",
                 item.getItemUuid()));
         }
-        
-        final ContentItem draft = itemManager.getDraftVersion(item, 
+
+        final ContentItem draft = itemManager.getDraftVersion(item,
                                                               ContentItem.class);
 //        draft.getCategories().stream()
 //            .map(categorization -> categorization.getCategory())
 //            .forEach(category -> removeCategoryFromItem(item, category));
-        for(final Categorization categorization : draft.getCategories()) {
+        for (final Categorization categorization : draft.getCategories()) {
             final Category category = categorization.getCategory();
-            
+
             removeCategoryFromItem(item, category);
         }
-        
-        
+
         super.delete(draft);
     }
-    
+
     private void removeCategoryFromItem(final ContentItem item,
                                         final Category category) {
         try {
-        categoryManager.removeObjectFromCategory(item, category);
-        } catch(ObjectNotAssignedToCategoryException ex) {
+            categoryManager.removeObjectFromCategory(item, category);
+        } catch (ObjectNotAssignedToCategoryException ex) {
             throw new UnexpectedErrorException(ex);
         }
     }

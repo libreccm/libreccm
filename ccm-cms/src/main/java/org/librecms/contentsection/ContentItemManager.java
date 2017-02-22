@@ -72,6 +72,8 @@ import javax.transaction.Transactional;
 import org.libreccm.security.PermissionChecker;
 import org.librecms.contentsection.privileges.TypePrivileges;
 
+import java.util.Objects;
+
 /**
  * Manager class providing several methods to manipulate {@link ContentItem}s.
  *
@@ -389,6 +391,9 @@ public class ContentItemManager {
             throw new RuntimeException(ex);
         }
 
+//        final String uuid = UUID.randomUUID().toString();
+//        copy.setUuid(uuid);
+//        copy.setItemUuid(uuid);
         copy.setContentType(contentType.get());
 
         if (draftItem.getWorkflow() != null) {
@@ -398,26 +403,6 @@ public class ContentItemManager {
                 template, item);
             copy.setWorkflow(copyWorkflow);
         }
-
-        contentItemRepo.save(copy);
-
-        draftItem.getCategories().forEach(categorization -> categoryManager
-            .addObjectToCategory(copy, categorization.getCategory()));
-
-        final Optional<Folder> itemFolder = getItemFolder(draftItem);
-        if (itemFolder.isPresent()) {
-            try {
-                categoryManager.removeObjectFromCategory(
-                    copy, getItemFolder(draftItem).get());
-            } catch (ObjectNotAssignedToCategoryException ex) {
-                throw new RuntimeException(ex);
-            }
-        }
-
-        categoryManager.addObjectToCategory(
-            copy,
-            targetFolder,
-            CATEGORIZATION_TYPE_FOLDER);
 
         for (AttachmentList attachmentList : item.getAttachments()) {
             copyAttachmentList(attachmentList, copy);
@@ -536,6 +521,24 @@ public class ContentItemManager {
             }
         }
 
+        contentItemRepo.save(copy);
+
+        draftItem.getCategories().forEach(categorization -> categoryManager
+            .addObjectToCategory(copy, categorization.getCategory()));
+        final Optional<Folder> itemFolder = getItemFolder(draftItem);
+        if (itemFolder.isPresent()) {
+            try {
+                categoryManager.removeObjectFromCategory(
+                    copy, getItemFolder(draftItem).get());
+            } catch (ObjectNotAssignedToCategoryException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+        categoryManager.addObjectToCategory(
+            copy,
+            targetFolder,
+            CATEGORIZATION_TYPE_FOLDER);
+
         if (targetFolder.equals(getItemFolder(item).orElse(null))) {
             final long number = contentItemRepo.countFilterByFolderAndName(
                 targetFolder, String.format("%s_copy",
@@ -545,8 +548,6 @@ public class ContentItemManager {
                                               copy.getDisplayName(),
                                               index));
         }
-
-        contentItemRepo.save(copy);
 
         return copy;
     }
