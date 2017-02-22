@@ -23,9 +23,13 @@ import org.apache.shiro.subject.Subject;
 import java.util.Date;
 
 import org.libreccm.auditing.AbstractAuditedEntityRepository;
+import org.libreccm.categorization.Categorization;
 import org.libreccm.categorization.Category;
+import org.libreccm.categorization.CategoryManager;
+import org.libreccm.categorization.ObjectNotAssignedToCategoryException;
 import org.libreccm.core.CcmObject;
 import org.libreccm.core.CcmObjectRepository;
+import org.libreccm.core.UnexpectedErrorException;
 
 import java.util.List;
 import java.util.Optional;
@@ -38,6 +42,8 @@ import javax.persistence.TypedQuery;
 
 import org.libreccm.security.Shiro;
 import org.libreccm.workflow.Workflow;
+
+import javax.transaction.Transactional;
 
 /**
  * Repository for content items.
@@ -53,6 +59,12 @@ public class ContentItemRepository
 
     @Inject
     private FolderRepository folderRepo;
+    
+    @Inject
+    private ContentItemManager itemManager;
+    
+    @Inject
+    private CategoryManager categoryManager;
 
     @Inject
     private Shiro shiro;
@@ -370,6 +382,40 @@ public class ContentItemRepository
         item.setLastModifyingUserName(userName);
 
         super.save(item);
+    }
+    
+    @Transactional(Transactional.TxType.REQUIRED)
+    @Override
+    public void delete(final ContentItem item) {
+        if (itemManager.isLive(item)) {
+            throw new IllegalArgumentException(String.format(
+                "The provided content item %s can't be deleted because it "
+                    + "is live.",
+                item.getItemUuid()));
+        }
+        
+        final ContentItem draft = itemManager.getDraftVersion(item, 
+                                                              ContentItem.class);
+//        draft.getCategories().stream()
+//            .map(categorization -> categorization.getCategory())
+//            .forEach(category -> removeCategoryFromItem(item, category));
+        for(final Categorization categorization : draft.getCategories()) {
+            final Category category = categorization.getCategory();
+            
+            removeCategoryFromItem(item, category);
+        }
+        
+        
+        super.delete(draft);
+    }
+    
+    private void removeCategoryFromItem(final ContentItem item,
+                                        final Category category) {
+        try {
+        categoryManager.removeObjectFromCategory(item, category);
+        } catch(ObjectNotAssignedToCategoryException ex) {
+            throw new UnexpectedErrorException(ex);
+        }
     }
 
 }

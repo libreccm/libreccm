@@ -30,9 +30,11 @@ import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemL10NManager;
 import org.librecms.contentsection.ContentItemManager;
+import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contentsection.ContentItemVersion;
 import org.librecms.contentsection.ContentType;
 import org.librecms.contentsection.Folder;
+import org.librecms.contentsection.FolderRepository;
 import org.librecms.contenttypes.ContentTypeInfo;
 import org.librecms.contenttypes.ContentTypesManager;
 
@@ -75,7 +77,7 @@ public class FolderBrowserController {
 
     @Inject
     private CategoryManager categoryManager;
-    
+
     @Inject
     private CcmObjectRepository objectRepo;
 
@@ -90,8 +92,14 @@ public class FolderBrowserController {
 
     @Inject
     private ContentTypesManager typesManager;
-    
-    @Inject 
+
+    @Inject
+    private FolderRepository folderRepo;
+
+    @Inject
+    private ContentItemRepository itemRepo;
+
+    @Inject
     private ContentItemManager itemManager;
 
     private Locale defaultLocale;
@@ -335,7 +343,7 @@ public class FolderBrowserController {
         }
         row.setFolder(true);
         row.setDeletable(!categoryManager.hasSubCategories(folder)
-                         && !categoryManager.hasObjects(folder));
+                             && !categoryManager.hasObjects(folder));
 
         return row;
     }
@@ -374,7 +382,7 @@ public class FolderBrowserController {
             type);
         row.setTypeLabelBundle(typeInfo.getLabelBundle());
         row.setTypeLabelKey(typeInfo.getLabelKey());
-        
+
         row.setDeletable(!itemManager.isLive(item));
 
         row.setCreated(item.getCreationDate());
@@ -391,11 +399,27 @@ public class FolderBrowserController {
      * @param objectId
      */
     @Transactional(Transactional.TxType.REQUIRED)
-    protected void deleteObject(final long objectId) {
-        final Optional<CcmObject> object = objectRepo.findById(objectId);
+    protected void deleteObject(final String objectId) {
 
-        if (object.isPresent()) {
-            objectRepo.delete(object.get());
+        Objects.requireNonNull(objectId);
+
+        if (objectId.startsWith("folder-")) {
+            final long folderId = Long.parseLong(
+                objectId.substring("folder-".length()));
+            
+            folderRepo
+                .findById(folderId)
+                .ifPresent(folderRepo::delete);
+        } else if (objectId.startsWith("item-")) {
+            final long itemId = Long.parseLong(
+            objectId.substring("item-".length()));
+            
+            itemRepo
+                .findById(itemId)
+                .ifPresent(itemRepo::delete);
+        } else {
+            throw new IllegalArgumentException(
+                "The objectId is expected to start with 'folder-' or 'item.'.");
         }
     }
 

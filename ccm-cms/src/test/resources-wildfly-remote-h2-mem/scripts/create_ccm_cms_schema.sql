@@ -296,7 +296,6 @@ create schema CCM_CORE;
         WORKFLOW_ID bigint,
         primary key (OBJECT_ID, REV)
     );
-
     create table CCM_CMS.CONTENT_SECTION_LIFECYCLE_DEFINITIONS (
         CONTENT_SECTION_ID bigint not null,
         LIFECYCLE_DEFINITION_ID bigint not null

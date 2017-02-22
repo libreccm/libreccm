@@ -289,26 +289,28 @@ public class CategoryManager {
                         ex);
             return;
         }
+        
+        entityManager.remove(categorization);
 
-        shiro.getSystemUser().execute(() -> {
-            object.removeCategory(categorization);
-            category.removeObject(categorization);
-            entityManager.remove(categorization);
-            categoryRepo.save(category);
-            ccmObjectRepo.save(object);
-
-            final List<Categorization> categories = object.getCategories();
-            for (int i = 0; i < categories.size(); i++) {
-                categories.get(i).setCategoryOrder(i);
-                entityManager.merge(categories.get(i));
-            }
-
-            final List<Categorization> objects = category.getObjects();
-            for (int i = 0; i < objects.size(); i++) {
-                objects.get(i).setObjectOrder(i);
-                entityManager.merge(objects.get(i));
-            }
-        });
+//        shiro.getSystemUser().execute(() -> {
+//            object.removeCategory(categorization);
+//            category.removeObject(categorization);
+//            entityManager.remove(categorization);
+//            categoryRepo.save(category);
+//            ccmObjectRepo.save(object);
+//
+//            final List<Categorization> categories = object.getCategories();
+//            for (int i = 0; i < categories.size(); i++) {
+//                categories.get(i).setCategoryOrder(i);
+//                entityManager.merge(categories.get(i));
+//            }
+//
+//            final List<Categorization> objects = category.getObjects();
+//            for (int i = 0; i < objects.size(); i++) {
+//                objects.get(i).setObjectOrder(i);
+//                entityManager.merge(objects.get(i));
+//            }
+//        });
     }
 
     /**
