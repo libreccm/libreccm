@@ -206,7 +206,7 @@
                 <configuration>
                     <dialects>
                         <param>h2</param>
-                        <param>oracle10g</param>
+                        <param>oracle12c</param>
                         <param>postgresql9</param>
                     </dialects>
                     <packages>
