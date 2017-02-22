@@ -274,7 +274,7 @@ create schema CCM_CORE;
         CREATION_USER_NAME varchar(255),
         ITEM_UUID varchar(255) not null,
         LAST_MODIFIED timestamp,
-        LAST_MODIFING_USER_NAME varchar(255),
+        LAST_MODIFYING_USER_NAME varchar(255),
         LAUNCH_DATE date,
         VERSION varchar(255),
         OBJECT_ID int8 not null,

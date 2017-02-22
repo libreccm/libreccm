@@ -18,37 +18,35 @@
  */
 package org.libreccm.auditing;
 
-import java.util.Optional;
+import org.apache.shiro.subject.Subject;
+
+
 import org.hibernate.envers.RevisionListener;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.Shiro;
-import org.libreccm.security.User;
-
 
 /**
  * {@link RevisionListener} setting the user for the {@link CcmRevision} entity.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class CcmRevisionListener implements RevisionListener {
 
     @Override
     public void newRevision(final Object revisionEntity) {
-        
+
         if (!(revisionEntity instanceof CcmRevision)) {
             throw new IllegalArgumentException(String.format(
                 "Provided revision entity is not an instance of class \"%s\".",
                 CcmRevision.class.getName()));
         }
         final CcmRevision revision = (CcmRevision) revisionEntity;
-        
+
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final Shiro shiro = cdiUtil.findBean(Shiro.class);
-        
-        final Optional<User> user = shiro.getUser();
-        if (user.isPresent()) {
-            revision.setUserName(user.get().getName());
-        }
+
+        final Subject subject = shiro.getSubject();
+        revision.setUserName(subject.getPrincipal().toString());
     }
 
 }

@@ -18,13 +18,16 @@
  */
 package com.arsdigita.cms.ui.folder;
 
-
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 /**
+ * A simple data transfer object containing the data required by the
+ * {@link FolderBrowser} to display its rows. Used by the
+ * {@link FolderBrowserTableModelBuilder} to transfer the data from the
+ * {@link FolderBrowserController} to the {@link FolderBrowserTableModel}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -85,11 +88,11 @@ class FolderBrowserTableRow {
     public String getTypeLabelBundle() {
         return typeLabelBundle;
     }
-    
+
     protected void setTypeLabelBundle(final String typeLabelBundle) {
         this.typeLabelBundle = typeLabelBundle;
     }
-    
+
     public String getTypeLabelKey() {
         return typeLabelKey;
     }
@@ -137,11 +140,11 @@ class FolderBrowserTableRow {
     protected void setDeletable(final boolean deletable) {
         this.deletable = deletable;
     }
-    
+
     public boolean isFolder() {
         return folder;
     }
-    
+
     protected void setFolder(final boolean folder) {
         this.folder = folder;
     }

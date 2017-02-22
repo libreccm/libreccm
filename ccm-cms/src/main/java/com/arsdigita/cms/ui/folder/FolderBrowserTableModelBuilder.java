@@ -33,7 +33,8 @@ import org.librecms.contentsection.Folder;
 import java.util.List;
 
 /**
- *
+ * Creates the {@link TableModel} for the {@link FolderBrowser}. 
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class FolderBrowserTableModelBuilder extends LockableImpl
@@ -62,15 +63,27 @@ class FolderBrowserTableModelBuilder extends LockableImpl
             final FolderBrowserController controller = cdiUtil.findBean(
                 FolderBrowserController.class);
             final String filter = folderBrowser.getFilter(state);
+            final String orderBy;
+            if (folderBrowser.getSortType(state) == null) {
+                orderBy = FolderBrowser.SORT_KEY_NAME;
+            } else {
+                orderBy = folderBrowser.getSortType(state);
+            }
+            final String orderDirection;
+            if (folderBrowser.getSortDirection(state) == null) {
+                orderDirection = FolderBrowser.SORT_ACTION_UP;
+            } else {
+                orderDirection = folderBrowser.getSortDirection(state);
+            }
             final String atozFilter = folderBrowser.getAtoZfilter(state);
             final int first = paginator.getFirst(state);
             final int pageSize = paginator.getPageSize(state);
 
             final String filterTerm;
             if (filter != null && !filter.trim().isEmpty()) {
-                filterTerm = filter.trim();
+                filterTerm = String.format("%s%%", filter.trim());
             } else if (atozFilter != null && !atozFilter.trim().isEmpty()) {
-                filterTerm = atozFilter.trim();
+                filterTerm = String.format("%s%%", atozFilter.trim());
             } else {
                 filterTerm = null;
             }
@@ -80,13 +93,15 @@ class FolderBrowserTableModelBuilder extends LockableImpl
             final List<FolderBrowserTableRow> rows;
             if (filterTerm == null) {
                 rows = controller.getObjectRows(folder,
-                                                "name",
+                                                orderBy,
+                                                orderDirection,
                                                 first - 1,
                                                 pageSize);
             } else {
                 rows = controller.getObjectRows(folder,
-                                                filter,
-                                                "name",
+                                                filterTerm,
+                                                orderBy,
+                                                orderDirection,
                                                 first - 1,
                                                 pageSize);
             }
