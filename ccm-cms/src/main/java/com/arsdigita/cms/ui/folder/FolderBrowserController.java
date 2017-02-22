@@ -20,14 +20,11 @@ package com.arsdigita.cms.ui.folder;
 
 import com.arsdigita.kernel.KernelConfig;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.libreccm.categorization.Categorization;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.core.CcmObject;
 import org.libreccm.core.CcmObjectRepository;
 import org.libreccm.l10n.GlobalizationHelper;
-import org.libreccm.l10n.LocalizedString;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemL10NManager;
@@ -55,23 +52,24 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
-import org.hibernate.envers.AuditReader;
+
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Path;
 
 /**
+ * The {@code FolderBrowserController} wraps all database operations (queries)
+ * required by the {@link FolderBrowser}, the
+ * {@link FolderBrowserTableModelBuilder} and the
+ * {@link FolderBrowserTableModel}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
 public class FolderBrowserController {
 
-    private static final Logger LOGGER = LogManager.getLogger(
-            FolderBrowserController.class);
-
     @Inject
     private EntityManager entityManager;
-
-    @Inject
-    private AuditReader auditReader;
 
     @Inject
     private CcmObjectRepository objectRepo;
@@ -90,189 +88,296 @@ public class FolderBrowserController {
 
     private Locale defaultLocale;
 
+    /**
+     * Initialisation method called by the CDI-Container after an instance of
+     * this class has be created by the container. Sets the
+     * {@link #defaultLocale} property using the the value from the
+     * {@link KernelConfig}.
+     */
     @PostConstruct
     private void init() {
         final KernelConfig kernelConfig = confManager.findConfiguration(
-                KernelConfig.class);
+            KernelConfig.class);
         defaultLocale = kernelConfig.getDefaultLocale();
     }
 
-    public List<CcmObject> findObjects(final Folder folder, final String orderBy) {
-        return findObjects(folder, orderBy, -1, -1);
-    }
-
-    public List<CcmObject> findObjects(final Folder folder,
-                                       final String orderBy,
-                                       final int first,
-                                       final int maxResults) {
-        return findObjects(folder, "%", orderBy, first, maxResults);
-    }
-
-    public List<CcmObject> findObjects(final Folder folder,
-                                       final String filterTerm,
-                                       final String orderBy) {
-        return findObjects(folder, filterTerm, orderBy, -1, -1);
-    }
-
-    public List<CcmObject> findObjects(final Folder folder,
-                                       final String filterTerm,
-                                       final String orderBy,
-                                       final int first,
-                                       final int maxResults) {
-
-        Objects.requireNonNull(folder);
-        LOGGER.debug("Trying to find objects in folder {}...",
-                     Objects.toString(folder));
-
-        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        final CriteriaQuery<CcmObject> criteriaQuery = builder
-                .createQuery(CcmObject.class);
-        final Root<CcmObject> from = criteriaQuery.from(CcmObject.class);
-
-        return entityManager.createQuery(
-                criteriaQuery
-                        .select(from)
-                        .where(builder.or(
-                                from.in(findSubFolders(folder, filterTerm)),
-                                from.in(findItemsInFolder(folder, filterTerm))))
-                        .orderBy(builder.asc(from.get("displayName"))))
-                .setFirstResult(first)
-                .setMaxResults(maxResults)
-                .getResultList();
-    }
-
+    /**
+     * Count the objects (subfolders and content items) in the provided folder.
+     *
+     * @param folder The folder.
+     *
+     * @return The number of objects (subfolders and content items) in the
+     *         provided {@code folder}.
+     */
     public long countObjects(final Folder folder) {
         return countObjects(folder, "%");
     }
 
+    /**
+     * Count all objects (subfolders and content items) in the provided folder
+     * which match the provided filter term.
+     *
+     * @param folder     The folder.
+     * @param filterTerm The filter term.
+     *
+     * @return The number of objects (subfolders and content items) in the
+     *         provided {@code folder} which match the provided
+     *         {@code filterTerm}.
+     */
     public long countObjects(final Folder folder,
                              final String filterTerm) {
 
+        Objects.requireNonNull(folder, "Can't count objects in Folder null.");
+        Objects.requireNonNull(filterTerm, "Can't filter for 'null'.");
+
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        final CriteriaQuery<Long> criteriaQuery = builder.createQuery(
-                Long.class);
+        CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
         final Root<CcmObject> from = criteriaQuery.from(CcmObject.class);
 
-        return entityManager
-                .createQuery(
-                        criteriaQuery
-                                .select(builder.count(from))
-                                .where(builder.or(
-                                        from.in(findSubFolders(folder,
-                                                               filterTerm)),
-                                        from.in(findItemsInFolder(folder,
-                                                                  filterTerm))))).
-                getSingleResult();
+        criteriaQuery = criteriaQuery.select(builder.count(from));
+
+        final List<Folder> subFolders = findSubFolders(folder,
+                                                       filterTerm,
+                                                       FolderBrowser.SORT_KEY_NAME,
+                                                       FolderBrowser.SORT_ACTION_UP,
+                                                       -1,
+                                                       -1);
+        final List<ContentItem> items = findItemsInFolder(folder,
+                                                          filterTerm,
+                                                          FolderBrowser.SORT_KEY_NAME,
+                                                          FolderBrowser.SORT_ACTION_UP,
+                                                          -1,
+                                                          -1);
+        if (subFolders.isEmpty() && items.isEmpty()) {
+            return 0;
+        } else if (subFolders.isEmpty() && !items.isEmpty()) {
+            criteriaQuery = criteriaQuery.where(from.in(items));
+        } else if (!subFolders.isEmpty() && items.isEmpty()) {
+            criteriaQuery = criteriaQuery.where(from.in(subFolders));
+        } else {
+            criteriaQuery = criteriaQuery.where(builder.or(
+                from.in(subFolders),
+                from.in(items)));
+        }
+
+        return entityManager.createQuery(criteriaQuery).getSingleResult();
     }
 
-    @Transactional(Transactional.TxType.REQUIRED)
-    List<FolderBrowserTableRow> getObjectRows(final Folder folder,
-                                              final String orderBy) {
-        final List<CcmObject> objects = findObjects(folder, orderBy);
-
-        return objects.stream()
-                .map(object -> buildRow(object))
-                .collect(Collectors.toList());
-    }
-
-    @Transactional(Transactional.TxType.REQUIRED)
-    List<FolderBrowserTableRow> getObjectRows(final Folder folder,
-                                              final String filterTerm,
-                                              final String orderBy) {
-        final List<CcmObject> objects = findObjects(folder,
-                                                    filterTerm,
-                                                    orderBy);
-
-        return objects.stream()
-                .map(object -> buildRow(object))
-                .collect(Collectors.toList());
-    }
-
+    /**
+     * Create {@link FolderBrowserTableRow} objects for all objects in the
+     * provided folder.
+     *
+     * @param folder         The folder which contains the objects.
+     * @param orderBy        The field used to order the objects.
+     * @param orderDirection The direction for ordering the objects.
+     *
+     * @return A list with {@link FolderBrowserTableRow} objects for each object
+     *         in the provided {@code folder} ordered by the provided field and
+     *         in the provided direction.
+     */
     @Transactional(Transactional.TxType.REQUIRED)
     List<FolderBrowserTableRow> getObjectRows(final Folder folder,
                                               final String orderBy,
-                                              final int first,
-                                              final int maxResults) {
-        final List<CcmObject> objects = findObjects(folder,
-                                                    orderBy,
-                                                    first,
-                                                    maxResults);
-
-        return objects.stream()
-                .map(object -> buildRow(object))
-                .collect(Collectors.toList());
+                                              final String orderDirection) {
+        return getObjectRows(folder, "%", orderBy, orderDirection, -1, -1);
     }
 
+    /**
+     * Create {@link FolderBrowserTableRow} objects for all objects in the
+     * provided folder which match provided filter term.
+     *
+     * @param folder         The folder which contains the objects.
+     * @param filterTerm     The filter term.
+     * @param orderBy        The field used to order the objects.
+     * @param orderDirection The direction for ordering the objects.
+     *
+     * @return A list with {@link FolderBrowserTableRow} objects for each object
+     *         in the provided {@code folder} which matches the provided
+     *         {@code filterTerm}, ordered by the provided field and in the
+     *         provided direction.
+     */
     @Transactional(Transactional.TxType.REQUIRED)
     List<FolderBrowserTableRow> getObjectRows(final Folder folder,
                                               final String filterTerm,
                                               final String orderBy,
-                                              final int first,
-                                              final int maxResults) {
-        final List<CcmObject> objects = findObjects(folder,
-                                                    filterTerm,
-                                                    orderBy,
-                                                    first,
-                                                    maxResults);
-
-        return objects.stream()
-                .map(object -> buildRow(object))
-                .collect(Collectors.toList());
+                                              final String orderDirection) {
+        return getObjectRows(folder,
+                             filterTerm,
+                             orderBy,
+                             orderDirection,
+                             -1,
+                             -1);
     }
 
-    private FolderBrowserTableRow buildRow(final CcmObject object) {
+    /**
+     * Create {@link FolderBrowserTableRow} objects for the objects in the
+     * provided folder which are in the range provided by {@code firstResult}
+     * and {@code maxResult}
+     *
+     * @param folder         The folder which contains the objects.
+     * @param orderBy        The field used to order the objects.
+     * @param orderDirection The direction for ordering the objects.
+     * @param firstResult    The index of the first object to use.
+     * @param maxResults     The maximum number of objects to retrieve.
+     *
+     * @return A list with {@link FolderBrowserTableRow} objects for each object
+     *         in the provided {@code folder} ordered by the provided field and
+     *         in the provided direction. The list will start with the object
+     *         with index provided as {@code firstResult} and contain at most
+     *         {@code maxResults} items.
+     */
+    @Transactional(Transactional.TxType.REQUIRED)
+    List<FolderBrowserTableRow> getObjectRows(final Folder folder,
+                                              final String orderBy,
+                                              final String orderDirection,
+                                              final int firstResult,
+                                              final int maxResults) {
+        return getObjectRows(folder,
+                             "%",
+                             orderBy,
+                             orderDirection,
+                             firstResult,
+                             maxResults);
+    }
+
+    /**
+     * Create {@link FolderBrowserTableRow} objects for the objects in the
+     * provided folder which match the provided filter term and which are in the
+     * range provided by {@code firstResult} and {@code maxResult}
+     *
+     * @param folder         The folder which contains the objects.
+     * @param filterTerm     The filter term.
+     * @param orderBy        The field used to order the objects.
+     * @param orderDirection The direction for ordering the objects.
+     * @param firstResult    The index of the first object to use.
+     * @param maxResults     The maximum number of objects to retrieve.
+     *
+     * @return A list with {@link FolderBrowserTableRow} objects for each object
+     *         in the provided {@code folder} which matches the provided
+     *         {@code filterTerm}, ordered by the provided field and in the
+     *         provided direction. The list will start with the object with
+     *         index provided as {@code firstResult} and contain at most
+     *         {@code maxResults} items.
+     */
+    @Transactional(Transactional.TxType.REQUIRED)
+    List<FolderBrowserTableRow> getObjectRows(final Folder folder,
+                                              final String filterTerm,
+                                              final String orderBy,
+                                              final String orderDirection,
+                                              final int firstResult,
+                                              final int maxResults) {
+        final List<Folder> subFolders = findSubFolders(folder,
+                                                       filterTerm,
+                                                       orderBy,
+                                                       orderDirection,
+                                                       firstResult,
+                                                       maxResults);
+        final List<FolderBrowserTableRow> subFolderRows = subFolders.stream()
+            .map(subFolder -> buildRow(subFolder))
+            .collect(Collectors.toList());
+
+        if (subFolders.size() > maxResults) {
+            return subFolderRows;
+        } else {
+            final int maxItems = maxResults - subFolders.size();
+            final int firstItem = firstResult - subFolders.size();
+
+            final List<ContentItem> items = findItemsInFolder(folder,
+                                                              filterTerm,
+                                                              orderBy,
+                                                              orderDirection,
+                                                              firstItem,
+                                                              maxItems);
+            final List<FolderBrowserTableRow> itemRows = items.stream()
+                .map(item -> buildRow(item))
+                .collect(Collectors.toList());
+
+            final ArrayList<FolderBrowserTableRow> rows = new ArrayList<>();
+            rows.addAll(subFolderRows);
+            rows.addAll(itemRows);
+
+            return rows;
+        }
+    }
+
+    /**
+     * Helper method for building a {@link FolderBrowserTableRow} from a
+     * {@link Folder}.
+     *
+     * @param folder The {@link Folder} to use for building the
+     *               {@link FolderBrowserTableRow}.
+     *
+     * @return A {@link FolderBrowserTableRow} containing the data needed by the
+     *         {@link FolderBrowser} to display the provided {@code folder}.
+     */
+    private FolderBrowserTableRow buildRow(final Folder folder) {
+
         final FolderBrowserTableRow row = new FolderBrowserTableRow();
 
-        if (object instanceof Folder) {
-            final Folder folder = (Folder) object;
-            row.setObjectId(folder.getObjectId());
-            row.setObjectUuid(folder.getUuid());
-            row.setName(folder.getName());
-            row.setLanguages(Collections.emptyList());
-            if (folder.getTitle().hasValue(globalizationHelper
-                    .getNegotiatedLocale())) {
-                row.setTitle(folder.getTitle().getValue(globalizationHelper
-                        .getNegotiatedLocale()));
-            } else {
-                row.setTitle(folder.getTitle().getValue(defaultLocale));
-            }
-            row.setFolder(true);
-        } else if (object instanceof ContentItem) {
-            final ContentItem item = (ContentItem) object;
-            row.setObjectId(item.getObjectId());
-            row.setObjectUuid(item.getItemUuid());
-            row.setName(item.getName().getValue(defaultLocale));
-            final List<Locale> languages = new ArrayList<>(itemL10NManager
-                    .availableLanguages(item));
-            languages.sort((lang1, lang2) -> lang1.toString().compareTo(
-                    lang2.toString()));
-            row.setLanguages(languages);
-            if (item.getTitle().hasValue(globalizationHelper
-                    .getNegotiatedLocale())) {
-                row.setTitle(item.getTitle().getValue(globalizationHelper
-                        .getNegotiatedLocale()));
-            } else {
-                row.setTitle(item.getTitle().getValue(defaultLocale));
-            }
-            final ContentType type = item.getContentType();
-            final ContentTypeInfo typeInfo = typesManager.getContentTypeInfo(
-                    type);
-            row.setTypeLabelBundle(typeInfo.getLabelBundle());
-            row.setTypeLabelKey(typeInfo.getLabelKey());
-            row.setFolder(false);
+        row.setObjectId(folder.getObjectId());
+        row.setObjectUuid(folder.getUuid());
+        row.setName(folder.getName());
+        row.setLanguages(Collections.emptyList());
+        if (folder.getTitle().hasValue(globalizationHelper
+            .getNegotiatedLocale())) {
+            row.setTitle(folder.getTitle().getValue(globalizationHelper
+                .getNegotiatedLocale()));
         } else {
-            row.setObjectId(object.getObjectId());
-            row.setObjectUuid(object.getUuid());
-            row.setName("???");
-            row.setLanguages(Collections.emptyList());
-            final LocalizedString title = new LocalizedString();
-            title.addValue(globalizationHelper.getNegotiatedLocale(), "???");
-            row.setFolder(false);
+            row.setTitle(folder.getTitle().getValue(defaultLocale));
         }
+        row.setFolder(true);
 
         return row;
     }
 
+    /**
+     * Helper method for building a {@link FolderBrowserTableRow} from a
+     * {@link ContentItem}.
+     *
+     * @param item The {@link ContentItem} to use for building the
+     *             {@link FolderBrowserTableRow}.
+     *
+     * @return A {@link FolderBrowserTableRow} containing the data needed by the
+     *         {@link FolderBrowser} to display the provided {@code item}.
+     */
+    private FolderBrowserTableRow buildRow(final ContentItem item) {
+
+        final FolderBrowserTableRow row = new FolderBrowserTableRow();
+
+        row.setObjectId(item.getObjectId());
+        row.setObjectUuid(item.getItemUuid());
+        row.setName(item.getName().getValue(defaultLocale));
+        final List<Locale> languages = new ArrayList<>(itemL10NManager
+            .availableLanguages(item));
+        languages.sort((lang1, lang2) -> lang1.toString().compareTo(
+            lang2.toString()));
+        row.setLanguages(languages);
+        if (item.getTitle().hasValue(globalizationHelper
+            .getNegotiatedLocale())) {
+            row.setTitle(item.getTitle().getValue(globalizationHelper
+                .getNegotiatedLocale()));
+        } else {
+            row.setTitle(item.getTitle().getValue(defaultLocale));
+        }
+        final ContentType type = item.getContentType();
+        final ContentTypeInfo typeInfo = typesManager.getContentTypeInfo(
+            type);
+        row.setTypeLabelBundle(typeInfo.getLabelBundle());
+        row.setTypeLabelKey(typeInfo.getLabelKey());
+
+        row.setCreated(item.getCreationDate());
+        row.setLastModified(item.getLastModified());
+
+        row.setFolder(false);
+
+        return row;
+    }
+
+    /**
+     * Called by the {@link FolderBrowser} to delete an object.
+     *
+     * @param objectId
+     */
     @Transactional(Transactional.TxType.REQUIRED)
     protected void deleteObject(final long objectId) {
         final Optional<CcmObject> object = objectRepo.findById(objectId);
@@ -283,55 +388,150 @@ public class FolderBrowserController {
     }
 
     /**
-     * Creates a Criteria Query
+     * Retrieves all subfolders of a folder matching the provided filter term.
+     * Because {@link Folder} does not have any of the fields despite the name
+     * which can be used to order the objects ordering is done as follows:
      *
-     * @param folder
-     * @param filterTerm
+     * If {@code orderBy} has any value other than
+     * {@link FolderBrowser#SORT_KEY_NAME} the subfolders are ordered in
+     * ascending order by their name. If {@code orderBy} is
+     * {@link FolderBrowser#SORT_KEY_NAME} the subfolders are ordered by their
+     * name in ascending and descending order depending on the value of
+     * {@code orderDirection}.
      *
-     * @return
+     * @param folder         The folder which contains the subfolders.
+     * @param filterTerm     The filter term.
+     * @param orderBy        Field to use for ordering. If the value is negative
+     *                       the parameter is ignored.
+     * @param orderDirection Direction for ordering. If the value is negative
+     *                       the parameter is ignored.
+     * @param firstResult    Index of the first result to retrieve.
+     * @param maxResults     Maxium number of results to retrieve.
+     *
+     *
+     * @return A list of the subfolders of the provided {@code folder} which
+     *         match the provided {@code filterTerm}. The list is ordered as
+     *         described above. The list will contain at most {@code maxResults}
+     *         starting with the result with the index provided as
+     *         {@code firstResult}.
      */
     private List<Folder> findSubFolders(final Folder folder,
-                                        final String filterTerm) {
+                                        final String filterTerm,
+                                        final String orderBy,
+                                        final String orderDirection,
+                                        final int firstResult,
+                                        final int maxResults) {
         final CriteriaBuilder builder = entityManager
-                .getCriteriaBuilder();
+            .getCriteriaBuilder();
 
-        final CriteriaQuery<Folder> query = builder.createQuery(
-                Folder.class);
-        final Root<Folder> from = query.from(Folder.class);
+        final CriteriaQuery<Folder> criteria = builder.createQuery(
+            Folder.class);
+        final Root<Folder> from = criteria.from(Folder.class);
 
-        return entityManager.createQuery(
-                query.where(builder.and(
-                        builder.equal(from.get("parentCategory"), folder),
-                        builder.
-                                like(builder.lower(from.get("name")), filterTerm)))).
-                getResultList();
+        final Order order;
+        if (FolderBrowser.SORT_KEY_NAME.equals(orderBy)
+                && FolderBrowser.SORT_ACTION_DOWN.equals(orderDirection)) {
+            order = builder.desc(from.get("name"));
+        } else {
+            order = builder.asc(from.get("name"));
+        }
 
+        final TypedQuery<Folder> query = entityManager.createQuery(
+            criteria.where(builder.and(
+                builder.equal(from.get("parentCategory"), folder),
+                builder
+                    .like(builder.lower(from.get("name")), filterTerm)))
+                .orderBy(order));
+
+        if (firstResult >= 0) {
+            query.setFirstResult(firstResult);
+        }
+        if (maxResults >= 0) {
+            query.setMaxResults(maxResults);
+        }
+
+        return query.getResultList();
     }
 
-    private List<ContentItem> findItemsInFolder(
-            final Folder folder,
-            final String filterTerm) {
+    /**
+     * Retrieves all items of a folder matching the provided filter term.
+     *
+     * @param folder         The folder which contains the subfolders.
+     * @param filterTerm     The filter term.
+     * @param orderBy        Field to use for ordering. If the value is negative
+     *                       the parameter is ignored.
+     * @param orderDirection Direction for ordering. If the value is negative
+     *                       the parameter is ignored.
+     * @param firstResult    Index of the first result to retrieve.
+     * @param maxResults     Maxium number of results to retrieve.
+     *
+     *
+     * @return A list of the subfolders of the provided {@code folder} which
+     *         match the provided {@code filterTerm}. The list is ordered the
+     *         field provided as {@code orderBy} in the direction provided by
+     *         {@code orderDirection}. The list will contain at most
+     *         {@code maxResults} starting with the result with the index
+     *         provided as {@code firstResult}.
+     */
+    private List<ContentItem> findItemsInFolder(final Folder folder,
+                                                final String filterTerm,
+                                                final String orderBy,
+                                                final String orderDirection,
+                                                final int firstResult,
+                                                final int maxResults) {
 
         final CriteriaBuilder builder = entityManager
-                .getCriteriaBuilder();
+            .getCriteriaBuilder();
 
-        final CriteriaQuery<ContentItem> query = builder.createQuery(
-                ContentItem.class);
-        final Root<ContentItem> fromItem = query.from(ContentItem.class);
+        final CriteriaQuery<ContentItem> criteria = builder.createQuery(
+            ContentItem.class);
+        final Root<ContentItem> fromItem = criteria.from(ContentItem.class);
         final Join<ContentItem, Categorization> join = fromItem.join(
-                "categories");
+            "categories");
 
-        return entityManager.createQuery(query
-                .select(fromItem)
-                .where(builder.and(
-                        builder.equal(join.get("category"), folder),
-                        builder.equal(join.get("type"),
-                                      CmsConstants.CATEGORIZATION_TYPE_FOLDER),
-                        builder.equal(fromItem.get("version"),
-                                      ContentItemVersion.DRAFT),
-                        builder.like(fromItem.get("displayName"),
-                                     filterTerm))))
-                .getResultList();
+        final Path<?> orderPath;
+        switch (orderBy) {
+            case FolderBrowser.SORT_KEY_NAME:
+                orderPath = fromItem.get("displayName");
+                break;
+            case FolderBrowser.SORT_KEY_CREATION_DATE:
+                orderPath = fromItem.get("creationDate");
+                break;
+            case FolderBrowser.SORT_KEY_LAST_MODIFIED_DATE:
+                orderPath = fromItem.get("lastModified");
+                break;
+            default:
+                orderPath = fromItem.get("displayName");
+                break;
+        }
+
+        final Order order;
+        if (FolderBrowser.SORT_ACTION_DOWN.equals(orderDirection)) {
+            order = builder.desc(orderPath);
+        } else {
+            order = builder.asc(orderPath);
+        }
+
+        final TypedQuery<ContentItem> query = entityManager.createQuery(criteria
+            .select(fromItem)
+            .where(builder.and(
+                builder.equal(join.get("category"), folder),
+                builder.equal(join.get("type"),
+                              CmsConstants.CATEGORIZATION_TYPE_FOLDER),
+                builder.equal(fromItem.get("version"),
+                              ContentItemVersion.DRAFT),
+                builder.like(fromItem.get("displayName"),
+                             filterTerm)))
+            .orderBy(order));
+
+        if (firstResult >= 0) {
+            query.setFirstResult(firstResult);
+        }
+        if (maxResults >= 0) {
+            query.setMaxResults(maxResults);
+        }
+
+        return query.getResultList();
     }
 
 }

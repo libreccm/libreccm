@@ -47,20 +47,27 @@ public class RoleMembershipMarshaller extends AbstractMarshaller<RoleMembership>
     }
 
     @Override
-    @Transactional(Transactional.TxType.REQUIRED)
-    protected void insertIntoDb(RoleMembership portableObject) {
+//    @Transactional(Transactional.TxType.REQUIRED)
+    protected void insertIntoDb(final RoleMembership portableObject) {
 
 //        if (portableObject.getMembershipId() == 0) {
             portableObject.setMembershipId(0);
 //            portableObject.setMembershipId(portableObject.getMembershipId() * -1);
-            entityManager.persist(portableObject);
+//            entityManager.persist(portableObject);
 //        entityManager.merge(portableObject);
-        entityManager.flush();
+//        entityManager.flush();
+            final RoleMembership roleMembership = save(portableObject);
         LOGGER.debug("Saved RoleMembership with id {}.",
-                     portableObject.getMembershipId());
+                     roleMembership.getMembershipId());
 //        } else {
 //            entityManager.merge(portableObject);
 //        }
+    }
+    
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
+    protected RoleMembership save(final RoleMembership membership) {
+        entityManager.persist(membership);
+        return membership;
     }
 
 }

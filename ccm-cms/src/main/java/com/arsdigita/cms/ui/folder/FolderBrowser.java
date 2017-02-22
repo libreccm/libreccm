@@ -58,6 +58,7 @@ import org.librecms.contentsection.ContentSectionManager;
 import org.librecms.contentsection.privileges.ItemPrivileges;
 import org.librecms.dispatcher.ItemResolver;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -126,13 +127,16 @@ public class FolderBrowser extends Table {
 
         nameColumn = getColumn(0);
         nameColumn.setCellRenderer(new NameCellRenderer());
-//        nameColumn.setHeaderRenderer(new HeaderCellRenderer(SORT_KEY_NAME));
+        nameColumn.setHeaderRenderer(new HeaderCellRenderer(SORT_KEY_NAME));
         getColumn(1).setCellRenderer(new LanguagesCellRenderer());
-//        getColumn(2).setHeaderRenderer(new HeaderCellRenderer(SORT_KEY_TITLE));
-//        getColumn(5).setHeaderRenderer(new HeaderCellRenderer(
-//            SORT_KEY_CREATION_DATE));
-//        getColumn(6).setHeaderRenderer(new HeaderCellRenderer(
-//            SORT_KEY_LAST_MODIFIED_DATE));
+        getColumn(4).setHeaderRenderer(new HeaderCellRenderer(
+            SORT_KEY_CREATION_DATE));
+
+        getColumn(4).setCellRenderer(new DateCellRenderer());
+        getColumn(5).setCellRenderer(new DateCellRenderer());
+        getColumn(5).setHeaderRenderer(new HeaderCellRenderer(
+            SORT_KEY_LAST_MODIFIED_DATE));
+
         deleteColumn = getColumn(6);
         deleteColumn.setCellRenderer(new ActionCellRenderer());
         deleteColumn.setAlign("center");
@@ -239,6 +243,14 @@ public class FolderBrowser extends Table {
         return (String) state.getValue(atozFilterParameter);
     }
 
+    protected String getSortType(final PageState state) {
+        return (String) state.getValue(sortTypeParameter);
+    }
+    
+    protected String getSortDirection(final PageState state) {
+        return (String) state.getValue(sortDirectionParameter);
+    }
+    
     private class HeaderCellRenderer
         extends com.arsdigita.cms.ui.util.DefaultTableCellRenderer {
 
@@ -273,7 +285,7 @@ public class FolderBrowser extends Table {
             final ControlLink link = new ControlLink(new Label(headerName)) {
 
                 @Override
-                public void setControlEvent(PageState ps) {
+                public void setControlEvent(final PageState state) {
                     String sortDirectionAction;
                     // by default, everything sorts "up" unless it
                     // is the current key and it is already pointing up
@@ -283,9 +295,9 @@ public class FolderBrowser extends Table {
                     } else {
                         sortDirectionAction = SORT_ACTION_UP;
                     }
-                    ps.setControlEvent(table,
-                                       sortDirectionAction,
-                                       headerKey);
+                    state.setControlEvent(table,
+                                          sortDirectionAction,
+                                          headerKey);
                 }
 
             };
@@ -427,6 +439,28 @@ public class FolderBrowser extends Table {
                     "DRAFT"))));
 
             return container;
+        }
+
+    }
+
+    private class DateCellRenderer implements TableCellRenderer {
+
+        @Override
+        public Component getComponent(final Table table,
+                                      final PageState state,
+                                      final Object value,
+                                      final boolean isSelected,
+                                      final Object key,
+                                      final int row,
+                                      final int column) {
+            if (value instanceof Date) {
+                final Date date = (Date) value;
+                return new Text(String.format("%1$TF %1$TT", date));
+            } else if (value == null) {
+                return new Text("");
+            } else {
+                return new Text(value.toString());
+            }
         }
 
     }
