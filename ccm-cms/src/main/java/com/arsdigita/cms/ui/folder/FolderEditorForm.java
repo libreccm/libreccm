@@ -22,53 +22,90 @@ import com.arsdigita.bebop.FormData;
 import com.arsdigita.bebop.FormProcessException;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.event.FormSectionEvent;
+import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.kernel.KernelConfig;
+
 import org.libreccm.categorization.Category;
+import org.libreccm.categorization.CategoryManager;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.ConfigurationManager;
+import org.librecms.CmsConstants;
+import org.librecms.contentsection.Folder;
 
+import static com.arsdigita.cms.ui.folder.FolderForm.*;
 
 /**
- * Implements functionality for renaming a folder. Most code taken from FolderCreator. Need to refactor out base
- * functionality of FolderEditor & Creator.
+ * Implements functionality for renaming a folder. Most code taken from
+ * FolderCreator. Need to refactor out base functionality of FolderEditorForm &
+ * Creator.
  *
  * @author <a href="mailto:jorris@arsdigita.com">Jon Orris</a>
- *  @author <a href="mailto:jens.pelzetter@googlemail.com">Jens >Pelzetter</a>
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens >Pelzetter</a>
  *
  */
+public class FolderEditorForm extends FolderForm {
 
-public class FolderEditor extends FolderForm {
-
-    public FolderEditor(final String name, final FolderSelectionModel folder) {
+    public FolderEditorForm(final String name, final FolderSelectionModel folder) {
         super(name, folder);
     }
 
     /**
      * Initialise the form with name & label of folder being edited.
+     *
      * @param event
+     *
      * @throws com.arsdigita.bebop.FormProcessException
      */
     @Override
     public void init(final FormSectionEvent event) throws FormProcessException {
         final PageState state = event.getPageState();
         final FormData data = event.getFormData();
-        final Category folder = getCurrentFolder(state);
+        final Folder folder = getCurrentFolder(state);
         data.put(NAME, folder.getName());
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-        final ConfigurationManager confManager = cdiUtil.findBean(ConfigurationManager.class);
+        final ConfigurationManager confManager = cdiUtil.findBean(
+            ConfigurationManager.class);
         final KernelConfig kernelConfig = confManager.findConfiguration(
-                KernelConfig.class);
-        data.put(TITLE, 
+            KernelConfig.class);
+        data.put(TITLE,
                  folder.getTitle().getValue(kernelConfig.getDefaultLocale()));
     }
 
+    /**
+     * Validates the form. Checks for name uniqueness.
+     *
+     * @param event
+     *
+     * @throws com.arsdigita.bebop.FormProcessException
+     */
+    @Override
+    public void validate(final FormSectionEvent event)
+        throws FormProcessException {
+        final Category folder = getCurrentFolder(event.getPageState())
+            .getParentCategory();
+        final FormData data = event.getFormData();
+        final String name = data.getString(NAME);
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final CategoryManager categoryManager = cdiUtil.findBean(
+            CategoryManager.class);
+
+        if (categoryManager.hasSubCategoryWithName(folder, name)) {
+            data.addError(new GlobalizedMessage(
+                "cms.ui.folderform.error.parent.name_not_unique",
+                CmsConstants.CMS_BUNDLE,
+                new Object[]{name}));
+        }
+
+    }
 
     @Override
-    public void process(final FormSectionEvent event) throws FormProcessException {
+    public void process(final FormSectionEvent event) throws
+        FormProcessException {
         final PageState state = event.getPageState();
         final FormData data = event.getFormData();
-        final Category folder = getCurrentFolder(state);
+        final Folder folder = getCurrentFolder(state);
 
-        updateFolder(folder, (String)data.get(NAME), (String)data.get(TITLE));
+        updateFolder(folder, (String) data.get(NAME), (String) data.get(TITLE));
     }
+
 }

@@ -39,7 +39,7 @@ import org.librecms.contentsection.Folder;
  */
 public class FolderSelectionModel extends CcmObjectSelectionModel<Folder> {
 
-    public FolderSelectionModel(String name) {
+    public FolderSelectionModel(final String name) {
         super(Category.class.getName(), name);
     }
 

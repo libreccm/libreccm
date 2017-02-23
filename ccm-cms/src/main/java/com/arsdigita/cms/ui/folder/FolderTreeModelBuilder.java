@@ -52,17 +52,17 @@ import org.libreccm.configuration.ConfigurationManager;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class FolderTreeModelBuilder extends LockableImpl
-        implements TreeModelBuilder {
+    implements TreeModelBuilder {
 
     /**
      * Make a tree model that lists the hierarchy of folders underneath the
      * folder returned by {@link #getRoot getRoot}.
      *
-     * @param tree the tree in which the model is used
+     * @param tree  the tree in which the model is used
      * @param state represents the current request
      *
      * @return a tree model that lists the hierarchy of folders underneath the
-     * folder returned by {@link #getRoot getRoot}.
+     *         folder returned by {@link #getRoot getRoot}.
      */
     @Override
     public TreeModel makeModel(final Tree tree, final PageState state) {
@@ -78,7 +78,7 @@ public class FolderTreeModelBuilder extends LockableImpl
                                        final PageState state) {
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
                 final FolderTreeModelController controller = cdiUtil.findBean(
-                        FolderTreeModelController.class);
+                    FolderTreeModelController.class);
 
                 return controller.hasChildren(node);
             }
@@ -90,7 +90,7 @@ public class FolderTreeModelBuilder extends LockableImpl
 
                 // Always expand root node
                 if (nodeKey.equals(getRoot(state).getKey().toString())
-                            && tree.isCollapsed(nodeKey, state)) {
+                        && tree.isCollapsed(nodeKey, state)) {
                     tree.expand(nodeKey, state);
                 }
 
@@ -100,13 +100,17 @@ public class FolderTreeModelBuilder extends LockableImpl
 
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
                 final FolderTreeModelController controller = cdiUtil.findBean(
-                        FolderTreeModelController.class);
+                    FolderTreeModelController.class);
 
                 final List<Folder> subFolders = controller.getChildren(node);
                 return subFolders.stream()
-                        .map(folder -> generateTreeNode(folder))
-                        .collect(Collectors.toList())
-                        .iterator();
+                    .map(folder -> generateTreeNode(folder))
+                    .sorted((node1, node2) -> {
+                        return ((String) node1.getElement())
+                            .compareTo((String) node2.getElement());
+                    })
+                    .collect(Collectors.toList())
+                    .iterator();
             }
 
             private TreeNode generateTreeNode(final Folder folder) {
@@ -114,6 +118,7 @@ public class FolderTreeModelBuilder extends LockableImpl
 
                 return node;
             }
+
         };
 
         /*return new DataQueryTreeModel(getRoot(state).getID(),
@@ -170,7 +175,7 @@ public class FolderTreeModelBuilder extends LockableImpl
      *
      */
     protected Folder getRootFolder(final PageState state)
-            throws IllegalStateException {
+        throws IllegalStateException {
 
         final ContentSection section = CMS.getContext().getContentSection();
         return section.getRootDocumentsFolder();
@@ -193,17 +198,17 @@ public class FolderTreeModelBuilder extends LockableImpl
         public Object getElement() {
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final GlobalizationHelper globalizationHelper = cdiUtil.findBean(
-                    GlobalizationHelper.class);
+                GlobalizationHelper.class);
             final Locale locale = globalizationHelper.getNegotiatedLocale();
             if (folder.getTitle().hasValue(locale)) {
                 return folder.getTitle().getValue(locale);
             } else {
                 final ConfigurationManager confManager = cdiUtil.findBean(
-                        ConfigurationManager.class);
+                    ConfigurationManager.class);
                 final KernelConfig kernelConfig = confManager.findConfiguration(
-                        KernelConfig.class);
+                    KernelConfig.class);
                 final String value = folder.getTitle().getValue(kernelConfig.
-                        getDefaultLocale());
+                    getDefaultLocale());
                 if (value == null) {
                     return folder.getName();
                 } else {
@@ -211,6 +216,7 @@ public class FolderTreeModelBuilder extends LockableImpl
                 }
             }
         }
+
     }
 
     /*private class NewFolderBrowserIterator implements Iterator {

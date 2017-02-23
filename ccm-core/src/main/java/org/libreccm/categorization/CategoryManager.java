@@ -524,6 +524,13 @@ public class CategoryManager {
                 parentCategory.toString()));
         }
 
+        if (hasSubCategoryWithName(parent.get(), sub.get().getName())) {
+            throw new IllegalArgumentException(String.format(
+                "The provided category already has a sub category with "
+                    + "the name '%s'.",
+                sub.get().getName()));
+        }
+        
         if (sub.get().getParentCategory() != null) {
             final Category oldParent = sub.get().getParentCategory();
             removeSubCategoryFromCategory(sub.get(), oldParent);
@@ -538,6 +545,35 @@ public class CategoryManager {
             categoryRepo.save(parent.get());
             categoryRepo.save(sub.get());
         });
+    }
+
+    /**
+     * Checks if a category has a sub category with the provided name.
+     *
+     * @param category The category.
+     * @param name     The name.
+     *
+     * @return {@code true} if the provided {@code category} has a child with
+     *         the provided {@code name}, {@code false} otherwise.
+     *
+     * @see {@link Category#name}.
+     */
+    @Transactional(Transactional.TxType.REQUIRED)
+    public boolean hasSubCategoryWithName(final Category category,
+                                          final String name) {
+        Objects.requireNonNull(category, "category can't be null");
+        Objects.requireNonNull(name, "name can't be null");
+
+        if (name.trim().isEmpty()) {
+            throw new IllegalArgumentException("name can't be empty.");
+        }
+
+        final TypedQuery<Boolean> query = entityManager.createNamedQuery(
+            "Category.hasSubCategoryWithName", Boolean.class);
+        query.setParameter("name", name);
+        query.setParameter("parent", category);
+
+        return query.getSingleResult();
     }
 
     /**

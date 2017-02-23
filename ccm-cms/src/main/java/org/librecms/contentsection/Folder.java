@@ -190,6 +190,10 @@ public class Folder extends Category implements Serializable {
         this.type = type;
     }
 
+    public Folder getParentFolder() {
+        return (Folder) getParentCategory();
+    }
+    
     /**
      * A convenient method for getting all sub folders of folder.
      *
