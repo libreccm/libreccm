@@ -85,8 +85,8 @@
     <!-- EN Processing content -->
     <xsl:template match="bebop:cell" mode="item-path">
         <xsl:apply-templates select="." mode="span"/>
-        <xsl:if test="position() != last()">
-            <xsl:text>&gt;</xsl:text>
+        <xsl:if test="position() != last() and position() != 1">
+            <xsl:text>/</xsl:text>
         </xsl:if>
     </xsl:template>
   
