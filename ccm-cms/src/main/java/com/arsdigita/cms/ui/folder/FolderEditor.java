@@ -22,44 +22,52 @@ import com.arsdigita.bebop.FormData;
 import com.arsdigita.bebop.FormProcessException;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.event.FormSectionEvent;
+import com.arsdigita.kernel.KernelConfig;
 import org.libreccm.categorization.Category;
+import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.configuration.ConfigurationManager;
 
 
 /**
  * Implements functionality for renaming a folder. Most code taken from FolderCreator. Need to refactor out base
  * functionality of FolderEditor & Creator.
  *
- * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens >Pelzetter</a>
  * @author <a href="mailto:jorris@arsdigita.com">Jon Orris</a>
+ *  @author <a href="mailto:jens.pelzetter@googlemail.com">Jens >Pelzetter</a>
  *
  */
 
 public class FolderEditor extends FolderForm {
 
-    public FolderEditor(String name, FolderSelectionModel folder) {
+    public FolderEditor(final String name, final FolderSelectionModel folder) {
         super(name, folder);
     }
 
     /**
      * Initialise the form with name & label of folder being edited.
-     * @param e
+     * @param event
      * @throws com.arsdigita.bebop.FormProcessException
      */
     @Override
-    public void init(FormSectionEvent e) throws FormProcessException {
-        PageState s = e.getPageState();
-        FormData data = e.getFormData();
-        Category folder = getCurrentFolder(s);
+    public void init(final FormSectionEvent event) throws FormProcessException {
+        final PageState state = event.getPageState();
+        final FormData data = event.getFormData();
+        final Category folder = getCurrentFolder(state);
         data.put(NAME, folder.getName());
-        data.put(TITLE, folder.getDisplayName());
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final ConfigurationManager confManager = cdiUtil.findBean(ConfigurationManager.class);
+        final KernelConfig kernelConfig = confManager.findConfiguration(
+                KernelConfig.class);
+        data.put(TITLE, 
+                 folder.getTitle().getValue(kernelConfig.getDefaultLocale()));
     }
 
 
     @Override
-    public void process(FormSectionEvent e) throws FormProcessException {
-        PageState s = e.getPageState();
-        FormData data = e.getFormData();
-        Category folder = getCurrentFolder(s);
+    public void process(final FormSectionEvent event) throws FormProcessException {
+        final PageState state = event.getPageState();
+        final FormData data = event.getFormData();
+        final Category folder = getCurrentFolder(state);
 
         updateFolder(folder, (String)data.get(NAME), (String)data.get(TITLE));
     }
