@@ -24,7 +24,7 @@ import com.arsdigita.bebop.tree.TreeModel;
 import com.arsdigita.bebop.tree.TreeModelBuilder;
 import com.arsdigita.bebop.tree.TreeNode;
 import com.arsdigita.cms.CMS;
-import com.arsdigita.ui.admin.applications.ApplicationInstanceTreeNode;
+import com.arsdigita.kernel.KernelConfig;
 
 import org.librecms.contentsection.ContentSection;
 
@@ -40,6 +40,7 @@ import org.librecms.contentsection.Folder;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
+import org.libreccm.configuration.ConfigurationManager;
 
 /**
  * A {@link com.arsdigita.bebop.tree.TreeModelBuilder} that produces trees
@@ -51,17 +52,17 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class FolderTreeModelBuilder extends LockableImpl
-    implements TreeModelBuilder {
+        implements TreeModelBuilder {
 
     /**
      * Make a tree model that lists the hierarchy of folders underneath the
      * folder returned by {@link #getRoot getRoot}.
      *
-     * @param tree  the tree in which the model is used
+     * @param tree the tree in which the model is used
      * @param state represents the current request
      *
      * @return a tree model that lists the hierarchy of folders underneath the
-     *         folder returned by {@link #getRoot getRoot}.
+     * folder returned by {@link #getRoot getRoot}.
      */
     @Override
     public TreeModel makeModel(final Tree tree, final PageState state) {
@@ -77,19 +78,19 @@ public class FolderTreeModelBuilder extends LockableImpl
                                        final PageState state) {
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
                 final FolderTreeModelController controller = cdiUtil.findBean(
-                    FolderTreeModelController.class);
+                        FolderTreeModelController.class);
 
                 return controller.hasChildren(node);
             }
 
             @Override
             public Iterator<TreeNode> getChildren(final TreeNode node,
-                                                final PageState state) {
+                                                  final PageState state) {
                 final String nodeKey = node.getKey().toString();
 
                 // Always expand root node
                 if (nodeKey.equals(getRoot(state).getKey().toString())
-                        && tree.isCollapsed(nodeKey, state)) {
+                            && tree.isCollapsed(nodeKey, state)) {
                     tree.expand(nodeKey, state);
                 }
 
@@ -99,23 +100,21 @@ public class FolderTreeModelBuilder extends LockableImpl
 
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
                 final FolderTreeModelController controller = cdiUtil.findBean(
-                    FolderTreeModelController.class);
-                
+                        FolderTreeModelController.class);
+
                 final List<Folder> subFolders = controller.getChildren(node);
                 return subFolders.stream()
-                    .map(folder -> generateTreeNode(folder))
-                    .collect(Collectors.toList())
-                    .iterator();
+                        .map(folder -> generateTreeNode(folder))
+                        .collect(Collectors.toList())
+                        .iterator();
             }
 
             private TreeNode generateTreeNode(final Folder folder) {
-            final FolderTreeNode node = new FolderTreeNode(folder);
-            
-            return node;
-        }
+                final FolderTreeNode node = new FolderTreeNode(folder);
+
+                return node;
+            }
         };
-        
-        
 
         /*return new DataQueryTreeModel(getRoot(state).getID(),
                                       "com.arsdigita.cms.getRootFolder",
@@ -171,7 +170,7 @@ public class FolderTreeModelBuilder extends LockableImpl
      *
      */
     protected Folder getRootFolder(final PageState state)
-        throws IllegalStateException {
+            throws IllegalStateException {
 
         final ContentSection section = CMS.getContext().getContentSection();
         return section.getRootDocumentsFolder();
@@ -194,12 +193,17 @@ public class FolderTreeModelBuilder extends LockableImpl
         public Object getElement() {
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final GlobalizationHelper globalizationHelper = cdiUtil.findBean(
-                GlobalizationHelper.class);
+                    GlobalizationHelper.class);
             final Locale locale = globalizationHelper.getNegotiatedLocale();
             if (folder.getTitle().hasValue(locale)) {
                 return folder.getTitle().getValue(locale);
             } else {
-                final String value = folder.getTitle().getValue();
+                final ConfigurationManager confManager = cdiUtil.findBean(
+                        ConfigurationManager.class);
+                final KernelConfig kernelConfig = confManager.findConfiguration(
+                        KernelConfig.class);
+                final String value = folder.getTitle().getValue(kernelConfig.
+                        getDefaultLocale());
                 if (value == null) {
                     return folder.getName();
                 } else {
