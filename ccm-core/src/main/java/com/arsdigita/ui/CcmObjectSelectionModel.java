@@ -36,7 +36,7 @@ import org.libreccm.core.CcmObjectRepository;
  *
  */
 public class CcmObjectSelectionModel<T extends CcmObject>
-        implements SingleSelectionModel<Long> {
+    implements SingleSelectionModel<Long> {
 
     private final Class<T> clazz;
     private final SingleSelectionModel<Long> model;
@@ -66,7 +66,7 @@ public class CcmObjectSelectionModel<T extends CcmObject>
             throw new RuntimeException(ex);
         }
         model = new ParameterSingleSelectionModel<Long>(new LongParameter(
-                parameterName));
+            parameterName));
     }
 
     public CcmObjectSelectionModel(final Class<T> clazz,
@@ -108,9 +108,11 @@ public class CcmObjectSelectionModel<T extends CcmObject>
     @Override
     public Long getSelectedKey(final PageState state) {
         final Object key = model.getSelectedKey(state);
-        if (key instanceof Long) {
+        if (key == null) {
+            return null;
+        } else if (key instanceof Long) {
             return (Long) key;
-        } else if(key instanceof String) {
+        } else if (key instanceof String) {
             return Long.parseLong((String) key);
         } else {
             return Long.parseLong(key.toString());
@@ -125,7 +127,7 @@ public class CcmObjectSelectionModel<T extends CcmObject>
     public T getSelectedObject(final PageState state) {
         final Long key = getSelectedKey(state);
         final CcmObjectRepository repository = CdiUtil.createCdiUtil().findBean(
-                CcmObjectRepository.class);
+            CcmObjectRepository.class);
         @SuppressWarnings("unchecked")
         final T object = (T) repository.findObjectById(key).get();
         return object;

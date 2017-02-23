@@ -435,9 +435,9 @@ public class Form extends FormSection implements BebopConstants {
 
         // Unless invisible form processing is turned on, don't run any
         // listeners if this form is not visible.
-        if (getProcessInvisible() || state.isVisibleOnPage(this)) {
+//        if (getProcessInvisible() || state.isVisibleOnPage(this)) {
             getModel().process(state, result);
-        }
+//        }
         return result;
     }
 
