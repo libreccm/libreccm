@@ -44,8 +44,8 @@ import org.librecms.contentsection.ContentSection;
 
 import com.arsdigita.cms.ui.authoring.CreationSelector;
 import com.arsdigita.cms.ui.authoring.NewItemForm;
-import com.arsdigita.cms.ui.folder.FolderCreator;
-import com.arsdigita.cms.ui.folder.FolderEditor;
+import com.arsdigita.cms.ui.folder.FolderCreateForm;
+import com.arsdigita.cms.ui.folder.FolderEditorForm;
 import com.arsdigita.cms.ui.folder.FolderManipulator;
 import com.arsdigita.cms.ui.folder.FolderPath;
 import com.arsdigita.cms.ui.folder.FolderRequestLocal;
@@ -88,7 +88,7 @@ public class FlatItemList extends SegmentedPanel implements FormProcessListener,
     private final SingleSelectionModel<Long> typeSelectionModel;
     private final CreationSelector creationSelector;
     private final FolderManipulator folderManipulator;
-    private final FolderCreator folderCreator;
+    private final FolderCreateForm folderCreator;
 //    private final ActionLink m_setHomeFolderAction;
 //    private final ActionLink m_removeHomeFolderAction;
     private final ActionLink createFolderAction;
@@ -102,7 +102,7 @@ public class FlatItemList extends SegmentedPanel implements FormProcessListener,
     private final CMSPermissionsPane permissionsPane;
     // Folder edit/rename functionality.
     private final ActionLink editFolderAction;
-    private final FolderEditor folderEditor;
+    private final FolderEditorForm folderEditor;
     private final Label contentLabel;
     private final FolderPath folderPath;
     private final Label chooseLabel;
@@ -155,7 +155,6 @@ public class FlatItemList extends SegmentedPanel implements FormProcessListener,
 
         browseActions.setSubject(folderManipulator);
 
-        // The actions
         createFolderAction = new ActionLink(new Label(globalize(
             "cms.ui.new_folder")));
         createFolderAction.addActionListener(this);
@@ -166,67 +165,16 @@ public class FlatItemList extends SegmentedPanel implements FormProcessListener,
         editFolderAction.addActionListener(this);
         browseActions.addAction(editFolderAction);
 
-//        m_setHomeFolderAction = new ActionLink(new Label(globalize(
-//            "cms.ui.set_home_folder")));
-//        m_setHomeFolderAction.addActionListener(this);
-//        browseActions.addAction(m_setHomeFolderAction);
-//        m_homeFolderLabel = new Label(new PrintListener() {
-//
-//            @Override
-//            public final void prepare(final PrintEvent event) {
-//                Label label = (Label) event.getTarget();
-//                User user = Web.getWebContext().getUser();
-//
-//                Folder folder = Folder.getUserHomeFolder(user, CMS.getContext()
-//                                                         .getContentSection());
-//                if (folder != null) {
-//                    String url = folder.getContentSection().getURL()
-//                                     + PageLocations.SECTION_PAGE + "?"
-//                                     + ContentSectionPage.SET_FOLDER + "="
-//                                     + folder.getID();
-//                    //label.setLabel("Go to home folder: <a href=\"" + url + "\">" + folder.getLabel() + "</a>");
-//                    String[] parts = new String[3];
-//                    parts[0] = "";
-//                    parts[1] = url;
-//                    parts[2] = folder.getLabel();
-//                    //  label.setLabel(String.format("%s: <a href=\"%s\">%s</a>",
-//                    //                               (String) globalize("cms.ui.go_to_home_folder").localize(),
-//                    //                               url,
-//                    //                               folder.getLabel()));                                      
-//                    label.setLabel(globalize("cms.ui.go_to_home_folder", parts));
-//                } else {
-//                    //label.setLabel("<font color=\"red\">No home folder selected</font>");
-//                    String[] parts = new String[3];
-//                    parts[0] = "";
-//                    parts[1] = "";
-//                    //label.setLabel(String.format("<span style=\"color: red\">%s</span>",
-//                    //                              (String)globalize("cms.ui.no_home_folder_selected").localize()));
-//                    label.setLabel(globalize("cms.ui.no_home_folder_selected",
-//                                             parts));
-//                }
-//                label.setOutputEscaping(false);
-//            }
-//
-//        });
-//        browseActions.addAction(m_homeFolderLabel);
-//        m_removeHomeFolderAction = new ActionLink(new Label(globalize(
-//            "cms.ui.remove_home_folder")));
-//        m_removeHomeFolderAction.addActionListener(this);
-//        browseActions.addAction(m_removeHomeFolderAction);
-
-        /*  */
         newItemForm = new SectionNewItemForm("newItem");
         newItemForm.addProcessListener(this);
         browseActions.addAction(newItemForm);
 
-        /* permission                                   */
         permissionsSegment = addSegment();
         permissionsSegment.setIdAttr("folder-permissions");
 
         final ActionGroup permissionActions = new ActionGroup();
         permissionsSegment.add(permissionActions);
 
-        // The permissions segment
         permissionsSegment.addHeader(new Label(new GlobalizedMessage(
             "cms.ui.permissions", CmsConstants.CMS_BUNDLE)));
 
@@ -244,31 +192,6 @@ public class FlatItemList extends SegmentedPanel implements FormProcessListener,
             (CcmObjectSelectionModel) folderSelectionModel);
         permissionActions.setSubject(permissionsPane);
 
-        // An action
-//        togglePrivateAction = new ActionLink(new Label(new PrintListener() {
-//
-//            @Override
-//            public void prepare(final PrintEvent event) {
-//                final PageState state = event.getPageState();
-//                final Label target = (Label) event.getTarget();
-//                final Folder currentFolder = folderRequestLocal.getFolder(state);
-//                // ACSObject parent = currentFolder.getParent();
-//
-////                if (context == null) {
-//                target.setLabel(new GlobalizedMessage(
-//                    "cms.ui.restore_default_permissions",
-//                    CmsConstants.CMS_BUNDLE));
-////                } else {
-////                    target.setLabel(GlobalizationUtil
-////                        .globalize("cms.ui.use_custom_permissions"));
-////                }
-//            }
-//
-//        }));
-//        togglePrivateAction.addActionListener(this);
-//        permissionActions.addAction(togglePrivateAction);
-
-        // The 'new item' segment
         newItemSegment.addHeader(new Label(globalize("cms.ui.new_item")));
         typeSelectionModel = new ParameterSingleSelectionModel<>(
             new LongParameter(CONTENT_TYPE_ID));
@@ -281,22 +204,21 @@ public class FlatItemList extends SegmentedPanel implements FormProcessListener,
 
         // The 'new folder' segment
         newFolderSegment.addHeader(new Label(globalize("cms.ui.new_folder")));
-        Form folderCreate = new Form("fcreat");
-        folderCreator = new FolderCreator("fcreat", folderSelectionModel);
+//        final Form folderCreate = new Form("fcreat");
+        folderCreator = new FolderCreateForm("fcreat", folderSelectionModel);
         folderCreator.addSubmissionListener(this);
         folderCreator.addProcessListener(this);
-        folderCreate.add(folderCreator);
-        newFolderSegment.add(folderCreate);
+        //folderCreator.add(folderCreator);
+        newFolderSegment.add(folderCreator);
         newFolderSegment.add(new Label("<br/>", false));
 
         editFolderSegment.addHeader(new Label(globalize("cms.ui.edit_folder")));
-        folderEditor = new FolderEditor("fedit", folderSelectionModel);
+        folderEditor = new FolderEditorForm("fedit", folderSelectionModel);
         folderEditor.addSubmissionListener(this);
         folderEditor.addProcessListener(this);
-
-        Form folderEditorForm = new Form("fedit_form");
-        folderEditorForm.add(folderEditor);
-        editFolderSegment.add(folderEditorForm);
+        //Form folderEditorForm = new Form("fedit_form");
+        //folderEditorForm.add(folderEditor);
+        editFolderSegment.add(folderEditor);
         editFolderSegment.add(new Label("<br/>", false));
     }
 
@@ -310,7 +232,7 @@ public class FlatItemList extends SegmentedPanel implements FormProcessListener,
         page.setVisibleDefault(newFolderSegment, false);
         page.setVisibleDefault(editFolderSegment, false);
 
-        page.addComponentStateParam(this, 
+        page.addComponentStateParam(this,
                                     typeSelectionModel.getStateParameter());
 
         page.addActionListener(new ActionListener() {
@@ -399,8 +321,8 @@ public class FlatItemList extends SegmentedPanel implements FormProcessListener,
             browseMode(state);
             throw new FormProcessException(new GlobalizedMessage(
                 "cms.ui.cancelled", CmsConstants.CMS_BUNDLE));
-        } else if (event.getSource() == folderEditor && folderEditor
-            .isCancelled(state)) {
+        } else if (event.getSource() == folderEditor
+                       && folderEditor.isCancelled(state)) {
             browseMode(state);
             throw new FormProcessException(new GlobalizedMessage(
                 "cms.ui.cancelled", CmsConstants.CMS_BUNDLE));
@@ -453,7 +375,7 @@ public class FlatItemList extends SegmentedPanel implements FormProcessListener,
         } else if (source == editFolderAction) {
             permissionsSegment.setVisible(state, false);
             editFolderSegment.setVisible(state, true);
-        } 
+        }
 //          else if (source == togglePrivateAction) {
 //            togglePermissions(state);
 //        }

@@ -90,6 +90,18 @@ import javax.xml.bind.annotation.XmlRootElement;
         query = "SELECT (CASE WHEN COUNT(c) > 0 THEN true ELSE false END) "
                     + "FROM Category c "
                     + "WHERE c.parentCategory = :category")
+    ,
+    @NamedQuery(
+        name = "Category.findByNameAndParent",
+        query = "SELECT c FROM Category c "
+                    + "WHERE c.name = :name AND c.parentCategory = :parent")
+    ,
+    @NamedQuery(
+        name = "Category.hasSubCategoryWithName",
+        query = "SELECT (CASE WHEN COUNT(c) > 0 THEN true ELSE False END) "
+                    + "FROM Category c "
+                    + "WHERE c.name = :name AND c.parentCategory = :parent"
+    )
 })
 @NamedEntityGraphs({
     @NamedEntityGraph(
