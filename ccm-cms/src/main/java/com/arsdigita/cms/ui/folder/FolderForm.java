@@ -37,6 +37,7 @@ import com.arsdigita.bebop.parameters.TrimmedStringParameter;
 import com.arsdigita.bebop.parameters.URLTokenValidationListener;
 import com.arsdigita.cms.ui.authoring.BasicItemForm;
 import com.arsdigita.globalization.GlobalizedMessage;
+import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.util.Assert;
 import com.arsdigita.web.Web;
 import com.arsdigita.xml.Element;
@@ -46,6 +47,8 @@ import org.apache.logging.log4j.Logger;
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryRepository;
 import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.configuration.ConfigurationManager;
+import org.libreccm.l10n.GlobalizationHelper;
 import org.librecms.CmsConstants;
 
 /**
@@ -62,9 +65,9 @@ import org.librecms.CmsConstants;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public abstract class FolderForm extends FormSection
-    implements FormInitListener,
-               FormProcessListener,
-               FormValidationListener {
+        implements FormInitListener,
+                   FormProcessListener,
+                   FormValidationListener {
 
     public static final Logger LOGGER = LogManager.getLogger(FolderForm.class);
 
@@ -81,16 +84,16 @@ public abstract class FolderForm extends FormSection
      * Currently, to insert javascript code the Label Widget is "abused".
      */
     private final Label m_script = new Label(String.format(
-        "<script language=\"javascript\" src=\"%s/javascript/manipulate-input.js\"></script>",
-        Web.getWebappContextPath()),
+            "<script language=\"javascript\" src=\"%s/javascript/manipulate-input.js\"></script>",
+            Web.getWebappContextPath()),
                                              false);
 
     /**
      * Create a new folder form.
      *
-     * @param name          Name of the form
+     * @param name Name of the form
      * @param currentFolder SelectionModel containing the current folder being
-     *                      operated on.
+     * operated on.
      *
      * @pre name != null && folder != null
      */
@@ -137,7 +140,7 @@ public abstract class FolderForm extends FormSection
         super(columnPanel);
 
         widgetSection = new FormSection(
-            new ColumnPanel(columnPanel.getNumCols()));
+                new ColumnPanel(columnPanel.getNumCols()));
         super.add(widgetSection, ColumnPanel.INSERT);
         this.currentFolder = currentFolder;
 
@@ -169,20 +172,20 @@ public abstract class FolderForm extends FormSection
         // it breaks URLs & potentially overwrites the user's
         // customizations.
         final TextField titleWidget = new TextField(new TrimmedStringParameter(
-            TITLE));
+                TITLE));
         titleWidget.setLabel(getTitleLabel());
         titleWidget.setHint(getTitleHint());
         titleWidget.addValidationListener(new NotNullValidationListener());
         titleWidget.setOnFocus("if (this.form." + NAME + ".value == '') { "
-                                   + " defaulting = true; this.form." + NAME
-                                   + ".value = urlize(this.value); }");
+                                       + " defaulting = true; this.form." + NAME
+                                       + ".value = urlize(this.value); }");
         titleWidget.setOnKeyUp(
-            "if (defaulting) { this.form." + NAME
-                + ".value = urlize(this.value) }");
+                "if (defaulting) { this.form." + NAME
+                        + ".value = urlize(this.value) }");
         add(titleWidget);
 
         final TextField nameWidget = new TextField(new TrimmedStringParameter(
-            NAME));
+                NAME));
         nameWidget.setLabel(getNameLabel());
         nameWidget.setHint(getNameHint());
 
@@ -195,11 +198,11 @@ public abstract class FolderForm extends FormSection
         nameWidget.setMaxLength(190);
         nameWidget.setOnFocus("defaulting = false");
         nameWidget.setOnBlur(
-            "if (this.value == '') "
-                + "{ defaulting = true; this.value = urlize(this.form."
-                + TITLE
-                + ".value) } "
-                + " else { this.value = urlize(this.value); }");
+                "if (this.value == '') "
+                        + "{ defaulting = true; this.value = urlize(this.form."
+                        + TITLE
+                        + ".value) } "
+                        + " else { this.value = urlize(this.value); }");
         add(nameWidget);
     }
 
@@ -225,7 +228,7 @@ public abstract class FolderForm extends FormSection
      */
     @Override
     public abstract void init(final FormSectionEvent event)
-        throws FormProcessException;
+            throws FormProcessException;
 
     /**
      * Process the form. Children have to override this method to save the
@@ -237,7 +240,7 @@ public abstract class FolderForm extends FormSection
      */
     @Override
     public abstract void process(final FormSectionEvent event)
-        throws FormProcessException;
+            throws FormProcessException;
 
     /**
      * Validates the form. Checks for name uniqueness.
@@ -248,9 +251,9 @@ public abstract class FolderForm extends FormSection
      */
     @Override
     public void validate(final FormSectionEvent event)
-        throws FormProcessException {
+            throws FormProcessException {
         Category folder = (Category) currentFolder.getSelectedObject(event
-            .getPageState());
+                .getPageState());
         Assert.exists(folder);
 //        validateNameUniqueness(folder, event);
     }
@@ -271,9 +274,9 @@ public abstract class FolderForm extends FormSection
      * Layout constraints are defined in each layout container as static ints.
      * Use a bitwise OR to specify multiple constraints.
      *
-     * @param component   the component to add to this container
+     * @param component the component to add to this container
      * @param constraints layout constraints (a bitwise OR of static ints in the
-     *                    particular layout)
+     * particular layout)
      */
     @Override
     public void add(final Component component, final int constraints) {
@@ -345,8 +348,8 @@ public abstract class FolderForm extends FormSection
      *
      * @param folder The folder to update
      * @param parent The new parent folder. May be null.
-     * @param name   The new name of the folder
-     * @param label  The new label for the folder
+     * @param name The new name of the folder
+     * @param label The new label for the folder
      */
     final protected void updateFolder(final Category folder,
                                       final Category parent,
@@ -360,32 +363,36 @@ public abstract class FolderForm extends FormSection
      * Updates a folder with a new name and label.
      *
      * @param folder The folder to update
-     * @param name   The new name of the folder
-     * @param label  The new label for the folder
+     * @param name The new name of the folder
+     * @param label The new label for the folder
      */
     final protected void updateFolder(final Category folder,
                                       final String name,
                                       final String label) {
-        folder.setName(name);
-        folder.setDisplayName(label);
-
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final ConfigurationManager confManager = cdiUtil.findBean(ConfigurationManager.class);
+        final KernelConfig kernelConfig = confManager.findConfiguration(
+                KernelConfig.class);
+
+        folder.setName(name);
+        folder.setDisplayName(name);
+        folder.getTitle().addValue(kernelConfig.getDefaultLocale(), label);
+
         final CategoryRepository categoryRepo = cdiUtil.findBean(
-            CategoryRepository.class);
+                CategoryRepository.class);
         categoryRepo.save(folder);
     }
 
     /**
      * Returns the current folder being operated on.
      *
+     * @param state
      * @return The current folder
      *
-     * @pre state != null
-     * @post return != null
      */
     final protected Category getCurrentFolder(final PageState state) {
         final Category folder = (Category) currentFolder
-            .getSelectedObject(state);
+                .getSelectedObject(state);
         return folder;
     }
 
