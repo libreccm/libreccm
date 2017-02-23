@@ -44,8 +44,8 @@ public class FolderPathListModelBuilder extends LockableImpl
     @Override
     public ListModel makeModel(final List list, final PageState state) {
 
-        return new FolderPathListModel(folderSelectionModel
-            .getSelectedObject(state));
+        return new FolderPathListModel(
+            folderSelectionModel.getSelectedObject(state));
     }
 
 }
