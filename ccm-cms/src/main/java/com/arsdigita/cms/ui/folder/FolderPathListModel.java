@@ -19,12 +19,17 @@
 package com.arsdigita.cms.ui.folder;
 
 import com.arsdigita.bebop.list.ListModel;
+import com.arsdigita.kernel.KernelConfig;
 
 import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.configuration.ConfigurationManager;
 import org.librecms.contentsection.Folder;
 import org.librecms.contentsection.FolderManager;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
 
 /**
  *
@@ -32,13 +37,23 @@ import java.util.Iterator;
  */
 class FolderPathListModel implements ListModel {
 
+    private final Locale defaultLocale;
     private final Iterator<Folder> pathFolders;
     private Folder currentFolder;
 
     public FolderPathListModel(final Folder folder) {
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final FolderManager folderManager = cdiUtil.findBean(FolderManager.class);
-        pathFolders = folderManager.getParentFolders(folder).iterator();
+        final List<Folder> parentFolders = folderManager.getParentFolders(folder);
+        final List<Folder> path = new ArrayList<>();
+        path.addAll(parentFolders);
+        path.add(folder);
+        pathFolders = path.iterator();
+        
+        final ConfigurationManager confManager = cdiUtil.findBean(ConfigurationManager.class);
+        final KernelConfig kernelConfig = confManager.findConfiguration(
+            KernelConfig.class);
+        defaultLocale = kernelConfig.getDefaultLocale();
     }
 
     @Override
@@ -53,7 +68,7 @@ class FolderPathListModel implements ListModel {
 
     @Override
     public Object getElement() {
-      return currentFolder.getName();
+      return currentFolder.getTitle().getValue(defaultLocale);
     }
 
     @Override
