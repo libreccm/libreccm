@@ -84,7 +84,8 @@ public class DatasetsVerifier {
      * Overwrite this method if you are using another schema than the default
      * one.
      *
-     * @return
+     * @return An string array contains the names of the database schemata used
+     * by the datasets the test.
      */
     public String[] getSchemas() {
         return new String[]{};

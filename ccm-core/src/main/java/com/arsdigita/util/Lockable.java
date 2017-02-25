@@ -78,7 +78,7 @@ public interface Lockable {
      * Return whether an object is locked and thus immutable, or can still be
      * modified.
      *
-     * @return
+     * @return {@code true} if the object is immutable, {@code false} otherwise.
      */
     boolean isLocked();
 
