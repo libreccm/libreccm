@@ -80,7 +80,6 @@ public interface SingleSelectionModel<T> {
      * Clears the selection.
      *
      * @param state the state of the current request
-     * @post ! isSelected(state)
      */
     void clearSelection(PageState state);
 
@@ -102,8 +101,10 @@ public interface SingleSelectionModel<T> {
     /**
      * Returns the state parameter that will be used to keep track
      * of the currently selected key. Typically, the implementing
-     * class will simply call:<br>
-     * <code><pre>return new StringParameter("foo");</pre></code><br>
+     * class will simply call:
+     * 
+     * {@code return new StringParameter("foo");}
+     * 
      * This method may return null if a state parameter is not
      * appropriate in the context of the implementing class.
      *

@@ -26,7 +26,6 @@ import com.arsdigita.bebop.event.EventListenerList;
 import com.arsdigita.util.Assert;
 import com.arsdigita.util.Lockable;
 
-import java.util.stream.Stream;
 
 /**
  * A standard implementation of <code>SingleSelectionModel</code> and
@@ -35,7 +34,7 @@ import java.util.stream.Stream;
  *
  * jensp: Added generics and Java 8 streams instead of using an iterator.
  *
- * @param <T>
+ * @param <T> The type managed by the parameter model.
  *
  * @author Unknown
  * @author Jens Pelzetter (jensp)

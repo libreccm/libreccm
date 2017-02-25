@@ -39,14 +39,14 @@ import org.junit.runners.Parameterized;
  * public class FooBarTest extends EqualsVerifier {
  *
  *     &#x40;Parameterized.Parameters(name = "{0}")
- *     public static Collection<Class<?>> data() {
- *         return Arrays.asList(new Class<?>[] {
+ *     public static Collection&lt;Class&lt;?&gt;&gt; data() {
+ *         return Arrays.asList(new Class&lt;?&gt;[] {
  *             Foo.class,
  *             Bar.class
  *         });
  *     }
  *
- *     public FooBarTest(final Class<?> entityClass) {
+ *     public FooBarTest(final Class&lt;?&gt; entityClass) {
  *         super(entityClass);
  *     }
  * }
