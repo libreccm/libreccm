@@ -18,6 +18,8 @@
  */
 package org.libreccm.tests.categories;
 
+import org.junit.experimental.categories.Category;
+
 /**
  * A marker interface for use with JUnit's {@link Category} annotation to mark 
  * the tests which should be only executed when using one of the Arquillian 

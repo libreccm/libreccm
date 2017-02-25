@@ -57,8 +57,10 @@ public interface SecurityHelper {
     /**
      * Determines where to redirect the client to log in.  The system calls
      * this method if the user fails to log in and
-     * <code>requiresLogin(req)</code> is true.
+     * {@code requiresLogin(req)} is true.
      *
+     * @param req The request for which the login URL is determined.
+     * 
      * @return the URL to which the client should be redirected to log in,
      * never null.
      **/

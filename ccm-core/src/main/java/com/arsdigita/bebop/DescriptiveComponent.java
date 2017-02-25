@@ -89,7 +89,7 @@ abstract public class DescriptiveComponent extends SimpleComponent {
      * Generates a (J)DOM fragment for clients to include into their generated
      * XML.
      * 
-     * @param state
+     * @param state The current page state.
      * @param parent the XML Element instance to add the attributes managed by 
      *               by this class
      */

@@ -40,7 +40,7 @@ import org.libreccm.core.CcmObjectRepository;
 
 /**
  * Loads a subclass of an ACSObject from the database. By default, uses a
- * <del>BigDecimal</del> {@code Long} state parameter in order to store and
+ * {@code Long} state parameter in order to store and
  * retrieve the item id.
  *
  * <strong>
@@ -95,24 +95,6 @@ import org.libreccm.core.CcmObjectRepository;
  * {@link SingleSelectionModel} may be wrapped. Thus, it becomes possible to use
  * the <code>ACSObjectSelectionModel</code> even if the currently selected ID is
  * not stored in a state parameter.
- * <p>
- * <b>Persistence Details:</b> The default constructor of
- * <code>ACSObjectSelectionModel</code> will attempt to use the
- * {@link DomainObjectFactory} to automatically instantiate the correct Java
- * subclass of {@link ACSObject}. However, it is also possible to use an
- * alternate constructor in order to force the
- * <code>ACSObjectSelectionModel</code> to manually instantiate the objects:
- *
- * <blockquote><pre><code>
- * ACSObjectSelectionModel model =
- *     new ACSObjectSelectionModel("com.arsdigita.cms.Article",
- *                                 "com.arsdigita.cms.Article", "item_id");
- * </code></pre></blockquote>
- *
- * In this case, the model will attempt to use reflection to instantiate the
- * correct subclass of <code>ACSObject</code>. In addition, the supplementary
- * constructor makes it possible to create new objects in the database using the
- * {@link #createACSObject(BigDecimal)} method.
  *
  * @see com.arsdigita.bebop.SingleSelectionModel
  * @see com.arsdigita.bebop.ParameterSingleSelectionModel
@@ -129,10 +111,7 @@ public class ACSObjectSelectionModel implements SingleSelectionModel {
     private SingleSelectionModel selectionModel;
 
     /**
-     * Construct a new <code>ACSObjectSelectionModel</code>. This model will
-     * produce instances of <code>ACSObject</code> by automatically
-     * instantiating the correct Java subclass using the
-     * {@link DomainObjectFactory}.
+     * Construct a new <code>ACSObjectSelectionModel</code>. 
      *
      * @param parameter The state parameter which should be used to store the
      * object ID
@@ -142,10 +121,7 @@ public class ACSObjectSelectionModel implements SingleSelectionModel {
     }
 
     /**
-     * Construct a new <code>ACSObjectSelectionModel</code>. This model will
-     * produce instances of <code>ACSObject</code> by automatically
-     * instantiating the correct Java subclass using the
-     * {@link DomainObjectFactory}.
+     * Construct a new <code>ACSObjectSelectionModel</code>. 
      *
      * @param parameterName The name of the state parameter which will be used
      * to store the object ID.
@@ -155,13 +131,10 @@ public class ACSObjectSelectionModel implements SingleSelectionModel {
     }
 
     /**
-     * Construct a new <code>ACSObjectSelectionModel</code>. This model will
-     * produce instances of <code>ACSObject</code> by automatically
-     * instantiating the correct Java subclass using the
-     * {@link DomainObjectFactory}.
+     * Construct a new <code>ACSObjectSelectionModel</code>. 
      *
      * @param model The {@link SingleSelectionModel} which will supply a
-     * {@link BigDecimal} ID of the currently selected object
+     * {@link Long} ID of the currently selected object
      */
     public ACSObjectSelectionModel(final SingleSelectionModel model) {
         this(null, null, model);
@@ -171,8 +144,8 @@ public class ACSObjectSelectionModel implements SingleSelectionModel {
      * Construct a new <code>ACSObjectSelectionModel</code>
      *
      * @param javaClass The name of the Java class which represents the object.
-     * Must be a subclass of {@link ACSObject}. In addition, the class must have
-     * a constructor with a single {@link OID} parameter.
+     * Must be a subclass of {@link CcmObject}. In addition, the class must have
+     * a constructor with a single {@code id} parameter.
      * @param objectType The name of the persistence metadata object type which
      * represents the ACS object. In practice, will often be the same as the
      * javaClass.
@@ -189,8 +162,8 @@ public class ACSObjectSelectionModel implements SingleSelectionModel {
      * Construct a new <code>ACSObjectSelectionModel</code>
      *
      * @param javaClass The name of the Java class which represents the object.
-     * Must be a subclass of {@link ACSObject}. In addition, the class must have
-     * a constructor with a single {@link OID} parameter.
+     * Must be a subclass of {@link CcmObject}. In addition, the class must have
+     * a constructor with a single {@code id} parameter.
      * @param objectType The name of the persistence metadata object type which
      * represents the ACS object. In practice, will often be the same as the
      * javaClass.
@@ -209,8 +182,8 @@ public class ACSObjectSelectionModel implements SingleSelectionModel {
      * Construct a new <code>ACSObjectSelectionModel</code>
      *
      * @param javaClass The name of the Java class which represents the object.
-     * Must be a subclass of {@link ACSObject}. In addition, the class must have
-     * a constructor with a single {@link OID} parameter.
+     * Must be a subclass of {@link CcmObject}. In addition, the class must have
+     * a constructor with a single {@code id} parameter.
      * @param objectType The name of the persistence metadata object type which
      * represents the ACS object. In practice, will often be the same as the
      * javaClass.
@@ -282,7 +255,7 @@ public class ACSObjectSelectionModel implements SingleSelectionModel {
     /**
      * Load the selected object for the first time. Child classes may choose to
      * override this method in order to load the object in nonstandard ways. The
-     * default implementation merely instantiates an {@link ACSObject} whose ID
+     * default implementation merely instantiates an {@link CcmObject} whose ID
      * is the passed-in key.
      *
      * @param state the current page state
@@ -345,8 +318,7 @@ public class ACSObjectSelectionModel implements SingleSelectionModel {
      * @param id The id of the new item - this is ignored and the object will
      * have a different id
      * @return The newly created item
-     * @throws javax.servlet.ServletException
-     * @post return != null
+     * @throws javax.servlet.ServletException If an error occurs.
      * @deprecated This ignores the ID since ACSObject.setID is a no-op
      */
     public CcmObject createACSObject(final Long id) throws ServletException {
@@ -360,8 +332,7 @@ public class ACSObjectSelectionModel implements SingleSelectionModel {
      * name was supplied in the constructor, an assertion failure will occur.
      *
      * @return The newly created item
-     * @throws javax.servlet.ServletException
-     * @post return != null
+     * @throws javax.servlet.ServletException If an error occurs.
      */
     public CcmObject createACSObject() throws ServletException {
         Assert.exists(javaClassName, Class.class);
@@ -415,7 +386,7 @@ public class ACSObjectSelectionModel implements SingleSelectionModel {
      * Return the key that identifies the selected object.
      *
      * @param state the current page state
-     * @return the <del>{@link BigDecimal}</del> {@link Long} ID of the
+     * @return the  {@link Long} ID of the
      * currently selected object, or null if no object is selected.
      *
      */
@@ -429,8 +400,6 @@ public class ACSObjectSelectionModel implements SingleSelectionModel {
      * Clear the selection.
      *
      * @param state the current page state.
-     * @post ! isSelected(state)
-     * @post ! isInitialized(state)
      */
     @Override
     public void clearSelection(final PageState state) {
