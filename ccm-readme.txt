@@ -2,15 +2,22 @@ ccm.sh is a helper script for building and running LibreCCM in a development
 environment. It provides shortcuts for several Maven goals. The available 
 subcommands are:
     
-build-site [PROFILE]         : Builds the Maven project site. 
-build [PROFILE]              : Builds LibreCCM using the provided profile
-build-module MODULE [PROFILE]: Build a specific LibreCCM module.
-testccm [PROFILE]            : Run tests for all modules.
-test-module MODULE [PROFILE] : Run tests for a specific LibreCCM module.
-install-runtime [RUNTIME]    : Download and install a runtime (application 
-                               server) into ./runtime
-run [-r RUNTIME] [BUNDLE]    : Run a runtime (application server)
-help                         : Show this help message.
+build-site [PROFILE]                            : Builds the Maven project site.
+build [PROFILE]                                 : Builds LibreCCM using the 
+                                                  provided profile
+build-module MODULE [PROFILE]                   : Build a specific LibreCCM 
+                                                  module.
+test-all [-s [-r RUNTIME]] [PROFILE]            : Run tests for all modules.
+test-module [-s [-r RUNTIME]] MODULE [PROFILE]  : Run tests for a specific 
+                                                  LibreCCM module.
+run-test [-s [-r RUNTIME]] MODULE TEST [PROFILE]: Run a specific testsuite or
+                                                  a single test.
+install-runtime [RUNTIME]                       : Download and install a 
+                                                  runtime (application server) 
+                                                  into ./runtime.
+run [-r RUNTIME] [BUNDLE]                       : Run a runtime 
+                                                  (application server)
+help                                            : Show this help message.
 
 build-site [PROFILE]
 ====================
@@ -49,6 +56,75 @@ without a profile and to
     mvn clean package -P$PROFILE -pl $MODULE -am
 
 with a profile.
+
+test-all [-s [-r RUNTIME]] [PROFILE]
+====================================
+
+Run all tests for all modules. If the -s flag is set a application server is
+started in the background before the tests are run and stopped afterwards.
+If no runtime is provided using -r RUNTIME Wildfly is used as runtime. See
+the section "run" for Wildfly specific details.
+
+If a profile is provided the profile is used to run the tests.
+
+test-module [-s [-r RUNTIME]] MODULE [PROFILE]
+==============================================
+
+Runs the tests for a specific module. If the -s flag is set a application 
+server is started in the background before the tests are run and stopped 
+afterwards. If no runtime is provided using -r RUNTIME Wildfly is used as 
+runtime. See the section "run" for Wildfly specific details.
+
+This subcommand has one mandatory parameter: The module which tests are run.
+Optionally a profile can be provided.
+
+run-test [-s [-r RUNTIME]] MODULE TEST [PROFILE]
+================================================
+
+Runs the a specific testsuite or a single test. 
+If the -s flag is set a application 
+server is started in the background before the tests are run and stopped 
+afterwards. If no runtime is provided using -r RUNTIME Wildfly is used as 
+runtime. See the section "run" for Wildfly specific details.
+
+This subcommand has two mandatory parameter: 
+The module which contains the test(suite) to run and the test to run. The test
+to run must be provided in the following syntax:
+
+fully.qualified.classname.of.testclass[#test-method]
+
+Optionally are profile can be provided. 
+
+Some examples:
+
+Run all tests in the class org.libreccm.configuration.EqualsAndHashCodeTest in 
+the ccm-core module:
+
+ccm.sh runtest ccm-core org.libreccm.configuration.EqualsAndHashCodeTest
+
+Run all tests in the class org.libreccm.core.CcmObjectRepositoryTest in the
+ccm-core module. This tests is run using Arquillian and requires a runtime and
+is only run when an integration test profile is used:
+
+ccm.sh runtest -s ccm-core org.libreccm.core.CcmObjectRepositoryTest
+wildfly-remote-h2-mem
+
+Or if you only want to run the saveChangedCcmObject test:
+
+ccm.sh runtest -s ccm-core
+org.libreccm.core.CcmObjectRepositoryTest#saveChangedCcmObject wildfly-remote-h2-mem
+
+The last two examples used the default runtime (Wildfly). Invoking without a
+specific runtime is equivalent to 
+
+ccm.sh runtest -s -r wildfly ccm-core org.libreccm.core.CcmObjectRepositoryTest wildfly-remote-h2-mem
+
+ccm.sh runtest -s -r wildfly ccm-core org.libreccm.core.CcmObjectRepositoryTest#saveChangedCcmObject wildfly-remote-h2-mem
+
+
+
+
+
 
 install-runtime [RUNTIME]
 =========================
