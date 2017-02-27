@@ -56,3 +56,10 @@ To install the archetypes in your local Maven repository run
 for example
 
 mvn clean install -pl ccm-cms-archetypes-contenttype -am
+
+Using the managed profiles (example is for testing):
+
+mvn clean test -Djboss.home=/path/to/wildfly/ -DstartupTimeoutInSeconds=180 -Pwildfly-managed-h2-mem
+
+You might need to increase the timeout.
+
