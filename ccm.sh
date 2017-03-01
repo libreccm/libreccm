@@ -67,7 +67,7 @@ starttestruntime() {
         fi
 
         pushd $wildflyhome
-        sh "LAUNCH_JBOSS_IN_BACKGROUND=1 JBOSS_PID_FILE=$wildflypidfile ./bin/standalone.sh"
+        LAUNCH_JBOSS_IN_BACKGROUND=1 JBOSS_PIDFILE=$wildflypidfile ./bin/standalone.sh &
         popd
         echo "Waiting 120s for Wildfly to start up..."
         sleep 120
@@ -109,7 +109,7 @@ stoptestruntime() {
             echo "Setting wildflyhome..."
             wildflyhome="./runtime/wildfly-$wildflyversion"
         else 
-            echo "There is not Wildfly in ./runtime/ and JBOSS_HOME is not set."
+            echo "There is no Wildfly in ./runtime/ and JBOSS_HOME is not set."
             echo "Please call install-runtime or set JBOSS_HOME"
             exit 1
         fi
@@ -129,126 +129,180 @@ stoptestruntime() {
 
 # Run all tests
 testall() {
-    
-    startruntime=false
-    runtime="wildfly"
-    profile=""
-
-    if [ "$1" = "-s" ]; then
-        startruntime=true
-        if [ "$2" = "-r" ]; then
-            runtime=$3
-            profile=$4
-        else
-            profile=$2
+    echo "Running all tests for all modules..."
+    if [[ $1 =~ ^wildfly-managed.* ]]; then
+        echo "...using a managed Wildfly container"
+        wildflyhome=""
+        if [ -n "$JBOSS_HOME" ]; then
+            echo "...JBOSS_HOME environment variable is set. Using Wildfly installation at $JBOSS_HOME."
+            wildflyhome=$JBOSS_HOME
+        elif [ -d "./runtime/wildfly-$wildflyversion" ]; then
+            echo "...using Wildfly installation in runtime directory"
+            pushd $wildflyhome
+            wildflyhome=`pwd`
+            popd
+        else 
+            echo -e "\e[41mThere is no Wildfly-$wildflyversion in ./runtime nore is JBOSS_HOME set. Please install Wildfly-$wildflyversion into runtime by calling install-runtime or set the JBOSS_HOME environment variable to a valid location.\e[0m"
+            exit 1
         fi
-    fi
+       
+        echo "...using profile $1"
+        echo ""
+        if [ -n $STARTUP_TIMEOUT ]; then
+            mvn clean test -Djboss.home=$wildflyhome -DstartuptimeoutInSeconds=$STARTUP_TIMEOUT -P$1
+        else 
+            mvn clean test -Djboss.home=$wildflyhome -P$1
+        fi
 
-    if [ $startruntime ]; then
-        starttestruntime $runtime
-    fi
+    elif [[ $1 =~ ^wildfly-remote.* ]]; then
+        echo "...using a remote Wildfly container"
+        if [[ $2 == "start" ]]; then
+            echo "...starting runtime"
+            starttestruntime wildfly
+        else 
+            echo "...runtime is started manually"
+        fi
 
-    if [ -n "$profile" ]; then
-        echo "Running tests for all modules with profile $profile..."
-        mvn clean test -P$profile
-    else
-        echo "Running tests for all modules..."
+        echo "...using profile $1"
+        mvn clean test -P$1
+
+        if [[ $2 == "start" ]]; then
+            echo "...stopping runtime"
+        fi
+   else
+        if [[ -n $1 ]]; then
+            echo -n -e "\e[43m"
+            echo "Warning:                                                 "
+            echo "The provided profile starts with an unknown prefix. Tests" 
+            echo "which require a running application server may fail.     "
+            echo -n -e "\e[0m"
+            
+        fi
+
         mvn clean test
-    fi
-
-    if [ $startruntime ]; then
-        stoptestruntime $runtime
     fi
 }
 
 # Run tests for a module
 testmodule() {
 
-    startruntime=false
-    runtime="wildfly"
-    module=""
-    profile=""
-
-    if [ "$1" = "-r" ]; then
-        startruntime=true
-        if [ "$2" = "-r" ]; then
-            runtime=$3
-            module=$4
-            profile=$5
-        else
-            module=$2
-            profile=$3
-        fi
-    fi
-
-    if [ -z "$module" ]; then
-        echo "Error: No module to test. Exiting."
+    if [[ -z $1 ]]; then
+        echo -e "\e[41mUsage: ccm.sh test-module MODULE [PROFILE] [start]\e[0m"
         exit 1
     fi
 
-    if [ $startruntime ]; then
-        starttestruntime $runtime
-    fi
+    echo "Running tests for module $1..."
+    if [[ $2 =~ ^wildfly-managed.* ]]; then
+        echo "...using a managed Wildfly container."
+        wildflyhome=""
+        if [ -n "$JBOSS_HOME" ]; then
+            echo "...JBOSS_HOME enviromentment variable is set Using Wildfly installation at $JBOSS_HOME."
+            wildflyhome=$JBOSS_HOME
+        elif [ -d "./runtime/wildfly-$wildflyversion" ]; then
+            echo "...using Wildfly installation in runtime-directory"
+            pushd $wildflyhome
+            wildflyhome=`pwd`
+            popd
+        else
+            echo -e "\e[41mThere is no Wildfly-$wildfly-version in ./runtime nore is JBOSS_HOME set. Please install Wildfly-$wildfly-version into ./runtime by calling install-runtime or set the JBOSS_HOME environment variable to valid location.\e[0m"
+            exit 1
+        fi
 
-    if [ -n "$profile" ]; then
-        echo "Running tests for module $module with profile $profile..."
-        mvn clean test -P$profile -pl $module -am
+        echo "...using profile $2"
+        echo ""
+        if [ -n $STARTUP_TIMEOUT ]; then
+            mvn clean test -Djboss.home=$wildflyhome -DstartupTimeoutInSeconds=$STARTUP_TIMEOUT -pl $1 -am -P$1
+        else
+            mvn clean test -Djboss.home=$wildflyhome -pl $1 -am -P$2
+        fi
+    elif [[ $2 =~ ^wildfly-remote.* ]]; then
+        echo "Using a remote Wildfly container..."
+        if [[ $3 == "start" ]]; then
+            echo "...starting runtime"
+            starttestruntime wildfly
+        else
+            echo "...runtime is started manually"
+        fi
+
+        echo "...using profile $2"
+        mvn clean test -pl $1 -am -P$2
+
+        if [[ $3 == "start" ]]; then
+            echo "...stopping runtime"
+        fi
     else
-        echo "Running tests for module $module..."
-        mvn clean test -pl $module $am
-    fi
+        if [[ -n $2 ]]; then
+            echo -n -e "\e[43m"
+            echo "Warning:                                                 "
+            echo "The provided profile starts with an unknown prefix. Tests" 
+            echo "which require a running application server may fail.     "
+            echo -n -e "\e[0m"
+        fi
 
-    if [ $startruntime ]; then
-        stoptestruntime $runtime
+        mvn clean test -pl $1 -am
     fi
 }
 
 # Run a single testsuite or test
 runtest() {
-    
-    startruntime=false
-    runtime="wildfly"
-    module=""
-    testtorun=""
-    profile=""
 
-    if [ "$1" = "-r" ]; then
-        startruntime=true
-        if [ "$2" = "-r" ]; then
-            runtime=$3
-            module=$4
-            profile=$5
+    if [ -z "$1" -o -z "$2" ]; then
+        echo -e "\e[41mUsage: ccm.sh test-module MODULE TEST [PROFILE] [start]\e[0m"
+        exit 1
+    fi
+
+    echo "Running test $2 from module $1..."
+    if [[ $3 =~ ^wildfly-managed.* ]]; then
+        echo "...using a managed Wildfly container."
+        wildflyhome=""
+        if [ -n "$JBOSS_HOME" ]; then
+            echo "...JBOSS_HOME environment variable is set. Using Wildfly installation at $JBOSS_HOME."
+            wildflyhome=$JBOSS_HOME            
+        elif [ -d "./runtime/wildfly-$wildflyversion" ]; then
+            echo "...using Wildfly installation in runtime directory"
+            pushd ./runtime/wildfly-$wildflyversion
+            wildflyhome=`pwd`
+            popd           
         else
-            module=$2
-            profile=$3
+            echo -e "\e[41mThere is no Wildfly-$wildfly-version in ./runtime nore is JBOSS_HOME set. Please install Wildfly-$wildfly-version into ./runtime by calling install-runtime or set the JBOSS_HOME environment variable to valid location.\e[0m"
+            exit 1
+        fi        
+
+        echo "...using Wildfly in $wildflyhome"
+        echo "...using profile $3"
+        echo ""
+        if [ -n $STARTUP_TIMEOUT ]; then
+            mvn clean test -Djboss.home=$wildflyhome -DstartupTimeoutInSeconds=$STARTUP_TIMEOUT -Dtest=$2 -DfailIfNoTests=false -pl $1 -am -P$3
+        else
+            mvn clean test -Djboss.home=$wildflyhome -Dtest=$2 -DfailIfNoTests=false -pl $1 -am -P$3
         fi
-    fi
+    elif [[ $3 =~ ^wildfly-remote.* ]]; then
+        echo "Using a remote Wildfly container..."
+        if [[ $4 == "start" ]]; then
+            echo "...starting runtime"
+            starttestruntime wildfly
+        else
+            echo "...runtime is started manually"
+        fi
 
-    if [ -z module ]; then
-        echo "No module provided. Please provide the module which contains the test to run. Exiting."
-        exit 1
-    fi
+        mvn clean test -Dtest=$2 -DfailIfNoTests=false -pl $1 -am -P$3
 
-    if [ -z testtorun ]; then
-        echo "No test to run provided. Exiting."
-        exit 1
-    fi
-
-    if [ $startruntime ]; then
-        starttestruntime $runtime
-    fi
-
-    if [ -n "$profile" ]; then
-        echo "Running tests for module $module with profile $profile..."
-        mvn clean test -Dtest=$testtorun -DfailIfNoTests=false -P$profile -pl $module -am
+        if [[ $4 == "start" ]]; then
+            echo "...stopping runtime"
+            stoptestruntime wildfly
+        fi
     else
-        echo "Runnign tests for module $module..."
-        mvn clean test -D$testtorun -pl $module $am
-    fi
+        if [[ -n $3 ]]; then
+            echo -n -e "\e[43m"
+            echo "Warning:                                                 "
+            echo "The provided profile starts with an unknown prefix. Tests" 
+            echo "which require a running application server may fail.     "
+            echo -n -e "\e[0m"            
+        fi
 
-    if [ $startruntime ]; then
-        stoptestruntime $runtime
+        mvn clean test -Dtest=$2 -DfailIfNoTests=false -pl $1 -am
     fi
+    
 }
 
 
@@ -430,26 +484,21 @@ stopruntime() {
 
 showhelp() {
     echo "ccm.sh is a helper script for building and running LibreCCM in a 
-    development environment. It provides shortcuts for several Maven goals. The
-    available subcommands are:
+development environment. It provides shortcuts for several Maven goals. The available subcommands are:
     
-    build-site [PROFILE]                            : Builds the Maven project 
-                                                      site. 
-    build [PROFILE]                                 : Build all LibreCCM 
-                                                      modules. 
-    build-module MODULE [PROFILE]                   : Build a specific LibreCCM 
-                                                      module.
-    test-all [-s [-r RUNTIME]] [PROFILE]            : Run tests for all modules.
-    test-module [-s [-r RUNTIME]] MODULE [PROFILE]  : Run tests for a specific 
-                                                      LibreCCM module.
-    run-test [-s [-r RUNTIME]] MODULE TEST [PROFILE]: Run a specific testsuite 
-                                                      or a single test. 
-    install-runtime [RUNTIME]                       : Download and install a 
-                                                      runtime  (application 
-                                                      server) into ./runtime
-    run [-r RUNTIME] [BUNDLE]                       : Run a runtime 
-                                                      (application server)
-    help                                            : Show this help message.
+    build-site [PROFILE]                    : Builds the Maven project site. 
+    build [PROFILE]                         : Build all LibreCCM modules. 
+    build-module MODULE [PROFILE]           : Build a specific LibreCCM module.
+    test-all [[PROFILE] [start]]            : Run all tests for all modules.
+    test-module MODULE [[PROFILE] [start]]  : Run all tests for a specific 
+                                              LibreCCM module.
+    run-test MODULE TEST [[PROFILE] [start]]: Run a specific testsuite or a 
+                                              single test method. 
+    install-runtime [RUNTIME]               : Download and install a runtime 
+                                              (application server) into 
+                                              ./runtime
+    run [-r RUNTIME] [BUNDLE]               : Run a runtime (application server)
+    help                                    : Show this help message.
 
     A detailed description of the subcommands is provided in ccm-readme.txt"
     
@@ -464,7 +513,7 @@ case $1 in
     build-module)    buildmodule $2 ;;
     test-all)        testall $2 $3 $4 ;;
     test-module)     testmodule $2 $3 $4 $5 ;;
-    run-test)        runtest $2 $3 $4 $5 $6 ;;
+    test)            runtest $2 $3 $4 $5 ;;
     install-runtime) installruntime $2 ;;
     run)             run $2 $3 $4 ;;
     stop-runtime)    stopruntime $2 ;;
