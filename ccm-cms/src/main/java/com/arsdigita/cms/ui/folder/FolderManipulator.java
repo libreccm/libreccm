@@ -30,7 +30,6 @@ import com.arsdigita.bebop.GridPanel;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.Page;
 import com.arsdigita.bebop.PageState;
-import com.arsdigita.bebop.PaginationModelBuilder;
 import com.arsdigita.bebop.Paginator;
 import com.arsdigita.bebop.RequestLocal;
 import com.arsdigita.bebop.Resettable;
@@ -56,45 +55,35 @@ import com.arsdigita.bebop.form.SingleSelect;
 import com.arsdigita.bebop.form.Submit;
 import com.arsdigita.bebop.form.TextField;
 import com.arsdigita.bebop.parameters.ArrayParameter;
-import com.arsdigita.bebop.parameters.BigDecimalParameter;
+import com.arsdigita.bebop.parameters.LongParameter;
 import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.bebop.table.TableCellRenderer;
 import com.arsdigita.bebop.table.TableColumn;
 import com.arsdigita.bebop.tree.TreeCellRenderer;
-import com.arsdigita.cms.CMS;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.toolbox.ui.ActionGroup;
-import com.arsdigita.util.Assert;
-import com.arsdigita.util.UncheckedWrapperException;
-import com.arsdigita.web.Web;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.Writer;
-
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.persistence.TypedQuery;
 
 import org.arsdigita.cms.CMSConfig;
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryManager;
 import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.core.CcmObject;
 import org.libreccm.security.PermissionChecker;
 import org.libreccm.security.Shiro;
-import org.libreccm.security.User;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemManager;
 import org.librecms.contentsection.ContentItemRepository;
-import org.librecms.contentsection.ContentSectionConfig;
+import org.librecms.contentsection.Folder;
+import org.librecms.contentsection.FolderRepository;
 import org.librecms.contentsection.privileges.ItemPrivileges;
+
+import java.util.Objects;
 
 /**
  * Browse folders and manipulate them with various actions (move/copy/delete).
@@ -123,7 +112,7 @@ public class FolderManipulator extends SimpleContainer implements
     //private static final String UNPUBLISH = "UnPublish";
 
     private final ArrayParameter sourcesParam = new ArrayParameter(
-        new BigDecimalParameter(SOURCES_PARAM));
+        new StringParameter(SOURCES_PARAM));
     private final StringParameter actionParam
                                       = new StringParameter(ACTION_PARAM);
     ;
@@ -174,13 +163,13 @@ public class FolderManipulator extends SimpleContainer implements
 
     }
 
-    public final Long[] getSources(final PageState state) {
+    public final String[] getSources(final PageState state) {
 
-        final Long[] result = (Long[]) state.getValue(sourcesParam);
+        final String[] result = (String[]) state.getValue(sourcesParam);
 
         //Return empty array instead of null.
         if (result == null) {
-            return new Long[0];
+            return new String[0];
         } else {
             return result;
         }
@@ -214,9 +203,9 @@ public class FolderManipulator extends SimpleContainer implements
     }
 
     protected void moveItems(final Category target,
-                             final Long[] itemIds) {
+                             final String[] itemIds) {
 
-        for (Long itemId : itemIds) {
+        for (String itemId : itemIds) {
 
             changeItemParent(itemId, target);
 
@@ -224,7 +213,8 @@ public class FolderManipulator extends SimpleContainer implements
 
     }
 
-    private void changeItemParent(final Long itemId, final Category newParent) {
+    private void changeItemParent(final String itemId,
+                                  final Category newParent) {
 
         //ToDo
         throw new UnsupportedOperationException();
@@ -244,7 +234,7 @@ public class FolderManipulator extends SimpleContainer implements
     }
 
     protected void copyItems(final Category target,
-                             final Long[] itemIds) {
+                             final String[] itemIds) {
 
         //ToDo
         throw new UnsupportedOperationException();
@@ -432,8 +422,9 @@ public class FolderManipulator extends SimpleContainer implements
         }
 
         @Override
-        public void process(final FormSectionEvent event) throws
-            FormProcessException {
+        public void process(final FormSectionEvent event)
+            throws FormProcessException {
+
             final PageState state = event.getPageState();
 
             itemView.setVisible(state, false);
@@ -459,7 +450,7 @@ public class FolderManipulator extends SimpleContainer implements
             targetSelector.setVisible(state, false);
 
             final Category folder = targetSelector.getTarget(state);
-            final Long[] itemIds = getSources(state);
+            final String[] itemIds = getSources(state);
 
             if (isCopy(state)) {
                 copyItems(folder, itemIds);
@@ -537,7 +528,7 @@ public class FolderManipulator extends SimpleContainer implements
                 throw new IllegalStateException("No source items specified");
             }
 
-            final Category target = targetSelector.getTarget(state);
+            final Folder target = targetSelector.getTarget(state);
             final FormData data = event.getFormData();
             if (target == null) {
                 data.addError(new GlobalizedMessage(
@@ -564,7 +555,7 @@ public class FolderManipulator extends SimpleContainer implements
                               CmsConstants.CMS_FOLDER_BUNDLE);
             }
 
-            for (Long source : getSources(state)) {
+            for (String source : getSources(state)) {
 
                 validateItem(source, target, state, data);
 
@@ -572,36 +563,77 @@ public class FolderManipulator extends SimpleContainer implements
 
         }
 
-        private void validateItem(final Long itemId,
-                                  final Category target,
+        private void validateItem(final String objectId,
+                                  final Folder target,
                                   final PageState state,
                                   final FormData data) {
+
+            Objects.requireNonNull(objectId, "objectId can't be null.");
+
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final FolderRepository folderRepo = cdiUtil.findBean(
+                FolderRepository.class);
             final ContentItemRepository itemRepo = cdiUtil.findBean(
                 ContentItemRepository.class);
             final ContentItemManager itemManager = cdiUtil.findBean(
                 ContentItemManager.class);
+            final FolderBrowserController controller = cdiUtil.findBean(
+                FolderBrowserController.class);
             final PermissionChecker permissionChecker = cdiUtil.findBean(
                 PermissionChecker.class);
 
-            final ContentItem item = itemRepo.findById(itemId).get();
-            final String name = item.getDisplayName();
+            final CcmObject object;
+            final String name;
+            if (objectId.startsWith("folder--")) {
+                final long folderId = Long.parseLong(objectId.substring(
+                    "folder--".length()));
+                final Folder folder = folderRepo.findById(folderId).orElseThrow(
+                    () -> new IllegalArgumentException(String.format(
+                        "No folder with id %d in database.", folderId)));
 
-            final long count = itemRepo.countByNameInFolder(target, name);
-            if (count > 0) {
-                // there is an item in the target folder that already has this name
-                addErrorMessage(data, "cms.ui.folder.item_already_exists", name);
+                name = folder.getName();
+
+                //Check if folder or subfolder contains live items
+                if (isMove(state) && controller.hasLiveItems(folder)) {
+                    addErrorMessage(data, "cms.ui.folder.item_is_live", name);
+                }
+
+                object = folder;
+
+            } else if (objectId.startsWith("item--")) {
+                final long itemId = Long.parseLong(objectId.substring(
+                    "item--".length()));
+                final ContentItem item = itemRepo.findById(itemId).orElseThrow(
+                    () -> new IllegalArgumentException(String.format(
+                        "No content item with id %d in database.", itemId)));
+
+                name = item.getDisplayName();
+
+                if (isMove(state) && itemManager.isLive(item)) {
+                    addErrorMessage(data, "cms.ui.folder.item_is_live", name);
+                }
+
+                object = item;
+            } else {
+                throw new IllegalArgumentException(String.format(
+                    "Provided objectId '%s' does not start with 'folder--' "
+                        + "or 'item--'.",
+                    objectId));
             }
 
-            if (itemManager.isLive(item) && isMove(state)) {
-                addErrorMessage(data, "cms.ui.folder.item_is_live", name);
+            final long count = controller.countObjects(target, name);
+            if (count > 0) {
+                // there is an item or subfolder in the target folder that already has this name
+                addErrorMessage(data, "cms.ui.folder.item_already_exists",
+                                name);
             }
 
             if (!(permissionChecker.isPermitted(
-                  ItemPrivileges.DELETE, item))
+                  ItemPrivileges.DELETE, object))
                     && isMove(state)) {
-                addErrorMessage(data, "cms.ui.folder.no_permission_for_item",
-                                name);
+                addErrorMessage(data,
+                                "cms.ui.folder.no_permission_for_item",
+                                object.getDisplayName());
             }
         }
 
@@ -755,8 +787,8 @@ public class FolderManipulator extends SimpleContainer implements
                            null);
         }
 
-        public Category getTarget(final PageState state) {
-            return (Category) targetModel.getSelectedObject(state);
+        public Folder getTarget(final PageState state) {
+            return (Folder) targetModel.getSelectedObject(state);
         }
 
         public boolean isCancelled(final PageState state) {
@@ -1072,7 +1104,25 @@ public class FolderManipulator extends SimpleContainer implements
                                       final Object key) {
 
             // Get the list of invalid folders once per request.
-            ArrayList invalidFolders = (ArrayList) m_invalidFolders.get(state);
+            @SuppressWarnings("unchecked")
+            ArrayList<String> invalidFolders
+                              = (ArrayList<String>) m_invalidFolders.get(state);
+
+            if (invalidFolders == null) {
+                // The list of invalid folders has not been set for this
+                // request.  Setting now.
+                invalidFolders = new ArrayList<>();
+                final String[] sources = getSources(state);
+
+                for (final String source : sources) {
+                    if (source.startsWith("folder--")) {
+                        invalidFolders.addAll(source);
+                    }
+                }
+                
+                
+
+            }
 
 //            if (invalidFolders == null) {
 //                // The list of invalid folders has not been set for this

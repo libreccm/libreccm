@@ -43,7 +43,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.Optional;
 
 import java.util.stream.Collectors;
 
@@ -88,6 +87,12 @@ public class FolderBrowserController {
     private GlobalizationHelper globalizationHelper;
 
     @Inject
+    private ContentItemRepository itemRepo;
+
+    @Inject
+    private ContentItemManager itemManager;
+
+    @Inject
     private ContentItemL10NManager itemL10NManager;
 
     @Inject
@@ -95,12 +100,6 @@ public class FolderBrowserController {
 
     @Inject
     private FolderRepository folderRepo;
-
-    @Inject
-    private ContentItemRepository itemRepo;
-
-    @Inject
-    private ContentItemManager itemManager;
 
     private Locale defaultLocale;
 
@@ -406,14 +405,14 @@ public class FolderBrowserController {
         if (objectId.startsWith("folder-")) {
             final long folderId = Long.parseLong(
                 objectId.substring("folder-".length()));
-            
+
             folderRepo
                 .findById(folderId)
                 .ifPresent(folderRepo::delete);
         } else if (objectId.startsWith("item-")) {
             final long itemId = Long.parseLong(
-            objectId.substring("item-".length()));
-            
+                objectId.substring("item-".length()));
+
             itemRepo
                 .findById(itemId)
                 .ifPresent(itemRepo::delete);
@@ -568,6 +567,43 @@ public class FolderBrowserController {
         }
 
         return query.getResultList();
+    }
+
+    /**
+     * Check if a folder or its subfolders contains at least one live item.
+     *
+     * @param folder The folder to check for live items.
+     *
+     * @return {@code true} if the {@code folder} or on of its subfolders
+     *         contains at least one live item, {@code false} otherwise.
+     */
+    @Transactional(Transactional.TxType.REQUIRED)
+    public boolean hasLiveItems(final Folder folder) {
+
+        Objects.requireNonNull(folder,
+                               "Folder to check for live items can't be null.");
+
+        //Ensure that we use an non detached entity.
+        final Folder theFolder = folderRepo.findById(folder.getObjectId())
+            .orElseThrow(() -> new IllegalArgumentException(String.format(
+            "No folder with id %s in the database. Where did that ID come from?",
+            folder.getObjectId())));
+
+        final boolean hasLiveItem = theFolder.getObjects()
+            .stream()
+            .map(categorization -> categorization.getCategorizedObject())
+            .filter(object -> object instanceof ContentItem)
+            .map(object -> (ContentItem) object)
+            .filter(item -> itemManager.isLive(item))
+            .anyMatch(item -> itemManager.isLive(item));
+
+        if (hasLiveItem) {
+            return true;
+        } else {
+            return theFolder.getSubFolders()
+                .stream()
+                .anyMatch(currentFolder -> hasLiveItems(currentFolder));
+        }
     }
 
 }
