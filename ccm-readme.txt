@@ -2,22 +2,19 @@ ccm.sh is a helper script for building and running LibreCCM in a development
 environment. It provides shortcuts for several Maven goals. The available 
 subcommands are:
     
-build-site [PROFILE]                            : Builds the Maven project site.
-build [PROFILE]                                 : Builds LibreCCM using the 
-                                                  provided profile
-build-module MODULE [PROFILE]                   : Build a specific LibreCCM 
-                                                  module.
-test-all [-s [-r RUNTIME]] [PROFILE]            : Run tests for all modules.
-test-module [-s [-r RUNTIME]] MODULE [PROFILE]  : Run tests for a specific 
-                                                  LibreCCM module.
-run-test [-s [-r RUNTIME]] MODULE TEST [PROFILE]: Run a specific testsuite or
-                                                  a single test.
-install-runtime [RUNTIME]                       : Download and install a 
-                                                  runtime (application server) 
-                                                  into ./runtime.
-run [-r RUNTIME] [BUNDLE]                       : Run a runtime 
-                                                  (application server)
-help                                            : Show this help message.
+build-site [PROFILE]                  : Builds the Maven project site.
+build [PROFILE]                       : Builds LibreCCM using the provided 
+                                        profile
+build-module MODULE [PROFILE]         : Build a specific LibreCCM module.
+test-all [[PROFILE] [start]]          : Run tests for all modules.
+test-module MODULE [[PROFILE] [start]]: Run tests for a specific LibreCCM 
+                                        module.
+test MODULE TEST [[PROFILE] [start]]  : Run a specific testsuite or a single 
+                                        test method.
+install-runtime [RUNTIME]             : Download and install a runtime 
+                                        (application server) into ./runtime.
+run [-r RUNTIME] [BUNDLE]             : Run a runtime (application server)
+help                                  : Show this help message.
 
 build-site [PROFILE]
 ====================
@@ -49,81 +46,121 @@ build-module MODULE [PROFILE]
 
 Build a specific LibreCCM module. Equivalent to 
 
-    mvn clean package -pl $MODULE -am 
+    mvn clean package -pl MODULE -am 
 
 without a profile and to
 
-    mvn clean package -P$PROFILE -pl $MODULE -am
+    mvn clean package -PPROFILE -pl MODULE -am
 
 with a profile.
 
-test-all [-s [-r RUNTIME]] [PROFILE]
+test-all [[PROFILE] [start]]
+============================
+
+Run all tests for all modules. The name of the (optional) profile is used to 
+determine if a runtime (application server) is started and which application 
+server is started. Some profiles use Arquillian container adapters which don't
+require a running application server. Others requires a running a application
+server. For those profiles the application server deduced from the profile
+name is started if the last parameter is "start". Otherwise the application
+server must be started manully before running the tests. Please note that the
+use of the "start" parameter is not recommanded because is may causes
+problems. It is recommanded to either start the application server manually or
+to use a profile which uses an Arquillian container adapter which starts the 
+application server itself.
+
+This subcommand is equivalent to the Maven command 
+
+    mvn clean test -PPROFILE
+
+with a profile and to 
+
+    mvn clean test 
+    
+without a profile.
+
+test-module MODULE [[PROFILE] [start]]
+======================================
+
+Runs the tests for a specific module. The name of the module is a mandatory
+parameter.
+
+The name of the (optional) profile is
+used to to determine if a runtime (application server) is started and
+application server is started. Some profiles use Arquillian container adapters
+which dont't require a running application server. Others require a running
+application server. For those profiles the application is deduced from the
+profile is started if the the last parameter is "start". Otherwise the
+application server must be started manually before running the tests. Please
+note that the use of the "start" parameter is not recommanded. It is
+recommanded to either start the application server manually or to use a
+profile which uses a container adapter which starts the application server
+itself.
+ 
+This subcommand is equivalent to the Maven command
+    
+    mvn clean test -pl MODULE -am -PPROFILE
+
+with a profile and to
+
+    mvn clean test -pl MODULE -am
+
+without a profile.
+
+test MODULE TEST [[PROFILE] [start]]
 ====================================
 
-Run all tests for all modules. If the -s flag is set a application server is
-started in the background before the tests are run and stopped afterwards.
-If no runtime is provided using -r RUNTIME Wildfly is used as runtime. See
-the section "run" for Wildfly specific details.
-
-If a profile is provided the profile is used to run the tests.
-
-test-module [-s [-r RUNTIME]] MODULE [PROFILE]
-==============================================
-
-Runs the tests for a specific module. If the -s flag is set a application 
-server is started in the background before the tests are run and stopped 
-afterwards. If no runtime is provided using -r RUNTIME Wildfly is used as 
-runtime. See the section "run" for Wildfly specific details.
-
-This subcommand has one mandatory parameter: The module which tests are run.
-Optionally a profile can be provided.
-
-run-test [-s [-r RUNTIME]] MODULE TEST [PROFILE]
-================================================
-
-Runs the a specific testsuite or a single test. 
-If the -s flag is set a application 
-server is started in the background before the tests are run and stopped 
-afterwards. If no runtime is provided using -r RUNTIME Wildfly is used as 
-runtime. See the section "run" for Wildfly specific details.
-
-This subcommand has two mandatory parameter: 
-The module which contains the test(suite) to run and the test to run. The test
-to run must be provided in the following syntax:
+Runs the a specific testsuite or a single test. Module and test are mandatory
+parameters. The testsuite or test to run is set using the following syntax:
 
 fully.qualified.classname.of.testclass[#test-method]
 
-Optionally are profile can be provided. 
+The name of the (optional) profile is
+used to to determine if a runtime (application server) is started and
+application server is started. Some profiles use Arquillian container adapters
+which dont't require a running application server. Others require a running
+application server. For those profiles the application is deduced from the
+profile is started if the the last parameter is "start". Otherwise the
+application server must be started manually before running the tests. Please
+note that the use of the "start" parameter is not recommanded. It is
+recommanded to either start the application server manually or to use a
+profile which uses a container adapter which starts the application server
+itself.
+ 
+This subcommand is equivalent to the Maven command
+
+    mvn clean test -Dtest=TEST -DfailIfNoTests=false -pl MODULE -am -PPROFILE
+
+with a profile and to 
+
+    mvn clean test -Dtest=TEST -DfailIfNoTests=false -pl MODULE -am
+
+without a profile.
 
 Some examples:
 
 Run all tests in the class org.libreccm.configuration.EqualsAndHashCodeTest in 
 the ccm-core module:
 
-ccm.sh runtest ccm-core org.libreccm.configuration.EqualsAndHashCodeTest
+ccm.sh test ccm-core org.libreccm.configuration.EqualsAndHashCodeTest
 
 Run all tests in the class org.libreccm.core.CcmObjectRepositoryTest in the
-ccm-core module. This tests is run using Arquillian and requires a runtime and
-is only run when an integration test profile is used:
+ccm-core module. These tests is run using Arquillian and require a runtime and
+is only run when an integration test profile is used. The application server
+must be started before the test are invoked.
 
-ccm.sh runtest -s ccm-core org.libreccm.core.CcmObjectRepositoryTest
-wildfly-remote-h2-mem
+ccm.sh test ccm-core org.libreccm.core.CcmObjectRepositoryTest wildfly-remote-h2-mem
+
+This example runs the same tests as the previous example but uses a managed
+profile. The application server will started by Arquillian automatically:
+
+ccm.sh test ccm-core org.libreccm.core.CcmObjectRepositoryTest
+wildfly-managed-h2-mem
 
 Or if you only want to run the saveChangedCcmObject test:
 
-ccm.sh runtest -s ccm-core
-org.libreccm.core.CcmObjectRepositoryTest#saveChangedCcmObject wildfly-remote-h2-mem
-
-The last two examples used the default runtime (Wildfly). Invoking without a
-specific runtime is equivalent to 
-
-ccm.sh runtest -s -r wildfly ccm-core org.libreccm.core.CcmObjectRepositoryTest wildfly-remote-h2-mem
-
-ccm.sh runtest -s -r wildfly ccm-core org.libreccm.core.CcmObjectRepositoryTest#saveChangedCcmObject wildfly-remote-h2-mem
-
-
-
-
+ccm.sh test ccm-core
+org.libreccm.core.CcmObjectRepositoryTest#saveChangedCcmObject wildfly-managed-h2-mem
 
 
 install-runtime [RUNTIME]
@@ -169,18 +206,28 @@ using Wildfly's administration UI available at
 http://localhost:9990
 
 
-Wildfly specific details
-------------------------
+Supported iApplication server
+=============================
+
+Wildfly
+-------
 
 If the JBOSS_HOME environment variable is set the script will use the server
-in the directory provided by JBOSS_HOME. You may provide a value for this
-variable when calling the script:
+in the directory provided by JBOSS_HOME for starting Wildfly. 
+You may provide a value for this variable when calling the script:
 
     JBOSS_HOME=/path/to/wildfly ./ccm.sh run [wildfly]
 
+For profiles using the wildfly-arquillian-container-remote adapter Wildfly
+must be started manually. The subcommands for running test have an optional
+parameter for starting Wildfly automatically if a remote profile is used, but
+this is not recommanded. If a profile is used which uses
+wildfly-arquillian-container-managed Arquillian starts the container
+automatically.
+
 If JBOSS_HOME is not set the script will look for a Wildfly installation in
 ./runtime. The install-runtime subcommand can be used to install Wildfly
-there. 
+there. The script passes this parameter to Maven in the required form.
 
 The datasource configuration is done using Wildfly's administration UI. To
 create a datasource open a browser and go to
