@@ -410,11 +410,11 @@ run() {
         bundle="$3"
     else 
         runtime="wildfly"
-        bundle="$2"
+        bundle="$1"
     fi
 
     if [ -z $bundle ]; then
-        echo "Running Wilfly $wildversion without a bundle (only starting Wilflybut not deploying LibreCCM)..."
+        echo "Running Wilfly $wildversion without a bundle (only starting Wilfly but not deploying LibreCCM)..."
     else 
         echo "Running bundle $bundle with Wildfly $wildflyversion..."
     fi

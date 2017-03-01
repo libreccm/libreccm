@@ -778,10 +778,17 @@ public class CategoryManager {
      *
      * @return The path of the category.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public String getCategoryPath(final Category category) {
+        
+        Objects.requireNonNull(category, "Can't get the path for category null");
+        
         final List<String> tokens = new ArrayList<>();
 
-        Category current = category;
+        Category current = categoryRepo.findById(category.getObjectId())
+        .orElseThrow(() -> new IllegalArgumentException(String.format(
+            "No category with ID %d in the database. Where did that ID come from?",
+            category.getObjectId())));
         while (current.getParentCategory() != null) {
             tokens.add(current.getDisplayName());
             current = current.getParentCategory();
@@ -794,6 +801,7 @@ public class CategoryManager {
         return joiner.toString();
     }
 
+    @Transactional(Transactional.TxType.REQUIRED)
     public boolean hasIndexObject(final Category category) {
         final TypedQuery<Boolean> query = entityManager
             .createNamedQuery("Categorization.hasIndexObject", Boolean.class);
@@ -813,6 +821,7 @@ public class CategoryManager {
      * @return An {@link Optional} containing the index object of the provided
      *         category if the category has an index object.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public Optional<CcmObject> getIndexObject(final Category category) {
         if (hasIndexObject(category)) {
             final TypedQuery<CcmObject> query = entityManager.createNamedQuery(
