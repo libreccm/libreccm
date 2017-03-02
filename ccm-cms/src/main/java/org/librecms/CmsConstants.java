@@ -54,6 +54,9 @@ public class CmsConstants {
 
     public static final String CATEGORIZATION_TYPE_FOLDER = "folder";
 
+    public static final String FOLDER_BROWSER_KEY_PREFIX_FOLDER = "folder-";
+    public static final String FOLDER_BROWSER_KEY_PREFIX_ITEM = "item-";
+    
     /**
      * Constant string used as key for creating service package as a legacy
      * application.
