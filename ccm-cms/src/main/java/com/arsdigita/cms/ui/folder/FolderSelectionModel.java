@@ -25,9 +25,9 @@ import com.arsdigita.cms.CMS;
 import com.arsdigita.ui.CcmObjectSelectionModel;
 
 import org.libreccm.categorization.Category;
+import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.Folder;
-
 
 /**
  * Keeps track of the selection of an item in a folder. The objects that are
@@ -50,7 +50,7 @@ public class FolderSelectionModel extends CcmObjectSelectionModel<Folder> {
     @Override
     public Long getSelectedKey(final PageState state) {
         // FIXME: this code will go away once parameter models support init listeners
-        Long result = super.getSelectedKey(state);
+        final Long result = super.getSelectedKey(state);
         if (result == null) {
             result = getRootFolderID(state);
             setSelectedKey(state, result);
@@ -62,11 +62,25 @@ public class FolderSelectionModel extends CcmObjectSelectionModel<Folder> {
     public void setSelectedKey(final PageState state, final Long key) {
         super.setSelectedKey(state, key);
     }
-    
+
+    public void setSelectedKey(final PageState state, final String key) {
+        if (!key.startsWith(CmsConstants.FOLDER_BROWSER_KEY_PREFIX_FOLDER)) {
+            throw new IllegalArgumentException(String.format(
+                    "The string '%s' does not contain a folder id "
+                            + "(it does not start with '%s').",
+                    key,
+                    CmsConstants.FOLDER_BROWSER_KEY_PREFIX_FOLDER));
+        }
+
+        final long keyAsLong = Long.parseLong(key.substring(
+                CmsConstants.FOLDER_BROWSER_KEY_PREFIX_FOLDER.length()));
+        setSelectedKey(state, keyAsLong);
+    }
+
     /**
      * Clear the selection by resetting it to the root folder id.
      *
-     * @param state represents the cuerent request.
+     * @param state represents the current request.
      */
     @Override
     public void clearSelection(final PageState state) {
@@ -93,8 +107,9 @@ public class FolderSelectionModel extends CcmObjectSelectionModel<Folder> {
     /**
      * Return true, since this selection model will always have a folder
      * selected in it
+     *
      * @param state
-     * @return 
+     * @return
      */
     @Override
     public boolean isSelected(final PageState state) {

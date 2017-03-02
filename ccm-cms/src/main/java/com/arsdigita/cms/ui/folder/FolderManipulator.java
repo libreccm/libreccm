@@ -203,55 +203,22 @@ public class FolderManipulator extends SimpleContainer implements
         return (String) state.getValue(actionParam);
     }
 
-    protected void moveItems(final Category target,
-                             final String[] itemIds) {
+    protected void moveObjects(final Folder target, final String[] objectIds) {
 
-        for (String itemId : itemIds) {
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final FolderBrowserController controller = cdiUtil.findBean(
+                FolderBrowserController.class);
 
-            changeItemParent(itemId, target);
-
-        }
-
+        controller.moveObjects(target, objectIds);
     }
 
-    private void changeItemParent(final String itemId,
-                                  final Category newParent) {
+    protected void copyObjects(final Folder target, final String[] objectIds) {
 
-        //ToDo
-        throw new UnsupportedOperationException();
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final FolderBrowserController controller = cdiUtil.findBean(
+                FolderBrowserController.class);
 
-//        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-//        final ContentItemRepository itemRepo = cdiUtil.findBean(
-//                ContentItemRepository.class);
-//        final ContentItemManager itemManager = cdiUtil.findBean(
-//                ContentItemManager.class);
-//        final CategoryManager categoryManager = cdiUtil.findBean(
-//                CategoryManager.class);
-//        final ContentItem item = itemRepo.findById(itemId);
-//        final Category itemFolder = itemManager.getItemFolders(item).
-//        item.addCategory(newParent);
-//        item.setParent(newParent);
-//        item.save();
-    }
-
-    protected void copyItems(final Category target,
-                             final String[] itemIds) {
-
-        //ToDo
-        throw new UnsupportedOperationException();
-//
-//        if (LOGGER.isDebugEnabled()) {
-//            LOGGER.debug("Copying items " + Arrays.asList(itemIds) + " to "
-//                                 + target);
-//        }
-//        for (BigDecimal itemId : itemIds) {
-//
-//            final ContentItem source = retrieveSourceItem(itemId);
-//
-//            final ContentItem newItem = source.copy(target, true);
-//            Assert.isEqual(target, newItem.getParent());
-//
-//        }
+        controller.copyObjects(target, objectIds);
     }
 
 //    protected void publishItems(final BigDecimal[] itemIds) {
@@ -450,13 +417,13 @@ public class FolderManipulator extends SimpleContainer implements
             itemView.setVisible(state, true);
             targetSelector.setVisible(state, false);
 
-            final Category folder = targetSelector.getTarget(state);
+            final Folder folder = targetSelector.getTarget(state);
             final String[] itemIds = getSources(state);
 
             if (isCopy(state)) {
-                copyItems(folder, itemIds);
+                copyObjects(folder, itemIds);
             } else if (isMove(state)) {
-                moveItems(folder, itemIds);
+                moveObjects(folder, itemIds);
             }
 
             reset(state);
