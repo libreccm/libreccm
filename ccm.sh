@@ -2,14 +2,44 @@
 
 # Provides shortcuts for working with LibreCCM
 
-wildflyversion="10.1.0.Final"
-wildflypidfile="./WILDFLY_PID"
+wildfly_version="10.1.0.Final"
+wildfly_pid_file="./WILDFLY_PID"
+wildfly_home=""
+
+# Helper function for finding Wildfly. First the function checks if the 
+# environment variable JBOSS_HOME is set. If JBOSS_HOME is set is make sure
+# that JBOSS_HOME points to a valid Wildfly installation. If JBOSS_HOME is not
+# set the function checks if Wildfly is installed in ./runtime. If there is no
+# Wildfly in runtime the function exits the script.
+find_wildfly_home() {
+    #local wildfly_home=""
+    if [[ -n $JBOSS_HOME ]]; then
+        echo "JBOSS_HOME = $JBOSS_HOME"
+        if [ -f "$JBOSS_HOME/bin/standalone.sh" ]; then           
+            echo $JBOSS_HOME
+        else 
+            echo -e "\e[41mJBOSS_HOME is set but there is no $JBOSS_HOME/bin/standalone.sh. Please make sure that JBOSS_HOME points to a valid Wildfly installation.\e[0m"
+            exit 1
+        fi
+    elif [[ -d "./runtime/wildfly-$wildfly_version" ]]; then
+        wildfly_home="./runtime/wildfly-$wildfly_version"
+        echo "wildfly_home is '$wildfly_home'"
+        pushd $wildfly_home
+        wildfly_home=$(pwd)
+        echo "wildfly_home is '$wildfly_home'"
+        popd
+        #echo $wildfly_home        
+    else
+        echo -e "\e[41mThere is no Wildfly in ./runtime/ neither is JBOSS_HOME set. Please install Wildfly $wildfly_version into ./runtime/ using install-runtime or set the JBOSS_HOME enviroment variable.\e[0m"
+        exit 1
+    fi
+}
 
 # Build the project site.
 # 
 # @param $1 (optional): Maven profile to use.
 #
-buildsite() {
+build_site() {
     if [ -d "$1" ]; then 
         mvn clean package site site:stage -Dmaven.test.failure.ignore=true -P$1
     else 
@@ -34,7 +64,7 @@ build() {
 # @param $1 (mandantory): The artifact ID of the module to build.
 # @param $2 (optional)  : The profile to use.
 #
-buildmodule() {
+build_module() {
     if [ -n "$1" ]; then
         if [ -n "$2" ]; then
             mvn clean package -P$2 -pl $1 -am
@@ -50,24 +80,15 @@ buildmodule() {
 # Helper method for starting runtime for integration tests
 # @param $1 (mandantory): Runtime to start
 #
-starttestruntime() {
+start_test_runtime() {
     if [ "$1"="wildfly" ]; then
-        echo "Starting Wildfly $wildversion for running tests..."
-        wildflyhome=""
-        if [ -n "$JBOSS_HOME" ]; then
-            echo "Setting wildflyhome to JBOSS_HOME"
-            wildflyhome=$JBOSS_HOME
-        elif [ -d "./runtime/wildfly-$wildflyversion" ]; then
-            echo "Setting wildflyhome..."
-            wildflyhome="./runtime/wildfly-$wildflyversion"
-        else 
-            echo "There is not Wildfly in ./runtime/ and JBOSS_HOME is not set."
-            echo "Please call install-runtime or set JBOSS_HOME"
-            exit 1
-        fi
+        echo "Starting Wildfly running tests..."
+        #local wildfly_home=$(find_wildfly_home)
 
-        pushd $wildflyhome
-        LAUNCH_JBOSS_IN_BACKGROUND=1 JBOSS_PIDFILE=$wildflypidfile ./bin/standalone.sh &
+        find_wildfly_home
+        #pushd $(find_wildfly_home)
+        pushd $wildfly_home
+        LAUNCH_JBOSS_IN_BACKGROUND=1 JBOSS_PIDFILE=$wildfly_pid_file ./bin/standalone.sh &
         popd
         echo "Waiting 120s for Wildfly to start up..."
         sleep 120
@@ -79,8 +100,8 @@ starttestruntime() {
         fi
 
         echo "Stopping Wildfly..."
-        pushd $wildflyhome
-        kill $(<"$wildflypidfile")
+        pushd $wildfly_home
+        kill $(<"$wildfly_pid_file")
         popd
 
     elif [ "$1"="tomee" ]; then
@@ -97,25 +118,14 @@ starttestruntime() {
 # 
 # @param $1 (mandantory): Runtime to stop
 #
-stoptestruntime() {
+stop_test_runtime() {
     if [ "$1" = "wildfly" ]; then
         echo "Stopping Wildfly..."
+        find_wildfly_home
+        #local wildfly_home=$(find_wildfly_home)
 
-        wildflyhome=""
-        if [ -n "$JBOSS_HOME" ]; then
-            echo "Setting wildflyhome to JBOSS_HOME"
-            wildflyhome=$JBOSS_HOME
-        elif [ -d "./runtime/wildfly-$wildflyversion" ]; then
-            echo "Setting wildflyhome..."
-            wildflyhome="./runtime/wildfly-$wildflyversion"
-        else 
-            echo "There is no Wildfly in ./runtime/ and JBOSS_HOME is not set."
-            echo "Please call install-runtime or set JBOSS_HOME"
-            exit 1
-        fi
-
-        pushd $wildflyhome
-        kill $(<"$wildflypidfile")
+        pushd $wildfly_home
+        kill $(<"$wildfly_pid_file")
         popd
     elif [ "$1" = "tomee" ]; then
         echo "Not implemented yet."
@@ -128,37 +138,26 @@ stoptestruntime() {
 }
 
 # Run all tests
-testall() {
+test_all() {
     echo "Running all tests for all modules..."
     if [[ $1 =~ ^wildfly-managed.* ]]; then
         echo "...using a managed Wildfly container"
-        wildflyhome=""
-        if [ -n "$JBOSS_HOME" ]; then
-            echo "...JBOSS_HOME environment variable is set. Using Wildfly installation at $JBOSS_HOME."
-            wildflyhome=$JBOSS_HOME
-        elif [ -d "./runtime/wildfly-$wildflyversion" ]; then
-            echo "...using Wildfly installation in runtime directory"
-            pushd $wildflyhome
-            wildflyhome=`pwd`
-            popd
-        else 
-            echo -e "\e[41mThere is no Wildfly-$wildflyversion in ./runtime nore is JBOSS_HOME set. Please install Wildfly-$wildflyversion into runtime by calling install-runtime or set the JBOSS_HOME environment variable to a valid location.\e[0m"
-            exit 1
-        fi
-       
+        find_wildfly_home
+        #local wildfly_home=$(find_wildfly_home)
+      
         echo "...using profile $1"
         echo ""
         if [ -n $STARTUP_TIMEOUT ]; then
-            mvn clean test -Djboss.home=$wildflyhome -DstartuptimeoutInSeconds=$STARTUP_TIMEOUT -P$1
+            mvn clean test -Djboss.home=$wildfly_home -DstartuptimeoutInSeconds=$STARTUP_TIMEOUT -P$1
         else 
-            mvn clean test -Djboss.home=$wildflyhome -P$1
+            mvn clean test -Djboss.home=$wildfly_home -P$1
         fi
 
     elif [[ $1 =~ ^wildfly-remote.* ]]; then
         echo "...using a remote Wildfly container"
         if [[ $2 == "start" ]]; then
             echo "...starting runtime"
-            starttestruntime wildfly
+            start_test_runtime wildfly
         else 
             echo "...runtime is started manually"
         fi
@@ -184,7 +183,7 @@ testall() {
 }
 
 # Run tests for a module
-testmodule() {
+test_module() {
 
     if [[ -z $1 ]]; then
         echo -e "\e[41mUsage: ccm.sh test-module MODULE [PROFILE] [start]\e[0m"
@@ -194,32 +193,20 @@ testmodule() {
     echo "Running tests for module $1..."
     if [[ $2 =~ ^wildfly-managed.* ]]; then
         echo "...using a managed Wildfly container."
-        wildflyhome=""
-        if [ -n "$JBOSS_HOME" ]; then
-            echo "...JBOSS_HOME enviromentment variable is set Using Wildfly installation at $JBOSS_HOME."
-            wildflyhome=$JBOSS_HOME
-        elif [ -d "./runtime/wildfly-$wildflyversion" ]; then
-            echo "...using Wildfly installation in runtime-directory"
-            pushd $wildflyhome
-            wildflyhome=`pwd`
-            popd
-        else
-            echo -e "\e[41mThere is no Wildfly-$wildfly-version in ./runtime nore is JBOSS_HOME set. Please install Wildfly-$wildfly-version into ./runtime by calling install-runtime or set the JBOSS_HOME environment variable to valid location.\e[0m"
-            exit 1
-        fi
-
+        find_wildfly_home
+        #local wildfly_home=$(find_wildfly_home)
         echo "...using profile $2"
         echo ""
         if [ -n $STARTUP_TIMEOUT ]; then
-            mvn clean test -Djboss.home=$wildflyhome -DstartupTimeoutInSeconds=$STARTUP_TIMEOUT -pl $1 -am -P$1
+            mvn clean test -Djboss.home=$wildfly_home -DstartupTimeoutInSeconds=$STARTUP_TIMEOUT -pl $1 -am -P$1
         else
-            mvn clean test -Djboss.home=$wildflyhome -pl $1 -am -P$2
+            mvn clean test -Djboss.home=$wildfly_home -pl $1 -am -P$2
         fi
     elif [[ $2 =~ ^wildfly-remote.* ]]; then
         echo "Using a remote Wildfly container..."
         if [[ $3 == "start" ]]; then
             echo "...starting runtime"
-            starttestruntime wildfly
+            start_test_runtime wildfly
         else
             echo "...runtime is started manually"
         fi
@@ -244,7 +231,7 @@ testmodule() {
 }
 
 # Run a single testsuite or test
-runtest() {
+run_test() {
 
     if [ -z "$1" -o -z "$2" ]; then
         echo -e "\e[41mUsage: ccm.sh test-module MODULE TEST [PROFILE] [start]\e[0m"
@@ -254,33 +241,22 @@ runtest() {
     echo "Running test $2 from module $1..."
     if [[ $3 =~ ^wildfly-managed.* ]]; then
         echo "...using a managed Wildfly container."
-        wildflyhome=""
-        if [ -n "$JBOSS_HOME" ]; then
-            echo "...JBOSS_HOME environment variable is set. Using Wildfly installation at $JBOSS_HOME."
-            wildflyhome=$JBOSS_HOME            
-        elif [ -d "./runtime/wildfly-$wildflyversion" ]; then
-            echo "...using Wildfly installation in runtime directory"
-            pushd ./runtime/wildfly-$wildflyversion
-            wildflyhome=`pwd`
-            popd           
-        else
-            echo -e "\e[41mThere is no Wildfly-$wildfly-version in ./runtime nore is JBOSS_HOME set. Please install Wildfly-$wildfly-version into ./runtime by calling install-runtime or set the JBOSS_HOME environment variable to valid location.\e[0m"
-            exit 1
-        fi        
+        find_wildfly_home
+        #local wildfly_home=$(find_wildfly_home)
 
-        echo "...using Wildfly in $wildflyhome"
+        echo "...using Wildfly in $wildfly_home"
         echo "...using profile $3"
         echo ""
         if [ -n $STARTUP_TIMEOUT ]; then
-            mvn clean test -Djboss.home=$wildflyhome -DstartupTimeoutInSeconds=$STARTUP_TIMEOUT -Dtest=$2 -DfailIfNoTests=false -pl $1 -am -P$3
+            mvn clean test -Djboss.home=$wildfly_home -DstartupTimeoutInSeconds=$STARTUP_TIMEOUT -Dtest=$2 -DfailIfNoTests=false -pl $1 -am -P$3
         else
-            mvn clean test -Djboss.home=$wildflyhome -Dtest=$2 -DfailIfNoTests=false -pl $1 -am -P$3
+            mvn clean test -Djboss.home=$wildfly_home -Dtest=$2 -DfailIfNoTests=false -pl $1 -am -P$3
         fi
     elif [[ $3 =~ ^wildfly-remote.* ]]; then
         echo "Using a remote Wildfly container..."
         if [[ $4 == "start" ]]; then
             echo "...starting runtime"
-            starttestruntime wildfly
+            start_test_runtime wildfly
         else
             echo "...runtime is started manually"
         fi
@@ -289,7 +265,7 @@ runtest() {
 
         if [[ $4 == "start" ]]; then
             echo "...stopping runtime"
-            stoptestruntime wildfly
+            stop_test_runtime wildfly
         fi
     else
         if [[ -n $3 ]]; then
@@ -307,8 +283,8 @@ runtest() {
 
 
 
-installruntime() {
-    runtime=""
+install_runtime() {
+    local runtime=""
     if [ -z $1 ]; then
         runtime="wildfly"
     else 
@@ -318,8 +294,8 @@ installruntime() {
     echo "Installing runtime $runtime..."
     if [ $runtime = wildfly ]; then
 
-        if [ -d ./runtime/wildfly-$wildflyversion ]; then 
-            echo "Wildfly $wildflyversion is already installed as runtime. Exiting"
+        if [ -d ./runtime/wildfly-$wildfly_version ]; then 
+            echo "Wildfly $wildfly_version is already installed as runtime. Exiting"
             exit 1
         fi
 
@@ -328,22 +304,22 @@ installruntime() {
         fi
 
         pushd runtime 
-        if [ -f wildfly-$wildflyversion.tar.gz ]; then
-            echo "Wildfly $wildflyversion has already been downloaded, using existing archive."
+        if [ -f wildfly-$wildfly_version.tar.gz ]; then
+            echo "Wildfly $wildfly_version has already been downloaded, using existing archive."
         else 
-            wget http://download.jboss.org/wildfly/$wildflyversion/wildfly-$wildflyversion.tar.gz
+            wget http://download.jboss.org/wildfly/$wildfly_version/wildfly-$wildfly_version.tar.gz
         fi
 
-        if [ ! -f wildfly-$wildflyversion.tar.gz ]; then
+        if [ ! -f wildfly-$wildfly_version.tar.gz ]; then
             echo "Failed to download Wildfly."
             exit 1
         fi
 
-        tar vxzf wildfly-$wildflyversion.tar.gz
+        tar vxzf wildfly-$wildfly_version.tar.gz
         echo ""
         echo "Wildfly extracted successfully. Please provide a username and password for a Wildfly management user (admin):" 
         echo ""
-        username=""
+        local username=""
         while [ -z $username ]; do
             echo -n "Username.......: "
             read username
@@ -351,8 +327,8 @@ installruntime() {
                 echo "Username can't be empty!"
             fi
         done
-        password=""
-        passwordrepeat=""
+        local password=""
+        local passwordrepeat=""
         while [ -z $password -o $password != $passwordrepeat ]; do
             echo -n "Password.......: "
             read -s password
@@ -372,13 +348,13 @@ installruntime() {
         done
         echo ""
         echo "Creating Wildfly management user $username..."
-        pushd wildfly-$wildflyversion
+        pushd wildfly-$wildfly_version
         sh ./bin/add-user.sh $username $password
         popd
         popd
 
         echo ""
-        echo "Wildfly $wildflyversion successfully installed in ./runtime."
+        echo "Wildfly $wildfly_version successfully installed in ./runtime."
         echo "Before running LibreCCM you have to configure a datasource."
         echo "To do that run"
         echo ""
@@ -399,61 +375,60 @@ installruntime() {
 }
 
 run() {
-    runtime=""
-    bundle=""
+    local runtime=""
+    local runtime_only=false
+    local bundle=""
 
     if [ "$1" = "-r" ]; then
         runtime="$2"
-        bundle="$3"
-    elif [ "$1" = "--with-runtime" ]; then
-        runtime="$2"
-        bundle="$3"
-    else 
-        runtime="wildfly"
-        bundle="$1"
+        runtime_only=true
+    else
+        runtime_only=false
+        bundle=$1
     fi
 
-    if [ -z $bundle ]; then
-        echo "Running Wilfly $wildversion without a bundle (only starting Wilfly but not deploying LibreCCM)..."
-    else 
-        echo "Running bundle $bundle with Wildfly $wildflyversion..."
-    fi
+    if [ $runtime_only == true ]; then
+        echo "Starting application server without deploying a bundle..."
+        if [[ -z "$runtime" ]]; then
+            echo "No application server set, using default (Wildfly)..."
+            runtime="wildfly"
+        fi
 
+        if [ $runtime="wildfly" ]; then
+            find_wildfly_home
+            # local wildfly_home=$(find_wildfly_home)
 
-    if [ $runtime = "wildfly" ]; then
-        wildflyhome=""
-        if [ -n "$JBOSS_HOME" ]; then
-            echo "Setting wildflyhome to JBOSS_HOME"
-            wildflyhome=$JBOSS_HOME
-        elif [ -d "./runtime/wildfly-$wildflyversion" ]; then
-            echo "Setting wildflyhome..."
-            wildflyhome="./runtime/wildfly-$wildflyversion"
-        else 
-            echo "There is not Wildfly in ./runtime/ and JBOSS_HOME is not set."
-            echo "Please call install-runtime or set JBOSS_HOME"
+            pushd $wildfly_home
+            sh ./bin/standalone.sh
+            popd
+        elif [ $runtime="tomee" ]; then
+            echo "Not implemented yet."
+            exit 0
+        else
+            echo -e "\e[41mUnknown runtime $runtime. Please specify a supported runtime.\e[0m"
             exit 1
         fi
-
-        echo "Starting Wildfly in $wildflyhome..."
-        if [ -z $bundle ]; then
-            pushd $wildflyhome
-            sh "./bin/standalone.sh"
-            popd
-        else 
-            mvn -Djboss-as.home=${wildflyhome} package wildfly:run -DskipTests -pl $bundle -am -Pgeneric
+    else
+        echo "Running bundle $bundle..."
+        if [[ $bundle=~^.*-wildfly$ ]]; then
+            find_wildfly_home
+            # local wildfly_home=$(find_wildfly_home)
+            echo "Using Wildfly in $wildfly_home..."
+            mvn package wildfly:run -Djboss-as.home=${wildfly_home} -DskipTests -pl $bundle -am -Pgeneric
+       elif [[ $bundle=~^.*-wildfly-swarm$ ]]; then
+            echo "Not implemented yet"
+            exit 0
+        elif [[ $bundle=~^.*-tomee$ ]]; then
+            echo "Not implemented yet"
+            exit 0
+        else
+            echo -e "\e[41mThe bundle '$bundle' has an unknown suffix. Are you sure that you specified a valid bundle?\e[0m"
         fi
-
-    elif [ $runtime = "tomee" ]; then
-        echo "Not implemented yet"
-        exit 0
-    else 
-        echo "Unknown runtime $runtime. Supported runtimes are: wildfly tomee"
-        exit 1
     fi
 }
 
-stopruntime() {
-    runtime=""
+stop_runtime() {
+    local runtime=""
     if [ -n "$1" ]; then
         runtime=$1
     else
@@ -461,18 +436,7 @@ stopruntime() {
     fi
 
     if [ runtime = "wildfly"]; then
-        wildflyhome=""
-        if [ -n $JBOSS_HOME ]; then
-            wildflyhome="$JBOSS_HOME"
-        elif [ -d "./runtime/wildfly-$wildflyversion" ]; then
-            wildflyhome="./runtime/wildfly-$wildflyversion"
-        else
-            echo "There is no Wildfly in ./runtime/ and JBOSS_HOME is not set."
-            echo "Exiting."
-            exit 1
-        fi
-
-        bin/standalone.sh
+        echo "Nothing to do, the Wildfly Maven plugins automatically stops Wildfly."
     elif [ $runtime = "tomee"]; then
         echo "Not implemented yet."
         exit 0
@@ -482,7 +446,7 @@ stopruntime() {
     fi
 }
 
-showhelp() {
+show_help() {
     echo "ccm.sh is a helper script for building and running LibreCCM in a 
 development environment. It provides shortcuts for several Maven goals. The available subcommands are:
     
@@ -508,17 +472,17 @@ development environment. It provides shortcuts for several Maven goals. The avai
 }
 
 case $1 in
-    build-site)      buildsite $2 ;;
+    build-site)      build_site $2 ;;
     build)           build $2 ;;
-    build-module)    buildmodule $2 ;;
-    test-all)        testall $2 $3 $4 ;;
-    test-module)     testmodule $2 $3 $4 $5 ;;
-    test)            runtest $2 $3 $4 $5 ;;
-    install-runtime) installruntime $2 ;;
+    build-module)    build_module $2 ;;
+    test-all)        test_all $2 $3 $4 ;;
+    test-module)     test_module $2 $3 $4 $5 ;;
+    test)            run_test $2 $3 $4 $5 ;;
+    install-runtime) install_runtime $2 ;;
     run)             run $2 $3 $4 ;;
-    stop-runtime)    stopruntime $2 ;;
-    help)            showhelp ;;
-    *)               showhelp ;;
+    stop-runtime)    stop_runtime $2 ;;
+    help)            show_help ;;
+    *)               show_help ;;
 
 esac
 

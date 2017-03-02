@@ -188,16 +188,21 @@ c) Extract Wildfly
 d) Ask for the username and password for a management user for Wildfly (see
    the Wildfly documentation for details on that).
 
-run [-r RUNTIME | --with-runtime RUNTIME] [BUNDLE]
+run -r [RUNTIME]| BUNDLE
 ==================================================
 
-Starts an application server (at the moment only Wildfly is supported). If a
-bundle is provided the bundle is build (skiping all JUnit tests) and deployed
-to the application server. If no bundle is provided the application server is
-only started. This is useful for configuring the application server. 
+Starts an application server (at the moment only Wildfly is supported). 
 
-If no runtime is provided using -r or --with-runtime Wildfly is used as
-default.
+If "-r" is set only the application server will be started and no bundle will
+be deployed. This is useful for configuring the application server. If no
+runtime is specified Wildfly will be used. 
+
+If a bundle is provided the runtime (application server) to start is deduced
+from the name of the bundle. For example if the name of the bundle ends with
+'-wildfly' Wildfly is started and the bundle is deployed to Wildfly.
+
+The method of starting the application server and deploying the bundle depends
+on the application server.
 
 IMPORTANT: You must configure a datasource with the JNDI-URL required by the
 bundle you want to run before running LibreCCM. For Wildfly this can be done
@@ -206,7 +211,7 @@ using Wildfly's administration UI available at
 http://localhost:9990
 
 
-Supported iApplication server
+Supported Application servers
 =============================
 
 Wildfly
@@ -244,6 +249,13 @@ and a datasource for the bundle you want to use.
 Some JNDI-Datasource-URLs:
 
 ccm-bundle-devel-wildfly    java:/comp/env/jdbc/libreccm/db
+
+For running integration tests via Arquillian in Wildfly the
+wildfly-arquillian-container-managed container adapter is used for managed
+profiles. For remote profiles Wildfly is started by invoking bin/standalone.sh
+directly, but only if the "start" parameter is present.
+
+For running LibreCCM the wildfly-maven-plugin is used.
 
 
 
