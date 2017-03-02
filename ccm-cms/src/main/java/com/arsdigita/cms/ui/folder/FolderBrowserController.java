@@ -60,6 +60,10 @@ import javax.transaction.Transactional;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
+import org.hibernate.tool.schema.internal.TargetFileImpl;
+import org.libreccm.categorization.ObjectNotAssignedToCategoryException;
+import org.libreccm.core.UnexpectedErrorException;
+import org.librecms.contentsection.FolderManager;
 
 import static org.librecms.CmsConstants.*;
 
@@ -76,6 +80,9 @@ public class FolderBrowserController {
 
     @Inject
     private EntityManager entityManager;
+
+    @Inject
+    private CcmObjectRepository ccmObjectRepo;
 
     @Inject
     private CategoryManager categoryManager;
@@ -103,6 +110,9 @@ public class FolderBrowserController {
 
     @Inject
     private FolderRepository folderRepo;
+
+    @Inject
+    private FolderManager folderManager;
 
     private Locale defaultLocale;
 
@@ -629,14 +639,14 @@ public class FolderBrowserController {
                 .map(Optional::get)
                 .collect(Collectors.toList());
         final List<List<String>> subFolderIds = sourceFolderIds
-        .stream()
-        .map(sourceFolderId -> findSubFolderIds(sourceFolderId))
-        .collect(Collectors.toList());
+                .stream()
+                .map(sourceFolderId -> findSubFolderIds(sourceFolderId))
+                .collect(Collectors.toList());
 
         final List<String> invalidTargetIds = new ArrayList<>();
         invalidTargetIds.addAll(sourceFolderIds);
         invalidTargetIds.addAll(parentFolderIds);
-        for(final List<String> subFolderIdList : subFolderIds) {
+        for (final List<String> subFolderIdList : subFolderIds) {
             invalidTargetIds.addAll(subFolderIdList);
         }
 
@@ -679,7 +689,7 @@ public class FolderBrowserController {
                     "Provided string '%s' is not the ID of a folder.",
                     folderId));
         }
-        
+
         final long objectId = Long.parseLong(folderId.substring(
                 FOLDER_BROWSER_KEY_PREFIX_FOLDER.length()));
         final Folder folder = folderRepo.findById(objectId)
@@ -689,28 +699,134 @@ public class FolderBrowserController {
                 objectId)));
         return findSubFolders(folder)
                 .stream()
-                .map(subFolder -> String.format("%s%d", 
-                                             FOLDER_BROWSER_KEY_PREFIX_FOLDER, 
-                                             subFolder.getObjectId()))
+                .map(subFolder -> String.format("%s%d",
+                                                FOLDER_BROWSER_KEY_PREFIX_FOLDER,
+                                                subFolder.getObjectId()))
                 .collect(Collectors.toList());
     }
-    
+
     private List<Folder> findSubFolders(final Folder folder) {
-        
+
         Objects.requireNonNull(folder);
-        
-        if (folder.getSubFolders() == null 
-            || folder.getSubFolders().isEmpty()) {
+
+        if (folder.getSubFolders() == null
+                    || folder.getSubFolders().isEmpty()) {
             return Collections.emptyList();
         }
-        
+
         final List<Folder> subFolders = new ArrayList<>();
-        for(final Folder subFolder : folder.getSubFolders()) {
+        for (final Folder subFolder : folder.getSubFolders()) {
             subFolders.add(subFolder);
             subFolders.addAll(findSubFolders(subFolder));
         }
-        
+
         return subFolders;
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public void moveObjects(final Folder targetFolder,
+                            final String[] objectIds) {
+
+        Objects.requireNonNull(targetFolder);
+        Objects.requireNonNull(objectIds);
+
+        for (final String objectId : objectIds) {
+            if (objectId.startsWith(FOLDER_BROWSER_KEY_PREFIX_FOLDER)) {
+                moveFolder(targetFolder,
+                           Long.parseLong(objectId.substring(
+                                   FOLDER_BROWSER_KEY_PREFIX_FOLDER.length())));
+            } else if (objectId.startsWith(FOLDER_BROWSER_KEY_PREFIX_ITEM)) {
+                moveItem(targetFolder,
+                         Long.parseLong(objectId.substring(
+                                 FOLDER_BROWSER_KEY_PREFIX_ITEM.length())));
+            } else {
+                throw new IllegalArgumentException(String.format(
+                        "ID '%s' does not start with '%s' or '%s'.",
+                        objectId,
+                        FOLDER_BROWSER_KEY_PREFIX_FOLDER,
+                        FOLDER_BROWSER_KEY_PREFIX_ITEM));
+            }
+        }
+    }
+
+    private void moveFolder(final Folder targetFolder, final long folderId) {
+
+        Objects.requireNonNull(targetFolder);
+
+        final Folder folder = folderRepo.findById(folderId)
+                .orElseThrow(() -> new IllegalArgumentException(String.format(
+                "No folder with ID %d in the database. "
+                        + "Where did that ID come from?",
+                folderId)));
+        
+        folderManager.moveFolder(folder, targetFolder);
+    }
+
+    private void moveItem(final Folder targetFolder, final long itemId) {
+
+        Objects.requireNonNull(targetFolder);
+
+        final ContentItem item = itemRepo.findById(itemId)
+                .orElseThrow(() -> new IllegalArgumentException(String.format(
+                "No content item with ID %d in the database. "
+                        + "Where did that ID come from?",
+                itemId)));
+
+        itemManager.move(item, targetFolder);
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public void copyObjects(final Folder targetFolder,
+                            final String[] objectIds) {
+
+        Objects.requireNonNull(targetFolder);
+        Objects.requireNonNull(objectIds);
+
+        for (final String objectId : objectIds) {
+            if (objectId.startsWith(FOLDER_BROWSER_KEY_PREFIX_FOLDER)) {
+                copyFolder(targetFolder,
+                           Long.parseLong(objectId.substring(
+                                   FOLDER_BROWSER_KEY_PREFIX_FOLDER.length())));
+            } else if (objectId.startsWith(FOLDER_BROWSER_KEY_PREFIX_ITEM)) {
+                copyItem(targetFolder,
+                         Long.parseLong(objectId.substring(
+                                 FOLDER_BROWSER_KEY_PREFIX_ITEM.length())));
+            } else {
+                throw new IllegalArgumentException(String.format(
+                        "ID '%s' does not start with '%s' or '%s'.",
+                        objectId,
+                        FOLDER_BROWSER_KEY_PREFIX_FOLDER,
+                        FOLDER_BROWSER_KEY_PREFIX_ITEM));
+            }
+        }
+    }
+    
+    private void copyFolder(final Folder targetFolder,
+                            final long folderId) {
+        
+        Objects.requireNonNull(targetFolder);
+        
+        final Folder folder = folderRepo.findById(folderId)
+                .orElseThrow(() -> new IllegalArgumentException(String.format(
+                "No folder with ID %d in the database. "
+                        + "Where did that ID come from?",
+                folderId)));
+        
+        folderManager.copyFolder(folder, targetFolder);
+    }
+    
+    private void copyItem(final Folder targetFolder,
+                          final long itemId) {
+        
+        Objects.requireNonNull(targetFolder);
+        
+        final ContentItem item = itemRepo.findById(itemId)
+                .orElseThrow(() -> new IllegalArgumentException(String.format(
+                "No content item with ID %d in the database. "
+                        + "Where did that ID come from?",
+                itemId)));
+        
+        itemManager.copy(item, targetFolder);
     }
 
 }
