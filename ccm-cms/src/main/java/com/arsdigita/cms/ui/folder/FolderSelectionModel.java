@@ -50,7 +50,7 @@ public class FolderSelectionModel extends CcmObjectSelectionModel<Folder> {
     @Override
     public Long getSelectedKey(final PageState state) {
         // FIXME: this code will go away once parameter models support init listeners
-        final Long result = super.getSelectedKey(state);
+        Long result = super.getSelectedKey(state);
         if (result == null) {
             result = getRootFolderID(state);
             setSelectedKey(state, result);
