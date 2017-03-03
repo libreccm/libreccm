@@ -48,7 +48,7 @@ public class ToStringTest extends ToStringVerifier {
             PersistentDataQuery.class,
             ProcessListener.class,
             Widget.class,
-            WidgetLabel.class
+//            WidgetLabel.class
         });
     }
     
