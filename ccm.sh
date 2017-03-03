@@ -409,6 +409,12 @@ run() {
             exit 1
         fi
     else
+        if [[ -z $bundle ]]; then
+            echo "No bundle specificed. Please specifiy a bundle."
+            echo "Usage: ccm.sh run BUNDLE"
+            exit 1
+        fi
+
         echo "Running bundle $bundle..."
         if [[ $bundle=~^.*-wildfly$ ]]; then
             find_wildfly_home
@@ -421,7 +427,7 @@ run() {
         elif [[ $bundle=~^.*-tomee$ ]]; then
             echo "Not implemented yet"
             exit 0
-        else
+       else
             echo -e "\e[41mThe bundle '$bundle' has an unknown suffix. Are you sure that you specified a valid bundle?\e[0m"
         fi
     fi
