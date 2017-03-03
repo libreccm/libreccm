@@ -40,6 +40,8 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 
 import org.libreccm.security.Relation;
 
+import javax.persistence.FetchType;
+
 /**
  * Association class describing the association between a category and an
  * object. Instances of these class should not created manually. The methods

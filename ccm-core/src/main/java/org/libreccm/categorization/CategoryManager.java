@@ -55,14 +55,11 @@ public class CategoryManager {
     private static final Logger LOGGER = LogManager.getLogger(
         CategoryManager.class);
 
-    /**
-     * A {@link CategoryRepository} instance used to interact with the database.
-     */
-    @Inject
-    private CategoryRepository categoryRepo;
-
     @Inject
     private CcmObjectRepository ccmObjectRepo;
+
+    @Inject
+    private CategoryRepository categoryRepo;
 
     @Inject
     private EntityManager entityManager;
@@ -126,26 +123,36 @@ public class CategoryManager {
         final Category category,
         final String type) {
 
-        if (object == null) {
-            throw new IllegalArgumentException(
-                "Null can't be added to a category.");
-        }
+        Objects.requireNonNull(object, "Null can't be added to a category.");
+        Objects.requireNonNull(category, 
+                               "Can't add an object to category 'null'.");
 
-        if (category == null) {
-            throw new IllegalArgumentException(
-                "Can't add an object to category 'null'.");
-        }
+        final CcmObject addedObject = ccmObjectRepo
+            .findObjectById(object.getObjectId())
+            .orElseThrow(() -> new IllegalArgumentException(String.format(
+                "No CcmObject with ID %d in the database. "
+                    + "Where did that ID come from?",
+                object.getObjectId())));
+        final Category assignedCategory = categoryRepo
+        .findById(category.getObjectId())
+        .orElseThrow(() -> new IllegalArgumentException(String.format(
+            "No Category with ID %d in the database. "
+                + "Where did that ID come from?",
+            category.getObjectId())));
 
         final Categorization categorization = new Categorization();
-        categorization.setCategorizedObject(object);
-        categorization.setCategory(category);
-        categorization.setCategoryOrder(object.getCategories().size() + 1);
-        categorization.setObjectOrder(category.getObjects().size() + 1);
+        categorization.setCategorizedObject(addedObject);
+        categorization.setCategory(assignedCategory);
+
+        final long categoryCount = countAssignedCategories(addedObject);
+        categorization.setCategoryOrder(categoryCount + 1);
+        final long objectCount = countObjects(assignedCategory);
+        categorization.setObjectOrder(objectCount + 1);
         categorization.setType(type);
         categorization.setIndex(false);
 
-        object.addCategory(categorization);
-        category.addObject(categorization);
+        addedObject.addCategory(categorization);
+        assignedCategory.addObject(categorization);
 
         // Saving a category requires the manage_category privilege which
         // may has not been granted to a user which is allowed to assign objects
@@ -153,11 +160,75 @@ public class CategoryManager {
         // by executing CategoryRepository#save(Category) as the system user.
         shiro.getSystemUser().execute(() -> {
             entityManager.persist(categorization);
-            categoryRepo.save(category);
-            ccmObjectRepo.save(object);
+//            categoryRepo.save(assignedCategory);
+//            ccmObjectRepo.save(addedObject);
         });
     }
 
+    /**
+     * Count the categories assigned to a {@link CcmObject}.
+     *
+     * @param object The object which categorisations are counted.
+     *
+     * @return The number of categorisations of the provided {@code object}.
+     */
+    public long countAssignedCategories(final CcmObject object) {
+
+        Objects.requireNonNull(object);
+
+        final TypedQuery<Long> query = entityManager.createNamedQuery(
+            "Category.countAssignedCategories", Long.class);
+        query.setParameter("object", object);
+
+        return query.getSingleResult();
+    }
+
+    /**
+     * Tests if an {@link CcmObject} is assigned to at least one category.
+     *
+     * @param object The object which is check for categorisations.
+     *
+     * @return {@code true} if the {@code object} is assigned to at least one
+     *         category, {@code false} otherwise.
+     */
+    public boolean isCategorized(final Object object) {
+        Objects.requireNonNull(object);
+
+        final TypedQuery<Boolean> query = entityManager.createNamedQuery(
+            "Category.isCategorized", Boolean.class);
+        query.setParameter("object", object);
+
+        return query.getSingleResult();
+    }
+
+    /**
+     * Counts the subcategories of a category.
+     *
+     * @param category The category for which the number of subcategories is
+     *                 determined.
+     *
+     * @return The number of subcategories of {@code category}.
+     */
+    public long countSubCategories(final Category category) {
+
+        Objects.requireNonNull(category,
+                               "Can't count sub categories for category null.");
+
+        final TypedQuery<Long> query = entityManager.createNamedQuery(
+            "Category.countSubCategories", Long.class);
+        query.setParameter("category", category);
+
+        return query.getSingleResult();
+    }
+
+    /**
+     * Checks if a category has at least one subcategory.
+     *
+     * @param category The category to check for subcategories.
+     *
+     * @return {@code true} if {@code category} has at least on subcategory,
+     *         {@code false} otherwise.
+     */
     public boolean hasSubCategories(final Category category) {
 
         Objects.requireNonNull(
@@ -171,6 +242,34 @@ public class CategoryManager {
         return query.getSingleResult();
     }
 
+    /**
+     * Counts to how many {@link CcmObject}s a category has been assigned.
+     *
+     * @param category The category which objects are counted.
+     *
+     * @return The number of {@link CcmObject}s to which the {@code category}
+     *         has been assigned.
+     */
+    public long countObjects(final Category category) {
+
+        Objects.requireNonNull(category,
+                               "Can't count object in category null");
+
+        final TypedQuery<Long> query = entityManager.createNamedQuery(
+            "Category.countObjects", Long.class);
+        query.setParameter("category", category);
+
+        return query.getSingleResult();
+    }
+
+    /**
+     * Checks if a category is assigned to at least one {@link CcmObject}.
+     *
+     * @param category The category to check for assigned objects.
+     *
+     * @return {@code true} if at least on {@link CcmObject} is assigned to the
+     *         {@code category}, {@code false} otherwise.
+     */
     public boolean hasObjects(final Category category) {
 
         Objects.requireNonNull(category,
@@ -530,7 +629,7 @@ public class CategoryManager {
                     + "the name '%s'.",
                 sub.get().getName()));
         }
-        
+
         if (sub.get().getParentCategory() != null) {
             final Category oldParent = sub.get().getParentCategory();
             removeSubCategoryFromCategory(sub.get(), oldParent);
@@ -780,13 +879,13 @@ public class CategoryManager {
      */
     @Transactional(Transactional.TxType.REQUIRED)
     public String getCategoryPath(final Category category) {
-        
+
         Objects.requireNonNull(category, "Can't get the path for category null");
-        
+
         final List<String> tokens = new ArrayList<>();
 
         Category current = categoryRepo.findById(category.getObjectId())
-        .orElseThrow(() -> new IllegalArgumentException(String.format(
+            .orElseThrow(() -> new IllegalArgumentException(String.format(
             "No category with ID %d in the database. Where did that ID come from?",
             category.getObjectId())));
         while (current.getParentCategory() != null) {

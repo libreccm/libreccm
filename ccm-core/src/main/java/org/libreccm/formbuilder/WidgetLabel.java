@@ -38,7 +38,7 @@ public class WidgetLabel extends Component implements Serializable {
 
     private static final long serialVersionUID = -2939505715812565159L;
     
-    @OneToOne
+    @OneToOne(mappedBy = "label")
     private Widget widget;
 
     public Widget getWidget() {
