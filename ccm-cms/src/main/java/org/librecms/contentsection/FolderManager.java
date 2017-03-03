@@ -32,6 +32,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.batch.api.chunk.ItemReader;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -59,6 +60,9 @@ public class FolderManager {
     @Inject
     private CategoryManager categoryManager;
 
+    @Inject
+    private ContentItemRepository itemRepo;
+    
     @Inject
     private ContentItemManager itemManager;
 
@@ -373,18 +377,31 @@ public class FolderManager {
         Objects.requireNonNull(folder, "Can't move null to a folder.");
         Objects.requireNonNull(target, "Can't move a folder to null.");
 
-        final Folder copy = createFolder(folder.getName(), target);
-        final List<ContentItem> items = folder.getObjects()
-            .stream()
-            .map(categorization -> categorization.getCategorizedObject())
-            .filter(object -> object instanceof ContentItem)
-            .map(object -> (ContentItem) object)
-            .collect(Collectors.toList());
+        final Folder copiedFolder = folderRepo.findById(
+            folder.getObjectId())
+        .orElseThrow(() -> new IllegalArgumentException(String.format(
+            "No folder with ID %d in the database. Where did that ID come from?",
+            folder.getObjectId())));
+        final Folder targetFolder = folderRepo.findById(
+            target.getObjectId())
+        .orElseThrow(() -> new IllegalArgumentException(String.format(
+            "No folder with ID %d in the database. Where did that ID come from?",
+            target.getObjectId())));
+        
+        final Folder copy = createFolder(copiedFolder.getName(), targetFolder);
+        
+        final List<ContentItem> items = itemRepo.findByFolder(copiedFolder);
+//        final List<ContentItem> items = copiedFolder.getObjects()
+//            .stream()
+//            .map(categorization -> categorization.getCategorizedObject())
+//            .filter(object -> object instanceof ContentItem)
+//            .map(object -> (ContentItem) object)
+//            .collect(Collectors.toList());
         for (final ContentItem item : items) {
-            itemManager.copy(item, target);
+            itemManager.copy(item, targetFolder);
         }
 
-        for (final Folder subFolder : folder.getSubFolders()) {
+        for (final Folder subFolder : copiedFolder.getSubFolders()) {
             copyFolder(subFolder, copy);
         }
     }
