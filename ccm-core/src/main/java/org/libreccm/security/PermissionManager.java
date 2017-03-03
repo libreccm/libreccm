@@ -18,7 +18,6 @@
  */
 package org.libreccm.security;
 
-
 import java.util.List;
 
 import javax.inject.Inject;
@@ -27,6 +26,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.libreccm.core.CcmObject;
+import org.libreccm.core.CcmObjectRepository;
 import org.libreccm.core.CoreConstants;
 import org.libreccm.core.UnexpectedErrorException;
 
@@ -57,6 +57,9 @@ public class PermissionManager {
 
     @Inject
     private EntityManager entityManager;
+
+    @Inject
+    private CcmObjectRepository ccmObjectRepo;
 
     /**
      * Retrieves a permission by its ID. Useful for UI classes.
@@ -237,9 +240,23 @@ public class PermissionManager {
                                 final Field field,
                                 final CcmObject owner,
                                 final CcmObject inheritedFrom) {
+
+        final CcmObject ownerObject = ccmObjectRepo
+            .findObjectById(owner.getObjectId())
+            .orElseThrow(() -> new IllegalArgumentException(String.format(
+            "No CcmObject with ID %d in the database. "
+                + "Where did that ID come from?",
+            owner.getObjectId())));
+        final CcmObject inheritedFromObject = ccmObjectRepo
+            .findObjectById(inheritedFrom.getObjectId())
+            .orElseThrow(() -> new IllegalArgumentException(String.format(
+            "No CcmObject with ID %d in the database. "
+                + "Where did that ID come from?",
+            inheritedFrom.getObjectId())));
+
         final Object value;
         try {
-            value = field.get(owner);
+            value = field.get(ownerObject);
         } catch (IllegalAccessException ex) {
             throw new UnexpectedErrorException(ex);
         }
@@ -258,7 +275,7 @@ public class PermissionManager {
                 .forEach(obj -> grantInherited(privilege,
                                                grantee,
                                                obj,
-                                               inheritedFrom));
+                                               inheritedFromObject));
             // Relations between two CcmObjects with attributes or n:m relations
             // use an object to represent the relation. The object must implement
             // the Relation interface. For each Relation object in the collection
@@ -271,14 +288,14 @@ public class PermissionManager {
                 .forEach(obj -> grantInherited(privilege,
                                                grantee,
                                                obj,
-                                               inheritedFrom));
+                                               inheritedFromObject));
         } else if (CcmObject.class.isAssignableFrom(field.getType())) {
             // If the provided object is a CcmObject create an inherited 
             // permission for this object.
             grantInherited(privilege,
                            grantee,
                            (CcmObject) value,
-                           inheritedFrom);
+                           inheritedFromObject);
         } else if (Relation.class.isAssignableFrom(field.getType())) {
             // If the provided field is a Relation object created an inherited
             // permission on the related object.
@@ -287,7 +304,7 @@ public class PermissionManager {
                 grantInherited(privilege,
                                grantee,
                                relation.getRelatedObject(),
-                               inheritedFrom);
+                               inheritedFromObject);
             }
         } else {
             throw new IllegalArgumentException(String.format(

@@ -77,11 +77,11 @@ class CMSPermissionsTableModel implements TableModel {
 
     @Override
     public Object getKeyAt(final int columnIndex) {
-        if (columnIndex == 0 || columnIndex == getColumnCount() - 1) {
+//        if (columnIndex == 0 || columnIndex == getColumnCount() - 1) {
             return currentRow.getRoleName();
-        } else {
-            return currentRow.getColumns().get(columnIndex - 1).getPrivilege();
-        }
+//        } else {
+//            return currentRow.getColumns().get(columnIndex - 1).getPrivilege();
+//        }
     }
 
 }

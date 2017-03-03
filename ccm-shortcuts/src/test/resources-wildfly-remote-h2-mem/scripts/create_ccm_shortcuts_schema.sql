@@ -280,18 +280,11 @@ CREATE SCHEMA ccm_shortcuts;
         primary key (OBJECT_ID)
     );
 
-    create table CCM_CORE.FORMBUILDER_WIDGET_LABELS (
-        OBJECT_ID bigint not null,
-        widget_OBJECT_ID bigint,
-        primary key (OBJECT_ID)
-    );
-
     create table CCM_CORE.FORMBUILDER_WIDGETS (
         DEFAULT_VALUE varchar(255),
         PARAMETER_MODEL varchar(255),
         PARAMETER_NAME varchar(255),
         OBJECT_ID bigint not null,
-        label_OBJECT_ID bigint,
         primary key (OBJECT_ID)
     );
 
@@ -906,21 +899,6 @@ create sequence hibernate_sequence start with 1 increment by 1;
         add constraint FK8kjyu72btjsuaaqh4bvd8npns 
         foreign key (OBJECT_ID) 
         references CCM_CORE.FORMBUILDER_PROCESS_LISTENERS;
-
-    alter table CCM_CORE.FORMBUILDER_WIDGET_LABELS 
-        add constraint FKb1q9bfshcrkwlj7r8w5jb4y8l 
-        foreign key (widget_OBJECT_ID) 
-        references CCM_CORE.FORMBUILDER_WIDGETS;
-
-    alter table CCM_CORE.FORMBUILDER_WIDGET_LABELS 
-        add constraint FKm1huo6ghk9l5o8buku9v8y6q7 
-        foreign key (OBJECT_ID) 
-        references CCM_CORE.FORMBUILDER_COMPONENTS;
-
-    alter table CCM_CORE.FORMBUILDER_WIDGETS 
-        add constraint FKs7qq6vxblhmq0rlf87re65jdp 
-        foreign key (label_OBJECT_ID) 
-        references CCM_CORE.FORMBUILDER_WIDGET_LABELS;
 
     alter table CCM_CORE.FORMBUILDER_WIDGETS 
         add constraint FK1wosr4ujbfckdc50u5fgmrhrk 

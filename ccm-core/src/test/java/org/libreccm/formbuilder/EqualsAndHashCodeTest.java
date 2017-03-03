@@ -52,7 +52,7 @@ public class EqualsAndHashCodeTest extends EqualsVerifier {
             PersistentDataQuery.class,
             ProcessListener.class,
             Widget.class,
-            WidgetLabel.class
+//            WidgetLabel.class
         });
     }
 
@@ -70,11 +70,11 @@ public class EqualsAndHashCodeTest extends EqualsVerifier {
         final Component component2 = new Component();
         component2.setAdminName("Component Two");
 
-        final WidgetLabel widgetLabel1 = new WidgetLabel();
-        widgetLabel1.setAdminName("WidgetLabel One");
-
-        final WidgetLabel widgetLabel2 = new WidgetLabel();
-        widgetLabel2.setAdminName("WidgetLabel Two");
+//        final WidgetLabel widgetLabel1 = new WidgetLabel();
+//        widgetLabel1.setAdminName("WidgetLabel One");
+//
+//        final WidgetLabel widgetLabel2 = new WidgetLabel();
+//        widgetLabel2.setAdminName("WidgetLabel Two");
 
         final Widget widget1 = new Widget();
         widget1.setAdminName("Widget 1");
@@ -122,7 +122,7 @@ public class EqualsAndHashCodeTest extends EqualsVerifier {
 
         verifier
             .withPrefabValues(Component.class, component1, component2)
-            .withPrefabValues(WidgetLabel.class, widgetLabel1, widgetLabel2)
+//            .withPrefabValues(WidgetLabel.class, widgetLabel1, widgetLabel2)
             .withPrefabValues(Widget.class, widget1, widget2)
             .withPrefabValues(FormSection.class, formSection1, formSection2)
             .withPrefabValues(CcmObject.class, ccmObject1, ccmObject2)

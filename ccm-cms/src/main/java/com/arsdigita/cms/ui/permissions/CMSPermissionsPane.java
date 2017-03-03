@@ -43,6 +43,7 @@ import com.arsdigita.bebop.parameters.ArrayParameter;
 import com.arsdigita.bebop.parameters.ParameterModel;
 import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.bebop.table.TableCellRenderer;
+import com.arsdigita.bebop.table.TableColumn;
 import com.arsdigita.dispatcher.DispatcherHelper;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.ui.CcmObjectSelectionModel;
@@ -270,6 +271,7 @@ public class CMSPermissionsPane extends SimpleContainer implements Resettable,
                                       headerLabels.toArray());
         table.setClassAttr("dataTable");
         for (int j = 1; j < table.getColumnModel().size() - 1; j++) {
+            table.getColumn(j).setKey(privileges.get(j - 1));
             table.getColumn(j).setCellRenderer(new TableCellRenderer() {
 
                 @Override

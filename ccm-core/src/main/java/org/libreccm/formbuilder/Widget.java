@@ -50,8 +50,8 @@ public class Widget extends Component implements Serializable {
     @Column(name = "DEFAULT_VALUE")
     private String defaultValue;
 
-    @OneToOne
-    private WidgetLabel label;
+//    @OneToOne
+//    private WidgetLabel label;
 
     @OneToMany(mappedBy = "widget")
     private List<Listener> listeners;
@@ -80,13 +80,13 @@ public class Widget extends Component implements Serializable {
         this.defaultValue = defaultValue;
     }
 
-    public WidgetLabel getLabel() {
-        return label;
-    }
-
-    protected void setLabel(final WidgetLabel label) {
-        this.label = label;
-    }
+//    public WidgetLabel getLabel() {
+//        return label;
+//    }
+//
+//    protected void setLabel(final WidgetLabel label) {
+//        this.label = label;
+//    }
 
     public List<Listener> getListeners() {
         if (listeners == null) {
@@ -114,7 +114,7 @@ public class Widget extends Component implements Serializable {
         hash = 17 * hash + Objects.hashCode(parameterName);
         hash = 17 * hash + Objects.hashCode(parameterModel);
         hash = 17 * hash + Objects.hashCode(defaultValue);
-        hash = 17 * hash + Objects.hashCode(label);
+//        hash = 17 * hash + Objects.hashCode(label);
         hash = 17 * hash + Objects.hashCode(listeners);
         return hash;
     }
@@ -148,9 +148,9 @@ public class Widget extends Component implements Serializable {
         if (!Objects.equals(defaultValue, other.getDefaultValue())) {
             return false;
         }
-        if (!Objects.equals(label, other.getLabel())) {
-            return false;
-        }
+//        if (!Objects.equals(label, other.getLabel())) {
+//            return false;
+//        }
 
         return Objects.equals(listeners, other.getListeners());
     }
