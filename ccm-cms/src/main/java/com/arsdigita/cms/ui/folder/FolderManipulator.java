@@ -740,7 +740,7 @@ public class FolderManipulator extends SimpleContainer implements
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
                 final FolderManager folderManager = cdiUtil.findBean(
                     FolderManager.class);
-                if (folder.getParentFolder() == null) {
+                if (!folderManager.getParentFolder(folder).isPresent()) {
                     folderTree.expand(Long.toString(folder.getObjectId()),
                                       state);
                 } else {
@@ -763,7 +763,7 @@ public class FolderManipulator extends SimpleContainer implements
         }
 
         public Folder getTarget(final PageState state) {
-            return (Folder) targetModel.getSelectedObject(state);
+            return targetModel.getSelectedObject(state);
         }
 
         public boolean isCancelled(final PageState state) {

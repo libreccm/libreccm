@@ -160,8 +160,6 @@ public class CategoryManager {
         // by executing CategoryRepository#save(Category) as the system user.
         shiro.getSystemUser().execute(() -> {
             entityManager.persist(categorization);
-//            categoryRepo.save(assignedCategory);
-//            ccmObjectRepo.save(addedObject);
         });
     }
 
