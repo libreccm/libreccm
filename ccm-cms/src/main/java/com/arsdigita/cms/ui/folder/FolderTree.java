@@ -18,13 +18,40 @@
  */
 package com.arsdigita.cms.ui.folder;
 
+import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.Tree;
+
+import org.librecms.CmsConstants;
+
+import static org.librecms.CmsConstants.*;
 
 public class FolderTree extends Tree {
 
     public FolderTree(final FolderSelectionModel folderSel) {
         super(new FolderTreeModelBuilder());
         setSelectionModel(folderSel);
+    }
+
+    @Override
+    public void setSelectedKey(final PageState state, final Object key) {
+        if (key instanceof String) {
+            final Long keyAsLong;
+            if (((String) key).startsWith(
+                FOLDER_BROWSER_KEY_PREFIX_FOLDER)) {
+                keyAsLong = Long.parseLong(((String) key).substring(
+                    FOLDER_BROWSER_KEY_PREFIX_FOLDER.length()));
+            } else {
+                keyAsLong = Long.parseLong((String) key);
+            }
+            super.setSelectedKey(state, keyAsLong);
+        } else if (key instanceof Long) {
+            super.setSelectedKey(state, key);
+        } else {
+            //We now that a FolderSelectionModel only takes keys of type Long.
+            //Therefore we try to cast here
+            final Long keyAsLong = (Long) key;
+            super.setSelectedKey(state, keyAsLong);
+        }
     }
 
 }
