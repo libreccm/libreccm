@@ -80,6 +80,10 @@ import javax.xml.bind.annotation.XmlRootElement;
         query = "SELECT c FROM Category c WHERE c.name = :name")
     ,
     @NamedQuery(
+        name = "Category.findParentCategory",
+        query = "SELECT c.parentCategory FROM Category c WHERE c = :category")
+    ,
+    @NamedQuery(
         name = "Category.countAssignedCategories",
         query = "SELECT COUNT(c) FROM Categorization c "
                     + "WHERE c.categorizedObject = :object"
