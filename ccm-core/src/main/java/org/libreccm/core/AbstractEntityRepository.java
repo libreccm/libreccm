@@ -241,6 +241,9 @@ public abstract class AbstractEntityRepository<K, E> {
      */
     @Transactional(Transactional.TxType.REQUIRED)
     public void save(final E entity) {
+        
+        Objects.requireNonNull(entity, "Can't save null.");
+        
         if (isNew(entity)) {
             initNewEntity(entity);
             entityManager.persist(entity);
@@ -254,7 +257,7 @@ public abstract class AbstractEntityRepository<K, E> {
      * example is assigning a (random) UUID to new entity which implements the
      * {@link Identifiable} interface.
      *
-     * @param entity The entity to init.
+     * @param entity The entity to initialise.
      */
     protected void initNewEntity(final E entity) {
         //Empty default implementation
