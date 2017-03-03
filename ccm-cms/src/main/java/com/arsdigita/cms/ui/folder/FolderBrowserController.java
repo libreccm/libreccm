@@ -670,13 +670,15 @@ public class FolderBrowserController {
                 "No folder with ID %d found in database. "
                         + "Where did that ID come form?",
                 objectId)));
-        if (folder.getParentFolder() == null) {
+        final Optional<Folder> parentFolder = folderManager.getParentFolder(
+            folder);
+        if (parentFolder.isPresent()) {
             return Optional.empty();
         } else {
             return Optional.ofNullable(String.format(
                     "%s%d",
                     FOLDER_BROWSER_KEY_PREFIX_FOLDER,
-                    folder.getParentFolder().getObjectId()));
+                    parentFolder.get().getObjectId()));
         }
     }
 

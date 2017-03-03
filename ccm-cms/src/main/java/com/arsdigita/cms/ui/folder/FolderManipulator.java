@@ -73,6 +73,7 @@ import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryManager;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.core.CcmObject;
+import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.security.PermissionChecker;
 import org.libreccm.security.Shiro;
 import org.librecms.CmsConstants;
@@ -549,6 +550,8 @@ public class FolderManipulator extends SimpleContainer implements
                 ContentItemManager.class);
             final FolderBrowserController controller = cdiUtil.findBean(
                 FolderBrowserController.class);
+            final FolderManager folderManager = cdiUtil.findBean(
+                FolderManager.class);
             final PermissionChecker permissionChecker = cdiUtil.findBean(
                 PermissionChecker.class);
 
@@ -564,8 +567,44 @@ public class FolderManipulator extends SimpleContainer implements
                 name = folder.getName();
 
                 //Check if folder or subfolder contains live items
-                if (isMove(state) && controller.hasLiveItems(folder)) {
-                    addErrorMessage(data, "cms.ui.folder.item_is_live", name);
+                if (isMove(state)) {
+                    final FolderManager.FolderIsMovable movable = folderManager
+                        .folderIsMovable(folder, target);
+                    switch (movable) {
+                        case DIFFERENT_SECTIONS:
+                            addErrorMessage(data, 
+                                            "cms.ui.folder.different_sections", 
+                                            name);
+                            break;
+                        case HAS_LIVE_ITEMS:
+                            addErrorMessage(data, 
+                                            "cms.ui.folder.item_is_live", 
+                                            name);
+                            break;
+                        case DIFFERENT_TYPES:
+                            addErrorMessage(data, 
+                                            "cms.ui.folder.different_folder_types", 
+                                            name);
+                            break;
+                        case IS_ROOT_FOLDER:
+                            addErrorMessage(data, 
+                                            "cms.ui.folder.is_root_folder", 
+                                            name);
+                            break;
+                        case SAME_FOLDER:
+                            addErrorMessage(data, 
+                                            "cms.ui.folder.same_folder", 
+                                            name);
+                            break;
+                        case YES:
+                            //Nothing
+                            break;
+                        default:
+                            throw new UnexpectedErrorException(String.format(
+                                "Unknown state '%s' for '%s'.",
+                                movable,
+                                FolderManager.FolderIsMovable.class.getName()));
+                    }
                 }
 
                 object = folder;

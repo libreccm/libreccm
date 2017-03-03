@@ -98,6 +98,14 @@ import static org.librecms.CmsConstants.*;
 //                    + "OR LOWER(c.categorizedObject.name.value) LIKE :term)")
 //    ,
     @NamedQuery(
+        name = "Folder.hasLiveItems",
+        query = "SELECT (CASE WHEN COUNT(i) > 0 THEN true ELSE false END) "
+                    + "FROM ContentItem i JOIN i.categories c "
+                    + "WHERE c.category = :folder "
+                    + "AND i.version = org.librecms.contentsection.ContentItemVersion.LIVE"
+    )
+    ,
+    @NamedQuery(
         name = "Folder.findObjects",
         query = "SELECT o FROM CcmObject o "
                     + "WHERE o IN (SELECT f FROM Folder f "
@@ -109,8 +117,8 @@ import static org.librecms.CmsConstants.*;
                     + "AND i.version = "
                     + "org.librecms.contentsection.ContentItemVersion.DRAFT "
                     + "AND (LOWER(i.displayName) LIKE LOWER(:term) "
-//                    + "OR LOWER(i.name.values) LIKE LOWER(:term)"
-                + ")) "
+                    //                    + "OR LOWER(i.name.values) LIKE LOWER(:term)"
+                    + ")) "
                     + "ORDER BY o.displayName"
     //        query = "SELECT o FROM CcmObject o "
     //                    + "WHERE o IN (SELECT f FROM Folder f "
@@ -140,8 +148,8 @@ import static org.librecms.CmsConstants.*;
                     + "AND i.version = "
                     + "org.librecms.contentsection.ContentItemVersion.DRAFT "
                     + "AND (LOWER(i.displayName) LIKE LOWER(:term) "
-//                    + "OR LOWER(i.name.values) LIKE LOWER(:term)"
-                + "))"
+                    //                    + "OR LOWER(i.name.values) LIKE LOWER(:term)"
+                    + "))"
     //            query = "SELECT COUNT(o) FROM CcmObject o "
     //                        + "WHERE o IN (SELECT f FROM Folder f "
     //                        + "WHERE f.parentCategory = :parent "
@@ -193,7 +201,7 @@ public class Folder extends Category implements Serializable {
     public Folder getParentFolder() {
         return (Folder) getParentCategory();
     }
-    
+
     /**
      * A convenient method for getting all sub folders of folder.
      *
