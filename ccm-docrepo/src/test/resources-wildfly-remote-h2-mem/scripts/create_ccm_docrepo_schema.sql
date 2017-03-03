@@ -275,13 +275,6 @@ CREATE SCHEMA ccm_docrepo;
         PARAMETER_MODEL varchar(255),
         PARAMETER_NAME varchar(255),
         OBJECT_ID bigint not null,
-        label_OBJECT_ID bigint,
-        primary key (OBJECT_ID)
-    );
-
-    create table CCM_CORE.FORMBUILDER_WIDGET_LABELS (
-        OBJECT_ID bigint not null,
-        widget_OBJECT_ID bigint,
         primary key (OBJECT_ID)
     );
 
@@ -906,26 +899,6 @@ CREATE SCHEMA ccm_docrepo;
         add constraint FK_iqwglkvml7y4yevaq8s1936im 
         foreign key (OBJECT_ID) 
         references CCM_CORE.FORMBUILDER_PROCESS_LISTENERS;
-
-    alter table CCM_CORE.FORMBUILDER_WIDGETS 
-        add constraint FK_nei20rvwsnawx4u0ywrh22df1 
-        foreign key (label_OBJECT_ID) 
-        references CCM_CORE.FORMBUILDER_WIDGET_LABELS;
-
-    alter table CCM_CORE.FORMBUILDER_WIDGETS 
-        add constraint FK_rr1oge60scu4a564h7rcra507 
-        foreign key (OBJECT_ID) 
-        references CCM_CORE.FORMBUILDER_COMPONENTS;
-
-    alter table CCM_CORE.FORMBUILDER_WIDGET_LABELS 
-        add constraint FK_7lp5ywog1suhe11jr3bl28cwg 
-        foreign key (widget_OBJECT_ID) 
-        references CCM_CORE.FORMBUILDER_WIDGETS;
-
-    alter table CCM_CORE.FORMBUILDER_WIDGET_LABELS 
-        add constraint FK_ieiewnctdo2hdqeuxiv7cl1ru 
-        foreign key (OBJECT_ID) 
-        references CCM_CORE.FORMBUILDER_COMPONENTS;
 
     alter table CCM_CORE.FORMBUILDER_XML_EMAIL_LISTENERS 
         add constraint FK_kcfevkdytrk81gj08f4aeh3qu 
