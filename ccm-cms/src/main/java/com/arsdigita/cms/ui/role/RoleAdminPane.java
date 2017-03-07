@@ -59,7 +59,7 @@ import org.librecms.contentsection.privileges.AdminPrivileges;
  *
  * @author Justin Ross &lt;jross@redhat.com&gt;
  * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
- * @authr  <a href="mailto:jens.pelzetter@googemail.com">Jens Pelzetter</a>
+ * @author  <a href="mailto:jens.pelzetter@googemail.com">Jens Pelzetter</a>
  *
  */
 public class RoleAdminPane extends BaseAdminPane<String> {
@@ -172,7 +172,13 @@ public class RoleAdminPane extends BaseAdminPane<String> {
         public final ListModel makeModel(final List list, final PageState state) {
             final ContentSection section = CMS.getContext().getContentSection();
 
-            return new RoleListModel(section.getRoles());
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final RoleAdminPaneController controller = cdiUtil
+                .findBean(RoleAdminPaneController.class);
+            final java.util.List<Role> roles = controller
+                .findRolesForContentSection(section);
+
+            return new RoleListModel(roles);
         }
 
     }

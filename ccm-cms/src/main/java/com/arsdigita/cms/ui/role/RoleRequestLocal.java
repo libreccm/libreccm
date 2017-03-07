@@ -20,22 +20,23 @@ package com.arsdigita.cms.ui.role;
 
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.RequestLocal;
-import com.arsdigita.util.Assert;
+
 import org.libreccm.security.Role;
 
-/** 
+import java.util.Optional;
+
+/**
  * See {@link RequestLocal} for more information.
  *
  * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
- * @version $Id: RoleRequestLocal.java 287 2005-02-22 00:29:02Z sskracic $
  */
 abstract class RoleRequestLocal extends RequestLocal {
 
     final Role getRole(final PageState state) {
-        final Role role = (Role) get(state);
-
-        Assert.exists(role, "Role role");
-
-        return role;
+        @SuppressWarnings("unchecked")
+        final Optional<Role> role = (Optional<Role>) get(state);
+        
+        return role.get();
     }
+
 }

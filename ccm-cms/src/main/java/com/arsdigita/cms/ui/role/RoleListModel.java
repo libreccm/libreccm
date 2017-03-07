@@ -19,38 +19,44 @@
 package com.arsdigita.cms.ui.role;
 
 import com.arsdigita.bebop.list.ListModel;
+
 import org.libreccm.security.Role;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 /**
- * Provides a {@link ListModel} implementation for Collections of Roles.
- * This class is usable like an iterator, with an exception.
- * The {@link #next()} method only moves the iterator forward. To get elements you need to first
- * use {@link #next()} and afterwards {@link #getRole()}, {@link #getElement()} or {@link #getKey()}.
+ * Provides a {@link ListModel} implementation for Collections of Roles. This
+ * class is usable like an iterator, with an exception. The {@link #next()}
+ * method only moves the iterator forward. To get elements you need to first use
+ * {@link #next()} and afterwards {@link #getRole()}, {@link #getElement()} or
+ * {@link #getKey()}.
  *
- * Also remember that the iterator does not move unless {@link #next()} is called.
+ * Also remember that the iterator does not move unless {@link #next()} is
+ * called.
  *
  * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  */
 class RoleListModel implements ListModel {
 
-    private final Collection<Role> m_roles;
-
+    private final List<Role> m_roles;
     private Iterator<Role> iterator;
-
     private Role currentRole;
 
-    RoleListModel(final Collection<Role> roles) {
+    RoleListModel(final List<Role> roles) {
         m_roles = roles;
         iterator = roles.iterator();
     }
 
     @Override
     public final boolean next() {
-        currentRole = iterator.next();
-        return currentRole != null;
+        if (iterator.hasNext()) {
+            currentRole = iterator.next();
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -74,4 +80,5 @@ class RoleListModel implements ListModel {
     public final void reset() {
         iterator = m_roles.iterator();
     }
+
 }
