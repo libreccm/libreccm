@@ -58,12 +58,10 @@ class MemberTableModelBuilder extends AbstractTableModelBuilder {
                                       final PageState state) {
         final Role role = roleRequestLocal.getRole(state);
 
-        final List<Party> members = role.getMemberships()
-            .stream()
-            .map(membership -> membership.getMember())
-            .collect(Collectors.toList());
-        members.sort((member1, member2) -> member1.getName().compareTo(
-            member2.getName()));
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final RoleAdminPaneController controller = cdiUtil.findBean(
+            RoleAdminPaneController.class);
+        final List<Party> members = controller.createRoleMemberList(role);
 
         return new Model(members);
     }
