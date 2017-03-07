@@ -18,7 +18,6 @@
  */
 package com.arsdigita.cms.ui.role;
 
-
 import com.arsdigita.bebop.ActionLink;
 import com.arsdigita.bebop.FormProcessException;
 import com.arsdigita.bebop.Label;
@@ -151,15 +150,15 @@ class BaseRoleItemPane extends BaseItemPane {
                 properties.add(new Property(lz("cms.ui.name"),
                                             role.getName()));
                 // Right now just loads the default locale description.
-                properties.add(new Property(lz("cms.ui.description"),
-                                            role.getDescription().getValue(
-                                                config
-                                                    .getDefaultLocale())));
+                properties.add(new Property(
+                    lz("cms.ui.description"),
+                    role.getDescription().getValue(config.getDefaultLocale())));
 
                 // Since Permissions don't seem to have a "pretty" form, the granted privilege is used.
-                final String permissions = role.getPermissions().stream()
-                    .map(Permission::getGrantedPrivilege)
-                    .collect(Collectors.joining(", "));
+                final RoleAdminPaneController controller = cdiUtil.findBean(
+                    RoleAdminPaneController.class);
+                final String permissions = controller
+                    .generateGrantedPermissionsString(role);
 
                 if (permissions.length() > 0) {
                     properties.add(new Property(lz("cms.ui.role.privileges"),
