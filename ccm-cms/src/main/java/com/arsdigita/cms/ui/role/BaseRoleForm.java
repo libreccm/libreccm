@@ -39,12 +39,12 @@ import org.libreccm.security.Role;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.privileges.AdminPrivileges;
+import org.librecms.contentsection.privileges.AssetPrivileges;
+import org.librecms.contentsection.privileges.ItemPrivileges;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.TooManyListenersException;
-
-
 
 /**
  * For more detailed information see {@link com.arsdigita.bebop.Form}.
@@ -55,25 +55,25 @@ import java.util.TooManyListenersException;
  */
 class BaseRoleForm extends BaseForm {
 
-    final Name m_name;
-    final Description m_description;
-    CheckboxGroup m_privileges;
+    private final Name roleName;
+    private final Description roleDescription;
+    private CheckboxGroup privileges;
 
     BaseRoleForm(final String key,
                  final GlobalizedMessage message) {
         super(key, message);
 
-        m_name = new Name("label", 200, true);
-        addField(gz("cms.ui.name"), m_name);
+        roleName = new Name("label", 200, true);
+        addField(gz("cms.ui.role.name"), roleName);
 
-        m_description = new Description("description", 4000, false);
-        addField(gz("cms.ui.description"), m_description);
+        roleDescription = new Description("description", 4000, false);
+        addField(gz("cms.ui.role.description"), roleDescription);
 
-        m_privileges = new CheckboxGroup("privileges");
-        addField(gz("cms.ui.role.privileges"), m_privileges);
+        privileges = new CheckboxGroup("privileges");
+        addField(gz("cms.ui.role.privileges"), privileges);
 
         try {
-            m_privileges.addPrintListener(new PrivilegePrinter());
+            privileges.addPrintListener(new PrivilegePrinter());
         } catch (TooManyListenersException tmle) {
             throw new UncheckedWrapperException(tmle);
         }
@@ -84,51 +84,85 @@ class BaseRoleForm extends BaseForm {
         addSecurityListener(AdminPrivileges.ADMINISTER_ROLES);
     }
 
+    protected Name getRoleName() {
+        return roleName;
+    }
+
+    protected Description getRoleDescription() {
+        return roleDescription;
+    }
+
+    protected CheckboxGroup getPrivileges() {
+        return privileges;
+    }
+
     private class PrivilegePrinter implements PrintListener {
-	    @Override
-        public final void prepare(final PrintEvent e) {
-	        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final PermissionManager permissionManager = cdiUtil.findBean(PermissionManager.class);
 
-            final CheckboxGroup target = (CheckboxGroup) e.getTarget();
+        @Override
+        public final void prepare(final PrintEvent event) {
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final PermissionManager permissionManager = cdiUtil.findBean(
+                PermissionManager.class);
 
-            final List<String> possiblePrivileges = permissionManager.listDefiniedPrivileges(CmsConstants.class);
+            final CheckboxGroup target = (CheckboxGroup) event.getTarget();
+            target.clearOptions();
+
+            final List<String> adminPrivileges = permissionManager
+                .listDefiniedPrivileges(AdminPrivileges.class);
+            final List<String> itemPrivileges = permissionManager
+                .listDefiniedPrivileges(ItemPrivileges.class);
+            final List<String> assetPrivileges = permissionManager
+                .listDefiniedPrivileges(AssetPrivileges.class);
+
+            final List<String> possiblePrivileges = new ArrayList<>();
+            possiblePrivileges.addAll(adminPrivileges);
+            possiblePrivileges.addAll(itemPrivileges);
+            possiblePrivileges.addAll(assetPrivileges);
 
             for (final String privilege : possiblePrivileges) {
-                target.addOption(new Option(privilege, new Label(new GlobalizedMessage(privilege, CmsConstants.CMS_BUNDLE))));
+                target.addOption(new Option(
+                    privilege,
+                    new Label(new GlobalizedMessage(privilege,
+                                                    CmsConstants.CMS_BUNDLE))));
             }
         }
+
     }
 
     class NameUniqueListener implements ParameterListener {
-        private final RoleRequestLocal m_role;
+
+        private final RoleRequestLocal roleRequestLocal;
 
         NameUniqueListener(final RoleRequestLocal role) {
-            m_role = role;
+            roleRequestLocal = role;
         }
 
         /**
          * Validates that there are no duplicates between the names of roles.
          */
-	    @Override
-        public final void validate(final ParameterEvent e)
-                throws FormProcessException {
-            final PageState state = e.getPageState();
-            final ContentSection section =
-                CMS.getContext().getContentSection();
-            final String name = (String) m_name.getValue(state);
+        @Override
+        public final void validate(final ParameterEvent event)
+            throws FormProcessException {
 
-            Collection<Role> roles = section.getRoles();
+            final PageState state = event.getPageState();
+            final String name = (String) roleName.getValue(state);
 
-            for (Role role : roles) {
-                if (role.getName().equalsIgnoreCase(name)
-                        && (m_role == null
-                        || !m_role.getRole(state).equals(role))) {
-
-                    throw new FormProcessException
-                            (GlobalizationUtil.globalize("cms.ui.role.name_not_unique"));
-                }
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final RoleAdminPaneController controller = cdiUtil.findBean(
+                RoleAdminPaneController.class);
+            final Role selectedRole;
+            if (roleRequestLocal == null) {
+                selectedRole = null;
+            } else {
+                selectedRole = roleRequestLocal.getRole(state);
+            }
+            
+            if (!controller.validateRoleNameUniqueness(name, selectedRole)) {
+                    throw new FormProcessException(GlobalizationUtil.globalize(
+                        "cms.ui.role.name_not_unique"));
             }
         }
+
     }
+
 }

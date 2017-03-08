@@ -30,6 +30,7 @@ import com.arsdigita.bebop.event.TableActionEvent;
 import com.arsdigita.bebop.table.DefaultTableCellRenderer;
 import com.arsdigita.bebop.table.TableColumn;
 import com.arsdigita.bebop.table.TableColumnModel;
+import com.arsdigita.cms.CMS;
 import com.arsdigita.cms.ui.BaseItemPane;
 import com.arsdigita.cms.ui.PartySearchForm;
 import com.arsdigita.cms.ui.VisibilityComponent;
@@ -46,14 +47,11 @@ import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.security.Party;
 import org.libreccm.security.PartyRepository;
-import org.libreccm.security.Permission;
 import org.libreccm.security.PermissionChecker;
 import org.libreccm.security.Role;
 import org.libreccm.security.RoleManager;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.privileges.AdminPrivileges;
-
-import java.util.stream.Collectors;
 
 /**
  * This pane is for showing the properties of a {@link Role}. That includes
@@ -69,9 +67,6 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class BaseRoleItemPane extends BaseItemPane {
-
-    private static final Logger LOGGER = LogManager.getLogger(
-        BaseRoleItemPane.class);
 
     private final RoleRequestLocal roleRequestLocal;
 
@@ -147,18 +142,20 @@ class BaseRoleItemPane extends BaseItemPane {
 
                 final Role role = roleRequestLocal.getRole(state);
 
-                properties.add(new Property(lz("cms.ui.name"),
+                properties.add(new Property(lz("cms.ui.role.name"),
                                             role.getName()));
                 // Right now just loads the default locale description.
                 properties.add(new Property(
-                    lz("cms.ui.description"),
+                    lz("cms.ui.role.description"),
                     role.getDescription().getValue(config.getDefaultLocale())));
 
                 // Since Permissions don't seem to have a "pretty" form, the granted privilege is used.
                 final RoleAdminPaneController controller = cdiUtil.findBean(
                     RoleAdminPaneController.class);
                 final String permissions = controller
-                    .generateGrantedPermissionsString(role);
+                    .generateGrantedPermissionsString(
+                        role,
+                        CMS.getContext().getContentSection());
 
                 if (permissions.length() > 0) {
                     properties.add(new Property(lz("cms.ui.role.privileges"),

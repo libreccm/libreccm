@@ -92,6 +92,10 @@ import javax.persistence.OneToOne;
     @NamedQuery(name = "Permission.findPermissionsForCcmObject",
                 query = "SELECT p FROM Permission p "
                             + "WHERE p.object = :object")
+    ,
+    @NamedQuery(name = "Permission.findPermissionsForRoleAndObject",
+                query = "SELECT p FROM Permission p "
+                            + "WHERE p.object = :object and p.grantee = :grantee")
 
 })
 @XmlRootElement(name = "permission", namespace = CORE_XML_NS)

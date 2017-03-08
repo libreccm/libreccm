@@ -23,75 +23,65 @@ import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.SingleSelectionModel;
 import com.arsdigita.bebop.event.FormProcessListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
-import com.arsdigita.kernel.KernelConfig;
 
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.configuration.ConfigurationManager;
-import org.libreccm.l10n.LocalizedString;
-
-
-import org.libreccm.security.PermissionManager;
 import org.libreccm.security.Role;
-import org.libreccm.security.RoleRepository;
 
 /**
  * Provides a {@link com.arsdigita.bebop.Form} for adding {@link Role roles}.
  *
- 
+ *
  * @author Michael Pih
  * @author Justin Ross &lt;jross@redhat.com&gt;
  * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  */
 final class RoleAddForm extends BaseRoleForm {
 
-    private SingleSelectionModel m_model;
+    private final SingleSelectionModel<String> selectionModel;
 
-    RoleAddForm(SingleSelectionModel model) {
+    RoleAddForm(final SingleSelectionModel<String> selectionModel) {
         super("AddStaffRole", gz("cms.ui.role.add"));
 
-        m_model = model;
+        this.selectionModel = selectionModel;
 
-        m_name.addValidationListener(new NameUniqueListener(null));
+        getRoleName().addValidationListener(new NameUniqueListener(null));
 
         addProcessListener(new ProcessListener());
     }
 
     /**
-     * The {@link Role} gets saved to the database and permissions are granted as needed.
+     * The {@link Role} gets saved to the database and permissions are granted
+     * as needed.
      *
-     * NOTE: The part about granting and revoking privileges is mostly Copy & Paste from {@link RoleEditForm}.
-     * If you find any bugs or errors in this code, be sure to change it there accordingly.
+     * NOTE: The part about granting and revoking privileges is mostly Copy &
+     * Paste from {@link RoleEditForm}. If you find any bugs or errors in this
+     * code, be sure to change it there accordingly.
      */
     private class ProcessListener implements FormProcessListener {
+
         @Override
-        public final void process(final FormSectionEvent e)
-                throws FormProcessException {
-            final PageState state = e.getPageState();
+        public final void process(final FormSectionEvent event)
+            throws FormProcessException {
+
+            final PageState state = event.getPageState();
+            final String roleName = (String) getRoleName().getValue(state);
+            final String roleDesc = (String) getRoleDescription()
+                .getValue(state);
+            final String[] selectedPrivileges = (String[]) getPrivileges()
+                .getValue(state);
 
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final PermissionManager permissionManager = cdiUtil.findBean(PermissionManager.class);
-            final ConfigurationManager manager = cdiUtil.findBean(ConfigurationManager.class);
-            final KernelConfig config = manager.findConfiguration(KernelConfig.class);
-            final RoleRepository roleRepository = cdiUtil.findBean(RoleRepository.class);
+            final RoleAdminPaneController controller = cdiUtil.findBean(
+                RoleAdminPaneController.class);
+            
+            final Role role = controller.addRole(roleName, 
+                                                 roleDesc, 
+                                                 selectedPrivileges);
 
-            final Role role = new Role();
-
-            role.setName((String) m_name.getValue(state));
-
-            LocalizedString localizedDescription = role.getDescription();
-            localizedDescription.addValue(config.getDefaultLocale(), (String) m_description.getValue(state));
-            role.setDescription(localizedDescription);
-
-            //We don't now if the permissions list is empty, so we have to save beforehand to not lose data.
-            roleRepository.save(role);
-
-            String[] selectedPermissions = (String[]) m_privileges.getValue(state);
-
-            for (String s : selectedPermissions) {
-                permissionManager.grantPrivilege(s, role);
-            }
-
-            m_model.setSelectedKey(state, Long.toString(role.getRoleId()));
+            selectionModel
+                .setSelectedKey(state, Long.toString(role.getRoleId()));
         }
+
     }
+
 }
