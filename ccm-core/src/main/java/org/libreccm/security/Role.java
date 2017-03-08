@@ -180,7 +180,7 @@ public class Role implements Serializable, Portable {
 
     @OneToMany(mappedBy = "role")
     @JsonManagedReference(value = "role-taskassignment")
-    private List<TaskAssignment> assignedTasks;
+    private List<TaskAssignment> assignedTasks = new ArrayList<>();
 
     /**
      * An optional description for a role.
@@ -194,7 +194,7 @@ public class Role implements Serializable, Portable {
                                        @JoinColumn(name = "ROLE_ID")
                                    }))
     @XmlElement(name = "description", namespace = CORE_XML_NS)
-    private LocalizedString description;
+    private LocalizedString description = new LocalizedString(); 
 
     public Role() {
         super();
