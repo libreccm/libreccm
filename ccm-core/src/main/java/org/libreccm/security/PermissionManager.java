@@ -106,6 +106,18 @@ public class PermissionManager {
         return query.getResultList();
     }
 
+    public List<Permission> findPermissionsForRoleAndObject(
+        final Role role, final CcmObject object) {
+
+        final TypedQuery<Permission> query = entityManager.createNamedQuery(
+            "Permission.findPermissionsForRoleAndObject", Permission.class);
+        query.setParameter("object", object);
+        query.setParameter("grantee", role);
+
+        return query.getResultList();
+
+    }
+
     /**
      * Grants a privilege on an object to a role. If the privilege was already
      * granted, the method does nothing. If the object on which the privilege is

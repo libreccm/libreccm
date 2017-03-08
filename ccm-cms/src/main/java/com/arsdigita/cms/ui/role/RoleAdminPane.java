@@ -197,15 +197,15 @@ public class RoleAdminPane extends BaseAdminPane<String> {
         @Override
         public final void process(final FormSectionEvent event)
             throws FormProcessException {
+            
             final PageState state = event.getPageState();
 
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final RoleRepository roleRepository = cdiUtil.findBean(
-                RoleRepository.class);
-            final Long id = Long.parseLong(selectionModel.getSelectedKey(state));
-            final Role role = roleRepository.findById(id).get();
+            final RoleAdminPaneController controller = cdiUtil.findBean(
+                RoleAdminPaneController.class);
 
-            roleRepository.delete(role);
+            controller.deleteRole(CMS.getContext().getContentSection(),
+                                  selectionModel.getSelectedKey(state));
 
             selectionModel.clearSelection(state);
         }
