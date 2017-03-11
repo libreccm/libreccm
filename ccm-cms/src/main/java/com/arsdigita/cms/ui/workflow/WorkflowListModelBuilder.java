@@ -25,10 +25,11 @@ import com.arsdigita.bebop.list.ListModel;
 import com.arsdigita.cms.CMS;
 import com.arsdigita.kernel.KernelConfig;
 
+import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.contentsection.ContentSection;
 import org.libreccm.workflow.WorkflowTemplate;
-import org.libreccm.workflow.Task;
 
+import java.util.Iterator;
 import java.util.Locale;
 
 /**
@@ -48,31 +49,39 @@ class WorkflowListModelBuilder extends AbstractListModelBuilder {
 
     private class Model implements ListModel {
 
-        private final java.util.List<WorkflowTemplate> templates;
-        private int index = -1;
+        private final Iterator<WorkflowTemplate> templates;
+        private WorkflowTemplate currentTemplate;
 
         public Model() {
-            final ContentSection section = CMS.getContext().getContentSection();
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final WorkflowAdminPaneController controller = cdiUtil.findBean(
+                WorkflowAdminPaneController.class);
 
-            templates = section.getWorkflowTemplates();
+            templates = controller
+                .retrieveWorkflows(CMS.getContext().getContentSection())
+                .iterator();
         }
 
         @Override
         public boolean next() {
-            index++;
-            return index < templates.size();
+            if (templates.hasNext()) {
+                currentTemplate = templates.next();
+                return true;
+            } else {
+                return false;
+            }
         }
 
         @Override
         public Object getElement() {
             final KernelConfig kernelConfig = KernelConfig.getConfig();
             final Locale defaultLocale = kernelConfig.getDefaultLocale();
-            return templates.get(index).getName().getValue(defaultLocale);
+            return currentTemplate.getName().getValue(defaultLocale);
         }
 
         @Override
         public String getKey() {
-            return Long.toString(templates.get(index).getWorkflowId());
+            return Long.toString(currentTemplate.getWorkflowId());
         }
 
     }

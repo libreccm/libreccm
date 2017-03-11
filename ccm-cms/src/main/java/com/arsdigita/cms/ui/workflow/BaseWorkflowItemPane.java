@@ -53,6 +53,7 @@ import org.librecms.workflow.CmsTaskType;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 abstract class BaseWorkflowItemPane extends BaseItemPane {
 
@@ -81,12 +82,14 @@ abstract class BaseWorkflowItemPane extends BaseItemPane {
 
         final ActionLink taskAddLink = new ActionLink(new Label(gz(
             "cms.ui.workflow.task.add")));
-        final TaskAddForm taskAddForm = new TaskAddForm(workflowRequestLocal, taskTable
-                                                        .getRowSelectionModel());
+        final TaskAddForm taskAddForm = new TaskAddForm(workflowRequestLocal,
+                                                        taskTable
+                                                            .getRowSelectionModel());
 
         final ActionLink taskEditLink = new ActionLink(new Label(gz(
             "cms.ui.workflow.task.edit")));
-        final TaskEditForm taskEditForm = new TaskEditForm(workflowRequestLocal, taskRequestLocal);
+        final TaskEditForm taskEditForm = new TaskEditForm(workflowRequestLocal,
+                                                           taskRequestLocal);
 
         final ActionLink taskDeleteLink = new ActionLink(new Label(gz(
             "cms.ui.workflow.task.delete")));
@@ -97,8 +100,8 @@ abstract class BaseWorkflowItemPane extends BaseItemPane {
         backLink.addActionListener(new ResetListener());
 
         taskItemPane = new TaskItemPane(workflowRequestLocal, taskRequestLocal,
-                                      taskFinishLink, taskEditLink,
-                                      taskDeleteLink, backLink);
+                                        taskFinishLink, taskEditLink,
+                                        taskDeleteLink, backLink);
 
         summarySection = new SummarySection(editLink, deleteLink);
         detailPane.add(summarySection);
@@ -159,7 +162,8 @@ abstract class BaseWorkflowItemPane extends BaseItemPane {
                 final PageState state = event.getPageState();
 
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-                final TaskManager taskManager = cdiUtil.findBean(TaskManager.class);
+                final TaskManager taskManager = cdiUtil.findBean(
+                    TaskManager.class);
 
                 final Task task = taskRequestLocal.getTask(state);
                 taskManager.finish(task);
@@ -205,10 +209,22 @@ abstract class BaseWorkflowItemPane extends BaseItemPane {
 
         @Override
         protected final Object initialValue(final PageState state) {
-            final String key = taskTable.getRowSelectionModel().getSelectedKey(
-                state).toString();
 
-            return CmsTaskType.valueOf(key);
+            final Long key = Long.parseLong(taskTable.getRowSelectionModel()
+                .getSelectedKey(state).toString());
+
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final TaskRepository taskRepo = cdiUtil.findBean(
+                TaskRepository.class);
+
+            final CmsTask task = (CmsTask) taskRepo
+                .findById(key)
+                .orElseThrow(() -> new IllegalArgumentException(String.format(
+                "No Task with ID %d in the database. "
+                    + "Where did that ID come from?",
+                key)));
+
+            return task;
         }
 
     }
@@ -224,9 +240,9 @@ abstract class BaseWorkflowItemPane extends BaseItemPane {
 
             actionGroup.setSubject(new Properties());
             actionGroup.addAction(new AdminVisible(editLink),
-                                    ActionGroup.EDIT);
+                                  ActionGroup.EDIT);
             actionGroup.addAction(new AdminVisible(deleteLink),
-                                    ActionGroup.DELETE);
+                                  ActionGroup.DELETE);
         }
 
         private class Properties extends PropertyList {
@@ -235,21 +251,27 @@ abstract class BaseWorkflowItemPane extends BaseItemPane {
             protected final List<Property> properties(final PageState state) {
                 @SuppressWarnings("unchecked")
                 final List<Property> props = super.properties(state);
-                final Workflow workflow = (Workflow) workflowRequestLocal.get(state);
+                @SuppressWarnings("unchecked")
+                final Workflow workflow
+                                   = ((Optional<Workflow>) workflowRequestLocal
+                                      .get(state)).get();
 
                 final KernelConfig kernelConfig = KernelConfig.getConfig();
                 final Locale defaultLocale = kernelConfig.getDefaultLocale();
 
-                props.add(new Property(gz("cms.ui.name"),
-                                       workflow.getName().getValue(defaultLocale)));
+                props.add(new Property(gz("cms.ui.workflow.name"),
+                                       workflow.getName()
+                                           .getValue(defaultLocale)));
                 props.add(new Property(
-                    gz("cms.ui.description"),
+                    gz("cms.ui.workflow.description"),
                     workflow.getDescription().getValue(defaultLocale)));
-                props.add(new Property(gz("cms.ui.workflow.current_state"),
-                                       workflow.getState().toString()));
-                props.add(new Property(gz("cms.ui.workflow.num_tasks"),
-                                       String.valueOf(workflow.getTasks().size())));
-
+                if (workflow.getState() == null) {
+                    props.add(new Property(gz("cms.ui.workflow.current_state"),
+                                           gz("cms.ui.workflow.current_state.none")));
+                } else {
+                    props.add(new Property(gz("cms.ui.workflow.current_state"),
+                                           workflow.getState().toString()));
+                }
                 return props;
             }
 

@@ -20,6 +20,8 @@ package org.libreccm.workflow;
 
 import org.libreccm.core.AbstractEntityRepository;
 
+import java.util.UUID;
+
 import javax.enterprise.context.RequestScoped;
 
 /**
@@ -39,6 +41,12 @@ public class WorkflowTemplateRepository
     @Override
     public boolean isNew(final WorkflowTemplate template) {
         return template.getWorkflowId() == 0;
+    }
+    
+    @Override
+    public void initNewEntity(final WorkflowTemplate workflowTemplate) {
+        super.initNewEntity(workflowTemplate);
+        workflowTemplate.setUuid(UUID.randomUUID().toString());
     }
 
 }
