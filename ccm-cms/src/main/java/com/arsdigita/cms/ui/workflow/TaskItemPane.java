@@ -317,17 +317,30 @@ final class TaskItemPane extends BaseItemPane {
                                            defaultLocale)));
                 props.add(new Property(gz("cms.ui.workflow.task.dependencies"),
                                        deps(task)));
-                props.add(new Property(gz("cms.ui.workflow.task.state"),
-                                       task.getTaskState().toString()));
-                props.add(new Property(gz("cms.ui.workflow.task.locked"),
-                                       task.isLocked()
-                                           ? lz("cms.ui.yes") : lz("cms.ui.no")));
+                if (task.getTaskState() == null) {
+                    props.add(new Property(gz("cms.ui.workflow.task.state"),
+                                           gz("cms.ui.workflow.task.state.none")));
+                } else {
+                    props.add(new Property(gz("cms.ui.workflow.task.state"),
+                                           task.getTaskState().toString()));
+                }
+                if (task.isLocked()) {
+                    props.add(new Property(gz("cms.ui.workflow.task.locked"),
+                                           gz("cms.ui.yes")));
+                } else {
+                    props.add(new Property(gz("cms.ui.workflow.task.locked"),
+                                           gz("cms.ui.no")));
+                }
 
                 return props;
             }
 
             private String deps(final CmsTask task) {
-                final List<Task> dependencies = task.getDependsOn();
+                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+                final WorkflowAdminPaneController controller = cdiUtil
+                    .findBean(WorkflowAdminPaneController.class);
+
+                final List<Task> dependencies = controller.getDependencies(task);
                 final KernelConfig kernelConfig = KernelConfig.getConfig();
                 final Locale defaultLocale = kernelConfig.getDefaultLocale();
 

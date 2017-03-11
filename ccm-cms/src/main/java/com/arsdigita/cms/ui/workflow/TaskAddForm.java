@@ -34,12 +34,7 @@ import org.librecms.workflow.CmsTask;
 import com.arsdigita.util.UncheckedWrapperException;
 
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.workflow.Task;
-import org.libreccm.workflow.TaskManager;
-import org.libreccm.workflow.TaskRepository;
-import org.libreccm.workflow.Workflow;
-import org.libreccm.workflow.WorkflowManager;
 import org.librecms.workflow.CmsTaskType;
 
 import java.util.List;
@@ -52,9 +47,9 @@ import java.util.TooManyListenersException;
  */
 class TaskAddForm extends BaseTaskForm {
 
-    protected final static String ERROR_MSG
-                                      = "A workflow template with that name already exists in this content "
-                                        + "section.";
+    protected final static String ERROR_MSG = "A workflow template with that "
+                                                  + "name already exists in this "
+                                              + "content section.";
 
     private final SingleSelectionModel<Long> m_model;
 
@@ -78,7 +73,11 @@ class TaskAddForm extends BaseTaskForm {
         @Override
         public final void prepare(final PrintEvent event) {
             final PageState state = event.getPageState();
-            final List<Task> tasks = m_workflow.getWorkflow(state).getTasks();
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final WorkflowAdminPaneController controller = cdiUtil
+                .findBean(WorkflowAdminPaneController.class);
+            final List<Task> tasks = controller
+                .getTasksForWorkflow(m_workflow.getWorkflow(state));
 
             final OptionGroup options = (OptionGroup) event.getTarget();
             final KernelConfig kernelConfig = KernelConfig.getConfig();
@@ -99,36 +98,16 @@ class TaskAddForm extends BaseTaskForm {
 
             final PageState state = event.getPageState();
 
-            final Workflow workflow = m_workflow.getWorkflow(state);
-            final CmsTask task = new CmsTask();
-
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final TaskRepository taskRepo = cdiUtil.findBean(
-                TaskRepository.class);
-            final WorkflowManager workflowManager = cdiUtil.findBean(
-                WorkflowManager.class);
-            final TaskManager taskManager = cdiUtil.findBean(TaskManager.class);
-            final ConfigurationManager confManager = cdiUtil.findBean(
-                ConfigurationManager.class);
-            final KernelConfig kernelConfig = confManager.findConfiguration(
-                KernelConfig.class);
-            final Locale defaultLocale = kernelConfig.getDefaultLocale();
+            final WorkflowAdminPaneController controller = cdiUtil
+                .findBean(WorkflowAdminPaneController.class);
 
-            task.getLabel().addValue(defaultLocale,
-                                     ((String) m_name.getValue(state)));
-            task.getDescription().addValue(
-                defaultLocale,
-                ((String) m_description.getValue(state)));
-            
-            final CmsTaskType taskType = CmsTaskType.valueOf((String) m_type.getValue(state));
-            task.setTaskType(taskType);
-            task.setActive(true);
-
-            taskRepo.save(task);
-
-            taskManager.addTask(workflow, task);
-            
-            processDependencies(task, (String[]) m_deps.getValue(state));
+            final CmsTask task = controller.addTask(
+                m_workflow.getWorkflow(state),
+                (String) m_name.getValue(state),
+                (String) m_description.getValue(state),
+                CmsTaskType.valueOf((String) m_type.getValue(state)),
+                (String[]) m_deps.getValue(state));
 
             m_model.setSelectedKey(state, task.getTaskId());
         }

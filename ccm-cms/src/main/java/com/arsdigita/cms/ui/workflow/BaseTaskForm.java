@@ -26,7 +26,7 @@ import com.arsdigita.bebop.form.OptionGroup;
 import com.arsdigita.bebop.form.SingleSelect;
 import com.arsdigita.bebop.form.TextArea;
 import com.arsdigita.bebop.form.TextField;
-import com.arsdigita.bebop.parameters.IntegerParameter;
+import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.cms.ui.BaseForm;
 
 import com.arsdigita.globalization.GlobalizedMessage;
@@ -68,9 +68,9 @@ class BaseTaskForm extends BaseForm {
         m_workflow = workflow;
 
         m_name = new Name("name", 200, true);
-        addField(gz("cms.ui.name"), m_name);
+        addField(gz("cms.ui.workflow.task.name"), m_name);
 
-        m_type = new SingleSelect(new IntegerParameter("task_type"));
+        m_type = new SingleSelect(new StringParameter("task_type"));
         addField(gz("cms.ui.workflow.task.type"), m_type);
 
         try {
@@ -80,7 +80,7 @@ class BaseTaskForm extends BaseForm {
         }
 
         m_description = new Description("desc", 4000, true);
-        addField(gz("cms.ui.description"), m_description);
+        addField(gz("cms.ui.workflow.task.description"), m_description);
 
         m_deps = new CheckboxGroup("dep");
         addField(gz("cms.ui.workflow.task.dependencies"), m_deps);
@@ -160,7 +160,6 @@ class BaseTaskForm extends BaseForm {
      * new ones in since it is possible that Tasks will fire events when
      * dependencies are added and removed.
      *
-     * XXX domlay
      */
     final void processDependencies(final Task task,
                                    final String[] selectedDependencies) {
