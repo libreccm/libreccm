@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.logging.log4j.Logger;
+import org.libreccm.cdi.utils.CdiUtil;
 
 class TaskTableModelBuilder extends AbstractTableModelBuilder {
 
@@ -64,7 +65,14 @@ class TaskTableModelBuilder extends AbstractTableModelBuilder {
         private Map m_dependencies = new HashMap();
 
         private Model(final Workflow workflow) {
-            final Iterator<Task> tasksIter = workflow.getTasks().iterator();
+
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final WorkflowAdminPaneController controller = cdiUtil.findBean(
+                WorkflowAdminPaneController.class);
+
+            final Iterator<Task> tasksIter = controller
+                .getTasksForWorkflow(workflow)
+                .iterator();
             GraphSet g = new GraphSet();
 
             while (tasksIter.hasNext()) {
@@ -100,7 +108,7 @@ class TaskTableModelBuilder extends AbstractTableModelBuilder {
                 LOGGER.error("found possible loop in tasks for " + workflow);
                 break;
             }
-            Assert.assertEquals(workflow.getTasks().size(), tasks.size());
+
             m_tasks = tasks.iterator();
         }
 

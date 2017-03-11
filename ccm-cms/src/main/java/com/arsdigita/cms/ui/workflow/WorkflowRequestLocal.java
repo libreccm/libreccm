@@ -20,11 +20,14 @@ package com.arsdigita.cms.ui.workflow;
 
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.RequestLocal;
+
 import org.libreccm.workflow.Workflow;
+
+import java.util.Optional;
 
 public abstract class WorkflowRequestLocal extends RequestLocal {
 
     public final Workflow getWorkflow(final PageState state) {
-        return (Workflow) get(state);
+        return ((Optional<Workflow>) get(state)).get();
     }
 }

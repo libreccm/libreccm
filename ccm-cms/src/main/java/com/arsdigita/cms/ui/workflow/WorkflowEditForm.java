@@ -94,7 +94,8 @@ class WorkflowEditForm extends BaseWorkflowForm {
             final Locale defaultLocale = kernelConfig.getDefaultLocale();
 
             m_title.setValue(state, workflow.getName().getValue(defaultLocale));
-            m_description.setValue(state, workflow.getDescription());
+            m_description.setValue(state, workflow.getDescription().getValue(
+                                   defaultLocale));
         }
 
     }

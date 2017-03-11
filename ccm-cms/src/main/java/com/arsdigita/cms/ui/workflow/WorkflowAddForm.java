@@ -24,16 +24,9 @@ import com.arsdigita.bebop.SingleSelectionModel;
 import com.arsdigita.bebop.event.FormProcessListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.cms.CMS;
-import com.arsdigita.kernel.KernelConfig;
 
-import org.librecms.contentsection.ContentSection;
 import org.libreccm.workflow.WorkflowTemplate;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.configuration.ConfigurationManager;
-import org.libreccm.workflow.WorkflowTemplateRepository;
-import org.librecms.contentsection.ContentSectionManager;
-
-import java.util.Locale;
 
 /**
  * @author Uday Mathur
@@ -54,36 +47,48 @@ class WorkflowAddForm extends BaseWorkflowForm {
     }
 
     private class ProcessListener implements FormProcessListener {
-        
+
         @Override
         public final void process(final FormSectionEvent event)
-                throws FormProcessException {
+            throws FormProcessException {
+
             final PageState state = event.getPageState();
 
             final String label = (String) m_title.getValue(state);
             final String description = (String) m_description.getValue(state);
 
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final WorkflowTemplateRepository workflowTemplateRepository = cdiUtil.findBean(
-                WorkflowTemplateRepository.class);
-            final ContentSectionManager sectionManager = cdiUtil.findBean(
-                ContentSectionManager.class);
-            final ConfigurationManager confManager = cdiUtil.findBean(ConfigurationManager.class);
-            final KernelConfig kernelConfig = confManager.findConfiguration(
-                KernelConfig.class);
-            final Locale defaultLocale = kernelConfig.getDefaultLocale();
-            
-            final WorkflowTemplate workflow = new WorkflowTemplate();
-            workflow.getName().addValue(defaultLocale, label);
-            workflow.getDescription().addValue(defaultLocale, description);
-            
-            workflowTemplateRepository.save(workflow);
+            final WorkflowAdminPaneController controller = cdiUtil.findBean(
+                WorkflowAdminPaneController.class);
+//            final WorkflowTemplateRepository workflowTemplateRepository
+//                                             = cdiUtil.findBean(
+//                    WorkflowTemplateRepository.class);
+//            final ContentSectionManager sectionManager = cdiUtil.findBean(
+//                ContentSectionManager.class);
+//            final ConfigurationManager confManager = cdiUtil.findBean(
+//                ConfigurationManager.class);
+//            final KernelConfig kernelConfig = confManager.findConfiguration(
+//                KernelConfig.class);
+//            final Locale defaultLocale = kernelConfig.getDefaultLocale();
+//
+//            final WorkflowTemplate workflow = new WorkflowTemplate();
+//            workflow.getName().addValue(defaultLocale, label);
+//            workflow.getDescription().addValue(defaultLocale, description);
+//
+//            workflowTemplateRepository.save(workflow);
+//
+//            final ContentSection section = CMS.getContext().getContentSection();
+//            sectionManager
+//                .addWorkflowTemplateToContentSection(workflow, section);
 
-            final ContentSection section =
-                CMS.getContext().getContentSection();
-            sectionManager.addWorkflowTemplateToContentSection(workflow, section);
+            final WorkflowTemplate workflow = controller.createWorkflow(
+                CMS.getContext().getContentSection(),
+                label,
+                description);
 
             m_model.setSelectedKey(state, workflow.getWorkflowId());
         }
+
     }
+
 }

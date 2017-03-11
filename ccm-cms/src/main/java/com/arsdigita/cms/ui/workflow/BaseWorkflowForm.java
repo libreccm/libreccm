@@ -41,10 +41,10 @@ class BaseWorkflowForm extends BaseForm {
         super(key, message);
 
         m_title = new Name("name", 200, true);
-        addField(gz("cms.ui.name"), m_title);
+        addField(gz("cms.ui.workflow.name"), m_title);
 
         m_description = new Description("desc", 4000, true);
-        addField(gz("cms.ui.description"), m_description);
+        addField(gz("cms.ui.workflow.description"), m_description);
 
         addAction(new Finish());
         addAction(new Cancel());
