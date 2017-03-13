@@ -189,7 +189,7 @@ public class AssignableTaskManager {
         }
 
         final TypedQuery<AssignableTask> query = entityManager.createNamedQuery(
-            "UserTask.findLockedBy", AssignableTask.class);
+            "AssignableTask.findLockedBy", AssignableTask.class);
         query.setParameter("user", user);
 
         return query.getResultList();

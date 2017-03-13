@@ -22,32 +22,29 @@ import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.Table;
 import com.arsdigita.bebop.table.AbstractTableModelBuilder;
 import com.arsdigita.bebop.table.TableModel;
-import com.arsdigita.util.Assert;
-import com.arsdigita.util.GraphSet;
-import com.arsdigita.util.Graphs;
+import com.arsdigita.kernel.KernelConfig;
 
 import org.apache.logging.log4j.LogManager;
 import org.libreccm.workflow.Task;
 import org.libreccm.workflow.Workflow;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.logging.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
+
+import java.util.Locale;
 
 class TaskTableModelBuilder extends AbstractTableModelBuilder {
 
     private static final Logger LOGGER = LogManager.getLogger(
         TaskTableModelBuilder.class);
 
-    private final WorkflowRequestLocal m_workflow;
+    private final WorkflowRequestLocal workflow;
 
     TaskTableModelBuilder(final WorkflowRequestLocal workflow) {
-        m_workflow = workflow;
+        this.workflow = workflow;
     }
 
     @Override
@@ -55,14 +52,14 @@ class TaskTableModelBuilder extends AbstractTableModelBuilder {
                                       final PageState state) {
         LOGGER.debug("Creating a new table model for the current request");
 
-        return new Model(m_workflow.getWorkflow(state));
+        return new Model(workflow.getWorkflow(state));
     }
 
     private static class Model implements TableModel {
 
-        private Task m_task;
-        private Iterator m_tasks;
-        private Map m_dependencies = new HashMap();
+        private Task currentTask;
+        private Iterator<Task> tasksIterator;
+        private Map<Task, String> dependencies;
 
         private Model(final Workflow workflow) {
 
@@ -70,46 +67,54 @@ class TaskTableModelBuilder extends AbstractTableModelBuilder {
             final WorkflowAdminPaneController controller = cdiUtil.findBean(
                 WorkflowAdminPaneController.class);
 
-            final Iterator<Task> tasksIter = controller
-                .getTasksForWorkflow(workflow)
-                .iterator();
-            GraphSet g = new GraphSet();
+            final TaskTableModelData data = controller
+                .getTaskTableModelData(workflow);
+            tasksIterator = data.getTasks();
+            dependencies = data.getDependencies();
+            
 
-            while (tasksIter.hasNext()) {
-                Task t = tasksIter.next();
-                final Iterator<Task> deps = t.getDependsOn().iterator();
-                final StringBuffer buffer = new StringBuffer();
-                while (deps.hasNext()) {
-                    Task dep = deps.next();
-                    g.addEdge(t, dep, null);
-                    buffer.append(dep.getLabel() + ", ");
-                }
-
-                final int len = buffer.length();
-                if (len >= 2) {
-                    buffer.setLength(len - 2);
-                } else {
-                    g.addNode(t);
-                }
-                m_dependencies.put(t, buffer.toString());
-            }
-
-            List tasks = new ArrayList();
-            outer:
-            while (g.nodeCount() > 0) {
-                List l = Graphs.getSinkNodes(g);
-                for (Iterator it = l.iterator(); it.hasNext();) {
-                    Task t = (Task) it.next();
-                    tasks.add(t);
-                    g.removeNode(t);
-                    continue outer;
-                }
-                // break loop if no nodes removed
-                LOGGER.error("found possible loop in tasks for " + workflow);
-                break;
-            }
-
-            m_tasks = tasks.iterator();
+//            final Iterator<Task> tasksIter = controller
+//                .getTasksForWorkflow(workflow)
+//                .iterator();
+//            GraphSet graphSet = new GraphSet();
+//
+//            while (tasksIter.hasNext()) {
+//                Task task = tasksIter.next();
+//                final Iterator<Task> deps = task.getDependsOn().iterator();
+//                final StringBuffer buffer = new StringBuffer();
+//                while (deps.hasNext()) {
+//                    Task dep = deps.next();
+//                    graphSet.addEdge(task, dep, null);
+//                    buffer
+//                        .append(dep.getLabel())
+//                        .append(", ");
+//                }
+//
+//                final int len = buffer.length();
+//                if (len >= 2) {
+//                    buffer.setLength(len - 2);
+//                } else {
+//                    graphSet.addNode(task);
+//                }
+//                m_dependencies.put(task, buffer.toString());
+//            }
+//
+//            List tasks = new ArrayList();
+//            outer:
+//            while (graphSet.nodeCount() > 0) {
+//                List list = Graphs.getSinkNodes(graphSet);
+//                for (Iterator it = list.iterator(); it.hasNext();) {
+//                    Task t = (Task) it.next();
+//                    tasks.add(t);
+//                    graphSet.removeNode(t);
+//                    continue outer;
+//                }
+//                // break loop if no nodes removed
+//                LOGGER.error("found possible loop in tasks for " + workflow);
+//                break;
+//            }
+//
+//            m_tasks = tasks.iterator();
         }
 
         @Override
@@ -119,8 +124,8 @@ class TaskTableModelBuilder extends AbstractTableModelBuilder {
 
         @Override
         public final boolean nextRow() {
-            if (m_tasks.hasNext()) {
-                m_task = (Task) m_tasks.next();
+            if (tasksIterator.hasNext()) {
+                currentTask = tasksIterator.next();
                 return true;
             } else {
                 return false;
@@ -129,18 +134,20 @@ class TaskTableModelBuilder extends AbstractTableModelBuilder {
 
         @Override
         public final Object getKeyAt(final int column) {
-            return m_task.getTaskId();
+            return currentTask.getTaskId();
         }
 
         @Override
         public final Object getElementAt(final int column) {
+            final Locale defaultLocale = KernelConfig.getConfig().getDefaultLocale();
+            
             switch (column) {
                 case 0:
-                    return m_task.getLabel();
+                    return currentTask.getLabel().getValue(defaultLocale);
                 case 1:
-                    return m_task.getDescription();
+                    return currentTask.getDescription().getValue(defaultLocale);
                 case 2:
-                    return m_dependencies.get(m_task);
+                    return dependencies.get(currentTask);
                 case 3:
                     return "";
 //                    return m_task.getStateString();

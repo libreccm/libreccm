@@ -293,10 +293,9 @@ abstract class BaseWorkflowItemPane extends BaseItemPane {
 
     }
 
-    // XXX Fix this.
-    private static final String[] s_columns = new String[]{
-        lz("cms.ui.name"),
-        lz("cms.ui.description"),
+    private static final String[] COLUMNS = new String[]{
+        lz("cms.ui.workflow.task.name"),
+        lz("cms.ui.workflow.task.description"),
         lz("cms.ui.workflow.task.dependencies"),
         lz("cms.ui.workflow.task.state")
     };
@@ -304,7 +303,7 @@ abstract class BaseWorkflowItemPane extends BaseItemPane {
     private class TaskTable extends Table {
 
         public TaskTable() {
-            super(new TaskTableModelBuilder(workflowRequestLocal), s_columns);
+            super(new TaskTableModelBuilder(workflowRequestLocal), COLUMNS);
 
             setEmptyView(new Label(gz("cms.ui.workflow.task.none")));
 
