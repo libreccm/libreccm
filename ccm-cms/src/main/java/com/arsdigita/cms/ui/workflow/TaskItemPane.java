@@ -440,9 +440,11 @@ final class TaskItemPane extends BaseItemPane {
             private int index = -1;
 
             private Model(final CmsTask task) {
-                roles = task.getAssignments().stream()
-                    .map(assignment -> assignment.getRole())
-                    .collect(Collectors.toList());
+                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+                final WorkflowAdminPaneController controller = cdiUtil.findBean(
+                    WorkflowAdminPaneController.class);
+                
+                roles = controller.findAssignees(task);
             }
 
             @Override

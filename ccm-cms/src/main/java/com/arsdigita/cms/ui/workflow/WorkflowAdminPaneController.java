@@ -19,10 +19,15 @@
 package com.arsdigita.cms.ui.workflow;
 
 import com.arsdigita.kernel.KernelConfig;
+import com.arsdigita.util.GraphSet;
+import com.arsdigita.util.Graphs;
 import com.arsdigita.util.UncheckedWrapperException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.ConfigurationManager;
+import org.libreccm.security.Role;
 import org.libreccm.workflow.CircularTaskDependencyException;
 import org.libreccm.workflow.Task;
 import org.libreccm.workflow.TaskManager;
@@ -40,6 +45,7 @@ import org.librecms.workflow.CmsTaskType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -55,6 +61,9 @@ import javax.transaction.Transactional;
  */
 @RequestScoped
 public class WorkflowAdminPaneController {
+
+    private static final Logger LOGGER = LogManager
+        .getLogger(WorkflowAdminPaneController.class);
 
     @Inject
     private ConfigurationManager confManager;
@@ -132,10 +141,10 @@ public class WorkflowAdminPaneController {
 
     @Transactional(Transactional.TxType.REQUIRED)
     public CmsTask addTask(final Workflow workflow,
-                        final String name,
-                        final String desc,
-                        final CmsTaskType type,
-                        final String[] deps) {
+                           final String name,
+                           final String desc,
+                           final CmsTaskType type,
+                           final String[] deps) {
         final KernelConfig kernelConfig = confManager
             .findConfiguration(KernelConfig.class);
         final Locale defaultLocale = kernelConfig.getDefaultLocale();
@@ -202,17 +211,82 @@ public class WorkflowAdminPaneController {
             }
         }
     }
-    
+
     @Transactional(Transactional.TxType.REQUIRED)
     public List<Task> getDependencies(final Task task) {
-        
+
         final Task theTask = taskRepo
             .findById(task.getTaskId())
-        .orElseThrow(() -> new IllegalArgumentException(String.format(
+            .orElseThrow(() -> new IllegalArgumentException(String.format(
             "No Task with ID %d in the database. Where did that ID come from?",
             task.getTaskId())));
-        
+
         return new ArrayList<>(theTask.getDependsOn());
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    TaskTableModelData getTaskTableModelData(final Workflow workflow) {
+        final Map<Task, String> dependencies = new HashMap<>();
+
+        final Iterator<Task> tasksIter = getTasksForWorkflow(workflow)
+            .iterator();
+        final GraphSet graphSet = new GraphSet();
+
+        while (tasksIter.hasNext()) {
+            Task task = tasksIter.next();
+            final Iterator<Task> deps = task.getDependsOn().iterator();
+            final StringBuffer buffer = new StringBuffer();
+            while (deps.hasNext()) {
+                Task dep = deps.next();
+                graphSet.addEdge(task, dep, null);
+                buffer
+                    .append(dep.getLabel())
+                    .append(", ");
+            }
+
+            final int len = buffer.length();
+            if (len >= 2) {
+                buffer.setLength(len - 2);
+            } else {
+                graphSet.addNode(task);
+            }
+            dependencies.put(task, buffer.toString());
+        }
+
+        final List<Task> tasks = new ArrayList<>();
+        outer:
+        while (graphSet.nodeCount() > 0) {
+            @SuppressWarnings("unchecked")
+            final List<Task> list = Graphs.getSinkNodes(graphSet);
+            for (final Iterator<Task> it = list.iterator(); it.hasNext();) {
+                final Task currentTask = it.next();
+                tasks.add(currentTask);
+                graphSet.removeNode(currentTask);
+                continue outer;
+            }
+            // break loop if no nodes removed
+            LOGGER.error("found possible loop in tasks for " + workflow);
+            break;
+        }
+
+        final Iterator<Task> taskIterator = tasks.iterator();
+
+        return new TaskTableModelData(taskIterator, dependencies);
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public List<Role> findAssignees(final CmsTask task) {
+        final CmsTask theTask = (CmsTask) taskRepo
+            .findById(task.getTaskId())
+            .orElseThrow(() -> new IllegalArgumentException(String.format(
+            "No Task with ID %d in the database. Where did that ID come from?",
+            task.getTaskId())));
+
+        return theTask
+            .getAssignments()
+            .stream()
+            .map(assignment -> assignment.getRole())
+            .collect(Collectors.toList());
     }
 
 }
