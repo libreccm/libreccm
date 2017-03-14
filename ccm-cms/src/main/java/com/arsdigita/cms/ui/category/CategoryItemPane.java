@@ -39,30 +39,39 @@ import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.bebop.util.GlobalizationUtil;
 import com.arsdigita.cms.ui.BaseItemPane;
 import com.arsdigita.cms.ui.CMSForm;
+import com.arsdigita.cms.ui.ContentItemPage;
 import com.arsdigita.cms.ui.VisibilityComponent;
+import com.arsdigita.cms.ui.templates.CategoryTemplates;
+import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.kernel.ui.ACSObjectSelectionModel;
 import com.arsdigita.toolbox.ui.ActionGroup;
+import com.arsdigita.toolbox.ui.Property;
 import com.arsdigita.toolbox.ui.PropertyList;
 import com.arsdigita.toolbox.ui.Section;
 import com.arsdigita.util.Assert;
 import com.arsdigita.web.Web;
 import com.arsdigita.xml.Element;
 
+import java.awt.image.Kernel;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Optional;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryManager;
 import org.libreccm.categorization.CategoryRepository;
 import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.configuration.ConfigurationManager;
+import org.libreccm.core.CcmObject;
 import org.libreccm.security.Permission;
 import org.libreccm.security.PermissionChecker;
 import org.libreccm.security.User;
 import org.librecms.contentsection.ContentItem;
+import org.librecms.contentsection.ContentItemManager;
 import org.librecms.contentsection.privileges.AdminPrivileges;
 
 /**
@@ -70,11 +79,12 @@ import org.librecms.contentsection.privileges.AdminPrivileges;
  *
  * @author Justin Ross &lt;jross@redhat.com&gt;
  * @author Sören Bernstein <quasi@quasiweb.de>
- * @version $Id: CategoryItemPane.java 1967 2009-08-29 21:05:51Z pboy $
+ * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  */
 class CategoryItemPane extends BaseItemPane {
 
-    private static final Logger s_log = Logger.getLogger(CategoryItemPane.class);
+    private static final Logger LOGGER = LogManager.getLogger(
+            CategoryItemPane.class);
     private final SingleSelectionModel m_model;
     private final CategoryRequestLocal m_category;
     private final SimpleContainer m_detailPane;
@@ -119,8 +129,8 @@ class CategoryItemPane extends BaseItemPane {
         
         //Move link
         final ActionLink moveLink = new MoveLink(new Label(gz("cms.ui.category.move")));
-        final Form moveForm = new CategoryMoveForm(m_category, contextModel);
-        add(moveForm);
+        //final Form moveForm = new CategoryMoveForm(m_category, contextModel);
+        //add(moveForm);
 
         ViewItemLink viewIndexLink = new ViewItemLink(new Label(gz(
                 "cms.ui.category.view_index_item")), "");
@@ -138,27 +148,32 @@ class CategoryItemPane extends BaseItemPane {
 
         // Quasimodo: BEGIN
         // Localizations
-        /*
-        ActionLink addCategoryLocalizationLink = new ActionLink(new Label(gz( TODO
+
+        ActionLink addCategoryLocalizationLink = new ActionLink(new Label(gz(
                 "cms.ui.category.localization_add"))) {
             @Override
             public boolean isVisible(PageState state) {
+                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+                final ConfigurationManager manager = cdiUtil.findBean(
+                        ConfigurationManager.class);
+                final KernelConfig config = manager.findConfiguration(
+                        KernelConfig.class);
+                final PermissionChecker permissionChecker =
+                        cdiUtil.findBean(PermissionChecker.class);
                 // Only show addLanguage button, if there are langauges to add
-                int countSupportedLanguages = (Kernel.getConfig()).getSupportedLanguagesTokenizer()
-                        .countTokens();
-                long countLanguages =
-                     m_category.getCategory(state)
-                        .getCategoryLocalizationCollection().size();
-
-                if (m_category.getCategory(state).canEdit()
-                    && countLanguages < countSupportedLanguages) {
-                    return true;
-                } else {
-                    return false;
+                int countSupportedLanguages = config.getSupportedLanguages().size();
+                final Category category = m_category.getCategory(state);
+                if (permissionChecker.isPermitted(AdminPrivileges.ADMINISTER_CATEGORIES,
+                        category)) {
+                    if (category.getTitle().getAvailableLocales().size() < countSupportedLanguages
+                            || category.getDescription().getAvailableLocales().size() < countSupportedLanguages) {
+                        return true;
+                    }
                 }
+                return false;
             }
 
-        };*/
+        };
         /*
         CategoryLocalizationAddForm addCategoryLocalizationForm =
                                     new CategoryLocalizationAddForm(m_category);
@@ -191,8 +206,8 @@ class CategoryItemPane extends BaseItemPane {
         connect(indexLink, indexForm);
         connect(indexForm);
         
-        connect(moveLink, moveForm);
-        connect(moveForm);
+        //connect(moveLink, moveForm);
+        //connect(moveForm);
 
         connect(orderItemsLink, orderItemsForm);
         connect(orderItemsForm);
@@ -315,7 +330,7 @@ class CategoryItemPane extends BaseItemPane {
         }
     }
 
-    /*
+
     // Quasimodo: BEGIN
     // CategoryLocalizationSection
     private class CategoryLocalizationSection extends Section {
@@ -349,7 +364,7 @@ class CategoryItemPane extends BaseItemPane {
             page.addComponentStateParam(m_editCategoryLocalizationForm, m_catLocaleParam);
         }
 
-    }*/
+    }
 
     private class SubcategorySection extends Section {
 
@@ -379,7 +394,7 @@ class CategoryItemPane extends BaseItemPane {
 
         @Override
         public final boolean isVisible(final PageState state) {
-            return m_category.getCategory(state).getParent().isPresent();
+            return m_category.getCategory(state).getParentCategory().isVisible();
         }
 
     }
@@ -392,7 +407,7 @@ class CategoryItemPane extends BaseItemPane {
             final ActionGroup group = new ActionGroup();
             setBody(group);
 
-            //group.setSubject(new CategoryTemplates(m_category)); TODO
+            group.setSubject(new CategoryTemplates(m_category));
             // XXX secvis
             //group.addAction(link);
         }
@@ -406,117 +421,117 @@ class CategoryItemPane extends BaseItemPane {
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final PermissionChecker permissionChecker = cdiUtil.findBean(PermissionChecker.class);
             Category cat = m_category.getCategory(ps);
-            return cat.getParent().isPresent() && permissionChecker.isPermitted(AdminPrivileges.ADMINISTER_CATEGORIES);
+            return cat.getParentCategory() != null && permissionChecker.isPermitted(AdminPrivileges.ADMINISTER_CATEGORIES);
         }
 
         PermissionsSection() {
             setHeading(new Label(gz("cms.ui.permissions")));
-            /*
+
             final ActionGroup group = new ActionGroup();
             setBody(group);
 
-            PrivilegeDescriptor[] privs = new PrivilegeDescriptor[]{
-                PrivilegeDescriptor.EDIT,
-                Category.MAP_DESCRIPTOR,
-                PrivilegeDescriptor.DELETE,
-                PrivilegeDescriptor.ADMIN
-            };
-
-            HashMap privMap = new HashMap();
-            privMap.put("edit", "Edit");
-            privMap.put("delete", "Delete");
-            privMap.put(Category.MAP_DESCRIPTOR.getName(), "Categorize Items");
-            privMap.put("admin", "Admin");
-
-            final CMSPermissionsPane permPane = new CMSPermissionsPane(privs, privMap,
-                                                                       new ACSObjectSelectionModel(
-                    m_model)) {
-                @Override
-                public void showAdmin(PageState ps) {
-                    Assert.exists(m_model.getSelectedKey(ps));
-
-                    super.showAdmin(ps);
-                    getAdminListingPanel().setVisible(ps, false);
-                }
-
-            };
-
-            final ActionLink restoreDefault = new ActionLink(new Label(gz(
-                    "cms.ui.restore_default_permissions"))) {
-                @Override
-                public boolean isVisible(PageState ps) {
-                    Category cat = m_category.getCategory(ps);
-                    return PermissionService.getContext(cat) == null;
-                }
-
-            };
-
-            final ActionLink useCustom = new ActionLink(new Label(gz(
-                    "cms.ui.use_custom_permissions"))) {
-                @Override
-                public boolean isVisible(PageState ps) {
-                    Category cat = m_category.getCategory(ps);
-                    return PermissionService.getContext(cat) != null;
-                }
-
-            };
-
-            ActionListener al = new ActionListener() {
-                public void actionPerformed(ActionEvent event) {
-                    PageState state = event.getPageState();
-                    // if this is the root then we cannot revert to anything
-                    // since there is not a parent
-                    Category cat = m_category.getCategory(state);
-                    if (!cat.canAdmin()) {
-                        throw new com.arsdigita.cms.dispatcher.AccessDeniedException();
-                    }
-                    DataObject context = PermissionService.getContext(cat);
-                    if (context != null) {
-                        PermissionService.clonePermissions(cat);
-                    } else {
-                        ACSObject parent;
-                        try {
-                            parent = cat.getDefaultParentCategory();
-                        } catch (CategoryNotFoundException ce) {
-                            throw new IllegalStateException(
-                                    "link shouldn't exist for root categories");
-                        }
-                        PermissionService.setContext(cat, parent);
-
-                        // revoke all direct permissions so category will only
-                        // have inherited permissions
-                        ObjectPermissionCollection perms =
-                                                   PermissionService.getDirectGrantedPermissions(
-                                cat.getOID());
-                        while (perms.next()) {
-                            PermissionService.revokePermission(
-                                    new PermissionDescriptor(
-                                    perms.getPrivilege(), cat.getOID(),
-                                    perms.getGranteeOID()));
-                        }
-                    }
-                    permPane.reset(state);
-                }
-
-            }
-
-            restoreDefault.addActionListener(al);
-            useCustom.addActionListener(al);
-
-            SimpleContainer links = new SimpleContainer();
-            links.add(restoreDefault);
-            links.add(useCustom);
-
-            group.setSubject(permPane);
-            group.addAction(links);
-
-            m_model.addChangeListener(new ChangeListener() {
-                public void stateChanged(ChangeEvent e) {
-                    PageState ps = e.getPageState();
-                }
-
-            });
-            */
+//            PrivilegeDescriptor[] privs = new PrivilegeDescriptor[]{
+//                PrivilegeDescriptor.EDIT,
+//                Category.MAP_DESCRIPTOR,
+//                PrivilegeDescriptor.DELETE,
+//                PrivilegeDescriptor.ADMIN
+//            };
+//
+//            HashMap privMap = new HashMap();
+//            privMap.put("edit", "Edit");
+//            privMap.put("delete", "Delete");
+//            privMap.put(Category.MAP_DESCRIPTOR.getName(), "Categorize Items");
+//            privMap.put("admin", "Admin");
+//
+//            final CMSPermissionsPane permPane = new CMSPermissionsPane(privs, privMap,
+//                                                                       new ACSObjectSelectionModel(
+//                    m_model)) {
+//                @Override
+//                public void showAdmin(PageState ps) {
+//                    Assert.exists(m_model.getSelectedKey(ps));
+//
+//                    super.showAdmin(ps);
+//                    getAdminListingPanel().setVisible(ps, false);
+//                }
+//
+//            };
+//
+//            final ActionLink restoreDefault = new ActionLink(new Label(gz(
+//                    "cms.ui.restore_default_permissions"))) {
+//                @Override
+//                public boolean isVisible(PageState ps) {
+//                    Category cat = m_category.getCategory(ps);
+//                    return PermissionService.getContext(cat) == null;
+//                }
+//
+//            };
+//
+//            final ActionLink useCustom = new ActionLink(new Label(gz(
+//                    "cms.ui.use_custom_permissions"))) {
+//                @Override
+//                public boolean isVisible(PageState ps) {
+//                    Category cat = m_category.getCategory(ps);
+//                    return PermissionService.getContext(cat) != null;
+//                }
+//
+//            };
+//
+//            ActionListener al = new ActionListener() {
+//                public void actionPerformed(ActionEvent event) {
+//                    PageState state = event.getPageState();
+//                    // if this is the root then we cannot revert to anything
+//                    // since there is not a parent
+//                    Category cat = m_category.getCategory(state);
+//                    if (!cat.canAdmin()) {
+//                        throw new com.arsdigita.cms.dispatcher.AccessDeniedException();
+//                    }
+//                    DataObject context = PermissionService.getContext(cat);
+//                    if (context != null) {
+//                        PermissionService.clonePermissions(cat);
+//                    } else {
+//                        ACSObject parent;
+//                        try {
+//                            parent = cat.getDefaultParentCategory();
+//                        } catch (CategoryNotFoundException ce) {
+//                            throw new IllegalStateException(
+//                                    "link shouldn't exist for root categories");
+//                        }
+//                        PermissionService.setContext(cat, parent);
+//
+//                        // revoke all direct permissions so category will only
+//                        // have inherited permissions
+//                        ObjectPermissionCollection perms =
+//                                                   PermissionService.getDirectGrantedPermissions(
+//                                cat.getOID());
+//                        while (perms.next()) {
+//                            PermissionService.revokePermission(
+//                                    new PermissionDescriptor(
+//                                    perms.getPrivilege(), cat.getOID(),
+//                                    perms.getGranteeOID()));
+//                        }
+//                    }
+//                    permPane.reset(state);
+//                }
+//
+//            }
+//
+//            restoreDefault.addActionListener(al);
+//            useCustom.addActionListener(al);
+//
+//            SimpleContainer links = new SimpleContainer();
+//            links.add(restoreDefault);
+//            links.add(useCustom);
+//
+//            group.setSubject(permPane);
+//            group.addAction(links);
+//
+//            m_model.addChangeListener(new ChangeListener() {
+//                public void stateChanged(ChangeEvent e) {
+//                    PageState ps = e.getPageState();
+//                }
+//
+//            });
+//
         }
 
     }
@@ -588,17 +603,19 @@ class CategoryItemPane extends BaseItemPane {
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final CategoryManager manager = cdiUtil.findBean(CategoryManager.class);
             final PermissionChecker permissionChecker = cdiUtil.findBean(PermissionChecker.class);
+            final ContentItemManager contentItemManager =
+                    cdiUtil.findBean(ContentItemManager.class);
 
-
-            boolean canEdit = false;
-            Optional<ContentItem> indexItem = manager.getIndexObject(m_category.getCategory(state);
+            Optional<CcmObject> indexItem = manager.getIndexObject(m_category.getCategory(state));
             if (!indexItem.isPresent()) {
                 return "";
             }
             if (!permissionChecker.isPermitted("", indexItem.get())) {
                 return "";
             } else {
-                BigDecimal draftID = indexItem.getDraftVersion().getID();
+                Long draftID = contentItemManager
+                        .getDraftVersion((ContentItem) indexItem.get(), ContentItem.class)
+                        .getObjectId();
                 return "item.jsp?item_id=" + draftID + "&set_tab="
                        + ContentItemPage.AUTHORING_TAB;
             }
@@ -614,14 +631,21 @@ class CategoryItemPane extends BaseItemPane {
          */
         @Override
         public boolean isVisible(PageState state) {
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final CategoryManager manager = cdiUtil.findBean(CategoryManager.class);
+            final ContentItemManager contentItemManager =
+                    cdiUtil.findBean(ContentItemManager.class);
+            final PermissionChecker permissionChecker =
+                    cdiUtil.findBean(PermissionChecker.class);
             if (!super.isVisible(state)) {
                 return false;
             }
-            ACSObject indexItem = m_category.getCategory(state).getDirectIndexObject();
-            if (indexItem == null) {
+            Optional<CcmObject> indexItem = manager.getIndexObject(m_category.getCategory(state));
+            if (!indexItem.isPresent()) {
                 return false;
             } else {
-                return isItemEditable((ContentItem) indexItem, state);
+                return permissionChecker.isPermitted(AdminPrivileges.ADMINISTER_CATEGORIES, indexItem.get());
+                //return isItemEditable((ContentItem) indexItem, state);
             }
         }
     };
@@ -642,7 +666,7 @@ class CategoryItemPane extends BaseItemPane {
             }
             
             final Category category = m_category.getCategory(state);
-            if (!category.getParent().isPresent()) {
+            if (category.getParentCategory() == null) {
                 alternativeLabel.generateXML(state, parent);
             } else {
                 super.generateXML(state, parent);
