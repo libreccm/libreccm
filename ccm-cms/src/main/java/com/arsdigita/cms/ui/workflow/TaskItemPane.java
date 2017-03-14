@@ -310,9 +310,9 @@ final class TaskItemPane extends BaseItemPane {
                 final KernelConfig kernelConfig = KernelConfig.getConfig();
                 final Locale defaultLocale = kernelConfig.getDefaultLocale();
 
-                props.add(new Property(gz("cms.ui.name"),
+                props.add(new Property(gz("cms.ui.workflow.task.name"),
                                        task.getLabel().getValue(defaultLocale)));
-                props.add(new Property(gz("cms.ui.description"),
+                props.add(new Property(gz("cms.ui.workflow.task.description"),
                                        task.getDescription().getValue(
                                            defaultLocale)));
                 props.add(new Property(gz("cms.ui.workflow.task.dependencies"),
@@ -373,7 +373,7 @@ final class TaskItemPane extends BaseItemPane {
         public RoleTable() {
             super(new RoleTableModelBuilder(m_task),
                   new String[]{
-                      lz("cms.ui.name"), // XXX globz
+                      lz("cms.ui.workflow.task.role.name"), 
                       lz("cms.ui.workflow.task.role.delete")
                   });
 
@@ -391,17 +391,12 @@ final class TaskItemPane extends BaseItemPane {
                     if (column == 1) {
                         if (hasAdmin(state)) {
                             final CmsTask task = m_task.getTask(state);
-                            final Long roleId = Long.parseLong((String) event
-                                .getRowKey());
-
                             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-                            final AssignableTaskManager taskManager = cdiUtil
-                                .findBean(AssignableTaskManager.class);
-                            final RoleRepository roleRepo = cdiUtil.findBean(
-                                RoleRepository.class);
-
-                            final Role role = roleRepo.findById(roleId).get();
-                            taskManager.retractTask(task, role);
+                            final WorkflowAdminPaneController controller = 
+                            cdiUtil.findBean(WorkflowAdminPaneController.class);
+                            controller.removeAssignment(task, 
+                                                        (String) event.getRowKey());
+                            
                         }
                     }
                 }
@@ -436,7 +431,6 @@ final class TaskItemPane extends BaseItemPane {
         private class Model implements TableModel {
 
             private final List<Role> roles;
-            private Role role;
             private int index = -1;
 
             private Model(final CmsTask task) {
@@ -460,14 +454,14 @@ final class TaskItemPane extends BaseItemPane {
 
             @Override
             public final Object getKeyAt(final int column) {
-                return Long.toString(role.getRoleId());
+                return Long.toString(roles.get(index).getRoleId());
             }
 
             @Override
             public final Object getElementAt(final int column) {
                 switch (column) {
                     case 0:
-                        return role.getName();
+                        return roles.get(index).getName();
                     case 1:
                         return lz("cms.ui.workflow.task.role.delete");
                     default:

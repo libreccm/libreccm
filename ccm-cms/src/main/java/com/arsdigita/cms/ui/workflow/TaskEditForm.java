@@ -37,6 +37,7 @@ import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.workflow.Task;
 import org.libreccm.workflow.TaskRepository;
+import org.libreccm.workflow.Workflow;
 import org.librecms.workflow.CmsTaskType;
 
 import java.util.List;
@@ -59,7 +60,8 @@ class TaskEditForm extends BaseTaskForm {
         this.selectedTask = selectedTask;
 
         try {
-            m_deps.addPrintListener(new DependencyPrinter());
+            getDependenciesOptionGroup()
+                .addPrintListener(new DependencyPrinter());
         } catch (TooManyListenersException tmle) {
             throw new UncheckedWrapperException(tmle);
         }
@@ -73,9 +75,15 @@ class TaskEditForm extends BaseTaskForm {
         @Override
         public final void prepare(final PrintEvent event) {
             final PageState state = event.getPageState();
-            final List<Task> tasks = m_workflow.getWorkflow(state).getTasks();
+            final Workflow workflow = getWorkflowRequestLocal()
+                .getWorkflow(state);
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final WorkflowAdminPaneController controller = cdiUtil
+                .findBean(WorkflowAdminPaneController.class);
+            final List<Task> tasks = controller.getTasksForWorkflow(workflow);
 
             final OptionGroup options = (OptionGroup) event.getTarget();
+            options.clearOptions();
 
             tasks.forEach(task -> addOption(task, state, options));
         }
@@ -102,16 +110,27 @@ class TaskEditForm extends BaseTaskForm {
             final PageState state = event.getPageState();
             final CmsTask task = selectedTask.getTask(state);
 
-            m_name.setValue(state, task.getLabel());
-            m_description.setValue(state, task.getDescription());
-            m_type.setValue(state, task.getTaskType().toString());
+            final Locale defaultLocale = KernelConfig
+                .getConfig()
+                .getDefaultLocale();
 
-            final List<Task> dependencies = task.getDependsOn();
-            final List<String> depIdList =  dependencies.stream()
+            getNameTextField().setValue(state,
+                                        task.getLabel().getValue(defaultLocale));
+            getDescriptionTextArea().setValue(
+                state,
+                task.getDescription().getValue(defaultLocale));
+            getTypeOptionGroup().setValue(state, task.getTaskType().toString());
+
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final WorkflowAdminPaneController controller = cdiUtil.findBean(
+                WorkflowAdminPaneController.class);
+
+            final List<Task> dependencies = controller.getDependencies(task);
+            final List<String> depIdList = dependencies.stream()
                 .map(dependency -> Long.toString(dependency.getTaskId()))
                 .collect(Collectors.toList());
 
-            m_deps.setValue(state, depIdList.toArray());
+            getDependenciesOptionGroup().setValue(state, depIdList.toArray());
         }
 
     }
@@ -124,26 +143,19 @@ class TaskEditForm extends BaseTaskForm {
             final PageState state = event.getPageState();
             final CmsTask task = selectedTask.getTask(state);
 
+            final String name = (String) getNameTextField().getValue(state);
+            final String desc = (String) getDescriptionTextArea()
+                .getValue(state);
+            final CmsTaskType taskType = CmsTaskType
+                .valueOf((String) getTypeOptionGroup().getValue(state));
+            final String[] deps = (String[]) getDependenciesOptionGroup()
+                .getValue(state);
+
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final TaskRepository taskRepo = cdiUtil.findBean(
-                TaskRepository.class);
-            final ConfigurationManager confManager = cdiUtil.findBean(
-                ConfigurationManager.class);
-            final KernelConfig kernelConfig = confManager.findConfiguration(
-                KernelConfig.class);
-            final Locale defaultLocale = kernelConfig.getDefaultLocale();
-
-            task.getLabel().addValue(defaultLocale,
-                                     (String) m_name.getValue(state));
-            task.getDescription().addValue(
-                defaultLocale,
-                (String) m_description.getValue(state));
-
-            task.setTaskType(CmsTaskType.valueOf((String)m_type.getValue(state)));
-
-            taskRepo.save(task);
-
-            processDependencies(task, (String[]) m_deps.getValue(state));
+            final WorkflowAdminPaneController controller = cdiUtil
+                .findBean(WorkflowAdminPaneController.class);
+            
+            controller.updateTask(task, name, desc, taskType, deps);
         }
 
     }

@@ -25,9 +25,10 @@ import com.arsdigita.util.UncheckedWrapperException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.security.Role;
+import org.libreccm.security.RoleRepository;
+import org.libreccm.workflow.AssignableTaskManager;
 import org.libreccm.workflow.CircularTaskDependencyException;
 import org.libreccm.workflow.Task;
 import org.libreccm.workflow.TaskManager;
@@ -35,7 +36,6 @@ import org.libreccm.workflow.TaskRepository;
 import org.libreccm.workflow.Workflow;
 import org.libreccm.workflow.WorkflowRepository;
 import org.libreccm.workflow.WorkflowTemplate;
-import org.libreccm.workflow.WorkflowTemplateMarshaller;
 import org.libreccm.workflow.WorkflowTemplateRepository;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionManager;
@@ -44,6 +44,7 @@ import org.librecms.workflow.CmsTask;
 import org.librecms.workflow.CmsTaskType;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -53,6 +54,7 @@ import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.management.relation.RoleInfo;
 import javax.transaction.Transactional;
 
 /**
@@ -85,6 +87,12 @@ public class WorkflowAdminPaneController {
 
     @Inject
     private TaskManager taskManager;
+
+    @Inject
+    private AssignableTaskManager assignableTaskManager;
+
+    @Inject
+    private RoleRepository roleRepo;
 
     @Transactional(Transactional.TxType.REQUIRED)
     public List<WorkflowTemplate> retrieveWorkflows(final ContentSection section) {
@@ -160,7 +168,7 @@ public class WorkflowAdminPaneController {
         task.getLabel().addValue(defaultLocale, name);
         task.getDescription().addValue(defaultLocale, desc);
         task.setTaskType(type);
-        task.setActive(true);
+//        task.setActive(true);
 
         taskRepo.save(task);
 
@@ -169,6 +177,31 @@ public class WorkflowAdminPaneController {
         processDependencies(task, deps);
 
         return task;
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public void updateTask(final Task task,
+                           final String name,
+                           final String desc,
+                           final CmsTaskType type,
+                           final String[] deps) {
+
+        final KernelConfig kernelConfig = confManager.findConfiguration(
+            KernelConfig.class);
+        final Locale defaultLocale = kernelConfig.getDefaultLocale();
+
+        final CmsTask theTask = (CmsTask) taskRepo
+            .findById(task.getTaskId())
+            .orElseThrow(() -> new IllegalArgumentException(String.format(
+            "No Task with ID %d in the database. Where did that ID come from?",
+            task.getTaskId())));
+        theTask.getLabel().addValue(defaultLocale, name);
+        theTask.getDescription().addValue(defaultLocale, desc);
+        theTask.setTaskType(type);
+
+        taskRepo.save(theTask);
+
+        processDependencies(theTask, deps);
     }
 
     /**
@@ -226,6 +259,10 @@ public class WorkflowAdminPaneController {
 
     @Transactional(Transactional.TxType.REQUIRED)
     TaskTableModelData getTaskTableModelData(final Workflow workflow) {
+        final KernelConfig kernelConfig = confManager
+            .findConfiguration(KernelConfig.class);
+        final Locale defaultLocale = kernelConfig.getDefaultLocale();
+
         final Map<Task, String> dependencies = new HashMap<>();
 
         final Iterator<Task> tasksIter = getTasksForWorkflow(workflow)
@@ -240,7 +277,7 @@ public class WorkflowAdminPaneController {
                 Task dep = deps.next();
                 graphSet.addEdge(task, dep, null);
                 buffer
-                    .append(dep.getLabel())
+                    .append(dep.getLabel().getValue(defaultLocale))
                     .append(", ");
             }
 
@@ -269,7 +306,9 @@ public class WorkflowAdminPaneController {
             break;
         }
 
-        final Iterator<Task> taskIterator = tasks.iterator();
+        //final Iterator<Task> taskIterator = tasks.iterator();
+        final Iterator<Task> taskIterator = getTasksForWorkflow(workflow)
+            .iterator();
 
         return new TaskTableModelData(taskIterator, dependencies);
     }
@@ -287,6 +326,67 @@ public class WorkflowAdminPaneController {
             .stream()
             .map(assignment -> assignment.getRole())
             .collect(Collectors.toList());
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public List<Role> findRoles(final ContentSection section) {
+
+        final ContentSection contentSection = sectionRepo
+            .findById(section.getObjectId())
+            .orElseThrow(() -> new IllegalArgumentException(String.format(
+            "No ContentSection with ID %d in the database. "
+                + "Where did that ID come from?",
+            section.getObjectId())));
+
+        return new ArrayList<>(contentSection.getRoles());
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public void assignTask(final Task task, final String[] roleIds) {
+
+        final CmsTask theTask = (CmsTask) taskRepo
+            .findById(task.getTaskId())
+            .orElseThrow(() -> new IllegalArgumentException(String.format(
+            "No Task with ID %d in the database. Where did that ID come from?",
+            task.getTaskId())));
+
+        theTask.getAssignments()
+            .forEach(assignment -> assignableTaskManager
+            .retractTask(theTask, assignment.getRole()));
+
+        if (roleIds != null) {
+        final List<Role> roles = Arrays
+            .stream(roleIds)
+            .map(roleId -> Long.parseLong(roleId))
+            .map(roleId -> roleRepo.findById(roleId).orElseThrow(
+            () -> new IllegalArgumentException(String.format(
+                "No role with ID %d in the database. "
+                    + "Where did that ID come from?", roleId))))
+            .collect(Collectors.toList());
+        
+            roles.forEach(role -> assignableTaskManager
+                .assignTask(theTask, role));
+        } 
+        
+    }
+    
+    @Transactional(Transactional.TxType.REQUIRED)
+    public void removeAssignment(final Task task, final String roleId ) {
+        
+        final Role role = roleRepo
+        .findById(Long.parseLong(roleId))
+        .orElseThrow(() -> new IllegalArgumentException(String.format(
+            "No Role with ID %d in the database. Where did that ID come from?",
+            roleId)));
+        
+         final CmsTask theTask = (CmsTask) taskRepo
+            .findById(task.getTaskId())
+            .orElseThrow(() -> new IllegalArgumentException(String.format(
+            "No Task with ID %d in the database. Where did that ID come from?",
+            task.getTaskId())));
+         
+         assignableTaskManager.retractTask(theTask, role);
+        
     }
 
 }

@@ -60,7 +60,8 @@ class TaskAddForm extends BaseTaskForm {
         m_model = model;
 
         try {
-            m_deps.addPrintListener(new DependencyPrinter());
+            getDependenciesOptionGroup()
+                .addPrintListener(new DependencyPrinter());
         } catch (TooManyListenersException tmle) {
             throw new UncheckedWrapperException(tmle);
         }
@@ -77,12 +78,14 @@ class TaskAddForm extends BaseTaskForm {
             final WorkflowAdminPaneController controller = cdiUtil
                 .findBean(WorkflowAdminPaneController.class);
             final List<Task> tasks = controller
-                .getTasksForWorkflow(m_workflow.getWorkflow(state));
+                .getTasksForWorkflow(getWorkflowRequestLocal()
+                    .getWorkflow(state));
 
             final OptionGroup options = (OptionGroup) event.getTarget();
             final KernelConfig kernelConfig = KernelConfig.getConfig();
             final Locale defaultLocale = kernelConfig.getDefaultLocale();
 
+            options.clearOptions();
             tasks.forEach(task -> options.addOption(new Option(
                 Long.toString(task.getTaskId()),
                 task.getLabel().getValue(defaultLocale))));
@@ -103,11 +106,12 @@ class TaskAddForm extends BaseTaskForm {
                 .findBean(WorkflowAdminPaneController.class);
 
             final CmsTask task = controller.addTask(
-                m_workflow.getWorkflow(state),
-                (String) m_name.getValue(state),
-                (String) m_description.getValue(state),
-                CmsTaskType.valueOf((String) m_type.getValue(state)),
-                (String[]) m_deps.getValue(state));
+                getWorkflowRequestLocal().getWorkflow(state),
+                (String) getNameTextField().getValue(state),
+                (String) getDescriptionTextArea().getValue(state),
+                CmsTaskType.valueOf((String) getTypeOptionGroup()
+                    .getValue(state)),
+                (String[]) getDependenciesOptionGroup().getValue(state));
 
             m_model.setSelectedKey(state, task.getTaskId());
         }
