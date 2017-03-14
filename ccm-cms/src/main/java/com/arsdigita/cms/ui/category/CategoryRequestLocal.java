@@ -23,7 +23,7 @@ import com.arsdigita.bebop.RequestLocal;
 
 import org.libreccm.categorization.Category;
 
-class CategoryRequestLocal extends RequestLocal {
+public class CategoryRequestLocal extends RequestLocal {
 
     public final Category getCategory(final PageState state) {
         return (Category) get(state);
