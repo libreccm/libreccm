@@ -31,12 +31,18 @@ import com.arsdigita.bebop.table.TableColumn;
 import com.arsdigita.bebop.table.TableColumnModel;
 import com.arsdigita.bebop.table.TableModel;
 import com.arsdigita.bebop.table.TableModelBuilder;
-import com.arsdigita.categorization.Category;
-import com.arsdigita.categorization.CategoryLocalization;
-import com.arsdigita.categorization.CategoryLocalizationCollection;
-import com.arsdigita.cms.util.GlobalizationUtil;
+import com.arsdigita.bebop.util.GlobalizationUtil;
 import com.arsdigita.util.LockableImpl;
+import org.libreccm.categorization.Category;
+import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.l10n.LocalizedString;
+import org.libreccm.security.PermissionChecker;
+import org.librecms.contentsection.privileges.AdminPrivileges;
+
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Locale;
 
 /**
@@ -46,6 +52,7 @@ import java.util.Locale;
  * order to present forms for managing the multi-language categories.
  *
  * @author Sören Bernstein <quasi@quasiweb.de>
+ * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  */
 public class CategoryLocalizationTable extends Table implements TableActionListener {
 
@@ -103,7 +110,7 @@ public class CategoryLocalizationTable extends Table implements TableActionListe
         public TableModel makeModel(Table table, PageState state) {
             final Category category = m_category.getCategory(state);
 
-            if (category != null && category.hasLocalizations()) {
+            if (category != null) {
                 return new CategoryLocalizationTableModel(table, state, category);
             } else {
                 return Table.EMPTY_MODEL;
@@ -119,12 +126,14 @@ public class CategoryLocalizationTable extends Table implements TableActionListe
 
         final private int MAX_DESC_LENGTH = 25;
         private Table m_table;
-        private CategoryLocalizationCollection m_categoryLocalizations;
-        private CategoryLocalization m_categoryLocalization;
+        private ArrayList<LocalizedString> localizedStringCollection;
+        private LocalizedString m_categoryLocalization;
 
         private CategoryLocalizationTableModel(Table t, PageState ps, Category category) {
             m_table = t;
-            m_categoryLocalizations = new CategoryLocalizationCollection(category);
+            localizedStringCollection = new ArrayList<>();
+            localizedStringCollection.add(category.getTitle());
+            localizedStringCollection.add(category.getDescription());
         }
 
         public int getColumnCount() {
@@ -138,16 +147,16 @@ public class CategoryLocalizationTable extends Table implements TableActionListe
          * into m_categoryLocalization class variable.
          */
         public boolean nextRow() {
-
-            if (m_categoryLocalizations != null && m_categoryLocalizations.next()) {
-                m_categoryLocalization = m_categoryLocalizations.getCategoryLocalization();
-                return true;
-
-            } else {
-
-                return false;
-
-            }
+            return false;
+//            if (m_categoryLocalizations != null && m_categoryLocalizations.next()) {
+//                m_categoryLocalization = m_categoryLocalizations.getCategoryLocalization();
+//                return true;
+//
+//            } else {
+//
+//                return false;
+//
+//            }
         }
 
         /**
@@ -156,25 +165,26 @@ public class CategoryLocalizationTable extends Table implements TableActionListe
          * @see com.arsdigita.bebop.table.TableModel#getElementAt(int)
          */
         public Object getElementAt(int columnIndex) {
-            switch (columnIndex) {
-                case 0:
-                    Locale clLocale = new Locale(m_categoryLocalization.getLocale());
-                    return clLocale.getDisplayLanguage(/*Locale*/);
-                case 1:
-                    return m_categoryLocalization.getName();
-                case 2:
-                    String desc = m_categoryLocalization.getDescription();
-                    if (desc != null && desc.length() > MAX_DESC_LENGTH) {
-                        desc = desc.substring(MAX_DESC_LENGTH - 3).concat("...");
-                    }
-                    return desc;
-                case 3:
-                    return m_categoryLocalization.getURL();
-                case 4:
-                    return GlobalizationUtil.globalize("cms.ui.delete").localize();
-                default:
-                    return null;
-            }
+            return null;
+//            switch (columnIndex) {
+//                case 0:
+//                    Locale clLocale = new Locale(m_categoryLocalization.getLocale());
+//                    return clLocale.getDisplayLanguage(/*Locale*/);
+//                case 1:
+//                    return m_categoryLocalization.getName();
+//                case 2:
+//                    String desc = m_categoryLocalization.getDescription();
+//                    if (desc != null && desc.length() > MAX_DESC_LENGTH) {
+//                        desc = desc.substring(MAX_DESC_LENGTH - 3).concat("...");
+//                    }
+//                    return desc;
+//                case 3:
+//                    return m_categoryLocalization.getURL();
+//                case 4:
+//                    return GlobalizationUtil.globalize("cms.ui.delete").localize();
+//                default:
+//                    return null;
+//            }
         }
 
         /**
@@ -182,7 +192,8 @@ public class CategoryLocalizationTable extends Table implements TableActionListe
          * @see com.arsdigita.bebop.table.TableModel#getKeyAt(int)
          */
         public Object getKeyAt(int columnIndex) {
-            return m_categoryLocalization.getID();
+            return null;
+//          return m_categoryLocalization.getID();
         }
     }
 
@@ -191,12 +202,13 @@ public class CategoryLocalizationTable extends Table implements TableActionListe
         public Component getComponent(Table table, PageState state, Object value,
                 boolean isSelected, final Object key,
                 int row, int column) {
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final PermissionChecker permissionChecker = cdiUtil.findBean(PermissionChecker.class);
 
-
-            if (m_category.getCategory(state).canEdit()) {
+            if (permissionChecker.isPermitted(AdminPrivileges.ADMINISTER_CATEGORIES, m_category.getCategory(state))) {
                 return new ControlLink(value.toString());
             } else {
-                return new Label(value.toString());
+                return new Label(GlobalizationUtil.globalize(value.toString()));
             }
         }
     }
@@ -206,11 +218,13 @@ public class CategoryLocalizationTable extends Table implements TableActionListe
         public Component getComponent(Table table, PageState state, Object value,
                 boolean isSelected, Object key,
                 int row, int column) {
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final PermissionChecker permissionChecker = cdiUtil.findBean(PermissionChecker.class);
 
-            if (m_category.getCategory(state).canDelete()) {
+            if (permissionChecker.isPermitted(AdminPrivileges.ADMINISTER_CATEGORIES, m_category.getCategory(state))) {
                 ControlLink link = new ControlLink(value.toString());
-                link.setConfirmation((String) GlobalizationUtil.globalize(
-                        "cms.ui.category.localization_confirm_delete").localize());
+                link.setConfirmation(GlobalizationUtil.globalize(
+                        "cms.ui.category.localization_confirm_delete"));
                 return link;
             } else {
                 return null;
@@ -227,25 +241,25 @@ public class CategoryLocalizationTable extends Table implements TableActionListe
 
         PageState state = evt.getPageState();
 
-        // Get selected CategoryLocalization
-        CategoryLocalization categoryLocalization =
-                new CategoryLocalization(new BigDecimal(evt.getRowKey().toString()));
-
-        // Get Category
-        Category category = m_category.getCategory(state);
-
-        // Get selected column
-        TableColumn col = getColumnModel().get(evt.getColumn().intValue());
-
-        // Edit
-        if (col.getHeaderKey().toString().equals(TABLE_COL_LANG)) {
-            m_catLocale.setSelectedKey(state, categoryLocalization.getLocale());
-        }
-
-        // Delete
-        if (col.getHeaderKey().toString().equals(TABLE_COL_DEL)) {
-            category.delLanguage(categoryLocalization.getLocale());
-        }
+//        // Get selected CategoryLocalization
+//        CategoryLocalization categoryLocalization =
+//                new CategoryLocalization(new BigDecimal(evt.getRowKey().toString()));
+//
+//        // Get Category
+//        Category category = m_category.getCategory(state);
+//
+//        // Get selected column
+//        TableColumn col = getColumnModel().get(evt.getColumn().intValue());
+//
+//        // Edit
+//        if (col.getHeaderKey().toString().equals(TABLE_COL_LANG)) {
+//            m_catLocale.setSelectedKey(state, categoryLocalization.getLocale());
+//        }
+//
+//        // Delete
+//        if (col.getHeaderKey().toString().equals(TABLE_COL_DEL)) {
+//            category.delLanguage(categoryLocalization.getLocale());
+//        }
 
     }
 
