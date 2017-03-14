@@ -21,25 +21,16 @@ package com.arsdigita.cms.ui.category;
 
 import com.arsdigita.bebop.*;
 import com.arsdigita.bebop.table.TableCellRenderer;
-import com.arsdigita.categorization.Category;
+import com.arsdigita.bebop.util.GlobalizationUtil;
 import com.arsdigita.cms.CMS;
-import com.arsdigita.cms.ContentPage;
-import com.arsdigita.cms.ContentSection;
-import com.arsdigita.cms.ContentType;
-import com.arsdigita.cms.dispatcher.ItemResolver;
+
 import com.arsdigita.cms.ui.CMSContainer;
-import com.arsdigita.cms.util.GlobalizationUtil;
-import com.arsdigita.domain.DomainObject;
-import com.arsdigita.domain.DomainObjectFactory;
-import com.arsdigita.kernel.ACSObject;
-import com.arsdigita.kernel.Kernel;
-import com.arsdigita.kernel.User;
 import com.arsdigita.kernel.ui.ACSObjectSelectionModel;
-import com.arsdigita.persistence.DataObject;
-import com.arsdigita.persistence.DataQuery;
-import com.arsdigita.persistence.OID;
-import com.arsdigita.toolbox.ui.DataQueryListModelBuilder;
 import com.arsdigita.util.Assert;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.librecms.contentsection.ContentSection;
+import org.librecms.dispatcher.ItemResolver;
 
 /**
  * Displays a list of items for the given category
@@ -50,8 +41,8 @@ import com.arsdigita.util.Assert;
  */
 public class CategoryItemsBrowser extends Grid {
 
-    private static final org.apache.log4j.Logger s_log =
-        org.apache.log4j.Logger.getLogger(CategoryItemsBrowser.class);
+    private static final Logger LOGGER = LogManager.getLogger(
+            CategoryItemsBrowser.class);
 
     private RequestLocal m_resolver;
 
@@ -87,7 +78,7 @@ public class CategoryItemsBrowser extends Grid {
                     ContentSection section =
                         CMS.getContext().getContentSection();
                     final ItemResolver itemResolver = section.getItemResolver();
-                    s_log.warn("Item resolver is" + itemResolver.getClass());
+                    LOGGER.warn("Item resolver is" + itemResolver.getClass());
                     return itemResolver;
                 }
             };

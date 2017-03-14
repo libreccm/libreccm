@@ -22,30 +22,21 @@ import com.arsdigita.bebop.*;
 import com.arsdigita.bebop.event.*;
 import com.arsdigita.bebop.parameters.ParameterModel;
 import com.arsdigita.bebop.parameters.StringParameter;
-import com.arsdigita.categorization.CategorizedCollection;
-import com.arsdigita.categorization.Category;
-import com.arsdigita.categorization.CategoryCollection;
 import com.arsdigita.cms.CMS;
-import com.arsdigita.cms.SecurityManager;
 import com.arsdigita.cms.ui.BaseAdminPane;
 import com.arsdigita.cms.ui.BaseDeleteForm;
 import com.arsdigita.cms.ui.BaseTree;
 import com.arsdigita.cms.ui.VisibilityComponent;
-import com.arsdigita.kernel.Kernel;
-import com.arsdigita.kernel.permissions.PermissionDescriptor;
-import com.arsdigita.kernel.permissions.PermissionService;
-import com.arsdigita.kernel.permissions.PrivilegeDescriptor;
 import com.arsdigita.toolbox.ui.ActionGroup;
 import com.arsdigita.toolbox.ui.Section;
 import com.arsdigita.xml.Element;
 import java.math.BigDecimal;
-import org.apache.log4j.Logger;
 
 /**
  * A split pane for the Category Administration UI.
  *
  * @author Justin Ross &lt;jross@redhat.com&gt;
- * @version $Id: CategoryAdminPane.java 2090 2010-04-17 08:04:14Z pboy $
+ * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  */
 public final class CategoryAdminPane extends BaseAdminPane {
 
