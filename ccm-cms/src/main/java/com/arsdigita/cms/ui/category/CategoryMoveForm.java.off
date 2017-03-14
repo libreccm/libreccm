@@ -18,15 +18,7 @@
  */
 package com.arsdigita.cms.ui.category;
 
-import com.arsdigita.bebop.ColumnPanel;
-import com.arsdigita.bebop.Form;
-import com.arsdigita.bebop.FormProcessException;
-import com.arsdigita.bebop.Label;
-import com.arsdigita.bebop.PageState;
-import com.arsdigita.bebop.ParameterSingleSelectionModel;
-import com.arsdigita.bebop.SaveCancelSection;
-import com.arsdigita.bebop.SingleSelectionModel;
-import com.arsdigita.bebop.Tree;
+import com.arsdigita.bebop.*;
 import com.arsdigita.bebop.event.ChangeEvent;
 import com.arsdigita.bebop.event.ChangeListener;
 import com.arsdigita.bebop.event.FormInitListener;
@@ -43,10 +35,13 @@ import com.arsdigita.cms.ui.CMSForm;
 import com.arsdigita.cms.ui.FormSecurityListener;
 import com.arsdigita.util.Assert;
 import org.libreccm.categorization.Category;
+import org.libreccm.categorization.CategoryManager;
 import org.libreccm.categorization.CategoryRepository;
 import org.libreccm.cdi.utils.CdiUtil;
+import org.librecms.contentsection.privileges.AdminPrivileges;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 /**
  *
@@ -55,12 +50,12 @@ import java.math.BigDecimal;
 public class CategoryMoveForm extends CMSForm {
 
     public static final String CONTEXT_SELECTED = "sel_context";
-    private static final String DEFAULT_USE_CONTEXT =
-                                CategoryUseContextModelBuilder.DEFAULT_USE_CONTEXT;
+    //private static final String DEFAULT_USE_CONTEXT =
+    //                            CategoryUseContextModelBuilder.DEFAULT_USE_CONTEXT;
     private final CategoryRequestLocal selectedCategory;
     private final SaveCancelSection saveCancelSection;
     private final ChangeListener changeListener;
-    //private final SingleSelectionModel selectionModel;
+    private final SingleSelectionModel selectionModel;
     private final Tree categoryTree;
 
     public CategoryMoveForm(final CategoryRequestLocal selectedCategory,
@@ -88,7 +83,7 @@ public class CategoryMoveForm extends CMSForm {
         add(header, ColumnPanel.FULL_WIDTH);
 
         changeListener = new TreeChangeListener();
-        //selectionModel = new ParameterSingleSelectionModel(new StringParameter("selectedCategory"));
+        selectionModel = new ParameterSingleSelectionModel(new StringParameter("selectedCategory"));
         categoryTree = new BaseTree(new CategoryTreeModelBuilder(contextModel));
         categoryTree.addChangeListener(changeListener);
 
@@ -99,8 +94,7 @@ public class CategoryMoveForm extends CMSForm {
 
         addInitListener(new InitListener());
         addProcessListener(new ProcessListener());
-        addSubmissionListener(new FormSecurityListener(
-                com.arsdigita.cms.SecurityManager.CATEGORY_ADMIN));
+        addSubmissionListener(new FormSecurityListener(AdminPrivileges.ADMINISTER_CATEGORIES));
 
     }
 
@@ -151,26 +145,31 @@ public class CategoryMoveForm extends CMSForm {
             final PageState state = event.getPageState();
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final CategoryRepository categoryRepository = cdiUtil.findBean(CategoryRepository.class);
+            final CategoryManager categoryManager = cdiUtil.findBean(CategoryManager.class);
 
             if (saveCancelSection.getSaveButton().isSelected(state)
                 && !(categoryTree.getSelectedKey(state).equals(selectedCategory.getCategory(state).getUniqueId()))) {
 
                 final Category categoryToMove = selectedCategory.getCategory(state);
                 final String targetKey = (String) categoryTree.getSelectedKey(state);
-                final Category target = categoryRepository.findById(Long.parseLong(targetKey));
 
-                final CategoryCollection parents = categoryToMove.getParents();
-                while (parents.next()) {
-                    final Category parent = parents.getCategory();
-                    parent.removeChild(categoryToMove);
-                    parent.save();
+                final Optional<Category> categoryOptional = categoryRepository.findById(Long.parseLong(targetKey));
+                if (categoryOptional.isPresent()) {
+                    final Category target = categoryOptional.get();
+
+                    final Category parent = categoryToMove.getParentCategory();
+
+                    categoryManager.removeSubCategoryFromCategory(categoryToMove, parent);
+                    categoryRepository.save(parent);
+
+                    categoryManager.addSubCategoryToCategory(categoryToMove, target);
+                    categoryToMove.setParentCategory(target);
+
+                    categoryRepository.save(target);
+                    categoryRepository.save(categoryToMove);
+                } else {
+                    throw new FormProcessException(GlobalizationUtil.globalize("Category with id" + targetKey + " does not exist!"));
                 }
-
-                target.addChild(categoryToMove);
-                categoryToMove.setDefaultParentCategory(target);
-
-                target.save();
-                categoryToMove.save();
             }
 
             categoryTree.clearSelection(state);

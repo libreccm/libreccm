@@ -23,11 +23,14 @@ import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.list.AbstractListModelBuilder;
 import com.arsdigita.bebop.list.ListModel;
 import com.arsdigita.cms.CMS;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryManager;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.contentsection.ContentSection;
+
+import java.util.Collection;
 
 /**
  * Builds a list of category use contexts for the current
@@ -41,15 +44,15 @@ class CategoryUseContextModelBuilder extends AbstractListModelBuilder {
 
     private static String DEFAULT_USE_CONTEXT = "<default>";
 
-    private static final Logger s_log = Logger.getLogger
-        (CategoryUseContextModelBuilder.class);
+    private static final Logger LOGGER = LogManager.getLogger(
+            CategoryUseContextModelBuilder.class);
 
     public final ListModel makeModel(final List list, final PageState state) {
         return new Model();
     }
 
     private class Model implements ListModel {
-        private final RootCategoryCollection m_roots;
+        private final java.util.List<Category> m_roots;
 
         public Model() {
             final ContentSection section =
@@ -58,7 +61,7 @@ class CategoryUseContextModelBuilder extends AbstractListModelBuilder {
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final CategoryManager manager = cdiUtil.findBean(CategoryManager.class);
 
-            m_roots = manager.get
+            m_roots = (Category) CMS.getContext().getContentItem();
             //m_roots.addOrder(Category.USE_CONTEXT);
         }
 

@@ -23,11 +23,9 @@ import com.arsdigita.bebop.SingleSelectionModel;
 import com.arsdigita.bebop.Tree;
 import com.arsdigita.bebop.tree.TreeModel;
 import com.arsdigita.bebop.tree.TreeModelBuilder;
-import com.arsdigita.categorization.Category;
-import com.arsdigita.categorization.CategoryTreeModelLite;
-import com.arsdigita.cms.CMS;
-import com.arsdigita.cms.ContentSection;
 import com.arsdigita.util.LockableImpl;
+import org.libreccm.categorization.Category;
+import org.libreccm.categorization.CategoryTreeModelLite;
 
 /**
  * Lists category tree.
@@ -50,11 +48,9 @@ class CategoryTreeModelBuilder extends LockableImpl
     }
 
     public final TreeModel makeModel(final Tree tree, final PageState state) {
-        final ContentSection section = CMS.getContext().getContentSection();
-        final Category root = Category.getRootForObject(section,
-                                                        getUseContext(state));
-        String order = ContentSection.getConfig().getCategoryTreeOrder();
-        final CategoryTreeModelLite model = new CategoryTreeModelLite(root, order);
+        final Category category = (Category) m_contextModel.getSelectedKey(state);
+
+        final CategoryTreeModelLite model = new CategoryTreeModelLite(category);
 
         return model;
     }
@@ -69,5 +65,4 @@ class CategoryTreeModelBuilder extends LockableImpl
         }
         return context;
     }
-
 }
