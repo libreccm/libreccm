@@ -201,6 +201,7 @@ public class Task implements Identifiable, Serializable {
         dependentTasks = new ArrayList<>();
         dependsOn = new ArrayList<>();
         comments = new ArrayList<>();
+        active = false;
     }
 
     public long getTaskId() {
@@ -387,9 +388,9 @@ public class Task implements Identifiable, Serializable {
                                  + "label = %s, "
                                  + "active = %b, "
                                  + "taskState = \"%s\", "
-                                 + "workflow = %s, "
-                                 + "dependentTasks = %s, "
-                                 + "dependsOn = %s%s"
+//                                 + "workflow = %s, "
+//                                 + "dependentTasks = %s, "
+//                                 + "dependsOn = %s%s"
                                  + " }",
                              super.toString(),
                              taskId,
@@ -397,9 +398,9 @@ public class Task implements Identifiable, Serializable {
                              Objects.toString(label),
                              active,
                              taskState,
-                             Objects.toString(workflow),
-                             Objects.toString(dependentTasks),
-                             Objects.toString(dependsOn),
+//                             Objects.toString(workflow),
+//                             Objects.toString(dependentTasks),
+//                             Objects.toString(dependsOn),
                              data);
     }
 
