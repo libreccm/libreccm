@@ -53,37 +53,38 @@ import java.util.stream.Collectors;
  */
 class BaseTaskForm extends BaseForm {
 
-    final WorkflowRequestLocal m_workflow;
+    private final WorkflowRequestLocal workflowRequestLocal;
 
-    final TextField m_name;
-    final TextArea m_description;
-    final OptionGroup m_type;
-    final OptionGroup m_deps;
+    private final TextField nameTextField;
+    private final TextArea descriptionTextArea;
+    private final OptionGroup typeOptionGroup;
+    private final OptionGroup dependenciesOptionGroup;
 
     BaseTaskForm(final String key,
                  final GlobalizedMessage message,
-                 final WorkflowRequestLocal workflow) {
+                 final WorkflowRequestLocal workflowRequestLocal) {
         super(key, message);
 
-        m_workflow = workflow;
+        this.workflowRequestLocal = workflowRequestLocal;
 
-        m_name = new Name("name", 200, true);
-        addField(gz("cms.ui.workflow.task.name"), m_name);
+        nameTextField = new Name("name", 200, true);
+        addField(gz("cms.ui.workflow.task.name"), nameTextField);
 
-        m_type = new SingleSelect(new StringParameter("task_type"));
-        addField(gz("cms.ui.workflow.task.type"), m_type);
+        typeOptionGroup = new SingleSelect(new StringParameter("task_type"));
+        addField(gz("cms.ui.workflow.task.type"), typeOptionGroup);
 
         try {
-            m_type.addPrintListener(new TaskTypePrintListener());
+            typeOptionGroup.addPrintListener(new TaskTypePrintListener());
         } catch (TooManyListenersException ex) {
             throw new UncheckedWrapperException(ex);
         }
 
-        m_description = new Description("desc", 4000, true);
-        addField(gz("cms.ui.workflow.task.description"), m_description);
+        descriptionTextArea = new Description("desc", 4000, true);
+        addField(gz("cms.ui.workflow.task.description"), descriptionTextArea);
 
-        m_deps = new CheckboxGroup("dep");
-        addField(gz("cms.ui.workflow.task.dependencies"), m_deps);
+        dependenciesOptionGroup = new CheckboxGroup("dep");
+        addField(gz("cms.ui.workflow.task.dependencies"),
+                 dependenciesOptionGroup);
 
         addAction(new Finish());
         addAction(new Cancel());
@@ -95,15 +96,38 @@ class BaseTaskForm extends BaseForm {
     private class ValidationListener implements FormValidationListener {
 
         @Override
-        public final void validate(final FormSectionEvent e)
+        public final void validate(final FormSectionEvent event)
             throws FormProcessException {
-            final String name = (String) m_name.getValue(e.getPageState());
+            final String name = (String) nameTextField.getValue(event
+                .getPageState());
 
             // XXX do a dupe check here ala commented out code below
         }
 
     }
 
+    protected WorkflowRequestLocal getWorkflowRequestLocal() {
+        return workflowRequestLocal;
+    }
+
+    protected TextField getNameTextField() {
+        return nameTextField;
+    }
+
+    protected TextArea getDescriptionTextArea() {
+        return descriptionTextArea;
+    }
+
+    protected OptionGroup getTypeOptionGroup() {
+        return typeOptionGroup;
+    }
+    
+    protected OptionGroup getDependenciesOptionGroup() {
+        return dependenciesOptionGroup;
+    }
+
+    
+    
     /*
     protected void addValidationListener() {
         addValidationListener(new DataQueryExistsListener(ERROR_MSG) {
@@ -192,8 +216,8 @@ class BaseTaskForm extends BaseForm {
 
         for (final Task taskToAdd : toAdd.values()) {
             try {
-            taskManager.addDependentTask(task, taskToAdd);
-            } catch(CircularTaskDependencyException ex) {
+                taskManager.addDependentTask(task, taskToAdd);
+            } catch (CircularTaskDependencyException ex) {
                 throw new UncheckedWrapperException(ex);
             }
         }

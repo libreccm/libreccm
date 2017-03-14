@@ -105,10 +105,11 @@ class TaskAddRole extends CMSForm {
             final PageState state = event.getPageState();
             final CmsTask task = m_task.getTask(state);
 
-            final List<TaskAssignment> assignments = task.getAssignments();
-            final List<Role> roles = assignments.stream()
-                .map(TaskAssignment::getRole)
-                .collect(Collectors.toList());
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final WorkflowAdminPaneController controller = cdiUtil
+                .findBean(WorkflowAdminPaneController.class);
+
+            final List<Role> roles = controller.findAssignees(task);
 
             m_roles.setValue(state, roles);
         }
@@ -125,24 +126,28 @@ class TaskAddRole extends CMSForm {
                 final CmsTask task = m_task.getTask(state);
 
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-                final AssignableTaskManager taskManager = cdiUtil.findBean(
-                    AssignableTaskManager.class);
-                final RoleRepository roleRepository = cdiUtil.findBean(
-                    RoleRepository.class);
-
-                task.getAssignments().forEach(assignment -> {
-                    taskManager.retractTask(task, assignment.getRole());
-                });
+                final WorkflowAdminPaneController controller = cdiUtil
+                .findBean(WorkflowAdminPaneController.class);
+//                final AssignableTaskManager taskManager = cdiUtil.findBean(
+//                    AssignableTaskManager.class);
+//                final RoleRepository roleRepository = cdiUtil.findBean(
+//                    RoleRepository.class);
+//
+//                task.getAssignments().forEach(assignment -> {
+//                    taskManager.retractTask(task, assignment.getRole());
+//                });
 
                 final String[] roleIds = (String[]) m_roles.getValue(state);
 
-                if (roleIds != null) {
-                    for (final String roleId : roleIds) {
-                        final Role role = roleRepository.findById(Long
-                            .parseLong(roleId)).get();
-                        taskManager.assignTask(task, role);
-                    }
-                }
+//                if (roleIds != null) {
+//                    for (final String roleId : roleIds) {
+//                        final Role role = roleRepository.findById(Long
+//                            .parseLong(roleId)).get();
+//                        taskManager.assignTask(task, role);
+//                    }
+//                }
+
+                controller.assignTask(task, roleIds);
             }
         }
 
@@ -182,8 +187,11 @@ class TaskAddRole extends CMSForm {
         @Override
         protected List<Role> getDataQuery(final PageState state) {
             final ContentSection section = CMS.getContext().getContentSection();
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final WorkflowAdminPaneController controller = cdiUtil
+                .findBean(WorkflowAdminPaneController.class);
 
-            return section.getRoles();
+            return controller.findRoles(section);
         }
 
         @Override

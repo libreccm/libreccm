@@ -49,7 +49,6 @@ import org.libreccm.workflow.TaskManager;
 import org.libreccm.workflow.TaskRepository;
 import org.libreccm.workflow.Workflow;
 import org.librecms.contentsection.privileges.AdminPrivileges;
-import org.librecms.workflow.CmsTaskType;
 
 import java.util.List;
 import java.util.Locale;
