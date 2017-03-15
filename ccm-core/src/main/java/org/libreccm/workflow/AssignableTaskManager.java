@@ -111,12 +111,14 @@ public class AssignableTaskManager {
                 "Can't retract a task from role null.");
         }
 
-        final List<TaskAssignment> result = task.getAssignments().stream()
-            .filter(assigned -> role.equals(assigned.getRole()))
-            .collect(Collectors.toList());
+        final Optional<TaskAssignment> result = task
+        .getAssignments()
+        .stream()
+        .filter(assigned -> role.getRoleId() == assigned.getRole().getRoleId())
+        .findAny();
 
-        if (!result.isEmpty()) {
-            final TaskAssignment assignment = result.get(0);
+        if (result.isPresent()) {
+            final TaskAssignment assignment = result.get();
             task.removeAssignment(assignment);
             role.removeAssignedTask(assignment);
             entityManager.remove(assignment);

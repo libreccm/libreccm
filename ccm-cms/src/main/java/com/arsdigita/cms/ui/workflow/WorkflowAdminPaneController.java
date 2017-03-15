@@ -376,7 +376,7 @@ public class WorkflowAdminPaneController {
         final Role role = roleRepo
         .findById(Long.parseLong(roleId))
         .orElseThrow(() -> new IllegalArgumentException(String.format(
-            "No Role with ID %d in the database. Where did that ID come from?",
+            "No Role with ID %s in the database. Where did that ID come from?",
             roleId)));
         
          final CmsTask theTask = (CmsTask) taskRepo
