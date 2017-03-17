@@ -22,12 +22,22 @@ import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.list.ListModel;
 import com.arsdigita.bebop.list.ListModelBuilder;
 import com.arsdigita.cms.CMS;
+import com.arsdigita.kernel.KernelConfig;
+
 import org.librecms.contentsection.ContentSection;
+
 import com.arsdigita.util.LockableImpl;
+
+import org.libreccm.cdi.utils.CdiUtil;
+
 import java.util.List;
 
 import java.util.NoSuchElementException;
+
 import org.librecms.lifecycle.LifecycleDefinition;
+
+import java.util.Iterator;
+import java.util.Locale;
 
 /**
  * Loads all the current lifecycles from the database so that they may be
@@ -38,45 +48,48 @@ import org.librecms.lifecycle.LifecycleDefinition;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public final class LifecycleListModelBuilder extends LockableImpl
-        implements ListModelBuilder {
+    implements ListModelBuilder {
 
     @Override
     public final ListModel makeModel(final com.arsdigita.bebop.List list,
                                      final PageState state) {
-        return new Model(state);
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final LifecycleAdminPaneController controller = cdiUtil
+            .findBean(LifecycleAdminPaneController.class);
+        final ContentSection section = CMS.getContext().getContentSection();
+        return new Model(controller.getLifecyclesForContentSection(section));
     }
 
     private class Model implements ListModel {
 
-        private final List<LifecycleDefinition> m_cycles;
-        private int index = -1;
+        private final Iterator<LifecycleDefinition> iterator;
+        private LifecycleDefinition currentLifecycleDef;
+        private final Locale defaultLocale;
 
-        public Model(final PageState state) {
-            m_cycles = getCollection(state);
+        public Model(final List<LifecycleDefinition> lifecycles) {
+            iterator = lifecycles.iterator();
+            defaultLocale = KernelConfig.getConfig().getDefaultLocale();
         }
-
-        private List<LifecycleDefinition> getCollection(final PageState state) {
-            final ContentSection section = CMS.getContext().getContentSection();
-
-            final List<LifecycleDefinition> cycles = section.getLifecycleDefinitions();
-
-            return cycles;
-        }
-
-        @Override
+   @Override
         public boolean next() throws NoSuchElementException {
-            index++;
-            return index < m_cycles.size();
+            if (iterator.hasNext()) {
+                currentLifecycleDef = iterator.next();
+                return true;
+            } else {
+                return false;
+            }
         }
 
         @Override
         public Object getElement() {
-            return m_cycles.get(index).getLabel();
+            return currentLifecycleDef.getLabel().getValue(defaultLocale);
         }
 
         @Override
         public String getKey() {
-            return Long.toString(m_cycles.get(index).getDefinitionId());
+            return Long.toString(currentLifecycleDef.getDefinitionId());
         }
+
     }
+
 }
