@@ -28,37 +28,45 @@ import org.librecms.lifecycle.LifecycleDefinition;
 import org.librecms.lifecycle.PhaseDefinition;
 
 import com.arsdigita.globalization.GlobalizedMessage;
-import com.arsdigita.util.Assert;
+import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.util.LockableImpl;
 
-import org.arsdigita.cms.CMSConfig;
+import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.CmsConstants;
 
+import java.util.Iterator;
 import java.util.List;
 
 class PhaseTableModelBuilder extends LockableImpl
-        implements TableModelBuilder {
-    private final LifecycleDefinitionRequestLocal cycle;
+    implements TableModelBuilder {
 
-    public PhaseTableModelBuilder
-            (final LifecycleDefinitionRequestLocal cycle) {
-        this.cycle = cycle;
+    private final LifecycleDefinitionRequestLocal selectedLifecycle;
+
+    public PhaseTableModelBuilder(
+        final LifecycleDefinitionRequestLocal selectedLifecycle) {
+        this.selectedLifecycle = selectedLifecycle;
     }
 
     @Override
     public final TableModel makeModel(final Table table,
                                       final PageState state) {
-        return new PhaseTableModel(cycle.getLifecycleDefinition(state));
+
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final LifecycleAdminPaneController controller = cdiUtil
+            .findBean(LifecycleAdminPaneController.class);
+        final LifecycleDefinition definition = selectedLifecycle
+            .getLifecycleDefinition(state);
+
+        return new PhaseTableModel(controller.getPhaseDefinitions(definition));
     }
 
     private static class PhaseTableModel implements TableModel {
-        
-        private final List<PhaseDefinition> phases;
-        private int index = -1;
-        private PhaseDefinition phase;
 
-        public PhaseTableModel(final LifecycleDefinition cycle) {
-            phases = cycle.getPhaseDefinitions();
+        private final Iterator<PhaseDefinition> iterator;
+        private PhaseDefinition currentPhaseDef;
+
+        public PhaseTableModel(final List<PhaseDefinition> phaseDefinitions) {
+            iterator = phaseDefinitions.iterator();
         }
 
         @Override
@@ -68,10 +76,8 @@ class PhaseTableModelBuilder extends LockableImpl
 
         @Override
         public final boolean nextRow() {
-            index++;
-            if (index < phases.size()) {
-                phase = phases.get(index);
-
+            if (iterator.hasNext()) {
+                currentPhaseDef = iterator.next();
                 return true;
             } else {
                 return false;
@@ -80,40 +86,45 @@ class PhaseTableModelBuilder extends LockableImpl
 
         @Override
         public final Object getElementAt(final int column) {
-            Assert.exists(phase, "PhaseDefinition m_phase");
 
             switch (column) {
-            case 0:
-                return phase.getLabel();
-            case 1:
-                return phase.getDescription();
-            case 2:
-                return Duration.formatDuration(phase.getDefaultDelay());
-            case 3:
-                final Long duration = phase.getDefaultDuration();
+                case 0:
+                    return currentPhaseDef
+                        .getLabel()
+                        .getValue(KernelConfig.getConfig().getDefaultLocale());
+                case 1:
+                    return currentPhaseDef
+                        .getDescription()
+                        .getValue(KernelConfig.getConfig().getDefaultLocale());
+                case 2:
+                    return Duration.formatDuration(currentPhaseDef
+                        .getDefaultDelay());
+                case 3:
+                    final Long duration = currentPhaseDef.getDefaultDuration();
 
-                if (duration == null) {
-                    return lz("cms.ui.lifecycle.forever");
-                } else {
-                    return Duration.formatDuration(duration);
-                }
-            case 4:
-                return lz("cms.ui.lifecycle.phase_edit");
-            case 5:
-                return lz("cms.ui.lifecycle.phase_delete");
-            default:
-                throw new IllegalStateException();
+                    if (duration == 0) {
+                        return lz("cms.ui.lifecycle.forever");
+                    } else {
+                        return Duration.formatDuration(duration);
+                    }
+                case 4:
+                    return lz("cms.ui.lifecycle.phase_edit");
+                case 5:
+                    return lz("cms.ui.lifecycle.phase_delete");
+                default:
+                    throw new IllegalStateException();
             }
         }
 
         @Override
-        public Object getKeyAt(int columnIndex) {
-            if (phase == null) {
+        public Object getKeyAt(final int columnIndex) {
+            if (currentPhaseDef == null) {
                 throw new IllegalStateException();
             } else {
-                return phase.getDefinitionId();
+                return currentPhaseDef.getDefinitionId();
             }
         }
+
     }
 
     private static GlobalizedMessage gz(final String key) {
@@ -123,4 +134,5 @@ class PhaseTableModelBuilder extends LockableImpl
     private static String lz(final String key) {
         return (String) gz(key).localize();
     }
+
 }

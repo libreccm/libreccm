@@ -32,48 +32,42 @@ import com.arsdigita.cms.ui.BaseAdminPane;
 import com.arsdigita.cms.ui.BaseDeleteForm;
 import com.arsdigita.cms.ui.FormSecurityListener;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.librecms.contentsection.ContentSectionManager;
 import org.librecms.contentsection.privileges.AdminPrivileges;
 import org.librecms.lifecycle.LifecycleDefinitionRepository;
-
 
 /**
  * This class contains the split pane for the lifecycle administration
  * interface.
  *
- 
+ *
  * @author Michael Pih
  * @author Jack Chung
  * @author <a href="mailto:jross@redhat.com">Justin Ross</a>
-* @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class LifecycleAdminPane extends BaseAdminPane {
 
-    private static Logger LOGGER = LogManager.getLogger(LifecycleAdminPane.class);
-
-    private final SingleSelectionModel m_model;
-    private final LifecycleDefinitionRequestLocal m_definition;
+    private final SingleSelectionModel selectionModel;
+    private final LifecycleDefinitionRequestLocal selectionLifecycleDefinition;
 
     public LifecycleAdminPane() {
         super(new Label(gz("cms.ui.lifecycles")),
               new LifecycleListModelBuilder());
 
-        m_model = getSelectionModel();
-        m_definition = new SelectionRequestLocal();
+        selectionModel = getSelectionModel();
+        selectionLifecycleDefinition = new SelectionRequestLocal();
 
         // XXX secvis
         //add(new LifecycleAdminContainer(m_addLink));
         setAdd(gz("cms.ui.lifecycle.add"),
-               new LifecycleAddForm(m_model));
+               new LifecycleAddForm(selectionModel));
         setEdit(gz("cms.ui.lifecycle.edit"),
-                new LifecycleEditForm(m_definition));
+                new LifecycleEditForm(selectionLifecycleDefinition));
         setDelete(gz("cms.ui.lifecycle.delete"), new DeleteForm());
 
         setIntroPane(new Label(gz("cms.ui.lifecycle.intro")));
-        setItemPane(new LifecycleItemPane(m_definition,
+        setItemPane(new LifecycleItemPane(selectionLifecycleDefinition,
                                           getEditLink(),
                                           getDeleteLink()));
 
@@ -85,7 +79,7 @@ public class LifecycleAdminPane extends BaseAdminPane {
 
         @Override
         protected final Object initialValue(final PageState state) {
-            final String id = m_model.getSelectedKey(state).toString();
+            final String id = selectionModel.getSelectedKey(state).toString();
 
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final LifecycleDefinitionRepository lifecycleDefRepo = cdiUtil
@@ -105,24 +99,21 @@ public class LifecycleAdminPane extends BaseAdminPane {
                 AdminPrivileges.ADMINISTER_LIFECYLES));
         }
 
+        @Override
         public final void process(final FormSectionEvent event)
             throws FormProcessException {
+            
             final PageState state = event.getPageState();
             final ContentSection section = CMS.getContext().getContentSection();
-            final LifecycleDefinition definition = m_definition
+            final LifecycleDefinition definition = selectionLifecycleDefinition
                 .getLifecycleDefinition(state);
 
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final ContentSectionManager sectionManager = cdiUtil.findBean(
-                ContentSectionManager.class);
-            final LifecycleDefinitionRepository lifecycleDefRepo = cdiUtil
-                .findBean(LifecycleDefinitionRepository.class);
+            final LifecycleAdminPaneController controller = cdiUtil
+            .findBean(LifecycleAdminPaneController.class);
+            controller.deleteLifecycleDefinition(definition, section);
 
-            sectionManager.removeLifecycleDefinitionFromContentSection(
-                definition, section);
-            lifecycleDefRepo.delete(definition);
-
-            m_model.clearSelection(state);
+            selectionModel.clearSelection(state);
         }
 
     }
