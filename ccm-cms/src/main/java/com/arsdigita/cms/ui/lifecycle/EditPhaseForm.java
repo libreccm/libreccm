@@ -49,9 +49,11 @@ import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.ConfigurationManager;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.privileges.AdminPrivileges;
-import org.librecms.lifecycle.PhaseDefinititionRepository;
+import org.librecms.lifecycle.LifecycleDefinition;
 
+import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 /**
  * This class contains a form component to edit a lifecycle phase definition.
@@ -63,7 +65,6 @@ import java.util.Locale;
  */
 class EditPhaseForm extends CMSForm {
 
-    private final static String PHASE_ID = "id";
     private final static String LABEL = "label";
     private final static String DESCRIPTION = "description";
     private final static String DELAY_DAYS = "delay_days";
@@ -75,18 +76,19 @@ class EditPhaseForm extends CMSForm {
     private final static String SUBMIT = "submit";
     private final static String CANCEL = "cancel";
 
-    private final PhaseRequestLocal m_phase;
+    private final LifecycleDefinitionRequestLocal selectedLifecycle;
+    private final PhaseRequestLocal selectedPhase;
 
-    private final TextField m_label;
-    private final TextArea m_description;
-    private final TextField m_delayDays;
-    private final TextField m_delayHours;
-    private final TextField m_delayMinutes;
-    private final TextField m_durDays;
-    private final TextField m_durHours;
-    private final TextField m_durMinutes;
-    private final Submit m_submit;
-    private final Submit m_cancel;
+    private final TextField phaseLabel;
+    private final TextArea phaseDescription;
+    private final TextField delayDays;
+    private final TextField delayHours;
+    private final TextField delayMinutes;
+    private final TextField durationDays;
+    private final TextField durationHours;
+    private final TextField durationMinutes;
+    private final Submit submit;
+    private final Submit cancel;
 
     /**
      * Constructor.
@@ -96,100 +98,106 @@ class EditPhaseForm extends CMSForm {
      *
      * @pre phases != null
      */
-    public EditPhaseForm(final PhaseRequestLocal phase) {
+    public EditPhaseForm(
+        final LifecycleDefinitionRequestLocal selectedLifecycle,
+        final PhaseRequestLocal selectedPhase) {
+
         super("EditPhaseDefinition");
 
-        m_phase = phase;
+        this.selectedLifecycle = selectedLifecycle;
+        this.selectedPhase = selectedPhase;
 
         add(new Label());
         add(new FormErrorDisplay(this));
 
-        add(new Label(gz("cms.ui.name")));
-        m_label = new TextField(new TrimmedStringParameter(LABEL));
-        m_label.addValidationListener(new NotEmptyValidationListener());
-        m_label.setSize(40);
-        m_label.setMaxLength(1000);
-        add(m_label);
+        add(new Label(gz("cms.ui.lifecycle.phase.name")));
+        phaseLabel = new TextField(new TrimmedStringParameter(LABEL));
+        phaseLabel.addValidationListener(new NotEmptyValidationListener());
+        phaseLabel.setSize(40);
+        phaseLabel.setMaxLength(1000);
+        add(phaseLabel);
 
-        add(new Label(gz("cms.ui.description")));
-        m_description = new TextArea(new TrimmedStringParameter(DESCRIPTION));
-        m_description.addValidationListener(new StringLengthValidationListener(
-            4000));
-        m_description.setCols(40);
-        m_description.setRows(5);
-        m_description.setWrap(TextArea.SOFT);
-        add(m_description);
-
-        // Phase duration
-        // Max value: days: 60 years, hours: 7 days, minutes: 1 day
-        m_delayDays = new TextField(new IntegerParameter(DELAY_DAYS));
-        m_delayDays.addValidationListener(new NumberInRangeValidationListener(0,
-                                                                              21900));
-        m_delayDays.setSize(7);
-        m_delayDays.setClassAttr("DaysField");
-
-        m_delayHours = new TextField(new IntegerParameter(DELAY_HOURS));
-        m_delayHours.addValidationListener(
-            new NumberInRangeValidationListener(0, 168));
-        m_delayHours.setClassAttr("HoursField");
-        m_delayHours.setSize(7);
-
-        m_delayMinutes = new TextField(new IntegerParameter(DELAY_MINUTES));
-        m_delayMinutes.addValidationListener(
-            new NumberInRangeValidationListener(0, 1440));
-        m_delayMinutes.setSize(7);
-        m_delayMinutes.setClassAttr("MinutesField");
-
-        add(new Label(new GlobalizedMessage("cms.ui.lifecycle.start_delay",
-                                            CmsConstants.CMS_BUNDLE)));
-        SimpleContainer de = new SimpleContainer();
-        de.add(new Label(gz("cms.ui.lifecycle.phase_days")));
-        de.add(m_delayDays);
-        de.add(new Label(gz("cms.ui.lifecycle.phase_hours")));
-        de.add(m_delayHours);
-        de.add(new Label(gz("cms.ui.lifecycle.phase_mins")));
-        de.add(m_delayMinutes);
-        add(de);
+        add(new Label(gz("cms.ui.lifecycle.phase.description")));
+        phaseDescription = new TextArea(new TrimmedStringParameter(DESCRIPTION));
+        phaseDescription.addValidationListener(
+            new StringLengthValidationListener(
+                4000));
+        phaseDescription.setCols(40);
+        phaseDescription.setRows(5);
+        phaseDescription.setWrap(TextArea.SOFT);
+        add(phaseDescription);
 
         // Phase duration
         // Max value: days: 60 years, hours: 7 days, minutes: 1 day
-        m_durDays = new TextField(new IntegerParameter(DURATION_DAYS));
-        m_durDays.addValidationListener(new NumberInRangeValidationListener(0,
+        delayDays = new TextField(new IntegerParameter(DELAY_DAYS));
+        delayDays.addValidationListener(new NumberInRangeValidationListener(0,
                                                                             21900));
-        m_durDays.setSize(7);
-        m_durDays.setClassAttr("DaysField");
+        delayDays.setSize(7);
+        delayDays.setClassAttr("DaysField");
 
-        m_durHours = new TextField(new IntegerParameter(DURATION_HOURS));
-        m_durHours.addValidationListener(new NumberInRangeValidationListener(0,
-                                                                             168));
-        m_durHours.setSize(7);
-        m_durHours.setClassAttr("HoursField");
+        delayHours = new TextField(new IntegerParameter(DELAY_HOURS));
+        delayHours.addValidationListener(
+            new NumberInRangeValidationListener(0, 168));
+        delayHours.setClassAttr("HoursField");
+        delayHours.setSize(7);
 
-        m_durMinutes = new TextField(new IntegerParameter(DURATION_MINUTES));
-        m_durMinutes.addValidationListener(
+        delayMinutes = new TextField(new IntegerParameter(DELAY_MINUTES));
+        delayMinutes.addValidationListener(
             new NumberInRangeValidationListener(0, 1440));
-        m_durMinutes.setSize(7);
-        m_durMinutes.setClassAttr("MinutesField");
+        delayMinutes.setSize(7);
+        delayMinutes.setClassAttr("MinutesField");
 
-        add(new Label(gz("cms.ui.lifecycle.duration")));
-        SimpleContainer du = new SimpleContainer();
-        du.add(new Label(gz("cms.ui.lifecycle.phase_days")));
-        du.add(m_durDays);
-        du.add(new Label(gz("cms.ui.lifecycle.phase_hours")));
-        du.add(m_durHours);
-        du.add(new Label(gz("cms.ui.lifecycle.phase_mins")));
-        du.add(m_durMinutes);
-        add(du);
+        add(new Label(
+            new GlobalizedMessage("cms.ui.lifecycle.phase_start_delay",
+                                  CmsConstants.CMS_BUNDLE)));
+        final SimpleContainer delayContainer = new SimpleContainer();
+        delayContainer.add(new Label(gz("cms.ui.lifecycle.phase_days")));
+        delayContainer.add(delayDays);
+        delayContainer.add(new Label(gz("cms.ui.lifecycle.phase_hours")));
+        delayContainer.add(delayHours);
+        delayContainer.add(new Label(gz("cms.ui.lifecycle.phase_minutes")));
+        delayContainer.add(delayMinutes);
+        add(delayContainer);
+
+        // Phase duration
+        // Max value: days: 60 years, hours: 7 days, minutes: 1 day
+        durationDays = new TextField(new IntegerParameter(DURATION_DAYS));
+        durationDays.addValidationListener(
+            new NumberInRangeValidationListener(0,
+                                                21900));
+        durationDays.setSize(7);
+        durationDays.setClassAttr("DaysField");
+
+        durationHours = new TextField(new IntegerParameter(DURATION_HOURS));
+        durationHours.addValidationListener(new NumberInRangeValidationListener(
+            0,
+            168));
+        durationHours.setSize(7);
+        durationHours.setClassAttr("HoursField");
+
+        durationMinutes = new TextField(new IntegerParameter(DURATION_MINUTES));
+        durationMinutes.addValidationListener(
+            new NumberInRangeValidationListener(0, 1440));
+        durationMinutes.setSize(7);
+        durationMinutes.setClassAttr("MinutesField");
+
+        add(new Label(gz("cms.ui.lifecycle.phase_duration")));
+        final SimpleContainer durationContainer = new SimpleContainer();
+        durationContainer.add(new Label(gz("cms.ui.lifecycle.phase_days")));
+        durationContainer.add(durationDays);
+        durationContainer.add(new Label(gz("cms.ui.lifecycle.phase_hours")));
+        durationContainer.add(durationHours);
+        durationContainer.add(new Label(gz("cms.ui.lifecycle.phase_minutes")));
+        durationContainer.add(durationMinutes);
+        add(durationContainer);
 
         // Submit and cancel buttons
-        SimpleContainer s = new SimpleContainer();
-        m_submit = new Submit(SUBMIT);
-        m_submit.setButtonLabel("Edit Phase");
-        s.add(m_submit);
-        m_cancel = new Submit(CANCEL);
-        m_cancel.setButtonLabel("Cancel");
-        s.add(m_cancel);
-        add(s, ColumnPanel.FULL_WIDTH | ColumnPanel.CENTER);
+        final SimpleContainer submitCancelContainer = new SimpleContainer();
+        submit = new Submit(SUBMIT, gz("cms.ui.lifecycle.phase.edit_submit"));
+        submitCancelContainer.add(submit);
+        cancel = new Submit(CANCEL, gz("cms.ui.lifecycle.phase.edit_cancel"));
+        submitCancelContainer.add(cancel);
+        add(submitCancelContainer, ColumnPanel.FULL_WIDTH | ColumnPanel.CENTER);
 
         // Add form listeners.
         addInitListener(new FormInitListener() {
@@ -240,7 +248,7 @@ class EditPhaseForm extends CMSForm {
      */
     @Override
     public boolean isCancelled(final PageState state) {
-        return m_cancel.isSelected(state);
+        return cancel.isSelected(state);
     }
 
     /**
@@ -253,21 +261,27 @@ class EditPhaseForm extends CMSForm {
      */
     private void initializePhaseDefinition(final PageState state)
         throws FormProcessException {
-        PhaseDefinition pd = m_phase.getPhase(state);
-        m_label.setValue(state, pd.getLabel());
-        m_description.setValue(state, pd.getDescription());
 
-        long[] delay = Duration.formatDHM(pd.getDefaultDelay());
-        m_delayDays.setValue(state, delay[0]);
-        m_delayHours.setValue(state, delay[1]);
-        m_delayMinutes.setValue(state, delay[2]);
+        final Locale defaultLocale = KernelConfig.getConfig().getDefaultLocale();
 
-        Long duration = pd.getDefaultDuration();
-        if (duration != null) {
-            Long[] dhm = Duration.formatDHM(duration);
-            m_durDays.setValue(state, dhm[0]);
-            m_durHours.setValue(state, dhm[1]);
-            m_durMinutes.setValue(state, dhm[2]);
+        final PhaseDefinition phaseDef = selectedPhase.getPhase(state);
+        phaseLabel.setValue(state, phaseDef.getLabel().getValue(defaultLocale));
+        phaseDescription.setValue(state,
+                                  phaseDef
+                                      .getDescription()
+                                      .getValue(defaultLocale));
+
+        final long[] delay = Duration.formatDHM(phaseDef.getDefaultDelay());
+        delayDays.setValue(state, delay[0]);
+        delayHours.setValue(state, delay[1]);
+        delayMinutes.setValue(state, delay[2]);
+
+        final Long duration = phaseDef.getDefaultDuration();
+        if (duration != 0) {
+            final Long[] dhm = Duration.formatDHM(duration);
+            durationDays.setValue(state, dhm[0]);
+            durationHours.setValue(state, dhm[1]);
+            durationMinutes.setValue(state, dhm[2]);
         }
     }
 
@@ -281,31 +295,40 @@ class EditPhaseForm extends CMSForm {
     private void updatePhaseDefinition(final PageState state)
         throws FormProcessException {
 
-        final String label = (String) m_label.getValue(state);
-        final String description = (String) m_description.getValue(state);
-        final Integer delayDays = (Integer) m_delayDays.getValue(state);
-        final Integer delayHours = (Integer) m_delayHours.getValue(state);
-        final Integer delayMinutes = (Integer) m_delayMinutes.getValue(state);
-        final Integer durDays = (Integer) m_durDays.getValue(state);
-        final Integer durHours = (Integer) m_durHours.getValue(state);
-        final Integer durMinutes = (Integer) m_durMinutes.getValue(state);
+        final String label = (String) phaseLabel.getValue(state);
+        final String description = (String) phaseDescription.getValue(state);
+        final int delDays = (int) Optional
+            .ofNullable(delayDays.getValue(state))
+            .orElseGet(() -> 0);
+        final int delHours = (int) Optional
+            .ofNullable(delayHours.getValue(state))
+            .orElseGet(() -> 0);;
+        final int delMinutes = (int) Optional
+            .ofNullable(delayMinutes.getValue(state))
+            .orElseGet(() -> 0);;
+        final int durDays = (int) Optional
+            .ofNullable(durationDays.getValue(state))
+            .orElseGet(() -> 0);;
+        final int durHours = (int) Optional
+            .ofNullable(durationHours.getValue(state))
+            .orElseGet(() -> 0);;
+        final int durMinutes = (int) Optional
+            .ofNullable(durationMinutes.getValue(state))
+            .orElseGet(() -> 0);;
 
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-        final ConfigurationManager confManager = cdiUtil.findBean(
-            ConfigurationManager.class);
-        final PhaseDefinititionRepository phaseDefRepo = cdiUtil.findBean(
-            PhaseDefinititionRepository.class);
-        final KernelConfig kernelConfig = confManager.findConfiguration(
-            KernelConfig.class);
-        final Locale defaultLocale = kernelConfig.getDefaultLocale();
+        final LifecycleAdminPaneController controller = cdiUtil
+            .findBean(LifecycleAdminPaneController.class);
 
-        final PhaseDefinition phaseDefinition = m_phase.getPhase(state);
-        phaseDefinition.getLabel().addValue(defaultLocale, label);
-        phaseDefinition.getDescription().addValue(defaultLocale, description);
-        phaseDefinition.setDefaultDelay(delayDays * delayHours * delayMinutes
-                                        * 60);
-        phaseDefinition.setDefaultDuration(durDays * durHours * durMinutes * 60);
-        phaseDefRepo.save(phaseDefinition);
+        controller.updatePhaseDefinition(selectedPhase.getPhase(state),
+                                         label,
+                                         description,
+                                         delDays,
+                                         delHours,
+                                         delMinutes,
+                                         durDays,
+                                         durHours,
+                                         durMinutes);
     }
 
     /**
@@ -318,24 +341,46 @@ class EditPhaseForm extends CMSForm {
      */
     private void validateUniqueName(final PageState state)
         throws FormProcessException {
-        final String newLabel = (String) m_label.getValue(state);
 
-//        PhaseDefinition pd = m_phase.getPhase(state);
-//        PhaseDefinitionCollection phaseDefs = pd.getLifecycleDefinition()
-//            .getPhaseDefinitions();
-//
-//        // If the name has changed, check for uniqueness.
-//        if (!pd.getLabel().equalsIgnoreCase(newLabel)) {
-//            while (phaseDefs.next()) {
-//                PhaseDefinition phaseDef = phaseDefs.getPhaseDefinition();
-//
-//                if (phaseDef.getLabel().equalsIgnoreCase(newLabel)) {
-//                    phaseDefs.close();
-//                    throw new FormProcessException(GlobalizationUtil.globalize(
-//                        "cms.ui.lifecycle.phase_name_not_unique"));
-//                }
-//            }
-//        }
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final ConfigurationManager confManager = cdiUtil.findBean(
+            ConfigurationManager.class);
+        final KernelConfig kernelConfig = confManager.findConfiguration(
+            KernelConfig.class);
+        final Locale defaultLocale = kernelConfig.getDefaultLocale();
+        
+        final String oldLabel = selectedPhase
+            .getPhase(state)
+            .getLabel()
+            .getValue(defaultLocale);
+        final String newLabel = (String) phaseLabel.getValue(state);
+        
+        if (oldLabel.equals(newLabel)) {
+            //Label has node changed, no validation required.
+            return;
+        }
+
+        final LifecycleDefinition cycleDef = selectedLifecycle
+            .getLifecycleDefinition(state);
+        final LifecycleAdminPaneController controller = cdiUtil
+            .findBean(LifecycleAdminPaneController.class);
+        final List<PhaseDefinition> phaseDefs = controller
+            .getPhaseDefinitions(cycleDef);
+
+        
+
+        final boolean duplicateLabel = phaseDefs
+            .stream()
+            .map(phaseDef -> phaseDef.getLabel().getValue(defaultLocale))
+            .anyMatch(phaseDefLabel -> {
+                return phaseDefLabel.equalsIgnoreCase(newLabel);
+            });
+
+        if (duplicateLabel) {
+            throw new FormProcessException(new GlobalizedMessage(
+                "cms.ui.lifecycle.phase_name_not_unique",
+                CmsConstants.CMS_BUNDLE));
+        }
     }
 
     /**
@@ -343,13 +388,14 @@ class EditPhaseForm extends CMSForm {
      *
      * @param state The page state
      *
-     * @pre state != null
+     *
      */
     private void validateDuration(final PageState state)
         throws FormProcessException {
-        final Integer durDays = (Integer) m_durDays.getValue(state);
-        final Integer durHours = (Integer) m_durHours.getValue(state);
-        final Integer durMinutes = (Integer) m_durMinutes.getValue(state);
+
+        final Integer durDays = (Integer) durationDays.getValue(state);
+        final Integer durHours = (Integer) durationHours.getValue(state);
+        final Integer durMinutes = (Integer) durationMinutes.getValue(state);
 
         // Phase duration is infinite, so the duration is valid.
         if (durDays == null && durHours == null && durMinutes == null) {
@@ -357,22 +403,22 @@ class EditPhaseForm extends CMSForm {
         }
 
         int days, hours, minutes;
-        if (durDays != null) {
-            days = durDays.intValue();
-        } else {
+        if (durDays == null) {
             days = 0;
+        } else {
+            days = durDays;
         }
 
-        if (durHours != null) {
-            hours = durHours.intValue();
-        } else {
+        if (durHours == null) {
             hours = 0;
+        } else {
+            hours = durHours;
         }
 
-        if (durMinutes != null) {
-            minutes = durMinutes.intValue();
-        } else {
+        if (durMinutes == null) {
             minutes = 0;
+        } else {
+            minutes = durMinutes;
         }
 
         if ((days + hours + minutes) == 0) {
@@ -384,10 +430,6 @@ class EditPhaseForm extends CMSForm {
 
     private static GlobalizedMessage gz(final String key) {
         return new GlobalizedMessage(key, CmsConstants.CMS_BUNDLE);
-    }
-
-    private static String lz(final String key) {
-        return (String) gz(key).localize();
     }
 
 }

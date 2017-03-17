@@ -60,34 +60,38 @@ import java.util.Locale;
  */
 class LifecycleItemPane extends BaseItemPane {
 
-    private final LifecycleDefinitionRequestLocal m_cycle;
-    private final PhaseRequestLocal m_phase;
+    private final LifecycleDefinitionRequestLocal selectedLifecycle;
+    private final PhaseRequestLocal selectedPhase;
 
-    private final Container m_detailPane;
-    private final Table m_phases;
+    private final Container detailPane;
+    private final Table phasesTable;
 
-    public LifecycleItemPane(final LifecycleDefinitionRequestLocal cycle,
-                             final ActionLink editLink,
-                             final ActionLink deleteLink) {
-        m_cycle = cycle;
-        m_phase = new SelectionRequestLocal();
+    public LifecycleItemPane(
+        final LifecycleDefinitionRequestLocal selectedLifecycle,
+        final ActionLink editLink,
+        final ActionLink deleteLink) {
 
-        m_phases = new PhaseTable();
+        this.selectedLifecycle = selectedLifecycle;
+        selectedPhase = new SelectionRequestLocal();
 
-        m_detailPane = new SimpleContainer();
-        add(m_detailPane);
-        setDefault(m_detailPane);
+        phasesTable = new PhaseTable();
 
-        m_detailPane.add(new SummarySection(editLink, deleteLink));
+        detailPane = new SimpleContainer();
+        add(detailPane);
+        setDefault(detailPane);
+
+        detailPane.add(new SummarySection(editLink, deleteLink));
 
         final ActionLink phaseAddLink = new ActionLink(new Label(gz(
             "cms.ui.lifecycle.phase_add")));
 
-        m_detailPane.add(new PhaseSection(phaseAddLink));
+        detailPane.add(new PhaseSection(phaseAddLink));
 
-        final AddPhaseForm phaseAddForm = new AddPhaseForm(m_cycle);
-        final EditPhaseForm phaseEditForm = new EditPhaseForm(m_phase);
-        final DeletePhaseForm phaseDeleteForm = new DeletePhaseForm(m_phase);
+        final AddPhaseForm phaseAddForm = new AddPhaseForm(selectedLifecycle);
+        final EditPhaseForm phaseEditForm = new EditPhaseForm(selectedLifecycle,
+                                                              selectedPhase);
+        final DeletePhaseForm phaseDeleteForm = new DeletePhaseForm(
+            selectedPhase);
 
         add(phaseAddForm);
         add(phaseEditForm);
@@ -95,17 +99,17 @@ class LifecycleItemPane extends BaseItemPane {
 
         connect(phaseAddLink, phaseAddForm);
         connect(phaseAddForm);
-        connect(m_phases, 4, phaseEditForm);
-        connect(phaseEditForm, m_phases.getRowSelectionModel());
-        connect(m_phases, 5, phaseDeleteForm);
-        connect(phaseDeleteForm, m_phases.getRowSelectionModel());
+        connect(phasesTable, 4, phaseEditForm);
+        connect(phaseEditForm, phasesTable.getRowSelectionModel());
+        connect(phasesTable, 5, phaseDeleteForm);
+        connect(phaseDeleteForm, phasesTable.getRowSelectionModel());
     }
 
     private class SelectionRequestLocal extends PhaseRequestLocal {
 
         @Override
         protected final Object initialValue(final PageState state) {
-            final String id = m_phases.getRowSelectionModel().getSelectedKey(
+            final String id = phasesTable.getRowSelectionModel().getSelectedKey(
                 state).toString();
 
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
@@ -136,7 +140,8 @@ class LifecycleItemPane extends BaseItemPane {
         private class Properties extends PropertyList {
 
             @Override
-            protected final java.util.List properties(final PageState state) {
+            protected final java.util.List<Property> properties(
+                final PageState state) {
 
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
                 final ConfigurationManager confManager = cdiUtil.findBean(
@@ -145,15 +150,15 @@ class LifecycleItemPane extends BaseItemPane {
                     KernelConfig.class);
                 final Locale defaultLocale = kernelConfig.getDefaultLocale();
 
-                final java.util.List props = super.properties(state);
-                final LifecycleDefinition cycle = m_cycle
+                final java.util.List<Property> props = super.properties(state);
+                final LifecycleDefinition cycle = selectedLifecycle
                     .getLifecycleDefinition(state);
 
                 props.add(new Property(
-                    gz("cms.ui.name"),
+                    gz("cms.ui.lifecycle.name"),
                     cycle.getLabel().getValue(defaultLocale)));
                 props.add(new Property(
-                    gz("cms.ui.description"),
+                    gz("cms.ui.lifecycle.description"),
                     cycle.getDescription().getValue(defaultLocale)));
 
                 return props;
@@ -171,7 +176,7 @@ class LifecycleItemPane extends BaseItemPane {
             final ActionGroup group = new ActionGroup();
             setBody(group);
 
-            group.setSubject(m_phases);
+            group.setSubject(phasesTable);
             group.addAction(new LifecycleAdminContainer(addLink),
                             ActionGroup.ADD);
         }
@@ -179,9 +184,9 @@ class LifecycleItemPane extends BaseItemPane {
     }
 
     // XXX fix this
-    private static final String[] s_headers = {
-        lz("cms.ui.name"),
-        lz("cms.ui.description"),
+    private static final String[] HEADERS = {
+        lz("cms.ui.lifecycle.phase.name"),
+        lz("cms.ui.lifecycle.phase.description"),
         lz("cms.ui.lifecycle.phase_delay"),
         lz("cms.ui.lifecycle.phase_duration"),
         "",
@@ -191,7 +196,7 @@ class LifecycleItemPane extends BaseItemPane {
     private class PhaseTable extends Table {
 
         public PhaseTable() {
-            super(new PhaseTableModelBuilder(m_cycle), s_headers);
+            super(new PhaseTableModelBuilder(selectedLifecycle), HEADERS);
 
             setEmptyView(new Label(gz("cms.ui.lifecycle.phase_none")));
 
@@ -235,7 +240,7 @@ class LifecycleItemPane extends BaseItemPane {
     public final void reset(final PageState state) {
         super.reset(state);
 
-        m_phases.clearSelection(state);
+        phasesTable.clearSelection(state);
     }
 
 }

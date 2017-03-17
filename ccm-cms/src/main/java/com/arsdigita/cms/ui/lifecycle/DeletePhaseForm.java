@@ -28,18 +28,19 @@ import com.arsdigita.bebop.event.FormProcessListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.bebop.form.Hidden;
 import com.arsdigita.bebop.form.Submit;
-import com.arsdigita.bebop.parameters.BigDecimalParameter;
+import com.arsdigita.bebop.parameters.LongParameter;
 import com.arsdigita.bebop.parameters.NotNullValidationListener;
 
 import org.librecms.lifecycle.PhaseDefinition;
 
 import com.arsdigita.cms.ui.CMSForm;
 import com.arsdigita.cms.ui.FormSecurityListener;
+import com.arsdigita.globalization.GlobalizedMessage;
 
 import org.libreccm.cdi.utils.CdiUtil;
+import org.librecms.CmsConstants;
 import org.librecms.contentsection.privileges.AdminPrivileges;
 import org.librecms.lifecycle.PhaseDefinititionRepository;
-
 
 /**
  * This class handles the deleting of a phase definition.
@@ -50,35 +51,40 @@ import org.librecms.lifecycle.PhaseDefinititionRepository;
 class DeletePhaseForm extends CMSForm
     implements FormProcessListener, FormInitListener {
 
-    private final PhaseRequestLocal m_phase;
+    private final PhaseRequestLocal selectedPhaseDef;
 
-    private final Hidden m_id;
-    private final Submit m_deleteWidget;
-    private final Submit m_cancelWidget;
+    private final Hidden selectedPhaseDefId;
+    private final Submit deleteWidget;
+    private final Submit cancelWidget;
 
     /**
      * @param m The phase selection model. This tells the form which phase
      *          definition is selected.
      */
-    public DeletePhaseForm(final PhaseRequestLocal phase) {
+    public DeletePhaseForm(final PhaseRequestLocal selectedPhaseDef) {
         super("PhaseDefinitionDelete");
 
-        m_phase = phase;
+        this.selectedPhaseDef = selectedPhaseDef;
 
-        m_id = new Hidden(new BigDecimalParameter("id"));
-        add(m_id);
-        m_id.addValidationListener(new NotNullValidationListener());
+        selectedPhaseDefId = new Hidden(new LongParameter("id"));
+        add(selectedPhaseDefId);
+        selectedPhaseDefId
+            .addValidationListener(new NotNullValidationListener());
 
         final BoxPanel buttons = new BoxPanel(BoxPanel.HORIZONTAL);
-        m_deleteWidget = new Submit("delete");
-        m_deleteWidget.setButtonLabel("Delete");
-        m_deleteWidget.setClassAttr("deletePhase");
-        buttons.add(m_deleteWidget);
+        deleteWidget = new Submit("delete",
+                                  new GlobalizedMessage(
+                                      "cms.ui.lifecycle.phase.delete_submit",
+                                      CmsConstants.CMS_BUNDLE));
+        deleteWidget.setClassAttr("deletePhase");
+        buttons.add(deleteWidget);
 
-        m_cancelWidget = new Submit("cancel");
-        m_cancelWidget.setButtonLabel("Cancel");
-        m_cancelWidget.setClassAttr("canceldeletePhase");
-        buttons.add(m_cancelWidget);
+        cancelWidget = new Submit("cancel",
+                                  new GlobalizedMessage(
+                                      "cms.ui.lifecycle.phase.delete_cancel",
+                                      CmsConstants.CMS_BUNDLE));
+        cancelWidget.setClassAttr("canceldeletePhase");
+        buttons.add(cancelWidget);
 
         add(buttons, ColumnPanel.CENTER | ColumnPanel.FULL_WIDTH);
 
@@ -99,7 +105,7 @@ class DeletePhaseForm extends CMSForm
      */
     @Override
     public boolean isCancelled(final PageState state) {
-        return m_cancelWidget.isSelected(state);
+        return cancelWidget.isSelected(state);
     }
 
     /**
@@ -112,8 +118,9 @@ class DeletePhaseForm extends CMSForm
     @Override
     public final void process(final FormSectionEvent event)
         throws FormProcessException {
+
         final FormData data = event.getFormData();
-        final Long key = (Long) data.get(m_id.getName());
+        final Long key = (Long) data.get(selectedPhaseDefId.getName());
 
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final PhaseDefinititionRepository phaseDefRepo = cdiUtil.findBean(
@@ -138,9 +145,10 @@ class DeletePhaseForm extends CMSForm
         final FormData data = event.getFormData();
         final PageState state = event.getPageState();
 
-        final Long id = m_phase.getPhase(state).getDefinitionId();
+        final Long phaseDefId = selectedPhaseDef.getPhase(state)
+            .getDefinitionId();
 
-        data.put(m_id.getName(), id);
+        data.put(selectedPhaseDefId.getName(), phaseDefId);
     }
 
 }

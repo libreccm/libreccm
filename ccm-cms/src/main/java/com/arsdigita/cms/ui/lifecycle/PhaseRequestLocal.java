@@ -23,10 +23,14 @@ import com.arsdigita.bebop.RequestLocal;
 
 import org.librecms.lifecycle.PhaseDefinition;
 
+import java.util.Optional;
+
 public abstract class PhaseRequestLocal extends RequestLocal {
 
 
     public final PhaseDefinition getPhase(final PageState state) {
-        return (PhaseDefinition) get(state);
+        @SuppressWarnings("unchecked")
+        final Optional<PhaseDefinition> phaseDef = (Optional<PhaseDefinition>) get(state);
+        return phaseDef.get();
     }
 }

@@ -23,11 +23,19 @@ import com.arsdigita.bebop.RequestLocal;
 
 import org.librecms.lifecycle.LifecycleDefinition;
 
+import java.util.Optional;
+
 public abstract class LifecycleDefinitionRequestLocal extends RequestLocal {
 
     public final LifecycleDefinition getLifecycleDefinition(
         final PageState state) {
-        return (LifecycleDefinition) get(state);
+
+        @SuppressWarnings("unchecked")
+        final Optional<LifecycleDefinition> definition
+                                                = (Optional<LifecycleDefinition>) get(
+                state);
+
+        return definition.get();
     }
 
 }

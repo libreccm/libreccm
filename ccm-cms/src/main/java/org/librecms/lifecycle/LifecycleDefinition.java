@@ -195,15 +195,11 @@ public class LifecycleDefinition implements Serializable {
                                  + "definitionId = %d, "
                                  + "label = %s, "
                                  + "description = %s, "
-                                 + "defaultListener = \"%s\", "
-                                 + "phaseDefinitions = { %s }%s"
                                  + " }",
                              super.toString(),
                              definitionId,
                              Objects.toString(label),
                              Objects.toString(description),
-                             defaultListener,
-                             Objects.toString(phaseDefinitions),
                              data);
     }
 

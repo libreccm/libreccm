@@ -24,18 +24,9 @@ import com.arsdigita.bebop.SingleSelectionModel;
 import com.arsdigita.bebop.event.FormProcessListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.cms.CMS;
-import com.arsdigita.kernel.KernelConfig;
 
-import org.apache.logging.log4j.LogManager;
-import org.librecms.contentsection.ContentSection;
 import org.librecms.lifecycle.LifecycleDefinition;
-import org.apache.logging.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.configuration.ConfigurationManager;
-import org.librecms.contentsection.ContentSectionManager;
-import org.librecms.lifecycle.LifecycleDefinitionRepository;
-
-import java.util.Locale;
 
 /**
  * @author Michael Pih
@@ -46,16 +37,15 @@ import java.util.Locale;
  */
 class LifecycleAddForm extends BaseLifecycleForm {
 
-    private static final Logger LOGGER = LogManager.getLogger(LifecycleAddForm.class);
+    private final SingleSelectionModel<Long> selectedLifecycle;
 
-    private final SingleSelectionModel<Long> m_model;
-
-    LifecycleAddForm(final SingleSelectionModel<Long> model) {
+    LifecycleAddForm(final SingleSelectionModel<Long> selectedLifecycle) {
         super("LifecycleDefinition", gz("cms.ui.lifecycle.add"));
 
-        m_model = model;
+        this.selectedLifecycle = selectedLifecycle;
 
-        m_name.addValidationListener(new NameUniqueListener(null));
+        getLifecycleName().addValidationListener(
+            new LifecycleNameUniqueListener(this));
 
         addProcessListener(new ProcessListener());
     }
@@ -63,35 +53,22 @@ class LifecycleAddForm extends BaseLifecycleForm {
     private class ProcessListener implements FormProcessListener {
 
         @Override
-        public final void process(final FormSectionEvent e)
+        public final void process(final FormSectionEvent event)
             throws FormProcessException {
-            final PageState state = e.getPageState();
+
+            final PageState state = event.getPageState();
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final ConfigurationManager confManager = cdiUtil.findBean(
-                ConfigurationManager.class);
-            final LifecycleDefinitionRepository lifecycleDefRepo = cdiUtil.findBean(
-                LifecycleDefinitionRepository.class);
-            final ContentSectionManager sectionManager = cdiUtil.findBean(
-                ContentSectionManager.class);
-            final KernelConfig kernelConfig = confManager.findConfiguration(
-                KernelConfig.class);
-            final Locale defaultLocale = kernelConfig.getDefaultLocale();
+            final LifecycleAdminPaneController controller = cdiUtil
+                .findBean(LifecycleAdminPaneController.class);
 
-            final LifecycleDefinition definition = new LifecycleDefinition();
+            final LifecycleDefinition definition = controller
+                .createLifecycleDefinition(
+                    CMS.getContext().getContentSection(),
+                    (String) getLifecycleName().getValue(state),
+                    (String) getLifecycleDescription().getValue(state));
 
-            definition.getLabel().addValue(defaultLocale,
-                                           (String) m_name.getValue(state));
-            definition.getDescription().addValue(
-                defaultLocale,
-                (String) m_description.getValue(state));
-            lifecycleDefRepo.save(definition);
-
-            final ContentSection section = CMS.getContext().getContentSection();
-            sectionManager.addLifecycleDefinitionToContentSection(definition,
-                                                                  section);
-
-            m_model.setSelectedKey(state, 
-                                   definition.getDefinitionId());
+            selectedLifecycle.setSelectedKey(state,
+                                             definition.getDefinitionId());
         }
 
     }
