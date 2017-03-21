@@ -26,6 +26,7 @@ import org.libreccm.security.PermissionChecker;
 import org.libreccm.security.PermissionManager;
 import org.libreccm.security.Role;
 import org.librecms.contentsection.ContentSection;
+import org.librecms.contentsection.ContentSectionRepository;
 import org.librecms.contentsection.ContentType;
 import org.librecms.contentsection.ContentTypeRepository;
 
@@ -50,6 +51,9 @@ public class TypePermissionsTableController {
     private PermissionManager permissionManager;
 
     @Inject
+    private ContentSectionRepository sectionRepo;
+
+    @Inject
     private ContentTypeRepository typeRepo;
 
     @Transactional(Transactional.TxType.REQUIRED)
@@ -63,9 +67,16 @@ public class TypePermissionsTableController {
     @Transactional(Transactional.TxType.REQUIRED)
     public List<RowData<Long>> retrieveTypePermissions(
         final long typeId, final ContentSection section) {
-        final ContentType type = typeRepo.findById(typeId).get();
 
-        final List<Role> roles = section.getRoles();
+        final ContentType type = typeRepo.findById(typeId).get();
+        final ContentSection contentSection = sectionRepo
+            .findById(section.getObjectId())
+            .orElseThrow(() -> new IllegalArgumentException(String.format(
+            "No ContentSection with ID %d in the database. "
+                + "Where did that Id come from?",
+            section.getObjectId())));
+
+        final List<Role> roles = contentSection.getRoles();
 
         return roles.stream()
             .map(role -> retrievePermissionsForRole(type, role))
@@ -88,7 +99,7 @@ public class TypePermissionsTableController {
     }
 
     public void toggleTypeUsePermission(final ContentType type,
-                                     final Role role) {
+                                        final Role role) {
         if (permissionChecker.isPermitted(TypePrivileges.USE_TYPE, type, role)) {
             permissionManager.revokePrivilege(TypePrivileges.USE_TYPE,
                                               role,

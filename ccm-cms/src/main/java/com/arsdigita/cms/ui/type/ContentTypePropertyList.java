@@ -30,19 +30,23 @@ import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.toolbox.ui.Property;
 import com.arsdigita.toolbox.ui.PropertyList;
 
+import org.libreccm.cdi.utils.CdiUtil;
+
 import java.util.Locale;
 
 import org.libreccm.workflow.WorkflowTemplate;
 import org.librecms.CmsConstants;
+import org.librecms.contenttypes.ContentTypeInfo;
+import org.librecms.contenttypes.ContentTypesManager;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.ResourceBundle;
 
 /**
- * This component displays basic attributes of a content type
- * including:
+ * This component displays basic attributes of a content type including:
  *
- * label, description, default lifecycle definition, default workflow
- * template
+ * label, description, default lifecycle definition, default workflow template
  *
  * @author Michael Pih
  * @author <a href="mailto:jross@redhat.com">Justin Ross</a>
@@ -60,16 +64,26 @@ class ContentTypePropertyList extends PropertyList {
     protected final List<Property> properties(final PageState state) {
         final List<Property> props = super.properties(state);
         final ContentType type = m_type.getContentType(state);
-        final ContentSection section =
-            CMS.getContext().getContentSection();
+        final ContentSection section = CMS.getContext().getContentSection();
+
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final ContentTypesManager typesManager = cdiUtil
+            .findBean(ContentTypesManager.class);
+        final ContentTypeInfo typeInfo = typesManager.getContentTypeInfo(type);
 
         final KernelConfig kernelConfig = KernelConfig.getConfig();
         final Locale defaultLocale = kernelConfig.getDefaultLocale();
-        
+
+        final ResourceBundle labelBundle = ResourceBundle
+            .getBundle(typeInfo.getLabelBundle());
+        final ResourceBundle descBundle = ResourceBundle
+            .getBundle(typeInfo.getDescriptionBundle());
+
         props.add(new Property(gz("cms.ui.name"),
-                               type.getLabel().getValue(defaultLocale)));
+                               labelBundle.getString(typeInfo.getLabelKey())));
         props.add(new Property(gz("cms.ui.description"),
-                               type.getDescription().getValue(defaultLocale)));
+                               descBundle
+                                   .getString(typeInfo.getDescriptionKey())));
 //        props.add(new Property(gz("cms.ui.type.parent"),
 //                               type.getParent().orElse(null)));
         props.add(new Property(gz("cms.ui.type.lifecycle"),
@@ -84,27 +98,37 @@ class ContentTypePropertyList extends PropertyList {
                                 final ContentType type) {
         final KernelConfig kernelConfig = KernelConfig.getConfig();
         final Locale defaultLocale = kernelConfig.getDefaultLocale();
-        
-        final LifecycleDefinition cycle = type.getDefaultLifecycle();
 
-        if (cycle == null) {
-            return lz("cms.ui.type.lifecycle.none");
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final ContentTypeAdminPaneController controller = cdiUtil
+            .findBean(ContentTypeAdminPaneController.class);
+
+        final Optional<String> label = controller
+            .getLifecycleDefinitionLabel(type, defaultLocale);
+
+        if (label.isPresent()) {
+            return label.get();
         } else {
-            return cycle.getLabel().getValue(defaultLocale);
+            return lz("cms.ui.type.lifecycle.none");
         }
     }
 
     private String getWorkflow(final ContentSection section,
                                final ContentType type) {
-         final KernelConfig kernelConfig = KernelConfig.getConfig();
+        final KernelConfig kernelConfig = KernelConfig.getConfig();
         final Locale defaultLocale = kernelConfig.getDefaultLocale();
-        
-        final WorkflowTemplate template = type.getDefaultWorkflow();
 
-        if (template == null) {
-            return lz("cms.ui.type.workflow.none");
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final ContentTypeAdminPaneController controller = cdiUtil
+            .findBean(ContentTypeAdminPaneController.class);
+
+        final Optional<String> name = controller
+            .getWorkflowTemplateName(type, defaultLocale);
+
+        if (name.isPresent()) {
+            return name.get();
         } else {
-            return template.getName().getValue(defaultLocale);
+            return lz("cms.ui.type.workflow.none");
         }
     }
 
@@ -115,4 +139,5 @@ class ContentTypePropertyList extends PropertyList {
     private static String lz(final String key) {
         return (String) gz(key).localize();
     }
+
 }

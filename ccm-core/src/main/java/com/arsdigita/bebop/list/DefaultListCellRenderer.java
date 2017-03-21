@@ -30,7 +30,7 @@ import com.arsdigita.bebop.PageState;
  * explicitly.
  *
  * @author David Lutterkort
- * @version $Id$ */
+ */
 public class DefaultListCellRenderer implements ListCellRenderer {
 
     /**
@@ -40,15 +40,21 @@ public class DefaultListCellRenderer implements ListCellRenderer {
      * <code>isSelected</code> is not true, returns a
      * <code>ControlLink</code> labelled with
      * <code>value.toString()</code>. When the user clicks on the link, that
-     * item becomes selected.  */
-    public Component getComponent(List list, PageState state, Object value,
-                                  String key, int index, boolean isSelected)
+     * item becomes selected.  
+     */
+    @Override
+    public Component getComponent(final List list, 
+                                  final PageState state, 
+                                  final Object value,
+                                  final String key, 
+                                  final int index, 
+                                  final boolean isSelected)
     {
-        Label l = new Label(value.toString());
+        final Label label = new Label(value.toString());
         if (isSelected) {
-            l.setFontWeight(Label.BOLD);
-            return l;
+            label.setFontWeight(Label.BOLD);
+            return label;
         }
-        return new ControlLink(l);
+        return new ControlLink(label);
     }
 }

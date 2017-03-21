@@ -18,9 +18,6 @@
  */
 package org.librecms.contentsection;
 
-import com.arsdigita.globalization.GlobalizedMessage;
-
-import org.libreccm.l10n.GlobalizationHelper;
 import org.librecms.contentsection.privileges.TypePrivileges;
 
 import org.libreccm.security.AuthorizationRequired;
@@ -29,11 +26,7 @@ import org.libreccm.security.RequiresPrivilege;
 import org.libreccm.security.Role;
 import org.libreccm.workflow.WorkflowTemplate;
 import org.librecms.contentsection.privileges.AdminPrivileges;
-import org.librecms.contenttypes.Article;
 import org.librecms.lifecycle.LifecycleDefinition;
-
-import java.util.Objects;
-import java.util.ResourceBundle;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
