@@ -18,15 +18,21 @@
  */
 package com.arsdigita.cms.ui.type;
 
-import com.arsdigita.kernel.KernelConfig;
-
-import org.libreccm.configuration.ConfigurationManager;
-import org.libreccm.l10n.GlobalizationHelper;
+import org.libreccm.workflow.WorkflowTemplate;
 import org.librecms.contentsection.ContentSection;
+import org.librecms.contentsection.ContentSectionRepository;
 import org.librecms.contentsection.ContentType;
 import org.librecms.contentsection.ContentTypeRepository;
+import org.librecms.contenttypes.ContentTypeInfo;
+import org.librecms.contenttypes.ContentTypesManager;
+import org.librecms.lifecycle.LifecycleDefinition;
 
+import java.nio.charset.IllegalCharsetNameException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
@@ -42,16 +48,16 @@ import javax.transaction.Transactional;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-public class ContentTypeAdminPaneController {
+class ContentTypeAdminPaneController {
 
     @Inject
     private ContentTypeRepository typeRepo;
 
     @Inject
-    private GlobalizationHelper globalizationHelper;
+    private ContentTypesManager typesManager;
 
     @Inject
-    private ConfigurationManager confManager;
+    private ContentSectionRepository sectionRepo;
 
     @Transactional(Transactional.TxType.REQUIRED)
     public List<String[]> getTypeList(final ContentSection section) {
@@ -65,19 +71,116 @@ public class ContentTypeAdminPaneController {
     private String[] generateListEntry(final ContentType type) {
         final String[] entry = new String[2];
 
-        final KernelConfig kernelConfig = confManager.findConfiguration(
-            KernelConfig.class);
+        entry[0] = Long.toString(type.getObjectId());
 
-        entry[0] = type.getUuid();
-        // Enable if admin UI has fields for editing localised labels...
-//        if (type.getLabel().hasValue(globalizationHelper.getNegotiatedLocale())) {
-//            entry[1] = type.getLabel().getValue(globalizationHelper
-//                .getNegotiatedLocale());
-//        } else {
-            entry[1] = type.getLabel().getValue(kernelConfig.getDefaultLocale());
-//        }
-        
+        final ContentTypeInfo typeInfo = typesManager
+            .getContentTypeInfo(type.getContentItemClass());
+        final ResourceBundle labelBundle = ResourceBundle
+            .getBundle(typeInfo.getLabelBundle());
+        final String labelKey = typeInfo.getLabelKey();
+
+        entry[1] = labelBundle.getString(labelKey);
+
         return entry;
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public List<ContentTypeInfo> getNotAssociatedContentTypes(
+        final ContentSection section) {
+
+        final List<ContentTypeInfo> availableTypes = typesManager
+            .getAvailableContentTypes();
+        final List<ContentTypeInfo> associatedTypes = typeRepo
+            .findByContentSection(section)
+            .stream()
+            .map(type -> typesManager.getContentTypeInfo(type))
+            .collect(Collectors.toList());
+
+        return availableTypes
+            .stream()
+            .filter(typeInfo -> !associatedTypes.contains(typeInfo))
+            .collect(Collectors.toList());
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public LifecycleDefinition getLifecycleDefinition(final ContentType type) {
+
+        final ContentType contentType = typeRepo
+            .findById(type.getObjectId())
+            .orElseThrow(() -> new IllegalCharsetNameException(String.format(
+            "No ContentType with Id %d in the database. "
+                + "Where did that ID come from?",
+            type.getObjectId())));
+
+        return contentType.getDefaultLifecycle();
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public Optional<String> getLifecycleDefinitionLabel(final ContentType type,
+                                                        final Locale locale) {
+
+        final LifecycleDefinition lifecycleDefinition = getLifecycleDefinition(
+            type);
+
+        if (lifecycleDefinition == null) {
+            return Optional.empty();
+        } else {
+            return Optional.of(lifecycleDefinition.getLabel().getValue(locale));
+        }
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public WorkflowTemplate getWorkflowTemplate(final ContentType type) {
+
+        final ContentType contentType = typeRepo
+            .findById(type.getObjectId())
+            .orElseThrow(() -> new IllegalCharsetNameException(String.format(
+            "No ContentType with Id %d in the database. "
+                + "Where did that ID come from?",
+            type.getObjectId())));
+
+        return contentType.getDefaultWorkflow();
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public Optional<String> getWorkflowTemplateName(final ContentType type,
+                                                    final Locale locale) {
+
+        final WorkflowTemplate workflowTemplate = getWorkflowTemplate(type);
+
+        if (workflowTemplate == null) {
+            return Optional.empty();
+        } else {
+            return Optional.of(workflowTemplate.getName().getValue(locale));
+        }
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public List<LifecycleDefinition> getLifecycleDefinitions(
+        final ContentSection section) {
+
+        final ContentSection contentSection = sectionRepo
+            .findById(section.getObjectId())
+            .orElseThrow(() -> new IllegalArgumentException(String.format(
+            "No ContentSection with ID %d in the database. "
+                + "Where did that ID come from?",
+            section.getObjectId())));
+
+        return new ArrayList<>(contentSection.getLifecycleDefinitions());
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public List<WorkflowTemplate> getWorkflowTemplates(
+        final ContentSection section) {
+
+        final ContentSection contentSection = sectionRepo
+            .findById(section.getObjectId())
+            .orElseThrow(() -> new IllegalArgumentException(String.format(
+            "No ContentSection with ID %d in the database. "
+                + "Where did that ID come from?",
+            section.getObjectId())));
+
+        return new ArrayList<>(contentSection.getWorkflowTemplates());
     }
 
 }
