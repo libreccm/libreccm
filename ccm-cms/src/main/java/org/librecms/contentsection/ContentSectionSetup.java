@@ -42,6 +42,7 @@ import org.librecms.dispatcher.MultilingualItemResolver;
 import java.util.Arrays;
 
 import org.librecms.contentsection.privileges.TypePrivileges;
+import org.librecms.contenttypes.ContentTypeDescription;
 
 import java.util.Locale;
 
@@ -348,6 +349,7 @@ public class ContentSectionSetup extends AbstractCcmApplicationSetup {
             final ContentType type = new ContentType();
             type.setContentSection(section);
             type.setUuid(UUID.randomUUID().toString());
+            type.setDisplayName(clazz.getSimpleName());
             type.setContentItemClass(clazz.getName());
             getEntityManager().persist(type);
             section.addContentType(type);

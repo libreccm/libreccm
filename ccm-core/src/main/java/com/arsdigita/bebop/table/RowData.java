@@ -37,10 +37,10 @@ public class RowData<K> {
     
     private K rowKey;
     
-    private final List<String> cols;
+    private final String[] cols;
     
     public RowData(final int numCols) {
-        cols = new ArrayList<>(numCols);
+        cols = new String[numCols];
     }
     
     public K getRowKey() {
@@ -52,11 +52,11 @@ public class RowData<K> {
     }
     
     public String getColData(final int colIndex) {
-        return cols.get(colIndex);
+        return cols[colIndex];
     }
     
     public void setColData(final int colIndex, final String data) {
-        cols.set(colIndex, data);
+        cols[colIndex] = data;
     }
     
 }

@@ -25,6 +25,7 @@ import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.SimpleContainer;
 import com.arsdigita.bebop.SingleSelectionModel;
+import com.arsdigita.bebop.Text;
 import com.arsdigita.bebop.event.FormInitListener;
 import com.arsdigita.bebop.event.FormProcessListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
@@ -34,12 +35,8 @@ import com.arsdigita.bebop.form.Hidden;
 import com.arsdigita.bebop.form.Option;
 import com.arsdigita.bebop.form.SingleSelect;
 import com.arsdigita.bebop.form.Submit;
-import com.arsdigita.bebop.form.TextArea;
-import com.arsdigita.bebop.form.TextField;
-import com.arsdigita.bebop.parameters.BigDecimalParameter;
+import com.arsdigita.bebop.parameters.LongParameter;
 import com.arsdigita.bebop.parameters.NotNullValidationListener;
-import com.arsdigita.bebop.parameters.StringLengthValidationListener;
-import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.cms.CMS;
 
 import org.librecms.contentsection.ContentSection;
@@ -48,6 +45,7 @@ import org.librecms.lifecycle.LifecycleDefinition;
 import org.libreccm.workflow.WorkflowTemplate;
 
 import com.arsdigita.cms.ui.CMSForm;
+import com.arsdigita.cms.ui.GlobalNavigation;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.util.UncheckedWrapperException;
@@ -66,8 +64,6 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.TooManyListenersException;
 
-import javax.persistence.NoResultException;
-
 /**
  * This class contains a form component to edit a content type
  *
@@ -80,12 +76,12 @@ public class EditType extends CMSForm
 
     private static final Logger LOGGER = LogManager.getLogger(EditType.class);
 
-    private final SingleSelectionModel<ContentType> m_types;
+    private final SingleSelectionModel<String> m_types;
 
     // Form widgets
     private Hidden m_id;
-    private TextField m_label;
-    private TextArea m_description;
+//    private TextField m_label;
+//    private TextArea m_description;
     private SingleSelect m_lcSelect;
     private SingleSelect m_wfSelect;
     private Submit m_submit;
@@ -95,36 +91,35 @@ public class EditType extends CMSForm
      * @param model The content type selection model. This tells the form which
      *              content type is selected.
      */
-    public EditType(final SingleSelectionModel<ContentType> model) {
+    public EditType(final SingleSelectionModel<String> model) {
         super("EditContentType");
 
         m_types = model;
 
-        m_id = new Hidden(new BigDecimalParameter("id"));
+        m_id = new Hidden(new LongParameter("id"));
         m_id.addValidationListener(new NotNullValidationListener());
         add(m_id);
 
-        add(new Label(new GlobalizedMessage("cms.ui.type.label",
-                                            CmsConstants.CMS_BUNDLE)));
-        m_label = new TextField(new StringParameter("label"));
-        m_label.addValidationListener(new NotNullValidationListener());
-        m_label.setSize(40);
-        m_label.setMaxLength(1000);
-        add(m_label);
-
-        add(new Label(new GlobalizedMessage("cms.ui.description",
-                                            CmsConstants.CMS_BUNDLE)));
-        m_description = new TextArea(new StringParameter("description"));
-        m_description.addValidationListener(
-            new StringLengthValidationListener(4000));
-        m_description.setCols(40);
-        m_description.setRows(5);
-        m_description.setWrap(TextArea.SOFT);
-        add(m_description);
-
+//        add(new Label(new GlobalizedMessage("cms.ui.type.label",
+//                                            CmsConstants.CMS_BUNDLE)));
+//        m_label = new TextField(new StringParameter("label"));
+//        m_label.addValidationListener(new NotNullValidationListener());
+//        m_label.setSize(40);
+//        m_label.setMaxLength(1000);
+//        add(m_label);
+//
+//        add(new Label(new GlobalizedMessage("cms.ui.description",
+//                                            CmsConstants.CMS_BUNDLE)));
+//        m_description = new TextArea(new StringParameter("description"));
+//        m_description.addValidationListener(
+//            new StringLengthValidationListener(4000));
+//        m_description.setCols(40);
+//        m_description.setRows(5);
+//        m_description.setWrap(TextArea.SOFT);
+//        add(m_description);
         add(new Label(new GlobalizedMessage("cms.ui.type.lifecycle",
                                             CmsConstants.CMS_BUNDLE)));
-        m_lcSelect = new SingleSelect(new BigDecimalParameter("lifecycle"));
+        m_lcSelect = new SingleSelect(new LongParameter("lifecycle"));
         try {
             m_lcSelect.addPrintListener(new SelectLifecyclePrintListener());
         } catch (TooManyListenersException e) {
@@ -135,7 +130,7 @@ public class EditType extends CMSForm
 
         add(new Label(new GlobalizedMessage("cms.ui.type.workflow",
                                             CmsConstants.CMS_BUNDLE)));
-        m_wfSelect = new SingleSelect(new BigDecimalParameter("workflow"));
+        m_wfSelect = new SingleSelect(new LongParameter("workflow"));
         try {
             m_wfSelect.addPrintListener(new SelectWorkflowPrintListener());
         } catch (TooManyListenersException e) {
@@ -195,14 +190,14 @@ public class EditType extends CMSForm
 
         final ContentType type = getContentType(state);
         final long typeId = type.getObjectId();
-        final String label = type.getLabel().getValue(kernelConfig
-            .getDefaultLocale());
-        final String description = type.getDescription().getValue(kernelConfig
-            .getDefaultLocale());
+//        final String label = type.getLabel().getValue(kernelConfig
+//            .getDefaultLocale());
+//        final String description = type.getDescription().getValue(kernelConfig
+//            .getDefaultLocale());
 
         data.put(m_id.getName(), typeId);
-        data.put(m_label.getName(), label);
-        data.put(m_description.getName(), description);
+//        data.put(m_label.getName(), label);
+//        data.put(m_description.getName(), description);
 
         final LifecycleDefinition cycle = type.getDefaultLifecycle();
         if (cycle != null) {
@@ -220,7 +215,7 @@ public class EditType extends CMSForm
      * model.
      */
     private ContentType getContentType(final PageState state) {
-        final String key = m_types.getSelectedKey(state).toString();
+        final String key = (String) m_types.getSelectedKey(state);
 
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final ContentTypeRepository typeRepo = cdiUtil.findBean(
@@ -231,10 +226,10 @@ public class EditType extends CMSForm
             result = typeRepo.findById(Long.parseLong(key));
         } catch (NumberFormatException ex) {
             throw new UncheckedWrapperException(String.format(
-                "The provided key \"%s\" is not a long.", key), 
-                ex);
+                "The provided key \"%d\" is not a long.", key),
+                                                ex);
         }
-        
+
         if (result.isPresent()) {
             return result.get();
         } else {
@@ -260,8 +255,8 @@ public class EditType extends CMSForm
 
         // Read form variables.
         final Long key = (Long) data.get(m_id.getName());
-        final String label = (String) data.get(m_label.getName());
-        final String description = (String) data.get(m_description.getName());
+//        final String label = (String) data.get(m_label.getName());
+//        final String description = (String) data.get(m_description.getName());
         final Long lifecycleId = (Long) data.get(m_lcSelect.getName());
         final Long workflowId = (Long) data.get(m_wfSelect.getName());
 
@@ -284,19 +279,26 @@ public class EditType extends CMSForm
                 new Object[]{key}));
         }
 
-        final KernelConfig kernelConfig = KernelConfig.getConfig();
-
-        type.get().getLabel().addValue(kernelConfig.getDefaultLocale(), label);
-        type.get().getDescription().addValue(kernelConfig.getDefaultLocale(),
-                                       description);
-
+//        final KernelConfig kernelConfig = KernelConfig.getConfig();
+//        type.get().getLabel().addValue(kernelConfig.getDefaultLocale(), label);
+//        type.get().getDescription().addValue(kernelConfig.getDefaultLocale(),
+//                                       description);
         typeRepo.save(type.get());
 
         // Handle default lifecycle and workflow.
-        final LifecycleDefinition defaultLifecycle = lifecycleDefRepo.findById(
-            lifecycleId).get();
-        final WorkflowTemplate defaultWorkflow = workflowTemplateRepo.findById(
-            workflowId).get();
+        final LifecycleDefinition defaultLifecycle;
+        if (lifecycleId == 0) {
+            defaultLifecycle = null;
+        } else {
+            defaultLifecycle = lifecycleDefRepo.findById(lifecycleId).get();
+        }
+        final WorkflowTemplate defaultWorkflow;
+        if (workflowId == 0) {
+             defaultWorkflow = null;
+        } else {
+            defaultWorkflow = workflowTemplateRepo.findById(workflowId).get();
+        }
+        
 
         typeManager.setDefaultLifecycle(type.get(), defaultLifecycle);
         typeManager.setDefaultWorkflow(type.get(), defaultWorkflow);
@@ -316,19 +318,26 @@ public class EditType extends CMSForm
                 .getTarget();
             lifecycleSelect.clearOptions();
 
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final ContentTypeAdminPaneController controller = cdiUtil
+                .findBean(ContentTypeAdminPaneController.class);
+
             // Get the current content section
             ContentSection section = CMS.getContext().getContentSection();
 
-            lifecycleSelect.addOption(new Option("", "-- select --"));
+            lifecycleSelect.addOption(new Option(
+                "0",
+                new Label(new GlobalizedMessage("cms.ui.type.lifecycle.select",
+                                                CmsConstants.CMS_BUNDLE))));
 
-            final List<LifecycleDefinition> cycles = section
-                .getLifecycleDefinitions();
+            final List<LifecycleDefinition> cycles = controller
+                .getLifecycleDefinitions(section);
             final Locale defaultLocale = KernelConfig.getConfig()
                 .getDefaultLocale();
             cycles.forEach(cycle -> {
                 lifecycleSelect.addOption(
                     new Option(Long.toString(cycle.getDefinitionId()),
-                               cycle.getLabel().getValue(defaultLocale)));
+                               new Text(cycle.getLabel().getValue(defaultLocale))));
             });
         }
 
@@ -349,10 +358,17 @@ public class EditType extends CMSForm
             // Get the current content section
             ContentSection section = CMS.getContext().getContentSection();
 
-            workflowSelect.addOption(new Option("", "-- select --"));
+            workflowSelect.addOption(new Option(
+                "0",
+                new Label(new GlobalizedMessage("cms.ui.type.workflow.select",
+                                                CmsConstants.CMS_BUNDLE))));
 
-            final List<WorkflowTemplate> templates = section
-                .getWorkflowTemplates();
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final ContentTypeAdminPaneController controller = cdiUtil
+                .findBean(ContentTypeAdminPaneController.class);
+
+            final List<WorkflowTemplate> templates = controller
+                .getWorkflowTemplates(section);
             final Locale defaultLocale = KernelConfig.getConfig()
                 .getDefaultLocale();
             templates.forEach(template -> {
