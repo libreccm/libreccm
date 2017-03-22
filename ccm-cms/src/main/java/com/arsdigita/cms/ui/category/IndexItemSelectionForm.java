@@ -55,7 +55,7 @@ import java.util.Optional;
 public class IndexItemSelectionForm extends CMSForm {
 
     private static final Logger LOGGER = LogManager.getLogger(
-            CategoryEditForm.class);
+            IndexItemSelectionForm.class);
 
     private final CategoryRequestLocal m_category;
     private RadioGroup m_options;
@@ -159,31 +159,28 @@ public class IndexItemSelectionForm extends CMSForm {
         addSubmissionListener(new FormSecurityListener(AdminPrivileges.ADMINISTER_CATEGORIES));
 
         // Process listener
-        addProcessListener(new FormProcessListener() {
-            public void process(FormSectionEvent event)
-                    throws FormProcessException {
-                PageState state = event.getPageState();
-                FormData data = event.getFormData();
-                ParameterData param = data.getParameter(m_options.getParameterModel().getName());
-                String selectedValue = (String) param.getValue();
+        addProcessListener(event -> {
+            PageState state = event.getPageState();
+            FormData data = event.getFormData();
+            ParameterData param = data.getParameter(m_options.getParameterModel().getName());
+            String selectedValue = (String) param.getValue();
 
-                Category category
-                        = getCategory(event.getPageState());
+            Category category
+                    = getCategory(event.getPageState());
 
-                if (selectedValue != null) {
-                    Optional<ContentItem> optionalItem = contentItemRepository.findById(Long.parseLong(selectedValue));
-                    if (optionalItem.isPresent()) {
-                        ContentItem item = contentItemManager.getDraftVersion(optionalItem.get(), ContentItem.class);
-                        try {
-                            categoryManager.setIndexObject(category, item);
-                            categoryRepository.save(category);
-                        } catch (ObjectNotAssignedToCategoryException e) {
-                            throw new FormProcessException(e);
-                        }
+            if (selectedValue != null) {
+                Optional<ContentItem> optionalItem = contentItemRepository.findById(Long.parseLong(selectedValue));
+                if (optionalItem.isPresent()) {
+                    ContentItem item = contentItemManager.getDraftVersion(optionalItem.get(), ContentItem.class);
+                    try {
+                        categoryManager.setIndexObject(category, item);
+                        categoryRepository.save(category);
+                    } catch (ObjectNotAssignedToCategoryException e) {
+                        throw new FormProcessException(e);
                     }
                 }
-
             }
+
         });
     }
 
@@ -205,7 +202,6 @@ public class IndexItemSelectionForm extends CMSForm {
      */
     protected Category getCategory(PageState state) {
         Category category = m_category.getCategory(state);
-        Assert.exists(category);
         return category;
     }
 
