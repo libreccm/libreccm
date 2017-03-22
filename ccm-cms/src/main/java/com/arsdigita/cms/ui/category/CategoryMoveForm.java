@@ -65,8 +65,8 @@ public class CategoryMoveForm extends CMSForm {
         setMethod(Form.POST);
         this.selectedCategory = selectedCategory;
 
-        //final Label header = new Label(GlobalizationUtil.globalize("cms.ui.category.move"));
-        final Label header = new Label();
+        final Label header = new Label(GlobalizationUtil.globalize("cms.ui.category.move"));
+        //final Label header = new Label();
         header.addPrintListener(new PrintListener() {
             @Override
             public void prepare(final PrintEvent event) {

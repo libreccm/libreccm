@@ -31,10 +31,12 @@ import org.libreccm.categorization.CategoryTreeModelLite;
  * Lists category tree.
  *
  * @author Tri Tran (tri@arsdigita.com)
- * @version $Id: CategoryTreeModelBuilder.java 1942 2009-05-29 07:53:23Z terry $
+ * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  */
 class CategoryTreeModelBuilder extends LockableImpl
         implements TreeModelBuilder {
+
+    private static String DEFAULT_USE_CONTEXT = "<default>";
 
     private SingleSelectionModel m_contextModel = null;
 
@@ -59,7 +61,7 @@ class CategoryTreeModelBuilder extends LockableImpl
         String context = null;
         if (m_contextModel != null) {
             context = (String) m_contextModel.getSelectedKey(state);
-            if ((CategoryUseContextModelBuilder.DEFAULT_USE_CONTEXT).equals(context)) {
+            if ((DEFAULT_USE_CONTEXT).equals(context)) {
                 context = null;
             }
         }
