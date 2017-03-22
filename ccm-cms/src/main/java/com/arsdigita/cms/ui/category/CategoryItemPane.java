@@ -18,17 +18,7 @@
  */
 package com.arsdigita.cms.ui.category;
 
-import com.arsdigita.bebop.ActionLink;
-import com.arsdigita.bebop.BaseLink;
-import com.arsdigita.bebop.Component;
-import com.arsdigita.bebop.Form;
-import com.arsdigita.bebop.Label;
-import com.arsdigita.bebop.Link;
-import com.arsdigita.bebop.Page;
-import com.arsdigita.bebop.PageState;
-import com.arsdigita.bebop.ParameterSingleSelectionModel;
-import com.arsdigita.bebop.SimpleContainer;
-import com.arsdigita.bebop.SingleSelectionModel;
+import com.arsdigita.bebop.*;
 import com.arsdigita.bebop.event.ActionEvent;
 import com.arsdigita.bebop.event.ActionListener;
 import com.arsdigita.bebop.event.ChangeEvent;
@@ -73,6 +63,7 @@ import org.libreccm.security.User;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemManager;
 import org.librecms.contentsection.privileges.AdminPrivileges;
+import org.librecms.contentsection.privileges.ItemPrivileges;
 
 /**
  * Edits a single category.
@@ -129,8 +120,8 @@ class CategoryItemPane extends BaseItemPane {
         
         //Move link
         final ActionLink moveLink = new MoveLink(new Label(gz("cms.ui.category.move")));
-        //final Form moveForm = new CategoryMoveForm(m_category, contextModel);
-        //add(moveForm);
+        final Form moveForm = new CategoryMoveForm(m_category, contextModel);
+        add(moveForm);
 
         ViewItemLink viewIndexLink = new ViewItemLink(new Label(gz(
                 "cms.ui.category.view_index_item")), "");
@@ -174,13 +165,13 @@ class CategoryItemPane extends BaseItemPane {
             }
 
         };
-        /*
+
         CategoryLocalizationAddForm addCategoryLocalizationForm =
                                     new CategoryLocalizationAddForm(m_category);
         m_detailPane.add(new CategoryLocalizationSection(addCategoryLocalizationLink));
         add(addCategoryLocalizationForm);
         connect(addCategoryLocalizationLink, addCategoryLocalizationForm);
-        connect(addCategoryLocalizationForm);*/
+        connect(addCategoryLocalizationForm);
         // Quasimodo: END
 
         // Subcategories
@@ -189,11 +180,11 @@ class CategoryItemPane extends BaseItemPane {
         // Linked categories
         final ActionLink linkAddLink = new ActionLink(new Label(gz("cms.ui.category.linked_add")));
 
-        //final Form linkForm = new LinkForm(m_category);
-        //add(linkForm);
+        final Form linkForm = new LinkForm(m_category);
+        add(linkForm);
 
-        //linkAddLink.addActionListener(new NavigationListener(linkForm));
-        //linkForm.addSubmissionListener(new CancelListener(linkForm));
+        linkAddLink.addActionListener(new NavigationListener(linkForm));
+        linkForm.addSubmissionListener(new CancelListener(linkForm));
 
         m_detailPane.add(new LinkedCategorySection(linkAddLink));
 
@@ -201,13 +192,14 @@ class CategoryItemPane extends BaseItemPane {
         m_detailPane.add(new AdminVisible(new CategoryTemplateSection()));
 
         // Permissions
-        m_detailPane.add(new PermissionsSection());
+        //m_detailPane.add(new PermissionsSection());
+        m_detailPane.add(new Text("PermissionSection Placeholder"));
 
         connect(indexLink, indexForm);
         connect(indexForm);
         
-        //connect(moveLink, moveForm);
-        //connect(moveForm);
+        connect(moveLink, moveForm);
+        connect(moveForm);
 
         connect(orderItemsLink, orderItemsForm);
         connect(orderItemsForm);
@@ -644,8 +636,7 @@ class CategoryItemPane extends BaseItemPane {
             if (!indexItem.isPresent()) {
                 return false;
             } else {
-                return permissionChecker.isPermitted(AdminPrivileges.ADMINISTER_CATEGORIES, indexItem.get());
-                //return isItemEditable((ContentItem) indexItem, state);
+                return permissionChecker.isPermitted(ItemPrivileges.EDIT, indexItem.get());
             }
         }
     };
