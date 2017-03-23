@@ -24,6 +24,7 @@ import org.jboss.arquillian.junit.InSequence;
 import org.jboss.arquillian.persistence.CleanupUsingScript;
 import org.jboss.arquillian.persistence.CreateSchema;
 import org.jboss.arquillian.persistence.PersistenceTest;
+import org.jboss.arquillian.persistence.TestExecutionPhase;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -39,9 +40,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.libreccm.tests.categories.IntegrationTest;
 
-import javax.faces.bean.RequestScoped;
 import javax.inject.Inject;
-import org.jboss.arquillian.persistence.TestExecutionPhase;
 
 import static org.libreccm.testutils.DependenciesHelpers.getModuleDependencies;
 
@@ -127,79 +126,75 @@ public class CoreDataImportTest {
     // TEST SECTION
 
     @Test
-    @InSequence(105)
-    public void categoriesShouldBeImported() {
+    @InSequence(115)
+    public void  roleMembershipsShouldBeImported() {
         Assert.assertFalse(importHelper.importRoleMemberships());
     }
 
-    //@Test
+    @Test
     @InSequence(110)
-    public void categorizationsShouldBeImported() {
-        importHelper.importGroupMemberships();
+    public void groupMembershipsShouldBeImported() {
+        Assert.assertFalse(importHelper.importGroupMemberships());
     }
 
-    //@Test
+    @Test
     @InSequence(115)
-    public void usersShouldBeImported() {
-        importHelper.importGroups();
+    public void groupsShouldBeImported() {
+        Assert.assertFalse(importHelper.importGroups());
     }
 
     //@Test
     @InSequence(120)
-    public void groupsShouldBeImported() {
+    public void usersShouldBeImported() {
         importHelper.importUsers();
     }
 
     //@Test
     @InSequence(125)
-    public void groupMembershipsShouldBeImported() {
+    public void taskAssignmentsMembershipsShouldBeImported() {
         importHelper.importTaskAssignments();
     }
 
     //@Test
     @InSequence(130)
-    public void rolesShouldBeImported() {
+    public void assignableTasksShouldBeImported() {
         importHelper.importAssignableTasks();
     }
 
     //@Test
     @InSequence(135)
-    public void roleMembershipsShouldBeImported() {
+    public void workflowTemplatesShouldBeImported() {
         importHelper.importWorkflowTemplates();
     }
 
     //@Test
     @InSequence(140)
-    public void workflowTemplatesShouldBeImported() {
+    public void workflowsShouldBeImported() {
         importHelper.importWorkflows();
     }
 
-
-
-
     //@Test
     @InSequence(145)
-    public void workflowsShouldBeImported() {
+    public void categorizationsShouldBeImported() {
         importHelper.importCategorizations();
     }
 
     //@Test
     @InSequence(150)
-    public void assignableTasksShouldBeImported() {
+    public void PermissionsShouldBeImported() {
         importHelper.importPermissions();
     }
 
     //@Test
     @InSequence(155)
-    public void taskAssignmentsShouldBeImported() {
+    public void categoriesShouldBeImported() {
         importHelper.importCategories();
     }
 
     //@Test
     @InSequence(160)
-    public void permissionsShouldBeImported() {
+    public void rolesShouldBeImported() {
         importHelper.importRoles();
     }
-
 
 }

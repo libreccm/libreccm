@@ -18,22 +18,15 @@
  */
 package org.libreccm.categorization;
 
-import static org.libreccm.categorization.CategorizationConstants.*;
-import static org.libreccm.core.CoreConstants.*;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.hibernate.validator.constraints.NotBlank;
 import org.libreccm.core.CcmObject;
 import org.libreccm.l10n.LocalizedString;
 import org.libreccm.portation.Portable;
 import org.libreccm.security.RecursivePermissions;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
 
 import javax.persistence.AssociationOverride;
 import javax.persistence.Column;
@@ -54,6 +47,14 @@ import javax.validation.constraints.Pattern;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+
+import static org.libreccm.categorization.CategorizationConstants.CAT_XML_NS;
+import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 
 /**
  * The category entity represents a single category. Each category is part of a
@@ -138,6 +139,9 @@ import javax.xml.bind.annotation.XmlRootElement;
     )
 })
 @XmlRootElement(name = "category", namespace = CAT_XML_NS)
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
+                  resolver = CategoryIdResolver.class,
+                  property = "uuid")
 public class Category extends CcmObject implements Serializable, Portable {
 
     private static final long serialVersionUID = -7250208963391878547L;
@@ -218,7 +222,7 @@ public class Category extends CcmObject implements Serializable, Portable {
     @RecursivePermissions
     @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
     @XmlElementWrapper(name = "objects", namespace = CAT_XML_NS)
-    @JsonManagedReference(value = "category-categorization")
+    @JsonIgnore
     private List<Categorization> objects;
 
     /**
@@ -228,7 +232,7 @@ public class Category extends CcmObject implements Serializable, Portable {
     @OneToMany(mappedBy = "parentCategory", fetch = FetchType.LAZY)
     @XmlElementWrapper(name = "subcategories", namespace = CAT_XML_NS)
     @XmlElement(name = "category")
-    @JsonManagedReference(value = "subcategory-parentcategory")
+    @JsonIgnore
     private List<Category> subCategories;
 
     /**
@@ -237,7 +241,7 @@ public class Category extends CcmObject implements Serializable, Portable {
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PARENT_CATEGORY_ID")
-    @JsonBackReference(value = "subcategory-parentcategory")
+    @JsonIdentityReference(alwaysAsId = true)
     private Category parentCategory;
 
     /**

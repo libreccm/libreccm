@@ -18,8 +18,9 @@
  */
 package org.libreccm.workflow;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.libreccm.portation.Portable;
 import org.libreccm.security.User;
 
@@ -81,6 +82,9 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 @SuppressWarnings({"PMD.CyclomaticComplexity",
                    "PMD.StdCyclomaticComplexity",
                    "PMD.ModifiedCyclomaticComplexity"})
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
+                  resolver = AssignableTaskIdResolver.class,
+                  property = "uuid")
 public class AssignableTask extends Task implements Serializable, Portable {
 
     private static final long serialVersionUID = 4188064584389893019L;
@@ -130,7 +134,7 @@ public class AssignableTask extends Task implements Serializable, Portable {
      * The roles to which task is assigned.
      */
     @OneToMany(mappedBy = "task")
-    @JsonManagedReference(value = "assignabletask-taskassignment")
+    @JsonIgnore
     private List<TaskAssignment> assignments;
 
     public AssignableTask() {

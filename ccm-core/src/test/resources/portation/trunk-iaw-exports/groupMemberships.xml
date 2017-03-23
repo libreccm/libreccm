@@ -1,8 +1,8 @@
-<GroupMembership><membershipId>1</membershipId></GroupMembership>
-<GroupMembership><membershipId>2</membershipId></GroupMembership>
-<GroupMembership><membershipId>3</membershipId></GroupMembership>
-<GroupMembership><membershipId>4</membershipId></GroupMembership>
-<GroupMembership><membershipId>5</membershipId></GroupMembership>
-<GroupMembership><membershipId>6</membershipId></GroupMembership>
-<GroupMembership><membershipId>7</membershipId></GroupMembership>
-<GroupMembership><membershipId>8</membershipId></GroupMembership>
+<GroupMembership><customMemId>{Site-wide Administrators}{Ariela Trümper}</customMemId><membershipId>7135036</membershipId><group>Site-wide Administrators</group><member>Ariela Trümper</member></GroupMembership>
+<GroupMembership><customMemId>{Site-wide Administrators}{Hartmut Schekerka}</customMemId><membershipId>7135037</membershipId><group>Site-wide Administrators</group><member>Hartmut Schekerka</member></GroupMembership>
+<GroupMembership><customMemId>{content Administration}{Hartmut Schekerka}</customMemId><membershipId>7135038</membershipId><group>content Administration</group><member>Hartmut Schekerka</member></GroupMembership>
+<GroupMembership><customMemId>{Portal Homepage}{Public Users}</customMemId><membershipId>7135039</membershipId><group>Portal Homepage</group><member>Public Users</member></GroupMembership>
+<GroupMembership><customMemId>{Site-wide Administrators}{Nessim Hemmer}</customMemId><membershipId>7135033</membershipId><group>Site-wide Administrators</group><member>Nessim Hemmer</member></GroupMembership>
+<GroupMembership><customMemId>{Site-wide Administrators}{Peter Boy}</customMemId><membershipId>7135034</membershipId><group>Site-wide Administrators</group><member>Peter Boy</member></GroupMembership>
+<GroupMembership><customMemId>{Site-wide Administrators}{Jörg Sommer}</customMemId><membershipId>7135035</membershipId><group>Site-wide Administrators</group><member>Jörg Sommer</member></GroupMembership>
+<GroupMembership><customMemId>{projects Administration}{Hartmut Schekerka}</customMemId><membershipId>7135040</membershipId><group>projects Administration</group><member>Hartmut Schekerka</member></GroupMembership>

@@ -1,16 +1,16 @@
-<Group><partyId>541003</partyId><name>projects Administration</name><memberships><membershipId>8</membershipId></memberships></Group>
-<Group><partyId>1061</partyId><name>content Administration</name><memberships><membershipId>6</membershipId></memberships></Group>
-<Group><partyId>541006</partyId><name>projects Viewers</name></Group>
-<Group><partyId>1064</partyId><name>content Viewers</name></Group>
-<Group><partyId>1339004</partyId><name>homepages Viewers</name></Group>
-<Group><partyId>3439036</partyId><name>publications Viewers</name></Group>
-<Group><partyId>5619069</partyId><name>euss Administration</name></Group>
-<Group><partyId>-300</partyId><name>Site-wide Administrators</name><roleMemberships><membershipId>157</membershipId></roleMemberships><roleMemberships><membershipId>152</membershipId></roleMemberships><roleMemberships><membershipId>130</membershipId></roleMemberships><roleMemberships><membershipId>153</membershipId></roleMemberships><roleMemberships><membershipId>123</membershipId></roleMemberships><roleMemberships><membershipId>136</membershipId></roleMemberships><roleMemberships><membershipId>158</membershipId></roleMemberships><roleMemberships><membershipId>109</membershipId></roleMemberships><roleMemberships><membershipId>154</membershipId></roleMemberships><roleMemberships><membershipId>112</membershipId></roleMemberships><roleMemberships><membershipId>116</membershipId></roleMemberships><roleMemberships><membershipId>140</membershipId></roleMemberships><memberships><membershipId>1</membershipId></memberships><memberships><membershipId>2</membershipId></memberships><memberships><membershipId>3</membershipId></memberships><memberships><membershipId>4</membershipId></memberships><memberships><membershipId>5</membershipId></memberships></Group>
-<Group><partyId>5619070</partyId><name>euss Viewers</name></Group>
-<Group><partyId>1339003</partyId><name>homepages Administration</name></Group>
-<Group><partyId>3439035</partyId><name>publications Administration</name></Group>
-<Group><partyId>1937037</partyId><name>research Viewers</name></Group>
-<Group><partyId>1937036</partyId><name>research Administration</name></Group>
-<Group><partyId>1271</partyId><name>Portal Workspace Groups</name></Group>
-<Group><partyId>1274</partyId><name>Portal Homepage</name></Group>
-<Group><partyId>1278</partyId><name>Portal Homepage</name><memberships><membershipId>7</membershipId></memberships></Group>
+<Group><name>projects Administration</name><partyId>541003</partyId></Group>
+<Group><name>content Administration</name><partyId>1061</partyId></Group>
+<Group><name>projects Viewers</name><partyId>541006</partyId></Group>
+<Group><name>content Viewers</name><partyId>1064</partyId></Group>
+<Group><name>homepages Viewers</name><partyId>1339004</partyId></Group>
+<Group><name>publications Viewers</name><partyId>3439036</partyId></Group>
+<Group><name>euss Administration</name><partyId>5619069</partyId></Group>
+<Group><name>Site-wide Administrators</name><partyId>-300</partyId></Group>
+<Group><name>euss Viewers</name><partyId>5619070</partyId></Group>
+<Group><name>homepages Administration</name><partyId>1339003</partyId></Group>
+<Group><name>publications Administration</name><partyId>3439035</partyId></Group>
+<Group><name>research Viewers</name><partyId>1937037</partyId></Group>
+<Group><name>research Administration</name><partyId>1937036</partyId></Group>
+<Group><name>Portal Workspace Groups</name><partyId>1271</partyId></Group>
+<Group><name>Portal Homepage</name><partyId>1274</partyId></Group>
+<Group><name>Portal Homepage</name><partyId>1278</partyId></Group>

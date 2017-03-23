@@ -18,8 +18,9 @@
  */
 package org.libreccm.workflow;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.libreccm.core.CcmObject;
 import org.libreccm.core.Identifiable;
@@ -98,6 +99,9 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
                     + "WHERE t.workflow = :workflow "
                     + "AND t.taskState = org.libreccm.workflow.TaskState.FINISHED")
 })
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
+                  resolver = TaskIdResolver.class,
+                  property = "uuid")
 public class Task implements Identifiable, Serializable {
 
     private static final long serialVersionUID = 8161343036908150426L;
@@ -159,16 +163,14 @@ public class Task implements Identifiable, Serializable {
      */
     @ManyToOne
     @JoinColumn(name = "WORKFLOW_ID")
-    @JsonBackReference(value = "workflow-task")
+    @JsonIdentityReference(alwaysAsId = true)
     private Workflow workflow;
 
     /**
      * Tasks which the depends of this task.
      */
     @ManyToMany(mappedBy = "dependsOn")
-    @JsonIdentityInfo(
-            generator = ObjectIdGenerators.PropertyGenerator.class,
-            property = "taskId")
+    @JsonIgnore
     private List<Task> dependentTasks;
 
     /**
@@ -181,9 +183,7 @@ public class Task implements Identifiable, Serializable {
                    @JoinColumn(name = "DEPENDS_ON_TASK_ID")},
                inverseJoinColumns = {
                    @JoinColumn(name = "DEPENDENT_TASK_ID")})
-    @JsonIdentityInfo(
-            generator = ObjectIdGenerators.PropertyGenerator.class,
-            property = "taskId")
+    @JsonIdentityReference(alwaysAsId = true)
     private List<Task> dependsOn;
 
     /**
