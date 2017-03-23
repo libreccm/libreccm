@@ -59,9 +59,6 @@ public class RoleMembershipMarshaller extends AbstractMarshaller<RoleMembership>
             final RoleMembership roleMembership = save(portableObject);
         LOGGER.debug("Saved RoleMembership with id {}.",
                      roleMembership.getMembershipId());
-//        } else {
-//            entityManager.merge(portableObject);
-//        }
     }
     
     @Transactional(Transactional.TxType.REQUIRES_NEW)

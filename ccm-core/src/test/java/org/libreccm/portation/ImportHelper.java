@@ -55,8 +55,8 @@ import javax.inject.Inject;
  */
 @RequestScoped
 class ImportHelper {
-    private String repoPath = "/home/jensp/pwi/libreccm/ccm/";
-    //private String repoPath = "";
+    //private String repoPath = "/home/jensp/pwi/libreccm/ccm/";
+    private String repoPath = "/home/tosmers/Svn/libreccm/";
     private String projectPath = "ccm_ng/ccm-core/src/test/resources/" +
                     "portation/trunk-iaw-exports";
     private boolean indentation = false;
@@ -99,40 +99,40 @@ class ImportHelper {
     private PermissionMarshaller permissionMarshaller;
 
 
-    void importCategories() {
+    boolean importCategories() {
         categoryMarshaller.prepare(Format.XML, repoPath + projectPath,
                 "categories.xml", indentation);
-        categoryMarshaller.importFile();
+        return categoryMarshaller.importFile();
     }
 
-    void importCategorizations() {
+    boolean importCategorizations() {
         categorizationMarshaller.prepare(Format.XML, repoPath + projectPath,
                 "categorizations.xml", indentation);
-        categorizationMarshaller.importFile();
+        return categorizationMarshaller.importFile();
     }
 
-    void importUsers() {
+    boolean importUsers() {
         userMarshaller.prepare(Format.XML, repoPath + projectPath,
                 "users.xml", indentation);
-        userMarshaller.importFile();
+        return userMarshaller.importFile();
     }
 
-    void importGroups() {
+    boolean importGroups() {
         groupMarshaller.prepare(Format.XML, repoPath + projectPath,
                 "groups.xml", indentation);
-        groupMarshaller.importFile();
+        return groupMarshaller.importFile();
     }
 
-    void importGroupMemberships() {
+    boolean importGroupMemberships() {
         groupMembershipMarshaller.prepare(Format.XML, repoPath + projectPath,
                 "groupMemberships.xml", indentation);
-        groupMembershipMarshaller.importFile();
+        return groupMembershipMarshaller.importFile();
     }
 
-    void importRoles() {
+    boolean importRoles() {
         roleMarshaller.prepare(Format.XML, repoPath + projectPath,
                 "roles.xml", indentation);
-        roleMarshaller.importFile();
+        return roleMarshaller.importFile();
     }
 
     boolean importRoleMemberships() {
@@ -141,34 +141,34 @@ class ImportHelper {
         return roleMembershipMarshaller.importFile();
     }
 
-    void importWorkflowTemplates() {
+    boolean importWorkflowTemplates() {
         workflowTemplateMarshaller.prepare(Format.XML, repoPath + projectPath,
                 "workflowTemplates.xml", indentation);
-        workflowTemplateMarshaller.importFile();
+        return workflowTemplateMarshaller.importFile();
     }
 
-    void importWorkflows() {
+    boolean importWorkflows() {
         workflowMarshaller.prepare(Format.XML, repoPath + projectPath,
                 "workflows.xml", indentation);
-        workflowMarshaller.importFile();
+        return workflowMarshaller.importFile();
     }
 
-    void importAssignableTasks() {
+    boolean importAssignableTasks() {
         assignableTaskMarshaller.prepare(Format.XML, repoPath + projectPath,
                 "assignableTasks.xml", indentation);
-        assignableTaskMarshaller.importFile();
+        return assignableTaskMarshaller.importFile();
     }
 
-    void importTaskAssignments() {
+    boolean importTaskAssignments() {
         taskAssignmentMarshaller.prepare(Format.XML, repoPath + projectPath,
                 "taskAssignments.xml", indentation);
-        taskAssignmentMarshaller.importFile();
+        return taskAssignmentMarshaller.importFile();
     }
 
-    void importPermissions() {
+    boolean importPermissions() {
         permissionMarshaller.prepare(Format.XML, repoPath + projectPath,
                 "permissions.xml", indentation);
-        permissionMarshaller.importFile();
+        return permissionMarshaller.importFile();
     }
 
 }

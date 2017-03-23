@@ -19,6 +19,8 @@
 package org.libreccm.categorization;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import org.libreccm.core.CcmObject;
 import org.libreccm.portation.Portable;
 
@@ -96,6 +98,8 @@ import javax.persistence.FetchType;
                             + "WHERE c.category = :category "
                             + "AND c.index = TRUE")
 })
+@JsonIdentityInfo(generator = CategorizationIdGenerator.class,
+                  property = "customCatId")
 public class Categorization implements Serializable, Relation, Portable {
 
     private static final long serialVersionUID = 201504301320L;
@@ -113,7 +117,7 @@ public class Categorization implements Serializable, Relation, Portable {
      */
     @ManyToOne
     @JoinColumn(name = "CATEGORY_ID")
-    @JsonBackReference(value = "category-categorization")
+    @JsonIdentityReference(alwaysAsId = true)
     private Category category;
 
     /**
@@ -121,7 +125,7 @@ public class Categorization implements Serializable, Relation, Portable {
      */
     @ManyToOne
     @JoinColumn(name = "OBJECT_ID")
-    @JsonBackReference(value = "object-categorization")
+    @JsonIdentityReference(alwaysAsId = true)
     private CcmObject categorizedObject;
 
     /**

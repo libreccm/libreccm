@@ -18,8 +18,9 @@
  */
 package org.libreccm.core;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.hibernate.envers.Audited;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.IndexedEmbedded;
@@ -83,6 +84,9 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 //persistence system we can't yet refactor it to make PMD happy. Also I think
 //this is a false warning.
 @SuppressWarnings("PMD.TooManyMethods")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
+                  resolver = CcmObjectIdResolver.class,
+                  property = "uuid")
 public class CcmObject implements Identifiable, Serializable {
 
     private static final long serialVersionUID = 201504261329L;
@@ -122,7 +126,7 @@ public class CcmObject implements Identifiable, Serializable {
     @IndexedEmbedded(includePaths = {"grantedPrivilege", "grantee.name"})
     @XmlElementWrapper(name = "permissions", namespace = CORE_XML_NS)
     @XmlElement(name = "permission", namespace = CORE_XML_NS)
-    @JsonManagedReference(value = "object-permission")
+    @JsonIgnore
     private List<Permission> permissions;
 
     /**
@@ -131,7 +135,7 @@ public class CcmObject implements Identifiable, Serializable {
     @OneToMany(mappedBy = "categorizedObject")
     @XmlElementWrapper(name = "categories", namespace = CORE_XML_NS)
     @XmlElement(name = "category", namespace = CORE_XML_NS)
-    @JsonManagedReference(value = "object-categorization")
+    @JsonIgnore
     private List<Categorization> categories;
 
     public CcmObject() {

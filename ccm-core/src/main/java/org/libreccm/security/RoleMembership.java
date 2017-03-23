@@ -18,8 +18,8 @@
  */
 package org.libreccm.security;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import org.libreccm.portation.Portable;
 
 import javax.persistence.Column;
@@ -55,6 +55,8 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
                             + "WHERE m.member = :member AND m.role = :role")
 })
 @XmlRootElement(name = "role-membership", namespace = CORE_XML_NS)
+@JsonIdentityInfo(generator = RoleMembershipIdGenerator.class,
+                  property = "customMemId")
 public class RoleMembership implements Serializable, Portable {
 
     private static final long serialVersionUID = -3049727720697964793L;
@@ -68,13 +70,13 @@ public class RoleMembership implements Serializable, Portable {
     @ManyToOne
     @JoinColumn(name = "ROLE_ID")
     @XmlTransient
-    @JsonBackReference(value = "role-rolemembership")
+    @JsonIdentityReference(alwaysAsId = true)
     private Role role;
 
     @ManyToOne
     @JoinColumn(name = "MEMBER_ID")
     @XmlTransient
-    @JsonBackReference(value = "party-rolemembership")
+    @JsonIdentityReference(alwaysAsId = true)
     private Party member;
 
     public long getMembershipId() {

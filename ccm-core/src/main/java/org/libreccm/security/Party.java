@@ -18,7 +18,9 @@
  */
 package org.libreccm.security;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -38,7 +40,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
-
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashSet;
@@ -73,6 +74,9 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
                       attributeNodes = @NamedAttributeNode(
                           value = "roleMemberships"))
 })
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
+                  resolver = PartyIdResolver.class,
+                  property = "name")
 public class Party implements Serializable {
 
     private static final long serialVersionUID = 3319997992281332204L;
@@ -97,7 +101,7 @@ public class Party implements Serializable {
     @OneToMany(mappedBy = "member")
     @XmlElementWrapper(name = "role-memberships", namespace = CORE_XML_NS)
     @XmlElement(name = "role-membership", namespace = CORE_XML_NS)
-    @JsonManagedReference(value = "party-rolemembership")
+    @JsonIgnore
     private Set<RoleMembership> roleMemberships = new HashSet<>();
 
     protected Party() {

@@ -18,7 +18,10 @@
  */
 package org.libreccm.security;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.libreccm.core.EmailAddress;
 import org.libreccm.portation.Portable;
 
@@ -46,7 +49,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -126,6 +128,9 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 //Supressing a few warnings from PMD because they misleading here.
 //User is perfectly fine class name, and the complexity is not to high...
 @SuppressWarnings({"PMD.ShortClassName", "PMD.LongVariable"})
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
+                  resolver = UserIdResolver.class,
+                  property = "name")
 public class User extends Party implements Serializable, Portable {
 
     private static final long serialVersionUID = 4035223413596611393L;
@@ -203,7 +208,7 @@ public class User extends Party implements Serializable, Portable {
     @OneToMany(mappedBy = "member")
     @XmlElementWrapper(name = "group-memberships", namespace = CORE_XML_NS)
     @XmlElement(name = "group-membership", namespace = CORE_XML_NS)
-    @JsonManagedReference(value = "user-groupmembership")
+    @JsonIgnore
     private Set<GroupMembership> groupMemberships = new HashSet<>();
 
     protected User() {
