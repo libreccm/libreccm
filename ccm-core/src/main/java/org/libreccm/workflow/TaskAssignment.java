@@ -18,8 +18,8 @@
  */
 package org.libreccm.workflow;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import org.libreccm.portation.Portable;
 import org.libreccm.security.Role;
 
@@ -43,6 +43,8 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
  */
 @Entity
 @Table(name = "WORKFLOW_TASK_ASSIGNMENTS", schema = DB_SCHEMA)
+@JsonIdentityInfo(generator = TaskAssignmentIdGenerator.class,
+                  property = "customAssignId")
 public class TaskAssignment implements Serializable, Portable {
 
     private static final long serialVersionUID = -4427537363301565707L;
@@ -60,7 +62,7 @@ public class TaskAssignment implements Serializable, Portable {
      */
     @ManyToOne
     @JoinColumn(name = "TASK_ID")
-    @JsonBackReference(value = "assignabletask-taskassignment")
+    @JsonIdentityReference(alwaysAsId = true)
     private AssignableTask task;
 
     /**
@@ -68,7 +70,7 @@ public class TaskAssignment implements Serializable, Portable {
      */
     @ManyToOne
     @JoinColumn(name = "ROLE_ID")
-    @JsonBackReference(value = "role-taskassignment")
+    @JsonIdentityReference(alwaysAsId = true)
     private Role role;
 
     public long getTaskAssignmentId() {

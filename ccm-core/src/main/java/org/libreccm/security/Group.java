@@ -18,7 +18,9 @@
  */
 package org.libreccm.security;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.libreccm.portation.Portable;
 
 import javax.persistence.Entity;
@@ -33,7 +35,6 @@ import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashSet;
@@ -89,6 +90,9 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
         })
 })
 @XmlRootElement(name = "user-group", namespace = CORE_XML_NS)
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
+                  resolver = GroupIdResolver.class,
+                  property = "name")
 public class Group extends Party implements Serializable, Portable {
 
     private static final long serialVersionUID = -4800759206452780739L;
@@ -100,7 +104,7 @@ public class Group extends Party implements Serializable, Portable {
     @OneToMany(mappedBy = "group")
     @XmlElementWrapper(name = "group-memberships", namespace = CORE_XML_NS)
     @XmlElement(name = "group-membership", namespace = CORE_XML_NS)
-    @JsonManagedReference(value = "group-groupmembership")
+    @JsonIgnore
     private Set<GroupMembership> memberships = new HashSet<>();
 
     public Group() {

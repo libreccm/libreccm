@@ -44,6 +44,7 @@ public class GroupMarshaller extends AbstractMarshaller<Group> {
     @Override
     @Transactional(Transactional.TxType.REQUIRED)
     protected void insertIntoDb(Group portableObject) {
+        portableObject.setPartyId(portableObject.getPartyId() * -1);
         groupRepository.save(portableObject);
     }
 }

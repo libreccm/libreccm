@@ -18,18 +18,13 @@
  */
 package org.libreccm.workflow;
 
-import static org.libreccm.core.CoreConstants.*;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.libreccm.core.CcmObject;
+import org.libreccm.core.Identifiable;
 import org.libreccm.l10n.LocalizedString;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import org.libreccm.portation.Portable;
 
 import javax.persistence.AssociationOverride;
 import javax.persistence.Column;
@@ -51,8 +46,13 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import org.libreccm.core.Identifiable;
-import org.libreccm.portation.Portable;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+
+import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 
 /**
  * A workflow is a collection of tasks which are performed on an object. Tasks
@@ -73,6 +73,9 @@ import org.libreccm.portation.Portable;
         query = "SELECT w FROM Workflow w "
                     + "WHERE W.object = :object")
 })
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
+                  resolver = WorkflowIdResolver.class,
+                  property = "uuid")
 public class Workflow implements Identifiable, Serializable, Portable {
 
     private static final long serialVersionUID = 4322500264543325829L;
@@ -157,7 +160,7 @@ public class Workflow implements Identifiable, Serializable, Portable {
      * The tasks belonging to this workflow.
      */
     @OneToMany(mappedBy = "workflow")
-    @JsonManagedReference(value = "workflow-task")
+    @JsonIgnore
     private List<Task> tasks;
 
     public Workflow() {

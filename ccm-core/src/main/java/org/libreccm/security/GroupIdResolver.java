@@ -18,34 +18,34 @@
  */
 package org.libreccm.security;
 
-import org.libreccm.portation.AbstractMarshaller;
-import org.libreccm.portation.Marshals;
-
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.transaction.Transactional;
+import com.fasterxml.jackson.annotation.ObjectIdGenerator;
+import com.fasterxml.jackson.annotation.ObjectIdResolver;
 
 /**
  * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
- * @version created on 11/7/16
+ * @version created on 3/23/17
  */
-@RequestScoped
-@Marshals(GroupMembership.class)
-public class GroupMembershipMarshaller extends AbstractMarshaller<GroupMembership> {
-
-    @Inject
-    private EntityManager entityManager;
-
+public class GroupIdResolver implements ObjectIdResolver {
     @Override
-    protected Class<GroupMembership> getObjectClass() {
-        return GroupMembership.class;
+    public void bindItem(final ObjectIdGenerator.IdKey id,
+                         final Object pojo) {
+        // According to the Jackson JavaDoc, this method can be used to keep
+        // track of objects directly in a resolver implementation. We don't need
+        // this here therefore this method is empty.
     }
 
     @Override
-    @Transactional(Transactional.TxType.REQUIRED)
-    protected void insertIntoDb(GroupMembership portableObject) {
-        portableObject.setMembershipId(portableObject.getMembershipId() * -1);
-        entityManager.merge(portableObject);
+    public Object resolveId(final ObjectIdGenerator.IdKey id) {
+        return null;
+    }
+
+    @Override
+    public ObjectIdResolver newForDeserialization(final Object context) {
+        return new GroupIdResolver();
+    }
+
+    @Override
+    public boolean canUseFor(final ObjectIdResolver objectIdResolver) {
+        return objectIdResolver instanceof GroupIdResolver;
     }
 }

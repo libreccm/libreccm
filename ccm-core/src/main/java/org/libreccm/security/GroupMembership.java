@@ -18,8 +18,8 @@
  */
 package org.libreccm.security;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import org.libreccm.portation.Portable;
 
 import javax.persistence.Column;
@@ -54,6 +54,8 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
                 query = "SELECT m FROM GroupMembership m "
                             + "WHERE m.member = :member AND m.group = :group")})
 @XmlRootElement(name = "group-membership", namespace = CORE_XML_NS)
+@JsonIdentityInfo(generator = GroupMembershipIdGenerator.class,
+                  property = "customMemId")
 public class GroupMembership implements Serializable, Portable {
 
     private static final long serialVersionUID = 83192968306850665L;
@@ -67,13 +69,13 @@ public class GroupMembership implements Serializable, Portable {
     @ManyToOne
     @JoinColumn(name = "GROUP_ID")
     @XmlTransient
-    @JsonBackReference(value = "group-groupmembership")
+    @JsonIdentityReference(alwaysAsId = true)
     private Group group;
 
     @ManyToOne
     @JoinColumn(name = "MEMBER_ID")
     @XmlTransient
-    @JsonBackReference(value = "user-groupmembership")
+    @JsonIdentityReference(alwaysAsId = true)
     private User member;
 
     public long getMembershipId() {

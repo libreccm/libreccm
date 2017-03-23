@@ -16,36 +16,43 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.security;
+package org.libreccm.categorization;
 
-import org.libreccm.portation.AbstractMarshaller;
-import org.libreccm.portation.Marshals;
+import com.fasterxml.jackson.annotation.ObjectIdGenerator;
+import com.fasterxml.jackson.annotation.ObjectIdResolver;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.transaction.Transactional;
 
 /**
  * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
- * @version created on 11/7/16
+ * @version created on 3/23/17
  */
 @RequestScoped
-@Marshals(GroupMembership.class)
-public class GroupMembershipMarshaller extends AbstractMarshaller<GroupMembership> {
-
+public class CategoryIdResolver implements ObjectIdResolver {
     @Inject
-    private EntityManager entityManager;
+    private CategoryRepository categoryRepository;
 
     @Override
-    protected Class<GroupMembership> getObjectClass() {
-        return GroupMembership.class;
+    public void bindItem(ObjectIdGenerator.IdKey idKey,
+                         Object pojo) {
+        // According to the Jackson JavaDoc, this method can be used to keep
+        // track of objects directly in a resolver implementation. We don't need
+        // this here therefore this method is empty.
     }
 
     @Override
-    @Transactional(Transactional.TxType.REQUIRED)
-    protected void insertIntoDb(GroupMembership portableObject) {
-        portableObject.setMembershipId(portableObject.getMembershipId() * -1);
-        entityManager.merge(portableObject);
+    public Object resolveId(ObjectIdGenerator.IdKey id) {
+        return null;
+    }
+
+    @Override
+    public ObjectIdResolver newForDeserialization(Object context) {
+        return new CategoryIdResolver();
+    }
+
+    @Override
+    public boolean canUseFor(ObjectIdResolver resolverType) {
+        return resolverType instanceof CategoryIdResolver;
     }
 }
