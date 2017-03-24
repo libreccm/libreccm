@@ -232,6 +232,9 @@ public interface FileSystemAdapter {
      *                                          exceptions occurs.
      * @throws FileDoesNotExistException        If the requested file does not
      *                                          exist.
+     * @throws DirectoryNotEmptyException       If the directory is not empty
+     *                                          <em>and</em> {@code recursively}
+     *                                          is set to {@code false}.
      * @throws InsufficientPermissionsException If the user which runs the
      *                                          application server does not have
      *                                          the permission to access the
@@ -240,6 +243,7 @@ public interface FileSystemAdapter {
     void deleteFile(String path, boolean recursively)
         throws FileAccessException,
                FileDoesNotExistException,
+               DirectoryNotEmptyException,
                InsufficientPermissionsException;
 
 }
