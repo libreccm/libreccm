@@ -18,36 +18,28 @@
  */
 package org.libreccm.files;
 
+import org.libreccm.configuration.Configuration;
+import org.libreccm.configuration.Setting;
+
 /**
- * Thrown if a method requires that a file does not exist already but the file
- * exists.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class FileAlreadyExistsException extends Exception {
+@Configuration(descBundle
+               = "org.libreccm.files.CcmFilesConfiguration.properties",
+               titleKey = "title",
+               descKey = "description")
+public class CcmFilesConfiguration {
 
-    private static final long serialVersionUID = 2237027823060973043L;
-    
-    private static final String MESSAGE_TEMPLATE = "The file '%s' already exists.";
+    @Setting()
+    private String dataPath;
 
-//    /**
-//     * Creates a new instance of <code>FileAlreadyExistsException</code> without
-//     * detail message.
-//     */
-//    FileAlreadyExistsException() {
-//        super();
-//    }
-
-    
-    FileAlreadyExistsException(final String path) {
-        super(String.format(MESSAGE_TEMPLATE, path));
+    public String getDataPath() {
+        return dataPath;
     }
 
-//    FileAlreadyExistsException(final Exception ex) {
-//        super(ex);
-//    }
-
-    FileAlreadyExistsException(final String path, final Exception ex) {
-        super(String.format(MESSAGE_TEMPLATE, path), ex);
+    public void setDataPath(final String dataPath) {
+        this.dataPath = dataPath;
     }
+
 }

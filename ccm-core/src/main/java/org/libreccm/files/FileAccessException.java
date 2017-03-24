@@ -28,29 +28,24 @@ public class FileAccessException extends Exception {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * Creates a new instance of <code>FileAccessException</code> without detail
-     * message.
-     */
-    FileAccessException() {
-        super();
+    private static final String MESSAGE_TEMPLATE = "Error accessing file '%s'.";
+
+//    /**
+//     * Creates a new instance of <code>FileAccessException</code> without detail
+//     * message.
+//     */
+//    FileAccessException() {
+//        super();
+//    }
+    FileAccessException(final String path) {
+        super(String.format(MESSAGE_TEMPLATE, path));
     }
 
-    /**
-     * Constructs an instance of <code>FileAccessException</code> with the
-     * specified detail message.
-     *
-     * @param msg the detail message.
-     */
-    FileAccessException(final String msg) {
-        super(msg);
+//    FileAccessException(final Exception ex) {
+//        super(ex);
+//    }
+    FileAccessException(final String path, final Exception ex) {
+        super(String.format(MESSAGE_TEMPLATE, path), ex);
     }
 
-    FileAccessException(final Exception ex) {
-        super(ex);
-    }
-
-    FileAccessException(final String msg, final Exception ex) {
-        super(msg, ex);
-    }
 }

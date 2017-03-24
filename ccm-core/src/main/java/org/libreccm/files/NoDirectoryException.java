@@ -28,29 +28,26 @@ public class NoDirectoryException extends Exception {
 
     private static final long serialVersionUID = -5811387600385322767L;
 
-    /**
-     * Creates a new instance of <code>NoDirectoryException</code> without
-     * detail message.
-     */
-    NoDirectoryException() {
-        super();
-    }
+    private static final String MESSAGE_TEMPLATE = "The file '%s' is not a directory.";
+    
+//    /**
+//     * Creates a new instance of <code>NoDirectoryException</code> without
+//     * detail message.
+//     */
+//    NoDirectoryException() {
+//        super();
+//    }
 
-    /**
-     * Constructs an instance of <code>NoDirectoryException</code> with the
-     * specified detail message.
-     *
-     * @param msg the detail message.
-     */
-    NoDirectoryException(final String msg) {
-        super(msg);
+
+    NoDirectoryException(final String path) {
+        super(String.format(MESSAGE_TEMPLATE, path));
     }
     
-    NoDirectoryException(final Exception ex) {
-        super(ex);
-    }
+//    NoDirectoryException(final Exception ex) {
+//        super(ex);
+//    }
     
-    NoDirectoryException(final String msg, final Exception ex) {
-        super(msg, ex);
+    NoDirectoryException(final String path, final Exception ex) {
+        super(String.format(MESSAGE_TEMPLATE, path), ex);
     }
 }

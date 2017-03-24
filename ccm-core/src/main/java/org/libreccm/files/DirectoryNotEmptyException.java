@@ -20,36 +20,43 @@ package org.libreccm.files;
 
 /**
  * Thrown if a non empty directory is not deleted recursively.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class DirectoryNotEmptyException extends Exception {
 
     private static final long serialVersionUID = -8515711805034123260L;
 
-    /**
-     * Creates a new instance of <code>DirectoryNotEmptyException</code> without
-     * detail message.
-     */
-    DirectoryNotEmptyException() {
-        super();
+    private static final String MESSAGE_TEMPLATE
+                                = "The directory '%s' is not empty.";
+
+    DirectoryNotEmptyException(final String path) {
+        super(String.format(MESSAGE_TEMPLATE, path));
     }
 
-    /**
-     * Constructs an instance of <code>DirectoryNotEmptyException</code> with
-     * the specified detail message.
-     *
-     * @param msg the detail message.
-     */
-    DirectoryNotEmptyException(final String msg) {
-        super(msg);
-    }
-    
-    DirectoryNotEmptyException(final Exception ex) {
-        super(ex);
-    }
-    
-    DirectoryNotEmptyException(final String msg, final Exception ex) {
-        super(msg, ex);
+//    /**
+//     * Creates a new instance of <code>DirectoryNotEmptyException</code> without
+//     * detail message.
+//     */
+//    DirectoryNotEmptyException() {
+//        super();
+//    }
+//
+//    /**
+//     * Constructs an instance of <code>DirectoryNotEmptyException</code> with
+//     * the specified detail message.
+//     *
+//     * @param msg the detail message.
+//     */
+//    DirectoryNotEmptyException(final String msg) {
+//        super(msg);
+//    }
+//    
+//    DirectoryNotEmptyException(final Exception ex) {
+//        super(ex);
+//    }
+//    
+    DirectoryNotEmptyException(final String path, final Exception ex) {
+        super(String.format(MESSAGE_TEMPLATE, path), ex);
     }
 }
