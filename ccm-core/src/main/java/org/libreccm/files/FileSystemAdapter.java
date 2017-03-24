@@ -23,28 +23,21 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.List;
-import javax.faces.bean.RequestScoped;
 
 /**
- * This class provides access to the file (local) system. If available an
- * implementation of the {@link FileSystemAdapter} interface is used. The
- * implementations of {@link FileSystemAdapter} provide a (transaction) safe way
- * to access the local file system. If no implementation of
- * {@link FileSystemAdapter} is available this class will use
- * {@link java.nio.file.Path} etc. as fallback. Depending on your application
- * server access to the local file system using these classes may fail. For
- * information about how to deploy and configure a specific implementation of
- * {@link FileSystemAdapter} please refer the the documentation of the
- * implementation.
- *
- * The method in this class encapsulate the details of the access to the local
- * file system. Therefore the paths to the files to read are usually provided as
- * strings.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@RequestScoped
-public class CcmFiles {
+public interface FileSystemAdapter {
+
+    /**
+     * Tests if all resources (eg JNDI resources) etc required by an
+     * implementation of the {@link FileSystemAdapter} are available.
+     *
+     * @return {@code true} if all resources are available and the adapter can
+     *         be used, {@code false} if not.
+     */
+    boolean isConfigured();
 
     /**
      * Creates a {@link Reader} for the provided {@code path}.
@@ -63,13 +56,9 @@ public class CcmFiles {
      *                                          the permission to access the
      *                                          requested file.
      */
-    public Reader createReader(final String path)
-        throws FileAccessException,
-               FileDoesNotExistException,
-               InsufficientPermissionsException {
-
-        throw new UnsupportedOperationException();
-    }
+    Reader createReader(String path) throws FileDoesNotExistException,
+                                            FileAccessException,
+                                            InsufficientPermissionsException;
 
     /**
      * Creates a {@link Writer} for the provided {@code path}.
@@ -85,11 +74,8 @@ public class CcmFiles {
      *                                          the permission to access the
      *                                          requested file.
      */
-    public Writer createWriter(final String path)
-        throws FileAccessException,
-               InsufficientPermissionsException {
-        throw new UnsupportedOperationException();
-    }
+    Writer createWriter(String path) throws FileAccessException,
+                                            InsufficientPermissionsException;
 
     /**
      * Creates a {@link InputStream} for the provided {@code path}.
@@ -98,8 +84,8 @@ public class CcmFiles {
      *
      * @return
      *
-     * @throws FileAccessException              If an error not covered by
-     *                                             other exceptions occurs.
+     * @throws FileAccessException              If an error not covered by other
+     *                                          exceptions occurs.
      * @throws FileDoesNotExistException        If the requested file does not
      *                                          exist.
      * @throws InsufficientPermissionsException If the user which runs the
@@ -107,13 +93,10 @@ public class CcmFiles {
      *                                          the permission to access the
      *                                          requested file.
      */
-    public InputStream createInputStream(final String path)
+    InputStream createInputStream(String path)
         throws FileDoesNotExistException,
                FileAccessException,
-               InsufficientPermissionsException {
-
-        throw new UnsupportedOperationException();
-    }
+               InsufficientPermissionsException;
 
     /**
      * Creates a {@link OutputStream} for the provided {@code path}.
@@ -129,11 +112,9 @@ public class CcmFiles {
      *                                          the permission to access the
      *                                          requested file.
      */
-    public OutputStream createOutputStream(final String path)
+    OutputStream createOutputStream(String path)
         throws FileAccessException,
-               InsufficientPermissionsException {
-        throw new UnsupportedOperationException();
-    }
+               InsufficientPermissionsException;
 
     /**
      * Checks if a file exists.
@@ -150,11 +131,9 @@ public class CcmFiles {
      *                                          the permission to access the
      *                                          requested file.
      */
-    public boolean existsFile(final String path)
+    boolean existsFile(String path)
         throws FileAccessException,
-               InsufficientPermissionsException {
-        throw new UnsupportedOperationException();
-    }
+               InsufficientPermissionsException;
 
     /**
      * checks if the provided path points to a directory.
@@ -173,12 +152,10 @@ public class CcmFiles {
      *                                          the permission to access the
      *                                          requested file.
      */
-    public boolean isDirectory(final String path)
+    boolean isDirectory(String path)
         throws FileAccessException,
                FileDoesNotExistException,
-               InsufficientPermissionsException {
-        throw new UnsupportedOperationException();
-    }
+               InsufficientPermissionsException;
 
     /**
      * Create a directory at the provided path.
@@ -194,12 +171,10 @@ public class CcmFiles {
      *                                          the permission to access the
      *                                          requested file.
      */
-    public void createDirectory(final String path)
+    void createDirectory(String path)
         throws FileAccessException,
                FileAlreadyExistsException,
-               InsufficientPermissionsException {
-        throw new UnsupportedOperationException();
-    }
+               InsufficientPermissionsException;
 
     /**
      * List the files in a directory.
@@ -217,12 +192,10 @@ public class CcmFiles {
      *                                          the permission to access the
      *                                          requested file.
      */
-    public List<String> listFiles(final String path)
+    List<String> listFiles(String path)
         throws FileAccessException,
                FileDoesNotExistException,
-               InsufficientPermissionsException {
-        throw new UnsupportedOperationException();
-    }
+               InsufficientPermissionsException;
 
     /**
      * Delete a file or directory. If the file is a directory the directory must
@@ -243,13 +216,11 @@ public class CcmFiles {
      *                                          the permission to access the
      *                                          requested file.
      */
-    public void deleteFile(final String path)
+    void deleteFile(String path)
         throws FileAccessException,
                FileDoesNotExistException,
                DirectoryNotEmptyException,
-               InsufficientPermissionsException {
-        throw new UnsupportedOperationException();
-    }
+               InsufficientPermissionsException;
 
     /**
      * Delete a file or directory.
@@ -266,11 +237,9 @@ public class CcmFiles {
      *                                          the permission to access the
      *                                          requested file.
      */
-    public void deleteFile(final String path, final boolean recursively)
+    void deleteFile(String path, boolean recursively)
         throws FileAccessException,
                FileDoesNotExistException,
-               InsufficientPermissionsException {
-        throw new UnsupportedOperationException();
-    }
+               InsufficientPermissionsException;
 
 }
