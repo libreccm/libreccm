@@ -27,30 +27,27 @@ package org.libreccm.files;
 public class InsufficientPermissionsException extends Exception {
 
     private static final long serialVersionUID = -7496839503615573013L;
+    
+    private static final String MESSAGE_TEMPLATE = "Insufficient permissions for accessing file '%s'.";
 
-    /**
-     * Creates a new instance of <code>InsufficientPermissionsException</code>
-     * without detail message.
-     */
-    InsufficientPermissionsException() {
-        super();
+//    /**
+//     * Creates a new instance of <code>InsufficientPermissionsException</code>
+//     * without detail message.
+//     */
+//    InsufficientPermissionsException() {
+//        super();
+//    }
+
+    
+    InsufficientPermissionsException(final String path) {
+        super(String.format(MESSAGE_TEMPLATE, path));
     }
 
-    /**
-     * Constructs an instance of <code>InsufficientPermissionsException</code>
-     * with the specified detail message.
-     *
-     * @param msg the detail message.
-     */
-    InsufficientPermissionsException(final String msg) {
-        super(msg);
-    }
+//    InsufficientPermissionsException(final Exception ex) {
+//        super(ex);
+//    }
 
-    InsufficientPermissionsException(final Exception ex) {
-        super(ex);
-    }
-
-    InsufficientPermissionsException(final String msg, final Exception ex) {
-        super(msg, ex);
+    InsufficientPermissionsException(final String path, final Exception ex) {
+        super(String.format(MESSAGE_TEMPLATE, path), ex);
     }
 }

@@ -23,7 +23,10 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.List;
+
+import javax.enterprise.inject.Instance;
 import javax.faces.bean.RequestScoped;
+import javax.inject.Inject;
 
 /**
  * This class provides access to the file (local) system. If available an
@@ -46,6 +49,9 @@ import javax.faces.bean.RequestScoped;
 @RequestScoped
 public class CcmFiles {
 
+    @Inject
+    private Instance<FileSystemAdapter> fileSystemAdapters;
+    
     /**
      * Creates a {@link Reader} for the provided {@code path}.
      *
