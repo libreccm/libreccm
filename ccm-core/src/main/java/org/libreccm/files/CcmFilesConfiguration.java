@@ -26,13 +26,25 @@ import org.libreccm.configuration.Setting;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Configuration(descBundle
-               = "org.libreccm.files.CcmFilesConfiguration.properties",
+                   = "org.libreccm.files.CcmFilesConfiguration.properties",
                titleKey = "title",
                descKey = "description")
 public class CcmFilesConfiguration {
 
+    /**
+     * Data of the directory used by CcmFiles to resolve paths.
+     */
     @Setting()
     private String dataPath;
+
+    /**
+     * Sets the {@link FileSystemAdapter} implementation to use. 
+     * Only required if multiple implementations (besides the default
+     * implementation {@link NIOFileSystemAdapter}) of the
+     * {@link FileSystemAdapter} are available in the classpath.
+     */
+    @Setting
+    private String activeFileSystemAdapter;
 
     public String getDataPath() {
         return dataPath;
@@ -42,4 +54,14 @@ public class CcmFilesConfiguration {
         this.dataPath = dataPath;
     }
 
+    public String getActiveFileSystemAdapter() {
+        return activeFileSystemAdapter;
+    }
+
+    public void setActiveFileSystemAdapter(final String activeFileSystemAdapter) {
+        this.activeFileSystemAdapter = activeFileSystemAdapter;
+    }
+
+    
+    
 }
