@@ -18,10 +18,16 @@
  */
 package org.libreccm.files;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.libreccm.configuration.ConfigurationManager;
+import org.libreccm.core.UnexpectedErrorException;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.inject.Instance;
@@ -49,9 +55,144 @@ import javax.inject.Inject;
 @RequestScoped
 public class CcmFiles {
 
+    private static final Logger LOGGER = LogManager.getLogger(CcmFiles.class);
+
     @Inject
     private Instance<FileSystemAdapter> fileSystemAdapters;
-    
+
+    @Inject
+    private ConfigurationManager confManager;
+
+    private FileSystemAdapter getFileSystemAdapter() {
+
+        LOGGER.debug("Trying to find FileSystemAdapter...");
+
+        final List<FileSystemAdapter> adapters = new ArrayList<>();
+        for (FileSystemAdapter fileSystemAdapter : fileSystemAdapters) {
+            adapters.add(fileSystemAdapter);
+        }
+
+        if (adapters.isEmpty()) {
+            throw new UnexpectedErrorException(
+                "No FileSystemAdapters available.");
+        } else if (adapters.size() > 1) {
+            if (adapters.size() == 2) {
+                final FileSystemAdapter adapter = adapters
+                    .stream()
+                    .filter(adap -> {
+                        return !NIOFileSystemAdapter.class.getName()
+                            .equals(adap.getClass().getName());
+                    })
+                    .findAny()
+                    .get();
+
+                if (adapter.isConfigured()) {
+                    LOGGER.debug("Found correctly configured "
+                                     + "FileSystemAdapter '{}'.",
+                                 adapter.getClass().getName());
+                    return adapter;
+                } else {
+                    LOGGER.warn("A FileSystemAdapter ({}) is available but not "
+                                    + "correctly configured. Falling back to default "
+                                + "adapter '{}'.",
+                                adapter.getClass().getName(),
+                                NIOFileSystemAdapter.class.getName());
+                    return adapters
+                        .stream()
+                        .filter(adap -> {
+                            return NIOFileSystemAdapter.class.getName()
+                                .equals(adap.getClass().getName());
+
+                        })
+                        .findAny()
+                        .get();
+                }
+            } else {
+                LOGGER.debug("Multiple FileSystemAdapters are available.");
+                final CcmFilesConfiguration filesConf = confManager
+                    .findConfiguration(CcmFilesConfiguration.class);
+                final String activeFileSystemAdapterClassName = filesConf
+                    .getActiveFileSystemAdapter();
+                if (activeFileSystemAdapterClassName == null
+                        || activeFileSystemAdapterClassName.trim().isEmpty()) {
+
+                    throw new UnexpectedErrorException(
+                        "Multiple implementations of the FileSystemAdapter "
+                            + "interface are available but "
+                            + "activeFileSystemAdapter is not set.");
+                }
+
+                final FileSystemAdapter adapter = adapters
+                    .stream()
+                    .filter(adap -> {
+                        return activeFileSystemAdapterClassName
+                            .equals(adap.getClass().getName());
+                    })
+                    .findAny()
+                    .orElseThrow(() -> new UnexpectedErrorException(
+                    String.format(
+                        "activeFileSystemAdapter set to '%s' but there is no "
+                            + "implementation with that class name available.",
+                        activeFileSystemAdapterClassName)));
+
+                if (adapter.isConfigured()) {
+                    return adapter;
+                } else {
+                    throw new UnexpectedErrorException(String.format(
+                        "Active FileSystemAdapter '%s' is not configured "
+                            + "correctly.",
+                        adapter.getClass().getName()));
+                }
+            }
+        } else {
+            LOGGER.debug("Only one FileSystemAdapter is avaiable.");
+            final FileSystemAdapter adapter = adapters.get(0);
+            if (NIOFileSystemAdapter.class.getName().equals(adapter.getClass()
+                .getName())) {
+                LOGGER.warn("Only the default FileSystemAdapter '{}' which "
+                                + "accesses the file system directly available. It is"
+                            + "strongly recommanded to install and configure a another "
+                            + "ileSystemAdapter which accesses the FileSystem in a way"
+                            + "which complies to the Java EE specification.");
+            }
+            if (adapter.isConfigured()) {
+                return adapter;
+            } else {
+                throw new UnexpectedErrorException(
+                    "Only the default FileSystemAdapter is available but is "
+                        + "not correctly configured.");
+            }
+        }
+    }
+
+    private String getDataPath(final String path) {
+        final StringBuilder builder = new StringBuilder();
+
+        final CcmFilesConfiguration filesConf = confManager
+            .findConfiguration(CcmFilesConfiguration.class);
+        final String dataPath = filesConf.getDataPath();
+
+        if (dataPath == null || dataPath.trim().isEmpty()) {
+            throw new UnexpectedErrorException("dataPath is not configured.");
+        }
+
+        if (dataPath.endsWith("/")) {
+            builder.append(dataPath.substring(0, dataPath.length() - 1));
+        } else {
+            builder.append(dataPath);
+        }
+
+        builder.append("/");
+
+        if (path.startsWith("/")) {
+            builder.append(path.substring(1));
+        } else {
+            builder.append(path);
+        }
+
+        return builder.toString();
+    }
+
     /**
      * Creates a {@link Reader} for the provided {@code path}.
      *
@@ -74,7 +215,7 @@ public class CcmFiles {
                FileDoesNotExistException,
                InsufficientPermissionsException {
 
-        throw new UnsupportedOperationException();
+        return getFileSystemAdapter().createReader(getDataPath(path));
     }
 
     /**
@@ -94,7 +235,8 @@ public class CcmFiles {
     public Writer createWriter(final String path)
         throws FileAccessException,
                InsufficientPermissionsException {
-        throw new UnsupportedOperationException();
+
+        return getFileSystemAdapter().createWriter(getDataPath(path));
     }
 
     /**
@@ -104,8 +246,8 @@ public class CcmFiles {
      *
      * @return
      *
-     * @throws FileAccessException              If an error not covered by
-     *                                             other exceptions occurs.
+     * @throws FileAccessException              If an error not covered by other
+     *                                          exceptions occurs.
      * @throws FileDoesNotExistException        If the requested file does not
      *                                          exist.
      * @throws InsufficientPermissionsException If the user which runs the
@@ -118,7 +260,7 @@ public class CcmFiles {
                FileAccessException,
                InsufficientPermissionsException {
 
-        throw new UnsupportedOperationException();
+        return getFileSystemAdapter().createInputStream(getDataPath(path));
     }
 
     /**
@@ -138,7 +280,8 @@ public class CcmFiles {
     public OutputStream createOutputStream(final String path)
         throws FileAccessException,
                InsufficientPermissionsException {
-        throw new UnsupportedOperationException();
+
+        return getFileSystemAdapter().createOutputStream(getDataPath(path));
     }
 
     /**
@@ -159,7 +302,8 @@ public class CcmFiles {
     public boolean existsFile(final String path)
         throws FileAccessException,
                InsufficientPermissionsException {
-        throw new UnsupportedOperationException();
+
+        return getFileSystemAdapter().existsFile(getDataPath(path));
     }
 
     /**
@@ -183,7 +327,8 @@ public class CcmFiles {
         throws FileAccessException,
                FileDoesNotExistException,
                InsufficientPermissionsException {
-        throw new UnsupportedOperationException();
+
+        return getFileSystemAdapter().isDirectory(getDataPath(path));
     }
 
     /**
@@ -204,7 +349,8 @@ public class CcmFiles {
         throws FileAccessException,
                FileAlreadyExistsException,
                InsufficientPermissionsException {
-        throw new UnsupportedOperationException();
+
+        getFileSystemAdapter().createDirectory(getDataPath(path));
     }
 
     /**
@@ -227,7 +373,8 @@ public class CcmFiles {
         throws FileAccessException,
                FileDoesNotExistException,
                InsufficientPermissionsException {
-        throw new UnsupportedOperationException();
+
+        return getFileSystemAdapter().listFiles(getDataPath(path));
     }
 
     /**
@@ -254,7 +401,8 @@ public class CcmFiles {
                FileDoesNotExistException,
                DirectoryNotEmptyException,
                InsufficientPermissionsException {
-        throw new UnsupportedOperationException();
+
+        getFileSystemAdapter().deleteFile(getDataPath(path));
     }
 
     /**
@@ -267,6 +415,8 @@ public class CcmFiles {
      *                                          exceptions occurs.
      * @throws FileDoesNotExistException        If the requested file does not
      *                                          exist.
+     * @throws DirectoryNotEmptyException       If the directory is not empty
+     * <em>and</em> {@code recursively} is set to {@code false}.
      * @throws InsufficientPermissionsException If the user which runs the
      *                                          application server does not have
      *                                          the permission to access the
@@ -275,8 +425,10 @@ public class CcmFiles {
     public void deleteFile(final String path, final boolean recursively)
         throws FileAccessException,
                FileDoesNotExistException,
+               DirectoryNotEmptyException,
                InsufficientPermissionsException {
-        throw new UnsupportedOperationException();
+
+        getFileSystemAdapter().deleteFile(getDataPath(path), recursively);
     }
 
 }
