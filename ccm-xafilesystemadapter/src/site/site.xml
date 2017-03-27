@@ -13,7 +13,7 @@
             <item name="Overview" href="index.html"/>
         </menu>
         <menu name="Configuration">
-            <item name="Wildfly 10.1.0" href="conf-wildfly_10_1_0.html/>
+            <item name="Wildfly 10.1.0" href="conf-wildfly_10_1_0.html" />
         </menu>
         
         <menu ref="reports"/>
