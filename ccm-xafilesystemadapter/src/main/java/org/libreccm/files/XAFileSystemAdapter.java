@@ -40,7 +40,8 @@ import javax.transaction.Transactional;
  * application server and that a resource adapter is configured to provided
  * access to the file system. Please refer the documentation of this module
  * for more information.
- * 
+ *
+ * @see http://xadisk.java.net
  * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
