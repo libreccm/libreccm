@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    
+    <modelVersion>4.0.0</modelVersion>
+    
+    <parent>
+        <groupId>org.libreccm</groupId>
+        <artifactId>libreccm-parent</artifactId>
+        <version>7.0.0-SNAPSHOT</version>
+    </parent>
+    
+    <groupId>org.libreccm.files</groupId>
+    <artifactId>ccm-xafilesystemadapter</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    
+    <name>ccm-xafilesystemadapter</name>
+    <url>http://www.libreccm.org</url>
+    
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+    
+    <dependencies>
+        
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-api</artifactId>
+        </dependency>
+            
+        
+        <dependency>
+            <groupId>org.libreccm</groupId>
+            <artifactId>ccm-core</artifactId>
+            <version>7.0.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>net.java.xadisk</groupId>
+            <artifactId>xadisk</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+    
+</project>
