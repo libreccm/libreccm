@@ -18,18 +18,18 @@ earlier or later versions.
     
     Configuration of the resource adapter via the Wildfly Administration Console:
     
-    ![Wildfly Configuration Attributes](resources/wildfly_conf_attributes.png)
+    ![Wildfly Configuration Attributes](screenshots/wildfly_conf_attributes.png)
 
-    ![Wildfly Configuration Properties](resources/wildfly_conf_properties.png)
+    ![Wildfly Configuration Properties](screenshots/wildfly_conf_properties.png)
 
-    ![Wildfly Connection Definition Attributes](resources/wildfly_connectiondef_attributes.png)
+    ![Wildfly Connection Definition Attributes](screenshots/wildfly_connectiondef_attributes.png)
 
-    ![Wildfly Connection Definition Properties](resources/wildfly_connectiondef_properties.png)
+    ![Wildfly Connection Definition Properties](screenshots/wildfly_connectiondef_properties.png)
 
     Or if you prefer to edit the XML file add the following configuration in
     the subsystem section for resource adapters:
 
-    <subsystem xmlns="urn:jboss:domain:resource-adapters:4.0">
+        <subsystem xmlns="urn:jboss:domain:resource-adapters:4.0">
         <resource-adapters>
             <resource-adapter id="Disk">
                 <archive>
@@ -55,7 +55,7 @@ earlier or later versions.
                 </connection-definitions>
             </resource-adapter>
         </resource-adapters>
-    </subsystem>
+        </subsystem>
 
     The name of the instance id can be choosen freely, as the id of the resource
     adapter. The `xaDiskHome` property must point to an existing directory. This
