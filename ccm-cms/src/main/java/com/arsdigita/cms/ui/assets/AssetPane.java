@@ -37,6 +37,7 @@ import com.arsdigita.bebop.event.PrintEvent;
 import com.arsdigita.bebop.event.PrintListener;
 import com.arsdigita.cms.CMS;
 import com.arsdigita.cms.ui.BaseTree;
+import com.arsdigita.cms.ui.folder.FolderBrowser;
 import com.arsdigita.cms.ui.folder.FolderCreateForm;
 import com.arsdigita.cms.ui.folder.FolderEditorForm;
 import com.arsdigita.cms.ui.folder.FolderRequestLocal;
@@ -142,6 +143,7 @@ public class AssetPane extends LayoutPanel implements Resettable {
 
         browseSegment = panel.addSegment();
         browseSegment.setIdAttr("folder-browse");
+        
 
         final ActionGroup actions = new ActionGroup();
         browseSegment.add(actions);
