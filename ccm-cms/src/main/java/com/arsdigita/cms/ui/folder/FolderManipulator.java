@@ -59,6 +59,7 @@ import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.bebop.table.TableCellRenderer;
 import com.arsdigita.bebop.table.TableColumn;
 import com.arsdigita.bebop.tree.TreeCellRenderer;
+import com.arsdigita.cms.CMS;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.toolbox.ui.ActionGroup;
 
@@ -80,6 +81,7 @@ import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemManager;
 import org.librecms.contentsection.ContentItemRepository;
+import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.Folder;
 import org.librecms.contentsection.FolderManager;
 import org.librecms.contentsection.FolderRepository;
@@ -719,7 +721,17 @@ public class FolderManipulator extends SimpleContainer implements
         public TargetSelector() {
             super("targetSel", new BoxPanel());
             setMethod(GET);
-            targetModel = new FolderSelectionModel("target");
+            targetModel = new FolderSelectionModel("target") {
+
+                @Override
+                protected Long getRootFolderID(final PageState state) {
+                    final ContentSection section = CMS
+                    .getContext()
+                    .getContentSection();
+                    return section.getRootDocumentsFolder().getObjectId();
+                }
+                
+            };
             folderTree = new FolderTree(targetModel);
             folderTree.setCellRenderer(new FolderTreeCellRenderer());
 

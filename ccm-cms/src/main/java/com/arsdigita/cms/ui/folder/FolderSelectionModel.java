@@ -36,7 +36,7 @@ import org.librecms.contentsection.Folder;
  * @author <a href="mailto:lutter@arsdigita.com">David Lutterkort</a>
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class FolderSelectionModel extends CcmObjectSelectionModel<Folder> {
+public abstract class FolderSelectionModel extends CcmObjectSelectionModel<Folder> {
 
     public FolderSelectionModel(final String name) {
         super(Category.class.getName(), name);
@@ -84,10 +84,11 @@ public class FolderSelectionModel extends CcmObjectSelectionModel<Folder> {
      * @pre s != null
      * @post return != null
      */
-    protected Long getRootFolderID(final PageState state) {
-        ContentSection sec = CMS.getContext().getContentSection();
-        return sec.getRootDocumentsFolder().getObjectId();
-    }
+    protected abstract Long getRootFolderID(final PageState state);
+//    {
+//        ContentSection sec = CMS.getContext().getContentSection();
+//        return sec.getRootDocumentsFolder().getObjectId();
+//    }
 
     /**
      * Return true, since this selection model will always have a folder
