@@ -51,7 +51,8 @@ import org.libreccm.configuration.ConfigurationManager;
  * @author <a href="mailto:lutter@arsdigita.com">David Lutterkort</a>
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class FolderTreeModelBuilder extends LockableImpl
+public abstract class FolderTreeModelBuilder 
+    extends LockableImpl
     implements TreeModelBuilder {
 
     /**
@@ -121,65 +122,32 @@ public class FolderTreeModelBuilder extends LockableImpl
 
         };
 
-        /*return new DataQueryTreeModel(getRoot(state).getID(),
-                                      "com.arsdigita.cms.getRootFolder",
-                                      "com.arsdigita.cms.getSubFolders") {
-
-            @Override
-            public Iterator getChildren(TreeNode node, PageState data) {
-                String nodeKey = node.getKey().toString();
-
-                // Always expand root node
-                if (nodeKey.equals(getRoot(data).getKey().toString()) && tree.
-                        isCollapsed(nodeKey, data)) {
-                    tree.expand(nodeKey, data);
-                }
-
-                if (tree.isCollapsed(nodeKey, data)) {
-                    return Collections.EMPTY_LIST.iterator();
-                }
-                Party party = Kernel.getContext().getParty();
-                OID partyOID = null;
-                if (party == null) {
-                    partyOID = new OID(User.BASE_DATA_OBJECT_TYPE,
-                                       PermissionManager.VIRTUAL_PUBLIC_ID);
-                } else {
-                    partyOID = party.getOID();
-                }
-                UniversalPermissionDescriptor universalPermission
-                                              = new UniversalPermissionDescriptor(
-                                SecurityManager.CMS_PREVIEW_ITEM_DESCRIPTOR,
-                                partyOID);
-                if (PermissionService.checkPermission(universalPermission)) {
-                    // the person is an admin so we just pass in the
-                    // standard, non filtered query
-                    return getDataQueryTreeIterator(
-                            (DataQueryTreeNode) node,
-                            "com.arsdigita.cms.getSubFolders");
-                } else {
-                    // now we need to set the parameters
-                    return new NewFolderBrowserIterator(
-                            (DataQueryTreeNode) node,
-                            partyOID);
-                }
-            }
-        };*/
     }
 
+//    /**
+//     * Return the root folder for the tree model in the current request.
+//     *
+//     * @param state represents the current request
+//     *
+//     * @return the root folder for the tree
+//     *
+//     */
+////    protected Folder getRootFolder(final PageState state)
+//        throws IllegalStateException {
+//
+//        final ContentSection section = CMS.getContext().getContentSection();
+//        return section.getRootDocumentsFolder();
+//    }
+    
     /**
-     * Retrn the root folder for the tree model in the current request.
+     * Return the root folder for the tree model in the current request.
      *
      * @param state represents the current request
      *
      * @return the root folder for the tree
      *
      */
-    protected Folder getRootFolder(final PageState state)
-        throws IllegalStateException {
-
-        final ContentSection section = CMS.getContext().getContentSection();
-        return section.getRootDocumentsFolder();
-    }
+    protected abstract Folder getRootFolder(final PageState state);
 
     private class FolderTreeNode implements TreeNode {
 
@@ -219,98 +187,4 @@ public class FolderTreeModelBuilder extends LockableImpl
 
     }
 
-    /*private class NewFolderBrowserIterator implements Iterator {
-
-        private DataQuery m_nodes;
-
-        public NewFolderBrowserIterator(DataQueryTreeNode node, OID partyOID) {
-
-            BigDecimal userID = (BigDecimal) partyOID.get("id");
-
-            String sql = ""
-                                 + "\n    select f.folder_id as id,"
-                                 + "\n           f.label as name,"
-                                 + "\n           count(sub.item_id) as nchild"
-                                 + "\n    from cms_folders f,"
-                                 + "\n         cms_items i"
-                                 + "\n         left join"
-                                 + "\n             (select i2.item_id, f2.label as name, i2.parent_id"
-                         + "\n                from cms_folders f2,"
-                                 + "\n                     cms_items i2"
-                                 + "\n               where f2.folder_id = i2.item_id) sub"
-                         + "\n           on (sub.parent_id = i.item_id"
-                                 + "\n             and"
-                                 + "\n             exists (select 1"
-                                 + "\n                          from dnm_object_1_granted_context dogc,"
-                         + "\n                               dnm_granted_context dgc,"
-                         + "\n                               dnm_permissions dp,"
-                         + "\n                               dnm_group_membership dgm"
-                         + "\n                           where dogc.pd_object_id = sub.item_id"
-                         + "\n                             and dogc.pd_context_id = dgc.pd_object_id"
-                         + "\n                             and dgc.pd_context_id = dp.pd_object_id"
-                         + "\n                             and dp.pd_grantee_id = dgm.pd_group_id"
-                         + "\n                             and dgm.pd_member_id in (-200,"
-                         + userID + ",-202)"
-                                 + "\n                             and dp."
-                         + TREE_DESCRIPTOR.getColumnName() + " = '1'"
-                                 + "\n                             ) )"
-                                 + "\n    where i.parent_id = " + node.getID()
-                                 + "\n      and f.folder_id = i.item_id"
-                                 + "\n      and  exists ("
-                                 + "\n            select 1 as permission_p"
-                                 + "\n              from dnm_object_1_granted_context dogc,"
-                         + "\n                   dnm_granted_context dgc,"
-                                 + "\n                   dnm_permissions dp,"
-                                 + "\n                   dnm_group_membership dgm"
-                         + "\n              where dogc.pd_context_id = dgc.pd_object_id"
-                         + "\n                and dgc.pd_context_id = dp.pd_object_id"
-                         + "\n                and dgm.pd_member_id in (-200,"
-                         + userID + ",-202)"
-                                 + "\n                and dp.pd_grantee_id = dgm.pd_group_id"
-                         + "\n                and dogc.pd_object_id = f.folder_id"
-                         + "\n                and dp." + TREE_DESCRIPTOR.
-                    getColumnName() + " = '1' )"
-                                 + "\n    group by f.label, f.folder_id"
-                                 + "\n    order by lower(f.label)";
-
-            if (s_log.isDebugEnabled()) {
-                s_log.debug("Custom SQL: \n" + sql);
-            }
-
-            m_nodes = new GenericDataQuery(
-                    SessionManager.getSession(),
-                    sql,
-                    new String[]{"id", "name", "nchild"});
-        }
-
-        @Override
-        public Object next() {
-            BigDecimal id = new BigDecimal(0);
-            try {
-                // this appears to be the only portable way to dig numbers out
-                // of the result set
-                id = new BigDecimal(m_nodes.get("id").toString());
-            } catch (NumberFormatException nfe) {
-            }
-            String name = m_nodes.get("name").toString();
-            BigDecimal count = new BigDecimal(0);
-            try {
-                count = new BigDecimal(m_nodes.get("nchild").toString());
-            } catch (NumberFormatException nfe) {
-            }
-
-            return new DataQueryTreeNode(id, name, count.intValue() > 0);
-        }
-
-        @Override
-        public void remove() {
-            throw new UnsupportedOperationException(
-                    "cannot remove nodes via iterator");
-        }
-
-        @Override
-        public boolean hasNext() {
-            return m_nodes.next();
-        }
-    }*/
 }

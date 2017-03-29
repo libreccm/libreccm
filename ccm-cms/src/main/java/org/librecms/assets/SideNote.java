@@ -45,17 +45,7 @@ import static org.librecms.CmsConstants.*;
 public class SideNote extends Asset implements Serializable {
 
     private static final long serialVersionUID = -4566222634780521726L;
-
-    @Embedded
-    @AssociationOverride(
-    name = "values",
-    joinTable = @JoinTable(name = "SIDE_NOTE_TITLES",
-                           schema = DB_SCHEMA,
-                           joinColumns = {
-                               @JoinColumn(name = "SIDE_NOTE_ID")
-                           }))
-    private LocalizedString title;
-    
+  
     @Embedded
     @AssociationOverride(
         name = "values",
