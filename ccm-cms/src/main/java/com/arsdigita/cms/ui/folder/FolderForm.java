@@ -402,8 +402,7 @@ public abstract class FolderForm extends Form implements FormInitListener,
      *
      */
     final protected Folder getCurrentFolder(final PageState state) {
-        final Folder folder = (Folder) currentFolder
-            .getSelectedObject(state);
+        final Folder folder = currentFolder.getSelectedObject(state);
         return folder;
     }
 

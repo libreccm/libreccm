@@ -73,9 +73,29 @@ public class BrowsePane extends LayoutPanel implements Resettable {
     public BrowsePane() {
 
         /* The folder tree displayed on the left side / left column           */
-        tree = new BaseTree(new FolderTreeModelBuilder());
+        tree = new BaseTree(new FolderTreeModelBuilder() {
+
+            @Override
+            protected Folder getRootFolder(final PageState state) {
+                final ContentSection section = CMS
+                    .getContext()
+                    .getContentSection();
+                return section.getRootDocumentsFolder();
+            }
+
+        });
         selectionModel = tree.getSelectionModel();
-        folderModel = new FolderSelectionModel(selectionModel);
+        folderModel = new FolderSelectionModel(selectionModel) {
+
+            @Override
+            protected Long getRootFolderID(final PageState state) {
+                final ContentSection section = CMS
+                    .getContext()
+                    .getContentSection();
+                return section.getRootDocumentsFolder().getObjectId();
+            }
+
+        };
         folderRequestLocal = new FolderRequestLocal(folderModel);
 
         final SegmentedPanel left = new SegmentedPanel();
@@ -157,11 +177,14 @@ public class BrowsePane extends LayoutPanel implements Resettable {
             final PageState state = event.getPageState();
 
             if (!selectionModel.isSelected(state)) {
-                final String folder = state.getRequest().getParameter(
-                    ContentSectionPage.SET_FOLDER);
+                final String folder = state
+                    .getRequest()
+                    .getParameter(ContentSectionPage.SET_FOLDER);
 
                 if (folder == null) {
-                    final Category root = CMS.getContext().getContentSection()
+                    final Category root = CMS
+                        .getContext()
+                        .getContentSection()
                         .getRootDocumentsFolder();
                     final Long folderID = root.getObjectId();
 
@@ -178,7 +201,7 @@ public class BrowsePane extends LayoutPanel implements Resettable {
                     }*/
                     selectionModel.setSelectedKey(state, folderID);
                 } else {
-                    selectionModel.setSelectedKey(state, folder);
+                    selectionModel.setSelectedKey(state, Long.parseLong(folder));
                 }
             }
         }
@@ -191,11 +214,9 @@ public class BrowsePane extends LayoutPanel implements Resettable {
         public final void actionPerformed(final ActionEvent event) {
             final PageState state = event.getPageState();
 
-            if (Assert.isEnabled()) {
-                Assert.isTrue(selectionModel.isSelected(state));
-            }
-
-            final Category root = CMS.getContext().getContentSection()
+            final Category root = CMS
+                .getContext()
+                .getContentSection()
                 .getRootDocumentsFolder();
 
             if (!root.equals(folderRequestLocal.getFolder(state))) {
@@ -207,27 +228,7 @@ public class BrowsePane extends LayoutPanel implements Resettable {
                 final List<Long> ancestorIds = controller.findAncestorIds(
                     folderRequestLocal.getFolder(state));
                 ancestorIds.forEach(id -> tree.expand(id.toString(), state));
-                
-//                CcmObject object = folderRequestLocal.getFolder(state);
-//
-//                while (object != null) {
-//                    if (object instanceof Category) {
-//                        final Category category = (Category) object;
-//
-//                        if (category.getParentCategory() != null) {
-//                            final Category result = category.getParentCategory();
-//                            object = result;
-//                            tree.expand(
-//                                ((Long) object.getObjectId()).toString(),
-//                                state);
-//                        } else {
-//                            object = null;
-//                        }
-//
-//                    } else {
-//                        object = null;
-//                    }
-//                }
+
             }
         }
 

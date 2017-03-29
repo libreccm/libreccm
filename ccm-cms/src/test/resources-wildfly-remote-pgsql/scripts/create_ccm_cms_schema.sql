@@ -803,23 +803,6 @@ create schema CCM_CORE;
         primary key (REV, SIDE_NOTE_ID, LOCALIZED_VALUE, LOCALE)
     );
 
-    create table CCM_CMS.SIDE_NOTE_TITLES (
-        SIDE_NOTE_ID int8 not null,
-        LOCALIZED_VALUE text,
-        LOCALE varchar(255) not null,
-        primary key (SIDE_NOTE_ID, LOCALE)
-    );
-
-    create table CCM_CMS.SIDE_NOTE_TITLES_AUD (
-        REV int4 not null,
-        SIDE_NOTE_ID int8 not null,
-        LOCALIZED_VALUE text not null,
-        LOCALE varchar(255) not null,
-        REVTYPE int2,
-        REVEND int4,
-        primary key (REV, SIDE_NOTE_ID, LOCALIZED_VALUE, LOCALE)
-    );
-
     create table CCM_CMS.SIDE_NOTES (
         OBJECT_ID int8 not null,
         primary key (OBJECT_ID)

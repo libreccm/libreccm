@@ -51,11 +51,13 @@ public class FolderCreateForm extends FolderForm {
      * Validates the form. Checks for name uniqueness.
      *
      * @param event
+     * @throws com.arsdigita.bebop.FormProcessException
      *
      */
     @Override
     public void validate(final FormSectionEvent event)
         throws FormProcessException {
+        
         final Folder folder = getCurrentFolder(event.getPageState());
         final FormData data = event.getFormData();
         final String name = data.getString(NAME);

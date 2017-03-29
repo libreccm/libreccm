@@ -39,6 +39,7 @@ import com.arsdigita.toolbox.ui.SelectionPanel;
 import org.libreccm.categorization.CategoryRepository;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.CmsConstants;
+import org.librecms.contentsection.Folder;
 
 
 /**
@@ -57,7 +58,18 @@ public class FolderAdminPane extends SelectionPanel {
 
     public FolderAdminPane() {
         super(new Label(gz("cms.ui.folder.folders")),
-              new FolderTreeModelBuilder());
+              new FolderTreeModelBuilder() {
+
+            @Override
+            protected Folder getRootFolder(final PageState state) {
+                final ContentSection section = CMS
+                .getContext()
+                .getContentSection();
+                
+                return section.getRootDocumentsFolder();
+            }
+                  
+              });
 
         m_folder = new FolderRequestLocal(getSelectionModel());
         m_param = new BigDecimalParameter(FOLDER_PARAMETER);

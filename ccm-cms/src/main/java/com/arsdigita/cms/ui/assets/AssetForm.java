@@ -18,10 +18,21 @@
  */
 package com.arsdigita.cms.ui.assets;
 
+import com.arsdigita.bebop.Container;
+import com.arsdigita.bebop.Form;
+
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class AssetForm {
+public class AssetForm extends Form {
+    
+    public AssetForm(final String name) {
+        super(name);
+    }
+    
+    public AssetForm(final String name, final Container container) {
+        super(name, container);
+    }
     
 }

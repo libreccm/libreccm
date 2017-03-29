@@ -35,6 +35,7 @@ import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentSection;
 
 import com.arsdigita.cms.dispatcher.CMSPage;
+import com.arsdigita.cms.ui.assets.AssetPane;
 //ToDo NG import com.arsdigita.cms.ui.category.CategoryAdminPane;
 import com.arsdigita.cms.ui.cse.ContentSoonExpiredPane;
 import com.arsdigita.cms.ui.folder.FolderAdminPane;
@@ -121,6 +122,7 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
     private FolderAdminPane m_folderPane;
     private BrowsePane m_browsePane;
     private ItemSearch m_searchPane;
+    private AssetPane m_assetPane;
 //ToDo NG    private ImagesPane m_imagesPane;
     private RoleAdminPane m_rolePane;
     private WorkflowAdminPane m_workflowPane;
@@ -148,6 +150,7 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
         m_folderPane = getFolderAdminPane();
         m_browsePane = getBrowsePane();
         m_searchPane = getSearchPane();
+        m_assetPane = getAssetPane();
 //ToDo NG        m_imagesPane = getImagesPane();
         m_rolePane = getRoleAdminPane();
         m_workflowPane = getWorkflowAdminPane();
@@ -259,6 +262,15 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
         }
         return m_searchPane;
     }
+
+    protected AssetPane getAssetPane() {
+        if (m_assetPane == null) {
+            m_assetPane = new AssetPane();
+        }
+
+        return m_assetPane;
+    }
+
 //    ToDo NG
 //    protected ImagesPane getImagesPane() {
 //        if (m_imagesPane == null) {
@@ -266,7 +278,6 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
 //        }
 //        return m_imagesPane;
 //    }
-
     protected RoleAdminPane getRoleAdminPane() {
         if (m_rolePane == null) {
             m_rolePane = new RoleAdminPane();
@@ -389,6 +400,7 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
         //tab(pane, "cms.ui.folders", getFolderAdminPane());
         tab(pane, "cms.ui.browse", getBrowsePane());
         tab(pane, "cms.ui.search", getSearchPane());
+        tab(pane, "cms.ui.assets", getAssetPane());
 //      ToDo NG replace with media tab tab(pane, "cms.ui.images", getImagesPane());
         tab(pane, "cms.ui.roles", getRoleAdminPane());
         tab(pane, "cms.ui.workflows", getWorkflowAdminPane());
@@ -433,7 +445,9 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
 //        } else if (pane == m_imagesPane) {
 //            m_imagesPane.reset(state);
 //        } else 
-        if (pane == m_folderPane) {
+        if (pane == m_assetPane) {
+            m_assetPane.reset(state);
+        } else if (pane == m_folderPane) {
             m_folderPane.reset(state);
 //ToDo NG        } else if (pane == m_browsePane) {
 //            m_browsePane.reset(state);

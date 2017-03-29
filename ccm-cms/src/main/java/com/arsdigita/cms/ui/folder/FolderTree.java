@@ -20,15 +20,28 @@ package com.arsdigita.cms.ui.folder;
 
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.Tree;
+import com.arsdigita.cms.CMS;
 
-import org.librecms.CmsConstants;
+import org.librecms.contentsection.ContentSection;
+import org.librecms.contentsection.Folder;
 
 import static org.librecms.CmsConstants.*;
 
 public class FolderTree extends Tree {
 
     public FolderTree(final FolderSelectionModel folderSel) {
-        super(new FolderTreeModelBuilder());
+        super(new FolderTreeModelBuilder() {
+
+            @Override
+            protected Folder getRootFolder(final PageState state) {
+                final ContentSection section = CMS
+                    .getContext()
+                    .getContentSection();
+                
+                return section.getRootDocumentsFolder();
+            }
+
+        });
         setSelectionModel(folderSel);
     }
 
