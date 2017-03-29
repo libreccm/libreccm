@@ -25,6 +25,7 @@ import org.librecms.contentsection.ContentType;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.ServiceLoader;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -34,6 +35,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
 
 /**
+ * Provides informations about the available content types.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -55,29 +57,30 @@ public class ContentTypesManager {
      */
     @PostConstruct
     protected void initialize() {
-        final ServiceLoader<CcmModule> modules = ServiceLoader.load(
-            CcmModule.class);
+        final ServiceLoader<CcmModule> modules = ServiceLoader
+            .load(CcmModule.class);
 
-        final SortedSet<Class<? extends ContentItem>> types = new TreeSet<>(
-            (type1, type2) -> type1.getName().compareTo(type2.getName())
-        );
+        final SortedSet<Class<? extends ContentItem>> contentTypes
+                                                          = new TreeSet<>(
+                (type1, type2) -> {
+                    return type1.getName().compareTo(type2.getName());
+                }
+            );
 
         for (final CcmModule module : modules) {
-            final ContentTypes annotation = module.getClass().getAnnotation(
-                ContentTypes.class);
+            final ContentTypes annotation = module
+                .getClass()
+                .getAnnotation(ContentTypes.class);
 
             if (annotation == null) {
                 continue;
             }
 
-            final List<Class<? extends ContentItem>> moduleTypes = Arrays
-                .stream(annotation.value())
-                .collect(Collectors.toList());
-
-            types.addAll(moduleTypes);
+            contentTypes.addAll(Arrays.asList(annotation.value()));
         }
 
-        availableContentTypes = types.stream()
+        availableContentTypes = contentTypes
+            .stream()
             .filter(type -> type.getAnnotation(AuthoringKit.class) != null)
             .map(contentTypeClass -> createContentTypeInfo(contentTypeClass))
             .collect(Collectors.toList());
@@ -94,12 +97,14 @@ public class ContentTypesManager {
     private ContentTypeInfo createContentTypeInfo(
         final Class<? extends ContentItem> contentTypeClass) {
 
+        Objects.requireNonNull(contentTypeClass);
+        
         final ContentTypeInfo contentTypeInfo = new ContentTypeInfo();
         contentTypeInfo.setContentItemClass(contentTypeClass);
 
         final String defaultBundleName = String.join(
             "",
-            contentTypeClass.getClass().getName(),
+            contentTypeClass.getName(),
             "Bundle");
         final ContentTypeDescription typeDesc = contentTypeClass.getAnnotation(
             ContentTypeDescription.class);
@@ -169,6 +174,9 @@ public class ContentTypesManager {
         final Class<? extends ContentItem> contentTypeClass,
         final AuthoringStep authoringStep) {
 
+        Objects.requireNonNull(contentTypeClass);
+        Objects.requireNonNull(authoringStep);
+        
         final AuthoringStepInfo stepInfo = new AuthoringStepInfo();
 
         stepInfo.setComponent(authoringStep.component());
@@ -231,6 +239,8 @@ public class ContentTypesManager {
     public ContentTypeInfo getContentTypeInfo(
         final Class<? extends ContentItem> contentTypeClass) {
 
+        Objects.requireNonNull(contentTypeClass);
+        
         return createContentTypeInfo(contentTypeClass);
     }
 
@@ -242,9 +252,16 @@ public class ContentTypesManager {
      *                         type.
      *
      * @return A {@link ContentTypeInfo} describing the content type.
+     *
+     * @throws IllegalArgumentException If no class with the provided name
+     *                                  exists or the class is not a subclass of
+     *                                  {@link ContentItem}.
      */
     @SuppressWarnings("unchecked")
     public ContentTypeInfo getContentTypeInfo(final String contentTypeClass) {
+
+        Objects.requireNonNull(contentTypeClass);
+        
         final Class<?> clazz;
         try {
             clazz = Class.forName(contentTypeClass);
