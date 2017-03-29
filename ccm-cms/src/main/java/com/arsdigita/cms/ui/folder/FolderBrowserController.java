@@ -125,7 +125,7 @@ public class FolderBrowserController {
     @PostConstruct
     private void init() {
         final KernelConfig kernelConfig = confManager.findConfiguration(
-                KernelConfig.class);
+            KernelConfig.class);
         defaultLocale = kernelConfig.getDefaultLocale();
     }
 
@@ -135,7 +135,7 @@ public class FolderBrowserController {
      * @param folder The folder.
      *
      * @return The number of objects (subfolders and content items) in the
-     * provided {@code folder}.
+     *         provided {@code folder}.
      */
     public long countObjects(final Folder folder) {
         return countObjects(folder, "%");
@@ -145,11 +145,12 @@ public class FolderBrowserController {
      * Count all objects (subfolders and content items) in the provided folder
      * which match the provided filter term.
      *
-     * @param folder The folder.
+     * @param folder     The folder.
      * @param filterTerm The filter term.
      *
      * @return The number of objects (subfolders and content items) in the
-     * provided {@code folder} which match the provided {@code filterTerm}.
+     *         provided {@code folder} which match the provided
+     *         {@code filterTerm}.
      */
     public long countObjects(final Folder folder,
                              final String filterTerm) {
@@ -183,8 +184,8 @@ public class FolderBrowserController {
             criteriaQuery = criteriaQuery.where(from.in(subFolders));
         } else {
             criteriaQuery = criteriaQuery.where(builder.or(
-                    from.in(subFolders),
-                    from.in(items)));
+                from.in(subFolders),
+                from.in(items)));
         }
 
         return entityManager.createQuery(criteriaQuery).getSingleResult();
@@ -194,13 +195,13 @@ public class FolderBrowserController {
      * Create {@link FolderBrowserTableRow} objects for all objects in the
      * provided folder.
      *
-     * @param folder The folder which contains the objects.
-     * @param orderBy The field used to order the objects.
+     * @param folder         The folder which contains the objects.
+     * @param orderBy        The field used to order the objects.
      * @param orderDirection The direction for ordering the objects.
      *
      * @return A list with {@link FolderBrowserTableRow} objects for each object
-     * in the provided {@code folder} ordered by the provided field and in the
-     * provided direction.
+     *         in the provided {@code folder} ordered by the provided field and
+     *         in the provided direction.
      */
     @Transactional(Transactional.TxType.REQUIRED)
     List<FolderBrowserTableRow> getObjectRows(final Folder folder,
@@ -213,15 +214,15 @@ public class FolderBrowserController {
      * Create {@link FolderBrowserTableRow} objects for all objects in the
      * provided folder which match provided filter term.
      *
-     * @param folder The folder which contains the objects.
-     * @param filterTerm The filter term.
-     * @param orderBy The field used to order the objects.
+     * @param folder         The folder which contains the objects.
+     * @param filterTerm     The filter term.
+     * @param orderBy        The field used to order the objects.
      * @param orderDirection The direction for ordering the objects.
      *
      * @return A list with {@link FolderBrowserTableRow} objects for each object
-     * in the provided {@code folder} which matches the provided
-     * {@code filterTerm}, ordered by the provided field and in the provided
-     * direction.
+     *         in the provided {@code folder} which matches the provided
+     *         {@code filterTerm}, ordered by the provided field and in the
+     *         provided direction.
      */
     @Transactional(Transactional.TxType.REQUIRED)
     List<FolderBrowserTableRow> getObjectRows(final Folder folder,
@@ -241,17 +242,17 @@ public class FolderBrowserController {
      * provided folder which are in the range provided by {@code firstResult}
      * and {@code maxResult}
      *
-     * @param folder The folder which contains the objects.
-     * @param orderBy The field used to order the objects.
+     * @param folder         The folder which contains the objects.
+     * @param orderBy        The field used to order the objects.
      * @param orderDirection The direction for ordering the objects.
-     * @param firstResult The index of the first object to use.
-     * @param maxResults The maximum number of objects to retrieve.
+     * @param firstResult    The index of the first object to use.
+     * @param maxResults     The maximum number of objects to retrieve.
      *
      * @return A list with {@link FolderBrowserTableRow} objects for each object
-     * in the provided {@code folder} ordered by the provided field and in the
-     * provided direction. The list will start with the object with index
-     * provided as {@code firstResult} and contain at most {@code maxResults}
-     * items.
+     *         in the provided {@code folder} ordered by the provided field and
+     *         in the provided direction. The list will start with the object
+     *         with index provided as {@code firstResult} and contain at most
+     *         {@code maxResults} items.
      */
     @Transactional(Transactional.TxType.REQUIRED)
     List<FolderBrowserTableRow> getObjectRows(final Folder folder,
@@ -272,18 +273,19 @@ public class FolderBrowserController {
      * provided folder which match the provided filter term and which are in the
      * range provided by {@code firstResult} and {@code maxResult}
      *
-     * @param folder The folder which contains the objects.
-     * @param filterTerm The filter term.
-     * @param orderBy The field used to order the objects.
+     * @param folder         The folder which contains the objects.
+     * @param filterTerm     The filter term.
+     * @param orderBy        The field used to order the objects.
      * @param orderDirection The direction for ordering the objects.
-     * @param firstResult The index of the first object to use.
-     * @param maxResults The maximum number of objects to retrieve.
+     * @param firstResult    The index of the first object to use.
+     * @param maxResults     The maximum number of objects to retrieve.
      *
      * @return A list with {@link FolderBrowserTableRow} objects for each object
-     * in the provided {@code folder} which matches the provided
-     * {@code filterTerm}, ordered by the provided field and in the provided
-     * direction. The list will start with the object with index provided as
-     * {@code firstResult} and contain at most {@code maxResults} items.
+     *         in the provided {@code folder} which matches the provided
+     *         {@code filterTerm}, ordered by the provided field and in the
+     *         provided direction. The list will start with the object with
+     *         index provided as {@code firstResult} and contain at most
+     *         {@code maxResults} items.
      */
     @Transactional(Transactional.TxType.REQUIRED)
     List<FolderBrowserTableRow> getObjectRows(final Folder folder,
@@ -298,9 +300,10 @@ public class FolderBrowserController {
                                                        orderDirection,
                                                        firstResult,
                                                        maxResults);
-        final List<FolderBrowserTableRow> subFolderRows = subFolders.stream()
-                .map(subFolder -> buildRow(subFolder))
-                .collect(Collectors.toList());
+        final List<FolderBrowserTableRow> subFolderRows = subFolders
+            .stream()
+            .map(subFolder -> buildRow(subFolder))
+            .collect(Collectors.toList());
 
         if (subFolders.size() > maxResults) {
             return subFolderRows;
@@ -315,10 +318,10 @@ public class FolderBrowserController {
                                                               firstItem,
                                                               maxItems);
             final List<FolderBrowserTableRow> itemRows = items.stream()
-                    .map(item -> buildRow(item))
-                    .collect(Collectors.toList());
+                .map(item -> buildRow(item))
+                .collect(Collectors.toList());
 
-            final ArrayList<FolderBrowserTableRow> rows = new ArrayList<>();
+            final List<FolderBrowserTableRow> rows = new ArrayList<>();
             rows.addAll(subFolderRows);
             rows.addAll(itemRows);
 
@@ -331,10 +334,10 @@ public class FolderBrowserController {
      * {@link Folder}.
      *
      * @param folder The {@link Folder} to use for building the
-     * {@link FolderBrowserTableRow}.
+     *               {@link FolderBrowserTableRow}.
      *
      * @return A {@link FolderBrowserTableRow} containing the data needed by the
-     * {@link FolderBrowser} to display the provided {@code folder}.
+     *         {@link FolderBrowser} to display the provided {@code folder}.
      */
     private FolderBrowserTableRow buildRow(final Folder folder) {
 
@@ -345,15 +348,15 @@ public class FolderBrowserController {
         row.setName(folder.getName());
         row.setLanguages(Collections.emptyList());
         if (folder.getTitle().hasValue(globalizationHelper
-                .getNegotiatedLocale())) {
+            .getNegotiatedLocale())) {
             row.setTitle(folder.getTitle().getValue(globalizationHelper
-                    .getNegotiatedLocale()));
+                .getNegotiatedLocale()));
         } else {
             row.setTitle(folder.getTitle().getValue(defaultLocale));
         }
         row.setFolder(true);
         row.setDeletable(!categoryManager.hasSubCategories(folder)
-                                 && !categoryManager.hasObjects(folder));
+                             && !categoryManager.hasObjects(folder));
 
         return row;
     }
@@ -363,10 +366,10 @@ public class FolderBrowserController {
      * {@link ContentItem}.
      *
      * @param item The {@link ContentItem} to use for building the
-     * {@link FolderBrowserTableRow}.
+     *             {@link FolderBrowserTableRow}.
      *
      * @return A {@link FolderBrowserTableRow} containing the data needed by the
-     * {@link FolderBrowser} to display the provided {@code item}.
+     *         {@link FolderBrowser} to display the provided {@code item}.
      */
     private FolderBrowserTableRow buildRow(final ContentItem item) {
 
@@ -376,20 +379,20 @@ public class FolderBrowserController {
         row.setObjectUuid(item.getItemUuid());
         row.setName(item.getName().getValue(defaultLocale));
         final List<Locale> languages = new ArrayList<>(itemL10NManager
-                .availableLanguages(item));
+            .availableLanguages(item));
         languages.sort((lang1, lang2) -> lang1.toString().compareTo(
-                lang2.toString()));
+            lang2.toString()));
         row.setLanguages(languages);
         if (item.getTitle().hasValue(globalizationHelper
-                .getNegotiatedLocale())) {
+            .getNegotiatedLocale())) {
             row.setTitle(item.getTitle().getValue(globalizationHelper
-                    .getNegotiatedLocale()));
+                .getNegotiatedLocale()));
         } else {
             row.setTitle(item.getTitle().getValue(defaultLocale));
         }
         final ContentType type = item.getContentType();
         final ContentTypeInfo typeInfo = typesManager.getContentTypeInfo(
-                type);
+            type);
         row.setTypeLabelBundle(typeInfo.getLabelBundle());
         row.setTypeLabelKey(typeInfo.getLabelKey());
 
@@ -415,21 +418,21 @@ public class FolderBrowserController {
 
         if (objectId.startsWith("folder-")) {
             final long folderId = Long.parseLong(
-                    objectId.substring("folder-".length()));
+                objectId.substring("folder-".length()));
 
             folderRepo
-                    .findById(folderId)
-                    .ifPresent(folderRepo::delete);
+                .findById(folderId)
+                .ifPresent(folderRepo::delete);
         } else if (objectId.startsWith("item-")) {
             final long itemId = Long.parseLong(
-                    objectId.substring("item-".length()));
+                objectId.substring("item-".length()));
 
             itemRepo
-                    .findById(itemId)
-                    .ifPresent(itemRepo::delete);
+                .findById(itemId)
+                .ifPresent(itemRepo::delete);
         } else {
             throw new IllegalArgumentException(
-                    "The objectId is expected to start with 'folder-' or 'item.'.");
+                "The objectId is expected to start with 'folder-' or 'item.'.");
         }
     }
 
@@ -445,20 +448,21 @@ public class FolderBrowserController {
      * name in ascending and descending order depending on the value of
      * {@code orderDirection}.
      *
-     * @param folder The folder which contains the subfolders.
-     * @param filterTerm The filter term.
-     * @param orderBy Field to use for ordering. If the value is negative the
-     * parameter is ignored.
+     * @param folder         The folder which contains the subfolders.
+     * @param filterTerm     The filter term.
+     * @param orderBy        Field to use for ordering. If the value is negative
+     *                       the parameter is ignored.
      * @param orderDirection Direction for ordering. If the value is negative
-     * the parameter is ignored.
-     * @param firstResult Index of the first result to retrieve.
-     * @param maxResults Maxium number of results to retrieve.
+     *                       the parameter is ignored.
+     * @param firstResult    Index of the first result to retrieve.
+     * @param maxResults     Maxium number of results to retrieve.
      *
      *
      * @return A list of the subfolders of the provided {@code folder} which
-     * match the provided {@code filterTerm}. The list is ordered as described
-     * above. The list will contain at most {@code maxResults} starting with the
-     * result with the index provided as {@code firstResult}.
+     *         match the provided {@code filterTerm}. The list is ordered as
+     *         described above. The list will contain at most {@code maxResults}
+     *         starting with the result with the index provided as
+     *         {@code firstResult}.
      */
     private List<Folder> findSubFolders(final Folder folder,
                                         final String filterTerm,
@@ -466,28 +470,33 @@ public class FolderBrowserController {
                                         final String orderDirection,
                                         final int firstResult,
                                         final int maxResults) {
-        final CriteriaBuilder builder = entityManager
-                .getCriteriaBuilder();
 
-        final CriteriaQuery<Folder> criteria = builder.createQuery(
-                Folder.class);
+        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+
+        final CriteriaQuery<Folder> criteria = builder
+            .createQuery(Folder.class);
         final Root<Folder> from = criteria.from(Folder.class);
 
         final Order order;
         if (FolderBrowser.SORT_KEY_NAME.equals(orderBy)
-                    && FolderBrowser.SORT_ACTION_DOWN.equals(orderDirection)) {
+                && FolderBrowser.SORT_ACTION_DOWN.equals(orderDirection)) {
             order = builder.desc(from.get("name"));
         } else {
             order = builder.asc(from.get("name"));
         }
 
-        final TypedQuery<Folder> query = entityManager.createQuery(
-                criteria.where(builder.and(
+        final TypedQuery<Folder> query = entityManager
+            .createQuery(
+                criteria.where(
+                    builder.and(
                         builder.equal(from.get("parentCategory"), folder),
                         builder
-                                .like(builder.lower(from.get("name")),
-                                      filterTerm)))
-                        .orderBy(order));
+                            .like(builder.lower(from.get("name")),
+                                  filterTerm)
+                    )
+                )
+                    .orderBy(order)
+            );
 
         if (firstResult >= 0) {
             query.setFirstResult(firstResult);
@@ -502,21 +511,22 @@ public class FolderBrowserController {
     /**
      * Retrieves all items of a folder matching the provided filter term.
      *
-     * @param folder The folder which contains the subfolders.
-     * @param filterTerm The filter term.
-     * @param orderBy Field to use for ordering. If the value is negative the
-     * parameter is ignored.
+     * @param folder         The folder which contains the subfolders.
+     * @param filterTerm     The filter term.
+     * @param orderBy        Field to use for ordering. If the value is negative
+     *                       the parameter is ignored.
      * @param orderDirection Direction for ordering. If the value is negative
-     * the parameter is ignored.
-     * @param firstResult Index of the first result to retrieve.
-     * @param maxResults Maxium number of results to retrieve.
+     *                       the parameter is ignored.
+     * @param firstResult    Index of the first result to retrieve.
+     * @param maxResults     Maxium number of results to retrieve.
      *
      *
      * @return A list of the subfolders of the provided {@code folder} which
-     * match the provided {@code filterTerm}. The list is ordered the field
-     * provided as {@code orderBy} in the direction provided by
-     * {@code orderDirection}. The list will contain at most {@code maxResults}
-     * starting with the result with the index provided as {@code firstResult}.
+     *         match the provided {@code filterTerm}. The list is ordered the
+     *         field provided as {@code orderBy} in the direction provided by
+     *         {@code orderDirection}. The list will contain at most
+     *         {@code maxResults} starting with the result with the index
+     *         provided as {@code firstResult}.
      */
     private List<ContentItem> findItemsInFolder(final Folder folder,
                                                 final String filterTerm,
@@ -525,14 +535,13 @@ public class FolderBrowserController {
                                                 final int firstResult,
                                                 final int maxResults) {
 
-        final CriteriaBuilder builder = entityManager
-                .getCriteriaBuilder();
+        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 
-        final CriteriaQuery<ContentItem> criteria = builder.createQuery(
-                ContentItem.class);
+        final CriteriaQuery<ContentItem> criteria = builder
+            .createQuery(ContentItem.class);
         final Root<ContentItem> fromItem = criteria.from(ContentItem.class);
-        final Join<ContentItem, Categorization> join = fromItem.join(
-                "categories");
+        final Join<ContentItem, Categorization> join = fromItem
+            .join("categories");
 
         final Path<?> orderPath;
         switch (orderBy) {
@@ -543,7 +552,7 @@ public class FolderBrowserController {
                 orderPath = fromItem.get("creationDate");
                 break;
             case FolderBrowser.SORT_KEY_LAST_MODIFIED_DATE:
-                orderPath = fromItem.get("lastModified");
+                orderPath = fromItem.get("lastModifed");
                 break;
             default:
                 orderPath = fromItem.get("displayName");
@@ -557,17 +566,22 @@ public class FolderBrowserController {
             order = builder.asc(orderPath);
         }
 
-        final TypedQuery<ContentItem> query = entityManager.createQuery(criteria
-                .select(fromItem)
-                .where(builder.and(
-                        builder.equal(join.get("category"), folder),
-                        builder.equal(join.get("type"),
-                                      CmsConstants.CATEGORIZATION_TYPE_FOLDER),
-                        builder.equal(fromItem.get("version"),
-                                      ContentItemVersion.DRAFT),
-                        builder.like(fromItem.get("displayName"),
-                                     filterTerm)))
-                .orderBy(order));
+        final TypedQuery<ContentItem> query = entityManager
+            .createQuery(
+                criteria.select(fromItem)
+                    .where(
+                        builder.and(
+                            builder.equal(join.get("category"), folder),
+                            builder.equal(join.get("type"),
+                                          CmsConstants.CATEGORIZATION_TYPE_FOLDER),
+                            builder.equal(fromItem.get("version"),
+                                          ContentItemVersion.DRAFT),
+                            builder.like(fromItem.get("displayName"),
+                                         filterTerm)
+                        )
+                    )
+                    .orderBy(order)
+            );
 
         if (firstResult >= 0) {
             query.setFirstResult(firstResult);
@@ -585,7 +599,7 @@ public class FolderBrowserController {
      * @param folder The folder to check for live items.
      *
      * @return {@code true} if the {@code folder} or on of its subfolders
-     * contains at least one live item, {@code false} otherwise.
+     *         contains at least one live item, {@code false} otherwise.
      */
     @Transactional(Transactional.TxType.REQUIRED)
     public boolean hasLiveItems(final Folder folder) {
@@ -595,24 +609,24 @@ public class FolderBrowserController {
 
         //Ensure that we use an non detached entity.
         final Folder theFolder = folderRepo.findById(folder.getObjectId())
-                .orElseThrow(() -> new IllegalArgumentException(String.format(
-                "No folder with id %s in the database. Where did that ID come from?",
-                folder.getObjectId())));
+            .orElseThrow(() -> new IllegalArgumentException(String.format(
+            "No folder with id %s in the database. Where did that ID come from?",
+            folder.getObjectId())));
 
         final boolean hasLiveItem = theFolder.getObjects()
-                .stream()
-                .map(categorization -> categorization.getCategorizedObject())
-                .filter(object -> object instanceof ContentItem)
-                .map(object -> (ContentItem) object)
-                .filter(item -> itemManager.isLive(item))
-                .anyMatch(item -> itemManager.isLive(item));
+            .stream()
+            .map(categorization -> categorization.getCategorizedObject())
+            .filter(object -> object instanceof ContentItem)
+            .map(object -> (ContentItem) object)
+            .filter(item -> itemManager.isLive(item))
+            .anyMatch(item -> itemManager.isLive(item));
 
         if (hasLiveItem) {
             return true;
         } else {
             return theFolder.getSubFolders()
-                    .stream()
-                    .anyMatch(currentFolder -> hasLiveItems(currentFolder));
+                .stream()
+                .anyMatch(currentFolder -> hasLiveItems(currentFolder));
         }
     }
 
@@ -620,6 +634,7 @@ public class FolderBrowserController {
      * Get the IDs of the folders invalid for copy/move actions.
      *
      * @param sources
+     *
      * @return
      */
     @Transactional(Transactional.TxType.REQUIRED)
@@ -628,20 +643,20 @@ public class FolderBrowserController {
         Objects.requireNonNull(sources);
 
         final List<String> sourceFolderIds = sources
-                .stream()
-                .filter(source -> source.startsWith(
-                FOLDER_BROWSER_KEY_PREFIX_FOLDER))
-                .collect(Collectors.toList());
+            .stream()
+            .filter(source -> source.startsWith(
+            FOLDER_BROWSER_KEY_PREFIX_FOLDER))
+            .collect(Collectors.toList());
         final List<String> parentFolderIds = sourceFolderIds
-                .stream()
-                .map(sourceFolderId -> findParentFolderId(sourceFolderId))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toList());
+            .stream()
+            .map(sourceFolderId -> findParentFolderId(sourceFolderId))
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .collect(Collectors.toList());
         final List<List<String>> subFolderIds = sourceFolderIds
-                .stream()
-                .map(sourceFolderId -> findSubFolderIds(sourceFolderId))
-                .collect(Collectors.toList());
+            .stream()
+            .map(sourceFolderId -> findSubFolderIds(sourceFolderId))
+            .collect(Collectors.toList());
 
         final List<String> invalidTargetIds = new ArrayList<>();
         invalidTargetIds.addAll(sourceFolderIds);
@@ -659,26 +674,26 @@ public class FolderBrowserController {
 
         if (!folderId.startsWith(FOLDER_BROWSER_KEY_PREFIX_FOLDER)) {
             throw new IllegalArgumentException(String.format(
-                    "Provided string '%s' is not an ID of a folder.",
-                    folderId));
+                "Provided string '%s' is not an ID of a folder.",
+                folderId));
         }
 
         final long objectId = Long.parseLong(folderId.substring(
-                FOLDER_BROWSER_KEY_PREFIX_FOLDER.length()));
+            FOLDER_BROWSER_KEY_PREFIX_FOLDER.length()));
         final Folder folder = folderRepo.findById(objectId)
-                .orElseThrow(() -> new IllegalArgumentException(String.format(
-                "No folder with ID %d found in database. "
-                        + "Where did that ID come form?",
-                objectId)));
+            .orElseThrow(() -> new IllegalArgumentException(String.format(
+            "No folder with ID %d found in database. "
+                + "Where did that ID come form?",
+            objectId)));
         final Optional<Folder> parentFolder = folderManager.getParentFolder(
             folder);
         if (parentFolder.isPresent()) {
             return Optional.empty();
         } else {
             return Optional.ofNullable(String.format(
-                    "%s%d",
-                    FOLDER_BROWSER_KEY_PREFIX_FOLDER,
-                    parentFolder.get().getObjectId()));
+                "%s%d",
+                FOLDER_BROWSER_KEY_PREFIX_FOLDER,
+                parentFolder.get().getObjectId()));
         }
     }
 
@@ -688,23 +703,23 @@ public class FolderBrowserController {
 
         if (!folderId.startsWith(FOLDER_BROWSER_KEY_PREFIX_FOLDER)) {
             throw new IllegalArgumentException(String.format(
-                    "Provided string '%s' is not the ID of a folder.",
-                    folderId));
+                "Provided string '%s' is not the ID of a folder.",
+                folderId));
         }
 
         final long objectId = Long.parseLong(folderId.substring(
-                FOLDER_BROWSER_KEY_PREFIX_FOLDER.length()));
+            FOLDER_BROWSER_KEY_PREFIX_FOLDER.length()));
         final Folder folder = folderRepo.findById(objectId)
-                .orElseThrow(() -> new IllegalArgumentException(String.format(
-                "No folder with ID %d found in database. "
-                        + "Where did that ID come form?",
-                objectId)));
+            .orElseThrow(() -> new IllegalArgumentException(String.format(
+            "No folder with ID %d found in database. "
+                + "Where did that ID come form?",
+            objectId)));
         return findSubFolders(folder)
-                .stream()
-                .map(subFolder -> String.format("%s%d",
-                                                FOLDER_BROWSER_KEY_PREFIX_FOLDER,
-                                                subFolder.getObjectId()))
-                .collect(Collectors.toList());
+            .stream()
+            .map(subFolder -> String.format("%s%d",
+                                            FOLDER_BROWSER_KEY_PREFIX_FOLDER,
+                                            subFolder.getObjectId()))
+            .collect(Collectors.toList());
     }
 
     private List<Folder> findSubFolders(final Folder folder) {
@@ -712,7 +727,7 @@ public class FolderBrowserController {
         Objects.requireNonNull(folder);
 
         if (folder.getSubFolders() == null
-                    || folder.getSubFolders().isEmpty()) {
+                || folder.getSubFolders().isEmpty()) {
             return Collections.emptyList();
         }
 
@@ -736,17 +751,17 @@ public class FolderBrowserController {
             if (objectId.startsWith(FOLDER_BROWSER_KEY_PREFIX_FOLDER)) {
                 moveFolder(targetFolder,
                            Long.parseLong(objectId.substring(
-                                   FOLDER_BROWSER_KEY_PREFIX_FOLDER.length())));
+                               FOLDER_BROWSER_KEY_PREFIX_FOLDER.length())));
             } else if (objectId.startsWith(FOLDER_BROWSER_KEY_PREFIX_ITEM)) {
                 moveItem(targetFolder,
                          Long.parseLong(objectId.substring(
-                                 FOLDER_BROWSER_KEY_PREFIX_ITEM.length())));
+                             FOLDER_BROWSER_KEY_PREFIX_ITEM.length())));
             } else {
                 throw new IllegalArgumentException(String.format(
-                        "ID '%s' does not start with '%s' or '%s'.",
-                        objectId,
-                        FOLDER_BROWSER_KEY_PREFIX_FOLDER,
-                        FOLDER_BROWSER_KEY_PREFIX_ITEM));
+                    "ID '%s' does not start with '%s' or '%s'.",
+                    objectId,
+                    FOLDER_BROWSER_KEY_PREFIX_FOLDER,
+                    FOLDER_BROWSER_KEY_PREFIX_ITEM));
             }
         }
     }
@@ -756,11 +771,11 @@ public class FolderBrowserController {
         Objects.requireNonNull(targetFolder);
 
         final Folder folder = folderRepo.findById(folderId)
-                .orElseThrow(() -> new IllegalArgumentException(String.format(
-                "No folder with ID %d in the database. "
-                        + "Where did that ID come from?",
-                folderId)));
-        
+            .orElseThrow(() -> new IllegalArgumentException(String.format(
+            "No folder with ID %d in the database. "
+                + "Where did that ID come from?",
+            folderId)));
+
         folderManager.moveFolder(folder, targetFolder);
     }
 
@@ -769,10 +784,10 @@ public class FolderBrowserController {
         Objects.requireNonNull(targetFolder);
 
         final ContentItem item = itemRepo.findById(itemId)
-                .orElseThrow(() -> new IllegalArgumentException(String.format(
-                "No content item with ID %d in the database. "
-                        + "Where did that ID come from?",
-                itemId)));
+            .orElseThrow(() -> new IllegalArgumentException(String.format(
+            "No content item with ID %d in the database. "
+                + "Where did that ID come from?",
+            itemId)));
 
         itemManager.move(item, targetFolder);
     }
@@ -788,46 +803,46 @@ public class FolderBrowserController {
             if (objectId.startsWith(FOLDER_BROWSER_KEY_PREFIX_FOLDER)) {
                 copyFolder(targetFolder,
                            Long.parseLong(objectId.substring(
-                                   FOLDER_BROWSER_KEY_PREFIX_FOLDER.length())));
+                               FOLDER_BROWSER_KEY_PREFIX_FOLDER.length())));
             } else if (objectId.startsWith(FOLDER_BROWSER_KEY_PREFIX_ITEM)) {
                 copyItem(targetFolder,
                          Long.parseLong(objectId.substring(
-                                 FOLDER_BROWSER_KEY_PREFIX_ITEM.length())));
+                             FOLDER_BROWSER_KEY_PREFIX_ITEM.length())));
             } else {
                 throw new IllegalArgumentException(String.format(
-                        "ID '%s' does not start with '%s' or '%s'.",
-                        objectId,
-                        FOLDER_BROWSER_KEY_PREFIX_FOLDER,
-                        FOLDER_BROWSER_KEY_PREFIX_ITEM));
+                    "ID '%s' does not start with '%s' or '%s'.",
+                    objectId,
+                    FOLDER_BROWSER_KEY_PREFIX_FOLDER,
+                    FOLDER_BROWSER_KEY_PREFIX_ITEM));
             }
         }
     }
-    
+
     private void copyFolder(final Folder targetFolder,
                             final long folderId) {
-        
+
         Objects.requireNonNull(targetFolder);
-        
+
         final Folder folder = folderRepo.findById(folderId)
-                .orElseThrow(() -> new IllegalArgumentException(String.format(
-                "No folder with ID %d in the database. "
-                        + "Where did that ID come from?",
-                folderId)));
-        
+            .orElseThrow(() -> new IllegalArgumentException(String.format(
+            "No folder with ID %d in the database. "
+                + "Where did that ID come from?",
+            folderId)));
+
         folderManager.copyFolder(folder, targetFolder);
     }
-    
+
     private void copyItem(final Folder targetFolder,
                           final long itemId) {
-        
+
         Objects.requireNonNull(targetFolder);
-        
+
         final ContentItem item = itemRepo.findById(itemId)
-                .orElseThrow(() -> new IllegalArgumentException(String.format(
-                "No content item with ID %d in the database. "
-                        + "Where did that ID come from?",
-                itemId)));
-        
+            .orElseThrow(() -> new IllegalArgumentException(String.format(
+            "No content item with ID %d in the database. "
+                + "Where did that ID come from?",
+            itemId)));
+
         itemManager.copy(item, targetFolder);
     }
 

@@ -522,7 +522,7 @@ public class FolderBrowser extends Table {
     /**
      * Getting the GlobalizedMessage using a CMS Class targetBundle.
      *
-     * @param key The resource key @pre ( key != null )
+     * @param key The resource key
      */
     private static GlobalizedMessage globalize(String key) {
         return new GlobalizedMessage(key, CmsConstants.CMS_FOLDER_BUNDLE);

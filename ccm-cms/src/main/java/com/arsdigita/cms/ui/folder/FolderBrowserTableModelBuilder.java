@@ -33,11 +33,12 @@ import org.librecms.contentsection.Folder;
 import java.util.List;
 
 /**
- * Creates the {@link TableModel} for the {@link FolderBrowser}. 
- * 
+ * Creates the {@link TableModel} for the {@link FolderBrowser}.
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-class FolderBrowserTableModelBuilder extends LockableImpl
+class FolderBrowserTableModelBuilder
+    extends LockableImpl
     implements TableModelBuilder {
 
     private final static Logger LOGGER = LogManager.getLogger(
@@ -48,7 +49,8 @@ class FolderBrowserTableModelBuilder extends LockableImpl
                                 final PageState state) {
         if (!(table instanceof FolderBrowser)) {
             throw new IllegalArgumentException(
-                "The FolderBrowserTableModelBuilder can be used for the FolderBrowser.");
+                "The FolderBrowserTableModelBuilder can only be used for the "
+                    + "FolderBrowser.");
         }
         final FolderBrowser folderBrowser = (FolderBrowser) table;
         final FolderSelectionModel folderSelectionModel = folderBrowser
@@ -60,8 +62,8 @@ class FolderBrowserTableModelBuilder extends LockableImpl
             folderBrowser.getRowSelectionModel().clearSelection(state);
             final Paginator paginator = folderBrowser.getPaginator();
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final FolderBrowserController controller = cdiUtil.findBean(
-                FolderBrowserController.class);
+            final FolderBrowserController controller = cdiUtil
+                .findBean(FolderBrowserController.class);
             final String filter = folderBrowser.getFilter(state);
             final String orderBy;
             if (folderBrowser.getSortType(state) == null) {
