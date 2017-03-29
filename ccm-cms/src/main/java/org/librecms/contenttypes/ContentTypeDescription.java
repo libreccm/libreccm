@@ -37,7 +37,7 @@ import java.lang.annotation.Target;
 public @interface ContentTypeDescription {
 
     /**
-     * The key of the label for the content type in the label bundle. Default
+     * The key for the label for the content type in the label bundle. Default
      * value is {@code label}.
      *
      * @return The key for label of the content type.
@@ -58,8 +58,8 @@ public @interface ContentTypeDescription {
     String labelBundle() default "";
 
     /**
-     * The key of the description for the content type in the label bundle.
-     * Default value is {@code descripion}.
+     * The key for the description for the content type in the description
+     * bundle. Default value is {@code descripion}.
      *
      * @return The key for description of the content type.
      */
