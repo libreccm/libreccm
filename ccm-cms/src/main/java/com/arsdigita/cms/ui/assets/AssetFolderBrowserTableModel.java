@@ -30,14 +30,15 @@ import java.util.List;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class AssetFolderBrowserTableModel implements TableModel {
+class AssetFolderBrowserTableModel implements TableModel {
     
-    private static final int COL_NAME = 0;
-    private static final int COL_TITLE = 1;
-    private static final int COL_TYPE = 2;
-    private static final int COL_CREATION_DATE = 3;
-    private static final int COL_LAST_MODIFIED = 4;
-    private static final int COL_DELETEABLE = 5;
+    protected static final int COL_NAME = 0;
+    protected static final int COL_TITLE = 1;
+    protected static final int COL_TYPE = 2;
+    protected static final int COL_CREATION_DATE = 3;
+    protected static final int COL_LAST_MODIFIED = 4;
+    protected static final int COL_DELETEABLE = 5;
+    protected static final int COL_ACTION = 6;
     
     private final Iterator<AssetFolderBrowserTableRow> iterator;
     private AssetFolderBrowserTableRow currentRow;
