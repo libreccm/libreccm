@@ -60,9 +60,6 @@ import javax.transaction.Transactional;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
-import org.hibernate.tool.schema.internal.TargetFileImpl;
-import org.libreccm.categorization.ObjectNotAssignedToCategoryException;
-import org.libreccm.core.UnexpectedErrorException;
 import org.librecms.contentsection.FolderManager;
 
 import static org.librecms.CmsConstants.*;
