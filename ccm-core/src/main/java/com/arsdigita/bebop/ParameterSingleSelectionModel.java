@@ -51,8 +51,8 @@ import com.arsdigita.util.Assert;
  * @author Jens Pelzetter
  *
  */
-public class ParameterSingleSelectionModel<T> 
-    extends AbstractSingleSelectionModel<T> {
+public class ParameterSingleSelectionModel<T>
+        extends AbstractSingleSelectionModel<T> {
 
     private final ParameterModel m_parameter;
 
@@ -60,7 +60,7 @@ public class ParameterSingleSelectionModel<T>
      * Constructs a new ParameterSingleSelectionModel.
      *
      * @param m the parameter model that will be used to keep track of the
-     *          currently selected key
+     * currently selected key
      */
     public ParameterSingleSelectionModel(ParameterModel m) {
         super();
@@ -94,7 +94,7 @@ public class ParameterSingleSelectionModel<T>
     /**
      * Set the selected key.
      *
-     * @param state  represents the state of the current request
+     * @param state represents the state of the current request
      * @param newKey the new selected key
      */
     @Override
@@ -103,7 +103,10 @@ public class ParameterSingleSelectionModel<T>
 
         if (Assert.isEnabled()) {
             final FormModel model = state.getPage().getStateModel();
-            Assert.isTrue(model.containsFormParam(m_parameter));
+            Assert.isTrue(model.containsFormParam(m_parameter),
+                          String.format(
+                                  "Parameter %s is not part of the FormModel.",
+                                  m_parameter.getName()));
         }
 
         state.setValue(m_parameter, newKey);

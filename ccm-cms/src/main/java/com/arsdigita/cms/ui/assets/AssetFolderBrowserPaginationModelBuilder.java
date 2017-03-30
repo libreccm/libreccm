@@ -16,12 +16,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package com.arsdigita.cms.ui.folder;
+package com.arsdigita.cms.ui.assets;
 
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.PaginationModelBuilder;
 import com.arsdigita.bebop.Paginator;
-
+import com.arsdigita.cms.ui.folder.FolderSelectionModel;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.contentsection.Folder;
 
@@ -29,14 +29,16 @@ import org.librecms.contentsection.Folder;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-class FolderBrowserPaginationModelBuilder implements PaginationModelBuilder {
+class AssetFolderBrowserPaginationModelBuilder implements PaginationModelBuilder {
 
-    private final FolderBrowser folderBrowser;
-
-    public FolderBrowserPaginationModelBuilder(final FolderBrowser folderBrowser) {
+    private final AssetFolderBrowser folderBrowser;
+    
+    public AssetFolderBrowserPaginationModelBuilder(
+            final AssetFolderBrowser folderBrowser) {
+        
         this.folderBrowser = folderBrowser;
     }
-
+    
     @Override
     public int getTotalSize(final Paginator paginator, final PageState state) {
         
@@ -46,30 +48,10 @@ class FolderBrowserPaginationModelBuilder implements PaginationModelBuilder {
         if (folder == null) {
             return 0;
         } else {
-            folderBrowser.getRowSelectionModel().clearSelection(state);
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final FolderBrowserController controller = cdiUtil.findBean(
-                    FolderBrowserController.class);
-            final String filter = folderBrowser.getFilter(state);
-            final String atozFilter = folderBrowser.getAtoZfilter(state);
-            final int first = paginator.getFirst(state);
-            final int pageSize = paginator.getPageSize(state);
-
-            final String filterTerm;
-            if (filter != null && !filter.trim().isEmpty()) {
-                filterTerm = filter.trim();
-            } else if (atozFilter != null && !atozFilter.trim().isEmpty()) {
-                filterTerm = atozFilter.trim();
-            } else {
-                filterTerm = null;
-            }
-
-            if (filterTerm == null) {
-                return (int) controller.countObjects(folder);
-            } else {
-                return (int) controller.countObjects(folder,
-                                                     filter);
-            }
+            final AssetFolderBrowserController controller = cdiUtil.findBean(
+                    AssetFolderBrowserController.class);
+            return (int) controller.countObjects(folder);
         }
     }
 
@@ -77,5 +59,7 @@ class FolderBrowserPaginationModelBuilder implements PaginationModelBuilder {
     public boolean isVisible(final PageState state) {
         return folderBrowser != null && folderBrowser.isVisible(state);
     }
-
+    
+    
+    
 }
