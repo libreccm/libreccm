@@ -31,24 +31,23 @@ import java.util.List;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class AssetFolderBrowserTableModel implements TableModel {
-    
+
     protected static final int COL_NAME = 0;
     protected static final int COL_TITLE = 1;
     protected static final int COL_TYPE = 2;
     protected static final int COL_CREATION_DATE = 3;
     protected static final int COL_LAST_MODIFIED = 4;
     protected static final int COL_DELETEABLE = 5;
-    protected static final int COL_ACTION = 6;
-    
+
     private final Iterator<AssetFolderBrowserTableRow> iterator;
     private AssetFolderBrowserTableRow currentRow;
 
     public AssetFolderBrowserTableModel(
-        final List<AssetFolderBrowserTableRow> rows) {
-        
+            final List<AssetFolderBrowserTableRow> rows) {
+
         iterator = rows.iterator();
     }
-    
+
     @Override
     public int getColumnCount() {
         return 6;
@@ -66,7 +65,7 @@ class AssetFolderBrowserTableModel implements TableModel {
 
     @Override
     public Object getElementAt(final int columnIndex) {
-        switch(columnIndex) {
+        switch (columnIndex) {
             case COL_NAME:
                 return currentRow.getName();
             case COL_TITLE:
@@ -88,7 +87,7 @@ class AssetFolderBrowserTableModel implements TableModel {
                 return currentRow.isDeletable();
             default:
                 throw new IllegalArgumentException(String.format(
-                    "Illegal column index %d.", columnIndex));
+                        "Illegal column index %d.", columnIndex));
         }
     }
 
@@ -99,13 +98,12 @@ class AssetFolderBrowserTableModel implements TableModel {
         } else {
             return String.format("item-%d", currentRow.getObjectId());
         }
-        
-        
+
 //        return currentRow.getObjectId();
     }
-    
+
     public boolean isFolder() {
         return currentRow.isFolder();
     }
-    
+
 }

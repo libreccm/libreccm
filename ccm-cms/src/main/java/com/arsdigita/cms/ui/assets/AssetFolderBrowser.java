@@ -94,7 +94,6 @@ public class AssetFolderBrowser extends Table {
 
         final GlobalizedMessage[] headers = {
             globalize("cms.ui.folder.name"),
-            globalize("cms.ui.folder.languages"),
             globalize("cms.ui.folder.title"),
             globalize("cms.ui.folder.type"),
             globalize("cms.ui.folder.creation_date"),
@@ -123,7 +122,7 @@ public class AssetFolderBrowser extends Table {
         getColumn(AssetFolderBrowserTableModel.COL_LAST_MODIFIED)
                 .setCellRenderer(new DateCellRenderer());
 
-        deleteColumn = getColumn(AssetFolderBrowserTableModel.COL_ACTION);
+        deleteColumn = getColumn(AssetFolderBrowserTableModel.COL_DELETEABLE);
         deleteColumn.setCellRenderer(new ActionCellRenderer());
         deleteColumn.setAlign("center");
 
@@ -334,7 +333,7 @@ public class AssetFolderBrowser extends Table {
                                       final Object key,
                                       final int row,
                                       final int column) {
-            if (((Boolean) value)) {
+            if ((!(Boolean) value)) {
                 return new Label("&nbsp;", false);
             } else {
                 final ControlLink link = new ControlLink(
