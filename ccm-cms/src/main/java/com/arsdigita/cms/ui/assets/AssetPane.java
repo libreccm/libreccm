@@ -19,6 +19,8 @@
 package com.arsdigita.cms.ui.assets;
 
 import com.arsdigita.bebop.ActionLink;
+import com.arsdigita.bebop.Component;
+import com.arsdigita.bebop.Form;
 import com.arsdigita.bebop.FormProcessException;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.Page;
@@ -28,6 +30,7 @@ import com.arsdigita.bebop.Resettable;
 import com.arsdigita.bebop.SegmentedPanel;
 import com.arsdigita.bebop.SimpleContainer;
 import com.arsdigita.bebop.SingleSelectionModel;
+import com.arsdigita.bebop.Table;
 import com.arsdigita.bebop.Text;
 import com.arsdigita.bebop.event.ActionEvent;
 import com.arsdigita.bebop.event.ActionListener;
@@ -36,6 +39,14 @@ import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.bebop.event.FormSubmissionListener;
 import com.arsdigita.bebop.event.PrintEvent;
 import com.arsdigita.bebop.event.PrintListener;
+import com.arsdigita.bebop.form.CheckboxGroup;
+import com.arsdigita.bebop.form.Option;
+import com.arsdigita.bebop.form.SingleSelect;
+import com.arsdigita.bebop.form.Submit;
+import com.arsdigita.bebop.parameters.ArrayParameter;
+import com.arsdigita.bebop.parameters.StringParameter;
+import com.arsdigita.bebop.table.TableCellRenderer;
+import com.arsdigita.bebop.table.TableColumn;
 import com.arsdigita.cms.CMS;
 import com.arsdigita.cms.ui.BaseTree;
 import com.arsdigita.cms.ui.folder.FolderCreateForm;
@@ -55,7 +66,10 @@ import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.Folder;
 
 import java.util.List;
+
 import org.arsdigita.cms.CMSConfig;
+
+import javax.swing.CellRendererPane;
 
 /**
  *
@@ -64,13 +78,21 @@ import org.arsdigita.cms.CMSConfig;
 public class AssetPane extends LayoutPanel implements Resettable {
 
     public static final String SET_FOLDER = "set_folder";
+    private static final String SOURCES_PARAM = "sources";
+    private static final String ACTION_PARAM = "action";
+    private static final String MOVE = "Move";
+    private static final String COPY = "Copy";
 
     private final BaseTree tree;
     private final SingleSelectionModel selectionModel;
     private final FolderSelectionModel folderSelectionModel;
     private final FolderRequestLocal folderRequestLocal;
+    private final ArrayParameter sourcesParameter = new ArrayParameter(
+        new StringParameter(SOURCES_PARAM));
 
     private AssetFolderBrowser folderBrowser;
+    private SingleSelect actionSelect;
+    private Submit actionSubmit;
 
     private SegmentedPanel.Segment browseSegment;
     private SegmentedPanel.Segment currentFolderSegment;
@@ -85,8 +107,8 @@ public class AssetPane extends LayoutPanel implements Resettable {
             @Override
             protected Folder getRootFolder(final PageState state) {
                 final ContentSection section = CMS
-                        .getContext()
-                        .getContentSection();
+                    .getContext()
+                    .getContentSection();
                 return section.getRootAssetsFolder();
             }
 
@@ -97,8 +119,8 @@ public class AssetPane extends LayoutPanel implements Resettable {
             @Override
             protected Long getRootFolderID(final PageState state) {
                 final ContentSection section = CMS
-                        .getContext()
-                        .getContentSection();
+                    .getContext()
+                    .getContentSection();
                 return section.getRootAssetsFolder().getObjectId();
             }
 
@@ -109,8 +131,8 @@ public class AssetPane extends LayoutPanel implements Resettable {
         setLeft(left);
 
         final Label heading = new Label(
-                new GlobalizedMessage("cms.ui.folder_browser",
-                                      CmsConstants.CMS_BUNDLE));
+            new GlobalizedMessage("cms.ui.folder_browser",
+                                  CmsConstants.CMS_BUNDLE));
         left.addSegment(heading, tree);
 
 //        final Text placeholder = new Text("Placeholder");
@@ -123,13 +145,69 @@ public class AssetPane extends LayoutPanel implements Resettable {
         final SegmentedPanel panel = new SegmentedPanel();
 
         browseSegment = panel.addSegment();
+        final Form browserForm = new Form("assetFolderBrowser",
+                                          new SimpleContainer());
+        browserForm.setMethod(Form.GET);
         folderBrowser = new AssetFolderBrowser(folderSelectionModel);
         final Paginator paginator = new Paginator(
-                new AssetFolderBrowserPaginationModelBuilder(folderBrowser),
-                CMSConfig.getConfig().getFolderBrowseListSize());
+            new AssetFolderBrowserPaginationModelBuilder(folderBrowser),
+            CMSConfig.getConfig().getFolderBrowseListSize());
         folderBrowser.setPaginator(paginator);
-        browseSegment.add(paginator);
-        browseSegment.add(folderBrowser);
+
+        final CheckboxGroup checkboxGroup = new CheckboxGroup(sourcesParameter);
+        browserForm.add(checkboxGroup);
+        final TableColumn checkboxCol = new TableColumn();
+        checkboxCol.setHeaderValue(
+            new GlobalizedMessage("empty_text", CmsConstants.CMS_BUNDLE));
+        checkboxCol.setCellRenderer(new TableCellRenderer() {
+
+            @Override
+            public Component getComponent(final Table table,
+                                          final PageState state,
+                                          final Object value,
+                                          final boolean isSelected,
+                                          final Object key,
+                                          final int row,
+                                          final int column) {
+
+                final Option result = new Option(key.toString(),
+                                                 new Text(""));
+                result.setGroup(checkboxGroup);
+                return result;
+            }
+
+        });
+        folderBrowser.getColumnModel().add(0, checkboxCol);
+
+        browserForm.add(paginator);
+        browserForm.add(folderBrowser);
+        final SimpleContainer actionFormContainer = new SimpleContainer();
+        actionFormContainer.add(new Label(
+            new GlobalizedMessage(
+                "cms.ui.folder.edit_selection",
+                CmsConstants.CMS_FOLDER_BUNDLE)));
+        actionSelect = new SingleSelect(ACTION_PARAM);
+        actionSelect.addOption(
+            new Option(COPY,
+                       new Label(new GlobalizedMessage(
+                           "cms.ui.folder.copy.action",
+                           CmsConstants.CMS_FOLDER_BUNDLE))));
+        actionSelect.addOption(
+            new Option(MOVE,
+                       new Label(new GlobalizedMessage(
+                           "cms.ui.folder.move.action",
+                           CmsConstants.CMS_FOLDER_BUNDLE))));
+        actionFormContainer.add(actionSelect);
+        actionSubmit = new Submit(
+            "Go",
+            new GlobalizedMessage("cms.ui.folder.go",
+                                  CmsConstants.CMS_FOLDER_BUNDLE));
+        actionFormContainer.add(actionSubmit);
+        browserForm.add(actionFormContainer);
+
+//        browseSegment.add(paginator);
+//        browseSegment.add(folderBrowser);
+        browseSegment.add(browserForm);
 
         currentFolderSegment = panel.addSegment();
         currentFolderSegment.addHeader(new Text("Current folder"));
@@ -142,13 +220,13 @@ public class AssetPane extends LayoutPanel implements Resettable {
                 final Label target = (Label) event.getTarget();
 
                 final long selectedId = Long.parseLong(selectionModel
-                        .getSelectedKey(state).toString());
+                    .getSelectedKey(state).toString());
                 final long currentFolderId = folderSelectionModel
-                        .getSelectedObject(state).getObjectId();
+                    .getSelectedObject(state).getObjectId();
                 target.setLabel(String.format(
-                        "selectedId = %d; currentFolderId = %d",
-                        selectedId,
-                        currentFolderId));
+                    "selectedId = %d; currentFolderId = %d",
+                    selectedId,
+                    currentFolderId));
             }
 
         });
@@ -161,19 +239,19 @@ public class AssetPane extends LayoutPanel implements Resettable {
         actionsSegment.add(actions);
 
         final FolderCreateForm folderCreateForm = new FolderCreateForm(
-                "fcreat", folderSelectionModel);
+            "fcreat", folderSelectionModel);
         folderCreateForm.addSubmissionListener(new FormSubmissionListener() {
 
             @Override
             public void submitted(final FormSectionEvent event)
-                    throws FormProcessException {
+                throws FormProcessException {
 
                 final PageState state = event.getPageState();
                 if (event.getSource() == folderCreateForm
-                            && folderCreateForm.isCancelled(state)) {
+                        && folderCreateForm.isCancelled(state)) {
                     browseMode(state);
                     throw new FormProcessException(new GlobalizedMessage(
-                            "cms.ui.cancelled", CmsConstants.CMS_BUNDLE));
+                        "cms.ui.cancelled", CmsConstants.CMS_BUNDLE));
 
                 }
             }
@@ -183,7 +261,7 @@ public class AssetPane extends LayoutPanel implements Resettable {
 
             @Override
             public void process(final FormSectionEvent event)
-                    throws FormProcessException {
+                throws FormProcessException {
 
                 final PageState state = event.getPageState();
                 final Object source = event.getSource();
@@ -194,24 +272,24 @@ public class AssetPane extends LayoutPanel implements Resettable {
 
         });
         newFolderSegment = panel.addSegment(
-                new Label(new GlobalizedMessage("cms.ui.new_folder",
-                                                CmsConstants.CMS_BUNDLE)),
-                folderCreateForm);
+            new Label(new GlobalizedMessage("cms.ui.new_folder",
+                                            CmsConstants.CMS_BUNDLE)),
+            folderCreateForm);
 
         final FolderEditorForm folderEditorForm = new FolderEditorForm(
-                "fedit", folderSelectionModel);
+            "fedit", folderSelectionModel);
         folderEditorForm.addSubmissionListener(new FormSubmissionListener() {
 
             @Override
             public void submitted(final FormSectionEvent event)
-                    throws FormProcessException {
+                throws FormProcessException {
 
                 final PageState state = event.getPageState();
                 if (event.getSource() == folderEditorForm
-                            && folderEditorForm.isCancelled(state)) {
+                        && folderEditorForm.isCancelled(state)) {
                     browseMode(state);
                     throw new FormProcessException(new GlobalizedMessage(
-                            "cms.ui.cancelled", CmsConstants.CMS_BUNDLE));
+                        "cms.ui.cancelled", CmsConstants.CMS_BUNDLE));
                 }
             }
 
@@ -220,7 +298,7 @@ public class AssetPane extends LayoutPanel implements Resettable {
 
             @Override
             public void process(final FormSectionEvent event)
-                    throws FormProcessException {
+                throws FormProcessException {
 
                 final PageState state = event.getPageState();
                 final Object source = event.getSource();
@@ -231,13 +309,13 @@ public class AssetPane extends LayoutPanel implements Resettable {
 
         });
         editFolderSegment = panel.addSegment(
-                new Label(new GlobalizedMessage("cms.ui.edit_folder",
-                                                CmsConstants.CMS_BUNDLE)),
-                folderEditorForm);
+            new Label(new GlobalizedMessage("cms.ui.edit_folder",
+                                            CmsConstants.CMS_BUNDLE)),
+            folderEditorForm);
 
         final ActionLink createFolderAction = new ActionLink(
-                new Label(new GlobalizedMessage("cms.ui.new_folder",
-                                                CmsConstants.CMS_BUNDLE)));
+            new Label(new GlobalizedMessage("cms.ui.new_folder",
+                                            CmsConstants.CMS_BUNDLE)));
         createFolderAction.addActionListener(new ActionListener() {
 
             @Override
@@ -253,8 +331,8 @@ public class AssetPane extends LayoutPanel implements Resettable {
         actions.addAction(createFolderAction);
 
         final ActionLink editFolderAction = new ActionLink(
-                new Label(new GlobalizedMessage("cms.ui.edit_folder",
-                                                CmsConstants.CMS_BUNDLE)));
+            new Label(new GlobalizedMessage("cms.ui.edit_folder",
+                                            CmsConstants.CMS_BUNDLE)));
         editFolderAction.addActionListener(new ActionListener() {
 
             @Override
@@ -265,6 +343,7 @@ public class AssetPane extends LayoutPanel implements Resettable {
                     editFolderMode(state);
                 }
             }
+
         });
         actions.addAction(editFolderAction);
 
@@ -312,7 +391,7 @@ public class AssetPane extends LayoutPanel implements Resettable {
     public void reset(final PageState state) {
 
         super.reset(state);
-        
+
         folderBrowser.getPaginator().reset(state);
 
     }
@@ -327,14 +406,14 @@ public class AssetPane extends LayoutPanel implements Resettable {
 
             if (!selectionModel.isSelected(state)) {
                 final String folder = state
-                        .getRequest()
-                        .getParameter(SET_FOLDER);
+                    .getRequest()
+                    .getParameter(SET_FOLDER);
 
                 if (folder == null) {
                     final Category root = CMS
-                            .getContext()
-                            .getContentSection()
-                            .getRootAssetsFolder();
+                        .getContext()
+                        .getContentSection()
+                        .getRootAssetsFolder();
                     final Long folderId = root.getObjectId();
 
                     selectionModel.setSelectedKey(state, folderId);
@@ -354,18 +433,18 @@ public class AssetPane extends LayoutPanel implements Resettable {
             final PageState state = event.getPageState();
 
             final Category root = CMS
-                    .getContext()
-                    .getContentSection()
-                    .getRootAssetsFolder();
+                .getContext()
+                .getContentSection()
+                .getRootAssetsFolder();
 
             if (!root.equals(folderRequestLocal.getFolder(state))) {
                 // Expand the ancestor nodes of the currently
                 // selected node.
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
                 final FolderTreeModelController controller = cdiUtil.findBean(
-                        FolderTreeModelController.class);
+                    FolderTreeModelController.class);
                 final List<Long> ancestorIds = controller.findAncestorIds(
-                        folderRequestLocal.getFolder(state));
+                    folderRequestLocal.getFolder(state));
                 ancestorIds.forEach(id -> tree.expand(id.toString(), state));
 
             }
