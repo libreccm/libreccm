@@ -414,8 +414,8 @@ public class FolderManipulator extends SimpleContainer implements
         }
 
         @Override
-        public void process(final FormSectionEvent event) throws
-            FormProcessException {
+        public void process(final FormSectionEvent event)
+            throws FormProcessException {
 
             final PageState state = event.getPageState();
 
@@ -484,16 +484,16 @@ public class FolderManipulator extends SimpleContainer implements
 
     }
 
-    private class TargetSelectorValidationListener implements
-        FormValidationListener {
+    private class TargetSelectorValidationListener
+        implements FormValidationListener {
 
         public TargetSelectorValidationListener() {
             //Nothing
         }
 
         @Override
-        public void validate(final FormSectionEvent event) throws
-            FormProcessException {
+        public void validate(final FormSectionEvent event)
+            throws FormProcessException {
 
             final PageState state = event.getPageState();
 
@@ -519,7 +519,6 @@ public class FolderManipulator extends SimpleContainer implements
 
             // check create item permission
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final Shiro shiro = cdiUtil.findBean(Shiro.class);
             final PermissionChecker permissionChecker = cdiUtil.findBean(
                 PermissionChecker.class);
             if (!permissionChecker.isPermitted(
@@ -574,28 +573,28 @@ public class FolderManipulator extends SimpleContainer implements
                         .folderIsMovable(folder, target);
                     switch (movable) {
                         case DIFFERENT_SECTIONS:
-                            addErrorMessage(data, 
-                                            "cms.ui.folder.different_sections", 
+                            addErrorMessage(data,
+                                            "cms.ui.folder.different_sections",
                                             name);
                             break;
                         case HAS_LIVE_ITEMS:
-                            addErrorMessage(data, 
-                                            "cms.ui.folder.item_is_live", 
+                            addErrorMessage(data,
+                                            "cms.ui.folder.item_is_live",
                                             name);
                             break;
                         case DIFFERENT_TYPES:
-                            addErrorMessage(data, 
-                                            "cms.ui.folder.different_folder_types", 
+                            addErrorMessage(data,
+                                            "cms.ui.folder.different_folder_types",
                                             name);
                             break;
                         case IS_ROOT_FOLDER:
-                            addErrorMessage(data, 
-                                            "cms.ui.folder.is_root_folder", 
+                            addErrorMessage(data,
+                                            "cms.ui.folder.is_root_folder",
                                             name);
                             break;
                         case SAME_FOLDER:
-                            addErrorMessage(data, 
-                                            "cms.ui.folder.same_folder", 
+                            addErrorMessage(data,
+                                            "cms.ui.folder.same_folder",
                                             name);
                             break;
                         case YES:
@@ -614,8 +613,10 @@ public class FolderManipulator extends SimpleContainer implements
             } else if (objectId.startsWith(FOLDER_BROWSER_KEY_PREFIX_ITEM)) {
                 final long itemId = Long.parseLong(objectId.substring(
                     FOLDER_BROWSER_KEY_PREFIX_ITEM.length()));
-                final ContentItem item = itemRepo.findById(itemId).orElseThrow(
-                    () -> new IllegalArgumentException(String.format(
+                final ContentItem item = itemRepo
+                    .findById(itemId)
+                    .orElseThrow(() -> new IllegalArgumentException(
+                    String.format(
                         "No content item with id %d in database.",
                         itemId)));
 
@@ -726,11 +727,11 @@ public class FolderManipulator extends SimpleContainer implements
                 @Override
                 protected Long getRootFolderID(final PageState state) {
                     final ContentSection section = CMS
-                    .getContext()
-                    .getContentSection();
+                        .getContext()
+                        .getContentSection();
                     return section.getRootDocumentsFolder().getObjectId();
                 }
-                
+
             };
             folderTree = new FolderTree(targetModel);
             folderTree.setCellRenderer(new FolderTreeCellRenderer());
@@ -742,8 +743,8 @@ public class FolderManipulator extends SimpleContainer implements
                     final PageState state = event.getPageState();
                     final Label label = (Label) event.getTarget();
                     final int numberOfItems = getSources(state).length;
-                    final Category folder = (Category) sourceFolderModel.
-                        getSelectedObject(state);
+                    final Category folder = (Category) sourceFolderModel
+                        .getSelectedObject(state);
                     final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
                     final CategoryManager categoryManager = cdiUtil.
                         findBean(CategoryManager.class);
@@ -795,9 +796,10 @@ public class FolderManipulator extends SimpleContainer implements
                     folderTree.expand(Long.toString(folder.getObjectId()),
                                       state);
                 } else {
-                    final List<Folder> parents = folderManager.getParentFolders(
-                        folder);
-                    parents.stream()
+                    final List<Folder> parents = folderManager
+                        .getParentFolders(folder);
+                    parents
+                        .stream()
                         .map(parent -> Long.toString(parent.getObjectId()))
                         .forEach(folderId -> folderTree.expand(folderId, state));
                 }
