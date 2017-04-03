@@ -573,7 +573,7 @@ public class FolderBrowserController {
                                           CmsConstants.CATEGORIZATION_TYPE_FOLDER),
                             builder.equal(fromItem.get("version"),
                                           ContentItemVersion.DRAFT),
-                            builder.like(fromItem.get("displayName"),
+                            builder.like(builder.lower(fromItem.get("displayName")),
                                          filterTerm)
                         )
                     )
@@ -780,7 +780,8 @@ public class FolderBrowserController {
 
         Objects.requireNonNull(targetFolder);
 
-        final ContentItem item = itemRepo.findById(itemId)
+        final ContentItem item = itemRepo
+            .findById(itemId)
             .orElseThrow(() -> new IllegalArgumentException(String.format(
             "No content item with ID %d in the database. "
                 + "Where did that ID come from?",
@@ -834,7 +835,8 @@ public class FolderBrowserController {
 
         Objects.requireNonNull(targetFolder);
 
-        final ContentItem item = itemRepo.findById(itemId)
+        final ContentItem item = itemRepo
+            .findById(itemId)
             .orElseThrow(() -> new IllegalArgumentException(String.format(
             "No content item with ID %d in the database. "
                 + "Where did that ID come from?",

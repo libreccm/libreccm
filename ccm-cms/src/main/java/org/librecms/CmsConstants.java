@@ -55,6 +55,7 @@ public class CmsConstants {
     public static final String CATEGORIZATION_TYPE_FOLDER = "folder";
 
     public static final String FOLDER_BROWSER_KEY_PREFIX_FOLDER = "folder-";
+    public static final String FOLDER_BROWSER_KEY_PREFIX_ASSET = "asset-";
     public static final String FOLDER_BROWSER_KEY_PREFIX_ITEM = "item-";
     
     /**

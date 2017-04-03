@@ -62,9 +62,12 @@ public class FolderManager {
 
     @Inject
     private ContentItemRepository itemRepo;
-    
+
     @Inject
     private ContentItemManager itemManager;
+
+    @Inject
+    private AssetManager assetManager;
 
     /**
      * An enum describing if a folder can be deleted or not and why.
@@ -118,7 +121,11 @@ public class FolderManager {
         /**
          * The folder to move contains live items.
          */
-        HAS_LIVE_ITEMS
+        HAS_LIVE_ITEMS,
+        /**
+         * The folder to contains assets which are in use.
+         */
+        HAS_IN_USE_ASSETS
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
@@ -368,6 +375,10 @@ public class FolderManager {
             return FolderIsMovable.HAS_LIVE_ITEMS;
         }
 
+        if (usedAssetsInFolder(movingFolder)) {
+            return FolderIsMovable.HAS_IN_USE_ASSETS;
+        }
+
         return FolderIsMovable.YES;
     }
 
@@ -379,17 +390,17 @@ public class FolderManager {
 
         final Folder copiedFolder = folderRepo.findById(
             folder.getObjectId())
-        .orElseThrow(() -> new IllegalArgumentException(String.format(
+            .orElseThrow(() -> new IllegalArgumentException(String.format(
             "No folder with ID %d in the database. Where did that ID come from?",
             folder.getObjectId())));
         final Folder targetFolder = folderRepo.findById(
             target.getObjectId())
-        .orElseThrow(() -> new IllegalArgumentException(String.format(
+            .orElseThrow(() -> new IllegalArgumentException(String.format(
             "No folder with ID %d in the database. Where did that ID come from?",
             target.getObjectId())));
-        
+
         final Folder copy = createFolder(copiedFolder.getName(), targetFolder);
-        
+
         final List<ContentItem> items = itemRepo.findByFolder(copiedFolder);
 //        final List<ContentItem> items = copiedFolder.getObjects()
 //            .stream()
@@ -432,6 +443,22 @@ public class FolderManager {
             .anyMatch(subFolder -> liveItemsInFolder(subFolder));
 
         return liveItemsInFolder || liveItemsInSubFolders;
+    }
+
+    private boolean usedAssetsInFolder(final Folder folder) {
+
+        final boolean usedAssetsInFolder = folder.getObjects()
+            .stream()
+            .map(categorization -> categorization.getCategorizedObject())
+            .filter(object -> object instanceof Asset)
+            .map(asset -> (Asset) asset)
+            .anyMatch(asset -> assetManager.isAssetInUse(asset));
+
+        final boolean usedAssetsInSubFolders = folder.getSubFolders()
+            .stream()
+            .anyMatch(subFolder -> usedAssetsInFolder(folder));
+
+        return usedAssetsInFolder || usedAssetsInSubFolders;
     }
 
     /**

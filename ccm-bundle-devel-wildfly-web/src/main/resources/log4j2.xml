@@ -36,6 +36,9 @@
         <Logger name="com.arsdigita.ui.admin.usersgroupsroles.UsersTable"
                 level="debug">
         </Logger>
+        <Logger name="com.arsdigita.cms.ui.assets.AssetPane"
+                level="debug">
+        </Logger>
         <Logger name="com.arsdigita.ui.login.UserLoginForm" 
                 level="debug">
         </Logger>

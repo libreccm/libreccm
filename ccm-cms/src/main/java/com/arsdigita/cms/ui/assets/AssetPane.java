@@ -19,27 +19,35 @@
 package com.arsdigita.cms.ui.assets;
 
 import com.arsdigita.bebop.ActionLink;
+import com.arsdigita.bebop.BoxPanel;
 import com.arsdigita.bebop.Component;
+import com.arsdigita.bebop.ControlLink;
 import com.arsdigita.bebop.Form;
+import com.arsdigita.bebop.FormData;
 import com.arsdigita.bebop.FormProcessException;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.Page;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.Paginator;
+import com.arsdigita.bebop.RequestLocal;
 import com.arsdigita.bebop.Resettable;
+import com.arsdigita.bebop.SaveCancelSection;
 import com.arsdigita.bebop.SegmentedPanel;
 import com.arsdigita.bebop.SimpleContainer;
 import com.arsdigita.bebop.SingleSelectionModel;
 import com.arsdigita.bebop.Table;
 import com.arsdigita.bebop.Text;
+import com.arsdigita.bebop.Tree;
 import com.arsdigita.bebop.event.ActionEvent;
 import com.arsdigita.bebop.event.ActionListener;
 import com.arsdigita.bebop.event.FormProcessListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.bebop.event.FormSubmissionListener;
+import com.arsdigita.bebop.event.FormValidationListener;
 import com.arsdigita.bebop.event.PrintEvent;
 import com.arsdigita.bebop.event.PrintListener;
 import com.arsdigita.bebop.form.CheckboxGroup;
+import com.arsdigita.bebop.form.FormErrorDisplay;
 import com.arsdigita.bebop.form.Option;
 import com.arsdigita.bebop.form.SingleSelect;
 import com.arsdigita.bebop.form.Submit;
@@ -47,6 +55,7 @@ import com.arsdigita.bebop.parameters.ArrayParameter;
 import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.bebop.table.TableCellRenderer;
 import com.arsdigita.bebop.table.TableColumn;
+import com.arsdigita.bebop.tree.TreeCellRenderer;
 import com.arsdigita.cms.CMS;
 import com.arsdigita.cms.ui.BaseTree;
 import com.arsdigita.cms.ui.folder.FolderCreateForm;
@@ -59,6 +68,8 @@ import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.toolbox.ui.ActionGroup;
 import com.arsdigita.toolbox.ui.LayoutPanel;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.libreccm.categorization.Category;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.CmsConstants;
@@ -68,14 +79,29 @@ import org.librecms.contentsection.Folder;
 import java.util.List;
 
 import org.arsdigita.cms.CMSConfig;
+import org.libreccm.categorization.CategoryManager;
+import org.libreccm.core.CcmObject;
+import org.libreccm.core.UnexpectedErrorException;
+import org.libreccm.security.PermissionChecker;
+import org.librecms.contentsection.Asset;
+import org.librecms.contentsection.AssetManager;
+import org.librecms.contentsection.AssetRepository;
+import org.librecms.contentsection.FolderManager;
+import org.librecms.contentsection.FolderRepository;
+import org.librecms.contentsection.privileges.ItemPrivileges;
 
-import javax.swing.CellRendererPane;
+import java.util.Arrays;
+import java.util.Objects;
+
+import static org.librecms.CmsConstants.*;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class AssetPane extends LayoutPanel implements Resettable {
+
+    private static final Logger LOGGER = LogManager.getLogger(AssetPane.class);
 
     public static final String SET_FOLDER = "set_folder";
     private static final String SOURCES_PARAM = "sources";
@@ -89,10 +115,14 @@ public class AssetPane extends LayoutPanel implements Resettable {
     private final FolderRequestLocal folderRequestLocal;
     private final ArrayParameter sourcesParameter = new ArrayParameter(
         new StringParameter(SOURCES_PARAM));
+    private final StringParameter actionParameter = new StringParameter(
+        ACTION_PARAM);
 
     private AssetFolderBrowser folderBrowser;
+    private Form browserForm;
     private SingleSelect actionSelect;
     private Submit actionSubmit;
+    private TargetSelector targetSelector;
 
     private SegmentedPanel.Segment browseSegment;
     private SegmentedPanel.Segment currentFolderSegment;
@@ -145,8 +175,8 @@ public class AssetPane extends LayoutPanel implements Resettable {
         final SegmentedPanel panel = new SegmentedPanel();
 
         browseSegment = panel.addSegment();
-        final Form browserForm = new Form("assetFolderBrowser",
-                                          new SimpleContainer());
+        browserForm = new Form("assetFolderBrowser",
+                               new SimpleContainer());
         browserForm.setMethod(Form.GET);
         folderBrowser = new AssetFolderBrowser(folderSelectionModel);
         final Paginator paginator = new Paginator(
@@ -186,7 +216,7 @@ public class AssetPane extends LayoutPanel implements Resettable {
             new GlobalizedMessage(
                 "cms.ui.folder.edit_selection",
                 CmsConstants.CMS_FOLDER_BUNDLE)));
-        actionSelect = new SingleSelect(ACTION_PARAM);
+        actionSelect = new SingleSelect(actionParameter);
         actionSelect.addOption(
             new Option(COPY,
                        new Label(new GlobalizedMessage(
@@ -203,7 +233,67 @@ public class AssetPane extends LayoutPanel implements Resettable {
             new GlobalizedMessage("cms.ui.folder.go",
                                   CmsConstants.CMS_FOLDER_BUNDLE));
         actionFormContainer.add(actionSubmit);
+        browserForm.addProcessListener(new FormProcessListener() {
+
+            @Override
+            public void process(final FormSectionEvent event)
+                throws FormProcessException {
+
+                final PageState state = event.getPageState();
+
+                moveCopyMode(state);
+
+            }
+
+        });
         browserForm.add(actionFormContainer);
+
+        targetSelector = new TargetSelector();
+        targetSelector.addProcessListener(new FormProcessListener() {
+
+            @Override
+            public void process(final FormSectionEvent event)
+                throws FormProcessException {
+
+                final PageState state = event.getPageState();
+
+                browseMode(state);
+                targetSelector.setVisible(state, false);
+
+                final Folder folder = targetSelector.getTarget(state);
+                final String[] objectIds = getSources(state);
+
+                if (isCopy(state)) {
+                    copyObjects(folder, objectIds);
+                } else if (isMove(state)) {
+                    moveObjects(folder, objectIds);
+                }
+
+                reset(state);
+            }
+
+        });
+        targetSelector.addValidationListener(
+            new TargetSelectorValidationListener());
+        targetSelector.addSubmissionListener(new FormSubmissionListener() {
+
+            @Override
+            public void submitted(final FormSectionEvent event)
+                throws FormProcessException {
+
+                final PageState state = event.getPageState();
+
+                if (targetSelector.isCancelled(state)) {
+                    reset(state);
+                    browseMode(state);
+                    throw new FormProcessException(new GlobalizedMessage(
+                        "cms.ui.folder.cancelled",
+                        CmsConstants.CMS_FOLDER_BUNDLE));
+                }
+            }
+
+        });
+        browseSegment.add(targetSelector);
 
 //        browseSegment.add(paginator);
 //        browseSegment.add(folderBrowser);
@@ -352,22 +442,44 @@ public class AssetPane extends LayoutPanel implements Resettable {
     }
 
     protected void browseMode(final PageState state) {
+        tree.setVisible(state, true);
         browseSegment.setVisible(state, true);
+        folderBrowser.setVisible(state, true);
+        browserForm.setVisible(state, true);
+        targetSelector.setVisible(state, false);
         actionsSegment.setVisible(state, true);
         newFolderSegment.setVisible(state, false);
         editFolderSegment.setVisible(state, false);
 
     }
 
+    protected void moveCopyMode(final PageState state) {
+        tree.setVisible(state, false);
+        browseSegment.setVisible(state, true);
+        folderBrowser.setVisible(state, false);
+        browserForm.setVisible(state, false);
+        targetSelector.setVisible(state, true);
+        actionsSegment.setVisible(state, false);
+        newFolderSegment.setVisible(state, false);
+        editFolderSegment.setVisible(state, false);
+        targetSelector.expose(state);
+    }
+
     protected void newFolderMode(final PageState state) {
+        tree.setVisible(state, false);
         browseSegment.setVisible(state, false);
+        folderBrowser.setVisible(state, false);
+        browserForm.setVisible(state, false);
+        targetSelector.setVisible(state, false);
         actionsSegment.setVisible(state, false);
         newFolderSegment.setVisible(state, true);
         editFolderSegment.setVisible(state, false);
     }
 
     protected void editFolderMode(final PageState state) {
+        tree.setVisible(state, false);
         browseSegment.setVisible(state, false);
+        targetSelector.setVisible(state, false);
         actionsSegment.setVisible(state, false);
         newFolderSegment.setVisible(state, false);
         editFolderSegment.setVisible(state, true);
@@ -381,10 +493,17 @@ public class AssetPane extends LayoutPanel implements Resettable {
         page.addActionListener(new TreeListener());
         page.addActionListener(new FolderListener());
 
+        page.setVisibleDefault(tree, true);
         page.setVisibleDefault(browseSegment, true);
+        page.setVisibleDefault(folderBrowser, true);
+        page.setVisibleDefault(browserForm, true);
+        page.setVisibleDefault(targetSelector, false);
         page.setVisibleDefault(actionsSegment, true);
         page.setVisibleDefault(newFolderSegment, false);
         page.setVisibleDefault(editFolderSegment, false);
+
+        page.addComponentStateParam(this, actionParameter);
+        page.addComponentStateParam(this, sourcesParameter);
     }
 
     @Override
@@ -394,6 +513,50 @@ public class AssetPane extends LayoutPanel implements Resettable {
 
         folderBrowser.getPaginator().reset(state);
 
+        state.setValue(actionParameter, null);
+        state.setValue(sourcesParameter, null);
+
+    }
+
+    private String[] getSources(final PageState state) {
+
+        final String[] result = (String[]) state.getValue(sourcesParameter);
+
+        if (result == null) {
+            return new String[0];
+        } else {
+            return result;
+        }
+    }
+
+    protected final boolean isMove(final PageState state) {
+        return MOVE.equals(getAction(state));
+    }
+
+    protected final boolean isCopy(final PageState state) {
+        return COPY.equals(getAction(state));
+    }
+
+    private String getAction(final PageState state) {
+        return (String) state.getValue(actionParameter);
+    }
+
+    protected void moveObjects(final Folder target, final String[] objectIds) {
+
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final AssetFolderBrowserController controller = cdiUtil.findBean(
+            AssetFolderBrowserController.class);
+
+        controller.moveObjects(target, objectIds);
+    }
+
+    protected void copyObjects(final Folder target, final String[] objectIds) {
+
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final AssetFolderBrowserController controller = cdiUtil.findBean(
+            AssetFolderBrowserController.class);
+
+        controller.copyObjects(target, objectIds);
     }
 
     private final class FolderListener implements ActionListener {
@@ -447,6 +610,387 @@ public class AssetPane extends LayoutPanel implements Resettable {
                     folderRequestLocal.getFolder(state));
                 ancestorIds.forEach(id -> tree.expand(id.toString(), state));
 
+            }
+        }
+
+    }
+
+    private class TargetSelector extends Form implements Resettable {
+
+        private final FolderSelectionModel targetFolderModel;
+        private final AssetFolderTree folderTree;
+        private final Submit cancelButton;
+
+        public TargetSelector() {
+            super("targetSelector", new BoxPanel());
+            setMethod(GET);
+            targetFolderModel = new FolderSelectionModel("target") {
+
+                @Override
+                protected Long getRootFolderID(final PageState state) {
+                    final ContentSection section = CMS
+                        .getContext()
+                        .getContentSection();
+                    return section.getRootAssetsFolder().getObjectId();
+                }
+
+            };
+            folderTree = new AssetFolderTree(targetFolderModel);
+
+            folderTree.setCellRenderer(new FolderTreeCellRenderer());
+
+            final Label label = new Label(new PrintListener() {
+
+                @Override
+                public void prepare(final PrintEvent event) {
+
+                    final PageState state = event.getPageState();
+                    final Label label = (Label) event.getTarget();
+                    final int numberOfItems = getSources(state).length;
+                    final Category folder = (Category) folderSelectionModel
+                        .getSelectedObject(state);
+                    final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+                    final CategoryManager categoryManager = cdiUtil
+                        .findBean(CategoryManager.class);
+
+                    if (isMove(state)) {
+                        label.setLabel(new GlobalizedMessage(
+                            "cms.ui.folder.move",
+                            CmsConstants.CMS_FOLDER_BUNDLE,
+                            new Object[]{numberOfItems,
+                                         categoryManager.getCategoryPath(folder)}));
+                    } else if (isCopy(state)) {
+                        label.setLabel(new GlobalizedMessage(
+                            "cms.ui.folder.copy",
+                            CMS_BUNDLE,
+                            new Object[]{numberOfItems,
+                                         categoryManager.getCategoryPath(
+                                             folder)}));
+                    }
+                }
+
+            });
+
+            label.setOutputEscaping(false);
+            add(label);
+            add(folderTree);
+            add(new FormErrorDisplay(this));
+            final SaveCancelSection saveCancelSection = new SaveCancelSection();
+            cancelButton = saveCancelSection.getCancelButton();
+            add(saveCancelSection);
+        }
+
+        @Override
+        public void register(final Page page) {
+            super.register(page);
+            page.addComponentStateParam(this, targetFolderModel
+                                        .getStateParameter());
+        }
+
+        public void expose(final PageState state) {
+
+            final Folder folder = folderSelectionModel.getSelectedObject(state);
+            targetFolderModel.clearSelection(state);
+            if (folder != null) {
+                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+                final FolderManager folderManager = cdiUtil.findBean(
+                    FolderManager.class);
+                if (!folderManager.getParentFolder(folder).isPresent()) {
+                    folderTree.expand(Long.toString(folder.getObjectId()),
+                                      state);
+                } else {
+                    final List<Folder> parents = folderManager
+                        .getParentFolders(folder);
+                    parents
+                        .stream()
+                        .map(parent -> Long.toString(parent.getObjectId()))
+                        .forEach(folderId -> folderTree.expand(folderId, state));
+                }
+            }
+        }
+
+        @Override
+        public void reset(final PageState state) {
+            folderTree.clearSelection(state);
+            state.setValue(folderTree.getSelectionModel().getStateParameter(),
+                           null);
+        }
+
+        public Folder getTarget(final PageState state) {
+            return targetFolderModel.getSelectedObject(state);
+        }
+
+        public boolean isCancelled(final PageState state) {
+            return cancelButton.isSelected(state);
+        }
+
+    }
+
+    private class FolderTreeCellRenderer implements TreeCellRenderer {
+
+        private final RequestLocal invalidFoldersRequestLocal
+                                       = new RequestLocal();
+
+        /**
+         * Render the folders appropriately. The selected folder is a bold
+         * label. Invalid folders are plain labels. Unselected, valid folders
+         * are control links. Invalid folders are: the parent folder of the
+         * sources, any of the sources, and any subfolders of the sources.
+         */
+        @Override
+        @SuppressWarnings("unchecked")
+        public Component getComponent(final Tree tree,
+                                      final PageState state,
+                                      final Object value,
+                                      final boolean isSelected,
+                                      final boolean isExpanded,
+                                      final boolean isLeaf,
+                                      final Object key) {
+
+            // Get the list of invalid folders once per request.
+            final List<String> invalidFolders;
+
+            if (invalidFoldersRequestLocal.get(state) == null) {
+                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+                final AssetFolderBrowserController controller = cdiUtil
+                    .findBean(AssetFolderBrowserController.class);
+                invalidFolders = controller.createInvalidTargetsList(
+                    Arrays.asList(getSources(state)));
+                invalidFoldersRequestLocal.set(state, invalidFolders);
+            } else {
+                invalidFolders = (List<String>) invalidFoldersRequestLocal
+                    .get(state);
+            }
+            final Label label = new Label(value.toString());
+
+            if (invalidFolders.contains(String.format(
+                FOLDER_BROWSER_KEY_PREFIX_FOLDER + "%s", key))) {
+                return label;
+            }
+
+            // Bold if selected
+            if (isSelected) {
+                label.setFontWeight(Label.BOLD);
+                return label;
+            }
+
+            return new ControlLink(label);
+        }
+
+    }
+
+    private class TargetSelectorValidationListener
+        implements FormValidationListener {
+
+        @Override
+        public void validate(final FormSectionEvent event)
+            throws FormProcessException {
+
+            final PageState state = event.getPageState();
+
+            if (getSources(state).length <= 0) {
+                throw new IllegalStateException("No source items specified");
+            }
+
+            final Folder target = targetSelector.getTarget(state);
+            final FormData data = event.getFormData();
+            if (target == null) {
+                data.addError(new GlobalizedMessage(
+                    "cms.ui.folder.need_select_target_folder",
+                    CmsConstants.CMS_FOLDER_BUNDLE));
+                //If the target is null, we can skip the rest of the checks
+                return;
+            }
+
+            if (target.equals(folderSelectionModel.getSelectedObject(state))) {
+                data.addError(new GlobalizedMessage(
+                    "cms.ui.folder.not_within_same_folder",
+                    CmsConstants.CMS_FOLDER_BUNDLE));
+            }
+
+            // check create item permission
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final PermissionChecker permissionChecker = cdiUtil.findBean(
+                PermissionChecker.class);
+            if (!permissionChecker.isPermitted(
+                ItemPrivileges.CREATE_NEW, target)) {
+                data.addError("cms.ui.folder.no_permission_for_item",
+                              CmsConstants.CMS_FOLDER_BUNDLE);
+            }
+
+            for (String source : getSources(state)) {
+
+                validateObject(source, target, state, data);
+
+            }
+        }
+
+        private void validateObject(final String objectId,
+                                    final Folder target,
+                                    final PageState state,
+                                    final FormData data) {
+
+            Objects.requireNonNull(objectId, "objectId can't be null.");
+
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final FolderRepository folderRepo = cdiUtil
+                .findBean(FolderRepository.class);
+            final AssetRepository assetRepo = cdiUtil
+                .findBean(AssetRepository.class);
+            final AssetManager assetManager = cdiUtil
+                .findBean(AssetManager.class);
+            final AssetFolderBrowserController controller = cdiUtil
+                .findBean(AssetFolderBrowserController.class);
+            final FolderManager folderManager = cdiUtil
+                .findBean(FolderManager.class);
+            final PermissionChecker permissionChecker = cdiUtil.findBean(
+                PermissionChecker.class);
+
+            final CcmObject object;
+            final String name;
+            if (objectId.startsWith(FOLDER_BROWSER_KEY_PREFIX_FOLDER)) {
+
+                final long folderId = Long.parseLong(objectId.substring(
+                    FOLDER_BROWSER_KEY_PREFIX_FOLDER.length()));
+                final Folder folder = folderRepo.findById(folderId).orElseThrow(
+                    () -> new IllegalArgumentException(String.format(
+                        "No folder with id %d in database.", folderId)));
+
+                name = folder.getName();
+
+                //Check if folder or subfolder contains in use assets
+                if (isMove(state)) {
+                    final FolderManager.FolderIsMovable movable = folderManager
+                        .folderIsMovable(folder, target);
+                    switch (movable) {
+                        case DIFFERENT_SECTIONS:
+                            addErrorMessage(data,
+                                            "cms.ui.folder.different_sections",
+                                            name);
+                            break;
+                        case HAS_IN_USE_ASSETS:
+                            addErrorMessage(data,
+                                            "cms.ui.folder.has_in_use_assets",
+                                            name);
+                            break;
+                        case DIFFERENT_TYPES:
+                            addErrorMessage(data,
+                                            "cms.ui.folder.different_folder_types",
+                                            name);
+                            break;
+                        case IS_ROOT_FOLDER:
+                            addErrorMessage(data,
+                                            "cms.ui.folder.is_root_folder",
+                                            name);
+                            break;
+                        case SAME_FOLDER:
+                            addErrorMessage(data,
+                                            "cms.ui.folder.same_folder",
+                                            name);
+                            break;
+                        case YES:
+                            //Nothing
+                            break;
+                        default:
+                            throw new UnexpectedErrorException(String.format(
+                                "Unknown state '%s' for '%s'.",
+                                movable,
+                                FolderManager.FolderIsMovable.class.getName()));
+                    }
+                }
+
+                object = folder;
+            } else if (objectId.startsWith(FOLDER_BROWSER_KEY_PREFIX_ASSET)) {
+                final long assetId = Long.parseLong(objectId.substring(
+                    FOLDER_BROWSER_KEY_PREFIX_ASSET.length()));
+                final Asset asset = assetRepo
+                    .findById(assetId)
+                    .orElseThrow(() -> new IllegalArgumentException(
+                    String.format(
+                        "No asset with id %d in the database.",
+                        assetId)));
+
+                name = asset.getDisplayName();
+
+                if (isMove(state) && assetManager.isAssetInUse(asset)) {
+                    addErrorMessage(data, "cms.ui.folder.item_is_live", name);
+                }
+
+                object = asset;
+            } else {
+                throw new IllegalArgumentException(String.format(
+                    "Provided objectId '%s' does not start with '%s' "
+                        + "or '%s'.",
+                    objectId,
+                    FOLDER_BROWSER_KEY_PREFIX_FOLDER,
+                    FOLDER_BROWSER_KEY_PREFIX_ASSET));
+            }
+
+            final long count = controller.countObjects(target, name);
+            if (count > 0) {
+                // there is an item or subfolder in the target folder that already has this name
+                addErrorMessage(data, "cms.ui.folder.item_already_exists",
+                                name);
+            }
+
+            if (!(permissionChecker.isPermitted(
+                  ItemPrivileges.DELETE, object))
+                    && isMove(state)) {
+                addErrorMessage(data,
+                                "cms.ui.folder.no_permission_for_item",
+                                object.getDisplayName());
+            }
+
+        }
+
+    }
+
+    private void addErrorMessage(final FormData data,
+                                 final String message,
+                                 final String itemName) {
+        data.addError(new GlobalizedMessage(message,
+                                            CmsConstants.CMS_FOLDER_BUNDLE,
+                                            new Object[]{itemName}));
+    }
+
+    private class AssetFolderTree extends Tree {
+
+        public AssetFolderTree(final FolderSelectionModel folderSelectionModel) {
+
+            super(new FolderTreeModelBuilder() {
+
+                @Override
+                protected Folder getRootFolder(final PageState state) {
+                    final ContentSection section = CMS
+                        .getContext()
+                        .getContentSection();
+
+                    return section.getRootAssetsFolder();
+                }
+
+            });
+            setSelectionModel(selectionModel);
+        }
+
+        @Override
+        public void setSelectedKey(final PageState state, final Object key) {
+            if (key instanceof String) {
+                final Long keyAsLong;
+                if (((String) key).startsWith(
+                    FOLDER_BROWSER_KEY_PREFIX_FOLDER)) {
+                    keyAsLong = Long.parseLong(((String) key).substring(
+                        FOLDER_BROWSER_KEY_PREFIX_FOLDER.length()));
+                } else {
+                    keyAsLong = Long.parseLong((String) key);
+                }
+                super.setSelectedKey(state, keyAsLong);
+            } else if (key instanceof Long) {
+                super.setSelectedKey(state, key);
+            } else {
+                //We know that a FolderSelectionModel only takes keys of type Long.
+                //Therefore we try to cast here
+                final Long keyAsLong = (Long) key;
+                super.setSelectedKey(state, keyAsLong);
             }
         }
 
