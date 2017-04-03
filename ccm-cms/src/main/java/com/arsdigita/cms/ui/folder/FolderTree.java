@@ -60,7 +60,7 @@ public class FolderTree extends Tree {
         } else if (key instanceof Long) {
             super.setSelectedKey(state, key);
         } else {
-            //We now that a FolderSelectionModel only takes keys of type Long.
+            //We know that a FolderSelectionModel only takes keys of type Long.
             //Therefore we try to cast here
             final Long keyAsLong = (Long) key;
             super.setSelectedKey(state, keyAsLong);
