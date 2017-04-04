@@ -98,14 +98,14 @@ import static org.librecms.CmsConstants.*;
  */
 @SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class FolderManipulator extends SimpleContainer implements
-    //FormProcessListener,
-    //FormValidationListener,
-    //FormSubmissionListener,
-    Resettable {
+        //FormProcessListener,
+        //FormValidationListener,
+        //FormSubmissionListener,
+        Resettable {
 
     //public static final String RESOURCE_BUNDLE = "com.arsdigita.cms.ui.folder.CMSFolderResources";
     private static final Logger LOGGER = LogManager.getLogger(
-        FolderManipulator.class);
+            FolderManipulator.class);
 
     private static final String ATOZ_FILTER_PARAM = "aToZfilter";
     private static final String ACTION_PARAM = "act";
@@ -118,9 +118,9 @@ public class FolderManipulator extends SimpleContainer implements
     //private static final String UNPUBLISH = "UnPublish";
 
     private final ArrayParameter sourcesParam = new ArrayParameter(
-        new StringParameter(SOURCES_PARAM));
+            new StringParameter(SOURCES_PARAM));
     private final StringParameter actionParam
-                                      = new StringParameter(ACTION_PARAM);
+                                  = new StringParameter(ACTION_PARAM);
     ;
     /**
      * The folder in which the source items live.
@@ -132,9 +132,9 @@ public class FolderManipulator extends SimpleContainer implements
 
     private FilterForm filterForm;
     private final StringParameter atozFilterParam = new StringParameter(
-        ATOZ_FILTER_PARAM);
+            ATOZ_FILTER_PARAM);
     private final StringParameter filterParam
-                                      = new StringParameter(FILTER_PARAM);
+                                  = new StringParameter(FILTER_PARAM);
 
     public FolderManipulator(final FolderSelectionModel folderModel) {
 
@@ -148,9 +148,9 @@ public class FolderManipulator extends SimpleContainer implements
 
         targetSelector.addProcessListener(new TargetSelectorProcessListener());
         targetSelector.addValidationListener(
-            new TargetSelectorValidationListener());
+                new TargetSelectorValidationListener());
         targetSelector.addSubmissionListener(
-            new TargetSelectorSubmissionListener());
+                new TargetSelectorSubmissionListener());
         add(targetSelector);
 
         //publishDialog.addProcessListener(new PublishDialogProcessListener());
@@ -212,7 +212,7 @@ public class FolderManipulator extends SimpleContainer implements
 
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final FolderBrowserController controller = cdiUtil.findBean(
-            FolderBrowserController.class);
+                FolderBrowserController.class);
 
         controller.moveObjects(target, objectIds);
     }
@@ -221,7 +221,7 @@ public class FolderManipulator extends SimpleContainer implements
 
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final FolderBrowserController controller = cdiUtil.findBean(
-            FolderBrowserController.class);
+                FolderBrowserController.class);
 
         controller.copyObjects(target, objectIds);
     }
@@ -396,7 +396,7 @@ public class FolderManipulator extends SimpleContainer implements
 
         @Override
         public void process(final FormSectionEvent event)
-            throws FormProcessException {
+                throws FormProcessException {
 
             final PageState state = event.getPageState();
 
@@ -415,7 +415,7 @@ public class FolderManipulator extends SimpleContainer implements
 
         @Override
         public void process(final FormSectionEvent event)
-            throws FormProcessException {
+                throws FormProcessException {
 
             final PageState state = event.getPageState();
 
@@ -471,7 +471,7 @@ public class FolderManipulator extends SimpleContainer implements
 
         @Override
         public void validate(final FormSectionEvent event) throws
-            FormProcessException {
+                FormProcessException {
 
             final PageState state = event.getPageState();
             final FormData data = event.getFormData();
@@ -485,7 +485,7 @@ public class FolderManipulator extends SimpleContainer implements
     }
 
     private class TargetSelectorValidationListener
-        implements FormValidationListener {
+            implements FormValidationListener {
 
         public TargetSelectorValidationListener() {
             //Nothing
@@ -493,7 +493,7 @@ public class FolderManipulator extends SimpleContainer implements
 
         @Override
         public void validate(final FormSectionEvent event)
-            throws FormProcessException {
+                throws FormProcessException {
 
             final PageState state = event.getPageState();
 
@@ -505,24 +505,24 @@ public class FolderManipulator extends SimpleContainer implements
             final FormData data = event.getFormData();
             if (target == null) {
                 data.addError(new GlobalizedMessage(
-                    "cms.ui.folder.need_select_target_folder",
-                    CmsConstants.CMS_FOLDER_BUNDLE));
+                        "cms.ui.folder.need_select_target_folder",
+                        CmsConstants.CMS_FOLDER_BUNDLE));
                 //If the target is null, we can skip the rest of the checks
                 return;
             }
 
             if (target.equals(sourceFolderModel.getSelectedObject(state))) {
                 data.addError(new GlobalizedMessage(
-                    "cms.ui.folder.not_within_same_folder",
-                    CmsConstants.CMS_FOLDER_BUNDLE));
+                        "cms.ui.folder.not_within_same_folder",
+                        CmsConstants.CMS_FOLDER_BUNDLE));
             }
 
             // check create item permission
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final PermissionChecker permissionChecker = cdiUtil.findBean(
-                PermissionChecker.class);
+                    PermissionChecker.class);
             if (!permissionChecker.isPermitted(
-                ItemPrivileges.CREATE_NEW, target)) {
+                    ItemPrivileges.CREATE_NEW, target)) {
                 data.addError("cms.ui.folder.no_permission_for_item",
                               CmsConstants.CMS_FOLDER_BUNDLE);
             }
@@ -544,33 +544,33 @@ public class FolderManipulator extends SimpleContainer implements
 
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final FolderRepository folderRepo = cdiUtil.findBean(
-                FolderRepository.class);
+                    FolderRepository.class);
             final ContentItemRepository itemRepo = cdiUtil.findBean(
-                ContentItemRepository.class);
+                    ContentItemRepository.class);
             final ContentItemManager itemManager = cdiUtil.findBean(
-                ContentItemManager.class);
+                    ContentItemManager.class);
             final FolderBrowserController controller = cdiUtil.findBean(
-                FolderBrowserController.class);
+                    FolderBrowserController.class);
             final FolderManager folderManager = cdiUtil.findBean(
-                FolderManager.class);
+                    FolderManager.class);
             final PermissionChecker permissionChecker = cdiUtil.findBean(
-                PermissionChecker.class);
+                    PermissionChecker.class);
 
             final CcmObject object;
             final String name;
             if (objectId.startsWith(FOLDER_BROWSER_KEY_PREFIX_FOLDER)) {
                 final long folderId = Long.parseLong(objectId.substring(
-                    FOLDER_BROWSER_KEY_PREFIX_FOLDER.length()));
+                        FOLDER_BROWSER_KEY_PREFIX_FOLDER.length()));
                 final Folder folder = folderRepo.findById(folderId).orElseThrow(
-                    () -> new IllegalArgumentException(String.format(
-                        "No folder with id %d in database.", folderId)));
+                        () -> new IllegalArgumentException(String.format(
+                                "No folder with id %d in database.", folderId)));
 
                 name = folder.getName();
 
                 //Check if folder or subfolder contains live items
                 if (isMove(state)) {
                     final FolderManager.FolderIsMovable movable = folderManager
-                        .folderIsMovable(folder, target);
+                            .folderIsMovable(folder, target);
                     switch (movable) {
                         case DIFFERENT_SECTIONS:
                             addErrorMessage(data,
@@ -602,9 +602,10 @@ public class FolderManipulator extends SimpleContainer implements
                             break;
                         default:
                             throw new UnexpectedErrorException(String.format(
-                                "Unknown state '%s' for '%s'.",
-                                movable,
-                                FolderManager.FolderIsMovable.class.getName()));
+                                    "Unknown state '%s' for '%s'.",
+                                    movable,
+                                    FolderManager.FolderIsMovable.class.
+                                            getName()));
                     }
                 }
 
@@ -612,13 +613,13 @@ public class FolderManipulator extends SimpleContainer implements
 
             } else if (objectId.startsWith(FOLDER_BROWSER_KEY_PREFIX_ITEM)) {
                 final long itemId = Long.parseLong(objectId.substring(
-                    FOLDER_BROWSER_KEY_PREFIX_ITEM.length()));
+                        FOLDER_BROWSER_KEY_PREFIX_ITEM.length()));
                 final ContentItem item = itemRepo
-                    .findById(itemId)
-                    .orElseThrow(() -> new IllegalArgumentException(
-                    String.format(
-                        "No content item with id %d in database.",
-                        itemId)));
+                        .findById(itemId)
+                        .orElseThrow(() -> new IllegalArgumentException(
+                        String.format(
+                                "No content item with id %d in database.",
+                                itemId)));
 
                 name = item.getDisplayName();
 
@@ -629,11 +630,11 @@ public class FolderManipulator extends SimpleContainer implements
                 object = item;
             } else {
                 throw new IllegalArgumentException(String.format(
-                    "Provided objectId '%s' does not start with '%s' "
-                        + "or '%s'.",
-                    objectId,
-                    FOLDER_BROWSER_KEY_PREFIX_FOLDER,
-                    FOLDER_BROWSER_KEY_PREFIX_ITEM));
+                        "Provided objectId '%s' does not start with '%s' "
+                                + "or '%s'.",
+                        objectId,
+                        FOLDER_BROWSER_KEY_PREFIX_FOLDER,
+                        FOLDER_BROWSER_KEY_PREFIX_ITEM));
             }
 
             final long count = controller.countObjects(target, name);
@@ -645,7 +646,7 @@ public class FolderManipulator extends SimpleContainer implements
 
             if (!(permissionChecker.isPermitted(
                   ItemPrivileges.DELETE, object))
-                    && isMove(state)) {
+                        && isMove(state)) {
                 addErrorMessage(data,
                                 "cms.ui.folder.no_permission_for_item",
                                 object.getDisplayName());
@@ -674,7 +675,7 @@ public class FolderManipulator extends SimpleContainer implements
 //        }
 //    }
     private class TargetSelectorSubmissionListener implements
-        FormSubmissionListener {
+            FormSubmissionListener {
 
         public TargetSelectorSubmissionListener() {
             //Nothing
@@ -682,15 +683,15 @@ public class FolderManipulator extends SimpleContainer implements
 
         @Override
         public void submitted(final FormSectionEvent event) throws
-            FormProcessException {
+                FormProcessException {
 
             final PageState state = event.getPageState();
 
             if (targetSelector.isCancelled(state)) {
                 reset(state);
                 throw new FormProcessException(new GlobalizedMessage(
-                    "cms.ui.folder.cancelled",
-                    CmsConstants.CMS_FOLDER_BUNDLE));
+                        "cms.ui.folder.cancelled",
+                        CmsConstants.CMS_FOLDER_BUNDLE));
             }
 
         }
@@ -727,8 +728,8 @@ public class FolderManipulator extends SimpleContainer implements
                 @Override
                 protected Long getRootFolderID(final PageState state) {
                     final ContentSection section = CMS
-                        .getContext()
-                        .getContentSection();
+                            .getContext()
+                            .getContentSection();
                     return section.getRootDocumentsFolder().getObjectId();
                 }
 
@@ -744,26 +745,37 @@ public class FolderManipulator extends SimpleContainer implements
                     final Label label = (Label) event.getTarget();
                     final int numberOfItems = getSources(state).length;
                     final Category folder = (Category) sourceFolderModel
-                        .getSelectedObject(state);
+                            .getSelectedObject(state);
                     final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
                     final CategoryManager categoryManager = cdiUtil.
-                        findBean(CategoryManager.class);
+                            findBean(CategoryManager.class);
+
+                    final String targetFolderPath;
+                    if (targetModel.getSelectedObject(state) == null) {
+                        targetFolderPath = "";
+                    } else {
+                        targetFolderPath = categoryManager.getCategoryPath(
+                                targetModel.getSelectedObject(state));
+                    }
 
                     if (isMove(state)) {
-
                         label.setLabel(new GlobalizedMessage(
-                            "cms.ui.folder.move",
-                            CmsConstants.CMS_FOLDER_BUNDLE,
-                            new Object[]{numberOfItems,
-                                         categoryManager.getCategoryPath(
-                                             folder)}));
+                                "cms.ui.folder.move",
+                                CmsConstants.CMS_FOLDER_BUNDLE,
+                                new Object[]{
+                                    numberOfItems,
+                                    categoryManager.getCategoryPath(folder),
+                                    targetFolderPath
+                                }));
                     } else if (isCopy(state)) {
                         label.setLabel(new GlobalizedMessage(
-                            "cms.ui.folder.copy",
-                            CMS_BUNDLE,
-                            new Object[]{numberOfItems,
-                                         categoryManager.getCategoryPath(
-                                             folder)}));
+                                "cms.ui.folder.copy",
+                                CMS_BUNDLE,
+                                new Object[]{
+                                    numberOfItems,
+                                    categoryManager.getCategoryPath(folder),
+                                    targetFolderPath
+                                }));
                     }
                 }
 
@@ -791,17 +803,18 @@ public class FolderManipulator extends SimpleContainer implements
             if (folder != null) {
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
                 final FolderManager folderManager = cdiUtil.findBean(
-                    FolderManager.class);
+                        FolderManager.class);
                 if (!folderManager.getParentFolder(folder).isPresent()) {
                     folderTree.expand(Long.toString(folder.getObjectId()),
                                       state);
                 } else {
                     final List<Folder> parents = folderManager
-                        .getParentFolders(folder);
+                            .getParentFolders(folder);
                     parents
-                        .stream()
-                        .map(parent -> Long.toString(parent.getObjectId()))
-                        .forEach(folderId -> folderTree.expand(folderId, state));
+                            .stream()
+                            .map(parent -> Long.toString(parent.getObjectId()))
+                            .forEach(folderId -> folderTree.expand(folderId,
+                                                                   state));
                 }
             }
         }
@@ -892,15 +905,15 @@ public class FolderManipulator extends SimpleContainer implements
 //            folderBrowser.setFilterForm(filterForm);
             folderBrowser.setFolderManipulator(FolderManipulator.this);
             paginator = new Paginator(
-                new FolderBrowserPaginationModelBuilder(folderBrowser),
-                CMSConfig.getConfig().getFolderBrowseListSize());
+                    new FolderBrowserPaginationModelBuilder(folderBrowser),
+                    CMSConfig.getConfig().getFolderBrowseListSize());
             folderBrowser.setPaginator(paginator);
             panel.add(paginator);
             panel.add(folderBrowser);
 
             LOGGER.debug("Adding filter form...");
             filterForm = new FilterForm(new FolderBrowserFilterFormModelBuilder(
-                folderBrowser));
+                    folderBrowser));
             FolderManipulator.this.add(filterForm);
 
             checkboxGroup = new CheckboxGroup(sourcesParam);
@@ -912,19 +925,19 @@ public class FolderManipulator extends SimpleContainer implements
             group.addAction(container);
 
             container.add(new Label(new GlobalizedMessage(
-                "cms.ui.folder.edit_selection",
-                CmsConstants.CMS_FOLDER_BUNDLE)));
+                    "cms.ui.folder.edit_selection",
+                    CmsConstants.CMS_FOLDER_BUNDLE)));
             actionSelect = new SingleSelect(actionParam);
             actionSelect.addOption(
-                new Option(COPY,
-                           new Label(new GlobalizedMessage(
-                               "cms.ui.folder.copy.action",
-                               CmsConstants.CMS_FOLDER_BUNDLE))));
+                    new Option(COPY,
+                               new Label(new GlobalizedMessage(
+                                       "cms.ui.folder.copy.action",
+                                       CmsConstants.CMS_FOLDER_BUNDLE))));
             actionSelect.addOption(
-                new Option(MOVE,
-                           new Label(new GlobalizedMessage(
-                               "cms.ui.folder.move.action",
-                               CmsConstants.CMS_FOLDER_BUNDLE))));
+                    new Option(MOVE,
+                               new Label(new GlobalizedMessage(
+                                       "cms.ui.folder.move.action",
+                                       CmsConstants.CMS_FOLDER_BUNDLE))));
             //Publishing in the folder browser only works if threaded publishing is active
 //            if (CMSConfig.getInstanceOf().getThreadedPublishing()) {
 //                actionSelect.addOption(new Option(PUBLISH,
@@ -937,8 +950,8 @@ public class FolderManipulator extends SimpleContainer implements
             container.add(actionSelect);
             submit = new Submit("Go",
                                 new GlobalizedMessage(
-                                    "cms.ui.folder.go",
-                                    CmsConstants.CMS_FOLDER_BUNDLE));
+                                        "cms.ui.folder.go",
+                                        CmsConstants.CMS_FOLDER_BUNDLE));
             container.add(submit);
 
             // Add a new first column to the table
@@ -1016,8 +1029,8 @@ public class FolderManipulator extends SimpleContainer implements
             panel = new BoxPanel(BoxPanel.HORIZONTAL);
 
             final ActionLink allLink = new ActionLink(
-                new GlobalizedMessage("cms.ui.folder.filter.all",
-                                      CmsConstants.CMS_FOLDER_BUNDLE));
+                    new GlobalizedMessage("cms.ui.folder.filter.all",
+                                          CmsConstants.CMS_FOLDER_BUNDLE));
             allLink.addActionListener(new ActionListener() {
 
                 @Override
@@ -1043,14 +1056,14 @@ public class FolderManipulator extends SimpleContainer implements
 //                panel.add(link);
 //            }
             panel.add(new Label(new GlobalizedMessage(
-                "cms.ui.folder.filter",
-                CmsConstants.CMS_FOLDER_BUNDLE)));
+                    "cms.ui.folder.filter",
+                    CmsConstants.CMS_FOLDER_BUNDLE)));
             filterField = new TextField(filterParam);
             panel.add(filterField);
             panel.add(new Submit("filterFolderSubmit",
                                  new GlobalizedMessage(
-                                     "cms.ui.folder.filter_do",
-                                     CmsConstants.CMS_FOLDER_BUNDLE)));
+                                         "cms.ui.folder.filter_do",
+                                         CmsConstants.CMS_FOLDER_BUNDLE)));
 
             add(panel);
 
@@ -1062,28 +1075,28 @@ public class FolderManipulator extends SimpleContainer implements
 
         @Override
         public void process(final FormSectionEvent event) throws
-            FormProcessException {
+                FormProcessException {
             //Nothing
         }
 
         @Override
         public void init(final FormSectionEvent event) throws
-            FormProcessException {
+                FormProcessException {
             //fse.getPageState().setValue(FolderManipulator.this.m_filter, null);
             //filterField.setValue(fse.getPageState(), null);
         }
 
         @Override
         public void submitted(final FormSectionEvent event) throws
-            FormProcessException {
+                FormProcessException {
         }
 
         @Override
         public boolean isVisible(PageState state) {
             if (super.isVisible(state)
-                    && (modelBuilder.getFolderSize(state)
-                        >= CMSConfig.getConfig().
-                        getFolderAtoZShowLimit())) {
+                        && (modelBuilder.getFolderSize(state)
+                            >= CMSConfig.getConfig().
+                            getFolderAtoZShowLimit())) {
                 return true;
             } else {
                 return false;
@@ -1115,7 +1128,7 @@ public class FolderManipulator extends SimpleContainer implements
     private class FolderTreeCellRenderer implements TreeCellRenderer {
 
         private final RequestLocal invalidFoldersRequestLocal
-                                       = new RequestLocal();
+                                   = new RequestLocal();
 
         /**
          * Render the folders appropriately. The selected folder is a bold
@@ -1137,13 +1150,13 @@ public class FolderManipulator extends SimpleContainer implements
             if (invalidFoldersRequestLocal.get(state) == null) {
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
                 final FolderBrowserController controller = cdiUtil.findBean(
-                    FolderBrowserController.class);
+                        FolderBrowserController.class);
                 invalidFolders = controller.createInvalidTargetsList(
-                    Arrays.asList(getSources(state)));
+                        Arrays.asList(getSources(state)));
                 invalidFoldersRequestLocal.set(state, invalidFolders);
             } else {
                 invalidFolders = (List<String>) invalidFoldersRequestLocal
-                    .get(state);
+                        .get(state);
             }
 
             final Label label = new Label(value.toString());
