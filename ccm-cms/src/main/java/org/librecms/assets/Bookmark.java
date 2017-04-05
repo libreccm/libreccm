@@ -18,6 +18,8 @@
  */
 package org.librecms.assets;
 
+import com.arsdigita.cms.ui.assets.forms.BookmarkForm;
+
 import org.librecms.contentsection.Asset;
 
 import java.io.Serializable;
@@ -37,13 +39,19 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.libreccm.l10n.LocalizedString;
 
 import static org.librecms.CmsConstants.*;
+import static org.librecms.assets.AssetConstants.*;
 
 /**
- * An assets for managing bookmarks which can be used to create links. Useful
- * if the same link appears in multiple places.
- * 
+ * An assets for managing bookmarks which can be used to create links. Useful if
+ * the same link appears in multiple places.
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
+@AssetType(assetForm = BookmarkForm.class,
+           labelBundle = ASSETS_BUNDLE,
+           labelKey = "bookmark.label",
+           descriptionBundle = ASSETS_BUNDLE,
+           descriptionKey = "bookmark.description")
 @Entity
 @Table(name = "BOOKMARKS", schema = DB_SCHEMA)
 @Audited
@@ -53,13 +61,13 @@ public class Bookmark extends Asset implements Serializable {
 
     @Embedded
     @AssociationOverride(
-            name = "values",
-            joinTable = @JoinTable(name = "BOOKMARK_DESCRIPTIONS",
-                                   schema = DB_SCHEMA,
-                                   joinColumns = {
-                                       @JoinColumn(name = "ASSET_ID")
-                                   }
-            )
+        name = "values",
+        joinTable = @JoinTable(name = "BOOKMARK_DESCRIPTIONS",
+                               schema = DB_SCHEMA,
+                               joinColumns = {
+                                   @JoinColumn(name = "ASSET_ID")
+                               }
+        )
     )
     private LocalizedString description;
 
@@ -130,7 +138,7 @@ public class Bookmark extends Asset implements Serializable {
     @Override
     public String toString(final String data) {
         return super.toString(String.format(", description = %s, "
-                                                    + "url = %s%s",
+                                                + "url = %s%s",
                                             Objects.toString(description),
                                             Objects.toString(url),
                                             data));

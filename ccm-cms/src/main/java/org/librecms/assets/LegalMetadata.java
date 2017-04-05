@@ -18,6 +18,8 @@
  */
 package org.librecms.assets;
 
+import com.arsdigita.cms.ui.assets.forms.LegalMetadataForm;
+
 import org.librecms.contentsection.Asset;
 import org.hibernate.envers.Audited;
 import org.libreccm.l10n.LocalizedString;
@@ -39,6 +41,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.Table;
 
 import static org.librecms.CmsConstants.*;
+import static org.librecms.assets.AssetConstants.*;
 
 /**
  * Container for storing legal metadata about a resource (a content item or an
@@ -46,6 +49,11 @@ import static org.librecms.CmsConstants.*;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
+@AssetType(assetForm = LegalMetadataForm.class,
+           labelKey = "legal_metadata.label",
+           labelBundle = ASSETS_BUNDLE,
+           descriptionKey = "legal_metadata.description",
+           descriptionBundle = ASSETS_BUNDLE)
 @Entity
 @Table(name = "LEGAL_METADATA", schema = DB_SCHEMA)
 @Audited
@@ -86,7 +94,7 @@ public class LegalMetadata extends Asset implements Serializable {
                      joinColumns = {
                          @JoinColumn(name = "LEGAL_METADATA_ID")
                      })
-    @Column(name  ="CONTRIBUTORS")
+    @Column(name = "CONTRIBUTORS")
     private List<String> contributors;
 
     public LegalMetadata() {
