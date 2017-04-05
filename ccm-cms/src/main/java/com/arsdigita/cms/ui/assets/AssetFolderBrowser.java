@@ -344,7 +344,7 @@ public class AssetFolderBrowser extends Table {
                                               CmsConstants.CMS_FOLDER_BUNDLE)));
                 link.setConfirmation(
                     new GlobalizedMessage(
-                        "cms.ui.folder.delete_confirmation",
+                        "cms.ui.folder.delete_confirmation_assets",
                         CmsConstants.CMS_FOLDER_BUNDLE));
                 return link;
             }
