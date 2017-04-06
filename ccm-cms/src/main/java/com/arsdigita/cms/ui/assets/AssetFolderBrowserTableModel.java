@@ -96,7 +96,7 @@ class AssetFolderBrowserTableModel implements TableModel {
         if (currentRow.isFolder()) {
             return String.format("folder-%d", currentRow.getObjectId());
         } else {
-            return String.format("item-%d", currentRow.getObjectId());
+            return String.format("asset-%d", currentRow.getObjectId());
         }
 
 //        return currentRow.getObjectId();
