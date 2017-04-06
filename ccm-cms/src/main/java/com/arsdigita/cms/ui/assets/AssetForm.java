@@ -39,6 +39,9 @@ import org.librecms.contentsection.Asset;
 import org.librecms.contentsection.AssetRepository;
 
 import java.util.Optional;
+import org.libreccm.categorization.CategoryManager;
+import org.librecms.contentsection.Folder;
+import org.librecms.contentsection.FolderManager;
 
 /**
  *
@@ -75,6 +78,10 @@ public abstract class AssetForm extends Form implements FormInitListener,
 
         saveCancelSection = new SaveCancelSection();
         add(saveCancelSection);
+
+        addInitListener(this);
+        addProcessListener(this);
+        addSubmissionListener(this);
     }
 
     protected void addWidgets() {
@@ -92,12 +99,13 @@ public abstract class AssetForm extends Form implements FormInitListener,
         } else {
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final AssetRepository assetRepo = cdiUtil.findBean(
-                AssetRepository.class);
+                    AssetRepository.class);
             final Asset asset = assetRepo
-                .findById(selectionModel.getSelectedKey(state))
-                .orElseThrow(() -> new IllegalArgumentException(String.format(
-                "No asset with ID %d in the database.",
-                selectionModel.getSelectedKey(state))));
+                    .findById(selectionModel.getSelectedKey(state))
+                    .orElseThrow(() -> new IllegalArgumentException(String.
+                    format(
+                            "No asset with ID %d in the database.",
+                            selectionModel.getSelectedKey(state))));
             return Optional.of(asset);
         }
     }
@@ -112,18 +120,18 @@ public abstract class AssetForm extends Form implements FormInitListener,
         if (selectedAsset.isPresent()) {
             title.setValue(state,
                            selectedAsset
-                               .get()
-                               .getTitle()
-                               .getValue(KernelConfig
-                                   .getConfig()
-                                   .getDefaultLocale()));
+                                   .get()
+                                   .getTitle()
+                                   .getValue(KernelConfig
+                                           .getConfig()
+                                           .getDefaultLocale()));
         }
 
     }
 
     @Override
     public void process(final FormSectionEvent event)
-        throws FormProcessException {
+            throws FormProcessException {
 
         final PageState state = event.getPageState();
 
@@ -138,26 +146,45 @@ public abstract class AssetForm extends Form implements FormInitListener,
             }
 
             asset.getTitle().addValue(
-                KernelConfig.getConfig().getDefaultLocale(),
-                (String) title.getValue(state));
+                    KernelConfig.getConfig().getDefaultLocale(),
+                    (String) title.getValue(state));
 
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final AssetRepository assetRepo = cdiUtil
-                .findBean(AssetRepository.class);
+                    .findBean(AssetRepository.class);
             assetRepo.save(asset);
+
+            if (!selectedAsset.isPresent()) {
+                //Set display name
+                asset.setDisplayName((String) title.getValue(state));
+                assetRepo.save(asset);
+                
+                //Add new asset to currently selected folder
+                final Folder selectedFolder = assetPane
+                        .getFolderSelectionModel()
+                        .getSelectedObject(state);
+                final CategoryManager categoryManager = cdiUtil
+                        .findBean(CategoryManager.class);
+                categoryManager.addObjectToCategory(
+                        asset,
+                        selectedFolder,
+                        CmsConstants.CATEGORIZATION_TYPE_FOLDER);
+            }
+
+            assetPane.browseMode(state);
         }
     }
 
     protected abstract Asset createAsset(final PageState state)
-        throws FormProcessException;
+            throws FormProcessException;
 
     protected abstract void updateAsset(final Asset asset,
-                                         final PageState state)
-        throws FormProcessException;
+                                        final PageState state)
+            throws FormProcessException;
 
     @Override
     public void submitted(final FormSectionEvent event)
-        throws FormProcessException {
+            throws FormProcessException {
 
         final PageState state = event.getPageState();
 

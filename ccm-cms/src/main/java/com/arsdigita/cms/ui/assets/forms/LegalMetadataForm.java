@@ -51,35 +51,44 @@ public class LegalMetadataForm extends AssetForm {
 
     @Override
     protected void addWidgets() {
-        add(new Label(new GlobalizedMessage(
-            "cms.ui.assets.legalmetadata.rightsholder",
-            CmsConstants.CMS_BUNDLE)));
 
+        add(new Label(new GlobalizedMessage(
+                "cms.ui.assets.legalmetadata.rightsholder",
+                CmsConstants.CMS_BUNDLE)));
         rightsHolder = new TextArea("legalmetadata-rightsholder");
         add(rightsHolder);
 
+        add(new Label(new GlobalizedMessage(
+                "cms.ui.assets.legalmetadata.rights",
+                CmsConstants.CMS_BUNDLE)));
         rights = new TextArea("legalmetadata-rights");
         add(rights);
 
+        add(new Label(new GlobalizedMessage(
+                "cms.ui.assets.legalmetadata.publisher",
+                CmsConstants.CMS_BUNDLE)));
         publisher = new TextArea("legalmetadata-rights");
         add(publisher);
 
+        add(new Label(new GlobalizedMessage(
+                "cms.ui.assets.legalmetadata.creator",
+                CmsConstants.CMS_BUNDLE)));
         creator = new TextArea("legalmetadata-creator");
         add(creator);
     }
 
     @Override
     protected Asset createAsset(final PageState state)
-        throws FormProcessException {
+            throws FormProcessException {
 
         Objects.requireNonNull(state);
-        
+
         final LegalMetadata legalMetadata = new LegalMetadata();
 
         legalMetadata.setRightsHolder((String) rightsHolder.getValue(state));
         legalMetadata.getRights().addValue(
-            KernelConfig.getConfig().getDefaultLocale(),
-            (String) rights.getValue(state));
+                KernelConfig.getConfig().getDefaultLocale(),
+                (String) rights.getValue(state));
 
         legalMetadata.setPublisher((String) publisher.getValue(state));
         legalMetadata.setCreator((String) creator.getValue(state));
@@ -89,25 +98,25 @@ public class LegalMetadataForm extends AssetForm {
 
     @Override
     protected void updateAsset(final Asset asset, final PageState state)
-        throws FormProcessException {
-        
+            throws FormProcessException {
+
         Objects.requireNonNull(asset);
         Objects.requireNonNull(state);
-        
+
         if (!(asset instanceof LegalMetadata)) {
             throw new IllegalArgumentException(String.format(
-                "Provided asset is not an instance of '%s' (or a sub class) "
+                    "Provided asset is not an instance of '%s' (or a sub class) "
                     + "but is an instance of class '%s'.",
-                LegalMetadata.class.getName(),
-                asset.getClass().getName()));
+                    LegalMetadata.class.getName(),
+                    asset.getClass().getName()));
         }
-        
+
         final LegalMetadata legalMetadata = (LegalMetadata) asset;
-        
+
         legalMetadata.setRightsHolder((String) rightsHolder.getValue(state));
         legalMetadata.getRights().addValue(
-            KernelConfig.getConfig().getDefaultLocale(),
-            (String) rights.getValue(state));
+                KernelConfig.getConfig().getDefaultLocale(),
+                (String) rights.getValue(state));
 
         legalMetadata.setPublisher((String) publisher.getValue(state));
         legalMetadata.setCreator((String) creator.getValue(state));

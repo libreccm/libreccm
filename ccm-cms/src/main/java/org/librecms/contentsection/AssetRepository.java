@@ -97,7 +97,8 @@ public class AssetRepository
     public void save(
         @RequiresPrivilege(AssetPrivileges.EDIT)
         final Asset asset) {
-
+        
+        super.save(asset);
     }
 
     /**

@@ -73,7 +73,7 @@ public class Bookmark extends Asset implements Serializable {
 
     @Column(name = "URL", length = 2048, nullable = false)
     @NotEmpty
-    private URL url;
+    private String url;
 
     public Bookmark() {
         super();
@@ -88,11 +88,11 @@ public class Bookmark extends Asset implements Serializable {
         this.description = description;
     }
 
-    public URL getUrl() {
+    public String getUrl() {
         return url;
     }
 
-    public void setUrl(final URL url) {
+    public void setUrl(final String url) {
         this.url = url;
     }
 
