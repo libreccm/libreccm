@@ -58,15 +58,15 @@ public class AssetTypesManager {
     protected void initialize() {
 
         final ServiceLoader<CcmModule> modules = ServiceLoader
-            .load(CcmModule.class);
+                .load(CcmModule.class);
 
         final SortedSet<Class<? extends Asset>> assetTypes = new TreeSet<>(
-            (type1, type2) -> type1.getName().compareTo(type2.getName()));
+                (type1, type2) -> type1.getName().compareTo(type2.getName()));
 
         for (final CcmModule module : modules) {
             final AssetTypes annotation = module
-                .getClass()
-                .getAnnotation(AssetTypes.class);
+                    .getClass()
+                    .getAnnotation(AssetTypes.class);
 
             if (annotation == null) {
                 continue;
@@ -76,22 +76,22 @@ public class AssetTypesManager {
         }
 
         availableAssetTypes = assetTypes
-            .stream()
-            .filter(type -> type.getAnnotation(AssetType.class) != null)
-            .map(assetTypeClass -> createAssetTypeInfo(assetTypeClass))
-            .collect(Collectors.toList());
+                .stream()
+                .filter(type -> type.getAnnotation(AssetType.class) != null)
+                .map(assetTypeClass -> createAssetTypeInfo(assetTypeClass))
+                .collect(Collectors.toList());
     }
 
     /**
      * Helper method for creating the info object for a asset type.
      *
      * @param assetTypeClass The class which provides the implementation of the
-     *                       asset type.
+     * asset type.
      *
      * @return A {@link AssetTypeInfo} object describing the asset type.
      */
     private AssetTypeInfo createAssetTypeInfo(
-        final Class<? extends Asset> assetTypeClass) {
+            final Class<? extends Asset> assetTypeClass) {
 
         Objects.requireNonNull(assetTypeClass);
 
@@ -101,7 +101,7 @@ public class AssetTypesManager {
         final String defaultBundleName = String.format("%sBundle",
                                                        assetTypeClass.getName());
         final AssetType assetType = assetTypeClass
-            .getAnnotation(AssetType.class);
+                .getAnnotation(AssetType.class);
 
         if (assetType == null) {
             assetTypeInfo.setLabelBundle(defaultBundleName);
@@ -156,7 +156,7 @@ public class AssetTypesManager {
      * @return A {@link AssetTypeInfo} object describing the asset type.
      */
     public AssetTypeInfo getAssetTypeInfo(
-        final Class<? extends Asset> assetTypeClass) {
+            final Class<? extends Asset> assetTypeClass) {
 
         Objects.requireNonNull(assetTypeClass);
 
@@ -168,13 +168,12 @@ public class AssetTypesManager {
      * asset type.
      *
      * @param assetTypeClass The fully qualified name of the class representing
-     *                       the asset type.
+     * the asset type.
      *
      * @return A {@link AssetTypeInfo} object describing the asset type.
      *
      * @throws IllegalArgumentException If no class with the provided name
-     *                                  exists or the class is not a subclass of
-     *                                  {@link Asset}.
+     * exists or the class is not a subclass of {@link Asset}.
      */
     @SuppressWarnings("unchecked")
     public AssetTypeInfo getAssetTypeInfo(final String assetTypeClass) {
@@ -186,15 +185,15 @@ public class AssetTypesManager {
             clazz = Class.forName(assetTypeClass);
         } catch (ClassNotFoundException ex) {
             throw new IllegalArgumentException(String.format(
-                "There is not class \"%s\".", assetTypeClass),
+                    "There is no class \"%s\".", assetTypeClass),
                                                ex);
         }
 
         if (!Asset.class.isAssignableFrom(clazz)) {
             throw new IllegalArgumentException(String.format(
-                "Class \"%s\" is not a subclass of of \"%s\".",
-                assetTypeClass,
-                Asset.class.getName()));
+                    "Class \"%s\" is not a subclass of of \"%s\".",
+                    assetTypeClass,
+                    Asset.class.getName()));
         }
 
         return getAssetTypeInfo((Class<? extends Asset>) clazz);

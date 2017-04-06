@@ -39,25 +39,25 @@ import java.util.List;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class AssetFolderBrowserTableModelBuilder
-    extends LockableImpl
-    implements TableModelBuilder {
+        extends LockableImpl
+        implements TableModelBuilder {
 
     private static final Logger LOGGER = LogManager
-        .getLogger(AssetFolderBrowserTableModelBuilder.class);
+            .getLogger(AssetFolderBrowserTableModelBuilder.class);
 
     @Override
     public TableModel makeModel(final Table table,
                                 final PageState state) {
 
         if (!(table instanceof AssetFolderBrowser)) {
-            throw new IllegalArgumentException("The "
-                                                   + "AssetFolderBrowserTableModelBuilder can only be used for the "
-                                               + "AssetFolderBrowser.");
+            throw new IllegalArgumentException(
+                    "The AssetFolderBrowserTableModelBuilder can only be used "
+                            + "for the AssetFolderBrowser.");
         }
 
         final AssetFolderBrowser assetFolderBrowser = (AssetFolderBrowser) table;
         final FolderSelectionModel folderSelectionModel = assetFolderBrowser
-            .getFolderSelectionModel();
+                .getFolderSelectionModel();
         final Folder folder = folderSelectionModel.getSelectedObject(state);
         if (folder == null) {
             return Table.EMPTY_MODEL;
@@ -66,7 +66,7 @@ class AssetFolderBrowserTableModelBuilder
             final Paginator paginator = assetFolderBrowser.getPaginator();
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final AssetFolderBrowserController controller = cdiUtil
-                .findBean(AssetFolderBrowserController.class);
+                    .findBean(AssetFolderBrowserController.class);
             final String orderBy;
             if (assetFolderBrowser.getSortType(state) == null) {
                 orderBy = AssetFolderBrowser.SORT_KEY_NAME;
@@ -85,12 +85,12 @@ class AssetFolderBrowserTableModelBuilder
             final long start = System.nanoTime();
             LOGGER.debug("Retrieving table rows...");
             final List<AssetFolderBrowserTableRow> rows = controller
-                .getAssetRows(folder,
-                              orderBy,
-                              orderDirection,
-                              first - 1,
-                              pageSize);
-            
+                    .getAssetRows(folder,
+                                  orderBy,
+                                  orderDirection,
+                                  first - 1,
+                                  pageSize);
+
             LOGGER.debug("Retrieve table rows in {} ms.",
                          (System.nanoTime() - start) / 1000);
             return new AssetFolderBrowserTableModel(rows);

@@ -38,8 +38,6 @@ import org.librecms.contentsection.Asset;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -58,8 +56,8 @@ public class BookmarkForm extends AssetForm {
     protected void addWidgets() {
 
         add(new Label(
-            new GlobalizedMessage("cms.ui.assets.bookmark.description",
-                                  CmsConstants.CMS_BUNDLE)));
+                new GlobalizedMessage("cms.ui.assets.bookmark.description",
+                                      CmsConstants.CMS_BUNDLE)));
         description = new TextArea("bookmark-description");
         add(description);
 
@@ -72,7 +70,7 @@ public class BookmarkForm extends AssetForm {
 
             @Override
             public void validate(final FormSectionEvent event)
-                throws FormProcessException {
+                    throws FormProcessException {
 
                 final PageState state = event.getPageState();
                 final FormData data = event.getFormData();
@@ -81,8 +79,8 @@ public class BookmarkForm extends AssetForm {
                     new URL((String) url.getValue(state));
                 } catch (MalformedURLException ex) {
                     data.addError(new GlobalizedMessage(
-                        "cms.ui.assets.bookmark.url.malformed",
-                        CmsConstants.CMS_BUNDLE));
+                            "cms.ui.assets.bookmark.url.malformed",
+                            CmsConstants.CMS_BUNDLE));
                 }
             }
 
@@ -92,58 +90,45 @@ public class BookmarkForm extends AssetForm {
 
     @Override
     protected Asset createAsset(final PageState state)
-        throws FormProcessException {
+            throws FormProcessException {
 
         Objects.requireNonNull(state);
 
         final Bookmark bookmark = new Bookmark();
 
         bookmark
-            .getDescription()
-            .addValue(KernelConfig.getConfig().getDefaultLocale(),
-                      (String) description.getValue(state));
+                .getDescription()
+                .addValue(KernelConfig.getConfig().getDefaultLocale(),
+                          (String) description.getValue(state));
 
-        try {
-            bookmark.setUrl(new URL((String) url.getValue(state)));
-        } catch (MalformedURLException ex) {
-            throw new FormProcessException(new GlobalizedMessage(
-                "cms.ui.assets.bookmark.url.malformed",
-                CmsConstants.CMS_BUNDLE));
-        }
+        bookmark.setUrl((String) url.getValue(state));
 
         return bookmark;
     }
 
     @Override
     protected void updateAsset(final Asset asset, final PageState state)
-        throws FormProcessException {
+            throws FormProcessException {
 
         Objects.requireNonNull(asset);
         Objects.requireNonNull(state);
 
         if (!(asset instanceof Bookmark)) {
             throw new IllegalArgumentException(String.format(
-                "Provided asset is not an instance of class (or sub class of) "
+                    "Provided asset is not an instance of class (or sub class of) "
                     + "'%s' but is an instance of class '%s'",
-                Bookmark.class.getName(),
-                asset.getClass().getName()));
+                    Bookmark.class.getName(),
+                    asset.getClass().getName()));
         }
 
         final Bookmark bookmark = (Bookmark) asset;
 
         bookmark
-            .getDescription()
-            .addValue(KernelConfig.getConfig().getDefaultLocale(),
-                      (String) description.getValue(state));
+                .getDescription()
+                .addValue(KernelConfig.getConfig().getDefaultLocale(),
+                          (String) description.getValue(state));
 
-        try {
-            bookmark.setUrl(new URL((String) url.getValue(state)));
-        } catch (MalformedURLException ex) {
-            throw new FormProcessException(new GlobalizedMessage(
-                "cms.ui.assets.bookmark.url.malformed",
-                CmsConstants.CMS_BUNDLE));
-        }
-
+        bookmark.setUrl((String) url.getValue(state));
     }
 
 }

@@ -26,6 +26,7 @@ import com.arsdigita.bebop.Page;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.Paginator;
 import com.arsdigita.bebop.SimpleContainer;
+import com.arsdigita.bebop.SingleSelectionModel;
 import com.arsdigita.bebop.Table;
 import com.arsdigita.bebop.Text;
 import com.arsdigita.bebop.event.TableActionAdapter;
@@ -64,31 +65,31 @@ public class AssetFolderBrowser extends Table {
     protected final static String SORT_KEY_LAST_MODIFIED_DATE = "lastModified";
     protected final static String SORT_KEY_CREATION_DATE = "creationDate";
 
-    private final FolderSelectionModel folderSelectionModel;
+    private final AssetPane assetPane;
     private TableActionListener folderChanger;
     private TableActionListener folderDeleter;
     private TableColumn nameColumn;
     private TableColumn deleteColumn;
     private final StringParameter sortTypeParameter = new StringParameter(
-        "sortType");
+            "sortType");
     private final StringParameter sortDirectionParameter = new StringParameter(
-        "sortDir");
+            "sortDir");
 
     private Paginator paginator;
     private long folderSize;
 
-    public AssetFolderBrowser(final FolderSelectionModel folderSelectionModel) {
+    public AssetFolderBrowser(final AssetPane assetPane) {
         super();
         sortTypeParameter.setDefaultValue(SORT_KEY_NAME);
         sortDirectionParameter.setDefaultValue(SORT_ACTION_UP);
 
-        this.folderSelectionModel = folderSelectionModel;
+        this.assetPane = assetPane;
 
         initComponents();
     }
 
     private void initComponents() {
-        
+
         setModelBuilder(new AssetFolderBrowserTableModelBuilder());
 
         final GlobalizedMessage[] headers = {
@@ -105,24 +106,23 @@ public class AssetFolderBrowser extends Table {
         setClassAttr("dataTable");
 
         getHeader().setDefaultRenderer(
-            new com.arsdigita.cms.ui.util.DefaultTableCellRenderer());
+                new com.arsdigita.cms.ui.util.DefaultTableCellRenderer());
 
         nameColumn = getColumn(AssetFolderBrowserTableModel.COL_NAME);
         nameColumn.setCellRenderer(new NameCellRenderer());
         nameColumn.setHeaderRenderer(new HeaderCellRenderer(SORT_KEY_NAME));
-       
 
         getColumn(AssetFolderBrowserTableModel.COL_CREATION_DATE)
-            .setHeaderRenderer(
-                new HeaderCellRenderer(SORT_KEY_CREATION_DATE));
+                .setHeaderRenderer(
+                        new HeaderCellRenderer(SORT_KEY_CREATION_DATE));
         getColumn(AssetFolderBrowserTableModel.COL_CREATION_DATE)
-            .setCellRenderer(new DateCellRenderer());
+                .setCellRenderer(new DateCellRenderer());
 
         getColumn(AssetFolderBrowserTableModel.COL_LAST_MODIFIED)
-            .setHeaderRenderer(new HeaderCellRenderer(
-                SORT_KEY_LAST_MODIFIED_DATE));
+                .setHeaderRenderer(new HeaderCellRenderer(
+                        SORT_KEY_LAST_MODIFIED_DATE));
         getColumn(AssetFolderBrowserTableModel.COL_LAST_MODIFIED)
-            .setCellRenderer(new DateCellRenderer());
+                .setCellRenderer(new DateCellRenderer());
 
         deleteColumn = getColumn(AssetFolderBrowserTableModel.COL_DELETEABLE);
         deleteColumn.setCellRenderer(new ActionCellRenderer());
@@ -142,14 +142,19 @@ public class AssetFolderBrowser extends Table {
 
         super.register(page);
 
-        page.addComponentStateParam(this, folderSelectionModel.
-                                    getStateParameter());
+        page.addComponentStateParam(
+                this,
+                getFolderSelectionModel().getStateParameter());
         page.addComponentStateParam(this, sortTypeParameter);
         page.addComponentStateParam(this, sortDirectionParameter);
     }
 
     protected FolderSelectionModel getFolderSelectionModel() {
-        return folderSelectionModel;
+        return assetPane.getFolderSelectionModel();
+    }
+
+    protected SingleSelectionModel<Long> getSelectedAssetModel() {
+        return assetPane.getSelectedAssetModel();
     }
 
     protected Paginator getPaginator() {
@@ -200,7 +205,7 @@ public class AssetFolderBrowser extends Table {
             final String sortKey = (String) state.getValue(sortTypeParameter);
             final boolean isCurrentKey = sortKey.equals(key);
             final String currentSortDirection = (String) state
-                .getValue(sortDirectionParameter);
+                    .getValue(sortDirectionParameter);
             final String imageUrlStub;
 
             if (SORT_ACTION_UP.equals(currentSortDirection)) {
@@ -217,7 +222,7 @@ public class AssetFolderBrowser extends Table {
                     // by default, everything sorts "up" unless it
                     // is the current key and it is already pointing up
                     if (SORT_ACTION_UP.equals(currentSortDirection)
-                            && isCurrentKey) {
+                                && isCurrentKey) {
                         sortDirectionAction = SORT_ACTION_DOWN;
                     } else {
                         sortDirectionAction = SORT_ACTION_UP;
@@ -268,14 +273,14 @@ public class AssetFolderBrowser extends Table {
 
             final String name = (String) value;
             final ContentSection section = CMS.getContext().
-                getContentSection();
+                    getContentSection();
             final ContentSectionManager sectionManager = CdiUtil.
-                createCdiUtil()
-                .findBean(ContentSectionManager.class);
+                    createCdiUtil()
+                    .findBean(ContentSectionManager.class);
 
             final boolean isFolder = ((AssetFolderBrowserTableModel) table
                                       .getTableModel(state))
-                .isFolder();
+                    .isFolder();
             final long objectId = getObjectId(key);
 
             if (isFolder) {
@@ -288,13 +293,14 @@ public class AssetFolderBrowser extends Table {
                                           row,
                                           column);
             } else {
+                return new ControlLink(new Text(name));
+                
 //                    return new Link(new Text(name),
 //                                    itemResolver.generateItemURL(state,
 //                                                                 objectId,
 //                                                                 name,
 //                                                                 section,
 //                                                                 "DRAFT"));
-                return new Text(name);
             }
         }
 
@@ -339,13 +345,13 @@ public class AssetFolderBrowser extends Table {
                 return new Label("&nbsp;", false);
             } else {
                 final ControlLink link = new ControlLink(
-                    new Label(
-                        new GlobalizedMessage("cms.ui.folder.delete",
-                                              CmsConstants.CMS_FOLDER_BUNDLE)));
+                        new Label(
+                                new GlobalizedMessage("cms.ui.folder.delete",
+                                                      CmsConstants.CMS_FOLDER_BUNDLE)));
                 link.setConfirmation(
-                    new GlobalizedMessage(
-                        "cms.ui.folder.delete_confirmation_assets",
-                        CmsConstants.CMS_FOLDER_BUNDLE));
+                        new GlobalizedMessage(
+                                "cms.ui.folder.delete_confirmation_assets",
+                                CmsConstants.CMS_FOLDER_BUNDLE));
                 return link;
             }
         }
@@ -367,7 +373,7 @@ public class AssetFolderBrowser extends Table {
 
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final AssetFolderBrowserController controller = cdiUtil.findBean(
-                AssetFolderBrowserController.class);
+                    AssetFolderBrowserController.class);
             controller.deleteObject((String) event.getRowKey());
 
             ((Table) event.getSource()).clearSelection(state);
@@ -387,9 +393,16 @@ public class AssetFolderBrowser extends Table {
             }
 
             clearSelection(state);
-            getFolderSelectionModel().setSelectedKey(
-                state,
-                getObjectId(event.getRowKey()));
+            final String rowKey = (String) event.getRowKey();
+            if (rowKey.startsWith(CmsConstants.FOLDER_BROWSER_KEY_PREFIX_FOLDER)) {
+                getFolderSelectionModel().setSelectedKey(state,
+                                                         getObjectId(rowKey));
+            } else if (rowKey.startsWith(
+                    CmsConstants.FOLDER_BROWSER_KEY_PREFIX_ASSET)) {
+                getSelectedAssetModel().setSelectedKey(state,
+                                                       getObjectId(rowKey));
+                assetPane.editAssetMode(state);
+            }
         }
 
     }
