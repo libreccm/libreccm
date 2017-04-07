@@ -392,7 +392,7 @@ public class ContentItemL10NManagerTest {
 
     /**
      * Tries to normalise the languages of a content item by using
-     * {@link ContentItemL10NManager#normalizedLanguages(org.librecms.contentsection.ContentItem)}
+     * {@link ContentItemL10NManager#normalizeLanguages(org.librecms.contentsection.ContentItem)}
      */
     @Test
     @InSequence(120)
@@ -406,12 +406,12 @@ public class ContentItemL10NManagerTest {
         final Optional<ContentItem> item = itemRepo.findById(-10200L);
         assertThat(item.isPresent(), is(true));
 
-        l10nManager.normalizedLanguages(item.get());
+        l10nManager.normalizeLanguages(item.get());
     }
 
     /**
      * Verifies that calling
-     * {@link ContentItemL10NManager#normalizedLanguages(org.librecms.contentsection.ContentItem)}
+     * {@link ContentItemL10NManager#normalizeLanguages(org.librecms.contentsection.ContentItem)}
      * for already normalised item has not effect.
      */
     @Test
@@ -425,13 +425,13 @@ public class ContentItemL10NManagerTest {
         final Optional<ContentItem> item = itemRepo.findById(-10100L);
         assertThat(item.isPresent(), is(true));
 
-        l10nManager.normalizedLanguages(item.get());
+        l10nManager.normalizeLanguages(item.get());
 
     }
 
     /**
      * Verifies that
-     * {@link ContentItemL10NManager#normalizedLanguages(org.librecms.contentsection.ContentItem)}
+     * {@link ContentItemL10NManager#normalizeLanguages(org.librecms.contentsection.ContentItem)}
      * throws an {@link IllegalArgumentException} if called with {@code null}
      * for the item.
      */
@@ -446,7 +446,7 @@ public class ContentItemL10NManagerTest {
     public void normalizeItemNull() {
         final ContentItem item = null;
 
-        l10nManager.normalizedLanguages(item);
+        l10nManager.normalizeLanguages(item);
     }
 
 }
