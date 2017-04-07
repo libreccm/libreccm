@@ -501,7 +501,7 @@ public class AssetPane extends LayoutPanel implements Resettable {
 
         actionsSegment.add(newAssetForm);
 
-        final MetaForm editAssetForm = new MetaForm(MOVE) {
+        final MetaForm editAssetForm = new MetaForm("editAsset") {
             @Override
             public Form buildForm(final PageState state) {
 

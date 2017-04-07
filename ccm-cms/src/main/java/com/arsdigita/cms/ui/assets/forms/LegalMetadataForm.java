@@ -29,10 +29,13 @@ import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.kernel.KernelConfig;
 
 import org.librecms.CmsConstants;
+import org.librecms.assets.Bookmark;
 import org.librecms.assets.LegalMetadata;
 import org.librecms.contentsection.Asset;
 
+import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  *
@@ -53,42 +56,87 @@ public class LegalMetadataForm extends AssetForm {
     protected void addWidgets() {
 
         add(new Label(new GlobalizedMessage(
-                "cms.ui.assets.legalmetadata.rightsholder",
-                CmsConstants.CMS_BUNDLE)));
+            "cms.ui.assets.legalmetadata.rightsholder",
+            CmsConstants.CMS_BUNDLE)));
         rightsHolder = new TextArea("legalmetadata-rightsholder");
         add(rightsHolder);
 
         add(new Label(new GlobalizedMessage(
-                "cms.ui.assets.legalmetadata.rights",
-                CmsConstants.CMS_BUNDLE)));
+            "cms.ui.assets.legalmetadata.rights",
+            CmsConstants.CMS_BUNDLE)));
         rights = new TextArea("legalmetadata-rights");
         add(rights);
 
         add(new Label(new GlobalizedMessage(
-                "cms.ui.assets.legalmetadata.publisher",
-                CmsConstants.CMS_BUNDLE)));
+            "cms.ui.assets.legalmetadata.publisher",
+            CmsConstants.CMS_BUNDLE)));
         publisher = new TextArea("legalmetadata-rights");
         add(publisher);
 
         add(new Label(new GlobalizedMessage(
-                "cms.ui.assets.legalmetadata.creator",
-                CmsConstants.CMS_BUNDLE)));
+            "cms.ui.assets.legalmetadata.creator",
+            CmsConstants.CMS_BUNDLE)));
         creator = new TextArea("legalmetadata-creator");
         add(creator);
     }
 
     @Override
+    protected void initForm(final PageState state,
+                            final Optional<Asset> selectedAsset) {
+
+        if (selectedAsset.isPresent()) {
+
+            if (!(selectedAsset.get() instanceof LegalMetadata)) {
+                throw new IllegalArgumentException(String.format(
+                    "The provided asset must be an instanceof of class '%s' or "
+                        + "an subclass but is an instanceof of class '%s'.",
+                    LegalMetadata.class.getName(),
+                    selectedAsset.get().getClass().getName()));
+            }
+
+            final LegalMetadata legalMetadata = (LegalMetadata) selectedAsset
+                .get();
+
+            rightsHolder.setValue(state, legalMetadata.getRightsHolder());
+            rights.setValue(state,
+                            legalMetadata
+                                .getRights()
+                                .getValue(getSelectedLocale(state)));
+            publisher.setValue(state, legalMetadata.getPublisher());
+            creator.setValue(state, legalMetadata.getCreator());
+        }
+    }
+
+    @Override
+    protected void showLocale(final PageState state) {
+        final Optional<Asset> selectedAsset = getSelectedAsset(state);
+
+        if (selectedAsset.isPresent()) {
+            if (!(getSelectedAsset(state).get() instanceof LegalMetadata)) {
+                throw new IllegalArgumentException(
+                    "Selected asset is not a legal metadata");
+            }
+
+            final LegalMetadata legalMetadata = (LegalMetadata) selectedAsset.get();
+
+            rights.setValue(state,
+                            legalMetadata
+                                .getRights()
+                                .getValue(getSelectedLocale(state)));
+        }
+    }
+
+    @Override
     protected Asset createAsset(final PageState state)
-            throws FormProcessException {
+        throws FormProcessException {
 
         Objects.requireNonNull(state);
 
         final LegalMetadata legalMetadata = new LegalMetadata();
 
         legalMetadata.setRightsHolder((String) rightsHolder.getValue(state));
-        legalMetadata.getRights().addValue(
-                KernelConfig.getConfig().getDefaultLocale(),
-                (String) rights.getValue(state));
+        legalMetadata.getRights().addValue(getSelectedLocale(state),
+                                           (String) rights.getValue(state));
 
         legalMetadata.setPublisher((String) publisher.getValue(state));
         legalMetadata.setCreator((String) creator.getValue(state));
@@ -98,25 +146,25 @@ public class LegalMetadataForm extends AssetForm {
 
     @Override
     protected void updateAsset(final Asset asset, final PageState state)
-            throws FormProcessException {
+        throws FormProcessException {
 
         Objects.requireNonNull(asset);
         Objects.requireNonNull(state);
 
         if (!(asset instanceof LegalMetadata)) {
             throw new IllegalArgumentException(String.format(
-                    "Provided asset is not an instance of '%s' (or a sub class) "
+                "Provided asset is not an instance of '%s' (or a sub class) "
                     + "but is an instance of class '%s'.",
-                    LegalMetadata.class.getName(),
-                    asset.getClass().getName()));
+                LegalMetadata.class
+                    .getName(),
+                asset.getClass().getName()));
         }
 
         final LegalMetadata legalMetadata = (LegalMetadata) asset;
 
         legalMetadata.setRightsHolder((String) rightsHolder.getValue(state));
-        legalMetadata.getRights().addValue(
-                KernelConfig.getConfig().getDefaultLocale(),
-                (String) rights.getValue(state));
+        legalMetadata.getRights().addValue(getSelectedLocale(state),
+                                           (String) rights.getValue(state));
 
         legalMetadata.setPublisher((String) publisher.getValue(state));
         legalMetadata.setCreator((String) creator.getValue(state));
