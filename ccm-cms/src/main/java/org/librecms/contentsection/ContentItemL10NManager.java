@@ -83,11 +83,16 @@ public class ContentItemL10NManager {
         final ContentItem item) {
 
         try {
-            return Arrays.stream(
-                Introspector.getBeanInfo(item.getClass())
-                    .getPropertyDescriptors())
-                .filter(property -> property.getPropertyType().isAssignableFrom(
-                LocalizedString.class))
+            final PropertyDescriptor[] properties = Introspector
+                .getBeanInfo(item.getClass())
+                .getPropertyDescriptors();
+
+            return Arrays.stream(properties)
+                .filter(property -> {
+                    return property
+                        .getPropertyType()
+                        .isAssignableFrom(LocalizedString.class);
+                })
                 .collect(Collectors.toList());
         } catch (IntrospectionException ex) {
             throw new UnexpectedErrorException(ex);
@@ -106,6 +111,7 @@ public class ContentItemL10NManager {
     }
 
     private Set<Locale> collectLanguages(final ContentItem item) {
+
         final Set<Locale> locales = new HashSet<>();
 
         findLocalizedStringProperties(item)
@@ -146,7 +152,7 @@ public class ContentItemL10NManager {
     }
 
     /**
-     * Retrieves all languages in which content item is available.
+     * Retrieves all languages in which a content item is available.
      *
      * @param item The item.
      *
@@ -154,8 +160,7 @@ public class ContentItemL10NManager {
      *         the item is available.
      */
     @Transactional(Transactional.TxType.REQUIRED)
-    public Set<Locale> availableLanguages(
-        final ContentItem item) {
+    public Set<Locale> availableLanguages(final ContentItem item) {
 
         checkReadPermission(item);
         return Collections.unmodifiableSet(collectLanguages(item));
@@ -205,7 +210,7 @@ public class ContentItemL10NManager {
         checkReadPermission(item);
 
         return supportedLocales.stream()
-            .filter(locale -> hasLanguage(item, locale))
+            .filter(locale -> !hasLanguage(item, locale))
             .collect(Collectors.toSet());
     }
 
@@ -329,7 +334,7 @@ public class ContentItemL10NManager {
         }
 
         findLocalizedStringProperties(item)
-            .forEach(property -> ContentItemL10NManager.this.removeLanguage(item, locale, property));
+            .forEach(property -> removeLanguage(item, locale, property));
 
         itemRepo.save(item);
     }
@@ -357,13 +362,13 @@ public class ContentItemL10NManager {
      * not an entry for the language is added.
      *
      * @param item The item to normalise. The item <strong>must be</strong> the
-     *             <strong>draft version</strong> of the item! If a <em>live
-     *             version</em> or a <em>pending version</em> is provided the
-     *             method will throw an {@link IllegalArgumentException}!
+     * <strong>draft version</strong> of the item! If a <em>live version</em> or
+     * a <em>pending version</em> is provided the method will throw an
+     * {@link IllegalArgumentException}!
      */
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
-    public void normalizedLanguages(
+    public void normalizeLanguages(
         @RequiresPrivilege(ItemPrivileges.EDIT)
         final ContentItem item) {
 
