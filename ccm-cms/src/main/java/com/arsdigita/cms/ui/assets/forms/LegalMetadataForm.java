@@ -22,18 +22,14 @@ import com.arsdigita.bebop.FormProcessException;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.form.TextArea;
-import com.arsdigita.bebop.form.TextField;
 import com.arsdigita.cms.ui.assets.AssetForm;
 import com.arsdigita.cms.ui.assets.AssetPane;
 import com.arsdigita.globalization.GlobalizedMessage;
-import com.arsdigita.kernel.KernelConfig;
 
 import org.librecms.CmsConstants;
-import org.librecms.assets.Bookmark;
 import org.librecms.assets.LegalMetadata;
 import org.librecms.contentsection.Asset;
 
-import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 
