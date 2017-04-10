@@ -23,7 +23,6 @@ import com.arsdigita.bebop.ColumnPanel;
 import com.arsdigita.bebop.Form;
 import com.arsdigita.bebop.FormProcessException;
 import com.arsdigita.bebop.Label;
-import com.arsdigita.bebop.Page;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.SaveCancelSection;
 import com.arsdigita.bebop.SingleSelectionModel;
@@ -38,7 +37,6 @@ import com.arsdigita.bebop.form.Option;
 import com.arsdigita.bebop.form.SingleSelect;
 import com.arsdigita.bebop.form.Submit;
 import com.arsdigita.bebop.form.TextField;
-import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.kernel.KernelConfig;
 
@@ -71,7 +69,6 @@ public abstract class AssetForm extends Form implements FormInitListener,
 
     private final AssetPane assetPane;
     private final SingleSelectionModel<Long> selectionModel;
-//    private final StringParameter selectedLocaleParameter;
 
     private BoxPanel showLocalePanel;
     private SingleSelect showLocaleSelect;
@@ -89,13 +86,12 @@ public abstract class AssetForm extends Form implements FormInitListener,
 
         this.assetPane = assetPane;
         selectionModel = assetPane.getSelectedAssetModel();
-//        selectedLocaleParameter = new StringParameter("selected-locale");
 
         initComponents();
     }
 
     private void initComponents() {
-
+        
         showLocalePanel = new BoxPanel(BoxPanel.HORIZONTAL);
         final Label showLocaleLabel = new Label(new PrintListener() {
 
@@ -106,11 +102,11 @@ public abstract class AssetForm extends Form implements FormInitListener,
                 final Label target = (Label) event.getTarget();
                 if (selectedAsset.isPresent()) {
                     target.setLabel(new GlobalizedMessage(
-                        "cms.ui.assest.show_locale",
+                        "cms.ui.asset.show_locale",
                         CmsConstants.CMS_BUNDLE));
                 } else {
                     target.setLabel(new GlobalizedMessage(
-                        "cms.ui.assest.initial_locale",
+                        "cms.ui.asset.initial_locale",
                         CmsConstants.CMS_BUNDLE));
                 }
             }
@@ -183,7 +179,7 @@ public abstract class AssetForm extends Form implements FormInitListener,
 
         };
         final Label addLocaleLabel = new Label(
-            new GlobalizedMessage("cms.ui.assest.add_locale",
+            new GlobalizedMessage("cms.ui.asset.add_locale",
                                   CmsConstants.CMS_BUNDLE));
         addLocaleSelect = new SingleSelect("add-locale-select");
         try {
@@ -248,15 +244,6 @@ public abstract class AssetForm extends Form implements FormInitListener,
         //Nothing here
     }
 
-//    @Override
-//    public void register(final Page page) {
-//        super.register(page);
-//
-//        page.addComponentStateParam(this, selectedLocaleParameter);
-//
-//        page.setVisibleDefault(showLocalePanel, true);
-//        page.setVisibleDefault(addLocalePanel, true);
-//    }
     protected String getTitle(final PageState state) {
         return (String) title.getValue(state);
     }
@@ -287,8 +274,6 @@ public abstract class AssetForm extends Form implements FormInitListener,
         final Optional<Asset> selectedAsset = getSelectedAsset(state);
 
         if (selectedAsset.isPresent()) {
-//            showLocalePanel.setVisible(state, true);
-//            addLocalePanel.setVisible(state, true);
 
             showLocaleSelect.setValue(state,
                                       KernelConfig
@@ -307,8 +292,6 @@ public abstract class AssetForm extends Form implements FormInitListener,
                                           .getConfig()
                                           .getDefaultLocale()
                                           .toString());
-//            showLocalePanel.setVisible(state, false);
-//            addLocalePanel.setVisible(state, false);
         }
 
         initForm(state, selectedAsset);
