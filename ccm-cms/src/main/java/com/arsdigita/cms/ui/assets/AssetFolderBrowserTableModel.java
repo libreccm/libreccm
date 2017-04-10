@@ -98,8 +98,6 @@ class AssetFolderBrowserTableModel implements TableModel {
         } else {
             return String.format("asset-%d", currentRow.getObjectId());
         }
-
-//        return currentRow.getObjectId();
     }
 
     public boolean isFolder() {
