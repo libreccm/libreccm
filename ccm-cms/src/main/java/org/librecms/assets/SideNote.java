@@ -18,6 +18,7 @@
  */
 package org.librecms.assets;
 
+import com.arsdigita.cms.ui.assets.forms.SideNoteForm;
 import org.librecms.contentsection.Asset;
 import org.hibernate.envers.Audited;
 import org.libreccm.l10n.LocalizedString;
@@ -33,6 +34,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.Table;
 
 import static org.librecms.CmsConstants.*;
+import static org.librecms.assets.AssetConstants.*;
 
 /**
  * Assets for side notes (additional informations) for a content item.
@@ -42,6 +44,11 @@ import static org.librecms.CmsConstants.*;
 @Entity
 @Table(name = "SIDE_NOTES", schema = DB_SCHEMA)
 @Audited
+@AssetType(assetForm = SideNoteForm.class,
+           labelBundle= ASSETS_BUNDLE,
+           labelKey = "sidenote.label",
+           descriptionBundle = ASSETS_BUNDLE,
+           descriptionKey = "sidenote.description")
 public class SideNote extends Asset implements Serializable {
 
     private static final long serialVersionUID = -4566222634780521726L;

@@ -18,6 +18,7 @@
  */
 package com.arsdigita.cms.ui.assets.forms;
 
+import com.arsdigita.bebop.BoxPanel;
 import com.arsdigita.bebop.FormProcessException;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.PageState;
@@ -51,29 +52,33 @@ public class LegalMetadataForm extends AssetForm {
     @Override
     protected void addWidgets() {
 
-        add(new Label(new GlobalizedMessage(
+        final BoxPanel panel = new BoxPanel(BoxPanel.VERTICAL);
+        
+        panel.add(new Label(new GlobalizedMessage(
             "cms.ui.assets.legalmetadata.rightsholder",
             CmsConstants.CMS_BUNDLE)));
         rightsHolder = new TextArea("legalmetadata-rightsholder");
-        add(rightsHolder);
+        panel.add(rightsHolder);
 
-        add(new Label(new GlobalizedMessage(
+        panel.add(new Label(new GlobalizedMessage(
             "cms.ui.assets.legalmetadata.rights",
             CmsConstants.CMS_BUNDLE)));
         rights = new TextArea("legalmetadata-rights");
-        add(rights);
+        panel.add(rights);
 
-        add(new Label(new GlobalizedMessage(
+        panel.add(new Label(new GlobalizedMessage(
             "cms.ui.assets.legalmetadata.publisher",
             CmsConstants.CMS_BUNDLE)));
         publisher = new TextArea("legalmetadata-rights");
-        add(publisher);
+        panel.add(publisher);
 
-        add(new Label(new GlobalizedMessage(
+        panel.add(new Label(new GlobalizedMessage(
             "cms.ui.assets.legalmetadata.creator",
             CmsConstants.CMS_BUNDLE)));
         creator = new TextArea("legalmetadata-creator");
-        add(creator);
+        panel.add(creator);
+        
+        add(panel);
     }
 
     @Override
