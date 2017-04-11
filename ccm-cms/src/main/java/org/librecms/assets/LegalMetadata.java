@@ -99,6 +99,7 @@ public class LegalMetadata extends Asset implements Serializable {
 
     public LegalMetadata() {
         super();
+        rights = new LocalizedString();
         contributors = new ArrayList<>();
     }
 

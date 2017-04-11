@@ -82,7 +82,7 @@ public abstract class AssetForm extends Form implements FormInitListener,
     private SaveCancelSection saveCancelSection;
 
     public AssetForm(final AssetPane assetPane) {
-        super("asset-form", new ColumnPanel(2));
+        super("asset-form", new ColumnPanel(1));
 
         this.assetPane = assetPane;
         selectionModel = assetPane.getSelectedAssetModel();
@@ -164,7 +164,13 @@ public abstract class AssetForm extends Form implements FormInitListener,
         }
         showLocaleSubmit = new Submit(new GlobalizedMessage(
             "cms.ui.asset.show_locale",
-            CmsConstants.CMS_BUNDLE));
+            CmsConstants.CMS_BUNDLE)) {
+                
+                @Override
+                public boolean isVisible(final PageState state) {
+                    return getSelectedAsset(state).isPresent();
+                }
+            };
         showLocalePanel.add(showLocaleLabel);
         showLocalePanel.add(showLocaleSelect);
         showLocalePanel.add(showLocaleSubmit);

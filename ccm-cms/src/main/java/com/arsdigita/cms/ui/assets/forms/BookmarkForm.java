@@ -29,7 +29,6 @@ import com.arsdigita.bebop.form.TextField;
 import com.arsdigita.cms.ui.assets.AssetForm;
 import com.arsdigita.cms.ui.assets.AssetPane;
 import com.arsdigita.globalization.GlobalizedMessage;
-import com.arsdigita.kernel.KernelConfig;
 
 import org.librecms.CmsConstants;
 import org.librecms.assets.Bookmark;

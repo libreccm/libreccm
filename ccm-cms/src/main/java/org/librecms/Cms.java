@@ -35,6 +35,7 @@ import org.librecms.contenttypes.News;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import org.librecms.assets.SideNote;
 
 @Module(//packageName = "org.librecms.cms",
     requiredModules = {
@@ -60,7 +61,7 @@ import java.util.Properties;
     }
 )
 @ContentTypes({Article.class, Event.class, MultiPartArticle.class, News.class})
-@AssetTypes({Bookmark.class, LegalMetadata.class})
+@AssetTypes({Bookmark.class, LegalMetadata.class, SideNote.class})
 public class Cms implements CcmModule {
 
     private static final Logger LOGGER = LogManager.getLogger(Cms.class);
