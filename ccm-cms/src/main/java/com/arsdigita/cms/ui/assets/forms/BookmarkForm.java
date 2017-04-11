@@ -141,16 +141,22 @@ public class BookmarkForm extends AssetForm {
 
         final Bookmark bookmark = new Bookmark();
 
-        bookmark
-            .getDescription()
-            .addValue(getSelectedLocale(state),
-                      (String) description.getValue(state));
-
-        bookmark.setUrl((String) url.getValue(state));
+        updateData(bookmark, state);
 
         return bookmark;
     }
 
+    protected void updateData(final Bookmark bookmark,
+                              final PageState state) {
+        bookmark
+            .getDescription()
+            .addValue(getSelectedLocale(state),
+                      (String) description.getValue(state));
+        
+        bookmark.setUrl((String) url.getValue(state));
+    }
+    
+    
     @Override
     protected void updateAsset(final Asset asset, final PageState state)
         throws FormProcessException {
@@ -168,12 +174,7 @@ public class BookmarkForm extends AssetForm {
 
         final Bookmark bookmark = (Bookmark) asset;
 
-        bookmark
-            .getDescription()
-            .addValue(getSelectedLocale(state),
-                      (String) description.getValue(state));
-
-        bookmark.setUrl((String) url.getValue(state));
+        updateData(bookmark, state);
     }
 
 }
