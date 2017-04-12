@@ -24,15 +24,19 @@ import com.arsdigita.bebop.FormProcessException;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.SimpleContainer;
+import com.arsdigita.bebop.Table;
 import com.arsdigita.bebop.event.FormInitListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.bebop.form.Submit;
 import com.arsdigita.bebop.form.TextField;
 import com.arsdigita.bebop.parameters.LongParameter;
 import com.arsdigita.bebop.parameters.StringParameter;
+import com.arsdigita.bebop.table.TableColumn;
+import com.arsdigita.bebop.table.TableColumnModel;
 import com.arsdigita.cms.dispatcher.CMSPage;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.toolbox.ui.LayoutPanel;
+
 import org.librecms.CmsConstants;
 
 /**
@@ -45,6 +49,10 @@ public class AssetSearchPage extends CMSPage {
     private static final String QUERY_PARAM = "query";
     private static final String WIDGET_PARAM = "widget";
     private static final String ASSET_TYPE_PARAM = "assettype";
+
+    private static final int RESULTS_TABLE_COL_TITLE = 0;
+    private static final int RESULTS_TABLE_COL_PLACE = 1;
+    private static final int RESULTS_TABLE_COL_TYPE = 2;
 
     private final LongParameter contentSectionId;
 
@@ -65,26 +73,58 @@ public class AssetSearchPage extends CMSPage {
 
         final Form queryForm = new Form("asset-search-page-query-form");
         queryForm.add(new Label(new GlobalizedMessage(
-                "cms.ui.assets.search_page.query",
-                CmsConstants.CMS_BUNDLE)));
+            "cms.ui.assets.search_page.query",
+            CmsConstants.CMS_BUNDLE)));
         query = new TextField("asset-search-page-query-form");
         queryForm.add(query);
         final Submit querySubmit = new Submit(new GlobalizedMessage(
-                "cms.ui.assets.search_page.query.submit"));
+            "cms.ui.assets.search_page.query.submit"));
         queryForm.add(querySubmit);
-        
+
         queryForm.addInitListener(new FormInitListener() {
+
             @Override
-            public void init(final FormSectionEvent event) 
-                    throws FormProcessException {
-                
+            public void init(final FormSectionEvent event)
+                throws FormProcessException {
+
                 final PageState state = event.getPageState();
                 final FormData data = event.getFormData();
-                
+
                 final String query = (String) data.get(QUERY_PARAM);
-                
+
             }
+
         });
+
+        mainPanel.setLeft(queryForm);
+
+        final Table resultsTable = new Table();
+        resultsTable.setEmptyView(
+            new Label(
+                new GlobalizedMessage(
+                    "cms.ui.assets.search_page.none",
+                    CmsConstants.CMS_BUNDLE)));
+        resultsTable.setClassAttr("dataTable");
+
+        final TableColumnModel columnModel = resultsTable.getColumnModel();
+        columnModel.add(new TableColumn(
+            RESULTS_TABLE_COL_TITLE,
+            new GlobalizedMessage(
+                "cms.ui.assets.search_page.results_table.title",
+                CmsConstants.CMS_BUNDLE)));
+        columnModel.add(new TableColumn(
+            RESULTS_TABLE_COL_PLACE,
+            new GlobalizedMessage(
+                "cms.ui.assets.search_page.results_table.place",
+                CmsConstants.CMS_BUNDLE)));
+        columnModel.add(new TableColumn(
+            RESULTS_TABLE_COL_TYPE,
+            new GlobalizedMessage(
+                "cms.ui.assets.search_page.results_table.type",
+                CmsConstants.CMS_BUNDLE)));
+        
+
+        mainPanel.setBody(resultsTable);
 
     }
 

@@ -189,6 +189,16 @@ public class AssetRepository
             return Optional.empty();
         }
     }
+    
+    @Transactional(Transactional.TxType.REQUIRED)
+    public List<Asset> findByTitle(final String title) {
+        
+        final TypedQuery<Asset> query = entityManager.createNamedQuery(
+            "Asset.findByTitle", Asset.class);
+        query.setParameter("query", String.format("%%%s%%", title));
+        
+        return query.getResultList();
+    }
 
     /**
      * Finds all shared {@link Asset}s of the specified type.
@@ -205,6 +215,18 @@ public class AssetRepository
             "Asset.findByType", Asset.class);
         query.setParameter("type", type);
 
+        return query.getResultList();
+    }
+    
+    @Transactional(Transactional.TxType.REQUIRED)
+    public List<Asset> findByTitleAndType(final String title,
+                                          final Class<? extends Asset> type) {
+        
+        final TypedQuery<Asset> query = entityManager.createNamedQuery(
+            "Asset.findByTitle", Asset.class);
+        query.setParameter("query", title);
+        query.setParameter("type", type);
+        
         return query.getResultList();
     }
 
@@ -246,19 +268,19 @@ public class AssetRepository
      *
      * @param folder The {@link Folder} which {@link Asset}s are filtered using
      *               the provided {@code name}.
-     * @param name   The string used to fiter the {@link Assets} in the provided
+     * @param title   The string used to fiter the {@link Assets} in the provided
      *               {@code folder}.
      *
      * @return A list with all {@link Asset}s in the provided {@link Folder}
      *         which name starts with the provided string.
      */
     @Transactional(Transactional.TxType.REQUIRED)
-    public List<Asset> filterByFolderAndName(final Folder folder,
-                                             final String name) {
+    public List<Asset> filterByFolderAndTitle(final Folder folder,
+                                             final String title) {
         final TypedQuery<Asset> query = entityManager.createNamedQuery(
-            "Asset.filterByFolderAndName", Asset.class);
+            "Asset.filterByFolderAndTitle", Asset.class);
         query.setParameter("folder", folder);
-        query.setParameter("name", name);
+        query.setParameter("title", title);
 
         return query.getResultList();
     }
@@ -334,22 +356,22 @@ public class AssetRepository
      *
      * @param folder The {@link Folder} which contains the assets.
      * @param type   The type of the {@link Asset}s.
-     * @param name   The name to filter the {@link Asset}s for.
+     * @param title   The name to filter the {@link Asset}s for.
      *
      * @return A list of all {@link Asset}s of the provided type which name
      *         starts with the provided string in the provided folder.
      */
     @Transactional(Transactional.TxType.REQUIRED)
-    public List<Asset> filterByFolderAndTypeAndName(
+    public List<Asset> filterByFolderAndTypeAndTitle(
         final Folder folder,
         final Class<? extends Asset> type,
-        final String name) {
+        final String title) {
 
         final TypedQuery<Asset> query = entityManager.createNamedQuery(
-            "Asset.filterByFolderAndNameAndType", Asset.class);
+            "Asset.filterByFolderAndTitleAndType", Asset.class);
         query.setParameter("folder", folder);
         query.setParameter("type", type);
-        query.setParameter("name", name);
+        query.setParameter("title", title);
 
         return query.getResultList();
     }
@@ -360,22 +382,22 @@ public class AssetRepository
      *
      * @param folder The {@link Folder} which contains the assets.
      * @param type   The type of the {@link Asset}s.
-     * @param name   The name to filter the {@link Asset}s for.
+     * @param title   The name to filter the {@link Asset}s for.
      *
      * @return The number of {@link Asset}s of the provided type which name
      *         starts with the provided string in the provided folder.
      */
     @Transactional(Transactional.TxType.REQUIRED)
-    public long countFilterByFolderAndTypeAndName(
+    public long countFilterByFolderAndTypeAndTitle(
         final Folder folder,
         final Class<? extends Asset> type,
-        final String name) {
+        final String title) {
 
         final TypedQuery<Long> query = entityManager.createNamedQuery(
-            "Asset.countFilterByFolderAndNameAndType", Long.class);
+            "Asset.countFilterByFolderAndTitleAndType", Long.class);
         query.setParameter("folder", folder);
         query.setParameter("type", type);
-        query.setParameter("name", name);
+        query.setParameter("title", title);
 
         return query.getSingleResult();
     }
