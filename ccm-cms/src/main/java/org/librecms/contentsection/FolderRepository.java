@@ -27,6 +27,7 @@ import org.libreccm.security.RequiresPrivilege;
 import org.librecms.contentsection.privileges.ItemPrivileges;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -117,12 +118,12 @@ public class FolderRepository extends AbstractEntityRepository<Long, Folder> {
     public Optional<Folder> findByPath(final ContentSection section,
                                        final String path,
                                        final FolderType type) {
-        if (section == null) {
-            throw new IllegalArgumentException("section can't be null");
-        }
 
-        if (path == null || path.isEmpty()) {
-            throw new IllegalArgumentException("Path can't be null or empty.");
+        Objects.requireNonNull(section, "section can't be null");
+
+        Objects.requireNonNull(path, "Path can't be null.");
+        if (path.isEmpty()) {
+            throw new IllegalArgumentException("Path can't be empty.");
         }
 
 //        String normalizedPath = path.replace('.', '/');
@@ -135,46 +136,45 @@ public class FolderRepository extends AbstractEntityRepository<Long, Folder> {
 //                                                      normalizedPath.length());
 //        }
 //        
+        final ContentSection contentSection = sectionRepo
+            .findById(section.getObjectId())
+            .get();
+
         final String normalizedPath = PathUtil.normalizePath(path);
 
         LOGGER.debug("Trying to find folder with path \"{}\" and type {} in"
                          + "content section \"{}\".",
                      normalizedPath,
                      type,
-                     section.getLabel());
+                     contentSection.getLabel());
         final String[] tokens = normalizedPath.split("/");
         Folder current;
-        switch(type) {
+        switch (type) {
             case ASSETS_FOLDER:
-                current = section.getRootAssetsFolder();
+                current = contentSection.getRootAssetsFolder();
                 break;
             case DOCUMENTS_FOLDER:
-                current = section.getRootDocumentsFolder();
+                current = contentSection.getRootDocumentsFolder();
                 break;
             default:
                 throw new IllegalArgumentException(String.format(
                     "Unexpected folder type %s", type));
         }
-        for(final String token : tokens) {
+        if (normalizedPath.isEmpty()) {
+            return Optional.of(current);
+        }
+        for (final String token : tokens) {
             if (current.getSubCategories() == null) {
                 return Optional.empty();
             }
-            
+
             final Optional<Category> result = current.getSubCategories()
-            .stream()
-            .filter( c -> {
-                LOGGER.debug("#findByPath(ContentSection, String, FolderType: c = {}",
-                             c.toString());
-                LOGGER.debug("#findByPath(ContentSection, String, FolderType: c.getName = \"{}\"",
-                             c.getName());
-                LOGGER.debug("#findByPath(ContentSection, String, FolderType: token = \"{}\"",
-                             token);
-                return c.getName().equals(token);
-            })
-            .findFirst();
-            
-            if (result.isPresent() 
-                && result.get() instanceof Folder) {
+                .stream()
+                .filter(category -> category.getName().equals(token))
+                .findFirst();
+
+            if (result.isPresent()
+                    && result.get() instanceof Folder) {
                 current = (Folder) result.get();
             } else {
                 return Optional.empty();
@@ -183,24 +183,24 @@ public class FolderRepository extends AbstractEntityRepository<Long, Folder> {
 
         return Optional.of(current);
     }
-    
+
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public void save(
         @RequiresPrivilege(ItemPrivileges.CREATE_NEW)
         final Folder folder) {
-        
+
         super.save(folder);
     }
-    
+
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public void delete(
         @RequiresPrivilege(ItemPrivileges.CREATE_NEW)
         final Folder folder) {
-        
+
         super.delete(folder);
     }
 

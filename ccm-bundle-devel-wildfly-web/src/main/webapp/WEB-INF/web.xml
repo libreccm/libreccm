@@ -27,6 +27,15 @@
         <listener-class>org.apache.shiro.web.env.EnvironmentLoaderListener</listener-class>
     </listener>
     
+    <!-- JAX-RS -->
+    <!--<servlet>
+        <servlet-name>javax.ws.rs.core.Application</servlet-name>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>javax.ws.rs.core.Application</servlet-name>
+        <url-pattern>/content-sections/*</url-pattern>
+    </servlet-mapping>-->
+    
     <servlet>
         <servlet-name>Faces Servlet</servlet-name>
         <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
@@ -46,4 +55,19 @@
         <param-name>javax.faces.FACELETS_SKIP_COMMENTS</param-name>
         <param-value>true</param-value>
     </context-param>
+    
+    <servlet>
+        <servlet-name>vaadin-servlet</servlet-name>
+        <servlet-class>com.vaadin.cdi.server.VaadinCDIServlet</servlet-class>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>vaadin-servlet</servlet-name>
+        <url-pattern>/vaadin/</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>vaadin-servlet</servlet-name>
+        <url-pattern>/VAADIN/</url-pattern>
+    </servlet-mapping>
+    
 </web-app>
