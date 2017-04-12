@@ -349,7 +349,7 @@ public class AssetRepositoryTest {
 
     /**
      * Tries to find {@link Asset}s in a {@link Folder} by using
-     * {@link AssetRepository#filterByFolderAndName(org.librecms.contentsection.Folder, java.lang.String)}.
+     * {@link AssetRepository#filterByFolderAndTitle(org.librecms.contentsection.Folder, java.lang.String)}.
      */
     @Test
     @InSequence(500)
@@ -358,9 +358,9 @@ public class AssetRepositoryTest {
     public void filterAssetByFolderAndName() {
         final Folder media = folderRepo.findById(-400L).get();
 
-        final List<Asset> result1 = assetRepo.filterByFolderAndName(media,
+        final List<Asset> result1 = assetRepo.filterByFolderAndTitle(media,
                                                                     "hea");
-        final List<Asset> result2 = assetRepo.filterByFolderAndName(media,
+        final List<Asset> result2 = assetRepo.filterByFolderAndTitle(media,
                                                                     "photo");
 
         assertThat(result1.size(), is(1));
@@ -443,7 +443,7 @@ public class AssetRepositoryTest {
     /**
      * Tries to filter the {@link Asset}s in a {@link Folder} by their type and
      * name using
-     * {@link AssetRepository#filterByFolderAndTypeAndName(org.librecms.contentsection.Folder, java.lang.Class, java.lang.String)}.
+     * {@link AssetRepository#filterByFolderAndTypeAndTitle(org.librecms.contentsection.Folder, java.lang.Class, java.lang.String)}.
      */
     @Test
     @InSequence(600)
@@ -452,9 +452,9 @@ public class AssetRepositoryTest {
     public void filterAssetsByFolderAndTypeAndName() {
         final Folder media = folderRepo.findById(-400L).get();
 
-        final List<Asset> result1 = assetRepo.filterByFolderAndTypeAndName(
+        final List<Asset> result1 = assetRepo.filterByFolderAndTypeAndTitle(
             media, Image.class, "hea");
-        final List<Asset> result2 = assetRepo.filterByFolderAndTypeAndName(
+        final List<Asset> result2 = assetRepo.filterByFolderAndTypeAndTitle(
             media, File.class, "hea");
 
         assertThat(result1.size(), is(1));
@@ -465,7 +465,7 @@ public class AssetRepositoryTest {
     /**
      * Tries to count the {@link Asset}s in a {@link Folder} which are of a
      * specific type and which name matches a specific pattern using
-     * {@link AssetRepository#filterByFolderAndTypeAndName(org.librecms.contentsection.Folder, java.lang.Class, java.lang.String)}.
+     * {@link AssetRepository#filterByFolderAndTypeAndTitle(org.librecms.contentsection.Folder, java.lang.Class, java.lang.String)}.
      */
     @Test
     @InSequence(610)
@@ -474,10 +474,10 @@ public class AssetRepositoryTest {
     public void countFilterAssetsByFolderAndTypeAndName() {
         final Folder media = folderRepo.findById(-400L).get();
 
-        assertThat(assetRepo.countFilterByFolderAndTypeAndName(
+        assertThat(assetRepo.countFilterByFolderAndTypeAndTitle(
             media, Image.class, "hea"),
                    is(1L));
-        assertThat(assetRepo.countFilterByFolderAndTypeAndName(
+        assertThat(assetRepo.countFilterByFolderAndTypeAndTitle(
             media, File.class, "hea"),
                    is(0L));
     }

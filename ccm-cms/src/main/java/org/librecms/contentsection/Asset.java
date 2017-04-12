@@ -68,6 +68,15 @@ import static org.librecms.CmsConstants.*;
                             + "WHERE a.uuid = :uuid "
                             + "AND TYPE(a) = :type")
     ,
+    @NamedQuery(name = "Asset.findByTitle'",
+                query = "SELECT a FROM Asset a JOIN a.title.values t "
+                            + "WHERE t LIKE :query")
+    ,
+    @NamedQuery(name = "Asset.findByTitleAndType",
+                query = "SELECT a FROM Asset a "
+                            + "WHERE :title MEMBER OF a.title.values "
+                            + "AND TYPE(a) = :type")
+    ,
     @NamedQuery(
         name = "Asset.findByFolder",
         query = "SELECT a FROM Asset a "
@@ -83,20 +92,22 @@ import static org.librecms.CmsConstants.*;
                     + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "'")
     ,
     @NamedQuery(
-        name = "Asset.filterByFolderAndName",
+        name = "Asset.filterByFolderAndTitle",
         query = "SELECT a FROM Asset a "
                     + "JOIN a.categories c "
+                + "JOIN a.title.values t "
                     + "WHERE c.category = :folder "
                     + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
-                    + "AND LOWER(a.displayName) LIKE CONCAT(LOWER(:name), '%')")
+                    + "AND LOWER(t) LIKE CONCAT('%', LOWER(:title), '%')")
     ,
     @NamedQuery(
-        name = "Asset.countFilterByFolderAndName",
+        name = "Asset.countFilterByFolderAndTitle",
         query = "SELECT COUNT(a) FROM Asset a "
                     + "JOIN a.categories c "
+                    + "JOIN a.title.values t "
                     + "WHERE c.category = :folder "
                     + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
-                    + "AND LOWER(a.displayName) LIKE CONCAT(LOWER(:name), '%')")
+                    + "AND LOWER(t) LIKE CONCAT('%', LOWER(:title), '%')")
     ,
     @NamedQuery(
         name = "Asset.filterByFolderAndType",
@@ -124,12 +135,13 @@ import static org.librecms.CmsConstants.*;
                     + "AND TYPE(a) = :type")
     ,
     @NamedQuery(
-        name = "Asset.countFilterByFolderAndNameAndType",
+        name = "Asset.countFilterByFolderAndTitleAndType",
         query = "SELECT COUNT(a) FROM Asset a "
                     + "JOIN a.categories c "
+                + "JOIN a.title.values t "
                     + "WHERE c.category = :folder "
                     + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
-                    + "AND LOWER(a.displayName) LIKE CONCAT(LOWER(:name), '%') "
+                    + "AND LOWER(t) LIKE CONCAT('%', LOWER(:title), '%') "
                     + "AND TYPE(a) = :type")
 })
 public class Asset extends CcmObject {
