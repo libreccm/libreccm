@@ -70,11 +70,11 @@ import static org.librecms.CmsConstants.*;
     ,
     @NamedQuery(name = "Asset.findByTitle'",
                 query = "SELECT a FROM Asset a JOIN a.title.values t "
-                            + "WHERE t LIKE :query")
+                            + "WHERE LOWER(t) LIKE CONCAT('%', :title, '%')")
     ,
     @NamedQuery(name = "Asset.findByTitleAndType",
-                query = "SELECT a FROM Asset a "
-                            + "WHERE :title MEMBER OF a.title.values "
+                query = "SELECT a FROM Asset a JOIN a.title.values t "
+                            + "WHERE LOWER(t) LIKE CONCAT('%', :title, '%') "
                             + "AND TYPE(a) = :type")
     ,
     @NamedQuery(
@@ -95,7 +95,7 @@ import static org.librecms.CmsConstants.*;
         name = "Asset.filterByFolderAndTitle",
         query = "SELECT a FROM Asset a "
                     + "JOIN a.categories c "
-                + "JOIN a.title.values t "
+                    + "JOIN a.title.values t "
                     + "WHERE c.category = :folder "
                     + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
                     + "AND LOWER(t) LIKE CONCAT('%', LOWER(:title), '%')")
@@ -126,19 +126,20 @@ import static org.librecms.CmsConstants.*;
                     + "AND TYPE(a) = :type")
     ,
     @NamedQuery(
-        name = "Asset.filterByFolderAndNameAndType",
+        name = "Asset.filterByFolderAndTitleAndType",
         query = "SELECT a FROM Asset a "
+                    + "JOIN a.title.values t "
                     + "JOIN a.categories c "
                     + "WHERE c.category = :folder "
                     + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
-                    + "AND LOWER(a.displayName) LIKE CONCAT(LOWER(:name), '%') "
+                    + "AND LOWER(t) LIKE CONCAT('%', LOWER(:title), '%') "
                     + "AND TYPE(a) = :type")
     ,
     @NamedQuery(
         name = "Asset.countFilterByFolderAndTitleAndType",
         query = "SELECT COUNT(a) FROM Asset a "
                     + "JOIN a.categories c "
-                + "JOIN a.title.values t "
+                    + "JOIN a.title.values t "
                     + "WHERE c.category = :folder "
                     + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
                     + "AND LOWER(t) LIKE CONCAT('%', LOWER(:title), '%') "
@@ -205,8 +206,8 @@ public class Asset extends CcmObject {
     private Optional<CcmObject> getFolder() {
         final Optional<Categorization> result = getCategories()
             .stream()
-            .filter(categorization -> CmsConstants.CATEGORIZATION_TYPE_FOLDER
-            .equals(categorization.getType()))
+            .filter(categorization -> CmsConstants.CATEGORIZATION_TYPE_FOLDER.
+            equals(categorization.getType()))
             .findFirst();
 
         if (result.isPresent()) {
