@@ -483,7 +483,7 @@ case $1 in
     build-module)    build_module $2 ;;
     test-all)        test_all $2 $3 $4 ;;
     test-module)     test_module $2 $3 $4 $5 ;;
-    test)            run_test $2 $3 $4 $5 ;;
+    run-test)        run_test $2 $3 $4 $5 ;;
     install-runtime) install_runtime $2 ;;
     run)             run $2 $3 $4 ;;
     stop-runtime)    stop_runtime $2 ;;
