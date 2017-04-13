@@ -195,7 +195,7 @@ public class AssetRepository
         
         final TypedQuery<Asset> query = entityManager.createNamedQuery(
             "Asset.findByTitle", Asset.class);
-        query.setParameter("query", String.format("%%%s%%", title));
+        query.setParameter("title", title);
         
         return query.getResultList();
     }
@@ -224,7 +224,7 @@ public class AssetRepository
         
         final TypedQuery<Asset> query = entityManager.createNamedQuery(
             "Asset.findByTitle", Asset.class);
-        query.setParameter("query", title);
+        query.setParameter("title", title);
         query.setParameter("type", type);
         
         return query.getResultList();
@@ -291,19 +291,19 @@ public class AssetRepository
      *
      * @param folder The {@link Folder} which {@link Asset}s are filtered using
      *               the provided {@code name}.
-     * @param name   The string used to fiter the {@link Assets} in the provided
+     * @param title   The string used to fiter the {@link Assets} in the provided
      *               {@code folder}.
      *
      * @return The number of {@link Asset}s in the provided {@link Folder} which
      *         name starts with the provided string.
      */
     @Transactional(Transactional.TxType.REQUIRED)
-    public long countFilterByFolderAndName(final Folder folder,
-                                           final String name) {
+    public long countFilterByFolderAndTitle(final Folder folder,
+                                           final String title) {
         final TypedQuery<Long> query = entityManager.createNamedQuery(
-            "Asset.countFilterByFolderAndName", Long.class);
+            "Asset.countFilterByFolderAndTitle", Long.class);
         query.setParameter("folder", folder);
-        query.setParameter("name", name);
+        query.setParameter("title", title);
 
         return query.getSingleResult();
     }

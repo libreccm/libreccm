@@ -353,7 +353,7 @@ public class AssetManager {
         }
 
         if (targetFolder.equals(getAssetFolder(asset).orElse(null))) {
-            final long number = assetRepo.countFilterByFolderAndName(
+            final long number = assetRepo.countFilterByFolderAndTitle(
                 targetFolder, String.format("%s_copy",
                                             asset.getDisplayName()));
             final long index = number + 1;
