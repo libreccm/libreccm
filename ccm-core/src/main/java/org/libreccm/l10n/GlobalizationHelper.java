@@ -73,10 +73,49 @@ public class GlobalizationHelper {
     @Inject
     private ConfigurationManager confManager;
 
-//    private final KernelConfig kernelConfig;
-//    public GlobalizationHelper() {
-//        kernelConfig = confManager.findConfiguration(KernelConfig.class);
-//    }
+    /**
+     * An utility method for getting an value from a {@link LocalizedString}.
+     *
+     * First tries to get a value for the negotiated locale. If the
+     * {@code localizedString} does not have a value for the negotiated locale
+     * the default locale set in {@link KernelConfig} is used. If that also
+     * values the first value available locale (ordered alphabetically) is used.
+     *
+     * @param localizedString
+     * @return
+     */
+    public String getValueFromLocalizedString(
+        final LocalizedString localizedString) {
+
+        if (localizedString.hasValue(getNegotiatedLocale())) {
+            return localizedString.getValue(getNegotiatedLocale());
+        }
+
+        final KernelConfig kernelConfig = confManager
+            .findConfiguration(KernelConfig.class);
+        if (localizedString.hasValue(kernelConfig.getDefaultLocale())) {
+            return localizedString.getValue(kernelConfig.getDefaultLocale());
+        }
+
+        if (localizedString.getAvailableLocales().isEmpty()) {
+            return "";
+        }
+
+        return localizedString
+            .getValues()
+            .entrySet()
+            .stream()
+            .sorted((entry1, entry2) -> {
+                return entry1
+                    .getKey()
+                    .toString()
+                    .compareTo(entry2.getKey().toString());
+            })
+            .findFirst()
+            .get()
+            .getValue();
+    }
+
     public Locale getNegotiatedLocale() {
         final KernelConfig kernelConfig = confManager.findConfiguration(
             KernelConfig.class);

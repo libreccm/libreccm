@@ -16,26 +16,35 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package com.arsdigita.cms.ui.assets;
+package com.arsdigita.cms.ui.assets.searchpage;
 
+import com.arsdigita.bebop.Component;
 import com.arsdigita.bebop.Form;
 import com.arsdigita.bebop.FormData;
 import com.arsdigita.bebop.FormProcessException;
 import com.arsdigita.bebop.Label;
+import com.arsdigita.bebop.Link;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.SimpleContainer;
 import com.arsdigita.bebop.Table;
+import com.arsdigita.bebop.Text;
 import com.arsdigita.bebop.event.FormInitListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.bebop.form.Submit;
 import com.arsdigita.bebop.form.TextField;
 import com.arsdigita.bebop.parameters.LongParameter;
 import com.arsdigita.bebop.parameters.StringParameter;
+import com.arsdigita.bebop.table.TableCellRenderer;
 import com.arsdigita.bebop.table.TableColumn;
 import com.arsdigita.bebop.table.TableColumnModel;
+import com.arsdigita.bebop.table.TableModel;
+import com.arsdigita.bebop.table.TableModelBuilder;
 import com.arsdigita.cms.dispatcher.CMSPage;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.toolbox.ui.LayoutPanel;
+import com.arsdigita.util.LockableImpl;
+import java.util.List;
+import org.libreccm.cdi.utils.CdiUtil;
 
 import org.librecms.CmsConstants;
 
@@ -122,10 +131,55 @@ public class AssetSearchPage extends CMSPage {
             new GlobalizedMessage(
                 "cms.ui.assets.search_page.results_table.type",
                 CmsConstants.CMS_BUNDLE)));
-        
+        resultsTable.setModelBuilder(new ResultsTableModelBuilder());
 
         mainPanel.setBody(resultsTable);
 
+    }
+
+    private class ResultsTableModelBuilder
+        extends LockableImpl
+        implements TableModelBuilder {
+
+        @Override
+        public TableModel makeModel(final Table table, final PageState state) {
+
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final AssetSearchPageController controller = cdiUtil
+                .findBean(AssetSearchPageController.class);
+
+            final List<ResultsTableRow> rows = controller
+                .findAssets((String) query.getValue(state));
+            return new ResultsTableModel(rows);
+        }
+
+    }
+     
+    private class TitleCellRenderer 
+        extends LockableImpl 
+        implements TableCellRenderer {
+
+        @Override
+        public Component getComponent(final Table table, 
+                                      final PageState state, 
+                                      final Object value,
+                                      final boolean isSelected, 
+                                      final Object key, 
+                                      final int row,
+                                      final int column) {
+            
+            if (value == null) {
+                return new Text("???");
+            }
+            
+            final Link link = new Link(new Text(value.toString()), "");
+            
+            return link;
+            
+            
+        }
+        
+        
     }
 
 }
