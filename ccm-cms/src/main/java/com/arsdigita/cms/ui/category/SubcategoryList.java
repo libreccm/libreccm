@@ -30,8 +30,6 @@ import com.arsdigita.bebop.util.GlobalizationUtil;
 import com.arsdigita.util.LockableImpl;
 import org.libreccm.categorization.Category;
 
-import java.util.Collection;
-
 /**
  * A List of all subcategories of the current category.
  *
@@ -80,12 +78,8 @@ public class SubcategoryList extends SortableCategoryList {
             final Category category = m_parent.getCategory(state);
 
             if (category != null && !category.getSubCategories().isEmpty()) {
-                Collection<Category> children = category.getSubCategories();
-                //String order = ContentSection.getConfig().getCategoryTreeOrder(); FIXME Collections are not sorted
-                //order = Category.SORT_KEY.equals(order) ? "link." + order : order;
-                //children.addOrder(order);
-             //   children.addOrder("link." + Category.SORT_KEY);
-                return new CategoryCollectionListModel(children);
+                java.util.List<Category> children = category.getSubCategories();
+                return new CategoryListModel(children);
             } else {
                 return List.EMPTY_MODEL;
             }

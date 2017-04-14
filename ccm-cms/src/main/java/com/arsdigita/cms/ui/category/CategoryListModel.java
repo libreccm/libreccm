@@ -18,10 +18,10 @@
  */
 package com.arsdigita.cms.ui.category;
 
+import java.util.List;
 import com.arsdigita.bebop.list.ListModel;
 import org.libreccm.categorization.Category;
 
-import java.util.Collection;
 import java.util.Iterator;
 
 /**
@@ -29,7 +29,7 @@ import java.util.Iterator;
  *
  * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  */
-public final class CategoryCollectionListModel implements ListModel {
+public final class CategoryListModel implements ListModel {
 
     private Category m_cat;
     private long m_excludedID;
@@ -37,17 +37,17 @@ public final class CategoryCollectionListModel implements ListModel {
 
 
     /**
-     * Constructs a new <code>CategoryCollectionListModel</code>
+     * Constructs a new <code>CategoryListModel</code>
      */
-    public CategoryCollectionListModel(Collection<Category> coll) {
+    public CategoryListModel(List<Category> coll) {
         this(coll, -1); //Hopefully a decent replacement for null in BigDecimal. Negative ids would be weird...
     }
 
     /**
-     * Constructs a new <code>CategoryCollectionListModel</code>
+     * Constructs a new <code>CategoryListModel</code>
      */
-    public CategoryCollectionListModel(Collection<Category> coll,
-                                       long excludedID) {
+    public CategoryListModel(List<Category> coll,
+                             long excludedID) {
 
         m_excludedID = excludedID;
         m_cat = null;
