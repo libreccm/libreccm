@@ -126,8 +126,9 @@ public class LinkForm extends CategoryForm implements Cancellable {
       *  there are not two objects in the same category with the same URL.
       */
      protected final String getItemURL(final PageState state) {
-         return m_category.getCategory(state).getName();
-         //return m_category.getCategory(state).getURL();
+         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+         final CategoryManager categoryManager = cdiUtil.findBean(CategoryManager.class);
+         return categoryManager.getCategoryPath(m_category.getCategory(state));
      }
 
      protected final CcmObject getObject(final PageState state) {

@@ -124,7 +124,6 @@ public class CategoryLocalizationTable extends Table implements TableActionListe
      */
     private class CategoryLocalizationTableModel implements TableModel {
 
-        final private int MAX_DESC_LENGTH = 25;
         private Table m_table;
         private ArrayList<LocalizedString> localizedStringCollection;
         private LocalizedString m_categoryLocalization;

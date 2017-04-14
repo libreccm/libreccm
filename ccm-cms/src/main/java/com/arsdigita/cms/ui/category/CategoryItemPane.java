@@ -193,7 +193,7 @@ class CategoryItemPane extends BaseItemPane {
 
         // Permissions
         //m_detailPane.add(new PermissionsSection());
-        m_detailPane.add(new Text("PermissionSection Placeholder"));
+        //m_detailPane.add(new Text("PermissionSection Placeholder"));
 
         connect(indexLink, indexForm);
         connect(indexForm);
@@ -406,127 +406,127 @@ class CategoryItemPane extends BaseItemPane {
 
     }
 
-    private class PermissionsSection extends Section {
-
-        @Override
-        public boolean isVisible(PageState ps) {
-            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final PermissionChecker permissionChecker = cdiUtil.findBean(PermissionChecker.class);
-            Category cat = m_category.getCategory(ps);
-            return cat.getParentCategory() != null && permissionChecker.isPermitted(AdminPrivileges.ADMINISTER_CATEGORIES);
-        }
-
-        PermissionsSection() {
-            setHeading(new Label(gz("cms.ui.permissions")));
-
-            final ActionGroup group = new ActionGroup();
-            setBody(group);
-
-//            PrivilegeDescriptor[] privs = new PrivilegeDescriptor[]{
-//                PrivilegeDescriptor.EDIT,
-//                Category.MAP_DESCRIPTOR,
-//                PrivilegeDescriptor.DELETE,
-//                PrivilegeDescriptor.ADMIN
-//            };
+//    private class PermissionsSection extends Section {
 //
-//            HashMap privMap = new HashMap();
-//            privMap.put("edit", "Edit");
-//            privMap.put("delete", "Delete");
-//            privMap.put(Category.MAP_DESCRIPTOR.getName(), "Categorize Items");
-//            privMap.put("admin", "Admin");
+//        @Override
+//        public boolean isVisible(PageState ps) {
+//            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+//            final PermissionChecker permissionChecker = cdiUtil.findBean(PermissionChecker.class);
+//            Category cat = m_category.getCategory(ps);
+//            return cat.getParentCategory() != null && permissionChecker.isPermitted(AdminPrivileges.ADMINISTER_CATEGORIES);
+//        }
 //
-//            final CMSPermissionsPane permPane = new CMSPermissionsPane(privs, privMap,
-//                                                                       new ACSObjectSelectionModel(
-//                    m_model)) {
-//                @Override
-//                public void showAdmin(PageState ps) {
-//                    Assert.exists(m_model.getSelectedKey(ps));
+//        PermissionsSection() {
+//            setHeading(new Label(gz("cms.ui.permissions")));
 //
-//                    super.showAdmin(ps);
-//                    getAdminListingPanel().setVisible(ps, false);
-//                }
+//            final ActionGroup group = new ActionGroup();
+//            setBody(group);
 //
-//            };
+////            PrivilegeDescriptor[] privs = new PrivilegeDescriptor[]{
+////                PrivilegeDescriptor.EDIT,
+////                Category.MAP_DESCRIPTOR,
+////                PrivilegeDescriptor.DELETE,
+////                PrivilegeDescriptor.ADMIN
+////            };
+////
+////            HashMap privMap = new HashMap();
+////            privMap.put("edit", "Edit");
+////            privMap.put("delete", "Delete");
+////            privMap.put(Category.MAP_DESCRIPTOR.getName(), "Categorize Items");
+////            privMap.put("admin", "Admin");
+////
+////            final CMSPermissionsPane permPane = new CMSPermissionsPane(privs, privMap,
+////                                                                       new ACSObjectSelectionModel(
+////                    m_model)) {
+////                @Override
+////                public void showAdmin(PageState ps) {
+////                    Assert.exists(m_model.getSelectedKey(ps));
+////
+////                    super.showAdmin(ps);
+////                    getAdminListingPanel().setVisible(ps, false);
+////                }
+////
+////            };
+////
+////            final ActionLink restoreDefault = new ActionLink(new Label(gz(
+////                    "cms.ui.restore_default_permissions"))) {
+////                @Override
+////                public boolean isVisible(PageState ps) {
+////                    Category cat = m_category.getCategory(ps);
+////                    return PermissionService.getContext(cat) == null;
+////                }
+////
+////            };
+////
+////            final ActionLink useCustom = new ActionLink(new Label(gz(
+////                    "cms.ui.use_custom_permissions"))) {
+////                @Override
+////                public boolean isVisible(PageState ps) {
+////                    Category cat = m_category.getCategory(ps);
+////                    return PermissionService.getContext(cat) != null;
+////                }
+////
+////            };
+////
+////            ActionListener al = new ActionListener() {
+////                public void actionPerformed(ActionEvent event) {
+////                    PageState state = event.getPageState();
+////                    // if this is the root then we cannot revert to anything
+////                    // since there is not a parent
+////                    Category cat = m_category.getCategory(state);
+////                    if (!cat.canAdmin()) {
+////                        throw new com.arsdigita.cms.dispatcher.AccessDeniedException();
+////                    }
+////                    DataObject context = PermissionService.getContext(cat);
+////                    if (context != null) {
+////                        PermissionService.clonePermissions(cat);
+////                    } else {
+////                        ACSObject parent;
+////                        try {
+////                            parent = cat.getDefaultParentCategory();
+////                        } catch (CategoryNotFoundException ce) {
+////                            throw new IllegalStateException(
+////                                    "link shouldn't exist for root categories");
+////                        }
+////                        PermissionService.setContext(cat, parent);
+////
+////                        // revoke all direct permissions so category will only
+////                        // have inherited permissions
+////                        ObjectPermissionCollection perms =
+////                                                   PermissionService.getDirectGrantedPermissions(
+////                                cat.getOID());
+////                        while (perms.next()) {
+////                            PermissionService.revokePermission(
+////                                    new PermissionDescriptor(
+////                                    perms.getPrivilege(), cat.getOID(),
+////                                    perms.getGranteeOID()));
+////                        }
+////                    }
+////                    permPane.reset(state);
+////                }
+////
+////            }
+////
+////            restoreDefault.addActionListener(al);
+////            useCustom.addActionListener(al);
+////
+////            SimpleContainer links = new SimpleContainer();
+////            links.add(restoreDefault);
+////            links.add(useCustom);
+////
+////            group.setSubject(permPane);
+////            group.addAction(links);
+////
+////            m_model.addChangeListener(new ChangeListener() {
+////                public void stateChanged(ChangeEvent e) {
+////                    PageState ps = e.getPageState();
+////                }
+////
+////            });
+////
+//        }
 //
-//            final ActionLink restoreDefault = new ActionLink(new Label(gz(
-//                    "cms.ui.restore_default_permissions"))) {
-//                @Override
-//                public boolean isVisible(PageState ps) {
-//                    Category cat = m_category.getCategory(ps);
-//                    return PermissionService.getContext(cat) == null;
-//                }
-//
-//            };
-//
-//            final ActionLink useCustom = new ActionLink(new Label(gz(
-//                    "cms.ui.use_custom_permissions"))) {
-//                @Override
-//                public boolean isVisible(PageState ps) {
-//                    Category cat = m_category.getCategory(ps);
-//                    return PermissionService.getContext(cat) != null;
-//                }
-//
-//            };
-//
-//            ActionListener al = new ActionListener() {
-//                public void actionPerformed(ActionEvent event) {
-//                    PageState state = event.getPageState();
-//                    // if this is the root then we cannot revert to anything
-//                    // since there is not a parent
-//                    Category cat = m_category.getCategory(state);
-//                    if (!cat.canAdmin()) {
-//                        throw new com.arsdigita.cms.dispatcher.AccessDeniedException();
-//                    }
-//                    DataObject context = PermissionService.getContext(cat);
-//                    if (context != null) {
-//                        PermissionService.clonePermissions(cat);
-//                    } else {
-//                        ACSObject parent;
-//                        try {
-//                            parent = cat.getDefaultParentCategory();
-//                        } catch (CategoryNotFoundException ce) {
-//                            throw new IllegalStateException(
-//                                    "link shouldn't exist for root categories");
-//                        }
-//                        PermissionService.setContext(cat, parent);
-//
-//                        // revoke all direct permissions so category will only
-//                        // have inherited permissions
-//                        ObjectPermissionCollection perms =
-//                                                   PermissionService.getDirectGrantedPermissions(
-//                                cat.getOID());
-//                        while (perms.next()) {
-//                            PermissionService.revokePermission(
-//                                    new PermissionDescriptor(
-//                                    perms.getPrivilege(), cat.getOID(),
-//                                    perms.getGranteeOID()));
-//                        }
-//                    }
-//                    permPane.reset(state);
-//                }
-//
-//            }
-//
-//            restoreDefault.addActionListener(al);
-//            useCustom.addActionListener(al);
-//
-//            SimpleContainer links = new SimpleContainer();
-//            links.add(restoreDefault);
-//            links.add(useCustom);
-//
-//            group.setSubject(permPane);
-//            group.addAction(links);
-//
-//            m_model.addChangeListener(new ChangeListener() {
-//                public void stateChanged(ChangeEvent e) {
-//                    PageState ps = e.getPageState();
-//                }
-//
-//            });
-//
-        }
-
-    }
+//    }
 
     private static class OrderItemsForm extends CMSForm {
 

@@ -57,7 +57,7 @@ public class CategoryLinks extends List {
         m_parent = parent;
         m_model = model;
 
-        //setModelBuilder(new LinkedCategoryModelBuilder());
+        setModelBuilder(new LinkedCategoryModelBuilder());
 
         // Select the category in the main tree when the
         // user selects it here
@@ -79,24 +79,23 @@ public class CategoryLinks extends List {
     }
 
     // Since this part is for non default parents, but there is only one... this is not needed anymore, i guess
-    /*
     private class LinkedCategoryModelBuilder extends LockableImpl
             implements ListModelBuilder {
         public ListModel makeModel(List list, PageState state) {
             final Category category = m_parent.getCategory(state);
 
-            if (category != null && category.getParent().isPresent()) {
+            if (category != null && category.getParentCategory() != null) {
 
-                Collection<Category> categories = new HashSet<>();
+                java.util.List<Category> categories = new java.util.ArrayList<>();
                 categories.add(category.getParentCategory());
 
-                return new CategoryCollectionListModel
+                return new CategoryListModel
                     (categories,
-                     parent == null ? null : parent.getID());
+                     category.getParentCategory() == null ? null : Long.parseLong(category.getParentCategory().getUniqueId()));
             } else {
                 return List.EMPTY_MODEL;
             }
         }
-    }*/
+    }
 
 }

@@ -38,8 +38,12 @@ import com.arsdigita.util.UncheckedWrapperException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.categorization.Category;
+import org.libreccm.categorization.CategoryManager;
+import org.libreccm.categorization.CategoryRepository;
+import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.core.CcmObject;
 
+import javax.enterprise.inject.spi.CDI;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -217,10 +221,10 @@ public abstract class CategoryForm extends Form
             OptionGroup target = (OptionGroup) e.getTarget();
             target.clearOptions();
             PageState state = e.getPageState();
-            Category root = getRootCategory(state);
-            if (root == null) {
-                return;
-            }
+//            Category root = getRootCategory(state);
+//            if (root == null) {
+//                return;
+//            }
 
             // exclude children of the excluded category (as per javadoc on
             // getExcludedCategory() method. This prevents attempts
@@ -234,8 +238,8 @@ public abstract class CategoryForm extends Form
             }
             CategoryMap assigned = getAssignedCategories(state);
             SortedMap sortedCats = new TreeMap();
-            java.util.List<Category> children = root.getSubCategories();
-            children.forEach(x -> sortedCats.put(x.getName(), x.getUniqueId()));
+//            java.util.List<Category> children = root.getSubCategories();
+//            children.forEach(x -> sortedCats.put(x.getName(), x.getUniqueId()));
 
             Iterator it = sortedCats.entrySet().iterator();
             Map.Entry entry;
@@ -243,7 +247,7 @@ public abstract class CategoryForm extends Form
             String id;
             boolean notExcluded;
             boolean notAlreadyAssigned;
-            boolean notRoot;
+//            boolean notRoot;
 
             while (it.hasNext()) {
                 entry = (Map.Entry) it.next();
@@ -252,9 +256,9 @@ public abstract class CategoryForm extends Form
 
                 notExcluded = !excluded.containsKey(id);
                 notAlreadyAssigned = !assigned.containsKey(id);
-                notRoot = !id.equals(root.getUniqueId());
+//                notRoot = !id.equals(root.getUniqueId());
 
-                if (notExcluded && notAlreadyAssigned && notRoot) {
+                if (notExcluded && notAlreadyAssigned) {// && notRoot) {
                     target.addOption(new Option(id, new Text(path)));
                 }
 
@@ -317,10 +321,10 @@ public abstract class CategoryForm extends Form
      * @return the root category which should be used to populate the lists
      *   of assigned and unassigned categories
      */
-    public Category getRootCategory(PageState state) {
-        return null;
+//    public Category getRootCategory(PageState state) {
+//        return null;
 //        return CMS.getContext().getContentSection().getRootCategory();
-    }
+//    }
 
     /**
      * Return a category which should be excluded from the list of
@@ -361,9 +365,19 @@ public abstract class CategoryForm extends Form
     // Process the form: assign/unassign categories
     @Override
     public void process(FormSectionEvent e) throws FormProcessException {
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final CategoryRepository categoryRepository = cdiUtil.findBean(CategoryRepository.class);
+        final CategoryManager categoryManager = cdiUtil.findBean(CategoryManager.class);
+
         PageState state = e.getPageState();
         FormData data = e.getFormData();
         BigDecimal id;
+
+        if (m_assign.isSelected(state)) {
+            Category cat = new Category();
+            assignCategory(state, cat);
+
+        }
 
 //        if (m_assign.isSelected(state)) {
 //            id = (BigDecimal) data.get(FREE);
@@ -481,22 +495,9 @@ public abstract class CategoryForm extends Form
      * @return the full path to a category
      */
     public static String getCategoryPath(Category c) {
-        return c.getName();
-//        final StringBuffer s = new StringBuffer();
-//        final CategoryCollection ancestors = c.getDefaultAscendants();
-//        ancestors.addOrder(Category.DEFAULT_ANCESTORS);
-//
-//        boolean isFirst = true;
-//
-//        while (ancestors.next()) {
-//            if (!isFirst) {
-//                s.append(SEPARATOR);
-//            }
-//            s.append(ancestors.getCategory().getName());
-//            isFirst = false;
-//        }
-//
-//        return s.toString();
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final CategoryManager categoryManager = cdiUtil.findBean(CategoryManager.class);
+        return categoryManager.getCategoryPath(c);
     }
 
     /**
