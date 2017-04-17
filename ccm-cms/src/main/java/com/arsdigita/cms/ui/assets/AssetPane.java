@@ -70,6 +70,7 @@ import com.arsdigita.cms.ui.folder.FolderTreeModelController;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.toolbox.ui.ActionGroup;
 import com.arsdigita.toolbox.ui.LayoutPanel;
+
 import java.lang.reflect.InvocationTargetException;
 
 import org.apache.logging.log4j.LogManager;
@@ -100,7 +101,6 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.TooManyListenersException;
-import java.util.logging.Level;
 
 import static org.librecms.CmsConstants.*;
 
@@ -137,7 +137,7 @@ public class AssetPane extends LayoutPanel implements Resettable {
     private TargetSelector targetSelector;
 
     private SegmentedPanel.Segment browseSegment;
-    private SegmentedPanel.Segment currentFolderSegment;
+//    private SegmentedPanel.Segment currentFolderSegment;
     private SegmentedPanel.Segment actionsSegment;
     private SegmentedPanel.Segment newFolderSegment;
     private SegmentedPanel.Segment editFolderSegment;
@@ -315,28 +315,28 @@ public class AssetPane extends LayoutPanel implements Resettable {
 //        browseSegment.add(folderBrowser);
         browseSegment.add(browserForm);
 
-        currentFolderSegment = panel.addSegment();
-        currentFolderSegment.addHeader(new Text("Current folder"));
-        final Label currentFolderLabel = new Label();
-        currentFolderLabel.addPrintListener(new PrintListener() {
-
-            @Override
-            public void prepare(final PrintEvent event) {
-                final PageState state = event.getPageState();
-                final Label target = (Label) event.getTarget();
-
-                final long selectedId = Long.parseLong(selectionModel
-                    .getSelectedKey(state).toString());
-                final long currentFolderId = folderSelectionModel
-                    .getSelectedObject(state).getObjectId();
-                target.setLabel(String.format(
-                    "selectedId = %d; currentFolderId = %d",
-                    selectedId,
-                    currentFolderId));
-            }
-
-        });
-        currentFolderSegment.add(currentFolderLabel);
+//        currentFolderSegment = panel.addSegment();
+//        currentFolderSegment.addHeader(new Text("Current folder"));
+//        final Label currentFolderLabel = new Label();
+//        currentFolderLabel.addPrintListener(new PrintListener() {
+//
+//            @Override
+//            public void prepare(final PrintEvent event) {
+//                final PageState state = event.getPageState();
+//                final Label target = (Label) event.getTarget();
+//
+//                final long selectedId = Long.parseLong(selectionModel
+//                    .getSelectedKey(state).toString());
+//                final long currentFolderId = folderSelectionModel
+//                    .getSelectedObject(state).getObjectId();
+//                target.setLabel(String.format(
+//                    "selectedId = %d; currentFolderId = %d",
+//                    selectedId,
+//                    currentFolderId));
+//            }
+//
+//        });
+//        currentFolderSegment.add(currentFolderLabel);
 
         actionsSegment = panel.addSegment();
         actionsSegment.setIdAttr("folder-browse");
@@ -455,6 +455,7 @@ public class AssetPane extends LayoutPanel implements Resettable {
 
         final Form newAssetForm = new Form("new-asset-form",
                                            new BoxPanel(BoxPanel.HORIZONTAL));
+        newAssetForm.setMethod("GET");
         newAssetForm.add(new Label(new GlobalizedMessage(
             "cms.ui.assets.new", CmsConstants.CMS_BUNDLE)));
         final SingleSelect newAssetTypeSelect = new SingleSelect(

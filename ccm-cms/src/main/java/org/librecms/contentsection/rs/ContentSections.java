@@ -16,9 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.librecms.contentsection;
+package org.librecms.contentsection.rs;
 
-import org.librecms.assets.AssetSearchService;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -31,13 +30,13 @@ import javax.ws.rs.core.Application;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @ApplicationPath("/content-sections")
-public class JaxRsContentSections extends Application{
+public class ContentSections extends Application{
     
     @Override
     public Set<Class<?>> getClasses() {
         final Set<Class<?>> classes = new HashSet<>();
         
-        classes.add(AssetSearchService.class);
+        classes.add(Assets.class);
         
         return classes;
     }

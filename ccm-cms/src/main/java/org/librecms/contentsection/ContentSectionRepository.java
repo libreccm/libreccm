@@ -39,7 +39,7 @@ import javax.transaction.Transactional;
 public class ContentSectionRepository
     extends AbstractEntityRepository<Long, ContentSection> {
 
-    public ContentSection findByLabel(final String label) {
+    public Optional<ContentSection> findByLabel(final String label) {
         if (label == null || label.isEmpty()) {
             throw new IllegalArgumentException(
                 "The label of a ContentSection can't be empty.");
@@ -50,7 +50,11 @@ public class ContentSectionRepository
                               ContentSection.class);
         query.setParameter("label", label);
 
-        return query.getSingleResult();
+        try {
+            return Optional.of(query.getSingleResult());
+        } catch(NoResultException ex) {
+            return Optional.empty();
+        }
     }
 
     @Override

@@ -18,6 +18,8 @@
  */
 package org.librecms.assets;
 
+import com.arsdigita.cms.ui.assets.forms.ExternalVideoAssetForm;
+
 import org.hibernate.envers.Audited;
 
 import java.io.Serializable;
@@ -29,6 +31,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import static org.librecms.CmsConstants.*;
+import static org.librecms.assets.AssetConstants.*;
 
 /**
  * An asset for external videos, like videos from YouTube.
@@ -38,6 +41,11 @@ import static org.librecms.CmsConstants.*;
 @Entity
 @Table(name = "EXTERNAL_VIDEO_ASSETS", schema = DB_SCHEMA)
 @Audited
+@AssetType(assetForm = ExternalVideoAssetForm.class,
+           labelKey = "external_video_asset.label",
+           labelBundle = ASSETS_BUNDLE,
+           descriptionKey = "external_video_asset.description",
+           descriptionBundle = ASSETS_BUNDLE)
 public class ExternalVideoAsset extends Bookmark implements Serializable {
 
     private static final long serialVersionUID = -2927375812188779049L;

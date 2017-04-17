@@ -42,6 +42,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.authz.AuthorizationException;
 import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.security.PermissionChecker;
 import org.libreccm.security.Shiro;
 import org.libreccm.security.User;
@@ -456,10 +457,15 @@ public class CMSDispatcher implements Dispatcher, ChainedDispatcher {
             url = url.substring(debugXSLString.length());
         }
 
+        final String sectionLabel = url;
+        
         // Fetch the current site node from the URL.
         final ContentSectionRepository sectionRepo = CdiUtil.createCdiUtil()
             .findBean(ContentSectionRepository.class);
-        ContentSection section = sectionRepo.findByLabel(url);
+        final ContentSection section = sectionRepo
+            .findByLabel(url)
+        .orElseThrow(() -> new UnexpectedErrorException(
+            String.format("No ContentSection '%s' found.", sectionLabel)));
         return section;
     }
 
