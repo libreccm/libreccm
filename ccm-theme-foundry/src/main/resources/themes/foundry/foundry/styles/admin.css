@@ -1425,11 +1425,118 @@ dl dd a:hover {
 .tile div + div {
     height: auto;
 }
-s
+
 img.cmsImageDisplay {
     float: left;
     max-height: 200px;
     width: auto;
+}
+
+div.asset-search-widget dialog {
+    background-color: #e6e4f2;
+
+    border: 1px solid #555;
+    border-radius: 0.75em;
+
+    box-shadow: 5px 5px #aaa;
+
+    display: none;
+
+    padding: 0;
+
+    position: absolute;
+    top: 5%;
+    left: 2%;
+
+    width: 96%;
+    height: 90%;
+
+    z-index: 999;
+}
+
+div.asset-search-widget dialog[open="open"] {
+    display: block;
+}
+
+div.asset-search-widget dialog .controls {
+    padding: 0.5em;
+}
+
+div.asset-search-widget dialog .controls label {
+
+    font-weight: bold;
+
+    margin-right: 0.5em;
+}
+
+div.asset-search-widget dialog .dialogarea controls button {
+
+    margin-left: 0.5em;
+
+}
+div .asset-search-widget dialog .selectable-assets {
+
+    padding: 0;
+    
+    position: absolute;
+    bottom: 0;
+    left: 0;
+
+    width: 100%;
+    height: 80%;
+    overflow: scroll;
+}
+
+div.asset-search-widget dialog .dialogarea table {
+
+    margin-top: 1em;
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+}
+
+div.asset-search-widget dialog .selectable-assets table thead tr th {
+    
+    background-color: transparent;
+    
+    color: #000;
+    
+    font-weight: bold;
+    
+}
+
+div.asset-search-widget dialog .titlebar {
+
+    border-bottom: 1px solid #555;
+
+    margin-top: 0;
+
+    padding: 0.5em 1em;
+}
+
+div.asset-search-widget dialog .titlebar .close-button {
+
+    background-color: transparent;
+
+    border: none;
+
+    font-size: 18px;
+
+    position: absolute;
+    right: 5px;
+}
+
+div.asset-search-widget dialog .titlebar .close-button:after {
+    content: '\2715';
+}
+
+div.asset-search-widget dialog .titlebar .close-button span {
+
+    position: absolute;
+    top: -999px;
+
+    width: 1px;
+    height: 1px;
+    overflow:hidden;
 }
 
 div.cmsImageInfoOverlay {
@@ -1796,7 +1903,7 @@ span#quickLinksCascade {
 
 .static-new-item-form select {
     max-width: 12em;
-    
+
 }
 
 .static-new-item-form input {

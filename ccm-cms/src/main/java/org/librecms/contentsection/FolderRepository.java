@@ -104,12 +104,11 @@ public class FolderRepository extends AbstractEntityRepository<Long, Folder> {
                 + "Valid path format: contentSection:path");
         }
 
-        final ContentSection section = sectionRepo.findByLabel(tokens[0]);
-        if (section == null) {
-            throw new InvalidFolderPathException(String.format(
-                "No content section identified by label \"%s\" found.",
-                tokens[0]));
-        }
+        final ContentSection section = sectionRepo
+            .findByLabel(tokens[0])
+            .orElseThrow(() -> new InvalidFolderPathException(String.format(
+            "No content section identified by label \"%s\" found.",
+            tokens[0])));
 
         return findByPath(section, tokens[1], type);
     }

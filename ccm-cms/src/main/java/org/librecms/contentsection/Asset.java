@@ -61,21 +61,51 @@ import static org.librecms.CmsConstants.*;
     ,
     @NamedQuery(name = "Asset.findByType",
                 query = "SELECT a FROM Asset a "
-                            + "WHERE TYPE(a) = :type")
+                            + "WHERE TYPE(a) = :type "
+                            + "AND a.categories IS NOT EMPTY")
+    ,
+    @NamedQuery(name = "Asset.findByTypeAndContentSection",
+                query = "SELECT a FROM Asset a "
+                            + "JOIN a.categories c "
+                            + "WHERE TYPE(a) = :type "
+                            + "AND c.category.section = :section")
     ,
     @NamedQuery(name = "Asset.findByUuidAndType",
                 query = "SELECT a FROM Asset a "
                             + "WHERE a.uuid = :uuid "
                             + "AND TYPE(a) = :type")
     ,
+    @NamedQuery(name = "Asset.findByContentSection",
+                query = "SELECT a FROM Asset a "
+                            + "JOIN a.categories c "
+                            + "WHERE c.category.section = :section")
+    ,
     @NamedQuery(name = "Asset.findByTitle'",
-                query = "SELECT a FROM Asset a JOIN a.title.values t "
-                            + "WHERE LOWER(t) LIKE CONCAT('%', :title, '%')")
+                query = "SELECT a FROM Asset a "
+                            + "JOIN a.title.values t "
+                            + "WHERE LOWER(t) LIKE CONCAT('%', :title, '%') "
+                            + "AND a.categories IS NOT EMPTY")
+    ,
+    @NamedQuery(name = "Asset.findByTitleAndContentSection",
+                query = "SELECT a FROM Asset a "
+                            + "JOIN a.title.values t "
+                            + "JOIN a.categories c "
+                            + "WHERE LOWER(t) LIKE CONCAT('%s', :title, '%s') "
+                            + "AND c.category.section = :section")
     ,
     @NamedQuery(name = "Asset.findByTitleAndType",
-                query = "SELECT a FROM Asset a JOIN a.title.values t "
+                query = "SELECT a FROM Asset a "
+                            + "JOIN a.title.values t "
                             + "WHERE LOWER(t) LIKE CONCAT('%', :title, '%') "
                             + "AND TYPE(a) = :type")
+    ,
+    @NamedQuery(name = "Asset.findByTitleAndTypeAndContentSection",
+                query = "SELECT a FROM Asset a "
+                            + "JOIN a.title.values t "
+                            + "JOIN a.categories c "
+                            + "WHERE LOWER(t) LIKE CONCAT('%', :title, '%') "
+                            + "AND TYPE(a) = :type "
+                            + "AND c.category.section = :section")
     ,
     @NamedQuery(
         name = "Asset.findByFolder",

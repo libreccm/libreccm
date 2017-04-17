@@ -18,7 +18,6 @@
  */
 package org.librecms.contentsection;
 
-
 import org.libreccm.auditing.AbstractAuditedEntityRepository;
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryManager;
@@ -97,7 +96,7 @@ public class AssetRepository
     public void save(
         @RequiresPrivilege(AssetPrivileges.EDIT)
         final Asset asset) {
-        
+
         super.save(asset);
     }
 
@@ -140,8 +139,8 @@ public class AssetRepository
     }
 
     /**
-     * Find an {@link Asset} by its UUID. This method does distinguish between
-     * shared and non shared assets.
+     * Find an {@link Asset} by its UUID. This method does not distinguish
+     * between shared and non shared assets.
      *
      * @param uuid The UUID of the {@link Asset}.
      *
@@ -164,7 +163,7 @@ public class AssetRepository
 
     /**
      * Finds an {@link Asset} by its UUID <strong>and</strong> type. This method
-     * does distinguish between shared and non shared assets.
+     * does not distinguish between shared and non shared assets.
      *
      * @param uuid The UUID of the asset to retrieve.
      * @param type The type of the asset to retrieve.
@@ -189,24 +188,58 @@ public class AssetRepository
             return Optional.empty();
         }
     }
-    
+
     @Transactional(Transactional.TxType.REQUIRED)
-    public List<Asset> findByTitle(final String title) {
-        
-        final TypedQuery<Asset> query = entityManager.createNamedQuery(
-            "Asset.findByTitle", Asset.class);
-        query.setParameter("title", title);
-        
+    public List<Asset> findByContentSection(final ContentSection section) {
+
+        final TypedQuery<Asset> query = entityManager
+            .createNamedQuery("Asset.findByContentSection", Asset.class);
+        query.setParameter("section", section);
+
         return query.getResultList();
     }
 
     /**
-     * Finds all shared {@link Asset}s of the specified type.
+     * Finds all sharable {@link Asset}s where the title is like the provided
+     * one. This method does a {@code LIKE} query. Therefore it will find all
+     * assets where the title contains the string provided using the
+     * {@code title} parameter.
+     *
+     * @param title The title to search for.
+     *
+     * @return A list of all sharable assets (from all content sections) where
+     *         the title contains the string provided by the {@code title}
+     *         parameter.
+     */
+    @Transactional(Transactional.TxType.REQUIRED)
+    public List<Asset> findByTitle(final String title) {
+
+        final TypedQuery<Asset> query = entityManager
+            .createNamedQuery("Asset.findByTitle", Asset.class);
+        query.setParameter("title", title);
+
+        return query.getResultList();
+    }
+
+    public List<Asset> findByTitleAndContentSection(
+        final String title, final ContentSection section) {
+
+        final TypedQuery<Asset> query = entityManager.createNamedQuery(
+            "Asset.findByTitleAndContentSection", Asset.class);
+        query.setParameter("title", title);
+        query.setParameter("section", section);
+
+        return query.getResultList();
+    }
+
+    /**
+     * Finds all sharable {@link Asset}s of the specified type from all content
+     * sections..
      *
      * @param type The type of the assets to find.
      *
-     * @return A list containing all shared assets of the specified
-     *         {@code type}.
+     * @return A list containing all sharable assets of the specified
+     *         {@code type} from all content sections.
      */
     @Transactional(Transactional.TxType.REQUIRED)
     public List<Asset> findByType(final Class<? extends Asset> type) {
@@ -217,15 +250,63 @@ public class AssetRepository
 
         return query.getResultList();
     }
-    
+
+    /**
+     * Finds all sharable {@link Asset}s of the specified type in the specified
+     * content section.
+     *
+     * @param type    The type of the assets to find.
+     * @param section The section.
+     *
+     * @return A list containing all sharable assets of the specified
+     *         {@code type} in the specified content section.
+     */
+    @Transactional(Transactional.TxType.REQUIRED)
+    public List<Asset> findByTypeAndContentSection(
+        final Class<? extends Asset> type,
+        final ContentSection section) {
+
+        final TypedQuery<Asset> query = entityManager.createNamedQuery(
+            "Asset.findByTypeAndContentSection", Asset.class);
+        query.setParameter("type", type);
+        query.setParameter("section", section);
+
+        return query.getResultList();
+    }
+
+    /**
+     * Finds all assets of the provided type which contain the provided string
+     * in their title.
+     *
+     * @param title The title fragment used to filter the assets.
+     * @param type  The type of the assets.
+     *
+     * @return A list of all assets from all content sections which are the
+     *         specified type and which title matches the provided title.
+     */
     @Transactional(Transactional.TxType.REQUIRED)
     public List<Asset> findByTitleAndType(final String title,
                                           final Class<? extends Asset> type) {
-        
-        final TypedQuery<Asset> query = entityManager.createNamedQuery(
-            "Asset.findByTitle", Asset.class);
+
+        final TypedQuery<Asset> query = entityManager
+            .createNamedQuery("Asset.findByTitle", Asset.class);
         query.setParameter("title", title);
         query.setParameter("type", type);
+
+        return query.getResultList();
+    }
+
+    public List<Asset> findByTitleAndTypeAndContentSection(
+        final String title,
+        final Class<? extends Asset> type,
+        final ContentSection section) {
+
+        final TypedQuery<Asset> query = entityManager
+        .createNamedQuery("Asset.findByTitleAndTypeAndContentSection", 
+                          Asset.class);
+        query.setParameter("title", title);
+        query.setParameter("type", type);
+        query.setParameter("section", section);
         
         return query.getResultList();
     }
@@ -268,7 +349,7 @@ public class AssetRepository
      *
      * @param folder The {@link Folder} which {@link Asset}s are filtered using
      *               the provided {@code name}.
-     * @param title   The string used to fiter the {@link Assets} in the provided
+     * @param title  The string used to fiter the {@link Assets} in the provided
      *               {@code folder}.
      *
      * @return A list with all {@link Asset}s in the provided {@link Folder}
@@ -276,7 +357,7 @@ public class AssetRepository
      */
     @Transactional(Transactional.TxType.REQUIRED)
     public List<Asset> filterByFolderAndTitle(final Folder folder,
-                                             final String title) {
+                                              final String title) {
         final TypedQuery<Asset> query = entityManager.createNamedQuery(
             "Asset.filterByFolderAndTitle", Asset.class);
         query.setParameter("folder", folder);
@@ -291,7 +372,7 @@ public class AssetRepository
      *
      * @param folder The {@link Folder} which {@link Asset}s are filtered using
      *               the provided {@code name}.
-     * @param title   The string used to fiter the {@link Assets} in the provided
+     * @param title  The string used to fiter the {@link Assets} in the provided
      *               {@code folder}.
      *
      * @return The number of {@link Asset}s in the provided {@link Folder} which
@@ -299,7 +380,7 @@ public class AssetRepository
      */
     @Transactional(Transactional.TxType.REQUIRED)
     public long countFilterByFolderAndTitle(final Folder folder,
-                                           final String title) {
+                                            final String title) {
         final TypedQuery<Long> query = entityManager.createNamedQuery(
             "Asset.countFilterByFolderAndTitle", Long.class);
         query.setParameter("folder", folder);
@@ -356,7 +437,7 @@ public class AssetRepository
      *
      * @param folder The {@link Folder} which contains the assets.
      * @param type   The type of the {@link Asset}s.
-     * @param title   The name to filter the {@link Asset}s for.
+     * @param title  The name to filter the {@link Asset}s for.
      *
      * @return A list of all {@link Asset}s of the provided type which name
      *         starts with the provided string in the provided folder.
@@ -382,7 +463,7 @@ public class AssetRepository
      *
      * @param folder The {@link Folder} which contains the assets.
      * @param type   The type of the {@link Asset}s.
-     * @param title   The name to filter the {@link Asset}s for.
+     * @param title  The name to filter the {@link Asset}s for.
      *
      * @return The number of {@link Asset}s of the provided type which name
      *         starts with the provided string in the provided folder.
