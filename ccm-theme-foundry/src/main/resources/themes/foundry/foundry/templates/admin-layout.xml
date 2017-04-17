@@ -8,15 +8,16 @@
         </title>
         <load-css-files/>
         <load-jquery/>
-        <script src="scripts/category-step.js" origin="internal"/>
-        <script src="scripts/dcp.js" origin="internal"/>
-        <script src="scripts/manipulate-input.js" origin="internal"/>
+        <script src="scripts/category-step.js" origin="internal" />
+        <script src="scripts/cms-admin.js" origin="internal" />
+        <script src="scripts/dcp.js" origin="internal" />
+        <script src="scripts/manipulate-input.js" origin="internal" />
     </head>
     <body id="cms-page">
         <div id="cms-header" class="header-height">
             <div class="min-width">
                 <div class="logo">
-                    <!--<img src-static="foundry/images/scientificcms_logo.png"/>-->
+                    <!--<img src-static="foundry/images/scientificcms_logo.png" />-->
                     <site-logo/>
                 </div>
                 
@@ -46,7 +47,7 @@
             </show-bebop-contextbar>
         </div>
         <div id="tabs">
-            <show-tabbed-pane class="min-width"/>
+            <show-tabbed-pane class="min-width" />
         </div>
         <div id="cms-content" class="min-width header-height">
             <div id="left">
@@ -75,7 +76,7 @@
                     <show-body-column/>
                 </div>
             </div>
-            <div class="end-float"/>
+            <div class="end-float" />
         </div>
         
         <div id="cms-footer">

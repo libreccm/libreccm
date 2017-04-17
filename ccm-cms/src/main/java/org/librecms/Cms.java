@@ -21,6 +21,7 @@ import org.libreccm.web.ApplicationType;
 import org.libreccm.web.CcmApplication;
 import org.librecms.assets.AssetTypes;
 import org.librecms.assets.Bookmark;
+import org.librecms.assets.ExternalVideoAsset;
 import org.librecms.assets.LegalMetadata;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionCreator;
@@ -35,6 +36,7 @@ import org.librecms.contenttypes.News;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+
 import org.librecms.assets.SideNote;
 
 @Module(//packageName = "org.librecms.cms",
@@ -61,7 +63,10 @@ import org.librecms.assets.SideNote;
     }
 )
 @ContentTypes({Article.class, Event.class, MultiPartArticle.class, News.class})
-@AssetTypes({Bookmark.class, LegalMetadata.class, SideNote.class})
+@AssetTypes({Bookmark.class, 
+             ExternalVideoAsset.class, 
+             LegalMetadata.class, 
+             SideNote.class})
 public class Cms implements CcmModule {
 
     private static final Logger LOGGER = LogManager.getLogger(Cms.class);

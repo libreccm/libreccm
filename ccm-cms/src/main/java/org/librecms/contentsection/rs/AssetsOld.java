@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.librecms.assets;
+package org.librecms.contentsection.rs;
 
 import com.arsdigita.kernel.KernelConfig;
 
@@ -48,13 +48,18 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
+import org.librecms.assets.AssetTypeInfo;
+import org.librecms.assets.AssetTypesManager;
+
+import javax.ws.rs.NotFoundException;
+
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
 @Path("/{content-section}/assets")
-public class AssetSearchService {
+public class AssetsOld {
 
     @Inject
     private AssetRepository assetRepo;
@@ -94,57 +99,24 @@ public class AssetSearchService {
         }
     }
 
-    public List<Asset> findAssetsByQuery(final String query) {
-        return assetRepo.findByTitle(query);
-    }
-
-    public List<Asset> findAssetsByType(final String type) {
-        return AssetSearchService.this.findAssets(toAssetClass(type));
-    }
-
-    public List<Asset> findAssets(final Class<? extends Asset> type) {
-        return assetRepo.findByType(type);
-    }
-
-    public List<Asset> findAssets(final String query, final String type) {
-
-        final Class<?> clazz;
-        try {
-            clazz = Class.forName(type);
-        } catch (ClassNotFoundException ex) {
-            throw new IllegalArgumentException(String.format(
-                "Type '%s' is not a valid class.",
-                type));
-        }
-
-        if (clazz.isAssignableFrom(Asset.class)) {
-            @SuppressWarnings("unchecked")
-            final Class<? extends Asset> typeClass
-                                             = (Class<? extends Asset>) clazz;
-            return AssetSearchService.this.findAssets(query, typeClass);
-        } else {
-            throw new IllegalArgumentException(String.format(
-                "Type '%s is not a subclass of '%s'.",
-                type,
-                Asset.class.getName()));
-        }
-
-    }
-
     public List<Asset> findAssets(final ContentSection section,
                                   final String path) {
+
         final Optional<Folder> folder = folderRepo
             .findByPath(section,
                         path,
                         FolderType.ASSETS_FOLDER);
 
         if (!folder.isPresent()) {
-            return Collections.emptyList();
+            throw new NotFoundException(String.format(
+                "No asset folder with path '%s' found in content section '%s'.",
+                path,
+                section.getLabel()));
         }
-        
+
         return assetRepo.findByFolder(folder.get());
     }
-    
+
     public List<Asset> findAssets(final String query,
                                   final Class<? extends Asset> type) {
         return assetRepo.findByTitleAndType(query, type);
@@ -153,8 +125,8 @@ public class AssetSearchService {
 
     @Transactional(Transactional.TxType.REQUIRED)
     public List<Asset> findAssetsByType(final ContentSection section,
-                                  final String path,
-                                  final String type) {
+                                        final String path,
+                                        final String type) {
 
         final Optional<Folder> folder = folderRepo
             .findByPath(section,
@@ -168,11 +140,11 @@ public class AssetSearchService {
         return assetRepo.filterByFolderAndType(folder.get(),
                                                toAssetClass(type));
     }
-    
+
     @Transactional(Transactional.TxType.REQUIRED)
     public List<Asset> findAssetsByQuery(final ContentSection section,
-                                  final String path,
-                                  final String query) {
+                                         final String path,
+                                         final String query) {
 
         final Optional<Folder> folder = folderRepo
             .findByPath(section,
@@ -229,7 +201,10 @@ public class AssetSearchService {
         @QueryParam("query") final String query,
         @QueryParam("type") final String type) {
 
-        final ContentSection contentSection = sectionRepo.findByLabel(section);
+         final ContentSection contentSection = sectionRepo
+            .findByLabel(section)
+            .orElseThrow(() -> new NotFoundException(
+            String.format("No content section '%s' found.", section)));
 
         final String folderPath;
         if (path == null || path.trim().isEmpty() || "/".equals(path.trim())) {
@@ -269,7 +244,7 @@ public class AssetSearchService {
                 assets = findAssetsByQuery(contentSection, folderPath, query);
             } else {
                 assets
-                = findAssets(contentSection, folderPath, query, assetType);
+                    = findAssets(contentSection, folderPath, query, assetType);
             }
         }
 

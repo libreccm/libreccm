@@ -1,10 +1,59 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <foundry:static-texts xmlns:foundry="http://foundry.libreccm.org">
     
-    <text id="greeting">
-        <translation lang="de">Willkommen</translation>
-        <translation lang="en">Welcome</translation>
+    <text id="asset-search-widget/filter-list">
+        <translation lang="de">Filtern nach</translation>
+        <translation lang="en">Filter using</translation>
     </text>
+    <text id="asset-search-widget/filter-list/apply">
+        <translation lang="de">Anwenden</translation>
+        <translation lang="en">Apply</translation>
+    </text>
+    <text id="asset-search-widget/no-asset-selected">
+        <translation lang="de">Kein Asset ausgewählt</translation>
+        <translation lang="en">No asset selected</translation>
+    </text>
+    <text id="asset-search-widget/selected-asset">
+        <translation lang="de">Ausgewähltes Asset</translation>
+        <translation lang="en">Selected asset</translation>
+    </text>
+    <text id="asset-search-widget/selected-asset-title">
+        <translation lang="de">Titel</translation>
+        <translation lang="en">Title</translation>
+    </text>
+    <text id="asset-search-widget/selected-asset-type">
+        <translation lang="de">Type</translation>
+        <translation lang="en">Typ</translation>
+    </text>
+    <text id="asset-search-widget/select-asset-button">
+        <translation lang="de">Asset auswählen</translation>
+        <translation lang="en">Select asset</translation>
+    </text>
+    <text id="asset-search-widget/selected-asset">
+        <translation lang="de">Ausgewähltes Asset</translation>
+        <translation lang="en">Selected asset</translation>
+    </text>
+    <text id="asset-search-widget/table/header/place">
+        <translation lang="de">Abgelegt in</translation>
+        <translation lang="en">From</translation>
+    </text>
+    <text id="asset-search-widget/table/header/title">
+        <translation lang="de">Titel</translation>
+        <translation lang="en">Title</translation>
+    </text>
+    <text id="asset-search-widget/table/header/type">
+        <translation lang="de">Typ</translation>
+        <translation lang="en">Type</translation>
+    </text>
+    <text id="asset-search-widget/titlebar">
+        <translation lang="de">Wählen Sie das zu verwendende Asset aus</translation>
+        <translation lang="en">Select the asset to use</translation>
+    </text>
+    <text id="asset-search-widget/titlebar/close">
+        <translation lang="de">Ohne Auswahl schließen</translation>
+        <translation lang="en">Close without selecting an asset</translation>
+    </text>
+    
     
     <text id="category-step/header">
         <translation lang="de">Zugewiesene Kategorien bearbeiten</translation>
@@ -22,6 +71,11 @@
     <text id="category-step/remove-category">
         <translation lang="de">Zuweisung aufheben</translation>
         <translation lang="en">Remove assignment</translation>
+    </text>
+    
+    <text id="greeting">
+        <translation lang="de">Willkommen</translation>
+        <translation lang="en">Welcome</translation>
     </text>
     
     <text id="summary/itemSummary/header">
