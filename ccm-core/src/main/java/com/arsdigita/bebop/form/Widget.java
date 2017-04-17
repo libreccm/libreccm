@@ -44,8 +44,6 @@ import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.util.Assert;
 import com.arsdigita.xml.Element;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * A class representing a widget in the graphical representation of a form.
