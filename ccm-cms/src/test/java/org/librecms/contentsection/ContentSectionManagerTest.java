@@ -242,7 +242,9 @@ public class ContentSectionManagerTest {
         excludeColumns = {"object_id"})
     @InSequence(200)
     public void renameSection() {
-        final ContentSection section = repository.findByLabel("info");
+        final ContentSection section = repository
+            .findByLabel("info")
+            .get();
 
         manager.renameContentSection(section, "content");
 
@@ -284,7 +286,9 @@ public class ContentSectionManagerTest {
                           "grantee_id"})
     @InSequence(300)
     public void addRole() {
-        final ContentSection section = repository.findByLabel("info");
+        final ContentSection section = repository
+            .findByLabel("info")
+            .get();
 
         manager.addRoleToContentSection(section,
                                         "reviewer",
@@ -330,7 +334,9 @@ public class ContentSectionManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(302)
     public void addRoleNameIsNull() {
-        final ContentSection section = repository.findByLabel("info");
+        final ContentSection section = repository
+            .findByLabel("info")
+            .get();
 
         manager.addRoleToContentSection(section,
                                         null,
@@ -354,7 +360,9 @@ public class ContentSectionManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(302)
     public void addRoleNameIsEmpty() {
-        final ContentSection section = repository.findByLabel("info");
+        final ContentSection section = repository
+            .findByLabel("info")
+            .get();
 
         manager.addRoleToContentSection(section,
                                         " ",
@@ -375,7 +383,9 @@ public class ContentSectionManagerTest {
         excludeColumns = {"object_id"})
     @InSequence(350)
     public void removeRole() {
-        final ContentSection section = repository.findByLabel("info");
+        final ContentSection section = repository
+            .findByLabel("info")
+            .get();
         final Role role = roleRepository.findByName("info_publisher").get();
 
         manager.removeRoleFromContentSection(section, role);
@@ -395,7 +405,9 @@ public class ContentSectionManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(351)
     public void removeRoleNull() {
-        final ContentSection section = repository.findByLabel("info");
+        final ContentSection section = repository
+            .findByLabel("info")
+            .get();
 
         manager.removeRoleFromContentSection(section, null);
     }

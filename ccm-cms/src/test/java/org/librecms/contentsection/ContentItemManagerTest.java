@@ -235,7 +235,9 @@ public class ContentItemManagerTest {
         })
     public void createContentItem() {
         shiro.getSystemUser().execute(() -> {
-            final ContentSection section = sectionRepo.findByLabel("info");
+            final ContentSection section = sectionRepo
+                .findByLabel("info")
+                .get();
             final Folder folder = section.getRootDocumentsFolder();
 
             final Article article = itemManager.createContentItem("new-article",
@@ -274,7 +276,9 @@ public class ContentItemManagerTest {
                             + "ContentItemManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void createItemTypeNotInSection() {
-        final ContentSection section = sectionRepo.findByLabel("info");
+        final ContentSection section = sectionRepo
+            .findByLabel("info")
+            .get();
         final Folder folder = section.getRootDocumentsFolder();
 
         itemManager.createContentItem("Test", section, folder, Event.class);
@@ -294,7 +298,9 @@ public class ContentItemManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     public void createItemNameIsNull() {
         shiro.getSystemUser().execute(() -> {
-            final ContentSection section = sectionRepo.findByLabel("info");
+            final ContentSection section = sectionRepo
+                .findByLabel("info")
+                .get();
             final Folder folder = section.getRootDocumentsFolder();
 
             itemManager.createContentItem(null, section, folder, Article.class);
@@ -315,7 +321,9 @@ public class ContentItemManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     public void createItemNameIsEmpty() {
         shiro.getSystemUser().execute(() -> {
-            final ContentSection section = sectionRepo.findByLabel("info");
+            final ContentSection section = sectionRepo
+                .findByLabel("info")
+                .get();
             final Folder folder = section.getRootDocumentsFolder();
 
             itemManager.createContentItem(" ", section, folder, Article.class);
@@ -337,7 +345,9 @@ public class ContentItemManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     public void createItemFolderIsNull() {
         shiro.getSystemUser().execute(() -> {
-            final ContentSection section = sectionRepo.findByLabel("info");
+            final ContentSection section = sectionRepo
+                .findByLabel("info")
+                .get();
 
             itemManager.createContentItem("Test", section, null, Article.class);
         });
@@ -370,7 +380,9 @@ public class ContentItemManagerTest {
         })
     public void createContentItemWithWorkflow() {
         shiro.getSystemUser().execute(() -> {
-            final ContentSection section = sectionRepo.findByLabel("info");
+            final ContentSection section = sectionRepo
+                .findByLabel("info")
+                .get();
             final Folder folder = section.getRootDocumentsFolder();
 
             final WorkflowTemplate workflowTemplate = workflowTemplateRepo
@@ -415,7 +427,9 @@ public class ContentItemManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     public void createItemTypeNotInSectionWithWorkflow() {
         shiro.getSystemUser().execute(() -> {
-            final ContentSection section = sectionRepo.findByLabel("info");
+            final ContentSection section = sectionRepo
+                .findByLabel("info")
+                .get();
             final Folder folder = section.getRootDocumentsFolder();
 
             final WorkflowTemplate workflowTemplate = workflowTemplateRepo
@@ -444,7 +458,9 @@ public class ContentItemManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     public void createItemNameIsNullWithWorkflow() {
         shiro.getSystemUser().execute(() -> {
-            final ContentSection section = sectionRepo.findByLabel("info");
+            final ContentSection section = sectionRepo
+                .findByLabel("info")
+                .get();
             final Folder folder = section.getRootDocumentsFolder();
 
             final WorkflowTemplate workflowTemplate = workflowTemplateRepo
@@ -473,7 +489,9 @@ public class ContentItemManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     public void createItemNameIsNullWorkflowIsNull() {
         shiro.getSystemUser().execute(() -> {
-            final ContentSection section = sectionRepo.findByLabel("info");
+            final ContentSection section = sectionRepo
+                .findByLabel("info")
+                .get();
             final Folder folder = section.getRootDocumentsFolder();
 
             itemManager.createContentItem(null,
@@ -499,7 +517,9 @@ public class ContentItemManagerTest {
     @ShouldThrowException(IllegalArgumentException.class)
     public void createItemFolderIsNullWithWorkflow() {
         shiro.getSystemUser().execute(() -> {
-            final ContentSection section = sectionRepo.findByLabel("info");
+            final ContentSection section = sectionRepo
+                .findByLabel("info")
+                .get();
 
             final WorkflowTemplate workflowTemplate = workflowTemplateRepo
                 .findById(-110L).get();
@@ -573,7 +593,8 @@ public class ContentItemManagerTest {
     }
 
     /**
-     * Verifies that null null null null null null null null null null null null     {@link ContentItemManager#move(org.librecms.contentsection.ContentItem, org.librecms.contentsection.Folder) 
+     * Verifies that null null null null null null null null null null null null
+     * null null null null null null null null null     {@link ContentItemManager#move(org.librecms.contentsection.ContentItem, org.librecms.contentsection.Folder) 
      * throws an {@link IllegalArgumentException} if the type of the item to
      * copy has not been registered in content section to which the target
      * folder belongs.
