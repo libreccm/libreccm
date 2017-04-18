@@ -6,6 +6,11 @@
          version="3.0">
     
     <display-name>LibreCCM Devel Bundle for Wildfly</display-name>
+    
+    <context-param>
+        <param-name>ccm.develmode</param-name>
+        <param-value>true</param-value>
+    </context-param>
 
     <!-- No JSESSIONID!!! -->
     <session-config>
