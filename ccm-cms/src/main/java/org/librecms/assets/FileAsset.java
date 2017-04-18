@@ -17,12 +17,14 @@
  * MA 02110-1301  USA
  */package org.librecms.assets;
 
+import com.arsdigita.cms.ui.assets.forms.FileAssetForm;
 import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import org.hibernate.envers.Audited;
 
 import static org.librecms.CmsConstants.*;
+import static org.librecms.assets.AssetConstants.*;
 
 /**
  * An asset for making files available for download.
@@ -32,7 +34,12 @@ import static org.librecms.CmsConstants.*;
 @Entity
 @Table(name = "FILES", schema = DB_SCHEMA)
 @Audited
-public class File extends BinaryAsset implements Serializable {
+@AssetType(assetForm = FileAssetForm.class,
+           labelKey = "fileasset.label",
+           labelBundle = ASSETS_BUNDLE,
+           descriptionKey = "fileasset.description",
+           descriptionBundle = ASSETS_BUNDLE)
+public class FileAsset extends BinaryAsset implements Serializable {
 
     private static final long serialVersionUID = -8195062456502964401L;
 
@@ -53,16 +60,16 @@ public class File extends BinaryAsset implements Serializable {
             return false;
         }
 
-        if (!(obj instanceof File)) {
+        if (!(obj instanceof FileAsset)) {
             return false;
         }
-        final File other = (File) obj;
+        final FileAsset other = (FileAsset) obj;
         return other.canEqual(this);
     }
     
     @Override
     public boolean canEqual(final Object obj) {
-        return obj instanceof File;
+        return obj instanceof FileAsset;
     }
     
     

@@ -36,6 +36,7 @@ import org.librecms.contenttypes.News;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import org.librecms.assets.FileAsset;
 
 import org.librecms.assets.SideNote;
 
@@ -50,7 +51,8 @@ import org.librecms.assets.SideNote;
             descBundle = CmsConstants.CONTENT_CENTER_DESC_BUNDLE,
             creator = ContentCenterAppCreator.class,
             servlet = ContentCenterServlet.class
-        ),
+        )
+        ,
         @ApplicationType(
             name = CmsConstants.CONTENT_SECTION_APP_TYPE,
             applicationClass = ContentSection.class,
@@ -62,10 +64,14 @@ import org.librecms.assets.SideNote;
         )
     }
 )
-@ContentTypes({Article.class, Event.class, MultiPartArticle.class, News.class})
-@AssetTypes({Bookmark.class, 
-             ExternalVideoAsset.class, 
-             LegalMetadata.class, 
+@ContentTypes({Article.class,
+               Event.class,
+               MultiPartArticle.class,
+               News.class})
+@AssetTypes({Bookmark.class,
+             ExternalVideoAsset.class,
+             FileAsset.class,
+             LegalMetadata.class,
              SideNote.class})
 public class Cms implements CcmModule {
 
