@@ -18,6 +18,7 @@
  */
 package com.arsdigita.xml;
 
+import javax.enterprise.context.ContextNotActiveException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -77,7 +78,7 @@ public class CCMTransformerFactory extends TransformerFactory {
     private XmlConfig retrieveXmlConfig() {
         try {
             return XmlConfig.getConfig();
-        } catch (IllegalStateException ex) {
+        } catch (IllegalStateException | ContextNotActiveException ex) {
             LOGGER.warn(
                 "Failed to access registry (CDI container not available?).",
                 ex);
