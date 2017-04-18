@@ -34,6 +34,9 @@ import java.io.File;
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
 import javax.activation.MimetypesFileTypeMap;
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 import org.librecms.CmsConstants;
 
 /**
@@ -372,13 +375,23 @@ public class FileUploadSection extends FormSection {
         final String fileName = getFileName(event);
 
         if (fileName != null && fileName.length() > 0) {
-            return ((MultipartHttpServletRequest) event
+            return ((MultipartHttpServletRequest) unwrapRequest(event
                     .getPageState()
-                    .getRequest())
+                    .getRequest()))
                 .getFile(getFileUploadWidgetName());
         }
 
         return null;
+    }
+
+    private ServletRequest unwrapRequest(final HttpServletRequest request) {
+
+        ServletRequest current = request;
+        while (current instanceof HttpServletRequestWrapper) {
+            current = ((HttpServletRequestWrapper) current).getRequest();
+        }
+
+        return current;
     }
 
     /**
@@ -449,16 +462,17 @@ public class FileUploadSection extends FormSection {
      * Add mime-type options to the option group by loading all mime types which
      * match a certain prefix from the database
      *
-     * @param mimeTypeOptions The mime type widget to which options should be added
+     * @param mimeTypeOptions The mime type widget to which options should be
+     * added
      *
      * @param mimePrefix Populate the mime type widget with all mime types that
      * match the prefix. Some of the possible prefixes are "text", "image",
      * "binary", etc.
      *
      */
-    public static void addMimeOptions(final OptionGroup mimeTypeOptions, 
+    public static void addMimeOptions(final OptionGroup mimeTypeOptions,
                                       final String mimePrefix) {
-        
+
 //        MimeTypeCollection types;
 //        if (mimePrefix == null || mimePrefix.equals("")) {
 //            types = MimeType.getAllMimeTypes();

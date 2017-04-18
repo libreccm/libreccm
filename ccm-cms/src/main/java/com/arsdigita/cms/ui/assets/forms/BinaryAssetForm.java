@@ -92,6 +92,7 @@ public abstract class BinaryAssetForm extends AssetForm {
                                   CmsConstants.CMS_BUNDLE),
             "",
             "");
+        panel.add(fileUpload);
 
         add(panel);
     }
@@ -117,9 +118,17 @@ public abstract class BinaryAssetForm extends AssetForm {
                                      .getDescription()
                                      .getValue(getSelectedLocale(state)));
 
-            fileName.setText(binaryAsset.getFileName());
-            mimeType.setText(binaryAsset.getMimeType().toString());
-            size.setText(Long.toString(binaryAsset.getSize()));
+            if (binaryAsset.getData() == null
+                    || binaryAsset.getData().length == 0) {
+                fileName.setText("-");
+                mimeType.setText("-");
+                size.setText("-");
+            } else {
+                
+                fileName.setText(binaryAsset.getFileName());
+                mimeType.setText(binaryAsset.getMimeType().toString());
+                size.setText(Long.toString(binaryAsset.getSize()));
+            }
         }
 
     }
@@ -161,7 +170,7 @@ public abstract class BinaryAssetForm extends AssetForm {
                       (String) description.getValue(state));
 
         setFileData(event, binaryAsset);
-        
+
         return binaryAsset;
     }
 
@@ -191,14 +200,14 @@ public abstract class BinaryAssetForm extends AssetForm {
             .getDescription()
             .addValue(getSelectedLocale(state),
                       (String) description.getValue(state));
-        
+
         setFileData(event, binaryAsset);
     }
 
     private void setFileData(final FormSectionEvent event,
                              final BinaryAsset binaryAsset)
         throws FormProcessException {
-        
+
         final File file = fileUpload.getFile(event);
         final Path path = file.toPath();
         final byte[] data;
