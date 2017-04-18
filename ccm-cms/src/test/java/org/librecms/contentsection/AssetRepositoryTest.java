@@ -49,7 +49,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 import org.jboss.arquillian.persistence.CleanupUsingScript;
 
-import org.librecms.assets.File;
+import org.librecms.assets.FileAsset;
 import org.librecms.assets.Image;
 import org.librecms.assets.VideoAsset;
 
@@ -256,7 +256,7 @@ public class AssetRepositoryTest {
         assertThat(datasheet.isPresent(), is(true));
         assertThat(datasheet.get(), is(instanceOf(Asset.class)));
         assertThat(datasheet.get(), is(instanceOf(BinaryAsset.class)));
-        assertThat(datasheet.get(), is(instanceOf(File.class)));
+        assertThat(datasheet.get(), is(instanceOf(FileAsset.class)));
         assertThat(datasheet.get().getDisplayName(), is(equalTo(
                    "product1-datasheet.pdf")));
 
@@ -274,8 +274,7 @@ public class AssetRepositoryTest {
     public void findAssetByUuidAndType() {
         final Optional<Asset> asset = assetRepo.findByUuidAndType(
             "4635589f-b87a-46d9-979e-6af14af063e5", Image.class);
-        final Optional<Asset> none = assetRepo.findByUuidAndType(
-            "4635589f-b87a-46d9-979e-6af14af063e5", File.class);
+        final Optional<Asset> none = assetRepo.findByUuidAndType("4635589f-b87a-46d9-979e-6af14af063e5", FileAsset.class);
 
         assertThat(asset.isPresent(), is(true));
         assertThat(asset.get().getDisplayName(), is(equalTo("header.png")));
@@ -293,7 +292,7 @@ public class AssetRepositoryTest {
         "datasets/org/librecms/contentsection/AssetRepositoryTest/data.xml")
     public void findAssetByType() {
         final List<Asset> images = assetRepo.findByType(Image.class);
-        final List<Asset> files = assetRepo.findByType(File.class);
+        final List<Asset> files = assetRepo.findByType(FileAsset.class);
 
         assertThat(images.isEmpty(), is(false));
         assertThat(files.isEmpty(), is(false));
@@ -402,7 +401,7 @@ public class AssetRepositoryTest {
         final List<Asset> images = assetRepo.filterByFolderAndType(media,
                                                                    Image.class);
         final List<Asset> files = assetRepo.filterByFolderAndType(media,
-                                                                  File.class);
+                                                                  FileAsset.class);
         final List<Asset> videos = assetRepo.filterByFolderAndType(
             media, VideoAsset.class);
 
@@ -434,7 +433,7 @@ public class AssetRepositoryTest {
 
         assertThat(assetRepo.countFilterByFolderAndType(media, Image.class),
                    is(3L));
-        assertThat(assetRepo.countFilterByFolderAndType(media, File.class),
+        assertThat(assetRepo.countFilterByFolderAndType(media, FileAsset.class),
                    is(2L));
         assertThat(assetRepo.countFilterByFolderAndType(media, VideoAsset.class),
                    is(0L));
@@ -454,8 +453,7 @@ public class AssetRepositoryTest {
 
         final List<Asset> result1 = assetRepo.filterByFolderAndTypeAndTitle(
             media, Image.class, "hea");
-        final List<Asset> result2 = assetRepo.filterByFolderAndTypeAndTitle(
-            media, File.class, "hea");
+        final List<Asset> result2 = assetRepo.filterByFolderAndTypeAndTitle(media, FileAsset.class, "hea");
 
         assertThat(result1.size(), is(2));
         assertThat(result2.size(), is(0));
@@ -477,8 +475,7 @@ public class AssetRepositoryTest {
         assertThat(assetRepo.countFilterByFolderAndTypeAndTitle(
             media, Image.class, "hea"),
                    is(2L));
-        assertThat(assetRepo.countFilterByFolderAndTypeAndTitle(
-            media, File.class, "hea"),
+        assertThat(assetRepo.countFilterByFolderAndTypeAndTitle(media, FileAsset.class, "hea"),
                    is(0L));
     }
 
