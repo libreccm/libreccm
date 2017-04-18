@@ -45,6 +45,7 @@ import org.libreccm.web.CcmApplication;
 import java.io.IOException;
 
 import javax.enterprise.inject.spi.CDI;
+import javax.servlet.ServletContext;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -142,6 +143,12 @@ public class AdminServlet extends BaseApplicationServlet {
             new Label(new GlobalizedMessage("ui.admin.tab.sysinfo.title",
                                             ADMIN_BUNDLE)),
             new SystemInformationTab());
+        
+        final ServletContext servletContext = getServletContext();
+        final String develMode = servletContext.getInitParameter("ccm.develmode");
+        if (develMode != null && "true".equals(develMode.toLowerCase())) {
+            
+        }
 
         //page.add(new Label("admin"));
         adminPage.add(tabbedPane);

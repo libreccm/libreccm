@@ -21,6 +21,7 @@ package com.arsdigita.cms.ui.assets.forms;
 import com.arsdigita.bebop.FormProcessException;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.PageState;
+import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.bebop.form.TextArea;
 import com.arsdigita.cms.ui.assets.AssetForm;
 import com.arsdigita.cms.ui.assets.AssetPane;
@@ -99,11 +100,13 @@ public class SideNoteForm extends AssetForm {
     }
 
     @Override
-    protected Asset createAsset(final PageState state) throws
+    protected Asset createAsset(final FormSectionEvent event) throws
             FormProcessException {
 
-        Objects.requireNonNull(state);
+        Objects.requireNonNull(event);
 
+        final PageState state = event.getPageState();
+        
         final SideNote sideNote = new SideNote();
 
         sideNote
@@ -115,11 +118,14 @@ public class SideNoteForm extends AssetForm {
     }
 
     @Override
-    protected void updateAsset(final Asset asset, final PageState state)
+    protected void updateAsset(final Asset asset, 
+                               final FormSectionEvent event)
             throws FormProcessException {
 
         Objects.requireNonNull(asset);
-        Objects.requireNonNull(state);
+        Objects.requireNonNull(event);
+        
+        final PageState state = event.getPageState();
 
         if (!(asset instanceof SideNote)) {
             throw new IllegalArgumentException(String.format(

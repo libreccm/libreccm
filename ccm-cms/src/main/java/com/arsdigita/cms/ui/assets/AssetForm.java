@@ -353,9 +353,9 @@ public abstract class AssetForm extends Form implements FormInitListener,
             final Asset asset;
             if (selectedAsset.isPresent()) {
                 asset = selectedAsset.get();
-                updateAsset(asset, state);
+                updateAsset(asset, event);
             } else {
-                asset = createAsset(state);
+                asset = createAsset(event);
             }
 
             asset.getTitle().addValue(getSelectedLocale(state),
@@ -388,11 +388,11 @@ public abstract class AssetForm extends Form implements FormInitListener,
 
     protected abstract void showLocale(final PageState state);
 
-    protected abstract Asset createAsset(final PageState state)
+    protected abstract Asset createAsset(final FormSectionEvent event)
         throws FormProcessException;
 
     protected abstract void updateAsset(final Asset asset,
-                                        final PageState state)
+                                        final FormSectionEvent event)
         throws FormProcessException;
 
     @Override

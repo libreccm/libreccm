@@ -21,6 +21,7 @@ package com.arsdigita.cms.ui.assets.forms;
 import com.arsdigita.bebop.FormProcessException;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.PageState;
+import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.cms.ui.assets.AssetPane;
 import com.arsdigita.cms.ui.assets.AssetSearchWidget;
 import com.arsdigita.globalization.GlobalizedMessage;
@@ -82,10 +83,12 @@ public class ExternalVideoAssetForm extends BookmarkForm {
     }
 
     @Override
-    protected Asset createAsset(final PageState state)
+    protected Asset createAsset(final FormSectionEvent event)
         throws FormProcessException {
 
-        Objects.requireNonNull(state);
+        Objects.requireNonNull(event);
+        
+        final PageState state = event.getPageState();
 
         final ExternalVideoAsset externalVideoAsset = new ExternalVideoAsset();
 
@@ -114,11 +117,14 @@ public class ExternalVideoAssetForm extends BookmarkForm {
     }
 
     @Override
-    protected void updateAsset(final Asset asset, final PageState state) {
+    protected void updateAsset(final Asset asset, 
+                               final FormSectionEvent event) {
 
         Objects.requireNonNull(asset);
-        Objects.requireNonNull(state);
+        Objects.requireNonNull(event);
 
+        final PageState state = event.getPageState();
+        
         if (!(asset instanceof ExternalVideoAsset)) {
             throw new IllegalArgumentException(String.format(
                 "Provided asset is not an instance of class (or sub class of) "

@@ -22,6 +22,7 @@ import com.arsdigita.bebop.BoxPanel;
 import com.arsdigita.bebop.FormProcessException;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.PageState;
+import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.bebop.form.TextArea;
 import com.arsdigita.cms.ui.assets.AssetForm;
 import com.arsdigita.cms.ui.assets.AssetPane;
@@ -53,7 +54,7 @@ public class LegalMetadataForm extends AssetForm {
     protected void addWidgets() {
 
         final BoxPanel panel = new BoxPanel(BoxPanel.VERTICAL);
-        
+
         panel.add(new Label(new GlobalizedMessage(
             "cms.ui.assets.legalmetadata.rightsholder",
             CmsConstants.CMS_BUNDLE)));
@@ -77,7 +78,7 @@ public class LegalMetadataForm extends AssetForm {
             CmsConstants.CMS_BUNDLE)));
         creator = new TextArea("legalmetadata-creator");
         panel.add(creator);
-        
+
         add(panel);
     }
 
@@ -110,6 +111,7 @@ public class LegalMetadataForm extends AssetForm {
 
     @Override
     protected void showLocale(final PageState state) {
+
         final Optional<Asset> selectedAsset = getSelectedAsset(state);
 
         if (selectedAsset.isPresent()) {
@@ -118,7 +120,8 @@ public class LegalMetadataForm extends AssetForm {
                     "Selected asset is not a legal metadata");
             }
 
-            final LegalMetadata legalMetadata = (LegalMetadata) selectedAsset.get();
+            final LegalMetadata legalMetadata = (LegalMetadata) selectedAsset.
+                get();
 
             rights.setValue(state,
                             legalMetadata
@@ -128,10 +131,12 @@ public class LegalMetadataForm extends AssetForm {
     }
 
     @Override
-    protected Asset createAsset(final PageState state)
+    protected Asset createAsset(final FormSectionEvent event)
         throws FormProcessException {
 
-        Objects.requireNonNull(state);
+        Objects.requireNonNull(event);
+        
+        final PageState state = event.getPageState();
 
         final LegalMetadata legalMetadata = new LegalMetadata();
 
@@ -146,18 +151,20 @@ public class LegalMetadataForm extends AssetForm {
     }
 
     @Override
-    protected void updateAsset(final Asset asset, final PageState state)
+    protected void updateAsset(final Asset asset, 
+                               final FormSectionEvent event)
         throws FormProcessException {
 
         Objects.requireNonNull(asset);
-        Objects.requireNonNull(state);
+        Objects.requireNonNull(event);
+        
+        final PageState state = event.getPageState();
 
         if (!(asset instanceof LegalMetadata)) {
             throw new IllegalArgumentException(String.format(
                 "Provided asset is not an instance of '%s' (or a sub class) "
                     + "but is an instance of class '%s'.",
-                LegalMetadata.class
-                    .getName(),
+                LegalMetadata.class.getName(),
                 asset.getClass().getName()));
         }
 
