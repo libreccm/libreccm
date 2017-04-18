@@ -53,7 +53,7 @@ import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
 import org.jboss.arquillian.persistence.CleanupUsingScript;
 
-import org.librecms.assets.File;
+import org.librecms.assets.FileAsset;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
@@ -215,7 +215,7 @@ public class AssetManagerTest {
         final Folder folder = folderRepo.findById(-420L).get();
         assertThat(folder, is(not(nullValue())));
 
-        final File file = new File();
+        final FileAsset file = new FileAsset();
         file.setDisplayName("datasheet.pdf");
         file.setFileName("datasheet.pdf");
         file.setMimeType(new MimeType("application/pdf"));
@@ -262,7 +262,7 @@ public class AssetManagerTest {
         "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void shareAssetFolderIsNull() throws MimeTypeParseException {
-        final File file = new File();
+        final FileAsset file = new FileAsset();
         file.setDisplayName("datasheet.pdf");
         file.setFileName("datasheet.pdf");
         file.setMimeType(new MimeType("application/pdf"));
