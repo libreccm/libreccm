@@ -134,10 +134,12 @@ public class BookmarkForm extends AssetForm {
     }
 
     @Override
-    protected Asset createAsset(final PageState state)
+    protected Asset createAsset(final FormSectionEvent event)
         throws FormProcessException {
 
-        Objects.requireNonNull(state);
+        Objects.requireNonNull(event);
+        
+        final PageState state = event.getPageState();
 
         final Bookmark bookmark = new Bookmark();
 
@@ -158,11 +160,14 @@ public class BookmarkForm extends AssetForm {
     
     
     @Override
-    protected void updateAsset(final Asset asset, final PageState state)
+    protected void updateAsset(final Asset asset, 
+                               final FormSectionEvent event)
         throws FormProcessException {
 
         Objects.requireNonNull(asset);
-        Objects.requireNonNull(state);
+        Objects.requireNonNull(event);
+        
+        final PageState state = event.getPageState();
 
         if (!(asset instanceof Bookmark)) {
             throw new IllegalArgumentException(String.format(
