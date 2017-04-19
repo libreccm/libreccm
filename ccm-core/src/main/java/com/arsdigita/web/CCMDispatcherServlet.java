@@ -19,6 +19,7 @@
 package com.arsdigita.web;
 
 import com.arsdigita.dispatcher.DispatcherHelper;
+import com.arsdigita.dispatcher.MultipartHttpServletRequest;
 import com.arsdigita.ui.UI;
 import com.arsdigita.util.Assert;
 
@@ -270,9 +271,9 @@ public class CCMDispatcherServlet extends BaseServlet {
 
         LOGGER.debug("forwarding from context \"{}\" to context \"{}\"...",
                      getServletContext(), context);
-
+        
         forward(getServletContext().getRequestDispatcher(target),
-                request,
+                DispatcherHelper.restoreOriginalRequest(request),
                 response);
     }
 
