@@ -60,8 +60,6 @@ public class ExternalVideoAssetForm extends BookmarkForm {
         assetSearchWidget = new AssetSearchWidget("legal-metadata",
                                                   LegalMetadata.class);
         add(assetSearchWidget);
-
-        //ToDo
     }
 
     @Override
