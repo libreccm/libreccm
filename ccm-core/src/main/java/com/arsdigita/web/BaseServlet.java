@@ -100,7 +100,7 @@ public abstract class BaseServlet extends HttpServlet {
             redirect(response, signal);
         } catch (ServletException ex) {
             final RedirectSignal signal = findRedirectSignal(ex);
-            
+
             if (signal == null) {
                 throw ex;
             } else {
@@ -172,7 +172,10 @@ public abstract class BaseServlet extends HttpServlet {
                     getServletConfig().getServletName(),
                     getClass().getName());
 
-        internalService(request, response);
+        final HttpServletRequest wrappedRequest = DispatcherHelper
+            .maybeWrapRequest(request);
+
+        internalService(wrappedRequest, response);
     }
 
     private URL getRequestURL(final HttpServletRequest request) {

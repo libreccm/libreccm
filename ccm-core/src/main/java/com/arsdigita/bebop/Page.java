@@ -49,7 +49,10 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletRequestWrapper;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -712,17 +715,24 @@ public class Page extends SimpleComponent implements Container {
      * calling generateXML on each. Does NOT do the rendering. If the HTTP
      * response has already been committed, does not build the XML document.
      *
+     * @param req
+     * @param res
      * @return a DOM ready for rendering, or null if the response has already
      *         been committed.
+     * @throws javax.servlet.ServletException
      *
-     * @post res.isCommitted() == (return == null)
      */
-    public Document buildDocument(HttpServletRequest req,
-                                  HttpServletResponse res)
+    public Document buildDocument(final HttpServletRequest req,
+                                  final HttpServletResponse res)
         throws ServletException {
         try {
             Document doc = new Document();
-            PageState state = process(req, res);
+            
+            final ServletRequest request = unwrapRequest(req);
+            if (!(request instanceof HttpServletRequest)) {
+                throw new ServletException("Request is not a HttpServletRequest.");
+            }
+            final PageState state = process((HttpServletRequest) request, res);
 
             // only generate XML document if the response is not already
             // committed
@@ -740,6 +750,16 @@ public class Page extends SimpleComponent implements Container {
         }
     }
 
+    private ServletRequest unwrapRequest(final HttpServletRequest request) {
+
+        ServletRequest current = request;
+        while (current instanceof ServletRequestWrapper) {
+            current = ((ServletRequestWrapper) current).getRequest();
+        }
+
+        return current;
+    }
+    
     /**
      * Finishes building the page. The tree of components is traversed and each
      * component is told to add its state parameters to the page's state model.

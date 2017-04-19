@@ -58,6 +58,8 @@ public class CmsConstants {
     public static final String FOLDER_BROWSER_KEY_PREFIX_ASSET = "asset-";
     public static final String FOLDER_BROWSER_KEY_PREFIX_ITEM = "item-";
     
+    public static final String FORM_ENCTYPE_MULTIPART = "multipart/form-data";
+    
     /**
      * Constant string used as key for creating service package as a legacy
      * application.
