@@ -19,17 +19,19 @@
 package org.libreccm.admin.ui;
 
 import com.arsdigita.kernel.KernelConfig;
-import com.arsdigita.ui.admin.AdminUiConstants;
 
 import com.vaadin.cdi.CDIView;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.UserError;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.VerticalLayout;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
@@ -63,28 +65,34 @@ public class LoginView extends CustomComponent implements View {
 
     private ResourceBundle bundle;
 
-    private final FormLayout layout;
+    private final Panel loginPanel;
+    private final FormLayout formLayout;
     private final TextField userName;
     private final TextField password;
     private final Button submitButton;
 
     public LoginView() {
 
-        layout = new FormLayout();
-        layout.setSizeFull();
+        formLayout = new FormLayout();
+        formLayout.setSizeFull();
 
         userName = new TextField();
         userName.setCaption("User name");
-        layout.addComponent(userName);
+        formLayout.addComponent(userName);
 
         password = new PasswordField("Password");
-        layout.addComponent(password);
+        formLayout.addComponent(password);
 
         submitButton = new Button("Login");
         submitButton.addClickListener(event -> login(event));
-        layout.addComponent(submitButton);
+        formLayout.addComponent(submitButton);
 
-        setCompositionRoot(layout);
+        loginPanel = new Panel("Login", formLayout);
+        loginPanel.setWidth("24em");
+
+        final VerticalLayout viewLayout = new VerticalLayout(loginPanel);
+        viewLayout.setComponentAlignment(loginPanel, Alignment.MIDDLE_CENTER);
+        setCompositionRoot(viewLayout);
     }
 
     @PostConstruct
@@ -92,7 +100,6 @@ public class LoginView extends CustomComponent implements View {
         bundle = ResourceBundle.getBundle(
             "com.arsdigita.ui.login.LoginResources",
             globalizationHelper.getNegotiatedLocale());
-
     }
 
     private void login(final Button.ClickEvent event) {
@@ -104,7 +111,7 @@ public class LoginView extends CustomComponent implements View {
         try {
             subject.login(token);
         } catch (AuthenticationException ex) {
-            layout.setComponentError(
+            formLayout.setComponentError(
                 new UserError(bundle.getString("login.error.loginFail")));
             return;
         }
@@ -117,6 +124,8 @@ public class LoginView extends CustomComponent implements View {
 
         final KernelConfig kernelConfig = confManager
             .findConfiguration(KernelConfig.class);
+        loginPanel
+            .setCaption(bundle.getString("login.userRegistrationForm.title"));
         if (kernelConfig.emailIsPrimaryIdentifier()) {
             userName.setCaption(bundle
                 .getString("login.userRegistrationForm.email"));

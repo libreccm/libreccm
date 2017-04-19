@@ -18,15 +18,26 @@
  */
 package org.libreccm.admin.ui;
 
+import com.arsdigita.ui.admin.AdminUiConstants;
+
 import com.vaadin.cdi.CDIView;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.VerticalLayout;
+import org.apache.shiro.subject.Subject;
+import org.libreccm.l10n.GlobalizationHelper;
+import org.libreccm.security.PermissionChecker;
 import org.libreccm.security.User;
 import org.libreccm.security.UserRepository;
 
+import java.util.ResourceBundle;
+
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 /**
@@ -38,8 +49,25 @@ import javax.inject.Inject;
 public class AdminView extends CustomComponent implements View {
 
     private static final long serialVersionUID = -2959302663954819489L;
-    
+
     public static final String VIEWNAME = "admin";
+
+    private static final String COL_USER_NAME = "username";
+    private static final String COL_GIVEN_NAME = "given_name";
+    private static final String COL_FAMILY_NAME = "family_name";
+    private static final String COL_EMAIL = "email";
+    private static final String COL_BANNED = "banned";
+
+    @Inject
+    private Subject subject;
+
+    @Inject
+    private PermissionChecker permissionChecker;
+
+    @Inject
+    private GlobalizationHelper globalizationHelper;
+
+    private ResourceBundle bundle;
 
     @Inject
     private UserRepository userRepo;
@@ -48,29 +76,81 @@ public class AdminView extends CustomComponent implements View {
     private final Grid<User> usersTable;
 
     public AdminView() {
+
         tabSheet = new TabSheet();
 
         final TabSheet userGroupsRoles = new TabSheet();
         usersTable = new Grid<>();
+        usersTable.setWidth("100%");
 //        usersTable.setItems(userRepo.findAll());
-        usersTable.addColumn(User::getName).setCaption("User name");
-        usersTable.addColumn(User::getGivenName).setCaption("Given name");
-        usersTable.addColumn(User::getFamilyName).setCaption("Family name");
+        usersTable.addColumn(User::getName)
+            .setId(COL_USER_NAME)
+            .setCaption("User name");
+        usersTable
+            .addColumn(User::getGivenName)
+            .setId(COL_GIVEN_NAME)
+            .setCaption("Given name");
+        usersTable
+            .addColumn(User::getFamilyName)
+            .setId(COL_FAMILY_NAME)
+            .setCaption("Family name");
         usersTable
             .addColumn(user -> user.getPrimaryEmailAddress().getAddress())
+            .setId(COL_EMAIL)
             .setCaption("E-Mail");
-        usersTable.addColumn(User::isBanned).setCaption("Banned?");
+        usersTable
+            .addColumn(user -> {
+                if (user.isBanned()) {
+                    return bundle.getString("ui.admin.user.banned_yes");
+                } else {
+                    return bundle.getString("ui.admin.user.banned_no");
+                }
+            })
+            .setId(COL_BANNED)
+            .setCaption("Banned?");
         userGroupsRoles.addTab(usersTable, "Users");
 
         tabSheet.addTab(userGroupsRoles, "Users/Groups/Roles");
-        setCompositionRoot(tabSheet);
+
+        final CssLayout header = new CssLayout() {
+
+            private static final long serialVersionUID = -4372147161604688854L;
+
+            @Override
+            protected String getCss(final Component component) {
+                return null;
+            }
+
+        };
+//        header.setWidth("100%");
+        header.setHeight("5em");
+
+        final CssLayout footer = new CssLayout();
+//        footer.setWidth("100%");
+        footer.setHeight("5em");
+
+        final VerticalLayout viewLayout = new VerticalLayout();
+
+        viewLayout.addComponent(tabSheet);
+
+        setCompositionRoot(viewLayout);
+    }
+
+    @PostConstruct
+    public void postConstruct() {
+        bundle = ResourceBundle
+            .getBundle(AdminUiConstants.ADMIN_BUNDLE,
+                       globalizationHelper.getNegotiatedLocale());
     }
 
     @Override
     public void enter(final ViewChangeListener.ViewChangeEvent event) {
-        
+
+//        if (!subject.isAuthenticated()) {
+//            getUI().getNavigator().navigateTo(LoginView.VIEWNAME);
+//        }
         usersTable.setItems(userRepo.findAll());
-        
+
     }
 
 }
