@@ -22,9 +22,12 @@ import com.vaadin.cdi.CDIUI;
 import com.vaadin.cdi.CDIViewProvider;
 import com.vaadin.cdi.URLMapping;
 import com.vaadin.navigator.Navigator;
+import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
 import org.apache.shiro.subject.Subject;
+import org.libreccm.security.PermissionChecker;
 
 import javax.inject.Inject;
 
@@ -39,29 +42,31 @@ public class AdminUIVaadin extends UI {
     private static final long serialVersionUID = -1352590567964037112L;
 
 //    private TabSheet tabSheet;
-
 //    @Inject
 //    private UserRepository userRepo;
-    
-    @Inject 
+    @Inject
     private CDIViewProvider viewProvider;
-    
+
     @Inject
     private Subject subject;
+
+    @Inject
+    private PermissionChecker permissionChecker;
 
     @Override
     protected void init(VaadinRequest request) {
 
         final Navigator navigator = new Navigator(this, this);
         navigator.addProvider(viewProvider);
-        
+
+        navigator.addViewChangeListener(new AuthNavListener());
+
         if (subject.isAuthenticated()) {
             navigator.navigateTo(AdminView.VIEWNAME);
         } else {
             navigator.navigateTo(LoginView.VIEWNAME);
         }
-        
-        
+
 //        tabSheet = new TabSheet();
 //
 //        final TabSheet userGroupsRoles = new TabSheet();
@@ -78,6 +83,34 @@ public class AdminUIVaadin extends UI {
 //
 //        tabSheet.addTab(userGroupsRoles, "Users/Groups/Roles");
 //        setContent(tabSheet);
+    }
+
+    private class AuthNavListener implements ViewChangeListener {
+
+        private static final long serialVersionUID = -693722234602948170L;
+
+        @Override
+        public boolean beforeViewChange(final ViewChangeEvent event) {
+
+            if (event.getNewView() instanceof AdminView) {
+
+                if (subject.isAuthenticated()) {
+
+                    if (!permissionChecker.isPermitted("admin")) {
+                        Notification.show(
+                            "Access denied",
+                            "Your are not allowed to access the LibreCCM admin application.",
+                            Notification.Type.ERROR_MESSAGE);
+                        return false;
+                    }
+                } else {
+                    event.getNavigator().navigateTo(LoginView.VIEWNAME);
+                }
+            }
+
+            return true;
+        }
+
     }
 
 }
