@@ -20,7 +20,6 @@ package com.arsdigita.cms.ui.assets.forms;
 
 import com.arsdigita.bebop.BoxPanel;
 import com.arsdigita.bebop.FormProcessException;
-import com.arsdigita.bebop.FormSection;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.Text;
@@ -30,13 +29,14 @@ import com.arsdigita.cms.ui.FileUploadSection;
 import com.arsdigita.cms.ui.assets.AssetForm;
 import com.arsdigita.cms.ui.assets.AssetPane;
 import com.arsdigita.globalization.GlobalizedMessage;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Optional;
-import javax.activation.MimeType;
+
 import org.librecms.CmsConstants;
 import org.librecms.assets.BinaryAsset;
 import org.librecms.contentsection.Asset;
@@ -95,6 +95,8 @@ public abstract class BinaryAssetForm extends AssetForm {
         panel.add(fileUpload);
 
         add(panel);
+        
+        setEncType(CmsConstants.FORM_ENCTYPE_MULTIPART);
     }
 
     @Override
@@ -217,6 +219,7 @@ public abstract class BinaryAssetForm extends AssetForm {
             throw new FormProcessException(ex);
         }
         binaryAsset.setData(data);
+        binaryAsset.setFileName(fileUpload.getFileName(event));
         binaryAsset.setSize(data.length);
 
         binaryAsset.setMimeType(fileUpload.getMimeType(event));
