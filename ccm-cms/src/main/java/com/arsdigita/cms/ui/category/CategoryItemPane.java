@@ -189,7 +189,7 @@ class CategoryItemPane extends BaseItemPane {
         m_detailPane.add(new LinkedCategorySection(linkAddLink));
 
         // Templates
-        m_detailPane.add(new AdminVisible(new CategoryTemplateSection()));
+//        m_detailPane.add(new AdminVisible(new CategoryTemplateSection()));
 
         // Permissions
         //m_detailPane.add(new PermissionsSection());
