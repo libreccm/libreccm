@@ -36,6 +36,7 @@ import org.librecms.contentsection.ContentSection;
 
 import com.arsdigita.cms.dispatcher.CMSPage;
 import com.arsdigita.cms.ui.assets.AssetPane;
+import com.arsdigita.cms.ui.category.CategoryAdminPane;
 //ToDo NG import com.arsdigita.cms.ui.category.CategoryAdminPane;
 import com.arsdigita.cms.ui.cse.ContentSoonExpiredPane;
 import com.arsdigita.cms.ui.folder.FolderAdminPane;
@@ -127,7 +128,7 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
     private RoleAdminPane m_rolePane;
     private WorkflowAdminPane m_workflowPane;
     private LifecycleAdminPane m_lifecyclePane;
-//ToDo NG    private CategoryAdminPane m_categoryPane;
+    private CategoryAdminPane m_categoryPane;
     private ContentTypeAdminPane m_typePane;
     //private LayoutPanel m_userAdminPane;
     private LayoutPanel m_csePane;
@@ -155,7 +156,7 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
         m_rolePane = getRoleAdminPane();
         m_workflowPane = getWorkflowAdminPane();
         m_lifecyclePane = getLifecycleAdminPane();
-//ToDo NG        m_categoryPane = getCategoryAdminPane();
+        m_categoryPane = getCategoryAdminPane();
         m_typePane = getContentTypeAdminPane();
         // userAdminPane removed, used to contain just one item (reset user
         // folder) which moved to the FolderAdminPane
@@ -191,11 +192,11 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
                         m_workflowPane,
                         permissionChecker.isPermitted(
                             AdminPrivileges.ADMINISTER_WORKFLOW));
-//ToDo NG
-//                    m_tabbedPane.setTabVisible(
-//                        state, m_categoryPane,
-//                        permissionChecker.isPermitted(
-//                            AdminPrivileges.ADMINISTER_CATEGORIES));
+                    m_tabbedPane.setTabVisible(
+                        state,
+                        m_categoryPane,
+                        permissionChecker.isPermitted(
+                            AdminPrivileges.ADMINISTER_CATEGORIES));
                     m_tabbedPane.setTabVisible(
                         state,
                         m_lifecyclePane,
@@ -256,7 +257,7 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
     protected ItemSearch getSearchPane() {
         if (m_searchPane == null) {
             m_searchPane
-                = new ItemSearch(
+            = new ItemSearch(
                     ContentItemVersion.DRAFT.toString(),
                     CMSConfig.getConfig().isLimitItemSearchToContentSection());
         }
@@ -311,13 +312,13 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
      * Creates, and then caches, the category administration pane. Overriding
      * this method to return null will prevent this tab from appearing.
      */
-//ToDo NG
-//    protected CategoryAdminPane getCategoryAdminPane() {
-//        if (m_categoryPane == null) {
-//            m_categoryPane = new CategoryAdminPane();
-//        }
-//        return m_categoryPane;
-//    }
+    protected CategoryAdminPane getCategoryAdminPane() {
+        if (m_categoryPane == null) {
+            m_categoryPane = new CategoryAdminPane();
+        }
+        return m_categoryPane;
+    }
+
     /**
      * Creates, and then caches, the content type administration pane.
      * Overriding this method to return null will prevent this tab from
@@ -360,9 +361,9 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
      * Adds the specified component, with the specified tab name, to the tabbed
      * pane only if it is not null.
      *
-     * @param pane    The pane to which to add the tab
+     * @param pane The pane to which to add the tab
      * @param tabName The name of the tab if it's added
-     * @param comp    The component to add to the pane
+     * @param comp The component to add to the pane
      */
     protected void addToPane(final TabbedPane pane,
                              final String tabName,
@@ -405,7 +406,7 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
         tab(pane, "cms.ui.roles", getRoleAdminPane());
         tab(pane, "cms.ui.workflows", getWorkflowAdminPane());
         tab(pane, "cms.ui.lifecycles", getLifecycleAdminPane());
-//      ToDo NG  tab(pane, "cms.ui.categories", getCategoryAdminPane());
+        tab(pane, "cms.ui.categories", getCategoryAdminPane());
         tab(pane, "cms.ui.content_types", getContentTypeAdminPane());
         tab(pane, "cms.ui.cse", getCSEPane());
         tab(pane, "cms.ui.reports", getReportPane());
@@ -457,8 +458,8 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
             m_workflowPane.reset(state);
         } else if (pane == m_lifecyclePane) {
             m_lifecyclePane.reset(state);
-//ToDo NG        } else if (pane == m_categoryPane) {
-//            m_categoryPane.reset(state);
+        } else if (pane == m_categoryPane) {
+            m_categoryPane.reset(state);
         } else if (pane == m_typePane) {
             m_typePane.reset(state);
 //        } else if (pane == m_userAdminPane) {
@@ -472,7 +473,7 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
      * Construct a URL for displaying the tab
      *
      * @param item The item from which we get the corresponding content section
-     * @param tab  The index of the tab to display
+     * @param tab The index of the tab to display
      *
      * @return
      */
