@@ -209,6 +209,7 @@ public final class CategoryAdminPane extends BaseAdminPane {
             prompt.add(catLabel);
         }
 
+        @Override
         public final void process(final FormSectionEvent e)
                 throws FormProcessException {
             final PageState state = e.getPageState();
