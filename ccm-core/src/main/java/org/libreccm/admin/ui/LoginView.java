@@ -21,13 +21,18 @@ package org.libreccm.admin.ui;
 import com.arsdigita.kernel.KernelConfig;
 
 import com.vaadin.cdi.CDIView;
+import com.vaadin.event.Action;
+import com.vaadin.event.Action.Handler;
+import com.vaadin.event.ShortcutAction;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.UserError;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
@@ -85,14 +90,64 @@ public class LoginView extends CustomComponent implements View {
 
         submitButton = new Button("Login");
         submitButton.addClickListener(event -> login(event));
+        submitButton.setEnabled(false);
         formLayout.addComponent(submitButton);
 
+        userName.addValueChangeListener(event -> {
+            if (userName.getValue() != null
+                    && !userName.getValue().trim().isEmpty()
+                    && password.getValue() != null
+                    && !password.getValue().trim().isEmpty()) {
+                submitButton.setEnabled(true);
+                submitButton.setClickShortcut(ShortcutAction.KeyCode.ENTER);
+            }
+        });
+
+        password.addValueChangeListener(event -> {
+            if (userName.getValue() != null
+                    && !userName.getValue().trim().isEmpty()
+                    && password.getValue() != null
+                    && !password.getValue().trim().isEmpty()) {
+                submitButton.setEnabled(true);
+                submitButton.setClickShortcut(ShortcutAction.KeyCode.ENTER);
+            }
+        });
+
+//        userName.addFocusListener(event -> {
+//            if (userName.getValue() != null
+//                    && !userName.getValue().trim().isEmpty()
+//                    && password.getValue() != null
+//                    && !password.getValue().trim().isEmpty()) {
+//                submitButton.setClickShortcut(ShortcutAction.KeyCode.ENTER);
+//            }
+//        });
+//        userName.addBlurListener(event -> {
+//            if (userName.getValue() != null
+//                    && !userName.getValue().trim().isEmpty()
+//                    && password.getValue() != null
+//                    && !password.getValue().trim().isEmpty()) {
+//                submitButton.removeClickShortcut();
+//            }
+//        });
+
+        password.addFocusListener(event -> {
+            submitButton.setClickShortcut(ShortcutAction.KeyCode.ENTER);
+        });
+        password.addBlurListener(event -> {
+            submitButton.removeClickShortcut();
+        });
+
         loginPanel = new Panel("Login", formLayout);
-        loginPanel.setWidth("24em");
+
+        loginPanel.setWidth(
+            "24em");
 
         final VerticalLayout viewLayout = new VerticalLayout(loginPanel);
+
         viewLayout.setComponentAlignment(loginPanel, Alignment.MIDDLE_CENTER);
+
         setCompositionRoot(viewLayout);
+
     }
 
     @PostConstruct
@@ -111,8 +166,11 @@ public class LoginView extends CustomComponent implements View {
         try {
             subject.login(token);
         } catch (AuthenticationException ex) {
-            formLayout.setComponentError(
+            submitButton.setComponentError(
                 new UserError(bundle.getString("login.error.loginFail")));
+            Notification.show(bundle.getString("login.error.loginFail"),
+                              Notification.Type.ERROR_MESSAGE);
+            password.setValue("");
             return;
         }
 
@@ -123,7 +181,8 @@ public class LoginView extends CustomComponent implements View {
     public void enter(final ViewChangeListener.ViewChangeEvent event) {
 
         final KernelConfig kernelConfig = confManager
-            .findConfiguration(KernelConfig.class);
+            .findConfiguration(KernelConfig.class
+            );
         loginPanel
             .setCaption(bundle.getString("login.userRegistrationForm.title"));
         if (kernelConfig.emailIsPrimaryIdentifier()) {

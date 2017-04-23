@@ -1,0 +1,17 @@
+/* Styles for Vaadin used in the CCM Core module */
+
+@import "../valo/valo.scss";
+
+@mixin ccm-core {
+    
+    @include valo;
+    
+    .libreccm-header {
+        border-bottom: 5px solid #0f0;
+        
+        .libreccm-logo {
+            max-height: 100px;
+        }
+        
+    }
+}
