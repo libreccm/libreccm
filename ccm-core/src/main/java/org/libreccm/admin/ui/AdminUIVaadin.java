@@ -18,6 +18,7 @@
  */
 package org.libreccm.admin.ui;
 
+import com.vaadin.annotations.Theme;
 import com.vaadin.cdi.CDIUI;
 import com.vaadin.cdi.CDIViewProvider;
 import com.vaadin.cdi.URLMapping;
@@ -27,7 +28,10 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
 import org.apache.shiro.subject.Subject;
+import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.security.PermissionChecker;
+
+import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -37,6 +41,7 @@ import javax.inject.Inject;
  */
 @URLMapping("vaadin")
 @CDIUI("admin")
+@Theme("ccm-core")
 public class AdminUIVaadin extends UI {
 
     private static final long serialVersionUID = -1352590567964037112L;
@@ -52,6 +57,9 @@ public class AdminUIVaadin extends UI {
 
     @Inject
     private PermissionChecker permissionChecker;
+    
+    @Inject
+    private GlobalizationHelper globalizationHelper;
 
     @Override
     protected void init(VaadinRequest request) {
@@ -59,6 +67,8 @@ public class AdminUIVaadin extends UI {
         final Navigator navigator = new Navigator(this, this);
         navigator.addProvider(viewProvider);
 
+        setLocale(globalizationHelper.getNegotiatedLocale());
+        
         navigator.addViewChangeListener(new AuthNavListener());
 
         if (subject.isAuthenticated()) {

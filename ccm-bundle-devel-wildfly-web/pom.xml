@@ -96,6 +96,14 @@
                             <type>jar</type>
                         </overlay>
                         <overlay>
+                            <groupId>org.libreccm</groupId>
+                            <artifactId>ccm-core</artifactId>
+                            <type>jar</type>
+                            <includes>
+                                <include>VAADIN/</include>
+                            </includes>
+                        </overlay>
+                        <overlay>
                             <groupId>org.librecms</groupId>
                             <artifactId>ccm-cms</artifactId>
                             <type>jar</type>
