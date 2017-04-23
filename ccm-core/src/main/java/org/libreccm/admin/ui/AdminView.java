@@ -23,10 +23,16 @@ import com.arsdigita.ui.admin.AdminUiConstants;
 import com.vaadin.cdi.CDIView;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.server.ClassResource;
+import com.vaadin.server.VaadinServlet;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.Image;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 import org.apache.shiro.subject.Subject;
@@ -39,6 +45,9 @@ import java.util.ResourceBundle;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletRequest;
 
 /**
  *
@@ -59,6 +68,12 @@ public class AdminView extends CustomComponent implements View {
     private static final String COL_BANNED = "banned";
 
     @Inject
+    private ServletContext servletContext;
+
+    @Inject
+    private JpqlConsoleController jpqlConsoleController;
+    
+    @Inject
     private Subject subject;
 
     @Inject
@@ -74,6 +89,8 @@ public class AdminView extends CustomComponent implements View {
 
     private final TabSheet tabSheet;
     private final Grid<User> usersTable;
+    
+    private final JpqlConsole jpqlConsole;
 
     public AdminView() {
 
@@ -112,18 +129,74 @@ public class AdminView extends CustomComponent implements View {
 
         tabSheet.addTab(userGroupsRoles, "Users/Groups/Roles");
 
-        final CssLayout header = new CssLayout() {
+        final ServletContext servletContext = VaadinServlet
+            .getCurrent()
+            .getServletContext();
+        if ("true".equals(servletContext.getInitParameter("ccm.develmode"))) {
+            jpqlConsole = new JpqlConsole(this);
+            tabSheet.addTab(jpqlConsole, "JPQL Console");
+        } else {
+            jpqlConsole = null;
+        }
 
-            private static final long serialVersionUID = -4372147161604688854L;
-
-            @Override
-            protected String getCss(final Component component) {
-                return null;
-            }
-
-        };
+//        final CssLayout header = new CssLayout() {
+//
+//            private static final long serialVersionUID = -4372147161604688854L;
+//
+//            @Override
+//            protected String getCss(final Component component) {
+//                /*if ((component instanceof Image)
+//                        && "libreccm-logo".equals(component.getId())) {
+//
+//                    return "position: absolute; top: 10px; left: 10px;";
+//
+//                } else if ((component instanceof Label)
+//                               && "libreccm-headerinfoline".equals(component
+//                        .getId())) {
+//                    return "background-color: #8b8e8a; width: 100%; position: absolute; top:120px; left: 0";
+//                }*/
+//                return "";
+//
+////                return ".v-csslayout {\n"
+////                           + "background-color: #56a1bd;\n"
+////                           + "background-image: -ie-linear-gradient(top , #56a1db 5%, #024c68 95%\n"
+////                       + "background-image: -moz-linear-gradient(top , #56a1db 5%, #024c68 95%\n"
+////                       + "background-image: -webkit-linear-gradient(top , #56a1db 5%, #024c68 95%\n"
+////                       + "background-image: linear-gradient(top , #56a1db 5%, #024c68 95%\n"
+////                       + "}\n"
+////                    + "\n"
+////                    + ".libreccm-logo {\n"
+////                    + "border-left: 10px solid #0f0;\n"
+////                    + "}\n";
+//            }
+//
+//        };
 //        header.setWidth("100%");
-        header.setHeight("5em");
+//        header.setHeight("5em");
+        final GridLayout header = new GridLayout(5, 1);
+        header.setWidth("100%");
+        header.addStyleName("libreccm-header");
+//        final Image logo = new Image(
+//            "",
+//            new ClassResource("/themes/libreccm-default/images/libreccm.png"));
+//        logo.setId("libreccm-logo");
+//        logo.addStyleName("libreccm-logo");   
+//        header.addComponent(logo, 0, 0);
+//        header.setComponentAlignment(logo, Alignment.MIDDLE_LEFT);
+
+        final Label headerInfoLine = new Label("LibreCCM");
+        headerInfoLine.setId("libreccm-headerinfoline");
+//        headerInfoLine.setWidth("100%");
+        header.addComponent(headerInfoLine, 3, 0, 4, 0);
+        header.setComponentAlignment(headerInfoLine, Alignment.TOP_RIGHT);
+
+        final Image logo = new Image(
+            null,
+            new ClassResource("/themes/libreccm-default/images/libreccm.png"));
+        logo.setId("libreccm-logo");
+        logo.addStyleName("libreccm-logo");
+        header.addComponent(logo, 0, 0);
+        header.setComponentAlignment(logo, Alignment.MIDDLE_LEFT);
 
         final CssLayout footer = new CssLayout();
 //        footer.setWidth("100%");
@@ -131,7 +204,9 @@ public class AdminView extends CustomComponent implements View {
 
         final VerticalLayout viewLayout = new VerticalLayout();
 
+        viewLayout.addComponent(header);
         viewLayout.addComponent(tabSheet);
+        viewLayout.addComponent(footer);
 
         setCompositionRoot(viewLayout);
     }
@@ -150,7 +225,11 @@ public class AdminView extends CustomComponent implements View {
 //            getUI().getNavigator().navigateTo(LoginView.VIEWNAME);
 //        }
         usersTable.setItems(userRepo.findAll());
-
     }
+    
 
+    protected JpqlConsoleController getJpqlConsoleController() {
+        return jpqlConsoleController;
+    }
+    
 }
