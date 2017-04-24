@@ -32,6 +32,7 @@ import com.arsdigita.toolbox.ui.Section;
 import com.arsdigita.xml.Element;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.libreccm.categorization.Categorization;
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryManager;
 import org.libreccm.categorization.CategoryRepository;
@@ -171,36 +172,29 @@ public final class CategoryAdminPane extends BaseAdminPane {
         DeleteForm(SimpleContainer prompt) {
             super(prompt);
             prompt.add(new Label(gz("cms.ui.category.delete_prompt")));
-            Label catLabel = new Label(gz("PLACEHOLDER TEXT"));
-//            catLabel.addPrintListener(new PrintListener() {
-//                public void prepare(PrintEvent pe) {
-//                    Label label = (Label) pe.getTarget();
-//                    Category cat =
-//                             m_category.getCategory(pe.getPageState());
-//                    CategoryCollection descendants = cat.getDescendants();
-//                    final long nDescendants = descendants.size() - 1;
-//                    descendants.close();
-//                    CategorizedCollection descObjects =
-//                                          cat.getDescendantObjects();
-//                    final long nDescObjects = descObjects.size();
-//                    descObjects.close();
-//                    StringBuffer sb = new StringBuffer(" ");
-//                    if (nDescendants > 0) {
-//                        sb.append("This category has ");
-//                        sb.append(nDescendants);
-//                        sb.append(" descendant category(ies). ");
-//                    }
-//                    if (nDescObjects > 0) {
-//                        sb.append("It has ").append(nDescObjects);
-//                        sb.append(" descendant object(s). ");
-//                    }
-//                    if (nDescendants > 0 || nDescObjects > 0) {
-//                        sb.append("Descendants will be orphaned, if this category is removed.");
-//                    }
-//                    label.setLabel(sb.toString());
-//                }
-//
-//            });
+            Label catLabel = new Label();
+            catLabel.addPrintListener(pe -> {
+                Label label = (Label) pe.getTarget();
+                Category cat =
+                         m_category.getCategory(pe.getPageState());
+                java.util.List<Category> descendants = cat.getSubCategories();
+                java.util.List<Categorization> catObjects = cat.getObjects();
+
+                StringBuffer sb = new StringBuffer(" ");
+                if (descendants.size() > 0) {
+                    sb.append("This category has ");
+                    sb.append(descendants.size());
+                    sb.append(" descendant category(ies). ");
+                }
+                if (catObjects.size() > 0) {
+                    sb.append("It has ").append(catObjects.size());
+                    sb.append(" descendant object(s). ");
+                }
+                if (descendants.size() > 0 || catObjects.size() > 0) {
+                    sb.append("Descendants will be orphaned, if this category is removed.");
+                }
+                label.setLabel(gz(sb.toString()));
+            });
             prompt.add(catLabel);
         }
 
