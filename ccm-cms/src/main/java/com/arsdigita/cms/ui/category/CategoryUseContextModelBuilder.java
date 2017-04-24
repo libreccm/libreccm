@@ -73,7 +73,7 @@ class CategoryUseContextModelBuilder extends AbstractListModelBuilder {
         }
 
         public Object getElement() {
-            return current;
+            return current.getDomain().getRoot();
         }
 
         public String getKey() {
