@@ -66,9 +66,9 @@ public final class CategoryAdminPane extends BaseAdminPane {
 
         /* Left column */
         /* Use context section */
-        //List list = new List(new CategoryUseContextModelBuilder());
-        //list.setSelectionModel(m_contextModel);
-        //list.addChangeListener(new ContextSelectionListener());
+        List list = new List(new CategoryUseContextModelBuilder());
+        list.setSelectionModel(m_contextModel);
+        list.addChangeListener(new ContextSelectionListener());
 
         /* Category tree section */
         m_categoryTree = new BaseTree(new CategoryTreeModelBuilder(m_contextModel));
@@ -83,7 +83,7 @@ public final class CategoryAdminPane extends BaseAdminPane {
         contextSection.setHeading(new Label(gz("cms.ui.category.use_contexts")));
         ActionGroup contextGroup = new ActionGroup();
         contextSection.setBody(contextGroup);
-        //contextGroup.setSubject(list);
+        contextGroup.setSubject(list);
 
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final PermissionChecker permissionChecker = cdiUtil.findBean(PermissionChecker.class);
@@ -128,11 +128,6 @@ public final class CategoryAdminPane extends BaseAdminPane {
                                          getAddLink(),
                                          getEditLink(),
                                          getDeleteLink()));
-
-        //m_contextList = new List(new ContextListModelBuilder());
-        //m_contextList.adChangeListener(new ContextListSelectionListener());
-        //m_contextModel = m_contextList.getSelectionModel();
-
     }
 
     @Override
@@ -176,7 +171,7 @@ public final class CategoryAdminPane extends BaseAdminPane {
         DeleteForm(SimpleContainer prompt) {
             super(prompt);
             prompt.add(new Label(gz("cms.ui.category.delete_prompt")));
-            Label catLabel = new Label();
+            Label catLabel = new Label(gz("PLACEHOLDER TEXT"));
 //            catLabel.addPrintListener(new PrintListener() {
 //                public void prepare(PrintEvent pe) {
 //                    Label label = (Label) pe.getTarget();
@@ -322,17 +317,15 @@ public final class CategoryAdminPane extends BaseAdminPane {
 
             getBody().reset(state);
 
-//            if (m_contextModel.isSelected(state)) {
-//                final Category root =
-//                               Category.getRootForObject(CMS.getContext().getContentSection(),
-//                                                         getUseContext(state));
-//
-//                if (root != null) {
-//                    m_model.setSelectedKey(state, root.getID());
-//                    //m_categoryTree.reset(state);
-//                }
-//
-//            }
+            if (m_contextModel.isSelected(state)) {
+                final Category root = (Category) m_contextModel.getSelectedKey(state);
+
+                if (root != null) {
+                    m_model.setSelectedKey(state, root.getUniqueId());
+                    m_categoryTree.reset(state);
+                }
+
+            }
             if (m_model.isSelected(state)) {
                 LOGGER.debug("The selection model is selected; displaying " + "the item pane");
 
