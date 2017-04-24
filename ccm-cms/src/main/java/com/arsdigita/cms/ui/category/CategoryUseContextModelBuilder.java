@@ -27,10 +27,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryManager;
+import org.libreccm.categorization.DomainManager;
+import org.libreccm.categorization.DomainOwnership;
 import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.web.ApplicationManager;
+import org.libreccm.web.CcmApplication;
 import org.librecms.contentsection.ContentSection;
 
 import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * Builds a list of category use contexts for the current
@@ -38,7 +43,6 @@ import java.util.Collection;
  *
  * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  * @author Scott Seago 
- * @version $Id: CategoryUseContextModelBuilder.java 2090 2010-04-17 08:04:14Z pboy $
  */
 class CategoryUseContextModelBuilder extends AbstractListModelBuilder {
 
@@ -52,31 +56,28 @@ class CategoryUseContextModelBuilder extends AbstractListModelBuilder {
     }
 
     private class Model implements ListModel {
-        private final java.util.List<Category> m_roots;
+        private final Iterator<DomainOwnership> m_roots;
+        private DomainOwnership current;
 
         public Model() {
             final ContentSection section =
                 CMS.getContext().getContentSection();
 
-            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final CategoryManager manager = cdiUtil.findBean(CategoryManager.class);
-
-            m_roots = (Category) CMS.getContext().getContentItem();
-            //m_roots.addOrder(Category.USE_CONTEXT);
+            m_roots = section.getDomains().iterator();
+            current = null;
         }
 
         public boolean next() {
-            return m_roots.next();
+            current = m_roots.next();
+            return current != null;
         }
 
         public Object getElement() {
-            String useContext = m_roots.getUseContext();
-            return useContext == null ? DEFAULT_USE_CONTEXT : useContext;
+            return current;
         }
 
         public String getKey() {
-            String useContext = m_roots.getUseContext();
-            return useContext == null ? DEFAULT_USE_CONTEXT : useContext;
+            return current.getContext() != null ? current.getContext() : DEFAULT_USE_CONTEXT;
         }
     }
 }

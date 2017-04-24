@@ -33,6 +33,7 @@ import com.arsdigita.bebop.util.GlobalizationUtil;
 import com.arsdigita.bebop.util.SequentialMap;
 import com.arsdigita.cms.CMS;
 import com.arsdigita.cms.ui.authoring.BasicItemForm;
+import com.arsdigita.globalization.Globalization;
 import com.arsdigita.util.StringUtils;
 import com.arsdigita.util.UncheckedWrapperException;
 import org.apache.logging.log4j.LogManager;
@@ -45,13 +46,7 @@ import org.libreccm.core.CcmObject;
 
 import javax.enterprise.inject.spi.CDI;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.TooManyListenersException;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * This is an abstract class which displays the category assignment UI.
@@ -367,60 +362,32 @@ public abstract class CategoryForm extends Form
     public void process(FormSectionEvent e) throws FormProcessException {
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final CategoryRepository categoryRepository = cdiUtil.findBean(CategoryRepository.class);
-        final CategoryManager categoryManager = cdiUtil.findBean(CategoryManager.class);
 
         PageState state = e.getPageState();
         FormData data = e.getFormData();
-        BigDecimal id;
+        Long id;
 
         if (m_assign.isSelected(state)) {
-            Category cat = new Category();
-            assignCategory(state, cat);
-
+            id = ((BigDecimal) data.get(FREE)).longValue();
+            Optional<Category> optional = categoryRepository.findById(id);
+            if (optional.isPresent()) {
+                Category cat = optional.get();
+                assignCategory(state, cat);
+                data.put(ASSIGNED, id);
+            } else {
+                throw new FormProcessException(GlobalizationUtil.globalize(String.format("Can't find category with id %d", id)));
+            }
+        } else if (m_remove.isSelected(state)) {
+            id = ((BigDecimal) data.get(ASSIGNED)).longValue();
+            Optional<Category> optional = categoryRepository.findById(id);
+            if (optional.isPresent()) {
+                Category cat = optional.get();
+                unassignCategory(state, cat);
+                data.put(FREE, id);
+            } else {
+                throw new FormProcessException(GlobalizationUtil.globalize(String.format("Can't find category with id %d", id)));
+            }
         }
-
-//        if (m_assign.isSelected(state)) {
-//            id = (BigDecimal) data.get(FREE);
-//
-//            // Assign a new category
-//            try {
-//                Category cat = new Category(
-//                        new OID(Category.BASE_DATA_OBJECT_TYPE, id));
-//                if (!cat.canMap()) {
-//                    data.addError(
-//                            (String) GlobalizationUtil.globalize(
-//                            "cms.ui.need_category_map_privilege").localize());
-//                    return;
-//                }
-//                assignCategory(state, cat);
-//                // Highlight the item
-//                data.put(ASSIGNED, id);
-//            } catch (DataObjectNotFoundException ex) {
-//                s_log.error("Couldn't find Category", ex);
-//                throw new FormProcessException(ex);
-//            }
-//
-//        } else if (m_remove.isSelected(state)) {
-//            id = (BigDecimal) data.get(ASSIGNED);
-//
-//            // Unassign a category
-//            try {
-//                Category cat = new Category(
-//                        new OID(Category.BASE_DATA_OBJECT_TYPE, id));
-//                if (!cat.canMap()) {
-//                    data.addError(
-//                            (String) GlobalizationUtil.globalize(
-//                            "cms.ui.need_category_map_privilege").localize());
-//                    return;
-//                }
-//                unassignCategory(state, cat);
-//                // Highlight the item
-//                data.put(FREE, id);
-//            } catch (DataObjectNotFoundException ex) {
-//                s_log.error("Couldn't find category");
-//                throw new FormProcessException(ex);
-//            }
-//        }
     }
 
     // Validate the form: make sure that a category is selected
@@ -429,19 +396,16 @@ public abstract class CategoryForm extends Form
     public void validate(FormSectionEvent e) throws FormProcessException {
         PageState state = e.getPageState();
         FormData data = e.getFormData();
+        if (m_assign.isSelected(state)) {
+            if (data.get(FREE) == null) {
+                data.addError(GlobalizationUtil.globalize("cms.ui.category.assign_select_missing"));
+            } else {
+                // we need to make sure that no other item in this
+                // category has the same name (url)
+                 Long id = ((BigDecimal) data.get(FREE)).longValue();
 
-//        if (m_assign.isSelected(state)) {
-//            if (data.get(FREE) == null) {
-//                data.addError("Please select a category to assign");
-//            } else {
-//                // we need to make sure that no other item in this
-//                // category has the same name (url)
-//                BigDecimal id = (BigDecimal) data.get(FREE);
-//
-//                // Assign a new category
+                // Assign a new category
 //                try {
-//                    Category cat =
-//                            new Category(new OID(Category.BASE_DATA_OBJECT_TYPE, id));
 //                    String url = getItemURL(state);
 //
 //                    if (url != null) {
@@ -477,12 +441,12 @@ public abstract class CategoryForm extends Form
 //                            + "category with id " + id);
 //                    throw new FormProcessException(ex);
 //                }
-//            }
-//        } else if (m_remove.isSelected(state)) {
-//            if (data.get(ASSIGNED) == null) {
-//                data.addError("Please select a category to remove");
-//            }
-//        }
+            }
+        } else if (m_remove.isSelected(state)) {
+            if (data.get(ASSIGNED) == null) {
+                data.addError(GlobalizationUtil.globalize("cms.ui.category.assign_select_missing"));
+            }
+        }
     }
 
     // Add a "filler" option to the option group in order to ensure
