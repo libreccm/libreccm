@@ -20,34 +20,44 @@ package org.libreccm.admin.ui;
 
 import com.arsdigita.ui.admin.AdminUiConstants;
 
+import com.vaadin.data.HasValue;
+import com.vaadin.data.ValueProvider;
+import com.vaadin.server.UserError;
+import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CustomComponent;
+import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextArea;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
-import java.util.ArrayList;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
+import javax.persistence.Id;
 import javax.persistence.PersistenceException;
-import javax.persistence.Query;
 
 /**
  *
@@ -56,10 +66,14 @@ import javax.persistence.Query;
 public class JpqlConsole extends CustomComponent {
 
     private static final long serialVersionUID = 2585630538827827614L;
+    private static final Logger LOGGER = LogManager.getLogger(JpqlConsole.class);
 
-    private AdminView view;
+    private final AdminView view;
 
     private final TextArea queryArea;
+    private final TextField maxResults;
+    private final TextField offset;
+    private final Button executeQueryButton;
 //    private final FormLayout queryForm;
 //    private final VerticalLayout resultsLayout;
     private final Label noResultsLabel;
@@ -74,21 +88,24 @@ public class JpqlConsole extends CustomComponent {
 
         queryArea = new TextArea(bundle.getString("ui.admin.jpqlconsole.query"));
         queryArea.setWidth("100%");
-        final Button executeQueryButton = new Button(bundle
+        executeQueryButton = new Button(bundle
             .getString("ui.admin.jpqlconsole.query.execute"));
         executeQueryButton.addClickListener(event -> executeQuery());
         final Button clearQueryButton = new Button(bundle
             .getString("ui.admin.jpqlconsole.query.clear"));
         clearQueryButton.addClickListener(event -> queryArea.clear());
-//        queryForm = new FormLayout(queryArea
-//                                   executeQueryButton,
-//                                   clearQueryButton);
-
         final HorizontalLayout queryButtonsLayout = new HorizontalLayout(
             clearQueryButton,
             executeQueryButton);
+        maxResults = new TextField("Max results", "10");
+        maxResults.addValueChangeListener(new NumberValidator());
+        offset = new TextField("Offset", "0");
+        offset.addValueChangeListener(new NumberValidator());
+        final HorizontalLayout maxResultsLayout = new HorizontalLayout(
+            maxResults, offset);
 
         final VerticalLayout queryLayout = new VerticalLayout(queryArea,
+                                                              maxResultsLayout,
                                                               queryButtonsLayout);
 
         noResultsLabel = new Label(bundle
@@ -106,6 +123,7 @@ public class JpqlConsole extends CustomComponent {
         setCompositionRoot(new VerticalLayout(queryLayout, resultsPanel));
     }
 
+    @SuppressWarnings("unchecked")
     private void executeQuery() {
         final String queryStr = queryArea.getValue();
 
@@ -120,18 +138,13 @@ public class JpqlConsole extends CustomComponent {
             return;
         }
 
-//        final Query query;
-//        try {
-//            query = entityManager.createQuery(queryStr);
-//        } catch (IllegalArgumentException ex) {
-//            Notification.show("Query is malformed.",
-//                              ex.getMessage(),
-//                              Notification.Type.ERROR_MESSAGE);
-//            return;
-//        }
         final List<?> result;
         try {
-            result = view.getJpqlConsoleController().executeQuery(queryStr);
+            result = view
+                .getJpqlConsoleController()
+                .executeQuery(queryStr,
+                              Integer.parseInt(maxResults.getValue()),
+                              Integer.parseInt(offset.getValue()));
         } catch (IllegalArgumentException ex) {
             Notification.show("Query is malformed.",
                               ex.getMessage(),
@@ -149,20 +162,29 @@ public class JpqlConsole extends CustomComponent {
             .map(Object::getClass)
             .collect(Collectors.toSet());
 
-        final Set<PropertyDescriptor> properties = new HashSet<>();
+        final Set<EntityPropertyDescriptor> entityProperties = new HashSet<>();
         try {
             for (final Class<?> clazz : classes) {
                 final BeanInfo beanInfo = Introspector.getBeanInfo(clazz);
                 final PropertyDescriptor[] props = beanInfo
                     .getPropertyDescriptors();
-                properties.addAll(Arrays.asList(props));
+
+                for (final PropertyDescriptor prop : props) {
+                    entityProperties.add(createEntityPropertyDescriptor(clazz,
+                                                                        prop));
+                }
+
             }
 
             for (final Class<?> clazz : classes) {
                 final BeanInfo beanInfo = Introspector.getBeanInfo(clazz);
-                final PropertyDescriptor[] props = beanInfo
-                    .getPropertyDescriptors();
-                properties.retainAll(Arrays.asList(props));
+                final List<EntityPropertyDescriptor> props = Arrays
+                    .stream(beanInfo.getPropertyDescriptors())
+                    .map(prop -> createEntityPropertyDescriptor(clazz,
+                                                                prop))
+                    .collect(Collectors.toList());
+
+                entityProperties.retainAll(props);
             }
         } catch (IntrospectionException ex) {
             Notification.show(
@@ -171,58 +193,233 @@ public class JpqlConsole extends CustomComponent {
             return;
         }
 
-        final List<PropertyDescriptor> propertiesList = properties
+        final List<EntityPropertyDescriptor> propertiesList = entityProperties
             .stream()
             .filter(prop -> {
                 return !Collection.class
-                    .isAssignableFrom(prop.getPropertyType());
+                    .isAssignableFrom(prop
+                        .getPropertyDescriptor()
+                        .getPropertyType());
             })
             .collect(Collectors.toList());
-        propertiesList.sort((prop1, prop2) -> {
-            return prop1.getName().compareTo(prop2.getName());
-        });
-        final List<String> propertyNames = propertiesList
-            .stream()
-            .map(PropertyDescriptor::getName)
-            .collect(Collectors.toList());
+        Collections.sort(propertiesList);
 
+//        final List<String> propertyNames = propertiesList
+//            .stream()
+//            .map(prop -> prop.getPropertyDescriptor().getName())
+//            .collect(Collectors.toList());
         final Label count = new Label(String.format("Found %d results",
                                                     result.size()));
-        final Label propertiesLabel = new Label(String.join(", ",
-                                                            propertyNames));
+//        final Label propertiesLabel = new Label(String.join(", ",
+//                                                            propertyNames));
 
-        final VerticalLayout data = new VerticalLayout(count, propertiesLabel);
+        final Grid<Object> resultsGrid = new Grid<>(Object.class);
+        resultsGrid.setWidth("100%");
+        for (final EntityPropertyDescriptor property : propertiesList) {
+            resultsGrid.addColumn(new ValueProvider<Object, Object>() {
+
+                private static final long serialVersionUID
+                                              = 8400673589843188514L;
+
+                @Override
+                public Object apply(final Object source) {
+                    final Method readMethod = property
+                        .getPropertyDescriptor()
+                        .getReadMethod();
+                    try {
+                        return readMethod.invoke(source);
+                    } catch (IllegalAccessException
+                             | IllegalArgumentException
+                             | InvocationTargetException ex) {
+                        Notification.show("Failed to display some properties.",
+                                          Notification.Type.WARNING_MESSAGE);
+                        LOGGER.error("Failed to display property '{}'.",
+                                     property.getPropertyDescriptor().getName());
+                        LOGGER.error(ex);
+                        return ex.getMessage();
+                    }
+                }
+
+            })
+                .setCaption(property.getPropertyDescriptor().getName());
+        }
+        resultsGrid.setItems((Collection<Object>) result);
+
+//        final VerticalLayout data = new VerticalLayout(count, propertiesLabel);
+        final VerticalLayout data = new VerticalLayout(count, resultsGrid);
         resultsPanel.setContent(data);
 
-//        while(classes.size() > 1) {
-//            final Set<Class<?>> oldClasses = classes;
-//            classes = oldClasses
-//                .stream()
-//                .map(clazz -> getSuperClass(clazz))
-//                .collect(Collectors.toSet());
-//        }
-//
-//        final Class<?> baseClass = classes.iterator().next();
-//        
-//        final Label count = new Label(String.format("Found %d results",
-//                                                    result.size()));
-//        final Label baseClassLabel;
-//        if (baseClass == null) {
-//            baseClassLabel = new Label("Base class is null");
-//        } else {
-//            baseClassLabel = new Label(String.format("Base class is '%s'.",
-//                                                     baseClass.getName()));
-//        }
-//        final VerticalLayout data = new VerticalLayout(count, baseClassLabel);
-//        resultsPanel.setContent(data);
     }
 
-    private Class<?> getSuperClass(final Class<?> clazz) {
-        if (Object.class.equals(clazz.getSuperclass())) {
-            return clazz;
-        } else {
-            return clazz.getSuperclass();
+    private boolean isIdProperty(final Class<?> clazz,
+                                 final PropertyDescriptor property) {
+
+        final String propertyName = property.getName();
+        final Optional<Field> field = getField(clazz, propertyName);
+        final Method readMethod = property.getReadMethod();
+
+        return (field.isPresent() && field.get().isAnnotationPresent(Id.class)
+                || (readMethod != null && readMethod.isAnnotationPresent(
+                    Id.class)));
+    }
+
+    private Optional<Field> getField(final Class<?> clazz, final String name) {
+
+        try {
+            return Optional.of(clazz.getDeclaredField(name));
+        } catch (NoSuchFieldException ex) {
+
+            if (Object.class.equals(clazz.getSuperclass())) {
+                return Optional.empty();
+            } else {
+                return getField(clazz.getSuperclass(), name);
+            }
         }
+    }
+
+    private EntityPropertyDescriptor createEntityPropertyDescriptor(
+        final Class<?> clazz,
+        final PropertyDescriptor propertyDescriptor) {
+
+        return new EntityPropertyDescriptor(
+            propertyDescriptor,
+            "class".equals(propertyDescriptor.getName()),
+            isIdProperty(clazz, propertyDescriptor));
+
+    }
+
+    private class EntityPropertyDescriptor
+        implements Comparable<EntityPropertyDescriptor> {
+
+        private final PropertyDescriptor propertyDescriptor;
+        private final boolean classProperty;
+        private final boolean idProperty;
+
+        public EntityPropertyDescriptor(
+            final PropertyDescriptor propertyDescriptor,
+            final boolean classProperty,
+            final boolean idProperty) {
+
+            this.propertyDescriptor = propertyDescriptor;
+            this.classProperty = classProperty;
+            this.idProperty = idProperty;
+        }
+
+        public PropertyDescriptor getPropertyDescriptor() {
+            return propertyDescriptor;
+        }
+
+        public boolean isClassProperty() {
+            return classProperty;
+        }
+
+        public boolean isIdProperty() {
+            return idProperty;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 5;
+            hash = 13 * hash + Objects.hashCode(propertyDescriptor);
+            hash = 13 * hash + (classProperty ? 1 : 0);
+            hash = 13 * hash + (idProperty ? 1 : 0);
+            return hash;
+        }
+
+        @Override
+        public boolean equals(final Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (!(obj instanceof EntityPropertyDescriptor)) {
+                return false;
+            }
+            final EntityPropertyDescriptor other
+                                               = (EntityPropertyDescriptor) obj;
+            if (classProperty != other.isClassProperty()) {
+                return false;
+            }
+            if (idProperty != other.isIdProperty()) {
+                return false;
+            }
+            return Objects.equals(propertyDescriptor,
+                                  other.getPropertyDescriptor());
+        }
+
+        @Override
+        public int compareTo(final EntityPropertyDescriptor other) {
+
+            if (isIdProperty() && other.isIdProperty()) {
+                return propertyDescriptor
+                    .getName()
+                    .compareTo(other.getPropertyDescriptor().getName());
+            } else if (isIdProperty() && other.isClassProperty()) {
+                return -1;
+            } else if (isClassProperty() && other.isIdProperty()) {
+                return 1;
+            } else if (isIdProperty()) {
+                return -1;
+            } else if (other.isIdProperty()) {
+                return 1;
+            } else if (isClassProperty()) {
+                return -1;
+            } else if (other.isClassProperty()) {
+                return 1;
+            } else {
+                return propertyDescriptor
+                    .getName()
+                    .compareTo(other.getPropertyDescriptor().getName());
+            }
+        }
+
+        @Override
+        public String toString() {
+            return String.format("%s{ "
+                                     + "name = '%s'; "
+                                     + "readMethod = '%s'; "
+                                     + "writeMethod = '%s'; "
+                                     + "type = '%s'; "
+                                     + "isIdProperty = '%b'; "
+                                     + "isClassProperty = '%b';"
+                                     + " }",
+                                 super.toString(),
+                                 propertyDescriptor.getName(),
+                                 propertyDescriptor.getReadMethod().getName(),
+                                 propertyDescriptor.getWriteMethod().getName(),
+                                 propertyDescriptor.getPropertyType().getName(),
+                                 idProperty,
+                                 classProperty);
+        }
+
+    }
+
+    private class NumberValidator
+        implements HasValue.ValueChangeListener<String> {
+
+        private static final long serialVersionUID = -3604431972616625411L;
+
+        @Override
+        public void valueChange(
+            final HasValue.ValueChangeEvent<String> event) {
+            final String value = event.getValue();
+            try {
+                Integer.parseUnsignedInt(value);
+            } catch (NumberFormatException ex) {
+                executeQueryButton.setEnabled(false);
+                ((AbstractComponent) event.getComponent()).setComponentError(
+                    new UserError(String.format(
+                        "%s is not a unsigned integer/long value.",
+                        event.getComponent().getCaption())));
+                return;
+            }
+
+            ((AbstractComponent) event.getComponent()).setComponentError(null);
+            executeQueryButton.setEnabled(true);
+        }
+
     }
 
 }
