@@ -38,11 +38,15 @@ class JpqlConsoleController {
     private EntityManager entityManager;
 
     @Transactional(Transactional.TxType.REQUIRED)
-    protected List<?> executeQuery(final String queryStr) {
+    protected List<?> executeQuery(final String queryStr,
+                                   final int maxResults,
+                                   final int offset) {
 
         Objects.requireNonNull(queryStr);
 
         final Query query = entityManager.createQuery(queryStr);
+        query.setMaxResults(maxResults);
+        query.setFirstResult(offset);
         return query.getResultList();
     }
 
