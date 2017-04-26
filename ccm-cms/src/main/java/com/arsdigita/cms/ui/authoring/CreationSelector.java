@@ -26,7 +26,6 @@ import com.arsdigita.bebop.Page;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.SingleSelectionModel;
 import com.arsdigita.bebop.form.FormErrorDisplay;
-import com.arsdigita.bebop.parameters.BigDecimalParameter;
 import com.arsdigita.bebop.parameters.LongParameter;
 import com.arsdigita.cms.ItemSelectionModel;
 import com.arsdigita.cms.ui.ContentItemPage;
@@ -45,14 +44,12 @@ import org.librecms.contentsection.ContentType;
 import org.librecms.contentsection.ContentTypeManager;
 import org.librecms.contentsection.ContentTypeRepository;
 import org.librecms.contentsection.Folder;
-import org.librecms.contenttypes.AuthoringKit;
 import org.librecms.contenttypes.AuthoringKitInfo;
 import org.librecms.contenttypes.ContentTypeInfo;
 import org.librecms.contenttypes.ContentTypesManager;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
 import java.util.Optional;
 
 /**
