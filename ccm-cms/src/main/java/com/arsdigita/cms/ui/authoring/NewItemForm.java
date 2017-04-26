@@ -22,21 +22,17 @@ import com.arsdigita.bebop.BoxPanel;
 import com.arsdigita.bebop.Form;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.PageState;
-import com.arsdigita.bebop.Text;
 import com.arsdigita.bebop.event.PrintEvent;
 import com.arsdigita.bebop.event.PrintListener;
 import com.arsdigita.bebop.form.Option;
 import com.arsdigita.bebop.form.OptionGroup;
 import com.arsdigita.bebop.form.SingleSelect;
 import com.arsdigita.bebop.form.Submit;
-import com.arsdigita.bebop.parameters.BigDecimalParameter;
 import com.arsdigita.bebop.parameters.LongParameter;
 import com.arsdigita.cms.ui.ItemSearch;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.util.UncheckedWrapperException;
 import com.arsdigita.xml.Element;
-
-import java.math.BigDecimal;
 
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.PermissionChecker;
@@ -44,14 +40,10 @@ import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentType;
 import org.librecms.contentsection.ContentTypeRepository;
-import org.librecms.contentsection.privileges.TypePrivileges;
 
 import java.util.List;
 import java.util.TooManyListenersException;
-import java.util.stream.Collectors;
 
-import org.libreccm.l10n.GlobalizationHelper;
-import org.librecms.contentsection.ContentTypeManager;
 import org.librecms.contenttypes.ContentTypeInfo;
 import org.librecms.contenttypes.ContentTypesManager;
 
@@ -107,7 +99,7 @@ public abstract class NewItemForm extends Form {
         createLabel.setIdAttr("create_label");
         panel.add(createLabel);
 
-        typeSelect = new SingleSelect(new BigDecimalParameter(TYPE_ID),
+        typeSelect = new SingleSelect(new LongParameter(TYPE_ID),
                                       OptionGroup.SortMode.ALPHABETICAL_ASCENDING);
         try {
             typeSelect.addPrintListener(new PrintListener() {
