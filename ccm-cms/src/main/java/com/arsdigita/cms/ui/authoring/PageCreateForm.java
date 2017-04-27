@@ -35,13 +35,9 @@ import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.util.Assert;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.arsdigita.cms.CMSConfig;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentItem;
 
-import java.util.Date;
 import java.util.Locale;
 
 /**
@@ -58,7 +54,7 @@ import java.util.Locale;
  * @author Stanislav Freidin (stas@arsdigita.com)
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class PageCreate
+public class PageCreateForm
     extends BasicPageForm
     implements FormSubmissionListener, CreationComponent {
 
@@ -81,7 +77,7 @@ public class PageCreate
      *                  CreationSelector#editItem(PageState, ContentItem)} methods on the parent
      *                         eventually
      */
-    public PageCreate(final ItemSelectionModel itemModel,
+    public PageCreateForm(final ItemSelectionModel itemModel,
                       final CreationSelector creationSelector) {
 
         super("PageCreate", itemModel);
@@ -141,6 +137,7 @@ public class PageCreate
     /**
      * Create a new item id.
      *
+     * @param event
      * @throws com.arsdigita.bebop.FormProcessException
      */
     @Override
@@ -152,6 +149,7 @@ public class PageCreate
      * If the Cancel button was pressed, hide self and show the display
      * component.
      *
+     * @param event
      * @throws com.arsdigita.bebop.FormProcessException
      */
     @Override
