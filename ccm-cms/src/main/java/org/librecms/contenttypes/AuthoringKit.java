@@ -18,7 +18,8 @@
  */
 package org.librecms.contenttypes;
 
-import com.arsdigita.cms.ui.item.ItemCreateForm;
+import com.arsdigita.bebop.FormSection;
+import com.arsdigita.cms.ui.authoring.PageCreateForm;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -33,7 +34,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AuthoringKit {
     
-    Class<? extends ItemCreateForm> createComponent();
+    Class<? extends FormSection> createComponent();
     
     AuthoringStep[] steps();
     

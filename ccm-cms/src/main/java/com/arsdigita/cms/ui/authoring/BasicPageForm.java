@@ -45,9 +45,6 @@ import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentItemManager;
 import org.librecms.contentsection.ContentType;
-import org.librecms.contentsection.FolderManager;
-
-import javax.servlet.ServletException;
 
 import java.util.Date;
 import java.util.Locale;
@@ -73,8 +70,6 @@ import java.util.Optional;
 public abstract class BasicPageForm extends BasicItemForm {
 
     private static final String LAUNCH_DATE = "launch_date";
-
-    private FormSection widgetSection;
 
     /**
      * Construct a new BasicPageForm
@@ -194,7 +189,6 @@ public abstract class BasicPageForm extends BasicItemForm {
 
         final Optional<Folder> folder = itemManager.getItemFolder(item);
         if (folder.isPresent()) {
-            final FormData data = fse.getFormData();
             final String name = fse.getFormData().getString(NAME);
             if (!item.getName()
                 .getValue(KernelConfig.getConfig().getDefaultLocale())

@@ -21,6 +21,7 @@ package com.arsdigita.cms.ui.authoring;
 import com.arsdigita.bebop.ColumnPanel;
 import com.arsdigita.bebop.Component;
 import com.arsdigita.bebop.Form;
+import com.arsdigita.bebop.FormSection;
 import com.arsdigita.bebop.MetaForm;
 import com.arsdigita.bebop.Page;
 import com.arsdigita.bebop.PageState;
@@ -107,13 +108,11 @@ public class CreationSelector extends MetaForm {
      * Constructs a new <code>CreationSelector</code>. Load all the possible
      * creation components from the database and stick them in the Map.
      *
-     * @param typeSelectionModel   the {@link SingleSelectionModel} which will
-     *                             supply a BigDecimal ID of the content type to
-     *                             instantiate
+     * @param typeSelectionModel the {@link SingleSelectionModel} which will
+     * supply a BigDecimal ID of the content type to instantiate
      *
      * @param folderSelectionModel the {@link FolderSelectionModel} containing
-     *                             the folder in which new items are to be
-     *                             created
+     * the folder in which new items are to be created
      */
     public CreationSelector(final SingleSelectionModel<Long> typeSelectionModel,
                             final FolderSelectionModel folderSelectionModel) {
@@ -191,7 +190,7 @@ public class CreationSelector extends MetaForm {
      */
     protected Component instantiateKitComponent(final AuthoringKitInfo kit,
                                                 final ContentType type) {
-        final Class<? extends ItemCreateForm> createClass = kit
+        final Class<? extends FormSection> createClass = kit
             .getCreateComponent();
         final Object[] vals;
 
@@ -200,18 +199,17 @@ public class CreationSelector extends MetaForm {
                                                                         itemIdParameter);
             vals = new Object[]{itemModel, this};
 
-            final Constructor<? extends ItemCreateForm> constructor
-                                                            = createClass
-                    .getConstructor(arguments);
+            final Constructor<? extends FormSection> constructor = createClass
+                .getConstructor(arguments);
             final Component component = (Component) constructor
                 .newInstance(vals);
             return component;
         } catch (IllegalAccessException
-                 | IllegalArgumentException
-                 | InstantiationException
-                 | NoSuchMethodException
-                 | SecurityException
-                 | InvocationTargetException ex) {
+                     | IllegalArgumentException
+                     | InstantiationException
+                     | NoSuchMethodException
+                     | SecurityException
+                     | InvocationTargetException ex) {
             LOGGER.error("\"Failed to instantiate creation component \"{}\".",
                          kit.getCreateComponent().getName());
             LOGGER.error(ex);
@@ -229,7 +227,7 @@ public class CreationSelector extends MetaForm {
      * @param state represents the current request
      *
      * @return the currently selected folder, in which new items should be
-     *         placed.
+     * placed.
      */
     public final Folder getFolder(final PageState state) {
         return (Folder) folderSelectionModel.getSelectedObject(state);
@@ -257,7 +255,7 @@ public class CreationSelector extends MetaForm {
      * complete.
      *
      * @param state the page state
-     * @param item  the newly created item
+     * @param item the newly created item
      */
     public void editItem(final PageState state, final ContentItem item) {
         final ContentSection section = getContentSection(state);

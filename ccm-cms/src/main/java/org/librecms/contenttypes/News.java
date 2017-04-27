@@ -18,6 +18,7 @@
  */
 package org.librecms.contenttypes;
 
+import com.arsdigita.cms.ui.authoring.PageCreateForm;
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.libreccm.l10n.LocalizedString;
@@ -48,6 +49,8 @@ import static org.librecms.CmsConstants.*;
 @Table(name = "NEWS", schema = DB_SCHEMA)
 @ContentTypeDescription(labelBundle = "org.librecms.contenttypes.News",
                         descriptionBundle = "org.librecms.contenttypes.News")
+@AuthoringKit(createComponent = PageCreateForm.class,
+              steps = {})
 public class News extends ContentItem implements Serializable {
 
     private static final long serialVersionUID = -4939565845920227974L;

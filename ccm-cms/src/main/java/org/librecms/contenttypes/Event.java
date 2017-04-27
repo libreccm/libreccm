@@ -18,6 +18,7 @@
  */
 package org.librecms.contenttypes;
 
+import com.arsdigita.cms.ui.authoring.PageCreateForm;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
@@ -50,6 +51,8 @@ import static org.librecms.CmsConstants.*;
 @Table(name = "EVENTS", schema = DB_SCHEMA)
 @ContentTypeDescription(labelBundle = "org.librecms.contenttypes.Event",
                         descriptionBundle = "org.librecms.contenttypes.Event")
+@AuthoringKit(createComponent = PageCreateForm.class,
+              steps = {})
 public class Event extends ContentItem implements Serializable {
 
     private static final long serialVersionUID = -9104886733503414635L;
