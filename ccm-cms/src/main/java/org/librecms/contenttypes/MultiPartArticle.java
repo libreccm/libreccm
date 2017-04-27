@@ -18,6 +18,7 @@
  */
 package org.librecms.contenttypes;
 
+import com.arsdigita.cms.contenttypes.ui.mparticle.MultiPartArticleCreateForm;
 import org.hibernate.envers.Audited;
 import org.libreccm.l10n.LocalizedString;
 import org.librecms.contentsection.ContentItem;
@@ -47,6 +48,8 @@ import static org.librecms.CmsConstants.*;
 @Table(name = "MULTIPART_ARTICLES", schema = DB_SCHEMA)
 @ContentTypeDescription(labelBundle = "org.librecms.contenttypes.MultiPartArticle",
                         descriptionBundle = "org.librecms.contenttypes.MultiPartArticle")
+@AuthoringKit(createComponent = MultiPartArticleCreateForm.class,
+              steps = {})
 public class MultiPartArticle extends ContentItem implements Serializable {
 
     private static final long serialVersionUID = -587374085831420868L;

@@ -18,6 +18,7 @@
  */
 package org.librecms.contenttypes;
 
+import com.arsdigita.cms.ui.authoring.PageCreateForm;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -44,6 +45,8 @@ import org.librecms.contentsection.ContentItem;
 @Table(name = "ARTICLES", schema = DB_SCHEMA)
 @ContentTypeDescription(labelBundle = "org.librecms.contenttypes.Article",
                         descriptionBundle = "org.librecms.contenttypes.Article")
+@AuthoringKit(createComponent = PageCreateForm.class,
+              steps = {})
 public class Article extends ContentItem implements Serializable {
 
     private static final long serialVersionUID = 3832010184748095822L;

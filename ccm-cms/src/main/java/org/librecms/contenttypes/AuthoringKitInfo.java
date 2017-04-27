@@ -18,6 +18,8 @@
  */
 package org.librecms.contenttypes;
 
+import com.arsdigita.bebop.FormSection;
+import com.arsdigita.cms.ui.authoring.PageCreateForm;
 import com.arsdigita.cms.ui.item.ItemCreateForm;
 
 import java.util.ArrayList;
@@ -36,7 +38,7 @@ public class AuthoringKitInfo {
      * The create component (the form used to collect the mandatory data for the
      * content type).
      */
-    private Class<? extends ItemCreateForm> createComponent;
+    private Class<? extends FormSection> createComponent;
 
     /**
      * The authoring steps of the authoring kit.
@@ -47,12 +49,12 @@ public class AuthoringKitInfo {
         authoringSteps = new ArrayList<>();
     }
 
-    public Class<? extends ItemCreateForm> getCreateComponent() {
+    public Class<? extends FormSection> getCreateComponent() {
         return createComponent;
     }
 
     public void setCreateComponent(
-            final Class<? extends ItemCreateForm> createComponent) {
+        final Class<? extends FormSection> createComponent) {
 
         this.createComponent = createComponent;
     }
@@ -66,7 +68,7 @@ public class AuthoringKitInfo {
     }
 
     protected void setAuthoringSteps(
-            final List<AuthoringStepInfo> authoringSteps) {
+        final List<AuthoringStepInfo> authoringSteps) {
         this.authoringSteps = authoringSteps;
     }
 
@@ -118,9 +120,9 @@ public class AuthoringKitInfo {
 
     public String toString(final String data) {
         return String.format("%s{ "
-                                     + "createComponent = \"%s\", "
-                                     + "authoringSteps = { %s }%s"
-                                     + " }",
+                                 + "createComponent = \"%s\", "
+                                 + "authoringSteps = { %s }%s"
+                                 + " }",
                              super.toString(),
                              Objects.toString(createComponent),
                              Objects.toString(authoringSteps),

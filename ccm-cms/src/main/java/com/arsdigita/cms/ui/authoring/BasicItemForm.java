@@ -372,8 +372,6 @@ public abstract class BasicItemForm extends FormSection
 
         if (newName != null) {
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final CategoryRepository categoryRepo = cdiUtil
-                .findBean(CategoryRepository.class);
             final ContentItemRepository itemRepo = cdiUtil
                 .findBean(ContentItemRepository.class);
 
