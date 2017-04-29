@@ -282,7 +282,7 @@ create schema CCM_CORE;
         DEFAULT_VALUE varchar(255),
         PARAMETER_MODEL varchar(255),
         PARAMETER_NAME varchar(255),
-        OBJECT_ID bigint not null,s
+        OBJECT_ID bigint not null,
         primary key (OBJECT_ID)
     );
 

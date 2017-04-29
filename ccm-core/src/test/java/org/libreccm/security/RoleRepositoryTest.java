@@ -320,8 +320,8 @@ public class RoleRepositoryTest {
      * throws a {@link IllegalArgumentException} is called with {@code null} for
      * the {@link Role} to save.
      */
-    @Test(expected = IllegalArgumentException.class)
-    @ShouldThrowException(IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
+    @ShouldThrowException(NullPointerException.class)
     @InSequence(600)
     public void saveNullValue() {
         roleRepository.save(null);

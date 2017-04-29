@@ -23,8 +23,11 @@ import com.arsdigita.bebop.FormData;
 import com.arsdigita.bebop.FormProcessException;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.PageState;
+import com.arsdigita.bebop.Text;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.bebop.event.FormSubmissionListener;
+import com.arsdigita.bebop.event.PrintEvent;
+import com.arsdigita.bebop.event.PrintListener;
 
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentType;
@@ -35,10 +38,15 @@ import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.util.Assert;
 
+import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.l10n.GlobalizationHelper;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentItem;
+import org.librecms.contenttypes.ContentTypeInfo;
+import org.librecms.contenttypes.ContentTypesManager;
 
 import java.util.Locale;
+import java.util.ResourceBundle;
 
 /**
  * A form which will create a new document (that is subclasses of class
@@ -59,7 +67,7 @@ public class PageCreateForm
     implements FormSubmissionListener, CreationComponent {
 
     private final CreationSelector creationSelector;
-    private final ApplyWorkflowFormSection workflowSection;
+    private ApplyWorkflowFormSection workflowSection;
 
     /**
      * The state parameter which specifies the content section
@@ -78,16 +86,11 @@ public class PageCreateForm
      *                         eventually
      */
     public PageCreateForm(final ItemSelectionModel itemModel,
-                      final CreationSelector creationSelector) {
+                          final CreationSelector creationSelector) {
 
         super("PageCreate", itemModel);
 
         this.creationSelector = creationSelector;
-
-        /* Retrieve Content Type  */
-        final ContentType type = getItemSelectionModel().getContentType();
-        /* Add workflow selection based on configured Content Type            */
-        workflowSection = new ApplyWorkflowFormSection(type);
 
         workflowSection.setCreationSelector(creationSelector);
         addSubmissionListener(this);
@@ -104,15 +107,21 @@ public class PageCreateForm
     @Override
     protected void addWidgets() {
 
+        /* Retrieve Content Type  */
+        final ContentType type = getItemSelectionModel().getContentType();
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final ContentTypesManager typesManager = cdiUtil
+            .findBean(ContentTypesManager.class);
+        final ContentTypeInfo typeInfo = typesManager.getContentTypeInfo(type);
+
+        /* Add workflow selection based on configured Content Type            */
+        workflowSection = new ApplyWorkflowFormSection(type);
         add(workflowSection, ColumnPanel.INSERT);
         /* content type */
         add(new Label(new GlobalizedMessage("cms.ui.authoring.content_type",
                                             CmsConstants.CMS_BUNDLE)));
-        /* Retrieve Content Type  */
-        final ContentType type = getItemSelectionModel().getContentType();
-        add(new Label(type.getLabel().getValue(KernelConfig
-            .getConfig()
-            .getDefaultLocale())));
+        final Label typeOutput = new Label(new ContentTypePrintListener(typeInfo));
+        add(typeOutput);
         /* language selection   */
         add(new Label(new GlobalizedMessage("cms.ui.language.field",
                                             CmsConstants.CMS_BUNDLE)));
@@ -138,6 +147,7 @@ public class PageCreateForm
      * Create a new item id.
      *
      * @param event
+     *
      * @throws com.arsdigita.bebop.FormProcessException
      */
     @Override
@@ -150,6 +160,7 @@ public class PageCreateForm
      * component.
      *
      * @param event
+     *
      * @throws com.arsdigita.bebop.FormProcessException
      */
     @Override
@@ -180,7 +191,7 @@ public class PageCreateForm
     @Override
     public void validate(final FormSectionEvent event)
         throws FormProcessException {
-        
+
         final Folder folder = creationSelector.getFolder(event.getPageState());
         validateNameUniqueness(folder, event);
     }
@@ -194,9 +205,9 @@ public class PageCreateForm
      * @throws FormProcessException
      */
     @Override
-    public void process(final FormSectionEvent event) 
+    public void process(final FormSectionEvent event)
         throws FormProcessException {
-        
+
         final FormData data = event.getFormData();
         final PageState state = event.getPageState();
         final ContentSection section = creationSelector.getContentSection(state);
@@ -204,17 +215,43 @@ public class PageCreateForm
 
         Assert.exists(section, ContentSection.class);
 
-        final ContentItem item = createContentPage(state, 
+        final ContentItem item = createContentPage(state,
                                                    (String) data.get(NAME),
                                                    section,
                                                    folder);
         final Locale locale = new Locale((String) data.get(LANGUAGE));
         item.getName().addValue(locale, (String) data.get(NAME));
         item.getTitle().addValue(locale, (String) data.get(TITLE));
-        
+
         workflowSection.applyWorkflow(state, item);
 
         creationSelector.editItem(state, item);
+    }
+
+    private class ContentTypePrintListener implements PrintListener {
+
+        private final ContentTypeInfo typeInfo;
+
+        public ContentTypePrintListener(final ContentTypeInfo typeInfo) {
+            this.typeInfo = typeInfo;
+        }
+
+        @Override
+        public void prepare(final PrintEvent event) {
+
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final GlobalizationHelper globalizationHelper = cdiUtil
+                .findBean(GlobalizationHelper.class);
+            final ResourceBundle bundle = ResourceBundle
+                .getBundle(typeInfo.getLabelBundle(),
+                           globalizationHelper.getNegotiatedLocale());
+
+            final String typeLabel = bundle.getString(typeInfo.getLabelKey());
+            
+            final Label target = (Label) event.getTarget();
+            target.setLabel(typeLabel);
+        }
+
     }
 
 }

@@ -41,7 +41,6 @@ import java.util.ArrayList;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import org.libreccm.core.CoreConstants;
 
 import org.libreccm.workflow.WorkflowTemplate;
 import org.librecms.contentsection.privileges.AssetPrivileges;
