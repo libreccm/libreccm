@@ -40,9 +40,14 @@ find_wildfly_home() {
 # @param $1 (optional): Maven profile to use.
 #
 build_site() {
-    if [ -d "$1" ]; then 
+    echo "build_site_param1: $1"
+    echo "build_site_param2: $2"
+    
+    if [ -n "$1" ]; then
+        echo "Building project site with profile $1..."
         mvn clean package site site:stage -Dmaven.test.failure.ignore=true -P$1
-    else 
+    else
+        echo "Building project site without a profile..."
         mvn clean package site site:stage -Dmaven.test.failure.ignore=true
     fi
 }
@@ -52,7 +57,7 @@ build_site() {
 # @param $1 (optional): Maven profile to use.
 #
 build() {
-    if [ -d "$1" ]; then
+    if [ -n "$1" ]; then
         mvn clean package -P$1
     else
         mvn clean package
@@ -476,6 +481,9 @@ development environment. It provides shortcuts for several Maven goals. The avai
     
     exit 0;
 }
+
+echo "param1: $1"
+echo "param2: $2"
 
 case $1 in
     build-site)      build_site $2 ;;
