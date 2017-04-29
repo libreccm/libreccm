@@ -93,6 +93,10 @@ public abstract class Traversal {
             throw new IllegalStateException
                 ("Component " + c + " is part of a cycle");
         }
+        
+        LOGGER.debug("---");
+        LOGGER.debug("Current component: '{}'", c);
+        LOGGER.debug("Visiting: {}", m_visiting);
 
         //s_log.debug("preorder called for component " + c.toString());
 
@@ -108,7 +112,11 @@ public abstract class Traversal {
             }
 
             for (Iterator i = c.children(); i.hasNext(); ) {
-                preorder ((Component) i.next());
+                final Component component = (Component) i.next();
+                LOGGER.debug("Calling preorder for component '{}'...", 
+                             component);
+                LOGGER.debug("---");
+                preorder (component);
             }
         }
 
