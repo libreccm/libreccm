@@ -93,7 +93,6 @@ public class SimpleContainer extends SimpleComponent implements Container {
      */
     public void add(Component pc) {
         Assert.isUnlocked(this);
-        Assert.exists(pc);
         m_components.add(pc);
     }
 
