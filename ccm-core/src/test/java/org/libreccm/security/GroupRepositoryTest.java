@@ -222,8 +222,8 @@ public class GroupRepositoryTest {
         groupRepository.save(group);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    @ShouldThrowException(IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
+    @ShouldThrowException(NullPointerException.class)
     @InSequence(600)
     public void saveNullValue() {
         groupRepository.save(null);

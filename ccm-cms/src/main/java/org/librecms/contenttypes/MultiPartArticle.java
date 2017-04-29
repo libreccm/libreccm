@@ -62,7 +62,7 @@ public class MultiPartArticle extends ContentItem implements Serializable {
                                joinColumns = {
                                    @JoinColumn(name = "OBJECT_ID")}
         ))
-    private LocalizedString summary;
+    private LocalizedString summary = new LocalizedString();
 
     @OneToMany
     @JoinColumn(name = "MULTIPART_ARTICLE_ID")

@@ -22,6 +22,11 @@
         <Logger name="org.hibernate.type.descriptor.sql"
                 level="trace">
         </Logger>-->
+        
+        <!--<Logger name="com.arsdigita.bebop.util.Traversal"
+                level="debug">
+        </Logger>-->
+        
         <Logger name="com.arsdigita.cms.ui.assets.AssetFolderBrowserController"
                 level="debug">
             

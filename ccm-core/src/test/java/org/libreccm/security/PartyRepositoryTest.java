@@ -250,8 +250,8 @@ public class PartyRepositoryTest {
         });
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    @ShouldThrowException(IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
+    @ShouldThrowException(NullPointerException.class)
     @InSequence(500)
     public void saveNullValue() {
         shiro.getSystemUser().execute(() -> partyRepository.save(null));
