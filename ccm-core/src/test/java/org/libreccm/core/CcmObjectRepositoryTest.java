@@ -323,8 +323,8 @@ public class CcmObjectRepositoryTest {
      * {@link IllegalArgumentException} if called with {@code null} as the
      * object to save.
      */
-    @Test(expected = IllegalArgumentException.class)
-    @ShouldThrowException(IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
+    @ShouldThrowException(NullPointerException.class)
     @InSequence(500)
     public void saveNullValue() {
         ccmObjectRepository.save(null);

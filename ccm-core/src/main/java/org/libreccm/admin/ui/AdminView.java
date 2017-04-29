@@ -36,6 +36,8 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 import org.apache.shiro.subject.Subject;
+import org.libreccm.admin.ui.usersgroupsroles.UsersGroupsRoles;
+import org.libreccm.admin.ui.usersgroupsroles.UsersTableDataProvider;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.security.PermissionChecker;
 import org.libreccm.security.User;
@@ -72,7 +74,7 @@ public class AdminView extends CustomComponent implements View {
 
     @Inject
     private JpqlConsoleController jpqlConsoleController;
-    
+
     @Inject
     private Subject subject;
 
@@ -81,6 +83,9 @@ public class AdminView extends CustomComponent implements View {
 
     @Inject
     private GlobalizationHelper globalizationHelper;
+    
+    @Inject
+    private UsersTableDataProvider usersTableDataProvider;
 
     private ResourceBundle bundle;
 
@@ -88,46 +93,49 @@ public class AdminView extends CustomComponent implements View {
     private UserRepository userRepo;
 
     private final TabSheet tabSheet;
-    private final Grid<User> usersTable;
-    
+//    private final Grid<User> usersTable;
+    private final UsersGroupsRoles usersGroupsRoles;
+
     private final JpqlConsole jpqlConsole;
 
     public AdminView() {
 
         tabSheet = new TabSheet();
 
-        final TabSheet userGroupsRoles = new TabSheet();
-        usersTable = new Grid<>();
-        usersTable.setWidth("100%");
-//        usersTable.setItems(userRepo.findAll());
-        usersTable.addColumn(User::getName)
-            .setId(COL_USER_NAME)
-            .setCaption("User name");
-        usersTable
-            .addColumn(User::getGivenName)
-            .setId(COL_GIVEN_NAME)
-            .setCaption("Given name");
-        usersTable
-            .addColumn(User::getFamilyName)
-            .setId(COL_FAMILY_NAME)
-            .setCaption("Family name");
-        usersTable
-            .addColumn(user -> user.getPrimaryEmailAddress().getAddress())
-            .setId(COL_EMAIL)
-            .setCaption("E-Mail");
-        usersTable
-            .addColumn(user -> {
-                if (user.isBanned()) {
-                    return bundle.getString("ui.admin.user.banned_yes");
-                } else {
-                    return bundle.getString("ui.admin.user.banned_no");
-                }
-            })
-            .setId(COL_BANNED)
-            .setCaption("Banned?");
-        userGroupsRoles.addTab(usersTable, "Users");
-
-        tabSheet.addTab(userGroupsRoles, "Users/Groups/Roles");
+//        final TabSheet userGroupsRoles = new TabSheet();
+//        usersTable = new Grid<>();
+//        usersTable.setWidth("100%");
+////        usersTable.setItems(userRepo.findAll());
+//        usersTable.addColumn(User::getName)
+//            .setId(COL_USER_NAME)
+//            .setCaption("User name");
+//        usersTable
+//            .addColumn(User::getGivenName)
+//            .setId(COL_GIVEN_NAME)
+//            .setCaption("Given name");
+//        usersTable
+//            .addColumn(User::getFamilyName)
+//            .setId(COL_FAMILY_NAME)
+//            .setCaption("Family name");
+//        usersTable
+//            .addColumn(user -> user.getPrimaryEmailAddress().getAddress())
+//            .setId(COL_EMAIL)
+//            .setCaption("E-Mail");
+//        usersTable
+//            .addColumn(user -> {
+//                if (user.isBanned()) {
+//                    return bundle.getString("ui.admin.user.banned_yes");
+//                } else {
+//                    return bundle.getString("ui.admin.user.banned_no");
+//                }
+//            })
+//            .setId(COL_BANNED)
+//            .setCaption("Banned?");
+//        userGroupsRoles.addTab(usersTable, "Users");
+//
+//        tabSheet.addTab(userGroupsRoles, "Users/Groups/Roles");
+        usersGroupsRoles = new UsersGroupsRoles(this);
+        tabSheet.addTab(usersGroupsRoles, "Users/Groups/Roles");
 
         final ServletContext servletContext = VaadinServlet
             .getCurrent()
@@ -139,54 +147,12 @@ public class AdminView extends CustomComponent implements View {
             jpqlConsole = null;
         }
 
-//        final CssLayout header = new CssLayout() {
-//
-//            private static final long serialVersionUID = -4372147161604688854L;
-//
-//            @Override
-//            protected String getCss(final Component component) {
-//                /*if ((component instanceof Image)
-//                        && "libreccm-logo".equals(component.getId())) {
-//
-//                    return "position: absolute; top: 10px; left: 10px;";
-//
-//                } else if ((component instanceof Label)
-//                               && "libreccm-headerinfoline".equals(component
-//                        .getId())) {
-//                    return "background-color: #8b8e8a; width: 100%; position: absolute; top:120px; left: 0";
-//                }*/
-//                return "";
-//
-////                return ".v-csslayout {\n"
-////                           + "background-color: #56a1bd;\n"
-////                           + "background-image: -ie-linear-gradient(top , #56a1db 5%, #024c68 95%\n"
-////                       + "background-image: -moz-linear-gradient(top , #56a1db 5%, #024c68 95%\n"
-////                       + "background-image: -webkit-linear-gradient(top , #56a1db 5%, #024c68 95%\n"
-////                       + "background-image: linear-gradient(top , #56a1db 5%, #024c68 95%\n"
-////                       + "}\n"
-////                    + "\n"
-////                    + ".libreccm-logo {\n"
-////                    + "border-left: 10px solid #0f0;\n"
-////                    + "}\n";
-//            }
-//
-//        };
-//        header.setWidth("100%");
-//        header.setHeight("5em");
         final GridLayout header = new GridLayout(5, 1);
         header.setWidth("100%");
         header.addStyleName("libreccm-header");
-//        final Image logo = new Image(
-//            "",
-//            new ClassResource("/themes/libreccm-default/images/libreccm.png"));
-//        logo.setId("libreccm-logo");
-//        logo.addStyleName("libreccm-logo");   
-//        header.addComponent(logo, 0, 0);
-//        header.setComponentAlignment(logo, Alignment.MIDDLE_LEFT);
 
         final Label headerInfoLine = new Label("LibreCCM");
         headerInfoLine.setId("libreccm-headerinfoline");
-//        headerInfoLine.setWidth("100%");
         header.addComponent(headerInfoLine, 3, 0, 4, 0);
         header.setComponentAlignment(headerInfoLine, Alignment.TOP_RIGHT);
 
@@ -216,20 +182,19 @@ public class AdminView extends CustomComponent implements View {
         bundle = ResourceBundle
             .getBundle(AdminUiConstants.ADMIN_BUNDLE,
                        globalizationHelper.getNegotiatedLocale());
+        
+        usersGroupsRoles.setDataProvider(usersTableDataProvider);
     }
 
     @Override
     public void enter(final ViewChangeListener.ViewChangeEvent event) {
 
-//        if (!subject.isAuthenticated()) {
-//            getUI().getNavigator().navigateTo(LoginView.VIEWNAME);
-//        }
-        usersTable.setItems(userRepo.findAll());
+//        usersGroupsRoles.setUsers(userRepo.findAll());
     }
-    
 
+    
     protected JpqlConsoleController getJpqlConsoleController() {
         return jpqlConsoleController;
     }
-    
+
 }

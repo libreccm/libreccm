@@ -289,8 +289,8 @@ public class UserRepositoryTest {
         shiro.getSystemUser().execute(() -> userRepository.save(user));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    @ShouldThrowException(IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
+    @ShouldThrowException(NullPointerException.class)
     @InSequence(700)
     public void saveNullValue() {
         shiro.getSystemUser().execute(() -> userRepository.save(null));

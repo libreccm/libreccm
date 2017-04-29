@@ -31,7 +31,6 @@ import com.arsdigita.bebop.parameters.LongParameter;
 import com.arsdigita.cms.ItemSelectionModel;
 import com.arsdigita.cms.ui.ContentItemPage;
 import com.arsdigita.cms.ui.folder.FolderSelectionModel;
-import com.arsdigita.cms.ui.item.ItemCreateForm;
 import com.arsdigita.util.UncheckedWrapperException;
 import com.arsdigita.web.RedirectSignal;
 import com.arsdigita.web.URL;
@@ -45,6 +44,7 @@ import org.librecms.contentsection.ContentType;
 import org.librecms.contentsection.ContentTypeManager;
 import org.librecms.contentsection.ContentTypeRepository;
 import org.librecms.contentsection.Folder;
+import org.librecms.contentsection.FolderRepository;
 import org.librecms.contenttypes.AuthoringKitInfo;
 import org.librecms.contenttypes.ContentTypeInfo;
 import org.librecms.contenttypes.ContentTypesManager;
@@ -92,7 +92,7 @@ public class CreationSelector extends MetaForm {
     private final FolderSelectionModel folderSelectionModel;
     private final SingleSelectionModel<Long> typeSelectionModel;
 
-    private static Class[] arguments = new Class[]{
+    private static final Class[] ARGUMENTS = new Class[]{
         ItemSelectionModel.class,
         CreationSelector.class
     };
@@ -108,11 +108,13 @@ public class CreationSelector extends MetaForm {
      * Constructs a new <code>CreationSelector</code>. Load all the possible
      * creation components from the database and stick them in the Map.
      *
-     * @param typeSelectionModel the {@link SingleSelectionModel} which will
-     * supply a BigDecimal ID of the content type to instantiate
+     * @param typeSelectionModel   the {@link SingleSelectionModel} which will
+     *                             supply a BigDecimal ID of the content type to
+     *                             instantiate
      *
      * @param folderSelectionModel the {@link FolderSelectionModel} containing
-     * the folder in which new items are to be created
+     *                             the folder in which new items are to be
+     *                             created
      */
     public CreationSelector(final SingleSelectionModel<Long> typeSelectionModel,
                             final FolderSelectionModel folderSelectionModel) {
@@ -156,8 +158,8 @@ public class CreationSelector extends MetaForm {
                 throw new UncheckedWrapperException(String.format(
                     "Type with id %d not found.", typeId));
             }
-            final ContentTypeInfo typeInfo = typesManager.getContentTypeInfo(
-                type.get());
+            final ContentTypeInfo typeInfo = typesManager
+                .getContentTypeInfo(type.get());
             final AuthoringKitInfo kit = typeInfo.getAuthoringKit();
             component = instantiateKitComponent(kit, type.get());
             if (component != null) {
@@ -195,24 +197,25 @@ public class CreationSelector extends MetaForm {
         final Object[] vals;
 
         try {
-            final ItemSelectionModel itemModel = new ItemSelectionModel(type,
-                                                                        itemIdParameter);
-            vals = new Object[]{itemModel, this};
+            final ItemSelectionModel itemSelectionModel
+                                         = new ItemSelectionModel(
+                    type, itemIdParameter);
+            vals = new Object[]{itemSelectionModel, this};
 
             final Constructor<? extends FormSection> constructor = createClass
-                .getConstructor(arguments);
+                .getConstructor(ARGUMENTS);
             final Component component = (Component) constructor
                 .newInstance(vals);
             return component;
         } catch (IllegalAccessException
-                     | IllegalArgumentException
-                     | InstantiationException
-                     | NoSuchMethodException
-                     | SecurityException
-                     | InvocationTargetException ex) {
-            LOGGER.error("\"Failed to instantiate creation component \"{}\".",
+                 | IllegalArgumentException
+                 | InstantiationException
+                 | NoSuchMethodException
+                 | SecurityException
+                 | InvocationTargetException ex) {
+            LOGGER.error("Failed to instantiate creation component \"{}\".",
                          kit.getCreateComponent().getName());
-            LOGGER.error(ex);
+            LOGGER.error("Exception: ", ex);
             throw new UncheckedWrapperException(String.format(
                 "Failed to instantiate creation component \"%s\".",
                 kit.getCreateComponent().getName()),
@@ -227,10 +230,10 @@ public class CreationSelector extends MetaForm {
      * @param state represents the current request
      *
      * @return the currently selected folder, in which new items should be
-     * placed.
+     *         placed.
      */
     public final Folder getFolder(final PageState state) {
-        return (Folder) folderSelectionModel.getSelectedObject(state);
+        return folderSelectionModel.getSelectedObject(state);
     }
 
     /**
@@ -244,9 +247,12 @@ public class CreationSelector extends MetaForm {
      * @return the currently selected content section.
      */
     public final ContentSection getContentSection(final PageState state) {
-        final ContentSection section = getFolder(state).getSection();
 
-        return section;
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final CreationSelectorController controller = cdiUtil
+            .findBean(CreationSelectorController.class);
+
+        return controller.getContentSectionForFolder(getFolder(state));
     }
 
     /**
@@ -255,7 +261,7 @@ public class CreationSelector extends MetaForm {
      * complete.
      *
      * @param state the page state
-     * @param item the newly created item
+     * @param item  the newly created item
      */
     public void editItem(final PageState state, final ContentItem item) {
         final ContentSection section = getContentSection(state);

@@ -52,6 +52,7 @@ import org.libreccm.workflow.WorkflowTemplateRepository;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.privileges.ItemPrivileges;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.TooManyListenersException;
 
@@ -146,11 +147,13 @@ public class ApplyWorkflowFormSection
     public void init(final FormSectionEvent event) throws FormProcessException {
 
         final PageState state = event.getPageState();
-        final ContentSection section = creationSelector.getContentSection(
-            state);
-        final WorkflowTemplate template = contentType.getDefaultWorkflow();
-        if (template != null) {
-            radioGroup.setValue(state, template.getWorkflowId());
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final ApplyWorkflowController controller = cdiUtil
+            .findBean(ApplyWorkflowController.class);
+        final Long workflowTemplateId = controller
+            .getDefaultWorkflowId(contentType);
+        if (workflowTemplateId != null) {
+            radioGroup.setValue(state, workflowTemplateId);
         }
     }
 
@@ -192,13 +195,12 @@ public class ApplyWorkflowFormSection
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final PermissionChecker permissionChecker = cdiUtil
             .findBean(PermissionChecker.class);
-        ;
 
         if (super.isVisible(state)
                 && permissionChecker
                 .isPermitted(ItemPrivileges.APPLY_ALTERNATE_WORKFLOW,
                              creationSelector.getFolder(state))) {
-            
+
             return !printListener.getCollection(state).isEmpty();
         }
         return result;
@@ -215,52 +217,57 @@ public class ApplyWorkflowFormSection
      */
     public void applyWorkflow(final PageState state, final ContentItem item) {
 
-        final Long flowId = (Long) radioGroup.getValue(state);
-        final ContentSection section = creationSelector.getContentSection(
-            state);
+        final Long workflowTemplateId = (Long) radioGroup.getValue(state);
         final Folder folder = creationSelector.getFolder(state);
-        final WorkflowTemplate template;
-
+        
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-        final PermissionChecker permissionChecker = cdiUtil
-            .findBean(PermissionChecker.class);
-        final WorkflowTemplateRepository templateRepo = cdiUtil
-            .findBean(WorkflowTemplateRepository.class);
-
-        if (flowId != null
-                && permissionChecker.isPermitted(
-                ItemPrivileges.APPLY_ALTERNATE_WORKFLOW, folder)) {
-            template = templateRepo
-                .findById(flowId)
-                .orElseThrow(() -> new IllegalArgumentException(String.format(
-                "No WorkflowTemplate with ID %d in database. "
-                    + "Where did that ID come from?")));
-        } else {
-            template = item.getContentType().getDefaultWorkflow();
-        }
-
-        if (template != null) {
-
-            final WorkflowManager workflowManager = cdiUtil
-                .findBean(WorkflowManager.class);
-
-            final Workflow workflow = workflowManager.createWorkflow(template,
-                                                                     item);
-            workflowManager.start(workflow);
-
-            if (!workflow.getTasks().isEmpty()) {
-
-                if (workflow.getTasks().get(0) instanceof AssignableTask) {
-
-                    final AssignableTaskManager taskManager = cdiUtil
-                        .findBean(AssignableTaskManager.class);
-                    final AssignableTask task = (AssignableTask) workflow
-                        .getTasks()
-                        .get(0);
-                    taskManager.lockTask(task);
-                }
-            }
-        }
+        final ApplyWorkflowController controller = cdiUtil
+            .findBean(ApplyWorkflowController.class);
+            
+        controller.applyWorkflow(item, folder, workflowTemplateId);
+        
+//        final WorkflowTemplate template;
+//
+//        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+//        final PermissionChecker permissionChecker = cdiUtil
+//            .findBean(PermissionChecker.class);
+//        final WorkflowTemplateRepository templateRepo = cdiUtil
+//            .findBean(WorkflowTemplateRepository.class);
+//
+//        if (flowId != null
+//                && permissionChecker.isPermitted(
+//                ItemPrivileges.APPLY_ALTERNATE_WORKFLOW, folder)) {
+//            template = templateRepo
+//                .findById(flowId)
+//                .orElseThrow(() -> new IllegalArgumentException(String.format(
+//                "No WorkflowTemplate with ID %d in database. "
+//                    + "Where did that ID come from?")));
+//        } else {
+//            template = item.getContentType().getDefaultWorkflow();
+//        }
+//
+//        if (template != null) {
+//
+//            final WorkflowManager workflowManager = cdiUtil
+//                .findBean(WorkflowManager.class);
+//
+//            final Workflow workflow = workflowManager.createWorkflow(template,
+//                                                                     item);
+//            workflowManager.start(workflow);
+//
+//            if (!workflow.getTasks().isEmpty()) {
+//
+//                if (workflow.getTasks().get(0) instanceof AssignableTask) {
+//
+//                    final AssignableTaskManager taskManager = cdiUtil
+//                        .findBean(AssignableTaskManager.class);
+//                    final AssignableTask task = (AssignableTask) workflow
+//                        .getTasks()
+//                        .get(0);
+//                    taskManager.lockTask(task);
+//                }
+//            }
+//        }
 
     }
 
@@ -269,12 +276,20 @@ public class ApplyWorkflowFormSection
 
         @Override
         protected ContentSection getContentSection(final PageState state) {
+
             return creationSelector.getContentSection(state);
         }
 
         @Override
         protected List<WorkflowTemplate> getCollection(final PageState state) {
-            return super.getCollection(state);
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final ApplyWorkflowController controller = cdiUtil
+                .findBean(ApplyWorkflowController.class);
+
+            final ContentSection section = creationSelector
+                .getContentSection(state);
+
+            return controller.getWorkflowTemplates(section);
         }
 
     }

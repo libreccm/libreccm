@@ -25,10 +25,11 @@ import com.arsdigita.bebop.form.Option;
 import com.arsdigita.bebop.form.OptionGroup;
 import com.arsdigita.cms.CMS;
 import com.arsdigita.kernel.KernelConfig;
+
 import java.util.List;
+
 import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.contentsection.ContentSection;
-import org.libreccm.workflow.Task;
 import org.libreccm.workflow.WorkflowTemplate;
 
 /**
@@ -41,9 +42,12 @@ import org.libreccm.workflow.WorkflowTemplate;
 public class WorkflowsOptionPrintListener implements PrintListener {
 
     protected List<WorkflowTemplate> getCollection(final PageState state) {
-        final ContentSection section = getContentSection(state);
-
-        return section.getWorkflowTemplates();
+      
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final WorkflowsOptionPrintListenerController controller = cdiUtil
+        .findBean(WorkflowsOptionPrintListenerController.class);
+        
+        return controller.getWorkflowTemplates(getContentSection(state));
     }
 
     protected ContentSection getContentSection(final PageState state) {
@@ -52,6 +56,7 @@ public class WorkflowsOptionPrintListener implements PrintListener {
 
     @Override
     public void prepare(final PrintEvent event) {
+        
         final PageState state = event.getPageState();
 
         final OptionGroup target = (OptionGroup) event.getTarget();

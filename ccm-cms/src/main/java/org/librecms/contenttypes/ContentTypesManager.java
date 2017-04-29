@@ -98,7 +98,7 @@ public class ContentTypesManager {
         final Class<? extends ContentItem> contentTypeClass) {
 
         Objects.requireNonNull(contentTypeClass);
-        
+
         final ContentTypeInfo contentTypeInfo = new ContentTypeInfo();
         contentTypeInfo.setContentItemClass(contentTypeClass);
 
@@ -140,21 +140,22 @@ public class ContentTypesManager {
             }
         }
 
-        final AuthoringKit authoringKit = contentTypeClass.getAnnotation(
-            AuthoringKit.class);
+        final AuthoringKit authoringKit = contentTypeClass
+            .getAnnotation(AuthoringKit.class);
         if (authoringKit != null) {
             final AuthoringKitInfo authoringKitInfo = new AuthoringKitInfo();
             authoringKitInfo.setCreateComponent(authoringKit.createComponent());
 
-            final List<AuthoringStepInfo> steps = Arrays.stream(authoringKit
-                .steps())
+            final List<AuthoringStepInfo> steps = Arrays
+                .stream(authoringKit.steps())
                 .map(step -> createAuthoringStepInfo(contentTypeClass, step))
                 .collect(Collectors.toList());
             authoringKitInfo.setAuthoringSteps(steps);
             steps.sort((step1, step2) -> Integer.compare(step1.getOrder(),
                                                          step2.getOrder()));
+            contentTypeInfo.setAuthoringKit(authoringKitInfo);
         }
-
+        
         return contentTypeInfo;
     }
 
@@ -176,7 +177,7 @@ public class ContentTypesManager {
 
         Objects.requireNonNull(contentTypeClass);
         Objects.requireNonNull(authoringStep);
-        
+
         final AuthoringStepInfo stepInfo = new AuthoringStepInfo();
 
         stepInfo.setComponent(authoringStep.component());
@@ -240,7 +241,7 @@ public class ContentTypesManager {
         final Class<? extends ContentItem> contentTypeClass) {
 
         Objects.requireNonNull(contentTypeClass);
-        
+
         return createContentTypeInfo(contentTypeClass);
     }
 
@@ -261,7 +262,7 @@ public class ContentTypesManager {
     public ContentTypeInfo getContentTypeInfo(final String contentTypeClass) {
 
         Objects.requireNonNull(contentTypeClass);
-        
+
         final Class<?> clazz;
         try {
             clazz = Class.forName(contentTypeClass);

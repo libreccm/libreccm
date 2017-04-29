@@ -21,7 +21,6 @@ package com.arsdigita.cms.contenttypes.ui.mparticle;
 import com.arsdigita.bebop.ColumnPanel;
 import com.arsdigita.bebop.FormData;
 import com.arsdigita.bebop.FormProcessException;
-import com.arsdigita.bebop.FormSection;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.event.FormInitListener;
@@ -36,7 +35,9 @@ import com.arsdigita.cms.ui.authoring.CreationSelector;
 import com.arsdigita.cms.ui.authoring.LanguageWidget;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.kernel.KernelConfig;
+
 import java.util.Date;
+
 import org.arsdigita.cms.CMSConfig;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentSection;
