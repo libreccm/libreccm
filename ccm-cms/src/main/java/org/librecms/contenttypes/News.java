@@ -18,7 +18,8 @@
  */
 package org.librecms.contenttypes;
 
-import com.arsdigita.cms.ui.authoring.PageCreateForm;
+import com.arsdigita.cms.ui.contenttypes.NewsCreateForm;
+
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.libreccm.l10n.LocalizedString;
@@ -37,6 +38,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
 
 import static org.librecms.CmsConstants.*;
 
@@ -49,7 +51,7 @@ import static org.librecms.CmsConstants.*;
 @Table(name = "NEWS", schema = DB_SCHEMA)
 @ContentTypeDescription(labelBundle = "org.librecms.contenttypes.News",
                         descriptionBundle = "org.librecms.contenttypes.News")
-@AuthoringKit(createComponent = PageCreateForm.class,
+@AuthoringKit(createComponent = NewsCreateForm.class,
               steps = {})
 public class News extends ContentItem implements Serializable {
 
@@ -72,7 +74,7 @@ public class News extends ContentItem implements Serializable {
      * Release date of the news
      */
     @Column(name = "NEWS_DATE", nullable = false)
-    @NotEmpty
+    @NotNull
     @Temporal(TemporalType.DATE)
     private Date releaseDate;
 

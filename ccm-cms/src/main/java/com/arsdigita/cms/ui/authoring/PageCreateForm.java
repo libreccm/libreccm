@@ -23,7 +23,6 @@ import com.arsdigita.bebop.FormData;
 import com.arsdigita.bebop.FormProcessException;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.PageState;
-import com.arsdigita.bebop.Text;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.bebop.event.FormSubmissionListener;
 import com.arsdigita.bebop.event.PrintEvent;
@@ -35,13 +34,13 @@ import org.librecms.contentsection.Folder;
 
 import com.arsdigita.cms.ItemSelectionModel;
 import com.arsdigita.globalization.GlobalizedMessage;
-import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.util.Assert;
 
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentItem;
+import org.librecms.contentsection.ContentItemInitializer;
 import org.librecms.contenttypes.ContentTypeInfo;
 import org.librecms.contenttypes.ContentTypesManager;
 
@@ -120,7 +119,8 @@ public class PageCreateForm
         /* content type */
         add(new Label(new GlobalizedMessage("cms.ui.authoring.content_type",
                                             CmsConstants.CMS_BUNDLE)));
-        final Label typeOutput = new Label(new ContentTypePrintListener(typeInfo));
+        final Label typeOutput = new Label(
+            new ContentTypePrintListener(typeInfo));
         add(typeOutput);
         /* language selection   */
         add(new Label(new GlobalizedMessage("cms.ui.language.field",
@@ -205,7 +205,7 @@ public class PageCreateForm
      * @throws FormProcessException
      */
     @Override
-    public void process(final FormSectionEvent event)
+    public final void process(final FormSectionEvent event)
         throws FormProcessException {
 
         final FormData data = event.getFormData();
@@ -218,7 +218,9 @@ public class PageCreateForm
         final ContentItem item = createContentPage(state,
                                                    (String) data.get(NAME),
                                                    section,
-                                                   folder);
+                                                   folder,
+                                                   getItemInitializer(data,
+                                                                      state));
         final Locale locale = new Locale((String) data.get(LANGUAGE));
         item.getName().addValue(locale, (String) data.get(NAME));
         item.getTitle().addValue(locale, (String) data.get(TITLE));
@@ -226,6 +228,12 @@ public class PageCreateForm
         workflowSection.applyWorkflow(state, item);
 
         creationSelector.editItem(state, item);
+    }
+
+    protected ContentItemInitializer<?> getItemInitializer(
+        final FormData data, final PageState state) {
+        
+        return item -> {};
     }
 
     private class ContentTypePrintListener implements PrintListener {
@@ -247,7 +255,7 @@ public class PageCreateForm
                            globalizationHelper.getNegotiatedLocale());
 
             final String typeLabel = bundle.getString(typeInfo.getLabelKey());
-            
+
             final Label target = (Label) event.getTarget();
             target.setLabel(typeLabel);
         }

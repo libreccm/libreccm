@@ -43,6 +43,7 @@ import com.arsdigita.util.Assert;
 import org.arsdigita.cms.CMSConfig;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.CmsConstants;
+import org.librecms.contentsection.ContentItemInitializer;
 import org.librecms.contentsection.ContentItemManager;
 import org.librecms.contentsection.ContentType;
 
@@ -240,16 +241,18 @@ public abstract class BasicPageForm extends BasicItemForm {
      * @param name
      * @param section
      * @param folder
+     * @param initializer
      *
      * @return the new content item (or a proper subclass thereof)
      *
      * @throws com.arsdigita.bebop.FormProcessException
      */
-    public ContentItem createContentPage(final PageState state,
-                                         final String name,
-                                         final ContentSection section,
-                                         final Folder folder)
-        throws FormProcessException {
+    public ContentItem createContentPage(
+        final PageState state,
+        final String name,
+        final ContentSection section,
+        final Folder folder,
+        final ContentItemInitializer initializer) throws FormProcessException {
 
         final ItemSelectionModel selectionModel = getItemSelectionModel();
         final ContentType contentType = selectionModel.getContentType();
@@ -265,7 +268,11 @@ public abstract class BasicPageForm extends BasicItemForm {
             final Class<? extends ContentItem> clazz
                                                    = (Class<? extends ContentItem>) Class
                     .forName(contentType.getContentItemClass());
-            item = itemManager.createContentItem(name, section, folder, clazz);
+            item = itemManager.createContentItem(name,
+                                                 section,
+                                                 folder,
+                                                 clazz,
+                                                 initializer);
         } catch (ClassNotFoundException ex) {
             throw new FormProcessException(
                 "Couldn't create contentpage",
@@ -276,7 +283,6 @@ public abstract class BasicPageForm extends BasicItemForm {
         }
 
         // Create new item
-
         // Make sure the item will be remembered across requests
         selectionModel.setSelectedKey(state, item.getObjectId());
 
