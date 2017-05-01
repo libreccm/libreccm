@@ -18,7 +18,8 @@
  */
 package org.librecms.contenttypes;
 
-import com.arsdigita.cms.ui.authoring.PageCreateForm;
+import com.arsdigita.cms.ui.contenttypes.EventCreateForm;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
@@ -34,11 +35,12 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.hibernate.envers.Audited;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import org.libreccm.l10n.LocalizedString;
 
 import org.librecms.contentsection.ContentItem;
+
+import javax.validation.constraints.NotNull;
 
 import static org.librecms.CmsConstants.*;
 
@@ -51,7 +53,7 @@ import static org.librecms.CmsConstants.*;
 @Table(name = "EVENTS", schema = DB_SCHEMA)
 @ContentTypeDescription(labelBundle = "org.librecms.contenttypes.Event",
                         descriptionBundle = "org.librecms.contenttypes.Event")
-@AuthoringKit(createComponent = PageCreateForm.class,
+@AuthoringKit(createComponent = EventCreateForm.class,
               steps = {})
 public class Event extends ContentItem implements Serializable {
 
@@ -72,7 +74,7 @@ public class Event extends ContentItem implements Serializable {
 
     @Column(name = "START_DATE", nullable = false)
     @Temporal(TemporalType.DATE)
-    @NotEmpty
+    @NotNull
     private Date startDate;
 
     @Column(name = "END_DATE")

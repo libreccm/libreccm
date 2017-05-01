@@ -21,7 +21,6 @@ package org.librecms.contenttypes;
 import com.arsdigita.cms.ui.contenttypes.NewsCreateForm;
 
 import org.hibernate.envers.Audited;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.libreccm.l10n.LocalizedString;
 import org.librecms.contentsection.ContentItem;
 
@@ -154,7 +153,7 @@ public class News extends ContentItem implements Serializable {
     public String toString(final String data) {
         return super.toString(String.format(", text = %s, "
                                                     + "releaseDate = %tF %<tT, "
-                                                    + "homepage = %b%d",
+                                                    + "homepage = %b%s",
                                             Objects.toString(text),
                                             releaseDate,
                                             homepage,
