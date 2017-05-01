@@ -123,7 +123,7 @@ public class ContentItemManager {
 
     /**
      * Creates a new content item in the provided content section and folder
-     * with the workflow.
+     * with the default workflow for the content type of the item.
      *
      * The folder must be a subfolder of the
      * {@link ContentSection#rootDocumentsFolder} of the provided content
@@ -146,6 +146,43 @@ public class ContentItemManager {
         final Folder folder,
         final Class<T> type) {
 
+        return createContentItem(name,
+                                 section,
+                                 folder,
+                                 type,
+                                 item -> {
+                                 });
+
+    }
+
+    /**
+     * Creates a new content item in the provided content section and folder
+     * with the default workflow for the content type of the item.
+     *
+     * The folder must be a subfolder of the
+     * {@link ContentSection#rootDocumentsFolder} of the provided content
+     * section. Otherwise an {@link IllegalArgumentException} is thrown.
+     *
+     * @param <T>        The type of the content item.
+     * @param name       The name (URL stub) of the new content item.
+     * @param section    The content section in which the item is generated.
+     * @param folder     The folder in which in the item is stored.
+     * @param type       The type of the new content item.
+     * @param initalizer A {@link ContentItemInitializer} for setting mandatory
+     *                   values
+     *
+     * @return The new content item.
+     */
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public <T extends ContentItem> T createContentItem(
+        final String name,
+        final ContentSection section,
+        @RequiresPrivilege(ItemPrivileges.CREATE_NEW)
+        final Folder folder,
+        final Class<T> type,
+        final ContentItemInitializer<T> initalizer) {
+
         final Optional<ContentType> contentType = typeRepo
             .findByContentSectionAndClass(section, type);
 
@@ -160,10 +197,11 @@ public class ContentItemManager {
                                  section,
                                  folder,
                                  contentType.get().getDefaultWorkflow(),
-                                 type);
+                                 type,
+                                 initalizer);
     }
 
-    /**
+     /**
      * Creates a new content item in the provided content section and folder
      * with specific workflow.
      *
@@ -195,6 +233,52 @@ public class ContentItemManager {
         final Folder folder,
         final WorkflowTemplate workflowTemplate,
         final Class<T> type) {
+
+        return createContentItem(name,
+                                 section,
+                                 folder,
+                                 workflowTemplate,
+                                 type,
+                                 item -> {
+                                 });
+
+    }
+
+    /**
+     * Creates a new content item in the provided content section and folder
+     * with specific workflow.
+     *
+     * The folder must be a subfolder of the
+     * {@link ContentSection#rootDocumentsFolder} of the provided content
+     * section. Otherwise an {@link IllegalArgumentException} is thrown.
+     *
+     * Likewise the provided {@link WorkflowTemplate} must be defined in the
+     * provided content section. Otherwise an {@link IllegalArgumentException}
+     * is thrown.
+     *
+     * @param <T>              The type of the content item.
+     * @param name             The name (URL stub) of the new content item.
+     * @param section          The content section in which the item is
+     *                         generated.
+     * @param folder           The folder in which in the item is stored.
+     * @param workflowTemplate The template for the workflow to apply to the new
+     *                         item.
+     * @param type             The type of the new content item.
+     * @param initializer      Initialiser implementation for setting mandatory
+     *                         properties of the new item.
+     *
+     * @return The new content item.
+     */
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public <T extends ContentItem> T createContentItem(
+        final String name,
+        final ContentSection section,
+        @RequiresPrivilege(ItemPrivileges.CREATE_NEW)
+        final Folder folder,
+        final WorkflowTemplate workflowTemplate,
+        final Class<T> type,
+        final ContentItemInitializer<T> initializer) {
 
         final Optional<ContentType> contentType = typeRepo
             .findByContentSectionAndClass(section, type);
@@ -242,6 +326,10 @@ public class ContentItemManager {
             item.setWorkflow(workflow);
         }
 
+        if (initializer != null) {
+            initializer.initializeValues(item);
+        }
+        
         contentItemRepo.save(item);
 
         categoryManager.addObjectToCategory(
