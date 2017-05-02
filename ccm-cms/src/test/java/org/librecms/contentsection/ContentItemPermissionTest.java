@@ -47,8 +47,10 @@ import org.libreccm.security.User;
 import org.libreccm.tests.categories.IntegrationTest;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -71,11 +73,12 @@ import static org.junit.Assert.*;
                     phase = TestExecutionPhase.BEFORE)
 public class ContentItemPermissionTest {
 
-    private static final String QUERY = "SELECT i FROM ContentItem i "
+    private static final String QUERY = "SELECT DISTINCT i FROM ContentItem i "
                                             + "JOIN i.permissions p "
-                                            + "WHERE p.grantee IN :roles "
-                                            + "AND p.grantedPrivilege = 'view_draft_items' "
-                                        + "ORDER BY i.displayName";
+                                            + "WHERE (p.grantee IN :roles "
+                                            + "AND p.grantedPrivilege = 'view_draft_items')"
+                                        + "OR true = :isSystemUser "
+                                            + "ORDER BY i.displayName";
 
     @Inject
     private EntityManager entityManager;
@@ -106,9 +109,9 @@ public class ContentItemPermissionTest {
     public static WebArchive createDeployment() {
         return ShrinkWrap
             .create(WebArchive.class,
-                    "LibreCCM-org.librecms.contentsection.ContentItemPermissionTest.war")
-            //Classes imported by this class
-            .addClass(Role.class)
+                    "LibreCCM-org.librecms.contentsection.ContentItemPermissionTest.war") //Classes imported by this class
+            .
+            addClass(Role.class)
             .addClass(Shiro.class)
             .addClass(User.class)
             .addClass(ContentItem.class)
@@ -232,7 +235,7 @@ public class ContentItemPermissionTest {
             .addClass(org.libreccm.core.CcmObjectRepository.class)
             //Required by org.libreccm.core.CcmObjectRepository
             .addClass(org.libreccm.core.CoreConstants.class)
-             //Dependencies from other modules and resources
+            //Dependencies from other modules and resources
             .addAsLibraries(getCcmCoreDependencies())
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")
@@ -270,12 +273,13 @@ public class ContentItemPermissionTest {
                 .map(membership -> membership.getRole())
                 .collect(Collectors.toList());
         } else {
-            roles = new ArrayList<>();
+            roles = Collections.emptyList();
         }
 
         final TypedQuery<ContentItem> query = entityManager.createQuery(
             QUERY, ContentItem.class);
         query.setParameter("roles", roles);
+        query.setParameter("isSystemUser", shiro.isSystemUser());
         final List<ContentItem> result = query.getResultList();
 
         assertThat(result.isEmpty(), is(true));
@@ -286,6 +290,7 @@ public class ContentItemPermissionTest {
     @UsingDataSet("datasets/org/librecms/contentsection/"
                       + "ContentItemPermissionTest/data.xml")
     public void accessByUser1() {
+
         final UsernamePasswordToken token = new UsernamePasswordToken(
             "user1@example.org", "foo123");
         token.setRememberMe(true);
@@ -299,6 +304,7 @@ public class ContentItemPermissionTest {
         final TypedQuery<ContentItem> query = entityManager.createQuery(
             QUERY, ContentItem.class);
         query.setParameter("roles", roles);
+        query.setParameter("isSystemUser", shiro.isSystemUser());
         final List<ContentItem> result = query.getResultList();
 
         assertThat(result.size(), is(2));
@@ -311,6 +317,7 @@ public class ContentItemPermissionTest {
     @UsingDataSet("datasets/org/librecms/contentsection/"
                       + "ContentItemPermissionTest/data.xml")
     public void accessByUser2() {
+
         final UsernamePasswordToken token = new UsernamePasswordToken(
             "user2@example.org", "foo123");
         token.setRememberMe(true);
@@ -324,6 +331,7 @@ public class ContentItemPermissionTest {
         final TypedQuery<ContentItem> query = entityManager.createQuery(
             QUERY, ContentItem.class);
         query.setParameter("roles", roles);
+        query.setParameter("isSystemUser", shiro.isSystemUser());
         final List<ContentItem> result = query.getResultList();
 
         assertThat(result.size(), is(1));
@@ -335,6 +343,7 @@ public class ContentItemPermissionTest {
     @UsingDataSet("datasets/org/librecms/contentsection/"
                       + "ContentItemPermissionTest/data.xml")
     public void accessByUser3() {
+
         final UsernamePasswordToken token = new UsernamePasswordToken(
             "user3@example.org", "foo123");
         token.setRememberMe(true);
@@ -348,12 +357,60 @@ public class ContentItemPermissionTest {
         final TypedQuery<ContentItem> query = entityManager.createQuery(
             QUERY, ContentItem.class);
         query.setParameter("roles", roles);
+        query.setParameter("isSystemUser", shiro.isSystemUser());
         final List<ContentItem> result = query.getResultList();
 
         assertThat(result.size(), is(3));
         assertThat(result.get(0).getDisplayName(), is(equalTo("article1")));
         assertThat(result.get(1).getDisplayName(), is(equalTo("article2")));
         assertThat(result.get(2).getDisplayName(), is(equalTo("article3")));
+    }
+
+    @Test
+    @InSequence(500)
+    @UsingDataSet("datasets/org/librecms/contentsection/"
+                      + "ContentItemPermissionTest/data.xml")
+    public void accessBySystemUser() {
+
+        final UsernamePasswordToken token = new UsernamePasswordToken(
+            "user3@example.org", "foo123");
+        token.setRememberMe(true);
+        subject.login(token);
+
+        final List<ContentItem> result = shiro
+            .getSystemUser()
+            .execute(new ItemRetriever());
+
+        assertThat(result.size(), is(4));
+        assertThat(result.get(0).getDisplayName(), is(equalTo("article1")));
+        assertThat(result.get(1).getDisplayName(), is(equalTo("article2")));
+        assertThat(result.get(2).getDisplayName(), is(equalTo("article3")));
+        assertThat(result.get(3).getDisplayName(), is(equalTo("news1")));
+    }
+
+    private class ItemRetriever implements Callable<List<ContentItem>> {
+
+        @Override
+        public List<ContentItem> call() throws Exception {
+
+            final Optional<User> user = shiro.getUser();
+            final List<Role> roles;
+            if (user.isPresent()) {
+                roles = shiro.getUser().get().getRoleMemberships()
+                    .stream()
+                    .map(membership -> membership.getRole())
+                    .collect(Collectors.toList());
+            } else {
+                roles = Collections.emptyList();
+            }
+
+            final TypedQuery<ContentItem> query = entityManager.createQuery(
+                QUERY, ContentItem.class);
+            query.setParameter("roles", roles);
+            query.setParameter("isSystemUser", shiro.isSystemUser());
+            return query.getResultList();
+        }
+
     }
 
 }
