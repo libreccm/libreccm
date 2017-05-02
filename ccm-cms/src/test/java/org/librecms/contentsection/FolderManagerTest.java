@@ -390,26 +390,26 @@ public class FolderManagerTest {
         folderManager.moveFolder(folder, folder);
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     @UsingDataSet("datasets/org/librecms/contentsection/"
                       + "FolderManagerTest/data.xml")
     @ShouldMatchDataSet(
         value = "datasets/org/librecms/contentsection/"
                     + "FolderManagerTest/data.xml")
-    @ShouldThrowException(IllegalArgumentException.class)
+    @ShouldThrowException(NullPointerException.class)
     @InSequence(3200)
     public void moveFolderNull() {
         final Folder target = folderRepo.findById(-2010L).get();
         folderManager.moveFolder(null, target);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     @UsingDataSet("datasets/org/librecms/contentsection/"
                       + "FolderManagerTest/data.xml")
     @ShouldMatchDataSet(
         value = "datasets/org/librecms/contentsection/"
                     + "FolderManagerTest/data.xml")
-    @ShouldThrowException(IllegalArgumentException.class)
+    @ShouldThrowException(NullPointerException.class)
     @InSequence(3210)
     public void moveFolderTargetNull() {
         final Folder folder = folderRepo.findById(-2008L).get();
