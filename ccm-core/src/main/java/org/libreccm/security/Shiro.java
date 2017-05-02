@@ -134,13 +134,39 @@ public class Shiro {
         }
     }
 
+    public boolean isPublicUser() {
+        final Subject subject = getSubject();
+        final Object principal = subject.getPrincipal();
+
+        if (KernelConfig.getConfig().emailIsPrimaryIdentifier()) {
+            return PUBLIC_USER_PRINCIPAL_EMAIL.equals(principal);
+        } else {
+            return PUBLIC_USER_PRINCIPAL_SCREEN_NAME.equals(principal);
+        }
+    }
+
     /**
      * A virtual user for internal processes which has all permissions.
      *
      * @return
      */
     public Subject getSystemUser() {
-        return buildInternalSubject(SYSTEM_USER_PRINCIPAL_SCREEN_NAME);
+        if (KernelConfig.getConfig().emailIsPrimaryIdentifier()) {
+            return buildInternalSubject(SYSTEM_USER_PRINCIPAL_EMAIL);
+        } else {
+            return buildInternalSubject(SYSTEM_USER_PRINCIPAL_SCREEN_NAME);
+        }
+    }
+
+    public boolean isSystemUser() {
+        final Subject subject = getSubject();
+        final Object principal = subject.getPrincipal();
+
+        if (KernelConfig.getConfig().emailIsPrimaryIdentifier()) {
+            return SYSTEM_USER_PRINCIPAL_EMAIL.equals(principal);
+        } else {
+            return SYSTEM_USER_PRINCIPAL_SCREEN_NAME.equals(principal);
+        }
     }
 
     /**
@@ -152,27 +178,27 @@ public class Shiro {
      * representation in the database the returned {@link Optional} is empty.
      *
      * @see #getSubject()
-     * @see #getSystemUser() 
-     * @see #getPublicUser() 
+     * @see #getSystemUser()
+     * @see #getPublicUser()
      */
     public Optional<User> getUser() {
         final KernelConfig kernelConfig = KernelConfig.getConfig();
         if (kernelConfig.emailIsPrimaryIdentifier()) {
             return userRepository.findByEmailAddress((String) getSubject().
-                    getPrincipal());
+                getPrincipal());
         } else {
             return userRepository.findByName((String) getSubject().
-                    getPrincipal());
+                getPrincipal());
         }
     }
 
     private Subject buildInternalSubject(final String userName) {
         final PrincipalCollection principals = new SimplePrincipalCollection(
-                userName, "CcmShiroRealm");
+            userName, "CcmShiroRealm");
         final Subject internalUser = new Subject.Builder()
-                .principals(principals)
-                .authenticated(true)
-                .buildSubject();
+            .principals(principals)
+            .authenticated(true)
+            .buildSubject();
 
         return internalUser;
     }
