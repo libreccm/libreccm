@@ -234,6 +234,7 @@ public class ContentItemManagerTest {
                           "workflow_id"
         })
     public void createContentItem() {
+        
         shiro.getSystemUser().execute(() -> {
             final ContentSection section = sectionRepo
                 .findByLabel("info")
@@ -553,6 +554,7 @@ public class ContentItemManagerTest {
                           "workflow_id"
         })
     public void moveItem() {
+        
         final Optional<ContentItem> item = itemRepo.findById(-10100L);
         assertThat(item.isPresent(), is(true));
 
