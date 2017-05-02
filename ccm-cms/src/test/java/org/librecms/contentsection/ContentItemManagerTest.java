@@ -336,13 +336,13 @@ public class ContentItemManagerTest {
      * is called with {@code null} for the folder in which the new item is
      * created.
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     @InSequence(1500)
     @UsingDataSet("datasets/org/librecms/contentsection/"
                       + "ContentItemManagerTest/data.xml")
     @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
                             + "ContentItemManagerTest/data.xml")
-    @ShouldThrowException(IllegalArgumentException.class)
+    @ShouldThrowException(NullPointerException.class)
     public void createItemFolderIsNull() {
         shiro.getSystemUser().execute(() -> {
             final ContentSection section = sectionRepo
@@ -508,13 +508,13 @@ public class ContentItemManagerTest {
      * throws an {@link IllegalArgumentException} if called with {@code null}
      * for the folder in which the new item is created.
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     @InSequence(2600)
     @UsingDataSet("datasets/org/librecms/contentsection/"
                       + "ContentItemManagerTest/data.xml")
     @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
                             + "ContentItemManagerTest/data.xml")
-    @ShouldThrowException(IllegalArgumentException.class)
+    @ShouldThrowException(NullPointerException.class)
     public void createItemFolderIsNullWithWorkflow() {
         shiro.getSystemUser().execute(() -> {
             final ContentSection section = sectionRepo
