@@ -682,7 +682,7 @@
     <ccm_core.categorizations categorization_id="-30110" 
                               category_id="-2300" 
                               object_id="-10110" 
-                              category_order="2" 
+                              category_order="1" 
                               object_order="1" 
                               category_index="false"
                               type="folder" />
