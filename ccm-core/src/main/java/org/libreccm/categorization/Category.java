@@ -81,6 +81,10 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
         query = "SELECT c FROM Category c WHERE c.name = :name")
     ,
     @NamedQuery(
+        name = "Category.findByUuid",
+        query = "SELECT c FROM Category c WHERE c.uuid = :uuid")
+    ,
+    @NamedQuery(
         name = "Category.findParentCategory",
         query = "SELECT c.parentCategory FROM Category c WHERE c = :category")
     ,

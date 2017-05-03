@@ -21,11 +21,16 @@ package org.libreccm.security;
 import com.fasterxml.jackson.annotation.ObjectIdGenerator;
 import com.fasterxml.jackson.annotation.ObjectIdResolver;
 
+import javax.inject.Inject;
+
 /**
  * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
  * @version created on 3/23/17
  */
 public class GroupIdResolver implements ObjectIdResolver {
+    @Inject
+    private GroupRepository groupRepository;
+
     @Override
     public void bindItem(final ObjectIdGenerator.IdKey id,
                          final Object pojo) {
@@ -36,7 +41,7 @@ public class GroupIdResolver implements ObjectIdResolver {
 
     @Override
     public Object resolveId(final ObjectIdGenerator.IdKey id) {
-        return null;
+        return groupRepository.findByName(id.key.toString());
     }
 
     @Override

@@ -43,7 +43,7 @@ public class CategoryIdResolver implements ObjectIdResolver {
 
     @Override
     public Object resolveId(ObjectIdGenerator.IdKey id) {
-        return null;
+        return categoryRepository.findByUuid(id.key.toString());
     }
 
     @Override
