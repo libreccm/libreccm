@@ -20,9 +20,11 @@ package org.libreccm.workflow;
 
 import org.libreccm.core.AbstractEntityRepository;
 
-import java.util.UUID;
-
 import javax.enterprise.context.RequestScoped;
+import javax.persistence.NoResultException;
+import javax.persistence.TypedQuery;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Repository for {@link Task}s.
@@ -41,10 +43,29 @@ public class TaskRepository extends AbstractEntityRepository<Long, Task> {
     public boolean isNew(final Task task) {
         return task.getTaskId() == 0;
     }
+
     @Override
     protected void initNewEntity(final Task task) {
         super.initNewEntity(task);
         task.setUuid(UUID.randomUUID().toString());
     }
 
+    /**
+     * Finds a {@link Task} by its uuid.
+     *
+     * @param uuid The uuid of the item to find
+     *
+     * @return An optional either with the found item or empty
+     */
+    public Optional<Task> findByUuid(final String uuid) {
+        final TypedQuery<Task> query = getEntityManager().createNamedQuery(
+                "Task.findByUuid", Task.class);
+        query.setParameter("uuid", uuid);
+
+        try {
+            return Optional.of(query.getSingleResult());
+        } catch (NoResultException ex) {
+            return Optional.empty();
+        }
+    }
 }

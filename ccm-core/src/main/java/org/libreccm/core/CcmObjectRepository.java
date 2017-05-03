@@ -18,16 +18,14 @@
  */
 package org.libreccm.core;
 
-import java.util.Optional;
-
-import static org.libreccm.core.CoreConstants.*;
-
-import java.util.UUID;
-
 import javax.enterprise.context.RequestScoped;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+import java.util.Optional;
+import java.util.UUID;
+
+import static org.libreccm.core.CoreConstants.ACCESS_DENIED;
 
 /**
  * A repository class for {@link CcmObject}.
@@ -64,8 +62,9 @@ public class CcmObjectRepository extends AbstractEntityRepository<Long, CcmObjec
     /**
      * Finds a {@link CcmObject} by its id.
      *
-      @param objectId The id of the item to find.
-     * @return
+     * @param objectId The id of the item to find
+     *
+     * @return An optional either with the found item or empty
      */
     public Optional<CcmObject> findObjectById(final long objectId) {
         final TypedQuery<CcmObject> query = getEntityManager().createNamedQuery(
@@ -79,6 +78,13 @@ public class CcmObjectRepository extends AbstractEntityRepository<Long, CcmObjec
         }
     }
 
+    /**
+     * Finds a {@link CcmObject} by its uuid.
+     *
+     * @param uuid The uuid of the item to find
+     *
+     * @return An optional either with the found item or empty
+     */
     public Optional<CcmObject> findObjectByUuid(final String uuid) {
         final TypedQuery<CcmObject> query = getEntityManager().createNamedQuery(
                 "CcmObject.findByUuid", CcmObject.class);

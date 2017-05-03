@@ -18,16 +18,14 @@
  */
 package org.libreccm.security;
 
-import javax.enterprise.context.RequestScoped;
-
 import org.libreccm.core.AbstractEntityRepository;
 import org.libreccm.core.CoreConstants;
 
-import java.util.List;
-import java.util.Optional;
-
+import javax.enterprise.context.RequestScoped;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Repository class for parties.
@@ -51,11 +49,11 @@ public class PartyRepository extends AbstractEntityRepository<Long, Party> {
     }
 
     /**
-     * Finds a party (which can be a user or group) by its name.
+     * Finds a {@link Party} (which can be a user or group) by its name.
      *
-     * @param name
+     * @param name The name of the item to find
      *
-     * @return
+     * @return An optional either with the found item or empty
      */
     public Optional<Party> findByName(final String name) {
         final TypedQuery<Party> query = getEntityManager().createNamedQuery(

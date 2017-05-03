@@ -26,14 +26,14 @@ import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.PermissionChecker;
 import org.libreccm.security.RequiresPrivilege;
 
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.persistence.TypedQuery;
-import javax.transaction.Transactional;
 
 /**
  * Provides CRUB operations for {@link Category} objects.
@@ -86,6 +86,25 @@ public class CategoryRepository extends AbstractEntityRepository<Long, Category>
             "Category.topLevelCategories", Category.class);
 
         return query.getResultList();
+    }
+
+    /**
+     * Finds a {@link Category} by its uuid.
+     *
+     * @param uuid The uuid of the item to find
+     *
+     * @return An optional either with the found item or empty
+     */
+    public Optional<Category> findByUuid(final String uuid) {
+        final TypedQuery<Category> query = getEntityManager().
+                createNamedQuery("Category.findByUuid", Category.class);
+        query.setParameter("uuid", uuid);
+
+        try {
+            return Optional.of(query.getSingleResult());
+        } catch (NoResultException ex) {
+            return Optional.empty();
+        }
     }
 
     @Transactional(Transactional.TxType.REQUIRED)

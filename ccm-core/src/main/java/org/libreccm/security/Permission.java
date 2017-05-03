@@ -58,6 +58,12 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 @Entity
 @Table(name = "PERMISSIONS", schema = DB_SCHEMA)
 @NamedQueries({
+    @NamedQuery(name = "Permission.findByCustomPermId",
+                query = "SELECT p FROM Permission p "
+                            + "WHERE p.grantedPrivilege = :privilege "
+                            + "AND p.grantee = :grantee "
+                            + "AND p.object = :object")
+    ,
     @NamedQuery(name = "Permission.existsForPrivilegeRoleObject",
                 query = "SELECT COUNT(p) FROM Permission p "
                             + "WHERE p.grantedPrivilege = :privilege "
@@ -79,7 +85,7 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
                             + "AND p.inherited = true")
     ,
     @NamedQuery(name = "Permission.existsForPrivilegeAndRole",
-                query = "SELECT count(p) FROM Permission p "
+                query = "SELECT COUNT(p) FROM Permission p "
                             + "WHERE p.grantedPrivilege = :privilege "
                             + "AND p.grantee = :grantee "
                             + "AND p.object IS NULL")

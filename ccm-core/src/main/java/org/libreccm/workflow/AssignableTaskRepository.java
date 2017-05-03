@@ -22,11 +22,12 @@ import org.libreccm.core.AbstractEntityRepository;
 import org.libreccm.security.Role;
 import org.libreccm.security.User;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import javax.enterprise.context.RequestScoped;
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Repository for assignable tasks.
@@ -45,6 +46,25 @@ public class AssignableTaskRepository
     @Override
     public boolean isNew(final AssignableTask task) {
         return task.getTaskId() == 0;
+    }
+
+    /**
+     * Finds a {@link AssignableTask} by its uuid.
+     *
+     * @param uuid The uuid of the item to find
+     *
+     * @return An optional either with the found item or empty
+     */
+    public Optional<AssignableTask> findByUuid(final String uuid) {
+        final TypedQuery<AssignableTask> query = getEntityManager().createNamedQuery(
+                "AssignableTask.findByUuid", AssignableTask.class);
+        query.setParameter("uuid", uuid);
+
+        try {
+            return Optional.of(query.getSingleResult());
+        } catch (NoResultException ex) {
+            return Optional.empty();
+        }
     }
 
     public List<AssignableTask> findEnabledTasksForWorkflow(
