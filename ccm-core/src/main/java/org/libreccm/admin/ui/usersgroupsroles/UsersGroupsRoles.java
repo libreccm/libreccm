@@ -29,6 +29,7 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.components.grid.HeaderCell;
 import com.vaadin.ui.components.grid.HeaderRow;
+import com.vaadin.ui.renderers.ButtonRenderer;
 import com.vaadin.ui.themes.ValoTheme;
 import org.libreccm.admin.ui.AdminView;
 import org.libreccm.security.User;
@@ -92,6 +93,13 @@ public class UsersGroupsRoles extends CustomComponent {
             })
             .setId(COL_BANNED)
             .setCaption("Banned?");
+        usersTable
+            .addColumn(user -> "Edit",
+                       new ButtonRenderer<>(event -> {
+                           final UserEditor editor = new UserEditor(event.getItem());
+                           editor.center();
+                           UI.getCurrent().addWindow(editor);
+                       }));
 
         final HeaderRow filterRow = usersTable.appendHeaderRow();
         final HeaderCell userNameFilterCell = filterRow.getCell(COL_USER_NAME);
@@ -113,8 +121,10 @@ public class UsersGroupsRoles extends CustomComponent {
                         COL_EMAIL, 
                         COL_BANNED);
         final Button clearFiltersButton = new Button("Clear filters");
+        clearFiltersButton.addStyleName(ValoTheme.BUTTON_TINY);
         clearFiltersButton.addClickListener(event -> {
-            usersTableDataProvider.setUserNameFilter(null);
+//            usersTableDataProvider.setUserNameFilter(null);
+            userNameFilter.setValue("");
         });
         final HorizontalLayout actionsLayout = new HorizontalLayout(
             clearFiltersButton);

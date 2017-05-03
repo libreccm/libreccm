@@ -63,6 +63,12 @@ public class UsersTableDataProvider extends AbstractDataProvider<User, String> {
 
         criteriaQuery = criteriaQuery.select(builder.count(from));
 
+        if (userNameFilter != null && !userNameFilter.trim().isEmpty()) {
+            criteriaQuery
+                .where(builder.like(builder.lower(from.get("name")),
+                                     String.format("%s%%", userNameFilter)));
+        }
+        
         return entityManager
             .createQuery(criteriaQuery)
             .getSingleResult()
