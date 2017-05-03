@@ -72,6 +72,10 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
                    "PMD.AvoidDuplicateLiterals"})
 @NamedQueries({
     @NamedQuery(
+        name = "Task.findByUuid",
+        query = "SELECT t FROM Task t WHERE t.uuid = :uuid")
+    ,
+    @NamedQuery(
         name = "Task.countUnfinishedAndActiveTasksForWorkflow",
         query = "SELECT COUNT(t) FROM Task t "
                     + "WHERE t.taskState != org.libreccm.workflow.TaskState.FINISHED "

@@ -126,7 +126,7 @@ public class CoreDataImportTest {
     // TEST SECTION
 
     @Test
-    @InSequence(115)
+    @InSequence(105)
     public void  roleMembershipsShouldBeImported() {
         Assert.assertFalse(importHelper.importRoleMemberships());
     }

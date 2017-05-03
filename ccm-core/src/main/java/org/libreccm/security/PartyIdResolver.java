@@ -21,11 +21,16 @@ package org.libreccm.security;
 import com.fasterxml.jackson.annotation.ObjectIdGenerator;
 import com.fasterxml.jackson.annotation.ObjectIdResolver;
 
+import javax.inject.Inject;
+
 /**
  * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
  * @version created on 3/23/17
  */
 public class PartyIdResolver implements ObjectIdResolver {
+    @Inject
+    private PartyRepository partyRepository;
+
     @Override
     public void bindItem(final ObjectIdGenerator.IdKey id,
                          final Object pojo) {
@@ -36,8 +41,7 @@ public class PartyIdResolver implements ObjectIdResolver {
 
     @Override
     public Object resolveId(final ObjectIdGenerator.IdKey id) {
-        // Find the user for the id (don't confuse that with the primary key!).
-        return null;
+        return partyRepository.findByName(id.key.toString());
     }
 
     @Override

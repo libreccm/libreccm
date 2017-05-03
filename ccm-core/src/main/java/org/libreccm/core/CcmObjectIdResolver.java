@@ -21,11 +21,16 @@ package org.libreccm.core;
 import com.fasterxml.jackson.annotation.ObjectIdGenerator;
 import com.fasterxml.jackson.annotation.ObjectIdResolver;
 
+import javax.inject.Inject;
+
 /**
  * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
  * @version created on 3/23/17
  */
 public class CcmObjectIdResolver implements ObjectIdResolver {
+    @Inject
+    private CcmObjectRepository ccmObjectRepository;
+
     @Override
     public void bindItem(ObjectIdGenerator.IdKey idKey,
                          Object pojo) {
@@ -36,7 +41,7 @@ public class CcmObjectIdResolver implements ObjectIdResolver {
 
     @Override
     public Object resolveId(ObjectIdGenerator.IdKey id) {
-        return null;
+        return ccmObjectRepository.findObjectByUuid(id.key.toString());
     }
 
     @Override

@@ -54,6 +54,10 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 @Table(name = "WORKFLOW_ASSIGNABLE_TASKS", schema = DB_SCHEMA)
 @NamedQueries({
     @NamedQuery(
+        name = "AssignableTask.findByUuid",
+        query = "SELECT t FROM AssignableTask t WHERE t.uuid = :uuid")
+    ,
+    @NamedQuery(
         name = "AssignableTask.findLockedBy",
         query = "SELECT t FROM AssignableTask t WHERE t.lockingUser = :user")
     ,
