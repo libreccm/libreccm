@@ -45,6 +45,8 @@ public class UsersTableDataProvider extends AbstractDataProvider<User, String> {
     @Inject
     private EntityManager entityManager;
 
+    private String userNameFilter;
+
     @Override
     public boolean isInMemory() {
         return false;
@@ -58,11 +60,9 @@ public class UsersTableDataProvider extends AbstractDataProvider<User, String> {
         CriteriaQuery<Long> criteriaQuery = builder
             .createQuery(Long.class);
         final Root<User> from = criteriaQuery.from(User.class);
-        
+
         criteriaQuery = criteriaQuery.select(builder.count(from));
 
-        
-        
         return entityManager
             .createQuery(criteriaQuery)
             .getSingleResult()
@@ -77,14 +77,24 @@ public class UsersTableDataProvider extends AbstractDataProvider<User, String> {
         final CriteriaQuery<User> criteriaQuery = builder
             .createQuery(User.class);
         final Root<User> from = criteriaQuery.from(User.class);
-        
-        
+
+        if (userNameFilter != null && !userNameFilter.trim().isEmpty()) {
+            criteriaQuery
+                .where(builder.like(builder.lower(from.get("name")),
+                                     String.format("%s%%", userNameFilter)));
+        }
+
         return entityManager
             .createQuery(criteriaQuery)
             .setMaxResults(query.getLimit())
             .setFirstResult(query.getOffset())
             .getResultList()
             .stream();
+    }
+
+    public void setUserNameFilter(final String userNameFilter) {
+        this.userNameFilter = userNameFilter;
+        refreshAll();
     }
 
 }
