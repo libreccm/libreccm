@@ -881,6 +881,8 @@ public class ContentItemManager {
 
         liveItem.setLifecycle(lifecycle);
         liveItem.setWorkflow(draftItem.getWorkflow());
+        
+        contentItemRepo.save(liveItem);
 
         final List<Category> oldCategories = liveItem
             .getCategories()
@@ -894,12 +896,16 @@ public class ContentItemManager {
                 throw new RuntimeException(ex);
             }
         });
+        
+        contentItemRepo.save(liveItem);
 
         draftItem.getCategories().forEach(categorization -> categoryManager
             .addObjectToCategory(liveItem,
                                  categorization.getCategory(),
                                  categorization.getType()));
 
+        contentItemRepo.save(liveItem);
+        
         for (int i = 0; i < draftItem.getAttachments().size(); i++) {
             final AttachmentList sourceList = draftItem.getAttachments().get(i);
 
@@ -968,10 +974,9 @@ public class ContentItemManager {
                 entityManager.merge(targetList);
             }
         }
+        
+        contentItemRepo.save(liveItem);
 
-//        for (AttachmentList attachmentList : item.getAttachments()) {
-//            copyAttachmentList(attachmentList, liveItem);
-//        }
         final BeanInfo beanInfo;
         try {
             beanInfo = Introspector.getBeanInfo(item.getClass());
