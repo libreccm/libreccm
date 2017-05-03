@@ -20,14 +20,19 @@ package org.libreccm.admin.ui.usersgroupsroles;
 
 import com.arsdigita.ui.admin.AdminUiConstants;
 
+import com.vaadin.ui.Button;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
+import com.vaadin.ui.components.grid.HeaderCell;
+import com.vaadin.ui.components.grid.HeaderRow;
+import com.vaadin.ui.themes.ValoTheme;
 import org.libreccm.admin.ui.AdminView;
 import org.libreccm.security.User;
 
-import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -49,6 +54,7 @@ public class UsersGroupsRoles extends CustomComponent {
     private final TabSheet tabSheet;
 
     private final Grid<User> usersTable;
+    private UsersTableDataProvider usersTableDataProvider;
 
     public UsersGroupsRoles(final AdminView view) {
 
@@ -86,8 +92,34 @@ public class UsersGroupsRoles extends CustomComponent {
             })
             .setId(COL_BANNED)
             .setCaption("Banned?");
+
+        final HeaderRow filterRow = usersTable.appendHeaderRow();
+        final HeaderCell userNameFilterCell = filterRow.getCell(COL_USER_NAME);
+        final TextField userNameFilter = new TextField();
+        userNameFilter.setPlaceholder("User name");
+        userNameFilter.setDescription("Filter users by username");
+        userNameFilter.addStyleName(ValoTheme.TEXTFIELD_TINY);
+        userNameFilter
+            .addValueChangeListener(event -> {
+                usersTableDataProvider
+                    .setUserNameFilter(event.getValue().toLowerCase());
+            });
+        userNameFilterCell.setComponent(userNameFilter);
         
-        
+        final HeaderRow actionsRow = usersTable.prependHeaderRow();
+        final HeaderCell actionsCell = actionsRow.join(COL_USER_NAME, 
+                        COL_GIVEN_NAME, 
+                        COL_FAMILY_NAME, 
+                        COL_EMAIL, 
+                        COL_BANNED);
+        final Button clearFiltersButton = new Button("Clear filters");
+        clearFiltersButton.addClickListener(event -> {
+            usersTableDataProvider.setUserNameFilter(null);
+        });
+        final HorizontalLayout actionsLayout = new HorizontalLayout(
+            clearFiltersButton);
+        actionsCell.setComponent(actionsLayout);
+
         tabSheet.addTab(usersTable, "Users");
 
         setCompositionRoot(tabSheet);
@@ -97,8 +129,8 @@ public class UsersGroupsRoles extends CustomComponent {
 //    public void setUsers(final List<User> users) {
 //        usersTable.setItems(users);
 //    }
-    
     public void setDataProvider(final UsersTableDataProvider dataProvider) {
+        this.usersTableDataProvider = dataProvider;
         usersTable.setDataProvider(dataProvider);
     }
 

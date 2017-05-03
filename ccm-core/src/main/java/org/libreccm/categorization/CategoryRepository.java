@@ -36,6 +36,11 @@ import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
 /**
+ * Provides CRUB operations for {@link Category} objects.
+ *
+ * Note: This repository class does no permission checks when retrieving
+ * categories. This is the responsibility of the application which uses the
+ * retrieved categories.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */

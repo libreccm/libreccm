@@ -136,12 +136,14 @@ public abstract class AbstractEntityRepository<K, E> {
      */
     @Transactional(Transactional.TxType.REQUIRED)
     public Optional<E> findById(final K entityId) {
+        
         return Optional.ofNullable(entityManager.find(getEntityClass(),
                                                       entityId));
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
     public Optional<E> findById(final K entityId, final String entityGraphName) {
+        
         @SuppressWarnings("unchecked")
         final EntityGraph<E> entityGraph = (EntityGraph<E>) entityManager.
                 getEntityGraph(entityGraphName);
@@ -151,6 +153,7 @@ public abstract class AbstractEntityRepository<K, E> {
     @Transactional(Transactional.TxType.REQUIRED)
     public Optional<E> findById(final K entityId,
                                 final EntityGraph<E> entityGraph) {
+        
         final Map<String, Object> hints = new HashMap<>();
         hints.put(FETCH_GRAPH_HINT_KEY, entityGraph);
         return Optional.ofNullable(entityManager.find(getEntityClass(),

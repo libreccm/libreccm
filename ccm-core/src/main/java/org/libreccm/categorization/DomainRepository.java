@@ -38,6 +38,10 @@ import javax.transaction.Transactional;
 /**
  * A repository for executing CRUD operations on {@link Domain} objects.
  *
+ * Note: This repository does the permission checks when retrieving
+ * {@link Domain}s from the database. This is the responsibility of the
+ * application using the {@link Domain}.
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
