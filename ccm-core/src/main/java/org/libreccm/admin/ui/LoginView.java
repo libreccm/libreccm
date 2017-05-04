@@ -21,15 +21,12 @@ package org.libreccm.admin.ui;
 import com.arsdigita.kernel.KernelConfig;
 
 import com.vaadin.cdi.CDIView;
-import com.vaadin.event.Action;
-import com.vaadin.event.Action.Handler;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.UserError;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Notification;
