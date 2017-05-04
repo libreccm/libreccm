@@ -130,6 +130,7 @@ public class CoreDataImportTest {
     public void  roleMembershipsShouldBeImported() {
         Assert.assertFalse(importHelper.importRoleMemberships());
     }
+/*
 
     @Test
     @InSequence(110)
@@ -143,58 +144,59 @@ public class CoreDataImportTest {
         Assert.assertFalse(importHelper.importGroups());
     }
 
-    //@Test
+    @Test
     @InSequence(120)
     public void usersShouldBeImported() {
         importHelper.importUsers();
     }
 
-    //@Test
+    @Test
     @InSequence(125)
     public void taskAssignmentsMembershipsShouldBeImported() {
         importHelper.importTaskAssignments();
     }
 
-    //@Test
+    @Test
     @InSequence(130)
     public void assignableTasksShouldBeImported() {
         importHelper.importAssignableTasks();
     }
 
-    //@Test
+    @Test
     @InSequence(135)
     public void workflowTemplatesShouldBeImported() {
         importHelper.importWorkflowTemplates();
     }
 
-    //@Test
+    @Test
     @InSequence(140)
     public void workflowsShouldBeImported() {
         importHelper.importWorkflows();
     }
 
-    //@Test
+    @Test
     @InSequence(145)
     public void categorizationsShouldBeImported() {
         importHelper.importCategorizations();
     }
 
-    //@Test
+    @Test
     @InSequence(150)
     public void PermissionsShouldBeImported() {
         importHelper.importPermissions();
     }
 
-    //@Test
+    @Test
     @InSequence(155)
     public void categoriesShouldBeImported() {
         importHelper.importCategories();
     }
 
-    //@Test
+    @Test
     @InSequence(160)
     public void rolesShouldBeImported() {
         importHelper.importRoles();
     }
+*/
 
 }
