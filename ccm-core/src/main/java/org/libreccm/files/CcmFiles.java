@@ -35,7 +35,7 @@ import javax.faces.bean.RequestScoped;
 import javax.inject.Inject;
 
 /**
- * This class provides access to the file (local) system. If available an
+ * This class provides access to the (local) file system. If available an
  * implementation of the {@link FileSystemAdapter} interface is used. The
  * implementations of {@link FileSystemAdapter} provide a (transaction) safe way
  * to access the local file system. If no implementation of
@@ -46,9 +46,13 @@ import javax.inject.Inject;
  * {@link FileSystemAdapter} please refer the the documentation of the
  * implementation.
  *
- * The method in this class encapsulate the details of the access to the local
- * file system. Therefore the paths to the files to read are usually provided as
- * strings.
+ * The method in this class encapsulates the details of the access to the local
+ * file system. Therefore the paths to the files to read or write are usually
+ * provided as strings.
+ *
+ * This class does not provide access to the complete file system of the server.
+ * Instead a directory has been configured before using this class. The methods
+ * in this class will interpret the paths provided relative to this directory.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -63,6 +67,14 @@ public class CcmFiles {
     @Inject
     private ConfigurationManager confManager;
 
+    /**
+     * A helper method for getting the {@link FileSystemAdapter} implementation
+     * to use.
+     *
+     * @return The implementation of the {@link FileSystemAdapter} interface to
+     * use. If no other implementation is available the default implementation
+     * {@link NIOFileSystemAdapter}.
+     */
     private FileSystemAdapter getFileSystemAdapter() {
 
         LOGGER.debug("Trying to find FileSystemAdapter...");
@@ -119,7 +131,8 @@ public class CcmFiles {
                     throw new UnexpectedErrorException(
                         "Multiple implementations of the FileSystemAdapter "
                             + "interface are available but "
-                            + "activeFileSystemAdapter is not set.");
+                            + "activeFileSystemAdapter is not set. Please set "
+                            + "the FileSystemAdapter to use.");
                 }
 
                 final FileSystemAdapter adapter = adapters
@@ -150,9 +163,9 @@ public class CcmFiles {
             if (NIOFileSystemAdapter.class.getName().equals(adapter.getClass()
                 .getName())) {
                 LOGGER.warn("Only the default FileSystemAdapter '{}' which "
-                                + "accesses the file system directly available. It is"
+                                + "accesses the file system directly is available. It is"
                             + "strongly recommanded to install and configure a another "
-                            + "ileSystemAdapter which accesses the FileSystem in a way"
+                            + "FileSystemAdapter which accesses the file system in a way"
                             + "which complies to the Java EE specification.");
             }
             if (adapter.isConfigured()) {
@@ -165,6 +178,15 @@ public class CcmFiles {
         }
     }
 
+    /**
+     * A helper method to create the path relative the the path of the data
+     * directory This method also normalises the path by removing or adding
+     * slashes at the end or beginning of the string as necessary.
+     *
+     * @param path The path the transform into a path relative to the data
+     * directories path.
+     * @return The absolute path.
+     */
     private String getDataPath(final String path) {
         final StringBuilder builder = new StringBuilder();
 
@@ -199,16 +221,14 @@ public class CcmFiles {
      * @param path The path of the file.
      *
      * @return A {@link Reader} for the file identified by the provided
-     *         {@code path}.
+     * {@code path}.
      *
-     * @throws FileAccessException              If an error not covered by other
-     *                                          exceptions occurs.
-     * @throws FileDoesNotExistException        If the requested file does not
-     *                                          exist.
+     * @throws FileAccessException If an error not covered by other exceptions
+     * occurs.
+     * @throws FileDoesNotExistException If the requested file does not exist.
      * @throws InsufficientPermissionsException If the user which runs the
-     *                                          application server does not have
-     *                                          the permission to access the
-     *                                          requested file.
+     * application server does not have the permission to access the requested
+     * file.
      */
     public Reader createReader(final String path)
         throws FileAccessException,
@@ -225,12 +245,11 @@ public class CcmFiles {
      *
      * @return A {@link Writer} for the file identified by {@code path}.
      *
-     * @throws FileAccessException              If an error not covered by other
-     *                                          exceptions occurs.
+     * @throws FileAccessException If an error not covered by other exceptions
+     * occurs.
      * @throws InsufficientPermissionsException If the user which runs the
-     *                                          application server does not have
-     *                                          the permission to access the
-     *                                          requested file.
+     * application server does not have the permission to access the requested
+     * file.
      */
     public Writer createWriter(final String path)
         throws FileAccessException,
@@ -246,14 +265,12 @@ public class CcmFiles {
      *
      * @return
      *
-     * @throws FileAccessException              If an error not covered by other
-     *                                          exceptions occurs.
-     * @throws FileDoesNotExistException        If the requested file does not
-     *                                          exist.
+     * @throws FileAccessException If an error not covered by other exceptions
+     * occurs.
+     * @throws FileDoesNotExistException If the requested file does not exist.
      * @throws InsufficientPermissionsException If the user which runs the
-     *                                          application server does not have
-     *                                          the permission to access the
-     *                                          requested file.
+     * application server does not have the permission to access the requested
+     * file.
      */
     public InputStream createInputStream(final String path)
         throws FileDoesNotExistException,
@@ -270,12 +287,11 @@ public class CcmFiles {
      *
      * @return
      *
-     * @throws FileAccessException              If an error not covered by other
-     *                                          exceptions occurs.
+     * @throws FileAccessException If an error not covered by other exceptions
+     * occurs.
      * @throws InsufficientPermissionsException If the user which runs the
-     *                                          application server does not have
-     *                                          the permission to access the
-     *                                          requested file.
+     * application server does not have the permission to access the requested
+     * file.
      */
     public OutputStream createOutputStream(final String path)
         throws FileAccessException,
@@ -290,14 +306,13 @@ public class CcmFiles {
      * @param path
      *
      * @return {@code true} if a file with the provided {@code path} exists,
-     *         {@code false} otherwise.
+     * {@code false} otherwise.
      *
-     * @throws FileAccessException              If an error not covered by other
-     *                                          exceptions occurs.
+     * @throws FileAccessException If an error not covered by other exceptions
+     * occurs.
      * @throws InsufficientPermissionsException If the user which runs the
-     *                                          application server does not have
-     *                                          the permission to access the
-     *                                          requested file.
+     * application server does not have the permission to access the requested
+     * file.
      */
     public boolean existsFile(final String path)
         throws FileAccessException,
@@ -312,16 +327,14 @@ public class CcmFiles {
      * @param path
      *
      * @return {@code true} if the the file to which the provided path points
-     *         exists and is a directory, {@code false} otherwise.
+     * exists and is a directory, {@code false} otherwise.
      *
-     * @throws FileAccessException              If an error not covered by other
-     *                                          exceptions occurs.
-     * @throws FileDoesNotExistException        If the requested file does not
-     *                                          exist.
+     * @throws FileAccessException If an error not covered by other exceptions
+     * occurs.
+     * @throws FileDoesNotExistException If the requested file does not exist.
      * @throws InsufficientPermissionsException If the user which runs the
-     *                                          application server does not have
-     *                                          the permission to access the
-     *                                          requested file.
+     * application server does not have the permission to access the requested
+     * file.
      */
     public boolean isDirectory(final String path)
         throws FileAccessException,
@@ -336,14 +349,12 @@ public class CcmFiles {
      *
      * @param path The path of the new directory.
      *
-     * @throws FileAccessException              If an error not covered by other
-     *                                          exceptions occurs.
-     * @throws FileAlreadyExistsException       If the requested file does not
-     *                                          exist.
+     * @throws FileAccessException If an error not covered by other exceptions
+     * occurs.
+     * @throws FileAlreadyExistsException If the requested file does not exist.
      * @throws InsufficientPermissionsException If the user which runs the
-     *                                          application server does not have
-     *                                          the permission to access the
-     *                                          requested file.
+     * application server does not have the permission to access the requested
+     * file.
      */
     public void createDirectory(final String path)
         throws FileAccessException,
@@ -360,14 +371,12 @@ public class CcmFiles {
      *
      * @return A list of the names of the files in the directory.
      *
-     * @throws FileAccessException              If an error not covered by other
-     *                                          exceptions occurs.
-     * @throws FileDoesNotExistException        If the requested file does not
-     *                                          exist.
+     * @throws FileAccessException If an error not covered by other exceptions
+     * occurs.
+     * @throws FileDoesNotExistException If the requested file does not exist.
      * @throws InsufficientPermissionsException If the user which runs the
-     *                                          application server does not have
-     *                                          the permission to access the
-     *                                          requested file.
+     * application server does not have the permission to access the requested
+     * file.
      */
     public List<String> listFiles(final String path)
         throws FileAccessException,
@@ -383,18 +392,15 @@ public class CcmFiles {
      *
      * @param path The path of the file to delete.
      *
-     * @throws FileAccessException              If an error not covered by other
-     *                                          exceptions occurs.
-     * @throws FileDoesNotExistException        If the requested file does not
-     *                                          exist.
-     * @throws DirectoryNotEmptyException       If the file to delete is a non
-     *                                          empty directory. To delete a
-     *                                          directory recursively use
-     *                                          {@link #deleteFile(java.lang.String, boolean)}.
+     * @throws FileAccessException If an error not covered by other exceptions
+     * occurs.
+     * @throws FileDoesNotExistException If the requested file does not exist.
+     * @throws DirectoryNotEmptyException If the file to delete is a non empty
+     * directory. To delete a directory recursively use
+     * {@link #deleteFile(java.lang.String, boolean)}.
      * @throws InsufficientPermissionsException If the user which runs the
-     *                                          application server does not have
-     *                                          the permission to access the
-     *                                          requested file.
+     * application server does not have the permission to access the requested
+     * file.
      */
     public void deleteFile(final String path)
         throws FileAccessException,
@@ -411,16 +417,14 @@ public class CcmFiles {
      * @param path
      * @param recursively Delete directories recursively.
      *
-     * @throws FileAccessException              If an error not covered by other
-     *                                          exceptions occurs.
-     * @throws FileDoesNotExistException        If the requested file does not
-     *                                          exist.
-     * @throws DirectoryNotEmptyException       If the directory is not empty
+     * @throws FileAccessException If an error not covered by other exceptions
+     * occurs.
+     * @throws FileDoesNotExistException If the requested file does not exist.
+     * @throws DirectoryNotEmptyException If the directory is not empty
      * <em>and</em> {@code recursively} is set to {@code false}.
      * @throws InsufficientPermissionsException If the user which runs the
-     *                                          application server does not have
-     *                                          the permission to access the
-     *                                          requested file.
+     * application server does not have the permission to access the requested
+     * file.
      */
     public void deleteFile(final String path, final boolean recursively)
         throws FileAccessException,
