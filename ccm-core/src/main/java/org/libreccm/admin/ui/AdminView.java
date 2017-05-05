@@ -26,10 +26,8 @@ import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.ClassResource;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.CustomComponent;
-import com.vaadin.ui.Grid;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
@@ -40,16 +38,13 @@ import org.libreccm.admin.ui.usersgroupsroles.UsersGroupsRoles;
 import org.libreccm.admin.ui.usersgroupsroles.UsersTableDataProvider;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.security.PermissionChecker;
-import org.libreccm.security.User;
 import org.libreccm.security.UserRepository;
 
 import java.util.ResourceBundle;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.servlet.ServletContext;
-import javax.servlet.ServletRequest;
 
 /**
  *
@@ -63,12 +58,11 @@ public class AdminView extends CustomComponent implements View {
 
     public static final String VIEWNAME = "admin";
 
-    private static final String COL_USER_NAME = "username";
-    private static final String COL_GIVEN_NAME = "given_name";
-    private static final String COL_FAMILY_NAME = "family_name";
-    private static final String COL_EMAIL = "email";
-    private static final String COL_BANNED = "banned";
-
+//    private static final String COL_USER_NAME = "username";
+//    private static final String COL_GIVEN_NAME = "given_name";
+//    private static final String COL_FAMILY_NAME = "family_name";
+//    private static final String COL_EMAIL = "email";
+//    private static final String COL_BANNED = "banned";
     @Inject
     private ServletContext servletContext;
 
@@ -83,7 +77,7 @@ public class AdminView extends CustomComponent implements View {
 
     @Inject
     private GlobalizationHelper globalizationHelper;
-    
+
     @Inject
     private UsersTableDataProvider usersTableDataProvider;
 
@@ -94,6 +88,7 @@ public class AdminView extends CustomComponent implements View {
 
     private final TabSheet tabSheet;
 //    private final Grid<User> usersTable;
+    private final TabSheet.Tab tabUsersGroupsRoles;
     private final UsersGroupsRoles usersGroupsRoles;
 
     private final JpqlConsole jpqlConsole;
@@ -135,7 +130,8 @@ public class AdminView extends CustomComponent implements View {
 //
 //        tabSheet.addTab(userGroupsRoles, "Users/Groups/Roles");
         usersGroupsRoles = new UsersGroupsRoles(this);
-        tabSheet.addTab(usersGroupsRoles, "Users/Groups/Roles");
+        tabUsersGroupsRoles = tabSheet.addTab(usersGroupsRoles,
+                                              "Users/Groups/Roles");
 
         final ServletContext servletContext = VaadinServlet
             .getCurrent()
@@ -182,8 +178,13 @@ public class AdminView extends CustomComponent implements View {
         bundle = ResourceBundle
             .getBundle(AdminUiConstants.ADMIN_BUNDLE,
                        globalizationHelper.getNegotiatedLocale());
-        
+
         usersGroupsRoles.setDataProvider(usersTableDataProvider);
+
+        tabUsersGroupsRoles.setCaption(bundle
+            .getString("ui.admin.tab.users_groups_roles.title"));
+
+        usersGroupsRoles.localize();
     }
 
     @Override
@@ -192,7 +193,6 @@ public class AdminView extends CustomComponent implements View {
 //        usersGroupsRoles.setUsers(userRepo.findAll());
     }
 
-    
     protected JpqlConsoleController getJpqlConsoleController() {
         return jpqlConsoleController;
     }

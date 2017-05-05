@@ -34,6 +34,7 @@ import com.vaadin.ui.themes.ValoTheme;
 import org.libreccm.admin.ui.AdminView;
 import org.libreccm.security.User;
 
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
@@ -49,20 +50,28 @@ public class UsersGroupsRoles extends CustomComponent {
     private static final String COL_FAMILY_NAME = "family_name";
     private static final String COL_EMAIL = "email";
     private static final String COL_BANNED = "banned";
+    private static final String COL_PASSWORD_RESET_REQUIRED
+                                = "password_reset_required";
+    private static final String COL_EDIT = "edit";
+    private static final String COL_DELETE = "delete";
 
     private final AdminView view;
 
     private final TabSheet tabSheet;
-
+    
     private final Grid<User> usersTable;
+    private final TextField userNameFilter;
+    private final Button clearFiltersButton;
+    
     private UsersTableDataProvider usersTableDataProvider;
 
     public UsersGroupsRoles(final AdminView view) {
 
         this.view = view;
 
-        final ResourceBundle bundle = ResourceBundle.getBundle(
-            AdminUiConstants.ADMIN_BUNDLE, UI.getCurrent().getLocale());
+        final ResourceBundle bundle = ResourceBundle
+            .getBundle(AdminUiConstants.ADMIN_BUNDLE,
+                       UI.getCurrent().getLocale());
 
         tabSheet = new TabSheet();
         usersTable = new Grid<>();
@@ -94,16 +103,39 @@ public class UsersGroupsRoles extends CustomComponent {
             .setId(COL_BANNED)
             .setCaption("Banned?");
         usersTable
-            .addColumn(user -> "Edit",
+            .addColumn(user -> {
+                if (user.isPasswordResetRequired()) {
+                    return bundle.getString(
+                        "ui.admin.user.password_reset_required_yes");
+                } else {
+                    return bundle.getString(
+                        "ui.admin.user.password_reset_required_no");
+                }
+            })
+            .setId(COL_PASSWORD_RESET_REQUIRED)
+            .setCaption("Password reset required");
+        usersTable
+            .addColumn(user -> bundle.getString("ui.admin.users.table.edit"),
                        new ButtonRenderer<>(event -> {
-                           final UserEditor editor = new UserEditor(event.getItem());
+                           final UserEditor editor = new UserEditor(event
+                               .getItem());
                            editor.center();
                            UI.getCurrent().addWindow(editor);
-                       }));
+                       }))
+            .setId(COL_EDIT);
+        usersTable
+            .addColumn(user -> bundle.getString("ui.admin.users.table.delete"),
+                       new ButtonRenderer<>(event -> {
+                           final UserEditor editor = new UserEditor(event
+                               .getItem());
+                           editor.center();
+                           UI.getCurrent().addWindow(editor);
+                       }))
+            .setId(COL_DELETE);
 
         final HeaderRow filterRow = usersTable.appendHeaderRow();
         final HeaderCell userNameFilterCell = filterRow.getCell(COL_USER_NAME);
-        final TextField userNameFilter = new TextField();
+        userNameFilter = new TextField();
         userNameFilter.setPlaceholder("User name");
         userNameFilter.setDescription("Filter users by username");
         userNameFilter.addStyleName(ValoTheme.TEXTFIELD_TINY);
@@ -113,14 +145,14 @@ public class UsersGroupsRoles extends CustomComponent {
                     .setUserNameFilter(event.getValue().toLowerCase());
             });
         userNameFilterCell.setComponent(userNameFilter);
-        
+
         final HeaderRow actionsRow = usersTable.prependHeaderRow();
-        final HeaderCell actionsCell = actionsRow.join(COL_USER_NAME, 
-                        COL_GIVEN_NAME, 
-                        COL_FAMILY_NAME, 
-                        COL_EMAIL, 
-                        COL_BANNED);
-        final Button clearFiltersButton = new Button("Clear filters");
+        final HeaderCell actionsCell = actionsRow.join(COL_USER_NAME,
+                                                       COL_GIVEN_NAME,
+                                                       COL_FAMILY_NAME,
+                                                       COL_EMAIL,
+                                                       COL_BANNED);
+        clearFiltersButton = new Button("Clear filters");
         clearFiltersButton.addStyleName(ValoTheme.BUTTON_TINY);
         clearFiltersButton.addClickListener(event -> {
 //            usersTableDataProvider.setUserNameFilter(null);
@@ -133,6 +165,42 @@ public class UsersGroupsRoles extends CustomComponent {
         tabSheet.addTab(usersTable, "Users");
 
         setCompositionRoot(tabSheet);
+
+    }
+
+    public void localize() {
+
+        final ResourceBundle bundle = ResourceBundle
+            .getBundle(AdminUiConstants.ADMIN_BUNDLE,
+                       UI.getCurrent().getLocale());
+
+        usersTable
+            .getColumn(COL_USER_NAME)
+            .setCaption(bundle.getString("ui.admin.users.table.screenname"));
+        usersTable
+            .getColumn(COL_GIVEN_NAME)
+            .setCaption(bundle.getString("ui.admin.users.table.givenname"));
+        usersTable
+            .getColumn(COL_FAMILY_NAME)
+            .setCaption(bundle.getString("ui.admin.users.table.familyname"));
+        usersTable
+            .getColumn(COL_EMAIL)
+            .setCaption(bundle.getString("ui.admin.users.table.primary_email"));
+        usersTable
+            .getColumn(COL_BANNED)
+            .setCaption(bundle.getString("ui.admin.users.table.banned"));
+        usersTable
+            .getColumn(COL_PASSWORD_RESET_REQUIRED)
+            .setCaption(bundle.getString(
+                "ui.admin.users.table.password_reset_required"));
+        
+        userNameFilter.setPlaceholder(bundle
+            .getString("ui.admin.users.table.filter.screenname.placeholder"));
+        userNameFilter.setDescription(bundle
+            .getString("ui.admin.users.table.filter.screenname.description"));
+        
+        clearFiltersButton.setCaption(bundle
+            .getString("ui.admin.users.table.filter.clear"));
 
     }
 
