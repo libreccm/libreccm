@@ -28,7 +28,14 @@ import java.util.UUID;
 import static org.libreccm.core.CoreConstants.ACCESS_DENIED;
 
 /**
- * A repository class for {@link CcmObject}.
+ * A repository class for {@link CcmObject} entities.
+ *
+ * Please note that the {@code CcmObjectRepository} does not do any
+ * authorisation checks. {@code CcmObjectRepository} can't do that because the
+ * permissions are application specific. Checking permissions is the
+ * responsibility of the developers which use this class. It is recommended the
+ * create a repository class for each entity type which performs the
+ * applications specific permission checks.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -48,7 +55,7 @@ public class CcmObjectRepository extends AbstractEntityRepository<Long, CcmObjec
 
         if (ACCESS_DENIED.equals(entity.getDisplayName())) {
             throw new IllegalArgumentException(
-                    "Can't save the Access Denied object.");
+                "Can't save the Access Denied object.");
         }
 
         return entity.getObjectId() == 0;
@@ -68,7 +75,7 @@ public class CcmObjectRepository extends AbstractEntityRepository<Long, CcmObjec
      */
     public Optional<CcmObject> findObjectById(final long objectId) {
         final TypedQuery<CcmObject> query = getEntityManager().createNamedQuery(
-                "CcmObject.findById", CcmObject.class);
+            "CcmObject.findById", CcmObject.class);
         query.setParameter("id", objectId);
 
         try {
@@ -87,16 +94,16 @@ public class CcmObjectRepository extends AbstractEntityRepository<Long, CcmObjec
      */
     public Optional<CcmObject> findObjectByUuid(final String uuid) {
         final TypedQuery<CcmObject> query = getEntityManager().createNamedQuery(
-                "CcmObject.findByUuid", CcmObject.class);
+            "CcmObject.findByUuid", CcmObject.class);
         query.setParameter("uuid", uuid);
-        
+
         try {
             return Optional.of(query.getSingleResult());
         } catch (NoResultException ex) {
             return Optional.empty();
         }
     }
-    
+
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public void delete(final CcmObject object) {
