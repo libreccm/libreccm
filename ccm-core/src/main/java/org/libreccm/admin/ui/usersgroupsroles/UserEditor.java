@@ -18,21 +18,26 @@
  */
 package org.libreccm.admin.ui.usersgroupsroles;
 
+import com.arsdigita.ui.admin.AdminUiConstants;
+
 import com.vaadin.data.provider.AbstractDataProvider;
 import com.vaadin.data.provider.Query;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.ItemCaptionGenerator;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.RadioButtonGroup;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.security.User;
 
 import java.util.Arrays;
+import java.util.ResourceBundle;
 import java.util.stream.Stream;
 
 /**
@@ -75,18 +80,26 @@ public class UserEditor extends Window {
 
     private void addWidgets() {
 
-        userName = new TextField("User name");
+        final ResourceBundle bundle = ResourceBundle
+            .getBundle(AdminUiConstants.ADMIN_BUNDLE,
+                       UI.getCurrent().getLocale());
+
+        userName = new TextField(bundle
+            .getString("ui.admin.user_edit.username.label"));
         userName.setRequiredIndicatorVisible(true);
 
-        familyName = new TextField("Family name");
+        familyName = new TextField(bundle
+            .getString("ui.admin.user_edit.familyname.label"));
 
-        givenName = new TextField("Given name");
+        givenName = new TextField(bundle
+            .getString("ui.admin.user_edit.givenname.label"));
 
-        emailAddress = new TextField("emailAddress");
+        emailAddress = new TextField(bundle
+            .getString("ui.admin.user_edit.emailAddress.label"));
         emailAddress.setRequiredIndicatorVisible(true);
 
         passwordOptions = new RadioButtonGroup<PasswordOptions>(
-            "Generate password or set manually?",
+            bundle.getString("ui.admin.user_edit.password_options.label"),
             new AbstractDataProvider<PasswordOptions, String>() {
 
             private static final long serialVersionUID = 1L;
@@ -108,11 +121,28 @@ public class UserEditor extends Window {
             }
 
         });
+        passwordOptions.setItemCaptionGenerator(
+            (final PasswordOptions item) -> {
+                switch (item) {
+                    case GENERATE_AND_SEND:
+                        return bundle.getString(
+                            "ui.admin.user_edit.password_options.generate_and_send");
+                    case SET:
+                        return bundle.getString(
+                            "ui.admin.user_edit.password_options.set");
+                    default:
+                        throw new UnexpectedErrorException(String.format(
+                            "Unexpected value '%s' for password options.",
+                            item.toString()));
+                }
+            });
 
-        password = new PasswordField("Password");
+        password = new PasswordField(bundle
+            .getString("ui.admin.user_edit.password.label"));
         password.setRequiredIndicatorVisible(true);
 
-        passwordConfirmation = new PasswordField("Confirm password");
+        passwordConfirmation = new PasswordField(bundle
+            .getString("ui.admin.user_set_password_confirm.label"));
         passwordConfirmation.setRequiredIndicatorVisible(true);
 
         passwordOptions.addValueChangeListener(event -> {
@@ -140,15 +170,16 @@ public class UserEditor extends Window {
 
         final Button submit = new Button();
         if (user == null) {
-            submit.setCaption("Create new user");
+            submit.setCaption(bundle.getString(
+                "ui.admin.user.createpanel.header"));
         } else {
-            submit.setCaption("Save");
+            submit.setCaption(bundle.getString("ui.admin.save"));
         }
 
-        final Button cancel = new Button("Cancel");
+        final Button cancel = new Button(bundle.getString("ui.admin.cancel"));
 
         final HorizontalLayout buttons = new HorizontalLayout(submit, cancel);
-        
+
         final FormLayout formLayout = new FormLayout(userName,
                                                      familyName,
                                                      givenName,
@@ -156,14 +187,16 @@ public class UserEditor extends Window {
                                                      passwordOptions,
                                                      password,
                                                      passwordConfirmation);
-        
+
         final VerticalLayout layout = new VerticalLayout(formLayout, buttons);
 
         final Panel panel = new Panel(layout);
         if (user == null) {
-            panel.setCaption("Create new user");
+            panel.setCaption(bundle
+                .getString("ui.admin.user.createpanel.header"));
         } else {
-            panel.setCaption("Edit user");
+            panel.setCaption(bundle
+                .getString("ui.admin.user_details.edit"));
         }
 
         setContent(panel);
