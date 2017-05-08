@@ -34,7 +34,6 @@ import com.vaadin.ui.themes.ValoTheme;
 import org.libreccm.admin.ui.AdminView;
 import org.libreccm.security.User;
 
-import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
@@ -51,18 +50,18 @@ public class UsersGroupsRoles extends CustomComponent {
     private static final String COL_EMAIL = "email";
     private static final String COL_BANNED = "banned";
     private static final String COL_PASSWORD_RESET_REQUIRED
-                                = "password_reset_required";
+                                    = "password_reset_required";
     private static final String COL_EDIT = "edit";
     private static final String COL_DELETE = "delete";
 
     private final AdminView view;
 
     private final TabSheet tabSheet;
-    
+
     private final Grid<User> usersTable;
     private final TextField userNameFilter;
     private final Button clearFiltersButton;
-    
+
     private UsersTableDataProvider usersTableDataProvider;
 
     public UsersGroupsRoles(final AdminView view) {
@@ -117,8 +116,10 @@ public class UsersGroupsRoles extends CustomComponent {
         usersTable
             .addColumn(user -> bundle.getString("ui.admin.users.table.edit"),
                        new ButtonRenderer<>(event -> {
-                           final UserEditor editor = new UserEditor(event
-                               .getItem());
+                           final UserEditor editor = new UserEditor(
+                               event.getItem(),
+                               view.getUserRepository(),
+                               view.getUserManager());
                            editor.center();
                            UI.getCurrent().addWindow(editor);
                        }))
@@ -126,8 +127,10 @@ public class UsersGroupsRoles extends CustomComponent {
         usersTable
             .addColumn(user -> bundle.getString("ui.admin.users.table.delete"),
                        new ButtonRenderer<>(event -> {
-                           final UserEditor editor = new UserEditor(event
-                               .getItem());
+                           final UserEditor editor = new UserEditor(
+                               event.getItem(),
+                               view.getUserRepository(),
+                               view.getUserManager());
                            editor.center();
                            UI.getCurrent().addWindow(editor);
                        }))
@@ -193,12 +196,12 @@ public class UsersGroupsRoles extends CustomComponent {
             .getColumn(COL_PASSWORD_RESET_REQUIRED)
             .setCaption(bundle.getString(
                 "ui.admin.users.table.password_reset_required"));
-        
+
         userNameFilter.setPlaceholder(bundle
             .getString("ui.admin.users.table.filter.screenname.placeholder"));
         userNameFilter.setDescription(bundle
             .getString("ui.admin.users.table.filter.screenname.description"));
-        
+
         clearFiltersButton.setCaption(bundle
             .getString("ui.admin.users.table.filter.clear"));
 

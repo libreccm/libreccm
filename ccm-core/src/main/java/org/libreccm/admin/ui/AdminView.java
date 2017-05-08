@@ -38,6 +38,7 @@ import org.libreccm.admin.ui.usersgroupsroles.UsersGroupsRoles;
 import org.libreccm.admin.ui.usersgroupsroles.UsersTableDataProvider;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.security.PermissionChecker;
+import org.libreccm.security.UserManager;
 import org.libreccm.security.UserRepository;
 
 import java.util.ResourceBundle;
@@ -58,11 +59,6 @@ public class AdminView extends CustomComponent implements View {
 
     public static final String VIEWNAME = "admin";
 
-//    private static final String COL_USER_NAME = "username";
-//    private static final String COL_GIVEN_NAME = "given_name";
-//    private static final String COL_FAMILY_NAME = "family_name";
-//    private static final String COL_EMAIL = "email";
-//    private static final String COL_BANNED = "banned";
     @Inject
     private ServletContext servletContext;
 
@@ -78,6 +74,12 @@ public class AdminView extends CustomComponent implements View {
     @Inject
     private GlobalizationHelper globalizationHelper;
 
+    @Inject
+    private UserRepository userRepository;
+    
+    @Inject
+    private UserManager userManager;
+    
     @Inject
     private UsersTableDataProvider usersTableDataProvider;
 
@@ -152,9 +154,27 @@ public class AdminView extends CustomComponent implements View {
         header.addComponent(headerInfoLine, 3, 0, 4, 0);
         header.setComponentAlignment(headerInfoLine, Alignment.TOP_RIGHT);
 
-        final Image logo = new Image(
-            null,
-            new ClassResource("/themes/libreccm-default/images/libreccm.png"));
+        final String logoPath;
+        switch (servletContext.getInitParameter("ccm.distribution")
+            .toLowerCase()) {
+            case "libreccm":
+                logoPath = "/themes/libreccm-default/images/libreccm.png";
+                break;
+            case "librecms":
+                logoPath = "/themes/libreccm-default/images/librecms.png";
+                break;
+            case "aplaws":
+                logoPath = "/themes/libreccm-default/images/aplaws.png";
+                break;
+            case "scientificcms":
+                logoPath = "/themes/libreccm-default/images/scientificcms.png";
+                break;
+            default:
+                logoPath = "/themes/libreccm-default/images/libreccm.png";
+                break;
+        }
+
+        final Image logo = new Image(null, new ClassResource(logoPath));
         logo.setId("libreccm-logo");
         logo.addStyleName("libreccm-logo");
         header.addComponent(logo, 0, 0);
@@ -195,6 +215,14 @@ public class AdminView extends CustomComponent implements View {
 
     protected JpqlConsoleController getJpqlConsoleController() {
         return jpqlConsoleController;
+    }
+    
+    public UserRepository getUserRepository() {
+        return userRepo;
+    }
+    
+    public UserManager getUserManager() {
+        return userManager;
     }
 
 }
