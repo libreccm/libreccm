@@ -863,7 +863,6 @@ public class ContentItemManager {
 
         if (isLive(item)) {
             liveItem = getLiveVersion(item, ContentItem.class).get();
-//            unpublish(oldLiveItem);
         } else {
             try {
                 liveItem = draftItem.getClass().newInstance();
@@ -872,7 +871,6 @@ public class ContentItemManager {
             }
         }
 
-        liveItem.setVersion(ContentItemVersion.PUBLISHING);
         liveItem.setItemUuid(draftItem.getItemUuid());
         liveItem.setContentType(draftItem.getContentType());
 
@@ -882,102 +880,7 @@ public class ContentItemManager {
         liveItem.setLifecycle(lifecycle);
         liveItem.setWorkflow(draftItem.getWorkflow());
         
-        contentItemRepo.save(liveItem);
-
-        final List<Category> oldCategories = liveItem
-            .getCategories()
-            .stream()
-            .map(categorization -> categorization.getCategory())
-            .collect(Collectors.toList());
-        oldCategories.forEach(category -> {
-            try {
-                categoryManager.removeObjectFromCategory(liveItem, category);
-            } catch (ObjectNotAssignedToCategoryException ex) {
-                throw new RuntimeException(ex);
-            }
-        });
-        
-        contentItemRepo.save(liveItem);
-
-        draftItem.getCategories().forEach(categorization -> categoryManager
-            .addObjectToCategory(liveItem,
-                                 categorization.getCategory(),
-                                 categorization.getType()));
-
-        contentItemRepo.save(liveItem);
-        
-        for (int i = 0; i < draftItem.getAttachments().size(); i++) {
-            final AttachmentList sourceList = draftItem.getAttachments().get(i);
-
-            final AttachmentList targetList;
-            if (liveItem.getAttachments().size() < i + 1) {
-                targetList = new AttachmentList();
-                copyLocalizedString(sourceList.getDescription(),
-                                    targetList.getDescription());
-
-                targetList.setItem(liveItem);
-                liveItem.addAttachmentList(targetList);
-                targetList.setName(sourceList.getName());
-                copyLocalizedString(sourceList.getTitle(),
-                                    targetList.getTitle());
-                targetList.setOrder(sourceList.getOrder());
-                targetList.setUuid(UUID.randomUUID().toString());
-            } else {
-                targetList = liveItem.getAttachments().get(i);
-            }
-
-            for (int j = 0; j < sourceList.getAttachments().size(); j++) {
-                final ItemAttachment<?> sourceAttachment = sourceList.
-                    getAttachments().get(j);
-                final ItemAttachment<Asset> targetAttachment;
-                if (targetList.getAttachments().size() < j + 1) {
-                    targetAttachment = new ItemAttachment<>();
-                } else {
-                    targetAttachment = (ItemAttachment<Asset>) targetList.
-                        getAttachments().get(j);
-                }
-
-                if (!sourceAttachment.getAsset().equals(targetAttachment)) {
-                    final Asset oldTargetAsset = targetAttachment.getAsset();
-                    if (oldTargetAsset != null
-                            && !assetManager.isShared(oldTargetAsset)) {
-                        targetAttachment.setAsset(null);
-                        oldTargetAsset.removeItemAttachment(targetAttachment);
-                        entityManager.remove(oldTargetAsset);
-                    }
-
-                    final Asset sourceAsset = sourceAttachment.getAsset();
-                    final Asset targetAsset;
-                    if (assetManager.isShared(sourceAttachment.getAsset())) {
-                        targetAsset = sourceAttachment.getAsset();
-                    } else {
-                        try {
-                            targetAsset = sourceAttachment.getAsset().getClass()
-                                .newInstance();
-                        } catch (InstantiationException | IllegalAccessException ex) {
-                            throw new UnexpectedErrorException(ex);
-                        }
-                        copyAsset(sourceAsset, targetAsset);
-
-                        entityManager.persist(targetAsset);
-                    }
-
-                    targetAttachment.setAsset(targetAsset);
-                    targetAttachment.setAttachmentList(targetList);
-                    targetAttachment.setSortKey(sourceAttachment.getSortKey());
-                    targetAttachment.setUuid(UUID.randomUUID().toString());
-                }
-
-                targetList.addAttachment(targetAttachment);
-
-                entityManager.persist(targetAttachment);
-                entityManager.merge(targetList);
-            }
-        }
-        
-        contentItemRepo.save(liveItem);
-
-        final BeanInfo beanInfo;
+                final BeanInfo beanInfo;
         try {
             beanInfo = Introspector.getBeanInfo(item.getClass());
         } catch (IntrospectionException ex) {
@@ -1097,6 +1000,93 @@ public class ContentItemManager {
 
         liveItem.setVersion(ContentItemVersion.LIVE);
         contentItemRepo.save(liveItem);
+
+        final List<Category> oldCategories = liveItem
+            .getCategories()
+            .stream()
+            .map(categorization -> categorization.getCategory())
+            .collect(Collectors.toList());
+        oldCategories.forEach(category -> {
+            try {
+                categoryManager.removeObjectFromCategory(liveItem, category);
+            } catch (ObjectNotAssignedToCategoryException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+        
+        draftItem.getCategories().forEach(categorization -> categoryManager
+            .addObjectToCategory(liveItem,
+                                 categorization.getCategory(),
+                                 categorization.getType()));
+        
+        for (int i = 0; i < draftItem.getAttachments().size(); i++) {
+            final AttachmentList sourceList = draftItem.getAttachments().get(i);
+
+            final AttachmentList targetList;
+            if (liveItem.getAttachments().size() < i + 1) {
+                targetList = new AttachmentList();
+                copyLocalizedString(sourceList.getDescription(),
+                                    targetList.getDescription());
+
+                targetList.setItem(liveItem);
+                liveItem.addAttachmentList(targetList);
+                targetList.setName(sourceList.getName());
+                copyLocalizedString(sourceList.getTitle(),
+                                    targetList.getTitle());
+                targetList.setOrder(sourceList.getOrder());
+                targetList.setUuid(UUID.randomUUID().toString());
+            } else {
+                targetList = liveItem.getAttachments().get(i);
+            }
+
+            for (int j = 0; j < sourceList.getAttachments().size(); j++) {
+                final ItemAttachment<?> sourceAttachment = sourceList.
+                    getAttachments().get(j);
+                final ItemAttachment<Asset> targetAttachment;
+                if (targetList.getAttachments().size() < j + 1) {
+                    targetAttachment = new ItemAttachment<>();
+                } else {
+                    targetAttachment = (ItemAttachment<Asset>) targetList.
+                        getAttachments().get(j);
+                }
+
+                if (!sourceAttachment.getAsset().equals(targetAttachment)) {
+                    final Asset oldTargetAsset = targetAttachment.getAsset();
+                    if (oldTargetAsset != null
+                            && !assetManager.isShared(oldTargetAsset)) {
+                        targetAttachment.setAsset(null);
+                        oldTargetAsset.removeItemAttachment(targetAttachment);
+                        entityManager.remove(oldTargetAsset);
+                    }
+
+                    final Asset sourceAsset = sourceAttachment.getAsset();
+                    final Asset targetAsset;
+                    if (assetManager.isShared(sourceAttachment.getAsset())) {
+                        targetAsset = sourceAttachment.getAsset();
+                    } else {
+                        try {
+                            targetAsset = sourceAttachment.getAsset().getClass()
+                                .newInstance();
+                        } catch (InstantiationException | IllegalAccessException ex) {
+                            throw new UnexpectedErrorException(ex);
+                        }
+                        copyAsset(sourceAsset, targetAsset);
+
+                        entityManager.persist(targetAsset);
+                    }
+
+                    targetAttachment.setAsset(targetAsset);
+                    targetAttachment.setAttachmentList(targetList);
+                    targetAttachment.setSortKey(sourceAttachment.getSortKey());
+                    targetAttachment.setUuid(UUID.randomUUID().toString());
+                }
+
+                targetList.addAttachment(targetAttachment);
+
+                entityManager.persist(targetAttachment);
+                entityManager.merge(targetList);
+            }
+        }
 
         return liveItem;
     }
