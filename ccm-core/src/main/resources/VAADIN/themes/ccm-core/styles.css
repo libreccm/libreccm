@@ -12502,10 +12502,22 @@ h1.no-margin, .v-label-h1.no-margin, h2.no-margin, .v-label-h2.no-margin, h3.no-
 	overflow: hidden;
 }
 
-.libreccm-header {
-	border-bottom: 5px solid #0f0;
-}
-
 .libreccm-header .libreccm-logo {
 	max-height: 100px;
+}
+
+.libreccm {
+	background-color: #71ac52;
+}
+
+.librecms {
+	background-color: #54ac9c;
+}
+
+.aplaws {
+	background-color: #5462ad;
+}
+
+.scientificcms {
+	background-color: #ad5353;
 }
