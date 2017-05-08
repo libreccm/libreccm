@@ -34,6 +34,7 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import org.libreccm.admin.ui.ConfirmDiscardDialog;
 import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.security.User;
 import org.libreccm.security.UserManager;
@@ -72,8 +73,10 @@ public class UserEditor extends Window {
     private CheckBox passwordResetRequired;
     private CheckBox banned;
 
-    public UserEditor(final UserRepository userRepo, 
+    public UserEditor(final UserRepository userRepo,
                       final UserManager userManager) {
+        
+        super("Create new user");
         
         user = null;
         this.userRepo = userRepo;
@@ -86,6 +89,8 @@ public class UserEditor extends Window {
                       final UserRepository userRepo,
                       final UserManager userManager) {
 
+        super(String.format("Edit user %s", user.getName()));
+        
         this.user = user;
         this.userRepo = userRepo;
         this.userManager = userManager;
@@ -98,7 +103,7 @@ public class UserEditor extends Window {
         final ResourceBundle bundle = ResourceBundle
             .getBundle(AdminUiConstants.ADMIN_BUNDLE,
                        UI.getCurrent().getLocale());
-
+        
         userName = new TextField(bundle
             .getString("ui.admin.user_edit.username.label"));
         userName.setRequiredIndicatorVisible(true);
@@ -188,7 +193,7 @@ public class UserEditor extends Window {
 
         banned = new CheckBox(bundle
             .getString("ui.admin.user_edit.banned.label"));
-        
+
         if (user == null) {
             banned.setVisible(false);
             banned.setEnabled(false);
@@ -203,6 +208,7 @@ public class UserEditor extends Window {
         }
 
         final Button cancel = new Button(bundle.getString("ui.admin.cancel"));
+        cancel.addClickListener(event -> close());
 
         final HorizontalLayout buttons = new HorizontalLayout(submit, cancel);
 
@@ -228,6 +234,16 @@ public class UserEditor extends Window {
         }
 
         setContent(panel);
+    }
+    
+    @Override
+    public void close() {
+        
+        final ConfirmDiscardDialog dialog = new ConfirmDiscardDialog(
+                this, "Are you sure to discard the changes made this user?");
+            dialog.setModal(true);
+            UI.getCurrent().addWindow(dialog);
+        
     }
 
 }
