@@ -23,6 +23,7 @@ import com.arsdigita.ui.admin.AdminUiConstants;
 import com.vaadin.data.provider.AbstractDataProvider;
 import com.vaadin.data.provider.Query;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.ItemCaptionGenerator;
@@ -35,6 +36,8 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.security.User;
+import org.libreccm.security.UserManager;
+import org.libreccm.security.UserRepository;
 
 import java.util.Arrays;
 import java.util.ResourceBundle;
@@ -56,6 +59,8 @@ public class UserEditor extends Window {
     }
 
     private final User user;
+    private final UserRepository userRepo;
+    private final UserManager userManager;
 
     private TextField userName;
     private TextField familyName;
@@ -64,16 +69,26 @@ public class UserEditor extends Window {
     private RadioButtonGroup<PasswordOptions> passwordOptions;
     private PasswordField password;
     private PasswordField passwordConfirmation;
+    private CheckBox passwordResetRequired;
+    private CheckBox banned;
 
-    public UserEditor() {
+    public UserEditor(final UserRepository userRepo, 
+                      final UserManager userManager) {
+        
         user = null;
+        this.userRepo = userRepo;
+        this.userManager = userManager;
 
         addWidgets();
     }
 
-    public UserEditor(final User user) {
+    public UserEditor(final User user,
+                      final UserRepository userRepo,
+                      final UserManager userManager) {
 
         this.user = user;
+        this.userRepo = userRepo;
+        this.userManager = userManager;
 
         addWidgets();
     }
@@ -168,6 +183,17 @@ public class UserEditor extends Window {
 
         passwordOptions.setValue(PasswordOptions.GENERATE_AND_SEND);
 
+        passwordResetRequired = new CheckBox(bundle
+            .getString("ui.admin.user_edit.password_reset_required.label"));
+
+        banned = new CheckBox(bundle
+            .getString("ui.admin.user_edit.banned.label"));
+        
+        if (user == null) {
+            banned.setVisible(false);
+            banned.setEnabled(false);
+        }
+
         final Button submit = new Button();
         if (user == null) {
             submit.setCaption(bundle.getString(
@@ -186,7 +212,9 @@ public class UserEditor extends Window {
                                                      emailAddress,
                                                      passwordOptions,
                                                      password,
-                                                     passwordConfirmation);
+                                                     passwordConfirmation,
+                                                     passwordResetRequired,
+                                                     banned);
 
         final VerticalLayout layout = new VerticalLayout(formLayout, buttons);
 

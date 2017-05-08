@@ -11,6 +11,10 @@
         <param-name>ccm.develmode</param-name>
         <param-value>true</param-value>
     </context-param>
+    <context-param>
+        <param-name>ccm.distribution</param-name>
+        <param-value>libreccm</param-value>
+    </context-param>
 
     <!-- No JSESSIONID!!! -->
     <session-config>
