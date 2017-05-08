@@ -21,14 +21,12 @@ package org.librecms.contentsection;
 import org.libreccm.core.AbstractEntityRepository;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
-import org.librecms.CmsConstants;
 import org.librecms.contentsection.privileges.AdminPrivileges;
 
 import java.util.List;
 import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
@@ -40,9 +38,6 @@ import javax.transaction.Transactional;
 public class ContentTypeRepository
     extends AbstractEntityRepository<Long, ContentType> {
 
-    @Inject
-    private ContentItemRepository itemRepo;
-    
     @Override
     public Class<ContentType> getEntityClass() {
         return ContentType.class;
