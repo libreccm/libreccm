@@ -49,8 +49,10 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.inject.Inject;
+
 import org.jboss.arquillian.persistence.CleanupUsingScript;
 import org.jboss.arquillian.persistence.TestExecutionPhase;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
@@ -101,61 +103,72 @@ public class ContentTypeRepositoryTest {
         return ShrinkWrap
             .create(WebArchive.class,
                     "LibreCCM-org.librecms.contentsection.ContentTypeRepositoryTest.war")
-            .addPackage(org.libreccm.auditing.CcmRevision.class.getPackage())
-            .addPackage(org.libreccm.categorization.Categorization.class
-                .getPackage())
-            .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
-            .addPackage(org.libreccm.configuration.Configuration.class
-                .getPackage())
-            .addPackage(org.libreccm.core.CcmCore.class.getPackage())
-            .addPackage(org.libreccm.jpa.EntityManagerProducer.class
-                .getPackage())
-            .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
-                .getPackage())
-            .addPackage(org.libreccm.l10n.LocalizedString.class
-                .getPackage())
+            .addClass(org.libreccm.categorization.Categorization.class)
+            .addClass(org.libreccm.categorization.Category.class)
+            .addClass(org.libreccm.categorization.Domain.class)
+            .addClass(org.libreccm.categorization.DomainOwnership.class)
+            .addClass(org.libreccm.core.AbstractEntityRepository.class)
+            .addClass(org.libreccm.core.CcmObject.class)
+            .addClass(org.libreccm.core.EmailAddress.class)
+            .addClass(org.libreccm.core.Identifiable.class)
+            .addClass(org.libreccm.core.Resource.class)
+            .addClass(org.libreccm.core.ResourceType.class)
+            .addClass(org.libreccm.jpa.EntityManagerProducer.class)
+            .addClass(org.libreccm.l10n.LocalizedString.class)
             .addClass(org.libreccm.portation.Portable.class)
-            .addPackage(org.libreccm.security.Permission.class.getPackage())
-            .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
-            .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
-            .addPackage(com.arsdigita.bebop.Component.class.getPackage())
-            .addPackage(com.arsdigita.bebop.util.BebopConstants.class
-                .getPackage())
-            .addClass(com.arsdigita.kernel.KernelConfig.class)
-            .addClass(com.arsdigita.runtime.CCMResourceManager.class)
-            .addClass(com.arsdigita.dispatcher.RequestContext.class)
-            .addClass(com.arsdigita.dispatcher.AccessDeniedException.class)
-            .addClass(com.arsdigita.cms.dispatcher.ContentItemDispatcher.class)
-            .addClass(com.arsdigita.dispatcher.Dispatcher.class)
-            .addClass(
-                com.arsdigita.ui.admin.applications.AbstractAppInstanceForm.class)
-            .addClass(
-                com.arsdigita.ui.admin.applications.AbstractAppSettingsPane.class)
-            .addClass(
-                com.arsdigita.ui.admin.applications.DefaultApplicationInstanceForm.class)
-            .addClass(
-                com.arsdigita.ui.admin.applications.DefaultApplicationSettingsPane.class)
-            .addClass(org.librecms.dispatcher.ItemResolver.class)
-            .addPackage(com.arsdigita.util.Lockable.class.getPackage())
-            .addPackage(com.arsdigita.web.BaseServlet.class.getPackage())
-            .addPackage(org.librecms.Cms.class.getPackage())
-            .addPackage(org.librecms.contentsection.Asset.class.getPackage())
-            .addPackage(org.librecms.contentsection.AttachmentList.class
-                .getPackage())
-            .addPackage(org.librecms.lifecycle.Lifecycle.class.getPackage())
-            .addPackage(org.librecms.contentsection.ContentSection.class
-                .getPackage())
-            .addPackage(org.librecms.contenttypes.Article.class.getPackage())
-            .addPackage(org.libreccm.tests.categories.IntegrationTest.class
-                .getPackage())
-            //            .addAsLibraries(getModuleDependencies())
+            .addClass(org.libreccm.security.AuthorizationRequired.class)
+            .addClass(org.libreccm.security.CcmShiroRealm.class)
+            .addClass(org.libreccm.security.Group.class)
+            .addClass(org.libreccm.security.GroupMembership.class)
+            .addClass(org.libreccm.security.Party.class)
+            .addClass(org.libreccm.security.Permission.class)
+            .addClass(org.libreccm.security.RecursivePermissions.class)
+            .addClass(org.libreccm.security.Relation.class)
+            .addClass(org.libreccm.security.RequiresPrivilege.class)
+            .addClass(org.libreccm.security.Role.class)
+            .addClass(org.libreccm.security.RoleMembership.class)
+            .addClass(org.libreccm.security.Shiro.class)
+            .addClass(org.libreccm.security.User.class)
+            .addClass(org.libreccm.security.UserRepository.class)
+            .addClass(org.libreccm.tests.categories.IntegrationTest.class)
+            .addClass(org.libreccm.web.CcmApplication.class)
+            .addClass(org.libreccm.workflow.AssignableTask.class)
+            .addClass(org.libreccm.workflow.Task.class)
+            .addClass(org.libreccm.workflow.TaskAssignment.class)
+            .addClass(org.libreccm.workflow.TaskComment.class)
+            .addClass(org.libreccm.workflow.TaskState.class)
+            .addClass(org.libreccm.workflow.Workflow.class)
+            .addClass(org.libreccm.workflow.WorkflowState.class)
+            .addClass(org.libreccm.workflow.WorkflowTemplate.class)
+            .addClass(org.librecms.CmsConstants.class)
+            .addClass(org.librecms.contentsection.Asset.class)
+            .addClass(org.librecms.contentsection.AttachmentList.class)
+            .addClass(org.librecms.contentsection.ContentItem.class)
+            .addClass(org.librecms.contentsection.ContentItemVersion.class)
+            .addClass(org.librecms.contentsection.ContentSection.class)
+            .addClass(org.librecms.contentsection.ContentSectionRepository.class)
+            .addClass(org.librecms.contentsection.ContentType.class)
+            .addClass(org.librecms.contentsection.ContentTypeMode.class)
+            .addClass(org.librecms.contentsection.ContentTypeRepository.class)
+            .addClass(org.librecms.contentsection.Folder.class)
+            .addClass(org.librecms.contentsection.FolderType.class)
+            .addClass(org.librecms.contentsection.ItemAttachment.class)
+            .addClass(org.librecms.contenttypes.Article.class)
+            .addClass(org.librecms.contenttypes.AuthoringKit.class)
+            .addClass(org.librecms.contenttypes.AuthoringStep.class)
+            .addClass(org.librecms.contenttypes.ContentTypeDescription.class)
+            .addClass(org.librecms.contenttypes.Event.class)
+            .addClass(org.librecms.contenttypes.News.class)
+            .addClass(org.librecms.lifecycle.Lifecycle.class)
+            .addClass(org.librecms.lifecycle.LifecycleDefinition.class)
+            .addClass(org.librecms.lifecycle.Phase.class)
+            .addClass(org.librecms.lifecycle.PhaseDefinition.class)
             .addAsLibraries(getCcmCoreDependencies())
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")
             .addAsWebInfResource("test-web.xml", "web.xml")
             .addAsResource("configs/shiro.ini", "shiro.ini")
-            .addAsResource("META-INF/beans.xml", "META-INF/beans.xml");
-        //.addAsWebInfResource(EmptyAsset.INSTANCE, "WEB-INF/beans.xml");
+            .addAsWebInfResource(EmptyAsset.INSTANCE, "WEB-INF/beans.xml");
     }
 
     /**
