@@ -76,9 +76,9 @@
     <ccm_core.ccm_objects object_id="-1800"
                           display_name="catalog.pdf_copy1"
                           uuid="00000000-0000-0000-0000-000000000000" />
-    <ccm_core.ccm_objects object_id="-1900"
+<!--    <ccm_core.ccm_objects object_id="-1900"
                           display_name="catalog.pdf_copy2"
-                          uuid="00000000-0000-0000-0000-000000000001" />
+                          uuid="00000000-0000-0000-0000-000000000001" />-->
     
     <ccm_core.ccm_objects_aud object_id="-600"
                               rev="0"
@@ -112,10 +112,10 @@
                               rev="1"
                               revtype="0"
                               display_name="catalog.pdf_copy1" />
-    <ccm_core.ccm_objects_aud object_id="-1900"
+<!--    <ccm_core.ccm_objects_aud object_id="-1900"
                               rev="1"
                               revtype="0"
-                              display_name="catalog.pdf_copy2" />
+                              display_name="catalog.pdf_copy2" />-->
 
     <ccm_core.categories object_id="-200" 
                          unique_id="82014239-9c06-486d-ae8c-4ae47f52a699" 
@@ -305,7 +305,7 @@
     <ccm_cms.assets object_id="-1100" />
     <ccm_cms.assets object_id="-1150" />
     <ccm_cms.assets object_id="-1800" />
-    <ccm_cms.assets object_id="-1900" />
+    <!--<ccm_cms.assets object_id="-1900" />-->
     
     <ccm_cms.assets_aud object_id="-700" 
                         rev="0" />
@@ -321,8 +321,8 @@
                         rev="0" />
     <ccm_cms.assets_aud object_id="-1800" 
                         rev="1" />
-    <ccm_cms.assets_aud object_id="-1900" 
-                        rev="1" />
+<!--    <ccm_cms.assets_aud object_id="-1900" 
+                        rev="1" />-->
     
     <ccm_cms.asset_titles asset_id="-700" 
                           localized_value="header.png" 
@@ -345,9 +345,9 @@
     <ccm_cms.asset_titles asset_id="-1800" 
                           localized_value="catalog.pdf" 
                           locale="en" />
-    <ccm_cms.asset_titles asset_id="-1900" 
+<!--    <ccm_cms.asset_titles asset_id="-1900" 
                           localized_value="catalog.pdf" 
-                          locale="en" />
+                          locale="en" />-->
     
     <ccm_cms.binary_assets object_id="-700" 
                            filename="header.png" 
@@ -377,10 +377,10 @@
                            filename="catalog.pdf" 
                            mime_type="application/pdf" 
                            data_size="0"/>
-    <ccm_cms.binary_assets object_id="-1900" 
+<!--    <ccm_cms.binary_assets object_id="-1900" 
                            filename="catalog.pdf" 
                            mime_type="application/pdf" 
-                           data_size="0"/>
+                           data_size="0"/>-->
     
     <ccm_cms.binary_assets_aud object_id="-700" 
                                rev="0"
@@ -417,11 +417,11 @@
                                filename="catalog.pdf" 
                                mime_type="application/pdf"
                                data_size="0" />
-    <ccm_cms.binary_assets_aud object_id="-1900" 
+<!--    <ccm_cms.binary_assets_aud object_id="-1900" 
                                rev="1"
                                filename="catalog.pdf" 
                                mime_type="application/pdf"
-                               data_size="0" />
+                               data_size="0" />-->
     
     <ccm_cms.images object_id="-700" 
                     height="0"
@@ -456,7 +456,7 @@
     <ccm_cms.files object_id="-1000" />
     <ccm_cms.files object_id="-1100" />
     <ccm_cms.files object_id="-1800" />
-    <ccm_cms.files object_id="-1900" />
+    <!--<ccm_cms.files object_id="-1900" />-->
     
     <ccm_cms.files_aud object_id="-1000" 
                        rev="0" />
@@ -464,8 +464,8 @@
                        rev="0" />
     <ccm_cms.files_aud object_id="-1800" 
                        rev="1" />
-    <ccm_cms.files_aud object_id="-1900" 
-                       rev="1" />
+<!--    <ccm_cms.files_aud object_id="-1900" 
+                       rev="1" />-->
     
     <ccm_cms.asset_titles_aud asset_id="-700" 
                               rev="0"
@@ -502,11 +502,11 @@
                               revtype="0"
                               localized_value="catalog.pdf" 
                               locale="en" />
-    <ccm_cms.asset_titles_aud asset_id="-1900" 
+<!--    <ccm_cms.asset_titles_aud asset_id="-1900" 
                               rev="1"
                               revtype="0"
                               localized_value="catalog.pdf" 
-                              locale="en" />
+                              locale="en" />-->
     
     <ccm_cms.content_items_aud object_id="-600" 
                                rev="0"
@@ -594,13 +594,13 @@
                               object_order="7" 
                               category_index="false"
                               type="folder" />
-    <ccm_core.categorizations categorization_id="-30800" 
+<!--    <ccm_core.categorizations categorization_id="-30800" 
                               category_id="-420" 
                               object_id="-1900" 
                               category_order="1" 
                               object_order="8" 
                               category_index="false"
-                              type="folder" />
+                              type="folder" />-->
     
     <ccm_cms.attachment_lists list_id="-40100"
                               name="images"

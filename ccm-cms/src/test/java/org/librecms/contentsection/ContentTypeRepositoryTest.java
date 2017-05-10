@@ -417,7 +417,7 @@ public class ContentTypeRepositoryTest {
                            "META-INF/persistence.xml")
             .addAsWebInfResource("test-web.xml", "web.xml")
             .addAsResource("configs/shiro.ini", "shiro.ini")
-            .addAsWebInfResource("META-INF/beans.xml", "WEB-INF/beans.xml");
+            .addAsWebInfResource("META-INF/beans.xml", "beans.xml");
     }
 
     /**
@@ -651,8 +651,6 @@ public class ContentTypeRepositoryTest {
             .execute(() -> contentTypeRepo.delete(newsType.get()));
     }
 
-//    ToDo, does not work at the moment because including AuthorizationInterceptor
-//   pulls in to many other dependencies, more exactly most of Bebop...
     /**
      * Verifies that an unused content type can be deleted.
      */
