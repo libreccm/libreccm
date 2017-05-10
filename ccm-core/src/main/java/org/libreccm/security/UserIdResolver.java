@@ -21,12 +21,14 @@ package org.libreccm.security;
 import com.fasterxml.jackson.annotation.ObjectIdGenerator;
 import com.fasterxml.jackson.annotation.ObjectIdResolver;
 
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
 /**
  * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
  * @version created on 3/23/17
  */
+@RequestScoped
 public class UserIdResolver implements ObjectIdResolver {
     @Inject
     private UserRepository userRepository;
