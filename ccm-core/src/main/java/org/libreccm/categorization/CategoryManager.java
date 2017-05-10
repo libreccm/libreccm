@@ -127,12 +127,6 @@ public class CategoryManager {
         Objects.requireNonNull(category, 
                                "Can't add an object to category 'null'.");
 
-        final CcmObject addedObject = ccmObjectRepo
-            .findObjectById(object.getObjectId())
-            .orElseThrow(() -> new IllegalArgumentException(String.format(
-                "No CcmObject with ID %d in the database. "
-                    + "Where did that ID come from?",
-                object.getObjectId())));
         final Category assignedCategory = categoryRepo
         .findById(category.getObjectId())
         .orElseThrow(() -> new IllegalArgumentException(String.format(
@@ -141,17 +135,17 @@ public class CategoryManager {
             category.getObjectId())));
 
         final Categorization categorization = new Categorization();
-        categorization.setCategorizedObject(addedObject);
+        categorization.setCategorizedObject(object);
         categorization.setCategory(assignedCategory);
-
-        final long categoryCount = countAssignedCategories(addedObject);
+        
+        final long categoryCount = countAssignedCategories(object);
         categorization.setCategoryOrder(categoryCount + 1);
         final long objectCount = countObjects(assignedCategory);
         categorization.setObjectOrder(objectCount + 1);
         categorization.setType(type);
         categorization.setIndex(false);
 
-        addedObject.addCategory(categorization);
+        object.addCategory(categorization);
         assignedCategory.addObject(categorization);
 
         // Saving a category requires the manage_category privilege which

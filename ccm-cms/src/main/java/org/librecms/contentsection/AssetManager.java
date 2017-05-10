@@ -362,7 +362,7 @@ public class AssetManager {
                                               index));
         }
 
-        assetRepo.save(asset);
+        assetRepo.save(copy);
 
         categoryManager.addObjectToCategory(copy,
                                             targetFolder,

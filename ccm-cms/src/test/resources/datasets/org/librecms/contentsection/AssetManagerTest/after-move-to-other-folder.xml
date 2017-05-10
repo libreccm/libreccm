@@ -514,7 +514,7 @@
     <ccm_core.categorizations categorization_id="-30400" 
                               category_id="-410" 
                               object_id="-900" 
-                              category_order="2" 
+                              category_order="1" 
                               object_order="4" 
                               category_index="false"
                               type="folder" />
