@@ -19,10 +19,7 @@ import org.libreccm.modules.ShutdownEvent;
 import org.libreccm.modules.UnInstallEvent;
 import org.libreccm.web.ApplicationType;
 import org.libreccm.web.CcmApplication;
-import org.librecms.assets.AssetTypes;
-import org.librecms.assets.Bookmark;
-import org.librecms.assets.ExternalVideoAsset;
-import org.librecms.assets.LegalMetadata;
+import org.librecms.assets.*;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionCreator;
 import org.librecms.contentsection.ContentSectionSetup;
@@ -36,9 +33,6 @@ import org.librecms.contenttypes.News;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-import org.librecms.assets.FileAsset;
-
-import org.librecms.assets.SideNote;
 
 @Module(//packageName = "org.librecms.cms",
     requiredModules = {
@@ -70,6 +64,7 @@ import org.librecms.assets.SideNote;
                News.class})
 @AssetTypes({Bookmark.class,
              ExternalVideoAsset.class,
+             ExternalAudioAsset.class,
              FileAsset.class,
              LegalMetadata.class,
              SideNote.class})
