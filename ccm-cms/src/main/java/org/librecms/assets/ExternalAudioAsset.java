@@ -18,6 +18,7 @@
  */
 package org.librecms.assets;
 
+import com.arsdigita.cms.ui.assets.forms.ExternalAudioAssetForm;
 import org.hibernate.envers.Audited;
 
 import java.io.Serializable;
@@ -29,6 +30,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import static org.librecms.CmsConstants.*;
+import static org.librecms.assets.AssetConstants.*;
 
 /**
  * An asset for an external audio file (an audio file which is
@@ -36,10 +38,16 @@ import static org.librecms.CmsConstants.*;
  * stored in the database of LibreCCM.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
+ * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  */
 @Entity
 @Table(name = "EXTERNAL_AUDIO_ASSETS", schema = DB_SCHEMA)
 @Audited
+@AssetType(assetForm = ExternalAudioAssetForm.class,
+           labelKey = "external_audio_asset.label",
+           labelBundle = ASSETS_BUNDLE,
+           descriptionKey = "external_audio_asset.description",
+           descriptionBundle = ASSETS_BUNDLE)
 public class ExternalAudioAsset extends Bookmark implements Serializable {
 
     private static final long serialVersionUID = 1190735204910197490L;
