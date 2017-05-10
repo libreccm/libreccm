@@ -26,11 +26,13 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 
+import com.arsdigita.cms.ui.assets.forms.ImageForm;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.OneToOne;
 
 import static org.librecms.CmsConstants.*;
+import static org.librecms.assets.AssetConstants.*;
 
 /**
  * An asset for images (in a format which can be displayed by a browser, like 
@@ -41,6 +43,11 @@ import static org.librecms.CmsConstants.*;
 @Entity
 @Table(name = "IMAGES", schema = DB_SCHEMA)
 @Audited
+@AssetType(assetForm = ImageForm.class,
+           labelKey = "image.label",
+           labelBundle = ASSETS_BUNDLE,
+           descriptionKey = "image.description",
+           descriptionBundle = ASSETS_BUNDLE)
 public class Image extends BinaryAsset implements Serializable {
 
     private static final long serialVersionUID = -8095106228017573785L;
