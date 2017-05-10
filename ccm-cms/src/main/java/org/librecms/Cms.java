@@ -66,6 +66,7 @@ import java.util.Properties;
              ExternalVideoAsset.class,
              ExternalAudioAsset.class,
              FileAsset.class,
+             Image.class,
              LegalMetadata.class,
              SideNote.class})
 public class Cms implements CcmModule {
