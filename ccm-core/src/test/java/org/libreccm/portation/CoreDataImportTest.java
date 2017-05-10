@@ -32,7 +32,6 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -126,11 +125,23 @@ public class CoreDataImportTest {
     // TEST SECTION
 
     @Test
+    @InSequence(120)
+    public void usersShouldBeImported() {
+        importHelper.importUsers();
+    }
+
+    /*
+    @Test
+    @InSequence(100)
+    public void categoriesShouldBeImported() {
+        importHelper.importCategories();
+    }
+
+    @Test
     @InSequence(105)
     public void  roleMembershipsShouldBeImported() {
         Assert.assertFalse(importHelper.importRoleMemberships());
     }
-/*
 
     @Test
     @InSequence(110)
@@ -144,11 +155,7 @@ public class CoreDataImportTest {
         Assert.assertFalse(importHelper.importGroups());
     }
 
-    @Test
-    @InSequence(120)
-    public void usersShouldBeImported() {
-        importHelper.importUsers();
-    }
+
 
     @Test
     @InSequence(125)
@@ -186,11 +193,7 @@ public class CoreDataImportTest {
         importHelper.importPermissions();
     }
 
-    @Test
-    @InSequence(155)
-    public void categoriesShouldBeImported() {
-        importHelper.importCategories();
-    }
+
 
     @Test
     @InSequence(160)
