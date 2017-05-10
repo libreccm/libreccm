@@ -470,7 +470,6 @@ public class AssetManagerTest {
         final Folder targetFolder = folderRepo.findById(-420L).get();
 
         assetManager.copy(asset, targetFolder);
-        assetManager.copy(asset, targetFolder);
     }
 
     /**
