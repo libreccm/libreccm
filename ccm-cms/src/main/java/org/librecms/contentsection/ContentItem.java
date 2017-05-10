@@ -21,11 +21,9 @@ package org.librecms.contentsection;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
 import org.hibernate.search.annotations.Field;
-import org.libreccm.categorization.Categorization;
 import org.libreccm.core.CcmObject;
 import org.libreccm.l10n.LocalizedString;
 import org.libreccm.workflow.Workflow;
-import org.librecms.CmsConstants;
 import org.librecms.lifecycle.Lifecycle;
 
 import java.io.Serializable;
@@ -34,8 +32,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.persistence.AssociationOverride;
 import javax.persistence.Column;
@@ -56,6 +52,7 @@ import javax.persistence.TemporalType;
 import org.hibernate.search.annotations.IndexedEmbedded;
 
 import javax.persistence.FetchType;
+
 import org.hibernate.envers.NotAudited;
 
 import static org.librecms.CmsConstants.*;
@@ -72,13 +69,13 @@ import static org.librecms.CmsConstants.*;
 @NamedQueries({
     @NamedQuery(
         name = "ContentItem.findById",
-        query = "SELECT i FROM ContentItem i "
+        query = "SELECT DISTINCT i "
+                    + "FROM ContentItem i "
+                    + "JOIN i.permissions p "
                     + "WHERE i.objectId = :objectId "
-                    + "AND (EXISTS(SELECT p FROM Permission p "
-                    + "WHERE p.grantedPrivilege = 'read' "
-                    + "AND p.grantee IN :roles "
-                    + "AND p.object = i)"
-                    + "OR true = :admin)")
+                    + "AND ((p.grantee IN :roles "
+                    + "AND p.grantedPrivilege = (CASE WHEN i.version = 'DRAFT' THEN 'preview_items' ELSE 'view_published_items' END)) "
+                + "OR true = :isSystemUser OR true = :isAdmin)")
     ,
     @NamedQuery(
         name = "ContentItem.findByType",
