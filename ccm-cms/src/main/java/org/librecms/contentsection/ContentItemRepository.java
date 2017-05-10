@@ -401,9 +401,6 @@ public class ContentItemRepository
 
         final ContentItem draft = itemManager.getDraftVersion(item,
                                                               ContentItem.class);
-//        draft.getCategories().stream()
-//            .map(categorization -> categorization.getCategory())
-//            .forEach(category -> removeCategoryFromItem(item, category));
         for (final Categorization categorization : draft.getCategories()) {
             final Category category = categorization.getCategory();
 
