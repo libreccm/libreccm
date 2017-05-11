@@ -30,6 +30,8 @@ import org.libreccm.categorization.ObjectNotAssignedToCategoryException;
 import org.libreccm.core.CcmObject;
 import org.libreccm.core.CcmObjectRepository;
 import org.libreccm.core.UnexpectedErrorException;
+import org.libreccm.security.PermissionChecker;
+import org.libreccm.security.Role;
 
 import java.util.List;
 import java.util.Optional;
@@ -41,7 +43,11 @@ import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 
 import org.libreccm.security.Shiro;
+import org.libreccm.security.User;
 import org.libreccm.workflow.Workflow;
+
+import java.util.Collections;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -68,6 +74,9 @@ public class ContentItemRepository
 
     @Inject
     private Shiro shiro;
+    
+    @Inject
+    private PermissionChecker permissionChecker;
 
     @Override
     public Long getEntityId(final ContentItem item) {
@@ -222,14 +231,35 @@ public class ContentItemRepository
         return query.getSingleResult();
     }
 
+    @Transactional(Transactional.TxType.REQUIRED)
     public Optional<ContentItem> findByNameInFolder(final Category folder,
                                                     final String name) {
+
+        final Optional<User> user = shiro.getUser();
+        final List<Role> roles;
+        if (user.isPresent()) {
+            roles = user
+                .get()
+                .getRoleMemberships()
+                .stream()
+                .map(membership -> membership.getRole())
+                .collect(Collectors.toList());
+        } else {
+            roles = Collections.emptyList();
+        }
+
+        final boolean isSystemUser = shiro.isSystemUser();
+        final boolean isAdmin = permissionChecker.isPermitted("*");
+        
         final TypedQuery<ContentItem> query = getEntityManager()
             .createNamedQuery("ContentItem.findByNameInFolder",
                               ContentItem.class);
         query.setParameter("folder", folder);
         query.setParameter("name", name);
-
+        query.setParameter("roles", roles);
+        query.setParameter("isSystemUser", isSystemUser);
+        query.setParameter("isAdmin", isAdmin);
+        
         try {
             return Optional.of(query.getSingleResult());
         } catch (NoResultException ex) {
