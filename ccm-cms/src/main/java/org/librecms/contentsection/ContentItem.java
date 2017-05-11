@@ -71,111 +71,140 @@ import static org.librecms.CmsConstants.*;
     @NamedQuery(
         name = "ContentItem.findById",
         query
-        = "SELECT DISTINCT i "
-              + "FROM ContentItem i "
-              + "JOIN i.permissions p "
-              + "WHERE i.objectId = :objectId "
-              + "AND ("
-              + "      ("
-              + "        p.grantee IN :roles "
-              + "        AND p.grantedPrivilege = "
-              + "          (CASE WHEN i.version = 'DRAFT' "
-              + "           THEN '" + ItemPrivileges.PREVIEW + "' "
-              + "           ELSE '" + ItemPrivileges.VIEW_PUBLISHED + "' "
-              + "           END"
-              + "          )"
-              + "      ) "
-              + "      OR true = :isSystemUser OR true = :isAdmin"
-              + "    )")
+            = "SELECT DISTINCT i "
+                  + "FROM ContentItem i "
+                  + "JOIN i.permissions p "
+                  + "WHERE i.objectId = :objectId "
+                  + "AND ("
+                  + "      ("
+                  + "        p.grantee IN :roles "
+                  + "        AND p.grantedPrivilege = "
+                  + "          (CASE WHEN i.version = 'DRAFT' "
+                  + "           THEN '" + ItemPrivileges.PREVIEW + "' "
+                  + "           ELSE '" + ItemPrivileges.VIEW_PUBLISHED + "' "
+                  + "           END"
+                  + "          )"
+                  + "      ) "
+                  + "      OR true = :isSystemUser OR true = :isAdmin"
+                  + "    )")
     ,
     @NamedQuery(
         name = "ContentItem.findByType",
         query
-        = "SELECT DISTINCT i "
-              + "FROM ContentItem i "
-              + "JOIN i.permissions p "
-              + "WHERE TYPE(i) = :type "
-              + "AND ("
-              + "      ("
-              + "        p.grantee IN :roles "
-              + "        AND p.grantedPrivilege = "
-              + "          (CASE WHEN i.version = 'DRAFT' "
-              + "           THEN '" + ItemPrivileges.PREVIEW + "' "
-              + "           ELSE '" + ItemPrivileges.VIEW_PUBLISHED + "' "
-              + "           END"
-              + "          )"
-              + "      ) "
-              + "      OR true = :isSystemUser OR true = :isAdmin"
-              + "    )")
+            = "SELECT DISTINCT i "
+                  + "FROM ContentItem i "
+                  + "JOIN i.permissions p "
+                  + "WHERE TYPE(i) = :type "
+                  + "AND ("
+                  + "      ("
+                  + "        p.grantee IN :roles "
+                  + "        AND p.grantedPrivilege = "
+                  + "          (CASE WHEN i.version = 'DRAFT' "
+                  + "           THEN '" + ItemPrivileges.PREVIEW + "' "
+                  + "           ELSE '" + ItemPrivileges.VIEW_PUBLISHED + "' "
+                  + "           END"
+                  + "          )"
+                  + "      ) "
+                  + "      OR true = :isSystemUser OR true = :isAdmin"
+                  + "    )")
     ,
     @NamedQuery(
         name = "ContentItem.findByFolder",
         query
-        = "SELECT DISTINCT i "
-              + "FROM ContentItem i "
-              + "JOIN i.categories c "
-              + "JOIN i.permissions p "
-              + "WHERE c.category = :folder "
-              + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
-              + "AND ("
-              + "      ("
-              + "        p.grantee IN :roles "
-              + "        AND p.grantedPrivilege = "
-              + "          (CASE WHEN i.version = 'DRAFT' "
-              + "           THEN '" + ItemPrivileges.PREVIEW + "' "
-              + "           ELSE '" + ItemPrivileges.VIEW_PUBLISHED + "' "
-              + "           END"
-              + "          )"
-              + "       )"
-              + "       OR true = :isSystemUser OR true = :isAdmin"
-              + "     )")
+            = "SELECT DISTINCT i "
+                  + "FROM ContentItem i "
+                  + "JOIN i.categories c "
+                  + "JOIN i.permissions p "
+                  + "WHERE c.category = :folder "
+                  + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
+                  + "AND ("
+                  + "      ("
+                  + "        p.grantee IN :roles "
+                  + "        AND p.grantedPrivilege = "
+                  + "          (CASE WHEN i.version = 'DRAFT' "
+                  + "           THEN '" + ItemPrivileges.PREVIEW + "' "
+                  + "           ELSE '" + ItemPrivileges.VIEW_PUBLISHED + "' "
+                  + "           END"
+                  + "          )"
+                  + "       )"
+                  + "       OR true = :isSystemUser OR true = :isAdmin"
+                  + "     )")
     ,
     @NamedQuery(
         name = "ContentItem.countItemsInFolder",
-        query = "SELECT COUNT(i) FROM ContentItem i "
-                    + "JOIN i.categories c "
-                    + "WHERE c.category = :folder "
-                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "'")
+        query
+            = "SELECT DISTINCT COUNT(i) "
+                  + "FROM ContentItem i "
+                  + "JOIN i.categories c "
+                  + "JOIN i.permissions p "
+                  + "WHERE c.category = :folder "
+                  + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
+                  + "AND ("
+                  + "      ("
+                  + "        p.grantee IN :roles "
+                  + "        AND p.grantedPrivilege = "
+                  + "          (CASE WHEN i.version = 'DRAFT' "
+                  + "           THEN '" + ItemPrivileges.PREVIEW + "' "
+                  + "           ELSE '" + ItemPrivileges.VIEW_PUBLISHED + "' "
+                  + "           END"
+                  + "          )"
+                  + "       )"
+                  + "       OR true = :isSystemUser OR true = :isAdmin"
+                  + "     )")
     ,
     @NamedQuery(
         name = "ContentItem.findByNameInFolder",
         query
-        = "SELECT DISTINCT i "
-              + "FROM ContentItem i "
-              + "JOIN i.categories c "
-              + "JOIN i.permissions p "
-              + "WHERE c.category = :folder "
-              + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
-              + "AND i.displayName = :name "
-              + "AND ("
-              + "      ("
-              + "        p.grantee IN :roles "
-              + "        AND p.grantedPrivilege = "
-              + "          (CASE WHEN i.version = 'DRAFT' "
-              + "           THEN '" + ItemPrivileges.PREVIEW + "' "
-              + "           ELSE '" + ItemPrivileges.VIEW_PUBLISHED + "' "
-              + "           END"
-              + "          )"
-              + "       )"
-              + "       OR true = :isSystemUser OR true = :isAdmin"
-              + "     )")
+            = "SELECT DISTINCT i "
+                  + "FROM ContentItem i "
+                  + "JOIN i.categories c "
+                  + "JOIN i.permissions p "
+                  + "WHERE c.category = :folder "
+                  + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
+                  + "AND i.displayName = :name "
+                  + "AND ("
+                  + "      ("
+                  + "        p.grantee IN :roles "
+                  + "        AND p.grantedPrivilege = "
+                  + "          (CASE WHEN i.version = 'DRAFT' "
+                  + "           THEN '" + ItemPrivileges.PREVIEW + "' "
+                  + "           ELSE '" + ItemPrivileges.VIEW_PUBLISHED + "' "
+                  + "           END"
+                  + "          )"
+                  + "       )"
+                  + "       OR true = :isSystemUser OR true = :isAdmin"
+                  + "     )")
     ,
     @NamedQuery(
         name = "ContentItem.countByNameInFolder",
-        query = "SELECT COUNT(i) FROM ContentItem i "
+        query = "SELECT DISTINCT COUNT(i)"
+                    + " FROM ContentItem i "
                     + "JOIN i.categories c "
+                    + "JOIN i.permissions p "
                     + "WHERE c.category = :folder "
-                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER
-                    + "' "
-                    + "AND i.displayName = :name")
+                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
+                    + "AND i.displayName = :name "
+                    + "AND ("
+                    + "      ("
+                    + "        p.grantee IN :roles "
+                    + "        AND p.grantedPrivilege = "
+                    + "          (CASE WHEN i.version = 'DRAFT' "
+                    + "           THEN '" + ItemPrivileges.PREVIEW + "' "
+                    + "           ELSE '" + ItemPrivileges.VIEW_PUBLISHED + "' "
+                    + "           END"
+                    + "          )"
+                    + "       )"
+                    + "       OR true = :isSystemUser OR true = :isAdmin"
+                    + "     )")
     ,
     @NamedQuery(
         name = "ContentItem.filterByFolderAndName",
-        query = "SELECT i FROM ContentItem i "
+        query = "SELECT DISTINCT i "
+                    + "FROM ContentItem i "
                     + "JOIN i.categories c "
+                    + "JOIN i.permissions p "
                     + "WHERE c.category = :folder "
-                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER
-                    + "' "
+                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
                     + "AND LOWER(i.displayName) LIKE CONCAT(LOWER(:name), '%')")
     ,
     @NamedQuery(
@@ -185,7 +214,19 @@ import static org.librecms.CmsConstants.*;
                     + "WHERE c.category = :folder "
                     + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER
                     + "' "
-                    + "AND LOWER(i.displayName) LIKE CONCAT(LOWER(:name), '%')"
+                    + "AND LOWER(i.displayName) LIKE CONCAT(LOWER(:name), '%') "
+                    + "AND ("
+                    + "      ("
+                    + "        p.grantee IN :roles "
+                    + "        AND p.grantedPrivilege = "
+                    + "          (CASE WHEN i.version = 'DRAFT' "
+                    + "           THEN '" + ItemPrivileges.PREVIEW + "' "
+                    + "           ELSE '" + ItemPrivileges.VIEW_PUBLISHED + "' "
+                    + "           END"
+                    + "          )"
+                    + "       )"
+                    + "       OR true = :isSystemUser OR true = :isAdmin"
+                    + "     )"
     )
     ,
     @NamedQuery(
@@ -197,20 +238,51 @@ import static org.librecms.CmsConstants.*;
     ,
     @NamedQuery(
         name = "ContentItem.findDraftVersion",
-        query = "SELECT i FROM ContentItem i "
-                    + "WHERE i.itemUuid = :uuid "
-                    + "AND i.version = org.librecms.contentsection.ContentItemVersion.DRAFT")
+        query
+            = "SELECT DISTINCT i "
+                  + "FROM ContentItem i "
+                  + "JOIN i.permissions p "
+                  + "WHERE i.itemUuid = :uuid "
+                  + "AND i.version = 'DRAFT' "
+                  + "AND "
+                  + "((p.grantee IN :roles "
+                  + "AND p.grantedPrivilege = '" + ItemPrivileges.PREVIEW + "' "
+                  + ") OR true = :isSystemUser OR true = :isAdmin)")
     ,
     @NamedQuery(
         name = "ContentItem.findLiveVersion",
-        query = "SELECT i FROM ContentItem i "
-                    + "WHERE i.itemUuid = :uuid "
-                    + "AND i.version = org.librecms.contentsection.ContentItemVersion.LIVE")
+        query
+            = "SELECT DISTINCT i "
+                  + "FROM ContentItem i "
+                  + "JOIN i.permissions p "
+                  + "WHERE i.itemUuid = :uuid "
+                  + "AND i.version = 'LIVE' "
+                  + "AND "
+                  + "((p.grantee IN :roles "
+                  + "AND p.grantedPrivilege = "
+                  + "'"
+                  + ItemPrivileges.VIEW_PUBLISHED
+                  + "' "
+                  + ") OR true = :isSystemUser OR true = :isAdmin)")
     ,
     @NamedQuery(
         name = "ContentItem.findItemWithWorkflow",
-        query = "SELECT i FROM ContentItem i "
-                    + "WHERE i.workflow = :workflow"
+        query = "SELECT DISTINCT i "
+                    + "FROM ContentItem i "
+                    + "JOIN i.permissions p "
+                    + "WHERE i.workflow = :workflow "
+                    + "AND ("
+                    + "      ("
+                    + "        p.grantee IN :roles "
+                    + "        AND p.grantedPrivilege = "
+                    + "          (CASE WHEN i.version = 'DRAFT' "
+                    + "           THEN '" + ItemPrivileges.PREVIEW + "' "
+                    + "           ELSE '" + ItemPrivileges.VIEW_PUBLISHED + "' "
+                    + "           END"
+                    + "          )"
+                    + "       )"
+                    + "       OR true = :isSystemUser OR true = :isAdmin"
+                    + "     )"
     )
 })
 public class ContentItem extends CcmObject implements Serializable {
