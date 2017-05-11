@@ -1,21 +1,21 @@
 <jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="1.2">
 
-  <jsp:directive.page import="com.arsdigita.cms.ui.ContentSectionPage"/>
-  <jsp:directive.page import="org.librecms.contentsection.ContentSection"/>
-  <jsp:directive.page import="org.librecms.contentsection.ContentSectionServlet"/>
-  <jsp:directive.page import="com.arsdigita.cms.dispatcher.Utilities"/>
-  <jsp:directive.page import="com.arsdigita.dispatcher.*"/>
-  <jsp:directive.page import="com.arsdigita.web.LoginSignal"/>
-  <jsp:directive.page import="com.arsdigita.web.Web"/>
-  <jsp:directive.page import="java.util.Date"/>
-  <jsp:directive.page import="org.libreccm.cdi.utils.CdiUtil"/>
-  <jsp:directive.page import="org.libreccm.security.Shiro"/>
+    <jsp:directive.page import="com.arsdigita.cms.ui.ContentSectionPage"/>
+    <jsp:directive.page import="org.librecms.contentsection.ContentSection"/>
+    <jsp:directive.page import="org.librecms.contentsection.ContentSectionServlet"/>
+    <jsp:directive.page import="com.arsdigita.cms.dispatcher.Utilities"/>
+    <jsp:directive.page import="com.arsdigita.dispatcher.*"/>
+    <jsp:directive.page import="com.arsdigita.web.LoginSignal"/>
+    <jsp:directive.page import="com.arsdigita.web.Web"/>
+    <jsp:directive.page import="java.util.Date"/>
+    <jsp:directive.page import="org.libreccm.cdi.utils.CdiUtil"/>
+    <jsp:directive.page import="org.libreccm.security.Shiro"/>
 
-  <jsp:declaration>
+    <jsp:declaration>
     private ContentSectionPage sectionPage = new ContentSectionPage();
-  </jsp:declaration>
+    </jsp:declaration>
 
-  <jsp:scriptlet>
+    <jsp:scriptlet>
     // Restore the wrapped request
     HttpServletRequest myRequest = DispatcherHelper.getRequest();
     DispatcherHelper.cacheDisable(response);
@@ -32,7 +32,7 @@
     RequestContext context = DispatcherHelper.getRequestContext(myRequest);
     sectionPage.init();
     sectionPage.dispatch(myRequest, response, context);
-  </jsp:scriptlet>
+    </jsp:scriptlet>
 </jsp:root>
 
 
