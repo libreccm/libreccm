@@ -21,7 +21,9 @@ package org.librecms.contentsection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+
 import javax.inject.Inject;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
@@ -50,7 +52,13 @@ import org.librecms.contenttypes.News;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
+
 import static org.libreccm.testutils.DependenciesHelpers.*;
+
+import org.apache.shiro.subject.Subject;
+import org.libreccm.security.Shiro;
+
+import java.util.concurrent.Callable;
 
 /**
  *
@@ -70,6 +78,9 @@ public class ContentItemRepositoryTest {
 
     @Inject
     private CategoryRepository categoryRepo;
+
+    @Inject
+    private Shiro shiro;
 
     public ContentItemRepositoryTest() {
     }
@@ -92,6 +103,7 @@ public class ContentItemRepositoryTest {
 
     @Deployment
     public static WebArchive createDeployment() {
+
         return ShrinkWrap
             .create(WebArchive.class,
                     "LibreCCM-org.librecms.contentsection.ContentItemRepositoryTest.war")
@@ -154,6 +166,7 @@ public class ContentItemRepositoryTest {
     @Test
     @InSequence(10)
     public void isRepositoryInjected() {
+
         assertThat(itemRepo, is(not(nullValue())));
         assertThat(categoryRepo, is(not(nullValue())));
     }
@@ -163,19 +176,26 @@ public class ContentItemRepositoryTest {
     @UsingDataSet("datasets/org/librecms/contentsection/"
                       + "ContentItemRepositoryTest/data.xml")
     public void findByIdAndType() {
-        final Optional<Article> article1 = itemRepo.findById(
-            -10100L, Article.class);
-        final Optional<Article> article2 = itemRepo.findById(
-            -10200L, Article.class);
-        final Optional<Article> article3 = itemRepo.findById(
-            -10300L, Article.class);
-        final Optional<News> news1 = itemRepo.findById(
-            -10400L, News.class);
 
-        final Optional<Article> newsAsArticle = itemRepo.findById(
-            -10400, Article.class);
-        final Optional<News> articleAsNews = itemRepo.findById(
-            -10200L, News.class);
+        final Optional<Article> article1 = shiro
+            .getSystemUser()
+            .execute(() -> itemRepo.findById(-10100L, Article.class));
+        final Optional<Article> article2 = shiro
+            .getSystemUser()
+            .execute(() -> itemRepo.findById(-10200L, Article.class));
+        final Optional<Article> article3 = shiro
+            .getSystemUser()
+            .execute(() -> itemRepo.findById(-10300L, Article.class));
+        final Optional<News> news1 = shiro
+            .getSystemUser()
+            .execute(() -> itemRepo.findById(-10400L, News.class));
+
+        final Optional<Article> newsAsArticle = shiro
+            .getSystemUser()
+            .execute(() -> itemRepo.findById(-10400, Article.class));
+        final Optional<News> articleAsNews = shiro
+            .getSystemUser()
+            .execute(() -> itemRepo.findById(-10200L, News.class));
 
         assertThat(article1.isPresent(), is(true));
         assertThat(article1.get().getDisplayName(), is(equalTo("article1")));
@@ -195,19 +215,46 @@ public class ContentItemRepositoryTest {
     @UsingDataSet("datasets/org/librecms/contentsection/"
                       + "ContentItemRepositoryTest/data.xml")
     public void findByUuidAndType() {
-        final Optional<Article> article1 = itemRepo.findByUuid(
-            "aed4b402-1180-46c6-b42d-7245f4dca248", Article.class);
-        final Optional<Article> article2 = itemRepo.findByUuid(
-            "acae860f-2ffa-450d-b486-054292f0dae6", Article.class);
-        final Optional<Article> article3 = itemRepo.findByUuid(
-            "f4b38abb-234b-4354-bc92-e36c068a1ebd", Article.class);
-        final Optional<News> news1 = itemRepo.findByUuid(
-            "d9ea527d-c6e3-4bdd-962d-c0a1a80c6c72", News.class);
 
-        final Optional<Article> newsAsArticle = itemRepo.findByUuid(
-            "d9ea527d-c6e3-4bdd-962d-c0a1a80c6c72", Article.class);
-        final Optional<News> articleAsNews = itemRepo.findByUuid(
-            "acae860f-2ffa-450d-b486-054292f0dae6", News.class);
+        final Subject systemUser = shiro.getSystemUser();
+
+        final Optional<Article> article1 = systemUser
+            .execute(() -> {
+                return itemRepo
+                    .findByUuid("aed4b402-1180-46c6-b42d-7245f4dca248",
+                                Article.class);
+            });
+        final Optional<Article> article2 = systemUser
+            .execute(() -> {
+                return itemRepo
+                    .findByUuid("acae860f-2ffa-450d-b486-054292f0dae6",
+                                Article.class);
+            });
+        final Optional<Article> article3 = systemUser
+            .execute(() -> {
+                return itemRepo
+                    .findByUuid("f4b38abb-234b-4354-bc92-e36c068a1ebd",
+                                Article.class);
+            });
+        final Optional<News> news1 = systemUser
+            .execute(() -> {
+                return itemRepo
+                    .findByUuid("d9ea527d-c6e3-4bdd-962d-c0a1a80c6c72",
+                                News.class);
+            });
+
+        final Optional<Article> newsAsArticle = systemUser
+            .execute(() -> {
+                return itemRepo
+                    .findByUuid("d9ea527d-c6e3-4bdd-962d-c0a1a80c6c72",
+                                Article.class);
+            });
+        final Optional<News> articleAsNews = systemUser
+            .execute(() -> {
+                return itemRepo
+                    .findByUuid("acae860f-2ffa-450d-b486-054292f0dae6",
+                                News.class);
+            });
 
         assertThat(article1.isPresent(), is(true));
         assertThat(article1.get().getDisplayName(), is(equalTo("article1")));
@@ -227,11 +274,16 @@ public class ContentItemRepositoryTest {
     @UsingDataSet("datasets/org/librecms/contentsection/"
                       + "ContentItemRepositoryTest/data.xml")
     public void findByType() {
-        final List<Article> articles = itemRepo.findByType(Article.class);
+
+        final List<Article> articles = shiro
+            .getSystemUser()
+            .execute(() -> itemRepo.findByType(Article.class));
         assertThat(articles, is(not(nullValue())));
         assertThat(articles.size(), is(3));
 
-        final List<News> news = itemRepo.findByType(News.class);
+        final List<News> news = shiro
+            .getSystemUser()
+            .execute(() -> itemRepo.findByType(News.class));
         assertThat(news, is(not(nullValue())));
         assertThat(news.size(), is(1));
     }
@@ -245,7 +297,9 @@ public class ContentItemRepositoryTest {
 
         assertThat(folder.getObjects().size(), is(4));
 
-        final List<ContentItem> items = itemRepo.findByFolder(folder);
+        final List<ContentItem> items = shiro
+            .getSystemUser()
+            .execute(() -> itemRepo.findByFolder(folder));
 
         assertThat(items, is(not(nullValue())));
         assertThat(items.size(), is(4));
@@ -256,9 +310,14 @@ public class ContentItemRepositoryTest {
     @UsingDataSet("datasets/org/librecms/contentsection/"
                       + "ContentItemRepositoryTest/data.xml")
     public void countItemsInFolder() {
+
         final Category folder = categoryRepo.findById(-2100L).get();
 
-        assertThat(itemRepo.countItemsInFolder(folder), is(4L));
+        assertThat(
+            shiro.getSystemUser().execute(() -> {
+                return itemRepo.countItemsInFolder(folder);
+            }),
+            is(4L));
     }
 
     @Test
@@ -266,14 +325,35 @@ public class ContentItemRepositoryTest {
     @UsingDataSet("datasets/org/librecms/contentsection/"
                       + "ContentItemRepositoryTest/data.xml")
     public void countByNameInFolder() {
+
         final Category folder = categoryRepo.findById(-2100L).get();
 
-        assertThat(itemRepo.countByNameInFolder(folder, "article1"), is(1L));
-        assertThat(itemRepo.countByNameInFolder(folder, "article2"), is(1L));
-        assertThat(itemRepo.countByNameInFolder(folder, "article3"), is(1L));
-        assertThat(itemRepo.countByNameInFolder(folder, "article4"), is(0L));
-        assertThat(itemRepo.countByNameInFolder(folder, "article"), is(0L));
-        assertThat(itemRepo.countByNameInFolder(folder, "news1"), is(1L));
+        final Subject systemUser = shiro.getSystemUser();
+
+        assertThat(
+            systemUser.execute(() -> itemRepo.countByNameInFolder(folder,
+                                                                  "article1")),
+            is(1L));
+        assertThat(
+            systemUser.execute(() -> itemRepo.countByNameInFolder(folder,
+                                                                  "article2")),
+            is(1L));
+        assertThat(
+            systemUser.execute(() -> itemRepo.countByNameInFolder(folder,
+                                                                  "article3")),
+            is(1L));
+        assertThat(
+            systemUser.execute(() -> itemRepo.countByNameInFolder(folder,
+                                                                  "article4")),
+            is(0L));
+        assertThat(
+            systemUser.execute(() -> itemRepo.countByNameInFolder(folder,
+                                                                  "article")),
+            is(0L));
+        assertThat(
+            systemUser.execute(() -> itemRepo.countByNameInFolder(folder,
+                                                                  "news1")),
+            is(1L));
     }
 
     @Test
@@ -283,10 +363,12 @@ public class ContentItemRepositoryTest {
     public void filterByFolderAndName() {
         final Category folder = categoryRepo.findById(-2100L).get();
 
-        final List<ContentItem> articles = itemRepo.filterByFolderAndName(
-            folder, "article");
-        final List<ContentItem> news = itemRepo.filterByFolderAndName(folder,
-                                                                      "news");
+        final List<ContentItem> articles = shiro
+            .getSystemUser()
+            .execute(() -> itemRepo.filterByFolderAndName(folder, "article"));
+        final List<ContentItem> news = shiro
+            .getSystemUser()
+            .execute(() -> itemRepo.filterByFolderAndName(folder, "news"));
 
         assertThat(articles.size(), is(3));
         assertThat(news.size(), is(1));
@@ -305,24 +387,42 @@ public class ContentItemRepositoryTest {
     public void countFilterByFolderAndName() {
         final Category folder = categoryRepo.findById(-2100L).get();
 
-        assertThat(itemRepo.countFilterByFolderAndName(folder, "article"),
-                   is(3L));
-        assertThat(itemRepo.countFilterByFolderAndName(folder, "art"),
-                   is(3L));
-        assertThat(itemRepo.countFilterByFolderAndName(folder, "article1"),
-                   is(1L));
-        assertThat(itemRepo.countFilterByFolderAndName(folder, "article2"),
-                   is(1L));
-        assertThat(itemRepo.countFilterByFolderAndName(folder, "article3"),
-                   is(1L));
+        final Subject systemUser = shiro.getSystemUser();
 
-        assertThat(itemRepo.countFilterByFolderAndName(folder, "news"),
-                   is(1L));
+        assertThat(
+            systemUser.execute(() -> itemRepo.countFilterByFolderAndName(folder,
+                                                                         "article")),
+            is(3L));
+        assertThat(
+            systemUser.execute(() -> itemRepo.countFilterByFolderAndName(folder,
+                                                                         "art")),
+            is(3L));
+        assertThat(
+            systemUser.execute(() -> itemRepo.countFilterByFolderAndName(folder,
+                                                                         "article1")),
+            is(1L));
+        assertThat(
+            systemUser.execute(() -> itemRepo.countFilterByFolderAndName(folder,
+                                                                         "article2")),
+            is(1L));
+        assertThat(
+            systemUser.execute(() -> itemRepo.countFilterByFolderAndName(folder,
+                                                                         "article3")),
+            is(1L));
 
-        assertThat(itemRepo.countFilterByFolderAndName(folder, "article10"),
-                   is(0L));
-        assertThat(itemRepo.countFilterByFolderAndName(folder, "foo"),
-                   is(0L));
+        assertThat(
+            systemUser.execute(() -> itemRepo.countFilterByFolderAndName(folder,
+                                                                         "news")),
+            is(1L));
+
+        assertThat(
+            systemUser.execute(() -> itemRepo.countFilterByFolderAndName(folder,
+                                                                         "article10")),
+            is(0L));
+        assertThat(
+            systemUser.execute(() -> itemRepo.countFilterByFolderAndName(folder,
+                                                                         "foo")),
+            is(0L));
     }
 
     @Test
@@ -336,7 +436,10 @@ public class ContentItemRepositoryTest {
                                           "item_uuid",
                                           "timestamp"})
     public void saveChangedItem() {
-        final Optional<ContentItem> item = itemRepo.findById(-10100L);
+
+        final Optional<ContentItem> item = shiro
+            .getSystemUser()
+            .execute(() -> itemRepo.findById(-10100L));
 
         assertThat(item.isPresent(), is(true));
 

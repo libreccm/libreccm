@@ -89,12 +89,74 @@ import static org.librecms.CmsConstants.*;
                   + "    )")
     ,
     @NamedQuery(
+        name = "ContentItem.findByUuid",
+        query
+            = "SELECT DISTINCT i "
+                  + "FROM ContentItem i "
+                  + "JOIN i.permissions p "
+                  + "WHERE i.uuid = :uuid "
+                  + "AND ("
+                  + "      ("
+                  + "        p.grantee IN :roles "
+                  + "        AND p.grantedPrivilege = "
+                  + "          (CASE WHEN i.version = 'DRAFT' "
+                  + "           THEN '" + ItemPrivileges.PREVIEW + "' "
+                  + "           ELSE '" + ItemPrivileges.VIEW_PUBLISHED + "' "
+                  + "           END"
+                  + "          )"
+                  + "      ) "
+                  + "      OR true = :isSystemUser OR true = :isAdmin"
+                  + "    )")
+    ,
+    @NamedQuery(
         name = "ContentItem.findByType",
         query
             = "SELECT DISTINCT i "
                   + "FROM ContentItem i "
                   + "JOIN i.permissions p "
                   + "WHERE TYPE(i) = :type "
+                  + "AND ("
+                  + "      ("
+                  + "        p.grantee IN :roles "
+                  + "        AND p.grantedPrivilege = "
+                  + "          (CASE WHEN i.version = 'DRAFT' "
+                  + "           THEN '" + ItemPrivileges.PREVIEW + "' "
+                  + "           ELSE '" + ItemPrivileges.VIEW_PUBLISHED + "' "
+                  + "           END"
+                  + "          )"
+                  + "      ) "
+                  + "      OR true = :isSystemUser OR true = :isAdmin"
+                  + "    )")
+    ,
+    @NamedQuery(
+        name = "ContentItem.findByIdAndType",
+        query
+            = "SELECT DISTINCT i "
+                  + "FROM ContentItem i "
+                  + "JOIN i.permissions p "
+                  + "WHERE i.objectId = :objectId "
+                  + "AND TYPE(i) = :type "
+                  + "AND ("
+                  + "      ("
+                  + "        p.grantee IN :roles "
+                  + "        AND p.grantedPrivilege = "
+                  + "          (CASE WHEN i.version = 'DRAFT' "
+                  + "           THEN '" + ItemPrivileges.PREVIEW + "' "
+                  + "           ELSE '" + ItemPrivileges.VIEW_PUBLISHED + "' "
+                  + "           END"
+                  + "          )"
+                  + "      ) "
+                  + "      OR true = :isSystemUser OR true = :isAdmin"
+                  + "    )")
+    ,
+    @NamedQuery(
+        name = "ContentItem.findByUuidAndType",
+        query
+            = "SELECT DISTINCT i "
+                  + "FROM ContentItem i "
+                  + "JOIN i.permissions p "
+                  + "WHERE i.uuid = :uuid "
+                  + "AND TYPE(i) = :type "
                   + "AND ("
                   + "      ("
                   + "        p.grantee IN :roles "
@@ -133,7 +195,7 @@ import static org.librecms.CmsConstants.*;
     @NamedQuery(
         name = "ContentItem.countItemsInFolder",
         query
-            = "SELECT DISTINCT COUNT(i) "
+            = "SELECT COUNT(DISTINCT i) "
                   + "FROM ContentItem i "
                   + "JOIN i.categories c "
                   + "JOIN i.permissions p "
@@ -177,7 +239,7 @@ import static org.librecms.CmsConstants.*;
     ,
     @NamedQuery(
         name = "ContentItem.countByNameInFolder",
-        query = "SELECT DISTINCT COUNT(i)"
+        query = "SELECT COUNT(DISTINCT i)"
                     + " FROM ContentItem i "
                     + "JOIN i.categories c "
                     + "JOIN i.permissions p "
@@ -205,15 +267,28 @@ import static org.librecms.CmsConstants.*;
                     + "JOIN i.permissions p "
                     + "WHERE c.category = :folder "
                     + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
-                    + "AND LOWER(i.displayName) LIKE CONCAT(LOWER(:name), '%')")
+                    + "AND LOWER(i.displayName) LIKE CONCAT(LOWER(:name), '%') "
+                    + "AND ("
+                    + "      ("
+                    + "        p.grantee IN :roles "
+                    + "        AND p.grantedPrivilege = "
+                    + "          (CASE WHEN i.version = 'DRAFT' "
+                    + "           THEN '" + ItemPrivileges.PREVIEW + "' "
+                    + "           ELSE '" + ItemPrivileges.VIEW_PUBLISHED + "' "
+                    + "           END"
+                    + "          )"
+                    + "       )"
+                    + "       OR true = :isSystemUser OR true = :isAdmin"
+                    + "     ) "
+                    + "ORDER BY i.displayName")
     ,
     @NamedQuery(
         name = "ContentItem.countFilterByFolderAndName",
-        query = "SELECT COUNT(i) FROM ContentItem i "
+        query = "SELECT COUNT(DISTINCT i) FROM ContentItem i "
                     + "JOIN i.categories c "
+                    + "JOIN i.permissions p "
                     + "WHERE c.category = :folder "
-                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER
-                    + "' "
+                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
                     + "AND LOWER(i.displayName) LIKE CONCAT(LOWER(:name), '%') "
                     + "AND ("
                     + "      ("
