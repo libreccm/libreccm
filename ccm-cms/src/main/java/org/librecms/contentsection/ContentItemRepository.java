@@ -74,7 +74,7 @@ public class ContentItemRepository
 
     @Inject
     private Shiro shiro;
-    
+
     @Inject
     private PermissionChecker permissionChecker;
 
@@ -111,10 +111,16 @@ public class ContentItemRepository
      *         nothing if there is such content item.
      */
     public Optional<ContentItem> findById(final long itemId) {
-        final Optional<CcmObject> result = ccmObjectRepo.findObjectById(itemId);
-        if (result.isPresent() && result.get() instanceof ContentItem) {
-            return Optional.of((ContentItem) result.get());
-        } else {
+
+        final TypedQuery<ContentItem> query = getEntityManager()
+            .createNamedQuery("ContentItem.findById",
+                              ContentItem.class);
+        query.setParameter("objectId", itemId);
+        setAuthorizationParameters(query);
+
+        try {
+            return Optional.of(query.getSingleResult());
+        } catch (NoResultException ex) {
             return Optional.empty();
         }
     }
@@ -133,10 +139,21 @@ public class ContentItemRepository
     @SuppressWarnings("unchecked")
     public <T extends ContentItem> Optional<T> findById(final long itemId,
                                                         final Class<T> type) {
-        final Optional<CcmObject> result = ccmObjectRepo.findById(itemId);
-        if (result.get().getClass().isAssignableFrom(type)) {
-            return Optional.of((T) result.get());
-        } else {
+
+        final TypedQuery<ContentItem> query = getEntityManager()
+            .createNamedQuery("ContentItem.findByIdAndType", ContentItem.class);
+        query.setParameter("objectId", itemId);
+        query.setParameter("type", type);
+        setAuthorizationParameters(query);
+
+        try {
+            final ContentItem result = query.getSingleResult();
+            if (result.getClass().isAssignableFrom(type)) {
+                return Optional.of((T) query.getSingleResult());
+            } else {
+                return Optional.empty();
+            }
+        } catch (NoResultException ex) {
             return Optional.empty();
         }
     }
@@ -150,10 +167,16 @@ public class ContentItemRepository
      *         nothing if there is such content item.
      */
     public Optional<ContentItem> findByUuid(final String uuid) {
-        final Optional<CcmObject> result = ccmObjectRepo.findObjectByUuid(uuid);
-        if (result.isPresent() && result.get() instanceof ContentItem) {
-            return Optional.of((ContentItem) result.get());
-        } else {
+
+        final TypedQuery<ContentItem> query = getEntityManager()
+            .createNamedQuery("ContentItem.findByUuid",
+                              ContentItem.class);
+        query.setParameter("objectId", uuid);
+        setAuthorizationParameters(query);
+
+        try {
+            return Optional.of(query.getSingleResult());
+        } catch (NoResultException ex) {
             return Optional.empty();
         }
     }
@@ -173,12 +196,22 @@ public class ContentItemRepository
     @SuppressWarnings("unchecked")
     public <T extends ContentItem> Optional<T> findByUuid(final String uuid,
                                                           final Class<T> type) {
-        final Optional<CcmObject> result = ccmObjectRepo.findObjectByUuid(uuid);
 
-        if (result.isPresent()
-                && result.get().getClass().isAssignableFrom(type)) {
-            return Optional.of((T) result.get());
-        } else {
+        final TypedQuery<ContentItem> query = getEntityManager()
+            .createNamedQuery("ContentItem.findByUuidAndType",
+                              ContentItem.class);
+        query.setParameter("uuid", uuid);
+        query.setParameter("type", type);
+        setAuthorizationParameters(query);
+
+        try {
+            final ContentItem result = query.getSingleResult();
+            if (result.getClass().isAssignableFrom(type)) {
+                return Optional.of((T) query.getSingleResult());
+            } else {
+                return Optional.empty();
+            }
+        } catch (NoResultException ex) {
             return Optional.empty();
         }
     }
@@ -193,9 +226,11 @@ public class ContentItemRepository
      */
     @SuppressWarnings("unchecked")
     public <T extends ContentItem> List<T> findByType(final Class<T> type) {
+
         final TypedQuery<ContentItem> query = getEntityManager()
             .createNamedQuery("ContentItem.findByType", ContentItem.class);
         query.setParameter("type", type);
+        setAuthorizationParameters(query);
 
         return (List<T>) query.getResultList();
     }
@@ -208,10 +243,12 @@ public class ContentItemRepository
      * @return A list of all items in the provided folder.
      */
     public List<ContentItem> findByFolder(final Category folder) {
+
         final TypedQuery<ContentItem> query = getEntityManager()
             .createNamedQuery("ContentItem.findByFolder",
                               ContentItem.class);
         query.setParameter("folder", folder);
+        setAuthorizationParameters(query);
 
         return query.getResultList();
     }
@@ -224,9 +261,11 @@ public class ContentItemRepository
      * @return The number of content items in the category/folder.
      */
     public long countItemsInFolder(final Category folder) {
+
         final TypedQuery<Long> query = getEntityManager()
             .createNamedQuery("ContentItem.countItemsInFolder", Long.class);
         query.setParameter("folder", folder);
+        setAuthorizationParameters(query);
 
         return query.getSingleResult();
     }
@@ -235,31 +274,13 @@ public class ContentItemRepository
     public Optional<ContentItem> findByNameInFolder(final Category folder,
                                                     final String name) {
 
-        final Optional<User> user = shiro.getUser();
-        final List<Role> roles;
-        if (user.isPresent()) {
-            roles = user
-                .get()
-                .getRoleMemberships()
-                .stream()
-                .map(membership -> membership.getRole())
-                .collect(Collectors.toList());
-        } else {
-            roles = Collections.emptyList();
-        }
-
-        final boolean isSystemUser = shiro.isSystemUser();
-        final boolean isAdmin = permissionChecker.isPermitted("*");
-        
         final TypedQuery<ContentItem> query = getEntityManager()
             .createNamedQuery("ContentItem.findByNameInFolder",
                               ContentItem.class);
         query.setParameter("folder", folder);
         query.setParameter("name", name);
-        query.setParameter("roles", roles);
-        query.setParameter("isSystemUser", isSystemUser);
-        query.setParameter("isAdmin", isAdmin);
-        
+        setAuthorizationParameters(query);
+
         try {
             return Optional.of(query.getSingleResult());
         } catch (NoResultException ex) {
@@ -276,10 +297,12 @@ public class ContentItemRepository
      * @return
      */
     public long countByNameInFolder(final Category folder, final String name) {
+
         final TypedQuery<Long> query = getEntityManager().createNamedQuery(
             "ContentItem.countByNameInFolder", Long.class);
         query.setParameter("folder", folder);
         query.setParameter("name", name);
+        setAuthorizationParameters(query);
 
         return query.getSingleResult();
     }
@@ -296,11 +319,13 @@ public class ContentItemRepository
      */
     public List<ContentItem> filterByFolderAndName(final Category folder,
                                                    final String name) {
+
         final TypedQuery<ContentItem> query = getEntityManager()
             .createNamedQuery("ContentItem.filterByFolderAndName",
                               ContentItem.class);
         query.setParameter("folder", folder);
         query.setParameter("name", name);
+        setAuthorizationParameters(query);
 
         return query.getResultList();
     }
@@ -322,15 +347,18 @@ public class ContentItemRepository
                               Long.class);
         query.setParameter("folder", folder);
         query.setParameter("name", name);
+        setAuthorizationParameters(query);
 
         return query.getSingleResult();
     }
 
     public Optional<ContentItem> findItemWithWorkflow(final Workflow workflow) {
+
         final TypedQuery<ContentItem> query = getEntityManager()
             .createNamedQuery("ContentItem.findItemWithWorkflow",
                               ContentItem.class);
         query.setParameter("workflow", workflow);
+        setAuthorizationParameters(query);
 
         try {
             return Optional.of(query.getSingleResult());
@@ -351,6 +379,7 @@ public class ContentItemRepository
      *         item.
      */
     public Optional<ContentItem> findByPath(final String path) {
+
         //The last token is the name of the item itself. Remove this part an get 
         //the folder containing the item using the FolderRepository.
         final String normalizedPath = PathUtil.normalizePath(path);
@@ -381,6 +410,7 @@ public class ContentItemRepository
      */
     public Optional<ContentItem> findByPath(final ContentSection section,
                                             final String path) {
+
         //The last token is the name of the item itself. Remove this part an get 
         //the folder containing the item using the FolderRepository.
         final String normalizedPath = PathUtil.normalizePath(path);
@@ -447,6 +477,37 @@ public class ContentItemRepository
         } catch (ObjectNotAssignedToCategoryException ex) {
             throw new UnexpectedErrorException(ex);
         }
+    }
+
+    /**
+     * A helper method for setting the parameters for the common query
+     * parameters used to determine if a user has access to an item.
+     *
+     * @param query The query on which the parameters are set. No type type
+     *              boundary here to allow usage with all results type used in
+     *              this class ({@link ContentItem} and sub classes ,Long)
+     */
+    private void setAuthorizationParameters(final TypedQuery<?> query) {
+
+        final Optional<User> user = shiro.getUser();
+        final List<Role> roles;
+        if (user.isPresent()) {
+            roles = user
+                .get()
+                .getRoleMemberships()
+                .stream()
+                .map(membership -> membership.getRole())
+                .collect(Collectors.toList());
+        } else {
+            roles = Collections.emptyList();
+        }
+
+        final boolean isSystemUser = shiro.isSystemUser();
+        final boolean isAdmin = permissionChecker.isPermitted("*");
+
+        query.setParameter("roles", roles);
+        query.setParameter("isSystemUser", isSystemUser);
+        query.setParameter("isAdmin", isAdmin);
     }
 
 }
