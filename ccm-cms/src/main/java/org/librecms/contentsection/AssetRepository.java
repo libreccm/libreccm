@@ -25,9 +25,14 @@ import org.libreccm.categorization.ObjectNotAssignedToCategoryException;
 import org.libreccm.core.CcmObjectRepository;
 import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.security.AuthorizationRequired;
+import org.libreccm.security.PermissionChecker;
 import org.libreccm.security.RequiresPrivilege;
+import org.libreccm.security.Role;
+import org.libreccm.security.Shiro;
+import org.libreccm.security.User;
 import org.librecms.contentsection.privileges.AssetPrivileges;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -49,6 +54,12 @@ import javax.transaction.Transactional;
 public class AssetRepository
     extends AbstractAuditedEntityRepository<Long, Asset> {
 
+    @Inject
+    private Shiro shiro;
+    
+    @Inject
+    private PermissionChecker permissionChecker;
+    
     @Inject
     private EntityManager entityManager;
 
@@ -150,9 +161,11 @@ public class AssetRepository
      */
     @Transactional(Transactional.TxType.REQUIRED)
     public Optional<Asset> findByUuid(final String uuid) {
-        final TypedQuery<Asset> query = entityManager.createNamedQuery(
-            "Asset.findByUuid", Asset.class);
+        
+        final TypedQuery<Asset> query = entityManager
+            .createNamedQuery("Asset.findByUuid", Asset.class);
         query.setParameter("uuid", uuid);
+        setAuthorizationParameters(query);
 
         try {
             return Optional.of(query.getSingleResult());
@@ -181,6 +194,7 @@ public class AssetRepository
             "Asset.findByUuidAndType", Asset.class);
         query.setParameter("uuid", uuid);
         query.setParameter("type", type);
+        setAuthorizationParameters(query);
 
         try {
             return Optional.of(query.getSingleResult());
@@ -195,6 +209,7 @@ public class AssetRepository
         final TypedQuery<Asset> query = entityManager
             .createNamedQuery("Asset.findByContentSection", Asset.class);
         query.setParameter("section", section);
+        setAuthorizationParameters(query);
 
         return query.getResultList();
     }
@@ -217,6 +232,7 @@ public class AssetRepository
         final TypedQuery<Asset> query = entityManager
             .createNamedQuery("Asset.findByTitle", Asset.class);
         query.setParameter("title", title);
+        setAuthorizationParameters(query);
 
         return query.getResultList();
     }
@@ -228,6 +244,7 @@ public class AssetRepository
             "Asset.findByTitleAndContentSection", Asset.class);
         query.setParameter("title", title);
         query.setParameter("section", section);
+        setAuthorizationParameters(query);
 
         return query.getResultList();
     }
@@ -247,6 +264,7 @@ public class AssetRepository
         final TypedQuery<Asset> query = entityManager.createNamedQuery(
             "Asset.findByType", Asset.class);
         query.setParameter("type", type);
+        setAuthorizationParameters(query);
 
         return query.getResultList();
     }
@@ -270,6 +288,7 @@ public class AssetRepository
             "Asset.findByTypeAndContentSection", Asset.class);
         query.setParameter("type", type);
         query.setParameter("section", section);
+        setAuthorizationParameters(query);
 
         return query.getResultList();
     }
@@ -292,6 +311,7 @@ public class AssetRepository
             .createNamedQuery("Asset.findByTitle", Asset.class);
         query.setParameter("title", title);
         query.setParameter("type", type);
+        setAuthorizationParameters(query);
 
         return query.getResultList();
     }
@@ -302,12 +322,13 @@ public class AssetRepository
         final ContentSection section) {
 
         final TypedQuery<Asset> query = entityManager
-        .createNamedQuery("Asset.findByTitleAndTypeAndContentSection", 
-                          Asset.class);
+            .createNamedQuery("Asset.findByTitleAndTypeAndContentSection",
+                              Asset.class);
         query.setParameter("title", title);
         query.setParameter("type", type);
         query.setParameter("section", section);
-        
+        setAuthorizationParameters(query);
+
         return query.getResultList();
     }
 
@@ -323,6 +344,7 @@ public class AssetRepository
         final TypedQuery<Asset> query = entityManager.createNamedQuery(
             "Asset.findByFolder", Asset.class);
         query.setParameter("folder", folder);
+        setAuthorizationParameters(query);
 
         return query.getResultList();
     }
@@ -339,7 +361,8 @@ public class AssetRepository
         final TypedQuery<Long> query = entityManager.createNamedQuery(
             "Asset.countInFolder", Long.class);
         query.setParameter("folder", folder);
-
+        setAuthorizationParameters(query);
+        
         return query.getSingleResult();
     }
 
@@ -362,6 +385,7 @@ public class AssetRepository
             "Asset.filterByFolderAndTitle", Asset.class);
         query.setParameter("folder", folder);
         query.setParameter("title", title);
+        setAuthorizationParameters(query);
 
         return query.getResultList();
     }
@@ -385,6 +409,7 @@ public class AssetRepository
             "Asset.countFilterByFolderAndTitle", Long.class);
         query.setParameter("folder", folder);
         query.setParameter("title", title);
+        setAuthorizationParameters(query);
 
         return query.getSingleResult();
     }
@@ -407,6 +432,7 @@ public class AssetRepository
             "Asset.filterByFolderAndType", Asset.class);
         query.setParameter("folder", folder);
         query.setParameter("type", type);
+        setAuthorizationParameters(query);
 
         return query.getResultList();
     }
@@ -427,6 +453,7 @@ public class AssetRepository
             "Asset.countFilterByFolderAndType", Long.class);
         query.setParameter("folder", folder);
         query.setParameter("type", type);
+        setAuthorizationParameters(query);
 
         return query.getSingleResult();
     }
@@ -453,6 +480,7 @@ public class AssetRepository
         query.setParameter("folder", folder);
         query.setParameter("type", type);
         query.setParameter("title", title);
+        setAuthorizationParameters(query);
 
         return query.getResultList();
     }
@@ -479,8 +507,33 @@ public class AssetRepository
         query.setParameter("folder", folder);
         query.setParameter("type", type);
         query.setParameter("title", title);
+        setAuthorizationParameters(query);
 
         return query.getSingleResult();
     }
 
+    private void setAuthorizationParameters(final TypedQuery<?> query) {
+        
+        final Optional<User> user = shiro.getUser();
+        final List<Role> roles;
+        if (user.isPresent()) {
+            roles = user
+                .get()
+                .getRoleMemberships()
+                .stream()
+                .map(membership -> membership.getRole())
+                .collect(Collectors.toList());
+        } else {
+            roles = Collections.emptyList();
+        }
+        
+        
+        final boolean isSystemUser = shiro.isSystemUser();
+        final boolean isAdmin = permissionChecker.isPermitted("*");
+
+        query.setParameter("roles", roles);
+        query.setParameter("isSystemUser", isSystemUser);
+        query.setParameter("isAdmin", isAdmin);
+    }
+    
 }

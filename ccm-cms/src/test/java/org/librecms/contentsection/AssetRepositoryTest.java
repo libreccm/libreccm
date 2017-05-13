@@ -20,6 +20,7 @@ package org.librecms.contentsection;
 
 import static org.libreccm.testutils.DependenciesHelpers.*;
 
+import org.apache.shiro.subject.Subject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.ShouldThrowException;
 import org.jboss.arquillian.junit.Arquillian;
@@ -47,11 +48,13 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.inject.Inject;
+
 import org.jboss.arquillian.persistence.CleanupUsingScript;
 
 import org.librecms.assets.FileAsset;
 import org.librecms.assets.Image;
 import org.librecms.assets.VideoAsset;
+import org.librecms.contentsection.rs.Assets;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
@@ -232,14 +235,31 @@ public class AssetRepositoryTest {
     @UsingDataSet(
         "datasets/org/librecms/contentsection/AssetRepositoryTest/data.xml")
     public void findAssetByUuid() {
-        final Optional<Asset> header = assetRepo.findByUuid(
-            "4635589f-b87a-46d9-979e-6af14af063e5");
-        final Optional<Asset> phb = assetRepo.findByUuid(
-            "0a192e98-3b28-49d0-833f-bc9ff5f9d1d4");
-        final Optional<Asset> datasheet = assetRepo.findByUuid(
-            "0393840f-06a6-4ec3-aeb3-a612f845ad60");
-        final Optional<Asset> none = assetRepo.findByUuid(
-            "5211bf56-c20b-40b3-8ef8-0c7d35325fda");
+
+        final Optional<Asset> header = shiro
+            .getSystemUser()
+            .execute(() -> {
+                return assetRepo
+                    .findByUuid("4635589f-b87a-46d9-979e-6af14af063e5");
+            });
+        final Optional<Asset> phb = shiro
+            .getSystemUser()
+            .execute(() -> {
+                return assetRepo
+                    .findByUuid("0a192e98-3b28-49d0-833f-bc9ff5f9d1d4");
+            });
+        final Optional<Asset> datasheet = shiro
+            .getSystemUser()
+            .execute(() -> {
+                return assetRepo
+                    .findByUuid("0393840f-06a6-4ec3-aeb3-a612f845ad60");
+            });
+        final Optional<Asset> none = shiro
+            .getSystemUser()
+            .execute(() -> {
+                return assetRepo
+                    .findByUuid("5211bf56-c20b-40b3-8ef8-0c7d35325fda");
+            });
 
         assertThat(header.isPresent(), is(true));
         assertThat(header.get(), is(instanceOf(Asset.class)));
@@ -272,9 +292,21 @@ public class AssetRepositoryTest {
     @UsingDataSet(
         "datasets/org/librecms/contentsection/AssetRepositoryTest/data.xml")
     public void findAssetByUuidAndType() {
-        final Optional<Asset> asset = assetRepo.findByUuidAndType(
-            "4635589f-b87a-46d9-979e-6af14af063e5", Image.class);
-        final Optional<Asset> none = assetRepo.findByUuidAndType("4635589f-b87a-46d9-979e-6af14af063e5", FileAsset.class);
+
+        final Optional<Asset> asset = shiro
+            .getSystemUser()
+            .execute(() -> {
+                return assetRepo
+                    .findByUuidAndType("4635589f-b87a-46d9-979e-6af14af063e5",
+                                       Image.class);
+            });
+        final Optional<Asset> none = shiro
+            .getSystemUser()
+            .execute(() -> {
+                return assetRepo
+                    .findByUuidAndType("4635589f-b87a-46d9-979e-6af14af063e5",
+                                       FileAsset.class);
+            });
 
         assertThat(asset.isPresent(), is(true));
         assertThat(asset.get().getDisplayName(), is(equalTo("header.png")));
@@ -291,8 +323,13 @@ public class AssetRepositoryTest {
     @UsingDataSet(
         "datasets/org/librecms/contentsection/AssetRepositoryTest/data.xml")
     public void findAssetByType() {
-        final List<Asset> images = assetRepo.findByType(Image.class);
-        final List<Asset> files = assetRepo.findByType(FileAsset.class);
+
+        final List<Asset> images = shiro
+            .getSystemUser()
+            .execute(() -> assetRepo.findByType(Image.class));
+        final List<Asset> files = shiro
+            .getSystemUser()
+            .execute(() -> assetRepo.findByType(FileAsset.class));
 
         assertThat(images.isEmpty(), is(false));
         assertThat(files.isEmpty(), is(false));
@@ -301,13 +338,14 @@ public class AssetRepositoryTest {
         assertThat(files.size(), is(2));
 
         assertThat(images.get(0).getDisplayName(), is(equalTo("header.png")));
-        assertThat(images.get(1).getDisplayName(), is(equalTo("the-phb.png")));
-        assertThat(images.get(2).getDisplayName(),
+        assertThat(images.get(1).getDisplayName(),
                    is(equalTo("services-header.png")));
+        assertThat(images.get(2).getDisplayName(), is(equalTo("the-phb.png")));
+        
 
-        assertThat(files.get(0).getDisplayName(),
+        assertThat(files.get(0).getDisplayName(), is(equalTo("catalog.pdf")));
+        assertThat(files.get(1).getDisplayName(),
                    is(equalTo("product1-datasheet.pdf")));
-        assertThat(files.get(1).getDisplayName(), is(equalTo("catalog.pdf")));
     }
 
     /**
@@ -319,11 +357,16 @@ public class AssetRepositoryTest {
     @UsingDataSet(
         "datasets/org/librecms/contentsection/AssetRepositoryTest/data.xml")
     public void findAssetsByFolder() {
+
         final Folder media = folderRepo.findById(-400L).get();
         final Folder data = folderRepo.findById(-500L).get();
 
-        final List<Asset> mediaAssets = assetRepo.findByFolder(media);
-        final List<Asset> dataAssets = assetRepo.findByFolder(data);
+        final List<Asset> mediaAssets = shiro
+            .getSystemUser()
+            .execute(() -> assetRepo.findByFolder(media));
+        final List<Asset> dataAssets = shiro
+            .getSystemUser()
+            .execute(() -> assetRepo.findByFolder(data));
 
         assertThat(mediaAssets.size(), is(5));
         assertThat(dataAssets.size(), is(0));
@@ -339,11 +382,18 @@ public class AssetRepositoryTest {
     @UsingDataSet(
         "datasets/org/librecms/contentsection/AssetRepositoryTest/data.xml")
     public void countAssetsInFolder() {
+
         final Folder media = folderRepo.findById(-400L).get();
         final Folder data = folderRepo.findById(-500L).get();
 
-        assertThat(assetRepo.countAssetsInFolder(media), is(5L));
-        assertThat(assetRepo.countAssetsInFolder(data), is(0L));
+        final Subject systemUser = shiro.getSystemUser();
+
+        assertThat(
+            systemUser.execute(() -> assetRepo.countAssetsInFolder(media)),
+            is(5L));
+        assertThat(
+            systemUser.execute(() -> assetRepo.countAssetsInFolder(data)),
+            is(0L));
     }
 
     /**
@@ -355,12 +405,17 @@ public class AssetRepositoryTest {
     @UsingDataSet(
         "datasets/org/librecms/contentsection/AssetRepositoryTest/data.xml")
     public void filterAssetByFolderAndTitle() {
-        final Folder media = folderRepo.findById(-400L).get();
 
-        final List<Asset> result1 = assetRepo.filterByFolderAndTitle(media,
-                                                                    "hea");
-        final List<Asset> result2 = assetRepo.filterByFolderAndTitle(media,
-                                                                    "photo");
+        final Folder media = shiro
+            .getSystemUser()
+            .execute(() -> folderRepo.findById(-400L).get());
+
+        final List<Asset> result1 = shiro
+            .getSystemUser()
+            .execute(() -> assetRepo.filterByFolderAndTitle(media, "hea"));
+        final List<Asset> result2 = shiro
+            .getSystemUser()
+            .execute(() -> assetRepo.filterByFolderAndTitle(media, "photo"));
 
         assertThat(result1.size(), is(2));
         assertThat(result2.size(), is(0));
@@ -378,12 +433,21 @@ public class AssetRepositoryTest {
     @UsingDataSet(
         "datasets/org/librecms/contentsection/AssetRepositoryTest/data.xml")
     public void countFilterAssetByFolderAndTitle() {
+
         final Folder media = folderRepo.findById(-400L).get();
 
-        assertThat(assetRepo.countFilterByFolderAndTitle(media, "hea"),
-                   is(2L));
-        assertThat(assetRepo.countFilterByFolderAndTitle(media, "photo"),
-                   is(0L));
+        final Subject systemUser = shiro.getSystemUser();
+
+        assertThat(
+            systemUser.execute(() -> {
+                return assetRepo.countFilterByFolderAndTitle(media, "hea");
+            }),
+            is(2L));
+        assertThat(
+            systemUser.execute(() -> {
+                return assetRepo.countFilterByFolderAndTitle(media, "photo");
+            }),
+            is(0L));
     }
 
     /**
@@ -396,27 +460,34 @@ public class AssetRepositoryTest {
     @UsingDataSet(
         "datasets/org/librecms/contentsection/AssetRepositoryTest/data.xml")
     public void filterAssetsByFolderAndType() {
+
         final Folder media = folderRepo.findById(-400L).get();
 
-        final List<Asset> images = assetRepo.filterByFolderAndType(media,
-                                                                   Image.class);
-        final List<Asset> files = assetRepo.filterByFolderAndType(media,
-                                                                  FileAsset.class);
-        final List<Asset> videos = assetRepo.filterByFolderAndType(
-            media, VideoAsset.class);
+        final Subject systemUser = shiro.getSystemUser();
+
+        final List<Asset> images = systemUser
+            .execute(() -> assetRepo.filterByFolderAndType(media,
+                                                           Image.class));
+        final List<Asset> files = systemUser
+            .execute(() -> assetRepo.filterByFolderAndType(media,
+                                                           FileAsset.class));
+        final List<Asset> videos = systemUser
+            .execute(() -> assetRepo.filterByFolderAndType(media,
+                                                           VideoAsset.class));
 
         assertThat(images.size(), is(3));
         assertThat(files.size(), is(2));
         assertThat(videos.size(), is(0));
 
         assertThat(images.get(0).getDisplayName(), is(equalTo("header.png")));
-        assertThat(images.get(1).getDisplayName(), is(equalTo("the-phb.png")));
-        assertThat(images.get(2).getDisplayName(),
+        assertThat(images.get(1).getDisplayName(),
                    is(equalTo("services-header.png")));
+        assertThat(images.get(2).getDisplayName(), is(equalTo("the-phb.png")));
 
-        assertThat(files.get(0).getDisplayName(),
+        assertThat(files.get(0).getDisplayName(), is(equalTo("catalog.pdf")));
+        assertThat(files.get(1).getDisplayName(),
                    is(equalTo("product1-datasheet.pdf")));
-        assertThat(files.get(1).getDisplayName(), is(equalTo("catalog.pdf")));
+        
     }
 
     /**
@@ -431,12 +502,25 @@ public class AssetRepositoryTest {
     public void countFilterAssetsByFolderAndType() {
         final Folder media = folderRepo.findById(-400L).get();
 
-        assertThat(assetRepo.countFilterByFolderAndType(media, Image.class),
-                   is(3L));
-        assertThat(assetRepo.countFilterByFolderAndType(media, FileAsset.class),
-                   is(2L));
-        assertThat(assetRepo.countFilterByFolderAndType(media, VideoAsset.class),
-                   is(0L));
+        final Subject systemUser = shiro.getSystemUser();
+
+        assertThat(
+            systemUser.execute(() -> {
+                return assetRepo.countFilterByFolderAndType(media, Image.class);
+            }),
+            is(3L));
+        assertThat(
+            systemUser.execute(() -> {
+                return assetRepo.countFilterByFolderAndType(media,
+                                                            FileAsset.class);
+            }),
+            is(2L));
+        assertThat(
+            systemUser.execute(() -> {
+                return assetRepo.countFilterByFolderAndType(media,
+                                                            VideoAsset.class);
+            }),
+            is(0L));
     }
 
     /**
@@ -451,9 +535,16 @@ public class AssetRepositoryTest {
     public void filterAssetsByFolderAndTypeAndTitle() {
         final Folder media = folderRepo.findById(-400L).get();
 
-        final List<Asset> result1 = assetRepo.filterByFolderAndTypeAndTitle(
-            media, Image.class, "hea");
-        final List<Asset> result2 = assetRepo.filterByFolderAndTypeAndTitle(media, FileAsset.class, "hea");
+        final List<Asset> result1 = shiro
+            .getSystemUser()
+            .execute(() -> assetRepo.filterByFolderAndTypeAndTitle(media,
+                                                                   Image.class,
+                                                                   "hea"));
+        final List<Asset> result2 = shiro
+            .getSystemUser()
+            .execute(() -> assetRepo.filterByFolderAndTypeAndTitle(media,
+                                                                   FileAsset.class,
+                                                                   "hea"));
 
         assertThat(result1.size(), is(2));
         assertThat(result2.size(), is(0));
@@ -472,11 +563,21 @@ public class AssetRepositoryTest {
     public void countFilterAssetsByFolderAndTypeAndTitle() {
         final Folder media = folderRepo.findById(-400L).get();
 
-        assertThat(assetRepo.countFilterByFolderAndTypeAndTitle(
-            media, Image.class, "hea"),
-                   is(2L));
-        assertThat(assetRepo.countFilterByFolderAndTypeAndTitle(media, FileAsset.class, "hea"),
-                   is(0L));
+        final Subject systemUser = shiro.getSystemUser();
+
+        assertThat(
+            systemUser.execute(() -> {
+                return assetRepo.countFilterByFolderAndTypeAndTitle(
+                    media, Image.class, "hea");
+            }),
+            is(2L));
+        assertThat(
+            systemUser.execute(() -> {
+                return assetRepo.countFilterByFolderAndTypeAndTitle(media,
+                                                                    FileAsset.class,
+                                                                    "hea");
+            }),
+            is(0L));
     }
 
 }
