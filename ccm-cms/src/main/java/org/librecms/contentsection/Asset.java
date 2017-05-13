@@ -23,6 +23,7 @@ import org.libreccm.categorization.Categorization;
 import org.libreccm.core.CcmObject;
 import org.libreccm.l10n.LocalizedString;
 import org.librecms.CmsConstants;
+import org.librecms.contentsection.privileges.AssetPrivileges;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -56,124 +57,306 @@ import static org.librecms.CmsConstants.*;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Audited
 @NamedQueries({
-    @NamedQuery(name = "Asset.findByUuid",
-                query = "SELECT a FROM Asset a WHERE a.uuid = :uuid")
+    @NamedQuery(
+        name = "Asset.findByUuid",
+        query = "SELECT DISTINCT a "
+                    + "FROM Asset a "
+                    + "LEFT JOIN a.permissions p "
+                    + "WHERE a.uuid = :uuid "
+                    + "AND ("
+                    + "  ("
+                    + "    p.grantee IN :roles "
+                    + "    AND p.grantedPrivilege = "
+                    + "      '" + AssetPrivileges.VIEW + "' "
+                    + "  ) "
+                    + "  OR true = :isSystemUser OR true = :isAdmin"
+                    + ")")
     ,
-    @NamedQuery(name = "Asset.findByType",
-                query = "SELECT a FROM Asset a "
-                            + "WHERE TYPE(a) = :type "
-                            + "AND a.categories IS NOT EMPTY")
+    @NamedQuery(
+        name = "Asset.findByType",
+        query = "SELECT DISTINCT a "
+                    + "FROM Asset a "
+                    + "LEFT JOIN a.permissions p "
+                    + "WHERE TYPE(a) = :type "
+                    + "AND a.categories IS NOT EMPTY "
+                    + "AND ("
+                    + "  ("
+                    + "    p.grantee IN :roles "
+                    + "    AND p.grantedPrivilege = "
+                    + "      '" + AssetPrivileges.VIEW + "' "
+                    + "  ) "
+                    + "  OR true = :isSystemUser OR true = :isAdmin"
+                    + ") "
+                    + "ORDER BY a.displayName")
     ,
-    @NamedQuery(name = "Asset.findByTypeAndContentSection",
-                query = "SELECT a FROM Asset a "
-                            + "JOIN a.categories c "
-                            + "WHERE TYPE(a) = :type "
-                            + "AND c.category.section = :section")
+    @NamedQuery(
+        name = "Asset.findByTypeAndContentSection",
+        query = "SELECT DISTINCT a "
+                    + "FROM Asset a "
+                    + "JOIN a.categories c "
+                    + "LEFT JOIN a.permissions p "
+                    + "WHERE TYPE(a) = :type "
+                    + "AND c.category.section = :section "
+                    + "AND ("
+                    + "  ("
+                    + "    p.grantee IN :roles "
+                    + "    AND p.grantedPrivilege = "
+                    + "      '" + AssetPrivileges.VIEW + "' "
+                    + "  ) "
+                    + "  OR true = :isSystemUser OR true = :isAdmin"
+                    + ")")
     ,
-    @NamedQuery(name = "Asset.findByUuidAndType",
-                query = "SELECT a FROM Asset a "
-                            + "WHERE a.uuid = :uuid "
-                            + "AND TYPE(a) = :type")
+    @NamedQuery(
+        name = "Asset.findByUuidAndType",
+        query = "SELECT DISTINCT a "
+                    + "FROM Asset a "
+                    + "LEFT JOIN a.permissions p "
+                    + "WHERE a.uuid = :uuid "
+                    + "AND TYPE(a) = :type "
+                    + "AND ("
+                    + "  ("
+                    + "    p.grantee IN :roles "
+                    + "    AND p.grantedPrivilege = "
+                    + "      '" + AssetPrivileges.VIEW + "' "
+                    + "  ) "
+                    + "  OR true = :isSystemUser OR true = :isAdmin"
+                    + ")")
     ,
-    @NamedQuery(name = "Asset.findByContentSection",
-                query = "SELECT a FROM Asset a "
-                            + "JOIN a.categories c "
-                            + "WHERE c.category.section = :section")
+    @NamedQuery(
+        name = "Asset.findByContentSection",
+        query = "SELECT DISTINCT a "
+                    + "FROM Asset a "
+                    + "JOIN a.categories c "
+                    + "LEFT JOIN a.permissions p "
+                    + "WHERE c.category.section = :section "
+                    + "AND ("
+                    + "  ("
+                    + "    p.grantee IN :roles "
+                    + "    AND p.grantedPrivilege = "
+                    + "      '" + AssetPrivileges.VIEW + "' "
+                    + "  ) "
+                    + "  OR true = :isSystemUser OR true = :isAdmin"
+                    + ")")
     ,
-    @NamedQuery(name = "Asset.findByTitle'",
-                query = "SELECT a FROM Asset a "
-                            + "JOIN a.title.values t "
-                            + "WHERE LOWER(t) LIKE CONCAT('%', :title, '%') "
-                            + "AND a.categories IS NOT EMPTY")
+    @NamedQuery(
+        name = "Asset.findByTitle'",
+        query = "SELECT DISTINCT a "
+                    + "FROM Asset a "
+                    + "JOIN a.title.values t "
+                    + "LEFT JOIN a.permissions p "
+                    + "WHERE LOWER(t) LIKE CONCAT('%', :title, '%') "
+                    + "AND a.categories IS NOT EMPTY "
+                    + "AND ("
+                    + "  ("
+                    + "    p.grantee IN :roles "
+                    + "    AND p.grantedPrivilege = "
+                    + "      '" + AssetPrivileges.VIEW + "' "
+                    + "  ) "
+                    + "  OR true = :isSystemUser OR true = :isAdmin"
+                    + ")")
     ,
-    @NamedQuery(name = "Asset.findByTitleAndContentSection",
-                query = "SELECT a FROM Asset a "
-                            + "JOIN a.title.values t "
-                            + "JOIN a.categories c "
-                            + "WHERE LOWER(t) LIKE CONCAT('%s', :title, '%s') "
-                            + "AND c.category.section = :section")
+    @NamedQuery(
+        name = "Asset.findByTitleAndContentSection",
+        query = "SELECT DISTINCT a "
+                    + "FROM Asset a "
+                    + "JOIN a.title.values t "
+                    + "JOIN a.categories c "
+                    + "LEFT JOIN a.permissions p "
+                    + "WHERE LOWER(t) LIKE CONCAT('%s', :title, '%s') "
+                    + "AND c.category.section = :section "
+                    + "AND ("
+                    + "  ("
+                    + "    p.grantee IN :roles "
+                    + "    AND p.grantedPrivilege = "
+                    + "      '" + AssetPrivileges.VIEW + "' "
+                    + "  ) "
+                    + "  OR true = :isSystemUser OR true = :isAdmin"
+                    + ")")
     ,
-    @NamedQuery(name = "Asset.findByTitleAndType",
-                query = "SELECT a FROM Asset a "
-                            + "JOIN a.title.values t "
-                            + "WHERE LOWER(t) LIKE CONCAT('%', :title, '%') "
-                            + "AND TYPE(a) = :type")
+    @NamedQuery(
+        name = "Asset.findByTitleAndType",
+        query = "SELECT DISTINCT a "
+                    + "FROM Asset a "
+                    + "JOIN a.title.values t "
+                    + "LEFT JOIN a.permissions p "
+                    + "WHERE LOWER(t) LIKE CONCAT('%', :title, '%') "
+                    + "AND TYPE(a) = :type "
+                    + "AND ("
+                    + "  ("
+                    + "    p.grantee IN :roles "
+                    + "    AND p.grantedPrivilege = "
+                    + "      '" + AssetPrivileges.VIEW + "' "
+                    + "  ) "
+                    + "  OR true = :isSystemUser OR true = :isAdmin"
+                    + ")")
     ,
-    @NamedQuery(name = "Asset.findByTitleAndTypeAndContentSection",
-                query = "SELECT a FROM Asset a "
-                            + "JOIN a.title.values t "
-                            + "JOIN a.categories c "
-                            + "WHERE LOWER(t) LIKE CONCAT('%', :title, '%') "
-                            + "AND TYPE(a) = :type "
-                            + "AND c.category.section = :section")
+    @NamedQuery(
+        name = "Asset.findByTitleAndTypeAndContentSection",
+        query = "SELECT DISTINCT a "
+                    + "FROM Asset a "
+                    + "JOIN a.title.values t "
+                    + "JOIN a.categories c "
+                    + "LEFT JOIN a.permissions p "
+                    + "WHERE LOWER(t) LIKE CONCAT('%', :title, '%') "
+                    + "AND TYPE(a) = :type "
+                    + "AND c.category.section = :section "
+                    + "AND ("
+                    + "  ("
+                    + "    p.grantee IN :roles "
+                    + "    AND p.grantedPrivilege = "
+                    + "      '" + AssetPrivileges.VIEW + "' "
+                    + "  ) "
+                    + "  OR true = :isSystemUser OR true = :isAdmin"
+                    + ")")
     ,
     @NamedQuery(
         name = "Asset.findByFolder",
-        query = "SELECT a FROM Asset a "
+        query = "SELECT DISTINCT a "
+                    + "FROM Asset a "
                     + "JOIN a.categories c "
+                    + "LEFT JOIN a.permissions p "
                     + "WHERE c.category = :folder "
-                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "'")
+                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
+                    + "AND ("
+                    + "  ("
+                    + "    p.grantee IN :roles "
+                    + "    AND p.grantedPrivilege = "
+                    + "      '" + AssetPrivileges.VIEW + "' "
+                    + "  ) "
+                    + "  OR true = :isSystemUser OR true = :isAdmin"
+                    + ")")
     ,
     @NamedQuery(
         name = "Asset.countInFolder",
-        query = "SELECT COUNT(a) FROM Asset a "
+        query = "SELECT COUNT(DISTINCT a) "
+                    + "FROM Asset a "
                     + "JOIN a.categories c "
+                    + "LEFT JOIN a.permissions p "
                     + "WHERE c.category = :folder "
-                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "'")
+                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
+                    + "AND ("
+                    + "  ("
+                    + "    p.grantee IN :roles "
+                    + "    AND p.grantedPrivilege = "
+                    + "      '" + AssetPrivileges.VIEW + "' "
+                    + "  ) "
+                    + "  OR true = :isSystemUser OR true = :isAdmin"
+                    + ")")
     ,
     @NamedQuery(
         name = "Asset.filterByFolderAndTitle",
-        query = "SELECT a FROM Asset a "
+        query = "SELECT DISTINCT a "
+                    + "FROM Asset a "
                     + "JOIN a.categories c "
                     + "JOIN a.title.values t "
+                    + "LEFT JOIN a.permissions p "
                     + "WHERE c.category = :folder "
                     + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
-                    + "AND LOWER(t) LIKE CONCAT('%', LOWER(:title), '%')")
+                    + "AND LOWER(t) LIKE CONCAT('%', LOWER(:title), '%') "
+                    + "AND ("
+                    + "  ("
+                    + "    p.grantee IN :roles "
+                    + "    AND p.grantedPrivilege = "
+                    + "      '" + AssetPrivileges.VIEW + "' "
+                    + "  ) "
+                    + "  OR true = :isSystemUser OR true = :isAdmin"
+                    + ")")
     ,
     @NamedQuery(
         name = "Asset.countFilterByFolderAndTitle",
-        query = "SELECT COUNT(a) FROM Asset a "
+        query = "SELECT COUNT(DISTINCT a) "
+                    + "FROM Asset a "
                     + "JOIN a.categories c "
                     + "JOIN a.title.values t "
+                    + "LEFT JOIN a.permissions p "
                     + "WHERE c.category = :folder "
                     + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
-                    + "AND LOWER(t) LIKE CONCAT('%', LOWER(:title), '%')")
+                    + "AND LOWER(t) LIKE CONCAT('%', LOWER(:title), '%') "
+                    + "AND ("
+                    + "  ("
+                    + "    p.grantee IN :roles "
+                    + "    AND p.grantedPrivilege = "
+                    + "      '" + AssetPrivileges.VIEW + "' "
+                    + "  ) "
+                    + "  OR true = :isSystemUser OR true = :isAdmin"
+                    + ")")
     ,
     @NamedQuery(
         name = "Asset.filterByFolderAndType",
-        query = "SELECT a FROM Asset a "
+        query = "SELECT DISTINCT a "
+                    + "FROM Asset a "
                     + "JOIN a.categories c "
+                    + "LEFT JOIN a.permissions p "
                     + "WHERE c.category = :folder "
                     + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
-                    + "AND TYPE(a) = :type")
+                    + "AND TYPE(a) = :type "
+                    + "AND ("
+                    + "  ("
+                    + "    p.grantee IN :roles "
+                    + "    AND p.grantedPrivilege = "
+                    + "      '" + AssetPrivileges.VIEW + "' "
+                    + "  ) "
+                    + "  OR true = :isSystemUser OR true = :isAdmin"
+                    + ") "
+                    + "ORDER BY a.displayName")
     ,
     @NamedQuery(
         name = "Asset.countFilterByFolderAndType",
-        query = "SELECT COUNT(a) FROM Asset a "
+        query = "SELECT COUNT(DISTINCT a) "
+                    + "FROM Asset a "
                     + "JOIN a.categories c "
+                    + "LEFT JOIN a.permissions p "
                     + "WHERE c.category = :folder "
                     + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
-                    + "AND TYPE(a) = :type")
+                    + "AND TYPE(a) = :type "
+                    + "AND ("
+                    + "  ("
+                    + "    p.grantee IN :roles "
+                    + "    AND p.grantedPrivilege = "
+                    + "      '" + AssetPrivileges.VIEW + "' "
+                    + "  ) "
+                    + "  OR true = :isSystemUser OR true = :isAdmin"
+                    + ")")
     ,
     @NamedQuery(
         name = "Asset.filterByFolderAndTitleAndType",
-        query = "SELECT a FROM Asset a "
+        query = "SELECT DISTINCT a "
+                    + "FROM Asset a "
                     + "JOIN a.title.values t "
                     + "JOIN a.categories c "
+                    + "LEFT JOIN a.permissions p "
                     + "WHERE c.category = :folder "
                     + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
                     + "AND LOWER(t) LIKE CONCAT('%', LOWER(:title), '%') "
-                    + "AND TYPE(a) = :type")
+                    + "AND TYPE(a) = :type "
+                    + "AND ("
+                    + "  ("
+                    + "    p.grantee IN :roles "
+                    + "    AND p.grantedPrivilege = "
+                    + "      '" + AssetPrivileges.VIEW + "' "
+                    + "  ) "
+                    + "  OR true = :isSystemUser OR true = :isAdmin"
+                    + ")")
     ,
     @NamedQuery(
         name = "Asset.countFilterByFolderAndTitleAndType",
-        query = "SELECT COUNT(a) FROM Asset a "
+        query = "SELECT COUNT(DISTINCT a) "
+                    + "FROM Asset a "
                     + "JOIN a.categories c "
                     + "JOIN a.title.values t "
+                    + "LEFT JOIN a.permissions p "
                     + "WHERE c.category = :folder "
                     + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
                     + "AND LOWER(t) LIKE CONCAT('%', LOWER(:title), '%') "
-                    + "AND TYPE(a) = :type")
+                    + "AND TYPE(a) = :type "
+                    + "AND ("
+                    + "  ("
+                    + "    p.grantee IN :roles "
+                    + "    AND p.grantedPrivilege = "
+                    + "      '" + AssetPrivileges.VIEW + "' "
+                    + "  ) "
+                    + "  OR true = :isSystemUser OR true = :isAdmin"
+                    + ")")
 })
 public class Asset extends CcmObject {
 
