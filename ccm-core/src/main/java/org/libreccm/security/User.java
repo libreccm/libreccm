@@ -74,14 +74,23 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
                             + "ORDER BY u.name, "
                             + "         u.familyName, "
                             + "         u.givenName, "
-                            + "         u.primaryEmailAddress.address"),
+                            + "         u.primaryEmailAddress.address")
+    ,
+    @NamedQuery(name = "User.countByName",
+                query = "SELECT COUNT(u) FROM User u WHERE u.name = :name")
+    ,
     @NamedQuery(name = "User.findByEmailAddress",
                 query = "SELECT u FROM User u WHERE "
                             + "u.primaryEmailAddress.address = :emailAddress "
                             + "ORDER BY u.name, "
                             + " u.familyName, "
                             + " u.givenName, "
-                            + " u.primaryEmailAddress.address"),
+                            + " u.primaryEmailAddress.address")
+    ,
+    @NamedQuery(name = "User.countByPrimaryEmailAddress",
+                query = "SELECT COUNT(u) FROM User u "
+                            + "WHERE u.primaryEmailAddress.address = :emailAddress")
+    ,
     @NamedQuery(
         name = "User.filterByNameAndEmail",
         query = "SELECT u FROM User u WHERE "
@@ -92,7 +101,8 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
                 + "ORDER BY u.name,"
                     + "u.familyName, "
                     + "u.givenName, "
-                    + "u.primaryEmailAddress.address"),
+                    + "u.primaryEmailAddress.address")
+    ,
     @NamedQuery(
         name = "User.findAllOrderedByUsername",
         query = "SELECT u FROM User u ORDER BY u.name, "
@@ -105,7 +115,8 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
         name = "User.withGroupAndRoleMemberships",
         attributeNodes = {
             @NamedAttributeNode(
-                value = "groupMemberships"),
+                value = "groupMemberships")
+            ,
             @NamedAttributeNode(
                 value = "roleMemberships",
                 subgraph = "role")},
@@ -115,7 +126,8 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
                 attributeNodes = {
                     @NamedAttributeNode(value = "role",
                                         subgraph = "permissions")
-                }),
+                })
+            ,
             @NamedSubgraph(
                 name = "permissions",
                 attributeNodes = {
