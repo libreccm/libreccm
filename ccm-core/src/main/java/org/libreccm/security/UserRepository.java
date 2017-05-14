@@ -85,7 +85,7 @@ public class UserRepository extends AbstractEntityRepository<Long, User> {
             .getEntityGraph(entityGraphName);
         return findByName(name, entityGraph);
     }
-
+    
     public Optional<User> findByName(final String name,
                            final EntityGraph<User> entityGraph) {
         final TypedQuery<User> query = getEntityManager().createNamedQuery(
@@ -96,6 +96,16 @@ public class UserRepository extends AbstractEntityRepository<Long, User> {
         return getSingleResult(query);
     }
 
+    public boolean isNameInUse(final String name) {
+        
+        final TypedQuery<Long> query = getEntityManager()
+        .createNamedQuery("User.countByName", Long.class);
+        query.setParameter("name", name);
+        
+        final Long result = query.getSingleResult();
+        return result > 0;
+    }
+    
     /**
      * Finds user by the primary email address.
      *
@@ -130,6 +140,16 @@ public class UserRepository extends AbstractEntityRepository<Long, User> {
         query.setHint(FETCH_GRAPH_HINT_KEY, entityGraph);
 
         return getSingleResult(query);
+    }
+    
+    public boolean isEmailAddressInUse(final String emailAddress) {
+        
+        final TypedQuery<Long> query = getEntityManager()
+        .createNamedQuery("User.countByPrimaryEmailAddress", Long.class);
+        query.setParameter("emailAddress", emailAddress);
+        
+        final Long result = query.getSingleResult();
+        return result > 0;
     }
 
     public List<User> filtered(final String term) {

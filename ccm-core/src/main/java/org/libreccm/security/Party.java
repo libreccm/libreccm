@@ -92,7 +92,7 @@ public class Party implements Serializable {
      */
     @Column(name = "NAME", length = 256, nullable = false)
     @NotNull
-    @Pattern(regexp = "[a-zA-Z0-9\\-_]*")
+//    @Pattern(regexp = "[a-zA-Z0-9\\-_\\.]*")
     private String name;
 
     /**
