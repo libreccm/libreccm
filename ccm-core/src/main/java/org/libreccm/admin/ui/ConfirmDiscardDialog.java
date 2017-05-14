@@ -45,6 +45,8 @@ public class ConfirmDiscardDialog extends Window {
                                                    + "used with itself.");
         }
 
+        setCaption(message);
+        
         final Label label = new Label(message);
 
         final ResourceBundle bundle = ResourceBundle

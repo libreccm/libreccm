@@ -20,6 +20,7 @@ package org.libreccm.admin.ui.usersgroupsroles;
 
 import com.arsdigita.ui.admin.AdminUiConstants;
 
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.Grid;
@@ -27,12 +28,14 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
+import com.vaadin.ui.Window;
 import com.vaadin.ui.components.grid.HeaderCell;
 import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.renderers.ButtonRenderer;
 import com.vaadin.ui.themes.ValoTheme;
 import org.libreccm.admin.ui.AdminView;
 import org.libreccm.security.User;
+import org.libreccm.security.UserRepository;
 
 import java.util.ResourceBundle;
 
@@ -61,6 +64,7 @@ public class UsersGroupsRoles extends CustomComponent {
     private final Grid<User> usersTable;
     private final TextField userNameFilter;
     private final Button clearFiltersButton;
+    private final Button createUserButton;
 
     private UsersTableDataProvider usersTableDataProvider;
 
@@ -118,23 +122,13 @@ public class UsersGroupsRoles extends CustomComponent {
                        new ButtonRenderer<>(event -> {
                            final UserEditor editor = new UserEditor(
                                event.getItem(),
+                               this,
                                view.getUserRepository(),
                                view.getUserManager());
                            editor.center();
                            UI.getCurrent().addWindow(editor);
                        }))
             .setId(COL_EDIT);
-        usersTable
-            .addColumn(user -> bundle.getString("ui.admin.users.table.delete"),
-                       new ButtonRenderer<>(event -> {
-                           final UserEditor editor = new UserEditor(
-                               event.getItem(),
-                               view.getUserRepository(),
-                               view.getUserManager());
-                           editor.center();
-                           UI.getCurrent().addWindow(editor);
-                       }))
-            .setId(COL_DELETE);
 
         final HeaderRow filterRow = usersTable.appendHeaderRow();
         final HeaderCell userNameFilterCell = filterRow.getCell(COL_USER_NAME);
@@ -161,8 +155,20 @@ public class UsersGroupsRoles extends CustomComponent {
 //            usersTableDataProvider.setUserNameFilter(null);
             userNameFilter.setValue("");
         });
+        createUserButton = new Button("New User");
+        createUserButton.addStyleName(ValoTheme.BUTTON_TINY);
+        createUserButton.setIcon(VaadinIcons.PLUS);
+        createUserButton.addClickListener(event -> {
+            final UserEditor userEditor = new UserEditor(
+                this,
+                view.getUserRepository(), 
+                view.getUserManager());
+            userEditor.center();
+            UI.getCurrent().addWindow(userEditor);
+        });
         final HorizontalLayout actionsLayout = new HorizontalLayout(
-            clearFiltersButton);
+            clearFiltersButton, 
+            createUserButton);
         actionsCell.setComponent(actionsLayout);
 
         tabSheet.addTab(usersTable, "Users");
@@ -214,5 +220,9 @@ public class UsersGroupsRoles extends CustomComponent {
         this.usersTableDataProvider = dataProvider;
         usersTable.setDataProvider(dataProvider);
     }
-
+    
+    protected void refreshUsers() {
+        usersTableDataProvider.refreshAll();
+    }
+    
 }
