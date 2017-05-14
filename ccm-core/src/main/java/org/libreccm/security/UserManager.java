@@ -87,7 +87,7 @@ public class UserManager {
     @Transactional(Transactional.TxType.REQUIRED)
     public User createUser(final String givenName,
                            final String familyName,
-                           @Pattern(regexp = "[a-zA-Z0-9\\-_]*")
+//                           @Pattern(regexp = "[a-zA-Z0-9\\-_]*")
                            final String name,
                            final String emailAddress,
                            final String password) {
