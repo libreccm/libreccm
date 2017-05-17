@@ -64,6 +64,7 @@ import java.util.Properties;
                MultiPartArticle.class,
                News.class})
 @AssetTypes({AudioAsset.class,
+             VideoAsset.class,
              Bookmark.class,
              ExternalVideoAsset.class,
              ExternalAudioAsset.class,

@@ -18,6 +18,7 @@
  */
 package org.librecms.assets;
 
+import com.arsdigita.cms.ui.assets.forms.AudioForm;
 import org.hibernate.envers.Audited;
 
 import java.io.Serializable;
@@ -30,6 +31,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import static org.librecms.CmsConstants.*;
+import static org.librecms.assets.AssetConstants.ASSETS_BUNDLE;
 
 /**
  * An asset for videos.
@@ -39,6 +41,11 @@ import static org.librecms.CmsConstants.*;
 @Entity
 @Table(name = "VIDEO_ASSETS", schema = DB_SCHEMA)
 @Audited
+@AssetType(assetForm = AudioForm.class,
+        labelKey = "video_asset.label",
+        labelBundle = ASSETS_BUNDLE,
+        descriptionKey = "video_asset.description",
+        descriptionBundle = ASSETS_BUNDLE)
 public class VideoAsset extends BinaryAsset implements Serializable {
 
     private static final long serialVersionUID = -4377789857099678289L;
