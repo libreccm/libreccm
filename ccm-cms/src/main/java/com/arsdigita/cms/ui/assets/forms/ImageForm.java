@@ -26,11 +26,14 @@ import com.arsdigita.bebop.form.TextField;
 import com.arsdigita.cms.ui.assets.AssetPane;
 import com.arsdigita.cms.ui.assets.AssetSearchWidget;
 import com.arsdigita.globalization.GlobalizedMessage;
+import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.CmsConstants;
 import org.librecms.assets.BinaryAsset;
+import org.librecms.assets.ExternalAudioAsset;
 import org.librecms.assets.Image;
 import org.librecms.assets.LegalMetadata;
 import org.librecms.contentsection.Asset;
+import org.librecms.contentsection.AssetRepository;
 
 import java.util.Optional;
 
@@ -105,7 +108,7 @@ public class ImageForm extends BinaryAssetForm {
 
         image.setHeight(Long.parseLong((String) height.getValue(state)));
         image.setWidth(Long.parseLong((String) width.getValue(state)));
-        image.setLegalMetadata((LegalMetadata) assetSearchWidget.getValue(state));
+        updateData(image, state);
 
         return image;
     }
@@ -123,7 +126,26 @@ public class ImageForm extends BinaryAssetForm {
 
         image.setHeight(Long.parseLong((String) height.getValue(state)));
         image.setWidth(Long.parseLong((String) width.getValue(state)));
-        image.setLegalMetadata((LegalMetadata) assetSearchWidget.getValue(state));
+
+        updateData(image, state);
+    }
+
+    protected void updateData(final Image image,
+                              final PageState state) {
+
+        final Long legalMetadataId = (Long) assetSearchWidget.getValue(state);
+        if (legalMetadataId != null) {
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final AssetRepository assetRepo = cdiUtil.findBean(
+                    AssetRepository.class);
+            final LegalMetadata legalMetadata = (LegalMetadata) assetRepo
+                    .findById(legalMetadataId)
+                    .orElseThrow(() -> new IllegalArgumentException(String.format(
+                            "No LegalMetadata asset with ID %d in the database.",
+                            legalMetadataId)));
+
+            image.setLegalMetadata(legalMetadata);
+        }
     }
 
     @Override
