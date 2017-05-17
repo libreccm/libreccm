@@ -101,7 +101,7 @@ public class UserEditor extends Window {
 
         addWidgets();
     }
-
+    
     public UserEditor(final User user,
                       final UsersGroupsRoles usersGroupsRoles,
                       final UserRepository userRepo,
@@ -436,7 +436,9 @@ public class UserEditor extends Window {
         }
 
         dataHasChanged = false;
-        usersGroupsRoles.refreshUsers();
+        if (usersGroupsRoles != null) {
+            usersGroupsRoles.refreshUsers();
+        }
         close();
     }
 
