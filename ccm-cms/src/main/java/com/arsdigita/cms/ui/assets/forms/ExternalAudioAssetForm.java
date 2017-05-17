@@ -87,15 +87,15 @@ public class ExternalAudioAssetForm extends BookmarkForm {
         
         final PageState state = event.getPageState();
 
-        final ExternalAudioAsset ExternalAudioAsset = new ExternalAudioAsset();
+        final ExternalAudioAsset externalAudioAsset = new ExternalAudioAsset();
 
-        updateData((Bookmark) ExternalAudioAsset, state);
-        updateData(ExternalAudioAsset, state);
+        updateData((Bookmark) externalAudioAsset, state);
+        updateData(externalAudioAsset, state);
 
-        return ExternalAudioAsset;
+        return externalAudioAsset;
     }
 
-    protected void updateData(final ExternalAudioAsset ExternalAudioAsset,
+    protected void updateData(final ExternalAudioAsset externalAudioAsset,
                               final PageState state) {
 
         final Long legalMetadataId = (Long) assetSearchWidget.getValue(state);
@@ -109,7 +109,7 @@ public class ExternalAudioAssetForm extends BookmarkForm {
                 "No LegalMetadata asset with ID %d in the database.",
                 legalMetadataId)));
 
-            ExternalAudioAsset.setLegalMetadata(legalMetadata);
+            externalAudioAsset.setLegalMetadata(legalMetadata);
         }
     }
 
