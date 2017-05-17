@@ -21,11 +21,10 @@ package org.libreccm.admin.ui.usersgroupsroles;
 import com.vaadin.cdi.ViewScoped;
 import com.vaadin.data.provider.AbstractDataProvider;
 import com.vaadin.data.provider.Query;
-import org.libreccm.security.User;
+import org.libreccm.security.Group;
 
 import java.util.stream.Stream;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -38,14 +37,14 @@ import javax.transaction.Transactional;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @ViewScoped
-public class UsersTableDataProvider extends AbstractDataProvider<User, String> {
+public class GroupsTableDataProvider extends AbstractDataProvider<Group, String> {
 
-    private static final long serialVersionUID = 8849235775786370772L;
+    private static final long serialVersionUID = 7341726757450723593L;
 
     @Inject
     private EntityManager entityManager;
 
-    private String userNameFilter;
+    private String groupNameFilter;
 
     @Override
     public boolean isInMemory() {
@@ -54,20 +53,20 @@ public class UsersTableDataProvider extends AbstractDataProvider<User, String> {
 
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
-    public int size(final Query<User, String> query) {
+    public int size(final Query<Group, String> query) {
 
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
-        final Root<User> from = criteriaQuery.from(User.class);
-
+        final Root<Group> from = criteriaQuery.from(Group.class);
+        
         criteriaQuery = criteriaQuery.select(builder.count(from));
-
-        if (userNameFilter != null && !userNameFilter.trim().isEmpty()) {
+        
+        if (groupNameFilter != null && !groupNameFilter.trim().isEmpty()) {
             criteriaQuery
-                .where(builder.like(builder.lower(from.get("name")),
-                                    String.format("%s%%", userNameFilter)));
+                .where(builder.like(builder.lower(from.get("name")), 
+                                    String.format("%s%%", groupNameFilter)));
         }
-
+        
         return entityManager
             .createQuery(criteriaQuery)
             .getSingleResult()
@@ -76,30 +75,30 @@ public class UsersTableDataProvider extends AbstractDataProvider<User, String> {
 
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
-    public Stream<User> fetch(final Query<User, String> query) {
-
+    public Stream<Group> fetch(final Query<Group, String> query) {
+        
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        final CriteriaQuery<User> criteriaQuery = builder
-            .createQuery(User.class);
-        final Root<User> from = criteriaQuery.from(User.class);
-
-        if (userNameFilter != null && !userNameFilter.trim().isEmpty()) {
+        final CriteriaQuery<Group> criteriaQuery = builder
+            .createQuery(Group.class);
+        final Root<Group> from = criteriaQuery.from(Group.class);
+        
+       if (groupNameFilter != null && !groupNameFilter.trim().isEmpty()) {
             criteriaQuery
-                .where(builder.like(builder.lower(from.get("name")),
-                                    String.format("%s%%", userNameFilter)));
+                .where(builder.like(builder.lower(from.get("name")), 
+                                    String.format("%s%%", groupNameFilter)));
         }
-
-        return entityManager
-            .createQuery(criteriaQuery)
-            .setMaxResults(query.getLimit())
-            .setFirstResult(query.getOffset())
-            .getResultList()
-            .stream();
+       
+       return entityManager
+           .createQuery(criteriaQuery)
+           .setMaxResults(query.getLimit())
+           .setFirstResult(query.getOffset())
+           .getResultList()
+           .stream();
     }
 
-    public void setUserNameFilter(final String userNameFilter) {
-        this.userNameFilter = userNameFilter;
+    public void setGroupNameFilter(final String groupNameFilter) {
+        this.groupNameFilter = groupNameFilter;
         refreshAll();
     }
-
+    
 }

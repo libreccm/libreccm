@@ -34,6 +34,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 import org.apache.shiro.subject.Subject;
+import org.libreccm.admin.ui.usersgroupsroles.GroupsTableDataProvider;
 import org.libreccm.admin.ui.usersgroupsroles.UsersGroupsRoles;
 import org.libreccm.admin.ui.usersgroupsroles.UsersTableDataProvider;
 import org.libreccm.l10n.GlobalizationHelper;
@@ -82,6 +83,9 @@ public class AdminView extends CustomComponent implements View {
     
     @Inject
     private UsersTableDataProvider usersTableDataProvider;
+    
+    @Inject
+    private GroupsTableDataProvider groupsTableDataProvider;
 
     private ResourceBundle bundle;
 
@@ -99,38 +103,6 @@ public class AdminView extends CustomComponent implements View {
 
         tabSheet = new TabSheet();
 
-//        final TabSheet userGroupsRoles = new TabSheet();
-//        usersTable = new Grid<>();
-//        usersTable.setWidth("100%");
-////        usersTable.setItems(userRepo.findAll());
-//        usersTable.addColumn(User::getName)
-//            .setId(COL_USER_NAME)
-//            .setCaption("User name");
-//        usersTable
-//            .addColumn(User::getGivenName)
-//            .setId(COL_GIVEN_NAME)
-//            .setCaption("Given name");
-//        usersTable
-//            .addColumn(User::getFamilyName)
-//            .setId(COL_FAMILY_NAME)
-//            .setCaption("Family name");
-//        usersTable
-//            .addColumn(user -> user.getPrimaryEmailAddress().getAddress())
-//            .setId(COL_EMAIL)
-//            .setCaption("E-Mail");
-//        usersTable
-//            .addColumn(user -> {
-//                if (user.isBanned()) {
-//                    return bundle.getString("ui.admin.user.banned_yes");
-//                } else {
-//                    return bundle.getString("ui.admin.user.banned_no");
-//                }
-//            })
-//            .setId(COL_BANNED)
-//            .setCaption("Banned?");
-//        userGroupsRoles.addTab(usersTable, "Users");
-//
-//        tabSheet.addTab(userGroupsRoles, "Users/Groups/Roles");
         usersGroupsRoles = new UsersGroupsRoles(this);
         tabUsersGroupsRoles = tabSheet.addTab(usersGroupsRoles,
                                               "Users/Groups/Roles");
@@ -199,7 +171,8 @@ public class AdminView extends CustomComponent implements View {
             .getBundle(AdminUiConstants.ADMIN_BUNDLE,
                        globalizationHelper.getNegotiatedLocale());
 
-        usersGroupsRoles.setDataProvider(usersTableDataProvider);
+        usersGroupsRoles.setUsersTableDataProvider(usersTableDataProvider);
+        usersGroupsRoles.setGroupsTableDataProvider(groupsTableDataProvider);
 
         tabUsersGroupsRoles.setCaption(bundle
             .getString("ui.admin.tab.users_groups_roles.title"));
