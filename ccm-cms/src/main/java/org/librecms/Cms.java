@@ -19,14 +19,7 @@ import org.libreccm.modules.ShutdownEvent;
 import org.libreccm.modules.UnInstallEvent;
 import org.libreccm.web.ApplicationType;
 import org.libreccm.web.CcmApplication;
-import org.librecms.assets.AssetTypes;
-import org.librecms.assets.Bookmark;
-import org.librecms.assets.ExternalAudioAsset;
-import org.librecms.assets.ExternalVideoAsset;
-import org.librecms.assets.FileAsset;
-import org.librecms.assets.Image;
-import org.librecms.assets.LegalMetadata;
-import org.librecms.assets.SideNote;
+import org.librecms.assets.*;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionCreator;
 import org.librecms.contentsection.ContentSectionSetup;
@@ -70,7 +63,8 @@ import java.util.Properties;
                Event.class,
                MultiPartArticle.class,
                News.class})
-@AssetTypes({Bookmark.class,
+@AssetTypes({AudioAsset.class,
+             Bookmark.class,
              ExternalVideoAsset.class,
              ExternalAudioAsset.class,
              FileAsset.class,
