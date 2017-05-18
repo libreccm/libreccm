@@ -23,59 +23,61 @@ import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.list.AbstractListModelBuilder;
 import com.arsdigita.bebop.list.ListModel;
 import com.arsdigita.cms.CMS;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.libreccm.categorization.Category;
-import org.libreccm.categorization.CategoryManager;
-import org.libreccm.categorization.DomainManager;
 import org.libreccm.categorization.DomainOwnership;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.web.ApplicationManager;
-import org.libreccm.web.CcmApplication;
 import org.librecms.contentsection.ContentSection;
 
-import java.util.Collection;
 import java.util.Iterator;
 
 /**
- * Builds a list of category use contexts for the current
- * content section.
+ * Builds a list of category use contexts for the current content section.
  *
  * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
- * @author Scott Seago 
+ * @author Scott Seago
  */
 class CategoryUseContextModelBuilder extends AbstractListModelBuilder {
 
     private static String DEFAULT_USE_CONTEXT = "<default>";
 
-    private static final Logger LOGGER = LogManager.getLogger(
-            CategoryUseContextModelBuilder.class);
-
+    @Override
     public final ListModel makeModel(final List list, final PageState state) {
         return new Model();
     }
 
     private class Model implements ListModel {
-        private final Iterator<DomainOwnership> m_roots;
+
+        private final Iterator<DomainOwnership> roots;
         private DomainOwnership current;
 
         public Model() {
-            final ContentSection section =
-                CMS.getContext().getContentSection();
+            final ContentSection section = CMS
+                .getContext()
+                .getContentSection();
 
-            m_roots = section.getDomains().iterator();
+            final CategoryAdminController controller = CdiUtil
+                .createCdiUtil()
+                .findBean(CategoryAdminController.class);
+
+            roots = controller.retrieveDomains(section).iterator();
             current = null;
         }
 
+        @Override
         public boolean next() {
-            current = m_roots.next();
-            return current != null;
+            if (roots.hasNext()) {
+                current = roots.next();
+                return true;
+            } else {
+                return false;
+            }
         }
 
+        @Override
         public Object getElement() {
             return current.getDomain().getRoot();
         }
 
+        @Override
         public String getKey() {
             return current.getContext() != null ? current.getContext() : DEFAULT_USE_CONTEXT;
         }
