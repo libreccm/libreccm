@@ -28,10 +28,19 @@ import com.arsdigita.ui.CcmObjectSelectionModel;
 import com.arsdigita.util.LockableImpl;
 
 import org.libreccm.core.CcmObject;
+import org.libreccm.core.UnexpectedErrorException;
 
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.StringTokenizer;
 
 /**
@@ -232,7 +241,7 @@ public class DomainObjectPropertySheet extends PropertySheet {
          * @return A String representation of the retrieved attribute of the
          *         domain object.
          */
-        String format(CcmObject obj, String attribute, PageState state);
+        String format(Object obj, String attribute, PageState state);
 
     }
 
@@ -397,7 +406,6 @@ public class DomainObjectPropertySheet extends PropertySheet {
      * formatted to a String by the default format method.
      */
     private static abstract class DefaultAttributeFormatter
-        extends DomainService
         implements AttributeFormatter {
 
         private GlobalizedMessage m_default;
@@ -431,7 +439,7 @@ public class DomainObjectPropertySheet extends PropertySheet {
      * A simple attribute formatter that calls get on the object with the
      * specified attribute.
      */
-    private static class SimpleAttributeFormatter
+    private class SimpleAttributeFormatter
         extends DefaultAttributeFormatter {
 
         /**
@@ -461,8 +469,9 @@ public class DomainObjectPropertySheet extends PropertySheet {
          *
          * @return
          */
-        public String format(final CcmObject obj, 
-                             final String attribute, 
+        @Override
+        public String format(final Object obj,
+                             final String attribute,
                              final PageState state) {
 
             /* Determine the default value                                    */
@@ -471,12 +480,13 @@ public class DomainObjectPropertySheet extends PropertySheet {
             if (obj == null) {
                 return (String) defaultMsg.localize();
             }
-            Object value = get(obj, attribute);
 
-            if (value == null) {
-                return (String) defaultMsg.localize();
+            final Optional<Object> value = getPropertyValue(obj, attribute);
+
+            if (value.isPresent()) {
+                return value.get().toString();
             } else {
-                return value.toString();
+                return (String) defaultMsg.localize();
             }
         }
 
@@ -488,8 +498,7 @@ public class DomainObjectPropertySheet extends PropertySheet {
      * says "foo.bar.baz", the formatter will attempt to call
      * obj.get("foo").get("bar").get("baz");
      */
-    private static class RecursiveAttributeFormatter
-        extends DefaultAttributeFormatter {
+    private class RecursiveAttributeFormatter extends DefaultAttributeFormatter {
 
         /**
          * Constructor, simply calls the super class. Uses a default value for
@@ -518,33 +527,71 @@ public class DomainObjectPropertySheet extends PropertySheet {
          *
          * @return
          */
-        public String format(DomainObject obj, String attribute, PageState state) {
+        @Override
+        public String format(final Object obj,
+                             final String attribute,
+                             final PageState state) {
 
             if (obj == null) {
                 return (String) getDefaultValue().localize();
             }
 
-            StringTokenizer tokenizer = new StringTokenizer(attribute, ".");
+            final StringTokenizer tokenizer
+                                      = new StringTokenizer(attribute, ".");
             String token = null;
-            Object value = getDataObject(obj);
+            Object currentObject = obj;
 
             while (tokenizer.hasMoreTokens()) {
                 token = tokenizer.nextToken();
                 // Null check
-                value = ((DataObject) value).get(token);
-                if (value == null) {
+                currentObject = getPropertyValue(currentObject, token);
+                if (currentObject == null) {
                     return (String) getDefaultValue().localize();
                 }
             }
 
             // Extract leaf value
-            if (token == null || value == null) {
+            if (token == null) {
                 return (String) getDefaultValue().localize();
             }
 
-            return value.toString();
+            return currentObject.toString();
         }
 
+    }
+
+    private Optional<Object> getPropertyValue(final Object obj,
+                                              final String property) {
+
+        final BeanInfo beanInfo;
+        try {
+            beanInfo = Introspector.getBeanInfo(obj.getClass());
+        } catch (IntrospectionException ex) {
+            throw new UnexpectedErrorException(ex);
+        }
+
+        final Optional<PropertyDescriptor> propertyDescriptor = Arrays
+            .stream(beanInfo.getPropertyDescriptors())
+            .filter(current -> property.equals(current.getName()))
+            .findAny();
+
+        if (propertyDescriptor.isPresent()) {
+
+            final Method readMethod = propertyDescriptor
+                .get()
+                .getReadMethod();
+
+            final Object value;
+            try {
+                value = readMethod.invoke(obj);
+            } catch (IllegalAccessException | InvocationTargetException ex) {
+                throw new UnexpectedErrorException(ex);
+            }
+            return Optional.of(value);
+
+        } else {
+            return Optional.empty();
+        }
     }
 
 }

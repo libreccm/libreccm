@@ -28,7 +28,6 @@ import com.arsdigita.bebop.PropertyEditorModel;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.bebop.event.FormSubmissionListener;
 import com.arsdigita.bebop.form.Submit;
-import com.arsdigita.cms.dispatcher.Utilities;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.toolbox.ui.ComponentAccess;
 import com.arsdigita.util.Assert;
@@ -36,8 +35,7 @@ import com.arsdigita.util.Assert;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.security.PermissionChecker;
+
 import org.librecms.CmsConstants;
 
 /**
