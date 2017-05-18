@@ -20,8 +20,6 @@ package com.arsdigita.cms.ui.authoring;
 
 import com.arsdigita.bebop.Page;
 import com.arsdigita.bebop.PageState;
-import com.arsdigita.bebop.event.ActionEvent;
-import com.arsdigita.bebop.event.ActionListener;
 import com.arsdigita.bebop.event.RequestEvent;
 import com.arsdigita.bebop.event.RequestListener;
 import com.arsdigita.bebop.parameters.StringParameter;
@@ -29,22 +27,30 @@ import com.arsdigita.bebop.parameters.StringParameter;
 import org.librecms.contentsection.ContentItem;
 
 import com.arsdigita.cms.ItemSelectionModel;
-import com.arsdigita.cms.dispatcher.Utilities;
 import com.arsdigita.cms.ui.ContentItemPage;
 import com.arsdigita.cms.ui.SecurityPropertyEditor;
+import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.toolbox.ui.ComponentAccess;
 import com.arsdigita.toolbox.ui.DomainObjectPropertySheet;
-
-import org.apache.logging.log4j.LogManager;
 
 import java.text.DateFormat;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import org.apache.logging.log4j.Logger;
-import org.libreccm.core.CcmObject;
+import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.core.UnexpectedErrorException;
+import org.libreccm.l10n.GlobalizationHelper;
+import org.librecms.CmsConstants;
+
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Optional;
 
 /**
  * A simple implementation of an Authoring Kit editing step. Extends
@@ -130,16 +136,9 @@ public class SimpleEditStep extends SecurityPropertyEditor
             authoringKitWizard.getContentType().getContentItemClass().getName()
                 + "_properties_done" + parameterSuffix);
 
-        authoringKitWizard.getList().addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-
-                final PageState state = event.getPageState();
-                showDisplayPane(state);
-            }
-
-        });
+        authoringKitWizard
+            .getList()
+            .addActionListener(event -> showDisplayPane(event.getPageState()));
 
         additionalDisplayComponents
             .stream()
@@ -151,6 +150,8 @@ public class SimpleEditStep extends SecurityPropertyEditor
 
     /**
      * Registers global state parameter for cancelling streamlined creation
+     *
+     * @param page
      */
     @Override
     public void register(final Page page) {
@@ -269,7 +270,7 @@ public class SimpleEditStep extends SecurityPropertyEditor
          * Note: the format method has to be executed at each page request. Take
          * care to properly adjust globalisation and localisation here!
          *
-         * @param object       Object containing the attribute to format.
+         * @param object    Object containing the attribute to format.
          * @param attribute Name of the attribute to retrieve and format
          * @param state     PageState of the request
          *
@@ -277,33 +278,61 @@ public class SimpleEditStep extends SecurityPropertyEditor
          *         the domain object.
          */
         @Override
-        public String format(final CcmObject object, 
-                             final String attribute, 
+        public String format(final Object object,
+                             final String attribute,
                              final PageState state) {
 
             if (object != null && object instanceof ContentItem) {
 
                 final ContentItem page = (ContentItem) object;
-                final Object field = page.get(attribute);
+                final BeanInfo beanInfo;
+                try {
+                    beanInfo = Introspector
+                        .getBeanInfo(page.getClass());
+                } catch (IntrospectionException ex) {
+                    throw new UnexpectedErrorException(ex);
+                }
+                final Optional<PropertyDescriptor> propertyDescriptor = Arrays
+                    .stream(beanInfo.getPropertyDescriptors())
+                    .filter(propDesc -> attribute.equals(propDesc.getName()))
+                    .findAny();
+                if (propertyDescriptor.isPresent()) {
+                    final Method readMethod = propertyDescriptor
+                        .get()
+                        .getReadMethod();
+                    final Object value;
+                    try {
+                        value = readMethod.invoke(object);
+                    } catch (IllegalAccessException | InvocationTargetException ex) {
+                        throw new IllegalArgumentException(ex);
+                    }
+                    if (value == null) {
+                        return (String) new GlobalizedMessage("cms.ui.unknown",
+                                                              CmsConstants.CMS_BUNDLE)
+                            .localize();
+                    } else {
+                        final GlobalizationHelper globalizationHelper = CdiUtil
+                            .createCdiUtil()
+                            .findBean(GlobalizationHelper.class);
 
-                if (field != null) {
-                    // Note: No type safety here! We relay that it is
-                    // attached to a date property!
-                    return DateFormat.getDateInstance(
-                        DateFormat.LONG,
-                        GlobalizationHelper.getNegotiatedLocale()
-                    )
-                        .format(field);
+                        // Note: No type safety here! We relay that it is
+                        // attached to a date property!
+                        return DateFormat.getDateInstance(
+                            DateFormat.LONG,
+                            globalizationHelper.getNegotiatedLocale())
+                            .format(value);
+                    }
                 } else {
-                    return (String) GlobalizationUtil
-                        .globalize("cms.ui.unknown")
+                    return (String) new GlobalizedMessage("cms.ui.unknown",
+                                                          CmsConstants.CMS_BUNDLE)
                         .localize();
                 }
-            }
 
-            return (String) GlobalizationUtil
-                .globalize("cms.ui.unknown")
-                .localize();
+            } else {
+                return (String) new GlobalizedMessage("cms.ui.unknown",
+                                                      CmsConstants.CMS_BUNDLE)
+                    .localize();
+            }
         }
 
     }

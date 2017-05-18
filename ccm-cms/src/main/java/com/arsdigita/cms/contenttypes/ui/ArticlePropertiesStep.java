@@ -20,65 +20,72 @@ package com.arsdigita.cms.contenttypes.ui;
 
 import com.arsdigita.bebop.Component;
 import com.arsdigita.cms.ItemSelectionModel;
+
 import org.librecms.contenttypes.Article;
+
 import com.arsdigita.cms.ui.authoring.AuthoringKitWizard;
 import com.arsdigita.cms.ui.authoring.BasicPageForm;
 import com.arsdigita.cms.ui.workflow.WorkflowLockedComponentAccess;
+import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.toolbox.ui.DomainObjectPropertySheet;
 
+import org.librecms.CmsConstants;
+
 /**
- * Authoring step to edit the simple attributes of the Article content
- * type (and its subclasses). The attributes edited are 'name', 'title',
- * 'article date', 'location', 'lead', and 'article type'.
- * This authoring step replaces
- * the <code>com.arsdigita.ui.authoring.PageEdit</code> step for this type.
+ * Authoring step to edit the simple attributes of the Article content type (and
+ * its subclasses). The attributes edited are 'name', 'title', 'article date',
+ * 'location', 'lead', and 'article type'. This authoring step replaces the
+ * {@code com.arsdigita.ui.authoring.PageEdit} step for this type.
  */
 public class ArticlePropertiesStep extends GenericArticlePropertiesStep {
 
-    /** The name of the editing sheet added to this step */
-    public static String EDIT_SHEET_NAME = "edit";
-
     /**
-     * Constructor.
-     * 
-     * @param itemModel
-     * @param parent 
+     * The name of the editing sheet added to this step
      */
-    public ArticlePropertiesStep(ItemSelectionModel itemModel, 
+    public final static String EDIT_SHEET_NAME = "edit";
+
+    public ArticlePropertiesStep(ItemSelectionModel itemModel,
                                  AuthoringKitWizard parent) {
         super(itemModel, parent);
     }
 
     @Override
-    protected void createEditSheet(ItemSelectionModel itemModel) {
+    protected void createEditSheet(final ItemSelectionModel itemModel) {
         BasicPageForm editSheet;
         editSheet = new ArticlePropertyForm(itemModel, this);
-        add(EDIT_SHEET_NAME, 
-            GlobalizationUtil.globalize("cms.ui.edit"), 
-            new WorkflowLockedComponentAccess(editSheet, itemModel), 
+        add(EDIT_SHEET_NAME,
+            new GlobalizedMessage("cms.ui.edit", CmsConstants.CMS_BUNDLE),
+            new WorkflowLockedComponentAccess(editSheet, itemModel),
             editSheet.getSaveCancelSection().getCancelButton());
     }
 
     @Override
-    protected void setDisplayComponent(ItemSelectionModel itemModel) {
+    protected void setDisplayComponent(final ItemSelectionModel itemModel) {
         setDisplayComponent(getArticlePropertySheet(itemModel));
     }
 
     /**
-     * Returns a component that displays the properties of the
-     * Article specified by the ItemSelectionModel passed in.
+     * Returns a component that displays the properties of the Article specified
+     * by the ItemSelectionModel passed in.
+     *
      * @param itemModel The ItemSelectionModel to use
+     *
      * @pre itemModel != null
-     * @return A component to display the state of the basic properties
-     *  of the release
+     * @return A component to display the state of the basic properties of the
+     *         release
      */
-    public static Component getArticlePropertySheet(ItemSelectionModel itemModel) {
-        DomainObjectPropertySheet sheet = (DomainObjectPropertySheet) 
-                                          getGenericArticlePropertySheet(itemModel);
+    public static Component getArticlePropertySheet(
+        final ItemSelectionModel itemModel) {
 
-        sheet.add(GlobalizationUtil.globalize("cms.contenttypes.ui.lead"), 
-                  Article.LEAD);
+        final DomainObjectPropertySheet sheet
+                                            = (DomainObjectPropertySheet) getGenericArticlePropertySheet(
+                itemModel);
+
+        sheet.add(new GlobalizedMessage("cms.contenttypes.ui.lead",
+                                        CmsConstants.CMS_BUNDLE),
+                  "lead");
 
         return sheet;
     }
+
 }
