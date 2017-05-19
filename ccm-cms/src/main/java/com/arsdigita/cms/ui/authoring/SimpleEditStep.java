@@ -73,6 +73,8 @@ public class SimpleEditStep extends SecurityPropertyEditor
     private StringParameter streamlinedCreationParameter;
     private static final String STREAMLINED = "_streamlined";
     private static final String STREAMLINED_DONE = "1";
+    
+    private final StringParameter selectedLanguageParameter;
 
     private static List<AdditionalDisplayComponent> additionalDisplayComponents
                                                         = new ArrayList<>();
@@ -105,8 +107,9 @@ public class SimpleEditStep extends SecurityPropertyEditor
      *                  stepBack, in its process listener.
      */
     public SimpleEditStep(final ItemSelectionModel itemModel,
-                          final AuthoringKitWizard parent) {
-        this(itemModel, parent, "");
+                          final AuthoringKitWizard parent,
+                          final StringParameter selectedLanguageParam) {
+        this(itemModel, parent, selectedLanguageParam, "");
     }
 
     /**
@@ -126,11 +129,14 @@ public class SimpleEditStep extends SecurityPropertyEditor
      */
     public SimpleEditStep(final ItemSelectionModel itemSelectionModel,
                           final AuthoringKitWizard authoringKitWizard,
+                          final StringParameter selectedLanguageParam,
                           final String parameterSuffix) {
 
         super();
         this.authoringKitWizard = authoringKitWizard;
         this.itemSelectionModel = itemSelectionModel;
+        
+        this.selectedLanguageParameter = selectedLanguageParam;
 
         streamlinedCreationParameter = new StringParameter(
             authoringKitWizard.getContentType().getContentItemClass().getName()

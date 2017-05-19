@@ -36,6 +36,7 @@ import com.arsdigita.bebop.event.FormProcessListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.list.ListCellRenderer;
+import com.arsdigita.bebop.parameters.StringParameter;
 
 import org.librecms.contentsection.ContentType;
 
@@ -69,6 +70,7 @@ import org.apache.logging.log4j.LogManager;
 import org.arsdigita.cms.CMSConfig;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.ConfigurationManager;
+import org.libreccm.l10n.GlobalizationHelper;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contenttypes.AuthoringKit;
@@ -99,18 +101,23 @@ public class AuthoringKitWizard extends LayoutPanel implements Resettable {
     /**
      * Private Logger instance for this class
      */
-    private static final Logger LOGGER = LogManager.getLogger(
-            AuthoringKitWizard.class);
+    private static final Logger LOGGER = LogManager
+        .getLogger(AuthoringKitWizard.class);
+
+    public final String SELECTED_LANGUAGE = "selectedLanguage";
+
     private static Class[] arguments = new Class[]{
         ItemSelectionModel.class,
-        AuthoringKitWizard.class
+        AuthoringKitWizard.class,
+        StringParameter.class
     };
     private static Class[] userDefinedArgs = new Class[]{
         ItemSelectionModel.class,
         AuthoringKitWizard.class,
         ContentType.class
     };
-    private static final java.util.List<AssetStepEntry> ASSETS = new ArrayList<AssetStepEntry>();
+    private static final java.util.List<AssetStepEntry> ASSETS
+                                                            = new ArrayList<AssetStepEntry>();
     private final Object[] values;
     private final ContentTypeInfo typeInfo;
     private final AuthoringKitInfo kitInfo;
@@ -125,6 +132,8 @@ public class AuthoringKitWizard extends LayoutPanel implements Resettable {
     private final SimpleContainer stepsContainer;
     private final TaskFinishForm m_taskFinishForm;
 
+    private final StringParameter selectedLanguageParam;
+
     /**
      * The name of the state parameter that determines whether the wizard is in
      * item creation mode or item editing mode.
@@ -135,15 +144,17 @@ public class AuthoringKitWizard extends LayoutPanel implements Resettable {
      */
     public static final String CREATION = "_creation_";
 
-    private final static String SEC_PAGE_EDIT_DYN = "com.arsdigita.cms.ui.authoring.SecondaryPageEditDynamic";
-    private final static String PAGE_EDIT_DYN = "com.arsdigita.cms.ui.authoring.PageEditDynamic";
+    private final static String SEC_PAGE_EDIT_DYN
+                                    = "com.arsdigita.cms.ui.authoring.SecondaryPageEditDynamic";
+    private final static String PAGE_EDIT_DYN
+                                    = "com.arsdigita.cms.ui.authoring.PageEditDynamic";
 
     /**
      * Construct a new AuthoringKitWizard. Add all the steps in the authoring
      * kit to the wizard.
      *
-     * @param typeInfo The content type of the items that this wizard will
-     * handle
+     * @param typeInfo       The content type of the items that this wizard will
+     *                       handle
      * @param selectionModel
      */
     public AuthoringKitWizard(final ContentTypeInfo typeInfo,
@@ -153,12 +164,19 @@ public class AuthoringKitWizard extends LayoutPanel implements Resettable {
 
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final ConfigurationManager confManager = cdiUtil.findBean(
-                ConfigurationManager.class);
+            ConfigurationManager.class);
+
+        selectedLanguageParam = new StringParameter(SELECTED_LANGUAGE);
+        final GlobalizationHelper globalizationHelper = cdiUtil
+            .findBean(GlobalizationHelper.class);
+        selectedLanguageParam.setDefaultValue(globalizationHelper
+            .getNegotiatedLocale()
+            .toString());
 
         this.typeInfo = typeInfo;
         kitInfo = typeInfo.getAuthoringKit();
         this.selectionModel = selectionModel;
-        values = new Object[]{selectionModel, this};
+        values = new Object[]{selectionModel, this, selectedLanguageParam};
         workflowRequestLocal = new ItemWorkflowRequestLocal();
         labels = new SequentialMap();
 
@@ -198,6 +216,7 @@ public class AuthoringKitWizard extends LayoutPanel implements Resettable {
                 }
                 return new ControlLink(label);
             }
+
         });
 
         bodyPanel = new ModalPanel();
@@ -208,17 +227,17 @@ public class AuthoringKitWizard extends LayoutPanel implements Resettable {
         bodyPanel.setDefault(stepsContainer);
 
         final java.util.List<AuthoringStepInfo> steps = kitInfo.
-                getAuthoringSteps();
+            getAuthoringSteps();
 
         if (Assert.isEnabled()) {
             Assert.isTrue(!steps.isEmpty(),
                           String.format("The authoring kit for content type "
-                                                + "s\"%s\" has no steps.",
+                                            + "s\"%s\" has no steps.",
                                         typeInfo.getContentItemClass().getName()));
         }
 
         final CMSConfig cmsConfig = confManager.findConfiguration(
-                CMSConfig.class);
+            CMSConfig.class);
 
         StepComponent panel = null;
         for (final AuthoringStepInfo step : steps) {
@@ -233,16 +252,16 @@ public class AuthoringKitWizard extends LayoutPanel implements Resettable {
              * compatibility
              */
             final ResourceBundle labelBundle = ResourceBundle.getBundle(step.
-                    getLabelBundle());
+                getLabelBundle());
             final ResourceBundle descBundle = ResourceBundle.getBundle(step.
-                    getDescriptionBundle());
+                getDescriptionBundle());
             final String labelKey = step.getLabelKey();
             final String label = labelBundle.getString(labelKey);
             final String descriptionKey = step.getDescriptionKey();
             final String description = descBundle.getString(descriptionKey);
 
             final Class<? extends Component> componentClass = step.
-                    getComponent();
+                getComponent();
             final String compClassName = componentClass.getName();
 
             if (panel != null) {
@@ -253,7 +272,7 @@ public class AuthoringKitWizard extends LayoutPanel implements Resettable {
             final Component comp;
 
             if (compClassName.equals(SEC_PAGE_EDIT_DYN)
-                        || compClassName.equals(PAGE_EDIT_DYN)) {
+                    || compClassName.equals(PAGE_EDIT_DYN)) {
                 comp = instantiateUserDefinedStep(compClassName, typeInfo);
             } else {
                 comp = instantiateStep(compClassName);
@@ -262,7 +281,7 @@ public class AuthoringKitWizard extends LayoutPanel implements Resettable {
             // XXX should be optional
             if (comp instanceof AuthoringStepComponent) {
                 ((AuthoringStepComponent) comp).addCompletionListener(
-                        new StepCompletionListener());
+                    new StepCompletionListener());
             }
 
             final GlobalizedMessage gzLabel;
@@ -283,8 +302,8 @@ public class AuthoringKitWizard extends LayoutPanel implements Resettable {
             }
         }
 
-        final Class<? extends ContentItem> typeClass = typeInfo.
-                getContentItemClass();
+        final Class<? extends ContentItem> typeClass = typeInfo
+            .getContentItemClass();
 
         final java.util.List<String> skipSteps = cmsConfig.getSkipAssetSteps();
         if (LOGGER.isDebugEnabled()) {
@@ -320,7 +339,7 @@ public class AuthoringKitWizard extends LayoutPanel implements Resettable {
                 Component comp = instantiateStep(step.getName());
                 if (comp instanceof AuthoringStepComponent) {
                     ((AuthoringStepComponent) comp).addCompletionListener(
-                            new StepCompletionListener());
+                        new StepCompletionListener());
                 }
                 panel.add(comp);
 
@@ -340,11 +359,12 @@ public class AuthoringKitWizard extends LayoutPanel implements Resettable {
 
             @Override
             public final void process(final FormSectionEvent event)
-                    throws FormProcessException {
+                throws FormProcessException {
                 final PageState state = event.getPageState();
 
                 assignedTaskTable.getRowSelectionModel().clearSelection(state);
             }
+
         });
     }
 
@@ -367,6 +387,7 @@ public class AuthoringKitWizard extends LayoutPanel implements Resettable {
                 }
             }
         }
+
     }
 
     /**
@@ -388,12 +409,13 @@ public class AuthoringKitWizard extends LayoutPanel implements Resettable {
                         Object nextStep = step.getNextStepKey();
                         if (nextStep != null) {
                             list.getSelectionModel().setSelectedKey(
-                                    state, nextStep.toString());
+                                state, nextStep.toString());
                         }
                     }
                 }
             }
         }
+
     }
 
     @Override
@@ -416,13 +438,14 @@ public class AuthoringKitWizard extends LayoutPanel implements Resettable {
 
                 if (state.isVisibleOnPage(AuthoringKitWizard.this)) {
                     final SingleSelectionModel model = list.
-                            getSelectionModel();
+                        getSelectionModel();
 
                     if (!model.isSelected(state)) {
                         model.setSelectedKey(state, defaultKey);
                     }
                 }
             }
+
         });
     }
 
@@ -438,7 +461,7 @@ public class AuthoringKitWizard extends LayoutPanel implements Resettable {
         // image step application was loaded. Solution is to ensure initialiser in new project
         // runs after original ccm-ldn-image-step initializer and override the registered step here
         LOGGER.debug("registering asset step - label: \"{}\"; "
-                             + "step class: \"%s\"",
+                         + "step class: \"%s\"",
                      label.localize(),
                      step.getName());
 
@@ -456,16 +479,16 @@ public class AuthoringKitWizard extends LayoutPanel implements Resettable {
              *
              */
             if ((thisObjectType.equals(baseObjectType))
-                        && (thisLabel.localize().equals(label.localize()))) {
+                    && (thisLabel.localize().equals(label.localize()))) {
                 LOGGER.debug(
-                        "registering authoring step with same label as previously registered step");
+                    "registering authoring step with same label as previously registered step");
                 ASSETS.remove(data);
                 break;
             }
         }
         ASSETS.add(
-                new AssetStepEntry(baseObjectType, step, label, description,
-                                   sortKey));
+            new AssetStepEntry(baseObjectType, step, label, description,
+                               sortKey));
         Collections.sort(ASSETS);
     }
 
@@ -541,6 +564,7 @@ public class AuthoringKitWizard extends LayoutPanel implements Resettable {
                 return sortKey.compareTo(other.getSortKey());
             }
         }
+
     }
 
     /**
@@ -573,6 +597,7 @@ public class AuthoringKitWizard extends LayoutPanel implements Resettable {
      * RuntimeException on failure.
      *
      * @param className The Java class name of the step
+     *
      * @return The instance of the component.
      */
     protected Component instantiateStep(final String className) {
@@ -589,15 +614,15 @@ public class AuthoringKitWizard extends LayoutPanel implements Resettable {
 
             return component;
         } catch (ClassNotFoundException
-                         | IllegalAccessException
-                         | IllegalArgumentException
-                         | InstantiationException
-                         | InvocationTargetException
-                         | NoSuchMethodException
-                         | SecurityException ex) {
+                 | IllegalAccessException
+                 | IllegalArgumentException
+                 | InstantiationException
+                 | InvocationTargetException
+                 | NoSuchMethodException
+                 | SecurityException ex) {
             throw new UncheckedWrapperException(String.format(
-                    "Failed to instantiate authoring kit component \"{}\".",
-                    className),
+                "Failed to instantiate authoring kit component \"{}\".",
+                className),
                                                 ex);
         }
     }
@@ -606,29 +631,30 @@ public class AuthoringKitWizard extends LayoutPanel implements Resettable {
      * Instantiate the specified authoring kit step for a user defined content
      * type. Will throw a RuntimeException on failure.
      *
-     * @param className The Java class name of the step
+     * @param className       The Java class name of the step
      * @param originatingType
+     *
      * @return
      */
     protected Component instantiateUserDefinedStep(
-            final String className, final ContentTypeInfo originatingType) {
+        final String className, final ContentTypeInfo originatingType) {
 
         Object[] vals;
         try {
             // Get the creation component
             final Class createClass = Class.forName(className);
             final Constructor constr = createClass.getConstructor(
-                    userDefinedArgs);
+                userDefinedArgs);
             final Object[] userDefinedVals = new Object[]{selectionModel,
                                                           this,
                                                           originatingType};
             final Component component = (Component) constr.newInstance(
-                    userDefinedVals);
+                userDefinedVals);
 
             return component;
         } catch (ClassNotFoundException | NoSuchMethodException
-                         | InstantiationException | IllegalAccessException
-                         | InvocationTargetException ex) {
+                 | InstantiationException | IllegalAccessException
+                 | InvocationTargetException ex) {
             throw new UncheckedWrapperException(ex);
         }
     }
@@ -661,6 +687,7 @@ public class AuthoringKitWizard extends LayoutPanel implements Resettable {
         public void setNextStepKey(final Object nextKey) {
             this.nextKey = nextKey;
         }
+
     }
 
     private final class TaskSelectionRequestLocal extends TaskRequestLocal {
@@ -668,12 +695,13 @@ public class AuthoringKitWizard extends LayoutPanel implements Resettable {
         @Override
         protected final Object initialValue(final PageState state) {
             final String key = assignedTaskTable
-                    .getRowSelectionModel()
-                    .getSelectedKey(state)
-                    .toString();
+                .getRowSelectionModel()
+                .getSelectedKey(state)
+                .toString();
 
             return CmsTaskType.valueOf(key);
         }
+
     }
 
     protected final static GlobalizedMessage gz(final String key) {
@@ -683,4 +711,5 @@ public class AuthoringKitWizard extends LayoutPanel implements Resettable {
     protected final static String lz(final String key) {
         return (String) gz(key).localize();
     }
+
 }
