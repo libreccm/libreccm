@@ -22,13 +22,16 @@ import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.PropertySheet;
 import com.arsdigita.bebop.PropertySheetModel;
 import com.arsdigita.bebop.PropertySheetModelBuilder;
+import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.globalization.GlobalizedMessage;
+import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.toolbox.ToolboxConstants;
 import com.arsdigita.ui.CcmObjectSelectionModel;
 import com.arsdigita.util.LockableImpl;
 
 import org.libreccm.core.CcmObject;
 import org.libreccm.core.UnexpectedErrorException;
+import org.libreccm.l10n.LocalizedString;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -40,6 +43,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.StringTokenizer;
 
@@ -87,6 +91,8 @@ public class DomainObjectPropertySheet extends PropertySheet {
     private AttributeFormatter toStringFormatter;
     private AttributeFormatter recursiveFormatter;
 
+    private StringParameter selectedLanguageParam;
+
     /**
      * Construct a new DomainObjectPropertySheet
      *
@@ -111,10 +117,19 @@ public class DomainObjectPropertySheet extends PropertySheet {
         final CcmObjectSelectionModel<?> objectSelectionModel,
         final boolean valueOutputEscape) {
 
+        this(objectSelectionModel, valueOutputEscape, null);
+    }
+
+    public DomainObjectPropertySheet(
+        final CcmObjectSelectionModel<?> objectSelectionModel,
+        final boolean valueOutputEscape,
+        final StringParameter selectedLanguageParam) {
+
         super(new DomainObjectModelBuilder(), valueOutputEscape);
 
         this.objectSelectionModel = objectSelectionModel;
         properties = new LinkedList<>();
+        this.selectedLanguageParam = selectedLanguageParam;
 
         toStringFormatter = new SimpleAttributeFormatter();
         recursiveFormatter = new RecursiveAttributeFormatter();
@@ -481,7 +496,9 @@ public class DomainObjectPropertySheet extends PropertySheet {
                 return (String) defaultMsg.localize();
             }
 
-            final Optional<Object> value = getPropertyValue(obj, attribute);
+            final Optional<Object> value = getPropertyValue(obj, 
+                                                            attribute, 
+                                                            state);
 
             if (value.isPresent()) {
                 return value.get().toString();
@@ -544,7 +561,7 @@ public class DomainObjectPropertySheet extends PropertySheet {
             while (tokenizer.hasMoreTokens()) {
                 token = tokenizer.nextToken();
                 // Null check
-                currentObject = getPropertyValue(currentObject, token);
+                currentObject = getPropertyValue(currentObject, token, state);
                 if (currentObject == null) {
                     return (String) getDefaultValue().localize();
                 }
@@ -561,7 +578,8 @@ public class DomainObjectPropertySheet extends PropertySheet {
     }
 
     private Optional<Object> getPropertyValue(final Object obj,
-                                              final String property) {
+                                              final String property,
+                                              final PageState state) {
 
         final BeanInfo beanInfo;
         try {
@@ -583,7 +601,23 @@ public class DomainObjectPropertySheet extends PropertySheet {
 
             final Object value;
             try {
-                value = readMethod.invoke(obj);
+                final Object tmp = readMethod.invoke(obj);
+                if (tmp instanceof LocalizedString) {
+                    final LocalizedString localizedString
+                                          = (LocalizedString) tmp;
+                    final Locale selectedLocale = new Locale(
+                        (String) state.getValue(selectedLanguageParam));
+                    final Locale defaultLocale = KernelConfig
+                        .getConfig()
+                        .getDefaultLocale();
+                    if (localizedString.hasValue(selectedLocale)) {
+                        value = localizedString.getValue(selectedLocale);
+                    } else {
+                        value = "";
+                    }
+                } else {
+                    value = tmp;
+                }
             } catch (IllegalAccessException | InvocationTargetException ex) {
                 throw new UnexpectedErrorException(ex);
             }

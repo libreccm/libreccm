@@ -35,6 +35,7 @@ import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 import org.apache.shiro.subject.Subject;
 import org.libreccm.admin.ui.usersgroupsroles.GroupsTableDataProvider;
+import org.libreccm.admin.ui.usersgroupsroles.RolesTableDataProvider;
 import org.libreccm.admin.ui.usersgroupsroles.UsersGroupsRoles;
 import org.libreccm.admin.ui.usersgroupsroles.UsersTableDataProvider;
 import org.libreccm.l10n.GlobalizationHelper;
@@ -87,6 +88,9 @@ public class AdminView extends CustomComponent implements View {
     @Inject
     private GroupsTableDataProvider groupsTableDataProvider;
 
+    @Inject
+    private RolesTableDataProvider rolesTableDataProvider;
+    
     private ResourceBundle bundle;
 
     @Inject
@@ -173,6 +177,7 @@ public class AdminView extends CustomComponent implements View {
 
         usersGroupsRoles.setUsersTableDataProvider(usersTableDataProvider);
         usersGroupsRoles.setGroupsTableDataProvider(groupsTableDataProvider);
+        usersGroupsRoles.setRolesTableDataProvider(rolesTableDataProvider);
 
         tabUsersGroupsRoles.setCaption(bundle
             .getString("ui.admin.tab.users_groups_roles.title"));

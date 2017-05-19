@@ -21,7 +21,7 @@ package org.libreccm.admin.ui.usersgroupsroles;
 import com.vaadin.cdi.ViewScoped;
 import com.vaadin.data.provider.AbstractDataProvider;
 import com.vaadin.data.provider.Query;
-import org.libreccm.security.User;
+import org.libreccm.security.Role;
 
 import java.util.stream.Stream;
 
@@ -37,14 +37,14 @@ import javax.transaction.Transactional;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @ViewScoped
-public class UsersTableDataProvider extends AbstractDataProvider<User, String> {
+public class RolesTableDataProvider extends AbstractDataProvider<Role, String> {
 
-    private static final long serialVersionUID = 8849235775786370772L;
+    private static final long serialVersionUID = 6305886670608199133L;
 
     @Inject
     private EntityManager entityManager;
 
-    private String userNameFilter;
+    private String roleNameFilter;
 
     @Override
     public boolean isInMemory() {
@@ -53,18 +53,18 @@ public class UsersTableDataProvider extends AbstractDataProvider<User, String> {
 
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
-    public int size(final Query<User, String> query) {
+    public int size(final Query<Role, String> query) {
 
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
-        final Root<User> from = criteriaQuery.from(User.class);
+        final Root<Role> from = criteriaQuery.from(Role.class);
 
         criteriaQuery = criteriaQuery.select(builder.count(from));
 
-        if (userNameFilter != null && !userNameFilter.trim().isEmpty()) {
+        if (roleNameFilter != null && !roleNameFilter.trim().isEmpty()) {
             criteriaQuery
                 .where(builder.like(builder.lower(from.get("name")),
-                                    String.format("%s%%", userNameFilter)));
+                                    String.format("%s%%", roleNameFilter)));
         }
 
         return entityManager
@@ -75,17 +75,16 @@ public class UsersTableDataProvider extends AbstractDataProvider<User, String> {
 
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
-    public Stream<User> fetch(final Query<User, String> query) {
+    public Stream<Role> fetch(final Query<Role, String> query) {
 
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        final CriteriaQuery<User> criteriaQuery = builder
-            .createQuery(User.class);
-        final Root<User> from = criteriaQuery.from(User.class);
+        CriteriaQuery<Role> criteriaQuery = builder.createQuery(Role.class);
+        final Root<Role> from = criteriaQuery.from(Role.class);
 
-        if (userNameFilter != null && !userNameFilter.trim().isEmpty()) {
+        if (roleNameFilter != null && !roleNameFilter.trim().isEmpty()) {
             criteriaQuery
                 .where(builder.like(builder.lower(from.get("name")),
-                                    String.format("%s%%", userNameFilter)));
+                                    String.format("%s%%", roleNameFilter)));
         }
 
         return entityManager
@@ -95,9 +94,9 @@ public class UsersTableDataProvider extends AbstractDataProvider<User, String> {
             .getResultList()
             .stream();
     }
-
-    public void setUserNameFilter(final String userNameFilter) {
-        this.userNameFilter = userNameFilter;
+    
+    public void setRoleNameFilter(final String roleNameFilter) {
+        this.roleNameFilter = roleNameFilter;
         refreshAll();
     }
 

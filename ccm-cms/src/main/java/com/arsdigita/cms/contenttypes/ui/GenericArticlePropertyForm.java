@@ -30,11 +30,9 @@ import org.librecms.contenttypes.Article;
 
 import com.arsdigita.cms.ui.authoring.BasicPageForm;
 
-import org.apache.logging.log4j.LogManager;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.contentsection.ContentItemRepository;
 
-import javax.enterprise.inject.spi.CDI;
 
 /**
  * Form to edit the basic properties of an article. This form can be extended to
