@@ -20,8 +20,9 @@ package com.arsdigita.cms.contenttypes.ui;
 
 import com.arsdigita.bebop.Component;
 import com.arsdigita.bebop.PageState;
+import com.arsdigita.bebop.PropertyEditor;
 
-import org.librecms.contentsection.ContentSection;
+import com.arsdigita.bebop.parameters.StringParameter;
 
 import com.arsdigita.cms.ItemSelectionModel;
 import com.arsdigita.toolbox.ui.DomainObjectPropertySheet;
@@ -51,11 +52,16 @@ public class GenericArticlePropertiesStep extends SimpleEditStep {
     public static final String EDIT_SHEET_NAME = "edit";
 
     private DomainObjectPropertySheet domainObjectPropertySheet;
+    
+    private StringParameter selectedLanguageParam;
 
-    public GenericArticlePropertiesStep(final ItemSelectionModel itemModel,
-                                        final AuthoringKitWizard parent) {
+    public GenericArticlePropertiesStep(
+        final ItemSelectionModel itemModel,
+        final AuthoringKitWizard parent,
+        final StringParameter selectedLanguageParam) {
 
-        super(itemModel, parent);
+        super(itemModel, parent, selectedLanguageParam);
+        this.selectedLanguageParam = selectedLanguageParam;
 
         setDefaultEditKey(EDIT_SHEET_NAME);
         createEditSheet(itemModel);
@@ -76,6 +82,10 @@ public class GenericArticlePropertiesStep extends SimpleEditStep {
         setDisplayComponent(getGenericArticlePropertySheet(itemModel));
     }
 
+    protected StringParameter getSelectedLanguageParam() {
+        return selectedLanguageParam;
+    }
+    
     /**
      * Returns a component that displays the properties of the Article specified
      * by the ItemSelectionModel passed in.

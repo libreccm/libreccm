@@ -19,9 +19,9 @@
 package com.arsdigita.cms.contenttypes.ui;
 
 import com.arsdigita.bebop.Component;
+import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.cms.ItemSelectionModel;
 
-import org.librecms.contenttypes.Article;
 
 import com.arsdigita.cms.ui.authoring.AuthoringKitWizard;
 import com.arsdigita.cms.ui.authoring.BasicPageForm;
@@ -43,10 +43,13 @@ public class ArticlePropertiesStep extends GenericArticlePropertiesStep {
      * The name of the editing sheet added to this step
      */
     public final static String EDIT_SHEET_NAME = "edit";
+    
+    private StringParameter selectedLanuageParam;
 
-    public ArticlePropertiesStep(ItemSelectionModel itemModel,
-                                 AuthoringKitWizard parent) {
-        super(itemModel, parent);
+    public ArticlePropertiesStep(final ItemSelectionModel itemModel,
+                                 final AuthoringKitWizard parent,
+                                 final StringParameter selectedLanguageParam) {
+        super(itemModel, parent, selectedLanguageParam);
     }
 
     @Override

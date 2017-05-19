@@ -56,9 +56,11 @@ public class UsersGroupsRoles extends CustomComponent {
     
     private final UsersTable usersTable;
     private final GroupsTable groupsTable;
+    private final RolesTable rolesTable;
 
     private UsersTableDataProvider usersTableDataProvider;
     private GroupsTableDataProvider groupsTableDataProvider;
+    private RolesTableDataProvider rolesTableDataProvider;
 
     public UsersGroupsRoles(final AdminView view) {
 
@@ -167,9 +169,13 @@ public class UsersGroupsRoles extends CustomComponent {
         
         groupsTable = new GroupsTable(view, this);
         groupsTable.setWidth("100%");
+        
+        rolesTable = new RolesTable(view, this);
+        rolesTable.setWidth("100%");
 
         tabSheet.addTab(usersTable, "Users");
         tabSheet.addTab(groupsTable, "Groups");
+        tabSheet.addTab(rolesTable, "Roles");
 
         setCompositionRoot(tabSheet);
 
@@ -214,17 +220,30 @@ public class UsersGroupsRoles extends CustomComponent {
     }
 
     public void setUsersTableDataProvider(final UsersTableDataProvider dataProvider) {
-        this.usersTableDataProvider = dataProvider;
+        usersTableDataProvider = dataProvider;
         usersTable.setDataProvider(dataProvider);
     }
     
     public void setGroupsTableDataProvider(final GroupsTableDataProvider dataProvider) {
-        this.groupsTableDataProvider = dataProvider;
+        groupsTableDataProvider = dataProvider;
         groupsTable.setDataProvider(dataProvider);
+    }
+    
+    public void setRolesTableDataProvider(final RolesTableDataProvider dataProvider) {
+        rolesTableDataProvider = dataProvider;
+        rolesTable.setDataProvider(dataProvider);
     }
     
     protected void refreshUsers() {
         usersTableDataProvider.refreshAll();
+    }
+    
+    protected void refreshGroups() {
+        groupsTableDataProvider.refreshAll();
+    }
+    
+    protected void refreshRoles() {
+        rolesTableDataProvider.refreshAll();
     }
     
 }

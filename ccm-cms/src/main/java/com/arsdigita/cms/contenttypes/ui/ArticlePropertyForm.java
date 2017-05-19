@@ -30,7 +30,6 @@ import com.arsdigita.bebop.parameters.ParameterModel;
 import com.arsdigita.bebop.parameters.StringInRangeValidationListener;
 import com.arsdigita.bebop.parameters.StringParameter;
 
-import org.librecms.contentsection.ContentSection;
 
 import com.arsdigita.cms.ItemSelectionModel;
 import com.arsdigita.globalization.GlobalizedMessage;
