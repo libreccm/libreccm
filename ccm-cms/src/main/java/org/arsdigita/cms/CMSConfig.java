@@ -18,6 +18,7 @@
  */
 package org.arsdigita.cms;
 
+import com.arsdigita.bebop.form.DHTMLEditor;
 import com.arsdigita.util.UncheckedWrapperException;
 
 import org.libreccm.cdi.utils.CdiUtil;
@@ -76,8 +77,8 @@ public class CMSConfig {
     private boolean useStreamlinedCreation = true;
 
     /**
-     * DHTML Editor Configuration for use in CMS module, lists the config object
-     * name and Javascript source location for its definition.
+     * DHTML Editor Configuration for use in CMS module, lists the configuration
+     * object name and Javascript source location for its definition.
      */
     @Setting
     private List<String> dhtmlEditorConfig = Arrays.asList(new String[]{
@@ -303,7 +304,6 @@ public class CMSConfig {
 //            DefaultTemplateResolver.class.getName(),
 //            TemplateResolver.class.getName()
 //        });
-
     @Setting
     private String itemSearchDefaultTab = "flatBrowse";
 
@@ -426,6 +426,16 @@ public class CMSConfig {
 
     public void setUseStreamlinedCreation(final boolean useStreamlinedCreation) {
         this.useStreamlinedCreation = useStreamlinedCreation;
+    }
+
+    public DHTMLEditor.Config getDHTMLEditorConfig() {
+        if (dhtmlEditorConfig.size() < 2) {
+            return DHTMLEditor.Config.STANDARD;
+        } else {
+            return new DHTMLEditor.Config(dhtmlEditorConfig.get(0),
+                                          dhtmlEditorConfig.get(0));
+        }
+
     }
 
     public List<String> getDhtmlEditorConfig() {
@@ -727,7 +737,6 @@ public class CMSConfig {
 //        }
 //        return resolverClasses;
 //    }
-
     public String getItemSearchDefaultTab() {
         return itemSearchDefaultTab;
     }
