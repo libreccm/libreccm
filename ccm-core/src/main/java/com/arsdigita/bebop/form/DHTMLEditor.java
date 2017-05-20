@@ -74,7 +74,7 @@ public class DHTMLEditor extends TextArea {
     public static final int SOFT = 2;
 
     /**
-     * Config objects for supported DHTMP editors
+     * Configuration objects for supported DHTML editors
      */
     public static class Config {
 
