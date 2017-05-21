@@ -24,15 +24,21 @@ import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 import com.vaadin.ui.components.grid.HeaderCell;
 import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.renderers.ButtonRenderer;
 import com.vaadin.ui.themes.ValoTheme;
 import org.libreccm.admin.ui.AdminView;
 import org.libreccm.security.Group;
+import org.libreccm.security.GroupRepository;
 
+import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
 /**
@@ -65,12 +71,24 @@ public class GroupsTable extends Grid<Group> {
             .setCaption("Name");
         addColumn(user -> bundle.getString("ui.admin.groups.table.edit"),
                   new ButtonRenderer<>(event -> {
-                      //ToDo Open GroupEditor window
+                      final GroupEditor groupEditor = new GroupEditor(
+                          event.getItem(),
+                          usersGroupsRoles,
+                          view.getGroupRepository(),
+                          view.getGroupManager());
+                      groupEditor.center();
+                      UI.getCurrent().addWindow(groupEditor);
                   }))
             .setId(COL_EDIT);
         addColumn(user -> bundle.getString("ui.admin.groups.table.delete"),
                   new ButtonRenderer<>(event -> {
-                      //ToDo Display Confirm dialog
+                      final ConfirmDeleteDialog dialog
+                                                    = new ConfirmDeleteDialog(
+                              event.getItem(),
+                              usersGroupsRoles,
+                              view.getGroupRepository());
+                      dialog.center();
+                      UI.getCurrent().addWindow(dialog);
                   }))
             .setId(COL_DELETE);
 
@@ -102,7 +120,12 @@ public class GroupsTable extends Grid<Group> {
         createGroupButton.setStyleName(ValoTheme.BUTTON_TINY);
         createGroupButton.setIcon(VaadinIcons.PLUS);
         createGroupButton.addClickListener(event -> {
-            //ToDo Open GroupEditor
+            final GroupEditor groupEditor = new GroupEditor(
+                usersGroupsRoles,
+                view.getGroupRepository(),
+                view.getGroupManager());
+            groupEditor.center();
+            UI.getCurrent().addWindow(groupEditor);
         });
         final HorizontalLayout actionsLayout = new HorizontalLayout(
             clearFiltersButton,
@@ -127,6 +150,58 @@ public class GroupsTable extends Grid<Group> {
 
         clearFiltersButton.setCaption(bundle
             .getString("ui.admin.users.table.filter.clear"));
+    }
+
+    private class ConfirmDeleteDialog extends Window {
+
+        private static final long serialVersionUID = -1168912882249598278L;
+
+        private final Group group;
+        private final UsersGroupsRoles usersGroupsRoles;
+        private final GroupRepository groupRepo;
+
+        public ConfirmDeleteDialog(final Group group,
+                                   final UsersGroupsRoles usersGroupsRoles,
+                                   final GroupRepository groupRepo) {
+
+            this.group = group;
+            this.usersGroupsRoles = usersGroupsRoles;
+            this.groupRepo = groupRepo;
+
+            final ResourceBundle bundle = ResourceBundle
+                .getBundle(AdminUiConstants.ADMIN_BUNDLE,
+                           UI.getCurrent().getLocale());
+
+            final MessageFormat messageFormat = new MessageFormat(
+                bundle.getString("ui.admin.groups.delete.confirm"));
+
+            final Label text = new Label(messageFormat
+                .format(new Object[]{group.getName()}));
+
+            final Button yesButton
+                             = new Button(bundle.getString("ui.admin.yes"));
+            yesButton.addClickListener(event -> deleteGroup());
+
+            final Button noButton = new Button(bundle.getString("ui.admin.no"));
+            noButton.addClickListener(event -> close());
+
+            final HorizontalLayout buttons = new HorizontalLayout(yesButton,
+                                                                  noButton);
+
+            final VerticalLayout layout = new VerticalLayout(text, buttons);
+
+//            final Panel panel = new Panel(
+//                bundle.getString("ui.admin.groups.delete.confirm.title"),
+//                layout);
+            setContent(layout);
+        }
+
+        private void deleteGroup() {
+            groupRepo.delete(group);
+            usersGroupsRoles.refreshGroups();
+            close();
+        }
+
     }
 
 }
