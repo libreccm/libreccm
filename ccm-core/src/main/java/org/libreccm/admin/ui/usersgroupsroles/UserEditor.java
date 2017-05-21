@@ -101,7 +101,7 @@ public class UserEditor extends Window {
 
         addWidgets();
     }
-    
+
     public UserEditor(final User user,
                       final UsersGroupsRoles usersGroupsRoles,
                       final UserRepository userRepo,
@@ -252,8 +252,8 @@ public class UserEditor extends Window {
 
         final Button submit = new Button();
         if (user == null) {
-            submit.setCaption(bundle.getString(
-                "ui.admin.user.createpanel.header"));
+            submit.setCaption(bundle
+                .getString("ui.admin.user.createpanel.header"));
         } else {
             submit.setCaption(bundle.getString("ui.admin.save"));
         }
@@ -442,8 +442,8 @@ public class UserEditor extends Window {
         close();
     }
 
-    private class DataHasChangedListener implements
-        HasValue.ValueChangeListener<String> {
+    private class DataHasChangedListener
+        implements HasValue.ValueChangeListener<String> {
 
         private static final long serialVersionUID = -4698658552890778877L;
 

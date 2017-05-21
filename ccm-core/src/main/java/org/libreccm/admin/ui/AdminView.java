@@ -39,6 +39,8 @@ import org.libreccm.admin.ui.usersgroupsroles.RolesTableDataProvider;
 import org.libreccm.admin.ui.usersgroupsroles.UsersGroupsRoles;
 import org.libreccm.admin.ui.usersgroupsroles.UsersTableDataProvider;
 import org.libreccm.l10n.GlobalizationHelper;
+import org.libreccm.security.GroupManager;
+import org.libreccm.security.GroupRepository;
 import org.libreccm.security.PermissionChecker;
 import org.libreccm.security.UserManager;
 import org.libreccm.security.UserRepository;
@@ -61,8 +63,6 @@ public class AdminView extends CustomComponent implements View {
 
     public static final String VIEWNAME = "admin";
 
-    @Inject
-    private ServletContext servletContext;
 
     @Inject
     private JpqlConsoleController jpqlConsoleController;
@@ -77,24 +77,27 @@ public class AdminView extends CustomComponent implements View {
     private GlobalizationHelper globalizationHelper;
 
     @Inject
-    private UserRepository userRepository;
-    
+    private UserRepository userRepo;
+
     @Inject
     private UserManager userManager;
-    
+
+    @Inject
+    private GroupRepository groupRepo;
+
+    @Inject
+    private GroupManager groupManager;
+
     @Inject
     private UsersTableDataProvider usersTableDataProvider;
-    
+
     @Inject
     private GroupsTableDataProvider groupsTableDataProvider;
 
     @Inject
     private RolesTableDataProvider rolesTableDataProvider;
-    
-    private ResourceBundle bundle;
 
-    @Inject
-    private UserRepository userRepo;
+    private ResourceBundle bundle;
 
     private final TabSheet tabSheet;
 //    private final Grid<User> usersTable;
@@ -194,13 +197,21 @@ public class AdminView extends CustomComponent implements View {
     protected JpqlConsoleController getJpqlConsoleController() {
         return jpqlConsoleController;
     }
-    
+
     public UserRepository getUserRepository() {
         return userRepo;
     }
-    
+
     public UserManager getUserManager() {
         return userManager;
+    }
+
+    public GroupRepository getGroupRepository() {
+        return groupRepo;
+    }
+
+    public GroupManager getGroupManager() {
+        return groupManager;
     }
 
 }
