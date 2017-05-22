@@ -42,6 +42,8 @@ import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.security.GroupManager;
 import org.libreccm.security.GroupRepository;
 import org.libreccm.security.PermissionChecker;
+import org.libreccm.security.RoleManager;
+import org.libreccm.security.RoleRepository;
 import org.libreccm.security.UserManager;
 import org.libreccm.security.UserRepository;
 
@@ -88,6 +90,12 @@ public class AdminView extends CustomComponent implements View {
     @Inject
     private GroupManager groupManager;
 
+    @Inject
+    private RoleRepository roleRepo;
+    
+    @Inject
+    private RoleManager roleManager;
+    
     @Inject
     private UsersTableDataProvider usersTableDataProvider;
 
@@ -214,4 +222,12 @@ public class AdminView extends CustomComponent implements View {
         return groupManager;
     }
 
+    public RoleRepository getRoleRepository() {
+        return roleRepo;
+    }
+    
+    public RoleManager getRoleManager() {
+        return roleManager;
+    }
+    
 }
