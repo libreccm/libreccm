@@ -23,6 +23,7 @@ import com.arsdigita.ui.admin.AdminUiConstants;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
 import org.libreccm.admin.ui.AdminView;
 
 import java.util.ResourceBundle;
@@ -172,7 +173,8 @@ public class UsersGroupsRoles extends CustomComponent {
         
         rolesTable = new RolesTable(view, this);
         rolesTable.setWidth("100%");
-
+        rolesTable.setHeight("100%");
+        
         tabSheet.addTab(usersTable, "Users");
         tabSheet.addTab(groupsTable, "Groups");
         tabSheet.addTab(rolesTable, "Roles");
