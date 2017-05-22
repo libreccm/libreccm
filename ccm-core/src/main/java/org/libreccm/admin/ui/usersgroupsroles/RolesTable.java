@@ -24,15 +24,20 @@ import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 import com.vaadin.ui.components.grid.HeaderCell;
 import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.renderers.ButtonRenderer;
 import com.vaadin.ui.themes.ValoTheme;
 import org.libreccm.admin.ui.AdminView;
 import org.libreccm.security.Role;
+import org.libreccm.security.RoleRepository;
 
+import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -54,7 +59,7 @@ public class RolesTable extends Grid<Role> {
     private final Button clearFiltersButton;
     private final Button createRoleButton;
 
-    public RolesTable(final AdminView adminView,
+    public RolesTable(final AdminView view,
                       final UsersGroupsRoles usersGroupsRoles) {
 
         super();
@@ -80,7 +85,7 @@ public class RolesTable extends Grid<Role> {
                     })
                     .findFirst();
                 if (locale.isPresent()) {
-                return role.getDescription().getValue(locale.get());
+                    return role.getDescription().getValue(locale.get());
                 } else {
                     return "";
                 }
@@ -91,12 +96,24 @@ public class RolesTable extends Grid<Role> {
             .setCaption("Description");
         addColumn(user -> bundle.getString("ui.admin.roles.table.edit"),
                   new ButtonRenderer<>(event -> {
-                      //ToDo Open GroupEditor window
+                      final RoleEditor roleEditor = new RoleEditor(
+                          event.getItem(),
+                          usersGroupsRoles,
+                          view.getRoleRepository(),
+                          view.getRoleManager());
+                      roleEditor.center();
+                      UI.getCurrent().addWindow(roleEditor);
                   }))
             .setId(COL_EDIT);
         addColumn(user -> bundle.getString("ui.admin.roles.table.delete"),
                   new ButtonRenderer<>(event -> {
-                      //ToDo Display Confirm dialog
+                      final ConfirmDeleteDialog dialog
+                                                    = new ConfirmDeleteDialog(
+                              event.getItem(),
+                              usersGroupsRoles,
+                              view.getRoleRepository());
+                      dialog.center();
+                      UI.getCurrent().addWindow(dialog);
                   }))
             .setId(COL_DELETE);
 
@@ -129,7 +146,12 @@ public class RolesTable extends Grid<Role> {
         createRoleButton.setStyleName(ValoTheme.BUTTON_TINY);
         createRoleButton.setIcon(VaadinIcons.PLUS);
         createRoleButton.addClickListener(event -> {
-            //ToDo Open GroupEditor
+            final RoleEditor roleEditor = new RoleEditor(
+                usersGroupsRoles,
+                view.getRoleRepository(),
+                view.getRoleManager());
+            roleEditor.center();
+            UI.getCurrent().addWindow(roleEditor);
         });
         final HorizontalLayout actionsLayout = new HorizontalLayout(
             clearFiltersButton,
@@ -157,6 +179,57 @@ public class RolesTable extends Grid<Role> {
 
         clearFiltersButton.setCaption(bundle
             .getString("ui.admin.users.table.filter.clear"));
+
+    }
+
+    private class ConfirmDeleteDialog extends Window {
+
+        private static final long serialVersionUID = -1315311220464298282L;
+
+        private final Role role;
+        private final UsersGroupsRoles usersGroupsRoles;
+        private final RoleRepository roleRepo;
+
+        public ConfirmDeleteDialog(final Role role,
+                                   final UsersGroupsRoles usersGroupsRoles,
+                                   final RoleRepository roleRepo) {
+            this.role = role;
+            this.usersGroupsRoles = usersGroupsRoles;
+            this.roleRepo = roleRepo;
+
+            final ResourceBundle bundle = ResourceBundle
+                .getBundle(AdminUiConstants.ADMIN_BUNDLE,
+                           UI.getCurrent().getLocale());
+
+            final MessageFormat messageFormat = new MessageFormat(
+                bundle.getString("ui.admin.roles.delete.confirm"));
+
+            final Label text = new Label(messageFormat
+                .format(new Object[]{role.getName()}));
+
+            final Button yesButton
+                             = new Button(bundle.getString("ui.admin.yes"));
+            yesButton.addClickListener(event -> deleteRole());
+
+            final Button noButton = new Button(bundle.getString("ui.admin.no"));
+            noButton.addClickListener(event -> close());
+
+            final HorizontalLayout buttons = new HorizontalLayout(yesButton,
+                                                                  noButton);
+
+            final VerticalLayout layout = new VerticalLayout(text, buttons);
+
+//            final Panel panel = new Panel(
+//                bundle.getString("ui.admin.groups.delete.confirm.title"),
+//                layout);
+            setContent(layout);
+        }
+
+        private void deleteRole() {
+            roleRepo.delete(role);
+            usersGroupsRoles.refreshRoles();
+            close();
+        }
 
     }
 
