@@ -64,7 +64,7 @@
         <module>ccm-bundle-devel-wildfly</module>
         <module>ccm-bundle-devel-wildfly-swarm</module>
         <module>ccm-xafilesystemadapter</module>
-    </modules>
+  </modules>
 
     <reporting>
         <excludeDefaults>true</excludeDefaults>
