@@ -19,7 +19,6 @@
 package org.arsdigita.cms;
 
 import com.arsdigita.bebop.form.DHTMLEditor;
-import com.arsdigita.util.UncheckedWrapperException;
 
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.Configuration;

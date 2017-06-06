@@ -73,7 +73,7 @@ public class SimpleEditStep extends SecurityPropertyEditor
     private StringParameter streamlinedCreationParameter;
     private static final String STREAMLINED = "_streamlined";
     private static final String STREAMLINED_DONE = "1";
-    
+
     private final StringParameter selectedLanguageParameter;
 
     private static List<AdditionalDisplayComponent> additionalDisplayComponents
@@ -99,12 +99,14 @@ public class SimpleEditStep extends SecurityPropertyEditor
     /**
      * Construct a new SimpleEditStep component
      *
-     * @param itemModel The {@link ItemSelectionModel} which will be responsible
-     *                  for loading the current item
+     * @param itemModel             The {@link ItemSelectionModel} which will be
+     *                              responsible for loading the current item
      *
-     * @param parent    The parent wizard which contains the form. The component
-     *                  may use the wizard's methods, such as stepForward and
-     *                  stepBack, in its process listener.
+     * @param parent                The parent wizard which contains the form.
+     *                              The component may use the wizard's methods,
+     *                              such as stepForward and stepBack, in its
+     *                              process listener.
+     * @param selectedLanguageParam
      */
     public SimpleEditStep(final ItemSelectionModel itemModel,
                           final AuthoringKitWizard parent,
@@ -135,7 +137,7 @@ public class SimpleEditStep extends SecurityPropertyEditor
         super();
         this.authoringKitWizard = authoringKitWizard;
         this.itemSelectionModel = itemSelectionModel;
-        
+
         this.selectedLanguageParameter = selectedLanguageParam;
 
         streamlinedCreationParameter = new StringParameter(
