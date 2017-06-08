@@ -19,13 +19,10 @@
 package com.arsdigita.cms.contenttypes.ui;
 
 import com.arsdigita.bebop.FormData;
-import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.event.FormInitListener;
 import com.arsdigita.bebop.event.FormProcessListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.bebop.event.FormSubmissionListener;
-import com.arsdigita.bebop.form.Option;
-import com.arsdigita.bebop.form.RadioGroup;
 import com.arsdigita.bebop.form.TextArea;
 import com.arsdigita.bebop.parameters.DateParameter;
 import com.arsdigita.bebop.parameters.NotNullValidationListener;
