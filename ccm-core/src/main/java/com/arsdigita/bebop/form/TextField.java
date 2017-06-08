@@ -18,19 +18,16 @@
  */
 package com.arsdigita.bebop.form;
 
-
 import com.arsdigita.bebop.parameters.ParameterModel;
 
-
-
 /**
- *    A class representing a text field in an HTML form.
+ * A class representing a text field in an HTML form.
  *
- *    @author Karl Goldstein 
- *    @author Uday Mathur 
- *    @author Rory Solomon 
- *    @author Michael Pih 
- *    @version $Id$
+ * @author Karl Goldstein
+ * @author Uday Mathur
+ * @author Rory Solomon
+ * @author Michael Pih
+ * @version $Id$
  */
 public class TextField extends Widget {
 
@@ -43,23 +40,23 @@ public class TextField extends Widget {
     }
 
     /**
-     *      Returns a string naming the type of this widget.
+     * Returns a string naming the type of this widget.
      */
     public String getType() {
         return "text";
     }
 
     /**
-     *      Sets the <tt>MAXLENGTH</tt> attribute for the <tt>INPUT</tt> tag
-     *      used to render this form element.
+     * Sets the <tt>MAXLENGTH</tt> attribute for the <tt>INPUT</tt> tag used to
+     * render this form element.
      */
     public void setMaxLength(int length) {
         setAttribute("MAXLENGTH", String.valueOf(length));
     }
 
     /**
-     *      Sets the <tt>SIZE</tt> attribute for the <tt>INPUT</tt> tag
-     *      used to render this form element.
+     * Sets the <tt>SIZE</tt> attribute for the <tt>INPUT</tt> tag used to
+     * render this form element.
      */
     public void setSize(int size) {
         setAttribute("SIZE", String.valueOf(size));
@@ -68,6 +65,5 @@ public class TextField extends Widget {
     public boolean isCompound() {
         return false;
     }
-
 
 }
