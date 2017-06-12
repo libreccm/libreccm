@@ -30,11 +30,7 @@ import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.libreccm.tests.categories.IntegrationTest;
@@ -56,8 +52,8 @@ import static org.libreccm.testutils.DependenciesHelpers.getModuleDependencies;
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
 @CreateSchema({"create_ccm_core_schema.sql"})
-@CleanupUsingScript(value = {"cleanup.sql"},
-                    phase = TestExecutionPhase.BEFORE)
+/*@CleanupUsingScript(value = {"cleanup.sql"},
+                    phase = TestExecutionPhase.BEFORE)*/
 public class CoreDataImportTest {
 
     @Inject
@@ -125,16 +121,22 @@ public class CoreDataImportTest {
     // TEST SECTION
 
     @Test
-    @InSequence(120)
+    @InSequence(100)
     public void usersShouldBeImported() {
-        importHelper.importUsers();
+        Assert.assertFalse(
+                importHelper.importUsers() &&
+                        importHelper.importGroups());
     }
 
-    /*
     @Test
+    @InSequence(105)
+    public void groupsShouldBeImported() {
+    }
+
+    /*@Test
     @InSequence(100)
     public void categoriesShouldBeImported() {
-        importHelper.importCategories();
+        Assert.assertFalse(importHelper.importCategories());
     }
 
     @Test
@@ -149,11 +151,7 @@ public class CoreDataImportTest {
         Assert.assertFalse(importHelper.importGroupMemberships());
     }
 
-    @Test
-    @InSequence(115)
-    public void groupsShouldBeImported() {
-        Assert.assertFalse(importHelper.importGroups());
-    }
+
 
 
 
