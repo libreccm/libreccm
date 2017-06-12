@@ -95,6 +95,7 @@ public class CategoryRepository extends AbstractEntityRepository<Long, Category>
      *
      * @return An optional either with the found item or empty
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public Optional<Category> findByUuid(final String uuid) {
         final TypedQuery<Category> query = getEntityManager().
                 createNamedQuery("Category.findByUuid", Category.class);
