@@ -18,7 +18,9 @@
  */
 package org.librecms.contenttypes;
 
+import com.arsdigita.cms.contenttypes.ui.ArticlePropertiesStep;
 import com.arsdigita.cms.ui.authoring.PageCreateForm;
+
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -45,27 +47,37 @@ import org.librecms.contentsection.ContentItem;
 @Table(name = "ARTICLES", schema = DB_SCHEMA)
 @ContentTypeDescription(labelBundle = "org.librecms.contenttypes.Article",
                         descriptionBundle = "org.librecms.contenttypes.Article")
-@AuthoringKit(createComponent = PageCreateForm.class,
-              steps = {})
+@AuthoringKit(
+    createComponent = PageCreateForm.class,
+    steps = {
+        @AuthoringStep(
+            component = ArticlePropertiesStep.class,
+            labelBundle = "org.librecms.CmsResources",
+            labelKey = "cms.contenttypes.shared.basic_properties.title",
+            descriptionBundle = "org.librecms.CmsResources",
+            descriptionKey = "cms.contenttypes.shared.basic_properties"
+                                 + ".description",
+            order = 1)
+    })
 public class Article extends ContentItem implements Serializable {
 
     private static final long serialVersionUID = 3832010184748095822L;
 
     @Embedded
     @AssociationOverride(
-            name = "values",
-            joinTable = @JoinTable(name = "ARTICLE_TEXTS",
-                                   schema = DB_SCHEMA,
-                                   joinColumns = {
-                                       @JoinColumn(name = "OBJECT_ID")}
-            ))
+        name = "values",
+        joinTable = @JoinTable(name = "ARTICLE_TEXTS",
+                               schema = DB_SCHEMA,
+                               joinColumns = {
+                                   @JoinColumn(name = "OBJECT_ID")}
+        ))
     private LocalizedString text;
 
     public Article() {
         super();
         text = new LocalizedString();
     }
-    
+
     public LocalizedString getText() {
         return text;
     }

@@ -296,6 +296,7 @@ public class ContentItemRepository
      *
      * @return
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public long countByNameInFolder(final Category folder, final String name) {
 
         final TypedQuery<Long> query = getEntityManager().createNamedQuery(
@@ -317,6 +318,7 @@ public class ContentItemRepository
      *
      * @return A list with all items in the folder matching the provided filter.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public List<ContentItem> filterByFolderAndName(final Category folder,
                                                    final String name) {
 
@@ -340,6 +342,7 @@ public class ContentItemRepository
      * @return The number of items in the folder/category which match the
      *         provided pattern.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public long countFilterByFolderAndName(final Category folder,
                                            final String name) {
         final TypedQuery<Long> query = getEntityManager()
@@ -352,6 +355,7 @@ public class ContentItemRepository
         return query.getSingleResult();
     }
 
+    @Transactional(Transactional.TxType.REQUIRED)
     public Optional<ContentItem> findItemWithWorkflow(final Workflow workflow) {
 
         final TypedQuery<ContentItem> query = getEntityManager()
@@ -378,6 +382,7 @@ public class ContentItemRepository
      *         provided path or an empty {@code Optional} if there is no such
      *         item.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public Optional<ContentItem> findByPath(final String path) {
 
         //The last token is the name of the item itself. Remove this part an get 
@@ -408,6 +413,7 @@ public class ContentItemRepository
      *         provided path or an empty {@code Optional} if there is no such
      *         item.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public Optional<ContentItem> findByPath(final ContentSection section,
                                             final String path) {
 
@@ -429,6 +435,7 @@ public class ContentItemRepository
     }
 
     @Override
+    @Transactional(Transactional.TxType.REQUIRED)
     public void save(final ContentItem item) {
         final Date now = new Date();
         final Subject subject = shiro.getSubject();
