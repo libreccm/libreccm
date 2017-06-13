@@ -111,6 +111,10 @@ class ApplyWorkflowController {
                                  final Folder folder,
                                  final Long workflowTemplateId) {
 
+        Objects.requireNonNull(item);
+        Objects.requireNonNull(folder);
+        Objects.requireNonNull(workflowTemplateId);
+        
         final WorkflowTemplate workflowTemplate;
         if (workflowTemplateId == null
                 && permissionChecker
