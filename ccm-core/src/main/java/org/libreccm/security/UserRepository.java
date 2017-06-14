@@ -78,16 +78,17 @@ public class UserRepository extends AbstractEntityRepository<Long, User> {
      *         user matching the user name (should be possible) the first one is
      *         returned. If there is no matching user {@code null} is returned.
      */
-    public Optional<User> findByName(final String name, final String entityGraphName) {
+    public Optional<User> findByName(final String name,
+                                     final String entityGraphName) {
         @SuppressWarnings("unchecked")
         final EntityGraph<User> entityGraph
                                     = (EntityGraph<User>) getEntityManager()
-            .getEntityGraph(entityGraphName);
+                .getEntityGraph(entityGraphName);
         return findByName(name, entityGraph);
     }
-    
+
     public Optional<User> findByName(final String name,
-                           final EntityGraph<User> entityGraph) {
+                                     final EntityGraph<User> entityGraph) {
         final TypedQuery<User> query = getEntityManager().createNamedQuery(
             "User.findByName", User.class);
         query.setParameter("name", name);
@@ -97,15 +98,15 @@ public class UserRepository extends AbstractEntityRepository<Long, User> {
     }
 
     public boolean isNameInUse(final String name) {
-        
+
         final TypedQuery<Long> query = getEntityManager()
-        .createNamedQuery("User.countByName", Long.class);
+            .createNamedQuery("User.countByName", Long.class);
         query.setParameter("name", name);
-        
+
         final Long result = query.getSingleResult();
         return result > 0;
     }
-    
+
     /**
      * Finds user by the primary email address.
      *
@@ -124,16 +125,16 @@ public class UserRepository extends AbstractEntityRepository<Long, User> {
     }
 
     public Optional<User> findByEmailAddress(final String emailAddress,
-                                   final String entityGraphName) {
+                                             final String entityGraphName) {
         @SuppressWarnings("unchecked")
         final EntityGraph<User> entityGraph
                                     = (EntityGraph<User>) getEntityManager()
-            .getEntityGraph(entityGraphName);
+                .getEntityGraph(entityGraphName);
         return findByEmailAddress(emailAddress, entityGraph);
     }
 
     public Optional<User> findByEmailAddress(final String emailAddress,
-                                   final EntityGraph<User> entityGraph) {
+                                             final EntityGraph<User> entityGraph) {
         final TypedQuery<User> query = getEntityManager().createNamedQuery(
             "User.findByEmailAddress", User.class);
         query.setParameter("emailAddress", emailAddress);
@@ -141,13 +142,13 @@ public class UserRepository extends AbstractEntityRepository<Long, User> {
 
         return getSingleResult(query);
     }
-    
+
     public boolean isEmailAddressInUse(final String emailAddress) {
-        
+
         final TypedQuery<Long> query = getEntityManager()
-        .createNamedQuery("User.countByPrimaryEmailAddress", Long.class);
+            .createNamedQuery("User.countByPrimaryEmailAddress", Long.class);
         query.setParameter("emailAddress", emailAddress);
-        
+
         final Long result = query.getSingleResult();
         return result > 0;
     }
@@ -159,10 +160,18 @@ public class UserRepository extends AbstractEntityRepository<Long, User> {
 
         return query.getResultList();
     }
-    
+
     public List<User> findAllOrderdByUsername() {
         final TypedQuery<User> query = getEntityManager().createNamedQuery(
             "User.findAllOrderedByUsername", User.class);
+        return query.getResultList();
+    }
+
+    public List<User> findByGroup(final Group group) {
+        final TypedQuery<User> query = getEntityManager()
+            .createNamedQuery("User.findByGroup", User.class);
+        query.setParameter("group", group);
+
         return query.getResultList();
     }
 
@@ -173,28 +182,28 @@ public class UserRepository extends AbstractEntityRepository<Long, User> {
     public void save(final User entity) {
         super.save(entity);
     }
-     
+
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public void delete(final User entity) {
-        if (entity == null) { 
+        if (entity == null) {
             throw new IllegalArgumentException("Can't delete null");
         }
-        
+
         final User delete = getEntityManager().find(User.class,
                                                     entity.getPartyId());
-        
+
         delete.getGroupMemberships().forEach(m -> {
             getEntityManager().remove(m);
         });
-        
+
         delete.getRoleMemberships().forEach(m -> {
             getEntityManager().remove(m);
         });
-        
+
         getEntityManager().remove(delete);
     }
-    
+
 }

@@ -1946,3 +1946,7 @@ span#quickLinksCascade {
 
     text-align: left;
 }
+
+.preformatted-text {
+    white-space: pre;
+}

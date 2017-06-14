@@ -107,16 +107,16 @@ public class DatasetsVerifier {
         //try-with-resources block to ensure that the connection is closed.
         final StringBuffer buffer = new StringBuffer("jdbc:h2:mem:testdatabase");
         //Create schema if necssary
-        if (getSchemas().length > 0) {
-            buffer.append(";INIT=");
-            for (final String schema : getSchemas()) {
-                if (buffer.length() > 0) {
-                    buffer.append("\\;");
-                }
-                buffer.append(String.format("CREATE SCHEMA IF NOT EXISTS %s",
-                                            schema));
-            }
-        }
+//        if (getSchemas().length > 0) {
+//            buffer.append(";INIT=");
+//            for (final String schema : getSchemas()) {
+//                if (buffer.length() > 0) {
+//                    buffer.append("\\;");
+//                }
+//                buffer.append(String.format("CREATE SCHEMA IF NOT EXISTS %s",
+//                                            schema));
+//            }
+//        }
         final String connectionStr = buffer.toString();
         try (final Connection connection = DriverManager.getConnection(
             connectionStr, "sa", "")) {

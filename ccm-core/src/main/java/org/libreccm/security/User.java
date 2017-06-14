@@ -109,6 +109,11 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
                     + "                    u.familyName, "
                     + "                    u.givenName, "
                     + "                    u.primaryEmailAddress.address")
+    ,
+    @NamedQuery(name = "User.findByGroup",
+                query = "SELECT u FROM User u "
+                            + "JOIN u.groupMemberships m "
+                            + "WHERE m.group = :group")
 })
 @NamedEntityGraphs({
     @NamedEntityGraph(
