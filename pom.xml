@@ -193,8 +193,8 @@
                 </plugin>
                 <plugin>
                     <groupId>de.jpdigital</groupId>
-                    <artifactId>hibernate50-ddl-maven-plugin</artifactId>
-                    <version>2.0.2-SNAPSHOT</version>
+                    <artifactId>hibernate5-ddl-maven-plugin</artifactId>
+                    <version>1.0.1-hibernate-5.2.4.Final</version>
                 </plugin>
                 <plugin>
                     <groupId>org.jacoco</groupId>
