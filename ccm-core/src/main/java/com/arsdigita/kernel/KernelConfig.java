@@ -62,9 +62,9 @@ public final class KernelConfig {
 
     @Setting
     private boolean secureLoginEnabled = false;
-    
+
     @Setting
-    private String systemEmailAddress = "libreccm@example.org"; 
+    private String systemEmailAddress = "libreccm@example.org";
 
     @Setting
     private Set<String> supportedLanguages = new HashSet<>(
@@ -72,6 +72,12 @@ public final class KernelConfig {
 
     @Setting
     private String defaultLanguage = "en";
+
+    @Setting
+    private String exportPath = "";
+
+    @Setting
+    private String importPath = "";
 
     public static KernelConfig getConfig() {
         final ConfigurationManager confManager = CdiUtil.createCdiUtil()
@@ -203,7 +209,7 @@ public final class KernelConfig {
     public Locale getDefaultLocale() {
         return new Locale(getDefaultLanguage());
     }
-    
+
     public String getSystemEmailAddress() {
         return systemEmailAddress;
     }
@@ -211,7 +217,23 @@ public final class KernelConfig {
     public void setSystemEmailAddress(final String systemEmailAddress) {
         this.systemEmailAddress = systemEmailAddress;
     }
-    
+
+    public String getExportPath() {
+        return exportPath;
+    }
+
+    public void setExportPath(final String exportPath) {
+        this.exportPath = exportPath;
+    }
+
+    public String getImportPath() {
+        return importPath;
+    }
+
+    public void setImportPath(final String importPath) {
+        this.importPath = importPath;
+    }
+
     @Override
     public int hashCode() {
         int hash = 7;
@@ -225,6 +247,8 @@ public final class KernelConfig {
         hash = 61 * hash + Objects.hashCode(supportedLanguages);
         hash = 61 * hash + Objects.hashCode(defaultLanguage);
         hash = 61 * hash + Objects.hashCode(systemEmailAddress);
+        hash = 61 * hash + Objects.hashCode(exportPath);
+        hash = 61 * hash + Objects.hashCode(importPath);
         return hash;
     }
 
@@ -269,9 +293,18 @@ public final class KernelConfig {
         if (!Objects.equals(defaultLanguage, other.getDefaultLanguage())) {
             return false;
         }
-        
-        return Objects.equals(systemEmailAddress, 
-                              other.getSystemEmailAddress());
+
+        if (!Objects.equals(systemEmailAddress,
+                            other.getSystemEmailAddress())) {
+            return false;
+        }
+
+        if (!Objects.equals(exportPath,
+                            other.getExportPath())) {
+            return false;
+        }
+
+        return Objects.equals(importPath, other.getImportPath());
     }
 
     @Override
@@ -295,7 +328,9 @@ public final class KernelConfig {
                 + "secureLoginEnabled = %b, "
                 + "supportedLanguages = { \"%s\" }, "
                 + "defaultLanguage = \"%s\", "
-                + "systemEmailAddress = \"%s\""
+                + "systemEmailAddress = \"%s\", "
+                + "exportPath = \"%s\", "
+                + "importPath = \"%s\""
                 + " }",
             super.toString(),
             debugEnabled,
@@ -308,7 +343,9 @@ public final class KernelConfig {
             //supportedLanguages == null ? "" : supportedLanguages.stream().collect(Collectors.joining(", ")),
             languages,
             defaultLanguage,
-            systemEmailAddress);
+            systemEmailAddress,
+            exportPath,
+            importPath);
     }
 
 }

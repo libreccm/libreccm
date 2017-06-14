@@ -158,6 +158,8 @@ public class ContentItemPage extends CMSPage implements ActionListener {
     private final Link m_previewLink;
     private final GlobalNavigation m_globalNavigation;
     private final ContentItemContextBar m_contextBar;
+    
+    private final StringParameter selectedLanguageParam;
 
     private class ItemRequestLocal extends ContentItemRequestLocal {
 
@@ -199,13 +201,13 @@ public class ContentItemPage extends CMSPage implements ActionListener {
         itemModel = new ItemSelectionModel(itemId);
 
         // Add the selected item language as parameter
-        final StringParameter selectedLanguage = new StringParameter(
+        selectedLanguageParam = new StringParameter(
             SELECTED_LANGUAGE);
-        selectedLanguage.addParameterListener(new NotNullValidationListener(
+        selectedLanguageParam.addParameterListener(new NotNullValidationListener(
             SELECTED_LANGUAGE));
-        addGlobalStateParam(selectedLanguage);
+        addGlobalStateParam(selectedLanguageParam);
         selectedLanguageModel = new ParameterSingleSelectionModel<>(
-            selectedLanguage);
+            selectedLanguageParam);
 
         // Add the content type global state parameter
         final LongParameter contentType = new LongParameter(CONTENT_TYPE);

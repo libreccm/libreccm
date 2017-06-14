@@ -170,7 +170,7 @@
 
             <plugin>
                 <groupId>de.jpdigital</groupId>
-                <artifactId>hibernate5-ddl-maven-plugin</artifactId>
+                <artifactId>hibernate50-ddl-maven-plugin</artifactId>
                 <configuration>
                     <dialects>
                         <param>h2</param>

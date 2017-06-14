@@ -70,13 +70,16 @@ public class GroupsTable extends Grid<Group> {
             .setCaption("Name");
         addColumn(user -> bundle.getString("ui.admin.groups.table.edit"),
                   new ButtonRenderer<>(event -> {
-                      final GroupEditor groupEditor = new GroupEditor(
+//                      final GroupEditor groupEditor = new GroupEditor(
+                        final GroupDetails groupDetails = new GroupDetails(
                           event.getItem(),
                           usersGroupsRoles,
                           view.getGroupRepository(),
                           view.getGroupManager());
-                      groupEditor.center();
-                      UI.getCurrent().addWindow(groupEditor);
+                      groupDetails.center();
+                      groupDetails.setWidth("50%");
+                      groupDetails.setHeight("100%");
+                      UI.getCurrent().addWindow(groupDetails);
                   }))
             .setId(COL_EDIT);
         addColumn(user -> bundle.getString("ui.admin.groups.table.delete"),
