@@ -18,6 +18,8 @@
  */
 package org.librecms.contentsection;
 
+import com.arsdigita.kernel.KernelConfig;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.core.UnexpectedErrorException;
@@ -121,18 +123,18 @@ public class ContentSectionSetup extends AbstractCcmApplicationSetup {
                      section.getPrimaryUrl(),
                      section.getDisplayName(),
                      section.getLabel());
-
+        
         final Folder rootFolder = new Folder();
         rootFolder.setUuid(UUID.randomUUID().toString());
         rootFolder.setUniqueId(rootFolder.getUuid());
         rootFolder.setName(String.format("%s_" + ROOT, sectionName));
-        rootFolder.getTitle().addValue(Locale.ROOT, "/");
+        rootFolder.getTitle().addValue(new Locale("en"), "/");
         rootFolder.setType(FolderType.DOCUMENTS_FOLDER);
         rootFolder.setSection(section);
 
         final Folder rootAssetFolder = new Folder();
         rootAssetFolder.setName(String.format("%s_" + ASSETS, sectionName));
-        rootAssetFolder.getTitle().addValue(Locale.ROOT, "/");
+        rootAssetFolder.getTitle().addValue(new Locale("en"), "/");
         rootAssetFolder.setUuid(UUID.randomUUID().toString());
         rootAssetFolder.setUniqueId(rootAssetFolder.getUuid());
         rootAssetFolder.setType(FolderType.ASSETS_FOLDER);
