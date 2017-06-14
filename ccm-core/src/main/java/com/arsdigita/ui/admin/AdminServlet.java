@@ -32,6 +32,7 @@ import com.arsdigita.ui.UserBanner;
 import com.arsdigita.ui.admin.applications.ApplicationsTab;
 import com.arsdigita.ui.admin.categories.CategoriesTab;
 import com.arsdigita.ui.admin.configuration.ConfigurationTab;
+import com.arsdigita.ui.admin.importexport.ImportExportTab;
 import com.arsdigita.web.BaseApplicationServlet;
 import com.arsdigita.web.LoginSignal;
 import com.arsdigita.xml.Document;
@@ -140,14 +141,20 @@ public class AdminServlet extends BaseApplicationServlet {
             new WorkflowAdminTab());
 
         tabbedPane.addTab(
+            new Label(new GlobalizedMessage("ui.admin.tab.importexport.title",
+                                            ADMIN_BUNDLE)),
+            new ImportExportTab());
+
+        tabbedPane.addTab(
             new Label(new GlobalizedMessage("ui.admin.tab.sysinfo.title",
                                             ADMIN_BUNDLE)),
             new SystemInformationTab());
-        
+
         final ServletContext servletContext = getServletContext();
-        final String develMode = servletContext.getInitParameter("ccm.develmode");
+        final String develMode = servletContext
+            .getInitParameter("ccm.develmode");
         if (develMode != null && "true".equals(develMode.toLowerCase())) {
-            
+
         }
 
         //page.add(new Label("admin"));
