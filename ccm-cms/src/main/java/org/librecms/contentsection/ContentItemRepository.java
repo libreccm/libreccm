@@ -32,6 +32,7 @@ import org.libreccm.core.CcmObjectRepository;
 import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.security.PermissionChecker;
 import org.libreccm.security.Role;
+import org.libreccm.security.RoleManager;
 
 import java.util.List;
 import java.util.Optional;
@@ -44,8 +45,11 @@ import javax.persistence.TypedQuery;
 
 import org.libreccm.security.Shiro;
 import org.libreccm.security.User;
+import org.libreccm.security.UserManager;
+import org.libreccm.security.UserRepository;
 import org.libreccm.workflow.Workflow;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
@@ -74,6 +78,15 @@ public class ContentItemRepository
 
     @Inject
     private Shiro shiro;
+
+    @Inject
+    private UserRepository userRepository;
+
+    @Inject
+    private UserManager userManager;
+
+    @Inject
+    private RoleManager roleManager;
 
     @Inject
     private PermissionChecker permissionChecker;
@@ -110,6 +123,7 @@ public class ContentItemRepository
      * @return The content item identified by the provided {@code itemId} or
      *         nothing if there is such content item.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public Optional<ContentItem> findById(final long itemId) {
 
         final TypedQuery<ContentItem> query = getEntityManager()
@@ -166,6 +180,7 @@ public class ContentItemRepository
      * @return The content item identified by the provided {@code uuid} or
      *         nothing if there is such content item.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public Optional<ContentItem> findByUuid(final String uuid) {
 
         final TypedQuery<ContentItem> query = getEntityManager()
@@ -193,6 +208,7 @@ public class ContentItemRepository
      *         {@link Optional} if there is no such item or if it is not of the
      *         requested type.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     @SuppressWarnings("unchecked")
     public <T extends ContentItem> Optional<T> findByUuid(final String uuid,
                                                           final Class<T> type) {
@@ -224,6 +240,7 @@ public class ContentItemRepository
      *
      * @return A list of all content items of the requested type.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     @SuppressWarnings("unchecked")
     public <T extends ContentItem> List<T> findByType(final Class<T> type) {
 
@@ -242,6 +259,7 @@ public class ContentItemRepository
      *
      * @return A list of all items in the provided folder.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public List<ContentItem> findByFolder(final Category folder) {
 
         final TypedQuery<ContentItem> query = getEntityManager()
@@ -260,6 +278,7 @@ public class ContentItemRepository
      *
      * @return The number of content items in the category/folder.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public long countItemsInFolder(final Category folder) {
 
         final TypedQuery<Long> query = getEntityManager()
@@ -499,20 +518,29 @@ public class ContentItemRepository
         final Optional<User> user = shiro.getUser();
         final List<Role> roles;
         if (user.isPresent()) {
-            roles = user
-                .get()
-                .getRoleMemberships()
-                .stream()
-                .map(membership -> membership.getRole())
-                .collect(Collectors.toList());
+            final User theUser = userRepository
+                .findById(user.get().getPartyId())
+                .orElseThrow(() -> new IllegalArgumentException(String
+                .format(
+                    "No user with id %d in the database. "
+                        + "Where did that ID come from?",
+                    user.get().getPartyId())));
+            roles = roleManager.findAllRolesForUser(theUser);
         } else {
+
             roles = Collections.emptyList();
         }
 
         final boolean isSystemUser = shiro.isSystemUser();
         final boolean isAdmin = permissionChecker.isPermitted("*");
 
-        query.setParameter("roles", roles);
+        // The roles collection is passed to an IN JPQL query. JPQL/SQL
+        // does not allow empty collections as paramete of IN. But null works...
+        if (roles.isEmpty()) {
+            query.setParameter("roles", null);
+        } else {
+            query.setParameter("roles", roles);
+        }
         query.setParameter("isSystemUser", isSystemUser);
         query.setParameter("isAdmin", isAdmin);
     }
