@@ -75,9 +75,10 @@ public class ItemTemplates extends SecurityPropertyEditor {
 //        ToDo
 //        ItemTemplatesListingImpl l = new ItemTemplatesListingImpl(model);
 //
-//        final LayoutPanel layout = new LayoutPanel();
-//        setDisplayComponent(layout);
-//
+        final LayoutPanel layout = new LayoutPanel();
+        setDisplayComponent(layout);
+
+//        ToDo
 //        SegmentedPanel st = new SegmentedPanel();
 //        layout.setBody(st);
 //
