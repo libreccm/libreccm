@@ -72,7 +72,6 @@ import javax.transaction.Transactional;
 import org.libreccm.security.PermissionChecker;
 import org.librecms.contentsection.privileges.TypePrivileges;
 
-import java.util.Objects;
 
 /**
  * Manager class providing several methods to manipulate {@link ContentItem}s.

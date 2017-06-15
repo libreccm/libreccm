@@ -41,7 +41,6 @@ import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.PermissionChecker;
 import org.librecms.contentsection.privileges.ItemPrivileges;
 
-
 /**
  * @author Michael Pih
  * @author Jack Chung
@@ -205,13 +204,19 @@ public class ItemLifecycleAdminPane extends BaseItemPane {
      */
     private boolean isAssignedToAbstractCategory(final ContentItem item) {
 
-        final long count = item.getCategories().stream()
-            .filter(categorization -> {
-                return categorization.getCategory().isAbstractCategory();
-            })
-            .count();
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final ItemLifecycleAdminController controller = cdiUtil
+            .findBean(ItemLifecycleAdminController.class);
         
-        return count > 0;
+        return controller.isAssignedToAbstractCategory(item);
+
+//        final long count = item.getCategories().stream()
+//            .filter(categorization -> {
+//                return categorization.getCategory().isAbstractCategory();
+//            })
+//            .count();
+//        
+//        return count > 0;
     }
 
 }
