@@ -18,6 +18,7 @@
  */
 package org.librecms.contenttypes;
 
+import com.arsdigita.cms.contenttypes.ui.NewsPropertiesStep;
 import com.arsdigita.cms.ui.contenttypes.NewsCreateForm;
 
 import org.hibernate.envers.Audited;
@@ -50,8 +51,18 @@ import static org.librecms.CmsConstants.*;
 @Table(name = "NEWS", schema = DB_SCHEMA)
 @ContentTypeDescription(labelBundle = "org.librecms.contenttypes.News",
                         descriptionBundle = "org.librecms.contenttypes.News")
-@AuthoringKit(createComponent = NewsCreateForm.class,
-              steps = {})
+@AuthoringKit(
+    createComponent = NewsCreateForm.class,
+    steps = {
+        @AuthoringStep(
+            component = NewsPropertiesStep.class,
+            labelBundle = "org.librecms.CmsResources",
+            labelKey = "cms.contenttypes.shared.basic_properties.title",
+            descriptionBundle = "org.librecms.CmsResources",
+            descriptionKey = "cms.contenttypes.shared.basic_properties"
+                                 + ".description",
+            order = 1)
+    })
 public class News extends ContentItem implements Serializable {
 
     private static final long serialVersionUID = -4939565845920227974L;
@@ -61,12 +72,12 @@ public class News extends ContentItem implements Serializable {
      */
     @Embedded
     @AssociationOverride(
-            name = "values",
-            joinTable = @JoinTable(name = "NEWS_TEXTS",
-                                   schema = DB_SCHEMA,
-                                   joinColumns = {
-                                       @JoinColumn(name = "OBJECT_ID")}
-            ))
+        name = "values",
+        joinTable = @JoinTable(name = "NEWS_TEXTS",
+                               schema = DB_SCHEMA,
+                               joinColumns = {
+                                   @JoinColumn(name = "OBJECT_ID")}
+        ))
     private LocalizedString text;
 
     /**
@@ -152,11 +163,12 @@ public class News extends ContentItem implements Serializable {
     @Override
     public String toString(final String data) {
         return super.toString(String.format(", text = %s, "
-                                                    + "releaseDate = %tF %<tT, "
-                                                    + "homepage = %b%s",
+                                                + "releaseDate = %tF %<tT, "
+                                                + "homepage = %b%s",
                                             Objects.toString(text),
                                             releaseDate,
                                             homepage,
                                             data));
     }
+
 }

@@ -18,6 +18,7 @@
  */
 package org.librecms.contenttypes;
 
+import com.arsdigita.cms.contenttypes.ui.EventPropertiesStep;
 import com.arsdigita.cms.ui.contenttypes.EventCreateForm;
 
 import java.io.Serializable;
@@ -53,8 +54,18 @@ import static org.librecms.CmsConstants.*;
 @Table(name = "EVENTS", schema = DB_SCHEMA)
 @ContentTypeDescription(labelBundle = "org.librecms.contenttypes.Event",
                         descriptionBundle = "org.librecms.contenttypes.Event")
-@AuthoringKit(createComponent = EventCreateForm.class,
-              steps = {})
+@AuthoringKit(
+    createComponent = EventCreateForm.class,
+    steps = {
+        @AuthoringStep(
+            component = EventPropertiesStep.class,
+            labelBundle = "org.librecms.CmsResources",
+            labelKey = "cms.contenttypes.shared.basic_properties.title",
+            descriptionBundle = "org.librecms.CmsResources",
+            descriptionKey = "cms.contenttypes.shared.basic_properties"
+                                 + ".description",
+            order = 1)
+    })
 public class Event extends ContentItem implements Serializable {
 
     private static final long serialVersionUID = -9104886733503414635L;

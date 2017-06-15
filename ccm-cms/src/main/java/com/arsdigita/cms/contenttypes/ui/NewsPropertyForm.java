@@ -47,16 +47,16 @@ import java.util.GregorianCalendar;
 
 /**
  * Form to edit the basic properties of a {@link News} item. These are name,
- * title, item date and reference code. Used by {@link NewsItemPropertiesStep}
+ * title, item date and reference code. Used by {@link NewsPropertiesStep}
  * authoring kit step.
  *
  * This form can be extended to create forms for NewsItem subclasses.
  *
  */
-public class NewsItemPropertyForm extends BasicPageForm
+public class NewsPropertyForm extends BasicPageForm
     implements FormProcessListener, FormInitListener, FormSubmissionListener {
 
-    private NewsItemPropertiesStep propertiesStep;
+    private NewsPropertiesStep propertiesStep;
     /**
      * lead parameter name
      */
@@ -80,7 +80,7 @@ public class NewsItemPropertyForm extends BasicPageForm
      * @param itemSelectionModel The ItemSelectionModel to use to obtain the
      *                           NewsItem to work on
      */
-    public NewsItemPropertyForm(final ItemSelectionModel itemSelectionModel) {
+    public NewsPropertyForm(final ItemSelectionModel itemSelectionModel) {
         this(itemSelectionModel, null);
     }
 
@@ -90,11 +90,11 @@ public class NewsItemPropertyForm extends BasicPageForm
      *
      * @param itemSelectionModel The ItemSelectionModel to use to obtain the
      *                           NewsItem to work on
-     * @param propertiesStep     The NewsItemPropertiesStep which controls this
-     *                           form.
+     * @param propertiesStep     The NewsPropertiesStep which controls this
+                           form.
      */
-    public NewsItemPropertyForm(final ItemSelectionModel itemSelectionModel,
-                                final NewsItemPropertiesStep propertiesStep) {
+    public NewsPropertyForm(final ItemSelectionModel itemSelectionModel,
+                                final NewsPropertiesStep propertiesStep) {
         super(ID, itemSelectionModel);
         this.propertiesStep = propertiesStep;
         addSubmissionListener(this);

@@ -219,13 +219,15 @@ public class ApplyWorkflowFormSection
 
         final Long workflowTemplateId = (Long) radioGroup.getValue(state);
         final Folder folder = creationSelector.getFolder(state);
-        
+
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final ApplyWorkflowController controller = cdiUtil
             .findBean(ApplyWorkflowController.class);
-            
-        controller.applyWorkflow(item, folder, workflowTemplateId);
-        
+
+        if (workflowTemplateId != null) {
+            controller.applyWorkflow(item, folder, workflowTemplateId);
+        }
+
 //        final WorkflowTemplate template;
 //
 //        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
@@ -268,7 +270,6 @@ public class ApplyWorkflowFormSection
 //                }
 //            }
 //        }
-
     }
 
     private class ApplyWorkflowPrintListener
