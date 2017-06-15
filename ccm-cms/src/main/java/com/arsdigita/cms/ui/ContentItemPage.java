@@ -74,6 +74,7 @@ import org.librecms.contentsection.ContentType;
 import org.librecms.dispatcher.ItemResolver;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
@@ -158,7 +159,7 @@ public class ContentItemPage extends CMSPage implements ActionListener {
     private final Link m_previewLink;
     private final GlobalNavigation m_globalNavigation;
     private final ContentItemContextBar m_contextBar;
-    
+
     private final StringParameter selectedLanguageParam;
 
     private class ItemRequestLocal extends ContentItemRequestLocal {
@@ -203,11 +204,14 @@ public class ContentItemPage extends CMSPage implements ActionListener {
         // Add the selected item language as parameter
         selectedLanguageParam = new StringParameter(
             SELECTED_LANGUAGE);
-        selectedLanguageParam.addParameterListener(new NotNullValidationListener(
-            SELECTED_LANGUAGE));
+        selectedLanguageParam.addParameterListener(
+            new NotNullValidationListener(
+                SELECTED_LANGUAGE));
         addGlobalStateParam(selectedLanguageParam);
         selectedLanguageModel = new ParameterSingleSelectionModel<>(
             selectedLanguageParam);
+        selectedLanguageParam
+            .setDefaultValue(KernelConfig.getConfig().getDefaultLanguage());
 
         // Add the content type global state parameter
         final LongParameter contentType = new LongParameter(CONTENT_TYPE);
@@ -633,14 +637,21 @@ public class ContentItemPage extends CMSPage implements ActionListener {
     @Override
     protected Element generateXMLHelper(final PageState state,
                                         final Document parent) {
+
+        Objects.requireNonNull(itemRequestLocal.getContentItem(state),
+                               "No ContentItem in current request.");
+
         final Element page = super.generateXMLHelper(state, parent);
         final Element contenttype = page.newChildElement("bebop:contentType",
                                                          BEBOP_XML_NS);
 
-        contenttype.setText(itemRequestLocal
-            .getContentItem(state)
-            .getContentType()
-            .getLabel().getValue(KernelConfig.getConfig().getDefaultLocale()));
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+
+        final ContentItemPageController controller = cdiUtil
+            .findBean(ContentItemPageController.class);
+        contenttype
+            .setText(controller
+                .getContentTypeLabel(itemRequestLocal.getContentItem(state)));
 
         return page;
     }
