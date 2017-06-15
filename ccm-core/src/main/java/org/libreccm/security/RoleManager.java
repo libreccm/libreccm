@@ -20,7 +20,11 @@ package org.libreccm.security;
 
 import org.libreccm.core.CoreConstants;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -125,11 +129,12 @@ public class RoleManager {
 
     /**
      * Determines if a role is assigned to a party.
-     *  
+     *
      * @param party The party to check.
-     * @param role The role to check.
+     * @param role  The role to check.
+     *
      * @return {@code true} if the provided {@code role} is assigned to the
-     * provided {@code party}.
+     *         provided {@code party}.
      */
     public boolean hasRole(final Party party, final Role role) {
         final TypedQuery<RoleMembership> query = entityManager
@@ -140,6 +145,42 @@ public class RoleManager {
 
         final List<RoleMembership> result = query.getResultList();
         return !result.isEmpty();
+    }
+
+    /**
+     * Finds all roles directly or indirectly assigned to a user.
+     *
+     * @param user The user
+     *
+     * @return A list of all roles assigned to the user or to a group the user
+     *         is a member of, sorted by name.
+     */
+    @Transactional(Transactional.TxType.REQUIRED)
+    public List<Role> findAllRolesForUser(final User user) {
+
+        final List<Role> directlyAssigned = user
+            .getRoleMemberships()
+            .stream()
+            .map(membership -> membership.getRole())
+            .collect(Collectors.toList());
+
+        final Set<Role> roles = new HashSet<>();
+
+        final List<Group> groups = user
+            .getGroupMemberships()
+            .stream()
+            .map(membership -> membership.getGroup())
+            .collect(Collectors.toList());
+
+        for (final Group group : groups) {
+            roles.addAll(group
+                .getRoleMemberships()
+                .stream()
+                .map(membership -> membership.getRole())
+                .collect(Collectors.toList()));
+        }
+        
+        return new ArrayList<>(roles);
     }
 
 }
