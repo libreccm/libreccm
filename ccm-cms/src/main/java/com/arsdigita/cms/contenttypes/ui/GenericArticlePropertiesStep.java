@@ -20,7 +20,6 @@ package com.arsdigita.cms.contenttypes.ui;
 
 import com.arsdigita.bebop.Component;
 import com.arsdigita.bebop.PageState;
-import com.arsdigita.bebop.PropertyEditor;
 
 import com.arsdigita.bebop.parameters.StringParameter;
 
@@ -78,7 +77,7 @@ public class GenericArticlePropertiesStep extends SimpleEditStep {
             editSheet.getSaveCancelSection().getCancelButton());
     }
 
-    protected void setDisplayComponent(ItemSelectionModel itemModel) {
+    protected void setDisplayComponent(final ItemSelectionModel itemModel) {
         setDisplayComponent(getGenericArticlePropertySheet(itemModel));
     }
 
@@ -97,8 +96,9 @@ public class GenericArticlePropertiesStep extends SimpleEditStep {
      *         release
      */
     public static Component getGenericArticlePropertySheet(
-        ItemSelectionModel itemModel) {
-        DomainObjectPropertySheet sheet = new DomainObjectPropertySheet(
+        final ItemSelectionModel itemModel) {
+        
+        final DomainObjectPropertySheet sheet = new DomainObjectPropertySheet(
             itemModel);
 
         sheet.add(new GlobalizedMessage("cms.contenttypes.ui.title",

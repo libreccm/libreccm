@@ -57,14 +57,14 @@ import java.util.Optional;
  * @see com.arsdigita.cms.contenttypes.NewsItem
  *
  */
-public class NewsItemPropertiesStep extends SimpleEditStep {
+public class NewsPropertiesStep extends SimpleEditStep {
 
     /**
      * The name of the editing sheet added to this step
      */
     public static String EDIT_SHEET_NAME = "edit";
 
-    public NewsItemPropertiesStep(final ItemSelectionModel itemModel,
+    public NewsPropertiesStep(final ItemSelectionModel itemModel,
                                   final AuthoringKitWizard parent,
                                   final StringParameter selectedLanguageParam) {
 
@@ -73,7 +73,7 @@ public class NewsItemPropertiesStep extends SimpleEditStep {
         setDefaultEditKey(EDIT_SHEET_NAME);
         BasicPageForm editSheet;
 
-        editSheet = new NewsItemPropertyForm(itemModel, this);
+        editSheet = new NewsPropertyForm(itemModel, this);
         add(EDIT_SHEET_NAME,
             new GlobalizedMessage("cms.ui.edit", CmsConstants.CMS_BUNDLE),
             new WorkflowLockedComponentAccess(editSheet, itemModel),
