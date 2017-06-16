@@ -20,7 +20,6 @@ import com.arsdigita.bebop.table.AbstractTableModelBuilder;
 import com.arsdigita.bebop.table.RowData;
 import com.arsdigita.bebop.table.TableModel;
 
-
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.util.Assert;
 
@@ -33,36 +32,36 @@ import java.util.Collections;
 import java.util.Iterator;
 import org.libreccm.workflow.WorkflowState;
 
-/**
- *
- *
- */
 class AssignedTaskTableModelBuilder extends AbstractTableModelBuilder {
 
-    private final WorkflowRequestLocal m_workflow;
+    private final WorkflowRequestLocal workflowRequestLocal;
 
-    public AssignedTaskTableModelBuilder(final WorkflowRequestLocal workflow) {
-        m_workflow = workflow;
+    public AssignedTaskTableModelBuilder(
+        final WorkflowRequestLocal workflowRequestLocal) {
+        this.workflowRequestLocal = workflowRequestLocal;
     }
 
     @Override
     public TableModel makeModel(final Table table, final PageState state) {
-        return new Model(m_workflow.getWorkflow(state));
+        return new AssignedTaskTableModel(workflowRequestLocal.getWorkflow(state));
     }
 
-    private static class Model implements TableModel {
+    private static class AssignedTaskTableModel implements TableModel {
 
         private final Iterator<RowData<Long>> m_iter;
 //        private CmsTask m_task;
         private RowData<Long> rowData;
 
-        Model(final Workflow workflow) {
+        AssignedTaskTableModel(final Workflow workflow) {
             Assert.exists(workflow, Workflow.class);
 
-            final CdiUtil cdiUtil= CdiUtil.createCdiUtil();
-            final WorkflowManager workflowManager = cdiUtil.findBean(WorkflowManager.class);
-    
-            if (workflow.getState() == WorkflowState.STARTED) {
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final WorkflowManager workflowManager = cdiUtil.findBean(
+                WorkflowManager.class);
+            final WorkflowState workflowState = workflowManager
+                .getWorkflowState(workflow);
+
+            if (workflowState == WorkflowState.STARTED) {
                 final AssignedTaskController controller = cdiUtil.findBean(
                     AssignedTaskController.class);
                 m_iter = controller.getAssignedTasks(workflow).iterator();
@@ -106,6 +105,7 @@ class AssignedTaskTableModelBuilder extends AbstractTableModelBuilder {
                         column));
             }
         }
+
     }
 
     protected final static GlobalizedMessage gz(final String key) {
@@ -115,4 +115,5 @@ class AssignedTaskTableModelBuilder extends AbstractTableModelBuilder {
     protected final static String lz(final String key) {
         return (String) gz(key).localize();
     }
+
 }

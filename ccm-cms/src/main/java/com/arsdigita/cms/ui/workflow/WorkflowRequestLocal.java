@@ -27,7 +27,14 @@ import java.util.Optional;
 
 public abstract class WorkflowRequestLocal extends RequestLocal {
 
+    @SuppressWarnings("unchecked")
     public final Workflow getWorkflow(final PageState state) {
-        return ((Optional<Workflow>) get(state)).get();
+        final Object object = get(state);
+        
+        if (object instanceof Optional) {
+            return ((Optional<Workflow>) object).get();
+        } else {
+            return (Workflow) object;
+        }
     }
 }
