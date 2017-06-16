@@ -32,6 +32,7 @@ import com.arsdigita.kernel.ui.ACSObjectSelectionModel;
 import com.arsdigita.util.UncheckedWrapperException;
 import com.arsdigita.xml.Element;
 
+import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.contenttypes.AuthoringKitInfo;
 import org.librecms.contenttypes.ContentTypeInfo;
 
@@ -109,18 +110,24 @@ public class WizardSelector extends AuthoringKitSelector
 
         final ContentItem item = itemSelectionModel.getSelectedObject(state);
 
-        final ContentType type = item.getContentType();
-        final String typeClass;
+//        final ContentType type = item.getContentType();
+//        final String typeClass;
+//
+//        if (type == null) {
+//            // Try to get the default content type
+//            typeClass = getComponentSelectionModel().getSelectedKey(state);
+//            if (typeClass == null || typeClass.isEmpty()) {
+//                throw new UncheckedWrapperException("Content type is missing");
+//            }
+//        } else {
+//            typeClass = type.getContentItemClass();
+//        }
 
-        if (type == null) {
-            // Try to get the default content type
-            typeClass = getComponentSelectionModel().getSelectedKey(state);
-            if (typeClass == null || typeClass.isEmpty()) {
-                throw new UncheckedWrapperException("Content type is missing");
-            }
-        } else {
-            typeClass = type.getContentItemClass();
-        }
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final WizardSelectorController controller = cdiUtil
+            .findBean(WizardSelectorController.class);
+        
+        final String typeClass = controller.getTypeClass(item);
 
         // Return the selected wizard
         return getComponent(typeClass);
