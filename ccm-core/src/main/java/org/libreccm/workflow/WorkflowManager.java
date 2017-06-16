@@ -68,7 +68,7 @@ import org.apache.shiro.subject.Subject;
 public class WorkflowManager {
 
     private final static Logger LOGGER = LogManager.getLogger(
-            WorkflowManager.class);
+        WorkflowManager.class);
 
     @Inject
     private EntityManager entityManager;
@@ -96,7 +96,7 @@ public class WorkflowManager {
     @PostConstruct
     private void init() {
         final KernelConfig kernelConfig = confManager.findConfiguration(
-                KernelConfig.class);
+            KernelConfig.class);
         defaultLocale = kernelConfig.getDefaultLocale();
     }
 
@@ -105,7 +105,8 @@ public class WorkflowManager {
      * provided {@link WorkflowTemplate}.
      *
      * @param template The template which is used to create the new workflow.
-     * @param object The object for which th workflow is generated.
+     * @param object   The object for which th workflow is generated.
+     *
      * @return The new workflow.
      */
     @AuthorizationRequired
@@ -115,24 +116,24 @@ public class WorkflowManager {
                                    final CcmObject object) {
         if (template == null) {
             throw new IllegalArgumentException(
-                    "Can't create a workflow without a template.");
+                "Can't create a workflow without a template.");
         }
 
         if (object == null) {
             throw new IllegalArgumentException(
-                    "Can't create a workflow without an object.");
+                "Can't create a workflow without an object.");
         }
 
         final Workflow workflow = new Workflow();
 
         final LocalizedString name = new LocalizedString();
         template.getName().getValues().forEach(
-                (locale, str) -> name.addValue(locale, str));
+            (locale, str) -> name.addValue(locale, str));
         workflow.setName(name);
 
         final LocalizedString description = new LocalizedString();
         template.getDescription().getValues().forEach(
-                (locale, str) -> description.addValue(locale, str));
+            (locale, str) -> description.addValue(locale, str));
         workflow.setDescription(description);
 
         final Map<Long, Task> tasks = new HashMap<>();
@@ -140,7 +141,7 @@ public class WorkflowManager {
         template.getTasks().forEach(taskTemplate -> createTask(taskTemplate,
                                                                tasks));
         template.getTasks().forEach(taskTemplate -> fixTaskDependencies(
-                taskTemplate, tasks.get(taskTemplate.getTaskId()), tasks));
+            taskTemplate, tasks.get(taskTemplate.getTaskId()), tasks));
 
         workflow.setObject(object);
         workflow.setState(WorkflowState.INIT);
@@ -151,6 +152,19 @@ public class WorkflowManager {
         return workflow;
     }
 
+    @Transactional(Transactional.TxType.REQUIRED)
+    public WorkflowState getWorkflowState(final Workflow workflow) {
+
+        // Get a non detached entity
+        final Workflow theWorkflow = workflowRepo
+            .findById(workflow.getWorkflowId())
+            .orElseThrow(() -> new IllegalArgumentException(String
+            .format("No Workflow with ID in the database.",
+                    workflow.getWorkflowId())));
+        
+        return theWorkflow.getState();
+    }
+
     /**
      * Helper method for
      * {@link #createWorkflow(org.libreccm.workflow.WorkflowTemplate, org.libreccm.core.CcmObject)}
@@ -158,7 +172,7 @@ public class WorkflowManager {
      * template.
      *
      * @param template The template for the task from the workflow template.
-     * @param tasks A map for storing the new tasks.
+     * @param tasks    A map for storing the new tasks.
      */
     private void createTask(final Task template, final Map<Long, Task> tasks) {
         final Class<? extends Task> templateClass = template.getClass();
@@ -177,14 +191,14 @@ public class WorkflowManager {
         }
 
         for (PropertyDescriptor propertyDesc : templateBeanInfo
-                .getPropertyDescriptors()) {
+            .getPropertyDescriptors()) {
             try {
                 if ("taskId".equals(propertyDesc.getName())
-                            || "workflow".equals(propertyDesc.getName())
-                            || "dependentTasks".equals(propertyDesc.getName())
-                            || "dependsOn".equals(propertyDesc.getName())
-                            || "assignments".equals(propertyDesc.getName())
-                            || "class".equals(propertyDesc.getName())) {
+                        || "workflow".equals(propertyDesc.getName())
+                        || "dependentTasks".equals(propertyDesc.getName())
+                        || "dependsOn".equals(propertyDesc.getName())
+                        || "assignments".equals(propertyDesc.getName())
+                        || "class".equals(propertyDesc.getName())) {
                     continue;
                 }
 
@@ -201,15 +215,15 @@ public class WorkflowManager {
                     final LocalizedString copy = new LocalizedString();
 
                     localized.getValues().forEach(
-                            (locale, str) -> copy.addValue(locale, str));
+                        (locale, str) -> copy.addValue(locale, str));
 
                     writeMethod.invoke(task, copy);
                 } else {
                     writeMethod.invoke(task, value);
                 }
             } catch (IllegalAccessException
-                             | IllegalArgumentException
-                             | InvocationTargetException ex) {
+                     | IllegalArgumentException
+                     | InvocationTargetException ex) {
                 throw new RuntimeException();
             }
 
@@ -231,15 +245,15 @@ public class WorkflowManager {
                                      final Task task,
                                      final Map<Long, Task> tasks) {
         if (template.getDependentTasks() != null
-                    && !template.getDependentTasks().isEmpty()) {
+                && !template.getDependentTasks().isEmpty()) {
             template.getDependentTasks().forEach(dependent
-                    -> task.addDependentTask(tasks.get(dependent.getTaskId())));
+                -> task.addDependentTask(tasks.get(dependent.getTaskId())));
         }
 
         if (template.getDependsOn() != null
-                    && !template.getDependsOn().isEmpty()) {
+                && !template.getDependsOn().isEmpty()) {
             template.getDependsOn().forEach(dependsOn
-                    -> task.addDependsOn(tasks.get(dependsOn.getTaskId())));
+                -> task.addDependsOn(tasks.get(dependsOn.getTaskId())));
         }
     }
 
@@ -247,23 +261,24 @@ public class WorkflowManager {
      * Finds the enabled {@link Task}s of a {@link Workflow}.
      *
      * @param workflow The workflow.
+     *
      * @return A unmodifiable list of the enabled tasks of the provided
-     * {@code workflow}.
+     *         {@code workflow}.
      */
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public List<Task> findEnabledTasks(final Workflow workflow) {
         if (workflow.getState() == WorkflowState.DELETED
-                    || workflow.getState() == WorkflowState.STOPPED) {
+                || workflow.getState() == WorkflowState.STOPPED) {
             LOGGER.debug(String.format("Workflow state is \"%s\". Workflow "
-                                               + "has no enabled tasks.",
+                                           + "has no enabled tasks.",
                                        workflow.getState().toString()));
             return Collections.emptyList();
         }
 
         final TypedQuery<Task> query = entityManager.createNamedQuery(
-                "Task.findEnabledTasks", Task.class);
+            "Task.findEnabledTasks", Task.class);
         query.setParameter("workflow", workflow);
 
         return Collections.unmodifiableList(query.getResultList());
@@ -273,15 +288,16 @@ public class WorkflowManager {
      * Finds the finished {@link Task}s of a workflow.
      *
      * @param workflow The workflow.
+     *
      * @return An unmodifiable list of the finished tasks of the provided
-     * {@code Workflow}.
+     *         {@code Workflow}.
      */
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public List<Task> findFinishedTasks(final Workflow workflow) {
         final TypedQuery<Task> query = entityManager.createNamedQuery(
-                "Task.findFinishedTasks", Task.class);
+            "Task.findFinishedTasks", Task.class);
         query.setParameter("workflow", workflow);
 
         return Collections.unmodifiableList(query.getResultList());
@@ -291,15 +307,16 @@ public class WorkflowManager {
      * Finds the {@link Task}s of a {@link Workflow} which are overdue.
      *
      * @param workflow The workflow.
+     *
      * @return A unmodifiable list of the overdue tasks of the provided
-     * {@code workflow}.
+     *         {@code workflow}.
      */
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public List<AssignableTask> findOverdueTasks(final Workflow workflow) {
         final TypedQuery<AssignableTask> query = entityManager.createNamedQuery(
-                "AssignableTask.findOverdueTasks", AssignableTask.class);
+            "AssignableTask.findOverdueTasks", AssignableTask.class);
         query.setParameter("workflow", workflow);
         query.setParameter("now", new Date());
 
@@ -342,7 +359,7 @@ public class WorkflowManager {
     private void updateState(final Workflow workflow) {
         if (workflow.getTasksState() == TaskState.ENABLED) {
             final TypedQuery<Long> query = entityManager.createNamedQuery(
-                    "Task.countUnfinishedAndActiveTasksForWorkflow", Long.class);
+                "Task.countUnfinishedAndActiveTasksForWorkflow", Long.class);
             query.setParameter("workflow", workflow);
 
             final Long result = query.getSingleResult();
@@ -356,7 +373,7 @@ public class WorkflowManager {
 
         if (workflow.getTasksState() == TaskState.FINISHED) {
             final TypedQuery<Long> query = entityManager.createNamedQuery(
-                    "Task.countUnfinishedTasksForWorkflow", Long.class);
+                "Task.countUnfinishedTasksForWorkflow", Long.class);
             query.setParameter("workflow", workflow);
 
             final Long result = query.getSingleResult();
@@ -391,8 +408,8 @@ public class WorkflowManager {
     public void finish(final Workflow workflow) {
         if (workflow.getTasksState() != TaskState.ENABLED) {
             throw new IllegalArgumentException(String.format(
-                    "Workflow \"%s\" is not enabled.",
-                    workflow.getName().getValue(defaultLocale)));
+                "Workflow \"%s\" is not enabled.",
+                workflow.getName().getValue(defaultLocale)));
         }
 
         workflow.setTasksState(TaskState.FINISHED);
@@ -427,7 +444,7 @@ public class WorkflowManager {
                 break;
             default:
                 LOGGER.debug("Workflow \"{}\" has tasksState \"{}\", "
-                                     + "#enable(Workflow) does nothing.",
+                                 + "#enable(Workflow) does nothing.",
                              workflow.getName().getValue(defaultLocale),
                              workflow.getTasksState());
                 break;

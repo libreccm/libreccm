@@ -25,7 +25,6 @@ import org.librecms.contentsection.ContentItem;
 
 import com.arsdigita.cms.ui.workflow.WorkflowRequestLocal;
 
-import org.libreccm.workflow.Workflow;
 
 public class ItemWorkflowRequestLocal extends WorkflowRequestLocal {
 
