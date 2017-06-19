@@ -21,17 +21,15 @@ package com.arsdigita.cms.ui.authoring;
 import com.arsdigita.bebop.Component;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.RequestLocal;
-import com.arsdigita.bebop.event.ActionEvent;
-import com.arsdigita.bebop.event.ActionListener;
 import com.arsdigita.bebop.form.Option;
 import com.arsdigita.bebop.form.SingleSelect;
 import com.arsdigita.bebop.parameters.LongParameter;
+import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.cms.ItemSelectionModel;
 
 import org.librecms.contenttypes.Article;
 
 import com.arsdigita.cms.ui.workflow.WorkflowLockedComponentAccess;
-import com.arsdigita.util.Assert;
 
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.l10n.LocalizedString;
@@ -64,9 +62,10 @@ public class GenericArticleBody extends TextAssetBody {
      *                           listener.
      */
     public GenericArticleBody(final ItemSelectionModel itemSelectionModel,
-                              final AuthoringKitWizard authoringKitWizard) {
+                              final AuthoringKitWizard authoringKitWizard,
+                              final StringParameter selectedLanguageParam) {
 
-        super(new ItemAssetModel(null));
+        super(new ItemAssetModel(null), selectedLanguageParam);
         this.itemSelectionModel = itemSelectionModel;
         this.authoringKitWizard = authoringKitWizard;
 

@@ -25,14 +25,21 @@ import org.librecms.contentsection.ContentItem;
 
 import com.arsdigita.cms.ui.workflow.WorkflowRequestLocal;
 
+import org.libreccm.cdi.utils.CdiUtil;
 
 public class ItemWorkflowRequestLocal extends WorkflowRequestLocal {
 
-
     @Override
     protected final Object initialValue(final PageState state) {
+
         final ContentItem item = CMS.getContext().getContentItem();
 
-        return item.getWorkflow();
+//        return item.getWorkflow();
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final ItemWorkflowRequestLocalHelper helper = cdiUtil
+            .findBean(ItemWorkflowRequestLocalHelper.class);
+
+        return helper.findWorkflowForContentItem(item);
     }
+
 }

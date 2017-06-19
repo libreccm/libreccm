@@ -152,19 +152,6 @@ public class WorkflowManager {
         return workflow;
     }
 
-    @Transactional(Transactional.TxType.REQUIRED)
-    public WorkflowState getWorkflowState(final Workflow workflow) {
-
-        // Get a non detached entity
-        final Workflow theWorkflow = workflowRepo
-            .findById(workflow.getWorkflowId())
-            .orElseThrow(() -> new IllegalArgumentException(String
-            .format("No Workflow with ID in the database.",
-                    workflow.getWorkflowId())));
-        
-        return theWorkflow.getState();
-    }
-
     /**
      * Helper method for
      * {@link #createWorkflow(org.libreccm.workflow.WorkflowTemplate, org.libreccm.core.CcmObject)}

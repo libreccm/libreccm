@@ -65,8 +65,8 @@ public class NewsPropertiesStep extends SimpleEditStep {
     public static String EDIT_SHEET_NAME = "edit";
 
     public NewsPropertiesStep(final ItemSelectionModel itemModel,
-                                  final AuthoringKitWizard parent,
-                                  final StringParameter selectedLanguageParam) {
+                              final AuthoringKitWizard parent,
+                              final StringParameter selectedLanguageParam) {
 
         super(itemModel, parent, selectedLanguageParam);
 
@@ -79,7 +79,9 @@ public class NewsPropertiesStep extends SimpleEditStep {
             new WorkflowLockedComponentAccess(editSheet, itemModel),
             editSheet.getSaveCancelSection().getCancelButton());
 
-        setDisplayComponent(getNewsDomainObjectPropertySheet(itemModel));
+        setDisplayComponent(getNewsDomainObjectPropertySheet(
+            itemModel,
+            selectedLanguageParam));
     }
 
     /**
@@ -94,10 +96,13 @@ public class NewsPropertiesStep extends SimpleEditStep {
      *
      */
     public static Component getNewsDomainObjectPropertySheet(
-        ItemSelectionModel itemModel) {
+        final ItemSelectionModel itemModel,
+        final StringParameter selectedLanguageParam) {
 
         final DomainObjectPropertySheet sheet = new DomainObjectPropertySheet(
-            itemModel);
+            itemModel,
+            false,
+            selectedLanguageParam);
 
         sheet.add(new GlobalizedMessage("cms.contenttypes.ui.title",
                                         CmsConstants.CMS_BUNDLE),
@@ -179,8 +184,8 @@ public class NewsPropertiesStep extends SimpleEditStep {
                     try {
                         result = readMethod.invoke(obj);
                     } catch (IllegalAccessException
-                                 | IllegalArgumentException
-                                 | InvocationTargetException ex) {
+                             | IllegalArgumentException
+                             | InvocationTargetException ex) {
                         throw new UnexpectedErrorException(ex);
                     }
 

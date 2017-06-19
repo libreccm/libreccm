@@ -461,6 +461,7 @@ public class MultilingualItemResolver implements ItemResolver {
      *
      * @return generated URL string
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     protected String generateDraftURL(final ContentSection section,
                                       final Long itemId) {
         if (LOGGER.isDebugEnabled()) {
@@ -504,6 +505,7 @@ public class MultilingualItemResolver implements ItemResolver {
      *         the given <code>section</code>, which will be presented within
      *         the given <code>templateContext</code>
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     protected String generateLiveURL(final ContentSection section,
                                      final ContentItem item,
                                      final String templateContext) {
@@ -555,6 +557,7 @@ public class MultilingualItemResolver implements ItemResolver {
      *
      * @return a URL which can be used to preview the given <code>item</code>
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     protected String generatePreviewURL(final ContentSection section,
                                         final ContentItem item,
                                         final String templateContext) {
@@ -595,6 +598,7 @@ public class MultilingualItemResolver implements ItemResolver {
      *         to, or <code>null</code> if no ID has been found in the
      *         <code>url</code>
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     protected ContentItem getItemFromDraftURL(final String url) {
         LOGGER.debug("Looking up the item from draft URL ", url);
 
@@ -640,6 +644,7 @@ public class MultilingualItemResolver implements ItemResolver {
      * @return The Content Item instance, it can also be either Bundle or Folder
      *         objects, depending on URL and file language extension
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     protected ContentItem getItemFromLiveURL(final String url,
                                              final Folder parentFolder) {
 
@@ -693,6 +698,7 @@ public class MultilingualItemResolver implements ItemResolver {
      * @return a two-element string array, the first element containing the
      *         bundle name, and the second element containing the lang string
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     protected String[] getNameAndLangFromURLFrag(final String url) {
         String name;
         String lang = null;
@@ -791,6 +797,7 @@ public class MultilingualItemResolver implements ItemResolver {
      *
      * @return The negotiated lang instance for the current request.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     protected ContentItem getItemFromLangAndBundle(final String lang,
                                                    final ContentItem item) {
         return item;
