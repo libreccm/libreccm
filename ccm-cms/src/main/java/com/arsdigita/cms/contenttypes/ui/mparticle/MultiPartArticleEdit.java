@@ -73,7 +73,8 @@ public class MultiPartArticleEdit extends SimpleEditStep {
         );
 
         setDisplayComponent(getMultiPartArticlePropertiesSheet(
-            itemSelectionModel));
+            itemSelectionModel,
+            selectedLanguageParam));
     }
 
     protected MultiPartArticleForm getForm(
@@ -83,10 +84,13 @@ public class MultiPartArticleEdit extends SimpleEditStep {
     }
 
     public Component getMultiPartArticlePropertiesSheet(
-        final ItemSelectionModel itemSelectionModel) {
+        final ItemSelectionModel itemSelectionModel,
+        final StringParameter selectedLanguageParam) {
 
         final DomainObjectPropertySheet sheet = new DomainObjectPropertySheet(
-            itemSelectionModel);
+            itemSelectionModel,
+            false,
+            selectedLanguageParam);
 
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final ConfigurationManager confManager = cdiUtil

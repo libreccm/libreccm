@@ -105,6 +105,7 @@ public abstract class TextAssetBody
     private static final CMSConfig CMS_CONFIG = CMSConfig.getConfig();
 
     private final StringParameter streamlinedCreationParam;
+    private final StringParameter selectedLanguageParam;
     private ItemSelectionModel assetModel;
 
     /**
@@ -112,9 +113,11 @@ public abstract class TextAssetBody
      *
      * @param assetModel The {@link ItemSelectionModel} which will be
      *                   responsible for maintaining the current asset
+     * @param selectedLanguageParam
      */
-    public TextAssetBody(final ItemSelectionModel assetModel) {
-        this(assetModel, null);
+    public TextAssetBody(final ItemSelectionModel assetModel,
+                         final StringParameter selectedLanguageParam) {
+        this(assetModel, null, selectedLanguageParam);
     }
 
     /**
@@ -126,9 +129,11 @@ public abstract class TextAssetBody
      *                           form may use the wizard's methods, such as
      *                           stepForward and stepBack, in its process
      *                           listener.
+     * @param selectedLangugeParam
      */
     public TextAssetBody(final ItemSelectionModel assetModel,
-                         final AuthoringKitWizard authoringKitWizard) {
+                         final AuthoringKitWizard authoringKitWizard,
+                         final StringParameter selectedLangugeParam) {
 
         super();
         this.assetModel = assetModel;
@@ -143,6 +148,8 @@ public abstract class TextAssetBody
                                   .getContentItemClass()
                                   .getName()));
         }
+        
+        this.selectedLanguageParam = selectedLangugeParam;
 
         if (!CMS_CONFIG.isHideTextAssetUploadFile()) {
             final PageFileForm pageFileForm = getPageFileForm();
@@ -182,7 +189,8 @@ public abstract class TextAssetBody
     protected DomainObjectPropertySheet getBodyPropertySheet(
         final ItemSelectionModel assetModel) {
 
-        return new TextAssetBodyPropertySheet(assetModel);
+        return new TextAssetBodyPropertySheet(assetModel,
+                                              selectedLanguageParam);
     }
 
     /**
@@ -698,7 +706,7 @@ public abstract class TextAssetBody
         pageTextForm.add(new Label(new GlobalizedMessage(
             "cms.ui.authoring.edit_body_text",
             CmsConstants.CMS_BUNDLE)),
-              ColumnPanel.LEFT | ColumnPanel.FULL_WIDTH);
+                         ColumnPanel.LEFT | ColumnPanel.FULL_WIDTH);
 
         pageTextForm.textWidget = new CMSDHTMLEditor(PageTextForm.TEXT_ENTRY);
         pageTextForm.textWidget.setRows(25);
@@ -709,7 +717,8 @@ public abstract class TextAssetBody
         pageTextForm.textWidget.setMetaDataAttribute("width", "575");
         pageTextForm.textWidget.setMetaDataAttribute("height", "500");
         pageTextForm.textWidget.setWrap(CMSDHTMLEditor.SOFT);
-        pageTextForm.add(pageTextForm.textWidget, ColumnPanel.LEFT | ColumnPanel.FULL_WIDTH);
+        pageTextForm.add(pageTextForm.textWidget, ColumnPanel.LEFT
+                                                  | ColumnPanel.FULL_WIDTH);
 
         pageTextForm.saveCancelSection = new SaveCancelSection();
         pageTextForm.add(pageTextForm.saveCancelSection, ColumnPanel.FULL_WIDTH);
@@ -717,9 +726,10 @@ public abstract class TextAssetBody
         // optionally, we clear the text of MSWord tags every time
         // the text is submitted/saved
         if (CMSConfig.getConfig().isSaveTextCleansWordTags()) {
-            pageTextForm.saveCancelSection.getSaveButton().setOnClick("wordClean_"
-                                                               + PageTextForm.TEXT_ENTRY
-                                                           + "();");
+            pageTextForm.saveCancelSection.getSaveButton().setOnClick(
+                "wordClean_"
+                    + PageTextForm.TEXT_ENTRY
+                    + "();");
         }
 
         pageTextForm.addInitListener(pageTextForm);

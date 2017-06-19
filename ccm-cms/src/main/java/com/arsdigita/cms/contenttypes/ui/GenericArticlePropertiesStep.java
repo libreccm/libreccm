@@ -51,7 +51,7 @@ public class GenericArticlePropertiesStep extends SimpleEditStep {
     public static final String EDIT_SHEET_NAME = "edit";
 
     private DomainObjectPropertySheet domainObjectPropertySheet;
-    
+
     private StringParameter selectedLanguageParam;
 
     public GenericArticlePropertiesStep(
@@ -78,28 +78,34 @@ public class GenericArticlePropertiesStep extends SimpleEditStep {
     }
 
     protected void setDisplayComponent(final ItemSelectionModel itemModel) {
-        setDisplayComponent(getGenericArticlePropertySheet(itemModel));
+        setDisplayComponent(getGenericArticlePropertySheet(
+            itemModel,
+            selectedLanguageParam));
     }
 
     protected StringParameter getSelectedLanguageParam() {
         return selectedLanguageParam;
     }
-    
+
     /**
      * Returns a component that displays the properties of the Article specified
      * by the ItemSelectionModel passed in.
      *
-     * @param itemModel The ItemSelectionModel to use
+     * @param itemModel             The ItemSelectionModel to use
+     * @param selectedLanguageParam
      *
      * @pre itemModel != null
      * @return A component to display the state of the basic properties of the
      *         release
      */
     public static Component getGenericArticlePropertySheet(
-        final ItemSelectionModel itemModel) {
-        
+        final ItemSelectionModel itemModel,
+        final StringParameter selectedLanguageParam) {
+
         final DomainObjectPropertySheet sheet = new DomainObjectPropertySheet(
-            itemModel);
+            itemModel,
+            false,
+            selectedLanguageParam);
 
         sheet.add(new GlobalizedMessage("cms.contenttypes.ui.title",
                                         CmsConstants.CMS_BUNDLE),

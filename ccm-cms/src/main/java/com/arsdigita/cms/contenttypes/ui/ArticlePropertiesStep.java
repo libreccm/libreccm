@@ -22,7 +22,6 @@ import com.arsdigita.bebop.Component;
 import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.cms.ItemSelectionModel;
 
-
 import com.arsdigita.cms.ui.authoring.AuthoringKitWizard;
 import com.arsdigita.cms.ui.authoring.BasicPageForm;
 import com.arsdigita.cms.ui.workflow.WorkflowLockedComponentAccess;
@@ -43,7 +42,7 @@ public class ArticlePropertiesStep extends GenericArticlePropertiesStep {
      * The name of the editing sheet added to this step
      */
     public final static String EDIT_SHEET_NAME = "edit";
-    
+
     private StringParameter selectedLanuageParam;
 
     public ArticlePropertiesStep(final ItemSelectionModel itemModel,
@@ -63,8 +62,10 @@ public class ArticlePropertiesStep extends GenericArticlePropertiesStep {
     }
 
     @Override
-    protected void setDisplayComponent(final ItemSelectionModel itemModel) {
-        setDisplayComponent(getArticlePropertySheet(itemModel));
+    protected void setDisplayComponent(
+        final ItemSelectionModel itemModel) {
+        setDisplayComponent(getArticlePropertySheet(itemModel, 
+                                                    selectedLanuageParam));
     }
 
     /**
@@ -78,11 +79,13 @@ public class ArticlePropertiesStep extends GenericArticlePropertiesStep {
      *         release
      */
     public static Component getArticlePropertySheet(
-        final ItemSelectionModel itemModel) {
+        final ItemSelectionModel itemModel,
+        final StringParameter selectedLanguageParam) {
 
         final DomainObjectPropertySheet sheet
                                             = (DomainObjectPropertySheet) getGenericArticlePropertySheet(
-                itemModel);
+                itemModel,
+                selectedLanguageParam);
 
         sheet.add(new GlobalizedMessage("cms.contenttypes.ui.lead",
                                         CmsConstants.CMS_BUNDLE),

@@ -22,7 +22,6 @@ import com.arsdigita.bebop.Component;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.parameters.StringParameter;
 
-
 import com.arsdigita.cms.ItemSelectionModel;
 
 import org.librecms.contenttypes.Event;
@@ -92,7 +91,8 @@ public class EventPropertiesStep extends SimpleEditStep {
             new WorkflowLockedComponentAccess(editSheet, itemSelectionModel),
             editSheet.getSaveCancelSection().getCancelButton());
 
-        setDisplayComponent(getEventPropertySheet(itemSelectionModel));
+        setDisplayComponent(getEventPropertySheet(itemSelectionModel,
+                                                  selectedLanguageParam));
     }
 
     /**
@@ -106,10 +106,13 @@ public class EventPropertiesStep extends SimpleEditStep {
      *
      */
     public static Component getEventPropertySheet(
-        final ItemSelectionModel itemSelectionModel) {
+        final ItemSelectionModel itemSelectionModel,
+        final StringParameter selectedLanguageParam) {
 
         final DomainObjectPropertySheet sheet = new DomainObjectPropertySheet(
-            itemSelectionModel);
+            itemSelectionModel,
+            false,
+            selectedLanguageParam);
 
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final ConfigurationManager confManager = cdiUtil
@@ -236,8 +239,8 @@ public class EventPropertiesStep extends SimpleEditStep {
                     try {
                         result = readMethod.invoke(obj);
                     } catch (IllegalAccessException
-                                 | IllegalArgumentException
-                                 | InvocationTargetException ex) {
+                             | IllegalArgumentException
+                             | InvocationTargetException ex) {
                         throw new UnexpectedErrorException(ex);
                     }
 
