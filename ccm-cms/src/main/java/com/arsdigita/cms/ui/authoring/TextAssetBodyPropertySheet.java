@@ -32,9 +32,9 @@ import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.bebop.table.TableModel;
 import com.arsdigita.bebop.table.TableModelBuilder;
 import com.arsdigita.bebop.Table;
+import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.cms.ItemSelectionModel;
 
-import org.libreccm.core.CcmObject;
 import org.libreccm.l10n.LocalizedString;
 
 /**
@@ -49,11 +49,14 @@ public class TextAssetBodyPropertySheet extends DomainObjectPropertySheet {
      *
      * @param objModel The selection model which feeds domain objects to this
      *                 property sheet.
+     * @param selectedLanguageParam
      *
      */
-    public TextAssetBodyPropertySheet(final ItemSelectionModel objModel) {
+    public TextAssetBodyPropertySheet(
+        final ItemSelectionModel objModel,
+        final StringParameter selectedLanguageParam) {
 
-        super(objModel);
+        super(objModel, false, selectedLanguageParam);
         setModelBuilder(new TMBAdapter(new DomainObjectModelBuilder()));
         getColumn(1).setCellRenderer(new TextAssetBodyLabelCellRenderer());
     }
@@ -64,7 +67,6 @@ public class TextAssetBodyPropertySheet extends DomainObjectPropertySheet {
 
 //        public final static String MIME_TYPE_KEY
 //                                   = TextAssetBodyLabelCellRenderer.MIME_TYPE_KEY;
-
         private static final String ERROR = "No current property. "
                                                 + "Make sure that nextRow() was "
                                             + "called at least once.";
@@ -74,7 +76,7 @@ public class TextAssetBodyPropertySheet extends DomainObjectPropertySheet {
         private Iterator<Property> properties;
         private Property currentProperty;
 
-        public TextAssetBodyPropertiesModel(final LocalizedString textAsset, 
+        public TextAssetBodyPropertiesModel(final LocalizedString textAsset,
                                             final Iterator<Property> properties,
                                             final PageState pageState) {
             this.textAsset = textAsset;
@@ -85,7 +87,7 @@ public class TextAssetBodyPropertySheet extends DomainObjectPropertySheet {
 
         @Override
         public boolean nextRow() {
-            
+
             if (properties.hasNext()) {
                 currentProperty = properties.next();
                 return true;
@@ -135,10 +137,11 @@ public class TextAssetBodyPropertySheet extends DomainObjectPropertySheet {
         implements PropertySheetModelBuilder {
 
         @Override
-        public PropertySheetModel makeModel(final PropertySheet sheet, 
+        public PropertySheetModel makeModel(final PropertySheet sheet,
                                             final PageState state) {
-            
-            TextAssetBodyPropertySheet propSheet = (TextAssetBodyPropertySheet) sheet;
+
+            TextAssetBodyPropertySheet propSheet
+                                       = (TextAssetBodyPropertySheet) sheet;
             throw new UnsupportedOperationException("ToDo");
         }
 
@@ -156,7 +159,7 @@ public class TextAssetBodyPropertySheet extends DomainObjectPropertySheet {
         }
 
         @Override
-        public TableModel makeModel(final Table table, 
+        public TableModel makeModel(final Table table,
                                     final PageState state) {
             return new TableModelAdapter(
                 (TextAssetBodyPropertiesModel) modelBuilder.makeModel(
@@ -179,7 +182,7 @@ public class TextAssetBodyPropertySheet extends DomainObjectPropertySheet {
 
         public TableModelAdapter(
             final TextAssetBodyPropertiesModel propertiesModel) {
-            
+
             this.propertiesModel = propertiesModel;
             row = -1;
         }

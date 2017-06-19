@@ -18,9 +18,16 @@
  */
 package com.arsdigita.cms.ui;
 
+import com.arsdigita.bebop.PageState;
+import com.arsdigita.cms.dispatcher.CMSDispatcher;
+
 import org.libreccm.l10n.GlobalizationHelper;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemRepository;
+import org.librecms.contentsection.ContentSection;
+import org.librecms.contentsection.ContentSectionManager;
+import org.librecms.contentsection.ContentSectionRepository;
+import org.librecms.dispatcher.ItemResolver;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -31,27 +38,59 @@ import javax.transaction.Transactional;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-public class ContentItemPageController {
-    
+class ContentItemPageController {
+
     @Inject
     private GlobalizationHelper globalizationHelper;
-    
+
+    @Inject
+    private ContentSectionRepository sectionRepo;
+
+    @Inject
+    private ContentSectionManager sectionManager;
     @Inject
     private ContentItemRepository itemRepo;
-    
+
     @Transactional(Transactional.TxType.REQUIRED)
-    public String getContentTypeLabel(final ContentItem item) {
-        
+    protected String getContentTypeLabel(final ContentItem item) {
+
         final ContentItem theItem = itemRepo
-        .findById(item.getObjectId())
-        .orElseThrow(() -> new IllegalArgumentException(String
+            .findById(item.getObjectId())
+            .orElseThrow(() -> new IllegalArgumentException(String
             .format("No ContentItem with ID %d in the database.",
                     item.getObjectId())));
-        
+
         return theItem
             .getContentType()
             .getLabel()
             .getValue(globalizationHelper.getNegotiatedLocale());
     }
-    
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    protected String getDefaultPreviewLink(final ContentSection section,
+                                           final ContentItem item,
+                                           final PageState state) {
+
+        final ContentSection contentSection = sectionRepo
+            .findById(section.getObjectId())
+            .orElseThrow(() -> new IllegalArgumentException(String
+            .format("No ContentSectio with ID %d in the database.",
+                    section.getObjectId())));
+
+        final ContentItem contentItem = itemRepo
+            .findById(item.getObjectId())
+            .orElseThrow(() -> new IllegalArgumentException(String
+            .format("No ContentItem with ID %d in the database.",
+                    item.getObjectId())));
+        
+        final ItemResolver itemResolver = sectionManager
+            .getItemResolver(contentSection);
+        
+        return itemResolver.generateItemURL(state, 
+                                            contentItem, 
+                                            contentSection, 
+                                            CMSDispatcher.PREVIEW);
+
+    }
+
 }

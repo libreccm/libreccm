@@ -592,16 +592,20 @@ public class ContentItemPage extends CMSPage implements ActionListener {
                                          final ContentItem item) {
         final ContentSection section = CMS.getContext().getContentSection();
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-        final ContentSectionManager sectionManager = cdiUtil.findBean(
-            ContentSectionManager.class);
-        final ItemResolver itemResolver = sectionManager
-            .getItemResolver(section);
+//        final ContentSectionManager sectionManager = cdiUtil.findBean(
+//            ContentSectionManager.class);
+//        final ItemResolver itemResolver = sectionManager
+//            .getItemResolver(section);
 
         // Pass in the "Live" context since we need it for the preview
-        return itemResolver.generateItemURL(state,
-                                            item,
-                                            section,
-                                            CMSDispatcher.PREVIEW);
+//        return itemResolver.generateItemURL(state,
+//                                            item,
+//                                            section,
+//                                            CMSDispatcher.PREVIEW);
+        final ContentItemPageController controller = cdiUtil
+            .findBean(ContentItemPageController.class);
+
+        return controller.getDefaultPreviewLink(section, item, state);
     }
 
     protected final static GlobalizedMessage gz(final String key) {
