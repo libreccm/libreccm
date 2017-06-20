@@ -47,6 +47,8 @@ public abstract class ListOptionPrintListener<T> implements PrintListener {
         final OptionGroup target = (OptionGroup) event.getTarget();
         final List<T> dataQuery = getDataQuery(state);
 
+        target.clearOptions();
+        
         dataQuery.forEach(item -> target.addOption(
             new Option(getKey(item),
                        getValue(item))));
