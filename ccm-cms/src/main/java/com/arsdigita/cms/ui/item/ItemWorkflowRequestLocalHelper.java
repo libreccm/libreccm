@@ -40,7 +40,7 @@ class ItemWorkflowRequestLocalHelper {
 
     @Inject
     private ContentItemRepository itemRepo;
-    
+
     @Inject
     private WorkflowRepository workflowRepo;
 
@@ -53,12 +53,17 @@ class ItemWorkflowRequestLocalHelper {
             .format("No ContentItem with ID %d in the database.",
                     item.getObjectId())));
 
-        final Workflow workflow = workflowRepo
-            .findById(contentItem.getWorkflow().getWorkflowId())
-            .orElseThrow(() -> new IllegalArgumentException(String
-            .format("No Workflow with ID %d in the database.",
-                    contentItem.getWorkflow().getWorkflowId())));
-        
+        final Workflow workflow;
+        if (contentItem.getWorkflow() == null) {
+            workflow = null;
+        } else {
+            workflow = workflowRepo
+                .findById(contentItem.getWorkflow().getWorkflowId())
+                .orElseThrow(() -> new IllegalArgumentException(String
+                .format("No Workflow with ID %d in the database.",
+                        contentItem.getWorkflow().getWorkflowId())));
+        }
+
         return workflow;
     }
 
