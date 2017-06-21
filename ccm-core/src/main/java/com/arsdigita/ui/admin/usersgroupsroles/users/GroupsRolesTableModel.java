@@ -22,6 +22,7 @@ import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.table.TableModel;
 import com.arsdigita.globalization.GlobalizedMessage;
 
+import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.User;
 
 import java.util.ArrayList;
@@ -32,8 +33,8 @@ import java.util.Set;
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
- * Model for the {@link GroupsRolesTable}. 
- * 
+ * Model for the {@link GroupsRolesTable}.
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class GroupsRolesTableModel implements TableModel {
@@ -89,19 +90,13 @@ class GroupsRolesTableModel implements TableModel {
             case COL_LABEL:
                 return new Label(new GlobalizedMessage("ui.admin.user.groups",
                                                        ADMIN_BUNDLE));
-            case COL_VALUE:
-                final List<String> groupNames = new ArrayList<>();
-                user.getGroupMemberships().forEach(m -> {
-                    groupNames.add(m.getGroup().getName());
-                });
+            case COL_VALUE: {
+                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+                final UsersGroupsRolesController controller = cdiUtil
+                    .findBean(UsersGroupsRolesController.class);
 
-                groupNames.sort((name1, name2) -> {
-                    return name1.compareTo(name2);
-                });
-
-                return String.join(
-                    ", ", groupNames.toArray(new String[groupNames.size()]));
-
+                return controller.getNamesOfAssignedGroups(user);
+            }
             case COL_ACTION:
                 return new Label(new GlobalizedMessage(
                     "ui.admin.user.groups.edit", ADMIN_BUNDLE));
@@ -115,19 +110,13 @@ class GroupsRolesTableModel implements TableModel {
             case COL_LABEL:
                 return new Label(new GlobalizedMessage("ui.admin.user.roles",
                                                        ADMIN_BUNDLE));
-            case COL_VALUE:
-                final List<String> roleNames = new ArrayList<>();
-                user.getRoleMemberships().forEach(m -> {
-                    roleNames.add(m.getRole().getName());
-                });
+            case COL_VALUE: {
+                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+                final UsersGroupsRolesController controller = cdiUtil
+                    .findBean(UsersGroupsRolesController.class);
 
-                roleNames.sort((name1, name2) -> {
-                    return name1.compareTo(name2);
-                });
-
-                return String.join(
-                    ", ", roleNames.toArray(new String[roleNames.size()]));
-
+                return controller.getNamesOfAssignedGroups(user);
+            }
             case COL_ACTION:
                 return new Label(new GlobalizedMessage(
                     "ui.admin.user.roles.edit", ADMIN_BUNDLE));
@@ -141,26 +130,13 @@ class GroupsRolesTableModel implements TableModel {
             case COL_LABEL:
                 return new Label(new GlobalizedMessage(
                     "ui.admin.user.all_roles", ADMIN_BUNDLE));
-            case COL_VALUE:
-                final Set<String> roleNames = new HashSet<>();
-                user.getRoleMemberships().forEach(m -> {
-                    roleNames.add(m.getRole().getName());
-                });
+            case COL_VALUE: {
+                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+                final UsersGroupsRolesController controller = cdiUtil
+                    .findBean(UsersGroupsRolesController.class);
 
-                user.getGroupMemberships().forEach(m -> {
-                    m.getGroup().getRoleMemberships().forEach(r -> {
-                        roleNames.add(r.getRole().getName());
-                    });
-                });
-
-                final List<String> allRoleNames = new ArrayList<>(roleNames);
-                allRoleNames.sort((name1, name2) -> {
-                    return name1.compareTo(name2);
-                });
-
-                return String.join(", ", allRoleNames.toArray(
-                                   new String[allRoleNames.size()]));
-
+                return controller.getNamesOfAllAssignedRoles(user);
+            }
             case COL_ACTION:
                 return "";
             default:

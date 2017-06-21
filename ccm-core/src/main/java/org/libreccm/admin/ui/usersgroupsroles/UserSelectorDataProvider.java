@@ -30,7 +30,6 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
@@ -63,7 +62,8 @@ public class UserSelectorDataProvider extends AbstractDataProvider<User, String>
         final Root<User> from = criteriaQuery.from(User.class);
 
         criteriaQuery = criteriaQuery.select(builder.count(from));
-
+        criteriaQuery = criteriaQuery.distinct(true);
+        
         if (userNameFilter != null && !userNameFilter.trim().isEmpty()) {
             criteriaQuery
                 .where(builder.like(builder.lower(from.get("name")),
@@ -84,9 +84,10 @@ public class UserSelectorDataProvider extends AbstractDataProvider<User, String>
     @Override
     public Stream<User> fetch(final Query<User, String> query) {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        final CriteriaQuery<User> criteriaQuery = builder
+        CriteriaQuery<User> criteriaQuery = builder
             .createQuery(User.class);
         final Root<User> from = criteriaQuery.from(User.class);
+        criteriaQuery = criteriaQuery.distinct(true);
 
         if (userNameFilter != null && !userNameFilter.trim().isEmpty()) {
             criteriaQuery
