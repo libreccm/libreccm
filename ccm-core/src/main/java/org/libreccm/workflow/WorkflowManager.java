@@ -132,16 +132,24 @@ public class WorkflowManager {
         workflow.setName(name);
 
         final LocalizedString description = new LocalizedString();
-        template.getDescription().getValues().forEach(
-            (locale, str) -> description.addValue(locale, str));
+        template
+            .getDescription()
+            .getValues()
+            .forEach((locale, str) -> description.addValue(locale, str));
         workflow.setDescription(description);
 
         final Map<Long, Task> tasks = new HashMap<>();
 
-        template.getTasks().forEach(taskTemplate -> createTask(taskTemplate,
-                                                               tasks));
-        template.getTasks().forEach(taskTemplate -> fixTaskDependencies(
-            taskTemplate, tasks.get(taskTemplate.getTaskId()), tasks));
+        template
+            .getTasks()
+            .forEach(taskTemplate -> createTask(workflow, taskTemplate, tasks));
+        template
+            .getTasks()
+            .forEach(taskTemplate -> {
+                fixTaskDependencies(taskTemplate,
+                                    tasks.get(taskTemplate.getTaskId()), 
+                                    tasks);
+            });
 
         workflow.setObject(object);
         workflow.setState(WorkflowState.INIT);
@@ -161,7 +169,10 @@ public class WorkflowManager {
      * @param template The template for the task from the workflow template.
      * @param tasks    A map for storing the new tasks.
      */
-    private void createTask(final Task template, final Map<Long, Task> tasks) {
+    private void createTask(final Workflow workflow, 
+                            final Task template, 
+                            final Map<Long, Task> tasks) {
+        
         final Class<? extends Task> templateClass = template.getClass();
         final Task task;
         try {
@@ -214,6 +225,8 @@ public class WorkflowManager {
                 throw new RuntimeException();
             }
 
+            workflow.addTask(task);
+            task.setWorkflow(workflow);
             tasks.put(template.getTaskId(), task);
         }
     }
