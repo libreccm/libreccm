@@ -38,6 +38,8 @@ import com.arsdigita.util.Assert;
 
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.l10n.GlobalizationHelper;
+import org.libreccm.workflow.WorkflowTemplate;
+import org.libreccm.workflow.WorkflowTemplateRepository;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemInitializer;
@@ -215,25 +217,48 @@ public class PageCreateForm
 
         Assert.exists(section, ContentSection.class);
 
-        final ContentItem item = createContentPage(state,
-                                                   (String) data.get(NAME),
-                                                   section,
-                                                   folder,
-                                                   getItemInitializer(data,
-                                                                      state));
+        final Long selectedWorkflowTemplateId = workflowSection
+            .getSelectedWorkflowTemplateId(state);
+
+        final ContentItem item;
+        if (selectedWorkflowTemplateId == null) {
+            item = createContentPage(state,
+                                     (String) data.get(NAME),
+                                     section,
+                                     folder,
+                                     getItemInitializer(data, state));
+        } else {
+
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final WorkflowTemplateRepository workflowTemplateRepo = cdiUtil
+                .findBean(WorkflowTemplateRepository.class);
+            final WorkflowTemplate workflowTemplate = workflowTemplateRepo
+                .findById(selectedWorkflowTemplateId)
+                .orElseThrow(() -> new IllegalArgumentException(String.format(
+                "No WorkflowTemplate with ID %d in the database.",
+                selectedWorkflowTemplateId)));
+
+            item = createContentItemPage(state,
+                                         (String) data.get(NAME),
+                                         section,
+                                         folder,
+                                         workflowTemplate,
+                                         getItemInitializer(data, state));
+        }
+
         final Locale locale = new Locale((String) data.get(LANGUAGE));
         item.getName().addValue(locale, (String) data.get(NAME));
         item.getTitle().addValue(locale, (String) data.get(TITLE));
 
-        workflowSection.applyWorkflow(state, item);
-
+//        workflowSection.applyWorkflow(state, item);
         creationSelector.editItem(state, item);
     }
 
     protected ContentItemInitializer<?> getItemInitializer(
         final FormData data, final PageState state) {
-        
-        return item -> {};
+
+        return item -> {
+        };
     }
 
     private class ContentTypePrintListener implements PrintListener {

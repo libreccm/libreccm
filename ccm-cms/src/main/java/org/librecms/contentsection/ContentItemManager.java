@@ -72,7 +72,6 @@ import javax.transaction.Transactional;
 import org.libreccm.security.PermissionChecker;
 import org.librecms.contentsection.privileges.TypePrivileges;
 
-
 /**
  * Manager class providing several methods to manipulate {@link ContentItem}s.
  *
@@ -200,7 +199,7 @@ public class ContentItemManager {
                                  initalizer);
     }
 
-     /**
+    /**
      * Creates a new content item in the provided content section and folder
      * with specific workflow.
      *
@@ -320,15 +319,15 @@ public class ContentItemManager {
         item.setContentType(contentType.get());
 
         if (workflowTemplate != null) {
-            final Workflow workflow = workflowManager.createWorkflow(
-                workflowTemplate, item);
+            final Workflow workflow = workflowManager
+                .createWorkflow(workflowTemplate, item);
             item.setWorkflow(workflow);
         }
 
         if (initializer != null) {
             initializer.initializeValues(item);
         }
-        
+
         contentItemRepo.save(item);
 
         categoryManager.addObjectToCategory(
@@ -337,6 +336,10 @@ public class ContentItemManager {
             CATEGORIZATION_TYPE_FOLDER);
 
         contentItemRepo.save(item);
+        
+        if (item.getWorkflow() != null) {
+            workflowManager.start(item.getWorkflow());
+        }
 
         return item;
     }
@@ -878,8 +881,8 @@ public class ContentItemManager {
 
         liveItem.setLifecycle(lifecycle);
         liveItem.setWorkflow(draftItem.getWorkflow());
-        
-                final BeanInfo beanInfo;
+
+        final BeanInfo beanInfo;
         try {
             beanInfo = Introspector.getBeanInfo(item.getClass());
         } catch (IntrospectionException ex) {
@@ -1012,12 +1015,12 @@ public class ContentItemManager {
                 throw new RuntimeException(ex);
             }
         });
-        
+
         draftItem.getCategories().forEach(categorization -> categoryManager
             .addObjectToCategory(liveItem,
                                  categorization.getCategory(),
                                  categorization.getType()));
-        
+
         for (int i = 0; i < draftItem.getAttachments().size(); i++) {
             final AttachmentList sourceList = draftItem.getAttachments().get(i);
 
