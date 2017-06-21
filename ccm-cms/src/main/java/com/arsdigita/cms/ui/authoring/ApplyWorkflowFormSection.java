@@ -43,16 +43,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.PermissionChecker;
-import org.libreccm.workflow.AssignableTask;
-import org.libreccm.workflow.AssignableTaskManager;
-import org.libreccm.workflow.Workflow;
-import org.libreccm.workflow.WorkflowManager;
 import org.libreccm.workflow.WorkflowTemplate;
-import org.libreccm.workflow.WorkflowTemplateRepository;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.privileges.ItemPrivileges;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.TooManyListenersException;
 
@@ -206,6 +200,10 @@ public class ApplyWorkflowFormSection
         return result;
     }
 
+    public Long getSelectedWorkflowTemplateId(final PageState state) {
+        return (Long) radioGroup.getValue(state);
+    }
+    
     /**
      * Apply the proper initial workflow to the item. If the user has
      * SecurityConstants.APPLY_ALTERNATE_WORKFLOWS permission on the parent
