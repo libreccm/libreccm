@@ -71,7 +71,7 @@ public class AssignableTaskRepository
         final User user, final Workflow workflow) {
         final TypedQuery<AssignableTask> query = getEntityManager()
             .createNamedQuery(
-                "UserTask.findEnabledTasksForWorkflow", AssignableTask.class);
+                "AssignableTask.findEnabledTasksForWorkflow", AssignableTask.class);
         query.setParameter("user", user);
         query.setParameter("workflow", workflow);
 
@@ -82,7 +82,7 @@ public class AssignableTaskRepository
                                                  final Workflow workflow) {
         final TypedQuery<AssignableTask> query = getEntityManager()
             .createNamedQuery(
-                "UserTask.findAssignedTasks", AssignableTask.class);
+                "AssignableTask.findAssignedTasks", AssignableTask.class);
         final List<Role> roles = user.getRoleMemberships()
             .stream()
             .map(membership -> membership.getRole())

@@ -33,6 +33,6 @@ public class ToolboxConstants {
     }
 
     public static final String TOOLBOX_BUNDLE
-                               = "com.arsdigita.toolbox.ui.ToolboxResources";
+                               = "com.arsdigita.toolbox.ToolboxResources";
 
 }

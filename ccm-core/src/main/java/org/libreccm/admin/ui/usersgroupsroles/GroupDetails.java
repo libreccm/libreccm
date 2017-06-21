@@ -203,6 +203,7 @@ public class GroupDetails extends Window {
                     });
                 }));
             userSelector.center();
+            userSelector.setWidth("80%");
             UI.getCurrent().addWindow(userSelector);
         });
         final HeaderCell membersGridHeaderCell = membersGridHeader
