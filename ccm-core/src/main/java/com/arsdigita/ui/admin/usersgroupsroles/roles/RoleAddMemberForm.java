@@ -162,6 +162,9 @@ class RoleAddMemberForm extends Form {
                     switch (event.getColumn()) {
                         case COL_MEMBER_ADD:
                             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+                            
+                            final RolesController controller = cdiUtil
+                            .findBean(RolesController.class);
                             final PartyRepository partyRepository = cdiUtil
                                 .findBean(PartyRepository.class);
                             final RoleRepository roleRepository = cdiUtil
@@ -170,10 +173,12 @@ class RoleAddMemberForm extends Form {
                                 RoleManager.class);
                             final Party party = partyRepository.findById(
                                 Long.parseLong(key)).get();
+                            
                             final Role role = roleRepository.findById(
                                 Long.parseLong(
                                     selectedRoleId.getSelectedKey(state))).get();
-                            roleManager.assignRoleToParty(role, party);
+                            controller.assignRoleToParty(role, party);
+                            
                             roleAdmin.hideRoleMemberAddForm(state);
                             break;
                         default:

@@ -129,19 +129,20 @@ class RoleMembershipsForm extends Form {
         saveCancelSection = new SaveCancelSection();
         add(saveCancelSection);
 
-        addInitListener(e -> {
+        addInitListener(event -> {
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final UserRepository userRepository = cdiUtil.findBean(
-                UserRepository.class);
+            final UserRepository userRepository = cdiUtil
+                .findBean(UserRepository.class);
+            final UsersController controller = cdiUtil
+                .findBean(UsersController.class);
 
-            final PageState state = e.getPageState();
+            final PageState state = event.getPageState();
 
-            final User user = userRepository.findById(Long.parseLong(
-                selectedUserId.getSelectedKey(state))).get();
-            final List<Role> assignedRoles = new ArrayList<>();
-            user.getRoleMemberships().forEach(m -> {
-                assignedRoles.add(m.getRole());
-            });
+            final User user = userRepository
+                .findById(Long.parseLong(selectedUserId.getSelectedKey(state)))
+                .get();
+            final List<Role> assignedRoles = controller
+                .getAssignedRoles(user);
 
             final String[] selectedRoles = new String[assignedRoles.size()];
             IntStream.range(0, assignedRoles.size()).forEach(i -> {
@@ -152,56 +153,65 @@ class RoleMembershipsForm extends Form {
             roles.setValue(state, selectedRoles);
         });
 
-        addProcessListener(e -> {
-            final PageState state = e.getPageState();
+        addProcessListener(event -> {
+            final PageState state = event.getPageState();
 
             if (saveCancelSection.getSaveButton().isSelected(state)) {
 
-                final FormData data = e.getFormData();
+                final FormData data = event.getFormData();
 
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-                final UserRepository userRepository = cdiUtil.findBean(
-                    UserRepository.class);
-                final RoleRepository roleRepository = cdiUtil.findBean(
-                    RoleRepository.class);
-                final RoleManager roleManager = cdiUtil.findBean(
-                    RoleManager.class);
+                final UserRepository userRepository = cdiUtil
+                    .findBean(UserRepository.class);
+                final RoleRepository roleRepository = cdiUtil
+                    .findBean(RoleRepository.class);
+                final RoleManager roleManager = cdiUtil
+                    .findBean(RoleManager.class);
+                final UsersController controller = cdiUtil
+                    .findBean(UsersController.class);
 
-                final String[] selectedRolesIds = (String[]) data.get(
-                    ROLES_SELECTOR);
+                final String[] selectedRolesIds = (String[]) data
+                    .get(ROLES_SELECTOR);
 
-                final User user = userRepository.findById(Long.parseLong(
-                    selectedUserId.getSelectedKey(state))).get();
+                final User user = userRepository
+                    .findById(Long
+                        .parseLong(selectedUserId.getSelectedKey(state)))
+                    .get();
                 final List<Role> selectedRoles = new ArrayList<>();
                 if (selectedRolesIds != null) {
-                    Arrays.stream(selectedRolesIds).forEach(id -> {
-                        final Role role = roleRepository.findById(
-                            Long.parseLong(id)).get();
-                        selectedRoles.add(role);
-                    });
+                    Arrays
+                        .stream(selectedRolesIds)
+                        .forEach(id -> {
+                            final Role role = roleRepository
+                                .findById(Long.parseLong(id))
+                                .get();
+                            selectedRoles.add(role);
+                        });
                 }
-                final List<Role> assignedRoles = new ArrayList<>();
-                user.getRoleMemberships().forEach(m -> {
-                    assignedRoles.add(m.getRole());
-                });
-
-                //First check for newly added roles
-                selectedRoles.forEach(r -> {
-                    if (!assignedRoles.contains(r)) {
-                        roleManager.assignRoleToParty(r, user);
-                    }
-                });
-
-                //Than check for removed roles
-                assignedRoles.forEach(r -> {
-                    if (!selectedRoles.contains(r)) {
-                        //Role is maybe detached or not fully loaded, 
-                        //therefore we load the role from the database.
-                        final Role role = roleRepository.findById(r.getRoleId())
-                            .get();
-                        roleManager.removeRoleFromParty(role, user);
-                    }
-                });
+                
+                controller.updateAssignedRoles(user, selectedRoles);
+                
+//                final List<Role> assignedRoles = controller
+//                    .getAssignedRoles(user);
+//
+//                //First check for newly added roles
+//                selectedRoles.forEach(role -> {
+//                    if (!assignedRoles.contains(role)) {
+//                        roleManager.assignRoleToParty(role, user);
+//                    }
+//                });
+//
+//                //Than check for removed roles
+//                assignedRoles.forEach(role -> {
+//                    if (!selectedRoles.contains(role)) {
+//                        //Role is maybe detached or not fully loaded, 
+//                        //therefore we load the role from the database.
+//                        final Role roleToRemove = roleRepository
+//                            .findById(role.getRoleId())
+//                            .get();
+//                        roleManager.removeRoleFromParty(roleToRemove, user);
+//                    }
+//                });
             }
 
             userAdmin.closeEditRoleMembershipsForm(state);

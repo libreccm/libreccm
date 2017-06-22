@@ -20,12 +20,14 @@ package com.arsdigita.ui.admin.usersgroupsroles.users;
 
 import org.libreccm.security.Group;
 import org.libreccm.security.GroupMembership;
+import org.libreccm.security.Party;
 import org.libreccm.security.Role;
+import org.libreccm.security.RoleManager;
 import org.libreccm.security.RoleMembership;
+import org.libreccm.security.RoleRepository;
 import org.libreccm.security.User;
 import org.libreccm.security.UserRepository;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -41,10 +43,36 @@ import javax.transaction.Transactional;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-class UsersGroupsRolesController {
+class UsersController {
 
     @Inject
     private UserRepository userRepo;
+
+    @Inject
+    private RoleRepository roleRepo;
+
+    @Inject
+    private RoleManager roleManager;
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    protected List<Group> getAssignedGroups(final User user) {
+
+        final User theUser = userRepo
+            .findById(user.getPartyId())
+            .orElseThrow(() -> new IllegalArgumentException(String
+            .format("No User with ID %d in the database.",
+                    user.getPartyId())));
+
+        return theUser
+            .getGroupMemberships()
+            .stream()
+            .map(GroupMembership::getGroup)
+            .sorted((group1, group2) -> {
+                return group1.getName().compareTo(group2.getName());
+            })
+            .collect(Collectors.toList());
+
+    }
 
     @Transactional(Transactional.TxType.REQUIRED)
     protected String getNamesOfAssignedGroups(final User user) {
@@ -65,7 +93,27 @@ class UsersGroupsRolesController {
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
-    public String getNamesOfAssignedRoles(final User user) {
+    protected List<Role> getAssignedRoles(final User user) {
+
+        final User theUser = userRepo
+            .findById(user.getPartyId())
+            .orElseThrow(() -> new IllegalArgumentException(String
+            .format("No User with ID %d in the database.",
+                    user.getPartyId())));
+
+        return theUser
+            .getRoleMemberships()
+            .stream()
+            .map(RoleMembership::getRole)
+            .sorted((role1, role2) -> {
+                return role1.getName().compareTo(role2.getName());
+            })
+            .collect(Collectors.toList());
+
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    protected String getNamesOfAssignedRoles(final User user) {
 
         final User theUser = userRepo
             .findById(user.getPartyId())
@@ -84,7 +132,7 @@ class UsersGroupsRolesController {
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
-    public String getNamesOfAllAssignedRoles(final User user) {
+    protected String getNamesOfAllAssignedRoles(final User user) {
 
         final User theUser = userRepo
             .findById(user.getPartyId())
@@ -116,6 +164,55 @@ class UsersGroupsRolesController {
                 .map(Role::getName)
                 .sorted((name1, name2) -> name1.compareTo(name2)))
             .collect(Collectors.joining(", "));
+    }
+
+    
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    protected void updateAssignedRoles(final User user,
+                                       final List<Role> selectedRoles) {
+
+        final User theUser = userRepo
+            .findById(user.getPartyId())
+            .orElseThrow(() -> new IllegalArgumentException(String
+            .format("No User with ID %d in the database.",
+                    user.getPartyId())));
+
+        final List<Role> assignedRoles = getAssignedRoles(user);
+
+        //First check for newly added role
+        selectedRoles
+            .stream()
+            .filter(role -> !assignedRoles.contains(role))
+            .forEach(role -> assignRoleToParty(role, theUser));
+
+        //Than check for removed roles
+        assignedRoles
+            .stream()
+            .filter(role -> !selectedRoles.contains(role))
+            .forEach(role -> removeRoleFromParty(role, theUser));
+    }
+
+    private void assignRoleToParty(final Role role, final Party party) {
+
+        final Role roleToAdd = roleRepo
+            .findById(role.getRoleId())
+            .orElseThrow(() -> new IllegalArgumentException(String
+            .format("No Role with ID %d in the database.",
+                    role.getRoleId())));
+
+        roleManager.assignRoleToParty(roleToAdd, party);
+    }
+
+    private void removeRoleFromParty(final Role role, final Party party) {
+
+        final Role roleToRemove = roleRepo
+            .findById(role.getRoleId())
+            .orElseThrow(() -> new IllegalArgumentException(String
+            .format("No Role with ID %d in the database.",
+                    role.getRoleId())));
+
+        roleManager.removeRoleFromParty(roleToRemove, party);
     }
 
 }
