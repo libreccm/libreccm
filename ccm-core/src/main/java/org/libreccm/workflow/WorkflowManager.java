@@ -49,7 +49,9 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+
 import org.apache.shiro.subject.Subject;
+import org.libreccm.security.Role;
 
 /**
  * Manager for {@link Workflow}s. The logic of some of these classes has been
@@ -81,6 +83,9 @@ public class WorkflowManager {
 
     @Inject
     private TaskManager taskManager;
+
+    @Inject
+    private AssignableTaskManager assignableTaskManager;
 
     @Inject
     private Shiro shiro;
@@ -138,6 +143,8 @@ public class WorkflowManager {
             .forEach((locale, str) -> description.addValue(locale, str));
         workflow.setDescription(description);
 
+        workflowRepo.save(workflow);
+
         final Map<Long, Task> tasks = new HashMap<>();
 
         template
@@ -147,7 +154,7 @@ public class WorkflowManager {
             .getTasks()
             .forEach(taskTemplate -> {
                 fixTaskDependencies(taskTemplate,
-                                    tasks.get(taskTemplate.getTaskId()), 
+                                    tasks.get(taskTemplate.getTaskId()),
                                     tasks);
             });
 
@@ -169,10 +176,10 @@ public class WorkflowManager {
      * @param template The template for the task from the workflow template.
      * @param tasks    A map for storing the new tasks.
      */
-    private void createTask(final Workflow workflow, 
-                            final Task template, 
+    private void createTask(final Workflow workflow,
+                            final Task template,
                             final Map<Long, Task> tasks) {
-        
+
         final Class<? extends Task> templateClass = template.getClass();
         final Task task;
         try {
@@ -224,10 +231,24 @@ public class WorkflowManager {
                      | InvocationTargetException ex) {
                 throw new RuntimeException();
             }
+        }
 
-            workflow.addTask(task);
-            task.setWorkflow(workflow);
-            tasks.put(template.getTaskId(), task);
+        workflow.addTask(task);
+        task.setWorkflow(workflow);
+        tasks.put(template.getTaskId(), task);
+
+        if (template instanceof AssignableTask) {
+            final AssignableTask assignableTemplate
+                                     = (AssignableTask) template;
+            final AssignableTask assignableTask = (AssignableTask) task;
+
+            assignableTemplate
+                .getAssignments()
+                .stream()
+                .map(TaskAssignment::getRole)
+                .forEach(role -> {
+                    assignableTaskManager.assignTask(assignableTask, role);
+                });
         }
     }
 
