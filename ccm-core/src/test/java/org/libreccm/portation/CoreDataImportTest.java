@@ -52,8 +52,8 @@ import static org.libreccm.testutils.DependenciesHelpers.getModuleDependencies;
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
 @CreateSchema({"create_ccm_core_schema.sql"})
-/*@CleanupUsingScript(value = {"cleanup.sql"},
-                    phase = TestExecutionPhase.BEFORE)*/
+@CleanupUsingScript(value = {"cleanup.sql"},
+                    phase = TestExecutionPhase.BEFORE)
 public class CoreDataImportTest {
 
     @Inject
@@ -122,82 +122,12 @@ public class CoreDataImportTest {
 
     @Test
     @InSequence(100)
-    public void usersShouldBeImported() {
-        Assert.assertFalse(
-                importHelper.importUsers() &&
-                        importHelper.importGroups());
-    }
-
-    @Test
-    @InSequence(105)
-    public void groupsShouldBeImported() {
-    }
-
-    /*@Test
-    @InSequence(100)
-    public void categoriesShouldBeImported() {
-        Assert.assertFalse(importHelper.importCategories());
-    }
-
-    @Test
-    @InSequence(105)
-    public void  roleMembershipsShouldBeImported() {
-        Assert.assertFalse(importHelper.importRoleMemberships());
-    }
-
-    @Test
-    @InSequence(110)
-    public void groupMembershipsShouldBeImported() {
+    public void objectsShouldBeImported() {
+        // assert for no errors
+        Assert.assertFalse(importHelper.importUsers());
+        Assert.assertFalse(importHelper.importGroups());
         Assert.assertFalse(importHelper.importGroupMemberships());
+
     }
-
-
-
-
-
-    @Test
-    @InSequence(125)
-    public void taskAssignmentsMembershipsShouldBeImported() {
-        importHelper.importTaskAssignments();
-    }
-
-    @Test
-    @InSequence(130)
-    public void assignableTasksShouldBeImported() {
-        importHelper.importAssignableTasks();
-    }
-
-    @Test
-    @InSequence(135)
-    public void workflowTemplatesShouldBeImported() {
-        importHelper.importWorkflowTemplates();
-    }
-
-    @Test
-    @InSequence(140)
-    public void workflowsShouldBeImported() {
-        importHelper.importWorkflows();
-    }
-
-    @Test
-    @InSequence(145)
-    public void categorizationsShouldBeImported() {
-        importHelper.importCategorizations();
-    }
-
-    @Test
-    @InSequence(150)
-    public void PermissionsShouldBeImported() {
-        importHelper.importPermissions();
-    }
-
-
-
-    @Test
-    @InSequence(160)
-    public void rolesShouldBeImported() {
-        importHelper.importRoles();
-    }
-*/
 
 }
