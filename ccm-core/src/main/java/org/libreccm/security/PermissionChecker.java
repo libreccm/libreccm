@@ -79,7 +79,7 @@ public class PermissionChecker {
             if (shiro.isSystemUser()) {
                 return true;
             } else {
-                return subject.isPermitted(generatePermissionString(privilege));
+                 return subject.isPermitted(generatePermissionString(privilege));
             }
         } else {
             return shiro.getPublicUser().isPermitted(generatePermissionString(

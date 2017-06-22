@@ -92,8 +92,8 @@ class GroupsRolesTableModel implements TableModel {
                                                        ADMIN_BUNDLE));
             case COL_VALUE: {
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-                final UsersGroupsRolesController controller = cdiUtil
-                    .findBean(UsersGroupsRolesController.class);
+                final UsersController controller = cdiUtil
+                    .findBean(UsersController.class);
 
                 return controller.getNamesOfAssignedGroups(user);
             }
@@ -112,8 +112,8 @@ class GroupsRolesTableModel implements TableModel {
                                                        ADMIN_BUNDLE));
             case COL_VALUE: {
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-                final UsersGroupsRolesController controller = cdiUtil
-                    .findBean(UsersGroupsRolesController.class);
+                final UsersController controller = cdiUtil
+                    .findBean(UsersController.class);
 
                 return controller.getNamesOfAssignedGroups(user);
             }
@@ -132,8 +132,8 @@ class GroupsRolesTableModel implements TableModel {
                     "ui.admin.user.all_roles", ADMIN_BUNDLE));
             case COL_VALUE: {
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-                final UsersGroupsRolesController controller = cdiUtil
-                    .findBean(UsersGroupsRolesController.class);
+                final UsersController controller = cdiUtil
+                    .findBean(UsersController.class);
 
                 return controller.getNamesOfAllAssignedRoles(user);
             }

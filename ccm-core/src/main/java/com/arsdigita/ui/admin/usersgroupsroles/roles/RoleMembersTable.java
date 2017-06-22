@@ -34,6 +34,7 @@ import com.arsdigita.bebop.table.TableModelBuilder;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.util.LockableImpl;
 
+import org.libreccm.admin.ui.usersgroupsroles.UsersGroupsRoles;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.Group;
 import org.libreccm.security.Party;
@@ -50,7 +51,7 @@ import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
  * Table showing all members (users or groups) of a role.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class RoleMembersTable extends Table {
@@ -121,7 +122,8 @@ class RoleMembersTable extends Table {
                         final Party party = partyRepository.findById(Long
                             .parseLong(key)).get();
                         final Role role = roleRepository.findById(
-                            Long.parseLong(selectedRoleId.getSelectedKey(state))).get();
+                            Long.parseLong(selectedRoleId.getSelectedKey(state)))
+                            .get();
                         roleManager.removeRoleFromParty(role, party);
                         break;
                     default:
@@ -170,20 +172,25 @@ class RoleMembersTable extends Table {
             final ParameterSingleSelectionModel<String> selectedRoleId,
             final PageState state) {
 
-            final RoleRepository roleRepository = CdiUtil.createCdiUtil()
+             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final RoleRepository roleRepository = cdiUtil
                 .findBean(RoleRepository.class);
             final Role role = roleRepository.findById(Long.parseLong(
                 selectedRoleId.getSelectedKey(state))).get();
+//
+//            members = new ArrayList<>();
+//
+//            role.getMemberships().forEach(m -> {
+//                members.add(m.getMember());
+//            });
+//
+//            members.sort((m1, m2) -> {
+//                return m1.getName().compareTo(m2.getName());
+//            });
 
-            members = new ArrayList<>();
-
-            role.getMemberships().forEach(m -> {
-                members.add(m.getMember());
-            });
-
-            members.sort((m1, m2) -> {
-                return m1.getName().compareTo(m2.getName());
-            });
+            final RolesController controller = cdiUtil
+                .findBean(RolesController.class);
+            members = controller.getMembersOfRole(role);
         }
 
         @Override
