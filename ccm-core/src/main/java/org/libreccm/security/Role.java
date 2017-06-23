@@ -159,7 +159,7 @@ public class Role implements Serializable, Portable {
     @Column(name = "NAME", length = 512, nullable = false)
     @Field
     @NotBlank
-    @Pattern(regexp = "[a-zA-Z0-9\\-_]*")
+//    @Pattern(regexp = "[a-zA-Z0-9\\-_]*")
     @XmlElement(name = "name", namespace = CORE_XML_NS)
     private String name;
 

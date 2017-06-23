@@ -20,9 +20,9 @@ package org.libreccm.security;
 
 import com.fasterxml.jackson.annotation.ObjectIdGenerator;
 import com.fasterxml.jackson.annotation.ObjectIdResolver;
+import org.libreccm.cdi.utils.CdiUtil;
 
 import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
 
 /**
  * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
@@ -30,8 +30,6 @@ import javax.inject.Inject;
  */
 @RequestScoped
 public class UserIdResolver implements ObjectIdResolver {
-    @Inject
-    private UserRepository userRepository;
 
     @Override
     public void bindItem(final ObjectIdGenerator.IdKey id,
@@ -43,7 +41,15 @@ public class UserIdResolver implements ObjectIdResolver {
 
     @Override
     public Object resolveId(final ObjectIdGenerator.IdKey id) {
-        return userRepository.findByName(id.key.toString());
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final UserRepository userRepo = cdiUtil
+                .findBean(UserRepository.class);
+
+        return userRepo
+                .findByName(id.key.toString())
+                .orElseThrow(() -> new IllegalArgumentException(String
+                .format("No User with name %s in the database.",
+                        id.key.toString())));
     }
 
     @Override
