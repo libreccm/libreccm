@@ -164,7 +164,7 @@ public class Category extends CcmObject implements Serializable, Portable {
      */
     @Column(name = "NAME", nullable = false)
     @NotBlank
-    @Pattern(regexp = "[\\w-.]*")
+//    @Pattern(regexp = "[\\w-.]*")
     @XmlElement(name = "name", namespace = CAT_XML_NS)
     private String name;
 
