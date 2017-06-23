@@ -83,6 +83,8 @@ public class CoreDataImportTest {
                                 "CoreDataImportTest.war")
                 .addPackage(org.libreccm.categorization.Category
                         .class.getPackage())
+                .addPackage(org.libreccm.cdi.utils.CdiUtil
+                        .class.getPackage())
                 .addPackage(org.libreccm.core.CcmObject
                         .class.getPackage())
                 .addPackage(org.libreccm.l10n.LocalizedString
@@ -127,6 +129,9 @@ public class CoreDataImportTest {
         Assert.assertFalse(importHelper.importUsers());
         Assert.assertFalse(importHelper.importGroups());
         Assert.assertFalse(importHelper.importGroupMemberships());
+        Assert.assertFalse(importHelper.importRoles());
+        Assert.assertFalse(importHelper.importRoleMemberships());
+        //Assert.assertFalse(importHelper.importCategories());
 
     }
 

@@ -20,9 +20,9 @@ package org.libreccm.categorization;
 
 import com.fasterxml.jackson.annotation.ObjectIdGenerator;
 import com.fasterxml.jackson.annotation.ObjectIdResolver;
+import org.libreccm.cdi.utils.CdiUtil;
 
 import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
 
 /**
  * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
@@ -30,8 +30,6 @@ import javax.inject.Inject;
  */
 @RequestScoped
 public class CategoryIdResolver implements ObjectIdResolver {
-    @Inject
-    private CategoryRepository categoryRepository;
 
     @Override
     public void bindItem(ObjectIdGenerator.IdKey idKey,
@@ -43,7 +41,15 @@ public class CategoryIdResolver implements ObjectIdResolver {
 
     @Override
     public Object resolveId(ObjectIdGenerator.IdKey id) {
-        return categoryRepository.findByUuid(id.key.toString());
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final CategoryRepository categoryRepository = cdiUtil
+                .findBean(CategoryRepository.class);
+
+        return categoryRepository
+                .findByUuid(id.key.toString())
+                .orElseThrow(() -> new IllegalArgumentException(String
+                .format("No Category with uuid %s in the database.",
+                        id.key.toString())));
     }
 
     @Override

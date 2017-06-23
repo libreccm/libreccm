@@ -20,16 +20,13 @@ package org.libreccm.security;
 
 import com.fasterxml.jackson.annotation.ObjectIdGenerator;
 import com.fasterxml.jackson.annotation.ObjectIdResolver;
-
-import javax.inject.Inject;
+import org.libreccm.cdi.utils.CdiUtil;
 
 /**
  * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
  * @version created on 3/23/17
  */
 public class RoleIdResolver implements ObjectIdResolver {
-    @Inject
-    private RoleRepository roleRepository;
 
     @Override
     public void bindItem(final ObjectIdGenerator.IdKey id,
@@ -41,7 +38,15 @@ public class RoleIdResolver implements ObjectIdResolver {
 
     @Override
     public Object resolveId(final ObjectIdGenerator.IdKey id) {
-        return roleRepository.findByName(id.key.toString());
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final RoleRepository roleRepository = cdiUtil
+                .findBean(RoleRepository.class);
+
+        return roleRepository
+                .findByName(id.key.toString())
+                .orElseThrow(() -> new IllegalArgumentException(String
+                .format("No Role with name %s in the database.",
+                        id.key.toString())));
     }
 
     @Override
