@@ -50,6 +50,9 @@ public class RoleManager {
 
     @Inject
     private EntityManager entityManager;
+    
+    @Inject
+    private PermissionChecker permissionChecker;
 
     /**
      * Assigns a role to a party and saves the changed {@code Role} and
