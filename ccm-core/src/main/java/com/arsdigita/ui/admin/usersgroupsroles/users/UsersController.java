@@ -21,6 +21,7 @@ package com.arsdigita.ui.admin.usersgroupsroles.users;
 import org.libreccm.security.Group;
 import org.libreccm.security.GroupMembership;
 import org.libreccm.security.Party;
+import org.libreccm.security.PermissionChecker;
 import org.libreccm.security.Role;
 import org.libreccm.security.RoleManager;
 import org.libreccm.security.RoleMembership;
@@ -53,6 +54,9 @@ class UsersController {
 
     @Inject
     private RoleManager roleManager;
+
+    @Inject
+    private PermissionChecker permissionChecker;
 
     @Transactional(Transactional.TxType.REQUIRED)
     protected List<Group> getAssignedGroups(final User user) {
@@ -166,8 +170,6 @@ class UsersController {
             .collect(Collectors.joining(", "));
     }
 
-    
-
     @Transactional(Transactional.TxType.REQUIRED)
     protected void updateAssignedRoles(final User user,
                                        final List<Role> selectedRoles) {
@@ -179,17 +181,24 @@ class UsersController {
                     user.getPartyId())));
 
         final List<Role> assignedRoles = getAssignedRoles(user);
+        final List<Long> assignedRolesIds = getAssignedRoles(user)
+            .stream()
+            .map(Role::getRoleId)
+            .collect(Collectors.toList());
+        final List<Long> selectedRolesIds = selectedRoles
+            .stream()
+            .map(Role::getRoleId)
+            .collect(Collectors.toList());
 
         //First check for newly added role
         selectedRoles
             .stream()
-            .filter(role -> !assignedRoles.contains(role))
+            .filter(role -> !assignedRolesIds.contains(role.getRoleId()))
             .forEach(role -> assignRoleToParty(role, theUser));
 
-        //Than check for removed roles
         assignedRoles
             .stream()
-            .filter(role -> !selectedRoles.contains(role))
+            .filter(role -> !selectedRolesIds.contains(role.getRoleId()))
             .forEach(role -> removeRoleFromParty(role, theUser));
     }
 
