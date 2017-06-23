@@ -102,17 +102,18 @@ public final class AssignedTaskTable extends Table {
                                             final int column) {
             // SF patch [ 1587168 ] Show locking user
             final BoxPanel panel = new BoxPanel();
-            final User lockingUser = (User) value;
-            if (lockingUser != null) {
+            final String lockingUserName = (String) value;
+            if (lockingUserName != null) {
                 final StringBuilder sb = new StringBuilder("Locked by <br />");
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
                 final Shiro shiro = cdiUtil.findBean(Shiro.class);
-                if (lockingUser.equals(shiro.getUser())) {
+                if (shiro.getUser().isPresent()
+                    && lockingUserName.equals(shiro.getUser().get().getName())) {
                     sb.append("you");
                     panel.add(new ControlLink(new Label(
                             gz("cms.ui.workflow.task.unlock"))));
                 } else {
-                    sb.append(lockingUser.getName());
+                    sb.append(lockingUserName);
                     panel.add(new ControlLink(new Label(
                             gz("cms.ui.workflow.task.takeover"))));
                 }
