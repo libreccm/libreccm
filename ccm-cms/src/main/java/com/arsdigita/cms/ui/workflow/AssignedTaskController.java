@@ -54,25 +54,24 @@ public class AssignedTaskController {
 
     @Inject
     private Shiro shiro;
-    
+
     @Inject
     private ConfigurationManager confManager;
-    
+
     private Locale defaultLocale;
-    
+
     @PostConstruct
     private void init() {
         final KernelConfig kernelConfig = confManager.findConfiguration(
             KernelConfig.class);
         defaultLocale = kernelConfig.getDefaultLocale();
     }
-    
 
     @Transactional(Transactional.TxType.REQUIRED)
     public List<RowData<Long>> getAssignedTasks(final Workflow workflow) {
         final User user = shiro.getUser().get();
         final List<AssignableTask> tasks = userTaskRepo.getAssignedTasks(user,
-                                                                   workflow);
+                                                                         workflow);
 
         return tasks
             .stream()
@@ -82,24 +81,22 @@ public class AssignedTaskController {
     }
 
     private RowData<Long> createRowData(final AssignableTask task) {
-        
-        
+
         final RowData<Long> rowData = new RowData<>(3);
-        
+
         rowData.setRowKey(task.getTaskId());
-        
+
         // Change when Workflow forms provide fields to enter localised label.
         rowData.setColData(0, task.getLabel().getValue(defaultLocale));
-        
+
         if (task.isLocked()) {
             rowData.setColData(1, task.getLockingUser().getName());
         } else {
-            rowData.setColData(1,"");
+            rowData.setColData(1, "");
         }
-        
+
         rowData.setColData(2, "");
-        
-        
+
         return rowData;
     }
 

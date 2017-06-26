@@ -20,18 +20,20 @@ package org.libreccm.workflow;
 
 import org.libreccm.core.AbstractEntityRepository;
 import org.libreccm.security.Role;
+import org.libreccm.security.RoleMembership;
 import org.libreccm.security.User;
 
 import javax.enterprise.context.RequestScoped;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
  * Repository for assignable tasks.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
@@ -56,7 +58,8 @@ public class AssignableTaskRepository
      * @return An optional either with the found item or empty
      */
     public Optional<AssignableTask> findByUuid(final String uuid) {
-        final TypedQuery<AssignableTask> query = getEntityManager().createNamedQuery(
+        final TypedQuery<AssignableTask> query = getEntityManager()
+            .createNamedQuery(
                 "AssignableTask.findByUuid", AssignableTask.class);
         query.setParameter("uuid", uuid);
 
@@ -71,7 +74,8 @@ public class AssignableTaskRepository
         final User user, final Workflow workflow) {
         final TypedQuery<AssignableTask> query = getEntityManager()
             .createNamedQuery(
-                "AssignableTask.findEnabledTasksForWorkflow", AssignableTask.class);
+                "AssignableTask.findEnabledTasksForWorkflow",
+                AssignableTask.class);
         query.setParameter("user", user);
         query.setParameter("workflow", workflow);
 
@@ -81,11 +85,12 @@ public class AssignableTaskRepository
     public List<AssignableTask> getAssignedTasks(final User user,
                                                  final Workflow workflow) {
         final TypedQuery<AssignableTask> query = getEntityManager()
-            .createNamedQuery(
-                "AssignableTask.findAssignedTasks", AssignableTask.class);
-        final List<Role> roles = user.getRoleMemberships()
+            .createNamedQuery("AssignableTask.findAssignedTasks",
+                              AssignableTask.class);
+        final List<Role> roles = user
+            .getRoleMemberships()
             .stream()
-            .map(membership -> membership.getRole())
+            .map(RoleMembership::getRole)
             .collect(Collectors.toList());
 
         query.setParameter("roles", roles);
