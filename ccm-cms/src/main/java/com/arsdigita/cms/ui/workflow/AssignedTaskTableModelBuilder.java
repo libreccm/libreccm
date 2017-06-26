@@ -56,8 +56,6 @@ class AssignedTaskTableModelBuilder extends AbstractTableModelBuilder {
             Assert.exists(workflow, Workflow.class);
 
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final WorkflowManager workflowManager = cdiUtil.findBean(
-                WorkflowManager.class);
             final WorkflowState workflowState = workflow.getState();
 
             if (workflowState == WorkflowState.STARTED) {

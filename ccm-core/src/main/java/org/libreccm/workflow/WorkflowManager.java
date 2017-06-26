@@ -51,7 +51,9 @@ import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
 import org.apache.shiro.subject.Subject;
-import org.libreccm.security.Role;
+import org.libreccm.security.User;
+
+import java.util.Optional;
 
 /**
  * Manager for {@link Workflow}s. The logic of some of these classes has been
@@ -360,12 +362,26 @@ public class WorkflowManager {
             workflow.setActive(true);
             updateState(workflow);
 
-            for (final Task current : workflow.getTasks()) {
-                current.setActive(true);
-                taskManager.updateState(current);
+//            for (final Task current : workflow.getTasks()) {
+//                current.setActive(true);
+//                taskManager.updateState(current);
+//            }
+            final List<Task> tasks = workflow.getTasks();
+            if (!tasks.isEmpty()) {
+                final Task firstTask = tasks.get(0);
+                firstTask.setActive(true);
+                taskManager.updateState(firstTask);
+
+                final Optional<User> currentUser = shiro.getUser();
+                if (!currentUser.isPresent()
+                        && assignableTaskManager
+                        .isAssignedTo((AssignableTask) firstTask,
+                                      currentUser.get())) {
+                    assignableTaskManager.lockTask((AssignableTask) firstTask);
+                }
             }
         }
-
+        
         workflowRepo.save(workflow);
     }
 

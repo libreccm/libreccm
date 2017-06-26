@@ -216,6 +216,7 @@ public class Task implements Identifiable, Serializable {
         this.taskId = taskId;
     }
 
+    @Override
     public String getUuid() {
         return uuid;
     }
