@@ -70,11 +70,20 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
     ,
     @NamedQuery(
         name = "AssignableTask.findAssignedTasks",
-        query = "SELECT t FROM AssignableTask t "
+        query = "SELECT DISTINCT t FROM AssignableTask t "
                     + "JOIN t.assignments a "
                     + "WHERE a.role IN :roles "
                     + "AND t.workflow = :workflow "
                     + "AND t.active = true")
+    ,
+    @NamedQuery(
+        name = "AssignableTask.isAssignedTo",
+        query = "SELECT (CASE WHEN COUNT(t) > 0 THEN true ELSE false END) "
+                    + "FROM AssignableTask t "
+                    + "JOIN t.assignments a "
+                    + "WHERE a.role IN :roles "
+                    + "AND t = :task"
+    )
     ,
     @NamedQuery(
         name = "AssignableTask.findOverdueTasks",

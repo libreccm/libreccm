@@ -22,6 +22,7 @@ import org.libreccm.core.CoreConstants;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
 import org.libreccm.security.Role;
+import org.libreccm.security.RoleMembership;
 import org.libreccm.security.RoleRepository;
 import org.libreccm.security.Shiro;
 import org.libreccm.security.User;
@@ -125,6 +126,24 @@ public class AssignableTaskManager {
         }
     }
 
+    @Transactional(Transactional.TxType.REQUIRED)
+    public boolean isAssignedTo(final AssignableTask task,
+                                final User user) {
+        final TypedQuery<Boolean> query = entityManager
+        .createNamedQuery("AssignableTask.isAssignedTo",
+                          Boolean.class);
+        final List<Role> roles = user
+            .getRoleMemberships()
+        .stream()
+        .map(RoleMembership::getRole)
+        .collect(Collectors.toList());
+        
+        query.setParameter("roles", roles);
+        query.setParameter("task", task);
+        
+        return query.getSingleResult();
+    }
+    
     /**
      *
      * @param task
