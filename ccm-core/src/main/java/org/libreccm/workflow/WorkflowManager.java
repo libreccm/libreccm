@@ -229,8 +229,8 @@ public class WorkflowManager {
                     writeMethod.invoke(task, value);
                 }
             } catch (IllegalAccessException
-                     | IllegalArgumentException
-                     | InvocationTargetException ex) {
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
                 throw new RuntimeException();
             }
         }
@@ -355,6 +355,7 @@ public class WorkflowManager {
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public void start(final Workflow workflow) {
+
         final WorkflowState oldState = workflow.getState();
 
         workflow.setState(WorkflowState.STARTED);
@@ -372,16 +373,19 @@ public class WorkflowManager {
                 firstTask.setActive(true);
                 taskManager.updateState(firstTask);
 
-                final Optional<User> currentUser = shiro.getUser();
-                if (!currentUser.isPresent()
-                        && assignableTaskManager
-                        .isAssignedTo((AssignableTask) firstTask,
-                                      currentUser.get())) {
-                    assignableTaskManager.lockTask((AssignableTask) firstTask);
+                if (firstTask instanceof AssignableTask) {
+                    final Optional<User> currentUser = shiro.getUser();
+                    if (currentUser.isPresent()
+                            && assignableTaskManager
+                            .isAssignedTo((AssignableTask) firstTask,
+                                          currentUser.get())) {
+                        assignableTaskManager
+                            .lockTask((AssignableTask) firstTask);
+                    }
                 }
             }
         }
-        
+
         workflowRepo.save(workflow);
     }
 
