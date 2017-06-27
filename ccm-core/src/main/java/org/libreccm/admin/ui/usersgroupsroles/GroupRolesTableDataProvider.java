@@ -22,8 +22,8 @@ import com.vaadin.cdi.ViewScoped;
 import com.vaadin.data.provider.AbstractDataProvider;
 import com.vaadin.data.provider.Query;
 import org.libreccm.security.Group;
-import org.libreccm.security.GroupMembership;
-import org.libreccm.security.User;
+import org.libreccm.security.Role;
+import org.libreccm.security.RoleMembership;
 
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -41,10 +41,10 @@ import javax.transaction.Transactional;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @ViewScoped
-class GroupMembersTableDataProvider
-    extends AbstractDataProvider<User, String> {
+class GroupRolesTableDataProvider
+    extends AbstractDataProvider<Role, String> {
 
-    private static final long serialVersionUID = -1924910843845830008L;
+    private static final long serialVersionUID = 7981493169013788121L;
 
     @Inject
     private EntityManager entityManager;
@@ -58,7 +58,7 @@ class GroupMembersTableDataProvider
 
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
-    public int size(final Query<User, String> query) {
+    public int size(Query<Role, String> query) {
 
         Objects.requireNonNull(group,
                                "This data provider needs to be initalized "
@@ -66,25 +66,15 @@ class GroupMembersTableDataProvider
                                + "the count method.");
 
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
-//        final Root<User> from = criteriaQuery.from(User.class);
-//        final Join<?, ?> memberships = from.join("groups");
-//
-//        criteriaQuery = criteriaQuery.select(builder.count(from));
-//
-//        criteriaQuery.where(builder.equal(memberships.get("group"),
-//                                          group));
-//        criteriaQuery
-//            .where(builder
-//                .equal(builder.treat(from.get("groups"),
-//                                     GroupMembership.class).get("group"),
-//                       group));
+        final CriteriaQuery<Long> criteriaQuery = builder
+            .createQuery(Long.class);
 
-        final Root<GroupMembership> from = criteriaQuery
-            .from(GroupMembership.class);
+        final Root<RoleMembership> from = criteriaQuery
+            .from(RoleMembership.class);
 
-        criteriaQuery = criteriaQuery.select(builder.count(from));
-        criteriaQuery.where(builder.equal(from.get("group"), group));
+        criteriaQuery
+            .select(builder.count(from))
+            .where(builder.equal(from.get("member"), group));
 
         return entityManager
             .createQuery(criteriaQuery)
@@ -94,7 +84,7 @@ class GroupMembersTableDataProvider
 
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
-    public Stream<User> fetch(final Query<User, String> query) {
+    public Stream<Role> fetch(Query<Role, String> query) {
 
         Objects.requireNonNull(group,
                                "This data provider needs to be initalized "
@@ -102,29 +92,14 @@ class GroupMembersTableDataProvider
                                + "the fetch method.");
 
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-//        final CriteriaQuery<User> criteriaQuery = builder
-//            .createQuery(User.class);
-//        final Root<User> from = criteriaQuery.from(User.class);
-//        final Join<User, GroupMembership> memberships = from
-//            .join("memberships");
-//
-//        criteriaQuery.where(builder.equal(memberships.get("group"),
-//                                          group));
-//
-//        return entityManager
-//            .createQuery(criteriaQuery)
-//            .setMaxResults(query.getLimit())
-//            .setFirstResult(query.getOffset())
-//            .getResultList()
-//            .stream();
 
-        final CriteriaQuery<GroupMembership> criteriaQuery = builder
-            .createQuery(GroupMembership.class);
-        final Root<GroupMembership> from = criteriaQuery
-            .from(GroupMembership.class);
-        final Join<?, ?> join = from.join("member");
+        final CriteriaQuery<RoleMembership> criteriaQuery = builder
+            .createQuery(RoleMembership.class);
+        final Root<RoleMembership> from = criteriaQuery
+            .from(RoleMembership.class);
+        final Join<?, ?> join = from.join("role");
         criteriaQuery
-            .where(builder.equal(from.get("group"), group))
+            .where(builder.equal(from.get("member"), group))
             .orderBy(builder.asc(join.get("name")));
 
         return entityManager
@@ -133,7 +108,7 @@ class GroupMembersTableDataProvider
             .setFirstResult(query.getOffset())
             .getResultList()
             .stream()
-            .map(GroupMembership::getMember);
+            .map(RoleMembership::getRole);
     }
 
     public void setGroup(final Group group) {
