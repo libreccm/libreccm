@@ -24,7 +24,6 @@ import com.arsdigita.bebop.PageState;
 import org.librecms.contentsection.ContentItem;
 
 import com.arsdigita.cms.ItemSelectionModel;
-import com.arsdigita.cms.dispatcher.Utilities;
 import com.arsdigita.toolbox.ui.ComponentAccess;
 
 import org.apache.logging.log4j.LogManager;
@@ -63,6 +62,7 @@ public class WorkflowLockedComponentAccess extends ComponentAccess {
      *
      * @param component The component
      * @param check     An access check
+     * @param itemModel
      */
     public WorkflowLockedComponentAccess(final Component component,
                                          final String check,
