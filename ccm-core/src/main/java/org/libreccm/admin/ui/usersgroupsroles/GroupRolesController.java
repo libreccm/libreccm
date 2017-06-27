@@ -21,8 +21,9 @@ package org.libreccm.admin.ui.usersgroupsroles;
 import org.libreccm.security.Group;
 import org.libreccm.security.GroupManager;
 import org.libreccm.security.GroupRepository;
-import org.libreccm.security.User;
-import org.libreccm.security.UserRepository;
+import org.libreccm.security.Role;
+import org.libreccm.security.RoleManager;
+import org.libreccm.security.RoleRepository;
 
 import java.util.Set;
 
@@ -35,10 +36,13 @@ import javax.transaction.Transactional;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-class GroupMembersController {
+class GroupRolesController {
 
     @Inject
-    private UserRepository userRepo;
+    private RoleRepository roleRepo;
+
+    @Inject
+    private RoleManager roleManager;
 
     @Inject
     private GroupRepository groupRepo;
@@ -47,20 +51,19 @@ class GroupMembersController {
     private GroupManager groupManager;
 
     @Transactional(Transactional.TxType.REQUIRED)
-    protected void addMembersToGroup(final Set<User> users, final Group group) {
+    protected void assignRolesToGroup(final Set<Role> roles, final Group group) {
 
-        users.forEach(user -> addMemberToGroup(user, group));
+        roles.forEach(role -> assignRoleToGroup(role, group));
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
-    protected void addMemberToGroup(final User user, final Group group) {
+    protected void assignRoleToGroup(final Role role, final Group group) {
 
-        final User theUser = userRepo
-            .findById(user.getPartyId())
-            .orElseThrow(() -> new IllegalArgumentException(
-            String.format("No user with id %d in the database. "
-                              + "Where did that ID come from?",
-                          user.getPartyId())));
+        final Role theRole = roleRepo
+            .findById(role.getRoleId())
+            .orElseThrow(() -> new IllegalArgumentException(String
+            .format("No Role with ID %d in the database.",
+                    role.getRoleId())));
 
         final Group theGroup = groupRepo
             .findById(group.getPartyId())
@@ -69,18 +72,17 @@ class GroupMembersController {
                         + "Where did that ID come from?",
                     group.getPartyId())));
 
-        groupManager.addMemberToGroup(theUser, theGroup);
+        roleManager.assignRoleToParty(theRole, theGroup);
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
-    protected void removeMemberFromGroup(final User member, final Group group) {
-
-        final User theMember = userRepo
-            .findById(member.getPartyId())
+    protected void removeRoleFromGroup(final Role role, final Group group) {
+        
+        final Role theRole = roleRepo
+            .findById(role.getRoleId())
             .orElseThrow(() -> new IllegalArgumentException(String
-            .format("No user with id %d in the database. "
-                        + "Where did that ID come from?",
-                    member.getPartyId())));
+            .format("No Role with ID %d in the database.",
+                    role.getRoleId())));
 
         final Group theGroup = groupRepo
             .findById(group.getPartyId())
@@ -88,8 +90,8 @@ class GroupMembersController {
             .format("No group with id %d in the database. "
                         + "Where did that ID come from?",
                     group.getPartyId())));
-
-        groupManager.removeMemberFromGroup(theMember, theGroup);
+        
+        roleManager.removeRoleFromParty(theRole, theGroup);
     }
 
 }

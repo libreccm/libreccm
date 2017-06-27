@@ -48,10 +48,7 @@ import org.libreccm.security.GroupRepository;
 import org.libreccm.security.User;
 import org.libreccm.security.UserRepository;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
 /**
  *
@@ -220,14 +217,12 @@ public class GroupDetails extends Window {
         dataProvider.setGroup(group);
         membersGrid.setDataProvider(dataProvider);
 
+        //ToDo Add roles grid
+        
         final TabSheet tabs = new TabSheet();
         tabs.addTab(membersGrid, "Members");
         tabs.addTab(new Label("Roles Placeholder"), "Roles");
 
-//        final Panel membersPanel = new Panel("Members");
-//        membersPanel.setContent(membersGrid);
-//        final VerticalLayout windowLayout = new VerticalLayout(propertiesPanel,
-//                                                               membersPanel);
         final VerticalLayout windowLayout = new VerticalLayout(propertiesPanel,
                                                                tabs);
 
