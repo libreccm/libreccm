@@ -131,9 +131,16 @@ public class RoleEditor extends Window {
 //        }
         if (role != null) {
             roleName.setValue(role.getName());
-            roleDescription.setValue(role
+            final String description = role
                 .getDescription()
-                .getValue(UI.getCurrent().getLocale()));
+                .getValue(UI.getCurrent().getLocale());
+            if (description == null) {
+                roleDescription.setValue("");
+            } else {
+                roleDescription.setValue(role
+                    .getDescription()
+                    .getValue(UI.getCurrent().getLocale()));
+            }
         }
 
         setContent(layout);
