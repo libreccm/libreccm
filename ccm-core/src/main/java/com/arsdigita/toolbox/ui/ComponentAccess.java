@@ -29,6 +29,8 @@ import org.libreccm.cdi.utils.CdiUtil;
 
 import org.libreccm.security.PermissionChecker;
 
+import java.util.Collections;
+
 /**
  * <p>
  * Wrapper class that registers access checks (actions) to a Bebop
@@ -46,7 +48,7 @@ public class ComponentAccess {
      * @param component The component
      */
     public ComponentAccess(final Component component) {
-        accessCheckList = new ArrayList();
+        accessCheckList = new ArrayList<>();
         this.component = component;
     }
 
@@ -74,7 +76,7 @@ public class ComponentAccess {
      * @return The list of access checks
      */
     public List<String> getAccessCheckList() {
-        return accessCheckList;
+        return Collections.unmodifiableList(accessCheckList);
     }
 
     /**
@@ -96,6 +98,10 @@ public class ComponentAccess {
         final PermissionChecker permissionChecker = cdiUtil.findBean(
                 PermissionChecker.class);
 
+        if (accessCheckList.isEmpty()) {
+            return true;
+        }
+        
         final Optional<Boolean> canAccess = accessCheckList.stream()
                 .map(accessCheck -> permissionChecker.isPermitted(accessCheck))
                 .reduce((result1, result2) -> result1 && result2);

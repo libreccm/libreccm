@@ -37,7 +37,6 @@ import org.libreccm.security.User;
 import org.libreccm.workflow.AssignableTask;
 import org.libreccm.workflow.AssignableTaskManager;
 import org.libreccm.workflow.AssignableTaskRepository;
-import org.libreccm.workflow.WorkflowManager;
 import org.librecms.CmsConstants;
 
 import java.util.Optional;
