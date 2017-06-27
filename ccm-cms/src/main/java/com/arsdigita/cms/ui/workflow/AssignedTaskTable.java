@@ -29,7 +29,6 @@ import com.arsdigita.bebop.event.TableActionEvent;
 import com.arsdigita.bebop.table.DefaultTableCellRenderer;
 import com.arsdigita.bebop.table.TableCellRenderer;
 
-
 import com.arsdigita.globalization.GlobalizedMessage;
 
 import org.libreccm.cdi.utils.CdiUtil;
@@ -40,6 +39,8 @@ import org.libreccm.workflow.AssignableTaskManager;
 import org.libreccm.workflow.AssignableTaskRepository;
 import org.libreccm.workflow.WorkflowManager;
 import org.librecms.CmsConstants;
+
+import java.util.Optional;
 
 public final class AssignedTaskTable extends Table {
 
@@ -65,22 +66,20 @@ public final class AssignedTaskTable extends Table {
             final int column = event.getColumn();
 
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final AssignableTaskRepository userTaskRepo = cdiUtil.findBean(
-                    AssignableTaskRepository.class);
-            final WorkflowManager workflowManager = cdiUtil.findBean(
-                    WorkflowManager.class);
-            final AssignableTaskManager taskManager = cdiUtil.findBean(
-                    AssignableTaskManager.class);
+            final AssignableTaskRepository userTaskRepo = cdiUtil
+                .findBean(AssignableTaskRepository.class);
+            final AssignableTaskManager taskManager = cdiUtil
+                .findBean(AssignableTaskManager.class);
             final Shiro shiro = cdiUtil.findBean(Shiro.class);
 
             if (column == 1) {
                 final AssignableTask task = userTaskRepo.findById((Long) event
-                        .getRowKey()).get();
+                    .getRowKey()).get();
                 final User currentUser = shiro.getUser().get();
                 final User lockingUser = task.getLockingUser();
                 if (task.isLocked()
-                            && lockingUser != null
-                            && lockingUser.equals(currentUser)) {
+                        && lockingUser != null
+                        && lockingUser.equals(currentUser)) {
                     taskManager.unlockTask(task);
                 } else {
                     taskManager.lockTask(task);
@@ -104,23 +103,49 @@ public final class AssignedTaskTable extends Table {
             final BoxPanel panel = new BoxPanel();
             final String lockingUserName = (String) value;
             if (lockingUserName != null) {
-                final StringBuilder sb = new StringBuilder("Locked by <br />");
+
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
                 final Shiro shiro = cdiUtil.findBean(Shiro.class);
-                if (shiro.getUser().isPresent()
-                    && lockingUserName.equals(shiro.getUser().get().getName())) {
-                    sb.append("you");
+
+                final Optional<User> currentUser = shiro.getUser();
+                if (currentUser.isPresent()
+                        && currentUser.get().getName().equals(lockingUserName)) {
                     panel.add(new ControlLink(new Label(
-                            gz("cms.ui.workflow.task.unlock"))));
+                        new GlobalizedMessage("cms.ui.workflow.task.unlock",
+                                              CmsConstants.CMS_BUNDLE))));
+                    panel.add(new Label(
+                        new GlobalizedMessage(
+                            "cms.ui.workflow.task.locked_by_you",
+                            CmsConstants.CMS_BUNDLE)));
                 } else {
-                    sb.append(lockingUserName);
                     panel.add(new ControlLink(new Label(
-                            gz("cms.ui.workflow.task.takeover"))));
+                        new GlobalizedMessage("cms.ui.workflow.task.takeover",
+                                              CmsConstants.CMS_BUNDLE))));
+                    panel.add(new Label(
+                        new GlobalizedMessage(
+                            "cms.ui.workflow.task.locked_by",
+                            CmsConstants.CMS_BUNDLE,
+                            new String[]{lockingUserName})));
                 }
-                panel.add(new Label(sb.toString(), false));
+
+//                final StringBuilder sb = new StringBuilder("Locked by <br />");
+//                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+//                final Shiro shiro = cdiUtil.findBean(Shiro.class);
+//                if (shiro.getUser().isPresent()
+//                        && lockingUserName.equals(shiro.getUser().get()
+//                        .getName())) {
+//                    sb.append("you");
+//                    panel.add(new ControlLink(new Label(
+//                        gz("cms.ui.workflow.task.unlock"))));
+//                } else {
+//                    sb.append(lockingUserName);
+//                    panel.add(new ControlLink(new Label(
+//                        gz("cms.ui.workflow.task.takeover"))));
+//                }
+//                panel.add(new Label(sb.toString(), false));
             } else {
                 panel.add(new ControlLink(
-                        new Label(gz("cms.ui.workflow.task.lock"))));
+                    new Label(gz("cms.ui.workflow.task.lock"))));
             }
             return panel;
         }
