@@ -21,10 +21,9 @@ package com.arsdigita.cms.ui.contenttypes;
 import com.arsdigita.bebop.FormData;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.PageState;
-import com.arsdigita.bebop.event.FormInitListener;
-import com.arsdigita.bebop.event.FormSubmissionListener;
 import com.arsdigita.bebop.form.Date;
 import com.arsdigita.bebop.parameters.NotEmptyValidationListener;
+import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.cms.ItemSelectionModel;
 import com.arsdigita.cms.ui.authoring.CreationSelector;
 import com.arsdigita.cms.ui.authoring.PageCreateForm;
@@ -45,9 +44,10 @@ public class NewsCreateForm extends PageCreateForm {
     private Date newsDate;
 
     public NewsCreateForm(final ItemSelectionModel itemSelectionModel,
-                          final CreationSelector creationSelector) {
+                          final CreationSelector creationSelector,
+                          final StringParameter selectedLanguageParam) {
 
-        super(itemSelectionModel, creationSelector);
+        super(itemSelectionModel, creationSelector, selectedLanguageParam);
     }
 
     @Override

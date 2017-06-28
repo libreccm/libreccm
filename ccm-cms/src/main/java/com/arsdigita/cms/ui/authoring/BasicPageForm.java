@@ -30,6 +30,7 @@ import com.arsdigita.bebop.event.ParameterListener;
 import com.arsdigita.bebop.parameters.DateParameter;
 import com.arsdigita.bebop.parameters.ParameterData;
 import com.arsdigita.bebop.parameters.ParameterModel;
+import com.arsdigita.bebop.parameters.StringParameter;
 
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentSection;
@@ -42,6 +43,7 @@ import com.arsdigita.util.Assert;
 
 import org.arsdigita.cms.CMSConfig;
 import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.workflow.WorkflowTemplate;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentItemInitializer;
@@ -50,6 +52,7 @@ import org.librecms.contentsection.ContentType;
 
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -73,32 +76,41 @@ public abstract class BasicPageForm extends BasicItemForm {
 
     private static final String LAUNCH_DATE = "launch_date";
 
+    private final StringParameter selectedLanguageParam;
+
     /**
      * Construct a new BasicPageForm
      *
-     * @param formName  the name of this form
-     * @param itemModel The {@link ItemSelectionModel} which will be responsible
-     *                  for loading the current item
+     * @param formName              the name of this form
+     * @param itemModel             The {@link ItemSelectionModel} which will be
+     *                              responsible for loading the current item
+     * @param selectedLanguageParam
      */
     public BasicPageForm(final String formName,
-                         final ItemSelectionModel itemModel) {
+                         final ItemSelectionModel itemModel,
+                         final StringParameter selectedLanguageParam) {
 
-        super(formName, itemModel);
+        super(formName, itemModel, selectedLanguageParam);
+        Objects.requireNonNull(selectedLanguageParam);
+        this.selectedLanguageParam = selectedLanguageParam;
     }
 
     /**
      * Construct a new BasicPageForm with nothing on it
      *
-     * @param formName    the name of this form
-     * @param columnPanel the column panel of the form
-     * @param itemModel   The {@link ItemSelectionModel} which will be
-     *                    responsible for loading the current item
+     * @param formName              the name of this form
+     * @param columnPanel           the column panel of the form
+     * @param itemModel             The {@link ItemSelectionModel} which will be
+     *                              responsible for loading the current item
+     * @param selectedLanguageParam
      */
     public BasicPageForm(final String formName,
                          final ColumnPanel columnPanel,
-                         final ItemSelectionModel itemModel) {
+                         final ItemSelectionModel itemModel,
+                         final StringParameter selectedLanguageParam) {
 
-        super(formName, columnPanel, itemModel);
+        super(formName, columnPanel, itemModel, selectedLanguageParam);
+        this.selectedLanguageParam = selectedLanguageParam;
     }
 
     /**
@@ -151,11 +163,20 @@ public abstract class BasicPageForm extends BasicItemForm {
         final ContentItem item = getItemSelectionModel()
             .getSelectedObject(state);
 
+        final String selectedLanguage = (String) state
+            .getValue(selectedLanguageParam);
+        final Locale selectedLocale;
+        if (selectedLanguage == null) {
+            selectedLocale = KernelConfig.getConfig().getDefaultLocale();
+        } else {
+            selectedLocale = new Locale(selectedLanguage);
+        }
+
         if (item != null) {
             // Preset fields
             data.put(CONTENT_ITEM_ID, Long.toString(item.getObjectId()));
-            data.put(NAME, item.getName());
-            data.put(TITLE, item.getTitle());
+            data.put(NAME, item.getName().getValue(selectedLocale));
+            data.put(TITLE, item.getTitle().getValue(selectedLocale));
             final CMSConfig cmsConfig = CMSConfig.getConfig();
             if (!cmsConfig.isHideLaunchDate()) {
                 data.put(LAUNCH_DATE, item.getLaunchDate());
@@ -219,10 +240,17 @@ public abstract class BasicPageForm extends BasicItemForm {
 
         if (item != null) {
             // Update attributes
-            final KernelConfig kernelConfig = KernelConfig.getConfig();
-            final Locale defaultLocale = kernelConfig.getDefaultLocale();
-            item.getName().addValue(defaultLocale, (String) data.get(NAME));
-            item.getTitle().addValue(defaultLocale, (String) data.get(TITLE));
+            final String selectedLanguage = (String) state
+                .getValue(selectedLanguageParam);
+            final Locale selectedLocale;
+            if (selectedLanguage == null) {
+                selectedLocale = KernelConfig.getConfig().getDefaultLocale();
+            } else {
+                selectedLocale = new Locale(selectedLanguage);
+            }
+
+            item.getName().addValue(selectedLocale, (String) data.get(NAME));
+            item.getTitle().addValue(selectedLocale, (String) data.get(TITLE));
             if (!CMSConfig.getConfig().isHideLaunchDate()) {
                 item.setLaunchDate((Date) data.get(LAUNCH_DATE));
             }
@@ -238,6 +266,7 @@ public abstract class BasicPageForm extends BasicItemForm {
      * Creation components may call this method in the process listener of their
      * form. See {@link PageCreate} for an example.
      *
+     * @param <T>
      * @param state
      * @param name
      * @param section
@@ -331,8 +360,9 @@ public abstract class BasicPageForm extends BasicItemForm {
 //                                                     folder,
 //                                                     clazz,
 //                                                     initializer);
-                item = controller.createContentItem(name, section, folder, clazz,
-                                             initializer);
+                item = controller
+                    .createContentItem(name, section, folder, clazz,
+                                       initializer);
             } else {
 //                item = itemManager.createContentItem(name,
 //                                                     section,
@@ -341,11 +371,11 @@ public abstract class BasicPageForm extends BasicItemForm {
 //                                                     clazz,
 //                                                     initializer);
                 item = controller.createContentItem(name,
-                                             section,
-                                             folder,
-                                             workflowTemplate,
-                                             clazz,
-                                             initializer);
+                                                    section,
+                                                    folder,
+                                                    workflowTemplate,
+                                                    clazz,
+                                                    initializer);
             }
         } catch (ClassNotFoundException ex) {
             throw new FormProcessException(

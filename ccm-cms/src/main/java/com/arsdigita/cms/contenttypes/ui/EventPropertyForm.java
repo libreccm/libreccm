@@ -20,6 +20,7 @@ package com.arsdigita.cms.contenttypes.ui;
 
 import com.arsdigita.bebop.FormData;
 import com.arsdigita.bebop.FormProcessException;
+import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.event.FormInitListener;
 import com.arsdigita.bebop.event.FormProcessListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
@@ -53,6 +54,8 @@ import org.librecms.contenttypes.EventConfig;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Locale;
+import java.util.Objects;
 
 /**
  * Form to edit the basic properties of an {@link Event} object.
@@ -108,6 +111,8 @@ public class EventPropertyForm
      */
     public static final String COST = "cost";
 
+    private final StringParameter selectedLanguageParam;
+
     /* DateWidgets have to be accessible later on */
     private com.arsdigita.bebop.form.Date startDateField;
     private com.arsdigita.bebop.form.Date endDateField;
@@ -116,28 +121,37 @@ public class EventPropertyForm
      * Creates a new form to edit the Event object specified by the item
      * selection model passed in.
      *
-     * @param itemSelectionModel The ItemSelectionModel to use to obtain the
-     *                           Event to work on
+     * @param itemSelectionModel    The ItemSelectionModel to use to obtain the
+     *                              Event to work on
+     * @param selectedLanguageParam
      *
      */
-    public EventPropertyForm(final ItemSelectionModel itemSelectionModel) {
-        this(itemSelectionModel, null);
+    public EventPropertyForm(final ItemSelectionModel itemSelectionModel,
+                             final StringParameter selectedLanguageParam) {
+        this(itemSelectionModel, null, selectedLanguageParam);
     }
 
     /**
      * Creates a new form to edit the Event object specified by the item
      * selection model passed in.
      *
-     * @param itemSelectionModel  The ItemSelectionModel to use to obtain the
-     *                            Event to work on
-     * @param eventPropertiesStep The EventPropertiesStep which controls this
-     *                            form.
+     * @param itemSelectionModel    The ItemSelectionModel to use to obtain the
+     *                              Event to work on
+     * @param eventPropertiesStep   The EventPropertiesStep which controls this
+     *                              form.
+     * @param selectedLanguageParam
      *
      */
     public EventPropertyForm(final ItemSelectionModel itemSelectionModel,
-                             final EventPropertiesStep eventPropertiesStep) {
-        super(ID, itemSelectionModel);
+                             final EventPropertiesStep eventPropertiesStep,
+                             final StringParameter selectedLanguageParam) {
+        
+        super(ID, itemSelectionModel, selectedLanguageParam);
+        
+        Objects.requireNonNull(selectedLanguageParam);
+        
         this.eventPropertiesStep = eventPropertiesStep;
+        this.selectedLanguageParam = selectedLanguageParam;
         addSubmissionListener(this);
     }
 
@@ -388,6 +402,7 @@ public class EventPropertyForm
     public void init(final FormSectionEvent event) {
         // Do some initialization hook stuff
         final FormData data = event.getFormData();
+        final PageState state = event.getPageState();
         final Event item = (Event) super.initBasicWidgets(event);
 
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
@@ -416,26 +431,39 @@ public class EventPropertyForm
         }
         endDateField.addYear(endDate);
 
-        data.put(LEAD, item.getDescription());
+        final String selectedLanguage = (String) state
+            .getValue(selectedLanguageParam);
+        final Locale selectedLocale;
+        if (selectedLanguage == null) {
+            selectedLocale = KernelConfig.getConfig().getDefaultLocale();
+        } else {
+            selectedLocale = new Locale(selectedLanguage);
+        }
+
+        data.put(LEAD, item.getDescription().getValue(selectedLocale));
         data.put(START_DATE, startDate);
         data.put(START_TIME, startDate.getTime());
         data.put(END_DATE, endDate);
         data.put(END_TIME, endDate.getTime());
         if (!eventConfig.isHideDateDescription()) {
-            data.put(EVENT_DATE, item.getEventDate());
+            data.put(EVENT_DATE, 
+                     item.getEventDate().getValue(selectedLocale));
         }
         data.put(LOCATION, item.getLocation());
         if (!eventConfig.isHideMainContributor()) {
-            data.put(MAIN_CONTRIBUTOR, item.getMainContributor());
+            data.put(MAIN_CONTRIBUTOR, 
+                     item.getMainContributor().getValue(selectedLocale));
         }
         if (!eventConfig.isHideEventType()) {
-            data.put(EVENT_TYPE, item.getEventType());
+            data.put(EVENT_TYPE, 
+                     item.getEventType().getValue(selectedLocale));
         }
         if (!eventConfig.isHideLinkToMap()) {
             data.put(MAP_LINK, item.getMapLink());
         }
         if (!eventConfig.isHideCost()) {
-            data.put(COST, item.getCost());
+            data.put(COST, 
+                     item.getCost().getValue(selectedLocale));
         }
     }
 

@@ -36,6 +36,7 @@ import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentItem;
 
 import java.text.DateFormat;
+import java.util.Objects;
 
 /**
  * Authoring step to edit the simple attributes of the GenericArticle content
@@ -52,7 +53,7 @@ public class GenericArticlePropertiesStep extends SimpleEditStep {
 
     private DomainObjectPropertySheet domainObjectPropertySheet;
 
-    private StringParameter selectedLanguageParam;
+    private final StringParameter selectedLanguageParam;
 
     public GenericArticlePropertiesStep(
         final ItemSelectionModel itemModel,
@@ -60,17 +61,24 @@ public class GenericArticlePropertiesStep extends SimpleEditStep {
         final StringParameter selectedLanguageParam) {
 
         super(itemModel, parent, selectedLanguageParam);
+
+        Objects.requireNonNull(selectedLanguageParam);
+
         this.selectedLanguageParam = selectedLanguageParam;
 
         setDefaultEditKey(EDIT_SHEET_NAME);
-        createEditSheet(itemModel);
+        createEditSheet(itemModel, selectedLanguageParam);
 
         setDisplayComponent(itemModel);
     }
 
-    protected void createEditSheet(final ItemSelectionModel itemModel) {
-        BasicPageForm editSheet;
-        editSheet = new GenericArticlePropertyForm(itemModel, this);
+    protected void createEditSheet(final ItemSelectionModel itemModel,
+                                   final StringParameter selectedLanguageParam) {
+
+        final BasicPageForm editSheet = new GenericArticlePropertyForm(
+            itemModel,
+            this,
+            selectedLanguageParam);
         add(EDIT_SHEET_NAME,
             new GlobalizedMessage("cms.ui.edit", CmsConstants.CMS_BUNDLE),
             new WorkflowLockedComponentAccess(editSheet, itemModel),
