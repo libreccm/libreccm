@@ -19,6 +19,7 @@
 package com.arsdigita.cms.contenttypes.ui;
 
 import com.arsdigita.bebop.FormData;
+import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.event.FormInitListener;
 import com.arsdigita.bebop.event.FormProcessListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
@@ -44,6 +45,8 @@ import org.librecms.contenttypes.NewsConfig;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Locale;
+import java.util.Objects;
 
 /**
  * Form to edit the basic properties of a {@link News} item. These are name,
@@ -71,32 +74,44 @@ public class NewsPropertyForm extends BasicPageForm
      */
     public static final String ID = "news_item_edit";
 
+    private final StringParameter selectedLanguageParam;
+
     private com.arsdigita.bebop.form.Date releaseDateSelector;
 
     /**
      * Creates a new form to edit the NewsItem object specified by the item
      * selection model passed in.
      *
-     * @param itemSelectionModel The ItemSelectionModel to use to obtain the
-     *                           NewsItem to work on
+     * @param itemSelectionModel    The ItemSelectionModel to use to obtain the
+     *                              NewsItem to work on
+     * @param selectedLanguageParam
      */
-    public NewsPropertyForm(final ItemSelectionModel itemSelectionModel) {
-        this(itemSelectionModel, null);
+    public NewsPropertyForm(final ItemSelectionModel itemSelectionModel,
+                            final StringParameter selectedLanguageParam) {
+
+        this(itemSelectionModel, null, selectedLanguageParam);
     }
 
     /**
      * Creates a new form to edit the NewsItem object specified by the item
      * selection model passed in.
      *
-     * @param itemSelectionModel The ItemSelectionModel to use to obtain the
-     *                           NewsItem to work on
-     * @param propertiesStep     The NewsPropertiesStep which controls this
-                           form.
+     * @param itemSelectionModel    The ItemSelectionModel to use to obtain the
+     *                              NewsItem to work on
+     * @param propertiesStep        The NewsPropertiesStep which controls this
+     *                              form.
+     * @param selectedLanguageParam
      */
     public NewsPropertyForm(final ItemSelectionModel itemSelectionModel,
-                                final NewsPropertiesStep propertiesStep) {
-        super(ID, itemSelectionModel);
+                            final NewsPropertiesStep propertiesStep,
+                            final StringParameter selectedLanguageParam) {
+
+        super(ID, itemSelectionModel, selectedLanguageParam);
+        
+        Objects.requireNonNull(selectedLanguageParam);
+        
         this.propertiesStep = propertiesStep;
+        this.selectedLanguageParam = selectedLanguageParam;
         addSubmissionListener(this);
     }
 
@@ -148,18 +163,30 @@ public class NewsPropertyForm extends BasicPageForm
     @Override
     public void init(final FormSectionEvent event) {
         final FormData data = event.getFormData();
+        final PageState state = event.getPageState();
         final News item = (News) super.initBasicWidgets(event);
 
         // set a default item date, if none set
-        java.util.Date releaseDate = item.getReleaseDate();
-        if (releaseDate == null) {
+        final java.util.Date releaseDate;
+        if (item.getReleaseDate() == null) {
             // new Date is initialised to current time
             releaseDate = new java.util.Date();
+        } else {
+            releaseDate = item.getReleaseDate();
+        }
+
+        final String selectedLanguage = (String) state
+            .getValue(selectedLanguageParam);
+        final Locale selectedLocale;
+        if (selectedLanguage == null) {
+            selectedLocale = KernelConfig.getConfig().getDefaultLocale();
+        } else {
+            selectedLocale = new Locale(selectedLanguage);
         }
 
         releaseDateSelector.addYear(releaseDate);
         data.put(NEWS_DATE, releaseDate);
-        data.put(LEAD, item.getDescription());
+        data.put(LEAD, item.getDescription().getValue(selectedLocale));
     }
 
     /**
@@ -185,7 +212,8 @@ public class NewsPropertyForm extends BasicPageForm
     @Override
     public void process(final FormSectionEvent event) {
 
-        FormData data = event.getFormData();
+        final FormData data = event.getFormData();
+        final PageState state = event.getPageState();
 
         final News item = (News) super.processBasicWidgets(event);
 
@@ -195,10 +223,21 @@ public class NewsPropertyForm extends BasicPageForm
                 .getSaveButton()
                 .isSelected(event.getPageState())) {
 
+            final String selectedLanguage = (String) state
+                .getValue(selectedLanguageParam);
+            final Locale selectedLocale;
+            if (selectedLanguage == null) {
+                selectedLocale = KernelConfig.getConfig().getDefaultLocale();
+            } else {
+                selectedLocale = new Locale(selectedLanguage);
+            }
+
             item.setReleaseDate((java.util.Date) data.get(NEWS_DATE));
-            item.getDescription().addValue(
-                KernelConfig.getConfig().getDefaultLocale(),
-                (String) data.get(LEAD));
+            item
+                .getDescription()
+                .addValue(
+                    selectedLocale,
+                    (String) data.get(LEAD));
 
             final ContentItemRepository itemRepo = CdiUtil
                 .createCdiUtil()

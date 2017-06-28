@@ -85,7 +85,9 @@ public class EventPropertiesStep extends SimpleEditStep {
         setDefaultEditKey(EDIT_SHEET_NAME);
         BasicPageForm editSheet;
 
-        editSheet = new EventPropertyForm(itemSelectionModel, this);
+        editSheet = new EventPropertyForm(itemSelectionModel,
+                                          this,
+                                          selectedLanguageParam);
         add(EDIT_SHEET_NAME,
             new GlobalizedMessage("cms.ui.edit", CmsConstants.CMS_BUNDLE),
             new WorkflowLockedComponentAccess(editSheet, itemSelectionModel),

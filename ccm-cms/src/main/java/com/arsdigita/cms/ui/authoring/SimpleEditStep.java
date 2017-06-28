@@ -50,6 +50,7 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -136,6 +137,9 @@ public class SimpleEditStep extends SecurityPropertyEditor
                           final String parameterSuffix) {
 
         super();
+        
+        Objects.requireNonNull(selectedLanguageParam);
+        
         this.authoringKitWizard = authoringKitWizard;
         this.itemSelectionModel = itemSelectionModel;
 
