@@ -33,6 +33,7 @@ import com.arsdigita.bebop.event.FormValidationListener;
 import com.arsdigita.bebop.form.Hidden;
 import com.arsdigita.bebop.form.TextField;
 import com.arsdigita.bebop.parameters.NotNullValidationListener;
+import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.bebop.parameters.TrimmedStringParameter;
 import com.arsdigita.bebop.parameters.URLTokenValidationListener;
 import com.arsdigita.cms.ItemSelectionModel;
@@ -41,11 +42,12 @@ import com.arsdigita.web.Web;
 import com.arsdigita.xml.Element;
 
 import org.libreccm.categorization.Category;
-import org.libreccm.categorization.CategoryRepository;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemRepository;
+
+import java.util.Objects;
 
 /**
  * A form for editing subclasses of ContentItem. This is just a convenience
@@ -59,33 +61,50 @@ public abstract class BasicItemForm extends FormSection
                FormProcessListener,
                FormValidationListener {
 
-    private final ItemSelectionModel m_itemModel;
-    private SaveCancelSection m_saveCancelSection;
-    private final FormSection m_widgetSection;
     public static final String CONTENT_ITEM_ID = "ContentItemId";
     public static final String NAME = "ContentItemName";
     public static final String TITLE = "ContentPageTitle";
     public static final String LANGUAGE = "ContentItemLanguage";
 
+    private final ItemSelectionModel itemSelectionModel;
+    private final StringParameter selectedLanguageParam;
+
+    private SaveCancelSection saveCancelSection;
+    private final FormSection widgetSection;
+    /**
+     * Currently, to insert JavaScript code the Label Widget is "abused".
+     */
+    private final Label script = new Label(String
+        .format("<script language=\"javascript\" "
+                    + "src=\"%s/javascript/manipulate-input.js\"></script>",
+                Web.getWebappContextPath()),
+                                             false);
+
     /**
      * Construct a new BasicItemForm with 2 ColumnPanels and add basic content.
      * The left Panel is used for Labels, the right Panel for values.
      *
-     * @param formName  the name of this form
-     * @param itemModel The {@link ItemSelectionModel} which will be responsible
-     *                  for loading the current item
+     * @param formName              the name of this form
+     * @param itemSelectionModel    The {@link ItemSelectionModel} which will be
+     *                              responsible for loading the current item
+     * @param selectedLanguageParam
      */
-    public BasicItemForm(String formName, ItemSelectionModel itemModel) {
+    public BasicItemForm(final String formName,
+                         final ItemSelectionModel itemSelectionModel,
+                         final StringParameter selectedLanguageParam) {
 
         super(new ColumnPanel(2));
 
-        m_widgetSection = new FormSection(new ColumnPanel(2, true));
+        Objects.requireNonNull(selectedLanguageParam);
+        
+        widgetSection = new FormSection(new ColumnPanel(2, true));
 
-        super.add(m_widgetSection, ColumnPanel.INSERT);
-        m_itemModel = itemModel;
+        super.add(widgetSection, ColumnPanel.INSERT);
+        this.itemSelectionModel = itemSelectionModel;
+        this.selectedLanguageParam = selectedLanguageParam;
 
-        /* Prepare Panel design                                               */
-        ColumnPanel panel = (ColumnPanel) getPanel();
+        /* Prepare Panel design */
+        final ColumnPanel panel = (ColumnPanel) getPanel();
         panel.setBorder(false);
         panel.setPadColor("#FFFFFF");
         panel.setColumnWidth(1, "20%");
@@ -95,8 +114,8 @@ public abstract class BasicItemForm extends FormSection
         /* Add basic contents */
         addWidgets();
 
-        m_saveCancelSection = new SaveCancelSection();
-        super.add(m_saveCancelSection,
+        saveCancelSection = new SaveCancelSection();
+        super.add(saveCancelSection,
                   ColumnPanel.FULL_WIDTH | ColumnPanel.LEFT);
 
         addInitListener(this);
@@ -108,39 +127,37 @@ public abstract class BasicItemForm extends FormSection
      * Construct a new BasicItemForm with a specified number of ColumnPanels and
      * without any content.
      *
-     * @param formName    the name of this form
-     * @param columnPanel the columnpanel of the form
-     * @param itemModel   The {@link ItemSelectionModel} which will be
-     *                    responsible for loading the current item
+     * @param formName              the name of this form
+     * @param columnPanel           the column panel of the form
+     * @param itemSelectionModel    The {@link ItemSelectionModel} which will be
+     *                              responsible for loading the current item
+     * @param selectedLanguageParam
      */
-    public BasicItemForm(String formName,
-                         ColumnPanel columnPanel,
-                         ItemSelectionModel itemModel) {
+    public BasicItemForm(final String formName,
+                         final ColumnPanel columnPanel,
+                         final ItemSelectionModel itemSelectionModel,
+                         final StringParameter selectedLanguageParam) {
+        
         super(columnPanel);
 
-        m_widgetSection = new FormSection(new ColumnPanel(columnPanel.
+        Objects.requireNonNull(selectedLanguageParam);
+        
+        widgetSection = new FormSection(new ColumnPanel(columnPanel.
             getNumCols(),
-                                                          true));
-        super.add(m_widgetSection, ColumnPanel.INSERT);
-        m_itemModel = itemModel;
+                                                        true));
+        super.add(widgetSection, ColumnPanel.INSERT);
+        this.itemSelectionModel = itemSelectionModel;
+        this.selectedLanguageParam = selectedLanguageParam;
     }
 
     /**
-     * instanciate and add the save/cancel section for this form
+     * create and add the save/cancel section for this form
      */
     public void addSaveCancelSection() {
-        m_saveCancelSection = new SaveCancelSection();
-        super.add(m_saveCancelSection,
+        saveCancelSection = new SaveCancelSection();
+        super.add(saveCancelSection,
                   ColumnPanel.FULL_WIDTH | ColumnPanel.LEFT);
     }
-
-    /**
-     * Currently, to insert javascript code the Label Widget is "abused".
-     */
-    private final Label m_script = new Label(String.format(
-        "<script language=\"javascript\" src=\"%s/javascript/manipulate-input.js\"></script>",
-        Web.getWebappContextPath()),
-                                             false);
 
     /**
      * Add basic widgets to the form.
@@ -208,69 +225,70 @@ public abstract class BasicItemForm extends FormSection
     }
 
     @Override
-    public void generateXML(PageState ps, Element parent) {
-        m_script.generateXML(ps, parent);
-        super.generateXML(ps, parent);
+    public void generateXML(final PageState state, 
+                            final Element parent) {
+        script.generateXML(state, parent);
+        super.generateXML(state, parent);
     }
 
     /**
      * @return the item selection model used in this form
      */
     public ItemSelectionModel getItemSelectionModel() {
-        return m_itemModel;
+        return itemSelectionModel;
     }
 
     /**
      * @return the save/cancel section for this form
      */
     public SaveCancelSection getSaveCancelSection() {
-        return m_saveCancelSection;
+        return saveCancelSection;
     }
 
     /**
      * Perform form initialisation. Children should override this this method to
      * pre-fill the widgets with data, instantiate the content item, etc.
      *
-     * @param e
+     * @param event
      *
      * @throws FormProcessException
      */
     @Override
-    public abstract void init(FormSectionEvent e) throws FormProcessException;
+    public abstract void init(final FormSectionEvent event) throws FormProcessException;
 
     /**
      * Process the form. Children have to override this method to save the
      * user's changes to the database.
      *
-     * @param e
+     * @param event
      *
      * @throws FormProcessException
      */
     @Override
-    public abstract void process(FormSectionEvent e) throws FormProcessException;
+    public abstract void process(final FormSectionEvent event) throws FormProcessException;
 
     /**
      * Validate the form. Children have to override this method to provide
      * context form validation, specifically name (url) uniqueness in a folder!
      *
-     * @param e
+     * @param event
      *
      * @throws com.arsdigita.bebop.FormProcessException
      */
     @Override
-    public void validate(FormSectionEvent e) throws FormProcessException {
+    public void validate(final FormSectionEvent event) throws FormProcessException {
         // do nothing
     }
 
     /**
      * Adds a component to this container.
      *
-     * @param pc the component to add to this BasicPageForm
+     * @param component the component to add to this BasicPageForm
      *
      */
     @Override
-    public void add(Component pc) {
-        m_widgetSection.add(pc);
+    public void add(final Component component) {
+        widgetSection.add(component);
     }
 
     /**
@@ -278,21 +296,22 @@ public abstract class BasicItemForm extends FormSection
      * Layout constraints are defined in each layout container as static ints.
      * Use a bitwise OR to specify multiple constraints.
      *
-     * @param pc          the component to add to this container
+     * @param component          the component to add to this container
      * @param constraints layout constraints (a bitwise OR of static ints in the
      *                    particular layout)
      */
     @Override
-    public void add(Component pc, int constraints) {
-        m_widgetSection.add(pc, constraints);
+    public void add(final Component component, 
+                    final int constraints) {
+        widgetSection.add(component, constraints);
     }
 
     /**
      * This method can be overridden to change the label of the title field. To
      * change to label of the title field can be useful for some content types.
-     * For example, for an organization the label "Title" for the field may be
+     * For example, for an organisation the label "Title" for the field may be
      * confusing for the normal user. For such a content type, the label would
-     * be changed to something like "Name of the organization".
+     * be changed to something like "Name of the organisation".
      *
      * @return (Content for the) Label for the title field as string
      */

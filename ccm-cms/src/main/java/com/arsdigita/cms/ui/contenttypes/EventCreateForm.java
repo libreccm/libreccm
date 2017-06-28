@@ -23,6 +23,7 @@ import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.form.Date;
 import com.arsdigita.bebop.parameters.NotEmptyValidationListener;
+import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.cms.ItemSelectionModel;
 import com.arsdigita.cms.ui.authoring.CreationSelector;
 import com.arsdigita.cms.ui.authoring.PageCreateForm;
@@ -43,8 +44,10 @@ public class EventCreateForm extends PageCreateForm {
     private Date startDate;
 
     public EventCreateForm(final ItemSelectionModel itemSelectionModel,
-                           final CreationSelector creationSelector) {
-        super(itemSelectionModel, creationSelector);
+                           final CreationSelector creationSelector,
+                           final StringParameter selectedLanguageParam) {
+        
+        super(itemSelectionModel, creationSelector, selectedLanguageParam);
     }
 
     @Override

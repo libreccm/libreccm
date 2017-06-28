@@ -30,6 +30,8 @@ import com.arsdigita.toolbox.ui.DomainObjectPropertySheet;
 
 import org.librecms.CmsConstants;
 
+import java.util.Objects;
+
 /**
  * Authoring step to edit the simple attributes of the Article content type (and
  * its subclasses). The attributes edited are 'name', 'title', 'article date',
@@ -43,18 +45,27 @@ public class ArticlePropertiesStep extends GenericArticlePropertiesStep {
      */
     public final static String EDIT_SHEET_NAME = "edit";
 
-    private StringParameter selectedLanuageParam;
+    private final StringParameter selectedLanguageParam;
 
     public ArticlePropertiesStep(final ItemSelectionModel itemModel,
                                  final AuthoringKitWizard parent,
                                  final StringParameter selectedLanguageParam) {
+
         super(itemModel, parent, selectedLanguageParam);
+
+        Objects.requireNonNull(selectedLanguageParam);
+
+        this.selectedLanguageParam = selectedLanguageParam;
     }
 
     @Override
-    protected void createEditSheet(final ItemSelectionModel itemModel) {
-        BasicPageForm editSheet;
-        editSheet = new ArticlePropertyForm(itemModel, this);
+    protected void createEditSheet(final ItemSelectionModel itemModel,
+                                   final StringParameter selectedLanguageParam) {
+
+        final BasicPageForm editSheet = new ArticlePropertyForm(
+            itemModel,
+            this,
+            selectedLanguageParam);
         add(EDIT_SHEET_NAME,
             new GlobalizedMessage("cms.ui.edit", CmsConstants.CMS_BUNDLE),
             new WorkflowLockedComponentAccess(editSheet, itemModel),
@@ -64,15 +75,16 @@ public class ArticlePropertiesStep extends GenericArticlePropertiesStep {
     @Override
     protected void setDisplayComponent(
         final ItemSelectionModel itemModel) {
-        setDisplayComponent(getArticlePropertySheet(itemModel, 
-                                                    selectedLanuageParam));
+        setDisplayComponent(getArticlePropertySheet(itemModel,
+                                                    selectedLanguageParam));
     }
 
     /**
      * Returns a component that displays the properties of the Article specified
      * by the ItemSelectionModel passed in.
      *
-     * @param itemModel The ItemSelectionModel to use
+     * @param itemModel             The ItemSelectionModel to use
+     * @param selectedLanguageParam
      *
      * @pre itemModel != null
      * @return A component to display the state of the basic properties of the

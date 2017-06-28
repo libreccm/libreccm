@@ -430,6 +430,8 @@ public class AuthoringKitWizard extends LayoutPanel implements Resettable {
             page.setVisibleDefault(child, false);
         }
 
+        page.addGlobalStateParam(selectedLanguageParam);
+        
         page.addActionListener(new ActionListener() {
 
             @Override
@@ -601,11 +603,11 @@ public class AuthoringKitWizard extends LayoutPanel implements Resettable {
      * @return The instance of the component.
      */
     protected Component instantiateStep(final String className) {
+        
         LOGGER.debug("Instantiating kit wizard \"{}\" with arguments {}...",
                      className,
                      arguments);
 
-        Object[] vals;
         try {
             // Get the creation component
             final Class createClass = Class.forName(className);
@@ -620,8 +622,11 @@ public class AuthoringKitWizard extends LayoutPanel implements Resettable {
                  | InvocationTargetException
                  | NoSuchMethodException
                  | SecurityException ex) {
+            LOGGER.error("Failed to instantiate authoring kit component \"{}\"...",
+                         className);
+            LOGGER.error("Exception is: ", ex);
             throw new UncheckedWrapperException(String.format(
-                "Failed to instantiate authoring kit component \"{}\".",
+                "Failed to instantiate authoring kit component \"%s\".",
                 className),
                                                 ex);
         }

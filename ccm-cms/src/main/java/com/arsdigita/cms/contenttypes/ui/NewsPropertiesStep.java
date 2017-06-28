@@ -46,6 +46,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -69,11 +70,13 @@ public class NewsPropertiesStep extends SimpleEditStep {
                               final StringParameter selectedLanguageParam) {
 
         super(itemModel, parent, selectedLanguageParam);
+        
+        Objects.requireNonNull(selectedLanguageParam); 
 
         setDefaultEditKey(EDIT_SHEET_NAME);
         BasicPageForm editSheet;
 
-        editSheet = new NewsPropertyForm(itemModel, this);
+        editSheet = new NewsPropertyForm(itemModel, this, selectedLanguageParam);
         add(EDIT_SHEET_NAME,
             new GlobalizedMessage("cms.ui.edit", CmsConstants.CMS_BUNDLE),
             new WorkflowLockedComponentAccess(editSheet, itemModel),
@@ -89,6 +92,7 @@ public class NewsPropertiesStep extends SimpleEditStep {
      * specified by the ItemSelectionModel passed in.
      *
      * @param itemModel The ItemSelectionModel to use
+     * @param selectedLanguageParam
      *
      * @pre itemModel != null
      * @return A component to display the state of the basic properties of the

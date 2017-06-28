@@ -24,6 +24,7 @@ import com.arsdigita.bebop.event.FormInitListener;
 import com.arsdigita.bebop.event.FormProcessListener;
 import com.arsdigita.bebop.event.FormSubmissionListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
+import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.cms.ItemSelectionModel;
 
 import org.librecms.contenttypes.Article;
@@ -32,7 +33,6 @@ import com.arsdigita.cms.ui.authoring.BasicPageForm;
 
 import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.contentsection.ContentItemRepository;
-
 
 /**
  * Form to edit the basic properties of an article. This form can be extended to
@@ -49,9 +49,13 @@ public class GenericArticlePropertyForm extends BasicPageForm
      *
      * @param itemModel The ItemSelectionModel to use to obtain the Article to
      *                  work on
+     * @param selectedLanguageParam
      */
-    public GenericArticlePropertyForm(final ItemSelectionModel itemModel) {
-        this(itemModel, null);
+    public GenericArticlePropertyForm(
+        final ItemSelectionModel itemModel,
+        final StringParameter selectedLanguageParam) {
+
+        this(itemModel, null, selectedLanguageParam);
     }
 
     /**
@@ -62,10 +66,14 @@ public class GenericArticlePropertyForm extends BasicPageForm
      *                  GenericArticle to work on
      * @param step      The GenericArticlePropertiesStep which controls this
      *                  form.
+     * @param selectedLanguageParam
      */
-    public GenericArticlePropertyForm(final ItemSelectionModel itemModel,
-                                      final GenericArticlePropertiesStep step) {
-        super(ID, itemModel);
+    public GenericArticlePropertyForm(
+        final ItemSelectionModel itemModel,
+        final GenericArticlePropertiesStep step,
+        final StringParameter selectedLanguageParam) {
+
+        super(ID, itemModel, selectedLanguageParam);
         propertiesStep = step;
         addSubmissionListener(this);
     }

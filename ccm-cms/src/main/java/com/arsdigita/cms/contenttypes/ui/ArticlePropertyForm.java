@@ -20,6 +20,7 @@ package com.arsdigita.cms.contenttypes.ui;
 
 import com.arsdigita.bebop.FormData;
 import com.arsdigita.bebop.FormProcessException;
+import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.event.FormInitListener;
 import com.arsdigita.bebop.event.FormProcessListener;
 import com.arsdigita.bebop.event.FormSubmissionListener;
@@ -29,7 +30,6 @@ import com.arsdigita.bebop.parameters.NotEmptyValidationListener;
 import com.arsdigita.bebop.parameters.ParameterModel;
 import com.arsdigita.bebop.parameters.StringInRangeValidationListener;
 import com.arsdigita.bebop.parameters.StringParameter;
-
 
 import com.arsdigita.cms.ItemSelectionModel;
 import com.arsdigita.globalization.GlobalizedMessage;
@@ -41,6 +41,9 @@ import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contenttypes.Article;
 
+import java.util.Locale;
+import java.util.Objects;
+
 /**
  * Form to edit the basic properties of an article. This form can be extended to
  * create forms for Article subclasses.
@@ -50,7 +53,8 @@ public class ArticlePropertyForm extends GenericArticlePropertyForm
 
     public static final String LEAD = "lead";
 
-    private ArticlePropertiesStep propertyStep;
+    private final ArticlePropertiesStep propertiesStep;
+    private final StringParameter selectedLanguageParam;
 
     /**
      * Creates a new form to edit the Article object specified by the item
@@ -58,23 +62,33 @@ public class ArticlePropertyForm extends GenericArticlePropertyForm
      *
      * @param itemModel The ItemSelectionModel to use to obtain the Article to
      *                  work on
+     * @param selectedLanguageParam
      */
-    public ArticlePropertyForm(final ItemSelectionModel itemModel) {
-        this(itemModel, null);
+    public ArticlePropertyForm(final ItemSelectionModel itemModel,
+                               final StringParameter selectedLanguageParam) {
+        this(itemModel, null, selectedLanguageParam);
     }
 
     /**
      * Creates a new form to edit the Article object specified by the item
      * selection model passed in.
      *
-     * @param itemModel The ItemSelectionModel to use to obtain the Article to
-     *                  work on
-     * @param step      The ArticlePropertiesStep which controls this form.
+     * @param itemModel      The ItemSelectionModel to use to obtain the Article
+     *                       to work on
+     * @param propertiesStep The ArticlePropertiesStep which controls this form.
+     * @param selectedLanguageParam
      */
-    public ArticlePropertyForm(final ItemSelectionModel itemModel,
-                               final ArticlePropertiesStep step) {
-        super(itemModel, step);
-        propertyStep = step;
+    public ArticlePropertyForm(
+        final ItemSelectionModel itemModel,
+        final ArticlePropertiesStep propertiesStep,
+        final StringParameter selectedLanguageParam) {
+        
+        super(itemModel, propertiesStep, selectedLanguageParam);
+        
+        Objects.requireNonNull(selectedLanguageParam);
+        
+        this.propertiesStep = propertiesStep;
+        this.selectedLanguageParam = selectedLanguageParam;
         addSubmissionListener(this);
     }
 
@@ -119,11 +133,20 @@ public class ArticlePropertyForm extends GenericArticlePropertyForm
      */
     @Override
     public void init(final FormSectionEvent event) {
-        // Do some initialization hook stuff
-        FormData data = event.getFormData();
+        final FormData data = event.getFormData();
+        final PageState state = event.getPageState();
         final Article article = (Article) super.initBasicWidgets(event);
 
-        data.put(LEAD, article.getDescription());
+        final String selectedLanguage = (String) state
+            .getValue(selectedLanguageParam);
+        final Locale selectedLocale;
+        if (selectedLanguage == null) {
+            selectedLocale = KernelConfig.getConfig().getDefaultLocale();
+        } else {
+            selectedLocale = new Locale(selectedLanguage);
+        }
+
+        data.put(LEAD, article.getDescription().getValue(selectedLocale));
     }
 
     /**
@@ -131,9 +154,9 @@ public class ArticlePropertyForm extends GenericArticlePropertyForm
      */
     @Override
     public void submitted(final FormSectionEvent event) {
-        if (propertyStep != null && getSaveCancelSection().getCancelButton()
+        if (propertiesStep != null && getSaveCancelSection().getCancelButton()
             .isSelected(event.getPageState())) {
-            propertyStep.cancelStreamlinedCreation(event.getPageState());
+            propertiesStep.cancelStreamlinedCreation(event.getPageState());
         }
     }
 
@@ -144,25 +167,36 @@ public class ArticlePropertyForm extends GenericArticlePropertyForm
      */
     @Override
     public void process(final FormSectionEvent event) {
-        FormData data = event.getFormData();
+        final FormData data = event.getFormData();
+        final PageState state = event.getPageState();
 
-        Article article = (Article) super.processBasicWidgets(event);
+        final Article article = (Article) super.processBasicWidgets(event);
 
         // save only if save button was pressed
         if (article != null
                 && getSaveCancelSection().getSaveButton()
                 .isSelected(event.getPageState())) {
 
-            article.getDescription().addValue(KernelConfig.getConfig()
-                .getDefaultLocale(), (String) data.get(LEAD));
+            final String selectedLanguage = (String) state
+                .getValue(selectedLanguageParam);
+            final Locale selectedLocale;
+            if (selectedLanguage == null) {
+                selectedLocale = KernelConfig.getConfig().getDefaultLocale();
+            } else {
+                selectedLocale = new Locale(selectedLanguage);
+            }
+
+            article
+                .getDescription()
+                .addValue(selectedLocale, (String) data.get(LEAD));
 
             final ContentItemRepository itemRepo = CdiUtil
                 .createCdiUtil()
                 .findBean(ContentItemRepository.class);
             itemRepo.save(article);
         }
-        if (propertyStep != null) {
-            propertyStep.maybeForwardToNextStep(event.getPageState());
+        if (propertiesStep != null) {
+            propertiesStep.maybeForwardToNextStep(event.getPageState());
         }
     }
 

@@ -27,6 +27,7 @@ import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.bebop.event.FormSubmissionListener;
 import com.arsdigita.bebop.event.PrintEvent;
 import com.arsdigita.bebop.event.PrintListener;
+import com.arsdigita.bebop.parameters.StringParameter;
 
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentType;
@@ -78,18 +79,20 @@ public class PageCreateForm
     /**
      * Construct a new PageCreationForm
      *
-     * @param itemModel        The {@link ItemSelectionModel} which will be
-     *                         responsible for loading the current item
-     * @param creationSelector The {@link CreationSelector} parent. This class
-     *                         should call either the {@link
+     * @param itemModel             The {@link ItemSelectionModel} which will be
+     *                              responsible for loading the current item
+     * @param creationSelector      The {@link CreationSelector} parent. This
+     *                              class should call either the {@link
      *                  CreationSelector#redirectBack(PageState)} or {@link
      *                  CreationSelector#editItem(PageState, ContentItem)} methods on the parent
-     *                         eventually
+     *                              eventually
+     * @param selectedLanguageParam
      */
     public PageCreateForm(final ItemSelectionModel itemModel,
-                          final CreationSelector creationSelector) {
+                          final CreationSelector creationSelector,
+                          final StringParameter selectedLanguageParam) {
 
-        super("PageCreate", itemModel);
+        super("PageCreate", itemModel, selectedLanguageParam);
 
         this.creationSelector = creationSelector;
 
