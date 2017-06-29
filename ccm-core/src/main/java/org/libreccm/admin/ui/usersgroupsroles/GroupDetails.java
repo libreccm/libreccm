@@ -45,6 +45,8 @@ import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.Group;
 import org.libreccm.security.GroupManager;
 import org.libreccm.security.GroupRepository;
+import org.libreccm.security.Role;
+import org.libreccm.security.RoleRepository;
 import org.libreccm.security.User;
 import org.libreccm.security.UserRepository;
 
@@ -63,6 +65,9 @@ public class GroupDetails extends Window {
     private static final String COL_FAMILY_NAME = "family_name";
     private static final String COL_EMAIL = "email";
     private static final String COL_REMOVE = "remove";
+
+    private static final String COL_ROLE_NAME = "role_name";
+    private static final String COL_ROLE_REMOVE = "remove";
 
     private final UsersGroupsRoles usersGroupsRoles;
     private final Group group;
@@ -152,7 +157,8 @@ public class GroupDetails extends Window {
         dataHasChanged = false;
 
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-        final GroupMembersController controller = cdiUtil
+
+        final GroupMembersController membersController = cdiUtil
             .findBean(GroupMembersController.class);
 
         final Grid<User> membersGrid = new Grid<>();
@@ -172,8 +178,8 @@ public class GroupDetails extends Window {
         membersGrid.addColumn(user -> bundle.getString(
             "ui.groups.members.remove"),
                               new ButtonRenderer<>(event -> {
-                                  controller
-                                      .removeMemberFromGroup(event.getItem(), 
+                                  membersController
+                                      .removeMemberFromGroup(event.getItem(),
                                                              group);
                                   membersGrid.getDataProvider().refreshAll();
                               }))
@@ -195,7 +201,8 @@ public class GroupDetails extends Window {
                 userRepo.findByGroup(group),
                 (selectedUsers -> {
                     selectedUsers.forEach(user -> {
-                        controller.addMembersToGroup(selectedUsers, group);
+                        membersController
+                            .addMembersToGroup(selectedUsers, group);
                         membersGrid.getDataProvider().refreshAll();
                     });
                 }));
@@ -217,8 +224,37 @@ public class GroupDetails extends Window {
         dataProvider.setGroup(group);
         membersGrid.setDataProvider(dataProvider);
 
-        //ToDo Add roles grid
+        final GroupRolesController rolesController = cdiUtil
+            .findBean(GroupRolesController.class);
+        final Grid<Role> rolesGrid = new Grid<>();
+        rolesGrid
+            .addColumn(Role::getName)
+            .setId(COL_ROLE_NAME)
+            .setCaption("Role Name");
+        rolesGrid
+            .addColumn(role -> bundle
+            .getString("ui.groups.roles.remove"),
+                       new ButtonRenderer<>(event -> {
+                           rolesController
+                               .removeRoleFromGroup(event.getItem(), group);
+                           rolesGrid.getDataProvider().refreshAll();
+                       }))
+            .setId(COL_ROLE_REMOVE);
         
+        rolesGrid.setWidth("100%");
+        
+        final RoleRepository roleRepository = cdiUtil
+            .findBean(RoleRepository.class);
+        
+        final HeaderRow rolesGridHeader = rolesGrid.prependHeaderRow();
+        final Button addRoleButton = new Button("Add role");
+        addRoleButton.setIcon(VaadinIcons.PLUS);
+        addRoleButton.setStyleName(ValoTheme.BUTTON_TINY);
+        addRoleButton.addClickListener(event -> {
+            
+        });
+        //ToDo Add roles grid
+
         final TabSheet tabs = new TabSheet();
         tabs.addTab(membersGrid, "Members");
         tabs.addTab(new Label("Roles Placeholder"), "Roles");
