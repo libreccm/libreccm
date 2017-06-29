@@ -1,4 +1,4 @@
-/*
+ /*
  * Copyright (C) 2017 LibreCCM Foundation.
  *
  * This library is free software; you can redistribute it and/or
@@ -301,6 +301,7 @@ public abstract class MultiPartArticleForm
      * @param name
      * @param section
      * @param folder
+     * @param locale Initial locale of the article.
      *
      * @return the new content item (or a proper subclass)
      * @throws com.arsdigita.bebop.FormProcessException
@@ -308,7 +309,8 @@ public abstract class MultiPartArticleForm
     public MultiPartArticle createArticle(final PageState state,
                                           final String name,
                                           final ContentSection section,
-                                          final Folder folder)
+                                          final Folder folder,
+                                          final Locale locale)
         throws FormProcessException {
 
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
@@ -319,7 +321,8 @@ public abstract class MultiPartArticleForm
             .createContentItem(name,
                                section,
                                folder,
-                               MultiPartArticle.class);
+                               MultiPartArticle.class,
+                               locale);
 
         if (itemSelectionModel.getSelectedKey(state) == null) {
             itemSelectionModel.setSelectedKey(state, article.getObjectId());

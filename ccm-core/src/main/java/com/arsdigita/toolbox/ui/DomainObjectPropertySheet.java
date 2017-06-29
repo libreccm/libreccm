@@ -130,7 +130,8 @@ public class DomainObjectPropertySheet extends PropertySheet {
         this.objectSelectionModel = objectSelectionModel;
         properties = new LinkedList<>();
         if (selectedLanguageParam == null) {
-            this.selectedLanguageParam = new StringParameter("selected_language");
+            this.selectedLanguageParam
+            = new StringParameter("selected_language");
         } else {
             this.selectedLanguageParam = selectedLanguageParam;
         }
@@ -609,11 +610,15 @@ public class DomainObjectPropertySheet extends PropertySheet {
                 if (tmp instanceof LocalizedString) {
                     final LocalizedString localizedString
                                               = (LocalizedString) tmp;
-                    final Locale selectedLocale = new Locale(
-                        (String) state.getValue(selectedLanguageParam));
-                    final Locale defaultLocale = KernelConfig
-                        .getConfig()
-                        .getDefaultLocale();
+                    final Object selectedLanguage = state.getValue(
+                        selectedLanguageParam);
+                    final Locale selectedLocale;
+                    if (selectedLanguage instanceof Locale) {
+                        selectedLocale = (Locale) selectedLanguage;
+                    } else {
+                        selectedLocale = new Locale((String) selectedLanguage);
+                    }
+
                     if (localizedString.hasValue(selectedLocale)) {
                         value = localizedString.getValue(selectedLocale);
                     } else {

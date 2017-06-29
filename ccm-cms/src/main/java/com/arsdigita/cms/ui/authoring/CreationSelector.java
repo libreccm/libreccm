@@ -28,6 +28,7 @@ import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.SingleSelectionModel;
 import com.arsdigita.bebop.form.FormErrorDisplay;
 import com.arsdigita.bebop.parameters.LongParameter;
+import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.cms.ItemSelectionModel;
 import com.arsdigita.cms.ui.ContentItemPage;
 import com.arsdigita.cms.ui.folder.FolderSelectionModel;
@@ -91,10 +92,12 @@ public class CreationSelector extends MetaForm {
 
     private final FolderSelectionModel folderSelectionModel;
     private final SingleSelectionModel<Long> typeSelectionModel;
+    private final StringParameter selectedLanguageParam;
 
     private static final Class[] ARGUMENTS = new Class[]{
         ItemSelectionModel.class,
-        CreationSelector.class
+        CreationSelector.class,
+        StringParameter.class
     };
 
     private Object[] values;
@@ -115,14 +118,17 @@ public class CreationSelector extends MetaForm {
      * @param folderSelectionModel the {@link FolderSelectionModel} containing
      *                             the folder in which new items are to be
      *                             created
+     * @param selectedLanguageParam
      */
     public CreationSelector(final SingleSelectionModel<Long> typeSelectionModel,
-                            final FolderSelectionModel folderSelectionModel) {
+                            final FolderSelectionModel folderSelectionModel,
+                            final StringParameter selectedLanguageParam) {
 
         super("pageCreate");
 
         this.typeSelectionModel = typeSelectionModel;
         this.folderSelectionModel = folderSelectionModel;
+        this.selectedLanguageParam = selectedLanguageParam;
 
         itemIdParameter = new LongParameter(ITEM_ID);
         itemSelectionModel = new ItemSelectionModel(itemIdParameter);
@@ -200,7 +206,9 @@ public class CreationSelector extends MetaForm {
             final ItemSelectionModel itemSelectionModel
                                          = new ItemSelectionModel(
                     type, itemIdParameter);
-            vals = new Object[]{itemSelectionModel, this};
+            vals = new Object[]{itemSelectionModel, 
+                                this, 
+                                selectedLanguageParam};
 
             final Constructor<? extends FormSection> constructor = createClass
                 .getConstructor(ARGUMENTS);

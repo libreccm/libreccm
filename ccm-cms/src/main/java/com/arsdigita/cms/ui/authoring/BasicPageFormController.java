@@ -29,6 +29,8 @@ import org.librecms.contentsection.ContentSectionRepository;
 import org.librecms.contentsection.Folder;
 import org.librecms.contentsection.FolderRepository;
 
+import java.util.Locale;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -61,9 +63,16 @@ class BasicPageFormController {
         final ContentSection section,
         final Folder folder,
         final Class<T> clazz,
-        final ContentItemInitializer<T> initializer) {
+        final ContentItemInitializer<T> initializer,
+        final Locale locale) {
 
-        return createContentItem(name, section, folder, null, clazz, initializer);
+        return createContentItem(name,
+                                 section,
+                                 folder,
+                                 null,
+                                 clazz,
+                                 initializer,
+                                 locale);
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
@@ -73,7 +82,8 @@ class BasicPageFormController {
         final Folder folder,
         final WorkflowTemplate workflowTemplate,
         final Class<T> clazz,
-        final ContentItemInitializer<T> initializer) {
+        final ContentItemInitializer<T> initializer,
+        final Locale locale) {
 
         final ContentSection contentSection = sectionRepo
             .findById(section.getObjectId())
@@ -90,25 +100,27 @@ class BasicPageFormController {
         final T item;
         if (workflowTemplate == null) {
 
-            item = itemManager.createContentItem(name, 
-                                                 contentSection, 
-                                                 itemFolder, 
+            item = itemManager.createContentItem(name,
+                                                 contentSection,
+                                                 itemFolder,
                                                  clazz,
-                                                 initializer);
-            
+                                                 initializer,
+                                                 locale);
+
         } else {
             final WorkflowTemplate itemWorkflowTemplate = workflowTemplateRepo
                 .findById(workflowTemplate.getWorkflowId())
                 .orElseThrow(() -> new IllegalArgumentException(String
                 .format("No WorkflowTemplate with ID %d in the database.",
                         workflowTemplate.getWorkflowId())));
-            
-            item = itemManager.createContentItem(name, 
-                                                 contentSection, 
+
+            item = itemManager.createContentItem(name,
+                                                 contentSection,
                                                  itemFolder,
-                                                 itemWorkflowTemplate, 
+                                                 itemWorkflowTemplate,
                                                  clazz,
-                                                 initializer);
+                                                 initializer,
+                                                 locale);
         }
 
         return item;

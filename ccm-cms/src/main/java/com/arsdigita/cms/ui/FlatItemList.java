@@ -38,6 +38,7 @@ import com.arsdigita.bebop.event.FormSubmissionListener;
 import com.arsdigita.bebop.event.PrintEvent;
 import com.arsdigita.bebop.event.PrintListener;
 import com.arsdigita.bebop.parameters.LongParameter;
+import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.cms.CMS;
 
 import org.librecms.contentsection.ContentSection;
@@ -106,6 +107,7 @@ public class FlatItemList extends SegmentedPanel implements FormProcessListener,
     private final Label contentLabel;
     private final FolderPath folderPath;
     private final Label chooseLabel;
+    private final StringParameter selectedLanguageParam;
 
     /**
      * Construct a new item listing pane. The provided folder selection model is
@@ -178,6 +180,8 @@ public class FlatItemList extends SegmentedPanel implements FormProcessListener,
         permissionsSegment.addHeader(new Label(new GlobalizedMessage(
             "cms.ui.permissions", CmsConstants.CMS_BUNDLE)));
 
+        selectedLanguageParam = new StringParameter(ContentItemPage.SELECTED_LANGUAGE);
+        
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final PermissionManager permissionManager = cdiUtil.findBean(
             PermissionManager.class);
@@ -198,7 +202,8 @@ public class FlatItemList extends SegmentedPanel implements FormProcessListener,
         typeSelectionModel.addChangeListener(this);
 
         creationSelector = new CreationSelector(typeSelectionModel,
-                                                folderSelectionModel);
+                                                folderSelectionModel,
+                                                selectedLanguageParam);
         newItemSegment.add(creationSelector);
         //m_newItemSeg.add(new Label("<br/>", false));
 
@@ -234,6 +239,7 @@ public class FlatItemList extends SegmentedPanel implements FormProcessListener,
 
         page.addComponentStateParam(this,
                                     typeSelectionModel.getStateParameter());
+        page.addGlobalStateParam(selectedLanguageParam);
 
         page.addActionListener(new ActionListener() {
 
