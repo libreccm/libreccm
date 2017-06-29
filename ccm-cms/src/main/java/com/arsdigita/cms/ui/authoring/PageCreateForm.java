@@ -44,6 +44,7 @@ import org.libreccm.workflow.WorkflowTemplateRepository;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemInitializer;
+import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contenttypes.ContentTypeInfo;
 import org.librecms.contenttypes.ContentTypesManager;
 
@@ -68,13 +69,14 @@ public class PageCreateForm
     extends BasicPageForm
     implements FormSubmissionListener, CreationComponent {
 
-    private final CreationSelector creationSelector;
-    private ApplyWorkflowFormSection workflowSection;
-
     /**
      * The state parameter which specifies the content section
      */
     public static final String SECTION_ID = "sid";
+
+    private final CreationSelector creationSelector;
+    private ApplyWorkflowFormSection workflowSection;
+    private final StringParameter selectedLanguageParam;
 
     /**
      * Construct a new PageCreationForm
@@ -95,6 +97,7 @@ public class PageCreateForm
         super("PageCreate", itemModel, selectedLanguageParam);
 
         this.creationSelector = creationSelector;
+        this.selectedLanguageParam = selectedLanguageParam;
 
         workflowSection.setCreationSelector(creationSelector);
         addSubmissionListener(this);
@@ -223,16 +226,19 @@ public class PageCreateForm
         final Long selectedWorkflowTemplateId = workflowSection
             .getSelectedWorkflowTemplateId(state);
 
+        final Locale locale = new Locale((String) data.get(LANGUAGE));
+
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+
         final ContentItem item;
         if (selectedWorkflowTemplateId == null) {
             item = createContentPage(state,
                                      (String) data.get(NAME),
                                      section,
                                      folder,
-                                     getItemInitializer(data, state));
+                                     getItemInitializer(data, state),
+                                     locale);
         } else {
-
-            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final WorkflowTemplateRepository workflowTemplateRepo = cdiUtil
                 .findBean(WorkflowTemplateRepository.class);
             final WorkflowTemplate workflowTemplate = workflowTemplateRepo
@@ -246,14 +252,19 @@ public class PageCreateForm
                                          section,
                                          folder,
                                          workflowTemplate,
-                                         getItemInitializer(data, state));
+                                         getItemInitializer(data, state),
+                                         locale);
         }
 
-        final Locale locale = new Locale((String) data.get(LANGUAGE));
-        item.getName().addValue(locale, (String) data.get(NAME));
+//        item.getName().addValue(locale, (String) data.get(NAME));
         item.getTitle().addValue(locale, (String) data.get(TITLE));
 
-//        workflowSection.applyWorkflow(state, item);
+        final ContentItemRepository itemRepo = cdiUtil
+            .findBean(ContentItemRepository.class);
+        itemRepo.save(item);
+        
+        state.setValue(selectedLanguageParam, locale.toString());
+
         creationSelector.editItem(state, item);
     }
 

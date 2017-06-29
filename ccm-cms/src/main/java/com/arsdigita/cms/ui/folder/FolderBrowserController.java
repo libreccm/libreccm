@@ -372,18 +372,24 @@ public class FolderBrowserController {
 
         final FolderBrowserTableRow row = new FolderBrowserTableRow();
 
+        final Locale negotiatedLocale = globalizationHelper
+            .getNegotiatedLocale();
+
         row.setObjectId(item.getObjectId());
         row.setObjectUuid(item.getItemUuid());
-        row.setName(item.getName().getValue(defaultLocale));
+
+        if (item.getName().hasValue(negotiatedLocale)) {
+            row.setName(item.getName().getValue(negotiatedLocale));
+        } else {
+            row.setName(item.getName().getValue(defaultLocale));
+        }
         final List<Locale> languages = new ArrayList<>(itemL10NManager
             .availableLanguages(item));
         languages.sort((lang1, lang2) -> lang1.toString().compareTo(
             lang2.toString()));
         row.setLanguages(languages);
-        if (item.getTitle().hasValue(globalizationHelper
-            .getNegotiatedLocale())) {
-            row.setTitle(item.getTitle().getValue(globalizationHelper
-                .getNegotiatedLocale()));
+        if (item.getTitle().hasValue(negotiatedLocale)) {
+            row.setTitle(item.getTitle().getValue(negotiatedLocale));
         } else {
             row.setTitle(item.getTitle().getValue(defaultLocale));
         }
@@ -573,7 +579,8 @@ public class FolderBrowserController {
                                           CmsConstants.CATEGORIZATION_TYPE_FOLDER),
                             builder.equal(fromItem.get("version"),
                                           ContentItemVersion.DRAFT),
-                            builder.like(builder.lower(fromItem.get("displayName")),
+                            builder.like(builder.lower(fromItem.get(
+                                "displayName")),
                                          filterTerm)
                         )
                     )

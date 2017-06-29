@@ -29,6 +29,7 @@ import com.arsdigita.bebop.Resettable;
 import com.arsdigita.bebop.SimpleContainer;
 import com.arsdigita.bebop.SingleSelectionModel;
 import com.arsdigita.bebop.TabbedPane;
+import com.arsdigita.bebop.Text;
 import com.arsdigita.bebop.event.ActionEvent;
 import com.arsdigita.bebop.event.ActionListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
@@ -66,6 +67,7 @@ import org.arsdigita.cms.CMSConfig;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentItem;
+import org.librecms.contentsection.ContentItemL10NManager;
 import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contentsection.ContentItemVersion;
 import org.librecms.contentsection.ContentSection;
@@ -74,6 +76,7 @@ import org.librecms.contentsection.ContentType;
 import org.librecms.dispatcher.ItemResolver;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -145,9 +148,9 @@ public class ContentItemPage extends CMSPage implements ActionListener {
 
     private final TabbedPane tabbedPane;
     private final StringParameter returnUrlParameter;
-    private final ItemSelectionModel itemModel;
+    private final ItemSelectionModel itemSelectionModel;
     private final SingleSelectionModel<String> selectedLanguageModel;
-    private final ACSObjectSelectionModel typeModel;
+    private final ACSObjectSelectionModel typeSelectionModel;
     private final ContentItemRequestLocal itemRequestLocal;
     private final Summary summaryPane;
     private final ItemWorkflowAdminPane workflowPane;
@@ -156,9 +159,9 @@ public class ContentItemPage extends CMSPage implements ActionListener {
     private final ItemLanguages languagesPane;
     private final ItemRevisionAdminPane revisionsPane;
     private final ItemTemplates templatesPane;
-    private final Link m_previewLink;
-    private final GlobalNavigation m_globalNavigation;
-    private final ContentItemContextBar m_contextBar;
+    private final Link previewLink;
+    private final GlobalNavigation globalNavigation;
+    private final ContentItemContextBar contextBar;
 
     private final StringParameter selectedLanguageParam;
 
@@ -175,11 +178,44 @@ public class ContentItemPage extends CMSPage implements ActionListener {
 
         @Override
         public final void prepare(final PrintEvent event) {
+            
+            final PageState state = event.getPageState();
+            
             final Label label = (Label) event.getTarget();
             final ContentItem item = itemRequestLocal.getContentItem(event.
                 getPageState());
 
-            label.setLabel(item.getDisplayName());
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final ContentItemL10NManager l10nManager = cdiUtil
+                .findBean(ContentItemL10NManager.class);
+            final String selectedLanguage = (String) state
+                .getValue(selectedLanguageParam);
+            final Locale selectedLocale;
+            if (selectedLanguage == null
+                    || selectedLanguage.isEmpty()) {
+                selectedLocale = KernelConfig.getConfig().getDefaultLocale();
+            } else {
+                selectedLocale = new Locale(selectedLanguage);
+            }
+
+            final String language;
+            if (l10nManager.hasLanguage(item, selectedLocale)) {
+                language = selectedLanguage;
+            } else {
+                state.setValue(selectedLanguageParam,
+                               KernelConfig.getConfig().getDefaultLanguage());
+                language = KernelConfig.getConfig().getDefaultLanguage();
+            }
+
+            final StringBuffer title = new StringBuffer(item.getDisplayName());
+            if (language != null) {
+                title
+                    .append(" (")
+                    .append(language)
+                    .append(")");
+            }
+            
+            label.setLabel(title.toString());
         }
 
     }
@@ -199,14 +235,13 @@ public class ContentItemPage extends CMSPage implements ActionListener {
         final LongParameter itemId = new LongParameter(ITEM_ID);
         itemId.addParameterListener(new NotNullValidationListener(ITEM_ID));
         addGlobalStateParam(itemId);
-        itemModel = new ItemSelectionModel(itemId);
+        itemSelectionModel = new ItemSelectionModel(itemId);
 
         // Add the selected item language as parameter
         selectedLanguageParam = new StringParameter(
             SELECTED_LANGUAGE);
         selectedLanguageParam.addParameterListener(
-            new NotNullValidationListener(
-                SELECTED_LANGUAGE));
+            new NotNullValidationListener(SELECTED_LANGUAGE));
         addGlobalStateParam(selectedLanguageParam);
         selectedLanguageModel = new ParameterSingleSelectionModel<>(
             selectedLanguageParam);
@@ -222,9 +257,11 @@ public class ContentItemPage extends CMSPage implements ActionListener {
             STREAMLINED_CREATION);
         addGlobalStateParam(streamlinedCreation);
 
-        typeModel = new ACSObjectSelectionModel(ContentType.class.getName(),
-                                                ContentType.class.getName(),
-                                                contentType);
+        typeSelectionModel = new ACSObjectSelectionModel(ContentType.class
+            .getName(),
+                                                         ContentType.class
+                                                             .getName(),
+                                                         contentType);
 
         // Validate the item ID parameter (caches the validation).
         getStateModel().addValidationListener(
@@ -234,20 +271,22 @@ public class ContentItemPage extends CMSPage implements ActionListener {
         returnUrlParameter = new StringParameter(RETURN_URL);
         addGlobalStateParam(returnUrlParameter);
 
-        m_globalNavigation = new GlobalNavigation();
-        add(m_globalNavigation);
+        globalNavigation = new GlobalNavigation();
+        add(globalNavigation);
 
-        m_contextBar = new ContentItemContextBar(itemModel);
-        add(m_contextBar);
+        contextBar = new ContentItemContextBar(itemSelectionModel,
+                                               selectedLanguageParam);
+        add(contextBar);
 
         // Create panels.
-        summaryPane = new Summary(itemModel);
-        wizardPane = new WizardSelector(itemModel, typeModel);
-        languagesPane = new ItemLanguages(itemModel, selectedLanguageModel);
+        summaryPane = new Summary(itemSelectionModel);
+        wizardPane = new WizardSelector(itemSelectionModel, typeSelectionModel);
+        languagesPane = new ItemLanguages(itemSelectionModel,
+                                          selectedLanguageModel);
         workflowPane = new ItemWorkflowAdminPane(itemId); // Make this use m_item XXX
         lifecyclePane = new ItemLifecycleAdminPane(itemRequestLocal);
         revisionsPane = new ItemRevisionAdminPane(itemRequestLocal);
-        templatesPane = new ItemTemplates(itemModel);
+        templatesPane = new ItemTemplates(itemSelectionModel);
 
         // Create tabbed pane.
         tabbedPane = new TabbedPane();
@@ -285,21 +324,21 @@ public class ContentItemPage extends CMSPage implements ActionListener {
         });
 
         // Build the preview link.
-        m_previewLink = new Link(new Label(gz("cms.ui.preview")),
-                                 new PrintListener() {
+        previewLink = new Link(new Label(gz("cms.ui.preview")),
+                               new PrintListener() {
 
-                                 @Override
-                                 public final void prepare(
-                                     final PrintEvent event) {
-                                     final Link link = (Link) event.getTarget();
-                                     link.setTarget(getPreviewURL(event.
-                                         getPageState()));
-                                     link.setTargetFrame(Link.NEW_FRAME);
-                                 }
+                               @Override
+                               public final void prepare(
+                                   final PrintEvent event) {
+                                   final Link link = (Link) event.getTarget();
+                                   link.setTarget(getPreviewURL(event.
+                                       getPageState()));
+                                   link.setTargetFrame(Link.NEW_FRAME);
+                               }
 
-                             });
-        m_previewLink.setIdAttr("preview_link");
-        add(m_previewLink);
+                           });
+        previewLink.setIdAttr("preview_link");
+        add(previewLink);
 
         addActionListener(this);
 
@@ -374,7 +413,7 @@ public class ContentItemPage extends CMSPage implements ActionListener {
      */
     @Override
     public ContentItem getContentItem(final PageState state) {
-        return (ContentItem) itemModel.getSelectedObject(state);
+        return (ContentItem) itemSelectionModel.getSelectedObject(state);
     }
 
     /**

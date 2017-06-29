@@ -132,6 +132,7 @@ public class ContentItemManager {
      * @param section The content section in which the item is generated.
      * @param folder  The folder in which in the item is stored.
      * @param type    The type of the new content item.
+     * @param locale  Initial locale of the new item
      *
      * @return The new content item.
      */
@@ -142,14 +143,16 @@ public class ContentItemManager {
         final ContentSection section,
         @RequiresPrivilege(ItemPrivileges.CREATE_NEW)
         final Folder folder,
-        final Class<T> type) {
+        final Class<T> type,
+        final Locale locale) {
 
         return createContentItem(name,
                                  section,
                                  folder,
                                  type,
                                  item -> {
-                                 });
+                                 },
+                                 locale);
 
     }
 
@@ -168,6 +171,7 @@ public class ContentItemManager {
      * @param type       The type of the new content item.
      * @param initalizer A {@link ContentItemInitializer} for setting mandatory
      *                   values
+     * @param locale     Initial locale of the new item
      *
      * @return The new content item.
      */
@@ -179,7 +183,8 @@ public class ContentItemManager {
         @RequiresPrivilege(ItemPrivileges.CREATE_NEW)
         final Folder folder,
         final Class<T> type,
-        final ContentItemInitializer<T> initalizer) {
+        final ContentItemInitializer<T> initalizer,
+        final Locale locale) {
 
         final Optional<ContentType> contentType = typeRepo
             .findByContentSectionAndClass(section, type);
@@ -196,7 +201,8 @@ public class ContentItemManager {
                                  folder,
                                  contentType.get().getDefaultWorkflow(),
                                  type,
-                                 initalizer);
+                                 initalizer,
+                                 locale);
     }
 
     /**
@@ -219,6 +225,7 @@ public class ContentItemManager {
      * @param workflowTemplate The template for the workflow to apply to the new
      *                         item.
      * @param type             The type of the new content item.
+     * @param locale
      *
      * @return The new content item.
      */
@@ -230,7 +237,8 @@ public class ContentItemManager {
         @RequiresPrivilege(ItemPrivileges.CREATE_NEW)
         final Folder folder,
         final WorkflowTemplate workflowTemplate,
-        final Class<T> type) {
+        final Class<T> type,
+        final Locale locale) {
 
         return createContentItem(name,
                                  section,
@@ -238,7 +246,8 @@ public class ContentItemManager {
                                  workflowTemplate,
                                  type,
                                  item -> {
-                                 });
+                                 },
+                                 locale);
 
     }
 
@@ -264,6 +273,7 @@ public class ContentItemManager {
      * @param type             The type of the new content item.
      * @param initializer      Initialiser implementation for setting mandatory
      *                         properties of the new item.
+     * @param locale           Initial locale of the new item
      *
      * @return The new content item.
      */
@@ -276,7 +286,8 @@ public class ContentItemManager {
         final Folder folder,
         final WorkflowTemplate workflowTemplate,
         final Class<T> type,
-        final ContentItemInitializer<T> initializer) {
+        final ContentItemInitializer<T> initializer,
+        final Locale locale) {
 
         final Optional<ContentType> contentType = typeRepo
             .findByContentSectionAndClass(section, type);
@@ -312,7 +323,7 @@ public class ContentItemManager {
             KernelConfig.class);
 
         item.setDisplayName(name);
-        item.getName().addValue(kernelConfig.getDefaultLocale(),
+        item.getName().addValue(locale,
                                 name);
 
         item.setVersion(ContentItemVersion.DRAFT);
@@ -336,7 +347,7 @@ public class ContentItemManager {
             CATEGORIZATION_TYPE_FOLDER);
 
         contentItemRepo.save(item);
-        
+
         if (item.getWorkflow() != null) {
             workflowManager.start(item.getWorkflow());
         }
@@ -526,8 +537,8 @@ public class ContentItemManager {
                     source = (LocalizedString) readMethod.invoke(draftItem);
                     target = (LocalizedString) readMethod.invoke(copy);
                 } catch (IllegalAccessException
-                         | IllegalArgumentException
-                         | InvocationTargetException ex) {
+                             | IllegalArgumentException
+                             | InvocationTargetException ex) {
                     throw new RuntimeException(ex);
                 }
 
@@ -539,8 +550,8 @@ public class ContentItemManager {
                 try {
                     linkedItem = (ContentItem) readMethod.invoke(draftItem);
                 } catch (IllegalAccessException
-                         | IllegalArgumentException
-                         | InvocationTargetException ex) {
+                             | IllegalArgumentException
+                             | InvocationTargetException ex) {
                     throw new RuntimeException(ex);
                 }
 
@@ -550,8 +561,8 @@ public class ContentItemManager {
                 try {
                     writeMethod.invoke(copy, linkedDraftItem);
                 } catch (IllegalAccessException
-                         | IllegalArgumentException
-                         | InvocationTargetException ex) {
+                             | IllegalArgumentException
+                             | InvocationTargetException ex) {
                     throw new RuntimeException(ex);
                 }
             } else if (propType != null
@@ -562,8 +573,8 @@ public class ContentItemManager {
                     source = (List<Object>) readMethod.invoke(draftItem);
                     target = (List<Object>) readMethod.invoke(copy);
                 } catch (IllegalAccessException
-                         | IllegalArgumentException
-                         | InvocationTargetException ex) {
+                             | IllegalArgumentException
+                             | InvocationTargetException ex) {
                     throw new RuntimeException(ex);
                 }
 
@@ -577,8 +588,8 @@ public class ContentItemManager {
                     source = (Map<Object, Object>) readMethod.invoke(draftItem);
                     target = (Map<Object, Object>) readMethod.invoke(copy);
                 } catch (IllegalAccessException
-                         | IllegalArgumentException
-                         | InvocationTargetException ex) {
+                             | IllegalArgumentException
+                             | InvocationTargetException ex) {
                     throw new RuntimeException(ex);
                 }
 
@@ -592,8 +603,8 @@ public class ContentItemManager {
                     source = (Set<Object>) readMethod.invoke(draftItem);
                     target = (Set<Object>) readMethod.invoke(copy);
                 } catch (IllegalAccessException
-                         | IllegalArgumentException
-                         | InvocationTargetException ex) {
+                             | IllegalArgumentException
+                             | InvocationTargetException ex) {
                     throw new RuntimeException(ex);
                 }
 
@@ -604,8 +615,8 @@ public class ContentItemManager {
                     value = readMethod.invoke(draftItem);
                     writeMethod.invoke(copy, value);
                 } catch (IllegalAccessException
-                         | IllegalArgumentException
-                         | InvocationTargetException ex) {
+                             | IllegalArgumentException
+                             | InvocationTargetException ex) {
                     throw new RuntimeException(ex);
                 }
             }
@@ -774,8 +785,8 @@ public class ContentItemManager {
                     sourceStr = (LocalizedString) readMethod.invoke(source);
                     targetStr = (LocalizedString) readMethod.invoke(target);
                 } catch (IllegalAccessException
-                         | IllegalArgumentException
-                         | InvocationTargetException ex) {
+                             | IllegalArgumentException
+                             | InvocationTargetException ex) {
                     throw new UnexpectedErrorException(ex);
                 }
 
@@ -786,8 +797,8 @@ public class ContentItemManager {
                     value = readMethod.invoke(source);
                     writeMethod.invoke(target, value);
                 } catch (IllegalAccessException
-                         | IllegalArgumentException
-                         | InvocationTargetException ex) {
+                             | IllegalArgumentException
+                             | InvocationTargetException ex) {
                     throw new UnexpectedErrorException(ex);
                 }
             }
@@ -911,8 +922,8 @@ public class ContentItemManager {
                     source = (LocalizedString) readMethod.invoke(draftItem);
                     target = (LocalizedString) readMethod.invoke(liveItem);
                 } catch (IllegalAccessException
-                         | IllegalArgumentException
-                         | InvocationTargetException ex) {
+                             | IllegalArgumentException
+                             | InvocationTargetException ex) {
                     throw new RuntimeException(ex);
                 }
 
@@ -923,8 +934,8 @@ public class ContentItemManager {
                 try {
                     linkedItem = (ContentItem) readMethod.invoke(draftItem);
                 } catch (IllegalAccessException
-                         | IllegalArgumentException
-                         | InvocationTargetException ex) {
+                             | IllegalArgumentException
+                             | InvocationTargetException ex) {
                     throw new RuntimeException(ex);
                 }
 
@@ -938,8 +949,8 @@ public class ContentItemManager {
                                 linkedDraftItem, ContentItem.class);
                         writeMethod.invoke(liveItem, linkedLiveItem);
                     } catch (IllegalAccessException
-                             | IllegalArgumentException
-                             | InvocationTargetException ex) {
+                                 | IllegalArgumentException
+                                 | InvocationTargetException ex) {
                         throw new RuntimeException(ex);
                     }
                 }
@@ -951,8 +962,8 @@ public class ContentItemManager {
                     source = (List<Object>) readMethod.invoke(draftItem);
                     target = (List<Object>) readMethod.invoke(liveItem);
                 } catch (IllegalAccessException
-                         | IllegalArgumentException
-                         | InvocationTargetException ex) {
+                             | IllegalArgumentException
+                             | InvocationTargetException ex) {
                     throw new RuntimeException(ex);
                 }
 
@@ -966,8 +977,8 @@ public class ContentItemManager {
                     source = (Map<Object, Object>) readMethod.invoke(draftItem);
                     target = (Map<Object, Object>) readMethod.invoke(liveItem);
                 } catch (IllegalAccessException
-                         | IllegalArgumentException
-                         | InvocationTargetException ex) {
+                             | IllegalArgumentException
+                             | InvocationTargetException ex) {
                     throw new RuntimeException(ex);
                 }
 
@@ -981,8 +992,8 @@ public class ContentItemManager {
                     source = (Set<Object>) readMethod.invoke(draftItem);
                     target = (Set<Object>) readMethod.invoke(liveItem);
                 } catch (IllegalAccessException
-                         | IllegalArgumentException
-                         | InvocationTargetException ex) {
+                             | IllegalArgumentException
+                             | InvocationTargetException ex) {
                     throw new RuntimeException(ex);
                 }
 
@@ -993,8 +1004,8 @@ public class ContentItemManager {
                     value = readMethod.invoke(item);
                     writeMethod.invoke(liveItem, value);
                 } catch (IllegalAccessException
-                         | IllegalArgumentException
-                         | InvocationTargetException ex) {
+                             | IllegalArgumentException
+                             | InvocationTargetException ex) {
                     throw new RuntimeException(ex);
                 }
             }
