@@ -28,7 +28,6 @@ import javax.enterprise.context.RequestScoped;
  * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
  * @version created on 3/23/17
  */
-@RequestScoped
 public class CategoryIdResolver implements ObjectIdResolver {
 
     @Override
