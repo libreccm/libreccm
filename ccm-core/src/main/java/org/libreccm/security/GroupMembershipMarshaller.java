@@ -44,8 +44,9 @@ public class GroupMembershipMarshaller extends AbstractMarshaller<GroupMembershi
 
     @Override
     @Transactional(Transactional.TxType.REQUIRED)
-    protected void insertIntoDb(GroupMembership portableObject) {
+    protected void insertIntoDb(final GroupMembership portableObject) {
         portableObject.setMembershipId(portableObject.getMembershipId() * -1);
         entityManager.merge(portableObject);
+        entityManager.flush();
     }
 }

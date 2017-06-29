@@ -33,9 +33,13 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.*;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+import org.libreccm.security.Group;
+import org.libreccm.security.GroupRepository;
 import org.libreccm.tests.categories.IntegrationTest;
 
 import javax.inject.Inject;
+
+import java.util.concurrent.TimeUnit;
 
 import static org.libreccm.testutils.DependenciesHelpers.getModuleDependencies;
 
@@ -58,6 +62,8 @@ public class CoreDataImportTest {
 
     @Inject
     private ImportHelper importHelper;
+    @Inject
+    private GroupRepository groupRepository;
 
     public CoreDataImportTest() {
 
@@ -124,13 +130,24 @@ public class CoreDataImportTest {
 
     @Test
     @InSequence(100)
-    public void objectsShouldBeImported() {
+    public void objectsShouldBeImported() throws InterruptedException {
         // assert for no errors
         Assert.assertFalse(importHelper.importUsers());
         Assert.assertFalse(importHelper.importGroups());
         Assert.assertFalse(importHelper.importGroupMemberships());
+
         Assert.assertFalse(importHelper.importRoles());
         Assert.assertFalse(importHelper.importRoleMemberships());
+
+
+        final String name = "research_Administration_Publisher";
+        Group group = groupRepository
+                .findByName(name)
+                .orElseThrow(() -> new IllegalArgumentException(String
+                .format("No Group fount with the name: %s", name)));
+        System.err.println(group.toString());
+
+
         //Assert.assertFalse(importHelper.importCategories());
 
     }
