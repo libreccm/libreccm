@@ -272,6 +272,7 @@ public abstract class BasicPageForm extends BasicItemForm {
      * @param section
      * @param folder
      * @param initializer
+     * @param locale
      *
      * @return the new content item (or a proper subclass thereof)
      *
@@ -282,47 +283,16 @@ public abstract class BasicPageForm extends BasicItemForm {
         final String name,
         final ContentSection section,
         final Folder folder,
-        final ContentItemInitializer<T> initializer) throws FormProcessException {
+        final ContentItemInitializer<T> initializer,
+        final Locale locale) throws FormProcessException {
 
-//        final ItemSelectionModel selectionModel = getItemSelectionModel();
-//        final ContentType contentType = selectionModel.getContentType();
-//
-//        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-//        final ContentItemManager itemManager = cdiUtil
-//            .findBean(ContentItemManager.class);
-//
-//        // Create new item
-//        final ContentItem item;
-//        try {
-//            @SuppressWarnings("unchecked")
-//            final Class<? extends ContentItem> clazz
-//                                                   = (Class<? extends ContentItem>) Class
-//                    .forName(contentType.getContentItemClass());
-//            item = itemManager.createContentItem(name,
-//                                                 section,
-//                                                 folder,
-//                                                 clazz,
-//                                                 initializer);
-//        } catch (ClassNotFoundException ex) {
-//            throw new FormProcessException(
-//                "Couldn't create contentpage",
-//                new GlobalizedMessage(
-//                    "cms.ui.authoring.couldnt_create_contentpage",
-//                    CmsConstants.CMS_BUNDLE),
-//                ex);
-//        }
-//
-//        // Create new item
-//        // Make sure the item will be remembered across requests
-//        selectionModel.setSelectedKey(state, item.getObjectId());
-//
-//        return item;
         return createContentItemPage(state,
                                      name,
                                      section,
                                      folder,
                                      null,
-                                     initializer);
+                                     initializer,
+                                     locale);
     }
 
     public <T extends ContentItem> T createContentItemPage(
@@ -331,15 +301,14 @@ public abstract class BasicPageForm extends BasicItemForm {
         final ContentSection section,
         final Folder folder,
         final WorkflowTemplate workflowTemplate,
-        final ContentItemInitializer<T> initializer) throws FormProcessException {
+        final ContentItemInitializer<T> initializer,
+        final Locale locale) throws FormProcessException {
 
         final ItemSelectionModel selectionModel = getItemSelectionModel();
         final ContentType contentType = selectionModel.getContentType();
 
         // Create new item
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-//        final ContentItemManager itemManager = cdiUtil
-//            .findBean(ContentItemManager.class);
         final BasicPageFormController controller = cdiUtil
             .findBean(BasicPageFormController.class);
 
@@ -349,33 +318,22 @@ public abstract class BasicPageForm extends BasicItemForm {
             final Class<T> clazz = (Class<T>) Class
                 .forName(contentType.getContentItemClass());
 
-//            @SuppressWarnings("unchecked")
-//            final Class<? extends ContentItem> clazz
-//                                                   = (Class<? extends ContentItem>) Class
-//                    .forName(contentType.getContentItemClass());
-//            
             if (workflowTemplate == null) {
-//                item = itemManager.createContentItem(name,
-//                                                     section,
-//                                                     folder,
-//                                                     clazz,
-//                                                     initializer);
                 item = controller
-                    .createContentItem(name, section, folder, clazz,
-                                       initializer);
+                    .createContentItem(name, 
+                                       section, 
+                                       folder, 
+                                       clazz,
+                                       initializer,
+                                       locale);
             } else {
-//                item = itemManager.createContentItem(name,
-//                                                     section,
-//                                                     folder,
-//                                                     workflowTemplate,
-//                                                     clazz,
-//                                                     initializer);
                 item = controller.createContentItem(name,
                                                     section,
                                                     folder,
                                                     workflowTemplate,
                                                     clazz,
-                                                    initializer);
+                                                    initializer,
+                                                    locale);
             }
         } catch (ClassNotFoundException ex) {
             throw new FormProcessException(

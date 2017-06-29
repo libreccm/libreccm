@@ -30,6 +30,7 @@ import com.arsdigita.bebop.event.FormSubmissionListener;
 import com.arsdigita.bebop.event.FormValidationListener;
 import com.arsdigita.cms.ItemSelectionModel;
 import com.arsdigita.cms.ui.authoring.ApplyWorkflowFormSection;
+import com.arsdigita.cms.ui.authoring.BasicItemForm;
 import com.arsdigita.cms.ui.authoring.CreationComponent;
 import com.arsdigita.cms.ui.authoring.CreationSelector;
 import com.arsdigita.cms.ui.authoring.LanguageWidget;
@@ -43,6 +44,8 @@ import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.Folder;
 import org.librecms.contenttypes.MultiPartArticle;
+
+import java.util.Locale;
 
 /**
  * A form which will create a MultiPartArticle or one of its subclasses.
@@ -135,16 +138,20 @@ public class MultiPartArticleCreateForm
     }
 
     @Override
-    public void process(final FormSectionEvent e) throws FormProcessException {
-        final FormData data = e.getFormData();
-        final PageState state = e.getPageState();
+    public void process(final FormSectionEvent event) throws FormProcessException {
+        final FormData data = event.getFormData();
+        final PageState state = event.getPageState();
         final ContentSection section = creationSelector.getContentSection(state);
         final Folder folder = creationSelector.getFolder(state);
 
+        final Locale locale = new Locale((String) data
+            .get(BasicItemForm.LANGUAGE));
+        
         final MultiPartArticle article = createArticle(state,
                                                        (String) data.get(NAME),
                                                        section,
-                                                       folder);
+                                                       folder,
+                                                       locale);
         article.getTitle().addValue(KernelConfig.getConfig().getDefaultLocale(),
                                     (String) data.get(TITLE));
         if (!CMSConfig.getConfig().isHideLaunchDate()) {

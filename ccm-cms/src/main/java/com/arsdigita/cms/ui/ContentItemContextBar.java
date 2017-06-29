@@ -19,6 +19,7 @@
 package com.arsdigita.cms.ui;
 
 import com.arsdigita.bebop.PageState;
+import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.cms.CMS;
 
 import org.librecms.contentsection.ContentItem;
@@ -26,10 +27,15 @@ import org.librecms.contentsection.ContentSection;
 
 import com.arsdigita.cms.ItemSelectionModel;
 import com.arsdigita.cms.PageLocations;
+import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.web.ParameterMap;
 import com.arsdigita.web.URL;
 
+import org.libreccm.cdi.utils.CdiUtil;
+import org.librecms.contentsection.ContentItemL10NManager;
+
 import java.util.List;
+import java.util.Locale;
 
 /**
  * <p>
@@ -41,11 +47,14 @@ import java.util.List;
 class ContentItemContextBar extends ContentSectionContextBar {
 
     private final ItemSelectionModel itemSelectionModel;
+    private final StringParameter selectedLanguageParam;
 
-    ContentItemContextBar(final ItemSelectionModel itemSelectionModel) {
+    ContentItemContextBar(final ItemSelectionModel itemSelectionModel,
+                          final StringParameter selectedLanguageParam) {
         super();
 
         this.itemSelectionModel = itemSelectionModel;
+        this.selectedLanguageParam = selectedLanguageParam;
     }
 
     @Override
@@ -63,12 +72,33 @@ class ContentItemContextBar extends ContentSectionContextBar {
         title.append(localize("cms.ui.content_item"));
         title.append(": ")
             .append(item.getDisplayName());
-//        final String language = item.getLanguage();
-//        if (language != null) {
-//            title.append(" (")
-//                .append(language)
-//                .append(")");
-//        }
+
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final ContentItemL10NManager l10nManager = cdiUtil
+            .findBean(ContentItemL10NManager.class);
+        final String selectedLanguage = (String) state
+            .getValue(selectedLanguageParam);
+        final Locale selectedLocale;
+        if (selectedLanguage == null
+                || selectedLanguage.isEmpty()) {
+            selectedLocale = KernelConfig.getConfig().getDefaultLocale();
+        } else {
+            selectedLocale = new Locale(selectedLanguage);
+        }
+        
+        final String language;
+        if (l10nManager.hasLanguage(item, selectedLocale)) {
+            language = selectedLanguage;
+        } else {
+            state.setValue(selectedLanguageParam,
+                           KernelConfig.getConfig().getDefaultLanguage());
+            language = KernelConfig.getConfig().getDefaultLanguage();
+        }
+        if (language != null) {
+            title.append(" (")
+                .append(language)
+                .append(")");
+        }
 
         entries.add(new Entry(title.toString(), url));
 
