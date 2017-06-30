@@ -211,7 +211,7 @@ public class ContentItemManagerTest {
 
     /**
      * Tries to create a new content item using
-     * {@link ContentItemManager#createContentItem(java.lang.String, org.librecms.contentsection.ContentSection, org.librecms.contentsection.Folder, java.lang.Class)}.
+     * {@link ContentItemManager#createContentItem(java.lang.String, org.librecms.contentsection.ContentSection, org.librecms.contentsection.Folder, java.lang.Class, java.util.Locale)}.
      */
     @Test
     @InSequence(1100)
@@ -234,7 +234,7 @@ public class ContentItemManagerTest {
                           "workflow_id"
         })
     public void createContentItem() {
-        
+
         shiro.getSystemUser().execute(() -> {
             final ContentSection section = sectionRepo
                 .findByLabel("info")
@@ -244,7 +244,8 @@ public class ContentItemManagerTest {
             final Article article = itemManager.createContentItem("new-article",
                                                                   section,
                                                                   folder,
-                                                                  Article.class);
+                                                                  Article.class,
+                                                                  Locale.ENGLISH);
 
             assertThat("DisplayName has not the expected value.",
                        article.getDisplayName(), is(equalTo("new-article")));
@@ -265,7 +266,7 @@ public class ContentItemManagerTest {
 
     /**
      * Checks if an {@link IllegalArgumentException} is thrown if
-     * {@link ContentItemManager#createContentItem(java.lang.String, org.librecms.contentsection.ContentSection, org.librecms.contentsection.Folder, java.lang.Class)}
+     * {@link ContentItemManager#createContentItem(java.lang.String, org.librecms.contentsection.ContentSection, org.librecms.contentsection.Folder, java.lang.Class, java.util.Locale) }
      * is called for a content type which is not registered for the provided
      * content section.
      */
@@ -282,12 +283,16 @@ public class ContentItemManagerTest {
             .get();
         final Folder folder = section.getRootDocumentsFolder();
 
-        itemManager.createContentItem("Test", section, folder, Event.class);
+        itemManager.createContentItem("Test", 
+                                      section, 
+                                      folder, 
+                                      Event.class,
+                                      Locale.ENGLISH);
     }
 
     /**
      * Verifies that an {@link IllegalArgumentException} is thrown if
-     * {@link ContentItemManager#createContentItem(java.lang.String, org.librecms.contentsection.ContentSection, org.librecms.contentsection.Folder, java.lang.Class)}
+     * {@link ContentItemManager#createContentItem(java.lang.String, org.librecms.contentsection.ContentSection, org.librecms.contentsection.Folder, java.lang.Class, java.util.Locale)}
      * is called with {@code null} for the name of the new item.
      */
     @Test(expected = IllegalArgumentException.class)
@@ -304,13 +309,17 @@ public class ContentItemManagerTest {
                 .get();
             final Folder folder = section.getRootDocumentsFolder();
 
-            itemManager.createContentItem(null, section, folder, Article.class);
+            itemManager.createContentItem(null, 
+                                          section, 
+                                          folder, 
+                                          Article.class,
+                                          Locale.ENGLISH);
         });
     }
 
     /**
      * Verifies that an {@link IllegalArgumentException} is thrown if
-     * {@link ContentItemManager#createContentItem(java.lang.String, org.librecms.contentsection.ContentSection, org.librecms.contentsection.Folder, java.lang.Class)}
+     * {@link ContentItemManager#createContentItem(java.lang.String, org.librecms.contentsection.ContentSection, org.librecms.contentsection.Folder, java.lang.Class, java.util.Locale)}
      * is called with an empty string for the name of the new content item.
      */
     @Test(expected = IllegalArgumentException.class)
@@ -327,13 +336,17 @@ public class ContentItemManagerTest {
                 .get();
             final Folder folder = section.getRootDocumentsFolder();
 
-            itemManager.createContentItem(" ", section, folder, Article.class);
+            itemManager.createContentItem(" ",
+                                          section, 
+                                          folder, 
+                                          Article.class,
+                                          Locale.ENGLISH);
         });
     }
 
     /**
      * Verifies that an {@link IllegalArgumentException} is thrown if
-     * {@link ContentItemManager#createContentItem(java.lang.String, org.librecms.contentsection.ContentSection, org.librecms.contentsection.Folder, java.lang.Class)}
+     * {@link ContentItemManager#createContentItem(java.lang.String, org.librecms.contentsection.ContentSection, org.librecms.contentsection.Folder, java.lang.Class, java.util.Locale)}
      * is called with {@code null} for the folder in which the new item is
      * created.
      */
@@ -350,13 +363,17 @@ public class ContentItemManagerTest {
                 .findByLabel("info")
                 .get();
 
-            itemManager.createContentItem("Test", section, null, Article.class);
+            itemManager.createContentItem("Test", 
+                                          section, 
+                                          null, 
+                                          Article.class,
+                                          Locale.ENGLISH);
         });
     }
 
     /**
      * Tries to create a new content item with an alternative workflow using
-     * {@link ContentItemManager#createContentItem(java.lang.String, org.librecms.contentsection.ContentSection, org.librecms.contentsection.Folder, org.libreccm.workflow.WorkflowTemplate, java.lang.Class)}.
+     * {@link ContentItemManager#createContentItem(java.lang.String, org.librecms.contentsection.ContentSection, org.librecms.contentsection.Folder, org.libreccm.workflow.WorkflowTemplate, java.lang.Class, java.util.Locale)}.
      */
     @Test
     @InSequence(2100)
@@ -394,7 +411,8 @@ public class ContentItemManagerTest {
                 section,
                 folder,
                 workflowTemplate,
-                Article.class);
+                Article.class,
+                Locale.ENGLISH);
 
             assertThat("DisplayName has not the expected value.",
                        article.getDisplayName(), is(equalTo("new-article")));
@@ -415,7 +433,7 @@ public class ContentItemManagerTest {
 
     /**
      * Verifies that
-     * {@link ContentItemManager#createContentItem(java.lang.String, org.librecms.contentsection.ContentSection, org.librecms.contentsection.Folder, org.libreccm.workflow.WorkflowTemplate, java.lang.Class)}
+     * {@link ContentItemManager#createContentItem(java.lang.String, org.librecms.contentsection.ContentSection, org.librecms.contentsection.Folder, org.libreccm.workflow.WorkflowTemplate, java.lang.Class, java.util.Locale)}
      * throws an {@link IllegalArgumentException} if the provided type of the
      * item to create is not registered with the provided content section.
      */
@@ -440,13 +458,14 @@ public class ContentItemManagerTest {
                                           section,
                                           folder,
                                           workflowTemplate,
-                                          Event.class);
+                                          Event.class,
+                                          Locale.ENGLISH);
         });
     }
 
     /**
      * Verifies that
-     * {@link ContentItemManager#createContentItem(java.lang.String, org.librecms.contentsection.ContentSection, org.librecms.contentsection.Folder, org.libreccm.workflow.WorkflowTemplate, java.lang.Class)}
+     * {@link ContentItemManager#createContentItem(java.lang.String, org.librecms.contentsection.ContentSection, org.librecms.contentsection.Folder, org.libreccm.workflow.WorkflowTemplate, java.lang.Class, java.util.Locale)}
      * throws an {@link IllegalArgumentException} if called with {@code null}
      * for the name of the new item.
      */
@@ -471,15 +490,16 @@ public class ContentItemManagerTest {
                                           section,
                                           folder,
                                           workflowTemplate,
-                                          Article.class);
+                                          Article.class,
+                                          Locale.ENGLISH);
         });
     }
 
     /**
      * Verifies that
-     * {@link ContentItemManager#createContentItem(java.lang.String, org.librecms.contentsection.ContentSection, org.librecms.contentsection.Folder, org.libreccm.workflow.WorkflowTemplate, java.lang.Class)}
+     * {@link ContentItemManager#createContentItem(java.lang.String, org.librecms.contentsection.ContentSection, org.librecms.contentsection.Folder, org.libreccm.workflow.WorkflowTemplate, java.lang.Class, java.util.Locale)}
      * throws an {@link IllegalArgumentException} if called with {@code null}
-     * for the name of the new item and for thw workflow of the new item.
+     * for the name of the new item and for the workflow of the new item.
      */
     @Test(expected = IllegalArgumentException.class)
     @InSequence(2400)
@@ -499,13 +519,14 @@ public class ContentItemManagerTest {
                                           section,
                                           folder,
                                           null,
-                                          Article.class);
+                                          Article.class,
+                                          Locale.ENGLISH);
         });
     }
 
     /**
      * Verifies that
-     * {@link ContentItemManager#createContentItem(java.lang.String, org.librecms.contentsection.ContentSection, org.librecms.contentsection.Folder, org.libreccm.workflow.WorkflowTemplate, java.lang.Class)}
+     * {@link ContentItemManager#createContentItem(java.lang.String, org.librecms.contentsection.ContentSection, org.librecms.contentsection.Folder, org.libreccm.workflow.WorkflowTemplate, java.lang.Class, java.util.Locale)}
      * throws an {@link IllegalArgumentException} if called with {@code null}
      * for the folder in which the new item is created.
      */
@@ -529,7 +550,8 @@ public class ContentItemManagerTest {
                                           section,
                                           null,
                                           workflowTemplate,
-                                          Article.class);
+                                          Article.class,
+                                          Locale.ENGLISH);
         });
     }
 
@@ -554,7 +576,7 @@ public class ContentItemManagerTest {
                           "workflow_id"
         })
     public void moveItem() {
-        
+
         final Optional<ContentItem> item = itemRepo.findById(-10100L);
         assertThat(item.isPresent(), is(true));
 
@@ -596,7 +618,7 @@ public class ContentItemManagerTest {
 
     /**
      * Verifies that null null null null null null null null null null null null
-     * null null null null null null null null null     {@link ContentItemManager#move(org.librecms.contentsection.ContentItem, org.librecms.contentsection.Folder) 
+     * null null null null null null null null null null     {@link ContentItemManager#move(org.librecms.contentsection.ContentItem, org.librecms.contentsection.Folder) 
      * throws an {@link IllegalArgumentException} if the type of the item to
      * copy has not been registered in content section to which the target
      * folder belongs.
