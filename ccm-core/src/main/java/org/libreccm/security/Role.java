@@ -70,66 +70,73 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 @NamedQueries({
     @NamedQuery(name = "Role.findByName",
                 query = "SELECT r FROM Role r "
-                                + "WHERE r.name = :name")
+                            + "WHERE r.name = :name")
     ,
     @NamedQuery(
-            name = "Role.count",
-            query = "SELECT COUNT(r) FROM Role r")
+        name = "Role.count",
+        query = "SELECT COUNT(r) FROM Role r")
     ,
     @NamedQuery(
-            name = "Role.findAllOrderedByRoleName",
-            query = "SELECT r FROM Role r ORDER BY r.name")
+        name = "Role.findAllOrderedByRoleName",
+        query = "SELECT r FROM Role r ORDER BY r.name")
     ,
     @NamedQuery(
-            name = "Role.findAllOrderedByRoleNameLimit",
-            query = "SELECT r FROM Role r ORDER BY r.name ")
+        name = "Role.findAllOrderedByRoleNameLimit",
+        query = "SELECT r FROM Role r ORDER BY r.name ")
     ,
     @NamedQuery(
-            name = "Role.findAllOrderedByRoleNameDesc",
-            query = "SELECT r FROM Role r ORDER BY r.name DESC")
+        name = "Role.findAllOrderedByRoleNameDesc",
+        query = "SELECT r FROM Role r ORDER BY r.name DESC")
     ,
     @NamedQuery(
-            name = "Role.searchByName",
-            query = "SELECT r FROM Role r "
-                            + "WHERE LOWER(r.name) LIKE CONCAT(LOWER(:name), '%') "
+        name = "Role.searchByName",
+        query = "SELECT r FROM Role r "
+                    + "WHERE LOWER(r.name) LIKE CONCAT(LOWER(:name), '%') "
                     + "ORDER BY r.name ")
     ,
     @NamedQuery(
-            name = "Role.searchByNameCount",
-            query = "SELECT COUNT(r.name) FROM Role r "
-                            + "WHERE LOWER(r.name) LIKE CONCAT(LOWER(:name), '%') "
+        name = "Role.searchByNameCount",
+        query = "SELECT COUNT(r.name) FROM Role r "
+                    + "WHERE LOWER(r.name) LIKE CONCAT(LOWER(:name), '%') "
                     + "GROUP BY r.name "
-                            + "ORDER BY r.name ")
+                    + "ORDER BY r.name ")
     ,
     @NamedQuery(
-            name = "Role.findByPrivilege",
-            query = "SELECT r FROM Role r JOIN r.permissions p "
-                            + "WHERE p.grantedPrivilege = :privilege "
-                            + "ORDER BY r.name")
+        name = "Role.findByPrivilege",
+        query = "SELECT r FROM Role r JOIN r.permissions p "
+                    + "WHERE p.grantedPrivilege = :privilege "
+                    + "ORDER BY r.name")
     ,
     @NamedQuery(
-            name = "Role.findByPrivilegeAndObject",
-            query = "SELECT r FROM Role r JOIN r.permissions p "
-                            + "WHERE p.grantedPrivilege = :privilege "
-                            + "AND p.object = :object "
-                            + "ORDER BY r.name")
+        name = "Role.findByPrivilegeAndObject",
+        query = "SELECT r FROM Role r JOIN r.permissions p "
+                    + "WHERE p.grantedPrivilege = :privilege "
+                    + "AND p.object = :object "
+                    + "ORDER BY r.name")
     ,
     @NamedQuery(
-            name = "Role.findRolesOfUser",
-            query = "SELECT r.role FROM RoleMembership r "
-                            + "WHERE r.member = :user")
+        name = "Role.findRolesOfUser",
+        query = "SELECT r.role FROM RoleMembership r "
+                    + "WHERE r.member = :user")
+    ,
+    @NamedQuery(
+        name = "Role.findByParty",
+        query = "SELECT r FROM Role r "
+                    + "JOIN r.memberships m "
+                    + "WHERE m.member = :member"
+    )
 })
 @NamedEntityGraphs({
     @NamedEntityGraph(
-            name = Role.ENTITY_GRPAH_WITH_MEMBERS,
-            attributeNodes = {
-                @NamedAttributeNode(value = "memberships"),})
+        name = Role.ENTITY_GRPAH_WITH_MEMBERS,
+        attributeNodes = {
+            @NamedAttributeNode(value = "memberships"),})
     ,
     @NamedEntityGraph(
-            name = Role.ENTITY_GRPAH_WITH_PERMISSIONS,
-            attributeNodes = {
-                @NamedAttributeNode(value = "permissions")
-            })
+        name = Role.ENTITY_GRPAH_WITH_PERMISSIONS,
+        attributeNodes = {
+            @NamedAttributeNode(value = "permissions")
+        })
 })
 @XmlRootElement(name = "role", namespace = CORE_XML_NS)
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -142,9 +149,9 @@ public class Role implements Serializable, Portable {
     private static final long serialVersionUID = -7121296514181469687L;
 
     public static final String ENTITY_GRPAH_WITH_MEMBERS
-                               = "Role.withMembers";
+                                   = "Role.withMembers";
     public static final String ENTITY_GRPAH_WITH_PERMISSIONS
-                               = "Role.withPermissions";
+                                   = "Role.withPermissions";
 
     @Id
     @Column(name = "ROLE_ID")
@@ -168,12 +175,12 @@ public class Role implements Serializable, Portable {
      */
     @Embedded
     @AssociationOverride(
-            name = "values",
-            joinTable = @JoinTable(name = "ROLE_DESCRIPTIONS",
-                    schema = DB_SCHEMA,
-                    joinColumns = {
-                            @JoinColumn(name = "ROLE_ID")
-                    }))
+        name = "values",
+        joinTable = @JoinTable(name = "ROLE_DESCRIPTIONS",
+                               schema = DB_SCHEMA,
+                               joinColumns = {
+                                   @JoinColumn(name = "ROLE_ID")
+                               }))
     @XmlElement(name = "description", namespace = CORE_XML_NS)
     private LocalizedString description = new LocalizedString();
 
@@ -334,9 +341,9 @@ public class Role implements Serializable, Portable {
 //                             name,
 //                             Objects.toString(permissions));
         return String.format("%s{ "
-                                     + "roldId = %d, "
-                                     + "name = \"%s\", "
-                                     + " }",
+                                 + "roldId = %d, "
+                                 + "name = \"%s\", "
+                                 + " }",
                              super.toString(),
                              roleId,
                              name);
