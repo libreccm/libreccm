@@ -56,7 +56,7 @@ public class RoleRepository extends AbstractEntityRepository<Long, Role> {
 
     public long count() {
         final TypedQuery<Long> query = getEntityManager().createNamedQuery(
-                "Role.count", Long.class);
+            "Role.count", Long.class);
         return query.getSingleResult();
     }
 
@@ -66,11 +66,11 @@ public class RoleRepository extends AbstractEntityRepository<Long, Role> {
      * @param name The name of the role to retrieve.
      *
      * @return The role identified by the provided {@code name} or {@code null}
-     * if there is no matching role.
+     *         if there is no matching role.
      */
     public Optional<Role> findByName(final String name) {
         final TypedQuery<Role> query = getEntityManager().createNamedQuery(
-                "Role.findByName", Role.class);
+            "Role.findByName", Role.class);
         query.setParameter("name", name);
         final List<Role> result = query.getResultList();
         if (result.isEmpty()) {
@@ -82,42 +82,51 @@ public class RoleRepository extends AbstractEntityRepository<Long, Role> {
 
     public List<Role> findAllOrderedByRoleName() {
         final TypedQuery<Role> query = getEntityManager().createNamedQuery(
-                "Role.findAllOrderedByRoleName", Role.class);
+            "Role.findAllOrderedByRoleName", Role.class);
         return query.getResultList();
     }
 
     public List<Role> findAllOrderedByRole(final int maxResults,
                                            final int firstResult) {
         final TypedQuery<Role> query = getEntityManager().createNamedQuery(
-                "Role.findAllOrderedByRoleName", Role.class);
+            "Role.findAllOrderedByRoleName", Role.class);
         query.setMaxResults(maxResults);
         query.setFirstResult(firstResult);
         return query.getResultList();
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
-    public List<Role> findByPrivilege(final String privilege) {
-        final TypedQuery<Role> query = getEntityManager().createNamedQuery(
-                "Role.findByPrivilege", Role.class);
-        query.setParameter("privilege", privilege);
-        
+    public List<Role> findByParty(final Party party) {
+        final TypedQuery<Role> query = getEntityManager()
+            .createNamedQuery("Role.findByParty", Role.class);
+        query.setParameter("member", party);
+
         return query.getResultList();
     }
-    
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public List<Role> findByPrivilege(final String privilege) {
+        final TypedQuery<Role> query = getEntityManager().createNamedQuery(
+            "Role.findByPrivilege", Role.class);
+        query.setParameter("privilege", privilege);
+
+        return query.getResultList();
+    }
+
     @Transactional(Transactional.TxType.REQUIRED)
     public List<Role> findByPrivilege(final String privilege,
                                       final CcmObject object) {
         final TypedQuery<Role> query = getEntityManager().createNamedQuery(
-                "Role.findByPrivilegeAndObject", Role.class);
+            "Role.findByPrivilegeAndObject", Role.class);
         query.setParameter("privilege", privilege);
         query.setParameter("object", object);
-        
+
         return query.getResultList();
     }
 
     public List<Role> searchByName(final String name) {
         final TypedQuery<Role> query = getEntityManager().createNamedQuery(
-                "Role.searchByName", Role.class);
+            "Role.searchByName", Role.class);
         query.setParameter("name", name);
         return query.getResultList();
     }
@@ -126,7 +135,7 @@ public class RoleRepository extends AbstractEntityRepository<Long, Role> {
                                    final int maxResults,
                                    final int firstResult) {
         final TypedQuery<Role> query = getEntityManager().createNamedQuery(
-                "Role.searchByName", Role.class);
+            "Role.searchByName", Role.class);
         query.setParameter("name", name);
         query.setFirstResult(firstResult);
         query.setMaxResults(maxResults);
@@ -135,7 +144,7 @@ public class RoleRepository extends AbstractEntityRepository<Long, Role> {
 
     public long searchByNameCount(final String name) {
         final TypedQuery<Long> query = getEntityManager().createNamedQuery(
-                "Role.searchByNameCount", Long.class);
+            "Role.searchByNameCount", Long.class);
         query.setParameter("name", name);
         try {
             return query.getSingleResult();

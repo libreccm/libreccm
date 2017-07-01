@@ -219,10 +219,10 @@ public class GroupDetails extends Window {
         membersGridHeaderCell
             .setComponent(new HorizontalLayout(addMemberButton));
 
-        final GroupMembersTableDataProvider dataProvider = cdiUtil
+        final GroupMembersTableDataProvider usersDataProvider = cdiUtil
             .findBean(GroupMembersTableDataProvider.class);
-        dataProvider.setGroup(group);
-        membersGrid.setDataProvider(dataProvider);
+        usersDataProvider.setGroup(group);
+        membersGrid.setDataProvider(usersDataProvider);
 
         final GroupRolesController rolesController = cdiUtil
             .findBean(GroupRolesController.class);
@@ -240,24 +240,46 @@ public class GroupDetails extends Window {
                            rolesGrid.getDataProvider().refreshAll();
                        }))
             .setId(COL_ROLE_REMOVE);
-        
+
         rolesGrid.setWidth("100%");
-        
+
         final RoleRepository roleRepository = cdiUtil
             .findBean(RoleRepository.class);
-        
+
         final HeaderRow rolesGridHeader = rolesGrid.prependHeaderRow();
         final Button addRoleButton = new Button("Add role");
         addRoleButton.setIcon(VaadinIcons.PLUS);
         addRoleButton.setStyleName(ValoTheme.BUTTON_TINY);
         addRoleButton.addClickListener(event -> {
-            
+            final RoleSelector roleSelector = new RoleSelector(
+                "Select role(s) to add to group",
+                "Add selected role(s) to group",
+                usersGroupsRoles,
+                roleRepository.findByParty(group),
+                (selectedRoles -> {
+                    selectedRoles.forEach(role -> {
+                        rolesController.assignRoleToGroup(role, group);
+                        rolesGrid.getDataProvider().refreshAll();
+                    });
+                }));
+            roleSelector.center();
+            roleSelector.setWidth("80%");
+            UI.getCurrent().addWindow(roleSelector);
         });
-        //ToDo Add roles grid
+        final HeaderCell rolesGridHeaderCell = rolesGridHeader
+            .join(COL_ROLE_NAME,
+                  COL_ROLE_REMOVE);
+        rolesGridHeaderCell
+            .setComponent(new HorizontalLayout(addRoleButton));
+
+        final GroupRolesTableDataProvider rolesDataProvider = cdiUtil
+            .findBean(GroupRolesTableDataProvider.class);
+        rolesDataProvider.setGroup(group);
+        rolesGrid.setDataProvider(rolesDataProvider);
 
         final TabSheet tabs = new TabSheet();
         tabs.addTab(membersGrid, "Members");
-        tabs.addTab(new Label("Roles Placeholder"), "Roles");
+        tabs.addTab(rolesGrid, "Roles");
 
         final VerticalLayout windowLayout = new VerticalLayout(propertiesPanel,
                                                                tabs);
