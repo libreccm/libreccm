@@ -20,7 +20,6 @@ package org.libreccm.admin.ui.usersgroupsroles;
 
 import com.arsdigita.ui.admin.AdminUiConstants;
 
-import com.vaadin.cdi.CDIUI;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
@@ -42,56 +41,61 @@ import java.util.ResourceBundle;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class RoleSelector extends Window {
-    
+
     private static final long serialVersionUID = -1437536052155383270L;
-    
+
     private static final String COL_NAME = "rolename";
-    
+    private static final String COL_OTHER = "other";
+
     private final RoleRepository roleRepo;
-    
+
     private final RoleSelectionAction roleSelectionAction;
-    
+
     public RoleSelector(final String caption,
                         final String actionLabel,
                         final UsersGroupsRoles usersGroupsRoles,
                         final List<Role> excludedRoles,
                         final RoleSelectionAction action) {
-        
+
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         roleRepo = cdiUtil.findBean(RoleRepository.class);
         this.roleSelectionAction = action;
-        
+
         addWidgets(caption, actionLabel, excludedRoles, action);
     }
-    
+
     private void addWidgets(final String caption,
                             final String actionLabel,
                             final List<Role> excludedRoles,
                             final RoleSelectionAction action) {
-        
+
         setCaption(caption);
-        
+
         final ResourceBundle bundle = ResourceBundle
             .getBundle(AdminUiConstants.ADMIN_BUNDLE,
                        UI.getCurrent().getLocale());
 
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-        
+
         final Grid<Role> rolesGrid = new Grid<>();
         rolesGrid
             .addColumn(Role::getName)
             .setId(COL_NAME)
             .setCaption("Role");
-        
+        rolesGrid
+            .addColumn(role -> " ")
+            .setId(COL_OTHER)
+            .setCaption(" ");
+
         rolesGrid.setSelectionMode(Grid.SelectionMode.MULTI);
         rolesGrid.setWidth("100%");
-        
+
         final Button actionButton = new Button(actionLabel);
         actionButton.addClickListener(event -> {
             action.action(rolesGrid.getSelectedItems());
             close();
         });
-        
+
         actionButton.setIcon(VaadinIcons.PLUS_CIRCLE_O);
         actionButton.setStyleName(ValoTheme.BUTTON_TINY);
 
@@ -101,9 +105,10 @@ public class RoleSelector extends Window {
         });
         clearButton.setIcon(VaadinIcons.BACKSPACE);
         clearButton.setStyleName(ValoTheme.BUTTON_TINY);
-        
+
         final HeaderRow actions = rolesGrid.prependHeaderRow();
-        final HeaderCell actionsCell = actions.join(COL_NAME);
+        final HeaderCell actionsCell = actions.join(COL_NAME,
+                                                    COL_OTHER);
         actionsCell.setComponent(new HorizontalLayout(actionButton,
                                                       clearButton));
 
@@ -116,4 +121,5 @@ public class RoleSelector extends Window {
 
         setContent(rolesGrid);
     }
+
 }
