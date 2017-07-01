@@ -101,7 +101,7 @@ public class ArticlePropertiesStep extends GenericArticlePropertiesStep {
 
         sheet.add(new GlobalizedMessage("cms.contenttypes.ui.lead",
                                         CmsConstants.CMS_BUNDLE),
-                  "lead");
+                  "description");
 
         return sheet;
     }
