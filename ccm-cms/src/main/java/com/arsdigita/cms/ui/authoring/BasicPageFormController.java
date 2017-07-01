@@ -30,6 +30,7 @@ import org.librecms.contentsection.Folder;
 import org.librecms.contentsection.FolderRepository;
 
 import java.util.Locale;
+import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -124,6 +125,19 @@ class BasicPageFormController {
         }
 
         return item;
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    protected Optional<Folder> getItemFolder(final ContentItem item) {
+
+        final Optional<ContentItem> contentItem = itemRepo
+            .findById(item.getObjectId());
+
+        if (contentItem.isPresent()) {
+            return itemManager.getItemFolder(contentItem.get());
+        } else {
+            return Optional.empty();
+        }
     }
 
 }

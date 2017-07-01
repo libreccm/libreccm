@@ -430,7 +430,7 @@ public class ContentItemPage extends CMSPage implements ActionListener {
         // link if the current item is a template.
         final ContentItem item = itemRequestLocal.getContentItem(state);
 
-        // ToDo: Reable when Templates have been ported. Not clear yet if 
+        // ToDo: Reenable when Templates have been ported. Not clear yet if 
         // Templates will be ContentItems in LibreCMS...
 //        if (item instanceof Template) {
 //            tabbedPane.setTabVisible(state, templatesPane, false);
