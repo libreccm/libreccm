@@ -195,28 +195,33 @@ public abstract class BasicPageForm extends BasicItemForm {
      * Class specific implementation of FormValidationListener interface
      * (inherited from BasicItemForm).
      *
-     * @param fse
+     * @param event
      *
      * @throws FormProcessException
      */
     @Override
-    public void validate(final FormSectionEvent fse) throws FormProcessException {
+    public void validate(final FormSectionEvent event)
+        throws FormProcessException {
 
-        super.validate(fse); //noop, BasicItemForm#validate does nothing
+        super.validate(event);
+
+        final PageState state = event.getPageState();
 
         final ContentItem item = getItemSelectionModel()
-            .getSelectedItem(fse.getPageState());
+            .getSelectedItem(event.getPageState());
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-        final ContentItemManager itemManager = cdiUtil
-            .findBean(ContentItemManager.class);
+        final BasicPageFormController controller = cdiUtil
+            .findBean(BasicPageFormController.class);
 
-        final Optional<Folder> folder = itemManager.getItemFolder(item);
+        final Optional<Folder> folder = controller.getItemFolder(item);
         if (folder.isPresent()) {
-            final String name = fse.getFormData().getString(NAME);
-            if (!item.getName()
-                .getValue(KernelConfig.getConfig().getDefaultLocale())
-                .equals(name)) {
-                validateNameUniqueness(folder.get(), fse);
+            final String name = event.getFormData().getString(NAME);
+            final String selectedLang = (String) state
+                .getValue(selectedLanguageParam);
+            final Locale selectedLocale = new Locale(selectedLang);
+            if (!item.getName().hasValue(selectedLocale)
+                    || !item.getName().getValue(selectedLocale).equals(name)) {
+                validateNameUniqueness(folder.get(), event);
             }
         }
     }
@@ -320,9 +325,9 @@ public abstract class BasicPageForm extends BasicItemForm {
 
             if (workflowTemplate == null) {
                 item = controller
-                    .createContentItem(name, 
-                                       section, 
-                                       folder, 
+                    .createContentItem(name,
+                                       section,
+                                       folder,
                                        clazz,
                                        initializer,
                                        locale);

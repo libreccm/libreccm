@@ -104,8 +104,7 @@ public class AuthoringKitWizard extends LayoutPanel implements Resettable {
     private static final Logger LOGGER = LogManager
         .getLogger(AuthoringKitWizard.class);
 
-    public final String SELECTED_LANGUAGE = "selectedLanguage";
-
+//    public final String SELECTED_LANGUAGE = "selectedLanguage";
     private static Class[] arguments = new Class[]{
         ItemSelectionModel.class,
         AuthoringKitWizard.class,
@@ -166,7 +165,8 @@ public class AuthoringKitWizard extends LayoutPanel implements Resettable {
         final ConfigurationManager confManager = cdiUtil.findBean(
             ConfigurationManager.class);
 
-        selectedLanguageParam = new StringParameter(SELECTED_LANGUAGE);
+        selectedLanguageParam = new StringParameter(
+            ContentItemPage.SELECTED_LANGUAGE);
         final GlobalizationHelper globalizationHelper = cdiUtil
             .findBean(GlobalizationHelper.class);
         selectedLanguageParam.setDefaultValue(globalizationHelper
@@ -431,7 +431,7 @@ public class AuthoringKitWizard extends LayoutPanel implements Resettable {
         }
 
         page.addGlobalStateParam(selectedLanguageParam);
-        
+
         page.addActionListener(new ActionListener() {
 
             @Override
@@ -603,7 +603,7 @@ public class AuthoringKitWizard extends LayoutPanel implements Resettable {
      * @return The instance of the component.
      */
     protected Component instantiateStep(final String className) {
-        
+
         LOGGER.debug("Instantiating kit wizard \"{}\" with arguments {}...",
                      className,
                      arguments);
@@ -622,8 +622,9 @@ public class AuthoringKitWizard extends LayoutPanel implements Resettable {
                  | InvocationTargetException
                  | NoSuchMethodException
                  | SecurityException ex) {
-            LOGGER.error("Failed to instantiate authoring kit component \"{}\"...",
-                         className);
+            LOGGER.error(
+                "Failed to instantiate authoring kit component \"{}\"...",
+                className);
             LOGGER.error("Exception is: ", ex);
             throw new UncheckedWrapperException(String.format(
                 "Failed to instantiate authoring kit component \"%s\".",
