@@ -43,7 +43,6 @@ import com.vaadin.ui.themes.ValoTheme;
 import org.libreccm.admin.ui.ConfirmDiscardDialog;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.Group;
-import org.libreccm.security.GroupManager;
 import org.libreccm.security.GroupRepository;
 import org.libreccm.security.Role;
 import org.libreccm.security.RoleRepository;
@@ -72,7 +71,6 @@ public class GroupDetails extends Window {
     private final UsersGroupsRoles usersGroupsRoles;
     private final Group group;
     private final GroupRepository groupRepo;
-    private final GroupManager groupManager;
 
     private boolean dataHasChanged = false;
 
@@ -83,15 +81,13 @@ public class GroupDetails extends Window {
 
     public GroupDetails(final Group group,
                         final UsersGroupsRoles usersGroupsRoles,
-                        final GroupRepository groupRepo,
-                        final GroupManager groupManager) {
+                        final GroupRepository groupRepo) {
 
         super(String.format("Edit group %s", group.getName()));
 
         this.group = group;
         this.usersGroupsRoles = usersGroupsRoles;
         this.groupRepo = groupRepo;
-        this.groupManager = groupManager;
 
         addWidgets();
     }

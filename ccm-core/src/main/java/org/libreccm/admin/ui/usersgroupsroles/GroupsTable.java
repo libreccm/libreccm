@@ -74,8 +74,7 @@ public class GroupsTable extends Grid<Group> {
                         final GroupDetails groupDetails = new GroupDetails(
                           event.getItem(),
                           usersGroupsRoles,
-                          view.getGroupRepository(),
-                          view.getGroupManager());
+                          view.getGroupRepository());
                       groupDetails.center();
                       groupDetails.setWidth("50%");
                       groupDetails.setHeight("100%");
